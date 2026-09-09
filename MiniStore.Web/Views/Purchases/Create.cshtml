@@ -1,0 +1,428 @@
+﻿@model MiniStore.Application.DTOs.Purchases.CreatePurchaseDto
+
+@{
+    ViewData["Title"] = "Create Purchase";
+}
+
+<h1>Create Purchase</h1>
+
+<form asp-action="Create"
+      method="post"
+      id="purchaseForm">
+
+    <!-- Purchase Header -->
+
+    <div class="row mb-3">
+
+        <div class="col-md-4">
+
+            <label asp-for="SupplierId"
+                   class="form-label">
+                Supplier
+            </label>
+
+            <select asp-for="SupplierId"
+                    class="form-select">
+
+                <option value="0">
+                    -- Select Supplier --
+                </option>
+
+                @foreach (var supplier in ViewBag.Suppliers)
+                {
+                    <option value="@supplier.Id">
+                        @supplier.Name
+                    </option>
+                }
+
+            </select>
+
+            <span asp-validation-for="SupplierId"
+                  class="text-danger">
+            </span>
+
+        </div>
+
+
+        <div class="col-md-4">
+
+            <label asp-for="WarehouseId"
+                   class="form-label">
+                Warehouse
+            </label>
+
+            <select asp-for="WarehouseId"
+                    class="form-select">
+
+                <option value="0">
+                    -- Select Warehouse --
+                </option>
+
+                @foreach (var warehouse in ViewBag.Warehouses)
+                {
+                    <option value="@warehouse.Id">
+                        @warehouse.Name
+                    </option>
+                }
+
+            </select>
+
+            <span asp-validation-for="WarehouseId"
+                  class="text-danger">
+            </span>
+
+        </div>
+
+
+        <div class="col-md-4">
+
+            <label asp-for="Date"
+                   class="form-label">
+                Date
+            </label>
+
+            <input asp-for="Date"
+                   type="date"
+                   class="form-control" />
+
+        </div>
+
+    </div>
+
+
+    <div class="row mb-4">
+
+        <div class="col-md-6">
+
+            <label asp-for="InvoiceNumber"
+                   class="form-label">
+                Supplier Invoice Number
+            </label>
+
+            <input asp-for="InvoiceNumber"
+                   class="form-control"
+                   placeholder="Example: INV-2026-001" />
+
+        </div>
+
+
+        <div class="col-md-6">
+
+            <label asp-for="Notes"
+                   class="form-label">
+                Notes
+            </label>
+
+            <input asp-for="Notes"
+                   class="form-control"
+                   placeholder="Optional notes" />
+
+        </div>
+
+    </div>
+
+
+    <!-- Items -->
+
+    <h3>Purchase Items</h3>
+
+    <div class="table-responsive">
+
+        <table class="table table-bordered">
+
+            <thead>
+
+                <tr>
+
+                    <th>Product</th>
+
+                    <th>Quantity</th>
+
+                    <th>Purchase Price</th>
+
+                    <th>Total</th>
+
+                    <th>Action</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody id="itemsBody">
+            </tbody>
+
+        </table>
+
+    </div>
+
+
+    <button type="button"
+            class="btn btn-primary mb-4"
+            id="addItemButton">
+
+        + Add Item
+
+    </button>
+
+
+    <!-- Total -->
+
+    <div class="row justify-content-end">
+
+        <div class="col-md-4">
+
+            <div class="card">
+
+                <div class="card-body">
+
+                    <h5>
+                        Grand Total
+                    </h5>
+
+                    <h2 id="grandTotal">
+                        0.00
+                    </h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="mt-4">
+
+        <button type="submit"
+                class="btn btn-success">
+
+            Save Purchase
+
+        </button>
+
+        <a asp-action="Index"
+           class="btn btn-secondary">
+
+            Cancel
+
+        </a>
+
+    </div>
+
+</form>
+
+
+<script>
+
+    let itemIndex = 0;
+
+
+    // Add Item button
+    document
+        .getElementById("addItemButton")
+        .addEventListener("click", function() {
+
+            addItem();
+
+        });
+
+
+    function addItem() {
+
+        const tbody =
+            document.getElementById("itemsBody");
+
+
+        const row =
+            document.createElement("tr");
+
+
+        row.innerHTML = `
+
+                <td>
+
+                    <select
+                        name="Items[${itemIndex}].ProductId"
+                        class="form-select">
+
+                        <option value="0">
+                            -- Select Product --
+                        </option>
+
+                        @foreach (var product in ViewBag.Products)
+                        {
+                                <option value="@product.Id">
+                                        @product.Name
+                                </option>
+                        }
+
+                    </select>
+
+                </td>
+
+
+                <td>
+
+                    <input
+                        type="number"
+                        name="Items[${itemIndex}].Quantity"
+                        class="form-control quantity"
+                        min="0.001"
+                        step="0.001"
+                        value="1">
+
+                </td>
+
+
+                <td>
+
+                    <input
+                        type="number"
+                        name="Items[${itemIndex}].PurchasePrice"
+                        class="form-control purchase-price"
+                        min="0"
+                        step="0.01"
+                        value="0">
+
+                </td>
+
+
+                <td>
+
+                    <input
+                        type="text"
+                        class="form-control row-total"
+                        value="0.00"
+                        readonly>
+
+                </td>
+
+
+                <td>
+
+                    <button
+                        type="button"
+                        class="btn btn-danger btn-sm remove-item">
+
+                        Remove
+
+                    </button>
+
+                </td>
+
+            `;
+
+
+        tbody.appendChild(row);
+
+
+        // Quantity / Price change
+        const quantityInput =
+            row.querySelector(".quantity");
+
+        const priceInput =
+            row.querySelector(".purchase-price");
+
+
+        quantityInput.addEventListener(
+            "input",
+            function() {
+
+                calculateRow(row);
+
+            });
+
+
+        priceInput.addEventListener(
+            "input",
+            function() {
+
+                calculateRow(row);
+
+            });
+
+
+        // Remove button
+        const removeButton =
+            row.querySelector(".remove-item");
+
+
+        removeButton.addEventListener(
+            "click",
+            function() {
+
+                row.remove();
+
+                calculateGrandTotal();
+
+            });
+
+
+        itemIndex++;
+
+        calculateGrandTotal();
+
+    }
+
+
+    function calculateRow(row) {
+
+        const quantity =
+            parseFloat(
+                row.querySelector(".quantity").value
+            ) || 0;
+
+
+        const price =
+            parseFloat(
+                row.querySelector(".purchase-price").value
+            ) || 0;
+
+
+        const total =
+            quantity * price;
+
+
+        row.querySelector(".row-total").value =
+            total.toFixed(2);
+
+
+        calculateGrandTotal();
+
+    }
+
+
+    function calculateGrandTotal() {
+
+        let total = 0;
+
+
+        document
+            .querySelectorAll(".row-total")
+            .forEach(function(input) {
+
+                total +=
+                    parseFloat(input.value) || 0;
+
+            });
+
+
+        document
+            .getElementById("grandTotal")
+            .textContent =
+            total.toFixed(2);
+
+    }
+
+
+    // Add first row automatically
+    document.addEventListener(
+        "DOMContentLoaded",
+        function() {
+
+            addItem();
+
+        });
+
+</script>

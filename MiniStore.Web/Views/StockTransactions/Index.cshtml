@@ -1,0 +1,85 @@
+﻿@model List<MiniStore.Application.DTOs.ProductStocks.StockTransactionDto>
+
+@{
+    ViewData["Title"] = "Stock Transactions";
+}
+
+<h1>Stock Transactions</h1>
+
+<p class="text-muted">
+    @Model.Count transaction(s) found.
+</p>
+
+<p>
+    <a asp-action="Create"
+       class="btn btn-primary">
+        Add Transaction
+    </a>
+</p>
+
+<table class="table table-bordered">
+
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Product</th>
+            <th>Warehouse</th>
+            <th>Quantity</th>
+            <th>Type</th>
+            <th>Reference</th>
+            <th>Date</th>
+        </tr>
+    </thead>
+
+    <tbody>
+
+        @if (Model.Count == 0)
+        {
+            <tr>
+                <td colspan="7"
+                    class="text-center text-muted">
+                    No transactions found.
+                </td>
+            </tr>
+        }
+        else
+        {
+            @foreach (var transaction in Model)
+            {
+                <tr>
+
+                    <td>
+                        @transaction.Id
+                    </td>
+
+                    <td>
+                        @transaction.ProductName
+                    </td>
+
+                    <td>
+                        @transaction.WarehouseName
+                    </td>
+
+                    <td>
+                        @transaction.Quantity
+                    </td>
+
+                    <td>
+                        @transaction.Type
+                    </td>
+
+                    <td>
+                        @transaction.Reference
+                    </td>
+
+                    <td>
+                        @transaction.CreatedAt
+                    </td>
+
+                </tr>
+            }
+        }
+
+    </tbody>
+
+</table>

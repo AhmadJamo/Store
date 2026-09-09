@@ -1,0 +1,92 @@
+﻿@model List<MiniStore.Application.DTOs.Warehouses.WarehouseDto>
+
+@{
+    ViewData["Title"] = "Warehouses";
+}
+
+<h1>Warehouses</h1>
+
+<p class="text-muted">
+    @Model.Count warehouse(s) found.
+</p>
+
+<p>
+    @if (await PermissionService.CanAsync(
+        User,
+        "Warehouses.Create"))
+    {
+        <a asp-action="Create"
+           class="btn btn-primary">
+            Add Warehouse
+        </a>
+    }
+</p>
+
+<table class="table table-bordered">
+
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+
+    <tbody>
+
+        @if (Model.Count == 0)
+        {
+            <tr>
+                <td colspan="3"
+                    class="text-center text-muted">
+                    No warehouses found.
+                </td>
+            </tr>
+        }
+        else
+        {
+            @foreach (var warehouse in Model)
+            {
+                <tr>
+
+                    <td>
+                        @warehouse.Id
+                    </td>
+
+                    <td>
+                        @warehouse.Name
+                    </td>
+
+                    <td>
+
+                        @if (await PermissionService.CanAsync(
+                           User,
+                             "Warehouses.Edit"))
+                        {
+                            <a asp-action="Edit"
+                               asp-route-id="@warehouse.Id"
+                               class="btn btn-warning">
+                                Edit
+                            </a>
+                        }
+
+                        @if (await PermissionService.CanAsync(
+                            User,
+                              "Warehouses.Delete"))
+                        {
+                            <a asp-action="Delete"
+                               asp-route-id="@warehouse.Id"
+                               class="btn btn-danger">
+                                Delete
+                            </a>
+                        }
+
+                    </td>
+
+                </tr>
+            }
+        }
+
+    </tbody>
+
+</table>

@@ -1,0 +1,137 @@
+﻿@model MiniStore.Application.DTOs.Purchases.PurchaseDto
+
+@{
+    ViewData["Title"] = "Purchase Details";
+}
+
+<h1>Purchase Details</h1>
+
+<div class="row mb-4">
+
+    <div class="col-md-3">
+
+        <strong>Invoice Number</strong>
+
+        <div>
+            @Model.InvoiceNumber
+        </div>
+
+    </div>
+
+    <div class="col-md-3">
+
+        <strong>Supplier</strong>
+
+        <div>
+            @Model.SupplierName
+        </div>
+
+    </div>
+
+    <div class="col-md-3">
+
+        <strong>Warehouse</strong>
+
+        <div>
+            @Model.WarehouseName
+        </div>
+
+    </div>
+
+    <div class="col-md-3">
+
+        <strong>Date</strong>
+
+        <div>
+            @Model.Date.ToShortDateString()
+        </div>
+
+    </div>
+
+</div>
+
+
+<h3>Items</h3>
+
+<table class="table table-bordered">
+
+    <thead>
+
+        <tr>
+
+            <th>Product</th>
+            <th>Quantity</th>
+            <th>Purchase Price</th>
+            <th>Total</th>
+
+        </tr>
+
+    </thead>
+
+    <tbody>
+
+        @foreach (var item in Model.Items)
+        {
+            <tr>
+
+                <td>
+                    @item.ProductName
+                </td>
+
+                <td>
+                    @item.Quantity
+                </td>
+
+                <td>
+                    @item.PurchasePrice.ToString("N2")
+                </td>
+
+                <td>
+                    @item.Total.ToString("N2")
+                </td>
+
+            </tr>
+        }
+
+    </tbody>
+
+    <tfoot>
+
+        <tr>
+
+            <th colspan="3"
+                class="text-end">
+
+                Grand Total
+
+            </th>
+
+            <th>
+
+                @Model.TotalAmount.ToString("N2")
+
+            </th>
+
+        </tr>
+
+    </tfoot>
+
+</table>
+
+@if (!string.IsNullOrWhiteSpace(Model.Notes))
+{
+    <div class="alert alert-secondary">
+
+        <strong>Notes:</strong>
+
+        @Model.Notes
+
+    </div>
+}
+
+<a asp-action="Index"
+   class="btn btn-secondary">
+
+    Back
+
+</a>

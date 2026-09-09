@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path="AGENTS.md" />
+  </Folder>
+  <Project Path="MiniStore.Application/MiniStore.Application.csproj" />
+  <Project Path="MiniStore.Domain/MiniStore.Domain.csproj" />
+  <Project Path="MiniStore.Infrastructure/MiniStore.Infrastructure.csproj" />
+  <Project Path="MiniStore.Web/MiniStore.Web.csproj" />
+</Solution>

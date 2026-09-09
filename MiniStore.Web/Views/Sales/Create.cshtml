@@ -1,0 +1,429 @@
+﻿@using System.Globalization
+@model MiniStore.Application.DTOs.Sale.CreateSaleDto
+
+@{
+    ViewData["Title"] = "Create Sale";
+}
+
+<div class="container mt-4">
+
+    <h2>Create Sale</h2>
+
+    <hr />
+
+    <form asp-action="Create" method="post">
+
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="channel" value="Wholesale" />
+
+        <div asp-validation-summary="ModelOnly"
+             class="text-danger mb-3">
+        </div>
+
+        <div class="row">
+
+            <div class="col-md-4">
+                <div class="mb-3">
+
+                    <label asp-for="Date"
+                           class="form-label">
+                        Date
+                    </label>
+
+                    <input asp-for="Date"
+                           type="date"
+                           class="form-control" />
+
+                    <span asp-validation-for="Date"
+                          class="text-danger">
+                    </span>
+
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="mb-3">
+
+                    <label asp-for="WarehouseId"
+                           class="form-label">
+                        Warehouse
+                    </label>
+
+                    <select asp-for="WarehouseId"
+                            class="form-select">
+                        <option value="">-- Select Warehouse --</option>
+                        @foreach (var warehouse in ViewBag.Warehouses)
+                        {
+                            <option value="@warehouse.Id">@warehouse.Name</option>
+                        }
+                    </select>
+
+                    <span asp-validation-for="WarehouseId"
+                          class="text-danger">
+                    </span>
+
+                </div>
+            </div>
+
+        </div>
+
+        <div class="mb-3">
+
+            <label asp-for="Notes"
+                   class="form-label">
+                Notes
+            </label>
+
+            <textarea asp-for="Notes"
+                      class="form-control">
+            </textarea>
+
+        </div>
+
+        <hr />
+
+        <h4>Sale Items</h4>
+
+        <div class="row align-items-end">
+
+            <div class="col-md-5">
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Product
+                    </label>
+
+                    <input id="productSearch"
+                           class="form-control mb-2"
+                           placeholder="Search by product name or barcode"
+                           autocomplete="off" />
+
+                    <select id="productId"
+                            class="form-select">
+                        <option value="">-- Select Product --</option>
+                        @foreach (var product in ViewBag.Products)
+                        {
+                            <option value="@product.Id"
+                                    data-sale-price="@product.SalePrice.ToString(CultureInfo.InvariantCulture)"
+                                    data-barcode="@product.Barcode">
+                                @product.Name (@product.Barcode)
+                            </option>
+                        }
+                    </select>
+
+                </div>
+            </div>
+
+            <div class="col-md-2">
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Quantity
+                    </label>
+
+                    <input id="quantity"
+                           type="number"
+                           step="0.001"
+                           min="0.001"
+                           value="1"
+                           class="form-control" />
+
+                </div>
+            </div>
+
+            <div class="col-md-2">
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Sale Price
+                    </label>
+
+                    <input id="salePrice"
+                           type="number"
+                           step="0.01"
+                           class="form-control"
+                           readonly />
+
+                </div>
+            </div>
+
+            <div class="col-md-3">
+
+                <button type="button"
+                        id="addItem"
+                        class="btn btn-success mb-3 w-100">
+                    Add Item
+                </button>
+
+            </div>
+
+        </div>
+
+        <table class="table table-bordered">
+
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Quantity</th>
+                    <th>Sale Price</th>
+                    <th>Total</th>
+                    <th></th>
+                </tr>
+            </thead>
+
+            <tbody id="itemsTableBody">
+            </tbody>
+
+            <tfoot>
+                <tr>
+
+                    <th colspan="3"
+                        class="text-end">
+                        Grand Total
+                    </th>
+
+                    <th id="grandTotal">
+                        0.00
+                    </th>
+
+                    <th></th>
+
+                </tr>
+            </tfoot>
+
+        </table>
+
+        <button type="submit"
+                class="btn btn-primary">
+            Save Sale
+        </button>
+
+        <a asp-action="Index"
+           class="btn btn-secondary">
+            Cancel
+        </a>
+
+    </form>
+
+</div>
+
+@section Scripts {
+
+  
+
+    <script>
+
+        let itemIndex = 0;
+
+        const addItemButton =
+            document.getElementById("addItem");
+
+        const itemsTableBody =
+            document.getElementById("itemsTableBody");
+
+        const grandTotal =
+            document.getElementById("grandTotal");
+
+        const productSearch =
+            document.getElementById("productSearch");
+
+        const productSelect =
+            document.getElementById("productId");
+
+        const salePriceInput =
+            document.getElementById("salePrice");
+
+        productSelect.addEventListener(
+            "change",
+            updateSalePrice
+        );
+
+        productSearch.addEventListener(
+            "input",
+            filterProducts
+        );
+
+        productSearch.addEventListener(
+            "keydown",
+            function(event) {
+                if (event.key !== "Enter") {
+                    return;
+                }
+
+                event.preventDefault();
+
+                const barcode = productSearch.value
+                    .trim()
+                    .toLowerCase();
+
+                const product = [...productSelect.options]
+                    .find(option =>
+                        option.dataset.barcode?.toLowerCase() === barcode);
+
+                if (product) {
+                    productSelect.value = product.value;
+                    updateSalePrice();
+                }
+            }
+        );
+
+        addItemButton.addEventListener(
+            "click",
+            function() {
+
+                const productId = productSelect.value;
+
+                const productName =
+                    productSelect
+                        .selectedOptions[0].text;
+
+                const quantity =
+                    parseFloat(
+                        document.getElementById("quantity").value
+                    );
+
+                const salePrice =
+                    parseFloat(
+                    salePriceInput.value
+                    );
+
+                if (!productId) {
+                    alert("Product is required.");
+                    return;
+                }
+
+                if (!quantity || quantity <= 0) {
+                    alert("Quantity must be greater than zero.");
+                    return;
+                }
+
+                if (isNaN(salePrice) || salePrice < 0) {
+                    alert("Sale price is invalid.");
+                    return;
+                }
+
+                const total =
+                    quantity * salePrice;
+
+                const row =
+                    document.createElement("tr");
+
+                row.innerHTML = `
+                            <td>
+                                ${escapeHtml(productName)}
+
+                                <input type="hidden"
+                                       name="Items[${itemIndex}].ProductId"
+                                       value="${productId}" />
+                            </td>
+
+                            <td>
+                                ${quantity}
+
+                                <input type="hidden"
+                                       name="Items[${itemIndex}].Quantity"
+                                       value="${quantity}" />
+                            </td>
+
+                            <td>
+                                ${salePrice.toFixed(2)}
+
+                                <input type="hidden"
+                                       name="Items[${itemIndex}].SalePrice"
+                                       value="${salePrice}" />
+                            </td>
+
+                            <td>
+                                ${total.toFixed(2)}
+                            </td>
+
+                            <td>
+                                <button type="button"
+                                        class="btn btn-danger btn-sm remove-item">
+                                    Remove
+                                </button>
+                            </td>
+                        `;
+
+                itemsTableBody.appendChild(row);
+
+                itemIndex++;
+
+                calculateGrandTotal();
+
+                productSelect.value = "";
+                productSearch.value = "";
+                document.getElementById("quantity").value = "1";
+                salePriceInput.value = "";
+            }
+        );
+
+        itemsTableBody.addEventListener(
+            "click",
+            function(event) {
+
+                if (
+                    event.target.classList.contains(
+                        "remove-item"
+                    )
+                ) {
+                    event.target
+                        .closest("tr")
+                        .remove();
+
+                    calculateGrandTotal();
+                }
+            }
+        );
+
+        function calculateGrandTotal() {
+            let total = 0;
+
+            const rows =
+                itemsTableBody.querySelectorAll("tr");
+
+            rows.forEach(row => {
+                total += parseFloat(
+                    row.children[3].innerText
+                );
+            });
+
+            grandTotal.innerText =
+                total.toFixed(2);
+        }
+
+        function escapeHtml(value) {
+            const element = document.createElement("div");
+            element.textContent = value;
+
+            return element.innerHTML;
+        }
+
+        function updateSalePrice() {
+            const selectedProduct =
+                productSelect.selectedOptions[0];
+
+            salePriceInput.value =
+                selectedProduct?.dataset.salePrice ?? "";
+        }
+
+        function filterProducts() {
+            const query = productSearch.value
+                .trim()
+                .toLowerCase();
+
+            [...productSelect.options]
+                .forEach(option => {
+                    if (!option.value) {
+                        option.hidden = false;
+                        return;
+                    }
+
+                    option.hidden = !option.text
+                        .toLowerCase()
+                        .includes(query);
+                });
+        }
+
+    </script>
+}

@@ -1,0 +1,102 @@
+﻿@using Microsoft.AspNetCore.Identity
+@model List<IdentityUser>
+
+@{
+    ViewData["Title"] = "Users";
+    var userRoles =
+        ViewBag.UserRoles
+        as Dictionary<string, IList<string>>;
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Users</h2>
+
+    <a asp-action="Create"
+       class="btn btn-primary">
+        + Add User
+    </a>
+</div>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["Success"]
+    </div>
+}
+
+<div class="card">
+    <div class="card-body">
+
+        <table class="table table-hover">
+
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Email Confirmed</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                @foreach (var user in Model)
+                {
+                    <tr>
+
+                        <td>
+                            @user.UserName
+                        </td>
+
+                        <td>
+                            @user.Email
+                        </td>
+
+                        <td>
+
+                            @if (userRoles != null &&
+                                userRoles.ContainsKey(user.Id))
+                            {
+                                var roles =
+                                    userRoles[user.Id];
+
+                                if (roles.Any())
+                                {
+                                    @string.Join(", ", roles)
+                                }
+                                else
+                                {
+                                    <span class="text-muted">
+                                        No Role
+                                    </span>
+                                }
+                            }
+
+                        </td>
+
+                        <td>
+
+                            @if (user.EmailConfirmed)
+                            {
+                                <span class="badge bg-success">
+                                    Yes
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">
+                                    No
+                                </span>
+                            }
+
+                        </td>
+
+                    </tr>
+                }
+
+            </tbody>
+
+        </table>
+
+    </div>
+</div>

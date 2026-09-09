@@ -1,0 +1,78 @@
+﻿@if (TempData["NotificationMessage"] != null)
+{
+    var type = TempData["NotificationType"]?.ToString() ?? "info";
+
+    var title = type switch
+    {
+        "success" => "Success",
+        "error" => "Error",
+        "warning" => "Warning",
+        _ => "Information"
+    };
+
+    var alertClass = type switch
+    {
+        "success" => "alert-success",
+        "error" => "alert-danger",
+        "warning" => "alert-warning",
+        _ => "alert-info"
+    };
+
+    <div class="modal fade"
+         id="notificationModal"
+         tabindex="-1"
+         aria-hidden="true">
+
+        <div class="modal-dialog modal-dialog-centered">
+
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        @title
+                    </h5>
+
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal">
+                    </button>
+                </div>
+
+                <div class="modal-body">
+
+                    <div class="alert @alertClass mb-0">
+                        @TempData["NotificationMessage"]
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+
+                    <button type="button"
+                            class="btn btn-secondary"
+                            data-bs-dismiss="modal">
+                        Close
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+
+            const modalElement =
+                document.getElementById("notificationModal");
+
+            const modal =
+                new bootstrap.Modal(modalElement);
+
+            modal.show();
+
+        });
+    </script>
+}

@@ -1,0 +1,44 @@
+﻿@model MiniStore.Application.DTOs.Settings.InvoiceSettingsDto
+
+@{
+    ViewData["Title"] = "Invoice Settings";
+}
+
+<div class="container mt-4" style="max-width: 760px;">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <h2 class="mb-1">Invoice Settings</h2>
+            <p class="text-muted mb-0">These formats apply only to new sales invoices.</p>
+        </div>
+    </div>
+
+    <form asp-action="Invoices" method="post" class="card shadow-sm border-0">
+        <div class="card-body p-4">
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label asp-for="WholesalePrefix" class="form-label">Wholesale Prefix</label>
+                    <input asp-for="WholesalePrefix" class="form-control" placeholder="SAL-" />
+                    <div class="form-text">Example: SAL-000001</div>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="PosPrefix" class="form-label">POS Prefix</label>
+                    <input asp-for="PosPrefix" class="form-control" placeholder="POS-" />
+                    <div class="form-text">Example: POS-000001</div>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="NumberLength" class="form-label">Number Length</label>
+                    <input asp-for="NumberLength" type="number" min="1" max="12" class="form-control" />
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Next Numbers</label>
+                    <div class="form-control bg-light">Wholesale: @Model.NextWholesaleNumber | POS: @Model.NextPosNumber</div>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer bg-white border-0 p-4 pt-0">
+            <button type="submit" class="btn btn-primary">Save Settings</button>
+        </div>
+    </form>
+</div>
