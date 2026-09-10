@@ -1,4 +1,7 @@
-﻿namespace MiniStore.Application.DTOs.Sale;
+﻿
+using MiniStore.Domain.Enums;
+
+namespace MiniStore.Application.DTOs.Sales;
 
 public class SaleDetailsDto
 {
@@ -12,7 +15,16 @@ public class SaleDetailsDto
 
     public string? Notes { get; set; }
 
+    public decimal Subtotal { get; set; }
+
+    public DiscountType InvoiceDiscountType { get; set; }
+
+    public decimal InvoiceDiscountValue { get; set; }
+
+    public decimal InvoiceDiscountAmount { get; set; }
+
     public decimal TotalAmount { get; set; }
 
     public List<SaleItemDetailsDto> Items { get; set; } = new();
 }
+

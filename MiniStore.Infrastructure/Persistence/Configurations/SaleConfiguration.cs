@@ -5,14 +5,15 @@ using MiniStore.Domain.Entities;
 namespace MiniStore.Infrastructure.Persistence.Configurations;
 
 public class SaleConfiguration
-    : IEntityTypeConfiguration<Sale>
+: IEntityTypeConfiguration<Sale>
 {
     public void Configure(
-        EntityTypeBuilder<Sale> builder)
+    EntityTypeBuilder<Sale> builder)
     {
         builder.ToTable("Sales");
 
-        builder.HasKey(x => x.Id);
+
+    builder.HasKey(x => x.Id);
 
         builder.Property(x => x.InvoiceNumber)
             .IsRequired()
@@ -37,8 +38,24 @@ public class SaleConfiguration
         builder.Property(x => x.Notes)
             .HasMaxLength(500);
 
+        builder.Property(x => x.Subtotal)
+            .HasColumnType("decimal(18,2)")
+            .IsRequired();
+
+        builder.Property(x => x.InvoiceDiscountType)
+            .IsRequired();
+
+        builder.Property(x => x.InvoiceDiscountValue)
+            .HasColumnType("decimal(18,4)")
+            .IsRequired();
+
+        builder.Property(x => x.InvoiceDiscountAmount)
+            .HasColumnType("decimal(18,2)")
+            .IsRequired();
+
         builder.Property(x => x.TotalAmount)
-            .HasColumnType("decimal(18,2)");
+            .HasColumnType("decimal(18,2)")
+            .IsRequired();
 
         builder.HasOne<Warehouse>()
             .WithMany()
@@ -50,4 +67,6 @@ public class SaleConfiguration
             .HasForeignKey(x => x.SaleId)
             .OnDelete(DeleteBehavior.Cascade);
     }
+
+
 }

@@ -12,8 +12,8 @@
 
 <p>
     @if (await PermissionService.CanAsync(
-        User,
-        "Purchases.Create"))
+    User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "System",
+    "Purchases.Create"))
     {
         <a asp-action="Create"
            class="btn btn-primary">

@@ -89,6 +89,14 @@ builder.Services.AddScoped<ISaleRepository, SaleRepository>();
 
 builder.Services.AddScoped<ISaleService, SaleService>();
 
+builder.Services.AddScoped<IGeneralSettingsRepository,GeneralSettingsRepository>();
+
+builder.Services.AddScoped<GeneralSettingsService>();
+
+builder.Services.AddScoped<IDiscountSettingsRepository, DiscountSettingsRepository>();
+
+builder.Services.AddScoped<DiscountSettingsService>();
+
 
 
 

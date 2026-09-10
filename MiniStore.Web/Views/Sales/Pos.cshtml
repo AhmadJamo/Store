@@ -1,315 +1,924 @@
 ﻿@using System.Globalization
-@model MiniStore.Application.DTOs.Sale.CreateSaleDto
+@model MiniStore.Application.DTOs.Sales.CreateSaleDto
 
 @{
     ViewData["Title"] = "Point of Sale";
 }
 
 <style>
-    .pos-page { background: #f4f7fb; min-height: calc(100vh - 92px); margin: -1.5rem calc(50% - 50vw) 0; padding: 1.5rem max(1rem, calc((100vw - 1320px) / 2)); }
-    .pos-header, .pos-card { border: 0; border-radius: 1rem; box-shadow: 0 8px 24px rgba(27, 48, 83, .08); }
-    .pos-header { background: linear-gradient(135deg, #142850, #2563a8); color: white; padding: 1.25rem 1.5rem; }
-    .pos-card { background: white; }
-    .pos-product { width: 100%; min-height: 126px; text-align: start; border: 1px solid #e5eaf2; border-radius: .85rem; background: #fff; padding: .9rem; transition: .15s ease; }
-    .pos-product:hover { border-color: #2563a8; box-shadow: 0 6px 16px rgba(37,99,168,.14); transform: translateY(-2px); }
-    .pos-product:disabled { opacity: .5; cursor: not-allowed; transform: none; }
-    .product-name { display: block; color: #18253d; font-weight: 700; line-height: 1.25; }
-    .product-barcode { color: #738197; font-size: .78rem; }
-    .product-price { color: #198754; font-size: 1.05rem; font-weight: 800; }
-    .cart-row { border-bottom: 1px solid #edf0f5; padding: .9rem 0; }
-    .quantity-control { display: inline-flex; align-items: center; border: 1px solid #dde4ee; border-radius: .5rem; overflow: hidden; }
-    .quantity-control button { border: 0; background: #f7f9fc; width: 30px; height: 30px; font-weight: 700; }
-    .quantity-control span { min-width: 38px; text-align: center; font-weight: 600; }
-    .total-panel { background: #eff6ff; border-radius: .75rem; padding: 1rem; }
-    .cart-empty { color: #7a8799; padding: 3.5rem 1rem; text-align: center; }
-    .stock-badge { font-size: .72rem; }
-    @@media (min-width: 992px) { .cart-column { position: sticky; top: 1rem; } }
+    .pos-page {
+        background: #f4f7fb;
+        min-height: calc(100vh - 92px);
+        margin: -1.5rem calc(50% - 50vw) 0;
+        padding: 1.5rem max(1rem, calc((100vw - 1320px) / 2));
+    }
+
+    .pos-header,
+    .pos-card {
+        border: 0;
+        border-radius: 1rem;
+        box-shadow: 0 8px 24px rgba(27, 48, 83, .08);
+    }
+
+    .pos-header {
+        background: linear-gradient(135deg, #142850, #2563a8);
+        color: white;
+        padding: 1.25rem 1.5rem;
+    }
+
+    .pos-card {
+        background: white;
+    }
+
+    .pos-product {
+        width: 100%;
+        min-height: 126px;
+        text-align: start;
+        border: 1px solid #e5eaf2;
+        border-radius: .85rem;
+        background: #fff;
+        padding: .9rem;
+        transition: .15s ease;
+    }
+
+    .pos-product:hover {
+        border-color: #2563a8;
+        box-shadow: 0 6px 16px rgba(37,99,168,.14);
+        transform: translateY(-2px);
+    }
+
+    .pos-product:disabled {
+        opacity: .5;
+        cursor: not-allowed;
+        transform: none;
+    }
+
+    .product-name {
+        display: block;
+        color: #18253d;
+        font-weight: 700;
+        line-height: 1.25;
+    }
+
+    .product-barcode {
+        color: #738197;
+        font-size: .78rem;
+    }
+
+    .product-price {
+        color: #198754;
+        font-size: 1.05rem;
+        font-weight: 800;
+    }
+
+    .cart-row {
+        border-bottom: 1px solid #edf0f5;
+        padding: .9rem 0;
+    }
+
+    .quantity-control {
+        display: inline-flex;
+        align-items: center;
+        border: 1px solid #dde4ee;
+        border-radius: .5rem;
+        overflow: hidden;
+    }
+
+    .quantity-control button {
+        border: 0;
+        background: #f7f9fc;
+        width: 30px;
+        height: 30px;
+        font-weight: 700;
+    }
+
+    .quantity-control span {
+        min-width: 38px;
+        text-align: center;
+        font-weight: 600;
+    }
+
+    .total-panel {
+        background: #eff6ff;
+        border-radius: .75rem;
+        padding: 1rem;
+    }
+
+    .cart-empty {
+        color: #7a8799;
+        padding: 3.5rem 1rem;
+        text-align: center;
+    }
+
+    .stock-badge {
+        font-size: .72rem;
+    }
+
+    @@media (min-width: 992px) {
+        .cart-column {
+            position: sticky;
+            top: 1rem;
+        }
+    }
 </style>
 
 <form asp-action="Create" method="post" id="posForm">
     <input type="hidden" name="channel" value="RetailPos" />
+
     <div class="pos-page">
+
         <div class="pos-header mb-4 d-flex flex-wrap gap-3 justify-content-between align-items-center">
             <div>
                 <div class="text-uppercase small opacity-75">MiniStore</div>
                 <h1 class="h3 mb-0">Point of Sale</h1>
             </div>
-            <a asp-action="Index" class="btn btn-outline-light">Back to Sales</a>
+
+            <a asp-action="Index" class="btn btn-outline-light">
+                Back to Sales
+            </a>
         </div>
 
-        <div asp-validation-summary="ModelOnly" class="alert alert-danger" id="validationSummary"></div>
+        <div asp-validation-summary="ModelOnly"
+             class="alert alert-danger"
+             id="validationSummary">
+        </div>
 
         <div class="card pos-card mb-4">
             <div class="card-body">
+
                 <div class="row g-3 align-items-end">
+
                     <div class="col-md-4">
-                        <label asp-for="WarehouseId" class="form-label fw-semibold">Warehouse</label>
-                        <select asp-for="WarehouseId" id="warehouseId" class="form-select">
-                            <option value="">-- Select Warehouse --</option>
+                        <label asp-for="WarehouseId"
+                               class="form-label fw-semibold">
+                            Warehouse
+                        </label>
+
+                        <select asp-for="WarehouseId"
+                                id="warehouseId"
+                                class="form-select">
+
+                            <option value="">
+                                -- Select Warehouse --
+                            </option>
+
                             @foreach (var warehouse in ViewBag.Warehouses)
                             {
-                                <option value="@warehouse.Id">@warehouse.Name</option>
+                                <option value="@warehouse.Id">
+                                    @warehouse.Name
+                                </option>
                             }
+
                         </select>
                     </div>
+
                     <div class="col-md-4">
-                        <label asp-for="Date" class="form-label fw-semibold">Date</label>
-                        <input asp-for="Date" class="form-control" type="date" />
+                        <label asp-for="Date"
+                               class="form-label fw-semibold">
+                            Date
+                        </label>
+
+                        <input asp-for="Date"
+                               class="form-control"
+                               type="date" />
                     </div>
+
                     <div class="col-md-4">
-                        <label asp-for="Notes" class="form-label fw-semibold">Notes</label>
-                        <input asp-for="Notes" class="form-control" placeholder="Optional note" />
+                        <label asp-for="Notes"
+                               class="form-label fw-semibold">
+                            Notes
+                        </label>
+
+                        <input asp-for="Notes"
+                               class="form-control"
+                               placeholder="Optional note" />
                     </div>
+
                 </div>
+
             </div>
         </div>
 
         <div class="row g-4">
+
+            <!-- PRODUCTS -->
             <div class="col-lg-7 col-xl-8">
+
                 <div class="card pos-card h-100">
+
                     <div class="card-body">
+
                         <div class="d-flex flex-wrap gap-2 justify-content-between align-items-center mb-3">
+
                             <div>
-                                <h2 class="h5 mb-1">Products</h2>
-                                <div class="small text-muted">Click a product to add it to the cart.</div>
+                                <h2 class="h5 mb-1">
+                                    Products
+                                </h2>
+
+                                <div class="small text-muted">
+                                    Click a product to add it to the cart.
+                                </div>
                             </div>
-                            <div class="input-group" style="max-width: 360px;">
-                                <span class="input-group-text">⌕</span>
-                                <input id="productSearch" class="form-control" placeholder="Search by name or barcode" autocomplete="off" />
+
+                            <div class="input-group"
+                                 style="max-width: 360px;">
+
+                                <span class="input-group-text">
+                                    ⌕
+                                </span>
+
+                                <input id="productSearch"
+                                       class="form-control"
+                                       placeholder="Search by name or barcode"
+                                       autocomplete="off" />
+
                             </div>
+
                         </div>
 
-                        <div class="row g-3" id="productGrid">
+                        <div class="row g-3"
+                             id="productGrid">
+
                             @foreach (var product in ViewBag.Products)
                             {
                                 <div class="col-sm-6 col-xl-4 product-wrapper"
                                      data-search="@product.Name @product.Barcode">
+
                                     <button type="button"
                                             class="pos-product product-button"
                                             data-id="@product.Id"
                                             data-name="@product.Name"
                                             data-price="@product.SalePrice.ToString(CultureInfo.InvariantCulture)"
                                             data-barcode="@product.Barcode">
-                                        <span class="product-name">@product.Name</span>
-                                        <span class="product-barcode d-block mt-1">@product.Barcode</span>
-                                        <span class="product-price d-block mt-3">@product.SalePrice.ToString("0.00") JOD</span>
-                                        <span class="badge text-bg-light border stock-badge mt-2 product-stock">Select a warehouse</span>
+
+                                        <span class="product-name">
+                                            @product.Name
+                                        </span>
+
+                                        <span class="product-barcode d-block mt-1">
+                                            @product.Barcode
+                                        </span>
+
+                                        <span class="product-price d-block mt-3">
+                                            @product.SalePrice.ToString("0.00") JOD
+                                        </span>
+
+                                        <span class="badge text-bg-light border stock-badge mt-2 product-stock">
+                                            Select a warehouse
+                                        </span>
+
                                     </button>
+
                                 </div>
                             }
+
                         </div>
 
-                        <div id="noProducts" class="text-center text-muted py-5 d-none">No products match your search.</div>
+                        <div id="noProducts"
+                             class="text-center text-muted py-5 d-none">
+
+                            No products match your search.
+
+                        </div>
+
                     </div>
+
                 </div>
+
             </div>
 
+
+            <!-- CART -->
             <div class="col-lg-5 col-xl-4 cart-column">
+
                 <div class="card pos-card">
+
                     <div class="card-body">
+
                         <div class="d-flex justify-content-between align-items-center mb-3">
+
                             <div>
-                                <h2 class="h5 mb-1">Current Cart</h2>
-                                <div class="small text-muted" id="cartCount">0 items</div>
+
+                                <h2 class="h5 mb-1">
+                                    Current Cart
+                                </h2>
+
+                                <div class="small text-muted"
+                                     id="cartCount">
+                                    0 items
+                                </div>
+
                             </div>
-                            <button type="button" class="btn btn-sm btn-outline-danger" id="clearCart">Clear</button>
+
+                            <button type="button"
+                                    class="btn btn-sm btn-outline-danger"
+                                    id="clearCart">
+
+                                Clear
+
+                            </button>
+
                         </div>
+
 
                         <div id="cartItems">
-                            <div class="cart-empty">Your cart is empty.<br />Choose products to begin.</div>
+
+                            <div class="cart-empty">
+
+                                Your cart is empty.
+                                <br />
+
+                                Choose products to begin.
+
+                            </div>
+
                         </div>
+
 
                         <div class="total-panel mt-3">
-                            <div class="d-flex justify-content-between text-muted"><span>Items</span><span id="itemCount">0</span></div>
-                            <div class="d-flex justify-content-between align-items-end mt-2">
-                                <span class="fw-semibold">Grand Total</span>
-                                <span class="fs-3 fw-bold text-primary"><span id="grandTotal">0.00</span> <small class="fs-6">JOD</small></span>
+
+                            <div class="d-flex justify-content-between text-muted">
+
+                                <span>
+                                    Items
+                                </span>
+
+                                <span id="itemCount">
+                                    0
+                                </span>
+
                             </div>
+
+                            <div class="d-flex justify-content-between align-items-end mt-2">
+
+                                <span class="fw-semibold">
+                                    Grand Total
+                                </span>
+
+                                <span class="fs-3 fw-bold text-primary">
+
+                                    <span id="grandTotal">
+                                        0.00
+                                    </span>
+
+                                    <small class="fs-6">
+                                        JOD
+                                    </small>
+
+                                </span>
+
+                            </div>
+
                         </div>
 
-                        <button type="submit" class="btn btn-primary btn-lg w-100 mt-3" id="saveSale">Complete Sale</button>
+
+                        <button type="submit"
+                                class="btn btn-primary btn-lg w-100 mt-3"
+                                id="saveSale">
+
+                            Complete Sale
+
+                        </button>
+
                     </div>
+
                 </div>
+
             </div>
+
         </div>
+
     </div>
+
 </form>
 
+
+<!--
+    Razor generates the stock data here as JSON-like data.
+
+    Keeping it outside the JavaScript code prevents Visual Studio
+    from trying to interpret Razor's @foreach as JavaScript.
+-->
+<script type="application/json" id="stockData">
+[
+    @foreach (var stock in ViewBag.ProductStocks)
+    {
+        <text>
+        {
+            "productId": @stock.ProductId,
+            "warehouseId": @stock.WarehouseId,
+            "quantity": @stock.Quantity.ToString(CultureInfo.InvariantCulture)
+        },
+        </text>
+    }
+]
+</script>
+
+
 @section Scripts {
+
     <script>
+
         const cart = new Map();
-        const stockByProductWarehouse = new Map([
-            @foreach (var stock in ViewBag.ProductStocks)
-            {
-                <text>["@stock.ProductId-@stock.WarehouseId", @stock.Quantity.ToString(CultureInfo.InvariantCulture)],</text>
-            }
-        ]);
 
-        const warehouseInput = document.getElementById("warehouseId");
-        const productSearch = document.getElementById("productSearch");
-        const productButtons = [...document.querySelectorAll(".product-button")];
-        const cartItems = document.getElementById("cartItems");
 
-        warehouseInput.addEventListener("change", updateProductAvailability);
-        productSearch.addEventListener("input", filterProducts);
-        productSearch.addEventListener("keydown", event => {
-            if (event.key !== "Enter") return;
-            event.preventDefault();
+        // Read stock data generated by Razor.
+        const stockData = JSON.parse(
+            document.getElementById("stockData").textContent
+        );
 
-            const barcode = productSearch.value.trim().toLowerCase();
-            const product = productButtons.find(button => button.dataset.barcode.toLowerCase() === barcode);
 
-            if (product && !product.disabled) {
-                addProduct(product);
-                productSearch.value = "";
-                filterProducts();
-            }
-        });
+        // Convert stock data into a fast lookup Map.
+        const stockByProductWarehouse = new Map(
+            stockData.map(stock => [
+                `${stock.productId}-${stock.warehouseId}`,
+                stock.quantity
+            ])
+        );
 
-        productButtons.forEach(button => button.addEventListener("click", () => addProduct(button)));
-        document.getElementById("clearCart").addEventListener("click", () => {
-            cart.clear();
-            renderCart();
-        });
 
-        document.getElementById("posForm").addEventListener("submit", event => {
-            if (!warehouseInput.value || cart.size === 0) {
-                event.preventDefault();
-                document.getElementById("validationSummary").textContent =
-                    !warehouseInput.value
-                        ? "Please select a warehouse before completing the sale."
-                        : "Add at least one product to the cart.";
-            }
-        });
+        const warehouseInput =
+            document.getElementById("warehouseId");
 
-        function getAvailableStock(productId) {
-            if (!warehouseInput.value) return null;
-            return stockByProductWarehouse.get(`${productId}-${warehouseInput.value}`) ?? 0;
-        }
+        const productSearch =
+            document.getElementById("productSearch");
 
-        function updateProductAvailability() {
-            productButtons.forEach(button => {
-                const available = getAvailableStock(button.dataset.id);
-                const label = button.querySelector(".product-stock");
+        const productButtons =
+            [...document.querySelectorAll(".product-button")];
 
-                if (available === null) {
-                    button.disabled = false;
-                    label.textContent = "Select a warehouse";
+        const cartItems =
+            document.getElementById("cartItems");
+
+
+        // Warehouse changed.
+        warehouseInput.addEventListener(
+            "change",
+            updateProductAvailability
+        );
+
+
+        // Product search.
+        productSearch.addEventListener(
+            "input",
+            filterProducts
+        );
+
+
+        // Barcode Enter.
+        productSearch.addEventListener(
+            "keydown",
+            event => {
+
+                if (event.key !== "Enter")
                     return;
+
+                event.preventDefault();
+
+                const barcode =
+                    productSearch.value.trim().toLowerCase();
+
+                const product =
+                    productButtons.find(
+                        button =>
+                            button.dataset.barcode.toLowerCase() === barcode
+                    );
+
+                if (product && !product.disabled) {
+
+                    addProduct(product);
+
+                    productSearch.value = "";
+
+                    filterProducts();
                 }
 
-                button.disabled = available <= 0;
-                label.textContent = available > 0 ? `Available: ${available}` : "Out of stock";
-                label.className = `badge stock-badge mt-2 ${available > 0 ? "text-bg-success" : "text-bg-danger"}`;
-            });
+            }
+        );
+
+
+        // Product buttons.
+        productButtons.forEach(
+            button =>
+                button.addEventListener(
+                    "click",
+                    () => addProduct(button)
+                )
+        );
+
+
+        // Clear cart.
+        document
+            .getElementById("clearCart")
+            .addEventListener(
+                "click",
+                () => {
+
+                    cart.clear();
+
+                    renderCart();
+
+                }
+            );
+
+
+        // Submit validation.
+        document
+            .getElementById("posForm")
+            .addEventListener(
+                "submit",
+                event => {
+
+                    if (!warehouseInput.value || cart.size === 0) {
+
+                        event.preventDefault();
+
+                        document
+                            .getElementById("validationSummary")
+                            .textContent =
+                            !warehouseInput.value
+                                ? "Please select a warehouse before completing the sale."
+                                : "Add at least one product to the cart.";
+
+                    }
+
+                }
+            );
+
+
+        function getAvailableStock(productId) {
+
+            if (!warehouseInput.value)
+                return null;
+
+            return stockByProductWarehouse.get(
+                `${productId}-${warehouseInput.value}`
+            ) ?? 0;
+
+        }
+
+
+        function updateProductAvailability() {
+
+            productButtons.forEach(
+                button => {
+
+                    const available =
+                        getAvailableStock(button.dataset.id);
+
+                    const label =
+                        button.querySelector(".product-stock");
+
+
+                    if (available === null) {
+
+                        button.disabled = false;
+
+                        label.textContent =
+                            "Select a warehouse";
+
+                        return;
+                    }
+
+
+                    button.disabled =
+                        available <= 0;
+
+
+                    label.textContent =
+                        available > 0
+                            ? `Available: ${available}`
+                            : "Out of stock";
+
+
+                    label.className =
+                        `badge stock-badge mt-2 ${
+                            available > 0
+                                ? "text-bg-success"
+                                : "text-bg-danger"
+                        }`;
+
+                }
+            );
+
 
             cart.clear();
+
             renderCart();
+
         }
+
 
         function filterProducts() {
-            const query = productSearch.value.trim().toLowerCase();
+
+            const query =
+                productSearch.value.trim().toLowerCase();
+
             let visibleCount = 0;
 
-            document.querySelectorAll(".product-wrapper").forEach(wrapper => {
-                const visible = wrapper.dataset.search.toLowerCase().includes(query);
-                wrapper.classList.toggle("d-none", !visible);
-                if (visible) visibleCount++;
-            });
 
-            document.getElementById("noProducts").classList.toggle("d-none", visibleCount !== 0);
+            document
+                .querySelectorAll(".product-wrapper")
+                .forEach(
+                    wrapper => {
+
+                        const visible =
+                            wrapper.dataset.search
+                                .toLowerCase()
+                                .includes(query);
+
+
+                        wrapper.classList.toggle(
+                            "d-none",
+                            !visible
+                        );
+
+
+                        if (visible)
+                            visibleCount++;
+
+                    }
+                );
+
+
+            document
+                .getElementById("noProducts")
+                .classList.toggle(
+                    "d-none",
+                    visibleCount !== 0
+                );
+
         }
+
 
         function addProduct(button) {
+
             if (!warehouseInput.value) {
-                document.getElementById("validationSummary").textContent = "Please select a warehouse first.";
+
+                document
+                    .getElementById("validationSummary")
+                    .textContent =
+                    "Please select a warehouse first.";
+
                 warehouseInput.focus();
+
                 return;
             }
 
-            const id = button.dataset.id;
-            const available = getAvailableStock(id);
-            const current = cart.get(id);
-            const nextQuantity = (current?.quantity ?? 0) + 1;
+
+            const id =
+                button.dataset.id;
+
+
+            const available =
+                getAvailableStock(id);
+
+
+            const current =
+                cart.get(id);
+
+
+            const nextQuantity =
+                (current?.quantity ?? 0) + 1;
+
 
             if (nextQuantity > available) {
-                document.getElementById("validationSummary").textContent = "The requested quantity exceeds available stock.";
+
+                document
+                    .getElementById("validationSummary")
+                    .textContent =
+                    "The requested quantity exceeds available stock.";
+
                 return;
             }
 
-            cart.set(id, {
-                id,
-                name: button.dataset.name,
-                price: Number(button.dataset.price),
-                quantity: nextQuantity
-            });
 
-            document.getElementById("validationSummary").textContent = "";
+            cart.set(
+                id,
+                {
+                    id,
+                    name: button.dataset.name,
+                    price: Number(button.dataset.price),
+                    quantity: nextQuantity
+                }
+            );
+
+
+            document
+                .getElementById("validationSummary")
+                .textContent = "";
+
+
             renderCart();
+
         }
+
 
         function changeQuantity(id, change) {
-            const item = cart.get(id);
-            const nextQuantity = item.quantity + change;
+
+            const item =
+                cart.get(id);
+
+
+            const nextQuantity =
+                item.quantity + change;
+
 
             if (nextQuantity <= 0) {
+
                 cart.delete(id);
-            } else if (nextQuantity <= getAvailableStock(id)) {
-                item.quantity = nextQuantity;
+
             }
+            else if (
+                nextQuantity <= getAvailableStock(id)
+            ) {
+
+                item.quantity =
+                    nextQuantity;
+
+            }
+
 
             renderCart();
+
         }
+
 
         function renderCart() {
+
             cartItems.innerHTML = "";
+
             let totalQuantity = 0;
+
             let grandTotal = 0;
 
+
             if (cart.size === 0) {
-                cartItems.innerHTML = '<div class="cart-empty">Your cart is empty.<br />Choose products to begin.</div>';
+
+                cartItems.innerHTML =
+                    '<div class="cart-empty">Your cart is empty.<br />Choose products to begin.</div>';
+
             }
 
-            [...cart.values()].forEach((item, index) => {
-                const total = item.price * item.quantity;
-                totalQuantity += item.quantity;
-                grandTotal += total;
 
-                const row = document.createElement("div");
-                row.className = "cart-row";
-                row.innerHTML = `
-                    <div class="d-flex justify-content-between gap-2">
-                        <div class="fw-semibold item-name"></div>
-                        <button type="button" class="btn btn-sm btn-link text-danger p-0 remove-item">Remove</button>
-                    </div>
-                    <div class="small text-muted mb-2">${item.price.toFixed(2)} JOD each</div>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div class="quantity-control">
-                            <button type="button" class="decrease">−</button>
-                            <span>${item.quantity}</span>
-                            <button type="button" class="increase">+</button>
+            [...cart.values()].forEach(
+                (item, index) => {
+
+                    const total =
+                        item.price * item.quantity;
+
+
+                    totalQuantity +=
+                        item.quantity;
+
+
+                    grandTotal +=
+                        total;
+
+
+                    const row =
+                        document.createElement("div");
+
+
+                    row.className =
+                        "cart-row";
+
+
+                    row.innerHTML = `
+                        <div class="d-flex justify-content-between gap-2">
+
+                            <div class="fw-semibold item-name"></div>
+
+                            <button
+                                type="button"
+                                class="btn btn-sm btn-link text-danger p-0 remove-item">
+
+                                Remove
+
+                            </button>
+
                         </div>
-                        <strong>${total.toFixed(2)} JOD</strong>
-                    </div>
-                    <input type="hidden" name="Items[${index}].ProductId" value="${item.id}" />
-                    <input type="hidden" name="Items[${index}].Quantity" value="${item.quantity}" />
-                    <input type="hidden" name="Items[${index}].SalePrice" value="${item.price}" />`;
 
-                row.querySelector(".item-name").textContent = item.name;
-                row.querySelector(".increase").addEventListener("click", () => changeQuantity(item.id, 1));
-                row.querySelector(".decrease").addEventListener("click", () => changeQuantity(item.id, -1));
-                row.querySelector(".remove-item").addEventListener("click", () => {
-                    cart.delete(item.id);
-                    renderCart();
-                });
-                cartItems.appendChild(row);
-            });
+                        <div class="small text-muted mb-2">
+                            ${item.price.toFixed(2)} JOD each
+                        </div>
 
-            document.getElementById("cartCount").textContent = `${totalQuantity} item${totalQuantity === 1 ? "" : "s"}`;
-            document.getElementById("itemCount").textContent = totalQuantity;
-            document.getElementById("grandTotal").textContent = grandTotal.toFixed(2);
+                        <div class="d-flex justify-content-between align-items-center">
+
+                            <div class="quantity-control">
+
+                                <button
+                                    type="button"
+                                    class="decrease">
+
+                                    −
+
+                                </button>
+
+                                <span>
+                                    ${item.quantity}
+                                </span>
+
+                                <button
+                                    type="button"
+                                    class="increase">
+
+                                    +
+
+                                </button>
+
+                            </div>
+
+                            <strong>
+                                ${total.toFixed(2)} JOD
+                            </strong>
+
+                        </div>
+
+                        <input
+                            type="hidden"
+                            name="Items[${index}].ProductId"
+                            value="${item.id}" />
+
+                        <input
+                            type="hidden"
+                            name="Items[${index}].Quantity"
+                            value="${item.quantity}" />
+
+                        <input
+                            type="hidden"
+                            name="Items[${index}].SalePrice"
+                            value="${item.price}" />
+                    `;
+
+
+                    row
+                        .querySelector(".item-name")
+                        .textContent =
+                        item.name;
+
+
+                    row
+                        .querySelector(".increase")
+                        .addEventListener(
+                            "click",
+                            () => changeQuantity(item.id, 1)
+                        );
+
+
+                    row
+                        .querySelector(".decrease")
+                        .addEventListener(
+                            "click",
+                            () => changeQuantity(item.id, -1)
+                        );
+
+
+                    row
+                        .querySelector(".remove-item")
+                        .addEventListener(
+                            "click",
+                            () => {
+
+                                cart.delete(item.id);
+
+                                renderCart();
+
+                            }
+                        );
+
+
+                    cartItems.appendChild(row);
+
+                }
+            );
+
+
+            document
+                .getElementById("cartCount")
+                .textContent =
+                `${totalQuantity} item${
+                    totalQuantity === 1
+                        ? ""
+                        : "s"
+                }`;
+
+
+            document
+                .getElementById("itemCount")
+                .textContent =
+                totalQuantity;
+
+
+            document
+                .getElementById("grandTotal")
+                .textContent =
+                grandTotal.toFixed(2);
+
         }
 
+
+        // Initial state.
         updateProductAvailability();
+
     </script>
-}
+}}

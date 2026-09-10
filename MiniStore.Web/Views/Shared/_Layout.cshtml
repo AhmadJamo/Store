@@ -13,31 +13,31 @@
 
             <div class="collapse navbar-collapse show">
                 <ul class="navbar-nav me-auto">
-                    @if (await PermissionService.CanAsync(User, "Products.View"))
+                    @if (await PermissionService.CanAsync(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "System","Products.View"))
                     {
                         <li class="nav-item"><a class="nav-link" asp-controller="Products" asp-action="Index">Products</a></li>
                     }
-                    @if (await PermissionService.CanAsync(User, "Warehouses.View"))
+                    @if (await PermissionService.CanAsync(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "System","Warehouses.View"))
                     {
                         <li class="nav-item"><a class="nav-link" asp-controller="Warehouses" asp-action="Index">Warehouses</a></li>
                     }
-                    @if (await PermissionService.CanAsync(User, "ProductStock.View"))
+                    @if (await PermissionService.CanAsync(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "System","ProductStock.View"))
                     {
                         <li class="nav-item"><a class="nav-link" asp-controller="ProductStocks" asp-action="Index">Product Stock</a></li>
                     }
-                    @if (await PermissionService.CanAsync(User, "StockTransactions.View"))
+                    @if (await PermissionService.CanAsync(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "System","StockTransactions.View"))
                     {
                         <li class="nav-item"><a class="nav-link" asp-controller="StockTransactions" asp-action="Index">Stock Transactions</a></li>
                     }
-                    @if (await PermissionService.CanAsync(User, "Suppliers.View"))
+                    @if (await PermissionService.CanAsync(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "System","Suppliers.View"))
                     {
                         <li class="nav-item"><a class="nav-link" asp-controller="Suppliers" asp-action="Index">Suppliers</a></li>
                     }
-                    @if (await PermissionService.CanAsync(User, "Purchases.View"))
+                    @if (await PermissionService.CanAsync(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "System","Purchases.View"))
                     {
                         <li class="nav-item"><a class="nav-link" asp-controller="Purchases" asp-action="Index">Purchases</a></li>
                     }
-                    @if (await PermissionService.CanAsync(User, "Sales.View"))
+                    @if (await PermissionService.CanAsync(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "System","Sales.View"))
                     {
                         <li class="nav-item"><a class="nav-link" asp-controller="Sales" asp-action="Index">Sales</a></li>
                     }
@@ -45,7 +45,7 @@
                     {
                         <li class="nav-item"><a class="nav-link" asp-controller="Users" asp-action="Index">Users</a></li>
                         <li class="nav-item"><a class="nav-link" asp-controller="Roles" asp-action="Index">Roles</a></li>
-                        <li class="nav-item"><a class="nav-link" asp-controller="Settings" asp-action="Invoices">Invoice Settings</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-controller="Settings" asp-action="Index">Settings</a></li>
                     }
                 </ul>
 

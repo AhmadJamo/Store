@@ -1,0 +1,280 @@
+﻿@model MiniStore.Application.Dtos.Settings.DiscountSettingsDto
+
+@{
+    ViewData["Title"] = "Discount Settings";
+}
+
+<div class="container-fluid">
+
+    ```
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1">Discount Settings</h2>
+            <p class="text-muted mb-0">
+                Configure how discounts are allowed and controlled in the system.
+            </p>
+        </div>
+    </div>
+
+    <form asp-action="Discounts" method="post">
+
+        <input asp-for="RowVersion" type="hidden" />
+
+        <!-- General -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">General</h5>
+            </div>
+
+            <div class="card-body">
+
+                <div class="form-check form-switch">
+                    <input asp-for="Enabled"
+                           class="form-check-input"
+                           type="checkbox" />
+
+                    <label asp-for="Enabled" class="form-check-label">
+                        Enable Discounts
+                    </label>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Where discounts can be applied -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Discount Application</h5>
+            </div>
+
+            <div class="card-body">
+
+                <div class="form-check mb-3">
+                    <input asp-for="AllowLineDiscount"
+                           class="form-check-input"
+                           type="checkbox" />
+
+                    <label asp-for="AllowLineDiscount"
+                           class="form-check-label">
+                        Allow Line Discount
+                    </label>
+
+                    <div class="form-text">
+                        Allow discount to be applied to individual sale items.
+                    </div>
+                </div>
+
+                <div class="form-check">
+                    <input asp-for="AllowInvoiceDiscount"
+                           class="form-check-input"
+                           type="checkbox" />
+
+                    <label asp-for="AllowInvoiceDiscount"
+                           class="form-check-label">
+                        Allow Invoice Discount
+                    </label>
+
+                    <div class="form-text">
+                        Allow discount to be applied to the entire invoice.
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Discount Types -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Discount Types</h5>
+            </div>
+
+            <div class="card-body">
+
+                <div class="form-check mb-3">
+                    <input asp-for="AllowPercentageDiscount"
+                           class="form-check-input"
+                           type="checkbox" />
+
+                    <label asp-for="AllowPercentageDiscount"
+                           class="form-check-label">
+                        Percentage Discount
+                    </label>
+                </div>
+
+                <div class="form-check mb-4">
+                    <input asp-for="AllowFixedAmountDiscount"
+                           class="form-check-input"
+                           type="checkbox" />
+
+                    <label asp-for="AllowFixedAmountDiscount"
+                           class="form-check-label">
+                        Fixed Amount Discount
+                    </label>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="DefaultDiscountType"
+                           class="form-label">
+                        Default Discount Type
+                    </label>
+
+                    <select asp-for="DefaultDiscountType"
+                            class="form-select">
+
+                        <option value="1">Percentage</option>
+                        <option value="2">Fixed Amount</option>
+
+                    </select>
+
+                    <div class="form-text">
+                        This type will be selected by default when creating a discount.
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Line Discount Limits -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Line Discount Limits</h5>
+            </div>
+
+            <div class="card-body">
+
+                <div class="row">
+
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="MaxLineDiscountPercent"
+                               class="form-label">
+                            Maximum Line Discount %
+                        </label>
+
+                        <input asp-for="MaxLineDiscountPercent"
+                               class="form-control"
+                               type="number"
+                               min="0"
+                               max="100"
+                               step="0.01" />
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="MaxLineDiscountAmount"
+                               class="form-label">
+                            Maximum Line Discount Amount
+                        </label>
+
+                        <input asp-for="MaxLineDiscountAmount"
+                               class="form-control"
+                               type="number"
+                               min="0"
+                               step="0.01" />
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Invoice Discount Limits -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Invoice Discount Limits</h5>
+            </div>
+
+            <div class="card-body">
+
+                <div class="row">
+
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="MaxInvoiceDiscountPercent"
+                               class="form-label">
+                            Maximum Invoice Discount %
+                        </label>
+
+                        <input asp-for="MaxInvoiceDiscountPercent"
+                               class="form-control"
+                               type="number"
+                               min="0"
+                               max="100"
+                               step="0.01" />
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="MaxInvoiceDiscountAmount"
+                               class="form-label">
+                            Maximum Invoice Discount Amount
+                        </label>
+
+                        <input asp-for="MaxInvoiceDiscountAmount"
+                               class="form-control"
+                               type="number"
+                               min="0"
+                               step="0.01" />
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Override -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Discount Override</h5>
+            </div>
+
+            <div class="card-body">
+
+                <div class="form-check mb-3">
+                    <input asp-for="AllowDiscountAboveLimit"
+                           class="form-check-input"
+                           type="checkbox" />
+
+                    <label asp-for="AllowDiscountAboveLimit"
+                           class="form-check-label">
+                        Allow Discount Above Limit
+                    </label>
+
+                    <div class="form-text">
+                        Users with the configured permission can exceed the normal discount limits.
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="DiscountOverridePermission"
+                           class="form-label">
+                        Override Permission
+                    </label>
+
+                    <input asp-for="DiscountOverridePermission"
+                           class="form-control" />
+
+                    <div class="form-text">
+                        Permission required to exceed the configured discount limits.
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="d-flex gap-2 mb-5">
+
+            <button type="submit"
+                    class="btn btn-primary">
+                Save
+            </button>
+
+            <a asp-controller="Settings"
+               asp-action="Index"
+               class="btn btn-secondary">
+                Cancel
+            </a>
+
+        </div>
+
+    </form>
+    ```
+
+</div>

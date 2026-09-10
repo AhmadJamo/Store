@@ -1,4 +1,6 @@
-﻿@model MiniStore.Application.DTOs.Sale.SaleDetailsDto
+﻿```cshtml
+@using MiniStore.Domain.Enums
+@model MiniStore.Application.DTOs.Sales.SaleDetailsDto
 
 @{
     ViewData["Title"] = "Sale Details";
@@ -17,6 +19,9 @@
 
     </div>
 
+
+    <!-- Sale Information -->
+
     <div class="card mb-4">
 
         <div class="card-body">
@@ -24,30 +29,39 @@
             <div class="row">
 
                 <div class="col-md-4">
+
                     <strong>Invoice Number:</strong>
 
                     <div>
                         @Model.InvoiceNumber
                     </div>
+
                 </div>
 
+
                 <div class="col-md-4">
+
                     <strong>Date:</strong>
 
                     <div>
                         @Model.Date.ToString("yyyy-MM-dd")
                     </div>
+
                 </div>
 
+
                 <div class="col-md-4">
+
                     <strong>Warehouse:</strong>
 
                     <div>
                         @Model.WarehouseId
                     </div>
+
                 </div>
 
             </div>
+
 
             @if (!string.IsNullOrWhiteSpace(Model.Notes))
             {
@@ -64,65 +78,190 @@
 
     </div>
 
+
+    <!-- Items -->
+
     <h4>Items</h4>
 
-    <table class="table table-bordered table-striped">
+    <div class="table-responsive">
 
-        <thead>
-            <tr>
-                <th>Product</th>
-                <th>Quantity</th>
-                <th>Sale Price</th>
-                <th>Total</th>
-            </tr>
-        </thead>
+        <table class="table table-bordered table-striped">
 
-        <tbody>
+            <thead>
 
-            @foreach (var item in Model.Items)
-            {
                 <tr>
 
-                    <td>
-                        @item.ProductId
-                    </td>
+                    <th>Product</th>
 
-                    <td>
-                        @item.Quantity
-                    </td>
+                    <th>Quantity</th>
 
-                    <td>
-                        @item.SalePrice.ToString("0.00")
-                    </td>
+                    <th>Sale Price</th>
 
-                    <td>
-                        @item.Total.ToString("0.00")
-                    </td>
+                    <th>Gross Total</th>
+
+                    <th>Discount</th>
+
+                    <th>Discount Amount</th>
+
+                    <th>Total</th>
 
                 </tr>
-            }
 
-        </tbody>
+            </thead>
 
-        <tfoot>
 
-            <tr>
+            <tbody>
 
-                <th colspan="3"
-                    class="text-end">
+                @foreach (var item in Model.Items)
+                {
+                    <tr>
 
-                    Grand Total
+                        <td>
+                            @item.ProductId
+                        </td>
 
-                </th>
 
-                <th>
-                    @Model.TotalAmount.ToString("0.00")
-                </th>
+                        <td>
+                            @item.Quantity
+                        </td>
 
-            </tr>
 
-        </tfoot>
+                        <td>
+                            @item.SalePrice.ToString("0.00")
+                        </td>
 
-    </table>
+
+                        <td>
+                            @item.GrossTotal.ToString("0.00")
+                        </td>
+
+
+                        <td>
+
+                            @if (item.DiscountValue > 0)
+                            {
+                                if (item.DiscountType == DiscountType.Percentage)
+                                {
+                                    @($"{item.DiscountValue:0.##}%")
+                                }
+                                else
+                                {
+                                    @item.DiscountValue.ToString("0.00")
+                                }
+                            }
+                            else
+                            {
+                                @:-
+                            }
+
+                        </td>
+
+
+                        <td>
+                            @item.DiscountAmount.ToString("0.00")
+                        </td>
+
+
+                        <td>
+                            @item.Total.ToString("0.00")
+                        </td>
+
+                    </tr>
+                }
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+
+    <!-- Invoice Totals -->
+
+    <div class="row justify-content-end">
+
+        <div class="col-md-5">
+
+            <table class="table table-bordered">
+
+                <tbody>
+
+                    <tr>
+
+                        <th>
+                            Subtotal
+                        </th>
+
+                        <td class="text-end">
+
+                            @Model.Subtotal.ToString("0.00")
+
+                        </td>
+
+                    </tr>
+
+
+                    <tr>
+
+                        <th>
+                            Invoice Discount
+                        </th>
+
+                        <td class="text-end">
+
+                            @if (Model.InvoiceDiscountValue > 0)
+                            {
+                                if (Model.InvoiceDiscountType == DiscountType.Percentage)
+                                {
+                                    <div>
+                                        @($"{Model.InvoiceDiscountValue:0.##}%")
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div>
+                                        @Model.InvoiceDiscountValue.ToString("0.00")
+                                    </div>
+                                }
+
+                                <small class="text-muted">
+                                    Discount Amount:
+                                    @Model.InvoiceDiscountAmount.ToString("0.00")
+                                </small>
+                            }
+                            else
+                            {
+                                @:-
+                            }
+
+                        </td>
+
+                    </tr>
+
+
+                    <tr>
+
+                        <th>
+                            <strong>Grand Total</strong>
+                        </th>
+
+                        <td class="text-end">
+
+                            <strong>
+                                @Model.TotalAmount.ToString("0.00")
+                            </strong>
+
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
 
 </div>
+```

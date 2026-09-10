@@ -1,5 +1,4 @@
-﻿using System.Security.Claims;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MiniStore.Application.Permissions;
 using MiniStore.Infrastructure.Persistence;
@@ -20,17 +19,14 @@ public class PermissionService : IPermissionService
     }
 
     public async Task<bool> CanAsync(
-        ClaimsPrincipal user,
+        string userId,
         string permission)
     {
-        if (user.Identity == null ||
-            !user.Identity.IsAuthenticated)
-        {
+        if (string.IsNullOrWhiteSpace(userId))
             return false;
-        }
 
         var currentUser =
-            await _userManager.GetUserAsync(user);
+            await _userManager.FindByIdAsync(userId);
 
         if (currentUser == null)
             return false;

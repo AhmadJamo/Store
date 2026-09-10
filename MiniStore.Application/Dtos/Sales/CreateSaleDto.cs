@@ -1,6 +1,6 @@
-﻿using MiniStore.Application.DTOs.Sales;
+﻿using MiniStore.Domain.Enums;
 
-namespace MiniStore.Application.DTOs.Sale;
+namespace MiniStore.Application.DTOs.Sales;
 
 public class CreateSaleDto
 {
@@ -11,6 +11,10 @@ public class CreateSaleDto
     public DateTime Date { get; set; }
 
     public string? Notes { get; set; }
+
+    public DiscountType InvoiceDiscountType { get; set; } = DiscountType.Percentage;
+
+    public decimal InvoiceDiscountValue { get; set; }
 
     public List<SaleItemDto> Items { get; set; } = new();
 }

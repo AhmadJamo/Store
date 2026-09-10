@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using MiniStore.Application.DTOs.Sale;
 using MiniStore.Application.DTOs.Sales;
 using MiniStore.Application.Services;
 using MiniStore.Domain.Interfaces;

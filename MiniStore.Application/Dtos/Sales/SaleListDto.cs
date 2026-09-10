@@ -1,4 +1,4 @@
-﻿namespace MiniStore.Application.DTOs.Sale;
+﻿namespace MiniStore.Application.DTOs.Sales;
 
 public class SaleListDto
 {

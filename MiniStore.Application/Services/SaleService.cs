@@ -1,6 +1,8 @@
-﻿using MiniStore.Application.DTOs.Sale;
+﻿
 using MiniStore.Application.DTOs.Sales;
+using MiniStore.Application.Permissions;
 using MiniStore.Domain.Entities;
+using MiniStore.Domain.Enums;
 using MiniStore.Domain.Interfaces;
 
 namespace MiniStore.Application.Services;
@@ -13,6 +15,8 @@ public class SaleService : ISaleService
     private readonly IStockTransactionRepository _stockTransactionRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IInvoiceSettingsRepository _invoiceSettingsRepository;
+    private readonly IDiscountSettingsRepository _discountSettingsRepository;
+    private readonly IPermissionService _permissionService;
 
     public SaleService(
         ISaleRepository saleRepository,
@@ -20,7 +24,9 @@ public class SaleService : ISaleService
         IProductStockRepository productStockRepository,
         IStockTransactionRepository stockTransactionRepository,
         IUnitOfWork unitOfWork,
-        IInvoiceSettingsRepository invoiceSettingsRepository)
+        IInvoiceSettingsRepository invoiceSettingsRepository,
+        IDiscountSettingsRepository discountSettingsRepository,
+        IPermissionService permissionService)
     {
         _saleRepository = saleRepository;
         _productRepository = productRepository;
@@ -28,6 +34,8 @@ public class SaleService : ISaleService
         _stockTransactionRepository = stockTransactionRepository;
         _unitOfWork = unitOfWork;
         _invoiceSettingsRepository = invoiceSettingsRepository;
+        _discountSettingsRepository = discountSettingsRepository;
+        _permissionService = permissionService;
     }
 
     public async Task<List<SaleListDto>> GetAllAsync()
@@ -58,6 +66,11 @@ public class SaleService : ISaleService
             WarehouseId = sale.WarehouseId,
             Date = sale.Date,
             Notes = sale.Notes,
+
+            Subtotal = sale.Subtotal,
+            InvoiceDiscountType = sale.InvoiceDiscountType,
+            InvoiceDiscountValue = sale.InvoiceDiscountValue,
+            InvoiceDiscountAmount = sale.InvoiceDiscountAmount,
             TotalAmount = sale.TotalAmount,
 
             Items = sale.Items
@@ -66,6 +79,11 @@ public class SaleService : ISaleService
                     ProductId = item.ProductId,
                     Quantity = item.Quantity,
                     SalePrice = item.SalePrice,
+
+                    GrossTotal = item.GrossTotal,
+                    DiscountType = item.DiscountType,
+                    DiscountValue = item.DiscountValue,
+                    DiscountAmount = item.DiscountAmount,
                     Total = item.Total
                 })
                 .ToList()
@@ -88,13 +106,111 @@ public class SaleService : ISaleService
 
         await _unitOfWork.ExecuteInTransactionAsync(async () =>
         {
+            var discountSettings =
+                await _discountSettingsRepository.GetAsync();
+
+            if (discountSettings == null)
+            {
+                throw new InvalidOperationException(
+                    "Discount settings have not been configured.");
+            }
+
+            if (!discountSettings.Enabled)
+            {
+                if (dto.Items.Any(x => x.DiscountValue > 0) ||
+                    dto.InvoiceDiscountValue > 0)
+                {
+                    throw new InvalidOperationException(
+                        "Discounts are currently disabled.");
+                }
+            }
+
+            if (!discountSettings.AllowLineDiscount &&
+                dto.Items.Any(x => x.DiscountValue > 0))
+            {
+                throw new InvalidOperationException(
+                    "Line discounts are currently disabled.");
+            }
+
+            if (!discountSettings.AllowInvoiceDiscount &&
+                dto.InvoiceDiscountValue > 0)
+            {
+                throw new InvalidOperationException(
+                    "Invoice discounts are currently disabled.");
+            }
+
+            if (!discountSettings.AllowPercentageDiscount &&
+                dto.Items.Any(x =>
+                    x.DiscountValue > 0 &&
+                    x.DiscountType == DiscountType.Percentage))
+            {
+                throw new InvalidOperationException(
+                    "Percentage line discounts are currently disabled.");
+            }
+
+            if (!discountSettings.AllowFixedAmountDiscount &&
+                dto.Items.Any(x =>
+                    x.DiscountValue > 0 &&
+                    x.DiscountType == DiscountType.FixedAmount))
+            {
+                throw new InvalidOperationException(
+                    "Fixed amount line discounts are currently disabled.");
+            }
+
+            if (dto.InvoiceDiscountValue > 0 &&
+                dto.InvoiceDiscountType == DiscountType.Percentage &&
+                !discountSettings.AllowPercentageDiscount)
+            {
+                throw new InvalidOperationException(
+                    "Percentage invoice discounts are currently disabled.");
+            }
+
+            if (dto.InvoiceDiscountValue > 0 &&
+                dto.InvoiceDiscountType == DiscountType.FixedAmount &&
+                !discountSettings.AllowFixedAmountDiscount)
+            {
+                throw new InvalidOperationException(
+                    "Fixed amount invoice discounts are currently disabled.");
+            }
+
+            var canOverrideDiscountLimit =
+                discountSettings.AllowDiscountAboveLimit &&
+                await _permissionService.CanAsync(
+                    createdByUserId,
+                    discountSettings.DiscountOverridePermission);
+
+            foreach (var item in dto.Items.Where(x => x.DiscountValue > 0))
+            {
+                if (item.DiscountType == DiscountType.Percentage &&
+                    item.DiscountValue >
+                        discountSettings.MaxLineDiscountPercent &&
+                    !canOverrideDiscountLimit)
+                {
+                    throw new InvalidOperationException(
+                        $"Line discount percentage cannot exceed " +
+                        $"{discountSettings.MaxLineDiscountPercent}%.");
+                }
+
+                if (item.DiscountType == DiscountType.FixedAmount &&
+                    item.DiscountValue >
+                        discountSettings.MaxLineDiscountAmount &&
+                    !canOverrideDiscountLimit)
+                {
+                    throw new InvalidOperationException(
+                        $"Line discount amount cannot exceed " +
+                        $"{discountSettings.MaxLineDiscountAmount}.");
+                }
+            }
+
             var invoiceSettings =
                 await _invoiceSettingsRepository.GetAsync();
 
             if (invoiceSettings == null)
             {
                 invoiceSettings = new InvoiceSettings();
-                await _invoiceSettingsRepository.AddAsync(invoiceSettings);
+
+                await _invoiceSettingsRepository
+                    .AddAsync(invoiceSettings);
             }
 
             sale = new Sale(
@@ -135,12 +251,18 @@ public class SaleService : ISaleService
                         $"Requested: {itemDto.Quantity}.");
                 }
 
-                sale.AddItem(new SaleItem(
-                    itemDto.ProductId,
-                    itemDto.Quantity,
+                var salePrice =
                     channel == SaleChannel.Wholesale
                         ? product.WholesalePrice
-                        : product.SalePrice));
+                        : product.SalePrice;
+
+                sale.AddItem(
+                    new SaleItem(
+                        itemDto.ProductId,
+                        itemDto.Quantity,
+                        salePrice,
+                        itemDto.DiscountType,
+                        itemDto.DiscountValue));
 
                 stock.RemoveQuantity(itemDto.Quantity);
 
@@ -155,9 +277,37 @@ public class SaleService : ISaleService
                     .AddAsync(transaction);
             }
 
+            if (dto.InvoiceDiscountValue > 0)
+            {
+                if (dto.InvoiceDiscountType == DiscountType.Percentage &&
+                    dto.InvoiceDiscountValue >
+                        discountSettings.MaxInvoiceDiscountPercent &&
+                    !canOverrideDiscountLimit)
+                {
+                    throw new InvalidOperationException(
+                        $"Invoice discount percentage cannot exceed " +
+                        $"{discountSettings.MaxInvoiceDiscountPercent}%.");
+                }
+
+                if (dto.InvoiceDiscountType == DiscountType.FixedAmount &&
+                    dto.InvoiceDiscountValue >
+                        discountSettings.MaxInvoiceDiscountAmount &&
+                    !canOverrideDiscountLimit)
+                {
+                    throw new InvalidOperationException(
+                        $"Invoice discount amount cannot exceed " +
+                        $"{discountSettings.MaxInvoiceDiscountAmount}.");
+                }
+            }
+
+            sale.ApplyInvoiceDiscount(
+                dto.InvoiceDiscountType,
+                dto.InvoiceDiscountValue);
+
             await _saleRepository.AddAsync(sale);
         });
 
         return sale!.Id;
     }
 }
+

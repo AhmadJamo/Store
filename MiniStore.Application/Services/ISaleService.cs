@@ -1,5 +1,4 @@
-﻿using MiniStore.Application.DTOs.Sale;
-using MiniStore.Application.DTOs.Sales;
+﻿using MiniStore.Application.DTOs.Sales;
 using MiniStore.Domain.Entities;
 
 namespace MiniStore.Application.Services;

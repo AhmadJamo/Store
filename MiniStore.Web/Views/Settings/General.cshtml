@@ -1,0 +1,238 @@
+﻿@model MiniStore.Application.DTOs.Settings.GeneralSettingsDto
+
+@{
+    ViewData["Title"] = "General Settings";
+}
+
+
+
+<div class="container mt-4" style="max-width: 900px;">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1">🏢 General Settings</h2>
+            <p class="text-muted mb-0">
+                Configure the basic information and regional settings of the system.
+            </p>
+        </div>
+
+        <a asp-action="Index"
+           class="btn btn-outline-secondary">
+            ← Settings
+        </a>
+    </div>
+
+    <form asp-action="General"
+          method="post"
+          class="card shadow-sm border-0">
+
+        <input type="hidden"
+               asp-for="RowVersion" />
+
+        <div class="card-body p-4">
+
+            <div asp-validation-summary="ModelOnly"
+                 class="text-danger mb-3">
+            </div>
+
+            <h5 class="mb-3">Company Information</h5>
+
+            <div class="row g-3">
+
+                <div class="col-md-6">
+                    <label asp-for="CompanyName"
+                           class="form-label">
+                        Company Name
+                    </label>
+
+                    <input asp-for="CompanyName"
+                           class="form-control"
+                           placeholder="MiniStore" />
+
+                    <span asp-validation-for="CompanyName"
+                          class="text-danger">
+                    </span>
+                </div>
+
+                <div class="col-md-6">
+                    <label asp-for="CompanyNameArabic"
+                           class="form-label">
+                        Company Name Arabic
+                    </label>
+
+                    <input asp-for="CompanyNameArabic"
+                           class="form-control"
+                           placeholder="ميني ستور" />
+
+                    <span asp-validation-for="CompanyNameArabic"
+                          class="text-danger">
+                    </span>
+                </div>
+
+                <div class="col-md-6">
+                    <label asp-for="Phone"
+                           class="form-label">
+                        Phone
+                    </label>
+
+                    <input asp-for="Phone"
+                           class="form-control"
+                           placeholder="07XXXXXXXX" />
+
+                    <span asp-validation-for="Phone"
+                          class="text-danger">
+                    </span>
+                </div>
+
+                <div class="col-md-6">
+                    <label asp-for="Address"
+                           class="form-label">
+                        Address
+                    </label>
+
+                    <input asp-for="Address"
+                           class="form-control"
+                           placeholder="Zarqa, Jordan" />
+
+                    <span asp-validation-for="Address"
+                          class="text-danger">
+                    </span>
+                </div>
+
+            </div>
+
+            <hr class="my-4" />
+
+            <h5 class="mb-3">Regional & Number Settings</h5>
+
+            <div class="row g-3">
+
+                <div class="col-md-4">
+                    <label asp-for="Currency"
+                           class="form-label">
+                        Currency
+                    </label>
+
+                    <input asp-for="Currency"
+                           class="form-control"
+                           placeholder="JOD" />
+
+                    <div class="form-text">
+                        Example: JOD
+                    </div>
+
+                    <span asp-validation-for="Currency"
+                          class="text-danger">
+                    </span>
+                </div>
+
+                <div class="col-md-4">
+                    <label asp-for="DecimalPlaces"
+                           class="form-label">
+                        Money Decimal Places
+                    </label>
+
+                    <input asp-for="DecimalPlaces"
+                           type="number"
+                           min="0"
+                           max="4"
+                           class="form-control" />
+
+                    <div class="form-text">
+                        Example: 2 → 10.50
+                    </div>
+
+                    <span asp-validation-for="DecimalPlaces"
+                          class="text-danger">
+                    </span>
+                </div>
+
+                <div class="col-md-4">
+                    <label asp-for="QuantityDecimalPlaces"
+                           class="form-label">
+                        Quantity Decimal Places
+                    </label>
+
+                    <input asp-for="QuantityDecimalPlaces"
+                           type="number"
+                           min="0"
+                           max="4"
+                           class="form-control" />
+
+                    <div class="form-text">
+                        Example: 3 → 1.250
+                    </div>
+
+                    <span asp-validation-for="QuantityDecimalPlaces"
+                          class="text-danger">
+                    </span>
+                </div>
+
+                <div class="col-md-6">
+                    <label asp-for="DateFormat"
+                           class="form-label">
+                        Date Format
+                    </label>
+
+                    <select asp-for="DateFormat"
+                            class="form-select">
+
+                        <option value="dd/MM/yyyy">
+                            dd/MM/yyyy
+                        </option>
+
+                        <option value="MM/dd/yyyy">
+                            MM/dd/yyyy
+                        </option>
+
+                        <option value="yyyy-MM-dd">
+                            yyyy-MM-dd
+                        </option>
+
+                    </select>
+
+                    <span asp-validation-for="DateFormat"
+                          class="text-danger">
+                    </span>
+                </div>
+
+                <div class="col-md-6">
+                    <label asp-for="TimeZone"
+                           class="form-label">
+                        Time Zone
+                    </label>
+
+                    <select asp-for="TimeZone"
+                            class="form-select">
+
+                        <option value="Asia/Amman">
+                            Asia/Amman
+                        </option>
+
+                        <option value="UTC">
+                            UTC
+                        </option>
+
+                    </select>
+
+                    <span asp-validation-for="TimeZone"
+                          class="text-danger">
+                    </span>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="card-footer bg-white border-0 p-4 pt-0">
+
+            <button type="submit"
+                    class="btn btn-primary">
+                💾 Save Settings
+            </button>
+
+        </div>
+
+    </form>
+
+</div>

@@ -12,8 +12,8 @@
 
 <p>
     @if (await PermissionService.CanAsync(
-        User,
-        "Suppliers.Create"))
+    User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "System",
+    "Suppliers.Create"))
     {
         <a asp-action="Create"
            class="btn btn-primary">
@@ -69,8 +69,8 @@
                     <td>
 
                         @if (await PermissionService.CanAsync(
-        User,
-        "Suppliers.Edit"))
+                     User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "System",
+                     "Suppliers.Edit"))
                         {
                             <a asp-action="Edit"
                                asp-route-id="@supplier.Id"
@@ -80,8 +80,8 @@
                         }
 
                         @if (await PermissionService.CanAsync(
-        User,
-        "Suppliers.Delete"))
+                         User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "System",
+                         "Suppliers.Delete"))
                         {
                             <a asp-action="Delete"
                                asp-route-id="@supplier.Id"
