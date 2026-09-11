@@ -80,7 +80,8 @@ public class ProductStockService
 
             ProductId = stock.ProductId,
 
-            ProductName = product?.Name ?? "Unknown Product",
+            ProductName =
+                product?.Name ?? "Unknown Product",
 
             WarehouseId = stock.WarehouseId,
 
@@ -94,9 +95,11 @@ public class ProductStockService
     public async Task CreateAsync(
         CreateProductStockDto dto)
     {
-        if (dto.Quantity <= 0)
+        // Opening Balance may be zero,
+        // but it can never be negative.
+        if (dto.Quantity < 0)
             throw new ArgumentException(
-                "Quantity must be greater than zero.");
+                "Opening balance quantity cannot be negative.");
 
         var product =
             await _productRepository.GetByIdAsync(
@@ -128,7 +131,12 @@ public class ProductStockService
             dto.ProductId,
             dto.WarehouseId);
 
-        stock.AddQuantity(dto.Quantity);
+        // AddQuantity does not allow zero,
+        // so only call it when the opening balance is greater than zero.
+        if (dto.Quantity > 0)
+        {
+            stock.AddQuantity(dto.Quantity);
+        }
 
         await _unitOfWork.ExecuteInTransactionAsync(
             async () =>

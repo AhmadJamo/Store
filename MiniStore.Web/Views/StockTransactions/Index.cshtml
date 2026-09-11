@@ -1,85 +1,900 @@
-﻿@model List<MiniStore.Application.DTOs.ProductStocks.StockTransactionDto>
+﻿@using MiniStore.Domain.Entities
+@model MiniStore.Application.DTOs.ProductStocks.StockTransactionPagedResultDto
 
 @{
     ViewData["Title"] = "Stock Transactions";
+
+    var search = ViewBag.Search as string;
+    var selectedType = ViewBag.Type as StockTransactionType?;
+    var movement = ViewBag.Movement as string;
+    var fromDate = ViewBag.FromDate as DateTime?;
+    var toDate = ViewBag.ToDate as DateTime?;
+    var sortColumn = ViewBag.SortColumn as string ?? "date";
+    var sortDescending = ViewBag.SortDescending is bool b && b;
+
+    var startRecord =
+        Model.TotalCount == 0
+            ? 0
+            : ((Model.Page - 1) * Model.PageSize) + 1;
+
+    var endRecord =
+        Math.Min(
+            Model.Page * Model.PageSize,
+            Model.TotalCount);
+
+    string SortUrl(string column)
+    {
+        var newDescending =
+            sortColumn.Equals(
+                column,
+                StringComparison.OrdinalIgnoreCase)
+                ? !sortDescending
+                : false;
+
+        return Url.Action(
+            "Index",
+            new
+            {
+                search,
+                type = selectedType,
+                movement,
+                fromDate =
+                    fromDate?.ToString("yyyy-MM-dd"),
+                toDate =
+                    toDate?.ToString("yyyy-MM-dd"),
+                page = 1,
+                pageSize = Model.PageSize,
+                sortColumn = column,
+                sortDescending = newDescending
+            })!;
+    }
+
+    string SortIcon(string column)
+    {
+        if (!sortColumn.Equals(
+                column,
+                StringComparison.OrdinalIgnoreCase))
+        {
+            return "";
+        }
+
+        return sortDescending
+            ? "▼"
+            : "▲";
+    }
+
+    string PageUrl(int page)
+    {
+        return Url.Action(
+            "Index",
+            new
+            {
+                search,
+                type = selectedType,
+                movement,
+                fromDate =
+                    fromDate?.ToString("yyyy-MM-dd"),
+                toDate =
+                    toDate?.ToString("yyyy-MM-dd"),
+                page,
+                pageSize = Model.PageSize,
+                sortColumn,
+                sortDescending
+            })!;
+    }
 }
 
-<h1>Stock Transactions</h1>
+<div class="container-fluid">
 
-<p class="text-muted">
-    @Model.Count transaction(s) found.
-</p>
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
 
-<p>
-    <a asp-action="Create"
-       class="btn btn-primary">
-        Add Transaction
-    </a>
-</p>
+        <div>
+            <h2 class="mb-1">
+                <i class="bi bi-clock-history"></i>
+                Stock Transactions
+            </h2>
 
-<table class="table table-bordered">
+            <p class="text-muted mb-0">
+                View and analyze stock movement history.
+            </p>
+        </div>
 
-    <thead>
-        <tr>
-            <th>Id</th>
-            <th>Product</th>
-            <th>Warehouse</th>
-            <th>Quantity</th>
-            <th>Type</th>
-            <th>Reference</th>
-            <th>Date</th>
-        </tr>
-    </thead>
+    </div>
 
-    <tbody>
 
-        @if (Model.Count == 0)
-        {
-            <tr>
-                <td colspan="7"
-                    class="text-center text-muted">
-                    No transactions found.
-                </td>
-            </tr>
-        }
-        else
-        {
-            @foreach (var transaction in Model)
+    <!-- Filters -->
+    <div class="card shadow-sm mb-4">
+
+        <div class="card-header">
+            <strong>
+                <i class="bi bi-funnel"></i>
+                Search & Filters
+            </strong>
+        </div>
+
+        <div class="card-body">
+
+            <form method="get"
+                  asp-action="Index">
+
+                <div class="row g-3">
+
+                    <!-- Search -->
+                    <div class="col-md-4">
+
+                        <label class="form-label">
+                            Search
+                        </label>
+
+                        <input type="text"
+                               name="search"
+                               value="@search"
+                               class="form-control"
+                               placeholder="Product, warehouse, reference..." />
+
+                    </div>
+
+
+                    <!-- Transaction Type -->
+                    <div class="col-md-2">
+
+                        <label class="form-label">
+                            Transaction Type
+                        </label>
+
+                        <select name="type"
+                                class="form-select">
+
+                            @if (!selectedType.HasValue)
+                            {
+                                <option value="" selected>
+                                    All Types
+                                </option>
+                            }
+                            else
+                            {
+                                <option value="">
+                                    All Types
+                                </option>
+                            }
+
+                            @foreach (var transactionType
+                                in Enum.GetValues<StockTransactionType>())
+                            {
+                                if (selectedType == transactionType)
+                                {
+                                    <option value="@transactionType"
+                                            selected>
+                                        @transactionType
+                                    </option>
+                                }
+                                else
+                                {
+                                    <option value="@transactionType">
+                                        @transactionType
+                                    </option>
+                                }
+                            }
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- Movement -->
+                    <div class="col-md-2">
+
+                        <label class="form-label">
+                            Movement
+                        </label>
+
+                        <select name="movement"
+                                class="form-select">
+
+                            @if (string.IsNullOrEmpty(movement))
+                            {
+                                <option value="" selected>
+                                    All
+                                </option>
+                            }
+                            else
+                            {
+                                <option value="">
+                                    All
+                                </option>
+                            }
+
+                            @if (movement == "incoming")
+                            {
+                                <option value="incoming" selected>
+                                    Incoming
+                                </option>
+                            }
+                            else
+                            {
+                                <option value="incoming">
+                                    Incoming
+                                </option>
+                            }
+
+                            @if (movement == "outgoing")
+                            {
+                                <option value="outgoing" selected>
+                                    Outgoing
+                                </option>
+                            }
+                            else
+                            {
+                                <option value="outgoing">
+                                    Outgoing
+                                </option>
+                            }
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- From Date -->
+                    <div class="col-md-2">
+
+                        <label class="form-label">
+                            From Date
+                        </label>
+
+                        <input type="date"
+                               name="fromDate"
+                               value="@fromDate?.ToString("yyyy-MM-dd")"
+                               class="form-control" />
+
+                    </div>
+
+
+                    <!-- To Date -->
+                    <div class="col-md-2">
+
+                        <label class="form-label">
+                            To Date
+                        </label>
+
+                        <input type="date"
+                               name="toDate"
+                               value="@toDate?.ToString("yyyy-MM-dd")"
+                               class="form-control" />
+
+                    </div>
+
+                </div>
+
+
+                <div class="row g-3 mt-1">
+
+                    <!-- Page Size -->
+                    <div class="col-md-2">
+
+                        <label class="form-label">
+                            Rows per page
+                        </label>
+
+                        <select name="pageSize"
+                                class="form-select">
+
+                            @foreach (var size in new[] { 25, 50, 100, 250 })
+                            {
+                                if (Model.PageSize == size)
+                                {
+                                    <option value="@size"
+                                            selected>
+                                        @size
+                                    </option>
+                                }
+                                else
+                                {
+                                    <option value="@size">
+                                        @size
+                                    </option>
+                                }
+                            }
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- Buttons -->
+                    <div class="col-md-10 d-flex align-items-end gap-2">
+
+                        <button type="submit"
+                                class="btn btn-primary">
+
+                            <i class="bi bi-search"></i>
+                            Search
+
+                        </button>
+
+
+                        <a asp-action="Index"
+                           class="btn btn-outline-secondary">
+
+                            <i class="bi bi-x-circle"></i>
+                            Clear Filters
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Keep sorting when submitting filters -->
+                <input type="hidden"
+                       name="sortColumn"
+                       value="@sortColumn" />
+
+                <input type="hidden"
+                       name="sortDescending"
+                       value="@sortDescending" />
+
+                <!-- Always start from page 1 after filtering -->
+                <input type="hidden"
+                       name="page"
+                       value="1" />
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- Summary -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+
+        <div class="text-muted">
+
+            @if (Model.TotalCount > 0)
             {
-                <tr>
-
-                    <td>
-                        @transaction.Id
-                    </td>
-
-                    <td>
-                        @transaction.ProductName
-                    </td>
-
-                    <td>
-                        @transaction.WarehouseName
-                    </td>
-
-                    <td>
-                        @transaction.Quantity
-                    </td>
-
-                    <td>
-                        @transaction.Type
-                    </td>
-
-                    <td>
-                        @transaction.Reference
-                    </td>
-
-                    <td>
-                        @transaction.CreatedAt
-                    </td>
-
-                </tr>
+                <span>
+                    Showing
+                    <strong>@startRecord</strong>
+                    -
+                    <strong>@endRecord</strong>
+                    of
+                    <strong>@Model.TotalCount</strong>
+                    transactions
+                </span>
             }
+            else
+            {
+                <span>
+                    No transactions found.
+                </span>
+            }
+
+        </div>
+
+
+        @if (Model.TotalPages > 0)
+        {
+            <div class="text-muted">
+
+                Page
+                <strong>@Model.Page</strong>
+                of
+                <strong>@Model.TotalPages</strong>
+
+            </div>
         }
 
-    </tbody>
+    </div>
 
-</table>
+
+    <!-- Transactions Table -->
+    <div class="card shadow-sm">
+
+        <div class="card-body p-0">
+
+            <div class="table-responsive">
+
+                <table class="table table-hover table-striped mb-0">
+
+                    <thead class="table-dark">
+
+                        <tr>
+
+                            <th>
+                                <a href="@SortUrl("id")"
+                                   class="text-white text-decoration-none">
+
+                                    Id
+
+                                    @if (sortColumn.Equals(
+                                        "id",
+                                        StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        <span class="ms-1">
+                                            @SortIcon("id")
+                                        </span>
+                                    }
+
+                                </a>
+                            </th>
+
+
+                            <th>
+                                <a href="@SortUrl("product")"
+                                   class="text-white text-decoration-none">
+
+                                    Product
+
+                                    @if (sortColumn.Equals(
+                                        "product",
+                                        StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        <span class="ms-1">
+                                            @SortIcon("product")
+                                        </span>
+                                    }
+
+                                </a>
+                            </th>
+
+
+                            <th>
+                                <a href="@SortUrl("warehouse")"
+                                   class="text-white text-decoration-none">
+
+                                    Warehouse
+
+                                    @if (sortColumn.Equals(
+                                        "warehouse",
+                                        StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        <span class="ms-1">
+                                            @SortIcon("warehouse")
+                                        </span>
+                                    }
+
+                                </a>
+                            </th>
+
+
+                            <th>
+                                <a href="@SortUrl("quantity")"
+                                   class="text-white text-decoration-none">
+
+                                    Quantity
+
+                                    @if (sortColumn.Equals(
+                                        "quantity",
+                                        StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        <span class="ms-1">
+                                            @SortIcon("quantity")
+                                        </span>
+                                    }
+
+                                </a>
+                            </th>
+
+
+                            <th>
+                                <a href="@SortUrl("type")"
+                                   class="text-white text-decoration-none">
+
+                                    Type
+
+                                    @if (sortColumn.Equals(
+                                        "type",
+                                        StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        <span class="ms-1">
+                                            @SortIcon("type")
+                                        </span>
+                                    }
+
+                                </a>
+                            </th>
+
+
+                            <th>
+                                <a href="@SortUrl("reference")"
+                                   class="text-white text-decoration-none">
+
+                                    Reference
+
+                                    @if (sortColumn.Equals(
+                                        "reference",
+                                        StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        <span class="ms-1">
+                                            @SortIcon("reference")
+                                        </span>
+                                    }
+
+                                </a>
+                            </th>
+
+
+                            <th>
+                                <a href="@SortUrl("date")"
+                                   class="text-white text-decoration-none">
+
+                                    Date
+
+                                    @if (sortColumn.Equals(
+                                        "date",
+                                        StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        <span class="ms-1">
+                                            @SortIcon("date")
+                                        </span>
+                                    }
+
+                                </a>
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        @if (Model.Items.Any())
+                        {
+                            foreach (var transaction in Model.Items)
+                            {
+                                <tr>
+
+                                    <!-- Id -->
+                                    <td>
+                                        @transaction.Id
+                                    </td>
+
+
+                                    <!-- Product -->
+                                    <td>
+
+                                        <strong>
+                                            @transaction.ProductName
+                                        </strong>
+
+                                    </td>
+
+
+                                    <!-- Warehouse -->
+                                    <td>
+                                        @transaction.WarehouseName
+                                    </td>
+
+
+                                    <!-- Quantity -->
+                                    <td>
+
+                                        @if (transaction.Quantity > 0)
+                                        {
+                                            <span class="text-success fw-bold">
+                                                +@transaction.Quantity
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-danger fw-bold">
+                                                @transaction.Quantity
+                                            </span>
+                                        }
+
+                                    </td>
+
+
+                                    <!-- Type -->
+                                    <td>
+
+                                        @switch (transaction.Type)
+                                        {
+                                            case StockTransactionType.Purchase:
+
+                                                <span class="badge bg-success">
+                                                    @transaction.Type
+                                                </span>
+
+                                                break;
+
+                                            case StockTransactionType.OpeningBalance:
+
+                                                <span class="badge bg-info text-dark">
+                                                    @transaction.Type
+                                                </span>
+
+                                                break;
+
+                                            case StockTransactionType.TransferIn:
+
+                                                <span class="badge bg-primary">
+                                                    @transaction.Type
+                                                </span>
+
+                                                break;
+
+                                            case StockTransactionType.AdjustmentIn:
+
+                                                <span class="badge bg-success">
+                                                    @transaction.Type
+                                                </span>
+
+                                                break;
+
+                                            case StockTransactionType.Sale:
+
+                                                <span class="badge bg-danger">
+                                                    @transaction.Type
+                                                </span>
+
+                                                break;
+
+                                            case StockTransactionType.TransferOut:
+
+                                                <span class="badge bg-warning text-dark">
+                                                    @transaction.Type
+                                                </span>
+
+                                                break;
+
+                                            case StockTransactionType.AdjustmentOut:
+
+                                                <span class="badge bg-danger">
+                                                    @transaction.Type
+                                                </span>
+
+                                                break;
+
+                                            default:
+
+                                                <span class="badge bg-secondary">
+                                                    @transaction.Type
+                                                </span>
+
+                                                break;
+                                        }
+
+                                    </td>
+
+
+                                    <!-- Reference -->
+                                    <td>
+
+                                        @if (string.IsNullOrWhiteSpace(
+                                            transaction.Reference))
+                                        {
+                                            <span class="text-muted">
+                                                -
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            @transaction.Reference
+                                        }
+
+                                    </td>
+
+
+                                    <!-- Date -->
+                                   
+                                        <td>
+                                            @transaction.CreatedAt.ToString("dd/MM/yyyy HH:mm:ss")
+                                        </td>
+
+
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+
+                                <td colspan="7"
+                                    class="text-center py-5">
+
+                                    <div class="text-muted">
+
+                                        <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+
+                                        <h5>
+                                            No transactions found
+                                        </h5>
+
+                                        <p class="mb-0">
+                                            Try changing your search or filters.
+                                        </p>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Pagination -->
+    @if (Model.TotalPages > 1)
+    {
+        <div class="d-flex justify-content-center mt-4">
+
+            <nav aria-label="Stock transaction pagination">
+
+                <ul class="pagination">
+
+                    <!-- Previous -->
+                    @if (Model.Page > 1)
+                    {
+                        <li class="page-item">
+
+                            <a class="page-link"
+                               href="@PageUrl(Model.Page - 1)">
+
+                                <i class="bi bi-chevron-left"></i>
+                                Previous
+
+                            </a>
+
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="page-item disabled">
+
+                            <span class="page-link">
+
+                                <i class="bi bi-chevron-left"></i>
+                                Previous
+
+                            </span>
+
+                        </li>
+                    }
+
+
+                    @{
+                        var startPage =
+                            Math.Max(
+                                1,
+                                Model.Page - 2);
+
+                        var endPage =
+                            Math.Min(
+                                Model.TotalPages,
+                                Model.Page + 2);
+                    }
+
+
+                    <!-- First page -->
+                    @if (startPage > 1)
+                    {
+                        <li class="page-item">
+
+                            <a class="page-link"
+                               href="@PageUrl(1)">
+                                1
+                            </a>
+
+                        </li>
+
+                        @if (startPage > 2)
+                        {
+                            <li class="page-item disabled">
+
+                                <span class="page-link">
+                                    ...
+                                </span>
+
+                            </li>
+                        }
+                    }
+
+
+                    <!-- Page numbers -->
+                    @for (
+                        var pageNumber = startPage;
+                        pageNumber <= endPage;
+                        pageNumber++)
+                    {
+                        if (pageNumber == Model.Page)
+                        {
+                            <li class="page-item active">
+
+                                <span class="page-link">
+                                    @pageNumber
+                                </span>
+
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="page-item">
+
+                                <a class="page-link"
+                                   href="@PageUrl(pageNumber)">
+                                    @pageNumber
+                                </a>
+
+                            </li>
+                        }
+                    }
+
+
+                    <!-- Last page -->
+                    @if (endPage < Model.TotalPages)
+                    {
+                        @if (endPage < Model.TotalPages - 1)
+                        {
+                            <li class="page-item disabled">
+
+                                <span class="page-link">
+                                    ...
+                                </span>
+
+                            </li>
+                        }
+
+                        <li class="page-item">
+
+                            <a class="page-link"
+                               href="@PageUrl(Model.TotalPages)">
+
+                                @Model.TotalPages
+
+                            </a>
+
+                        </li>
+                    }
+
+
+                    <!-- Next -->
+                    @if (Model.Page < Model.TotalPages)
+                    {
+                        <li class="page-item">
+
+                            <a class="page-link"
+                               href="@PageUrl(Model.Page + 1)">
+
+                                Next
+                                <i class="bi bi-chevron-right"></i>
+
+                            </a>
+
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="page-item disabled">
+
+                            <span class="page-link">
+
+                                Next
+                                <i class="bi bi-chevron-right"></i>
+
+                            </span>
+
+                        </li>
+                    }
+
+                </ul>
+
+            </nav>
+
+        </div>
+    }
+
+</div>

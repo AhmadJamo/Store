@@ -267,11 +267,11 @@ public class SaleService : ISaleService
                 stock.RemoveQuantity(itemDto.Quantity);
 
                 var transaction = new StockTransaction(
-                    itemDto.ProductId,
-                    dto.WarehouseId,
-                    -itemDto.Quantity,
-                    StockTransactionType.Sale,
-                    dto.InvoiceNumber);
+                 itemDto.ProductId,
+                 dto.WarehouseId,
+                -itemDto.Quantity,
+                 StockTransactionType.Sale,
+                 sale.InvoiceNumber);
 
                 await _stockTransactionRepository
                     .AddAsync(transaction);

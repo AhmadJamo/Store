@@ -31,9 +31,13 @@ public class StockTransaction
             throw new ArgumentException(
                 "Warehouse is required.");
 
-        if (quantity == 0)
+        // Zero quantity is allowed only for Opening Balance.
+        if (quantity == 0 &&
+            type != StockTransactionType.OpeningBalance)
+        {
             throw new ArgumentException(
                 "Quantity cannot be zero.");
+        }
 
         ProductId = productId;
         WarehouseId = warehouseId;

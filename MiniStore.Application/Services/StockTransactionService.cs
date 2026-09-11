@@ -169,4 +169,113 @@ public class StockTransactionService
 
             }).ToList();
     }
+
+    public async Task<StockTransactionPagedResultDto>
+    GetPagedAsync(
+        string? search,
+        StockTransactionType? type,
+        bool? incoming,
+        DateTime? fromDate,
+        DateTime? toDate,
+        int page,
+        int pageSize,
+        string sortColumn,
+        bool sortDescending)
+    {
+        var allowedPageSizes = new[] { 25, 50, 100, 250 };
+
+        if (!allowedPageSizes.Contains(pageSize))
+            pageSize = 50;
+
+        if (page < 1)
+            page = 1;
+
+        var allowedSortColumns = new[]
+        {
+        "id",
+        "product",
+        "warehouse",
+        "quantity",
+        "type",
+        "reference",
+        "date"
+    };
+
+        if (!allowedSortColumns.Contains(
+                sortColumn.ToLower()))
+        {
+            sortColumn = "date";
+        }
+
+        var result =
+            await _stockTransactionRepository.GetPagedAsync(
+                search,
+                type,
+                incoming,
+                fromDate,
+                toDate,
+                page,
+                pageSize,
+                sortColumn,
+                sortDescending);
+
+        var products =
+            await _productRepository.GetAllAsync(null);
+
+        var warehouses =
+            await _warehouseRepository.GetAllAsync();
+
+        var items =
+            result.Items
+                .Select(transaction =>
+                    new StockTransactionDto
+                    {
+                        Id = transaction.Id,
+
+                        ProductId =
+                            transaction.ProductId,
+
+                        ProductName =
+                            products.FirstOrDefault(x =>
+                                x.Id == transaction.ProductId)
+                            ?.Name ?? "Unknown Product",
+
+                        WarehouseId =
+                            transaction.WarehouseId,
+
+                        WarehouseName =
+                            warehouses.FirstOrDefault(x =>
+                                x.Id == transaction.WarehouseId)
+                            ?.Name ?? "Unknown Warehouse",
+
+                        Quantity =
+                            transaction.Quantity,
+
+                        Type =
+                            transaction.Type,
+
+                        Reference =
+                            transaction.Reference,
+
+                        CreatedAt =
+                            transaction.CreatedAt
+                    })
+                .ToList();
+
+        var totalPages =
+            (int)Math.Ceiling(
+                result.TotalCount /
+                (double)pageSize);
+
+        if (totalPages > 0 && page > totalPages)
+            page = totalPages;
+
+        return new StockTransactionPagedResultDto
+        {
+            Items = items,
+            TotalCount = result.TotalCount,
+            Page = page,
+            PageSize = pageSize
+        };
+    }
 }

@@ -37,12 +37,45 @@ public class StockTransactionsController : Controller
     [HttpGet]
     [Authorize]
     [PermissionAuthorize("StockTransactions.View")]
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(
+       string? search,
+       StockTransactionType? type,
+       string? movement,
+       DateTime? fromDate,
+       DateTime? toDate,
+       int page = 1,
+       int pageSize = 50,
+       string sortColumn = "date",
+       bool sortDescending = true)
     {
-        var transactions =
-            await _stockTransactionService.GetAllAsync();
+        bool? incoming = movement switch
+        {
+            "incoming" => true,
+            "outgoing" => false,
+            _ => null
+        };
 
-        return View(transactions);
+        var result =
+            await _stockTransactionService.GetPagedAsync(
+                search,
+                type,
+                incoming,
+                fromDate,
+                toDate,
+                page,
+                pageSize,
+                sortColumn,
+                sortDescending);
+
+        ViewBag.Search = search;
+        ViewBag.Type = type;
+        ViewBag.Movement = movement;
+        ViewBag.FromDate = fromDate;
+        ViewBag.ToDate = toDate;
+        ViewBag.SortColumn = sortColumn;
+        ViewBag.SortDescending = sortDescending;
+
+        return View(result);
     }
 
     [HttpGet]

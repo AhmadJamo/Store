@@ -1,6 +1,6 @@
 ﻿```cshtml
 @using System.Globalization
-@using MiniStore.Domain.Enums
+@using System.Text.Json
 @model MiniStore.Application.DTOs.Sales.CreateSaleDto
 
 @{
@@ -252,19 +252,12 @@
                     <tr>
 
                         <th>Product</th>
-
                         <th>Quantity</th>
-
                         <th>Sale Price</th>
-
                         <th>Gross Total</th>
-
                         <th>Discount</th>
-
                         <th>Discount Amount</th>
-
                         <th>Total</th>
-
                         <th></th>
 
                     </tr>
@@ -333,8 +326,7 @@
                                    type="number"
                                    step="0.01"
                                    min="0"
-                                   class="form-control"
-                                   value="0" />
+                                   class="form-control" />
 
                         </div>
 
@@ -477,6 +469,20 @@
             document.getElementById("grandTotal");
 
 
+        /*
+         * Existing items returned from the server.
+         *
+         * This is important when the POST fails because of
+         * insufficient stock or another business validation error.
+         *
+         * The server returns the original CreateSaleDto,
+         * including Items, so we rebuild the table here.
+         */
+
+        const existingItems =
+            @Html.Raw(JsonSerializer.Serialize(Model.Items));
+
+
         productSelect.addEventListener(
             "change",
             updateSalePrice
@@ -534,6 +540,10 @@
             calculateTotals
         );
 
+
+        /*
+         * Add a new item from the product selector.
+         */
 
         addItemButton.addEventListener(
             "click",
@@ -656,108 +666,17 @@
                     discountAmount;
 
 
-                const row =
-                    document.createElement("tr");
-
-
-                const discountText =
-                    discountType === 1
-                        ? `${discountValue.toFixed(2)}%`
-                        : discountValue.toFixed(2);
-
-
-                row.innerHTML = `
-
-                    <td>
-
-                        ${escapeHtml(productName)}
-
-                        <input type="hidden"
-                               name="Items[${itemIndex}].ProductId"
-                               value="${productId}" />
-
-                    </td>
-
-
-                    <td>
-
-                        ${quantity.toFixed(3)}
-
-                        <input type="hidden"
-                               name="Items[${itemIndex}].Quantity"
-                               value="${quantity}" />
-
-                    </td>
-
-
-                    <td>
-
-                        ${salePrice.toFixed(2)}
-
-                        <input type="hidden"
-                               name="Items[${itemIndex}].SalePrice"
-                               value="${salePrice}" />
-
-                    </td>
-
-
-                    <td>
-
-                        ${grossTotal.toFixed(2)}
-
-                    </td>
-
-
-                    <td>
-
-                        ${discountText}
-
-                        <input type="hidden"
-                               name="Items[${itemIndex}].DiscountType"
-                               value="${discountType}" />
-
-                        <input type="hidden"
-                               name="Items[${itemIndex}].DiscountValue"
-                               value="${discountValue}" />
-
-                    </td>
-
-
-                    <td>
-
-                        ${discountAmount.toFixed(2)}
-
-                    </td>
-
-
-                    <td class="line-total">
-
-                        ${total.toFixed(2)}
-
-                    </td>
-
-
-                    <td>
-
-                        <button type="button"
-                                class="btn btn-danger btn-sm remove-item">
-
-                            Remove
-
-                        </button>
-
-                    </td>
-
-                `;
-
-
-                itemsTableBody.appendChild(row);
-
-
-                itemIndex++;
-
-
-                calculateTotals();
+                addItemRow(
+                    productId,
+                    productName,
+                    quantity,
+                    salePrice,
+                    discountType,
+                    discountValue,
+                    discountAmount,
+                    grossTotal,
+                    total
+                );
 
 
                 productSelect.value = "";
@@ -775,6 +694,10 @@
             }
         );
 
+
+        /*
+         * Remove item.
+         */
 
         itemsTableBody.addEventListener(
             "click",
@@ -797,6 +720,242 @@
             }
         );
 
+
+        /*
+         * Add item row to the table.
+         *
+         * This function is used both when the user adds
+         * a new item and when the server returns the
+         * previously entered items after validation failure.
+         */
+
+        function addItemRow(
+            productId,
+            productName,
+            quantity,
+            salePrice,
+            discountType,
+            discountValue,
+            discountAmount,
+            grossTotal,
+            total
+        ) {
+
+            const row =
+                document.createElement("tr");
+
+
+            const discountText =
+                discountType === 1
+                    ? `${discountValue.toFixed(2)}%`
+                    : discountValue.toFixed(2);
+
+
+            row.innerHTML = `
+
+                <td>
+
+                    ${escapeHtml(productName)}
+
+                    <input type="hidden"
+                           name="Items[${itemIndex}].ProductId"
+                           value="${productId}" />
+
+                </td>
+
+
+                <td>
+
+                    ${quantity.toFixed(3)}
+
+                    <input type="hidden"
+                           name="Items[${itemIndex}].Quantity"
+                           value="${quantity}" />
+
+                </td>
+
+
+                <td>
+
+                    ${salePrice.toFixed(2)}
+
+                    <input type="hidden"
+                           name="Items[${itemIndex}].SalePrice"
+                           value="${salePrice}" />
+
+                </td>
+
+
+                <td>
+
+                    ${grossTotal.toFixed(2)}
+
+                </td>
+
+
+                <td>
+
+                    ${discountText}
+
+                    <input type="hidden"
+                           name="Items[${itemIndex}].DiscountType"
+                           value="${discountType}" />
+
+                    <input type="hidden"
+                           name="Items[${itemIndex}].DiscountValue"
+                           value="${discountValue}" />
+
+                </td>
+
+
+                <td>
+
+                    ${discountAmount.toFixed(2)}
+
+                </td>
+
+
+                <td class="line-total">
+
+                    ${total.toFixed(2)}
+
+                </td>
+
+
+                <td>
+
+                    <button type="button"
+                            class="btn btn-danger btn-sm remove-item">
+
+                        Remove
+
+                    </button>
+
+                </td>
+
+            `;
+
+
+            itemsTableBody.appendChild(row);
+
+            itemIndex++;
+
+            calculateTotals();
+
+        }
+
+
+        /*
+         * Rebuild items that came back from the server.
+         *
+         * On the first normal GET:
+         *
+         * Model.Items = []
+         *
+         * Nothing happens.
+         *
+         * On a failed POST:
+         *
+         * Model.Items contains the user's original items,
+         * so they are restored into the table.
+         */
+
+        if (
+            Array.isArray(existingItems) &&
+            existingItems.length > 0
+        ) {
+
+            existingItems.forEach(function (item) {
+
+                const productOption =
+                    [...productSelect.options]
+                        .find(option =>
+                            option.value ==
+                            item.ProductId
+                        );
+
+
+                let productName =
+                    `Product #${item.ProductId}`;
+
+
+                if (productOption) {
+
+                    productName =
+                        productOption.text;
+
+                }
+
+
+                const quantity =
+                    Number(item.Quantity) || 0;
+
+
+                const salePrice =
+                    Number(item.SalePrice) || 0;
+
+
+                const discountType =
+                    Number(item.DiscountType) || 1;
+
+
+                const discountValue =
+                    Number(item.DiscountValue) || 0;
+
+
+                const grossTotal =
+                    quantity * salePrice;
+
+
+                let discountAmount = 0;
+
+
+                if (discountType === 1) {
+
+                    discountAmount =
+                        grossTotal *
+                        discountValue /
+                        100;
+
+                }
+                else if (discountType === 2) {
+
+                    discountAmount =
+                        discountValue;
+
+                }
+
+
+                if (discountAmount > grossTotal) {
+                    discountAmount = grossTotal;
+                }
+
+
+                const total =
+                    grossTotal -
+                    discountAmount;
+
+
+                addItemRow(
+                    item.ProductId,
+                    productName,
+                    quantity,
+                    salePrice,
+                    discountType,
+                    discountValue,
+                    discountAmount,
+                    grossTotal,
+                    total
+                );
+
+            });
+
+        }
+
+
+        /*
+         * Calculate invoice totals.
+         */
 
         function calculateTotals() {
 
@@ -884,17 +1043,27 @@
         }
 
 
+        /*
+         * Escape product names before inserting them
+         * into the HTML table.
+         */
+
         function escapeHtml(value) {
 
             const element =
                 document.createElement("div");
 
-            element.textContent = value;
+            element.textContent =
+                value;
 
             return element.innerHTML;
 
         }
 
+
+        /*
+         * Update sale price when product changes.
+         */
 
         function updateSalePrice() {
 
@@ -908,6 +1077,10 @@
 
         }
 
+
+        /*
+         * Filter products by name or barcode.
+         */
 
         function filterProducts() {
 
