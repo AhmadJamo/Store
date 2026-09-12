@@ -1,0 +1,1177 @@
+﻿```cshtml
+@using MiniStore.Application.DTOs.StockTransfers
+@using MiniStore.Domain.Entities
+@using System.Security.Claims
+
+@model StockTransferDetailsDto
+
+@{
+    ViewData["Title"] = $"Stock Transfer - {Model.TransferNumber}";
+
+    var userId =
+        User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "";
+}
+
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+    <div>
+
+        <h2>
+            Stock Transfer
+        </h2>
+
+        <div class="text-muted">
+            @Model.TransferNumber
+        </div>
+
+    </div>
+
+
+    <div>
+
+        <a asp-action="Index"
+           class="btn btn-secondary">
+
+            <i class="bi bi-arrow-left"></i>
+            Back to List
+
+        </a>
+
+    </div>
+
+</div>
+
+
+<!-- ========================================== -->
+<!-- Status -->
+<!-- ========================================== -->
+
+<div class="card mb-4">
+
+    <div class="card-body">
+
+        <div class="d-flex justify-content-between align-items-center">
+
+            <div>
+
+                <strong>
+                    Status:
+                </strong>
+
+
+                @switch (Model.Status)
+                {
+                    case StockTransferStatus.Draft:
+
+                        <span class="badge bg-secondary">
+                            Draft
+                        </span>
+
+                        break;
+
+
+                    case StockTransferStatus.Submitted:
+
+                        <span class="badge bg-primary">
+                            Submitted
+                        </span>
+
+                        break;
+
+
+                    case StockTransferStatus.Approved:
+
+                        <span class="badge bg-success">
+                            Approved
+                        </span>
+
+                        break;
+
+
+                    case StockTransferStatus.Rejected:
+
+                        <span class="badge bg-danger">
+                            Rejected
+                        </span>
+
+                        break;
+
+
+                    case StockTransferStatus.Posted:
+
+                        <span class="badge bg-dark">
+                            Posted
+                        </span>
+
+                        break;
+
+
+                    case StockTransferStatus.Cancelled:
+
+                        <span class="badge bg-warning text-dark">
+                            Cancelled
+                        </span>
+
+                        break;
+                }
+
+            </div>
+
+
+            <!-- ========================================== -->
+            <!-- Workflow Actions -->
+            <!-- ========================================== -->
+
+            <div class="d-flex gap-2">
+
+
+                <!-- Edit -->
+                @if (Model.Status == StockTransferStatus.Draft &&
+                                     await PermissionService.CanAsync(
+                                         userId,
+                                         "StockTransfers.Edit"))
+                {
+                    <a asp-action="Edit"
+                       asp-route-id="@Model.Id"
+                       class="btn btn-outline-primary">
+
+                        <i class="bi bi-pencil"></i>
+                        Edit
+
+                    </a>
+                }
+
+
+                <!-- Submit -->
+                @if (Model.Status == StockTransferStatus.Draft &&
+                                     await PermissionService.CanAsync(
+                                         userId,
+                                         "StockTransfers.Submit"))
+                {
+                    <form asp-action="Submit"
+                          method="post"
+                          class="d-inline">
+
+                        @Html.AntiForgeryToken()
+
+                        <input type="hidden"
+                               name="id"
+                               value="@Model.Id" />
+
+                        <button type="submit"
+                                class="btn btn-primary">
+
+                            Submit
+
+                        </button>
+
+                    </form>
+                }
+
+
+                <!-- Approve -->
+                @if (Model.Status == StockTransferStatus.Submitted &&
+                                     await PermissionService.CanAsync(
+                                         userId,
+                                         "StockTransfers.Approve"))
+                {
+                    <form asp-action="Approve"
+                          method="post"
+                          class="d-inline">
+
+                        @Html.AntiForgeryToken()
+
+                        <input type="hidden"
+                               name="id"
+                               value="@Model.Id" />
+
+                        <button type="submit"
+                                class="btn btn-success">
+
+                            Approve
+
+                        </button>
+
+                    </form>
+                }
+
+
+                <!-- Reject -->
+                @if (Model.Status == StockTransferStatus.Submitted &&
+                                     await PermissionService.CanAsync(
+                                         userId,
+                                         "StockTransfers.Reject"))
+                {
+                    <button type="button"
+                            class="btn btn-danger"
+                            data-bs-toggle="modal"
+                            data-bs-target="#rejectModal">
+
+                        Reject
+
+                    </button>
+                }
+
+
+                <!-- Return To Draft -->
+                @if (Model.Status == StockTransferStatus.Rejected &&
+                                     await PermissionService.CanAsync(
+                                         userId,
+                                         "StockTransfers.Edit"))
+                {
+                    <form asp-action="ReturnToDraft"
+                          method="post"
+                          class="d-inline">
+
+                        @Html.AntiForgeryToken()
+
+                        <input type="hidden"
+                               name="id"
+                               value="@Model.Id" />
+
+                        <button type="submit"
+                                class="btn btn-warning">
+
+                            Return to Draft
+
+                        </button>
+
+                    </form>
+                }
+
+
+                <!-- Post -->
+                @if (Model.Status == StockTransferStatus.Approved &&
+                                     await PermissionService.CanAsync(
+                                         userId,
+                                         "StockTransfers.Post"))
+                {
+                    <form asp-action="Post"
+                          method="post"
+                          class="d-inline">
+
+                        @Html.AntiForgeryToken()
+
+                        <input type="hidden"
+                               name="id"
+                               value="@Model.Id" />
+
+                        <button type="submit"
+                                class="btn btn-success">
+
+                            Post
+
+                        </button>
+
+                    </form>
+                }
+
+
+                <!-- Cancel -->
+                @if (Model.Status == StockTransferStatus.Posted &&
+                                     await PermissionService.CanAsync(
+                                         userId,
+                                         "StockTransfers.Cancel"))
+                {
+                    <button type="button"
+                            class="btn btn-danger"
+                            data-bs-toggle="modal"
+                            data-bs-target="#cancelModal">
+
+                        Cancel
+
+                    </button>
+                }
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ========================================== -->
+<!-- Transfer Information -->
+<!-- ========================================== -->
+
+<div class="card mb-4">
+
+    <div class="card-header">
+
+        <h5 class="mb-0">
+            Transfer Information
+        </h5>
+
+    </div>
+
+
+    <div class="card-body">
+
+        <div class="row">
+
+
+            <!-- Transfer Number -->
+
+            <div class="col-md-6 mb-3">
+
+                <strong>
+                    Transfer Number
+                </strong>
+
+                <div>
+                    @Model.TransferNumber
+                </div>
+
+            </div>
+
+
+            <!-- Created At -->
+
+            <div class="col-md-6 mb-3">
+
+                <strong>
+                    Created At
+                </strong>
+
+                <div>
+                    @Model.CreatedAt.ToLocalTime()
+                </div>
+
+            </div>
+
+
+            <!-- From Warehouse -->
+
+            <div class="col-md-6 mb-3">
+
+                <strong>
+                    From Warehouse
+                </strong>
+
+                <div>
+                    @Model.FromWarehouseName
+                </div>
+
+            </div>
+
+
+            <!-- To Warehouse -->
+
+            <div class="col-md-6 mb-3">
+
+                <strong>
+                    To Warehouse
+                </strong>
+
+                <div>
+                    @Model.ToWarehouseName
+                </div>
+
+            </div>
+
+
+            <!-- Created By -->
+
+            <div class="col-md-6 mb-3">
+
+                <strong>
+                    Created By
+                </strong>
+
+                <div>
+                    @if (!string.IsNullOrWhiteSpace(Model.CreatedByUserName))
+                    {
+                        @Model.CreatedByUserName
+                    }
+                    else
+                    {
+                        <span class="text-muted">
+                            Unknown User
+                        </span>
+                    }
+                </div>
+
+            </div>
+
+
+            <!-- Reference -->
+
+            <div class="col-md-6 mb-3">
+
+                <strong>
+                    Reference
+                </strong>
+
+                <div>
+                    @(string.IsNullOrWhiteSpace(Model.Reference)
+                        ? "-"
+                        : Model.Reference)
+                </div>
+
+            </div>
+
+
+            <!-- Notes -->
+
+            <div class="col-12 mb-3">
+
+                <strong>
+                    Notes
+                </strong>
+
+                <div>
+                    @(string.IsNullOrWhiteSpace(Model.Notes)
+                        ? "-"
+                        : Model.Notes)
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ========================================== -->
+<!-- Rejection Information -->
+<!-- ========================================== -->
+@if (Model.Status == StockTransferStatus.Rejected)
+{
+    <div class="alert alert-danger mb-4">
+
+        <h5 class="alert-heading">
+            Rejection Information
+        </h5>
+
+        <hr />
+
+        <div>
+
+            <strong>
+                Rejected By:
+            </strong>
+
+            @if (!string.IsNullOrWhiteSpace(Model.RejectedByUserName))
+            {
+                @Model.RejectedByUserName
+            }
+            else
+            {
+                <span class="text-muted">
+                    Unknown User
+                </span>
+            }
+
+        </div>
+
+        <div>
+
+            <strong>
+                Rejected At:
+            </strong>
+
+            @(Model.RejectedAt?
+                .ToLocalTime()
+                .ToString()
+                ?? "-")
+
+        </div>
+
+        <div>
+
+            <strong>
+                Reason:
+            </strong>
+
+            @(string.IsNullOrWhiteSpace(Model.RejectionReason)
+                ? "-"
+                : Model.RejectionReason)
+
+        </div>
+
+    </div>
+}
+
+
+<!-- ========================================== -->
+<!-- Cancellation Information -->
+<!-- ========================================== -->
+@if (Model.Status == StockTransferStatus.Cancelled)
+{
+    <div class="alert alert-warning mb-4">
+
+        <h5 class="alert-heading">
+            Cancellation Information
+        </h5>
+
+        <hr />
+
+        <div>
+
+            <strong>
+                Cancelled By:
+            </strong>
+
+            @if (!string.IsNullOrWhiteSpace(Model.CancelledByUserName))
+            {
+                @Model.CancelledByUserName
+            }
+            else
+            {
+                <span class="text-muted">
+                    Unknown User
+                </span>
+            }
+
+        </div>
+
+        <div>
+
+            <strong>
+                Cancelled At:
+            </strong>
+
+            @(Model.CancelledAt?
+                .ToLocalTime()
+                .ToString()
+                ?? "-")
+
+        </div>
+
+        <div>
+
+            <strong>
+                Reason:
+            </strong>
+
+            @(string.IsNullOrWhiteSpace(Model.CancellationReason)
+                ? "-"
+                : Model.CancellationReason)
+
+        </div>
+
+    </div>
+}
+
+
+<!-- ========================================== -->
+<!-- Items -->
+<!-- ========================================== -->
+
+<div class="card mb-4">
+
+    <div class="card-header">
+
+        <h5 class="mb-0">
+            Transfer Items
+        </h5>
+
+    </div>
+
+
+    <div class="card-body p-0">
+
+        @if (Model.Items.Any())
+        {
+            <div class="table-responsive">
+
+                <table class="table table-bordered table-hover mb-0">
+
+                    <thead class="table-light">
+
+                        <tr>
+
+                            <th style="width: 70px;">
+                                #
+                            </th>
+
+                            <th>
+                                Product
+                            </th>
+
+                            <th>
+                                Barcode
+                            </th>
+
+                            <th class="text-end">
+                                Quantity
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        @{
+                            var itemNumber = 1;
+                        }
+
+
+                        @foreach (var item in Model.Items)
+                        {
+                            <tr>
+
+                                <td>
+                                    @itemNumber
+                                </td>
+
+                                <td>
+                                    @item.ProductName
+                                </td>
+
+                                <td>
+                                    @(string.IsNullOrWhiteSpace(item.Barcode)
+                                        ? "-"
+                                        : item.Barcode)
+                                </td>
+
+                                <td class="text-end">
+                                    @item.Quantity.ToString("N3")
+                                </td>
+
+                            </tr>
+
+                            itemNumber++;
+                        }
+
+                    </tbody>
+
+
+                    <tfoot class="table-light">
+
+                        <tr>
+
+                            <th colspan="3"
+                                class="text-end">
+
+                                Total Quantity
+
+                            </th>
+
+                            <th class="text-end">
+
+                                @(Model.Items
+                                    .Sum(x => x.Quantity)
+                                    .ToString("N3"))
+
+                            </th>
+
+                        </tr>
+
+                    </tfoot>
+
+                </table>
+
+            </div>
+        }
+        else
+        {
+            <div class="p-4 text-muted">
+
+                No items found.
+
+            </div>
+        }
+
+    </div>
+
+</div>
+
+
+<!-- ========================================== -->
+<!-- Workflow Summary -->
+<!-- ========================================== -->
+
+<div class="card mb-4">
+
+    <div class="card-header">
+
+        <h5 class="mb-0">
+            Workflow Summary
+        </h5>
+
+    </div>
+
+
+    <div class="card-body">
+
+        <div class="row">
+
+
+            <!-- Submitted -->
+
+            <div class="col-md-6 mb-3">
+
+                <strong>
+                    Submitted By
+                </strong>
+
+                <div>
+
+                    @if (!string.IsNullOrWhiteSpace(Model.SubmittedByUserName))
+                    {
+                        @Model.SubmittedByUserName
+                    }
+                    else
+                    {
+                        <span class="text-muted">
+                            -
+                        </span>
+                    }
+
+                </div>
+
+                <small class="text-muted">
+
+                    @(Model.SubmittedAt?
+                        .ToLocalTime()
+                        .ToString()
+                        ?? "-")
+
+                </small>
+
+            </div>
+
+
+            <!-- Approved -->
+
+            <div class="col-md-6 mb-3">
+
+                <strong>
+                    Approved By
+                </strong>
+
+                <div>
+
+                    @if (!string.IsNullOrWhiteSpace(Model.ApprovedByUserName))
+                    {
+                        @Model.ApprovedByUserName
+                    }
+                    else
+                    {
+                        <span class="text-muted">
+                            -
+                        </span>
+                    }
+
+                </div>
+
+                <small class="text-muted">
+
+                    @(Model.ApprovedAt?
+                        .ToLocalTime()
+                        .ToString()
+                        ?? "-")
+
+                </small>
+
+            </div>
+
+
+            <!-- Posted -->
+
+            <div class="col-md-6 mb-3">
+
+                <strong>
+                    Posted By
+                </strong>
+
+                <div>
+
+                    @if (!string.IsNullOrWhiteSpace(Model.PostedByUserName))
+                    {
+                        @Model.PostedByUserName
+                    }
+                    else
+                    {
+                        <span class="text-muted">
+                            -
+                        </span>
+                    }
+
+                </div>
+
+                <small class="text-muted">
+
+                    @(Model.PostedAt?
+                        .ToLocalTime()
+                        .ToString()
+                        ?? "-")
+
+                </small>
+
+            </div>
+
+
+            <!-- Cancelled -->
+
+            <div class="col-md-6 mb-3">
+
+                <strong>
+                    Cancelled By
+                </strong>
+
+                <div>
+
+                    @if (!string.IsNullOrWhiteSpace(Model.CancelledByUserName))
+                    {
+                        @Model.CancelledByUserName
+                    }
+                    else
+                    {
+                        <span class="text-muted">
+                            -
+                        </span>
+                    }
+
+                </div>
+
+                <small class="text-muted">
+
+                    @(Model.CancelledAt?
+                        .ToLocalTime()
+                        .ToString()
+                        ?? "-")
+
+                </small>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ========================================== -->
+<!-- Workflow History -->
+<!-- ========================================== -->
+
+<div class="card mb-4">
+
+    <div class="card-header">
+
+        <h5 class="mb-0">
+            Workflow History
+        </h5>
+
+    </div>
+
+
+    <div class="card-body p-0">
+
+        @if (Model.History.Any())
+        {
+            <div class="table-responsive">
+
+                <table class="table table-bordered table-hover mb-0">
+
+                    <thead class="table-light">
+
+                        <tr>
+
+                            <th>
+                                Date
+                            </th>
+
+                            <th>
+                                Action
+                            </th>
+
+                            <th>
+                                From
+                            </th>
+
+                            <th>
+                                To
+                            </th>
+
+                            <th>
+                                User
+                            </th>
+
+                            <th>
+                                Reason
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        @foreach (
+                            var history in
+                            Model.History.OrderBy(
+                                x => x.CreatedAt))
+                        {
+                            <tr>
+
+                                <td>
+                                    @history.CreatedAt.ToLocalTime()
+                                </td>
+
+                                <td>
+                                    @history.Action
+                                </td>
+
+                                <td>
+                                    @history.FromStatus
+                                </td>
+
+                                <td>
+                                    @history.ToStatus
+                                </td>
+
+                                <td>
+
+                                    @if (!string.IsNullOrWhiteSpace(history.UserName))
+                                    {
+                                        @history.UserName
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">
+                                            Unknown User
+                                        </span>
+                                    }
+
+                                </td>
+
+                                <td>
+
+                                    @(string.IsNullOrWhiteSpace(
+                                        history.Reason)
+                                        ? "-"
+                                        : history.Reason)
+
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+        }
+        else
+        {
+            <div class="p-4 text-muted">
+
+                No workflow history found.
+
+            </div>
+        }
+
+    </div>
+
+</div>
+
+
+<!-- ========================================== -->
+<!-- Reject Modal -->
+<!-- ========================================== -->
+@if (Model.Status == StockTransferStatus.Submitted &&
+     await PermissionService.CanAsync(
+         userId,
+         "StockTransfers.Reject"))
+{
+    <div class="modal fade"
+         id="rejectModal"
+         tabindex="-1"
+         aria-hidden="true">
+
+        <div class="modal-dialog">
+
+            <div class="modal-content">
+
+                <form asp-action="Reject"
+                      method="post">
+
+                    @Html.AntiForgeryToken()
+
+
+                    <div class="modal-header">
+
+                        <h5 class="modal-title">
+                            Reject Stock Transfer
+                        </h5>
+
+                        <button type="button"
+                                class="btn-close"
+                                data-bs-dismiss="modal">
+                        </button>
+
+                    </div>
+
+
+                    <div class="modal-body">
+
+                        <input type="hidden"
+                               name="id"
+                               value="@Model.Id" />
+
+
+                        <div class="mb-3">
+
+                            <label for="rejectionReason"
+                                   class="form-label">
+
+                                Rejection Reason
+
+                            </label>
+
+                            <textarea id="rejectionReason"
+                                      name="reason"
+                                      class="form-control"
+                                      rows="4"
+                                      required></textarea>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="modal-footer">
+
+                        <button type="button"
+                                class="btn btn-secondary"
+                                data-bs-dismiss="modal">
+
+                            Close
+
+                        </button>
+
+
+                        <button type="submit"
+                                class="btn btn-danger">
+
+                            Reject
+
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+}
+
+
+<!-- ========================================== -->
+<!-- Cancel Modal -->
+<!-- ========================================== -->
+@if (Model.Status == StockTransferStatus.Posted &&
+     await PermissionService.CanAsync(
+         userId,
+         "StockTransfers.Cancel"))
+{
+    <div class="modal fade"
+         id="cancelModal"
+         tabindex="-1"
+         aria-hidden="true">
+
+        <div class="modal-dialog">
+
+            <div class="modal-content">
+
+                <form asp-action="Cancel"
+                      method="post">
+
+                    @Html.AntiForgeryToken()
+
+
+                    <div class="modal-header">
+
+                        <h5 class="modal-title">
+                            Cancel Stock Transfer
+                        </h5>
+
+                        <button type="button"
+                                class="btn-close"
+                                data-bs-dismiss="modal">
+                        </button>
+
+                    </div>
+
+
+                    <div class="modal-body">
+
+                        <input type="hidden"
+                               name="id"
+                               value="@Model.Id" />
+
+
+                        <div class="alert alert-warning">
+
+                            Cancelling this transfer will reverse
+                            the stock movement. The original
+                            transfer will not be deleted.
+
+                        </div>
+
+
+                        <div class="mb-3">
+
+                            <label for="cancellationReason"
+                                   class="form-label">
+
+                                Cancellation Reason
+
+                            </label>
+
+                            <textarea id="cancellationReason"
+                                      name="reason"
+                                      class="form-control"
+                                      rows="4"
+                                      required></textarea>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="modal-footer">
+
+                        <button type="button"
+                                class="btn btn-secondary"
+                                data-bs-dismiss="modal">
+
+                            Close
+
+                        </button>
+
+
+                        <button type="submit"
+                                class="btn btn-danger">
+
+                            Cancel Transfer
+
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+}
+```

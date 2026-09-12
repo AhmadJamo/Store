@@ -1,0 +1,901 @@
+﻿```cshtml
+@using MiniStore.Application.DTOs.StockTransfers
+
+@model UpdateStockTransferDto
+
+@{
+    var transferId =
+        Context.Request.RouteValues["id"]?.ToString()
+        ?? string.Empty;
+
+    ViewData["Title"] =
+        $"Edit Stock Transfer - {ViewBag.TransferNumber}";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+    <div>
+        <h2>
+            Edit Stock Transfer
+        </h2>
+
+        <div class="text-muted">
+            @ViewBag.TransferNumber
+        </div>
+    </div>
+
+    <div>
+
+        <a asp-action="Details"
+           asp-route-id="@transferId"
+           class="btn btn-secondary">
+
+            <i class="bi bi-arrow-left"></i>
+            Back to Details
+
+        </a>
+
+    </div>
+
+</div>
+
+
+<form asp-action="Edit"
+      asp-route-id="@transferId"
+      method="post"
+      id="editTransferForm">
+
+    @Html.AntiForgeryToken()
+
+
+    <!-- ========================================== -->
+    <!-- Transfer Information -->
+    <!-- ========================================== -->
+
+    <div class="card mb-4">
+
+        <div class="card-header">
+
+            <h5 class="mb-0">
+                Transfer Information
+            </h5>
+
+        </div>
+
+        <div class="card-body">
+
+            <div class="row">
+
+                <!-- From Warehouse -->
+
+                <div class="col-md-6 mb-3">
+
+                    <label class="form-label">
+                        From Warehouse
+                    </label>
+
+                    <select asp-for="FromWarehouseId"
+                            class="form-select"
+                            id="fromWarehouse"
+                            required>
+
+                        <option value="">
+                            -- Select Source Warehouse --
+                        </option>
+
+                        @foreach (var warehouse in ViewBag.Warehouses)
+                        {
+                            <option value="@warehouse.Id">
+                                @warehouse.Name
+                            </option>
+                        }
+
+                    </select>
+
+                    <span asp-validation-for="FromWarehouseId"
+                          class="text-danger">
+                    </span>
+
+                </div>
+
+
+                <!-- To Warehouse -->
+
+                <div class="col-md-6 mb-3">
+
+                    <label class="form-label">
+                        To Warehouse
+                    </label>
+
+                    <select asp-for="ToWarehouseId"
+                            class="form-select"
+                            id="toWarehouse"
+                            required>
+
+                        <option value="">
+                            -- Select Destination Warehouse --
+                        </option>
+
+                        @foreach (var warehouse in ViewBag.Warehouses)
+                        {
+                            <option value="@warehouse.Id">
+                                @warehouse.Name
+                            </option>
+                        }
+
+                    </select>
+
+                    <span asp-validation-for="ToWarehouseId"
+                          class="text-danger">
+                    </span>
+
+                </div>
+
+
+                <!-- Reference -->
+
+                <div class="col-md-6 mb-3">
+
+                    <label asp-for="Reference"
+                           class="form-label">
+
+                        Reference
+
+                    </label>
+
+                    <input asp-for="Reference"
+                           class="form-control"
+                           maxlength="200" />
+
+                    <span asp-validation-for="Reference"
+                          class="text-danger">
+                    </span>
+
+                </div>
+
+
+                <!-- Notes -->
+
+                <div class="col-12 mb-3">
+
+                    <label asp-for="Notes"
+                           class="form-label">
+
+                        Notes
+
+                    </label>
+
+                    <textarea asp-for="Notes"
+                              class="form-control"
+                              rows="3"
+                              maxlength="1000"></textarea>
+
+                    <span asp-validation-for="Notes"
+                          class="text-danger">
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ========================================== -->
+    <!-- Items -->
+    <!-- ========================================== -->
+
+    <div class="card mb-4">
+
+        <div class="card-header d-flex justify-content-between align-items-center">
+
+            <h5 class="mb-0">
+                Transfer Items
+            </h5>
+
+            <button type="button"
+                    class="btn btn-primary btn-sm"
+                    id="addItemButton">
+
+                <i class="bi bi-plus-lg"></i>
+                Add Product
+
+            </button>
+
+        </div>
+
+
+        <div class="card-body">
+
+            <!-- Product template -->
+
+            <select id="productTemplate"
+                    class="d-none">
+
+                <option value="">
+                    -- Select Product --
+                </option>
+
+                @foreach (var product in ViewBag.Products)
+                {
+                    <option value="@product.Id"
+                            data-barcode="@product.Barcode">
+
+                        @product.Name
+
+                    </option>
+                }
+
+            </select>
+
+
+            <!-- Items -->
+
+            <div id="itemsContainer">
+
+                @for (var i = 0; i < Model.Items.Count; i++)
+                {
+                    <div class="item-row border rounded p-3 mb-3">
+
+                        <div class="row align-items-end">
+
+                            <!-- Product -->
+
+                            <div class="col-md-5 mb-2">
+
+                                <label class="form-label">
+                                    Product
+                                </label>
+
+                                <select name="Items[@i].ProductId"
+                                        class="form-select product-select"
+                                        required>
+
+                                    <option value="">
+                                        -- Select Product --
+                                    </option>
+
+                                    @foreach (var product in ViewBag.Products)
+                                    {
+                                        if (product.Id ==
+                                            Model.Items[i].ProductId)
+                                        {
+                                            <option value="@product.Id"
+                                                    data-barcode="@product.Barcode"
+                                                    selected>
+
+                                                @product.Name
+
+                                            </option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@product.Id"
+                                                    data-barcode="@product.Barcode">
+
+                                                @product.Name
+
+                                            </option>
+                                        }
+                                    }
+
+                                </select>
+
+                            </div>
+
+
+                            <!-- Barcode -->
+
+                            <div class="col-md-3 mb-2">
+
+                                <label class="form-label">
+                                    Barcode
+                                </label>
+
+                                <input type="text"
+                                       class="form-control barcode-display"
+                                       readonly />
+
+                            </div>
+
+
+                            <!-- Quantity -->
+
+                            <div class="col-md-2 mb-2">
+
+                                <label class="form-label">
+                                    Quantity
+                                </label>
+
+                                <input type="number"
+                                       name="Items[@i].Quantity"
+                                       class="form-control quantity-input"
+                                       value="@Model.Items[i].Quantity"
+                                       min="0.001"
+                                       step="0.001"
+                                       required />
+
+                            </div>
+
+
+                            <!-- Remove -->
+
+                            <div class="col-md-2 mb-2">
+
+                                <button type="button"
+                                        class="btn btn-outline-danger w-100 remove-item-button">
+
+                                    <i class="bi bi-trash"></i>
+                                    Remove
+
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+                }
+
+            </div>
+
+
+            <!-- Empty state -->
+
+            <div id="emptyItemsMessage"
+                 class="alert alert-secondary"
+                 style="@(Model.Items.Any()
+                                     ? "display:none;"
+                                     : "")">
+
+                No products have been added yet.
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ========================================== -->
+    <!-- Information -->
+    <!-- ========================================== -->
+
+    <div class="alert alert-info">
+
+        <i class="bi bi-info-circle"></i>
+
+        <strong>Draft Transfer:</strong>
+
+        Editing this transfer does not change stock.
+        Stock movement occurs only after the transfer
+        is approved and posted.
+
+    </div>
+
+
+    <!-- ========================================== -->
+    <!-- Actions -->
+    <!-- ========================================== -->
+
+    <div class="d-flex justify-content-end gap-2 mb-5">
+
+        <a asp-action="Details"
+           asp-route-id="@transferId"
+           class="btn btn-secondary">
+
+            Cancel
+
+        </a>
+
+        <button type="submit"
+                class="btn btn-primary">
+
+            <i class="bi bi-check-lg"></i>
+            Save Changes
+
+        </button>
+
+    </div>
+
+</form>
+
+
+@section Scripts
+{
+    @await Html.PartialAsync(
+        "_ValidationScriptsPartial")
+
+
+    <script>
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            function() {
+
+                const itemsContainer =
+                    document.getElementById(
+                        "itemsContainer");
+
+                const addItemButton =
+                    document.getElementById(
+                        "addItemButton");
+
+                const productTemplate =
+                    document.getElementById(
+                        "productTemplate");
+
+                const emptyItemsMessage =
+                    document.getElementById(
+                        "emptyItemsMessage");
+
+                const form =
+                    document.getElementById(
+                        "editTransferForm");
+
+
+                // ==========================================
+                // Update Empty State
+                // ==========================================
+
+                function updateEmptyState() {
+
+                    const rows =
+                        itemsContainer.querySelectorAll(
+                            ".item-row");
+
+                    emptyItemsMessage.style.display =
+                        rows.length === 0
+                            ? ""
+                            : "none";
+                }
+
+
+                // ==========================================
+                // Reindex Items
+                // ==========================================
+
+                function reindexItems() {
+
+                    const rows =
+                        itemsContainer.querySelectorAll(
+                            ".item-row");
+
+                    rows.forEach(
+                        function(row, index) {
+
+                            const productSelect =
+                                row.querySelector(
+                                    ".product-select");
+
+                            const quantityInput =
+                                row.querySelector(
+                                    ".quantity-input");
+
+
+                            if (productSelect) {
+
+                                productSelect.name =
+                                    "Items[" +
+                                    index +
+                                    "].ProductId";
+                            }
+
+
+                            if (quantityInput) {
+
+                                quantityInput.name =
+                                    "Items[" +
+                                    index +
+                                    "].Quantity";
+                            }
+
+                        });
+                }
+
+
+                // ==========================================
+                // Update Barcode
+                // ==========================================
+
+                function updateBarcode(row) {
+
+                    if (!row) {
+                        return;
+                    }
+
+                    const select =
+                        row.querySelector(
+                            ".product-select");
+
+                    const barcodeInput =
+                        row.querySelector(
+                            ".barcode-display");
+
+
+                    if (!select ||
+                        !barcodeInput) {
+
+                        return;
+                    }
+
+
+                    const selectedOption =
+                        select.options[
+                        select.selectedIndex];
+
+
+                    if (!selectedOption ||
+                        !selectedOption.value) {
+
+                        barcodeInput.value =
+                            "";
+
+                        return;
+                    }
+
+
+                    barcodeInput.value =
+                        selectedOption.dataset.barcode
+                        || "";
+                }
+
+
+                // ==========================================
+                // Check Duplicate Products
+                // ==========================================
+
+                function hasDuplicateProducts() {
+
+                    const selects =
+                        itemsContainer.querySelectorAll(
+                            ".product-select");
+
+                    const selectedIds =
+                        new Set();
+
+
+                    for (const select of selects) {
+
+                        const productId =
+                            select.value;
+
+
+                        if (!productId) {
+                            continue;
+                        }
+
+
+                        if (selectedIds.has(
+                            productId)) {
+
+                            return true;
+                        }
+
+
+                        selectedIds.add(
+                            productId);
+                    }
+
+
+                    return false;
+                }
+
+
+                // ==========================================
+                // Add Item
+                // ==========================================
+
+                function addItem() {
+
+                    const row =
+                        document.createElement(
+                            "div");
+
+                    row.className =
+                        "item-row border rounded p-3 mb-3";
+
+
+                    row.innerHTML =
+                        '<div class="row align-items-end">' +
+
+                        '<div class="col-md-5 mb-2">' +
+
+                        '<label class="form-label">' +
+                        'Product' +
+                        '</label>' +
+
+                        '<select class="form-select product-select" required>' +
+
+                        productTemplate.innerHTML +
+
+                        '</select>' +
+
+                        '</div>' +
+
+
+                        '<div class="col-md-3 mb-2">' +
+
+                        '<label class="form-label">' +
+                        'Barcode' +
+                        '</label>' +
+
+                        '<input type="text" ' +
+                        'class="form-control barcode-display" ' +
+                        'readonly />' +
+
+                        '</div>' +
+
+
+                        '<div class="col-md-2 mb-2">' +
+
+                        '<label class="form-label">' +
+                        'Quantity' +
+                        '</label>' +
+
+                        '<input type="number" ' +
+                        'class="form-control quantity-input" ' +
+                        'min="0.001" ' +
+                        'step="0.001" ' +
+                        'required />' +
+
+                        '</div>' +
+
+
+                        '<div class="col-md-2 mb-2">' +
+
+                        '<button type="button" ' +
+                        'class="btn btn-outline-danger w-100 remove-item-button">' +
+
+                        '<i class="bi bi-trash"></i> ' +
+                        'Remove' +
+
+                        '</button>' +
+
+                        '</div>' +
+
+                        '</div>';
+
+
+                    itemsContainer.appendChild(
+                        row);
+
+
+                    reindexItems();
+
+                    updateEmptyState();
+
+                    updateBarcode(row);
+                }
+
+
+                // ==========================================
+                // Remove Item
+                // ==========================================
+
+                function removeItem(button) {
+
+                    const row =
+                        button.closest(
+                            ".item-row");
+
+
+                    if (!row) {
+                        return;
+                    }
+
+
+                    row.remove();
+
+
+                    reindexItems();
+
+                    updateEmptyState();
+                }
+
+
+                // ==========================================
+                // Add Button
+                // ==========================================
+
+                addItemButton.addEventListener(
+                    "click",
+                    function() {
+
+                        addItem();
+
+                    });
+
+
+                // ==========================================
+                // Product Change
+                // ==========================================
+
+                itemsContainer.addEventListener(
+                    "change",
+                    function(event) {
+
+                        if (
+                            event.target.classList.contains(
+                                "product-select")
+                        ) {
+
+                            const row =
+                                event.target.closest(
+                                    ".item-row");
+
+                            updateBarcode(row);
+                        }
+
+                    });
+
+
+                // ==========================================
+                // Remove Button
+                // ==========================================
+
+                itemsContainer.addEventListener(
+                    "click",
+                    function(event) {
+
+                        const button =
+                            event.target.closest(
+                                ".remove-item-button");
+
+
+                        if (!button) {
+                            return;
+                        }
+
+
+                        removeItem(button);
+
+                    });
+
+
+                // ==========================================
+                // Initial Barcode Values
+                // ==========================================
+
+                document
+                    .querySelectorAll(
+                        ".item-row")
+                    .forEach(
+                        function(row) {
+
+                            updateBarcode(row);
+
+                        });
+
+
+                // ==========================================
+                // Form Validation
+                // ==========================================
+
+                form.addEventListener(
+                    "submit",
+                    function(event) {
+
+                        const fromWarehouse =
+                            document.getElementById(
+                                "fromWarehouse").value;
+
+                        const toWarehouse =
+                            document.getElementById(
+                                "toWarehouse").value;
+
+
+                        // Same warehouse
+
+                        if (
+                            fromWarehouse &&
+                            toWarehouse &&
+                            fromWarehouse ===
+                            toWarehouse
+                        ) {
+
+                            event.preventDefault();
+
+                            alert(
+                                "Source and destination warehouses must be different.");
+
+                            return;
+                        }
+
+
+                        // No items
+
+                        const rows =
+                            itemsContainer.querySelectorAll(
+                                ".item-row");
+
+
+                        if (rows.length === 0) {
+
+                            event.preventDefault();
+
+                            alert(
+                                "A transfer must contain at least one product.");
+
+                            return;
+                        }
+
+
+                        // Duplicate products
+
+                        if (hasDuplicateProducts()) {
+
+                            event.preventDefault();
+
+                            alert(
+                                "The same product cannot be added more than once.");
+
+                            return;
+                        }
+
+
+                        // Quantity validation
+
+                        let invalidQuantity =
+                            false;
+
+
+                        rows.forEach(
+                            function(row) {
+
+                                const quantityInput =
+                                    row.querySelector(
+                                        ".quantity-input");
+
+
+                                const quantity =
+                                    parseFloat(
+                                        quantityInput.value);
+
+
+                                if (
+                                    !quantity ||
+                                    quantity <= 0
+                                ) {
+
+                                    invalidQuantity =
+                                        true;
+                                }
+
+                            });
+
+
+                        if (invalidQuantity) {
+
+                            event.preventDefault();
+
+                            alert(
+                                "All quantities must be greater than zero.");
+
+                            return;
+                        }
+
+
+                        // Make sure indexes are consecutive
+                        // before submitting.
+
+                        reindexItems();
+
+                    });
+
+
+                // ==========================================
+                // Initial State
+                // ==========================================
+
+                updateEmptyState();
+
+                reindexItems();
+
+            });
+
+    </script>
+}
+```

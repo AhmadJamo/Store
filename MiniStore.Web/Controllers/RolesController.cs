@@ -4,18 +4,22 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MiniStore.Domain.Entities;
 using MiniStore.Infrastructure.Persistence;
+using MiniStore.Web.Authorization;
 
 namespace MiniStore.Web.Controllers;
 
-[Authorize(Roles = "Admin")]
+[Authorize]
 public class RolesController : Controller
 {
     private readonly RoleManager<IdentityRole> _roleManager;
     private readonly UserManager<IdentityUser> _userManager;
     private readonly AppDbContext _context;
-    public RolesController(
-     RoleManager<IdentityRole> roleManager,
-     UserManager<IdentityUser> userManager, AppDbContext context)
+
+
+public RolesController(
+    RoleManager<IdentityRole> roleManager,
+    UserManager<IdentityUser> userManager,
+    AppDbContext context)
     {
         _roleManager = roleManager;
         _userManager = userManager;
@@ -23,6 +27,8 @@ public class RolesController : Controller
     }
 
     // GET: /Roles
+    [HttpGet]
+    [PermissionAuthorize("Roles.View")]
     public async Task<IActionResult> Index()
     {
         var roles =
@@ -43,64 +49,72 @@ public class RolesController : Controller
                 users.Count;
         }
 
-        ViewBag.RoleUsers = roleUsers;
+        var rolePermissionCounts =
+            await _context.RolePermissions
+                .GroupBy(x => x.RoleId)
+                .Select(x => new
+                {
+                    RoleId = x.Key,
+                    Count = x.Count()
+                })
+                .ToDictionaryAsync(
+                    x => x.RoleId,
+                    x => x.Count);
+
+        ViewBag.RoleUsers =
+            roleUsers;
+
+        ViewBag.RolePermissionCounts =
+            rolePermissionCounts;
 
         return View(roles);
     }
 
-
-
     // GET: /Roles/Create
     [HttpGet]
+    [PermissionAuthorize("Roles.Create")]
     public async Task<IActionResult> Create()
     {
         var permissions =
-            await _context.Permissions
-                .OrderBy(x => x.Group)
-                .ThenBy(x => x.Name)
-                .ToListAsync();
+            await GetPermissionsAsync();
 
         return View(permissions);
     }
 
-
-
-
-
     // POST: /Roles/Create
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [PermissionAuthorize("Roles.Create")]
     public async Task<IActionResult> Create(
         string name,
-        int[] selectedPermissions)
+        int[]? selectedPermissions)
     {
+        name =
+            name?.Trim()
+            ?? string.Empty;
+
+        selectedPermissions ??= [];
+
         if (string.IsNullOrWhiteSpace(name))
         {
-            ViewBag.Error = "Role name is required.";
+            ViewBag.Error =
+                "Role name is required.";
 
-            var permissions =
-                await _context.Permissions
-                    .OrderBy(x => x.Group)
-                    .ThenBy(x => x.Name)
-                    .ToListAsync();
-
-            return View(permissions);
+            return View(
+                await GetPermissionsAsync());
         }
 
         if (await _roleManager.RoleExistsAsync(name))
         {
-            ViewBag.Error = "Role already exists.";
+            ViewBag.Error =
+                "Role already exists.";
 
-            var permissions =
-                await _context.Permissions
-                    .OrderBy(x => x.Group)
-                    .ThenBy(x => x.Name)
-                    .ToListAsync();
-
-            return View(permissions);
+            return View(
+                await GetPermissionsAsync());
         }
 
-        var role = new IdentityRole(name);
+        var role =
+            new IdentityRole(name);
 
         var result =
             await _roleManager.CreateAsync(role);
@@ -110,44 +124,50 @@ public class RolesController : Controller
             ViewBag.Error =
                 string.Join(
                     ", ",
-                    result.Errors.Select(x => x.Description));
+                    result.Errors.Select(
+                        x => x.Description));
 
-            var permissions =
+            return View(
+                await GetPermissionsAsync());
+        }
+
+        var permissionIds =
+            selectedPermissions
+                .Distinct()
+                .ToList();
+
+        if (permissionIds.Count > 0)
+        {
+            var validPermissionIds =
                 await _context.Permissions
-                    .OrderBy(x => x.Group)
-                    .ThenBy(x => x.Name)
+                    .Where(x =>
+                        permissionIds.Contains(x.Id))
+                    .Select(x => x.Id)
                     .ToListAsync();
 
-            return View(permissions);
+            foreach (var permissionId in validPermissionIds)
+            {
+                _context.RolePermissions.Add(
+                    new RolePermission(
+                        role.Id,
+                        permissionId));
+            }
+
+            await _context.SaveChangesAsync();
         }
 
-        foreach (var permissionId in selectedPermissions.Distinct())
-        {
-            var permissionExists =
-                await _context.Permissions
-                    .AnyAsync(x => x.Id == permissionId);
+        TempData["Success"] =
+            "Role created successfully.";
 
-            if (!permissionExists)
-                continue;
-
-            _context.RolePermissions.Add(
-                new RolePermission(
-                    role.Id,
-                    permissionId));
-        }
-
-        await _context.SaveChangesAsync();
-
-        return RedirectToAction(nameof(Index));
+        return RedirectToAction(
+            nameof(Index));
     }
-
-
-
-
 
     // GET: /Roles/Edit/{id}
     [HttpGet]
-    public async Task<IActionResult> Edit(string id)
+    [PermissionAuthorize("Roles.Edit")]
+    public async Task<IActionResult> Edit(
+        string id)
     {
         if (string.IsNullOrWhiteSpace(id))
             return NotFound();
@@ -158,39 +178,52 @@ public class RolesController : Controller
         if (role == null)
             return NotFound();
 
+        // Admin is a protected system role.
+        if (IsProtectedRole(role))
+        {
+            TempData["Error"] =
+                "The Admin role is a protected system role.";
+
+            return RedirectToAction(
+                nameof(Index));
+        }
+
         var permissions =
-            await _context.Permissions
-                .OrderBy(x => x.Group)
-                .ThenBy(x => x.Name)
-                .ToListAsync();
+            await GetPermissionsAsync();
 
         var selectedPermissions =
             await _context.RolePermissions
-                .Where(x => x.RoleId == id)
-                .Select(x => x.PermissionId)
+                .Where(x =>
+                    x.RoleId == id)
+                .Select(x =>
+                    x.PermissionId)
                 .ToListAsync();
 
-        ViewBag.RoleId = id;
-        ViewBag.RoleName = role.Name;
+        ViewBag.RoleId =
+            id;
+
+        ViewBag.RoleName =
+            role.Name;
+
         ViewBag.SelectedPermissions =
             selectedPermissions;
 
         return View(permissions);
     }
 
-
-
-
     // POST: /Roles/Edit
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [PermissionAuthorize("Roles.Edit")]
     public async Task<IActionResult> Edit(
-    string id,
-    string name,
-    int[] selectedPermissions)
+        string id,
+        string name,
+        int[]? selectedPermissions)
     {
         if (string.IsNullOrWhiteSpace(id))
             return NotFound();
+
+        selectedPermissions ??= [];
 
         var role =
             await _roleManager.FindByIdAsync(id);
@@ -198,22 +231,27 @@ public class RolesController : Controller
         if (role == null)
             return NotFound();
 
+        // Admin is a protected system role.
+        if (IsProtectedRole(role))
+        {
+            TempData["Error"] =
+                "The Admin role is a protected system role.";
+
+            return RedirectToAction(
+                nameof(Index));
+        }
+
+        name =
+            name?.Trim()
+            ?? string.Empty;
+
         if (string.IsNullOrWhiteSpace(name))
         {
-            ViewBag.Error = "Role name is required.";
-
-            var permissions =
-                await _context.Permissions
-                    .OrderBy(x => x.Group)
-                    .ThenBy(x => x.Name)
-                    .ToListAsync();
-
-            ViewBag.RoleId = id;
-            ViewBag.RoleName = name;
-            ViewBag.SelectedPermissions =
-                selectedPermissions.ToList();
-
-            return View(permissions);
+            return await ReturnEditWithError(
+                id,
+                name,
+                selectedPermissions,
+                "Role name is required.");
         }
 
         var existingRole =
@@ -222,84 +260,78 @@ public class RolesController : Controller
         if (existingRole != null &&
             existingRole.Id != role.Id)
         {
-            ViewBag.Error = "Role name already exists.";
-
-            var permissions =
-                await _context.Permissions
-                    .OrderBy(x => x.Group)
-                    .ThenBy(x => x.Name)
-                    .ToListAsync();
-
-            ViewBag.RoleId = id;
-            ViewBag.RoleName = name;
-            ViewBag.SelectedPermissions =
-                selectedPermissions.ToList();
-
-            return View(permissions);
+            return await ReturnEditWithError(
+                id,
+                name,
+                selectedPermissions,
+                "Role name already exists.");
         }
 
-        role.Name = name;
+        role.Name =
+            name;
 
         var updateResult =
             await _roleManager.UpdateAsync(role);
 
         if (!updateResult.Succeeded)
         {
-            ViewBag.Error =
+            var error =
                 string.Join(
                     ", ",
-                    updateResult.Errors.Select(x =>
-                        x.Description));
+                    updateResult.Errors.Select(
+                        x => x.Description));
 
-            var permissions =
-                await _context.Permissions
-                    .OrderBy(x => x.Group)
-                    .ThenBy(x => x.Name)
-                    .ToListAsync();
-
-            ViewBag.RoleId = id;
-            ViewBag.RoleName = name;
-            ViewBag.SelectedPermissions =
-                selectedPermissions.ToList();
-
-            return View(permissions);
+            return await ReturnEditWithError(
+                id,
+                name,
+                selectedPermissions,
+                error);
         }
 
         var oldPermissions =
             await _context.RolePermissions
-                .Where(x => x.RoleId == id)
+                .Where(x =>
+                    x.RoleId == id)
                 .ToListAsync();
 
         _context.RolePermissions.RemoveRange(
             oldPermissions);
 
-        foreach (var permissionId in
-                 selectedPermissions.Distinct())
+        var permissionIds =
+            selectedPermissions
+                .Distinct()
+                .ToList();
+
+        if (permissionIds.Count > 0)
         {
-            var permissionExists =
+            var validPermissionIds =
                 await _context.Permissions
-                    .AnyAsync(x => x.Id == permissionId);
+                    .Where(x =>
+                        permissionIds.Contains(x.Id))
+                    .Select(x => x.Id)
+                    .ToListAsync();
 
-            if (!permissionExists)
-                continue;
-
-            _context.RolePermissions.Add(
-                new RolePermission(
-                    id,
-                    permissionId));
+            foreach (var permissionId in validPermissionIds)
+            {
+                _context.RolePermissions.Add(
+                    new RolePermission(
+                        id,
+                        permissionId));
+            }
         }
 
         await _context.SaveChangesAsync();
 
-        return RedirectToAction(nameof(Index));
+        TempData["Success"] =
+            "Role updated successfully.";
+
+        return RedirectToAction(
+            nameof(Index));
     }
-
-
-
-
 
     // GET: /Roles/Delete/{id}
     [HttpGet]
+    [PermissionAuthorize("Roles.Delete")]
     public async Task<IActionResult> Delete(
         string id)
     {
@@ -312,6 +344,16 @@ public class RolesController : Controller
         if (role == null)
             return NotFound();
 
+        // Admin is a protected system role.
+        if (IsProtectedRole(role))
+        {
+            TempData["Error"] =
+                "The Admin role is a protected system role.";
+
+            return RedirectToAction(
+                nameof(Index));
+        }
+
         var users =
             await _userManager.GetUsersInRoleAsync(
                 role.Name!);
@@ -321,7 +363,8 @@ public class RolesController : Controller
             TempData["Error"] =
                 "Cannot delete a role that has users.";
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(
+                nameof(Index));
         }
 
         var result =
@@ -332,15 +375,61 @@ public class RolesController : Controller
             TempData["Error"] =
                 string.Join(
                     " ",
-                    result.Errors.Select(x =>
-                        x.Description));
+                    result.Errors.Select(
+                        x => x.Description));
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(
+                nameof(Index));
         }
 
         TempData["Success"] =
             "Role deleted successfully.";
 
-        return RedirectToAction(nameof(Index));
+        return RedirectToAction(
+            nameof(Index));
     }
+
+    private async Task<List<Permission>> GetPermissionsAsync()
+    {
+        return await _context.Permissions
+            .OrderBy(x => x.Group)
+            .ThenBy(x => x.Name)
+            .ToListAsync();
+    }
+
+    private async Task<IActionResult> ReturnEditWithError(
+        string id,
+        string name,
+        int[] selectedPermissions,
+        string error)
+    {
+        var permissions =
+            await GetPermissionsAsync();
+
+        ViewBag.Error =
+            error;
+
+        ViewBag.RoleId =
+            id;
+
+        ViewBag.RoleName =
+            name;
+
+        ViewBag.SelectedPermissions =
+            selectedPermissions.ToList();
+
+        return View(
+            "Edit",
+            permissions);
+    }
+
+    private static bool IsProtectedRole(
+        IdentityRole role)
+    {
+        return string.Equals(
+            role.Name,
+            "Admin",
+            StringComparison.OrdinalIgnoreCase);
+    }
+
 }

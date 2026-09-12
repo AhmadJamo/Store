@@ -1,0 +1,819 @@
+﻿@using MiniStore.Application.DTOs.StockTransfers
+@using MiniStore.Domain.Entities
+
+@model CreateStockTransferDto
+
+@{
+    ViewData["Title"] = "New Stock Transfer";
+
+    var products =
+        ViewBag.Products as List<Product>
+        ?? new List<Product>();
+
+    var warehouses =
+        ViewBag.Warehouses as List<Warehouse>
+        ?? new List<Warehouse>();
+}
+
+
+<div class="container-fluid">
+
+    <!-- Page Header -->
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+
+            <h2 class="mb-1">
+                New Stock Transfer
+            </h2>
+
+            <p class="text-muted mb-0">
+                Transfer multiple products between warehouses.
+            </p>
+
+        </div>
+
+        <div>
+
+            <a asp-action="Index"
+               class="btn btn-outline-secondary">
+
+                <i class="bi bi-arrow-left"></i>
+
+                Back
+
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- Form -->
+
+    <form asp-action="Create"
+          method="post"
+          id="stockTransferForm">
+
+        @Html.AntiForgeryToken()
+
+
+        <!-- Transfer Information -->
+
+        <div class="card shadow-sm mb-4">
+
+            <div class="card-header bg-white">
+
+                <strong>
+                    Transfer Information
+                </strong>
+
+            </div>
+
+
+            <div class="card-body">
+
+                <div class="row g-3">
+
+
+                    <!-- From Warehouse -->
+
+                    <div class="col-md-6">
+
+                        <label asp-for="FromWarehouseId"
+                               class="form-label">
+
+                            From Warehouse
+
+                        </label>
+
+
+                        <select asp-for="FromWarehouseId"
+                                class="form-select"
+                                id="fromWarehouse">
+
+                            <option value="">
+                                -- Select source warehouse --
+                            </option>
+
+
+                            @foreach (var warehouse in warehouses)
+                            {
+                                <option value="@warehouse.Id">
+
+                                    @warehouse.Name
+
+                                </option>
+                            }
+
+                        </select>
+
+
+                        <span asp-validation-for="FromWarehouseId"
+                              class="text-danger">
+                        </span>
+
+                    </div>
+
+
+                    <!-- To Warehouse -->
+
+                    <div class="col-md-6">
+
+                        <label asp-for="ToWarehouseId"
+                               class="form-label">
+
+                            To Warehouse
+
+                        </label>
+
+
+                        <select asp-for="ToWarehouseId"
+                                class="form-select"
+                                id="toWarehouse">
+
+                            <option value="">
+                                -- Select destination warehouse --
+                            </option>
+
+
+                            @foreach (var warehouse in warehouses)
+                            {
+                                <option value="@warehouse.Id">
+
+                                    @warehouse.Name
+
+                                </option>
+                            }
+
+                        </select>
+
+
+                        <span asp-validation-for="ToWarehouseId"
+                              class="text-danger">
+                        </span>
+
+                    </div>
+
+
+                    <!-- Reference -->
+
+                    <div class="col-md-6">
+
+                        <label asp-for="Reference"
+                               class="form-label">
+
+                            Reference
+
+                        </label>
+
+
+                        <input asp-for="Reference"
+                               class="form-control"
+                               maxlength="200"
+                               placeholder="Optional reference..." />
+
+
+                        <span asp-validation-for="Reference"
+                              class="text-danger">
+                        </span>
+
+                    </div>
+
+
+                    <!-- Notes -->
+
+                    <div class="col-md-6">
+
+                        <label asp-for="Notes"
+                               class="form-label">
+
+                            Notes
+
+                        </label>
+
+
+                        <input asp-for="Notes"
+                               class="form-control"
+                               maxlength="1000"
+                               placeholder="Optional notes..." />
+
+
+                        <span asp-validation-for="Notes"
+                              class="text-danger">
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Transfer Items -->
+
+        <div class="card shadow-sm mb-4">
+
+            <div class="card-header bg-white">
+
+                <div class="d-flex justify-content-between align-items-center">
+
+                    <strong>
+                        Transfer Items
+                    </strong>
+
+
+                    <button type="button"
+                            class="btn btn-sm btn-primary"
+                            id="addItemButton">
+
+                        <i class="bi bi-plus-lg"></i>
+
+                        Add Product
+
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <div class="card-body p-0">
+
+                <div class="table-responsive">
+
+                    <table class="table table-hover align-middle mb-0">
+
+                        <thead class="table-light">
+
+                            <tr>
+
+                                <th style="width: 50%;">
+                                    Product
+                                </th>
+
+                                <th style="width: 25%;">
+                                    Quantity
+                                </th>
+
+                                <th style="width: 15%;">
+                                    Barcode
+                                </th>
+
+                                <th style="width: 10%;"
+                                    class="text-end">
+
+                                    Action
+
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody id="itemsTableBody">
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+
+                <div id="emptyItemsMessage"
+                     class="text-center py-5">
+
+                    <i class="bi bi-box-seam display-5 text-muted"></i>
+
+
+                    <h6 class="mt-3">
+
+                        No products added
+
+                    </h6>
+
+
+                    <p class="text-muted mb-0">
+
+                        Add at least one product to create the transfer.
+
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Product Template -->
+
+        <select id="productTemplate"
+                class="d-none">
+
+            <option value="">
+                -- Select product --
+            </option>
+
+
+            @foreach (var product in products)
+            {
+                <option value="@product.Id"
+                        data-barcode="@product.Barcode">
+
+                    @product.Name
+
+                </option>
+            }
+
+        </select>
+
+
+        <!-- Validation Summary -->
+
+        <div asp-validation-summary="ModelOnly"
+             class="text-danger mb-3">
+        </div>
+
+
+        <!-- Actions -->
+
+        <div class="d-flex justify-content-end gap-2">
+
+            <a asp-action="Index"
+               class="btn btn-outline-secondary">
+
+                Cancel
+
+            </a>
+
+
+            <button type="submit"
+                    class="btn btn-primary">
+
+                <i class="bi bi-check-lg"></i>
+
+                Create Transfer
+
+            </button>
+
+        </div>
+
+    </form>
+
+</div>
+
+
+@section Scripts
+{
+
+    <partial name="_ValidationScriptsPartial" />
+
+
+    <script>
+
+        let itemIndex = 0;
+
+
+        // ================================================
+        // Elements
+        // ================================================
+
+        const itemsTableBody =
+            document.getElementById("itemsTableBody");
+
+        const emptyItemsMessage =
+            document.getElementById("emptyItemsMessage");
+
+        const productTemplate =
+            document.getElementById("productTemplate");
+
+        const addItemButton =
+            document.getElementById("addItemButton");
+
+        const stockTransferForm =
+            document.getElementById("stockTransferForm");
+
+        const fromWarehouse =
+            document.getElementById("fromWarehouse");
+
+        const toWarehouse =
+            document.getElementById("toWarehouse");
+
+
+        // ================================================
+        // Empty State
+        // ================================================
+
+        function updateEmptyState() {
+            if (itemsTableBody.children.length === 0) {
+                emptyItemsMessage.style.display = "block";
+            }
+            else {
+                emptyItemsMessage.style.display = "none";
+            }
+        }
+
+
+        // ================================================
+        // Selected Products
+        // ================================================
+
+        function getSelectedProductIds() {
+            const selects =
+                document.querySelectorAll(
+                    ".product-select"
+                );
+
+
+            return Array.from(selects)
+                .map(select => parseInt(select.value))
+                .filter(id => !isNaN(id));
+        }
+
+
+        // ================================================
+        // Refresh Product Options
+        // ================================================
+
+        function refreshProductOptions() {
+            const selectedIds =
+                getSelectedProductIds();
+
+
+            document
+                .querySelectorAll(".product-select")
+                .forEach(select => {
+                    const currentValue =
+                        parseInt(select.value);
+
+
+                    const currentOptions =
+                        productTemplate.options;
+
+
+                    select.innerHTML = "";
+
+
+                    Array.from(currentOptions)
+                        .forEach(templateOption => {
+                            const productId =
+                                parseInt(
+                                    templateOption.value
+                                );
+
+
+                            if (
+                                productId &&
+                                selectedIds.includes(productId) &&
+                                productId !== currentValue
+                            ) {
+                                return;
+                            }
+
+
+                            const option =
+                                templateOption.cloneNode(true);
+
+
+                            if (
+                                productId === currentValue
+                            ) {
+                                option.selected = true;
+                            }
+
+
+                            select.appendChild(option);
+
+                        });
+
+                });
+
+
+            updateBarcodes();
+        }
+
+
+        // ================================================
+        // Update Barcode
+        // ================================================
+
+        function updateBarcodes() {
+            document
+                .querySelectorAll(".product-select")
+                .forEach(select => {
+                    const row =
+                        select.closest("tr");
+
+
+                    const barcodeCell =
+                        row.querySelector(
+                            ".barcode-cell"
+                        );
+
+
+                    const selectedOption =
+                        select.options[
+                        select.selectedIndex
+                        ];
+
+
+                    if (
+                        selectedOption &&
+                        selectedOption.value
+                    ) {
+                        barcodeCell.textContent =
+                            selectedOption.dataset.barcode
+                            || "—";
+                    }
+                    else {
+                        barcodeCell.textContent =
+                            "—";
+                    }
+
+                });
+        }
+
+
+        // ================================================
+        // Add Item
+        // ================================================
+
+        function addItem() {
+            const row =
+                document.createElement("tr");
+
+
+            row.innerHTML = `
+                        <td>
+
+                            <select
+                                name="Items[${itemIndex}].ProductId"
+                                class="form-select product-select"
+                                required>
+                            </select>
+
+                        </td>
+
+
+                        <td>
+
+                            <input
+                                type="number"
+                                name="Items[${itemIndex}].Quantity"
+                                class="form-control quantity-input"
+                                min="0.001"
+                                step="0.001"
+                                required
+                                placeholder="0.000" />
+
+                        </td>
+
+
+                        <td class="barcode-cell text-muted">
+
+                            —
+
+                        </td>
+
+
+                        <td class="text-end">
+
+                            <button
+                                type="button"
+                                class="btn btn-sm btn-outline-danger remove-item">
+
+                                <i class="bi bi-trash"></i>
+
+                            </button>
+
+                        </td>
+                    `;
+
+
+            itemsTableBody.appendChild(row);
+
+
+            const select =
+                row.querySelector(
+                    ".product-select"
+                );
+
+
+            // Copy product options
+
+            Array.from(productTemplate.options)
+                .forEach(templateOption => {
+                    const option =
+                        templateOption.cloneNode(true);
+
+                    select.appendChild(option);
+                });
+
+
+            // Product changed
+
+            select.addEventListener(
+                "change",
+                function() {
+                    refreshProductOptions();
+                }
+            );
+
+
+            // Remove item
+
+            const removeButton =
+                row.querySelector(
+                    ".remove-item"
+                );
+
+
+            removeButton.addEventListener(
+                "click",
+                function() {
+                    row.remove();
+
+                    refreshProductOptions();
+
+                    updateEmptyState();
+                }
+            );
+
+
+            itemIndex++;
+
+
+            updateEmptyState();
+
+            refreshProductOptions();
+        }
+
+
+        // ================================================
+        // Add Product
+        // ================================================
+
+        addItemButton.addEventListener(
+            "click",
+            function() {
+                addItem();
+            }
+        );
+
+
+        // ================================================
+        // Form Validation
+        // ================================================
+
+        stockTransferForm.addEventListener(
+            "submit",
+            function(event) {
+
+                // ----------------------------------------
+                // Warehouse validation
+                // ----------------------------------------
+
+                if (
+                    fromWarehouse.value &&
+                    toWarehouse.value &&
+                    fromWarehouse.value === toWarehouse.value
+                ) {
+                    event.preventDefault();
+
+
+                    alert(
+                        "Source and destination warehouses must be different."
+                    );
+
+
+                    return;
+                }
+
+
+                // ----------------------------------------
+                // Items validation
+                // ----------------------------------------
+
+                const rows =
+                    document.querySelectorAll(
+                        "#itemsTableBody tr"
+                    );
+
+
+                if (rows.length === 0) {
+                    event.preventDefault();
+
+
+                    alert(
+                        "Add at least one product."
+                    );
+
+
+                    return;
+                }
+
+
+                // ----------------------------------------
+                // Product validation
+                // ----------------------------------------
+
+                const selectedIds =
+                    getSelectedProductIds();
+
+
+                const hasMissingProduct =
+                    selectedIds.length !== rows.length;
+
+
+                if (hasMissingProduct) {
+                    event.preventDefault();
+
+
+                    alert(
+                        "Please select a product for every row."
+                    );
+
+
+                    return;
+                }
+
+
+                // ----------------------------------------
+                // Duplicate validation
+                // ----------------------------------------
+
+                const hasDuplicate =
+                    selectedIds.some(
+                        (id, index) =>
+                            selectedIds.indexOf(id) !== index
+                    );
+
+
+                if (hasDuplicate) {
+                    event.preventDefault();
+
+
+                    alert(
+                        "The same product cannot be added more than once."
+                    );
+
+
+                    return;
+                }
+
+
+                // ----------------------------------------
+                // Quantity validation
+                // ----------------------------------------
+
+                let invalidQuantity = false;
+
+
+                document
+                    .querySelectorAll(".quantity-input")
+                    .forEach(input => {
+                        const quantity =
+                            parseFloat(
+                                input.value
+                            );
+
+
+                        if (
+                            isNaN(quantity) ||
+                            quantity <= 0
+                        ) {
+                            invalidQuantity = true;
+                        }
+
+                    });
+
+
+                if (invalidQuantity) {
+                    event.preventDefault();
+
+
+                    alert(
+                        "All quantities must be greater than zero."
+                    );
+
+
+                    return;
+                }
+
+            }
+        );
+
+
+        // ================================================
+        // Initial State
+        // ================================================
+
+        updateEmptyState();
+
+    </script>
+
+}

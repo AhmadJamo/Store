@@ -2,10 +2,11 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using MiniStore.Web.Authorization;
 
 namespace MiniStore.Web.Controllers;
 
-[Authorize(Roles = "Admin")]
+[Authorize]
 public class UsersController : Controller
 {
     private readonly UserManager<IdentityUser> _userManager;
@@ -20,6 +21,8 @@ public class UsersController : Controller
     }
 
     // GET: /Users
+    [HttpGet]
+    [PermissionAuthorize("Users.View")]
     public async Task<IActionResult> Index()
     {
         var users =
@@ -27,7 +30,8 @@ public class UsersController : Controller
                 .OrderBy(x => x.UserName)
                 .ToListAsync();
 
-        var userRoles = new Dictionary<string, IList<string>>();
+        var userRoles =
+            new Dictionary<string, IList<string>>();
 
         foreach (var user in users)
         {
@@ -35,13 +39,15 @@ public class UsersController : Controller
                 await _userManager.GetRolesAsync(user);
         }
 
-        ViewBag.UserRoles = userRoles;
+        ViewBag.UserRoles =
+            userRoles;
 
         return View(users);
     }
 
     // GET: /Users/Create
     [HttpGet]
+    [PermissionAuthorize("Users.Create")]
     public async Task<IActionResult> Create()
     {
         ViewBag.Roles =
@@ -55,6 +61,7 @@ public class UsersController : Controller
     // POST: /Users/Create
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [PermissionAuthorize("Users.Create")]
     public async Task<IActionResult> Create(
         string username,
         string email,
@@ -69,52 +76,46 @@ public class UsersController : Controller
             ViewBag.Error =
                 "All fields are required.";
 
-            ViewBag.Roles =
-                await _roleManager.Roles
-                    .OrderBy(x => x.Name)
-                    .ToListAsync();
+            await LoadRoles();
 
             return View();
         }
 
         var existingUser =
-            await _userManager.FindByNameAsync(username);
+            await _userManager.FindByNameAsync(
+                username);
 
         if (existingUser != null)
         {
             ViewBag.Error =
                 "Username already exists.";
 
-            ViewBag.Roles =
-                await _roleManager.Roles
-                    .OrderBy(x => x.Name)
-                    .ToListAsync();
+            await LoadRoles();
 
             return View();
         }
 
         var selectedRole =
-            await _roleManager.FindByNameAsync(role);
+            await _roleManager.FindByNameAsync(
+                role);
 
         if (selectedRole == null)
         {
             ViewBag.Error =
                 "Selected role does not exist.";
 
-            ViewBag.Roles =
-                await _roleManager.Roles
-                    .OrderBy(x => x.Name)
-                    .ToListAsync();
+            await LoadRoles();
 
             return View();
         }
 
-        var user = new IdentityUser
-        {
-            UserName = username,
-            Email = email,
-            EmailConfirmed = true
-        };
+        var user =
+            new IdentityUser
+            {
+                UserName = username,
+                Email = email,
+                EmailConfirmed = true
+            };
 
         var result =
             await _userManager.CreateAsync(
@@ -126,24 +127,44 @@ public class UsersController : Controller
             ViewBag.Error =
                 string.Join(
                     " ",
-                    result.Errors.Select(x =>
-                        x.Description));
+                    result.Errors.Select(
+                        x => x.Description));
 
-            ViewBag.Roles =
-                await _roleManager.Roles
-                    .OrderBy(x => x.Name)
-                    .ToListAsync();
+            await LoadRoles();
 
             return View();
         }
 
-        await _userManager.AddToRoleAsync(
-            user,
-            role);
+        var roleResult =
+            await _userManager.AddToRoleAsync(
+                user,
+                role);
+
+        if (!roleResult.Succeeded)
+        {
+            ViewBag.Error =
+                string.Join(
+                    " ",
+                    roleResult.Errors.Select(
+                        x => x.Description));
+
+            await LoadRoles();
+
+            return View();
+        }
 
         TempData["Success"] =
             "User created successfully.";
 
-        return RedirectToAction(nameof(Index));
+        return RedirectToAction(
+            nameof(Index));
+    }
+
+    private async Task LoadRoles()
+    {
+        ViewBag.Roles =
+            await _roleManager.Roles
+                .OrderBy(x => x.Name)
+                .ToListAsync();
     }
 }

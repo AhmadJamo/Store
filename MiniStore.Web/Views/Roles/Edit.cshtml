@@ -7,96 +7,538 @@
         ViewBag.SelectedPermissions
         as List<int>
         ?? new List<int>();
+
+    var groups =
+        Model
+            .GroupBy(x => x.Group)
+            .OrderBy(x => x.Key)
+            .ToList();
+
+    var totalPermissions = Model.Count;
+    var selectedCount = selectedPermissions.Count;
 }
 
-<h1>Edit Role</h1>
+<div class="container-fluid">
 
-<form asp-action="Edit" method="post">
+    <!-- ========================================== -->
+    <!-- Header -->
+    <!-- ========================================== -->
 
-    <input type="hidden"
-           name="id"
-           value="@ViewBag.RoleId" />
+    <div class="d-flex justify-content-between align-items-center mb-4">
 
-    @if (ViewBag.Error != null)
-    {
-        <div class="alert alert-danger">
-            @ViewBag.Error
+        <div>
+            <h2 class="mb-1">
+                Edit Role
+            </h2>
+
+            <p class="text-muted mb-0">
+                Modify the role information and assigned permissions.
+            </p>
         </div>
-    }
 
-    <div class="mb-3">
-
-        <label class="form-label">
-            Role Name
-        </label>
-
-        <input type="text"
-               name="name"
-               value="@ViewBag.RoleName"
-               class="form-control"
-               required />
+        <a asp-action="Index"
+           class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i>
+            Back to Roles
+        </a>
 
     </div>
 
-    <hr />
-
-    <h3>Permissions</h3>
-
-    @{
-        var groups =
-            Model
-                .GroupBy(x => x.Group)
-                .OrderBy(x => x.Key);
-    }
-
-    @foreach (var group in groups)
+    <!-- ========================================== -->
+    <!-- Error -->
+    <!-- ========================================== -->
+    @if (ViewBag.Error != null)
     {
-        <div class="card mb-3">
+        <div class="alert alert-danger alert-dismissible fade show"
+             role="alert">
 
-            <div class="card-header">
-                <strong>@group.Key</strong>
-            </div>
+            <strong>Error:</strong>
+            @ViewBag.Error
 
-            <div class="card-body">
-
-                @foreach (var permission in group)
-                {
-                    var isChecked =
-                        selectedPermissions
-                            .Contains(permission.Id);
-
-                    <div class="form-check mb-2">
-
-                        <input class="form-check-input"
-                               type="checkbox"
-                               name="selectedPermissions"
-                               value="@permission.Id"
-                               id="permission_@permission.Id"
-                        @(isChecked ? "checked" : "") />
-
-                        <label class="form-check-label"
-                               for="permission_@permission.Id">
-
-                            @permission.DisplayName
-
-                        </label>
-
-                    </div>
-                }
-
-            </div>
+            <button type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert">
+            </button>
 
         </div>
     }
 
-    <button type="submit"
-            class="btn btn-primary">
-        Save Changes
-    </button>
+    <form asp-action="Edit"
+          method="post">
 
-    <a asp-action="Index"
-       class="btn btn-secondary">
-        Cancel
-    </a>
+        @Html.AntiForgeryToken()
 
-</form>
+        <input type="hidden"
+               name="id"
+               value="@ViewBag.RoleId" />
+
+        <div class="row g-4">
+
+            <!-- ========================================== -->
+            <!-- Role Information -->
+            <!-- ========================================== -->
+
+            <div class="col-lg-4">
+
+                <div class="card shadow-sm">
+
+                    <div class="card-header bg-white">
+
+                        <h5 class="mb-0">
+                            Role Information
+                        </h5>
+
+                    </div>
+
+                    <div class="card-body">
+
+                        <div class="mb-3">
+
+                            <label for="roleName"
+                                   class="form-label fw-semibold">
+                                Role Name
+                            </label>
+
+                            <input type="text"
+                                   id="roleName"
+                                   name="name"
+                                   value="@ViewBag.RoleName"
+                                   class="form-control"
+                                   required
+                                   maxlength="256"
+                                   autocomplete="off" />
+
+                        </div>
+
+                        <hr />
+
+                        <div class="d-flex justify-content-between
+                            align-items-center mb-2">
+
+                            <span class="fw-semibold">
+                                Permissions
+                            </span>
+
+                            <span class="badge bg-primary">
+                                @totalPermissions
+                            </span>
+
+                        </div>
+
+                        <p class="text-muted small mb-0">
+                            Select the permissions that users assigned
+                            to this role should have.
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <!-- ========================================== -->
+                <!-- Permission Summary -->
+                <!-- ========================================== -->
+
+                <div class="card shadow-sm mt-4">
+
+                    <div class="card-header bg-white">
+
+                        <h5 class="mb-0">
+                            Permission Selection
+                        </h5>
+
+                    </div>
+
+                    <div class="card-body">
+
+                        <div class="d-flex justify-content-between mb-2">
+
+                            <span>
+                                Selected Permissions
+                            </span>
+
+                            <strong id="selectedCount">
+                                @selectedCount
+                            </strong>
+
+                        </div>
+
+                        <div class="progress"
+                             style="height: 8px;">
+
+                            <div id="permissionProgress"
+                                 class="progress-bar"
+                                 role="progressbar"
+                                 style="width: @(totalPermissions == 0 ? 0 : (selectedCount * 100.0 / totalPermissions))%;">
+                            </div>
+
+                        </div>
+
+                        <div class="mt-3">
+
+                            <button type="button"
+                                    id="selectAllButton"
+                                    class="btn btn-sm btn-outline-primary w-100 mb-2">
+                                Select All Permissions
+                            </button>
+
+                            <button type="button"
+                                    id="clearAllButton"
+                                    class="btn btn-sm btn-outline-secondary w-100">
+                                Clear All Permissions
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- ========================================== -->
+            <!-- Permissions -->
+            <!-- ========================================== -->
+
+            <div class="col-lg-8">
+
+                <div class="card shadow-sm">
+
+                    <div class="card-header bg-white">
+
+                        <div class="d-flex justify-content-between
+                            align-items-center">
+
+                            <div>
+
+                                <h5 class="mb-0">
+                                    Permissions
+                                </h5>
+
+                                <small class="text-muted">
+                                    Existing permissions are already selected.
+                                </small>
+
+                            </div>
+
+                            <span class="badge bg-secondary">
+                                @groups.Count modules
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                    <div class="card-body">
+
+                        @foreach (var group in groups)
+                        {
+                            var groupId =
+                                "group_" +
+                                group.Key
+                                    .Replace(" ", "_")
+                                    .Replace("/", "_");
+
+                            <div class="border rounded mb-4">
+
+                                <!-- Group Header -->
+
+                                <div class="p-3 bg-light border-bottom">
+
+                                    <div class="d-flex
+                                        justify-content-between
+                                        align-items-center">
+
+                                        <div>
+
+                                            <h6 class="mb-1 fw-bold">
+                                                @group.Key
+                                            </h6>
+
+                                            <small class="text-muted">
+                                                @group.Count() permissions
+                                            </small>
+
+                                        </div>
+
+                                        <div>
+
+                                            <button type="button"
+                                                    class="btn btn-sm btn-outline-primary group-select-all"
+                                                    data-group="@groupId">
+
+                                                Select All
+
+                                            </button>
+
+                                            <button type="button"
+                                                    class="btn btn-sm btn-outline-secondary group-clear"
+                                                    data-group="@groupId">
+
+                                                Clear
+
+                                            </button>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                                <!-- Group Permissions -->
+
+                                <div class="p-3">
+
+                                    <div class="row g-3">
+
+                                        @foreach (var permission in group)
+                                        {
+                                            var isChecked =
+                                                selectedPermissions.Contains(
+                                                    permission.Id);
+
+                                            <div class="col-md-6">
+
+                                                <div class="border rounded p-3 h-100">
+
+                                                    <div class="form-check">
+
+                                                        <input class="form-check-input permission-checkbox"
+                                                               type="checkbox"
+                                                               name="selectedPermissions"
+                                                               value="@permission.Id"
+                                                               id="permission_@permission.Id"
+                                                               data-group="@groupId"
+                                                        @(isChecked ? "checked" : "") />
+
+                                                        <label class="form-check-label"
+                                                               for="permission_@permission.Id">
+
+                                                            <span class="fw-semibold">
+                                                                @permission.DisplayName
+                                                            </span>
+
+                                                            <br />
+
+                                                            <small class="text-muted">
+                                                                @permission.Name
+                                                            </small>
+
+                                                        </label>
+
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+                                        }
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        }
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- ========================================== -->
+        <!-- Footer Actions -->
+        <!-- ========================================== -->
+
+        <div class="card shadow-sm mt-4">
+
+            <div class="card-body">
+
+                <div class="d-flex justify-content-between
+                    align-items-center">
+
+                    <div class="text-muted">
+
+                        <span id="footerSelectedCount">
+                            @selectedCount
+                        </span>
+
+                        permission(s) selected
+
+                    </div>
+
+                    <div>
+
+                        <a asp-action="Index"
+                           class="btn btn-outline-secondary me-2">
+                            Cancel
+                        </a>
+
+                        <button type="submit"
+                                class="btn btn-primary">
+
+                            Save Changes
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </form>
+
+</div>
+
+@section Scripts
+{
+    <script>
+
+        document.addEventListener("DOMContentLoaded", function() {
+
+            const checkboxes =
+                document.querySelectorAll(".permission-checkbox");
+
+            const selectedCount =
+                document.getElementById("selectedCount");
+
+            const footerSelectedCount =
+                document.getElementById("footerSelectedCount");
+
+            const progress =
+                document.getElementById("permissionProgress");
+
+            const selectAllButton =
+                document.getElementById("selectAllButton");
+
+            const clearAllButton =
+                document.getElementById("clearAllButton");
+
+
+            function updateSelection() {
+
+                const total =
+                    checkboxes.length;
+
+                const selected =
+                    document.querySelectorAll(
+                        ".permission-checkbox:checked"
+                    ).length;
+
+                selectedCount.textContent =
+                    selected;
+
+                footerSelectedCount.textContent =
+                    selected;
+
+                const percentage =
+                    total === 0
+                        ? 0
+                        : (selected / total) * 100;
+
+                progress.style.width =
+                    percentage + "%";
+            }
+
+
+            selectAllButton.addEventListener(
+                "click",
+                function() {
+
+                    checkboxes.forEach(
+                        function(checkbox) {
+                            checkbox.checked = true;
+                        });
+
+                    updateSelection();
+                });
+
+
+            clearAllButton.addEventListener(
+                "click",
+                function() {
+
+                    checkboxes.forEach(
+                        function(checkbox) {
+                            checkbox.checked = false;
+                        });
+
+                    updateSelection();
+                });
+
+
+            document
+                .querySelectorAll(".group-select-all")
+                .forEach(
+                    function(button) {
+
+                        button.addEventListener(
+                            "click",
+                            function() {
+
+                                const group =
+                                    button.dataset.group;
+
+                                document
+                                    .querySelectorAll(
+                                        '.permission-checkbox[data-group="' +
+                                        group +
+                                        '"]'
+                                    )
+                                    .forEach(
+                                        function(checkbox) {
+                                            checkbox.checked = true;
+                                        });
+
+                                updateSelection();
+                            });
+                    });
+
+
+            document
+                .querySelectorAll(".group-clear")
+                .forEach(
+                    function(button) {
+
+                        button.addEventListener(
+                            "click",
+                            function() {
+
+                                const group =
+                                    button.dataset.group;
+
+                                document
+                                    .querySelectorAll(
+                                        '.permission-checkbox[data-group="' +
+                                        group +
+                                        '"]'
+                                    )
+                                    .forEach(
+                                        function(checkbox) {
+                                            checkbox.checked = false;
+                                        });
+
+                                updateSelection();
+                            });
+                    });
+
+
+            checkboxes.forEach(
+                function(checkbox) {
+
+                    checkbox.addEventListener(
+                        "change",
+                        updateSelection);
+                });
+
+
+            updateSelection();
+
+        });
+
+    </script>
+}

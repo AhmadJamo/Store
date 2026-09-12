@@ -1,0 +1,102 @@
+﻿@model List<MiniStore.Domain.Entities.Permission>
+
+@{
+    ViewData["Title"] = "Edit Role";
+
+    var selectedPermissions =
+        ViewBag.SelectedPermissions
+        as List<int>
+        ?? new List<int>();
+}
+
+<h1>Edit Role</h1>
+
+<form asp-action="Edit" method="post">
+
+    <input type="hidden"
+           name="id"
+           value="@ViewBag.RoleId" />
+
+    @if (ViewBag.Error != null)
+    {
+        <div class="alert alert-danger">
+            @ViewBag.Error
+        </div>
+    }
+
+    <div class="mb-3">
+
+        <label class="form-label">
+            Role Name
+        </label>
+
+        <input type="text"
+               name="name"
+               value="@ViewBag.RoleName"
+               class="form-control"
+               required />
+
+    </div>
+
+    <hr />
+
+    <h3>Permissions</h3>
+
+    @{
+        var groups =
+            Model
+                .GroupBy(x => x.Group)
+                .OrderBy(x => x.Key);
+    }
+
+    @foreach (var group in groups)
+    {
+        <div class="card mb-3">
+
+            <div class="card-header">
+                <strong>@group.Key</strong>
+            </div>
+
+            <div class="card-body">
+
+                @foreach (var permission in group)
+                {
+                    var isChecked =
+                        selectedPermissions
+                            .Contains(permission.Id);
+
+                    <div class="form-check mb-2">
+
+                        <input class="form-check-input"
+                               type="checkbox"
+                               name="selectedPermissions"
+                               value="@permission.Id"
+                               id="permission_@permission.Id"
+                        @(isChecked ? "checked" : "") />
+
+                        <label class="form-check-label"
+                               for="permission_@permission.Id">
+
+                            @permission.DisplayName
+
+                        </label>
+
+                    </div>
+                }
+
+            </div>
+
+        </div>
+    }
+
+    <button type="submit"
+            class="btn btn-primary">
+        Save Changes
+    </button>
+
+    <a asp-action="Index"
+       class="btn btn-secondary">
+        Cancel
+    </a>
+
+</form>

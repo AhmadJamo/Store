@@ -1,0 +1,104 @@
+﻿@model List<MiniStore.Application.DTOs.Purchases.PurchaseDto>
+
+@{
+    ViewData["Title"] = "Purchases";
+}
+
+<h1>Purchases</h1>
+
+<p class="text-muted">
+    @Model.Count purchase(s) found.
+</p>
+
+<p>
+    @if (await PermissionService.CanAsync(
+    User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "System",
+    "Purchases.Create"))
+    {
+        <a asp-action="Create"
+           class="btn btn-primary">
+            New Purchase
+        </a>
+    }
+</p>
+
+<table class="table table-bordered">
+
+    <thead>
+
+        <tr>
+            <th>Id</th>
+            <th>Invoice Number</th>
+            <th>Supplier</th>
+            <th>Warehouse</th>
+            <th>Date</th>
+            <th>Total</th>
+            <th>Actions</th>
+        </tr>
+
+    </thead>
+
+    <tbody>
+
+        @if (Model.Count == 0)
+        {
+            <tr>
+
+                <td colspan="7"
+                    class="text-center text-muted">
+
+                    No purchases found.
+
+                </td>
+
+            </tr>
+        }
+        else
+        {
+            @foreach (var purchase in Model)
+            {
+                <tr>
+
+                    <td>
+                        @purchase.Id
+                    </td>
+
+                    <td>
+                        @purchase.InvoiceNumber
+                    </td>
+
+                    <td>
+                        @purchase.SupplierName
+                    </td>
+
+                    <td>
+                        @purchase.WarehouseName
+                    </td>
+
+                    <td>
+                        @purchase.Date.ToShortDateString()
+                    </td>
+
+                    <td>
+                        @purchase.TotalAmount.ToString("N2")
+                    </td>
+
+                    <td>
+
+                        <a asp-action="Details"
+                           asp-route-id="@purchase.Id"
+                           class="btn btn-info btn-sm">
+
+                            Details
+
+                        </a>
+
+                    </td>
+
+                </tr>
+            }
+        }
+
+    </tbody>
+
+</table>

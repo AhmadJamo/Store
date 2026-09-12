@@ -1,73 +1,278 @@
-﻿<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - MiniStore</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
-</head>
-<body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container">
-            <a class="navbar-brand" asp-controller="Home" asp-action="Index">MiniStore</a>
+﻿```cshtml
+<!DOCTYPE html>
 
-            <div class="collapse navbar-collapse show">
-                <ul class="navbar-nav me-auto">
-                    @if (await PermissionService.CanAsync(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "System","Products.View"))
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8" />
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0" />
+
+    <title>
+        @ViewData["Title"] - MiniStore
+    </title>
+
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
+
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+
+    <style>
+
+            body {
+                background-color: #f8f9fa;
+            }
+
+            .navbar {
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            }
+
+            .navbar-brand {
+                font-weight: 700;
+                letter-spacing: 0.3px;
+            }
+
+            .navbar-nav .nav-link {
+                font-weight: 500;
+                padding-left: 0.8rem;
+                padding-right: 0.8rem;
+            }
+
+                .navbar-nav .nav-link:hover {
+                    color: #ffffff;
+                }
+
+            .dropdown-menu {
+                border: 0;
+                border-radius: 10px;
+                box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+                padding: 0.5rem;
+                min-width: 220px;
+            }
+
+            .dropdown-item {
+                border-radius: 7px;
+                padding: 0.6rem 0.75rem;
+                font-weight: 500;
+            }
+
+                .dropdown-item:hover {
+                    background-color: #f1f3f5;
+                }
+
+                .dropdown-item.active {
+                    font-weight: 600;
+                }
+
+                .dropdown-item i {
+                    width: 22px;
+                    margin-right: 6px;
+                }
+
+            .user-menu {
+                border-left: 1px solid rgba(255, 255, 255, 0.15);
+                padding-left: 1rem;
+            }
+
+            .user-name {
+                color: rgba(255, 255, 255, 0.9);
+                font-weight: 500;
+            }
+
+    </style>
+
+</head>
+
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+
+        <div class="container">
+
+            <!-- Brand -->
+            <a class="navbar-brand"
+               asp-controller="Home"
+               asp-action="Index">
+
+                <i class="bi bi-shop"></i>
+                MiniStore
+
+            </a>
+
+
+            <!-- Mobile Toggle -->
+            <button class="navbar-toggler"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#mainNavbar"
+                    aria-controls="mainNavbar"
+                    aria-expanded="false"
+                    aria-label="Toggle navigation">
+
+                <span class="navbar-toggler-icon"></span>
+
+            </button>
+
+
+            <div class="collapse navbar-collapse"
+                 id="mainNavbar">
+
+                @{
+                    var currentUserId =
+                        User.FindFirstValue(
+                            ClaimTypes.NameIdentifier);
+
+                    var navigationGroups =
+                        NavigationDefinitions.All
+                            .OrderBy(x => x.Order)
+                            .ToList();
+
+                    var currentController =
+                        ViewContext.RouteData.Values["controller"]
+                            ?.ToString();
+
+                    var currentAction =
+                        ViewContext.RouteData.Values["action"]
+                            ?.ToString();
+                }
+
+
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+                    @foreach (var group in navigationGroups)
                     {
-                        <li class="nav-item"><a class="nav-link" asp-controller="Products" asp-action="Index">Products</a></li>
+                        var visibleItems =
+                            new List<NavigationItem>();
+
+                        foreach (var item in group.Items)
+                        {
+                            if (await PermissionService.CanAsync(
+                                    currentUserId ?? "System",
+                                    item.Permission))
+                            {
+                                visibleItems.Add(item);
+                            }
+                        }
+
+                        if (visibleItems.Count == 0)
+                        {
+                            continue;
+                        }
+
+
+                        <li class="nav-item dropdown">
+
+                            <a class="nav-link dropdown-toggle"
+                               href="#"
+                               role="button"
+                               data-bs-toggle="dropdown"
+                               aria-expanded="false">
+
+                                <i class="bi @group.Icon"></i>
+                                @group.Title
+
+                            </a>
+
+
+                            <ul class="dropdown-menu">
+
+                                @foreach (var item in visibleItems)
+                                {
+                                    var isActive =
+                                        string.Equals(
+                                            currentController,
+                                            item.Controller,
+                                            StringComparison.OrdinalIgnoreCase)
+                                        &&
+                                        string.Equals(
+                                            currentAction,
+                                            item.Action,
+                                            StringComparison.OrdinalIgnoreCase);
+
+                                    <li>
+
+                                        <a class="dropdown-item @(isActive ? "active" : "")"
+                                           asp-controller="@item.Controller"
+                                           asp-action="@item.Action">
+
+                                            <i class="bi @item.Icon"></i>
+                                            @item.Title
+
+                                        </a>
+
+                                    </li>
+                                }
+
+                            </ul>
+
+                        </li>
                     }
-                    @if (await PermissionService.CanAsync(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "System","Warehouses.View"))
-                    {
-                        <li class="nav-item"><a class="nav-link" asp-controller="Warehouses" asp-action="Index">Warehouses</a></li>
-                    }
-                    @if (await PermissionService.CanAsync(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "System","ProductStock.View"))
-                    {
-                        <li class="nav-item"><a class="nav-link" asp-controller="ProductStocks" asp-action="Index">Product Stock</a></li>
-                    }
-                    @if (await PermissionService.CanAsync(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "System","StockTransactions.View"))
-                    {
-                        <li class="nav-item"><a class="nav-link" asp-controller="StockTransactions" asp-action="Index">Stock Transactions</a></li>
-                    }
-                    @if (await PermissionService.CanAsync(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "System","Suppliers.View"))
-                    {
-                        <li class="nav-item"><a class="nav-link" asp-controller="Suppliers" asp-action="Index">Suppliers</a></li>
-                    }
-                    @if (await PermissionService.CanAsync(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "System","Purchases.View"))
-                    {
-                        <li class="nav-item"><a class="nav-link" asp-controller="Purchases" asp-action="Index">Purchases</a></li>
-                    }
-                    @if (await PermissionService.CanAsync(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "System","Sales.View"))
-                    {
-                        <li class="nav-item"><a class="nav-link" asp-controller="Sales" asp-action="Index">Sales</a></li>
-                    }
-                    @if (User.IsInRole("Admin"))
-                    {
-                        <li class="nav-item"><a class="nav-link" asp-controller="Users" asp-action="Index">Users</a></li>
-                        <li class="nav-item"><a class="nav-link" asp-controller="Roles" asp-action="Index">Roles</a></li>
-                        <li class="nav-item"><a class="nav-link" asp-controller="Settings" asp-action="Index">Settings</a></li>
-                    }
+
                 </ul>
 
+
+                <!-- Current User -->
                 @if (User.Identity?.IsAuthenticated == true)
                 {
-                    <span class="navbar-text me-3">Hello, @User.Identity.Name</span>
-                    <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
-                        @Html.AntiForgeryToken()
-                        <button type="submit" class="btn btn-outline-light btn-sm">Logout</button>
-                    </form>
+                    <div class="d-flex align-items-center user-menu">
+
+                        <span class="user-name me-3">
+
+                            <i class="bi bi-person-circle"></i>
+                            @User.Identity.Name
+
+                        </span>
+
+
+                        <form asp-controller="Account"
+                              asp-action="Logout"
+                              method="post"
+                              class="d-inline">
+
+                            @Html.AntiForgeryToken()
+
+                            <button type="submit"
+                                    class="btn btn-outline-light btn-sm">
+
+                                <i class="bi bi-box-arrow-right"></i>
+                                Logout
+
+                            </button>
+
+                        </form>
+
+                    </div>
                 }
+
             </div>
+
         </div>
+
     </nav>
 
+
     <main class="container mt-4">
+
         @await Html.PartialAsync("_Notification")
+
         @await Html.PartialAsync("_ConfirmDelete")
+
         @RenderBody()
+
     </main>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    @await RenderSectionAsync("Scripts", required: false)
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+    </script>
+
+    @await RenderSectionAsync(
+        "Scripts",
+        required: false)
+
 </body>
+
 </html>
+```
