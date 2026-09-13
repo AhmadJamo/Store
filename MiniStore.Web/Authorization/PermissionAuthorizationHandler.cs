@@ -45,6 +45,9 @@ public class PermissionAuthorizationHandler
             return;
         }
 
+        if (MiniStore.Application.Permissions.AdministrationPermissions.RequiresAdmin(requirement.Permission))
+            return;
+
         var roleIds =
             await _userManager.GetRolesAsync(user);
 

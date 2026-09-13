@@ -39,6 +39,9 @@ public class PermissionService : IPermissionService
             return true;
         }
 
+        if (AdministrationPermissions.RequiresAdmin(permission))
+            return false;
+
         var roleNames =
             await _userManager.GetRolesAsync(
                 currentUser);

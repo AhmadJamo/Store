@@ -9,6 +9,8 @@ public class ProductStock
     public int WarehouseId { get; private set; }
 
     public decimal Quantity { get; private set; }
+
+    public byte[] RowVersion { get; private set; } = [];
     //State
     public ProductStock(
         int productId,

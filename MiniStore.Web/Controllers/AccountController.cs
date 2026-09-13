@@ -23,6 +23,7 @@ public class AccountController : Controller
     }
 
     [HttpPost]
+    [Microsoft.AspNetCore.RateLimiting.EnableRateLimiting("login")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Login(
         string username,
@@ -45,7 +46,7 @@ public class AccountController : Controller
                 username,
                 password,
                 isPersistent: false,
-                lockoutOnFailure: false);
+                lockoutOnFailure: true);
 
         if (result.Succeeded)
         {

@@ -44,6 +44,8 @@ public class StockTransfer
 
     public string? CancellationReason { get; private set; }
 
+    public byte[] RowVersion { get; private set; } = [];
+
     public List<StockTransferItem> Items { get; private set; }
 
     public List<StockTransferHistory> History { get; private set; }

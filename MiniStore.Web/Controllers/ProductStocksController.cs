@@ -78,11 +78,13 @@ public class ProductStocksController : Controller
         }
         catch (Exception ex)
         {
+            HttpContext.RequestServices.GetRequiredService<ILoggerFactory>()
+                .CreateLogger(GetType()).LogError(ex, "Request operation failed");
             await LoadDropdowns();
 
             TempData["NotificationType"] = "error";
             TempData["NotificationMessage"] =
-                ex.Message;
+                "The operation could not be completed. Please try again or contact the administrator.";
 
             return View(dto);
         }
@@ -151,6 +153,8 @@ public class ProductStocksController : Controller
         }
         catch (Exception ex)
         {
+            HttpContext.RequestServices.GetRequiredService<ILoggerFactory>()
+                .CreateLogger(GetType()).LogError(ex, "Request operation failed");
             var stock =
                 await _productStockService.GetByIdAsync(id);
 
@@ -162,7 +166,7 @@ public class ProductStocksController : Controller
 
             TempData["NotificationType"] = "error";
             TempData["NotificationMessage"] =
-                ex.Message;
+                "The operation could not be completed. Please try again or contact the administrator.";
 
             return View(dto);
         }
@@ -182,9 +186,11 @@ public class ProductStocksController : Controller
         }
         catch (Exception ex)
         {
+            HttpContext.RequestServices.GetRequiredService<ILoggerFactory>()
+                .CreateLogger(GetType()).LogError(ex, "Request operation failed");
             TempData["NotificationType"] = "error";
             TempData["NotificationMessage"] =
-                ex.Message;
+                "The operation could not be completed. Please try again or contact the administrator.";
         }
 
         return RedirectToAction(nameof(Index));

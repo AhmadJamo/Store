@@ -417,7 +417,7 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("DocumentNumberSettings");
+                    b.ToTable("DocumentNumberSettings", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.InvoiceSettings", b =>
@@ -521,7 +521,7 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Products");
+                    b.ToTable("Products", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.ProductStock", b =>
@@ -539,6 +539,12 @@ namespace MiniStore.Infrastructure.Migrations
                         .HasPrecision(18, 3)
                         .HasColumnType("decimal(18,3)");
 
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
                     b.Property<int>("WarehouseId")
                         .HasColumnType("int");
 
@@ -549,7 +555,7 @@ namespace MiniStore.Infrastructure.Migrations
                     b.HasIndex("ProductId", "WarehouseId")
                         .IsUnique();
 
-                    b.ToTable("ProductStocks");
+                    b.ToTable("ProductStocks", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.Purchase", b =>
@@ -591,7 +597,7 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasIndex("WarehouseId");
 
-                    b.ToTable("Purchases");
+                    b.ToTable("Purchases", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.PurchaseItem", b =>
@@ -626,7 +632,7 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasIndex("PurchaseId");
 
-                    b.ToTable("PurchaseItems");
+                    b.ToTable("PurchaseItems", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.RolePermission", b =>
@@ -792,7 +798,7 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasIndex("ProductId", "WarehouseId");
 
-                    b.ToTable("StockTransactions");
+                    b.ToTable("StockTransactions", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.StockTransfer", b =>
@@ -858,6 +864,12 @@ namespace MiniStore.Infrastructure.Migrations
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
 
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
@@ -887,7 +899,7 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasIndex("Status", "CreatedAt");
 
-                    b.ToTable("StockTransfers");
+                    b.ToTable("StockTransfers", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.StockTransferHistory", b =>
@@ -926,7 +938,7 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasIndex("StockTransferId", "CreatedAt");
 
-                    b.ToTable("StockTransferHistories");
+                    b.ToTable("StockTransferHistories", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.StockTransferItem", b =>
@@ -954,7 +966,7 @@ namespace MiniStore.Infrastructure.Migrations
                     b.HasIndex("StockTransferId", "ProductId")
                         .IsUnique();
 
-                    b.ToTable("StockTransferItems");
+                    b.ToTable("StockTransferItems", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.Supplier", b =>
@@ -980,7 +992,7 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Suppliers");
+                    b.ToTable("Suppliers", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.Warehouse", b =>
@@ -998,7 +1010,7 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Warehouses");
+                    b.ToTable("Warehouses", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

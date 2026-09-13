@@ -50,6 +50,9 @@ public class StockTransferConfiguration
         builder.Property(x => x.CancellationReason)
             .HasMaxLength(1000);
 
+        builder.Property(x => x.RowVersion)
+            .IsRowVersion();
+
         builder.HasIndex(x => x.TransferNumber)
             .IsUnique();
 

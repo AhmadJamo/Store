@@ -1,5 +1,11 @@
 # ERP Project Instructions
 
+## Documentation System (Required)
+
+Before working on code, read `docs/00_PROJECT_CONTEXT.md`, `docs/01_CODEBASE_MAP.md`, and the relevant module documentation. Documentation summarizes code but actual source remains authoritative.
+
+After any code, schema, permission, UI, configuration, or architecture change, follow `docs/development/HOW_TO_UPDATE.md` and `docs/development/DOCUMENTATION_MATRIX.md`. Update affected documentation, `docs/01_CODEBASE_MAP.md`, `docs/TODO.md` when status changes, and `docs/history/AI_WORKLOG.md` after completing work. Create an ADR in `docs/decisions/` for significant architectural decisions. Do not put secrets in documentation.
+
 ## Architecture
 
 This project follows layered architecture and DDD principles.

@@ -329,8 +329,9 @@ public RolesController(
             nameof(Index));
     }
 
-    // GET: /Roles/Delete/{id}
-    [HttpGet]
+    // POST: /Roles/Delete/{id}
+    [HttpPost]
+    [ValidateAntiForgeryToken]
     [PermissionAuthorize("Roles.Delete")]
     public async Task<IActionResult> Delete(
         string id)

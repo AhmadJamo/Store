@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MiniStore.Domain.Interfaces;
+using System.Data;
 
 namespace MiniStore.Infrastructure.Persistence;
 
@@ -16,7 +17,8 @@ public class UnitOfWork : IUnitOfWork
         Func<Task> operation)
     {
         await using var transaction =
-            await _context.Database.BeginTransactionAsync();
+            await _context.Database.BeginTransactionAsync(
+                IsolationLevel.Serializable);
 
         try
         {
@@ -25,6 +27,14 @@ public class UnitOfWork : IUnitOfWork
             await _context.SaveChangesAsync();
 
             await transaction.CommitAsync();
+        }
+        catch (DbUpdateConcurrencyException exception)
+        {
+            await transaction.RollbackAsync();
+
+            throw new InvalidOperationException(
+                "Inventory changed while this operation was being processed. Please review the current stock and try again.",
+                exception);
         }
         catch
         {

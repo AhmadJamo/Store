@@ -19,6 +19,19 @@ builder.Services.AddControllersWithViews(options =>
         new AutoValidateAntiforgeryTokenAttribute());
 });
 
+builder.Services.AddRateLimiter(options =>
+{
+    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+    options.AddPolicy("login", context =>
+        System.Threading.RateLimiting.RateLimitPartition.GetFixedWindowLimiter(
+            context.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+            _ => new System.Threading.RateLimiting.FixedWindowRateLimiterOptions
+            {
+                PermitLimit = 10,
+                Window = TimeSpan.FromMinutes(1),
+                QueueLimit = 0
+            }));
+});
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 builder.Services.AddScoped<AuditSaveChangesInterceptor>();
@@ -32,7 +45,12 @@ builder.Services.AddDbContext<AppDbContext>((services, options) =>
 
 
 builder.Services
-    .AddIdentity<IdentityUser, IdentityRole>()
+    .AddIdentity<IdentityUser, IdentityRole>(options =>
+    {
+        options.Lockout.MaxFailedAccessAttempts = 5;
+        options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
+        options.Lockout.AllowedForNewUsers = true;
+    })
     .AddEntityFrameworkStores<AppDbContext>()
     .AddDefaultTokenProviders();
 
@@ -150,6 +168,7 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseRouting();
+app.UseRateLimiter();
 
 app.UseAuthentication();
 

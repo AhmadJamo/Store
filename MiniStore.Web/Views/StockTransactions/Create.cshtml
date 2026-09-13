@@ -8,6 +8,9 @@
 
 <form asp-action="Create" method="post">
 
+    <div asp-validation-summary="ModelOnly"
+         class="text-danger mb-3"></div>
+
     <div class="mb-3">
 
         <label asp-for="ProductId"
@@ -80,26 +83,6 @@
                 -- Select Type --
             </option>
 
-            <option value="1">
-                Opening Balance
-            </option>
-
-            <option value="2">
-                Purchase
-            </option>
-
-            <option value="3">
-                Sale
-            </option>
-
-            <option value="4">
-                Transfer In
-            </option>
-
-            <option value="5">
-                Transfer Out
-            </option>
-
             <option value="6">
                 Adjustment In
             </option>
@@ -131,8 +114,7 @@
 
         <div class="form-text">
             Enter the quantity as a positive number.
-            The transaction type determines whether stock
-            increases or decreases.
+            Choose whether the adjustment increases or decreases stock.
         </div>
 
         <span asp-validation-for="Quantity"
@@ -145,12 +127,13 @@
 
         <label asp-for="Reference"
                class="form-label">
-            Reference
+            Adjustment reason
         </label>
 
         <input asp-for="Reference"
                class="form-control"
-               placeholder="Example: INV-001" />
+               required
+               placeholder="Example: Physical count correction" />
 
         <span asp-validation-for="Reference"
               class="text-danger">

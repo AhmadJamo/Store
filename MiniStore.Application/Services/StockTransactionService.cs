@@ -18,11 +18,14 @@ public class StockTransactionService
     private readonly IProductStockRepository
         _productStockRepository;
 
+    private readonly IUnitOfWork _unitOfWork;
+
     public StockTransactionService(
         IStockTransactionRepository stockTransactionRepository,
         IProductRepository productRepository,
         IWarehouseRepository warehouseRepository,
-        IProductStockRepository productStockRepository)
+        IProductStockRepository productStockRepository,
+        IUnitOfWork unitOfWork)
     {
         _stockTransactionRepository =
             stockTransactionRepository;
@@ -35,6 +38,8 @@ public class StockTransactionService
 
         _productStockRepository =
             productStockRepository;
+
+        _unitOfWork = unitOfWork;
     }
 
     public async Task CreateAsync(
@@ -43,6 +48,17 @@ public class StockTransactionService
         if (dto.Quantity <= 0)
             throw new ArgumentException(
                 "Quantity must be greater than zero.");
+
+        if (dto.Type is not StockTransactionType.AdjustmentIn and
+            not StockTransactionType.AdjustmentOut)
+        {
+            throw new ArgumentException(
+                "Manual stock transactions are limited to inventory adjustments.");
+        }
+
+        if (string.IsNullOrWhiteSpace(dto.Reference))
+            throw new ArgumentException(
+                "An adjustment reason is required.");
 
         var product =
             await _productRepository.GetByIdAsync(
@@ -60,74 +76,40 @@ public class StockTransactionService
             throw new InvalidOperationException(
                 "Warehouse not found.");
 
-        var stock =
-            await _productStockRepository
+        await _unitOfWork.ExecuteInTransactionAsync(async () =>
+        {
+            var stock = await _productStockRepository
                 .GetByProductAndWarehouseAsync(
                     dto.ProductId,
                     dto.WarehouseId);
 
-        if (stock == null)
-        {
-            stock = new ProductStock(
-                dto.ProductId,
-                dto.WarehouseId);
+            if (stock == null)
+            {
+                stock = new ProductStock(
+                    dto.ProductId,
+                    dto.WarehouseId);
 
-            await _productStockRepository
-                .AddAsync(stock);
-        }
+                await _productStockRepository.AddAsync(stock);
+            }
 
-        var finalQuantity = dto.Type switch
-        {
-            StockTransactionType.OpeningBalance
-                => dto.Quantity,
+            var finalQuantity =
+                dto.Type == StockTransactionType.AdjustmentIn
+                    ? dto.Quantity
+                    : -dto.Quantity;
 
-            StockTransactionType.Purchase
-                => dto.Quantity,
+            if (finalQuantity > 0)
+                stock.AddQuantity(finalQuantity);
+            else
+                stock.RemoveQuantity(-finalQuantity);
 
-            StockTransactionType.Sale
-                => -dto.Quantity,
-
-            StockTransactionType.TransferIn
-                => dto.Quantity,
-
-            StockTransactionType.TransferOut
-                => -dto.Quantity,
-
-            StockTransactionType.AdjustmentIn
-                => dto.Quantity,
-
-            StockTransactionType.AdjustmentOut
-                => -dto.Quantity,
-
-            _ => throw new ArgumentException(
-                "Invalid stock transaction type.")
-        };
-
-        if (finalQuantity > 0)
-        {
-            stock.AddQuantity(finalQuantity);
-        }
-        else
-        {
-            stock.RemoveQuantity(-finalQuantity);
-        }
-
-        var transaction =
-            new StockTransaction(
-                dto.ProductId,
-                dto.WarehouseId,
-                finalQuantity,
-                dto.Type,
-                dto.Reference);
-
-        await _stockTransactionRepository
-            .AddAsync(transaction);
-
-        await _stockTransactionRepository
-            .SaveChangesAsync();
-
-        await _productStockRepository
-            .SaveChangesAsync();
+            await _stockTransactionRepository.AddAsync(
+                new StockTransaction(
+                    dto.ProductId,
+                    dto.WarehouseId,
+                    finalQuantity,
+                    dto.Type,
+                    dto.Reference.Trim()));
+        });
     }
     public async Task<List<StockTransactionDto>> GetAllAsync()
     {

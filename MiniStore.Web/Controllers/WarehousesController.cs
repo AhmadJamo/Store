@@ -59,9 +59,11 @@ public class WarehousesController : Controller
         }
         catch (Exception ex)
         {
+            HttpContext.RequestServices.GetRequiredService<ILoggerFactory>()
+                .CreateLogger(GetType()).LogError(ex, "Request operation failed");
             TempData["NotificationType"] = "error";
             TempData["NotificationMessage"] =
-                ex.Message;
+                "The operation could not be completed. Please try again or contact the administrator.";
 
             return View(dto);
         }
@@ -118,9 +120,11 @@ public class WarehousesController : Controller
         }
         catch (Exception ex)
         {
+            HttpContext.RequestServices.GetRequiredService<ILoggerFactory>()
+                .CreateLogger(GetType()).LogError(ex, "Request operation failed");
             TempData["NotificationType"] = "error";
             TempData["NotificationMessage"] =
-                ex.Message;
+                "The operation could not be completed. Please try again or contact the administrator.";
 
             return View(dto);
         }
@@ -140,9 +144,11 @@ public class WarehousesController : Controller
         }
         catch (Exception ex)
         {
+            HttpContext.RequestServices.GetRequiredService<ILoggerFactory>()
+                .CreateLogger(GetType()).LogError(ex, "Request operation failed");
             TempData["NotificationType"] = "error";
             TempData["NotificationMessage"] =
-                ex.Message;
+                "The operation could not be completed. Please try again or contact the administrator.";
         }
 
         return RedirectToAction(nameof(Index));

@@ -56,6 +56,9 @@ public static class IdentitySeeder
         // 2. Admin configuration
         // ==========================================
 
+        if (!configuration.GetValue<bool>("AdminUser:Enabled"))
+            return;
+
         var adminUsername =
             configuration["AdminUser:Username"];
 
@@ -84,6 +87,9 @@ public static class IdentitySeeder
         var adminUser =
             await userManager.FindByNameAsync(
                 adminUsername);
+
+        if (adminUser != null)
+            throw new InvalidOperationException("Bootstrap requires a new username; existing accounts are never promoted.");
 
         if (adminUser == null)
         {
@@ -120,9 +126,11 @@ public static class IdentitySeeder
                 adminUser,
                 "Admin"))
         {
-            await userManager.AddToRoleAsync(
+            var roleResult = await userManager.AddToRoleAsync(
                 adminUser,
                 "Admin");
+            if (!roleResult.Succeeded)
+                throw new InvalidOperationException("Failed to assign the bootstrap administrator role.");
         }
     }
 }

@@ -14,6 +14,9 @@ public class ProductStockConfiguration
         builder.Property(x => x.Quantity)
             .HasPrecision(18, 3);
 
+        builder.Property(x => x.RowVersion)
+            .IsRowVersion();
+
         builder.HasOne<Product>()
             .WithMany()
             .HasForeignKey(x => x.ProductId)

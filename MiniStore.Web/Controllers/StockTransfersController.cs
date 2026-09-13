@@ -508,13 +508,15 @@ public class StockTransfersController : Controller
         }
         catch (Exception ex)
         {
+            HttpContext.RequestServices.GetRequiredService<ILoggerFactory>()
+                .CreateLogger(GetType()).LogError(ex, "Request operation failed");
             await LoadDropdowns();
 
             TempData["NotificationType"] =
                 "error";
 
             TempData["NotificationMessage"] =
-                ex.Message;
+                "The operation could not be completed. Please try again or contact the administrator.";
 
             return View(dto);
         }
@@ -662,6 +664,8 @@ public class StockTransfersController : Controller
         }
         catch (Exception ex)
         {
+            HttpContext.RequestServices.GetRequiredService<ILoggerFactory>()
+                .CreateLogger(GetType()).LogError(ex, "Request operation failed");
             await LoadDropdowns();
 
             ViewBag.TransferNumber =
@@ -673,7 +677,7 @@ public class StockTransfersController : Controller
                 "error";
 
             TempData["NotificationMessage"] =
-                ex.Message;
+                "The operation could not be completed. Please try again or contact the administrator.";
 
             return View(dto);
         }
@@ -884,11 +888,13 @@ public class StockTransfersController : Controller
         }
         catch (Exception ex)
         {
+            HttpContext.RequestServices.GetRequiredService<ILoggerFactory>()
+                .CreateLogger(GetType()).LogError(ex, "Request operation failed");
             TempData["NotificationType"] =
                 "error";
 
             TempData["NotificationMessage"] =
-                ex.Message;
+                "The operation could not be completed. Please try again or contact the administrator.";
         }
 
         return RedirectToAction(
@@ -944,4 +950,3 @@ public class StockTransfersController : Controller
                 .GetAllAsync();
     }
 }
-

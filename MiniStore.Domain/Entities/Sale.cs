@@ -82,6 +82,10 @@ public string InvoiceNumber { get; private set; }
         if (item == null)
             throw new ArgumentNullException(nameof(item));
 
+        if (Items.Any(x => x.ProductId == item.ProductId))
+            throw new InvalidOperationException(
+                "The same product cannot be added more than once.");
+
         Items.Add(item);
 
         RecalculateTotal();
