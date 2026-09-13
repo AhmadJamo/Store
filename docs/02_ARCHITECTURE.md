@@ -8,6 +8,8 @@
 
 `Web → Application → Domain`; `Infrastructure → Application + Domain`. EF configuration lives in Infrastructure. `Program.cs` registers all concrete services/repositories and MVC/Identity.
 
+Source files are grouped by business feature inside each layer. Entities, service contracts, services, repositories, EF configurations and controllers use the shared feature names Accounting, Catalog, Customers, Inventory, Purchases, Sales, Security, Settings and Suppliers; Web also contains Home. Shared infrastructure stays at the layer root or in a `Shared` folder. Razor views retain the MVC `Views/<ControllerName>/` convention and migrations retain chronological ordering. See `decisions/2026-09-13-feature-folder-organization.md`.
+
 ## Request lifecycle
 Browser → MVC controller → DTO model binding/ModelState → application service → repository/domain entity → `AppDbContext`/SQL Server → redirect or Razor view. AutoValidateAntiforgeryToken is registered globally. Sales, purchases and transfers use `IUnitOfWork`; several master-data services use repository `SaveChangesAsync` directly.
 

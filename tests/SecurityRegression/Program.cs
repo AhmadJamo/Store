@@ -62,11 +62,22 @@ Check(transferRowVersion.IsConcurrencyToken,
     "StockTransfer.RowVersion must prevent duplicate workflow transitions");
 
 var purchase = new Purchase(1, 1, "P-1", DateTime.UtcNow);
-purchase.AddItem(new PurchaseItem(1, 1, 1));
-CheckThrows(() => purchase.AddItem(new PurchaseItem(1, 2, 1)),
-    "Purchase must reject duplicate products");
+purchase.AddItem(new PurchaseItem(1, 1, 1, 1));
+CheckThrows(() => purchase.AddItem(new PurchaseItem(1, 2, 1, 1)),
+    "Purchase must reject duplicate products in the same warehouse");
+purchase.AddItem(new PurchaseItem(1, 2, 1, 2));
+Check(
+    purchase.Items.Count == 2,
+    "Purchase must allow the same product in different warehouses");
 
-var sale = new Sale("S-1", 1, DateTime.UtcNow, SaleChannel.RetailPos, "user");
+var sale = new Sale(
+    "S-1",
+    1,
+    DateTime.UtcNow,
+    SaleChannel.RetailPos,
+    "user",
+    customerId: null,
+    paymentMethodId: 1);
 sale.AddItem(new SaleItem(1, 1, 1));
 CheckThrows(() => sale.AddItem(new SaleItem(1, 2, 1)),
     "Sale must reject duplicate products");

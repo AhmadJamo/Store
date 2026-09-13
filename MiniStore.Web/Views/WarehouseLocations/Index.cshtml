@@ -1,3 +1,130 @@
 @model MiniStore.Application.DTOs.Warehouses.WarehouseInventorySearchDto
-@{ ViewData["Title"]="Warehouse Locations"; }
-<div class="container mt-4"><div class="d-flex justify-content-between align-items-center"><div><h2>Warehouse Locations</h2><p class="text-muted">Search products, barcodes, racks, levels and bins.</p></div><a asp-action="Create" class="btn btn-primary">Add location</a></div><form method="get" class="card card-body mb-4"><div class="row g-2"><div class="col-md-4"><select name="warehouseId" class="form-select"><option value="">All warehouses</option>@foreach(var warehouse in ViewBag.Warehouses){<option value="@warehouse.Id" selected="@(ViewBag.WarehouseId==warehouse.Id)">@warehouse.Name</option>}</select></div><div class="col-md-6"><input name="query" value="@ViewBag.Query" class="form-control" placeholder="Product name, barcode or location code" /></div><div class="col-md-2"><button class="btn btn-outline-primary w-100">Search</button></div></div></form><h4>Storage locations</h4><div class="table-responsive"><table class="table table-striped"><thead><tr><th>Code</th><th>Zone</th><th>Aisle</th><th>Rack</th><th>Level</th><th>Bin</th><th>Type</th><th>Status</th><th>Capacity</th></tr></thead><tbody>@foreach(var location in Model.Locations){<tr><td><strong>@location.Code</strong></td><td>@location.Zone</td><td>@location.Aisle</td><td>@location.Rack</td><td>@location.Level</td><td>@location.Bin</td><td>@location.Type</td><td>@location.Status</td><td>@location.MaximumQuantity</td></tr>}@if(Model.Locations.Count==0){<tr><td colspan="9" class="text-center text-muted">No locations found.</td></tr>}</tbody></table></div><h4 class="mt-4">Products in warehouses</h4><div class="alert alert-info">Existing balances appear as Unassigned until putaway and internal movements are enabled.</div><div class="table-responsive"><table class="table table-bordered"><thead><tr><th>Product</th><th>Barcode</th><th>Warehouse</th><th>Quantity</th><th>Location</th></tr></thead><tbody>@foreach(var row in Model.Products){<tr><td>@row.ProductName</td><td>@row.Barcode</td><td>@row.WarehouseName</td><td>@row.Quantity</td><td><span class="badge bg-secondary">@row.Location</span></td></tr>}@if(Model.Products.Count==0){<tr><td colspan="5" class="text-center text-muted">No products found.</td></tr>}</tbody></table></div></div>
+@using MiniStore.Domain.Entities
+
+@{
+    ViewData["Title"] = "Warehouse Locations";
+    var warehouses = ViewBag.Warehouses as List<Warehouse> ?? [];
+    int? selectedWarehouseId = ViewBag.WarehouseId;
+    string? query = ViewBag.Query;
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h2>Warehouse Locations</h2>
+            <p class="text-muted">Search products, barcodes, racks, levels and bins.</p>
+        </div>
+        <a asp-action="Create" class="btn btn-primary">Add location</a>
+    </div>
+
+    <form method="get" class="card card-body mb-4">
+        <div class="row g-2">
+            <div class="col-md-4">
+                <label for="warehouseId" class="form-label">Warehouse</label>
+                <select id="warehouseId" name="warehouseId" class="form-select">
+                    <option value="">All warehouses</option>
+                    @foreach (var warehouse in warehouses)
+                    {
+                        <option value="@warehouse.Id"
+                                selected="@(selectedWarehouseId == warehouse.Id)">
+                            @warehouse.Name
+                        </option>
+                    }
+                </select>
+            </div>
+
+            <div class="col-md-6">
+                <label for="query" class="form-label">Search</label>
+                <input id="query"
+                       name="query"
+                       value="@query"
+                       class="form-control"
+                       placeholder="Product name, barcode or location code" />
+            </div>
+
+            <div class="col-md-2 d-flex align-items-end">
+                <button class="btn btn-outline-primary w-100">Search</button>
+            </div>
+        </div>
+    </form>
+
+    <h4>Storage locations</h4>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Code</th>
+                    <th>Zone</th>
+                    <th>Aisle</th>
+                    <th>Rack</th>
+                    <th>Level</th>
+                    <th>Bin</th>
+                    <th>Type</th>
+                    <th>Status</th>
+                    <th>Capacity</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var location in Model.Locations)
+                {
+                    <tr>
+                        <td><strong>@location.Code</strong></td>
+                        <td>@location.Zone</td>
+                        <td>@location.Aisle</td>
+                        <td>@location.Rack</td>
+                        <td>@location.Level</td>
+                        <td>@location.Bin</td>
+                        <td>@location.Type</td>
+                        <td>@location.Status</td>
+                        <td>@location.MaximumQuantity</td>
+                    </tr>
+                }
+
+                @if (Model.Locations.Count == 0)
+                {
+                    <tr>
+                        <td colspan="9" class="text-center text-muted">No locations found.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <h4 class="mt-4">Products in warehouses</h4>
+    <div class="alert alert-info">
+        Existing balances appear as Unassigned until putaway and internal movements are enabled.
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Barcode</th>
+                    <th>Warehouse</th>
+                    <th>Quantity</th>
+                    <th>Location</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var row in Model.Products)
+                {
+                    <tr>
+                        <td>@row.ProductName</td>
+                        <td>@row.Barcode</td>
+                        <td>@row.WarehouseName</td>
+                        <td>@row.Quantity</td>
+                        <td><span class="badge bg-secondary">@row.Location</span></td>
+                    </tr>
+                }
+
+                @if (Model.Products.Count == 0)
+                {
+                    <tr>
+                        <td colspan="5" class="text-center text-muted">No products found.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

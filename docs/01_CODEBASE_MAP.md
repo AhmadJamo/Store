@@ -16,33 +16,29 @@
 ## Domain source map
 | Files | Type/purpose | Consumers/docs |
 |---|---|---|
-| `Entities/Product.cs`, `Warehouse.cs`, `Supplier.cs` | Master-data entities | respective modules/entities docs. |
-| `Entities/ProductStock.cs`, `ProductLocationStock.cs`, `StockTransaction.cs`, `StockTransactionType.cs` | warehouse balance, exact-location allocation and movement model | inventory module. |
-| `Entities/StorageLocation*.cs` | warehouse zone/aisle/rack/level/bin master data | inventory module. |
-| `Entities/Purchase.cs`, `PurchaseItem.cs` | purchase aggregate/items | purchases module. |
-| `Entities/Sale.cs`, `SaleItem.cs`, `SaleChannel.cs` | sales aggregate/items/channels | sales module. |
-| `Entities/StockTransfer*.cs` | transfer aggregate, item, history, statuses/actions | stock-transfers module. |
-| `Entities/{Permission,RolePermission}.cs` | role permission mapping | permissions doc. |
-| `Entities/{Account,Branch,JournalEntry,JournalEntryLine,PaymentMethod}.cs` | accounting foundation: hierarchy, dimensions, settlement methods and balanced multi-line entries | accounting doc. |
-| `Entities/{AuditLog,GeneralSettings,DiscountSettings,AccountingSettings,InvoiceSettings,DocumentNumberSettings}.cs` | audit/configuration state; accounting posting-account mappings | settings/database docs. |
-| `Enum/DiscountType.cs` | percentage/fixed discount enum | sales/settings docs. |
-| `Commands/CreateStockTransferCommand.cs`, `UpdateStockTransferCommand.cs` | transfer service input commands | transfer service. |
-| `Interfaces/I*Repository.cs` | persistence contracts | matching Infrastructure repository. |
-| `Interfaces/IUnitOfWork.cs`, `IStockTransferService.cs` | transaction/transfer contracts | UnitOfWork/StockTransferService. |
+| `Entities/Accounting/*.cs` | chart, branches, journal entries, tax and payment entities | accounting docs. |
+| `Entities/Catalog/Product.cs` | product master data | products and entity docs. |
+| `Entities/Customers/Customer.cs`, `Entities/Suppliers/Supplier.cs` | commercial-party master data | sales/purchases docs. |
+| `Entities/Inventory/*.cs` | warehouses, balances, locations, movements and transfers | inventory and stock-transfer docs. |
+| `Entities/Purchases/*.cs`, `Entities/Sales/*.cs` | purchase, sale and POS aggregates | purchase/sales docs. |
+| `Entities/Settings/*.cs` | accounting, discount, numbering, invoice and general settings | settings/database docs. |
+| `Entities/Security/*.cs` | audit and role-permission entities | permissions/security docs. |
+| `Enums/Sales/DiscountType.cs` | percentage/fixed discount enum | sales/settings docs. |
+| `Commands/Inventory/*.cs` | transfer service input commands | transfer service. |
+| `Interfaces/<Feature>/*.cs` | persistence/service contracts grouped by feature | matching Application/Infrastructure feature. |
+| `Interfaces/Shared/IUnitOfWork.cs` | shared transaction boundary | document services and UnitOfWork. |
 
 ## Application source map
 | Files | Purpose | Used by |
 |---|---|---|
-| `Services/{Product,Warehouse,Supplier}Service.cs` | master-data operations | matching MVC controllers. |
-| `Services/{ProductStock,StockTransaction,Purchase,Sale,StockTransfer}Service.cs` | inventory/business documents | matching controllers. |
-| `Services/StorageLocationService.cs` | location administration and warehouse product/location search | WarehouseLocationsController. |
-| `Services/UnassignedStockService.cs` | calculates unallocated balances and assigns quantities to exact locations | UnassignedStockController. |
-| `Services/{Invoice,General,DiscountSettings,AccountingSettings,PaymentMethod,Branch}Service.cs` | settings operations and branch sales-account mapping | SettingsController, BranchesController and PaymentMethodsController. |
-| `Services/DiscountCalculator.cs` | standalone discount calculation helper; no active consumer found by scan | Unknown. |
-| `Services/ISaleService.cs`, `ICurrentUserService.cs` | service contracts | SaleService/CurrentUserService. |
+| `Services/<Feature>/*.cs` | use-case services grouped as Accounting, Catalog, Customers, Inventory, Purchases, Sales, Settings and Suppliers | matching MVC controllers. |
+| `Services/Inventory/{StorageLocation,UnassignedStock}Service.cs` | location administration, warehouse search and stock putaway | inventory controllers. |
+| `Services/Sales/DiscountCalculator.cs` | standalone discount calculation helper; no active consumer found by scan | Unknown. |
+| `Services/Shared/ICurrentUserService.cs` | current-user application contract | Web CurrentUserService. |
 | `Permissions/{PermissionDefinitions,IPermissionService}.cs` | permission catalogue/contract | seeders/auth/services. |
-| `Dtos/<Products|Warehouses|Suppliers>/*.cs` | request/display DTOs | matching services/controllers/views. |
-| `Dtos/<ProductStocks|Purchases|Sales|StockTransfers|Settings>/*.cs` | request/display DTOs | matching services/controllers/views. |
+| `Dtos/Catalog/Products/*.cs` | product request/display DTOs | catalog services/controllers/views. |
+| `Dtos/Inventory/<ProductStocks|StockTransfers|Warehouses>/*.cs` | inventory request/display DTO families | inventory services/controllers/views. |
+| `Dtos/<Accounting|Purchases|Sales|Settings|Suppliers>/*.cs` | feature request/display DTOs | matching services/controllers/views. |
 
 ## Infrastructure source map
 | Files | Purpose | Consumers |
@@ -51,14 +47,14 @@
 | `Persistence/UnitOfWork.cs` | transaction wrapper | purchase/sale/stock/transfer services. |
 | `Persistence/AuditSaveChangesInterceptor.cs` | creates AuditLog rows for tracked changes | registered in Program. |
 | `Persistence/{Identity,Permission}Seeder.cs` | default roles/admin and permissions | Program startup. |
-| `Persistence/Configurations/*.cs` | per-entity schema mapping | applied by AppDbContext. |
+| `Persistence/Configurations/<Feature>/*.cs` | per-entity schema mapping grouped by feature | applied automatically by AppDbContext. |
 
 Accounting foundation (2026-09-13): migration `AddAccountingFoundation` adds Accounts, Branches, JournalEntries, JournalEntryLines and optional warehouse branch/inventory-account links. See accounting ADR before adding automated posting.
 | `Migrations/*.cs` and snapshot | schema evolution/model snapshots | EF tooling, deployment. |
 
 Inventory concurrency update (2026-09-13): ProductStock and StockTransfer include database-generated rowversions; migration `AddInventoryConcurrency` updates SQL Server. UnitOfWork uses Serializable isolation for atomic inventory workflows. Manual stock transactions accept adjustments only, and purchase/sale aggregates reject duplicate product lines. Focused checks live in `tests/SecurityRegression`.
-| `Repositories/*.cs` | EF implementations of Domain repository contracts | application services. |
-| `Repositories/JournalEntryRepository.cs` | journal source duplicate-posting lookup and persistence | `PurchasePostingService`. |
+| `Repositories/<Feature>/*.cs` | EF implementations grouped by feature | application services. |
+| `Repositories/Accounting/JournalEntryRepository.cs` | journal source duplicate-posting lookup and persistence | `PurchasePostingService`. |
 | `Authorization/PermissionService.cs` | permission check implementation | SaleService. |
 
 ## Web source map
@@ -66,8 +62,9 @@ Inventory concurrency update (2026-09-13): ProductStock and StockTransfer includ
 |---|---|---|
 | `Program.cs`, `appsettings.json`, `Properties/launchSettings.json` | startup/configuration | configuration/architecture. |
 | `Authorization/*.cs` | dynamic permission policy and handler | permissions/security. |
-| `Services/CurrentUserService.cs` | current Identity user ID for auditing | security/database. |
-| `Controllers/*.cs` | MVC endpoints | `controllers/*.md`. |
+| `Services/Security/CurrentUserService.cs` | current Identity user ID for auditing | security/database. |
+| `Controllers/<Feature>/*.cs` | MVC endpoints grouped by business feature; namespaces remain stable | `controllers/*.md`. |
+| `Controllers/Home/HomeController.cs` | application entry page | home view. |
 | `Navigation/*.cs` | navigation metadata | permissions/screens. |
 | `Views/<Module>/*.cshtml` | Razor screens/forms/client JS | `screens/*.md`. |
 | `Views/Shared/*.cshtml` | layout, notifications, validation/error/delete partials | screens/shared-ui.md. |
@@ -79,6 +76,6 @@ For exact module relationships, use `modules/*.md`; for entity and service detai
 ## Security additions (2026-09-13)
 - `MiniStore.Application/Permissions/AdministrationPermissions.cs`: shared Admin-only identity mutation boundary, consumed by both permission evaluators.
 - `tests/SecurityRegression/{SecurityRegression.csproj,Program.cs}`: standalone executable authorization/action regression checks; references Web; no test-framework dependency.
-- Runtime login limiter and Identity lockout: `Web/Program.cs` and `Controllers/AccountController.cs`.
+- Runtime login limiter and Identity lockout: `Web/Program.cs` and `Controllers/Security/AccountController.cs`.
 - Bootstrap opt-in: `Infrastructure/Persistence/IdentitySeeder.cs` and Web appsettings.
 - Controller broad-error handling and five index delete forms: see security/controller/screen docs.

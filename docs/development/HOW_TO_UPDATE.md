@@ -13,3 +13,5 @@ Source code is authoritative. Before code changes read `00_PROJECT_CONTEXT.md`, 
 - **Accounting rule:** update accounting, relevant entities/services/modules/database and ADR when it changes system design.
 
 After change: build, run relevant tests, review diff, update docs' date/status, TODO status and `history/AI_WORKLOG.md`.
+
+Place new source files in the matching feature subfolder inside their layer. Use the established feature names documented in `decisions/2026-09-13-feature-folder-organization.md`; do not add a file to a flat Entities, Interfaces, Services, Repositories, Configurations or Controllers root unless it is cross-cutting.

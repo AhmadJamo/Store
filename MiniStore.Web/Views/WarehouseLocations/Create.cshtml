@@ -1,4 +1,93 @@
 @model MiniStore.Application.DTOs.Warehouses.CreateStorageLocationDto
 @using MiniStore.Domain.Entities
-@{ ViewData["Title"]="Add Storage Location"; }
-<div class="container mt-4"><h2>Add Storage Location</h2><p class="text-muted">Create a scannable warehouse position such as MAIN-DRY-A-R03-L02-B04.</p><form method="post"><div asp-validation-summary="ModelOnly" class="text-danger"></div><div class="row g-3"><div class="col-md-6"><label asp-for="WarehouseId" class="form-label">Warehouse</label><select asp-for="WarehouseId" class="form-select" required><option value="">Select warehouse</option>@foreach(var warehouse in ViewBag.Warehouses){<option value="@warehouse.Id">@warehouse.Name</option>}</select></div><div class="col-md-6"><label asp-for="Code" class="form-label">Location code / barcode</label><input asp-for="Code" class="form-control" placeholder="MAIN-A-R03-L02-B04" required /></div><div class="col-md-4"><label asp-for="Zone" class="form-label">Zone</label><input asp-for="Zone" class="form-control" /></div><div class="col-md-4"><label asp-for="Aisle" class="form-label">Aisle</label><input asp-for="Aisle" class="form-control" /></div><div class="col-md-4"><label asp-for="Rack" class="form-label">Rack</label><input asp-for="Rack" class="form-control" /></div><div class="col-md-4"><label asp-for="Level" class="form-label">Level / floor</label><input asp-for="Level" class="form-control" /></div><div class="col-md-4"><label asp-for="Bin" class="form-label">Bin</label><input asp-for="Bin" class="form-control" /></div><div class="col-md-4"><label asp-for="Type" class="form-label">Location type</label><select asp-for="Type" asp-items="Html.GetEnumSelectList<StorageLocationType>()" class="form-select"></select></div><div class="col-md-4"><label asp-for="MaximumQuantity" class="form-label">Maximum quantity</label><input asp-for="MaximumQuantity" type="number" min="0" step="0.001" class="form-control" /></div></div><div class="mt-4"><button class="btn btn-primary">Save location</button> <a asp-action="Index" class="btn btn-secondary">Cancel</a></div></form></div>
+
+@{
+    ViewData["Title"] = "Add Storage Location";
+    var warehouses = ViewBag.Warehouses as List<Warehouse> ?? [];
+}
+
+<div class="container mt-4">
+    <h2>Add Storage Location</h2>
+    <p class="text-muted">
+        Create a scannable warehouse position such as MAIN-DRY-A-R03-L02-B04.
+    </p>
+
+    <form asp-action="Create" method="post">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label asp-for="WarehouseId" class="form-label">Warehouse</label>
+                <select asp-for="WarehouseId" class="form-select" required>
+                    <option value="">Select warehouse</option>
+                    @foreach (var warehouse in warehouses)
+                    {
+                        <option value="@warehouse.Id">@warehouse.Name</option>
+                    }
+                </select>
+                <span asp-validation-for="WarehouseId" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-6">
+                <label asp-for="Code" class="form-label">Location code / barcode</label>
+                <input asp-for="Code"
+                       class="form-control"
+                       placeholder="MAIN-A-R03-L02-B04"
+                       required />
+                <span asp-validation-for="Code" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-4">
+                <label asp-for="Zone" class="form-label">Zone</label>
+                <input asp-for="Zone" class="form-control" />
+            </div>
+
+            <div class="col-md-4">
+                <label asp-for="Aisle" class="form-label">Aisle</label>
+                <input asp-for="Aisle" class="form-control" />
+            </div>
+
+            <div class="col-md-4">
+                <label asp-for="Rack" class="form-label">Rack</label>
+                <input asp-for="Rack" class="form-control" />
+            </div>
+
+            <div class="col-md-4">
+                <label asp-for="Level" class="form-label">Level / floor</label>
+                <input asp-for="Level" class="form-control" />
+            </div>
+
+            <div class="col-md-4">
+                <label asp-for="Bin" class="form-label">Bin</label>
+                <input asp-for="Bin" class="form-control" />
+            </div>
+
+            <div class="col-md-4">
+                <label asp-for="Type" class="form-label">Location type</label>
+                <select asp-for="Type"
+                        asp-items="Html.GetEnumSelectList<StorageLocationType>()"
+                        class="form-select">
+                </select>
+            </div>
+
+            <div class="col-md-4">
+                <label asp-for="MaximumQuantity" class="form-label">Maximum quantity</label>
+                <input asp-for="MaximumQuantity"
+                       type="number"
+                       min="0"
+                       step="0.001"
+                       class="form-control" />
+                <span asp-validation-for="MaximumQuantity" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="mt-4">
+            <button class="btn btn-primary">Save location</button>
+            <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
