@@ -17,17 +17,20 @@ public class StockTransfersController : Controller
     private readonly IProductRepository _productRepository;
     private readonly IWarehouseRepository _warehouseRepository;
     private readonly UserManager<IdentityUser> _userManager;
+    private readonly IStorageLocationRepository _storageLocationRepository;
 
     public StockTransfersController(
         IStockTransferService stockTransferService,
         IProductRepository productRepository,
         IWarehouseRepository warehouseRepository,
-        UserManager<IdentityUser> userManager)
+        UserManager<IdentityUser> userManager,
+        IStorageLocationRepository storageLocationRepository)
     {
         _stockTransferService = stockTransferService;
         _productRepository = productRepository;
         _warehouseRepository = warehouseRepository;
         _userManager = userManager;
+        _storageLocationRepository = storageLocationRepository;
     }
 
     // ============================================================
@@ -141,6 +144,7 @@ public class StockTransfersController : Controller
 
         var products =
             await _productRepository.GetAllAsync(null);
+        var storageLocations = await _storageLocationRepository.SearchAsync(null, null);
 
         var fromWarehouse =
             warehouses.FirstOrDefault(
@@ -374,7 +378,11 @@ public class StockTransfersController : Controller
                         product?.Barcode,
 
                     Quantity =
-                        item.Quantity
+                        item.Quantity,
+                    SourceLocationId = item.SourceLocationId,
+                    DestinationLocationId = item.DestinationLocationId,
+                    SourceLocationCode = storageLocations.FirstOrDefault(x => x.Id == item.SourceLocationId)?.Code ?? "Legacy / unassigned",
+                    DestinationLocationCode = storageLocations.FirstOrDefault(x => x.Id == item.DestinationLocationId)?.Code ?? "Legacy / unassigned"
                 });
         }
 
@@ -480,7 +488,9 @@ public class StockTransfersController : Controller
                         item =>
                             new CreateStockTransferItemCommand(
                                 item.ProductId,
-                                item.Quantity))
+                                item.Quantity,
+                                item.SourceLocationId,
+                                item.DestinationLocationId))
                     .ToList();
 
             var command =
@@ -585,7 +595,13 @@ public class StockTransfersController : Controller
                         item.ProductId,
 
                     Quantity =
-                        item.Quantity
+                        item.Quantity,
+
+                    SourceLocationId =
+                        item.SourceLocationId,
+
+                    DestinationLocationId =
+                        item.DestinationLocationId
                 });
         }
 
@@ -635,7 +651,9 @@ public class StockTransfersController : Controller
                         item =>
                             new UpdateStockTransferItemCommand(
                                 item.ProductId,
-                                item.Quantity))
+                                item.Quantity,
+                                item.SourceLocationId,
+                                item.DestinationLocationId))
                     .ToList();
 
             var command =
@@ -948,5 +966,6 @@ public class StockTransfersController : Controller
         ViewBag.Warehouses =
             await _warehouseRepository
                 .GetAllAsync();
+        ViewBag.StorageLocations = await _storageLocationRepository.SearchAsync(null, null);
     }
 }

@@ -7,6 +7,7 @@
 
 ## In Progress
 - Add sale tax and journal posting, weighted-average COGS calculation, purchase reversal and fiscal-period controls.
+- Add dedicated internal location-to-location movement and allocation audit-history workflows.
 
 ## High Priority
 - Rotate previously committed admin credentials and invalidate sessions on existing deployments (operator action).

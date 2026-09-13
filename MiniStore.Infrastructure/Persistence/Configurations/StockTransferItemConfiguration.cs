@@ -21,6 +21,9 @@ public class StockTransferItemConfiguration
             .HasForeignKey(x => x.ProductId)
             .OnDelete(DeleteBehavior.Restrict);
 
+        builder.HasOne<StorageLocation>().WithMany().HasForeignKey(x => x.SourceLocationId).OnDelete(DeleteBehavior.Restrict);
+        builder.HasOne<StorageLocation>().WithMany().HasForeignKey(x => x.DestinationLocationId).OnDelete(DeleteBehavior.Restrict);
+
         builder.HasOne<StockTransfer>()
             .WithMany(x => x.Items)
             .HasForeignKey(x => x.StockTransferId)

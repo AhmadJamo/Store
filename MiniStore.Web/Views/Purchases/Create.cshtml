@@ -48,7 +48,7 @@
 
             <label asp-for="WarehouseId"
                    class="form-label">
-                Warehouse
+                Default Warehouse
             </label>
 
             <select asp-for="WarehouseId"
@@ -135,14 +135,15 @@
                 <tr>
 
                     <th>Product</th>
+                    <th>Warehouse</th>
 
                     <th>Quantity</th>
 
                     <th>Purchase Price</th>
 
-                    <th>Discount</th>
-
                     <th>Tax</th>
+
+                    <th>Discount</th>
 
                     <th>Total</th>
 
@@ -265,6 +266,7 @@
 
                 </td>
 
+                <td><select name="Items[${itemIndex}].WarehouseId" class="form-select item-warehouse" required><option value="">-- Select Warehouse --</option>@foreach (var warehouse in ViewBag.Warehouses) { <option value="@warehouse.Id">@warehouse.Name</option> }</select></td>
 
                 <td>
 
@@ -341,6 +343,8 @@
 
 
         tbody.appendChild(row);
+        const defaultWarehouse = document.getElementById("WarehouseId")?.value;
+        if (defaultWarehouse) row.querySelector(".item-warehouse").value = defaultWarehouse;
 
 
         // Quantity / Price change

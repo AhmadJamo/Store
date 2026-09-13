@@ -89,6 +89,10 @@ builder.Services.AddScoped<IJournalEntryRepository, JournalEntryRepository>();
 builder.Services.AddScoped<PurchasePostingService>();
 builder.Services.AddScoped<IPaymentMethodRepository, PaymentMethodRepository>();
 builder.Services.AddScoped<PaymentMethodService>();
+builder.Services.AddScoped<IStorageLocationRepository, StorageLocationRepository>();
+builder.Services.AddScoped<StorageLocationService>();
+builder.Services.AddScoped<IProductLocationStockRepository, ProductLocationStockRepository>();
+builder.Services.AddScoped<UnassignedStockService>();
 
 builder.Services.AddScoped<IProductStockRepository,ProductStockRepository>();
 

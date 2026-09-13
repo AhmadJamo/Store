@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MiniStore.Infrastructure.Persistence;
 
@@ -11,9 +12,11 @@ using MiniStore.Infrastructure.Persistence;
 namespace MiniStore.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260913163900_AddWarehouseStorageLocations")]
+    partial class AddWarehouseStorageLocations
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -824,45 +827,6 @@ namespace MiniStore.Infrastructure.Migrations
                     b.ToTable("Products");
                 });
 
-            modelBuilder.Entity("MiniStore.Domain.Entities.ProductLocationStock", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("Quantity")
-                        .HasPrecision(18, 3)
-                        .HasColumnType("decimal(18,3)");
-
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .IsRequired()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
-
-                    b.Property<int>("StorageLocationId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("WarehouseId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("StorageLocationId");
-
-                    b.HasIndex("WarehouseId");
-
-                    b.HasIndex("ProductId", "StorageLocationId")
-                        .IsUnique();
-
-                    b.ToTable("ProductLocationStocks");
-                });
-
             modelBuilder.Entity("MiniStore.Domain.Entities.ProductStock", b =>
                 {
                     b.Property<int>("Id")
@@ -972,9 +936,6 @@ namespace MiniStore.Infrastructure.Migrations
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int?>("WarehouseId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("ProductId");
@@ -982,8 +943,6 @@ namespace MiniStore.Infrastructure.Migrations
                     b.HasIndex("PurchaseId");
 
                     b.HasIndex("TaxRateId");
-
-                    b.HasIndex("WarehouseId");
 
                     b.ToTable("PurchaseItems");
                 });
@@ -1312,9 +1271,6 @@ namespace MiniStore.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("DestinationLocationId")
-                        .HasColumnType("int");
-
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
 
@@ -1322,19 +1278,12 @@ namespace MiniStore.Infrastructure.Migrations
                         .HasPrecision(18, 3)
                         .HasColumnType("decimal(18,3)");
 
-                    b.Property<int?>("SourceLocationId")
-                        .HasColumnType("int");
-
                     b.Property<int>("StockTransferId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("DestinationLocationId");
-
                     b.HasIndex("ProductId");
-
-                    b.HasIndex("SourceLocationId");
 
                     b.HasIndex("StockTransferId", "ProductId")
                         .IsUnique();
@@ -1653,27 +1602,6 @@ namespace MiniStore.Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("MiniStore.Domain.Entities.ProductLocationStock", b =>
-                {
-                    b.HasOne("MiniStore.Domain.Entities.Product", null)
-                        .WithMany()
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("MiniStore.Domain.Entities.StorageLocation", null)
-                        .WithMany()
-                        .HasForeignKey("StorageLocationId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("MiniStore.Domain.Entities.Warehouse", null)
-                        .WithMany()
-                        .HasForeignKey("WarehouseId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("MiniStore.Domain.Entities.ProductStock", b =>
                 {
                     b.HasOne("MiniStore.Domain.Entities.Product", null)
@@ -1721,11 +1649,6 @@ namespace MiniStore.Infrastructure.Migrations
                     b.HasOne("MiniStore.Domain.Entities.TaxRate", null)
                         .WithMany()
                         .HasForeignKey("TaxRateId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("MiniStore.Domain.Entities.Warehouse", null)
-                        .WithMany()
-                        .HasForeignKey("WarehouseId")
                         .OnDelete(DeleteBehavior.Restrict);
                 });
 
@@ -1815,21 +1738,11 @@ namespace MiniStore.Infrastructure.Migrations
 
             modelBuilder.Entity("MiniStore.Domain.Entities.StockTransferItem", b =>
                 {
-                    b.HasOne("MiniStore.Domain.Entities.StorageLocation", null)
-                        .WithMany()
-                        .HasForeignKey("DestinationLocationId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("MiniStore.Domain.Entities.Product", null)
                         .WithMany()
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.HasOne("MiniStore.Domain.Entities.StorageLocation", null)
-                        .WithMany()
-                        .HasForeignKey("SourceLocationId")
-                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("MiniStore.Domain.Entities.StockTransfer", null)
                         .WithMany("Items")

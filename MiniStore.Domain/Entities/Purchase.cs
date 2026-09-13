@@ -53,9 +53,9 @@ public class Purchase
         if (item == null)
             throw new ArgumentNullException(nameof(item));
 
-        if (Items.Any(x => x.ProductId == item.ProductId))
+        if (Items.Any(x => x.ProductId == item.ProductId && x.WarehouseId == item.WarehouseId))
             throw new InvalidOperationException(
-                "The same product cannot be added more than once.");
+                "The same product cannot be added more than once for the same warehouse.");
 
         Items.Add(item);
 

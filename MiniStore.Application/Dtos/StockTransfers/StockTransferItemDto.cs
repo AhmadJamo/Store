@@ -11,4 +11,8 @@ public class StockTransferItemDto
     public string? Barcode { get; set; }
 
     public decimal Quantity { get; set; }
+    public int? SourceLocationId { get; set; }
+    public int? DestinationLocationId { get; set; }
+    public string SourceLocationCode { get; set; } = "Legacy / unassigned";
+    public string DestinationLocationCode { get; set; } = "Legacy / unassigned";
 }

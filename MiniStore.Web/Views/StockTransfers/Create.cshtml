@@ -13,6 +13,7 @@
     var warehouses =
         ViewBag.Warehouses as List<Warehouse>
         ?? new List<Warehouse>();
+    var locations = ViewBag.StorageLocations as List<StorageLocation> ?? new List<StorageLocation>();
 }
 
 
@@ -251,9 +252,12 @@
 
                             <tr>
 
-                                <th style="width: 50%;">
+                                <th>
                                     Product
                                 </th>
+
+                                <th>Source location</th>
+                                <th>Destination location</th>
 
                                 <th style="width: 25%;">
                                     Quantity
@@ -331,6 +335,14 @@
 
         </select>
 
+        <select id="locationTemplate" class="d-none">
+            <option value="">Unassigned / choose later</option>
+            @foreach (var location in locations)
+            {
+                <option value="@location.Id" data-warehouse-id="@location.WarehouseId">@location.Code</option>
+            }
+        </select>
+
 
         <!-- Validation Summary -->
 
@@ -390,6 +402,7 @@
 
         const productTemplate =
             document.getElementById("productTemplate");
+        const locationTemplate = document.getElementById("locationTemplate");
 
         const addItemButton =
             document.getElementById("addItemButton");
@@ -402,6 +415,17 @@
 
         const toWarehouse =
             document.getElementById("toWarehouse");
+
+        function refreshLocationSelects() {
+            document.querySelectorAll('.source-location').forEach(select => {
+                select.innerHTML = ''; Array.from(locationTemplate.options).forEach(option => { if (!option.value || option.dataset.warehouseId === fromWarehouse.value) select.appendChild(option.cloneNode(true)); });
+            });
+            document.querySelectorAll('.destination-location').forEach(select => {
+                select.innerHTML = ''; Array.from(locationTemplate.options).forEach(option => { if (!option.value || option.dataset.warehouseId === toWarehouse.value) select.appendChild(option.cloneNode(true)); });
+            });
+        }
+        fromWarehouse.addEventListener('change', refreshLocationSelects);
+        toWarehouse.addEventListener('change', refreshLocationSelects);
 
 
         // ================================================
@@ -558,6 +582,9 @@
 
                         </td>
 
+                        <td><select name="Items[${itemIndex}].SourceLocationId" class="form-select source-location"></select></td>
+                        <td><select name="Items[${itemIndex}].DestinationLocationId" class="form-select destination-location"></select></td>
+
 
                         <td>
 
@@ -595,6 +622,15 @@
 
 
             itemsTableBody.appendChild(row);
+
+            const fillLocations = (select, warehouseId) => {
+                select.innerHTML = '';
+                Array.from(locationTemplate.options).forEach(option => {
+                    if (!option.value || option.dataset.warehouseId === warehouseId) select.appendChild(option.cloneNode(true));
+                });
+            };
+            fillLocations(row.querySelector('.source-location'), fromWarehouse.value);
+            fillLocations(row.querySelector('.destination-location'), toWarehouse.value);
 
 
             const select =

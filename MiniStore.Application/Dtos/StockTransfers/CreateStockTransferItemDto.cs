@@ -5,4 +5,6 @@ public class CreateStockTransferItemDto
     public int ProductId { get; set; }
 
     public decimal Quantity { get; set; }
+    public int? SourceLocationId { get; set; }
+    public int? DestinationLocationId { get; set; }
 }

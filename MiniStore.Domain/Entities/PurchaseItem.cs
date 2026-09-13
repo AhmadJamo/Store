@@ -7,6 +7,7 @@ public class PurchaseItem
     public int PurchaseId { get; private set; }
 
     public int ProductId { get; private set; }
+    public int? WarehouseId { get; private set; }
 
     public decimal Quantity { get; private set; }
 
@@ -22,6 +23,7 @@ public class PurchaseItem
         int productId,
         decimal quantity,
         decimal purchasePrice,
+        int? warehouseId,
         decimal discountAmount = 0,
         int? taxRateId = null)
     {
@@ -36,11 +38,13 @@ public class PurchaseItem
         if (purchasePrice < 0)
             throw new ArgumentException(
                 "Purchase price cannot be negative.");
+        if (!warehouseId.HasValue || warehouseId.Value <= 0) throw new ArgumentException("A warehouse is required for every purchase item.");
 
         if (discountAmount < 0 || discountAmount > quantity * purchasePrice)
             throw new ArgumentException("Purchase discount is invalid.");
 
         ProductId = productId;
+        WarehouseId = warehouseId;
         Quantity = quantity;
         PurchasePrice = purchasePrice;
         DiscountAmount = discountAmount;

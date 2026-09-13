@@ -12,16 +12,16 @@ public class PurchasePostingService(IPurchaseRepository purchaseRepository, ISup
     {
         var purchase = await purchaseRepository.GetByIdAsync(purchaseId) ?? throw new InvalidOperationException("Purchase not found.");
         var supplier = await supplierRepository.GetByIdAsync(purchase.SupplierId) ?? throw new InvalidOperationException("Supplier not found.");
-        var warehouse = await warehouseRepository.GetByIdAsync(purchase.WarehouseId) ?? throw new InvalidOperationException("Warehouse not found.");
         var settings = await accountingSettingsRepository.GetAsync() ?? throw new InvalidOperationException("Configure accounting posting accounts before posting purchases.");
         if (!supplier.AccountId.HasValue) throw new InvalidOperationException("Assign a payable account to the supplier before posting this purchase.");
-        if (!warehouse.InventoryAccountId.HasValue) throw new InvalidOperationException("Assign an inventory account to the warehouse before posting this purchase.");
 
         var taxRates = (await taxRateRepository.GetAllAsync()).ToDictionary(x => x.Id);
         var entry = new JournalEntry($"JE-PUR-{purchase.InvoiceNumber}", purchase.Date, $"Purchase invoice {purchase.InvoiceNumber}", PurchaseSourceType, purchase.InvoiceNumber);
         decimal payableTotal = 0;
         foreach (var item in purchase.Items)
         {
+            var warehouse = await warehouseRepository.GetByIdAsync(item.WarehouseId ?? purchase.WarehouseId) ?? throw new InvalidOperationException("Item warehouse not found.");
+            if (!warehouse.InventoryAccountId.HasValue) throw new InvalidOperationException($"Assign an inventory account to warehouse '{warehouse.Name}' before posting this purchase.");
             var gross = item.Quantity * item.PurchasePrice;
             var taxableAmount = gross - item.DiscountAmount;
             var taxAmount = 0m;
@@ -42,7 +42,7 @@ public class PurchasePostingService(IPurchaseRepository purchaseRepository, ISup
                 entry.AddLine(new JournalEntryLine(taxRate.InputAccountId, taxAmount, 0, warehouse.BranchId, warehouse.Id, $"Input tax on {purchase.InvoiceNumber}"));
             payableTotal += taxRate?.IsPriceInclusive == true ? taxableAmount : taxableAmount + taxAmount;
         }
-        entry.AddLine(new JournalEntryLine(supplier.AccountId.Value, 0, payableTotal, warehouse.BranchId, warehouse.Id, $"Supplier payable for {purchase.InvoiceNumber}"));
+        entry.AddLine(new JournalEntryLine(supplier.AccountId.Value, 0, payableTotal, null, null, $"Supplier payable for {purchase.InvoiceNumber}"));
         entry.Post();
         await unitOfWork.ExecuteInTransactionAsync(async () =>
         {

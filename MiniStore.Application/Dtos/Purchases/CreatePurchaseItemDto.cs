@@ -3,6 +3,7 @@
 public class CreatePurchaseItemDto
 {
     public int ProductId { get; set; }
+    public int WarehouseId { get; set; }
 
     public decimal Quantity { get; set; }
 

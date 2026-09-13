@@ -13,11 +13,14 @@
 | Warehouses, Suppliers | Warehouses can link a branch and inventory account; suppliers can link a payable account. |
 | TaxRates / AccountingSettings | Tax rates require input/output tax accounts; singleton accounting settings reference optional discount, revenue and COGS accounts. |
 | PaymentMethods / Sales | Each payment method references a settlement account; new sales capture a required payment method and optional customer. |
+| StorageLocations | Warehouse FK Restrict; unique `(WarehouseId, Code)`; zone/aisle/rack/level/bin, type, status and optional quantity capacity. |
 | ProductStocks | product + warehouse FKs Restrict; unique `(ProductId, WarehouseId)`; quantity decimal(18,3); SQL Server rowversion optimistic-concurrency token. |
+| ProductLocationStocks | product/warehouse/location FKs Restrict; unique `(ProductId, StorageLocationId)`; quantity decimal(18,3) and rowversion. Sum of location quantities cannot exceed warehouse balance through application allocation rules. |
 | StockTransactions | product + warehouse FKs Restrict; quantity decimal(18,3); indexed `(ProductId, WarehouseId)`. |
-| Purchases / PurchaseItems | supplier/warehouse FKs Restrict; items cascade from purchase; purchase invoice number unique; item supports discount amount and optional tax rate. |
+| Purchases / PurchaseItems | supplier/header warehouse FKs Restrict; each item has its own optional-for-legacy warehouse FK, discount and tax. New items require warehouse selection. |
 | Sales / SaleItems | warehouse FK Restrict; items cascade; sale invoice number unique. |
 | StockTransfers / items/history | warehouse FKs Restrict; transfer number unique; StockTransfer rowversion; item/history FKs Restrict; item unique `(StockTransferId, ProductId)`. |
+| StockTransferItem locations | Optional source/destination StorageLocation FKs preserve old rows; application requires both valid locations for new transfers. |
 | Permissions / RolePermissions | permission name unique; role-permission unique `(RoleId, PermissionId)`; permission deletion cascades mapping. |
 | AuditLogs | indexed by CreatedAt and `(EntityName, EntityId)`. |
 | GeneralSettings / DiscountSettings | singleton key check/index and rowversion. |

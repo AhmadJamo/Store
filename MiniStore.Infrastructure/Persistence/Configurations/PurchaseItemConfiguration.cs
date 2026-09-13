@@ -30,5 +30,10 @@ public class PurchaseItemConfiguration
             .WithMany()
             .HasForeignKey(x => x.ProductId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasOne<Warehouse>()
+            .WithMany()
+            .HasForeignKey(x => x.WarehouseId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

@@ -91,7 +91,23 @@ public static class NavigationDefinitions
                 "StockTransfers",
                 "Index",
                 "StockTransfers.View",
-                50)
+                50),
+
+            new NavigationItem(
+                "Warehouse Locations",
+                "bi-grid-3x3-gap",
+                "WarehouseLocations",
+                "Index",
+                "Warehouses.View",
+                60),
+
+            new NavigationItem(
+                "Unassigned Stock",
+                "bi-inbox",
+                "UnassignedStock",
+                "Index",
+                "ProductStock.View",
+                70)
         ),
 
         new NavigationGroup(

@@ -16,6 +16,8 @@ public class PurchaseService
   
     private readonly IProductStockRepository _productStockRepository;
 
+    private readonly IProductLocationStockRepository _productLocationStockRepository;
+
     private readonly IStockTransactionRepository _stockTransactionRepository;
 
     private readonly IUnitOfWork _unitOfWork;
@@ -26,6 +28,7 @@ public class PurchaseService
         ISupplierRepository supplierRepository,
         IWarehouseRepository warehouseRepository,
         IProductStockRepository productStockRepository,
+        IProductLocationStockRepository productLocationStockRepository,
         IStockTransactionRepository stockTransactionRepository,
         IUnitOfWork unitOfWork)
     {
@@ -38,6 +41,8 @@ public class PurchaseService
         _warehouseRepository = warehouseRepository;
 
         _productStockRepository = productStockRepository;
+
+        _productLocationStockRepository = productLocationStockRepository;
 
         _stockTransactionRepository = stockTransactionRepository;
 
@@ -95,6 +100,8 @@ public class PurchaseService
 
                             ProductId =
                                 item.ProductId,
+                            WarehouseId = item.WarehouseId,
+                            WarehouseName = warehouses.FirstOrDefault(x => x.Id == item.WarehouseId)?.Name ?? "Legacy warehouse",
 
                             ProductName = products
                                 .FirstOrDefault(x =>
@@ -131,9 +138,8 @@ public class PurchaseService
             await _supplierRepository
                 .GetByIdAsync(purchase.SupplierId);
 
-        var warehouse =
-            await _warehouseRepository
-                .GetByIdAsync(purchase.WarehouseId);
+        var warehouse = await _warehouseRepository.GetByIdAsync(purchase.WarehouseId);
+        var warehouses = await _warehouseRepository.GetAllAsync();
 
         var products =
             await _productRepository.GetAllAsync(null);
@@ -174,6 +180,8 @@ public class PurchaseService
 
                         ProductId =
                             item.ProductId,
+                        WarehouseId = item.WarehouseId,
+                        WarehouseName = warehouses.FirstOrDefault(x => x.Id == item.WarehouseId)?.Name ?? warehouse?.Name ?? "Legacy warehouse",
 
                         ProductName = products
                             .FirstOrDefault(x =>
@@ -207,10 +215,6 @@ public class PurchaseService
             throw new ArgumentException(
                 "Supplier is required.");
 
-        if (dto.WarehouseId <= 0)
-            throw new ArgumentException(
-                "Warehouse is required.");
-
         if (string.IsNullOrWhiteSpace(dto.InvoiceNumber))
             throw new ArgumentException(
                 "Invoice number is required.");
@@ -230,13 +234,8 @@ public class PurchaseService
             throw new InvalidOperationException(
                 "Supplier not found.");
 
-        var warehouse =
-            await _warehouseRepository
-                .GetByIdAsync(dto.WarehouseId);
-
-        if (warehouse == null)
-            throw new InvalidOperationException(
-                "Warehouse not found.");
+        var firstWarehouseId = dto.Items.First().WarehouseId;
+        if (firstWarehouseId <= 0) throw new ArgumentException("A warehouse is required for every purchase item.");
 
         await _unitOfWork.ExecuteInTransactionAsync(
             async () =>
@@ -244,7 +243,7 @@ public class PurchaseService
                 var purchase =
                     new Purchase(
                         dto.SupplierId,
-                        dto.WarehouseId,
+                        firstWarehouseId,
                         dto.InvoiceNumber,
                         dto.Date,
                         dto.Notes);
@@ -262,6 +261,8 @@ public class PurchaseService
                     if (itemDto.PurchasePrice < 0)
                         throw new ArgumentException(
                             "Purchase price cannot be negative.");
+                    var itemWarehouse = await _warehouseRepository.GetByIdAsync(itemDto.WarehouseId);
+                    if (itemWarehouse == null) throw new InvalidOperationException("A selected item warehouse was not found.");
 
                     var product =
                         await _productRepository
@@ -278,6 +279,7 @@ public class PurchaseService
                             itemDto.ProductId,
                             itemDto.Quantity,
                             itemDto.PurchasePrice,
+                            itemDto.WarehouseId,
                             itemDto.DiscountAmount,
                             itemDto.TaxRateId);
 
@@ -287,16 +289,24 @@ public class PurchaseService
                         await _productStockRepository
                             .GetByProductAndWarehouseAsync(
                                 itemDto.ProductId,
-                                dto.WarehouseId);
+                                itemDto.WarehouseId);
 
                     if (stock == null)
                     {
                         stock = new ProductStock(
                             itemDto.ProductId,
-                            dto.WarehouseId);
+                            itemDto.WarehouseId);
 
                         await _productStockRepository
                             .AddAsync(stock);
+                    }
+                    else if (stock.Quantity == 0)
+                    {
+                        // A depleted warehouse has no physical quantity left in its
+                        // previous rack/bin allocations. New receipts must be put away again.
+                        await _productLocationStockRepository.RemoveAllAsync(
+                            itemDto.ProductId,
+                            itemDto.WarehouseId);
                     }
 
                     stock.AddQuantity(
@@ -305,7 +315,7 @@ public class PurchaseService
                     var transaction =
                         new StockTransaction(
                             itemDto.ProductId,
-                            dto.WarehouseId,
+                            itemDto.WarehouseId,
                             itemDto.Quantity,
                             StockTransactionType.Purchase,
                             dto.InvoiceNumber);

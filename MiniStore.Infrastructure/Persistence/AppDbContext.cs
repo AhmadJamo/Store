@@ -71,6 +71,8 @@ public class AppDbContext
     public DbSet<PosTerminalProduct> PosTerminalProducts => Set<PosTerminalProduct>();
     public DbSet<AccountingSettings> AccountingSettings => Set<AccountingSettings>();
     public DbSet<PaymentMethod> PaymentMethods => Set<PaymentMethod>();
+    public DbSet<StorageLocation> StorageLocations => Set<StorageLocation>();
+    public DbSet<ProductLocationStock> ProductLocationStocks => Set<ProductLocationStock>();
 
 
 

@@ -37,6 +37,18 @@ Added a Settings → Accounting screen for assigning each branch a dedicated sal
 ## 2026-09-13 — Navigation update
 Added navigation entries for customers, chart of accounts, branches, tax rates and payment methods. Accounting connection screens remain under Settings. These master-data controllers retain their existing Admin role authorization.
 
+## 2026-09-13 — Warehouse location foundation
+Added storage-location master data with warehouse-scoped unique codes, zone, aisle, rack, level, bin, type, status and optional capacity. Added a Warehouse Locations screen with warehouse filtering and combined location/product-name/barcode search. Existing warehouse-level stock is shown as Unassigned pending location allocation and putaway, avoiding duplicate quantities during transition. Added navigation and applied migration `AddWarehouseStorageLocations` to the local MiniStoreDb. Release build passed with no warnings or errors and EF reports no pending model changes.
+
+## 2026-09-13 — Exact locations on warehouse transfers
+Added source and destination StorageLocation references to every stock-transfer line. New transfers require both, filter location choices by selected source/destination warehouse and validate warehouse ownership and active status in the Application layer. Details display both location codes. Historical rows remain nullable. Added and applied migration `AddStockTransferLocations` to the local MiniStoreDb; location quantity enforcement awaits the allocation ledger.
+
+## 2026-09-13 — Unassigned stock and per-line purchase warehouses
+Made exact transfer locations optional. Added concurrent location-level balances and an Unassigned Stock work queue with warehouse/name/barcode search, sorting and partial allocation to active locations with capacity and aggregate-balance validation. Transfer posting/cancellation now moves location balances when selected and otherwise uses unassigned quantities. Purchase invoices now select a warehouse per line and may distribute one invoice across warehouses; receipt remains unassigned for later putaway. Added and applied migration `AddLocationAllocationAndPurchaseItemWarehouses` to the local MiniStoreDb with legacy purchase-item warehouse backfill. The Release build passed with zero warnings or errors and EF reports no pending model changes.
+
+## 2026-09-13 — Reset putaway after stock depletion
+Purchase creation now removes obsolete rack/bin allocations when the product's pre-receipt warehouse balance is zero. The new receipt is therefore shown in full in Unassigned Stock and must be assigned to a current physical location. The cleanup shares the Serializable purchase transaction, so the purchase, warehouse balance, movement and allocation reset commit or roll back together.
+
 ## 2026-09-13 — Security remediation
 Inspected authentication, permission evaluators, role/user management, seeders, MVC mutations, dynamic views and error handling. Added Admin-only identity mutation policy in Application and enforced it in both evaluators; fixed role-delete GET CSRF and all delete controls; enabled lockout/rate limiting; removed default bootstrap password and blocked existing-account promotion; sanitized broad exception responses while logging details. Added focused executable regression checks. No deployment/database credentials changed. Remaining credential rotation, hosting configuration, inventory concurrency and audit limitations are recorded in security/TODO docs.
 

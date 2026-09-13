@@ -17,7 +17,8 @@
 | Files | Type/purpose | Consumers/docs |
 |---|---|---|
 | `Entities/Product.cs`, `Warehouse.cs`, `Supplier.cs` | Master-data entities | respective modules/entities docs. |
-| `Entities/ProductStock.cs`, `StockTransaction.cs`, `StockTransactionType.cs` | balance and movement model | inventory module. |
+| `Entities/ProductStock.cs`, `ProductLocationStock.cs`, `StockTransaction.cs`, `StockTransactionType.cs` | warehouse balance, exact-location allocation and movement model | inventory module. |
+| `Entities/StorageLocation*.cs` | warehouse zone/aisle/rack/level/bin master data | inventory module. |
 | `Entities/Purchase.cs`, `PurchaseItem.cs` | purchase aggregate/items | purchases module. |
 | `Entities/Sale.cs`, `SaleItem.cs`, `SaleChannel.cs` | sales aggregate/items/channels | sales module. |
 | `Entities/StockTransfer*.cs` | transfer aggregate, item, history, statuses/actions | stock-transfers module. |
@@ -34,6 +35,8 @@
 |---|---|---|
 | `Services/{Product,Warehouse,Supplier}Service.cs` | master-data operations | matching MVC controllers. |
 | `Services/{ProductStock,StockTransaction,Purchase,Sale,StockTransfer}Service.cs` | inventory/business documents | matching controllers. |
+| `Services/StorageLocationService.cs` | location administration and warehouse product/location search | WarehouseLocationsController. |
+| `Services/UnassignedStockService.cs` | calculates unallocated balances and assigns quantities to exact locations | UnassignedStockController. |
 | `Services/{Invoice,General,DiscountSettings,AccountingSettings,PaymentMethod,Branch}Service.cs` | settings operations and branch sales-account mapping | SettingsController, BranchesController and PaymentMethodsController. |
 | `Services/DiscountCalculator.cs` | standalone discount calculation helper; no active consumer found by scan | Unknown. |
 | `Services/ISaleService.cs`, `ICurrentUserService.cs` | service contracts | SaleService/CurrentUserService. |
