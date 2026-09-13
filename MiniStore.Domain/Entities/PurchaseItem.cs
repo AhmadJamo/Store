@@ -12,12 +12,18 @@ public class PurchaseItem
 
     public decimal PurchasePrice { get; private set; }
 
+    public decimal DiscountAmount { get; private set; }
+
+    public int? TaxRateId { get; private set; }
+
     public decimal Total { get; private set; }
 
     public PurchaseItem(
         int productId,
         decimal quantity,
-        decimal purchasePrice)
+        decimal purchasePrice,
+        decimal discountAmount = 0,
+        int? taxRateId = null)
     {
         if (productId <= 0)
             throw new ArgumentException(
@@ -31,9 +37,14 @@ public class PurchaseItem
             throw new ArgumentException(
                 "Purchase price cannot be negative.");
 
+        if (discountAmount < 0 || discountAmount > quantity * purchasePrice)
+            throw new ArgumentException("Purchase discount is invalid.");
+
         ProductId = productId;
         Quantity = quantity;
         PurchasePrice = purchasePrice;
+        DiscountAmount = discountAmount;
+        TaxRateId = taxRateId;
 
         CalculateTotal();
     }
@@ -62,6 +73,6 @@ public class PurchaseItem
 
     private void CalculateTotal()
     {
-        Total = Quantity * PurchasePrice;
+        Total = Quantity * PurchasePrice - DiscountAmount;
     }
 }

@@ -1,0 +1,2 @@
+@model List<MiniStore.Domain.Entities.Customer>
+<div class="container mt-4"><div class="d-flex justify-content-between"><h2>Customers</h2><a asp-action="Create" class="btn btn-primary">Add Customer</a></div><table class="table mt-3"><thead><tr><th>Name</th><th>Receivable account</th></tr></thead><tbody>@foreach(var customer in Model){<tr><td>@customer.Name</td><td>@customer.AccountId</td></tr>}</tbody></table></div>

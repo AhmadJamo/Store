@@ -14,17 +14,23 @@ public class SalesController : Controller
     private readonly IProductRepository _productRepository;
     private readonly IWarehouseRepository _warehouseRepository;
     private readonly IProductStockRepository _productStockRepository;
+    private readonly ICustomerRepository _customerRepository;
+    private readonly IPaymentMethodRepository _paymentMethodRepository;
 
     public SalesController(
         ISaleService saleService,
         IProductRepository productRepository,
         IWarehouseRepository warehouseRepository,
-        IProductStockRepository productStockRepository)
+        IProductStockRepository productStockRepository,
+        ICustomerRepository customerRepository,
+        IPaymentMethodRepository paymentMethodRepository)
     {
         _saleService = saleService;
         _productRepository = productRepository;
         _warehouseRepository = warehouseRepository;
         _productStockRepository = productStockRepository;
+        _customerRepository = customerRepository;
+        _paymentMethodRepository = paymentMethodRepository;
     }
 
     [PermissionAuthorize("Sales.View")]
@@ -132,5 +138,8 @@ public class SalesController : Controller
 
         ViewBag.ProductStocks =
             await _productStockRepository.GetAllAsync();
+
+        ViewBag.Customers = await _customerRepository.GetAllAsync();
+        ViewBag.PaymentMethods = await _paymentMethodRepository.GetAllAsync();
     }
 }

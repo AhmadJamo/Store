@@ -7,11 +7,13 @@ namespace MiniStore.Application.Services;
 public class SupplierService
 {
     private readonly ISupplierRepository _supplierRepository;
+    private readonly IAccountRepository _accountRepository;
 
     public SupplierService(
-        ISupplierRepository supplierRepository)
+        ISupplierRepository supplierRepository, IAccountRepository accountRepository)
     {
         _supplierRepository = supplierRepository;
+        _accountRepository = accountRepository;
     }
 
     public async Task<List<SupplierDto>> GetAllAsync()
@@ -25,7 +27,7 @@ public class SupplierService
                 Id = supplier.Id,
                 Name = supplier.Name,
                 Phone = supplier.Phone,
-                Address = supplier.Address
+                Address = supplier.Address, AccountId = supplier.AccountId
             })
             .ToList();
     }
@@ -43,7 +45,7 @@ public class SupplierService
             Id = supplier.Id,
             Name = supplier.Name,
             Phone = supplier.Phone,
-            Address = supplier.Address
+            Address = supplier.Address, AccountId = supplier.AccountId
         };
     }
 
@@ -71,6 +73,7 @@ public class SupplierService
             dto.Name,
             dto.Phone,
             dto.Address);
+        await AssignAccount(supplier, dto.AccountId);
 
         await _supplierRepository.AddAsync(supplier);
 
@@ -105,6 +108,7 @@ public class SupplierService
         supplier.ChangeName(dto.Name);
         supplier.ChangePhone(dto.Phone);
         supplier.ChangeAddress(dto.Address);
+        await AssignAccount(supplier, dto.AccountId);
 
         await _supplierRepository.SaveChangesAsync();
     }
@@ -121,5 +125,12 @@ public class SupplierService
         await _supplierRepository.DeleteAsync(supplier);
 
         await _supplierRepository.SaveChangesAsync();
+    }
+
+    private async Task AssignAccount(Supplier supplier, int accountId)
+    {
+        if (await _accountRepository.GetByIdAsync(accountId) == null)
+            throw new InvalidOperationException("Selected supplier account was not found.");
+        supplier.AssignPayableAccount(accountId);
     }
 }

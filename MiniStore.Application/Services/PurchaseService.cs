@@ -107,6 +107,8 @@ public class PurchaseService
 
                             PurchasePrice =
                                 item.PurchasePrice,
+                            DiscountAmount = item.DiscountAmount,
+                            TaxRateId = item.TaxRateId,
 
                             Total =
                                 item.Total
@@ -184,6 +186,8 @@ public class PurchaseService
 
                         PurchasePrice =
                             item.PurchasePrice,
+                        DiscountAmount = item.DiscountAmount,
+                        TaxRateId = item.TaxRateId,
 
                         Total =
                             item.Total
@@ -273,7 +277,9 @@ public class PurchaseService
                         new PurchaseItem(
                             itemDto.ProductId,
                             itemDto.Quantity,
-                            itemDto.PurchasePrice);
+                            itemDto.PurchasePrice,
+                            itemDto.DiscountAmount,
+                            itemDto.TaxRateId);
 
                     purchase.AddItem(purchaseItem);
 

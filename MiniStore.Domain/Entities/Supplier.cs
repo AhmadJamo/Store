@@ -9,6 +9,7 @@ public class Supplier
     public string? Phone { get; private set; }
 
     public string? Address { get; private set; }
+    public int? AccountId { get; private set; }
 
     public Supplier(
         string name,
@@ -37,6 +38,12 @@ public class Supplier
     public void ChangeAddress(string? address)
     {
         Address = address?.Trim();
+    }
+
+    public void AssignPayableAccount(int accountId)
+    {
+        if (accountId <= 0) throw new ArgumentException("A supplier payable account is required.");
+        AccountId = accountId;
     }
 
     private static void ValidateName(string name)

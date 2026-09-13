@@ -1,0 +1,2 @@
+@model List<MiniStore.Domain.Entities.PaymentMethod>
+<div class="container mt-4"><div class="d-flex justify-content-between"><h2>Payment Methods</h2><a asp-action="Create" class="btn btn-primary">Add Payment Method</a></div><table class="table mt-3"><thead><tr><th>Name</th><th>Settlement account ID</th><th>Status</th></tr></thead><tbody>@foreach (var method in Model) { <tr><td>@method.Name</td><td>@method.AccountId</td><td>@(method.IsActive ? "Active" : "Inactive")</td></tr> }</tbody></table></div>

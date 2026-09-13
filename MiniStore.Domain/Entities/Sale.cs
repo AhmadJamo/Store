@@ -16,6 +16,8 @@ public string InvoiceNumber { get; private set; }
     public DateTime CreatedAt { get; private set; }
 
     public int WarehouseId { get; private set; }
+    public int? CustomerId { get; private set; }
+    public int? PaymentMethodId { get; private set; }
 
     public DateTime Date { get; private set; }
 
@@ -46,6 +48,8 @@ public string InvoiceNumber { get; private set; }
         DateTime date,
         SaleChannel channel,
         string createdByUserId,
+        int? customerId,
+        int paymentMethodId,
         string? notes = null)
     {
         if (string.IsNullOrWhiteSpace(invoiceNumber))
@@ -59,6 +63,8 @@ public string InvoiceNumber { get; private set; }
         if (string.IsNullOrWhiteSpace(createdByUserId))
             throw new ArgumentException(
                 "The user who created the sale is required.");
+        if (customerId.HasValue && customerId.Value <= 0) throw new ArgumentException("Customer is invalid.");
+        if (paymentMethodId <= 0) throw new ArgumentException("A payment method is required.");
 
         InvoiceNumber = invoiceNumber;
         WarehouseId = warehouseId;
@@ -66,6 +72,8 @@ public string InvoiceNumber { get; private set; }
         Channel = channel;
         CreatedByUserId = createdByUserId;
         CreatedAt = DateTime.UtcNow;
+        CustomerId = customerId;
+        PaymentMethodId = paymentMethodId;
         Notes = notes;
 
         Items = new List<SaleItem>();

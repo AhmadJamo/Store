@@ -18,6 +18,11 @@ public class PurchaseItemConfiguration
         builder.Property(x => x.PurchasePrice)
             .HasPrecision(18, 2);
 
+        builder.Property(x => x.DiscountAmount)
+            .HasPrecision(18, 2);
+
+        builder.HasOne<TaxRate>().WithMany().HasForeignKey(x => x.TaxRateId).OnDelete(DeleteBehavior.Restrict);
+
         builder.Property(x => x.Total)
             .HasPrecision(18, 2);
 

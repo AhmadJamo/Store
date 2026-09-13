@@ -8,6 +8,8 @@
 
 <form asp-action="Create" method="post">
 
+    @{ var accounts = ViewBag.Accounts as List<MiniStore.Application.Dtos.Accounting.AccountDto> ?? []; }
+
     <div class="mb-3">
 
         <label asp-for="Name"
@@ -23,6 +25,8 @@
         </span>
 
     </div>
+
+    <div class="mb-3"><label asp-for="AccountId" class="form-label">Payable account</label><select asp-for="AccountId" class="form-select"><option value="">Select supplier account</option>@foreach(var account in accounts){<option value="@account.Id">@account.Code — @account.Name</option>}</select></div>
 
     <div class="mb-3">
 

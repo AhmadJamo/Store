@@ -8,6 +8,8 @@
 
 <form asp-action="Create" method="post">
 
+    @{ var branches = ViewBag.Branches as List<MiniStore.Domain.Entities.Branch> ?? []; var accounts = ViewBag.Accounts as List<MiniStore.Application.Dtos.Accounting.AccountDto> ?? []; }
+
     <div class="mb-3">
 
         <label asp-for="Name"
@@ -23,6 +25,9 @@
         </span>
 
     </div>
+
+    <div class="mb-3"><label asp-for="BranchId" class="form-label">Branch</label><select asp-for="BranchId" class="form-select"><option value="">Select branch</option>@foreach(var branch in branches){<option value="@branch.Id">@branch.Code — @branch.Name</option>}</select></div>
+    <div class="mb-3"><label asp-for="InventoryAccountId" class="form-label">Inventory account</label><select asp-for="InventoryAccountId" class="form-select"><option value="">Select inventory account</option>@foreach(var account in accounts){<option value="@account.Id">@account.Code — @account.Name</option>}</select></div>
 
     <button type="submit"
             class="btn btn-success">

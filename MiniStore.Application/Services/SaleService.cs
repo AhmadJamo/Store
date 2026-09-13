@@ -17,6 +17,8 @@ public class SaleService : ISaleService
     private readonly IInvoiceSettingsRepository _invoiceSettingsRepository;
     private readonly IDiscountSettingsRepository _discountSettingsRepository;
     private readonly IPermissionService _permissionService;
+    private readonly ICustomerRepository _customerRepository;
+    private readonly IPaymentMethodRepository _paymentMethodRepository;
 
     public SaleService(
         ISaleRepository saleRepository,
@@ -26,7 +28,9 @@ public class SaleService : ISaleService
         IUnitOfWork unitOfWork,
         IInvoiceSettingsRepository invoiceSettingsRepository,
         IDiscountSettingsRepository discountSettingsRepository,
-        IPermissionService permissionService)
+        IPermissionService permissionService,
+        ICustomerRepository customerRepository,
+        IPaymentMethodRepository paymentMethodRepository)
     {
         _saleRepository = saleRepository;
         _productRepository = productRepository;
@@ -36,6 +40,8 @@ public class SaleService : ISaleService
         _invoiceSettingsRepository = invoiceSettingsRepository;
         _discountSettingsRepository = discountSettingsRepository;
         _permissionService = permissionService;
+        _customerRepository = customerRepository;
+        _paymentMethodRepository = paymentMethodRepository;
     }
 
     public async Task<List<SaleListDto>> GetAllAsync()
@@ -101,6 +107,8 @@ public class SaleService : ISaleService
         if (dto.Items == null || dto.Items.Count == 0)
             throw new ArgumentException(
                 "Sale must contain at least one item.");
+        if (dto.CustomerId.HasValue && await _customerRepository.GetByIdAsync(dto.CustomerId.Value) is null) throw new ArgumentException("Selected customer was not found.");
+        if (dto.PaymentMethodId <= 0 || await _paymentMethodRepository.GetByIdAsync(dto.PaymentMethodId) is null) throw new ArgumentException("Select an active payment method.");
 
         Sale? sale = null;
 
@@ -219,6 +227,8 @@ public class SaleService : ISaleService
                 dto.Date,
                 channel,
                 createdByUserId,
+                dto.CustomerId,
+                dto.PaymentMethodId,
                 dto.Notes);
 
             foreach (var itemDto in dto.Items)

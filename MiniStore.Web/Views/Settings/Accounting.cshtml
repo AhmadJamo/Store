@@ -1,0 +1,20 @@
+@model MiniStore.Application.Dtos.Settings.AccountingSettingsDto
+@{ ViewData["Title"] = "Accounting Posting Settings"; var accounts = ViewBag.Accounts as List<MiniStore.Application.Dtos.Accounting.AccountDto> ?? []; }
+<div class="container mt-4">
+    <h2>Accounting Posting Settings</h2>
+    <p class="text-muted">Choose the chart-of-account destinations used when sales and purchases are posted. Tax accounts are set separately on each tax rate.</p>
+    <form asp-action="Accounting" method="post">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="card mb-3"><div class="card-body"><h5>Discount accounts</h5>
+            <div class="mb-3"><label asp-for="PurchaseDiscountAccountId" class="form-label">Purchase discount account</label><select asp-for="PurchaseDiscountAccountId" class="form-select"><option value="">Not configured</option>@foreach (var account in accounts) { <option value="@account.Id">@account.Code — @account.Name</option> }</select><div class="form-text">Used for supplier discounts when purchase posting is enabled.</div></div>
+            <div class="mb-3"><label asp-for="SalesDiscountAccountId" class="form-label">Sales discount account</label><select asp-for="SalesDiscountAccountId" class="form-select"><option value="">Not configured</option>@foreach (var account in accounts) { <option value="@account.Id">@account.Code — @account.Name</option> }</select><div class="form-text">Used for line and invoice discounts when sale posting is enabled.</div></div>
+        </div></div>
+        <div class="card mb-3"><div class="card-body"><h5>Sales and inventory accounts</h5>
+            <div class="mb-3"><label asp-for="SalesRevenueAccountId" class="form-label">Sales revenue account</label><select asp-for="SalesRevenueAccountId" class="form-select"><option value="">Not configured</option>@foreach (var account in accounts) { <option value="@account.Id">@account.Code — @account.Name</option> }</select></div>
+            <div class="mb-3"><label asp-for="CostOfSalesAccountId" class="form-label">Cost of sales account</label><select asp-for="CostOfSalesAccountId" class="form-select"><option value="">Not configured</option>@foreach (var account in accounts) { <option value="@account.Id">@account.Code — @account.Name</option> }</select></div>
+        </div></div>
+        <button type="submit" class="btn btn-primary">Save accounting settings</button>
+        <a asp-action="BranchSalesAccounts" class="btn btn-outline-primary">Branch sales accounts</a>
+        <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>

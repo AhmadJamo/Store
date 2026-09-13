@@ -58,6 +58,20 @@ public class AppDbContext
 
     public DbSet<DocumentNumberSettings> DocumentNumberSettings => Set<DocumentNumberSettings>();
 
+    public DbSet<Branch> Branches => Set<Branch>();
+
+    public DbSet<Account> Accounts => Set<Account>();
+
+    public DbSet<JournalEntry> JournalEntries => Set<JournalEntry>();
+
+    public DbSet<JournalEntryLine> JournalEntryLines => Set<JournalEntryLine>();
+    public DbSet<Customer> Customers => Set<Customer>();
+    public DbSet<TaxRate> TaxRates => Set<TaxRate>();
+    public DbSet<PosTerminal> PosTerminals => Set<PosTerminal>();
+    public DbSet<PosTerminalProduct> PosTerminalProducts => Set<PosTerminalProduct>();
+    public DbSet<AccountingSettings> AccountingSettings => Set<AccountingSettings>();
+    public DbSet<PaymentMethod> PaymentMethods => Set<PaymentMethod>();
+
 
 
 

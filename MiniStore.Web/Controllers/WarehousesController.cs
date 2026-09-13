@@ -9,11 +9,15 @@ namespace MiniStore.Web.Controllers;
 public class WarehousesController : Controller
 {
     private readonly WarehouseService _warehouseService;
+    private readonly BranchService _branchService;
+    private readonly AccountService _accountService;
 
     public WarehousesController(
-        WarehouseService warehouseService)
+        WarehouseService warehouseService, BranchService branchService, AccountService accountService)
     {
         _warehouseService = warehouseService;
+        _branchService = branchService;
+        _accountService = accountService;
     }
 
     [HttpGet]
@@ -28,8 +32,9 @@ public class WarehousesController : Controller
 
     [HttpGet]
     [PermissionAuthorize("Warehouses.Create")]
-    public IActionResult Create()
+    public async Task<IActionResult> Create()
     {
+        await LoadAccountingOptions();
         return View();
     }
 
@@ -44,7 +49,7 @@ public class WarehousesController : Controller
             TempData["NotificationMessage"] =
                 "Please check the entered data.";
 
-            return View(dto);
+            await LoadAccountingOptions(); return View(dto);
         }
 
         try
@@ -65,7 +70,7 @@ public class WarehousesController : Controller
             TempData["NotificationMessage"] =
                 "The operation could not be completed. Please try again or contact the administrator.";
 
-            return View(dto);
+            await LoadAccountingOptions(); return View(dto);
         }
     }
 
@@ -88,9 +93,10 @@ public class WarehousesController : Controller
         var dto = new UpdateWarehouseDto
         {
             Name = warehouse.Name
+            , BranchId = warehouse.BranchId ?? 0, InventoryAccountId = warehouse.InventoryAccountId ?? 0
         };
 
-        return View(dto);
+        await LoadAccountingOptions(); return View(dto);
     }
 
     [HttpPost]
@@ -105,7 +111,7 @@ public class WarehousesController : Controller
             TempData["NotificationMessage"] =
                 "Please check the entered data.";
 
-            return View(dto);
+            await LoadAccountingOptions(); return View(dto);
         }
 
         try
@@ -126,7 +132,7 @@ public class WarehousesController : Controller
             TempData["NotificationMessage"] =
                 "The operation could not be completed. Please try again or contact the administrator.";
 
-            return View(dto);
+            await LoadAccountingOptions(); return View(dto);
         }
     }
 
@@ -152,5 +158,11 @@ public class WarehousesController : Controller
         }
 
         return RedirectToAction(nameof(Index));
+    }
+
+    private async Task LoadAccountingOptions()
+    {
+        ViewBag.Branches = await _branchService.GetAllAsync();
+        ViewBag.Accounts = await _accountService.GetAllAsync();
     }
 }

@@ -183,6 +183,10 @@
                                type="date" />
                     </div>
 
+                    <div class="col-md-4"><label asp-for="CustomerId" class="form-label fw-semibold">Customer</label><select asp-for="CustomerId" class="form-select"><option value="">Unknown customer / walk-in</option>@foreach (var customer in ViewBag.Customers) { <option value="@customer.Id">@customer.Name</option> }</select></div>
+
+                    <div class="col-md-4"><label asp-for="PaymentMethodId" class="form-label fw-semibold">Payment Method</label><select asp-for="PaymentMethodId" class="form-select" required><option value="">-- Select payment method --</option>@foreach (var method in ViewBag.PaymentMethods) { <option value="@method.Id">@method.Name</option> }</select></div>
+
                     <div class="col-md-4">
                         <label asp-for="Notes"
                                class="form-label fw-semibold">

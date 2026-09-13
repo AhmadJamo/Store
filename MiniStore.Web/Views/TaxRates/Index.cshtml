@@ -1,0 +1,2 @@
+@model List<MiniStore.Domain.Entities.TaxRate>
+<div class="container mt-4"><div class="d-flex justify-content-between"><h2>Tax Rates</h2><a asp-action="Create" class="btn btn-primary">Add Tax Rate</a></div><table class="table mt-3"><thead><tr><th>Name</th><th>Rate</th><th>Price inclusive</th></tr></thead><tbody>@foreach(var tax in Model){<tr><td>@tax.Name</td><td>@tax.Rate%</td><td>@tax.IsPriceInclusive</td></tr>}</tbody></table></div>

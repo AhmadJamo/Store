@@ -9,11 +9,13 @@ namespace MiniStore.Web.Controllers;
 public class SuppliersController : Controller
 {
     private readonly SupplierService _supplierService;
+    private readonly AccountService _accountService;
 
     public SuppliersController(
-        SupplierService supplierService)
+        SupplierService supplierService, AccountService accountService)
     {
         _supplierService = supplierService;
+        _accountService = accountService;
     }
 
     [HttpGet]
@@ -29,8 +31,9 @@ public class SuppliersController : Controller
 
     [HttpGet]
     [PermissionAuthorize("Suppliers.Create")]
-    public IActionResult Create()
+    public async Task<IActionResult> Create()
     {
+        await LoadAccounts();
         return View();
     }
 
@@ -45,7 +48,7 @@ public class SuppliersController : Controller
             TempData["NotificationMessage"] =
                 "Please check the entered data.";
 
-            return View(dto);
+            await LoadAccounts(); return View(dto);
         }
 
         try
@@ -66,7 +69,7 @@ public class SuppliersController : Controller
             TempData["NotificationMessage"] =
                 "The operation could not be completed. Please try again or contact the administrator.";
 
-            return View(dto);
+            await LoadAccounts(); return View(dto);
         }
     }
 
@@ -91,9 +94,10 @@ public class SuppliersController : Controller
             Name = supplier.Name,
             Phone = supplier.Phone,
             Address = supplier.Address
+            , AccountId = supplier.AccountId ?? 0
         };
 
-        return View(dto);
+        await LoadAccounts(); return View(dto);
     }
 
     [HttpPost]
@@ -108,7 +112,7 @@ public class SuppliersController : Controller
             TempData["NotificationMessage"] =
                 "Please check the entered data.";
 
-            return View(dto);
+            await LoadAccounts(); return View(dto);
         }
 
         try
@@ -129,7 +133,7 @@ public class SuppliersController : Controller
             TempData["NotificationMessage"] =
                 "The operation could not be completed. Please try again or contact the administrator.";
 
-            return View(dto);
+            await LoadAccounts(); return View(dto);
         }
     }
 
@@ -156,4 +160,6 @@ public class SuppliersController : Controller
 
         return RedirectToAction(nameof(Index));
     }
+
+    private async Task LoadAccounts() => ViewBag.Accounts = await _accountService.GetAllAsync();
 }

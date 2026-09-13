@@ -7,4 +7,8 @@ public class CreatePurchaseItemDto
     public decimal Quantity { get; set; }
 
     public decimal PurchasePrice { get; set; }
+
+    public decimal DiscountAmount { get; set; }
+
+    public int? TaxRateId { get; set; }
 }

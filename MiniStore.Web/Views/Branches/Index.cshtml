@@ -1,0 +1,2 @@
+@model List<MiniStore.Domain.Entities.Branch>
+<div class="container mt-4"><div class="d-flex justify-content-between"><h2>Branches</h2><a asp-action="Create" class="btn btn-primary">Add Branch</a></div><table class="table mt-3"><thead><tr><th>Code</th><th>Name</th><th>Status</th></tr></thead><tbody>@foreach(var branch in Model){<tr><td>@branch.Code</td><td>@branch.Name</td><td>@(branch.IsActive ? "Active" : "Inactive")</td></tr>}</tbody></table></div>

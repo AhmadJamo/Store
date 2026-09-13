@@ -140,6 +140,10 @@
 
                     <th>Purchase Price</th>
 
+                    <th>Discount</th>
+
+                    <th>Tax</th>
+
                     <th>Total</th>
 
                     <th>Action</th>
@@ -287,6 +291,28 @@
 
                 </td>
 
+                <td>
+                    <select name="Items[${itemIndex}].TaxRateId" class="form-select">
+                        <option value="">No tax</option>
+                        @foreach (var tax in ViewBag.TaxRates)
+                        {
+                            <option value="@tax.Id">@tax.Name (@tax.Rate%)</option>
+                        }
+                    </select>
+                </td>
+
+                <td>
+
+                    <input
+                        type="number"
+                        name="Items[${itemIndex}].DiscountAmount"
+                        class="form-control discount-amount"
+                        min="0"
+                        step="0.01"
+                        value="0">
+
+                </td>
+
 
                 <td>
 
@@ -324,6 +350,9 @@
         const priceInput =
             row.querySelector(".purchase-price");
 
+        const discountInput =
+            row.querySelector(".discount-amount");
+
 
         quantityInput.addEventListener(
             "input",
@@ -335,6 +364,14 @@
 
 
         priceInput.addEventListener(
+            "input",
+            function() {
+
+                calculateRow(row);
+
+            });
+
+        discountInput.addEventListener(
             "input",
             function() {
 
@@ -379,9 +416,14 @@
                 row.querySelector(".purchase-price").value
             ) || 0;
 
+        const discount =
+            parseFloat(
+                row.querySelector(".discount-amount").value
+            ) || 0;
+
 
         const total =
-            quantity * price;
+            Math.max(0, quantity * price - discount);
 
 
         row.querySelector(".row-total").value =

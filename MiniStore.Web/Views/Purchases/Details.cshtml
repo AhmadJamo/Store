@@ -135,3 +135,15 @@
     Back
 
 </a>
+
+@if (ViewBag.IsPosted == true)
+{
+    <span class="badge bg-success ms-2">Posted to general ledger</span>
+}
+else
+{
+    <form asp-action="Post" method="post" class="d-inline ms-2">
+        <input type="hidden" name="id" value="@Model.Id" />
+        <button type="submit" class="btn btn-primary">Post to general ledger</button>
+    </form>
+}

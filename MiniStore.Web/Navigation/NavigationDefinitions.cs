@@ -15,7 +15,15 @@ public static class NavigationDefinitions
                 "Sales",
                 "Index",
                 "Sales.View",
-                10)
+                10),
+
+            new NavigationItem(
+                "Customers",
+                "bi-people",
+                "Customers",
+                "Index",
+                "Settings.View",
+                20)
         ),
 
         new NavigationGroup(
@@ -113,7 +121,39 @@ public static class NavigationDefinitions
                 "Settings",
                 "Index",
                 "Settings.View",
-                30)
+                30),
+
+            new NavigationItem(
+                "Chart of Accounts",
+                "bi-diagram-3",
+                "Accounts",
+                "Index",
+                "Settings.View",
+                40),
+
+            new NavigationItem(
+                "Branches",
+                "bi-building",
+                "Branches",
+                "Index",
+                "Settings.View",
+                50),
+
+            new NavigationItem(
+                "Tax Rates",
+                "bi-percent",
+                "TaxRates",
+                "Index",
+                "Settings.View",
+                60),
+
+            new NavigationItem(
+                "Payment Methods",
+                "bi-credit-card",
+                "PaymentMethods",
+                "Index",
+                "Settings.View",
+                70)
         )
     ];
 }

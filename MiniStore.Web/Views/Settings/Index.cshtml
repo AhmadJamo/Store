@@ -47,18 +47,16 @@
             </div>
         </div>
 
-        <!-- Sales -->
+        <!-- Accounting -->
         <div class="col-md-6 col-lg-4">
             <div class="card h-100 shadow-sm border-0">
                 <div class="card-body">
-                    <h5 class="card-title">💰 Sales</h5>
+                    <h5 class="card-title">📒 Accounting</h5>
                     <p class="card-text text-muted">
-                        Configure sales behavior, pricing and sales rules.
+                        Choose the chart accounts used for discounts, revenue and cost of sales.
                     </p>
 
-                    <button class="btn btn-outline-primary" disabled>
-                        Coming Soon
-                    </button>
+                    <a asp-action="Accounting" class="btn btn-primary">Open Settings</a>
                 </div>
             </div>
         </div>
@@ -89,9 +87,7 @@
                         Configure tax rates, tax profiles and tax calculation rules.
                     </p>
 
-                    <button class="btn btn-outline-primary" disabled>
-                        Coming Soon
-                    </button>
+                    <a asp-controller="TaxRates" asp-action="Index" class="btn btn-primary">Manage Taxes</a>
                 </div>
             </div>
         </div>
@@ -121,9 +117,7 @@
                         Configure cash, card, bank transfer and credit payments.
                     </p>
 
-                    <button class="btn btn-outline-primary" disabled>
-                        Coming Soon
-                    </button>
+                    <a asp-controller="PaymentMethods" asp-action="Index" class="btn btn-primary">Manage Payment Methods</a>
                 </div>
             </div>
         </div>

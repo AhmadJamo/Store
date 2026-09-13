@@ -22,7 +22,8 @@
 | `Entities/Sale.cs`, `SaleItem.cs`, `SaleChannel.cs` | sales aggregate/items/channels | sales module. |
 | `Entities/StockTransfer*.cs` | transfer aggregate, item, history, statuses/actions | stock-transfers module. |
 | `Entities/{Permission,RolePermission}.cs` | role permission mapping | permissions doc. |
-| `Entities/{AuditLog,GeneralSettings,DiscountSettings,InvoiceSettings,DocumentNumberSettings}.cs` | audit/configuration state | settings/database docs. |
+| `Entities/{Account,Branch,JournalEntry,JournalEntryLine,PaymentMethod}.cs` | accounting foundation: hierarchy, dimensions, settlement methods and balanced multi-line entries | accounting doc. |
+| `Entities/{AuditLog,GeneralSettings,DiscountSettings,AccountingSettings,InvoiceSettings,DocumentNumberSettings}.cs` | audit/configuration state; accounting posting-account mappings | settings/database docs. |
 | `Enum/DiscountType.cs` | percentage/fixed discount enum | sales/settings docs. |
 | `Commands/CreateStockTransferCommand.cs`, `UpdateStockTransferCommand.cs` | transfer service input commands | transfer service. |
 | `Interfaces/I*Repository.cs` | persistence contracts | matching Infrastructure repository. |
@@ -33,7 +34,7 @@
 |---|---|---|
 | `Services/{Product,Warehouse,Supplier}Service.cs` | master-data operations | matching MVC controllers. |
 | `Services/{ProductStock,StockTransaction,Purchase,Sale,StockTransfer}Service.cs` | inventory/business documents | matching controllers. |
-| `Services/{Invoice,General,DiscountSettings}Service.cs` | settings operations | SettingsController. |
+| `Services/{Invoice,General,DiscountSettings,AccountingSettings,PaymentMethod,Branch}Service.cs` | settings operations and branch sales-account mapping | SettingsController, BranchesController and PaymentMethodsController. |
 | `Services/DiscountCalculator.cs` | standalone discount calculation helper; no active consumer found by scan | Unknown. |
 | `Services/ISaleService.cs`, `ICurrentUserService.cs` | service contracts | SaleService/CurrentUserService. |
 | `Permissions/{PermissionDefinitions,IPermissionService}.cs` | permission catalogue/contract | seeders/auth/services. |
@@ -48,10 +49,13 @@
 | `Persistence/AuditSaveChangesInterceptor.cs` | creates AuditLog rows for tracked changes | registered in Program. |
 | `Persistence/{Identity,Permission}Seeder.cs` | default roles/admin and permissions | Program startup. |
 | `Persistence/Configurations/*.cs` | per-entity schema mapping | applied by AppDbContext. |
+
+Accounting foundation (2026-09-13): migration `AddAccountingFoundation` adds Accounts, Branches, JournalEntries, JournalEntryLines and optional warehouse branch/inventory-account links. See accounting ADR before adding automated posting.
 | `Migrations/*.cs` and snapshot | schema evolution/model snapshots | EF tooling, deployment. |
 
 Inventory concurrency update (2026-09-13): ProductStock and StockTransfer include database-generated rowversions; migration `AddInventoryConcurrency` updates SQL Server. UnitOfWork uses Serializable isolation for atomic inventory workflows. Manual stock transactions accept adjustments only, and purchase/sale aggregates reject duplicate product lines. Focused checks live in `tests/SecurityRegression`.
 | `Repositories/*.cs` | EF implementations of Domain repository contracts | application services. |
+| `Repositories/JournalEntryRepository.cs` | journal source duplicate-posting lookup and persistence | `PurchasePostingService`. |
 | `Authorization/PermissionService.cs` | permission check implementation | SaleService. |
 
 ## Web source map

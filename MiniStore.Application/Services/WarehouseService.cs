@@ -7,10 +7,14 @@ namespace MiniStore.Application.Services;
 public class WarehouseService
 {
     private readonly IWarehouseRepository _warehouseRepository;
+    private readonly IBranchRepository _branchRepository;
+    private readonly IAccountRepository _accountRepository;
 
-    public WarehouseService(IWarehouseRepository warehouseRepository)
+    public WarehouseService(IWarehouseRepository warehouseRepository, IBranchRepository branchRepository, IAccountRepository accountRepository)
     {
         _warehouseRepository = warehouseRepository;
+        _branchRepository = branchRepository;
+        _accountRepository = accountRepository;
     }
 
     public async Task<List<WarehouseDto>> GetAllAsync()
@@ -21,7 +25,7 @@ public class WarehouseService
         return warehouses.Select(warehouse => new WarehouseDto
         {
             Id = warehouse.Id,
-            Name = warehouse.Name
+            Name = warehouse.Name, BranchId = warehouse.BranchId, InventoryAccountId = warehouse.InventoryAccountId
         }).ToList();
     }
 
@@ -36,7 +40,7 @@ public class WarehouseService
         return new WarehouseDto
         {
             Id = warehouse.Id,
-            Name = warehouse.Name
+            Name = warehouse.Name, BranchId = warehouse.BranchId, InventoryAccountId = warehouse.InventoryAccountId
         };
     }
 
@@ -55,8 +59,9 @@ public class WarehouseService
             throw new InvalidOperationException(
                 "A warehouse with this name already exists.");
 
-        var warehouse =
-            new Warehouse(dto.Name.Trim());
+        await ValidateAccountingAssignment(dto.BranchId, dto.InventoryAccountId);
+        var warehouse = new Warehouse(dto.Name.Trim());
+        warehouse.AssignAccounting(dto.BranchId, dto.InventoryAccountId);
 
         await _warehouseRepository.AddAsync(warehouse);
 
@@ -89,6 +94,8 @@ public class WarehouseService
                 "A warehouse with this name already exists.");
 
         warehouse.ChangeName(dto.Name.Trim());
+        await ValidateAccountingAssignment(dto.BranchId, dto.InventoryAccountId);
+        warehouse.AssignAccounting(dto.BranchId, dto.InventoryAccountId);
 
         await _warehouseRepository.SaveChangesAsync();
     }
@@ -105,5 +112,13 @@ public class WarehouseService
         await _warehouseRepository.DeleteAsync(warehouse);
 
         await _warehouseRepository.SaveChangesAsync();
+    }
+
+    private async Task ValidateAccountingAssignment(int branchId, int accountId)
+    {
+        if (await _branchRepository.GetByIdAsync(branchId) == null)
+            throw new InvalidOperationException("Selected branch was not found.");
+        if (await _accountRepository.GetByIdAsync(accountId) == null)
+            throw new InvalidOperationException("Selected inventory account was not found.");
     }
 }

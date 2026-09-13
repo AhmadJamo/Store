@@ -9,4 +9,5 @@ public class SupplierDto
     public string? Phone { get; set; }
 
     public string? Address { get; set; }
+    public int? AccountId { get; set; }
 }

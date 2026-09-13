@@ -19,6 +19,7 @@ Products, Warehouses, ProductStock, StockTransactions, Suppliers, Purchases, Sal
 | Users | View/Create enforced; Edit/Delete definitions have no actions. |
 | Roles | View/Create/Edit/Delete enforced. |
 | Settings | Controller requires Identity role `Admin`, not Settings.* permissions. |
+| Accounting master data | Accounts, branches, customers, tax rates and payment methods require Identity role `Admin`; their navigation entries use `Settings.View` as the menu visibility gate. |
 
 ## Known inconsistencies
 `Settings.View` and `Settings.Edit` are defined but unused. UI navigation visibility is defined separately in `NavigationDefinitions`; inspect it with each permission change. Identity mutations (`Users.Create/Edit/Delete`, `Roles.Create/Edit/Delete`) now require current database Admin membership in both permission evaluators, regardless of stored role mappings. Read permissions remain delegable. Navigation and buttons use the same evaluator.

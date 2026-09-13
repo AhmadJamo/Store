@@ -7,6 +7,8 @@ public class CreateSaleDto
     public string InvoiceNumber { get; set; } = string.Empty;
 
     public int WarehouseId { get; set; }
+    public int? CustomerId { get; set; }
+    public int PaymentMethodId { get; set; }
 
     public DateTime Date { get; set; }
 

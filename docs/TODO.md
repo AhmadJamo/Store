@@ -6,7 +6,7 @@
 - Core catalog, warehouse, supplier, inventory, purchase, sale and stock-transfer code exists.
 
 ## In Progress
-- Unknown / Not determined from code.
+- Add sale tax and journal posting, weighted-average COGS calculation, purchase reversal and fiscal-period controls.
 
 ## High Priority
 - Rotate previously committed admin credentials and invalidate sessions on existing deployments (operator action).
@@ -21,7 +21,7 @@
 - Duplicate `PermissionsCodeExport` tree can drift.
 
 ## Accounting Gaps
-- Ledger, accounts, payments, customers, taxes, COGS/valuation, returns, fiscal periods, financial statements: not implemented.
+- Sale posting, moving weighted-average valuation/COGS calculation, payments, returns, fiscal periods and financial statements are not implemented. Purchase posting, chart accounts, journal-entry validation, branches, customer/supplier account links, tax account links and posting-account settings are implemented.
 
 ## Testing Gaps
 - Security regression executable added under `tests/SecurityRegression`; HTTP/database integration and penetration tests remain outstanding.

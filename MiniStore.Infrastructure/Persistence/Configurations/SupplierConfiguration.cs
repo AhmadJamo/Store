@@ -21,5 +21,7 @@ public class SupplierConfiguration
 
         builder.Property(x => x.Address)
             .HasMaxLength(500);
+
+        builder.HasOne<Account>().WithMany().HasForeignKey(x => x.AccountId).OnDelete(DeleteBehavior.Restrict);
     }
 }

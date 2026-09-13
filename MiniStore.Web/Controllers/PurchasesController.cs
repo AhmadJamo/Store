@@ -16,17 +16,22 @@ public class PurchasesController : Controller
     private readonly IWarehouseRepository _warehouseRepository;
 
     private readonly IProductRepository _productRepository;
+    private readonly TaxRateService _taxRateService;
+    private readonly PurchasePostingService _purchasePostingService;
 
     public PurchasesController(
         PurchaseService purchaseService,
         ISupplierRepository supplierRepository,
         IWarehouseRepository warehouseRepository,
-        IProductRepository productRepository)
+        IProductRepository productRepository, TaxRateService taxRateService,
+        PurchasePostingService purchasePostingService)
     {
         _purchaseService = purchaseService;
         _supplierRepository = supplierRepository;
         _warehouseRepository = warehouseRepository;
         _productRepository = productRepository;
+        _taxRateService = taxRateService;
+        _purchasePostingService = purchasePostingService;
     }
 
     [HttpGet]
@@ -110,7 +115,27 @@ public class PurchasesController : Controller
             return RedirectToAction(nameof(Index));
         }
 
+        ViewBag.IsPosted = await _purchasePostingService.IsPostedAsync(purchase.InvoiceNumber);
         return View(purchase);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [PermissionAuthorize("Purchases.Create")]
+    public async Task<IActionResult> Post(int id)
+    {
+        try
+        {
+            await _purchasePostingService.PostAsync(id);
+            TempData["NotificationType"] = "success";
+            TempData["NotificationMessage"] = "Purchase posted to the general ledger.";
+        }
+        catch (Exception ex) when (ex is ArgumentException or InvalidOperationException)
+        {
+            TempData["NotificationType"] = "error";
+            TempData["NotificationMessage"] = ex.Message;
+        }
+        return RedirectToAction(nameof(Details), new { id });
     }
 
 
@@ -125,5 +150,7 @@ public class PurchasesController : Controller
 
         ViewBag.Products =
             await _productRepository.GetAllAsync(null);
+
+        ViewBag.TaxRates = await _taxRateService.GetAllAsync();
     }
 }
