@@ -19,6 +19,8 @@
 
     public string DateFormat { get; private set; } = "dd/MM/yyyy";
     public string TimeZone { get; private set; } = "Asia/Amman";
+    public MiniStore.Domain.Entities.UiLanguage DefaultLanguage { get; private set; } =
+        MiniStore.Domain.Entities.UiLanguage.English;
 
 
     private GeneralSettings()
@@ -38,7 +40,8 @@
         int decimalPlaces,
         int quantityDecimalPlaces,
         string dateFormat,
-        string timeZone)
+        string timeZone,
+        MiniStore.Domain.Entities.UiLanguage defaultLanguage = MiniStore.Domain.Entities.UiLanguage.English)
     {
         SetCompanyName(companyName);
         SetCompanyNameArabic(companyNameArabic);
@@ -49,6 +52,7 @@
         SetQuantityDecimalPlaces(quantityDecimalPlaces);
         SetDateFormat(dateFormat);
         SetTimeZone(timeZone);
+        SetDefaultLanguage(defaultLanguage);
     }
 
     public void SetCompanyName(string companyName)
@@ -127,5 +131,13 @@
                 "Time zone is required.");
 
         TimeZone = timeZone.Trim();
+    }
+
+    public void SetDefaultLanguage(MiniStore.Domain.Entities.UiLanguage defaultLanguage)
+    {
+        if (!Enum.IsDefined(defaultLanguage))
+            throw new ArgumentException("Invalid default interface language.");
+
+        DefaultLanguage = defaultLanguage;
     }
 }

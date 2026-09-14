@@ -53,6 +53,21 @@ Barcode and product-name search should be supported.
 Users should select warehouses by name.
 Do not expose WarehouseId as the primary user-facing selection.
 
+## Localization
+
+The supported UI languages are English (`en-US`) and Arabic (`ar-JO`).
+
+Every new or changed user-facing label, message, validation error, notification,
+placeholder and JavaScript message must use the shared localization resources and
+must include an Arabic translation. Do not hard-code new presentation text.
+
+Arabic pages must support RTL. Use logical CSS properties such as `margin-inline-*`,
+`padding-inline-*`, `border-inline-*` and Bootstrap start/end utilities so the same
+view works correctly in both directions.
+
+Keep identifiers, permission codes, document numbers and stored business codes
+language-neutral. Do not store translated UI text as domain state.
+
 ## General Rule
 
 Before modifying code, inspect related entities,

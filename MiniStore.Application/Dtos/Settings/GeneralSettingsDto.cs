@@ -20,5 +20,8 @@ public class GeneralSettingsDto
 
     public string TimeZone { get; set; } = "Asia/Amman";
 
+    public MiniStore.Domain.Entities.UiLanguage DefaultLanguage { get; set; } =
+        MiniStore.Domain.Entities.UiLanguage.English;
+
     public byte[] RowVersion { get; set; } = Array.Empty<byte>();
 }

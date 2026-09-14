@@ -13,4 +13,5 @@ public class SaleItemDto
     public DiscountType DiscountType { get; set; } = DiscountType.Percentage;
 
     public decimal DiscountValue { get; set; }
+    public string? Notes { get; set; }
 }

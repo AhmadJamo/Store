@@ -116,6 +116,17 @@
         font-size: .72rem;
     }
 
+    .pos-page.pos-dark { background: #111827; color: #e5e7eb; }
+    .pos-page.pos-dark .pos-card { background: #1f2937; color: #e5e7eb; }
+    .pos-page.pos-dark .pos-product { background: #253247; border-color: #394960; }
+    .pos-page.pos-dark .product-name { color: #f8fafc; }
+    .pos-page.pos-dark .form-control,
+    .pos-page.pos-dark .form-select { background-color: #253247; color: #f8fafc; border-color: #4b5d75; }
+    .pos-page.pos-compact .pos-product { min-height: 76px; padding: .55rem; }
+    .pos-page.pos-touch .btn,
+    .pos-page.pos-touch .form-control,
+    .pos-page.pos-touch .form-select { min-height: 48px; }
+
     @@media (min-width: 992px) {
         .cart-column {
             position: sticky;
@@ -132,7 +143,7 @@
         <div class="pos-header mb-4 d-flex flex-wrap gap-3 justify-content-between align-items-center">
             <div>
                 <div class="text-uppercase small opacity-75">MiniStore</div>
-                <h1 class="h3 mb-0">Point of Sale</h1>
+                <h1 class="h3 mb-0" id="posHeaderTitle">Point of Sale</h1>
             </div>
 
             <a asp-action="Index" class="btn btn-outline-light">
@@ -211,15 +222,35 @@
                                placeholder="Optional note" />
                     </div>
 
+                    <div class="col-md-4" id="orderTypeGroup">
+                        <label asp-for="PosOrderType" class="form-label fw-semibold">Order Type</label>
+                        <select asp-for="PosOrderType" id="posOrderType" class="form-select">
+                            <option value="@((int)MiniStore.Domain.Entities.PosOrderType.WalkIn)">Walk-in</option>
+                            <option value="@((int)MiniStore.Domain.Entities.PosOrderType.DineIn)">Dine-in</option>
+                            <option value="@((int)MiniStore.Domain.Entities.PosOrderType.Takeaway)">Takeaway</option>
+                            <option value="@((int)MiniStore.Domain.Entities.PosOrderType.Delivery)">Delivery</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-4" id="serviceReferenceGroup">
+                        <label asp-for="ServiceReference" class="form-label fw-semibold">Table / Service Reference</label>
+                        <input asp-for="ServiceReference" id="serviceReference" class="form-control" maxlength="80" placeholder="Table 12, pickup name, delivery reference..." />
+                    </div>
+
+                    <div class="col-md-4" id="guestCountGroup">
+                        <label asp-for="GuestCount" class="form-label fw-semibold">Guest Count</label>
+                        <input asp-for="GuestCount" id="guestCount" class="form-control" type="number" min="1" max="999" />
+                    </div>
+
                 </div>
 
             </div>
         </div>
 
-        <div class="row g-4">
+        <div class="row g-4" id="posWorkspace">
 
             <!-- PRODUCTS -->
-            <div class="col-lg-7 col-xl-8">
+            <div class="col-lg-7 col-xl-8" id="productColumn">
 
                 <div class="card pos-card h-100">
 
@@ -306,7 +337,7 @@
 
 
             <!-- CART -->
-            <div class="col-lg-5 col-xl-4 cart-column">
+            <div class="col-lg-5 col-xl-4 cart-column" id="cartColumn">
 
                 <div class="card pos-card">
 
@@ -437,6 +468,11 @@
         .Select(x => new { x.Id, x.DefaultWarehouseId, WarehouseIds = x.Warehouses.Select(w => w.WarehouseId) })))
 </script>
 
+<script type="application/json" id="posExperienceData">
+@Html.Raw(JsonSerializer.Serialize(
+    (IEnumerable<MiniStore.Application.Dtos.Settings.PosRuntimeSettingsDto>)(ViewBag.PosRuntimeSettings ?? new List<MiniStore.Application.Dtos.Settings.PosRuntimeSettingsDto>())))
+</script>
+
 
 @section Scripts {
 
@@ -465,6 +501,81 @@
         const terminalInput = document.getElementById("posTerminalId");
         const terminalAccess = JSON.parse(
             document.getElementById("terminalAccessData").textContent);
+        const experienceSettings = JSON.parse(
+            document.getElementById("posExperienceData").textContent);
+        let activeExperience = null;
+
+        const orderTypeInput = document.getElementById('posOrderType');
+        const serviceReferenceGroup = document.getElementById('serviceReferenceGroup');
+        const serviceReferenceInput = document.getElementById('serviceReference');
+        const guestCountGroup = document.getElementById('guestCountGroup');
+
+        function refreshOrderContext() {
+            if (!activeExperience) return;
+            const isDineIn = Number(orderTypeInput.value) === @((int)MiniStore.Domain.Entities.PosOrderType.DineIn);
+            const hasServiceContext = Number(orderTypeInput.value) !== @((int)MiniStore.Domain.Entities.PosOrderType.WalkIn);
+            serviceReferenceGroup.hidden = !hasServiceContext && !serviceReferenceInput.value;
+            serviceReferenceInput.required = activeExperience.RequireServiceReference && isDineIn;
+            guestCountGroup.hidden = !activeExperience.EnableGuestCount || !isDineIn;
+            if (guestCountGroup.hidden) document.getElementById('guestCount').value = '';
+        }
+
+        orderTypeInput.addEventListener('change', refreshOrderContext);
+
+        function applyPosExperience(terminalId) {
+            const settings = experienceSettings.find(
+                x => String(x.PosTerminalId) === String(terminalId)) ?? {
+                    PosTerminalId: null,
+                    ProductLayout: @((int)MiniStore.Domain.Entities.PosProductLayout.Grid),
+                    Theme: @((int)MiniStore.Domain.Entities.PosTheme.Light),
+                    CartPosition: @((int)MiniStore.Domain.Entities.PosCartPosition.Right),
+                    AccentColor: '#2563A8', HeaderTitle: 'Point of Sale', ProductColumns: 4,
+                    CompactProductCards: false, ShowBarcode: true, ShowPrice: true, ShowStock: true,
+                    AutoFocusSearch: true, TouchOptimized: true,
+                    EnabledOrderTypes: @((int)MiniStore.Domain.Entities.PosOrderTypeOptions.WalkIn),
+                    DefaultOrderType: @((int)MiniStore.Domain.Entities.PosOrderType.WalkIn),
+                    RequireServiceReference: false, EnableGuestCount: false,
+                    EnableItemNotes: false, QuickAddOnBarcodeScan: true
+                };
+            activeExperience = settings;
+
+            const page = document.querySelector('.pos-page');
+            page.classList.toggle('pos-dark', settings.Theme === @((int)MiniStore.Domain.Entities.PosTheme.Dark));
+            page.classList.toggle('pos-compact', settings.CompactProductCards);
+            page.classList.toggle('pos-touch', settings.TouchOptimized);
+            document.querySelector('.pos-header').style.background = settings.AccentColor;
+            document.getElementById('posHeaderTitle').textContent = settings.HeaderTitle;
+
+            document.querySelectorAll('.product-wrapper').forEach(wrapper => {
+                wrapper.style.width = settings.ProductLayout === @((int)MiniStore.Domain.Entities.PosProductLayout.CompactList)
+                    ? '100%'
+                    : `${100 / settings.ProductColumns}%`;
+            });
+            document.querySelectorAll('.product-barcode').forEach(x => x.hidden = !settings.ShowBarcode);
+            document.querySelectorAll('.product-price').forEach(x => x.hidden = !settings.ShowPrice);
+            document.querySelectorAll('.product-stock').forEach(x => x.hidden = !settings.ShowStock);
+
+            const productColumn = document.getElementById('productColumn');
+            const cartColumn = document.getElementById('cartColumn');
+            productColumn.style.order = settings.CartPosition === @((int)MiniStore.Domain.Entities.PosCartPosition.Left) ? '2' : '1';
+            cartColumn.style.order = settings.CartPosition === @((int)MiniStore.Domain.Entities.PosCartPosition.Left) ? '1' : '2';
+            const orderTypeFlags = {
+                @((int)MiniStore.Domain.Entities.PosOrderType.WalkIn): @((int)MiniStore.Domain.Entities.PosOrderTypeOptions.WalkIn),
+                @((int)MiniStore.Domain.Entities.PosOrderType.DineIn): @((int)MiniStore.Domain.Entities.PosOrderTypeOptions.DineIn),
+                @((int)MiniStore.Domain.Entities.PosOrderType.Takeaway): @((int)MiniStore.Domain.Entities.PosOrderTypeOptions.Takeaway),
+                @((int)MiniStore.Domain.Entities.PosOrderType.Delivery): @((int)MiniStore.Domain.Entities.PosOrderTypeOptions.Delivery)
+            };
+            [...orderTypeInput.options].forEach(option => {
+                const enabled = (settings.EnabledOrderTypes & orderTypeFlags[Number(option.value)]) !== 0;
+                option.hidden = !enabled;
+                option.disabled = !enabled;
+            });
+            const selectedOption = orderTypeInput.selectedOptions[0];
+            if (!selectedOption || selectedOption.disabled)
+                orderTypeInput.value = String(settings.DefaultOrderType);
+            refreshOrderContext();
+            if (settings.AutoFocusSearch) document.getElementById('productSearch').focus();
+        }
 
         terminalInput.addEventListener("change", () => {
             const terminal = terminalAccess.find(
@@ -476,6 +587,7 @@
             warehouseInput.value = terminal
                 ? String(terminal.DefaultWarehouseId)
                 : "";
+            applyPosExperience(terminalInput.value);
             updateProductAvailability();
         });
 
@@ -522,7 +634,7 @@
                             button.dataset.barcode.toLowerCase() === barcode
                     );
 
-                if (product && !product.disabled) {
+                if (product && !product.disabled && activeExperience?.QuickAddOnBarcodeScan !== false) {
 
                     addProduct(product);
 
@@ -737,7 +849,8 @@
                     id,
                     name: button.dataset.name,
                     price: Number(button.dataset.price),
-                    quantity: nextQuantity
+                    quantity: nextQuantity,
+                    notes: current?.notes ?? ""
                 }
             );
 
@@ -873,6 +986,11 @@
 
                         </div>
 
+                        <div class="item-notes mt-2">
+                            <input type="text" class="form-control form-control-sm item-notes-input"
+                                   maxlength="200" placeholder="Preparation note for this item" />
+                        </div>
+
                         <input
                             type="hidden"
                             name="Items[${index}].ProductId"
@@ -887,6 +1005,11 @@
                             type="hidden"
                             name="Items[${index}].SalePrice"
                             value="${item.price}" />
+
+                        <input
+                            type="hidden"
+                            class="item-notes-hidden"
+                            name="Items[${index}].Notes" />
                     `;
 
 
@@ -894,6 +1017,18 @@
                         .querySelector(".item-name")
                         .textContent =
                         item.name;
+
+                    const itemNotesContainer = row.querySelector('.item-notes');
+                    const itemNotesInput = row.querySelector('.item-notes-input');
+                    const itemNotesHidden = row.querySelector('.item-notes-hidden');
+                    const allowItemNotes = activeExperience?.EnableItemNotes === true;
+                    itemNotesContainer.hidden = !allowItemNotes;
+                    itemNotesInput.value = item.notes;
+                    itemNotesHidden.value = allowItemNotes ? item.notes : '';
+                    itemNotesInput.addEventListener('input', () => {
+                        item.notes = itemNotesInput.value;
+                        itemNotesHidden.value = item.notes;
+                    });
 
 
                     row
@@ -957,7 +1092,8 @@
 
 
         // Initial state.
+        applyPosExperience(terminalInput.value);
         updateProductAvailability();
 
     </script>
-}}
+}

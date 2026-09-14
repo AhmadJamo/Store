@@ -132,5 +132,23 @@ public static class IdentitySeeder
             if (!roleResult.Succeeded)
                 throw new InvalidOperationException("Failed to assign the bootstrap administrator role.");
         }
+
+        var context = services.GetRequiredService<AppDbContext>();
+        var tenantId = await Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions
+            .FirstOrDefaultAsync(
+                context.Tenants
+                    .Where(x => x.IsActive)
+                    .OrderBy(x => x.Id)
+                    .Select(x => (int?)x.Id));
+
+        if (tenantId is int activeTenantId)
+        {
+            await context.TenantMemberships.AddAsync(
+                new MiniStore.Domain.Entities.TenantMembership(
+                    activeTenantId,
+                    adminUser.Id,
+                    isOwner: true));
+            await context.SaveChangesAsync();
+        }
     }
 }

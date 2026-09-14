@@ -19,6 +19,9 @@ public string InvoiceNumber { get; private set; }
     public int? CustomerId { get; private set; }
     public int? PaymentMethodId { get; private set; }
     public int? PosTerminalId { get; private set; }
+    public PosOrderType? PosOrderType { get; private set; }
+    public string? ServiceReference { get; private set; }
+    public int? GuestCount { get; private set; }
 
     public DateTime Date { get; private set; }
 
@@ -52,7 +55,10 @@ public string InvoiceNumber { get; private set; }
         int? customerId,
         int paymentMethodId,
         string? notes = null,
-        int? posTerminalId = null)
+        int? posTerminalId = null,
+        PosOrderType? posOrderType = null,
+        string? serviceReference = null,
+        int? guestCount = null)
     {
         if (string.IsNullOrWhiteSpace(invoiceNumber))
             throw new ArgumentException(
@@ -69,6 +75,12 @@ public string InvoiceNumber { get; private set; }
         if (paymentMethodId <= 0) throw new ArgumentException("A payment method is required.");
         if (posTerminalId.HasValue && posTerminalId.Value <= 0)
             throw new ArgumentException("POS terminal is invalid.");
+        if (posOrderType.HasValue && !Enum.IsDefined(posOrderType.Value))
+            throw new ArgumentException("POS order type is invalid.");
+        if (serviceReference?.Trim().Length > 80)
+            throw new ArgumentException("Service reference cannot exceed 80 characters.");
+        if (guestCount is <= 0 or > 999)
+            throw new ArgumentException("Guest count must be between 1 and 999.");
 
         InvoiceNumber = invoiceNumber;
         WarehouseId = warehouseId;
@@ -79,6 +91,11 @@ public string InvoiceNumber { get; private set; }
         CustomerId = customerId;
         PaymentMethodId = paymentMethodId;
         PosTerminalId = posTerminalId;
+        PosOrderType = posOrderType;
+        ServiceReference = string.IsNullOrWhiteSpace(serviceReference)
+            ? null
+            : serviceReference.Trim();
+        GuestCount = guestCount;
         Notes = notes;
 
         Items = new List<SaleItem>();

@@ -2,17 +2,21 @@
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using MiniStore.Application.Services;
 using MiniStore.Domain.Entities;
+using MiniStore.Domain.Interfaces;
 
 namespace MiniStore.Infrastructure.Persistence;
 
 public class AuditSaveChangesInterceptor : SaveChangesInterceptor
 {
     private readonly ICurrentUserService _currentUserService;
+    private readonly ITenantContext _tenantContext;
 
     public AuditSaveChangesInterceptor(
-        ICurrentUserService currentUserService)
+        ICurrentUserService currentUserService,
+        ITenantContext tenantContext)
     {
         _currentUserService = currentUserService;
+        _tenantContext = tenantContext;
     }
 
     public override ValueTask<InterceptionResult<int>> SavingChangesAsync(
@@ -39,6 +43,7 @@ public class AuditSaveChangesInterceptor : SaveChangesInterceptor
             .Entries()
             .Where(entry =>
                 entry.Entity is not AuditLog &&
+                entry.Entity is not Tenant &&
                 entry.State is EntityState.Added or
                     EntityState.Modified or
                     EntityState.Deleted)
@@ -46,6 +51,11 @@ public class AuditSaveChangesInterceptor : SaveChangesInterceptor
 
         foreach (var entry in entries)
         {
+            var auditTenantId = _tenantContext.TenantId ??
+                (entry.Entity as TenantMembership)?.TenantId;
+            if (auditTenantId is not > 0)
+                continue;
+
             var primaryKey = entry.Metadata.FindPrimaryKey();
             var entityId = primaryKey == null
                 ? "Unknown"
@@ -56,11 +66,12 @@ public class AuditSaveChangesInterceptor : SaveChangesInterceptor
                         ?? entry.Property(property.Name).OriginalValue?.ToString()
                         ?? "Unknown"));
 
-            context.Set<AuditLog>().Add(new AuditLog(
+            var auditEntry = context.Set<AuditLog>().Add(new AuditLog(
                 entry.Metadata.ClrType.Name,
                 entityId,
                 entry.State.ToString(),
                 userId));
+            auditEntry.Property("TenantId").CurrentValue = auditTenantId.Value;
         }
     }
 }

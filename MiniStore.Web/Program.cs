@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MiniStore.Application.Permissions;
@@ -10,13 +11,37 @@ using MiniStore.Infrastructure.Persistence;
 using MiniStore.Infrastructure.Repositories;
 using MiniStore.Web.Authorization;
 using MiniStore.Web.Services;
+using MiniStore.Web.Localization;
+using MiniStore.Web.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
+if (OperatingSystem.IsWindows())
+{
+    builder.Logging.AddFilter<Microsoft.Extensions.Logging.EventLog.EventLogLoggerProvider>(
+        category: null,
+        LogLevel.None);
+}
+builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
+builder.Services.AddMemoryCache();
 builder.Services.AddControllersWithViews(options =>
 {
     options.Filters.Add(
         new AutoValidateAntiforgeryTokenAttribute());
+})
+    .AddViewLocalization()
+    .AddDataAnnotationsLocalization();
+
+builder.Services.Configure<RequestLocalizationOptions>(options =>
+{
+    options.DefaultRequestCulture = new RequestCulture(SupportedUiCultures.English);
+    options.SupportedCultures = SupportedUiCultures.All.ToList();
+    options.SupportedUICultures = SupportedUiCultures.All.ToList();
+    options.RequestCultureProviders =
+    [
+        new CookieRequestCultureProvider(),
+        new DatabaseRequestCultureProvider()
+    ];
 });
 
 builder.Services.AddRateLimiter(options =>
@@ -34,6 +59,8 @@ builder.Services.AddRateLimiter(options =>
 });
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
+builder.Services.AddScoped<ITenantContext, HttpTenantContext>();
+builder.Services.AddScoped<ITenantMembershipRepository, TenantMembershipRepository>();
 builder.Services.AddScoped<AuditSaveChangesInterceptor>();
 
 builder.Services.AddDbContext<AppDbContext>((services, options) =>
@@ -89,6 +116,8 @@ builder.Services.AddScoped<IInventorySettingsRepository, InventorySettingsReposi
 builder.Services.AddScoped<InventorySettingsService>();
 builder.Services.AddScoped<IInventoryAccessRepository, InventoryAccessRepository>();
 builder.Services.AddScoped<InventoryAccessService>();
+builder.Services.AddScoped<IPosTerminalSettingsRepository, PosTerminalSettingsRepository>();
+builder.Services.AddScoped<PosExperienceSettingsService>();
 builder.Services.AddScoped<IJournalEntryRepository, JournalEntryRepository>();
 builder.Services.AddScoped<PurchasePostingService>();
 builder.Services.AddScoped<IPaymentMethodRepository, PaymentMethodRepository>();
@@ -169,14 +198,20 @@ builder.Services.AddScoped<
 
 var app = builder.Build();
 
-using (var scope = app.Services.CreateScope())
+try
 {
-    await IdentitySeeder.SeedAsync(
-        scope.ServiceProvider,
-        builder.Configuration);
+    using var scope = app.Services.CreateScope();
+    await IdentitySeeder.SeedAsync(scope.ServiceProvider, builder.Configuration);
+    await PermissionSeeder.SeedAsync(scope.ServiceProvider);
+}
+catch (Exception exception)
+{
+    app.Logger.LogCritical(
+        exception,
+        "MiniStore could not complete startup database initialization.");
 
-    await PermissionSeeder.SeedAsync(
-        scope.ServiceProvider);
+    Environment.ExitCode = 1;
+    return;
 }
 
 
@@ -196,6 +231,8 @@ app.UseRouting();
 app.UseRateLimiter();
 
 app.UseAuthentication();
+app.UseMiddleware<TenantSessionMiddleware>();
+app.UseRequestLocalization();
 
 app.UseAuthorization();
 

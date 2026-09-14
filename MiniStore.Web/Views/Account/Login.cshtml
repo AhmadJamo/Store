@@ -1,78 +1,30 @@
-﻿@{
-    ViewData["Title"] = "Login";
-}
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizer<MiniStore.Web.SharedResource> Localizer
+@{ ViewData["Title"] = "Login"; }
 
 <div class="row justify-content-center">
-
     <div class="col-md-5">
-
-        <div class="card mt-5">
-
-            <div class="card-body">
-
-                <h2 class="text-center mb-4">
-                    Mini Store
-                </h2>
-
-                <h4 class="text-center mb-4">
-                    Login
-                </h4>
-
+        <div class="card mt-5 shadow-sm border-0">
+            <div class="card-body p-4">
+                <h2 class="text-center mb-2">MiniStore</h2>
+                <h4 class="text-center mb-4">@Localizer["Login"]</h4>
                 @if (ViewBag.Error != null)
                 {
-                    <div class="alert alert-danger">
-                        @ViewBag.Error
-                    </div>
+                    <div class="alert alert-danger">@Localizer[ViewBag.Error.ToString()]</div>
                 }
-
-                <form asp-action="Login"
-                      method="post">
-
-                    <input type="hidden"
-                           name="returnUrl"
-                           value="@ViewBag.ReturnUrl" />
-
+                <form asp-action="Login" method="post">
+                    <input type="hidden" name="returnUrl" value="@ViewBag.ReturnUrl" />
                     <div class="mb-3">
-
-                        <label class="form-label">
-                            Username
-                        </label>
-
-                        <input type="text"
-                               name="username"
-                               class="form-control"
-                               autocomplete="username"
-                               required />
-
+                        <label class="form-label">@Localizer["Username"]</label>
+                        <input type="text" name="username" class="form-control" autocomplete="username" required />
                     </div>
-
                     <div class="mb-3">
-
-                        <label class="form-label">
-                            Password
-                        </label>
-
-                        <input type="password"
-                               name="password"
-                               class="form-control"
-                               autocomplete="current-password"
-                               required />
-
+                        <label class="form-label">@Localizer["Password"]</label>
+                        <input type="password" name="password" class="form-control" autocomplete="current-password" required />
                     </div>
-
-                    <button type="submit"
-                            class="btn btn-primary w-100">
-
-                        Login
-
-                    </button>
-
+                    <button type="submit" class="btn btn-primary w-100">@Localizer["Login"]</button>
                 </form>
-
             </div>
-
         </div>
-
     </div>
-
 </div>

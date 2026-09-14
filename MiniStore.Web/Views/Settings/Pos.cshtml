@@ -1,0 +1,177 @@
+@model MiniStore.Application.Dtos.Settings.PosExperienceSettingsPageDto
+@using MiniStore.Domain.Entities
+
+@{
+    ViewData["Title"] = "POS Experience";
+    var settings = Model.Settings;
+}
+
+<div class="container-fluid mt-4">
+    <div class="d-flex justify-content-between align-items-start mb-4">
+        <div>
+            <h2 class="mb-1">POS Experience</h2>
+            <p class="text-muted mb-0">Choose a business profile, then customize the terminal layout.</p>
+        </div>
+        <a asp-action="InventoryAccess" class="btn btn-outline-secondary">POS &amp; Warehouse Access</a>
+    </div>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <form method="get" asp-action="Pos" class="row g-3 align-items-end">
+                <div class="col-md-6">
+                    <label class="form-label">POS terminal</label>
+                    <select name="terminalId" class="form-select" onchange="this.form.submit()">
+                        <option value="">Select terminal</option>
+                        @foreach (var terminal in Model.Terminals)
+                        {
+                            <option value="@terminal.Id" selected="@(terminal.Id == Model.SelectedTerminalId)">@terminal.DisplayName</option>
+                        }
+                    </select>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    @if (settings is null)
+    {
+        <div class="alert alert-info">
+            Create a POS terminal in Branch &amp; POS Warehouses before configuring its experience.
+        </div>
+    }
+    else
+    {
+        <form asp-action="Pos" method="post" id="posSettingsForm">
+            <input asp-for="Settings.PosTerminalId" name="PosTerminalId" type="hidden" />
+            <input asp-for="Settings.RowVersion" name="RowVersion" type="hidden" />
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+            <div class="row g-4">
+                <div class="col-xl-7">
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-header bg-white"><strong>Business profile</strong></div>
+                        <div class="card-body">
+                            <div class="row g-3">
+                                <div class="col-md-7">
+                                    <label class="form-label">Profile</label>
+                                    <select asp-for="Settings.Profile" name="Profile" asp-items="Html.GetEnumSelectList<PosExperienceProfile>()" class="form-select" id="profile"></select>
+                                </div>
+                                <div class="col-md-5 d-flex align-items-end">
+                                    <button type="submit" name="ApplyProfileDefaults" value="true" class="btn btn-outline-primary w-100">Apply Profile Defaults</button>
+                                </div>
+                            </div>
+                            <div class="form-text mt-3">Applying a profile resets this terminal's appearance to a practical starting point. You can customize it afterward.</div>
+                        </div>
+                    </div>
+
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-header bg-white"><strong>Layout and theme</strong></div>
+                        <div class="card-body">
+                            <div class="row g-3">
+                                <div class="col-md-6"><label class="form-label">Product layout</label><select asp-for="Settings.ProductLayout" name="ProductLayout" asp-items="Html.GetEnumSelectList<PosProductLayout>()" class="form-select preview-control" id="productLayout"></select></div>
+                                <div class="col-md-6"><label class="form-label">Theme</label><select asp-for="Settings.Theme" name="Theme" asp-items="Html.GetEnumSelectList<PosTheme>()" class="form-select preview-control" id="theme"></select></div>
+                                <div class="col-md-6"><label class="form-label">Cart position</label><select asp-for="Settings.CartPosition" name="CartPosition" asp-items="Html.GetEnumSelectList<PosCartPosition>()" class="form-select preview-control" id="cartPosition"></select></div>
+                                <div class="col-md-3"><label class="form-label">Columns</label><input asp-for="Settings.ProductColumns" name="ProductColumns" type="number" min="2" max="6" class="form-control preview-control" id="productColumns" /></div>
+                                <div class="col-md-3"><label class="form-label">Accent</label><input asp-for="Settings.AccentColor" name="AccentColor" type="color" class="form-control form-control-color w-100 preview-control" id="accentColor" /></div>
+                                <div class="col-12"><label class="form-label">Header title</label><input asp-for="Settings.HeaderTitle" name="HeaderTitle" maxlength="80" class="form-control preview-control" id="headerTitle" /></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-white"><strong>Visible information and interaction</strong></div>
+                        <div class="card-body row g-3">
+                            <div class="col-md-6"><label class="form-check form-switch"><input asp-for="Settings.CompactProductCards" name="CompactProductCards" class="form-check-input preview-control" /><span class="form-check-label">Compact product cards</span></label></div>
+                            <div class="col-md-6"><label class="form-check form-switch"><input asp-for="Settings.TouchOptimized" name="TouchOptimized" class="form-check-input preview-control" /><span class="form-check-label">Touch optimized controls</span></label></div>
+                            <div class="col-md-6"><label class="form-check form-switch"><input asp-for="Settings.ShowBarcode" name="ShowBarcode" class="form-check-input preview-control" /><span class="form-check-label">Show barcode</span></label></div>
+                            <div class="col-md-6"><label class="form-check form-switch"><input asp-for="Settings.ShowPrice" name="ShowPrice" class="form-check-input preview-control" /><span class="form-check-label">Show price</span></label></div>
+                            <div class="col-md-6"><label class="form-check form-switch"><input asp-for="Settings.ShowStock" name="ShowStock" class="form-check-input preview-control" /><span class="form-check-label">Show stock</span></label></div>
+                            <div class="col-md-6"><label class="form-check form-switch"><input asp-for="Settings.AutoFocusSearch" name="AutoFocusSearch" class="form-check-input" /><span class="form-check-label">Focus search on start</span></label></div>
+                        </div>
+                    </div>
+
+                    <div class="card shadow-sm mt-4">
+                        <div class="card-header bg-white"><strong>Order workflow</strong></div>
+                        <div class="card-body">
+                            <label class="form-label fw-semibold">Enabled order types</label>
+                            <div class="row g-2 mb-3">
+                                <div class="col-sm-6"><label class="form-check"><input asp-for="Settings.EnableWalkIn" name="EnableWalkIn" class="form-check-input" /><span class="form-check-label">Walk-in</span></label></div>
+                                <div class="col-sm-6"><label class="form-check"><input asp-for="Settings.EnableDineIn" name="EnableDineIn" class="form-check-input" /><span class="form-check-label">Dine-in</span></label></div>
+                                <div class="col-sm-6"><label class="form-check"><input asp-for="Settings.EnableTakeaway" name="EnableTakeaway" class="form-check-input" /><span class="form-check-label">Takeaway</span></label></div>
+                                <div class="col-sm-6"><label class="form-check"><input asp-for="Settings.EnableDelivery" name="EnableDelivery" class="form-check-input" /><span class="form-check-label">Delivery</span></label></div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Default order type</label>
+                                <select asp-for="Settings.DefaultOrderType" name="DefaultOrderType" asp-items="Html.GetEnumSelectList<PosOrderType>()" class="form-select"></select>
+                            </div>
+                            <div class="row g-2">
+                                <div class="col-12"><label class="form-check form-switch"><input asp-for="Settings.RequireServiceReference" name="RequireServiceReference" class="form-check-input" /><span class="form-check-label">Require table/service reference for dine-in</span></label></div>
+                                <div class="col-12"><label class="form-check form-switch"><input asp-for="Settings.EnableGuestCount" name="EnableGuestCount" class="form-check-input" /><span class="form-check-label">Capture guest count</span></label></div>
+                                <div class="col-12"><label class="form-check form-switch"><input asp-for="Settings.EnableItemNotes" name="EnableItemNotes" class="form-check-input" /><span class="form-check-label">Allow preparation notes per item</span></label></div>
+                                <div class="col-12"><label class="form-check form-switch"><input asp-for="Settings.QuickAddOnBarcodeScan" name="QuickAddOnBarcodeScan" class="form-check-input" /><span class="form-check-label">Add exact barcode immediately when Enter is pressed</span></label></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-4"><button type="submit" class="btn btn-primary">Save POS Settings</button></div>
+                </div>
+
+                <div class="col-xl-5">
+                    <div class="card shadow-sm sticky-xl-top" style="top: 1rem;">
+                        <div class="card-header bg-white"><strong>Live preview</strong></div>
+                        <div class="card-body">
+                            <div id="posPreview" class="rounded-4 overflow-hidden border">
+                                <div id="previewHeader" class="p-3 text-white fw-bold">@settings.HeaderTitle</div>
+                                <div id="previewBody" class="p-3 d-flex gap-3">
+                                    <div id="previewProducts" class="flex-grow-1 d-grid gap-2">
+                                        @for (var i = 1; i <= 6; i++)
+                                        {
+                                            <div class="preview-product border rounded-3 p-2 bg-white">
+                                                <strong>Product @i</strong>
+                                                <div class="preview-barcode small text-muted">10000@i</div>
+                                                <div class="preview-price text-success">2.50 JOD</div>
+                                                <div class="preview-stock small">Available: 12</div>
+                                            </div>
+                                        }
+                                    </div>
+                                    <div id="previewCart" class="border rounded-3 p-3 bg-white" style="width: 36%;"><strong>Current Cart</strong><hr /><div class="small">2 × Product</div><div class="mt-4 fw-bold">Total 5.00</div></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    }
+</div>
+
+@if (settings is not null)
+{
+    @section Scripts {
+        <script>
+            const preview = document.getElementById('posPreview');
+            const body = document.getElementById('previewBody');
+            const products = document.getElementById('previewProducts');
+            const cart = document.getElementById('previewCart');
+            function updatePreview() {
+                const accent = document.getElementById('accentColor').value;
+                document.getElementById('previewHeader').style.background = accent;
+                document.getElementById('previewHeader').textContent = document.getElementById('headerTitle').value;
+                const columns = Number(document.getElementById('productColumns').value || 3);
+                const layout = document.getElementById('productLayout').value;
+                products.style.gridTemplateColumns = layout === '@((int)PosProductLayout.CompactList)' ? '1fr' : `repeat(${Math.min(columns, 3)}, 1fr)`;
+                body.style.flexDirection = document.getElementById('cartPosition').value === '@((int)PosCartPosition.Left)' ? 'row-reverse' : 'row';
+                preview.style.background = document.getElementById('theme').value === '@((int)PosTheme.Dark)' ? '#182132' : '#f4f7fb';
+                document.querySelectorAll('.preview-product').forEach(card => card.style.padding = document.querySelector('[name="CompactProductCards"]').checked ? '.35rem' : '.75rem');
+                document.querySelectorAll('.preview-barcode').forEach(x => x.hidden = !document.querySelector('[name="ShowBarcode"]').checked);
+                document.querySelectorAll('.preview-price').forEach(x => x.hidden = !document.querySelector('[name="ShowPrice"]').checked);
+                document.querySelectorAll('.preview-stock').forEach(x => x.hidden = !document.querySelector('[name="ShowStock"]').checked);
+                cart.style.borderColor = accent;
+            }
+            document.querySelectorAll('.preview-control').forEach(x => {
+                x.addEventListener('input', updatePreview);
+                x.addEventListener('change', updatePreview);
+            });
+            updatePreview();
+        </script>
+    }
+}

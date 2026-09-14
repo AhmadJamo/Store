@@ -1,87 +1,33 @@
-﻿<div class="modal fade"
-     id="deleteModal"
-     tabindex="-1"
-     aria-hidden="true">
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizer<MiniStore.Web.SharedResource> Localizer
 
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-
         <div class="modal-content">
-
             <div class="modal-header">
-
-                <h5 class="modal-title">
-                    Confirm Delete
-                </h5>
-
-                <button type="button"
-                        class="btn-close"
-                        data-bs-dismiss="modal">
-                </button>
-
+                <h5 class="modal-title">@Localizer["Confirm Delete"]</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-
             <div class="modal-body">
-
-                <p>
-                    Are you sure you want to delete
-                    <strong id="deleteItemName"></strong>?
-                </p>
-
-                <p class="text-danger mb-0">
-                    This action cannot be undone.
-                </p>
-
+                <p>@Localizer["Are you sure you want to delete"] <strong id="deleteItemName"></strong>?</p>
+                <p class="text-danger mb-0">@Localizer["This action cannot be undone."]</p>
             </div>
-
             <div class="modal-footer">
-
-                <button type="button"
-                        class="btn btn-secondary"
-                        data-bs-dismiss="modal">
-                    Cancel
-                </button>
-
-                <form id="deleteForm"
-                      method="post">
-
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@Localizer["Cancel"]</button>
+                <form id="deleteForm" method="post">
                     @Html.AntiForgeryToken()
-
-                    <input type="hidden"
-                           id="deleteItemId"
-                           name="id" />
-
-                    <button type="submit"
-                            class="btn btn-danger">
-                        Delete
-                    </button>
-
+                    <input type="hidden" id="deleteItemId" name="id" />
+                    <button type="submit" class="btn btn-danger">@Localizer["Delete"]</button>
                 </form>
-
             </div>
-
         </div>
-
     </div>
-
 </div>
-
 <script>
-
     function confirmDelete(id, name, deleteUrl) {
-
-        document.getElementById("deleteItemId").value = id;
-
-        document.getElementById("deleteItemName").textContent = name;
-
-        document.getElementById("deleteForm").action = deleteUrl;
-
-            var modalElement =
-            document.getElementById("deleteModal");
-
-            var modal =
-            new bootstrap.Modal(modalElement);
-
-            modal.show();
-        }
-
+        document.getElementById('deleteItemId').value = id;
+        document.getElementById('deleteItemName').textContent = name;
+        document.getElementById('deleteForm').action = deleteUrl;
+        new bootstrap.Modal(document.getElementById('deleteModal')).show();
+    }
 </script>

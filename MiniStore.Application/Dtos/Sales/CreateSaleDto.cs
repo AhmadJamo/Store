@@ -10,6 +10,9 @@ public class CreateSaleDto
     public int? PosTerminalId { get; set; }
     public int? CustomerId { get; set; }
     public int PaymentMethodId { get; set; }
+    public MiniStore.Domain.Entities.PosOrderType? PosOrderType { get; set; }
+    public string? ServiceReference { get; set; }
+    public int? GuestCount { get; set; }
 
     public DateTime Date { get; set; }
 

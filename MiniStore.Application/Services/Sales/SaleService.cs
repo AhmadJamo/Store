@@ -21,6 +21,7 @@ public class SaleService : ISaleService
     private readonly IPaymentMethodRepository _paymentMethodRepository;
     private readonly IWarehouseRepository _warehouseRepository;
     private readonly InventoryAccessService _inventoryAccessService;
+    private readonly IPosTerminalSettingsRepository _posTerminalSettingsRepository;
 
     public SaleService(
         ISaleRepository saleRepository,
@@ -34,7 +35,8 @@ public class SaleService : ISaleService
         ICustomerRepository customerRepository,
         IPaymentMethodRepository paymentMethodRepository,
         IWarehouseRepository warehouseRepository,
-        InventoryAccessService inventoryAccessService)
+        InventoryAccessService inventoryAccessService,
+        IPosTerminalSettingsRepository posTerminalSettingsRepository)
     {
         _saleRepository = saleRepository;
         _productRepository = productRepository;
@@ -48,6 +50,7 @@ public class SaleService : ISaleService
         _paymentMethodRepository = paymentMethodRepository;
         _warehouseRepository = warehouseRepository;
         _inventoryAccessService = inventoryAccessService;
+        _posTerminalSettingsRepository = posTerminalSettingsRepository;
     }
 
     public async Task<List<SaleListDto>> GetAllAsync()
@@ -71,12 +74,18 @@ public class SaleService : ISaleService
         if (sale == null)
             return null;
 
+        var productNames = (await _productRepository.GetAllAsync(null))
+            .ToDictionary(x => x.Id, x => x.Name);
+
         return new SaleDetailsDto
         {
             Id = sale.Id,
             InvoiceNumber = sale.InvoiceNumber,
             WarehouseId = sale.WarehouseId,
             PosTerminalId = sale.PosTerminalId,
+            PosOrderType = sale.PosOrderType,
+            ServiceReference = sale.ServiceReference,
+            GuestCount = sale.GuestCount,
             Date = sale.Date,
             Notes = sale.Notes,
 
@@ -90,6 +99,7 @@ public class SaleService : ISaleService
                 .Select(item => new SaleItemDetailsDto
                 {
                     ProductId = item.ProductId,
+                    ProductName = productNames.GetValueOrDefault(item.ProductId, $"Product #{item.ProductId}"),
                     Quantity = item.Quantity,
                     SalePrice = item.SalePrice,
 
@@ -97,7 +107,8 @@ public class SaleService : ISaleService
                     DiscountType = item.DiscountType,
                     DiscountValue = item.DiscountValue,
                     DiscountAmount = item.DiscountAmount,
-                    Total = item.Total
+                    Total = item.Total,
+                    Notes = item.Notes
                 })
                 .ToList()
         };
@@ -123,6 +134,7 @@ public class SaleService : ISaleService
             throw new InvalidOperationException(
                 "The selected warehouse is not enabled for POS sales.");
         }
+        PosTerminalSettings? terminalSettings = null;
         if (channel == SaleChannel.RetailPos)
         {
             if (!dto.PosTerminalId.HasValue)
@@ -137,6 +149,33 @@ public class SaleService : ISaleService
                 throw new InvalidOperationException(
                     "This POS terminal is not allowed to sell from the selected warehouse.");
             }
+
+            if (dto.PosTerminalId.HasValue)
+            {
+                terminalSettings = await _posTerminalSettingsRepository.GetAsync(dto.PosTerminalId.Value)
+                    ?? new PosTerminalSettings(dto.PosTerminalId.Value, PosExperienceProfile.Retail);
+            }
+
+            var effectiveOrderType = dto.PosOrderType
+                ?? terminalSettings?.DefaultOrderType
+                ?? PosOrderType.WalkIn;
+            if (terminalSettings is not null && !terminalSettings.Supports(effectiveOrderType))
+                throw new ArgumentException("The selected order type is not enabled for this POS terminal.");
+            if (terminalSettings is null && effectiveOrderType != PosOrderType.WalkIn)
+                throw new ArgumentException("Legacy POS supports walk-in orders only.");
+            if (terminalSettings?.RequireServiceReference == true &&
+                effectiveOrderType == PosOrderType.DineIn &&
+                string.IsNullOrWhiteSpace(dto.ServiceReference))
+                throw new ArgumentException("Enter a table or service reference for dine-in orders.");
+            if (dto.GuestCount.HasValue && terminalSettings?.EnableGuestCount != true)
+                throw new ArgumentException("Guest count is not enabled for this POS terminal.");
+            if (dto.GuestCount.HasValue && effectiveOrderType != PosOrderType.DineIn)
+                throw new ArgumentException("Guest count is only valid for dine-in orders.");
+            if (dto.Items.Any(x => !string.IsNullOrWhiteSpace(x.Notes)) &&
+                terminalSettings?.EnableItemNotes != true)
+                throw new ArgumentException("Item notes are not enabled for this POS terminal.");
+
+            dto.PosOrderType = effectiveOrderType;
         }
 
         Sale? sale = null;
@@ -259,7 +298,10 @@ public class SaleService : ISaleService
                 dto.CustomerId,
                 dto.PaymentMethodId,
                 dto.Notes,
-                dto.PosTerminalId);
+                dto.PosTerminalId,
+                channel == SaleChannel.RetailPos ? dto.PosOrderType : null,
+                channel == SaleChannel.RetailPos ? dto.ServiceReference : null,
+                channel == SaleChannel.RetailPos ? dto.GuestCount : null);
 
             foreach (var itemDto in dto.Items)
             {
@@ -302,7 +344,8 @@ public class SaleService : ISaleService
                         itemDto.Quantity,
                         salePrice,
                         itemDto.DiscountType,
-                        itemDto.DiscountValue));
+                        itemDto.DiscountValue,
+                        itemDto.Notes));
 
                 stock.RemoveQuantity(itemDto.Quantity);
 

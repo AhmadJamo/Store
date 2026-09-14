@@ -63,5 +63,9 @@ public class GeneralSettingsConfiguration
         builder.Property(x => x.TimeZone)
             .IsRequired()
             .HasMaxLength(100);
+
+        builder.Property(x => x.DefaultLanguage)
+            .HasConversion<int>()
+            .IsRequired();
     }
 }

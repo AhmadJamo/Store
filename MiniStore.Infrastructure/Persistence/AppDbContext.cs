@@ -2,17 +2,28 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using MiniStore.Domain.Entities;
+using MiniStore.Domain.Interfaces;
+using System.Linq.Expressions;
 
 namespace MiniStore.Infrastructure.Persistence;
 
 public class AppDbContext
     : IdentityDbContext<IdentityUser, IdentityRole, string>
 {
+    private readonly ITenantContext? _tenantContext;
+
     public AppDbContext(
-        DbContextOptions<AppDbContext> options)
+        DbContextOptions<AppDbContext> options,
+        ITenantContext? tenantContext = null)
         : base(options)
     {
+        _tenantContext = tenantContext;
     }
+
+    public int CurrentTenantId => _tenantContext?.TenantId ?? 0;
+
+    public DbSet<Tenant> Tenants => Set<Tenant>();
+    public DbSet<TenantMembership> TenantMemberships => Set<TenantMembership>();
 
     public DbSet<Product> Products => Set<Product>();
 
@@ -70,6 +81,7 @@ public class AppDbContext
     public DbSet<PosTerminal> PosTerminals => Set<PosTerminal>();
     public DbSet<PosTerminalProduct> PosTerminalProducts => Set<PosTerminalProduct>();
     public DbSet<PosTerminalWarehouse> PosTerminalWarehouses => Set<PosTerminalWarehouse>();
+    public DbSet<PosTerminalSettings> PosTerminalSettings => Set<PosTerminalSettings>();
     public DbSet<BranchWarehouseAccess> BranchWarehouseAccesses => Set<BranchWarehouseAccess>();
     public DbSet<AccountingSettings> AccountingSettings => Set<AccountingSettings>();
     public DbSet<InventorySettings> InventorySettings => Set<InventorySettings>();
@@ -92,5 +104,100 @@ public class AppDbContext
 
         modelBuilder.ApplyConfigurationsFromAssembly(
             typeof(AppDbContext).Assembly);
+
+        ConfigureTenantIsolation(modelBuilder);
     }
+
+    public override int SaveChanges(bool acceptAllChangesOnSuccess)
+    {
+        ApplyTenantBoundary();
+        return base.SaveChanges(acceptAllChangesOnSuccess);
+    }
+
+    public override Task<int> SaveChangesAsync(
+        bool acceptAllChangesOnSuccess,
+        CancellationToken cancellationToken = default)
+    {
+        ApplyTenantBoundary();
+        return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+    }
+
+    private void ApplyTenantBoundary()
+    {
+        var entries = ChangeTracker.Entries()
+            .Where(x => TenantOwnedTypes.Contains(x.Metadata.ClrType) &&
+                        x.State is EntityState.Added or EntityState.Modified or EntityState.Deleted);
+
+        foreach (var entry in entries)
+        {
+            if (CurrentTenantId <= 0)
+                throw new InvalidOperationException("An active tenant is required for business data changes.");
+
+            var tenantProperty = entry.Property("TenantId");
+            if (entry.State == EntityState.Added)
+            {
+                tenantProperty.CurrentValue = CurrentTenantId;
+                continue;
+            }
+
+            if (!Equals(tenantProperty.OriginalValue, CurrentTenantId))
+                throw new InvalidOperationException("Cross-tenant data changes are not allowed.");
+            tenantProperty.CurrentValue = CurrentTenantId;
+        }
+    }
+
+    private void ConfigureTenantIsolation(ModelBuilder modelBuilder)
+    {
+        foreach (var clrType in TenantOwnedTypes)
+        {
+            var entity = modelBuilder.Entity(clrType);
+            entity.Property<int>("TenantId").IsRequired();
+
+            var uniqueIndexes = entity.Metadata.GetIndexes()
+                .Where(x => x.IsUnique && x.Properties.All(p => p.Name != "TenantId"))
+                .ToList();
+            foreach (var uniqueIndex in uniqueIndexes)
+            {
+                var propertyNames = uniqueIndex.Properties.Select(x => x.Name).ToArray();
+                var filter = uniqueIndex.GetFilter();
+                entity.Metadata.RemoveIndex(uniqueIndex.Properties);
+                var replacement = entity.HasIndex(["TenantId", .. propertyNames]).IsUnique();
+                if (!string.IsNullOrWhiteSpace(filter)) replacement.HasFilter(filter);
+            }
+
+            entity.HasIndex("TenantId");
+            entity.HasOne(typeof(Tenant), null)
+                .WithMany()
+                .HasForeignKey("TenantId")
+                .OnDelete(DeleteBehavior.Restrict);
+
+            var parameter = Expression.Parameter(clrType, "entity");
+            var tenantProperty = Expression.Call(
+                typeof(EF),
+                nameof(EF.Property),
+                [typeof(int)],
+                parameter,
+                Expression.Constant("TenantId"));
+            var currentTenant = Expression.Property(
+                Expression.Constant(this),
+                nameof(CurrentTenantId));
+            entity.HasQueryFilter(Expression.Lambda(
+                Expression.Equal(tenantProperty, currentTenant),
+                parameter));
+        }
+    }
+
+    private static readonly Type[] TenantOwnedTypes =
+    [
+        typeof(Product), typeof(Warehouse), typeof(ProductStock), typeof(StockTransaction),
+        typeof(Supplier), typeof(Purchase), typeof(PurchaseItem), typeof(Sale), typeof(SaleItem),
+        typeof(InvoiceSettings), typeof(AuditLog), typeof(GeneralSettings), typeof(DiscountSettings),
+        typeof(StockTransfer), typeof(StockTransferItem), typeof(StockTransferHistory),
+        typeof(DocumentNumberSettings), typeof(Branch), typeof(Account), typeof(JournalEntry),
+        typeof(JournalEntryLine), typeof(Customer), typeof(TaxRate), typeof(PosTerminal),
+        typeof(PosTerminalProduct), typeof(PosTerminalWarehouse), typeof(PosTerminalSettings),
+        typeof(BranchWarehouseAccess), typeof(AccountingSettings), typeof(InventorySettings),
+        typeof(PaymentMethod), typeof(StorageLocation), typeof(ProductLocationStock),
+        typeof(LocationMovement)
+    ];
 }

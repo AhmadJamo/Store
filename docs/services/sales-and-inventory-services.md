@@ -11,4 +11,6 @@ SaleService rejects POS sales against a warehouse whose `AllowPosSales` policy i
 
 InventoryAccessService manages branch warehouse permissions, branch priority/defaults, POS terminals and terminal warehouse priorities. SaleService requires the selected terminal to be active and authorized by both branch and terminal mappings once terminals exist.
 
+The POS reads terminal-specific presentation and order-workflow preferences from `PosExperienceSettingsService`. SaleService independently validates the submitted order type, required dine-in service reference, guest-count permission and item-note permission before persisting the context; these preferences do not alter pricing, inventory validation or accounting behavior.
+
 Controllers: Sales, Purchases, ProductStocks, StockTransactions, StockTransfers, UnassignedStock and LocationMovements. Change any service → inspect its domain entities/DTOs/repositories/configurations, relevant controller/views, permissions, stock concurrency, accounting and module docs.

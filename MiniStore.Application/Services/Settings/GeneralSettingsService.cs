@@ -34,6 +34,7 @@ public class GeneralSettingsService
             QuantityDecimalPlaces = settings.QuantityDecimalPlaces,
             DateFormat = settings.DateFormat,
             TimeZone = settings.TimeZone,
+            DefaultLanguage = settings.DefaultLanguage,
             RowVersion = settings.RowVersion
         };
     }
@@ -54,7 +55,8 @@ public class GeneralSettingsService
                 dto.DecimalPlaces,
                 dto.QuantityDecimalPlaces,
                 dto.DateFormat,
-                dto.TimeZone);
+                dto.TimeZone,
+                dto.DefaultLanguage);
 
             await _repository.AddAsync(settings);
         }
@@ -81,6 +83,7 @@ public class GeneralSettingsService
                 dto.QuantityDecimalPlaces);
             settings.SetDateFormat(dto.DateFormat);
             settings.SetTimeZone(dto.TimeZone);
+            settings.SetDefaultLanguage(dto.DefaultLanguage);
         }
 
         await _repository.SaveChangesAsync();

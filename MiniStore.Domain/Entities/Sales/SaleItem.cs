@@ -24,6 +24,7 @@ public int SaleId { get; private set; }
     public decimal DiscountAmount { get; private set; }
 
     public decimal Total { get; private set; }
+    public string? Notes { get; private set; }
 
     private SaleItem()
     {
@@ -34,7 +35,8 @@ public int SaleId { get; private set; }
         decimal quantity,
         decimal salePrice,
         DiscountType discountType = DiscountType.Percentage,
-        decimal discountValue = 0)
+        decimal discountValue = 0,
+        string? notes = null)
     {
         if (productId <= 0)
             throw new ArgumentException(
@@ -55,6 +57,8 @@ public int SaleId { get; private set; }
         if (!Enum.IsDefined(discountType))
             throw new ArgumentException(
                 "Invalid discount type.");
+        if (notes?.Trim().Length > 200)
+            throw new ArgumentException("Item notes cannot exceed 200 characters.");
 
         var grossTotal = quantity * salePrice;
 
@@ -99,6 +103,7 @@ public int SaleId { get; private set; }
         DiscountAmount = discountAmount;
 
         Total = GrossTotal - DiscountAmount;
+        Notes = string.IsNullOrWhiteSpace(notes) ? null : notes.Trim();
     }
 
 

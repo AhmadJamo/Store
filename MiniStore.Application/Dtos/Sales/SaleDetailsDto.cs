@@ -11,6 +11,9 @@ public class SaleDetailsDto
 
     public int WarehouseId { get; set; }
     public int? PosTerminalId { get; set; }
+    public MiniStore.Domain.Entities.PosOrderType? PosOrderType { get; set; }
+    public string? ServiceReference { get; set; }
+    public int? GuestCount { get; set; }
 
     public DateTime Date { get; set; }
 

@@ -6,6 +6,7 @@ namespace MiniStore.Application.DTOs.Sales;
 public class SaleItemDetailsDto
 {
     public int ProductId { get; set; }
+    public string ProductName { get; set; } = string.Empty;
 
     public decimal Quantity { get; set; }
 
@@ -20,5 +21,6 @@ public class SaleItemDetailsDto
     public decimal DiscountAmount { get; set; }
 
     public decimal Total { get; set; }
+    public string? Notes { get; set; }
 }
 

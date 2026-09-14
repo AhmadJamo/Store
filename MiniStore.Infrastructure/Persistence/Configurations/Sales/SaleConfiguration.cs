@@ -38,6 +38,12 @@ public class SaleConfiguration
         builder.Property(x => x.Notes)
             .HasMaxLength(500);
 
+        builder.Property(x => x.PosOrderType)
+            .HasConversion<int?>();
+
+        builder.Property(x => x.ServiceReference)
+            .HasMaxLength(80);
+
         builder.Property(x => x.Subtotal)
             .HasColumnType("decimal(18,2)")
             .IsRequired();

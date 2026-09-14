@@ -1,4 +1,6 @@
 using System.Reflection;
+using System.Globalization;
+using System.Resources;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -14,6 +16,7 @@ using MiniStore.Domain.Entities;
 using MiniStore.Domain.Enums;
 using MiniStore.Web.Authorization;
 using MiniStore.Web.Controllers;
+using MiniStore.Web.Localization;
 
 var count = 0;
 void Check(bool condition, string message)
@@ -26,6 +29,69 @@ using var db = new AppDbContext(
     new DbContextOptionsBuilder<AppDbContext>()
         .UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=MiniStoreRegression;Trusted_Connection=True")
         .Options);
+
+var tenant = new Tenant("Demo Company", "demo-company");
+Check(tenant.Name == "Demo Company" && tenant.Slug == "demo-company",
+    "Tenant must preserve its validated company identity");
+CheckArgumentThrows(() => new Tenant("Demo", "Invalid Slug"),
+    "Tenant slug must reject unsafe host identifiers");
+var membership = new TenantMembership(1, "user", isOwner: true);
+Check(membership.IsActive && membership.IsOwner,
+    "Tenant membership must preserve active owner access");
+CheckArgumentThrows(() => new TenantMembership(0, "user"),
+    "Tenant membership must require a valid tenant");
+
+Type[] tenantOwnedTypes =
+[
+    typeof(Product), typeof(Warehouse), typeof(ProductStock), typeof(StockTransaction),
+    typeof(Supplier), typeof(Purchase), typeof(PurchaseItem), typeof(Sale), typeof(SaleItem),
+    typeof(InvoiceSettings), typeof(AuditLog), typeof(GeneralSettings), typeof(DiscountSettings),
+    typeof(StockTransfer), typeof(StockTransferItem), typeof(StockTransferHistory),
+    typeof(DocumentNumberSettings), typeof(Branch), typeof(Account), typeof(JournalEntry),
+    typeof(JournalEntryLine), typeof(Customer), typeof(TaxRate), typeof(PosTerminal),
+    typeof(PosTerminalProduct), typeof(PosTerminalWarehouse), typeof(PosTerminalSettings),
+    typeof(BranchWarehouseAccess), typeof(AccountingSettings), typeof(InventorySettings),
+    typeof(PaymentMethod), typeof(StorageLocation), typeof(ProductLocationStock),
+    typeof(LocationMovement)
+];
+foreach (var entityType in tenantOwnedTypes)
+{
+    var metadata = db.Model.FindEntityType(entityType)!;
+    Check(metadata.FindProperty("TenantId")?.ClrType == typeof(int),
+        $"{entityType.Name} must carry tenant ownership");
+    Check(metadata.GetDeclaredQueryFilters().Any(),
+        $"{entityType.Name} must be protected by a tenant query filter");
+}
+
+using (var noTenantDb = new AppDbContext(
+    new DbContextOptionsBuilder<AppDbContext>()
+        .UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=MiniStoreRegression;Trusted_Connection=True")
+        .Options))
+{
+    noTenantDb.Products.Add(new Product("Tenant Guard", "TENANT-GUARD", 1, 2, 2));
+    CheckThrows(() => noTenantDb.SaveChanges(),
+        "Business writes must fail when no active tenant exists");
+}
+
+var generalSettings = new GeneralSettings(
+    "MiniStore", null, null, null, "JOD", 2, 3, "dd/MM/yyyy", "Asia/Amman");
+Check(generalSettings.DefaultLanguage == UiLanguage.English,
+    "General settings must default to English for compatible upgrades");
+generalSettings.SetDefaultLanguage(UiLanguage.Arabic);
+Check(generalSettings.DefaultLanguage == UiLanguage.Arabic,
+    "General settings must support Arabic as the company default language");
+CheckArgumentThrows(() => generalSettings.SetDefaultLanguage((UiLanguage)999),
+    "General settings must reject unsupported interface languages");
+Check(SupportedUiCultures.Contains("ar-JO") && SupportedUiCultures.Contains("en-US") &&
+      !SupportedUiCultures.Contains("fr-FR"),
+    "Only Arabic and English UI cultures must be accepted");
+var resources = new ResourceManager(
+    "MiniStore.Web.Resources.SharedResource",
+    typeof(MiniStore.Web.SharedResource).Assembly);
+Check(resources.GetString("Settings", CultureInfo.GetCultureInfo("ar-JO")) == "الإعدادات",
+    "Arabic shared resources must be embedded and loadable");
+Check(new LanguageController().Set("fr-FR", "/") is BadRequestResult,
+    "Language endpoint must reject unsupported cultures");
 foreach (var admin in new[] { false, true })
 {
     using var users = new StubUsers(db, admin);
@@ -145,6 +211,62 @@ CheckThrows(
     () => terminal.ChangeDefaultWarehouse(4),
     "POS default warehouse must belong to its allowed warehouse list");
 
+var groceryPos = new PosTerminalSettings(1, PosExperienceProfile.Grocery);
+Check(
+    groceryPos.ProductLayout == PosProductLayout.BarcodeFocused &&
+    groceryPos.AutoFocusSearch && groceryPos.CompactProductCards,
+    "Grocery POS profile must favor barcode speed and compact products");
+var cafePos = new PosTerminalSettings(2, PosExperienceProfile.Cafe);
+Check(
+    cafePos.TouchOptimized && !cafePos.ShowBarcode && cafePos.ProductColumns == 4,
+    "Cafe POS profile must favor touch-friendly visual products");
+var restaurantPos = new PosTerminalSettings(3, PosExperienceProfile.Restaurant);
+Check(
+    restaurantPos.Supports(PosOrderType.DineIn) &&
+    restaurantPos.Supports(PosOrderType.Takeaway) &&
+    !restaurantPos.Supports(PosOrderType.WalkIn) &&
+    restaurantPos.RequireServiceReference && restaurantPos.EnableGuestCount,
+    "Restaurant POS profile must enable dine-in service context");
+CheckArgumentThrows(
+    () => restaurantPos.ConfigureOperations(
+        PosOrderTypeOptions.None,
+        PosOrderType.DineIn,
+        false,
+        false,
+        false,
+        false),
+    "POS workflow must require at least one order type");
+CheckArgumentThrows(
+    () => restaurantPos.ConfigureOperations(
+        PosOrderTypeOptions.Takeaway,
+        PosOrderType.DineIn,
+        false,
+        false,
+        false,
+        false),
+    "POS workflow default order type must be enabled");
+CheckArgumentThrows(
+    () => cafePos.ConfigureLayout(
+        PosExperienceProfile.Cafe,
+        PosProductLayout.Grid,
+        PosTheme.Brand,
+        PosCartPosition.Right,
+        "not-a-color",
+        "Cafe",
+        4,
+        false,
+        false,
+        true,
+        true,
+        false,
+        true),
+    "POS appearance must reject unsafe accent color values");
+
+var posSettingsRowVersion = db.Model.FindEntityType(typeof(PosTerminalSettings))!
+    .FindProperty(nameof(PosTerminalSettings.RowVersion))!;
+Check(posSettingsRowVersion.IsConcurrencyToken,
+    "POS terminal settings must use optimistic concurrency");
+
 var purchase = new Purchase(1, 1, "P-1", DateTime.UtcNow);
 purchase.AddItem(new PurchaseItem(1, 1, 1, 1));
 CheckThrows(() => purchase.AddItem(new PurchaseItem(1, 2, 1, 1)),
@@ -162,9 +284,17 @@ var sale = new Sale(
     "user",
     customerId: null,
     paymentMethodId: 1,
-    posTerminalId: 7);
-Check(sale.PosTerminalId == 7, "POS sale must preserve its terminal for audit");
-sale.AddItem(new SaleItem(1, 1, 1));
+    posTerminalId: 7,
+    posOrderType: PosOrderType.DineIn,
+    serviceReference: " Table 4 ",
+    guestCount: 3);
+Check(
+    sale.PosTerminalId == 7 && sale.PosOrderType == PosOrderType.DineIn &&
+    sale.ServiceReference == "Table 4" && sale.GuestCount == 3,
+    "POS sale must preserve its terminal and service context for audit");
+var notedItem = new SaleItem(1, 1, 1, notes: " No onions ");
+Check(notedItem.Notes == "No onions", "POS sale item must preserve a trimmed preparation note");
+sale.AddItem(notedItem);
 CheckThrows(() => sale.AddItem(new SaleItem(1, 2, 1)),
     "Sale must reject duplicate products");
 

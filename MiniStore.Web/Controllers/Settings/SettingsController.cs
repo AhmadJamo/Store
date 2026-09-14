@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using MiniStore.Application.Dtos.Settings;
 using MiniStore.Application.DTOs.Settings;
 using MiniStore.Application.Services;
+using MiniStore.Domain.Interfaces;
 
 namespace MiniStore.Web.Controllers;
 
@@ -16,6 +18,9 @@ public class SettingsController : Controller
     private readonly AccountService _accountService;
     private readonly InventorySettingsService _inventorySettingsService;
     private readonly InventoryAccessService _inventoryAccessService;
+    private readonly PosExperienceSettingsService _posExperienceSettingsService;
+    private readonly IMemoryCache _memoryCache;
+    private readonly ITenantContext _tenantContext;
 
     public SettingsController(
         InvoiceSettingsService invoiceSettingsService,
@@ -24,7 +29,10 @@ public class SettingsController : Controller
         AccountingSettingsService accountingSettingsService,
         AccountService accountService,
         InventorySettingsService inventorySettingsService,
-        InventoryAccessService inventoryAccessService)
+        InventoryAccessService inventoryAccessService,
+        PosExperienceSettingsService posExperienceSettingsService,
+        IMemoryCache memoryCache,
+        ITenantContext tenantContext)
     {
         _invoiceSettingsService = invoiceSettingsService;
         _generalSettingsService = generalSettingsService;
@@ -33,6 +41,9 @@ public class SettingsController : Controller
         _accountService = accountService;
         _inventorySettingsService = inventorySettingsService;
         _inventoryAccessService = inventoryAccessService;
+        _posExperienceSettingsService = posExperienceSettingsService;
+        _memoryCache = memoryCache;
+        _tenantContext = tenantContext;
     }
 
     [HttpGet]
@@ -134,6 +145,32 @@ public class SettingsController : Controller
     }
 
     [HttpGet]
+    public async Task<IActionResult> Pos(int? terminalId)
+    {
+        return View(await _posExperienceSettingsService.GetPageAsync(terminalId));
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Pos(PosExperienceSettingsDto dto)
+    {
+        try
+        {
+            await _posExperienceSettingsService.UpdateAsync(dto);
+            TempData["NotificationType"] = "success";
+            TempData["NotificationMessage"] = dto.ApplyProfileDefaults
+                ? "POS profile defaults applied."
+                : "POS appearance settings saved.";
+            return RedirectToAction(nameof(Pos), new { terminalId = dto.PosTerminalId });
+        }
+        catch (Exception ex) when (ex is ArgumentException or InvalidOperationException)
+        {
+            ModelState.AddModelError(string.Empty, ex.Message);
+            return View(await _posExperienceSettingsService.GetPageAsync(dto.PosTerminalId));
+        }
+    }
+
+    [HttpGet]
     public async Task<IActionResult> Invoices()
     {
         return View(await _invoiceSettingsService.GetAsync());
@@ -179,6 +216,8 @@ public class SettingsController : Controller
         try
         {
             await _generalSettingsService.UpdateAsync(dto);
+            _memoryCache.Remove(
+                MiniStore.Web.Localization.DatabaseRequestCultureProvider.GetCacheKey(_tenantContext.TenantId));
 
             TempData["NotificationType"] = "success";
             TempData["NotificationMessage"] =

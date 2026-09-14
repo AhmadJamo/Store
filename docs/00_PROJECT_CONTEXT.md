@@ -7,12 +7,12 @@
 MiniStore is a server-rendered ASP.NET Core MVC store-management application. It targets .NET 10, uses EF Core 10 with SQL Server, ASP.NET Core Identity, Razor views, and a Domain/Application/Infrastructure/Web layered solution. No public API project is present.
 
 ## Current development stage
-The repository implements a first operational slice for catalog, warehouses, stock, suppliers, purchases, sales (wholesale and POS), configurable discounts, stock transfers, users/roles, and basic settings. It is not a complete accounting ERP and is not multi-tenant/SaaS in code.
+The repository implements a first operational slice for catalog, warehouses, stock, suppliers, purchases, sales (wholesale and POS), configurable discounts, stock transfers, users/roles, basic settings and shared-database tenant isolation. It is not a complete accounting ERP; subscriptions, billing and tenant administration remain future SaaS phases.
 
 ## Status classification
 - IMPLEMENTED: catalog, warehouses, suppliers, stock balances/movements, purchases, sales, transfer workflow, Identity login, role-permission checks, audit-log rows, Razor UI.
 - PARTIALLY IMPLEMENTED: authorization administration, settings concurrency, auditability, inventory controls, invoice/document numbering.
-- PLANNED: accounting ledger, customers, payments, taxes, returns, fiscal periods, SaaS tenancy/subscriptions, API/integrations. No implementation found.
+- PLANNED: returns, fiscal periods, SaaS subscriptions/billing/onboarding, API/integrations.
 - BLOCKED: stock-transfer creation requires a `DocumentNumberSettings` row; code does not seed or create one when absent.
 - UNKNOWN: deployed environment, production migration process, backups, CI/CD, external integrations, and operational ownership.
 
@@ -34,7 +34,7 @@ See `06_SECURITY.md`, `04_ACCOUNTING.md`, and `TODO.md`. Highest-priority findin
 
 ## Recommended next steps
 1. Complete the security and inventory-integrity work listed in `TODO.md`.
-2. Decide and document a tenant boundary before SaaS development; no `TenantId` exists.
+2. Build tenant administration, tenant-scoped roles and subscription enforcement on the implemented tenant data boundary.
 3. Establish an immutable posted-document and double-entry accounting design before adding more ERP features.
 
 ## Read first

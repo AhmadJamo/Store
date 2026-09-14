@@ -42,6 +42,9 @@ public class SaleItemConfiguration
             .HasColumnType("decimal(18,2)")
             .IsRequired();
 
+        builder.Property(x => x.Notes)
+            .HasMaxLength(200);
+
         builder.HasOne<Product>()
             .WithMany()
             .HasForeignKey(x => x.ProductId)

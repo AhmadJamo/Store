@@ -7,7 +7,7 @@
 `MiniStore.Web/appsettings.json` contains `ConnectionStrings:DefaultConnection`, `AdminUser` values, logging levels and wildcard `AllowedHosts`. No admin password is stored in the current configuration. `launchSettings.json` is development launch metadata. Required production secret handling is Unknown / Not determined from code.
 
 ## Runtime setup
-`Program.cs` registers MVC, global antiforgery, HttpContext accessor, current-user/audit services, SQL Server DbContext plus interceptor, Identity, cookie routes, repositories/services, custom authorization provider/handler, static assets, authentication and authorization middleware. At startup it runs Identity and permission seeders. It does not call `Database.Migrate`; migration deployment is Unknown.
+`Program.cs` registers MVC, localization/resources, memory cache, global antiforgery, HttpContext accessor, current-user/tenant/audit services, SQL Server DbContext plus interceptor, Identity, cookie routes, repositories/services, custom authorization provider/handler, static assets, authentication and authorization middleware. Tenant-session validation runs after authentication and before tenant-aware localization/authorization. Request culture uses the user's cookie then the cached tenant-company default. Windows Event Log output is disabled, and startup database initialization failures are caught, logged and returned with exit code 1 instead of escaping as an unhandled Windows application error. At startup the app runs Identity and permission seeders. It does not call `Database.Migrate`; migration deployment remains explicit.
 
 ## Required values
 - SQL Server connection string.

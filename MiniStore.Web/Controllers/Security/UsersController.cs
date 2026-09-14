@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MiniStore.Web.Authorization;
+using MiniStore.Domain.Entities;
+using MiniStore.Domain.Interfaces;
 
 namespace MiniStore.Web.Controllers;
 
@@ -11,13 +13,19 @@ public class UsersController : Controller
 {
     private readonly UserManager<IdentityUser> _userManager;
     private readonly RoleManager<IdentityRole> _roleManager;
+    private readonly ITenantContext _tenantContext;
+    private readonly ITenantMembershipRepository _memberships;
 
     public UsersController(
         UserManager<IdentityUser> userManager,
-        RoleManager<IdentityRole> roleManager)
+        RoleManager<IdentityRole> roleManager,
+        ITenantContext tenantContext,
+        ITenantMembershipRepository memberships)
     {
         _userManager = userManager;
         _roleManager = roleManager;
+        _tenantContext = tenantContext;
+        _memberships = memberships;
     }
 
     // GET: /Users
@@ -25,8 +33,12 @@ public class UsersController : Controller
     [PermissionAuthorize("Users.View")]
     public async Task<IActionResult> Index()
     {
+        var tenantId = _tenantContext.TenantId
+            ?? throw new InvalidOperationException("An active company is required.");
+        var tenantUserIds = await _memberships.GetActiveUserIdsAsync(tenantId);
         var users =
             await _userManager.Users
+                .Where(x => tenantUserIds.Contains(x.Id))
                 .OrderBy(x => x.UserName)
                 .ToListAsync();
 
@@ -152,6 +164,11 @@ public class UsersController : Controller
 
             return View();
         }
+
+        var tenantId = _tenantContext.TenantId
+            ?? throw new InvalidOperationException("An active company is required.");
+        await _memberships.AddAsync(new TenantMembership(tenantId, user.Id));
+        await _memberships.SaveChangesAsync();
 
         TempData["Success"] =
             "User created successfully.";

@@ -13,12 +13,17 @@
 ## Verified protections and boundaries
 Global MVC antiforgery, local returnUrl validation, Identity password hashing, HTTPS redirection and production HSTS already exist. Inspected active data access uses EF LINQ; no raw SQL found. No confirmed XSS was identified in inspected dynamic row rendering; this is not a penetration-test guarantee.
 
+The language switch is an antiforgery-protected POST, accepts only `en-US` and `ar-JO`, uses `LocalRedirect` after validating the return URL, and stores an essential HttpOnly SameSite=Lax culture cookie. Arabic translation values are output through Razor encoding.
+
+Business data is isolated by an authenticated tenant claim backed by an active `TenantMembership` and active `Tenant`. Middleware validates that membership on every authenticated request, upgrades older cookies with a valid tenant claim and signs out users with no active company. EF global query filters scope reads; the DbContext stamps inserts and rejects changes made without a tenant or against another tenant. Every tenant-owned table has a restrictive tenant foreign key. Focused checks verify all 34 protected entity types and the no-tenant write guard.
+
 ## Remaining risks / deployment work
 - Configure production AllowedHosts; wildcard remains because the deployment hostname is unknown.
 - Supply a production SQL connection string with validated TLS certificates; local development configuration trusts the certificate.
 - Rate limiting is per process and uses the connection IP. Multi-instance/reverse-proxy deployments need trusted proxy configuration and shared edge limits; do not trust arbitrary forwarded headers.
 - Stock updates lack concurrency control; manual stock movements permit document-owned types. These existing financial-integrity issues remain tracked in TODO and require coordinated inventory changes.
 - Audit history lacks before/after values and tamper-evidence. Production secrets, TLS, backups, access controls and log retention are not verified.
+- Identity roles and role-permission mappings are still global. Tenant-specific role assignments must be implemented before one user can hold different roles in different companies.
 - No deployed HTTP/database penetration test performed. Focused tests use a stub Identity manager, real permission evaluators and action metadata.
 
 ## Verification

@@ -17,6 +17,7 @@ public class SalesController : Controller
     private readonly ICustomerRepository _customerRepository;
     private readonly IPaymentMethodRepository _paymentMethodRepository;
     private readonly InventoryAccessService _inventoryAccessService;
+    private readonly PosExperienceSettingsService _posExperienceSettingsService;
 
     public SalesController(
         ISaleService saleService,
@@ -25,7 +26,8 @@ public class SalesController : Controller
         IProductStockRepository productStockRepository,
         ICustomerRepository customerRepository,
         IPaymentMethodRepository paymentMethodRepository,
-        InventoryAccessService inventoryAccessService)
+        InventoryAccessService inventoryAccessService,
+        PosExperienceSettingsService posExperienceSettingsService)
     {
         _saleService = saleService;
         _productRepository = productRepository;
@@ -34,6 +36,7 @@ public class SalesController : Controller
         _customerRepository = customerRepository;
         _paymentMethodRepository = paymentMethodRepository;
         _inventoryAccessService = inventoryAccessService;
+        _posExperienceSettingsService = posExperienceSettingsService;
     }
 
     [PermissionAuthorize("Sales.View")]
@@ -147,6 +150,8 @@ public class SalesController : Controller
                 .PosTerminals
                 .Where(terminal => terminal.IsActive)
                 .ToList();
+            ViewBag.PosRuntimeSettings =
+                await _posExperienceSettingsService.GetRuntimeSettingsAsync();
         }
 
         ViewBag.ProductStocks =
