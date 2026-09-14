@@ -118,7 +118,11 @@ public class StockTransferService : IStockTransferService
                     $"Product with ID {item.ProductId} was not found.");
             }
 
-            await ValidateLocationsAsync(item.SourceLocationId, item.DestinationLocationId, command.FromWarehouseId, command.ToWarehouseId);
+            await ValidateLocationsAsync(
+                item.SourceLocationId,
+                item.DestinationLocationId,
+                fromWarehouse,
+                toWarehouse);
         }
 
         var documentSettings =
@@ -243,7 +247,11 @@ public class StockTransferService : IStockTransferService
                     $"Product with ID {item.ProductId} was not found.");
             }
 
-            await ValidateLocationsAsync(item.SourceLocationId, item.DestinationLocationId, command.FromWarehouseId, command.ToWarehouseId);
+            await ValidateLocationsAsync(
+                item.SourceLocationId,
+                item.DestinationLocationId,
+                fromWarehouse,
+                toWarehouse);
         }
 
         await _unitOfWork.ExecuteInTransactionAsync(
@@ -316,15 +324,43 @@ public class StockTransferService : IStockTransferService
     private async Task ValidateLocationsAsync(
         int? sourceLocationId,
         int? destinationLocationId,
-        int fromWarehouseId,
-        int toWarehouseId)
+        Warehouse fromWarehouse,
+        Warehouse toWarehouse)
     {
+        if (fromWarehouse.ControlMode == InventoryControlMode.Simple &&
+            sourceLocationId.HasValue)
+        {
+            throw new InvalidOperationException(
+                "A source location cannot be selected for a simple warehouse.");
+        }
+
+        if (toWarehouse.ControlMode == InventoryControlMode.Simple &&
+            destinationLocationId.HasValue)
+        {
+            throw new InvalidOperationException(
+                "A destination location cannot be selected for a simple warehouse.");
+        }
+
+        if (fromWarehouse.RequireSourceLocationForTransfers &&
+            !sourceLocationId.HasValue)
+        {
+            throw new InvalidOperationException(
+                "The source warehouse requires an exact source location.");
+        }
+
+        if (toWarehouse.RequireDestinationLocationForTransfers &&
+            !destinationLocationId.HasValue)
+        {
+            throw new InvalidOperationException(
+                "The destination warehouse requires an exact destination location.");
+        }
+
         if (sourceLocationId.HasValue)
         {
             var source = await _storageLocationRepository
                 .GetByIdAsync(sourceLocationId.Value);
 
-            if (source is null || source.WarehouseId != fromWarehouseId)
+            if (source is null || source.WarehouseId != fromWarehouse.Id)
             {
                 throw new InvalidOperationException(
                     "Source location must belong to the source warehouse.");
@@ -341,7 +377,7 @@ public class StockTransferService : IStockTransferService
             var destination = await _storageLocationRepository
                 .GetByIdAsync(destinationLocationId.Value);
 
-            if (destination is null || destination.WarehouseId != toWarehouseId)
+            if (destination is null || destination.WarehouseId != toWarehouse.Id)
             {
                 throw new InvalidOperationException(
                     "Destination location must belong to the destination warehouse.");
@@ -366,6 +402,20 @@ public class StockTransferService : IStockTransferService
         if (transfer == null)
             throw new InvalidOperationException(
                 "Stock transfer not found.");
+
+        var fromWarehouse = await _warehouseRepository.GetByIdAsync(transfer.FromWarehouseId)
+            ?? throw new InvalidOperationException("Source warehouse not found.");
+        var toWarehouse = await _warehouseRepository.GetByIdAsync(transfer.ToWarehouseId)
+            ?? throw new InvalidOperationException("Destination warehouse not found.");
+
+        foreach (var item in transfer.Items)
+        {
+            await ValidateLocationsAsync(
+                item.SourceLocationId,
+                item.DestinationLocationId,
+                fromWarehouse,
+                toWarehouse);
+        }
 
         await _unitOfWork.ExecuteInTransactionAsync(
             async () =>
@@ -441,6 +491,20 @@ public class StockTransferService : IStockTransferService
         if (transfer == null)
             throw new InvalidOperationException(
                 "Stock transfer not found.");
+
+        var fromWarehouse = await _warehouseRepository.GetByIdAsync(transfer.FromWarehouseId)
+            ?? throw new InvalidOperationException("Source warehouse not found.");
+        var toWarehouse = await _warehouseRepository.GetByIdAsync(transfer.ToWarehouseId)
+            ?? throw new InvalidOperationException("Destination warehouse not found.");
+
+        foreach (var item in transfer.Items)
+        {
+            await ValidateLocationsAsync(
+                item.SourceLocationId,
+                item.DestinationLocationId,
+                fromWarehouse,
+                toWarehouse);
+        }
 
         await _unitOfWork.ExecuteInTransactionAsync(
             async () =>
@@ -518,6 +582,10 @@ public class StockTransferService : IStockTransferService
 
                     if (item.DestinationLocationId.HasValue)
                     {
+                        var destinationLocation = await _storageLocationRepository
+                            .GetByIdAsync(item.DestinationLocationId.Value)
+                            ?? throw new InvalidOperationException(
+                                "Destination location was not found.");
                         var destinationLocationStock =
                             await _productLocationStockRepository.GetAsync(
                                 item.ProductId,
@@ -532,6 +600,21 @@ public class StockTransferService : IStockTransferService
 
                             await _productLocationStockRepository.AddAsync(
                                 destinationLocationStock);
+                        }
+
+                        if (toWarehouse.EnforceLocationCapacity &&
+                            destinationLocation.MaximumQuantity.HasValue)
+                        {
+                            var allLocationStocks = await _productLocationStockRepository.GetAllAsync();
+                            var currentLocationQuantity = allLocationStocks
+                                .Where(stock => stock.StorageLocationId == destinationLocation.Id)
+                                .Sum(stock => stock.Quantity);
+                            if (currentLocationQuantity + item.Quantity >
+                                destinationLocation.MaximumQuantity.Value)
+                            {
+                                throw new InvalidOperationException(
+                                    "Transfer quantity exceeds the destination location capacity.");
+                            }
                         }
 
                         destinationLocationStock.AddQuantity(item.Quantity);

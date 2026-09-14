@@ -46,9 +46,16 @@ public class StorageLocationService(
 
     public async Task CreateAsync(CreateStorageLocationDto dto)
     {
-        if (await warehouseRepository.GetByIdAsync(dto.WarehouseId) is null)
+        var warehouse = await warehouseRepository.GetByIdAsync(dto.WarehouseId);
+        if (warehouse is null)
         {
             throw new InvalidOperationException("Warehouse not found.");
+        }
+
+        if (warehouse.ControlMode == InventoryControlMode.Simple)
+        {
+            throw new InvalidOperationException(
+                "Storage locations cannot be created for a simple warehouse. Change its inventory control mode first.");
         }
 
         var normalizedCode = dto.Code.Trim().ToUpperInvariant();

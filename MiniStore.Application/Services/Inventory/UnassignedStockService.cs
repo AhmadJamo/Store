@@ -10,6 +10,8 @@ public class UnassignedStockService(
     IProductRepository productRepository,
     IWarehouseRepository warehouseRepository,
     IStorageLocationRepository storageLocationRepository,
+    ILocationMovementRepository movementRepository,
+    ICurrentUserService currentUserService,
     IUnitOfWork unitOfWork)
 {
     public async Task<List<UnassignedStockDto>> SearchAsync(
@@ -26,12 +28,17 @@ public class UnassignedStockService(
         var warehouseNamesById = warehouses.ToDictionary(
             warehouse => warehouse.Id,
             warehouse => warehouse.Name);
+        var managedWarehouseIds = warehouses
+            .Where(warehouse => warehouse.ControlMode != InventoryControlMode.Simple)
+            .Select(warehouse => warehouse.Id)
+            .ToHashSet();
         var assignedQuantities = locationStocks
             .GroupBy(stock => (stock.ProductId, stock.WarehouseId))
             .ToDictionary(group => group.Key, group => group.Sum(stock => stock.Quantity));
 
         var rows = warehouseStocks
             .Where(stock =>
+                managedWarehouseIds.Contains(stock.WarehouseId) &&
                 productsById.ContainsKey(stock.ProductId) &&
                 (!warehouseId.HasValue || stock.WarehouseId == warehouseId))
             .Select(stock => CreateRow(
@@ -59,6 +66,14 @@ public class UnassignedStockService(
 
         var location = await storageLocationRepository.GetByIdAsync(storageLocationId)
             ?? throw new InvalidOperationException("Storage location not found.");
+        var warehouse = await warehouseRepository.GetByIdAsync(warehouseId)
+            ?? throw new InvalidOperationException("Warehouse not found.");
+
+        if (warehouse.ControlMode == InventoryControlMode.Simple)
+        {
+            throw new InvalidOperationException(
+                "A simple warehouse does not use exact storage locations.");
+        }
 
         if (location.WarehouseId != warehouseId ||
             location.Status != StorageLocationStatus.Active)
@@ -90,11 +105,13 @@ public class UnassignedStockService(
             var targetStock = await locationStockRepository.GetAsync(
                 productId,
                 storageLocationId);
-            var targetQuantityAfterAssignment =
-                (targetStock?.Quantity ?? 0) + quantity;
+            var locationQuantityAfterAssignment = existingLocationStocks
+                .Where(stock => stock.StorageLocationId == storageLocationId)
+                .Sum(stock => stock.Quantity) + quantity;
 
-            if (location.MaximumQuantity.HasValue &&
-                targetQuantityAfterAssignment > location.MaximumQuantity.Value)
+            if (warehouse.EnforceLocationCapacity &&
+                location.MaximumQuantity.HasValue &&
+                locationQuantityAfterAssignment > location.MaximumQuantity.Value)
             {
                 throw new InvalidOperationException(
                     "Quantity exceeds the location capacity.");
@@ -111,6 +128,18 @@ public class UnassignedStockService(
             }
 
             targetStock.AddQuantity(quantity);
+
+            var movement = new LocationMovement(
+                productId,
+                warehouseId,
+                fromStorageLocationId: null,
+                toStorageLocationId: storageLocationId,
+                quantity,
+                LocationMovementType.Putaway,
+                currentUserService.UserId,
+                reference: "Unassigned Stock");
+
+            await movementRepository.AddAsync(movement);
         });
     }
 

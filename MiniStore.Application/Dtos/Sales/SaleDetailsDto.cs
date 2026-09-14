@@ -10,6 +10,7 @@ public class SaleDetailsDto
     public string InvoiceNumber { get; set; } = string.Empty;
 
     public int WarehouseId { get; set; }
+    public int? PosTerminalId { get; set; }
 
     public DateTime Date { get; set; }
 

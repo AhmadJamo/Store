@@ -1,7 +1,7 @@
 # Codebase map
 > Status: IMPLEMENTED  
 > Source of truth: Repository scan  
-> Last reviewed: 2026-09-13
+> Last reviewed: 2026-09-14
 
 ## Solution roots
 | Path | Project/layer | Purpose |
@@ -19,9 +19,9 @@
 | `Entities/Accounting/*.cs` | chart, branches, journal entries, tax and payment entities | accounting docs. |
 | `Entities/Catalog/Product.cs` | product master data | products and entity docs. |
 | `Entities/Customers/Customer.cs`, `Entities/Suppliers/Supplier.cs` | commercial-party master data | sales/purchases docs. |
-| `Entities/Inventory/*.cs` | warehouses, balances, locations, movements and transfers | inventory and stock-transfer docs. |
+| `Entities/Inventory/*.cs` | warehouses, operating-policy enums, balances, exact locations, putaway/relocation history, stock movements and transfers | inventory and stock-transfer docs. |
 | `Entities/Purchases/*.cs`, `Entities/Sales/*.cs` | purchase, sale and POS aggregates | purchase/sales docs. |
-| `Entities/Settings/*.cs` | accounting, discount, numbering, invoice and general settings | settings/database docs. |
+| `Entities/Settings/*.cs` | accounting, discount, inventory-policy defaults, numbering, invoice and general settings | settings/database docs. |
 | `Entities/Security/*.cs` | audit and role-permission entities | permissions/security docs. |
 | `Enums/Sales/DiscountType.cs` | percentage/fixed discount enum | sales/settings docs. |
 | `Commands/Inventory/*.cs` | transfer service input commands | transfer service. |
@@ -32,12 +32,15 @@
 | Files | Purpose | Used by |
 |---|---|---|
 | `Services/<Feature>/*.cs` | use-case services grouped as Accounting, Catalog, Customers, Inventory, Purchases, Sales, Settings and Suppliers | matching MVC controllers. |
-| `Services/Inventory/{StorageLocation,UnassignedStock}Service.cs` | location administration, warehouse search and stock putaway | inventory controllers. |
+| `Services/Inventory/{StorageLocation,UnassignedStock,LocationMovement}Service.cs` | location administration, warehouse search, putaway, internal relocation and history | inventory controllers. |
+| `Services/Settings/InventorySettingsService.cs` | rowversion-protected defaults for new warehouse operating policies | SettingsController inventory screen. |
+| `Services/Settings/InventoryAccessService.cs` | branch warehouse permissions/priorities and POS terminal warehouse policies | Settings InventoryAccess and POS validation. |
 | `Services/Sales/DiscountCalculator.cs` | standalone discount calculation helper; no active consumer found by scan | Unknown. |
 | `Services/Shared/ICurrentUserService.cs` | current-user application contract | Web CurrentUserService. |
 | `Permissions/{PermissionDefinitions,IPermissionService}.cs` | permission catalogue/contract | seeders/auth/services. |
 | `Dtos/Catalog/Products/*.cs` | product request/display DTOs | catalog services/controllers/views. |
 | `Dtos/Inventory/<ProductStocks|StockTransfers|Warehouses>/*.cs` | inventory request/display DTO families | inventory services/controllers/views. |
+| `Dtos/Inventory/LocationMovements/*.cs` | relocation input, lookup and history page models | LocationMovementService/controller/view. |
 | `Dtos/<Accounting|Purchases|Sales|Settings|Suppliers>/*.cs` | feature request/display DTOs | matching services/controllers/views. |
 
 ## Infrastructure source map
@@ -53,6 +56,12 @@ Accounting foundation (2026-09-13): migration `AddAccountingFoundation` adds Acc
 | `Migrations/*.cs` and snapshot | schema evolution/model snapshots | EF tooling, deployment. |
 
 Inventory concurrency update (2026-09-13): ProductStock and StockTransfer include database-generated rowversions; migration `AddInventoryConcurrency` updates SQL Server. UnitOfWork uses Serializable isolation for atomic inventory workflows. Manual stock transactions accept adjustments only, and purchase/sale aggregates reject duplicate product lines. Focused checks live in `tests/SecurityRegression`.
+
+Inventory operating-policy update (2026-09-14): warehouses separate operational type from Simple/LocationManaged/Hybrid control and persist picking, POS, capacity and transfer-location rules. InventorySettings stores defaults for new warehouses; migration `AddInventoryOperatingPolicies` updates the schema.
+
+Branch/POS access update (2026-09-14): `BranchWarehouseAccess` and `PosTerminalWarehouse` provide layered warehouse allow-lists and priorities. Settings manages both levels and POS sale creation validates them. Migration `AddBranchAndPosWarehouseAccess` includes compatible backfill.
+
+Warehouse location movement update (2026-09-14): `LocationMovement` and its repository/configuration/service record Putaway and Relocation operations. `LocationMovementsController` and `Views/LocationMovements/Index.cshtml` provide internal movement and searchable history. Migration `AddLocationMovementHistory` creates the audit table and indexes.
 | `Repositories/<Feature>/*.cs` | EF implementations grouped by feature | application services. |
 | `Repositories/Accounting/JournalEntryRepository.cs` | journal source duplicate-posting lookup and persistence | `PurchasePostingService`. |
 | `Authorization/PermissionService.cs` | permission check implementation | SaleService. |

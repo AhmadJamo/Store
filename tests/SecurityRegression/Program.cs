@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
+using MiniStore.Application.Permissions;
 using MiniStore.Infrastructure.Authorization;
 using MiniStore.Infrastructure.Persistence;
 using MiniStore.Domain.Entities;
@@ -61,6 +62,89 @@ var transferRowVersion = db.Model.FindEntityType(typeof(StockTransfer))!
 Check(transferRowVersion.IsConcurrencyToken,
     "StockTransfer.RowVersion must prevent duplicate workflow transitions");
 
+Check(
+    PermissionDefinitions.All.Any(permission =>
+        permission.Name == "LocationMovements.View"),
+    "Location movement view permission must be defined");
+Check(
+    PermissionDefinitions.All.Any(permission =>
+        permission.Name == "LocationMovements.Create"),
+    "Location movement create permission must be defined");
+
+var locationMovement = new LocationMovement(
+    productId: 1,
+    warehouseId: 1,
+    fromStorageLocationId: 10,
+    toStorageLocationId: 20,
+    quantity: 3,
+    type: LocationMovementType.Relocation,
+    createdByUserId: "user");
+Check(
+    locationMovement.FromStorageLocationId == 10 &&
+    locationMovement.ToStorageLocationId == 20 &&
+    locationMovement.Quantity == 3,
+    "Location relocation must preserve its source, destination and quantity");
+CheckArgumentThrows(
+    () => new LocationMovement(
+        productId: 1,
+        warehouseId: 1,
+        fromStorageLocationId: 10,
+        toStorageLocationId: 10,
+        quantity: 1,
+        type: LocationMovementType.Relocation,
+        createdByUserId: "user"),
+    "Location relocation must reject identical source and destination locations");
+
+var inventorySettingsRowVersion = db.Model.FindEntityType(typeof(InventorySettings))!
+    .FindProperty(nameof(InventorySettings.RowVersion))!;
+Check(
+    inventorySettingsRowVersion.IsConcurrencyToken,
+    "Inventory settings must use optimistic concurrency");
+
+var organizedSalesFloor = new Warehouse("Mall Sales Floor");
+organizedSalesFloor.ConfigureInventoryOperations(
+    WarehouseType.SalesFloor,
+    InventoryControlMode.Hybrid,
+    InventoryPickingStrategy.LocationPriority,
+    allowPosSales: true,
+    enforceLocationCapacity: true,
+    requireSourceLocationForTransfers: false,
+    requireDestinationLocationForTransfers: false);
+Check(
+    organizedSalesFloor.AllowPosSales &&
+    organizedSalesFloor.ControlMode == InventoryControlMode.Hybrid,
+    "An organized sales-floor warehouse must be usable by POS");
+CheckArgumentThrows(
+    () => organizedSalesFloor.ConfigureInventoryOperations(
+        WarehouseType.Outlet,
+        InventoryControlMode.Simple,
+        InventoryPickingStrategy.Manual,
+        allowPosSales: true,
+        enforceLocationCapacity: false,
+        requireSourceLocationForTransfers: true,
+        requireDestinationLocationForTransfers: false),
+    "A simple warehouse must reject exact-location requirements");
+
+var branchAccess = new BranchWarehouseAccess(branchId: 1, warehouseId: 2);
+branchAccess.Configure(1, 2, 3, true, true, true, true, true, true);
+Check(
+    branchAccess.IsDefaultForPos && branchAccess.Priority == 3,
+    "Branch warehouse access must preserve POS default and priority");
+CheckArgumentThrows(
+    () => branchAccess.Configure(1, 2, 1, true, false, false, true, true, true),
+    "A branch POS default must allow POS sales");
+
+var terminal = new PosTerminal("Mall POS 1", branchId: 1, defaultWarehouseId: 2);
+terminal.AddOrUpdateWarehouse(2, 1);
+terminal.AddOrUpdateWarehouse(3, 2);
+terminal.ChangeDefaultWarehouse(3);
+Check(
+    terminal.DefaultWarehouseId == 3 && terminal.Warehouses.Count == 2,
+    "POS must support an allowed default warehouse and prioritized alternatives");
+CheckThrows(
+    () => terminal.ChangeDefaultWarehouse(4),
+    "POS default warehouse must belong to its allowed warehouse list");
+
 var purchase = new Purchase(1, 1, "P-1", DateTime.UtcNow);
 purchase.AddItem(new PurchaseItem(1, 1, 1, 1));
 CheckThrows(() => purchase.AddItem(new PurchaseItem(1, 2, 1, 1)),
@@ -77,7 +161,9 @@ var sale = new Sale(
     SaleChannel.RetailPos,
     "user",
     customerId: null,
-    paymentMethodId: 1);
+    paymentMethodId: 1,
+    posTerminalId: 7);
+Check(sale.PosTerminalId == 7, "POS sale must preserve its terminal for audit");
 sale.AddItem(new SaleItem(1, 1, 1));
 CheckThrows(() => sale.AddItem(new SaleItem(1, 2, 1)),
     "Sale must reject duplicate products");
@@ -92,6 +178,19 @@ void CheckThrows(Action action, string message)
         throw new Exception(message);
     }
     catch (InvalidOperationException)
+    {
+        count++;
+    }
+}
+
+void CheckArgumentThrows(Action action, string message)
+{
+    try
+    {
+        action();
+        throw new Exception(message);
+    }
+    catch (ArgumentException)
     {
         count++;
     }

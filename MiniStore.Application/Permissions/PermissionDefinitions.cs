@@ -46,6 +46,20 @@ public static class PermissionDefinitions
             "Stock Transactions"),
 
         // ==========================================
+        // Warehouse Location Movements
+        // ==========================================
+
+        new(
+            "LocationMovements.View",
+            "View Location Movements",
+            "Warehouse Locations"),
+
+        new(
+            "LocationMovements.Create",
+            "Move Stock Between Locations",
+            "Warehouse Locations"),
+
+        // ==========================================
         // Suppliers
         // ==========================================
 

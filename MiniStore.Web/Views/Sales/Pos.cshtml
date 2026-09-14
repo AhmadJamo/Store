@@ -1,8 +1,10 @@
 ﻿@using System.Globalization
+@using System.Text.Json
 @model MiniStore.Application.DTOs.Sales.CreateSaleDto
 
 @{
     ViewData["Title"] = "Point of Sale";
+    var posTerminals = ViewBag.PosTerminals as List<MiniStore.Application.Dtos.Settings.PosTerminalAccessDto> ?? [];
 }
 
 <style>
@@ -147,6 +149,17 @@
             <div class="card-body">
 
                 <div class="row g-3 align-items-end">
+
+                    <div class="col-md-4">
+                        <label asp-for="PosTerminalId" class="form-label fw-semibold">POS Terminal</label>
+                        <select asp-for="PosTerminalId" id="posTerminalId" class="form-select" required="@(posTerminals.Count > 0 ? "required" : null)">
+                            <option value="">@(posTerminals.Count == 0 ? "Legacy POS — configure terminals in Settings" : "-- Select POS Terminal --")</option>
+                            @foreach (var terminal in posTerminals)
+                            {
+                                <option value="@terminal.Id">@terminal.BranchName · @terminal.Name</option>
+                            }
+                        </select>
+                    </div>
 
                     <div class="col-md-4">
                         <label asp-for="WarehouseId"
@@ -418,6 +431,12 @@
 ]
 </script>
 
+<script type="application/json" id="terminalAccessData">
+@Html.Raw(JsonSerializer.Serialize(
+    posTerminals
+        .Select(x => new { x.Id, x.DefaultWarehouseId, WarehouseIds = x.Warehouses.Select(w => w.WarehouseId) })))
+</script>
+
 
 @section Scripts {
 
@@ -443,6 +462,22 @@
 
         const warehouseInput =
             document.getElementById("warehouseId");
+        const terminalInput = document.getElementById("posTerminalId");
+        const terminalAccess = JSON.parse(
+            document.getElementById("terminalAccessData").textContent);
+
+        terminalInput.addEventListener("change", () => {
+            const terminal = terminalAccess.find(
+                x => String(x.Id) === terminalInput.value);
+            [...warehouseInput.options].forEach(option => {
+                option.hidden = Boolean(option.value) &&
+                    (!terminal || !terminal.WarehouseIds.includes(Number(option.value)));
+            });
+            warehouseInput.value = terminal
+                ? String(terminal.DefaultWarehouseId)
+                : "";
+            updateProductAvailability();
+        });
 
         const productSearch =
             document.getElementById("productSearch");

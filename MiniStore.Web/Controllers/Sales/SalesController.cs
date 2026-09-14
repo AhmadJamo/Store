@@ -16,6 +16,7 @@ public class SalesController : Controller
     private readonly IProductStockRepository _productStockRepository;
     private readonly ICustomerRepository _customerRepository;
     private readonly IPaymentMethodRepository _paymentMethodRepository;
+    private readonly InventoryAccessService _inventoryAccessService;
 
     public SalesController(
         ISaleService saleService,
@@ -23,7 +24,8 @@ public class SalesController : Controller
         IWarehouseRepository warehouseRepository,
         IProductStockRepository productStockRepository,
         ICustomerRepository customerRepository,
-        IPaymentMethodRepository paymentMethodRepository)
+        IPaymentMethodRepository paymentMethodRepository,
+        InventoryAccessService inventoryAccessService)
     {
         _saleService = saleService;
         _productRepository = productRepository;
@@ -31,6 +33,7 @@ public class SalesController : Controller
         _productStockRepository = productStockRepository;
         _customerRepository = customerRepository;
         _paymentMethodRepository = paymentMethodRepository;
+        _inventoryAccessService = inventoryAccessService;
     }
 
     [PermissionAuthorize("Sales.View")]
@@ -71,7 +74,7 @@ public class SalesController : Controller
     [PermissionAuthorize("Sales.Create")]
     public async Task<IActionResult> Pos()
     {
-        await LoadDropdowns();
+        await LoadDropdowns(posOnly: true);
 
         return View(new CreateSaleDto
         {
@@ -88,7 +91,7 @@ public class SalesController : Controller
     {
         if (!ModelState.IsValid)
         {
-            await LoadDropdowns();
+            await LoadDropdowns(channel == SaleChannel.RetailPos);
             return View(dto);
         }
 
@@ -108,7 +111,7 @@ public class SalesController : Controller
         }
         catch (ArgumentException ex)
         {
-            await LoadDropdowns();
+            await LoadDropdowns(channel == SaleChannel.RetailPos);
 
             ModelState.AddModelError(
                 string.Empty,
@@ -118,7 +121,7 @@ public class SalesController : Controller
         }
         catch (InvalidOperationException ex)
         {
-            await LoadDropdowns();
+            await LoadDropdowns(channel == SaleChannel.RetailPos);
 
             ModelState.AddModelError(
                 string.Empty,
@@ -128,13 +131,23 @@ public class SalesController : Controller
         }
     }
 
-    private async Task LoadDropdowns()
+    private async Task LoadDropdowns(bool posOnly = false)
     {
         ViewBag.Products =
             await _productRepository.GetAllAsync(null);
 
-        ViewBag.Warehouses =
-            await _warehouseRepository.GetAllAsync();
+        var warehouses = await _warehouseRepository.GetAllAsync();
+        ViewBag.Warehouses = posOnly
+            ? warehouses.Where(warehouse => warehouse.AllowPosSales).ToList()
+            : warehouses;
+
+        if (posOnly)
+        {
+            ViewBag.PosTerminals = (await _inventoryAccessService.GetPageAsync())
+                .PosTerminals
+                .Where(terminal => terminal.IsActive)
+                .ToList();
+        }
 
         ViewBag.ProductStocks =
             await _productStockRepository.GetAllAsync();

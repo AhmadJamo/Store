@@ -58,6 +58,8 @@ public class WarehouseLocationsController(
 
     private async Task LoadWarehousesAsync()
     {
-        ViewBag.Warehouses = await warehouseRepository.GetAllAsync();
+        ViewBag.Warehouses = (await warehouseRepository.GetAllAsync())
+            .Where(warehouse => warehouse.ControlMode != MiniStore.Domain.Entities.InventoryControlMode.Simple)
+            .ToList();
     }
 }

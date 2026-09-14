@@ -85,6 +85,10 @@ builder.Services.AddScoped<ITaxRateRepository, TaxRateRepository>();
 builder.Services.AddScoped<TaxRateService>();
 builder.Services.AddScoped<IAccountingSettingsRepository, AccountingSettingsRepository>();
 builder.Services.AddScoped<AccountingSettingsService>();
+builder.Services.AddScoped<IInventorySettingsRepository, InventorySettingsRepository>();
+builder.Services.AddScoped<InventorySettingsService>();
+builder.Services.AddScoped<IInventoryAccessRepository, InventoryAccessRepository>();
+builder.Services.AddScoped<InventoryAccessService>();
 builder.Services.AddScoped<IJournalEntryRepository, JournalEntryRepository>();
 builder.Services.AddScoped<PurchasePostingService>();
 builder.Services.AddScoped<IPaymentMethodRepository, PaymentMethodRepository>();
@@ -93,6 +97,8 @@ builder.Services.AddScoped<IStorageLocationRepository, StorageLocationRepository
 builder.Services.AddScoped<StorageLocationService>();
 builder.Services.AddScoped<IProductLocationStockRepository, ProductLocationStockRepository>();
 builder.Services.AddScoped<UnassignedStockService>();
+builder.Services.AddScoped<ILocationMovementRepository, LocationMovementRepository>();
+builder.Services.AddScoped<LocationMovementService>();
 
 builder.Services.AddScoped<IProductStockRepository,ProductStockRepository>();
 

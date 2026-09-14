@@ -14,6 +14,14 @@ public class WarehouseConfiguration : IEntityTypeConfiguration<Warehouse>
             .IsRequired()
             .HasMaxLength(200);
 
+        builder.Property(x => x.Type).HasConversion<int>().IsRequired();
+        builder.Property(x => x.ControlMode).HasConversion<int>().IsRequired();
+        builder.Property(x => x.PickingStrategy).HasConversion<int>().IsRequired();
+        builder.Property(x => x.AllowPosSales).IsRequired();
+        builder.Property(x => x.EnforceLocationCapacity).IsRequired();
+        builder.Property(x => x.RequireSourceLocationForTransfers).IsRequired();
+        builder.Property(x => x.RequireDestinationLocationForTransfers).IsRequired();
+
         builder.HasOne<Branch>().WithMany().HasForeignKey(x => x.BranchId).OnDelete(DeleteBehavior.Restrict);
         builder.HasOne<Account>().WithMany().HasForeignKey(x => x.InventoryAccountId).OnDelete(DeleteBehavior.Restrict);
     }

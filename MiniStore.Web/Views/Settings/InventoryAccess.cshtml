@@ -1,0 +1,145 @@
+@model MiniStore.Application.Dtos.Settings.InventoryAccessSettingsDto
+
+@{
+    ViewData["Title"] = "Branch & POS Warehouses";
+}
+
+<div class="container-fluid mt-4">
+    <div class="d-flex justify-content-between align-items-start mb-4">
+        <div>
+            <h2 class="mb-1">Branch & POS Warehouses</h2>
+            <p class="text-muted mb-0">Control which warehouses each branch and POS may use, and in what order.</p>
+        </div>
+        <a asp-action="Inventory" class="btn btn-outline-secondary">Inventory Settings</a>
+    </div>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-white"><strong>1. Branch warehouse access</strong></div>
+        <div class="card-body">
+            <form asp-action="ConfigureBranchWarehouse" method="post" class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label">Branch</label>
+                    <select name="BranchId" class="form-select" required>
+                        <option value="">Select branch</option>
+                        @foreach (var branch in Model.Branches) { <option value="@branch.Id">@branch.DisplayName</option> }
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Warehouse</label>
+                    <select name="WarehouseId" class="form-select" required>
+                        <option value="">Select warehouse</option>
+                        @foreach (var warehouse in Model.Warehouses) { <option value="@warehouse.Id">@warehouse.Name</option> }
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Priority</label>
+                    <input name="Priority" type="number" min="1" max="999" value="1" class="form-control" required />
+                </div>
+                <div class="col-md-4 d-flex flex-wrap gap-3 align-items-end">
+                    <label class="form-check"><input name="AllowPosSales" value="true" type="checkbox" class="form-check-input" /> POS sales</label>
+                    <label class="form-check"><input name="IsDefaultForPos" value="true" type="checkbox" class="form-check-input" /> Branch POS default</label>
+                    <label class="form-check"><input name="AllowPurchases" value="true" type="checkbox" class="form-check-input" /> Purchases</label>
+                    <label class="form-check"><input name="AllowTransferOut" value="true" type="checkbox" checked class="form-check-input" /> Transfer out</label>
+                    <label class="form-check"><input name="AllowTransferIn" value="true" type="checkbox" checked class="form-check-input" /> Transfer in</label>
+                    <label class="form-check"><input name="AllowReplenishment" value="true" type="checkbox" checked class="form-check-input" /> Replenishment</label>
+                </div>
+                <div class="col-12"><button class="btn btn-primary">Save Branch Access</button></div>
+            </form>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-sm align-middle mb-0">
+                <thead><tr><th>Branch</th><th>Warehouse</th><th>Priority</th><th>POS</th><th>Purchases</th><th>Transfers</th><th>Replenishment</th></tr></thead>
+                <tbody>
+                    @if (Model.BranchAccesses.Count == 0) { <tr><td colspan="7" class="text-center text-muted py-3">No branch warehouse access configured.</td></tr> }
+                    @foreach (var access in Model.BranchAccesses)
+                    {
+                        <tr>
+                            <td>@access.BranchName</td><td>@access.WarehouseName</td><td>@access.Priority</td>
+                            <td>@(access.AllowPosSales ? (access.IsDefaultForPos ? "Allowed · Default" : "Allowed") : "No")</td>
+                            <td>@(access.AllowPurchases ? "Allowed" : "No")</td>
+                            <td>@(access.AllowTransferOut ? "Out " : "")@(access.AllowTransferIn ? "In" : "")</td>
+                            <td>@(access.AllowReplenishment ? "Allowed" : "No")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-5">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-white"><strong>2. Create POS terminal</strong></div>
+                <div class="card-body">
+                    <p class="small text-muted">Configure branch access above before creating its POS.</p>
+                    <form asp-action="CreatePosTerminal" method="post" class="row g-3">
+                        <div class="col-12"><label class="form-label">Terminal name</label><input name="Name" class="form-control" maxlength="100" required /></div>
+                        <div class="col-12"><label class="form-label">Branch</label><select name="BranchId" id="createTerminalBranch" class="form-select" required><option value="">Select branch</option>@foreach (var branch in Model.Branches) { <option value="@branch.Id">@branch.DisplayName</option> }</select></div>
+                        <div class="col-12"><label class="form-label">Default warehouse</label><select name="DefaultWarehouseId" id="createTerminalWarehouse" class="form-select" required><option value="">Select an allowed POS warehouse</option>@foreach (var warehouse in Model.Warehouses.Where(x => x.AllowPosSales)) { <option value="@warehouse.Id">@warehouse.Name</option> }</select></div>
+                        <div class="col-12"><button class="btn btn-primary">Create POS Terminal</button></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-7">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-white"><strong>3. Add warehouse to POS</strong></div>
+                <div class="card-body">
+                    <form asp-action="ConfigurePosTerminalWarehouse" method="post" class="row g-3">
+                        <div class="col-md-5"><label class="form-label">POS terminal</label><select name="PosTerminalId" id="terminalWarehouseTerminal" class="form-select" required><option value="">Select POS</option>@foreach (var terminal in Model.PosTerminals) { <option value="@terminal.Id" data-branch-id="@terminal.BranchId">@terminal.BranchName · @terminal.Name</option> }</select></div>
+                        <div class="col-md-4"><label class="form-label">Warehouse</label><select name="WarehouseId" id="terminalWarehouse" class="form-select" required><option value="">Select warehouse</option>@foreach (var warehouse in Model.Warehouses.Where(x => x.AllowPosSales)) { <option value="@warehouse.Id">@warehouse.Name</option> }</select></div>
+                        <div class="col-md-3"><label class="form-label">Priority</label><input name="Priority" type="number" min="1" max="999" value="1" class="form-control" required /></div>
+                        <div class="col-12"><label class="form-check"><input name="MakeDefault" value="true" type="checkbox" class="form-check-input" /> Make this the POS default</label></div>
+                        <div class="col-12"><button class="btn btn-primary">Save POS Warehouse</button></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm mt-4">
+        <div class="card-header bg-white"><strong>Configured POS terminals</strong></div>
+        <div class="table-responsive">
+            <table class="table align-middle mb-0"><thead><tr><th>POS</th><th>Branch</th><th>Default</th><th>Allowed warehouses by priority</th></tr></thead><tbody>
+                @if (Model.PosTerminals.Count == 0) { <tr><td colspan="4" class="text-center text-muted py-3">No POS terminals configured.</td></tr> }
+                @foreach (var terminal in Model.PosTerminals)
+                {
+                    <tr><td>@terminal.Name</td><td>@terminal.BranchName</td><td>@terminal.DefaultWarehouseName</td><td>@string.Join(" → ", terminal.Warehouses.Select(x => $"{x.Priority}. {x.WarehouseName}"))</td></tr>
+                }
+            </tbody></table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script type="application/json" id="branchPosAccessData">
+        @Html.Raw(System.Text.Json.JsonSerializer.Serialize(
+            Model.BranchAccesses.Where(x => x.AllowPosSales)
+                .Select(x => new { x.BranchId, x.WarehouseId })))
+    </script>
+    <script>
+        const branchAccess = JSON.parse(document.getElementById('branchPosAccessData').textContent);
+        const filterWarehouseOptions = (select, branchId) => {
+            [...select.options].forEach(option => {
+                option.hidden = Boolean(option.value) && !branchAccess.some(
+                    access => String(access.BranchId) === branchId &&
+                              String(access.WarehouseId) === option.value);
+            });
+            if (select.selectedOptions[0]?.hidden) select.value = '';
+        };
+
+        const createBranch = document.getElementById('createTerminalBranch');
+        const createWarehouse = document.getElementById('createTerminalWarehouse');
+        createBranch.addEventListener('change', () =>
+            filterWarehouseOptions(createWarehouse, createBranch.value));
+        filterWarehouseOptions(createWarehouse, createBranch.value);
+
+        const terminal = document.getElementById('terminalWarehouseTerminal');
+        const terminalWarehouse = document.getElementById('terminalWarehouse');
+        terminal.addEventListener('change', () => {
+            const branchId = terminal.selectedOptions[0]?.dataset.branchId ?? '';
+            filterWarehouseOptions(terminalWarehouse, branchId);
+        });
+        filterWarehouseOptions(terminalWarehouse, '');
+    </script>
+}

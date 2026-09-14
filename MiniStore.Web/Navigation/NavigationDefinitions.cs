@@ -107,7 +107,15 @@ public static class NavigationDefinitions
                 "UnassignedStock",
                 "Index",
                 "ProductStock.View",
-                70)
+                70),
+
+            new NavigationItem(
+                "Location Movements",
+                "bi-signpost-split",
+                "LocationMovements",
+                "Index",
+                "LocationMovements.View",
+                80)
         ),
 
         new NavigationGroup(

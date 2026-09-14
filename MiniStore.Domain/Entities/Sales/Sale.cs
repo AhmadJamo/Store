@@ -18,6 +18,7 @@ public string InvoiceNumber { get; private set; }
     public int WarehouseId { get; private set; }
     public int? CustomerId { get; private set; }
     public int? PaymentMethodId { get; private set; }
+    public int? PosTerminalId { get; private set; }
 
     public DateTime Date { get; private set; }
 
@@ -50,7 +51,8 @@ public string InvoiceNumber { get; private set; }
         string createdByUserId,
         int? customerId,
         int paymentMethodId,
-        string? notes = null)
+        string? notes = null,
+        int? posTerminalId = null)
     {
         if (string.IsNullOrWhiteSpace(invoiceNumber))
             throw new ArgumentException(
@@ -65,6 +67,8 @@ public string InvoiceNumber { get; private set; }
                 "The user who created the sale is required.");
         if (customerId.HasValue && customerId.Value <= 0) throw new ArgumentException("Customer is invalid.");
         if (paymentMethodId <= 0) throw new ArgumentException("A payment method is required.");
+        if (posTerminalId.HasValue && posTerminalId.Value <= 0)
+            throw new ArgumentException("POS terminal is invalid.");
 
         InvoiceNumber = invoiceNumber;
         WarehouseId = warehouseId;
@@ -74,6 +78,7 @@ public string InvoiceNumber { get; private set; }
         CreatedAt = DateTime.UtcNow;
         CustomerId = customerId;
         PaymentMethodId = paymentMethodId;
+        PosTerminalId = posTerminalId;
         Notes = notes;
 
         Items = new List<SaleItem>();

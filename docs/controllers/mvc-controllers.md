@@ -1,17 +1,19 @@
 # MVC controllers
-> Status: IMPLEMENTED | Last reviewed: 2026-09-13
+> Status: IMPLEMENTED | Last reviewed: 2026-09-14
 
 | Controller | Actions/views | Authorization and dependencies |
 |---|---|---|
 | AccountController | Login GET/POST, Logout POST, AccessDenied | Identity SignInManager; anonymous login by absence of authorization attribute. |
 | HomeController | Index | `[Authorize]`; dashboard content is minimal. |
-| Products/Warehouses/Suppliers | Index/Create/Edit/Delete | matching permission attributes; matching master-data service. |
+| Products/Warehouses/Suppliers | Index/Create/Edit/Delete | matching permission attributes; Warehouse create/edit includes inventory operating policy. |
 | ProductStocks | Index/Create/Edit/Delete | product-stock permissions/service; delete service always refuses. |
 | StockTransactions | Index/Create | movement permissions/service. |
+| WarehouseLocations / UnassignedStock | location search/create and putaway | warehouse/product-stock permissions and location services. |
+| LocationMovements | Index/Move | LocationMovements.View/Create and LocationMovementService. |
 | Purchases | Index/Create/Details | Purchases.View/Create; PurchaseService and master repositories for dropdowns. |
 | Sales | Index/Details/Create/Pos | Sales.View/Create; SaleService plus repositories for dropdowns. |
 | StockTransfers | Index/Details/Create/Edit and state POSTs | transfer-specific permissions/service. |
-| Settings | Index/Invoices/General/Discounts | `[Authorize(Roles="Admin")]`; settings services. |
+| Settings | Index/Invoices/General/Discounts/Inventory/InventoryAccess plus access mutations | `[Authorize(Roles="Admin")]`; settings services, inventory defaults and branch/POS warehouse configuration. |
 | Users | Index/Create | `[Authorize]` plus Users.View/Create; Identity managers. |
 | Roles | Index/Create/Edit/Delete | `[Authorize]` plus Roles permissions; directly uses AppDbContext for mappings. |
 

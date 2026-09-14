@@ -10,6 +10,10 @@
 
 Source files are grouped by business feature inside each layer. Entities, service contracts, services, repositories, EF configurations and controllers use the shared feature names Accounting, Catalog, Customers, Inventory, Purchases, Sales, Security, Settings and Suppliers; Web also contains Home. Shared infrastructure stays at the layer root or in a `Shared` folder. Razor views retain the MVC `Views/<ControllerName>/` convention and migrations retain chronological ordering. See `decisions/2026-09-13-feature-folder-organization.md`.
 
+Inventory behavior is policy-driven at the warehouse boundary. Operational use is separate from Simple/LocationManaged/Hybrid control, and global InventorySettings provide defaults rather than overriding an established warehouse. See `decisions/2026-09-14-configurable-inventory-operating-policies.md`.
+
+Warehouse access is layered: branch permissions define the organizational boundary and POS terminal mappings narrow that list. See `decisions/2026-09-14-branch-and-pos-warehouse-access.md`.
+
 ## Request lifecycle
 Browser → MVC controller → DTO model binding/ModelState → application service → repository/domain entity → `AppDbContext`/SQL Server → redirect or Razor view. AutoValidateAntiforgeryToken is registered globally. Sales, purchases and transfers use `IUnitOfWork`; several master-data services use repository `SaveChangesAsync` directly.
 

@@ -19,6 +19,8 @@ public class SaleService : ISaleService
     private readonly IPermissionService _permissionService;
     private readonly ICustomerRepository _customerRepository;
     private readonly IPaymentMethodRepository _paymentMethodRepository;
+    private readonly IWarehouseRepository _warehouseRepository;
+    private readonly InventoryAccessService _inventoryAccessService;
 
     public SaleService(
         ISaleRepository saleRepository,
@@ -30,7 +32,9 @@ public class SaleService : ISaleService
         IDiscountSettingsRepository discountSettingsRepository,
         IPermissionService permissionService,
         ICustomerRepository customerRepository,
-        IPaymentMethodRepository paymentMethodRepository)
+        IPaymentMethodRepository paymentMethodRepository,
+        IWarehouseRepository warehouseRepository,
+        InventoryAccessService inventoryAccessService)
     {
         _saleRepository = saleRepository;
         _productRepository = productRepository;
@@ -42,6 +46,8 @@ public class SaleService : ISaleService
         _permissionService = permissionService;
         _customerRepository = customerRepository;
         _paymentMethodRepository = paymentMethodRepository;
+        _warehouseRepository = warehouseRepository;
+        _inventoryAccessService = inventoryAccessService;
     }
 
     public async Task<List<SaleListDto>> GetAllAsync()
@@ -70,6 +76,7 @@ public class SaleService : ISaleService
             Id = sale.Id,
             InvoiceNumber = sale.InvoiceNumber,
             WarehouseId = sale.WarehouseId,
+            PosTerminalId = sale.PosTerminalId,
             Date = sale.Date,
             Notes = sale.Notes,
 
@@ -109,6 +116,28 @@ public class SaleService : ISaleService
                 "Sale must contain at least one item.");
         if (dto.CustomerId.HasValue && await _customerRepository.GetByIdAsync(dto.CustomerId.Value) is null) throw new ArgumentException("Selected customer was not found.");
         if (dto.PaymentMethodId <= 0 || await _paymentMethodRepository.GetByIdAsync(dto.PaymentMethodId) is null) throw new ArgumentException("Select an active payment method.");
+        var warehouse = await _warehouseRepository.GetByIdAsync(dto.WarehouseId)
+            ?? throw new ArgumentException("Selected warehouse was not found.");
+        if (channel == SaleChannel.RetailPos && !warehouse.AllowPosSales)
+        {
+            throw new InvalidOperationException(
+                "The selected warehouse is not enabled for POS sales.");
+        }
+        if (channel == SaleChannel.RetailPos)
+        {
+            if (!dto.PosTerminalId.HasValue)
+            {
+                if (await _inventoryAccessService.HasPosTerminalsAsync())
+                    throw new ArgumentException("Select a POS terminal.");
+            }
+            else if (!await _inventoryAccessService.CanPosSellFromWarehouseAsync(
+                dto.PosTerminalId.Value,
+                dto.WarehouseId))
+            {
+                throw new InvalidOperationException(
+                    "This POS terminal is not allowed to sell from the selected warehouse.");
+            }
+        }
 
         Sale? sale = null;
 
@@ -229,7 +258,8 @@ public class SaleService : ISaleService
                 createdByUserId,
                 dto.CustomerId,
                 dto.PaymentMethodId,
-                dto.Notes);
+                dto.Notes,
+                dto.PosTerminalId);
 
             foreach (var itemDto in dto.Items)
             {

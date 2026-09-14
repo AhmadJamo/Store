@@ -14,7 +14,20 @@ public class TaxRateConfiguration : IEntityTypeConfiguration<TaxRate>
 }
 public class PosTerminalConfiguration : IEntityTypeConfiguration<PosTerminal>
 {
-    public void Configure(EntityTypeBuilder<PosTerminal> builder) { builder.HasKey(x => x.Id); builder.Property(x => x.Name).HasMaxLength(100).IsRequired(); builder.HasOne<Branch>().WithMany().HasForeignKey(x => x.BranchId).OnDelete(DeleteBehavior.Restrict); builder.HasOne<Warehouse>().WithMany().HasForeignKey(x => x.DefaultWarehouseId).OnDelete(DeleteBehavior.Restrict); }
+    public void Configure(EntityTypeBuilder<PosTerminal> builder)
+    {
+        builder.HasKey(x => x.Id);
+        builder.Property(x => x.Name).HasMaxLength(100).IsRequired();
+        builder.HasIndex(x => new { x.BranchId, x.Name }).IsUnique();
+        builder.HasOne<Branch>().WithMany().HasForeignKey(x => x.BranchId)
+            .OnDelete(DeleteBehavior.Restrict);
+        builder.HasOne<Warehouse>().WithMany().HasForeignKey(x => x.DefaultWarehouseId)
+            .OnDelete(DeleteBehavior.Restrict);
+        builder.HasMany(x => x.Warehouses).WithOne()
+            .HasForeignKey(x => x.PosTerminalId)
+            .OnDelete(DeleteBehavior.Cascade);
+        builder.Navigation(x => x.Warehouses).UsePropertyAccessMode(PropertyAccessMode.Field);
+    }
 }
 public class PosTerminalProductConfiguration : IEntityTypeConfiguration<PosTerminalProduct>
 {

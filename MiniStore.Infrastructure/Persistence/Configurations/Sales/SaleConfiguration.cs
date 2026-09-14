@@ -72,6 +72,11 @@ public class SaleConfiguration
             .HasForeignKey(x => x.PaymentMethodId)
             .OnDelete(DeleteBehavior.Restrict);
 
+        builder.HasOne<PosTerminal>()
+            .WithMany()
+            .HasForeignKey(x => x.PosTerminalId)
+            .OnDelete(DeleteBehavior.Restrict);
+
         builder.HasMany(x => x.Items)
             .WithOne()
             .HasForeignKey(x => x.SaleId)

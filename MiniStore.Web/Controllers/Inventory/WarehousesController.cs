@@ -11,13 +11,18 @@ public class WarehousesController : Controller
     private readonly WarehouseService _warehouseService;
     private readonly BranchService _branchService;
     private readonly AccountService _accountService;
+    private readonly InventorySettingsService _inventorySettingsService;
 
     public WarehousesController(
-        WarehouseService warehouseService, BranchService branchService, AccountService accountService)
+        WarehouseService warehouseService,
+        BranchService branchService,
+        AccountService accountService,
+        InventorySettingsService inventorySettingsService)
     {
         _warehouseService = warehouseService;
         _branchService = branchService;
         _accountService = accountService;
+        _inventorySettingsService = inventorySettingsService;
     }
 
     [HttpGet]
@@ -35,7 +40,17 @@ public class WarehousesController : Controller
     public async Task<IActionResult> Create()
     {
         await LoadAccountingOptions();
-        return View();
+        var defaults = await _inventorySettingsService.GetAsync();
+        return View(new CreateWarehouseDto
+        {
+            Type = defaults.DefaultWarehouseType,
+            ControlMode = defaults.DefaultControlMode,
+            PickingStrategy = defaults.DefaultPickingStrategy,
+            AllowPosSales = defaults.DefaultAllowPosSales,
+            EnforceLocationCapacity = defaults.DefaultEnforceLocationCapacity,
+            RequireSourceLocationForTransfers = defaults.DefaultRequireSourceLocationForTransfers,
+            RequireDestinationLocationForTransfers = defaults.DefaultRequireDestinationLocationForTransfers
+        });
     }
 
     [HttpPost]
@@ -92,8 +107,16 @@ public class WarehousesController : Controller
 
         var dto = new UpdateWarehouseDto
         {
-            Name = warehouse.Name
-            , BranchId = warehouse.BranchId ?? 0, InventoryAccountId = warehouse.InventoryAccountId ?? 0
+            Name = warehouse.Name,
+            BranchId = warehouse.BranchId ?? 0,
+            InventoryAccountId = warehouse.InventoryAccountId ?? 0,
+            Type = warehouse.Type,
+            ControlMode = warehouse.ControlMode,
+            PickingStrategy = warehouse.PickingStrategy,
+            AllowPosSales = warehouse.AllowPosSales,
+            EnforceLocationCapacity = warehouse.EnforceLocationCapacity,
+            RequireSourceLocationForTransfers = warehouse.RequireSourceLocationForTransfers,
+            RequireDestinationLocationForTransfers = warehouse.RequireDestinationLocationForTransfers
         };
 
         await LoadAccountingOptions(); return View(dto);

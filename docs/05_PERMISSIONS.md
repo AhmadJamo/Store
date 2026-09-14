@@ -1,12 +1,12 @@
 # Permissions and authorization
 > Status: PARTIALLY IMPLEMENTED  
 > Source of truth: Code  
-> Last reviewed: 2026-09-13
+> Last reviewed: 2026-09-14
 
 Authentication is ASP.NET Core Identity cookie authentication. `PermissionAuthorizeAttribute` creates policies with `Permission:` prefix; `PermissionAuthorizationHandler` grants Admin all permissions, otherwise maps Identity role names → Identity role IDs → `RolePermissions` → `Permissions`.
 
 ## Defined permission groups
-Products, Warehouses, ProductStock, StockTransactions, Suppliers, Purchases, Sales, StockTransfers, Users, Roles, and Settings are defined in `MiniStore.Application/Permissions/PermissionDefinitions.cs`. CRUD permissions exist for several modules even where matching actions do not exist (for example purchase/sale edit/delete). Stock transfer also defines Submit/Approve/Reject/Post/Cancel.
+Products, Warehouses, ProductStock, StockTransactions, LocationMovements, Suppliers, Purchases, Sales, StockTransfers, Users, Roles, and Settings are defined in `MiniStore.Application/Permissions/PermissionDefinitions.cs`. CRUD permissions exist for several modules even where matching actions do not exist (for example purchase/sale edit/delete). Stock transfer also defines Submit/Approve/Reject/Post/Cancel. Location movements define View/Create.
 
 ## Enforcement map
 | Module | Backend enforcement |
@@ -15,6 +15,7 @@ Products, Warehouses, ProductStock, StockTransactions, Suppliers, Purchases, Sal
 | Purchases | View/Create enforced; Edit/Delete definitions have no controller actions. |
 | Sales | View/Create enforced; Edit/Delete definitions have no controller actions. |
 | Stock transactions | View/Create enforced. |
+| Location movements | View/Create enforced for history and internal relocation; putaway continues to require ProductStock.Edit. |
 | Stock transfers | View/Create/Edit/Submit/Approve/Reject/Post/Cancel enforced. |
 | Users | View/Create enforced; Edit/Delete definitions have no actions. |
 | Roles | View/Create/Edit/Delete enforced. |

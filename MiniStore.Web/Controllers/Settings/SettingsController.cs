@@ -14,25 +14,123 @@ public class SettingsController : Controller
     private readonly DiscountSettingsService _discountSettingsService;
     private readonly AccountingSettingsService _accountingSettingsService;
     private readonly AccountService _accountService;
+    private readonly InventorySettingsService _inventorySettingsService;
+    private readonly InventoryAccessService _inventoryAccessService;
 
     public SettingsController(
         InvoiceSettingsService invoiceSettingsService,
         GeneralSettingsService generalSettingsService,
         DiscountSettingsService discountSettingsService,
         AccountingSettingsService accountingSettingsService,
-        AccountService accountService)
+        AccountService accountService,
+        InventorySettingsService inventorySettingsService,
+        InventoryAccessService inventoryAccessService)
     {
         _invoiceSettingsService = invoiceSettingsService;
         _generalSettingsService = generalSettingsService;
         _discountSettingsService = discountSettingsService;
         _accountingSettingsService = accountingSettingsService;
         _accountService = accountService;
+        _inventorySettingsService = inventorySettingsService;
+        _inventoryAccessService = inventoryAccessService;
     }
 
     [HttpGet]
     public IActionResult Index()
     {
         return View();
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Inventory()
+    {
+        return View(await _inventorySettingsService.GetAsync());
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Inventory(InventorySettingsDto dto)
+    {
+        if (!ModelState.IsValid)
+            return View(dto);
+
+        try
+        {
+            await _inventorySettingsService.UpdateAsync(dto);
+            TempData["NotificationType"] = "success";
+            TempData["NotificationMessage"] = "Inventory settings updated successfully.";
+            return RedirectToAction(nameof(Inventory));
+        }
+        catch (Exception ex) when (ex is ArgumentException or InvalidOperationException)
+        {
+            ModelState.AddModelError(string.Empty, ex.Message);
+            return View(dto);
+        }
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> InventoryAccess()
+    {
+        return View(await _inventoryAccessService.GetPageAsync());
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ConfigureBranchWarehouse(
+        ConfigureBranchWarehouseDto dto)
+    {
+        try
+        {
+            await _inventoryAccessService.ConfigureBranchWarehouseAsync(dto);
+            SetInventoryAccessMessage("success", "Branch warehouse access saved.");
+        }
+        catch (Exception ex) when (ex is ArgumentException or InvalidOperationException)
+        {
+            SetInventoryAccessMessage("error", ex.Message);
+        }
+
+        return RedirectToAction(nameof(InventoryAccess));
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> CreatePosTerminal(CreatePosTerminalDto dto)
+    {
+        try
+        {
+            await _inventoryAccessService.CreatePosTerminalAsync(dto);
+            SetInventoryAccessMessage("success", "POS terminal created.");
+        }
+        catch (Exception ex) when (ex is ArgumentException or InvalidOperationException)
+        {
+            SetInventoryAccessMessage("error", ex.Message);
+        }
+
+        return RedirectToAction(nameof(InventoryAccess));
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ConfigurePosTerminalWarehouse(
+        ConfigurePosTerminalWarehouseDto dto)
+    {
+        try
+        {
+            await _inventoryAccessService.ConfigurePosTerminalWarehouseAsync(dto);
+            SetInventoryAccessMessage("success", "POS warehouse priority saved.");
+        }
+        catch (Exception ex) when (ex is ArgumentException or InvalidOperationException)
+        {
+            SetInventoryAccessMessage("error", ex.Message);
+        }
+
+        return RedirectToAction(nameof(InventoryAccess));
+    }
+
+    private void SetInventoryAccessMessage(string type, string message)
+    {
+        TempData["NotificationType"] = type;
+        TempData["NotificationMessage"] = message;
     }
 
     [HttpGet]

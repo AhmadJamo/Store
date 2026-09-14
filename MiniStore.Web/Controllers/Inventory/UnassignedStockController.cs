@@ -14,7 +14,9 @@ public class UnassignedStockController(
     [PermissionAuthorize("ProductStock.View")]
     public async Task<IActionResult> Index(int? warehouseId, string? query, string? sort)
     {
-        ViewBag.Warehouses = await warehouseRepository.GetAllAsync();
+        ViewBag.Warehouses = (await warehouseRepository.GetAllAsync())
+            .Where(warehouse => warehouse.ControlMode != MiniStore.Domain.Entities.InventoryControlMode.Simple)
+            .ToList();
         ViewBag.Locations = await storageLocationRepository.SearchAsync(null, null);
         ViewBag.WarehouseId = warehouseId;
         ViewBag.Query = query;

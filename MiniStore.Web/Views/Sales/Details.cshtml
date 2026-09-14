@@ -58,6 +58,11 @@
                         @Model.WarehouseId
                     </div>
 
+                    @if (Model.PosTerminalId.HasValue)
+                    {
+                        <div class="mt-2"><strong>POS Terminal:</strong> @Model.PosTerminalId</div>
+                    }
+
                 </div>
 
             </div>

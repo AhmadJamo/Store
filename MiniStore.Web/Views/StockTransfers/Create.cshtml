@@ -101,7 +101,9 @@
 
                             @foreach (var warehouse in warehouses)
                             {
-                                <option value="@warehouse.Id">
+                                <option value="@warehouse.Id"
+                                        data-control-mode="@((int)warehouse.ControlMode)"
+                                        data-require-source="@warehouse.RequireSourceLocationForTransfers.ToString().ToLowerInvariant()">
 
                                     @warehouse.Name
 
@@ -141,7 +143,9 @@
 
                             @foreach (var warehouse in warehouses)
                             {
-                                <option value="@warehouse.Id">
+                                <option value="@warehouse.Id"
+                                        data-control-mode="@((int)warehouse.ControlMode)"
+                                        data-require-destination="@warehouse.RequireDestinationLocationForTransfers.ToString().ToLowerInvariant()">
 
                                     @warehouse.Name
 
@@ -417,11 +421,19 @@
             document.getElementById("toWarehouse");
 
         function refreshLocationSelects() {
+            const sourceOption = fromWarehouse.options[fromWarehouse.selectedIndex];
+            const destinationOption = toWarehouse.options[toWarehouse.selectedIndex];
+            const sourceIsSimple = sourceOption?.dataset.controlMode === '@((int)MiniStore.Domain.Entities.InventoryControlMode.Simple)';
+            const destinationIsSimple = destinationOption?.dataset.controlMode === '@((int)MiniStore.Domain.Entities.InventoryControlMode.Simple)';
             document.querySelectorAll('.source-location').forEach(select => {
                 select.innerHTML = ''; Array.from(locationTemplate.options).forEach(option => { if (!option.value || option.dataset.warehouseId === fromWarehouse.value) select.appendChild(option.cloneNode(true)); });
+                select.disabled = sourceIsSimple;
+                select.required = !sourceIsSimple && sourceOption?.dataset.requireSource === 'true';
             });
             document.querySelectorAll('.destination-location').forEach(select => {
                 select.innerHTML = ''; Array.from(locationTemplate.options).forEach(option => { if (!option.value || option.dataset.warehouseId === toWarehouse.value) select.appendChild(option.cloneNode(true)); });
+                select.disabled = destinationIsSimple;
+                select.required = !destinationIsSimple && destinationOption?.dataset.requireDestination === 'true';
             });
         }
         fromWarehouse.addEventListener('change', refreshLocationSelects);
@@ -631,6 +643,7 @@
             };
             fillLocations(row.querySelector('.source-location'), fromWarehouse.value);
             fillLocations(row.querySelector('.destination-location'), toWarehouse.value);
+            refreshLocationSelects();
 
 
             const select =

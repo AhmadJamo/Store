@@ -26,6 +26,44 @@
 
     </div>
 
+
+    <div class="card mb-3">
+        <div class="card-header"><strong>Inventory Operations</strong></div>
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label asp-for="Type" class="form-label">Operational use</label>
+                    <select asp-for="Type" asp-items="Html.GetEnumSelectList<MiniStore.Domain.Entities.WarehouseType>()" class="form-select"></select>
+                </div>
+                <div class="col-md-4">
+                    <label asp-for="ControlMode" class="form-label">Control mode</label>
+                    <select asp-for="ControlMode" asp-items="Html.GetEnumSelectList<MiniStore.Domain.Entities.InventoryControlMode>()" class="form-select warehouse-control-mode"></select>
+                </div>
+                <div class="col-md-4">
+                    <label asp-for="PickingStrategy" class="form-label">Picking strategy</label>
+                    <select asp-for="PickingStrategy" asp-items="Html.GetEnumSelectList<MiniStore.Domain.Entities.InventoryPickingStrategy>()" class="form-select"></select>
+                </div>
+            </div>
+            <div class="form-check form-switch mt-3">
+                <input asp-for="AllowPosSales" class="form-check-input" />
+                <label asp-for="AllowPosSales" class="form-check-label">Allow this warehouse to supply POS sales</label>
+            </div>
+            <div class="form-check form-switch mt-3">
+                <input asp-for="EnforceLocationCapacity" class="form-check-input" />
+                <label asp-for="EnforceLocationCapacity" class="form-check-label">Enforce location capacity</label>
+            </div>
+            <div class="form-check form-switch mt-3 warehouse-location-rule">
+                <input asp-for="RequireSourceLocationForTransfers" class="form-check-input" />
+                <label asp-for="RequireSourceLocationForTransfers" class="form-check-label">Require exact source location for transfers</label>
+            </div>
+            <div class="form-check form-switch mt-3 warehouse-location-rule">
+                <input asp-for="RequireDestinationLocationForTransfers" class="form-check-input" />
+                <label asp-for="RequireDestinationLocationForTransfers" class="form-check-label">Require exact destination location for transfers</label>
+            </div>
+            <div class="form-text mt-3">Hybrid mode supports organized locations and a temporary Unassigned Stock queue. Products may occupy multiple locations.</div>
+        </div>
+    </div>
+
     <div class="mb-3"><label asp-for="BranchId" class="form-label">Branch</label><select asp-for="BranchId" class="form-select"><option value="">Select branch</option>@foreach(var branch in branches){<option value="@branch.Id">@branch.Code — @branch.Name</option>}</select></div>
     <div class="mb-3"><label asp-for="InventoryAccountId" class="form-label">Inventory account</label><select asp-for="InventoryAccountId" class="form-select"><option value="">Select inventory account</option>@foreach(var account in accounts){<option value="@account.Id">@account.Code — @account.Name</option>}</select></div>
 
@@ -40,3 +78,20 @@
     </a>
 
 </form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        const mode = document.querySelector('.warehouse-control-mode');
+        const rules = document.querySelectorAll('.warehouse-location-rule input');
+        function updateRules() {
+            const simple = mode.value === '@((int)MiniStore.Domain.Entities.InventoryControlMode.Simple)';
+            rules.forEach(input => {
+                input.disabled = simple;
+                if (simple) input.checked = false;
+            });
+        }
+        mode.addEventListener('change', updateRules);
+        updateRules();
+    </script>
+}

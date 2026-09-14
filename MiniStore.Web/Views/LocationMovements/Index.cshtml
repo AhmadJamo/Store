@@ -1,0 +1,274 @@
+@model MiniStore.Application.DTOs.LocationMovements.LocationMovementPageDto
+
+@{
+    ViewData["Title"] = "Location Movements";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <h2>Location Movements</h2>
+            <p class="text-muted mb-0">
+                Move stock between exact locations without changing the warehouse balance.
+            </p>
+        </div>
+        <a asp-controller="UnassignedStock"
+           asp-action="Index"
+           class="btn btn-outline-primary">
+            Unassigned Stock
+        </a>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <strong>New internal movement</strong>
+        </div>
+        <div class="card-body">
+            <form asp-action="Move" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label asp-for="Form.WarehouseId" class="form-label">Warehouse</label>
+                        <select asp-for="Form.WarehouseId"
+                                id="movementWarehouse"
+                                class="form-select"
+                                required>
+                            <option value="">Select warehouse</option>
+                            @foreach (var warehouse in Model.Warehouses)
+                            {
+                                <option value="@warehouse.Id">@warehouse.Name</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label asp-for="Form.ProductId" class="form-label">Product</label>
+                        <select asp-for="Form.ProductId"
+                                id="movementProduct"
+                                class="form-select"
+                                required>
+                            <option value="">Select product</option>
+                            @foreach (var product in Model.Products)
+                            {
+                                <option value="@product.Id">
+                                    @product.Name (@product.Barcode)
+                                </option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label asp-for="Form.Quantity" class="form-label">Quantity</label>
+                        <input asp-for="Form.Quantity"
+                               type="number"
+                               min="0.001"
+                               step="0.001"
+                               class="form-control"
+                               required />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="Form.FromStorageLocationId" class="form-label">
+                            Source location
+                        </label>
+                        <select asp-for="Form.FromStorageLocationId"
+                                id="sourceLocation"
+                                class="form-select"
+                                required>
+                            <option value="">Select source location</option>
+                            @foreach (var stock in Model.SourceStocks)
+                            {
+                                var location = Model.Locations.FirstOrDefault(item =>
+                                    item.Id == stock.StorageLocationId);
+
+                                if (location is not null)
+                                {
+                                    <option value="@stock.StorageLocationId"
+                                            data-warehouse="@stock.WarehouseId"
+                                            data-product="@stock.ProductId"
+                                            data-quantity="@stock.Quantity">
+                                        @location.Code — available @stock.Quantity.ToString("N3")
+                                    </option>
+                                }
+                            }
+                        </select>
+                        <div id="sourceAvailability" class="form-text"></div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="Form.ToStorageLocationId" class="form-label">
+                            Destination location
+                        </label>
+                        <select asp-for="Form.ToStorageLocationId"
+                                id="destinationLocation"
+                                class="form-select"
+                                required>
+                            <option value="">Select destination location</option>
+                            @foreach (var location in Model.Locations)
+                            {
+                                <option value="@location.Id"
+                                        data-warehouse="@location.WarehouseId">
+                                    @location.Code
+                                </option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label asp-for="Form.Reference" class="form-label">Reference</label>
+                        <input asp-for="Form.Reference"
+                               class="form-control"
+                               maxlength="100"
+                               placeholder="Pick list or request number" />
+                    </div>
+
+                    <div class="col-md-8">
+                        <label asp-for="Form.Notes" class="form-label">Notes</label>
+                        <input asp-for="Form.Notes"
+                               class="form-control"
+                               maxlength="500"
+                               placeholder="Reason or handling instructions" />
+                    </div>
+                </div>
+
+                <button class="btn btn-primary mt-3">Move stock</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mb-2">
+        <h4 class="mb-0">Movement history</h4>
+    </div>
+
+    <form method="get" class="card card-body mb-3">
+        <div class="row g-2">
+            <div class="col-md-4">
+                <select name="warehouseId" class="form-select">
+                    <option value="">All warehouses</option>
+                    @foreach (var warehouse in Model.Warehouses)
+                    {
+                        <option value="@warehouse.Id"
+                                selected="@(Model.WarehouseFilterId == warehouse.Id)">
+                            @warehouse.Name
+                        </option>
+                    }
+                </select>
+            </div>
+
+            <div class="col-md-6">
+                <input name="query"
+                       value="@Model.Query"
+                       class="form-control"
+                       placeholder="Product name, barcode or reference" />
+            </div>
+
+            <div class="col-md-2">
+                <button class="btn btn-outline-primary w-100">Search</button>
+            </div>
+        </div>
+    </form>
+
+    <div class="table-responsive">
+        <table class="table table-striped align-middle">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Type</th>
+                    <th>Product</th>
+                    <th>Barcode</th>
+                    <th>Warehouse</th>
+                    <th>From</th>
+                    <th>To</th>
+                    <th>Quantity</th>
+                    <th>Reference</th>
+                    <th>User</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var movement in Model.Movements)
+                {
+                    <tr title="@movement.Notes">
+                        <td>@movement.CreatedAt.ToLocalTime().ToString("yyyy-MM-dd HH:mm")</td>
+                        <td>@movement.Type</td>
+                        <td>@movement.ProductName</td>
+                        <td>@movement.Barcode</td>
+                        <td>@movement.WarehouseName</td>
+                        <td>@movement.FromLocationCode</td>
+                        <td>@movement.ToLocationCode</td>
+                        <td>@movement.Quantity.ToString("N3")</td>
+                        <td>@movement.Reference</td>
+                        <td class="text-truncate" style="max-width: 160px">
+                            @movement.CreatedByUserId
+                        </td>
+                    </tr>
+                }
+
+                @if (Model.Movements.Count == 0)
+                {
+                    <tr>
+                        <td colspan="10" class="text-center text-muted">
+                            No location movements found.
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        (() => {
+            const warehouse = document.getElementById("movementWarehouse");
+            const product = document.getElementById("movementProduct");
+            const source = document.getElementById("sourceLocation");
+            const destination = document.getElementById("destinationLocation");
+            const availability = document.getElementById("sourceAvailability");
+            const quantity = document.getElementById("Form_Quantity");
+
+            const refreshOptions = (select, predicate) => {
+                Array.from(select.options).slice(1).forEach(option => {
+                    const visible = predicate(option);
+                    option.hidden = !visible;
+                    option.disabled = !visible;
+                });
+
+                if (select.selectedOptions[0]?.disabled) {
+                    select.value = "";
+                }
+            };
+
+            const refresh = () => {
+                const warehouseId = warehouse.value;
+                const productId = product.value;
+
+                refreshOptions(source, option =>
+                    option.dataset.warehouse === warehouseId &&
+                    option.dataset.product === productId);
+
+                const sourceId = source.value;
+                refreshOptions(destination, option =>
+                    option.dataset.warehouse === warehouseId &&
+                    option.value !== sourceId);
+
+                const selectedSource = source.selectedOptions[0];
+                availability.textContent = selectedSource?.dataset.quantity
+                    ? `Available: ${selectedSource.dataset.quantity}`
+                    : "";
+
+                if (selectedSource?.dataset.quantity) {
+                    quantity.max = selectedSource.dataset.quantity;
+                } else {
+                    quantity.removeAttribute("max");
+                }
+            };
+
+            warehouse.addEventListener("change", refresh);
+            product.addEventListener("change", refresh);
+            source.addEventListener("change", refresh);
+            refresh();
+        })();
+    </script>
+}

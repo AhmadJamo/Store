@@ -1,18 +1,21 @@
 # Razor screen map
-> Status: IMPLEMENTED | Last reviewed: 2026-09-13
+> Status: IMPLEMENTED | Last reviewed: 2026-09-14
 
 | Screens | Controller flow / notable UI |
 |---|---|
 | `Views/Account/{Login,AccessDenied}.cshtml` | Account login form/logout navigation; Identity flow. |
 | `Views/Home/Index.cshtml` | authenticated home page. |
 | `Views/Products/{Index,Create,Edit}.cshtml` | product search/list and CRUD forms. |
-| `Views/Warehouses/*`, `Views/Suppliers/*` | list/create/edit master data and delete posts. |
+| `Views/Warehouses/*`, `Views/Suppliers/*` | list/create/edit master data and delete posts; warehouses configure operating use, location control, picking, POS and transfer policies. |
 | `Views/ProductStocks/{Index,Create,Edit}.cshtml` | balance list/opening balance/direct quantity adjustment. |
 | `Views/StockTransactions/{Index,Create}.cshtml` | paged/filterable movement list and manual movement form. |
+| `Views/WarehouseLocations/{Index,Create}.cshtml`, `Views/UnassignedStock/Index.cshtml` | location master data, warehouse/product search and putaway assignment. |
+| `Views/LocationMovements/Index.cshtml` | same-warehouse rack/bin relocation form with filtered choices, available quantity and searchable movement history. |
 | `Views/Purchases/{Index,Create,Details}.cshtml` | purchase list/detail and client-side dynamic item rows. |
-| `Views/Sales/{Index,Create,Details,Pos}.cshtml` | wholesale sale, detail/list and POS cart; client JavaScript constructs item hidden inputs. |
+| `Views/Sales/{Index,Create,Details,Pos}.cshtml` | wholesale sale, detail/list and POS cart; POS terminal selection filters its allowed warehouses and chooses its default. |
 | `Views/StockTransfers/{Index,Create,Edit,Details}.cshtml` | transfer list/edit/detail/status actions; client-side product rows/filtering. |
-| `Views/Settings/{Index,Invoices,General,Discounts}.cshtml` | Admin-only setting forms. |
+| `Views/Settings/{Index,Invoices,General,Discounts,Inventory}.cshtml` | Admin-only setting forms; Inventory defines defaults for new warehouses and explains multi-location balances. |
+| `Views/Settings/InventoryAccess.cshtml` | branch warehouse operation flags/priorities plus POS terminal creation and prioritized warehouse assignment. |
 | `Views/Users/{Index,Create}.cshtml`, `Views/Roles/{Index,Create,Edit}.cshtml` | Identity user/role administration. |
 | `Views/Shared/{_Layout,_Notification,_ErrorPopup,_ConfirmDelete,_ValidationScriptsPartial}.cshtml` | global navigation, feedback, confirmation/validation partials. |
 
