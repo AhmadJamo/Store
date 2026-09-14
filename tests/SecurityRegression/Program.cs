@@ -40,6 +40,28 @@ Check(membership.IsActive && membership.IsOwner,
     "Tenant membership must preserve active owner access");
 CheckArgumentThrows(() => new TenantMembership(0, "user"),
     "Tenant membership must require a valid tenant");
+var promotion = new PromotionCode("LAUNCH-25", 25, DateTime.UtcNow.AddDays(-1), DateTime.UtcNow.AddDays(5), 2, planId: 1);
+Check(promotion.CanRedeem(DateTime.UtcNow, 1), "Active promotion must be redeemable for its configured plan");
+promotion.Redeem(DateTime.UtcNow, 1); promotion.Redeem(DateTime.UtcNow, 1);
+Check(!promotion.CanRedeem(DateTime.UtcNow, 1), "Promotion must stop at its redemption limit");
+CheckArgumentThrows(() => new PromotionCode("BAD", 101, DateTime.UtcNow, DateTime.UtcNow.AddDays(1), null, null),
+    "Promotion percentage must remain within 0-100");
+var checkout = new BillingCheckoutSession(1, 1, BillingCycle.Monthly, null, 100m, 25m, "jod");
+Check(checkout.Total == 75m && checkout.Currency == "JOD" && checkout.Status == CheckoutStatus.Pending,
+    "Checkout must calculate a normalized, immutable quote");
+checkout.MarkPaid(" manual-001 ");
+Check(checkout.Status == CheckoutStatus.Paid && checkout.ProviderReference == "manual-001" && checkout.PaidAt.HasValue,
+    "Checkout must preserve its payment confirmation reference");
+CheckThrows(() => checkout.MarkPaid("manual-002"),
+    "A paid checkout must reject duplicate confirmation");
+CheckArgumentThrows(() => new BillingCheckoutSession(1, 1, (BillingCycle)999, null, 100m, 0m, "JOD"),
+    "Checkout must reject unsupported billing cycles");
+CheckArgumentThrows(() => new BillingCheckoutSession(1, 1, BillingCycle.Monthly, null, 100m, 0m, "invalid"),
+    "Checkout must require a three-letter currency code");
+var subscription = new TenantSubscription(1, 1, DateTime.UtcNow.AddDays(14));
+Check(subscription.AllowsUse(DateTime.UtcNow), "Trial subscription must allow company access");
+subscription.SetStatus(SubscriptionStatus.Suspended);
+Check(!subscription.AllowsUse(DateTime.UtcNow), "Suspended subscription must block company access");
 
 Type[] tenantOwnedTypes =
 [
@@ -95,9 +117,11 @@ Check(new LanguageController().Set("fr-FR", "/") is BadRequestResult,
 foreach (var admin in new[] { false, true })
 {
     using var users = new StubUsers(db, admin);
-    var service = new PermissionService(users, db);
-    var handler = new PermissionAuthorizationHandler(users, db);
-    foreach (var permission in new[] { "Users.Create", "Users.Edit", "Users.Delete", "Roles.Create", "Roles.Edit", "Roles.Delete" })
+    var tenantContext = new StubTenantContext();
+    var tenantAuthorization = new StubTenantAuthorization(admin);
+    var service = new PermissionService(users, tenantContext, tenantAuthorization);
+    var handler = new PermissionAuthorizationHandler(users, tenantContext, tenantAuthorization);
+    foreach (var permission in new[] { "Administration.Access", "Users.Create", "Users.Edit", "Users.Delete", "Roles.Create", "Roles.Edit", "Roles.Delete" })
     {
         Check(await service.CanAsync("user", permission) == admin, $"Service: {permission}, admin={admin}");
         var requirement = new PermissionRequirement(permission);
@@ -116,6 +140,16 @@ foreach (var controller in new[] { typeof(RolesController), typeof(ProductsContr
 }
 Check(typeof(AccountController).GetMethods().Single(m => m.Name == "Login" && m.GetCustomAttribute<HttpPostAttribute>() != null)
     .GetCustomAttribute<Microsoft.AspNetCore.RateLimiting.EnableRateLimitingAttribute>()?.PolicyName == "login", "Login rate limiter missing");
+Check(typeof(AccountController).GetMethods().Single(m => m.Name == "Register" && m.GetCustomAttribute<HttpPostAttribute>() != null)
+    .GetCustomAttribute<Microsoft.AspNetCore.RateLimiting.EnableRateLimitingAttribute>()?.PolicyName == "registration", "Registration rate limiter missing");
+foreach (var controller in new[] { typeof(SettingsController), typeof(AccountsController), typeof(BranchesController), typeof(PaymentMethodsController), typeof(TaxRatesController), typeof(CustomersController) })
+{
+    var policy = controller.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy;
+    Check(policy == $"{PermissionAuthorizeAttribute.PolicyPrefix}Administration.Access",
+        $"{controller.Name} must enforce admin access inside the active company");
+    Check(controller.GetCustomAttributes<AuthorizeAttribute>().All(attribute => attribute.Roles is null),
+        $"{controller.Name} must not trust a cross-company Identity role claim");
+}
 
 var stockRowVersion = db.Model.FindEntityType(typeof(ProductStock))!
     .FindProperty(nameof(ProductStock.RowVersion))!;
@@ -336,5 +370,14 @@ sealed class StubUsers : UserManager<IdentityUser>
     public override Task<IdentityUser?> FindByIdAsync(string id) => Task.FromResult<IdentityUser?>(new IdentityUser { Id = id });
     public override Task<IdentityUser?> GetUserAsync(ClaimsPrincipal principal) => FindByIdAsync("user");
     public override Task<bool> IsInRoleAsync(IdentityUser user, string role) => Task.FromResult(admin);
+}
+
+sealed class StubTenantContext : MiniStore.Domain.Interfaces.ITenantContext { public int? TenantId => 1; }
+sealed class StubTenantAuthorization(bool admin) : MiniStore.Domain.Interfaces.ITenantAuthorizationRepository
+{
+    public Task<bool> HasRoleAsync(int tenantId, string userId, string roleName) => Task.FromResult(admin && roleName == "Admin");
+    public Task<bool> HasPermissionAsync(int tenantId, string userId, string permission) => Task.FromResult(false);
+    public Task AddRoleAsync(TenantUserRole assignment) => Task.CompletedTask;
+    public Task SaveChangesAsync() => Task.CompletedTask;
 }
 

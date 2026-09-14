@@ -1,0 +1,5 @@
+@model IReadOnlyList<MiniStore.Application.Saas.PlanCardDto>
+@using System.Globalization
+@{ var ar=CultureInfo.CurrentUICulture.Name.StartsWith("ar"); ViewData["Title"]=ar?"نظرة عامة":"Platform overview"; }
+<h1>@(ar?"نظرة عامة على المنصة":"Platform overview")</h1><p class="text-muted">@(ar?"إدارة المنصة منفصلة بالكامل عن إدارة شركات العملاء.":"Platform administration is isolated from tenant ERP administration.")</p>
+<div class="row g-4 mt-3"><div class="col-md-4"><div class="card p-4 border-0 shadow-sm"><span class="text-muted">@(ar?"الخطط المعرفة":"Configured plans")</span><strong class="display-5">@Model.Count</strong></div></div><div class="col-md-4"><div class="card p-4 border-0 shadow-sm"><span class="text-muted">@(ar?"الخطط العامة":"Public plans")</span><strong class="display-5">@Model.Count</strong></div></div></div>

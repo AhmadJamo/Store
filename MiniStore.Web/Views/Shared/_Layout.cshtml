@@ -86,6 +86,10 @@
                 </ul>
 
                 <div class="d-flex align-items-center gap-2 user-menu">
+                    @if (User.Identity?.IsAuthenticated == true)
+                    {
+                        <a class="btn btn-outline-light btn-sm" href="/subscription"><i class="bi bi-credit-card"></i> @Localizer["Subscription"]</a>
+                    }
                     <form asp-controller="Language" asp-action="Set" method="post" class="d-inline">
                         <input type="hidden" name="culture" value="@targetCulture" />
                         <input type="hidden" name="returnUrl" value="@($"{Context.Request.PathBase}{Context.Request.Path}{Context.Request.QueryString}")" />

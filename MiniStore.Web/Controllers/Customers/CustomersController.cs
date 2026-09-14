@@ -1,8 +1,9 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MiniStore.Application.Services;
+using MiniStore.Web.Authorization;
 namespace MiniStore.Web.Controllers;
-[Authorize(Roles="Admin")]
+[PermissionAuthorize("Administration.Access")]
 public class CustomersController(CustomerService service, AccountService accounts):Controller
 {
     public async Task<IActionResult> Index()=>View(await service.GetAllAsync());

@@ -3,7 +3,7 @@
 > Source of truth: Code  
 > Last reviewed: 2026-09-14
 
-Authentication is ASP.NET Core Identity cookie authentication. `PermissionAuthorizeAttribute` creates policies with `Permission:` prefix; `PermissionAuthorizationHandler` grants Admin all permissions, otherwise maps Identity role names → Identity role IDs → `RolePermissions` → `Permissions`.
+Authentication is ASP.NET Core Identity cookie authentication. `PermissionAuthorizeAttribute` creates policies with `Permission:` prefix. Both permission evaluators first require an active tenant and then query `TenantUserRoles`; Admin therefore receives full access only inside the active company. Non-Admin assignments resolve through the existing global role-permission templates.
 
 ## Defined permission groups
 Products, Warehouses, ProductStock, StockTransactions, LocationMovements, Suppliers, Purchases, Sales, StockTransfers, Users, Roles, and Settings are defined in `MiniStore.Application/Permissions/PermissionDefinitions.cs`. CRUD permissions exist for several modules even where matching actions do not exist (for example purchase/sale edit/delete). Stock transfer also defines Submit/Approve/Reject/Post/Cancel. Location movements define View/Create.
@@ -19,11 +19,11 @@ Products, Warehouses, ProductStock, StockTransactions, LocationMovements, Suppli
 | Stock transfers | View/Create/Edit/Submit/Approve/Reject/Post/Cancel enforced. |
 | Users | View/Create enforced; Edit/Delete definitions have no actions. |
 | Roles | View/Create/Edit/Delete enforced. |
-| Settings | Controller requires Identity role `Admin`, not Settings.* permissions. |
-| Accounting master data | Accounts, branches, customers, tax rates and payment methods require Identity role `Admin`; their navigation entries use `Settings.View` as the menu visibility gate. |
+| Settings | Requires `Administration.Access`, which only an Admin assignment in the active tenant can satisfy. |
+| Accounting master data | Accounts, branches, customers, tax rates and payment methods require the same tenant-Admin boundary; navigation visibility remains separately gated. |
 
 ## Known inconsistencies
-`Settings.View` and `Settings.Edit` are defined but unused. UI navigation visibility is defined separately in `NavigationDefinitions`; inspect it with each permission change. Identity mutations (`Users.Create/Edit/Delete`, `Roles.Create/Edit/Delete`) now require current database Admin membership in both permission evaluators, regardless of stored role mappings. Read permissions remain delegable. Navigation and buttons use the same evaluator.
+`Settings.View` and `Settings.Edit` remain mainly navigation capabilities. `Administration.Access` is an internal protected policy key and is deliberately absent from the delegable permission catalogue. Identity mutations (`Users.Create/Edit/Delete`, `Roles.Create/Edit/Delete`) also require tenant Admin membership regardless of stored templates. Role definitions and non-Admin permission templates are still global, although assignment and Admin evaluation are tenant-scoped.
 
 ## Update rules
 Permission change → `PermissionDefinitions`, seeder, controller attributes, navigation/views, `05_PERMISSIONS.md`, related module/controller/screen docs and tests.

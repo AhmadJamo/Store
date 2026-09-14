@@ -1,0 +1,5 @@
+@model IReadOnlyList<MiniStore.Application.Saas.PlanCardDto>
+@using System.Globalization
+@{ var ar=CultureInfo.CurrentUICulture.Name.StartsWith("ar"); ViewData["Title"]=ar?"الخطط":"Plans"; }
+<div class="d-flex justify-content-between"><div><h1>@(ar?"الخطط":"Plans")</h1><p class="text-muted">@(ar?"الباقات التجارية وحدود الاستخدام.":"Commercial packages and operational limits.")</p></div><a class="btn btn-primary align-self-start" href="/platform/plans/create">@(ar?"خطة جديدة":"New plan")</a></div>
+<div class="card mt-4 table-responsive"><table class="table mb-0"><thead><tr><th>@(ar?"الرمز":"Code")</th><th>@(ar?"الاسم":"Name")</th><th>@(ar?"شهري":"Monthly")</th><th>@(ar?"سنوي":"Annual")</th><th>@(ar?"الحدود":"Limits")</th></tr></thead><tbody>@foreach(var p in Model){<tr><td><code>@p.Code</code></td><td>@(ar?p.NameArabic:p.NameEnglish)<br><span class="text-muted">@(ar?p.NameEnglish:p.NameArabic)</span></td><td>@p.MonthlyPrice @p.Currency</td><td>@p.AnnualPrice @p.Currency</td><td>@p.Limits.Count</td></tr>}</tbody></table></div>

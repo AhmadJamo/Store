@@ -1,6 +1,7 @@
 ﻿using MiniStore.Application.DTOs.Warehouses;
 using MiniStore.Domain.Entities;
 using MiniStore.Domain.Interfaces;
+using MiniStore.Application.Saas;
 
 namespace MiniStore.Application.Services;
 
@@ -12,6 +13,7 @@ public class WarehouseService
     private readonly IStorageLocationRepository _storageLocationRepository;
     private readonly IProductLocationStockRepository _productLocationStockRepository;
     private readonly IInventoryAccessRepository _inventoryAccessRepository;
+    private readonly EntitlementService _entitlements;
 
     public WarehouseService(
         IWarehouseRepository warehouseRepository,
@@ -19,7 +21,8 @@ public class WarehouseService
         IAccountRepository accountRepository,
         IStorageLocationRepository storageLocationRepository,
         IProductLocationStockRepository productLocationStockRepository,
-        IInventoryAccessRepository inventoryAccessRepository)
+        IInventoryAccessRepository inventoryAccessRepository,
+        EntitlementService entitlements)
     {
         _warehouseRepository = warehouseRepository;
         _branchRepository = branchRepository;
@@ -27,6 +30,7 @@ public class WarehouseService
         _storageLocationRepository = storageLocationRepository;
         _productLocationStockRepository = productLocationStockRepository;
         _inventoryAccessRepository = inventoryAccessRepository;
+        _entitlements = entitlements;
     }
 
     public async Task<List<WarehouseDto>> GetAllAsync()
@@ -76,6 +80,7 @@ public class WarehouseService
 
     public async Task CreateAsync(CreateWarehouseDto dto)
     {
+        await _entitlements.EnsureLimitAsync(SaasLimitKeys.Warehouses);
         var warehouses =
             await _warehouseRepository.GetAllAsync();
 

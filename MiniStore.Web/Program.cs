@@ -56,11 +56,26 @@ builder.Services.AddRateLimiter(options =>
                 Window = TimeSpan.FromMinutes(1),
                 QueueLimit = 0
             }));
+    options.AddPolicy("registration", context =>
+        System.Threading.RateLimiting.RateLimitPartition.GetFixedWindowLimiter(
+            context.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+            _ => new System.Threading.RateLimiting.FixedWindowRateLimiterOptions
+            {
+                PermitLimit = 5,
+                Window = TimeSpan.FromHours(1),
+                QueueLimit = 0
+            }));
 });
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 builder.Services.AddScoped<ITenantContext, HttpTenantContext>();
 builder.Services.AddScoped<ITenantMembershipRepository, TenantMembershipRepository>();
+builder.Services.AddScoped<ITenantAuthorizationRepository, TenantAuthorizationRepository>();
+builder.Services.AddScoped<ISaasRepository, SaasRepository>();
+builder.Services.AddScoped<MiniStore.Application.Saas.EntitlementService>();
+builder.Services.AddScoped<MiniStore.Application.Saas.PlatformSaasService>();
+builder.Services.AddScoped<MiniStore.Application.Saas.ISaasOnboardingService, MiniStore.Infrastructure.Services.SaasOnboardingService>();
+builder.Services.AddScoped<MiniStore.Application.Saas.IBillingCheckoutService, MiniStore.Infrastructure.Services.BillingCheckoutService>();
 builder.Services.AddScoped<AuditSaveChangesInterceptor>();
 
 builder.Services.AddDbContext<AppDbContext>((services, options) =>
@@ -80,6 +95,18 @@ builder.Services
     })
     .AddEntityFrameworkStores<AppDbContext>()
     .AddDefaultTokenProviders();
+
+builder.Services.AddAuthentication()
+    .AddCookie(PlatformAuthentication.Scheme, options =>
+    {
+        options.Cookie.Name = "MiniStore.Platform";
+        options.LoginPath = "/platform/account/login";
+        options.AccessDeniedPath = "/platform/account/login";
+        options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+        options.SlidingExpiration = false;
+        options.Cookie.HttpOnly = true;
+        options.Cookie.SameSite = SameSiteMode.Strict;
+    });
 
 
 
@@ -180,7 +207,24 @@ builder.Services.AddScoped<IStockTransferService,StockTransferService>();
 
 
 
-builder.Services.AddAuthorization();
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy(PlatformAuthentication.Policy, policy =>
+    {
+        policy.AddAuthenticationSchemes(PlatformAuthentication.Scheme);
+        policy.RequireAuthenticatedUser();
+    });
+    options.AddPolicy(PlatformAuthentication.ManagementPolicy, policy =>
+    {
+        policy.AddAuthenticationSchemes(PlatformAuthentication.Scheme);
+        policy.RequireRole("Owner", "Administrator");
+    });
+    options.AddPolicy(PlatformAuthentication.BillingPolicy, policy =>
+    {
+        policy.AddAuthenticationSchemes(PlatformAuthentication.Scheme);
+        policy.RequireRole("Owner", "Administrator", "Billing");
+    });
+});
 
 builder.Services.AddSingleton<
     IAuthorizationPolicyProvider,
@@ -203,6 +247,7 @@ try
     using var scope = app.Services.CreateScope();
     await IdentitySeeder.SeedAsync(scope.ServiceProvider, builder.Configuration);
     await PermissionSeeder.SeedAsync(scope.ServiceProvider);
+    await PlatformOperatorSeeder.SeedAsync(scope.ServiceProvider, builder.Configuration);
 }
 catch (Exception exception)
 {
@@ -232,11 +277,13 @@ app.UseRateLimiter();
 
 app.UseAuthentication();
 app.UseMiddleware<TenantSessionMiddleware>();
+app.UseMiddleware<SubscriptionAccessMiddleware>();
 app.UseRequestLocalization();
 
 app.UseAuthorization();
 
 app.MapStaticAssets();
+app.MapControllers();
 
 app.MapControllerRoute(
     name: "default",

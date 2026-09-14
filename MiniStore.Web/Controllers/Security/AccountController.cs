@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using MiniStore.Application.Tenancy;
 using MiniStore.Domain.Interfaces;
+using MiniStore.Application.Saas;
 
 namespace MiniStore.Web.Controllers;
 
@@ -11,15 +12,21 @@ public class AccountController : Controller
     private readonly SignInManager<IdentityUser> _signInManager;
     private readonly UserManager<IdentityUser> _userManager;
     private readonly ITenantMembershipRepository _memberships;
+    private readonly ISaasOnboardingService _onboarding;
+    private readonly PlatformSaasService _saas;
 
     public AccountController(
         SignInManager<IdentityUser> signInManager,
         UserManager<IdentityUser> userManager,
-        ITenantMembershipRepository memberships)
+        ITenantMembershipRepository memberships,
+        ISaasOnboardingService onboarding,
+        PlatformSaasService saas)
     {
         _signInManager = signInManager;
         _userManager = userManager;
         _memberships = memberships;
+        _onboarding = onboarding;
+        _saas = saas;
     }
 
     [HttpGet]
@@ -102,6 +109,39 @@ public class AccountController : Controller
 
         return RedirectToAction(
             nameof(Login));
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Register(int? planId = null)
+    {
+        ViewBag.Plans = await _saas.GetPublicPlansAsync();
+        ViewBag.PlanId = planId;
+        return View();
+    }
+
+    [HttpPost]
+    [Microsoft.AspNetCore.RateLimiting.EnableRateLimiting("registration")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Register(RegisterCompanyCommand command)
+    {
+        try
+        {
+            var result = await _onboarding.RegisterAsync(command);
+            var user = await _userManager.FindByIdAsync(result.UserId)
+                ?? throw new InvalidOperationException("The registered user was not found.");
+            await _signInManager.SignInWithClaimsAsync(
+                user,
+                false,
+                [new Claim(TenantClaimTypes.TenantId, result.TenantId.ToString(System.Globalization.CultureInfo.InvariantCulture))]);
+            return RedirectToAction("Index", "Home");
+        }
+        catch (Exception exception) when (exception is ArgumentException or InvalidOperationException)
+        {
+            ModelState.AddModelError(string.Empty, exception.Message);
+            ViewBag.Plans = await _saas.GetPublicPlansAsync();
+            ViewBag.PlanId = command.PlanId;
+            return View(command);
+        }
     }
 
     [HttpGet]

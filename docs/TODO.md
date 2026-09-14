@@ -1,10 +1,13 @@
 # Project TODO
 > Source of truth: Current repository scan  
-> Last reviewed: 2026-09-14
+> Last reviewed: 2026-09-15
 
 ## Completed
 - Core catalog, warehouse, supplier, inventory, purchase, sale and stock-transfer code exists.
 - Shared-database tenant isolation is implemented for all current business entities, including active membership validation, tenant-scoped reads/writes/unique indexes and demo-data backfill.
+- Added separately authenticated platform control center, bilingual public landing/pricing pages, plans/features/limits, tenant subscription states, user/warehouse limit enforcement and bounded percentage promotion codes.
+- Added atomic self-service company registration with a selected-plan trial, tenant subscription self-service, persisted monthly/annual checkout quotes, promotion calculation/redemption and protected manual payment confirmation.
+- Added tenant-scoped user-role assignments and removed cross-company global Admin checks from tenant administration controllers.
 
 ## In Progress
 - Add sale tax and journal posting, weighted-average COGS calculation, purchase reversal and fiscal-period controls.
@@ -29,7 +32,7 @@
 - Security regression executable added under `tests/SecurityRegression`; HTTP/database integration and penetration tests remain outstanding.
 
 ## Future ERP/SaaS Features
-- Add tenant administration/onboarding, company switching for multi-company users, tenant-specific role assignments, subscription plans/limits, billing provider integration and platform-operator controls. The data-isolation foundation is implemented.
+- Add company switching/invitations, fully tenant-owned custom role definitions/permissions, plan versioning/overrides, external provider checkout/webhooks/refunds, 2FA for platform operators and controlled support impersonation.
 
 ## Security fixes completed (2026-09-13)
 - Admin-only identity mutations enforced in both permission evaluators.

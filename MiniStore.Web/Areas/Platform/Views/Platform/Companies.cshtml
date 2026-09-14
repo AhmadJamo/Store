@@ -1,0 +1,11 @@
+@model IReadOnlyList<MiniStore.Application.Saas.CompanySubscriptionDto>
+@using System.Globalization
+@{ var ar=CultureInfo.CurrentUICulture.Name.StartsWith("ar"); ViewData["Title"]=ar?"الشركات":"Companies"; var plans=(IReadOnlyList<MiniStore.Application.Saas.PlanCardDto>)ViewBag.Plans; }
+<h1>@(ar?"الشركات والاشتراكات":"Companies & subscriptions")</h1>
+<p class="text-muted">@(ar?"إدارة حالة الشركة وخطتها وفترة اشتراكها.":"Manage company access, plan and subscription period.")</p>
+<div class="row g-4 mt-2">@foreach(var c in Model){<div class="col-xl-6"><form action="/platform/companies/update" method="post" class="card shadow-sm border-0 p-4">@Html.AntiForgeryToken()
+<input type="hidden" name="TenantId" value="@c.TenantId"><div class="d-flex justify-content-between"><div><h4>@c.Name</h4><code>@c.Slug</code></div><span class="badge @(c.IsActive?"text-bg-success":"text-bg-danger") align-self-start">@(c.IsActive?(ar?"نشطة":"Active"):(ar?"معطلة":"Disabled"))</span></div><hr>
+<div class="row g-3"><div class="col-md-6"><label class="form-label">@(ar?"الخطة":"Plan")</label><select name="PlanId" class="form-select" required>@foreach(var p in plans){<option value="@p.Id" selected="@(p.Id==c.PlanId)">@(ar?p.NameArabic:p.NameEnglish)</option>}</select></div>
+<div class="col-md-6"><label class="form-label">@(ar?"حالة الاشتراك":"Subscription status")</label><select name="Status" class="form-select">@foreach(var s in Enum.GetValues<MiniStore.Domain.Entities.SubscriptionStatus>()){<option value="@((int)s)" selected="@(c.Status==s)">@s</option>}</select></div>
+<div class="col-md-6"><label class="form-label">@(ar?"نهاية الفترة":"Period end")</label><input name="PeriodEnd" type="date" value="@c.PeriodEnd?.ToString("yyyy-MM-dd")" class="form-control" required></div><div class="col-md-6"><label class="form-label">@(ar?"عدد المستخدمين":"Users")</label><input value="@c.UserCount" class="form-control" disabled></div>
+<div class="col-12 form-check ms-2"><input type="checkbox" name="CompanyIsActive" value="true" checked="@c.IsActive" class="form-check-input"><label class="form-check-label">@(ar?"السماح بدخول الشركة":"Company access enabled")</label></div></div><button class="btn btn-primary mt-3">@(ar?"حفظ الاشتراك":"Save subscription")</button></form></div>}</div>

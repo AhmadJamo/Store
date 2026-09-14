@@ -1,10 +1,14 @@
 # Database tables reference
-> Last reviewed: 2026-09-14
+> Last reviewed: 2026-09-15
 
 Schema source is `AppDbContext`, configurations and migrations. Identity's standard `AspNet*` tables are supplied by IdentityDbContext.
 
 - **Tenants:** company identity, unique URL-safe Slug, active state, creation time and RowVersion.
-- **TenantMemberships:** composite TenantId/UserId membership with owner and active flags; links a global Identity login to a company.
+- **TenantMemberships / TenantUserRoles:** company membership plus tenant-scoped role assignment; Admin status is evaluated inside the active company.
+- **Plans / PlanFeatures / PlanLimits / TenantSubscriptions:** bilingual plan catalogue, entitlements and one lifecycle-aware subscription per company.
+- **PlatformOperators:** explicit platform-owner/admin/billing allow-list, separate from tenant Admin.
+- **PromotionCodes / PromotionRedemptions:** percentage promotions bounded by time, plan, total use and one use per company.
+- **BillingCheckoutSessions:** priced monthly/annual quotes with expiry, promotion, status, confirmation reference and rowversion.
 - **Tenant ownership:** every ERP business table below also carries required TenantId with a restrictive Tenant FK. Tenant-aware unique indexes allow each company its own codes, invoice numbers and singleton settings.
 
 - **Products:** Id, Name, Barcode, PurchasePrice, SalePrice, WholesalePrice; all prices decimal(18,2).

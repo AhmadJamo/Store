@@ -148,6 +148,10 @@ public static class IdentitySeeder
                     activeTenantId,
                     adminUser.Id,
                     isOwner: true));
+            var adminRoleId = await Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.FirstAsync(
+                services.GetRequiredService<AppDbContext>().Roles.Where(x => x.Name == "Admin").Select(x => x.Id));
+            await context.TenantUserRoles.AddAsync(
+                new MiniStore.Domain.Entities.TenantUserRole(activeTenantId, adminUser.Id, adminRoleId));
             await context.SaveChangesAsync();
         }
     }

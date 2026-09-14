@@ -1,0 +1,5 @@
+@model IReadOnlyList<MiniStore.Domain.Entities.PromotionCode>
+@using System.Globalization
+@{ var ar=CultureInfo.CurrentUICulture.Name.StartsWith("ar"); ViewData["Title"]=ar?"أكواد الخصم":"Promo codes"; }
+<div class="d-flex justify-content-between"><div><h1>@(ar?"أكواد الخصم":"Promo codes")</h1><p class="text-muted">@(ar?"خصومات بنسبة مئوية مع وقت وحدود استخدام.":"Time-bound percentage discounts with redemption limits.")</p></div><a class="btn btn-primary" href="/platform/promotions/create">@(ar?"كود جديد":"New promo code")</a></div>
+<div class="card mt-4 table-responsive"><table class="table mb-0"><thead><tr><th>@(ar?"الكود":"Code")</th><th>@(ar?"الخصم":"Discount")</th><th>@(ar?"الصلاحية":"Validity")</th><th>@(ar?"الاستخدام":"Usage")</th><th>@(ar?"الحالة":"Status")</th></tr></thead><tbody>@foreach(var x in Model){<tr><td><code>@x.Code</code></td><td>@x.DiscountPercentage%</td><td>@x.StartsAt.ToString("yyyy-MM-dd") → @x.EndsAt.ToString("yyyy-MM-dd")</td><td>@x.RedemptionCount / @(x.MaximumRedemptions?.ToString()??"∞")</td><td>@(x.IsActive?(ar?"نشط":"Active"):(ar?"معطل":"Disabled"))</td></tr>}</tbody></table></div>

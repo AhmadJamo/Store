@@ -24,6 +24,15 @@ public class AppDbContext
 
     public DbSet<Tenant> Tenants => Set<Tenant>();
     public DbSet<TenantMembership> TenantMemberships => Set<TenantMembership>();
+    public DbSet<TenantUserRole> TenantUserRoles => Set<TenantUserRole>();
+    public DbSet<Plan> Plans => Set<Plan>();
+    public DbSet<PlanFeature> PlanFeatures => Set<PlanFeature>();
+    public DbSet<PlanLimit> PlanLimits => Set<PlanLimit>();
+    public DbSet<TenantSubscription> TenantSubscriptions => Set<TenantSubscription>();
+    public DbSet<PlatformOperator> PlatformOperators => Set<PlatformOperator>();
+    public DbSet<PromotionCode> PromotionCodes => Set<PromotionCode>();
+    public DbSet<PromotionRedemption> PromotionRedemptions => Set<PromotionRedemption>();
+    public DbSet<BillingCheckoutSession> BillingCheckoutSessions => Set<BillingCheckoutSession>();
 
     public DbSet<Product> Products => Set<Product>();
 

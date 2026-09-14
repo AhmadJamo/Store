@@ -10,7 +10,12 @@ All business tables have a required `TenantId` foreign key to `Tenants`. EF quer
 ## Application tables
 | Table/entity | Key relationships and notable constraints |
 |---|---|
-| Tenants / TenantMemberships | Tenant identity has globally unique slug, active state and rowversion. Membership uses composite `(TenantId, UserId)`, links Identity users to active companies and records owner/active flags. |
+| Tenants / TenantMemberships / TenantUserRoles | Tenant identity has globally unique slug, active state and rowversion. Membership links Identity users to companies; tenant user roles use `(TenantId, UserId, RoleId)` so an Admin assignment applies only inside its company. |
+| Plans / PlanFeatures / PlanLimits | bilingual public commercial plans with monthly/annual prices, feature flags and nullable unlimited numeric limits. |
+| TenantSubscriptions | one current subscription per tenant with trial/active/dunning states, billing cycle/period, provider references and rowversion. |
+| PlatformOperators | explicit allow-list and platform role linked to Identity; separate from tenant Admin membership. |
+| PromotionCodes / PromotionRedemptions | unique codes with percentage, UTC validity, optional plan and redemption cap; one redemption per tenant and concurrency-protected counter. |
+| BillingCheckoutSessions | immutable tenant/plan/cycle quote amounts plus optional promotion, 30-minute expiry, status, payment reference/time and rowversion. Subscription activation occurs only on successful confirmation. |
 | Products | `Id`; barcode required but no database unique index. |
 | Accounts / Branches / JournalEntries / JournalEntryLines | hierarchical chart; branches optionally reference a sales-revenue subaccount; journal lines hold debit/credit plus optional branch/warehouse dimensions. A journal source type/reference has a filtered unique index to prevent a document from posting twice. |
 | Warehouses, Suppliers | Warehouses link a branch/inventory account and persist operational type, control mode, picking, POS, capacity and transfer-location policies; suppliers can link a payable account. |
@@ -34,7 +39,7 @@ All business tables have a required `TenantId` foreign key to `Tenants`. EF quer
 | InvoiceSettings / DocumentNumberSettings | no singleton constraint; InvoiceSettings has rowversion; DocumentNumberSettings does not. |
 
 ## Migrations
-Migration history is chronological from initial create through tenant isolation (`AddTenantIsolation`). That migration creates a Demo Company, attaches existing test rows and users to it, converts business uniqueness to tenant-aware indexes and removes temporary TenantId defaults. Migrations are source-controlled under `MiniStore.Infrastructure/Migrations`; generated `*.Designer.cs` and `AppDbContextModelSnapshot.cs` describe EF model snapshots, not separate runtime features.
+Migration history is chronological through `AddSaasControlPlane`, `AddBillingCheckout`, `AddTenantScopedRoles` and `BootstrapPlatformOwner`. Tenant isolation creates a Demo Company and attaches existing test rows/users. The SaaS migrations add commercial control-plane data, checkout, tenant role assignments and one explicit initial platform owner for upgraded test installations. Migrations are source-controlled under `MiniStore.Infrastructure/Migrations`; generated designers and the model snapshot are metadata, not separate runtime features.
 
 ## Transactions and concurrency
 `UnitOfWork.ExecuteInTransactionAsync` starts a Serializable database transaction, executes an operation, calls one `SaveChangesAsync`, then commits. Sales, purchases, transfers, putaway and internal location relocation use it. ProductStock, ProductLocationStock and StockTransfer use rowversion concurrency tokens. General, discount, inventory, invoice and POS terminal experience settings use rowversion to varying degrees.

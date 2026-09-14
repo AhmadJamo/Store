@@ -1,0 +1,7 @@
+@model IReadOnlyList<MiniStore.Application.Saas.PendingCheckoutDto>
+@using System.Globalization
+@{ var ar=CultureInfo.CurrentUICulture.Name.StartsWith("ar"); ViewData["Title"]=ar?"الدفعات المعلقة":"Pending payments"; }
+<h1>@(ar?"الدفعات المعلقة":"Pending payments")</h1><p class="text-muted">@(ar?"أكد العملية فقط بعد تحقق البنك أو مزود الدفع من استلام المبلغ.":"Confirm only after the bank or payment provider verifies settlement.")</p>
+<div class="card mt-4 table-responsive"><table class="table align-middle mb-0"><thead><tr><th>@(ar?"الشركة":"Company")</th><th>@(ar?"الخطة":"Plan")</th><th>@(ar?"الإجمالي":"Total")</th><th>@(ar?"ينتهي":"Expires")</th><th>@(ar?"التأكيد":"Confirmation")</th></tr></thead><tbody>
+@foreach(var x in Model){<tr><td>@x.CompanyName</td><td>@(ar?x.PlanNameArabic:x.PlanNameEnglish)</td><td>@x.Total @x.Currency</td><td>@x.ExpiresAt.ToString("u")</td><td><form action="/platform/payments/confirm" method="post" class="d-flex gap-2">@Html.AntiForgeryToken()<input type="hidden" name="sessionId" value="@x.SessionId"><input name="providerReference" class="form-control" placeholder="@(ar?"مرجع البنك أو المزود":"Bank/provider reference")" required maxlength="200"><button class="btn btn-success">@(ar?"تأكيد الدفع":"Confirm paid")</button></form></td></tr>}
+</tbody></table>@if(!Model.Any()){<div class="p-5 text-center text-muted">@(ar?"لا توجد دفعات معلقة حالياً.":"There are no pending payments.")</div>}</div>

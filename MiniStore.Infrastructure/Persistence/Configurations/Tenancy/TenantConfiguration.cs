@@ -30,3 +30,15 @@ public class TenantMembershipConfiguration : IEntityTypeConfiguration<TenantMemb
         builder.HasIndex(x => new { x.UserId, x.IsActive });
     }
 }
+public class TenantUserRoleConfiguration : IEntityTypeConfiguration<TenantUserRole>
+{
+    public void Configure(EntityTypeBuilder<TenantUserRole> builder)
+    {
+        builder.HasKey(x => new { x.TenantId, x.UserId, x.RoleId });
+        builder.Property(x => x.UserId).HasMaxLength(450); builder.Property(x => x.RoleId).HasMaxLength(450);
+        builder.HasOne<Tenant>().WithMany().HasForeignKey(x => x.TenantId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasOne<IdentityUser>().WithMany().HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasOne<IdentityRole>().WithMany().HasForeignKey(x => x.RoleId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasIndex(x => new { x.TenantId, x.UserId });
+    }
+}

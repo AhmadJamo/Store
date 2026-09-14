@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using MiniStore.Web.Authorization;
 using MiniStore.Domain.Entities;
 using MiniStore.Domain.Interfaces;
+using MiniStore.Application.Saas;
 
 namespace MiniStore.Web.Controllers;
 
@@ -15,17 +16,23 @@ public class UsersController : Controller
     private readonly RoleManager<IdentityRole> _roleManager;
     private readonly ITenantContext _tenantContext;
     private readonly ITenantMembershipRepository _memberships;
+    private readonly EntitlementService _entitlements;
+    private readonly ITenantAuthorizationRepository _tenantAuthorization;
 
     public UsersController(
         UserManager<IdentityUser> userManager,
         RoleManager<IdentityRole> roleManager,
         ITenantContext tenantContext,
-        ITenantMembershipRepository memberships)
+        ITenantMembershipRepository memberships,
+        EntitlementService entitlements,
+        ITenantAuthorizationRepository tenantAuthorization)
     {
         _userManager = userManager;
         _roleManager = roleManager;
         _tenantContext = tenantContext;
         _memberships = memberships;
+        _entitlements = entitlements;
+        _tenantAuthorization = tenantAuthorization;
     }
 
     // GET: /Users
@@ -80,6 +87,16 @@ public class UsersController : Controller
         string password,
         string role)
     {
+        try
+        {
+            await _entitlements.EnsureLimitAsync(SaasLimitKeys.Users);
+        }
+        catch (InvalidOperationException exception)
+        {
+            ViewBag.Error = exception.Message;
+            await LoadRoles();
+            return View();
+        }
         if (string.IsNullOrWhiteSpace(username) ||
             string.IsNullOrWhiteSpace(email) ||
             string.IsNullOrWhiteSpace(password) ||
@@ -168,6 +185,7 @@ public class UsersController : Controller
         var tenantId = _tenantContext.TenantId
             ?? throw new InvalidOperationException("An active company is required.");
         await _memberships.AddAsync(new TenantMembership(tenantId, user.Id));
+        await _tenantAuthorization.AddRoleAsync(new TenantUserRole(tenantId, user.Id, selectedRole.Id));
         await _memberships.SaveChangesAsync();
 
         TempData["Success"] =

@@ -5,10 +5,11 @@ using MiniStore.Application.Dtos.Settings;
 using MiniStore.Application.DTOs.Settings;
 using MiniStore.Application.Services;
 using MiniStore.Domain.Interfaces;
+using MiniStore.Web.Authorization;
 
 namespace MiniStore.Web.Controllers;
 
-[Authorize(Roles = "Admin")]
+[PermissionAuthorize("Administration.Access")]
 public class SettingsController : Controller
 {
     private readonly InvoiceSettingsService _invoiceSettingsService;

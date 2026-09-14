@@ -1,8 +1,10 @@
 # Testing
-> Status: NOT IMPLEMENTED  
-> Source of truth: Repository scan and build command  
-> Last reviewed: 2026-09-13
+> Status: FOCUSED REGRESSION EXECUTABLE IMPLEMENTED
+> Source of truth: `tests/SecurityRegression` and build output
+> Last reviewed: 2026-09-15
 
-No test project, unit tests, integration tests, or end-to-end test files were found. `dotnet build MiniStore.sln --no-restore` was executed during the 2026-09-12 review and succeeded with 0 warnings and 0 errors. It is not a test result.
+`tests/SecurityRegression` is a standalone executable test harness. It verifies tenant metadata/query filters and write guards; tenant-scoped Admin authorization in both permission evaluators and controller metadata; destructive action HTTP methods; login/registration rate-limit metadata; subscription/promotion/checkout domain rules; inventory rowversions and core warehouse/POS/location invariants.
 
-Priority test gaps: permission escalation, login lockout, sales/transfer concurrency, stock movement-to-balance reconciliation, price invariant, invoice numbering concurrency, discount limits and transfer state transitions.
+The 2026-09-15 Release run passed 167 checks, and `dotnet build MiniStore.slnx -c Release --no-restore` completed with zero warnings/errors.
+
+Remaining gaps include database-backed concurrent operations, full HTTP authentication/authorization journeys, billing confirmation integration tests, stock reconciliation, invoice-number concurrency, external payment webhook tests and penetration testing.

@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using MiniStore.Infrastructure.Persistence;
+using MiniStore.Domain.Interfaces;
 
 namespace MiniStore.Web.Authorization;
 
@@ -9,14 +8,17 @@ public class PermissionAuthorizationHandler
     : AuthorizationHandler<PermissionRequirement>
 {
     private readonly UserManager<IdentityUser> _userManager;
-    private readonly AppDbContext _context;
+    private readonly ITenantContext _tenantContext;
+    private readonly ITenantAuthorizationRepository _authorization;
 
     public PermissionAuthorizationHandler(
         UserManager<IdentityUser> userManager,
-        AppDbContext context)
+        ITenantContext tenantContext,
+        ITenantAuthorizationRepository authorization)
     {
         _userManager = userManager;
-        _context = context;
+        _tenantContext = tenantContext;
+        _authorization = authorization;
     }
 
     protected override async Task HandleRequirementAsync(
@@ -36,10 +38,10 @@ public class PermissionAuthorizationHandler
         if (user == null)
             return;
 
-        // Admin has all permissions
-        if (await _userManager.IsInRoleAsync(
-                user,
-                "Admin"))
+        if (_tenantContext.TenantId is not int tenantId)
+            return;
+
+        if (await _authorization.HasRoleAsync(tenantId, user.Id, "Admin"))
         {
             context.Succeed(requirement);
             return;
@@ -48,29 +50,12 @@ public class PermissionAuthorizationHandler
         if (MiniStore.Application.Permissions.AdministrationPermissions.RequiresAdmin(requirement.Permission))
             return;
 
-        var roleIds =
-            await _userManager.GetRolesAsync(user);
-
-        if (!roleIds.Any())
-            return;
-
-        var roleEntities =
-            await _context.Roles
-                .Where(x => roleIds.Contains(x.Name!))
-                .Select(x => x.Id)
-                .ToListAsync();
-
-        var hasPermission =
-            await _context.RolePermissions
-                .Include(x => x.Permission)
-                .AnyAsync(x =>
-                    roleEntities.Contains(x.RoleId) &&
-                    x.Permission.Name ==
-                        requirement.Permission);
+        var hasPermission = await _authorization.HasPermissionAsync(tenantId, user.Id, requirement.Permission);
 
         if (hasPermission)
         {
             context.Succeed(requirement);
         }
     }
+
 }

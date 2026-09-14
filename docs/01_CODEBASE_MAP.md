@@ -23,7 +23,8 @@
 | `Entities/Purchases/*.cs`, `Entities/Sales/*.cs` | purchase, sale and POS aggregates plus per-terminal experience/order enums and settings | purchase/sales/settings docs. |
 | `Entities/Settings/*.cs` | accounting, discount, inventory-policy defaults, numbering, invoice/general settings and supported UI language | settings/database/localization docs. |
 | `Entities/Security/*.cs` | audit and role-permission entities | permissions/security docs. |
-| `Entities/Tenancy/*.cs` | company tenant and Identity-user membership control-plane entities | tenancy/security/database docs. |
+| `Entities/Tenancy/*.cs` | company tenant, Identity-user membership and tenant-scoped user-role assignments | tenancy/security/database docs. |
+| `Entities/Saas/*.cs` | plans, limits, features, subscriptions, checkout sessions, platform operators and promotion codes/redemptions | SaaS module and control center. |
 | `Enums/Sales/DiscountType.cs` | percentage/fixed discount enum | sales/settings docs. |
 | `Commands/Inventory/*.cs` | transfer service input commands | transfer service. |
 | `Interfaces/<Feature>/*.cs` | persistence/service contracts grouped by feature | matching Application/Infrastructure feature. |
@@ -73,6 +74,7 @@ POS order-context update (2026-09-14): Sale/SaleItem persist order type, service
 Warehouse location movement update (2026-09-14): `LocationMovement` and its repository/configuration/service record Putaway and Relocation operations. `LocationMovementsController` and `Views/LocationMovements/Index.cshtml` provide internal movement and searchable history. Migration `AddLocationMovementHistory` creates the audit table and indexes.
 | `Repositories/<Feature>/*.cs` | EF implementations grouped by feature | application services. |
 | `Repositories/Tenancy/TenantMembershipRepository.cs` | active company membership lookup and user list | login, tenant middleware and user administration. |
+| `Repositories/Saas/SaasRepository.cs` | control-plane plan, subscription, entitlement usage, operator and promotion persistence | public pricing and Platform area. |
 | `Repositories/Accounting/JournalEntryRepository.cs` | journal source duplicate-posting lookup and persistence | `PurchasePostingService`. |
 | `Authorization/PermissionService.cs` | permission check implementation | SaleService. |
 
@@ -84,6 +86,9 @@ Warehouse location movement update (2026-09-14): `LocationMovement` and its repo
 | `Services/Security/CurrentUserService.cs` | current Identity user ID for auditing | security/database. |
 | `Services/Tenancy/HttpTenantContext.cs`, `Middleware/TenantSessionMiddleware.cs` | resolve, validate and refresh the authenticated company boundary | AppDbContext, login and localization. |
 | `Controllers/<Feature>/*.cs` | MVC endpoints grouped by business feature; namespaces remain stable | `controllers/*.md`. |
+| `Areas/Platform/*` | separately authenticated platform-owner control center for plans, companies/subscriptions, promotion codes and pending payment confirmations | SaaS module. |
+| `Controllers/PublicController.cs`, `Controllers/Saas/SubscriptionController.cs` | public landing/pricing and tenant subscription/checkout flows | SaaS module and public/subscription views. |
+| `Middleware/SubscriptionAccessMiddleware.cs` | blocks tenant ERP access when the current subscription is not usable | SaaS module/security. |
 | `Localization/*.cs`, `Resources/SharedResource.ar.resx` | supported cultures, cached database-default provider and centralized Arabic translations | shared layout and localized views/controllers. |
 | `Controllers/Home/HomeController.cs` | application entry page | home view. |
 | `Navigation/*.cs` | navigation metadata | permissions/screens. |
@@ -93,6 +98,10 @@ Warehouse location movement update (2026-09-14): `LocationMovement` and its repo
 Localization update (2026-09-14): ASP.NET request localization supports `en-US` and `ar-JO`; GeneralSettings provides the cached company default and a whitelisted cookie endpoint provides user override. Shared layout/navigation/auth/dialogs and core Settings pages use `SharedResource`; migration `AddLocalizationSettings` backfills English.
 
 Tenant isolation update (2026-09-14): `Tenant`, `TenantMembership`, tenant context and session middleware establish a shared-database company boundary. AppDbContext adds TenantId/query filters/write guards to 34 business entities and changes business uniqueness to tenant-aware indexes. Migration `AddTenantIsolation` backfills the Demo Company and current users.
+
+SaaS control-plane update (2026-09-14): public product/pricing pages, separate Platform cookie and operator allow-list, plan features/limits, tenant subscription lifecycle, warehouse/user limit enforcement and time/usage/plan-bounded promotion codes. Migration `AddSaasControlPlane` seeds three bilingual plans and a 30-day Professional trial for existing tenants.
+
+SaaS onboarding/billing update (2026-09-15): company self-registration creates the Identity owner, tenant membership, tenant-scoped Admin assignment and 14-day trial atomically. Tenant checkout stores a priced monthly/annual session, applies a valid one-use-per-company promotion and activates the subscription only after protected platform confirmation. `SubscriptionAccessMiddleware` enforces lifecycle access. Migrations `AddBillingCheckout`, `AddTenantScopedRoles` and `BootstrapPlatformOwner` are applied locally.
 | `Views/*/*.cshtml.cs`, `_View*.cshtml.cs` | generated/companion view files; no custom behaviour verified | do not edit as module logic without inspection. |
 
 ## File change impact

@@ -1,9 +1,12 @@
 # Razor screen map
-> Status: IMPLEMENTED | Last reviewed: 2026-09-14
+> Status: IMPLEMENTED | Last reviewed: 2026-09-15
 
 | Screens | Controller flow / notable UI |
 |---|---|
-| `Views/Account/{Login,AccessDenied}.cshtml` | Account login form/logout navigation; Identity flow. |
+| `Views/Account/{Login,Register,AccessDenied}.cshtml` | tenant login and bilingual company/owner registration with plan selection. |
+| `Views/Public/*`, `_PublicLayout.cshtml` | anonymous bilingual landing and database-backed pricing experience. |
+| `Views/Subscription/{Index,Checkout}.cshtml` | current subscription, plan selection, promo entry and immutable checkout quote. |
+| `Areas/Platform/Views/*` | separately signed-in operator dashboard for plans, promotions, companies/subscriptions and pending payment confirmation. |
 | `Views/Home/Index.cshtml` | authenticated home page. |
 | `Views/Products/{Index,Create,Edit}.cshtml` | product search/list and CRUD forms. |
 | `Views/Warehouses/*`, `Views/Suppliers/*` | list/create/edit master data and delete posts; warehouses configure operating use, location control, picking, POS and transfer policies. |
