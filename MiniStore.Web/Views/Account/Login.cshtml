@@ -8,12 +8,25 @@
             <div class="card-body p-4">
                 <h2 class="text-center mb-2">MiniStore</h2>
                 <h4 class="text-center mb-4">@Localizer["Login"]</h4>
+                @if (ViewBag.RateLimitMinutes is int retryMinutes)
+                {
+                    <div class="alert alert-warning" role="alert">
+                        @(System.Globalization.CultureInfo.CurrentUICulture.Name.StartsWith("ar")
+                            ? $"تم تسجيل محاولات كثيرة. حاول مجدداً بعد حوالي {retryMinutes} دقيقة."
+                            : $"Too many attempts. Try again in about {retryMinutes} minute(s).")
+                    </div>
+                }
                 @if (ViewBag.Error != null)
                 {
                     <div class="alert alert-danger">@Localizer[ViewBag.Error.ToString()]</div>
                 }
                 <form asp-action="Login" method="post">
                     <input type="hidden" name="returnUrl" value="@ViewBag.ReturnUrl" />
+                    <div class="mb-3">
+                        <label class="form-label">@(System.Globalization.CultureInfo.CurrentUICulture.Name.StartsWith("ar") ? "كود الشركة" : "Company code")</label>
+                        <input type="text" name="companyCode" value="@ViewBag.CompanyCode" class="form-control" autocomplete="organization" placeholder="amman-cafe" />
+                        <div class="form-text">@(System.Globalization.CultureInfo.CurrentUICulture.Name.StartsWith("ar") ? "هو عنوان الشركة الذي تم اختياره عند التسجيل. اتركه فارغاً إذا كان حسابك مرتبطاً بشركة واحدة." : "This is the company address chosen at registration. Leave it empty when your account belongs to one company.")</div>
+                    </div>
                     <div class="mb-3">
                         <label class="form-label">@Localizer["Username"]</label>
                         <input type="text" name="username" class="form-control" autocomplete="username" required />

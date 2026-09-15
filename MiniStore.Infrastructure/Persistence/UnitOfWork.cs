@@ -33,7 +33,7 @@ public class UnitOfWork : IUnitOfWork
             await transaction.RollbackAsync();
 
             throw new InvalidOperationException(
-                "Inventory changed while this operation was being processed. Please review the current stock and try again.",
+                "Data changed while this operation was being processed. Review the latest values and try again.",
                 exception);
         }
         catch

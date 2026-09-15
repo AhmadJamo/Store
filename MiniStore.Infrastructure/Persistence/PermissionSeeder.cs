@@ -1,4 +1,3 @@
-﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using MiniStore.Application.Permissions;
@@ -8,68 +7,58 @@ namespace MiniStore.Infrastructure.Persistence;
 
 public static class PermissionSeeder
 {
-    public static async Task SeedAsync(
-        IServiceProvider services)
+    public static readonly (string Name, string Description, bool IsSystem)[] DefaultTenantRoles =
+    [
+        ("Admin", "Protected company owner and administration role.", true),
+        ("WarehouseManager", "Warehouse and inventory operations.", false),
+        ("Sales", "Sales and point-of-sale operations.", false),
+        ("Accountant", "Accounting and purchase posting operations.", false)
+    ];
+
+    public static async Task SeedAsync(IServiceProvider services)
     {
-        var context =
-            services.GetRequiredService<AppDbContext>();
-
-        var roleManager =
-            services.GetRequiredService<
-                RoleManager<IdentityRole>>();
-
-        // 1. Create permissions
+        var context = services.GetRequiredService<AppDbContext>();
+        var existingPermissionNames = (await context.Permissions.Select(x => x.Name).ToListAsync())
+            .ToHashSet(StringComparer.Ordinal);
         foreach (var definition in PermissionDefinitions.All)
         {
-            var exists =
-                await context.Permissions
-                    .AnyAsync(x => x.Name == definition.Name);
-
-            if (!exists)
-            {
-                context.Permissions.Add(
-                    new Permission(
-                        definition.Name,
-                        definition.DisplayName,
-                        definition.Group));
-            }
+            if (existingPermissionNames.Add(definition.Name))
+                context.Permissions.Add(new Permission(
+                    definition.Name, definition.DisplayName, definition.Group));
         }
-
         await context.SaveChangesAsync();
 
-        // 2. Get Admin role
-        var adminRole =
-            await roleManager.FindByNameAsync("Admin");
-
-        if (adminRole == null)
+        var tenantIds = await context.Tenants.Select(x => x.Id).ToListAsync();
+        var existingRoles = (await context.TenantRoles
+                .Select(x => new { x.TenantId, x.NormalizedName }).ToListAsync())
+            .Select(x => (x.TenantId, x.NormalizedName)).ToHashSet();
+        foreach (var tenantId in tenantIds)
         {
-            throw new InvalidOperationException(
-                "Admin role does not exist.");
-        }
-
-        // 3. Get all permissions
-        var permissions =
-            await context.Permissions
-                .ToListAsync();
-
-        // 4. Give Admin all permissions
-        foreach (var permission in permissions)
-        {
-            var exists =
-                await context.RolePermissions
-                    .AnyAsync(x =>
-                        x.RoleId == adminRole.Id &&
-                        x.PermissionId == permission.Id);
-
-            if (!exists)
+            foreach (var definition in DefaultTenantRoles)
             {
-                context.RolePermissions.Add(
-                    new RolePermission(
-                        adminRole.Id,
-                        permission.Id));
+                var normalized = definition.Name.ToUpperInvariant();
+                if (existingRoles.Add((tenantId, normalized)))
+                    await context.TenantRoles.AddAsync(new TenantRole(
+                        tenantId, definition.Name, definition.Description, definition.IsSystem));
             }
         }
+        await context.SaveChangesAsync();
 
+        var permissions = await context.Permissions.ToListAsync();
+        var adminRoles = await context.TenantRoles
+            .Where(x => x.NormalizedName == "ADMIN").ToListAsync();
+        var existingAssignments = (await context.TenantRolePermissions
+                .Select(x => new { x.TenantRoleId, x.PermissionId }).ToListAsync())
+            .Select(x => (x.TenantRoleId, x.PermissionId)).ToHashSet();
+        foreach (var adminRole in adminRoles)
+        {
+            foreach (var permission in permissions)
+            {
+                if (existingAssignments.Add((adminRole.Id, permission.Id)))
+                    context.TenantRolePermissions.Add(
+                        new TenantRolePermission(adminRole.Id, permission.Id));
+            }
+        }
         await context.SaveChangesAsync();
     }
 }

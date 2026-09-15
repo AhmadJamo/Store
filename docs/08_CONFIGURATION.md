@@ -4,7 +4,7 @@
 > Last reviewed: 2026-09-15
 
 ## Configuration
-`MiniStore.Web/appsettings.json` contains `ConnectionStrings:DefaultConnection`, disabled `AdminUser` and `PlatformOwner` bootstrap sections, logging levels and wildcard `AllowedHosts`. No password is stored in current configuration. `PlatformOwner` may explicitly promote a named existing Identity user into the platform allow-list; it is disabled by default.
+`MiniStore.Web/appsettings.json` contains `ConnectionStrings:DefaultConnection`, disabled `AdminUser` and `PlatformOwner` bootstrap sections, registration rate-limit values, logging levels and wildcard `AllowedHosts`. No password is stored in current configuration. `PlatformOwner` may explicitly promote a named existing Identity user into the platform allow-list; it is disabled by default. `RateLimiting:Registration:PermitLimit` defaults to 20 and `WindowMinutes` defaults to 60; runtime clamps unsafe values to 5–1000 submissions and 1–1440 minutes.
 
 ## Runtime setup
 `Program.cs` registers MVC, localization/resources, memory cache, global antiforgery, Identity tenant and platform cookies, tenant/onboarding/SaaS/billing services, platform policies and named login/registration limits. Tenant-session validation runs after authentication; subscription lifecycle enforcement runs before tenant authorization. Request culture uses the user's cookie then the cached company default. Windows Event Log output is disabled, and startup database initialization failures exit cleanly. Startup runs Identity, permission and configured platform-operator seeders. It does not call `Database.Migrate`; migration deployment remains explicit.
@@ -20,5 +20,5 @@ DI/configuration changes → update this file, architecture/dependencies/securit
 
 ## Security configuration update (2026-09-13)
 AdminUser:Password is no longer stored in appsettings. AdminUser:Enabled defaults to false. For first bootstrap only, provide AdminUser__Enabled=true and AdminUser__Username, AdminUser__Email, AdminUser__Password using protected environment/secret configuration. Use a new username; existing accounts are never promoted. Disable bootstrap and remove its password after success. Existing installations must rotate the former credential separately and invalidate sessions.
-Identity lockout is 5 failures for 15 minutes; tenant and platform login POSTs use the login limiter, and company registration permits 5 attempts/hour/IP. Production AllowedHosts, proxy-aware client IP handling and trusted SQL TLS configuration remain operator responsibilities.
+Identity lockout is 5 failures for 15 minutes; tenant and platform login POSTs use the login limiter. Company registration defaults to 20 submissions/hour/IP and can be tuned through the `RateLimiting:Registration` configuration section. A rejected login or registration returns to its form with a bilingual wait message and `Retry-After` response header. Production AllowedHosts, proxy-aware client IP handling and trusted SQL TLS configuration remain operator responsibilities.
 

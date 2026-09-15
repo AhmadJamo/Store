@@ -23,7 +23,17 @@ public class PlanFeatureConfiguration : IEntityTypeConfiguration<PlanFeature> { 
 public class PlanLimitConfiguration : IEntityTypeConfiguration<PlanLimit> { public void Configure(EntityTypeBuilder<PlanLimit> b) { b.HasKey(x => new { x.PlanId, x.Key }); b.Property(x => x.Key).HasMaxLength(100); } }
 public class TenantSubscriptionConfiguration : IEntityTypeConfiguration<TenantSubscription>
 {
-    public void Configure(EntityTypeBuilder<TenantSubscription> b) { b.HasKey(x => x.Id); b.HasIndex(x => x.TenantId).IsUnique(); b.HasOne<Tenant>().WithMany().HasForeignKey(x => x.TenantId).OnDelete(DeleteBehavior.Cascade); b.HasOne<Plan>().WithMany().HasForeignKey(x => x.PlanId).OnDelete(DeleteBehavior.Restrict); b.Property(x => x.ExternalCustomerId).HasMaxLength(200); b.Property(x => x.ExternalSubscriptionId).HasMaxLength(200); b.Property(x => x.RowVersion).IsRowVersion(); }
+    public void Configure(EntityTypeBuilder<TenantSubscription> b)
+    {
+        b.HasKey(x => x.Id);
+        b.HasAlternateKey(x => new { x.Id, x.TenantId });
+        b.HasIndex(x => x.TenantId).IsUnique();
+        b.HasOne<Tenant>().WithMany().HasForeignKey(x => x.TenantId).OnDelete(DeleteBehavior.Cascade);
+        b.HasOne<Plan>().WithMany().HasForeignKey(x => x.PlanId).OnDelete(DeleteBehavior.Restrict);
+        b.Property(x => x.ExternalCustomerId).HasMaxLength(200);
+        b.Property(x => x.ExternalSubscriptionId).HasMaxLength(200);
+        b.Property(x => x.RowVersion).IsRowVersion();
+    }
 }
 public class PlatformOperatorConfiguration : IEntityTypeConfiguration<PlatformOperator>
 {
@@ -35,7 +45,20 @@ public class PromotionCodeConfiguration : IEntityTypeConfiguration<PromotionCode
 }
 public class PromotionRedemptionConfiguration : IEntityTypeConfiguration<PromotionRedemption>
 {
-    public void Configure(EntityTypeBuilder<PromotionRedemption> b) { b.HasKey(x => x.Id); b.Property(x => x.DiscountPercentage).HasPrecision(5, 2); b.HasIndex(x => new { x.PromotionCodeId, x.TenantId }).IsUnique(); b.HasOne<PromotionCode>().WithMany().HasForeignKey(x => x.PromotionCodeId).OnDelete(DeleteBehavior.Restrict); b.HasOne<Tenant>().WithMany().HasForeignKey(x => x.TenantId).OnDelete(DeleteBehavior.Restrict); b.HasOne<TenantSubscription>().WithMany().HasForeignKey(x => x.SubscriptionId).OnDelete(DeleteBehavior.Restrict); }
+    public void Configure(EntityTypeBuilder<PromotionRedemption> b)
+    {
+        b.HasKey(x => x.Id);
+        b.Property(x => x.DiscountPercentage).HasPrecision(5, 2);
+        b.HasIndex(x => new { x.PromotionCodeId, x.TenantId }).IsUnique();
+        b.HasOne<PromotionCode>().WithMany().HasForeignKey(x => x.PromotionCodeId)
+            .OnDelete(DeleteBehavior.Restrict);
+        b.HasOne<Tenant>().WithMany().HasForeignKey(x => x.TenantId)
+            .OnDelete(DeleteBehavior.Restrict);
+        b.HasOne<TenantSubscription>().WithMany()
+            .HasForeignKey(x => new { x.SubscriptionId, x.TenantId })
+            .HasPrincipalKey(x => new { x.Id, x.TenantId })
+            .OnDelete(DeleteBehavior.Restrict);
+    }
 }
 public class BillingCheckoutSessionConfiguration : IEntityTypeConfiguration<BillingCheckoutSession>
 {

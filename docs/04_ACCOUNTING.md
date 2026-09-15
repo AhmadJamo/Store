@@ -22,6 +22,7 @@ Warehouses now have optional BranchId and InventoryAccountId fields. Completing 
 | Tax account mapping | IMPLEMENTED | `TaxRate` stores required input/output tax account IDs. |
 | Discount/revenue/COGS account mapping | IMPLEMENTED | Singleton settings configure company defaults; each branch can override sales revenue with a required subaccount. |
 | Purchase journal posting | IMPLEMENTED | Explicit posting creates a balanced inventory/input-tax/purchase-discount/supplier-payable entry. |
+| Central journal numbering | IMPLEMENTED | Tenant-specific JournalEntry sequence is generated inside posting; supplier invoice remains the external source reference. |
 | Payment settlement and customer selection | IMPLEMENTED | Payment method maps to a chart account; customer must use a chart subaccount; sales allow unknown customer. |
 | Inventory valuation and COGS | NOT IMPLEMENTED | Quantity moves only; no cost layers/valuation. |
 | Sales/purchase returns | NOT IMPLEMENTED | No return document entities/services found. |

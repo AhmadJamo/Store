@@ -7,7 +7,7 @@ namespace MiniStore.Application.Services;
 public class StockTransferService : IStockTransferService
 {
     private readonly IStockTransferRepository _stockTransferRepository;
-    private readonly IDocumentNumberSettingsRepository _documentNumberSettingsRepository;
+    private readonly DocumentNumberService _documentNumbers;
     private readonly IProductRepository _productRepository;
     private readonly IWarehouseRepository _warehouseRepository;
     private readonly IProductStockRepository _productStockRepository;
@@ -18,7 +18,7 @@ public class StockTransferService : IStockTransferService
 
     public StockTransferService(
         IStockTransferRepository stockTransferRepository,
-        IDocumentNumberSettingsRepository documentNumberSettingsRepository,
+        DocumentNumberService documentNumbers,
         IProductRepository productRepository,
         IWarehouseRepository warehouseRepository,
         IProductStockRepository productStockRepository,
@@ -28,8 +28,7 @@ public class StockTransferService : IStockTransferService
         IProductLocationStockRepository productLocationStockRepository)
     {
         _stockTransferRepository = stockTransferRepository;
-        _documentNumberSettingsRepository =
-            documentNumberSettingsRepository;
+        _documentNumbers = documentNumbers;
         _productRepository = productRepository;
         _warehouseRepository = warehouseRepository;
         _productStockRepository = productStockRepository;
@@ -125,42 +124,36 @@ public class StockTransferService : IStockTransferService
                 toWarehouse);
         }
 
-        var documentSettings =
-            await _documentNumberSettingsRepository.GetAsync();
-
-        if (documentSettings == null)
-            throw new InvalidOperationException(
-                "Document number settings were not found.");
-
-        var transferNumber =
-            documentSettings.GenerateNextStockTransferNumber();
-
-        var transfer = new StockTransfer(
-            transferNumber,
-            command.FromWarehouseId,
-            command.ToWarehouseId,
-            command.CreatedByUserId,
-            command.Reference,
-            command.Notes);
-
-        foreach (var item in command.Items)
-        {
-            transfer.AddItem(
-                new StockTransferItem(
-                    item.ProductId,
-                    item.Quantity,
-                    item.SourceLocationId,
-                    item.DestinationLocationId));
-        }
+        StockTransfer? transfer = null;
 
         await _unitOfWork.ExecuteInTransactionAsync(
             async () =>
             {
+                transfer = new StockTransfer(
+                    await _documentNumbers.GenerateAsync(
+                        DocumentNumberType.StockTransfer,
+                        DateTime.Today),
+                    command.FromWarehouseId,
+                    command.ToWarehouseId,
+                    command.CreatedByUserId,
+                    command.Reference,
+                    command.Notes);
+
+                foreach (var item in command.Items)
+                {
+                    transfer.AddItem(
+                        new StockTransferItem(
+                            item.ProductId,
+                            item.Quantity,
+                            item.SourceLocationId,
+                            item.DestinationLocationId));
+                }
+
                 await _stockTransferRepository.AddAsync(
                     transfer);
             });
 
-        return transfer.Id;
+        return transfer!.Id;
     }
 
     public async Task UpdateAsync(

@@ -1,4 +1,156 @@
 @model MiniStore.Application.Saas.RegisterCompanyCommand
 @using System.Globalization
-@{ Layout="_PublicLayout"; var ar=CultureInfo.CurrentUICulture.Name.StartsWith("ar"); ViewData["Title"]=ar?"إنشاء شركة":"Create company"; var plans=(IReadOnlyList<MiniStore.Application.Saas.PlanCardDto>)ViewBag.Plans; }
-<div class="container py-5"><div class="glass p-4 p-lg-5 mx-auto" style="max-width:850px"><h1>@(ar?"ابدأ تجربتك المجانية":"Start your free trial")</h1><p class="muted">@(ar?"أنشئ حساب المالك والشركة. لن يتم طلب بطاقة دفع خلال التجربة.":"Create the owner and company account. No payment card is required for the trial.")</p><div asp-validation-summary="All" class="alert alert-danger"></div><form method="post"><div class="row g-3"><div class="col-md-6"><label>@(ar?"اسم الشركة":"Company name")</label><input asp-for="CompanyName" class="form-control" required maxlength="200"></div><div class="col-md-6"><label>@(ar?"عنوان الشركة":"Company address")</label><div class="input-group"><span class="input-group-text">app/</span><input asp-for="CompanySlug" class="form-control" required pattern="[a-z0-9][a-z0-9-]{1,61}[a-z0-9]"></div></div><div class="col-md-6"><label>@(ar?"اسم مستخدم المالك":"Owner username")</label><input asp-for="OwnerUsername" class="form-control" required autocomplete="username"></div><div class="col-md-6"><label>@(ar?"البريد الإلكتروني":"Email")</label><input asp-for="OwnerEmail" type="email" class="form-control" required autocomplete="email"></div><div class="col-md-6"><label>@(ar?"كلمة المرور":"Password")</label><input asp-for="Password" type="password" class="form-control" required autocomplete="new-password"></div><div class="col-md-6"><label>@(ar?"الخطة":"Plan")</label><select asp-for="PlanId" class="form-select" required>@foreach(var p in plans){<option value="@p.Id" selected="@(ViewBag.PlanId is int id && id==p.Id)">@(ar?p.NameArabic:p.NameEnglish) — @p.MonthlyPrice @p.Currency</option>}</select></div></div><button class="btn btn-accent btn-lg w-100 mt-4">@(ar?"إنشاء الشركة وبدء 14 يوماً مجاناً":"Create company and start 14-day trial")</button></form></div></div>
+@{
+    Layout = "_PublicLayout";
+    var ar = CultureInfo.CurrentUICulture.Name.StartsWith("ar");
+    ViewData["Title"] = ar ? "إنشاء شركة" : "Create company";
+    var plans = (IReadOnlyList<MiniStore.Application.Saas.PlanCardDto>)ViewBag.Plans;
+}
+
+<div class="container py-5">
+    <div class="glass p-4 p-lg-5 mx-auto" style="max-width:850px">
+        <div class="d-flex flex-wrap align-items-start justify-content-between gap-3 mb-2">
+            <div>
+                <h1>@(ar ? "ابدأ تجربتك المجانية" : "Start your free trial")</h1>
+                <p class="muted mb-0">
+                    @(ar
+                        ? "أنشئ حساب المالك والشركة. لن يتم طلب بطاقة دفع خلال التجربة."
+                        : "Create the owner and company account. No payment card is required for the trial.")
+                </p>
+            </div>
+            <button type="button"
+                    class="btn btn-outline-info"
+                    data-bs-toggle="modal"
+                    data-bs-target="#registrationRulesModal"
+                    aria-controls="registrationRulesModal">
+                <span aria-hidden="true">ⓘ</span>
+                @(ar ? "قواعد التسجيل" : "Registration rules")
+            </button>
+        </div>
+
+        @if (ViewBag.RateLimitMinutes is int retryMinutes)
+        {
+            <div class="alert alert-warning mt-4" role="alert">
+                @(ar
+                    ? $"تم إرسال محاولات تسجيل كثيرة. حاول مجدداً بعد حوالي {retryMinutes} دقيقة."
+                    : $"Too many registration attempts were submitted. Try again in about {retryMinutes} minute(s).")
+            </div>
+        }
+
+        <div asp-validation-summary="All" class="alert alert-danger mt-4"></div>
+
+        <form method="post" id="company-registration-form">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label asp-for="CompanyName" class="form-label">@(ar ? "اسم الشركة" : "Company name")</label>
+                    <input asp-for="CompanyName" class="form-control" required maxlength="200">
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="CompanySlug" class="form-label">@(ar ? "عنوان الشركة" : "Company address")</label>
+                    <div class="input-group">
+                        <span class="input-group-text">app/</span>
+                        <input asp-for="CompanySlug"
+                               class="form-control"
+                               required
+                               minlength="3"
+                               maxlength="63"
+                               pattern="[a-z0-9][a-z0-9-]{1,61}[a-z0-9]"
+                               placeholder="amman-cafe">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="OwnerUsername" class="form-label">@(ar ? "اسم مستخدم المالك" : "Owner username")</label>
+                    <input asp-for="OwnerUsername" class="form-control" required autocomplete="username">
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="OwnerEmail" class="form-label">@(ar ? "البريد الإلكتروني" : "Email")</label>
+                    <input asp-for="OwnerEmail" type="email" class="form-control" required autocomplete="email">
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="Password" class="form-label">@(ar ? "كلمة المرور" : "Password")</label>
+                    <input asp-for="Password" type="password" class="form-control" required minlength="6" autocomplete="new-password">
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="PlanId" class="form-label">@(ar ? "الخطة" : "Plan")</label>
+                    <select asp-for="PlanId" class="form-select" required>
+                        @foreach (var plan in plans)
+                        {
+                            <option value="@plan.Id" selected="@(ViewBag.PlanId is int id && id == plan.Id)">
+                                @(ar ? plan.NameArabic : plan.NameEnglish) — @plan.MonthlyPrice @plan.Currency
+                            </option>
+                        }
+                    </select>
+                </div>
+            </div>
+
+            <button class="btn btn-accent btn-lg w-100 mt-4" id="company-registration-submit">
+                @(ar ? "إنشاء الشركة وبدء 14 يوماً مجاناً" : "Create company and start 14-day trial")
+            </button>
+        </form>
+    </div>
+</div>
+
+<div class="modal fade"
+     id="registrationRulesModal"
+     tabindex="-1"
+     aria-labelledby="registrationRulesTitle"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content bg-dark text-light border-secondary">
+            <div class="modal-header border-secondary">
+                <h2 class="modal-title fs-4" id="registrationRulesTitle">
+                    @(ar ? "قواعد إنشاء الشركة والحساب" : "Company and account registration rules")
+                </h2>
+                <button type="button"
+                        class="btn-close btn-close-white"
+                        data-bs-dismiss="modal"
+                        aria-label="@(ar ? "إغلاق" : "Close")"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <h3 class="h6 text-info">@(ar ? "اسم الشركة" : "Company name")</h3>
+                        <p class="mb-0">@(ar ? "مطلوب، ويمكن كتابته بالعربية أو الإنجليزية، وبحد أقصى 200 حرف." : "Required, may be entered in Arabic or English, and cannot exceed 200 characters.")</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h3 class="h6 text-info">@(ar ? "عنوان الشركة" : "Company address")</h3>
+                        <p class="mb-0">@(ar ? "من 3 إلى 63 خانة، باستخدام أحرف إنجليزية صغيرة وأرقام وشرطة (-) فقط. يجب أن يبدأ وينتهي بحرف أو رقم وأن يكون غير مستخدم. مثال: amman-cafe" : "Use 3–63 lowercase English letters, numbers or hyphens (-). It must start and end with a letter or number and be unused. Example: amman-cafe")</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h3 class="h6 text-info">@(ar ? "اسم المستخدم" : "Username")</h3>
+                        <p class="mb-0">@(ar ? "مطلوب وغير مستخدم سابقاً. يقبل الأحرف الإنجليزية والأرقام والرموز: - . _ @@ +" : "Required and must be unused. English letters, numbers and these symbols are accepted: - . _ @@ +")</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h3 class="h6 text-info">@(ar ? "البريد الإلكتروني" : "Email")</h3>
+                        <p class="mb-0">@(ar ? "يجب إدخال بريد إلكتروني صحيح وغير مرتبط بحساب آخر." : "Enter a valid email address that is not linked to another account.")</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h3 class="h6 text-info">@(ar ? "كلمة المرور" : "Password")</h3>
+                        <p class="mb-0">@(ar ? "6 خانات على الأقل، وتحتوي حرفاً إنجليزياً كبيراً وحرفاً صغيراً ورقماً ورمزاً خاصاً." : "Use at least 6 characters, including an uppercase letter, a lowercase letter, a number and a special character.")</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h3 class="h6 text-info">@(ar ? "الخطة والتجربة" : "Plan and trial")</h3>
+                        <p class="mb-0">@(ar ? "اختر إحدى الخطط المتاحة. تبدأ تجربة مجانية لمدة 14 يوماً ولا تتطلب بطاقة دفع." : "Choose an available plan. The 14-day free trial starts immediately and requires no payment card.")</p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer border-secondary">
+                <button type="button" class="btn btn-accent" data-bs-dismiss="modal">
+                    @(ar ? "فهمت، متابعة التسجيل" : "Got it, continue registration")
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('company-registration-form')?.addEventListener('submit', function () {
+        if (!this.checkValidity()) return;
+
+        const button = document.getElementById('company-registration-submit');
+        if (button) {
+            button.disabled = true;
+            button.textContent = '@(ar ? "جارٍ إنشاء الشركة..." : "Creating company...")';
+        }
+    });
+</script>

@@ -1,7 +1,7 @@
 # Codebase map
 > Status: IMPLEMENTED  
 > Source of truth: Repository scan  
-> Last reviewed: 2026-09-14
+> Last reviewed: 2026-09-15
 
 ## Solution roots
 | Path | Project/layer | Purpose |
@@ -13,6 +13,8 @@
 | `MiniStore.Web/` | Presentation | MVC controllers, Razor views, auth/navigation/runtime composition. |
 | `PermissionsCodeExport/` | Uncompiled export | Duplicate code snapshot; not referenced by active projects. |
 
+`docs/ARABIC_SHARED_ROADMAP.md` is the shared Arabic execution roadmap. It records ordered ERP/SaaS work, business rules, workflow, task status, completion evidence and the rolling five-suggestion queue.
+
 ## Domain source map
 | Files | Type/purpose | Consumers/docs |
 |---|---|---|
@@ -21,8 +23,8 @@
 | `Entities/Customers/Customer.cs`, `Entities/Suppliers/Supplier.cs` | commercial-party master data | sales/purchases docs. |
 | `Entities/Inventory/*.cs` | warehouses, operating-policy enums, balances, exact locations, putaway/relocation history, stock movements and transfers | inventory and stock-transfer docs. |
 | `Entities/Purchases/*.cs`, `Entities/Sales/*.cs` | purchase, sale and POS aggregates plus per-terminal experience/order enums and settings | purchase/sales/settings docs. |
-| `Entities/Settings/*.cs` | accounting, discount, inventory-policy defaults, numbering, invoice/general settings and supported UI language | settings/database/localization docs. |
-| `Entities/Security/*.cs` | audit and role-permission entities | permissions/security docs. |
+| `Entities/Settings/*.cs` | accounting, discount, inventory-policy defaults, centralized `DocumentSequence`, general settings and supported UI language | settings/database/localization docs. |
+| `Entities/Security/*.cs` | audit, permission catalogue and tenant-owned role/permission entities | permissions/security docs. |
 | `Entities/Tenancy/*.cs` | company tenant, Identity-user membership and tenant-scoped user-role assignments | tenancy/security/database docs. |
 | `Entities/Saas/*.cs` | plans, limits, features, subscriptions, checkout sessions, platform operators and promotion codes/redemptions | SaaS module and control center. |
 | `Enums/Sales/DiscountType.cs` | percentage/fixed discount enum | sales/settings docs. |
@@ -39,6 +41,8 @@
 | `Services/Settings/InventorySettingsService.cs` | rowversion-protected defaults for new warehouse operating policies | SettingsController inventory screen. |
 | `Services/Settings/InventoryAccessService.cs` | branch warehouse permissions/priorities and POS terminal warehouse policies | Settings InventoryAccess and POS validation. |
 | `Services/Settings/PosExperienceSettingsService.cs` | profile presets, custom terminal appearance persistence and POS runtime projection | Settings/Pos and Sales/Pos. |
+| `Services/Settings/DocumentNumberService.cs` | default creation, validation, administration projection and transactional document-number generation | sales, transfers, purchase posting and Settings/DocumentNumbers. |
+| `Services/Security/TenantRoleService.cs` | tenant-local role CRUD, permission validation, protected-role rules and user assignment options | Roles and Users controllers. |
 | `Services/Sales/DiscountCalculator.cs` | standalone discount calculation helper; no active consumer found by scan | Unknown. |
 | `Services/Shared/ICurrentUserService.cs` | current-user application contract | Web CurrentUserService. |
 | `Permissions/{PermissionDefinitions,IPermissionService}.cs` | permission catalogue/contract | seeders/auth/services. |
@@ -51,7 +55,7 @@
 ## Infrastructure source map
 | Files | Purpose | Consumers |
 |---|---|---|
-| `Persistence/AppDbContext.cs` | EF + Identity DbContext and DbSets | all repositories/authorization. |
+| `Persistence/AppDbContext.cs`, `Persistence/TenantIsolationModel.cs` | EF + Identity DbContext/DbSets and immutable business/control-plane entity classification; applies query/write guards and composite tenant relationship convention | all repositories/authorization. |
 | `Persistence/UnitOfWork.cs` | transaction wrapper | purchase/sale/stock/transfer services. |
 | `Persistence/AuditSaveChangesInterceptor.cs` | creates AuditLog rows for tracked changes | registered in Program. |
 | `Persistence/{Identity,Permission}Seeder.cs` | default roles/admin and permissions | Program startup. |
@@ -74,6 +78,7 @@ POS order-context update (2026-09-14): Sale/SaleItem persist order type, service
 Warehouse location movement update (2026-09-14): `LocationMovement` and its repository/configuration/service record Putaway and Relocation operations. `LocationMovementsController` and `Views/LocationMovements/Index.cshtml` provide internal movement and searchable history. Migration `AddLocationMovementHistory` creates the audit table and indexes.
 | `Repositories/<Feature>/*.cs` | EF implementations grouped by feature | application services. |
 | `Repositories/Tenancy/TenantMembershipRepository.cs` | active company membership lookup and user list | login, tenant middleware and user administration. |
+| `Repositories/Security/TenantRoleRepository.cs` | company-filtered role, permission and assignment persistence | TenantRoleService and authorization. |
 | `Repositories/Saas/SaasRepository.cs` | control-plane plan, subscription, entitlement usage, operator and promotion persistence | public pricing and Platform area. |
 | `Repositories/Accounting/JournalEntryRepository.cs` | journal source duplicate-posting lookup and persistence | `PurchasePostingService`. |
 | `Authorization/PermissionService.cs` | permission check implementation | SaleService. |
@@ -81,7 +86,7 @@ Warehouse location movement update (2026-09-14): `LocationMovement` and its repo
 ## Web source map
 | Files | Purpose | Related docs |
 |---|---|---|
-| `Program.cs`, `appsettings.json`, `Properties/launchSettings.json` | startup/configuration | configuration/architecture. |
+| `Program.cs`, `appsettings.json`, `Properties/launchSettings.json` | startup/configuration, including configurable registration throttling and friendly rejection routing | configuration/architecture. |
 | `Authorization/*.cs` | dynamic permission policy and handler | permissions/security. |
 | `Services/Security/CurrentUserService.cs` | current Identity user ID for auditing | security/database. |
 | `Services/Tenancy/HttpTenantContext.cs`, `Middleware/TenantSessionMiddleware.cs` | resolve, validate and refresh the authenticated company boundary | AppDbContext, login and localization. |
@@ -102,6 +107,10 @@ Tenant isolation update (2026-09-14): `Tenant`, `TenantMembership`, tenant conte
 SaaS control-plane update (2026-09-14): public product/pricing pages, separate Platform cookie and operator allow-list, plan features/limits, tenant subscription lifecycle, warehouse/user limit enforcement and time/usage/plan-bounded promotion codes. Migration `AddSaasControlPlane` seeds three bilingual plans and a 30-day Professional trial for existing tenants.
 
 SaaS onboarding/billing update (2026-09-15): company self-registration creates the Identity owner, tenant membership, tenant-scoped Admin assignment and 14-day trial atomically. Tenant checkout stores a priced monthly/annual session, applies a valid one-use-per-company promotion and activates the subscription only after protected platform confirmation. `SubscriptionAccessMiddleware` enforces lifecycle access. Migrations `AddBillingCheckout`, `AddTenantScopedRoles` and `BootstrapPlatformOwner` are applied locally.
+
+Document numbering update (2026-09-15): `DocumentSequence`, its Settings DTO/service/repository/configuration and bilingual `Views/Settings/DocumentNumbers.cshtml` replace the separate invoice and transfer settings. Sale, transfer and purchase-journal workflows generate numbers inside their existing Serializable transactions. Migration `UnifyDocumentNumbering` preserves legacy counters and creates missing tenant defaults.
+
+Tenant role update (2026-09-15): `TenantRole`, `TenantRolePermission`, `TenantRoleService` and its repository separate company authorization from global Identity roles. RolesController no longer accesses EF directly; Users uses tenant-local role options. `AddTenantOwnedRoleDefinitions` preserves existing role permissions and user assignments, while `EnforceTenantRoleAssignmentBoundary` adds the composite database boundary between a role and its owning tenant.
 | `Views/*/*.cshtml.cs`, `_View*.cshtml.cs` | generated/companion view files; no custom behaviour verified | do not edit as module logic without inspection. |
 
 ## File change impact
@@ -113,3 +122,10 @@ For exact module relationships, use `modules/*.md`; for entity and service detai
 - Runtime login limiter and Identity lockout: `Web/Program.cs` and `Controllers/Security/AccountController.cs`.
 - Bootstrap opt-in: `Infrastructure/Persistence/IdentitySeeder.cs` and Web appsettings.
 - Controller broad-error handling and five index delete forms: see security/controller/screen docs.
+
+## Guided onboarding additions (2026-09-15)
+- `Domain/Entities/Saas/CompanyOnboarding.cs`: one-time setup state and business-profile choices.
+- `Application/Saas/CompanyOnboardingModels.cs`: setup DTOs and Application contract.
+- `Infrastructure/Services/Saas/CompanyOnboardingService.cs`: versioned transactional starter template.
+- `Web/Controllers/Saas/CompanyOnboardingController.cs` and `Views/CompanyOnboarding/Index.cshtml`: authenticated bilingual setup/skip flow.
+- `AddCompanyGuidedOnboarding`: onboarding table and compatible existing-tenant backfill.

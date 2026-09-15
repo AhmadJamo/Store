@@ -14,7 +14,7 @@ public class SaleService : ISaleService
     private readonly IProductStockRepository _productStockRepository;
     private readonly IStockTransactionRepository _stockTransactionRepository;
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IInvoiceSettingsRepository _invoiceSettingsRepository;
+    private readonly DocumentNumberService _documentNumbers;
     private readonly IDiscountSettingsRepository _discountSettingsRepository;
     private readonly IPermissionService _permissionService;
     private readonly ICustomerRepository _customerRepository;
@@ -29,7 +29,7 @@ public class SaleService : ISaleService
         IProductStockRepository productStockRepository,
         IStockTransactionRepository stockTransactionRepository,
         IUnitOfWork unitOfWork,
-        IInvoiceSettingsRepository invoiceSettingsRepository,
+        DocumentNumberService documentNumbers,
         IDiscountSettingsRepository discountSettingsRepository,
         IPermissionService permissionService,
         ICustomerRepository customerRepository,
@@ -43,7 +43,7 @@ public class SaleService : ISaleService
         _productStockRepository = productStockRepository;
         _stockTransactionRepository = stockTransactionRepository;
         _unitOfWork = unitOfWork;
-        _invoiceSettingsRepository = invoiceSettingsRepository;
+        _documentNumbers = documentNumbers;
         _discountSettingsRepository = discountSettingsRepository;
         _permissionService = permissionService;
         _customerRepository = customerRepository;
@@ -278,19 +278,12 @@ public class SaleService : ISaleService
                 }
             }
 
-            var invoiceSettings =
-                await _invoiceSettingsRepository.GetAsync();
-
-            if (invoiceSettings == null)
-            {
-                invoiceSettings = new InvoiceSettings();
-
-                await _invoiceSettingsRepository
-                    .AddAsync(invoiceSettings);
-            }
-
             sale = new Sale(
-                invoiceSettings.GenerateNextNumber(channel),
+                await _documentNumbers.GenerateAsync(
+                    channel == SaleChannel.Wholesale
+                        ? DocumentNumberType.WholesaleSale
+                        : DocumentNumberType.PosSale,
+                    dto.Date),
                 dto.WarehouseId,
                 dto.Date,
                 channel,

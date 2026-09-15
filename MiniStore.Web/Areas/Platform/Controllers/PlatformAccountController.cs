@@ -13,7 +13,17 @@ namespace MiniStore.Web.Areas.Platform.Controllers;
 public class PlatformAccountController(UserManager<IdentityUser> users, SignInManager<IdentityUser> signInManager, ISaasRepository saas) : Controller
 {
     [AllowAnonymous, HttpGet("login")]
-    public IActionResult Login(string? returnUrl = null) { ViewBag.ReturnUrl = returnUrl; return View(); }
+    public IActionResult Login(
+        string? returnUrl = null,
+        bool rateLimited = false,
+        int? retryAfterSeconds = null)
+    {
+        ViewBag.ReturnUrl = returnUrl;
+        ViewBag.RateLimitMinutes = rateLimited
+            ? (int?)Math.Max(1, (int)Math.Ceiling(Math.Clamp(retryAfterSeconds ?? 60, 1, 86400) / 60d))
+            : null;
+        return View();
+    }
 
     [AllowAnonymous, HttpPost("login"), ValidateAntiForgeryToken, Microsoft.AspNetCore.RateLimiting.EnableRateLimiting("login")]
     public async Task<IActionResult> Login(string username, string password, string? returnUrl = null)

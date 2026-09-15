@@ -44,14 +44,20 @@ public class SaasOnboardingService(
         await context.SaveChangesAsync();
 
         await context.TenantMemberships.AddAsync(new TenantMembership(tenant.Id, user.Id, isOwner: true));
+        await context.CompanyOnboardings.AddAsync(new CompanyOnboarding(tenant.Id));
         await context.TenantSubscriptions.AddAsync(
             new TenantSubscription(tenant.Id, plan.Id, DateTime.UtcNow.AddDays(14)));
-        var roleResult = await users.AddToRoleAsync(user, "Admin");
-        if (!roleResult.Succeeded)
-            throw new InvalidOperationException("The company owner role could not be assigned.");
+        foreach (var definition in PermissionSeeder.DefaultTenantRoles)
+            await context.TenantRoles.AddAsync(
+                new TenantRole(tenant.Id, definition.Name, definition.Description, definition.IsSystem));
+        await context.SaveChangesAsync();
 
-        var adminRoleId = await context.Roles.Where(x => x.Name == "Admin").Select(x => x.Id).FirstAsync();
-        await context.TenantUserRoles.AddAsync(new TenantUserRole(tenant.Id, user.Id, adminRoleId));
+        var adminRole = await context.TenantRoles.SingleAsync(x =>
+            x.TenantId == tenant.Id && x.NormalizedName == "ADMIN");
+        var permissionIds = await context.Permissions.Select(x => x.Id).ToListAsync();
+        await context.TenantRolePermissions.AddRangeAsync(
+            permissionIds.Select(permissionId => new TenantRolePermission(adminRole.Id, permissionId)));
+        await context.TenantUserRoles.AddAsync(new TenantUserRole(tenant.Id, user.Id, adminRole.Id));
 
         await context.SaveChangesAsync();
         await transaction.CommitAsync();

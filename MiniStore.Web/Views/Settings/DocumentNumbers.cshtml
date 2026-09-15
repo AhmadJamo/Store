@@ -1,0 +1,47 @@
+@model MiniStore.Application.DTOs.Settings.DocumentNumberSettingsPageDto
+@using System.Globalization
+@using MiniStore.Domain.Entities
+@{ var ar = CultureInfo.CurrentUICulture.Name.StartsWith("ar"); ViewData["Title"] = ar ? "ترقيم المستندات" : "Document numbering"; }
+
+<div class="container-fluid py-3">
+    <div class="mb-4"><h2>@(ar ? "ترقيم المستندات المركزي" : "Central document numbering")</h2><p class="text-muted">@(ar ? "تحكم في أرقام المبيعات والتحويلات والقيود من مكان واحد. تطبق التغييرات على المستندات الجديدة فقط." : "Control sales, transfer and journal numbers in one place. Changes apply to new documents only.")</p></div>
+    <div class="alert alert-info">@(ar ? "الرقم التالي يمكن رفعه للانتقال من نظام قديم، ولا يمكن تخفيضه. عند إعادة العداد يجب أن يحتوي القالب على التاريخ المناسب، وبعد بدء فترة جديدة لا يقبل التسلسل مستنداً من فترة أقدم." : "The next number may be moved forward for migration, but never backwards. Resetting formats must include matching date tokens; after a new period starts, the sequence rejects documents from an older period.")</div>
+    <form asp-action="DocumentNumbers" method="post">
+        <div asp-validation-summary="All" class="alert alert-danger"></div>
+        <div class="row g-4">
+        @for (var i = 0; i < Model.Sequences.Count; i++)
+        {
+            var item = Model.Sequences[i];
+            <div class="col-xl-6"><div class="card h-100 border-0 shadow-sm sequence-card"><div class="card-header bg-white p-3"><div class="d-flex justify-content-between"><div><h5 class="mb-1">@(ar ? item.NameArabic : item.NameEnglish)</h5><small class="text-muted">@item.DocumentType</small></div><span class="badge text-bg-primary preview">@item.Preview</span></div></div><div class="card-body p-4">
+                <input asp-for="Sequences[i].DocumentType" type="hidden"><input asp-for="Sequences[i].NameEnglish" type="hidden"><input asp-for="Sequences[i].NameArabic" type="hidden"><input asp-for="Sequences[i].RowVersion" type="hidden">
+                <div class="row g-3">
+                    <div class="col-md-6"><label class="form-label">@(ar ? "البادئة Prefix" : "Prefix")</label><input asp-for="Sequences[i].Prefix" class="form-control prefix" maxlength="30"></div>
+                    <div class="col-md-6"><label class="form-label">@(ar ? "اللاحقة Suffix" : "Suffix")</label><input asp-for="Sequences[i].Suffix" class="form-control suffix" maxlength="30"></div>
+                    <div class="col-12"><label class="form-label">@(ar ? "قالب الرقم" : "Format template")</label><input asp-for="Sequences[i].FormatTemplate" class="form-control template" maxlength="120"><div class="form-text">{PREFIX} {NUMBER} {SUFFIX} {YYYY} {YY} {MM} {DD} — @(ar ? "الناتج النهائي بحد أقصى 50 حرفاً" : "final output: maximum 50 characters")</div></div>
+                    <div class="col-md-4"><label class="form-label">@(ar ? "عدد الخانات" : "Number length")</label><input asp-for="Sequences[i].NumberLength" type="number" min="1" max="18" class="form-control length"></div>
+                    <div class="col-md-4"><label class="form-label">@(ar ? "الرقم التالي" : "Next number")</label><input asp-for="Sequences[i].NextNumber" type="number" min="@item.NextNumber" class="form-control next"></div>
+                    <div class="col-md-4"><label class="form-label">@(ar ? "بداية العداد" : "Reset start")</label><input asp-for="Sequences[i].ResetStartNumber" type="number" min="1" class="form-control"></div>
+                    <div class="col-12"><label class="form-label">@(ar ? "إعادة العداد" : "Reset period")</label><select asp-for="Sequences[i].ResetPeriod" class="form-select"><option value="0">@(ar ? "بدون إعادة" : "Never")</option><option value="1">@(ar ? "سنوياً" : "Yearly")</option><option value="2">@(ar ? "شهرياً" : "Monthly")</option><option value="3">@(ar ? "يومياً" : "Daily")</option></select></div>
+                </div>
+            </div></div></div>
+        }
+        </div>
+        <div class="sticky-bottom bg-white border rounded shadow-sm p-3 mt-4 d-flex justify-content-between align-items-center"><span class="text-muted">@(ar ? "يحفظ كل نوع كتسلسل مستقل للشركة الحالية." : "Each type is saved as an independent sequence for the current company.")</span><button class="btn btn-primary">@(ar ? "حفظ إعدادات الترقيم" : "Save numbering settings")</button></div>
+    </form>
+</div>
+
+@section Scripts {
+<script>
+document.querySelectorAll('.sequence-card').forEach(card => {
+  const update = () => {
+    const now = new Date(), pad = n => String(n).padStart(2, '0');
+    const number = String(card.querySelector('.next').value || '1').padStart(Number(card.querySelector('.length').value || 1), '0');
+    card.querySelector('.preview').textContent = card.querySelector('.template').value.toUpperCase()
+      .replaceAll('{PREFIX}', card.querySelector('.prefix').value).replaceAll('{SUFFIX}', card.querySelector('.suffix').value)
+      .replaceAll('{NUMBER}', number).replaceAll('{YYYY}', String(now.getFullYear())).replaceAll('{YY}', String(now.getFullYear()).slice(-2))
+      .replaceAll('{MM}', pad(now.getMonth() + 1)).replaceAll('{DD}', pad(now.getDate()));
+  };
+  card.querySelectorAll('input,select').forEach(x => x.addEventListener('input', update)); update();
+});
+</script>
+}

@@ -6,6 +6,7 @@ using MiniStore.Web.Authorization;
 using MiniStore.Domain.Entities;
 using MiniStore.Domain.Interfaces;
 using MiniStore.Application.Saas;
+using MiniStore.Application.Services;
 
 namespace MiniStore.Web.Controllers;
 
@@ -13,26 +14,23 @@ namespace MiniStore.Web.Controllers;
 public class UsersController : Controller
 {
     private readonly UserManager<IdentityUser> _userManager;
-    private readonly RoleManager<IdentityRole> _roleManager;
+    private readonly TenantRoleService _roles;
     private readonly ITenantContext _tenantContext;
     private readonly ITenantMembershipRepository _memberships;
     private readonly EntitlementService _entitlements;
-    private readonly ITenantAuthorizationRepository _tenantAuthorization;
 
     public UsersController(
         UserManager<IdentityUser> userManager,
-        RoleManager<IdentityRole> roleManager,
+        TenantRoleService roles,
         ITenantContext tenantContext,
         ITenantMembershipRepository memberships,
-        EntitlementService entitlements,
-        ITenantAuthorizationRepository tenantAuthorization)
+        EntitlementService entitlements)
     {
         _userManager = userManager;
-        _roleManager = roleManager;
+        _roles = roles;
         _tenantContext = tenantContext;
         _memberships = memberships;
         _entitlements = entitlements;
-        _tenantAuthorization = tenantAuthorization;
     }
 
     // GET: /Users
@@ -49,17 +47,7 @@ public class UsersController : Controller
                 .OrderBy(x => x.UserName)
                 .ToListAsync();
 
-        var userRoles =
-            new Dictionary<string, IList<string>>();
-
-        foreach (var user in users)
-        {
-            userRoles[user.Id] =
-                await _userManager.GetRolesAsync(user);
-        }
-
-        ViewBag.UserRoles =
-            userRoles;
+        ViewBag.UserRoles = await _roles.GetUserRoleNamesAsync(users.Select(x => x.Id).ToArray());
 
         return View(users);
     }
@@ -69,10 +57,7 @@ public class UsersController : Controller
     [PermissionAuthorize("Users.Create")]
     public async Task<IActionResult> Create()
     {
-        ViewBag.Roles =
-            await _roleManager.Roles
-                .OrderBy(x => x.Name)
-                .ToListAsync();
+        ViewBag.Roles = await _roles.GetOptionsAsync();
 
         return View();
     }
@@ -85,7 +70,7 @@ public class UsersController : Controller
         string username,
         string email,
         string password,
-        string role)
+        int roleId)
     {
         try
         {
@@ -100,7 +85,7 @@ public class UsersController : Controller
         if (string.IsNullOrWhiteSpace(username) ||
             string.IsNullOrWhiteSpace(email) ||
             string.IsNullOrWhiteSpace(password) ||
-            string.IsNullOrWhiteSpace(role))
+            roleId <= 0)
         {
             ViewBag.Error =
                 "All fields are required.";
@@ -124,11 +109,8 @@ public class UsersController : Controller
             return View();
         }
 
-        var selectedRole =
-            await _roleManager.FindByNameAsync(
-                role);
-
-        if (selectedRole == null)
+        var selectedRole = (await _roles.GetOptionsAsync()).SingleOrDefault(x => x.Id == roleId);
+        if (selectedRole is null)
         {
             ViewBag.Error =
                 "Selected role does not exist.";
@@ -164,28 +146,10 @@ public class UsersController : Controller
             return View();
         }
 
-        var roleResult =
-            await _userManager.AddToRoleAsync(
-                user,
-                role);
-
-        if (!roleResult.Succeeded)
-        {
-            ViewBag.Error =
-                string.Join(
-                    " ",
-                    roleResult.Errors.Select(
-                        x => x.Description));
-
-            await LoadRoles();
-
-            return View();
-        }
-
         var tenantId = _tenantContext.TenantId
             ?? throw new InvalidOperationException("An active company is required.");
         await _memberships.AddAsync(new TenantMembership(tenantId, user.Id));
-        await _tenantAuthorization.AddRoleAsync(new TenantUserRole(tenantId, user.Id, selectedRole.Id));
+        await _roles.AssignUserAsync(user.Id, selectedRole.Id);
         await _memberships.SaveChangesAsync();
 
         TempData["Success"] =
@@ -197,9 +161,6 @@ public class UsersController : Controller
 
     private async Task LoadRoles()
     {
-        ViewBag.Roles =
-            await _roleManager.Roles
-                .OrderBy(x => x.Name)
-                .ToListAsync();
+        ViewBag.Roles = await _roles.GetOptionsAsync();
     }
 }

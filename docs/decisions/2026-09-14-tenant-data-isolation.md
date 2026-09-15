@@ -16,4 +16,4 @@ Migration `AddTenantIsolation` creates Demo Company, assigns existing test rows 
 ## Consequences
 Repositories and application services automatically see only the active company's rows. A business write cannot proceed without an active tenant. Codes and document numbers may repeat between companies.
 
-Identity roles remain global in this phase, so one user cannot yet have different roles in different companies. Tenant-specific role assignments, company switching, onboarding and subscription enforcement require later decisions and migrations.
+This phase originally left Identity roles global. `2026-09-15-tenant-owned-roles.md` supersedes that limitation with company-owned role definitions, permission sets and assignments. Company switching remains a separate workflow.

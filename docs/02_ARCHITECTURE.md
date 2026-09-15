@@ -20,7 +20,7 @@ POS order context is stored on the completed sale and its items, while the termi
 
 Presentation localization uses ASP.NET request localization with English fallback keys and centralized Arabic resources. Culture precedence is user cookie, cached company default, then English. Domain state stores only a language enum; translated text remains in Web resources. See `decisions/2026-09-14-bilingual-localization.md`.
 
-SaaS data uses one SQL Server database with a required tenant owner key on every business entity. The authenticated tenant claim is accepted only while an active user membership and active tenant exist. EF global query filters scope reads, SaveChanges stamps inserts and rejects cross-tenant mutations, and tenant-aware unique indexes allow repeated business codes across companies. Tenant membership and role assignments are explicit control-plane records. Subscription middleware blocks ERP routes when the active company's lifecycle does not allow use. Public, tenant and `/platform` experiences have separate route/authentication boundaries. See `decisions/2026-09-14-tenant-data-isolation.md` and `decisions/2026-09-14-saas-control-plane.md`.
+SaaS data uses one SQL Server database with a required tenant owner key on every business entity. The authenticated tenant claim is accepted only while an active user membership and active tenant exist. EF global query filters scope reads, SaveChanges stamps inserts and rejects cross-tenant mutations, tenant-aware unique indexes allow repeated business codes across companies, and composite `(business FK, TenantId)` relationships make SQL Server reject references across companies. `TenantIsolationModel` centrally classifies mapped Domain types and the regression suite rejects omissions. Tenant membership and role assignments are explicit control-plane records. Subscription middleware blocks ERP routes when the active company's lifecycle does not allow use. Public, tenant and `/platform` experiences have separate route/authentication boundaries. See `decisions/2026-09-14-tenant-data-isolation.md`, `decisions/2026-09-14-saas-control-plane.md` and `decisions/2026-09-15-tenant-relationship-hardening.md`.
 
 ## Request lifecycle
 Browser → MVC controller → DTO model binding/ModelState → application service → repository/domain entity → `AppDbContext`/SQL Server → redirect or Razor view. AutoValidateAntiforgeryToken is registered globally. Sales, purchases and transfers use `IUnitOfWork`; several master-data services use repository `SaveChangesAsync` directly.
@@ -29,15 +29,14 @@ Browser → MVC controller → DTO model binding/ModelState → application serv
 - Domain entities use private setters and behaviour methods.
 - Manual DTO mapping is used; AutoMapper is not referenced.
 - Repository interfaces are in Domain; implementations are in Infrastructure.
-- MVC controllers sometimes directly use repository interfaces or `AppDbContext` (`RolesController`), which is an architecture inconsistency against the intended application-layer rule.
+- MVC controllers use application services for role administration; remaining direct repository/controller dependencies should still be reduced when those modules change.
 - No validators, CQRS query objects, middleware classes, public API controllers, background jobs, or tests were found.
 
 ## Dependency injection
 See `08_CONFIGURATION.md`. `Program.cs` is the sole DI composition root. `ISaleRepository`/`ISaleService` are registered twice (same mapping) in `Program.cs`; no behavioural difference is implied.
 
 ## Architectural risks
-- Authorization administration accesses EF directly in `RolesController`.
-- User-to-role assignments are tenant-scoped, and Admin authorization is evaluated against the active company. Identity role definitions and non-Admin permission templates remain global; fully tenant-owned custom role definitions are still required.
+- Role administration follows Controller → `TenantRoleService` → repository. Identity owns credentials while tenant roles, permissions and assignments form the company authorization boundary.
 - Several repositories expose `SaveChangesAsync`, creating inconsistent transaction ownership.
 - `PermissionsCodeExport/` is a duplicate export tree, not included by the solution projects; it can drift from active code.
 

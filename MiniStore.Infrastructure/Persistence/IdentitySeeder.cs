@@ -118,21 +118,6 @@ public static class IdentitySeeder
             }
         }
 
-        // ==========================================
-        // 4. Make sure Admin has Admin role
-        // ==========================================
-
-        if (!await userManager.IsInRoleAsync(
-                adminUser,
-                "Admin"))
-        {
-            var roleResult = await userManager.AddToRoleAsync(
-                adminUser,
-                "Admin");
-            if (!roleResult.Succeeded)
-                throw new InvalidOperationException("Failed to assign the bootstrap administrator role.");
-        }
-
         var context = services.GetRequiredService<AppDbContext>();
         var tenantId = await Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions
             .FirstOrDefaultAsync(
@@ -148,10 +133,17 @@ public static class IdentitySeeder
                     activeTenantId,
                     adminUser.Id,
                     isOwner: true));
-            var adminRoleId = await Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.FirstAsync(
-                services.GetRequiredService<AppDbContext>().Roles.Where(x => x.Name == "Admin").Select(x => x.Id));
+            var adminRole = await Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.FirstOrDefaultAsync(
+                context.TenantRoles.Where(x => x.TenantId == activeTenantId && x.NormalizedName == "ADMIN"));
+            if (adminRole is null)
+            {
+                adminRole = new MiniStore.Domain.Entities.TenantRole(
+                    activeTenantId, "Admin", "Protected company owner and administration role.", true);
+                await context.TenantRoles.AddAsync(adminRole);
+                await context.SaveChangesAsync();
+            }
             await context.TenantUserRoles.AddAsync(
-                new MiniStore.Domain.Entities.TenantUserRole(activeTenantId, adminUser.Id, adminRoleId));
+                new MiniStore.Domain.Entities.TenantUserRole(activeTenantId, adminUser.Id, adminRole.Id));
             await context.SaveChangesAsync();
         }
     }

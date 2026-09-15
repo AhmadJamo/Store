@@ -44,9 +44,39 @@ builder.Services.Configure<RequestLocalizationOptions>(options =>
     ];
 });
 
+var registrationPermitLimit = Math.Clamp(
+    builder.Configuration.GetValue("RateLimiting:Registration:PermitLimit", 20),
+    5,
+    1000);
+var registrationWindowMinutes = Math.Clamp(
+    builder.Configuration.GetValue("RateLimiting:Registration:WindowMinutes", 60),
+    1,
+    1440);
+
 builder.Services.AddRateLimiter(options =>
 {
     options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+    options.OnRejected = (rejectionContext, _) =>
+    {
+        var httpContext = rejectionContext.HttpContext;
+        var retryAfterSeconds = rejectionContext.Lease.TryGetMetadata(
+            System.Threading.RateLimiting.MetadataName.RetryAfter,
+            out var retryAfter)
+            ? Math.Max(1, (int)Math.Ceiling(retryAfter.TotalSeconds))
+            : 60;
+
+        httpContext.Response.Headers.RetryAfter = retryAfterSeconds.ToString(
+            System.Globalization.CultureInfo.InvariantCulture);
+
+        var target = httpContext.Request.Path.StartsWithSegments("/Account/Register")
+            ? $"/Account/Register?rateLimited=true&retryAfterSeconds={retryAfterSeconds}"
+            : httpContext.Request.Path.StartsWithSegments("/platform/account/login")
+                ? $"/platform/account/login?rateLimited=true&retryAfterSeconds={retryAfterSeconds}"
+                : $"/Account/Login?rateLimited=true&retryAfterSeconds={retryAfterSeconds}";
+
+        httpContext.Response.Redirect(target);
+        return ValueTask.CompletedTask;
+    };
     options.AddPolicy("login", context =>
         System.Threading.RateLimiting.RateLimitPartition.GetFixedWindowLimiter(
             context.Connection.RemoteIpAddress?.ToString() ?? "unknown",
@@ -61,8 +91,8 @@ builder.Services.AddRateLimiter(options =>
             context.Connection.RemoteIpAddress?.ToString() ?? "unknown",
             _ => new System.Threading.RateLimiting.FixedWindowRateLimiterOptions
             {
-                PermitLimit = 5,
-                Window = TimeSpan.FromHours(1),
+                PermitLimit = registrationPermitLimit,
+                Window = TimeSpan.FromMinutes(registrationWindowMinutes),
                 QueueLimit = 0
             }));
 });
@@ -71,10 +101,13 @@ builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 builder.Services.AddScoped<ITenantContext, HttpTenantContext>();
 builder.Services.AddScoped<ITenantMembershipRepository, TenantMembershipRepository>();
 builder.Services.AddScoped<ITenantAuthorizationRepository, TenantAuthorizationRepository>();
+builder.Services.AddScoped<ITenantRoleRepository, TenantRoleRepository>();
+builder.Services.AddScoped<TenantRoleService>();
 builder.Services.AddScoped<ISaasRepository, SaasRepository>();
 builder.Services.AddScoped<MiniStore.Application.Saas.EntitlementService>();
 builder.Services.AddScoped<MiniStore.Application.Saas.PlatformSaasService>();
 builder.Services.AddScoped<MiniStore.Application.Saas.ISaasOnboardingService, MiniStore.Infrastructure.Services.SaasOnboardingService>();
+builder.Services.AddScoped<MiniStore.Application.Saas.ICompanyOnboardingService, MiniStore.Infrastructure.Services.CompanyOnboardingService>();
 builder.Services.AddScoped<MiniStore.Application.Saas.IBillingCheckoutService, MiniStore.Infrastructure.Services.BillingCheckoutService>();
 builder.Services.AddScoped<AuditSaveChangesInterceptor>();
 
@@ -180,9 +213,8 @@ builder.Services.AddScoped<ISaleRepository, SaleRepository>();
 
 builder.Services.AddScoped<ISaleService, SaleService>();
 
-builder.Services.AddScoped<IInvoiceSettingsRepository, InvoiceSettingsRepository>();
-
-builder.Services.AddScoped<InvoiceSettingsService>();
+builder.Services.AddScoped<IDocumentSequenceRepository, DocumentSequenceRepository>();
+builder.Services.AddScoped<DocumentNumberService>();
 
 builder.Services.AddScoped<ISaleRepository, SaleRepository>();
 
@@ -197,8 +229,6 @@ builder.Services.AddScoped<IDiscountSettingsRepository, DiscountSettingsReposito
 builder.Services.AddScoped<DiscountSettingsService>();
 
 builder.Services.AddScoped<IStockTransferRepository, StockTransferRepository>();
-
-builder.Services.AddScoped<IDocumentNumberSettingsRepository,DocumentNumberSettingsRepository>();
 
 builder.Services.AddScoped<IStockTransferService,StockTransferService>();
 

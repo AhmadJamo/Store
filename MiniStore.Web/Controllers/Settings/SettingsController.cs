@@ -12,7 +12,7 @@ namespace MiniStore.Web.Controllers;
 [PermissionAuthorize("Administration.Access")]
 public class SettingsController : Controller
 {
-    private readonly InvoiceSettingsService _invoiceSettingsService;
+    private readonly DocumentNumberService _documentNumberService;
     private readonly GeneralSettingsService _generalSettingsService;
     private readonly DiscountSettingsService _discountSettingsService;
     private readonly AccountingSettingsService _accountingSettingsService;
@@ -24,7 +24,7 @@ public class SettingsController : Controller
     private readonly ITenantContext _tenantContext;
 
     public SettingsController(
-        InvoiceSettingsService invoiceSettingsService,
+        DocumentNumberService documentNumberService,
         GeneralSettingsService generalSettingsService,
         DiscountSettingsService discountSettingsService,
         AccountingSettingsService accountingSettingsService,
@@ -35,7 +35,7 @@ public class SettingsController : Controller
         IMemoryCache memoryCache,
         ITenantContext tenantContext)
     {
-        _invoiceSettingsService = invoiceSettingsService;
+        _documentNumberService = documentNumberService;
         _generalSettingsService = generalSettingsService;
         _discountSettingsService = discountSettingsService;
         _accountingSettingsService = accountingSettingsService;
@@ -172,32 +172,27 @@ public class SettingsController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> Invoices()
-    {
-        return View(await _invoiceSettingsService.GetAsync());
-    }
+    public IActionResult Invoices() => RedirectToAction(nameof(DocumentNumbers));
+
+    [HttpGet]
+    public async Task<IActionResult> DocumentNumbers() =>
+        View(await _documentNumberService.GetPageAsync());
 
     [HttpPost]
-    public async Task<IActionResult> Invoices(
-        InvoiceSettingsDto dto)
+    public async Task<IActionResult> DocumentNumbers(DocumentNumberSettingsPageDto dto)
     {
-        if (!ModelState.IsValid)
-            return View(dto);
-
+        if (!ModelState.IsValid) return View(dto);
         try
         {
-            await _invoiceSettingsService.UpdateAsync(dto);
-
+            await _documentNumberService.UpdateAsync(dto);
             TempData["NotificationType"] = "success";
-            TempData["NotificationMessage"] =
-                "Invoice settings updated successfully.";
-
-            return RedirectToAction(nameof(Invoices));
+            TempData["NotificationMessage"] = "Document numbering settings updated successfully.";
+            return RedirectToAction(nameof(DocumentNumbers));
         }
-        catch (ArgumentException ex)
+        catch (Exception ex) when (ex is ArgumentException or InvalidOperationException)
         {
             ModelState.AddModelError(string.Empty, ex.Message);
-            return View(dto);
+            return View(await _documentNumberService.GetPageAsync());
         }
     }
 

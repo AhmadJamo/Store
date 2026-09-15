@@ -1,126 +1,14 @@
-﻿@using Microsoft.AspNetCore.Identity
-
-@{
-    ViewData["Title"] = "Create User";
-
-    var roles =
-        ViewBag.Roles
-        as List<IdentityRole>;
-}
-
-<div class="row justify-content-center">
-
-    <div class="col-md-6">
-
-        <div class="card">
-
-            <div class="card-header">
-                <h4 class="mb-0">
-                    Create User
-                </h4>
-            </div>
-
-            <div class="card-body">
-
-                @if (ViewBag.Error != null)
-                {
-                    <div class="alert alert-danger">
-                        @ViewBag.Error
-                    </div>
-                }
-
-                <form asp-action="Create"
-                      method="post">
-
-                    @Html.AntiForgeryToken()
-
-                    <div class="mb-3">
-
-                        <label class="form-label">
-                            Username
-                        </label>
-
-                        <input type="text"
-                               name="username"
-                               class="form-control"
-                               required />
-
-                    </div>
-
-                    <div class="mb-3">
-
-                        <label class="form-label">
-                            Email
-                        </label>
-
-                        <input type="email"
-                               name="email"
-                               class="form-control"
-                               required />
-
-                    </div>
-
-                    <div class="mb-3">
-
-                        <label class="form-label">
-                            Password
-                        </label>
-
-                        <input type="password"
-                               name="password"
-                               class="form-control"
-                               required />
-
-                    </div>
-
-                    <div class="mb-3">
-
-                        <label class="form-label">
-                            Role
-                        </label>
-
-                        <select name="role"
-                                class="form-select"
-                                required>
-
-                            <option value="">
-                                -- Select Role --
-                            </option>
-
-                            @if (roles != null)
-                            {
-                                foreach (var role in roles)
-                                {
-                                    <option value="@role.Name">
-                                        @role.Name
-                                    </option>
-                                }
-                            }
-
-                        </select>
-
-                    </div>
-
-                    <div class="d-flex gap-2">
-
-                        <button type="submit"
-                                class="btn btn-primary">
-                            Create User
-                        </button>
-
-                        <a asp-action="Index"
-                           class="btn btn-secondary">
-                            Cancel
-                        </a>
-
-                    </div>
-
-                </form>
-
-            </div>
-
-        </div>
-
-    </div>
-
-</div>
+@using System.Globalization
+@using MiniStore.Application.DTOs.Security
+@{ var ar = CultureInfo.CurrentUICulture.Name.StartsWith("ar"); ViewData["Title"] = ar ? "إضافة مستخدم" : "Add user"; var roles = ViewBag.Roles as List<TenantRoleOptionDto> ?? []; }
+<div class="row justify-content-center py-3"><div class="col-lg-7"><div class="card border-0 shadow-sm"><div class="card-header bg-white"><h4 class="mb-0">@ViewData["Title"]</h4></div><div class="card-body p-4">
+    @if (ViewBag.Error is string error) { <div class="alert alert-danger">@error</div> }
+    <p class="text-muted">@(ar ? "سيضاف المستخدم إلى الشركة الحالية فقط، ويأخذ صلاحيات الدور المختار فيها." : "The user will join only the active company and receive the selected company role.")</p>
+    <form asp-action="Create" method="post">
+        <div class="mb-3"><label class="form-label">@(ar ? "اسم المستخدم" : "Username")</label><input name="username" class="form-control" required maxlength="100" /></div>
+        <div class="mb-3"><label class="form-label">@(ar ? "البريد الإلكتروني" : "Email")</label><input name="email" type="email" class="form-control" required maxlength="256" /></div>
+        <div class="mb-3"><label class="form-label">@(ar ? "كلمة المرور" : "Password")</label><input name="password" type="password" class="form-control" required autocomplete="new-password" /></div>
+        <div class="mb-4"><label class="form-label">@(ar ? "دور الشركة" : "Company role")</label><select name="roleId" class="form-select" required><option value="">@(ar ? "اختر الدور" : "Select role")</option>@foreach(var role in roles){<option value="@role.Id">@role.Name @(role.IsSystem ? (ar ? "(محمي)" : "(Protected)") : "")</option>}</select></div>
+        <div class="d-flex justify-content-end gap-2"><a asp-action="Index" class="btn btn-outline-secondary">@(ar ? "إلغاء" : "Cancel")</a><button class="btn btn-primary">@(ar ? "إنشاء المستخدم" : "Create user")</button></div>
+    </form>
+</div></div></div></div>

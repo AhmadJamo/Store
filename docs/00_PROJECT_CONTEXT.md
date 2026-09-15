@@ -11,9 +11,10 @@ The repository implements a first operational slice for catalog, warehouses, sto
 
 ## Status classification
 - IMPLEMENTED: catalog, warehouses, suppliers, stock balances/movements, purchases, sales, transfer workflow, Identity login, role-permission checks, audit-log rows, Razor UI.
-- PARTIALLY IMPLEMENTED: authorization administration, settings concurrency, auditability, inventory controls, invoice/document numbering.
+- PARTIALLY IMPLEMENTED: authorization administration, auditability and inventory controls.
+- IMPLEMENTED: tenant-scoped centralized numbering for wholesale sales, POS sales, stock transfers and journal entries, including safe defaults and concurrent-edit protection.
+- IMPLEMENTED: database-enforced tenant relationship boundaries across all current ERP entities and tenant subscription redemptions, with automatic entity classification and relationship regression checks.
 - PLANNED: returns, fiscal periods, external payment-provider/webhook integration, API/integrations.
-- BLOCKED: stock-transfer creation requires a `DocumentNumberSettings` row; code does not seed or create one when absent.
 - UNKNOWN: deployed environment, production migration process, backups, CI/CD, external integrations, and operational ownership.
 
 ## Main modules
@@ -26,7 +27,7 @@ The repository implements a first operational slice for catalog, warehouses, sto
 | Purchases | IMPLEMENTED | `Purchase`, `PurchaseService` | Immediately increases stock. |
 | Sales | IMPLEMENTED | `Sale`, `SaleService` | Uses configured product price by channel and decreases stock. |
 | Stock transfers | IMPLEMENTED | `StockTransfer`, `StockTransferService` | Draft/submitted/approved/posted/cancelled flow. |
-| Settings | PARTIALLY IMPLEMENTED | settings entities/services | General/discount/invoice settings. |
+| Settings | PARTIALLY IMPLEMENTED | settings entities/services | General, discount, inventory, accounting, POS and centralized document-number settings. |
 | Identity & permissions | PARTIALLY IMPLEMENTED | Identity + `PermissionAuthorizationHandler` | Custom permission rows mapped to roles. |
 
 ## Current problems
@@ -34,9 +35,12 @@ See `06_SECURITY.md`, `04_ACCOUNTING.md`, and `TODO.md`. Highest-priority findin
 
 ## Recommended next steps
 1. Complete the security and inventory-integrity work listed in `TODO.md`.
-2. Complete company switching/invitations and make custom role definitions and permission sets fully tenant-owned.
+2. Complete company switching, invitations and existing-user role assignment management on top of the tenant-owned role model.
 3. Establish an immutable posted-document and double-entry accounting design before adding more ERP features.
 
 ## Read first
 Read `01_CODEBASE_MAP.md`, then the relevant module document, then actual source.
+
+## Guided company onboarding update (2026-09-15)
+New-company registration now continues into a bilingual guided setup. Business presets atomically create a starter chart of accounts, linked branch and warehouse, payment, tax, numbering, discount, inventory and POS configuration. Owners may skip for manual setup, and tenant login accepts an optional company code (the tenant slug).
 

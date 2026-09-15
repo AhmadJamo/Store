@@ -1,0 +1,132 @@
+@model MiniStore.Application.Saas.CompanyOnboardingDto
+@using System.Globalization
+@using MiniStore.Domain.Entities
+@{
+    Layout = "_PublicLayout";
+    var ar = CultureInfo.CurrentUICulture.Name.StartsWith("ar");
+    ViewData["Title"] = ar ? "تهيئة الشركة" : "Company setup";
+}
+
+<style>
+    .setup-shell{max-width:1100px}.setup-step{font-size:.82rem;letter-spacing:.04em;color:#7dd3fc}.business-card{height:100%;cursor:pointer;border:1px solid rgba(148,163,184,.3);background:rgba(15,23,42,.45);transition:.18s ease}.business-card:hover,.business-card:has(input:checked){border-color:#38bdf8;transform:translateY(-2px);box-shadow:0 0 0 2px rgba(56,189,248,.16)}.business-card input{position:absolute;opacity:0}.setup-panel{background:rgba(15,23,42,.38);border:1px solid rgba(148,163,184,.22);border-radius:1rem}.choice-note{font-size:.88rem;color:#94a3b8}
+</style>
+
+<div class="container py-4 py-lg-5 setup-shell">
+    <div class="glass p-4 p-lg-5">
+        <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4">
+            <div>
+                <div class="setup-step mb-2">@(ar ? "الخطوة الأخيرة • إعداد آمن وقابل للتعديل" : "FINAL STEP • SAFE, EDITABLE SETUP")</div>
+                <h1 class="mb-2">@(ar ? $"جهّز {Model.TenantName} للعمل" : $"Prepare {Model.TenantName} for work")</h1>
+                <p class="muted mb-0">@(ar ? "اختر طبيعة المنشأة وسننشئ الأساس المحاسبي والتشغيلي المناسب تلقائياً." : "Choose the business type and we will create a suitable accounting and operating foundation.")</p>
+            </div>
+            <span class="badge rounded-pill text-bg-info px-3 py-2">@(ar ? "يمكن تعديل كل الإعدادات لاحقاً" : "Everything remains editable")</span>
+        </div>
+
+        <div asp-validation-summary="All" class="alert alert-danger"></div>
+
+        <form action="/onboarding/complete" method="post" id="setup-form">
+            @Html.AntiForgeryToken()
+            <h2 class="h5 mb-3">@(ar ? "1. نوع المنشأة" : "1. Business type")</h2>
+            <div class="row g-3 mb-4">
+                @foreach (var option in Model.BusinessTypes.Where(x => x.Value != BusinessType.Custom))
+                {
+                    <div class="col-md-6 col-lg-4">
+                        <label class="business-card rounded-4 p-3 d-block position-relative">
+                            <input type="radio" name="BusinessType" value="@((int)option.Value)" data-pos="@option.RecommendedPos.ToString().ToLowerInvariant()" checked="@(option.Value == BusinessType.Retail)" required>
+                            <strong class="d-block mb-1">@(ar ? option.NameArabic : option.NameEnglish)</strong>
+                            <span class="choice-note">@(ar ? option.DescriptionArabic : option.DescriptionEnglish)</span>
+                        </label>
+                    </div>
+                }
+            </div>
+
+            <div class="setup-panel p-3 p-lg-4 mb-4">
+                <h2 class="h5 mb-3">@(ar ? "2. الإعدادات الأساسية" : "2. Essential settings")</h2>
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <label class="form-label">@(ar ? "الدولة" : "Country")</label>
+                        <select name="CountryCode" class="form-select" required>
+                            <option value="JO">@(ar ? "الأردن" : "Jordan")</option>
+                            <option value="SA">@(ar ? "السعودية" : "Saudi Arabia")</option>
+                            <option value="AE">@(ar ? "الإمارات" : "United Arab Emirates")</option>
+                            <option value="PS">@(ar ? "فلسطين" : "Palestine")</option>
+                            <option value="EG">@(ar ? "مصر" : "Egypt")</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">@(ar ? "العملة" : "Currency")</label>
+                        <select name="Currency" class="form-select" required>
+                            <option value="JOD">JOD</option><option value="SAR">SAR</option><option value="AED">AED</option><option value="USD">USD</option><option value="EGP">EGP</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">@(ar ? "لغة النظام الافتراضية" : "Default language")</label>
+                        <select name="Language" class="form-select" required>
+                            <option value="2" selected="@ar">العربية</option>
+                            <option value="1" selected="@(!ar)">English</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">@(ar ? "بداية السنة المالية" : "Fiscal year starts")</label>
+                        <select name="FiscalYearStartMonth" class="form-select" required>
+                            @for (var month = 1; month <= 12; month++)
+                            {
+                                <option value="@month">@CultureInfo.CurrentUICulture.DateTimeFormat.GetMonthName(month)</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">@(ar ? "طريقة إدارة المخزون" : "Inventory control")</label>
+                        <select name="InventoryControlMode" class="form-select">
+                            <option value="3">@(ar ? "هجين — يسمح بالمواقع التفصيلية دون إجبارها" : "Hybrid — detailed locations without forcing them")</option>
+                            <option value="2">@(ar ? "منظم بالمواقع والرفوف" : "Location managed")</option>
+                            <option value="1">@(ar ? "بسيط للمحل الصغير" : "Simple outlet inventory")</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3 d-flex align-items-end">
+                        <div class="form-check form-switch mb-2">
+                            <input class="form-check-input" type="checkbox" id="use-pos" name="UsePos" value="true" checked>
+                            <label class="form-check-label" for="use-pos">@(ar ? "إنشاء نقطة بيع" : "Create a POS")</label>
+                        </div>
+                    </div>
+                    <div class="col-md-3 d-flex align-items-end">
+                        <div class="form-check form-switch mb-2">
+                            <input class="form-check-input" type="checkbox" id="tax-registered" name="IsTaxRegistered" value="true">
+                            <label class="form-check-label" for="tax-registered">@(ar ? "مسجل للضريبة" : "Tax registered")</label>
+                        </div>
+                    </div>
+                    <div class="col-md-4" id="tax-rate-wrap" hidden>
+                        <label class="form-label">@(ar ? "نسبة الضريبة الافتراضية %" : "Default tax rate %")</label>
+                        <input type="number" name="DefaultTaxRate" class="form-control" value="0" min="0" max="100" step="0.0001">
+                    </div>
+                </div>
+            </div>
+
+            <div class="alert alert-info">
+                @(ar
+                    ? "سينشئ النظام شجرة حسابات أولية، فرعاً رئيسياً، حساب مخزون فرعياً ومستودعاً مرتبطاً به، وسائل دفع، إعدادات خصم وترقيم، وضريبة وPOS حسب اختياراتك. لن يكتب فوق أي بيانات أنشأتها مسبقاً."
+                    : "The system will create a starter chart of accounts, main branch, linked warehouse inventory subaccount, warehouse, payment methods, discount and numbering settings, plus tax and POS when selected. Existing records are preserved.")
+            </div>
+
+            <div class="d-flex flex-column flex-md-row gap-2 justify-content-between">
+                <button type="submit" class="btn btn-accent btn-lg px-4" id="complete-setup">@(ar ? "تطبيق الإعداد والدخول للنظام" : "Apply setup and enter the system")</button>
+                <button class="btn btn-outline-secondary btn-lg" type="submit" formaction="/onboarding/skip" formnovalidate>@(ar ? "تخطي والإعداد يدوياً" : "Skip and configure manually")</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    const taxToggle = document.getElementById('tax-registered');
+    const taxWrap = document.getElementById('tax-rate-wrap');
+    taxToggle?.addEventListener('change', () => taxWrap.hidden = !taxToggle.checked);
+    document.querySelectorAll('input[name="BusinessType"]').forEach(option => option.addEventListener('change', () => {
+        const usePos = document.getElementById('use-pos');
+        if (usePos) usePos.checked = option.dataset.pos === 'true';
+    }));
+    document.getElementById('setup-form')?.addEventListener('submit', function () {
+        if (!this.checkValidity()) return;
+        const button = document.getElementById('complete-setup');
+        if (button) { button.disabled = true; button.textContent = '@(ar ? "جارٍ تجهيز الشركة..." : "Preparing company...")'; }
+    });
+</script>

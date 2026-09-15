@@ -25,6 +25,8 @@ public class AppDbContext
     public DbSet<Tenant> Tenants => Set<Tenant>();
     public DbSet<TenantMembership> TenantMemberships => Set<TenantMembership>();
     public DbSet<TenantUserRole> TenantUserRoles => Set<TenantUserRole>();
+    public DbSet<TenantRole> TenantRoles => Set<TenantRole>();
+    public DbSet<TenantRolePermission> TenantRolePermissions => Set<TenantRolePermission>();
     public DbSet<Plan> Plans => Set<Plan>();
     public DbSet<PlanFeature> PlanFeatures => Set<PlanFeature>();
     public DbSet<PlanLimit> PlanLimits => Set<PlanLimit>();
@@ -33,6 +35,7 @@ public class AppDbContext
     public DbSet<PromotionCode> PromotionCodes => Set<PromotionCode>();
     public DbSet<PromotionRedemption> PromotionRedemptions => Set<PromotionRedemption>();
     public DbSet<BillingCheckoutSession> BillingCheckoutSessions => Set<BillingCheckoutSession>();
+    public DbSet<CompanyOnboarding> CompanyOnboardings => Set<CompanyOnboarding>();
 
     public DbSet<Product> Products => Set<Product>();
 
@@ -56,13 +59,11 @@ public class AppDbContext
 
     public DbSet<Permission> Permissions => Set<Permission>();
 
-    public DbSet<RolePermission> RolePermissions => Set<RolePermission>();
-
     public DbSet<Sale> Sales => Set<Sale>();
 
     public DbSet<SaleItem> SaleItems => Set<SaleItem>();
 
-    public DbSet<InvoiceSettings> InvoiceSettings => Set<InvoiceSettings>();
+    public DbSet<DocumentSequence> DocumentSequences => Set<DocumentSequence>();
 
     public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
 
@@ -75,8 +76,6 @@ public class AppDbContext
     public DbSet<StockTransferItem> StockTransferItems => Set<StockTransferItem>();
 
     public DbSet<StockTransferHistory> StockTransferHistories => Set<StockTransferHistory>();
-
-    public DbSet<DocumentNumberSettings> DocumentNumberSettings => Set<DocumentNumberSettings>();
 
     public DbSet<Branch> Branches => Set<Branch>();
 
@@ -134,7 +133,7 @@ public class AppDbContext
     private void ApplyTenantBoundary()
     {
         var entries = ChangeTracker.Entries()
-            .Where(x => TenantOwnedTypes.Contains(x.Metadata.ClrType) &&
+            .Where(x => TenantIsolationModel.TenantOwnedTypes.Contains(x.Metadata.ClrType) &&
                         x.State is EntityState.Added or EntityState.Modified or EntityState.Deleted);
 
         foreach (var entry in entries)
@@ -157,7 +156,7 @@ public class AppDbContext
 
     private void ConfigureTenantIsolation(ModelBuilder modelBuilder)
     {
-        foreach (var clrType in TenantOwnedTypes)
+        foreach (var clrType in TenantIsolationModel.TenantOwnedTypes)
         {
             var entity = modelBuilder.Entity(clrType);
             entity.Property<int>("TenantId").IsRequired();
@@ -194,19 +193,59 @@ public class AppDbContext
                 Expression.Equal(tenantProperty, currentTenant),
                 parameter));
         }
+
+        ConfigureTenantRelationshipBoundaries(modelBuilder);
     }
 
-    private static readonly Type[] TenantOwnedTypes =
-    [
-        typeof(Product), typeof(Warehouse), typeof(ProductStock), typeof(StockTransaction),
-        typeof(Supplier), typeof(Purchase), typeof(PurchaseItem), typeof(Sale), typeof(SaleItem),
-        typeof(InvoiceSettings), typeof(AuditLog), typeof(GeneralSettings), typeof(DiscountSettings),
-        typeof(StockTransfer), typeof(StockTransferItem), typeof(StockTransferHistory),
-        typeof(DocumentNumberSettings), typeof(Branch), typeof(Account), typeof(JournalEntry),
-        typeof(JournalEntryLine), typeof(Customer), typeof(TaxRate), typeof(PosTerminal),
-        typeof(PosTerminalProduct), typeof(PosTerminalWarehouse), typeof(PosTerminalSettings),
-        typeof(BranchWarehouseAccess), typeof(AccountingSettings), typeof(InventorySettings),
-        typeof(PaymentMethod), typeof(StorageLocation), typeof(ProductLocationStock),
-        typeof(LocationMovement)
-    ];
+    private static void ConfigureTenantRelationshipBoundaries(ModelBuilder modelBuilder)
+    {
+        var relationships = modelBuilder.Model.GetEntityTypes()
+            .SelectMany(entity => entity.GetDeclaredForeignKeys())
+            .Where(foreignKey =>
+                TenantIsolationModel.TenantOwnedTypes.Contains(foreignKey.DeclaringEntityType.ClrType) &&
+                TenantIsolationModel.TenantOwnedTypes.Contains(foreignKey.PrincipalEntityType.ClrType) &&
+                foreignKey.Properties.All(property => property.Name != "TenantId"))
+            .Select(foreignKey => new
+            {
+                ForeignKey = foreignKey,
+                DependentType = foreignKey.DeclaringEntityType.ClrType,
+                PrincipalType = foreignKey.PrincipalEntityType.ClrType,
+                DependentNavigation = foreignKey.DependentToPrincipal?.Name,
+                PrincipalNavigation = foreignKey.PrincipalToDependent?.Name,
+                ForeignKeyProperties = foreignKey.Properties.Select(property => property.Name).ToArray(),
+                PrincipalKeyProperties = foreignKey.PrincipalKey.Properties.Select(property => property.Name).ToArray(),
+                foreignKey.IsUnique,
+                foreignKey.IsRequired,
+                foreignKey.DeleteBehavior
+            })
+            .ToList();
+
+        foreach (var relationship in relationships)
+            relationship.ForeignKey.DeclaringEntityType.RemoveForeignKey(relationship.ForeignKey);
+
+        foreach (var relationship in relationships)
+        {
+            var foreignKeyProperties = relationship.ForeignKeyProperties.Append("TenantId").ToArray();
+            var principalKeyProperties = relationship.PrincipalKeyProperties.Append("TenantId").ToArray();
+            var reference = modelBuilder.Entity(relationship.DependentType)
+                .HasOne(relationship.PrincipalType, relationship.DependentNavigation);
+
+            if (relationship.IsUnique)
+            {
+                reference.WithOne(relationship.PrincipalNavigation)
+                    .HasForeignKey(relationship.DependentType, foreignKeyProperties)
+                    .HasPrincipalKey(relationship.PrincipalType, principalKeyProperties)
+                    .OnDelete(relationship.DeleteBehavior)
+                    .IsRequired(relationship.IsRequired);
+            }
+            else
+            {
+                reference.WithMany(relationship.PrincipalNavigation)
+                    .HasForeignKey(foreignKeyProperties)
+                    .HasPrincipalKey(principalKeyProperties)
+                    .OnDelete(relationship.DeleteBehavior)
+                    .IsRequired(relationship.IsRequired);
+            }
+        }
+    }
 }

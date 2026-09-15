@@ -1,16 +1,16 @@
 # Database
 > Status: IMPLEMENTED  
 > Source of truth: EF Core entities, configurations and migrations  
-> Last reviewed: 2026-09-14
+> Last reviewed: 2026-09-15
 
 `AppDbContext` derives from `IdentityDbContext<IdentityUser, IdentityRole, string>`, so Identity tables coexist with ERP tables. Provider: SQL Server.
 
-All business tables have a required `TenantId` foreign key to `Tenants`. EF query filters use the authenticated tenant context, and SaveChanges enforces tenant ownership for inserts, updates and deletes. Business unique indexes include `TenantId`; the same invoice number, account code or settings singleton may therefore exist independently in different companies.
+All business tables have a required `TenantId` foreign key to `Tenants`. EF query filters use the authenticated tenant context, and SaveChanges enforces tenant ownership for inserts, updates and deletes. Business unique indexes include `TenantId`; the same invoice number, account code or settings singleton may therefore exist independently in different companies. Every relationship between records carrying tenant ownership also includes `TenantId` on both sides, so SQL rejects a reference to another company's record.
 
 ## Application tables
 | Table/entity | Key relationships and notable constraints |
 |---|---|
-| Tenants / TenantMemberships / TenantUserRoles | Tenant identity has globally unique slug, active state and rowversion. Membership links Identity users to companies; tenant user roles use `(TenantId, UserId, RoleId)` so an Admin assignment applies only inside its company. |
+| Tenants / TenantMemberships / TenantRoles / TenantRolePermissions / TenantUserRoles | Tenant identity has globally unique slug and rowversion. Roles have tenant-local normalized-name uniqueness and rowversion; permissions use `(TenantRoleId, PermissionId)` and user assignment uses `(TenantId, UserId, TenantRoleId)`. A composite FK from `(TenantRoleId, TenantId)` to the role prevents cross-company assignment at database level. |
 | Plans / PlanFeatures / PlanLimits | bilingual public commercial plans with monthly/annual prices, feature flags and nullable unlimited numeric limits. |
 | TenantSubscriptions | one current subscription per tenant with trial/active/dunning states, billing cycle/period, provider references and rowversion. |
 | PlatformOperators | explicit allow-list and platform role linked to Identity; separate from tenant Admin membership. |
@@ -33,16 +33,19 @@ All business tables have a required `TenantId` foreign key to `Tenants`. EF quer
 | Sales / SaleItems | warehouse FK Restrict; items cascade; sale invoice number unique. POS rows optionally store order type, service reference and guest count; item preparation notes are optional and bounded to 200 characters. |
 | StockTransfers / items/history | warehouse FKs Restrict; transfer number unique; StockTransfer rowversion; item/history FKs Restrict; item unique `(StockTransferId, ProductId)`. |
 | StockTransferItem locations | Optional source/destination StorageLocation FKs; when selected, Application validates active locations in the matching warehouses. |
-| Permissions / RolePermissions | permission name unique; role-permission unique `(RoleId, PermissionId)`; permission deletion cascades mapping. |
+| Permissions | global permission catalogue with unique technical name; company-specific selections live in TenantRolePermissions and restrict permission deletion. |
 | AuditLogs | indexed by CreatedAt and `(EntityName, EntityId)`. |
 | GeneralSettings / DiscountSettings / InventorySettings | singleton key check/index and rowversion. GeneralSettings stores a required English/Arabic default-language enum; InventorySettings supplies new-warehouse policy defaults. |
-| InvoiceSettings / DocumentNumberSettings | no singleton constraint; InvoiceSettings has rowversion; DocumentNumberSettings does not. |
+| DocumentSequences | one row per tenant/document type; unique `(TenantId, DocumentType)`; customizable template, prefix, suffix, padding, next/reset counters and period state; rowversion protects settings updates. |
 
 ## Migrations
-Migration history is chronological through `AddSaasControlPlane`, `AddBillingCheckout`, `AddTenantScopedRoles` and `BootstrapPlatformOwner`. Tenant isolation creates a Demo Company and attaches existing test rows/users. The SaaS migrations add commercial control-plane data, checkout, tenant role assignments and one explicit initial platform owner for upgraded test installations. Migrations are source-controlled under `MiniStore.Infrastructure/Migrations`; generated designers and the model snapshot are metadata, not separate runtime features.
+Migration history is chronological through `EnforceTenantRoleAssignmentBoundary`, `HardenTenantIsolationRelationships` and `HardenTenantSubscriptionRedemption`. The two hardening migrations replace single-ID business relationships with composite tenant relationships and cover tenant subscription redemptions. Migrations are source-controlled under `MiniStore.Infrastructure/Migrations`; generated designers and the model snapshot are metadata, not separate runtime features.
 
 ## Transactions and concurrency
 `UnitOfWork.ExecuteInTransactionAsync` starts a Serializable database transaction, executes an operation, calls one `SaveChangesAsync`, then commits. Sales, purchases, transfers, putaway and internal location relocation use it. ProductStock, ProductLocationStock and StockTransfer use rowversion concurrency tokens. General, discount, inventory, invoice and POS terminal experience settings use rowversion to varying degrees.
 
 ## Update rules
 Changing an entity/configuration requires a migration, update to this file and `database/tables.md`, affected entity/module docs, and validation of existing data. Never alter a migration already applied to shared environments.
+
+## CompanyOnboardings (2026-09-15)
+CompanyOnboardings uses TenantId as its primary key and cascading FK to Tenants. It stores setup status, normalized setup choices, template/audit metadata and SQL Server rowversion. Migration 20260915140248_AddCompanyGuidedOnboarding creates the table and backfills existing companies as Skipped.

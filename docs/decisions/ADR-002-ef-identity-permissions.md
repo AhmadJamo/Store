@@ -1,6 +1,6 @@
 # ADR-002: ASP.NET Core Identity with database role permissions
-> Status: OBSERVED / ACCEPTED IN CODE  
-> Last reviewed: 2026-09-13
+> Status: SUPERSEDED by `2026-09-15-tenant-owned-roles.md`
+> Last reviewed: 2026-09-15
 
 ## Context and decision
 Identity manages users/roles. A permission catalogue is seeded; RolePermissions maps Identity role IDs to permissions. Dynamic policies and a handler check those mappings; Admin role bypasses them.

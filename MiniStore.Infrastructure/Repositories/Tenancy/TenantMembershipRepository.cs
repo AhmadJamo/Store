@@ -20,6 +20,19 @@ public class TenantMembershipRepository(AppDbContext context)
             .ThenBy(x => x.TenantId)
             .FirstOrDefaultAsync();
 
+    public Task<TenantMembership?> GetActiveByCompanyCodeAsync(string userId, string companyCode)
+    {
+        var normalizedCode = companyCode.Trim().ToLowerInvariant();
+        return context.TenantMemberships
+            .Where(x => x.UserId == userId && x.IsActive)
+            .Join(
+                context.Tenants.Where(x => x.IsActive && x.Slug == normalizedCode),
+                membership => membership.TenantId,
+                tenant => tenant.Id,
+                (membership, _) => membership)
+            .SingleOrDefaultAsync();
+    }
+
     public async Task<IReadOnlyList<string>> GetActiveUserIdsAsync(int tenantId) =>
         await context.TenantMemberships
             .Where(x => x.TenantId == tenantId && x.IsActive)

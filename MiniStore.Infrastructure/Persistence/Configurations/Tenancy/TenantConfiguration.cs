@@ -34,11 +34,14 @@ public class TenantUserRoleConfiguration : IEntityTypeConfiguration<TenantUserRo
 {
     public void Configure(EntityTypeBuilder<TenantUserRole> builder)
     {
-        builder.HasKey(x => new { x.TenantId, x.UserId, x.RoleId });
-        builder.Property(x => x.UserId).HasMaxLength(450); builder.Property(x => x.RoleId).HasMaxLength(450);
+        builder.HasKey(x => new { x.TenantId, x.UserId, x.TenantRoleId });
+        builder.Property(x => x.UserId).HasMaxLength(450);
         builder.HasOne<Tenant>().WithMany().HasForeignKey(x => x.TenantId).OnDelete(DeleteBehavior.Cascade);
         builder.HasOne<IdentityUser>().WithMany().HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.Cascade);
-        builder.HasOne<IdentityRole>().WithMany().HasForeignKey(x => x.RoleId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasOne<TenantRole>().WithMany()
+            .HasForeignKey(x => new { x.TenantRoleId, x.TenantId })
+            .HasPrincipalKey(x => new { x.Id, x.TenantId })
+            .OnDelete(DeleteBehavior.Restrict);
         builder.HasIndex(x => new { x.TenantId, x.UserId });
     }
 }

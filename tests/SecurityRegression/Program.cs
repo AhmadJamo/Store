@@ -40,6 +40,46 @@ Check(membership.IsActive && membership.IsOwner,
     "Tenant membership must preserve active owner access");
 CheckArgumentThrows(() => new TenantMembership(0, "user"),
     "Tenant membership must require a valid tenant");
+var onboarding = new CompanyOnboarding(1);
+Check(onboarding.Status == CompanyOnboardingStatus.Pending && !onboarding.IsResolved,
+    "New company onboarding must start pending");
+onboarding.Complete(
+    BusinessType.Cafe, "jo", "jod", UiLanguage.Arabic, 1,
+    true, 16, true, InventoryControlMode.Hybrid, 1, "owner", DateTime.UtcNow);
+Check(
+    onboarding.IsResolved && onboarding.Status == CompanyOnboardingStatus.Completed &&
+    onboarding.CountryCode == "JO" && onboarding.Currency == "JOD" &&
+    onboarding.DefaultTaxRate == 16,
+    "Completed onboarding must preserve normalized company choices");
+CheckThrows(
+    () => onboarding.Skip("owner", DateTime.UtcNow),
+    "Resolved onboarding must reject duplicate application");
+var skippedOnboarding = new CompanyOnboarding(2);
+skippedOnboarding.Skip("owner", DateTime.UtcNow);
+Check(skippedOnboarding.Status == CompanyOnboardingStatus.Skipped && skippedOnboarding.IsResolved,
+    "Skipped onboarding must allow manual company setup");
+CheckArgumentThrows(
+    () => new CompanyOnboarding(3).Complete(
+        BusinessType.Retail, "JO", "INVALID", UiLanguage.English, 1,
+        false, 0, true, InventoryControlMode.Simple, 1, "owner", DateTime.UtcNow),
+    "Company onboarding must reject invalid currency codes");
+var onboardingRowVersion = db.Model.FindEntityType(typeof(CompanyOnboarding))!
+    .FindProperty(nameof(CompanyOnboarding.RowVersion))!;
+Check(onboardingRowVersion.IsConcurrencyToken,
+    "Company onboarding must use optimistic concurrency");
+var companyRole = new TenantRole(1, " Branch Manager ", " Company-specific access ");
+var sameNameOtherCompanyRole = new TenantRole(2, "Branch Manager");
+Check(companyRole.Name == "Branch Manager" && companyRole.NormalizedName == "BRANCH MANAGER" &&
+      sameNameOtherCompanyRole.NormalizedName == companyRole.NormalizedName,
+    "Different companies must be able to own roles with the same display name");
+var protectedCompanyRole = new TenantRole(1, "Admin", isSystem: true);
+CheckThrows(() => protectedCompanyRole.Rename("Owner", null),
+    "Protected company roles must reject domain-level renaming");
+CheckArgumentThrows(() => new TenantRole(1, "A"),
+    "Company role names must meet safe length rules");
+var companyRoleAssignment = new TenantUserRole(1, "user", 7);
+Check(companyRoleAssignment.TenantRoleId == 7,
+    "Company role assignments must reference tenant-owned roles");
 var promotion = new PromotionCode("LAUNCH-25", 25, DateTime.UtcNow.AddDays(-1), DateTime.UtcNow.AddDays(5), 2, planId: 1);
 Check(promotion.CanRedeem(DateTime.UtcNow, 1), "Active promotion must be redeemable for its configured plan");
 promotion.Redeem(DateTime.UtcNow, 1); promotion.Redeem(DateTime.UtcNow, 1);
@@ -63,19 +103,7 @@ Check(subscription.AllowsUse(DateTime.UtcNow), "Trial subscription must allow co
 subscription.SetStatus(SubscriptionStatus.Suspended);
 Check(!subscription.AllowsUse(DateTime.UtcNow), "Suspended subscription must block company access");
 
-Type[] tenantOwnedTypes =
-[
-    typeof(Product), typeof(Warehouse), typeof(ProductStock), typeof(StockTransaction),
-    typeof(Supplier), typeof(Purchase), typeof(PurchaseItem), typeof(Sale), typeof(SaleItem),
-    typeof(InvoiceSettings), typeof(AuditLog), typeof(GeneralSettings), typeof(DiscountSettings),
-    typeof(StockTransfer), typeof(StockTransferItem), typeof(StockTransferHistory),
-    typeof(DocumentNumberSettings), typeof(Branch), typeof(Account), typeof(JournalEntry),
-    typeof(JournalEntryLine), typeof(Customer), typeof(TaxRate), typeof(PosTerminal),
-    typeof(PosTerminalProduct), typeof(PosTerminalWarehouse), typeof(PosTerminalSettings),
-    typeof(BranchWarehouseAccess), typeof(AccountingSettings), typeof(InventorySettings),
-    typeof(PaymentMethod), typeof(StorageLocation), typeof(ProductLocationStock),
-    typeof(LocationMovement)
-];
+var tenantOwnedTypes = TenantIsolationModel.TenantOwnedTypes.ToArray();
 foreach (var entityType in tenantOwnedTypes)
 {
     var metadata = db.Model.FindEntityType(entityType)!;
@@ -84,6 +112,29 @@ foreach (var entityType in tenantOwnedTypes)
     Check(metadata.GetDeclaredQueryFilters().Any(),
         $"{entityType.Name} must be protected by a tenant query filter");
 }
+
+var unclassifiedDomainEntities = db.Model.GetEntityTypes()
+    .Select(entity => entity.ClrType)
+    .Where(type => type.Assembly == typeof(Product).Assembly &&
+                   !TenantIsolationModel.TenantOwnedTypes.Contains(type) &&
+                   !TenantIsolationModel.NonBusinessTypes.Contains(type))
+    .Select(type => type.Name)
+    .OrderBy(name => name)
+    .ToArray();
+Check(unclassifiedDomainEntities.Length == 0,
+    $"Every mapped domain entity must be classified as tenant-owned or shared: {string.Join(", ", unclassifiedDomainEntities)}");
+
+var unsafeTenantRelationships = db.Model.GetEntityTypes()
+    .SelectMany(entity => entity.GetForeignKeys())
+    .Where(foreignKey =>
+        foreignKey.DeclaringEntityType.FindProperty("TenantId") is not null &&
+        foreignKey.PrincipalEntityType.FindProperty("TenantId") is not null &&
+        (foreignKey.Properties.All(property => property.Name != "TenantId") ||
+         foreignKey.PrincipalKey.Properties.All(property => property.Name != "TenantId")))
+    .Select(foreignKey => $"{foreignKey.DeclaringEntityType.ClrType.Name}->{foreignKey.PrincipalEntityType.ClrType.Name}")
+    .ToArray();
+Check(unsafeTenantRelationships.Length == 0,
+    $"Every relationship between tenant-scoped records must include TenantId: {string.Join(", ", unsafeTenantRelationships)}");
 
 using (var noTenantDb = new AppDbContext(
     new DbContextOptionsBuilder<AppDbContext>()
@@ -114,6 +165,80 @@ Check(resources.GetString("Settings", CultureInfo.GetCultureInfo("ar-JO")) == "Ø
     "Arabic shared resources must be embedded and loadable");
 Check(new LanguageController().Set("fr-FR", "/") is BadRequestResult,
     "Language endpoint must reject unsupported cultures");
+
+var documentDate = new DateTime(2026, 9, 15);
+var documentSequence = DocumentSequence.CreateDefault(DocumentNumberType.WholesaleSale);
+Check(documentSequence.Preview(documentDate) == "SAL-000001",
+    "Default wholesale numbering must provide a stable preview");
+Check(documentSequence.GenerateNext(documentDate) == "SAL-000001" && documentSequence.NextNumber == 2,
+    "Generating a document number must advance its sequence exactly once");
+documentSequence.MoveNextNumberForward(42);
+documentSequence.Configure(
+    "INV-", "-A", "{PREFIX}{YYYY}-{NUMBER}{SUFFIX}", 5,
+    DocumentNumberResetPeriod.Yearly, 100);
+Check(documentSequence.Preview(documentDate) == "INV-2026-00100-A",
+    "Yearly numbering must preview its configured reset value and date tokens");
+Check(documentSequence.GenerateNext(documentDate) == "INV-2026-00100-A" && documentSequence.NextNumber == 101,
+    "A new period must reset and then advance the sequence");
+var previousCulture = CultureInfo.CurrentCulture;
+try
+{
+    CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("ar-SA");
+    Check(documentSequence.Preview(documentDate) == "INV-2026-00101-A",
+        "Document date tokens must use a stable Gregorian format independent of UI culture");
+}
+finally
+{
+    CultureInfo.CurrentCulture = previousCulture;
+}
+CheckThrows(() => documentSequence.MoveNextNumberForward(50),
+    "The next document number must never move backwards");
+CheckThrows(() => documentSequence.GenerateNext(new DateTime(2025, 12, 31)),
+    "A resetting sequence must not move back to an older accounting period");
+CheckArgumentThrows(() => documentSequence.Configure(
+        "INV-", "", "{PREFIX}{NUMBER}", 6, DocumentNumberResetPeriod.Yearly, 1),
+    "A resetting sequence must include enough date tokens to remain unique");
+CheckArgumentThrows(() => documentSequence.Configure(
+        "INV-", "", "{PREFIX}{UNKNOWN}{NUMBER}", 6, DocumentNumberResetPeriod.Never, 1),
+    "Document numbering must reject unknown format tokens");
+CheckArgumentThrows(() => documentSequence.Configure(
+        "INV-", "", "{PREFIX}\n{NUMBER}", 6, DocumentNumberResetPeriod.Never, 1),
+    "Document numbering must reject hidden control characters");
+CheckArgumentThrows(() => documentSequence.Configure(
+        new string('P', 30), new string('S', 30), "{PREFIX}{NUMBER}{SUFFIX}", 18,
+        DocumentNumberResetPeriod.Never, 1),
+    "Document numbering must reject output longer than document database columns");
+
+var documentSequenceMetadata = db.Model.FindEntityType(typeof(DocumentSequence))!;
+var documentSequenceRowVersion = documentSequenceMetadata.FindProperty(nameof(DocumentSequence.RowVersion))!;
+Check(documentSequenceRowVersion.IsConcurrencyToken,
+    "Document numbering settings must use optimistic concurrency");
+Check(documentSequenceMetadata.GetIndexes().Any(index => index.IsUnique &&
+        index.Properties.Select(property => property.Name).SequenceEqual(new[] { "TenantId", nameof(DocumentSequence.DocumentType) })),
+    "Each company must have only one sequence per document type");
+
+var tenantRoleMetadata = db.Model.FindEntityType(typeof(TenantRole))!;
+Check(tenantRoleMetadata.FindProperty(nameof(TenantRole.RowVersion))!.IsConcurrencyToken,
+    "Company role definitions must use optimistic concurrency");
+Check(tenantRoleMetadata.GetIndexes().Any(index => index.IsUnique &&
+        index.Properties.Select(property => property.Name).SequenceEqual(
+            new[] { nameof(TenantRole.TenantId), nameof(TenantRole.NormalizedName) })),
+    "Role names must be unique inside one company while remaining reusable by another company");
+var assignmentMetadata = db.Model.FindEntityType(typeof(TenantUserRole))!;
+Check(assignmentMetadata.FindPrimaryKey()!.Properties.Select(x => x.Name).SequenceEqual(
+        new[] { nameof(TenantUserRole.TenantId), nameof(TenantUserRole.UserId), nameof(TenantUserRole.TenantRoleId) }),
+    "User-role assignments must be keyed by company, user and tenant-owned role");
+var tenantRoleAssignmentForeignKey = assignmentMetadata.GetForeignKeys().Single(foreignKey =>
+    foreignKey.PrincipalEntityType.ClrType == typeof(TenantRole));
+Check(tenantRoleAssignmentForeignKey.Properties.Select(property => property.Name).SequenceEqual(
+        new[] { nameof(TenantUserRole.TenantRoleId), nameof(TenantUserRole.TenantId) }) &&
+      tenantRoleAssignmentForeignKey.PrincipalKey.Properties.Select(property => property.Name).SequenceEqual(
+        new[] { nameof(TenantRole.Id), nameof(TenantRole.TenantId) }),
+    "The database relationship must prevent assigning a role owned by another company");
+Check(!typeof(RolesController).GetFields(BindingFlags.Instance | BindingFlags.NonPublic)
+        .Any(field => field.FieldType == typeof(AppDbContext) ||
+                      field.FieldType.IsGenericType && field.FieldType.GetGenericTypeDefinition() == typeof(RoleManager<>)),
+    "RolesController must use the Application service instead of EF or Identity role storage");
 foreach (var admin in new[] { false, true })
 {
     using var users = new StubUsers(db, admin);
@@ -142,6 +267,16 @@ Check(typeof(AccountController).GetMethods().Single(m => m.Name == "Login" && m.
     .GetCustomAttribute<Microsoft.AspNetCore.RateLimiting.EnableRateLimitingAttribute>()?.PolicyName == "login", "Login rate limiter missing");
 Check(typeof(AccountController).GetMethods().Single(m => m.Name == "Register" && m.GetCustomAttribute<HttpPostAttribute>() != null)
     .GetCustomAttribute<Microsoft.AspNetCore.RateLimiting.EnableRateLimitingAttribute>()?.PolicyName == "registration", "Registration rate limiter missing");
+Check(typeof(AccountController).GetMethods().Single(m =>
+        m.Name == "Register" && m.GetCustomAttribute<HttpGetAttribute>() != null)
+        .GetParameters().Select(parameter => parameter.Name)
+        .Contains("retryAfterSeconds"),
+    "Registration page must accept friendly rate-limit retry information");
+Check(typeof(MiniStore.Web.Areas.Platform.Controllers.PlatformAccountController).GetMethods().Single(m =>
+        m.Name == "Login" && m.GetCustomAttribute<HttpGetAttribute>() != null)
+        .GetParameters().Select(parameter => parameter.Name)
+        .Contains("retryAfterSeconds"),
+    "Platform login page must accept friendly rate-limit retry information");
 foreach (var controller in new[] { typeof(SettingsController), typeof(AccountsController), typeof(BranchesController), typeof(PaymentMethodsController), typeof(TaxRatesController), typeof(CustomersController) })
 {
     var policy = controller.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy;

@@ -1,0 +1,19 @@
+@using System.Globalization
+@model MiniStore.Application.DTOs.Security.TenantRoleEditDto
+@{ var ar = CultureInfo.CurrentUICulture.Name.StartsWith("ar"); var editing = Model.Id > 0; var groups = Model.Permissions.GroupBy(x => x.Group).OrderBy(x => x.Key); }
+<form asp-action="@(editing ? "Edit" : "Create")" method="post">
+    <input asp-for="Id" type="hidden" /><input asp-for="RowVersion" type="hidden" />
+    <div asp-validation-summary="All" class="alert alert-danger"></div>
+    <div class="row g-4">
+        <div class="col-lg-4"><div class="card border-0 shadow-sm"><div class="card-body">
+            <div class="mb-3"><label asp-for="Name" class="form-label">@(ar ? "اسم الدور" : "Role name")</label><input asp-for="Name" maxlength="80" class="form-control" required /></div>
+            <div><label asp-for="Description" class="form-label">@(ar ? "الوصف" : "Description")</label><textarea asp-for="Description" maxlength="300" rows="4" class="form-control"></textarea></div>
+        </div></div></div>
+        <div class="col-lg-8">
+            @foreach (var group in groups) { <div class="card border-0 shadow-sm mb-3"><div class="card-header bg-white"><strong>@group.Key</strong><span class="badge text-bg-light ms-2">@group.Count()</span></div><div class="card-body"><div class="row g-2">
+                @foreach (var permission in group) { var selected = Model.SelectedPermissionIds.Contains(permission.Id); <div class="col-md-6"><label class="border rounded p-3 w-100 h-100"><input type="checkbox" name="SelectedPermissionIds" value="@permission.Id" checked="@selected" class="form-check-input me-2" /><strong>@permission.DisplayName</strong><small class="d-block text-muted mt-1">@permission.Name</small></label></div> }
+            </div></div></div> }
+        </div>
+    </div>
+    <div class="d-flex justify-content-end gap-2 mt-4"><a asp-action="Index" class="btn btn-outline-secondary">@(ar ? "إلغاء" : "Cancel")</a><button class="btn btn-primary">@(editing ? (ar ? "حفظ التعديلات" : "Save changes") : (ar ? "إنشاء الدور" : "Create role"))</button></div>
+</form>

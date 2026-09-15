@@ -15,3 +15,5 @@
 | Architectural decision | architecture, ADR, affected module docs, TODO/worklog |
 
 Security regression executable: `tests/SecurityRegression` must be reviewed/run when changing permission evaluation, identity mutation policy or delete action HTTP methods. Shared policy helper is mapped in `01_CODEBASE_MAP.md`.
+
+Guided company setup changes map to tenancy/settings modules, tenancy entities, database tables/relationships/migrations, MVC controllers, screen map, settings services, security, testing, TODO, worklog and an ADR.

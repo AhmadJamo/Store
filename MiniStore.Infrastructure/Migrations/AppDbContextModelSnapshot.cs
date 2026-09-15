@@ -326,9 +326,9 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ParentAccountId");
-
                     b.HasIndex("TenantId");
+
+                    b.HasIndex("ParentAccountId", "TenantId");
 
                     b.HasIndex("TenantId", "Code")
                         .IsUnique();
@@ -364,15 +364,15 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CostOfSalesAccountId");
-
-                    b.HasIndex("PurchaseDiscountAccountId");
-
-                    b.HasIndex("SalesDiscountAccountId");
-
-                    b.HasIndex("SalesRevenueAccountId");
-
                     b.HasIndex("TenantId");
+
+                    b.HasIndex("CostOfSalesAccountId", "TenantId");
+
+                    b.HasIndex("PurchaseDiscountAccountId", "TenantId");
+
+                    b.HasIndex("SalesDiscountAccountId", "TenantId");
+
+                    b.HasIndex("SalesRevenueAccountId", "TenantId");
 
                     b.HasIndex("TenantId", "SingletonKey")
                         .IsUnique();
@@ -524,9 +524,9 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("SalesRevenueAccountId");
-
                     b.HasIndex("TenantId");
+
+                    b.HasIndex("SalesRevenueAccountId", "TenantId");
 
                     b.HasIndex("TenantId", "Code")
                         .IsUnique();
@@ -570,11 +570,72 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasIndex("TenantId");
 
-                    b.HasIndex("WarehouseId");
-
                     b.HasIndex("BranchId", "Priority");
 
+                    b.HasIndex("BranchId", "TenantId");
+
+                    b.HasIndex("WarehouseId", "TenantId");
+
                     b.ToTable("BranchWarehouseAccesses");
+                });
+
+            modelBuilder.Entity("MiniStore.Domain.Entities.CompanyOnboarding", b =>
+                {
+                    b.Property<int>("TenantId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("BusinessType")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("CompletedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CompletedByUserId")
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("CountryCode")
+                        .HasMaxLength(3)
+                        .HasColumnType("nvarchar(3)");
+
+                    b.Property<string>("Currency")
+                        .HasMaxLength(3)
+                        .HasColumnType("nvarchar(3)");
+
+                    b.Property<decimal?>("DefaultTaxRate")
+                        .HasPrecision(9, 4)
+                        .HasColumnType("decimal(9,4)");
+
+                    b.Property<int?>("FiscalYearStartMonth")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("InventoryControlMode")
+                        .HasColumnType("int");
+
+                    b.Property<bool?>("IsTaxRegistered")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("Language")
+                        .HasColumnType("int");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("TemplateVersion")
+                        .HasColumnType("int");
+
+                    b.Property<bool?>("UsePos")
+                        .HasColumnType("bit");
+
+                    b.HasKey("TenantId");
+
+                    b.ToTable("CompanyOnboardings");
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.Customer", b =>
@@ -598,9 +659,9 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AccountId");
-
                     b.HasIndex("TenantId");
+
+                    b.HasIndex("AccountId", "TenantId");
 
                     b.HasIndex("TenantId", "AccountId")
                         .IsUnique();
@@ -683,7 +744,7 @@ namespace MiniStore.Infrastructure.Migrations
                         });
                 });
 
-            modelBuilder.Entity("MiniStore.Domain.Entities.DocumentNumberSettings", b =>
+            modelBuilder.Entity("MiniStore.Domain.Entities.DocumentSequence", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -691,16 +752,45 @@ namespace MiniStore.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("NextStockTransferNumber")
+                    b.Property<string>("CurrentPeriodKey")
+                        .HasMaxLength(8)
+                        .HasColumnType("nvarchar(8)");
+
+                    b.Property<int>("DocumentType")
                         .HasColumnType("int");
+
+                    b.Property<string>("FormatTemplate")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("nvarchar(120)");
+
+                    b.Property<long>("NextNumber")
+                        .HasColumnType("bigint");
 
                     b.Property<int>("NumberLength")
                         .HasColumnType("int");
 
-                    b.Property<string>("StockTransferPrefix")
+                    b.Property<string>("Prefix")
                         .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<int>("ResetPeriod")
+                        .HasColumnType("int");
+
+                    b.Property<long>("ResetStartNumber")
+                        .HasColumnType("bigint");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<string>("Suffix")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
 
                     b.Property<int>("TenantId")
                         .HasColumnType("int");
@@ -709,7 +799,10 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasIndex("TenantId");
 
-                    b.ToTable("DocumentNumberSettings");
+                    b.HasIndex("TenantId", "DocumentType")
+                        .IsUnique();
+
+                    b.ToTable("DocumentSequences", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.InventorySettings", b =>
@@ -764,49 +857,6 @@ namespace MiniStore.Infrastructure.Migrations
                         {
                             t.HasCheckConstraint("CK_InventorySettings_SingletonKey", "[SingletonKey] = 1");
                         });
-                });
-
-            modelBuilder.Entity("MiniStore.Domain.Entities.InvoiceSettings", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("NextPosNumber")
-                        .HasColumnType("int");
-
-                    b.Property<int>("NextWholesaleNumber")
-                        .HasColumnType("int");
-
-                    b.Property<int>("NumberLength")
-                        .HasColumnType("int");
-
-                    b.Property<string>("PosPrefix")
-                        .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)");
-
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .IsRequired()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
-
-                    b.Property<int>("TenantId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("WholesalePrefix")
-                        .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("TenantId");
-
-                    b.ToTable("InvoiceSettings", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.JournalEntry", b =>
@@ -897,15 +947,15 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AccountId");
-
-                    b.HasIndex("BranchId");
-
-                    b.HasIndex("JournalEntryId");
-
                     b.HasIndex("TenantId");
 
-                    b.HasIndex("WarehouseId");
+                    b.HasIndex("AccountId", "TenantId");
+
+                    b.HasIndex("BranchId", "TenantId");
+
+                    b.HasIndex("JournalEntryId", "TenantId");
+
+                    b.HasIndex("WarehouseId", "TenantId");
 
                     b.ToTable("JournalEntryLines");
                 });
@@ -958,15 +1008,19 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("FromStorageLocationId");
-
                     b.HasIndex("TenantId");
 
-                    b.HasIndex("ToStorageLocationId");
+                    b.HasIndex("FromStorageLocationId", "TenantId");
 
                     b.HasIndex("ProductId", "CreatedAt");
 
+                    b.HasIndex("ProductId", "TenantId");
+
+                    b.HasIndex("ToStorageLocationId", "TenantId");
+
                     b.HasIndex("WarehouseId", "CreatedAt");
+
+                    b.HasIndex("WarehouseId", "TenantId");
 
                     b.ToTable("LocationMovements", (string)null);
                 });
@@ -995,9 +1049,9 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AccountId");
-
                     b.HasIndex("TenantId");
+
+                    b.HasIndex("AccountId", "TenantId");
 
                     b.HasIndex("TenantId", "Name")
                         .IsUnique();
@@ -1185,11 +1239,11 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BranchId");
-
-                    b.HasIndex("DefaultWarehouseId");
-
                     b.HasIndex("TenantId");
+
+                    b.HasIndex("BranchId", "TenantId");
+
+                    b.HasIndex("DefaultWarehouseId", "TenantId");
 
                     b.HasIndex("TenantId", "BranchId", "Name")
                         .IsUnique();
@@ -1210,9 +1264,11 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasKey("PosTerminalId", "ProductId");
 
-                    b.HasIndex("ProductId");
-
                     b.HasIndex("TenantId");
+
+                    b.HasIndex("PosTerminalId", "TenantId");
+
+                    b.HasIndex("ProductId", "TenantId");
 
                     b.ToTable("PosTerminalProducts");
                 });
@@ -1296,6 +1352,9 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasIndex("TenantId");
 
+                    b.HasIndex("PosTerminalId", "TenantId")
+                        .IsUnique();
+
                     b.ToTable("PosTerminalSettings");
                 });
 
@@ -1317,9 +1376,11 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasIndex("TenantId");
 
-                    b.HasIndex("WarehouseId");
-
                     b.HasIndex("PosTerminalId", "Priority");
+
+                    b.HasIndex("PosTerminalId", "TenantId");
+
+                    b.HasIndex("WarehouseId", "TenantId");
 
                     b.ToTable("PosTerminalWarehouses");
                 });
@@ -1396,13 +1457,13 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ProductId");
-
-                    b.HasIndex("StorageLocationId");
-
                     b.HasIndex("TenantId");
 
-                    b.HasIndex("WarehouseId");
+                    b.HasIndex("ProductId", "TenantId");
+
+                    b.HasIndex("StorageLocationId", "TenantId");
+
+                    b.HasIndex("WarehouseId", "TenantId");
 
                     b.HasIndex("TenantId", "ProductId", "StorageLocationId")
                         .IsUnique();
@@ -1439,11 +1500,11 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ProductId");
-
                     b.HasIndex("TenantId");
 
-                    b.HasIndex("WarehouseId");
+                    b.HasIndex("ProductId", "TenantId");
+
+                    b.HasIndex("WarehouseId", "TenantId");
 
                     b.HasIndex("TenantId", "ProductId", "WarehouseId")
                         .IsUnique();
@@ -1528,12 +1589,12 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("SubscriptionId");
-
                     b.HasIndex("TenantId");
 
                     b.HasIndex("PromotionCodeId", "TenantId")
                         .IsUnique();
+
+                    b.HasIndex("SubscriptionId", "TenantId");
 
                     b.ToTable("PromotionRedemptions");
                 });
@@ -1573,14 +1634,14 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("SupplierId");
-
                     b.HasIndex("TenantId");
 
-                    b.HasIndex("WarehouseId");
+                    b.HasIndex("SupplierId", "TenantId");
 
                     b.HasIndex("TenantId", "InvoiceNumber")
                         .IsUnique();
+
+                    b.HasIndex("WarehouseId", "TenantId");
 
                     b.ToTable("Purchases");
                 });
@@ -1626,43 +1687,17 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ProductId");
-
-                    b.HasIndex("PurchaseId");
-
-                    b.HasIndex("TaxRateId");
-
                     b.HasIndex("TenantId");
 
-                    b.HasIndex("WarehouseId");
+                    b.HasIndex("ProductId", "TenantId");
+
+                    b.HasIndex("PurchaseId", "TenantId");
+
+                    b.HasIndex("TaxRateId", "TenantId");
+
+                    b.HasIndex("WarehouseId", "TenantId");
 
                     b.ToTable("PurchaseItems");
-                });
-
-            modelBuilder.Entity("MiniStore.Domain.Entities.RolePermission", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("PermissionId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("RoleId")
-                        .IsRequired()
-                        .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PermissionId");
-
-                    b.HasIndex("RoleId", "PermissionId")
-                        .IsUnique();
-
-                    b.ToTable("RolePermissions", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.Sale", b =>
@@ -1738,18 +1773,18 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CustomerId");
-
-                    b.HasIndex("PaymentMethodId");
-
-                    b.HasIndex("PosTerminalId");
-
                     b.HasIndex("TenantId");
 
-                    b.HasIndex("WarehouseId");
+                    b.HasIndex("CustomerId", "TenantId");
+
+                    b.HasIndex("PaymentMethodId", "TenantId");
+
+                    b.HasIndex("PosTerminalId", "TenantId");
 
                     b.HasIndex("TenantId", "InvoiceNumber")
                         .IsUnique();
+
+                    b.HasIndex("WarehouseId", "TenantId");
 
                     b.ToTable("Sales", (string)null);
                 });
@@ -1798,11 +1833,11 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ProductId");
-
-                    b.HasIndex("SaleId");
-
                     b.HasIndex("TenantId");
+
+                    b.HasIndex("ProductId", "TenantId");
+
+                    b.HasIndex("SaleId", "TenantId");
 
                     b.ToTable("SaleItems", (string)null);
                 });
@@ -1842,9 +1877,11 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasIndex("TenantId");
 
-                    b.HasIndex("WarehouseId");
+                    b.HasIndex("ProductId", "TenantId");
 
                     b.HasIndex("ProductId", "WarehouseId");
+
+                    b.HasIndex("WarehouseId", "TenantId");
 
                     b.ToTable("StockTransactions");
                 });
@@ -1941,16 +1978,16 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("FromWarehouseId");
-
                     b.HasIndex("TenantId");
 
-                    b.HasIndex("ToWarehouseId");
+                    b.HasIndex("FromWarehouseId", "TenantId");
 
                     b.HasIndex("Status", "CreatedAt");
 
                     b.HasIndex("TenantId", "TransferNumber")
                         .IsUnique();
+
+                    b.HasIndex("ToWarehouseId", "TenantId");
 
                     b.ToTable("StockTransfers");
                 });
@@ -1996,6 +2033,8 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasIndex("StockTransferId", "CreatedAt");
 
+                    b.HasIndex("StockTransferId", "TenantId");
+
                     b.ToTable("StockTransferHistories");
                 });
 
@@ -2028,15 +2067,15 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("DestinationLocationId");
-
-                    b.HasIndex("ProductId");
-
-                    b.HasIndex("SourceLocationId");
-
-                    b.HasIndex("StockTransferId");
-
                     b.HasIndex("TenantId");
+
+                    b.HasIndex("DestinationLocationId", "TenantId");
+
+                    b.HasIndex("ProductId", "TenantId");
+
+                    b.HasIndex("SourceLocationId", "TenantId");
+
+                    b.HasIndex("StockTransferId", "TenantId");
 
                     b.HasIndex("TenantId", "StockTransferId", "ProductId")
                         .IsUnique();
@@ -2097,7 +2136,7 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasIndex("TenantId");
 
-                    b.HasIndex("WarehouseId");
+                    b.HasIndex("WarehouseId", "TenantId");
 
                     b.HasIndex("TenantId", "WarehouseId", "Code")
                         .IsUnique();
@@ -2134,9 +2173,9 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AccountId");
-
                     b.HasIndex("TenantId");
+
+                    b.HasIndex("AccountId", "TenantId");
 
                     b.ToTable("Suppliers");
                 });
@@ -2172,11 +2211,11 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("InputAccountId");
-
-                    b.HasIndex("OutputAccountId");
-
                     b.HasIndex("TenantId");
+
+                    b.HasIndex("InputAccountId", "TenantId");
+
+                    b.HasIndex("OutputAccountId", "TenantId");
 
                     b.ToTable("TaxRates");
                 });
@@ -2244,6 +2283,63 @@ namespace MiniStore.Infrastructure.Migrations
                     b.ToTable("TenantMemberships");
                 });
 
+            modelBuilder.Entity("MiniStore.Domain.Entities.TenantRole", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.Property<bool>("IsSystem")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("nvarchar(80)");
+
+                    b.Property<string>("NormalizedName")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("nvarchar(80)");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<int>("TenantId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TenantId", "NormalizedName")
+                        .IsUnique();
+
+                    b.ToTable("TenantRoles", (string)null);
+                });
+
+            modelBuilder.Entity("MiniStore.Domain.Entities.TenantRolePermission", b =>
+                {
+                    b.Property<int>("TenantRoleId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PermissionId")
+                        .HasColumnType("int");
+
+                    b.HasKey("TenantRoleId", "PermissionId");
+
+                    b.HasIndex("PermissionId");
+
+                    b.ToTable("TenantRolePermissions", (string)null);
+                });
+
             modelBuilder.Entity("MiniStore.Domain.Entities.TenantSubscription", b =>
                 {
                     b.Property<int>("Id")
@@ -2309,17 +2405,16 @@ namespace MiniStore.Infrastructure.Migrations
                         .HasMaxLength(450)
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("RoleId")
-                        .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("TenantRoleId")
+                        .HasColumnType("int");
 
-                    b.HasKey("TenantId", "UserId", "RoleId");
-
-                    b.HasIndex("RoleId");
+                    b.HasKey("TenantId", "UserId", "TenantRoleId");
 
                     b.HasIndex("UserId");
 
                     b.HasIndex("TenantId", "UserId");
+
+                    b.HasIndex("TenantRoleId", "TenantId");
 
                     b.ToTable("TenantUserRoles");
                 });
@@ -2369,11 +2464,11 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BranchId");
-
-                    b.HasIndex("InventoryAccountId");
-
                     b.HasIndex("TenantId");
+
+                    b.HasIndex("BranchId", "TenantId");
+
+                    b.HasIndex("InventoryAccountId", "TenantId");
 
                     b.ToTable("Warehouses");
                 });
@@ -2440,45 +2535,50 @@ namespace MiniStore.Infrastructure.Migrations
 
             modelBuilder.Entity("MiniStore.Domain.Entities.Account", b =>
                 {
-                    b.HasOne("MiniStore.Domain.Entities.Account", null)
-                        .WithMany()
-                        .HasForeignKey("ParentAccountId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("MiniStore.Domain.Entities.Tenant", null)
                         .WithMany()
                         .HasForeignKey("TenantId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.HasOne("MiniStore.Domain.Entities.Account", null)
+                        .WithMany()
+                        .HasForeignKey("ParentAccountId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.AccountingSettings", b =>
                 {
-                    b.HasOne("MiniStore.Domain.Entities.Account", null)
-                        .WithMany()
-                        .HasForeignKey("CostOfSalesAccountId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("MiniStore.Domain.Entities.Account", null)
-                        .WithMany()
-                        .HasForeignKey("PurchaseDiscountAccountId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("MiniStore.Domain.Entities.Account", null)
-                        .WithMany()
-                        .HasForeignKey("SalesDiscountAccountId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("MiniStore.Domain.Entities.Account", null)
-                        .WithMany()
-                        .HasForeignKey("SalesRevenueAccountId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("MiniStore.Domain.Entities.Tenant", null)
                         .WithMany()
                         .HasForeignKey("TenantId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.HasOne("MiniStore.Domain.Entities.Account", null)
+                        .WithMany()
+                        .HasForeignKey("CostOfSalesAccountId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("MiniStore.Domain.Entities.Account", null)
+                        .WithMany()
+                        .HasForeignKey("PurchaseDiscountAccountId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("MiniStore.Domain.Entities.Account", null)
+                        .WithMany()
+                        .HasForeignKey("SalesDiscountAccountId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("MiniStore.Domain.Entities.Account", null)
+                        .WithMany()
+                        .HasForeignKey("SalesRevenueAccountId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.AuditLog", b =>
@@ -2512,50 +2612,63 @@ namespace MiniStore.Infrastructure.Migrations
 
             modelBuilder.Entity("MiniStore.Domain.Entities.Branch", b =>
                 {
-                    b.HasOne("MiniStore.Domain.Entities.Account", null)
-                        .WithMany()
-                        .HasForeignKey("SalesRevenueAccountId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("MiniStore.Domain.Entities.Tenant", null)
                         .WithMany()
                         .HasForeignKey("TenantId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.HasOne("MiniStore.Domain.Entities.Account", null)
+                        .WithMany()
+                        .HasForeignKey("SalesRevenueAccountId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.BranchWarehouseAccess", b =>
                 {
-                    b.HasOne("MiniStore.Domain.Entities.Branch", null)
-                        .WithMany()
-                        .HasForeignKey("BranchId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("MiniStore.Domain.Entities.Tenant", null)
                         .WithMany()
                         .HasForeignKey("TenantId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("MiniStore.Domain.Entities.Branch", null)
+                        .WithMany()
+                        .HasForeignKey("BranchId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("MiniStore.Domain.Entities.Warehouse", null)
                         .WithMany()
-                        .HasForeignKey("WarehouseId")
+                        .HasForeignKey("WarehouseId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
                         .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("MiniStore.Domain.Entities.CompanyOnboarding", b =>
+                {
+                    b.HasOne("MiniStore.Domain.Entities.Tenant", null)
+                        .WithOne()
+                        .HasForeignKey("MiniStore.Domain.Entities.CompanyOnboarding", "TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.Customer", b =>
                 {
-                    b.HasOne("MiniStore.Domain.Entities.Account", null)
-                        .WithMany()
-                        .HasForeignKey("AccountId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("MiniStore.Domain.Entities.Tenant", null)
                         .WithMany()
                         .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MiniStore.Domain.Entities.Account", null)
+                        .WithMany()
+                        .HasForeignKey("AccountId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
@@ -2569,7 +2682,7 @@ namespace MiniStore.Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("MiniStore.Domain.Entities.DocumentNumberSettings", b =>
+            modelBuilder.Entity("MiniStore.Domain.Entities.DocumentSequence", b =>
                 {
                     b.HasOne("MiniStore.Domain.Entities.Tenant", null)
                         .WithMany()
@@ -2579,15 +2692,6 @@ namespace MiniStore.Infrastructure.Migrations
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.InventorySettings", b =>
-                {
-                    b.HasOne("MiniStore.Domain.Entities.Tenant", null)
-                        .WithMany()
-                        .HasForeignKey("TenantId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("MiniStore.Domain.Entities.InvoiceSettings", b =>
                 {
                     b.HasOne("MiniStore.Domain.Entities.Tenant", null)
                         .WithMany()
@@ -2607,48 +2711,41 @@ namespace MiniStore.Infrastructure.Migrations
 
             modelBuilder.Entity("MiniStore.Domain.Entities.JournalEntryLine", b =>
                 {
+                    b.HasOne("MiniStore.Domain.Entities.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("MiniStore.Domain.Entities.Account", null)
                         .WithMany()
-                        .HasForeignKey("AccountId")
+                        .HasForeignKey("AccountId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("MiniStore.Domain.Entities.Branch", null)
                         .WithMany()
-                        .HasForeignKey("BranchId")
+                        .HasForeignKey("BranchId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("MiniStore.Domain.Entities.JournalEntry", null)
                         .WithMany("Lines")
-                        .HasForeignKey("JournalEntryId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("MiniStore.Domain.Entities.Tenant", null)
-                        .WithMany()
-                        .HasForeignKey("TenantId")
+                        .HasForeignKey("JournalEntryId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("MiniStore.Domain.Entities.Warehouse", null)
                         .WithMany()
-                        .HasForeignKey("WarehouseId")
+                        .HasForeignKey("WarehouseId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
                         .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.LocationMovement", b =>
                 {
-                    b.HasOne("MiniStore.Domain.Entities.StorageLocation", null)
-                        .WithMany()
-                        .HasForeignKey("FromStorageLocationId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("MiniStore.Domain.Entities.Product", null)
-                        .WithMany()
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("MiniStore.Domain.Entities.Tenant", null)
                         .WithMany()
                         .HasForeignKey("TenantId")
@@ -2657,28 +2754,44 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasOne("MiniStore.Domain.Entities.StorageLocation", null)
                         .WithMany()
-                        .HasForeignKey("ToStorageLocationId")
+                        .HasForeignKey("FromStorageLocationId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("MiniStore.Domain.Entities.Product", null)
+                        .WithMany()
+                        .HasForeignKey("ProductId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MiniStore.Domain.Entities.StorageLocation", null)
+                        .WithMany()
+                        .HasForeignKey("ToStorageLocationId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("MiniStore.Domain.Entities.Warehouse", null)
                         .WithMany()
-                        .HasForeignKey("WarehouseId")
+                        .HasForeignKey("WarehouseId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.PaymentMethod", b =>
                 {
-                    b.HasOne("MiniStore.Domain.Entities.Account", null)
-                        .WithMany()
-                        .HasForeignKey("AccountId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("MiniStore.Domain.Entities.Tenant", null)
                         .WithMany()
                         .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MiniStore.Domain.Entities.Account", null)
+                        .WithMany()
+                        .HasForeignKey("AccountId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
@@ -2712,78 +2825,85 @@ namespace MiniStore.Infrastructure.Migrations
 
             modelBuilder.Entity("MiniStore.Domain.Entities.PosTerminal", b =>
                 {
+                    b.HasOne("MiniStore.Domain.Entities.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("MiniStore.Domain.Entities.Branch", null)
                         .WithMany()
-                        .HasForeignKey("BranchId")
+                        .HasForeignKey("BranchId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("MiniStore.Domain.Entities.Warehouse", null)
                         .WithMany()
-                        .HasForeignKey("DefaultWarehouseId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("MiniStore.Domain.Entities.Tenant", null)
-                        .WithMany()
-                        .HasForeignKey("TenantId")
+                        .HasForeignKey("DefaultWarehouseId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.PosTerminalProduct", b =>
                 {
+                    b.HasOne("MiniStore.Domain.Entities.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("MiniStore.Domain.Entities.PosTerminal", null)
                         .WithMany()
-                        .HasForeignKey("PosTerminalId")
+                        .HasForeignKey("PosTerminalId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("MiniStore.Domain.Entities.Product", null)
                         .WithMany()
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("MiniStore.Domain.Entities.Tenant", null)
-                        .WithMany()
-                        .HasForeignKey("TenantId")
+                        .HasForeignKey("ProductId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.PosTerminalSettings", b =>
                 {
-                    b.HasOne("MiniStore.Domain.Entities.PosTerminal", null)
-                        .WithOne()
-                        .HasForeignKey("MiniStore.Domain.Entities.PosTerminalSettings", "PosTerminalId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("MiniStore.Domain.Entities.Tenant", null)
                         .WithMany()
                         .HasForeignKey("TenantId")
                         .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MiniStore.Domain.Entities.PosTerminal", null)
+                        .WithOne()
+                        .HasForeignKey("MiniStore.Domain.Entities.PosTerminalSettings", "PosTerminalId", "TenantId")
+                        .HasPrincipalKey("MiniStore.Domain.Entities.PosTerminal", "Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.PosTerminalWarehouse", b =>
                 {
-                    b.HasOne("MiniStore.Domain.Entities.PosTerminal", null)
-                        .WithMany("Warehouses")
-                        .HasForeignKey("PosTerminalId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("MiniStore.Domain.Entities.Tenant", null)
                         .WithMany()
                         .HasForeignKey("TenantId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("MiniStore.Domain.Entities.PosTerminal", null)
+                        .WithMany("Warehouses")
+                        .HasForeignKey("PosTerminalId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("MiniStore.Domain.Entities.Warehouse", null)
                         .WithMany()
-                        .HasForeignKey("WarehouseId")
+                        .HasForeignKey("WarehouseId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
@@ -2799,48 +2919,53 @@ namespace MiniStore.Infrastructure.Migrations
 
             modelBuilder.Entity("MiniStore.Domain.Entities.ProductLocationStock", b =>
                 {
-                    b.HasOne("MiniStore.Domain.Entities.Product", null)
-                        .WithMany()
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("MiniStore.Domain.Entities.StorageLocation", null)
-                        .WithMany()
-                        .HasForeignKey("StorageLocationId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("MiniStore.Domain.Entities.Tenant", null)
                         .WithMany()
                         .HasForeignKey("TenantId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("MiniStore.Domain.Entities.Product", null)
+                        .WithMany()
+                        .HasForeignKey("ProductId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MiniStore.Domain.Entities.StorageLocation", null)
+                        .WithMany()
+                        .HasForeignKey("StorageLocationId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("MiniStore.Domain.Entities.Warehouse", null)
                         .WithMany()
-                        .HasForeignKey("WarehouseId")
+                        .HasForeignKey("WarehouseId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.ProductStock", b =>
                 {
-                    b.HasOne("MiniStore.Domain.Entities.Product", null)
-                        .WithMany()
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("MiniStore.Domain.Entities.Tenant", null)
                         .WithMany()
                         .HasForeignKey("TenantId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("MiniStore.Domain.Entities.Product", null)
+                        .WithMany()
+                        .HasForeignKey("ProductId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("MiniStore.Domain.Entities.Warehouse", null)
                         .WithMany()
-                        .HasForeignKey("WarehouseId")
+                        .HasForeignKey("WarehouseId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
@@ -2861,162 +2986,160 @@ namespace MiniStore.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("MiniStore.Domain.Entities.TenantSubscription", null)
-                        .WithMany()
-                        .HasForeignKey("SubscriptionId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("MiniStore.Domain.Entities.Tenant", null)
                         .WithMany()
                         .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MiniStore.Domain.Entities.TenantSubscription", null)
+                        .WithMany()
+                        .HasForeignKey("SubscriptionId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.Purchase", b =>
                 {
-                    b.HasOne("MiniStore.Domain.Entities.Supplier", null)
-                        .WithMany()
-                        .HasForeignKey("SupplierId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("MiniStore.Domain.Entities.Tenant", null)
                         .WithMany()
                         .HasForeignKey("TenantId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("MiniStore.Domain.Entities.Supplier", null)
+                        .WithMany()
+                        .HasForeignKey("SupplierId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("MiniStore.Domain.Entities.Warehouse", null)
                         .WithMany()
-                        .HasForeignKey("WarehouseId")
+                        .HasForeignKey("WarehouseId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.PurchaseItem", b =>
                 {
+                    b.HasOne("MiniStore.Domain.Entities.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("MiniStore.Domain.Entities.Product", null)
                         .WithMany()
-                        .HasForeignKey("ProductId")
+                        .HasForeignKey("ProductId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("MiniStore.Domain.Entities.Purchase", null)
                         .WithMany("Items")
-                        .HasForeignKey("PurchaseId")
+                        .HasForeignKey("PurchaseId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("MiniStore.Domain.Entities.TaxRate", null)
                         .WithMany()
-                        .HasForeignKey("TaxRateId")
+                        .HasForeignKey("TaxRateId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
                         .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("MiniStore.Domain.Entities.Tenant", null)
-                        .WithMany()
-                        .HasForeignKey("TenantId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
 
                     b.HasOne("MiniStore.Domain.Entities.Warehouse", null)
                         .WithMany()
-                        .HasForeignKey("WarehouseId")
+                        .HasForeignKey("WarehouseId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
                         .OnDelete(DeleteBehavior.Restrict);
-                });
-
-            modelBuilder.Entity("MiniStore.Domain.Entities.RolePermission", b =>
-                {
-                    b.HasOne("MiniStore.Domain.Entities.Permission", "Permission")
-                        .WithMany()
-                        .HasForeignKey("PermissionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Permission");
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.Sale", b =>
                 {
-                    b.HasOne("MiniStore.Domain.Entities.Customer", null)
-                        .WithMany()
-                        .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("MiniStore.Domain.Entities.PaymentMethod", null)
-                        .WithMany()
-                        .HasForeignKey("PaymentMethodId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("MiniStore.Domain.Entities.PosTerminal", null)
-                        .WithMany()
-                        .HasForeignKey("PosTerminalId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("MiniStore.Domain.Entities.Tenant", null)
                         .WithMany()
                         .HasForeignKey("TenantId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("MiniStore.Domain.Entities.Customer", null)
+                        .WithMany()
+                        .HasForeignKey("CustomerId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("MiniStore.Domain.Entities.PaymentMethod", null)
+                        .WithMany()
+                        .HasForeignKey("PaymentMethodId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("MiniStore.Domain.Entities.PosTerminal", null)
+                        .WithMany()
+                        .HasForeignKey("PosTerminalId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("MiniStore.Domain.Entities.Warehouse", null)
                         .WithMany()
-                        .HasForeignKey("WarehouseId")
+                        .HasForeignKey("WarehouseId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.SaleItem", b =>
                 {
+                    b.HasOne("MiniStore.Domain.Entities.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("MiniStore.Domain.Entities.Product", null)
                         .WithMany()
-                        .HasForeignKey("ProductId")
+                        .HasForeignKey("ProductId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("MiniStore.Domain.Entities.Sale", null)
                         .WithMany("Items")
-                        .HasForeignKey("SaleId")
+                        .HasForeignKey("SaleId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MiniStore.Domain.Entities.Tenant", null)
-                        .WithMany()
-                        .HasForeignKey("TenantId")
-                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.StockTransaction", b =>
                 {
-                    b.HasOne("MiniStore.Domain.Entities.Product", null)
-                        .WithMany()
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("MiniStore.Domain.Entities.Tenant", null)
                         .WithMany()
                         .HasForeignKey("TenantId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("MiniStore.Domain.Entities.Product", null)
+                        .WithMany()
+                        .HasForeignKey("ProductId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("MiniStore.Domain.Entities.Warehouse", null)
                         .WithMany()
-                        .HasForeignKey("WarehouseId")
+                        .HasForeignKey("WarehouseId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.StockTransfer", b =>
                 {
-                    b.HasOne("MiniStore.Domain.Entities.Warehouse", null)
-                        .WithMany()
-                        .HasForeignKey("FromWarehouseId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("MiniStore.Domain.Entities.Tenant", null)
                         .WithMany()
                         .HasForeignKey("TenantId")
@@ -3025,53 +3148,66 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasOne("MiniStore.Domain.Entities.Warehouse", null)
                         .WithMany()
-                        .HasForeignKey("ToWarehouseId")
+                        .HasForeignKey("FromWarehouseId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MiniStore.Domain.Entities.Warehouse", null)
+                        .WithMany()
+                        .HasForeignKey("ToWarehouseId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.StockTransferHistory", b =>
                 {
-                    b.HasOne("MiniStore.Domain.Entities.StockTransfer", null)
-                        .WithMany("History")
-                        .HasForeignKey("StockTransferId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("MiniStore.Domain.Entities.Tenant", null)
                         .WithMany()
                         .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MiniStore.Domain.Entities.StockTransfer", null)
+                        .WithMany("History")
+                        .HasForeignKey("StockTransferId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.StockTransferItem", b =>
                 {
+                    b.HasOne("MiniStore.Domain.Entities.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("MiniStore.Domain.Entities.StorageLocation", null)
                         .WithMany()
-                        .HasForeignKey("DestinationLocationId")
+                        .HasForeignKey("DestinationLocationId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("MiniStore.Domain.Entities.Product", null)
                         .WithMany()
-                        .HasForeignKey("ProductId")
+                        .HasForeignKey("ProductId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("MiniStore.Domain.Entities.StorageLocation", null)
                         .WithMany()
-                        .HasForeignKey("SourceLocationId")
+                        .HasForeignKey("SourceLocationId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("MiniStore.Domain.Entities.StockTransfer", null)
                         .WithMany("Items")
-                        .HasForeignKey("StockTransferId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("MiniStore.Domain.Entities.Tenant", null)
-                        .WithMany()
-                        .HasForeignKey("TenantId")
+                        .HasForeignKey("StockTransferId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
@@ -3086,42 +3222,46 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasOne("MiniStore.Domain.Entities.Warehouse", null)
                         .WithMany()
-                        .HasForeignKey("WarehouseId")
+                        .HasForeignKey("WarehouseId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.Supplier", b =>
                 {
-                    b.HasOne("MiniStore.Domain.Entities.Account", null)
-                        .WithMany()
-                        .HasForeignKey("AccountId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("MiniStore.Domain.Entities.Tenant", null)
                         .WithMany()
                         .HasForeignKey("TenantId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.HasOne("MiniStore.Domain.Entities.Account", null)
+                        .WithMany()
+                        .HasForeignKey("AccountId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.TaxRate", b =>
                 {
-                    b.HasOne("MiniStore.Domain.Entities.Account", null)
-                        .WithMany()
-                        .HasForeignKey("InputAccountId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("MiniStore.Domain.Entities.Account", null)
-                        .WithMany()
-                        .HasForeignKey("OutputAccountId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("MiniStore.Domain.Entities.Tenant", null)
                         .WithMany()
                         .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MiniStore.Domain.Entities.Account", null)
+                        .WithMany()
+                        .HasForeignKey("InputAccountId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MiniStore.Domain.Entities.Account", null)
+                        .WithMany()
+                        .HasForeignKey("OutputAccountId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
@@ -3141,6 +3281,32 @@ namespace MiniStore.Infrastructure.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("MiniStore.Domain.Entities.TenantRole", b =>
+                {
+                    b.HasOne("MiniStore.Domain.Entities.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("MiniStore.Domain.Entities.TenantRolePermission", b =>
+                {
+                    b.HasOne("MiniStore.Domain.Entities.Permission", "Permission")
+                        .WithMany()
+                        .HasForeignKey("PermissionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MiniStore.Domain.Entities.TenantRole", null)
+                        .WithMany()
+                        .HasForeignKey("TenantRoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Permission");
+                });
+
             modelBuilder.Entity("MiniStore.Domain.Entities.TenantSubscription", b =>
                 {
                     b.HasOne("MiniStore.Domain.Entities.Plan", null)
@@ -3158,12 +3324,6 @@ namespace MiniStore.Infrastructure.Migrations
 
             modelBuilder.Entity("MiniStore.Domain.Entities.TenantUserRole", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
-                        .WithMany()
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("MiniStore.Domain.Entities.Tenant", null)
                         .WithMany()
                         .HasForeignKey("TenantId")
@@ -3175,25 +3335,34 @@ namespace MiniStore.Infrastructure.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("MiniStore.Domain.Entities.TenantRole", null)
+                        .WithMany()
+                        .HasForeignKey("TenantRoleId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.Warehouse", b =>
                 {
-                    b.HasOne("MiniStore.Domain.Entities.Branch", null)
-                        .WithMany()
-                        .HasForeignKey("BranchId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("MiniStore.Domain.Entities.Account", null)
-                        .WithMany()
-                        .HasForeignKey("InventoryAccountId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("MiniStore.Domain.Entities.Tenant", null)
                         .WithMany()
                         .HasForeignKey("TenantId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.HasOne("MiniStore.Domain.Entities.Branch", null)
+                        .WithMany()
+                        .HasForeignKey("BranchId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("MiniStore.Domain.Entities.Account", null)
+                        .WithMany()
+                        .HasForeignKey("InventoryAccountId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.JournalEntry", b =>

@@ -4,12 +4,12 @@
 Schema source is `AppDbContext`, configurations and migrations. Identity's standard `AspNet*` tables are supplied by IdentityDbContext.
 
 - **Tenants:** company identity, unique URL-safe Slug, active state, creation time and RowVersion.
-- **TenantMemberships / TenantUserRoles:** company membership plus tenant-scoped role assignment; Admin status is evaluated inside the active company.
+- **TenantMemberships / TenantRoles / TenantRolePermissions / TenantUserRoles:** company membership, tenant-owned role definitions and permission/user assignments; Admin status is evaluated inside the active company.
 - **Plans / PlanFeatures / PlanLimits / TenantSubscriptions:** bilingual plan catalogue, entitlements and one lifecycle-aware subscription per company.
 - **PlatformOperators:** explicit platform-owner/admin/billing allow-list, separate from tenant Admin.
 - **PromotionCodes / PromotionRedemptions:** percentage promotions bounded by time, plan, total use and one use per company.
 - **BillingCheckoutSessions:** priced monthly/annual quotes with expiry, promotion, status, confirmation reference and rowversion.
-- **Tenant ownership:** every ERP business table below also carries required TenantId with a restrictive Tenant FK. Tenant-aware unique indexes allow each company its own codes, invoice numbers and singleton settings.
+- **Tenant ownership:** every ERP business table below also carries required TenantId with a restrictive Tenant FK. Tenant-aware unique indexes allow each company its own codes, invoice numbers and singleton settings. All relationships between TenantId-bearing records use matching composite foreign keys; the database rejects cross-company references.
 
 - **Products:** Id, Name, Barcode, PurchasePrice, SalePrice, WholesalePrice; all prices decimal(18,2).
 - **Accounts / Branches:** chart account code/name/type/parent and branch code/name with optional SalesRevenueAccountId subaccount mapping.
@@ -31,8 +31,12 @@ Schema source is `AppDbContext`, configurations and migrations. Identity's stand
 - **Purchases:** header plus items containing ProductId, WarehouseId?, Quantity, PurchasePrice, DiscountAmount, TaxRateId? and Total; new invoices select warehouse per item.
 - **Sales:** Id, InvoiceNumber, Channel, CreatedByUserId, CreatedAt, WarehouseId, PosTerminalId?, CustomerId?, PaymentMethodId?, Date, Notes?, PosOrderType?, ServiceReference?, GuestCount? and subtotal/discount/total fields; SaleItems may hold a preparation note. POS sales retain terminal and order context for audit while historical/legacy values may be null.
 - **StockTransfers:** identity, transfer number, source/destination warehouse, status, actor/time/reason fields; each item may identify optional exact source and destination storage locations.
-- **Permissions / RolePermissions:** permission catalogue and Identity role mapping.
+- **Permissions:** global technical permission catalogue selected by tenant-owned role mappings.
 - **AuditLogs:** EntityName, EntityId, Action, UserId, CreatedAt.
-- **GeneralSettings / DiscountSettings / InventorySettings / InvoiceSettings / DocumentNumberSettings:** application settings; GeneralSettings stores the English/Arabic default UI language and InventorySettings stores rowversion-protected defaults for new warehouse operating policies.
+- **GeneralSettings / DiscountSettings / InventorySettings:** company settings; GeneralSettings stores the English/Arabic default UI language and InventorySettings stores rowversion-protected defaults for new warehouse operating policies.
+- **DocumentSequences:** tenant-specific numbering for wholesale sales, POS sales, stock transfers and journal entries. Each row stores prefix, suffix, tokenized format, padding length, next number, reset start/period/current period and rowversion.
 
 See `03_DATABASE.md` for constraints and `entities/*.md` for behaviour.
+
+## CompanyOnboardings
+One row per tenant stores guided-setup status and choices, template/audit metadata and rowversion. TenantId is both the primary key and cascading FK to Tenants. This is explicitly tenant-addressed control-plane state.
