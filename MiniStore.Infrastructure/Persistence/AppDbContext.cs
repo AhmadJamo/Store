@@ -38,6 +38,9 @@ public class AppDbContext
     public DbSet<CompanyOnboarding> CompanyOnboardings => Set<CompanyOnboarding>();
 
     public DbSet<Product> Products => Set<Product>();
+    public DbSet<ProductRecipe> ProductRecipes => Set<ProductRecipe>();
+    public DbSet<RecipeIngredient> RecipeIngredients => Set<RecipeIngredient>();
+    public DbSet<MeasurementUnit> MeasurementUnits => Set<MeasurementUnit>();
 
     public DbSet<Warehouse> Warehouses
         => Set<Warehouse>();

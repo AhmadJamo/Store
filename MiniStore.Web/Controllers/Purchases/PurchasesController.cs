@@ -148,8 +148,10 @@ public class PurchasesController : Controller
         ViewBag.Warehouses =
             await _warehouseRepository.GetAllAsync();
 
-        ViewBag.Products =
-            await _productRepository.GetAllAsync(null);
+        ViewBag.Products = (await _productRepository.GetAllAsync(null))
+            .Where(product => product.IsActive &&
+                product.ProductType != MiniStore.Domain.Entities.ProductType.PreparedToOrder)
+            .ToList();
 
         ViewBag.TaxRates = await _taxRateService.GetAllAsync();
     }

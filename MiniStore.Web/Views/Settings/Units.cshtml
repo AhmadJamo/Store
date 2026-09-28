@@ -1,0 +1,88 @@
+@model MiniStore.Application.DTOs.Settings.MeasurementUnitsPageDto
+@using MiniStore.Domain.Entities
+@inject Microsoft.Extensions.Localization.IStringLocalizer<MiniStore.Web.SharedResource> Localizer
+
+@{ ViewData["Title"] = "Measurement Units"; }
+
+<div class="d-flex justify-content-between align-items-start mb-4">
+    <div>
+        <h1>@Localizer["Measurement Units"]</h1>
+        <p class="text-muted mb-0">@Localizer["Conversion factors are measured against the base unit of the same dimension: piece for count, gram for mass, and milliliter for volume."]</p>
+    </div>
+    <a asp-action="Index" class="btn btn-outline-secondary">@Localizer["Back to Settings"]</a>
+</div>
+
+<div class="card mb-4">
+    <div class="card-header fw-semibold">@Localizer["Add measurement unit"]</div>
+    <div class="card-body">
+        <form asp-action="Units" method="post">
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+            <div class="row g-3 align-items-end">
+                <div class="col-md-2">
+                    <label asp-for="NewUnit.Code" class="form-label">@Localizer["Code"]</label>
+                    <input asp-for="NewUnit.Code" name="Code" class="form-control" placeholder="BOX" />
+                </div>
+                <div class="col-md-3">
+                    <label asp-for="NewUnit.Name" class="form-label">@Localizer["Unit name"]</label>
+                    <input asp-for="NewUnit.Name" name="Name" class="form-control" />
+                </div>
+                <div class="col-md-2">
+                    <label asp-for="NewUnit.Symbol" class="form-label">@Localizer["Symbol"]</label>
+                    <input asp-for="NewUnit.Symbol" name="Symbol" class="form-control" />
+                </div>
+                <div class="col-md-2">
+                    <label asp-for="NewUnit.Dimension" class="form-label">@Localizer["Dimension"]</label>
+                    <select asp-for="NewUnit.Dimension" name="Dimension" class="form-select">
+                        @foreach (var dimension in Enum.GetValues<MeasurementDimension>())
+                        { <option value="@((int)dimension)">@Localizer[dimension.ToString()]</option> }
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label asp-for="NewUnit.FactorToBaseUnit" class="form-label">@Localizer["Factor to base unit"]</label>
+                    <input asp-for="NewUnit.FactorToBaseUnit" name="FactorToBaseUnit" type="number" min="0.000000000001" step="0.000000000001" class="form-control" />
+                </div>
+                <div class="col-md-1">
+                    <label asp-for="NewUnit.DecimalPlaces" class="form-label">@Localizer["Decimals"]</label>
+                    <input asp-for="NewUnit.DecimalPlaces" name="DecimalPlaces" type="number" min="0" max="6" class="form-control" />
+                </div>
+                <div class="col-12">
+                    <button class="btn btn-primary">@Localizer["Add unit"]</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@foreach (var group in Model.Units.GroupBy(x => x.Dimension))
+{
+    <h2 class="h5 mt-4">@Localizer[group.Key.ToString()]</h2>
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead><tr><th>@Localizer["Code"]</th><th>@Localizer["Unit name"]</th><th>@Localizer["Symbol"]</th><th>@Localizer["Factor to base unit"]</th><th>@Localizer["Decimals"]</th><th>@Localizer["Status"]</th><th>@Localizer["Actions"]</th></tr></thead>
+            <tbody>
+            @foreach (var unit in group)
+            {
+                <tr>
+                    <td><code>@unit.Code</code></td>
+                    <td>@Localizer[unit.Name]</td>
+                    <td>@unit.Symbol</td>
+                    <td>@unit.FactorToBaseUnit.ToString("0.############")</td>
+                    <td>@unit.DecimalPlaces</td>
+                    <td>
+                        <span class="badge @(unit.IsActive ? "text-bg-success" : "text-bg-secondary")">@Localizer[unit.IsActive ? "Active" : "Inactive"]</span>
+                        @if (unit.IsSystem) { <span class="badge text-bg-light">@Localizer["Built-in"]</span> }
+                    </td>
+                    <td>
+                        @if (!unit.IsSystem && unit.IsActive)
+                        {
+                            <form asp-action="DeactivateUnit" method="post" asp-route-id="@unit.Id">
+                                <button class="btn btn-sm btn-outline-danger">@Localizer["Deactivate"]</button>
+                            </form>
+                        }
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+}

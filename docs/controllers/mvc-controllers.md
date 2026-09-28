@@ -1,14 +1,15 @@
 # MVC controllers
-> Status: IMPLEMENTED | Last reviewed: 2026-09-15
+> Status: IMPLEMENTED | Last reviewed: 2026-09-28
 
 | Controller | Actions/views | Authorization and dependencies |
 |---|---|---|
-| AccountController | Login, Register, Logout, AccessDenied | Login issues a validated tenant claim; configurable rate-limited registration atomically creates company owner, membership, tenant Admin assignment and trial. Rejected requests return to the form with retry timing. |
+| AccountController | Login, Register, Logout, AccessDenied | Login issues a validated tenant claim and redirects resolved companies to Dashboard; an already-authenticated Login request redirects instead of showing the login form. Configurable rate-limited registration atomically creates company owner, membership, tenant Admin assignment and trial. |
 | PublicController | Index/Pricing | Anonymous bilingual product and database-backed plan pages. |
 | SubscriptionController | Index/Checkout | Tenant subscription status and server-calculated plan/promotion quote creation. |
 | Platform area | Account/Dashboard/Plans/Promotions/Companies/Payments | Separate Platform cookie and operator policies; manages plans, promotion codes, tenant subscriptions and pending payment confirmation. |
-| HomeController | Index | `[Authorize]`; dashboard content is minimal. |
-| Products/Warehouses/Suppliers | Index/Create/Edit/Delete | matching permission attributes; Warehouse create/edit includes inventory operating policy. |
+| DashboardController / HomeController | Index | `[Authorize]`; Dashboard is the authenticated landing page and Home redirects to it after onboarding validation. |
+| Products/Warehouses/Suppliers | Index/Create/Edit/Delete | matching permission attributes; products configure type, optional barcode, units, active/sale-channel and recipe-negative policy, with filtered/sorted/paged index and localized business errors; warehouses configure inventory operating policy. |
+| Recipes | Index/Edit | Products.View/Edit; Application service creates immutable versions and validates tenant products and compatible units. |
 | ProductStocks | Index/Create/Edit/Delete | product-stock permissions/service; delete service always refuses. |
 | StockTransactions | Index/Create | movement permissions/service. |
 | WarehouseLocations / UnassignedStock | location search/create and putaway | warehouse/product-stock permissions and location services. |
@@ -16,7 +17,7 @@
 | Purchases | Index/Create/Details | Purchases.View/Create; PurchaseService and master repositories for dropdowns. |
 | Sales | Index/Details/Create/Pos | Sales.View/Create; SaleService validates/persists POS order context and item notes; PosExperienceSettingsService supplies terminal-specific runtime presentation/workflow. |
 | StockTransfers | Index/Details/Create/Edit and state POSTs | transfer-specific permissions/service. |
-| Settings | Index/DocumentNumbers/General/Discounts/Inventory/InventoryAccess/Pos plus access mutations | active-company Admin policy; centralized document sequences, inventory defaults, branch/POS warehouse configuration and rowversion-protected terminal experience settings. Legacy Invoices redirects to DocumentNumbers. |
+| Settings | Index/DocumentNumbers/General/Discounts/Inventory/InventoryAccess/Pos/Units plus access mutations | active-company Admin policy; centralized document sequences, inventory defaults, managed measurement units, branch/POS warehouse configuration and rowversion-protected terminal experience settings. Legacy Invoices redirects to DocumentNumbers. |
 | Language | Set POST | Whitelists `en-US`/`ar-JO`, writes the ASP.NET culture cookie and uses a validated local return URL; available from shared navigation. |
 | Users | Index/Create | `[Authorize]` plus Users.View/Create; lists current-company members and assigns a validated tenant-owned role. |
 | Roles | Index/Create/Edit/Delete | `[Authorize]` plus Roles permissions; `TenantRoleService` enforces tenant ownership, protected roles, concurrency and permission validation. |

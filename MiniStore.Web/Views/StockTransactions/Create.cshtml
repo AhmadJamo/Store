@@ -1,5 +1,7 @@
 ﻿@model MiniStore.Application.DTOs.ProductStocks.CreateStockTransactionDto
 
+@inject Microsoft.Extensions.Localization.IStringLocalizer<MiniStore.Web.SharedResource> Localizer
+
 @{
     ViewData["Title"] = "Create Stock Transaction";
 }
@@ -91,6 +93,10 @@
                 Adjustment Out
             </option>
 
+            <option value="8">
+                @Localizer["Kitchen waste or recipe variance"]
+            </option>
+
         </select>
 
         <span asp-validation-for="Type"
@@ -115,6 +121,7 @@
         <div class="form-text">
             Enter the quantity as a positive number.
             Choose whether the adjustment increases or decreases stock.
+            @Localizer["Kitchen variance may create a controlled negative balance only when enabled on the ingredient."]
         </div>
 
         <span asp-validation-for="Quantity"

@@ -39,6 +39,9 @@ public class AccountController : Controller
         bool rateLimited = false,
         int? retryAfterSeconds = null)
     {
+        if (User.Identity?.IsAuthenticated == true)
+            return RedirectToAction("Index", "Dashboard");
+
         ViewBag.ReturnUrl = returnUrl;
         ViewBag.CompanyCode = companyCode;
         ViewBag.RateLimitMinutes = GetRateLimitMinutes(rateLimited, retryAfterSeconds);
@@ -101,14 +104,15 @@ public class AccountController : Controller
                 return RedirectToAction("Index", "CompanyOnboarding");
 
             if (!string.IsNullOrWhiteSpace(returnUrl) &&
-                Url.IsLocalUrl(returnUrl))
+                Url.IsLocalUrl(returnUrl) &&
+                !returnUrl.StartsWith("/Account/Login", StringComparison.OrdinalIgnoreCase))
             {
                 return Redirect(returnUrl);
             }
 
             return RedirectToAction(
                 "Index",
-                "Home");
+                "Dashboard");
         }
 
         ViewBag.Error =

@@ -12,7 +12,7 @@ public class ProductStockConfiguration
         builder.HasKey(x => x.Id);
 
         builder.Property(x => x.Quantity)
-            .HasPrecision(18, 3);
+            .HasPrecision(18, 6);
 
         builder.Property(x => x.RowVersion)
             .IsRowVersion();

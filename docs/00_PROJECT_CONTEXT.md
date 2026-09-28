@@ -1,7 +1,7 @@
 # MiniStore project context
 > Status: PARTIALLY IMPLEMENTED  
 > Source of truth: Code  
-> Last reviewed: 2026-09-15
+> Last reviewed: 2026-09-28
 
 ## Project identity
 MiniStore is a server-rendered ASP.NET Core MVC store-management application. It targets .NET 10, uses EF Core 10 with SQL Server, ASP.NET Core Identity, Razor views, and a Domain/Application/Infrastructure/Web layered solution. No public API project is present.
@@ -20,10 +20,10 @@ The repository implements a first operational slice for catalog, warehouses, sto
 ## Main modules
 | Module | Status | Core code | Notes |
 |---|---|---|---|
-| Products | IMPLEMENTED | `Product`, `ProductService`, `ProductsController` | Name/barcode and three prices. |
+| Products | IMPLEMENTED | `Product`, `ProductService`, `ProductsController` | Name/barcode, prices, stock unit and stocked/prepared behavior. |
 | Warehouses | IMPLEMENTED | `Warehouse`, `WarehouseService` | Named warehouse master data. |
 | Suppliers | IMPLEMENTED | `Supplier`, `SupplierService` | Supplier master data. |
-| Inventory | PARTIALLY IMPLEMENTED | `ProductStock`, `StockTransaction` | Balances and manual movements; see accounting/security risks. |
+| Inventory | PARTIALLY IMPLEMENTED | `ProductStock`, `StockTransaction`, recipes | Balances, movements, versioned prepared-product recipes and controlled negative ingredient exceptions; valuation remains pending. |
 | Purchases | IMPLEMENTED | `Purchase`, `PurchaseService` | Immediately increases stock. |
 | Sales | IMPLEMENTED | `Sale`, `SaleService` | Uses configured product price by channel and decreases stock. |
 | Stock transfers | IMPLEMENTED | `StockTransfer`, `StockTransferService` | Draft/submitted/approved/posted/cancelled flow. |

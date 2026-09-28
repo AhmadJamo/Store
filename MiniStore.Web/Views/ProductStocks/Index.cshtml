@@ -1,5 +1,7 @@
 ﻿@model List<MiniStore.Application.DTOs.ProductStocks.ProductStockDto>
 
+@inject Microsoft.Extensions.Localization.IStringLocalizer<MiniStore.Web.SharedResource> Localizer
+
 @{
     ViewData["Title"] = "Stock";
 }
@@ -63,7 +65,15 @@
                     </td>
 
                     <td>
-                        @stock.Quantity
+                        @if (stock.Quantity < 0)
+                        {
+                            <span class="text-danger fw-bold">@stock.Quantity</span>
+                            <span class="badge bg-danger ms-1">@Localizer["Requires reconciliation"]</span>
+                        }
+                        else
+                        {
+                            @stock.Quantity
+                        }
                     </td>
 
                     <td>

@@ -83,7 +83,6 @@
   <data name="Confirm Delete" xml:space="preserve"><value>تأكيد الحذف</value></data>
   <data name="Are you sure you want to delete" xml:space="preserve"><value>هل أنت متأكد من حذف</value></data>
   <data name="This action cannot be undone." xml:space="preserve"><value>لا يمكن التراجع عن هذا الإجراء.</value></data>
-  <data name="Cancel" xml:space="preserve"><value>إلغاء</value></data>
   <data name="Delete" xml:space="preserve"><value>حذف</value></data>
   <data name="Login" xml:space="preserve"><value>تسجيل الدخول</value></data>
   <data name="Username" xml:space="preserve"><value>اسم المستخدم</value></data>
@@ -95,4 +94,148 @@
   <data name="Username and password are required." xml:space="preserve"><value>اسم المستخدم وكلمة المرور مطلوبان.</value></data>
   <data name="Invalid username or password." xml:space="preserve"><value>اسم المستخدم أو كلمة المرور غير صحيح.</value></data>
   <data name="Your account is not assigned to an active company." xml:space="preserve"><value>حسابك غير مرتبط بشركة فعالة.</value></data>
+  <data name="Recipes" xml:space="preserve"><value>الوصفات</value></data>
+  <data name="Prepared products consume the active recipe when they are sold." xml:space="preserve"><value>تستهلك المنتجات المحضّرة مكونات الوصفة الفعالة عند بيعها.</value></data>
+  <data name="To add a recipe, edit a product and set its inventory behavior to prepared to order." xml:space="preserve"><value>لإضافة وصفة، عدّل المنتج واجعل سلوكه المخزني محضّراً عند الطلب.</value></data>
+  <data name="Product" xml:space="preserve"><value>المنتج</value></data>
+  <data name="Active version" xml:space="preserve"><value>الإصدار الفعال</value></data>
+  <data name="Recipe yield" xml:space="preserve"><value>ناتج الوصفة</value></data>
+  <data name="Ingredients" xml:space="preserve"><value>المكونات</value></data>
+  <data name="No prepared products found." xml:space="preserve"><value>لا توجد منتجات محضّرة.</value></data>
+  <data name="Not configured" xml:space="preserve"><value>غير معدّة</value></data>
+  <data name="Create new version" xml:space="preserve"><value>إنشاء إصدار جديد</value></data>
+  <data name="Configure recipe" xml:space="preserve"><value>إعداد الوصفة</value></data>
+  <data name="Recipe for {0}" xml:space="preserve"><value>وصفة {0}</value></data>
+  <data name="Saving creates a new immutable version. Current active version: {0}." xml:space="preserve"><value>ينشئ الحفظ إصداراً جديداً غير قابل للتعديل. الإصدار الفعال حالياً: {0}.</value></data>
+  <data name="Configure the first active recipe version." xml:space="preserve"><value>أعدّ أول إصدار فعال للوصفة.</value></data>
+  <data name="Example: a recipe with yield 1 defines ingredients for one sold item; a dough batch may yield 20 portions." xml:space="preserve"><value>مثال: الناتج 1 يحدد مكونات قطعة مباعة واحدة، بينما قد تنتج دفعة العجين 20 حصة.</value></data>
+  <data name="Add ingredient" xml:space="preserve"><value>إضافة مكوّن</value></data>
+  <data name="Ingredient" xml:space="preserve"><value>المكوّن</value></data>
+  <data name="Quantity" xml:space="preserve"><value>الكمية</value></data>
+  <data name="Unit" xml:space="preserve"><value>الوحدة</value></data>
+  <data name="Negative stock policy" xml:space="preserve"><value>سياسة الرصيد السالب</value></data>
+  <data name="Save new recipe version" xml:space="preserve"><value>حفظ إصدار وصفة جديد</value></data>
+  <data name="Select ingredient" xml:space="preserve"><value>اختر المكوّن</value></data>
+  <data name="Remove" xml:space="preserve"><value>إزالة</value></data>
+  <data name="Controlled negative allowed" xml:space="preserve"><value>السالب المضبوط مسموح</value></data>
+  <data name="Negative blocked" xml:space="preserve"><value>السالب ممنوع</value></data>
+  <data name="Inventory behavior" xml:space="preserve"><value>سلوك المخزون</value></data>
+  <data name="Stocked product" xml:space="preserve"><value>منتج مخزني</value></data>
+  <data name="Prepared to order from a recipe" xml:space="preserve"><value>محضّر عند الطلب من وصفة</value></data>
+  <data name="Prepared products consume their recipe ingredients instead of their own stock." xml:space="preserve"><value>تستهلك المنتجات المحضّرة مكونات الوصفة بدلاً من رصيد المنتج نفسه.</value></data>
+  <data name="Stock unit" xml:space="preserve"><value>وحدة المخزون</value></data>
+  <data name="Choose carefully. Changing a stock unit later requires stock reconciliation and new recipe versions." xml:space="preserve"><value>اختر بعناية. تغيير وحدة المخزون لاحقاً يتطلب تسوية الرصيد وإنشاء إصدارات وصفات جديدة.</value></data>
+  <data name="Piece" xml:space="preserve"><value>قطعة</value></data>
+  <data name="Gram" xml:space="preserve"><value>غرام</value></data>
+  <data name="Kilogram" xml:space="preserve"><value>كيلوغرام</value></data>
+  <data name="Milliliter" xml:space="preserve"><value>ملليلتر</value></data>
+  <data name="Liter" xml:space="preserve"><value>لتر</value></data>
+  <data name="Allow controlled negative stock for recipe and kitchen consumption" xml:space="preserve"><value>السماح برصيد سالب مضبوط لاستهلاك الوصفات والمطبخ</value></data>
+  <data name="Use this only for ingredients that must not block POS sales. Negative balances remain visible and require reconciliation." xml:space="preserve"><value>استخدمه فقط للمكونات التي يجب ألا توقف نقطة البيع. تبقى الأرصدة السالبة ظاهرة وتتطلب تسوية.</value></data>
+  <data name="Kitchen waste or recipe variance" xml:space="preserve"><value>هدر مطبخ أو فرق وصفة</value></data>
+  <data name="Kitchen variance may create a controlled negative balance only when enabled on the ingredient." xml:space="preserve"><value>قد ينشئ فرق المطبخ رصيداً سالباً مضبوطاً فقط إذا كان الخيار مفعلاً على المكوّن.</value></data>
+  <data name="Kitchen Variance" xml:space="preserve"><value>فرق المطبخ</value></data>
+  <data name="Recipe Consumption" xml:space="preserve"><value>استهلاك وصفة</value></data>
+  <data name="Requires reconciliation" xml:space="preserve"><value>يتطلب تسوية</value></data>
+  <data name="Recipe version saved successfully." xml:space="preserve"><value>تم حفظ إصدار الوصفة بنجاح.</value></data>
+  <data name="Recipe could not be saved. Check ingredients, units, and quantities." xml:space="preserve"><value>تعذر حفظ الوصفة. تحقق من المكونات والوحدات والكميات.</value></data>
+  <data name="Prepared product has no active recipe." xml:space="preserve"><value>لا توجد وصفة فعالة للمنتج المحضّر.</value></data>
+  <data name="A recipe ingredient was not found." xml:space="preserve"><value>تعذر العثور على أحد مكونات الوصفة.</value></data>
+  <data name="Stock record was not found for a recipe ingredient." xml:space="preserve"><value>لا يوجد سجل مخزون لأحد مكونات الوصفة.</value></data>
+  <data name="Insufficient stock and negative recipe consumption is not enabled for this ingredient." xml:space="preserve"><value>الرصيد غير كافٍ ولم يُفعّل الاستهلاك السالب للوصفة على هذا المكوّن.</value></data>
+  <data name="An ingredient stock unit changed after this recipe version was created. Create a new recipe version after reconciling stock." xml:space="preserve"><value>تغيرت وحدة مخزون أحد المكونات بعد إنشاء إصدار الوصفة. سوِّ رصيد المادة ثم أنشئ إصدار وصفة جديداً.</value></data>
+  <data name="Recipe consumption is below the supported stock precision." xml:space="preserve"><value>استهلاك الوصفة أصغر من دقة كمية المخزون المدعومة.</value></data>
+  <data name="Dashboard" xml:space="preserve"><value>لوحة التحكم</value></data>
+  <data name="Choose a module from the navigation menu to continue." xml:space="preserve"><value>اختر وحدة من قائمة التنقل للمتابعة.</value></data>
+  <data name="Create Product" xml:space="preserve"><value>إضافة منتج</value></data>
+  <data name="Edit Product" xml:space="preserve"><value>تعديل المنتج</value></data>
+  <data name="Product Name" xml:space="preserve"><value>اسم المنتج</value></data>
+  <data name="Barcode (optional)" xml:space="preserve"><value>الباركود (اختياري)</value></data>
+  <data name="Leave barcode empty when the item has no manufacturer barcode. The system creates an internal product code automatically." xml:space="preserve"><value>اترك الباركود فارغاً إذا لم يكن للمادة باركود من المصنّع؛ ينشئ النظام كود منتج داخلياً تلقائياً.</value></data>
+  <data name="Product type" xml:space="preserve"><value>نوع المنتج</value></data>
+  <data name="Raw material" xml:space="preserve"><value>مادة خام</value></data>
+  <data name="Direct-sale product" xml:space="preserve"><value>منتج بيع مباشر</value></data>
+  <data name="RawMaterial" xml:space="preserve"><value>مادة خام</value></data>
+  <data name="DirectSale" xml:space="preserve"><value>بيع مباشر</value></data>
+  <data name="PreparedToOrder" xml:space="preserve"><value>محضّر حسب الطلب</value></data>
+  <data name="Purchase Price" xml:space="preserve"><value>سعر الشراء</value></data>
+  <data name="Wholesale Price" xml:space="preserve"><value>سعر الجملة</value></data>
+  <data name="Retail Price" xml:space="preserve"><value>سعر البيع</value></data>
+  <data name="Sell through POS" xml:space="preserve"><value>يباع من نقطة البيع</value></data>
+  <data name="Sell through sales invoices" xml:space="preserve"><value>يباع من فواتير المبيعات</value></data>
+  <data name="Active product" xml:space="preserve"><value>منتج فعال</value></data>
+  <data name="Prepared products do not have a purchase price. Their cost will be calculated from the active recipe and ingredient costs." xml:space="preserve"><value>المنتجات المحضّرة لا تحمل سعر شراء؛ ستُحسب تكلفتها من الوصفة الفعالة وتكاليف مكوناتها.</value></data>
+  <data name="Raw materials are stocked ingredients and cannot be sold directly." xml:space="preserve"><value>المواد الخام مكونات مخزنية ولا يمكن بيعها مباشرة.</value></data>
+  <data name="Save" xml:space="preserve"><value>حفظ</value></data>
+  <data name="Save Changes" xml:space="preserve"><value>حفظ التعديلات</value></data>
+  <data name="Cancel" xml:space="preserve"><value>إلغاء</value></data>
+  <data name="{0} product(s) found." xml:space="preserve"><value>تم العثور على {0} منتج.</value></data>
+  <data name="Add Product" xml:space="preserve"><value>إضافة منتج</value></data>
+  <data name="Search" xml:space="preserve"><value>بحث</value></data>
+  <data name="Search by name, product code, or barcode..." xml:space="preserve"><value>ابحث بالاسم أو كود المنتج أو الباركود...</value></data>
+  <data name="All types" xml:space="preserve"><value>كل الأنواع</value></data>
+  <data name="Availability" xml:space="preserve"><value>حالة التفعيل</value></data>
+  <data name="All statuses" xml:space="preserve"><value>كل الحالات</value></data>
+  <data name="Active" xml:space="preserve"><value>فعال</value></data>
+  <data name="Inactive" xml:space="preserve"><value>موقوف</value></data>
+  <data name="Sales channel" xml:space="preserve"><value>قناة البيع</value></data>
+  <data name="All channels" xml:space="preserve"><value>كل القنوات</value></data>
+  <data name="POS" xml:space="preserve"><value>نقطة البيع</value></data>
+  <data name="Sales invoices" xml:space="preserve"><value>فواتير المبيعات</value></data>
+  <data name="Ingredients only" xml:space="preserve"><value>مكونات فقط</value></data>
+  <data name="Sort by" xml:space="preserve"><value>ترتيب حسب</value></data>
+  <data name="Name" xml:space="preserve"><value>الاسم</value></data>
+  <data name="Product code" xml:space="preserve"><value>كود المنتج</value></data>
+  <data name="Apply filters" xml:space="preserve"><value>تطبيق الفلاتر</value></data>
+  <data name="Clear" xml:space="preserve"><value>مسح</value></data>
+  <data name="Descending" xml:space="preserve"><value>تنازلي</value></data>
+  <data name="Barcode" xml:space="preserve"><value>الباركود</value></data>
+  <data name="Status" xml:space="preserve"><value>الحالة</value></data>
+  <data name="Actions" xml:space="preserve"><value>الإجراءات</value></data>
+  <data name="No products found." xml:space="preserve"><value>لا توجد منتجات مطابقة.</value></data>
+  <data name="Not assigned" xml:space="preserve"><value>غير معيّن</value></data>
+  <data name="Edit" xml:space="preserve"><value>تعديل</value></data>
+  <data name="Product pages" xml:space="preserve"><value>صفحات المنتجات</value></data>
+  <data name="A product with this barcode already exists." xml:space="preserve"><value>يوجد منتج آخر يحمل هذا الباركود.</value></data>
+  <data name="Raw materials cannot be enabled for direct sales." xml:space="preserve"><value>لا يمكن تفعيل البيع المباشر للمواد الخام.</value></data>
+  <data name="Wholesale price cannot be higher than retail price." xml:space="preserve"><value>لا يمكن أن يكون سعر الجملة أعلى من سعر البيع.</value></data>
+  <data name="Purchase price cannot be higher than retail price for a direct-sale product." xml:space="preserve"><value>لا يمكن أن يكون سعر شراء منتج البيع المباشر أعلى من سعر البيع.</value></data>
+  <data name="The selected product is inactive." xml:space="preserve"><value>المنتج المحدد موقوف.</value></data>
+  <data name="The selected product is not enabled for POS sales." xml:space="preserve"><value>المنتج المحدد غير مفعّل للبيع من نقطة البيع.</value></data>
+  <data name="The selected product is not enabled for sales invoices." xml:space="preserve"><value>المنتج المحدد غير مفعّل لفواتير المبيعات.</value></data>
+  <data name="Prepared products cannot be purchased directly." xml:space="preserve"><value>لا يمكن شراء المنتج المحضّر مباشرة؛ تُشترى مكوناته.</value></data>
+  <data name="Prepared products do not hold direct stock. Add stock to their recipe ingredients." xml:space="preserve"><value>المنتجات المحضّرة لا تحتفظ برصيد مباشر؛ أضف المخزون إلى مكونات وصفتها.</value></data>
+  <data name="Measurement Units" xml:space="preserve"><value>وحدات القياس</value></data>
+  <data name="Manage count, weight and volume units with safe conversion factors." xml:space="preserve"><value>إدارة وحدات العدد والوزن والحجم بمعاملات تحويل آمنة.</value></data>
+  <data name="Conversion factors are measured against the base unit of the same dimension: piece for count, gram for mass, and milliliter for volume." xml:space="preserve"><value>يُقاس معامل التحويل مقابل وحدة الأساس للبُعد نفسه: القطعة للعدد، والغرام للوزن، والملليلتر للحجم.</value></data>
+  <data name="Back to Settings" xml:space="preserve"><value>العودة إلى الإعدادات</value></data>
+  <data name="Add measurement unit" xml:space="preserve"><value>إضافة وحدة قياس</value></data>
+  <data name="Code" xml:space="preserve"><value>الكود</value></data>
+  <data name="Unit name" xml:space="preserve"><value>اسم الوحدة</value></data>
+  <data name="Symbol" xml:space="preserve"><value>الرمز</value></data>
+  <data name="Dimension" xml:space="preserve"><value>البُعد</value></data>
+  <data name="Factor to base unit" xml:space="preserve"><value>المعامل إلى وحدة الأساس</value></data>
+  <data name="Decimals" xml:space="preserve"><value>المنازل العشرية</value></data>
+  <data name="Add unit" xml:space="preserve"><value>إضافة الوحدة</value></data>
+  <data name="Count" xml:space="preserve"><value>عدد</value></data>
+  <data name="Mass" xml:space="preserve"><value>وزن</value></data>
+  <data name="Volume" xml:space="preserve"><value>حجم</value></data>
+  <data name="Milligram" xml:space="preserve"><value>مليغرام</value></data>
+  <data name="Ounce" xml:space="preserve"><value>أونصة</value></data>
+  <data name="Pound" xml:space="preserve"><value>رطل</value></data>
+  <data name="Select unit" xml:space="preserve"><value>اختر وحدة القياس</value></data>
+  <data name="Built-in" xml:space="preserve"><value>مدمجة</value></data>
+  <data name="Deactivate" xml:space="preserve"><value>إيقاف</value></data>
+  <data name="Measurement unit created successfully." xml:space="preserve"><value>تمت إضافة وحدة القياس بنجاح.</value></data>
+  <data name="Measurement unit deactivated successfully." xml:space="preserve"><value>تم إيقاف وحدة القياس بنجاح.</value></data>
+  <data name="A measurement unit with this code already exists." xml:space="preserve"><value>يوجد وحدة قياس بهذا الكود.</value></data>
+  <data name="Built-in measurement units cannot be deactivated." xml:space="preserve"><value>لا يمكن إيقاف وحدات القياس المدمجة.</value></data>
+  <data name="Measurement unit was not found." xml:space="preserve"><value>لم يتم العثور على وحدة القياس.</value></data>
+  <data name="Unit code is required and cannot exceed 20 characters." xml:space="preserve"><value>كود الوحدة مطلوب ويجب ألا يتجاوز 20 حرفاً.</value></data>
+  <data name="Unit name is required and cannot exceed 100 characters." xml:space="preserve"><value>اسم الوحدة مطلوب ويجب ألا يتجاوز 100 حرف.</value></data>
+  <data name="Unit symbol is required and cannot exceed 20 characters." xml:space="preserve"><value>رمز الوحدة مطلوب ويجب ألا يتجاوز 20 حرفاً.</value></data>
+  <data name="Measurement dimension is invalid." xml:space="preserve"><value>بُعد القياس غير صالح.</value></data>
+  <data name="Conversion factor must be greater than zero." xml:space="preserve"><value>يجب أن يكون معامل التحويل أكبر من صفر.</value></data>
+  <data name="Unit decimal places must be between zero and six." xml:space="preserve"><value>يجب أن تكون المنازل العشرية للوحدة بين صفر وستة.</value></data>
+  <data name="Units from different measurement dimensions cannot be converted." xml:space="preserve"><value>لا يمكن التحويل بين وحدات تنتمي إلى أبعاد قياس مختلفة.</value></data>
 </root>

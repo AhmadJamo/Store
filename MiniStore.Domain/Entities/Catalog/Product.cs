@@ -2,11 +2,18 @@
 
 public class Product
 {
+    private Product()
+    {
+        Name = string.Empty;
+    }
+
     public int Id { get; private set; }
 
     public string Name { get; private set; }
 
-    public string Barcode { get; private set; }
+    public string ProductCode { get; private set; } = string.Empty;
+
+    public string? Barcode { get; private set; }
 
     public decimal PurchasePrice { get; private set; }
 
@@ -14,27 +21,72 @@ public class Product
 
     public decimal WholesalePrice { get; private set; }
 
+    public ProductInventoryBehavior InventoryBehavior { get; private set; }
+
+    public ProductType ProductType { get; private set; }
+
+    public UnitOfMeasure StockUnit { get; private set; }
+
+    public int? MeasurementUnitId { get; private set; }
+
+    public bool AllowNegativeRecipeConsumption { get; private set; }
+
+    public bool IsSellableInPos { get; private set; }
+
+    public bool IsSellableInSales { get; private set; }
+
+    public bool IsActive { get; private set; }
+
     //State
     public Product(
         string name,
-        string barcode,
+        string? barcode,
         decimal purchasePrice,
         decimal salePrice,
-        decimal wholesalePrice)
+        decimal wholesalePrice,
+        ProductInventoryBehavior inventoryBehavior = ProductInventoryBehavior.Stocked,
+        UnitOfMeasure stockUnit = UnitOfMeasure.Piece,
+        bool allowNegativeRecipeConsumption = false,
+        ProductType? productType = null,
+        bool isSellableInPos = true,
+        bool isSellableInSales = true,
+        bool isActive = true,
+        int? measurementUnitId = null)
     {
+        var resolvedProductType = productType ??
+            (inventoryBehavior == ProductInventoryBehavior.PreparedToOrder
+                ? ProductType.PreparedToOrder
+                : ProductType.DirectSale);
+
         ValidateName(name);
         ValidateBarcode(barcode);
         ValidatePurchasePrice(purchasePrice);
         ValidateSalePrice(salePrice);
         ValidateWholesalePrice(wholesalePrice);
 
-        ValidatePriceOrder(purchasePrice, wholesalePrice, salePrice);
+        ValidateProductConfiguration(
+            resolvedProductType,
+            inventoryBehavior,
+            stockUnit,
+            purchasePrice,
+            wholesalePrice,
+            salePrice,
+            isSellableInPos,
+            isSellableInSales);
 
         Name = name;
-        Barcode = barcode;
-        PurchasePrice = purchasePrice;
+        Barcode = NormalizeBarcode(barcode);
+        PurchasePrice = resolvedProductType == ProductType.PreparedToOrder ? 0 : purchasePrice;
         SalePrice = salePrice;
         WholesalePrice = wholesalePrice;
+        InventoryBehavior = MapInventoryBehavior(resolvedProductType);
+        ProductType = resolvedProductType;
+        StockUnit = stockUnit;
+        MeasurementUnitId = measurementUnitId;
+        AllowNegativeRecipeConsumption = allowNegativeRecipeConsumption;
+        IsSellableInPos = isSellableInPos;
+        IsSellableInSales = isSellableInSales;
+        IsActive = isActive;
     }
 
     //Behavior
@@ -45,11 +97,11 @@ public class Product
         Name = name;
     }
 
-    public void ChangeBarcode(string barcode)
+    public void ChangeBarcode(string? barcode)
     {
         ValidateBarcode(barcode);
 
-        Barcode = barcode;
+        Barcode = NormalizeBarcode(barcode);
     }
 
     public void ChangePurchasePrice(decimal price)
@@ -80,6 +132,72 @@ public class Product
         WholesalePrice = price;
     }
 
+    public void ConfigureInventory(
+        ProductInventoryBehavior inventoryBehavior,
+        UnitOfMeasure stockUnit,
+        bool allowNegativeRecipeConsumption)
+    {
+        ValidateInventoryConfiguration(inventoryBehavior, stockUnit);
+
+        InventoryBehavior = inventoryBehavior;
+        StockUnit = stockUnit;
+        AllowNegativeRecipeConsumption = allowNegativeRecipeConsumption;
+    }
+
+    public void ConfigureProduct(
+        string name,
+        string? barcode,
+        decimal purchasePrice,
+        decimal salePrice,
+        decimal wholesalePrice,
+        ProductType productType,
+        UnitOfMeasure stockUnit,
+        bool allowNegativeRecipeConsumption,
+        bool isSellableInPos,
+        bool isSellableInSales,
+        bool isActive,
+        int measurementUnitId)
+    {
+        var inventoryBehavior = MapInventoryBehavior(productType);
+        ValidateName(name);
+        ValidateBarcode(barcode);
+        ValidatePurchasePrice(purchasePrice);
+        ValidateSalePrice(salePrice);
+        ValidateWholesalePrice(wholesalePrice);
+        if (measurementUnitId <= 0)
+            throw new ArgumentException("Measurement unit is required.");
+        ValidateProductConfiguration(
+            productType,
+            inventoryBehavior,
+            stockUnit,
+            purchasePrice,
+            wholesalePrice,
+            salePrice,
+            isSellableInPos,
+            isSellableInSales);
+
+        Name = name.Trim();
+        Barcode = NormalizeBarcode(barcode);
+        PurchasePrice = productType == ProductType.PreparedToOrder ? 0 : purchasePrice;
+        SalePrice = salePrice;
+        WholesalePrice = wholesalePrice;
+        ProductType = productType;
+        InventoryBehavior = inventoryBehavior;
+        StockUnit = stockUnit;
+        MeasurementUnitId = measurementUnitId;
+        AllowNegativeRecipeConsumption = allowNegativeRecipeConsumption;
+        IsSellableInPos = isSellableInPos;
+        IsSellableInSales = isSellableInSales;
+        IsActive = isActive;
+    }
+
+    public void MarkPreparedToOrder()
+    {
+        InventoryBehavior = ProductInventoryBehavior.PreparedToOrder;
+        ProductType = ProductType.PreparedToOrder;
+        PurchasePrice = 0;
+    }
+
     private static void ValidateName(string name)
     {
         if (string.IsNullOrWhiteSpace(name))
@@ -87,11 +205,10 @@ public class Product
                 "Product name is required.");
     }
 
-    private static void ValidateBarcode(string barcode)
+    private static void ValidateBarcode(string? barcode)
     {
-        if (string.IsNullOrWhiteSpace(barcode))
-            throw new ArgumentException(
-                "Product barcode is required.");
+        if (barcode?.Trim().Length > 100)
+            throw new ArgumentException("Product barcode cannot exceed 100 characters.");
     }
 
     private static void ValidatePurchasePrice(decimal price)
@@ -127,4 +244,50 @@ public class Product
                 "Prices must satisfy purchase price ≤ wholesale price ≤ retail price.");
         }
     }
+
+    private static void ValidateInventoryConfiguration(
+        ProductInventoryBehavior inventoryBehavior,
+        UnitOfMeasure stockUnit)
+    {
+        if (!Enum.IsDefined(inventoryBehavior))
+            throw new ArgumentException("Inventory behavior is invalid.");
+        if (!Enum.IsDefined(stockUnit))
+            throw new ArgumentException("Stock unit is invalid.");
+    }
+
+    private static void ValidateProductConfiguration(
+        ProductType productType,
+        ProductInventoryBehavior inventoryBehavior,
+        UnitOfMeasure stockUnit,
+        decimal purchasePrice,
+        decimal wholesalePrice,
+        decimal salePrice,
+        bool isSellableInPos,
+        bool isSellableInSales)
+    {
+        if (!Enum.IsDefined(productType))
+            throw new ArgumentException("Product type is invalid.");
+
+        ValidateInventoryConfiguration(inventoryBehavior, stockUnit);
+
+        if (inventoryBehavior != MapInventoryBehavior(productType))
+            throw new ArgumentException("Product type and inventory behavior do not match.");
+
+        if (productType == ProductType.RawMaterial && (isSellableInPos || isSellableInSales))
+            throw new ArgumentException("Raw materials cannot be enabled for direct sales.");
+
+        if ((isSellableInPos || isSellableInSales) && wholesalePrice > salePrice)
+            throw new ArgumentException("Wholesale price cannot be higher than retail price.");
+
+        if (productType == ProductType.DirectSale && purchasePrice > salePrice)
+            throw new ArgumentException("Purchase price cannot be higher than retail price for a direct-sale product.");
+    }
+
+    private static ProductInventoryBehavior MapInventoryBehavior(ProductType productType) =>
+        productType == ProductType.PreparedToOrder
+            ? ProductInventoryBehavior.PreparedToOrder
+            : ProductInventoryBehavior.Stocked;
+
+    private static string? NormalizeBarcode(string? barcode) =>
+        string.IsNullOrWhiteSpace(barcode) ? null : barcode.Trim();
 }

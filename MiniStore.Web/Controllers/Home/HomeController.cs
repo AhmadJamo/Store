@@ -12,6 +12,6 @@ public class HomeController(ICompanyOnboardingService onboarding, ITenantContext
     {
         if (tenantContext.TenantId is int tenantId && !await onboarding.IsResolvedAsync(tenantId))
             return RedirectToAction("Index", "CompanyOnboarding");
-        return View();
+        return RedirectToAction("Index", "Dashboard");
     }
 }

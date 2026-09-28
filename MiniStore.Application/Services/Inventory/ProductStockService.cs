@@ -109,6 +109,10 @@ public class ProductStockService
             throw new InvalidOperationException(
                 "Product not found.");
 
+        if (product.ProductType == ProductType.PreparedToOrder)
+            throw new InvalidOperationException(
+                "Prepared products do not hold direct stock. Add stock to their recipe ingredients.");
+
         var warehouse =
             await _warehouseRepository.GetByIdAsync(
                 dto.WarehouseId);

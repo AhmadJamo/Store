@@ -1,0 +1,53 @@
+@model List<MiniStore.Application.DTOs.Recipes.RecipeListItemDto>
+@inject Microsoft.Extensions.Localization.IStringLocalizer<MiniStore.Web.SharedResource> Localizer
+
+@{
+    ViewData["Title"] = Localizer["Recipes"];
+}
+
+<div class="d-flex justify-content-between align-items-start mb-4">
+    <div>
+        <h1>@Localizer["Recipes"]</h1>
+        <p class="text-muted">@Localizer["Prepared products consume the active recipe when they are sold."]</p>
+    </div>
+    <a asp-controller="Products" asp-action="Index" class="btn btn-outline-secondary">@Localizer["Products"]</a>
+</div>
+
+<div class="alert alert-info">
+    @Localizer["To add a recipe, edit a product and set its inventory behavior to prepared to order."]
+</div>
+
+<div class="table-responsive">
+    <table class="table table-hover align-middle">
+        <thead><tr>
+            <th>@Localizer["Product"]</th>
+            <th>@Localizer["Active version"]</th>
+            <th>@Localizer["Recipe yield"]</th>
+            <th>@Localizer["Ingredients"]</th>
+            <th class="text-end">@Localizer["Actions"]</th>
+        </tr></thead>
+        <tbody>
+        @if (Model.Count == 0)
+        {
+            <tr><td colspan="5" class="text-center text-muted py-4">@Localizer["No prepared products found."]</td></tr>
+        }
+        else
+        {
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td><strong>@item.ProductName</strong></td>
+                    <td>@(item.ActiveVersion?.ToString() ?? Localizer["Not configured"].Value)</td>
+                    <td>@(item.YieldQuantity?.ToString() ?? "—")</td>
+                    <td>@item.IngredientCount</td>
+                    <td class="text-end">
+                        <a asp-action="Edit" asp-route-productId="@item.ProductId" class="btn btn-sm btn-primary">
+                            @(item.ActiveVersion.HasValue ? Localizer["Create new version"] : Localizer["Configure recipe"])
+                        </a>
+                    </td>
+                </tr>
+            }
+        }
+        </tbody>
+    </table>
+</div>

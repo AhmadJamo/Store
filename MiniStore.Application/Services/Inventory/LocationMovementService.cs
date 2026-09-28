@@ -66,7 +66,7 @@ public class LocationMovementService(
                 {
                     Id = product.Id,
                     Name = product.Name,
-                    Barcode = product.Barcode
+                    Barcode = product.Barcode ?? string.Empty
                 })
                 .ToList(),
             Locations = locations
@@ -243,7 +243,7 @@ public class LocationMovementService(
         }
 
         return product.Name.Contains(query, StringComparison.OrdinalIgnoreCase) ||
-               product.Barcode.Contains(query, StringComparison.OrdinalIgnoreCase) ||
+                (product.Barcode?.Contains(query, StringComparison.OrdinalIgnoreCase) ?? false) ||
                (movement.Reference?.Contains(
                    query,
                    StringComparison.OrdinalIgnoreCase) ?? false);

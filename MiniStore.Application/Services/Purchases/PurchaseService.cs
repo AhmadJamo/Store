@@ -274,6 +274,11 @@ public class PurchaseService
                             $"Product with ID {itemDto.ProductId} not found.");
                     }
 
+                    if (!product.IsActive)
+                        throw new InvalidOperationException("The selected product is inactive.");
+                    if (product.ProductType == ProductType.PreparedToOrder)
+                        throw new InvalidOperationException("Prepared products cannot be purchased directly.");
+
                     var purchaseItem =
                         new PurchaseItem(
                             itemDto.ProductId,

@@ -3,33 +3,37 @@ using Microsoft.AspNetCore.Mvc;
 using MiniStore.Application.DTOs.Products;
 using MiniStore.Application.Services;
 using MiniStore.Web.Authorization;
+using Microsoft.Extensions.Localization;
 
 namespace MiniStore.Web.Controllers;
 
 public class ProductsController : Controller
 {
     private readonly ProductService _productService;
+    private readonly IStringLocalizer<SharedResource> _localizer;
+    private readonly MeasurementUnitService _measurementUnitService;
 
-    public ProductsController(ProductService productService)
+    public ProductsController(
+        ProductService productService,
+        IStringLocalizer<SharedResource> localizer,
+        MeasurementUnitService measurementUnitService)
     {
         _productService = productService;
+        _localizer = localizer;
+        _measurementUnitService = measurementUnitService;
     }
 
     [PermissionAuthorize("Products.View")]
-    public async Task<IActionResult> Index(string? search)
+    public async Task<IActionResult> Index([FromQuery] ProductListQueryDto query)
     {
-        var products =
-            await _productService.GetAllAsync(search);
-
-        ViewBag.Search = search;
-
-        return View(products);
+        return View(await _productService.SearchAsync(query));
     }
 
     [HttpGet]
     [PermissionAuthorize("Products.Create")]
-    public IActionResult Create()
+    public async Task<IActionResult> Create()
     {
+        await LoadMeasurementUnitsAsync();
         return View();
     }
 
@@ -40,6 +44,7 @@ public class ProductsController : Controller
     {
         if (!ModelState.IsValid)
         {
+            await LoadMeasurementUnitsAsync();
             TempData["NotificationType"] = "error";
             TempData["NotificationMessage"] =
                 "Please check the entered data.";
@@ -57,8 +62,15 @@ public class ProductsController : Controller
 
             return RedirectToAction(nameof(Index));
         }
+        catch (Exception ex) when (ex is ArgumentException or InvalidOperationException)
+        {
+            await LoadMeasurementUnitsAsync();
+            ModelState.AddModelError(string.Empty, _localizer[ex.Message]);
+            return View(dto);
+        }
         catch (Exception ex)
         {
+            await LoadMeasurementUnitsAsync();
             HttpContext.RequestServices.GetRequiredService<ILoggerFactory>()
                 .CreateLogger(GetType()).LogError(ex, "Request operation failed");
             TempData["NotificationType"] = "error";
@@ -86,13 +98,23 @@ public class ProductsController : Controller
             return RedirectToAction(nameof(Index));
         }
 
+        ViewBag.ProductId = id;
+        await LoadMeasurementUnitsAsync();
         var dto = new UpdateProductDto
         {
             Name = product.Name,
             Barcode = product.Barcode,
             PurchasePrice = product.PurchasePrice,
             SalePrice = product.SalePrice,
-            WholesalePrice = product.WholesalePrice
+            WholesalePrice = product.WholesalePrice,
+            InventoryBehavior = product.InventoryBehavior,
+            ProductType = product.ProductType,
+            StockUnit = product.StockUnit,
+            MeasurementUnitId = product.MeasurementUnitId ?? 0,
+            AllowNegativeRecipeConsumption = product.AllowNegativeRecipeConsumption,
+            IsSellableInPos = product.IsSellableInPos,
+            IsSellableInSales = product.IsSellableInSales,
+            IsActive = product.IsActive
         };
 
         return View(dto);
@@ -107,6 +129,8 @@ public class ProductsController : Controller
     {
         if (!ModelState.IsValid)
         {
+            ViewBag.ProductId = id;
+            await LoadMeasurementUnitsAsync();
             TempData["NotificationType"] = "error";
             TempData["NotificationMessage"] =
                 "Please check the entered data.";
@@ -124,8 +148,17 @@ public class ProductsController : Controller
 
             return RedirectToAction(nameof(Index));
         }
+        catch (Exception ex) when (ex is ArgumentException or InvalidOperationException)
+        {
+            ViewBag.ProductId = id;
+            await LoadMeasurementUnitsAsync();
+            ModelState.AddModelError(string.Empty, _localizer[ex.Message]);
+            return View(dto);
+        }
         catch (Exception ex)
         {
+            ViewBag.ProductId = id;
+            await LoadMeasurementUnitsAsync();
             HttpContext.RequestServices.GetRequiredService<ILoggerFactory>()
                 .CreateLogger(GetType()).LogError(ex, "Request operation failed");
             TempData["NotificationType"] = "error";
@@ -159,5 +192,10 @@ public class ProductsController : Controller
         }
 
         return RedirectToAction(nameof(Index));
+    }
+
+    private async Task LoadMeasurementUnitsAsync()
+    {
+        ViewBag.MeasurementUnits = await _measurementUnitService.GetActiveAsync();
     }
 }

@@ -1,0 +1,7 @@
+@inject Microsoft.Extensions.Localization.IStringLocalizer<MiniStore.Web.SharedResource> Localizer
+@{ ViewData["Title"] = "Dashboard"; }
+
+<div class="py-4">
+    <h1 class="display-6">@Localizer["Dashboard"]</h1>
+    <p class="lead text-muted">@Localizer["Choose a module from the navigation menu to continue."]</p>
+</div>

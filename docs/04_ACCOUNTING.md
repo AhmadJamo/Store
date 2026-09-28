@@ -1,7 +1,9 @@
 # Accounting implementation assessment
 > Status: PARTIALLY IMPLEMENTED  
 > Source of truth: Code  
-> Last reviewed: 2026-09-13
+> Last reviewed: 2026-09-28
+
+For the Arabic accounting-cycle, journal examples, international-standard map, mandatory software controls and ordered implementation guide, see [`ACCOUNTING_REFERENCE_AR.md`](ACCOUNTING_REFERENCE_AR.md). That reference describes the target policy and must not be read as an implemented-feature list; the status table below remains the implementation assessment.
 
 ## Accounting foundation (2026-09-13)
 
@@ -15,6 +17,7 @@ Warehouses now have optional BranchId and InventoryAccountId fields. Completing 
 | Sales invoice totals/discounts | IMPLEMENTED | `Sale`, `SaleItem`, `SaleService`. |
 | Purchase document totals | IMPLEMENTED | `Purchase`, `PurchaseItem`, `PurchaseService`. |
 | Per-warehouse quantity balances and movement log | IMPLEMENTED | `ProductStock`, `StockTransaction`. |
+| Prepared-item recipes and operational ingredient consumption | IMPLEMENTED | Immutable recipe versions, SaleItem snapshot, RecipeConsumption and controlled negative ingredient exceptions; migration applied locally. |
 | Stock transfers / reversal by cancellation | IMPLEMENTED | `StockTransferService`. |
 | Product prices | IMPLEMENTED | purchase/wholesale/sale price fields. |
 | Chart of accounts and balanced journal-entry foundation | IMPLEMENTED | `Account`, `JournalEntry`, `JournalEntryLine` and administration UI. |
@@ -28,13 +31,14 @@ Warehouses now have optional BranchId and InventoryAccountId fields. Completing 
 | Sales/purchase returns | NOT IMPLEMENTED | No return document entities/services found. |
 
 ## Existing rules
-Sales select the product `SalePrice` for retail POS or `WholesalePrice` for wholesale; client-submitted line price is ignored by `SaleService`. Stock cannot be removed beyond current balance in one tracked operation. A transfer creator cannot approve their own submitted transfer. Discount settings can disable types/limits and an override permission is checked.
+Sales select the product `SalePrice` for retail POS or `WholesalePrice` for wholesale; client-submitted line price is ignored by `SaleService`. Normal stock removal cannot exceed balance. Prepared-product recipe use and kitchen variance may cross zero only for an ingredient explicitly configured for controlled negative consumption, and the negative row remains visible for reconciliation. A transfer creator cannot approve their own submitted transfer. Discount settings can disable types/limits and an override permission is checked.
 
 ## Risks and controls missing
 - Sales do not yet create accounting journal entries; a sale now captures payment method and optional customer, but tax and weighted-average COGS posting remain to be completed.
+- Controlled negative ingredient quantities do not yet have provisional value or later cost-variance settlement; ACC-001 must implement that before COGS posting.
 - Purchase posting has no cancellation/reversal workflow yet; posted purchase documents must remain immutable until reversals are added.
-- Manual stock transaction UI can create Purchase/Sale/Transfer types without their source document.
-- No stock concurrency token can make balance data diverge from movement records under concurrent operations.
+- Manual stock transactions are limited to adjustment-in, adjustment-out and reason-required kitchen variance; financial posting for those variances is not implemented.
+- ProductStock has rowversion and inventory transactions are Serializable, but database-backed simultaneous recipe-sale/reconciliation tests remain pending.
 - Purchase invoices immediately affect stock and have no cancellation/return path.
 - Date input is not subject to fiscal-period controls.
 

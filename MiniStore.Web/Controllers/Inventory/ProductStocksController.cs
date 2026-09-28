@@ -44,7 +44,10 @@ public class ProductStocksController : Controller
         var warehouses =
             await _warehouseRepository.GetAllAsync();
 
-        ViewBag.Products = products;
+        ViewBag.Products = products
+            .Where(product => product.IsActive &&
+                product.ProductType != MiniStore.Domain.Entities.ProductType.PreparedToOrder)
+            .ToList();
         ViewBag.Warehouses = warehouses;
 
         return View();
@@ -198,8 +201,10 @@ public class ProductStocksController : Controller
    
     private async Task LoadDropdowns()
     {
-        ViewBag.Products =
-            await _productRepository.GetAllAsync(null);
+        ViewBag.Products = (await _productRepository.GetAllAsync(null))
+            .Where(product => product.IsActive &&
+                product.ProductType != MiniStore.Domain.Entities.ProductType.PreparedToOrder)
+            .ToList();
 
         ViewBag.Warehouses =
             await _warehouseRepository.GetAllAsync();

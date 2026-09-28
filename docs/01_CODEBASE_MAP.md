@@ -1,7 +1,7 @@
 # Codebase map
 > Status: IMPLEMENTED  
 > Source of truth: Repository scan  
-> Last reviewed: 2026-09-15
+> Last reviewed: 2026-09-28
 
 ## Solution roots
 | Path | Project/layer | Purpose |
@@ -15,11 +15,13 @@
 
 `docs/ARABIC_SHARED_ROADMAP.md` is the shared Arabic execution roadmap. It records ordered ERP/SaaS work, business rules, workflow, task status, completion evidence and the rolling five-suggestion queue.
 
+`docs/ACCOUNTING_REFERENCE_AR.md` is the shared Arabic accounting and software-design reference. It covers the accounting cycle, example postings, inventory valuation, sales/purchases, close, advanced topics, international-standard mapping, implementation invariants and the ordered accounting delivery plan. It is guidance rather than evidence that a feature is implemented.
+
 ## Domain source map
 | Files | Type/purpose | Consumers/docs |
 |---|---|---|
 | `Entities/Accounting/*.cs` | chart, branches, journal entries, tax and payment entities | accounting docs. |
-| `Entities/Catalog/Product.cs` | product master data | products and entity docs. |
+| `Entities/Catalog/{Product,ProductRecipe,RecipeIngredient,MeasurementUnit}.cs` and product type/unit/dimension/behavior enums | product code, optional barcode, raw/direct/prepared classification, sale channels, immutable recipe versions and managed/legacy recipe units | products, sales and inventory docs. |
 | `Entities/Customers/Customer.cs`, `Entities/Suppliers/Supplier.cs` | commercial-party master data | sales/purchases docs. |
 | `Entities/Inventory/*.cs` | warehouses, operating-policy enums, balances, exact locations, putaway/relocation history, stock movements and transfers | inventory and stock-transfer docs. |
 | `Entities/Purchases/*.cs`, `Entities/Sales/*.cs` | purchase, sale and POS aggregates plus per-terminal experience/order enums and settings | purchase/sales/settings docs. |
@@ -37,6 +39,8 @@
 | Files | Purpose | Used by |
 |---|---|---|
 | `Services/<Feature>/*.cs` | use-case services grouped as Accounting, Catalog, Customers, Inventory, Purchases, Sales, Settings and Suppliers | matching MVC controllers. |
+| `Services/Catalog/RecipeService.cs` | lists and creates immutable active recipe versions with compatible ingredient units | Recipes controller/views and prepared-product sales. |
+| `Services/Settings/MeasurementUnitService.cs` | initializes protected built-ins, manages custom units and performs dimension-safe conversion | Settings/Units plus product and recipe unit selection. |
 | `Services/Inventory/{StorageLocation,UnassignedStock,LocationMovement}Service.cs` | location administration, warehouse search, putaway, internal relocation and history | inventory controllers. |
 | `Services/Settings/InventorySettingsService.cs` | rowversion-protected defaults for new warehouse operating policies | SettingsController inventory screen. |
 | `Services/Settings/InventoryAccessService.cs` | branch warehouse permissions/priorities and POS terminal warehouse policies | Settings InventoryAccess and POS validation. |
@@ -47,7 +51,7 @@
 | `Services/Shared/ICurrentUserService.cs` | current-user application contract | Web CurrentUserService. |
 | `Permissions/{PermissionDefinitions,IPermissionService}.cs` | permission catalogue/contract | seeders/auth/services. |
 | `Tenancy/TenantClaimTypes.cs` | trusted tenant claim names shared by login and request session validation | Web authentication. |
-| `Dtos/Catalog/Products/*.cs` | product request/display DTOs | catalog services/controllers/views. |
+| `Dtos/Catalog/Products/*.cs` | product request/display plus filtered/sorted/paged catalogue DTOs | catalog services/controllers/views. |
 | `Dtos/Inventory/<ProductStocks|StockTransfers|Warehouses>/*.cs` | inventory request/display DTO families | inventory services/controllers/views. |
 | `Dtos/Inventory/LocationMovements/*.cs` | relocation input, lookup and history page models | LocationMovementService/controller/view. |
 | `Dtos/<Accounting|Purchases|Sales|Settings|Suppliers>/*.cs` | feature request/display DTOs | matching services/controllers/views. |
@@ -77,6 +81,7 @@ POS order-context update (2026-09-14): Sale/SaleItem persist order type, service
 
 Warehouse location movement update (2026-09-14): `LocationMovement` and its repository/configuration/service record Putaway and Relocation operations. `LocationMovementsController` and `Views/LocationMovements/Index.cshtml` provide internal movement and searchable history. Migration `AddLocationMovementHistory` creates the audit table and indexes.
 | `Repositories/<Feature>/*.cs` | EF implementations grouped by feature | application services. |
+| `Repositories/Catalog/ProductRecipeRepository.cs` | active/versioned recipe persistence with ingredients | RecipeService and SaleService. |
 | `Repositories/Tenancy/TenantMembershipRepository.cs` | active company membership lookup and user list | login, tenant middleware and user administration. |
 | `Repositories/Security/TenantRoleRepository.cs` | company-filtered role, permission and assignment persistence | TenantRoleService and authorization. |
 | `Repositories/Saas/SaasRepository.cs` | control-plane plan, subscription, entitlement usage, operator and promotion persistence | public pricing and Platform area. |
@@ -91,11 +96,12 @@ Warehouse location movement update (2026-09-14): `LocationMovement` and its repo
 | `Services/Security/CurrentUserService.cs` | current Identity user ID for auditing | security/database. |
 | `Services/Tenancy/HttpTenantContext.cs`, `Middleware/TenantSessionMiddleware.cs` | resolve, validate and refresh the authenticated company boundary | AppDbContext, login and localization. |
 | `Controllers/<Feature>/*.cs` | MVC endpoints grouped by business feature; namespaces remain stable | `controllers/*.md`. |
+| `Controllers/Catalog/RecipesController.cs` | bilingual recipe list/version editor using Products permissions | recipe views and RecipeService. |
 | `Areas/Platform/*` | separately authenticated platform-owner control center for plans, companies/subscriptions, promotion codes and pending payment confirmations | SaaS module. |
 | `Controllers/PublicController.cs`, `Controllers/Saas/SubscriptionController.cs` | public landing/pricing and tenant subscription/checkout flows | SaaS module and public/subscription views. |
 | `Middleware/SubscriptionAccessMiddleware.cs` | blocks tenant ERP access when the current subscription is not usable | SaaS module/security. |
 | `Localization/*.cs`, `Resources/SharedResource.ar.resx` | supported cultures, cached database-default provider and centralized Arabic translations | shared layout and localized views/controllers. |
-| `Controllers/Home/HomeController.cs` | application entry page | home view. |
+| `Controllers/Home/{Dashboard,Home}Controller.cs` | authenticated Dashboard entry and legacy Home redirect | Dashboard view and login flow. |
 | `Navigation/*.cs` | navigation metadata | permissions/screens. |
 | `Views/<Module>/*.cshtml` | Razor screens/forms/client JS | `screens/*.md`. |
 | `Views/Shared/*.cshtml` | localized LTR/RTL layout, language switch, notifications, validation/error/delete partials | screens/shared-ui.md. |

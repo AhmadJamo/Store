@@ -1,0 +1,136 @@
+@model MiniStore.Application.DTOs.Recipes.RecipeEditorDto
+@inject Microsoft.Extensions.Localization.IStringLocalizer<MiniStore.Web.SharedResource> Localizer
+
+@{
+    ViewData["Title"] = Localizer["Recipe for {0}", Model.ProductName];
+}
+
+<h1>@Localizer["Recipe for {0}", Model.ProductName]</h1>
+<p class="text-muted">
+    @if (Model.ActiveVersion.HasValue)
+    {
+        @Localizer["Saving creates a new immutable version. Current active version: {0}.", Model.ActiveVersion]
+    }
+    else
+    {
+        @Localizer["Configure the first active recipe version."]
+    }
+</p>
+
+<form asp-action="Edit" method="post">
+    <input asp-for="ProductId" type="hidden" />
+    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+    <div class="row mb-3">
+        <div class="col-md-4">
+            <label asp-for="YieldQuantity" class="form-label">@Localizer["Recipe yield"]</label>
+            <input asp-for="YieldQuantity" type="number" min="0.000001" step="0.000001" class="form-control" />
+            <div class="form-text">@Localizer["Example: a recipe with yield 1 defines ingredients for one sold item; a dough batch may yield 20 portions."]</div>
+            <span asp-validation-for="YieldQuantity" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mb-2">
+        <h2 class="h5 mb-0">@Localizer["Ingredients"]</h2>
+        <button type="button" class="btn btn-sm btn-outline-primary" id="addIngredient">@Localizer["Add ingredient"]</button>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table align-middle">
+            <thead><tr>
+                <th>@Localizer["Ingredient"]</th>
+                <th>@Localizer["Quantity"]</th>
+                <th>@Localizer["Unit"]</th>
+                <th>@Localizer["Negative stock policy"]</th>
+                <th></th>
+            </tr></thead>
+            <tbody id="ingredientRows"></tbody>
+        </table>
+    </div>
+
+    <button type="submit" class="btn btn-success">@Localizer["Save new recipe version"]</button>
+    <a asp-action="Index" class="btn btn-secondary">@Localizer["Cancel"]</a>
+</form>
+
+<template id="ingredientTemplate">
+    <tr>
+        <td>
+            <select data-field="IngredientProductId" class="form-select ingredient-select" required>
+                <option value="">@Localizer["Select ingredient"]</option>
+                @foreach (var option in Model.IngredientOptions)
+                {
+                    <option value="@option.ProductId" data-stock-unit="@option.StockMeasurementUnitId"
+                            data-stock-dimension="@((int)option.StockUnitDimension)"
+                            data-negative="@option.AllowNegativeRecipeConsumption.ToString().ToLowerInvariant()">
+                        @option.ProductName (@Localizer[option.StockUnitName] - @option.StockUnitSymbol)
+                    </option>
+                }
+            </select>
+        </td>
+        <td><input data-field="Quantity" type="number" min="0.000001" step="0.000001" class="form-control" required /></td>
+        <td>
+            <select data-field="MeasurementUnitId" class="form-select" required>
+                @foreach (var unit in Model.MeasurementUnits)
+                {
+                    <option value="@unit.Id" data-dimension="@((int)unit.Dimension)">@Localizer[unit.Name] (@unit.Symbol)</option>
+                }
+            </select>
+        </td>
+        <td><span class="negative-policy text-muted"></span></td>
+        <td><button type="button" class="btn btn-sm btn-outline-danger remove-row">@Localizer["Remove"]</button></td>
+    </tr>
+</template>
+
+@section Scripts {
+<script>
+(() => {
+    const body = document.getElementById('ingredientRows');
+    const template = document.getElementById('ingredientTemplate');
+    const allowedText = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Localizer["Controlled negative allowed"].Value));
+    const blockedText = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Localizer["Negative blocked"].Value));
+    const rows = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Ingredients));
+
+    function renumber() {
+        [...body.querySelectorAll('tr')].forEach((row, index) => {
+            row.querySelectorAll('[data-field]').forEach(input => {
+                input.name = `Ingredients[${index}].${input.dataset.field}`;
+            });
+        });
+    }
+
+    function updatePolicy(row) {
+        const selected = row.querySelector('.ingredient-select').selectedOptions[0];
+        row.querySelector('.negative-policy').textContent =
+            selected?.dataset.negative === 'true' ? allowedText : blockedText;
+
+        const unitSelect = row.querySelector('[data-field="MeasurementUnitId"]');
+        const requiredDimension = selected?.dataset.stockDimension;
+        [...unitSelect.options].forEach(option => {
+            option.hidden = !!requiredDimension && option.dataset.dimension !== requiredDimension;
+            option.disabled = option.hidden;
+        });
+        if (unitSelect.selectedOptions[0]?.disabled) {
+            const compatible = [...unitSelect.options].find(option => !option.disabled);
+            if (compatible) unitSelect.value = compatible.value;
+        }
+    }
+
+    function addRow(value) {
+        const row = template.content.firstElementChild.cloneNode(true);
+        body.appendChild(row);
+        if (value) {
+            row.querySelector('[data-field="IngredientProductId"]').value = value.IngredientProductId;
+            row.querySelector('[data-field="Quantity"]').value = value.Quantity;
+            row.querySelector('[data-field="MeasurementUnitId"]').value = value.MeasurementUnitId;
+        }
+        row.querySelector('.ingredient-select').addEventListener('change', () => updatePolicy(row));
+        row.querySelector('.remove-row').addEventListener('click', () => { row.remove(); renumber(); });
+        updatePolicy(row);
+        renumber();
+    }
+
+    document.getElementById('addIngredient').addEventListener('click', () => addRow(null));
+    if (rows.length === 0) addRow(null); else rows.forEach(addRow);
+})();
+</script>
+}

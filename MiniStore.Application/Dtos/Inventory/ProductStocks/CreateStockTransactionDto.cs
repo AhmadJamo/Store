@@ -12,7 +12,9 @@ public class CreateStockTransactionDto
     [Range(1, int.MaxValue)]
     public int WarehouseId { get; set; }
 
-    [Range(typeof(decimal), "0.001", "999999999999999.999")]
+    [Range(typeof(decimal), "0.001", "999999999999999.999",
+        ParseLimitsInInvariantCulture = true,
+        ConvertValueInInvariantCulture = true)]
     public decimal Quantity { get; set; }
 
     public StockTransactionType Type { get; set; }

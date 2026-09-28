@@ -5,6 +5,7 @@ using MiniStore.Application.Services;
 using MiniStore.Domain.Interfaces;
 using MiniStore.Domain.Entities;
 using MiniStore.Web.Authorization;
+using Microsoft.Extensions.Localization;
 
 namespace MiniStore.Web.Controllers;
 
@@ -18,6 +19,7 @@ public class SalesController : Controller
     private readonly IPaymentMethodRepository _paymentMethodRepository;
     private readonly InventoryAccessService _inventoryAccessService;
     private readonly PosExperienceSettingsService _posExperienceSettingsService;
+    private readonly IStringLocalizer<SharedResource> _localizer;
 
     public SalesController(
         ISaleService saleService,
@@ -27,7 +29,8 @@ public class SalesController : Controller
         ICustomerRepository customerRepository,
         IPaymentMethodRepository paymentMethodRepository,
         InventoryAccessService inventoryAccessService,
-        PosExperienceSettingsService posExperienceSettingsService)
+        PosExperienceSettingsService posExperienceSettingsService,
+        IStringLocalizer<SharedResource> localizer)
     {
         _saleService = saleService;
         _productRepository = productRepository;
@@ -37,6 +40,7 @@ public class SalesController : Controller
         _paymentMethodRepository = paymentMethodRepository;
         _inventoryAccessService = inventoryAccessService;
         _posExperienceSettingsService = posExperienceSettingsService;
+        _localizer = localizer;
     }
 
     [PermissionAuthorize("Sales.View")]
@@ -118,7 +122,7 @@ public class SalesController : Controller
 
             ModelState.AddModelError(
                 string.Empty,
-                ex.Message);
+                _localizer[ex.Message]);
 
             return View(dto);
         }
@@ -128,7 +132,7 @@ public class SalesController : Controller
 
             ModelState.AddModelError(
                 string.Empty,
-                ex.Message);
+                _localizer[ex.Message]);
 
             return View(dto);
         }
@@ -136,8 +140,11 @@ public class SalesController : Controller
 
     private async Task LoadDropdowns(bool posOnly = false)
     {
-        ViewBag.Products =
-            await _productRepository.GetAllAsync(null);
+        var products = await _productRepository.GetAllAsync(null);
+        ViewBag.Products = products
+            .Where(product => product.IsActive &&
+                (posOnly ? product.IsSellableInPos : product.IsSellableInSales))
+            .ToList();
 
         var warehouses = await _warehouseRepository.GetAllAsync();
         ViewBag.Warehouses = posOnly

@@ -1,5 +1,5 @@
 # Database tables reference
-> Last reviewed: 2026-09-15
+> Last reviewed: 2026-09-28
 
 Schema source is `AppDbContext`, configurations and migrations. Identity's standard `AspNet*` tables are supplied by IdentityDbContext.
 
@@ -11,7 +11,9 @@ Schema source is `AppDbContext`, configurations and migrations. Identity's stand
 - **BillingCheckoutSessions:** priced monthly/annual quotes with expiry, promotion, status, confirmation reference and rowversion.
 - **Tenant ownership:** every ERP business table below also carries required TenantId with a restrictive Tenant FK. Tenant-aware unique indexes allow each company its own codes, invoice numbers and singleton settings. All relationships between TenantId-bearing records use matching composite foreign keys; the database rejects cross-company references.
 
-- **Products:** Id, Name, Barcode, PurchasePrice, SalePrice, WholesalePrice; all prices decimal(18,2).
+- **Products:** Id, SQL-computed ProductCode, optional Barcode, Name, prices, ProductType, InventoryBehavior, StockUnit, POS/sales channel flags, IsActive and AllowNegativeRecipeConsumption. Existing stocked rows backfill as direct-sale products; prepared rows stay prepared and have PurchasePrice zeroed.
+- **ProductRecipes / RecipeIngredients:** immutable product recipe versions, yield, creator/time and active state; ingredient lines store a stocked product, authored quantity/unit and converted stock quantity/unit snapshot. One active version is allowed per tenant/product.
+- **MeasurementUnits:** tenant-local unit code/name/symbol, Count/Mass/Volume dimension, decimal(24,12) factor to base, precision, system/active flags. Built-ins are protected from deactivation. Products and recipe ingredients use tenant-safe foreign keys; recipe rows additionally preserve unit-code/factor snapshots.
 - **Accounts / Branches:** chart account code/name/type/parent and branch code/name with optional SalesRevenueAccountId subaccount mapping.
 - **JournalEntries / JournalEntryLines:** entry number/status/date/description, optional source type/reference protected against duplicate posting, and balanced account debit-credit lines with optional branch/warehouse.
 - **Warehouses:** Id, Name, BranchId?, InventoryAccountId?, Type, ControlMode, PickingStrategy, AllowPosSales, EnforceLocationCapacity and source/destination transfer-location requirements.
@@ -24,12 +26,12 @@ Schema source is `AppDbContext`, configurations and migrations. Identity's stand
 - **TaxRates:** Name, Rate, OutputAccountId, InputAccountId, IsPriceInclusive.
 - **AccountingSettings:** singleton posting links for purchase discount, sales discount, sales revenue and cost of sales.
 - **PaymentMethods:** Name, AccountId, IsActive; maps cash, bank, card or similar settlement method to a chart account.
-- **ProductStocks:** Id, ProductId, WarehouseId, Quantity decimal(18,3); unique product/warehouse.
+- **ProductStocks:** Id, ProductId, WarehouseId, Quantity decimal(18,6); unique product/warehouse. Negative values are permitted only through the controlled recipe/kitchen domain methods.
 - **ProductLocationStocks:** ProductId, WarehouseId, StorageLocationId, Quantity and RowVersion; unique product/location allocation.
 - **LocationMovements:** immutable putaway/relocation audit rows with ProductId, WarehouseId, FromStorageLocationId?, ToStorageLocationId, Quantity, Type, Reference?, Notes?, CreatedByUserId and CreatedAt.
-- **StockTransactions:** Id, ProductId, WarehouseId, Quantity decimal(18,3), Type, Reference?, CreatedAt.
+- **StockTransactions:** Id, ProductId, WarehouseId, Quantity decimal(18,6), Type, Reference?, CreatedAt; recipe consumption and kitchen variance have distinct types.
 - **Purchases:** header plus items containing ProductId, WarehouseId?, Quantity, PurchasePrice, DiscountAmount, TaxRateId? and Total; new invoices select warehouse per item.
-- **Sales:** Id, InvoiceNumber, Channel, CreatedByUserId, CreatedAt, WarehouseId, PosTerminalId?, CustomerId?, PaymentMethodId?, Date, Notes?, PosOrderType?, ServiceReference?, GuestCount? and subtotal/discount/total fields; SaleItems may hold a preparation note. POS sales retain terminal and order context for audit while historical/legacy values may be null.
+- **Sales:** Id, InvoiceNumber, Channel, CreatedByUserId, CreatedAt, WarehouseId, PosTerminalId?, CustomerId?, PaymentMethodId?, Date, Notes?, PosOrderType?, ServiceReference?, GuestCount? and totals; SaleItems may hold preparation notes and the ProductRecipeId version used for prepared-item consumption.
 - **StockTransfers:** identity, transfer number, source/destination warehouse, status, actor/time/reason fields; each item may identify optional exact source and destination storage locations.
 - **Permissions:** global technical permission catalogue selected by tenant-owned role mappings.
 - **AuditLogs:** EntityName, EntityId, Action, UserId, CreatedAt.

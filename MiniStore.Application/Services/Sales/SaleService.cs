@@ -22,6 +22,7 @@ public class SaleService : ISaleService
     private readonly IWarehouseRepository _warehouseRepository;
     private readonly InventoryAccessService _inventoryAccessService;
     private readonly IPosTerminalSettingsRepository _posTerminalSettingsRepository;
+    private readonly IProductRecipeRepository _productRecipeRepository;
 
     public SaleService(
         ISaleRepository saleRepository,
@@ -36,7 +37,8 @@ public class SaleService : ISaleService
         IPaymentMethodRepository paymentMethodRepository,
         IWarehouseRepository warehouseRepository,
         InventoryAccessService inventoryAccessService,
-        IPosTerminalSettingsRepository posTerminalSettingsRepository)
+        IPosTerminalSettingsRepository posTerminalSettingsRepository,
+        IProductRecipeRepository productRecipeRepository)
     {
         _saleRepository = saleRepository;
         _productRepository = productRepository;
@@ -51,6 +53,7 @@ public class SaleService : ISaleService
         _warehouseRepository = warehouseRepository;
         _inventoryAccessService = inventoryAccessService;
         _posTerminalSettingsRepository = posTerminalSettingsRepository;
+        _productRecipeRepository = productRecipeRepository;
     }
 
     public async Task<List<SaleListDto>> GetAllAsync()
@@ -296,6 +299,9 @@ public class SaleService : ISaleService
                 channel == SaleChannel.RetailPos ? dto.ServiceReference : null,
                 channel == SaleChannel.RetailPos ? dto.GuestCount : null);
 
+            var directRequirements = new List<(Product Product, decimal Quantity)>();
+            var recipeRequirements = new Dictionary<int, (Product Product, decimal Quantity)>();
+
             foreach (var itemDto in dto.Items)
             {
                 var product = await _productRepository
@@ -307,29 +313,58 @@ public class SaleService : ISaleService
                         $"Product with ID {itemDto.ProductId} was not found.");
                 }
 
-                var stock = await _productStockRepository
-                    .GetByProductAndWarehouseAsync(
-                        itemDto.ProductId,
-                        dto.WarehouseId);
-
-                if (stock == null)
-                {
-                    throw new InvalidOperationException(
-                        "Stock record was not found.");
-                }
-
-                if (stock.Quantity < itemDto.Quantity)
-                {
-                    throw new InvalidOperationException(
-                        $"Insufficient stock for product '{product.Name}'. " +
-                        $"Available: {stock.Quantity}, " +
-                        $"Requested: {itemDto.Quantity}.");
-                }
+                if (!product.IsActive)
+                    throw new InvalidOperationException("The selected product is inactive.");
+                if (channel == SaleChannel.RetailPos && !product.IsSellableInPos)
+                    throw new InvalidOperationException("The selected product is not enabled for POS sales.");
+                if (channel == SaleChannel.Wholesale && !product.IsSellableInSales)
+                    throw new InvalidOperationException("The selected product is not enabled for sales invoices.");
 
                 var salePrice =
                     channel == SaleChannel.Wholesale
                         ? product.WholesalePrice
                         : product.SalePrice;
+
+                ProductRecipe? recipe = null;
+                if (product.InventoryBehavior == ProductInventoryBehavior.PreparedToOrder)
+                {
+                    recipe = await _productRecipeRepository
+                        .GetActiveByProductIdAsync(product.Id)
+                        ?? throw new InvalidOperationException(
+                            "Prepared product has no active recipe.");
+
+                    foreach (var ingredientLine in recipe.Ingredients)
+                    {
+                        var ingredient = await _productRepository
+                            .GetByIdAsync(ingredientLine.IngredientProductId)
+                            ?? throw new InvalidOperationException(
+                                "A recipe ingredient was not found.");
+                        var stockUnitChanged = ingredientLine.StockMeasurementUnitId.HasValue
+                            ? ingredient.MeasurementUnitId != ingredientLine.StockMeasurementUnitId
+                            : ingredient.StockUnit != ingredientLine.StockUnitSnapshot;
+                        if (stockUnitChanged)
+                            throw new InvalidOperationException(
+                                "An ingredient stock unit changed after this recipe version was created. Create a new recipe version after reconciling stock.");
+                        var requestedRecipeQuantity =
+                            ingredientLine.StockQuantity * itemDto.Quantity / recipe.YieldQuantity;
+                        var stockQuantity = Math.Round(
+                            requestedRecipeQuantity,
+                            6,
+                            MidpointRounding.AwayFromZero);
+                        if (stockQuantity <= 0)
+                            throw new InvalidOperationException(
+                                "Recipe consumption is below the supported stock precision.");
+
+                        if (recipeRequirements.TryGetValue(ingredient.Id, out var existing))
+                            recipeRequirements[ingredient.Id] = (ingredient, existing.Quantity + stockQuantity);
+                        else
+                            recipeRequirements[ingredient.Id] = (ingredient, stockQuantity);
+                    }
+                }
+                else
+                {
+                    directRequirements.Add((product, itemDto.Quantity));
+                }
 
                 sale.AddItem(
                     new SaleItem(
@@ -338,19 +373,55 @@ public class SaleService : ISaleService
                         salePrice,
                         itemDto.DiscountType,
                         itemDto.DiscountValue,
-                        itemDto.Notes));
+                        itemDto.Notes,
+                        recipe?.Id));
+            }
 
-                stock.RemoveQuantity(itemDto.Quantity);
+            foreach (var requirement in directRequirements)
+            {
+                var stock = await _productStockRepository
+                    .GetByProductAndWarehouseAsync(requirement.Product.Id, dto.WarehouseId)
+                    ?? throw new InvalidOperationException("Stock record was not found.");
 
-                var transaction = new StockTransaction(
-                 itemDto.ProductId,
-                 dto.WarehouseId,
-                -itemDto.Quantity,
-                 StockTransactionType.Sale,
-                 sale.InvoiceNumber);
+                if (stock.Quantity < requirement.Quantity)
+                    throw new InvalidOperationException(
+                        $"Insufficient stock for product '{requirement.Product.Name}'. " +
+                        $"Available: {stock.Quantity}, Requested: {requirement.Quantity}.");
 
-                await _stockTransactionRepository
-                    .AddAsync(transaction);
+                stock.RemoveQuantity(requirement.Quantity);
+
+                await _stockTransactionRepository.AddAsync(new StockTransaction(
+                    requirement.Product.Id,
+                    dto.WarehouseId,
+                    -requirement.Quantity,
+                    StockTransactionType.Sale,
+                    sale.InvoiceNumber));
+            }
+
+            foreach (var requirement in recipeRequirements.Values)
+            {
+                var stock = await _productStockRepository
+                    .GetByProductAndWarehouseAsync(requirement.Product.Id, dto.WarehouseId);
+                if (stock is null)
+                {
+                    if (!requirement.Product.AllowNegativeRecipeConsumption)
+                        throw new InvalidOperationException(
+                            "Stock record was not found for a recipe ingredient.");
+
+                    stock = new ProductStock(requirement.Product.Id, dto.WarehouseId);
+                    await _productStockRepository.AddAsync(stock);
+                }
+
+                stock.ConsumeRecipeQuantity(
+                    requirement.Quantity,
+                    requirement.Product.AllowNegativeRecipeConsumption);
+
+                await _stockTransactionRepository.AddAsync(new StockTransaction(
+                    requirement.Product.Id,
+                    dto.WarehouseId,
+                    -requirement.Quantity,
+                    StockTransactionType.RecipeConsumption,
+                    sale.InvoiceNumber));
             }
 
             if (dto.InvoiceDiscountValue > 0)

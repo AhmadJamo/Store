@@ -5,6 +5,7 @@ using MiniStore.Application.Services;
 using MiniStore.Domain.Entities;
 using MiniStore.Domain.Interfaces;
 using MiniStore.Web.Authorization;
+using Microsoft.Extensions.Localization;
 
 namespace MiniStore.Web.Controllers;
 
@@ -19,10 +20,13 @@ public class StockTransactionsController : Controller
     private readonly IWarehouseRepository
         _warehouseRepository;
 
+    private readonly IStringLocalizer<SharedResource> _localizer;
+
     public StockTransactionsController(
         StockTransactionService stockTransactionService,
         IProductRepository productRepository,
-        IWarehouseRepository warehouseRepository)
+        IWarehouseRepository warehouseRepository,
+        IStringLocalizer<SharedResource> localizer)
     {
         _stockTransactionService =
             stockTransactionService;
@@ -32,6 +36,7 @@ public class StockTransactionsController : Controller
 
         _warehouseRepository =
             warehouseRepository;
+        _localizer = localizer;
     }
 
     [HttpGet]
@@ -117,13 +122,13 @@ public class StockTransactionsController : Controller
         catch (ArgumentException ex)
         {
             await LoadDropdowns();
-            ModelState.AddModelError(string.Empty, ex.Message);
+            ModelState.AddModelError(string.Empty, _localizer[ex.Message]);
             return View(dto);
         }
         catch (InvalidOperationException ex)
         {
             await LoadDropdowns();
-            ModelState.AddModelError(string.Empty, ex.Message);
+            ModelState.AddModelError(string.Empty, _localizer[ex.Message]);
             return View(dto);
         }
         catch (Exception ex)

@@ -1,75 +1,102 @@
-﻿@model MiniStore.Application.DTOs.Products.CreateProductDto
+@model MiniStore.Application.DTOs.Products.CreateProductDto
+@using MiniStore.Domain.Entities
+@using MiniStore.Application.DTOs.Settings
+@inject Microsoft.Extensions.Localization.IStringLocalizer<MiniStore.Web.SharedResource> Localizer
 
-@{
-    ViewData["Title"] = "Create Product";
-}
+@{ ViewData["Title"] = "Create Product"; }
 
-<h1>Create Product</h1>
-
-<form asp-action="Create" method="post">
-
-    <div class="mb-3">
-        <label asp-for="Name" class="form-label">
-            Product Name
-        </label>
-
-        <input asp-for="Name" class="form-control" />
-
-        <span asp-validation-for="Name"
-              class="text-danger"></span>
+<h1>@Localizer["Create Product"]</h1>
+<form asp-action="Create" method="post" id="product-form">
+    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+    <div class="row g-3">
+        <div class="col-md-6">
+            <label asp-for="Name" class="form-label">@Localizer["Product Name"]</label>
+            <input asp-for="Name" class="form-control" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="Barcode" class="form-label">@Localizer["Barcode (optional)"]</label>
+            <input asp-for="Barcode" class="form-control" />
+            <div class="form-text">@Localizer["Leave barcode empty when the item has no manufacturer barcode. The system creates an internal product code automatically."]</div>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="ProductType" class="form-label">@Localizer["Product type"]</label>
+            <select asp-for="ProductType" class="form-select" id="product-type">
+                <option value="@((int)ProductType.RawMaterial)">@Localizer["Raw material"]</option>
+                <option value="@((int)ProductType.DirectSale)">@Localizer["Direct-sale product"]</option>
+                <option value="@((int)ProductType.PreparedToOrder)">@Localizer["Prepared to order from a recipe"]</option>
+            </select>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="MeasurementUnitId" class="form-label">@Localizer["Stock unit"]</label>
+            <select asp-for="MeasurementUnitId" class="form-select">
+                <option value="">@Localizer["Select unit"]</option>
+                @foreach (var unit in (IEnumerable<MeasurementUnitDto>)ViewBag.MeasurementUnits)
+                { <option value="@unit.Id">@Localizer[unit.Name] (@unit.Symbol)</option> }
+            </select>
+            <span asp-validation-for="MeasurementUnitId" class="text-danger"></span>
+        </div>
+        <div class="col-md-4" id="purchase-price-group">
+            <label asp-for="PurchasePrice" class="form-label">@Localizer["Purchase Price"]</label>
+            <input asp-for="PurchasePrice" type="number" min="0" step="0.01" class="form-control" />
+        </div>
+        <div class="col-md-4" id="wholesale-price-group">
+            <label asp-for="WholesalePrice" class="form-label">@Localizer["Wholesale Price"]</label>
+            <input asp-for="WholesalePrice" type="number" min="0" step="0.01" class="form-control" />
+        </div>
+        <div class="col-md-4" id="sale-price-group">
+            <label asp-for="SalePrice" class="form-label">@Localizer["Retail Price"]</label>
+            <input asp-for="SalePrice" type="number" min="0" step="0.01" class="form-control" />
+        </div>
     </div>
 
-    <div class="mb-3">
-        <label asp-for="Barcode" class="form-label">
-            Barcode
-        </label>
-
-        <input asp-for="Barcode" class="form-control" />
-
-        <span asp-validation-for="Barcode"
-              class="text-danger"></span>
+    <div class="border rounded p-3 mt-3">
+        <div class="form-check mb-2">
+            <input asp-for="IsSellableInPos" class="form-check-input sale-option" />
+            <label asp-for="IsSellableInPos" class="form-check-label">@Localizer["Sell through POS"]</label>
+        </div>
+        <div class="form-check mb-2">
+            <input asp-for="IsSellableInSales" class="form-check-input sale-option" />
+            <label asp-for="IsSellableInSales" class="form-check-label">@Localizer["Sell through sales invoices"]</label>
+        </div>
+        <div class="form-check mb-2">
+            <input asp-for="AllowNegativeRecipeConsumption" class="form-check-input" />
+            <label asp-for="AllowNegativeRecipeConsumption" class="form-check-label">@Localizer["Allow controlled negative stock for recipe and kitchen consumption"]</label>
+        </div>
+        <div class="form-check">
+            <input asp-for="IsActive" class="form-check-input" />
+            <label asp-for="IsActive" class="form-check-label">@Localizer["Active product"]</label>
+        </div>
     </div>
 
-    <div class="mb-3">
-        <label asp-for="PurchasePrice" class="form-label">
-            Purchase Price
-        </label>
+    <div id="prepared-help" class="alert alert-info mt-3 d-none">@Localizer["Prepared products do not have a purchase price. Their cost will be calculated from the active recipe and ingredient costs."]</div>
+    <div id="raw-help" class="alert alert-secondary mt-3 d-none">@Localizer["Raw materials are stocked ingredients and cannot be sold directly."]</div>
 
-        <input asp-for="PurchasePrice"
-               type="number"
-               step="0.001"
-               class="form-control" />
-
-        <span asp-validation-for="PurchasePrice"
-              class="text-danger"></span>
-    </div>
-
-    <div class="mb-3">
-        <label asp-for="SalePrice" class="form-label">
-            Retail Price
-        </label>
-
-        <input asp-for="SalePrice"
-               type="number"
-               step="0.001"
-               class="form-control" />
-
-        <span asp-validation-for="SalePrice"
-              class="text-danger"></span>
-    </div>
-
-    <div class="mb-3">
-        <label asp-for="WholesalePrice" class="form-label">Wholesale Price</label>
-        <input asp-for="WholesalePrice" type="number" step="0.001" class="form-control" />
-        <span asp-validation-for="WholesalePrice" class="text-danger"></span>
-    </div>
-
-    <button type="submit" class="btn btn-success">
-        Save
-    </button>
-
-    <a asp-action="Index" class="btn btn-secondary">
-        Cancel
-    </a>
-
+    <button type="submit" class="btn btn-success mt-3">@Localizer["Save"]</button>
+    <a asp-action="Index" class="btn btn-secondary mt-3">@Localizer["Cancel"]</a>
 </form>
+
+@section Scripts {
+<script>
+(() => {
+    const type = document.getElementById('product-type');
+    const purchaseGroup = document.getElementById('purchase-price-group');
+    const purchase = document.getElementById('PurchasePrice');
+    const preparedHelp = document.getElementById('prepared-help');
+    const rawHelp = document.getElementById('raw-help');
+    const saleOptions = document.querySelectorAll('.sale-option');
+    const refresh = () => {
+        const prepared = type.value === '@((int)ProductType.PreparedToOrder)';
+        const raw = type.value === '@((int)ProductType.RawMaterial)';
+        purchaseGroup.classList.toggle('d-none', prepared);
+        purchase.disabled = prepared;
+        if (prepared) purchase.value = '0';
+        preparedHelp.classList.toggle('d-none', !prepared);
+        rawHelp.classList.toggle('d-none', !raw);
+        saleOptions.forEach(x => { if (raw) x.checked = false; x.disabled = raw; });
+    };
+    type.addEventListener('change', refresh);
+    refresh();
+})();
+</script>
+}

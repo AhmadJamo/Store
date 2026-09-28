@@ -40,7 +40,7 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
-            <a class="navbar-brand" asp-controller="Home" asp-action="Index"><i class="bi bi-shop"></i> MiniStore</a>
+            <a class="navbar-brand" asp-controller="Dashboard" asp-action="Index"><i class="bi bi-shop"></i> MiniStore</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
                     aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -54,6 +54,9 @@
                 }
 
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Dashboard" asp-action="Index"><i class="bi bi-speedometer2"></i> @Localizer["Dashboard"]</a>
+                    </li>
                     @foreach (var group in NavigationDefinitions.All.OrderBy(x => x.Order))
                     {
                         var visibleItems = new List<NavigationItem>();

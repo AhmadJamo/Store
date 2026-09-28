@@ -11,6 +11,8 @@ public int SaleId { get; private set; }
 
     public int ProductId { get; private set; }
 
+    public int? ProductRecipeId { get; private set; }
+
     public decimal Quantity { get; private set; }
 
     public decimal SalePrice { get; private set; }
@@ -36,7 +38,8 @@ public int SaleId { get; private set; }
         decimal salePrice,
         DiscountType discountType = DiscountType.Percentage,
         decimal discountValue = 0,
-        string? notes = null)
+        string? notes = null,
+        int? productRecipeId = null)
     {
         if (productId <= 0)
             throw new ArgumentException(
@@ -59,6 +62,8 @@ public int SaleId { get; private set; }
                 "Invalid discount type.");
         if (notes?.Trim().Length > 200)
             throw new ArgumentException("Item notes cannot exceed 200 characters.");
+        if (productRecipeId.HasValue && productRecipeId.Value <= 0)
+            throw new ArgumentException("Recipe version is invalid.");
 
         var grossTotal = quantity * salePrice;
 
@@ -93,6 +98,7 @@ public int SaleId { get; private set; }
             discountAmount = grossTotal;
 
         ProductId = productId;
+        ProductRecipeId = productRecipeId;
         Quantity = quantity;
         SalePrice = salePrice;
 

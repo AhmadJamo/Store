@@ -1,6 +1,7 @@
 using System.Reflection;
 using System.Globalization;
 using System.Resources;
+using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -10,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using MiniStore.Application.Permissions;
+using MiniStore.Application.DTOs.Settings;
 using MiniStore.Infrastructure.Authorization;
 using MiniStore.Infrastructure.Persistence;
 using MiniStore.Domain.Entities;
@@ -163,6 +165,8 @@ var resources = new ResourceManager(
     typeof(MiniStore.Web.SharedResource).Assembly);
 Check(resources.GetString("Settings", CultureInfo.GetCultureInfo("ar-JO")) == "الإعدادات",
     "Arabic shared resources must be embedded and loadable");
+Check(resources.GetString("Recipes", CultureInfo.GetCultureInfo("ar-JO")) == "الوصفات",
+    "Recipe screens must provide Arabic shared resources");
 Check(new LanguageController().Set("fr-FR", "/") is BadRequestResult,
     "Language endpoint must reject unsupported cultures");
 
@@ -186,6 +190,19 @@ try
     CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("ar-SA");
     Check(documentSequence.Preview(documentDate) == "INV-2026-00101-A",
         "Document date tokens must use a stable Gregorian format independent of UI culture");
+}
+finally
+{
+    CultureInfo.CurrentCulture = previousCulture;
+}
+var factorRange = typeof(CreateMeasurementUnitDto)
+    .GetProperty(nameof(CreateMeasurementUnitDto.FactorToBaseUnit))!
+    .GetCustomAttribute<RangeAttribute>()!;
+try
+{
+    CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("ar-JO");
+    Check(factorRange.IsValid(1m),
+        "Decimal range limits must parse independently of the Arabic UI culture");
 }
 finally
 {
@@ -466,6 +483,113 @@ Check(notedItem.Notes == "No onions", "POS sale item must preserve a trimmed pre
 sale.AddItem(notedItem);
 CheckThrows(() => sale.AddItem(new SaleItem(1, 2, 1)),
     "Sale must reject duplicate products");
+
+Check(UnitConversion.Convert(100m, UnitOfMeasure.Gram, UnitOfMeasure.Kilogram) == 0.1m,
+    "Recipe units must convert grams to the ingredient stock unit exactly");
+var managedGram = new MeasurementUnit(
+    "G", "Gram", "g", MeasurementDimension.Mass, 1m, 3, isSystem: true);
+var managedOunce = new MeasurementUnit(
+    "OZ", "Ounce", "oz", MeasurementDimension.Mass, 28.349523125m, 6, isSystem: true);
+Check(
+    MeasurementUnitConversion.Convert(2m, managedOunce, managedGram) == 56.699m,
+    "Managed measurement units must convert through their shared base dimension and target precision");
+CheckThrows(
+    () => managedGram.Deactivate(),
+    "Built-in measurement units must not be deactivated");
+var managedLiter = new MeasurementUnit(
+    "L", "Liter", "L", MeasurementDimension.Volume, 1000m, 6);
+CheckThrows(
+    () => MeasurementUnitConversion.Convert(1m, managedLiter, managedGram),
+    "Managed measurement units must reject conversion across dimensions");
+var managedRecipeIngredient = new RecipeIngredient(1, 2m, managedOunce, managedGram);
+Check(
+    managedRecipeIngredient.StockQuantity == 56.699046m &&
+    managedRecipeIngredient.UnitCodeSnapshot == "OZ" &&
+    managedRecipeIngredient.StockUnitCodeSnapshot == "G" &&
+    managedRecipeIngredient.UnitFactorSnapshot == 28.349523125m &&
+    managedRecipeIngredient.StockUnitFactorSnapshot == 1m,
+    "Recipe versions must preserve managed unit codes, factors, and converted stock quantity");
+CheckArgumentThrows(
+    () => new RecipeIngredient(1, 1m, managedLiter, managedGram),
+    "Managed recipe ingredients must reject units from a different dimension");
+CheckThrows(
+    () => UnitConversion.Convert(1m, UnitOfMeasure.Piece, UnitOfMeasure.Kilogram),
+    "Recipe units must reject conversion between incompatible dimensions");
+CheckArgumentThrows(
+    () => new RecipeIngredient(
+        1, 0.000001m, UnitOfMeasure.Gram, UnitOfMeasure.Kilogram),
+    "Recipe ingredients must reject quantities that round to zero in stock precision");
+var ingredientProduct = new Product(
+    "Flour", "FLOUR", 1, 2, 2,
+    ProductInventoryBehavior.Stocked,
+    UnitOfMeasure.Kilogram,
+    allowNegativeRecipeConsumption: true);
+Check(
+    ingredientProduct.StockUnit == UnitOfMeasure.Kilogram &&
+    ingredientProduct.AllowNegativeRecipeConsumption,
+    "Ingredient products must preserve stock units and controlled-negative policy");
+var recipeStock = new ProductStock(1, 1);
+recipeStock.ConsumeRecipeQuantity(0.15m, allowNegative: true);
+Check(recipeStock.Quantity == -0.15m,
+    "Recipe consumption must permit a controlled negative ingredient balance");
+var strictRecipeStock = new ProductStock(1, 1);
+CheckThrows(
+    () => strictRecipeStock.ConsumeRecipeQuantity(0.15m, allowNegative: false),
+    "Recipe consumption must block negative stock when the ingredient policy is disabled");
+var pizzaRecipe = new ProductRecipe(
+    2, 1, 1, "chef",
+    [new RecipeIngredient(1, 100m, UnitOfMeasure.Gram, UnitOfMeasure.Kilogram)]);
+Check(
+    pizzaRecipe.IsActive &&
+    pizzaRecipe.Ingredients.Single().StockQuantity == 0.1m &&
+    pizzaRecipe.Ingredients.Single().StockUnitSnapshot == UnitOfMeasure.Kilogram,
+    "A recipe version must preserve authored and converted ingredient snapshots");
+pizzaRecipe.Deactivate();
+Check(!pizzaRecipe.IsActive,
+    "A superseded recipe version must become inactive without deleting history");
+var recipeSaleItem = new SaleItem(2, 1, 5, productRecipeId: 9);
+Check(recipeSaleItem.ProductRecipeId == 9,
+    "A prepared sale line must preserve the recipe version used for consumption");
+var rawMaterial = new Product(
+    "Raw flour", null, 1, 0, 0,
+    ProductInventoryBehavior.Stocked,
+    UnitOfMeasure.Kilogram,
+    productType: ProductType.RawMaterial,
+    isSellableInPos: false,
+    isSellableInSales: false);
+Check(rawMaterial.Barcode is null && rawMaterial.PurchasePrice == 1,
+    "Raw materials must allow an optional barcode and a purchase cost without sale prices");
+CheckArgumentThrows(
+    () => new Product(
+        "Invalid raw material", null, 1, 0, 0,
+        ProductInventoryBehavior.Stocked,
+        UnitOfMeasure.Kilogram,
+        productType: ProductType.RawMaterial,
+        isSellableInPos: true,
+        isSellableInSales: false),
+    "Raw materials must reject direct-sale channel enablement");
+var preparedProduct = new Product(
+    "Pizza", null, 99, 8, 6,
+    ProductInventoryBehavior.PreparedToOrder,
+    UnitOfMeasure.Piece,
+    productType: ProductType.PreparedToOrder);
+Check(preparedProduct.PurchasePrice == 0 && preparedProduct.Barcode is null,
+    "Prepared products must clear direct purchase price and allow automatic internal coding");
+CheckArgumentThrows(
+    () => new Product("Loss item", null, 5, 4, 4),
+    "Direct-sale products must reject a purchase price above retail price");
+var productCodeProperty = db.Model.FindEntityType(typeof(Product))!
+    .FindProperty(nameof(Product.ProductCode));
+Check(
+    productCodeProperty?.GetComputedColumnSql()?.Contains("PRD-", StringComparison.Ordinal) == true,
+    "Product code must be generated by the database from the product identity");
+var activeRecipeIndex = db.Model.FindEntityType(typeof(ProductRecipe))!
+    .GetIndexes()
+    .Single(index => index.IsUnique &&
+                     index.Properties.Select(property => property.Name)
+                         .SequenceEqual(["TenantId", nameof(ProductRecipe.ProductId), nameof(ProductRecipe.IsActive)]));
+Check(activeRecipeIndex.GetFilter() == "[IsActive] = 1",
+    "The database model must allow only one active recipe version per tenant product");
 
 Console.WriteLine($"Passed {count} security and inventory regression checks.");
 

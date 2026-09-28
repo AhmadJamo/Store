@@ -153,7 +153,7 @@ public class UnassignedStockService(
         {
             ProductId = warehouseStock.ProductId,
             ProductName = product.Name,
-            Barcode = product.Barcode,
+            Barcode = product.Barcode ?? string.Empty,
             WarehouseId = warehouseStock.WarehouseId,
             WarehouseName = warehouseName,
             WarehouseQuantity = warehouseStock.Quantity,

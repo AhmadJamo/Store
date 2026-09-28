@@ -50,4 +50,19 @@ public class ProductStock
 
         Quantity -= quantity;
     }
+
+    public void ConsumeRecipeQuantity(
+        decimal quantity,
+        bool allowNegative)
+    {
+        if (quantity <= 0)
+            throw new ArgumentException(
+                "Quantity must be greater than zero.");
+
+        if (!allowNegative && quantity > Quantity)
+            throw new InvalidOperationException(
+                "Insufficient stock and negative recipe consumption is not enabled for this ingredient.");
+
+        Quantity -= quantity;
+    }
 }

@@ -1,7 +1,7 @@
 # Database
 > Status: IMPLEMENTED  
 > Source of truth: EF Core entities, configurations and migrations  
-> Last reviewed: 2026-09-15
+> Last reviewed: 2026-09-28
 
 `AppDbContext` derives from `IdentityDbContext<IdentityUser, IdentityRole, string>`, so Identity tables coexist with ERP tables. Provider: SQL Server.
 
@@ -16,7 +16,9 @@ All business tables have a required `TenantId` foreign key to `Tenants`. EF quer
 | PlatformOperators | explicit allow-list and platform role linked to Identity; separate from tenant Admin membership. |
 | PromotionCodes / PromotionRedemptions | unique codes with percentage, UTC validity, optional plan and redemption cap; one redemption per tenant and concurrency-protected counter. |
 | BillingCheckoutSessions | immutable tenant/plan/cycle quote amounts plus optional promotion, 30-minute expiry, status, payment reference/time and rowversion. Subscription activation occurs only on successful confirmation. |
-| Products | `Id`; barcode required but no database unique index. |
+| Products | SQL-computed internal ProductCode; optional tenant-unique barcode; raw/direct/prepared type; stocked/prepared behavior; managed stock-unit FK; active/POS/sales flags; controlled-negative recipe flag. |
+| MeasurementUnits | Tenant-local codes for Count/Mass/Volume units with conversion factor, precision and protected built-in state; referenced through tenant-safe product/recipe FKs. |
+| ProductRecipes / RecipeIngredients | Immutable recipe versions with one filtered-unique active version per tenant/product. Lines reference stocked ingredients and managed authored/stock units, while freezing unit codes/factors and converted stock quantity. SaleItem optionally snapshots the recipe version used. |
 | Accounts / Branches / JournalEntries / JournalEntryLines | hierarchical chart; branches optionally reference a sales-revenue subaccount; journal lines hold debit/credit plus optional branch/warehouse dimensions. A journal source type/reference has a filtered unique index to prevent a document from posting twice. |
 | Warehouses, Suppliers | Warehouses link a branch/inventory account and persist operational type, control mode, picking, POS, capacity and transfer-location policies; suppliers can link a payable account. |
 | TaxRates / AccountingSettings | Tax rates require input/output tax accounts; singleton accounting settings reference optional discount, revenue and COGS accounts. |
@@ -25,10 +27,10 @@ All business tables have a required `TenantId` foreign key to `Tenants`. EF quer
 | BranchWarehouseAccesses | composite branch/warehouse key; priority and operation flags; branch cascades, warehouse restricts. |
 | PosTerminalWarehouses | composite terminal/warehouse key and priority; terminal cascades, warehouse restricts. PosTerminal names are unique inside a branch. |
 | PosTerminalSettings | one-to-one shared primary/foreign key with PosTerminal and cascade delete; stores per-terminal profile/layout and enabled/default order workflow preferences with SQL Server rowversion concurrency. |
-| ProductStocks | product + warehouse FKs Restrict; unique `(ProductId, WarehouseId)`; quantity decimal(18,3); SQL Server rowversion optimistic-concurrency token. |
+| ProductStocks | product + warehouse FKs Restrict; unique `(ProductId, WarehouseId)`; quantity decimal(18,6), including controlled negative recipe exceptions; SQL Server rowversion optimistic-concurrency token. |
 | ProductLocationStocks | product/warehouse/location FKs Restrict; unique `(ProductId, StorageLocationId)`; quantity decimal(18,3) and rowversion. Sum of location quantities cannot exceed warehouse balance through application allocation rules. |
 | LocationMovements | immutable putaway/relocation history with product, warehouse, optional source location, required destination location, quantity, type, reference, notes, user and time; Restrict FKs and product/warehouse date indexes. |
-| StockTransactions | product + warehouse FKs Restrict; quantity decimal(18,3); indexed `(ProductId, WarehouseId)`. |
+| StockTransactions | product + warehouse FKs Restrict; quantity decimal(18,6); includes explicit RecipeConsumption and KitchenVariance movement types; indexed `(ProductId, WarehouseId)`. |
 | Purchases / PurchaseItems | supplier/header warehouse FKs Restrict; each item has its own optional-for-legacy warehouse FK, discount and tax. New items require warehouse selection. |
 | Sales / SaleItems | warehouse FK Restrict; items cascade; sale invoice number unique. POS rows optionally store order type, service reference and guest count; item preparation notes are optional and bounded to 200 characters. |
 | StockTransfers / items/history | warehouse FKs Restrict; transfer number unique; StockTransfer rowversion; item/history FKs Restrict; item unique `(StockTransferId, ProductId)`. |
@@ -39,7 +41,7 @@ All business tables have a required `TenantId` foreign key to `Tenants`. EF quer
 | DocumentSequences | one row per tenant/document type; unique `(TenantId, DocumentType)`; customizable template, prefix, suffix, padding, next/reset counters and period state; rowversion protects settings updates. |
 
 ## Migrations
-Migration history is chronological through `EnforceTenantRoleAssignmentBoundary`, `HardenTenantIsolationRelationships` and `HardenTenantSubscriptionRedemption`. The two hardening migrations replace single-ID business relationships with composite tenant relationships and cover tenant subscription redemptions. Migrations are source-controlled under `MiniStore.Infrastructure/Migrations`; generated designers and the model snapshot are metadata, not separate runtime features.
+Migration history is chronological through `AddCafeRecipesAndControlledNegativeStock`. That migration adds product inventory behavior/units, versioned recipes, the SaleItem recipe snapshot and six-decimal warehouse movement quantities. It was applied successfully to the local `MiniStoreDb` on server `AHMAD` on 2026-09-28, and a second EF update confirmed that the database is current. Migrations are source-controlled under `MiniStore.Infrastructure/Migrations`; generated designers and the model snapshot are metadata, not separate runtime features.
 
 ## Transactions and concurrency
 `UnitOfWork.ExecuteInTransactionAsync` starts a Serializable database transaction, executes an operation, calls one `SaveChangesAsync`, then commits. Sales, purchases, transfers, putaway and internal location relocation use it. ProductStock, ProductLocationStock and StockTransfer use rowversion concurrency tokens. General, discount, inventory, invoice and POS terminal experience settings use rowversion to varying degrees.

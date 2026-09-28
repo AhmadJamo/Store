@@ -29,7 +29,7 @@ public class StorageLocationService(
             {
                 ProductId = stock.ProductId,
                 ProductName = productsById[stock.ProductId].Name,
-                Barcode = productsById[stock.ProductId].Barcode,
+                Barcode = productsById[stock.ProductId].Barcode ?? string.Empty,
                 WarehouseName = warehouseNamesById.GetValueOrDefault(
                     stock.WarehouseId,
                     "Unknown"),

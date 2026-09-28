@@ -14,5 +14,9 @@ public enum StockTransactionType
 
     AdjustmentIn = 6,
 
-    AdjustmentOut = 7
+    AdjustmentOut = 7,
+
+    KitchenVariance = 8,
+
+    RecipeConsumption = 9
 }

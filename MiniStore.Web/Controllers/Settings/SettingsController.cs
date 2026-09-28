@@ -6,6 +6,7 @@ using MiniStore.Application.DTOs.Settings;
 using MiniStore.Application.Services;
 using MiniStore.Domain.Interfaces;
 using MiniStore.Web.Authorization;
+using Microsoft.Extensions.Localization;
 
 namespace MiniStore.Web.Controllers;
 
@@ -20,6 +21,8 @@ public class SettingsController : Controller
     private readonly InventorySettingsService _inventorySettingsService;
     private readonly InventoryAccessService _inventoryAccessService;
     private readonly PosExperienceSettingsService _posExperienceSettingsService;
+    private readonly MeasurementUnitService _measurementUnitService;
+    private readonly IStringLocalizer<SharedResource> _localizer;
     private readonly IMemoryCache _memoryCache;
     private readonly ITenantContext _tenantContext;
 
@@ -32,6 +35,8 @@ public class SettingsController : Controller
         InventorySettingsService inventorySettingsService,
         InventoryAccessService inventoryAccessService,
         PosExperienceSettingsService posExperienceSettingsService,
+        MeasurementUnitService measurementUnitService,
+        IStringLocalizer<SharedResource> localizer,
         IMemoryCache memoryCache,
         ITenantContext tenantContext)
     {
@@ -43,6 +48,8 @@ public class SettingsController : Controller
         _inventorySettingsService = inventorySettingsService;
         _inventoryAccessService = inventoryAccessService;
         _posExperienceSettingsService = posExperienceSettingsService;
+        _measurementUnitService = measurementUnitService;
+        _localizer = localizer;
         _memoryCache = memoryCache;
         _tenantContext = tenantContext;
     }
@@ -51,6 +58,51 @@ public class SettingsController : Controller
     public IActionResult Index()
     {
         return View();
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Units()
+    {
+        return View(await _measurementUnitService.GetPageAsync());
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Units(CreateMeasurementUnitDto dto)
+    {
+        if (!ModelState.IsValid)
+            return View(await _measurementUnitService.GetPageAsync(dto));
+
+        try
+        {
+            await _measurementUnitService.CreateAsync(dto);
+            TempData["NotificationType"] = "success";
+            TempData["NotificationMessage"] = _localizer["Measurement unit created successfully."].Value;
+            return RedirectToAction(nameof(Units));
+        }
+        catch (Exception ex) when (ex is ArgumentException or InvalidOperationException)
+        {
+            ModelState.AddModelError(string.Empty, _localizer[ex.Message]);
+            return View(await _measurementUnitService.GetPageAsync(dto));
+        }
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DeactivateUnit(int id)
+    {
+        try
+        {
+            await _measurementUnitService.DeactivateAsync(id);
+            TempData["NotificationType"] = "success";
+            TempData["NotificationMessage"] = _localizer["Measurement unit deactivated successfully."].Value;
+        }
+        catch (Exception ex) when (ex is ArgumentException or InvalidOperationException)
+        {
+            TempData["NotificationType"] = "error";
+            TempData["NotificationMessage"] = _localizer[ex.Message].Value;
+        }
+        return RedirectToAction(nameof(Units));
     }
 
     [HttpGet]

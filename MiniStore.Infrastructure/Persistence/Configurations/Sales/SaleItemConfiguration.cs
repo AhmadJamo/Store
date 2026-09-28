@@ -49,6 +49,11 @@ public class SaleItemConfiguration
             .WithMany()
             .HasForeignKey(x => x.ProductId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasOne<ProductRecipe>()
+            .WithMany()
+            .HasForeignKey(x => x.ProductRecipeId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 
 }

@@ -50,7 +50,8 @@ public class StockTransactionService
                 "Quantity must be greater than zero.");
 
         if (dto.Type is not StockTransactionType.AdjustmentIn and
-            not StockTransactionType.AdjustmentOut)
+            not StockTransactionType.AdjustmentOut and
+            not StockTransactionType.KitchenVariance)
         {
             throw new ArgumentException(
                 "Manual stock transactions are limited to inventory adjustments.");
@@ -99,6 +100,10 @@ public class StockTransactionService
 
             if (finalQuantity > 0)
                 stock.AddQuantity(finalQuantity);
+            else if (dto.Type == StockTransactionType.KitchenVariance)
+                stock.ConsumeRecipeQuantity(
+                    -finalQuantity,
+                    product.AllowNegativeRecipeConsumption);
             else
                 stock.RemoveQuantity(-finalQuantity);
 

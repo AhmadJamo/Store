@@ -155,8 +155,12 @@ builder.Services.ConfigureApplicationCookie(options =>
 
 
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<IProductRecipeRepository, ProductRecipeRepository>();
+builder.Services.AddScoped<IMeasurementUnitRepository, MeasurementUnitRepository>();
 
 builder.Services.AddScoped<ProductService>();
+builder.Services.AddScoped<MeasurementUnitService>();
+builder.Services.AddScoped<RecipeService>();
 
 builder.Services.AddScoped<IWarehouseRepository,WarehouseRepository>();
 

@@ -62,6 +62,14 @@ public static class NavigationDefinitions
                 10),
 
             new NavigationItem(
+                "Recipes",
+                "bi-journal-text",
+                "Recipes",
+                "Index",
+                "Products.View",
+                15),
+
+            new NavigationItem(
                 "Warehouses",
                 "bi-building",
                 "Warehouses",

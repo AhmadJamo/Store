@@ -1,5 +1,6 @@
 ﻿@using MiniStore.Domain.Entities
 @model MiniStore.Application.DTOs.ProductStocks.StockTransactionPagedResultDto
+@inject Microsoft.Extensions.Localization.IStringLocalizer<MiniStore.Web.SharedResource> Localizer
 
 @{
     ViewData["Title"] = "Stock Transactions";
@@ -646,6 +647,22 @@
 
                                                 <span class="badge bg-danger">
                                                     @transaction.Type
+                                                </span>
+
+                                                break;
+
+                                            case StockTransactionType.KitchenVariance:
+
+                                                <span class="badge bg-warning text-dark">
+                                                    @Localizer["Kitchen Variance"]
+                                                </span>
+
+                                                break;
+
+                                            case StockTransactionType.RecipeConsumption:
+
+                                                <span class="badge bg-danger">
+                                                    @Localizer["Recipe Consumption"]
                                                 </span>
 
                                                 break;
