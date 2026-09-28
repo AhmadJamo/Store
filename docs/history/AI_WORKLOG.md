@@ -1,5 +1,8 @@
 # AI Work Log
 
+## 2026-09-28 — GitHub repository documentation
+Added a comprehensive root README describing MiniStore's current ERP/SaaS scope, café recipe model, managed units, architecture, local setup, security guidance, verification commands, roadmap and production-readiness limits. Added a documentation index and refreshed the project context and codebase map so GitHub readers can navigate authoritative module, database, accounting, security and decision records.
+
 ## 2026-09-28 — Arabic decimal range validation fix
 Fixed the Measurement Units page crash under Arabic culture by making decimal `RangeAttribute` limits parse and convert with invariant culture. Applied the same correction to recipe and stock-transaction decimal DTOs to prevent the identical failure elsewhere. Added an Arabic-culture regression check; Release build passed with zero warnings and all 225 focused checks passed.
 
