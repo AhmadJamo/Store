@@ -42,6 +42,9 @@ public class SaleItemConfiguration
             .HasColumnType("decimal(18,2)")
             .IsRequired();
 
+        builder.Property(x => x.UnitCost).HasPrecision(24, 8);
+        builder.Property(x => x.CostOfGoodsSold).HasPrecision(24, 8);
+
         builder.Property(x => x.Notes)
             .HasMaxLength(200);
 

@@ -14,6 +14,10 @@ public class ProductStockConfiguration
         builder.Property(x => x.Quantity)
             .HasPrecision(18, 6);
 
+        builder.Property(x => x.AverageUnitCost).HasPrecision(24, 8);
+        builder.Property(x => x.InventoryValue).HasPrecision(24, 8);
+        builder.Property(x => x.LastReferenceUnitCost).HasPrecision(24, 8);
+
         builder.Property(x => x.RowVersion)
             .IsRowVersion();
 

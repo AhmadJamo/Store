@@ -98,14 +98,15 @@ public class StockTransactionService
                     ? dto.Quantity
                     : -dto.Quantity;
 
+            InventoryCostMovement costMovement;
             if (finalQuantity > 0)
-                stock.AddQuantity(finalQuantity);
+                costMovement = stock.AddQuantity(finalQuantity);
             else if (dto.Type == StockTransactionType.KitchenVariance)
-                stock.ConsumeRecipeQuantity(
+                costMovement = stock.ConsumeRecipeQuantity(
                     -finalQuantity,
                     product.AllowNegativeRecipeConsumption);
             else
-                stock.RemoveQuantity(-finalQuantity);
+                costMovement = stock.RemoveQuantity(-finalQuantity);
 
             await _stockTransactionRepository.AddAsync(
                 new StockTransaction(
@@ -113,7 +114,8 @@ public class StockTransactionService
                     dto.WarehouseId,
                     finalQuantity,
                     dto.Type,
-                    dto.Reference.Trim()));
+                    dto.Reference.Trim(),
+                    costMovement));
         });
     }
     public async Task<List<StockTransactionDto>> GetAllAsync()
@@ -152,7 +154,16 @@ public class StockTransactionService
 
                 Reference = transaction.Reference,
 
-                CreatedAt = transaction.CreatedAt
+                CreatedAt = transaction.CreatedAt,
+                QuantityBefore = transaction.QuantityBefore,
+                QuantityAfter = transaction.QuantityAfter,
+                AverageUnitCostBefore = transaction.AverageUnitCostBefore,
+                AverageUnitCostAfter = transaction.AverageUnitCostAfter,
+                InventoryValueBefore = transaction.InventoryValueBefore,
+                InventoryValueAfter = transaction.InventoryValueAfter,
+                UnitCost = transaction.UnitCost,
+                TransactionValue = transaction.TransactionValue,
+                CostVariance = transaction.CostVariance
 
             }).ToList();
     }
@@ -244,8 +255,16 @@ public class StockTransactionService
                         Reference =
                             transaction.Reference,
 
-                        CreatedAt =
-                            transaction.CreatedAt
+                        CreatedAt = transaction.CreatedAt,
+                        QuantityBefore = transaction.QuantityBefore,
+                        QuantityAfter = transaction.QuantityAfter,
+                        AverageUnitCostBefore = transaction.AverageUnitCostBefore,
+                        AverageUnitCostAfter = transaction.AverageUnitCostAfter,
+                        InventoryValueBefore = transaction.InventoryValueBefore,
+                        InventoryValueAfter = transaction.InventoryValueAfter,
+                        UnitCost = transaction.UnitCost,
+                        TransactionValue = transaction.TransactionValue,
+                        CostVariance = transaction.CostVariance
                     })
                 .ToList();
 

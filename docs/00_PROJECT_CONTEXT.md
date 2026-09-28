@@ -23,7 +23,7 @@ The repository implements an operational slice for catalog, warehouses, stock, s
 | Products | IMPLEMENTED | `Product`, `ProductService`, `ProductsController` | Generated code, optional barcode, raw/direct/prepared type, managed stock unit, channel controls and advanced catalog search. |
 | Warehouses | IMPLEMENTED | `Warehouse`, `WarehouseService` | Named warehouse master data. |
 | Suppliers | IMPLEMENTED | `Supplier`, `SupplierService` | Supplier master data. |
-| Inventory | PARTIALLY IMPLEMENTED | `ProductStock`, `StockTransaction`, recipes, measurement units | Balances, movements, managed-unit conversion, versioned prepared-product recipes and controlled negative ingredient exceptions; valuation remains pending. |
+| Inventory | PARTIALLY IMPLEMENTED | `ProductStock`, `StockTransaction`, recipes, measurement units | Balances, moving-average valuation, auditable cost movements, managed-unit conversion, prepared recipes and controlled negative variance; ledger posting remains pending. |
 | Purchases | IMPLEMENTED | `Purchase`, `PurchaseService` | Immediately increases stock. |
 | Sales | IMPLEMENTED | `Sale`, `SaleService` | Uses configured product price by channel and decreases stock. |
 | Stock transfers | IMPLEMENTED | `StockTransfer`, `StockTransferService` | Draft/submitted/approved/posted/cancelled flow. |

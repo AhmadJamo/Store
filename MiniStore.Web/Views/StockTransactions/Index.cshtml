@@ -481,6 +481,18 @@
 
 
                             <th>
+                                @Localizer["Unit cost"]
+                            </th>
+
+                            <th>
+                                @Localizer["Movement value"]
+                            </th>
+
+                            <th>
+                                @Localizer["Cost variance"]
+                            </th>
+
+                            <th>
                                 <a href="@SortUrl("type")"
                                    class="text-white text-decoration-none">
 
@@ -552,6 +564,12 @@
                                     <!-- Id -->
                                     <td>
                                         @transaction.Id
+                                    </td>
+
+                                    <td>@transaction.UnitCost.ToString("0.########")</td>
+                                    <td>@transaction.TransactionValue.ToString("0.########")</td>
+                                    <td class="@(transaction.CostVariance != 0 ? "text-warning fw-semibold" : "")">
+                                        @transaction.CostVariance.ToString("0.########")
                                     </td>
 
 
@@ -711,7 +729,7 @@
                         {
                             <tr>
 
-                                <td colspan="7"
+                                <td colspan="10"
                                     class="text-center py-5">
 
                                     <div class="text-muted">

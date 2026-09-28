@@ -53,7 +53,9 @@ public class ProductStockService
                 .FirstOrDefault(x => x.Id == stock.WarehouseId)
                 ?.Name ?? "Unknown Warehouse",
 
-            Quantity = stock.Quantity
+            Quantity = stock.Quantity,
+            AverageUnitCost = stock.AverageUnitCost,
+            InventoryValue = stock.InventoryValue
 
         }).ToList();
     }
@@ -88,7 +90,9 @@ public class ProductStockService
             WarehouseName =
                 warehouse?.Name ?? "Unknown Warehouse",
 
-            Quantity = stock.Quantity
+            Quantity = stock.Quantity,
+            AverageUnitCost = stock.AverageUnitCost,
+            InventoryValue = stock.InventoryValue
         };
     }
 
@@ -137,10 +141,9 @@ public class ProductStockService
 
         // AddQuantity does not allow zero,
         // so only call it when the opening balance is greater than zero.
+        InventoryCostMovement? costMovement = null;
         if (dto.Quantity > 0)
-        {
-            stock.AddQuantity(dto.Quantity);
-        }
+            costMovement = stock.Receive(dto.Quantity, product.PurchasePrice);
 
         await _unitOfWork.ExecuteInTransactionAsync(
             async () =>
@@ -153,7 +156,8 @@ public class ProductStockService
                         dto.WarehouseId,
                         dto.Quantity,
                         StockTransactionType.OpeningBalance,
-                        "Opening balance"));
+                        "Opening balance",
+                        costMovement));
             });
     }
 
@@ -181,14 +185,9 @@ public class ProductStockService
         await _unitOfWork.ExecuteInTransactionAsync(
             async () =>
             {
-                if (difference > 0)
-                {
-                    stock.AddQuantity(difference);
-                }
-                else
-                {
-                    stock.RemoveQuantity(-difference);
-                }
+                var costMovement = difference > 0
+                    ? stock.AddQuantity(difference)
+                    : stock.RemoveQuantity(-difference);
 
                 await _stockTransactionRepository.AddAsync(
                     new StockTransaction(
@@ -198,7 +197,8 @@ public class ProductStockService
                         difference > 0
                             ? StockTransactionType.AdjustmentIn
                             : StockTransactionType.AdjustmentOut,
-                        "Manual stock adjustment"));
+                        "Manual stock adjustment",
+                        costMovement));
             });
     }
 

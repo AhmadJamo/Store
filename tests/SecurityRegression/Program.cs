@@ -536,6 +536,31 @@ var strictRecipeStock = new ProductStock(1, 1);
 CheckThrows(
     () => strictRecipeStock.ConsumeRecipeQuantity(0.15m, allowNegative: false),
     "Recipe consumption must block negative stock when the ingredient policy is disabled");
+var valuedStock = new ProductStock(1, 1);
+var firstReceipt = valuedStock.Receive(10m, 5m);
+var secondReceipt = valuedStock.Receive(20m, 8m);
+var valuedIssue = valuedStock.RemoveQuantity(4m);
+Check(
+    firstReceipt.AverageUnitCostAfter == 5m &&
+    secondReceipt.AverageUnitCostAfter == 7m &&
+    secondReceipt.InventoryValueAfter == 210m,
+    "Moving weighted average must produce 7 after receiving 10 at 5 and 20 at 8");
+Check(
+    valuedIssue.UnitCost == 7m &&
+    valuedIssue.TransactionValue == -28m &&
+    valuedStock.Quantity == 26m &&
+    valuedStock.InventoryValue == 182m,
+    "Inventory issues must preserve the current average and snapshot movement value");
+var provisionalStock = new ProductStock(1, 1);
+provisionalStock.EnsureReferenceUnitCost(7m);
+provisionalStock.ConsumeRecipeQuantity(5m, allowNegative: true);
+var settlementReceipt = provisionalStock.Receive(10m, 8m);
+Check(
+    provisionalStock.Quantity == 5m &&
+    provisionalStock.AverageUnitCost == 8m &&
+    provisionalStock.InventoryValue == 40m &&
+    settlementReceipt.CostVariance == 5m,
+    "A receipt covering provisional negative stock must value remaining stock at receipt cost and isolate the settlement variance");
 var pizzaRecipe = new ProductRecipe(
     2, 1, 1, "chef",
     [new RecipeIngredient(1, 100m, UnitOfMeasure.Gram, UnitOfMeasure.Kilogram)]);

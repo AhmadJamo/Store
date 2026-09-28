@@ -15,6 +15,7 @@ The project currently provides an operational foundation for retail stores, whol
 - Automatically generated internal product codes and optional barcodes
 - Advanced product search, filtering, sorting, and paging
 - Warehouse balances, stock movements, transfers, and storage locations
+- Moving weighted-average inventory valuation per product and warehouse
 - Purchasing and wholesale/POS sales workflows
 - Café and restaurant recipes with immutable recipe versions
 - Automatic ingredient consumption when prepared products are sold
@@ -40,7 +41,7 @@ Each immutable recipe version preserves:
 
 This prevents later unit-configuration changes from rewriting historical consumption. Ingredients can optionally allow controlled negative stock for kitchen operations, while ordinary inventory operations remain strict.
 
-Recipe cost and cost of goods sold will be completed with the planned moving weighted-average valuation engine.
+Recipe cost and cost of goods sold are frozen from moving weighted-average ingredient costs at sale time. Automatic COGS journal posting remains a following accounting phase.
 
 ## Product Catalog
 
@@ -143,14 +144,13 @@ dotnet run --project tests/SecurityRegression/SecurityRegression.csproj -c Relea
 dotnet ef migrations has-pending-model-changes --project MiniStore.Infrastructure --startup-project MiniStore.Web --configuration Release --no-build
 ```
 
-The latest verified local run completed with zero build warnings/errors, 225 passing focused checks, and no pending EF model changes.
+The latest verified local run completed with zero build warnings/errors, 228 passing focused checks, and no pending EF model changes.
 
 ## Current Roadmap
 
 The main planned work includes:
 
-- moving weighted-average inventory valuation;
-- recipe cost and cost-of-goods-sold posting;
+- automatic cost-of-goods-sold and provisional-variance journal posting;
 - settlement of provisional cost after controlled negative stock;
 - sales tax and complete double-entry posting;
 - purchase and sales returns;

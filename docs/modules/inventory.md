@@ -1,9 +1,9 @@
 # Inventory and stock movements
 > Status: IMPLEMENTED WITH REMAINING CONTROLS | Last reviewed: 2026-09-28
 
-Balances are held by product/warehouse in `ProductStock`; immutable-by-convention movement rows are `StockTransaction`. ProductStock and StockTransfer have SQL Server rowversion concurrency tokens. Inventory UnitOfWork operations use Serializable transactions, and a stale update rolls back the document, balance and movement together with a retry message.
+Balances and moving weighted-average valuation are held by product/warehouse in `ProductStock`; immutable-by-convention quantity/cost movement rows are `StockTransaction`. Every new movement freezes quantity, average and inventory value before/after plus unit cost, movement value and cost variance. ProductStock and StockTransfer have SQL Server rowversion concurrency tokens. Inventory UnitOfWork operations use Serializable transactions, and a stale update rolls back the document, balance and movement together with a retry message.
 
-Prepared-to-order products consume active recipe ingredients instead of a finished-item balance. Requirements are converted to each ingredient's stock unit, aggregated for the sale and recorded as RecipeConsumption in the sale transaction. Controlled negative balances are restricted to recipe consumption or KitchenVariance on ingredients explicitly configured to allow it; normal stock removal stays strict. Negative rows are highlighted for reconciliation. Financial valuation of the negative interval remains part of ACC-001.
+Prepared-to-order products consume active recipe ingredients instead of a finished-item balance. Requirements are converted to each ingredient's stock unit, aggregated and recorded as RecipeConsumption. Controlled negative balances are restricted to authorized recipe/kitchen use and retain a provisional reference cost. A later receipt isolates the provisional-versus-actual CostVariance and values any remaining positive quantity at receipt cost; ledger settlement remains pending.
 
 Manual transaction creation permits only AdjustmentIn and AdjustmentOut and requires a reason. Purchase, Sale, TransferIn, TransferOut and OpeningBalance are owned by their corresponding application workflows. Purchase and sale aggregates reject duplicate product lines.
 

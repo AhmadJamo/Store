@@ -27,9 +27,20 @@ public int SaleId { get; private set; }
 
     public decimal Total { get; private set; }
     public string? Notes { get; private set; }
+    public decimal UnitCost { get; private set; }
+    public decimal CostOfGoodsSold { get; private set; }
 
     private SaleItem()
     {
+    }
+
+    public void SetCostSnapshot(decimal unitCost, decimal costOfGoodsSold)
+    {
+        if (unitCost < 0 || costOfGoodsSold < 0)
+            throw new ArgumentException("Sale cost cannot be negative.");
+
+        UnitCost = Math.Round(unitCost, 8, MidpointRounding.AwayFromZero);
+        CostOfGoodsSold = Math.Round(costOfGoodsSold, 8, MidpointRounding.AwayFromZero);
     }
 
     public SaleItem(

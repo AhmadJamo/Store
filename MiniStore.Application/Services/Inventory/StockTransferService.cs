@@ -567,11 +567,10 @@ public class StockTransferService : IStockTransferService
                             destinationStock);
                     }
 
-                    sourceStock.RemoveQuantity(
-                        item.Quantity);
-
-                    destinationStock.AddQuantity(
-                        item.Quantity);
+                    var sourceCostMovement = sourceStock.RemoveQuantity(item.Quantity);
+                    var destinationCostMovement = destinationStock.Receive(
+                        item.Quantity,
+                        sourceCostMovement.UnitCost);
 
                     if (item.DestinationLocationId.HasValue)
                     {
@@ -619,7 +618,8 @@ public class StockTransferService : IStockTransferService
                             transfer.FromWarehouseId,
                             -item.Quantity,
                             StockTransactionType.TransferOut,
-                            transfer.TransferNumber));
+                            transfer.TransferNumber,
+                            sourceCostMovement));
 
                     await _stockTransactionRepository.AddAsync(
                         new StockTransaction(
@@ -627,7 +627,8 @@ public class StockTransferService : IStockTransferService
                             transfer.ToWarehouseId,
                             item.Quantity,
                             StockTransactionType.TransferIn,
-                            transfer.TransferNumber));
+                            transfer.TransferNumber,
+                            destinationCostMovement));
                 }
 
                 transfer.Post(userId);
@@ -709,11 +710,10 @@ public class StockTransferService : IStockTransferService
                         }
                     }
 
-                    destinationStock.RemoveQuantity(
-                        item.Quantity);
-
-                    sourceStock.AddQuantity(
-                        item.Quantity);
+                    var destinationCostMovement = destinationStock.RemoveQuantity(item.Quantity);
+                    var sourceCostMovement = sourceStock.Receive(
+                        item.Quantity,
+                        destinationCostMovement.UnitCost);
 
                     if (item.SourceLocationId.HasValue)
                     {
@@ -742,7 +742,8 @@ public class StockTransferService : IStockTransferService
                             transfer.FromWarehouseId,
                             item.Quantity,
                             StockTransactionType.TransferIn,
-                            $"Cancellation of {transfer.TransferNumber}"));
+                            $"Cancellation of {transfer.TransferNumber}",
+                            sourceCostMovement));
 
                     await _stockTransactionRepository.AddAsync(
                         new StockTransaction(
@@ -750,7 +751,8 @@ public class StockTransferService : IStockTransferService
                             transfer.ToWarehouseId,
                             -item.Quantity,
                             StockTransactionType.TransferOut,
-                            $"Cancellation of {transfer.TransferNumber}"));
+                            $"Cancellation of {transfer.TransferNumber}",
+                            destinationCostMovement));
                 }
 
                 transfer.Cancel(

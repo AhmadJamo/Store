@@ -19,3 +19,6 @@ Creates the tenant-isolated managed measurement-unit catalogue with code, dimens
 
 ## 20260928145232_ConnectManagedUnitsToProductsAndRecipes
 Adds tenant-safe managed-unit foreign keys to Products and RecipeIngredients, immutable recipe unit-code/factor snapshots and compatibility backfill. It idempotently initializes the eight built-in units for every existing tenant, maps legacy stock/recipe units, and repairs the alternate tenant key required by older local schemas. Applied successfully to local `MiniStoreDb` on server `AHMAD` on 2026-09-28.
+
+## 20260928153229_AddMovingWeightedAverageInventoryCost
+Adds product/warehouse average cost, inventory value and reference cost; full before/after cost snapshots and variance on stock movements; and unit-cost/COGS snapshots on sale lines. Existing balances initialize from Product.PurchasePrice while historical movements remain zero-valued because their original cost cannot be reconstructed reliably. Applied successfully to local `MiniStoreDb` on server `AHMAD` on 2026-09-28.

@@ -2,6 +2,10 @@
 
 public class StockTransaction
 {
+    private StockTransaction()
+    {
+    }
+
     public int Id { get; private set; }
 
     public int ProductId { get; private set; }
@@ -16,12 +20,23 @@ public class StockTransaction
 
     public DateTime CreatedAt { get; private set; }
 
+    public decimal QuantityBefore { get; private set; }
+    public decimal QuantityAfter { get; private set; }
+    public decimal AverageUnitCostBefore { get; private set; }
+    public decimal AverageUnitCostAfter { get; private set; }
+    public decimal InventoryValueBefore { get; private set; }
+    public decimal InventoryValueAfter { get; private set; }
+    public decimal UnitCost { get; private set; }
+    public decimal TransactionValue { get; private set; }
+    public decimal CostVariance { get; private set; }
+
     public StockTransaction(
         int productId,
         int warehouseId,
         decimal quantity,
         StockTransactionType type,
-        string? reference = null)
+        string? reference = null,
+        InventoryCostMovement? costMovement = null)
     {
         if (productId <= 0)
             throw new ArgumentException(
@@ -45,5 +60,18 @@ public class StockTransaction
         Type = type;
         Reference = reference;
         CreatedAt = DateTime.UtcNow;
+
+        if (costMovement is not null)
+        {
+            QuantityBefore = costMovement.QuantityBefore;
+            QuantityAfter = costMovement.QuantityAfter;
+            AverageUnitCostBefore = costMovement.AverageUnitCostBefore;
+            AverageUnitCostAfter = costMovement.AverageUnitCostAfter;
+            InventoryValueBefore = costMovement.InventoryValueBefore;
+            InventoryValueAfter = costMovement.InventoryValueAfter;
+            UnitCost = costMovement.UnitCost;
+            TransactionValue = costMovement.TransactionValue;
+            CostVariance = costMovement.CostVariance;
+        }
     }
 }

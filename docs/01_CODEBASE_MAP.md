@@ -26,7 +26,7 @@
 | `Entities/Accounting/*.cs` | chart, branches, journal entries, tax and payment entities | accounting docs. |
 | `Entities/Catalog/{Product,ProductRecipe,RecipeIngredient,MeasurementUnit}.cs` and product type/unit/dimension/behavior enums | product code, optional barcode, raw/direct/prepared classification, sale channels, immutable recipe versions and managed/legacy recipe units | products, sales and inventory docs. |
 | `Entities/Customers/Customer.cs`, `Entities/Suppliers/Supplier.cs` | commercial-party master data | sales/purchases docs. |
-| `Entities/Inventory/*.cs` | warehouses, operating-policy enums, balances, exact locations, putaway/relocation history, stock movements and transfers | inventory and stock-transfer docs. |
+| `Entities/Inventory/*.cs` | warehouses, operating-policy enums, moving-average balances/cost snapshots, exact locations, putaway/relocation history, stock movements and transfers | inventory, accounting and stock-transfer docs. |
 | `Entities/Purchases/*.cs`, `Entities/Sales/*.cs` | purchase, sale and POS aggregates plus per-terminal experience/order enums and settings | purchase/sales/settings docs. |
 | `Entities/Settings/*.cs` | accounting, discount, inventory-policy defaults, centralized `DocumentSequence`, general settings and supported UI language | settings/database/localization docs. |
 | `Entities/Security/*.cs` | audit, permission catalogue and tenant-owned role/permission entities | permissions/security docs. |

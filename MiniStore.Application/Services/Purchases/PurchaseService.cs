@@ -314,8 +314,10 @@ public class PurchaseService
                             itemDto.WarehouseId);
                     }
 
-                    stock.AddQuantity(
-                        itemDto.Quantity);
+                    var netUnitCost = purchaseItem.Total / purchaseItem.Quantity;
+                    var costMovement = stock.Receive(
+                        itemDto.Quantity,
+                        netUnitCost);
 
                     var transaction =
                         new StockTransaction(
@@ -323,7 +325,8 @@ public class PurchaseService
                             itemDto.WarehouseId,
                             itemDto.Quantity,
                             StockTransactionType.Purchase,
-                            dto.InvoiceNumber);
+                            dto.InvoiceNumber,
+                            costMovement);
 
                     await _stockTransactionRepository
                         .AddAsync(transaction);

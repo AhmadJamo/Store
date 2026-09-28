@@ -26,10 +26,10 @@ Schema source is `AppDbContext`, configurations and migrations. Identity's stand
 - **TaxRates:** Name, Rate, OutputAccountId, InputAccountId, IsPriceInclusive.
 - **AccountingSettings:** singleton posting links for purchase discount, sales discount, sales revenue and cost of sales.
 - **PaymentMethods:** Name, AccountId, IsActive; maps cash, bank, card or similar settlement method to a chart account.
-- **ProductStocks:** Id, ProductId, WarehouseId, Quantity decimal(18,6); unique product/warehouse. Negative values are permitted only through the controlled recipe/kitchen domain methods.
+- **ProductStocks:** Id, ProductId, WarehouseId, Quantity decimal(18,6), AverageUnitCost, InventoryValue and LastReferenceUnitCost decimal(24,8); unique product/warehouse. Negative values are permitted only through controlled recipe/kitchen methods and retain provisional value.
 - **ProductLocationStocks:** ProductId, WarehouseId, StorageLocationId, Quantity and RowVersion; unique product/location allocation.
 - **LocationMovements:** immutable putaway/relocation audit rows with ProductId, WarehouseId, FromStorageLocationId?, ToStorageLocationId, Quantity, Type, Reference?, Notes?, CreatedByUserId and CreatedAt.
-- **StockTransactions:** Id, ProductId, WarehouseId, Quantity decimal(18,6), Type, Reference?, CreatedAt; recipe consumption and kitchen variance have distinct types.
+- **StockTransactions:** immutable quantity/valuation movement with quantity, average and value before/after, unit cost, transaction value, cost variance, Type, Reference and CreatedAt; recipe consumption and kitchen variance have distinct types.
 - **Purchases:** header plus items containing ProductId, WarehouseId?, Quantity, PurchasePrice, DiscountAmount, TaxRateId? and Total; new invoices select warehouse per item.
 - **Sales:** Id, InvoiceNumber, Channel, CreatedByUserId, CreatedAt, WarehouseId, PosTerminalId?, CustomerId?, PaymentMethodId?, Date, Notes?, PosOrderType?, ServiceReference?, GuestCount? and totals; SaleItems may hold preparation notes and the ProductRecipeId version used for prepared-item consumption.
 - **StockTransfers:** identity, transfer number, source/destination warehouse, status, actor/time/reason fields; each item may identify optional exact source and destination storage locations.

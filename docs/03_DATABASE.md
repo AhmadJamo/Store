@@ -27,10 +27,10 @@ All business tables have a required `TenantId` foreign key to `Tenants`. EF quer
 | BranchWarehouseAccesses | composite branch/warehouse key; priority and operation flags; branch cascades, warehouse restricts. |
 | PosTerminalWarehouses | composite terminal/warehouse key and priority; terminal cascades, warehouse restricts. PosTerminal names are unique inside a branch. |
 | PosTerminalSettings | one-to-one shared primary/foreign key with PosTerminal and cascade delete; stores per-terminal profile/layout and enabled/default order workflow preferences with SQL Server rowversion concurrency. |
-| ProductStocks | product + warehouse FKs Restrict; unique `(ProductId, WarehouseId)`; quantity decimal(18,6), including controlled negative recipe exceptions; SQL Server rowversion optimistic-concurrency token. |
+| ProductStocks | product + warehouse FKs Restrict; unique `(ProductId, WarehouseId)`; quantity decimal(18,6), average/value/reference cost decimal(24,8), controlled negative recipe valuation and rowversion concurrency. |
 | ProductLocationStocks | product/warehouse/location FKs Restrict; unique `(ProductId, StorageLocationId)`; quantity decimal(18,3) and rowversion. Sum of location quantities cannot exceed warehouse balance through application allocation rules. |
 | LocationMovements | immutable putaway/relocation history with product, warehouse, optional source location, required destination location, quantity, type, reference, notes, user and time; Restrict FKs and product/warehouse date indexes. |
-| StockTransactions | product + warehouse FKs Restrict; quantity decimal(18,6); includes explicit RecipeConsumption and KitchenVariance movement types; indexed `(ProductId, WarehouseId)`. |
+| StockTransactions | product + warehouse FKs Restrict; quantity decimal(18,6), quantity/average/value before and after, unit cost, transaction value and settlement variance; includes RecipeConsumption and KitchenVariance; indexed `(ProductId, WarehouseId)`. |
 | Purchases / PurchaseItems | supplier/header warehouse FKs Restrict; each item has its own optional-for-legacy warehouse FK, discount and tax. New items require warehouse selection. |
 | Sales / SaleItems | warehouse FK Restrict; items cascade; sale invoice number unique. POS rows optionally store order type, service reference and guest count; item preparation notes are optional and bounded to 200 characters. |
 | StockTransfers / items/history | warehouse FKs Restrict; transfer number unique; StockTransfer rowversion; item/history FKs Restrict; item unique `(StockTransferId, ProductId)`. |

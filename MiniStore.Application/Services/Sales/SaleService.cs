@@ -301,6 +301,7 @@ public class SaleService : ISaleService
 
             var directRequirements = new List<(Product Product, decimal Quantity)>();
             var recipeRequirements = new Dictionary<int, (Product Product, decimal Quantity)>();
+            var preparedUnitCosts = new Dictionary<int, decimal>();
 
             foreach (var itemDto in dto.Items)
             {
@@ -333,6 +334,7 @@ public class SaleService : ISaleService
                         ?? throw new InvalidOperationException(
                             "Prepared product has no active recipe.");
 
+                    decimal recipeUnitCost = 0;
                     foreach (var ingredientLine in recipe.Ingredients)
                     {
                         var ingredient = await _productRepository
@@ -355,11 +357,23 @@ public class SaleService : ISaleService
                             throw new InvalidOperationException(
                                 "Recipe consumption is below the supported stock precision.");
 
+                        var ingredientStock = await _productStockRepository
+                            .GetByProductAndWarehouseAsync(ingredient.Id, dto.WarehouseId);
+                        var ingredientUnitCost = ingredientStock?.AverageUnitCost > 0
+                            ? ingredientStock.AverageUnitCost
+                            : ingredientStock?.LastReferenceUnitCost > 0
+                                ? ingredientStock.LastReferenceUnitCost
+                                : ingredient.PurchasePrice;
+                        recipeUnitCost += ingredientLine.StockQuantity /
+                            recipe.YieldQuantity * ingredientUnitCost;
+
                         if (recipeRequirements.TryGetValue(ingredient.Id, out var existing))
                             recipeRequirements[ingredient.Id] = (ingredient, existing.Quantity + stockQuantity);
                         else
                             recipeRequirements[ingredient.Id] = (ingredient, stockQuantity);
                     }
+                    preparedUnitCosts[product.Id] = Math.Round(
+                        recipeUnitCost, 8, MidpointRounding.AwayFromZero);
                 }
                 else
                 {
@@ -375,6 +389,14 @@ public class SaleService : ISaleService
                         itemDto.DiscountValue,
                         itemDto.Notes,
                         recipe?.Id));
+
+                if (preparedUnitCosts.TryGetValue(product.Id, out var preparedUnitCost))
+                {
+                    sale.Items.Single(x => x.ProductId == product.Id)
+                        .SetCostSnapshot(
+                            preparedUnitCost,
+                            preparedUnitCost * itemDto.Quantity);
+                }
             }
 
             foreach (var requirement in directRequirements)
@@ -388,14 +410,19 @@ public class SaleService : ISaleService
                         $"Insufficient stock for product '{requirement.Product.Name}'. " +
                         $"Available: {stock.Quantity}, Requested: {requirement.Quantity}.");
 
-                stock.RemoveQuantity(requirement.Quantity);
+                var costMovement = stock.RemoveQuantity(requirement.Quantity);
+                sale.Items.Single(x => x.ProductId == requirement.Product.Id)
+                    .SetCostSnapshot(
+                        costMovement.UnitCost,
+                        Math.Abs(costMovement.TransactionValue));
 
                 await _stockTransactionRepository.AddAsync(new StockTransaction(
                     requirement.Product.Id,
                     dto.WarehouseId,
                     -requirement.Quantity,
                     StockTransactionType.Sale,
-                    sale.InvoiceNumber));
+                    sale.InvoiceNumber,
+                    costMovement));
             }
 
             foreach (var requirement in recipeRequirements.Values)
@@ -412,7 +439,9 @@ public class SaleService : ISaleService
                     await _productStockRepository.AddAsync(stock);
                 }
 
-                stock.ConsumeRecipeQuantity(
+                stock.EnsureReferenceUnitCost(requirement.Product.PurchasePrice);
+
+                var costMovement = stock.ConsumeRecipeQuantity(
                     requirement.Quantity,
                     requirement.Product.AllowNegativeRecipeConsumption);
 
@@ -421,7 +450,8 @@ public class SaleService : ISaleService
                     dto.WarehouseId,
                     -requirement.Quantity,
                     StockTransactionType.RecipeConsumption,
-                    sale.InvoiceNumber));
+                    sale.InvoiceNumber,
+                    costMovement));
             }
 
             if (dto.InvoiceDiscountValue > 0)

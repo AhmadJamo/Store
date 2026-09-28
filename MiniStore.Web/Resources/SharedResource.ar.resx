@@ -224,6 +224,11 @@
   <data name="Ounce" xml:space="preserve"><value>أونصة</value></data>
   <data name="Pound" xml:space="preserve"><value>رطل</value></data>
   <data name="Select unit" xml:space="preserve"><value>اختر وحدة القياس</value></data>
+  <data name="Average unit cost" xml:space="preserve"><value>متوسط تكلفة الوحدة</value></data>
+  <data name="Inventory value" xml:space="preserve"><value>قيمة المخزون</value></data>
+  <data name="Unit cost" xml:space="preserve"><value>تكلفة الوحدة</value></data>
+  <data name="Movement value" xml:space="preserve"><value>قيمة الحركة</value></data>
+  <data name="Cost variance" xml:space="preserve"><value>فرق التكلفة</value></data>
   <data name="Built-in" xml:space="preserve"><value>مدمجة</value></data>
   <data name="Deactivate" xml:space="preserve"><value>إيقاف</value></data>
   <data name="Measurement unit created successfully." xml:space="preserve"><value>تمت إضافة وحدة القياس بنجاح.</value></data>

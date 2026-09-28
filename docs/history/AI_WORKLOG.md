@@ -1,5 +1,8 @@
 # AI Work Log
 
+## 2026-09-28 — Moving weighted-average inventory valuation
+Implemented moving weighted-average valuation per product/warehouse. Purchases use net line cost after discount; sales freeze direct or recipe-derived UnitCost/COGS; transfers carry source cost into the destination average; stock movements freeze quantity/average/value before and after. Controlled recipe negatives use a provisional reference cost and later receipts isolate CostVariance while valuing remaining positive stock at receipt cost. Migration `20260928153229_AddMovingWeightedAverageInventoryCost` initialized current balances from product purchase prices and was applied to `MiniStoreDb` on `AHMAD`. Release build passed with zero warnings, 228 checks passed, SQL generation succeeded and EF reported no pending model changes. Ledger COGS/variance posting remains next.
+
 ## 2026-09-28 — GitHub repository documentation
 Added a comprehensive root README describing MiniStore's current ERP/SaaS scope, café recipe model, managed units, architecture, local setup, security guidance, verification commands, roadmap and production-readiness limits. Added a documentation index and refreshed the project context and codebase map so GitHub readers can navigate authoritative module, database, accounting, security and decision records.
 

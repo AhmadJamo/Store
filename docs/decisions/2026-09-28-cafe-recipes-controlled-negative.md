@@ -13,7 +13,7 @@ Cafe and restaurant POS products may be prepared on demand rather than held as f
 - Ingredients remain stocked products. Each product declares a stock unit; recipe lines may use a compatible count, mass or volume unit. Every version freezes both the authored quantity/unit and its converted stock quantity/unit at six-decimal precision, and a later stock-unit mismatch blocks use until stock is reconciled and a new recipe version is created.
 - Negative stock remains blocked for normal sales, transfers and ordinary adjustments. It is allowed only for recipe consumption and kitchen variance when `AllowNegativeRecipeConsumption` is enabled on that ingredient.
 - Recipe consumption is aggregated per ingredient for the sale, committed in the existing Serializable sale transaction and recorded as `RecipeConsumption`. Extra waste or actual-use variance is recorded explicitly as `KitchenVariance` with a required reason.
-- Negative balances remain visible as exceptions that require receiving, count or variance reconciliation. This decision does not define their financial valuation; ACC-001 must add provisional costing and cost-variance settlement before COGS posting.
+- Negative balances remain visible as exceptions that require receiving, count or variance reconciliation. ACC-001 now supplies provisional costing and receipt-time cost-variance calculation; ledger settlement remains part of COGS posting.
 
 ## Consequences
 

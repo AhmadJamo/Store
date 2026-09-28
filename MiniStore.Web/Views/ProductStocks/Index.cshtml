@@ -32,6 +32,8 @@
             <th>Product</th>
             <th>Warehouse</th>
             <th>Quantity</th>
+            <th>@Localizer["Average unit cost"]</th>
+            <th>@Localizer["Inventory value"]</th>
             <th>Actions</th>
         </tr>
     </thead>
@@ -41,7 +43,7 @@
         @if (Model.Count == 0)
         {
             <tr>
-                <td colspan="5"
+                <td colspan="7"
                     class="text-center text-muted">
                     No stock records found.
                 </td>
@@ -55,6 +57,9 @@
                     <td>
                         @stock.Id
                     </td>
+
+                    <td>@stock.AverageUnitCost.ToString("0.########")</td>
+                    <td>@stock.InventoryValue.ToString("0.########")</td>
 
                     <td>
                         @stock.ProductName

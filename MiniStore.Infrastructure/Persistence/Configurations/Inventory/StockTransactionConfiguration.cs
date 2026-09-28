@@ -15,6 +15,16 @@ public class StockTransactionConfiguration
         builder.Property(x => x.Quantity)
             .HasPrecision(18, 6);
 
+        builder.Property(x => x.QuantityBefore).HasPrecision(18, 6);
+        builder.Property(x => x.QuantityAfter).HasPrecision(18, 6);
+        builder.Property(x => x.AverageUnitCostBefore).HasPrecision(24, 8);
+        builder.Property(x => x.AverageUnitCostAfter).HasPrecision(24, 8);
+        builder.Property(x => x.InventoryValueBefore).HasPrecision(24, 8);
+        builder.Property(x => x.InventoryValueAfter).HasPrecision(24, 8);
+        builder.Property(x => x.UnitCost).HasPrecision(24, 8);
+        builder.Property(x => x.TransactionValue).HasPrecision(24, 8);
+        builder.Property(x => x.CostVariance).HasPrecision(24, 8);
+
         builder.Property(x => x.Type)
             .IsRequired();
 

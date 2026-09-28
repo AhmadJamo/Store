@@ -13,4 +13,6 @@ public class ProductStockDto
     public string WarehouseName { get; set; } = string.Empty;
 
     public decimal Quantity { get; set; }
+    public decimal AverageUnitCost { get; set; }
+    public decimal InventoryValue { get; set; }
 }
