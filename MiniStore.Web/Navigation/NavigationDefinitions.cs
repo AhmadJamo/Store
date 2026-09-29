@@ -23,7 +23,15 @@ public static class NavigationDefinitions
                 "Customers",
                 "Index",
                 "Settings.View",
-                20)
+                20),
+
+            new NavigationItem(
+                "Sales Returns",
+                "bi-arrow-counterclockwise",
+                "SalesReturns",
+                "Index",
+                "SalesReturns.View",
+                30)
         ),
 
         new NavigationGroup(

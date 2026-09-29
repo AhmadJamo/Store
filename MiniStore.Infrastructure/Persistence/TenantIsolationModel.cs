@@ -10,6 +10,7 @@ public static class TenantIsolationModel
         typeof(Product), typeof(ProductRecipe), typeof(RecipeIngredient), typeof(MeasurementUnit),
         typeof(Warehouse), typeof(ProductStock), typeof(StockTransaction),
         typeof(Supplier), typeof(Purchase), typeof(PurchaseItem), typeof(Sale), typeof(SaleItem),
+        typeof(SalesReturn), typeof(SalesReturnItem),
         typeof(DocumentSequence), typeof(AuditLog), typeof(GeneralSettings), typeof(DiscountSettings),
         typeof(StockTransfer), typeof(StockTransferItem), typeof(StockTransferHistory),
         typeof(Branch), typeof(Account), typeof(JournalEntry), typeof(JournalEntryLine),

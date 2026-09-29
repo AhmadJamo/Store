@@ -18,5 +18,7 @@ public enum StockTransactionType
 
     KitchenVariance = 8,
 
-    RecipeConsumption = 9
+    RecipeConsumption = 9,
+
+    SalesReturn = 10
 }

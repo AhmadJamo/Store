@@ -144,13 +144,13 @@ dotnet run --project tests/SecurityRegression/SecurityRegression.csproj -c Relea
 dotnet ef migrations has-pending-model-changes --project MiniStore.Infrastructure --startup-project MiniStore.Web --configuration Release --no-build
 ```
 
-The latest verified local run completed with zero build warnings/errors, 234 passing focused checks, and no pending EF model changes.
+The latest verified local run completed with zero build warnings/errors, 240 passing focused checks, and no pending EF model changes.
 
 ## Current Roadmap
 
 The main planned work includes:
 
-- purchase and sales returns;
+- purchase returns;
 - fiscal periods and financial statements;
 - centralized Excel/CSV import and export;
 - per-terminal product assortments and finer user branch/POS scope;

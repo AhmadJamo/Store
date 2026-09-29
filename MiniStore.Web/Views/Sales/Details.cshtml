@@ -1,9 +1,11 @@
 @using MiniStore.Domain.Enums
 @model MiniStore.Application.DTOs.Sales.SaleDetailsDto
 @inject Microsoft.Extensions.Localization.IStringLocalizer<MiniStore.Web.SharedResource> Localizer
+@inject Microsoft.AspNetCore.Authorization.IAuthorizationService AuthorizationService
 
 @{
     ViewData["Title"] = "Sale Details";
+    var canCreateReturn = (await AuthorizationService.AuthorizeAsync(User, null, "Permission:SalesReturns.Create")).Succeeded;
 }
 
 <div class="container mt-4">
@@ -16,6 +18,10 @@
             @if (ViewBag.IsPosted == true)
             {
                 <span class="badge bg-success me-2">@Localizer["Posted to general ledger"]</span>
+                @if (canCreateReturn)
+                {
+                    <a asp-controller="SalesReturns" asp-action="Create" asp-route-saleId="@Model.Id" class="btn btn-warning me-2">@Localizer["Create sales return"]</a>
+                }
             }
             else
             {

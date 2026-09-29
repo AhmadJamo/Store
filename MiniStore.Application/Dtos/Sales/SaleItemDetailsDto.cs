@@ -5,6 +5,7 @@ namespace MiniStore.Application.DTOs.Sales;
 
 public class SaleItemDetailsDto
 {
+    public int Id { get; set; }
     public int ProductId { get; set; }
     public string ProductName { get; set; } = string.Empty;
 

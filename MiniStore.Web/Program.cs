@@ -185,6 +185,8 @@ builder.Services.AddScoped<PosExperienceSettingsService>();
 builder.Services.AddScoped<IJournalEntryRepository, JournalEntryRepository>();
 builder.Services.AddScoped<PurchasePostingService>();
 builder.Services.AddScoped<SalePostingService>();
+builder.Services.AddScoped<ISalesReturnRepository, SalesReturnRepository>();
+builder.Services.AddScoped<SalesReturnService>();
 builder.Services.AddScoped<IPaymentMethodRepository, PaymentMethodRepository>();
 builder.Services.AddScoped<PaymentMethodService>();
 builder.Services.AddScoped<IStorageLocationRepository, StorageLocationRepository>();

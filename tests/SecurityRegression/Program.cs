@@ -620,6 +620,23 @@ inclusiveTaxPosting.AddLine(new JournalEntryLine(10, 0, 12.41m));
 inclusiveTaxPosting.Post();
 Check(inclusiveTaxPosting.Status == JournalEntryStatus.Posted,
     "Inclusive sales tax posting must split net discount, revenue and output tax without imbalance");
+var salesReturn = new SalesReturn("SRT-TEST", 1, 1, 1, DateTime.Today, "Customer return");
+salesReturn.AddItem(new SalesReturnItem(
+    1, 1, 1m, 86.21m, 8.62m, 12.41m, 90m, true, 60m));
+Check(
+    salesReturn.RefundAmount == 90m && salesReturn.RestockedCostAmount == 60m,
+    "A sales return must preserve its refund and historical restocked-cost snapshots");
+var returnPosting = new JournalEntry(
+    "JRN-RETURN", DateTime.Today, "Sales return", "SalesReturn", "SRT-TEST");
+returnPosting.AddLine(new JournalEntryLine(3, 86.21m, 0));
+returnPosting.AddLine(new JournalEntryLine(10, 12.41m, 0));
+returnPosting.AddLine(new JournalEntryLine(1, 0, 90m));
+returnPosting.AddLine(new JournalEntryLine(2, 0, 8.62m));
+returnPosting.AddLine(new JournalEntryLine(5, 60m, 0));
+returnPosting.AddLine(new JournalEntryLine(4, 0, 60m));
+returnPosting.Post();
+Check(returnPosting.Status == JournalEntryStatus.Posted,
+    "A sales return must balance revenue, tax, refund, discount, inventory and COGS reversal");
 var rawMaterial = new Product(
     "Raw flour", null, 1, 0, 0,
     ProductInventoryBehavior.Stocked,

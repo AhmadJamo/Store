@@ -66,6 +66,9 @@ public class AppDbContext
 
     public DbSet<SaleItem> SaleItems => Set<SaleItem>();
 
+    public DbSet<SalesReturn> SalesReturns => Set<SalesReturn>();
+    public DbSet<SalesReturnItem> SalesReturnItems => Set<SalesReturnItem>();
+
     public DbSet<DocumentSequence> DocumentSequences => Set<DocumentSequence>();
 
     public DbSet<AuditLog> AuditLogs => Set<AuditLog>();

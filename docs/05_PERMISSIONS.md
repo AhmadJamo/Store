@@ -1,12 +1,12 @@
 # Permissions and authorization
 > Status: PARTIALLY IMPLEMENTED  
 > Source of truth: Code  
-> Last reviewed: 2026-09-15
+> Last reviewed: 2026-09-29
 
 Authentication is ASP.NET Core Identity cookie authentication. `PermissionAuthorizeAttribute` creates policies with `Permission:` prefix. Identity owns credentials, while `TenantRole`, `TenantRolePermission` and `TenantUserRole` own authorization inside each company. Both evaluators require an active tenant; Admin receives full access only from that company's protected Admin assignment. Non-Admin permissions resolve only through the active company's role definition.
 
 ## Defined permission groups
-Products, Warehouses, ProductStock, StockTransactions, LocationMovements, Suppliers, Purchases, Sales, StockTransfers, Users, Roles, and Settings are defined in `MiniStore.Application/Permissions/PermissionDefinitions.cs`. CRUD permissions exist for several modules even where matching actions do not exist (for example purchase/sale edit/delete). Stock transfer also defines Submit/Approve/Reject/Post/Cancel. Location movements define View/Create.
+Products, Warehouses, ProductStock, StockTransactions, LocationMovements, Suppliers, Purchases, Sales, SalesReturns, StockTransfers, Users, Roles, and Settings are defined in `MiniStore.Application/Permissions/PermissionDefinitions.cs`. CRUD permissions exist for several modules even where matching actions do not exist (for example purchase/sale edit/delete). Sales returns define View/Create. Stock transfer also defines Submit/Approve/Reject/Post/Cancel. Location movements define View/Create.
 
 ## Enforcement map
 | Module | Backend enforcement |
@@ -14,6 +14,7 @@ Products, Warehouses, ProductStock, StockTransactions, LocationMovements, Suppli
 | Products, Warehouses, Suppliers, Product Stocks | View/Create/Edit/Delete controller actions have matching `PermissionAuthorize`. |
 | Purchases | View/Create enforced; Edit/Delete definitions have no controller actions. |
 | Sales | View/Create enforced; Edit/Delete definitions have no controller actions. |
+| Sales returns | View/Create enforced; the original-sale return action is also hidden without Create. |
 | Stock transactions | View/Create enforced. |
 | Location movements | View/Create enforced for history and internal relocation; putaway continues to require ProductStock.Edit. |
 | Stock transfers | View/Create/Edit/Submit/Approve/Reject/Post/Cancel enforced. |

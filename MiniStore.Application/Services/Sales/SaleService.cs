@@ -108,6 +108,7 @@ public class SaleService : ISaleService
             Items = sale.Items
                 .Select(item => new SaleItemDetailsDto
                 {
+                    Id = item.Id,
                     ProductId = item.ProductId,
                     ProductName = productNames.GetValueOrDefault(item.ProductId, $"Product #{item.ProductId}"),
                     Quantity = item.Quantity,

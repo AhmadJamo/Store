@@ -85,6 +85,8 @@ public static class PermissionDefinitions
         new("Sales.Create", "Create Sale", "Sales"),
         new("Sales.Edit", "Edit Sale", "Sales"),
         new("Sales.Delete", "Delete Sale", "Sales"),
+        new("SalesReturns.View", "View Sales Returns", "Sales Returns"),
+        new("SalesReturns.Create", "Create Sales Return", "Sales Returns"),
 
         // ==========================================
         // Stock Transfers

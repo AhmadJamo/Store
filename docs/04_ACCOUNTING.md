@@ -31,7 +31,8 @@ Warehouses now have optional BranchId and InventoryAccountId fields. Completing 
 | COGS snapshot | IMPLEMENTED | New direct and prepared sale lines freeze unit cost and COGS; prepared cost is derived from current ingredient averages. |
 | Sale revenue, output tax and COGS posting | IMPLEMENTED | Explicit idempotent posting debits settlement and net invoice discount, credits net revenue and frozen output tax, debits COGS and credits warehouse inventory. Inclusive and exclusive invoice tax are supported. |
 | Provisional negative-stock cost settlement | IMPLEMENTED | Purchase posting reads receipt cost variances and adjusts COGS against the affected warehouse inventory account in either direction. |
-| Sales/purchase returns | NOT IMPLEMENTED | No return document entities/services found. |
+| Sales returns | IMPLEMENTED | Immutable partial/full return documents cap cumulative quantity, reverse revenue/output tax/discount, and restock direct items with historical-cost COGS reversal. |
+| Purchase returns | NOT IMPLEMENTED | No purchase-return document exists yet. |
 
 ## Existing rules
 Sales select the product `SalePrice` for retail POS or `WholesalePrice` for wholesale; client-submitted line price is ignored by `SaleService`. Normal stock removal cannot exceed balance. Prepared-product recipe use and kitchen variance may cross zero only for an ingredient explicitly configured for controlled negative consumption, and the negative row remains visible for reconciliation. A transfer creator cannot approve their own submitted transfer. Discount settings can disable types/limits and an override permission is checked.

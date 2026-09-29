@@ -9,6 +9,8 @@
 
 Purchase receipt costing excludes recoverable tax when a selected tax rate is price-inclusive. `PurchasePostingService` also reads receipt movements by source reference and settles provisional negative-stock cost variance between COGS and the affected warehouse inventory account.
 
+`SalesReturnService` creates an immutable partial/full return only for a posted sale. Inside one Serializable transaction it enforces cumulative remaining quantity, generates the return and journal numbers, restores eligible direct inventory at historical sale cost and posts the proportional revenue/tax/discount/refund plus inventory/COGS reversal. Prepared items are refunded without recreating ingredients.
+
 `UnassignedStockService` assigns unallocated warehouse quantity to an active exact location and records a Putaway movement. `LocationMovementService` moves product quantity between two active locations in the same warehouse, validates source quantity and total destination capacity, preserves the warehouse total and writes a Relocation history row in the same transaction.
 
 Storage-location, unassigned-stock, location-movement and transfer services enforce each warehouse's control mode. Simple warehouses bypass location allocation; structured warehouses can require transfer locations. Capacity checks follow the destination warehouse's enforcement policy.

@@ -1,0 +1,25 @@
+@model List<MiniStore.Application.DTOs.Sales.SalesReturnDto>
+@inject Microsoft.Extensions.Localization.IStringLocalizer<MiniStore.Web.SharedResource> Localizer
+@{
+    ViewData["Title"] = Localizer["Sales returns"];
+}
+
+<div class="container mt-4">
+    <h1 class="h3 mb-4">@Localizer["Sales returns"]</h1>
+    <div class="card shadow-sm border-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light"><tr><th>@Localizer["Return number"]</th><th>@Localizer["Original sale"]</th><th>@Localizer["Date"]</th><th>@Localizer["Refund amount"]</th><th></th></tr></thead>
+                <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.ReturnNumber</td><td>@item.SaleInvoiceNumber</td><td>@item.Date.ToString("yyyy-MM-dd")</td><td>@item.RefundAmount.ToString("0.00") JOD</td>
+                        <td class="text-end"><a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary">@Localizer["Details"]</a></td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

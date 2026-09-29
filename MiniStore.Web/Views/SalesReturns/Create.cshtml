@@ -1,0 +1,43 @@
+@model MiniStore.Application.DTOs.Sales.CreateSalesReturnDto
+@using MiniStore.Application.DTOs.Sales
+@inject Microsoft.Extensions.Localization.IStringLocalizer<MiniStore.Web.SharedResource> Localizer
+@{
+    var sale = (SaleDetailsDto)ViewBag.Sale;
+    var returned = (Dictionary<int, decimal>)ViewBag.ReturnedQuantities;
+    ViewData["Title"] = Localizer["Create sales return"];
+}
+
+<div class="container mt-4">
+    <h1 class="h3">@Localizer["Create sales return"]</h1>
+    <p class="text-muted">@Localizer["Original sale"]: <strong>@sale.InvoiceNumber</strong></p>
+    <form method="post">
+        <input asp-for="SaleId" type="hidden" />
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+        <div class="row g-3 mb-4">
+            <div class="col-md-4"><label asp-for="Date" class="form-label">@Localizer["Date"]</label><input asp-for="Date" type="date" class="form-control" /></div>
+            <div class="col-md-8"><label asp-for="Reason" class="form-label">@Localizer["Return reason"]</label><input asp-for="Reason" class="form-control" maxlength="500" required /></div>
+        </div>
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="table-responsive">
+                <table class="table align-middle mb-0">
+                    <thead class="table-light"><tr><th>@Localizer["Product"]</th><th>@Localizer["Sold quantity"]</th><th>@Localizer["Already returned"]</th><th>@Localizer["Return quantity"]</th></tr></thead>
+                    <tbody>
+                    @for (var index = 0; index < sale.Items.Count; index++)
+                    {
+                        var item = sale.Items[index];
+                        var alreadyReturned = returned.GetValueOrDefault(item.Id);
+                        var remaining = item.Quantity - alreadyReturned;
+                        <tr>
+                            <td>@item.ProductName<input type="hidden" name="Items[@index].SaleItemId" value="@item.Id" /></td>
+                            <td>@item.Quantity</td><td>@alreadyReturned</td>
+                            <td><input name="Items[@index].Quantity" value="0" type="number" min="0" max="@remaining" step="0.001" class="form-control" @(remaining <= 0 ? "disabled" : null) /></td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary">@Localizer["Create and post return"]</button>
+        <a asp-controller="Sales" asp-action="Details" asp-route-id="@sale.Id" class="btn btn-outline-secondary">@Localizer["Cancel"]</a>
+    </form>
+</div>

@@ -285,4 +285,32 @@
   <data name="The sale does not have a valid output tax account snapshot." xml:space="preserve">
     <value>لا تحتوي المبيعة على لقطة صالحة لحساب ضريبة المخرجات.</value>
   </data>
+  <data name="Sales returns" xml:space="preserve"><value>مرتجعات المبيعات</value></data>
+  <data name="Sales return" xml:space="preserve"><value>مرتجع مبيعات</value></data>
+  <data name="Sales return details" xml:space="preserve"><value>تفاصيل مرتجع المبيعات</value></data>
+  <data name="Create sales return" xml:space="preserve"><value>إنشاء مرتجع مبيعات</value></data>
+  <data name="Create and post return" xml:space="preserve"><value>إنشاء المرتجع وترحيله</value></data>
+  <data name="Sales return created and posted." xml:space="preserve"><value>تم إنشاء مرتجع المبيعات وترحيله.</value></data>
+  <data name="Return number" xml:space="preserve"><value>رقم المرتجع</value></data>
+  <data name="Original sale" xml:space="preserve"><value>المبيعة الأصلية</value></data>
+  <data name="Refund amount" xml:space="preserve"><value>مبلغ الاسترداد</value></data>
+  <data name="Return reason" xml:space="preserve"><value>سبب المرتجع</value></data>
+  <data name="Sold quantity" xml:space="preserve"><value>الكمية المباعة</value></data>
+  <data name="Already returned" xml:space="preserve"><value>الكمية المرتجعة سابقاً</value></data>
+  <data name="Return quantity" xml:space="preserve"><value>كمية المرتجع</value></data>
+  <data name="Restocked" xml:space="preserve"><value>أعيدت للمخزون</value></data>
+  <data name="Restocked cost" xml:space="preserve"><value>تكلفة المخزون المعاد</value></data>
+  <data name="Select at least one quantity to return." xml:space="preserve"><value>اختر كمية واحدة على الأقل للإرجاع.</value></data>
+  <data name="A return reason is required." xml:space="preserve"><value>سبب المرتجع مطلوب.</value></data>
+  <data name="Post the original sale before creating a return." xml:space="preserve"><value>رحّل المبيعة الأصلية قبل إنشاء المرتجع.</value></data>
+  <data name="Return date cannot be earlier than the sale date." xml:space="preserve"><value>لا يمكن أن يكون تاريخ المرتجع أقدم من تاريخ المبيعة.</value></data>
+  <data name="The original sale accounting mappings are incomplete." xml:space="preserve"><value>الربط المحاسبي للمبيعة الأصلية غير مكتمل.</value></data>
+  <data name="Configure accounting posting accounts before creating a return." xml:space="preserve"><value>أكمل إعداد حسابات الترحيل قبل إنشاء المرتجع.</value></data>
+  <data name="Configure a sales revenue account before creating a return." xml:space="preserve"><value>أعد حساب إيراد المبيعات قبل إنشاء المرتجع.</value></data>
+  <data name="A selected sale item was not found on the original sale." xml:space="preserve"><value>لم يتم العثور على بند البيع المحدد في المبيعة الأصلية.</value></data>
+  <data name="Return quantity cannot exceed the remaining sold quantity." xml:space="preserve"><value>لا يمكن أن تتجاوز كمية المرتجع الكمية المباعة المتبقية.</value></data>
+  <data name="Returned product was not found." xml:space="preserve"><value>لم يتم العثور على المنتج المرتجع.</value></data>
+  <data name="Configure a sales discount account before creating a discounted return." xml:space="preserve"><value>أعد حساب خصم المبيعات قبل إنشاء مرتجع يتضمن خصماً.</value></data>
+  <data name="The original sale has no output tax account snapshot." xml:space="preserve"><value>لا تحتوي المبيعة الأصلية على لقطة حساب ضريبة المخرجات.</value></data>
+  <data name="Configure a cost of sales account before restocking a return." xml:space="preserve"><value>أعد حساب تكلفة المبيعات قبل إعادة المرتجع للمخزون.</value></data>
 </root>
