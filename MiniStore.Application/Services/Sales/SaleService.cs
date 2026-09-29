@@ -111,7 +111,9 @@ public class SaleService : ISaleService
                     DiscountValue = item.DiscountValue,
                     DiscountAmount = item.DiscountAmount,
                     Total = item.Total,
-                    Notes = item.Notes
+                    Notes = item.Notes,
+                    UnitCost = item.UnitCost,
+                    CostOfGoodsSold = item.CostOfGoodsSold
                 })
                 .ToList()
         };

@@ -1,7 +1,7 @@
 # Codebase map
 > Status: IMPLEMENTED  
 > Source of truth: Repository scan  
-> Last reviewed: 2026-09-28
+> Last reviewed: 2026-09-29
 
 ## Solution roots
 | Path | Project/layer | Purpose |
@@ -50,6 +50,7 @@
 | `Services/Settings/PosExperienceSettingsService.cs` | profile presets, custom terminal appearance persistence and POS runtime projection | Settings/Pos and Sales/Pos. |
 | `Services/Settings/DocumentNumberService.cs` | default creation, validation, administration projection and transactional document-number generation | sales, transfers, purchase posting and Settings/DocumentNumbers. |
 | `Services/Security/TenantRoleService.cs` | tenant-local role CRUD, permission validation, protected-role rules and user assignment options | Roles and Users controllers. |
+| `Services/Sales/SalePostingService.cs` | idempotent sale revenue, discount and COGS general-ledger posting | Sales/Details and Sales/Post. |
 | `Services/Sales/DiscountCalculator.cs` | standalone discount calculation helper; no active consumer found by scan | Unknown. |
 | `Services/Shared/ICurrentUserService.cs` | current-user application contract | Web CurrentUserService. |
 | `Permissions/{PermissionDefinitions,IPermissionService}.cs` | permission catalogue/contract | seeders/auth/services. |
@@ -88,7 +89,8 @@ Warehouse location movement update (2026-09-14): `LocationMovement` and its repo
 | `Repositories/Tenancy/TenantMembershipRepository.cs` | active company membership lookup and user list | login, tenant middleware and user administration. |
 | `Repositories/Security/TenantRoleRepository.cs` | company-filtered role, permission and assignment persistence | TenantRoleService and authorization. |
 | `Repositories/Saas/SaasRepository.cs` | control-plane plan, subscription, entitlement usage, operator and promotion persistence | public pricing and Platform area. |
-| `Repositories/Accounting/JournalEntryRepository.cs` | journal source duplicate-posting lookup and persistence | `PurchasePostingService`. |
+| `Repositories/Accounting/JournalEntryRepository.cs` | journal source duplicate-posting lookup and persistence | purchase and sale posting services. |
+| `Repositories/Inventory/StockTransactionRepository.cs` | inventory movement history plus source/type lookup for accounting settlement | inventory services and `PurchasePostingService`. |
 | `Authorization/PermissionService.cs` | permission check implementation | SaleService. |
 
 ## Web source map

@@ -183,6 +183,16 @@ public class StockTransactionRepository
             .ToListAsync();
     }
 
+    public Task<List<StockTransaction>> GetByReferenceAndTypeAsync(
+        string reference,
+        StockTransactionType type)
+    {
+        return _context.StockTransactions
+            .Where(x => x.Reference == reference && x.Type == type)
+            .OrderBy(x => x.Id)
+            .ToListAsync();
+    }
+
     public async Task AddAsync(
         StockTransaction transaction)
     {

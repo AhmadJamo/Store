@@ -575,6 +575,26 @@ Check(!pizzaRecipe.IsActive,
 var recipeSaleItem = new SaleItem(2, 1, 5, productRecipeId: 9);
 Check(recipeSaleItem.ProductRecipeId == 9,
     "A prepared sale line must preserve the recipe version used for consumption");
+recipeSaleItem.SetCostSnapshot(2.75m, 2.75m);
+Check(recipeSaleItem.UnitCost == 2.75m && recipeSaleItem.CostOfGoodsSold == 2.75m,
+    "A sale line must preserve its immutable unit-cost and COGS snapshots");
+var salePostingEntry = new JournalEntry(
+    "JRN-TEST", DateTime.Today, "Sale posting", "Sale", "S-TEST");
+salePostingEntry.AddLine(new JournalEntryLine(1, 90m, 0));
+salePostingEntry.AddLine(new JournalEntryLine(2, 10m, 0));
+salePostingEntry.AddLine(new JournalEntryLine(3, 0, 100m));
+salePostingEntry.AddLine(new JournalEntryLine(4, 60m, 0));
+salePostingEntry.AddLine(new JournalEntryLine(5, 0, 60m));
+salePostingEntry.Post();
+Check(salePostingEntry.Status == JournalEntryStatus.Posted,
+    "Sale posting must balance settlement and discount against revenue plus COGS against inventory");
+var variancePostingEntry = new JournalEntry(
+    "JRN-VAR", DateTime.Today, "Negative stock settlement", "Purchase", "P-TEST");
+variancePostingEntry.AddLine(new JournalEntryLine(4, 5m, 0));
+variancePostingEntry.AddLine(new JournalEntryLine(5, 0, 5m));
+variancePostingEntry.Post();
+Check(variancePostingEntry.Status == JournalEntryStatus.Posted,
+    "A positive provisional-cost variance must debit COGS and credit inventory in a balanced entry");
 var rawMaterial = new Product(
     "Raw flour", null, 1, 0, 0,
     ProductInventoryBehavior.Stocked,

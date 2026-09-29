@@ -229,6 +229,21 @@
   <data name="Unit cost" xml:space="preserve"><value>تكلفة الوحدة</value></data>
   <data name="Movement value" xml:space="preserve"><value>قيمة الحركة</value></data>
   <data name="Cost variance" xml:space="preserve"><value>فرق التكلفة</value></data>
+  <data name="Cost of goods sold" xml:space="preserve"><value>تكلفة البضاعة المباعة</value></data>
+  <data name="Posted to general ledger" xml:space="preserve"><value>مُرحّل إلى دفتر الأستاذ</value></data>
+  <data name="Post to general ledger" xml:space="preserve"><value>ترحيل إلى دفتر الأستاذ</value></data>
+  <data name="Sale posted to the general ledger." xml:space="preserve"><value>تم ترحيل المبيعة إلى دفتر الأستاذ.</value></data>
+  <data name="Sale not found." xml:space="preserve"><value>لم يتم العثور على المبيعة.</value></data>
+  <data name="Sale warehouse was not found." xml:space="preserve"><value>لم يتم العثور على مستودع المبيعة.</value></data>
+  <data name="Assign a valid payment method before posting this sale." xml:space="preserve"><value>عيّن طريقة دفع صالحة قبل ترحيل هذه المبيعة.</value></data>
+  <data name="Assign the sale warehouse to a branch and inventory account before posting." xml:space="preserve"><value>اربط مستودع المبيعة بفرع وحساب مخزون قبل الترحيل.</value></data>
+  <data name="Configure accounting posting accounts before posting sales." xml:space="preserve"><value>اضبط حسابات الترحيل المحاسبي قبل ترحيل المبيعات.</value></data>
+  <data name="Sale warehouse branch was not found." xml:space="preserve"><value>لم يتم العثور على فرع مستودع المبيعة.</value></data>
+  <data name="Configure a sales revenue account before posting sales." xml:space="preserve"><value>اضبط حساب إيراد المبيعات قبل الترحيل.</value></data>
+  <data name="A sale must have a positive posting amount." xml:space="preserve"><value>يجب أن تحتوي المبيعة على مبلغ موجب للترحيل.</value></data>
+  <data name="Configure a sales discount account before posting a discounted sale." xml:space="preserve"><value>اضبط حساب خصم المبيعات قبل ترحيل مبيعة مخصومة.</value></data>
+  <data name="Configure a cost of sales account before posting inventory cost." xml:space="preserve"><value>اضبط حساب تكلفة المبيعات قبل ترحيل تكلفة المخزون.</value></data>
+  <data name="This sale has already been posted." xml:space="preserve"><value>تم ترحيل هذه المبيعة مسبقًا.</value></data>
   <data name="Built-in" xml:space="preserve"><value>مدمجة</value></data>
   <data name="Deactivate" xml:space="preserve"><value>إيقاف</value></data>
   <data name="Measurement unit created successfully." xml:space="preserve"><value>تمت إضافة وحدة القياس بنجاح.</value></data>
@@ -243,4 +258,10 @@
   <data name="Conversion factor must be greater than zero." xml:space="preserve"><value>يجب أن يكون معامل التحويل أكبر من صفر.</value></data>
   <data name="Unit decimal places must be between zero and six." xml:space="preserve"><value>يجب أن تكون المنازل العشرية للوحدة بين صفر وستة.</value></data>
   <data name="Units from different measurement dimensions cannot be converted." xml:space="preserve"><value>لا يمكن التحويل بين وحدات تنتمي إلى أبعاد قياس مختلفة.</value></data>
+  <data name="Configure a cost of sales account before posting inventory cost variance." xml:space="preserve">
+    <value>يرجى إعداد حساب تكلفة المبيعات قبل ترحيل فرق تكلفة المخزون.</value>
+  </data>
+  <data name="Variance warehouse was not found." xml:space="preserve">
+    <value>لم يتم العثور على المستودع المرتبط بفرق التكلفة.</value>
+  </data>
 </root>

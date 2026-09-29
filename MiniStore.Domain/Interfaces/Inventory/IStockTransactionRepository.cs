@@ -21,6 +21,10 @@ public interface IStockTransactionRepository
         int productId,
         int warehouseId);
 
+    Task<List<StockTransaction>> GetByReferenceAndTypeAsync(
+        string reference,
+        StockTransactionType type);
+
     Task AddAsync(StockTransaction transaction);
 
     Task SaveChangesAsync();

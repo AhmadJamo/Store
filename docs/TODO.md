@@ -1,6 +1,6 @@
 # Project TODO
 > Source of truth: Current repository scan  
-> Last reviewed: 2026-09-28
+> Last reviewed: 2026-09-29
 
 The ordered Arabic execution plan, workflow, business rules and rolling suggestion queue are maintained in `ARABIC_SHARED_ROADMAP.md`. This file remains the concise technical backlog.
 
@@ -19,12 +19,14 @@ The ordered Arabic execution plan, workflow, business rules and rolling suggesti
 - Added the authenticated Dashboard landing flow and locally migrated product classification, generated internal codes, optional barcodes, POS/sales channel controls and the advanced product catalogue.
 - Replaced product and recipe unit entry with the tenant-managed measurement catalogue, including safe legacy backfill and immutable unit-code/factor snapshots on recipe versions.
 - Added moving weighted-average valuation per product/warehouse, immutable cost snapshots, recipe-derived sale cost and provisional-negative settlement variance.
+- Added idempotent sale posting for settlement, invoice discount, revenue, COGS and warehouse inventory.
+- Added provisional-negative cost-variance settlement to purchase posting and excluded recoverable inclusive input tax from moving-average inventory cost.
 
 ## In Progress
 - Run an authenticated HTTP/SQL cafe recipe sale and reconciliation journey. Batch production, actual yields and negative-cost settlement remain follow-up work.
 - Add per-terminal product assortment UI/enforcement and per-user branch/POS data scope.
 - Build the central preview/validation/template/audit engine for Excel and CSV import/export, then onboard modules incrementally.
-- Add sale tax and COGS/variance journal posting, purchase reversal and fiscal-period controls.
+- Add sale tax, purchase reversal and fiscal-period controls.
 - Migrate remaining legacy feature screens and existing validation messages to the shared English/Arabic resources before making further functional changes to those screens.
 
 ## High Priority
@@ -37,7 +39,7 @@ The ordered Arabic execution plan, workflow, business rules and rolling suggesti
 - Duplicate `PermissionsCodeExport` tree can drift.
 
 ## Accounting Gaps
-- Sale/COGS journal posting, payments, returns, fiscal periods and financial statements are not implemented. Moving weighted-average valuation, sale cost snapshots and provisional-negative variance calculation are implemented; ledger settlement remains pending. Purchase posting, chart accounts, journal-entry validation, branches, customer/supplier account links, tax account links and posting-account settings are implemented.
+- Sales revenue/settlement/discount and COGS/inventory posting is implemented as an explicit idempotent action. Provisional-negative variance settles during purchase posting. Sales tax, returns, fiscal periods and financial statements remain pending.
 
 ## Testing Gaps
 - Security regression executable checks complete entity classification and composite tenant relationships. A live two-company SQL mutation was rejected by the database; comprehensive repository HTTP/database integration and penetration tests remain outstanding.

@@ -1,5 +1,11 @@
 # AI Work Log
 
+## 2026-09-29 — Negative-stock cost-variance ledger settlement
+Completed the accounting settlement for provisional recipe-negative inventory. Purchase posting now reads receipt cost movements by source reference and warehouse, then debits COGS/credits inventory when actual cost is higher or reverses the direction when it is lower. Purchase receipt valuation also excludes recoverable input tax from price-inclusive lines so the moving average agrees with the purchase journal. Added repository support, Arabic errors, balanced-journal regression coverage and documentation. Release build passed without warnings, all 231 focused checks passed, EF reports no pending model changes and no schema migration was required.
+
+## 2026-09-28 — Sale revenue and COGS posting
+Added `SalePostingService` and a localized posting action/status on sale details. A sale can post once to a source-unique balanced journal: debit payment settlement, debit configured invoice discount when applicable, credit branch/default revenue, debit COGS and credit warehouse inventory using the immutable sale-line cost snapshots. Central journal numbering and duplicate detection run inside the existing UnitOfWork. Release build passed without warnings and 230 focused checks passed. Sales tax and provisional-negative variance settlement remain follow-up accounting work.
+
 ## 2026-09-28 — Moving weighted-average inventory valuation
 Implemented moving weighted-average valuation per product/warehouse. Purchases use net line cost after discount; sales freeze direct or recipe-derived UnitCost/COGS; transfers carry source cost into the destination average; stock movements freeze quantity/average/value before and after. Controlled recipe negatives use a provisional reference cost and later receipts isolate CostVariance while valuing remaining positive stock at receipt cost. Migration `20260928153229_AddMovingWeightedAverageInventoryCost` initialized current balances from product purchase prices and was applied to `MiniStoreDb` on `AHMAD`. Release build passed with zero warnings, 228 checks passed, SQL generation succeeded and EF reported no pending model changes. Ledger COGS/variance posting remains next.
 

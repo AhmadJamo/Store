@@ -19,6 +19,7 @@ public class SalesController : Controller
     private readonly IPaymentMethodRepository _paymentMethodRepository;
     private readonly InventoryAccessService _inventoryAccessService;
     private readonly PosExperienceSettingsService _posExperienceSettingsService;
+    private readonly SalePostingService _salePostingService;
     private readonly IStringLocalizer<SharedResource> _localizer;
 
     public SalesController(
@@ -30,6 +31,7 @@ public class SalesController : Controller
         IPaymentMethodRepository paymentMethodRepository,
         InventoryAccessService inventoryAccessService,
         PosExperienceSettingsService posExperienceSettingsService,
+        SalePostingService salePostingService,
         IStringLocalizer<SharedResource> localizer)
     {
         _saleService = saleService;
@@ -40,6 +42,7 @@ public class SalesController : Controller
         _paymentMethodRepository = paymentMethodRepository;
         _inventoryAccessService = inventoryAccessService;
         _posExperienceSettingsService = posExperienceSettingsService;
+        _salePostingService = salePostingService;
         _localizer = localizer;
     }
 
@@ -61,7 +64,28 @@ public class SalesController : Controller
         if (sale == null)
             return NotFound();
 
+        ViewBag.IsPosted = await _salePostingService.IsPostedAsync(sale.InvoiceNumber);
         return View(sale);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [PermissionAuthorize("Sales.Create")]
+    public async Task<IActionResult> Post(int id)
+    {
+        try
+        {
+            await _salePostingService.PostAsync(id);
+            TempData["NotificationType"] = "success";
+            TempData["NotificationMessage"] = _localizer["Sale posted to the general ledger."].Value;
+        }
+        catch (Exception ex) when (ex is ArgumentException or InvalidOperationException)
+        {
+            TempData["NotificationType"] = "error";
+            TempData["NotificationMessage"] = _localizer[ex.Message].Value;
+        }
+
+        return RedirectToAction(nameof(Details), new { id });
     }
 
     [PermissionAuthorize("Sales.Create")]

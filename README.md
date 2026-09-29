@@ -150,7 +150,7 @@ The latest verified local run completed with zero build warnings/errors, 228 pas
 
 The main planned work includes:
 
-- automatic cost-of-goods-sold and provisional-variance journal posting;
+- sales tax posting;
 - settlement of provisional cost after controlled negative stock;
 - sales tax and complete double-entry posting;
 - purchase and sales returns;

@@ -22,5 +22,7 @@ public class SaleItemDetailsDto
 
     public decimal Total { get; set; }
     public string? Notes { get; set; }
+    public decimal UnitCost { get; set; }
+    public decimal CostOfGoodsSold { get; set; }
 }
 

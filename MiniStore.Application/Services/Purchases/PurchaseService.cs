@@ -20,6 +20,8 @@ public class PurchaseService
 
     private readonly IStockTransactionRepository _stockTransactionRepository;
 
+    private readonly ITaxRateRepository _taxRateRepository;
+
     private readonly IUnitOfWork _unitOfWork;
 
     public PurchaseService(
@@ -30,6 +32,7 @@ public class PurchaseService
         IProductStockRepository productStockRepository,
         IProductLocationStockRepository productLocationStockRepository,
         IStockTransactionRepository stockTransactionRepository,
+        ITaxRateRepository taxRateRepository,
         IUnitOfWork unitOfWork)
     {
         _purchaseRepository = purchaseRepository;
@@ -45,6 +48,8 @@ public class PurchaseService
         _productLocationStockRepository = productLocationStockRepository;
 
         _stockTransactionRepository = stockTransactionRepository;
+
+        _taxRateRepository = taxRateRepository;
 
         _unitOfWork = unitOfWork;
     }
@@ -236,6 +241,8 @@ public class PurchaseService
 
         var firstWarehouseId = dto.Items.First().WarehouseId;
         if (firstWarehouseId <= 0) throw new ArgumentException("A warehouse is required for every purchase item.");
+        var taxRates = (await _taxRateRepository.GetAllAsync())
+            .ToDictionary(x => x.Id);
 
         await _unitOfWork.ExecuteInTransactionAsync(
             async () =>
@@ -314,7 +321,23 @@ public class PurchaseService
                             itemDto.WarehouseId);
                     }
 
-                    var netUnitCost = purchaseItem.Total / purchaseItem.Quantity;
+                    var inventoryCost = purchaseItem.Total;
+                    if (purchaseItem.TaxRateId.HasValue)
+                    {
+                        if (!taxRates.TryGetValue(purchaseItem.TaxRateId.Value, out var taxRate))
+                            throw new InvalidOperationException(
+                                "A tax rate selected on this purchase no longer exists.");
+                        if (taxRate.IsPriceInclusive && taxRate.Rate > 0)
+                        {
+                            var includedTax = Math.Round(
+                                inventoryCost * taxRate.Rate / (100m + taxRate.Rate),
+                                2,
+                                MidpointRounding.AwayFromZero);
+                            inventoryCost -= includedTax;
+                        }
+                    }
+
+                    var netUnitCost = inventoryCost / purchaseItem.Quantity;
                     var costMovement = stock.Receive(
                         itemDto.Quantity,
                         netUnitCost);

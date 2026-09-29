@@ -1,7 +1,7 @@
 # Accounting implementation assessment
 > Status: PARTIALLY IMPLEMENTED  
 > Source of truth: Code  
-> Last reviewed: 2026-09-28
+> Last reviewed: 2026-09-29
 
 For the Arabic accounting-cycle, journal examples, international-standard map, mandatory software controls and ordered implementation guide, see [`ACCOUNTING_REFERENCE_AR.md`](ACCOUNTING_REFERENCE_AR.md). That reference describes the target policy and must not be read as an implemented-feature list; the status table below remains the implementation assessment.
 
@@ -29,15 +29,16 @@ Warehouses now have optional BranchId and InventoryAccountId fields. Completing 
 | Payment settlement and customer selection | IMPLEMENTED | Payment method maps to a chart account; customer must use a chart subaccount; sales allow unknown customer. |
 | Moving weighted-average inventory valuation | IMPLEMENTED | Product+warehouse average/value, immutable movement snapshots, source-cost transfers and provisional-negative variance are persisted. |
 | COGS snapshot | IMPLEMENTED | New direct and prepared sale lines freeze unit cost and COGS; prepared cost is derived from current ingredient averages. |
-| COGS/variance journal posting | NOT IMPLEMENTED | Cost snapshots exist, but automatic debit COGS / credit Inventory and variance settlement entries remain pending. |
+| Sale revenue and COGS posting | PARTIALLY IMPLEMENTED | Explicit idempotent posting debits settlement and invoice discount, credits revenue, debits COGS and credits warehouse inventory. Sales tax remains pending. |
+| Provisional negative-stock cost settlement | IMPLEMENTED | Purchase posting reads receipt cost variances and adjusts COGS against the affected warehouse inventory account in either direction. |
 | Sales/purchase returns | NOT IMPLEMENTED | No return document entities/services found. |
 
 ## Existing rules
 Sales select the product `SalePrice` for retail POS or `WholesalePrice` for wholesale; client-submitted line price is ignored by `SaleService`. Normal stock removal cannot exceed balance. Prepared-product recipe use and kitchen variance may cross zero only for an ingredient explicitly configured for controlled negative consumption, and the negative row remains visible for reconciliation. A transfer creator cannot approve their own submitted transfer. Discount settings can disable types/limits and an override permission is checked.
 
 ## Risks and controls missing
-- Sales do not yet create accounting journal entries; a sale captures payment method, optional customer and immutable COGS snapshots, but tax and accounting posting remain to be completed.
-- Controlled negative ingredient quantities now retain provisional cost and later receipts calculate a separate cost variance. Posting that variance to the ledger remains pending.
+- Sales can now be posted explicitly and once to a balanced revenue/settlement/discount and COGS/inventory journal. Sales tax posting remains to be added.
+- Controlled negative ingredient quantities retain provisional cost; later purchase receipts calculate the variance and purchase posting settles it between COGS and warehouse inventory. Inclusive input tax is excluded from receipt inventory cost.
 - Purchase posting has no cancellation/reversal workflow yet; posted purchase documents must remain immutable until reversals are added.
 - Manual stock transactions are limited to adjustment-in, adjustment-out and reason-required kitchen variance; financial posting for those variances is not implemented.
 - ProductStock has rowversion and inventory transactions are Serializable, but database-backed simultaneous recipe-sale/reconciliation tests remain pending.

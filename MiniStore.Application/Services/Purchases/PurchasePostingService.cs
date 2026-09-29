@@ -3,7 +3,7 @@ using MiniStore.Domain.Interfaces;
 
 namespace MiniStore.Application.Services;
 
-public class PurchasePostingService(IPurchaseRepository purchaseRepository, ISupplierRepository supplierRepository, IWarehouseRepository warehouseRepository, ITaxRateRepository taxRateRepository, IAccountingSettingsRepository accountingSettingsRepository, IJournalEntryRepository journalEntryRepository, IUnitOfWork unitOfWork, DocumentNumberService documentNumbers)
+public class PurchasePostingService(IPurchaseRepository purchaseRepository, ISupplierRepository supplierRepository, IWarehouseRepository warehouseRepository, ITaxRateRepository taxRateRepository, IAccountingSettingsRepository accountingSettingsRepository, IJournalEntryRepository journalEntryRepository, IStockTransactionRepository stockTransactionRepository, IUnitOfWork unitOfWork, DocumentNumberService documentNumbers)
 {
     private const string PurchaseSourceType = "Purchase";
     public Task<bool> IsPostedAsync(string invoiceNumber) => journalEntryRepository.ExistsForSourceAsync(PurchaseSourceType, invoiceNumber);
@@ -41,6 +41,49 @@ public class PurchasePostingService(IPurchaseRepository purchaseRepository, ISup
             if (taxRate is not null && taxAmount > 0)
                 lines.Add(new JournalEntryLine(taxRate.InputAccountId, taxAmount, 0, warehouse.BranchId, warehouse.Id, $"Input tax on {purchase.InvoiceNumber}"));
             payableTotal += taxRate?.IsPriceInclusive == true ? taxableAmount : taxableAmount + taxAmount;
+        }
+
+        var receiptTransactions = await stockTransactionRepository.GetByReferenceAndTypeAsync(
+            purchase.InvoiceNumber,
+            StockTransactionType.Purchase);
+        foreach (var varianceGroup in receiptTransactions
+            .Where(x => x.CostVariance != 0)
+            .GroupBy(x => x.WarehouseId))
+        {
+            if (!settings.CostOfSalesAccountId.HasValue)
+                throw new InvalidOperationException(
+                    "Configure a cost of sales account before posting inventory cost variance.");
+
+            var warehouse = await warehouseRepository.GetByIdAsync(varianceGroup.Key)
+                ?? throw new InvalidOperationException("Variance warehouse was not found.");
+            if (!warehouse.InventoryAccountId.HasValue)
+                throw new InvalidOperationException(
+                    $"Assign an inventory account to warehouse '{warehouse.Name}' before posting this purchase.");
+
+            var variance = Round(varianceGroup.Sum(x => x.CostVariance));
+            if (variance > 0)
+            {
+                lines.Add(new JournalEntryLine(
+                    settings.CostOfSalesAccountId.Value, variance, 0,
+                    warehouse.BranchId, warehouse.Id,
+                    $"Negative-stock cost variance on {purchase.InvoiceNumber}"));
+                lines.Add(new JournalEntryLine(
+                    warehouse.InventoryAccountId.Value, 0, variance,
+                    warehouse.BranchId, warehouse.Id,
+                    $"Negative-stock settlement on {purchase.InvoiceNumber}"));
+            }
+            else if (variance < 0)
+            {
+                var reversal = Math.Abs(variance);
+                lines.Add(new JournalEntryLine(
+                    warehouse.InventoryAccountId.Value, reversal, 0,
+                    warehouse.BranchId, warehouse.Id,
+                    $"Negative-stock settlement on {purchase.InvoiceNumber}"));
+                lines.Add(new JournalEntryLine(
+                    settings.CostOfSalesAccountId.Value, 0, reversal,
+                    warehouse.BranchId, warehouse.Id,
+                    $"Negative-stock cost variance on {purchase.InvoiceNumber}"));
+            }
         }
         lines.Add(new JournalEntryLine(supplier.AccountId.Value, 0, payableTotal, null, null, $"Supplier payable for {purchase.InvoiceNumber}"));
         await unitOfWork.ExecuteInTransactionAsync(async () =>

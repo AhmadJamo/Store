@@ -1,5 +1,6 @@
 @using MiniStore.Domain.Enums
 @model MiniStore.Application.DTOs.Sales.SaleDetailsDto
+@inject Microsoft.Extensions.Localization.IStringLocalizer<MiniStore.Web.SharedResource> Localizer
 
 @{
     ViewData["Title"] = "Sale Details";
@@ -11,7 +12,19 @@
             <h2 class="mb-1">Sale @Model.InvoiceNumber</h2>
             <div class="text-muted">@Model.Date.ToString("yyyy-MM-dd")</div>
         </div>
-        <a asp-action="Index" class="btn btn-outline-secondary">Back to Sales</a>
+        <div>
+            @if (ViewBag.IsPosted == true)
+            {
+                <span class="badge bg-success me-2">@Localizer["Posted to general ledger"]</span>
+            }
+            else
+            {
+                <form asp-action="Post" asp-route-id="@Model.Id" method="post" class="d-inline me-2">
+                    <button type="submit" class="btn btn-primary">@Localizer["Post to general ledger"]</button>
+                </form>
+            }
+            <a asp-action="Index" class="btn btn-outline-secondary">Back to Sales</a>
+        </div>
     </div>
 
     <div class="card shadow-sm border-0 mb-4">
@@ -47,7 +60,7 @@
         <div class="table-responsive">
             <table class="table table-hover align-middle mb-0">
                 <thead class="table-light">
-                    <tr><th>Product</th><th>Quantity</th><th>Price</th><th>Gross</th><th>Discount</th><th>Total</th><th>Preparation Notes</th></tr>
+                    <tr><th>Product</th><th>Quantity</th><th>Price</th><th>Gross</th><th>Discount</th><th>Total</th><th>@Localizer["Unit cost"]</th><th>@Localizer["Cost of goods sold"]</th><th>Preparation Notes</th></tr>
                 </thead>
                 <tbody>
                     @foreach (var item in Model.Items)
@@ -72,6 +85,8 @@
                                 }
                             </td>
                             <td class="fw-semibold">@item.Total.ToString("0.00")</td>
+                            <td>@item.UnitCost.ToString("0.########")</td>
+                            <td>@item.CostOfGoodsSold.ToString("0.########")</td>
                             <td>@(string.IsNullOrWhiteSpace(item.Notes) ? "-" : item.Notes)</td>
                         </tr>
                     }
