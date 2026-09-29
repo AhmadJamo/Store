@@ -1,0 +1,76 @@
+@model MiniStore.Application.DTOs.Settings.FiscalPeriodsPageDto
+@using MiniStore.Domain.Entities
+@inject Microsoft.Extensions.Localization.IStringLocalizer<MiniStore.Web.SharedResource> Localizer
+
+@{ ViewData["Title"] = Localizer["Fiscal Periods"]; }
+
+<div class="d-flex justify-content-between align-items-start mb-4">
+    <div>
+        <h1>@Localizer["Fiscal Periods"]</h1>
+        <p class="text-muted mb-0">@Localizer["Once the first fiscal period is created, accounting postings are allowed only inside open periods."]</p>
+    </div>
+    <a asp-action="Index" class="btn btn-outline-secondary">@Localizer["Back to Settings"]</a>
+</div>
+
+<div class="card mb-4">
+    <div class="card-header fw-semibold">@Localizer["Add fiscal period"]</div>
+    <div class="card-body">
+        <form asp-action="FiscalPeriods" method="post">
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+            <div class="row g-3 align-items-end">
+                <div class="col-md-4">
+                    <label asp-for="NewPeriod.Name" class="form-label">@Localizer["Period name"]</label>
+                    <input asp-for="NewPeriod.Name" name="Name" class="form-control" />
+                </div>
+                <div class="col-md-3">
+                    <label asp-for="NewPeriod.StartDate" class="form-label">@Localizer["Start date"]</label>
+                    <input asp-for="NewPeriod.StartDate" name="StartDate" type="date" class="form-control" />
+                </div>
+                <div class="col-md-3">
+                    <label asp-for="NewPeriod.EndDate" class="form-label">@Localizer["End date"]</label>
+                    <input asp-for="NewPeriod.EndDate" name="EndDate" type="date" class="form-control" />
+                </div>
+                <div class="col-md-2">
+                    <button class="btn btn-primary w-100">@Localizer["Add period"]</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-hover align-middle">
+        <thead><tr><th>@Localizer["Period name"]</th><th>@Localizer["Start date"]</th><th>@Localizer["End date"]</th><th>@Localizer["Status"]</th><th>@Localizer["Change status"]</th></tr></thead>
+        <tbody>
+        @if (Model.Periods.Count == 0)
+        {
+            <tr><td colspan="5" class="text-center text-muted py-4">@Localizer["No fiscal periods have been configured. Posting remains available for all dates."]</td></tr>
+        }
+        @foreach (var period in Model.Periods)
+        {
+            <tr>
+                <td class="fw-semibold">@period.Name</td>
+                <td>@period.StartDate.ToString("yyyy-MM-dd")</td>
+                <td>@period.EndDate.ToString("yyyy-MM-dd")</td>
+                <td><span class="badge @(period.Status == FiscalPeriodStatus.Open ? "text-bg-success" : period.Status == FiscalPeriodStatus.SoftClosed ? "text-bg-warning" : "text-bg-secondary")">@Localizer[period.Status.ToString()]</span></td>
+                <td>
+                    <form asp-action="ChangeFiscalPeriodStatus" method="post" class="row g-2">
+                        <input type="hidden" name="Id" value="@period.Id" />
+                        <input type="hidden" name="RowVersion" value="@period.RowVersion" />
+                        <div class="col-lg-4">
+                            <select name="Status" class="form-select form-select-sm" aria-label="@Localizer["Status"]">
+                                @foreach (var status in Enum.GetValues<FiscalPeriodStatus>().Where(x => x != period.Status))
+                                { <option value="@((int)status)">@Localizer[status.ToString()]</option> }
+                            </select>
+                        </div>
+                        <div class="col-lg-5"><input name="Reason" maxlength="500" required class="form-control form-control-sm" placeholder="@Localizer["Reason"]" /></div>
+                        <div class="col-lg-3"><button class="btn btn-sm btn-outline-primary w-100">@Localizer["Update"]</button></div>
+                    </form>
+                    @if (!string.IsNullOrWhiteSpace(period.StatusChangeReason))
+                    { <div class="small text-muted mt-1">@Localizer["Last reason"]: @period.StatusChangeReason</div> }
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>

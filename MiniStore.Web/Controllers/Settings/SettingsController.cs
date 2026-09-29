@@ -22,6 +22,7 @@ public class SettingsController : Controller
     private readonly InventoryAccessService _inventoryAccessService;
     private readonly PosExperienceSettingsService _posExperienceSettingsService;
     private readonly MeasurementUnitService _measurementUnitService;
+    private readonly FiscalPeriodService _fiscalPeriodService;
     private readonly IStringLocalizer<SharedResource> _localizer;
     private readonly IMemoryCache _memoryCache;
     private readonly ITenantContext _tenantContext;
@@ -36,6 +37,7 @@ public class SettingsController : Controller
         InventoryAccessService inventoryAccessService,
         PosExperienceSettingsService posExperienceSettingsService,
         MeasurementUnitService measurementUnitService,
+        FiscalPeriodService fiscalPeriodService,
         IStringLocalizer<SharedResource> localizer,
         IMemoryCache memoryCache,
         ITenantContext tenantContext)
@@ -49,6 +51,7 @@ public class SettingsController : Controller
         _inventoryAccessService = inventoryAccessService;
         _posExperienceSettingsService = posExperienceSettingsService;
         _measurementUnitService = measurementUnitService;
+        _fiscalPeriodService = fiscalPeriodService;
         _localizer = localizer;
         _memoryCache = memoryCache;
         _tenantContext = tenantContext;
@@ -58,6 +61,48 @@ public class SettingsController : Controller
     public IActionResult Index()
     {
         return View();
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> FiscalPeriods() =>
+        View(await _fiscalPeriodService.GetPageAsync());
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> FiscalPeriods(CreateFiscalPeriodDto dto)
+    {
+        if (!ModelState.IsValid)
+            return View(await _fiscalPeriodService.GetPageAsync(dto));
+        try
+        {
+            await _fiscalPeriodService.CreateAsync(dto);
+            TempData["NotificationType"] = "success";
+            TempData["NotificationMessage"] = _localizer["Fiscal period created successfully."].Value;
+            return RedirectToAction(nameof(FiscalPeriods));
+        }
+        catch (Exception ex) when (ex is ArgumentException or InvalidOperationException)
+        {
+            ModelState.AddModelError(string.Empty, _localizer[ex.Message]);
+            return View(await _fiscalPeriodService.GetPageAsync(dto));
+        }
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ChangeFiscalPeriodStatus(ChangeFiscalPeriodStatusDto dto)
+    {
+        try
+        {
+            await _fiscalPeriodService.ChangeStatusAsync(dto);
+            TempData["NotificationType"] = "success";
+            TempData["NotificationMessage"] = _localizer["Fiscal period status updated."].Value;
+        }
+        catch (Exception ex) when (ex is ArgumentException or InvalidOperationException)
+        {
+            TempData["NotificationType"] = "error";
+            TempData["NotificationMessage"] = _localizer[ex.Message].Value;
+        }
+        return RedirectToAction(nameof(FiscalPeriods));
     }
 
     [HttpGet]

@@ -23,7 +23,7 @@
 ## Domain source map
 | Files | Type/purpose | Consumers/docs |
 |---|---|---|
-| `Entities/Accounting/*.cs` | chart, branches, journal entries, tax and payment entities | accounting docs. |
+| `Entities/Accounting/*.cs` | chart, branches, journal entries, fiscal periods, tax and payment entities | accounting docs. |
 | `Entities/Catalog/{Product,ProductRecipe,RecipeIngredient,MeasurementUnit}.cs` and product type/unit/dimension/behavior enums | product code, optional barcode, raw/direct/prepared classification, sale channels, immutable recipe versions and managed/legacy recipe units | products, sales and inventory docs. |
 | `Entities/Customers/Customer.cs`, `Entities/Suppliers/Supplier.cs` | commercial-party master data | sales/purchases docs. |
 | `Entities/Inventory/*.cs` | warehouses, operating-policy enums, moving-average balances/cost snapshots, exact locations, putaway/relocation history, stock movements and transfers | inventory, accounting and stock-transfer docs. |
@@ -51,6 +51,7 @@
 | `Services/Settings/DocumentNumberService.cs` | default creation, validation, administration projection and transactional document-number generation | sales, transfers, purchase posting and Settings/DocumentNumbers. |
 | `Services/Security/TenantRoleService.cs` | tenant-local role CRUD, permission validation, protected-role rules and user assignment options | Roles and Users controllers. |
 | `Services/Accounting/JournalPostingService.cs` | central source-idempotency, numbering, balance/posting and persistence gateway used inside caller transactions | purchase, sale and sales-return posting workflows. |
+| `Services/Settings/FiscalPeriodService.cs` | non-overlapping fiscal-period administration and central posting-date validation | Settings/FiscalPeriods and JournalPostingService. |
 | `Services/Sales/SalePostingService.cs` | idempotent sale revenue, discount and COGS general-ledger posting | Sales/Details and Sales/Post. |
 | `Services/Sales/SalesReturnService.cs` | cumulative quantity control, proportional refund and atomic inventory/accounting reversal | SalesReturns controller/views. |
 | `Services/Sales/DiscountCalculator.cs` | standalone discount calculation helper; no active consumer found by scan | Unknown. |
@@ -92,6 +93,7 @@ Warehouse location movement update (2026-09-14): `LocationMovement` and its repo
 | `Repositories/Security/TenantRoleRepository.cs` | company-filtered role, permission and assignment persistence | TenantRoleService and authorization. |
 | `Repositories/Saas/SaasRepository.cs` | control-plane plan, subscription, entitlement usage, operator and promotion persistence | public pricing and Platform area. |
 | `Repositories/Accounting/JournalEntryRepository.cs` | journal source duplicate-posting lookup and persistence | purchase and sale posting services. |
+| `Repositories/Accounting/FiscalPeriodRepository.cs` | tenant period lookup, overlap validation and rowversion handling | FiscalPeriodService. |
 | `Repositories/Inventory/StockTransactionRepository.cs` | inventory movement history plus source/type lookup for accounting settlement | inventory services and `PurchasePostingService`. |
 | `Repositories/Sales/SalesReturnRepository.cs` | immutable return history and original-sale aggregation | `SalesReturnService`. |
 | `Authorization/PermissionService.cs` | permission check implementation | SaleService. |

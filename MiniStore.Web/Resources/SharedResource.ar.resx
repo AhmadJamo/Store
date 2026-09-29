@@ -313,4 +313,33 @@
   <data name="Configure a sales discount account before creating a discounted return." xml:space="preserve"><value>أعد حساب خصم المبيعات قبل إنشاء مرتجع يتضمن خصماً.</value></data>
   <data name="The original sale has no output tax account snapshot." xml:space="preserve"><value>لا تحتوي المبيعة الأصلية على لقطة حساب ضريبة المخرجات.</value></data>
   <data name="Configure a cost of sales account before restocking a return." xml:space="preserve"><value>أعد حساب تكلفة المبيعات قبل إعادة المرتجع للمخزون.</value></data>
+  <data name="Fiscal Periods" xml:space="preserve"><value>الفترات المالية</value></data>
+  <data name="Control which accounting dates are open for posting." xml:space="preserve"><value>حدد التواريخ المحاسبية المفتوحة للترحيل.</value></data>
+  <data name="Once the first fiscal period is created, accounting postings are allowed only inside open periods." xml:space="preserve"><value>بعد إنشاء أول فترة مالية، يُسمح بالترحيل المحاسبي فقط داخل الفترات المفتوحة.</value></data>
+  <data name="Add fiscal period" xml:space="preserve"><value>إضافة فترة مالية</value></data>
+  <data name="Period name" xml:space="preserve"><value>اسم الفترة</value></data>
+  <data name="Start date" xml:space="preserve"><value>تاريخ البداية</value></data>
+  <data name="End date" xml:space="preserve"><value>تاريخ النهاية</value></data>
+  <data name="Add period" xml:space="preserve"><value>إضافة الفترة</value></data>
+  <data name="Change status" xml:space="preserve"><value>تغيير الحالة</value></data>
+  <data name="Open" xml:space="preserve"><value>مفتوحة</value></data>
+  <data name="SoftClosed" xml:space="preserve"><value>إغلاق مبدئي</value></data>
+  <data name="Closed" xml:space="preserve"><value>مغلقة</value></data>
+  <data name="Reason" xml:space="preserve"><value>السبب</value></data>
+  <data name="Update" xml:space="preserve"><value>تحديث</value></data>
+  <data name="Last reason" xml:space="preserve"><value>آخر سبب</value></data>
+  <data name="No fiscal periods have been configured. Posting remains available for all dates." xml:space="preserve"><value>لم يتم إعداد فترات مالية؛ يبقى الترحيل متاحاً لجميع التواريخ.</value></data>
+  <data name="Fiscal period created successfully." xml:space="preserve"><value>تم إنشاء الفترة المالية بنجاح.</value></data>
+  <data name="Fiscal period status updated." xml:space="preserve"><value>تم تحديث حالة الفترة المالية.</value></data>
+  <data name="Fiscal period name is required and cannot exceed 100 characters." xml:space="preserve"><value>اسم الفترة المالية مطلوب ويجب ألا يتجاوز 100 حرف.</value></data>
+  <data name="Fiscal period end date cannot be earlier than its start date." xml:space="preserve"><value>لا يمكن أن يكون تاريخ نهاية الفترة المالية أقدم من تاريخ بدايتها.</value></data>
+  <data name="Fiscal period status is invalid." xml:space="preserve"><value>حالة الفترة المالية غير صالحة.</value></data>
+  <data name="Fiscal period already has the selected status." xml:space="preserve"><value>الفترة المالية تحمل الحالة المحددة مسبقاً.</value></data>
+  <data name="A status change reason is required and cannot exceed 500 characters." xml:space="preserve"><value>سبب تغيير الحالة مطلوب ويجب ألا يتجاوز 500 حرف.</value></data>
+  <data name="Fiscal periods cannot overlap." xml:space="preserve"><value>لا يجوز أن تتداخل الفترات المالية.</value></data>
+  <data name="Fiscal period was not found." xml:space="preserve"><value>لم يتم العثور على الفترة المالية.</value></data>
+  <data name="Fiscal period version is invalid." xml:space="preserve"><value>نسخة الفترة المالية غير صالحة.</value></data>
+  <data name="The posting date is not covered by a fiscal period." xml:space="preserve"><value>تاريخ الترحيل غير مشمول ضمن فترة مالية.</value></data>
+  <data name="The fiscal period for the posting date is not open." xml:space="preserve"><value>الفترة المالية الخاصة بتاريخ الترحيل ليست مفتوحة.</value></data>
+  <data name="Data changed while this operation was being processed. Review the latest values and try again." xml:space="preserve"><value>تغيرت البيانات أثناء تنفيذ العملية. راجع أحدث القيم ثم حاول مرة أخرى.</value></data>
 </root>

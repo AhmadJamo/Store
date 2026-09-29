@@ -13,7 +13,8 @@ public sealed record JournalPostingRequest(
 
 public sealed class JournalPostingService(
     IJournalEntryRepository journalEntryRepository,
-    DocumentNumberService documentNumbers)
+    DocumentNumberService documentNumbers,
+    FiscalPeriodService fiscalPeriods)
 {
     public Task<bool> IsPostedAsync(string sourceType, string sourceReference) =>
         journalEntryRepository.ExistsForSourceAsync(sourceType, sourceReference);
@@ -25,6 +26,7 @@ public sealed class JournalPostingService(
             throw new ArgumentException("A journal source requires both its type and reference.");
         if (request.Lines.Count < 2)
             throw new InvalidOperationException("A posting requires at least two journal lines.");
+        await fiscalPeriods.EnsurePostingAllowedAsync(request.Date);
         if (await IsPostedAsync(request.SourceType, request.SourceReference))
             throw new InvalidOperationException(request.DuplicateMessage);
 

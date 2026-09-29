@@ -637,6 +637,15 @@ returnPosting.AddLine(new JournalEntryLine(4, 0, 60m));
 returnPosting.Post();
 Check(returnPosting.Status == JournalEntryStatus.Posted,
     "A sales return must balance revenue, tax, refund, discount, inventory and COGS reversal");
+var fiscalPeriod = new FiscalPeriod("FY 2026", new DateTime(2026, 1, 1), new DateTime(2026, 12, 31));
+Check(fiscalPeriod.Contains(new DateTime(2026, 9, 29)) && fiscalPeriod.Status == FiscalPeriodStatus.Open,
+    "A new fiscal period must be open and contain dates inside its inclusive range");
+fiscalPeriod.ChangeStatus(FiscalPeriodStatus.SoftClosed, "Month-end review", "accountant");
+Check(fiscalPeriod.Status == FiscalPeriodStatus.SoftClosed && fiscalPeriod.StatusChangeReason == "Month-end review",
+    "Fiscal-period status changes must preserve their reason and actor metadata");
+CheckArgumentThrows(
+    () => new FiscalPeriod("Invalid", new DateTime(2026, 12, 31), new DateTime(2026, 1, 1)),
+    "Fiscal periods must reject an inverted date range");
 var rawMaterial = new Product(
     "Raw flour", null, 1, 0, 0,
     ProductInventoryBehavior.Stocked,

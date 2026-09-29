@@ -24,12 +24,13 @@ The ordered Arabic execution plan, workflow, business rules and rolling suggesti
 - Added immutable invoice-level sales-tax snapshots, inclusive/exclusive calculation and output-tax journal posting.
 - Added immutable partial/full sales returns with cumulative quantity control, proportional refund/tax reversal, direct-item restocking at historical cost and an atomic posted reversal journal.
 - Added a central journal-posting gateway used by purchase, sale and sales-return workflows for source idempotency, numbering, balancing, posting and persistence.
+- Added tenant fiscal periods with overlap prevention, Open/Soft Closed/Closed states, status audit metadata, concurrency protection and central posting-date enforcement.
 
 ## In Progress
 - Run an authenticated HTTP/SQL cafe recipe sale and reconciliation journey. Batch production, actual yields and negative-cost settlement remain follow-up work.
 - Add per-terminal product assortment UI/enforcement and per-user branch/POS data scope.
 - Build the central preview/validation/template/audit engine for Excel and CSV import/export, then onboard modules incrementally.
-- Add fiscal-period validation to the central posting gateway, then build purchase returns and generalized reversal metadata on it.
+- Build purchase returns and generalized reversal metadata on the central posting and fiscal-period foundation.
 - Migrate remaining legacy feature screens and existing validation messages to the shared English/Arabic resources before making further functional changes to those screens.
 
 ## High Priority
@@ -42,7 +43,7 @@ The ordered Arabic execution plan, workflow, business rules and rolling suggesti
 - Duplicate `PermissionsCodeExport` tree can drift.
 
 ## Accounting Gaps
-- Sales posting and immutable posted sales returns are implemented; provisional-negative variance settles during purchase posting. Mixed-rate product tax, purchase returns, fiscal periods and financial statements remain pending.
+- Sales posting, immutable posted sales returns and fiscal-period enforcement are implemented; provisional-negative variance settles during purchase posting. Mixed-rate product tax, purchase returns and financial statements remain pending.
 
 ## Testing Gaps
 - Security regression executable checks complete entity classification and composite tenant relationships. A live two-company SQL mutation was rejected by the database; comprehensive repository HTTP/database integration and penetration tests remain outstanding.

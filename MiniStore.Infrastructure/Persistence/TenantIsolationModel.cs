@@ -13,7 +13,7 @@ public static class TenantIsolationModel
         typeof(SalesReturn), typeof(SalesReturnItem),
         typeof(DocumentSequence), typeof(AuditLog), typeof(GeneralSettings), typeof(DiscountSettings),
         typeof(StockTransfer), typeof(StockTransferItem), typeof(StockTransferHistory),
-        typeof(Branch), typeof(Account), typeof(JournalEntry), typeof(JournalEntryLine),
+        typeof(Branch), typeof(Account), typeof(JournalEntry), typeof(JournalEntryLine), typeof(FiscalPeriod),
         typeof(Customer), typeof(TaxRate), typeof(PosTerminal), typeof(PosTerminalProduct),
         typeof(PosTerminalWarehouse), typeof(PosTerminalSettings), typeof(BranchWarehouseAccess),
         typeof(AccountingSettings), typeof(InventorySettings), typeof(PaymentMethod),

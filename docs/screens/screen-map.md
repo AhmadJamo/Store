@@ -23,6 +23,7 @@
 | `Views/Settings/InventoryAccess.cshtml` | branch warehouse operation flags/priorities plus POS terminal creation and prioritized warehouse assignment. |
 | `Views/Settings/Pos.cshtml` | per-terminal business profile, POS appearance and order workflow settings with preset application and live preview. |
 | `Views/Settings/Units.cshtml` | tenant measurement-unit catalogue grouped by dimension; creates custom units and safely deactivates non-system units while showing factors and precision. |
+| `Views/Settings/FiscalPeriods.cshtml` | Admin-only period creation and status management with non-overlap validation, reason capture and concurrency protection. |
 | `Views/Users/{Index,Create}.cshtml`, `Views/Roles/{Index,Create,Edit,_Form}.cshtml` | bilingual company-local users and role/permission administration; protected roles are read-only. |
 | `Views/Shared/{_Layout,_Notification,_ErrorPopup,_ConfirmDelete,_ValidationScriptsPartial}.cshtml` | localized LTR/RTL navigation and language switch, feedback, confirmation/validation partials. |
 

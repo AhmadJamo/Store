@@ -90,6 +90,7 @@ public class AppDbContext
     public DbSet<JournalEntry> JournalEntries => Set<JournalEntry>();
 
     public DbSet<JournalEntryLine> JournalEntryLines => Set<JournalEntryLine>();
+    public DbSet<FiscalPeriod> FiscalPeriods => Set<FiscalPeriod>();
     public DbSet<Customer> Customers => Set<Customer>();
     public DbSet<TaxRate> TaxRates => Set<TaxRate>();
     public DbSet<PosTerminal> PosTerminals => Set<PosTerminal>();

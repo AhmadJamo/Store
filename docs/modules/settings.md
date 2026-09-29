@@ -13,6 +13,8 @@ Inventory Access configures branch warehouse operation permissions/priorities, c
 
 POS Experience configures each terminal independently. A business preset supplies a safe starting layout for retail, grocery, cafe, restaurant or quick service, while the administrator can save a custom product layout, theme, cart position, accent color, header, grid density, compact cards, touch sizing, search focus and product barcode/price/stock visibility. Settings use SQL Server rowversion concurrency and the screen includes a live preview.
 
+Fiscal Periods manages non-overlapping accounting date ranges with Open, Soft Closed and Closed states. Creating the first period activates date coverage: central journal posting then accepts dates only inside an Open period. Companies with no configured periods retain the legacy all-dates-open behavior. Status changes require a reason and store actor/time metadata; rowversion protects concurrent administration edits.
+
 The same terminal screen configures operational order behavior: enabled/default Walk-in, Dine-in, Takeaway and Delivery types, required dine-in table/service reference, guest count, item preparation notes and fast barcode addition. Applying a business profile resets both appearance and workflow defaults; a custom save validates that at least one type is enabled and the default belongs to the enabled set.
 
 ## New-company defaults (2026-09-15)

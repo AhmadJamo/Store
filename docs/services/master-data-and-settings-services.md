@@ -7,5 +7,7 @@ GeneralSettingsService maps and validates the company default `UiLanguage`. The 
 
 `PosExperienceSettingsService` loads terminals with branch-qualified display names, provides a default Retail experience when no row exists, applies business-profile appearance/order defaults or validates and saves custom settings, rejects stale rowversions and supplies the runtime settings collection consumed by the POS screen.
 
+`FiscalPeriodService` creates non-overlapping tenant accounting ranges, changes Open/SoftClosed/Closed status with reason/actor metadata and validates posting dates for the central journal gateway. Zero configured periods preserves compatibility; after activation only dates inside an Open period may post.
+
 ## Guided company onboarding
 CompanyOnboardingService applies template version 1 in a Serializable transaction. It creates accounts parent-first, then the main branch, linked warehouse/access, general/inventory/accounting/discount/number settings, cash/bank methods, optional tax and optional POS/profile. A resolved setup cannot run twice.

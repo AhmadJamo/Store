@@ -183,6 +183,8 @@ builder.Services.AddScoped<InventoryAccessService>();
 builder.Services.AddScoped<IPosTerminalSettingsRepository, PosTerminalSettingsRepository>();
 builder.Services.AddScoped<PosExperienceSettingsService>();
 builder.Services.AddScoped<IJournalEntryRepository, JournalEntryRepository>();
+builder.Services.AddScoped<IFiscalPeriodRepository, FiscalPeriodRepository>();
+builder.Services.AddScoped<FiscalPeriodService>();
 builder.Services.AddScoped<PurchasePostingService>();
 builder.Services.AddScoped<SalePostingService>();
 builder.Services.AddScoped<JournalPostingService>();

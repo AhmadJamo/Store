@@ -14,7 +14,8 @@ The repository implements an operational slice for catalog, warehouses, stock, s
 - PARTIALLY IMPLEMENTED: authorization administration, auditability and inventory controls.
 - IMPLEMENTED: tenant-scoped centralized numbering for wholesale sales, POS sales, stock transfers and journal entries, including safe defaults and concurrent-edit protection.
 - IMPLEMENTED: database-enforced tenant relationship boundaries across all current ERP entities and tenant subscription redemptions, with automatic entity classification and relationship regression checks.
-- PLANNED: returns, fiscal periods, external payment-provider/webhook integration, API/integrations.
+- IMPLEMENTED: posted sales returns and tenant fiscal-period posting controls.
+- PLANNED: purchase returns, external payment-provider/webhook integration, API/integrations.
 - UNKNOWN: deployed environment, production migration process, backups, CI/CD, external integrations, and operational ownership.
 
 ## Main modules
@@ -27,7 +28,7 @@ The repository implements an operational slice for catalog, warehouses, stock, s
 | Purchases | IMPLEMENTED | `Purchase`, `PurchaseService` | Immediately increases stock. |
 | Sales | IMPLEMENTED | `Sale`, `SaleService`, `SalePostingService` | Uses configured channel price, optional frozen inclusive/exclusive tax, decreases stock and posts revenue/output tax/COGS. |
 | Stock transfers | IMPLEMENTED | `StockTransfer`, `StockTransferService` | Draft/submitted/approved/posted/cancelled flow. |
-| Settings | PARTIALLY IMPLEMENTED | settings entities/services | General, discount, inventory, accounting, POS and centralized document-number settings. |
+| Settings | PARTIALLY IMPLEMENTED | settings entities/services | General, discount, inventory, accounting, fiscal periods, POS and centralized document-number settings. |
 | Identity & permissions | PARTIALLY IMPLEMENTED | Identity + `PermissionAuthorizationHandler` | Custom permission rows mapped to roles. |
 
 ## Current problems

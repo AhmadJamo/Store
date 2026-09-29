@@ -1,5 +1,8 @@
 # AI Work Log
 
+## 2026-09-29 — Fiscal-period posting control
+Added tenant-owned, non-overlapping fiscal periods with Open, Soft Closed and Closed states, required status-change reasons, actor/time metadata and rowversion concurrency. The central journal gateway now validates every posting date; companies with no periods retain legacy behavior, while configured companies may post only inside Open periods. Added an Admin-only bilingual Settings screen, tenant-safe persistence and ADR. Migration `20260929153537_AddFiscalPeriods` was applied to `AHMAD/MiniStoreDb`; Release build passed without warnings, 245 focused checks passed and EF reports no pending model changes.
+
 ## 2026-09-29 — Central journal-posting gateway
 Added `JournalPostingService` as the shared Application-layer gateway for source duplicate detection, central journal-number generation, journal construction, domain balance validation, posting and persistence. Refactored purchase posting, sale posting and sales-return reversal to submit their resolved lines through the gateway inside their existing Serializable UnitOfWork transactions. This creates one insertion point for fiscal-period, approval and generalized reversal controls without changing the accounting calculations owned by each feature. No schema migration was required.
 
