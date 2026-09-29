@@ -1,0 +1,70 @@
+@model MiniStore.Application.DTOs.Products.ProductLogisticsInputDto
+@using MiniStore.Domain.Entities
+@using MiniStore.Application.DTOs.Products
+@using MiniStore.Application.DTOs.Settings
+@inject Microsoft.Extensions.Localization.IStringLocalizer<MiniStore.Web.SharedResource> Localizer
+
+<div class="col-md-6">
+    <label asp-for="ProductCategoryId" class="form-label">@Localizer["Product category"]</label>
+    <select asp-for="ProductCategoryId" class="form-select">
+        <option value="">@Localizer["No category"]</option>
+        @foreach (var category in (IEnumerable<ProductCategoryDto>)ViewBag.ProductCategories)
+        { <option value="@category.Id" disabled="@(!category.IsActive && category.Id != Model.ProductCategoryId)">@category.Name @(!category.IsActive ? $"({Localizer["Inactive"]})" : string.Empty)</option> }
+    </select>
+</div>
+<div class="col-md-6">
+    <label asp-for="TrackingPolicy" class="form-label">@Localizer["Tracking policy"]</label>
+    <select asp-for="TrackingPolicy" class="form-select">
+        <option value="@((int)ProductTrackingPolicy.None)">@Localizer["No lot or serial tracking"]</option>
+        <option value="@((int)ProductTrackingPolicy.Lot)">@Localizer["Lot tracking"]</option>
+        <option value="@((int)ProductTrackingPolicy.Serial)">@Localizer["Serial tracking"]</option>
+    </select>
+    <div class="form-text">@Localizer["Lot and serial execution will be enabled in the traceability phase. Existing non-zero stock cannot switch to tracked inventory."]</div>
+</div>
+
+<div class="col-12"><h5 class="mt-2 mb-0">@Localizer["Logistics measurements"]</h5></div>
+<div class="col-md-3">
+    <label asp-for="NetWeight" class="form-label">@Localizer["Net weight"]</label>
+    <input asp-for="NetWeight" type="number" min="0" step="0.000001" class="form-control" />
+</div>
+<div class="col-md-3">
+    <label asp-for="GrossWeight" class="form-label">@Localizer["Gross weight"]</label>
+    <input asp-for="GrossWeight" type="number" min="0" step="0.000001" class="form-control" />
+</div>
+<div class="col-md-6">
+    <label asp-for="WeightMeasurementUnitId" class="form-label">@Localizer["Weight unit"]</label>
+    <select asp-for="WeightMeasurementUnitId" class="form-select">
+        <option value="">@Localizer["Select mass unit"]</option>
+        @foreach (var unit in (IEnumerable<MeasurementUnitDto>)ViewBag.MassUnits)
+        { <option value="@unit.Id">@Localizer[unit.Name] (@unit.Symbol)</option> }
+    </select>
+</div>
+<div class="col-md-2">
+    <label asp-for="Length" class="form-label">@Localizer["Length"]</label>
+    <input asp-for="Length" type="number" min="0.000001" step="0.000001" class="form-control" />
+</div>
+<div class="col-md-2">
+    <label asp-for="Width" class="form-label">@Localizer["Width"]</label>
+    <input asp-for="Width" type="number" min="0.000001" step="0.000001" class="form-control" />
+</div>
+<div class="col-md-2">
+    <label asp-for="Height" class="form-label">@Localizer["Height"]</label>
+    <input asp-for="Height" type="number" min="0.000001" step="0.000001" class="form-control" />
+</div>
+<div class="col-md-6">
+    <label asp-for="DimensionMeasurementUnitId" class="form-label">@Localizer["Dimension unit"]</label>
+    <select asp-for="DimensionMeasurementUnitId" class="form-select">
+        <option value="">@Localizer["Select length unit"]</option>
+        @foreach (var unit in (IEnumerable<MeasurementUnitDto>)ViewBag.LengthUnits)
+        { <option value="@unit.Id">@Localizer[unit.Name] (@unit.Symbol)</option> }
+    </select>
+    <div class="form-text">@Localizer["Enter length, width and height together. Volume is calculated from these dimensions."]</div>
+</div>
+
+<div class="col-12"><h5 class="mt-2 mb-0">@Localizer["Handling requirements"]</h5></div>
+<div class="col-md-2 form-check ms-3"><input asp-for="IsFragile" class="form-check-input" /><label asp-for="IsFragile" class="form-check-label">@Localizer["Fragile"]</label></div>
+<div class="col-md-2 form-check ms-3"><input asp-for="KeepDry" class="form-check-input" /><label asp-for="KeepDry" class="form-check-label">@Localizer["Keep dry"]</label></div>
+<div class="col-md-2 form-check ms-3"><input asp-for="RequiresRefrigeration" class="form-check-input" /><label asp-for="RequiresRefrigeration" class="form-check-label">@Localizer["Refrigerated"]</label></div>
+<div class="col-md-2 form-check ms-3"><input asp-for="RequiresFrozenStorage" class="form-check-input" /><label asp-for="RequiresFrozenStorage" class="form-check-label">@Localizer["Frozen"]</label></div>
+<div class="col-md-2 form-check ms-3"><input asp-for="IsHazardous" class="form-check-input" /><label asp-for="IsHazardous" class="form-check-label">@Localizer["Hazardous"]</label></div>
+<div class="col-12"><hr /></div>

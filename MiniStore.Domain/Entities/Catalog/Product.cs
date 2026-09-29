@@ -29,6 +29,26 @@ public class Product
 
     public int? MeasurementUnitId { get; private set; }
 
+    public int? ProductCategoryId { get; private set; }
+
+    public decimal? NetWeight { get; private set; }
+
+    public decimal? GrossWeight { get; private set; }
+
+    public int? WeightMeasurementUnitId { get; private set; }
+
+    public decimal? Length { get; private set; }
+
+    public decimal? Width { get; private set; }
+
+    public decimal? Height { get; private set; }
+
+    public int? DimensionMeasurementUnitId { get; private set; }
+
+    public ProductTrackingPolicy TrackingPolicy { get; private set; }
+
+    public ProductHandlingRequirements HandlingRequirements { get; private set; }
+
     public bool AllowNegativeRecipeConsumption { get; private set; }
 
     public bool IsSellableInPos { get; private set; }
@@ -196,6 +216,64 @@ public class Product
         InventoryBehavior = ProductInventoryBehavior.PreparedToOrder;
         ProductType = ProductType.PreparedToOrder;
         PurchasePrice = 0;
+    }
+
+    public void ConfigureLogistics(
+        int? productCategoryId,
+        decimal? netWeight,
+        decimal? grossWeight,
+        int? weightMeasurementUnitId,
+        decimal? length,
+        decimal? width,
+        decimal? height,
+        int? dimensionMeasurementUnitId,
+        ProductTrackingPolicy trackingPolicy,
+        ProductHandlingRequirements handlingRequirements)
+    {
+        if (productCategoryId <= 0)
+            throw new ArgumentException("Selected product category is invalid.");
+        if (netWeight < 0 || grossWeight < 0)
+            throw new ArgumentException("Product weights cannot be negative.");
+        if (netWeight.HasValue && grossWeight.HasValue && grossWeight < netWeight)
+            throw new ArgumentException("Gross weight cannot be less than net weight.");
+        if ((netWeight.HasValue || grossWeight.HasValue) != weightMeasurementUnitId.HasValue)
+            throw new ArgumentException("Select a mass unit when a product weight is entered.");
+
+        var dimensionValues = new[] { length, width, height };
+        var hasAnyDimension = dimensionValues.Any(value => value.HasValue);
+        var hasAllDimensions = dimensionValues.All(value => value.HasValue);
+        if (hasAnyDimension && !hasAllDimensions)
+            throw new ArgumentException("Length, width and height must be entered together.");
+        if (hasAllDimensions && dimensionValues.Any(value => value <= 0))
+            throw new ArgumentException("Product dimensions must be greater than zero.");
+        if (hasAnyDimension != dimensionMeasurementUnitId.HasValue)
+            throw new ArgumentException("Select a length unit when product dimensions are entered.");
+        if (!Enum.IsDefined(trackingPolicy))
+            throw new ArgumentException("Product tracking policy is invalid.");
+        const ProductHandlingRequirements allRequirements =
+            ProductHandlingRequirements.Fragile |
+            ProductHandlingRequirements.KeepDry |
+            ProductHandlingRequirements.Refrigerated |
+            ProductHandlingRequirements.Frozen |
+            ProductHandlingRequirements.Hazardous;
+        if ((handlingRequirements & ~allRequirements) != 0)
+            throw new ArgumentException("Product handling requirements are invalid.");
+        if (handlingRequirements.HasFlag(ProductHandlingRequirements.Refrigerated) &&
+            handlingRequirements.HasFlag(ProductHandlingRequirements.Frozen))
+        {
+            throw new ArgumentException("A product cannot be both refrigerated and frozen.");
+        }
+
+        ProductCategoryId = productCategoryId;
+        NetWeight = netWeight;
+        GrossWeight = grossWeight;
+        WeightMeasurementUnitId = weightMeasurementUnitId;
+        Length = length;
+        Width = width;
+        Height = height;
+        DimensionMeasurementUnitId = dimensionMeasurementUnitId;
+        TrackingPolicy = trackingPolicy;
+        HandlingRequirements = handlingRequirements;
     }
 
     private static void ValidateName(string name)

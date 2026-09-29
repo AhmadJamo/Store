@@ -36,6 +36,14 @@ The POS warehouse list contains only warehouses with POS sales enabled, and Sale
 
 The Inventory Settings singleton supplies defaults for new warehouses. Effective rules remain warehouse-specific. Existing warehouses are migrated as Hybrid with capacity enforcement so established location data and workflows remain available.
 
+## Inventory reconciliation baseline
+
+The `InventoryReconciliation.View` report is a read-only WMS control. For each tenant Product + Warehouse it compares ProductStock quantity/value, the SQL-aggregated ProductLocationStock quantity, derived Unassigned quantity and the latest StockTransaction quantity/value snapshot. It also finds location balances without a warehouse balance, negative location rows and location balances attached to Simple warehouses. Search accepts product name, generated code or barcode; warehouse, exception-only and page-size filters are available. The report never adjusts stock.
+
+Quantity differences use a 0.000001 tolerance and value differences use 0.00000001. Exceptions must be resolved through the owning inventory document or a future approved adjustment workflow. The SQL integration fixture creates a disposable database, verifies query translation and tenant isolation for two companies, and proves that ProductStock rowversion allows exactly one of two concurrent last-unit issues to succeed.
+
+The 2026-09-30 read-only run against the demo database found five explained legacy exceptions: three positive balances whose latest pre-valuation transactions contain zero snapshot fields, and two controlled-negative recipe ingredient balances with the same legacy zero snapshots. No location allocation rows were present for those balances. They are demo-data baseline exceptions, not silent corrections; the report retains them until the demo inventory is deliberately reseeded or an approved baseline workflow exists.
+
 ## Branch and POS access
 `BranchWarehouseAccess` assigns warehouses to a branch with priority and separate permissions for POS sales, purchases, transfer-in, transfer-out and replenishment. One access row may be the branch POS default. `PosTerminalWarehouse` narrows the branch list for each terminal and orders its default and alternatives.
 

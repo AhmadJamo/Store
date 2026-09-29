@@ -1508,6 +1508,20 @@ namespace MiniStore.Infrastructure.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<int?>("DimensionMeasurementUnitId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal?>("GrossWeight")
+                        .HasPrecision(18, 6)
+                        .HasColumnType("decimal(18,6)");
+
+                    b.Property<int>("HandlingRequirements")
+                        .HasColumnType("int");
+
+                    b.Property<decimal?>("Height")
+                        .HasPrecision(18, 6)
+                        .HasColumnType("decimal(18,6)");
+
                     b.Property<int>("InventoryBehavior")
                         .HasColumnType("int");
 
@@ -1520,6 +1534,10 @@ namespace MiniStore.Infrastructure.Migrations
                     b.Property<bool>("IsSellableInSales")
                         .HasColumnType("bit");
 
+                    b.Property<decimal?>("Length")
+                        .HasPrecision(18, 6)
+                        .HasColumnType("decimal(18,6)");
+
                     b.Property<int?>("MeasurementUnitId")
                         .HasColumnType("int");
 
@@ -1527,6 +1545,13 @@ namespace MiniStore.Infrastructure.Migrations
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
+
+                    b.Property<decimal?>("NetWeight")
+                        .HasPrecision(18, 6)
+                        .HasColumnType("decimal(18,6)");
+
+                    b.Property<int?>("ProductCategoryId")
+                        .HasColumnType("int");
 
                     b.Property<string>("ProductCode")
                         .IsRequired()
@@ -1552,15 +1577,29 @@ namespace MiniStore.Infrastructure.Migrations
                     b.Property<int>("TenantId")
                         .HasColumnType("int");
 
+                    b.Property<int>("TrackingPolicy")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("WeightMeasurementUnitId")
+                        .HasColumnType("int");
+
                     b.Property<decimal>("WholesalePrice")
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("Width")
+                        .HasPrecision(18, 6)
+                        .HasColumnType("decimal(18,6)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("TenantId");
 
+                    b.HasIndex("DimensionMeasurementUnitId", "TenantId");
+
                     b.HasIndex("MeasurementUnitId", "TenantId");
+
+                    b.HasIndex("ProductCategoryId", "TenantId");
 
                     b.HasIndex("TenantId", "Barcode")
                         .IsUnique()
@@ -1569,7 +1608,52 @@ namespace MiniStore.Infrastructure.Migrations
                     b.HasIndex("TenantId", "ProductCode")
                         .IsUnique();
 
+                    b.HasIndex("WeightMeasurementUnitId", "TenantId");
+
                     b.ToTable("Products");
+                });
+
+            modelBuilder.Entity("MiniStore.Domain.Entities.ProductCategory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<int>("TenantId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TenantId");
+
+                    b.HasIndex("TenantId", "Code")
+                        .IsUnique();
+
+                    b.HasIndex("TenantId", "Name")
+                        .IsUnique();
+
+                    b.ToTable("ProductCategories");
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.ProductLocationStock", b =>
@@ -3543,9 +3627,36 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasOne("MiniStore.Domain.Entities.MeasurementUnit", null)
                         .WithMany()
+                        .HasForeignKey("DimensionMeasurementUnitId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("MiniStore.Domain.Entities.MeasurementUnit", null)
+                        .WithMany()
                         .HasForeignKey("MeasurementUnitId", "TenantId")
                         .HasPrincipalKey("Id", "TenantId")
                         .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("MiniStore.Domain.Entities.ProductCategory", null)
+                        .WithMany()
+                        .HasForeignKey("ProductCategoryId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("MiniStore.Domain.Entities.MeasurementUnit", null)
+                        .WithMany()
+                        .HasForeignKey("WeightMeasurementUnitId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict);
+                });
+
+            modelBuilder.Entity("MiniStore.Domain.Entities.ProductCategory", b =>
+                {
+                    b.HasOne("MiniStore.Domain.Entities.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.ProductLocationStock", b =>

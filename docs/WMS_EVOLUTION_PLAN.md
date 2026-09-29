@@ -25,6 +25,16 @@ Warehouse ProductStock valuation aggregate
 - `ProductStock` remains the authoritative Product + Warehouse quantity/AVCO aggregate during the transition and continues to own valuation.
 - `StockTransaction` remains the existing warehouse-level valuation and quantity snapshot ledger until every producer has migrated. It is not deleted or silently reinterpreted.
 
+### Current database data classification
+
+All records currently stored in the development database are classified as **demo/test data**, not production business records. This classification covers current master data, users created for testing, stock quantities, locations, products and transactional history. It does **not** mean that the database schema, migrations, domain rules or tenant/security boundaries are disposable.
+
+During WMS development, demo rows may be reseeded, corrected or recreated when a clean baseline is required, provided the action is deliberate and preceded by the relevant reconciliation or backup check. No plan item should assume that the current demo quantities are a production migration constraint. Nevertheless, every new migration and workflow must remain production-safe because the same architecture will later carry real customer data. Destructive demo-data reset is an explicit execution task, not an automatic side effect of applying a migration.
+
+### Execution authorization and autonomy
+
+The project owner has authorized continuous autonomous execution of the approved WMS roadmap. Routine in-scope code edits, documentation updates, builds, tests, migrations against the named development environment and creation/removal of dedicated temporary test databases should proceed without pausing for a separate confirmation each time. This standing authorization does not expand the roadmap beyond inventory/warehouse work and cannot bypass an approval prompt imposed by the execution platform. A new decision is still required for an unclear target, production data, credentials, external publication, or destructive action outside the explicitly named development/test scope.
+
 ## 2. Repository inspection summary
 
 ### Implemented strengths to preserve
@@ -69,6 +79,9 @@ Warehouse ProductStock valuation aggregate
 | Capability | Existing | Partial | Missing | Keep | Modify | New | Priority |
 |---|---:|---:|---:|---:|---:|---:|---|
 | Tenant-safe warehouse master | ✓ | | | ✓ | | | Foundation |
+| Product category/logistics profile | product type/unit only | ✓ | weight/dimensions/storage traits | ✓ | ✓ | category/profile | P1 |
+| Flexible business-specific attributes | | | ✓ | Product remains SKU | | ✓ | P1 |
+| Product variants | each Product is one SKU | ✓ | template/variant grouping | ✓ | extend gradually | template/attributes | P1 |
 | Warehouse operating policies | ✓ | | | ✓ | extend later | | Foundation |
 | Flat exact locations | ✓ | | | ✓ | ✓ | | P1 |
 | Hierarchical location tree | | ✓ labels only | ✓ | | ✓ | | P1 |
@@ -392,7 +405,31 @@ Risk: financial misstatement and irreconcilable historic layers.
 
 Decision: **Keep AVCO; New/Extend later**.
 
+### 5.13 Product logistics, flexible attributes and variants
+
+Current: `Product` is the stocked/sellable identity referenced by recipes, purchases, sales, balances and movements. It has classification, managed stock unit, prices, barcode/code and channel behavior, but no category, physical dimensions, tracking policy or configurable business attributes.
+
+Problem: warehouses need weight, length/width/height, volume, storage handling and lot/serial policy. Different businesses also need different descriptive or variant attributes—such as clothing color/size, food allergens/storage temperature, electronics memory/voltage or automotive compatibility—without adding a nullable database column for every industry.
+
+Proposed: preserve `Product` as the concrete stockable SKU/variant identity. Add a logistics foundation containing ProductCategory, net/gross weight where justified, package-independent base dimensions, calculated/overridden volume, storage/handling flags and tracking policy. Add metadata-driven attribute definitions with typed values (text, number, boolean, date, option and measured value), category applicability and validation. Later add an optional ProductTemplate that groups concrete Product rows into variants; variant-defining attributes create distinct Product SKUs, barcodes, prices and balances, while descriptive attributes do not.
+
+Why: WMS capacity, putaway, replenishment, lots/serials and barcode workflows require structured product facts, while a flexible catalogue must support multiple industries without an ever-growing Product table.
+
+Existing Feature Impact: Product create/edit/index, product search/import, recipes, purchase/sale selectors, POS assortment, measurement units, stock balances, capacity and future lot/serial rules.
+
+Preservation Strategy: every existing Product remains a valid independent SKU with the same Id and relationships. ProductTemplate is optional; no existing ProductId is replaced. Existing products receive safe defaults: no tracking, no special handling and unknown physical dimensions. A template groups products but never owns inventory itself.
+
+Migration: first add nullable logistics fields/category relationship and explicit tracking default. Add attribute tables separately. If templates are introduced, create or assign a default one-to-one template only when needed; do not change historic line or movement ProductIds.
+
+Dependencies: managed measurement units already exist. Logistics metadata should precede advanced capacity/putaway and lot/serial work. Template/variant UI must precede any bulk variant generation.
+
+Risk: variant explosion, duplicate barcodes/codes, confusing descriptive attributes with stock dimensions, changing tracking on non-zero stock, and unit mismatch for weight/dimensions.
+
+Decision: **Extend Product and add metadata; preserve Product as stocked SKU; introduce ProductTemplate gradually**.
+
 ## 6. Safe data migration strategy
+
+The current local database contains demo/test data only. Therefore, implementation may use a controlled clean reseed instead of preserving inconsistent demo history when that is the safer verification route. The default engineering path remains additive and reversible so it is suitable for future production databases.
 
 1. Run a preflight reconciliation per tenant/Product/Warehouse:
    - ProductStock quantity.
@@ -409,6 +446,7 @@ Decision: **Keep AVCO; New/Extend later**.
 8. Switch reads only after totals match and critical workflows pass SQL integration tests.
 9. Keep old tables and references through at least one stable release; deprecation requires a separate ADR and backup/rollback rehearsal.
 10. Never invent lot, serial, owner or package history for legacy quantities. Require an opening allocation document where traceability begins.
+11. If a demo-data reset is selected, record its scope, take any required development backup, recreate the supported seed/onboarding baseline and rerun reconciliation and SQL integration tests before continuing.
 
 Rollback is application-level first: disable the new read path and continue using preserved ProductStock/ProductLocationStock/StockTransaction data. Schema removal is not part of an ordinary rollback.
 
@@ -453,20 +491,35 @@ Inventory-at-date must derive from immutable posted movements/snapshots, never f
 
 ## 10. Implementation roadmap and vertical slices
 
-### WMS-000 — Reconciliation baseline and contracts (next)
+### WMS-000 — Reconciliation baseline and contracts (complete)
 
-- Document and implement read-only inventory reconciliation across warehouse totals, location allocations and latest movement snapshots.
-- Add SQL integration fixtures for two tenants and concurrent last-unit issue.
-- Define stable movement reference/idempotency conventions and feature-flag strategy.
-- No balance mutation or cutover.
+- [x] Document and implement read-only inventory reconciliation across warehouse totals, location allocations and latest movement snapshots.
+- [x] Add SQL integration fixtures for two tenants and concurrent last-unit issue.
+- [x] Define stable movement reference/idempotency conventions and feature-flag strategy.
+- [x] No balance mutation or cutover.
 
 Definition of Done: bilingual Admin report, permission, indexed repository queries, tests, docs and zero unexplained differences before the next phase.
+
+### WMS-005 — Product logistics foundation (implementation complete; development migration pending)
+
+- [x] Product categories and structured logistics metadata required by warehouse rules.
+- [x] Weight/dimensions/derived volume with explicit managed Mass/Length units and safe nullable defaults.
+- [x] Storage/handling traits and None/Lot/Serial tracking policy, without enabling tracked stock allocation yet.
+- [x] Prevent tracking-policy activation on non-zero stock until the WMS-070 opening-allocation workflow exists.
+- [ ] Apply `20260929220416_AddProductLogisticsFoundation` to the named development database and complete an authenticated UI smoke test.
 
 ### WMS-010 — Hierarchical locations
 
 - Parent tree, name, barcode, sequence and capabilities.
 - Tree UI plus cycle/same-warehouse validation.
 - Backfill existing location metadata without ID changes.
+
+### WMS-015 — Flexible attributes and product variants
+
+- Typed attribute definitions, options, category applicability and validation.
+- Separate descriptive attributes from variant-defining attributes.
+- Optional ProductTemplate groups existing concrete Product SKUs; Product remains the inventory identity.
+- No automatic Cartesian variant generation without preview, limits and explicit confirmation.
 
 ### WMS-020 — Physical movement kernel
 
@@ -546,7 +599,7 @@ Stop implementation and record a decision before proceeding if:
 
 This is a planning inventory, not authorization to create every file at once. Each phase adds only its vertical-slice files.
 
-### WMS-000 next slice — reconciliation baseline
+### WMS-000 implemented slice — reconciliation baseline
 
 Files to add:
 
@@ -557,7 +610,9 @@ MiniStore.Domain/Interfaces/Inventory/IInventoryReconciliationRepository.cs
 MiniStore.Infrastructure/Repositories/Inventory/InventoryReconciliationRepository.cs
 MiniStore.Web/Controllers/Inventory/InventoryReconciliationController.cs
 MiniStore.Web/Views/InventoryReconciliation/Index.cshtml
-docs/decisions/<date>-inventory-reconciliation-contract.md
+docs/decisions/2026-09-30-inventory-reconciliation-contract.md
+tests/InventorySqlIntegration/InventorySqlIntegration.csproj
+tests/InventorySqlIntegration/Program.cs
 ```
 
 Files to modify:
@@ -612,6 +667,49 @@ MiniStore.Web/Resources/SharedResource.ar.resx
 tests/SecurityRegression/Program.cs
 relevant inventory/database/controller/screen/permission docs
 ```
+
+### WMS-005/WMS-015 — product logistics, attributes and variants
+
+Files likely to add:
+
+```text
+MiniStore.Domain/Entities/Catalog/ProductCategory.cs
+MiniStore.Domain/Entities/Catalog/ProductTemplate.cs
+MiniStore.Domain/Entities/Catalog/ProductAttributeDefinition.cs
+MiniStore.Domain/Entities/Catalog/ProductAttributeOption.cs
+MiniStore.Domain/Entities/Catalog/ProductAttributeValue.cs
+MiniStore.Domain/Entities/Catalog/ProductTrackingPolicy.cs
+MiniStore.Domain/Interfaces/Catalog/IProductAttributeRepository.cs
+MiniStore.Application/Dtos/Catalog/ProductAttributes/*
+MiniStore.Application/Services/Catalog/ProductAttributeService.cs
+MiniStore.Infrastructure/Repositories/Catalog/ProductAttributeRepository.cs
+MiniStore.Infrastructure/Persistence/Configurations/Catalog/ProductAttribute*.cs
+MiniStore.Web/Controllers/Catalog/ProductAttributesController.cs
+MiniStore.Web/Views/ProductAttributes/*
+docs/decisions/<date>-product-logistics-and-variant-model.md
+```
+
+Files to modify:
+
+```text
+MiniStore.Domain/Entities/Catalog/Product.cs
+MiniStore.Application/Dtos/Catalog/Products/CreateProductDto.cs
+MiniStore.Application/Dtos/Catalog/Products/UpdateProductDto.cs
+MiniStore.Application/Dtos/Catalog/Products/ProductDto.cs
+MiniStore.Application/Services/Catalog/ProductService.cs
+MiniStore.Domain/Interfaces/Catalog/IProductRepository.cs
+MiniStore.Infrastructure/Repositories/Catalog/ProductRepository.cs
+MiniStore.Infrastructure/Persistence/Configurations/Catalog/ProductConfiguration.cs
+MiniStore.Web/Controllers/Catalog/ProductsController.cs
+MiniStore.Web/Views/Products/{Create,Edit,Index}.cshtml
+MiniStore.Infrastructure/Persistence/{AppDbContext,TenantIsolationModel}.cs
+MiniStore.Web/Program.cs
+MiniStore.Web/Resources/SharedResource.ar.resx
+tests/SecurityRegression/Program.cs
+product/inventory/database/permission/screen/roadmap docs
+```
+
+This phase must not replace ProductId in stock, recipe, purchase, sale or history tables. Concrete Product rows remain the inventory SKUs.
 
 ### WMS-020 — physical movement kernel
 

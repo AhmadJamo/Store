@@ -59,6 +59,11 @@ public static class PermissionDefinitions
             "Move Stock Between Locations",
             "Warehouse Locations"),
 
+        new(
+            "InventoryReconciliation.View",
+            "View Inventory Reconciliation",
+            "Inventory"),
+
         // ==========================================
         // Suppliers
         // ==========================================

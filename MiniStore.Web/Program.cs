@@ -156,9 +156,11 @@ builder.Services.ConfigureApplicationCookie(options =>
 
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IProductRecipeRepository, ProductRecipeRepository>();
+builder.Services.AddScoped<IProductCategoryRepository, ProductCategoryRepository>();
 builder.Services.AddScoped<IMeasurementUnitRepository, MeasurementUnitRepository>();
 
 builder.Services.AddScoped<ProductService>();
+builder.Services.AddScoped<ProductCategoryService>();
 builder.Services.AddScoped<MeasurementUnitService>();
 builder.Services.AddScoped<RecipeService>();
 
@@ -198,6 +200,8 @@ builder.Services.AddScoped<IProductLocationStockRepository, ProductLocationStock
 builder.Services.AddScoped<UnassignedStockService>();
 builder.Services.AddScoped<ILocationMovementRepository, LocationMovementRepository>();
 builder.Services.AddScoped<LocationMovementService>();
+builder.Services.AddScoped<IInventoryReconciliationRepository, InventoryReconciliationRepository>();
+builder.Services.AddScoped<InventoryReconciliationService>();
 
 builder.Services.AddScoped<IProductStockRepository,ProductStockRepository>();
 

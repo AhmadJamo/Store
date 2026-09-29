@@ -139,7 +139,15 @@ public static class NavigationDefinitions
                 "LocationMovements",
                 "Index",
                 "LocationMovements.View",
-                80)
+                80),
+
+            new NavigationItem(
+                "Inventory reconciliation",
+                "bi-clipboard-data",
+                "InventoryReconciliation",
+                "Index",
+                "InventoryReconciliation.View",
+                90)
         ),
 
         new NavigationGroup(

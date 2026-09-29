@@ -1,0 +1,60 @@
+@model IReadOnlyList<MiniStore.Application.DTOs.Products.ProductCategoryDto>
+@inject Microsoft.Extensions.Localization.IStringLocalizer<MiniStore.Web.SharedResource> Localizer
+
+@{ ViewData["Title"] = Localizer["Product categories"]; }
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-start mb-3">
+        <div>
+            <h2>@Localizer["Product categories"]</h2>
+            <p class="text-muted">@Localizer["Categories organize logistics rules and future business-specific product attributes."]</p>
+        </div>
+        <a asp-controller="Products" asp-action="Index" class="btn btn-outline-secondary">@Localizer["Back to products"]</a>
+    </div>
+
+    <form asp-action="Create" method="post" class="card card-body mb-4">
+        <div class="row g-3 align-items-end">
+            <div class="col-md-5">
+                <label for="Name" class="form-label">@Localizer["Category name"]</label>
+                <input id="Name" name="Name" maxlength="100" class="form-control" required />
+            </div>
+            <div class="col-md-5">
+                <label for="Code" class="form-label">@Localizer["Category code"]</label>
+                <input id="Code" name="Code" maxlength="30" class="form-control" required />
+                <div class="form-text">@Localizer["Use language-neutral letters, numbers, hyphens or underscores."]</div>
+            </div>
+            <div class="col-md-2">
+                <button class="btn btn-primary w-100">@Localizer["Add category"]</button>
+            </div>
+        </div>
+    </form>
+
+    <div class="table-responsive">
+        <table class="table table-bordered align-middle">
+            <thead><tr><th>@Localizer["Category name"]</th><th>@Localizer["Category code"]</th><th>@Localizer["Status"]</th><th>@Localizer["Actions"]</th></tr></thead>
+            <tbody>
+            @foreach (var category in Model)
+            {
+                <tr>
+                    <td>@category.Name</td>
+                    <td><code>@category.Code</code></td>
+                    <td>@(category.IsActive ? Localizer["Active"] : Localizer["Inactive"])</td>
+                    <td>
+                        <form asp-action="SetActive" method="post">
+                            <input type="hidden" name="id" value="@category.Id" />
+                            <input type="hidden" name="isActive" value="@(!category.IsActive)" />
+                            <button class="btn btn-sm @(category.IsActive ? "btn-outline-warning" : "btn-outline-success")">
+                                @(category.IsActive ? Localizer["Deactivate"] : Localizer["Activate"])
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            }
+            @if (Model.Count == 0)
+            {
+                <tr><td colspan="4" class="text-center text-muted">@Localizer["No product categories have been created."]</td></tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -1,5 +1,5 @@
 # Razor screen map
-> Status: IMPLEMENTED | Last reviewed: 2026-09-28
+> Status: IMPLEMENTED | Last reviewed: 2026-09-30
 
 | Screens | Controller flow / notable UI |
 |---|---|
@@ -8,13 +8,15 @@
 | `Views/Subscription/{Index,Checkout}.cshtml` | current subscription, plan selection, promo entry and immutable checkout quote. |
 | `Areas/Platform/Views/*` | separately signed-in operator dashboard for plans, promotions, companies/subscriptions and pending payment confirmation; login displays friendly retry feedback when throttled. |
 | `Views/Dashboard/Index.cshtml` | authenticated landing page after login; authenticated requests to Login redirect here. Home remains a compatibility redirect. |
-| `Views/Products/{Index,Create,Edit}.cshtml` | localized product catalogue with name/code/barcode search, type/status/channel filters, sorting and paging. Forms configure raw/direct/prepared type, optional barcode, managed stock unit, active state, sale channels and controlled-negative ingredient policy; prepared purchase price is hidden and cleared. |
+| `Views/Products/{Index,Create,Edit,_LogisticsFields}.cshtml` | localized catalogue with category/tracking/type/status/channel filters. Forms configure product type, category, weight, dimensions, handling, future tracking policy, optional barcode, managed units, active state, channels and controlled-negative ingredient policy. |
+| `Views/ProductCategories/Index.cshtml` | category create/list/activate screen with language-neutral codes and preserved inactive categories. |
 | `Views/Recipes/{Index,Edit}.cshtml` | bilingual prepared-product recipe list and dynamic immutable-version editor using active managed units, immutable conversion snapshots and visible negative policy. |
 | `Views/Warehouses/*`, `Views/Suppliers/*` | list/create/edit master data and delete posts; warehouses configure operating use, location control, picking, POS and transfer policies. |
 | `Views/ProductStocks/{Index,Create,Edit}.cshtml` | balance, moving average and inventory value list; opening balance/direct adjustment; negative recipe exceptions are highlighted. |
 | `Views/StockTransactions/{Index,Create}.cshtml` | paged/filterable movement list with unit cost, movement value and variance; manual adjustments include reason-required kitchen variance. |
 | `Views/WarehouseLocations/{Index,Create}.cshtml`, `Views/UnassignedStock/Index.cshtml` | location master data, warehouse/product search and putaway assignment. |
 | `Views/LocationMovements/Index.cshtml` | same-warehouse rack/bin relocation form with filtered choices, available quantity and searchable movement history. |
+| `Views/InventoryReconciliation/Index.cshtml` | bilingual read-only WMS exception report comparing warehouse quantity/value, assigned/unassigned location quantity and the latest movement snapshot, with warehouse/search/exception/page filters. |
 | `Views/Purchases/{Index,Create,Details}.cshtml` | purchase list/detail and client-side dynamic item rows. |
 | `Views/Sales/{Index,Create,Details,Pos}.cshtml` | wholesale sale, detail/list and POS cart; optional inclusive/exclusive invoice tax is selected and previewed, while terminal selection filters warehouses and applies saved order experience. Details shows tax, product names, POS context, unit cost/COGS and an idempotent general-ledger posting action/status. |
 | `Views/SalesReturns/{Index,Create,Details}.cshtml` | return history, remaining-quantity entry from a posted sale, and posted refund/restock details. |

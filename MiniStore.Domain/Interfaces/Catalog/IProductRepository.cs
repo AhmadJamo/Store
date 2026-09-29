@@ -12,6 +12,8 @@ public interface IProductRepository
 
     Task<List<Product>> GetAllAsync(string? search);
 
+    Task<bool> HasNonZeroStockAsync(int productId);
+
     Task AddAsync(Product product);
 
     Task DeleteAsync(Product product);
@@ -22,6 +24,8 @@ public interface IProductRepository
 public sealed record ProductSearchCriteria(
     string? Search,
     ProductType? ProductType,
+    int? ProductCategoryId,
+    ProductTrackingPolicy? TrackingPolicy,
     bool? IsSellableInPos,
     bool? IsSellableInSales,
     bool? IsActive,

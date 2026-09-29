@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using MiniStore.Application.DTOs.Products;
 using MiniStore.Application.Services;
+using MiniStore.Domain.Entities;
 using MiniStore.Web.Authorization;
 using Microsoft.Extensions.Localization;
 
@@ -12,15 +13,18 @@ public class ProductsController : Controller
     private readonly ProductService _productService;
     private readonly IStringLocalizer<SharedResource> _localizer;
     private readonly MeasurementUnitService _measurementUnitService;
+    private readonly ProductCategoryService _productCategoryService;
 
     public ProductsController(
         ProductService productService,
         IStringLocalizer<SharedResource> localizer,
-        MeasurementUnitService measurementUnitService)
+        MeasurementUnitService measurementUnitService,
+        ProductCategoryService productCategoryService)
     {
         _productService = productService;
         _localizer = localizer;
         _measurementUnitService = measurementUnitService;
+        _productCategoryService = productCategoryService;
     }
 
     [PermissionAuthorize("Products.View")]
@@ -114,7 +118,21 @@ public class ProductsController : Controller
             AllowNegativeRecipeConsumption = product.AllowNegativeRecipeConsumption,
             IsSellableInPos = product.IsSellableInPos,
             IsSellableInSales = product.IsSellableInSales,
-            IsActive = product.IsActive
+            IsActive = product.IsActive,
+            ProductCategoryId = product.ProductCategoryId,
+            NetWeight = product.NetWeight,
+            GrossWeight = product.GrossWeight,
+            WeightMeasurementUnitId = product.WeightMeasurementUnitId,
+            Length = product.Length,
+            Width = product.Width,
+            Height = product.Height,
+            DimensionMeasurementUnitId = product.DimensionMeasurementUnitId,
+            TrackingPolicy = product.TrackingPolicy,
+            IsFragile = product.HandlingRequirements.HasFlag(ProductHandlingRequirements.Fragile),
+            KeepDry = product.HandlingRequirements.HasFlag(ProductHandlingRequirements.KeepDry),
+            RequiresRefrigeration = product.HandlingRequirements.HasFlag(ProductHandlingRequirements.Refrigerated),
+            RequiresFrozenStorage = product.HandlingRequirements.HasFlag(ProductHandlingRequirements.Frozen),
+            IsHazardous = product.HandlingRequirements.HasFlag(ProductHandlingRequirements.Hazardous)
         };
 
         return View(dto);
@@ -196,6 +214,10 @@ public class ProductsController : Controller
 
     private async Task LoadMeasurementUnitsAsync()
     {
-        ViewBag.MeasurementUnits = await _measurementUnitService.GetActiveAsync();
+        var units = await _measurementUnitService.GetActiveAsync();
+        ViewBag.MeasurementUnits = units;
+        ViewBag.MassUnits = units.Where(unit => unit.Dimension == MeasurementDimension.Mass).ToList();
+        ViewBag.LengthUnits = units.Where(unit => unit.Dimension == MeasurementDimension.Length).ToList();
+        ViewBag.ProductCategories = await _productCategoryService.GetAllAsync();
     }
 }

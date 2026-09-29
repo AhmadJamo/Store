@@ -41,6 +41,10 @@ public class ProductRepository : IProductRepository
 
         if (criteria.ProductType.HasValue)
             query = query.Where(x => x.ProductType == criteria.ProductType.Value);
+        if (criteria.ProductCategoryId.HasValue)
+            query = query.Where(x => x.ProductCategoryId == criteria.ProductCategoryId.Value);
+        if (criteria.TrackingPolicy.HasValue)
+            query = query.Where(x => x.TrackingPolicy == criteria.TrackingPolicy.Value);
         if (criteria.IsSellableInPos.HasValue)
             query = query.Where(x => x.IsSellableInPos == criteria.IsSellableInPos.Value);
         if (criteria.IsSellableInSales.HasValue)
@@ -54,6 +58,10 @@ public class ProductRepository : IProductRepository
             ("code", true) => query.OrderByDescending(x => x.ProductCode),
             ("type", false) => query.OrderBy(x => x.ProductType).ThenBy(x => x.Name),
             ("type", true) => query.OrderByDescending(x => x.ProductType).ThenBy(x => x.Name),
+            ("category", false) => query.OrderBy(x => x.ProductCategoryId).ThenBy(x => x.Name),
+            ("category", true) => query.OrderByDescending(x => x.ProductCategoryId).ThenBy(x => x.Name),
+            ("tracking", false) => query.OrderBy(x => x.TrackingPolicy).ThenBy(x => x.Name),
+            ("tracking", true) => query.OrderByDescending(x => x.TrackingPolicy).ThenBy(x => x.Name),
             ("price", false) => query.OrderBy(x => x.SalePrice).ThenBy(x => x.Name),
             ("price", true) => query.OrderByDescending(x => x.SalePrice).ThenBy(x => x.Name),
             ("name", true) => query.OrderByDescending(x => x.Name),
@@ -82,6 +90,10 @@ public class ProductRepository : IProductRepository
 
         return await query.ToListAsync();
     }
+
+    public Task<bool> HasNonZeroStockAsync(int productId) =>
+        _context.ProductStocks.AnyAsync(stock =>
+            stock.ProductId == productId && stock.Quantity != 0);
 
     public async Task AddAsync(Product product)
     {

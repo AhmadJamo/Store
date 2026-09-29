@@ -1,5 +1,5 @@
 # MVC controllers
-> Status: IMPLEMENTED | Last reviewed: 2026-09-28
+> Status: IMPLEMENTED | Last reviewed: 2026-09-30
 
 | Controller | Actions/views | Authorization and dependencies |
 |---|---|---|
@@ -8,12 +8,14 @@
 | SubscriptionController | Index/Checkout | Tenant subscription status and server-calculated plan/promotion quote creation. |
 | Platform area | Account/Dashboard/Plans/Promotions/Companies/Payments | Separate Platform cookie and operator policies; manages plans, promotion codes, tenant subscriptions and pending payment confirmation. |
 | DashboardController / HomeController | Index | `[Authorize]`; Dashboard is the authenticated landing page and Home redirects to it after onboarding validation. |
-| Products/Warehouses/Suppliers | Index/Create/Edit/Delete | matching permission attributes; products configure type, optional barcode, units, active/sale-channel and recipe-negative policy, with filtered/sorted/paged index and localized business errors; warehouses configure inventory operating policy. |
+| Products/Warehouses/Suppliers | Index/Create/Edit/Delete | matching permission attributes; products configure type, category, logistics measurements, handling, tracking policy, optional barcode, units, active/sale-channel and recipe-negative policy, with filtered/sorted/paged index and localized business errors; warehouses configure inventory operating policy. |
+| ProductCategories | Index/Create/SetActive | Products.View/Edit; tenant category service enforces unique language-neutral codes/names and preserves referenced rows. |
 | Recipes | Index/Edit | Products.View/Edit; Application service creates immutable versions and validates tenant products and compatible units. |
 | ProductStocks | Index/Create/Edit/Delete | product-stock permissions/service; delete service always refuses. |
 | StockTransactions | Index/Create | movement permissions/service. |
 | WarehouseLocations / UnassignedStock | location search/create and putaway | warehouse/product-stock permissions and location services. |
 | LocationMovements | Index/Move | LocationMovements.View/Create and LocationMovementService. |
+| InventoryReconciliation | Index | InventoryReconciliation.View; read-only Application service over tenant-filtered SQL aggregate queries. |
 | Purchases | Index/Create/Details | Purchases.View/Create; PurchaseService and master repositories for dropdowns. |
 | Sales | Index/Details/Create/Pos/Post | Sales.View/Create; SaleService validates and snapshots optional invoice tax plus POS order context/item notes; SalePostingService creates the one-time balanced revenue, output-tax and COGS journal; PosExperienceSettingsService supplies terminal-specific runtime presentation/workflow. |
 | PurchaseReturns | Index/Details/Create | PurchaseReturns.View/Create; only posted purchases may return remaining quantities covered by current warehouse stock, and creation atomically posts inventory/payable/tax/discount/variance reversal. |

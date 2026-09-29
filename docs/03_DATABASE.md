@@ -1,7 +1,7 @@
 # Database
 > Status: IMPLEMENTED  
 > Source of truth: EF Core entities, configurations and migrations  
-> Last reviewed: 2026-09-29
+> Last reviewed: 2026-09-30
 
 `AppDbContext` derives from `IdentityDbContext<IdentityUser, IdentityRole, string>`, so Identity tables coexist with ERP tables. Provider: SQL Server.
 
@@ -16,8 +16,9 @@ All business tables have a required `TenantId` foreign key to `Tenants`. EF quer
 | PlatformOperators | explicit allow-list and platform role linked to Identity; separate from tenant Admin membership. |
 | PromotionCodes / PromotionRedemptions | unique codes with percentage, UTC validity, optional plan and redemption cap; one redemption per tenant and concurrency-protected counter. |
 | BillingCheckoutSessions | immutable tenant/plan/cycle quote amounts plus optional promotion, 30-minute expiry, status, payment reference/time and rowversion. Subscription activation occurs only on successful confirmation. |
-| Products | SQL-computed internal ProductCode; optional tenant-unique barcode; raw/direct/prepared type; stocked/prepared behavior; managed stock-unit FK; active/POS/sales flags; controlled-negative recipe flag. |
-| MeasurementUnits | Tenant-local codes for Count/Mass/Volume units with conversion factor, precision and protected built-in state; referenced through tenant-safe product/recipe FKs. |
+| Products | SQL-computed internal ProductCode; optional tenant-unique barcode; raw/direct/prepared type; optional category; managed stock/weight/dimension unit FKs; nullable physical measurements; handling flags; None/Lot/Serial policy; active/POS/sales flags; controlled-negative recipe flag. |
+| ProductCategories | Tenant-local unique code/name, active state and rowversion; optional tenant-safe Product relationship. |
+| MeasurementUnits | Tenant-local codes for Count/Mass/Volume/Length units with conversion factor, precision and protected built-in state; referenced through tenant-safe product/recipe FKs. |
 | ProductRecipes / RecipeIngredients | Immutable recipe versions with one filtered-unique active version per tenant/product. Lines reference stocked ingredients and managed authored/stock units, while freezing unit codes/factors and converted stock quantity. SaleItem optionally snapshots the recipe version used. |
 | Accounts / Branches / JournalEntries / JournalEntryLines | hierarchical chart; branches optionally reference a sales-revenue subaccount; journal lines hold debit/credit plus optional branch/warehouse dimensions. A journal source type/reference has a filtered unique index to prevent a document from posting twice. |
 | PurchaseReturns / PurchaseReturnItems | immutable tenant-owned supplier-return headers/lines linked to original purchase/items with proportional accounting and actual inventory-cost snapshots. |
@@ -43,7 +44,7 @@ All business tables have a required `TenantId` foreign key to `Tenants`. EF quer
 | DocumentSequences | one row per tenant/document type; unique `(TenantId, DocumentType)`; customizable template, prefix, suffix, padding, next/reset counters and period state; rowversion protects settings updates. |
 
 ## Migrations
-Migration history is chronological through `AddSalesReturns`. It adds tenant-isolated return headers/items and the SaleItem tenant alternate key needed by the protected relationship, and was applied to `AHMAD/MiniStoreDb` on 2026-09-29. Migrations are source-controlled under `MiniStore.Infrastructure/Migrations`; generated designers and the model snapshot are metadata, not separate runtime features.
+Migration history is chronological through `AddProductLogisticsFoundation`. It adds ProductCategories and nullable/defaulted product logistics columns without replacing Product IDs. The migration is generated and SQL-script validated but is not yet recorded as applied to `MiniStoreDb`. Migrations are source-controlled under `MiniStore.Infrastructure/Migrations`; generated designers and the model snapshot are metadata, not separate runtime features.
 
 ## Transactions and concurrency
 `UnitOfWork.ExecuteInTransactionAsync` starts a Serializable database transaction, executes an operation, calls one `SaveChangesAsync`, then commits. Sales, purchases, transfers, putaway and internal location relocation use it. ProductStock, ProductLocationStock and StockTransfer use rowversion concurrency tokens. General, discount, inventory, invoice and POS terminal experience settings use rowversion to varying degrees.

@@ -17,7 +17,11 @@ public class MeasurementUnitService(
         ("OZ", "Ounce", "oz", MeasurementDimension.Mass, 28.349523125m, 6),
         ("LB", "Pound", "lb", MeasurementDimension.Mass, 453.59237m, 6),
         ("ML", "Milliliter", "ml", MeasurementDimension.Volume, 1m, 3),
-        ("L", "Liter", "L", MeasurementDimension.Volume, 1000m, 6)
+        ("L", "Liter", "L", MeasurementDimension.Volume, 1000m, 6),
+        ("MM", "Millimeter", "mm", MeasurementDimension.Length, 1m, 3),
+        ("CM", "Centimeter", "cm", MeasurementDimension.Length, 10m, 3),
+        ("M", "Meter", "m", MeasurementDimension.Length, 1000m, 6),
+        ("IN", "Inch", "in", MeasurementDimension.Length, 25.4m, 6)
     ];
 
     public async Task<MeasurementUnitsPageDto> GetPageAsync(CreateMeasurementUnitDto? input = null)

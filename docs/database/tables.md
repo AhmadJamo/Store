@@ -1,5 +1,5 @@
 # Database tables reference
-> Last reviewed: 2026-09-28
+> Last reviewed: 2026-09-30
 
 Schema source is `AppDbContext`, configurations and migrations. Identity's standard `AspNet*` tables are supplied by IdentityDbContext.
 
@@ -11,9 +11,10 @@ Schema source is `AppDbContext`, configurations and migrations. Identity's stand
 - **BillingCheckoutSessions:** priced monthly/annual quotes with expiry, promotion, status, confirmation reference and rowversion.
 - **Tenant ownership:** every ERP business table below also carries required TenantId with a restrictive Tenant FK. Tenant-aware unique indexes allow each company its own codes, invoice numbers and singleton settings. All relationships between TenantId-bearing records use matching composite foreign keys; the database rejects cross-company references.
 
-- **Products:** Id, SQL-computed ProductCode, optional Barcode, Name, prices, ProductType, InventoryBehavior, StockUnit, POS/sales channel flags, IsActive and AllowNegativeRecipeConsumption. Existing stocked rows backfill as direct-sale products; prepared rows stay prepared and have PurchasePrice zeroed.
+- **Products:** Id, SQL-computed ProductCode, optional Barcode, Name, prices, ProductType, InventoryBehavior, StockUnit, optional ProductCategory, nullable net/gross weight and dimensions with managed units, handling flags, None/Lot/Serial policy, POS/sales channel flags, IsActive and AllowNegativeRecipeConsumption. Existing products keep their IDs and default to unknown logistics and no tracking.
+- **ProductCategories:** tenant-local unique code/name, active state and rowversion; referenced optionally by products through a tenant-safe Restrict FK.
 - **ProductRecipes / RecipeIngredients:** immutable product recipe versions, yield, creator/time and active state; ingredient lines store a stocked product, authored quantity/unit and converted stock quantity/unit snapshot. One active version is allowed per tenant/product.
-- **MeasurementUnits:** tenant-local unit code/name/symbol, Count/Mass/Volume dimension, decimal(24,12) factor to base, precision, system/active flags. Built-ins are protected from deactivation. Products and recipe ingredients use tenant-safe foreign keys; recipe rows additionally preserve unit-code/factor snapshots.
+- **MeasurementUnits:** tenant-local unit code/name/symbol, Count/Mass/Volume/Length dimension, decimal(24,12) factor to base, precision, system/active flags. Built-ins are protected from deactivation. Products and recipe ingredients use tenant-safe foreign keys; recipe rows additionally preserve unit-code/factor snapshots.
 - **Accounts / Branches:** chart account code/name/type/parent and branch code/name with optional SalesRevenueAccountId subaccount mapping.
 - **JournalEntries / JournalEntryLines:** entry number/status/date/description, optional source type/reference protected against duplicate posting, and balanced account debit-credit lines with optional branch/warehouse.
 - **Warehouses:** Id, Name, BranchId?, InventoryAccountId?, Type, ControlMode, PickingStrategy, AllowPosSales, EnforceLocationCapacity and source/destination transfer-location requirements.

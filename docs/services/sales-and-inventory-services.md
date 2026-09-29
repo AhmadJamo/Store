@@ -1,5 +1,5 @@
 # Sales and inventory services
-> Status: IMPLEMENTED WITH REMAINING CONTROLS | Last reviewed: 2026-09-28
+> Status: IMPLEMENTED WITH REMAINING CONTROLS | Last reviewed: 2026-09-30
 
 `SaleService` owns pricing, numbering, discounts, stock decrement and immutable direct/recipe-derived UnitCost/COGS snapshots. `PurchaseService` creates purchases and recalculates product/warehouse moving averages from net line cost; `PurchasePostingService` posts the supplier document separately. `ProductStockService` creates valued opening balances and adjustments. `StockTransactionService` records auditable quantity/average/value snapshots and permits only reasoned manual adjustments. `StockTransferService` carries source cost into the destination average during posting/cancellation. UnitOfWork uses Serializable transactions and converts EF concurrency conflicts to a retryable data-change message.
 
@@ -15,6 +15,10 @@ Purchase receipt costing excludes recoverable tax when a selected tax rate is pr
 
 `UnassignedStockService` assigns unallocated warehouse quantity to an active exact location and records a Putaway movement. `LocationMovementService` moves product quantity between two active locations in the same warehouse, validates source quantity and total destination capacity, preserves the warehouse total and writes a Relocation history row in the same transaction.
 
+`InventoryReconciliationService` is read-only. It classifies tenant-filtered SQL snapshots from `InventoryReconciliationRepository`, comparing ProductStock quantity/value, aggregated ProductLocationStock, derived Unassigned and the latest StockTransaction snapshot. It applies fixed quantity/value tolerances, exposes exceptions through a paged bilingual report and never performs a correction.
+
+`ProductService` also validates product logistics against managed units: weights require Mass, dimensions require Length and all three dimensions, and category selection remains tenant-scoped. It refuses a transition from untracked to Lot/Serial while any ProductStock row has a non-zero balance. `ProductCategoryService` creates and activates/deactivates preserved category rows; it never deletes referenced categories.
+
 Storage-location, unassigned-stock, location-movement and transfer services enforce each warehouse's control mode. Simple warehouses bypass location allocation; structured warehouses can require transfer locations. Capacity checks follow the destination warehouse's enforcement policy.
 
 SaleService rejects POS sales against a warehouse whose `AllowPosSales` policy is disabled. SalesController filters the POS warehouse selector to the same eligible set.
@@ -23,4 +27,4 @@ InventoryAccessService manages branch warehouse permissions, branch priority/def
 
 The POS reads terminal-specific presentation and order-workflow preferences from `PosExperienceSettingsService`. SaleService independently validates the submitted order type, required dine-in service reference, guest-count permission and item-note permission before persisting the context; these preferences do not alter pricing, inventory validation or accounting behavior.
 
-Controllers: Sales, Purchases, ProductStocks, StockTransactions, StockTransfers, UnassignedStock and LocationMovements. Change any service → inspect its domain entities/DTOs/repositories/configurations, relevant controller/views, permissions, stock concurrency, accounting and module docs.
+Controllers: Sales, Purchases, ProductStocks, StockTransactions, StockTransfers, UnassignedStock, LocationMovements and InventoryReconciliation. Change any service → inspect its domain entities/DTOs/repositories/configurations, relevant controller/views, permissions, stock concurrency, accounting and module docs.

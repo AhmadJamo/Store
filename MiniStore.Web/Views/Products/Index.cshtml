@@ -9,10 +9,13 @@
         <h1 class="mb-1">@Localizer["Products"]</h1>
         <div class="text-muted">@string.Format(Localizer["{0} product(s) found."], Model.TotalCount)</div>
     </div>
-    @if (await PermissionService.CanAsync(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "System", "Products.Create"))
-    {
-        <a asp-action="Create" class="btn btn-primary"><i class="bi bi-plus-lg"></i> @Localizer["Add Product"]</a>
-    }
+    <div class="d-flex gap-2">
+        <a asp-controller="ProductCategories" asp-action="Index" class="btn btn-outline-secondary">@Localizer["Product categories"]</a>
+        @if (await PermissionService.CanAsync(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "System", "Products.Create"))
+        {
+            <a asp-action="Create" class="btn btn-primary"><i class="bi bi-plus-lg"></i> @Localizer["Add Product"]</a>
+        }
+    </div>
 </div>
 
 <form asp-action="Index" method="get" class="card card-body mb-3">
@@ -27,6 +30,22 @@
                 <option value="">@Localizer["All types"]</option>
                 @foreach (var type in Enum.GetValues<ProductType>())
                 { <option value="@type" selected="@(Model.Query.ProductType == type ? "selected" : null)">@Localizer[type.ToString()]</option> }
+            </select>
+        </div>
+        <div class="col-md-4 col-lg-2">
+            <label class="form-label">@Localizer["Product category"]</label>
+            <select name="ProductCategoryId" class="form-select">
+                <option value="">@Localizer["All categories"]</option>
+                @foreach (var category in Model.Categories)
+                { <option value="@category.Id" selected="@(Model.Query.ProductCategoryId == category.Id)">@category.Name</option> }
+            </select>
+        </div>
+        <div class="col-md-4 col-lg-2">
+            <label class="form-label">@Localizer["Tracking policy"]</label>
+            <select name="TrackingPolicy" class="form-select">
+                <option value="">@Localizer["All tracking policies"]</option>
+                @foreach (var policy in Enum.GetValues<ProductTrackingPolicy>())
+                { <option value="@policy" selected="@(Model.Query.TrackingPolicy == policy)">@Localizer[policy.ToString()]</option> }
             </select>
         </div>
         <div class="col-md-4 col-lg-2">
@@ -54,6 +73,8 @@
                 <option value="name" selected="@(Model.Query.SortBy == "name" ? "selected" : null)">@Localizer["Name"]</option>
                 <option value="code" selected="@(Model.Query.SortBy == "code" ? "selected" : null)">@Localizer["Product code"]</option>
                 <option value="type" selected="@(Model.Query.SortBy == "type" ? "selected" : null)">@Localizer["Product type"]</option>
+                <option value="category" selected="@(Model.Query.SortBy == "category" ? "selected" : null)">@Localizer["Product category"]</option>
+                <option value="tracking" selected="@(Model.Query.SortBy == "tracking" ? "selected" : null)">@Localizer["Tracking policy"]</option>
                 <option value="price" selected="@(Model.Query.SortBy == "price" ? "selected" : null)">@Localizer["Retail Price"]</option>
             </select>
         </div>
@@ -71,19 +92,21 @@
 <div class="table-responsive">
 <table class="table table-hover align-middle">
     <thead><tr>
-        <th>@Localizer["Product code"]</th><th>@Localizer["Name"]</th><th>@Localizer["Product type"]</th>
+        <th>@Localizer["Product code"]</th><th>@Localizer["Name"]</th><th>@Localizer["Product type"]</th><th>@Localizer["Product category"]</th><th>@Localizer["Tracking policy"]</th>
         <th>@Localizer["Barcode"]</th><th>@Localizer["Stock unit"]</th><th>@Localizer["Sales channel"]</th>
         <th>@Localizer["Retail Price"]</th><th>@Localizer["Status"]</th><th>@Localizer["Actions"]</th>
     </tr></thead>
     <tbody>
     @if (Model.Items.Count == 0)
-    { <tr><td colspan="9" class="text-center text-muted py-4">@Localizer["No products found."]</td></tr> }
+    { <tr><td colspan="11" class="text-center text-muted py-4">@Localizer["No products found."]</td></tr> }
     @foreach (var product in Model.Items)
     {
         <tr>
             <td><code>@product.ProductCode</code></td>
             <td>@product.Name</td>
             <td><span class="badge text-bg-light">@Localizer[product.ProductType.ToString()]</span></td>
+            <td>@(product.ProductCategoryName ?? Localizer["Not assigned"].Value)</td>
+            <td>@Localizer[product.TrackingPolicy.ToString()]</td>
             <td>@(product.Barcode ?? Localizer["Not assigned"].Value)</td>
             <td>@Localizer[product.StockUnit.ToString()]</td>
             <td>
@@ -115,6 +138,8 @@
                asp-action="Index"
                asp-route-Search="@Model.Query.Search"
                asp-route-ProductType="@Model.Query.ProductType"
+               asp-route-ProductCategoryId="@Model.Query.ProductCategoryId"
+               asp-route-TrackingPolicy="@Model.Query.TrackingPolicy"
                asp-route-IsSellableInPos="@Model.Query.IsSellableInPos"
                asp-route-IsSellableInSales="@Model.Query.IsSellableInSales"
                asp-route-IsActive="@Model.Query.IsActive"

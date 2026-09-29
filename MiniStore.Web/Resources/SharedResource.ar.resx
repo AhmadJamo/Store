@@ -368,4 +368,97 @@
   <data name="Configure a purchase discount account before returning a discounted purchase." xml:space="preserve"><value>أعد حساب خصم المشتريات قبل إرجاع مشتريات تتضمن خصماً.</value></data>
   <data name="Configure a cost of sales account before posting purchase return cost variance." xml:space="preserve"><value>أعد حساب تكلفة المبيعات قبل ترحيل فرق تكلفة مرتجع المشتريات.</value></data>
   <data name="This purchase return has already been posted." xml:space="preserve"><value>تم ترحيل مرتجع المشتريات مسبقاً.</value></data>
+  <data name="Inventory reconciliation" xml:space="preserve"><value>مصالحة المخزون</value></data>
+  <data name="Read-only comparison of warehouse balances, location allocations and latest movement snapshots." xml:space="preserve"><value>مقارنة للقراءة فقط بين أرصدة المستودعات وتوزيعات المواقع وآخر لقطات الحركات.</value></data>
+  <data name="Exceptions" xml:space="preserve"><value>الاستثناءات</value></data>
+  <data name="Displayed rows" xml:space="preserve"><value>الصفوف المعروضة</value></data>
+  <data name="All warehouses" xml:space="preserve"><value>كل المستودعات</value></data>
+  <data name="Product search" xml:space="preserve"><value>البحث عن منتج</value></data>
+  <data name="Product name, code or barcode" xml:space="preserve"><value>اسم المنتج أو الكود أو الباركود</value></data>
+  <data name="Page size" xml:space="preserve"><value>حجم الصفحة</value></data>
+  <data name="Exceptions only" xml:space="preserve"><value>الاستثناءات فقط</value></data>
+  <data name="This report never changes stock. Resolve exceptions through the owning inventory document or an approved adjustment workflow." xml:space="preserve"><value>هذا التقرير لا يغيّر المخزون. عالج الاستثناءات من خلال مستند المخزون المسؤول أو مسار تسوية معتمد.</value></data>
+  <data name="Warehouse quantity" xml:space="preserve"><value>كمية المستودع</value></data>
+  <data name="Assigned quantity" xml:space="preserve"><value>الكمية الموزعة</value></data>
+  <data name="Unassigned quantity" xml:space="preserve"><value>الكمية غير الموزعة</value></data>
+  <data name="Latest movement quantity" xml:space="preserve"><value>كمية آخر حركة</value></data>
+  <data name="Latest movement" xml:space="preserve"><value>آخر حركة</value></data>
+  <data name="Consistent" xml:space="preserve"><value>متطابق</value></data>
+  <data name="Location balance has no warehouse balance" xml:space="preserve"><value>رصيد الموقع لا يملك رصيد مستودع مقابل</value></data>
+  <data name="Assigned quantity exceeds warehouse quantity" xml:space="preserve"><value>الكمية الموزعة على المواقع تتجاوز كمية المستودع</value></data>
+  <data name="A location has a negative quantity" xml:space="preserve"><value>يوجد موقع بكمية سالبة</value></data>
+  <data name="Simple warehouse has location balances" xml:space="preserve"><value>المستودع البسيط يحتوي أرصدة مواقع</value></data>
+  <data name="Warehouse balance has no stock transaction" xml:space="preserve"><value>رصيد المستودع لا يملك حركة مخزون</value></data>
+  <data name="Latest movement quantity does not match" xml:space="preserve"><value>كمية آخر حركة لا تطابق الرصيد</value></data>
+  <data name="Latest movement value does not match" xml:space="preserve"><value>قيمة آخر حركة لا تطابق قيمة المخزون</value></data>
+  <data name="No reconciliation rows match the selected filters." xml:space="preserve"><value>لا توجد صفوف مصالحة تطابق عوامل التصفية المحددة.</value></data>
+  <data name="Reconciliation pages" xml:space="preserve"><value>صفحات المصالحة</value></data>
+  <data name="Product categories" xml:space="preserve"><value>تصنيفات المنتجات</value></data>
+  <data name="Product category" xml:space="preserve"><value>تصنيف المنتج</value></data>
+  <data name="Categories organize logistics rules and future business-specific product attributes." xml:space="preserve"><value>تنظم التصنيفات القواعد اللوجستية وخصائص المنتجات المستقبلية الخاصة بنوع العمل.</value></data>
+  <data name="Back to products" xml:space="preserve"><value>العودة إلى المنتجات</value></data>
+  <data name="Category name" xml:space="preserve"><value>اسم التصنيف</value></data>
+  <data name="Category code" xml:space="preserve"><value>كود التصنيف</value></data>
+  <data name="Use language-neutral letters, numbers, hyphens or underscores." xml:space="preserve"><value>استخدم أحرفاً وأرقاماً وشرطات أو شرطات سفلية محايدة لغوياً.</value></data>
+  <data name="Add category" xml:space="preserve"><value>إضافة تصنيف</value></data>
+  <data name="Activate" xml:space="preserve"><value>تفعيل</value></data>
+  <data name="No product categories have been created." xml:space="preserve"><value>لم يتم إنشاء تصنيفات منتجات.</value></data>
+  <data name="Product category created successfully." xml:space="preserve"><value>تم إنشاء تصنيف المنتج بنجاح.</value></data>
+  <data name="Product category updated successfully." xml:space="preserve"><value>تم تحديث تصنيف المنتج بنجاح.</value></data>
+  <data name="A product category with this code already exists." xml:space="preserve"><value>يوجد تصنيف منتج بهذا الكود.</value></data>
+  <data name="A product category with this name already exists." xml:space="preserve"><value>يوجد تصنيف منتج بهذا الاسم.</value></data>
+  <data name="Product category was not found." xml:space="preserve"><value>لم يتم العثور على تصنيف المنتج.</value></data>
+  <data name="Category name is required and cannot exceed 100 characters." xml:space="preserve"><value>اسم التصنيف مطلوب ولا يمكن أن يتجاوز 100 حرف.</value></data>
+  <data name="Category code must use letters, numbers, hyphens or underscores and cannot exceed 30 characters." xml:space="preserve"><value>يجب أن يستخدم كود التصنيف الأحرف أو الأرقام أو الشرطات أو الشرطات السفلية وألا يتجاوز 30 حرفاً.</value></data>
+  <data name="No category" xml:space="preserve"><value>بدون تصنيف</value></data>
+  <data name="All categories" xml:space="preserve"><value>كل التصنيفات</value></data>
+  <data name="All tracking policies" xml:space="preserve"><value>كل سياسات التتبع</value></data>
+  <data name="Tracking policy" xml:space="preserve"><value>سياسة التتبع</value></data>
+  <data name="No lot or serial tracking" xml:space="preserve"><value>بدون تتبع تشغيلات أو أرقام تسلسلية</value></data>
+  <data name="Lot tracking" xml:space="preserve"><value>تتبع التشغيلات</value></data>
+  <data name="Serial tracking" xml:space="preserve"><value>تتبع الأرقام التسلسلية</value></data>
+  <data name="None" xml:space="preserve"><value>بدون تتبع</value></data>
+  <data name="Lot" xml:space="preserve"><value>تشغيلة</value></data>
+  <data name="Serial" xml:space="preserve"><value>رقم تسلسلي</value></data>
+  <data name="Lot and serial execution will be enabled in the traceability phase. Existing non-zero stock cannot switch to tracked inventory." xml:space="preserve"><value>سيتم تفعيل تنفيذ التشغيلات والأرقام التسلسلية في مرحلة التتبع. لا يمكن تحويل مخزون قائم غير صفري إلى تتبع.</value></data>
+  <data name="Logistics measurements" xml:space="preserve"><value>القياسات اللوجستية</value></data>
+  <data name="Net weight" xml:space="preserve"><value>الوزن الصافي</value></data>
+  <data name="Gross weight" xml:space="preserve"><value>الوزن الإجمالي</value></data>
+  <data name="Weight unit" xml:space="preserve"><value>وحدة الوزن</value></data>
+  <data name="Select mass unit" xml:space="preserve"><value>اختر وحدة وزن</value></data>
+  <data name="Length" xml:space="preserve"><value>الطول</value></data>
+  <data name="Width" xml:space="preserve"><value>العرض</value></data>
+  <data name="Height" xml:space="preserve"><value>الارتفاع</value></data>
+  <data name="Dimension unit" xml:space="preserve"><value>وحدة الأبعاد</value></data>
+  <data name="Select length unit" xml:space="preserve"><value>اختر وحدة طول</value></data>
+  <data name="Enter length, width and height together. Volume is calculated from these dimensions." xml:space="preserve"><value>أدخل الطول والعرض والارتفاع معاً. يتم حساب الحجم من هذه الأبعاد.</value></data>
+  <data name="Handling requirements" xml:space="preserve"><value>متطلبات المناولة</value></data>
+  <data name="Fragile" xml:space="preserve"><value>قابل للكسر</value></data>
+  <data name="Keep dry" xml:space="preserve"><value>يحفظ جافاً</value></data>
+  <data name="Refrigerated" xml:space="preserve"><value>مبرد</value></data>
+  <data name="Frozen" xml:space="preserve"><value>مجمد</value></data>
+  <data name="Hazardous" xml:space="preserve"><value>خطر</value></data>
+  <data name="Millimeter" xml:space="preserve"><value>مليمتر</value></data>
+  <data name="Centimeter" xml:space="preserve"><value>سنتيمتر</value></data>
+  <data name="Meter" xml:space="preserve"><value>متر</value></data>
+  <data name="Inch" xml:space="preserve"><value>بوصة</value></data>
+  <data name="Selected product category is invalid." xml:space="preserve"><value>تصنيف المنتج المحدد غير صالح.</value></data>
+  <data name="Selected product category was not found." xml:space="preserve"><value>لم يتم العثور على تصنيف المنتج المحدد.</value></data>
+  <data name="Selected product category is inactive." xml:space="preserve"><value>تصنيف المنتج المحدد غير فعال.</value></data>
+  <data name="Product weights cannot be negative." xml:space="preserve"><value>لا يمكن أن تكون أوزان المنتج سالبة.</value></data>
+  <data name="Gross weight cannot be less than net weight." xml:space="preserve"><value>لا يمكن أن يكون الوزن الإجمالي أقل من الوزن الصافي.</value></data>
+  <data name="Select a mass unit when a product weight is entered." xml:space="preserve"><value>اختر وحدة وزن عند إدخال وزن للمنتج.</value></data>
+  <data name="Length, width and height must be entered together." xml:space="preserve"><value>يجب إدخال الطول والعرض والارتفاع معاً.</value></data>
+  <data name="Product dimensions must be greater than zero." xml:space="preserve"><value>يجب أن تكون أبعاد المنتج أكبر من صفر.</value></data>
+  <data name="Select a length unit when product dimensions are entered." xml:space="preserve"><value>اختر وحدة طول عند إدخال أبعاد المنتج.</value></data>
+  <data name="Product tracking policy is invalid." xml:space="preserve"><value>سياسة تتبع المنتج غير صالحة.</value></data>
+  <data name="Product handling requirements are invalid." xml:space="preserve"><value>متطلبات مناولة المنتج غير صالحة.</value></data>
+  <data name="A product cannot be both refrigerated and frozen." xml:space="preserve"><value>لا يمكن أن يكون المنتج مبرداً ومجمداً في الوقت نفسه.</value></data>
+  <data name="Lot or serial tracking cannot be enabled while the product has a non-zero stock balance." xml:space="preserve"><value>لا يمكن تفعيل تتبع التشغيلات أو الأرقام التسلسلية بينما للمنتج رصيد مخزون غير صفري.</value></data>
+  <data name="Selected weight unit was not found." xml:space="preserve"><value>لم يتم العثور على وحدة الوزن المحددة.</value></data>
+  <data name="Selected weight unit is inactive." xml:space="preserve"><value>وحدة الوزن المحددة غير فعالة.</value></data>
+  <data name="Selected weight unit has an incompatible dimension." xml:space="preserve"><value>وحدة الوزن المحددة من نوع قياس غير متوافق.</value></data>
+  <data name="Selected dimension unit was not found." xml:space="preserve"><value>لم يتم العثور على وحدة الأبعاد المحددة.</value></data>
+  <data name="Selected dimension unit is inactive." xml:space="preserve"><value>وحدة الأبعاد المحددة غير فعالة.</value></data>
+  <data name="Selected dimension unit has an incompatible dimension." xml:space="preserve"><value>وحدة الأبعاد المحددة من نوع قياس غير متوافق.</value></data>
 </root>

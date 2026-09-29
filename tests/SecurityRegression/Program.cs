@@ -322,6 +322,21 @@ Check(
     PermissionDefinitions.All.Any(permission =>
         permission.Name == "LocationMovements.Create"),
     "Location movement create permission must be defined");
+Check(
+    PermissionDefinitions.All.Any(permission =>
+        permission.Name == "InventoryReconciliation.View"),
+    "Inventory reconciliation view permission must be defined");
+var reconciliationIndex = typeof(InventoryReconciliationController)
+    .GetMethod(nameof(InventoryReconciliationController.Index))!;
+Check(
+    reconciliationIndex.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
+        $"{PermissionAuthorizeAttribute.PolicyPrefix}InventoryReconciliation.View",
+    "Inventory reconciliation report must enforce its dedicated view permission");
+Check(
+    typeof(InventoryReconciliationController).GetMethods(BindingFlags.Instance | BindingFlags.Public)
+        .Where(method => method.DeclaringType == typeof(InventoryReconciliationController))
+        .All(method => method.GetCustomAttribute<HttpPostAttribute>() is null),
+    "Inventory reconciliation controller must remain read-only");
 
 var locationMovement = new LocationMovement(
     productId: 1,
@@ -501,6 +516,31 @@ var managedLiter = new MeasurementUnit(
 CheckThrows(
     () => MeasurementUnitConversion.Convert(1m, managedLiter, managedGram),
     "Managed measurement units must reject conversion across dimensions");
+var managedCentimeter = new MeasurementUnit(
+    "CM", "Centimeter", "cm", MeasurementDimension.Length, 10m, 3, isSystem: true);
+Check(
+    managedCentimeter.Dimension == MeasurementDimension.Length &&
+    managedCentimeter.FactorToBaseUnit == 10m,
+    "Length units must support product logistics dimensions");
+var logisticsProduct = new Product("Logistics item", null, 5m, 8m, 6m);
+logisticsProduct.ConfigureLogistics(
+    null, 1m, 1.2m, 10, 20m, 10m, 5m, 20,
+    ProductTrackingPolicy.None,
+    ProductHandlingRequirements.Fragile | ProductHandlingRequirements.KeepDry);
+Check(
+    logisticsProduct.GrossWeight == 1.2m &&
+    logisticsProduct.HandlingRequirements.HasFlag(ProductHandlingRequirements.Fragile),
+    "Product logistics must preserve physical measurements and handling requirements");
+CheckArgumentThrows(
+    () => logisticsProduct.ConfigureLogistics(
+        null, 2m, 1m, 10, null, null, null, null,
+        ProductTrackingPolicy.None, ProductHandlingRequirements.None),
+    "Gross product weight must not be less than net weight");
+CheckArgumentThrows(
+    () => logisticsProduct.ConfigureLogistics(
+        null, null, null, null, 1m, null, 1m, 20,
+        ProductTrackingPolicy.None, ProductHandlingRequirements.None),
+    "Partial product dimensions must be rejected");
 var managedRecipeIngredient = new RecipeIngredient(1, 2m, managedOunce, managedGram);
 Check(
     managedRecipeIngredient.StockQuantity == 56.699046m &&

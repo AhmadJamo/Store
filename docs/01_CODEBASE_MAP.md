@@ -20,13 +20,13 @@
 
 `docs/ACCOUNTING_REFERENCE_AR.md` is the shared Arabic accounting and software-design reference. It covers the accounting cycle, example postings, inventory valuation, sales/purchases, close, advanced topics, international-standard mapping, implementation invariants and the ordered accounting delivery plan. It is guidance rather than evidence that a feature is implemented.
 
-`docs/WMS_EVOLUTION_PLAN.md` is the approved analysis-only WMS evolution plan. It records the current inventory model, gap matrix, target authority boundaries, migration safeguards, phased vertical slices and anticipated file impact. It does not claim that planned WMS entities are implemented.
+`docs/WMS_EVOLUTION_PLAN.md` is the approved WMS evolution plan. It records the current inventory model, gap matrix, target authority boundaries, migration safeguards, phased vertical slices and anticipated file impact. WMS-000 reconciliation is implemented; later WMS entities remain planned unless explicitly marked complete.
 
 ## Domain source map
 | Files | Type/purpose | Consumers/docs |
 |---|---|---|
 | `Entities/Accounting/*.cs` | chart, branches, journal entries, fiscal periods, tax and payment entities | accounting docs. |
-| `Entities/Catalog/{Product,ProductRecipe,RecipeIngredient,MeasurementUnit}.cs` and product type/unit/dimension/behavior enums | product code, optional barcode, raw/direct/prepared classification, sale channels, immutable recipe versions and managed/legacy recipe units | products, sales and inventory docs. |
+| `Entities/Catalog/{Product,ProductCategory,ProductRecipe,RecipeIngredient,MeasurementUnit}.cs` and product type/unit/dimension/behavior/logistics enums | product code, optional barcode, classification, category, physical logistics metadata, tracking policy, sale channels, immutable recipes and managed units | products, sales and inventory docs. |
 | `Entities/Customers/Customer.cs`, `Entities/Suppliers/Supplier.cs` | commercial-party master data | sales/purchases docs. |
 | `Entities/Inventory/*.cs` | warehouses, operating-policy enums, moving-average balances/cost snapshots, exact locations, putaway/relocation history, stock movements and transfers | inventory, accounting and stock-transfer docs. |
 | `Entities/Purchases/*.cs`, `Entities/Sales/*.cs` | purchase/supplier-return and sale/customer-return aggregates plus POS experience/order settings | purchase/sales/settings docs. |
@@ -45,8 +45,10 @@
 |---|---|---|
 | `Services/<Feature>/*.cs` | use-case services grouped as Accounting, Catalog, Customers, Inventory, Purchases, Sales, Settings and Suppliers | matching MVC controllers. |
 | `Services/Catalog/RecipeService.cs` | lists and creates immutable active recipe versions with compatible ingredient units | Recipes controller/views and prepared-product sales. |
+| `Services/Catalog/ProductCategoryService.cs` | creates and activates/deactivates tenant product categories used by logistics metadata | ProductCategories controller/view and product forms. |
 | `Services/Settings/MeasurementUnitService.cs` | initializes protected built-ins, manages custom units and performs dimension-safe conversion | Settings/Units plus product and recipe unit selection. |
 | `Services/Inventory/{StorageLocation,UnassignedStock,LocationMovement}Service.cs` | location administration, warehouse search, putaway, internal relocation and history | inventory controllers. |
+| `Services/Inventory/InventoryReconciliationService.cs` | classifies warehouse/location/latest-movement differences with fixed precision tolerances and read-only paging | InventoryReconciliation controller/view. |
 | `Services/Settings/InventorySettingsService.cs` | rowversion-protected defaults for new warehouse operating policies | SettingsController inventory screen. |
 | `Services/Settings/InventoryAccessService.cs` | branch warehouse permissions/priorities and POS terminal warehouse policies | Settings InventoryAccess and POS validation. |
 | `Services/Settings/PosExperienceSettingsService.cs` | profile presets, custom terminal appearance persistence and POS runtime projection | Settings/Pos and Sales/Pos. |
@@ -98,6 +100,7 @@ Warehouse location movement update (2026-09-14): `LocationMovement` and its repo
 | `Repositories/Accounting/JournalEntryRepository.cs` | journal source duplicate-posting lookup and persistence | purchase and sale posting services. |
 | `Repositories/Accounting/FiscalPeriodRepository.cs` | tenant period lookup, overlap validation and rowversion handling | FiscalPeriodService. |
 | `Repositories/Inventory/StockTransactionRepository.cs` | inventory movement history plus source/type lookup for accounting settlement | inventory services and `PurchasePostingService`. |
+| `Repositories/Inventory/InventoryReconciliationRepository.cs` | tenant-filtered SQL aggregates for warehouse balances, location allocations, orphan allocations and latest movement snapshots | WMS-000 reconciliation service. |
 | `Repositories/Sales/SalesReturnRepository.cs` | immutable return history and original-sale aggregation | `SalesReturnService`. |
 | `Repositories/Purchases/PurchaseReturnRepository.cs` | immutable supplier-return history and original-purchase aggregation | `PurchaseReturnService`. |
 | `Authorization/PermissionService.cs` | permission check implementation | SaleService. |
@@ -111,6 +114,7 @@ Warehouse location movement update (2026-09-14): `LocationMovement` and its repo
 | `Services/Tenancy/HttpTenantContext.cs`, `Middleware/TenantSessionMiddleware.cs` | resolve, validate and refresh the authenticated company boundary | AppDbContext, login and localization. |
 | `Controllers/<Feature>/*.cs` | MVC endpoints grouped by business feature; namespaces remain stable | `controllers/*.md`. |
 | `Controllers/Catalog/RecipesController.cs` | bilingual recipe list/version editor using Products permissions | recipe views and RecipeService. |
+| `Controllers/Catalog/ProductCategoriesController.cs` | bilingual product-category administration using Products View/Edit permissions | ProductCategories view and ProductCategoryService. |
 | `Areas/Platform/*` | separately authenticated platform-owner control center for plans, companies/subscriptions, promotion codes and pending payment confirmations | SaaS module. |
 | `Controllers/PublicController.cs`, `Controllers/Saas/SubscriptionController.cs` | public landing/pricing and tenant subscription/checkout flows | SaaS module and public/subscription views. |
 | `Middleware/SubscriptionAccessMiddleware.cs` | blocks tenant ERP access when the current subscription is not usable | SaaS module/security. |
@@ -139,6 +143,7 @@ For exact module relationships, use `modules/*.md`; for entity and service detai
 ## Security additions (2026-09-13)
 - `MiniStore.Application/Permissions/AdministrationPermissions.cs`: shared Admin-only identity mutation boundary, consumed by both permission evaluators.
 - `tests/SecurityRegression/{SecurityRegression.csproj,Program.cs}`: standalone executable authorization/action regression checks; references Web; no test-framework dependency.
+- `tests/InventorySqlIntegration/{InventorySqlIntegration.csproj,Program.cs}`: disposable SQL Server fixture for two-tenant reconciliation translation/isolation and concurrent last-unit protection.
 - Runtime login limiter and Identity lockout: `Web/Program.cs` and `Controllers/Security/AccountController.cs`.
 - Bootstrap opt-in: `Infrastructure/Persistence/IdentitySeeder.cs` and Web appsettings.
 - Controller broad-error handling and five index delete forms: see security/controller/screen docs.

@@ -31,4 +31,16 @@ public class ProductDto
     public bool IsSellableInSales { get; set; }
 
     public bool IsActive { get; set; }
+
+    public int? ProductCategoryId { get; set; }
+    public string? ProductCategoryName { get; set; }
+    public decimal? NetWeight { get; set; }
+    public decimal? GrossWeight { get; set; }
+    public int? WeightMeasurementUnitId { get; set; }
+    public decimal? Length { get; set; }
+    public decimal? Width { get; set; }
+    public decimal? Height { get; set; }
+    public int? DimensionMeasurementUnitId { get; set; }
+    public MiniStore.Domain.Entities.ProductTrackingPolicy TrackingPolicy { get; set; }
+    public MiniStore.Domain.Entities.ProductHandlingRequirements HandlingRequirements { get; set; }
 }

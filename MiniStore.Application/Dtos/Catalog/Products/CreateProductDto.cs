@@ -1,6 +1,6 @@
 ﻿namespace MiniStore.Application.DTOs.Products;
 
-public class CreateProductDto
+public class CreateProductDto : ProductLogisticsInputDto
 {
     public string Name { get; set; } = string.Empty;
 
@@ -31,4 +31,5 @@ public class CreateProductDto
     public bool IsSellableInSales { get; set; } = true;
 
     public bool IsActive { get; set; } = true;
+
 }

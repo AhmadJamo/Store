@@ -42,6 +42,28 @@ public class ProductConfiguration : IEntityTypeConfiguration<Product>
         builder.Property(x => x.IsSellableInPos).IsRequired();
         builder.Property(x => x.IsSellableInSales).IsRequired();
         builder.Property(x => x.IsActive).IsRequired();
+        builder.Property(x => x.NetWeight).HasPrecision(18, 6);
+        builder.Property(x => x.GrossWeight).HasPrecision(18, 6);
+        builder.Property(x => x.Length).HasPrecision(18, 6);
+        builder.Property(x => x.Width).HasPrecision(18, 6);
+        builder.Property(x => x.Height).HasPrecision(18, 6);
+        builder.Property(x => x.TrackingPolicy).IsRequired();
+        builder.Property(x => x.HandlingRequirements).IsRequired();
+
+        builder.HasOne<ProductCategory>()
+            .WithMany()
+            .HasForeignKey(x => x.ProductCategoryId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasOne<MeasurementUnit>()
+            .WithMany()
+            .HasForeignKey(x => x.WeightMeasurementUnitId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasOne<MeasurementUnit>()
+            .WithMany()
+            .HasForeignKey(x => x.DimensionMeasurementUnitId)
+            .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasOne<MeasurementUnit>()
             .WithMany()

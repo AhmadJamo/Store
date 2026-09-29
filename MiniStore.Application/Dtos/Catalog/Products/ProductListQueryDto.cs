@@ -6,6 +6,8 @@ public sealed class ProductListQueryDto
 {
     public string? Search { get; set; }
     public ProductType? ProductType { get; set; }
+    public int? ProductCategoryId { get; set; }
+    public ProductTrackingPolicy? TrackingPolicy { get; set; }
     public bool? IsSellableInPos { get; set; }
     public bool? IsSellableInSales { get; set; }
     public bool? IsActive { get; set; }
@@ -19,6 +21,7 @@ public sealed class ProductListPageDto
 {
     public ProductListQueryDto Query { get; init; } = new();
     public List<ProductDto> Items { get; init; } = [];
+    public List<ProductCategoryDto> Categories { get; init; } = [];
     public int TotalCount { get; init; }
     public int TotalPages { get; init; }
 }

@@ -1,0 +1,154 @@
+@model MiniStore.Application.DTOs.Inventory.Reconciliation.InventoryReconciliationPageDto
+@using MiniStore.Application.DTOs.Inventory.Reconciliation
+@inject Microsoft.Extensions.Localization.IStringLocalizer<MiniStore.Web.SharedResource> Localizer
+
+@{
+    ViewData["Title"] = Localizer["Inventory reconciliation"];
+    string IssueLabel(InventoryReconciliationIssue issue) => Localizer[issue switch
+    {
+        InventoryReconciliationIssue.MissingWarehouseStock => "Location balance has no warehouse balance",
+        InventoryReconciliationIssue.OverAllocated => "Assigned quantity exceeds warehouse quantity",
+        InventoryReconciliationIssue.NegativeLocationQuantity => "A location has a negative quantity",
+        InventoryReconciliationIssue.SimpleWarehouseHasLocationStock => "Simple warehouse has location balances",
+        InventoryReconciliationIssue.MissingTransaction => "Warehouse balance has no stock transaction",
+        InventoryReconciliationIssue.QuantitySnapshotMismatch => "Latest movement quantity does not match",
+        InventoryReconciliationIssue.ValueSnapshotMismatch => "Latest movement value does not match",
+        _ => issue.ToString()
+    }];
+}
+
+<div class="container-fluid mt-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-3">
+        <div>
+            <h2>@Localizer["Inventory reconciliation"]</h2>
+            <p class="text-muted mb-0">@Localizer["Read-only comparison of warehouse balances, location allocations and latest movement snapshots."]</p>
+        </div>
+        <div class="d-flex gap-2">
+            <span class="badge text-bg-danger fs-6">@Localizer["Exceptions"]: @Model.ExceptionCount</span>
+            <span class="badge text-bg-secondary fs-6">@Localizer["Displayed rows"]: @Model.TotalCount</span>
+        </div>
+    </div>
+
+    <form method="get" class="card card-body mb-3">
+        <div class="row g-3 align-items-end">
+            <div class="col-lg-3">
+                <label for="warehouseId" class="form-label">@Localizer["Warehouse"]</label>
+                <select id="warehouseId" name="warehouseId" class="form-select">
+                    <option value="">@Localizer["All warehouses"]</option>
+                    @foreach (var warehouse in Model.Warehouses)
+                    {
+                        <option value="@warehouse.Id" selected="@(Model.WarehouseId == warehouse.Id)">@warehouse.Name</option>
+                    }
+                </select>
+            </div>
+            <div class="col-lg-4">
+                <label for="search" class="form-label">@Localizer["Product search"]</label>
+                <input id="search" name="search" value="@Model.Search" class="form-control"
+                       placeholder="@Localizer["Product name, code or barcode"]" />
+            </div>
+            <div class="col-lg-2">
+                <label for="pageSize" class="form-label">@Localizer["Page size"]</label>
+                <select id="pageSize" name="pageSize" class="form-select">
+                    @foreach (var size in new[] { 25, 50, 100, 200 })
+                    {
+                        <option value="@size" selected="@(Model.PageSize == size)">@size</option>
+                    }
+                </select>
+            </div>
+            <div class="col-lg-2">
+                <div class="form-check mb-2">
+                    <input id="exceptionsOnly" name="exceptionsOnly" value="true" type="checkbox"
+                           class="form-check-input" checked="@Model.ExceptionsOnly" />
+                    <input name="exceptionsOnly" value="false" type="hidden" />
+                    <label for="exceptionsOnly" class="form-check-label">@Localizer["Exceptions only"]</label>
+                </div>
+            </div>
+            <div class="col-lg-1">
+                <button class="btn btn-primary w-100">@Localizer["Search"]</button>
+            </div>
+        </div>
+    </form>
+
+    <div class="alert alert-info" role="status">
+        @Localizer["This report never changes stock. Resolve exceptions through the owning inventory document or an approved adjustment workflow."]
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover align-middle">
+            <thead>
+                <tr>
+                    <th>@Localizer["Status"]</th>
+                    <th>@Localizer["Product"]</th>
+                    <th>@Localizer["Warehouse"]</th>
+                    <th class="text-end">@Localizer["Warehouse quantity"]</th>
+                    <th class="text-end">@Localizer["Assigned quantity"]</th>
+                    <th class="text-end">@Localizer["Unassigned quantity"]</th>
+                    <th class="text-end">@Localizer["Latest movement quantity"]</th>
+                    <th class="text-end">@Localizer["Inventory value"]</th>
+                    <th>@Localizer["Latest movement"]</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var row in Model.Items)
+                {
+                    <tr class="@(row.IsConsistent ? string.Empty : "table-warning")">
+                        <td style="min-width: 240px">
+                            @if (row.IsConsistent)
+                            {
+                                <span class="badge text-bg-success">@Localizer["Consistent"]</span>
+                            }
+                            else
+                            {
+                                @foreach (var issue in row.Issues)
+                                {
+                                    <span class="badge text-bg-danger d-block mb-1 text-wrap">@IssueLabel(issue)</span>
+                                }
+                            }
+                        </td>
+                        <td>
+                            <strong>@row.ProductName</strong>
+                            <div class="small text-muted">@row.ProductCode @row.Barcode</div>
+                        </td>
+                        <td>@row.WarehouseName</td>
+                        <td class="text-end">@row.WarehouseQuantity.ToString("N3")</td>
+                        <td class="text-end">@row.AssignedLocationQuantity.ToString("N3")</td>
+                        <td class="text-end">@row.UnassignedQuantity.ToString("N3")</td>
+                        <td class="text-end">@(row.LatestQuantityAfter?.ToString("N3") ?? "—")</td>
+                        <td class="text-end">@row.InventoryValue.ToString("N2")</td>
+                        <td>
+                            @if (row.LatestTransactionId.HasValue)
+                            {
+                                <span>#@row.LatestTransactionId</span>
+                                <div class="small text-muted">@row.LatestTransactionAt?.ToLocalTime().ToString("g")</div>
+                            }
+                            else
+                            {
+                                <span>—</span>
+                            }
+                        </td>
+                    </tr>
+                }
+                @if (Model.Items.Count == 0)
+                {
+                    <tr><td colspan="9" class="text-center text-muted py-4">@Localizer["No reconciliation rows match the selected filters."]</td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    @if (Model.TotalPages > 1)
+    {
+        <nav aria-label="@Localizer["Reconciliation pages"]">
+            <ul class="pagination justify-content-center">
+                @for (var pageNumber = 1; pageNumber <= Model.TotalPages; pageNumber++)
+                {
+                    <li class="page-item @(pageNumber == Model.Page ? "active" : string.Empty)">
+                        <a class="page-link" asp-route-page="@pageNumber" asp-route-pageSize="@Model.PageSize"
+                           asp-route-warehouseId="@Model.WarehouseId" asp-route-search="@Model.Search"
+                           asp-route-exceptionsOnly="@Model.ExceptionsOnly">@pageNumber</a>
+                    </li>
+                }
+            </ul>
+        </nav>
+    }
+</div>
