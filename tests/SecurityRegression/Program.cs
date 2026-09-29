@@ -595,6 +595,31 @@ variancePostingEntry.AddLine(new JournalEntryLine(5, 0, 5m));
 variancePostingEntry.Post();
 Check(variancePostingEntry.Status == JournalEntryStatus.Posted,
     "A positive provisional-cost variance must debit COGS and credit inventory in a balanced entry");
+var exclusiveTaxSale = new Sale(
+    "S-TAX-EX", 1, DateTime.Today, SaleChannel.Wholesale, "user", null, 1);
+exclusiveTaxSale.ApplyTax(1, 16m, 10, isPriceInclusive: false);
+exclusiveTaxSale.AddItem(new SaleItem(1, 1, 100m));
+exclusiveTaxSale.ApplyInvoiceDiscount(DiscountType.FixedAmount, 10m);
+Check(
+    exclusiveTaxSale.TaxAmount == 14.4m && exclusiveTaxSale.TotalAmount == 104.4m,
+    "Exclusive sales tax must be calculated after invoice discount and added to settlement");
+var inclusiveTaxSale = new Sale(
+    "S-TAX-IN", 1, DateTime.Today, SaleChannel.Wholesale, "user", null, 1);
+inclusiveTaxSale.ApplyTax(1, 16m, 10, isPriceInclusive: true);
+inclusiveTaxSale.AddItem(new SaleItem(1, 1, 100m));
+inclusiveTaxSale.ApplyInvoiceDiscount(DiscountType.FixedAmount, 10m);
+Check(
+    inclusiveTaxSale.TaxAmount == 12.41m && inclusiveTaxSale.TotalAmount == 90m,
+    "Inclusive sales tax must be extracted after invoice discount without increasing settlement");
+var inclusiveTaxPosting = new JournalEntry(
+    "JRN-TAX", DateTime.Today, "Inclusive tax sale", "Sale", "S-TAX-IN");
+inclusiveTaxPosting.AddLine(new JournalEntryLine(1, 90m, 0));
+inclusiveTaxPosting.AddLine(new JournalEntryLine(2, 8.62m, 0));
+inclusiveTaxPosting.AddLine(new JournalEntryLine(3, 0, 86.21m));
+inclusiveTaxPosting.AddLine(new JournalEntryLine(10, 0, 12.41m));
+inclusiveTaxPosting.Post();
+Check(inclusiveTaxPosting.Status == JournalEntryStatus.Posted,
+    "Inclusive sales tax posting must split net discount, revenue and output tax without imbalance");
 var rawMaterial = new Product(
     "Raw flour", null, 1, 0, 0,
     ProductInventoryBehavior.Stocked,

@@ -101,6 +101,14 @@
                 <div class="card-body">
                     <div class="d-flex justify-content-between"><span>Subtotal</span><strong>@Model.Subtotal.ToString("0.00") JOD</strong></div>
                     <div class="d-flex justify-content-between mt-2"><span>Invoice Discount</span><strong>@Model.InvoiceDiscountAmount.ToString("0.00") JOD</strong></div>
+                    <div class="d-flex justify-content-between mt-2">
+                        <span>@Localizer["Sales tax"] (@Model.TaxRatePercent.ToString("0.####")%)</span>
+                        <strong>@Model.TaxAmount.ToString("0.00") JOD</strong>
+                    </div>
+                    @if (Model.TaxRateId.HasValue)
+                    {
+                        <div class="small text-muted mt-1">@(Model.IsTaxInclusive ? Localizer["Tax included in prices"] : Localizer["Tax added to prices"])</div>
+                    }
                     <hr />
                     <div class="d-flex justify-content-between fs-5"><span>Total</span><strong class="text-primary">@Model.TotalAmount.ToString("0.00") JOD</strong></div>
                 </div>

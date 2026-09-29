@@ -23,6 +23,7 @@ public class SaleService : ISaleService
     private readonly InventoryAccessService _inventoryAccessService;
     private readonly IPosTerminalSettingsRepository _posTerminalSettingsRepository;
     private readonly IProductRecipeRepository _productRecipeRepository;
+    private readonly ITaxRateRepository _taxRateRepository;
 
     public SaleService(
         ISaleRepository saleRepository,
@@ -38,7 +39,8 @@ public class SaleService : ISaleService
         IWarehouseRepository warehouseRepository,
         InventoryAccessService inventoryAccessService,
         IPosTerminalSettingsRepository posTerminalSettingsRepository,
-        IProductRecipeRepository productRecipeRepository)
+        IProductRecipeRepository productRecipeRepository,
+        ITaxRateRepository taxRateRepository)
     {
         _saleRepository = saleRepository;
         _productRepository = productRepository;
@@ -54,6 +56,7 @@ public class SaleService : ISaleService
         _inventoryAccessService = inventoryAccessService;
         _posTerminalSettingsRepository = posTerminalSettingsRepository;
         _productRecipeRepository = productRecipeRepository;
+        _taxRateRepository = taxRateRepository;
     }
 
     public async Task<List<SaleListDto>> GetAllAsync()
@@ -96,6 +99,10 @@ public class SaleService : ISaleService
             InvoiceDiscountType = sale.InvoiceDiscountType,
             InvoiceDiscountValue = sale.InvoiceDiscountValue,
             InvoiceDiscountAmount = sale.InvoiceDiscountAmount,
+            TaxRateId = sale.TaxRateId,
+            TaxRatePercent = sale.TaxRatePercent,
+            IsTaxInclusive = sale.IsTaxInclusive,
+            TaxAmount = sale.TaxAmount,
             TotalAmount = sale.TotalAmount,
 
             Items = sale.Items
@@ -300,6 +307,18 @@ public class SaleService : ISaleService
                 channel == SaleChannel.RetailPos ? dto.PosOrderType : null,
                 channel == SaleChannel.RetailPos ? dto.ServiceReference : null,
                 channel == SaleChannel.RetailPos ? dto.GuestCount : null);
+
+            if (dto.TaxRateId.HasValue)
+            {
+                var taxRate = (await _taxRateRepository.GetAllAsync())
+                    .SingleOrDefault(x => x.Id == dto.TaxRateId.Value)
+                    ?? throw new ArgumentException("The selected sales tax was not found.");
+                sale.ApplyTax(
+                    taxRate.Id,
+                    taxRate.Rate,
+                    taxRate.OutputAccountId,
+                    taxRate.IsPriceInclusive);
+            }
 
             var directRequirements = new List<(Product Product, decimal Quantity)>();
             var recipeRequirements = new Dictionary<int, (Product Product, decimal Quantity)>();

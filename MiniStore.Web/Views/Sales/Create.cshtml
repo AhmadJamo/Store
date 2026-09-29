@@ -2,6 +2,7 @@
 @using System.Globalization
 @using System.Text.Json
 @model MiniStore.Application.DTOs.Sales.CreateSaleDto
+@inject Microsoft.Extensions.Localization.IStringLocalizer<MiniStore.Web.SharedResource> Localizer
 
 @{
     ViewData["Title"] = "Create Sale";
@@ -84,6 +85,23 @@
             <div class="col-md-4"><div class="mb-3"><label asp-for="CustomerId" class="form-label">Customer</label><select asp-for="CustomerId" class="form-select"><option value="">Unknown customer / walk-in</option>@foreach (var customer in ViewBag.Customers) { <option value="@customer.Id">@customer.Name</option> }</select></div></div>
 
             <div class="col-md-4"><div class="mb-3"><label asp-for="PaymentMethodId" class="form-label">Payment Method</label><select asp-for="PaymentMethodId" class="form-select" required><option value="">-- Select payment method --</option>@foreach (var method in ViewBag.PaymentMethods) { <option value="@method.Id">@method.Name</option> }</select></div></div>
+
+            <div class="col-md-4">
+                <div class="mb-3">
+                    <label asp-for="TaxRateId" class="form-label">@Localizer["Sales tax"]</label>
+                    <select asp-for="TaxRateId" id="taxRateId" class="form-select">
+                        <option value="">@Localizer["No sales tax"]</option>
+                        @foreach (var taxRate in ViewBag.TaxRates)
+                        {
+                            <option value="@taxRate.Id"
+                                    data-rate="@taxRate.Rate.ToString(CultureInfo.InvariantCulture)"
+                                    data-inclusive="@taxRate.IsPriceInclusive.ToString().ToLowerInvariant()">
+                                @taxRate.Name (@taxRate.Rate.ToString("0.####")%)
+                            </option>
+                        }
+                    </select>
+                </div>
+            </div>
 
         </div>
 
@@ -371,6 +389,14 @@
 
                         <tr>
 
+                            <th>@Localizer["Sales tax"]</th>
+
+                            <td id="taxAmount" class="text-end">0.00</td>
+
+                        </tr>
+
+                        <tr>
+
                             <th>
                                 Invoice Discount
                             </th>
@@ -463,11 +489,17 @@
         const invoiceDiscountValue =
             document.getElementById("invoiceDiscountValue");
 
+        const taxRateSelect =
+            document.getElementById("taxRateId");
+
         const subtotalElement =
             document.getElementById("subtotal");
 
         const invoiceDiscountAmountElement =
             document.getElementById("invoiceDiscountAmount");
+
+        const taxAmountElement =
+            document.getElementById("taxAmount");
 
         const grandTotalElement =
             document.getElementById("grandTotal");
@@ -1028,9 +1060,18 @@
             }
 
 
-            const grandTotal =
-                subtotal -
-                invoiceDiscount;
+            const discountedAmount = subtotal - invoiceDiscount;
+            const selectedTax = taxRateSelect.selectedOptions[0];
+            const taxRate = Number(selectedTax?.dataset.rate) || 0;
+            const isInclusive = selectedTax?.dataset.inclusive === "true";
+            const taxAmount = taxRate <= 0
+                ? 0
+                : isInclusive
+                    ? discountedAmount * taxRate / (100 + taxRate)
+                    : discountedAmount * taxRate / 100;
+            const grandTotal = isInclusive
+                ? discountedAmount
+                : discountedAmount + taxAmount;
 
 
             subtotalElement.innerText =
@@ -1040,11 +1081,16 @@
             invoiceDiscountAmountElement.innerText =
                 invoiceDiscount.toFixed(2);
 
+            taxAmountElement.innerText =
+                taxAmount.toFixed(2);
+
 
             grandTotalElement.innerText =
                 grandTotal.toFixed(2);
 
         }
+
+        taxRateSelect.addEventListener("change", calculateTotals);
 
 
         /*

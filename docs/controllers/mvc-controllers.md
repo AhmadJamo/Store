@@ -15,7 +15,7 @@
 | WarehouseLocations / UnassignedStock | location search/create and putaway | warehouse/product-stock permissions and location services. |
 | LocationMovements | Index/Move | LocationMovements.View/Create and LocationMovementService. |
 | Purchases | Index/Create/Details | Purchases.View/Create; PurchaseService and master repositories for dropdowns. |
-| Sales | Index/Details/Create/Pos/Post | Sales.View/Create; SaleService validates and persists POS order context and item notes; SalePostingService creates the one-time balanced revenue and COGS journal; PosExperienceSettingsService supplies terminal-specific runtime presentation/workflow. |
+| Sales | Index/Details/Create/Pos/Post | Sales.View/Create; SaleService validates and snapshots optional invoice tax plus POS order context/item notes; SalePostingService creates the one-time balanced revenue, output-tax and COGS journal; PosExperienceSettingsService supplies terminal-specific runtime presentation/workflow. |
 | StockTransfers | Index/Details/Create/Edit and state POSTs | transfer-specific permissions/service. |
 | Settings | Index/DocumentNumbers/General/Discounts/Inventory/InventoryAccess/Pos/Units plus access mutations | active-company Admin policy; centralized document sequences, inventory defaults, managed measurement units, branch/POS warehouse configuration and rowversion-protected terminal experience settings. Legacy Invoices redirects to DocumentNumbers. |
 | Language | Set POST | Whitelists `en-US`/`ar-JO`, writes the ASP.NET culture cookie and uses a validated local return URL; available from shared navigation. |

@@ -27,6 +27,11 @@ public class SaleDetailsDto
 
     public decimal InvoiceDiscountAmount { get; set; }
 
+    public int? TaxRateId { get; set; }
+    public decimal TaxRatePercent { get; set; }
+    public bool IsTaxInclusive { get; set; }
+    public decimal TaxAmount { get; set; }
+
     public decimal TotalAmount { get; set; }
 
     public List<SaleItemDetailsDto> Items { get; set; } = new();

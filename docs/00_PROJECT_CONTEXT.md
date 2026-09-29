@@ -1,7 +1,7 @@
 # MiniStore project context
 > Status: PARTIALLY IMPLEMENTED  
 > Source of truth: Code  
-> Last reviewed: 2026-09-28
+> Last reviewed: 2026-09-29
 
 ## Project identity
 MiniStore is a server-rendered ASP.NET Core MVC store-management application. It targets .NET 10, uses EF Core 10 with SQL Server, ASP.NET Core Identity, Razor views, and a Domain/Application/Infrastructure/Web layered solution. No public API project is present.
@@ -23,9 +23,9 @@ The repository implements an operational slice for catalog, warehouses, stock, s
 | Products | IMPLEMENTED | `Product`, `ProductService`, `ProductsController` | Generated code, optional barcode, raw/direct/prepared type, managed stock unit, channel controls and advanced catalog search. |
 | Warehouses | IMPLEMENTED | `Warehouse`, `WarehouseService` | Named warehouse master data. |
 | Suppliers | IMPLEMENTED | `Supplier`, `SupplierService` | Supplier master data. |
-| Inventory | PARTIALLY IMPLEMENTED | `ProductStock`, `StockTransaction`, recipes, measurement units | Balances, moving-average valuation, auditable cost movements, managed-unit conversion, prepared recipes and controlled negative variance; ledger posting remains pending. |
+| Inventory | PARTIALLY IMPLEMENTED | `ProductStock`, `StockTransaction`, recipes, measurement units | Balances, moving-average valuation, auditable cost movements, managed-unit conversion, prepared recipes, controlled negative variance and purchase-time variance settlement; manual adjustment posting remains pending. |
 | Purchases | IMPLEMENTED | `Purchase`, `PurchaseService` | Immediately increases stock. |
-| Sales | IMPLEMENTED | `Sale`, `SaleService` | Uses configured product price by channel and decreases stock. |
+| Sales | IMPLEMENTED | `Sale`, `SaleService`, `SalePostingService` | Uses configured channel price, optional frozen inclusive/exclusive tax, decreases stock and posts revenue/output tax/COGS. |
 | Stock transfers | IMPLEMENTED | `StockTransfer`, `StockTransferService` | Draft/submitted/approved/posted/cancelled flow. |
 | Settings | PARTIALLY IMPLEMENTED | settings entities/services | General, discount, inventory, accounting, POS and centralized document-number settings. |
 | Identity & permissions | PARTIALLY IMPLEMENTED | Identity + `PermissionAuthorizationHandler` | Custom permission rows mapped to roles. |

@@ -39,14 +39,22 @@ public sealed class SalePostingService(
         var revenueAccountId = branch.SalesRevenueAccountId ?? settings.SalesRevenueAccountId
             ?? throw new InvalidOperationException("Configure a sales revenue account before posting sales.");
 
-        var revenue = Round(sale.Subtotal);
+        var taxOnSubtotal = sale.TaxRateId.HasValue && sale.IsTaxInclusive
+            ? Round(sale.Subtotal * sale.TaxRatePercent / (100m + sale.TaxRatePercent))
+            : 0;
+        var revenue = Round(sale.Subtotal - taxOnSubtotal);
         var settlement = Round(sale.TotalAmount);
-        var invoiceDiscount = Round(sale.InvoiceDiscountAmount);
+        var invoiceDiscount = sale.IsTaxInclusive
+            ? Round(sale.InvoiceDiscountAmount - (taxOnSubtotal - sale.TaxAmount))
+            : Round(sale.InvoiceDiscountAmount);
+        var outputTax = Round(sale.TaxAmount);
         var cogs = Round(sale.Items.Sum(x => x.CostOfGoodsSold));
         if (revenue <= 0 || settlement < 0)
             throw new InvalidOperationException("A sale must have a positive posting amount.");
         if (invoiceDiscount > 0 && !settings.SalesDiscountAccountId.HasValue)
             throw new InvalidOperationException("Configure a sales discount account before posting a discounted sale.");
+        if (outputTax > 0 && !sale.TaxOutputAccountId.HasValue)
+            throw new InvalidOperationException("The sale does not have a valid output tax account snapshot.");
         if (cogs > 0 && !settings.CostOfSalesAccountId.HasValue)
             throw new InvalidOperationException("Configure a cost of sales account before posting inventory cost.");
 
@@ -76,6 +84,11 @@ public sealed class SalePostingService(
                 revenueAccountId, 0, revenue,
                 warehouse.BranchId, warehouse.Id,
                 $"Revenue from {sale.InvoiceNumber}"));
+            if (outputTax > 0)
+                entry.AddLine(new JournalEntryLine(
+                    sale.TaxOutputAccountId!.Value, 0, outputTax,
+                    warehouse.BranchId, warehouse.Id,
+                    $"Output tax on {sale.InvoiceNumber}"));
 
             if (cogs > 0)
             {

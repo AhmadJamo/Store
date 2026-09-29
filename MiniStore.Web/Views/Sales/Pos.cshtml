@@ -1,6 +1,7 @@
 ﻿@using System.Globalization
 @using System.Text.Json
 @model MiniStore.Application.DTOs.Sales.CreateSaleDto
+@inject Microsoft.Extensions.Localization.IStringLocalizer<MiniStore.Web.SharedResource> Localizer
 
 @{
     ViewData["Title"] = "Point of Sale";
@@ -212,6 +213,21 @@
                     <div class="col-md-4"><label asp-for="PaymentMethodId" class="form-label fw-semibold">Payment Method</label><select asp-for="PaymentMethodId" class="form-select" required><option value="">-- Select payment method --</option>@foreach (var method in ViewBag.PaymentMethods) { <option value="@method.Id">@method.Name</option> }</select></div>
 
                     <div class="col-md-4">
+                        <label asp-for="TaxRateId" class="form-label fw-semibold">@Localizer["Sales tax"]</label>
+                        <select asp-for="TaxRateId" id="taxRateId" class="form-select">
+                            <option value="">@Localizer["No sales tax"]</option>
+                            @foreach (var taxRate in ViewBag.TaxRates)
+                            {
+                                <option value="@taxRate.Id"
+                                        data-rate="@taxRate.Rate.ToString(CultureInfo.InvariantCulture)"
+                                        data-inclusive="@taxRate.IsPriceInclusive.ToString().ToLowerInvariant()">
+                                    @taxRate.Name (@taxRate.Rate.ToString("0.####")%)
+                                </option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="col-md-4">
                         <label asp-for="Notes"
                                class="form-label fw-semibold">
                             Notes
@@ -417,6 +433,11 @@
 
                             </div>
 
+                            <div class="d-flex justify-content-between small text-muted mt-2">
+                                <span>@Localizer["Sales tax"]</span>
+                                <span id="taxAmount">0.00 JOD</span>
+                            </div>
+
                         </div>
 
 
@@ -498,6 +519,7 @@
 
         const warehouseInput =
             document.getElementById("warehouseId");
+        const taxRateInput = document.getElementById("taxRateId");
         const terminalInput = document.getElementById("posTerminalId");
         const terminalAccess = JSON.parse(
             document.getElementById("terminalAccessData").textContent);
@@ -606,6 +628,7 @@
             "change",
             updateProductAvailability
         );
+        taxRateInput.addEventListener("change", renderCart);
 
 
         // Product search.
@@ -1065,6 +1088,20 @@
 
                 }
             );
+
+            const selectedTax = taxRateInput.selectedOptions[0];
+            const taxRate = Number(selectedTax?.dataset.rate) || 0;
+            const isInclusive = selectedTax?.dataset.inclusive === "true";
+            const taxAmount = taxRate <= 0
+                ? 0
+                : isInclusive
+                    ? grandTotal * taxRate / (100 + taxRate)
+                    : grandTotal * taxRate / 100;
+            if (!isInclusive)
+                grandTotal += taxAmount;
+
+            document.getElementById("taxAmount").textContent =
+                `${taxAmount.toFixed(2)} JOD`;
 
 
             document

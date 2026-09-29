@@ -59,6 +59,14 @@ public class SaleConfiguration
             .HasColumnType("decimal(18,2)")
             .IsRequired();
 
+        builder.Property(x => x.TaxRatePercent)
+            .HasColumnType("decimal(9,4)")
+            .IsRequired();
+
+        builder.Property(x => x.TaxAmount)
+            .HasColumnType("decimal(18,2)")
+            .IsRequired();
+
         builder.Property(x => x.TotalAmount)
             .HasColumnType("decimal(18,2)")
             .IsRequired();
@@ -76,6 +84,11 @@ public class SaleConfiguration
         builder.HasOne<PaymentMethod>()
             .WithMany()
             .HasForeignKey(x => x.PaymentMethodId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasOne<TaxRate>()
+            .WithMany()
+            .HasForeignKey(x => x.TaxRateId)
             .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasOne<PosTerminal>()

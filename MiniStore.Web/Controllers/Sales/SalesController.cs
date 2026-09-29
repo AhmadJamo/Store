@@ -17,6 +17,7 @@ public class SalesController : Controller
     private readonly IProductStockRepository _productStockRepository;
     private readonly ICustomerRepository _customerRepository;
     private readonly IPaymentMethodRepository _paymentMethodRepository;
+    private readonly ITaxRateRepository _taxRateRepository;
     private readonly InventoryAccessService _inventoryAccessService;
     private readonly PosExperienceSettingsService _posExperienceSettingsService;
     private readonly SalePostingService _salePostingService;
@@ -29,6 +30,7 @@ public class SalesController : Controller
         IProductStockRepository productStockRepository,
         ICustomerRepository customerRepository,
         IPaymentMethodRepository paymentMethodRepository,
+        ITaxRateRepository taxRateRepository,
         InventoryAccessService inventoryAccessService,
         PosExperienceSettingsService posExperienceSettingsService,
         SalePostingService salePostingService,
@@ -40,6 +42,7 @@ public class SalesController : Controller
         _productStockRepository = productStockRepository;
         _customerRepository = customerRepository;
         _paymentMethodRepository = paymentMethodRepository;
+        _taxRateRepository = taxRateRepository;
         _inventoryAccessService = inventoryAccessService;
         _posExperienceSettingsService = posExperienceSettingsService;
         _salePostingService = salePostingService;
@@ -190,5 +193,6 @@ public class SalesController : Controller
 
         ViewBag.Customers = await _customerRepository.GetAllAsync();
         ViewBag.PaymentMethods = await _paymentMethodRepository.GetAllAsync();
+        ViewBag.TaxRates = await _taxRateRepository.GetAllAsync();
     }
 }

@@ -35,6 +35,12 @@ public string InvoiceNumber { get; private set; }
 
     public decimal InvoiceDiscountAmount { get; private set; }
 
+    public int? TaxRateId { get; private set; }
+    public decimal TaxRatePercent { get; private set; }
+    public int? TaxOutputAccountId { get; private set; }
+    public bool IsTaxInclusive { get; private set; }
+    public decimal TaxAmount { get; private set; }
+
     public decimal TotalAmount { get; private set; }
 
     public List<SaleItem> Items { get; private set; }
@@ -104,7 +110,26 @@ public string InvoiceNumber { get; private set; }
         InvoiceDiscountType = DiscountType.Percentage;
         InvoiceDiscountValue = 0;
         InvoiceDiscountAmount = 0;
+        TaxRatePercent = 0;
+        IsTaxInclusive = false;
+        TaxAmount = 0;
         TotalAmount = 0;
+    }
+
+    public void ApplyTax(
+        int taxRateId,
+        decimal rate,
+        int outputAccountId,
+        bool isPriceInclusive)
+    {
+        if (taxRateId <= 0 || rate < 0 || rate > 100 || outputAccountId <= 0)
+            throw new ArgumentException("The selected sales tax is invalid.");
+
+        TaxRateId = taxRateId;
+        TaxRatePercent = rate;
+        TaxOutputAccountId = outputAccountId;
+        IsTaxInclusive = isPriceInclusive;
+        RecalculateTotal();
     }
 
     public void AddItem(SaleItem item)
@@ -158,7 +183,7 @@ public string InvoiceNumber { get; private set; }
             discountType,
             discountValue);
 
-        TotalAmount = Subtotal - InvoiceDiscountAmount;
+        RecalculateTaxAndTotal();
     }
 
     public void RemoveInvoiceDiscount()
@@ -167,7 +192,7 @@ public string InvoiceNumber { get; private set; }
         InvoiceDiscountValue = 0;
         InvoiceDiscountAmount = 0;
 
-        TotalAmount = Subtotal;
+        RecalculateTaxAndTotal();
     }
 
     private void RecalculateTotal()
@@ -179,8 +204,24 @@ public string InvoiceNumber { get; private set; }
             InvoiceDiscountType,
             InvoiceDiscountValue);
 
-        TotalAmount = Subtotal - InvoiceDiscountAmount;
+        RecalculateTaxAndTotal();
     }
+
+    private void RecalculateTaxAndTotal()
+    {
+        var discountedAmount = Subtotal - InvoiceDiscountAmount;
+        TaxAmount = !TaxRateId.HasValue || TaxRatePercent <= 0
+            ? 0
+            : IsTaxInclusive
+                ? RoundMoney(discountedAmount * TaxRatePercent / (100m + TaxRatePercent))
+                : RoundMoney(discountedAmount * TaxRatePercent / 100m);
+        TotalAmount = IsTaxInclusive
+            ? discountedAmount
+            : discountedAmount + TaxAmount;
+    }
+
+    private static decimal RoundMoney(decimal value) =>
+        Math.Round(value, 2, MidpointRounding.AwayFromZero);
 
     private static decimal CalculateDiscountAmount(
         decimal amount,

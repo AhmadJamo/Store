@@ -264,4 +264,25 @@
   <data name="Variance warehouse was not found." xml:space="preserve">
     <value>لم يتم العثور على المستودع المرتبط بفرق التكلفة.</value>
   </data>
+  <data name="Sales tax" xml:space="preserve">
+    <value>ضريبة المبيعات</value>
+  </data>
+  <data name="No sales tax" xml:space="preserve">
+    <value>بدون ضريبة مبيعات</value>
+  </data>
+  <data name="Tax included in prices" xml:space="preserve">
+    <value>الضريبة مشمولة في الأسعار</value>
+  </data>
+  <data name="Tax added to prices" xml:space="preserve">
+    <value>الضريبة مضافة إلى الأسعار</value>
+  </data>
+  <data name="The selected sales tax is invalid." xml:space="preserve">
+    <value>ضريبة المبيعات المحددة غير صالحة.</value>
+  </data>
+  <data name="The selected sales tax was not found." xml:space="preserve">
+    <value>لم يتم العثور على ضريبة المبيعات المحددة.</value>
+  </data>
+  <data name="The sale does not have a valid output tax account snapshot." xml:space="preserve">
+    <value>لا تحتوي المبيعة على لقطة صالحة لحساب ضريبة المخرجات.</value>
+  </data>
 </root>

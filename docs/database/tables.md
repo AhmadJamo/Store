@@ -31,7 +31,7 @@ Schema source is `AppDbContext`, configurations and migrations. Identity's stand
 - **LocationMovements:** immutable putaway/relocation audit rows with ProductId, WarehouseId, FromStorageLocationId?, ToStorageLocationId, Quantity, Type, Reference?, Notes?, CreatedByUserId and CreatedAt.
 - **StockTransactions:** immutable quantity/valuation movement with quantity, average and value before/after, unit cost, transaction value, cost variance, Type, Reference and CreatedAt; recipe consumption and kitchen variance have distinct types.
 - **Purchases:** header plus items containing ProductId, WarehouseId?, Quantity, PurchasePrice, DiscountAmount, TaxRateId? and Total; new invoices select warehouse per item.
-- **Sales:** Id, InvoiceNumber, Channel, CreatedByUserId, CreatedAt, WarehouseId, PosTerminalId?, CustomerId?, PaymentMethodId?, Date, Notes?, PosOrderType?, ServiceReference?, GuestCount? and totals; SaleItems may hold preparation notes and the ProductRecipeId version used for prepared-item consumption.
+- **Sales:** Id, InvoiceNumber, Channel, CreatedByUserId, CreatedAt, WarehouseId, PosTerminalId?, CustomerId?, PaymentMethodId?, TaxRateId?, TaxRatePercent, TaxOutputAccountId?, IsTaxInclusive, TaxAmount, Date, Notes?, PosOrderType?, ServiceReference?, GuestCount? and totals; SaleItems may hold preparation notes and the ProductRecipeId version used for prepared-item consumption.
 - **StockTransfers:** identity, transfer number, source/destination warehouse, status, actor/time/reason fields; each item may identify optional exact source and destination storage locations.
 - **Permissions:** global technical permission catalogue selected by tenant-owned role mappings.
 - **AuditLogs:** EntityName, EntityId, Action, UserId, CreatedAt.
