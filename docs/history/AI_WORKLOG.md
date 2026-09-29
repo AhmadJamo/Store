@@ -1,5 +1,8 @@
 # AI Work Log
 
+## 2026-09-30 — WMS evolution analysis and roadmap
+Completed an analysis-only review of the existing inventory/warehouse architecture and documented its implemented strengths, gaps and migration hazards. Added `WMS_EVOLUTION_PLAN.md` with a capability matrix, target separation of business documents/physical movements/balance projections/valuation, authoritative-data rules, twelve structured proposals, concurrency/reporting/permission requirements, safe additive migration and rollback strategy, phased vertical slices and an exact file change map. Added an ADR choosing gradual evolution: preserve StockTransfer workflow, ProductStock AVCO and legacy ledgers; extend StorageLocation; introduce StockMovement and InventoryBalance only through dual-write reconciliation. No runtime code, schema or migration was added for WMS planning.
+
 ## 2026-09-29 — Posted purchase returns
 Added immutable tenant purchase-return documents, separate numbering and permissions, cumulative original-quantity and current-stock controls, moving-average stock issues and atomic central journal posting. Supplier payable, input tax and purchase discount reverse proportionally; the original-versus-current inventory-cost difference posts to COGS. Added bilingual navigation/screens, regression coverage and an ADR documenting the valuation policy. Migration `20260929155442_AddPurchaseReturns` was applied to `AHMAD/MiniStoreDb`; Release build passed without warnings, 251 focused checks passed and EF reports no pending model changes.
 

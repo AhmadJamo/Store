@@ -1,6 +1,6 @@
 # Project TODO
 > Source of truth: Current repository scan  
-> Last reviewed: 2026-09-29
+> Last reviewed: 2026-09-30
 
 The ordered Arabic execution plan, workflow, business rules and rolling suggestion queue are maintained in `ARABIC_SHARED_ROADMAP.md`. This file remains the concise technical backlog.
 
@@ -26,8 +26,10 @@ The ordered Arabic execution plan, workflow, business rules and rolling suggesti
 - Added a central journal-posting gateway used by purchase, sale and sales-return workflows for source idempotency, numbering, balancing, posting and persistence.
 - Added tenant fiscal periods with overlap prevention, Open/Soft Closed/Closed states, status audit metadata, concurrency protection and central posting-date enforcement.
 - Added immutable partial/full purchase returns with cumulative and available-stock controls, moving-average issues, proportional supplier/tax/discount reversal and COGS cost-variance posting.
+- Completed the repository-wide WMS gap analysis, target authority model, safe migration strategy, ADR, phased vertical-slice roadmap and file change map without changing runtime inventory code.
 
 ## In Progress
+- WMS is the active delivery track until its planned inventory/warehouse phases are complete. Next: WMS-000 read-only reconciliation baseline and SQL concurrency fixtures; see `WMS_EVOLUTION_PLAN.md`.
 - Run an authenticated HTTP/SQL cafe recipe sale and reconciliation journey. Batch production, actual yields and negative-cost settlement remain follow-up work.
 - Add per-terminal product assortment UI/enforcement and per-user branch/POS data scope.
 - Build the central preview/validation/template/audit engine for Excel and CSV import/export, then onboard modules incrementally.
@@ -35,6 +37,7 @@ The ordered Arabic execution plan, workflow, business rules and rolling suggesti
 - Migrate remaining legacy feature screens and existing validation messages to the shared English/Arabic resources before making further functional changes to those screens.
 
 ## High Priority
+- Do not begin movement/balance cutover before reconciling ProductStock, ProductLocationStock, implicit Unassigned Stock and latest StockTransaction snapshots per tenant/product/warehouse.
 - Rotate previously committed admin credentials and invalidate sessions on existing deployments (operator action).
 
 

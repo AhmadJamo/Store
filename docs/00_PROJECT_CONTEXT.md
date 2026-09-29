@@ -1,13 +1,15 @@
 # MiniStore project context
 > Status: PARTIALLY IMPLEMENTED  
 > Source of truth: Code  
-> Last reviewed: 2026-09-29
+> Last reviewed: 2026-09-30
 
 ## Project identity
 MiniStore is a server-rendered ASP.NET Core MVC store-management application. It targets .NET 10, uses EF Core 10 with SQL Server, ASP.NET Core Identity, Razor views, and a Domain/Application/Infrastructure/Web layered solution. No public API project is present.
 
 ## Current development stage
 The repository implements an operational slice for catalog, warehouses, stock, suppliers, purchases, sales (wholesale and POS), configurable discounts, stock transfers, users/roles, settings and shared-database SaaS tenancy. Public signup, pricing, plans, trials, subscription access, promotion codes and a separate platform-owner control center are implemented. Product classification, generated internal codes, advanced catalog search, managed measurement units, immutable prepared-product recipes, automatic ingredient consumption and controlled kitchen-negative stock are also implemented. It is not yet a complete accounting ERP and does not yet integrate an external payment provider.
+
+The active product-development track is now the additive WMS evolution documented in `WMS_EVOLUTION_PLAN.md`. The analysis and roadmap are complete; no planned StockMovement or InventoryBalance runtime model has been implemented yet. Existing inventory and warehouse workflows remain authoritative.
 
 ## Status classification
 - IMPLEMENTED: catalog, warehouses, suppliers, stock balances/movements, purchases, sales, transfer workflow, Identity login, role-permission checks, audit-log rows, Razor UI.
@@ -35,7 +37,7 @@ The repository implements an operational slice for catalog, warehouses, stock, s
 See `06_SECURITY.md`, `04_ACCOUNTING.md`, and `TODO.md`. Highest-priority findings include rotating previously committed admin credentials on existing deployments, completing inventory valuation and accounting posting, and establishing production deployment/backup/integration-test controls. Identity escalation, role-delete CSRF, login lockout and core inventory concurrency have been addressed; see the security and inventory documentation.
 
 ## Recommended next steps
-1. Complete the security and inventory-integrity work listed in `TODO.md`.
+1. Execute WMS-000 inventory reconciliation and SQL concurrency verification before any WMS balance/movement migration.
 2. Complete company switching, invitations and existing-user role assignment management on top of the tenant-owned role model.
 3. Establish an immutable posted-document and double-entry accounting design before adding more ERP features.
 

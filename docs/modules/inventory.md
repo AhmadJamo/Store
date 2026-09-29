@@ -1,5 +1,7 @@
 # Inventory and stock movements
-> Status: IMPLEMENTED WITH REMAINING CONTROLS | Last reviewed: 2026-09-29
+> Status: IMPLEMENTED WITH APPROVED WMS EVOLUTION | Last reviewed: 2026-09-30
+
+The approved next evolution is documented in `../WMS_EVOLUTION_PLAN.md`. Existing ProductStock, ProductLocationStock, StockTransaction, LocationMovement, warehouse policies and StockTransfer workflows remain authoritative until each planned WMS vertical slice is implemented and reconciled. No target WMS entity should be treated as currently implemented.
 
 Balances and moving weighted-average valuation are held by product/warehouse in `ProductStock`; immutable-by-convention quantity/cost movement rows are `StockTransaction`. Every new movement freezes quantity, average and inventory value before/after plus unit cost, movement value and cost variance. ProductStock and StockTransfer have SQL Server rowversion concurrency tokens. Inventory UnitOfWork operations use Serializable transactions, and a stale update rolls back the document, balance and movement together with a retry message.
 

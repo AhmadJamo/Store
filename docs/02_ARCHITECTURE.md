@@ -1,7 +1,7 @@
 # Architecture
 > Status: IMPLEMENTED WITH INCONSISTENCIES  
 > Source of truth: Code  
-> Last reviewed: 2026-09-14
+> Last reviewed: 2026-09-30
 
 ## Solution and dependency direction
 `MiniStore.Domain` contains entities, enums, commands and repository/service interfaces. `MiniStore.Application` references Domain and contains DTOs plus use-case services. `MiniStore.Infrastructure` references Application and Domain and implements EF Core persistence, repositories, seeders, authorization service and Unit of Work. `MiniStore.Web` references Application and Infrastructure and is the MVC presentation/composition root.
@@ -11,6 +11,8 @@
 Source files are grouped by business feature inside each layer. Entities, service contracts, services, repositories, EF configurations and controllers use the shared feature names Accounting, Catalog, Customers, Inventory, Purchases, Sales, Security, Settings and Suppliers; Web also contains Home. Shared infrastructure stays at the layer root or in a `Shared` folder. Razor views retain the MVC `Views/<ControllerName>/` convention and migrations retain chronological ordering. See `decisions/2026-09-13-feature-folder-organization.md`.
 
 Inventory behavior is policy-driven at the warehouse boundary. Operational use is separate from Simple/LocationManaged/Hybrid control, and global InventorySettings provide defaults rather than overriding an established warehouse. See `decisions/2026-09-14-configurable-inventory-operating-policies.md`.
+
+The approved WMS evolution preserves business documents and warehouse AVCO while separating future physical movements and dimensional balance projections. `StockTransfer` remains the approval document; `ProductStock` remains the warehouse valuation authority; a new physical movement ledger and balance projection will be introduced additively with dual-write reconciliation rather than replacing existing history. See `WMS_EVOLUTION_PLAN.md` and `decisions/2026-09-30-wms-evolution-strategy.md`. These are target architecture, not implemented code.
 
 Warehouse access is layered: branch permissions define the organizational boundary and POS terminal mappings narrow that list. See `decisions/2026-09-14-branch-and-pos-warehouse-access.md`.
 

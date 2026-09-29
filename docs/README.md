@@ -2,6 +2,8 @@
 
 This directory describes the implemented system, known gaps, design decisions, and development rules. Source code and EF migrations remain authoritative when documentation and implementation differ.
 
+The approved Warehouse Management System gap analysis, target architecture, migration strategy, phased roadmap and file change map are in [WMS_EVOLUTION_PLAN.md](WMS_EVOLUTION_PLAN.md). Planned WMS types in that document are not yet implemented.
+
 ## Start Here
 
 1. [Project context](00_PROJECT_CONTEXT.md)

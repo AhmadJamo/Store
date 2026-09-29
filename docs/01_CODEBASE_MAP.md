@@ -1,7 +1,7 @@
 # Codebase map
 > Status: IMPLEMENTED  
 > Source of truth: Repository scan  
-> Last reviewed: 2026-09-29
+> Last reviewed: 2026-09-30
 
 ## Solution roots
 | Path | Project/layer | Purpose |
@@ -19,6 +19,8 @@
 `docs/README.md` is the documentation index and recommended reading order for contributors.
 
 `docs/ACCOUNTING_REFERENCE_AR.md` is the shared Arabic accounting and software-design reference. It covers the accounting cycle, example postings, inventory valuation, sales/purchases, close, advanced topics, international-standard mapping, implementation invariants and the ordered accounting delivery plan. It is guidance rather than evidence that a feature is implemented.
+
+`docs/WMS_EVOLUTION_PLAN.md` is the approved analysis-only WMS evolution plan. It records the current inventory model, gap matrix, target authority boundaries, migration safeguards, phased vertical slices and anticipated file impact. It does not claim that planned WMS entities are implemented.
 
 ## Domain source map
 | Files | Type/purpose | Consumers/docs |
