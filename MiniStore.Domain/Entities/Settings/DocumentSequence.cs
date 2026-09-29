@@ -8,7 +8,8 @@ public enum DocumentNumberType
     PosSale = 2,
     StockTransfer = 3,
     JournalEntry = 4,
-    SalesReturn = 5
+    SalesReturn = 5,
+    PurchaseReturn = 6
 }
 
 public enum DocumentNumberResetPeriod
@@ -121,6 +122,7 @@ public class DocumentSequence
         DocumentNumberType.StockTransfer => new(type, "TRF-"),
         DocumentNumberType.JournalEntry => new(type, "JE-"),
         DocumentNumberType.SalesReturn => new(type, "SRT-"),
+        DocumentNumberType.PurchaseReturn => new(type, "PRT-"),
         _ => throw new ArgumentException("Unsupported document type.", nameof(type))
     };
 

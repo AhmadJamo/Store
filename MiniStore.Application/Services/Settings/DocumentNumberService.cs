@@ -86,6 +86,7 @@ public class DocumentNumberService(IDocumentSequenceRepository repository)
             DocumentNumberType.StockTransfer => ("Stock transfer", "تحويل مخزني"),
             DocumentNumberType.JournalEntry => ("Journal entry", "قيد يومية"),
             DocumentNumberType.SalesReturn => ("Sales return", "مرتجع مبيعات"),
+            DocumentNumberType.PurchaseReturn => ("Purchase return", "مرتجع مشتريات"),
             _ => (row.DocumentType.ToString(), row.DocumentType.ToString())
         };
         return new DocumentSequenceDto

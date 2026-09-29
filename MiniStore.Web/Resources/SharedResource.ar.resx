@@ -342,4 +342,30 @@
   <data name="The posting date is not covered by a fiscal period." xml:space="preserve"><value>تاريخ الترحيل غير مشمول ضمن فترة مالية.</value></data>
   <data name="The fiscal period for the posting date is not open." xml:space="preserve"><value>الفترة المالية الخاصة بتاريخ الترحيل ليست مفتوحة.</value></data>
   <data name="Data changed while this operation was being processed. Review the latest values and try again." xml:space="preserve"><value>تغيرت البيانات أثناء تنفيذ العملية. راجع أحدث القيم ثم حاول مرة أخرى.</value></data>
+  <data name="Purchase returns" xml:space="preserve"><value>مرتجعات المشتريات</value></data>
+  <data name="Purchase return" xml:space="preserve"><value>مرتجع مشتريات</value></data>
+  <data name="Purchase return details" xml:space="preserve"><value>تفاصيل مرتجع المشتريات</value></data>
+  <data name="Create purchase return" xml:space="preserve"><value>إنشاء مرتجع مشتريات</value></data>
+  <data name="Purchase return created and posted." xml:space="preserve"><value>تم إنشاء مرتجع المشتريات وترحيله.</value></data>
+  <data name="Original purchase" xml:space="preserve"><value>المشتريات الأصلية</value></data>
+  <data name="Purchased quantity" xml:space="preserve"><value>الكمية المشتراة</value></data>
+  <data name="Supplier credit" xml:space="preserve"><value>رصيد دائن المورد</value></data>
+  <data name="Removed inventory cost" xml:space="preserve"><value>تكلفة المخزون المُخرج</value></data>
+  <data name="Purchase and supplier are required for a purchase return." xml:space="preserve"><value>المشتريات والمورد مطلوبان لمرتجع المشتريات.</value></data>
+  <data name="The same purchase item cannot be returned more than once in one document." xml:space="preserve"><value>لا يمكن إرجاع بند المشتريات نفسه أكثر من مرة في المستند الواحد.</value></data>
+  <data name="A valid purchase item, product, warehouse and quantity are required." xml:space="preserve"><value>بند مشتريات ومنتج ومستودع وكمية صالحة مطلوبة.</value></data>
+  <data name="Purchase return amounts cannot be negative." xml:space="preserve"><value>لا يمكن أن تكون مبالغ مرتجع المشتريات سالبة.</value></data>
+  <data name="Post the original purchase before creating a return." xml:space="preserve"><value>رحّل المشتريات الأصلية قبل إنشاء المرتجع.</value></data>
+  <data name="Return date cannot be earlier than the purchase date." xml:space="preserve"><value>لا يمكن أن يكون تاريخ المرتجع أقدم من تاريخ المشتريات.</value></data>
+  <data name="Assign a payable account to the supplier before creating a return." xml:space="preserve"><value>عيّن حساب دائن للمورد قبل إنشاء المرتجع.</value></data>
+  <data name="A selected purchase item was not found on the original purchase." xml:space="preserve"><value>لم يتم العثور على بند المشتريات المحدد في المستند الأصلي.</value></data>
+  <data name="Return quantity cannot exceed the remaining purchased quantity." xml:space="preserve"><value>لا يمكن أن تتجاوز كمية المرتجع الكمية المشتراة المتبقية.</value></data>
+  <data name="Purchase item warehouse was not found." xml:space="preserve"><value>لم يتم العثور على مستودع بند المشتريات.</value></data>
+  <data name="Configure the purchase return warehouse inventory account." xml:space="preserve"><value>أعد حساب المخزون لمستودع مرتجع المشتريات.</value></data>
+  <data name="Returned purchase stock was not found." xml:space="preserve"><value>لم يتم العثور على رصيد مخزون المشتريات المرتجعة.</value></data>
+  <data name="Purchase return quantity cannot exceed currently available stock." xml:space="preserve"><value>لا يمكن أن تتجاوز كمية مرتجع المشتريات الرصيد المتاح حالياً.</value></data>
+  <data name="The original purchase tax rate no longer exists." xml:space="preserve"><value>لم يعد معدل ضريبة المشتريات الأصلية موجوداً.</value></data>
+  <data name="Configure a purchase discount account before returning a discounted purchase." xml:space="preserve"><value>أعد حساب خصم المشتريات قبل إرجاع مشتريات تتضمن خصماً.</value></data>
+  <data name="Configure a cost of sales account before posting purchase return cost variance." xml:space="preserve"><value>أعد حساب تكلفة المبيعات قبل ترحيل فرق تكلفة مرتجع المشتريات.</value></data>
+  <data name="This purchase return has already been posted." xml:space="preserve"><value>تم ترحيل مرتجع المشتريات مسبقاً.</value></data>
 </root>

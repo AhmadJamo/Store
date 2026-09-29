@@ -20,5 +20,7 @@ public enum StockTransactionType
 
     RecipeConsumption = 9,
 
-    SalesReturn = 10
+    SalesReturn = 10,
+
+    PurchaseReturn = 11
 }

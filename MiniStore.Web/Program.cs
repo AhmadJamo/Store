@@ -212,6 +212,8 @@ builder.Services.AddScoped<ISupplierRepository,SupplierRepository>();
 builder.Services.AddScoped<SupplierService>();
 
 builder.Services.AddScoped<IPurchaseRepository,PurchaseRepository>();
+builder.Services.AddScoped<IPurchaseReturnRepository, PurchaseReturnRepository>();
+builder.Services.AddScoped<PurchaseReturnService>();
 
 builder.Services.AddScoped<PurchaseService>();
 

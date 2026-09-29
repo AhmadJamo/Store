@@ -1,7 +1,11 @@
 ﻿@model MiniStore.Application.DTOs.Purchases.PurchaseDto
 
+@inject Microsoft.Extensions.Localization.IStringLocalizer<MiniStore.Web.SharedResource> Localizer
+@inject Microsoft.AspNetCore.Authorization.IAuthorizationService AuthorizationService
+
 @{
     ViewData["Title"] = "Purchase Details";
+    var canCreateReturn = (await AuthorizationService.AuthorizeAsync(User, null, "Permission:PurchaseReturns.Create")).Succeeded;
 }
 
 <h1>Purchase Details</h1>
@@ -138,7 +142,7 @@
 
 </a>
 
-@if (ViewBag.IsPosted == true)
+@if (ViewBag.IsPosted == true && canCreateReturn)
 {
     <span class="badge bg-success ms-2">Posted to general ledger</span>
 }
@@ -148,4 +152,9 @@ else
         <input type="hidden" name="id" value="@Model.Id" />
         <button type="submit" class="btn btn-primary">Post to general ledger</button>
     </form>
+}
+
+@if (ViewBag.IsPosted == true)
+{
+    <a asp-controller="PurchaseReturns" asp-action="Create" asp-route-purchaseId="@Model.Id" class="btn btn-outline-primary ms-2">@Localizer["Purchase return"]</a>
 }

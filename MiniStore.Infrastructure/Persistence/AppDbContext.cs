@@ -60,6 +60,9 @@ public class AppDbContext
     public DbSet<PurchaseItem> PurchaseItems
         => Set<PurchaseItem>();
 
+    public DbSet<PurchaseReturn> PurchaseReturns => Set<PurchaseReturn>();
+    public DbSet<PurchaseReturnItem> PurchaseReturnItems => Set<PurchaseReturnItem>();
+
     public DbSet<Permission> Permissions => Set<Permission>();
 
     public DbSet<Sale> Sales => Set<Sale>();

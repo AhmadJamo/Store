@@ -53,7 +53,15 @@ public static class NavigationDefinitions
                 "Suppliers",
                 "Index",
                 "Suppliers.View",
-                20)
+                20),
+
+            new NavigationItem(
+                "Purchase returns",
+                "bi-arrow-counterclockwise",
+                "PurchaseReturns",
+                "Index",
+                "PurchaseReturns.View",
+                30)
         ),
 
         new NavigationGroup(

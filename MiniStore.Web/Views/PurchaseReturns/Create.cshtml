@@ -1,0 +1,14 @@
+@model MiniStore.Application.DTOs.Purchases.CreatePurchaseReturnDto
+@using MiniStore.Application.DTOs.Purchases
+@inject Microsoft.Extensions.Localization.IStringLocalizer<MiniStore.Web.SharedResource> Localizer
+@{ var purchase=(PurchaseDto)ViewBag.Purchase; var returned=(Dictionary<int,decimal>)ViewBag.ReturnedQuantities; ViewData["Title"]=Localizer["Create purchase return"]; }
+<div class="container mt-4">
+    <h1 class="h3">@Localizer["Create purchase return"]</h1><p class="text-muted">@Localizer["Original purchase"]: <strong>@purchase.InvoiceNumber</strong></p>
+    <form method="post"><input asp-for="PurchaseId" type="hidden" /><div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+        <div class="row g-3 mb-4"><div class="col-md-4"><label asp-for="Date" class="form-label">@Localizer["Date"]</label><input asp-for="Date" type="date" class="form-control" /></div><div class="col-md-8"><label asp-for="Reason" class="form-label">@Localizer["Return reason"]</label><input asp-for="Reason" maxlength="500" required class="form-control" /></div></div>
+        <div class="card shadow-sm border-0 mb-4"><div class="table-responsive"><table class="table align-middle mb-0"><thead class="table-light"><tr><th>@Localizer["Product"]</th><th>@Localizer["Warehouse"]</th><th>@Localizer["Purchased quantity"]</th><th>@Localizer["Already returned"]</th><th>@Localizer["Return quantity"]</th></tr></thead><tbody>
+        @for(var i=0;i<purchase.Items.Count;i++){var item=purchase.Items[i];var prior=returned.GetValueOrDefault(item.Id);var remaining=item.Quantity-prior;<tr><td>@item.ProductName<input type="hidden" name="Items[@i].PurchaseItemId" value="@item.Id" /></td><td>@item.WarehouseName</td><td>@item.Quantity</td><td>@prior</td><td><input name="Items[@i].Quantity" value="0" type="number" min="0" max="@remaining" step="0.001" class="form-control" disabled="@(remaining<=0 ? "disabled" : null)" /></td></tr>}
+        </tbody></table></div></div>
+        <button class="btn btn-primary">@Localizer["Create and post return"]</button> <a asp-controller="Purchases" asp-action="Details" asp-route-id="@purchase.Id" class="btn btn-outline-secondary">@Localizer["Cancel"]</a>
+    </form>
+</div>

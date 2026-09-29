@@ -637,6 +637,20 @@ returnPosting.AddLine(new JournalEntryLine(4, 0, 60m));
 returnPosting.Post();
 Check(returnPosting.Status == JournalEntryStatus.Posted,
     "A sales return must balance revenue, tax, refund, discount, inventory and COGS reversal");
+var purchaseReturn = new PurchaseReturn("PRT-TEST", 1, 1, DateTime.Today, "Supplier return");
+purchaseReturn.AddItem(new PurchaseReturnItem(1, 1, 1, 2m, 20m, 2m, 2.88m, 20.88m, 18m));
+Check(
+    purchaseReturn.PayableAmount == 20.88m && purchaseReturn.RemovedInventoryCost == 18m,
+    "A purchase return must preserve proportional supplier credit and actual moving-average inventory cost");
+var purchaseReturnPosting = new JournalEntry("JRN-PRT", DateTime.Today, "Purchase return", "PurchaseReturn", "PRT-TEST");
+purchaseReturnPosting.AddLine(new JournalEntryLine(1, 20.88m, 0));
+purchaseReturnPosting.AddLine(new JournalEntryLine(2, 2m, 0));
+purchaseReturnPosting.AddLine(new JournalEntryLine(3, 0, 2.88m));
+purchaseReturnPosting.AddLine(new JournalEntryLine(4, 0, 18m));
+purchaseReturnPosting.AddLine(new JournalEntryLine(5, 0, 2m));
+purchaseReturnPosting.Post();
+Check(purchaseReturnPosting.Status == JournalEntryStatus.Posted,
+    "A purchase return must balance payable, discount, input tax, inventory and cost variance");
 var fiscalPeriod = new FiscalPeriod("FY 2026", new DateTime(2026, 1, 1), new DateTime(2026, 12, 31));
 Check(fiscalPeriod.Contains(new DateTime(2026, 9, 29)) && fiscalPeriod.Status == FiscalPeriodStatus.Open,
     "A new fiscal period must be open and contain dates inside its inclusive range");

@@ -34,7 +34,7 @@ Warehouses now have optional BranchId and InventoryAccountId fields. Completing 
 | Provisional negative-stock cost settlement | IMPLEMENTED | Purchase posting reads receipt cost variances and adjusts COGS against the affected warehouse inventory account in either direction. |
 | Sales returns | IMPLEMENTED | Immutable partial/full return documents cap cumulative quantity, reverse revenue/output tax/discount, and restock direct items with historical-cost COGS reversal. |
 | Fiscal periods | IMPLEMENTED | Tenant periods cannot overlap; once configured, the central journal gateway accepts postings only inside an Open period. Soft Closed and Closed block operational posting. |
-| Purchase returns | NOT IMPLEMENTED | No purchase-return document exists yet. |
+| Purchase returns | IMPLEMENTED | Immutable partial/full supplier returns reverse payable, input tax and discount, remove stock at current moving average and post the cost difference to COGS. |
 
 ## Existing rules
 Sales select the product `SalePrice` for retail POS or `WholesalePrice` for wholesale; client-submitted line price is ignored by `SaleService`. Normal stock removal cannot exceed balance. Prepared-product recipe use and kitchen variance may cross zero only for an ingredient explicitly configured for controlled negative consumption, and the negative row remains visible for reconciliation. A transfer creator cannot approve their own submitted transfer. Discount settings can disable types/limits and an override permission is checked.
@@ -47,8 +47,8 @@ Feature services calculate business amounts and resolve accounts, then send prep
 - Purchase posting has no cancellation/reversal workflow yet; posted purchase documents must remain immutable until reversals are added.
 - Manual stock transactions are limited to adjustment-in, adjustment-out and reason-required kitchen variance; financial posting for those variances is not implemented.
 - ProductStock has rowversion and inventory transactions are Serializable, but database-backed simultaneous recipe-sale/reconciliation tests remain pending.
-- Purchase invoices immediately affect stock and have no cancellation/return path.
+- Purchase invoices immediately affect stock; returns now require prior posting and sufficient remaining quantity/current stock, while general cancellation remains unavailable.
 - Soft Closed currently blocks the same operational posting sources as Closed; a future manual-adjustment workflow may add a narrowly permissioned soft-close override.
 
 ## Before accounting expansion
-Purchase returns, generalized reversals, currency policy and mixed-rate product tax remain planned decisions before broader accounting expansion.
+Generalized reversals, currency policy and mixed-rate product tax remain planned decisions before broader accounting expansion.

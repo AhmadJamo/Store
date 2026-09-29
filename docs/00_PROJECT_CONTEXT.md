@@ -14,8 +14,8 @@ The repository implements an operational slice for catalog, warehouses, stock, s
 - PARTIALLY IMPLEMENTED: authorization administration, auditability and inventory controls.
 - IMPLEMENTED: tenant-scoped centralized numbering for wholesale sales, POS sales, stock transfers and journal entries, including safe defaults and concurrent-edit protection.
 - IMPLEMENTED: database-enforced tenant relationship boundaries across all current ERP entities and tenant subscription redemptions, with automatic entity classification and relationship regression checks.
-- IMPLEMENTED: posted sales returns and tenant fiscal-period posting controls.
-- PLANNED: purchase returns, external payment-provider/webhook integration, API/integrations.
+- IMPLEMENTED: posted sales and purchase returns plus tenant fiscal-period posting controls.
+- PLANNED: generalized reversals, external payment-provider/webhook integration, API/integrations.
 - UNKNOWN: deployed environment, production migration process, backups, CI/CD, external integrations, and operational ownership.
 
 ## Main modules
@@ -25,7 +25,7 @@ The repository implements an operational slice for catalog, warehouses, stock, s
 | Warehouses | IMPLEMENTED | `Warehouse`, `WarehouseService` | Named warehouse master data. |
 | Suppliers | IMPLEMENTED | `Supplier`, `SupplierService` | Supplier master data. |
 | Inventory | PARTIALLY IMPLEMENTED | `ProductStock`, `StockTransaction`, recipes, measurement units | Balances, moving-average valuation, auditable cost movements, managed-unit conversion, prepared recipes, controlled negative variance and purchase-time variance settlement; manual adjustment posting remains pending. |
-| Purchases | IMPLEMENTED | `Purchase`, `PurchaseService` | Immediately increases stock. |
+| Purchases | IMPLEMENTED | `Purchase`, `PurchaseService`, `PurchaseReturnService` | Receipts increase stock; posted partial/full supplier returns remove available stock at moving-average cost and reverse accounting. |
 | Sales | IMPLEMENTED | `Sale`, `SaleService`, `SalePostingService` | Uses configured channel price, optional frozen inclusive/exclusive tax, decreases stock and posts revenue/output tax/COGS. |
 | Stock transfers | IMPLEMENTED | `StockTransfer`, `StockTransferService` | Draft/submitted/approved/posted/cancelled flow. |
 | Settings | PARTIALLY IMPLEMENTED | settings entities/services | General, discount, inventory, accounting, fiscal periods, POS and centralized document-number settings. |

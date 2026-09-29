@@ -1,5 +1,8 @@
 # AI Work Log
 
+## 2026-09-29 — Posted purchase returns
+Added immutable tenant purchase-return documents, separate numbering and permissions, cumulative original-quantity and current-stock controls, moving-average stock issues and atomic central journal posting. Supplier payable, input tax and purchase discount reverse proportionally; the original-versus-current inventory-cost difference posts to COGS. Added bilingual navigation/screens, regression coverage and an ADR documenting the valuation policy. Migration `20260929155442_AddPurchaseReturns` was applied to `AHMAD/MiniStoreDb`; Release build passed without warnings, 251 focused checks passed and EF reports no pending model changes.
+
 ## 2026-09-29 — Fiscal-period posting control
 Added tenant-owned, non-overlapping fiscal periods with Open, Soft Closed and Closed states, required status-change reasons, actor/time metadata and rowversion concurrency. The central journal gateway now validates every posting date; companies with no periods retain legacy behavior, while configured companies may post only inside Open periods. Added an Admin-only bilingual Settings screen, tenant-safe persistence and ADR. Migration `20260929153537_AddFiscalPeriods` was applied to `AHMAD/MiniStoreDb`; Release build passed without warnings, 245 focused checks passed and EF reports no pending model changes.
 
