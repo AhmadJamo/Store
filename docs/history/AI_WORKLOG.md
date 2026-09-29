@@ -1,5 +1,8 @@
 # AI Work Log
 
+## 2026-09-29 — Central journal-posting gateway
+Added `JournalPostingService` as the shared Application-layer gateway for source duplicate detection, central journal-number generation, journal construction, domain balance validation, posting and persistence. Refactored purchase posting, sale posting and sales-return reversal to submit their resolved lines through the gateway inside their existing Serializable UnitOfWork transactions. This creates one insertion point for fiscal-period, approval and generalized reversal controls without changing the accounting calculations owned by each feature. No schema migration was required.
+
 ## 2026-09-29 — Immutable posted sales returns
 Added tenant-isolated SalesReturn/SalesReturnItem documents, a separate centralized sequence, View/Create permissions, repository/service/controller and bilingual Index/Create/Details screens. A return requires a posted original sale, caps cumulative partial returns inside the Serializable transaction, freezes proportional revenue/discount/output-tax/refund amounts and posts the reversal journal immediately. Direct stocked items return to the original warehouse at historical sale cost with COGS reversal; prepared-to-order returns do not recreate consumed ingredients. Migration `20260929151051_AddSalesReturns` adds the protected schema and was applied to `AHMAD/MiniStoreDb`. Release build passed without warnings, 240 focused checks passed and EF reports no pending model changes.
 

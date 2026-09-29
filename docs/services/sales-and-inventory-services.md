@@ -5,6 +5,8 @@
 
 `RecipeService` creates a new immutable recipe version, deactivates the old version and validates ingredient/unit compatibility. SaleService reads active recipes and writes aggregated RecipeConsumption movements. StockTransactionService additionally permits a reason-required KitchenVariance movement; it may cross zero only when the ingredient explicitly enables controlled negative recipe consumption.
 
+`JournalPostingService` is the shared posting gateway for purchases, sales and sales returns. It accepts resolved journal lines from the feature workflow and centrally performs source duplicate detection, journal-number generation, balance/post validation and persistence inside the caller's UnitOfWork transaction. Fiscal-period and approval controls will attach here.
+
 `SalePostingService` creates one source-unique posted journal for a sale. It resolves payment settlement, branch/default revenue, net invoice discount, frozen output tax, COGS and warehouse inventory accounts, generates the central journal number inside UnitOfWork and rejects missing mappings or duplicate posting. Inclusive prices are split into net revenue/output tax without increasing settlement; exclusive tax is added to settlement.
 
 Purchase receipt costing excludes recoverable tax when a selected tax rate is price-inclusive. `PurchasePostingService` also reads receipt movements by source reference and settles provisional negative-stock cost variance between COGS and the affected warehouse inventory account.

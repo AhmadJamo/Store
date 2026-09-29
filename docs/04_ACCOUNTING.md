@@ -21,6 +21,7 @@ Warehouses now have optional BranchId and InventoryAccountId fields. Completing 
 | Stock transfers / reversal by cancellation | IMPLEMENTED | `StockTransferService`. |
 | Product prices | IMPLEMENTED | purchase/wholesale/sale price fields. |
 | Chart of accounts and balanced journal-entry foundation | IMPLEMENTED | `Account`, `JournalEntry`, `JournalEntryLine` and administration UI. |
+| Central journal-posting gateway | IMPLEMENTED | `JournalPostingService` owns source idempotency, journal numbering, construction, balance validation, posting and persistence for purchase, sale and sales-return workflows. |
 | Customers and suppliers account linkage | IMPLEMENTED | Customer account is required; supplier payable account is optional. |
 | Tax account mapping | IMPLEMENTED | `TaxRate` stores required input/output tax account IDs. |
 | Discount/revenue/COGS account mapping | IMPLEMENTED | Singleton settings configure company defaults; each branch can override sales revenue with a required subaccount. |
@@ -36,6 +37,8 @@ Warehouses now have optional BranchId and InventoryAccountId fields. Completing 
 
 ## Existing rules
 Sales select the product `SalePrice` for retail POS or `WholesalePrice` for wholesale; client-submitted line price is ignored by `SaleService`. Normal stock removal cannot exceed balance. Prepared-product recipe use and kitchen variance may cross zero only for an ingredient explicitly configured for controlled negative consumption, and the negative row remains visible for reconciliation. A transfer creator cannot approve their own submitted transfer. Discount settings can disable types/limits and an override permission is checked.
+
+Feature services calculate business amounts and resolve accounts, then send prepared lines through the central posting gateway inside their existing Serializable UnitOfWork. The gateway rejects duplicate sources, generates the journal number, invokes domain balancing/posting and persists the entry.
 
 ## Risks and controls missing
 - Sales post explicitly and once to a balanced revenue/output-tax/settlement/discount and COGS/inventory journal. The current tax model supports one optional frozen tax rate per invoice; mixed-rate product taxes remain future scope.

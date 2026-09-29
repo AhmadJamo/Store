@@ -3,10 +3,10 @@ using MiniStore.Domain.Interfaces;
 
 namespace MiniStore.Application.Services;
 
-public class PurchasePostingService(IPurchaseRepository purchaseRepository, ISupplierRepository supplierRepository, IWarehouseRepository warehouseRepository, ITaxRateRepository taxRateRepository, IAccountingSettingsRepository accountingSettingsRepository, IJournalEntryRepository journalEntryRepository, IStockTransactionRepository stockTransactionRepository, IUnitOfWork unitOfWork, DocumentNumberService documentNumbers)
+public class PurchasePostingService(IPurchaseRepository purchaseRepository, ISupplierRepository supplierRepository, IWarehouseRepository warehouseRepository, ITaxRateRepository taxRateRepository, IAccountingSettingsRepository accountingSettingsRepository, JournalPostingService journalPosting, IStockTransactionRepository stockTransactionRepository, IUnitOfWork unitOfWork)
 {
     private const string PurchaseSourceType = "Purchase";
-    public Task<bool> IsPostedAsync(string invoiceNumber) => journalEntryRepository.ExistsForSourceAsync(PurchaseSourceType, invoiceNumber);
+    public Task<bool> IsPostedAsync(string invoiceNumber) => journalPosting.IsPostedAsync(PurchaseSourceType, invoiceNumber);
 
     public async Task PostAsync(int purchaseId)
     {
@@ -88,16 +88,13 @@ public class PurchasePostingService(IPurchaseRepository purchaseRepository, ISup
         lines.Add(new JournalEntryLine(supplier.AccountId.Value, 0, payableTotal, null, null, $"Supplier payable for {purchase.InvoiceNumber}"));
         await unitOfWork.ExecuteInTransactionAsync(async () =>
         {
-            if (await journalEntryRepository.ExistsForSourceAsync(PurchaseSourceType, purchase.InvoiceNumber)) throw new InvalidOperationException("This purchase has already been posted.");
-            var entry = new JournalEntry(
-                await documentNumbers.GenerateAsync(DocumentNumberType.JournalEntry, purchase.Date),
+            await journalPosting.PostAsync(new JournalPostingRequest(
                 purchase.Date,
                 $"Purchase invoice {purchase.InvoiceNumber}",
                 PurchaseSourceType,
-                purchase.InvoiceNumber);
-            foreach (var line in lines) entry.AddLine(line);
-            entry.Post();
-            await journalEntryRepository.AddAsync(entry);
+                purchase.InvoiceNumber,
+                lines,
+                "This purchase has already been posted."));
         });
     }
 

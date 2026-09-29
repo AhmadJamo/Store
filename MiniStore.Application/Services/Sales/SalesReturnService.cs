@@ -14,7 +14,7 @@ public sealed class SalesReturnService(
     IPaymentMethodRepository paymentMethodRepository,
     IAccountingSettingsRepository accountingSettingsRepository,
     IBranchRepository branchRepository,
-    IJournalEntryRepository journalEntryRepository,
+    JournalPostingService journalPosting,
     DocumentNumberService documentNumbers,
     IUnitOfWork unitOfWork)
 {
@@ -55,7 +55,7 @@ public sealed class SalesReturnService(
 
         var sale = await saleRepository.GetByIdAsync(dto.SaleId)
             ?? throw new InvalidOperationException("Sale not found.");
-        if (!await journalEntryRepository.ExistsForSourceAsync(SaleSourceType, sale.InvoiceNumber))
+        if (!await journalPosting.IsPostedAsync(SaleSourceType, sale.InvoiceNumber))
             throw new InvalidOperationException("Post the original sale before creating a return.");
         if (dto.Date.Date < sale.Date.Date)
             throw new ArgumentException("Return date cannot be earlier than the sale date.");
@@ -147,32 +147,34 @@ public sealed class SalesReturnService(
             if (created.RestockedCostAmount > 0 && !settings.CostOfSalesAccountId.HasValue)
                 throw new InvalidOperationException("Configure a cost of sales account before restocking a return.");
 
-            var entry = new JournalEntry(
-                await documentNumbers.GenerateAsync(DocumentNumberType.JournalEntry, dto.Date),
-                dto.Date,
-                $"Sales return {created.ReturnNumber} for {sale.InvoiceNumber}",
-                ReturnSourceType,
-                created.ReturnNumber);
-            entry.AddLine(new JournalEntryLine(revenueAccountId, created.RevenueAmount, 0,
-                warehouse.BranchId, warehouse.Id, $"Revenue reversal for {created.ReturnNumber}"));
+            var lines = new List<JournalEntryLine>
+            {
+                new(revenueAccountId, created.RevenueAmount, 0,
+                    warehouse.BranchId, warehouse.Id, $"Revenue reversal for {created.ReturnNumber}")
+            };
             if (created.TaxAmount > 0)
-                entry.AddLine(new JournalEntryLine(sale.TaxOutputAccountId!.Value, created.TaxAmount, 0,
+                lines.Add(new JournalEntryLine(sale.TaxOutputAccountId!.Value, created.TaxAmount, 0,
                     warehouse.BranchId, warehouse.Id, $"Output tax reversal for {created.ReturnNumber}"));
-            entry.AddLine(new JournalEntryLine(paymentMethod.AccountId, 0, created.RefundAmount,
+            lines.Add(new JournalEntryLine(paymentMethod.AccountId, 0, created.RefundAmount,
                 warehouse.BranchId, warehouse.Id, $"Refund for {created.ReturnNumber}"));
             if (created.DiscountAmount > 0)
-                entry.AddLine(new JournalEntryLine(settings.SalesDiscountAccountId!.Value, 0, created.DiscountAmount,
+                lines.Add(new JournalEntryLine(settings.SalesDiscountAccountId!.Value, 0, created.DiscountAmount,
                     warehouse.BranchId, warehouse.Id, $"Sales discount reversal for {created.ReturnNumber}"));
             if (created.RestockedCostAmount > 0)
             {
-                entry.AddLine(new JournalEntryLine(warehouse.InventoryAccountId.Value, created.RestockedCostAmount, 0,
+                lines.Add(new JournalEntryLine(warehouse.InventoryAccountId.Value, created.RestockedCostAmount, 0,
                     warehouse.BranchId, warehouse.Id, $"Returned inventory for {created.ReturnNumber}"));
-                entry.AddLine(new JournalEntryLine(settings.CostOfSalesAccountId!.Value, 0, created.RestockedCostAmount,
+                lines.Add(new JournalEntryLine(settings.CostOfSalesAccountId!.Value, 0, created.RestockedCostAmount,
                     warehouse.BranchId, warehouse.Id, $"COGS reversal for {created.ReturnNumber}"));
             }
-            entry.Post();
             await salesReturnRepository.AddAsync(created);
-            await journalEntryRepository.AddAsync(entry);
+            await journalPosting.PostAsync(new JournalPostingRequest(
+                dto.Date,
+                $"Sales return {created.ReturnNumber} for {sale.InvoiceNumber}",
+                ReturnSourceType,
+                created.ReturnNumber,
+                lines,
+                "This sales return has already been posted."));
         });
 
         return created!.Id;

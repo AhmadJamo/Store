@@ -9,14 +9,13 @@ public sealed class SalePostingService(
     IBranchRepository branchRepository,
     IPaymentMethodRepository paymentMethodRepository,
     IAccountingSettingsRepository accountingSettingsRepository,
-    IJournalEntryRepository journalEntryRepository,
-    IUnitOfWork unitOfWork,
-    DocumentNumberService documentNumbers)
+    JournalPostingService journalPosting,
+    IUnitOfWork unitOfWork)
 {
     private const string SaleSourceType = "Sale";
 
     public Task<bool> IsPostedAsync(string invoiceNumber) =>
-        journalEntryRepository.ExistsForSourceAsync(SaleSourceType, invoiceNumber);
+        journalPosting.IsPostedAsync(SaleSourceType, invoiceNumber);
 
     public async Task PostAsync(int saleId)
     {
@@ -60,50 +59,47 @@ public sealed class SalePostingService(
 
         await unitOfWork.ExecuteInTransactionAsync(async () =>
         {
-            if (await journalEntryRepository.ExistsForSourceAsync(SaleSourceType, sale.InvoiceNumber))
-                throw new InvalidOperationException("This sale has already been posted.");
-
-            var entry = new JournalEntry(
-                await documentNumbers.GenerateAsync(DocumentNumberType.JournalEntry, sale.Date),
-                sale.Date,
-                $"Sale invoice {sale.InvoiceNumber}",
-                SaleSourceType,
-                sale.InvoiceNumber);
+            var lines = new List<JournalEntryLine>();
 
             if (settlement > 0)
-                entry.AddLine(new JournalEntryLine(
+                lines.Add(new JournalEntryLine(
                     paymentMethod.AccountId, settlement, 0,
                     warehouse.BranchId, warehouse.Id,
                     $"Settlement for {sale.InvoiceNumber}"));
             if (invoiceDiscount > 0)
-                entry.AddLine(new JournalEntryLine(
+                lines.Add(new JournalEntryLine(
                     settings.SalesDiscountAccountId!.Value, invoiceDiscount, 0,
                     warehouse.BranchId, warehouse.Id,
                     $"Sales discount on {sale.InvoiceNumber}"));
-            entry.AddLine(new JournalEntryLine(
+            lines.Add(new JournalEntryLine(
                 revenueAccountId, 0, revenue,
                 warehouse.BranchId, warehouse.Id,
                 $"Revenue from {sale.InvoiceNumber}"));
             if (outputTax > 0)
-                entry.AddLine(new JournalEntryLine(
+                lines.Add(new JournalEntryLine(
                     sale.TaxOutputAccountId!.Value, 0, outputTax,
                     warehouse.BranchId, warehouse.Id,
                     $"Output tax on {sale.InvoiceNumber}"));
 
             if (cogs > 0)
             {
-                entry.AddLine(new JournalEntryLine(
+                lines.Add(new JournalEntryLine(
                     settings.CostOfSalesAccountId!.Value, cogs, 0,
                     warehouse.BranchId, warehouse.Id,
                     $"Cost of sales for {sale.InvoiceNumber}"));
-                entry.AddLine(new JournalEntryLine(
+                lines.Add(new JournalEntryLine(
                     warehouse.InventoryAccountId.Value, 0, cogs,
                     warehouse.BranchId, warehouse.Id,
                     $"Inventory issued for {sale.InvoiceNumber}"));
             }
 
-            entry.Post();
-            await journalEntryRepository.AddAsync(entry);
+            await journalPosting.PostAsync(new JournalPostingRequest(
+                sale.Date,
+                $"Sale invoice {sale.InvoiceNumber}",
+                SaleSourceType,
+                sale.InvoiceNumber,
+                lines,
+                "This sale has already been posted."));
         });
     }
 
