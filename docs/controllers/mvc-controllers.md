@@ -13,7 +13,7 @@
 | Recipes | Index/Edit | Products.View/Edit; Application service creates immutable versions and validates tenant products and compatible units. |
 | ProductStocks | Index/Create/Edit/Delete | product-stock permissions/service; delete service always refuses. |
 | StockTransactions | Index/Create | movement permissions/service. |
-| WarehouseLocations / UnassignedStock | location search/create and putaway | warehouse/product-stock permissions and location services. |
+| WarehouseLocations / UnassignedStock | hierarchical location search/create/edit and putaway | warehouse/product-stock permissions and location services. |
 | LocationMovements | Index/Move | LocationMovements.View/Create and LocationMovementService. |
 | InventoryReconciliation | Index | InventoryReconciliation.View; read-only Application service over tenant-filtered SQL aggregate queries. |
 | Purchases | Index/Create/Details | Purchases.View/Create; PurchaseService and master repositories for dropdowns. |

@@ -372,7 +372,6 @@
   <data name="Read-only comparison of warehouse balances, location allocations and latest movement snapshots." xml:space="preserve"><value>مقارنة للقراءة فقط بين أرصدة المستودعات وتوزيعات المواقع وآخر لقطات الحركات.</value></data>
   <data name="Exceptions" xml:space="preserve"><value>الاستثناءات</value></data>
   <data name="Displayed rows" xml:space="preserve"><value>الصفوف المعروضة</value></data>
-  <data name="All warehouses" xml:space="preserve"><value>كل المستودعات</value></data>
   <data name="Product search" xml:space="preserve"><value>البحث عن منتج</value></data>
   <data name="Product name, code or barcode" xml:space="preserve"><value>اسم المنتج أو الكود أو الباركود</value></data>
   <data name="Page size" xml:space="preserve"><value>حجم الصفحة</value></data>
@@ -461,4 +460,37 @@
   <data name="Selected dimension unit was not found." xml:space="preserve"><value>لم يتم العثور على وحدة الأبعاد المحددة.</value></data>
   <data name="Selected dimension unit is inactive." xml:space="preserve"><value>وحدة الأبعاد المحددة غير فعالة.</value></data>
   <data name="Selected dimension unit has an incompatible dimension." xml:space="preserve"><value>وحدة الأبعاد المحددة من نوع قياس غير متوافق.</value></data>
+  <data name="Search products, barcodes, names, racks, levels and bins." xml:space="preserve"><value>ابحث في المنتجات والباركود والأسماء والرفوف والمستويات والخانات.</value></data>
+  <data name="All warehouses" xml:space="preserve"><value>كل المستودعات</value></data>
+  <data name="Product name, barcode or location code" xml:space="preserve"><value>اسم المنتج أو الباركود أو رمز الموقع</value></data>
+  <data name="Storage locations" xml:space="preserve"><value>مواقع التخزين</value></data>
+  <data name="Parent location" xml:space="preserve"><value>الموقع الأب</value></data>
+  <data name="Capabilities" xml:space="preserve"><value>الإمكانات التشغيلية</value></data>
+  <data name="Root" xml:space="preserve"><value>جذر</value></data>
+  <data name="Receive" xml:space="preserve"><value>استلام</value></data>
+  <data name="Pick" xml:space="preserve"><value>التقاط</value></data>
+  <data name="Reserve" xml:space="preserve"><value>حجز</value></data>
+  <data name="Ship" xml:space="preserve"><value>شحن</value></data>
+  <data name="Inventory count" xml:space="preserve"><value>جرد</value></data>
+  <data name="No locations found." xml:space="preserve"><value>لم يتم العثور على مواقع.</value></data>
+  <data name="Location name" xml:space="preserve"><value>اسم الموقع</value></data>
+  <data name="Location barcode" xml:space="preserve"><value>باركود الموقع</value></data>
+  <data name="Root location" xml:space="preserve"><value>موقع جذري</value></data>
+  <data name="Only a location from the selected warehouse can be used as parent." xml:space="preserve"><value>يمكن اختيار موقع أب من المستودع المحدد فقط.</value></data>
+  <data name="Sequence" xml:space="preserve"><value>الترتيب</value></data>
+  <data name="Operational capabilities" xml:space="preserve"><value>الإمكانات التشغيلية</value></data>
+  <data name="Receivable" xml:space="preserve"><value>يسمح بالاستلام</value></data>
+  <data name="Pickable" xml:space="preserve"><value>يسمح بالالتقاط</value></data>
+  <data name="Reservable" xml:space="preserve"><value>يسمح بالحجز</value></data>
+  <data name="Shippable" xml:space="preserve"><value>يسمح بالشحن</value></data>
+  <data name="Countable" xml:space="preserve"><value>يسمح بالجرد</value></data>
+  <data name="Edit storage location" xml:space="preserve"><value>تعديل موقع التخزين</value></data>
+  <data name="Storage location updated successfully." xml:space="preserve"><value>تم تحديث موقع التخزين بنجاح.</value></data>
+  <data name="Location barcode already exists in this warehouse." xml:space="preserve"><value>باركود الموقع مستخدم مسبقاً في هذا المستودع.</value></data>
+  <data name="Storage location not found." xml:space="preserve"><value>لم يتم العثور على موقع التخزين.</value></data>
+  <data name="A location cannot be its own parent." xml:space="preserve"><value>لا يمكن أن يكون الموقع أباً لنفسه.</value></data>
+  <data name="Parent location must belong to the same warehouse." xml:space="preserve"><value>يجب أن ينتمي الموقع الأب إلى المستودع نفسه.</value></data>
+  <data name="A location cannot be moved below one of its descendants." xml:space="preserve"><value>لا يمكن نقل الموقع تحت أحد المواقع التابعة له.</value></data>
+  <data name="Location name is required." xml:space="preserve"><value>اسم الموقع مطلوب.</value></data>
+  <data name="Location sequence cannot be negative." xml:space="preserve"><value>لا يمكن أن يكون ترتيب الموقع سالباً.</value></data>
 </root>

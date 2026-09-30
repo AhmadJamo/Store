@@ -1,8 +1,9 @@
 @model MiniStore.Application.DTOs.Warehouses.WarehouseInventorySearchDto
 @using MiniStore.Domain.Entities
+@inject Microsoft.Extensions.Localization.IStringLocalizer<MiniStore.Web.SharedResource> Localizer
 
 @{
-    ViewData["Title"] = "Warehouse Locations";
+    ViewData["Title"] = Localizer["Warehouse Locations"];
     var warehouses = ViewBag.Warehouses as List<Warehouse> ?? [];
     int? selectedWarehouseId = ViewBag.WarehouseId;
     string? query = ViewBag.Query;
@@ -11,18 +12,18 @@
 <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center">
         <div>
-            <h2>Warehouse Locations</h2>
-            <p class="text-muted">Search products, barcodes, racks, levels and bins.</p>
+            <h2>@Localizer["Warehouse Locations"]</h2>
+            <p class="text-muted">@Localizer["Search products, barcodes, names, racks, levels and bins."]</p>
         </div>
-        <a asp-action="Create" class="btn btn-primary">Add location</a>
+        <a asp-action="Create" class="btn btn-primary">@Localizer["Add location"]</a>
     </div>
 
     <form method="get" class="card card-body mb-4">
         <div class="row g-2">
             <div class="col-md-4">
-                <label for="warehouseId" class="form-label">Warehouse</label>
+                <label for="warehouseId" class="form-label">@Localizer["Warehouse"]</label>
                 <select id="warehouseId" name="warehouseId" class="form-select">
-                    <option value="">All warehouses</option>
+                    <option value="">@Localizer["All warehouses"]</option>
                     @foreach (var warehouse in warehouses)
                     {
                         <option value="@warehouse.Id"
@@ -34,26 +35,28 @@
             </div>
 
             <div class="col-md-6">
-                <label for="query" class="form-label">Search</label>
+                <label for="query" class="form-label">@Localizer["Search"]</label>
                 <input id="query"
                        name="query"
                        value="@query"
                        class="form-control"
-                       placeholder="Product name, barcode or location code" />
+                       placeholder="@Localizer["Product name, barcode or location code"]" />
             </div>
 
             <div class="col-md-2 d-flex align-items-end">
-                <button class="btn btn-outline-primary w-100">Search</button>
+                <button class="btn btn-outline-primary w-100">@Localizer["Search"]</button>
             </div>
         </div>
     </form>
 
-    <h4>Storage locations</h4>
+    <h4>@Localizer["Storage locations"]</h4>
     <div class="table-responsive">
         <table class="table table-striped">
             <thead>
                 <tr>
-                    <th>Code</th>
+                    <th>@Localizer["Code"]</th>
+                    <th>@Localizer["Name"]</th>
+                    <th>@Localizer["Parent location"]</th>
                     <th>Zone</th>
                     <th>Aisle</th>
                     <th>Rack</th>
@@ -61,7 +64,8 @@
                     <th>Bin</th>
                     <th>Type</th>
                     <th>Status</th>
-                    <th>Capacity</th>
+                    <th>@Localizer["Capabilities"]</th>
+                    <th>@Localizer["Actions"]</th>
                 </tr>
             </thead>
             <tbody>
@@ -69,6 +73,8 @@
                 {
                     <tr>
                         <td><strong>@location.Code</strong></td>
+                        <td>@location.Name</td>
+                        <td>@(Model.Locations.FirstOrDefault(x => x.Id == location.ParentLocationId)?.Name ?? Localizer["Root"])</td>
                         <td>@location.Zone</td>
                         <td>@location.Aisle</td>
                         <td>@location.Rack</td>
@@ -76,14 +82,21 @@
                         <td>@location.Bin</td>
                         <td>@location.Type</td>
                         <td>@location.Status</td>
-                        <td>@location.MaximumQuantity</td>
+                        <td>
+                            @if (location.IsReceivable) { <span class="badge bg-info">@Localizer["Receive"]</span> }
+                            @if (location.IsPickable) { <span class="badge bg-primary">@Localizer["Pick"]</span> }
+                            @if (location.IsReservable) { <span class="badge bg-secondary">@Localizer["Reserve"]</span> }
+                            @if (location.IsShippable) { <span class="badge bg-success">@Localizer["Ship"]</span> }
+                            @if (location.IsCountable) { <span class="badge bg-dark">@Localizer["Inventory count"]</span> }
+                        </td>
+                        <td><a asp-action="Edit" asp-route-id="@location.Id" class="btn btn-sm btn-outline-primary">@Localizer["Edit"]</a></td>
                     </tr>
                 }
 
                 @if (Model.Locations.Count == 0)
                 {
                     <tr>
-                        <td colspan="9" class="text-center text-muted">No locations found.</td>
+                        <td colspan="12" class="text-center text-muted">@Localizer["No locations found."]</td>
                     </tr>
                 }
             </tbody>

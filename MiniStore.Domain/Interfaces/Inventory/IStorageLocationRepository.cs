@@ -7,6 +7,8 @@ public interface IStorageLocationRepository
     Task<List<StorageLocation>> SearchAsync(int? warehouseId, string? query);
     Task<StorageLocation?> GetByIdAsync(int id);
     Task<bool> CodeExistsAsync(int warehouseId, string code);
+    Task<bool> BarcodeExistsAsync(int warehouseId, string barcode, int? excludedId = null);
+    Task<List<StorageLocation>> GetWarehouseLocationsAsync(int warehouseId);
     Task AddAsync(StorageLocation location);
     Task SaveChangesAsync();
 }

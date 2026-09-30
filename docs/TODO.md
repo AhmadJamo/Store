@@ -28,10 +28,11 @@ The ordered Arabic execution plan, workflow, business rules and rolling suggesti
 - Added immutable partial/full purchase returns with cumulative and available-stock controls, moving-average issues, proportional supplier/tax/discount reversal and COGS cost-variance posting.
 - Completed the repository-wide WMS gap analysis, target authority model, safe migration strategy, ADR, phased vertical-slice roadmap and file change map without changing runtime inventory code.
 - Added WMS-000 read-only bilingual inventory reconciliation, dedicated permission/navigation, structured movement identity/cutover contract and a disposable two-tenant SQL fixture for query translation and concurrent last-unit protection.
-- Implemented WMS-005 product categories, Mass/Length logistics metadata, handling requirements, tracking-policy guard, catalogue filters and additive migration; development database application/UI smoke remains.
+- Implemented WMS-005 product categories, Mass/Length logistics metadata, handling requirements, tracking-policy guard, catalogue filters and additive migration; the migration is applied to the development database.
+- Implemented WMS-010 hierarchical location metadata, barcode, sequence, operational capabilities, edit workflow and cycle/same-warehouse validation. Its additive migration is applied to `AHMAD/MiniStoreDb`; authenticated UI smoke remains.
 
 ## In Progress
-- WMS is the active delivery track until its planned inventory/warehouse phases are complete. Next: apply/smoke-test WMS-005, then begin WMS-010 hierarchical locations; see `WMS_EVOLUTION_PLAN.md`.
+- WMS is the active delivery track until its planned inventory/warehouse phases are complete. Next: smoke-test WMS-010, then proceed to WMS-015; see `WMS_EVOLUTION_PLAN.md`.
 - Run an authenticated HTTP/SQL cafe recipe sale and reconciliation journey. Batch production, actual yields and negative-cost settlement remain follow-up work.
 - Add per-terminal product assortment UI/enforcement and per-user branch/POS data scope.
 - Build the central preview/validation/template/audit engine for Excel and CSV import/export, then onboard modules incrementally.

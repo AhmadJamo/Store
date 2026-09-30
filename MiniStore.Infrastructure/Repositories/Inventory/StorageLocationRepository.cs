@@ -27,6 +27,8 @@ public class StorageLocationRepository(AppDbContext context) : IStorageLocationR
             var term = query.Trim();
             locations = locations.Where(location =>
                 location.Code.Contains(term) ||
+                location.Name.Contains(term) ||
+                (location.Barcode != null && location.Barcode.Contains(term)) ||
                 (location.Zone != null && location.Zone.Contains(term)) ||
                 (location.Aisle != null && location.Aisle.Contains(term)) ||
                 (location.Rack != null && location.Rack.Contains(term)) ||
@@ -36,6 +38,24 @@ public class StorageLocationRepository(AppDbContext context) : IStorageLocationR
 
         return locations
             .OrderBy(location => location.WarehouseId)
+            .ThenBy(location => location.Sequence)
+            .ThenBy(location => location.Code)
+            .ToListAsync();
+    }
+
+    public Task<bool> BarcodeExistsAsync(int warehouseId, string barcode, int? excludedId = null)
+    {
+        return context.StorageLocations.AnyAsync(location =>
+            location.WarehouseId == warehouseId &&
+            location.Barcode == barcode &&
+            (!excludedId.HasValue || location.Id != excludedId.Value));
+    }
+
+    public Task<List<StorageLocation>> GetWarehouseLocationsAsync(int warehouseId)
+    {
+        return context.StorageLocations
+            .Where(location => location.WarehouseId == warehouseId)
+            .OrderBy(location => location.Sequence)
             .ThenBy(location => location.Code)
             .ToListAsync();
     }

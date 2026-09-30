@@ -21,7 +21,7 @@ Schema source is `AppDbContext`, configurations and migrations. Identity's stand
 - **BranchWarehouseAccesses:** composite BranchId/WarehouseId key, priority, branch POS default and POS/purchase/transfer/replenishment permissions.
 - **PosTerminalWarehouses:** composite PosTerminalId/WarehouseId terminal allow-list with priority; each terminal retains DefaultWarehouseId.
 - **PosTerminalSettings:** one-to-one shared-key settings for each POS terminal; stores experience profile, product layout, theme, cart position, accent/header, grid density, operator visibility/touch preferences and order workflow flags/defaults with RowVersion concurrency.
-- **StorageLocations:** WarehouseId, unique Code within warehouse, Zone?, Aisle?, Rack?, Level?, Bin?, Type, Status and MaximumQuantity?.
+- **StorageLocations:** WarehouseId, ParentLocationId?, warehouse-unique Code and optional Barcode, Name, Sequence, Zone?/Aisle?/Rack?/Level?/Bin?, Type, Status, MaximumQuantity? and receive/pick/reserve/ship/count capability flags. The self-reference is tenant-safe and restrictive on delete.
 - **Suppliers:** Id, Name, Phone?, Address?, AccountId?.
 - **Customers:** Id, Name, Phone?, Address?, AccountId.
 - **TaxRates:** Name, Rate, OutputAccountId, InputAccountId, IsPriceInclusive.

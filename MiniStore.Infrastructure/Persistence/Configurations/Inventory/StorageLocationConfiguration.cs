@@ -14,6 +14,12 @@ public class StorageLocationConfiguration : IEntityTypeConfiguration<StorageLoca
             .HasMaxLength(80)
             .IsRequired();
 
+        builder.Property(location => location.Name)
+            .HasMaxLength(120)
+            .IsRequired();
+
+        builder.Property(location => location.Barcode).HasMaxLength(100);
+
         builder.Property(location => location.Zone).HasMaxLength(50);
         builder.Property(location => location.Aisle).HasMaxLength(50);
         builder.Property(location => location.Rack).HasMaxLength(50);
@@ -30,9 +36,20 @@ public class StorageLocationConfiguration : IEntityTypeConfiguration<StorageLoca
             })
             .IsUnique();
 
+        builder.HasIndex(location => new { location.WarehouseId, location.Barcode })
+            .IsUnique()
+            .HasFilter("[Barcode] IS NOT NULL");
+
+        builder.HasIndex(location => new { location.WarehouseId, location.ParentLocationId, location.Sequence });
+
         builder.HasOne<Warehouse>()
             .WithMany()
             .HasForeignKey(location => location.WarehouseId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasOne<StorageLocation>()
+            .WithMany()
+            .HasForeignKey(location => location.ParentLocationId)
             .OnDelete(DeleteBehavior.Restrict);
     }
 }

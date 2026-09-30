@@ -65,18 +65,126 @@ public class StorageLocationService(
                 "Location code already exists in this warehouse.");
         }
 
+        var normalizedBarcode = NormalizeBarcode(dto.Barcode);
+        if (normalizedBarcode is not null &&
+            await locationRepository.BarcodeExistsAsync(dto.WarehouseId, normalizedBarcode))
+        {
+            throw new InvalidOperationException("Location barcode already exists in this warehouse.");
+        }
+
+        await ValidateParentAsync(dto.WarehouseId, dto.ParentLocationId, null);
+
         var location = new StorageLocation(
             dto.WarehouseId,
             dto.Code,
+            dto.Name,
+            normalizedBarcode,
+            dto.ParentLocationId,
+            dto.Sequence,
             dto.Zone,
             dto.Aisle,
             dto.Rack,
             dto.Level,
             dto.Bin,
             dto.Type,
-            dto.MaximumQuantity);
+            dto.MaximumQuantity,
+            dto.IsReceivable,
+            dto.IsPickable,
+            dto.IsReservable,
+            dto.IsShippable,
+            dto.IsCountable);
 
         await locationRepository.AddAsync(location);
         await locationRepository.SaveChangesAsync();
+    }
+
+    public async Task<EditStorageLocationDto?> GetForEditAsync(int id)
+    {
+        var location = await locationRepository.GetByIdAsync(id);
+        return location is null ? null : new EditStorageLocationDto
+        {
+            Id = location.Id,
+            WarehouseId = location.WarehouseId,
+            Code = location.Code,
+            Name = location.Name,
+            Barcode = location.Barcode,
+            ParentLocationId = location.ParentLocationId,
+            Sequence = location.Sequence,
+            IsReceivable = location.IsReceivable,
+            IsPickable = location.IsPickable,
+            IsReservable = location.IsReservable,
+            IsShippable = location.IsShippable,
+            IsCountable = location.IsCountable
+        };
+    }
+
+    public async Task UpdateAsync(EditStorageLocationDto dto)
+    {
+        var location = await locationRepository.GetByIdAsync(dto.Id)
+            ?? throw new InvalidOperationException("Storage location not found.");
+
+        var normalizedBarcode = NormalizeBarcode(dto.Barcode);
+        if (normalizedBarcode is not null &&
+            await locationRepository.BarcodeExistsAsync(location.WarehouseId, normalizedBarcode, location.Id))
+        {
+            throw new InvalidOperationException("Location barcode already exists in this warehouse.");
+        }
+
+        await ValidateParentAsync(location.WarehouseId, dto.ParentLocationId, location.Id);
+        location.UpdateHierarchyAndCapabilities(
+            dto.Name,
+            normalizedBarcode,
+            dto.ParentLocationId,
+            dto.Sequence,
+            dto.IsReceivable,
+            dto.IsPickable,
+            dto.IsReservable,
+            dto.IsShippable,
+            dto.IsCountable);
+        await locationRepository.SaveChangesAsync();
+    }
+
+    public Task<List<StorageLocation>> GetParentOptionsAsync(int warehouseId)
+    {
+        return locationRepository.GetWarehouseLocationsAsync(warehouseId);
+    }
+
+    private async Task ValidateParentAsync(int warehouseId, int? parentId, int? locationId)
+    {
+        if (!parentId.HasValue)
+        {
+            return;
+        }
+
+        if (parentId == locationId)
+        {
+            throw new InvalidOperationException("A location cannot be its own parent.");
+        }
+
+        var allLocations = await locationRepository.GetWarehouseLocationsAsync(warehouseId);
+        var parent = allLocations.FirstOrDefault(item => item.Id == parentId.Value)
+            ?? throw new InvalidOperationException("Parent location must belong to the same warehouse.");
+
+        if (!locationId.HasValue)
+        {
+            return;
+        }
+
+        var currentId = parent.Id;
+        var byId = allLocations.ToDictionary(item => item.Id);
+        while (byId.TryGetValue(currentId, out var current) && current.ParentLocationId.HasValue)
+        {
+            if (current.ParentLocationId.Value == locationId.Value)
+            {
+                throw new InvalidOperationException("A location cannot be moved below one of its descendants.");
+            }
+
+            currentId = current.ParentLocationId.Value;
+        }
+    }
+
+    private static string? NormalizeBarcode(string? barcode)
+    {
+        return string.IsNullOrWhiteSpace(barcode) ? null : barcode.Trim().ToUpperInvariant();
     }
 }

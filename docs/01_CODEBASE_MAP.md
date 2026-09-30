@@ -47,7 +47,7 @@
 | `Services/Catalog/RecipeService.cs` | lists and creates immutable active recipe versions with compatible ingredient units | Recipes controller/views and prepared-product sales. |
 | `Services/Catalog/ProductCategoryService.cs` | creates and activates/deactivates tenant product categories used by logistics metadata | ProductCategories controller/view and product forms. |
 | `Services/Settings/MeasurementUnitService.cs` | initializes protected built-ins, manages custom units and performs dimension-safe conversion | Settings/Units plus product and recipe unit selection. |
-| `Services/Inventory/{StorageLocation,UnassignedStock,LocationMovement}Service.cs` | location administration, warehouse search, putaway, internal relocation and history | inventory controllers. |
+| `Services/Inventory/{StorageLocation,UnassignedStock,LocationMovement}Service.cs` | hierarchical location administration and validation, warehouse search, putaway, internal relocation and history | inventory controllers. |
 | `Services/Inventory/InventoryReconciliationService.cs` | classifies warehouse/location/latest-movement differences with fixed precision tolerances and read-only paging | InventoryReconciliation controller/view. |
 | `Services/Settings/InventorySettingsService.cs` | rowversion-protected defaults for new warehouse operating policies | SettingsController inventory screen. |
 | `Services/Settings/InventoryAccessService.cs` | branch warehouse permissions/priorities and POS terminal warehouse policies | Settings InventoryAccess and POS validation. |
@@ -92,6 +92,8 @@ POS experience update (2026-09-14): `PosTerminalSettings`, its Sales repository/
 POS order-context update (2026-09-14): Sale/SaleItem persist order type, service reference, guest count and preparation notes. Terminal settings define allowed/default order types and capture behavior; SaleService validates the submitted context. Migration `AddPosOrderWorkflow` backfills operational preferences from each saved profile.
 
 Warehouse location movement update (2026-09-14): `LocationMovement` and its repository/configuration/service record Putaway and Relocation operations. `LocationMovementsController` and `Views/LocationMovements/Index.cshtml` provide internal movement and searchable history. Migration `AddLocationMovementHistory` creates the audit table and indexes.
+
+Hierarchical location update (2026-09-30): StorageLocation retains its identity and structured labels while adding parent, display name, optional barcode, sequence and receive/pick/reserve/ship/count capabilities. WarehouseLocations now supports create/edit and cycle/same-warehouse validation. Migration `AddHierarchicalStorageLocations` is applied to `AHMAD/MiniStoreDb`.
 | `Repositories/<Feature>/*.cs` | EF implementations grouped by feature | application services. |
 | `Repositories/Catalog/ProductRecipeRepository.cs` | active/versioned recipe persistence with ingredients | RecipeService and SaleService. |
 | `Repositories/Tenancy/TenantMembershipRepository.cs` | active company membership lookup and user list | login, tenant middleware and user administration. |

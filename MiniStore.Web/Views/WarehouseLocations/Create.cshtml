@@ -1,13 +1,15 @@
 @model MiniStore.Application.DTOs.Warehouses.CreateStorageLocationDto
 @using MiniStore.Domain.Entities
+@inject Microsoft.Extensions.Localization.IStringLocalizer<MiniStore.Web.SharedResource> Localizer
 
 @{
-    ViewData["Title"] = "Add Storage Location";
+    ViewData["Title"] = Localizer["Add Storage Location"];
     var warehouses = ViewBag.Warehouses as List<Warehouse> ?? [];
+    var parents = ViewBag.ParentLocations as List<StorageLocation> ?? [];
 }
 
 <div class="container mt-4">
-    <h2>Add Storage Location</h2>
+    <h2>@Localizer["Add Storage Location"]</h2>
     <p class="text-muted">
         Create a scannable warehouse position such as MAIN-DRY-A-R03-L02-B04.
     </p>
@@ -26,6 +28,33 @@
                     }
                 </select>
                 <span asp-validation-for="WarehouseId" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-6">
+                <label asp-for="Name" class="form-label">@Localizer["Location name"]</label>
+                <input asp-for="Name" class="form-control" required maxlength="120" />
+            </div>
+
+            <div class="col-md-6">
+                <label asp-for="Barcode" class="form-label">@Localizer["Location barcode"]</label>
+                <input asp-for="Barcode" class="form-control" maxlength="100" />
+            </div>
+
+            <div class="col-md-6">
+                <label asp-for="ParentLocationId" class="form-label">@Localizer["Parent location"]</label>
+                <select asp-for="ParentLocationId" class="form-select">
+                    <option value="">@Localizer["Root location"]</option>
+                    @foreach (var parent in parents)
+                    {
+                        <option value="@parent.Id" data-warehouse-id="@parent.WarehouseId">@parent.Code — @parent.Name</option>
+                    }
+                </select>
+                <div class="form-text">@Localizer["Only a location from the selected warehouse can be used as parent."]</div>
+            </div>
+
+            <div class="col-md-3">
+                <label asp-for="Sequence" class="form-label">@Localizer["Sequence"]</label>
+                <input asp-for="Sequence" type="number" min="0" class="form-control" />
             </div>
 
             <div class="col-md-6">
@@ -78,6 +107,17 @@
                        step="0.001"
                        class="form-control" />
                 <span asp-validation-for="MaximumQuantity" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="card card-body mt-3">
+            <h5>@Localizer["Operational capabilities"]</h5>
+            <div class="d-flex flex-wrap gap-3">
+                <label><input asp-for="IsReceivable" /> @Localizer["Receivable"]</label>
+                <label><input asp-for="IsPickable" /> @Localizer["Pickable"]</label>
+                <label><input asp-for="IsReservable" /> @Localizer["Reservable"]</label>
+                <label><input asp-for="IsShippable" /> @Localizer["Shippable"]</label>
+                <label><input asp-for="IsCountable" /> @Localizer["Countable"]</label>
             </div>
         </div>
 

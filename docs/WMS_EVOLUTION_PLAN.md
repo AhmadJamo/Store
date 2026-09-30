@@ -500,15 +500,18 @@ Inventory-at-date must derive from immutable posted movements/snapshots, never f
 
 Definition of Done: bilingual Admin report, permission, indexed repository queries, tests, docs and zero unexplained differences before the next phase.
 
-### WMS-005 — Product logistics foundation (implementation complete; development migration pending)
+### WMS-005 — Product logistics foundation (complete; development migration applied)
 
 - [x] Product categories and structured logistics metadata required by warehouse rules.
 - [x] Weight/dimensions/derived volume with explicit managed Mass/Length units and safe nullable defaults.
 - [x] Storage/handling traits and None/Lot/Serial tracking policy, without enabling tracked stock allocation yet.
 - [x] Prevent tracking-policy activation on non-zero stock until the WMS-070 opening-allocation workflow exists.
-- [ ] Apply `20260929220416_AddProductLogisticsFoundation` to the named development database and complete an authenticated UI smoke test.
+- [x] Apply `20260929220416_AddProductLogisticsFoundation` to the named development database.
+- [ ] Complete an authenticated UI smoke test with the next WMS UI verification pass.
 
 ### WMS-010 — Hierarchical locations
+
+Status: implementation and additive migration complete; migration applied to `AHMAD/MiniStoreDb`; authenticated UI smoke remains.
 
 - Parent tree, name, barcode, sequence and capabilities.
 - Tree UI plus cycle/same-warehouse validation.
