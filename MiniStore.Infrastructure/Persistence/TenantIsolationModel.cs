@@ -7,7 +7,8 @@ public static class TenantIsolationModel
 {
     public static IReadOnlySet<Type> TenantOwnedTypes { get; } = new Type[]
     {
-        typeof(Product), typeof(ProductCategory), typeof(ProductRecipe), typeof(RecipeIngredient), typeof(MeasurementUnit),
+        typeof(Product), typeof(ProductCategory), typeof(ProductAttributeDefinition), typeof(ProductAttributeOption),
+        typeof(ProductCategoryAttribute), typeof(ProductRecipe), typeof(RecipeIngredient), typeof(MeasurementUnit),
         typeof(Warehouse), typeof(ProductStock), typeof(StockTransaction),
         typeof(Supplier), typeof(Purchase), typeof(PurchaseItem), typeof(PurchaseReturn), typeof(PurchaseReturnItem), typeof(Sale), typeof(SaleItem),
         typeof(SalesReturn), typeof(SalesReturnItem),

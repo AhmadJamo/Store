@@ -17,6 +17,7 @@
 | `Views/WarehouseLocations/{Index,Create,Edit}.cshtml`, `Views/UnassignedStock/Index.cshtml` | parent-indented hierarchical location master data and capabilities, warehouse-filtered parent selection, warehouse/product search and capability-validated putaway. |
 | `Views/LocationMovements/Index.cshtml` | same-warehouse rack/bin relocation form with filtered choices, available quantity and searchable movement history. |
 | `Views/InventoryReconciliation/Index.cshtml` | bilingual read-only WMS exception report comparing warehouse quantity/value, assigned/unassigned location quantity and the latest movement snapshot, with warehouse/search/exception/page filters. |
+| `Views/ProductAttributes/Index.cshtml` | bilingual attribute-definition screen for types, required/variant rules, category applicability, selection options and activation. |
 | `Views/Purchases/{Index,Create,Details}.cshtml` | purchase list/detail and client-side dynamic item rows. |
 | `Views/Sales/{Index,Create,Details,Pos}.cshtml` | wholesale sale, detail/list and POS cart; optional inclusive/exclusive invoice tax is selected and previewed, while terminal selection filters warehouses and applies saved order experience. Details shows tax, product names, POS context, unit cost/COGS and an idempotent general-ledger posting action/status. |
 | `Views/SalesReturns/{Index,Create,Details}.cshtml` | return history, remaining-quantity entry from a posted sale, and posted refund/restock details. |

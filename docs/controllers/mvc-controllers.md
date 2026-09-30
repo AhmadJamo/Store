@@ -14,6 +14,7 @@
 | ProductStocks | Index/Create/Edit/Delete | product-stock permissions/service; delete service always refuses. |
 | StockTransactions | Index/Create | movement permissions/service. |
 | WarehouseLocations / UnassignedStock | hierarchical location search/create/edit and putaway | warehouse/product-stock permissions and location services. |
+| ProductAttributes | typed attribute dictionary create/list/activation | Products View/Edit permissions and ProductAttributeService. |
 | LocationMovements | Index/Move | LocationMovements.View/Create and LocationMovementService. |
 | InventoryReconciliation | Index | InventoryReconciliation.View; read-only Application service over tenant-filtered SQL aggregate queries. |
 | Purchases | Index/Create/Details | Purchases.View/Create; PurchaseService and master repositories for dropdowns. |

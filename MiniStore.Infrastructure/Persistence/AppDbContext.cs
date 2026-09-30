@@ -39,6 +39,9 @@ public class AppDbContext
 
     public DbSet<Product> Products => Set<Product>();
     public DbSet<ProductCategory> ProductCategories => Set<ProductCategory>();
+    public DbSet<ProductAttributeDefinition> ProductAttributeDefinitions => Set<ProductAttributeDefinition>();
+    public DbSet<ProductAttributeOption> ProductAttributeOptions => Set<ProductAttributeOption>();
+    public DbSet<ProductCategoryAttribute> ProductCategoryAttributes => Set<ProductCategoryAttribute>();
     public DbSet<ProductRecipe> ProductRecipes => Set<ProductRecipe>();
     public DbSet<RecipeIngredient> RecipeIngredients => Set<RecipeIngredient>();
     public DbSet<MeasurementUnit> MeasurementUnits => Set<MeasurementUnit>();

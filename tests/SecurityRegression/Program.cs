@@ -754,6 +754,17 @@ var activeRecipeIndex = db.Model.FindEntityType(typeof(ProductRecipe))!
                          .SequenceEqual(["TenantId", nameof(ProductRecipe.ProductId), nameof(ProductRecipe.IsActive)]));
 Check(activeRecipeIndex.GetFilter() == "[IsActive] = 1",
     "The database model must allow only one active recipe version per tenant product");
+var colorAttribute = new ProductAttributeDefinition(
+    "Color", "COLOR", ProductAttributeDataType.Selection,
+    isRequired: true, isVariantDefining: true, displayOrder: 1);
+Check(colorAttribute.Code == "COLOR" && colorAttribute.IsVariantDefining && colorAttribute.IsActive,
+    "Product attributes must preserve typed required and variant-defining rules");
+var redOption = new ProductAttributeOption(1, "Red", "RED", 0);
+Check(redOption.Code == "RED" && redOption.IsActive,
+    "Selection options must preserve stable language-neutral codes");
+CheckArgumentThrows(
+    () => new ProductAttributeDefinition("Invalid", "bad code", ProductAttributeDataType.Text, false, false, 0),
+    "Product attribute definitions must reject invalid business codes");
 
 Console.WriteLine($"Passed {count} security and inventory regression checks.");
 

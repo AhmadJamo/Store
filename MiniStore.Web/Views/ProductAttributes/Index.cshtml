@@ -1,0 +1,29 @@
+@model MiniStore.Application.DTOs.Products.ProductAttributePageDto
+@using MiniStore.Domain.Entities
+@inject Microsoft.Extensions.Localization.IStringLocalizer<MiniStore.Web.SharedResource> Localizer
+@{ ViewData["Title"] = Localizer["Product attributes"]; }
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-start mb-3">
+        <div><h2>@Localizer["Product attributes"]</h2><p class="text-muted">@Localizer["Define reusable product details and mark only the properties that create distinct inventory variants."]</p></div>
+        <a asp-controller="Products" asp-action="Index" class="btn btn-outline-secondary">@Localizer["Back to products"]</a>
+    </div>
+    <form asp-action="Create" method="post" class="card card-body mb-4">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="row g-3">
+            <div class="col-md-4"><label asp-for="Form.Name" class="form-label">@Localizer["Attribute name"]</label><input asp-for="Form.Name" name="Name" class="form-control" required maxlength="100" /></div>
+            <div class="col-md-4"><label asp-for="Form.Code" class="form-label">@Localizer["Attribute code"]</label><input asp-for="Form.Code" name="Code" class="form-control" required maxlength="40" /></div>
+            <div class="col-md-2"><label asp-for="Form.DataType" class="form-label">@Localizer["Data type"]</label><select asp-for="Form.DataType" name="DataType" asp-items="Html.GetEnumSelectList<ProductAttributeDataType>()" class="form-select"></select></div>
+            <div class="col-md-2"><label asp-for="Form.DisplayOrder" class="form-label">@Localizer["Display order"]</label><input asp-for="Form.DisplayOrder" name="DisplayOrder" type="number" min="0" class="form-control" /></div>
+            <div class="col-md-6"><label class="form-label">@Localizer["Applicable categories"]</label><select name="ProductCategoryIds" class="form-select" multiple size="4">@foreach (var category in Model.Categories.Where(x => x.IsActive)) { <option value="@category.Id">@category.Name (@category.Code)</option> }</select><div class="form-text">@Localizer["Leave empty to make the attribute available to every category."]</div></div>
+            <div class="col-md-6"><label asp-for="Form.OptionsText" class="form-label">@Localizer["Selection options"]</label><textarea asp-for="Form.OptionsText" name="OptionsText" class="form-control" rows="4" placeholder="Red|RED&#10;Blue|BLUE"></textarea><div class="form-text">@Localizer["For selection attributes, enter one Name|CODE option per line."]</div></div>
+            <div class="col-md-3 form-check ms-2"><input asp-for="Form.IsRequired" name="IsRequired" class="form-check-input" /><label asp-for="Form.IsRequired" class="form-check-label">@Localizer["Required value"]</label></div>
+            <div class="col-md-4 form-check"><input asp-for="Form.IsVariantDefining" name="IsVariantDefining" class="form-check-input" /><label asp-for="Form.IsVariantDefining" class="form-check-label">@Localizer["Creates a distinct variant"]</label></div>
+        </div>
+        <div class="mt-3"><button class="btn btn-primary">@Localizer["Add attribute"]</button></div>
+    </form>
+    <div class="table-responsive"><table class="table table-bordered align-middle"><thead><tr><th>@Localizer["Attribute"]</th><th>@Localizer["Data type"]</th><th>@Localizer["Rules"]</th><th>@Localizer["Applicable categories"]</th><th>@Localizer["Selection options"]</th><th>@Localizer["Status"]</th><th>@Localizer["Actions"]</th></tr></thead><tbody>
+    @foreach (var item in Model.Definitions) { <tr><td><strong>@item.Name</strong><br /><code>@item.Code</code></td><td>@Localizer[item.DataType.ToString()]</td><td>@if(item.IsRequired){<span class="badge bg-danger">@Localizer["Required"]</span>} @if(item.IsVariantDefining){<span class="badge bg-primary">@Localizer["Variant"]</span>}</td><td>@(item.Categories.Count == 0 ? Localizer["All categories"] : string.Join(", ", item.Categories))</td><td>@string.Join(", ", item.Options)</td><td>@(item.IsActive ? Localizer["Active"] : Localizer["Inactive"])</td><td><form asp-action="SetActive" method="post"><input type="hidden" name="id" value="@item.Id" /><input type="hidden" name="isActive" value="@(!item.IsActive)" /><button class="btn btn-sm @(item.IsActive ? "btn-outline-warning" : "btn-outline-success")">@(item.IsActive ? Localizer["Deactivate"] : Localizer["Activate"])</button></form></td></tr> }
+    @if(Model.Definitions.Count == 0){<tr><td colspan="7" class="text-center text-muted">@Localizer["No product attributes have been defined."]</td></tr>}
+    </tbody></table></div>
+</div>

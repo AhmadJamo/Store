@@ -26,7 +26,7 @@
 | Files | Type/purpose | Consumers/docs |
 |---|---|---|
 | `Entities/Accounting/*.cs` | chart, branches, journal entries, fiscal periods, tax and payment entities | accounting docs. |
-| `Entities/Catalog/{Product,ProductCategory,ProductRecipe,RecipeIngredient,MeasurementUnit}.cs` and product type/unit/dimension/behavior/logistics enums | product code, optional barcode, classification, category, physical logistics metadata, tracking policy, sale channels, immutable recipes and managed units | products, sales and inventory docs. |
+| `Entities/Catalog/{Product,ProductCategory,ProductAttributeDefinition,ProductRecipe,RecipeIngredient,MeasurementUnit}.cs` and product type/unit/dimension/behavior/logistics enums | product code, optional barcode, classification, category-scoped typed attributes/options, physical logistics metadata, tracking policy, sale channels, immutable recipes and managed units | products, sales and inventory docs. |
 | `Entities/Customers/Customer.cs`, `Entities/Suppliers/Supplier.cs` | commercial-party master data | sales/purchases docs. |
 | `Entities/Inventory/*.cs` | warehouses, operating-policy enums, moving-average balances/cost snapshots, exact locations, putaway/relocation history, stock movements and transfers | inventory, accounting and stock-transfer docs. |
 | `Entities/Purchases/*.cs`, `Entities/Sales/*.cs` | purchase/supplier-return and sale/customer-return aggregates plus POS experience/order settings | purchase/sales/settings docs. |
@@ -46,6 +46,7 @@
 | `Services/<Feature>/*.cs` | use-case services grouped as Accounting, Catalog, Customers, Inventory, Purchases, Sales, Settings and Suppliers | matching MVC controllers. |
 | `Services/Catalog/RecipeService.cs` | lists and creates immutable active recipe versions with compatible ingredient units | Recipes controller/views and prepared-product sales. |
 | `Services/Catalog/ProductCategoryService.cs` | creates and activates/deactivates tenant product categories used by logistics metadata | ProductCategories controller/view and product forms. |
+| `Services/Catalog/ProductAttributeService.cs` | transactionally creates typed attribute definitions, category links and selection options | ProductAttributes controller/view. |
 | `Services/Settings/MeasurementUnitService.cs` | initializes protected built-ins, manages custom units and performs dimension-safe conversion | Settings/Units plus product and recipe unit selection. |
 | `Services/Inventory/{StorageLocation,UnassignedStock,LocationMovement}Service.cs` | hierarchical location administration and validation, warehouse search, putaway, internal relocation and history | inventory controllers. |
 | `Services/Inventory/InventoryReconciliationService.cs` | classifies warehouse/location/latest-movement differences with fixed precision tolerances and read-only paging | InventoryReconciliation controller/view. |
@@ -96,6 +97,7 @@ Warehouse location movement update (2026-09-14): `LocationMovement` and its repo
 Hierarchical location update (2026-09-30): StorageLocation retains its identity and structured labels while adding parent, display name, optional barcode, sequence and receive/pick/reserve/ship/count capabilities. WarehouseLocations now supports create/edit and cycle/same-warehouse validation. Migration `AddHierarchicalStorageLocations` is applied to `AHMAD/MiniStoreDb`.
 | `Repositories/<Feature>/*.cs` | EF implementations grouped by feature | application services. |
 | `Repositories/Catalog/ProductRecipeRepository.cs` | active/versioned recipe persistence with ingredients | RecipeService and SaleService. |
+| `Repositories/Catalog/ProductAttributeRepository.cs` | tenant-filtered attribute definition, category-applicability and option persistence | ProductAttributeService. |
 | `Repositories/Tenancy/TenantMembershipRepository.cs` | active company membership lookup and user list | login, tenant middleware and user administration. |
 | `Repositories/Security/TenantRoleRepository.cs` | company-filtered role, permission and assignment persistence | TenantRoleService and authorization. |
 | `Repositories/Saas/SaasRepository.cs` | control-plane plan, subscription, entitlement usage, operator and promotion persistence | public pricing and Platform area. |
@@ -117,6 +119,7 @@ Hierarchical location update (2026-09-30): StorageLocation retains its identity 
 | `Controllers/<Feature>/*.cs` | MVC endpoints grouped by business feature; namespaces remain stable | `controllers/*.md`. |
 | `Controllers/Catalog/RecipesController.cs` | bilingual recipe list/version editor using Products permissions | recipe views and RecipeService. |
 | `Controllers/Catalog/ProductCategoriesController.cs` | bilingual product-category administration using Products View/Edit permissions | ProductCategories view and ProductCategoryService. |
+| `Controllers/Catalog/ProductAttributesController.cs` | bilingual typed product-attribute administration using Products View/Edit permissions | ProductAttributes view and ProductAttributeService. |
 | `Areas/Platform/*` | separately authenticated platform-owner control center for plans, companies/subscriptions, promotion codes and pending payment confirmations | SaaS module. |
 | `Controllers/PublicController.cs`, `Controllers/Saas/SubscriptionController.cs` | public landing/pricing and tenant subscription/checkout flows | SaaS module and public/subscription views. |
 | `Middleware/SubscriptionAccessMiddleware.cs` | blocks tenant ERP access when the current subscription is not usable | SaaS module/security. |

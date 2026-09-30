@@ -410,7 +410,6 @@
   <data name="Category name is required and cannot exceed 100 characters." xml:space="preserve"><value>اسم التصنيف مطلوب ولا يمكن أن يتجاوز 100 حرف.</value></data>
   <data name="Category code must use letters, numbers, hyphens or underscores and cannot exceed 30 characters." xml:space="preserve"><value>يجب أن يستخدم كود التصنيف الأحرف أو الأرقام أو الشرطات أو الشرطات السفلية وألا يتجاوز 30 حرفاً.</value></data>
   <data name="No category" xml:space="preserve"><value>بدون تصنيف</value></data>
-  <data name="All categories" xml:space="preserve"><value>كل التصنيفات</value></data>
   <data name="All tracking policies" xml:space="preserve"><value>كل سياسات التتبع</value></data>
   <data name="Tracking policy" xml:space="preserve"><value>سياسة التتبع</value></data>
   <data name="No lot or serial tracking" xml:space="preserve"><value>بدون تتبع تشغيلات أو أرقام تسلسلية</value></data>
@@ -498,4 +497,41 @@
   <data name="The destination location does not allow receiving." xml:space="preserve"><value>الموقع الوجهة لا يسمح بالاستلام.</value></data>
   <data name="Source location does not allow picking." xml:space="preserve"><value>الموقع المصدر لا يسمح بالالتقاط.</value></data>
   <data name="Destination location does not allow receiving." xml:space="preserve"><value>الموقع الوجهة لا يسمح بالاستلام.</value></data>
+  <data name="Product attributes" xml:space="preserve"><value>خصائص المنتجات</value></data>
+  <data name="Define reusable product details and mark only the properties that create distinct inventory variants." xml:space="preserve"><value>عرّف تفاصيل منتجات قابلة لإعادة الاستخدام وحدد فقط الخصائص التي تنشئ أصناف مخزون مختلفة.</value></data>
+  <data name="Attribute name" xml:space="preserve"><value>اسم الخاصية</value></data>
+  <data name="Attribute code" xml:space="preserve"><value>رمز الخاصية</value></data>
+  <data name="Data type" xml:space="preserve"><value>نوع البيانات</value></data>
+  <data name="Display order" xml:space="preserve"><value>ترتيب العرض</value></data>
+  <data name="Applicable categories" xml:space="preserve"><value>التصنيفات المطبقة</value></data>
+  <data name="Leave empty to make the attribute available to every category." xml:space="preserve"><value>اتركها فارغة لإتاحة الخاصية لكل التصنيفات.</value></data>
+  <data name="Selection options" xml:space="preserve"><value>خيارات القائمة</value></data>
+  <data name="For selection attributes, enter one Name|CODE option per line." xml:space="preserve"><value>لخاصية القائمة، أدخل خياراً واحداً بالصيغة الاسم|الرمز في كل سطر.</value></data>
+  <data name="Required value" xml:space="preserve"><value>قيمة إجبارية</value></data>
+  <data name="Creates a distinct variant" xml:space="preserve"><value>تنشئ Variant مستقلاً</value></data>
+  <data name="Add attribute" xml:space="preserve"><value>إضافة خاصية</value></data>
+  <data name="Attribute" xml:space="preserve"><value>الخاصية</value></data>
+  <data name="Rules" xml:space="preserve"><value>القواعد</value></data>
+  <data name="Required" xml:space="preserve"><value>إجبارية</value></data>
+  <data name="Variant" xml:space="preserve"><value>Variant</value></data>
+  <data name="All categories" xml:space="preserve"><value>كل التصنيفات</value></data>
+  <data name="No product attributes have been defined." xml:space="preserve"><value>لم يتم تعريف خصائص منتجات بعد.</value></data>
+  <data name="Product attribute created successfully." xml:space="preserve"><value>تم إنشاء خاصية المنتج بنجاح.</value></data>
+  <data name="Product attribute updated successfully." xml:space="preserve"><value>تم تحديث خاصية المنتج بنجاح.</value></data>
+  <data name="An attribute with this code already exists." xml:space="preserve"><value>توجد خاصية بهذا الرمز مسبقاً.</value></data>
+  <data name="A selection attribute requires at least one option." xml:space="preserve"><value>خاصية القائمة تتطلب خياراً واحداً على الأقل.</value></data>
+  <data name="Options can only be added to a selection attribute." xml:space="preserve"><value>يمكن إضافة الخيارات إلى خاصية من نوع قائمة فقط.</value></data>
+  <data name="Product attribute was not found." xml:space="preserve"><value>لم يتم العثور على خاصية المنتج.</value></data>
+  <data name="Attribute option codes must be unique." xml:space="preserve"><value>يجب أن تكون رموز خيارات الخاصية فريدة.</value></data>
+  <data name="Attribute name is required and cannot exceed 100 characters." xml:space="preserve"><value>اسم الخاصية مطلوب ولا يمكن أن يتجاوز 100 حرف.</value></data>
+  <data name="Attribute code must use letters, numbers, hyphens or underscores and cannot exceed 40 characters." xml:space="preserve"><value>يجب أن يستخدم رمز الخاصية حروفاً أو أرقاماً أو شرطة أو شرطة سفلية وألا يتجاوز 40 حرفاً.</value></data>
+  <data name="Attribute data type is invalid." xml:space="preserve"><value>نوع بيانات الخاصية غير صالح.</value></data>
+  <data name="Attribute display order cannot be negative." xml:space="preserve"><value>لا يمكن أن يكون ترتيب عرض الخاصية سالباً.</value></data>
+  <data name="Attribute option name is required and cannot exceed 100 characters." xml:space="preserve"><value>اسم خيار الخاصية مطلوب ولا يمكن أن يتجاوز 100 حرف.</value></data>
+  <data name="Attribute option code is invalid." xml:space="preserve"><value>رمز خيار الخاصية غير صالح.</value></data>
+  <data name="Attribute option order cannot be negative." xml:space="preserve"><value>لا يمكن أن يكون ترتيب خيار الخاصية سالباً.</value></data>
+  <data name="Text" xml:space="preserve"><value>نص</value></data>
+  <data name="Number" xml:space="preserve"><value>رقم</value></data>
+  <data name="Boolean" xml:space="preserve"><value>نعم/لا</value></data>
+  <data name="Selection" xml:space="preserve"><value>قائمة خيارات</value></data>
 </root>
