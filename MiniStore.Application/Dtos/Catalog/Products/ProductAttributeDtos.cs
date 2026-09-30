@@ -34,3 +34,38 @@ public sealed class ProductAttributePageDto
     public List<ProductAttributeDefinitionDto> Definitions { get; set; } = [];
     public List<ProductCategoryDto> Categories { get; set; } = [];
 }
+
+public sealed class ProductAttributeValueInputDto
+{
+    public int DefinitionId { get; set; }
+    public string? Value { get; set; }
+}
+
+public sealed class ProductAttributeValueFieldDto
+{
+    public int DefinitionId { get; set; }
+    public string Name { get; set; } = string.Empty;
+    public string Code { get; set; } = string.Empty;
+    public ProductAttributeDataType DataType { get; set; }
+    public bool IsRequired { get; set; }
+    public bool IsVariantDefining { get; set; }
+    public string? Value { get; set; }
+    public List<ProductAttributeOptionFieldDto> Options { get; set; } = [];
+}
+
+public sealed class ProductAttributeOptionFieldDto
+{
+    public int Id { get; set; }
+    public string Name { get; set; } = string.Empty;
+    public string Code { get; set; } = string.Empty;
+}
+
+public sealed class ProductAttributeValuesPageDto
+{
+    public int ProductId { get; set; }
+    public string ProductName { get; set; } = string.Empty;
+    public string ProductCode { get; set; } = string.Empty;
+    public string? CategoryName { get; set; }
+    public List<ProductAttributeValueFieldDto> Fields { get; set; } = [];
+    public List<ProductAttributeValueInputDto> Values { get; set; } = [];
+}

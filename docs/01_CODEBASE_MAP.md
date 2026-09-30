@@ -26,7 +26,7 @@
 | Files | Type/purpose | Consumers/docs |
 |---|---|---|
 | `Entities/Accounting/*.cs` | chart, branches, journal entries, fiscal periods, tax and payment entities | accounting docs. |
-| `Entities/Catalog/{Product,ProductCategory,ProductAttributeDefinition,ProductRecipe,RecipeIngredient,MeasurementUnit}.cs` and product type/unit/dimension/behavior/logistics enums | product code, optional barcode, classification, category-scoped typed attributes/options, physical logistics metadata, tracking policy, sale channels, immutable recipes and managed units | products, sales and inventory docs. |
+| `Entities/Catalog/{Product,ProductCategory,ProductAttributeDefinition,ProductAttributeValue,ProductRecipe,RecipeIngredient,MeasurementUnit}.cs` and product type/unit/dimension/behavior/logistics enums | product code, optional barcode, classification, category-scoped typed attributes/options/values, physical logistics metadata, tracking policy, sale channels, immutable recipes and managed units | products, sales and inventory docs. |
 | `Entities/Customers/Customer.cs`, `Entities/Suppliers/Supplier.cs` | commercial-party master data | sales/purchases docs. |
 | `Entities/Inventory/*.cs` | warehouses, operating-policy enums, moving-average balances/cost snapshots, exact locations, putaway/relocation history, stock movements and transfers | inventory, accounting and stock-transfer docs. |
 | `Entities/Purchases/*.cs`, `Entities/Sales/*.cs` | purchase/supplier-return and sale/customer-return aggregates plus POS experience/order settings | purchase/sales/settings docs. |

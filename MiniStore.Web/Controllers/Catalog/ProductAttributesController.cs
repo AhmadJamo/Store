@@ -51,4 +51,34 @@ public sealed class ProductAttributesController(
         }
         return RedirectToAction(nameof(Index));
     }
+
+    [HttpGet]
+    [PermissionAuthorize("Products.Edit")]
+    public async Task<IActionResult> Values(int productId)
+    {
+        try { return View(await service.GetValuesPageAsync(productId)); }
+        catch (InvalidOperationException) { return NotFound(); }
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [PermissionAuthorize("Products.Edit")]
+    public async Task<IActionResult> Values(ProductAttributeValuesPageDto dto)
+    {
+        try
+        {
+            await service.SaveValuesAsync(dto.ProductId, dto.Values);
+            TempData["NotificationType"] = "success";
+            TempData["NotificationMessage"] = localizer["Product attribute values saved successfully."].Value;
+            return RedirectToAction(nameof(Values), new { productId = dto.ProductId });
+        }
+        catch (Exception exception) when (exception is ArgumentException or InvalidOperationException)
+        {
+            var page = await service.GetValuesPageAsync(dto.ProductId);
+            foreach (var field in page.Fields)
+                field.Value = dto.Values.LastOrDefault(x => x.DefinitionId == field.DefinitionId)?.Value;
+            ModelState.AddModelError(string.Empty, localizer[exception.Message]);
+            return View(page);
+        }
+    }
 }

@@ -765,6 +765,17 @@ Check(redOption.Code == "RED" && redOption.IsActive,
 CheckArgumentThrows(
     () => new ProductAttributeDefinition("Invalid", "bad code", ProductAttributeDataType.Text, false, false, 0),
     "Product attribute definitions must reject invalid business codes");
+var numericAttributeValue = new ProductAttributeValue(1, 1, null, 42.5m, null, null);
+Check(numericAttributeValue.NumberValue == 42.5m && numericAttributeValue.TextValue is null,
+    "Product attribute values must preserve exactly one typed value");
+CheckArgumentThrows(
+    () => new ProductAttributeValue(1, 1, "Large", 42.5m, null, null),
+    "Product attribute values must reject ambiguous multi-type values");
+var attributeValueIndex = db.Model.FindEntityType(typeof(ProductAttributeValue))!
+    .GetIndexes().Single(index => index.IsUnique && index.Properties.Select(property => property.Name)
+        .SequenceEqual(["TenantId", nameof(ProductAttributeValue.ProductId), nameof(ProductAttributeValue.ProductAttributeDefinitionId)]));
+Check(attributeValueIndex is not null,
+    "The database model must allow one value per tenant product and attribute definition");
 
 Console.WriteLine($"Passed {count} security and inventory regression checks.");
 

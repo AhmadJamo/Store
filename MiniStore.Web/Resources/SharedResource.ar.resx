@@ -534,4 +534,22 @@
   <data name="Number" xml:space="preserve"><value>رقم</value></data>
   <data name="Boolean" xml:space="preserve"><value>نعم/لا</value></data>
   <data name="Selection" xml:space="preserve"><value>قائمة خيارات</value></data>
+  <data name="Product attribute values" xml:space="preserve"><value>قيم خصائص المنتج</value></data>
+  <data name="Back to product" xml:space="preserve"><value>العودة إلى المنتج</value></data>
+  <data name="No active attributes apply to this product category." xml:space="preserve"><value>لا توجد خصائص فعالة تنطبق على تصنيف هذا المنتج.</value></data>
+  <data name="Yes" xml:space="preserve"><value>نعم</value></data>
+  <data name="No" xml:space="preserve"><value>لا</value></data>
+  <data name="Select option" xml:space="preserve"><value>اختر خياراً</value></data>
+  <data name="Save attribute values" xml:space="preserve"><value>حفظ قيم الخصائص</value></data>
+  <data name="Attributes" xml:space="preserve"><value>الخصائص</value></data>
+  <data name="Product attribute values saved successfully." xml:space="preserve"><value>تم حفظ قيم خصائص المنتج بنجاح.</value></data>
+  <data name="Product and attribute definition are required." xml:space="preserve"><value>المنتج وتعريف الخاصية مطلوبان.</value></data>
+  <data name="An attribute value must contain exactly one typed value." xml:space="preserve"><value>يجب أن تحتوي قيمة الخاصية على قيمة واحدة من النوع الصحيح.</value></data>
+  <data name="Text attribute values cannot exceed 500 characters." xml:space="preserve"><value>لا يمكن أن تتجاوز قيمة الخاصية النصية 500 حرف.</value></data>
+  <data name="A required product attribute is missing." xml:space="preserve"><value>توجد خاصية إجبارية بدون قيمة.</value></data>
+  <data name="One or more product attributes are not applicable to this product category." xml:space="preserve"><value>خاصية منتج واحدة أو أكثر لا تنطبق على تصنيف هذا المنتج.</value></data>
+  <data name="A number attribute contains an invalid value." xml:space="preserve"><value>تحتوي خاصية رقمية على قيمة غير صالحة.</value></data>
+  <data name="A yes/no attribute contains an invalid value." xml:space="preserve"><value>تحتوي خاصية نعم/لا على قيمة غير صالحة.</value></data>
+  <data name="A selection attribute contains an invalid option." xml:space="preserve"><value>تحتوي خاصية قائمة على خيار غير صالح.</value></data>
+  <data name="Product attribute data type is invalid." xml:space="preserve"><value>نوع بيانات خاصية المنتج غير صالح.</value></data>
 </root>

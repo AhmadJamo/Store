@@ -521,7 +521,7 @@ Status: implementation and additive migration complete; migration applied to `AH
 ### WMS-015 — Flexible attributes and product variants
 
 - [x] Typed attribute definitions, options, category applicability and definition validation (WMS-015A).
-- [ ] Typed product value assignment and required/category validation.
+- [x] Typed product value assignment and required/category/option validation (WMS-015B).
 - Separate descriptive attributes from variant-defining attributes.
 - Optional ProductTemplate groups existing concrete Product SKUs; Product remains the inventory identity.
 - No automatic Cartesian variant generation without preview, limits and explicit confirmation.

@@ -33,7 +33,7 @@ The ordered Arabic execution plan, workflow, business rules and rolling suggesti
 
 ## In Progress
 - WMS is the active delivery track until its planned inventory/warehouse phases are complete. Next: smoke-test WMS-010, then proceed to WMS-015; see `WMS_EVOLUTION_PLAN.md`.
-- WMS-015A typed attribute definitions, selection options and category applicability are implemented and migrated on `AHMAD/MiniStoreDb`. Next: product value assignment, validation and optional ProductTemplate variant grouping without changing Product as the SKU.
+- WMS-015A/B typed definitions, selection options, category applicability and per-product typed values are implemented. Next: optional ProductTemplate variant grouping and controlled preview/generation without changing Product as the SKU.
 - Run an authenticated HTTP/SQL cafe recipe sale and reconciliation journey. Batch production, actual yields and negative-cost settlement remain follow-up work.
 - Add per-terminal product assortment UI/enforcement and per-user branch/POS data scope.
 - Build the central preview/validation/template/audit engine for Excel and CSV import/export, then onboard modules incrementally.

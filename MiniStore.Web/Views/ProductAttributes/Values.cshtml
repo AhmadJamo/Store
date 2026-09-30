@@ -1,0 +1,42 @@
+@model MiniStore.Application.DTOs.Products.ProductAttributeValuesPageDto
+@using MiniStore.Domain.Entities
+@inject Microsoft.Extensions.Localization.IStringLocalizer<MiniStore.Web.SharedResource> Localizer
+@{ ViewData["Title"] = Localizer["Product attribute values"]; }
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-start mb-3">
+        <div><h2>@Localizer["Product attribute values"]</h2><p class="text-muted"><code>@Model.ProductCode</code> — @Model.ProductName @if(Model.CategoryName is not null){<span>· @Model.CategoryName</span>}</p></div>
+        <a asp-controller="Products" asp-action="Edit" asp-route-id="@Model.ProductId" class="btn btn-outline-secondary">@Localizer["Back to product"]</a>
+    </div>
+    <form asp-action="Values" method="post" class="card card-body">
+        <input asp-for="ProductId" type="hidden" />
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+        @if(Model.Fields.Count == 0){<div class="alert alert-info mb-0">@Localizer["No active attributes apply to this product category."]</div>}
+        <div class="row g-3">
+        @for(var index = 0; index < Model.Fields.Count; index++)
+        {
+            var field = Model.Fields[index];
+            <div class="col-md-6">
+                <input type="hidden" name="Values[@index].DefinitionId" value="@field.DefinitionId" />
+                <label class="form-label">@field.Name <code>@field.Code</code> @if(field.IsRequired){<span class="text-danger">*</span>} @if(field.IsVariantDefining){<span class="badge bg-primary">@Localizer["Variant"]</span>}</label>
+                @switch(field.DataType)
+                {
+                    case ProductAttributeDataType.Number:
+                        <input name="Values[@index].Value" value="@field.Value" type="number" step="0.000001" class="form-control" />
+                        break;
+                    case ProductAttributeDataType.Boolean:
+                        <select name="Values[@index].Value" class="form-select"><option value="">@Localizer["Not assigned"]</option><option value="true" selected="@(field.Value == "true")">@Localizer["Yes"]</option><option value="false" selected="@(field.Value == "false")">@Localizer["No"]</option></select>
+                        break;
+                    case ProductAttributeDataType.Selection:
+                        <select name="Values[@index].Value" class="form-select"><option value="">@Localizer["Select option"]</option>@foreach(var option in field.Options){<option value="@option.Id" selected="@(field.Value == option.Id.ToString())">@option.Name (@option.Code)</option>}</select>
+                        break;
+                    default:
+                        <input name="Values[@index].Value" value="@field.Value" maxlength="500" class="form-control" />
+                        break;
+                }
+            </div>
+        }
+        </div>
+        @if(Model.Fields.Count > 0){<div class="mt-4"><button class="btn btn-primary">@Localizer["Save attribute values"]</button></div>}
+    </form>
+</div>

@@ -38,3 +38,25 @@ public sealed class ProductCategoryAttributeConfiguration : IEntityTypeConfigura
         builder.HasOne<ProductAttributeDefinition>().WithMany().HasForeignKey(x => x.ProductAttributeDefinitionId).OnDelete(DeleteBehavior.Cascade);
     }
 }
+
+public sealed class ProductAttributeValueConfiguration : IEntityTypeConfiguration<ProductAttributeValue>
+{
+    public void Configure(EntityTypeBuilder<ProductAttributeValue> builder)
+    {
+        builder.ToTable(table => table.HasCheckConstraint(
+            "CK_ProductAttributeValues_ExactlyOneValue",
+            "(CASE WHEN [TextValue] IS NULL THEN 0 ELSE 1 END + " +
+            "CASE WHEN [NumberValue] IS NULL THEN 0 ELSE 1 END + " +
+            "CASE WHEN [BooleanValue] IS NULL THEN 0 ELSE 1 END + " +
+            "CASE WHEN [ProductAttributeOptionId] IS NULL THEN 0 ELSE 1 END) = 1"));
+        builder.HasKey(x => x.Id);
+        builder.Property(x => x.TextValue).HasMaxLength(500);
+        builder.Property(x => x.NumberValue).HasPrecision(24, 6);
+        builder.HasIndex(x => new { x.ProductId, x.ProductAttributeDefinitionId }).IsUnique();
+        builder.HasOne<Product>().WithMany().HasForeignKey(x => x.ProductId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasOne<ProductAttributeDefinition>().WithMany()
+            .HasForeignKey(x => x.ProductAttributeDefinitionId).OnDelete(DeleteBehavior.Restrict);
+        builder.HasOne<ProductAttributeOption>().WithMany()
+            .HasForeignKey(x => x.ProductAttributeOptionId).OnDelete(DeleteBehavior.Restrict);
+    }
+}
