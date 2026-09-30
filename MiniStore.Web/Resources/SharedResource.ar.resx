@@ -493,4 +493,9 @@
   <data name="A location cannot be moved below one of its descendants." xml:space="preserve"><value>لا يمكن نقل الموقع تحت أحد المواقع التابعة له.</value></data>
   <data name="Location name is required." xml:space="preserve"><value>اسم الموقع مطلوب.</value></data>
   <data name="Location sequence cannot be negative." xml:space="preserve"><value>لا يمكن أن يكون ترتيب الموقع سالباً.</value></data>
+  <data name="The selected location does not allow receiving or putaway." xml:space="preserve"><value>الموقع المحدد لا يسمح بالاستلام أو التخزين.</value></data>
+  <data name="The source location does not allow picking." xml:space="preserve"><value>الموقع المصدر لا يسمح بالالتقاط.</value></data>
+  <data name="The destination location does not allow receiving." xml:space="preserve"><value>الموقع الوجهة لا يسمح بالاستلام.</value></data>
+  <data name="Source location does not allow picking." xml:space="preserve"><value>الموقع المصدر لا يسمح بالالتقاط.</value></data>
+  <data name="Destination location does not allow receiving." xml:space="preserve"><value>الموقع الوجهة لا يسمح بالاستلام.</value></data>
 </root>

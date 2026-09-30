@@ -5,6 +5,7 @@ namespace MiniStore.Application.DTOs.Warehouses;
 public class WarehouseInventorySearchDto
 {
     public List<StorageLocation> Locations { get; set; } = [];
+    public Dictionary<int, int> LocationDepths { get; set; } = [];
     public List<WarehouseProductSearchRowDto> Products { get; set; } = [];
 }
 

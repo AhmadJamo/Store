@@ -19,9 +19,9 @@
 
         <div class="row g-3">
             <div class="col-md-6">
-                <label asp-for="WarehouseId" class="form-label">Warehouse</label>
-                <select asp-for="WarehouseId" class="form-select" required>
-                    <option value="">Select warehouse</option>
+                <label asp-for="WarehouseId" class="form-label">@Localizer["Warehouse"]</label>
+                <select asp-for="WarehouseId" id="warehouse-select" class="form-select" required>
+                    <option value="">@Localizer["Select warehouse"]</option>
                     @foreach (var warehouse in warehouses)
                     {
                         <option value="@warehouse.Id">@warehouse.Name</option>
@@ -42,7 +42,7 @@
 
             <div class="col-md-6">
                 <label asp-for="ParentLocationId" class="form-label">@Localizer["Parent location"]</label>
-                <select asp-for="ParentLocationId" class="form-select">
+                <select asp-for="ParentLocationId" id="parent-location-select" class="form-select">
                     <option value="">@Localizer["Root location"]</option>
                     @foreach (var parent in parents)
                     {
@@ -130,4 +130,21 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script>
+        (() => {
+            const warehouse = document.getElementById('warehouse-select');
+            const parent = document.getElementById('parent-location-select');
+            const refreshParents = () => {
+                const warehouseId = warehouse.value;
+                for (const option of parent.options) {
+                    if (!option.value) continue;
+                    option.hidden = option.dataset.warehouseId !== warehouseId;
+                    option.disabled = option.hidden;
+                }
+                if (parent.selectedOptions[0]?.disabled) parent.value = '';
+            };
+            warehouse.addEventListener('change', refreshParents);
+            refreshParents();
+        })();
+    </script>
 }

@@ -37,9 +37,12 @@ public class StorageLocationService(
             })
             .ToList();
 
+        var locations = await locationRepository.SearchAsync(warehouseId, query);
+        var (orderedLocations, depths) = OrderAsTree(locations);
         return new WarehouseInventorySearchDto
         {
-            Locations = await locationRepository.SearchAsync(warehouseId, query),
+            Locations = orderedLocations,
+            LocationDepths = depths,
             Products = productRows
         };
     }
@@ -186,5 +189,44 @@ public class StorageLocationService(
     private static string? NormalizeBarcode(string? barcode)
     {
         return string.IsNullOrWhiteSpace(barcode) ? null : barcode.Trim().ToUpperInvariant();
+    }
+
+    private static (List<StorageLocation> Locations, Dictionary<int, int> Depths) OrderAsTree(
+        IReadOnlyCollection<StorageLocation> locations)
+    {
+        var ids = locations.Select(location => location.Id).ToHashSet();
+        var children = locations
+            .GroupBy(location => location.ParentLocationId.HasValue && ids.Contains(location.ParentLocationId.Value)
+                ? location.ParentLocationId.Value
+                : 0)
+            .ToDictionary(
+                group => group.Key,
+                group => group.OrderBy(location => location.Sequence).ThenBy(location => location.Code).ToList());
+        var ordered = new List<StorageLocation>(locations.Count);
+        var depths = new Dictionary<int, int>();
+        var visited = new HashSet<int>();
+
+        void AddBranch(int parentId, int depth)
+        {
+            if (!children.TryGetValue(parentId, out var branch))
+                return;
+            foreach (var location in branch)
+            {
+                if (!visited.Add(location.Id))
+                    continue;
+                ordered.Add(location);
+                depths[location.Id] = depth;
+                AddBranch(location.Id, depth + 1);
+            }
+        }
+
+        AddBranch(0, 0);
+        foreach (var location in locations.Where(location => !visited.Contains(location.Id)))
+        {
+            ordered.Add(location);
+            depths[location.Id] = 0;
+        }
+
+        return (ordered, depths);
     }
 }

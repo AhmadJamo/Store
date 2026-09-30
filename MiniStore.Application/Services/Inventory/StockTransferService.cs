@@ -363,6 +363,12 @@ public class StockTransferService : IStockTransferService
             {
                 throw new InvalidOperationException("Source location must be active.");
             }
+
+            if (!source.IsPickable)
+            {
+                throw new InvalidOperationException(
+                    "Source location does not allow picking.");
+            }
         }
 
         if (destinationLocationId.HasValue)
@@ -380,6 +386,12 @@ public class StockTransferService : IStockTransferService
             {
                 throw new InvalidOperationException(
                     "Destination location must be active.");
+            }
+
+            if (!destination.IsReceivable)
+            {
+                throw new InvalidOperationException(
+                    "Destination location does not allow receiving.");
             }
         }
     }

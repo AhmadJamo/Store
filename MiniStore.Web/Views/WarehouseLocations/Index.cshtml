@@ -72,7 +72,7 @@
                 @foreach (var location in Model.Locations)
                 {
                     <tr>
-                        <td><strong>@location.Code</strong></td>
+                        <td><strong style="padding-inline-start: @(Model.LocationDepths.GetValueOrDefault(location.Id) * 1.5)rem">@(Model.LocationDepths.GetValueOrDefault(location.Id) > 0 ? "↳ " : "")@location.Code</strong></td>
                         <td>@location.Name</td>
                         <td>@(Model.Locations.FirstOrDefault(x => x.Id == location.ParentLocationId)?.Name ?? Localizer["Root"])</td>
                         <td>@location.Zone</td>

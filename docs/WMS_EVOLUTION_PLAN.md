@@ -513,9 +513,10 @@ Definition of Done: bilingual Admin report, permission, indexed repository queri
 
 Status: implementation and additive migration complete; migration applied to `AHMAD/MiniStoreDb`; authenticated UI smoke remains.
 
-- Parent tree, name, barcode, sequence and capabilities.
-- Tree UI plus cycle/same-warehouse validation.
-- Backfill existing location metadata without ID changes.
+- [x] Parent tree, name, barcode, sequence and capabilities.
+- [x] Parent-indented UI, warehouse-filtered parent selection and cycle/same-warehouse validation.
+- [x] Backfill existing location metadata without ID changes.
+- [x] Enforce receive/pick capabilities in putaway, relocation and transfer workflows.
 
 ### WMS-015 — Flexible attributes and product variants
 

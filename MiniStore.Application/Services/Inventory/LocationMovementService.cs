@@ -225,6 +225,17 @@ public class LocationMovementService(
         {
             throw new InvalidOperationException("Both locations must be active.");
         }
+
+        if (!source.IsPickable)
+        {
+            throw new InvalidOperationException("The source location does not allow picking.");
+        }
+
+        if (!destination.IsReceivable)
+        {
+            throw new InvalidOperationException(
+                "The destination location does not allow receiving.");
+        }
     }
 
     private static bool MatchesQuery(

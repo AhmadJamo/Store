@@ -82,6 +82,12 @@ public class UnassignedStockService(
                 "Select an active location in the same warehouse.");
         }
 
+        if (!location.IsReceivable)
+        {
+            throw new InvalidOperationException(
+                "The selected location does not allow receiving or putaway.");
+        }
+
         await unitOfWork.ExecuteInTransactionAsync(async () =>
         {
             var warehouseStock = await productStockRepository

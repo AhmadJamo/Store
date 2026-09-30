@@ -23,6 +23,8 @@ Storage-location, unassigned-stock, location-movement and transfer services enfo
 
 `StorageLocationService` also owns hierarchy mutation rules. It normalizes optional barcodes, enforces warehouse-local barcode uniqueness, requires parents in the same warehouse and prevents self/descendant cycles before saving hierarchy or operational capabilities.
 
+Location search returns parents before children with a calculated display depth. Putaway requires a receivable destination; relocation and transfer validation require pickable sources and receivable destinations in addition to active status, warehouse ownership and capacity rules.
+
 SaleService rejects POS sales against a warehouse whose `AllowPosSales` policy is disabled. SalesController filters the POS warehouse selector to the same eligible set.
 
 InventoryAccessService manages branch warehouse permissions, branch priority/defaults, POS terminals and terminal warehouse priorities. SaleService requires the selected terminal to be active and authorized by both branch and terminal mappings once terminals exist.
