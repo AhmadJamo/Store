@@ -12,6 +12,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using MiniStore.Application.Permissions;
 using MiniStore.Application.DTOs.Settings;
+using MiniStore.Application.Services;
 using MiniStore.Infrastructure.Authorization;
 using MiniStore.Infrastructure.Persistence;
 using MiniStore.Domain.Entities;
@@ -776,6 +777,22 @@ var attributeValueIndex = db.Model.FindEntityType(typeof(ProductAttributeValue))
         .SequenceEqual(["TenantId", nameof(ProductAttributeValue.ProductId), nameof(ProductAttributeValue.ProductAttributeDefinitionId)]));
 Check(attributeValueIndex is not null,
     "The database model must allow one value per tenant product and attribute definition");
+var template = new ProductTemplate("T-Shirt", "TSHIRT", 1);
+Check(template.IsActive && template.Code == "TSHIRT",
+    "Product templates must preserve a stable code and category");
+rawMaterial.AssignTemplate(1, new string('A', 64), "Color: Red · Size: L");
+Check(rawMaterial.ProductTemplateId == 1 && rawMaterial.VariantLabel == "Color: Red · Size: L",
+    "A concrete Product SKU must retain its template and readable variant identity");
+rawMaterial.AssignTemplate(null, null, null);
+Check(rawMaterial.ProductTemplateId is null && rawMaterial.VariantSignature is null,
+    "A Product SKU must support safe removal from its template without changing its identity");
+var boundedCombinations = VariantCombinationBuilder.Build(
+    new List<List<string>> { new() { "Red", "Blue" }, new() { "S", "M", "L" } }, 50);
+Check(boundedCombinations.Count == 6 && boundedCombinations.All(x => x.Count == 2),
+    "Variant preview must create the deterministic bounded Cartesian combinations");
+CheckThrows(() => VariantCombinationBuilder.Build(
+        new List<List<int>> { Enumerable.Range(1, 10).ToList(), Enumerable.Range(1, 6).ToList() }, 50),
+    "Variant generation must reject plans above the hard limit");
 
 Console.WriteLine($"Passed {count} security and inventory regression checks.");
 

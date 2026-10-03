@@ -523,8 +523,9 @@ Status: implementation and additive migration complete; migration applied to `AH
 - [x] Typed attribute definitions, options, category applicability and definition validation (WMS-015A).
 - [x] Typed product value assignment and required/category/option validation (WMS-015B).
 - Separate descriptive attributes from variant-defining attributes.
-- Optional ProductTemplate groups existing concrete Product SKUs; Product remains the inventory identity.
-- No automatic Cartesian variant generation without preview, limits and explicit confirmation.
+- [x] Optional ProductTemplate groups existing concrete Product SKUs with duplicate-safe canonical signatures; Product remains the inventory identity (WMS-015C).
+- [x] Controlled preview and explicit creation of missing selection-based combinations, with a server-enforced 50-variant limit and safe source-SKU cloning (WMS-015D).
+- Automatic generation never copies barcode, stock, recipes or history; prepared-to-order and non-selection variants remain manual.
 
 ### WMS-020 — Physical movement kernel
 

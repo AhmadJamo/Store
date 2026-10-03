@@ -1,0 +1,54 @@
+@model MiniStore.Application.DTOs.Products.ProductTemplatePageDto
+@inject Microsoft.Extensions.Localization.IStringLocalizer<MiniStore.Web.SharedResource> Localizer
+@{ ViewData["Title"] = Localizer["Product templates and variants"]; }
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-start mb-3">
+        <div><h2>@Localizer["Product templates and variants"]</h2><p class="text-muted">@Localizer["Group existing inventory SKUs without changing their product IDs or stock history."]</p></div>
+        <a asp-controller="Products" asp-action="Index" class="btn btn-outline-secondary">@Localizer["Back to products"]</a>
+    </div>
+    <div class="row g-4 mb-4">
+        <div class="col-lg-6"><form asp-action="Create" method="post" class="card card-body h-100"><h5>@Localizer["Create product template"]</h5><div class="row g-3">
+            <div class="col-md-6"><label class="form-label">@Localizer["Template name"]</label><input name="Name" class="form-control" maxlength="150" required /></div>
+            <div class="col-md-6"><label class="form-label">@Localizer["Template code"]</label><input name="Code" class="form-control" maxlength="40" required /></div>
+            <div class="col-12"><label class="form-label">@Localizer["Product category"]</label><select name="ProductCategoryId" class="form-select" required><option value="">@Localizer["Select category"]</option>@foreach(var category in Model.Categories.Where(x => x.IsActive)){<option value="@category.Id">@category.Name (@category.Code)</option>}</select></div>
+        </div><button class="btn btn-primary mt-3">@Localizer["Create template"]</button></form></div>
+        <div class="col-lg-6"><form asp-action="Assign" method="post" class="card card-body h-100"><h5>@Localizer["Assign existing SKU"]</h5><div class="row g-3">
+            <div class="col-12"><label class="form-label">@Localizer["Product"]</label><select name="ProductId" class="form-select" required><option value="">@Localizer["Select product"]</option>@foreach(var product in Model.Products){<option value="@product.Id">@product.ProductCode — @product.Name</option>}</select></div>
+            <div class="col-12"><label class="form-label">@Localizer["Product template"]</label><select name="ProductTemplateId" class="form-select"><option value="">@Localizer["Remove template assignment"]</option>@foreach(var template in Model.Templates.Where(x => x.IsActive)){<option value="@template.Id">@template.Code — @template.Name</option>}</select></div>
+        </div><div class="form-text mt-2">@Localizer["The product category must match and every variant-defining attribute must already have a value."]</div><button class="btn btn-primary mt-3">@Localizer["Update assignment"]</button></form></div>
+    </div>
+    @foreach(var template in Model.Templates)
+    {
+        @if(template.GenerationAttributes.Count > 0 && template.Variants.Count > 0)
+        {
+            <form asp-action="Preview" method="post" class="card card-body mb-3">
+                <input type="hidden" name="ProductTemplateId" value="@template.Id" />
+                <h5>@Localizer["Generate variants"] — @template.Name</h5>
+                <p class="text-muted">@Localizer["Select one or more options for every attribute. Preview is required before explicit creation and is limited to 50 combinations."]</p>
+                <div class="row g-3">
+                    <div class="col-md-4"><label class="form-label">@Localizer["Source SKU"]</label><select name="SourceProductId" class="form-select" required><option value="">@Localizer["Select source SKU"]</option>@foreach(var variant in template.Variants){<option value="@variant.ProductId">@variant.ProductCode — @variant.ProductName</option>}</select></div>
+                    @foreach(var generationAttribute in template.GenerationAttributes)
+                    {
+                        <fieldset class="col-md-4"><legend class="form-label fs-6">@generationAttribute.Name</legend>
+                            @foreach(var option in generationAttribute.Options){<div class="form-check"><input class="form-check-input" type="checkbox" name="OptionIds" value="@option.Id" id="opt-@template.Id-@option.Id" /><label class="form-check-label" for="opt-@template.Id-@option.Id">@option.Name</label></div>}
+                        </fieldset>
+                    }
+                </div>
+                <button class="btn btn-outline-primary mt-3 align-self-start">@Localizer["Preview variants"]</button>
+            </form>
+        }
+        <div class="card mb-3"><div class="card-header d-flex justify-content-between"><span><strong>@template.Name</strong> <code>@template.Code</code></span><span>@template.CategoryName · @template.Variants.Count @Localizer["variant(s)"]</span></div>
+        <div class="table-responsive"><table class="table mb-0"><thead><tr><th>@Localizer["Product code"]</th><th>@Localizer["Product"]</th><th>@Localizer["Variant values"]</th><th>@Localizer["Actions"]</th></tr></thead><tbody>
+        @foreach(var variant in template.Variants){<tr><td><code>@variant.ProductCode</code></td><td>@variant.ProductName</td><td>@variant.VariantLabel</td><td><a asp-controller="ProductAttributes" asp-action="Values" asp-route-productId="@variant.ProductId" class="btn btn-sm btn-outline-primary">@Localizer["Attributes"]</a></td></tr>}
+        @if(template.Variants.Count == 0){<tr><td colspan="4" class="text-center text-muted">@Localizer["No SKUs are assigned to this template."]</td></tr>}
+        </tbody></table></div></div>
+    }
+    @if(Model.Preview is not null)
+    {
+        <div class="modal fade show d-block" tabindex="-1" role="dialog" aria-modal="true"><div class="modal-dialog modal-lg"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">@Localizer["Variant generation preview"]</h5><a asp-action="Index" class="btn-close" aria-label="@Localizer["Close"]"></a></div><div class="modal-body">
+            <div class="alert alert-info">@Model.Preview.NewCount @Localizer["new variant(s)"] · @Model.Preview.ExistingCount @Localizer["existing combination(s) skipped"]</div>
+            <div class="table-responsive"><table class="table table-sm"><thead><tr><th>@Localizer["Variant values"]</th><th>@Localizer["Status"]</th></tr></thead><tbody>@foreach(var row in Model.Preview.Rows){<tr><td>@row.Label</td><td>@(row.AlreadyExists ? Localizer["Already exists"] : Localizer["Will be created"])</td></tr>}</tbody></table></div>
+        </div><div class="modal-footer"><a asp-action="Index" class="btn btn-outline-secondary">@Localizer["Cancel"]</a>@if(Model.Preview.NewCount > 0){<form asp-action="Generate" method="post"><input type="hidden" name="ProductTemplateId" value="@Model.Preview.ProductTemplateId" /><input type="hidden" name="SourceProductId" value="@Model.Preview.SourceProductId" />@foreach(var optionId in Model.Preview.OptionIds){<input type="hidden" name="OptionIds" value="@optionId" />}<button class="btn btn-primary">@Localizer["Create new variants"]</button></form>}</div></div></div></div><div class="modal-backdrop fade show"></div>
+    }
+</div>

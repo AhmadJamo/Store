@@ -552,4 +552,54 @@
   <data name="A yes/no attribute contains an invalid value." xml:space="preserve"><value>تحتوي خاصية نعم/لا على قيمة غير صالحة.</value></data>
   <data name="A selection attribute contains an invalid option." xml:space="preserve"><value>تحتوي خاصية قائمة على خيار غير صالح.</value></data>
   <data name="Product attribute data type is invalid." xml:space="preserve"><value>نوع بيانات خاصية المنتج غير صالح.</value></data>
+  <data name="Product templates and variants" xml:space="preserve"><value>قوالب المنتجات والمتغيرات</value></data>
+  <data name="Group existing inventory SKUs without changing their product IDs or stock history." xml:space="preserve"><value>جمّع أصناف المخزون الحالية دون تغيير أرقام المنتجات أو تاريخ المخزون.</value></data>
+  <data name="Create product template" xml:space="preserve"><value>إنشاء قالب منتج</value></data>
+  <data name="Template name" xml:space="preserve"><value>اسم القالب</value></data>
+  <data name="Template code" xml:space="preserve"><value>رمز القالب</value></data>
+  <data name="Select category" xml:space="preserve"><value>اختر التصنيف</value></data>
+  <data name="Create template" xml:space="preserve"><value>إنشاء القالب</value></data>
+  <data name="Assign existing SKU" xml:space="preserve"><value>ربط صنف مخزون حالي</value></data>
+  <data name="Product template" xml:space="preserve"><value>قالب المنتج</value></data>
+  <data name="Remove template assignment" xml:space="preserve"><value>إزالة الربط بالقالب</value></data>
+  <data name="The product category must match and every variant-defining attribute must already have a value." xml:space="preserve"><value>يجب أن يتطابق تصنيف المنتج وأن تكون لكل خاصية منشئة للمتغير قيمة محفوظة.</value></data>
+  <data name="Update assignment" xml:space="preserve"><value>تحديث الربط</value></data>
+  <data name="variant(s)" xml:space="preserve"><value>متغير</value></data>
+  <data name="Variant values" xml:space="preserve"><value>قيم المتغير</value></data>
+  <data name="No SKUs are assigned to this template." xml:space="preserve"><value>لا توجد أصناف مخزون مرتبطة بهذا القالب.</value></data>
+  <data name="Variants" xml:space="preserve"><value>المتغيرات</value></data>
+  <data name="Product template created successfully." xml:space="preserve"><value>تم إنشاء قالب المنتج بنجاح.</value></data>
+  <data name="Product template assignment updated successfully." xml:space="preserve"><value>تم تحديث ربط المنتج بالقالب بنجاح.</value></data>
+  <data name="Template name is required and cannot exceed 150 characters." xml:space="preserve"><value>اسم القالب مطلوب ولا يمكن أن يتجاوز 150 حرفاً.</value></data>
+  <data name="Template code must use letters, numbers, hyphens or underscores and cannot exceed 40 characters." xml:space="preserve"><value>يجب أن يستخدم رمز القالب حروفاً أو أرقاماً أو شرطة أو شرطة سفلية وألا يتجاوز 40 حرفاً.</value></data>
+  <data name="Product template category is required." xml:space="preserve"><value>تصنيف قالب المنتج مطلوب.</value></data>
+  <data name="A product template with this code already exists." xml:space="preserve"><value>يوجد قالب منتج بهذا الرمز مسبقاً.</value></data>
+  <data name="Product template was not found." xml:space="preserve"><value>لم يتم العثور على قالب المنتج.</value></data>
+  <data name="Product template is inactive." xml:space="preserve"><value>قالب المنتج غير فعال.</value></data>
+  <data name="Product and template must use the same category." xml:space="preserve"><value>يجب أن يستخدم المنتج والقالب التصنيف نفسه.</value></data>
+  <data name="This template already contains a product with the same variant values." xml:space="preserve"><value>يحتوي هذا القالب مسبقاً على منتج بقيم المتغير نفسها.</value></data>
+  <data name="The product category has no active variant-defining attributes." xml:space="preserve"><value>لا يحتوي تصنيف المنتج على خصائص فعالة منشئة للمتغيرات.</value></data>
+  <data name="Every variant-defining attribute must have a value before template assignment." xml:space="preserve"><value>يجب أن تحتوي كل خاصية منشئة للمتغير على قيمة قبل ربط القالب.</value></data>
+  <data name="A variant selection option was not found." xml:space="preserve"><value>لم يتم العثور على خيار إحدى خصائص المتغير.</value></data>
+  <data name="A valid template and variant signature are required." xml:space="preserve"><value>يلزم قالب صالح وتوقيع متغير صالح.</value></data>
+  <data name="Remove the product from its template before changing its category." xml:space="preserve"><value>أزل المنتج من القالب قبل تغيير تصنيفه.</value></data>
+  <data name="Generate variants" xml:space="preserve"><value>توليد المتغيرات</value></data>
+  <data name="Select one or more options for every attribute. Preview is required before explicit creation and is limited to 50 combinations." xml:space="preserve"><value>اختر خيارًا واحدًا أو أكثر لكل خاصية. المعاينة مطلوبة قبل الإنشاء الصريح وبحد أقصى 50 تركيبة.</value></data>
+  <data name="Source SKU" xml:space="preserve"><value>صنف المصدر</value></data>
+  <data name="Select source SKU" xml:space="preserve"><value>اختر صنف المصدر</value></data>
+  <data name="Preview variants" xml:space="preserve"><value>معاينة المتغيرات</value></data>
+  <data name="Variant generation preview" xml:space="preserve"><value>معاينة توليد المتغيرات</value></data>
+  <data name="new variant(s)" xml:space="preserve"><value>متغير جديد</value></data>
+  <data name="existing combination(s) skipped" xml:space="preserve"><value>تركيبة موجودة تم تجاوزها</value></data>
+  <data name="Already exists" xml:space="preserve"><value>موجود مسبقًا</value></data>
+  <data name="Will be created" xml:space="preserve"><value>سيتم إنشاؤه</value></data>
+  <data name="Create new variants" xml:space="preserve"><value>إنشاء المتغيرات الجديدة</value></data>
+  <data name="{0} variant(s) created successfully." xml:space="preserve"><value>تم إنشاء {0} متغير بنجاح.</value></data>
+  <data name="Source product was not found." xml:space="preserve"><value>لم يتم العثور على صنف المصدر.</value></data>
+  <data name="Source product must already belong to the selected template." xml:space="preserve"><value>يجب أن يكون صنف المصدر مرتبطًا مسبقًا بالقالب المحدد.</value></data>
+  <data name="Prepared-to-order variants must be created manually because recipes are not cloned." xml:space="preserve"><value>يجب إنشاء متغيرات المنتجات المحضرة عند الطلب يدويًا لأن الوصفات لا يتم نسخها.</value></data>
+  <data name="The template category has no selectable variant attributes." xml:space="preserve"><value>فئة القالب لا تحتوي خصائص متغيرات من نوع الاختيار.</value></data>
+  <data name="Select at least one valid option for every variant attribute." xml:space="preserve"><value>اختر خيارًا صالحًا واحدًا على الأقل لكل خاصية متغير.</value></data>
+  <data name="A maximum of 50 variants can be generated at once." xml:space="preserve"><value>يمكن توليد 50 متغيرًا كحد أقصى في العملية الواحدة.</value></data>
+  <data name="Automatic generation supports selection-based variant attributes only." xml:space="preserve"><value>التوليد التلقائي يدعم خصائص المتغيرات من نوع الاختيار فقط.</value></data>
 </root>

@@ -38,6 +38,7 @@ public class AppDbContext
     public DbSet<CompanyOnboarding> CompanyOnboardings => Set<CompanyOnboarding>();
 
     public DbSet<Product> Products => Set<Product>();
+    public DbSet<ProductTemplate> ProductTemplates => Set<ProductTemplate>();
     public DbSet<ProductCategory> ProductCategories => Set<ProductCategory>();
     public DbSet<ProductAttributeDefinition> ProductAttributeDefinitions => Set<ProductAttributeDefinition>();
     public DbSet<ProductAttributeOption> ProductAttributeOptions => Set<ProductAttributeOption>();

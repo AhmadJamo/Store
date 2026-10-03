@@ -15,6 +15,7 @@
 | StockTransactions | Index/Create | movement permissions/service. |
 | WarehouseLocations / UnassignedStock | hierarchical location search/create/edit and putaway | warehouse/product-stock permissions and location services. |
 | ProductAttributes | typed attribute dictionary create/list/activation and per-product value assignment | Products View/Edit permissions and ProductAttributeService. |
+| ProductTemplates | template creation, existing-SKU assignment/removal and grouped variant listing | Products View/Edit permissions and ProductTemplateService. |
 | LocationMovements | Index/Move | LocationMovements.View/Create and LocationMovementService. |
 | InventoryReconciliation | Index | InventoryReconciliation.View; read-only Application service over tenant-filtered SQL aggregate queries. |
 | Purchases | Index/Create/Details | Purchases.View/Create; PurchaseService and master repositories for dropdowns. |
@@ -36,3 +37,5 @@ Roles.Delete now requires POST and antiforgery. User/role mutations require curr
 
 ## CompanyOnboardingController
 Authenticated /onboarding endpoints display, complete or skip new-company setup through the Application contract. Registration and pending-company login redirect here; Home resumes unresolved setup. The controller does not access EF.
+## WMS-015D product variant generation
+`ProductTemplatesController` provides antiforgery-protected preview and generate actions. Both require `Products.Edit`; generation recomputes the bounded plan server-side and creates only missing signatures.

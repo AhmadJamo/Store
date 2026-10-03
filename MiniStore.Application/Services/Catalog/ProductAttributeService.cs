@@ -8,6 +8,7 @@ public sealed class ProductAttributeService(
     IProductAttributeRepository repository,
     IProductCategoryRepository categories,
     IProductRepository products,
+    ProductTemplateService productTemplates,
     IUnitOfWork unitOfWork)
 {
     public async Task<ProductAttributePageDto> GetPageAsync(CreateProductAttributeDto? form = null)
@@ -148,6 +149,9 @@ public sealed class ProductAttributeService(
 
         await unitOfWork.ExecuteInTransactionAsync(async () =>
         {
+            var product = await products.GetByIdAsync(productId)
+                ?? throw new InvalidOperationException("Product not found.");
+            await productTemplates.RefreshAssignedVariantAsync(product, newValues);
             repository.RemoveValues(await repository.GetValuesAsync(productId));
             foreach (var value in newValues) await repository.AddValueAsync(value);
         });

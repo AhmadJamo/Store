@@ -34,6 +34,8 @@ public class ProductDto
 
     public int? ProductCategoryId { get; set; }
     public string? ProductCategoryName { get; set; }
+    public int? ProductTemplateId { get; set; }
+    public string? VariantLabel { get; set; }
     public decimal? NetWeight { get; set; }
     public decimal? GrossWeight { get; set; }
     public int? WeightMeasurementUnitId { get; set; }

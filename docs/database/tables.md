@@ -24,6 +24,7 @@ Schema source is `AppDbContext`, configurations and migrations. Identity's stand
 - **StorageLocations:** WarehouseId, ParentLocationId?, warehouse-unique Code and optional Barcode, Name, Sequence, Zone?/Aisle?/Rack?/Level?/Bin?, Type, Status, MaximumQuantity? and receive/pick/reserve/ship/count capability flags. The self-reference is tenant-safe and restrictive on delete.
 - **ProductAttributeDefinitions / ProductAttributeOptions / ProductCategoryAttributes:** tenant-owned typed attribute dictionary, ordered selection choices and category applicability. Codes are tenant-safe unique and relationships use tenant-composite foreign keys.
 - **ProductAttributeValues:** one tenant-safe typed value per Product + definition. Nullable typed columns are protected by a database check requiring exactly one value; selected options use tenant-composite foreign keys.
+- **ProductTemplates / Product variant columns:** category-owned template name/code/state plus Product.TemplateId?, VariantSignature? and VariantLabel?. A filtered tenant-safe unique index prevents repeated signatures within one template.
 - **Suppliers:** Id, Name, Phone?, Address?, AccountId?.
 - **Customers:** Id, Name, Phone?, Address?, AccountId.
 - **TaxRates:** Name, Rate, OutputAccountId, InputAccountId, IsPriceInclusive.

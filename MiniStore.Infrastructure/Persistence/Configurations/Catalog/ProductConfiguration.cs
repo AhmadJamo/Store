@@ -49,10 +49,19 @@ public class ProductConfiguration : IEntityTypeConfiguration<Product>
         builder.Property(x => x.Height).HasPrecision(18, 6);
         builder.Property(x => x.TrackingPolicy).IsRequired();
         builder.Property(x => x.HandlingRequirements).IsRequired();
+        builder.Property(x => x.VariantSignature).HasMaxLength(64);
+        builder.Property(x => x.VariantLabel).HasMaxLength(300);
+        builder.HasIndex(x => new { x.ProductTemplateId, x.VariantSignature })
+            .IsUnique().HasFilter("[ProductTemplateId] IS NOT NULL AND [VariantSignature] IS NOT NULL");
 
         builder.HasOne<ProductCategory>()
             .WithMany()
             .HasForeignKey(x => x.ProductCategoryId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasOne<ProductTemplate>()
+            .WithMany()
+            .HasForeignKey(x => x.ProductTemplateId)
             .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasOne<MeasurementUnit>()

@@ -30,6 +30,9 @@ public class Product
     public int? MeasurementUnitId { get; private set; }
 
     public int? ProductCategoryId { get; private set; }
+    public int? ProductTemplateId { get; private set; }
+    public string? VariantSignature { get; private set; }
+    public string? VariantLabel { get; private set; }
 
     public decimal? NetWeight { get; private set; }
 
@@ -274,6 +277,23 @@ public class Product
         DimensionMeasurementUnitId = dimensionMeasurementUnitId;
         TrackingPolicy = trackingPolicy;
         HandlingRequirements = handlingRequirements;
+    }
+
+    public void AssignTemplate(int? productTemplateId, string? variantSignature, string? variantLabel)
+    {
+        if (!productTemplateId.HasValue)
+        {
+            ProductTemplateId = null;
+            VariantSignature = null;
+            VariantLabel = null;
+            return;
+        }
+        if (productTemplateId <= 0 || string.IsNullOrWhiteSpace(variantSignature) ||
+            variantSignature.Length > 64 || string.IsNullOrWhiteSpace(variantLabel) || variantLabel.Trim().Length > 300)
+            throw new ArgumentException("A valid template and variant signature are required.");
+        ProductTemplateId = productTemplateId;
+        VariantSignature = variantSignature;
+        VariantLabel = variantLabel.Trim();
     }
 
     private static void ValidateName(string name)

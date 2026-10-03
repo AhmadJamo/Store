@@ -158,11 +158,13 @@ builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IProductRecipeRepository, ProductRecipeRepository>();
 builder.Services.AddScoped<IProductCategoryRepository, ProductCategoryRepository>();
 builder.Services.AddScoped<IProductAttributeRepository, ProductAttributeRepository>();
+builder.Services.AddScoped<IProductTemplateRepository, ProductTemplateRepository>();
 builder.Services.AddScoped<IMeasurementUnitRepository, MeasurementUnitRepository>();
 
 builder.Services.AddScoped<ProductService>();
 builder.Services.AddScoped<ProductCategoryService>();
 builder.Services.AddScoped<ProductAttributeService>();
+builder.Services.AddScoped<ProductTemplateService>();
 builder.Services.AddScoped<MeasurementUnitService>();
 builder.Services.AddScoped<RecipeService>();
 

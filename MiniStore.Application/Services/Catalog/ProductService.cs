@@ -123,6 +123,9 @@ public class ProductService(
         var category = await GetCategoryAsync(
             dto.ProductCategoryId,
             requireActive: product.ProductCategoryId != dto.ProductCategoryId);
+        if (product.ProductTemplateId.HasValue && product.ProductCategoryId != dto.ProductCategoryId)
+            throw new InvalidOperationException(
+                "Remove the product from its template before changing its category.");
         var weightUnit = await GetOptionalUnitAsync(
             dto.WeightMeasurementUnitId, MeasurementDimension.Mass, "weight");
         var dimensionUnit = await GetOptionalUnitAsync(
@@ -203,6 +206,8 @@ public class ProductService(
         ProductCategoryName = product.ProductCategoryId.HasValue
             ? categoryNames.GetValueOrDefault(product.ProductCategoryId.Value)
             : null,
+        ProductTemplateId = product.ProductTemplateId,
+        VariantLabel = product.VariantLabel,
         NetWeight = product.NetWeight,
         GrossWeight = product.GrossWeight,
         WeightMeasurementUnitId = product.WeightMeasurementUnitId,
