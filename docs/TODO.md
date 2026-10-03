@@ -35,6 +35,7 @@ The ordered Arabic execution plan, workflow, business rules and rolling suggesti
 - WMS is the active delivery track until its planned inventory/warehouse phases are complete. Next: smoke-test WMS-010, then proceed to WMS-015; see `WMS_EVOLUTION_PLAN.md`.
 - WMS-015A/B/C/D typed definitions, values, ProductTemplate grouping and controlled selection-based variant generation are implemented. Product remains the SKU; proceed to the next WMS slice.
 - WMS-020A physical StockMovement kernel is implemented for idempotent Putaway/Relocation dual-write. Next: authenticated pilot smoke test and WMS-030 transfer/transit integration; do not cut over legacy reads yet.
+- WMS-030 transfer movement stages are implemented without historic backfill. Next: authenticated transfer lifecycle smoke test, then WMS-040 explicit balances and availability; partial transit receipt remains deferred.
 - Run an authenticated HTTP/SQL cafe recipe sale and reconciliation journey. Batch production, actual yields and negative-cost settlement remain follow-up work.
 - Add per-terminal product assortment UI/enforcement and per-user branch/POS data scope.
 - Build the central preview/validation/template/audit engine for Excel and CSV import/export, then onboard modules incrementally.

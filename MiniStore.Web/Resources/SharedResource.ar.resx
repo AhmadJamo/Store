@@ -614,4 +614,15 @@
   <data name="A valid idempotency key is required." xml:space="preserve"><value>مفتاح منع التكرار الصالح مطلوب.</value></data>
   <data name="View Physical Stock Movements" xml:space="preserve"><value>عرض حركات المخزون الفعلية</value></data>
   <data name="The idempotency key was already used for a different stock movement." xml:space="preserve"><value>تم استخدام مفتاح منع التكرار مسبقًا لحركة مخزون مختلفة.</value></data>
+  <data name="Kernel movements" xml:space="preserve"><value>حركات المحرك</value></data>
+  <data name="The linked ledgers are reconciled." xml:space="preserve"><value>السجلات المرتبطة متطابقة.</value></data>
+  <data name="Planned" xml:space="preserve"><value>مخططة</value></data>
+  <data name="Posted" xml:space="preserve"><value>مرحلة</value></data>
+  <data name="Reversed" xml:space="preserve"><value>معكوسة</value></data>
+  <data name="Putaway" xml:space="preserve"><value>تخزين</value></data>
+  <data name="Relocation" xml:space="preserve"><value>نقل داخلي</value></data>
+  <data name="TransferOutbound" xml:space="preserve"><value>خروج التحويل</value></data>
+  <data name="TransferTransit" xml:space="preserve"><value>التحويل في الطريق</value></data>
+  <data name="TransferInbound" xml:space="preserve"><value>دخول التحويل</value></data>
+  <data name="Related warehouse" xml:space="preserve"><value>المستودع المرتبط</value></data>
 </root>

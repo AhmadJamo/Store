@@ -800,6 +800,17 @@ Check(stockMovement.Status == StockMovementStatus.Posted && stockMovement.Quanti
 CheckArgumentThrows(() => new StockMovement(1, 1, 1, null, 2, 1m,
         StockMovementType.Putaway, "short", "user-1"),
     "Physical stock movements must reject invalid idempotency keys");
+var plannedTransferMovement = StockMovement.PlanTransfer(10, 20, 1, 1, 2, null, null, 4m,
+    StockMovementType.TransferTransit, 2, "TRANSFER:10:20:TRANSIT", "approver", "TR-10");
+Check(plannedTransferMovement.Status == StockMovementStatus.Planned &&
+      plannedTransferMovement.SourceDocumentType == "StockTransfer" && plannedTransferMovement.StageSequence == 2,
+    "Approved transfers must expose a planned transit movement stage");
+plannedTransferMovement.Post("poster");
+Check(plannedTransferMovement.Status == StockMovementStatus.Posted && plannedTransferMovement.PostedAt.HasValue,
+    "Posting a transfer must post its physical movement stages");
+plannedTransferMovement.Reverse("canceller");
+Check(plannedTransferMovement.Status == StockMovementStatus.Reversed && plannedTransferMovement.ReversedAt.HasValue,
+    "Cancelling a posted transfer must reverse its physical movement stages");
 var stockMovementIndex = typeof(StockMovementsController).GetMethod(nameof(StockMovementsController.Index))!;
 Check(stockMovementIndex.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
       $"{PermissionAuthorizeAttribute.PolicyPrefix}StockMovements.View",

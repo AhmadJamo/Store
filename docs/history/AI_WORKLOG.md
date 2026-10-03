@@ -194,3 +194,8 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
 - Putaway and Relocation now update balances, preserve LocationMovement and write the linked new fact atomically.
 - Added a bilingual, permission-protected, read-only pilot ledger; no historic rows were backfilled.
 - Applied migration `20261003211115_AddPhysicalStockMovementKernel` to `AHMAD/MiniStoreDb` without changing inventory quantities.
+## 2026-10-04 — WMS-030 transfer and transit stages
+- Approved transfers now create deterministic Planned outbound, transit and inbound StockMovement stages per line.
+- Existing Post atomically transfers balances/AVCO and marks stages Posted; cancellation retains compensating behavior and marks linked stages Reversed.
+- Added just-in-time compatibility for older Approved transfers and preserved cancellation of historic Posted transfers without fabricating history.
+- Applied migration `20261003212429_AddTransferMovementTransitStages` to `AHMAD/MiniStoreDb`; it preserves existing kernel timestamps and changes no quantities.

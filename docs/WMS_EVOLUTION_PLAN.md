@@ -536,9 +536,11 @@ Status: implementation and additive migration complete; migration applied to `AH
 
 ### WMS-030 — Transfer and transit integration
 
-- Approved StockTransfer generates outbound/transit/inbound movements.
-- Preserve current workflow and cancellation; add explicit transit visibility.
-- Migrate no historic transfer state automatically.
+- [x] Approved StockTransfer generates Planned outbound/transit/inbound movements per line.
+- [x] Existing atomic posting marks stages Posted; cancellation marks linked stages Reversed.
+- [x] Preserve current workflow, permissions, valuation and cancellation behavior with explicit transit visibility.
+- [x] No historic transfer state is migrated automatically; compatibility fallbacks preserve old records.
+- [ ] Separate transit balances and partial dispatch/receipt remain deferred until explicit balances and reservations exist.
 
 ### WMS-040 — Explicit balances and availability
 

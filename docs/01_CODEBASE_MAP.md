@@ -52,7 +52,7 @@
 | `Services/Settings/MeasurementUnitService.cs` | initializes protected built-ins, manages custom units and performs dimension-safe conversion | Settings/Units plus product and recipe unit selection. |
 | `Services/Inventory/{StorageLocation,UnassignedStock,LocationMovement}Service.cs` | hierarchical location administration and validation, warehouse search, putaway, internal relocation and history | inventory controllers. |
 | `Services/Inventory/InventoryReconciliationService.cs` | classifies warehouse/location/latest-movement differences with fixed precision tolerances and read-only paging | InventoryReconciliation controller/view. |
-| `Services/Inventory/StockMovementService.cs` | idempotently dual-writes posted Putaway/Relocation facts linked to legacy LocationMovement and provides read-only pilot reconciliation | StockMovements controller plus location services. |
+| `Services/Inventory/StockMovementService.cs` | idempotently dual-writes Putaway/Relocation facts, plans/posts/reverses transfer outbound-transit-inbound stages and provides read-only visibility | StockMovements controller, location services and StockTransferService. |
 | `Services/Settings/InventorySettingsService.cs` | rowversion-protected defaults for new warehouse operating policies | SettingsController inventory screen. |
 | `Services/Settings/InventoryAccessService.cs` | branch warehouse permissions/priorities and POS terminal warehouse policies | Settings InventoryAccess and POS validation. |
 | `Services/Settings/PosExperienceSettingsService.cs` | profile presets, custom terminal appearance persistence and POS runtime projection | Settings/Pos and Sales/Pos. |

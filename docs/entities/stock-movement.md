@@ -1,4 +1,4 @@
 # StockMovement
 > Status: WMS-020A PILOT | Last reviewed: 2026-10-04
 
-Tenant-owned immutable posted fact for physical Putaway and Relocation. It stores product, warehouse, optional source location, destination, positive quantity, actor, reference/notes, posted UTC time and a tenant-unique idempotency key. Each pilot row must reference exactly one preserved LocationMovement from the same tenant. Historic location movements are not backfilled. Reversal behavior and additional movement types are not implemented yet.
+Tenant-owned physical movement aggregate. Putaway and Relocation are created Posted and link to one preserved LocationMovement. TransferOutbound, TransferTransit and TransferInbound are created Planned from an approved StockTransfer line, become Posted with the atomic stock transfer and become Reversed with cancellation. It stores primary/related warehouse, optional locations, positive quantity, actors/timestamps, neutral source-document identity and a tenant-unique idempotency key. Historic movements/transfers are not backfilled.

@@ -15,6 +15,7 @@ public class StockTransferService : IStockTransferService
     private readonly IUnitOfWork _unitOfWork;
     private readonly IStorageLocationRepository _storageLocationRepository;
     private readonly IProductLocationStockRepository _productLocationStockRepository;
+    private readonly StockMovementService _stockMovementService;
 
     public StockTransferService(
         IStockTransferRepository stockTransferRepository,
@@ -25,7 +26,8 @@ public class StockTransferService : IStockTransferService
         IStockTransactionRepository stockTransactionRepository,
         IUnitOfWork unitOfWork,
         IStorageLocationRepository storageLocationRepository,
-        IProductLocationStockRepository productLocationStockRepository)
+        IProductLocationStockRepository productLocationStockRepository,
+        StockMovementService stockMovementService)
     {
         _stockTransferRepository = stockTransferRepository;
         _documentNumbers = documentNumbers;
@@ -36,6 +38,7 @@ public class StockTransferService : IStockTransferService
         _unitOfWork = unitOfWork;
         _storageLocationRepository = storageLocationRepository;
         _productLocationStockRepository = productLocationStockRepository;
+        _stockMovementService = stockMovementService;
     }
 
     public async Task<List<StockTransfer>> GetAllAsync(
@@ -444,6 +447,7 @@ public class StockTransferService : IStockTransferService
             async () =>
             {
                 transfer.Approve(userId);
+                await _stockMovementService.PlanTransferAsync(transfer, userId);
             });
     }
 
@@ -643,6 +647,7 @@ public class StockTransferService : IStockTransferService
                             destinationCostMovement));
                 }
 
+                await _stockMovementService.PostTransferAsync(transfer, userId);
                 transfer.Post(userId);
             });
     }
@@ -767,6 +772,7 @@ public class StockTransferService : IStockTransferService
                             destinationCostMovement));
                 }
 
+                await _stockMovementService.ReverseTransferAsync(transfer.Id, userId);
                 transfer.Cancel(
                     userId,
                     reason);

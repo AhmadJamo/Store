@@ -38,6 +38,50 @@ public sealed class StockMovementService(
             legacyMovement.Reference, legacyMovement.Notes));
     }
 
+    public async Task PlanTransferAsync(StockTransfer transfer, string userId)
+    {
+        if ((await movements.GetBySourceAsync("StockTransfer", transfer.Id)).Count > 0) return;
+        foreach (var movement in CreateTransferMovements(transfer, userId))
+            await movements.AddAsync(movement);
+    }
+
+    private static List<StockMovement> CreateTransferMovements(StockTransfer transfer, string userId)
+    {
+        var result = new List<StockMovement>();
+        foreach (var item in transfer.Items)
+        {
+            var prefix = $"TRANSFER:{transfer.Id}:{item.Id}";
+            result.Add(StockMovement.PlanTransfer(transfer.Id, item.Id, item.ProductId,
+                transfer.FromWarehouseId, transfer.ToWarehouseId, item.SourceLocationId, null,
+                item.Quantity, StockMovementType.TransferOutbound, 1, $"{prefix}:OUTBOUND", userId, transfer.TransferNumber));
+            result.Add(StockMovement.PlanTransfer(transfer.Id, item.Id, item.ProductId,
+                transfer.FromWarehouseId, transfer.ToWarehouseId, null, null,
+                item.Quantity, StockMovementType.TransferTransit, 2, $"{prefix}:TRANSIT", userId, transfer.TransferNumber));
+            result.Add(StockMovement.PlanTransfer(transfer.Id, item.Id, item.ProductId,
+                transfer.ToWarehouseId, transfer.FromWarehouseId, null, item.DestinationLocationId,
+                item.Quantity, StockMovementType.TransferInbound, 3, $"{prefix}:INBOUND", userId, transfer.TransferNumber));
+        }
+        return result;
+    }
+
+    public async Task PostTransferAsync(StockTransfer transfer, string userId)
+    {
+        var rows = await movements.GetBySourceAsync("StockTransfer", transfer.Id);
+        if (rows.Count == 0)
+        {
+            rows = CreateTransferMovements(transfer, userId);
+            foreach (var movement in rows) await movements.AddAsync(movement);
+        }
+        foreach (var movement in rows) movement.Post(userId);
+    }
+
+    public async Task ReverseTransferAsync(int transferId, string userId)
+    {
+        var rows = await movements.GetBySourceAsync("StockTransfer", transferId);
+        if (rows.Count == 0) return;
+        foreach (var movement in rows) movement.Reverse(userId);
+    }
+
     public async Task<StockMovementPageDto> GetPageAsync()
     {
         var rows = await movements.GetAllAsync();
@@ -49,18 +93,25 @@ public sealed class StockMovementService(
         return new StockMovementPageDto
         {
             LegacyMovementCount = legacy.Count,
-            LinkedMovementCount = rows.Count,
-            IsReconciled = rows.All(x => legacyIds.Contains(x.LocationMovementId)),
+            LinkedMovementCount = rows.Count(x => x.LocationMovementId.HasValue),
+            TotalMovementCount = rows.Count,
+            IsReconciled = rows.Where(x => x.LocationMovementId.HasValue)
+                .All(x => legacyIds.Contains(x.LocationMovementId!.Value)),
             Rows = rows.Select(x => new StockMovementRowDto
             {
                 Id = x.Id, LocationMovementId = x.LocationMovementId,
                 ProductName = productNames.GetValueOrDefault(x.ProductId, "Unknown Product"),
                 WarehouseName = warehouseNames.GetValueOrDefault(x.WarehouseId, "Unknown Warehouse"),
+                RelatedWarehouseName = x.RelatedWarehouseId.HasValue
+                    ? warehouseNames.GetValueOrDefault(x.RelatedWarehouseId.Value, "Unknown Warehouse") : null,
                 FromLocation = x.FromStorageLocationId.HasValue
                     ? locationCodes.GetValueOrDefault(x.FromStorageLocationId.Value, "Unknown Location") : "Unassigned",
-                ToLocation = locationCodes.GetValueOrDefault(x.ToStorageLocationId, "Unknown Location"),
+                ToLocation = x.ToStorageLocationId.HasValue
+                    ? locationCodes.GetValueOrDefault(x.ToStorageLocationId.Value, "Unknown Location") : "—",
                 Quantity = x.Quantity, Type = x.Type, Status = x.Status,
-                Reference = x.Reference, PostedAt = x.PostedAt
+                Reference = x.Reference, CreatedAt = x.CreatedAt, PostedAt = x.PostedAt,
+                SourceDocumentType = x.SourceDocumentType, SourceDocumentId = x.SourceDocumentId,
+                StageSequence = x.StageSequence
             }).ToList()
         };
     }

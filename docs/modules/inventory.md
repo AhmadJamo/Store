@@ -32,6 +32,8 @@ Every assignment from Unassigned Stock also writes a `Putaway` history row. Hist
 ## Physical movement kernel pilot
 New Putaway and Relocation requests carry a server-rendered idempotency key. Inside the existing Serializable transaction, the services first reject a repeated key, update location quantities, preserve the legacy LocationMovement row and write one linked Posted StockMovement. Tenant-aware foreign keys and unique indexes enforce the source linkage and idempotency boundary. Historic LocationMovement rows are not backfilled. The read-only Physical Stock Movements screen uses `StockMovements.View` and reports linked pilot rows alongside the legacy count.
 
+WMS-030 extends the same ledger to stock transfers. Approval creates Planned outbound, transit and inbound stages per transfer line. Posting retains the current atomic warehouse/location and AVCO movement behavior, then marks all stages Posted in the same transaction. Cancellation retains the current compensating balance/valuation behavior and marks linked stages Reversed. Historic transfers are not backfilled; pre-WMS Approved transfers are planned only when subsequently posted, while old Posted transfers remain cancellable without invented history.
+
 ## Warehouse operating policies
 Warehouse operational use is independent from inventory control. Types cover general, central, branch backroom, sales floor, outlet, production, transit, returns and quarantine uses. Control modes are Simple, LocationManaged and Hybrid. An organized sales-floor or central warehouse may explicitly allow direct POS sales.
 
