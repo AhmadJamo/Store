@@ -21,4 +21,6 @@ public class LocationMovementRepository(AppDbContext context)
     {
         return context.LocationMovements.AddAsync(movement).AsTask();
     }
+
+    public Task SaveChangesAsync() => context.SaveChangesAsync();
 }

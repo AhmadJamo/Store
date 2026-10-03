@@ -2,6 +2,7 @@ namespace MiniStore.Application.DTOs.LocationMovements;
 
 public class CreateLocationMovementDto
 {
+    public string IdempotencyKey { get; set; } = Guid.NewGuid().ToString("N");
     public int WarehouseId { get; set; }
 
     public int ProductId { get; set; }

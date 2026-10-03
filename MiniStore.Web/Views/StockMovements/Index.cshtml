@@ -1,0 +1,11 @@
+@model MiniStore.Application.DTOs.StockMovements.StockMovementPageDto
+@inject Microsoft.Extensions.Localization.IStringLocalizer<MiniStore.Web.SharedResource> Localizer
+@{ ViewData["Title"] = Localizer["Physical stock movements"]; }
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-start mb-3"><div><h2>@Localizer["Physical stock movements"]</h2><p class="text-muted">@Localizer["This pilot ledger is dual-written with the existing location movement history."]</p></div><a asp-controller="LocationMovements" asp-action="Index" class="btn btn-outline-secondary">@Localizer["Location Movements"]</a></div>
+    <div class="alert @(Model.IsReconciled ? "alert-success" : "alert-warning")">@Localizer["Linked pilot movements"]: @Model.LinkedMovementCount / @Localizer["Legacy location movements"]: @Model.LegacyMovementCount. @(Model.IsReconciled ? Localizer["The ledgers are reconciled."] : Localizer["Historic legacy movements are intentionally not backfilled."])</div>
+    <div class="table-responsive"><table class="table table-striped align-middle"><thead><tr><th>@Localizer["Date"]</th><th>@Localizer["Type"]</th><th>@Localizer["Status"]</th><th>@Localizer["Product"]</th><th>@Localizer["Warehouse"]</th><th>@Localizer["From"]</th><th>@Localizer["To"]</th><th>@Localizer["Quantity"]</th><th>@Localizer["Reference"]</th></tr></thead><tbody>
+    @foreach(var row in Model.Rows){<tr><td>@row.PostedAt.ToLocalTime().ToString("yyyy-MM-dd HH:mm")</td><td>@row.Type</td><td>@row.Status</td><td>@row.ProductName</td><td>@row.WarehouseName</td><td>@row.FromLocation</td><td>@row.ToLocation</td><td>@row.Quantity.ToString("N3")</td><td>@row.Reference</td></tr>}
+    @if(Model.Rows.Count == 0){<tr><td colspan="9" class="text-center text-muted">@Localizer["No pilot stock movements have been posted yet."]</td></tr>}
+    </tbody></table></div>
+</div>

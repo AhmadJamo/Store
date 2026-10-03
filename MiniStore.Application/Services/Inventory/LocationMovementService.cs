@@ -6,6 +6,7 @@ namespace MiniStore.Application.Services;
 
 public class LocationMovementService(
     ILocationMovementRepository movementRepository,
+    StockMovementService stockMovementService,
     IProductLocationStockRepository locationStockRepository,
     IStorageLocationRepository storageLocationRepository,
     IProductRepository productRepository,
@@ -118,6 +119,8 @@ public class LocationMovementService(
 
         await unitOfWork.ExecuteInTransactionAsync(async () =>
         {
+            if (await stockMovementService.IsDuplicateAsync(dto.IdempotencyKey, StockMovementType.Relocation,
+                    dto.ProductId, dto.WarehouseId, dto.FromStorageLocationId, dto.ToStorageLocationId, dto.Quantity)) return;
             var sourceStock = await locationStockRepository.GetAsync(
                 dto.ProductId,
                 dto.FromStorageLocationId)
@@ -172,7 +175,7 @@ public class LocationMovementService(
                 dto.Reference,
                 dto.Notes);
 
-            await movementRepository.AddAsync(movement);
+            await stockMovementService.RecordPostedAsync(movement, dto.IdempotencyKey);
         });
     }
 

@@ -10,7 +10,7 @@ public class UnassignedStockService(
     IProductRepository productRepository,
     IWarehouseRepository warehouseRepository,
     IStorageLocationRepository storageLocationRepository,
-    ILocationMovementRepository movementRepository,
+    StockMovementService stockMovementService,
     ICurrentUserService currentUserService,
     IUnitOfWork unitOfWork)
 {
@@ -57,7 +57,8 @@ public class UnassignedStockService(
         int productId,
         int warehouseId,
         int storageLocationId,
-        decimal quantity)
+        decimal quantity,
+        string idempotencyKey)
     {
         if (quantity <= 0)
         {
@@ -90,6 +91,8 @@ public class UnassignedStockService(
 
         await unitOfWork.ExecuteInTransactionAsync(async () =>
         {
+            if (await stockMovementService.IsDuplicateAsync(idempotencyKey, StockMovementType.Putaway,
+                    productId, warehouseId, null, storageLocationId, quantity)) return;
             var warehouseStock = await productStockRepository
                 .GetByProductAndWarehouseAsync(productId, warehouseId)
                 ?? throw new InvalidOperationException("Warehouse stock not found.");
@@ -145,7 +148,7 @@ public class UnassignedStockService(
                 currentUserService.UserId,
                 reference: "Unassigned Stock");
 
-            await movementRepository.AddAsync(movement);
+            await stockMovementService.RecordPostedAsync(movement, idempotencyKey);
         });
     }
 

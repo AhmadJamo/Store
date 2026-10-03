@@ -54,3 +54,5 @@ Changing an entity/configuration requires a migration, update to this file and `
 
 ## CompanyOnboardings (2026-09-15)
 CompanyOnboardings uses TenantId as its primary key and cascading FK to Tenants. It stores setup status, normalized setup choices, template/audit metadata and SQL Server rowversion. Migration 20260915140248_AddCompanyGuidedOnboarding creates the table and backfills existing companies as Skipped.
+## WMS-020A physical movement kernel
+Migration `20261003211115_AddPhysicalStockMovementKernel` creates tenant-owned `StockMovements`. Each row has a tenant-unique idempotency key and a tenant-safe FK to one preserved `LocationMovement`, Product, Warehouse and source/destination locations. The migration performs no historic backfill and changes no inventory quantity.

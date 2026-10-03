@@ -147,7 +147,15 @@ public static class NavigationDefinitions
                 "InventoryReconciliation",
                 "Index",
                 "InventoryReconciliation.View",
-                90)
+                90),
+
+            new NavigationItem(
+                "Physical stock movements",
+                "bi-arrow-repeat",
+                "StockMovements",
+                "Index",
+                "StockMovements.View",
+                100)
         ),
 
         new NavigationGroup(

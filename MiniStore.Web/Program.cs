@@ -204,6 +204,8 @@ builder.Services.AddScoped<IProductLocationStockRepository, ProductLocationStock
 builder.Services.AddScoped<UnassignedStockService>();
 builder.Services.AddScoped<ILocationMovementRepository, LocationMovementRepository>();
 builder.Services.AddScoped<LocationMovementService>();
+  builder.Services.AddScoped<IStockMovementRepository, StockMovementRepository>();
+  builder.Services.AddScoped<StockMovementService>();
 builder.Services.AddScoped<IInventoryReconciliationRepository, InventoryReconciliationRepository>();
 builder.Services.AddScoped<InventoryReconciliationService>();
 

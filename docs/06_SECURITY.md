@@ -39,3 +39,4 @@ Run `dotnet run --project tests/SecurityRegression/SecurityRegression.csproj` an
 
 ## Company-code login selection (2026-09-15)
 Password validation runs before company selection. A supplied globally unique tenant slug must resolve to an active membership for that user before the TenantId claim is issued. Empty company code retains default-membership behavior. Errors do not expose another company's records.
+WMS-020A uses a dedicated `StockMovements.View` permission for its read-only ledger. Putaway and Relocation retain their existing mutation permissions. Server-side tenant filters, composite tenant foreign keys, antiforgery-protected forms and tenant-unique idempotency keys prevent cross-company linkage and repeated submissions.

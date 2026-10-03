@@ -47,3 +47,5 @@ See `03_DATABASE.md` for constraints and `entities/*.md` for behaviour.
 
 ## CompanyOnboardings
 One row per tenant stores guided-setup status and choices, template/audit metadata and rowversion. TenantId is both the primary key and cascading FK to Tenants. This is explicitly tenant-addressed control-plane state.
+### StockMovements
+Additive WMS-020 physical movement facts. The pilot stores Posted Putaway/Relocation quantity, locations, actor, timestamps, reference/notes and idempotency key. It links one-to-one by tenant to the preserved LocationMovement and does not replace ProductStock or ProductLocationStock.

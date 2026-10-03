@@ -44,3 +44,5 @@ Products, Warehouses, Suppliers, ProductStocks and Roles index delete controls u
 /onboarding is a bilingual, responsive post-registration screen with business-type cards, country/currency/language/fiscal choices, tax and POS switches, inventory control level, transactional Apply and explicit manual-setup Skip.
 ## WMS-015D Product Templates
 The Product Templates screen supports a two-step selection-variant workflow: choose an assigned source SKU and options, inspect the bounded preview, then explicitly create missing products. Existing combinations are labelled and skipped.
+## Physical Stock Movements
+Bilingual read-only pilot ledger showing posted Putaway/Relocation facts, their legacy linkage, product, warehouse, locations, quantity and reference. It intentionally reports historic legacy rows without backfilling them.

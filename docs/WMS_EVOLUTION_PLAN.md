@@ -529,9 +529,10 @@ Status: implementation and additive migration complete; migration applied to `AH
 
 ### WMS-020 — Physical movement kernel
 
-- StockMovement aggregate/status/idempotency.
-- Pilot Putaway and Relocation end-to-end with dual-write reconciliation.
-- Preserve LocationMovement history.
+- [x] WMS-020A StockMovement aggregate, posted status and tenant-unique idempotency.
+- [x] Pilot Putaway and Relocation end-to-end with atomic dual-write and read-only linkage status.
+- [x] Preserve LocationMovement history without historic backfill or read cutover.
+- [ ] Extend the kernel to transfer/transit through WMS-030 after pilot verification.
 
 ### WMS-030 — Transfer and transit integration
 

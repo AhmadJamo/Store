@@ -39,3 +39,5 @@ Roles.Delete now requires POST and antiforgery. User/role mutations require curr
 Authenticated /onboarding endpoints display, complete or skip new-company setup through the Application contract. Registration and pending-company login redirect here; Home resumes unresolved setup. The controller does not access EF.
 ## WMS-015D product variant generation
 `ProductTemplatesController` provides antiforgery-protected preview and generate actions. Both require `Products.Edit`; generation recomputes the bounded plan server-side and creates only missing signatures.
+## StockMovementsController
+Read-only WMS-020 pilot ledger protected by `StockMovements.View`. The controller delegates all queries and reconciliation projection to the Application service.

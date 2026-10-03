@@ -7,4 +7,5 @@ public interface ILocationMovementRepository
     Task<List<LocationMovement>> GetAllAsync();
 
     Task AddAsync(LocationMovement movement);
+    Task SaveChangesAsync();
 }

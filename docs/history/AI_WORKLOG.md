@@ -189,3 +189,8 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
 - Enforced a server-side maximum of 50 combinations, recomputation at creation and duplicate-signature skipping.
 - New SKUs clone safe commercial, unit, logistics and non-variant attribute configuration only; barcode, stock, recipes and history are never cloned.
 - Kept prepared-to-order and non-selection variants manual, preserving recipe and identity safety.
+## 2026-10-04 — WMS-020A physical movement kernel
+- Added tenant-isolated StockMovement posted facts and idempotency enforcement.
+- Putaway and Relocation now update balances, preserve LocationMovement and write the linked new fact atomically.
+- Added a bilingual, permission-protected, read-only pilot ledger; no historic rows were backfilled.
+- Applied migration `20261003211115_AddPhysicalStockMovementKernel` to `AHMAD/MiniStoreDb` without changing inventory quantities.

@@ -793,6 +793,17 @@ Check(boundedCombinations.Count == 6 && boundedCombinations.All(x => x.Count == 
 CheckThrows(() => VariantCombinationBuilder.Build(
         new List<List<int>> { Enumerable.Range(1, 10).ToList(), Enumerable.Range(1, 6).ToList() }, 50),
     "Variant generation must reject plans above the hard limit");
+var stockMovement = new StockMovement(1, 1, 1, null, 2, 3.5m,
+    StockMovementType.Putaway, "putaway-request-0001", "user-1", "PUT-1");
+Check(stockMovement.Status == StockMovementStatus.Posted && stockMovement.Quantity == 3.5m,
+    "Physical stock movements must be immutable posted facts with a positive quantity");
+CheckArgumentThrows(() => new StockMovement(1, 1, 1, null, 2, 1m,
+        StockMovementType.Putaway, "short", "user-1"),
+    "Physical stock movements must reject invalid idempotency keys");
+var stockMovementIndex = typeof(StockMovementsController).GetMethod(nameof(StockMovementsController.Index))!;
+Check(stockMovementIndex.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
+      $"{PermissionAuthorizeAttribute.PolicyPrefix}StockMovements.View",
+    "Physical stock movement history must require its dedicated view permission");
 
 Console.WriteLine($"Passed {count} security and inventory regression checks.");
 

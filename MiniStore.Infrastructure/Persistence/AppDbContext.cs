@@ -114,6 +114,7 @@ public class AppDbContext
     public DbSet<ProductLocationStock> ProductLocationStocks => Set<ProductLocationStock>();
 
     public DbSet<LocationMovement> LocationMovements => Set<LocationMovement>();
+    public DbSet<StockMovement> StockMovements => Set<StockMovement>();
 
 
 

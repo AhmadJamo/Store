@@ -92,6 +92,7 @@
                             <form asp-action="Assign" method="post" class="d-flex gap-2">
                                 <input type="hidden" name="productId" value="@row.ProductId" />
                                 <input type="hidden" name="warehouseId" value="@row.WarehouseId" />
+                                <input type="hidden" name="idempotencyKey" value="@Guid.NewGuid().ToString("N")" />
 
                                 <select name="storageLocationId" class="form-select" required>
                                     <option value="">Select rack/bin</option>

@@ -33,7 +33,8 @@ public class UnassignedStockController(
         int productId,
         int warehouseId,
         int storageLocationId,
-        decimal quantity)
+        decimal quantity,
+        string idempotencyKey)
     {
         try
         {
@@ -41,7 +42,8 @@ public class UnassignedStockController(
                 productId,
                 warehouseId,
                 storageLocationId,
-                quantity);
+                quantity,
+                idempotencyKey);
 
             SetNotification("success", "Stock location saved.");
         }

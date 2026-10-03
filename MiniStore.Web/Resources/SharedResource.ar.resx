@@ -602,4 +602,16 @@
   <data name="Select at least one valid option for every variant attribute." xml:space="preserve"><value>اختر خيارًا صالحًا واحدًا على الأقل لكل خاصية متغير.</value></data>
   <data name="A maximum of 50 variants can be generated at once." xml:space="preserve"><value>يمكن توليد 50 متغيرًا كحد أقصى في العملية الواحدة.</value></data>
   <data name="Automatic generation supports selection-based variant attributes only." xml:space="preserve"><value>التوليد التلقائي يدعم خصائص المتغيرات من نوع الاختيار فقط.</value></data>
+  <data name="Physical stock movements" xml:space="preserve"><value>حركات المخزون الفعلية</value></data>
+  <data name="This pilot ledger is dual-written with the existing location movement history." xml:space="preserve"><value>يتم تسجيل هذا الدفتر التجريبي بالتوازي مع سجل حركات المواقع الحالي.</value></data>
+  <data name="Linked pilot movements" xml:space="preserve"><value>الحركات التجريبية المرتبطة</value></data>
+  <data name="Legacy location movements" xml:space="preserve"><value>حركات المواقع السابقة</value></data>
+  <data name="The ledgers are reconciled." xml:space="preserve"><value>السجلان متطابقان.</value></data>
+  <data name="Historic legacy movements are intentionally not backfilled." xml:space="preserve"><value>لم تتم تعبئة الحركات التاريخية القديمة بشكل مقصود.</value></data>
+  <data name="No pilot stock movements have been posted yet." xml:space="preserve"><value>لم يتم ترحيل حركات مخزون تجريبية بعد.</value></data>
+  <data name="From" xml:space="preserve"><value>من</value></data>
+  <data name="To" xml:space="preserve"><value>إلى</value></data>
+  <data name="A valid idempotency key is required." xml:space="preserve"><value>مفتاح منع التكرار الصالح مطلوب.</value></data>
+  <data name="View Physical Stock Movements" xml:space="preserve"><value>عرض حركات المخزون الفعلية</value></data>
+  <data name="The idempotency key was already used for a different stock movement." xml:space="preserve"><value>تم استخدام مفتاح منع التكرار مسبقًا لحركة مخزون مختلفة.</value></data>
 </root>

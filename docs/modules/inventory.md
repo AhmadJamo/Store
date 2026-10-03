@@ -1,7 +1,7 @@
 # Inventory and stock movements
 > Status: IMPLEMENTED WITH APPROVED WMS EVOLUTION | Last reviewed: 2026-09-30
 
-The approved next evolution is documented in `../WMS_EVOLUTION_PLAN.md`. Existing ProductStock, ProductLocationStock, StockTransaction, LocationMovement, warehouse policies and StockTransfer workflows remain authoritative until each planned WMS vertical slice is implemented and reconciled. No target WMS entity should be treated as currently implemented.
+The approved evolution is documented in `../WMS_EVOLUTION_PLAN.md`. Existing ProductStock, ProductLocationStock, StockTransaction, LocationMovement, warehouse policies and StockTransfer workflows remain authoritative until each WMS vertical slice is implemented and reconciled. WMS-020A now adds the StockMovement kernel for new Putaway and Relocation operations only.
 
 Balances and moving weighted-average valuation are held by product/warehouse in `ProductStock`; immutable-by-convention quantity/cost movement rows are `StockTransaction`. Every new movement freezes quantity, average and inventory value before/after plus unit cost, movement value and cost variance. ProductStock and StockTransfer have SQL Server rowversion concurrency tokens. Inventory UnitOfWork operations use Serializable transactions, and a stale update rolls back the document, balance and movement together with a retry message.
 
@@ -28,6 +28,9 @@ Inter-warehouse transfer locations are optional. When a location is provided, it
 The Location Movements screen moves a selected product between two active locations in the same warehouse. It shows only source locations holding a positive balance for the selected product, displays available quantity, filters destination locations by warehouse and rejects identical locations, insufficient source quantity or destination-capacity overflow. The Serializable UnitOfWork transaction updates both location balances and writes one immutable `LocationMovement` history row while leaving `ProductStock` unchanged.
 
 Every assignment from Unassigned Stock also writes a `Putaway` history row. History can be filtered by warehouse and searched by product name, barcode or reference, and records quantity, source, destination, UTC creation time, user, reference and notes. Permissions are `LocationMovements.View` and `LocationMovements.Create`.
+
+## Physical movement kernel pilot
+New Putaway and Relocation requests carry a server-rendered idempotency key. Inside the existing Serializable transaction, the services first reject a repeated key, update location quantities, preserve the legacy LocationMovement row and write one linked Posted StockMovement. Tenant-aware foreign keys and unique indexes enforce the source linkage and idempotency boundary. Historic LocationMovement rows are not backfilled. The read-only Physical Stock Movements screen uses `StockMovements.View` and reports linked pilot rows alongside the legacy count.
 
 ## Warehouse operating policies
 Warehouse operational use is independent from inventory control. Types cover general, central, branch backroom, sales floor, outlet, production, transit, returns and quarantine uses. Control modes are Simple, LocationManaged and Hybrid. An organized sales-floor or central warehouse may explicitly allow direct POS sales.

@@ -64,6 +64,8 @@ public static class PermissionDefinitions
             "View Inventory Reconciliation",
             "Inventory"),
 
+        new("StockMovements.View", "View Physical Stock Movements", "Inventory"),
+
         // ==========================================
         // Suppliers
         // ==========================================
