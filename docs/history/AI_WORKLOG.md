@@ -1,5 +1,13 @@
 # AI Work Log
 
+## 2026-10-04 — WMS-070A opening lot/serial tracking
+
+- Added tenant-owned tracked balances and immutable trace history with lot/serial identity, manufacture/expiration dates and rowversion.
+- Added serial-one constraints, serial global uniqueness and location-aware lot uniqueness.
+- Added atomic opening allocation that reconciles every current dimensional balance before activating Product.TrackingPolicy.
+- Added bilingual trace/expiry UI, dedicated permissions, ADR, migration and SQL integration coverage.
+- Applied `AddInventoryLotAndSerialTracking` to `AHMAD/MiniStoreDb`; operational receipt/issue/transfer/return integration remains WMS-070B.
+
 ## 2026-10-04 — WMS-060 inventory adjustments and cycle counting
 
 - Added tenant-owned adjustment header/lines, centralized ADJ numbering and Draft/Counted/Approved/Posted/Cancelled lifecycle.

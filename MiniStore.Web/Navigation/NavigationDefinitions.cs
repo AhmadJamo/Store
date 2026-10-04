@@ -179,7 +179,15 @@ public static class NavigationDefinitions
                 "InventoryAdjustments",
                 "Index",
                 "InventoryAdjustments.View",
-                130)
+                130),
+
+            new NavigationItem(
+                "Lot and serial tracking",
+                "bi-upc-scan",
+                "InventoryTracking",
+                "Index",
+                "InventoryTracking.View",
+                140)
         ),
 
         new NavigationGroup(

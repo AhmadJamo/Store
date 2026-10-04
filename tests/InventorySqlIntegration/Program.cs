@@ -2,6 +2,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using MiniStore.Application.DTOs.Inventory.Reconciliation;
 using MiniStore.Application.DTOs.Inventory.Adjustments;
+using MiniStore.Application.DTOs.Inventory.Tracking;
 using MiniStore.Application.DTOs.Products;
 using MiniStore.Application.Services;
 using MiniStore.Domain.Entities;
@@ -93,8 +94,9 @@ try
         connectionString);
     await VerifyAdjustmentPostingAsync(tenantOneId, tenantOneFixture.ProductId, tenantOneFixture.WarehouseId, connectionString);
     await VerifyInventoryBalanceProjectionAsync(tenantOneId, tenantOneFixture.ProductId, expectedOnHand: 2m, connectionString);
+    await VerifyOpeningTrackingAllocationAsync(tenantOneId, tenantOneFixture.ProductId, tenantOneFixture.WarehouseId, connectionString);
 
-    Console.WriteLine("Passed WMS SQL integration checks: tenant isolation, reconciliation translation, balance synchronization, reservation concurrency, last-unit issue, adjustment posting and tracking-policy guard.");
+    Console.WriteLine("Passed WMS SQL integration checks: tenant isolation, reconciliation, balances, reservation concurrency, last-unit issue, adjustment posting and opening lot allocation.");
 }
 finally
 {
@@ -248,6 +250,24 @@ static async Task VerifyAdjustmentPostingAsync(int tenantId, int productId, int 
         x.SourceDocumentType == "InventoryAdjustment" && x.SourceDocumentId == id);
     if (adjustment.Status != InventoryAdjustmentStatus.Posted || physical.Type != StockMovementType.AdjustmentIn || physical.Quantity != 2m)
         throw new InvalidOperationException("Posted count variance must atomically update stock and create a compensating movement.");
+}
+
+static async Task VerifyOpeningTrackingAllocationAsync(int tenantId, int productId, int warehouseId, string connectionString)
+{
+    await using var context = new AppDbContext(CreateOptions(connectionString), new FixedTenantContext(tenantId));
+    var service = new InventoryTrackingService(new InventoryTrackingRepository(context), new ProductRepository(context),
+        new WarehouseRepository(context), new StorageLocationRepository(context), new InventoryBalanceRepository(context), new UnitOfWork(context));
+    await service.OpenAsync(new OpenTrackingAllocationDto
+    {
+        ProductId = productId, Policy = ProductTrackingPolicy.Lot, SourceReference = "OPEN-LOT-1",
+        Lines = [new OpenTrackingAllocationLineDto { WarehouseId = warehouseId, Identifier = "LOT-A", Quantity = 2m, ExpirationDate = new DateOnly(2027, 1, 1) }]
+    }, "tracking-user");
+    var product = await context.Products.AsNoTracking().SingleAsync(x => x.Id == productId);
+    var balance = await context.InventoryTrackingBalances.AsNoTracking().SingleAsync(x => x.ProductId == productId);
+    var history = await context.InventoryTrackingTransactions.AsNoTracking().SingleAsync(x => x.InventoryTrackingBalanceId == balance.Id);
+    if (product.TrackingPolicy != ProductTrackingPolicy.Lot || balance.Quantity != 2m ||
+        history.Type != InventoryTrackingTransactionType.OpeningAllocation)
+        throw new InvalidOperationException("Opening tracking allocation must atomically cover stock, activate policy and write trace history.");
 }
 
 static async Task VerifyTrackedActivationGuardAsync(

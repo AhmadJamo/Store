@@ -49,6 +49,10 @@ WMS-050 makes `InventoryReservation` the owner of Reserved. Transfer approval al
 
 WMS-060 adds a controlled Draft → Counted → Approved → Posted workflow, with cancellation before posting and optional blind counts. Expected OnHand is frozen per product and exact location/Unassigned position. Posting refuses stale counts or a result below Reserved, then atomically updates warehouse/location balances and writes both the valued AdjustmentIn/AdjustmentOut StockTransaction and linked physical StockMovement. General-ledger gain/loss posting is deferred until explicit accounts are configured.
 
+## Lot, serial and expiration tracking
+
+WMS-070A adds dimensional lot/serial balances and immutable trace transactions. Serial quantities are limited to zero/one and identifiers are unique per tenant product; lot identifiers may occupy multiple locations. Opening activation rejects negative or partially allocated stock and requires submitted allocations to equal every current InventoryBalance position before Product.TrackingPolicy changes. Receipt, issue, transfer and return integration remains WMS-070B, so the current report and opening workflow are a foundation rather than a completed operational cutover.
+
 ## Warehouse operating policies
 Warehouse operational use is independent from inventory control. Types cover general, central, branch backroom, sales floor, outlet, production, transit, returns and quarantine uses. Control modes are Simple, LocationManaged and Hybrid. An organized sales-floor or central warehouse may explicitly allow direct POS sales.
 

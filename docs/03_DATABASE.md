@@ -7,6 +7,8 @@ WMS-050 adds tenant-owned `InventoryReservations` and `InventoryReservationLines
 
 WMS-060 adds tenant-owned `InventoryAdjustments` and `InventoryAdjustmentLines`, tenant-unique document numbers, workflow rowversion, warehouse/location relationships and one product line per document. Migration `AddInventoryAdjustments` is additive and applied to `AHMAD/MiniStoreDb`.
 
+WMS-070A adds `InventoryTrackingBalances` and immutable `InventoryTrackingTransactions`. Filtered tenant-safe indexes enforce serial identity and lot dimensional uniqueness; check constraints enforce non-negative tracked balance and serial zero/one quantity. Migration `AddInventoryLotAndSerialTracking` is additive and applied to `AHMAD/MiniStoreDb`.
+
 `AppDbContext` derives from `IdentityDbContext<IdentityUser, IdentityRole, string>`, so Identity tables coexist with ERP tables. Provider: SQL Server.
 
 All business tables have a required `TenantId` foreign key to `Tenants`. EF query filters use the authenticated tenant context, and SaveChanges enforces tenant ownership for inserts, updates and deletes. Business unique indexes include `TenantId`; the same invoice number, account code or settings singleton may therefore exist independently in different companies. Every relationship between records carrying tenant ownership also includes `TenantId` on both sides, so SQL rejects a reference to another company's record.

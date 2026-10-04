@@ -7,6 +7,8 @@ WMS-050 reservation writes run inside the existing serializable UnitOfWork. Tena
 
 WMS-060 enforces antiforgery and action-specific permissions, separates counter from approver, rejects stale expected balances and results below Reserved, and posts the document, quantity, valuation and movement evidence in one serializable transaction.
 
+WMS-070A requires full dimensional reconciliation before tracking activation, rejects negative stock, constrains serial quantities and uniqueness in SQL, and writes policy, balances and history in one serializable tenant boundary.
+
 ## Confirmed findings and fixes
 - **Critical — privilege escalation:** Users.Create could assign Admin; Roles.Edit could grant the caller arbitrary permissions through their role. Both permission evaluators now reserve all Users/Roles mutation permissions for current database Admin members. Read access remains delegable. Stored mappings cannot override this rule.
 - **High — CSRF:** Roles.Delete mutated state through GET, which global antiforgery deliberately skips. It now requires POST and antiforgery. All five list delete controls now submit POST forms with generated antiforgery tokens; other delete endpoints already required POST.

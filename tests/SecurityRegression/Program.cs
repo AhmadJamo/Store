@@ -869,6 +869,21 @@ var adjustmentsControllerIndex = typeof(InventoryAdjustmentsController).GetMetho
 Check(adjustmentsControllerIndex.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
       $"{PermissionAuthorizeAttribute.PolicyPrefix}InventoryAdjustments.View",
     "Inventory adjustment history must require its dedicated view permission");
+var lotBalance = new InventoryTrackingBalance(1, 1, null, ProductTrackingPolicy.Lot,
+    "lot-2026-a", 5m, new DateOnly(2026, 1, 1), new DateOnly(2027, 1, 1), "OPEN-1");
+Check(lotBalance.Identifier == "LOT-2026-A" && lotBalance.Quantity == 5m && lotBalance.Status == InventoryTrackingStatus.Available,
+    "Lot balances must normalize identifiers and preserve expiry metadata");
+CheckArgumentThrows(() => new InventoryTrackingBalance(1, 1, null, ProductTrackingPolicy.Serial,
+        "SER-1", 2m, null, null, "OPEN-1"),
+    "Every serial balance must contain exactly one unit");
+var serialIndex = db.Model.FindEntityType(typeof(InventoryTrackingBalance))!.GetIndexes()
+    .Single(index => index.IsUnique && index.GetFilter() == "[Policy] = 2");
+Check(serialIndex.Properties.Select(x => x.Name).SequenceEqual(["TenantId", nameof(InventoryTrackingBalance.ProductId), nameof(InventoryTrackingBalance.Policy), nameof(InventoryTrackingBalance.Identifier)]),
+    "Serial identifiers must be globally unique per tenant product");
+var trackingControllerIndex = typeof(InventoryTrackingController).GetMethod(nameof(InventoryTrackingController.Index))!;
+Check(trackingControllerIndex.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
+      $"{PermissionAuthorizeAttribute.PolicyPrefix}InventoryTracking.View",
+    "Lot and serial traceability must require its dedicated view permission");
 
 Console.WriteLine($"Passed {count} security and inventory regression checks.");
 

@@ -674,4 +674,25 @@
   <data name="AdjustmentIn" xml:space="preserve"><value>تسوية زيادة</value></data>
   <data name="AdjustmentOut" xml:space="preserve"><value>تسوية نقص</value></data>
   <data name="Inventory adjustment" xml:space="preserve"><value>تسوية مخزون</value></data>
+  <data name="Lot and serial tracking" xml:space="preserve"><value>تتبع التشغيلات والأرقام التسلسلية</value></data>
+  <data name="Opening allocation must cover every current inventory position before tracking is activated." xml:space="preserve"><value>يجب أن يغطي التخصيص الافتتاحي كل مواقع المخزون الحالية قبل تفعيل التتبع.</value></data>
+  <data name="Opening tracking allocation" xml:space="preserve"><value>التخصيص الافتتاحي للتتبع</value></data>
+  <data name="Lot or serial number" xml:space="preserve"><value>رقم التشغيلة أو الرقم التسلسلي</value></data>
+  <data name="Manufacture date" xml:space="preserve"><value>تاريخ التصنيع</value></data>
+  <data name="Expiration date" xml:space="preserve"><value>تاريخ الصلاحية</value></data>
+  <data name="Add allocation" xml:space="preserve"><value>إضافة تخصيص</value></data>
+  <data name="Activate tracking" xml:space="preserve"><value>تفعيل التتبع</value></data>
+  <data name="Current tracked inventory" xml:space="preserve"><value>المخزون المتتبع الحالي</value></data>
+  <data name="No tracked inventory found." xml:space="preserve"><value>لا يوجد مخزون متتبع.</value></data>
+  <data name="Tracking history" xml:space="preserve"><value>سجل التتبع</value></data>
+  <data name="View Inventory Tracking" xml:space="preserve"><value>عرض تتبع المخزون</value></data>
+  <data name="Open Inventory Tracking" xml:space="preserve"><value>تفعيل تتبع المخزون</value></data>
+  <data name="Depleted" xml:space="preserve"><value>مستنفد</value></data>
+  <data name="Quarantined" xml:space="preserve"><value>محجور</value></data>
+  <data name="OpeningAllocation" xml:space="preserve"><value>تخصيص افتتاحي</value></data>
+  <data name="Receipt" xml:space="preserve"><value>استلام</value></data>
+  <data name="Issue" xml:space="preserve"><value>صرف</value></data>
+  <data name="Return" xml:space="preserve"><value>مرتجع</value></data>
+  <data name="Adjustment" xml:space="preserve"><value>تسوية</value></data>
+  <data name="Transfer" xml:space="preserve"><value>تحويل</value></data>
 </root>

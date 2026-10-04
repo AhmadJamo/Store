@@ -73,6 +73,8 @@ public static class PermissionDefinitions
         new("InventoryAdjustments.Approve", "Approve Inventory Adjustment", "Inventory"),
         new("InventoryAdjustments.Post", "Post Inventory Adjustment", "Inventory"),
         new("InventoryAdjustments.Cancel", "Cancel Inventory Adjustment", "Inventory"),
+        new("InventoryTracking.View", "View Inventory Tracking", "Inventory"),
+        new("InventoryTracking.Open", "Open Inventory Tracking", "Inventory"),
 
         // ==========================================
         // Suppliers

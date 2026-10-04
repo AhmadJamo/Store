@@ -7,6 +7,8 @@ Schema source is `AppDbContext`, configurations and migrations. Identity's stand
 - **InventoryReservationLines:** positive product/warehouse/exact-location or Unassigned allocations that own `InventoryBalance.Reserved`.
 - **InventoryAdjustments:** numbered blind/visible count documents and immutable workflow actor/timestamp evidence.
 - **InventoryAdjustmentLines:** frozen expected, counted and derived variance quantities per product.
+- **InventoryTrackingBalances:** lot/serial quantities, dimensional position, dates, status, source and concurrency token.
+- **InventoryTrackingTransactions:** immutable lot/serial trace events linked to their balance.
 
 - **Tenants:** company identity, unique URL-safe Slug, active state, creation time and RowVersion.
 - **TenantMemberships / TenantRoles / TenantRolePermissions / TenantUserRoles:** company membership, tenant-owned role definitions and permission/user assignments; Admin status is evaluated inside the active company.

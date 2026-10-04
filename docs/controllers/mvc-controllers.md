@@ -49,3 +49,6 @@ Read-only WMS-050 reservation history protected by `InventoryReservations.View`.
 
 ## InventoryAdjustmentsController
 WMS-060 list/create/details plus antiforgery-protected Count, Approve, Post and Cancel actions. Each mutation has a dedicated permission and delegates all rules to the Application service.
+
+## InventoryTrackingController
+WMS-070A bilingual traceability report plus antiforgery-protected opening allocation. All reconciliation and policy activation rules stay in the Application service.

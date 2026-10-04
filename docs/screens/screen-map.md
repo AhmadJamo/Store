@@ -54,3 +54,6 @@ Bilingual read-only Product/Warehouse/Location projection showing OnHand, Reserv
 
 ## Inventory adjustments
 `InventoryAdjustments/Index`, `Create` and `Details` implement the bilingual count workflow. Blind Draft documents hide expected quantities; later states expose expected, counted and variance values plus allowed workflow actions.
+
+## Lot and serial tracking
+`InventoryTracking/Index` shows current lot/serial positions, expiration highlighting and immutable history. Its opening form captures all dimensional allocations required to activate tracking on legacy stock.
