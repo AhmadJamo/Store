@@ -3,6 +3,7 @@ namespace MiniStore.Domain.Interfaces;
 public interface IInventoryTrackingRepository
 {
     Task<List<InventoryTrackingBalance>> GetBalancesAsync();
+    Task<InventoryTrackingBalance?> GetByIdForUpdateAsync(long id);
     Task<List<InventoryTrackingTransaction>> GetTransactionsAsync();
     Task<bool> IdentifierExistsAsync(int productId, ProductTrackingPolicy policy, string identifier);
     Task<InventoryTrackingBalance?> GetBalanceAsync(int productId, int warehouseId, int? locationId, string identifier);

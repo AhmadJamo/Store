@@ -8,7 +8,7 @@ public sealed class InventoryTrackingService(IInventoryTrackingRepository tracki
   var ps=await products.GetAllAsync(null);var ws=await warehouses.GetAllAsync();var ls=await locations.SearchAsync(null,null);
   var productMap=ps.ToDictionary(x=>x.Id);var names=ps.ToDictionary(x=>x.Id,x=>x.Name);var warehouseNames=ws.ToDictionary(x=>x.Id,x=>x.Name);var locationNames=ls.ToDictionary(x=>x.Id,x=>$"{x.Code} — {x.Name}");
   var bs=await tracking.GetBalancesAsync();var ts=await tracking.GetTransactionsAsync();
-  var today=DateOnly.FromDateTime(DateTime.Today);var rows=bs.Select(x=>{var days=x.ExpirationDate.HasValue?x.ExpirationDate.Value.DayNumber-today.DayNumber:(int?)null;var warning=productMap.GetValueOrDefault(x.ProductId)?.ExpirationWarningDays??30;var state=!days.HasValue?"No expiration":days<0?"Expired":days<=warning?"Expiring soon":"Valid";return new TrackingBalanceRowDto{Product=names.GetValueOrDefault(x.ProductId,"Unknown"),Warehouse=warehouseNames.GetValueOrDefault(x.WarehouseId,"Unknown"),Location=x.StorageLocationId.HasValue?locationNames.GetValueOrDefault(x.StorageLocationId.Value,"Unknown"):"Unassigned (system)",Policy=x.Policy,Identifier=x.Identifier,Quantity=x.Quantity,ExpirationDate=x.ExpirationDate,Status=x.Status,ExpirationState=state,DaysUntilExpiration=days};}).ToList();
+  var today=DateOnly.FromDateTime(DateTime.Today);var rows=bs.Select(x=>{var days=x.ExpirationDate.HasValue?x.ExpirationDate.Value.DayNumber-today.DayNumber:(int?)null;var warning=productMap.GetValueOrDefault(x.ProductId)?.ExpirationWarningDays??30;var state=!days.HasValue?"No expiration":days<0?"Expired":days<=warning?"Expiring soon":"Valid";return new TrackingBalanceRowDto{Id=x.Id,Product=names.GetValueOrDefault(x.ProductId,"Unknown"),Warehouse=warehouseNames.GetValueOrDefault(x.WarehouseId,"Unknown"),Location=x.StorageLocationId.HasValue?locationNames.GetValueOrDefault(x.StorageLocationId.Value,"Unknown"):"Unassigned (system)",Policy=x.Policy,Identifier=x.Identifier,Quantity=x.Quantity,ExpirationDate=x.ExpirationDate,Status=x.Status,ExpirationState=state,DaysUntilExpiration=days};}).ToList();
   return new(){Input=input??new(),Products=ps.Where(x=>x.InventoryBehavior==ProductInventoryBehavior.Stocked&&x.TrackingPolicy==ProductTrackingPolicy.None).Select(x=>(x.Id,x.Name)).ToList(),
    Warehouses=ws.Select(x=>(x.Id,x.Name)).ToList(),Locations=ls.Where(x=>x.Status==StorageLocationStatus.Active).Select(x=>(x.Id,x.WarehouseId,$"{x.Code} — {x.Name}")).ToList(),
    Balances=rows,ExpiredCount=rows.Count(x=>x.Quantity>0&&x.ExpirationState=="Expired"),ExpiringSoonCount=rows.Count(x=>x.Quantity>0&&x.ExpirationState=="Expiring soon"),
@@ -132,6 +132,22 @@ public sealed class InventoryTrackingService(IInventoryTrackingRepository tracki
    var remaining=allocation.Quantity;
    foreach(var balance in candidates){if(remaining<=0)break;var take=Math.Min(balance.Quantity,remaining);balance.Remove(take);if(balance.StorageLocationId.HasValue){var located=await locationStocks.GetAsync(product.Id,balance.StorageLocationId.Value)??throw new InvalidOperationException("Tracked location stock is missing.");located.RemoveQuantity(take);}await tracking.AddTransactionAsync(new InventoryTrackingTransaction(balance,-take,InventoryTrackingTransactionType.Return,$"{returnReference}|{originalReference}",userId));remaining-=take;}
   }
+ }
+
+ public Task QuarantineAsync(long balanceId,string reason,string userId)=>ChangeQuarantineAsync(balanceId,reason,userId,true);
+ public Task ReleaseAsync(long balanceId,string reason,string userId)=>ChangeQuarantineAsync(balanceId,reason,userId,false);
+ private async Task ChangeQuarantineAsync(long balanceId,string reason,string userId,bool quarantine)
+ {
+  var normalizedReason=reason?.Trim()??string.Empty;
+  if(normalizedReason.Length<3||normalizedReason.Length>90)throw new ArgumentException("Quarantine reason must be between 3 and 90 characters.");
+  await unitOfWork.ExecuteInTransactionAsync(async()=>
+  {
+   var balance=await tracking.GetByIdForUpdateAsync(balanceId)??throw new InvalidOperationException("Tracked inventory balance was not found.");
+   if(quarantine)balance.Quarantine();else balance.Release();
+   await tracking.AddTransactionAsync(new InventoryTrackingTransaction(balance,0,
+    quarantine?InventoryTrackingTransactionType.Quarantine:InventoryTrackingTransactionType.Release,
+    normalizedReason,userId));
+  });
  }
 
  private static List<(string Identifier,decimal Quantity)> ParseAllocations(Product product,string? value,decimal expectedQuantity)

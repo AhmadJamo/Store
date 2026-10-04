@@ -312,6 +312,16 @@ static async Task VerifyOpeningTrackingAllocationAsync(int tenantId, int product
         .ToListAsync();
     if (returnHistory.Count != 2 || returnHistory.Sum(x => x.Quantity) != 0)
         throw new InvalidOperationException("Tracked sales and purchase returns must restore/remove the selected identities with balanced trace history.");
+
+    await service.QuarantineAsync(transferred.Id, "Quality inspection", "quality-user");
+    await service.ReleaseAsync(transferred.Id, "Inspection passed", "quality-user");
+    var quarantineHistory = await context.InventoryTrackingTransactions.AsNoTracking()
+        .Where(x => x.InventoryTrackingBalanceId == transferred.Id &&
+            (x.Type == InventoryTrackingTransactionType.Quarantine || x.Type == InventoryTrackingTransactionType.Release))
+        .OrderBy(x => x.CreatedAt).ToListAsync();
+    if (quarantineHistory.Count != 2 || quarantineHistory.Any(x => x.Quantity != 0) ||
+        (await context.InventoryTrackingBalances.AsNoTracking().SingleAsync(x => x.Id == transferred.Id)).Status != InventoryTrackingStatus.Available)
+        throw new InvalidOperationException("Quarantine and release must preserve quantity while recording both audited state transitions.");
 }
 
 static async Task VerifyTrackedActivationGuardAsync(

@@ -688,7 +688,6 @@
   <data name="View Inventory Tracking" xml:space="preserve"><value>عرض تتبع المخزون</value></data>
   <data name="Open Inventory Tracking" xml:space="preserve"><value>تفعيل تتبع المخزون</value></data>
   <data name="Depleted" xml:space="preserve"><value>مستنفد</value></data>
-  <data name="Quarantined" xml:space="preserve"><value>محجور</value></data>
   <data name="OpeningAllocation" xml:space="preserve"><value>تخصيص افتتاحي</value></data>
   <data name="Receipt" xml:space="preserve"><value>استلام</value></data>
   <data name="Issue" xml:space="preserve"><value>صرف</value></data>
@@ -726,4 +725,12 @@
   <data name="Expired" xml:space="preserve"><value>منتهي الصلاحية</value></data>
   <data name="Valid" xml:space="preserve"><value>صالح</value></data>
   <data name="No expiration" xml:space="preserve"><value>بدون تاريخ انتهاء</value></data>
+  <data name="Quarantine control" xml:space="preserve"><value>التحكم بالحجر</value></data>
+  <data name="Quarantine" xml:space="preserve"><value>حجر</value></data>
+  <data name="Release" xml:space="preserve"><value>إفراج</value></data>
+  <data name="Quarantined" xml:space="preserve"><value>محجور</value></data>
+  <data name="Only available tracked inventory can be quarantined." xml:space="preserve"><value>يمكن حجر مخزون التتبع المتاح فقط.</value></data>
+  <data name="Only quarantined tracked inventory can be released." xml:space="preserve"><value>يمكن الإفراج عن مخزون التتبع المحجور فقط.</value></data>
+  <data name="Quarantine reason must be between 3 and 90 characters." xml:space="preserve"><value>يجب أن يكون سبب الحجر أو الإفراج بين 3 و90 حرفاً.</value></data>
+  <data name="Tracked inventory balance was not found." xml:space="preserve"><value>لم يتم العثور على رصيد التتبع.</value></data>
 </root>

@@ -1,7 +1,7 @@
 namespace MiniStore.Domain.Entities;
 
 public enum InventoryTrackingStatus { Available = 1, Depleted = 2, Quarantined = 3 }
-public enum InventoryTrackingTransactionType { OpeningAllocation = 1, Receipt = 2, Issue = 3, Transfer = 4, Return = 5, Adjustment = 6 }
+public enum InventoryTrackingTransactionType { OpeningAllocation = 1, Receipt = 2, Issue = 3, Transfer = 4, Return = 5, Adjustment = 6, Quarantine = 7, Release = 8 }
 
 public sealed class InventoryTrackingBalance
 {
@@ -36,14 +36,15 @@ public sealed class InventoryTrackingBalance
         Quantity=quantity; ManufactureDate=manufactureDate; ExpirationDate=expirationDate; SourceReference=sourceReference.Trim();
         Status=InventoryTrackingStatus.Available; ReceivedAt=DateTime.UtcNow;
     }
-    public void Add(decimal quantity) { if (Policy==ProductTrackingPolicy.Serial) throw new InvalidOperationException("Serial balances cannot be increased."); if(quantity<=0) throw new ArgumentException("Quantity must be positive."); Quantity+=quantity; Status=InventoryTrackingStatus.Available; }
+    public void Add(decimal quantity) { if (Policy==ProductTrackingPolicy.Serial) throw new InvalidOperationException("Serial balances cannot be increased."); if(quantity<=0) throw new ArgumentException("Quantity must be positive."); Quantity+=quantity; if(Status==InventoryTrackingStatus.Depleted)Status=InventoryTrackingStatus.Available; }
     public void Remove(decimal quantity) { if(quantity<=0||quantity>Quantity) throw new InvalidOperationException("Insufficient tracked quantity."); Quantity-=quantity; if(Quantity==0) Status=InventoryTrackingStatus.Depleted; }
     public void Restore(decimal quantity)
     {
         if (quantity <= 0 || (Policy == ProductTrackingPolicy.Serial && (quantity != 1 || Quantity != 0)))
             throw new InvalidOperationException("Invalid tracked return quantity.");
         Quantity += quantity;
-        Status = InventoryTrackingStatus.Available;
+        if (Status == InventoryTrackingStatus.Depleted)
+            Status = InventoryTrackingStatus.Available;
     }
     public void Relocate(int warehouseId, int? locationId)
     {
@@ -56,6 +57,18 @@ public sealed class InventoryTrackingBalance
 
         WarehouseId = warehouseId;
         StorageLocationId = locationId;
+    }
+    public void Quarantine()
+    {
+        if (Quantity <= 0 || Status != InventoryTrackingStatus.Available)
+            throw new InvalidOperationException("Only available tracked inventory can be quarantined.");
+        Status = InventoryTrackingStatus.Quarantined;
+    }
+    public void Release()
+    {
+        if (Quantity <= 0 || Status != InventoryTrackingStatus.Quarantined)
+            throw new InvalidOperationException("Only quarantined tracked inventory can be released.");
+        Status = InventoryTrackingStatus.Available;
     }
     private static string Normalize(string value) { if(string.IsNullOrWhiteSpace(value)) throw new ArgumentException("Lot or serial number is required."); return value.Trim().ToUpperInvariant(); }
 }
@@ -78,7 +91,7 @@ public sealed class InventoryTrackingTransaction
     public InventoryTrackingTransaction(long balanceId,int productId,int warehouseId,int? locationId,string identifier,decimal quantity,InventoryTrackingTransactionType type,string sourceReference,string userId)
     {
         if(balanceId<=0||productId<=0||warehouseId<=0) throw new ArgumentException("Tracking balance, product and warehouse are required.");
-        if(quantity==0) throw new ArgumentException("Tracking transaction quantity cannot be zero.");
+        if(quantity==0&&type is not(InventoryTrackingTransactionType.Quarantine or InventoryTrackingTransactionType.Release)) throw new ArgumentException("Tracking transaction quantity cannot be zero.");
         if(string.IsNullOrWhiteSpace(identifier)||string.IsNullOrWhiteSpace(sourceReference)||string.IsNullOrWhiteSpace(userId)) throw new ArgumentException("Tracking transaction identity is required.");
         InventoryTrackingBalanceId=balanceId; ProductId=productId; WarehouseId=warehouseId; StorageLocationId=locationId;
         Identifier=identifier.Trim().ToUpperInvariant(); Quantity=quantity; Type=type; SourceReference=sourceReference.Trim(); CreatedByUserId=userId.Trim(); CreatedAt=DateTime.UtcNow;

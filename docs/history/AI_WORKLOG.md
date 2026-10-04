@@ -1,5 +1,12 @@
 # AI Work Log
 
+## 2026-10-04 — Lot and serial quarantine workflow
+
+- Added reasoned Available → Quarantined → Available transitions without changing physical quantity.
+- Quarantine/release writes immutable zero-quantity trace events and uses the dedicated `InventoryTracking.ManageQuarantine` permission.
+- Quarantined balances remain excluded from sales/transfers, and additional receipts/returns cannot silently release a quarantined lot.
+- Added and applied `AddInventoryTrackingQuarantineEvents` to `AHMAD/MiniStoreDb`; controller authorization, domain and SQL integration coverage passed. The normal startup seeder grants the new permission to protected tenant Admin roles.
+
 ## 2026-10-04 — Product shelf-life controls and expiry alerts
 
 - Added product-level default shelf-life days, mandatory expiration and warning-horizon policy with database constraints and safe defaults.

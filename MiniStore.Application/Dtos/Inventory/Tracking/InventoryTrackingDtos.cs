@@ -21,7 +21,7 @@ public sealed class InventoryTrackingPageDto
 }
 public sealed class TrackingBalanceRowDto
 {
- public string Product{get;set;}="";public string Warehouse{get;set;}="";public string Location{get;set;}="";public ProductTrackingPolicy Policy{get;set;}
+ public long Id{get;set;} public string Product{get;set;}="";public string Warehouse{get;set;}="";public string Location{get;set;}="";public ProductTrackingPolicy Policy{get;set;}
  public string Identifier{get;set;}="";public decimal Quantity{get;set;}public DateOnly? ExpirationDate{get;set;}public InventoryTrackingStatus Status{get;set;}
  public string ExpirationState{get;set;}=""; public int? DaysUntilExpiration{get;set;}
 }

@@ -75,6 +75,7 @@ public static class PermissionDefinitions
         new("InventoryAdjustments.Cancel", "Cancel Inventory Adjustment", "Inventory"),
         new("InventoryTracking.View", "View Inventory Tracking", "Inventory"),
         new("InventoryTracking.Open", "Open Inventory Tracking", "Inventory"),
+        new("InventoryTracking.ManageQuarantine", "Manage Inventory Quarantine", "Inventory"),
 
         // ==========================================
         // Suppliers

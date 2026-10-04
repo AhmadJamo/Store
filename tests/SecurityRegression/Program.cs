@@ -873,6 +873,12 @@ var lotBalance = new InventoryTrackingBalance(1, 1, null, ProductTrackingPolicy.
     "lot-2026-a", 5m, new DateOnly(2026, 1, 1), new DateOnly(2027, 1, 1), "OPEN-1");
 Check(lotBalance.Identifier == "LOT-2026-A" && lotBalance.Quantity == 5m && lotBalance.Status == InventoryTrackingStatus.Available,
     "Lot balances must normalize identifiers and preserve expiry metadata");
+lotBalance.Quarantine();
+Check(lotBalance.Status == InventoryTrackingStatus.Quarantined,
+    "Available tracked inventory must support an explicit quarantine transition");
+lotBalance.Release();
+Check(lotBalance.Status == InventoryTrackingStatus.Available,
+    "Quarantined tracked inventory must require an explicit release transition");
 var shelfLifeProduct = new Product("Shelf life product", null, 1m, 2m, 1.5m);
 shelfLifeProduct.ConfigureLogistics(null, null, null, null, null, null, null, null,
     ProductTrackingPolicy.Lot, ProductHandlingRequirements.None);
@@ -900,6 +906,11 @@ var trackingControllerIndex = typeof(InventoryTrackingController).GetMethod(name
 Check(trackingControllerIndex.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
       $"{PermissionAuthorizeAttribute.PolicyPrefix}InventoryTracking.View",
     "Lot and serial traceability must require its dedicated view permission");
+var quarantineAction = typeof(InventoryTrackingController).GetMethod(nameof(InventoryTrackingController.Quarantine))!;
+Check(quarantineAction.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
+      $"{PermissionAuthorizeAttribute.PolicyPrefix}InventoryTracking.ManageQuarantine" &&
+      PermissionDefinitions.All.Any(x => x.Name == "InventoryTracking.ManageQuarantine"),
+    "Tracking quarantine changes must require a dedicated permission");
 
 Console.WriteLine($"Passed {count} security and inventory regression checks.");
 
