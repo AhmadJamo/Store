@@ -163,7 +163,15 @@ public static class NavigationDefinitions
                 "InventoryBalances",
                 "Index",
                 "InventoryBalances.View",
-                110)
+                110),
+
+            new NavigationItem(
+                "Inventory reservations",
+                "bi-lock",
+                "InventoryReservations",
+                "Index",
+                "InventoryReservations.View",
+                120)
         ),
 
         new NavigationGroup(

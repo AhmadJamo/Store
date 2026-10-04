@@ -116,6 +116,8 @@ public class AppDbContext
     public DbSet<LocationMovement> LocationMovements => Set<LocationMovement>();
     public DbSet<StockMovement> StockMovements => Set<StockMovement>();
     public DbSet<InventoryBalance> InventoryBalances => Set<InventoryBalance>();
+    public DbSet<InventoryReservation> InventoryReservations => Set<InventoryReservation>();
+    public DbSet<InventoryReservationLine> InventoryReservationLines => Set<InventoryReservationLine>();
 
 
 

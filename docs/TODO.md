@@ -4,6 +4,8 @@
 
 The ordered Arabic execution plan, workflow, business rules and rolling suggestion queue are maintained in `ARABIC_SHARED_ROADMAP.md`. This file remains the concise technical backlog.
 
+- [x] WMS-050 reservations and exact transfer allocation with concurrent last-unit protection.
+
 ## Completed
 - Core catalog, warehouse, supplier, inventory, purchase, sale and stock-transfer code exists.
 - Shared-database tenant isolation is implemented for all current business entities, including active membership validation, tenant-scoped reads/writes/unique indexes and demo-data backfill.

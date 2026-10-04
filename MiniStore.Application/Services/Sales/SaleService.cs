@@ -14,6 +14,7 @@ public class SaleService : ISaleService
     private readonly IProductStockRepository _productStockRepository;
     private readonly IStockTransactionRepository _stockTransactionRepository;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IInventoryBalanceRepository _inventoryBalanceRepository;
     private readonly DocumentNumberService _documentNumbers;
     private readonly IDiscountSettingsRepository _discountSettingsRepository;
     private readonly IPermissionService _permissionService;
@@ -31,6 +32,7 @@ public class SaleService : ISaleService
         IProductStockRepository productStockRepository,
         IStockTransactionRepository stockTransactionRepository,
         IUnitOfWork unitOfWork,
+        IInventoryBalanceRepository inventoryBalanceRepository,
         DocumentNumberService documentNumbers,
         IDiscountSettingsRepository discountSettingsRepository,
         IPermissionService permissionService,
@@ -47,6 +49,7 @@ public class SaleService : ISaleService
         _productStockRepository = productStockRepository;
         _stockTransactionRepository = stockTransactionRepository;
         _unitOfWork = unitOfWork;
+        _inventoryBalanceRepository = inventoryBalanceRepository;
         _documentNumbers = documentNumbers;
         _discountSettingsRepository = discountSettingsRepository;
         _permissionService = permissionService;
@@ -426,6 +429,13 @@ public class SaleService : ISaleService
                 var stock = await _productStockRepository
                     .GetByProductAndWarehouseAsync(requirement.Product.Id, dto.WarehouseId)
                     ?? throw new InvalidOperationException("Stock record was not found.");
+
+                var available = await _inventoryBalanceRepository.GetWarehouseAvailableAsync(
+                    requirement.Product.Id, dto.WarehouseId);
+                if (available < requirement.Quantity)
+                    throw new InvalidOperationException(
+                        $"Insufficient available stock for product '{requirement.Product.Name}'. " +
+                        $"Available after reservations: {available}, Requested: {requirement.Quantity}.");
 
                 if (stock.Quantity < requirement.Quantity)
                     throw new InvalidOperationException(

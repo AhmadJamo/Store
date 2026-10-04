@@ -553,8 +553,11 @@ Status: implementation and additive migration complete; migration applied to `AH
 
 ### WMS-050 — Reservations and fulfillment allocation
 
-- Sale/transfer reservations, release/consume/idempotency and over-reservation policy.
-- Exact location allocation and concurrency tests.
+- [x] Tenant-owned reservation aggregate with Active/Consumed/Released lifecycle and source idempotency.
+- [x] Approved transfer reservations, compatibility creation at posting and atomic consumption.
+- [x] Exact reservable-location or protected Unassigned allocation with over-reservation rejection.
+- [x] Read-only bilingual history, permission and concurrency integration coverage.
+- [ ] Staged sale-order reservations wait for a sale-order lifecycle; immediate POS/invoice sales issue stock atomically.
 
 ### WMS-060 — Inventory adjustments and cycle counting
 

@@ -3,6 +3,8 @@
 > Source of truth: EF Core entities, configurations and migrations  
 > Last reviewed: 2026-09-30
 
+WMS-050 adds tenant-owned `InventoryReservations` and `InventoryReservationLines`. Source identity is unique per tenant, quantities are positive, relationships are tenant-safe, exact and Unassigned dimensions are duplicate-protected, and rowversions protect concurrent reservation changes. Migrations `AddInventoryReservations` and `AddUnassignedReservationUniqueness` are additive and are applied to `AHMAD/MiniStoreDb`.
+
 `AppDbContext` derives from `IdentityDbContext<IdentityUser, IdentityRole, string>`, so Identity tables coexist with ERP tables. Provider: SQL Server.
 
 All business tables have a required `TenantId` foreign key to `Tenants`. EF query filters use the authenticated tenant context, and SaveChanges enforces tenant ownership for inserts, updates and deletes. Business unique indexes include `TenantId`; the same invoice number, account code or settings singleton may therefore exist independently in different companies. Every relationship between records carrying tenant ownership also includes `TenantId` on both sides, so SQL rejects a reference to another company's record.

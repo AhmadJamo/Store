@@ -43,3 +43,6 @@ Authenticated /onboarding endpoints display, complete or skip new-company setup 
 Read-only WMS-020 pilot ledger protected by `StockMovements.View`. The controller delegates all queries and reconciliation projection to the Application service.
 ## InventoryBalancesController
 Read-only WMS-040 availability screen protected by `InventoryBalances.View`. Product, warehouse and location mapping stays in the Application service.
+
+## InventoryReservationsController
+Read-only WMS-050 reservation history protected by `InventoryReservations.View`. Filtering and projection remain in the Application service.

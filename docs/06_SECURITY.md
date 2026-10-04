@@ -3,6 +3,8 @@
 > Source of truth: Static inspection and focused executable regression checks
 > Last reviewed: 2026-09-15
 
+WMS-050 reservation writes run inside the existing serializable UnitOfWork. Tenant-scoped source uniqueness, balance and reservation rowversions, positive-quantity constraints and exact-dimension indexes prevent cross-tenant, duplicate and concurrent over-allocation.
+
 ## Confirmed findings and fixes
 - **Critical — privilege escalation:** Users.Create could assign Admin; Roles.Edit could grant the caller arbitrary permissions through their role. Both permission evaluators now reserve all Users/Roles mutation permissions for current database Admin members. Read access remains delegable. Stored mappings cannot override this rule.
 - **High — CSRF:** Roles.Delete mutated state through GET, which global antiforgery deliberately skips. It now requires POST and antiforgery. All five list delete controls now submit POST forms with generated antiforgery tokens; other delete endpoints already required POST.

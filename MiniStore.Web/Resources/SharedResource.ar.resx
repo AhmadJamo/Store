@@ -175,7 +175,6 @@
   <data name="Search by name, product code, or barcode..." xml:space="preserve"><value>ابحث بالاسم أو كود المنتج أو الباركود...</value></data>
   <data name="All types" xml:space="preserve"><value>كل الأنواع</value></data>
   <data name="Availability" xml:space="preserve"><value>حالة التفعيل</value></data>
-  <data name="All statuses" xml:space="preserve"><value>كل الحالات</value></data>
   <data name="Active" xml:space="preserve"><value>فعال</value></data>
   <data name="Inactive" xml:space="preserve"><value>موقوف</value></data>
   <data name="Sales channel" xml:space="preserve"><value>قناة البيع</value></data>
@@ -636,4 +635,18 @@
   <data name="On-hand quantity cannot be lower than reserved quantity." xml:space="preserve"><value>لا يمكن أن تكون الكمية الموجودة أقل من الكمية المحجوزة.</value></data>
   <data name="Reserved quantity cannot be negative." xml:space="preserve"><value>لا يمكن أن تكون الكمية المحجوزة سالبة.</value></data>
   <data name="Reserved quantity cannot exceed on-hand quantity." xml:space="preserve"><value>لا يمكن أن تتجاوز الكمية المحجوزة الكمية الموجودة.</value></data>
+  <data name="Inventory reservations" xml:space="preserve"><value>حجوزات المخزون</value></data>
+  <data name="Reservations protect available stock until fulfillment or release." xml:space="preserve"><value>تحمي الحجوزات المخزون المتاح حتى التنفيذ أو التحرير.</value></data>
+  <data name="All statuses" xml:space="preserve"><value>كل الحالات</value></data>
+  <data name="Source type" xml:space="preserve"><value>نوع المصدر</value></data>
+  <data name="Lines" xml:space="preserve"><value>البنود</value></data>
+  <data name="Total quantity" xml:space="preserve"><value>إجمالي الكمية</value></data>
+  <data name="Created at" xml:space="preserve"><value>تاريخ الإنشاء</value></data>
+  <data name="Closed at" xml:space="preserve"><value>تاريخ الإغلاق</value></data>
+  <data name="No inventory reservations found." xml:space="preserve"><value>لا توجد حجوزات مخزون.</value></data>
+  <data name="View Inventory Reservations" xml:space="preserve"><value>عرض حجوزات المخزون</value></data>
+  <data name="StockTransfer" xml:space="preserve"><value>تحويل مخزون</value></data>
+  <data name="SaleOrder" xml:space="preserve"><value>طلب بيع</value></data>
+  <data name="Consumed" xml:space="preserve"><value>مستهلك</value></data>
+  <data name="Released" xml:space="preserve"><value>محرر</value></data>
 </root>

@@ -832,6 +832,23 @@ var inventoryBalancesIndex = typeof(InventoryBalancesController).GetMethod(nameo
 Check(inventoryBalancesIndex.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
       $"{PermissionAuthorizeAttribute.PolicyPrefix}InventoryBalances.View",
     "Inventory availability must require its dedicated view permission");
+var reservation = new InventoryReservation(
+    InventoryReservationSourceType.StockTransfer, 10, "TR-10", "approver");
+reservation.AddLine(1, 1, null, 4m);
+reservation.Consume("poster");
+Check(reservation.Status == InventoryReservationStatus.Consumed && reservation.ClosedAt.HasValue && reservation.Lines.Count == 1,
+    "Inventory reservations must preserve allocation lines and an auditable consume transition");
+CheckThrows(() => reservation.Release("user", "late release"),
+    "Closed inventory reservations must reject a second terminal transition");
+var reservationSourceIndex = db.Model.FindEntityType(typeof(InventoryReservation))!.GetIndexes()
+    .Single(index => index.IsUnique && index.Properties.Select(property => property.Name)
+        .SequenceEqual(["TenantId", nameof(InventoryReservation.SourceType), nameof(InventoryReservation.SourceId)]));
+Check(reservationSourceIndex is not null,
+    "Reservation sources must be idempotent within each tenant");
+var inventoryReservationsIndex = typeof(InventoryReservationsController).GetMethod(nameof(InventoryReservationsController.Index))!;
+Check(inventoryReservationsIndex.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
+      $"{PermissionAuthorizeAttribute.PolicyPrefix}InventoryReservations.View",
+    "Inventory reservation history must require its dedicated view permission");
 
 Console.WriteLine($"Passed {count} security and inventory regression checks.");
 

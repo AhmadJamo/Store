@@ -1,5 +1,14 @@
 # AI Work Log
 
+## 2026-10-04 — WMS-050 reservations and allocation
+
+- Added tenant-owned reservation header/lines, lifecycle, source idempotency and exact dimensional allocation.
+- Transfer approval now reserves availability and transfer posting consumes it atomically; legacy approved transfers use a safe compatibility path.
+- Immediate sales now validate aggregate Available and cannot consume quantities held by an active reservation.
+- Added bilingual read-only history and `InventoryReservations.View`.
+- Applied both additive migrations to `AHMAD/MiniStoreDb`.
+- Release build passed with zero warnings, 306 regression checks passed, and SQL concurrency integration proved only one claimant can reserve the final available unit.
+
 ## 2026-09-30 — WMS evolution analysis and roadmap
 Completed an analysis-only review of the existing inventory/warehouse architecture and documented its implemented strengths, gaps and migration hazards. Added `WMS_EVOLUTION_PLAN.md` with a capability matrix, target separation of business documents/physical movements/balance projections/valuation, authoritative-data rules, structured proposals, concurrency/reporting/permission requirements, safe additive migration and rollback strategy, phased vertical slices and an exact file change map. The plan also preserves Product as the concrete inventory SKU while adding staged logistics metadata, typed business-specific attributes and optional template/variant grouping. Added an ADR choosing gradual evolution: preserve StockTransfer workflow, ProductStock AVCO and legacy ledgers; extend StorageLocation; introduce StockMovement and InventoryBalance only through dual-write reconciliation. No runtime code, schema or migration was added for WMS planning.
 

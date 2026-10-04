@@ -1,0 +1,16 @@
+@model MiniStore.Application.DTOs.Inventory.Reservations.InventoryReservationPageDto
+@using MiniStore.Domain.Entities
+@inject Microsoft.Extensions.Localization.IStringLocalizer<MiniStore.Web.SharedResource> Localizer
+@{ ViewData["Title"] = Localizer["Inventory reservations"]; }
+<div class="container mt-4">
+    <div class="mb-3"><h2>@Localizer["Inventory reservations"]</h2><p class="text-muted">@Localizer["Reservations protect available stock until fulfillment or release."]</p></div>
+    <form method="get" class="card card-body mb-3"><div class="row g-2">
+        <div class="col-md-4"><label class="form-label">@Localizer["Status"]</label><select name="status" class="form-select"><option value="">@Localizer["All statuses"]</option>@foreach(var value in Enum.GetValues<InventoryReservationStatus>()){<option value="@value" selected="@(Model.Status == value)">@Localizer[value.ToString()]</option>}</select></div>
+        <div class="col-md-6"><label class="form-label">@Localizer["Reference"]</label><input name="search" value="@Model.Search" class="form-control" /></div>
+        <div class="col-md-2 d-flex align-items-end"><button class="btn btn-primary w-100">@Localizer["Search"]</button></div>
+    </div></form>
+    <div class="table-responsive"><table class="table table-striped align-middle"><thead><tr><th>@Localizer["Reference"]</th><th>@Localizer["Source type"]</th><th>@Localizer["Status"]</th><th>@Localizer["Lines"]</th><th>@Localizer["Total quantity"]</th><th>@Localizer["Created at"]</th><th>@Localizer["Closed at"]</th></tr></thead><tbody>
+    @foreach(var row in Model.Rows){<tr><td><code>@row.SourceReference</code></td><td>@Localizer[row.SourceType.ToString()]</td><td>@Localizer[row.Status.ToString()]</td><td>@row.LineCount</td><td>@row.TotalQuantity.ToString("N3")</td><td>@row.CreatedAt.ToLocalTime().ToString("g")</td><td>@(row.ClosedAt?.ToLocalTime().ToString("g") ?? "—")</td></tr>}
+    @if(Model.Rows.Count == 0){<tr><td colspan="7" class="text-center text-muted">@Localizer["No inventory reservations found."]</td></tr>}
+    </tbody></table></div>
+</div>

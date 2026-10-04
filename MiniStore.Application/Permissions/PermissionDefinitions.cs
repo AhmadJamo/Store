@@ -66,6 +66,7 @@ public static class PermissionDefinitions
 
         new("StockMovements.View", "View Physical Stock Movements", "Inventory"),
         new("InventoryBalances.View", "View Inventory Availability", "Inventory"),
+        new("InventoryReservations.View", "View Inventory Reservations", "Inventory"),
 
         // ==========================================
         // Suppliers

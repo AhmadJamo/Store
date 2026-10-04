@@ -48,3 +48,6 @@ The Product Templates screen supports a two-step selection-variant workflow: cho
 Bilingual read-only ledger showing Putaway/Relocation plus Planned, Posted or Reversed transfer outbound/transit/inbound stages, product, warehouse, locations, quantity and reference. It intentionally reports historic legacy rows without backfilling them.
 ## Inventory Availability
 Bilingual read-only Product/Warehouse/Location projection showing OnHand, Reserved and Available. The system-owned Unassigned row is visibly distinguished and cannot be managed as a normal storage location.
+## Inventory reservations
+
+`InventoryReservations/Index` is a bilingual, permission-protected audit list of source reference, lifecycle status, line count, total quantity and create/close times.

@@ -3,6 +3,9 @@
 
 Schema source is `AppDbContext`, configurations and migrations. Identity's standard `AspNet*` tables are supplied by IdentityDbContext.
 
+- **InventoryReservations:** auditable source-owned Active/Consumed/Released inventory holds with rowversion and tenant-unique source identity.
+- **InventoryReservationLines:** positive product/warehouse/exact-location or Unassigned allocations that own `InventoryBalance.Reserved`.
+
 - **Tenants:** company identity, unique URL-safe Slug, active state, creation time and RowVersion.
 - **TenantMemberships / TenantRoles / TenantRolePermissions / TenantUserRoles:** company membership, tenant-owned role definitions and permission/user assignments; Admin status is evaluated inside the active company.
 - **Plans / PlanFeatures / PlanLimits / TenantSubscriptions:** bilingual plan catalogue, entitlements and one lifecycle-aware subscription per company.

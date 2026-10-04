@@ -71,6 +71,11 @@ try
         tenantOneFixture.ProductId,
         expectedOnHand: 1m,
         connectionString);
+    await VerifyConcurrentReservationAsync(
+        tenantOneId,
+        tenantOneFixture.ProductId,
+        tenantOneFixture.WarehouseId,
+        connectionString);
     await VerifyTrackedActivationGuardAsync(
         tenantOneId,
         tenantOneFixture.ProductId,
@@ -86,7 +91,7 @@ try
         expectedOnHand: 0m,
         connectionString);
 
-    Console.WriteLine("Passed WMS SQL integration checks: tenant isolation, reconciliation translation, InventoryBalance synchronization, concurrent last-unit issue and tracking-policy guard.");
+    Console.WriteLine("Passed WMS SQL integration checks: tenant isolation, reconciliation translation, balance synchronization, concurrent reservation protection, concurrent last-unit issue and tracking-policy guard.");
 }
 finally
 {
@@ -139,7 +144,7 @@ static async Task InspectCurrentDatabaseAsync()
     }
 }
 
-static async Task<(int ProductId, int StockId, int MeasurementUnitId)> SeedTenantAsync(
+static async Task<(int ProductId, int StockId, int MeasurementUnitId, int WarehouseId)> SeedTenantAsync(
     int tenantId,
     string productName,
     string barcode,
@@ -178,7 +183,42 @@ static async Task<(int ProductId, int StockId, int MeasurementUnitId)> SeedTenan
         movement));
     await context.SaveChangesAsync();
 
-    return (product.Id, stock.Id, unit.Id);
+    return (product.Id, stock.Id, unit.Id, warehouse.Id);
+}
+
+static async Task VerifyConcurrentReservationAsync(
+    int tenantId, int productId, int warehouseId, string connectionString)
+{
+    var loaded = 0;
+    var release = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+    async Task<bool> TryReserveAsync(int sourceId)
+    {
+        await using var context = new AppDbContext(CreateOptions(connectionString), new FixedTenantContext(tenantId));
+        var balance = await context.InventoryBalances.SingleAsync(x =>
+            x.ProductId == productId && x.WarehouseId == warehouseId && x.StorageLocationId == null);
+        if (Interlocked.Increment(ref loaded) == 2) release.SetResult();
+        await release.Task;
+        balance.SetReserved(1m);
+        var reservation = new InventoryReservation(
+            InventoryReservationSourceType.SaleOrder, sourceId, $"SO-{sourceId}", "integration-user");
+        reservation.AddLine(productId, warehouseId, null, 1m);
+        context.InventoryReservations.Add(reservation);
+        try { await context.SaveChangesAsync(); return true; }
+        catch (DbUpdateConcurrencyException) { return false; }
+    }
+
+    var outcomes = await Task.WhenAll(TryReserveAsync(1001), TryReserveAsync(1002));
+    if (outcomes.Count(x => x) != 1)
+        throw new InvalidOperationException("Exactly one concurrent reservation may claim the last available unit.");
+
+    await using var cleanup = new AppDbContext(CreateOptions(connectionString), new FixedTenantContext(tenantId));
+    var active = await cleanup.InventoryReservations.Include(x => x.Lines)
+        .SingleAsync(x => x.Status == InventoryReservationStatus.Active);
+    var currentBalance = await cleanup.InventoryBalances.SingleAsync(x =>
+        x.ProductId == productId && x.WarehouseId == warehouseId && x.StorageLocationId == null);
+    currentBalance.SetReserved(0m);
+    active.Consume("integration-user");
+    await cleanup.SaveChangesAsync();
 }
 
 static async Task VerifyTrackedActivationGuardAsync(

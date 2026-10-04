@@ -16,6 +16,7 @@ public class StockTransferService : IStockTransferService
     private readonly IStorageLocationRepository _storageLocationRepository;
     private readonly IProductLocationStockRepository _productLocationStockRepository;
     private readonly StockMovementService _stockMovementService;
+    private readonly InventoryReservationService _inventoryReservationService;
 
     public StockTransferService(
         IStockTransferRepository stockTransferRepository,
@@ -27,7 +28,8 @@ public class StockTransferService : IStockTransferService
         IUnitOfWork unitOfWork,
         IStorageLocationRepository storageLocationRepository,
         IProductLocationStockRepository productLocationStockRepository,
-        StockMovementService stockMovementService)
+        StockMovementService stockMovementService,
+        InventoryReservationService inventoryReservationService)
     {
         _stockTransferRepository = stockTransferRepository;
         _documentNumbers = documentNumbers;
@@ -39,6 +41,7 @@ public class StockTransferService : IStockTransferService
         _storageLocationRepository = storageLocationRepository;
         _productLocationStockRepository = productLocationStockRepository;
         _stockMovementService = stockMovementService;
+        _inventoryReservationService = inventoryReservationService;
     }
 
     public async Task<List<StockTransfer>> GetAllAsync(
@@ -447,6 +450,7 @@ public class StockTransferService : IStockTransferService
             async () =>
             {
                 transfer.Approve(userId);
+                await _inventoryReservationService.ReserveTransferAsync(transfer, userId);
                 await _stockMovementService.PlanTransferAsync(transfer, userId);
             });
     }
@@ -518,6 +522,8 @@ public class StockTransferService : IStockTransferService
         await _unitOfWork.ExecuteInTransactionAsync(
             async () =>
             {
+                await _inventoryReservationService.ReserveTransferAsync(transfer, userId);
+                await _inventoryReservationService.ConsumeTransferAsync(transfer.Id, userId);
                 foreach (var item in transfer.Items)
                 {
                     var sourceStock =
