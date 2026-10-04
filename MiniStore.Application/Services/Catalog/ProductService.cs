@@ -110,6 +110,7 @@ public class ProductService(
             dimensionUnit?.Id,
             dto.TrackingPolicy,
             MapHandlingRequirements(dto));
+        product.ConfigureShelfLife(dto.DefaultShelfLifeDays, dto.RequireExpirationDate, dto.ExpirationWarningDays);
 
         await productRepository.AddAsync(product);
         await productRepository.SaveChangesAsync();
@@ -171,6 +172,7 @@ public class ProductService(
             dimensionUnit?.Id,
             dto.TrackingPolicy,
             MapHandlingRequirements(dto));
+        product.ConfigureShelfLife(dto.DefaultShelfLifeDays, dto.RequireExpirationDate, dto.ExpirationWarningDays);
 
         await productRepository.SaveChangesAsync();
     }
@@ -216,6 +218,9 @@ public class ProductService(
         Height = product.Height,
         DimensionMeasurementUnitId = product.DimensionMeasurementUnitId,
         TrackingPolicy = product.TrackingPolicy,
+        DefaultShelfLifeDays = product.DefaultShelfLifeDays,
+        RequireExpirationDate = product.RequireExpirationDate,
+        ExpirationWarningDays = product.ExpirationWarningDays,
         HandlingRequirements = product.HandlingRequirements
     };
 

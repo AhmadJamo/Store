@@ -1,5 +1,12 @@
 # AI Work Log
 
+## 2026-10-04 — Product shelf-life controls and expiry alerts
+
+- Added product-level default shelf-life days, mandatory expiration and warning-horizon policy with database constraints and safe defaults.
+- Tracked receipts derive expiration when configured and reject missing mandatory or already-expired dates; sales and transfers exclude expired balances.
+- Added expired/expiring-soon tracking counters and row highlighting using each product's warning horizon.
+- Added and applied `AddProductShelfLifeControls` to `AHMAD/MiniStoreDb`; domain and SQL integration coverage passed. Existing database rows keep neutral demo-safe defaults.
+
 ## 2026-10-04 — WMS-070B tracked receipts, issues and transfers
 
 - Added lot and serial input to purchase lines and atomically creates tracked receipt balances/history with the existing purchase transaction.

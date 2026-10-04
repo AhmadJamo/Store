@@ -22,6 +22,20 @@
     <div class="form-text">@Localizer["Lot and serial execution will be enabled in the traceability phase. Existing non-zero stock cannot switch to tracked inventory."]</div>
 </div>
 
+<div class="col-md-3">
+    <label asp-for="DefaultShelfLifeDays" class="form-label">@Localizer["Default shelf life (days)"]</label>
+    <input asp-for="DefaultShelfLifeDays" type="number" min="1" max="36500" class="form-control" />
+</div>
+<div class="col-md-3">
+    <label asp-for="ExpirationWarningDays" class="form-label">@Localizer["Expiration warning (days)"]</label>
+    <input asp-for="ExpirationWarningDays" type="number" min="0" max="3650" class="form-control" />
+</div>
+<div class="col-md-4 form-check ms-3 align-self-end mb-2">
+    <input asp-for="RequireExpirationDate" class="form-check-input" />
+    <label asp-for="RequireExpirationDate" class="form-check-label">@Localizer["Require expiration date on receipt"]</label>
+</div>
+<div class="col-12"><div class="form-text">@Localizer["Shelf-life controls require lot or serial tracking."]</div></div>
+
 <div class="col-12"><h5 class="mt-2 mb-0">@Localizer["Logistics measurements"]</h5></div>
 <div class="col-md-3">
     <label asp-for="NetWeight" class="form-label">@Localizer["Net weight"]</label>

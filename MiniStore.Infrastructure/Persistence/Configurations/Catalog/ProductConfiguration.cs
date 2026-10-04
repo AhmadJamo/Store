@@ -8,6 +8,13 @@ public class ProductConfiguration : IEntityTypeConfiguration<Product>
 {
     public void Configure(EntityTypeBuilder<Product> builder)
     {
+        builder.ToTable("Products", table =>
+        {
+            table.HasCheckConstraint("CK_Products_DefaultShelfLifeDays",
+                "[DefaultShelfLifeDays] IS NULL OR ([DefaultShelfLifeDays] BETWEEN 1 AND 36500)");
+            table.HasCheckConstraint("CK_Products_ExpirationWarningDays",
+                "[ExpirationWarningDays] BETWEEN 0 AND 3650");
+        });
         builder.HasKey(x => x.Id);
 
         builder.Property(x => x.Name)
@@ -48,6 +55,7 @@ public class ProductConfiguration : IEntityTypeConfiguration<Product>
         builder.Property(x => x.Width).HasPrecision(18, 6);
         builder.Property(x => x.Height).HasPrecision(18, 6);
         builder.Property(x => x.TrackingPolicy).IsRequired();
+        builder.Property(x => x.ExpirationWarningDays).IsRequired().HasDefaultValue(30);
         builder.Property(x => x.HandlingRequirements).IsRequired();
         builder.Property(x => x.VariantSignature).HasMaxLength(64);
         builder.Property(x => x.VariantLabel).HasMaxLength(300);

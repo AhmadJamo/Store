@@ -1,5 +1,5 @@
 # Products and recipes
-> Status: IMPLEMENTED | Last reviewed: 2026-09-30
+> Status: IMPLEMENTED | Last reviewed: 2026-10-04
 
 ## Purpose and flow
 Manages database-generated product code, optional barcode, raw/direct/prepared classification, product category, logistics measurements, handling requirements, future tracking policy, active state, POS/sales channel availability, prices and stock unit. `RecipesController` and `RecipeService` create immutable recipe versions for prepared products; saving a recipe automatically marks the product prepared-to-order and clears direct purchase price.
@@ -12,6 +12,10 @@ Settings → Measurement Units manages a tenant-local catalogue of count, mass, 
 
 ## Rules and dependencies
 Name is required; barcode is optional and unique per company when supplied. Category is optional. Weight requires a Mass unit; gross weight cannot be lower than net weight. Length, width and height must be positive and entered together with a Length unit. Refrigerated and Frozen are mutually exclusive. Lot/Serial cannot be enabled for a product with any non-zero warehouse balance, and WMS-005 does not yet execute tracked receipts. Raw materials cannot use sales channels. Direct-sale products retain purchase/wholesale/retail validation, while prepared products have no direct purchase price. Product search covers name, code and barcode with type/category/tracking/status/channel filters, sorting and paging. Recipe lines require distinct stocked ingredients and compatible managed units from the same count/mass/volume dimension. Each product can explicitly allow controlled negative use only through recipe/kitchen workflows. Recipes reuse Products.View/Edit permissions. Product and recipe deletion remains restricted by operational history.
+
+## Shelf-life policy
+
+Tracked products may define an optional default shelf life in days, require an expiration date on receipt and set their own expiration-warning horizon. Shelf-life controls are rejected when lot/serial tracking is disabled. When a receipt omits expiration and a default duration exists, expiration is derived from manufacture date, or from the receipt day when manufacture date is absent.
 
 ## Source files
 `Domain/Entities/Catalog/{Product,ProductRecipe,RecipeIngredient,UnitOfMeasure,UnitConversion}.cs`; Product/Recipe DTOs and services; product/recipe repositories and configurations; Products/Recipes controllers and views.

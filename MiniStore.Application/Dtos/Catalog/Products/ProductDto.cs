@@ -44,5 +44,8 @@ public class ProductDto
     public decimal? Height { get; set; }
     public int? DimensionMeasurementUnitId { get; set; }
     public MiniStore.Domain.Entities.ProductTrackingPolicy TrackingPolicy { get; set; }
+    public int? DefaultShelfLifeDays { get; set; }
+    public bool RequireExpirationDate { get; set; }
+    public int ExpirationWarningDays { get; set; }
     public MiniStore.Domain.Entities.ProductHandlingRequirements HandlingRequirements { get; set; }
 }

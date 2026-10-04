@@ -8,6 +8,8 @@ The ordered Arabic execution plan, workflow, business rules and rolling suggesti
 - [x] WMS-060 blind cycle counts and controlled inventory adjustment posting; scheduling remains deferred.
 - [x] WMS-070A opening lot/serial allocation and traceability foundation.
 - [x] WMS-070B tracked purchases, FEFO sales/recipe issues, transfer/cancellation and identifier-aware sales/purchase returns.
+- [x] Product shelf-life defaults, mandatory receipt expiration, expiry blocking and warning dashboard.
+- [ ] Add lot/serial quarantine/release workflow and scheduled expiration notifications.
 
 ## Completed
 - Core catalog, warehouse, supplier, inventory, purchase, sale and stock-transfer code exists.

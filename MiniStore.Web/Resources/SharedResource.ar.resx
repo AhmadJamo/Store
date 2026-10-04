@@ -712,4 +712,18 @@
   <data name="The selected lot or serial was not found." xml:space="preserve"><value>لم يتم العثور على التشغيلة أو الرقم التسلسلي المحدد.</value></data>
   <data name="The selected serial is already available in inventory." xml:space="preserve"><value>الرقم التسلسلي المحدد متوفر في المخزون مسبقاً.</value></data>
   <data name="The selected lot or serial is not available in the purchase warehouse." xml:space="preserve"><value>التشغيلة أو الرقم التسلسلي المحدد غير متوفر في مستودع الشراء.</value></data>
+  <data name="Default shelf life (days)" xml:space="preserve"><value>مدة الصلاحية الافتراضية (بالأيام)</value></data>
+  <data name="Expiration warning (days)" xml:space="preserve"><value>التنبيه قبل الانتهاء (بالأيام)</value></data>
+  <data name="Require expiration date on receipt" xml:space="preserve"><value>إلزام تاريخ الانتهاء عند الاستلام</value></data>
+  <data name="Shelf-life controls require lot or serial tracking." xml:space="preserve"><value>إعدادات الصلاحية تتطلب تتبع التشغيلات أو الأرقام التسلسلية.</value></data>
+  <data name="An expiration date is required for this product." xml:space="preserve"><value>تاريخ الانتهاء إلزامي لهذا المنتج.</value></data>
+  <data name="Expired inventory cannot be received into available stock." xml:space="preserve"><value>لا يمكن استلام مخزون منتهي الصلاحية كمخزون متاح.</value></data>
+  <data name="Default shelf life must be between 1 and 36500 days." xml:space="preserve"><value>يجب أن تكون مدة الصلاحية الافتراضية بين يوم و36500 يوم.</value></data>
+  <data name="Expiration warning days must be between 0 and 3650." xml:space="preserve"><value>يجب أن تكون مدة التنبيه بين صفر و3650 يوماً.</value></data>
+  <data name="Expired tracked balances" xml:space="preserve"><value>أرصدة التتبع منتهية الصلاحية</value></data>
+  <data name="Expiring soon" xml:space="preserve"><value>قريب الانتهاء</value></data>
+  <data name="Expiration state" xml:space="preserve"><value>حالة الصلاحية</value></data>
+  <data name="Expired" xml:space="preserve"><value>منتهي الصلاحية</value></data>
+  <data name="Valid" xml:space="preserve"><value>صالح</value></data>
+  <data name="No expiration" xml:space="preserve"><value>بدون تاريخ انتهاء</value></data>
 </root>

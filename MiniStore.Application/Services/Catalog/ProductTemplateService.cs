@@ -104,6 +104,8 @@ public sealed class ProductTemplateService(
                 product.ConfigureLogistics(source.ProductCategoryId, source.NetWeight, source.GrossWeight,
                     source.WeightMeasurementUnitId, source.Length, source.Width, source.Height,
                     source.DimensionMeasurementUnitId, source.TrackingPolicy, source.HandlingRequirements);
+                product.ConfigureShelfLife(source.DefaultShelfLifeDays, source.RequireExpirationDate,
+                    source.ExpirationWarningDays);
                 product.AssignTemplate(dto.ProductTemplateId, combination.Signature, combination.Label);
                 await products.AddAsync(product);
                 await products.SaveChangesAsync();

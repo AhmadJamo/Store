@@ -50,6 +50,12 @@ public class Product
 
     public ProductTrackingPolicy TrackingPolicy { get; private set; }
 
+    public int? DefaultShelfLifeDays { get; private set; }
+
+    public bool RequireExpirationDate { get; private set; }
+
+    public int ExpirationWarningDays { get; private set; } = 30;
+
     public ProductHandlingRequirements HandlingRequirements { get; private set; }
 
     public bool AllowNegativeRecipeConsumption { get; private set; }
@@ -294,6 +300,21 @@ public class Product
         ProductTemplateId = productTemplateId;
         VariantSignature = variantSignature;
         VariantLabel = variantLabel.Trim();
+    }
+
+    public void ConfigureShelfLife(int? defaultShelfLifeDays, bool requireExpirationDate, int expirationWarningDays)
+    {
+        if (defaultShelfLifeDays is <= 0 or > 36500)
+            throw new ArgumentException("Default shelf life must be between 1 and 36500 days.");
+        if (expirationWarningDays is < 0 or > 3650)
+            throw new ArgumentException("Expiration warning days must be between 0 and 3650.");
+        if (TrackingPolicy == ProductTrackingPolicy.None &&
+            (defaultShelfLifeDays.HasValue || requireExpirationDate))
+            throw new InvalidOperationException("Shelf-life controls require lot or serial tracking.");
+
+        DefaultShelfLifeDays = defaultShelfLifeDays;
+        RequireExpirationDate = requireExpirationDate;
+        ExpirationWarningDays = expirationWarningDays;
     }
 
     private static void ValidateName(string name)

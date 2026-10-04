@@ -17,11 +17,13 @@ public sealed class InventoryTrackingPageDto
  public OpenTrackingAllocationDto Input{get;set;}=new(); public List<(int Id,string Name)> Products{get;set;}=[];
  public List<(int Id,string Name)> Warehouses{get;set;}=[]; public List<(int Id,int WarehouseId,string Name)> Locations{get;set;}=[];
  public List<TrackingBalanceRowDto> Balances{get;set;}=[]; public List<TrackingTransactionRowDto> Transactions{get;set;}=[];
+ public int ExpiredCount{get;set;} public int ExpiringSoonCount{get;set;}
 }
 public sealed class TrackingBalanceRowDto
 {
  public string Product{get;set;}="";public string Warehouse{get;set;}="";public string Location{get;set;}="";public ProductTrackingPolicy Policy{get;set;}
  public string Identifier{get;set;}="";public decimal Quantity{get;set;}public DateOnly? ExpirationDate{get;set;}public InventoryTrackingStatus Status{get;set;}
+ public string ExpirationState{get;set;}=""; public int? DaysUntilExpiration{get;set;}
 }
 public sealed class TrackingTransactionRowDto
 {

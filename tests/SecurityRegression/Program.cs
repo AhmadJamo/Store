@@ -873,6 +873,13 @@ var lotBalance = new InventoryTrackingBalance(1, 1, null, ProductTrackingPolicy.
     "lot-2026-a", 5m, new DateOnly(2026, 1, 1), new DateOnly(2027, 1, 1), "OPEN-1");
 Check(lotBalance.Identifier == "LOT-2026-A" && lotBalance.Quantity == 5m && lotBalance.Status == InventoryTrackingStatus.Available,
     "Lot balances must normalize identifiers and preserve expiry metadata");
+var shelfLifeProduct = new Product("Shelf life product", null, 1m, 2m, 1.5m);
+shelfLifeProduct.ConfigureLogistics(null, null, null, null, null, null, null, null,
+    ProductTrackingPolicy.Lot, ProductHandlingRequirements.None);
+shelfLifeProduct.ConfigureShelfLife(90, true, 14);
+Check(shelfLifeProduct.DefaultShelfLifeDays == 90 && shelfLifeProduct.RequireExpirationDate &&
+      shelfLifeProduct.ExpirationWarningDays == 14,
+    "Tracked products must preserve validated shelf-life and expiration-warning policy");
 CheckArgumentThrows(() => new InventoryTrackingBalance(1, 1, null, ProductTrackingPolicy.Serial,
         "SER-1", 2m, null, null, "OPEN-1"),
     "Every serial balance must contain exactly one unit");

@@ -6,11 +6,12 @@ public sealed class InventoryTrackingService(IInventoryTrackingRepository tracki
  public async Task<InventoryTrackingPageDto> GetPageAsync(OpenTrackingAllocationDto? input=null)
  {
   var ps=await products.GetAllAsync(null);var ws=await warehouses.GetAllAsync();var ls=await locations.SearchAsync(null,null);
-  var names=ps.ToDictionary(x=>x.Id,x=>x.Name);var warehouseNames=ws.ToDictionary(x=>x.Id,x=>x.Name);var locationNames=ls.ToDictionary(x=>x.Id,x=>$"{x.Code} — {x.Name}");
+  var productMap=ps.ToDictionary(x=>x.Id);var names=ps.ToDictionary(x=>x.Id,x=>x.Name);var warehouseNames=ws.ToDictionary(x=>x.Id,x=>x.Name);var locationNames=ls.ToDictionary(x=>x.Id,x=>$"{x.Code} — {x.Name}");
   var bs=await tracking.GetBalancesAsync();var ts=await tracking.GetTransactionsAsync();
+  var today=DateOnly.FromDateTime(DateTime.Today);var rows=bs.Select(x=>{var days=x.ExpirationDate.HasValue?x.ExpirationDate.Value.DayNumber-today.DayNumber:(int?)null;var warning=productMap.GetValueOrDefault(x.ProductId)?.ExpirationWarningDays??30;var state=!days.HasValue?"No expiration":days<0?"Expired":days<=warning?"Expiring soon":"Valid";return new TrackingBalanceRowDto{Product=names.GetValueOrDefault(x.ProductId,"Unknown"),Warehouse=warehouseNames.GetValueOrDefault(x.WarehouseId,"Unknown"),Location=x.StorageLocationId.HasValue?locationNames.GetValueOrDefault(x.StorageLocationId.Value,"Unknown"):"Unassigned (system)",Policy=x.Policy,Identifier=x.Identifier,Quantity=x.Quantity,ExpirationDate=x.ExpirationDate,Status=x.Status,ExpirationState=state,DaysUntilExpiration=days};}).ToList();
   return new(){Input=input??new(),Products=ps.Where(x=>x.InventoryBehavior==ProductInventoryBehavior.Stocked&&x.TrackingPolicy==ProductTrackingPolicy.None).Select(x=>(x.Id,x.Name)).ToList(),
    Warehouses=ws.Select(x=>(x.Id,x.Name)).ToList(),Locations=ls.Where(x=>x.Status==StorageLocationStatus.Active).Select(x=>(x.Id,x.WarehouseId,$"{x.Code} — {x.Name}")).ToList(),
-   Balances=bs.Select(x=>new TrackingBalanceRowDto{Product=names.GetValueOrDefault(x.ProductId,"Unknown"),Warehouse=warehouseNames.GetValueOrDefault(x.WarehouseId,"Unknown"),Location=x.StorageLocationId.HasValue?locationNames.GetValueOrDefault(x.StorageLocationId.Value,"Unknown"):"Unassigned (system)",Policy=x.Policy,Identifier=x.Identifier,Quantity=x.Quantity,ExpirationDate=x.ExpirationDate,Status=x.Status}).ToList(),
+   Balances=rows,ExpiredCount=rows.Count(x=>x.Quantity>0&&x.ExpirationState=="Expired"),ExpiringSoonCount=rows.Count(x=>x.Quantity>0&&x.ExpirationState=="Expiring soon"),
    Transactions=ts.Take(200).Select(x=>new TrackingTransactionRowDto{Product=names.GetValueOrDefault(x.ProductId,"Unknown"),Identifier=x.Identifier,Quantity=x.Quantity,Type=x.Type,Reference=x.SourceReference,CreatedAt=x.CreatedAt}).ToList()};
  }
  public async Task OpenAsync(OpenTrackingAllocationDto dto,string userId)
@@ -45,6 +46,9 @@ public sealed class InventoryTrackingService(IInventoryTrackingRepository tracki
  public async Task ReceiveAsync(Product product,int warehouseId,decimal quantity,string? lotNumber,string? serialNumbers,DateOnly? manufactureDate,DateOnly? expirationDate,string reference,string userId)
  {
   if(product.TrackingPolicy==ProductTrackingPolicy.None)return;
+  if(!expirationDate.HasValue&&product.DefaultShelfLifeDays.HasValue)expirationDate=(manufactureDate??DateOnly.FromDateTime(DateTime.Today)).AddDays(product.DefaultShelfLifeDays.Value);
+  if(product.RequireExpirationDate&&!expirationDate.HasValue)throw new InvalidOperationException("An expiration date is required for this product.");
+  if(expirationDate.HasValue&&expirationDate<DateOnly.FromDateTime(DateTime.Today))throw new InvalidOperationException("Expired inventory cannot be received into available stock.");
   if(product.TrackingPolicy==ProductTrackingPolicy.Lot)
   {
    if(string.IsNullOrWhiteSpace(lotNumber))throw new InvalidOperationException("A lot number is required for this tracked purchase item.");
@@ -74,7 +78,8 @@ public sealed class InventoryTrackingService(IInventoryTrackingRepository tracki
  {
   if(product.TrackingPolicy==ProductTrackingPolicy.None)return;
   if(product.TrackingPolicy==ProductTrackingPolicy.Serial&&quantity!=decimal.Truncate(quantity))throw new InvalidOperationException("Serial-tracked transfer quantity must be a whole number.");
-  var candidates=(await tracking.GetAvailableForUpdateAsync(product.Id,fromWarehouseId)).Where(x=>x.StorageLocationId==fromLocationId).ToList();
+  var today=DateOnly.FromDateTime(DateTime.Today);
+  var candidates=(await tracking.GetAvailableForUpdateAsync(product.Id,fromWarehouseId)).Where(x=>x.StorageLocationId==fromLocationId&&(!x.ExpirationDate.HasValue||x.ExpirationDate>=today)).ToList();
   if(candidates.Sum(x=>x.Quantity)<quantity)throw new InvalidOperationException($"Insufficient tracked stock in the selected source position for product '{product.Name}'.");
   var remaining=quantity;
   foreach(var source in candidates){if(remaining<=0)break;var take=Math.Min(source.Quantity,remaining);var oldWarehouse=source.WarehouseId;var oldLocation=source.StorageLocationId;
