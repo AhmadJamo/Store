@@ -38,6 +38,18 @@ public sealed class InventoryTrackingBalance
     }
     public void Add(decimal quantity) { if (Policy==ProductTrackingPolicy.Serial) throw new InvalidOperationException("Serial balances cannot be increased."); if(quantity<=0) throw new ArgumentException("Quantity must be positive."); Quantity+=quantity; Status=InventoryTrackingStatus.Available; }
     public void Remove(decimal quantity) { if(quantity<=0||quantity>Quantity) throw new InvalidOperationException("Insufficient tracked quantity."); Quantity-=quantity; if(Quantity==0) Status=InventoryTrackingStatus.Depleted; }
+    public void Relocate(int warehouseId, int? locationId)
+    {
+        if (Policy != ProductTrackingPolicy.Serial || Quantity != 1)
+            throw new InvalidOperationException("Only an available serial can be relocated directly.");
+        if (warehouseId <= 0)
+            throw new ArgumentException("Warehouse is required.");
+        if (locationId <= 0)
+            locationId = null;
+
+        WarehouseId = warehouseId;
+        StorageLocationId = locationId;
+    }
     private static string Normalize(string value) { if(string.IsNullOrWhiteSpace(value)) throw new ArgumentException("Lot or serial number is required."); return value.Trim().ToUpperInvariant(); }
 }
 

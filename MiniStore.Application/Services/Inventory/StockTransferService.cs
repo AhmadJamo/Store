@@ -17,6 +17,7 @@ public class StockTransferService : IStockTransferService
     private readonly IProductLocationStockRepository _productLocationStockRepository;
     private readonly StockMovementService _stockMovementService;
     private readonly InventoryReservationService _inventoryReservationService;
+    private readonly InventoryTrackingService _inventoryTrackingService;
 
     public StockTransferService(
         IStockTransferRepository stockTransferRepository,
@@ -29,7 +30,8 @@ public class StockTransferService : IStockTransferService
         IStorageLocationRepository storageLocationRepository,
         IProductLocationStockRepository productLocationStockRepository,
         StockMovementService stockMovementService,
-        InventoryReservationService inventoryReservationService)
+        InventoryReservationService inventoryReservationService,
+        InventoryTrackingService inventoryTrackingService)
     {
         _stockTransferRepository = stockTransferRepository;
         _documentNumbers = documentNumbers;
@@ -42,6 +44,7 @@ public class StockTransferService : IStockTransferService
         _productLocationStockRepository = productLocationStockRepository;
         _stockMovementService = stockMovementService;
         _inventoryReservationService = inventoryReservationService;
+        _inventoryTrackingService = inventoryTrackingService;
     }
 
     public async Task<List<StockTransfer>> GetAllAsync(
@@ -526,6 +529,8 @@ public class StockTransferService : IStockTransferService
                 await _inventoryReservationService.ConsumeTransferAsync(transfer.Id, userId);
                 foreach (var item in transfer.Items)
                 {
+                    var trackedProduct = await _productRepository.GetByIdAsync(item.ProductId)
+                        ?? throw new InvalidOperationException("Transfer product was not found.");
                     var sourceStock =
                         await _productStockRepository
                             .GetByProductAndWarehouseAsync(
@@ -651,6 +656,11 @@ public class StockTransferService : IStockTransferService
                             StockTransactionType.TransferIn,
                             transfer.TransferNumber,
                             destinationCostMovement));
+
+                    await _inventoryTrackingService.TransferAsync(trackedProduct,
+                        transfer.FromWarehouseId, transfer.ToWarehouseId,
+                        item.SourceLocationId, item.DestinationLocationId,
+                        item.Quantity, transfer.TransferNumber, userId);
                 }
 
                 await _stockMovementService.PostTransferAsync(transfer, userId);
@@ -675,6 +685,8 @@ public class StockTransferService : IStockTransferService
             {
                 foreach (var item in transfer.Items)
                 {
+                    var trackedProduct = await _productRepository.GetByIdAsync(item.ProductId)
+                        ?? throw new InvalidOperationException("Transfer product was not found.");
                     var sourceStock =
                         await _productStockRepository
                             .GetByProductAndWarehouseAsync(
@@ -776,6 +788,11 @@ public class StockTransferService : IStockTransferService
                             StockTransactionType.TransferOut,
                             $"Cancellation of {transfer.TransferNumber}",
                             destinationCostMovement));
+
+                    await _inventoryTrackingService.TransferAsync(trackedProduct,
+                        transfer.ToWarehouseId, transfer.FromWarehouseId,
+                        item.DestinationLocationId, item.SourceLocationId,
+                        item.Quantity, $"Cancellation of {transfer.TransferNumber}", userId);
                 }
 
                 await _stockMovementService.ReverseTransferAsync(transfer.Id, userId);

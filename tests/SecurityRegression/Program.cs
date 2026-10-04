@@ -876,6 +876,11 @@ Check(lotBalance.Identifier == "LOT-2026-A" && lotBalance.Quantity == 5m && lotB
 CheckArgumentThrows(() => new InventoryTrackingBalance(1, 1, null, ProductTrackingPolicy.Serial,
         "SER-1", 2m, null, null, "OPEN-1"),
     "Every serial balance must contain exactly one unit");
+var serialBalance = new InventoryTrackingBalance(1, 1, null, ProductTrackingPolicy.Serial,
+    "SER-2", 1m, null, null, "OPEN-1");
+serialBalance.Relocate(2, 3);
+Check(serialBalance.WarehouseId == 2 && serialBalance.StorageLocationId == 3 && serialBalance.Quantity == 1m,
+    "A serial transfer must preserve the serial unit while relocating its exact warehouse position");
 var serialIndex = db.Model.FindEntityType(typeof(InventoryTrackingBalance))!.GetIndexes()
     .Single(index => index.IsUnique && index.GetFilter() == "[Policy] = 2");
 Check(serialIndex.Properties.Select(x => x.Name).SequenceEqual(["TenantId", nameof(InventoryTrackingBalance.ProductId), nameof(InventoryTrackingBalance.Policy), nameof(InventoryTrackingBalance.Identifier)]),

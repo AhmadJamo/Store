@@ -15,6 +15,7 @@ public class SaleService : ISaleService
     private readonly IStockTransactionRepository _stockTransactionRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IInventoryBalanceRepository _inventoryBalanceRepository;
+    private readonly InventoryTrackingService _inventoryTrackingService;
     private readonly DocumentNumberService _documentNumbers;
     private readonly IDiscountSettingsRepository _discountSettingsRepository;
     private readonly IPermissionService _permissionService;
@@ -33,6 +34,7 @@ public class SaleService : ISaleService
         IStockTransactionRepository stockTransactionRepository,
         IUnitOfWork unitOfWork,
         IInventoryBalanceRepository inventoryBalanceRepository,
+        InventoryTrackingService inventoryTrackingService,
         DocumentNumberService documentNumbers,
         IDiscountSettingsRepository discountSettingsRepository,
         IPermissionService permissionService,
@@ -50,6 +52,7 @@ public class SaleService : ISaleService
         _stockTransactionRepository = stockTransactionRepository;
         _unitOfWork = unitOfWork;
         _inventoryBalanceRepository = inventoryBalanceRepository;
+        _inventoryTrackingService = inventoryTrackingService;
         _documentNumbers = documentNumbers;
         _discountSettingsRepository = discountSettingsRepository;
         _permissionService = permissionService;
@@ -442,6 +445,10 @@ public class SaleService : ISaleService
                         $"Insufficient stock for product '{requirement.Product.Name}'. " +
                         $"Available: {stock.Quantity}, Requested: {requirement.Quantity}.");
 
+                await _inventoryTrackingService.IssueAsync(
+                    requirement.Product, dto.WarehouseId, requirement.Quantity,
+                    sale!.InvoiceNumber, createdByUserId);
+
                 var costMovement = stock.RemoveQuantity(requirement.Quantity);
                 sale.Items.Single(x => x.ProductId == requirement.Product.Id)
                     .SetCostSnapshot(
@@ -472,6 +479,13 @@ public class SaleService : ISaleService
                 }
 
                 stock.EnsureReferenceUnitCost(requirement.Product.PurchasePrice);
+
+                if (requirement.Product.TrackingPolicy != ProductTrackingPolicy.None)
+                {
+                    await _inventoryTrackingService.IssueAsync(
+                        requirement.Product, dto.WarehouseId, requirement.Quantity,
+                        sale!.InvoiceNumber, createdByUserId);
+                }
 
                 var costMovement = stock.ConsumeRecipeQuantity(
                     requirement.Quantity,

@@ -1,13 +1,13 @@
 # Project TODO
 > Source of truth: Current repository scan  
-> Last reviewed: 2026-09-30
+> Last reviewed: 2026-10-04
 
 The ordered Arabic execution plan, workflow, business rules and rolling suggestion queue are maintained in `ARABIC_SHARED_ROADMAP.md`. This file remains the concise technical backlog.
 
 - [x] WMS-050 reservations and exact transfer allocation with concurrent last-unit protection.
 - [x] WMS-060 blind cycle counts and controlled inventory adjustment posting; scheduling remains deferred.
 - [x] WMS-070A opening lot/serial allocation and traceability foundation.
-- [ ] WMS-070B integrate tracked allocations with purchases, issues, transfers and returns.
+- [ ] WMS-070B tracked purchases, FEFO sales/recipe issues and transfer/cancellation are integrated; explicit sales/purchase return identifiers remain.
 
 ## Completed
 - Core catalog, warehouse, supplier, inventory, purchase, sale and stock-transfer code exists.

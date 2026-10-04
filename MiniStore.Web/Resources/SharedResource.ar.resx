@@ -695,4 +695,8 @@
   <data name="Return" xml:space="preserve"><value>مرتجع</value></data>
   <data name="Adjustment" xml:space="preserve"><value>تسوية</value></data>
   <data name="Transfer" xml:space="preserve"><value>تحويل</value></data>
+  <data name="Lot number" xml:space="preserve"><value>رقم التشغيلة</value></data>
+  <data name="Serial numbers" xml:space="preserve"><value>الأرقام التسلسلية</value></data>
+  <data name="Required for lot tracking" xml:space="preserve"><value>مطلوب للمنتج المتتبع بالتشغيلة</value></data>
+  <data name="One serial per line" xml:space="preserve"><value>رقم تسلسلي واحد في كل سطر</value></data>
 </root>

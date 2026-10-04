@@ -1,5 +1,5 @@
 # Sales
-> Status: IMPLEMENTED | Last reviewed: 2026-09-29
+> Status: IMPLEMENTED | Last reviewed: 2026-10-04
 
 Wholesale Create and Retail POS call `SalesController.Create` then `SaleService.CreateAsync`. Product choices are limited to active products enabled for the corresponding channel, and the service revalidates those flags against crafted requests. It validates discount rules, generates the tenant document number, chooses the server-side price, applies the optional invoice tax after discounts, decreases stock at the current warehouse average and writes the Sale movement in one UnitOfWork transaction. Sale freezes the selected tax percentage, inclusive policy, output account and amount; SaleItem freezes UnitCost and CostOfGoodsSold. The number, sale, valuation and movement commit or roll back together; ProductStock rowversion detects concurrent writes.
 
@@ -7,7 +7,9 @@ For a prepared-to-order item, SaleService requires an active recipe, snapshots i
 
 Sales and POS require a payment method mapped to a settlement account. The Details screen can post the sale once: debit settlement, debit configured net invoice discount when present, credit branch/default net revenue, credit the frozen output-tax account, debit COGS and credit warehouse inventory. Inclusive tax is extracted without increasing settlement; exclusive tax is added. Source type/reference uniqueness blocks duplicate posting. Sources include `SalePostingService`, Sale/SaleItem, sales DTOs/controller/views and accounting repositories/settings.
 
-Posted sales support partial or full immutable returns. The service subtracts all earlier returned quantities, prevents over-return, allocates original invoice discount and tax proportionally, refunds through the original payment account and creates a source-unique posted reversal journal. Direct stocked goods return to the original warehouse at the frozen sale-line cost and reverse COGS; prepared-to-order goods do not recreate consumed ingredients or reverse their COGS.
+Tracked direct products and tracked recipe ingredients are issued from non-expired balances using FEFO inside the sale transaction. The immutable tracking trace records the invoice reference; serial-tracked issues require whole units.
+
+Posted sales support partial or full immutable returns. The service subtracts all earlier returned quantities, prevents over-return, allocates original invoice discount and tax proportionally, refunds through the original payment account and creates a source-unique posted reversal journal. Direct stocked goods return to the original warehouse at the frozen sale-line cost and reverse COGS; prepared-to-order goods do not recreate consumed ingredients or reverse their COGS. Explicit lot/serial selection for returned units remains pending.
 
 POS terminals have a branch, default warehouse and prioritized warehouse allow-list. The POS screen filters warehouses after terminal selection. SaleService verifies the active terminal, branch warehouse permission and warehouse POS eligibility before changing stock, and the Sale records `PosTerminalId` for audit. Legacy POS remains available only while no terminals are configured.
 

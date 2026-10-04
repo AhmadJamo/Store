@@ -96,7 +96,7 @@ try
     await VerifyInventoryBalanceProjectionAsync(tenantOneId, tenantOneFixture.ProductId, expectedOnHand: 2m, connectionString);
     await VerifyOpeningTrackingAllocationAsync(tenantOneId, tenantOneFixture.ProductId, tenantOneFixture.WarehouseId, connectionString);
 
-    Console.WriteLine("Passed WMS SQL integration checks: tenant isolation, reconciliation, balances, reservation concurrency, last-unit issue, adjustment posting and opening lot allocation.");
+    Console.WriteLine("Passed WMS SQL integration checks: tenant isolation, reconciliation, balances, reservation concurrency, adjustment posting, opening allocation, tracked receipt, FEFO issue and tracked transfer.");
 }
 finally
 {
@@ -256,7 +256,8 @@ static async Task VerifyOpeningTrackingAllocationAsync(int tenantId, int product
 {
     await using var context = new AppDbContext(CreateOptions(connectionString), new FixedTenantContext(tenantId));
     var service = new InventoryTrackingService(new InventoryTrackingRepository(context), new ProductRepository(context),
-        new WarehouseRepository(context), new StorageLocationRepository(context), new InventoryBalanceRepository(context), new UnitOfWork(context));
+        new WarehouseRepository(context), new StorageLocationRepository(context), new InventoryBalanceRepository(context),
+        new ProductLocationStockRepository(context), new UnitOfWork(context));
     await service.OpenAsync(new OpenTrackingAllocationDto
     {
         ProductId = productId, Policy = ProductTrackingPolicy.Lot, SourceReference = "OPEN-LOT-1",
@@ -268,6 +269,32 @@ static async Task VerifyOpeningTrackingAllocationAsync(int tenantId, int product
     if (product.TrackingPolicy != ProductTrackingPolicy.Lot || balance.Quantity != 2m ||
         history.Type != InventoryTrackingTransactionType.OpeningAllocation)
         throw new InvalidOperationException("Opening tracking allocation must atomically cover stock, activate policy and write trace history.");
+
+    var trackedProduct = await context.Products.SingleAsync(x => x.Id == productId);
+    await new UnitOfWork(context).ExecuteInTransactionAsync(async () =>
+    {
+        await service.ReceiveAsync(trackedProduct, warehouseId, 1m, "LOT-B", null, null,
+            new DateOnly(2028, 1, 1), "PUR-TRACKED", "receiver");
+        await service.IssueAsync(trackedProduct, warehouseId, 1m, "SALE-TRACKED", "seller");
+    });
+    var lots = await context.InventoryTrackingBalances.AsNoTracking().Where(x => x.ProductId == productId).OrderBy(x => x.Identifier).ToListAsync();
+    if (lots.Count != 2 || lots[0].Identifier != "LOT-A" || lots[0].Quantity != 1m || lots[1].Quantity != 1m)
+        throw new InvalidOperationException("Tracked receipt and FEFO issue must update the correct lot balances atomically.");
+
+    var destinationWarehouse = new Warehouse("Tracked transfer destination");
+    await context.Warehouses.AddAsync(destinationWarehouse);
+    await context.SaveChangesAsync();
+    await new UnitOfWork(context).ExecuteInTransactionAsync(() => service.TransferAsync(
+        trackedProduct, warehouseId, destinationWarehouse.Id, null, null, 1m,
+        "TRF-TRACKED", "transfer-user"));
+    var transferred = await context.InventoryTrackingBalances.AsNoTracking()
+        .SingleAsync(x => x.ProductId == productId && x.WarehouseId == destinationWarehouse.Id);
+    var transferHistory = await context.InventoryTrackingTransactions.AsNoTracking()
+        .Where(x => x.ProductId == productId && x.SourceReference == "TRF-TRACKED")
+        .ToListAsync();
+    if (transferred.Identifier != "LOT-A" || transferred.Quantity != 1m ||
+        transferHistory.Count != 2 || transferHistory.Sum(x => x.Quantity) != 0)
+        throw new InvalidOperationException("Tracked transfer must preserve the lot identity and write balanced source/destination history.");
 }
 
 static async Task VerifyTrackedActivationGuardAsync(

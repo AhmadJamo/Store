@@ -23,6 +23,8 @@ public class PurchaseService
     private readonly ITaxRateRepository _taxRateRepository;
 
     private readonly IUnitOfWork _unitOfWork;
+    private readonly InventoryTrackingService _inventoryTrackingService;
+    private readonly ICurrentUserService _currentUser;
 
     public PurchaseService(
         IPurchaseRepository purchaseRepository,
@@ -33,7 +35,9 @@ public class PurchaseService
         IProductLocationStockRepository productLocationStockRepository,
         IStockTransactionRepository stockTransactionRepository,
         ITaxRateRepository taxRateRepository,
-        IUnitOfWork unitOfWork)
+        IUnitOfWork unitOfWork,
+        InventoryTrackingService inventoryTrackingService,
+        ICurrentUserService currentUser)
     {
         _purchaseRepository = purchaseRepository;
 
@@ -52,6 +56,8 @@ public class PurchaseService
         _taxRateRepository = taxRateRepository;
 
         _unitOfWork = unitOfWork;
+        _inventoryTrackingService = inventoryTrackingService;
+        _currentUser = currentUser;
     }
 
     public async Task<List<PurchaseDto>> GetAllAsync()
@@ -341,6 +347,12 @@ public class PurchaseService
                     var costMovement = stock.Receive(
                         itemDto.Quantity,
                         netUnitCost);
+
+                    await _inventoryTrackingService.ReceiveAsync(
+                        product, itemDto.WarehouseId, itemDto.Quantity,
+                        itemDto.LotNumber, itemDto.SerialNumbers,
+                        itemDto.ManufactureDate, itemDto.ExpirationDate,
+                        dto.InvoiceNumber, _currentUser.UserId);
 
                     var transaction =
                         new StockTransaction(

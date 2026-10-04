@@ -574,7 +574,7 @@ Status: implementation and additive migration complete; migration applied to `AH
 - [x] Serial-one database constraint and tenant-product serial uniqueness; lots may span locations.
 - [x] Atomic opening allocation that must exactly cover all current dimensional stock before policy activation.
 - [x] Bilingual tracking/expiry report, permissions, migration and SQL integration coverage.
-- [ ] WMS-070B purchase receipt input, issue/transfer/return allocation and enforced tracked-operation cutover.
+- [ ] WMS-070B tracked-operation cutover: purchase receipt input, FEFO sale/recipe issue and transfer/cancellation allocation are implemented; explicit lot/serial return allocation remains.
 - [ ] FEFO consumption belongs to WMS-080 after tracked document integration is complete.
 
 ### WMS-080 — Removal and putaway strategies

@@ -1,5 +1,5 @@
 # Inventory and stock movements
-> Status: IMPLEMENTED WITH APPROVED WMS EVOLUTION | Last reviewed: 2026-09-30
+> Status: IMPLEMENTED WITH APPROVED WMS EVOLUTION | Last reviewed: 2026-10-04
 
 The approved evolution is documented in `../WMS_EVOLUTION_PLAN.md`. Existing ProductStock, ProductLocationStock, StockTransaction, LocationMovement, warehouse policies and StockTransfer workflows remain authoritative until each WMS vertical slice is implemented and reconciled. WMS-020A now adds the StockMovement kernel for new Putaway and Relocation operations only.
 
@@ -51,7 +51,9 @@ WMS-060 adds a controlled Draft → Counted → Approved → Posted workflow, wi
 
 ## Lot, serial and expiration tracking
 
-WMS-070A adds dimensional lot/serial balances and immutable trace transactions. Serial quantities are limited to zero/one and identifiers are unique per tenant product; lot identifiers may occupy multiple locations. Opening activation rejects negative or partially allocated stock and requires submitted allocations to equal every current InventoryBalance position before Product.TrackingPolicy changes. Receipt, issue, transfer and return integration remains WMS-070B, so the current report and opening workflow are a foundation rather than a completed operational cutover.
+WMS-070A adds dimensional lot/serial balances and immutable trace transactions. Serial quantities are limited to zero/one and identifiers are unique per tenant product; lot identifiers may occupy multiple locations. Opening activation rejects negative or partially allocated stock and requires submitted allocations to equal every current InventoryBalance position before Product.TrackingPolicy changes.
+
+WMS-070B now requires lot identity or one serial per received unit on tracked purchase lines. Direct sales and tracked recipe ingredients issue non-expired stock by FEFO. Transfer posting and cancellation preserve the exact lot/serial identity between source and destination positions and write balanced trace entries inside the owning transaction. Sales and purchase returns still need explicit identifier selection/reversal and remain the final tracked-operation cutover gap.
 
 ## Warehouse operating policies
 Warehouse operational use is independent from inventory control. Types cover general, central, branch backroom, sales floor, outlet, production, transit, returns and quarantine uses. Control modes are Simple, LocationManaged and Hybrid. An organized sales-floor or central warehouse may explicitly allow direct POS sales.

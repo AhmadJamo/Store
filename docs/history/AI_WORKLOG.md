@@ -1,5 +1,12 @@
 # AI Work Log
 
+## 2026-10-04 — WMS-070B tracked receipts, issues and transfers
+
+- Added lot and serial input to purchase lines and atomically creates tracked receipt balances/history with the existing purchase transaction.
+- Direct sales and recipe consumption now allocate non-expired tracked stock using FEFO; exact location quantities are reduced when applicable.
+- Transfer posting and cancellation preserve lot/serial identity across warehouse/location positions and write balanced trace transactions.
+- Added regression coverage for serial relocation and SQL coverage for receipt, FEFO issue and lot transfer. Explicit identifier-aware sales and purchase returns remain pending.
+
 ## 2026-10-04 — WMS-070A opening lot/serial tracking
 
 - Added tenant-owned tracked balances and immutable trace history with lot/serial identity, manufacture/expiration dates and rowversion.

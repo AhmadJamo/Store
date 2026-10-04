@@ -1,5 +1,6 @@
 ﻿@model MiniStore.Application.DTOs.Purchases.CreatePurchaseDto
 
+@inject Microsoft.Extensions.Localization.IStringLocalizer<MiniStore.Web.SharedResource> Localizer
 @{
     ViewData["Title"] = "Create Purchase";
 }
@@ -144,6 +145,10 @@
                     <th>Tax</th>
 
                     <th>Discount</th>
+                    <th>@Localizer["Lot number"]</th>
+                    <th>@Localizer["Serial numbers"]</th>
+                    <th>@Localizer["Manufacture date"]</th>
+                    <th>@Localizer["Expiration date"]</th>
 
                     <th>Total</th>
 
@@ -316,15 +321,12 @@
                 </td>
 
 
-                <td>
+                <td><input name="Items[${itemIndex}].LotNumber" class="form-control" maxlength="100" placeholder="@Localizer["Required for lot tracking"]" /></td>
+                <td><textarea name="Items[${itemIndex}].SerialNumbers" class="form-control" rows="2" placeholder="@Localizer["One serial per line"]"></textarea></td>
+                <td><input name="Items[${itemIndex}].ManufactureDate" type="date" class="form-control" /></td>
+                <td><input name="Items[${itemIndex}].ExpirationDate" type="date" class="form-control" /></td>
 
-                    <input
-                        type="text"
-                        class="form-control row-total"
-                        value="0.00"
-                        readonly>
-
-                </td>
+                <td><input type="text" class="form-control row-total" value="0.00" readonly></td>
 
 
                 <td>
