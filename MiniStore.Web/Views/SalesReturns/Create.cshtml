@@ -20,7 +20,7 @@
         <div class="card shadow-sm border-0 mb-4">
             <div class="table-responsive">
                 <table class="table align-middle mb-0">
-                    <thead class="table-light"><tr><th>@Localizer["Product"]</th><th>@Localizer["Sold quantity"]</th><th>@Localizer["Already returned"]</th><th>@Localizer["Return quantity"]</th></tr></thead>
+                    <thead class="table-light"><tr><th>@Localizer["Product"]</th><th>@Localizer["Sold quantity"]</th><th>@Localizer["Already returned"]</th><th>@Localizer["Return quantity"]</th><th>@Localizer["Lot or serial allocations"]</th></tr></thead>
                     <tbody>
                     @for (var index = 0; index < sale.Items.Count; index++)
                     {
@@ -31,6 +31,7 @@
                             <td>@item.ProductName<input type="hidden" name="Items[@index].SaleItemId" value="@item.Id" /></td>
                             <td>@item.Quantity</td><td>@alreadyReturned</td>
                             <td><input name="Items[@index].Quantity" value="0" type="number" min="0" max="@remaining" step="0.001" class="form-control" @(remaining <= 0 ? "disabled" : null) /></td>
+                            <td><textarea name="Items[@index].TrackingAllocations" class="form-control" rows="2" placeholder="@Localizer["Tracking allocation format"]" @(remaining <= 0 ? "disabled" : null)></textarea></td>
                         </tr>
                     }
                     </tbody>

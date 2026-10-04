@@ -881,6 +881,10 @@ var serialBalance = new InventoryTrackingBalance(1, 1, null, ProductTrackingPoli
 serialBalance.Relocate(2, 3);
 Check(serialBalance.WarehouseId == 2 && serialBalance.StorageLocationId == 3 && serialBalance.Quantity == 1m,
     "A serial transfer must preserve the serial unit while relocating its exact warehouse position");
+serialBalance.Remove(1m);
+serialBalance.Restore(1m);
+Check(serialBalance.Quantity == 1m && serialBalance.Status == InventoryTrackingStatus.Available,
+    "A returned serial must restore the depleted identity without creating a duplicate serial");
 var serialIndex = db.Model.FindEntityType(typeof(InventoryTrackingBalance))!.GetIndexes()
     .Single(index => index.IsUnique && index.GetFilter() == "[Policy] = 2");
 Check(serialIndex.Properties.Select(x => x.Name).SequenceEqual(["TenantId", nameof(InventoryTrackingBalance.ProductId), nameof(InventoryTrackingBalance.Policy), nameof(InventoryTrackingBalance.Identifier)]),

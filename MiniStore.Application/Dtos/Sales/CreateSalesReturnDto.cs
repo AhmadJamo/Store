@@ -12,4 +12,5 @@ public class CreateSalesReturnItemDto
 {
     public int SaleItemId { get; set; }
     public decimal Quantity { get; set; }
+    public string? TrackingAllocations { get; set; }
 }

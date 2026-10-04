@@ -5,7 +5,8 @@
 - Added lot and serial input to purchase lines and atomically creates tracked receipt balances/history with the existing purchase transaction.
 - Direct sales and recipe consumption now allocate non-expired tracked stock using FEFO; exact location quantities are reduced when applicable.
 - Transfer posting and cancellation preserve lot/serial identity across warehouse/location positions and write balanced trace transactions.
-- Added regression coverage for serial relocation and SQL coverage for receipt, FEFO issue and lot transfer. Explicit identifier-aware sales and purchase returns remain pending.
+- Added explicit lot-quantity/serial allocation to sales and purchase returns, original-document identity validation and duplicate-return prevention.
+- Added regression coverage for serial relocation/restoration and SQL coverage for receipt, FEFO issue, lot transfer and both tracked return directions. WMS-070B is complete.
 
 ## 2026-10-04 — WMS-070A opening lot/serial tracking
 

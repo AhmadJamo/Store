@@ -7,7 +7,7 @@ The ordered Arabic execution plan, workflow, business rules and rolling suggesti
 - [x] WMS-050 reservations and exact transfer allocation with concurrent last-unit protection.
 - [x] WMS-060 blind cycle counts and controlled inventory adjustment posting; scheduling remains deferred.
 - [x] WMS-070A opening lot/serial allocation and traceability foundation.
-- [ ] WMS-070B tracked purchases, FEFO sales/recipe issues and transfer/cancellation are integrated; explicit sales/purchase return identifiers remain.
+- [x] WMS-070B tracked purchases, FEFO sales/recipe issues, transfer/cancellation and identifier-aware sales/purchase returns.
 
 ## Completed
 - Core catalog, warehouse, supplier, inventory, purchase, sale and stock-transfer code exists.

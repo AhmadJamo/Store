@@ -84,5 +84,62 @@ public sealed class InventoryTrackingService(IInventoryTrackingRepository tracki
   }
  }
 
+ public async Task ReturnSaleAsync(Product product,int warehouseId,decimal quantity,string? allocationText,string originalReference,string returnReference,string userId)
+ {
+  if(product.TrackingPolicy==ProductTrackingPolicy.None)return;
+  var allocations=ParseAllocations(product,allocationText,quantity);
+  var history=await tracking.GetTransactionsAsync();
+  foreach(var allocation in allocations)
+  {
+   var issued=-history.Where(x=>x.ProductId==product.Id&&x.Identifier==allocation.Identifier&&x.Type==InventoryTrackingTransactionType.Issue&&x.SourceReference==originalReference).Sum(x=>Math.Min(0,x.Quantity));
+   var previouslyReturned=history.Where(x=>x.ProductId==product.Id&&x.Identifier==allocation.Identifier&&x.Type==InventoryTrackingTransactionType.Return&&x.SourceReference.EndsWith($"|{originalReference}",StringComparison.Ordinal)).Sum(x=>x.Quantity);
+   if(allocation.Quantity>issued-previouslyReturned)throw new InvalidOperationException("The selected lot or serial was not issued by the original sale, or it was already returned.");
+   var matches=await tracking.GetByIdentifierForUpdateAsync(product.Id,allocation.Identifier);
+   if(matches.Count==0)throw new InvalidOperationException("The selected lot or serial was not found.");
+   if(product.TrackingPolicy==ProductTrackingPolicy.Serial)
+   {
+    var serial=matches.Single();
+    if(serial.Quantity!=0)throw new InvalidOperationException("The selected serial is already available in inventory.");
+    serial.Restore(1);serial.Relocate(warehouseId,null);
+    await tracking.AddTransactionAsync(new InventoryTrackingTransaction(serial,1,InventoryTrackingTransactionType.Return,$"{returnReference}|{originalReference}",userId));
+   }
+   else
+   {
+    var source=matches[0];var destination=await tracking.GetBalanceAsync(product.Id,warehouseId,null,allocation.Identifier);
+    if(destination is null){destination=new InventoryTrackingBalance(product.Id,warehouseId,null,ProductTrackingPolicy.Lot,allocation.Identifier,allocation.Quantity,source.ManufactureDate,source.ExpirationDate,returnReference);await tracking.AddBalanceAsync(destination);}else destination.Restore(allocation.Quantity);
+    await tracking.AddTransactionAsync(new InventoryTrackingTransaction(destination,allocation.Quantity,InventoryTrackingTransactionType.Return,$"{returnReference}|{originalReference}",userId));
+   }
+  }
+ }
+
+ public async Task ReturnPurchaseAsync(Product product,int warehouseId,decimal quantity,string? allocationText,string originalReference,string returnReference,string userId)
+ {
+  if(product.TrackingPolicy==ProductTrackingPolicy.None)return;
+  var allocations=ParseAllocations(product,allocationText,quantity);
+  var history=await tracking.GetTransactionsAsync();
+  foreach(var allocation in allocations)
+  {
+   var received=history.Where(x=>x.ProductId==product.Id&&x.Identifier==allocation.Identifier&&x.Type==InventoryTrackingTransactionType.Receipt&&x.SourceReference==originalReference).Sum(x=>x.Quantity);
+   var previouslyReturned=-history.Where(x=>x.ProductId==product.Id&&x.Identifier==allocation.Identifier&&x.Type==InventoryTrackingTransactionType.Return&&x.Quantity<0&&x.SourceReference.EndsWith($"|{originalReference}",StringComparison.Ordinal)).Sum(x=>x.Quantity);
+   if(allocation.Quantity>received-previouslyReturned)throw new InvalidOperationException("The selected lot or serial was not received by the original purchase, or it was already returned.");
+   var candidates=(await tracking.GetAvailableForUpdateAsync(product.Id,warehouseId)).Where(x=>x.Identifier==allocation.Identifier).ToList();
+   if(candidates.Sum(x=>x.Quantity)<allocation.Quantity)throw new InvalidOperationException("The selected lot or serial is not available in the purchase warehouse.");
+   var remaining=allocation.Quantity;
+   foreach(var balance in candidates){if(remaining<=0)break;var take=Math.Min(balance.Quantity,remaining);balance.Remove(take);if(balance.StorageLocationId.HasValue){var located=await locationStocks.GetAsync(product.Id,balance.StorageLocationId.Value)??throw new InvalidOperationException("Tracked location stock is missing.");located.RemoveQuantity(take);}await tracking.AddTransactionAsync(new InventoryTrackingTransaction(balance,-take,InventoryTrackingTransactionType.Return,$"{returnReference}|{originalReference}",userId));remaining-=take;}
+  }
+ }
+
+ private static List<(string Identifier,decimal Quantity)> ParseAllocations(Product product,string? value,decimal expectedQuantity)
+ {
+  var lines=(value??string.Empty).Split([',',';','\n','\r'],StringSplitOptions.RemoveEmptyEntries|StringSplitOptions.TrimEntries);
+  if(lines.Length==0)throw new InvalidOperationException("Lot or serial allocations are required for the tracked return.");
+  var parsed=new List<(string Identifier,decimal Quantity)>();
+  foreach(var line in lines){var separator=line.LastIndexOf(':');var identifier=separator>0?line[..separator].Trim():line.Trim();var amount=1m;if(separator>0&&!decimal.TryParse(line[(separator+1)..].Trim(),System.Globalization.NumberStyles.Number,System.Globalization.CultureInfo.InvariantCulture,out amount))throw new InvalidOperationException("Use LOT:QUANTITY format for lot allocations.");if(string.IsNullOrWhiteSpace(identifier)||amount<=0)throw new InvalidOperationException("Every tracked return allocation requires an identifier and positive quantity.");if(product.TrackingPolicy==ProductTrackingPolicy.Serial&&amount!=1)throw new InvalidOperationException("Every returned serial must have quantity one.");parsed.Add((identifier.ToUpperInvariant(),amount));}
+  var grouped=parsed.GroupBy(x=>x.Identifier,StringComparer.OrdinalIgnoreCase).Select(x=>(x.Key,x.Sum(y=>y.Quantity))).ToList();
+  if(grouped.Sum(x=>x.Item2)!=expectedQuantity)throw new InvalidOperationException("Tracked return allocations must exactly equal the return quantity.");
+  if(product.TrackingPolicy==ProductTrackingPolicy.Serial&&grouped.Count!=parsed.Count)throw new InvalidOperationException("Returned serial numbers must be unique.");
+  return grouped;
+ }
+
  private static List<string> SplitIdentifiers(string? value)=>(value??string.Empty).Split([',',';','\n','\r'],StringSplitOptions.RemoveEmptyEntries|StringSplitOptions.TrimEntries).Select(x=>x.ToUpperInvariant()).ToList();
 }

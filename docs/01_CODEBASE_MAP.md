@@ -65,8 +65,8 @@
 | `Services/Accounting/JournalPostingService.cs` | central source-idempotency, numbering, balance/posting and persistence gateway used inside caller transactions | purchase, sale and sales-return posting workflows. |
 | `Services/Settings/FiscalPeriodService.cs` | non-overlapping fiscal-period administration and central posting-date validation | Settings/FiscalPeriods and JournalPostingService. |
 | `Services/Sales/SalePostingService.cs` | idempotent sale revenue, discount and COGS general-ledger posting | Sales/Details and Sales/Post. |
-| `Services/Sales/SalesReturnService.cs` | cumulative quantity control, proportional refund and atomic inventory/accounting reversal | SalesReturns controller/views. |
-| `Services/Purchases/PurchaseReturnService.cs` | cumulative supplier-return control, moving-average inventory issue and proportional accounting reversal | PurchaseReturns controller/views. |
+| `Services/Sales/SalesReturnService.cs` | cumulative quantity control, identifier-aware tracked restocking, proportional refund and atomic inventory/accounting reversal | SalesReturns controller/views. |
+| `Services/Purchases/PurchaseReturnService.cs` | cumulative supplier-return control, explicit tracked identity issue, moving-average inventory issue and proportional accounting reversal | PurchaseReturns controller/views. |
 | `Services/Sales/DiscountCalculator.cs` | standalone discount calculation helper; no active consumer found by scan | Unknown. |
 | `Services/Shared/ICurrentUserService.cs` | current-user application contract | Web CurrentUserService. |
 | `Permissions/{PermissionDefinitions,IPermissionService}.cs` | permission catalogue/contract | seeders/auth/services. |

@@ -9,7 +9,8 @@ public sealed class PurchaseReturnService(
     IProductRepository products, IWarehouseRepository warehouses, IProductStockRepository stocks,
     IStockTransactionRepository transactions, ITaxRateRepository taxRates,
     IAccountingSettingsRepository accountingSettings, JournalPostingService journalPosting,
-    DocumentNumberService documentNumbers, IUnitOfWork unitOfWork)
+    DocumentNumberService documentNumbers, InventoryTrackingService inventoryTracking,
+    ICurrentUserService currentUser, IUnitOfWork unitOfWork)
 {
     public async Task<List<PurchaseReturnDto>> GetAllAsync()
     {
@@ -87,6 +88,11 @@ public sealed class PurchaseReturnService(
                 var removedCostPosting = Round(removedCost);
                 created.AddItem(new PurchaseReturnItem(original.Id, original.ProductId, warehouseId, request.Quantity, originalInventory, discount, tax, payable, removedCost));
                 await transactions.AddAsync(new StockTransaction(original.ProductId, warehouseId, -request.Quantity, StockTransactionType.PurchaseReturn, created.ReturnNumber, movement));
+                var product = await products.GetByIdAsync(original.ProductId)
+                    ?? throw new InvalidOperationException("Returned purchase product was not found.");
+                await inventoryTracking.ReturnPurchaseAsync(product, warehouseId,
+                    request.Quantity, request.TrackingAllocations, purchase.InvoiceNumber,
+                    created.ReturnNumber, currentUser.UserId);
 
                 lines.Add(new JournalEntryLine(supplier.AccountId.Value, payable, 0, warehouse.BranchId, warehouse.Id, $"Supplier credit for {created.ReturnNumber}"));
                 if (discount > 0)

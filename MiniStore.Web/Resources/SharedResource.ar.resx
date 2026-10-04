@@ -699,4 +699,17 @@
   <data name="Serial numbers" xml:space="preserve"><value>الأرقام التسلسلية</value></data>
   <data name="Required for lot tracking" xml:space="preserve"><value>مطلوب للمنتج المتتبع بالتشغيلة</value></data>
   <data name="One serial per line" xml:space="preserve"><value>رقم تسلسلي واحد في كل سطر</value></data>
+  <data name="Lot or serial allocations" xml:space="preserve"><value>توزيع التشغيلات أو الأرقام التسلسلية</value></data>
+  <data name="Tracking allocation format" xml:space="preserve"><value>LOT-A:2 أو رقم سيريال في كل سطر</value></data>
+  <data name="Lot or serial allocations are required for the tracked return." xml:space="preserve"><value>يجب تحديد التشغيلات أو الأرقام التسلسلية للمرتجع المتتبع.</value></data>
+  <data name="Use LOT:QUANTITY format for lot allocations." xml:space="preserve"><value>استخدم الصيغة LOT:QUANTITY لتوزيع كميات التشغيلات.</value></data>
+  <data name="Every tracked return allocation requires an identifier and positive quantity." xml:space="preserve"><value>كل توزيع مرتجع متتبع يحتاج إلى هوية وكمية موجبة.</value></data>
+  <data name="Every returned serial must have quantity one." xml:space="preserve"><value>يجب أن تكون كمية كل رقم تسلسلي مرتجع واحداً.</value></data>
+  <data name="Tracked return allocations must exactly equal the return quantity." xml:space="preserve"><value>يجب أن يساوي مجموع توزيعات التتبع كمية المرتجع تماماً.</value></data>
+  <data name="Returned serial numbers must be unique." xml:space="preserve"><value>يجب ألا تتكرر الأرقام التسلسلية المرتجعة.</value></data>
+  <data name="The selected lot or serial was not issued by the original sale, or it was already returned." xml:space="preserve"><value>التشغيلة أو الرقم التسلسلي المحدد لم يصدر في البيع الأصلي أو تم إرجاعه مسبقاً.</value></data>
+  <data name="The selected lot or serial was not received by the original purchase, or it was already returned." xml:space="preserve"><value>التشغيلة أو الرقم التسلسلي المحدد لم يُستلم في الشراء الأصلي أو تم إرجاعه مسبقاً.</value></data>
+  <data name="The selected lot or serial was not found." xml:space="preserve"><value>لم يتم العثور على التشغيلة أو الرقم التسلسلي المحدد.</value></data>
+  <data name="The selected serial is already available in inventory." xml:space="preserve"><value>الرقم التسلسلي المحدد متوفر في المخزون مسبقاً.</value></data>
+  <data name="The selected lot or serial is not available in the purchase warehouse." xml:space="preserve"><value>التشغيلة أو الرقم التسلسلي المحدد غير متوفر في مستودع الشراء.</value></data>
 </root>

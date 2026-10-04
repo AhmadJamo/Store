@@ -16,6 +16,8 @@ public sealed class SalesReturnService(
     IBranchRepository branchRepository,
     JournalPostingService journalPosting,
     DocumentNumberService documentNumbers,
+    InventoryTrackingService inventoryTracking,
+    ICurrentUserService currentUser,
     IUnitOfWork unitOfWork)
 {
     private const string SaleSourceType = "Sale";
@@ -135,6 +137,9 @@ public sealed class SalesReturnService(
                     await stockTransactionRepository.AddAsync(new StockTransaction(
                         saleItem.ProductId, sale.WarehouseId, request.Quantity,
                         StockTransactionType.SalesReturn, created.ReturnNumber, movement));
+                    await inventoryTracking.ReturnSaleAsync(product, sale.WarehouseId,
+                        request.Quantity, request.TrackingAllocations, sale.InvoiceNumber,
+                        created.ReturnNumber, currentUser.UserId);
                 }
             }
 

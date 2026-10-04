@@ -96,7 +96,7 @@ try
     await VerifyInventoryBalanceProjectionAsync(tenantOneId, tenantOneFixture.ProductId, expectedOnHand: 2m, connectionString);
     await VerifyOpeningTrackingAllocationAsync(tenantOneId, tenantOneFixture.ProductId, tenantOneFixture.WarehouseId, connectionString);
 
-    Console.WriteLine("Passed WMS SQL integration checks: tenant isolation, reconciliation, balances, reservation concurrency, adjustment posting, opening allocation, tracked receipt, FEFO issue and tracked transfer.");
+    Console.WriteLine("Passed WMS SQL integration checks: tenant isolation, reconciliation, balances, reservation concurrency, adjustment posting, opening allocation, tracked receipt, FEFO issue, transfer and returns.");
 }
 finally
 {
@@ -295,6 +295,19 @@ static async Task VerifyOpeningTrackingAllocationAsync(int tenantId, int product
     if (transferred.Identifier != "LOT-A" || transferred.Quantity != 1m ||
         transferHistory.Count != 2 || transferHistory.Sum(x => x.Quantity) != 0)
         throw new InvalidOperationException("Tracked transfer must preserve the lot identity and write balanced source/destination history.");
+
+    await new UnitOfWork(context).ExecuteInTransactionAsync(async () =>
+    {
+        await service.ReturnSaleAsync(trackedProduct, warehouseId, 1m, "LOT-A:1",
+            "SALE-TRACKED", "SRT-TRACKED", "returns-user");
+        await service.ReturnPurchaseAsync(trackedProduct, warehouseId, 1m, "LOT-B:1",
+            "PUR-TRACKED", "PRT-TRACKED", "returns-user");
+    });
+    var returnHistory = await context.InventoryTrackingTransactions.AsNoTracking()
+        .Where(x => x.ProductId == productId && x.Type == InventoryTrackingTransactionType.Return)
+        .ToListAsync();
+    if (returnHistory.Count != 2 || returnHistory.Sum(x => x.Quantity) != 0)
+        throw new InvalidOperationException("Tracked sales and purchase returns must restore/remove the selected identities with balanced trace history.");
 }
 
 static async Task VerifyTrackedActivationGuardAsync(
