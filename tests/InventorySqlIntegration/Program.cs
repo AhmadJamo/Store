@@ -1,6 +1,7 @@
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using MiniStore.Application.DTOs.Inventory.Reconciliation;
+using MiniStore.Application.DTOs.Inventory.Adjustments;
 using MiniStore.Application.DTOs.Products;
 using MiniStore.Application.Services;
 using MiniStore.Domain.Entities;
@@ -90,8 +91,10 @@ try
         tenantOneFixture.ProductId,
         expectedOnHand: 0m,
         connectionString);
+    await VerifyAdjustmentPostingAsync(tenantOneId, tenantOneFixture.ProductId, tenantOneFixture.WarehouseId, connectionString);
+    await VerifyInventoryBalanceProjectionAsync(tenantOneId, tenantOneFixture.ProductId, expectedOnHand: 2m, connectionString);
 
-    Console.WriteLine("Passed WMS SQL integration checks: tenant isolation, reconciliation translation, balance synchronization, concurrent reservation protection, concurrent last-unit issue and tracking-policy guard.");
+    Console.WriteLine("Passed WMS SQL integration checks: tenant isolation, reconciliation translation, balance synchronization, reservation concurrency, last-unit issue, adjustment posting and tracking-policy guard.");
 }
 finally
 {
@@ -219,6 +222,32 @@ static async Task VerifyConcurrentReservationAsync(
     currentBalance.SetReserved(0m);
     active.Consume("integration-user");
     await cleanup.SaveChangesAsync();
+}
+
+static async Task VerifyAdjustmentPostingAsync(int tenantId, int productId, int warehouseId, string connectionString)
+{
+    await using var context = new AppDbContext(CreateOptions(connectionString), new FixedTenantContext(tenantId));
+    var service = new InventoryAdjustmentService(
+        new InventoryAdjustmentRepository(context), new WarehouseRepository(context),
+        new StorageLocationRepository(context), new ProductRepository(context),
+        new ProductStockRepository(context), new ProductLocationStockRepository(context),
+        new StockTransactionRepository(context), new StockMovementRepository(context),
+        new DocumentNumberService(new DocumentSequenceRepository(context)), new UnitOfWork(context));
+    var id = await service.CreateAsync(new CreateInventoryAdjustmentDto
+    {
+        WarehouseId = warehouseId, Reason = "SQL integration count", ProductIds = [productId]
+    }, "creator");
+    await service.RecordCountsAsync(id, new RecordInventoryCountsDto
+    {
+        Lines = [new InventoryCountInputDto { ProductId = productId, CountedQuantity = 2m }]
+    }, "counter");
+    await service.ApproveAsync(id, "supervisor");
+    await service.PostAsync(id, "poster");
+    var adjustment = await context.InventoryAdjustments.AsNoTracking().SingleAsync(x => x.Id == id);
+    var physical = await context.StockMovements.AsNoTracking().SingleAsync(x =>
+        x.SourceDocumentType == "InventoryAdjustment" && x.SourceDocumentId == id);
+    if (adjustment.Status != InventoryAdjustmentStatus.Posted || physical.Type != StockMovementType.AdjustmentIn || physical.Quantity != 2m)
+        throw new InvalidOperationException("Posted count variance must atomically update stock and create a compensating movement.");
 }
 
 static async Task VerifyTrackedActivationGuardAsync(

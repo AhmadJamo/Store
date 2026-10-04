@@ -649,4 +649,29 @@
   <data name="SaleOrder" xml:space="preserve"><value>طلب بيع</value></data>
   <data name="Consumed" xml:space="preserve"><value>مستهلك</value></data>
   <data name="Released" xml:space="preserve"><value>محرر</value></data>
+  <data name="Inventory adjustments" xml:space="preserve"><value>تسويات المخزون</value></data>
+  <data name="Count, approve and post auditable inventory differences." xml:space="preserve"><value>عدّ واعتمد ورحّل فروقات المخزون القابلة للتدقيق.</value></data>
+  <data name="New inventory count" xml:space="preserve"><value>جرد مخزون جديد</value></data>
+  <data name="Document number" xml:space="preserve"><value>رقم المستند</value></data>
+  <data name="Blind count" xml:space="preserve"><value>جرد أعمى</value></data>
+  <data name="No inventory adjustments found." xml:space="preserve"><value>لا توجد تسويات مخزون.</value></data>
+  <data name="Blind count hides expected quantities from the counter." xml:space="preserve"><value>الجرد الأعمى يخفي الكميات المتوقعة عن الشخص الذي يعدّ المخزون.</value></data>
+  <data name="Select one or more products." xml:space="preserve"><value>اختر منتجاً واحداً أو أكثر.</value></data>
+  <data name="Expected quantity" xml:space="preserve"><value>الكمية المتوقعة</value></data>
+  <data name="Counted quantity" xml:space="preserve"><value>الكمية المعدودة</value></data>
+  <data name="Hidden" xml:space="preserve"><value>مخفية</value></data>
+  <data name="Complete count" xml:space="preserve"><value>إكمال الجرد</value></data>
+  <data name="Variance" xml:space="preserve"><value>الفرق</value></data>
+  <data name="Counted" xml:space="preserve"><value>تم العد</value></data>
+  <data name="Approved" xml:space="preserve"><value>معتمد</value></data>
+  <data name="Cancelled" xml:space="preserve"><value>ملغي</value></data>
+  <data name="View Inventory Adjustments" xml:space="preserve"><value>عرض تسويات المخزون</value></data>
+  <data name="Create Inventory Count" xml:space="preserve"><value>إنشاء جرد مخزون</value></data>
+  <data name="Record Inventory Count" xml:space="preserve"><value>تسجيل عدّ المخزون</value></data>
+  <data name="Approve Inventory Adjustment" xml:space="preserve"><value>اعتماد تسوية المخزون</value></data>
+  <data name="Post Inventory Adjustment" xml:space="preserve"><value>ترحيل تسوية المخزون</value></data>
+  <data name="Cancel Inventory Adjustment" xml:space="preserve"><value>إلغاء تسوية المخزون</value></data>
+  <data name="AdjustmentIn" xml:space="preserve"><value>تسوية زيادة</value></data>
+  <data name="AdjustmentOut" xml:space="preserve"><value>تسوية نقص</value></data>
+  <data name="Inventory adjustment" xml:space="preserve"><value>تسوية مخزون</value></data>
 </root>

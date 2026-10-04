@@ -1,0 +1,10 @@
+@model MiniStore.Application.DTOs.Inventory.Adjustments.InventoryAdjustmentCreatePageDto
+@inject Microsoft.Extensions.Localization.IStringLocalizer<MiniStore.Web.SharedResource> Localizer
+@{ViewData["Title"]=Localizer["New inventory count"];}
+<div class="container mt-4"><h2>@Localizer["New inventory count"]</h2><form asp-action="Create" method="post" class="card card-body mt-3"><div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<div class="row g-3"><div class="col-md-6"><label class="form-label">@Localizer["Warehouse"]</label><select asp-for="Input.WarehouseId" name="WarehouseId" class="form-select"><option value="">@Localizer["Select warehouse"]</option>@foreach(var x in Model.Warehouses){<option value="@x.Id">@x.Name</option>}</select></div>
+<div class="col-md-6"><label class="form-label">@Localizer["Location"]</label><select asp-for="Input.StorageLocationId" name="StorageLocationId" class="form-select"><option value="">@Localizer["Unassigned (system)"]</option>@foreach(var x in Model.Locations){<option value="@x.Id">@x.Name</option>}</select></div>
+<div class="col-12"><label class="form-label">@Localizer["Reason"]</label><input asp-for="Input.Reason" name="Reason" class="form-control" maxlength="250" /></div>
+<div class="col-12"><div class="form-check"><input asp-for="Input.IsBlindCount" name="IsBlindCount" class="form-check-input" /><label class="form-check-label">@Localizer["Blind count hides expected quantities from the counter."]</label></div></div>
+<div class="col-12"><label class="form-label">@Localizer["Products"]</label><select name="ProductIds" multiple size="12" class="form-select" required>@foreach(var x in Model.Products){<option value="@x.Id">@x.Name</option>}</select><div class="form-text">@Localizer["Select one or more products."]</div></div></div>
+<div class="mt-3"><button class="btn btn-primary">@Localizer["Create"]</button> <a asp-action="Index" class="btn btn-outline-secondary">@Localizer["Cancel"]</a></div></form></div>

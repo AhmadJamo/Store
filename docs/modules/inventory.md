@@ -45,6 +45,10 @@ The disposable SQL fixture verifies tenant isolation, opening-balance projection
 
 WMS-050 makes `InventoryReservation` the owner of Reserved. Transfer approval allocates every line against its exact reservable source location or the protected Unassigned position. Posting consumes the reservation inside the same transaction as the physical issue. Source uniqueness makes retries idempotent, while balance and reservation rowversions prevent two concurrent documents from claiming the final available quantity. Immediate sales validate aggregate Available before issuing stock atomically, so they cannot consume a transfer hold, but do not create artificial zero-duration reservations.
 
+## Inventory adjustments and cycle counting
+
+WMS-060 adds a controlled Draft → Counted → Approved → Posted workflow, with cancellation before posting and optional blind counts. Expected OnHand is frozen per product and exact location/Unassigned position. Posting refuses stale counts or a result below Reserved, then atomically updates warehouse/location balances and writes both the valued AdjustmentIn/AdjustmentOut StockTransaction and linked physical StockMovement. General-ledger gain/loss posting is deferred until explicit accounts are configured.
+
 ## Warehouse operating policies
 Warehouse operational use is independent from inventory control. Types cover general, central, branch backroom, sales floor, outlet, production, transit, returns and quarantine uses. Control modes are Simple, LocationManaged and Hybrid. An organized sales-floor or central warehouse may explicitly allow direct POS sales.
 

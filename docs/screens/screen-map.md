@@ -51,3 +51,6 @@ Bilingual read-only Product/Warehouse/Location projection showing OnHand, Reserv
 ## Inventory reservations
 
 `InventoryReservations/Index` is a bilingual, permission-protected audit list of source reference, lifecycle status, line count, total quantity and create/close times.
+
+## Inventory adjustments
+`InventoryAdjustments/Index`, `Create` and `Details` implement the bilingual count workflow. Blind Draft documents hide expected quantities; later states expose expected, counted and variance values plus allowed workflow actions.

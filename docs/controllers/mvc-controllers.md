@@ -46,3 +46,6 @@ Read-only WMS-040 availability screen protected by `InventoryBalances.View`. Pro
 
 ## InventoryReservationsController
 Read-only WMS-050 reservation history protected by `InventoryReservations.View`. Filtering and projection remain in the Application service.
+
+## InventoryAdjustmentsController
+WMS-060 list/create/details plus antiforgery-protected Count, Approve, Post and Cancel actions. Each mutation has a dedicated permission and delegates all rules to the Application service.

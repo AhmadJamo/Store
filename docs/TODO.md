@@ -5,6 +5,7 @@
 The ordered Arabic execution plan, workflow, business rules and rolling suggestion queue are maintained in `ARABIC_SHARED_ROADMAP.md`. This file remains the concise technical backlog.
 
 - [x] WMS-050 reservations and exact transfer allocation with concurrent last-unit protection.
+- [x] WMS-060 blind cycle counts and controlled inventory adjustment posting; scheduling remains deferred.
 
 ## Completed
 - Core catalog, warehouse, supplier, inventory, purchase, sale and stock-transfer code exists.

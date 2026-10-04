@@ -1,0 +1,7 @@
+@model List<MiniStore.Application.DTOs.Inventory.Adjustments.InventoryAdjustmentRowDto>
+@inject Microsoft.Extensions.Localization.IStringLocalizer<MiniStore.Web.SharedResource> Localizer
+@{ViewData["Title"]=Localizer["Inventory adjustments"];}
+<div class="container mt-4"><div class="d-flex justify-content-between align-items-center mb-3"><div><h2>@Localizer["Inventory adjustments"]</h2><p class="text-muted mb-0">@Localizer["Count, approve and post auditable inventory differences."]</p></div><a asp-action="Create" class="btn btn-primary">@Localizer["New inventory count"]</a></div>
+<div class="table-responsive"><table class="table table-striped"><thead><tr><th>@Localizer["Document number"]</th><th>@Localizer["Warehouse"]</th><th>@Localizer["Location"]</th><th>@Localizer["Status"]</th><th>@Localizer["Blind count"]</th><th>@Localizer["Lines"]</th><th></th></tr></thead><tbody>
+@foreach(var row in Model){<tr><td><code>@row.Number</code></td><td>@row.Warehouse</td><td>@Localizer[row.Location]</td><td>@Localizer[row.Status.ToString()]</td><td>@(row.IsBlindCount?Localizer["Yes"]:Localizer["No"])</td><td>@row.LineCount</td><td><a asp-action="Details" asp-route-id="@row.Id" class="btn btn-sm btn-outline-primary">@Localizer["Details"]</a></td></tr>}
+@if(Model.Count==0){<tr><td colspan="7" class="text-center text-muted">@Localizer["No inventory adjustments found."]</td></tr>}</tbody></table></div></div>

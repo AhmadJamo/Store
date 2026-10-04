@@ -561,8 +561,12 @@ Status: implementation and additive migration complete; migration applied to `AH
 
 ### WMS-060 — Inventory adjustments and cycle counting
 
-- Count/approve/post workflow, blind count option and compensating movements.
-- Cycle schedule and assignments follow only after adjustment workflow is stable.
+- [x] Draft/count/approve/post/cancel workflow with separation of counter and approver.
+- [x] Optional blind count and frozen expected dimensional quantities.
+- [x] Stale-count and active-reservation posting guards.
+- [x] Atomic ProductStock/location update plus valued StockTransaction and compensating StockMovement.
+- [x] Bilingual UI, centralized numbering, permissions and SQL integration coverage.
+- [ ] Cycle schedules and assignments follow only after the posting workflow is observed in use.
 
 ### WMS-070 — Lots, serials and expiration
 

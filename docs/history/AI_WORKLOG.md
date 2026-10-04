@@ -1,5 +1,13 @@
 # AI Work Log
 
+## 2026-10-04 — WMS-060 inventory adjustments and cycle counting
+
+- Added tenant-owned adjustment header/lines, centralized ADJ numbering and Draft/Counted/Approved/Posted/Cancelled lifecycle.
+- Added blind counts, counter/approver separation, stale-snapshot and reservation guards.
+- Posting atomically updates warehouse/optional location stock and emits valued StockTransaction plus linked physical StockMovement.
+- Added bilingual screens, six dedicated permissions, ADR, tests and documentation.
+- Applied `AddInventoryAdjustments` to `AHMAD/MiniStoreDb`; release build and SQL integration passed.
+
 ## 2026-10-04 — WMS-050 reservations and allocation
 
 - Added tenant-owned reservation header/lines, lifecycle, source idempotency and exact dimensional allocation.

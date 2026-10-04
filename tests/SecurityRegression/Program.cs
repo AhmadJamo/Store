@@ -849,6 +849,26 @@ var inventoryReservationsIndex = typeof(InventoryReservationsController).GetMeth
 Check(inventoryReservationsIndex.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
       $"{PermissionAuthorizeAttribute.PolicyPrefix}InventoryReservations.View",
     "Inventory reservation history must require its dedicated view permission");
+var adjustment = new InventoryAdjustment("ADJ-000001", 1, null, true, "Annual count", "counter");
+adjustment.AddLine(1, 10m);
+adjustment.RecordCounts([(1, 8m)], "counter");
+Check(adjustment.Status == InventoryAdjustmentStatus.Counted && adjustment.Lines.Single().VarianceQuantity == -2m,
+    "Inventory counts must freeze expected quantity and calculate the counted variance");
+CheckThrows(() => adjustment.Approve("counter"),
+    "The inventory counter must not approve their own adjustment");
+adjustment.Approve("supervisor"); adjustment.Post("poster");
+Check(adjustment.Status == InventoryAdjustmentStatus.Posted && adjustment.PostedAt.HasValue,
+    "Approved inventory adjustments must transition to an immutable posted state");
+var adjustmentMovement = StockMovement.PostAdjustment(1, 1, 1, 1, null, -2m, "poster", "ADJ-000001");
+Check(adjustmentMovement.Type == StockMovementType.AdjustmentOut && adjustmentMovement.Status == StockMovementStatus.Posted,
+    "Posted count shortages must create compensating physical adjustment movements");
+var adjustmentNumber = DocumentSequence.CreateDefault(DocumentNumberType.InventoryAdjustment);
+Check(adjustmentNumber.Preview(DateTime.Today).StartsWith("ADJ-", StringComparison.Ordinal),
+    "Inventory adjustments must use centralized document numbering");
+var adjustmentsControllerIndex = typeof(InventoryAdjustmentsController).GetMethod(nameof(InventoryAdjustmentsController.Index))!;
+Check(adjustmentsControllerIndex.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
+      $"{PermissionAuthorizeAttribute.PolicyPrefix}InventoryAdjustments.View",
+    "Inventory adjustment history must require its dedicated view permission");
 
 Console.WriteLine($"Passed {count} security and inventory regression checks.");
 

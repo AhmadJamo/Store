@@ -210,6 +210,8 @@ builder.Services.AddScoped<LocationMovementService>();
   builder.Services.AddScoped<InventoryBalanceService>();
   builder.Services.AddScoped<IInventoryReservationRepository, InventoryReservationRepository>();
   builder.Services.AddScoped<InventoryReservationService>();
+  builder.Services.AddScoped<IInventoryAdjustmentRepository, InventoryAdjustmentRepository>();
+  builder.Services.AddScoped<InventoryAdjustmentService>();
 builder.Services.AddScoped<IInventoryReconciliationRepository, InventoryReconciliationRepository>();
 builder.Services.AddScoped<InventoryReconciliationService>();
 

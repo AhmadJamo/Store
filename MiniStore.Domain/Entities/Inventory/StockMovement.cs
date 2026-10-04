@@ -1,6 +1,6 @@
 namespace MiniStore.Domain.Entities;
 
-public enum StockMovementType { Putaway = 1, Relocation = 2, TransferOutbound = 3, TransferTransit = 4, TransferInbound = 5 }
+public enum StockMovementType { Putaway = 1, Relocation = 2, TransferOutbound = 3, TransferTransit = 4, TransferInbound = 5, AdjustmentIn = 6, AdjustmentOut = 7 }
 public enum StockMovementStatus { Planned = 0, Posted = 1, Reversed = 2 }
 
 public sealed class StockMovement
@@ -102,6 +102,29 @@ public sealed class StockMovement
             SourceLineId = sourceLineId, StageSequence = stageSequence, CreatedAt = DateTime.UtcNow
         };
         return movement;
+    }
+
+    public static StockMovement PostAdjustment(long adjustmentId, long sourceLineId, int productId,
+        int warehouseId, int? locationId, decimal variance, string userId, string reference)
+    {
+        if (adjustmentId <= 0 || sourceLineId <= 0) throw new ArgumentException("Adjustment and line are required.");
+        if (productId <= 0 || warehouseId <= 0) throw new ArgumentException("Product and warehouse are required.");
+        if (variance == 0) throw new ArgumentException("Adjustment variance cannot be zero.");
+        if (string.IsNullOrWhiteSpace(userId)) throw new ArgumentException("Movement user is required.");
+        return new StockMovement
+        {
+            ProductId = productId, WarehouseId = warehouseId,
+            FromStorageLocationId = variance < 0 ? locationId : null,
+            ToStorageLocationId = variance > 0 ? locationId : null,
+            Quantity = Math.Abs(variance),
+            Type = variance > 0 ? StockMovementType.AdjustmentIn : StockMovementType.AdjustmentOut,
+            Status = StockMovementStatus.Posted,
+            IdempotencyKey = $"ADJUSTMENT:{adjustmentId}:{sourceLineId}",
+            CreatedByUserId = userId.Trim(), PostedByUserId = userId.Trim(),
+            Reference = Normalize(reference), SourceDocumentType = "InventoryAdjustment",
+            SourceDocumentId = checked((int)adjustmentId), SourceLineId = checked((int)sourceLineId),
+            StageSequence = 1, CreatedAt = DateTime.UtcNow, PostedAt = DateTime.UtcNow
+        };
     }
 
     public void Post(string userId)

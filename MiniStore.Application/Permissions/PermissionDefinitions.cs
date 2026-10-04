@@ -67,6 +67,12 @@ public static class PermissionDefinitions
         new("StockMovements.View", "View Physical Stock Movements", "Inventory"),
         new("InventoryBalances.View", "View Inventory Availability", "Inventory"),
         new("InventoryReservations.View", "View Inventory Reservations", "Inventory"),
+        new("InventoryAdjustments.View", "View Inventory Adjustments", "Inventory"),
+        new("InventoryAdjustments.Create", "Create Inventory Count", "Inventory"),
+        new("InventoryAdjustments.Count", "Record Inventory Count", "Inventory"),
+        new("InventoryAdjustments.Approve", "Approve Inventory Adjustment", "Inventory"),
+        new("InventoryAdjustments.Post", "Post Inventory Adjustment", "Inventory"),
+        new("InventoryAdjustments.Cancel", "Cancel Inventory Adjustment", "Inventory"),
 
         // ==========================================
         // Suppliers

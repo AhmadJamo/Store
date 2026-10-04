@@ -171,7 +171,15 @@ public static class NavigationDefinitions
                 "InventoryReservations",
                 "Index",
                 "InventoryReservations.View",
-                120)
+                120),
+
+            new NavigationItem(
+                "Inventory adjustments",
+                "bi-clipboard-check",
+                "InventoryAdjustments",
+                "Index",
+                "InventoryAdjustments.View",
+                130)
         ),
 
         new NavigationGroup(
