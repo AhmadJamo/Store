@@ -544,9 +544,12 @@ Status: implementation and additive migration complete; migration applied to `AH
 
 ### WMS-040 — Explicit balances and availability
 
-- Protected Unassigned/default locations.
-- InventoryBalance projection and migration from verified existing balances.
-- OnHand/Reserved/Available definitions; optimized capacity queries.
+- [x] Protected virtual Unassigned/default position with tenant-safe filtered uniqueness.
+- [x] Transactionally maintained InventoryBalance projection and guarded migration from verified existing balances.
+- [x] OnHand/Reserved/Available definitions, rowversion and warehouse/location indexes.
+- [x] Direct SQL reconciliation confirms projection totals equal ProductStock in the development database.
+- [x] Disposable SQL integration proves same-transaction projection synchronization and concurrent last-unit protection.
+- [ ] Reserved mutation and allocation ownership begin in WMS-050; legacy read cutover remains deferred.
 
 ### WMS-050 — Reservations and fulfillment allocation
 

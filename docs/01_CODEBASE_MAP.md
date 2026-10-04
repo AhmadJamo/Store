@@ -28,7 +28,7 @@
 | `Entities/Accounting/*.cs` | chart, branches, journal entries, fiscal periods, tax and payment entities | accounting docs. |
 | `Entities/Catalog/{Product,ProductTemplate,ProductCategory,ProductAttributeDefinition,ProductAttributeValue,ProductRecipe,RecipeIngredient,MeasurementUnit}.cs` and product type/unit/dimension/behavior/logistics enums | concrete SKU identity, optional variant template grouping, category-scoped typed attributes/options/values, logistics metadata, tracking policy, sale channels, immutable recipes and managed units | products, sales and inventory docs. |
 | `Entities/Customers/Customer.cs`, `Entities/Suppliers/Supplier.cs` | commercial-party master data | sales/purchases docs. |
-| `Entities/Inventory/*.cs` | warehouses, operating-policy enums, moving-average balances/cost snapshots, exact locations, legacy location history, additive physical StockMovement facts and transfers | inventory, accounting and stock-transfer docs. |
+| `Entities/Inventory/*.cs` | warehouses, operating-policy enums, moving-average balances/cost snapshots, exact locations, InventoryBalance availability projection, legacy history, physical StockMovement facts and transfers | inventory, accounting and stock-transfer docs. |
 | `Entities/Purchases/*.cs`, `Entities/Sales/*.cs` | purchase/supplier-return and sale/customer-return aggregates plus POS experience/order settings | purchase/sales/settings docs. |
 | `Entities/Settings/*.cs` | accounting, discount, inventory-policy defaults, centralized `DocumentSequence`, general settings and supported UI language | settings/database/localization docs. |
 | `Entities/Security/*.cs` | audit, permission catalogue and tenant-owned role/permission entities | permissions/security docs. |
@@ -53,6 +53,7 @@
 | `Services/Inventory/{StorageLocation,UnassignedStock,LocationMovement}Service.cs` | hierarchical location administration and validation, warehouse search, putaway, internal relocation and history | inventory controllers. |
 | `Services/Inventory/InventoryReconciliationService.cs` | classifies warehouse/location/latest-movement differences with fixed precision tolerances and read-only paging | InventoryReconciliation controller/view. |
 | `Services/Inventory/StockMovementService.cs` | idempotently dual-writes Putaway/Relocation facts, plans/posts/reverses transfer outbound-transit-inbound stages and provides read-only visibility | StockMovements controller, location services and StockTransferService. |
+| `Services/Inventory/InventoryBalanceService.cs` | read-only OnHand/Reserved/Available projection with product, warehouse and protected virtual Unassigned location display | InventoryBalances controller/view. |
 | `Services/Settings/InventorySettingsService.cs` | rowversion-protected defaults for new warehouse operating policies | SettingsController inventory screen. |
 | `Services/Settings/InventoryAccessService.cs` | branch warehouse permissions/priorities and POS terminal warehouse policies | Settings InventoryAccess and POS validation. |
 | `Services/Settings/PosExperienceSettingsService.cs` | profile presets, custom terminal appearance persistence and POS runtime projection | Settings/Pos and Sales/Pos. |
@@ -110,6 +111,7 @@ Hierarchical location update (2026-09-30): StorageLocation retains its identity 
 | `Repositories/Inventory/StockTransactionRepository.cs` | inventory movement history plus source/type lookup for accounting settlement | inventory services and `PurchasePostingService`. |
 | `Repositories/Inventory/InventoryReconciliationRepository.cs` | tenant-filtered SQL aggregates for warehouse balances, location allocations, orphan allocations and latest movement snapshots | WMS-000 reconciliation service. |
 | `Repositories/Inventory/StockMovementRepository.cs` | tenant-filtered physical movement persistence and idempotency lookup | WMS-020 StockMovementService. |
+| `Repositories/Inventory/InventoryBalanceRepository.cs` | tenant-filtered current dimensional availability projection reads | WMS-040 InventoryBalanceService. |
 | `Repositories/Sales/SalesReturnRepository.cs` | immutable return history and original-sale aggregation | `SalesReturnService`. |
 | `Repositories/Purchases/PurchaseReturnRepository.cs` | immutable supplier-return history and original-purchase aggregation | `PurchaseReturnService`. |
 | `Authorization/PermissionService.cs` | permission check implementation | SaleService. |
@@ -127,6 +129,7 @@ Hierarchical location update (2026-09-30): StorageLocation retains its identity 
 | `Controllers/Catalog/ProductAttributesController.cs` | bilingual typed product-attribute administration using Products View/Edit permissions | ProductAttributes view and ProductAttributeService. |
 | `Controllers/Catalog/ProductTemplatesController.cs` | bilingual template creation, existing-SKU assignment and explicit bounded variant preview/generation using Products View/Edit permissions | ProductTemplates view and ProductTemplateService. |
 | `Controllers/Inventory/StockMovementsController.cs` | permission-protected read-only WMS-020 pilot ledger and legacy-link status | StockMovements view and service. |
+| `Controllers/Inventory/InventoryBalancesController.cs` | permission-protected read-only dimensional inventory availability | InventoryBalances view and service. |
 | `Areas/Platform/*` | separately authenticated platform-owner control center for plans, companies/subscriptions, promotion codes and pending payment confirmations | SaaS module. |
 | `Controllers/PublicController.cs`, `Controllers/Saas/SubscriptionController.cs` | public landing/pricing and tenant subscription/checkout flows | SaaS module and public/subscription views. |
 | `Middleware/SubscriptionAccessMiddleware.cs` | blocks tenant ERP access when the current subscription is not usable | SaaS module/security. |

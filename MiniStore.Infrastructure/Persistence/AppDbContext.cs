@@ -115,6 +115,7 @@ public class AppDbContext
 
     public DbSet<LocationMovement> LocationMovements => Set<LocationMovement>();
     public DbSet<StockMovement> StockMovements => Set<StockMovement>();
+    public DbSet<InventoryBalance> InventoryBalances => Set<InventoryBalance>();
 
 
 
@@ -135,6 +136,7 @@ public class AppDbContext
 
     public override int SaveChanges(bool acceptAllChangesOnSuccess)
     {
+        SynchronizeInventoryBalancesAsync().GetAwaiter().GetResult();
         ApplyTenantBoundary();
         return base.SaveChanges(acceptAllChangesOnSuccess);
     }
@@ -143,8 +145,70 @@ public class AppDbContext
         bool acceptAllChangesOnSuccess,
         CancellationToken cancellationToken = default)
     {
+        return SaveChangesWithInventoryProjectionAsync(acceptAllChangesOnSuccess, cancellationToken);
+    }
+
+    private async Task<int> SaveChangesWithInventoryProjectionAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+    {
+        await SynchronizeInventoryBalancesAsync(cancellationToken);
         ApplyTenantBoundary();
-        return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+        return await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+    }
+
+    private async Task SynchronizeInventoryBalancesAsync(CancellationToken cancellationToken = default)
+    {
+        var affected = ChangeTracker.Entries()
+            .Where(entry => entry.Entity is ProductStock or ProductLocationStock &&
+                            entry.State is EntityState.Added or EntityState.Modified or EntityState.Deleted)
+            .Select(entry => entry.Entity switch
+            {
+                ProductStock stock => (stock.ProductId, stock.WarehouseId),
+                ProductLocationStock stock => (stock.ProductId, stock.WarehouseId),
+                _ => default
+            }).Distinct().ToList();
+        if (affected.Count == 0) return;
+
+        foreach (var key in affected)
+        {
+            var stockEntry = ChangeTracker.Entries<ProductStock>()
+                .FirstOrDefault(entry => entry.Entity.ProductId == key.ProductId && entry.Entity.WarehouseId == key.WarehouseId);
+            var warehouseStock = stockEntry?.State == EntityState.Deleted ? null : stockEntry?.Entity;
+            warehouseStock ??= await ProductStocks.FirstOrDefaultAsync(x =>
+                x.ProductId == key.ProductId && x.WarehouseId == key.WarehouseId, cancellationToken);
+
+            var storedLocations = await ProductLocationStocks.Where(x =>
+                x.ProductId == key.ProductId && x.WarehouseId == key.WarehouseId).ToListAsync(cancellationToken);
+            var locationsById = storedLocations.ToDictionary(x => x.StorageLocationId);
+            foreach (var entry in ChangeTracker.Entries<ProductLocationStock>().Where(entry =>
+                         entry.Entity.ProductId == key.ProductId && entry.Entity.WarehouseId == key.WarehouseId))
+            {
+                if (entry.State == EntityState.Deleted) locationsById.Remove(entry.Entity.StorageLocationId);
+                else locationsById[entry.Entity.StorageLocationId] = entry.Entity;
+            }
+
+            var existing = await InventoryBalances.Where(x =>
+                x.ProductId == key.ProductId && x.WarehouseId == key.WarehouseId).ToListAsync(cancellationToken);
+            if (warehouseStock is null)
+            {
+                InventoryBalances.RemoveRange(existing);
+                continue;
+            }
+
+            var desired = locationsById.ToDictionary(x => x.Key, x => x.Value.Quantity);
+            desired[0] = warehouseStock.Quantity - locationsById.Values.Sum(x => x.Quantity);
+            foreach (var target in desired)
+            {
+                int? locationId = target.Key == 0 ? null : target.Key;
+                var balance = existing.FirstOrDefault(x => x.StorageLocationId == locationId);
+                if (balance is null)
+                    await InventoryBalances.AddAsync(new InventoryBalance(key.ProductId, key.WarehouseId, locationId, target.Value), cancellationToken);
+                else
+                    balance.SetOnHand(target.Value);
+            }
+
+            var obsolete = existing.Where(x => x.StorageLocationId.HasValue && !desired.ContainsKey(x.StorageLocationId.Value)).ToList();
+            InventoryBalances.RemoveRange(obsolete);
+        }
     }
 
     private void ApplyTenantBoundary()

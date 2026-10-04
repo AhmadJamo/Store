@@ -1,0 +1,11 @@
+@model MiniStore.Application.DTOs.Inventory.Balances.InventoryBalancePageDto
+@inject Microsoft.Extensions.Localization.IStringLocalizer<MiniStore.Web.SharedResource> Localizer
+@{ ViewData["Title"] = Localizer["Inventory availability"]; }
+<div class="container mt-4">
+    <div class="mb-3"><h2>@Localizer["Inventory availability"]</h2><p class="text-muted">@Localizer["On hand is the physical quantity. Available equals on hand minus reserved."]</p></div>
+    <form method="get" class="card card-body mb-3"><div class="row g-2"><div class="col-md-4"><label class="form-label">@Localizer["Warehouse"]</label><select name="warehouseId" class="form-select"><option value="">@Localizer["All warehouses"]</option>@foreach(var warehouse in Model.Warehouses){<option value="@warehouse.Id" selected="@(Model.WarehouseId == warehouse.Id)">@warehouse.Name</option>}</select></div><div class="col-md-6"><label class="form-label">@Localizer["Product"]</label><input name="search" value="@Model.Search" class="form-control" placeholder="@Localizer["Product name, code or barcode"]" /></div><div class="col-md-2 d-flex align-items-end"><button class="btn btn-primary w-100">@Localizer["Search"]</button></div></div></form>
+    <div class="table-responsive"><table class="table table-striped align-middle"><thead><tr><th>@Localizer["Product code"]</th><th>@Localizer["Product"]</th><th>@Localizer["Warehouse"]</th><th>@Localizer["Location"]</th><th>@Localizer["On hand"]</th><th>@Localizer["Reserved"]</th><th>@Localizer["Available"]</th></tr></thead><tbody>
+    @foreach(var row in Model.Rows){<tr class="@(row.IsUnassigned ? "table-light" : null)"><td><code>@row.ProductCode</code></td><td>@row.ProductName</td><td>@row.WarehouseName</td><td>@(row.IsUnassigned ? Localizer["Unassigned (system)"] : row.LocationName)</td><td>@row.OnHand.ToString("N3")</td><td>@row.Reserved.ToString("N3")</td><td class="@(row.Available < 0 ? "text-danger" : null)">@row.Available.ToString("N3")</td></tr>}
+    @if(Model.Rows.Count == 0){<tr><td colspan="7" class="text-center text-muted">@Localizer["No inventory balances found."]</td></tr>}
+    </tbody></table></div>
+</div>

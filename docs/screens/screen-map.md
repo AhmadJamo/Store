@@ -46,3 +46,5 @@ Products, Warehouses, Suppliers, ProductStocks and Roles index delete controls u
 The Product Templates screen supports a two-step selection-variant workflow: choose an assigned source SKU and options, inspect the bounded preview, then explicitly create missing products. Existing combinations are labelled and skipped.
 ## Physical Stock Movements
 Bilingual read-only ledger showing Putaway/Relocation plus Planned, Posted or Reversed transfer outbound/transit/inbound stages, product, warehouse, locations, quantity and reference. It intentionally reports historic legacy rows without backfilling them.
+## Inventory Availability
+Bilingual read-only Product/Warehouse/Location projection showing OnHand, Reserved and Available. The system-owned Unassigned row is visibly distinguished and cannot be managed as a normal storage location.

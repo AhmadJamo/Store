@@ -34,6 +34,13 @@ New Putaway and Relocation requests carry a server-rendered idempotency key. Ins
 
 WMS-030 extends the same ledger to stock transfers. Approval creates Planned outbound, transit and inbound stages per transfer line. Posting retains the current atomic warehouse/location and AVCO movement behavior, then marks all stages Posted in the same transaction. Cancellation retains the current compensating balance/valuation behavior and marks linked stages Reversed. Historic transfers are not backfilled; pre-WMS Approved transfers are planned only when subsequently posted, while old Posted transfers remain cancellable without invented history.
 
+## Explicit balances and availability
+WMS-040 adds InventoryBalance per Product, Warehouse and optional exact location. A null location is the protected virtual Unassigned position. OnHand is physical quantity, Reserved starts at zero pending WMS-050, and Available is always OnHand minus Reserved. Filtered tenant-safe indexes guarantee one Unassigned row and one row per exact location. RowVersion supports later atomic reservation updates.
+
+ProductStock remains the warehouse quantity/AVCO authority and ProductLocationStock remains the exact-location compatibility source. The persistence boundary refreshes affected projection rows before the same transaction commits, covering all current purchase, sale, return, recipe, adjustment, transfer and location workflows without duplicated service calls. Migration backfill stops on unexplained over-allocation, changes no legacy quantity and can be reconciled by summing InventoryBalance OnHand back to ProductStock.
+
+The disposable SQL fixture verifies tenant isolation, opening-balance projection creation, projection update when two contexts compete for the last unit, and final zero OnHand consistency.
+
 ## Warehouse operating policies
 Warehouse operational use is independent from inventory control. Types cover general, central, branch backroom, sales floor, outlet, production, transit, returns and quarantine uses. Control modes are Simple, LocationManaged and Hybrid. An organized sales-floor or central warehouse may explicitly allow direct POS sales.
 

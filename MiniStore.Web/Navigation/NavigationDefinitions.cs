@@ -155,7 +155,15 @@ public static class NavigationDefinitions
                 "StockMovements",
                 "Index",
                 "StockMovements.View",
-                100)
+                100),
+
+            new NavigationItem(
+                "Inventory availability",
+                "bi-boxes",
+                "InventoryBalances",
+                "Index",
+                "InventoryBalances.View",
+                110)
         ),
 
         new NavigationGroup(

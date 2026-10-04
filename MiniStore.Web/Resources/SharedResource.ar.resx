@@ -373,7 +373,6 @@
   <data name="Exceptions" xml:space="preserve"><value>الاستثناءات</value></data>
   <data name="Displayed rows" xml:space="preserve"><value>الصفوف المعروضة</value></data>
   <data name="Product search" xml:space="preserve"><value>البحث عن منتج</value></data>
-  <data name="Product name, code or barcode" xml:space="preserve"><value>اسم المنتج أو الكود أو الباركود</value></data>
   <data name="Page size" xml:space="preserve"><value>حجم الصفحة</value></data>
   <data name="Exceptions only" xml:space="preserve"><value>الاستثناءات فقط</value></data>
   <data name="This report never changes stock. Resolve exceptions through the owning inventory document or an approved adjustment workflow." xml:space="preserve"><value>هذا التقرير لا يغيّر المخزون. عالج الاستثناءات من خلال مستند المخزون المسؤول أو مسار تسوية معتمد.</value></data>
@@ -625,4 +624,16 @@
   <data name="TransferTransit" xml:space="preserve"><value>التحويل في الطريق</value></data>
   <data name="TransferInbound" xml:space="preserve"><value>دخول التحويل</value></data>
   <data name="Related warehouse" xml:space="preserve"><value>المستودع المرتبط</value></data>
+  <data name="Inventory availability" xml:space="preserve"><value>توفر المخزون</value></data>
+  <data name="On hand is the physical quantity. Available equals on hand minus reserved." xml:space="preserve"><value>الموجود هو الكمية الفعلية، والمتاح يساوي الموجود ناقص المحجوز.</value></data>
+  <data name="On hand" xml:space="preserve"><value>الموجود</value></data>
+  <data name="Reserved" xml:space="preserve"><value>المحجوز</value></data>
+  <data name="Available" xml:space="preserve"><value>المتاح</value></data>
+  <data name="Unassigned (system)" xml:space="preserve"><value>غير موزع (نظام)</value></data>
+  <data name="No inventory balances found." xml:space="preserve"><value>لا توجد أرصدة مخزون.</value></data>
+  <data name="View Inventory Availability" xml:space="preserve"><value>عرض توفر المخزون</value></data>
+  <data name="Product name, code or barcode" xml:space="preserve"><value>اسم المنتج أو الكود أو الباركود</value></data>
+  <data name="On-hand quantity cannot be lower than reserved quantity." xml:space="preserve"><value>لا يمكن أن تكون الكمية الموجودة أقل من الكمية المحجوزة.</value></data>
+  <data name="Reserved quantity cannot be negative." xml:space="preserve"><value>لا يمكن أن تكون الكمية المحجوزة سالبة.</value></data>
+  <data name="Reserved quantity cannot exceed on-hand quantity." xml:space="preserve"><value>لا يمكن أن تتجاوز الكمية المحجوزة الكمية الموجودة.</value></data>
 </root>

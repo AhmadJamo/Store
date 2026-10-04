@@ -49,3 +49,5 @@ See `03_DATABASE.md` for constraints and `entities/*.md` for behaviour.
 One row per tenant stores guided-setup status and choices, template/audit metadata and rowversion. TenantId is both the primary key and cascading FK to Tenants. This is explicitly tenant-addressed control-plane state.
 ### StockMovements
 Additive physical movement facts. Putaway/Relocation rows link to preserved LocationMovement. Transfer rows use stable StockTransfer document, line and stage identity and represent Planned/Posted/Reversed outbound, transit and inbound stages. Related warehouse and optional locations support simple, hybrid and location-managed transfers. The table does not replace ProductStock, ProductLocationStock or valuation StockTransaction.
+### InventoryBalances
+Rebuildable current-position projection by Product + Warehouse + optional StorageLocation. Null location is virtual Unassigned. Stores OnHand, Reserved, UpdatedAt and RowVersion; Available is computed in the domain/application layer. Filtered tenant-aware unique indexes protect both null and exact-location dimensions. It is synchronized in the same persistence transaction as legacy balance changes.

@@ -815,6 +815,23 @@ var stockMovementIndex = typeof(StockMovementsController).GetMethod(nameof(Stock
 Check(stockMovementIndex.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
       $"{PermissionAuthorizeAttribute.PolicyPrefix}StockMovements.View",
     "Physical stock movement history must require its dedicated view permission");
+var inventoryBalance = new InventoryBalance(1, 1, null, 12m);
+inventoryBalance.SetReserved(4m);
+Check(inventoryBalance.OnHand == 12m && inventoryBalance.Reserved == 4m && inventoryBalance.Available == 8m,
+    "Inventory availability must equal on hand minus reserved");
+CheckArgumentThrows(() => inventoryBalance.SetReserved(-1m),
+    "Inventory balances must reject negative reservations");
+CheckThrows(() => inventoryBalance.SetReserved(13m),
+    "Inventory balances must reject reservations above on hand");
+var unassignedBalanceIndex = db.Model.FindEntityType(typeof(InventoryBalance))!.GetIndexes()
+    .Single(index => index.IsUnique && index.GetFilter() == "[StorageLocationId] IS NULL");
+Check(unassignedBalanceIndex.Properties.Select(property => property.Name)
+        .SequenceEqual(["TenantId", nameof(InventoryBalance.ProductId), nameof(InventoryBalance.WarehouseId)]),
+    "Inventory balances must allow only one protected unassigned row per tenant product and warehouse");
+var inventoryBalancesIndex = typeof(InventoryBalancesController).GetMethod(nameof(InventoryBalancesController.Index))!;
+Check(inventoryBalancesIndex.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
+      $"{PermissionAuthorizeAttribute.PolicyPrefix}InventoryBalances.View",
+    "Inventory availability must require its dedicated view permission");
 
 Console.WriteLine($"Passed {count} security and inventory regression checks.");
 

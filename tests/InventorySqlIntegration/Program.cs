@@ -66,6 +66,11 @@ try
         tenantOneId,
         tenantOneFixture.ProductId,
         connectionString);
+    await VerifyInventoryBalanceProjectionAsync(
+        tenantOneId,
+        tenantOneFixture.ProductId,
+        expectedOnHand: 1m,
+        connectionString);
     await VerifyTrackedActivationGuardAsync(
         tenantOneId,
         tenantOneFixture.ProductId,
@@ -75,8 +80,13 @@ try
         tenantOneId,
         tenantOneFixture.StockId,
         connectionString);
+    await VerifyInventoryBalanceProjectionAsync(
+        tenantOneId,
+        tenantOneFixture.ProductId,
+        expectedOnHand: 0m,
+        connectionString);
 
-    Console.WriteLine("Passed WMS SQL integration checks: tenant isolation, reconciliation translation, concurrent last-unit issue and tracking-policy guard.");
+    Console.WriteLine("Passed WMS SQL integration checks: tenant isolation, reconciliation translation, InventoryBalance synchronization, concurrent last-unit issue and tracking-policy guard.");
 }
 finally
 {
@@ -208,6 +218,18 @@ static async Task VerifyTrackedActivationGuardAsync(
         exception.Message.Contains("non-zero stock balance", StringComparison.Ordinal))
     {
     }
+}
+
+static async Task VerifyInventoryBalanceProjectionAsync(
+    int tenantId, int productId, decimal expectedOnHand, string connectionString)
+{
+    await using var context = new AppDbContext(CreateOptions(connectionString), new FixedTenantContext(tenantId));
+    var balances = await context.InventoryBalances.AsNoTracking()
+        .Where(x => x.ProductId == productId).ToListAsync();
+    if (balances.Count != 1 || balances[0].StorageLocationId.HasValue ||
+        balances[0].OnHand != expectedOnHand || balances[0].Reserved != 0m ||
+        balances[0].Available != expectedOnHand)
+        throw new InvalidOperationException("InventoryBalance must synchronize the protected Unassigned position in the same stock transaction.");
 }
 
 static async Task VerifyTenantIsolationAndReconciliationAsync(

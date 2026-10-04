@@ -31,3 +31,5 @@ Products, Warehouses, ProductStock, StockTransactions, StockMovements, LocationM
 ## Update rules
 Permission change → `PermissionDefinitions`, seeder, controller attributes, navigation/views, `05_PERMISSIONS.md`, related module/controller/screen docs and tests.
 
+`InventoryBalances.View` protects the read-only Inventory Availability projection. Balance mutation remains owned by inventory workflows; no direct edit permission exists.
+

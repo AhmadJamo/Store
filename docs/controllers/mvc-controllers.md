@@ -41,3 +41,5 @@ Authenticated /onboarding endpoints display, complete or skip new-company setup 
 `ProductTemplatesController` provides antiforgery-protected preview and generate actions. Both require `Products.Edit`; generation recomputes the bounded plan server-side and creates only missing signatures.
 ## StockMovementsController
 Read-only WMS-020 pilot ledger protected by `StockMovements.View`. The controller delegates all queries and reconciliation projection to the Application service.
+## InventoryBalancesController
+Read-only WMS-040 availability screen protected by `InventoryBalances.View`. Product, warehouse and location mapping stays in the Application service.

@@ -199,3 +199,10 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
 - Existing Post atomically transfers balances/AVCO and marks stages Posted; cancellation retains compensating behavior and marks linked stages Reversed.
 - Added just-in-time compatibility for older Approved transfers and preserved cancellation of historic Posted transfers without fabricating history.
 - Applied migration `20261003212429_AddTransferMovementTransitStages` to `AHMAD/MiniStoreDb`; it preserves existing kernel timestamps and changes no quantities.
+## 2026-10-04 — WMS-040 explicit balances and availability
+- Added transactionally synchronized InventoryBalance rows with OnHand, Reserved, Available and rowversion.
+- Added a protected virtual Unassigned dimension and filtered uniqueness for null/exact locations.
+- Guarded migration backfill changes no legacy quantities and stops on unexplained over-allocation.
+- Applied migration `20261003214320_AddInventoryBalancesAndDefaultLocations` to `AHMAD/MiniStoreDb`; direct SQL found 8 rows, zero ProductStock mismatches and zero invalid availability rows.
+- Added a bilingual permission-protected availability screen, tests, ADR and documentation.
+- Extended the disposable SQL fixture to prove transactional projection synchronization before and after the concurrent last-unit test.
