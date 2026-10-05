@@ -11,7 +11,8 @@ The ordered Arabic execution plan, workflow, business rules and rolling suggesti
 - [x] Product shelf-life defaults, mandatory receipt expiration, expiry blocking and warning dashboard.
 - [x] Add permission-protected, reasoned lot/serial quarantine and release with immutable trace events.
 - [x] Add tracked-identity recall creation/closure, automatic quarantine and affected-document trace.
-- [ ] Add scheduled expiration alerts and supplier/customer recall communication workflows.
+- [x] Add a live expiration alert center sourced from current tracked balances and per-product warning horizons.
+- [ ] Add scheduled delivery channels and supplier/customer recall communication workflows.
 
 ## Completed
 - Core catalog, warehouse, supplier, inventory, purchase, sale and stock-transfer code exists.

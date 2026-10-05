@@ -12,6 +12,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using MiniStore.Application.Permissions;
 using MiniStore.Application.DTOs.Settings;
+using MiniStore.Application.DTOs.Inventory.Tracking;
 using MiniStore.Application.Services;
 using MiniStore.Infrastructure.Authorization;
 using MiniStore.Infrastructure.Persistence;
@@ -886,6 +887,10 @@ shelfLifeProduct.ConfigureShelfLife(90, true, 14);
 Check(shelfLifeProduct.DefaultShelfLifeDays == 90 && shelfLifeProduct.RequireExpirationDate &&
       shelfLifeProduct.ExpirationWarningDays == 14,
     "Tracked products must preserve validated shelf-life and expiration-warning policy");
+var alertRow = new ExpirationAlertRowDto { Product = "Shelf life product", Identifier = "LOT-1", Quantity = 2m,
+    ExpirationDate = DateOnly.FromDateTime(DateTime.Today), DaysUntilExpiration = 0, Severity = "Expiring soon" };
+Check(alertRow.Severity == "Expiring soon" && alertRow.DaysUntilExpiration == 0,
+    "Expiration alerts must expose actionable identity, quantity and remaining-day facts");
 CheckArgumentThrows(() => new InventoryTrackingBalance(1, 1, null, ProductTrackingPolicy.Serial,
         "SER-1", 2m, null, null, "OPEN-1"),
     "Every serial balance must contain exactly one unit");

@@ -61,6 +61,8 @@ Authorized users can quarantine an available positive lot/serial balance or rele
 
 Inventory recall records one tracked Product and normalized lot/serial identity, unique active case and reason. Starting a recall atomically quarantines every currently available positive balance for that identity across positions. The recall list derives affected purchase, sale, transfer and return references from immutable tracking history. Closing requires notes and never releases stock; quality release remains a separate permission and trace event. Automated supplier/customer communication remains outside this slice.
 
+The expiration alert center is a live tenant-safe projection over positive tracked balances. It uses each Product's warning horizon, orders the most urgent balances first and shows severity, identity, warehouse/location, quantity, expiration date, remaining days and quarantine state. It creates no duplicate persisted notifications and cannot become stale; scheduled delivery channels may consume this same projection later.
+
 ## Warehouse operating policies
 Warehouse operational use is independent from inventory control. Types cover general, central, branch backroom, sales floor, outlet, production, transit, returns and quarantine uses. Control modes are Simple, LocationManaged and Hybrid. An organized sales-floor or central warehouse may explicitly allow direct POS sales.
 

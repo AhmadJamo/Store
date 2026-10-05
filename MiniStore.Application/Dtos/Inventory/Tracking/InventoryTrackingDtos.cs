@@ -19,7 +19,13 @@ public sealed class InventoryTrackingPageDto
  public List<(int Id,string Name)> Warehouses{get;set;}=[]; public List<(int Id,int WarehouseId,string Name)> Locations{get;set;}=[];
  public List<TrackingBalanceRowDto> Balances{get;set;}=[]; public List<TrackingTransactionRowDto> Transactions{get;set;}=[];
  public int ExpiredCount{get;set;} public int ExpiringSoonCount{get;set;}
+ public List<ExpirationAlertRowDto> ExpirationAlerts{get;set;}=[];
  public List<InventoryRecallRowDto> Recalls{get;set;}=[];
+}
+public sealed class ExpirationAlertRowDto
+{
+ public string Product{get;set;}="";public string Warehouse{get;set;}="";public string Location{get;set;}="";public string Identifier{get;set;}="";
+ public decimal Quantity{get;set;}public DateOnly ExpirationDate{get;set;}public int DaysUntilExpiration{get;set;}public string Severity{get;set;}="";public InventoryTrackingStatus Status{get;set;}
 }
 public sealed class InventoryRecallRowDto
 {

@@ -1,5 +1,12 @@
 # AI Work Log
 
+## 2026-10-05 — Live expiration alert center
+
+- Added an urgency-ordered, tenant-safe alert projection for positive expired and expiring-soon tracked balances.
+- Alerts use each product's warning horizon and expose product, lot/serial, warehouse/location, quantity, expiration, remaining days and quarantine state.
+- Kept alerts live rather than duplicating persisted notification rows; scheduled delivery channels can consume this source later.
+- Added bilingual UI plus focused and SQL integration coverage.
+
 ## 2026-10-05 — Inventory recall workflow
 
 - Added tenant-owned active/closed recall cases for one Product plus lot/serial identity, with reason, closure notes, user/time audit and concurrency token.

@@ -271,7 +271,7 @@ static async Task VerifyOpeningTrackingAllocationAsync(int tenantId, int product
         throw new InvalidOperationException("Opening tracking allocation must atomically cover stock, activate policy and write trace history.");
 
     var trackedProduct = await context.Products.SingleAsync(x => x.Id == productId);
-    trackedProduct.ConfigureShelfLife(365, true, 30);
+    trackedProduct.ConfigureShelfLife(365, true, 120);
     await new UnitOfWork(context).ExecuteInTransactionAsync(async () =>
     {
         await service.ReceiveAsync(trackedProduct, warehouseId, 1m, "LOT-B", null, null,
@@ -333,6 +333,9 @@ static async Task VerifyOpeningTrackingAllocationAsync(int tenantId, int product
     if ((await context.InventoryRecalls.AsNoTracking().SingleAsync(x => x.Id == recall.Id)).Status != InventoryRecallStatus.Closed ||
         (await context.InventoryTrackingBalances.AsNoTracking().Where(x => x.ProductId == productId && x.Identifier == "LOT-A").ToListAsync()).Any(x => x.Quantity > 0 && x.Status != InventoryTrackingStatus.Quarantined))
         throw new InvalidOperationException("Closing a recall must preserve quarantine until an explicit release decision.");
+    var trackingPage = await service.GetPageAsync();
+    if (trackingPage.ExpirationAlerts.Count == 0 || trackingPage.ExpirationAlerts.Any(x => x.DaysUntilExpiration > 120))
+        throw new InvalidOperationException("Expiration alert center must use each product's warning horizon and current tracked balances.");
 }
 
 static async Task VerifyTrackedActivationGuardAsync(
