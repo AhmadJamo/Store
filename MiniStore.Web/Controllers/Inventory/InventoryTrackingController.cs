@@ -15,4 +15,18 @@ public sealed class InventoryTrackingController(InventoryTrackingService service
   catch(Exception ex)when(ex is ArgumentException or InvalidOperationException){TempData["NotificationType"]="danger";TempData["NotificationMessage"]=localizer[ex.Message].Value;}
   return RedirectToAction(nameof(Index));
  }
+ [HttpPost,ValidateAntiForgeryToken,PermissionAuthorize("InventoryTracking.ManageRecall")]
+ public async Task<IActionResult> CreateRecall(string reference,int productId,string identifier,string reason)
+ {
+  try{await service.CreateRecallAsync(reference,productId,identifier,reason,User.FindFirstValue(ClaimTypes.NameIdentifier)??throw new InvalidOperationException("Authenticated user was not found."));TempData["NotificationType"]="success";TempData["NotificationMessage"]=localizer["Recall created and available stock quarantined."].Value;}
+  catch(Exception ex)when(ex is ArgumentException or InvalidOperationException){TempData["NotificationType"]="danger";TempData["NotificationMessage"]=localizer[ex.Message].Value;}
+  return RedirectToAction(nameof(Index));
+ }
+ [HttpPost,ValidateAntiForgeryToken,PermissionAuthorize("InventoryTracking.ManageRecall")]
+ public async Task<IActionResult> CloseRecall(long recallId,string notes)
+ {
+  try{await service.CloseRecallAsync(recallId,notes,User.FindFirstValue(ClaimTypes.NameIdentifier)??throw new InvalidOperationException("Authenticated user was not found."));TempData["NotificationType"]="success";TempData["NotificationMessage"]=localizer["Recall closed. Quarantined stock remains blocked until explicitly released."].Value;}
+  catch(Exception ex)when(ex is ArgumentException or InvalidOperationException){TempData["NotificationType"]="danger";TempData["NotificationMessage"]=localizer[ex.Message].Value;}
+  return RedirectToAction(nameof(Index));
+ }
 }

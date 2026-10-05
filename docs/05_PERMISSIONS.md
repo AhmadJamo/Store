@@ -8,6 +8,7 @@
 Inventory adjustments split `View`, `Create`, `Count`, `Approve`, `Post` and `Cancel` so operational counting and supervisory approval can be assigned separately.
 
 Inventory tracking uses `InventoryTracking.View` for traceability, `InventoryTracking.Open` for the high-impact opening allocation/policy activation and `InventoryTracking.ManageQuarantine` for reasoned quarantine/release transitions.
+`InventoryTracking.ManageRecall` controls recall creation and closure. Recall visibility follows `InventoryTracking.View`; closing a recall never grants or implies quarantine release authority.
 
 Authentication is ASP.NET Core Identity cookie authentication. `PermissionAuthorizeAttribute` creates policies with `Permission:` prefix. Identity owns credentials, while `TenantRole`, `TenantRolePermission` and `TenantUserRole` own authorization inside each company. Both evaluators require an active tenant; Admin receives full access only from that company's protected Admin assignment. Non-Admin permissions resolve only through the active company's role definition.
 

@@ -96,7 +96,7 @@ try
     await VerifyInventoryBalanceProjectionAsync(tenantOneId, tenantOneFixture.ProductId, expectedOnHand: 2m, connectionString);
     await VerifyOpeningTrackingAllocationAsync(tenantOneId, tenantOneFixture.ProductId, tenantOneFixture.WarehouseId, connectionString);
 
-    Console.WriteLine("Passed WMS SQL integration checks: tenant isolation, reconciliation, balances, reservation concurrency, adjustment posting, opening allocation, tracked receipt, FEFO issue, transfer and returns.");
+    Console.WriteLine("Passed WMS SQL integration checks: tenant isolation, reconciliation, balances, reservation concurrency, adjustment posting, tracked operations, quarantine and recall.");
 }
 finally
 {
@@ -255,7 +255,7 @@ static async Task VerifyAdjustmentPostingAsync(int tenantId, int productId, int 
 static async Task VerifyOpeningTrackingAllocationAsync(int tenantId, int productId, int warehouseId, string connectionString)
 {
     await using var context = new AppDbContext(CreateOptions(connectionString), new FixedTenantContext(tenantId));
-    var service = new InventoryTrackingService(new InventoryTrackingRepository(context), new ProductRepository(context),
+    var service = new InventoryTrackingService(new InventoryTrackingRepository(context), new InventoryRecallRepository(context), new ProductRepository(context),
         new WarehouseRepository(context), new StorageLocationRepository(context), new InventoryBalanceRepository(context),
         new ProductLocationStockRepository(context), new UnitOfWork(context));
     await service.OpenAsync(new OpenTrackingAllocationDto
@@ -322,6 +322,17 @@ static async Task VerifyOpeningTrackingAllocationAsync(int tenantId, int product
     if (quarantineHistory.Count != 2 || quarantineHistory.Any(x => x.Quantity != 0) ||
         (await context.InventoryTrackingBalances.AsNoTracking().SingleAsync(x => x.Id == transferred.Id)).Status != InventoryTrackingStatus.Available)
         throw new InvalidOperationException("Quarantine and release must preserve quantity while recording both audited state transitions.");
+
+    await service.CreateRecallAsync("RCL-TRACKED", productId, "LOT-A", "Supplier quality alert", "recall-user");
+    var recall = await context.InventoryRecalls.AsNoTracking().SingleAsync(x => x.Reference == "RCL-TRACKED");
+    var recalledBalances = await context.InventoryTrackingBalances.AsNoTracking()
+        .Where(x => x.ProductId == productId && x.Identifier == "LOT-A" && x.Quantity > 0).ToListAsync();
+    if (recall.Status != InventoryRecallStatus.Active || recalledBalances.Any(x => x.Status != InventoryTrackingStatus.Quarantined))
+        throw new InvalidOperationException("Starting a recall must atomically quarantine every available balance for the selected identity.");
+    await service.CloseRecallAsync(recall.Id, "All affected stock reviewed", "recall-user");
+    if ((await context.InventoryRecalls.AsNoTracking().SingleAsync(x => x.Id == recall.Id)).Status != InventoryRecallStatus.Closed ||
+        (await context.InventoryTrackingBalances.AsNoTracking().Where(x => x.ProductId == productId && x.Identifier == "LOT-A").ToListAsync()).Any(x => x.Quantity > 0 && x.Status != InventoryTrackingStatus.Quarantined))
+        throw new InvalidOperationException("Closing a recall must preserve quarantine until an explicit release decision.");
 }
 
 static async Task VerifyTrackedActivationGuardAsync(

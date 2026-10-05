@@ -1,7 +1,7 @@
 # Database
 > Status: IMPLEMENTED  
 > Source of truth: EF Core entities, configurations and migrations  
-> Last reviewed: 2026-09-30
+> Last reviewed: 2026-10-05
 
 WMS-050 adds tenant-owned `InventoryReservations` and `InventoryReservationLines`. Source identity is unique per tenant, quantities are positive, relationships are tenant-safe, exact and Unassigned dimensions are duplicate-protected, and rowversions protect concurrent reservation changes. Migrations `AddInventoryReservations` and `AddUnassignedReservationUniqueness` are additive and are applied to `AHMAD/MiniStoreDb`.
 
@@ -66,3 +66,6 @@ Migration `20261003211115_AddPhysicalStockMovementKernel` creates tenant-owned `
 Migration `20261003212429_AddTransferMovementTransitStages` makes legacy/location links optional for document movements and adds related warehouse, source document/line/stage, planned/posted/reversed timestamps and actors. Existing kernel rows preserve their creation/posting data. No historic transfers or quantities are backfilled.
 ## WMS-040 inventory availability projection
 Migration `20261003214320_AddInventoryBalancesAndDefaultLocations` creates tenant-owned `InventoryBalances` with filtered unique indexes for one virtual Unassigned row and exact-location rows. A guarded SQL backfill copies locations and derives Unassigned without changing legacy balances. RowVersion and reservation checks prepare WMS-050. The 2026-10-04 development reconciliation returned 8 projection rows, zero ProductStock total mismatches and zero availability invariant failures.
+## Inventory recalls
+
+`InventoryRecalls` is tenant-owned and references Product through the composite tenant boundary. It stores a normalized reference and lot/serial identifier, reason, active/closed lifecycle audit fields and rowversion. A filtered unique index permits only one active recall per tenant/product/identifier, while recall reference is tenant-unique. Existing inventory history is not copied or rewritten.

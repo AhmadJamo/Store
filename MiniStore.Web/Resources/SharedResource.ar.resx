@@ -733,4 +733,24 @@
   <data name="Only quarantined tracked inventory can be released." xml:space="preserve"><value>يمكن الإفراج عن مخزون التتبع المحجور فقط.</value></data>
   <data name="Quarantine reason must be between 3 and 90 characters." xml:space="preserve"><value>يجب أن يكون سبب الحجر أو الإفراج بين 3 و90 حرفاً.</value></data>
   <data name="Tracked inventory balance was not found." xml:space="preserve"><value>لم يتم العثور على رصيد التتبع.</value></data>
+  <data name="Create inventory recall" xml:space="preserve"><value>إنشاء استدعاء مخزون</value></data>
+  <data name="Inventory recalls" xml:space="preserve"><value>استدعاءات المخزون</value></data>
+  <data name="Recall" xml:space="preserve"><value>استدعاء</value></data>
+  <data name="Recall reason" xml:space="preserve"><value>سبب الاستدعاء</value></data>
+  <data name="Closure notes" xml:space="preserve"><value>ملاحظات الإغلاق</value></data>
+  <data name="Close recall" xml:space="preserve"><value>إغلاق الاستدعاء</value></data>
+  <data name="No inventory recalls found." xml:space="preserve"><value>لا توجد استدعاءات مخزون.</value></data>
+  <data name="Recall created and available stock quarantined." xml:space="preserve"><value>تم إنشاء الاستدعاء وحجر المخزون المتاح.</value></data>
+  <data name="Recall closed. Quarantined stock remains blocked until explicitly released." xml:space="preserve"><value>تم إغلاق الاستدعاء. يبقى المخزون المحجور موقوفاً حتى الإفراج عنه بشكل صريح.</value></data>
+  <data name="Recall reference is required and cannot exceed 50 characters." xml:space="preserve"><value>مرجع الاستدعاء مطلوب ولا يجوز أن يتجاوز 50 حرفاً.</value></data>
+  <data name="Recall reason is required and cannot exceed 250 characters." xml:space="preserve"><value>سبب الاستدعاء مطلوب ولا يجوز أن يتجاوز 250 حرفاً.</value></data>
+  <data name="Recall closure notes are required and cannot exceed 250 characters." xml:space="preserve"><value>ملاحظات إغلاق الاستدعاء مطلوبة ولا يجوز أن تتجاوز 250 حرفاً.</value></data>
+  <data name="Recall product was not found." xml:space="preserve"><value>لم يتم العثور على منتج الاستدعاء.</value></data>
+  <data name="Recall requires a lot- or serial-tracked product." xml:space="preserve"><value>الاستدعاء يتطلب منتجاً متتبعاً بالتشغيلة أو الرقم التسلسلي.</value></data>
+  <data name="The recalled lot or serial was not found." xml:space="preserve"><value>لم يتم العثور على التشغيلة أو الرقم التسلسلي المستدعى.</value></data>
+  <data name="An active recall already exists for this lot or serial." xml:space="preserve"><value>يوجد استدعاء فعال لهذه التشغيلة أو الرقم التسلسلي.</value></data>
+  <data name="Recall reference already exists." xml:space="preserve"><value>مرجع الاستدعاء موجود مسبقاً.</value></data>
+  <data name="Inventory recall was not found." xml:space="preserve"><value>لم يتم العثور على استدعاء المخزون.</value></data>
+  <data name="Only an active recall can be closed." xml:space="preserve"><value>يمكن إغلاق الاستدعاء الفعال فقط.</value></data>
+  <data name="Affected documents" xml:space="preserve"><value>المستندات المتأثرة</value></data>
 </root>

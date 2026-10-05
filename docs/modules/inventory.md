@@ -59,6 +59,8 @@ The shelf-life control slice adds per-product default shelf-life days, mandatory
 
 Authorized users can quarantine an available positive lot/serial balance or release a quarantined balance with an obligatory reason. Both state-only events write immutable zero-quantity trace entries and preserve physical quantity. Allocation queries accept only Available balances, so quarantine immediately blocks sales and transfers. Receiving or returning more units to a quarantined lot does not silently release it. Scheduled notifications and full recall orchestration remain follow-up work.
 
+Inventory recall records one tracked Product and normalized lot/serial identity, unique active case and reason. Starting a recall atomically quarantines every currently available positive balance for that identity across positions. The recall list derives affected purchase, sale, transfer and return references from immutable tracking history. Closing requires notes and never releases stock; quality release remains a separate permission and trace event. Automated supplier/customer communication remains outside this slice.
+
 ## Warehouse operating policies
 Warehouse operational use is independent from inventory control. Types cover general, central, branch backroom, sales floor, outlet, production, transit, returns and quarantine uses. Control modes are Simple, LocationManaged and Hybrid. An organized sales-floor or central warehouse may explicitly allow direct POS sales.
 

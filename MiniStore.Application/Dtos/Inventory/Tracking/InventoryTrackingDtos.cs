@@ -15,9 +15,17 @@ public sealed class OpenTrackingAllocationLineDto
 public sealed class InventoryTrackingPageDto
 {
  public OpenTrackingAllocationDto Input{get;set;}=new(); public List<(int Id,string Name)> Products{get;set;}=[];
+ public List<(int Id,string Name)> TrackedProducts{get;set;}=[];
  public List<(int Id,string Name)> Warehouses{get;set;}=[]; public List<(int Id,int WarehouseId,string Name)> Locations{get;set;}=[];
  public List<TrackingBalanceRowDto> Balances{get;set;}=[]; public List<TrackingTransactionRowDto> Transactions{get;set;}=[];
  public int ExpiredCount{get;set;} public int ExpiringSoonCount{get;set;}
+ public List<InventoryRecallRowDto> Recalls{get;set;}=[];
+}
+public sealed class InventoryRecallRowDto
+{
+ public long Id{get;set;}public string Reference{get;set;}="";public string Product{get;set;}="";public string Identifier{get;set;}="";public string Reason{get;set;}="";
+ public InventoryRecallStatus Status{get;set;}public DateTime CreatedAt{get;set;}public DateTime? ClosedAt{get;set;}public string? ClosureNotes{get;set;}
+ public List<string> AffectedReferences{get;set;}=[];
 }
 public sealed class TrackingBalanceRowDto
 {

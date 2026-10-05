@@ -1,5 +1,12 @@
 # AI Work Log
 
+## 2026-10-05 — Inventory recall workflow
+
+- Added tenant-owned active/closed recall cases for one Product plus lot/serial identity, with reason, closure notes, user/time audit and concurrency token.
+- Recall initiation atomically quarantines every available positive balance for the identity across positions and reports affected receipt, issue, transfer and return references from immutable tracking history.
+- Recall closure deliberately preserves quarantine; release remains a separate quality decision.
+- Added dedicated recall permission, bilingual UI and ADR. Migration `AddInventoryRecallWorkflow` is applied to `AHMAD/MiniStoreDb`; 335 focused checks and the disposable SQL workflow passed.
+
 ## 2026-10-04 — Lot and serial quarantine workflow
 
 - Added reasoned Available → Quarantined → Available transitions without changing physical quantity.

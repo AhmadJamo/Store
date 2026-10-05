@@ -1,18 +1,18 @@
 using MiniStore.Application.DTOs.Inventory.Tracking;using MiniStore.Domain.Entities;using MiniStore.Domain.Interfaces;
 namespace MiniStore.Application.Services;
-public sealed class InventoryTrackingService(IInventoryTrackingRepository tracking,IProductRepository products,IWarehouseRepository warehouses,
+public sealed class InventoryTrackingService(IInventoryTrackingRepository tracking,IInventoryRecallRepository recalls,IProductRepository products,IWarehouseRepository warehouses,
  IStorageLocationRepository locations,IInventoryBalanceRepository balances,IProductLocationStockRepository locationStocks,IUnitOfWork unitOfWork)
 {
  public async Task<InventoryTrackingPageDto> GetPageAsync(OpenTrackingAllocationDto? input=null)
  {
   var ps=await products.GetAllAsync(null);var ws=await warehouses.GetAllAsync();var ls=await locations.SearchAsync(null,null);
   var productMap=ps.ToDictionary(x=>x.Id);var names=ps.ToDictionary(x=>x.Id,x=>x.Name);var warehouseNames=ws.ToDictionary(x=>x.Id,x=>x.Name);var locationNames=ls.ToDictionary(x=>x.Id,x=>$"{x.Code} — {x.Name}");
-  var bs=await tracking.GetBalancesAsync();var ts=await tracking.GetTransactionsAsync();
+  var bs=await tracking.GetBalancesAsync();var ts=await tracking.GetTransactionsAsync();var recallRows=await recalls.GetAllAsync();
   var today=DateOnly.FromDateTime(DateTime.Today);var rows=bs.Select(x=>{var days=x.ExpirationDate.HasValue?x.ExpirationDate.Value.DayNumber-today.DayNumber:(int?)null;var warning=productMap.GetValueOrDefault(x.ProductId)?.ExpirationWarningDays??30;var state=!days.HasValue?"No expiration":days<0?"Expired":days<=warning?"Expiring soon":"Valid";return new TrackingBalanceRowDto{Id=x.Id,Product=names.GetValueOrDefault(x.ProductId,"Unknown"),Warehouse=warehouseNames.GetValueOrDefault(x.WarehouseId,"Unknown"),Location=x.StorageLocationId.HasValue?locationNames.GetValueOrDefault(x.StorageLocationId.Value,"Unknown"):"Unassigned (system)",Policy=x.Policy,Identifier=x.Identifier,Quantity=x.Quantity,ExpirationDate=x.ExpirationDate,Status=x.Status,ExpirationState=state,DaysUntilExpiration=days};}).ToList();
-  return new(){Input=input??new(),Products=ps.Where(x=>x.InventoryBehavior==ProductInventoryBehavior.Stocked&&x.TrackingPolicy==ProductTrackingPolicy.None).Select(x=>(x.Id,x.Name)).ToList(),
+  return new(){Input=input??new(),Products=ps.Where(x=>x.InventoryBehavior==ProductInventoryBehavior.Stocked&&x.TrackingPolicy==ProductTrackingPolicy.None).Select(x=>(x.Id,x.Name)).ToList(),TrackedProducts=ps.Where(x=>x.TrackingPolicy!=ProductTrackingPolicy.None).Select(x=>(x.Id,x.Name)).ToList(),
    Warehouses=ws.Select(x=>(x.Id,x.Name)).ToList(),Locations=ls.Where(x=>x.Status==StorageLocationStatus.Active).Select(x=>(x.Id,x.WarehouseId,$"{x.Code} — {x.Name}")).ToList(),
    Balances=rows,ExpiredCount=rows.Count(x=>x.Quantity>0&&x.ExpirationState=="Expired"),ExpiringSoonCount=rows.Count(x=>x.Quantity>0&&x.ExpirationState=="Expiring soon"),
-   Transactions=ts.Take(200).Select(x=>new TrackingTransactionRowDto{Product=names.GetValueOrDefault(x.ProductId,"Unknown"),Identifier=x.Identifier,Quantity=x.Quantity,Type=x.Type,Reference=x.SourceReference,CreatedAt=x.CreatedAt}).ToList()};
+   Transactions=ts.Take(200).Select(x=>new TrackingTransactionRowDto{Product=names.GetValueOrDefault(x.ProductId,"Unknown"),Identifier=x.Identifier,Quantity=x.Quantity,Type=x.Type,Reference=x.SourceReference,CreatedAt=x.CreatedAt}).ToList(),Recalls=recallRows.Select(x=>new InventoryRecallRowDto{Id=x.Id,Reference=x.Reference,Product=names.GetValueOrDefault(x.ProductId,"Unknown"),Identifier=x.Identifier,Reason=x.Reason,Status=x.Status,CreatedAt=x.CreatedAt,ClosedAt=x.ClosedAt,ClosureNotes=x.ClosureNotes,AffectedReferences=ts.Where(t=>t.ProductId==x.ProductId&&t.Identifier==x.Identifier&&t.Type is InventoryTrackingTransactionType.Receipt or InventoryTrackingTransactionType.Issue or InventoryTrackingTransactionType.Transfer or InventoryTrackingTransactionType.Return).Select(t=>t.SourceReference).Distinct().Take(20).ToList()}).ToList()};
  }
  public async Task OpenAsync(OpenTrackingAllocationDto dto,string userId)
  {
@@ -148,6 +148,28 @@ public sealed class InventoryTrackingService(IInventoryTrackingRepository tracki
     quarantine?InventoryTrackingTransactionType.Quarantine:InventoryTrackingTransactionType.Release,
     normalizedReason,userId));
   });
+ }
+
+ public async Task CreateRecallAsync(string reference,int productId,string identifier,string reason,string userId)
+ {
+  var product=await products.GetByIdAsync(productId)??throw new InvalidOperationException("Recall product was not found.");
+  if(product.TrackingPolicy==ProductTrackingPolicy.None)throw new InvalidOperationException("Recall requires a lot- or serial-tracked product.");
+  var normalized=identifier?.Trim().ToUpperInvariant()??string.Empty;
+  var recall=new InventoryRecall(reference,productId,normalized,reason,userId);
+  await unitOfWork.ExecuteInTransactionAsync(async()=>
+  {
+   var matches=await tracking.GetByIdentifierForUpdateAsync(productId,normalized);
+   if(matches.Count==0)throw new InvalidOperationException("The recalled lot or serial was not found.");
+   if(await recalls.HasActiveAsync(productId,normalized))throw new InvalidOperationException("An active recall already exists for this lot or serial.");
+   if(await recalls.ReferenceExistsAsync(recall.Reference))throw new InvalidOperationException("Recall reference already exists.");
+   await recalls.AddAsync(recall);
+   foreach(var balance in matches.Where(x=>x.Quantity>0&&x.Status==InventoryTrackingStatus.Available))
+   {balance.Quarantine();await tracking.AddTransactionAsync(new InventoryTrackingTransaction(balance,0,InventoryTrackingTransactionType.Quarantine,$"Recall {recall.Reference}",userId));}
+  });
+ }
+ public async Task CloseRecallAsync(long recallId,string notes,string userId)
+ {
+  await unitOfWork.ExecuteInTransactionAsync(async()=>{var recall=await recalls.GetByIdForUpdateAsync(recallId)??throw new InvalidOperationException("Inventory recall was not found.");recall.Close(notes,userId);});
  }
 
  private static List<(string Identifier,decimal Quantity)> ParseAllocations(Product product,string? value,decimal expectedQuantity)

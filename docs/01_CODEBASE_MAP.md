@@ -28,7 +28,7 @@
 | `Entities/Accounting/*.cs` | chart, branches, journal entries, fiscal periods, tax and payment entities | accounting docs. |
 | `Entities/Catalog/{Product,ProductTemplate,ProductCategory,ProductAttributeDefinition,ProductAttributeValue,ProductRecipe,RecipeIngredient,MeasurementUnit}.cs` and product type/unit/dimension/behavior/logistics enums | concrete SKU identity, optional variant template grouping, category-scoped typed attributes/options/values, logistics metadata, tracking/shelf-life policy, sale channels, immutable recipes and managed units | products, sales and inventory docs. |
 | `Entities/Customers/Customer.cs`, `Entities/Suppliers/Supplier.cs` | commercial-party master data | sales/purchases docs. |
-| `Entities/Inventory/*.cs` | warehouses, operating-policy enums, AVCO balances, locations, availability, reservations, adjustments, lot/serial tracking, legacy history, physical movements and transfers | inventory, accounting and stock-transfer docs. |
+| `Entities/Inventory/*.cs` | warehouses, operating-policy enums, AVCO balances, locations, availability, reservations, adjustments, lot/serial tracking and recall, legacy history, physical movements and transfers | inventory, accounting and stock-transfer docs. |
 | `Entities/Purchases/*.cs`, `Entities/Sales/*.cs` | purchase/supplier-return and sale/customer-return aggregates plus POS experience/order settings | purchase/sales/settings docs. |
 | `Entities/Settings/*.cs` | accounting, discount, inventory-policy defaults, centralized `DocumentSequence`, general settings and supported UI language | settings/database/localization docs. |
 | `Entities/Security/*.cs` | audit, permission catalogue and tenant-owned role/permission entities | permissions/security docs. |
@@ -118,6 +118,7 @@ Hierarchical location update (2026-09-30): StorageLocation retains its identity 
 | `Repositories/Inventory/InventoryReservationRepository.cs` | tracked dimensional balances and tenant-filtered reservation aggregate persistence | WMS-050 InventoryReservationService. |
 | `Repositories/Inventory/InventoryAdjustmentRepository.cs` | tenant-filtered adjustment aggregate and current dimensional balance persistence | WMS-060 InventoryAdjustmentService. |
 | `Repositories/Inventory/InventoryTrackingRepository.cs` | tenant-filtered tracked balances, FEFO operational allocation and immutable trace history | WMS-070 InventoryTrackingService. |
+| `Repositories/Inventory/InventoryRecallRepository.cs` | tenant-filtered recall lifecycle persistence and active-identity guard | InventoryTrackingService recall workflow. |
 | `Repositories/Sales/SalesReturnRepository.cs` | immutable return history and original-sale aggregation | `SalesReturnService`. |
 | `Repositories/Purchases/PurchaseReturnRepository.cs` | immutable supplier-return history and original-purchase aggregation | `PurchaseReturnService`. |
 | `Authorization/PermissionService.cs` | permission check implementation | SaleService. |

@@ -911,6 +911,17 @@ Check(quarantineAction.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Polic
       $"{PermissionAuthorizeAttribute.PolicyPrefix}InventoryTracking.ManageQuarantine" &&
       PermissionDefinitions.All.Any(x => x.Name == "InventoryTracking.ManageQuarantine"),
     "Tracking quarantine changes must require a dedicated permission");
+var recall = new InventoryRecall("rcl-test", 1, "lot-2026-a", "Quality alert", "creator");
+Check(recall.Reference == "RCL-TEST" && recall.Identifier == "LOT-2026-A" && recall.Status == InventoryRecallStatus.Active,
+    "Inventory recalls must normalize their business identity and start active");
+recall.Close("Investigation completed", "closer");
+Check(recall.Status == InventoryRecallStatus.Closed && recall.ClosedAt.HasValue,
+    "Inventory recalls must retain an auditable explicit close transition");
+var recallAction = typeof(InventoryTrackingController).GetMethod(nameof(InventoryTrackingController.CreateRecall))!;
+Check(recallAction.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
+      $"{PermissionAuthorizeAttribute.PolicyPrefix}InventoryTracking.ManageRecall" &&
+      PermissionDefinitions.All.Any(x => x.Name == "InventoryTracking.ManageRecall"),
+    "Inventory recall creation must require its dedicated permission");
 
 Console.WriteLine($"Passed {count} security and inventory regression checks.");
 

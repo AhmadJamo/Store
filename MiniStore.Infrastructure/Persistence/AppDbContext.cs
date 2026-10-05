@@ -122,6 +122,7 @@ public class AppDbContext
     public DbSet<InventoryAdjustmentLine> InventoryAdjustmentLines => Set<InventoryAdjustmentLine>();
     public DbSet<InventoryTrackingBalance> InventoryTrackingBalances => Set<InventoryTrackingBalance>();
     public DbSet<InventoryTrackingTransaction> InventoryTrackingTransactions => Set<InventoryTrackingTransaction>();
+    public DbSet<InventoryRecall> InventoryRecalls => Set<InventoryRecall>();
 
 
 
