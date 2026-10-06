@@ -1,5 +1,12 @@
 # AI Work Log
 
+## 2026-10-06 — WMS-080A warehouse removal strategies
+
+- Added one deterministic allocator for tracked FIFO, FEFO, location-priority and minimize-locations removal.
+- Sales, tracked recipe consumption and stock transfers now use the source warehouse policy while continuing to exclude expired/quarantined stock.
+- Kept Manual warehouses on deterministic FIFO compatibility until an explicit audited identity override is available.
+- No schema migration was required; the Release build passed without warnings, 344 focused checks passed and the disposable SQL integration workflow passed.
+
 ## 2026-10-06 — Recall communication evidence
 
 - Added append-only recall communication entries for party, contact address, Phone/Email/SMS/In-person/Other channel, Attempted/Reached/Confirmed/Failed outcome, notes, actor and time.

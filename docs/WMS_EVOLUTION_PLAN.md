@@ -579,7 +579,8 @@ Status: implementation and additive migration complete; migration applied to `AH
 
 ### WMS-080 — Removal and putaway strategies
 
-- FIFO/FEFO/closest allocator, auditable manual override and simple putaway rules.
+- [x] WMS-080A deterministic tracked-stock removal applies each warehouse's FIFO, FEFO, location-priority or minimize-locations strategy to sales, recipe consumption and transfer allocation.
+- [ ] Auditable manual identity override, untracked exact-location allocation and simple putaway rules.
 - Storage categories/capacity dimensions follow measured need.
 
 ### WMS-090 — Replenishment, forecasting and alerts

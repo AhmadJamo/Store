@@ -1,4 +1,6 @@
 # Sales and inventory services
+
+`InventoryRemovalAllocator` is the shared tracked-stock ordering policy used by `InventoryTrackingService` for issues and transfers. It converts the source warehouse's configured FIFO, FEFO, location-priority or minimize-locations strategy into a deterministic candidate order; Manual currently falls back to FIFO until the audited override workflow is implemented.
 > Status: IMPLEMENTED WITH REMAINING CONTROLS | Last reviewed: 2026-09-30
 
 `SaleService` owns pricing, numbering, discounts, stock decrement and immutable direct/recipe-derived UnitCost/COGS snapshots. `PurchaseService` creates purchases and recalculates product/warehouse moving averages from net line cost; `PurchasePostingService` posts the supplier document separately. `ProductStockService` creates valued opening balances and adjustments. `StockTransactionService` records auditable quantity/average/value snapshots and permits only reasoned manual adjustments. `StockTransferService` carries source cost into the destination average during posting/cancellation. UnitOfWork uses Serializable transactions and converts EF concurrency conflicts to a retryable data-change message.

@@ -56,7 +56,7 @@
 | `Services/Inventory/InventoryBalanceService.cs` | read-only OnHand/Reserved/Available projection with product, warehouse and protected virtual Unassigned location display | InventoryBalances controller/view. |
 | `Services/Inventory/InventoryReservationService.cs` | exact-location/Unassigned reservation, consume/release and read-only history orchestration | StockTransferService and InventoryReservations controller/view. |
 | `Services/Inventory/InventoryAdjustmentService.cs` | blind count, approval and atomic dimensional/valued variance posting | InventoryAdjustments controller/views. |
-| `Services/Inventory/InventoryTrackingService.cs` | opening allocation, policy activation, shelf-life validation/defaulting, live expiration alerts, recall/quarantine, tracked receipt, FEFO issue, transfer identity preservation and trace projection | products, purchases, sales, stock transfers and InventoryTracking controller/view. |
+| `Services/Inventory/{InventoryTrackingService,InventoryRemovalAllocator}.cs` | opening allocation, policy activation, shelf-life validation/defaulting, live expiration alerts, recall/quarantine, tracked receipt, warehouse-policy removal ordering, transfer identity preservation and trace projection | products, purchases, sales, stock transfers and InventoryTracking controller/view. |
 | `Services/Settings/InventorySettingsService.cs` | rowversion-protected defaults for new warehouse operating policies | SettingsController inventory screen. |
 | `Services/Settings/InventoryAccessService.cs` | branch warehouse permissions/priorities and POS terminal warehouse policies | Settings InventoryAccess and POS validation. |
 | `Services/Settings/PosExperienceSettingsService.cs` | profile presets, custom terminal appearance persistence and POS runtime projection | Settings/Pos and Sales/Pos. |
@@ -117,7 +117,7 @@ Hierarchical location update (2026-09-30): StorageLocation retains its identity 
 | `Repositories/Inventory/InventoryBalanceRepository.cs` | tenant-filtered current dimensional availability projection reads | WMS-040 InventoryBalanceService. |
 | `Repositories/Inventory/InventoryReservationRepository.cs` | tracked dimensional balances and tenant-filtered reservation aggregate persistence | WMS-050 InventoryReservationService. |
 | `Repositories/Inventory/InventoryAdjustmentRepository.cs` | tenant-filtered adjustment aggregate and current dimensional balance persistence | WMS-060 InventoryAdjustmentService. |
-| `Repositories/Inventory/InventoryTrackingRepository.cs` | tenant-filtered tracked balances, FEFO operational allocation and immutable trace history | WMS-070 InventoryTrackingService. |
+| `Repositories/Inventory/InventoryTrackingRepository.cs` | tenant-filtered tracked balances for application-level removal ordering plus immutable trace history | WMS-070/WMS-080 InventoryTrackingService. |
 | `Repositories/Inventory/InventoryRecallRepository.cs` | tenant-filtered recall lifecycle persistence and active-identity guard | InventoryTrackingService recall workflow. |
 | `Repositories/Sales/SalesReturnRepository.cs` | immutable return history and original-sale aggregation | `SalesReturnService`. |
 | `Repositories/Purchases/PurchaseReturnRepository.cs` | immutable supplier-return history and original-purchase aggregation | `PurchaseReturnService`. |

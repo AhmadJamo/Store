@@ -71,8 +71,10 @@ public sealed class InventoryTrackingService(IInventoryTrackingRepository tracki
  {
   if(product.TrackingPolicy==ProductTrackingPolicy.None)return;
   if(product.TrackingPolicy==ProductTrackingPolicy.Serial&&quantity!=decimal.Truncate(quantity))throw new InvalidOperationException("Serial-tracked issue quantity must be a whole number.");
+  var warehouse=await warehouses.GetByIdAsync(warehouseId)??throw new InvalidOperationException("Warehouse was not found.");
+  var locationSequences=(await locations.GetWarehouseLocationsAsync(warehouseId)).ToDictionary(x=>x.Id,x=>x.Sequence);
   var candidates=await tracking.GetAvailableForUpdateAsync(product.Id,warehouseId);var today=DateOnly.FromDateTime(DateTime.Today);
-  var usable=candidates.Where(x=>!x.ExpirationDate.HasValue||x.ExpirationDate>=today).ToList();
+  var usable=InventoryRemovalAllocator.Order(candidates.Where(x=>!x.ExpirationDate.HasValue||x.ExpirationDate>=today),warehouse.PickingStrategy,locationSequences).ToList();
   if(usable.Sum(x=>x.Quantity)<quantity)throw new InvalidOperationException($"Insufficient non-expired tracked stock for product '{product.Name}'.");
   var remaining=quantity;
   foreach(var balance in usable){if(remaining<=0)break;var take=Math.Min(balance.Quantity,remaining);balance.Remove(take);if(balance.StorageLocationId.HasValue){var located=await locationStocks.GetAsync(product.Id,balance.StorageLocationId.Value)??throw new InvalidOperationException("Tracked location stock is missing.");located.RemoveQuantity(take);}await tracking.AddTransactionAsync(new InventoryTrackingTransaction(balance,-take,InventoryTrackingTransactionType.Issue,reference,userId));remaining-=take;}
@@ -83,7 +85,9 @@ public sealed class InventoryTrackingService(IInventoryTrackingRepository tracki
   if(product.TrackingPolicy==ProductTrackingPolicy.None)return;
   if(product.TrackingPolicy==ProductTrackingPolicy.Serial&&quantity!=decimal.Truncate(quantity))throw new InvalidOperationException("Serial-tracked transfer quantity must be a whole number.");
   var today=DateOnly.FromDateTime(DateTime.Today);
-  var candidates=(await tracking.GetAvailableForUpdateAsync(product.Id,fromWarehouseId)).Where(x=>x.StorageLocationId==fromLocationId&&(!x.ExpirationDate.HasValue||x.ExpirationDate>=today)).ToList();
+  var warehouse=await warehouses.GetByIdAsync(fromWarehouseId)??throw new InvalidOperationException("Source warehouse was not found.");
+  var locationSequences=(await locations.GetWarehouseLocationsAsync(fromWarehouseId)).ToDictionary(x=>x.Id,x=>x.Sequence);
+  var candidates=InventoryRemovalAllocator.Order((await tracking.GetAvailableForUpdateAsync(product.Id,fromWarehouseId)).Where(x=>x.StorageLocationId==fromLocationId&&(!x.ExpirationDate.HasValue||x.ExpirationDate>=today)),warehouse.PickingStrategy,locationSequences).ToList();
   if(candidates.Sum(x=>x.Quantity)<quantity)throw new InvalidOperationException($"Insufficient tracked stock in the selected source position for product '{product.Name}'.");
   var remaining=quantity;
   foreach(var source in candidates){if(remaining<=0)break;var take=Math.Min(source.Quantity,remaining);var oldWarehouse=source.WarehouseId;var oldLocation=source.StorageLocationId;

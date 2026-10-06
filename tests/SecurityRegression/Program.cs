@@ -938,6 +938,18 @@ var communicationAction = typeof(InventoryTrackingController).GetMethod(nameof(I
 Check(communicationAction.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
       $"{PermissionAuthorizeAttribute.PolicyPrefix}InventoryTracking.ManageRecall",
     "Recall communication logging must require recall management permission");
+var laterExpiry = new InventoryTrackingBalance(1, 1, 2, ProductTrackingPolicy.Lot,
+    "LOT-LATER", 8m, null, DateOnly.FromDateTime(DateTime.Today.AddDays(20)), "RECEIPT-1");
+var earlierExpiry = new InventoryTrackingBalance(1, 1, 1, ProductTrackingPolicy.Lot,
+    "LOT-EARLIER", 2m, null, DateOnly.FromDateTime(DateTime.Today.AddDays(5)), "RECEIPT-2");
+var removalCandidates = new[] { laterExpiry, earlierExpiry };
+Check(InventoryRemovalAllocator.Order(removalCandidates, InventoryPickingStrategy.Fefo)[0] == earlierExpiry,
+    "FEFO removal must select the earliest expiring available identity first");
+Check(InventoryRemovalAllocator.Order(removalCandidates, InventoryPickingStrategy.LocationPriority,
+        new Dictionary<int, int> { [1] = 20, [2] = 10 })[0] == laterExpiry,
+    "Location-priority removal must respect the configured location sequence");
+Check(InventoryRemovalAllocator.Order(removalCandidates, InventoryPickingStrategy.MinimizeLocations)[0] == laterExpiry,
+    "Minimize-locations removal must consume the largest balance first");
 
 Console.WriteLine($"Passed {count} security and inventory regression checks.");
 
