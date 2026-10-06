@@ -23,6 +23,12 @@ public class ProductLocationStockRepository(AppDbContext context) : IProductLoca
             stock.StorageLocationId == storageLocationId);
     }
 
+    public Task<List<ProductLocationStock>> GetWarehouseProductAsync(int productId, int warehouseId)
+    {
+        return context.ProductLocationStocks.Where(stock =>
+            stock.ProductId == productId && stock.WarehouseId == warehouseId).ToListAsync();
+    }
+
     public Task AddAsync(ProductLocationStock stock)
     {
         return context.ProductLocationStocks.AddAsync(stock).AsTask();

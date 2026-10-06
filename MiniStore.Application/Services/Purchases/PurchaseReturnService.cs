@@ -10,6 +10,7 @@ public sealed class PurchaseReturnService(
     IStockTransactionRepository transactions, ITaxRateRepository taxRates,
     IAccountingSettingsRepository accountingSettings, JournalPostingService journalPosting,
     DocumentNumberService documentNumbers, InventoryTrackingService inventoryTracking,
+    UntrackedInventoryRemovalService untrackedInventoryRemoval,
     ICurrentUserService currentUser, IUnitOfWork unitOfWork)
 {
     public async Task<List<PurchaseReturnDto>> GetAllAsync()
@@ -83,13 +84,15 @@ public sealed class PurchaseReturnService(
                 }
                 var originalInventory = taxRate?.IsPriceInclusive == true ? gross - tax : gross;
                 var payable = taxRate?.IsPriceInclusive == true ? gross - discount : gross - discount + tax;
+                var product = await products.GetByIdAsync(original.ProductId)
+                    ?? throw new InvalidOperationException("Returned purchase product was not found.");
+                await untrackedInventoryRemoval.RemoveAsync(
+                    product, warehouseId, request.Quantity);
                 var movement = stock.RemoveQuantity(request.Quantity);
                 var removedCost = Math.Abs(movement.TransactionValue);
                 var removedCostPosting = Round(removedCost);
                 created.AddItem(new PurchaseReturnItem(original.Id, original.ProductId, warehouseId, request.Quantity, originalInventory, discount, tax, payable, removedCost));
                 await transactions.AddAsync(new StockTransaction(original.ProductId, warehouseId, -request.Quantity, StockTransactionType.PurchaseReturn, created.ReturnNumber, movement));
-                var product = await products.GetByIdAsync(original.ProductId)
-                    ?? throw new InvalidOperationException("Returned purchase product was not found.");
                 await inventoryTracking.ReturnPurchaseAsync(product, warehouseId,
                     request.Quantity, request.TrackingAllocations, purchase.InvoiceNumber,
                     created.ReturnNumber, currentUser.UserId);

@@ -950,6 +950,30 @@ Check(InventoryRemovalAllocator.Order(removalCandidates, InventoryPickingStrateg
     "Location-priority removal must respect the configured location sequence");
 Check(InventoryRemovalAllocator.Order(removalCandidates, InventoryPickingStrategy.MinimizeLocations)[0] == laterExpiry,
     "Minimize-locations removal must consume the largest balance first");
+var untrackedCandidates = new[]
+{
+    new InventoryLocationRemovalCandidate(1, 2m, 20),
+    new InventoryLocationRemovalCandidate(2, 8m, 10),
+    new InventoryLocationRemovalCandidate(null, 4m, int.MaxValue)
+};
+var priorityRemoval = UntrackedInventoryRemovalAllocator.Plan(
+    untrackedCandidates, 6m, InventoryPickingStrategy.LocationPriority);
+Check(priorityRemoval.Count == 1 && priorityRemoval[0].StorageLocationId == 2 &&
+      priorityRemoval[0].Quantity == 6m,
+    "Untracked location-priority removal must consume the lowest-sequence pickable location first");
+var minimizedRemoval = UntrackedInventoryRemovalAllocator.Plan(
+    untrackedCandidates, 10m, InventoryPickingStrategy.MinimizeLocations);
+Check(minimizedRemoval.Count == 2 && minimizedRemoval[0].StorageLocationId == 2 &&
+      minimizedRemoval[1].StorageLocationId is null,
+    "Untracked minimize-locations removal must use the fewest available positions");
+CheckThrows(() => UntrackedInventoryRemovalAllocator.Plan(
+        untrackedCandidates, 15m, InventoryPickingStrategy.Fifo),
+    "Untracked removal must reject quantities above pickable and unassigned availability");
+var controlledNegativeRemoval = UntrackedInventoryRemovalAllocator.Plan(
+    [], 3m, InventoryPickingStrategy.Fifo, allowUnassignedShortfall: true);
+Check(controlledNegativeRemoval.Single().StorageLocationId is null &&
+      controlledNegativeRemoval.Single().Quantity == 3m,
+    "Controlled recipe shortage must remain an explicit unassigned position shortfall");
 var manuallySelectedIssue = new InventoryTrackingTransaction(earlierExpiry, -1m,
     InventoryTrackingTransactionType.Issue, "SALE-MANUAL", "picker", InventoryPickingStrategy.Manual);
 Check(manuallySelectedIssue.PickingStrategy == InventoryPickingStrategy.Manual,

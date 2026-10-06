@@ -16,6 +16,7 @@ public class SaleService : ISaleService
     private readonly IUnitOfWork _unitOfWork;
     private readonly IInventoryBalanceRepository _inventoryBalanceRepository;
     private readonly InventoryTrackingService _inventoryTrackingService;
+    private readonly UntrackedInventoryRemovalService _untrackedInventoryRemovalService;
     private readonly DocumentNumberService _documentNumbers;
     private readonly IDiscountSettingsRepository _discountSettingsRepository;
     private readonly IPermissionService _permissionService;
@@ -35,6 +36,7 @@ public class SaleService : ISaleService
         IUnitOfWork unitOfWork,
         IInventoryBalanceRepository inventoryBalanceRepository,
         InventoryTrackingService inventoryTrackingService,
+        UntrackedInventoryRemovalService untrackedInventoryRemovalService,
         DocumentNumberService documentNumbers,
         IDiscountSettingsRepository discountSettingsRepository,
         IPermissionService permissionService,
@@ -53,6 +55,7 @@ public class SaleService : ISaleService
         _unitOfWork = unitOfWork;
         _inventoryBalanceRepository = inventoryBalanceRepository;
         _inventoryTrackingService = inventoryTrackingService;
+        _untrackedInventoryRemovalService = untrackedInventoryRemovalService;
         _documentNumbers = documentNumbers;
         _discountSettingsRepository = discountSettingsRepository;
         _permissionService = permissionService;
@@ -453,6 +456,8 @@ public class SaleService : ISaleService
                 await _inventoryTrackingService.IssueAsync(
                     requirement.Product, dto.WarehouseId, requirement.Quantity,
                     sale!.InvoiceNumber, createdByUserId, requirement.TrackingAllocations);
+                await _untrackedInventoryRemovalService.RemoveAsync(
+                    requirement.Product, dto.WarehouseId, requirement.Quantity);
 
                 var costMovement = stock.RemoveQuantity(requirement.Quantity);
                 sale.Items.Single(x => x.ProductId == requirement.Product.Id)
@@ -490,6 +495,14 @@ public class SaleService : ISaleService
                     await _inventoryTrackingService.IssueAsync(
                         requirement.Product, dto.WarehouseId, requirement.Quantity,
                         sale!.InvoiceNumber, createdByUserId);
+                }
+                else
+                {
+                    await _untrackedInventoryRemovalService.RemoveAsync(
+                        requirement.Product,
+                        dto.WarehouseId,
+                        requirement.Quantity,
+                        requirement.Product.AllowNegativeRecipeConsumption);
                 }
 
                 var costMovement = stock.ConsumeRecipeQuantity(

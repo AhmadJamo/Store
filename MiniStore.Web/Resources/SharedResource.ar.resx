@@ -829,4 +829,5 @@
   <data name="Warehouse stock not found." xml:space="preserve"><value>رصيد المخزون في المستودع غير موجود.</value></data>
   <data name="Quantity exceeds the unassigned balance." xml:space="preserve"><value>الكمية تتجاوز الرصيد غير الموزّع.</value></data>
   <data name="Quantity exceeds the location capacity." xml:space="preserve"><value>الكمية تتجاوز سعة الموقع.</value></data>
+  <data name="Insufficient available stock in pickable inventory positions." xml:space="preserve"><value>لا توجد كمية متاحة كافية في مواقع المخزون القابلة للسحب.</value></data>
 </root>

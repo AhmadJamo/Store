@@ -108,6 +108,7 @@ public static class BusinessServicesExtensions
         services.AddScoped<InventoryTrackingService>();
         services.AddScoped<IPutawayRuleRepository, PutawayRuleRepository>();
         services.AddScoped<PutawayRuleService>();
+        services.AddScoped<UntrackedInventoryRemovalService>();
         services.AddScoped<IInventoryReconciliationRepository, InventoryReconciliationRepository>();
         services.AddScoped<InventoryReconciliationService>();
         services.AddScoped<IProductStockRepository, ProductStockRepository>();

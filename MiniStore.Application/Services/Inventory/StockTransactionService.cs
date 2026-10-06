@@ -19,13 +19,15 @@ public class StockTransactionService
         _productStockRepository;
 
     private readonly IUnitOfWork _unitOfWork;
+    private readonly UntrackedInventoryRemovalService _untrackedInventoryRemoval;
 
     public StockTransactionService(
         IStockTransactionRepository stockTransactionRepository,
         IProductRepository productRepository,
         IWarehouseRepository warehouseRepository,
         IProductStockRepository productStockRepository,
-        IUnitOfWork unitOfWork)
+        IUnitOfWork unitOfWork,
+        UntrackedInventoryRemovalService untrackedInventoryRemoval)
     {
         _stockTransactionRepository =
             stockTransactionRepository;
@@ -40,6 +42,7 @@ public class StockTransactionService
             productStockRepository;
 
         _unitOfWork = unitOfWork;
+        _untrackedInventoryRemoval = untrackedInventoryRemoval;
     }
 
     public async Task CreateAsync(
@@ -102,11 +105,22 @@ public class StockTransactionService
             if (finalQuantity > 0)
                 costMovement = stock.AddQuantity(finalQuantity);
             else if (dto.Type == StockTransactionType.KitchenVariance)
+            {
+                await _untrackedInventoryRemoval.RemoveAsync(
+                    product,
+                    dto.WarehouseId,
+                    -finalQuantity,
+                    product.AllowNegativeRecipeConsumption);
                 costMovement = stock.ConsumeRecipeQuantity(
                     -finalQuantity,
                     product.AllowNegativeRecipeConsumption);
+            }
             else
+            {
+                await _untrackedInventoryRemoval.RemoveAsync(
+                    product, dto.WarehouseId, -finalQuantity);
                 costMovement = stock.RemoveQuantity(-finalQuantity);
+            }
 
             await _stockTransactionRepository.AddAsync(
                 new StockTransaction(

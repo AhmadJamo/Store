@@ -11,19 +11,22 @@ public class ProductStockService
     private readonly IWarehouseRepository _warehouseRepository;
     private readonly IStockTransactionRepository _stockTransactionRepository;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly UntrackedInventoryRemovalService _untrackedInventoryRemoval;
 
     public ProductStockService(
         IProductStockRepository productStockRepository,
         IProductRepository productRepository,
         IWarehouseRepository warehouseRepository,
         IStockTransactionRepository stockTransactionRepository,
-        IUnitOfWork unitOfWork)
+        IUnitOfWork unitOfWork,
+        UntrackedInventoryRemovalService untrackedInventoryRemoval)
     {
         _productStockRepository = productStockRepository;
         _productRepository = productRepository;
         _warehouseRepository = warehouseRepository;
         _stockTransactionRepository = stockTransactionRepository;
         _unitOfWork = unitOfWork;
+        _untrackedInventoryRemoval = untrackedInventoryRemoval;
     }
 
     public async Task<List<ProductStockDto>> GetAllAsync()
@@ -182,9 +185,15 @@ public class ProductStockService
         if (difference == 0)
             return;
 
+        var product = await _productRepository.GetByIdAsync(stock.ProductId)
+            ?? throw new InvalidOperationException("Product not found.");
+
         await _unitOfWork.ExecuteInTransactionAsync(
             async () =>
             {
+                if (difference < 0)
+                    await _untrackedInventoryRemoval.RemoveAsync(
+                        product, stock.WarehouseId, -difference);
                 var costMovement = difference > 0
                     ? stock.AddQuantity(difference)
                     : stock.RemoveQuantity(-difference);

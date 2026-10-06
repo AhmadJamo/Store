@@ -1,5 +1,13 @@
 # AI Work Log
 
+## 2026-10-06 — WMS-080C3 untracked location removal
+
+- Added a central reservation-aware allocator for non-tracked inventory issues across active pickable exact locations and Unassigned.
+- Connected sales, recipe consumption, supplier returns and legacy aggregate adjustment-out paths so warehouse deductions no longer leave stale rack/bin quantities.
+- Applied warehouse LocationPriority and MinimizeLocations policies; deterministic location order is the documented fallback where untracked inventory has no FIFO/FEFO receipt layer.
+- Preserved controlled recipe-negative shortages in Unassigned and left lot/serial removal under the existing tracking engine.
+- No migration was required; Release build passed without warnings, 357 focused checks and the disposable SQL integration suite passed, and EF reports no pending model changes.
+
 ## 2026-10-06 — Web composition-root cleanup
 
 - Reduced `Program.cs` to a readable composition entry point and moved presentation, persistence, security, feature DI, startup seeding and middleware/routes into focused Web configuration extensions.
