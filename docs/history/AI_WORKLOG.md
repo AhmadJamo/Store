@@ -1,5 +1,12 @@
 # AI Work Log
 
+## 2026-10-06 — Recall affected-party report
+
+- Resolved recall trace references into purchase, sale, transfer and return impact rows.
+- Purchase impacts show supplier/phone; sale impacts show the named customer or walk-in classification.
+- Aggregated affected quantity per document and avoided double-counting balanced transfer legs.
+- Added bilingual UI and focused/SQL coverage without changing the database schema.
+
 ## 2026-10-05 — Live expiration alert center
 
 - Added an urgency-ordered, tenant-safe alert projection for positive expired and expiring-soon tracked balances.

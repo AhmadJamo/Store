@@ -891,6 +891,9 @@ var alertRow = new ExpirationAlertRowDto { Product = "Shelf life product", Ident
     ExpirationDate = DateOnly.FromDateTime(DateTime.Today), DaysUntilExpiration = 0, Severity = "Expiring soon" };
 Check(alertRow.Severity == "Expiring soon" && alertRow.DaysUntilExpiration == 0,
     "Expiration alerts must expose actionable identity, quantity and remaining-day facts");
+var impactRow = new RecallImpactRowDto { DocumentType = "Sale", Reference = "INV-1", Party = "Walk-in customer", Quantity = 1m };
+Check(impactRow.DocumentType == "Sale" && impactRow.Quantity == 1m,
+    "Recall impact rows must expose document, party and affected quantity facts");
 CheckArgumentThrows(() => new InventoryTrackingBalance(1, 1, null, ProductTrackingPolicy.Serial,
         "SER-1", 2m, null, null, "OPEN-1"),
     "Every serial balance must contain exactly one unit");

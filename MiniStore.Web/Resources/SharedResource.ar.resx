@@ -757,4 +757,7 @@
   <data name="Severity" xml:space="preserve"><value>درجة التنبيه</value></data>
   <data name="Days remaining" xml:space="preserve"><value>الأيام المتبقية</value></data>
   <data name="No expiration alerts." xml:space="preserve"><value>لا توجد تنبيهات صلاحية.</value></data>
+  <data name="Purchase" xml:space="preserve"><value>شراء</value></data>
+  <data name="Sale" xml:space="preserve"><value>بيع</value></data>
+  <data name="Walk-in customer" xml:space="preserve"><value>عميل نقدي</value></data>
 </root>

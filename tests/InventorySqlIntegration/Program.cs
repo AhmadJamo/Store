@@ -257,7 +257,8 @@ static async Task VerifyOpeningTrackingAllocationAsync(int tenantId, int product
     await using var context = new AppDbContext(CreateOptions(connectionString), new FixedTenantContext(tenantId));
     var service = new InventoryTrackingService(new InventoryTrackingRepository(context), new InventoryRecallRepository(context), new ProductRepository(context),
         new WarehouseRepository(context), new StorageLocationRepository(context), new InventoryBalanceRepository(context),
-        new ProductLocationStockRepository(context), new UnitOfWork(context));
+        new ProductLocationStockRepository(context), new PurchaseRepository(context), new SupplierRepository(context),
+        new SaleRepository(context), new CustomerRepository(context), new UnitOfWork(context));
     await service.OpenAsync(new OpenTrackingAllocationDto
     {
         ProductId = productId, Policy = ProductTrackingPolicy.Lot, SourceReference = "OPEN-LOT-1",
@@ -336,6 +337,10 @@ static async Task VerifyOpeningTrackingAllocationAsync(int tenantId, int product
     var trackingPage = await service.GetPageAsync();
     if (trackingPage.ExpirationAlerts.Count == 0 || trackingPage.ExpirationAlerts.Any(x => x.DaysUntilExpiration > 120))
         throw new InvalidOperationException("Expiration alert center must use each product's warning horizon and current tracked balances.");
+    var recallImpact = trackingPage.Recalls.Single(x => x.Reference == "RCL-TRACKED").Impacts;
+    if (!recallImpact.Any(x => x.DocumentType == "Sale" && x.Reference == "SALE-TRACKED") ||
+        recallImpact.Single(x => x.DocumentType == "Transfer" && x.Reference == "TRF-TRACKED").Quantity != 1m)
+        throw new InvalidOperationException("Recall impact must classify affected documents without double-counting transfer legs.");
 }
 
 static async Task VerifyTrackedActivationGuardAsync(

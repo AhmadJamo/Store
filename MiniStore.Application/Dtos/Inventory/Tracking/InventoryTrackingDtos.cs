@@ -31,7 +31,12 @@ public sealed class InventoryRecallRowDto
 {
  public long Id{get;set;}public string Reference{get;set;}="";public string Product{get;set;}="";public string Identifier{get;set;}="";public string Reason{get;set;}="";
  public InventoryRecallStatus Status{get;set;}public DateTime CreatedAt{get;set;}public DateTime? ClosedAt{get;set;}public string? ClosureNotes{get;set;}
- public List<string> AffectedReferences{get;set;}=[];
+ public List<RecallImpactRowDto> Impacts{get;set;}=[];
+}
+public sealed class RecallImpactRowDto
+{
+ public string DocumentType{get;set;}="";public string Reference{get;set;}="";public string Party{get;set;}="";public string? Contact{get;set;}
+ public decimal Quantity{get;set;}public DateTime LastActivityAt{get;set;}
 }
 public sealed class TrackingBalanceRowDto
 {

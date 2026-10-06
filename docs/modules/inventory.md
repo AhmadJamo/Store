@@ -63,6 +63,8 @@ Inventory recall records one tracked Product and normalized lot/serial identity,
 
 The expiration alert center is a live tenant-safe projection over positive tracked balances. It uses each Product's warning horizon, orders the most urgent balances first and shows severity, identity, warehouse/location, quantity, expiration date, remaining days and quarantine state. It creates no duplicate persisted notifications and cannot become stale; scheduled delivery channels may consume this same projection later.
 
+Recall impact resolves immutable tracking references into purchase/sale/transfer/return document types. Purchase receipts show the supplier and stored phone when available; sale issues show the customer name or an explicit walk-in customer label. Quantity is aggregated per document and transfer source/destination legs are counted once. The report is operational evidence, not an automated outbound message.
+
 ## Warehouse operating policies
 Warehouse operational use is independent from inventory control. Types cover general, central, branch backroom, sales floor, outlet, production, transit, returns and quarantine uses. Control modes are Simple, LocationManaged and Hybrid. An organized sales-floor or central warehouse may explicitly allow direct POS sales.
 

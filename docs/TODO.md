@@ -12,6 +12,7 @@ The ordered Arabic execution plan, workflow, business rules and rolling suggesti
 - [x] Add permission-protected, reasoned lot/serial quarantine and release with immutable trace events.
 - [x] Add tracked-identity recall creation/closure, automatic quarantine and affected-document trace.
 - [x] Add a live expiration alert center sourced from current tracked balances and per-product warning horizons.
+- [x] Resolve recall history into affected document types, supplier/customer identities, contacts and quantities.
 - [ ] Add scheduled delivery channels and supplier/customer recall communication workflows.
 
 ## Completed
