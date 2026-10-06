@@ -59,6 +59,7 @@
 | `Services/Inventory/{InventoryTrackingService,InventoryRemovalAllocator}.cs` | opening allocation, policy activation, shelf-life validation/defaulting, live expiration alerts, recall/quarantine, tracked receipt, warehouse-policy removal ordering, transfer identity preservation and trace projection | products, purchases, sales, stock transfers and InventoryTracking controller/view. |
 | `Services/Inventory/UntrackedInventoryRemovalService.cs` | reservation-aware policy allocation across exact pickable locations and Unassigned, with atomic location-balance removal for non-tracked issues | sales, recipes, purchase returns and legacy adjustments. |
 | `Services/Inventory/PutawayRuleService.cs` | administers product/category/default putaway rules and resolves priority- and capacity-aware active receivable-location suggestions | Unassigned Stock putaway. |
+| `Services/Inventory/ReplenishmentService.cs` | manages product/warehouse replenishment policies and reservation-aware reviewed suggestions | Replenishment screen. |
 | `Services/Settings/InventorySettingsService.cs` | rowversion-protected defaults for new warehouse operating policies | SettingsController inventory screen. |
 | `Services/Settings/InventoryAccessService.cs` | branch warehouse permissions/priorities and POS terminal warehouse policies | Settings InventoryAccess and POS validation. |
 | `Services/Settings/PosExperienceSettingsService.cs` | profile presets, custom terminal appearance persistence and POS runtime projection | Settings/Pos and Sales/Pos. |

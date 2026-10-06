@@ -22,3 +22,6 @@ Adds tenant-safe managed-unit foreign keys to Products and RecipeIngredients, im
 
 ## 20260928153229_AddMovingWeightedAverageInventoryCost
 Adds product/warehouse average cost, inventory value and reference cost; full before/after cost snapshots and variance on stock movements; and unit-cost/COGS snapshots on sale lines. Existing balances initialize from Product.PurchasePrice while historical movements remain zero-valued because their original cost cannot be reconstructed reliably. Applied successfully to local `MiniStoreDb` on server `AHMAD` on 2026-09-28.
+
+## 20261006205205_AddReplenishmentRules
+Creates the empty tenant-isolated replenishment-policy table and tenant-safe Product/source/destination relationships. It performs no inventory backfill or document creation. Applied to `AHMAD/MiniStoreDb` on 2026-10-06.

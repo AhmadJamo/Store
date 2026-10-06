@@ -182,6 +182,14 @@ public static class NavigationDefinitions
                 130),
 
             new NavigationItem(
+                "Replenishment",
+                "bi-arrow-down-up",
+                "Replenishment",
+                "Index",
+                "Inventory.Replenishment.View",
+                135),
+
+            new NavigationItem(
                 "Lot and serial tracking",
                 "bi-upc-scan",
                 "InventoryTracking",

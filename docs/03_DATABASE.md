@@ -74,3 +74,7 @@ Migration `20261003214320_AddInventoryBalancesAndDefaultLocations` creates tenan
 `InventoryRecalls` is tenant-owned and references Product through the composite tenant boundary. It stores a normalized reference and lot/serial identifier, reason, active/closed lifecycle audit fields and rowversion. A filtered unique index permits only one active recall per tenant/product/identifier, while recall reference is tenant-unique. Existing inventory history is not copied or rewritten.
 
 `InventoryRecallCommunications` is an append-only tenant-owned child of a recall. It records party, contact address, neutral channel/outcome codes, notes, actor and time. Restrict delete preserves evidence and the composite tenant relationship prevents cross-company attachment.
+
+## Replenishment rules
+
+Migration `AddReplenishmentRules` creates tenant-owned `ReplenishmentRules` with one unique Product + destination Warehouse policy per tenant. Composite tenant-safe foreign keys protect Product, destination Warehouse and optional preferred source Warehouse. The additive migration creates no rules and changes no inventory quantities.

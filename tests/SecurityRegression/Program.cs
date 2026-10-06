@@ -998,6 +998,19 @@ Check(createPutawayRuleAction.GetCustomAttribute<PermissionAuthorizeAttribute>()
       activatePutawayRuleAction.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
       $"{PermissionAuthorizeAttribute.PolicyPrefix}ProductStock.Edit",
     "Putaway-rule administration must require stock edit permission");
+var replenishmentRule = new ReplenishmentRule(1, 2, 3, 5m, 20m, 2m, 7);
+Check(replenishmentRule.MinimumQuantity == 5m && replenishmentRule.MaximumQuantity == 20m &&
+      replenishmentRule.PreferredSourceWarehouseId == 3,
+    "Replenishment rules must preserve destination thresholds, lead time and preferred source");
+CheckArgumentThrows(() => new ReplenishmentRule(1, 2, null, 10m, 5m, 1m, 0),
+    "Replenishment maximum must not be lower than minimum");
+var replenishmentIndex = typeof(ReplenishmentController).GetMethod(nameof(ReplenishmentController.Index))!;
+var replenishmentSave = typeof(ReplenishmentController).GetMethod(nameof(ReplenishmentController.Save))!;
+Check(replenishmentIndex.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
+      $"{PermissionAuthorizeAttribute.PolicyPrefix}Inventory.Replenishment.View" &&
+      replenishmentSave.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
+      $"{PermissionAuthorizeAttribute.PolicyPrefix}Inventory.Replenishment.Manage",
+    "Replenishment viewing and rule management must use separate permissions");
 
 Console.WriteLine($"Passed {count} security and inventory regression checks.");
 

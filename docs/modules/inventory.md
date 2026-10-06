@@ -76,6 +76,10 @@ Recall impact resolves immutable tracking references into purchase/sale/transfer
 While a recall is Active, authorized users may append immutable communication entries containing party, phone/email/address, channel, outcome, notes, actor and UTC time. Communication history remains visible after closure and cannot be edited. Automated sending is not implied; entries record actual manual or externally completed contact.
 
 ## Warehouse operating policies
+
+## Replenishment planning
+
+WMS-090A stores one active/inactive replenishment rule per tenant Product + destination Warehouse with minimum, maximum, safety stock, lead days and an optional preferred source warehouse. The suggestion screen uses reservation-aware Available across all positions. At or below Minimum it suggests replenishing to Maximum and shows preferred-source availability when configured. Suggestions are advisory only and never mutate inventory or create a purchase/transfer document automatically.
 Warehouse operational use is independent from inventory control. Types cover general, central, branch backroom, sales floor, outlet, production, transit, returns and quarantine uses. Control modes are Simple, LocationManaged and Hybrid. An organized sales-floor or central warehouse may explicitly allow direct POS sales.
 
 Each warehouse stores its picking strategy, POS eligibility, capacity enforcement and whether exact source/destination locations are required on transfers. Simple warehouses do not use exact locations. Location-managed and Hybrid warehouses support a product in multiple locations; the warehouse balance remains the total and `ProductLocationStock` rows represent physical distribution. Hybrid is the safe default because receipts may enter Unassigned Stock before putaway.

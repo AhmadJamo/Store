@@ -19,6 +19,8 @@ Purchase receipt costing excludes recoverable tax when a selected tax rate is pr
 
 `UntrackedInventoryRemovalService` prevents warehouse issues from leaving stale rack/bin quantities. It plans against current location rows and reserved InventoryBalance quantities, then removes from active pickable exact locations or Unassigned according to the warehouse policy in the owning Serializable transaction. Tracked products bypass it and remain under `InventoryTrackingService`.
 
+`ReplenishmentService` manages one Product + destination Warehouse rule and projects reviewed suggestions from aggregate OnHand, Reserved and Available. It exposes preferred-source availability but performs no stock or document mutation.
+
 `InventoryReconciliationService` is read-only. It classifies tenant-filtered SQL snapshots from `InventoryReconciliationRepository`, comparing ProductStock quantity/value, aggregated ProductLocationStock, derived Unassigned and the latest StockTransaction snapshot. It applies fixed quantity/value tolerances, exposes exceptions through a paged bilingual report and never performs a correction.
 
 `ProductService` also validates product logistics against managed units: weights require Mass, dimensions require Length and all three dimensions, and category selection remains tenant-scoped. It refuses a transition from untracked to Lot/Serial while any ProductStock row has a non-zero balance. `ProductCategoryService` creates and activates/deactivates preserved category rows; it never deletes referenced categories.

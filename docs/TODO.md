@@ -21,6 +21,8 @@ The ordered Arabic execution plan, workflow, business rules and rolling suggesti
 - [x] WMS-080C1 add the tenant-safe putaway-rule model and deterministic suggestion service.
 - [x] WMS-080C2 add putaway-rule administration UI and capacity-aware suggestions.
 - [x] WMS-080C3 add policy-driven untracked exact-location removal.
+- [x] WMS-090A add reviewed min/max replenishment rules and suggestions.
+- [ ] WMS-090B add confirmed incoming/outgoing forecasting and reviewed draft document conversion.
 - [ ] Add scheduled/automated delivery channels and delivery-provider callbacks.
 
 ## Completed

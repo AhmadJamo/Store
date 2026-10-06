@@ -1,5 +1,12 @@
 # AI Work Log
 
+## 2026-10-06 — WMS-090A replenishment planning
+
+- Added tenant-safe per-product/destination min-max, safety-stock, lead-time and optional preferred-source rules.
+- Added bilingual permission-separated administration and reservation-aware suggestions that replenish Available to Maximum when it reaches Minimum.
+- Suggestions remain advisory and create no stock movement or business document automatically.
+- Created and applied migration `AddReplenishmentRules` to `AHMAD/MiniStoreDb`; Release build passed without warnings, 362 focused checks and SQL integration passed, and EF reports no pending model changes.
+
 ## 2026-10-06 — WMS-080C3 untracked location removal
 
 - Added a central reservation-aware allocator for non-tracked inventory issues across active pickable exact locations and Unassigned.

@@ -1,0 +1,9 @@
+using Microsoft.AspNetCore.Mvc;using Microsoft.Extensions.Localization;using MiniStore.Application.DTOs.Inventory.Replenishment;using MiniStore.Application.Services;using MiniStore.Web.Authorization;
+namespace MiniStore.Web.Controllers;
+public sealed class ReplenishmentController(ReplenishmentService service,IStringLocalizer<SharedResource> localizer):Controller
+{
+ [HttpGet,PermissionAuthorize("Inventory.Replenishment.View")]public async Task<IActionResult> Index(int? warehouseId,string? search,bool exceptionsOnly=false)=>View(await service.GetPageAsync(warehouseId,search,exceptionsOnly));
+ [HttpPost,ValidateAntiForgeryToken,PermissionAuthorize("Inventory.Replenishment.Manage")]public async Task<IActionResult> Save(SaveReplenishmentRuleDto input){try{await service.SaveAsync(input);Notify("success","Replenishment rule saved.");}catch(Exception ex)when(ex is ArgumentException or InvalidOperationException){Notify("danger",ex.Message);}return RedirectToAction(nameof(Index),new{warehouseId=input.WarehouseId});}
+ [HttpPost,ValidateAntiForgeryToken,PermissionAuthorize("Inventory.Replenishment.Manage")]public async Task<IActionResult> SetActive(int id,bool active){try{await service.SetActiveAsync(id,active);Notify("success","Replenishment rule updated.");}catch(Exception ex)when(ex is ArgumentException or InvalidOperationException){Notify("danger",ex.Message);}return RedirectToAction(nameof(Index));}
+ private void Notify(string type,string message){TempData["NotificationType"]=type;TempData["NotificationMessage"]=localizer[message].Value;}
+}

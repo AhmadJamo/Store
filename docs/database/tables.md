@@ -58,3 +58,6 @@ One row per tenant stores guided-setup status and choices, template/audit metada
 Additive physical movement facts. Putaway/Relocation rows link to preserved LocationMovement. Transfer rows use stable StockTransfer document, line and stage identity and represent Planned/Posted/Reversed outbound, transit and inbound stages. Related warehouse and optional locations support simple, hybrid and location-managed transfers. The table does not replace ProductStock, ProductLocationStock or valuation StockTransaction.
 ### InventoryBalances
 Rebuildable current-position projection by Product + Warehouse + optional StorageLocation. Null location is virtual Unassigned. Stores OnHand, Reserved, UpdatedAt and RowVersion; Available is computed in the domain/application layer. Filtered tenant-aware unique indexes protect both null and exact-location dimensions. It is synchronized in the same persistence transaction as legacy balance changes.
+
+### ReplenishmentRules
+Tenant-owned Product + destination Warehouse planning policy with minimum, maximum, safety stock, lead days, optional preferred source Warehouse and active state. It produces suggestions only and stores no forecast or stock movement.

@@ -1,0 +1,17 @@
+using MiniStore.Application.DTOs.Inventory.Replenishment;using MiniStore.Domain.Entities;using MiniStore.Domain.Interfaces;
+namespace MiniStore.Application.Services;
+public sealed class ReplenishmentService(IReplenishmentRuleRepository rules,IProductRepository products,IWarehouseRepository warehouses,IInventoryBalanceRepository balances)
+{
+ public async Task<ReplenishmentPageDto> GetPageAsync(int? warehouseId,string? search,bool exceptionsOnly)
+ {
+  var ps=await products.GetAllAsync(search);var ws=await warehouses.GetAllAsync();var productMap=ps.ToDictionary(x=>x.Id);var warehouseMap=ws.ToDictionary(x=>x.Id);var bs=(await balances.GetAllAsync()).GroupBy(x=>(x.ProductId,x.WarehouseId)).ToDictionary(x=>x.Key,x=>(OnHand:x.Sum(y=>y.OnHand),Reserved:x.Sum(y=>y.Reserved),Available:x.Sum(y=>y.Available)));
+  var rows=(await rules.GetAllAsync()).Where(x=>productMap.ContainsKey(x.ProductId)&&warehouseMap.ContainsKey(x.WarehouseId)&&(!warehouseId.HasValue||x.WarehouseId==warehouseId)).Select(x=>{var b=bs.GetValueOrDefault((x.ProductId,x.WarehouseId));var source=x.PreferredSourceWarehouseId.HasValue?bs.GetValueOrDefault((x.ProductId,x.PreferredSourceWarehouseId.Value)).Available:(decimal?)null;return new ReplenishmentRowDto{RuleId=x.Id,Product=productMap[x.ProductId].Name,Warehouse=warehouseMap[x.WarehouseId].Name,SourceWarehouse=x.PreferredSourceWarehouseId.HasValue?warehouseMap.GetValueOrDefault(x.PreferredSourceWarehouseId.Value)?.Name:null,OnHand=b.OnHand,Reserved=b.Reserved,Available=b.Available,Minimum=x.MinimumQuantity,Maximum=x.MaximumQuantity,SafetyStock=x.SafetyStock,LeadTimeDays=x.LeadTimeDays,SuggestedQuantity=Math.Max(0,x.MaximumQuantity-b.Available),SourceAvailable=source,IsActive=x.IsActive};}).Where(x=>!exceptionsOnly||x.NeedsReplenishment).OrderByDescending(x=>x.NeedsReplenishment).ThenBy(x=>x.Product).ToList();
+  return new ReplenishmentPageDto{Rows=rows,Products=await products.GetAllAsync(null),Warehouses=ws,WarehouseId=warehouseId,Search=search?.Trim()??""};
+ }
+ public async Task SaveAsync(SaveReplenishmentRuleDto dto)
+ {
+  _=await products.GetByIdAsync(dto.ProductId)??throw new InvalidOperationException("Product not found.");_=await warehouses.GetByIdAsync(dto.WarehouseId)??throw new InvalidOperationException("Warehouse not found.");if(dto.PreferredSourceWarehouseId.HasValue)_=await warehouses.GetByIdAsync(dto.PreferredSourceWarehouseId.Value)??throw new InvalidOperationException("Source warehouse not found.");
+  var rule=await rules.GetAsync(dto.ProductId,dto.WarehouseId);if(rule is null){rule=new ReplenishmentRule(dto.ProductId,dto.WarehouseId,dto.PreferredSourceWarehouseId,dto.MinimumQuantity,dto.MaximumQuantity,dto.SafetyStock,dto.LeadTimeDays);await rules.AddAsync(rule);}else rule.Update(dto.PreferredSourceWarehouseId,dto.MinimumQuantity,dto.MaximumQuantity,dto.SafetyStock,dto.LeadTimeDays);await rules.SaveChangesAsync();
+ }
+ public async Task SetActiveAsync(int id,bool active){var rule=await rules.GetByIdAsync(id)??throw new InvalidOperationException("Replenishment rule not found.");rule.SetActive(active);await rules.SaveChangesAsync();}
+}

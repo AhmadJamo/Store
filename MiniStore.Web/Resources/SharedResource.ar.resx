@@ -830,4 +830,26 @@
   <data name="Quantity exceeds the unassigned balance." xml:space="preserve"><value>الكمية تتجاوز الرصيد غير الموزّع.</value></data>
   <data name="Quantity exceeds the location capacity." xml:space="preserve"><value>الكمية تتجاوز سعة الموقع.</value></data>
   <data name="Insufficient available stock in pickable inventory positions." xml:space="preserve"><value>لا توجد كمية متاحة كافية في مواقع المخزون القابلة للسحب.</value></data>
+  <data name="Replenishment" xml:space="preserve"><value>إعادة التزويد</value></data>
+  <data name="Suggestions are reviewed only and never change stock or create documents automatically." xml:space="preserve"><value>الاقتراحات للمراجعة فقط ولا تغيّر المخزون أو تنشئ مستندات تلقائيًا.</value></data>
+  <data name="Replenishment rule" xml:space="preserve"><value>قاعدة إعادة التزويد</value></data>
+  <data name="Destination warehouse" xml:space="preserve"><value>مستودع الوجهة</value></data>
+  <data name="Preferred source" xml:space="preserve"><value>المصدر المفضل</value></data>
+  <data name="Purchase / no source" xml:space="preserve"><value>شراء / دون مصدر</value></data>
+  <data name="Minimum" xml:space="preserve"><value>الحد الأدنى</value></data>
+  <data name="Maximum" xml:space="preserve"><value>الحد الأعلى</value></data>
+  <data name="Safety stock" xml:space="preserve"><value>مخزون الأمان</value></data>
+  <data name="Lead days" xml:space="preserve"><value>أيام التوريد</value></data>
+  <data name="Needs replenishment only" xml:space="preserve"><value>المحتاج لإعادة التزويد فقط</value></data>
+  <data name="Min / Max" xml:space="preserve"><value>الحد الأدنى / الأعلى</value></data>
+  <data name="Suggested quantity" xml:space="preserve"><value>الكمية المقترحة</value></data>
+  <data name="No replenishment rules found." xml:space="preserve"><value>لا توجد قواعد إعادة تزويد.</value></data>
+  <data name="Replenishment rule saved." xml:space="preserve"><value>تم حفظ قاعدة إعادة التزويد.</value></data>
+  <data name="Replenishment rule updated." xml:space="preserve"><value>تم تحديث قاعدة إعادة التزويد.</value></data>
+  <data name="Replenishment rule not found." xml:space="preserve"><value>قاعدة إعادة التزويد غير موجودة.</value></data>
+  <data name="Source warehouse not found." xml:space="preserve"><value>مستودع المصدر غير موجود.</value></data>
+  <data name="Source and destination warehouses must be different." xml:space="preserve"><value>يجب أن يختلف مستودع المصدر عن مستودع الوجهة.</value></data>
+  <data name="Maximum quantity must be positive and at least the minimum quantity." xml:space="preserve"><value>يجب أن يكون الحد الأعلى موجبًا وألا يقل عن الحد الأدنى.</value></data>
+  <data name="Safety stock must be between zero and the minimum quantity." xml:space="preserve"><value>يجب أن يكون مخزون الأمان بين صفر والحد الأدنى.</value></data>
+  <data name="Lead time must be between zero and 3650 days." xml:space="preserve"><value>يجب أن تكون مدة التوريد بين صفر و3650 يومًا.</value></data>
 </root>
