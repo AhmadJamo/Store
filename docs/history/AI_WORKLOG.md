@@ -1,5 +1,11 @@
 # AI Work Log
 
+## 2026-10-06 — WMS-080C1 putaway-rule foundation
+
+- Added tenant-safe warehouse putaway rules targeting a product, category or warehouse default location with explicit priority and active state.
+- Added deterministic suggestion resolution and active/receivable-location fallback without changing stock authority or automatically moving quantities.
+- Created and applied migration `AddPutawayRules` to `AHMAD/MiniStoreDb`; Release build passed without warnings and 351 focused checks passed.
+
 ## 2026-10-06 — WMS-080B3 POS tracked selection
 
 - Added a compact optional lot/serial field to POS cart rows only when the selected product uses tracking.

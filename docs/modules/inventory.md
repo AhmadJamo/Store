@@ -59,6 +59,8 @@ WMS-080B1 lets wholesale-sale lines explicitly select tracked identities using `
 
 WMS-080B2 carries the same explicit selection on stock-transfer draft lines. Posting validates the selected identities in the chosen source position. Cancellation derives its selection from the original destination trace so the same lots/serials return to the source; it does not silently substitute another identity.
 
+WMS-080C1 adds tenant-owned `PutawayRule` rows scoped to one warehouse and destination location. A rule may target one product, one category or act as the warehouse default. Suggestions prefer product over category over default, then priority, and only return active receivable locations; the first receivable location is a deterministic fallback. Administration UI and capacity-aware ranking remain WMS-080C2.
+
 The shelf-life control slice adds per-product default shelf-life days, mandatory-expiration policy and warning horizon. Receipts derive missing expiration when a default exists, reject missing mandatory dates and reject already-expired stock. Sales and transfers cannot allocate expired balances. The tracking screen highlights expired and expiring-soon balances and reports their active counts.
 
 Authorized users can quarantine an available positive lot/serial balance or release a quarantined balance with an obligatory reason. Both state-only events write immutable zero-quantity trace entries and preserve physical quantity. Allocation queries accept only Available balances, so quarantine immediately blocks sales and transfers. Receiving or returning more units to a quarantined lot does not silently release it. Scheduled notifications and full recall orchestration remain follow-up work.

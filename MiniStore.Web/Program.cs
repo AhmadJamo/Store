@@ -215,6 +215,8 @@ builder.Services.AddScoped<LocationMovementService>();
   builder.Services.AddScoped<IInventoryTrackingRepository, InventoryTrackingRepository>();
   builder.Services.AddScoped<IInventoryRecallRepository, InventoryRecallRepository>();
   builder.Services.AddScoped<InventoryTrackingService>();
+  builder.Services.AddScoped<IPutawayRuleRepository, PutawayRuleRepository>();
+  builder.Services.AddScoped<PutawayRuleService>();
 builder.Services.AddScoped<IInventoryReconciliationRepository, InventoryReconciliationRepository>();
 builder.Services.AddScoped<InventoryReconciliationService>();
 

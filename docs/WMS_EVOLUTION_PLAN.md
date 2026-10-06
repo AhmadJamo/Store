@@ -583,7 +583,8 @@ Status: implementation and additive migration complete; migration applied to `AH
 - [x] WMS-080B1 wholesale sale manual lot/serial override with exact-quantity validation and persisted selection-strategy audit.
 - [x] WMS-080B2 persist manual lot/serial selection on transfer drafts, validate it at posting and reverse the exact delivered identities on cancellation.
 - [x] WMS-080B3 expose the same optional audited manual lot/serial selection in the POS cart for directly stocked tracked products.
-- [ ] Add untracked exact-location allocation and simple putaway rules.
+- [x] WMS-080C1 tenant-safe product/category/default putaway-rule foundation with priority and receivable-location fallback suggestion.
+- [ ] Add rule administration UI, capacity-aware suggestions and untracked exact-location removal.
 - Storage categories/capacity dimensions follow measured need.
 
 ### WMS-090 — Replenishment, forecasting and alerts

@@ -124,6 +124,7 @@ public class AppDbContext
     public DbSet<InventoryTrackingTransaction> InventoryTrackingTransactions => Set<InventoryTrackingTransaction>();
     public DbSet<InventoryRecall> InventoryRecalls => Set<InventoryRecall>();
     public DbSet<InventoryRecallCommunication> InventoryRecallCommunications => Set<InventoryRecallCommunication>();
+    public DbSet<PutawayRule> PutawayRules => Set<PutawayRule>();
 
 
 
