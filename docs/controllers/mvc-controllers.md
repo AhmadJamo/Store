@@ -13,7 +13,7 @@
 | Recipes | Index/Edit | Products.View/Edit; Application service creates immutable versions and validates tenant products and compatible units. |
 | ProductStocks | Index/Create/Edit/Delete | product-stock permissions/service; delete service always refuses. |
 | StockTransactions | Index/Create | movement permissions/service. |
-| WarehouseLocations / UnassignedStock | hierarchical location search/create/edit and putaway | warehouse/product-stock permissions and location services. |
+| WarehouseLocations / UnassignedStock | hierarchical location search/create/edit, putaway-rule administration and capacity-aware suggested putaway | warehouse/product-stock permissions and location/putaway services. |
 | ProductAttributes | typed attribute dictionary create/list/activation and per-product value assignment | Products View/Edit permissions and ProductAttributeService. |
 | ProductTemplates | template creation, existing-SKU assignment/removal and grouped variant listing | Products View/Edit permissions and ProductTemplateService. |
 | LocationMovements | Index/Move | LocationMovements.View/Create and LocationMovementService. |

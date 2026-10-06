@@ -10,6 +10,7 @@ public class UnassignedStockService(
     IProductRepository productRepository,
     IWarehouseRepository warehouseRepository,
     IStorageLocationRepository storageLocationRepository,
+    PutawayRuleService putawayRuleService,
     StockMovementService stockMovementService,
     ICurrentUserService currentUserService,
     IUnitOfWork unitOfWork)
@@ -49,6 +50,14 @@ public class UnassignedStockService(
                     (stock.ProductId, stock.WarehouseId))))
             .Where(row => row.UnassignedQuantity > 0)
             .ToList();
+
+        foreach (var row in rows)
+        {
+            var suggestion = await putawayRuleService.SuggestAsync(
+                productsById[row.ProductId], row.WarehouseId, row.UnassignedQuantity);
+            row.SuggestedLocationId = suggestion?.Id;
+            row.SuggestedLocationCode = suggestion?.Code;
+        }
 
         return SortRows(rows, sort);
     }

@@ -16,5 +16,9 @@ public class UnassignedStockDto
 
     public decimal AssignedQuantity { get; set; }
 
+    public int? SuggestedLocationId { get; set; }
+
+    public string? SuggestedLocationCode { get; set; }
+
     public decimal UnassignedQuantity => WarehouseQuantity - AssignedQuantity;
 }

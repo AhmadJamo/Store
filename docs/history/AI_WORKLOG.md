@@ -1,5 +1,12 @@
 # AI Work Log
 
+## 2026-10-06 — WMS-080C2 managed putaway suggestions
+
+- Added ProductStock.Edit-protected putaway-rule creation and active-state management to the Unassigned Stock screen.
+- Added product/category/default suggestion display and preselection while excluding inactive, non-receivable, cross-warehouse and insufficient-capacity destinations.
+- Added bilingual UI and validation messages plus controller authorization and rule lifecycle regression checks.
+- No schema migration was required; Release build passed without warnings, 353 focused checks passed and EF reports no pending model changes.
+
 ## 2026-10-06 — WMS-080C1 putaway-rule foundation
 
 - Added tenant-safe warehouse putaway rules targeting a product, category or warehouse default location with explicit priority and active state.

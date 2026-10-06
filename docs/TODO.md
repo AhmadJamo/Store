@@ -19,7 +19,8 @@ The ordered Arabic execution plan, workflow, business rules and rolling suggesti
 - [x] WMS-080B2 extend audited identity override to transfers and preserve exact identities on cancellation.
 - [x] WMS-080B3 extend audited identity override to POS tracked products.
 - [x] WMS-080C1 add the tenant-safe putaway-rule model and deterministic suggestion service.
-- [ ] WMS-080C2 add rule administration UI, capacity-aware suggestions and untracked exact-location removal.
+- [x] WMS-080C2 add putaway-rule administration UI and capacity-aware suggestions.
+- [ ] WMS-080C3 add policy-driven untracked exact-location removal.
 - [ ] Add scheduled/automated delivery channels and delivery-provider callbacks.
 
 ## Completed

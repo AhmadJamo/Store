@@ -791,4 +791,42 @@
   <data name="LocationPriority" xml:space="preserve"><value>أولوية الموقع</value></data>
   <data name="MinimizeLocations" xml:space="preserve"><value>تقليل عدد المواقع</value></data>
   <data name="Manual lot or serial selection is only valid for a directly stocked tracked product." xml:space="preserve"><value>الاختيار اليدوي للتشغيلة أو الرقم التسلسلي صالح فقط لمنتج مخزني مباشر ومفعّل عليه التتبع.</value></data>
+  <data name="Products received or transferred without an exact rack/bin location." xml:space="preserve"><value>منتجات تم استلامها أو نقلها دون تحديد موقع رف أو خانة.</value></data>
+  <data name="Manage locations" xml:space="preserve"><value>إدارة المواقع</value></data>
+  <data name="Putaway rules" xml:space="preserve"><value>قواعد التخزين</value></data>
+  <data name="Product rules take priority, followed by category rules and then the warehouse default." xml:space="preserve"><value>قواعد المنتج لها الأولوية، ثم قواعد الفئة، ثم الإعداد الافتراضي للمستودع.</value></data>
+  <data name="Destination location" xml:space="preserve"><value>موقع الوجهة</value></data>
+  <data name="Select rack/bin" xml:space="preserve"><value>اختر الرف أو الخانة</value></data>
+  <data name="Product (optional)" xml:space="preserve"><value>المنتج (اختياري)</value></data>
+  <data name="Any product" xml:space="preserve"><value>أي منتج</value></data>
+  <data name="Category (optional)" xml:space="preserve"><value>الفئة (اختيارية)</value></data>
+  <data name="Any category" xml:space="preserve"><value>أي فئة</value></data>
+  <data name="Priority" xml:space="preserve"><value>الأولوية</value></data>
+  <data name="Target" xml:space="preserve"><value>النطاق</value></data>
+  <data name="Warehouse default" xml:space="preserve"><value>افتراضي المستودع</value></data>
+  <data name="No putaway rules configured." xml:space="preserve"><value>لا توجد قواعد تخزين مهيأة.</value></data>
+  <data name="Product name or barcode" xml:space="preserve"><value>اسم المنتج أو الباركود</value></data>
+  <data name="Sort" xml:space="preserve"><value>الترتيب</value></data>
+  <data name="Unassigned" xml:space="preserve"><value>غير موزّع</value></data>
+  <data name="Assign location" xml:space="preserve"><value>تحديد الموقع</value></data>
+  <data name="Suggested" xml:space="preserve"><value>المقترح</value></data>
+  <data name="All stock has an exact location." xml:space="preserve"><value>جميع كميات المخزون موزّعة على مواقع محددة.</value></data>
+  <data name="Putaway rule saved." xml:space="preserve"><value>تم حفظ قاعدة التخزين.</value></data>
+  <data name="Putaway rule updated." xml:space="preserve"><value>تم تحديث قاعدة التخزين.</value></data>
+  <data name="Select an active receivable location in the same warehouse." xml:space="preserve"><value>اختر موقعًا فعالًا يقبل الاستلام داخل المستودع نفسه.</value></data>
+  <data name="Product category not found." xml:space="preserve"><value>فئة المنتج غير موجودة.</value></data>
+  <data name="An identical putaway rule already exists." xml:space="preserve"><value>توجد قاعدة تخزين مطابقة مسبقًا.</value></data>
+  <data name="Putaway rule not found." xml:space="preserve"><value>قاعدة التخزين غير موجودة.</value></data>
+  <data name="Warehouse not found." xml:space="preserve"><value>المستودع غير موجود.</value></data>
+  <data name="A simple warehouse does not use exact storage locations." xml:space="preserve"><value>المستودع البسيط لا يستخدم مواقع تخزين محددة.</value></data>
+  <data name="Product not found." xml:space="preserve"><value>المنتج غير موجود.</value></data>
+  <data name="A putaway rule can target either a product or a category, not both." xml:space="preserve"><value>يمكن لقاعدة التخزين استهداف منتج أو فئة، وليس كليهما.</value></data>
+  <data name="Putaway rule target is invalid." xml:space="preserve"><value>نطاق قاعدة التخزين غير صالح.</value></data>
+  <data name="Putaway priority must be between 1 and 9999." xml:space="preserve"><value>يجب أن تكون أولوية التخزين بين 1 و9999.</value></data>
+  <data name="Stock location saved." xml:space="preserve"><value>تم حفظ موقع المخزون.</value></data>
+  <data name="Quantity must be greater than zero." xml:space="preserve"><value>يجب أن تكون الكمية أكبر من صفر.</value></data>
+  <data name="Select an active location in the same warehouse." xml:space="preserve"><value>اختر موقعًا فعالًا داخل المستودع نفسه.</value></data>
+  <data name="Warehouse stock not found." xml:space="preserve"><value>رصيد المخزون في المستودع غير موجود.</value></data>
+  <data name="Quantity exceeds the unassigned balance." xml:space="preserve"><value>الكمية تتجاوز الرصيد غير الموزّع.</value></data>
+  <data name="Quantity exceeds the location capacity." xml:space="preserve"><value>الكمية تتجاوز سعة الموقع.</value></data>
 </root>

@@ -1,131 +1,21 @@
 @model List<MiniStore.Application.DTOs.Warehouses.UnassignedStockDto>
+@using MiniStore.Application.DTOs.Warehouses
 @using MiniStore.Domain.Entities
-
-@{
-    ViewData["Title"] = "Unassigned Stock";
-    var warehouses = ViewBag.Warehouses as List<Warehouse> ?? [];
-    var locations = ViewBag.Locations as List<StorageLocation> ?? [];
-    int? selectedWarehouseId = ViewBag.WarehouseId;
-    string? query = ViewBag.Query;
-    string sort = ViewBag.Sort as string ?? "name";
-}
-
+@inject Microsoft.Extensions.Localization.IStringLocalizer<MiniStore.Web.SharedResource> Localizer
+@inject Microsoft.AspNetCore.Authorization.IAuthorizationService AuthorizationService
+@{ViewData["Title"]=Localizer["Unassigned Stock"];var warehouses=ViewBag.Warehouses as List<Warehouse>??[];var locations=ViewBag.Locations as List<StorageLocation>??[];var products=ViewBag.Products as List<Product>??[];var categories=ViewBag.Categories as List<ProductCategory>??[];var rules=ViewBag.PutawayRules as List<PutawayRuleDto>??[];int? selectedWarehouseId=ViewBag.WarehouseId;string? query=ViewBag.Query;string sort=ViewBag.Sort as string??"name";var canEdit=(await AuthorizationService.AuthorizeAsync(User,null,"Permission:ProductStock.Edit")).Succeeded;}
 <div class="container mt-4">
-    <div class="d-flex justify-content-between">
-        <div>
-            <h2>Unassigned Stock</h2>
-            <p class="text-muted">
-                Products received or transferred without an exact rack/bin location.
-            </p>
-        </div>
-        <a asp-controller="WarehouseLocations"
-           asp-action="Index"
-           class="btn btn-outline-primary align-self-start">
-            Manage locations
-        </a>
-    </div>
-
-    <form method="get" class="card card-body mb-3">
-        <div class="row g-2">
-            <div class="col-md-3">
-                <label for="warehouseId" class="form-label">Warehouse</label>
-                <select id="warehouseId" name="warehouseId" class="form-select">
-                    <option value="">All warehouses</option>
-                    @foreach (var warehouse in warehouses)
-                    {
-                        <option value="@warehouse.Id"
-                                selected="@(selectedWarehouseId == warehouse.Id)">
-                            @warehouse.Name
-                        </option>
-                    }
-                </select>
-            </div>
-
-            <div class="col-md-5">
-                <label for="query" class="form-label">Product</label>
-                <input id="query"
-                       name="query"
-                       value="@query"
-                       class="form-control"
-                       placeholder="Product name or barcode" />
-            </div>
-
-            <div class="col-md-2">
-                <label for="sort" class="form-label">Sort</label>
-                <select id="sort" name="sort" class="form-select">
-                    <option value="name" selected="@(sort == "name")">Name</option>
-                    <option value="barcode" selected="@(sort == "barcode")">Barcode</option>
-                    <option value="warehouse" selected="@(sort == "warehouse")">Warehouse</option>
-                </select>
-            </div>
-
-            <div class="col-md-2 d-flex align-items-end">
-                <button class="btn btn-primary w-100">Search</button>
-            </div>
-        </div>
-    </form>
-
-    <div class="table-responsive">
-        <table class="table table-bordered align-middle">
-            <thead>
-                <tr>
-                    <th>Product</th>
-                    <th>Barcode</th>
-                    <th>Warehouse</th>
-                    <th>Unassigned</th>
-                    <th>Assign location</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var row in Model)
-                {
-                    var availableLocations = locations.Where(location =>
-                        location.WarehouseId == row.WarehouseId &&
-                        location.Status == StorageLocationStatus.Active);
-
-                    <tr>
-                        <td>@row.ProductName</td>
-                        <td>@row.Barcode</td>
-                        <td>@row.WarehouseName</td>
-                        <td><strong>@row.UnassignedQuantity.ToString("N3")</strong></td>
-                        <td>
-                            <form asp-action="Assign" method="post" class="d-flex gap-2">
-                                <input type="hidden" name="productId" value="@row.ProductId" />
-                                <input type="hidden" name="warehouseId" value="@row.WarehouseId" />
-                                <input type="hidden" name="idempotencyKey" value="@Guid.NewGuid().ToString("N")" />
-
-                                <select name="storageLocationId" class="form-select" required>
-                                    <option value="">Select rack/bin</option>
-                                    @foreach (var location in availableLocations)
-                                    {
-                                        <option value="@location.Id">@location.Code</option>
-                                    }
-                                </select>
-
-                                <input name="quantity"
-                                       type="number"
-                                       value="@row.UnassignedQuantity"
-                                       min="0.001"
-                                       max="@row.UnassignedQuantity"
-                                       step="0.001"
-                                       class="form-control"
-                                       style="max-width: 140px" />
-
-                                <button class="btn btn-success">Save</button>
-                            </form>
-                        </td>
-                    </tr>
-                }
-
-                @if (Model.Count == 0)
-                {
-                    <tr>
-                        <td colspan="5" class="text-center text-muted">
-                            All stock has an exact location.
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    </div>
+<div class="d-flex justify-content-between align-items-start mb-3"><div><h2>@Localizer["Unassigned Stock"]</h2><p class="text-muted">@Localizer["Products received or transferred without an exact rack/bin location."]</p></div><a asp-controller="WarehouseLocations" asp-action="Index" class="btn btn-outline-primary">@Localizer["Manage locations"]</a></div>
+@if(canEdit){<div class="card card-body mb-4"><h5>@Localizer["Putaway rules"]</h5><p class="text-muted">@Localizer["Product rules take priority, followed by category rules and then the warehouse default."]</p>
+<form asp-action="CreateRule" method="post" class="row g-2 align-items-end"><div class="col-lg-2"><label class="form-label">@Localizer["Warehouse"]</label><select id="ruleWarehouse" name="WarehouseId" class="form-select" required><option value="">@Localizer["Select warehouse"]</option>@foreach(var x in warehouses){<option value="@x.Id">@x.Name</option>}</select></div><div class="col-lg-2"><label class="form-label">@Localizer["Destination location"]</label><select id="ruleLocation" name="StorageLocationId" class="form-select" required><option value="">@Localizer["Select rack/bin"]</option>@foreach(var x in locations.Where(x=>x.Status==StorageLocationStatus.Active&&x.IsReceivable)){<option value="@x.Id" data-warehouse="@x.WarehouseId">@x.Code — @x.Name</option>}</select></div><div class="col-lg-3"><label class="form-label">@Localizer["Product (optional)"]</label><select id="ruleProduct" name="ProductId" class="form-select"><option value="">@Localizer["Any product"]</option>@foreach(var x in products){<option value="@x.Id">@x.Name</option>}</select></div><div class="col-lg-3"><label class="form-label">@Localizer["Category (optional)"]</label><select id="ruleCategory" name="ProductCategoryId" class="form-select"><option value="">@Localizer["Any category"]</option>@foreach(var x in categories){<option value="@x.Id">@x.Name</option>}</select></div><div class="col-lg-1"><label class="form-label">@Localizer["Priority"]</label><input name="Priority" type="number" min="1" max="9999" value="100" class="form-control" required/></div><div class="col-lg-1"><button class="btn btn-primary w-100">@Localizer["Add"]</button></div></form>
+<div class="table-responsive mt-3"><table class="table table-sm align-middle mb-0"><thead><tr><th>@Localizer["Warehouse"]</th><th>@Localizer["Target"]</th><th>@Localizer["Location"]</th><th>@Localizer["Priority"]</th><th>@Localizer["Status"]</th><th></th></tr></thead><tbody>@foreach(var rule in rules.Where(x=>!selectedWarehouseId.HasValue||x.WarehouseId==selectedWarehouseId)){<tr><td>@rule.WarehouseName</td><td>@(rule.Target=="Default"?Localizer["Warehouse default"]:rule.Target)</td><td><code>@rule.StorageLocationCode</code></td><td>@rule.Priority</td><td>@(rule.IsActive?Localizer["Active"]:Localizer["Inactive"])</td><td><form asp-action="SetRuleActive" method="post"><input type="hidden" name="id" value="@rule.Id"/><input type="hidden" name="active" value="@(!rule.IsActive)"/><input type="hidden" name="warehouseId" value="@selectedWarehouseId"/><button class="btn btn-sm @(rule.IsActive?"btn-outline-danger":"btn-outline-success")">@(rule.IsActive?Localizer["Deactivate"]:Localizer["Activate"])</button></form></td></tr>}@if(!rules.Any(x=>!selectedWarehouseId.HasValue||x.WarehouseId==selectedWarehouseId)){<tr><td colspan="6" class="text-center text-muted">@Localizer["No putaway rules configured."]</td></tr>}</tbody></table></div></div>}
+<form method="get" class="card card-body mb-3"><div class="row g-2"><div class="col-md-3"><label for="warehouseId" class="form-label">@Localizer["Warehouse"]</label><select id="warehouseId" name="warehouseId" class="form-select"><option value="">@Localizer["All warehouses"]</option>@foreach(var x in warehouses){<option value="@x.Id" selected="@(selectedWarehouseId==x.Id)">@x.Name</option>}</select></div><div class="col-md-5"><label for="query" class="form-label">@Localizer["Product"]</label><input id="query" name="query" value="@query" class="form-control" placeholder="@Localizer["Product name or barcode"]"/></div><div class="col-md-2"><label for="sort" class="form-label">@Localizer["Sort"]</label><select id="sort" name="sort" class="form-select"><option value="name" selected="@(sort=="name")">@Localizer["Name"]</option><option value="barcode" selected="@(sort=="barcode")">@Localizer["Barcode"]</option><option value="warehouse" selected="@(sort=="warehouse")">@Localizer["Warehouse"]</option></select></div><div class="col-md-2 d-flex align-items-end"><button class="btn btn-primary w-100">@Localizer["Search"]</button></div></div></form>
+<div class="table-responsive"><table class="table table-bordered align-middle"><thead><tr><th>@Localizer["Product"]</th><th>@Localizer["Barcode"]</th><th>@Localizer["Warehouse"]</th><th>@Localizer["Unassigned"]</th><th>@Localizer["Assign location"]</th></tr></thead><tbody>@foreach(var row in Model){var availableLocations=locations.Where(x=>x.WarehouseId==row.WarehouseId&&x.Status==StorageLocationStatus.Active&&x.IsReceivable);<tr><td>@row.ProductName</td><td>@row.Barcode</td><td>@row.WarehouseName</td><td><strong>@row.UnassignedQuantity.ToString("N3")</strong></td><td>@if(row.SuggestedLocationCode is not null){<div class="small text-success mb-1">@Localizer["Suggested"]: <strong>@row.SuggestedLocationCode</strong></div>}<form asp-action="Assign" method="post" class="d-flex gap-2"><input type="hidden" name="productId" value="@row.ProductId"/><input type="hidden" name="warehouseId" value="@row.WarehouseId"/><input type="hidden" name="idempotencyKey" value="@Guid.NewGuid().ToString("N")"/><select name="storageLocationId" class="form-select" required><option value="">@Localizer["Select rack/bin"]</option>@foreach(var x in availableLocations){<option value="@x.Id" selected="@(row.SuggestedLocationId==x.Id)">@x.Code</option>}</select><input name="quantity" type="number" value="@row.UnassignedQuantity" min="0.001" max="@row.UnassignedQuantity" step="0.001" class="form-control" style="max-width:140px"/><button class="btn btn-success">@Localizer["Save"]</button></form></td></tr>}@if(Model.Count==0){<tr><td colspan="5" class="text-center text-muted">@Localizer["All stock has an exact location."]</td></tr>}</tbody></table></div>
 </div>
+@if(canEdit){<script>
+const ruleWarehouse=document.getElementById('ruleWarehouse'),ruleLocation=document.getElementById('ruleLocation'),ruleProduct=document.getElementById('ruleProduct'),ruleCategory=document.getElementById('ruleCategory');
+const locationOptions=[...ruleLocation.options].slice(1).map(x=>({value:x.value,text:x.textContent,warehouse:x.dataset.warehouse}));
+ruleWarehouse.addEventListener('change',()=>{ruleLocation.length=1;locationOptions.filter(x=>x.warehouse===ruleWarehouse.value).forEach(x=>ruleLocation.add(new Option(x.text,x.value)));});
+ruleProduct.addEventListener('change',()=>{ruleCategory.disabled=!!ruleProduct.value;if(ruleProduct.value)ruleCategory.value='';});
+ruleCategory.addEventListener('change',()=>{ruleProduct.disabled=!!ruleCategory.value;if(ruleCategory.value)ruleProduct.value='';});
+</script>}

@@ -964,6 +964,16 @@ Check(productPutawayRule.ProductId == 3 && productPutawayRule.Priority == 10 && 
     "Putaway rules must preserve product/category scope, destination and priority");
 CheckArgumentThrows(() => new PutawayRule(1, 2, 3, 4, 10),
     "A putaway rule cannot target a product and category simultaneously");
+productPutawayRule.SetActive(false);
+Check(!productPutawayRule.IsActive,
+    "Putaway rules must support an explicit reversible active-state transition");
+var createPutawayRuleAction = typeof(UnassignedStockController).GetMethod(nameof(UnassignedStockController.CreateRule))!;
+var activatePutawayRuleAction = typeof(UnassignedStockController).GetMethod(nameof(UnassignedStockController.SetRuleActive))!;
+Check(createPutawayRuleAction.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
+      $"{PermissionAuthorizeAttribute.PolicyPrefix}ProductStock.Edit" &&
+      activatePutawayRuleAction.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
+      $"{PermissionAuthorizeAttribute.PolicyPrefix}ProductStock.Edit",
+    "Putaway-rule administration must require stock edit permission");
 
 Console.WriteLine($"Passed {count} security and inventory regression checks.");
 
