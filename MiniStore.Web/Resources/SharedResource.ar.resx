@@ -760,4 +760,24 @@
   <data name="Purchase" xml:space="preserve"><value>شراء</value></data>
   <data name="Sale" xml:space="preserve"><value>بيع</value></data>
   <data name="Walk-in customer" xml:space="preserve"><value>عميل نقدي</value></data>
+  <data name="Communication log" xml:space="preserve"><value>سجل التواصل</value></data>
+  <data name="Party name" xml:space="preserve"><value>اسم الجهة</value></data>
+  <data name="Phone, email or address" xml:space="preserve"><value>الهاتف أو البريد أو العنوان</value></data>
+  <data name="Communication notes" xml:space="preserve"><value>ملاحظات التواصل</value></data>
+  <data name="Record communication" xml:space="preserve"><value>تسجيل التواصل</value></data>
+  <data name="Recall communication recorded." xml:space="preserve"><value>تم تسجيل تواصل الاستدعاء.</value></data>
+  <data name="Email" xml:space="preserve"><value>بريد إلكتروني</value></data>
+  <data name="Sms" xml:space="preserve"><value>رسالة نصية</value></data>
+  <data name="InPerson" xml:space="preserve"><value>شخصياً</value></data>
+  <data name="Other" xml:space="preserve"><value>أخرى</value></data>
+  <data name="Attempted" xml:space="preserve"><value>تمت المحاولة</value></data>
+  <data name="Reached" xml:space="preserve"><value>تم الوصول</value></data>
+  <data name="Confirmed" xml:space="preserve"><value>تم التأكيد</value></data>
+  <data name="Failed" xml:space="preserve"><value>فشل</value></data>
+  <data name="Communication can only be recorded for an active recall." xml:space="preserve"><value>يمكن تسجيل التواصل للاستدعاء الفعال فقط.</value></data>
+  <data name="Inventory recall is required." xml:space="preserve"><value>استدعاء المخزون مطلوب.</value></data>
+  <data name="Communication party is required and cannot exceed 200 characters." xml:space="preserve"><value>جهة التواصل مطلوبة ولا يجوز أن تتجاوز 200 حرف.</value></data>
+  <data name="Communication address cannot exceed 200 characters." xml:space="preserve"><value>عنوان التواصل لا يجوز أن يتجاوز 200 حرف.</value></data>
+  <data name="Communication channel or outcome is invalid." xml:space="preserve"><value>وسيلة التواصل أو نتيجته غير صحيحة.</value></data>
+  <data name="Communication notes are required and cannot exceed 500 characters." xml:space="preserve"><value>ملاحظات التواصل مطلوبة ولا يجوز أن تتجاوز 500 حرف.</value></data>
 </root>

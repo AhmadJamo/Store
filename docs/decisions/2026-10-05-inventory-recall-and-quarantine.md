@@ -20,3 +20,4 @@ Recall completion means the investigation or outreach process is closed; it does
 - Depleted identities can still be recalled when history exists; no inventory history is invented.
 - Available balances are blocked immediately through the existing quarantine status.
 - Customer/supplier contact workflows and external notification delivery remain future integrations.
+- Manual/external communication results are append-only recall children; automated provider delivery remains a separate integration.

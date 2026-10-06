@@ -20,7 +20,7 @@ public static class TenantIsolationModel
         typeof(AccountingSettings), typeof(InventorySettings), typeof(PaymentMethod),
         typeof(StorageLocation), typeof(ProductLocationStock), typeof(LocationMovement), typeof(StockMovement), typeof(InventoryBalance),
         typeof(InventoryReservation), typeof(InventoryReservationLine), typeof(InventoryAdjustment), typeof(InventoryAdjustmentLine),
-        typeof(InventoryTrackingBalance), typeof(InventoryTrackingTransaction), typeof(InventoryRecall)
+        typeof(InventoryTrackingBalance), typeof(InventoryTrackingTransaction), typeof(InventoryRecall), typeof(InventoryRecallCommunication)
     }.ToFrozenSet();
 
     public static IReadOnlySet<Type> NonBusinessTypes { get; } = new Type[]

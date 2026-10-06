@@ -1,6 +1,8 @@
 namespace MiniStore.Domain.Entities;
 
 public enum InventoryRecallStatus { Active = 1, Closed = 2 }
+public enum RecallCommunicationChannel { Phone = 1, Email = 2, Sms = 3, InPerson = 4, Other = 5 }
+public enum RecallCommunicationOutcome { Attempted = 1, Reached = 2, Confirmed = 3, Failed = 4 }
 
 public sealed class InventoryRecall
 {
@@ -36,4 +38,19 @@ public sealed class InventoryRecall
         EnsureUser(userId);Status=InventoryRecallStatus.Closed;ClosureNotes=notes.Trim();ClosedByUserId=userId.Trim();ClosedAt=DateTime.UtcNow;
     }
     private static void EnsureUser(string value){if(string.IsNullOrWhiteSpace(value)||value.Trim().Length>450)throw new ArgumentException("User is required.");}
+}
+
+public sealed class InventoryRecallCommunication
+{
+    private InventoryRecallCommunication(){PartyName=ChannelAddress=Notes=CreatedByUserId=string.Empty;}
+    public long Id{get;private set;}public long InventoryRecallId{get;private set;}public string PartyName{get;private set;}public string ChannelAddress{get;private set;}
+    public RecallCommunicationChannel Channel{get;private set;}public RecallCommunicationOutcome Outcome{get;private set;}public string Notes{get;private set;}
+    public string CreatedByUserId{get;private set;}public DateTime CreatedAt{get;private set;}
+    public InventoryRecallCommunication(long recallId,string partyName,string? channelAddress,RecallCommunicationChannel channel,RecallCommunicationOutcome outcome,string notes,string userId)
+    {
+        if(recallId<=0)throw new ArgumentException("Inventory recall is required.");if(string.IsNullOrWhiteSpace(partyName)||partyName.Trim().Length>200)throw new ArgumentException("Communication party is required and cannot exceed 200 characters.");
+        if(channelAddress?.Trim().Length>200)throw new ArgumentException("Communication address cannot exceed 200 characters.");if(!Enum.IsDefined(channel)||!Enum.IsDefined(outcome))throw new ArgumentException("Communication channel or outcome is invalid.");
+        if(string.IsNullOrWhiteSpace(notes)||notes.Trim().Length>500)throw new ArgumentException("Communication notes are required and cannot exceed 500 characters.");if(string.IsNullOrWhiteSpace(userId)||userId.Trim().Length>450)throw new ArgumentException("User is required.");
+        InventoryRecallId=recallId;PartyName=partyName.Trim();ChannelAddress=channelAddress?.Trim()??string.Empty;Channel=channel;Outcome=outcome;Notes=notes.Trim();CreatedByUserId=userId.Trim();CreatedAt=DateTime.UtcNow;
+    }
 }

@@ -1,5 +1,11 @@
 # AI Work Log
 
+## 2026-10-06 — Recall communication evidence
+
+- Added append-only recall communication entries for party, contact address, Phone/Email/SMS/In-person/Other channel, Attempted/Reached/Confirmed/Failed outcome, notes, actor and time.
+- Restricted new entries to Active recalls and retained the log after closure.
+- Added bilingual recall UI and tenant-safe child mapping. Migration `AddInventoryRecallCommunicationLog` is applied to `AHMAD/MiniStoreDb`; 341 focused checks and the disposable SQL workflow passed.
+
 ## 2026-10-06 — Recall affected-party report
 
 - Resolved recall trace references into purchase, sale, transfer and return impact rows.

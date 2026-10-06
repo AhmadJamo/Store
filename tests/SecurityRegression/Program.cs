@@ -930,6 +930,14 @@ Check(recallAction.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
       $"{PermissionAuthorizeAttribute.PolicyPrefix}InventoryTracking.ManageRecall" &&
       PermissionDefinitions.All.Any(x => x.Name == "InventoryTracking.ManageRecall"),
     "Inventory recall creation must require its dedicated permission");
+var communication = new InventoryRecallCommunication(1, "Affected customer", "0790000000",
+    RecallCommunicationChannel.Phone, RecallCommunicationOutcome.Reached, "Customer acknowledged recall", "agent");
+Check(communication.Channel == RecallCommunicationChannel.Phone && communication.Outcome == RecallCommunicationOutcome.Reached,
+    "Recall communication entries must preserve immutable channel, outcome and audit facts");
+var communicationAction = typeof(InventoryTrackingController).GetMethod(nameof(InventoryTrackingController.RecordRecallCommunication))!;
+Check(communicationAction.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
+      $"{PermissionAuthorizeAttribute.PolicyPrefix}InventoryTracking.ManageRecall",
+    "Recall communication logging must require recall management permission");
 
 Console.WriteLine($"Passed {count} security and inventory regression checks.");
 

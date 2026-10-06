@@ -330,6 +330,9 @@ static async Task VerifyOpeningTrackingAllocationAsync(int tenantId, int product
         .Where(x => x.ProductId == productId && x.Identifier == "LOT-A" && x.Quantity > 0).ToListAsync();
     if (recall.Status != InventoryRecallStatus.Active || recalledBalances.Any(x => x.Status != InventoryTrackingStatus.Quarantined))
         throw new InvalidOperationException("Starting a recall must atomically quarantine every available balance for the selected identity.");
+    await service.RecordRecallCommunicationAsync(recall.Id, "Affected customer", "0790000000",
+        RecallCommunicationChannel.Phone, RecallCommunicationOutcome.Confirmed,
+        "Customer confirmed disposal", "recall-agent");
     await service.CloseRecallAsync(recall.Id, "All affected stock reviewed", "recall-user");
     if ((await context.InventoryRecalls.AsNoTracking().SingleAsync(x => x.Id == recall.Id)).Status != InventoryRecallStatus.Closed ||
         (await context.InventoryTrackingBalances.AsNoTracking().Where(x => x.ProductId == productId && x.Identifier == "LOT-A").ToListAsync()).Any(x => x.Quantity > 0 && x.Status != InventoryTrackingStatus.Quarantined))
@@ -341,6 +344,9 @@ static async Task VerifyOpeningTrackingAllocationAsync(int tenantId, int product
     if (!recallImpact.Any(x => x.DocumentType == "Sale" && x.Reference == "SALE-TRACKED") ||
         recallImpact.Single(x => x.DocumentType == "Transfer" && x.Reference == "TRF-TRACKED").Quantity != 1m)
         throw new InvalidOperationException("Recall impact must classify affected documents without double-counting transfer legs.");
+    var communication = trackingPage.Recalls.Single(x => x.Reference == "RCL-TRACKED").Communications.Single();
+    if (communication.Outcome != RecallCommunicationOutcome.Confirmed || communication.PartyName != "Affected customer")
+        throw new InvalidOperationException("Recall communication log must preserve immutable party, channel and outcome details.");
 }
 
 static async Task VerifyTrackedActivationGuardAsync(

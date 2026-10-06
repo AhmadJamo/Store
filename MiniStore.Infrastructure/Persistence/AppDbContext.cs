@@ -123,6 +123,7 @@ public class AppDbContext
     public DbSet<InventoryTrackingBalance> InventoryTrackingBalances => Set<InventoryTrackingBalance>();
     public DbSet<InventoryTrackingTransaction> InventoryTrackingTransactions => Set<InventoryTrackingTransaction>();
     public DbSet<InventoryRecall> InventoryRecalls => Set<InventoryRecall>();
+    public DbSet<InventoryRecallCommunication> InventoryRecallCommunications => Set<InventoryRecallCommunication>();
 
 
 

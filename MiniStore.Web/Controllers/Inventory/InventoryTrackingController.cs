@@ -1,4 +1,4 @@
-using System.Security.Claims;using Microsoft.AspNetCore.Mvc;using Microsoft.Extensions.Localization;using MiniStore.Application.DTOs.Inventory.Tracking;using MiniStore.Application.Services;using MiniStore.Web.Authorization;
+using System.Security.Claims;using Microsoft.AspNetCore.Mvc;using Microsoft.Extensions.Localization;using MiniStore.Application.DTOs.Inventory.Tracking;using MiniStore.Application.Services;using MiniStore.Domain.Entities;using MiniStore.Web.Authorization;
 namespace MiniStore.Web.Controllers;
 public sealed class InventoryTrackingController(InventoryTrackingService service,IStringLocalizer<SharedResource> localizer):Controller
 {
@@ -26,6 +26,13 @@ public sealed class InventoryTrackingController(InventoryTrackingService service
  public async Task<IActionResult> CloseRecall(long recallId,string notes)
  {
   try{await service.CloseRecallAsync(recallId,notes,User.FindFirstValue(ClaimTypes.NameIdentifier)??throw new InvalidOperationException("Authenticated user was not found."));TempData["NotificationType"]="success";TempData["NotificationMessage"]=localizer["Recall closed. Quarantined stock remains blocked until explicitly released."].Value;}
+  catch(Exception ex)when(ex is ArgumentException or InvalidOperationException){TempData["NotificationType"]="danger";TempData["NotificationMessage"]=localizer[ex.Message].Value;}
+  return RedirectToAction(nameof(Index));
+ }
+ [HttpPost,ValidateAntiForgeryToken,PermissionAuthorize("InventoryTracking.ManageRecall")]
+ public async Task<IActionResult> RecordRecallCommunication(long recallId,string partyName,string? channelAddress,RecallCommunicationChannel channel,RecallCommunicationOutcome outcome,string notes)
+ {
+  try{await service.RecordRecallCommunicationAsync(recallId,partyName,channelAddress,channel,outcome,notes,User.FindFirstValue(ClaimTypes.NameIdentifier)??throw new InvalidOperationException("Authenticated user was not found."));TempData["NotificationType"]="success";TempData["NotificationMessage"]=localizer["Recall communication recorded."].Value;}
   catch(Exception ex)when(ex is ArgumentException or InvalidOperationException){TempData["NotificationType"]="danger";TempData["NotificationMessage"]=localizer[ex.Message].Value;}
   return RedirectToAction(nameof(Index));
  }

@@ -8,7 +8,7 @@ public sealed class InventoryTrackingService(IInventoryTrackingRepository tracki
  {
   var ps=await products.GetAllAsync(null);var ws=await warehouses.GetAllAsync();var ls=await locations.SearchAsync(null,null);
   var productMap=ps.ToDictionary(x=>x.Id);var names=ps.ToDictionary(x=>x.Id,x=>x.Name);var warehouseNames=ws.ToDictionary(x=>x.Id,x=>x.Name);var locationNames=ls.ToDictionary(x=>x.Id,x=>$"{x.Code} — {x.Name}");
-  var bs=await tracking.GetBalancesAsync();var ts=await tracking.GetTransactionsAsync();var recallRows=await recalls.GetAllAsync();
+  var bs=await tracking.GetBalancesAsync();var ts=await tracking.GetTransactionsAsync();var recallRows=await recalls.GetAllAsync();var communicationRows=await recalls.GetCommunicationsAsync();
   var purchaseMap=(await purchases.GetAllAsync()).ToDictionary(x=>x.InvoiceNumber,StringComparer.OrdinalIgnoreCase);var supplierMap=(await suppliers.GetAllAsync()).ToDictionary(x=>x.Id);
   var saleMap=(await sales.GetAllAsync()).ToDictionary(x=>x.InvoiceNumber,StringComparer.OrdinalIgnoreCase);var customerMap=(await customers.GetAllAsync()).ToDictionary(x=>x.Id);
   var today=DateOnly.FromDateTime(DateTime.Today);var rows=bs.Select(x=>{var days=x.ExpirationDate.HasValue?x.ExpirationDate.Value.DayNumber-today.DayNumber:(int?)null;var warning=productMap.GetValueOrDefault(x.ProductId)?.ExpirationWarningDays??30;var state=!days.HasValue?"No expiration":days<0?"Expired":days<=warning?"Expiring soon":"Valid";return new TrackingBalanceRowDto{Id=x.Id,Product=names.GetValueOrDefault(x.ProductId,"Unknown"),Warehouse=warehouseNames.GetValueOrDefault(x.WarehouseId,"Unknown"),Location=x.StorageLocationId.HasValue?locationNames.GetValueOrDefault(x.StorageLocationId.Value,"Unknown"):"Unassigned (system)",Policy=x.Policy,Identifier=x.Identifier,Quantity=x.Quantity,ExpirationDate=x.ExpirationDate,Status=x.Status,ExpirationState=state,DaysUntilExpiration=days};}).ToList();
@@ -16,7 +16,7 @@ public sealed class InventoryTrackingService(IInventoryTrackingRepository tracki
   return new(){Input=input??new(),Products=ps.Where(x=>x.InventoryBehavior==ProductInventoryBehavior.Stocked&&x.TrackingPolicy==ProductTrackingPolicy.None).Select(x=>(x.Id,x.Name)).ToList(),TrackedProducts=ps.Where(x=>x.TrackingPolicy!=ProductTrackingPolicy.None).Select(x=>(x.Id,x.Name)).ToList(),
    Warehouses=ws.Select(x=>(x.Id,x.Name)).ToList(),Locations=ls.Where(x=>x.Status==StorageLocationStatus.Active).Select(x=>(x.Id,x.WarehouseId,$"{x.Code} — {x.Name}")).ToList(),
    Balances=rows,ExpirationAlerts=alerts,ExpiredCount=alerts.Count(x=>x.Severity=="Expired"),ExpiringSoonCount=alerts.Count(x=>x.Severity=="Expiring soon"),
-   Transactions=ts.Take(200).Select(x=>new TrackingTransactionRowDto{Product=names.GetValueOrDefault(x.ProductId,"Unknown"),Identifier=x.Identifier,Quantity=x.Quantity,Type=x.Type,Reference=x.SourceReference,CreatedAt=x.CreatedAt}).ToList(),Recalls=recallRows.Select(x=>new InventoryRecallRowDto{Id=x.Id,Reference=x.Reference,Product=names.GetValueOrDefault(x.ProductId,"Unknown"),Identifier=x.Identifier,Reason=x.Reason,Status=x.Status,CreatedAt=x.CreatedAt,ClosedAt=x.ClosedAt,ClosureNotes=x.ClosureNotes,Impacts=BuildRecallImpacts(ts.Where(t=>t.ProductId==x.ProductId&&t.Identifier==x.Identifier),purchaseMap,supplierMap,saleMap,customerMap)}).ToList()};
+   Transactions=ts.Take(200).Select(x=>new TrackingTransactionRowDto{Product=names.GetValueOrDefault(x.ProductId,"Unknown"),Identifier=x.Identifier,Quantity=x.Quantity,Type=x.Type,Reference=x.SourceReference,CreatedAt=x.CreatedAt}).ToList(),Recalls=recallRows.Select(x=>new InventoryRecallRowDto{Id=x.Id,Reference=x.Reference,Product=names.GetValueOrDefault(x.ProductId,"Unknown"),Identifier=x.Identifier,Reason=x.Reason,Status=x.Status,CreatedAt=x.CreatedAt,ClosedAt=x.ClosedAt,ClosureNotes=x.ClosureNotes,Impacts=BuildRecallImpacts(ts.Where(t=>t.ProductId==x.ProductId&&t.Identifier==x.Identifier),purchaseMap,supplierMap,saleMap,customerMap),Communications=communicationRows.Where(c=>c.InventoryRecallId==x.Id).Select(c=>new RecallCommunicationRowDto{PartyName=c.PartyName,ChannelAddress=c.ChannelAddress,Channel=c.Channel,Outcome=c.Outcome,Notes=c.Notes,CreatedAt=c.CreatedAt}).ToList()}).ToList()};
  }
  public async Task OpenAsync(OpenTrackingAllocationDto dto,string userId)
  {
@@ -174,6 +174,10 @@ public sealed class InventoryTrackingService(IInventoryTrackingRepository tracki
  public async Task CloseRecallAsync(long recallId,string notes,string userId)
  {
   await unitOfWork.ExecuteInTransactionAsync(async()=>{var recall=await recalls.GetByIdForUpdateAsync(recallId)??throw new InvalidOperationException("Inventory recall was not found.");recall.Close(notes,userId);});
+ }
+ public async Task RecordRecallCommunicationAsync(long recallId,string partyName,string? channelAddress,RecallCommunicationChannel channel,RecallCommunicationOutcome outcome,string notes,string userId)
+ {
+  await unitOfWork.ExecuteInTransactionAsync(async()=>{var recall=await recalls.GetByIdForUpdateAsync(recallId)??throw new InvalidOperationException("Inventory recall was not found.");if(recall.Status!=InventoryRecallStatus.Active)throw new InvalidOperationException("Communication can only be recorded for an active recall.");await recalls.AddCommunicationAsync(new InventoryRecallCommunication(recallId,partyName,channelAddress,channel,outcome,notes,userId));});
  }
 
  private static List<(string Identifier,decimal Quantity)> ParseAllocations(Product product,string? value,decimal expectedQuantity)

@@ -65,6 +65,8 @@ The expiration alert center is a live tenant-safe projection over positive track
 
 Recall impact resolves immutable tracking references into purchase/sale/transfer/return document types. Purchase receipts show the supplier and stored phone when available; sale issues show the customer name or an explicit walk-in customer label. Quantity is aggregated per document and transfer source/destination legs are counted once. The report is operational evidence, not an automated outbound message.
 
+While a recall is Active, authorized users may append immutable communication entries containing party, phone/email/address, channel, outcome, notes, actor and UTC time. Communication history remains visible after closure and cannot be edited. Automated sending is not implied; entries record actual manual or externally completed contact.
+
 ## Warehouse operating policies
 Warehouse operational use is independent from inventory control. Types cover general, central, branch backroom, sales floor, outlet, production, transit, returns and quarantine uses. Control modes are Simple, LocationManaged and Hybrid. An organized sales-floor or central warehouse may explicitly allow direct POS sales.
 
