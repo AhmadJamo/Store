@@ -15,4 +15,5 @@ public class StockTransferItemDto
     public int? DestinationLocationId { get; set; }
     public string SourceLocationCode { get; set; } = "Legacy / unassigned";
     public string DestinationLocationCode { get; set; } = "Legacy / unassigned";
+    public string? TrackingAllocations { get; set; }
 }

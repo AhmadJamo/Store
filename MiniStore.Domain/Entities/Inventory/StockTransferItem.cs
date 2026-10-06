@@ -11,6 +11,7 @@ public class StockTransferItem
     public decimal Quantity { get; private set; }
     public int? SourceLocationId { get; private set; }
     public int? DestinationLocationId { get; private set; }
+    public string? TrackingAllocations { get; private set; }
 
     private StockTransferItem()
     {
@@ -20,7 +21,8 @@ public class StockTransferItem
         int productId,
         decimal quantity,
         int? sourceLocationId = null,
-        int? destinationLocationId = null)
+        int? destinationLocationId = null,
+        string? trackingAllocations = null)
     {
         if (productId <= 0)
             throw new ArgumentException("Product is required.");
@@ -33,6 +35,7 @@ public class StockTransferItem
         Quantity = quantity;
         SourceLocationId = sourceLocationId;
         DestinationLocationId = destinationLocationId;
+        ChangeTrackingAllocations(trackingAllocations);
     }
 
     public void ChangeQuantity(decimal quantity)
@@ -49,5 +52,13 @@ public class StockTransferItem
         if (sourceLocationId <= 0) sourceLocationId = null;
         if (destinationLocationId <= 0) destinationLocationId = null;
         SourceLocationId = sourceLocationId; DestinationLocationId = destinationLocationId;
+    }
+
+    public void ChangeTrackingAllocations(string? value)
+    {
+        var normalized = string.IsNullOrWhiteSpace(value) ? null : value.Trim();
+        if (normalized?.Length > 2000)
+            throw new ArgumentException("Tracking allocations cannot exceed 2000 characters.");
+        TrackingAllocations = normalized;
     }
 }

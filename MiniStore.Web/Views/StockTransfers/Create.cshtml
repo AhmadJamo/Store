@@ -1,5 +1,6 @@
 ﻿@using MiniStore.Application.DTOs.StockTransfers
 @using MiniStore.Domain.Entities
+@inject Microsoft.Extensions.Localization.IStringLocalizer<MiniStore.Web.SharedResource> Localizer
 
 @model CreateStockTransferDto
 
@@ -266,6 +267,8 @@
                                 <th style="width: 25%;">
                                     Quantity
                                 </th>
+
+                                <th>@Localizer["Manual lot or serial selection"]</th>
 
                                 <th style="width: 15%;">
                                     Barcode
@@ -610,6 +613,8 @@
                                 placeholder="0.000" />
 
                         </td>
+
+                        <td><textarea name="Items[${itemIndex}].TrackingAllocations" class="form-control" rows="2" maxlength="2000" placeholder="@Localizer["Lot: quantity, or one serial per line"]"></textarea></td>
 
 
                         <td class="barcode-cell text-muted">

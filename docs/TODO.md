@@ -16,7 +16,8 @@ The ordered Arabic execution plan, workflow, business rules and rolling suggesti
 - [x] Add immutable manual recall communication history with channel and outcome.
 - [x] WMS-080A apply warehouse FIFO/FEFO/location-priority/minimize-locations policy to tracked issues and transfers.
 - [x] WMS-080B1 add auditable manual tracked-identity override to wholesale sales.
-- [ ] WMS-080B2 extend override to POS/transfers and add simple putaway rules.
+- [x] WMS-080B2 extend audited identity override to transfers and preserve exact identities on cancellation.
+- [ ] WMS-080B3 extend override to POS and add simple putaway rules.
 - [ ] Add scheduled/automated delivery channels and delivery-provider callbacks.
 
 ## Completed

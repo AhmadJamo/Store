@@ -291,15 +291,20 @@ static async Task VerifyOpeningTrackingAllocationAsync(int tenantId, int product
     await context.SaveChangesAsync();
     await new UnitOfWork(context).ExecuteInTransactionAsync(() => service.TransferAsync(
         trackedProduct, warehouseId, destinationWarehouse.Id, null, null, 1m,
-        "TRF-TRACKED", "transfer-user"));
+        "TRF-TRACKED", "transfer-user", "LOT-A:1"));
     var transferred = await context.InventoryTrackingBalances.AsNoTracking()
         .SingleAsync(x => x.ProductId == productId && x.WarehouseId == destinationWarehouse.Id);
     var transferHistory = await context.InventoryTrackingTransactions.AsNoTracking()
         .Where(x => x.ProductId == productId && x.SourceReference == "TRF-TRACKED")
         .ToListAsync();
     if (transferred.Identifier != "LOT-A" || transferred.Quantity != 1m ||
-        transferHistory.Count != 2 || transferHistory.Sum(x => x.Quantity) != 0)
+        transferHistory.Count != 2 || transferHistory.Sum(x => x.Quantity) != 0 ||
+        transferHistory.Any(x => x.PickingStrategy != InventoryPickingStrategy.Manual))
         throw new InvalidOperationException("Tracked transfer must preserve the lot identity and write balanced source/destination history.");
+    var cancellationSelection = await service.GetTransferredAllocationTextAsync(
+        "TRF-TRACKED", productId, destinationWarehouse.Id, null);
+    if (cancellationSelection != "LOT-A:1")
+        throw new InvalidOperationException("Transfer cancellation must reconstruct the exact identities delivered by the original transfer.");
 
     await new UnitOfWork(context).ExecuteInTransactionAsync(async () =>
     {

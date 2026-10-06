@@ -1,5 +1,6 @@
 ﻿```cshtml
 @using MiniStore.Application.DTOs.StockTransfers
+@inject Microsoft.Extensions.Localization.IStringLocalizer<MiniStore.Web.SharedResource> Localizer
 
 @model UpdateStockTransferDto
 
@@ -322,6 +323,12 @@
 
                             </div>
 
+                            <div class="col-12 mb-2">
+                                <label class="form-label">@Localizer["Manual lot or serial selection"]</label>
+                                <textarea name="Items[@i].TrackingAllocations" class="form-control tracking-allocations" rows="2" maxlength="2000" placeholder="@Localizer["Lot: quantity, or one serial per line"]">@Model.Items[i].TrackingAllocations</textarea>
+                                <div class="form-text">@Localizer["Leave empty to use the warehouse removal strategy."]</div>
+                            </div>
+
 
                             <!-- Remove -->
 
@@ -477,6 +484,10 @@
                                 row.querySelector(
                                     ".quantity-input");
 
+                            const trackingAllocations =
+                                row.querySelector(
+                                    ".tracking-allocations");
+
 
                             if (productSelect) {
 
@@ -493,6 +504,11 @@
                                     "Items[" +
                                     index +
                                     "].Quantity";
+                            }
+
+                            if (trackingAllocations) {
+                                trackingAllocations.name =
+                                    "Items[" + index + "].TrackingAllocations";
                             }
 
                         });
@@ -629,6 +645,12 @@
                         'class="form-control barcode-display" ' +
                         'readonly />' +
 
+                        '</div>' +
+
+                        '<div class="col-12 mb-2">' +
+                        '<label class="form-label">@Localizer["Manual lot or serial selection"]</label>' +
+                        '<textarea class="form-control tracking-allocations" rows="2" maxlength="2000" placeholder="@Localizer["Lot: quantity, or one serial per line"]"></textarea>' +
+                        '<div class="form-text">@Localizer["Leave empty to use the warehouse removal strategy."]</div>' +
                         '</div>' +
 
 

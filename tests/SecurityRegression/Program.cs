@@ -954,6 +954,9 @@ var manuallySelectedIssue = new InventoryTrackingTransaction(earlierExpiry, -1m,
     InventoryTrackingTransactionType.Issue, "SALE-MANUAL", "picker", InventoryPickingStrategy.Manual);
 Check(manuallySelectedIssue.PickingStrategy == InventoryPickingStrategy.Manual,
     "Tracked issue history must preserve an auditable manual-selection marker");
+var trackedTransferItem = new StockTransferItem(1, 2m, null, null, " lot-a:2 ");
+Check(trackedTransferItem.TrackingAllocations == "lot-a:2",
+    "Draft transfer lines must preserve their requested tracked identity allocation");
 
 Console.WriteLine($"Passed {count} security and inventory regression checks.");
 

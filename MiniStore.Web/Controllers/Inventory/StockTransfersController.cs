@@ -382,7 +382,8 @@ public class StockTransfersController : Controller
                     SourceLocationId = item.SourceLocationId,
                     DestinationLocationId = item.DestinationLocationId,
                     SourceLocationCode = storageLocations.FirstOrDefault(x => x.Id == item.SourceLocationId)?.Code ?? "Legacy / unassigned",
-                    DestinationLocationCode = storageLocations.FirstOrDefault(x => x.Id == item.DestinationLocationId)?.Code ?? "Legacy / unassigned"
+                    DestinationLocationCode = storageLocations.FirstOrDefault(x => x.Id == item.DestinationLocationId)?.Code ?? "Legacy / unassigned",
+                    TrackingAllocations = item.TrackingAllocations
                 });
         }
 
@@ -490,7 +491,8 @@ public class StockTransfersController : Controller
                                 item.ProductId,
                                 item.Quantity,
                                 item.SourceLocationId,
-                                item.DestinationLocationId))
+                                item.DestinationLocationId,
+                                item.TrackingAllocations))
                     .ToList();
 
             var command =
@@ -601,7 +603,9 @@ public class StockTransfersController : Controller
                         item.SourceLocationId,
 
                     DestinationLocationId =
-                        item.DestinationLocationId
+                        item.DestinationLocationId,
+
+                    TrackingAllocations = item.TrackingAllocations
                 });
         }
 
@@ -653,7 +657,8 @@ public class StockTransfersController : Controller
                                 item.ProductId,
                                 item.Quantity,
                                 item.SourceLocationId,
-                                item.DestinationLocationId))
+                                item.DestinationLocationId,
+                                item.TrackingAllocations))
                     .ToList();
 
             var command =

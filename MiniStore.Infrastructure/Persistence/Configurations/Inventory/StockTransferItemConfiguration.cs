@@ -16,6 +16,9 @@ public class StockTransferItemConfiguration
             .HasPrecision(18, 3)
             .IsRequired();
 
+        builder.Property(x => x.TrackingAllocations)
+            .HasMaxLength(2000);
+
         builder.HasOne<Product>()
             .WithMany()
             .HasForeignKey(x => x.ProductId)

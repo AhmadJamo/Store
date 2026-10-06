@@ -38,16 +38,19 @@ public class CreateStockTransferItemCommand
     public decimal Quantity { get; }
     public int? SourceLocationId { get; }
     public int? DestinationLocationId { get; }
+    public string? TrackingAllocations { get; }
 
     public CreateStockTransferItemCommand(
         int productId,
         decimal quantity,
         int? sourceLocationId,
-        int? destinationLocationId)
+        int? destinationLocationId,
+        string? trackingAllocations = null)
     {
         ProductId = productId;
         Quantity = quantity;
         SourceLocationId = sourceLocationId;
         DestinationLocationId = destinationLocationId;
+        TrackingAllocations = trackingAllocations;
     }
 }

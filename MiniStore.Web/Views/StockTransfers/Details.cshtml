@@ -2,6 +2,7 @@
 @using MiniStore.Application.DTOs.StockTransfers
 @using MiniStore.Domain.Entities
 @using System.Security.Claims
+@inject Microsoft.Extensions.Localization.IStringLocalizer<MiniStore.Web.SharedResource> Localizer
 
 @model StockTransferDetailsDto
 
@@ -600,6 +601,7 @@
 
                             <th>From location</th>
                             <th>To location</th>
+                            <th>@Localizer["Tracked identity selection"]</th>
 
                             <th class="text-end">
                                 Quantity
@@ -637,6 +639,7 @@
 
                                 <td><strong>@item.SourceLocationCode</strong></td>
                                 <td><strong>@item.DestinationLocationCode</strong></td>
+                                <td>@if(!string.IsNullOrWhiteSpace(item.TrackingAllocations)){<code class="text-wrap">@item.TrackingAllocations</code>}else{<span>—</span>}</td>
 
                                 <td class="text-end">
                                     @item.Quantity.ToString("N3")
@@ -654,7 +657,7 @@
 
                         <tr>
 
-                            <th colspan="5"
+                            <th colspan="6"
                                 class="text-end">
 
                                 Total Quantity

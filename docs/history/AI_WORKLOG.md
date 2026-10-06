@@ -1,5 +1,12 @@
 # AI Work Log
 
+## 2026-10-06 — WMS-080B2 transfer identity override
+
+- Persisted optional lot/serial allocation text on transfer draft lines and exposed it on create, edit and details screens.
+- Posting applies exact-quantity, source-position, expiration and availability validation and marks resulting trace rows Manual.
+- Cancellation reconstructs the original delivered identities from immutable positive destination trace rows, preventing substitution by a new automatic allocation.
+- Created and applied migration `AddTransferTrackingAllocations` to `AHMAD/MiniStoreDb`; Release build, 346 focused checks and SQL integration passed.
+
 ## 2026-10-06 — WMS-080B1 audited manual tracked removal
 
 - Added optional exact lot/serial selection to wholesale sale lines with exact-quantity, availability, expiration and serial uniqueness validation.

@@ -95,7 +95,7 @@ public sealed class InventoryTrackingService(IInventoryTrackingRepository tracki
   foreach(var allocation in plan){allocation.Balance.Remove(allocation.Quantity);if(allocation.Balance.StorageLocationId.HasValue){var located=await locationStocks.GetAsync(product.Id,allocation.Balance.StorageLocationId.Value)??throw new InvalidOperationException("Tracked location stock is missing.");located.RemoveQuantity(allocation.Quantity);}await tracking.AddTransactionAsync(new InventoryTrackingTransaction(allocation.Balance,-allocation.Quantity,InventoryTrackingTransactionType.Issue,reference,userId,appliedStrategy));}
  }
 
- public async Task TransferAsync(Product product,int fromWarehouseId,int toWarehouseId,int? fromLocationId,int? toLocationId,decimal quantity,string reference,string userId)
+ public async Task TransferAsync(Product product,int fromWarehouseId,int toWarehouseId,int? fromLocationId,int? toLocationId,decimal quantity,string reference,string userId,string? allocationText=null)
  {
   if(product.TrackingPolicy==ProductTrackingPolicy.None)return;
   if(product.TrackingPolicy==ProductTrackingPolicy.Serial&&quantity!=decimal.Truncate(quantity))throw new InvalidOperationException("Serial-tracked transfer quantity must be a whole number.");
@@ -104,12 +104,21 @@ public sealed class InventoryTrackingService(IInventoryTrackingRepository tracki
   var locationSequences=(await locations.GetWarehouseLocationsAsync(fromWarehouseId)).ToDictionary(x=>x.Id,x=>x.Sequence);
   var candidates=InventoryRemovalAllocator.Order((await tracking.GetAvailableForUpdateAsync(product.Id,fromWarehouseId)).Where(x=>x.StorageLocationId==fromLocationId&&(!x.ExpirationDate.HasValue||x.ExpirationDate>=today)),warehouse.PickingStrategy,locationSequences).ToList();
   if(candidates.Sum(x=>x.Quantity)<quantity)throw new InvalidOperationException($"Insufficient tracked stock in the selected source position for product '{product.Name}'.");
-  var remaining=quantity;
-  foreach(var source in candidates){if(remaining<=0)break;var take=Math.Min(source.Quantity,remaining);var oldWarehouse=source.WarehouseId;var oldLocation=source.StorageLocationId;
-   if(source.Policy==ProductTrackingPolicy.Serial){source.Relocate(toWarehouseId,toLocationId);await tracking.AddTransactionAsync(new InventoryTrackingTransaction(source.Id,product.Id,oldWarehouse,oldLocation,source.Identifier,-1,InventoryTrackingTransactionType.Transfer,reference,userId,warehouse.PickingStrategy));await tracking.AddTransactionAsync(new InventoryTrackingTransaction(source.Id,product.Id,toWarehouseId,toLocationId,source.Identifier,1,InventoryTrackingTransactionType.Transfer,reference,userId,warehouse.PickingStrategy));}
-   else{source.Remove(take);var destination=await tracking.GetBalanceAsync(product.Id,toWarehouseId,toLocationId,source.Identifier);if(destination is null){destination=new InventoryTrackingBalance(product.Id,toWarehouseId,toLocationId,source.Policy,source.Identifier,take,source.ManufactureDate,source.ExpirationDate,reference);await tracking.AddBalanceAsync(destination);}else{if(destination.ManufactureDate!=source.ManufactureDate||destination.ExpirationDate!=source.ExpirationDate)throw new InvalidOperationException("Destination lot dates do not match the source lot.");destination.Add(take);}await tracking.AddTransactionAsync(new InventoryTrackingTransaction(source,-take,InventoryTrackingTransactionType.Transfer,reference,userId,warehouse.PickingStrategy));await tracking.AddTransactionAsync(new InventoryTrackingTransaction(destination,take,InventoryTrackingTransactionType.Transfer,reference,userId,warehouse.PickingStrategy));}
-   remaining-=take;
+  var plan=new List<(InventoryTrackingBalance Balance,decimal Quantity)>();var manual=!string.IsNullOrWhiteSpace(allocationText);
+  if(manual){foreach(var allocation in ParseAllocations(product,allocationText,quantity)){var left=allocation.Quantity;foreach(var balance in candidates.Where(x=>x.Identifier==allocation.Identifier)){if(left<=0)break;var take=Math.Min(balance.Quantity,left);plan.Add((balance,take));left-=take;}if(left>0)throw new InvalidOperationException($"Insufficient tracked stock for identity '{allocation.Identifier}' in the selected source position.");}}
+  else{var left=quantity;foreach(var balance in candidates){if(left<=0)break;var take=Math.Min(balance.Quantity,left);plan.Add((balance,take));left-=take;}}
+  var appliedStrategy=manual?InventoryPickingStrategy.Manual:warehouse.PickingStrategy;
+  foreach(var allocation in plan){var source=allocation.Balance;var take=allocation.Quantity;var oldWarehouse=source.WarehouseId;var oldLocation=source.StorageLocationId;
+   if(source.Policy==ProductTrackingPolicy.Serial){source.Relocate(toWarehouseId,toLocationId);await tracking.AddTransactionAsync(new InventoryTrackingTransaction(source.Id,product.Id,oldWarehouse,oldLocation,source.Identifier,-1,InventoryTrackingTransactionType.Transfer,reference,userId,appliedStrategy));await tracking.AddTransactionAsync(new InventoryTrackingTransaction(source.Id,product.Id,toWarehouseId,toLocationId,source.Identifier,1,InventoryTrackingTransactionType.Transfer,reference,userId,appliedStrategy));}
+   else{source.Remove(take);var destination=await tracking.GetBalanceAsync(product.Id,toWarehouseId,toLocationId,source.Identifier);if(destination is null){destination=new InventoryTrackingBalance(product.Id,toWarehouseId,toLocationId,source.Policy,source.Identifier,take,source.ManufactureDate,source.ExpirationDate,reference);await tracking.AddBalanceAsync(destination);}else{if(destination.ManufactureDate!=source.ManufactureDate||destination.ExpirationDate!=source.ExpirationDate)throw new InvalidOperationException("Destination lot dates do not match the source lot.");destination.Add(take);}await tracking.AddTransactionAsync(new InventoryTrackingTransaction(source,-take,InventoryTrackingTransactionType.Transfer,reference,userId,appliedStrategy));await tracking.AddTransactionAsync(new InventoryTrackingTransaction(destination,take,InventoryTrackingTransactionType.Transfer,reference,userId,appliedStrategy));}
   }
+ }
+
+ public async Task<string?> GetTransferredAllocationTextAsync(string reference,int productId,int warehouseId,int? locationId)
+ {
+  var rows=(await tracking.GetTransactionsAsync()).Where(x=>x.Type==InventoryTrackingTransactionType.Transfer&&x.SourceReference==reference&&x.ProductId==productId&&x.WarehouseId==warehouseId&&x.StorageLocationId==locationId&&x.Quantity>0).ToList();
+  if(rows.Count==0)return null;
+  return string.Join('\n',rows.GroupBy(x=>x.Identifier).Select(x=>$"{x.Key}:{x.Sum(y=>y.Quantity).ToString("0.######",System.Globalization.CultureInfo.InvariantCulture)}"));
  }
 
  public async Task ReturnSaleAsync(Product product,int warehouseId,decimal quantity,string? allocationText,string originalReference,string returnReference,string userId)

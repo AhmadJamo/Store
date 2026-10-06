@@ -155,7 +155,8 @@ public class StockTransferService : IStockTransferService
                             item.ProductId,
                             item.Quantity,
                             item.SourceLocationId,
-                            item.DestinationLocationId));
+                            item.DestinationLocationId,
+                            item.TrackingAllocations));
                 }
 
                 await _stockTransferRepository.AddAsync(
@@ -310,7 +311,8 @@ public class StockTransferService : IStockTransferService
                                 requestedItem.ProductId,
                                 requestedItem.Quantity,
                                 requestedItem.SourceLocationId,
-                                requestedItem.DestinationLocationId));
+                                requestedItem.DestinationLocationId,
+                                requestedItem.TrackingAllocations));
                     }
                     else
                     {
@@ -318,6 +320,7 @@ public class StockTransferService : IStockTransferService
                             requestedItem.ProductId,
                             requestedItem.Quantity);
                         existingItem.ChangeLocations(requestedItem.SourceLocationId, requestedItem.DestinationLocationId);
+                        existingItem.ChangeTrackingAllocations(requestedItem.TrackingAllocations);
                     }
                 }
             });
@@ -660,7 +663,7 @@ public class StockTransferService : IStockTransferService
                     await _inventoryTrackingService.TransferAsync(trackedProduct,
                         transfer.FromWarehouseId, transfer.ToWarehouseId,
                         item.SourceLocationId, item.DestinationLocationId,
-                        item.Quantity, transfer.TransferNumber, userId);
+                        item.Quantity, transfer.TransferNumber, userId, item.TrackingAllocations);
                 }
 
                 await _stockMovementService.PostTransferAsync(transfer, userId);
@@ -789,10 +792,12 @@ public class StockTransferService : IStockTransferService
                             $"Cancellation of {transfer.TransferNumber}",
                             destinationCostMovement));
 
+                    var cancellationAllocations = await _inventoryTrackingService.GetTransferredAllocationTextAsync(
+                        transfer.TransferNumber, item.ProductId, transfer.ToWarehouseId, item.DestinationLocationId);
                     await _inventoryTrackingService.TransferAsync(trackedProduct,
                         transfer.ToWarehouseId, transfer.FromWarehouseId,
                         item.DestinationLocationId, item.SourceLocationId,
-                        item.Quantity, $"Cancellation of {transfer.TransferNumber}", userId);
+                        item.Quantity, $"Cancellation of {transfer.TransferNumber}", userId, cancellationAllocations);
                 }
 
                 await _stockMovementService.ReverseTransferAsync(transfer.Id, userId);

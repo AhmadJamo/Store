@@ -7,4 +7,5 @@ public class CreateStockTransferItemDto
     public decimal Quantity { get; set; }
     public int? SourceLocationId { get; set; }
     public int? DestinationLocationId { get; set; }
+    public string? TrackingAllocations { get; set; }
 }
