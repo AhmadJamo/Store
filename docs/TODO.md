@@ -24,6 +24,7 @@ The ordered Arabic execution plan, workflow, business rules and rolling suggesti
 - [ ] Add scheduled/automated delivery channels and delivery-provider callbacks.
 
 ## Completed
+- Refactored the Web composition root into focused presentation, persistence, security, business-service and application-pipeline extensions; removed duplicate sale registrations without changing runtime behavior.
 - Core catalog, warehouse, supplier, inventory, purchase, sale and stock-transfer code exists.
 - Shared-database tenant isolation is implemented for all current business entities, including active membership validation, tenant-scoped reads/writes/unique indexes and demo-data backfill.
 - Added separately authenticated platform control center, bilingual public landing/pricing pages, plans/features/limits, tenant subscription states, user/warehouse limit enforcement and bounded percentage promotion codes.

@@ -4,7 +4,7 @@
 - Nullable references and implicit usings are enabled; asynchronous methods conventionally end in `Async`.
 - Domain entities use private setters and constructor/behaviour validation.
 - DTOs are manually mapped in services; entities are not intentionally returned to Razor views.
-- Repository interfaces are Domain; EF implementations Infrastructure; services are registered manually in Web `Program.cs`.
+- Repository interfaces are Domain; EF implementations are Infrastructure; services are registered explicitly in the feature-grouped Web configuration extensions invoked by `Program.cs`.
 - Controllers commonly add errors/TempData and redirect after writes. This is observed practice, not proof it is ideal.
 - EF transaction use is expected for multi-record business documents via `IUnitOfWork`.
 - Permission names use `Module.Action`; use `PermissionAuthorize` on controller actions.

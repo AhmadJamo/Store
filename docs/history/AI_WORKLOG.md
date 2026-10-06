@@ -1,5 +1,12 @@
 # AI Work Log
 
+## 2026-10-06 — Web composition-root cleanup
+
+- Reduced `Program.cs` to a readable composition entry point and moved presentation, persistence, security, feature DI, startup seeding and middleware/routes into focused Web configuration extensions.
+- Kept registrations explicit and grouped by business responsibility, preserving service lifetimes and middleware order.
+- Removed the duplicate `ISaleRepository` and `ISaleService` registrations; no database or business behavior changed.
+- No migration was required; Release build passed without warnings and 353 focused checks passed.
+
 ## 2026-10-06 — WMS-080C2 managed putaway suggestions
 
 - Added ProductStock.Edit-protected putaway-rule creation and active-state management to the Unassigned Stock screen.

@@ -6,7 +6,7 @@
 ## Solution and dependency direction
 `MiniStore.Domain` contains entities, enums, commands and repository/service interfaces. `MiniStore.Application` references Domain and contains DTOs plus use-case services. `MiniStore.Infrastructure` references Application and Domain and implements EF Core persistence, repositories, seeders, authorization service and Unit of Work. `MiniStore.Web` references Application and Infrastructure and is the MVC presentation/composition root.
 
-`Web → Application → Domain`; `Infrastructure → Application + Domain`. EF configuration lives in Infrastructure. `Program.cs` registers all concrete services/repositories and MVC/Identity.
+`Web → Application → Domain`; `Infrastructure → Application + Domain`. EF configuration lives in Infrastructure. `Program.cs` remains the composition entry point but delegates registrations to cohesive extensions under `MiniStore.Web/Configuration`: presentation, persistence, security and feature-grouped business services. Startup seeding and middleware/route composition are isolated there as well.
 
 Source files are grouped by business feature inside each layer. Entities, service contracts, services, repositories, EF configurations and controllers use the shared feature names Accounting, Catalog, Customers, Inventory, Purchases, Sales, Security, Settings and Suppliers; Web also contains Home. Shared infrastructure stays at the layer root or in a `Shared` folder. Razor views retain the MVC `Views/<ControllerName>/` convention and migrations retain chronological ordering. See `decisions/2026-09-13-feature-folder-organization.md`.
 
@@ -35,7 +35,7 @@ Browser → MVC controller → DTO model binding/ModelState → application serv
 - No validators, CQRS query objects, middleware classes, public API controllers, background jobs, or tests were found.
 
 ## Dependency injection
-See `08_CONFIGURATION.md`. `Program.cs` is the sole DI composition root. `ISaleRepository`/`ISaleService` are registered twice (same mapping) in `Program.cs`; no behavioural difference is implied.
+See `08_CONFIGURATION.md`. `Program.cs` is the concise composition entry point and calls the configuration extensions; each service mapping is registered once. Feature registrations remain explicit and searchable rather than using assembly scanning.
 
 ## Architectural risks
 - Role administration follows Controller → `TenantRoleService` → repository. Identity owns credentials while tenant roles, permissions and assignments form the company authorization boundary.

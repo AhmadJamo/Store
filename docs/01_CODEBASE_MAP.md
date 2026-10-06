@@ -127,7 +127,7 @@ Hierarchical location update (2026-09-30): StorageLocation retains its identity 
 ## Web source map
 | Files | Purpose | Related docs |
 |---|---|---|
-| `Program.cs`, `appsettings.json`, `Properties/launchSettings.json` | startup/configuration, including configurable registration throttling and friendly rejection routing | configuration/architecture. |
+| `Program.cs`, `Configuration/*.cs`, `appsettings.json`, `Properties/launchSettings.json` | concise composition entry point plus separated presentation, persistence, security, feature DI, startup seeding, middleware and configurable throttling | configuration/architecture. |
 | `Authorization/*.cs` | dynamic permission policy and handler | permissions/security. |
 | `Services/Security/CurrentUserService.cs` | current Identity user ID for auditing | security/database. |
 | `Services/Tenancy/HttpTenantContext.cs`, `Middleware/TenantSessionMiddleware.cs` | resolve, validate and refresh the authenticated company boundary | AppDbContext, login and localization. |
@@ -170,7 +170,7 @@ For exact module relationships, use `modules/*.md`; for entity and service detai
 - `MiniStore.Application/Permissions/AdministrationPermissions.cs`: shared Admin-only identity mutation boundary, consumed by both permission evaluators.
 - `tests/SecurityRegression/{SecurityRegression.csproj,Program.cs}`: standalone executable authorization/action regression checks; references Web; no test-framework dependency.
 - `tests/InventorySqlIntegration/{InventorySqlIntegration.csproj,Program.cs}`: disposable SQL Server fixture for two-tenant reconciliation translation/isolation and concurrent last-unit protection.
-- Runtime login limiter and Identity lockout: `Web/Program.cs` and `Controllers/Security/AccountController.cs`.
+- Runtime login limiter and Identity lockout: `Web/Configuration/{WebPresentation,Security}Extensions.cs` and `Controllers/Security/AccountController.cs`.
 - Bootstrap opt-in: `Infrastructure/Persistence/IdentitySeeder.cs` and Web appsettings.
 - Controller broad-error handling and five index delete forms: see security/controller/screen docs.
 

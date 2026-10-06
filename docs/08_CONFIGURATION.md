@@ -1,13 +1,13 @@
 # Configuration and runtime composition
 > Status: IMPLEMENTED WITH PRODUCTION GAPS  
-> Source of truth: `Program.cs`, project files, appsettings  
+> Source of truth: `Program.cs`, `MiniStore.Web/Configuration/*.cs`, project files, appsettings
 > Last reviewed: 2026-09-15
 
 ## Configuration
 `MiniStore.Web/appsettings.json` contains `ConnectionStrings:DefaultConnection`, disabled `AdminUser` and `PlatformOwner` bootstrap sections, registration rate-limit values, logging levels and wildcard `AllowedHosts`. No password is stored in current configuration. `PlatformOwner` may explicitly promote a named existing Identity user into the platform allow-list; it is disabled by default. `RateLimiting:Registration:PermitLimit` defaults to 20 and `WindowMinutes` defaults to 60; runtime clamps unsafe values to 5–1000 submissions and 1–1440 minutes.
 
 ## Runtime setup
-`Program.cs` registers MVC, localization/resources, memory cache, global antiforgery, Identity tenant and platform cookies, tenant/onboarding/SaaS/billing services, platform policies and named login/registration limits. Tenant-session validation runs after authentication; subscription lifecycle enforcement runs before tenant authorization. Request culture uses the user's cookie then the cached company default. Windows Event Log output is disabled, and startup database initialization failures exit cleanly. Startup runs Identity, permission and configured platform-operator seeders. It does not call `Database.Migrate`; migration deployment remains explicit.
+`Program.cs` only composes five explicit startup concerns. `WebPresentationExtensions` owns MVC, localization, antiforgery, cache and throttling; `PersistenceExtensions` owns DbContext and audit interception; `SecurityExtensions` owns Identity, cookies and authorization; `BusinessServicesExtensions` groups explicit repository/application registrations by feature; and `WebApplicationExtensions` owns startup seeding plus middleware/routes. Tenant-session validation runs after authentication; subscription lifecycle enforcement runs before tenant authorization. Request culture uses the user's cookie then the cached company default. Windows Event Log output is disabled, and startup database initialization failures exit cleanly. Startup runs Identity, permission and configured platform-operator seeders. It does not call `Database.Migrate`; migration deployment remains explicit.
 
 ## Required values
 - SQL Server connection string.
