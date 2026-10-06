@@ -327,7 +327,7 @@ public class SaleService : ISaleService
                     taxRate.IsPriceInclusive);
             }
 
-            var directRequirements = new List<(Product Product, decimal Quantity)>();
+            var directRequirements = new List<(Product Product, decimal Quantity, string? TrackingAllocations)>();
             var recipeRequirements = new Dictionary<int, (Product Product, decimal Quantity)>();
             var preparedUnitCosts = new Dictionary<int, decimal>();
 
@@ -405,7 +405,7 @@ public class SaleService : ISaleService
                 }
                 else
                 {
-                    directRequirements.Add((product, itemDto.Quantity));
+                    directRequirements.Add((product, itemDto.Quantity, itemDto.TrackingAllocations));
                 }
 
                 sale.AddItem(
@@ -447,7 +447,7 @@ public class SaleService : ISaleService
 
                 await _inventoryTrackingService.IssueAsync(
                     requirement.Product, dto.WarehouseId, requirement.Quantity,
-                    sale!.InvoiceNumber, createdByUserId);
+                    sale!.InvoiceNumber, createdByUserId, requirement.TrackingAllocations);
 
                 var costMovement = stock.RemoveQuantity(requirement.Quantity);
                 sale.Items.Single(x => x.ProductId == requirement.Product.Id)

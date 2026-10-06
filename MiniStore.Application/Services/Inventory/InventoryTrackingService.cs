@@ -16,7 +16,7 @@ public sealed class InventoryTrackingService(IInventoryTrackingRepository tracki
   return new(){Input=input??new(),Products=ps.Where(x=>x.InventoryBehavior==ProductInventoryBehavior.Stocked&&x.TrackingPolicy==ProductTrackingPolicy.None).Select(x=>(x.Id,x.Name)).ToList(),TrackedProducts=ps.Where(x=>x.TrackingPolicy!=ProductTrackingPolicy.None).Select(x=>(x.Id,x.Name)).ToList(),
    Warehouses=ws.Select(x=>(x.Id,x.Name)).ToList(),Locations=ls.Where(x=>x.Status==StorageLocationStatus.Active).Select(x=>(x.Id,x.WarehouseId,$"{x.Code} — {x.Name}")).ToList(),
    Balances=rows,ExpirationAlerts=alerts,ExpiredCount=alerts.Count(x=>x.Severity=="Expired"),ExpiringSoonCount=alerts.Count(x=>x.Severity=="Expiring soon"),
-   Transactions=ts.Take(200).Select(x=>new TrackingTransactionRowDto{Product=names.GetValueOrDefault(x.ProductId,"Unknown"),Identifier=x.Identifier,Quantity=x.Quantity,Type=x.Type,Reference=x.SourceReference,CreatedAt=x.CreatedAt}).ToList(),Recalls=recallRows.Select(x=>new InventoryRecallRowDto{Id=x.Id,Reference=x.Reference,Product=names.GetValueOrDefault(x.ProductId,"Unknown"),Identifier=x.Identifier,Reason=x.Reason,Status=x.Status,CreatedAt=x.CreatedAt,ClosedAt=x.ClosedAt,ClosureNotes=x.ClosureNotes,Impacts=BuildRecallImpacts(ts.Where(t=>t.ProductId==x.ProductId&&t.Identifier==x.Identifier),purchaseMap,supplierMap,saleMap,customerMap),Communications=communicationRows.Where(c=>c.InventoryRecallId==x.Id).Select(c=>new RecallCommunicationRowDto{PartyName=c.PartyName,ChannelAddress=c.ChannelAddress,Channel=c.Channel,Outcome=c.Outcome,Notes=c.Notes,CreatedAt=c.CreatedAt}).ToList()}).ToList()};
+   Transactions=ts.Take(200).Select(x=>new TrackingTransactionRowDto{Product=names.GetValueOrDefault(x.ProductId,"Unknown"),Identifier=x.Identifier,Quantity=x.Quantity,Type=x.Type,PickingStrategy=x.PickingStrategy,Reference=x.SourceReference,CreatedAt=x.CreatedAt}).ToList(),Recalls=recallRows.Select(x=>new InventoryRecallRowDto{Id=x.Id,Reference=x.Reference,Product=names.GetValueOrDefault(x.ProductId,"Unknown"),Identifier=x.Identifier,Reason=x.Reason,Status=x.Status,CreatedAt=x.CreatedAt,ClosedAt=x.ClosedAt,ClosureNotes=x.ClosureNotes,Impacts=BuildRecallImpacts(ts.Where(t=>t.ProductId==x.ProductId&&t.Identifier==x.Identifier),purchaseMap,supplierMap,saleMap,customerMap),Communications=communicationRows.Where(c=>c.InventoryRecallId==x.Id).Select(c=>new RecallCommunicationRowDto{PartyName=c.PartyName,ChannelAddress=c.ChannelAddress,Channel=c.Channel,Outcome=c.Outcome,Notes=c.Notes,CreatedAt=c.CreatedAt}).ToList()}).ToList()};
  }
  public async Task OpenAsync(OpenTrackingAllocationDto dto,string userId)
  {
@@ -67,7 +67,7 @@ public sealed class InventoryTrackingService(IInventoryTrackingRepository tracki
   foreach(var identifier in identifiers){if(await tracking.IdentifierExistsAsync(product.Id,ProductTrackingPolicy.Serial,identifier))throw new InvalidOperationException($"Serial '{identifier}' already exists.");var balance=new InventoryTrackingBalance(product.Id,warehouseId,null,ProductTrackingPolicy.Serial,identifier,1,manufactureDate,expirationDate,reference);await tracking.AddBalanceAsync(balance);await tracking.AddTransactionAsync(new InventoryTrackingTransaction(balance,1,InventoryTrackingTransactionType.Receipt,reference,userId));}
  }
 
- public async Task IssueAsync(Product product,int warehouseId,decimal quantity,string reference,string userId)
+ public async Task IssueAsync(Product product,int warehouseId,decimal quantity,string reference,string userId,string? allocationText=null)
  {
   if(product.TrackingPolicy==ProductTrackingPolicy.None)return;
   if(product.TrackingPolicy==ProductTrackingPolicy.Serial&&quantity!=decimal.Truncate(quantity))throw new InvalidOperationException("Serial-tracked issue quantity must be a whole number.");
@@ -76,8 +76,23 @@ public sealed class InventoryTrackingService(IInventoryTrackingRepository tracki
   var candidates=await tracking.GetAvailableForUpdateAsync(product.Id,warehouseId);var today=DateOnly.FromDateTime(DateTime.Today);
   var usable=InventoryRemovalAllocator.Order(candidates.Where(x=>!x.ExpirationDate.HasValue||x.ExpirationDate>=today),warehouse.PickingStrategy,locationSequences).ToList();
   if(usable.Sum(x=>x.Quantity)<quantity)throw new InvalidOperationException($"Insufficient non-expired tracked stock for product '{product.Name}'.");
-  var remaining=quantity;
-  foreach(var balance in usable){if(remaining<=0)break;var take=Math.Min(balance.Quantity,remaining);balance.Remove(take);if(balance.StorageLocationId.HasValue){var located=await locationStocks.GetAsync(product.Id,balance.StorageLocationId.Value)??throw new InvalidOperationException("Tracked location stock is missing.");located.RemoveQuantity(take);}await tracking.AddTransactionAsync(new InventoryTrackingTransaction(balance,-take,InventoryTrackingTransactionType.Issue,reference,userId));remaining-=take;}
+  var plan=new List<(InventoryTrackingBalance Balance,decimal Quantity)>();
+  var manual=!string.IsNullOrWhiteSpace(allocationText);
+  if(manual)
+  {
+   foreach(var allocation in ParseAllocations(product,allocationText,quantity))
+   {
+    var remainingAllocation=allocation.Quantity;
+    foreach(var balance in usable.Where(x=>x.Identifier==allocation.Identifier)){if(remainingAllocation<=0)break;var take=Math.Min(balance.Quantity,remainingAllocation);plan.Add((balance,take));remainingAllocation-=take;}
+    if(remainingAllocation>0)throw new InvalidOperationException($"Insufficient available tracked stock for identity '{allocation.Identifier}'.");
+   }
+  }
+  else
+  {
+   var remaining=quantity;foreach(var balance in usable){if(remaining<=0)break;var take=Math.Min(balance.Quantity,remaining);plan.Add((balance,take));remaining-=take;}
+  }
+  var appliedStrategy=manual?InventoryPickingStrategy.Manual:warehouse.PickingStrategy;
+  foreach(var allocation in plan){allocation.Balance.Remove(allocation.Quantity);if(allocation.Balance.StorageLocationId.HasValue){var located=await locationStocks.GetAsync(product.Id,allocation.Balance.StorageLocationId.Value)??throw new InvalidOperationException("Tracked location stock is missing.");located.RemoveQuantity(allocation.Quantity);}await tracking.AddTransactionAsync(new InventoryTrackingTransaction(allocation.Balance,-allocation.Quantity,InventoryTrackingTransactionType.Issue,reference,userId,appliedStrategy));}
  }
 
  public async Task TransferAsync(Product product,int fromWarehouseId,int toWarehouseId,int? fromLocationId,int? toLocationId,decimal quantity,string reference,string userId)
@@ -91,8 +106,8 @@ public sealed class InventoryTrackingService(IInventoryTrackingRepository tracki
   if(candidates.Sum(x=>x.Quantity)<quantity)throw new InvalidOperationException($"Insufficient tracked stock in the selected source position for product '{product.Name}'.");
   var remaining=quantity;
   foreach(var source in candidates){if(remaining<=0)break;var take=Math.Min(source.Quantity,remaining);var oldWarehouse=source.WarehouseId;var oldLocation=source.StorageLocationId;
-   if(source.Policy==ProductTrackingPolicy.Serial){source.Relocate(toWarehouseId,toLocationId);await tracking.AddTransactionAsync(new InventoryTrackingTransaction(source.Id,product.Id,oldWarehouse,oldLocation,source.Identifier,-1,InventoryTrackingTransactionType.Transfer,reference,userId));await tracking.AddTransactionAsync(new InventoryTrackingTransaction(source.Id,product.Id,toWarehouseId,toLocationId,source.Identifier,1,InventoryTrackingTransactionType.Transfer,reference,userId));}
-   else{source.Remove(take);var destination=await tracking.GetBalanceAsync(product.Id,toWarehouseId,toLocationId,source.Identifier);if(destination is null){destination=new InventoryTrackingBalance(product.Id,toWarehouseId,toLocationId,source.Policy,source.Identifier,take,source.ManufactureDate,source.ExpirationDate,reference);await tracking.AddBalanceAsync(destination);}else{if(destination.ManufactureDate!=source.ManufactureDate||destination.ExpirationDate!=source.ExpirationDate)throw new InvalidOperationException("Destination lot dates do not match the source lot.");destination.Add(take);}await tracking.AddTransactionAsync(new InventoryTrackingTransaction(source,-take,InventoryTrackingTransactionType.Transfer,reference,userId));await tracking.AddTransactionAsync(new InventoryTrackingTransaction(destination,take,InventoryTrackingTransactionType.Transfer,reference,userId));}
+   if(source.Policy==ProductTrackingPolicy.Serial){source.Relocate(toWarehouseId,toLocationId);await tracking.AddTransactionAsync(new InventoryTrackingTransaction(source.Id,product.Id,oldWarehouse,oldLocation,source.Identifier,-1,InventoryTrackingTransactionType.Transfer,reference,userId,warehouse.PickingStrategy));await tracking.AddTransactionAsync(new InventoryTrackingTransaction(source.Id,product.Id,toWarehouseId,toLocationId,source.Identifier,1,InventoryTrackingTransactionType.Transfer,reference,userId,warehouse.PickingStrategy));}
+   else{source.Remove(take);var destination=await tracking.GetBalanceAsync(product.Id,toWarehouseId,toLocationId,source.Identifier);if(destination is null){destination=new InventoryTrackingBalance(product.Id,toWarehouseId,toLocationId,source.Policy,source.Identifier,take,source.ManufactureDate,source.ExpirationDate,reference);await tracking.AddBalanceAsync(destination);}else{if(destination.ManufactureDate!=source.ManufactureDate||destination.ExpirationDate!=source.ExpirationDate)throw new InvalidOperationException("Destination lot dates do not match the source lot.");destination.Add(take);}await tracking.AddTransactionAsync(new InventoryTrackingTransaction(source,-take,InventoryTrackingTransactionType.Transfer,reference,userId,warehouse.PickingStrategy));await tracking.AddTransactionAsync(new InventoryTrackingTransaction(destination,take,InventoryTrackingTransactionType.Transfer,reference,userId,warehouse.PickingStrategy));}
    remaining-=take;
   }
  }

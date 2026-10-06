@@ -1,5 +1,13 @@
 # AI Work Log
 
+## 2026-10-06 — WMS-080B1 audited manual tracked removal
+
+- Added optional exact lot/serial selection to wholesale sale lines with exact-quantity, availability, expiration and serial uniqueness validation.
+- Persisted Manual or effective warehouse removal strategy on new tracking transactions and exposed it in tracking history.
+- Added bilingual wholesale UI and Arabic resources; existing rows remain null rather than receiving invented audit values.
+- Created and applied migration `AddTrackedRemovalStrategyAudit` to `AHMAD/MiniStoreDb`.
+- Release build passed without warnings, 345 focused checks and the disposable SQL integration workflow passed, and EF reports no pending model changes.
+
 ## 2026-10-06 — WMS-080A warehouse removal strategies
 
 - Added one deterministic allocator for tracked FIFO, FEFO, location-priority and minimize-locations removal.

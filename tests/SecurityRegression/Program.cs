@@ -950,6 +950,10 @@ Check(InventoryRemovalAllocator.Order(removalCandidates, InventoryPickingStrateg
     "Location-priority removal must respect the configured location sequence");
 Check(InventoryRemovalAllocator.Order(removalCandidates, InventoryPickingStrategy.MinimizeLocations)[0] == laterExpiry,
     "Minimize-locations removal must consume the largest balance first");
+var manuallySelectedIssue = new InventoryTrackingTransaction(earlierExpiry, -1m,
+    InventoryTrackingTransactionType.Issue, "SALE-MANUAL", "picker", InventoryPickingStrategy.Manual);
+Check(manuallySelectedIssue.PickingStrategy == InventoryPickingStrategy.Manual,
+    "Tracked issue history must preserve an auditable manual-selection marker");
 
 Console.WriteLine($"Passed {count} security and inventory regression checks.");
 

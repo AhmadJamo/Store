@@ -53,5 +53,5 @@ public sealed class TrackingBalanceRowDto
 public sealed class TrackingTransactionRowDto
 {
  public string Product{get;set;}="";public string Identifier{get;set;}="";public decimal Quantity{get;set;}public InventoryTrackingTransactionType Type{get;set;}
- public string Reference{get;set;}="";public DateTime CreatedAt{get;set;}
+ public InventoryPickingStrategy? PickingStrategy{get;set;} public string Reference{get;set;}="";public DateTime CreatedAt{get;set;}
 }

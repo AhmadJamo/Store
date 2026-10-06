@@ -14,4 +14,5 @@ public class SaleItemDto
 
     public decimal DiscountValue { get; set; }
     public string? Notes { get; set; }
+    public string? TrackingAllocations { get; set; }
 }

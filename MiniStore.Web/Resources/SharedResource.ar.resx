@@ -780,4 +780,14 @@
   <data name="Communication address cannot exceed 200 characters." xml:space="preserve"><value>عنوان التواصل لا يجوز أن يتجاوز 200 حرف.</value></data>
   <data name="Communication channel or outcome is invalid." xml:space="preserve"><value>وسيلة التواصل أو نتيجته غير صحيحة.</value></data>
   <data name="Communication notes are required and cannot exceed 500 characters." xml:space="preserve"><value>ملاحظات التواصل مطلوبة ولا يجوز أن تتجاوز 500 حرف.</value></data>
+  <data name="Manual lot or serial selection" xml:space="preserve"><value>اختيار يدوي للتشغيلة أو الرقم التسلسلي</value></data>
+  <data name="Lot: quantity, or one serial per line" xml:space="preserve"><value>التشغيلة: الكمية، أو رقم تسلسلي واحد في كل سطر</value></data>
+  <data name="Leave empty to use the warehouse removal strategy." xml:space="preserve"><value>اتركه فارغًا لاستخدام استراتيجية السحب المحددة للمستودع.</value></data>
+  <data name="Tracked identity selection" xml:space="preserve"><value>اختيار هوية التتبع</value></data>
+  <data name="Picking strategy" xml:space="preserve"><value>استراتيجية السحب</value></data>
+  <data name="Manual" xml:space="preserve"><value>يدوي</value></data>
+  <data name="Fifo" xml:space="preserve"><value>الأقدم استلامًا أولًا</value></data>
+  <data name="Fefo" xml:space="preserve"><value>الأقرب انتهاءً أولًا</value></data>
+  <data name="LocationPriority" xml:space="preserve"><value>أولوية الموقع</value></data>
+  <data name="MinimizeLocations" xml:space="preserve"><value>تقليل عدد المواقع</value></data>
 </root>

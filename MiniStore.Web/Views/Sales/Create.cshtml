@@ -150,6 +150,7 @@
                         {
                             <option value="@product.Id"
                                     data-sale-price="@product.SalePrice.ToString(CultureInfo.InvariantCulture)"
+                                    data-tracking-policy="@product.TrackingPolicy"
                                     data-barcode="@product.Barcode">
 
                                 @product.Name (@product.Barcode)
@@ -248,6 +249,17 @@
         </div>
 
         <div class="row">
+            <div class="col-md-8">
+                <div class="mb-3" id="trackingAllocationsContainer" hidden>
+                    <label for="trackingAllocations" class="form-label">@Localizer["Manual lot or serial selection"]</label>
+                    <textarea id="trackingAllocations" class="form-control" rows="2"
+                              placeholder="@Localizer["Lot: quantity, or one serial per line"]"></textarea>
+                    <div class="form-text">@Localizer["Leave empty to use the warehouse removal strategy."]</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
 
             <div class="col-md-3">
 
@@ -279,6 +291,7 @@
                         <th>Gross Total</th>
                         <th>Discount</th>
                         <th>Discount Amount</th>
+                        <th>@Localizer["Tracked identity selection"]</th>
                         <th>Total</th>
                         <th></th>
 
@@ -483,6 +496,12 @@
         const discountValueInput =
             document.getElementById("discountValue");
 
+        const trackingAllocationsInput =
+            document.getElementById("trackingAllocations");
+
+        const trackingAllocationsContainer =
+            document.getElementById("trackingAllocationsContainer");
+
         const invoiceDiscountType =
             document.getElementById("invoiceDiscountType");
 
@@ -521,7 +540,13 @@
 
         productSelect.addEventListener(
             "change",
-            updateSalePrice
+            function () {
+                updateSalePrice();
+                const policy = productSelect.selectedOptions[0]?.dataset.trackingPolicy;
+                trackingAllocationsContainer.hidden = !policy || policy === "None";
+                if (trackingAllocationsContainer.hidden)
+                    trackingAllocationsInput.value = "";
+            }
         );
 
 
@@ -626,6 +651,9 @@
                         discountValueInput.value
                     ) || 0;
 
+                const trackingAllocations =
+                    trackingAllocationsInput.value.trim();
+
 
                 if (!quantity || quantity <= 0) {
 
@@ -711,7 +739,8 @@
                     discountValue,
                     discountAmount,
                     grossTotal,
-                    total
+                    total,
+                    trackingAllocations
                 );
 
 
@@ -726,6 +755,9 @@
                 discountTypeSelect.value = "1";
 
                 discountValueInput.value = "0";
+
+                trackingAllocationsInput.value = "";
+                trackingAllocationsContainer.hidden = true;
 
             }
         );
@@ -774,7 +806,8 @@
             discountValue,
             discountAmount,
             grossTotal,
-            total
+            total,
+            trackingAllocations = ""
         ) {
 
             const row =
@@ -848,6 +881,13 @@
 
                     ${discountAmount.toFixed(2)}
 
+                </td>
+
+                <td>
+                    ${trackingAllocations ? `<code>${escapeHtml(trackingAllocations).replaceAll('\n', '<br>')}</code>` : '—'}
+                    <input type="hidden"
+                           name="Items[${itemIndex}].TrackingAllocations"
+                           value="${escapeHtml(trackingAllocations)}" />
                 </td>
 
 
@@ -981,7 +1021,8 @@
                     discountValue,
                     discountAmount,
                     grossTotal,
-                    total
+                    total,
+                    item.TrackingAllocations || ""
                 );
 
             });

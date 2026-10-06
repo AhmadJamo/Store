@@ -314,6 +314,13 @@ static async Task VerifyOpeningTrackingAllocationAsync(int tenantId, int product
     if (returnHistory.Count != 2 || returnHistory.Sum(x => x.Quantity) != 0)
         throw new InvalidOperationException("Tracked sales and purchase returns must restore/remove the selected identities with balanced trace history.");
 
+    await new UnitOfWork(context).ExecuteInTransactionAsync(() => service.IssueAsync(
+        trackedProduct, warehouseId, 1m, "SALE-MANUAL-TRACKED", "picker", "LOT-C:1"));
+    var manualIssue = await context.InventoryTrackingTransactions.AsNoTracking().SingleAsync(x =>
+        x.SourceReference == "SALE-MANUAL-TRACKED");
+    if (manualIssue.Identifier != "LOT-C" || manualIssue.PickingStrategy != InventoryPickingStrategy.Manual)
+        throw new InvalidOperationException("Manual tracked issue must consume the selected identity and persist its override strategy.");
+
     await service.QuarantineAsync(transferred.Id, "Quality inspection", "quality-user");
     await service.ReleaseAsync(transferred.Id, "Inspection passed", "quality-user");
     var quarantineHistory = await context.InventoryTrackingTransactions.AsNoTracking()

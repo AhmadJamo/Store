@@ -30,6 +30,7 @@ All business tables have a required `TenantId` foreign key to `Tenants`. EF quer
 | PurchaseReturns / PurchaseReturnItems | immutable tenant-owned supplier-return headers/lines linked to original purchase/items with proportional accounting and actual inventory-cost snapshots. |
 | FiscalPeriods | tenant accounting date ranges with Open/SoftClosed/Closed status, status-change audit metadata, date/status checks and SQL rowversion concurrency. Application validation prevents overlapping ranges. |
 | Warehouses, Suppliers | Warehouses link a branch/inventory account and persist operational type, control mode, picking, POS, capacity and transfer-location policies; suppliers can link a payable account. |
+| InventoryTrackingTransactions | Immutable lot/serial trace rows include nullable picking-strategy provenance; null identifies history created before `AddTrackedRemovalStrategyAudit`. |
 | TaxRates / AccountingSettings | Tax rates require input/output tax accounts; singleton accounting settings reference optional discount, revenue and COGS accounts. |
 | PaymentMethods / Sales | Each payment method references a settlement account; new sales capture a required payment method, optional customer and optional immutable invoice-tax snapshot. |
 | StorageLocations | Warehouse FK Restrict; unique `(WarehouseId, Code)`; zone/aisle/rack/level/bin, type, status and optional quantity capacity. |

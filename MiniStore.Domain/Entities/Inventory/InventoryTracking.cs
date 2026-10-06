@@ -85,18 +85,20 @@ public sealed class InventoryTrackingTransaction
     public string Identifier { get; private set; }
     public decimal Quantity { get; private set; }
     public InventoryTrackingTransactionType Type { get; private set; }
+    public InventoryPickingStrategy? PickingStrategy { get; private set; }
     public string SourceReference { get; private set; }
     public string CreatedByUserId { get; private set; }
     public DateTime CreatedAt { get; private set; }
-    public InventoryTrackingTransaction(long balanceId,int productId,int warehouseId,int? locationId,string identifier,decimal quantity,InventoryTrackingTransactionType type,string sourceReference,string userId)
+    public InventoryTrackingTransaction(long balanceId,int productId,int warehouseId,int? locationId,string identifier,decimal quantity,InventoryTrackingTransactionType type,string sourceReference,string userId,InventoryPickingStrategy? pickingStrategy=null)
     {
         if(balanceId<=0||productId<=0||warehouseId<=0) throw new ArgumentException("Tracking balance, product and warehouse are required.");
         if(quantity==0&&type is not(InventoryTrackingTransactionType.Quarantine or InventoryTrackingTransactionType.Release)) throw new ArgumentException("Tracking transaction quantity cannot be zero.");
         if(string.IsNullOrWhiteSpace(identifier)||string.IsNullOrWhiteSpace(sourceReference)||string.IsNullOrWhiteSpace(userId)) throw new ArgumentException("Tracking transaction identity is required.");
         InventoryTrackingBalanceId=balanceId; ProductId=productId; WarehouseId=warehouseId; StorageLocationId=locationId;
-        Identifier=identifier.Trim().ToUpperInvariant(); Quantity=quantity; Type=type; SourceReference=sourceReference.Trim(); CreatedByUserId=userId.Trim(); CreatedAt=DateTime.UtcNow;
+        if(pickingStrategy.HasValue&&!Enum.IsDefined(pickingStrategy.Value))throw new ArgumentException("Invalid inventory picking strategy.");
+        Identifier=identifier.Trim().ToUpperInvariant(); Quantity=quantity; Type=type; PickingStrategy=pickingStrategy; SourceReference=sourceReference.Trim(); CreatedByUserId=userId.Trim(); CreatedAt=DateTime.UtcNow;
     }
-    public InventoryTrackingTransaction(InventoryTrackingBalance balance, decimal quantity, InventoryTrackingTransactionType type, string sourceReference, string userId)
-        : this(1, balance.ProductId, balance.WarehouseId, balance.StorageLocationId, balance.Identifier, quantity, type, sourceReference, userId)
+    public InventoryTrackingTransaction(InventoryTrackingBalance balance, decimal quantity, InventoryTrackingTransactionType type, string sourceReference, string userId, InventoryPickingStrategy? pickingStrategy=null)
+        : this(1, balance.ProductId, balance.WarehouseId, balance.StorageLocationId, balance.Identifier, quantity, type, sourceReference, userId, pickingStrategy)
     { Balance = balance ?? throw new ArgumentNullException(nameof(balance)); InventoryTrackingBalanceId = 0; }
 }
