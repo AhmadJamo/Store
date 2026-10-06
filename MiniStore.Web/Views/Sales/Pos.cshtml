@@ -313,6 +313,7 @@
                                             data-id="@product.Id"
                                             data-name="@product.Name"
                                             data-price="@product.SalePrice.ToString(CultureInfo.InvariantCulture)"
+                                            data-tracking-policy="@product.TrackingPolicy"
                                             data-barcode="@product.Barcode">
 
                                         <span class="product-name">
@@ -873,7 +874,9 @@
                     name: button.dataset.name,
                     price: Number(button.dataset.price),
                     quantity: nextQuantity,
-                    notes: current?.notes ?? ""
+                    notes: current?.notes ?? "",
+                    trackingPolicy: button.dataset.trackingPolicy,
+                    trackingAllocations: current?.trackingAllocations ?? ""
                 }
             );
 
@@ -1014,6 +1017,14 @@
                                    maxlength="200" placeholder="Preparation note for this item" />
                         </div>
 
+                        <div class="tracking-selection mt-2">
+                            <label class="form-label small fw-semibold">@Localizer["Manual lot or serial selection"]</label>
+                            <textarea class="form-control form-control-sm tracking-allocations-input"
+                                      rows="2" maxlength="2000"
+                                      placeholder="@Localizer["Lot: quantity, or one serial per line"]"></textarea>
+                            <div class="form-text">@Localizer["Leave empty to use the warehouse removal strategy."]</div>
+                        </div>
+
                         <input
                             type="hidden"
                             name="Items[${index}].ProductId"
@@ -1033,6 +1044,11 @@
                             type="hidden"
                             class="item-notes-hidden"
                             name="Items[${index}].Notes" />
+
+                        <input
+                            type="hidden"
+                            class="tracking-allocations-hidden"
+                            name="Items[${index}].TrackingAllocations" />
                     `;
 
 
@@ -1051,6 +1067,18 @@
                     itemNotesInput.addEventListener('input', () => {
                         item.notes = itemNotesInput.value;
                         itemNotesHidden.value = item.notes;
+                    });
+
+                    const trackingContainer = row.querySelector('.tracking-selection');
+                    const trackingInput = row.querySelector('.tracking-allocations-input');
+                    const trackingHidden = row.querySelector('.tracking-allocations-hidden');
+                    const isTracked = item.trackingPolicy && item.trackingPolicy !== 'None';
+                    trackingContainer.hidden = !isTracked;
+                    trackingInput.value = item.trackingAllocations;
+                    trackingHidden.value = isTracked ? item.trackingAllocations : '';
+                    trackingInput.addEventListener('input', () => {
+                        item.trackingAllocations = trackingInput.value;
+                        trackingHidden.value = item.trackingAllocations;
                     });
 
 

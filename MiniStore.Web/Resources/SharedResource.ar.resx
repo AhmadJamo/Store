@@ -790,4 +790,5 @@
   <data name="Fefo" xml:space="preserve"><value>الأقرب انتهاءً أولًا</value></data>
   <data name="LocationPriority" xml:space="preserve"><value>أولوية الموقع</value></data>
   <data name="MinimizeLocations" xml:space="preserve"><value>تقليل عدد المواقع</value></data>
+  <data name="Manual lot or serial selection is only valid for a directly stocked tracked product." xml:space="preserve"><value>الاختيار اليدوي للتشغيلة أو الرقم التسلسلي صالح فقط لمنتج مخزني مباشر ومفعّل عليه التتبع.</value></data>
 </root>

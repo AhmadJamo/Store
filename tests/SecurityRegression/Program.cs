@@ -957,6 +957,8 @@ Check(manuallySelectedIssue.PickingStrategy == InventoryPickingStrategy.Manual,
 var trackedTransferItem = new StockTransferItem(1, 2m, null, null, " lot-a:2 ");
 Check(trackedTransferItem.TrackingAllocations == "lot-a:2",
     "Draft transfer lines must preserve their requested tracked identity allocation");
+Check(typeof(MiniStore.Application.DTOs.Sales.SaleItemDto).GetProperty(nameof(MiniStore.Application.DTOs.Sales.SaleItemDto.TrackingAllocations)) is not null,
+    "Wholesale and POS sale lines must accept the same audited tracked identity selection");
 
 Console.WriteLine($"Passed {count} security and inventory regression checks.");
 

@@ -1,5 +1,12 @@
 # AI Work Log
 
+## 2026-10-06 — WMS-080B3 POS tracked selection
+
+- Added a compact optional lot/serial field to POS cart rows only when the selected product uses tracking.
+- Reused the shared Sale DTO and InventoryTracking issue validation, so POS and wholesale have identical quantity, availability, expiration and audit rules.
+- Rejected crafted manual selections for untracked or prepared-to-order sale lines and added Arabic validation/UI resources.
+- No schema migration was required; Release build passed without warnings and 347 focused checks passed.
+
 ## 2026-10-06 — WMS-080B2 transfer identity override
 
 - Persisted optional lot/serial allocation text on transfer draft lines and exposed it on create, edit and details screens.

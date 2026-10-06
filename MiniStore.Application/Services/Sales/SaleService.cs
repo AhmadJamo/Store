@@ -348,6 +348,11 @@ public class SaleService : ISaleService
                     throw new InvalidOperationException("The selected product is not enabled for POS sales.");
                 if (channel == SaleChannel.Wholesale && !product.IsSellableInSales)
                     throw new InvalidOperationException("The selected product is not enabled for sales invoices.");
+                if (!string.IsNullOrWhiteSpace(itemDto.TrackingAllocations) &&
+                    (product.InventoryBehavior == ProductInventoryBehavior.PreparedToOrder ||
+                     product.TrackingPolicy == ProductTrackingPolicy.None))
+                    throw new InvalidOperationException(
+                        "Manual lot or serial selection is only valid for a directly stocked tracked product.");
 
                 var salePrice =
                     channel == SaleChannel.Wholesale
