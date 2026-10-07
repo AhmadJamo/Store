@@ -852,4 +852,8 @@
   <data name="Maximum quantity must be positive and at least the minimum quantity." xml:space="preserve"><value>يجب أن يكون الحد الأعلى موجبًا وألا يقل عن الحد الأدنى.</value></data>
   <data name="Safety stock must be between zero and the minimum quantity." xml:space="preserve"><value>يجب أن يكون مخزون الأمان بين صفر والحد الأدنى.</value></data>
   <data name="Lead time must be between zero and 3650 days." xml:space="preserve"><value>يجب أن تكون مدة التوريد بين صفر و3650 يومًا.</value></data>
+  <data name="Confirmed incoming" xml:space="preserve"><value>الوارد المؤكد</value></data>
+  <data name="Confirmed outgoing" xml:space="preserve"><value>الصادر المؤكد</value></data>
+  <data name="Projected available" xml:space="preserve"><value>المتاح المتوقع</value></data>
+  <data name="Projected on hand" xml:space="preserve"><value>الرصيد الفعلي المتوقع</value></data>
 </root>

@@ -1011,6 +1011,15 @@ Check(replenishmentIndex.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Pol
       replenishmentSave.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
       $"{PermissionAuthorizeAttribute.PolicyPrefix}Inventory.Replenishment.Manage",
     "Replenishment viewing and rule management must use separate permissions");
+var forecastRow = new MiniStore.Application.DTOs.Inventory.Replenishment.ReplenishmentRowDto
+{
+    OnHand = 10m, Reserved = 4m, Available = 6m,
+    ConfirmedIncoming = 5m, ConfirmedOutgoing = 4m,
+    Minimum = 8m, Maximum = 20m, SuggestedQuantity = 9m, IsActive = true
+};
+Check(forecastRow.ProjectedOnHand == 11m && forecastRow.ProjectedAvailable == 11m &&
+      !forecastRow.NeedsReplenishment,
+    "Replenishment forecast must add approved incoming while avoiding a second deduction of reserved outgoing");
 
 Console.WriteLine($"Passed {count} security and inventory regression checks.");
 

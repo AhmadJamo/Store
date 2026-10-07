@@ -591,7 +591,8 @@ Status: implementation and additive migration complete; migration applied to `AH
 ### WMS-090 — Replenishment, forecasting and alerts
 
 - [x] WMS-090A tenant-safe product/warehouse min-max, safety-stock, lead-time and optional source rules with reviewed, non-posting suggestions.
-- [ ] WMS-090B confirmed incoming/outgoing forecast projection and reviewed conversion into draft purchase/transfer intent.
+- [x] WMS-090B1 forecast Approved transfer incoming/outgoing without double-counting reserved outbound quantity.
+- [ ] WMS-090B2 reviewed conversion into draft transfer intent and a future purchase-order intent after purchase ordering exists.
 
 ### WMS-100 — Barcode execution and packages
 

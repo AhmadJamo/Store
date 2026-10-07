@@ -1,5 +1,12 @@
 # AI Work Log
 
+## 2026-10-07 — WMS-090B1 confirmed transfer forecast
+
+- Added confirmed incoming, confirmed outgoing, projected OnHand and projected Available to replenishment suggestions using Approved transfers only.
+- Avoided double-counting outbound: Approved transfer quantity is displayed as outgoing but is already removed from Available through its reservation.
+- Excluded drafts and terminal transfer states, and documented why the immediate-receipt Purchase aggregate is not future incoming.
+- No migration was required; Release build passed without warnings, 363 focused checks and SQL integration passed, and EF reports no pending model changes.
+
 ## 2026-10-06 — WMS-090A replenishment planning
 
 - Added tenant-safe per-product/destination min-max, safety-stock, lead-time and optional preferred-source rules.
