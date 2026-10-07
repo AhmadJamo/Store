@@ -1,0 +1,58 @@
+@using MiniStore.Application.DTOs.Inventory.Insights
+@using Microsoft.Extensions.Localization
+@model InventoryInsightsPageDto
+@inject IStringLocalizer<MiniStore.Web.SharedResource> Localizer
+@{
+    ViewData["Title"] = Localizer["Inventory insights"];
+    string StateLabel(InventoryActivityState state) => state switch
+    {
+        InventoryActivityState.Active => Localizer["Active"],
+        InventoryActivityState.Slow => Localizer["Slow moving"],
+        InventoryActivityState.Dead => Localizer["Dead stock"],
+        InventoryActivityState.NeverIssued => Localizer["Never issued"],
+        _ => Localizer["No movement history"]
+    };
+    string StateClass(InventoryActivityState state) => state switch
+    {
+        InventoryActivityState.Active => "text-bg-success",
+        InventoryActivityState.Slow => "text-bg-warning",
+        InventoryActivityState.Dead => "text-bg-danger",
+        InventoryActivityState.NeverIssued => "text-bg-secondary",
+        _ => "text-bg-dark"
+    };
+}
+
+<div class="container-fluid mt-4">
+    <h2>@Localizer["Inventory insights"]</h2>
+    <p class="text-muted">@Localizer["A read-only activity report based on actual outbound stock movements. It does not change stock or accounting values."]</p>
+
+    <div class="row g-3 mb-3">
+        <div class="col-md-3"><div class="card card-body"><span class="text-muted">@Localizer["Current inventory value"]</span><strong>@Model.TotalValue.ToString("N2")</strong></div></div>
+        <div class="col-md-3"><div class="card card-body"><span class="text-muted">@Localizer["Attention inventory value"]</span><strong>@Model.AttentionValue.ToString("N2")</strong></div></div>
+        <div class="col-md-2"><div class="card card-body"><span class="text-muted">@Localizer["Slow moving"]</span><strong>@Model.SlowCount</strong></div></div>
+        <div class="col-md-2"><div class="card card-body"><span class="text-muted">@Localizer["Dead stock"]</span><strong>@Model.DeadCount</strong></div></div>
+        <div class="col-md-2"><div class="card card-body"><span class="text-muted">@Localizer["Never issued"] / @Localizer["No movement history"]</span><strong>@Model.NeverIssuedCount / @Model.NoMovementHistoryCount</strong></div></div>
+    </div>
+
+    <form method="get" class="card card-body mb-3">
+        <div class="row g-2 align-items-end">
+            <div class="col-md-3"><label class="form-label">@Localizer["Search"]</label><input name="search" value="@Model.Query.Search" class="form-control" placeholder="@Localizer["Product name, code or barcode"]" /></div>
+            <div class="col-md-2"><label class="form-label">@Localizer["Warehouse"]</label><select name="warehouseId" class="form-select"><option value="">@Localizer["All warehouses"]</option>@foreach (var warehouse in Model.Warehouses){<option value="@warehouse.Id" selected="@(Model.Query.WarehouseId == warehouse.Id)">@warehouse.Name</option>}</select></div>
+            <div class="col-md-2"><label class="form-label">@Localizer["Status"]</label><select name="state" class="form-select"><option value="">@Localizer["All statuses"]</option>@foreach (var state in Enum.GetValues<InventoryActivityState>()){<option value="@state" selected="@(Model.Query.State == state)">@StateLabel(state)</option>}</select></div>
+            <div class="col-md-1"><label class="form-label">@Localizer["Slow days"]</label><input name="slowDays" type="number" min="1" max="3649" value="@Model.Query.SlowDays" class="form-control" /></div>
+            <div class="col-md-1"><label class="form-label">@Localizer["Dead days"]</label><input name="deadDays" type="number" min="2" max="3650" value="@Model.Query.DeadDays" class="form-control" /></div>
+            <div class="col-md-2 form-check ms-2"><input name="attentionOnly" value="true" type="checkbox" checked="@Model.Query.AttentionOnly" class="form-check-input" id="attentionOnly" /><label for="attentionOnly" class="form-check-label">@Localizer["Attention only"]</label></div>
+            <div class="col-md-1"><button class="btn btn-primary w-100">@Localizer["Apply"]</button></div>
+        </div>
+    </form>
+
+    <div class="table-responsive">
+        <table class="table table-striped align-middle">
+            <thead><tr><th>@Localizer["Product"]</th><th>@Localizer["Warehouse"]</th><th>@Localizer["On hand"]</th><th>@Localizer["Inventory value"]</th><th>@Localizer["Last outbound"]</th><th>@Localizer["Days since activity"]</th><th>@Localizer["Status"]</th></tr></thead>
+            <tbody>
+            @if (Model.Rows.Count == 0){<tr><td colspan="7" class="text-center text-muted py-4">@Localizer["No inventory insights match the selected filters."]</td></tr>}
+            @foreach (var row in Model.Rows){<tr><td><strong>@row.ProductName</strong><div class="small text-muted">@row.ProductCode</div></td><td>@row.WarehouseName</td><td>@row.OnHand.ToString("N6")</td><td>@row.InventoryValue.ToString("N2")</td><td>@(row.LastOutboundAt?.ToLocalTime().ToString("yyyy-MM-dd") ?? Localizer["Never"])</td><td>@(row.DaysSinceActivity?.ToString() ?? "—")</td><td><span class="badge @StateClass(row.State)">@StateLabel(row.State)</span></td></tr>}
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -79,6 +79,7 @@ public static class PermissionDefinitions
         new("InventoryTracking.ManageRecall", "Manage Inventory Recalls", "Inventory"),
         new("Inventory.Replenishment.View", "View Replenishment Suggestions", "Inventory"),
         new("Inventory.Replenishment.Manage", "Manage Replenishment Rules", "Inventory"),
+        new("InventoryInsights.View", "View Inventory Insights", "Inventory"),
 
         // ==========================================
         // Suppliers

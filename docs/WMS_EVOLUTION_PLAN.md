@@ -593,6 +593,7 @@ Status: implementation and additive migration complete; migration applied to `AH
 - [x] WMS-090A tenant-safe product/warehouse min-max, safety-stock, lead-time and optional source rules with reviewed, non-posting suggestions.
 - [x] WMS-090B1 forecast Approved transfer incoming/outgoing without double-counting reserved outbound quantity.
 - [x] WMS-090B2 reviewed conversion into a Draft stock transfer with dual permissions, fresh availability checks, branch access, required-location resolution and open-intent duplicate protection.
+- [x] WMS-090D read-only slow/dead inventory insights using actual outbound activity, configurable thresholds and a separate no-history state.
 - [ ] WMS-090C purchase-order intent after a real purchase-order lifecycle exists.
 
 ### WMS-100 — Barcode execution and packages

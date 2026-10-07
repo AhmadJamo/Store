@@ -1,5 +1,12 @@
 # AI Work Log
 
+## 2026-10-07 — WMS-090D inventory activity insights
+
+- Added a bilingual, permission-protected, read-only report for slow and dead positive inventory with configurable inactivity thresholds.
+- Classified activity from actual outbound StockTransaction history and separated received-but-never-issued stock from positive balances with no movement history.
+- Added current and attention-value summaries plus warehouse, product and status filters without changing stock or accounting values.
+- No migration was required; Release build passed without warnings, 367 focused checks and the disposable SQL integration suite passed, and EF reports no pending model changes.
+
 ## 2026-10-07 — WMS-090B2 reviewed transfer draft
 
 - Added explicit conversion of a still-needed preferred-source replenishment suggestion into a Draft StockTransfer.

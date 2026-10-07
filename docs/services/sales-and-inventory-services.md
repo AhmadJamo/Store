@@ -23,6 +23,8 @@ Purchase receipt costing excludes recoverable tax when a selected tax rate is pr
 
 When explicitly requested by an authorized operator, the same service revalidates a suggestion and delegates creation of a Draft intent to `StockTransferService`; branch access, exact-location requirements and duplicate open references are enforced before the draft is returned for the ordinary transfer workflow.
 
+`InventoryInsightsService` is a read-only projection of positive ProductStock and StockTransaction history. It classifies recent, slow and dead stock from the last actual negative movement, distinguishes stock that was received but never issued, and exposes missing movement history as a separate control state. Configurable thresholds affect reporting only; they never write inventory or accounting values.
+
 `InventoryReconciliationService` is read-only. It classifies tenant-filtered SQL snapshots from `InventoryReconciliationRepository`, comparing ProductStock quantity/value, aggregated ProductLocationStock, derived Unassigned and the latest StockTransaction snapshot. It applies fixed quantity/value tolerances, exposes exceptions through a paged bilingual report and never performs a correction.
 
 `ProductService` also validates product logistics against managed units: weights require Mass, dimensions require Length and all three dimensions, and category selection remains tenant-scoped. It refuses a transition from untracked to Lot/Serial while any ProductStock row has a non-zero balance. `ProductCategoryService` creates and activates/deactivates preserved category rows; it never deletes referenced categories.

@@ -190,6 +190,14 @@ public static class NavigationDefinitions
                 135),
 
             new NavigationItem(
+                "Inventory insights",
+                "bi-graph-down-arrow",
+                "InventoryInsights",
+                "Index",
+                "InventoryInsights.View",
+                137),
+
+            new NavigationItem(
                 "Lot and serial tracking",
                 "bi-upc-scan",
                 "InventoryTracking",

@@ -1028,6 +1028,17 @@ Check(replenishmentDraftPolicies.SetEquals([
         $"{PermissionAuthorizeAttribute.PolicyPrefix}StockTransfers.Create"]),
     "Creating a replenishment transfer draft must require both replenishment management and transfer creation permissions");
 
+var insightsIndex = typeof(InventoryInsightsController).GetMethod(nameof(InventoryInsightsController.Index))!;
+Check(insightsIndex.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
+      $"{PermissionAuthorizeAttribute.PolicyPrefix}InventoryInsights.View",
+    "Inventory insights must require its dedicated view permission");
+Check(InventoryActivityClassifier.Classify(null, DateTime.UtcNow.AddDays(-40), DateTime.UtcNow, 30, 90) ==
+      MiniStore.Application.DTOs.Inventory.Insights.InventoryActivityState.NeverIssued,
+    "Old stock with no outbound movement must remain visibly distinct from dead stock");
+Check(InventoryActivityClassifier.Classify(DateTime.UtcNow.AddDays(-90), DateTime.UtcNow.AddDays(-120), DateTime.UtcNow, 30, 90) ==
+      MiniStore.Application.DTOs.Inventory.Insights.InventoryActivityState.Dead,
+    "Dead-stock classification must include the configured threshold boundary");
+
 Console.WriteLine($"Passed {count} security and inventory regression checks.");
 
 void CheckThrows(Action action, string message)

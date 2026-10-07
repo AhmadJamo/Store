@@ -24,6 +24,7 @@ The ordered Arabic execution plan, workflow, business rules and rolling suggesti
 - [x] WMS-090A add reviewed min/max replenishment rules and suggestions.
 - [x] WMS-090B1 add Approved-transfer incoming/outgoing forecasting.
 - [x] WMS-090B2 add reviewed replenishment conversion into a Draft stock transfer.
+- [x] WMS-090D add read-only slow/dead inventory insights and no-movement-history visibility.
 - [ ] WMS-090C add purchase-order intent after a purchase-order lifecycle exists.
 - [ ] Add scheduled/automated delivery channels and delivery-provider callbacks.
 

@@ -867,4 +867,21 @@
   <data name="No eligible destination location can receive the suggested quantity." xml:space="preserve"><value>لا يوجد موقع وجهة مؤهل لاستلام الكمية المقترحة.</value></data>
   <data name="Source warehouse does not allow replenishment transfer-out." xml:space="preserve"><value>مستودع المصدر لا يسمح بتحويل إعادة التزويد الصادر.</value></data>
   <data name="Destination warehouse does not allow replenishment transfer-in." xml:space="preserve"><value>مستودع الوجهة لا يسمح بتحويل إعادة التزويد الوارد.</value></data>
+  <data name="Inventory insights" xml:space="preserve"><value>تحليلات المخزون</value></data>
+  <data name="A read-only activity report based on actual outbound stock movements. It does not change stock or accounting values." xml:space="preserve"><value>تقرير نشاط للقراءة فقط يعتمد على حركات الصرف الفعلية، ولا يغيّر المخزون أو القيم المحاسبية.</value></data>
+  <data name="Current inventory value" xml:space="preserve"><value>قيمة المخزون الحالية</value></data>
+  <data name="Attention inventory value" xml:space="preserve"><value>قيمة المخزون التي تحتاج متابعة</value></data>
+  <data name="Slow moving" xml:space="preserve"><value>بطيء الحركة</value></data>
+  <data name="Dead stock" xml:space="preserve"><value>مخزون راكد</value></data>
+  <data name="Never issued" xml:space="preserve"><value>لم يُصرف سابقًا</value></data>
+  <data name="No movement history" xml:space="preserve"><value>لا يوجد سجل حركات</value></data>
+  <data name="Slow days" xml:space="preserve"><value>أيام البطء</value></data>
+  <data name="Dead days" xml:space="preserve"><value>أيام الركود</value></data>
+  <data name="Attention only" xml:space="preserve"><value>الذي يحتاج متابعة فقط</value></data>
+  <data name="Last outbound" xml:space="preserve"><value>آخر صرف</value></data>
+  <data name="Days since activity" xml:space="preserve"><value>الأيام منذ آخر نشاط</value></data>
+  <data name="Never" xml:space="preserve"><value>لم يحدث</value></data>
+  <data name="No inventory insights match the selected filters." xml:space="preserve"><value>لا توجد تحليلات مخزون تطابق الفلاتر المحددة.</value></data>
+  <data name="Slow-stock days must be between 1 and 3650." xml:space="preserve"><value>يجب أن تكون أيام المخزون البطيء بين 1 و3650.</value></data>
+  <data name="Dead-stock days must be greater than slow-stock days and no more than 3650." xml:space="preserve"><value>يجب أن تكون أيام الركود أكبر من أيام البطء وألا تتجاوز 3650.</value></data>
 </root>
