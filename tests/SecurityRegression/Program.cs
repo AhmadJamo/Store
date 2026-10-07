@@ -1049,6 +1049,18 @@ Check(InventoryScanResolver.Normalize("  ab-123 ") == "AB-123" &&
 Check(InventoryScanResolver.ResolveCount("DUPLICATE", 2) ==
       MiniStore.Application.DTOs.Inventory.Scanning.InventoryScanStatus.Ambiguous,
     "Inventory scans must reject ambiguous identifiers instead of choosing silently");
+var scanningPutaway = typeof(InventoryScanningController).GetMethod(nameof(InventoryScanningController.Putaway))!;
+var scanningPutawayPolicies = scanningPutaway.GetCustomAttributes<PermissionAuthorizeAttribute>()
+    .Select(x => x.Policy).ToHashSet();
+Check(scanningPutawayPolicies.SetEquals([
+        $"{PermissionAuthorizeAttribute.PolicyPrefix}InventoryScanning.View",
+        $"{PermissionAuthorizeAttribute.PolicyPrefix}ProductStock.Edit"]),
+    "Scanned putaway must require scan visibility and stock edit permission");
+var scanRequestKey = InventoryScanResolver.NewPutawayIdempotencyKey();
+Check(InventoryScanResolver.ValidatePutawayIdempotencyKey(scanRequestKey) == scanRequestKey,
+    "Scanned putaway must use a strongly scoped retry key");
+CheckArgumentThrows(() => InventoryScanResolver.ValidatePutawayIdempotencyKey("TRANSFER:1:1"),
+    "Scanned putaway must reject an idempotency key from another workflow");
 
 Console.WriteLine($"Passed {count} security and inventory regression checks.");
 

@@ -39,4 +39,13 @@ public sealed class InventoryScanPageDto
     public InventoryScanResultDto Product { get; init; } = new();
     public InventoryScanResultDto Location { get; init; } = new();
     public List<InventoryScanBalanceDto> Balances { get; init; } = [];
+    public string PutawayIdempotencyKey { get; init; } = string.Empty;
+}
+
+public sealed class ScannedPutawayDto
+{
+    public string ProductScan { get; init; } = string.Empty;
+    public string LocationScan { get; init; } = string.Empty;
+    public decimal Quantity { get; init; }
+    public string IdempotencyKey { get; init; } = string.Empty;
 }

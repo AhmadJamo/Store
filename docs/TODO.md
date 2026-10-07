@@ -27,7 +27,8 @@ The ordered Arabic execution plan, workflow, business rules and rolling suggesti
 - [x] WMS-090D add read-only slow/dead inventory insights and no-movement-history visibility.
 - [ ] WMS-090C add purchase-order intent after a purchase-order lifecycle exists.
 - [x] WMS-100A add safe read-only product/location barcode resolution and availability lookup.
-- [ ] WMS-100B add idempotent scan commands to controlled receiving, movement and count workflows.
+- [x] WMS-100B1 add idempotent scanned putaway through the controlled Unassigned Stock workflow.
+- [ ] WMS-100B2 extend idempotent scan commands to relocation, receiving and count workflows.
 - [ ] Add scheduled/automated delivery channels and delivery-provider callbacks.
 
 ## Completed

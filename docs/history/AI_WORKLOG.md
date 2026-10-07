@@ -1,5 +1,12 @@
 # AI Work Log
 
+## 2026-10-07 — WMS-100B1 idempotent scanned putaway
+
+- Added the first scan mutation: permission-gated putaway from Unassigned into one exactly scanned destination location.
+- Reused `UnassignedStockService` so warehouse mode, receivability, capacity, unassigned quantity, Serializable transaction and movement dual-write controls remain authoritative.
+- Added workflow-scoped retry keys; replaying the same facts is harmless while cross-workflow or changed-fact key reuse is rejected.
+- No migration was required; Release build passed without warnings, 373 focused checks and the disposable SQL integration suite passed, and EF reports no pending model changes. The focused test output was isolated from a separately running process that held its normal output files.
+
 ## 2026-10-07 — WMS-100A read-only inventory scanning
 
 - Added a bilingual, permission-protected scan console for exact product barcode/code and storage-location barcode/code lookup.

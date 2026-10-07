@@ -894,6 +894,13 @@
   <data name="Ambiguous scan" xml:space="preserve"><value>رمز مسح غير محدد</value></data>
   <data name="Waiting for scan" xml:space="preserve"><value>بانتظار المسح</value></data>
   <data name="No inventory balance was found for the resolved scan." xml:space="preserve"><value>لم يتم العثور على رصيد مخزون للرمز الذي تم التعرف عليه.</value></data>
+  <data name="Put away scanned stock" xml:space="preserve"><value>تخزين المخزون الممسوح</value></data>
+  <data name="This posts stock from Unassigned into the scanned destination location." xml:space="preserve"><value>تقوم هذه العملية بترحيل المخزون من غير الموزّع إلى موقع الوجهة الممسوح.</value></data>
+  <data name="Post putaway" xml:space="preserve"><value>ترحيل التخزين</value></data>
+  <data name="Scanned putaway posted." xml:space="preserve"><value>تم ترحيل التخزين الممسوح.</value></data>
+  <data name="A valid scan request key is required." xml:space="preserve"><value>مفتاح طلب مسح صالح مطلوب.</value></data>
+  <data name="Scan one exact product before putaway." xml:space="preserve"><value>امسح منتجًا واحدًا محددًا قبل التخزين.</value></data>
+  <data name="Scan one exact destination location before putaway." xml:space="preserve"><value>امسح موقع وجهة واحدًا محددًا قبل التخزين.</value></data>
   <data name="Slow-stock days must be between 1 and 3650." xml:space="preserve"><value>يجب أن تكون أيام المخزون البطيء بين 1 و3650.</value></data>
   <data name="Dead-stock days must be greater than slow-stock days and no more than 3650." xml:space="preserve"><value>يجب أن تكون أيام الركود أكبر من أيام البطء وألا تتجاوز 3650.</value></data>
 </root>

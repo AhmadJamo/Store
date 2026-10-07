@@ -8,7 +8,8 @@ public sealed class InventoryScanningService(
     IProductRepository products,
     IStorageLocationRepository locations,
     IWarehouseRepository warehouses,
-    IInventoryBalanceRepository balances)
+    IInventoryBalanceRepository balances,
+    UnassignedStockService unassignedStock)
 {
     public async Task<InventoryScanPageDto> ResolveAsync(InventoryScanQueryDto query)
     {
@@ -68,8 +69,36 @@ public sealed class InventoryScanningService(
             Query = new InventoryScanQueryDto { ProductScan = productToken, LocationScan = locationToken },
             Product = productResult,
             Location = locationResult,
-            Balances = balanceRows
+            Balances = balanceRows,
+            PutawayIdempotencyKey = InventoryScanResolver.NewPutawayIdempotencyKey()
         };
+    }
+
+    public async Task ExecutePutawayAsync(ScannedPutawayDto input)
+    {
+        if (input.Quantity <= 0)
+            throw new ArgumentException("Quantity must be greater than zero.");
+
+        var key = InventoryScanResolver.ValidatePutawayIdempotencyKey(input.IdempotencyKey);
+        var page = await ResolveAsync(new InventoryScanQueryDto
+        {
+            ProductScan = input.ProductScan,
+            LocationScan = input.LocationScan
+        });
+
+        if (page.Product.Status != InventoryScanStatus.Resolved || !page.Product.EntityId.HasValue)
+            throw new InvalidOperationException("Scan one exact product before putaway.");
+        if (page.Location.Status != InventoryScanStatus.Resolved || !page.Location.EntityId.HasValue)
+            throw new InvalidOperationException("Scan one exact destination location before putaway.");
+
+        var location = await locations.GetByIdAsync(page.Location.EntityId.Value)
+            ?? throw new InvalidOperationException("Storage location not found.");
+        await unassignedStock.AssignAsync(
+            page.Product.EntityId.Value,
+            location.WarehouseId,
+            location.Id,
+            input.Quantity,
+            key);
     }
 
     private static InventoryScanResultDto ProductResult(string token, List<Product> matches)
