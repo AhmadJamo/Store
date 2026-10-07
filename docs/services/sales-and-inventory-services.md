@@ -19,7 +19,9 @@ Purchase receipt costing excludes recoverable tax when a selected tax rate is pr
 
 `UntrackedInventoryRemovalService` prevents warehouse issues from leaving stale rack/bin quantities. It plans against current location rows and reserved InventoryBalance quantities, then removes from active pickable exact locations or Unassigned according to the warehouse policy in the owning Serializable transaction. Tracked products bypass it and remain under `InventoryTrackingService`.
 
-`ReplenishmentService` manages one Product + destination Warehouse rule and projects reviewed suggestions from aggregate OnHand, Reserved and Available. It adds Approved-transfer inbound/outbound forecasting, avoids subtracting already-reserved outbound twice, exposes preferred-source availability and performs no stock or document mutation.
+`ReplenishmentService` manages one Product + destination Warehouse rule and projects reviewed suggestions from aggregate OnHand, Reserved and Available. It adds Approved-transfer inbound/outbound forecasting, avoids subtracting already-reserved outbound twice and exposes preferred-source availability. Reading a suggestion never changes stock or documents.
+
+When explicitly requested by an authorized operator, the same service revalidates a suggestion and delegates creation of a Draft intent to `StockTransferService`; branch access, exact-location requirements and duplicate open references are enforced before the draft is returned for the ordinary transfer workflow.
 
 `InventoryReconciliationService` is read-only. It classifies tenant-filtered SQL snapshots from `InventoryReconciliationRepository`, comparing ProductStock quantity/value, aggregated ProductLocationStock, derived Unassigned and the latest StockTransaction snapshot. It applies fixed quantity/value tolerances, exposes exceptions through a paged bilingual report and never performs a correction.
 

@@ -1020,6 +1020,13 @@ var forecastRow = new MiniStore.Application.DTOs.Inventory.Replenishment.Repleni
 Check(forecastRow.ProjectedOnHand == 11m && forecastRow.ProjectedAvailable == 11m &&
       !forecastRow.NeedsReplenishment,
     "Replenishment forecast must add approved incoming while avoiding a second deduction of reserved outgoing");
+var replenishmentDraft = typeof(ReplenishmentController).GetMethod(nameof(ReplenishmentController.CreateTransferDraft))!;
+var replenishmentDraftPolicies = replenishmentDraft.GetCustomAttributes<PermissionAuthorizeAttribute>()
+    .Select(x => x.Policy).ToHashSet();
+Check(replenishmentDraftPolicies.SetEquals([
+        $"{PermissionAuthorizeAttribute.PolicyPrefix}Inventory.Replenishment.Manage",
+        $"{PermissionAuthorizeAttribute.PolicyPrefix}StockTransfers.Create"]),
+    "Creating a replenishment transfer draft must require both replenishment management and transfer creation permissions");
 
 Console.WriteLine($"Passed {count} security and inventory regression checks.");
 

@@ -856,4 +856,15 @@
   <data name="Confirmed outgoing" xml:space="preserve"><value>الصادر المؤكد</value></data>
   <data name="Projected available" xml:space="preserve"><value>المتاح المتوقع</value></data>
   <data name="Projected on hand" xml:space="preserve"><value>الرصيد الفعلي المتوقع</value></data>
+  <data name="Create transfer draft" xml:space="preserve"><value>إنشاء مسودة تحويل</value></data>
+  <data name="Transfer draft created from the replenishment suggestion." xml:space="preserve"><value>تم إنشاء مسودة تحويل من اقتراح إعادة التزويد.</value></data>
+  <data name="Replenishment rule is inactive." xml:space="preserve"><value>قاعدة إعادة التزويد غير فعالة.</value></data>
+  <data name="A preferred source warehouse is required to create a transfer draft." xml:space="preserve"><value>مستودع مصدر مفضل مطلوب لإنشاء مسودة تحويل.</value></data>
+  <data name="This replenishment suggestion is no longer required." xml:space="preserve"><value>اقتراح إعادة التزويد هذا لم يعد مطلوبًا.</value></data>
+  <data name="Preferred source warehouse does not have enough available stock." xml:space="preserve"><value>لا يحتوي مستودع المصدر المفضل على مخزون متاح كافٍ.</value></data>
+  <data name="An open transfer already exists for this replenishment rule." xml:space="preserve"><value>يوجد تحويل مفتوح مسبقًا لقاعدة إعادة التزويد هذه.</value></data>
+  <data name="No single pickable source location can cover the suggested quantity." xml:space="preserve"><value>لا يوجد موقع مصدر واحد قابل للسحب يغطي الكمية المقترحة.</value></data>
+  <data name="No eligible destination location can receive the suggested quantity." xml:space="preserve"><value>لا يوجد موقع وجهة مؤهل لاستلام الكمية المقترحة.</value></data>
+  <data name="Source warehouse does not allow replenishment transfer-out." xml:space="preserve"><value>مستودع المصدر لا يسمح بتحويل إعادة التزويد الصادر.</value></data>
+  <data name="Destination warehouse does not allow replenishment transfer-in." xml:space="preserve"><value>مستودع الوجهة لا يسمح بتحويل إعادة التزويد الوارد.</value></data>
 </root>

@@ -138,6 +138,15 @@ public class StockTransferService : IStockTransferService
         await _unitOfWork.ExecuteInTransactionAsync(
             async () =>
             {
+                if (command.Reference?.StartsWith("REPLENISHMENT:RULE:", StringComparison.Ordinal) == true)
+                {
+                    var existing = await _stockTransferRepository.GetAllAsync(command.Reference, null);
+                    if (existing.Any(x => x.Reference == command.Reference &&
+                        x.Status is StockTransferStatus.Draft or StockTransferStatus.Submitted or StockTransferStatus.Approved))
+                        throw new InvalidOperationException(
+                            "An open transfer already exists for this replenishment rule.");
+                }
+
                 transfer = new StockTransfer(
                     await _documentNumbers.GenerateAsync(
                         DocumentNumberType.StockTransfer,

@@ -1,5 +1,12 @@
 # AI Work Log
 
+## 2026-10-07 — WMS-090B2 reviewed transfer draft
+
+- Added explicit conversion of a still-needed preferred-source replenishment suggestion into a Draft StockTransfer.
+- Required both replenishment-management and transfer-create permissions and revalidated projected shortage, source availability, branch access and exact-location policies.
+- Added capacity-aware destination suggestion, single-position source resolution and duplicate open-intent protection through the normal transfer service.
+- No submit, approval, reservation, posting or stock change is automatic. No migration was required; Release build passed without warnings, 364 focused checks and SQL integration passed, and EF reports no pending model changes.
+
 ## 2026-10-07 — WMS-090B1 confirmed transfer forecast
 
 - Added confirmed incoming, confirmed outgoing, projected OnHand and projected Available to replenishment suggestions using Approved transfers only.

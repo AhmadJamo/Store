@@ -23,7 +23,8 @@ The ordered Arabic execution plan, workflow, business rules and rolling suggesti
 - [x] WMS-080C3 add policy-driven untracked exact-location removal.
 - [x] WMS-090A add reviewed min/max replenishment rules and suggestions.
 - [x] WMS-090B1 add Approved-transfer incoming/outgoing forecasting.
-- [ ] WMS-090B2 add reviewed draft transfer conversion and purchase-order intent after a purchase-order lifecycle exists.
+- [x] WMS-090B2 add reviewed replenishment conversion into a Draft stock transfer.
+- [ ] WMS-090C add purchase-order intent after a purchase-order lifecycle exists.
 - [ ] Add scheduled/automated delivery channels and delivery-provider callbacks.
 
 ## Completed

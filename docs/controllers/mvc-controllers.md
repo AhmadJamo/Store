@@ -14,7 +14,7 @@
 | ProductStocks | Index/Create/Edit/Delete | product-stock permissions/service; delete service always refuses. |
 | StockTransactions | Index/Create | movement permissions/service. |
 | WarehouseLocations / UnassignedStock | hierarchical location search/create/edit, putaway-rule administration and capacity-aware suggested putaway | warehouse/product-stock permissions and location/putaway services. |
-| Replenishment | reviewed shortage suggestions and replenishment-rule management | Inventory.Replenishment.View/Manage. |
+| Replenishment | reviewed shortage suggestions, rule management and explicitly reviewed Draft transfer creation | Inventory.Replenishment.View/Manage plus StockTransfers.Create for draft conversion. |
 | ProductAttributes | typed attribute dictionary create/list/activation and per-product value assignment | Products View/Edit permissions and ProductAttributeService. |
 | ProductTemplates | template creation, existing-SKU assignment/removal and grouped variant listing | Products View/Edit permissions and ProductTemplateService. |
 | LocationMovements | Index/Move | LocationMovements.View/Create and LocationMovementService. |
