@@ -12,10 +12,11 @@ public sealed class InventoryScanningController(
 {
     [HttpGet]
     [PermissionAuthorize("InventoryScanning.View")]
-    public async Task<IActionResult> Index(string? productScan, string? locationScan) =>
+    public async Task<IActionResult> Index(string? productScan, string? sourceLocationScan, string? locationScan) =>
         View(await service.ResolveAsync(new InventoryScanQueryDto
         {
             ProductScan = productScan ?? string.Empty,
+            SourceLocationScan = sourceLocationScan ?? string.Empty,
             LocationScan = locationScan ?? string.Empty
         }));
 
@@ -39,6 +40,30 @@ public sealed class InventoryScanningController(
         {
             productScan = input.ProductScan,
             locationScan = input.LocationScan
+        });
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [PermissionAuthorize("InventoryScanning.View")]
+    [PermissionAuthorize("LocationMovements.Create")]
+    public async Task<IActionResult> Relocate(ScannedRelocationDto input)
+    {
+        try
+        {
+            await service.ExecuteRelocationAsync(input);
+            Notify("success", "Scanned relocation posted.");
+        }
+        catch (Exception exception) when (exception is ArgumentException or InvalidOperationException)
+        {
+            Notify("danger", exception.Message);
+        }
+
+        return RedirectToAction(nameof(Index), new
+        {
+            productScan = input.ProductScan,
+            sourceLocationScan = input.SourceLocationScan,
+            locationScan = input.DestinationLocationScan
         });
     }
 

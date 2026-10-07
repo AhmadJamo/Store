@@ -600,6 +600,7 @@ Status: implementation and additive migration complete; migration applied to `AH
 
 - [x] WMS-100A permission-protected read-only product/location scan resolver with exact-match ambiguity blocking and live availability lookup.
 - [x] WMS-100B1 idempotent scanned putaway delegates to the existing controlled Unassigned Stock workflow with dual permissions and scoped retry keys.
+- [x] WMS-100B2 idempotent scanned relocation delegates to the controlled internal-location movement workflow with exact source/destination resolution.
 - Shared scan commands, protected retry/idempotency and package hierarchy.
 
 ### WMS-110 — Advanced picking

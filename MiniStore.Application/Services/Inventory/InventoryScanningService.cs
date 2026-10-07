@@ -1,4 +1,5 @@
 using MiniStore.Application.DTOs.Inventory.Scanning;
+using MiniStore.Application.DTOs.LocationMovements;
 using MiniStore.Domain.Entities;
 using MiniStore.Domain.Interfaces;
 
@@ -9,11 +10,13 @@ public sealed class InventoryScanningService(
     IStorageLocationRepository locations,
     IWarehouseRepository warehouses,
     IInventoryBalanceRepository balances,
-    UnassignedStockService unassignedStock)
+    UnassignedStockService unassignedStock,
+    LocationMovementService locationMovements)
 {
     public async Task<InventoryScanPageDto> ResolveAsync(InventoryScanQueryDto query)
     {
         var productToken = InventoryScanResolver.Normalize(query.ProductScan);
+        var sourceLocationToken = InventoryScanResolver.Normalize(query.SourceLocationScan);
         var locationToken = InventoryScanResolver.Normalize(query.LocationScan);
         var productRows = await products.GetAllAsync(null);
         var locationRows = await locations.SearchAsync(null, null);
@@ -31,23 +34,39 @@ public sealed class InventoryScanningService(
                     string.Equals(x.Barcode, locationToken, StringComparison.OrdinalIgnoreCase) ||
                     string.Equals(x.Code, locationToken, StringComparison.OrdinalIgnoreCase))
                 .ToList();
+        var sourceLocationMatches = string.IsNullOrEmpty(sourceLocationToken)
+            ? []
+            : locationRows.Where(x =>
+                    string.Equals(x.Barcode, sourceLocationToken, StringComparison.OrdinalIgnoreCase) ||
+                    string.Equals(x.Code, sourceLocationToken, StringComparison.OrdinalIgnoreCase))
+                .ToList();
 
         var productResult = ProductResult(productToken, productMatches);
         var locationResult = LocationResult(locationToken, locationMatches, warehouseRows);
+        var sourceLocationResult = LocationResult(sourceLocationToken, sourceLocationMatches, warehouseRows);
         var balanceRows = new List<InventoryScanBalanceDto>();
 
         if (productResult.Status == InventoryScanStatus.Resolved &&
-            locationResult.Status is InventoryScanStatus.Empty or InventoryScanStatus.Resolved)
+            locationResult.Status is InventoryScanStatus.Empty or InventoryScanStatus.Resolved &&
+            sourceLocationResult.Status is InventoryScanStatus.Empty or InventoryScanStatus.Resolved)
         {
             var warehouseMap = warehouseRows.ToDictionary(x => x.Id, x => x.Name);
             var locationMap = locationRows.ToDictionary(x => x.Id);
             var resolvedLocation = locationResult.Status == InventoryScanStatus.Resolved
                 ? locationMatches.Single()
                 : null;
+            var resolvedSourceLocation = sourceLocationResult.Status == InventoryScanStatus.Resolved
+                ? sourceLocationMatches.Single()
+                : null;
+            var selectedLocationIds = new[] { resolvedLocation?.Id, resolvedSourceLocation?.Id }
+                .Where(x => x.HasValue)
+                .Select(x => x!.Value)
+                .ToHashSet();
 
             balanceRows = (await balances.GetAllAsync())
                 .Where(x => x.ProductId == productResult.EntityId)
-                .Where(x => resolvedLocation is null || x.StorageLocationId == resolvedLocation.Id)
+                .Where(x => selectedLocationIds.Count == 0 ||
+                    x.StorageLocationId.HasValue && selectedLocationIds.Contains(x.StorageLocationId.Value))
                 .Select(x => new InventoryScanBalanceDto
                 {
                     WarehouseName = warehouseMap.GetValueOrDefault(x.WarehouseId, "Unknown Warehouse"),
@@ -66,11 +85,18 @@ public sealed class InventoryScanningService(
 
         return new InventoryScanPageDto
         {
-            Query = new InventoryScanQueryDto { ProductScan = productToken, LocationScan = locationToken },
+            Query = new InventoryScanQueryDto
+            {
+                ProductScan = productToken,
+                SourceLocationScan = sourceLocationToken,
+                LocationScan = locationToken
+            },
             Product = productResult,
+            SourceLocation = sourceLocationResult,
             Location = locationResult,
             Balances = balanceRows,
-            PutawayIdempotencyKey = InventoryScanResolver.NewPutawayIdempotencyKey()
+            PutawayIdempotencyKey = InventoryScanResolver.NewPutawayIdempotencyKey(),
+            RelocationIdempotencyKey = InventoryScanResolver.NewRelocationIdempotencyKey()
         };
     }
 
@@ -99,6 +125,40 @@ public sealed class InventoryScanningService(
             location.Id,
             input.Quantity,
             key);
+    }
+
+    public async Task ExecuteRelocationAsync(ScannedRelocationDto input)
+    {
+        if (input.Quantity <= 0)
+            throw new ArgumentException("Quantity must be greater than zero.");
+
+        var key = InventoryScanResolver.ValidateRelocationIdempotencyKey(input.IdempotencyKey);
+        var page = await ResolveAsync(new InventoryScanQueryDto
+        {
+            ProductScan = input.ProductScan,
+            SourceLocationScan = input.SourceLocationScan,
+            LocationScan = input.DestinationLocationScan
+        });
+
+        if (page.Product.Status != InventoryScanStatus.Resolved || !page.Product.EntityId.HasValue)
+            throw new InvalidOperationException("Scan one exact product before relocation.");
+        if (page.SourceLocation.Status != InventoryScanStatus.Resolved || !page.SourceLocation.EntityId.HasValue)
+            throw new InvalidOperationException("Scan one exact source location before relocation.");
+        if (page.Location.Status != InventoryScanStatus.Resolved || !page.Location.EntityId.HasValue)
+            throw new InvalidOperationException("Scan one exact destination location before relocation.");
+
+        var source = await locations.GetByIdAsync(page.SourceLocation.EntityId.Value)
+            ?? throw new InvalidOperationException("Source location not found.");
+        await locationMovements.MoveAsync(new CreateLocationMovementDto
+        {
+            ProductId = page.Product.EntityId.Value,
+            WarehouseId = source.WarehouseId,
+            FromStorageLocationId = source.Id,
+            ToStorageLocationId = page.Location.EntityId.Value,
+            Quantity = input.Quantity,
+            IdempotencyKey = key,
+            Reference = "Inventory Scan"
+        });
     }
 
     private static InventoryScanResultDto ProductResult(string token, List<Product> matches)

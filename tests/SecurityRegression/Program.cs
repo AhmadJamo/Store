@@ -1061,6 +1061,18 @@ Check(InventoryScanResolver.ValidatePutawayIdempotencyKey(scanRequestKey) == sca
     "Scanned putaway must use a strongly scoped retry key");
 CheckArgumentThrows(() => InventoryScanResolver.ValidatePutawayIdempotencyKey("TRANSFER:1:1"),
     "Scanned putaway must reject an idempotency key from another workflow");
+var scanningRelocation = typeof(InventoryScanningController).GetMethod(nameof(InventoryScanningController.Relocate))!;
+var scanningRelocationPolicies = scanningRelocation.GetCustomAttributes<PermissionAuthorizeAttribute>()
+    .Select(x => x.Policy).ToHashSet();
+Check(scanningRelocationPolicies.SetEquals([
+        $"{PermissionAuthorizeAttribute.PolicyPrefix}InventoryScanning.View",
+        $"{PermissionAuthorizeAttribute.PolicyPrefix}LocationMovements.Create"]),
+    "Scanned relocation must require scan visibility and location movement permission");
+var scanRelocationKey = InventoryScanResolver.NewRelocationIdempotencyKey();
+Check(InventoryScanResolver.ValidateRelocationIdempotencyKey(scanRelocationKey) == scanRelocationKey,
+    "Scanned relocation must use a strongly scoped retry key");
+CheckArgumentThrows(() => InventoryScanResolver.ValidateRelocationIdempotencyKey(scanRequestKey),
+    "Scanned relocation must reject a putaway retry key");
 
 Console.WriteLine($"Passed {count} security and inventory regression checks.");
 

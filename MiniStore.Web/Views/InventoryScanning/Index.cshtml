@@ -13,6 +13,7 @@
         _ => Localizer["Waiting for scan"]
     };
     var canPutaway = (await AuthorizationService.AuthorizeAsync(User, null, "Permission:ProductStock.Edit")).Succeeded;
+    var canRelocate = (await AuthorizationService.AuthorizeAsync(User, null, "Permission:LocationMovements.Create")).Succeeded;
     string StatusClass(InventoryScanStatus status) => status switch
     {
         InventoryScanStatus.Resolved => "text-bg-success",
@@ -24,16 +25,20 @@
 
 <div class="container mt-4">
     <h2>@Localizer["Inventory scanning"]</h2>
-    <p class="text-muted">@Localizer["Scan lookup is read-only. It identifies products and locations without creating an inventory movement."]</p>
+    <p class="text-muted">@Localizer["Scanning identifies products and locations. Inventory changes occur only when an authorized operator explicitly posts an action."]</p>
 
     <form method="get" class="card card-body mb-3">
         <div class="row g-3 align-items-end">
-            <div class="col-md-5">
+            <div class="col-md-4">
                 <label class="form-label">@Localizer["Product barcode or code"]</label>
                 <input name="productScan" value="@Model.Query.ProductScan" class="form-control form-control-lg" autofocus autocomplete="off" />
             </div>
-            <div class="col-md-5">
-                <label class="form-label">@Localizer["Location barcode or code"]</label>
+            <div class="col-md-3">
+                <label class="form-label">@Localizer["Source location barcode or code"]</label>
+                <input name="sourceLocationScan" value="@Model.Query.SourceLocationScan" class="form-control form-control-lg" autocomplete="off" />
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">@Localizer["Destination location barcode or code"]</label>
                 <input name="locationScan" value="@Model.Query.LocationScan" class="form-control form-control-lg" autocomplete="off" />
             </div>
             <div class="col-md-2"><button class="btn btn-primary btn-lg w-100">@Localizer["Resolve scan"]</button></div>
@@ -41,11 +46,12 @@
     </form>
 
     <div class="row g-3 mb-3">
-        <div class="col-md-6"><div class="card card-body h-100"><div class="d-flex justify-content-between"><strong>@Localizer["Product scan"]</strong><span class="badge @StatusClass(Model.Product.Status)">@StatusLabel(Model.Product.Status)</span></div>@if(Model.Product.Status == InventoryScanStatus.Resolved){<div class="mt-2">@Model.Product.DisplayName</div><code>@Model.Product.SecondaryText</code>}</div></div>
-        <div class="col-md-6"><div class="card card-body h-100"><div class="d-flex justify-content-between"><strong>@Localizer["Location scan"]</strong><span class="badge @StatusClass(Model.Location.Status)">@StatusLabel(Model.Location.Status)</span></div>@if(Model.Location.Status == InventoryScanStatus.Resolved){<div class="mt-2">@Model.Location.DisplayName</div><span class="text-muted">@Model.Location.SecondaryText</span>}</div></div>
+        <div class="col-md-4"><div class="card card-body h-100"><div class="d-flex justify-content-between"><strong>@Localizer["Product scan"]</strong><span class="badge @StatusClass(Model.Product.Status)">@StatusLabel(Model.Product.Status)</span></div>@if(Model.Product.Status == InventoryScanStatus.Resolved){<div class="mt-2">@Model.Product.DisplayName</div><code>@Model.Product.SecondaryText</code>}</div></div>
+        <div class="col-md-4"><div class="card card-body h-100"><div class="d-flex justify-content-between"><strong>@Localizer["Source location scan"]</strong><span class="badge @StatusClass(Model.SourceLocation.Status)">@StatusLabel(Model.SourceLocation.Status)</span></div>@if(Model.SourceLocation.Status == InventoryScanStatus.Resolved){<div class="mt-2">@Model.SourceLocation.DisplayName</div><span class="text-muted">@Model.SourceLocation.SecondaryText</span>}</div></div>
+        <div class="col-md-4"><div class="card card-body h-100"><div class="d-flex justify-content-between"><strong>@Localizer["Destination location scan"]</strong><span class="badge @StatusClass(Model.Location.Status)">@StatusLabel(Model.Location.Status)</span></div>@if(Model.Location.Status == InventoryScanStatus.Resolved){<div class="mt-2">@Model.Location.DisplayName</div><span class="text-muted">@Model.Location.SecondaryText</span>}</div></div>
     </div>
 
-    @if (canPutaway && Model.Product.Status == InventoryScanStatus.Resolved && Model.Location.Status == InventoryScanStatus.Resolved)
+    @if (canPutaway && Model.Product.Status == InventoryScanStatus.Resolved && Model.SourceLocation.Status == InventoryScanStatus.Empty && Model.Location.Status == InventoryScanStatus.Resolved)
     {
         <form asp-action="Putaway" method="post" class="card card-body mb-3">
             <h5>@Localizer["Put away scanned stock"]</h5>
@@ -56,6 +62,22 @@
             <div class="row g-2 align-items-end">
                 <div class="col-md-4"><label class="form-label">@Localizer["Quantity"]</label><input type="number" name="Quantity" min="0.000001" step="0.000001" class="form-control" required /></div>
                 <div class="col-md-3"><button class="btn btn-success w-100">@Localizer["Post putaway"]</button></div>
+            </div>
+        </form>
+    }
+
+    @if (canRelocate && Model.Product.Status == InventoryScanStatus.Resolved && Model.SourceLocation.Status == InventoryScanStatus.Resolved && Model.Location.Status == InventoryScanStatus.Resolved)
+    {
+        <form asp-action="Relocate" method="post" class="card card-body mb-3">
+            <h5>@Localizer["Relocate scanned stock"]</h5>
+            <p class="text-muted">@Localizer["This moves stock between the scanned source and destination locations in the same warehouse."]</p>
+            <input type="hidden" name="ProductScan" value="@Model.Query.ProductScan" />
+            <input type="hidden" name="SourceLocationScan" value="@Model.Query.SourceLocationScan" />
+            <input type="hidden" name="DestinationLocationScan" value="@Model.Query.LocationScan" />
+            <input type="hidden" name="IdempotencyKey" value="@Model.RelocationIdempotencyKey" />
+            <div class="row g-2 align-items-end">
+                <div class="col-md-4"><label class="form-label">@Localizer["Quantity"]</label><input type="number" name="Quantity" min="0.000001" step="0.000001" class="form-control" required /></div>
+                <div class="col-md-3"><button class="btn btn-primary w-100">@Localizer["Post relocation"]</button></div>
             </div>
         </form>
     }

@@ -11,6 +11,7 @@ public enum InventoryScanStatus
 public sealed class InventoryScanQueryDto
 {
     public string ProductScan { get; init; } = string.Empty;
+    public string SourceLocationScan { get; init; } = string.Empty;
     public string LocationScan { get; init; } = string.Empty;
 }
 
@@ -37,9 +38,20 @@ public sealed class InventoryScanPageDto
 {
     public InventoryScanQueryDto Query { get; init; } = new();
     public InventoryScanResultDto Product { get; init; } = new();
+    public InventoryScanResultDto SourceLocation { get; init; } = new();
     public InventoryScanResultDto Location { get; init; } = new();
     public List<InventoryScanBalanceDto> Balances { get; init; } = [];
     public string PutawayIdempotencyKey { get; init; } = string.Empty;
+    public string RelocationIdempotencyKey { get; init; } = string.Empty;
+}
+
+public sealed class ScannedRelocationDto
+{
+    public string ProductScan { get; init; } = string.Empty;
+    public string SourceLocationScan { get; init; } = string.Empty;
+    public string DestinationLocationScan { get; init; } = string.Empty;
+    public decimal Quantity { get; init; }
+    public string IdempotencyKey { get; init; } = string.Empty;
 }
 
 public sealed class ScannedPutawayDto

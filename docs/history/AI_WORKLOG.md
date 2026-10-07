@@ -1,5 +1,12 @@
 # AI Work Log
 
+## 2026-10-07 — WMS-100B2 idempotent scanned relocation
+
+- Added exact source-location scanning and permission-gated relocation to the inventory scan console.
+- Delegated mutation to `LocationMovementService`, retaining same-warehouse, pick/receive capability, source stock, capacity, Serializable transaction and movement dual-write controls.
+- Added a relocation-specific retry-key namespace that cannot be substituted with a putaway key, plus dual-permission and antiforgery enforcement.
+- No migration was required; Release build passed without warnings, 376 focused checks and the disposable SQL integration suite passed, and EF reports no pending model changes.
+
 ## 2026-10-07 — WMS-100B1 idempotent scanned putaway
 
 - Added the first scan mutation: permission-gated putaway from Unassigned into one exactly scanned destination location.

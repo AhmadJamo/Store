@@ -612,6 +612,18 @@
   <data name="A valid idempotency key is required." xml:space="preserve"><value>مفتاح منع التكرار الصالح مطلوب.</value></data>
   <data name="View Physical Stock Movements" xml:space="preserve"><value>عرض حركات المخزون الفعلية</value></data>
   <data name="The idempotency key was already used for a different stock movement." xml:space="preserve"><value>تم استخدام مفتاح منع التكرار مسبقًا لحركة مخزون مختلفة.</value></data>
+  <data name="Source location barcode or code" xml:space="preserve"><value>باركود موقع المصدر أو كوده</value></data>
+  <data name="Destination location barcode or code" xml:space="preserve"><value>باركود موقع الوجهة أو كوده</value></data>
+  <data name="Source location scan" xml:space="preserve"><value>مسح موقع المصدر</value></data>
+  <data name="Destination location scan" xml:space="preserve"><value>مسح موقع الوجهة</value></data>
+  <data name="Relocate scanned stock" xml:space="preserve"><value>نقل المخزون الممسوح</value></data>
+  <data name="This moves stock between the scanned source and destination locations in the same warehouse." xml:space="preserve"><value>تنقل هذه العملية المخزون بين موقعي المصدر والوجهة الممسوحين داخل المستودع نفسه.</value></data>
+  <data name="Post relocation" xml:space="preserve"><value>ترحيل النقل الداخلي</value></data>
+  <data name="Scanned relocation posted." xml:space="preserve"><value>تم ترحيل النقل الداخلي الممسوح.</value></data>
+  <data name="A valid scan relocation key is required." xml:space="preserve"><value>مفتاح صالح لطلب النقل بالمسح مطلوب.</value></data>
+  <data name="Scan one exact product before relocation." xml:space="preserve"><value>امسح منتجًا واحدًا محددًا قبل النقل.</value></data>
+  <data name="Scan one exact source location before relocation." xml:space="preserve"><value>امسح موقع مصدر واحدًا محددًا قبل النقل.</value></data>
+  <data name="Scan one exact destination location before relocation." xml:space="preserve"><value>امسح موقع وجهة واحدًا محددًا قبل النقل.</value></data>
   <data name="Kernel movements" xml:space="preserve"><value>حركات المحرك</value></data>
   <data name="The linked ledgers are reconciled." xml:space="preserve"><value>السجلات المرتبطة متطابقة.</value></data>
   <data name="Planned" xml:space="preserve"><value>مخططة</value></data>
@@ -883,7 +895,7 @@
   <data name="Never" xml:space="preserve"><value>لم يحدث</value></data>
   <data name="No inventory insights match the selected filters." xml:space="preserve"><value>لا توجد تحليلات مخزون تطابق الفلاتر المحددة.</value></data>
   <data name="Inventory scanning" xml:space="preserve"><value>مسح المخزون</value></data>
-  <data name="Scan lookup is read-only. It identifies products and locations without creating an inventory movement." xml:space="preserve"><value>البحث بالمسح للقراءة فقط، ويعرّف المنتجات والمواقع دون إنشاء حركة مخزون.</value></data>
+  <data name="Scanning identifies products and locations. Inventory changes occur only when an authorized operator explicitly posts an action." xml:space="preserve"><value>يعرّف المسح المنتجات والمواقع، ولا يتغيّر المخزون إلا عندما يرحّل مستخدم مخوّل العملية بشكل صريح.</value></data>
   <data name="Product barcode or code" xml:space="preserve"><value>باركود المنتج أو كوده</value></data>
   <data name="Location barcode or code" xml:space="preserve"><value>باركود الموقع أو كوده</value></data>
   <data name="Resolve scan" xml:space="preserve"><value>تحقق من المسح</value></data>

@@ -12,6 +12,7 @@ Inventory tracking uses `InventoryTracking.View` for traceability, `InventoryTra
 `Inventory.Replenishment.View` protects reviewed replenishment suggestions; `Inventory.Replenishment.Manage` separately protects rule create/update and activation changes.
 `InventoryInsights.View` protects the read-only slow/dead inventory activity report; it grants no stock mutation capability.
 `InventoryScanning.View` protects the scan console. Scanned putaway additionally requires `ProductStock.Edit`; both policies are enforced on the POST action and the form is hidden without edit authority.
+Scanned internal relocation additionally requires `LocationMovements.Create`; its POST action enforces both permissions and antiforgery, and uses a relocation-specific retry key.
 
 Authentication is ASP.NET Core Identity cookie authentication. `PermissionAuthorizeAttribute` creates policies with `Permission:` prefix. Identity owns credentials, while `TenantRole`, `TenantRolePermission` and `TenantUserRole` own authorization inside each company. Both evaluators require an active tenant; Admin receives full access only from that company's protected Admin assignment. Non-Admin permissions resolve only through the active company's role definition.
 
@@ -30,7 +31,7 @@ Products, Warehouses, ProductStock, StockTransactions, StockMovements, LocationM
 | Location movements | View/Create enforced for history and internal relocation; putaway continues to require ProductStock.Edit. |
 | Inventory reconciliation | Dedicated View permission protects the read-only exception report; the controller exposes no mutation action. |
 | Inventory insights | Dedicated View permission protects the read-only activity report; thresholds and filters do not mutate stock. |
-| Inventory scanning | View protects scan resolution; scanned putaway requires both View and ProductStock.Edit and uses antiforgery plus a scoped idempotency key. |
+| Inventory scanning | View protects resolution; scanned putaway adds ProductStock.Edit and scanned relocation adds LocationMovements.Create. Both mutations use antiforgery and workflow-scoped idempotency keys. |
 | Stock transfers | View/Create/Edit/Submit/Approve/Reject/Post/Cancel enforced. |
 | Users | View/Create enforced; Edit/Delete definitions have no actions. |
 | Roles | View/Create/Edit/Delete enforced; controller uses `TenantRoleService`, system Admin cannot be edited/deleted and all IDs are resolved inside the active tenant. |
