@@ -54,9 +54,17 @@ public sealed class InventoryAdjustment
         foreach (var line in _lines)
         {
             if (!values.TryGetValue(line.ProductId, out var quantity)) throw new InvalidOperationException("A counted quantity is required for every line.");
-            line.RecordCount(quantity);
+            RecordLineCount(line.ProductId, quantity, userId);
         }
         Status = InventoryAdjustmentStatus.Counted; CountedByUserId = userId.Trim(); CountedAt = DateTime.UtcNow;
+    }
+
+    public void RecordLineCount(int productId, decimal countedQuantity, string userId)
+    {
+        EnsureDraft(); EnsureUser(userId);
+        var line = _lines.SingleOrDefault(x => x.ProductId == productId)
+            ?? throw new InvalidOperationException("The scanned product is not included in this inventory adjustment.");
+        line.RecordCount(countedQuantity);
     }
 
     public void Approve(string userId)

@@ -624,6 +624,17 @@
   <data name="Scan one exact product before relocation." xml:space="preserve"><value>امسح منتجًا واحدًا محددًا قبل النقل.</value></data>
   <data name="Scan one exact source location before relocation." xml:space="preserve"><value>امسح موقع مصدر واحدًا محددًا قبل النقل.</value></data>
   <data name="Scan one exact destination location before relocation." xml:space="preserve"><value>امسح موقع وجهة واحدًا محددًا قبل النقل.</value></data>
+  <data name="Inventory adjustment number" xml:space="preserve"><value>رقم مستند الجرد</value></data>
+  <data name="Count document" xml:space="preserve"><value>مستند الجرد</value></data>
+  <data name="Record scanned count" xml:space="preserve"><value>تسجيل العدّ الممسوح</value></data>
+  <data name="The scanned quantity updates one draft count line. It does not post an inventory variance." xml:space="preserve"><value>تحدّث الكمية الممسوحة سطرًا واحدًا في مسودة الجرد، ولا ترحّل فرق مخزون.</value></data>
+  <data name="Record count" xml:space="preserve"><value>تسجيل العدّ</value></data>
+  <data name="This is a blind count. Current balances remain hidden until the count is completed." xml:space="preserve"><value>هذا جرد أعمى، وتبقى الأرصدة الحالية مخفية حتى اكتمال العدّ.</value></data>
+  <data name="Scanned count recorded." xml:space="preserve"><value>تم تسجيل العدّ الممسوح.</value></data>
+  <data name="Inventory adjustment number is required." xml:space="preserve"><value>رقم مستند الجرد مطلوب.</value></data>
+  <data name="The scanned location does not match the inventory adjustment position." xml:space="preserve"><value>الموقع الممسوح لا يطابق موضع مستند الجرد.</value></data>
+  <data name="The scanned product is not included in this inventory adjustment." xml:space="preserve"><value>المنتج الممسوح غير موجود في مستند الجرد هذا.</value></data>
+  <data name="The scanned count does not match an editable adjustment line and position." xml:space="preserve"><value>العدّ الممسوح لا يطابق سطرًا وموضعًا قابلين للتعديل في مستند الجرد.</value></data>
   <data name="Kernel movements" xml:space="preserve"><value>حركات المحرك</value></data>
   <data name="The linked ledgers are reconciled." xml:space="preserve"><value>السجلات المرتبطة متطابقة.</value></data>
   <data name="Planned" xml:space="preserve"><value>مخططة</value></data>

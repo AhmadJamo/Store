@@ -1,5 +1,12 @@
 # AI Work Log
 
+## 2026-10-07 — WMS-100B3 scanned inventory counting
+
+- Added exact Draft adjustment-number scanning and absolute per-product count entry through the existing inventory-adjustment application boundary.
+- Kept scanned documents Draft until the ordinary all-line completion action, leaving approval, posting and inventory variance mutation under their separate permissions.
+- Preserved blind-count secrecy by hiding current balances in the scan console and prefilled saved scanned values on the completion form.
+- Added matching-position and included-product validation plus dual scan/count authorization. No migration was required; Release build passed without warnings, 378 focused checks and the updated disposable SQL suite passed repeated absolute scan-count persistence, and EF reports no pending model changes.
+
 ## 2026-10-07 — WMS-100B2 idempotent scanned relocation
 
 - Added exact source-location scanning and permission-gated relocation to the inventory scan console.

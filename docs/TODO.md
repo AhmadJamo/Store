@@ -29,7 +29,8 @@ The ordered Arabic execution plan, workflow, business rules and rolling suggesti
 - [x] WMS-100A add safe read-only product/location barcode resolution and availability lookup.
 - [x] WMS-100B1 add idempotent scanned putaway through the controlled Unassigned Stock workflow.
 - [x] WMS-100B2 add idempotent scanned relocation between exact locations.
-- [ ] WMS-100B3 extend idempotent scan commands to receiving and count workflows.
+- [x] WMS-100B3 add retry-safe absolute scanned counts to Draft inventory adjustments.
+- [ ] WMS-100B4 add receiving scans after a real purchase-order/receipt workflow exists.
 - [ ] Add scheduled/automated delivery channels and delivery-provider callbacks.
 
 ## Completed

@@ -13,6 +13,7 @@ Inventory tracking uses `InventoryTracking.View` for traceability, `InventoryTra
 `InventoryInsights.View` protects the read-only slow/dead inventory activity report; it grants no stock mutation capability.
 `InventoryScanning.View` protects the scan console. Scanned putaway additionally requires `ProductStock.Edit`; both policies are enforced on the POST action and the form is hidden without edit authority.
 Scanned internal relocation additionally requires `LocationMovements.Create`; its POST action enforces both permissions and antiforgery, and uses a relocation-specific retry key.
+Scanned Draft line counting additionally requires `InventoryAdjustments.Count`; it records an absolute line value only and grants no approval or posting authority.
 
 Authentication is ASP.NET Core Identity cookie authentication. `PermissionAuthorizeAttribute` creates policies with `Permission:` prefix. Identity owns credentials, while `TenantRole`, `TenantRolePermission` and `TenantUserRole` own authorization inside each company. Both evaluators require an active tenant; Admin receives full access only from that company's protected Admin assignment. Non-Admin permissions resolve only through the active company's role definition.
 
@@ -31,7 +32,7 @@ Products, Warehouses, ProductStock, StockTransactions, StockMovements, LocationM
 | Location movements | View/Create enforced for history and internal relocation; putaway continues to require ProductStock.Edit. |
 | Inventory reconciliation | Dedicated View permission protects the read-only exception report; the controller exposes no mutation action. |
 | Inventory insights | Dedicated View permission protects the read-only activity report; thresholds and filters do not mutate stock. |
-| Inventory scanning | View protects resolution; scanned putaway adds ProductStock.Edit and scanned relocation adds LocationMovements.Create. Both mutations use antiforgery and workflow-scoped idempotency keys. |
+| Inventory scanning | View protects resolution; putaway adds ProductStock.Edit, relocation adds LocationMovements.Create and Draft line counting adds InventoryAdjustments.Count. Every mutation uses antiforgery; movement commands use scoped keys and counts use absolute state assignment. |
 | Stock transfers | View/Create/Edit/Submit/Approve/Reject/Post/Cancel enforced. |
 | Users | View/Create enforced; Edit/Delete definitions have no actions. |
 | Roles | View/Create/Edit/Delete enforced; controller uses `TenantRoleService`, system Admin cannot be edited/deleted and all IDs are resolved inside the active tenant. |

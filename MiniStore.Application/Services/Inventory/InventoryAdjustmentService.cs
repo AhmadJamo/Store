@@ -55,6 +55,14 @@ public sealed class InventoryAdjustmentService(
     }
     public async Task RecordCountsAsync(long id, RecordInventoryCountsDto dto, string userId) => await unitOfWork.ExecuteInTransactionAsync(async () =>
     { var item = await adjustments.GetByIdAsync(id) ?? throw new InvalidOperationException("Inventory adjustment was not found."); item.RecordCounts(dto.Lines.Select(x => (x.ProductId, x.CountedQuantity)), userId); });
+    public async Task RecordScannedLineAsync(string number, int productId, int? locationId, decimal countedQuantity, string userId) => await unitOfWork.ExecuteInTransactionAsync(async () =>
+    {
+        if (string.IsNullOrWhiteSpace(number)) throw new ArgumentException("Inventory adjustment number is required.");
+        var item = await adjustments.GetByNumberAsync(number.Trim()) ?? throw new InvalidOperationException("Inventory adjustment was not found.");
+        if (item.Status != InventoryAdjustmentStatus.Draft) throw new InvalidOperationException("Only draft adjustments can be edited.");
+        if (item.StorageLocationId != locationId) throw new InvalidOperationException("The scanned location does not match the inventory adjustment position.");
+        item.RecordLineCount(productId, countedQuantity, userId);
+    });
     public async Task ApproveAsync(long id, string userId) => await unitOfWork.ExecuteInTransactionAsync(async () =>
     { var item = await adjustments.GetByIdAsync(id) ?? throw new InvalidOperationException("Inventory adjustment was not found."); item.Approve(userId); });
     public async Task CancelAsync(long id, string userId) => await unitOfWork.ExecuteInTransactionAsync(async () =>

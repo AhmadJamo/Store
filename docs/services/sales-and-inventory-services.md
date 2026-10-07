@@ -31,6 +31,8 @@ WMS-100B1 extends that boundary only for scanned putaway. It validates a strongl
 
 WMS-100B2 adds an independently scoped scanned-relocation retry key. After exact product/source/destination resolution, `InventoryScanningService` delegates to `LocationMovementService`, preserving the existing same-warehouse, source-availability, location-capability, capacity and Serializable movement controls.
 
+WMS-100B3 delegates one absolute scanned quantity to `InventoryAdjustmentService.RecordScannedLineAsync`. The service validates the Draft document, included product and exact count position inside the UnitOfWork; it does not complete, approve, post or mutate inventory. Existing scanned values are prefilled when the operator later completes all lines.
+
 `InventoryReconciliationService` is read-only. It classifies tenant-filtered SQL snapshots from `InventoryReconciliationRepository`, comparing ProductStock quantity/value, aggregated ProductLocationStock, derived Unassigned and the latest StockTransaction snapshot. It applies fixed quantity/value tolerances, exposes exceptions through a paged bilingual report and never performs a correction.
 
 `ProductService` also validates product logistics against managed units: weights require Mass, dimensions require Length and all three dimensions, and category selection remains tenant-scoped. It refuses a transition from untracked to Lot/Serial while any ProductStock row has a non-zero balance. `ProductCategoryService` creates and activates/deactivates preserved category rows; it never deletes referenced categories.

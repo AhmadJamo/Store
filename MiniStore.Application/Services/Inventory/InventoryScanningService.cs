@@ -10,17 +10,22 @@ public sealed class InventoryScanningService(
     IStorageLocationRepository locations,
     IWarehouseRepository warehouses,
     IInventoryBalanceRepository balances,
+    IInventoryAdjustmentRepository adjustments,
     UnassignedStockService unassignedStock,
-    LocationMovementService locationMovements)
+    LocationMovementService locationMovements,
+    InventoryAdjustmentService adjustmentService,
+    ICurrentUserService currentUser)
 {
     public async Task<InventoryScanPageDto> ResolveAsync(InventoryScanQueryDto query)
     {
+        var adjustmentToken = InventoryScanResolver.Normalize(query.AdjustmentScan);
         var productToken = InventoryScanResolver.Normalize(query.ProductScan);
         var sourceLocationToken = InventoryScanResolver.Normalize(query.SourceLocationScan);
         var locationToken = InventoryScanResolver.Normalize(query.LocationScan);
         var productRows = await products.GetAllAsync(null);
         var locationRows = await locations.SearchAsync(null, null);
         var warehouseRows = await warehouses.GetAllAsync();
+        var adjustmentRows = await adjustments.GetAllAsync();
 
         var productMatches = string.IsNullOrEmpty(productToken)
             ? []
@@ -40,11 +45,19 @@ public sealed class InventoryScanningService(
                     string.Equals(x.Barcode, sourceLocationToken, StringComparison.OrdinalIgnoreCase) ||
                     string.Equals(x.Code, sourceLocationToken, StringComparison.OrdinalIgnoreCase))
                 .ToList();
+        var adjustmentMatches = string.IsNullOrEmpty(adjustmentToken)
+            ? []
+            : adjustmentRows.Where(x => string.Equals(
+                x.AdjustmentNumber, adjustmentToken, StringComparison.OrdinalIgnoreCase)).ToList();
 
         var productResult = ProductResult(productToken, productMatches);
+        var adjustmentResult = AdjustmentResult(adjustmentToken, adjustmentMatches);
         var locationResult = LocationResult(locationToken, locationMatches, warehouseRows);
         var sourceLocationResult = LocationResult(sourceLocationToken, sourceLocationMatches, warehouseRows);
         var balanceRows = new List<InventoryScanBalanceDto>();
+        var adjustment = adjustmentResult.Status == InventoryScanStatus.Resolved
+            ? adjustmentMatches.Single()
+            : null;
 
         if (productResult.Status == InventoryScanStatus.Resolved &&
             locationResult.Status is InventoryScanStatus.Empty or InventoryScanStatus.Resolved &&
@@ -83,20 +96,38 @@ public sealed class InventoryScanningService(
                 .ToList();
         }
 
+        var countLocationMatches = adjustment is not null &&
+            (adjustment.StorageLocationId.HasValue
+                ? locationResult.Status == InventoryScanStatus.Resolved &&
+                  locationResult.EntityId == adjustment.StorageLocationId
+                : locationResult.Status == InventoryScanStatus.Empty);
+        var canRecordCount = adjustment is not null &&
+            adjustment.Status == InventoryAdjustmentStatus.Draft &&
+            productResult.Status == InventoryScanStatus.Resolved &&
+            sourceLocationResult.Status == InventoryScanStatus.Empty &&
+            adjustment.Lines.Any(x => x.ProductId == productResult.EntityId) &&
+            countLocationMatches;
+        if (adjustment?.IsBlindCount == true)
+            balanceRows = [];
+
         return new InventoryScanPageDto
         {
             Query = new InventoryScanQueryDto
             {
+                AdjustmentScan = adjustmentToken,
                 ProductScan = productToken,
                 SourceLocationScan = sourceLocationToken,
                 LocationScan = locationToken
             },
             Product = productResult,
+            Adjustment = adjustmentResult,
             SourceLocation = sourceLocationResult,
             Location = locationResult,
             Balances = balanceRows,
             PutawayIdempotencyKey = InventoryScanResolver.NewPutawayIdempotencyKey(),
-            RelocationIdempotencyKey = InventoryScanResolver.NewRelocationIdempotencyKey()
+            RelocationIdempotencyKey = InventoryScanResolver.NewRelocationIdempotencyKey(),
+            IsBlindCount = adjustment?.IsBlindCount == true,
+            CanRecordCount = canRecordCount
         };
     }
 
@@ -161,6 +192,31 @@ public sealed class InventoryScanningService(
         });
     }
 
+    public async Task RecordCountAsync(ScannedInventoryCountDto input)
+    {
+        if (input.CountedQuantity < 0)
+            throw new ArgumentException("Counted quantity cannot be negative.");
+
+        var page = await ResolveAsync(new InventoryScanQueryDto
+        {
+            AdjustmentScan = input.AdjustmentNumber,
+            ProductScan = input.ProductScan,
+            LocationScan = input.LocationScan
+        });
+        if (!page.CanRecordCount || !page.Product.EntityId.HasValue || !page.Adjustment.EntityLongId.HasValue)
+            throw new InvalidOperationException("The scanned count does not match an editable adjustment line and position.");
+
+        var locationId = page.Location.Status == InventoryScanStatus.Resolved
+            ? page.Location.EntityId
+            : null;
+        await adjustmentService.RecordScannedLineAsync(
+            page.Adjustment.NormalizedValue,
+            page.Product.EntityId.Value,
+            locationId,
+            input.CountedQuantity,
+            currentUser.UserId);
+    }
+
     private static InventoryScanResultDto ProductResult(string token, List<Product> matches)
     {
         var status = InventoryScanResolver.ResolveCount(token, matches.Count);
@@ -172,6 +228,22 @@ public sealed class InventoryScanningService(
             EntityId = match?.Id,
             DisplayName = match?.Name ?? string.Empty,
             SecondaryText = match?.ProductCode
+        };
+    }
+
+    private static InventoryScanResultDto AdjustmentResult(
+        string token,
+        List<InventoryAdjustment> matches)
+    {
+        var status = InventoryScanResolver.ResolveCount(token, matches.Count);
+        var match = status == InventoryScanStatus.Resolved ? matches.Single() : null;
+        return new InventoryScanResultDto
+        {
+            NormalizedValue = token,
+            Status = status,
+            EntityLongId = match?.Id,
+            DisplayName = match?.AdjustmentNumber ?? string.Empty,
+            SecondaryText = match?.Status.ToString()
         };
     }
 

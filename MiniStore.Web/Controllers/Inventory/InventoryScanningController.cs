@@ -12,9 +12,10 @@ public sealed class InventoryScanningController(
 {
     [HttpGet]
     [PermissionAuthorize("InventoryScanning.View")]
-    public async Task<IActionResult> Index(string? productScan, string? sourceLocationScan, string? locationScan) =>
+    public async Task<IActionResult> Index(string? adjustmentScan, string? productScan, string? sourceLocationScan, string? locationScan) =>
         View(await service.ResolveAsync(new InventoryScanQueryDto
         {
+            AdjustmentScan = adjustmentScan ?? string.Empty,
             ProductScan = productScan ?? string.Empty,
             SourceLocationScan = sourceLocationScan ?? string.Empty,
             LocationScan = locationScan ?? string.Empty
@@ -38,6 +39,30 @@ public sealed class InventoryScanningController(
 
         return RedirectToAction(nameof(Index), new
         {
+            productScan = input.ProductScan,
+            locationScan = input.LocationScan
+        });
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [PermissionAuthorize("InventoryScanning.View")]
+    [PermissionAuthorize("InventoryAdjustments.Count")]
+    public async Task<IActionResult> Count(ScannedInventoryCountDto input)
+    {
+        try
+        {
+            await service.RecordCountAsync(input);
+            Notify("success", "Scanned count recorded.");
+        }
+        catch (Exception exception) when (exception is ArgumentException or InvalidOperationException)
+        {
+            Notify("danger", exception.Message);
+        }
+
+        return RedirectToAction(nameof(Index), new
+        {
+            adjustmentScan = input.AdjustmentNumber,
             productScan = input.ProductScan,
             locationScan = input.LocationScan
         });

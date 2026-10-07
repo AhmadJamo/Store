@@ -1073,6 +1073,20 @@ Check(InventoryScanResolver.ValidateRelocationIdempotencyKey(scanRelocationKey) 
     "Scanned relocation must use a strongly scoped retry key");
 CheckArgumentThrows(() => InventoryScanResolver.ValidateRelocationIdempotencyKey(scanRequestKey),
     "Scanned relocation must reject a putaway retry key");
+var scanningCount = typeof(InventoryScanningController).GetMethod(nameof(InventoryScanningController.Count))!;
+var scanningCountPolicies = scanningCount.GetCustomAttributes<PermissionAuthorizeAttribute>()
+    .Select(x => x.Policy).ToHashSet();
+Check(scanningCountPolicies.SetEquals([
+        $"{PermissionAuthorizeAttribute.PolicyPrefix}InventoryScanning.View",
+        $"{PermissionAuthorizeAttribute.PolicyPrefix}InventoryAdjustments.Count"]),
+    "Scanned counting must require scan visibility and inventory count permission");
+var scannedAdjustment = new InventoryAdjustment("ADJ-SCAN", 1, null, true, "Blind scan test", "creator");
+scannedAdjustment.AddLine(10, 5m);
+scannedAdjustment.RecordLineCount(10, 4m, "counter");
+scannedAdjustment.RecordLineCount(10, 4m, "counter");
+Check(scannedAdjustment.Status == InventoryAdjustmentStatus.Draft &&
+      scannedAdjustment.Lines.Single().CountedQuantity == 4m,
+    "Repeated absolute scanned counts must be idempotent and keep the adjustment draft");
 
 Console.WriteLine($"Passed {count} security and inventory regression checks.");
 

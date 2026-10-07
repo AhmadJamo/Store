@@ -4,6 +4,7 @@ public interface IInventoryAdjustmentRepository
 {
     Task<List<InventoryAdjustment>> GetAllAsync();
     Task<InventoryAdjustment?> GetByIdAsync(long id);
+    Task<InventoryAdjustment?> GetByNumberAsync(string number);
     Task<InventoryBalance?> GetBalanceAsync(int productId, int warehouseId, int? locationId);
     Task AddAsync(InventoryAdjustment adjustment);
 }

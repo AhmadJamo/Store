@@ -14,6 +14,7 @@
     };
     var canPutaway = (await AuthorizationService.AuthorizeAsync(User, null, "Permission:ProductStock.Edit")).Succeeded;
     var canRelocate = (await AuthorizationService.AuthorizeAsync(User, null, "Permission:LocationMovements.Create")).Succeeded;
+    var canCount = (await AuthorizationService.AuthorizeAsync(User, null, "Permission:InventoryAdjustments.Count")).Succeeded;
     string StatusClass(InventoryScanStatus status) => status switch
     {
         InventoryScanStatus.Resolved => "text-bg-success",
@@ -29,15 +30,19 @@
 
     <form method="get" class="card card-body mb-3">
         <div class="row g-3 align-items-end">
-            <div class="col-md-4">
+            <div class="col-md-3">
+                <label class="form-label">@Localizer["Inventory adjustment number"]</label>
+                <input name="adjustmentScan" value="@Model.Query.AdjustmentScan" class="form-control form-control-lg" autocomplete="off" />
+            </div>
+            <div class="col-md-3">
                 <label class="form-label">@Localizer["Product barcode or code"]</label>
                 <input name="productScan" value="@Model.Query.ProductScan" class="form-control form-control-lg" autofocus autocomplete="off" />
             </div>
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <label class="form-label">@Localizer["Source location barcode or code"]</label>
                 <input name="sourceLocationScan" value="@Model.Query.SourceLocationScan" class="form-control form-control-lg" autocomplete="off" />
             </div>
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <label class="form-label">@Localizer["Destination location barcode or code"]</label>
                 <input name="locationScan" value="@Model.Query.LocationScan" class="form-control form-control-lg" autocomplete="off" />
             </div>
@@ -46,12 +51,13 @@
     </form>
 
     <div class="row g-3 mb-3">
-        <div class="col-md-4"><div class="card card-body h-100"><div class="d-flex justify-content-between"><strong>@Localizer["Product scan"]</strong><span class="badge @StatusClass(Model.Product.Status)">@StatusLabel(Model.Product.Status)</span></div>@if(Model.Product.Status == InventoryScanStatus.Resolved){<div class="mt-2">@Model.Product.DisplayName</div><code>@Model.Product.SecondaryText</code>}</div></div>
-        <div class="col-md-4"><div class="card card-body h-100"><div class="d-flex justify-content-between"><strong>@Localizer["Source location scan"]</strong><span class="badge @StatusClass(Model.SourceLocation.Status)">@StatusLabel(Model.SourceLocation.Status)</span></div>@if(Model.SourceLocation.Status == InventoryScanStatus.Resolved){<div class="mt-2">@Model.SourceLocation.DisplayName</div><span class="text-muted">@Model.SourceLocation.SecondaryText</span>}</div></div>
-        <div class="col-md-4"><div class="card card-body h-100"><div class="d-flex justify-content-between"><strong>@Localizer["Destination location scan"]</strong><span class="badge @StatusClass(Model.Location.Status)">@StatusLabel(Model.Location.Status)</span></div>@if(Model.Location.Status == InventoryScanStatus.Resolved){<div class="mt-2">@Model.Location.DisplayName</div><span class="text-muted">@Model.Location.SecondaryText</span>}</div></div>
+        <div class="col-md-3"><div class="card card-body h-100"><div class="d-flex justify-content-between"><strong>@Localizer["Count document"]</strong><span class="badge @StatusClass(Model.Adjustment.Status)">@StatusLabel(Model.Adjustment.Status)</span></div>@if(Model.Adjustment.Status == InventoryScanStatus.Resolved){<div class="mt-2">@Model.Adjustment.DisplayName</div><span class="text-muted">@Localizer[Model.Adjustment.SecondaryText ?? string.Empty]</span>}</div></div>
+        <div class="col-md-3"><div class="card card-body h-100"><div class="d-flex justify-content-between"><strong>@Localizer["Product scan"]</strong><span class="badge @StatusClass(Model.Product.Status)">@StatusLabel(Model.Product.Status)</span></div>@if(Model.Product.Status == InventoryScanStatus.Resolved){<div class="mt-2">@Model.Product.DisplayName</div><code>@Model.Product.SecondaryText</code>}</div></div>
+        <div class="col-md-3"><div class="card card-body h-100"><div class="d-flex justify-content-between"><strong>@Localizer["Source location scan"]</strong><span class="badge @StatusClass(Model.SourceLocation.Status)">@StatusLabel(Model.SourceLocation.Status)</span></div>@if(Model.SourceLocation.Status == InventoryScanStatus.Resolved){<div class="mt-2">@Model.SourceLocation.DisplayName</div><span class="text-muted">@Model.SourceLocation.SecondaryText</span>}</div></div>
+        <div class="col-md-3"><div class="card card-body h-100"><div class="d-flex justify-content-between"><strong>@Localizer["Destination location scan"]</strong><span class="badge @StatusClass(Model.Location.Status)">@StatusLabel(Model.Location.Status)</span></div>@if(Model.Location.Status == InventoryScanStatus.Resolved){<div class="mt-2">@Model.Location.DisplayName</div><span class="text-muted">@Model.Location.SecondaryText</span>}</div></div>
     </div>
 
-    @if (canPutaway && Model.Product.Status == InventoryScanStatus.Resolved && Model.SourceLocation.Status == InventoryScanStatus.Empty && Model.Location.Status == InventoryScanStatus.Resolved)
+    @if (canPutaway && Model.Adjustment.Status == InventoryScanStatus.Empty && Model.Product.Status == InventoryScanStatus.Resolved && Model.SourceLocation.Status == InventoryScanStatus.Empty && Model.Location.Status == InventoryScanStatus.Resolved)
     {
         <form asp-action="Putaway" method="post" class="card card-body mb-3">
             <h5>@Localizer["Put away scanned stock"]</h5>
@@ -66,7 +72,7 @@
         </form>
     }
 
-    @if (canRelocate && Model.Product.Status == InventoryScanStatus.Resolved && Model.SourceLocation.Status == InventoryScanStatus.Resolved && Model.Location.Status == InventoryScanStatus.Resolved)
+    @if (canRelocate && Model.Adjustment.Status == InventoryScanStatus.Empty && Model.Product.Status == InventoryScanStatus.Resolved && Model.SourceLocation.Status == InventoryScanStatus.Resolved && Model.Location.Status == InventoryScanStatus.Resolved)
     {
         <form asp-action="Relocate" method="post" class="card card-body mb-3">
             <h5>@Localizer["Relocate scanned stock"]</h5>
@@ -82,7 +88,27 @@
         </form>
     }
 
-    @if (Model.Product.Status == InventoryScanStatus.Resolved)
+    @if (canCount && Model.CanRecordCount)
+    {
+        <form asp-action="Count" method="post" class="card card-body mb-3">
+            <h5>@Localizer["Record scanned count"]</h5>
+            <p class="text-muted">@Localizer["The scanned quantity updates one draft count line. It does not post an inventory variance."]</p>
+            <input type="hidden" name="AdjustmentNumber" value="@Model.Query.AdjustmentScan" />
+            <input type="hidden" name="ProductScan" value="@Model.Query.ProductScan" />
+            <input type="hidden" name="LocationScan" value="@Model.Query.LocationScan" />
+            <div class="row g-2 align-items-end">
+                <div class="col-md-4"><label class="form-label">@Localizer["Counted quantity"]</label><input type="number" name="CountedQuantity" min="0" step="0.000001" class="form-control" required /></div>
+                <div class="col-md-3"><button class="btn btn-primary w-100">@Localizer["Record count"]</button></div>
+            </div>
+        </form>
+    }
+
+    @if (Model.IsBlindCount)
+    {
+        <div class="alert alert-info">@Localizer["This is a blind count. Current balances remain hidden until the count is completed."]</div>
+    }
+
+    @if (Model.Product.Status == InventoryScanStatus.Resolved && !Model.IsBlindCount)
     {
         <div class="table-responsive"><table class="table table-striped align-middle"><thead><tr><th>@Localizer["Warehouse"]</th><th>@Localizer["Location"]</th><th>@Localizer["On hand"]</th><th>@Localizer["Reserved"]</th><th>@Localizer["Available"]</th></tr></thead><tbody>
         @foreach(var row in Model.Balances){<tr><td>@row.WarehouseName</td><td>@(row.IsUnassigned ? Localizer["Unassigned (system)"] : row.LocationName)</td><td>@row.OnHand.ToString("N6")</td><td>@row.Reserved.ToString("N6")</td><td class="@(row.Available < 0 ? "text-danger" : null)">@row.Available.ToString("N6")</td></tr>}

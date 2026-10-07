@@ -239,6 +239,9 @@ static async Task VerifyAdjustmentPostingAsync(int tenantId, int productId, int 
     {
         WarehouseId = warehouseId, Reason = "SQL integration count", ProductIds = [productId]
     }, "creator");
+    var draft = await context.InventoryAdjustments.AsNoTracking().SingleAsync(x => x.Id == id);
+    await service.RecordScannedLineAsync(draft.AdjustmentNumber, productId, null, 2m, "counter");
+    await service.RecordScannedLineAsync(draft.AdjustmentNumber, productId, null, 2m, "counter");
     await service.RecordCountsAsync(id, new RecordInventoryCountsDto
     {
         Lines = [new InventoryCountInputDto { ProductId = productId, CountedQuantity = 2m }]

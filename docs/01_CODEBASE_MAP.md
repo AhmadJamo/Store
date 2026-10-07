@@ -61,7 +61,7 @@
 | `Services/Inventory/PutawayRuleService.cs` | administers product/category/default putaway rules and resolves priority- and capacity-aware active receivable-location suggestions | Unassigned Stock putaway. |
 | `Services/Inventory/ReplenishmentService.cs` | manages product/warehouse replenishment policies and reservation-aware reviewed suggestions | Replenishment screen. |
 | `Services/Inventory/{InventoryInsightsService,InventoryActivityClassifier}.cs` | classifies current positive inventory by actual outbound inactivity without mutating stock or valuation | Inventory Insights screen. |
-| `Services/Inventory/{InventoryScanningService,InventoryScanResolver}.cs` | exact product/source/destination resolution, availability and scoped-idempotency delegation of scanned putaway/relocation | Inventory Scanning screen, UnassignedStockService and LocationMovementService. |
+| `Services/Inventory/{InventoryScanningService,InventoryScanResolver}.cs` | exact adjustment/product/source/destination resolution and safe delegation of scanned putaway, relocation and absolute Draft counts | Inventory Scanning screen and owning inventory services. |
 | `Services/Settings/InventorySettingsService.cs` | rowversion-protected defaults for new warehouse operating policies | SettingsController inventory screen. |
 | `Services/Settings/InventoryAccessService.cs` | branch warehouse permissions/priorities and POS terminal warehouse policies | Settings InventoryAccess and POS validation. |
 | `Services/Settings/PosExperienceSettingsService.cs` | profile presets, custom terminal appearance persistence and POS runtime projection | Settings/Pos and Sales/Pos. |
