@@ -1,5 +1,12 @@
 # AI Work Log
 
+## 2026-10-07 — WMS-100A read-only inventory scanning
+
+- Added a bilingual, permission-protected scan console for exact product barcode/code and storage-location barcode/code lookup.
+- Normalized scanner input, rejected ambiguous identifiers and prevented invalid location scans from widening results to all locations.
+- Displayed the existing OnHand, Reserved and Available projection without creating a stock movement, reservation or document.
+- No migration was required; Release build passed without warnings, 370 focused checks and the disposable SQL integration suite passed, and EF reports no pending model changes.
+
 ## 2026-10-07 — WMS-090D inventory activity insights
 
 - Added a bilingual, permission-protected, read-only report for slow and dead positive inventory with configurable inactivity thresholds.

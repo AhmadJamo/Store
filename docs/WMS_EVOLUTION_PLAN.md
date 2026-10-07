@@ -598,6 +598,7 @@ Status: implementation and additive migration complete; migration applied to `AH
 
 ### WMS-100 — Barcode execution and packages
 
+- [x] WMS-100A permission-protected read-only product/location scan resolver with exact-match ambiguity blocking and live availability lookup.
 - Shared scan commands, protected retry/idempotency and package hierarchy.
 
 ### WMS-110 — Advanced picking

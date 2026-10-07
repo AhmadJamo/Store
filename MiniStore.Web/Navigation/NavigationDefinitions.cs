@@ -198,6 +198,14 @@ public static class NavigationDefinitions
                 137),
 
             new NavigationItem(
+                "Inventory scanning",
+                "bi-upc",
+                "InventoryScanning",
+                "Index",
+                "InventoryScanning.View",
+                138),
+
+            new NavigationItem(
                 "Lot and serial tracking",
                 "bi-upc-scan",
                 "InventoryTracking",

@@ -1038,6 +1038,17 @@ Check(InventoryActivityClassifier.Classify(null, DateTime.UtcNow.AddDays(-40), D
 Check(InventoryActivityClassifier.Classify(DateTime.UtcNow.AddDays(-90), DateTime.UtcNow.AddDays(-120), DateTime.UtcNow, 30, 90) ==
       MiniStore.Application.DTOs.Inventory.Insights.InventoryActivityState.Dead,
     "Dead-stock classification must include the configured threshold boundary");
+var scanningIndex = typeof(InventoryScanningController).GetMethod(nameof(InventoryScanningController.Index))!;
+Check(scanningIndex.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
+      $"{PermissionAuthorizeAttribute.PolicyPrefix}InventoryScanning.View",
+    "Inventory scan lookup must require its dedicated view permission");
+Check(InventoryScanResolver.Normalize("  ab-123 ") == "AB-123" &&
+      InventoryScanResolver.ResolveCount("AB-123", 1) ==
+      MiniStore.Application.DTOs.Inventory.Scanning.InventoryScanStatus.Resolved,
+    "Inventory scans must normalize scanner input and resolve one exact match");
+Check(InventoryScanResolver.ResolveCount("DUPLICATE", 2) ==
+      MiniStore.Application.DTOs.Inventory.Scanning.InventoryScanStatus.Ambiguous,
+    "Inventory scans must reject ambiguous identifiers instead of choosing silently");
 
 Console.WriteLine($"Passed {count} security and inventory regression checks.");
 

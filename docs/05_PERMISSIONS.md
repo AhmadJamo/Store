@@ -11,6 +11,7 @@ Inventory tracking uses `InventoryTracking.View` for traceability, `InventoryTra
 `InventoryTracking.ManageRecall` controls recall creation and closure. Recall visibility follows `InventoryTracking.View`; closing a recall never grants or implies quarantine release authority.
 `Inventory.Replenishment.View` protects reviewed replenishment suggestions; `Inventory.Replenishment.Manage` separately protects rule create/update and activation changes.
 `InventoryInsights.View` protects the read-only slow/dead inventory activity report; it grants no stock mutation capability.
+`InventoryScanning.View` protects the read-only scan console; scan-based mutations will require separate workflow permissions.
 
 Authentication is ASP.NET Core Identity cookie authentication. `PermissionAuthorizeAttribute` creates policies with `Permission:` prefix. Identity owns credentials, while `TenantRole`, `TenantRolePermission` and `TenantUserRole` own authorization inside each company. Both evaluators require an active tenant; Admin receives full access only from that company's protected Admin assignment. Non-Admin permissions resolve only through the active company's role definition.
 
@@ -29,6 +30,7 @@ Products, Warehouses, ProductStock, StockTransactions, StockMovements, LocationM
 | Location movements | View/Create enforced for history and internal relocation; putaway continues to require ProductStock.Edit. |
 | Inventory reconciliation | Dedicated View permission protects the read-only exception report; the controller exposes no mutation action. |
 | Inventory insights | Dedicated View permission protects the read-only activity report; thresholds and filters do not mutate stock. |
+| Inventory scanning | Dedicated View permission protects exact scan resolution and availability lookup; the controller exposes no mutation action. |
 | Stock transfers | View/Create/Edit/Submit/Approve/Reject/Post/Cancel enforced. |
 | Users | View/Create enforced; Edit/Delete definitions have no actions. |
 | Roles | View/Create/Edit/Delete enforced; controller uses `TenantRoleService`, system Admin cannot be edited/deleted and all IDs are resolved inside the active tenant. |

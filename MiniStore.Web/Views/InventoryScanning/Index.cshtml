@@ -1,0 +1,53 @@
+@using MiniStore.Application.DTOs.Inventory.Scanning
+@using Microsoft.Extensions.Localization
+@model InventoryScanPageDto
+@inject IStringLocalizer<MiniStore.Web.SharedResource> Localizer
+@{
+    ViewData["Title"] = Localizer["Inventory scanning"];
+    string StatusLabel(InventoryScanStatus status) => status switch
+    {
+        InventoryScanStatus.Resolved => Localizer["Resolved"],
+        InventoryScanStatus.NotFound => Localizer["Not found"],
+        InventoryScanStatus.Ambiguous => Localizer["Ambiguous scan"],
+        _ => Localizer["Waiting for scan"]
+    };
+    string StatusClass(InventoryScanStatus status) => status switch
+    {
+        InventoryScanStatus.Resolved => "text-bg-success",
+        InventoryScanStatus.NotFound => "text-bg-danger",
+        InventoryScanStatus.Ambiguous => "text-bg-warning",
+        _ => "text-bg-secondary"
+    };
+}
+
+<div class="container mt-4">
+    <h2>@Localizer["Inventory scanning"]</h2>
+    <p class="text-muted">@Localizer["Scan lookup is read-only. It identifies products and locations without creating an inventory movement."]</p>
+
+    <form method="get" class="card card-body mb-3">
+        <div class="row g-3 align-items-end">
+            <div class="col-md-5">
+                <label class="form-label">@Localizer["Product barcode or code"]</label>
+                <input name="productScan" value="@Model.Query.ProductScan" class="form-control form-control-lg" autofocus autocomplete="off" />
+            </div>
+            <div class="col-md-5">
+                <label class="form-label">@Localizer["Location barcode or code"]</label>
+                <input name="locationScan" value="@Model.Query.LocationScan" class="form-control form-control-lg" autocomplete="off" />
+            </div>
+            <div class="col-md-2"><button class="btn btn-primary btn-lg w-100">@Localizer["Resolve scan"]</button></div>
+        </div>
+    </form>
+
+    <div class="row g-3 mb-3">
+        <div class="col-md-6"><div class="card card-body h-100"><div class="d-flex justify-content-between"><strong>@Localizer["Product scan"]</strong><span class="badge @StatusClass(Model.Product.Status)">@StatusLabel(Model.Product.Status)</span></div>@if(Model.Product.Status == InventoryScanStatus.Resolved){<div class="mt-2">@Model.Product.DisplayName</div><code>@Model.Product.SecondaryText</code>}</div></div>
+        <div class="col-md-6"><div class="card card-body h-100"><div class="d-flex justify-content-between"><strong>@Localizer["Location scan"]</strong><span class="badge @StatusClass(Model.Location.Status)">@StatusLabel(Model.Location.Status)</span></div>@if(Model.Location.Status == InventoryScanStatus.Resolved){<div class="mt-2">@Model.Location.DisplayName</div><span class="text-muted">@Model.Location.SecondaryText</span>}</div></div>
+    </div>
+
+    @if (Model.Product.Status == InventoryScanStatus.Resolved)
+    {
+        <div class="table-responsive"><table class="table table-striped align-middle"><thead><tr><th>@Localizer["Warehouse"]</th><th>@Localizer["Location"]</th><th>@Localizer["On hand"]</th><th>@Localizer["Reserved"]</th><th>@Localizer["Available"]</th></tr></thead><tbody>
+        @foreach(var row in Model.Balances){<tr><td>@row.WarehouseName</td><td>@(row.IsUnassigned ? Localizer["Unassigned (system)"] : row.LocationName)</td><td>@row.OnHand.ToString("N6")</td><td>@row.Reserved.ToString("N6")</td><td class="@(row.Available < 0 ? "text-danger" : null)">@row.Available.ToString("N6")</td></tr>}
+        @if(Model.Balances.Count == 0){<tr><td colspan="5" class="text-center text-muted">@Localizer["No inventory balance was found for the resolved scan."]</td></tr>}
+        </tbody></table></div>
+    }
+</div>

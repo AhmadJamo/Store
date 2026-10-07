@@ -882,6 +882,18 @@
   <data name="Days since activity" xml:space="preserve"><value>الأيام منذ آخر نشاط</value></data>
   <data name="Never" xml:space="preserve"><value>لم يحدث</value></data>
   <data name="No inventory insights match the selected filters." xml:space="preserve"><value>لا توجد تحليلات مخزون تطابق الفلاتر المحددة.</value></data>
+  <data name="Inventory scanning" xml:space="preserve"><value>مسح المخزون</value></data>
+  <data name="Scan lookup is read-only. It identifies products and locations without creating an inventory movement." xml:space="preserve"><value>البحث بالمسح للقراءة فقط، ويعرّف المنتجات والمواقع دون إنشاء حركة مخزون.</value></data>
+  <data name="Product barcode or code" xml:space="preserve"><value>باركود المنتج أو كوده</value></data>
+  <data name="Location barcode or code" xml:space="preserve"><value>باركود الموقع أو كوده</value></data>
+  <data name="Resolve scan" xml:space="preserve"><value>تحقق من المسح</value></data>
+  <data name="Product scan" xml:space="preserve"><value>مسح المنتج</value></data>
+  <data name="Location scan" xml:space="preserve"><value>مسح الموقع</value></data>
+  <data name="Resolved" xml:space="preserve"><value>تم التعرف</value></data>
+  <data name="Not found" xml:space="preserve"><value>غير موجود</value></data>
+  <data name="Ambiguous scan" xml:space="preserve"><value>رمز مسح غير محدد</value></data>
+  <data name="Waiting for scan" xml:space="preserve"><value>بانتظار المسح</value></data>
+  <data name="No inventory balance was found for the resolved scan." xml:space="preserve"><value>لم يتم العثور على رصيد مخزون للرمز الذي تم التعرف عليه.</value></data>
   <data name="Slow-stock days must be between 1 and 3650." xml:space="preserve"><value>يجب أن تكون أيام المخزون البطيء بين 1 و3650.</value></data>
   <data name="Dead-stock days must be greater than slow-stock days and no more than 3650." xml:space="preserve"><value>يجب أن تكون أيام الركود أكبر من أيام البطء وألا تتجاوز 3650.</value></data>
 </root>

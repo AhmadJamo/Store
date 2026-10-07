@@ -26,6 +26,8 @@ The ordered Arabic execution plan, workflow, business rules and rolling suggesti
 - [x] WMS-090B2 add reviewed replenishment conversion into a Draft stock transfer.
 - [x] WMS-090D add read-only slow/dead inventory insights and no-movement-history visibility.
 - [ ] WMS-090C add purchase-order intent after a purchase-order lifecycle exists.
+- [x] WMS-100A add safe read-only product/location barcode resolution and availability lookup.
+- [ ] WMS-100B add idempotent scan commands to controlled receiving, movement and count workflows.
 - [ ] Add scheduled/automated delivery channels and delivery-provider callbacks.
 
 ## Completed

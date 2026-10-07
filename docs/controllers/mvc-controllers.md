@@ -16,6 +16,7 @@
 | WarehouseLocations / UnassignedStock | hierarchical location search/create/edit, putaway-rule administration and capacity-aware suggested putaway | warehouse/product-stock permissions and location/putaway services. |
 | Replenishment | reviewed shortage suggestions, rule management and explicitly reviewed Draft transfer creation | Inventory.Replenishment.View/Manage plus StockTransfers.Create for draft conversion. |
 | InventoryInsights | read-only positive-stock activity, slow/dead thresholds and movement-history exceptions | InventoryInsights.View. |
+| InventoryScanning | read-only exact product/location scan resolution and live availability | InventoryScanning.View. |
 | ProductAttributes | typed attribute dictionary create/list/activation and per-product value assignment | Products View/Edit permissions and ProductAttributeService. |
 | ProductTemplates | template creation, existing-SKU assignment/removal and grouped variant listing | Products View/Edit permissions and ProductTemplateService. |
 | LocationMovements | Index/Move | LocationMovements.View/Create and LocationMovementService. |

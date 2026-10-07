@@ -80,6 +80,7 @@ public static class PermissionDefinitions
         new("Inventory.Replenishment.View", "View Replenishment Suggestions", "Inventory"),
         new("Inventory.Replenishment.Manage", "Manage Replenishment Rules", "Inventory"),
         new("InventoryInsights.View", "View Inventory Insights", "Inventory"),
+        new("InventoryScanning.View", "Use Inventory Scan Lookup", "Inventory"),
 
         // ==========================================
         // Suppliers

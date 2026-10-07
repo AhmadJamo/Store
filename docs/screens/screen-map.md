@@ -17,6 +17,7 @@
 | `Views/WarehouseLocations/{Index,Create,Edit}.cshtml`, `Views/UnassignedStock/Index.cshtml` | parent-indented location master data plus warehouse/product search, putaway-rule administration and capacity-aware destination suggestions before capability-validated putaway. |
 | `Views/Replenishment/Index.cshtml` | permission-separated min/max management, Approved-transfer forecast and reviewed preferred-source suggestions that may explicitly create Draft transfers. |
 | `Views/InventoryInsights/Index.cshtml` | bilingual read-only slow/dead stock analysis with warehouse, product, status and threshold filters. |
+| `Views/InventoryScanning/Index.cshtml` | bilingual keyboard-wedge barcode/code lookup for products, locations and current OnHand/Reserved/Available. |
 | `Views/LocationMovements/Index.cshtml` | same-warehouse rack/bin relocation form with filtered choices, available quantity and searchable movement history. |
 | `Views/InventoryReconciliation/Index.cshtml` | bilingual read-only WMS exception report comparing warehouse quantity/value, assigned/unassigned location quantity and the latest movement snapshot, with warehouse/search/exception/page filters. |
 | `Views/ProductAttributes/{Index,Values}.cshtml` | bilingual definition administration plus per-product typed value assignment with required/category/option validation. |

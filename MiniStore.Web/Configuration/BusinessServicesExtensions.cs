@@ -112,6 +112,7 @@ public static class BusinessServicesExtensions
         services.AddScoped<IReplenishmentRuleRepository, ReplenishmentRuleRepository>();
         services.AddScoped<ReplenishmentService>();
         services.AddScoped<InventoryInsightsService>();
+        services.AddScoped<InventoryScanningService>();
         services.AddScoped<IInventoryReconciliationRepository, InventoryReconciliationRepository>();
         services.AddScoped<InventoryReconciliationService>();
         services.AddScoped<IProductStockRepository, ProductStockRepository>();
