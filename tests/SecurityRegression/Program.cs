@@ -1088,6 +1088,46 @@ Check(scannedAdjustment.Status == InventoryAdjustmentStatus.Draft &&
       scannedAdjustment.Lines.Single().CountedQuantity == 4m,
     "Repeated absolute scanned counts must be idempotent and keep the adjustment draft");
 
+var supplierTerms = new SupplierProductPurchasingInfo(
+    1, 2, 3, " vendor-sku ", " Supplier pack ", 5m, 2.5m, 7,
+    12.3456m, "jod", new DateOnly(2026, 1, 1), null, true, 10);
+Check(supplierTerms.SupplierProductCode == "vendor-sku" &&
+      supplierTerms.CurrencyCode == "JOD" && supplierTerms.IsPreferred && supplierTerms.IsActive,
+    "Supplier purchasing terms must normalize commercial identifiers and preserve purchasing policy");
+CheckArgumentThrows(() => new SupplierProductPurchasingInfo(
+        1, 2, 3, "SKU", null, 0m, 1m, 0, 1m, "JOD",
+        new DateOnly(2026, 1, 1), null, false, 100),
+    "Supplier purchasing terms must reject a zero minimum order quantity");
+CheckArgumentThrows(() => new SupplierProductPurchasingInfo(
+        1, 2, 3, "SKU", null, 1m, 1m, 0, 1m, "JOD",
+        new DateOnly(2026, 2, 1), new DateOnly(2026, 1, 1), false, 100),
+    "Supplier purchasing terms must reject an inverted validity period");
+supplierTerms.SetActive(false);
+Check(!supplierTerms.IsActive && !supplierTerms.IsPreferred,
+    "Deactivating supplier purchasing terms must clear preferred status");
+CheckThrows(() => supplierTerms.SetPreferred(true),
+    "Inactive supplier purchasing terms cannot become preferred");
+var supplierTermsType = db.Model.FindEntityType(typeof(SupplierProductPurchasingInfo))!;
+Check(supplierTermsType.FindProperty("TenantId") is { IsNullable: false } &&
+      supplierTermsType.FindProperty(nameof(SupplierProductPurchasingInfo.RowVersion))!.IsConcurrencyToken,
+    "Supplier purchasing terms must be tenant-owned and rowversion protected");
+var supplierTermsIndex = supplierTermsType.GetIndexes().Single(index => index.IsUnique &&
+    index.Properties.Select(property => property.Name).SequenceEqual([
+        "TenantId", nameof(SupplierProductPurchasingInfo.SupplierId),
+        nameof(SupplierProductPurchasingInfo.ProductId),
+        nameof(SupplierProductPurchasingInfo.PurchaseMeasurementUnitId)]));
+Check(supplierTermsIndex is not null,
+    "Supplier/product/purchase-unit identity must be unique per tenant");
+var supplierTermsIndexAction = typeof(SupplierPurchasingController)
+    .GetMethod(nameof(SupplierPurchasingController.Index))!;
+var supplierTermsSaveAction = typeof(SupplierPurchasingController)
+    .GetMethod(nameof(SupplierPurchasingController.Save))!;
+Check(supplierTermsIndexAction.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
+      $"{PermissionAuthorizeAttribute.PolicyPrefix}Purchases.SupplierTerms.View" &&
+      supplierTermsSaveAction.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
+      $"{PermissionAuthorizeAttribute.PolicyPrefix}Purchases.SupplierTerms.Manage",
+    "Supplier purchasing data must separate view and manage permissions");
+
 Console.WriteLine($"Passed {count} security and inventory regression checks.");
 
 void CheckThrows(Action action, string message)

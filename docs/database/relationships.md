@@ -17,3 +17,6 @@ The local schema contains 59 composite tenant foreign keys and zero single-ID re
 
 ## Guided onboarding
 CompanyOnboarding.TenantId is a one-to-one primary/foreign key to Tenant.Id with cascade delete. Template-created ERP rows remain tenant-owned and receive the standard query, write and composite-relationship safeguards.
+# PUR-010 relationships
+
+`SupplierProductPurchasingInfo` references Supplier, Product and MeasurementUnit with Restrict deletion. The tenant-isolation convention rewrites each relationship to include TenantId, so SQL Server rejects cross-company supplier/product/unit references.

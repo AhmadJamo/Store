@@ -130,6 +130,8 @@ public static class BusinessServicesExtensions
         services.AddScoped<CustomerService>();
         services.AddScoped<ISupplierRepository, SupplierRepository>();
         services.AddScoped<SupplierService>();
+        services.AddScoped<ISupplierProductPurchasingInfoRepository, SupplierProductPurchasingInfoRepository>();
+        services.AddScoped<SupplierPurchasingInfoService>();
         services.AddScoped<IPurchaseRepository, PurchaseRepository>();
         services.AddScoped<IPurchaseReturnRepository, PurchaseReturnRepository>();
         services.AddScoped<PurchaseService>();

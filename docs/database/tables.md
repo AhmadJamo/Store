@@ -61,3 +61,6 @@ Rebuildable current-position projection by Product + Warehouse + optional Storag
 
 ### ReplenishmentRules
 Tenant-owned Product + destination Warehouse planning policy with minimum, maximum, safety stock, lead days, optional preferred source Warehouse and active state. It produces suggestions only and stores no forecast or stock movement.
+# PUR-010 table addition
+
+`SupplierProductPurchasingInfos` owns editable supplier/product commercial master data: supplier/product/unit references, supplier product code/description, minimum/order-multiple quantities, lead time, base-currency price, validity, preferred/priority/active flags, rowversion and shadow TenantId. It is not a price-history ledger and is never used as a substitute for a confirmed document snapshot.

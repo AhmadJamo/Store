@@ -36,6 +36,7 @@
 | `Entities/Customers/Customer.cs`, `Entities/Suppliers/Supplier.cs` | commercial-party master data | sales/purchases docs. |
 | `Entities/Inventory/*.cs` | warehouses, operating-policy enums, AVCO balances, locations, putaway rules, availability, reservations, adjustments, lot/serial tracking with persisted removal-strategy audit, recall communication evidence, legacy history, physical movements and transfers | inventory, accounting and stock-transfer docs. |
 | `Entities/Purchases/*.cs`, `Entities/Sales/*.cs` | purchase/supplier-return and sale/customer-return aggregates plus POS experience/order settings | purchase/sales/settings docs. |
+| `Entities/Purchases/SupplierProductPurchasingInfo.cs` | supplier-specific product code, compatible purchase unit, base-currency price, lead time, order policy, validity and preference | PUR-010 purchasing data screen/service. |
 | `Entities/Settings/*.cs` | accounting, discount, inventory-policy defaults, centralized `DocumentSequence`, general settings and supported UI language | settings/database/localization docs. |
 | `Entities/Security/*.cs` | audit, permission catalogue and tenant-owned role/permission entities | permissions/security docs. |
 | `Entities/Tenancy/*.cs` | company tenant, Identity-user membership and tenant-scoped user-role assignments | tenancy/security/database docs. |
@@ -78,6 +79,7 @@
 | `Services/Sales/SalePostingService.cs` | idempotent sale revenue, discount and COGS general-ledger posting | Sales/Details and Sales/Post. |
 | `Services/Sales/SalesReturnService.cs` | cumulative quantity control, identifier-aware tracked restocking, proportional refund and atomic inventory/accounting reversal | SalesReturns controller/views. |
 | `Services/Purchases/PurchaseReturnService.cs` | cumulative supplier-return control, explicit tracked identity issue, moving-average inventory issue and proportional accounting reversal | PurchaseReturns controller/views. |
+| `Services/Purchases/SupplierPurchasingInfoService.cs` | validates and manages supplier/product purchasing terms without stock or accounting effects | SupplierPurchasing controller/view. |
 | `Services/Sales/DiscountCalculator.cs` | standalone discount calculation helper; no active consumer found by scan | Unknown. |
 | `Services/Shared/ICurrentUserService.cs` | current-user application contract | Web CurrentUserService. |
 | `Permissions/{PermissionDefinitions,IPermissionService}.cs` | permission catalogue/contract | seeders/auth/services. |
@@ -132,6 +134,7 @@ Hierarchical location update (2026-09-30): StorageLocation retains its identity 
 | `Repositories/Inventory/InventoryRecallRepository.cs` | tenant-filtered recall lifecycle persistence and active-identity guard | InventoryTrackingService recall workflow. |
 | `Repositories/Sales/SalesReturnRepository.cs` | immutable return history and original-sale aggregation | `SalesReturnService`. |
 | `Repositories/Purchases/PurchaseReturnRepository.cs` | immutable supplier-return history and original-purchase aggregation | `PurchaseReturnService`. |
+| `Repositories/Purchases/SupplierProductPurchasingInfoRepository.cs` | tenant-filtered purchasing-term persistence, uniqueness and preferred-supplier lookup | `SupplierPurchasingInfoService`. |
 | `Authorization/PermissionService.cs` | permission check implementation | SaleService. |
 
 ## Web source map
@@ -151,6 +154,7 @@ Hierarchical location update (2026-09-30): StorageLocation retains its identity 
 | `Controllers/Inventory/InventoryReservationsController.cs` | permission-protected read-only reservation history | InventoryReservations view and service. |
 | `Controllers/Inventory/InventoryAdjustmentsController.cs` | permission-split count/approve/post/cancel workflow | InventoryAdjustments views and service. |
 | `Controllers/Inventory/InventoryTrackingController.cs` | permission-protected opening allocation, tracking report and quarantine/release commands | InventoryTracking view and service. |
+| `Controllers/Purchases/SupplierPurchasingController.cs` | permission-split bilingual supplier purchasing-data administration | PUR-010 service and `Views/SupplierPurchasing/Index.cshtml`. |
 | `Areas/Platform/*` | separately authenticated platform-owner control center for plans, companies/subscriptions, promotion codes and pending payment confirmations | SaaS module. |
 | `Controllers/PublicController.cs`, `Controllers/Saas/SubscriptionController.cs` | public landing/pricing and tenant subscription/checkout flows | SaaS module and public/subscription views. |
 | `Middleware/SubscriptionAccessMiddleware.cs` | blocks tenant ERP access when the current subscription is not usable | SaaS module/security. |

@@ -25,3 +25,6 @@ Adds product/warehouse average cost, inventory value and reference cost; full be
 
 ## 20261006205205_AddReplenishmentRules
 Creates the empty tenant-isolated replenishment-policy table and tenant-safe Product/source/destination relationships. It performs no inventory backfill or document creation. Applied to `AHMAD/MiniStoreDb` on 2026-10-06.
+# 2026-10-08 — AddSupplierPurchasingData
+
+Creates only `SupplierProductPurchasingInfos`, its tenant-safe foreign keys, indexes and rowversion. It performs no data backfill and does not change legacy Purchase records. Generation and pending-model verification passed. Applying to `AHMAD/MiniStoreDb` was attempted with both `AHMAD` and `localhost`; SQL Server rejected Windows Authentication with `Cannot generate SSPI context`, so the migration remains unapplied locally.

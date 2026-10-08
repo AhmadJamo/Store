@@ -78,3 +78,6 @@ Migration `20261003214320_AddInventoryBalancesAndDefaultLocations` creates tenan
 ## Replenishment rules
 
 Migration `AddReplenishmentRules` creates tenant-owned `ReplenishmentRules` with one unique Product + destination Warehouse policy per tenant. Composite tenant-safe foreign keys protect Product, destination Warehouse and optional preferred source Warehouse. The additive migration creates no rules and changes no inventory quantities.
+# PUR-010 supplier purchasing data
+
+Migration `AddSupplierPurchasingData` additively creates tenant-owned `SupplierProductPurchasingInfos`. Composite tenant foreign keys restrict Supplier, Product and MeasurementUnit references to the same company. A tenant-scoped unique index enforces one row per supplier + product + purchase unit; rowversion protects mutable terms. No legacy Purchase, inventory or accounting row is changed or backfilled. The migration was generated and model-verified on 2026-10-08, but local application remains pending because SQL Server Windows Authentication returns `Cannot generate SSPI context`.

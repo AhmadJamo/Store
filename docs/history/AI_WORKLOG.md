@@ -413,3 +413,10 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
 - Defined distinct ordered/received/returned/billed/paid authorities, purchase-first approval history, a staged currency boundary and future event facts without prematurely adding an event bus.
 - Accepted GRNI as the target bridge between Goods Receipt and Vendor Bill while leaving Legacy Direct Purchase accounting unchanged.
 - Added two ADRs and entry gates for later purchase slices. Documentation only; no runtime code, migration or database data changed.
+
+## 2026-10-08 — PUR-010 supplier purchasing data and lead time
+- Added tenant-owned, rowversion-protected supplier/product purchasing information with compatible purchase unit, supplier code/description, minimum/order-multiple quantities, lead time, base-currency price, validity, priority, preferred and active state.
+- Added Application validation that rejects prepared-to-order/inactive products, inactive or dimension-incompatible units, foreign currency and duplicate supplier/product/unit identities; no inventory or accounting state is changed.
+- Added repository/configuration/DI, separate view/manage permissions, Purchasing navigation and a bilingual RTL-safe administration screen.
+- Added domain, EF metadata and controller-permission regression coverage; 212 focused checks passed and the solution built with zero warnings.
+- Created migration `AddSupplierPurchasingData`; EF reports no pending model changes. Local application is pending because SQL Server Windows Authentication failed with `Cannot generate SSPI context` for both `AHMAD` and `localhost`.

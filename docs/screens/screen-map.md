@@ -60,3 +60,6 @@ Bilingual read-only Product/Warehouse/Location projection showing OnHand, Reserv
 
 ## Lot and serial tracking
 `InventoryTracking/Index` shows current lot/serial positions, expiration highlighting and immutable history. Its opening form captures all dimensional allocations required to activate tracking on legacy stock.
+# PUR-010 screen
+
+`Views/SupplierPurchasing/Index.cshtml` is a bilingual RTL-safe Purchasing screen for supplier-specific product codes, compatible purchase units, minimum/order-multiple quantities, base-currency prices, validity, lead time, priority and preferred/active state. Product, supplier and unit names are shown while IDs remain internal. Prepared-to-order products are excluded from selection.

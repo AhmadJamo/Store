@@ -55,3 +55,6 @@ WMS-060 list/create/details plus antiforgery-protected Count, Approve, Post and 
 
 ## InventoryTrackingController
 WMS-070A bilingual traceability report plus antiforgery-protected opening allocation. All reconciliation and policy activation rules stay in the Application service.
+# PUR-010 controller
+
+`SupplierPurchasingController` exposes a permission-protected Index plus antiforgery-protected Save and SetActive commands. It delegates validation and persistence to `SupplierPurchasingInfoService`, localizes expected business errors and logs unexpected failures without exposing details.

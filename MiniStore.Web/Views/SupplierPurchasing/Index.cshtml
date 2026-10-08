@@ -1,0 +1,40 @@
+@model MiniStore.Application.DTOs.Purchases.SupplierPurchasingInfoPageDto
+@inject Microsoft.Extensions.Localization.IStringLocalizer<MiniStore.Web.SharedResource> Localizer
+@{ ViewData["Title"] = Localizer["Supplier purchasing data"]; var canManage = await PermissionService.CanAsync(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "System", "Purchases.SupplierTerms.Manage"); }
+
+<div class="d-flex justify-content-between align-items-start mb-4">
+    <div><h2>@Localizer["Supplier purchasing data"]</h2><p class="text-muted mb-0">@Localizer["Maintain supplier-specific product codes, purchase units, prices and lead times without changing inventory or accounting."]</p></div>
+    <a asp-controller="Suppliers" asp-action="Index" class="btn btn-outline-secondary">@Localizer["Back to suppliers"]</a>
+</div>
+
+@if (canManage)
+{
+<form asp-action="Save" method="post" class="card card-body mb-4">
+    <input asp-for="Form.Id" name="Id" type="hidden" />
+    <input asp-for="Form.RowVersion" name="RowVersion" type="hidden" />
+    <h5>@(Model.Form.Id == 0 ? Localizer["Add supplier purchasing information"] : Localizer["Edit supplier purchasing information"])</h5>
+    <div asp-validation-summary="All" class="text-danger"></div>
+    <div class="row g-3">
+        <div class="col-md-4"><label class="form-label">@Localizer["Supplier"]</label><select asp-for="Form.SupplierId" name="SupplierId" class="form-select" required><option value="">@Localizer["Select supplier"]</option>@foreach(var option in Model.Suppliers){<option value="@option.Id">@option.Label</option>}</select></div>
+        <div class="col-md-4"><label class="form-label">@Localizer["Product"]</label><select asp-for="Form.ProductId" name="ProductId" class="form-select" required><option value="">@Localizer["Select product"]</option>@foreach(var option in Model.Products){<option value="@option.Id">@option.Label</option>}</select></div>
+        <div class="col-md-4"><label class="form-label">@Localizer["Purchase unit"]</label><select asp-for="Form.PurchaseMeasurementUnitId" name="PurchaseMeasurementUnitId" class="form-select" required><option value="">@Localizer["Select purchase unit"]</option>@foreach(var option in Model.Units){<option value="@option.Id">@option.Label</option>}</select></div>
+        <div class="col-md-3"><label class="form-label">@Localizer["Supplier product code"]</label><input asp-for="Form.SupplierProductCode" name="SupplierProductCode" maxlength="100" class="form-control" required /></div>
+        <div class="col-md-3"><label class="form-label">@Localizer["Minimum order quantity"]</label><input asp-for="Form.MinimumOrderQuantity" name="MinimumOrderQuantity" type="number" min="0.000001" step="0.000001" class="form-control" required /></div>
+        <div class="col-md-3"><label class="form-label">@Localizer["Order multiple"]</label><input asp-for="Form.OrderMultiple" name="OrderMultiple" type="number" min="0.000001" step="0.000001" class="form-control" required /></div>
+        <div class="col-md-3"><label class="form-label">@Localizer["Lead time (days)"]</label><input asp-for="Form.LeadTimeDays" name="LeadTimeDays" type="number" min="0" max="3650" class="form-control" required /></div>
+        <div class="col-md-3"><label class="form-label">@Localizer["Supplier unit price"]</label><input asp-for="Form.UnitPrice" name="UnitPrice" type="number" min="0" step="0.0001" class="form-control" required /></div>
+        <div class="col-md-2"><label class="form-label">@Localizer["Currency"]</label><input asp-for="Form.CurrencyCode" name="CurrencyCode" value="@Model.BaseCurrency" readonly class="form-control" /><div class="form-text">@Localizer["Base currency only in PUR-010"]</div></div>
+        <div class="col-md-2"><label class="form-label">@Localizer["Valid from"]</label><input asp-for="Form.ValidFrom" name="ValidFrom" type="date" class="form-control" required /></div>
+        <div class="col-md-2"><label class="form-label">@Localizer["Valid to"]</label><input asp-for="Form.ValidTo" name="ValidTo" type="date" class="form-control" /></div>
+        <div class="col-md-1"><label class="form-label">@Localizer["Priority"]</label><input asp-for="Form.Priority" name="Priority" type="number" min="0" max="9999" class="form-control" /></div>
+        <div class="col-12"><label class="form-label">@Localizer["Supplier description"]</label><input asp-for="Form.SupplierDescription" name="SupplierDescription" maxlength="300" class="form-control" /></div>
+        <div class="col-12 form-check ms-2"><input asp-for="Form.IsPreferred" name="IsPreferred" class="form-check-input" /><label asp-for="Form.IsPreferred" class="form-check-label">@Localizer["Preferred supplier for this product"]</label></div>
+    </div>
+    <div class="mt-3"><button class="btn btn-primary">@Localizer["Save"]</button>@if(Model.Form.Id > 0){<a asp-action="Index" class="btn btn-outline-secondary ms-2">@Localizer["Cancel"]</a>}</div>
+</form>
+}
+
+<div class="table-responsive"><table class="table table-striped align-middle"><thead><tr><th>@Localizer["Product"]</th><th>@Localizer["Supplier"]</th><th>@Localizer["Supplier product code"]</th><th>@Localizer["Purchase unit"]</th><th>@Localizer["Minimum / multiple"]</th><th>@Localizer["Price"]</th><th>@Localizer["Lead time"]</th><th>@Localizer["Validity"]</th><th>@Localizer["Status"]</th><th>@Localizer["Actions"]</th></tr></thead><tbody>
+@foreach(var row in Model.Rows){<tr><td><code>@row.ProductCode</code><br />@row.ProductName</td><td>@row.SupplierName @if(row.IsPreferred){<span class="badge bg-primary">@Localizer["Preferred"]</span>}</td><td>@row.SupplierProductCode</td><td>@row.PurchaseUnit</td><td>@row.MinimumOrderQuantity.ToString("N6") / @row.OrderMultiple.ToString("N6")</td><td>@row.UnitPrice.ToString("N4") @row.CurrencyCode</td><td>@row.LeadTimeDays @Localizer["day(s)"]</td><td>@row.ValidFrom.ToString("yyyy-MM-dd")<br />@(row.ValidTo?.ToString("yyyy-MM-dd") ?? Localizer["Open-ended"].Value)</td><td><span class="badge @(row.IsActive ? "bg-success" : "bg-secondary")">@(row.IsActive ? Localizer["Active"] : Localizer["Inactive"])</span></td><td>@if(canManage){<a asp-action="Index" asp-route-editId="@row.Id" class="btn btn-sm btn-outline-primary">@Localizer["Edit"]</a><form asp-action="SetActive" method="post" class="d-inline"><input type="hidden" name="id" value="@row.Id" /><input type="hidden" name="isActive" value="@(!row.IsActive)" /><input type="hidden" name="rowVersion" value="@Convert.ToBase64String(row.RowVersion)" /><button class="btn btn-sm @(row.IsActive ? "btn-outline-danger" : "btn-outline-success")">@(row.IsActive ? Localizer["Deactivate"] : Localizer["Activate"])</button></form>}</td></tr>}
+@if(Model.Rows.Count == 0){<tr><td colspan="10" class="text-center text-muted">@Localizer["No supplier purchasing information has been configured."]</td></tr>}
+</tbody></table></div>

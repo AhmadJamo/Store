@@ -60,6 +60,9 @@ public class AppDbContext
     public DbSet<Supplier> Suppliers
         => Set<Supplier>();
 
+    public DbSet<SupplierProductPurchasingInfo> SupplierProductPurchasingInfos
+        => Set<SupplierProductPurchasingInfo>();
+
     public DbSet<Purchase> Purchases
         => Set<Purchase>();
 

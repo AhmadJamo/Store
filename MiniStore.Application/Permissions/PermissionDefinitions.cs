@@ -99,6 +99,8 @@ public static class PermissionDefinitions
         new("Purchases.Create", "Create Purchase", "Purchases"),
         new("Purchases.Edit", "Edit Purchase", "Purchases"),
         new("Purchases.Delete", "Delete Purchase", "Purchases"),
+        new("Purchases.SupplierTerms.View", "View Supplier Purchasing Data", "Purchases"),
+        new("Purchases.SupplierTerms.Manage", "Manage Supplier Purchasing Data", "Purchases"),
         new("PurchaseReturns.View", "View Purchase Returns", "Purchase Returns"),
         new("PurchaseReturns.Create", "Create Purchase Return", "Purchase Returns"),
 

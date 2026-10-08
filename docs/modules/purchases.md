@@ -1,9 +1,11 @@
 # Purchases
-> Status: LEGACY DIRECT PURCHASE IMPLEMENTED; ERP PROCURE-TO-PAY PLANNED | Last reviewed: 2026-10-08
+> Status: LEGACY DIRECT PURCHASE + PUR-010 IMPLEMENTED IN CODE; LATER PROCURE-TO-PAY PLANNED | Last reviewed: 2026-10-08
 
 The implemented workflow described below is a direct supplier invoice and inventory receipt, not a Purchase Order lifecycle. The approved additive evolution, compatibility rules and ordered delivery slices are documented in `docs/PURCHASE_MANAGEMENT_EVOLUTION_PLAN.md`. Existing Purchase and PurchaseReturn history will remain valid and will not be fabricated into new procurement documents.
 
 PUR-005 context ownership and accounting gates are accepted in `docs/PURCHASE_ARCHITECTURE_ALIGNMENT.md`: Supplier remains the current counterparty, Purchasing owns requests/sourcing/orders, Inventory owns receipt stock effects, and Accounting/AP owns bills, payables and payments. These are target boundaries, not implemented new documents.
+
+PUR-010 adds tenant-safe supplier/product purchasing information with purchase unit, supplier code/description, minimum quantity, order multiple, base-currency price, validity, lead time, priority, preferred/active state and rowversion. It excludes prepared-to-order products and enforces purchase-unit compatibility with the product stock unit. The dedicated bilingual screen uses separate view/manage permissions and has no stock or GL side effect. Migration `AddSupplierPurchasingData` is created; application to the local database is pending repair of SQL Windows Authentication/SSPI.
 
 Creates a purchase header/items after validating supplier, each line's warehouse, active product, quantity and non-negative price. Prepared-to-order products are excluded because their ingredients, not the menu item, are purchased. One invoice can distribute products across warehouses. Exact rack/bin is not requested, so receipts enter Unassigned Stock. Lot-tracked lines require a lot number and may capture manufacture/expiration dates; serial-tracked lines require one unique serial per received unit. The tracked balance and immutable receipt trace are committed with the purchase. A line total is quantity × price minus fixed line discount; its net unit cost updates the target product/warehouse moving average inside the same UnitOfWork and the purchase movement freezes the full valuation change. Recoverable input tax is excluded from inventory cost, including tax extracted from price-inclusive lines.
 

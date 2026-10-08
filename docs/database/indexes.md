@@ -10,3 +10,8 @@ Non-unique: StockTransaction(ProductId, WarehouseId), AuditLog.CreatedAt, AuditL
 Check constraints: GeneralSettings.SingletonKey = 1 and DiscountSettings.SingletonKey = 1. DocumentSequences has a unique `(TenantId, DocumentType)` index and a rowversion concurrency token. Product barcode and warehouse/supplier names have no observed unique constraint.
 
 Tenant relationship principals receive alternate keys containing their primary key plus `TenantId`; dependent lookup indexes contain the business FK plus `TenantId`. These support the database-enforced same-company composite foreign keys.
+# PUR-010 indexes
+
+- Unique `(TenantId, SupplierId, ProductId, PurchaseMeasurementUnitId)` prevents duplicate purchasing-term identities inside one company.
+- `(TenantId, ProductId, IsActive, Priority)` supports active supplier selection ordered by policy.
+- Composite relationship indexes support tenant-safe Supplier, Product and MeasurementUnit foreign keys.

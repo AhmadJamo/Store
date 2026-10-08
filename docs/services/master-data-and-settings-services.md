@@ -11,3 +11,6 @@ GeneralSettingsService maps and validates the company default `UiLanguage`. The 
 
 ## Guided company onboarding
 CompanyOnboardingService applies template version 1 in a Serializable transaction. It creates accounts parent-first, then the main branch, linked warehouse/access, general/inventory/accounting/discount/number settings, cash/bank methods, optional tax and optional POS/profile. A resolved setup cannot run twice.
+# Supplier purchasing information service
+
+`SupplierPurchasingInfoService` manages PUR-010 supplier/product commercial terms. It verifies Supplier/Product/MeasurementUnit existence, rejects prepared products, enforces managed-unit dimension compatibility and company base currency, prevents duplicate identities, clears older preferred records for the product and enforces rowversion on edits/state changes. It has no inventory or accounting side effect.

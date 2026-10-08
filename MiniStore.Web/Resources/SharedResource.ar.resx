@@ -41,7 +41,6 @@
   <data name="English" xml:space="preserve"><value>الإنجليزية</value></data>
   <data name="Arabic" xml:space="preserve"><value>العربية</value></data>
   <data name="Users can temporarily switch their language from the navigation bar." xml:space="preserve"><value>يمكن للمستخدمين تبديل لغتهم من شريط التنقل، ويُحفظ اختيارهم على جهازهم.</value></data>
-  <data name="Currency" xml:space="preserve"><value>العملة</value></data>
   <data name="Money Decimal Places" xml:space="preserve"><value>المنازل العشرية للمبالغ</value></data>
   <data name="Quantity Decimal Places" xml:space="preserve"><value>المنازل العشرية للكميات</value></data>
   <data name="Date Format" xml:space="preserve"><value>تنسيق التاريخ</value></data>
@@ -824,7 +823,6 @@
   <data name="Any product" xml:space="preserve"><value>أي منتج</value></data>
   <data name="Category (optional)" xml:space="preserve"><value>الفئة (اختيارية)</value></data>
   <data name="Any category" xml:space="preserve"><value>أي فئة</value></data>
-  <data name="Priority" xml:space="preserve"><value>الأولوية</value></data>
   <data name="Target" xml:space="preserve"><value>النطاق</value></data>
   <data name="Warehouse default" xml:space="preserve"><value>افتراضي المستودع</value></data>
   <data name="No putaway rules configured." xml:space="preserve"><value>لا توجد قواعد تخزين مهيأة.</value></data>
@@ -926,4 +924,62 @@
   <data name="Scan one exact destination location before putaway." xml:space="preserve"><value>امسح موقع وجهة واحدًا محددًا قبل التخزين.</value></data>
   <data name="Slow-stock days must be between 1 and 3650." xml:space="preserve"><value>يجب أن تكون أيام المخزون البطيء بين 1 و3650.</value></data>
   <data name="Dead-stock days must be greater than slow-stock days and no more than 3650." xml:space="preserve"><value>يجب أن تكون أيام الركود أكبر من أيام البطء وألا تتجاوز 3650.</value></data>
+  <data name="Supplier purchasing data" xml:space="preserve"><value>بيانات شراء الموردين</value></data>
+  <data name="Maintain supplier-specific product codes, purchase units, prices and lead times without changing inventory or accounting." xml:space="preserve"><value>إدارة أكواد المنتجات ووحدات الشراء والأسعار ومدد التوريد الخاصة بكل مورد دون تغيير المخزون أو المحاسبة.</value></data>
+  <data name="Back to suppliers" xml:space="preserve"><value>العودة إلى الموردين</value></data>
+  <data name="Add supplier purchasing information" xml:space="preserve"><value>إضافة بيانات شراء للمورد</value></data>
+  <data name="Edit supplier purchasing information" xml:space="preserve"><value>تعديل بيانات شراء المورد</value></data>
+  <data name="Select supplier" xml:space="preserve"><value>اختر المورد</value></data>
+  <data name="Select product" xml:space="preserve"><value>اختر المنتج</value></data>
+  <data name="Purchase unit" xml:space="preserve"><value>وحدة الشراء</value></data>
+  <data name="Select purchase unit" xml:space="preserve"><value>اختر وحدة الشراء</value></data>
+  <data name="Supplier product code" xml:space="preserve"><value>كود المنتج لدى المورد</value></data>
+  <data name="Minimum order quantity" xml:space="preserve"><value>الحد الأدنى للطلب</value></data>
+  <data name="Order multiple" xml:space="preserve"><value>مضاعف كمية الطلب</value></data>
+  <data name="Lead time (days)" xml:space="preserve"><value>مدة التوريد (بالأيام)</value></data>
+  <data name="Supplier unit price" xml:space="preserve"><value>سعر الوحدة من المورد</value></data>
+  <data name="Currency" xml:space="preserve"><value>العملة</value></data>
+  <data name="Base currency only in PUR-010" xml:space="preserve"><value>عملة الشركة الأساسية فقط في PUR-010</value></data>
+  <data name="Valid from" xml:space="preserve"><value>صالح من</value></data>
+  <data name="Valid to" xml:space="preserve"><value>صالح حتى</value></data>
+  <data name="Priority" xml:space="preserve"><value>الأولوية</value></data>
+  <data name="Supplier description" xml:space="preserve"><value>وصف المورد للمنتج</value></data>
+  <data name="Preferred supplier for this product" xml:space="preserve"><value>المورد المفضل لهذا المنتج</value></data>
+  <data name="Minimum / multiple" xml:space="preserve"><value>الحد الأدنى / المضاعف</value></data>
+  <data name="Price" xml:space="preserve"><value>السعر</value></data>
+  <data name="Lead time" xml:space="preserve"><value>مدة التوريد</value></data>
+  <data name="Validity" xml:space="preserve"><value>الصلاحية</value></data>
+  <data name="Preferred" xml:space="preserve"><value>مفضل</value></data>
+  <data name="Open-ended" xml:space="preserve"><value>مفتوح</value></data>
+  <data name="day(s)" xml:space="preserve"><value>يوم</value></data>
+  <data name="No supplier purchasing information has been configured." xml:space="preserve"><value>لم يتم إعداد بيانات شراء للموردين بعد.</value></data>
+  <data name="Supplier purchasing information saved." xml:space="preserve"><value>تم حفظ بيانات شراء المورد.</value></data>
+  <data name="Supplier purchasing information updated." xml:space="preserve"><value>تم تحديث بيانات شراء المورد.</value></data>
+  <data name="Please check the entered supplier purchasing data." xml:space="preserve"><value>يرجى التحقق من بيانات شراء المورد المدخلة.</value></data>
+  <data name="Supplier purchasing information was not found." xml:space="preserve"><value>لم يتم العثور على بيانات شراء المورد.</value></data>
+  <data name="Supplier was not found." xml:space="preserve"><value>لم يتم العثور على المورد.</value></data>
+  <data name="Product was not found." xml:space="preserve"><value>لم يتم العثور على المنتج.</value></data>
+  <data name="Purchase unit was not found." xml:space="preserve"><value>لم يتم العثور على وحدة الشراء.</value></data>
+  <data name="Prepared-to-order products are costed from recipes and cannot have supplier purchasing terms." xml:space="preserve"><value>المنتجات المحضرة حسب الطلب تُحتسب تكلفتها من الوصفة ولا يمكن إضافة شروط شراء مورد لها.</value></data>
+  <data name="Supplier purchasing terms require an active product." xml:space="preserve"><value>تتطلب شروط شراء المورد منتجًا فعالًا.</value></data>
+  <data name="Supplier purchasing terms require an active purchase unit." xml:space="preserve"><value>تتطلب شروط شراء المورد وحدة شراء فعالة.</value></data>
+  <data name="The product must have a managed stock unit before supplier purchasing terms are added." xml:space="preserve"><value>يجب أن يكون للمنتج وحدة مخزون معرفة قبل إضافة شروط شراء المورد.</value></data>
+  <data name="The product stock unit was not found." xml:space="preserve"><value>لم يتم العثور على وحدة مخزون المنتج.</value></data>
+  <data name="Purchase unit and product stock unit must use the same measurement dimension." xml:space="preserve"><value>يجب أن تستخدم وحدة الشراء ووحدة مخزون المنتج نفس بُعد القياس.</value></data>
+  <data name="PUR-010 supports the company base currency only. Foreign-currency posting is not enabled." xml:space="preserve"><value>يدعم PUR-010 عملة الشركة الأساسية فقط، ولم يتم تفعيل الترحيل بالعملات الأجنبية.</value></data>
+  <data name="Purchasing information already exists for this supplier, product and purchase unit." xml:space="preserve"><value>توجد مسبقًا بيانات شراء لهذا المورد والمنتج ووحدة الشراء.</value></data>
+  <data name="Supplier purchasing information was modified by another user. Reload and try again." xml:space="preserve"><value>تم تعديل بيانات شراء المورد بواسطة مستخدم آخر. أعد تحميل الصفحة وحاول مجددًا.</value></data>
+  <data name="Supplier is required." xml:space="preserve"><value>المورد مطلوب.</value></data>
+  <data name="Product is required." xml:space="preserve"><value>المنتج مطلوب.</value></data>
+  <data name="Purchase unit is required." xml:space="preserve"><value>وحدة الشراء مطلوبة.</value></data>
+  <data name="Supplier product code is required and cannot exceed 100 characters." xml:space="preserve"><value>كود المنتج لدى المورد مطلوب ولا يمكن أن يتجاوز 100 حرف.</value></data>
+  <data name="Supplier description cannot exceed 300 characters." xml:space="preserve"><value>لا يمكن أن يتجاوز وصف المورد 300 حرف.</value></data>
+  <data name="Minimum order quantity must be greater than zero." xml:space="preserve"><value>يجب أن يكون الحد الأدنى للطلب أكبر من صفر.</value></data>
+  <data name="Order multiple must be greater than zero." xml:space="preserve"><value>يجب أن يكون مضاعف كمية الطلب أكبر من صفر.</value></data>
+  <data name="Lead time must be between 0 and 3650 days." xml:space="preserve"><value>يجب أن تكون مدة التوريد بين 0 و3650 يومًا.</value></data>
+  <data name="Supplier unit price cannot be negative." xml:space="preserve"><value>لا يمكن أن يكون سعر المورد سالبًا.</value></data>
+  <data name="Currency code must contain exactly three letters." xml:space="preserve"><value>يجب أن يتكون كود العملة من ثلاثة أحرف تمامًا.</value></data>
+  <data name="Valid-to date cannot be earlier than valid-from date." xml:space="preserve"><value>لا يمكن أن يكون تاريخ نهاية الصلاحية قبل تاريخ بدايتها.</value></data>
+  <data name="Supplier priority must be between 0 and 9999." xml:space="preserve"><value>يجب أن تكون أولوية المورد بين 0 و9999.</value></data>
+  <data name="An inactive supplier purchasing record cannot be preferred." xml:space="preserve"><value>لا يمكن جعل سجل شراء مورد غير فعال سجلًا مفضلًا.</value></data>
 </root>

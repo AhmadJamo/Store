@@ -47,3 +47,10 @@ Permission change → `PermissionDefinitions`, seeder, controller attributes, na
 
 `InventoryBalances.View` protects the read-only Inventory Availability projection. Balance mutation remains owned by inventory workflows; no direct edit permission exists.
 
+# PUR-010 supplier purchasing permissions
+
+- `Purchases.SupplierTerms.View` allows viewing supplier/product purchasing data.
+- `Purchases.SupplierTerms.Manage` allows create, edit, prefer, activate and deactivate commands.
+
+The Index and mutation actions enforce these policies server-side. Permission seeding adds both definitions and grants them to protected tenant Admin roles through the existing idempotent seeder.
+

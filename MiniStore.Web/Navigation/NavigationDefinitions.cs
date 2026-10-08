@@ -61,7 +61,15 @@ public static class NavigationDefinitions
                 "PurchaseReturns",
                 "Index",
                 "PurchaseReturns.View",
-                30)
+                30),
+
+            new NavigationItem(
+                "Supplier purchasing data",
+                "bi-card-list",
+                "SupplierPurchasing",
+                "Index",
+                "Purchases.SupplierTerms.View",
+                40)
         ),
 
         new NavigationGroup(
