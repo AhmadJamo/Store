@@ -1,5 +1,12 @@
 # AI Work Log
 
+## 2026-10-08 — PUR-040A supplier quotation foundation
+
+- Added tenant-owned supplier quotation headers and lines, one quote per sourcing event/supplier, and rowversion protection for the mutable Draft document.
+- Quote lines freeze quoted quantity, unit price, discount, tax and product/unit identifiers. Submitted quotes are immutable and their net/tax/gross comparison totals are calculated only from their stored snapshots.
+- Added and applied `AddSupplierQuotationFoundation` to `AHMAD/MiniStoreDb`; the additive migration does not create quotes, orders, stock movements or accounting entries.
+- The focused regression suite now covers quotation normalization, calculated totals, submitted-document immutability and tenant ownership.
+
 ## 2026-10-08 — PUR-030 sourcing event and supplier invitations
 
 - Added an RFX-numbered sourcing event created from exactly one approved Purchase Request, with frozen request-line product, unit and quantity snapshots.

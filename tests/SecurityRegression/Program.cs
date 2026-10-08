@@ -1231,6 +1231,19 @@ foreach (var type in new[] { typeof(PurchaseSourcingEvent), typeof(PurchaseSourc
         $"{type.Name} must be tenant owned");
 Check(DocumentSequence.CreateDefault(DocumentNumberType.PurchaseSourcingEvent).Preview(DateTime.Today).StartsWith("RFX-"),
     "Sourcing events must use an independent centralized RFX document sequence");
+var quotation = new SupplierQuotation("QTN-000001", 301, 5, "SUP-2026-77",
+    DateOnly.FromDateTime(DateTime.Today), DateOnly.FromDateTime(DateTime.Today.AddDays(14)), 5,
+    "jod", "30 days", null, "buyer");
+quotation.AddLine(new SupplierQuotationLine(401, 2m, 11.25m, 10m, 16m, "P-10", "Coffee beans", "kg"));
+quotation.Submit();
+Check(quotation.Status == SupplierQuotationStatus.Submitted && quotation.CurrencyCode == "JOD" &&
+      quotation.NetAmount == 20.25m && quotation.TaxAmount == 3.24m && quotation.GrossAmount == 23.49m,
+    "Supplier quotations must freeze commercial line terms and calculate comparison totals from snapshots");
+CheckThrows(() => quotation.AddLine(new SupplierQuotationLine(402, 1m, 1m, 0m, 0m, "P-11", "Tea", "kg")),
+    "Submitted supplier quotations must be immutable");
+foreach (var type in new[] { typeof(SupplierQuotation), typeof(SupplierQuotationLine) })
+    Check(db.Model.FindEntityType(type)!.FindProperty("TenantId") is { IsNullable: false },
+        $"{type.Name} must be tenant owned");
 var sourcingController = typeof(PurchaseSourcingController);
 Check(sourcingController.GetMethod(nameof(PurchaseSourcingController.Index))!
           .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
