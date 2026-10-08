@@ -53,6 +53,7 @@
 | Files | Purpose | Used by |
 |---|---|---|
 | `Services/<Feature>/*.cs` | use-case services grouped as Accounting, Catalog, Customers, Inventory, Purchases, Sales, Settings and Suppliers | matching MVC controllers. |
+| `Services/Purchases/PurchaseApprovalService.cs` | approval-rule administration, submit-time rule resolution, frozen instance creation and role-authorized ordered decisions | Purchase Approval Rules and Purchase Request screens. |
 | `Services/Catalog/RecipeService.cs` | lists and creates immutable active recipe versions with compatible ingredient units | Recipes controller/views and prepared-product sales. |
 | `Services/Catalog/ProductCategoryService.cs` | creates and activates/deactivates tenant product categories used by logistics metadata | ProductCategories controller/view and product forms. |
 | `Services/Catalog/ProductAttributeService.cs` | transactionally creates typed attribute definitions, category links and selection options | ProductAttributes controller/view. |

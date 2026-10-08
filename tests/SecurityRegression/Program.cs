@@ -1189,6 +1189,26 @@ Check(db.Model.FindEntityType(typeof(PurchaseApprovalRule))!
       db.Model.FindEntityType(typeof(PurchaseApprovalInstance))!
           .FindProperty(nameof(PurchaseApprovalInstance.RowVersion))!.IsConcurrencyToken,
     "Editable approval rules and instances must be rowversion protected");
+var approvalController = typeof(PurchaseRequestsController);
+Check(approvalController.GetMethod(nameof(PurchaseRequestsController.Approve))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
+      $"{PermissionAuthorizeAttribute.PolicyPrefix}PurchaseRequests.Approve" &&
+      approvalController.GetMethod(nameof(PurchaseRequestsController.Reject))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
+      $"{PermissionAuthorizeAttribute.PolicyPrefix}PurchaseRequests.Reject",
+    "Purchase approval and rejection commands must use separate server-side permissions");
+var approvalRulesController = typeof(PurchaseApprovalRulesController);
+Check(approvalRulesController.GetMethod(nameof(PurchaseApprovalRulesController.Index))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
+      $"{PermissionAuthorizeAttribute.PolicyPrefix}PurchaseApprovalRules.View" &&
+      approvalRulesController.GetMethod(nameof(PurchaseApprovalRulesController.Create))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
+      $"{PermissionAuthorizeAttribute.PolicyPrefix}PurchaseApprovalRules.Manage",
+    "Purchase approval rule administration must separate view and manage permissions");
+var cancelledApproval = new PurchaseApprovalInstance(102, 20, "Rule", approvalRule.Steps, "requester");
+cancelledApproval.Cancel();
+Check(cancelledApproval.Status == PurchaseApprovalStatus.Cancelled && cancelledApproval.CompletedAtUtc.HasValue,
+    "Cancelling a submitted request must close its pending approval instance");
 
 Console.WriteLine($"Passed {count} security and inventory regression checks.");
 

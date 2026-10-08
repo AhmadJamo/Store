@@ -120,6 +120,13 @@ public sealed class PurchaseApprovalInstance
         Status = PurchaseApprovalStatus.Rejected;
         CompletedAtUtc = DateTime.UtcNow;
     }
+
+    public void Cancel()
+    {
+        if (Status != PurchaseApprovalStatus.Pending) return;
+        Status = PurchaseApprovalStatus.Cancelled;
+        CompletedAtUtc = DateTime.UtcNow;
+    }
 }
 
 public sealed class PurchaseApprovalStep

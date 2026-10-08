@@ -983,4 +983,26 @@
   <data name="Supplier priority must be between 0 and 9999." xml:space="preserve"><value>يجب أن تكون أولوية المورد بين 0 و9999.</value></data>
   <data name="An inactive supplier purchasing record cannot be preferred." xml:space="preserve"><value>لا يمكن جعل سجل شراء مورد غير فعال سجلًا مفضلًا.</value></data>
   <data name="Purchase requests" xml:space="preserve"><value>طلبات الشراء</value></data><data name="Internal demand only; no stock or accounting effect." xml:space="preserve"><value>طلب داخلي فقط دون أثر مخزني أو محاسبي.</value></data><data name="New purchase request" xml:space="preserve"><value>طلب شراء جديد</value></data><data name="Request number" xml:space="preserve"><value>رقم الطلب</value></data><data name="Needed by" xml:space="preserve"><value>تاريخ الحاجة</value></data><data name="No purchase requests found." xml:space="preserve"><value>لا توجد طلبات شراء.</value></data><data name="Select warehouse" xml:space="preserve"><value>اختر المستودع</value></data><data name="Justification" xml:space="preserve"><value>سبب الطلب</value></data><data name="Request lines" xml:space="preserve"><value>أسطر الطلب</value></data><data name="Add line" xml:space="preserve"><value>إضافة سطر</value></data><data name="Suggested supplier" xml:space="preserve"><value>المورد المقترح</value></data><data name="Create draft" xml:space="preserve"><value>إنشاء مسودة</value></data><data name="Requested quantity" xml:space="preserve"><value>الكمية المطلوبة</value></data><data name="Stock quantity" xml:space="preserve"><value>كمية المخزون</value></data><data name="Cancellation reason" xml:space="preserve"><value>سبب الإلغاء</value></data><data name="Cancel request" xml:space="preserve"><value>إلغاء الطلب</value></data><data name="Purchase request created." xml:space="preserve"><value>تم إنشاء طلب الشراء.</value></data><data name="Low" xml:space="preserve"><value>منخفضة</value></data><data name="Normal" xml:space="preserve"><value>عادية</value></data><data name="High" xml:space="preserve"><value>عالية</value></data><data name="Urgent" xml:space="preserve"><value>عاجلة</value></data><data name="Submitted" xml:space="preserve"><value>مُرسل</value></data>
+  <data name="Purchase approval rules" xml:space="preserve"><value>قواعد اعتماد المشتريات</value></data>
+  <data name="Rules determine who must approve submitted purchase requests." xml:space="preserve"><value>تحدد القواعد من يجب أن يعتمد طلبات الشراء المرسلة.</value></data>
+  <data name="Rule name" xml:space="preserve"><value>اسم القاعدة</value></data>
+  <data name="Warehouse scope" xml:space="preserve"><value>نطاق المستودع</value></data>
+  <data name="Minimum priority" xml:space="preserve"><value>الحد الأدنى للأولوية</value></data>
+  <data name="Maximum priority" xml:space="preserve"><value>الحد الأعلى للأولوية</value></data>
+  <data name="Approval step" xml:space="preserve"><value>مرحلة الاعتماد</value></data>
+  <data name="Approval steps" xml:space="preserve"><value>مراحل الاعتماد</value></data>
+  <data name="Create rule" xml:space="preserve"><value>إنشاء القاعدة</value></data>
+  <data name="No purchase approval rules have been configured." xml:space="preserve"><value>لم يتم إعداد قواعد اعتماد للمشتريات.</value></data>
+  <data name="Approval" xml:space="preserve"><value>الاعتماد</value></data>
+  <data name="Decision note" xml:space="preserve"><value>ملاحظة القرار</value></data>
+  <data name="Rejection reason" xml:space="preserve"><value>سبب الرفض</value></data>
+  <data name="Approve" xml:space="preserve"><value>اعتماد</value></data>
+  <data name="Reject" xml:space="preserve"><value>رفض</value></data>
+  <data name="Pending" xml:space="preserve"><value>قيد الانتظار</value></data>
+  <data name="Rejected" xml:space="preserve"><value>مرفوض</value></data>
+  <data name="Purchase approval rule created." xml:space="preserve"><value>تم إنشاء قاعدة اعتماد المشتريات.</value></data>
+  <data name="At least one approver role is required." xml:space="preserve"><value>مطلوب دور معتمد واحد على الأقل.</value></data>
+  <data name="One or more approver roles are invalid." xml:space="preserve"><value>دور واحد أو أكثر من أدوار الاعتماد غير صالح.</value></data>
+  <data name="Each approver role can appear only once in a rule." xml:space="preserve"><value>يمكن أن يظهر كل دور اعتماد مرة واحدة فقط في القاعدة.</value></data>
+  <data name="No active approval rule matches this purchase request." xml:space="preserve"><value>لا توجد قاعدة اعتماد فعالة تطابق طلب الشراء.</value></data>
 </root>

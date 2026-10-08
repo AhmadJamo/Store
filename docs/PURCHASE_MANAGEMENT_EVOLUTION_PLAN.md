@@ -1,5 +1,5 @@
 # MiniStore purchase management evolution plan
-> Status: APPROVED ARCHITECTURAL PLAN — PUR-000 THROUGH PUR-020 COMPLETE; PUR-025 FOUNDATION IMPLEMENTED
+> Status: APPROVED ARCHITECTURAL PLAN — PUR-000 THROUGH PUR-025 IMPLEMENTED
 > Source of truth: current code and migrations  
 > Last reviewed: 2026-10-08
 
@@ -228,7 +228,7 @@ Each slice must include rollback/retry analysis and SQL-backed tenant/concurrenc
 | PUR-005 | Context ownership, currency, approval and GRNI alignment | Alignment gate + ownership/accounting ADRs, no runtime change |
 | PUR-010 | Supplier purchasing data and lead time | Implemented through bilingual UI with tests; additive migration applied to `AHMAD/MiniStoreDb` |
 | PUR-020 | Purchase Request lifecycle | Implemented: domain/schema/numbering/history, Application service, permissions and bilingual UI |
-| PUR-025 | Configurable purchase approvals | Foundation implemented: tenant-safe rules, ordered role steps, frozen instances, decisions and migration; Application service, permissions and bilingual UI remain |
+| PUR-025 | Configurable purchase approvals | Implemented: tenant-safe rule administration, deterministic submit-time resolution, frozen ordered role steps, role/permission-gated decisions and bilingual UI |
 | PUR-030 | Sourcing event and supplier invitations | Approved demand converted without stock changes |
 | PUR-040 | Supplier quotations and comparison | Frozen terms and auditable award decision |
 | PUR-050 | Purchase Order lifecycle | Create/approve/confirm/cancel/close; no stock mutation |

@@ -1,5 +1,13 @@
 # AI Work Log
 
+## 2026-10-08 — PUR-025B configurable approval workflow
+
+- Added bilingual purchase approval rule administration with warehouse/global scope, priority ranges and up to three ordered tenant-role steps.
+- Purchase Request submission now deterministically selects an active rule (warehouse-specific before global, then narrowest priority range), freezes its steps and rejects submission when no rule matches.
+- Added separate rule view/manage and request approve/reject permissions. Each decision also verifies that the actor belongs to the role frozen on the current step.
+- Final approval or rejection updates Purchase Request status/history atomically; cancellation closes a pending approval without stock or accounting effects.
+- Release build passed without warnings and all 428 focused regression checks passed. No additional migration was required beyond PUR-025A.
+
 ## 2026-10-08 — PUR-025A purchase approval foundation
 
 - Added tenant-owned, warehouse/priority-scoped Purchase Approval Rules with ordered role steps and rowversion concurrency.

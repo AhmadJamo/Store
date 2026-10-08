@@ -54,3 +54,9 @@ Permission change → `PermissionDefinitions`, seeder, controller attributes, na
 
 The Index and mutation actions enforce these policies server-side. Permission seeding adds both definitions and grants them to protected tenant Admin roles through the existing idempotent seeder.
 
+# PUR-025 purchase approval permissions
+
+- `PurchaseApprovalRules.View` and `PurchaseApprovalRules.Manage` separate rule visibility from configuration changes.
+- `PurchaseRequests.Approve` and `PurchaseRequests.Reject` separately protect decision commands.
+- A decision requires both the matching command permission and membership in the tenant role frozen on the current approval step. Having only one of these authorities is insufficient.
+

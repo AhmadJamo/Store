@@ -105,6 +105,10 @@ public static class PermissionDefinitions
         new("PurchaseRequests.Create", "Create Purchase Request", "Purchases"),
         new("PurchaseRequests.Submit", "Submit Purchase Request", "Purchases"),
         new("PurchaseRequests.Cancel", "Cancel Purchase Request", "Purchases"),
+        new("PurchaseRequests.Approve", "Approve Purchase Request", "Purchases"),
+        new("PurchaseRequests.Reject", "Reject Purchase Request", "Purchases"),
+        new("PurchaseApprovalRules.View", "View Purchase Approval Rules", "Purchases"),
+        new("PurchaseApprovalRules.Manage", "Manage Purchase Approval Rules", "Purchases"),
         new("PurchaseReturns.View", "View Purchase Returns", "Purchase Returns"),
         new("PurchaseReturns.Create", "Create Purchase Return", "Purchase Returns"),
 
