@@ -406,3 +406,10 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
 - Preserved its system charter, module/data ownership maps, workflows, integration contracts, cross-cutting guidance, delivery roadmap, test matrix and decisions/gaps register.
 - Added an explicit precedence note: repository source, `AGENTS.md`, accepted ADRs and MiniStore's documentation workflow remain authoritative; the imported Codex file is reference guidance only.
 - Updated the documentation index and codebase map. No application code, schema or database data changed.
+
+## 2026-10-08 — PUR-005 purchase architecture alignment
+- Fixed ownership before runtime work: Purchasing owns requests/sourcing/orders, Inventory owns physical stock effects, and Accounting/AP owns vendor bills, payables, payments and journals.
+- Retained Supplier as the current purchasing counterparty and deferred a generic Party migration until repository-wide evidence justifies it.
+- Defined distinct ordered/received/returned/billed/paid authorities, purchase-first approval history, a staged currency boundary and future event facts without prematurely adding an event bus.
+- Accepted GRNI as the target bridge between Goods Receipt and Vendor Bill while leaving Legacy Direct Purchase accounting unchanged.
+- Added two ADRs and entry gates for later purchase slices. Documentation only; no runtime code, migration or database data changed.

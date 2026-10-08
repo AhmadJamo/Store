@@ -7,6 +7,7 @@ The ordered Arabic execution plan, workflow, business rules and rolling suggesti
 The inventory/WMS track is paused by product-owner direction. The active planned track is the additive purchase-management evolution in `PURCHASE_MANAGEMENT_EVOLUTION_PLAN.md`.
 
 - [x] PUR-000 complete purchase architecture review, legacy compatibility boundary, migration strategy and vertical-slice roadmap.
+- [x] PUR-005 fix context ownership, quantity authority, staged currency, approval and GRNI boundaries before runtime implementation.
 - [ ] PUR-010 add supplier-product purchasing information and lead time.
 - [ ] PUR-020 add the Purchase Request lifecycle.
 - [ ] PUR-025 add configurable purchase approval rules and history.
@@ -74,7 +75,7 @@ The inventory/WMS track is paused by product-owner direction. The active planned
 - Implemented WMS-010 hierarchical location metadata, barcode, sequence, tree ordering, warehouse-filtered parent selection, operational capabilities, edit workflow and cycle/same-warehouse validation. Putaway/transfers/relocations enforce receive/pick capabilities. Its additive migration is applied to `AHMAD/MiniStoreDb`; authenticated UI smoke remains because no login secret is stored in the repository.
 
 ## In Progress
-- Purchase Management is the active planned delivery track. Next: PUR-010 Supplier purchasing data and lead time.
+- PUR-005 architecture alignment is complete. Next: PUR-010 Supplier purchasing data and lead time.
 - WMS delivery is paused by product-owner direction. Its remaining items stay documented in `WMS_EVOLUTION_PLAN.md` and resume after the current purchase-management priority.
 - WMS-015A/B/C/D typed definitions, values, ProductTemplate grouping and controlled selection-based variant generation are implemented. Product remains the SKU; proceed to the next WMS slice.
 - WMS-020A physical StockMovement kernel is implemented for idempotent Putaway/Relocation dual-write. Next: authenticated pilot smoke test and WMS-030 transfer/transit integration; do not cut over legacy reads yet.

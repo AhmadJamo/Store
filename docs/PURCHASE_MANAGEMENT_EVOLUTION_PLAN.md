@@ -1,5 +1,5 @@
 # MiniStore purchase management evolution plan
-> Status: APPROVED ARCHITECTURAL PLAN — IMPLEMENTATION NOT STARTED  
+> Status: APPROVED ARCHITECTURAL PLAN — PUR-000/PUR-005 COMPLETE; RUNTIME IMPLEMENTATION NOT STARTED
 > Source of truth: current code and migrations  
 > Last reviewed: 2026-10-08
 
@@ -225,6 +225,7 @@ Each slice must include rollback/retry analysis and SQL-backed tenant/concurrenc
 | Slice | Scope | Completion evidence |
 |---|---|---|
 | PUR-000 | Architecture, legacy boundary and roadmap | This plan + ADR, no runtime change |
+| PUR-005 | Context ownership, currency, approval and GRNI alignment | Alignment gate + ownership/accounting ADRs, no runtime change |
 | PUR-010 | Supplier purchasing data and lead time | Domain through bilingual UI, tests, additive migration |
 | PUR-020 | Purchase Request lifecycle | Draft/submit/cancel, numbering, permissions, history |
 | PUR-025 | Configurable purchase approvals | Rules, instances, approval/rejection and audit |
@@ -259,4 +260,4 @@ Shared accounting, settings, inventory and document-number files are changed onl
 
 ## 10. Immediate next slice
 
-Begin **PUR-010 Supplier purchasing data and lead time**. It is additive, creates the supplier/product commercial foundation needed by sourcing and has no inventory or accounting side effect. Its migration must not modify legacy Purchase rows.
+PUR-005 is accepted in `PURCHASE_ARCHITECTURE_ALIGNMENT.md`. Begin **PUR-010 Supplier purchasing data and lead time**. It is additive, creates the supplier/product commercial foundation needed by sourcing and has no inventory or accounting side effect. Its migration must not modify legacy Purchase rows or claim full multi-currency support.

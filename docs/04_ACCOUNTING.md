@@ -1,7 +1,7 @@
 # Accounting implementation assessment
 > Status: PARTIALLY IMPLEMENTED  
 > Source of truth: Code  
-> Last reviewed: 2026-09-29
+> Last reviewed: 2026-10-08
 
 For the Arabic accounting-cycle, journal examples, international-standard map, mandatory software controls and ordered implementation guide, see [`ACCOUNTING_REFERENCE_AR.md`](ACCOUNTING_REFERENCE_AR.md). That reference describes the target policy and must not be read as an implemented-feature list; the status table below remains the implementation assessment.
 
@@ -52,3 +52,6 @@ Feature services calculate business amounts and resolve accounts, then send prep
 
 ## Before accounting expansion
 Generalized reversals, currency policy and mixed-rate product tax remain planned decisions before broader accounting expansion.
+## Planned procure-to-pay accounting boundary
+
+PUR-005 accepts GRNI as the target accounting bridge for the new, separate Goods Receipt and Vendor Bill flow. PO confirmation has no GL effect. A posted receipt will eventually debit Inventory and credit GRNI; a posted Vendor Bill will clear matched GRNI, recognize recoverable input tax and purchase-price variance, and credit Accounts Payable; payment will clear AP. This target is **not implemented** by the current Legacy Direct Purchase workflow. Activation is deferred to PUR-065/PUR-080 and requires configured accounts, distinct source identities, fiscal-period validation, idempotent posting, reversals and reconciliation tests. See `PURCHASE_ARCHITECTURE_ALIGNMENT.md` and `decisions/2026-10-08-grni-and-purchase-currency-boundary.md`.
