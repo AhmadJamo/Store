@@ -8,7 +8,7 @@ The inventory/WMS track is paused by product-owner direction. The active planned
 
 - [x] PUR-000 complete purchase architecture review, legacy compatibility boundary, migration strategy and vertical-slice roadmap.
 - [x] PUR-005 fix context ownership, quantity authority, staged currency, approval and GRNI boundaries before runtime implementation.
-- [x] PUR-010 add supplier-product purchasing information and lead time (code, UI, tests and migration complete; local migration application pending SQL SSPI repair).
+- [x] PUR-010 add supplier-product purchasing information and lead time; migration applied to `AHMAD/MiniStoreDb`.
 - [ ] PUR-020 add the Purchase Request lifecycle.
 - [ ] PUR-025 add configurable purchase approval rules and history.
 - [ ] PUR-030/PUR-040 add sourcing events, supplier quotations and comparison.
@@ -75,7 +75,7 @@ The inventory/WMS track is paused by product-owner direction. The active planned
 - Implemented WMS-010 hierarchical location metadata, barcode, sequence, tree ordering, warehouse-filtered parent selection, operational capabilities, edit workflow and cycle/same-warehouse validation. Putaway/transfers/relocations enforce receive/pick capabilities. Its additive migration is applied to `AHMAD/MiniStoreDb`; authenticated UI smoke remains because no login secret is stored in the repository.
 
 ## In Progress
-- PUR-010 is implemented in code. Next: repair local SQL Windows Authentication, apply/smoke-test `AddSupplierPurchasingData`, then begin PUR-020 Purchase Request.
+- PUR-010 is implemented and locally migrated. Next: authenticated UI smoke test, then PUR-020 Purchase Request.
 - WMS delivery is paused by product-owner direction. Its remaining items stay documented in `WMS_EVOLUTION_PLAN.md` and resume after the current purchase-management priority.
 - WMS-015A/B/C/D typed definitions, values, ProductTemplate grouping and controlled selection-based variant generation are implemented. Product remains the SKU; proceed to the next WMS slice.
 - WMS-020A physical StockMovement kernel is implemented for idempotent Putaway/Relocation dual-write. Next: authenticated pilot smoke test and WMS-030 transfer/transit integration; do not cut over legacy reads yet.

@@ -1,5 +1,5 @@
 # Supplier product purchasing information
-> Status: IMPLEMENTED IN CODE; MIGRATION CREATED, LOCAL APPLICATION BLOCKED BY SQL WINDOWS AUTHENTICATION  
+> Status: IMPLEMENTED AND LOCALLY MIGRATED
 > Last reviewed: 2026-10-08
 
 `SupplierProductPurchasingInfo` stores commercial purchasing terms for one Supplier + Product + Purchase Measurement Unit. It does not replace `Product.PurchasePrice`, receive inventory, create a Purchase, or post accounting.

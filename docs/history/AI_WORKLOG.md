@@ -419,4 +419,4 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
 - Added Application validation that rejects prepared-to-order/inactive products, inactive or dimension-incompatible units, foreign currency and duplicate supplier/product/unit identities; no inventory or accounting state is changed.
 - Added repository/configuration/DI, separate view/manage permissions, Purchasing navigation and a bilingual RTL-safe administration screen.
 - Added domain, EF metadata and controller-permission regression coverage; 212 focused checks passed and the solution built with zero warnings.
-- Created migration `AddSupplierPurchasingData`; EF reports no pending model changes. Local application is pending because SQL Server Windows Authentication failed with `Cannot generate SSPI context` for both `AHMAD` and `localhost`.
+- Created migration `AddSupplierPurchasingData`; EF reports no pending model changes. Sandbox Windows authentication could not reach SQL, so the authorized host identity applied `20261008161855_AddSupplierPurchasingData` successfully to `AHMAD/MiniStoreDb`.
