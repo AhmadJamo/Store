@@ -427,3 +427,9 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
 - Extended centralized numbering with PurchaseRequest and the `PRQ-` default without creating stock or accounting effects.
 - Added domain/metadata regression checks; the focused executable passed 404 checks and the solution built with zero warnings.
 - Created and applied migration `20261008180612_AddPurchaseRequestFoundation` to `AHMAD/MiniStoreDb`. PUR-020 remains in progress until PUR-020B adds the Application service, permissions and bilingual UI.
+
+## 2026-10-08 — PUR-020B purchase-request application and UI
+- Added repository and Application orchestration for Draft creation, managed-unit conversion, Submit and reasoned Cancel with rowversion checks.
+- Added distinct View/Create/Submit/Cancel permissions, navigation, list/create/details screens and Arabic translations.
+- Product, warehouse, unit and optional suggested-supplier identities are validated by name-backed selectors; prepared-to-order products are excluded.
+- Purchase requests remain internal demand only and create no inventory or accounting effect.

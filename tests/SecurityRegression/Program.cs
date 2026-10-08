@@ -13,6 +13,7 @@ using Microsoft.Extensions.Options;
 using MiniStore.Application.Permissions;
 using MiniStore.Application.DTOs.Settings;
 using MiniStore.Application.DTOs.Inventory.Tracking;
+using MiniStore.Application.DTOs.Purchases;
 using MiniStore.Application.Services;
 using MiniStore.Infrastructure.Authorization;
 using MiniStore.Infrastructure.Persistence;
@@ -1150,6 +1151,8 @@ foreach (var type in new[] { typeof(PurchaseRequest), typeof(PurchaseRequestLine
         $"{type.Name} must be tenant owned");
 Check(DocumentSequence.CreateDefault(DocumentNumberType.PurchaseRequest).Preview(DateTime.Today).StartsWith("PRQ-"),
     "Purchase requests must use the centralized PRQ document sequence");
+var prController=typeof(PurchaseRequestsController);
+Check(prController.GetMethod(nameof(PurchaseRequestsController.Index))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy==$"{PermissionAuthorizeAttribute.PolicyPrefix}PurchaseRequests.View"&&prController.GetMethod(nameof(PurchaseRequestsController.Create),[typeof(CreatePurchaseRequestDto)])!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy==$"{PermissionAuthorizeAttribute.PolicyPrefix}PurchaseRequests.Create"&&prController.GetMethod(nameof(PurchaseRequestsController.Submit))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy==$"{PermissionAuthorizeAttribute.PolicyPrefix}PurchaseRequests.Submit"&&prController.GetMethod(nameof(PurchaseRequestsController.Cancel))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy==$"{PermissionAuthorizeAttribute.PolicyPrefix}PurchaseRequests.Cancel","Purchase request commands must use separate server-side permissions");
 
 Console.WriteLine($"Passed {count} security and inventory regression checks.");
 

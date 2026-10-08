@@ -69,7 +69,8 @@ public static class NavigationDefinitions
                 "SupplierPurchasing",
                 "Index",
                 "Purchases.SupplierTerms.View",
-                40)
+                40),
+            new NavigationItem("Purchase requests","bi-clipboard-plus","PurchaseRequests","Index","PurchaseRequests.View",50)
         ),
 
         new NavigationGroup(
