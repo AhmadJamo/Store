@@ -62,6 +62,9 @@ public class AppDbContext
 
     public DbSet<SupplierProductPurchasingInfo> SupplierProductPurchasingInfos
         => Set<SupplierProductPurchasingInfo>();
+    public DbSet<PurchaseRequest> PurchaseRequests => Set<PurchaseRequest>();
+    public DbSet<PurchaseRequestLine> PurchaseRequestLines => Set<PurchaseRequestLine>();
+    public DbSet<PurchaseRequestHistory> PurchaseRequestHistories => Set<PurchaseRequestHistory>();
 
     public DbSet<Purchase> Purchases
         => Set<Purchase>();

@@ -420,3 +420,10 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
 - Added repository/configuration/DI, separate view/manage permissions, Purchasing navigation and a bilingual RTL-safe administration screen.
 - Added domain, EF metadata and controller-permission regression coverage; 212 focused checks passed and the solution built with zero warnings.
 - Created migration `AddSupplierPurchasingData`; EF reports no pending model changes. Sandbox Windows authentication could not reach SQL, so the authorized host identity applied `20261008161855_AddSupplierPurchasingData` successfully to `AHMAD/MiniStoreDb`.
+
+## 2026-10-08 — PUR-020A purchase-request foundation
+- Added tenant-owned PurchaseRequest, PurchaseRequestLine and PurchaseRequestHistory with Draft -> Submitted and reasoned Draft/Submitted -> Cancelled transitions.
+- Added frozen requested-unit conversion and stock quantity, optional suggested supplier, rowversion and explicit Created/Submitted/Cancelled actor/time history.
+- Extended centralized numbering with PurchaseRequest and the `PRQ-` default without creating stock or accounting effects.
+- Added domain/metadata regression checks; the focused executable passed 404 checks and the solution built with zero warnings.
+- Created and applied migration `20261008180612_AddPurchaseRequestFoundation` to `AHMAD/MiniStoreDb`. PUR-020 remains in progress until PUR-020B adds the Application service, permissions and bilingual UI.

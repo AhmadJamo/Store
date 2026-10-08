@@ -28,3 +28,7 @@ Creates the empty tenant-isolated replenishment-policy table and tenant-safe Pro
 # 2026-10-08 — AddSupplierPurchasingData
 
 Creates only `SupplierProductPurchasingInfos`, its tenant-safe foreign keys, indexes and rowversion. It performs no data backfill and does not change legacy Purchase records. Generation and pending-model verification passed. Initial sandbox attempts could not use the developer's Windows SQL identity; the authorized host execution applied migration `20261008161855_AddSupplierPurchasingData` successfully to `AHMAD/MiniStoreDb`.
+
+## 2026-10-08 — AddPurchaseRequestFoundation
+
+Migration `20261008180612_AddPurchaseRequestFoundation` creates PurchaseRequests, lines and histories with tenant-safe composite relationships, request-number and line-identity uniqueness, rowversion and frozen quantity conversion. It was applied successfully to `AHMAD/MiniStoreDb`; it changes no inventory or accounting table.

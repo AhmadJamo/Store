@@ -81,3 +81,5 @@ Migration `AddReplenishmentRules` creates tenant-owned `ReplenishmentRules` with
 # PUR-010 supplier purchasing data
 
 Migration `AddSupplierPurchasingData` additively creates tenant-owned `SupplierProductPurchasingInfos`. Composite tenant foreign keys restrict Supplier, Product and MeasurementUnit references to the same company. A tenant-scoped unique index enforces one row per supplier + product + purchase unit; rowversion protects mutable terms. No legacy Purchase, inventory or accounting row is changed or backfilled. The migration was generated, model-verified and applied to `AHMAD/MiniStoreDb` on 2026-10-08 using the authorized host Windows identity.
+
+Migration `AddPurchaseRequestFoundation` creates tenant-owned PurchaseRequests, PurchaseRequestLines and PurchaseRequestHistories plus the centralized PurchaseRequest document type/default `PRQ-` sequence. Lines freeze requested quantity, managed unit factor and stock quantity. The schema has no ProductStock, StockMovement or Journal relationship and was applied to `AHMAD/MiniStoreDb` on 2026-10-08.

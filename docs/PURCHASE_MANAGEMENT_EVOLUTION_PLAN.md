@@ -227,7 +227,7 @@ Each slice must include rollback/retry analysis and SQL-backed tenant/concurrenc
 | PUR-000 | Architecture, legacy boundary and roadmap | This plan + ADR, no runtime change |
 | PUR-005 | Context ownership, currency, approval and GRNI alignment | Alignment gate + ownership/accounting ADRs, no runtime change |
 | PUR-010 | Supplier purchasing data and lead time | Implemented through bilingual UI with tests; additive migration applied to `AHMAD/MiniStoreDb` |
-| PUR-020 | Purchase Request lifecycle | Draft/submit/cancel, numbering, permissions, history |
+| PUR-020 | Purchase Request lifecycle | IN PROGRESS: PUR-020A domain/schema/numbering/history implemented and migrated; PUR-020B application/UI/permissions pending |
 | PUR-025 | Configurable purchase approvals | Rules, instances, approval/rejection and audit |
 | PUR-030 | Sourcing event and supplier invitations | Approved demand converted without stock changes |
 | PUR-040 | Supplier quotations and comparison | Frozen terms and auditable award decision |

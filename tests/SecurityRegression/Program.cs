@@ -1128,6 +1128,29 @@ Check(supplierTermsIndexAction.GetCustomAttribute<PermissionAuthorizeAttribute>(
       $"{PermissionAuthorizeAttribute.PolicyPrefix}Purchases.SupplierTerms.Manage",
     "Supplier purchasing data must separate view and manage permissions");
 
+var purchaseRequest = new PurchaseRequest("PRQ-000001", 1, DateOnly.FromDateTime(DateTime.Today.AddDays(7)),
+    PurchaseRequestPriority.High, "Restock critical ingredients", null, "requester");
+Check(purchaseRequest.Status == PurchaseRequestStatus.Draft && purchaseRequest.History.Count == 1,
+    "A purchase request must begin as a traced draft");
+CheckThrows(() => purchaseRequest.Submit("requester"),
+    "An empty purchase request cannot be submitted");
+purchaseRequest.AddLine(new PurchaseRequestLine(10, 2, 3m, 1000m, 5, "Three kilograms"));
+Check(purchaseRequest.Lines.Single().StockQuantity == 3000m,
+    "Purchase request lines must freeze requested-to-stock conversion");
+purchaseRequest.Submit("requester");
+Check(purchaseRequest.Status == PurchaseRequestStatus.Submitted && purchaseRequest.History.Count == 2,
+    "Submitting a purchase request must create explicit lifecycle history");
+CheckThrows(() => purchaseRequest.AddLine(new PurchaseRequestLine(11, 2, 1m, 1m, null, null)),
+    "Submitted purchase requests must reject line mutation");
+purchaseRequest.Cancel("manager", "Demand no longer required");
+Check(purchaseRequest.Status == PurchaseRequestStatus.Cancelled && purchaseRequest.History.Count == 3,
+    "Submitted purchase requests must support reasoned cancellation without deletion");
+foreach (var type in new[] { typeof(PurchaseRequest), typeof(PurchaseRequestLine), typeof(PurchaseRequestHistory) })
+    Check(db.Model.FindEntityType(type)!.FindProperty("TenantId") is { IsNullable: false },
+        $"{type.Name} must be tenant owned");
+Check(DocumentSequence.CreateDefault(DocumentNumberType.PurchaseRequest).Preview(DateTime.Today).StartsWith("PRQ-"),
+    "Purchase requests must use the centralized PRQ document sequence");
+
 Console.WriteLine($"Passed {count} security and inventory regression checks.");
 
 void CheckThrows(Action action, string message)
