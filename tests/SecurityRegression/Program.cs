@@ -1210,6 +1210,36 @@ cancelledApproval.Cancel();
 Check(cancelledApproval.Status == PurchaseApprovalStatus.Cancelled && cancelledApproval.CompletedAtUtc.HasValue,
     "Cancelling a submitted request must close its pending approval instance");
 
+var sourcingRequest = new PurchaseRequest("PRQ-000002", 1, DateOnly.FromDateTime(DateTime.Today.AddDays(7)),
+    PurchaseRequestPriority.Normal, "Restock", null, "requester");
+sourcingRequest.AddLine(new PurchaseRequestLine(10, 2, 2m, 1m, null, null));
+sourcingRequest.Submit("requester");
+sourcingRequest.Approve("approver");
+var sourcingEvent = new PurchaseSourcingEvent("RFX-000001", 101, 1, DateOnly.FromDateTime(DateTime.Today.AddDays(7)),
+    "Request quotations", "buyer");
+sourcingEvent.AddLine(new PurchaseSourcingLine(201, 10, 2, 2m, 1m, 2m, "P-10", "Coffee beans", "kg", null));
+sourcingEvent.InviteSupplier(5, "Please quote your best delivery date.");
+sourcingEvent.Send("buyer");
+sourcingRequest.StartSourcing("buyer");
+Check(sourcingEvent.Status == PurchaseSourcingStatus.Sent && sourcingEvent.Invitations.Count == 1 &&
+      sourcingRequest.Status == PurchaseRequestStatus.Sourced,
+    "Approved demand must become a sent sourcing event without inventory or accounting behavior");
+CheckThrows(() => sourcingEvent.InviteSupplier(6, null),
+    "Sent sourcing events must reject further supplier invitation changes");
+foreach (var type in new[] { typeof(PurchaseSourcingEvent), typeof(PurchaseSourcingLine), typeof(PurchaseSupplierInvitation) })
+    Check(db.Model.FindEntityType(type)!.FindProperty("TenantId") is { IsNullable: false },
+        $"{type.Name} must be tenant owned");
+Check(DocumentSequence.CreateDefault(DocumentNumberType.PurchaseSourcingEvent).Preview(DateTime.Today).StartsWith("RFX-"),
+    "Sourcing events must use an independent centralized RFX document sequence");
+var sourcingController = typeof(PurchaseSourcingController);
+Check(sourcingController.GetMethod(nameof(PurchaseSourcingController.Index))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
+      $"{PermissionAuthorizeAttribute.PolicyPrefix}PurchaseSourcing.View" &&
+      sourcingController.GetMethod(nameof(PurchaseSourcingController.Create), [typeof(CreatePurchaseSourcingDto)])!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
+      $"{PermissionAuthorizeAttribute.PolicyPrefix}PurchaseSourcing.Create",
+    "Purchase sourcing visibility and creation must use separate server-side permissions");
+
 Console.WriteLine($"Passed {count} security and inventory regression checks.");
 
 void CheckThrows(Action action, string message)

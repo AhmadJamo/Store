@@ -1,5 +1,5 @@
 # MiniStore purchase management evolution plan
-> Status: APPROVED ARCHITECTURAL PLAN — PUR-000 THROUGH PUR-025 IMPLEMENTED
+> Status: APPROVED ARCHITECTURAL PLAN — PUR-000 THROUGH PUR-030 IMPLEMENTED
 > Source of truth: current code and migrations  
 > Last reviewed: 2026-10-08
 
@@ -229,7 +229,7 @@ Each slice must include rollback/retry analysis and SQL-backed tenant/concurrenc
 | PUR-010 | Supplier purchasing data and lead time | Implemented through bilingual UI with tests; additive migration applied to `AHMAD/MiniStoreDb` |
 | PUR-020 | Purchase Request lifecycle | Implemented: domain/schema/numbering/history, Application service, permissions and bilingual UI |
 | PUR-025 | Configurable purchase approvals | Implemented: tenant-safe rule administration, deterministic submit-time resolution, frozen ordered role steps, role/permission-gated decisions and bilingual UI |
-| PUR-030 | Sourcing event and supplier invitations | Approved demand converted without stock changes |
+| PUR-030 | Sourcing event and supplier invitations | Implemented: RFX numbering, frozen approved-demand snapshots, deduplicated supplier invitations, permissions and bilingual UI; no stock or accounting mutation |
 | PUR-040 | Supplier quotations and comparison | Frozen terms and auditable award decision |
 | PUR-050 | Purchase Order lifecycle | Create/approve/confirm/cancel/close; no stock mutation |
 | PUR-060 | Partial Goods Receipt | Idempotent receipt integrated with WMS and tracking |

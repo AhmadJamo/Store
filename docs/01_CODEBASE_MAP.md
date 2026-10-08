@@ -39,6 +39,7 @@
 | `Entities/Purchases/SupplierProductPurchasingInfo.cs` | supplier-specific product code, compatible purchase unit, base-currency price, lead time, order policy, validity and preference | PUR-010 purchasing data screen/service. |
 | `Entities/Purchases/PurchaseRequest.cs` | PRQ-numbered Draft/Submitted/Cancelled internal demand, frozen unit conversion lines and immutable action history | PUR-020 purchase-request workflow. |
 | `Entities/Purchases/PurchaseApproval.cs` | Warehouse/priority-scoped approval rules, ordered role steps and immutable per-request decision snapshots | PUR-025 approval workflow foundation. |
+| `Entities/Purchases/PurchaseSourcingEvent.cs` | RFX-numbered sourcing event, frozen request-line snapshots and supplier invitations; no price, inventory or accounting authority | PUR-030 sourcing workflow. |
 | `Entities/Settings/*.cs` | accounting, discount, inventory-policy defaults, centralized `DocumentSequence`, general settings and supported UI language | settings/database/localization docs. |
 | `Entities/Security/*.cs` | audit, permission catalogue and tenant-owned role/permission entities | permissions/security docs. |
 | `Entities/Tenancy/*.cs` | company tenant, Identity-user membership and tenant-scoped user-role assignments | tenancy/security/database docs. |
@@ -54,6 +55,7 @@
 |---|---|---|
 | `Services/<Feature>/*.cs` | use-case services grouped as Accounting, Catalog, Customers, Inventory, Purchases, Sales, Settings and Suppliers | matching MVC controllers. |
 | `Services/Purchases/PurchaseApprovalService.cs` | approval-rule administration, submit-time rule resolution, frozen instance creation and role-authorized ordered decisions | Purchase Approval Rules and Purchase Request screens. |
+| `Services/Purchases/PurchaseSourcingService.cs` | creates and sends supplier invitations from exactly one approved request, while freezing demand snapshots | Purchase Sourcing screens. |
 | `Services/Catalog/RecipeService.cs` | lists and creates immutable active recipe versions with compatible ingredient units | Recipes controller/views and prepared-product sales. |
 | `Services/Catalog/ProductCategoryService.cs` | creates and activates/deactivates tenant product categories used by logistics metadata | ProductCategories controller/view and product forms. |
 | `Services/Catalog/ProductAttributeService.cs` | transactionally creates typed attribute definitions, category links and selection options | ProductAttributes controller/view. |

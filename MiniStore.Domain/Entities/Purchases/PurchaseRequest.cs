@@ -1,8 +1,8 @@
 namespace MiniStore.Domain.Entities;
 
-public enum PurchaseRequestStatus { Draft = 1, Submitted = 2, Cancelled = 3, Approved = 4, Rejected = 5 }
+public enum PurchaseRequestStatus { Draft = 1, Submitted = 2, Cancelled = 3, Approved = 4, Rejected = 5, Sourced = 6 }
 public enum PurchaseRequestPriority { Low = 1, Normal = 2, High = 3, Urgent = 4 }
-public enum PurchaseRequestHistoryAction { Created = 1, Submitted = 2, Cancelled = 3, Approved = 4, Rejected = 5 }
+public enum PurchaseRequestHistoryAction { Created = 1, Submitted = 2, Cancelled = 3, Approved = 4, Rejected = 5, Sourced = 6 }
 
 public sealed class PurchaseRequest
 {
@@ -84,6 +84,14 @@ public sealed class PurchaseRequest
             throw new InvalidOperationException("Only submitted purchase requests can be rejected.");
         if (string.IsNullOrWhiteSpace(reason)) throw new ArgumentException("Approval rejection reason is required.");
         ChangeStatus(PurchaseRequestStatus.Rejected, PurchaseRequestHistoryAction.Rejected, userId, reason.Trim());
+    }
+
+    public void StartSourcing(string userId)
+    {
+        EnsureUser(userId);
+        if (Status != PurchaseRequestStatus.Approved)
+            throw new InvalidOperationException("Only approved purchase requests can start sourcing.");
+        ChangeStatus(PurchaseRequestStatus.Sourced, PurchaseRequestHistoryAction.Sourced, userId);
     }
 
     private void ChangeStatus(PurchaseRequestStatus next, PurchaseRequestHistoryAction action, string user, string? reason = null)

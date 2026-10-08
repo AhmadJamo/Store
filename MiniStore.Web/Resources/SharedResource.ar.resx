@@ -1005,4 +1005,22 @@
   <data name="One or more approver roles are invalid." xml:space="preserve"><value>دور واحد أو أكثر من أدوار الاعتماد غير صالح.</value></data>
   <data name="Each approver role can appear only once in a rule." xml:space="preserve"><value>يمكن أن يظهر كل دور اعتماد مرة واحدة فقط في القاعدة.</value></data>
   <data name="No active approval rule matches this purchase request." xml:space="preserve"><value>لا توجد قاعدة اعتماد فعالة تطابق طلب الشراء.</value></data>
+  <data name="Purchase sourcing" xml:space="preserve"><value>توريد المشتريات</value></data>
+  <data name="Approved requests sent to suppliers for quotations." xml:space="preserve"><value>طلبات معتمدة تُرسل للموردين للحصول على عروض أسعار.</value></data>
+  <data name="Sourcing number" xml:space="preserve"><value>رقم التوريد</value></data>
+  <data name="Purchase request" xml:space="preserve"><value>طلب الشراء</value></data>
+  <data name="No sourcing events found." xml:space="preserve"><value>لا توجد أحداث توريد.</value></data>
+  <data name="Start sourcing" xml:space="preserve"><value>بدء التوريد</value></data>
+  <data name="Create a supplier invitation from an approved purchase request. This does not change inventory or accounting." xml:space="preserve"><value>إنشاء دعوة للموردين من طلب شراء معتمد. لا يغيّر هذا المخزون أو المحاسبة.</value></data>
+  <data name="Invitation message" xml:space="preserve"><value>رسالة الدعوة</value></data>
+  <data name="Suppliers to invite" xml:space="preserve"><value>الموردون المدعوون</value></data>
+  <data name="Send sourcing invitations" xml:space="preserve"><value>إرسال دعوات التوريد</value></data>
+  <data name="Requested items" xml:space="preserve"><value>الأصناف المطلوبة</value></data>
+  <data name="Invited suppliers" xml:space="preserve"><value>الموردون المدعوون</value></data>
+  <data name="Purchase sourcing event sent." xml:space="preserve"><value>تم إرسال حدث توريد المشتريات.</value></data>
+  <data name="At least one supplier must be selected." xml:space="preserve"><value>يجب اختيار مورد واحد على الأقل.</value></data>
+  <data name="Only approved purchase requests can start sourcing." xml:space="preserve"><value>يمكن بدء التوريد من طلبات الشراء المعتمدة فقط.</value></data>
+  <data name="This purchase request already has a sourcing event." xml:space="preserve"><value>يوجد حدث توريد لهذا الطلب بالفعل.</value></data>
+  <data name="Draft" xml:space="preserve"><value>مسودة</value></data>
+  <data name="Sent" xml:space="preserve"><value>مُرسل</value></data>
 </root>

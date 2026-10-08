@@ -69,6 +69,9 @@ public class AppDbContext
     public DbSet<PurchaseApprovalRuleStep> PurchaseApprovalRuleSteps => Set<PurchaseApprovalRuleStep>();
     public DbSet<PurchaseApprovalInstance> PurchaseApprovalInstances => Set<PurchaseApprovalInstance>();
     public DbSet<PurchaseApprovalStep> PurchaseApprovalSteps => Set<PurchaseApprovalStep>();
+    public DbSet<PurchaseSourcingEvent> PurchaseSourcingEvents => Set<PurchaseSourcingEvent>();
+    public DbSet<PurchaseSourcingLine> PurchaseSourcingLines => Set<PurchaseSourcingLine>();
+    public DbSet<PurchaseSupplierInvitation> PurchaseSupplierInvitations => Set<PurchaseSupplierInvitation>();
 
     public DbSet<Purchase> Purchases
         => Set<Purchase>();

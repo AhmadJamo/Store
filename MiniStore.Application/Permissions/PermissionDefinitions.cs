@@ -109,6 +109,8 @@ public static class PermissionDefinitions
         new("PurchaseRequests.Reject", "Reject Purchase Request", "Purchases"),
         new("PurchaseApprovalRules.View", "View Purchase Approval Rules", "Purchases"),
         new("PurchaseApprovalRules.Manage", "Manage Purchase Approval Rules", "Purchases"),
+        new("PurchaseSourcing.View", "View Purchase Sourcing", "Purchases"),
+        new("PurchaseSourcing.Create", "Create Purchase Sourcing", "Purchases"),
         new("PurchaseReturns.View", "View Purchase Returns", "Purchase Returns"),
         new("PurchaseReturns.Create", "Create Purchase Return", "Purchase Returns"),
 

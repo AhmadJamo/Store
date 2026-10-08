@@ -11,7 +11,8 @@ The inventory/WMS track is paused by product-owner direction. The active planned
 - [x] PUR-010 add supplier-product purchasing information and lead time; migration applied to `AHMAD/MiniStoreDb`.
 - [x] PUR-020 add the Purchase Request lifecycle with Draft/Submit/Cancel, frozen units, history, permissions and bilingual UI.
 - [x] PUR-025 add configurable purchase approval rules, frozen instances, ordered decisions, permissions and bilingual UI.
-- [ ] PUR-030/PUR-040 add sourcing events, supplier quotations and comparison.
+- [x] PUR-030 add sourcing events and supplier invitations from approved Purchase Requests without stock changes.
+- [ ] PUR-040 add supplier quotations and comparison.
 - [ ] PUR-050 add the Purchase Order lifecycle without stock mutation.
 - [ ] PUR-060/PUR-065 add partial Goods Receipts, WMS integration and GRNI accounting.
 - [ ] PUR-080/PUR-090 add Vendor Bills and three-way matching.
@@ -75,7 +76,7 @@ The inventory/WMS track is paused by product-owner direction. The active planned
 - Implemented WMS-010 hierarchical location metadata, barcode, sequence, tree ordering, warehouse-filtered parent selection, operational capabilities, edit workflow and cycle/same-warehouse validation. Putaway/transfers/relocations enforce receive/pick capabilities. Its additive migration is applied to `AHMAD/MiniStoreDb`; authenticated UI smoke remains because no login secret is stored in the repository.
 
 ## In Progress
-- PUR-025 is implemented. Next: authenticated approval journey smoke test, then PUR-030 sourcing events and supplier invitations.
+- PUR-030 sourcing is implemented. Next: authenticated supplier-invitation smoke test, then PUR-040 quotations and comparison.
 - WMS delivery is paused by product-owner direction. Its remaining items stay documented in `WMS_EVOLUTION_PLAN.md` and resume after the current purchase-management priority.
 - WMS-015A/B/C/D typed definitions, values, ProductTemplate grouping and controlled selection-based variant generation are implemented. Product remains the SKU; proceed to the next WMS slice.
 - WMS-020A physical StockMovement kernel is implemented for idempotent Putaway/Relocation dual-write. Next: authenticated pilot smoke test and WMS-030 transfer/transit integration; do not cut over legacy reads yet.

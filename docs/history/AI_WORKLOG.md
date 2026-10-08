@@ -1,5 +1,13 @@
 # AI Work Log
 
+## 2026-10-08 — PUR-030 sourcing event and supplier invitations
+
+- Added an RFX-numbered sourcing event created from exactly one approved Purchase Request, with frozen request-line product, unit and quantity snapshots.
+- Added deduplicated supplier invitations and a send transition that requires both demand lines and at least one selected supplier.
+- Added a tenant-safe repository, Application service, separate sourcing view/create permissions, bilingual list/create/details UI and a Request Details entry point.
+- Kept PUR-030 outside inventory and accounting: it creates no quotation price, Purchase Order, receipt, stock movement or journal entry.
+- Added and applied the additive `AddPurchaseSourcingFoundation` migration to `AHMAD/MiniStoreDb`; Release build passed without warnings, and the focused regression suite passed.
+
 ## 2026-10-08 — PUR-025B configurable approval workflow
 
 - Added bilingual purchase approval rule administration with warehouse/global scope, priority ranges and up to three ordered tenant-role steps.

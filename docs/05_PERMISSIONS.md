@@ -60,3 +60,9 @@ The Index and mutation actions enforce these policies server-side. Permission se
 - `PurchaseRequests.Approve` and `PurchaseRequests.Reject` separately protect decision commands.
 - A decision requires both the matching command permission and membership in the tenant role frozen on the current approval step. Having only one of these authorities is insufficient.
 
+# PUR-030 purchase sourcing permissions
+
+- `PurchaseSourcing.View` protects sourcing-event listing and detail visibility.
+- `PurchaseSourcing.Create` protects converting an approved request into exactly one sent supplier-invitation event.
+- The command remains commercial intent only; it has no inventory or accounting permission because it cannot mutate either area.
+

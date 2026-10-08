@@ -1,0 +1,7 @@
+@model MiniStore.Application.DTOs.Purchases.PurchaseSourcingDto
+@inject Microsoft.Extensions.Localization.IStringLocalizer<MiniStore.Web.SharedResource> Localizer
+@{ ViewData["Title"] = Model.SourcingNumber; }
+<div class="d-flex justify-content-between"><div><h2>@Model.SourcingNumber</h2><span class="badge bg-secondary">@Localizer[Model.Status.ToString()]</span></div><a asp-action="Index" class="btn btn-outline-secondary">@Localizer["Back"]</a></div>
+<div class="card card-body my-3"><div><strong>@Localizer["Purchase request"]:</strong> @Model.PurchaseRequestNumber</div><div><strong>@Localizer["Warehouse"]:</strong> @Model.WarehouseName</div><div><strong>@Localizer["Needed by"]:</strong> @Model.RequestedByDate</div></div>
+<h5>@Localizer["Requested items"]</h5><table class="table"><thead><tr><th>@Localizer["Product"]</th><th>@Localizer["Requested quantity"]</th><th>@Localizer["Stock quantity"]</th></tr></thead><tbody>@foreach(var line in Model.Lines){<tr><td>@line.ProductCode — @line.ProductName</td><td>@line.RequestedQuantity @line.UnitName</td><td>@line.StockQuantity</td></tr>}</tbody></table>
+<h5>@Localizer["Invited suppliers"]</h5><ul class="list-group">@foreach(var invitation in Model.Invitations){<li class="list-group-item">@invitation.SupplierName @if(invitation.Message is not null){<span>— @invitation.Message</span>}</li>}</ul>
