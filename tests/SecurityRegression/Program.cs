@@ -1154,6 +1154,42 @@ Check(DocumentSequence.CreateDefault(DocumentNumberType.PurchaseRequest).Preview
 var prController=typeof(PurchaseRequestsController);
 Check(prController.GetMethod(nameof(PurchaseRequestsController.Index))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy==$"{PermissionAuthorizeAttribute.PolicyPrefix}PurchaseRequests.View"&&prController.GetMethod(nameof(PurchaseRequestsController.Create),[typeof(CreatePurchaseRequestDto)])!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy==$"{PermissionAuthorizeAttribute.PolicyPrefix}PurchaseRequests.Create"&&prController.GetMethod(nameof(PurchaseRequestsController.Submit))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy==$"{PermissionAuthorizeAttribute.PolicyPrefix}PurchaseRequests.Submit"&&prController.GetMethod(nameof(PurchaseRequestsController.Cancel))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy==$"{PermissionAuthorizeAttribute.PolicyPrefix}PurchaseRequests.Cancel","Purchase request commands must use separate server-side permissions");
 
+var approvalRule = new PurchaseApprovalRule("Warehouse managers", 1,
+    PurchaseRequestPriority.Normal, PurchaseRequestPriority.Urgent);
+approvalRule.AddStep(2, "Finance Manager");
+approvalRule.AddStep(1, "Purchase Manager");
+Check(approvalRule.Matches(1, PurchaseRequestPriority.High) &&
+      !approvalRule.Matches(2, PurchaseRequestPriority.High),
+    "Purchase approval rules must evaluate their warehouse and priority scope");
+CheckThrows(() => approvalRule.AddStep(1, "Owner"),
+    "Purchase approval rule step sequences must be unique");
+var approval = new PurchaseApprovalInstance(100, 20, approvalRule.Name, approvalRule.Steps, "requester");
+approvalRule.SetActive(false);
+Check(approval.RuleNameSnapshot == "Warehouse managers" &&
+      approval.Steps.Select(x => x.ApproverRoleName).SequenceEqual(["Purchase Manager", "Finance Manager"]),
+    "Purchase approval instances must freeze the selected rule and ordered role steps");
+approval.ApproveCurrent("purchasing-user", "Reviewed");
+Check(approval.Status == PurchaseApprovalStatus.Pending && approval.CurrentStep().Sequence == 2,
+    "A multi-step approval must remain pending until every ordered step is approved");
+approval.ApproveCurrent("finance-user");
+Check(approval.Status == PurchaseApprovalStatus.Approved && approval.CompletedAtUtc.HasValue,
+    "The final approval decision must complete the approval instance");
+var rejectedApproval = new PurchaseApprovalInstance(101, 20, approvalRule.Name, approvalRule.Steps, "requester");
+CheckArgumentThrows(() => rejectedApproval.RejectCurrent("manager", " "),
+    "Approval rejection must require a reason");
+rejectedApproval.RejectCurrent("manager", "Budget unavailable");
+Check(rejectedApproval.Status == PurchaseApprovalStatus.Rejected,
+    "A rejection must close the active approval instance");
+foreach (var type in new[] { typeof(PurchaseApprovalRule), typeof(PurchaseApprovalRuleStep),
+             typeof(PurchaseApprovalInstance), typeof(PurchaseApprovalStep) })
+    Check(db.Model.FindEntityType(type)!.FindProperty("TenantId") is { IsNullable: false },
+        $"{type.Name} must be tenant owned");
+Check(db.Model.FindEntityType(typeof(PurchaseApprovalRule))!
+          .FindProperty(nameof(PurchaseApprovalRule.RowVersion))!.IsConcurrencyToken &&
+      db.Model.FindEntityType(typeof(PurchaseApprovalInstance))!
+          .FindProperty(nameof(PurchaseApprovalInstance.RowVersion))!.IsConcurrencyToken,
+    "Editable approval rules and instances must be rowversion protected");
+
 Console.WriteLine($"Passed {count} security and inventory regression checks.");
 
 void CheckThrows(Action action, string message)

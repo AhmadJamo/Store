@@ -1,8 +1,8 @@
 namespace MiniStore.Domain.Entities;
 
-public enum PurchaseRequestStatus { Draft = 1, Submitted = 2, Cancelled = 3 }
+public enum PurchaseRequestStatus { Draft = 1, Submitted = 2, Cancelled = 3, Approved = 4, Rejected = 5 }
 public enum PurchaseRequestPriority { Low = 1, Normal = 2, High = 3, Urgent = 4 }
-public enum PurchaseRequestHistoryAction { Created = 1, Submitted = 2, Cancelled = 3 }
+public enum PurchaseRequestHistoryAction { Created = 1, Submitted = 2, Cancelled = 3, Approved = 4, Rejected = 5 }
 
 public sealed class PurchaseRequest
 {
@@ -68,6 +68,22 @@ public sealed class PurchaseRequest
             throw new ArgumentException("Cancellation reason is required and cannot exceed 500 characters.");
         ChangeStatus(PurchaseRequestStatus.Cancelled, PurchaseRequestHistoryAction.Cancelled, userId, reason.Trim());
         CancelledByUserId = userId; CancelledAtUtc = DateTime.UtcNow; CancellationReason = reason.Trim();
+    }
+    public void Approve(string userId)
+    {
+        EnsureUser(userId);
+        if (Status != PurchaseRequestStatus.Submitted)
+            throw new InvalidOperationException("Only submitted purchase requests can be approved.");
+        ChangeStatus(PurchaseRequestStatus.Approved, PurchaseRequestHistoryAction.Approved, userId);
+    }
+
+    public void Reject(string userId, string reason)
+    {
+        EnsureUser(userId);
+        if (Status != PurchaseRequestStatus.Submitted)
+            throw new InvalidOperationException("Only submitted purchase requests can be rejected.");
+        if (string.IsNullOrWhiteSpace(reason)) throw new ArgumentException("Approval rejection reason is required.");
+        ChangeStatus(PurchaseRequestStatus.Rejected, PurchaseRequestHistoryAction.Rejected, userId, reason.Trim());
     }
 
     private void ChangeStatus(PurchaseRequestStatus next, PurchaseRequestHistoryAction action, string user, string? reason = null)

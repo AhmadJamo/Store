@@ -1,7 +1,7 @@
 # Database
 > Status: IMPLEMENTED  
 > Source of truth: EF Core entities, configurations and migrations  
-> Last reviewed: 2026-10-05
+> Last reviewed: 2026-10-08
 
 WMS-050 adds tenant-owned `InventoryReservations` and `InventoryReservationLines`. Source identity is unique per tenant, quantities are positive, relationships are tenant-safe, exact and Unassigned dimensions are duplicate-protected, and rowversions protect concurrent reservation changes. Migrations `AddInventoryReservations` and `AddUnassignedReservationUniqueness` are additive and are applied to `AHMAD/MiniStoreDb`.
 
@@ -44,6 +44,8 @@ All business tables have a required `TenantId` foreign key to `Tenants`. EF quer
 | LocationMovements | immutable putaway/relocation history with product, warehouse, optional source location, required destination location, quantity, type, reference, notes, user and time; Restrict FKs and product/warehouse date indexes. |
 | StockTransactions | product + warehouse FKs Restrict; quantity decimal(18,6), quantity/average/value before and after, unit cost, transaction value and settlement variance; includes RecipeConsumption and KitchenVariance; indexed `(ProductId, WarehouseId)`. |
 | Purchases / PurchaseItems | supplier/header warehouse FKs Restrict; each item has its own optional-for-legacy warehouse FK, discount and tax. New items require warehouse selection. |
+| PurchaseApprovalRules / RuleSteps | Tenant-owned warehouse/priority-scoped rules with ordered role-name steps and rowversion protection. Rules remain mutable configuration; their later instances preserve snapshots. |
+| PurchaseApprovalInstances / Steps | One tenant-unique approval instance per Purchase Request with frozen rule name and ordered role steps, explicit pending/approved/rejected decisions, actors, timestamps and notes. |
 | Sales / SaleItems / SalesReturns / SalesReturnItems | sale warehouse and optional TaxRate FKs Restrict; items cascade; sale invoice number unique. Sale freezes tax percentage, output account, inclusive policy and amount. Returns reference the original sale/items, warehouse/payment and freeze refund, tax, revenue, discount and historical restock cost; return numbers are tenant-unique. |
 | StockTransfers / items/history | warehouse FKs Restrict; transfer number unique; StockTransfer rowversion; item/history FKs Restrict; item unique `(StockTransferId, ProductId)`. |
 | StockTransferItem locations | Optional source/destination StorageLocation FKs; when selected, Application validates active locations in the matching warehouses. |
@@ -83,3 +85,5 @@ Migration `AddReplenishmentRules` creates tenant-owned `ReplenishmentRules` with
 Migration `AddSupplierPurchasingData` additively creates tenant-owned `SupplierProductPurchasingInfos`. Composite tenant foreign keys restrict Supplier, Product and MeasurementUnit references to the same company. A tenant-scoped unique index enforces one row per supplier + product + purchase unit; rowversion protects mutable terms. No legacy Purchase, inventory or accounting row is changed or backfilled. The migration was generated, model-verified and applied to `AHMAD/MiniStoreDb` on 2026-10-08 using the authorized host Windows identity.
 
 Migration `AddPurchaseRequestFoundation` creates tenant-owned PurchaseRequests, PurchaseRequestLines and PurchaseRequestHistories plus the centralized PurchaseRequest document type/default `PRQ-` sequence. Lines freeze requested quantity, managed unit factor and stock quantity. The schema has no ProductStock, StockMovement or Journal relationship and was applied to `AHMAD/MiniStoreDb` on 2026-10-08.
+
+Migration `AddPurchaseApprovalFoundation` additively creates tenant-owned purchase approval rules, rule steps, approval instances and decision steps. Composite foreign keys enforce tenant boundaries, ordered steps are unique inside their parent, rule/instance rowversions protect concurrency, and one approval instance is allowed per Purchase Request. It creates no default rules, changes no stock or accounting data and was applied to `AHMAD/MiniStoreDb` on 2026-10-08.

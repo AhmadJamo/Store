@@ -1,5 +1,13 @@
 # AI Work Log
 
+## 2026-10-08 — PUR-025A purchase approval foundation
+
+- Added tenant-owned, warehouse/priority-scoped Purchase Approval Rules with ordered role steps and rowversion concurrency.
+- Added per-request approval instances that freeze the selected rule name and ordered roles so later configuration changes cannot rewrite historical decisions.
+- Added ordered approve/reject domain behavior with actor, timestamp, note/reason and terminal completion state, plus Approved/Rejected Purchase Request transitions and history.
+- Added and applied the additive `AddPurchaseApprovalFoundation` migration to `AHMAD/MiniStoreDb`; no default rules, inventory movements or accounting entries were created.
+- Release build passed with zero warnings and all 425 focused regression checks passed.
+
 ## 2026-10-07 — WMS-100B3 scanned inventory counting
 
 - Added exact Draft adjustment-number scanning and absolute per-product count entry through the existing inventory-adjustment application boundary.

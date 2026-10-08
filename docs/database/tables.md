@@ -1,5 +1,5 @@
 # Database tables reference
-> Last reviewed: 2026-09-30
+> Last reviewed: 2026-10-08
 
 Schema source is `AppDbContext`, configurations and migrations. Identity's standard `AspNet*` tables are supplied by IdentityDbContext.
 
@@ -42,6 +42,9 @@ Schema source is `AppDbContext`, configurations and migrations. Identity's stand
 - **LocationMovements:** immutable putaway/relocation audit rows with ProductId, WarehouseId, FromStorageLocationId?, ToStorageLocationId, Quantity, Type, Reference?, Notes?, CreatedByUserId and CreatedAt.
 - **StockTransactions:** immutable quantity/valuation movement with quantity, average and value before/after, unit cost, transaction value, cost variance, Type, Reference and CreatedAt; recipe consumption and kitchen variance have distinct types.
 - **Purchases:** header plus items containing ProductId, WarehouseId?, Quantity, PurchasePrice, DiscountAmount, TaxRateId? and Total; new invoices select warehouse per item.
+- **PurchaseRequests / PurchaseRequestLines / PurchaseRequestHistories:** numbered internal demand with destination, priority, needed date, frozen unit conversion, explicit lifecycle actors and immutable action history.
+- **PurchaseApprovalRules / PurchaseApprovalRuleSteps:** editable warehouse/priority-scoped configuration with ordered tenant-role name steps and rowversion concurrency.
+- **PurchaseApprovalInstances / PurchaseApprovalSteps:** one frozen approval plan per request, preserving the selected rule name, ordered role requirements, decisions, actor, timestamp and reason/note.
 - **Sales:** Id, InvoiceNumber, Channel, CreatedByUserId, CreatedAt, WarehouseId, PosTerminalId?, CustomerId?, PaymentMethodId?, TaxRateId?, TaxRatePercent, TaxOutputAccountId?, IsTaxInclusive, TaxAmount, Date, Notes?, PosOrderType?, ServiceReference?, GuestCount? and totals; SaleItems may hold preparation notes and the ProductRecipeId version used for prepared-item consumption.
 - **SalesReturns / SalesReturnItems:** immutable return number/date/reason linked to original Sale, warehouse and payment method; header/lines freeze revenue, discount, output tax, refund and eligible historical restock cost. Lines reference original SaleItem and Product, and cumulative quantity is enforced by the Application transaction.
 - **StockTransfers:** identity, transfer number, source/destination warehouse, status, actor/time/reason fields; each item may identify optional exact source and destination storage locations.
