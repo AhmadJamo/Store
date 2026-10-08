@@ -1,8 +1,20 @@
 # Project TODO
 > Source of truth: Current repository scan  
-> Last reviewed: 2026-10-04
+> Last reviewed: 2026-10-08
 
 The ordered Arabic execution plan, workflow, business rules and rolling suggestion queue are maintained in `ARABIC_SHARED_ROADMAP.md`. This file remains the concise technical backlog.
+
+The inventory/WMS track is paused by product-owner direction. The active planned track is the additive purchase-management evolution in `PURCHASE_MANAGEMENT_EVOLUTION_PLAN.md`.
+
+- [x] PUR-000 complete purchase architecture review, legacy compatibility boundary, migration strategy and vertical-slice roadmap.
+- [ ] PUR-010 add supplier-product purchasing information and lead time.
+- [ ] PUR-020 add the Purchase Request lifecycle.
+- [ ] PUR-025 add configurable purchase approval rules and history.
+- [ ] PUR-030/PUR-040 add sourcing events, supplier quotations and comparison.
+- [ ] PUR-050 add the Purchase Order lifecycle without stock mutation.
+- [ ] PUR-060/PUR-065 add partial Goods Receipts, WMS integration and GRNI accounting.
+- [ ] PUR-080/PUR-090 add Vendor Bills and three-way matching.
+- [ ] Continue PUR-070 and PUR-100 through PUR-150 in the approved plan order.
 
 - [x] WMS-050 reservations and exact transfer allocation with concurrent last-unit protection.
 - [x] WMS-060 blind cycle counts and controlled inventory adjustment posting; scheduling remains deferred.
@@ -62,7 +74,8 @@ The ordered Arabic execution plan, workflow, business rules and rolling suggesti
 - Implemented WMS-010 hierarchical location metadata, barcode, sequence, tree ordering, warehouse-filtered parent selection, operational capabilities, edit workflow and cycle/same-warehouse validation. Putaway/transfers/relocations enforce receive/pick capabilities. Its additive migration is applied to `AHMAD/MiniStoreDb`; authenticated UI smoke remains because no login secret is stored in the repository.
 
 ## In Progress
-- WMS is the active delivery track until its planned inventory/warehouse phases are complete. Next: smoke-test WMS-010, then proceed to WMS-015; see `WMS_EVOLUTION_PLAN.md`.
+- Purchase Management is the active planned delivery track. Next: PUR-010 Supplier purchasing data and lead time.
+- WMS delivery is paused by product-owner direction. Its remaining items stay documented in `WMS_EVOLUTION_PLAN.md` and resume after the current purchase-management priority.
 - WMS-015A/B/C/D typed definitions, values, ProductTemplate grouping and controlled selection-based variant generation are implemented. Product remains the SKU; proceed to the next WMS slice.
 - WMS-020A physical StockMovement kernel is implemented for idempotent Putaway/Relocation dual-write. Next: authenticated pilot smoke test and WMS-030 transfer/transit integration; do not cut over legacy reads yet.
 - WMS-030 transfer movement stages are implemented without historic backfill. Next: authenticated transfer lifecycle smoke test, then WMS-040 explicit balances and availability; partial transit receipt remains deferred.

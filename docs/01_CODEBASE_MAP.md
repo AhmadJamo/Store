@@ -22,6 +22,10 @@
 
 `docs/WMS_EVOLUTION_PLAN.md` is the approved WMS evolution plan. It records the current inventory model, gap matrix, target authority boundaries, migration safeguards, phased vertical slices and anticipated file impact. WMS-000 reconciliation is implemented; later WMS entities remain planned unless explicitly marked complete.
 
+`docs/PURCHASE_MANAGEMENT_EVOLUTION_PLAN.md` is the approved procure-to-pay evolution plan. It records the legacy direct-purchase boundary, capability gaps, target aggregates, inventory/accounting integration contracts, additive migration safeguards and PUR-000 through PUR-150 vertical slices. Planned purchase types are not implemented unless the matching slice is explicitly marked complete.
+
+`docs/reference/erp-architecture/` preserves the imported cross-ERP proposed architecture package: system charter, module and ownership maps, workflows, integration contracts, cross-cutting rules, delivery roadmap, agent guidance, test matrix and open decisions. It is a planning reference rather than evidence of implemented code, and its Codex guidance does not supersede repository `AGENTS.md`, accepted ADRs or the required documentation workflow.
+
 ## Domain source map
 | Files | Type/purpose | Consumers/docs |
 |---|---|---|

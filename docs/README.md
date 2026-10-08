@@ -4,6 +4,8 @@ This directory describes the implemented system, known gaps, design decisions, a
 
 The approved Warehouse Management System gap analysis, target architecture, migration strategy, phased roadmap and file change map are in [WMS_EVOLUTION_PLAN.md](WMS_EVOLUTION_PLAN.md). Planned WMS types in that document are not yet implemented.
 
+The approved procure-to-pay gap analysis, legacy-compatibility boundary, target domain, accounting/inventory integrations, migration strategy and vertical-slice roadmap are in [PURCHASE_MANAGEMENT_EVOLUTION_PLAN.md](PURCHASE_MANAGEMENT_EVOLUTION_PLAN.md). Planned purchase types in that document are not yet implemented.
+
 ## Start Here
 
 1. [Project context](00_PROJECT_CONTEXT.md)
@@ -26,6 +28,8 @@ The approved Warehouse Management System gap analysis, target architecture, migr
 | [Technical TODO](TODO.md) | Concise implementation backlog |
 | [Arabic roadmap](ARABIC_SHARED_ROADMAP.md) | Ordered business and technical execution plan |
 | [Arabic accounting reference](ACCOUNTING_REFERENCE_AR.md) | Accounting and ERP design reference |
+| [Purchase management evolution plan](PURCHASE_MANAGEMENT_EVOLUTION_PLAN.md) | Approved ERP procure-to-pay architecture and ordered delivery plan |
+| [Cross-ERP architecture reference](reference/erp-architecture/README.md) | Proposed system-wide charter, module/data maps, workflows, contracts, delivery guidance and test matrix; not implementation evidence |
 
 ## Detailed Documentation
 
@@ -38,6 +42,7 @@ The approved Warehouse Management System gap analysis, target architecture, migr
 - `decisions/` — architecture decision records
 - `development/` — coding, workflow, and documentation rules
 - `history/` — completed AI-assisted work log
+- `reference/erp-architecture/` — imported proposed ERP target architecture; reconcile every proposal with source code and accepted ADRs before implementation
 
 ## Current Feature Areas
 

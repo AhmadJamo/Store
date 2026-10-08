@@ -393,3 +393,16 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
 - Applied migration `20261003214320_AddInventoryBalancesAndDefaultLocations` to `AHMAD/MiniStoreDb`; direct SQL found 8 rows, zero ProductStock mismatches and zero invalid availability rows.
 - Added a bilingual permission-protected availability screen, tests, ADR and documentation.
 - Extended the disposable SQL fixture to prove transactional projection synchronization before and after the concurrent last-unit test.
+
+## 2026-10-08 — PUR-000 purchase-management architecture plan
+- Reviewed the implemented direct-purchase, inventory receipt, supplier-return, accounting, permission, numbering and tenant-isolation boundaries.
+- Added the approved procure-to-pay plan covering supplier purchasing data, requests, approvals, sourcing, quotations, purchase orders, partial receipts, vendor bills, three-way matching, payments, agreements, landed costs and receiving scans.
+- Recorded the decision to preserve current Purchase records as Legacy Direct Purchases and add the new lifecycle without fabricated history or destructive migration.
+- Classified current development-database records as demo/test data while requiring production-safe schema and migrations.
+- Changed documentation only; no runtime code, schema or database data changed.
+
+## 2026-10-08 — Cross-ERP architecture reference import
+- Added the supplied eleven-document ERP architecture package under `docs/reference/erp-architecture/` without treating proposed capabilities as implemented behavior.
+- Preserved its system charter, module/data ownership maps, workflows, integration contracts, cross-cutting guidance, delivery roadmap, test matrix and decisions/gaps register.
+- Added an explicit precedence note: repository source, `AGENTS.md`, accepted ADRs and MiniStore's documentation workflow remain authoritative; the imported Codex file is reference guidance only.
+- Updated the documentation index and codebase map. No application code, schema or database data changed.

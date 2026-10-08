@@ -1,7 +1,7 @@
 # Architecture
 > Status: IMPLEMENTED WITH INCONSISTENCIES  
 > Source of truth: Code  
-> Last reviewed: 2026-09-30
+> Last reviewed: 2026-10-08
 
 ## Solution and dependency direction
 `MiniStore.Domain` contains entities, enums, commands and repository/service interfaces. `MiniStore.Application` references Domain and contains DTOs plus use-case services. `MiniStore.Infrastructure` references Application and Domain and implements EF Core persistence, repositories, seeders, authorization service and Unit of Work. `MiniStore.Web` references Application and Infrastructure and is the MVC presentation/composition root.
@@ -46,3 +46,7 @@ See `08_CONFIGURATION.md`. `Program.cs` is the concise composition entry point a
 Entity → EF configuration/migration → repository → service → DTO → controller/view → module/entity/database docs. Service → interface/dependencies/controllers/views/tests. See `development/DOCUMENTATION_MATRIX.md`.
 
 2026-09-13 security policy: identity mutations now use the shared Application `AdministrationPermissions` rule in existing permission evaluators. Login limiting uses built-in ASP.NET Core middleware. See `decisions/2026-09-13-admin-mutations.md`; no additional transaction mechanism or database schema was introduced.
+
+## Purchase-management evolution boundary
+
+The approved target procure-to-pay architecture is defined in `PURCHASE_MANAGEMENT_EVOLUTION_PLAN.md` and the accepted ADR `decisions/2026-10-08-additive-procure-to-pay-evolution.md`. The current `Purchase` aggregate remains a compatible Legacy Direct Purchase because it combines supplier invoice capture and immediate inventory receipt. New Purchase Order, Goods Receipt and Vendor Bill responsibilities must be introduced as separate aggregates through the existing Domain/Application/Infrastructure/Web layers; controllers must not orchestrate inventory or accounting persistence directly.
