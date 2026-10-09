@@ -119,6 +119,8 @@ public static class PermissionDefinitions
         new("PurchaseOrders.Approve", "Approve Purchase Order", "Purchases"),
         new("PurchaseOrders.Confirm", "Confirm Purchase Order", "Purchases"),
         new("PurchaseOrders.Cancel", "Cancel Purchase Order", "Purchases"),
+        new("GoodsReceipts.View", "View Goods Receipts", "Purchases"),
+        new("GoodsReceipts.Create", "Create and Post Goods Receipt", "Purchases"),
         new("PurchaseReturns.View", "View Purchase Returns", "Purchase Returns"),
         new("PurchaseReturns.Create", "Create Purchase Return", "Purchase Returns"),
 

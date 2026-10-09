@@ -1,5 +1,11 @@
 # AI Work Log
 
+## 2026-10-10 — PUR-060A goods receipt posting foundation
+
+- Added tenant-safe Goods Receipt/line records, GRN numbering, a partial-receipt screen and permissions. Receipt lines freeze PO evidence and accept lot/serial/manufacture/expiry values.
+- Posting occurs in one Serializable transaction, recomputes the open quantity inside that transaction, then updates ProductStock moving average, tracked identity balances and immutable StockTransactions. No GRNI journal is created.
+- Applied `AddGoodsReceiptFoundation` to `AHMAD/MiniStoreDb`; it is additive and creates no demo receipt data.
+
 ## 2026-10-10 — PUR-050B purchase order operation
 
 - Completed the Purchase Order list/detail operation with status/search filtering, supplier and warehouse context, navigation and permission-aware actions.

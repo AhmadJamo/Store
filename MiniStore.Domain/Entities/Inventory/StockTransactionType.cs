@@ -22,5 +22,7 @@ public enum StockTransactionType
 
     SalesReturn = 10,
 
-    PurchaseReturn = 11
+    PurchaseReturn = 11,
+
+    GoodsReceipt = 12
 }

@@ -74,4 +74,5 @@ The Index and mutation actions enforce these policies server-side. Permission se
 - `PurchaseOrders.View` protects order list/detail visibility.
 - `PurchaseOrders.Create` permits creating one order from the recorded quotation award only.
 - `PurchaseOrders.Approve`, `PurchaseOrders.Confirm` and `PurchaseOrders.Cancel` separately protect the corresponding state transitions; confirmation still has no inventory or accounting effect.
+- `GoodsReceipts.Create` protects both capture and posting of a Goods Receipt; it is limited to confirmed Purchase Orders and invokes the purchasing Application service. `GoodsReceipts.View` reserves separate receipt visibility for the upcoming history screen.
 

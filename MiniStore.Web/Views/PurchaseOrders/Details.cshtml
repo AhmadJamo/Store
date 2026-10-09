@@ -8,6 +8,7 @@
     var canApprove = (await AuthorizationService.AuthorizeAsync(User, null, "Permission:PurchaseOrders.Approve")).Succeeded;
     var canConfirm = (await AuthorizationService.AuthorizeAsync(User, null, "Permission:PurchaseOrders.Confirm")).Succeeded;
     var canCancel = (await AuthorizationService.AuthorizeAsync(User, null, "Permission:PurchaseOrders.Cancel")).Succeeded;
+    var canReceive = (await AuthorizationService.AuthorizeAsync(User, null, "Permission:GoodsReceipts.Create")).Succeeded;
 }
 <div class="d-flex justify-content-between">
     <h2>@Model.OrderNumber <span class="badge bg-secondary">@Localizer[Model.Status.ToString()]</span></h2>
@@ -23,3 +24,4 @@
 @if(Model.Status == PurchaseOrderStatus.Draft && canApprove){<form asp-action="Approve" method="post" class="d-inline"><input type="hidden" name="id" value="@Model.Id"/><input type="hidden" name="rowVersion" value="@rowVersion"/><button class="btn btn-primary">@Localizer["Approve"]</button></form>}
 @if(Model.Status == PurchaseOrderStatus.Approved && canConfirm){<form asp-action="Confirm" method="post" class="d-inline"><input type="hidden" name="id" value="@Model.Id"/><input type="hidden" name="rowVersion" value="@rowVersion"/><button class="btn btn-success">@Localizer["Confirm"]</button></form>}
 @if((Model.Status is PurchaseOrderStatus.Draft or PurchaseOrderStatus.Approved) && canCancel){<form asp-action="Cancel" method="post" class="d-inline"><input type="hidden" name="id" value="@Model.Id"/><input type="hidden" name="rowVersion" value="@rowVersion"/><input required name="reason" maxlength="1000" class="form-control d-inline-block w-auto" placeholder="@Localizer["Cancellation reason"]"/><button class="btn btn-outline-danger">@Localizer["Cancel"]</button></form>}
+@if(Model.Status == PurchaseOrderStatus.Confirmed && canReceive){<a asp-controller="GoodsReceipts" asp-action="Create" asp-route-purchaseOrderId="@Model.Id" class="btn btn-primary">@Localizer["Receive goods"]</a>}

@@ -1056,4 +1056,11 @@
   <data name="No purchase orders found." xml:space="preserve"><value>لا توجد أوامر شراء.</value></data>
   <data name="Purchase order created." xml:space="preserve"><value>تم إنشاء أمر الشراء.</value></data>
   <data name="Create purchase order from awarded quotation" xml:space="preserve"><value>إنشاء أمر الشراء من العرض المختار</value></data>
+  <data name="Receive goods" xml:space="preserve"><value>استلام بضاعة</value></data>
+  <data name="Receipt date" xml:space="preserve"><value>تاريخ الاستلام</value></data>
+  <data name="Remaining quantity" xml:space="preserve"><value>الكمية المتبقية</value></data>
+  <data name="Receive quantity" xml:space="preserve"><value>كمية الاستلام</value></data>
+  <data name="Post goods receipt" xml:space="preserve"><value>ترحيل استلام البضاعة</value></data>
+  <data name="Goods receipt posted." xml:space="preserve"><value>تم ترحيل استلام البضاعة.</value></data>
+  <data name="Enter only quantities physically received. Posting increases inventory and cannot be edited." xml:space="preserve"><value>أدخل الكميات المستلمة فعليًا فقط. الترحيل يزيد المخزون ولا يمكن تعديله.</value></data>
 </root>

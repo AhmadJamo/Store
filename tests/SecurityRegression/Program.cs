@@ -1256,6 +1256,12 @@ purchaseOrder.Approve("manager"); purchaseOrder.Confirm("buyer");
 Check(purchaseOrder.Status == PurchaseOrderStatus.Confirmed &&
       db.Model.FindEntityType(typeof(PurchaseOrder))!.FindProperty("TenantId") is { IsNullable: false },
     "A confirmed purchase order must retain its sourced commercial snapshots without stock mutation");
+var goodsReceipt = new GoodsReceipt("GRN-000001", 1, 1, DateOnly.FromDateTime(DateTime.Today), "Partial delivery", "receiver");
+goodsReceipt.AddLine(new GoodsReceiptLine(1, 10, 2, 1m, 1m, 11.25m, "P-10", "Coffee beans", "kg", "LOT-1", null, null, null));
+goodsReceipt.Post("receiver");
+Check(goodsReceipt.Status == GoodsReceiptStatus.Posted && goodsReceipt.Lines.Single().StockQuantity == 1m &&
+      db.Model.FindEntityType(typeof(GoodsReceipt))!.FindProperty("TenantId") is { IsNullable: false },
+    "Posted goods receipts must retain frozen partial receipt evidence inside the tenant boundary");
 var sourcingController = typeof(PurchaseSourcingController);
 Check(sourcingController.GetMethod(nameof(PurchaseSourcingController.Index))!
           .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
