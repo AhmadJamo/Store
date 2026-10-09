@@ -5,7 +5,7 @@ using MiniStore.Domain.Entities;
 namespace MiniStore.Infrastructure.Persistence.Configurations;
 
 public sealed class SupplierQuotationConfiguration : IEntityTypeConfiguration<SupplierQuotation>,
-    IEntityTypeConfiguration<SupplierQuotationLine>
+    IEntityTypeConfiguration<SupplierQuotationLine>, IEntityTypeConfiguration<PurchaseQuotationAward>
 {
     public void Configure(EntityTypeBuilder<SupplierQuotation> builder)
     {
@@ -39,5 +39,16 @@ public sealed class SupplierQuotationConfiguration : IEntityTypeConfiguration<Su
         builder.HasIndex(x => new { x.SupplierQuotationId, x.PurchaseSourcingLineId }).IsUnique();
         builder.HasOne<PurchaseSourcingLine>().WithMany().HasForeignKey(x => x.PurchaseSourcingLineId)
             .OnDelete(DeleteBehavior.Restrict);
+    }
+
+    public void Configure(EntityTypeBuilder<PurchaseQuotationAward> builder)
+    {
+        builder.HasKey(x => x.Id);
+        builder.Property(x => x.Reason).HasMaxLength(1000).IsRequired();
+        builder.Property(x => x.AwardedByUserId).HasMaxLength(450).IsRequired();
+        builder.HasIndex(x => x.PurchaseSourcingEventId).IsUnique();
+        builder.HasIndex(x => x.SupplierQuotationId).IsUnique();
+        builder.HasOne<PurchaseSourcingEvent>().WithMany().HasForeignKey(x => x.PurchaseSourcingEventId).OnDelete(DeleteBehavior.Restrict);
+        builder.HasOne<SupplierQuotation>().WithMany().HasForeignKey(x => x.SupplierQuotationId).OnDelete(DeleteBehavior.Restrict);
     }
 }

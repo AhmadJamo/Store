@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MiniStore.Infrastructure.Persistence;
 
@@ -11,9 +12,11 @@ using MiniStore.Infrastructure.Persistence;
 namespace MiniStore.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20261009220628_AddPurchaseQuotationAward")]
+    partial class AddPurchaseQuotationAward
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -3016,185 +3019,6 @@ namespace MiniStore.Infrastructure.Migrations
                     b.HasIndex("WarehouseId", "TenantId");
 
                     b.ToTable("PurchaseItems");
-                });
-
-            modelBuilder.Entity("MiniStore.Domain.Entities.PurchaseOrder", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime?>("ApprovedAtUtc")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("ApprovedByUserId")
-                        .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("CancellationReason")
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
-
-                    b.Property<DateTime?>("ConfirmedAtUtc")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("ConfirmedByUserId")
-                        .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime>("CreatedAtUtc")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedByUserId")
-                        .IsRequired()
-                        .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("CurrencyCode")
-                        .IsRequired()
-                        .HasMaxLength(3)
-                        .HasColumnType("nvarchar(3)");
-
-                    b.Property<DateOnly>("ExpectedDate")
-                        .HasColumnType("date");
-
-                    b.Property<DateOnly>("OrderDate")
-                        .HasColumnType("date");
-
-                    b.Property<string>("OrderNumber")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("PaymentTermsSnapshot")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<int>("PurchaseSourcingEventId")
-                        .HasColumnType("int");
-
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .IsRequired()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.Property<int>("SupplierId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("SupplierQuotationId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TenantId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("WarehouseId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("TenantId");
-
-                    b.HasIndex("PurchaseSourcingEventId", "TenantId");
-
-                    b.HasIndex("SupplierId", "TenantId");
-
-                    b.HasIndex("SupplierQuotationId", "TenantId");
-
-                    b.HasIndex("TenantId", "OrderNumber")
-                        .IsUnique();
-
-                    b.HasIndex("TenantId", "SupplierQuotationId")
-                        .IsUnique();
-
-                    b.HasIndex("WarehouseId", "TenantId");
-
-                    b.ToTable("PurchaseOrders");
-                });
-
-            modelBuilder.Entity("MiniStore.Domain.Entities.PurchaseOrderLine", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<decimal>("DiscountPercent")
-                        .HasPrecision(9, 4)
-                        .HasColumnType("decimal(9,4)");
-
-                    b.Property<int>("MeasurementUnitId")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("OrderedQuantity")
-                        .HasPrecision(18, 6)
-                        .HasColumnType("decimal(18,6)");
-
-                    b.Property<string>("ProductCodeSnapshot")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ProductNameSnapshot")
-                        .IsRequired()
-                        .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)");
-
-                    b.Property<int>("PurchaseOrderId")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("StockQuantity")
-                        .HasPrecision(18, 6)
-                        .HasColumnType("decimal(18,6)");
-
-                    b.Property<int>("SupplierQuotationLineId")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("TaxPercent")
-                        .HasPrecision(9, 4)
-                        .HasColumnType("decimal(9,4)");
-
-                    b.Property<int>("TenantId")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("UnitFactorToBase")
-                        .HasPrecision(24, 12)
-                        .HasColumnType("decimal(24,12)");
-
-                    b.Property<string>("UnitNameSnapshot")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<decimal>("UnitPrice")
-                        .HasPrecision(24, 8)
-                        .HasColumnType("decimal(24,8)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("TenantId");
-
-                    b.HasIndex("MeasurementUnitId", "TenantId");
-
-                    b.HasIndex("ProductId", "TenantId");
-
-                    b.HasIndex("PurchaseOrderId", "TenantId");
-
-                    b.HasIndex("SupplierQuotationLineId", "TenantId");
-
-                    b.HasIndex("TenantId", "PurchaseOrderId", "SupplierQuotationLineId")
-                        .IsUnique();
-
-                    b.ToTable("PurchaseOrderLines");
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.PurchaseQuotationAward", b =>
@@ -6319,80 +6143,6 @@ namespace MiniStore.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict);
                 });
 
-            modelBuilder.Entity("MiniStore.Domain.Entities.PurchaseOrder", b =>
-                {
-                    b.HasOne("MiniStore.Domain.Entities.Tenant", null)
-                        .WithMany()
-                        .HasForeignKey("TenantId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("MiniStore.Domain.Entities.PurchaseSourcingEvent", null)
-                        .WithMany()
-                        .HasForeignKey("PurchaseSourcingEventId", "TenantId")
-                        .HasPrincipalKey("Id", "TenantId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("MiniStore.Domain.Entities.Supplier", null)
-                        .WithMany()
-                        .HasForeignKey("SupplierId", "TenantId")
-                        .HasPrincipalKey("Id", "TenantId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("MiniStore.Domain.Entities.SupplierQuotation", null)
-                        .WithMany()
-                        .HasForeignKey("SupplierQuotationId", "TenantId")
-                        .HasPrincipalKey("Id", "TenantId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("MiniStore.Domain.Entities.Warehouse", null)
-                        .WithMany()
-                        .HasForeignKey("WarehouseId", "TenantId")
-                        .HasPrincipalKey("Id", "TenantId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("MiniStore.Domain.Entities.PurchaseOrderLine", b =>
-                {
-                    b.HasOne("MiniStore.Domain.Entities.Tenant", null)
-                        .WithMany()
-                        .HasForeignKey("TenantId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("MiniStore.Domain.Entities.MeasurementUnit", null)
-                        .WithMany()
-                        .HasForeignKey("MeasurementUnitId", "TenantId")
-                        .HasPrincipalKey("Id", "TenantId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("MiniStore.Domain.Entities.Product", null)
-                        .WithMany()
-                        .HasForeignKey("ProductId", "TenantId")
-                        .HasPrincipalKey("Id", "TenantId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("MiniStore.Domain.Entities.PurchaseOrder", null)
-                        .WithMany("Lines")
-                        .HasForeignKey("PurchaseOrderId", "TenantId")
-                        .HasPrincipalKey("Id", "TenantId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MiniStore.Domain.Entities.SupplierQuotationLine", null)
-                        .WithMany()
-                        .HasForeignKey("SupplierQuotationLineId", "TenantId")
-                        .HasPrincipalKey("Id", "TenantId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("MiniStore.Domain.Entities.PurchaseQuotationAward", b =>
                 {
                     b.HasOne("MiniStore.Domain.Entities.Tenant", null)
@@ -7279,11 +7029,6 @@ namespace MiniStore.Infrastructure.Migrations
             modelBuilder.Entity("MiniStore.Domain.Entities.PurchaseApprovalRule", b =>
                 {
                     b.Navigation("Steps");
-                });
-
-            modelBuilder.Entity("MiniStore.Domain.Entities.PurchaseOrder", b =>
-                {
-                    b.Navigation("Lines");
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.PurchaseRequest", b =>

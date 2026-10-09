@@ -1,5 +1,5 @@
 # MiniStore purchase management evolution plan
-> Status: APPROVED ARCHITECTURAL PLAN — PUR-000 THROUGH PUR-030 IMPLEMENTED; PUR-040 FOUNDATION IMPLEMENTED
+> Status: APPROVED ARCHITECTURAL PLAN — PUR-000 THROUGH PUR-050 IMPLEMENTED
 > Source of truth: current code and migrations  
 > Last reviewed: 2026-10-08
 
@@ -230,8 +230,8 @@ Each slice must include rollback/retry analysis and SQL-backed tenant/concurrenc
 | PUR-020 | Purchase Request lifecycle | Implemented: domain/schema/numbering/history, Application service, permissions and bilingual UI |
 | PUR-025 | Configurable purchase approvals | Implemented: tenant-safe rule administration, deterministic submit-time resolution, frozen ordered role steps, role/permission-gated decisions and bilingual UI |
 | PUR-030 | Sourcing event and supplier invitations | Implemented: RFX numbering, frozen approved-demand snapshots, deduplicated supplier invitations, permissions and bilingual UI; no stock or accounting mutation |
-| PUR-040 | Supplier quotations and comparison | Foundation implemented: tenant-safe immutable submitted quote snapshots and commercial totals; Application service, UI comparison and award decision remain |
-| PUR-050 | Purchase Order lifecycle | Create/approve/confirm/cancel/close; no stock mutation |
+| PUR-040 | Supplier quotations and comparison | Implemented: invited supplier quote capture, base-currency snapshots, calculated comparison, immutable submission and one reasoned award decision |
+| PUR-050 | Purchase Order lifecycle | Implemented: one order can be created only from an awarded quotation, freezes commercial snapshots, supports Draft -> Approved -> Confirmed or pre-confirmation cancellation, and provides permission-aware list/detail UI. Closing is deliberately deferred until receipt/billing progress exists. No stock or accounting mutation occurs. |
 | PUR-060 | Partial Goods Receipt | Idempotent receipt integrated with WMS and tracking |
 | PUR-065 | Receipt accounting | GRNI posting and reconciliation |
 | PUR-070 | Receipt-based supplier returns | New-flow returns without breaking legacy returns |

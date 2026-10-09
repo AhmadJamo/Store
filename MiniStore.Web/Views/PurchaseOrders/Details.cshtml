@@ -1,0 +1,25 @@
+@model MiniStore.Application.DTOs.Purchases.PurchaseOrderDto
+@using MiniStore.Domain.Entities
+@inject Microsoft.Extensions.Localization.IStringLocalizer<MiniStore.Web.SharedResource> Localizer
+@inject Microsoft.AspNetCore.Authorization.IAuthorizationService AuthorizationService
+@{
+    ViewData["Title"] = Model.OrderNumber;
+    var rowVersion = Convert.ToBase64String(Model.RowVersion);
+    var canApprove = (await AuthorizationService.AuthorizeAsync(User, null, "Permission:PurchaseOrders.Approve")).Succeeded;
+    var canConfirm = (await AuthorizationService.AuthorizeAsync(User, null, "Permission:PurchaseOrders.Confirm")).Succeeded;
+    var canCancel = (await AuthorizationService.AuthorizeAsync(User, null, "Permission:PurchaseOrders.Cancel")).Succeeded;
+}
+<div class="d-flex justify-content-between">
+    <h2>@Model.OrderNumber <span class="badge bg-secondary">@Localizer[Model.Status.ToString()]</span></h2>
+    <a asp-action="Index" class="btn btn-outline-secondary">@Localizer["Back"]</a>
+</div>
+<div class="card card-body my-3">
+    <div>@Localizer["Supplier"]: @Model.SupplierName</div><div>@Localizer["Warehouse"]: @Model.WarehouseName</div>
+    <div>@Localizer["Order date"]: @Model.OrderDate</div><div>@Localizer["Expected date"]: @Model.ExpectedDate</div>
+</div>
+<table class="table"><thead><tr><th>@Localizer["Product"]</th><th>@Localizer["Ordered quantity"]</th><th>@Localizer["Unit price"]</th><th>@Localizer["Gross amount"]</th></tr></thead><tbody>
+@foreach(var line in Model.Lines){<tr><td>@line.ProductCode — @line.ProductName</td><td>@line.OrderedQuantity @line.UnitName</td><td>@line.UnitPrice @Model.CurrencyCode</td><td>@line.GrossAmount @Model.CurrencyCode</td></tr>}
+</tbody></table>
+@if(Model.Status == PurchaseOrderStatus.Draft && canApprove){<form asp-action="Approve" method="post" class="d-inline"><input type="hidden" name="id" value="@Model.Id"/><input type="hidden" name="rowVersion" value="@rowVersion"/><button class="btn btn-primary">@Localizer["Approve"]</button></form>}
+@if(Model.Status == PurchaseOrderStatus.Approved && canConfirm){<form asp-action="Confirm" method="post" class="d-inline"><input type="hidden" name="id" value="@Model.Id"/><input type="hidden" name="rowVersion" value="@rowVersion"/><button class="btn btn-success">@Localizer["Confirm"]</button></form>}
+@if((Model.Status is PurchaseOrderStatus.Draft or PurchaseOrderStatus.Approved) && canCancel){<form asp-action="Cancel" method="post" class="d-inline"><input type="hidden" name="id" value="@Model.Id"/><input type="hidden" name="rowVersion" value="@rowVersion"/><input required name="reason" maxlength="1000" class="form-control d-inline-block w-auto" placeholder="@Localizer["Cancellation reason"]"/><button class="btn btn-outline-danger">@Localizer["Cancel"]</button></form>}

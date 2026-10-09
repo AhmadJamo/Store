@@ -1244,6 +1244,18 @@ CheckThrows(() => quotation.AddLine(new SupplierQuotationLine(402, 1m, 1m, 0m, 0
 foreach (var type in new[] { typeof(SupplierQuotation), typeof(SupplierQuotationLine) })
     Check(db.Model.FindEntityType(type)!.FindProperty("TenantId") is { IsNullable: false },
         $"{type.Name} must be tenant owned");
+var quotationAward = new PurchaseQuotationAward(301, 501, "Best total cost and delivery", "buyer");
+Check(quotationAward.PurchaseSourcingEventId == 301 && quotationAward.SupplierQuotationId == 501 &&
+      quotationAward.Reason == "Best total cost and delivery" &&
+      db.Model.FindEntityType(typeof(PurchaseQuotationAward))!.FindProperty("TenantId") is { IsNullable: false },
+    "Quotation awards must preserve a tenant-owned, reasoned supplier-selection decision");
+var purchaseOrder = new PurchaseOrder("PO-000001", 301, 501, 5, 1, DateOnly.FromDateTime(DateTime.Today),
+    DateOnly.FromDateTime(DateTime.Today.AddDays(5)), "JOD", "30 days", "buyer");
+purchaseOrder.AddLine(new PurchaseOrderLine(601, 10, 2, 2m, 1m, 2m, 11.25m, 10m, 16m, "P-10", "Coffee beans", "kg"));
+purchaseOrder.Approve("manager"); purchaseOrder.Confirm("buyer");
+Check(purchaseOrder.Status == PurchaseOrderStatus.Confirmed &&
+      db.Model.FindEntityType(typeof(PurchaseOrder))!.FindProperty("TenantId") is { IsNullable: false },
+    "A confirmed purchase order must retain its sourced commercial snapshots without stock mutation");
 var sourcingController = typeof(PurchaseSourcingController);
 Check(sourcingController.GetMethod(nameof(PurchaseSourcingController.Index))!
           .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==

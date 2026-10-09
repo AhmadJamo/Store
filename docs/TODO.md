@@ -12,8 +12,8 @@ The inventory/WMS track is paused by product-owner direction. The active planned
 - [x] PUR-020 add the Purchase Request lifecycle with Draft/Submit/Cancel, frozen units, history, permissions and bilingual UI.
 - [x] PUR-025 add configurable purchase approval rules, frozen instances, ordered decisions, permissions and bilingual UI.
 - [x] PUR-030 add sourcing events and supplier invitations from approved Purchase Requests without stock changes.
-- [ ] PUR-040 add supplier quotations and comparison. Quotation domain/schema/migration foundation is complete; Application service, UI comparison and award decision remain.
-- [ ] PUR-050 add the Purchase Order lifecycle without stock mutation.
+- [x] PUR-040 add supplier quotations, comparison and a reasoned award decision.
+- [x] PUR-050 add the Purchase Order lifecycle without stock mutation. Receipt/bill-based closure is deferred to later slices.
 - [ ] PUR-060/PUR-065 add partial Goods Receipts, WMS integration and GRNI accounting.
 - [ ] PUR-080/PUR-090 add Vendor Bills and three-way matching.
 - [ ] Continue PUR-070 and PUR-100 through PUR-150 in the approved plan order.
@@ -76,7 +76,7 @@ The inventory/WMS track is paused by product-owner direction. The active planned
 - Implemented WMS-010 hierarchical location metadata, barcode, sequence, tree ordering, warehouse-filtered parent selection, operational capabilities, edit workflow and cycle/same-warehouse validation. Putaway/transfers/relocations enforce receive/pick capabilities. Its additive migration is applied to `AHMAD/MiniStoreDb`; authenticated UI smoke remains because no login secret is stored in the repository.
 
 ## In Progress
-- PUR-040A quotation domain/schema is implemented and migrated. Next: PUR-040B quotation capture and a read-only comparison screen; award remains explicitly auditable.
+- PUR-040 is implemented. Next: PUR-050 Purchase Order lifecycle from the recorded quotation award, without stock mutation.
 - WMS delivery is paused by product-owner direction. Its remaining items stay documented in `WMS_EVOLUTION_PLAN.md` and resume after the current purchase-management priority.
 - WMS-015A/B/C/D typed definitions, values, ProductTemplate grouping and controlled selection-based variant generation are implemented. Product remains the SKU; proceed to the next WMS slice.
 - WMS-020A physical StockMovement kernel is implemented for idempotent Putaway/Relocation dual-write. Next: authenticated pilot smoke test and WMS-030 transfer/transit integration; do not cut over legacy reads yet.

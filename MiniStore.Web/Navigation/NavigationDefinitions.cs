@@ -73,6 +73,7 @@ public static class NavigationDefinitions
             new NavigationItem("Purchase requests","bi-clipboard-plus","PurchaseRequests","Index","PurchaseRequests.View",50),
             new NavigationItem("Purchase approval rules","bi-diagram-3","PurchaseApprovalRules","Index","PurchaseApprovalRules.View",60)
             ,new NavigationItem("Purchase sourcing","bi-send","PurchaseSourcing","Index","PurchaseSourcing.View",70)
+            ,new NavigationItem("Purchase orders","bi-file-earmark-text","PurchaseOrders","Index","PurchaseOrders.View",80)
         ),
 
         new NavigationGroup(

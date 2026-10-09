@@ -26,6 +26,7 @@ public sealed class PurchaseSourcingDto
 
 public sealed class PurchaseSourcingLineDto
 {
+    public int Id { get; init; }
     public string ProductCode { get; init; } = string.Empty;
     public string ProductName { get; init; } = string.Empty;
     public string UnitName { get; init; } = string.Empty;

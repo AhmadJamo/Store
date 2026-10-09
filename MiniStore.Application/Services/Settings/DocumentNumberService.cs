@@ -89,6 +89,8 @@ public class DocumentNumberService(IDocumentSequenceRepository repository)
             DocumentNumberType.PurchaseReturn => ("Purchase return", "مرتجع مشتريات"),
             DocumentNumberType.InventoryAdjustment => ("Inventory adjustment", "تسوية مخزون"),
             DocumentNumberType.PurchaseRequest => ("Purchase request", "طلب شراء"),
+            DocumentNumberType.SupplierQuotation => ("Supplier quotation", "عرض سعر مورد"),
+            DocumentNumberType.PurchaseOrder => ("Purchase order", "أمر شراء"),
             _ => (row.DocumentType.ToString(), row.DocumentType.ToString())
         };
         return new DocumentSequenceDto

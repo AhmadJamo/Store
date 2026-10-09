@@ -1,5 +1,24 @@
 # AI Work Log
 
+## 2026-10-10 — PUR-050B purchase order operation
+
+- Completed the Purchase Order list/detail operation with status/search filtering, supplier and warehouse context, navigation and permission-aware actions.
+- Moved order creation to a single action after quotation selection, preventing the misleading appearance that a different unawarded quote could create an order.
+- Confirmed orders remain commercial intent only; receipt/billing-derived closure begins with PUR-060.
+
+## 2026-10-10 — PUR-050A purchase order foundation
+
+- Added a distinct, tenant-safe PurchaseOrder aggregate sourced only from the reasoned awarded supplier quotation, with frozen commercial lines and independent `PO-` numbering.
+- Added Draft/Approved/Confirmed/Cancelled state transitions, rowversion protection, permissions and a detail screen. Confirmation deliberately changes neither stock nor accounting.
+- Applied `AddPurchaseOrderFoundation` to `AHMAD/MiniStoreDb`; its only legacy-schema addition is the tenant composite key required for quotation-line references.
+
+## 2026-10-10 — PUR-040B supplier quotation capture and comparison
+
+- Added a bilingual capture screen limited to suppliers invited by the sent sourcing event. It requires one quoted line per frozen sourcing line and records the tenant base currency from general settings.
+- Submitted quotations are immutable; comparison derives net, tax and gross totals only from quote snapshots rather than mutable supplier master data.
+- Added a one-time PurchaseQuotationAward record with mandatory business reason, actor and timestamp, plus independent view/create/award permissions.
+- Applied `AddPurchaseQuotationAward` to `AHMAD/MiniStoreDb`; the award remains commercial intent and does not create an order, receipt, stock movement or journal entry.
+
 ## 2026-10-08 — PUR-040A supplier quotation foundation
 
 - Added tenant-owned supplier quotation headers and lines, one quote per sourcing event/supplier, and rowversion protection for the mutable Draft document.

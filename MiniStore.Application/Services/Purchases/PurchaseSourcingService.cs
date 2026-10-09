@@ -93,7 +93,7 @@ public sealed class PurchaseSourcingService(
             PurchaseRequestNumber = request?.RequestNumber ?? $"#{source.PurchaseRequestId}",
             WarehouseName = warehouse?.Name ?? $"#{source.WarehouseId}", RequestedByDate = source.RequestedByDate,
             Notes = source.Notes, RowVersion = source.RowVersion,
-            Lines = source.Lines.Select(x => new PurchaseSourcingLineDto { ProductCode = x.ProductCodeSnapshot,
+            Lines = source.Lines.Select(x => new PurchaseSourcingLineDto { Id=x.Id, ProductCode = x.ProductCodeSnapshot,
                 ProductName = x.ProductNameSnapshot, UnitName = x.UnitNameSnapshot, RequestedQuantity = x.RequestedQuantity,
                 StockQuantity = x.StockQuantity, Notes = x.Notes }).ToList(),
             Invitations = source.Invitations.Select(x => new PurchaseSourcingInvitationDto { SupplierId = x.SupplierId,

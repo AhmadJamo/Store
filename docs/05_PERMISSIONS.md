@@ -66,3 +66,12 @@ The Index and mutation actions enforce these policies server-side. Permission se
 - `PurchaseSourcing.Create` protects converting an approved request into exactly one sent supplier-invitation event.
 - The command remains commercial intent only; it has no inventory or accounting permission because it cannot mutate either area.
 
+# PUR-040 supplier quotation permissions
+
+- `SupplierQuotations.View` protects quotation comparison visibility.
+- `SupplierQuotations.Create` protects capture and submission of a supplier's invited response.
+- `SupplierQuotations.Award` protects the one-time, reason-required supplier selection. It does not grant Purchase Order, receipt, stock or accounting authority.
+- `PurchaseOrders.View` protects order list/detail visibility.
+- `PurchaseOrders.Create` permits creating one order from the recorded quotation award only.
+- `PurchaseOrders.Approve`, `PurchaseOrders.Confirm` and `PurchaseOrders.Cancel` separately protect the corresponding state transitions; confirmation still has no inventory or accounting effect.
+

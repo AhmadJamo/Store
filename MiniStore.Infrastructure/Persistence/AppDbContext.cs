@@ -74,6 +74,9 @@ public class AppDbContext
     public DbSet<PurchaseSupplierInvitation> PurchaseSupplierInvitations => Set<PurchaseSupplierInvitation>();
     public DbSet<SupplierQuotation> SupplierQuotations => Set<SupplierQuotation>();
     public DbSet<SupplierQuotationLine> SupplierQuotationLines => Set<SupplierQuotationLine>();
+    public DbSet<PurchaseQuotationAward> PurchaseQuotationAwards => Set<PurchaseQuotationAward>();
+    public DbSet<PurchaseOrder> PurchaseOrders => Set<PurchaseOrder>();
+    public DbSet<PurchaseOrderLine> PurchaseOrderLines => Set<PurchaseOrderLine>();
 
     public DbSet<Purchase> Purchases
         => Set<Purchase>();

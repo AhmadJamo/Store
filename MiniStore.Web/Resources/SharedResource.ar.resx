@@ -1023,4 +1023,37 @@
   <data name="This purchase request already has a sourcing event." xml:space="preserve"><value>يوجد حدث توريد لهذا الطلب بالفعل.</value></data>
   <data name="Draft" xml:space="preserve"><value>مسودة</value></data>
   <data name="Sent" xml:space="preserve"><value>مُرسل</value></data>
+  <data name="Enter supplier quotation" xml:space="preserve"><value>إدخال عرض سعر المورد</value></data>
+  <data name="Supplier reference" xml:space="preserve"><value>مرجع المورد</value></data>
+  <data name="Quotation date" xml:space="preserve"><value>تاريخ العرض</value></data>
+  <data name="Valid until" xml:space="preserve"><value>صالح حتى</value></data>
+  <data name="Lead time days" xml:space="preserve"><value>مدة التوريد بالأيام</value></data>
+  <data name="Payment terms" xml:space="preserve"><value>شروط الدفع</value></data>
+  <data name="Quoted quantity" xml:space="preserve"><value>الكمية المعروضة</value></data>
+  <data name="Unit price" xml:space="preserve"><value>سعر الوحدة</value></data>
+  <data name="Discount %" xml:space="preserve"><value>الخصم ٪</value></data>
+  <data name="Tax %" xml:space="preserve"><value>الضريبة ٪</value></data>
+  <data name="Submit quotation" xml:space="preserve"><value>إرسال العرض</value></data>
+  <data name="Quotation comparison" xml:space="preserve"><value>مقارنة عروض الأسعار</value></data>
+  <data name="Comparison is read-only; selecting a supplier happens with the Purchase Order workflow." xml:space="preserve"><value>المقارنة للعرض فقط؛ اختيار المورد يتم ضمن مسار أمر الشراء.</value></data>
+  <data name="Quotation number" xml:space="preserve"><value>رقم عرض السعر</value></data>
+  <data name="Net amount" xml:space="preserve"><value>الصافي</value></data>
+  <data name="Tax amount" xml:space="preserve"><value>الضريبة</value></data>
+  <data name="Gross amount" xml:space="preserve"><value>الإجمالي</value></data>
+  <data name="No supplier quotations have been entered." xml:space="preserve"><value>لم يتم إدخال عروض أسعار الموردين.</value></data>
+  <data name="Supplier quotation submitted." xml:space="preserve"><value>تم إرسال عرض سعر المورد.</value></data>
+  <data name="Select one submitted quotation with a recorded reason before creating a Purchase Order." xml:space="preserve"><value>اختر عرضًا واحدًا مُرسلًا مع تسجيل السبب قبل إنشاء أمر الشراء.</value></data>
+  <data name="Award reason" xml:space="preserve"><value>سبب الاختيار</value></data>
+  <data name="Award" xml:space="preserve"><value>اختيار</value></data>
+  <data name="Supplier quotation awarded." xml:space="preserve"><value>تم اختيار عرض سعر المورد.</value></data>
+  <data name="Create purchase order" xml:space="preserve"><value>إنشاء أمر شراء</value></data>
+  <data name="Order date" xml:space="preserve"><value>تاريخ الأمر</value></data>
+  <data name="Expected date" xml:space="preserve"><value>تاريخ التسليم المتوقع</value></data>
+  <data name="Ordered quantity" xml:space="preserve"><value>الكمية المطلوبة</value></data>
+  <data name="Confirm" xml:space="preserve"><value>تأكيد</value></data>
+  <data name="Purchase orders" xml:space="preserve"><value>أوامر الشراء</value></data>
+  <data name="Purchase order" xml:space="preserve"><value>أمر الشراء</value></data>
+  <data name="No purchase orders found." xml:space="preserve"><value>لا توجد أوامر شراء.</value></data>
+  <data name="Purchase order created." xml:space="preserve"><value>تم إنشاء أمر الشراء.</value></data>
+  <data name="Create purchase order from awarded quotation" xml:space="preserve"><value>إنشاء أمر الشراء من العرض المختار</value></data>
 </root>
