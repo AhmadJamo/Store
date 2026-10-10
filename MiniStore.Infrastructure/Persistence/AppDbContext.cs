@@ -81,6 +81,8 @@ public class AppDbContext
     public DbSet<GoodsReceiptLine> GoodsReceiptLines => Set<GoodsReceiptLine>();
     public DbSet<GoodsReceiptReturn> GoodsReceiptReturns => Set<GoodsReceiptReturn>();
     public DbSet<GoodsReceiptReturnLine> GoodsReceiptReturnLines => Set<GoodsReceiptReturnLine>();
+    public DbSet<VendorBill> VendorBills => Set<VendorBill>();
+    public DbSet<VendorBillLine> VendorBillLines => Set<VendorBillLine>();
 
     public DbSet<Purchase> Purchases
         => Set<Purchase>();

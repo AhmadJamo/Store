@@ -123,6 +123,8 @@ public static class PermissionDefinitions
         new("GoodsReceipts.Create", "Create and Post Goods Receipt", "Purchases"),
         new("GoodsReceiptReturns.View", "View Goods Receipt Returns", "Purchases"),
         new("GoodsReceiptReturns.Create", "Create and Post Goods Receipt Return", "Purchases"),
+        new("VendorBills.View", "View Vendor Bills", "Purchases"),
+        new("VendorBills.Create", "Create and Post Vendor Bill", "Purchases"),
         new("PurchaseReturns.View", "View Purchase Returns", "Purchase Returns"),
         new("PurchaseReturns.Create", "Create Purchase Return", "Purchase Returns"),
 

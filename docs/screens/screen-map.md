@@ -24,6 +24,7 @@
 | `Views/ProductTemplates/Index.cshtml` | bilingual template creation, existing-SKU assignment and grouped variant listing. |
 | `Views/Purchases/{Index,Create,Details}.cshtml` | purchase list/detail and client-side dynamic item rows. |
 | `Views/GoodsReceiptReturns/{Index,Create,Details}.cshtml` | bilingual receipt-based supplier return capture and immutable posted history. |
+| `Views/VendorBills/{Index,Create,Details}.cshtml` | bilingual receipt-allocation capture, posted bill history and immutable accounting detail. |
 | `Views/Sales/{Index,Create,Details,Pos}.cshtml` | wholesale sale, detail/list and POS cart; optional inclusive/exclusive invoice tax is selected and previewed, while terminal selection filters warehouses and applies saved order experience. Wholesale/POS tracked direct lines can submit an optional audited lot/serial selection. Details shows tax, product names, POS context, unit cost/COGS and an idempotent general-ledger posting action/status. |
 | `Views/SalesReturns/{Index,Create,Details}.cshtml` | return history, remaining-quantity entry from a posted sale, and posted refund/restock details. |
 | `Views/StockTransfers/{Index,Create,Edit,Details}.cshtml` | transfer list/edit/detail/status actions; client-side product rows/filtering. |

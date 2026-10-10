@@ -234,8 +234,8 @@ Each slice must include rollback/retry analysis and SQL-backed tenant/concurrenc
 | PUR-050 | Purchase Order lifecycle | Implemented: one order can be created only from an awarded quotation, freezes commercial snapshots, supports Draft -> Approved -> Confirmed or pre-confirmation cancellation, and provides permission-aware list/detail UI. Closing is deliberately deferred until receipt/billing progress exists. No stock or accounting mutation occurs. |
 | PUR-060 | Partial Goods Receipt | Implemented: GRN document, history/listing, partial remaining-quantity control, receipt tracking input and atomic ProductStock/AVCO/tracking/transaction/physical-movement posting. The disposable SQL fixture proves that two concurrent full-quantity attempts yield exactly one posted receipt and one set of inventory effects. |
 | PUR-065 | Receipt accounting | In progress: configured tenant-safe GRNI/PPV mappings and atomic, idempotent receipt and receipt-return journals are implemented and SQL-tested; inventory-to-GL reconciliation reporting remains open. |
-| PUR-070 | Receipt-based supplier returns | Implemented: immutable receipt-linked returns cap cumulative quantity, remove current available stock/tracking, write `ReceiptReturnOut`, reverse GRNI at original value and isolate AVCO difference in PPV without changing legacy returns. SQL concurrency proves two full-return attempts yield exactly one posted result. |
-| PUR-080 | Vendor Bills | Partial billing, duplicate protection and AP posting |
+| PUR-070 | Receipt-based supplier returns | Implemented: immutable receipt-linked returns cap cumulative quantity to the unbilled receipt balance, remove current available stock/tracking, write `ReceiptReturnOut`, reverse GRNI at original value and isolate AVCO difference in PPV without changing legacy returns. SQL concurrency proves two attempts against the remaining unbilled quantity yield exactly one posted result. |
+| PUR-080 | Vendor Bills | Implemented: partial receipt-line allocations, normalized active supplier-invoice uniqueness, frozen price/tax/clearing snapshots and atomic GRNI/Input Tax/PPV/Accounts Payable posting. SQL concurrency accepts exactly one duplicate-invoice attempt. |
 | PUR-090 | Three-way matching | Tolerances, exceptions and controlled override |
 | PUR-100 | Supplier payments | AP settlement through Accounting |
 | PUR-110 | Replenishment purchase demand | WMS-090C -> Draft Purchase Request |
@@ -260,4 +260,4 @@ Shared accounting, settings, inventory and document-number files are changed onl
 
 ## 10. Immediate next slice
 
-PUR-010 is implemented and `AddSupplierPurchasingData` is applied to `AHMAD/MiniStoreDb`. Smoke-test the bilingual screen, then begin **PUR-020 Purchase Request lifecycle**. PUR-010 remains additive and has no inventory/accounting side effect or foreign-currency posting claim.
+Implement PUR-090 three-way matching with tenant-configurable quantity/price tolerances, persisted exceptions and a dedicated reasoned override permission. Supplier credit notes for returning already billed receipt quantities remain a later controlled accounting slice; PUR-070 rejects those quantities meanwhile.

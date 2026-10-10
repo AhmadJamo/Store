@@ -1093,4 +1093,51 @@
   <data name="Returned receipt stock was not found." xml:space="preserve"><value>لم يتم العثور على مخزون الاستلام المرتجع.</value></data>
   <data name="Return quantity cannot exceed currently available warehouse stock." xml:space="preserve"><value>لا يمكن أن تتجاوز كمية المرتجع مخزون المستودع المتاح حالياً.</value></data>
   <data name="Configure a purchase price variance account before posting a return with a cost difference." xml:space="preserve"><value>هيّئ حساب فرق سعر الشراء قبل ترحيل مرتجع يحتوي فرق تكلفة.</value></data>
+  <data name="Vendor bills" xml:space="preserve"><value>فواتير الموردين</value></data>
+  <data name="Vendor bill" xml:space="preserve"><value>فاتورة المورد</value></data>
+  <data name="Create vendor bill" xml:space="preserve"><value>إنشاء فاتورة مورد</value></data>
+  <data name="Vendor bill posted." xml:space="preserve"><value>تم ترحيل فاتورة المورد.</value></data>
+  <data name="Bill number" xml:space="preserve"><value>رقم الفاتورة الداخلي</value></data>
+  <data name="Supplier invoice number" xml:space="preserve"><value>رقم فاتورة المورد</value></data>
+  <data name="Bill date" xml:space="preserve"><value>تاريخ الفاتورة</value></data>
+  <data name="Search by bill or supplier invoice number" xml:space="preserve"><value>ابحث برقم الفاتورة الداخلي أو رقم فاتورة المورد</value></data>
+  <data name="Only posted receipt quantities that have not been returned or billed are available." xml:space="preserve"><value>تظهر فقط كميات الاستلام المرحلة التي لم تُرجع ولم تُفوتر.</value></data>
+  <data name="Available quantity" xml:space="preserve"><value>الكمية المتاحة</value></data>
+  <data name="Bill quantity" xml:space="preserve"><value>كمية الفاتورة</value></data>
+  <data name="Purchase tax" xml:space="preserve"><value>ضريبة المشتريات</value></data>
+  <data name="No tax" xml:space="preserve"><value>دون ضريبة</value></data>
+  <data name="Inclusive" xml:space="preserve"><value>شاملة</value></data>
+  <data name="Exclusive" xml:space="preserve"><value>غير شاملة</value></data>
+  <data name="There are no received quantities available for billing." xml:space="preserve"><value>لا توجد كميات مستلمة متاحة للفوترة.</value></data>
+  <data name="Post vendor bill" xml:space="preserve"><value>ترحيل فاتورة المورد</value></data>
+  <data name="GRNI clearing" xml:space="preserve"><value>تسوية البضاعة المستلمة غير المفوترة</value></data>
+  <data name="Totals" xml:space="preserve"><value>الإجماليات</value></data>
+  <data name="Enter at least one positive billed quantity." xml:space="preserve"><value>أدخل كمية فوترة موجبة واحدة على الأقل.</value></data>
+  <data name="Each goods receipt line can be billed only once per vendor bill." xml:space="preserve"><value>يمكن فوترة كل سطر استلام مرة واحدة فقط في فاتورة المورد نفسها.</value></data>
+  <data name="Only confirmed purchase orders can be billed." xml:space="preserve"><value>يمكن فوترة أوامر الشراء المؤكدة فقط.</value></data>
+  <data name="Assign a payable account to the supplier before posting a vendor bill." xml:space="preserve"><value>عيّن حسابًا دائنًا للمورد قبل ترحيل فاتورته.</value></data>
+  <data name="Supplier invoice number must contain at least one letter or number." xml:space="preserve"><value>يجب أن يحتوي رقم فاتورة المورد على حرف أو رقم واحد على الأقل.</value></data>
+  <data name="This supplier invoice number has already been used." xml:space="preserve"><value>رقم فاتورة المورد هذا مستخدم مسبقًا.</value></data>
+  <data name="Purchase order warehouse was not found." xml:space="preserve"><value>لم يتم العثور على مستودع أمر الشراء.</value></data>
+  <data name="Configure accounting posting accounts before posting a vendor bill." xml:space="preserve"><value>هيّئ حسابات الترحيل المحاسبي قبل ترحيل فاتورة المورد.</value></data>
+  <data name="Configure a goods received not invoiced account before posting a vendor bill." xml:space="preserve"><value>هيّئ حساب البضاعة المستلمة غير المفوترة قبل ترحيل فاتورة المورد.</value></data>
+  <data name="One or more vendor bill lines do not belong to a posted receipt for this purchase order." xml:space="preserve"><value>سطر فاتورة واحد أو أكثر لا يتبع استلامًا مرحلًا لأمر الشراء هذا.</value></data>
+  <data name="Billed quantity cannot exceed the received quantity available for billing." xml:space="preserve"><value>لا يمكن أن تتجاوز كمية الفاتورة الكمية المستلمة المتاحة للفوترة.</value></data>
+  <data name="Vendor bill unit price cannot be negative." xml:space="preserve"><value>لا يمكن أن يكون سعر وحدة فاتورة المورد سالبًا.</value></data>
+  <data name="The selected purchase tax rate was not found." xml:space="preserve"><value>لم يتم العثور على نسبة ضريبة المشتريات المختارة.</value></data>
+  <data name="Vendor bill total must be greater than zero." xml:space="preserve"><value>يجب أن يكون إجمالي فاتورة المورد أكبر من صفر.</value></data>
+  <data name="Configure a purchase price variance account before posting a vendor bill with a price difference." xml:space="preserve"><value>هيّئ حساب فرق سعر الشراء قبل ترحيل فاتورة مورد تحتوي فرق سعر.</value></data>
+  <data name="Return quantity cannot exceed the remaining unbilled received quantity." xml:space="preserve"><value>لا يمكن أن تتجاوز كمية المرتجع الكمية المستلمة المتبقية غير المفوترة.</value></data>
+  <data name="VendorBill" xml:space="preserve"><value>فاتورة مورد</value></data>
+  <data name="Vendor bill number is required and cannot exceed 50 characters." xml:space="preserve"><value>رقم فاتورة المورد الداخلي مطلوب ولا يجوز أن يتجاوز 50 حرفًا.</value></data>
+  <data name="Purchase order and supplier are required." xml:space="preserve"><value>أمر الشراء والمورد مطلوبان.</value></data>
+  <data name="Supplier invoice number is required and cannot exceed 100 characters." xml:space="preserve"><value>رقم فاتورة المورد مطلوب ولا يجوز أن يتجاوز 100 حرف.</value></data>
+  <data name="Vendor bill notes cannot exceed 1000 characters." xml:space="preserve"><value>لا يجوز أن تتجاوز ملاحظات فاتورة المورد 1000 حرف.</value></data>
+  <data name="A vendor bill must contain at least one line." xml:space="preserve"><value>يجب أن تحتوي فاتورة المورد على سطر واحد على الأقل.</value></data>
+  <data name="Only draft vendor bills can be changed." xml:space="preserve"><value>يمكن تعديل فواتير الموردين المسودة فقط.</value></data>
+  <data name="Vendor bill line references are required." xml:space="preserve"><value>مراجع سطر فاتورة المورد مطلوبة.</value></data>
+  <data name="Vendor bill quantity and prices are invalid." xml:space="preserve"><value>كمية سطر فاتورة المورد أو أسعاره غير صالحة.</value></data>
+  <data name="Vendor bill tax percentage must be between 0 and 100." xml:space="preserve"><value>يجب أن تكون نسبة ضريبة فاتورة المورد بين 0 و100.</value></data>
+  <data name="A tax rate and input tax account are required for a taxed vendor bill line." xml:space="preserve"><value>نسبة الضريبة وحساب ضريبة المدخلات مطلوبان لسطر فاتورة مورد خاضع للضريبة.</value></data>
+  <data name="Vendor bill line snapshots are required." xml:space="preserve"><value>بيانات سطر فاتورة المورد التاريخية مطلوبة.</value></data>
 </root>

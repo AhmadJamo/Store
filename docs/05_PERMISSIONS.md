@@ -77,4 +77,5 @@ The Index and mutation actions enforce these policies server-side. Permission se
 - `PurchaseOrders.Approve`, `PurchaseOrders.Confirm` and `PurchaseOrders.Cancel` separately protect the corresponding state transitions; confirmation still has no inventory or accounting effect.
 - `GoodsReceipts.Create` protects both capture and posting of a Goods Receipt; it is limited to confirmed Purchase Orders and invokes the purchasing Application service. `GoodsReceipts.View` reserves separate receipt visibility for the upcoming history screen.
 - `GoodsReceiptReturns.Create` protects capture and immediate posting of a receipt-based supplier return; `GoodsReceiptReturns.View` protects its list/detail history. These permissions are distinct from legacy `PurchaseReturns.*`.
+- `VendorBills.Create` protects receipt allocation and immediate accounting posting; `VendorBills.View` protects bill list/detail history. Match override remains a later, separate permission.
 

@@ -1,0 +1,38 @@
+@model MiniStore.Application.DTOs.Purchases.VendorBillCreatePageDto
+@inject Microsoft.Extensions.Localization.IStringLocalizer<MiniStore.Web.SharedResource> Localizer
+@{ ViewData["Title"] = Localizer["Create vendor bill"]; }
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div><h2>@Localizer["Create vendor bill"]</h2><p class="text-muted mb-0">@Model.PurchaseOrderNumber — @Model.SupplierName</p></div>
+    <a asp-controller="PurchaseOrders" asp-action="Details" asp-route-id="@Model.PurchaseOrderId" class="btn btn-outline-secondary">@Localizer["Back"]</a>
+</div>
+<form asp-action="Create" method="post">
+    <input type="hidden" name="PurchaseOrderId" value="@Model.PurchaseOrderId" />
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="row g-3 mb-3">
+        <div class="col-md-4"><label class="form-label">@Localizer["Supplier invoice number"]</label><input name="SupplierInvoiceNumber" value="@Model.Form.SupplierInvoiceNumber" class="form-control" maxlength="100" required /></div>
+        <div class="col-md-3"><label class="form-label">@Localizer["Bill date"]</label><input name="BillDate" value="@Model.Form.BillDate.ToString("yyyy-MM-dd")" type="date" class="form-control" required /></div>
+        <div class="col-md-5"><label class="form-label">@Localizer["Notes"]</label><input name="Notes" value="@Model.Form.Notes" class="form-control" maxlength="1000" /></div>
+    </div>
+    <p class="text-muted">@Localizer["Only posted receipt quantities that have not been returned or billed are available."]</p>
+    <div class="table-responsive"><table class="table align-middle">
+        <thead><tr><th>@Localizer["Goods receipt"]</th><th>@Localizer["Product"]</th><th>@Localizer["Available quantity"]</th><th>@Localizer["Bill quantity"]</th><th>@Localizer["Unit price"]</th><th>@Localizer["Purchase tax"]</th></tr></thead>
+        <tbody>
+        @for (var i = 0; i < Model.Lines.Count; i++)
+        {
+            var line = Model.Lines[i];
+            var submitted = Model.Form.Lines.FirstOrDefault(x => x.GoodsReceiptLineId == line.GoodsReceiptLineId);
+            var unitPrice = submitted?.UnitPrice ?? line.SuggestedUnitPrice;
+            var taxRateId = submitted?.TaxRateId ?? line.SuggestedTaxRateId;
+            <tr>
+                <td>@line.ReceiptNumber<br/><small class="text-muted">@line.ReceiptDate</small><input type="hidden" name="Lines[@i].GoodsReceiptLineId" value="@line.GoodsReceiptLineId" /></td>
+                <td>@line.ProductCode — @line.ProductName</td><td>@line.RemainingQuantity @line.UnitName</td>
+                <td><input name="Lines[@i].Quantity" value="@(submitted?.Quantity ?? 0)" type="number" class="form-control" min="0" max="@line.RemainingQuantity" step="0.000001" /></td>
+                <td><input name="Lines[@i].UnitPrice" value="@unitPrice" type="number" class="form-control" min="0" step="0.00000001" /></td>
+                <td><select name="Lines[@i].TaxRateId" class="form-select"><option value="">@Localizer["No tax"]</option>@foreach(var tax in Model.TaxRates){<option value="@tax.Id" selected="@(taxRateId == tax.Id)">@tax.Name (@tax.Rate%) @(tax.IsPriceInclusive ? Localizer["Inclusive"] : Localizer["Exclusive"])</option>}</select></td>
+            </tr>
+        }
+        </tbody>
+    </table></div>
+    @if (Model.Lines.Count == 0) { <div class="alert alert-info">@Localizer["There are no received quantities available for billing."]</div> }
+    else { <button class="btn btn-primary">@Localizer["Post vendor bill"]</button> }
+</form>

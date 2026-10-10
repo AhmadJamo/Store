@@ -101,7 +101,7 @@ try
     await VerifyInventoryBalanceProjectionAsync(tenantOneId, tenantOneFixture.ProductId, expectedOnHand: 2m, connectionString);
     await VerifyOpeningTrackingAllocationAsync(tenantOneId, tenantOneFixture.ProductId, tenantOneFixture.WarehouseId, connectionString);
 
-    Console.WriteLine("Passed SQL integration checks: tenant isolation, reconciliation, balances, reservation and goods-receipt concurrency, GRNI posting and reversal, receipt-based supplier returns, adjustment posting, tracked operations, quarantine and recall.");
+    Console.WriteLine("Passed SQL integration checks: tenant isolation, reconciliation, balances, receipt and vendor-bill concurrency, GRNI posting and clearing, receipt-based supplier returns, adjustment posting, tracked operations, quarantine and recall.");
 }
 finally
 {
@@ -205,6 +205,8 @@ static async Task VerifyConcurrentGoodsReceiptAndGrniAsync(
     int warehouseId;
     int inventoryAccountId;
     int grniAccountId;
+    int varianceAccountId;
+    int payableAccountId;
     var receiptDate = DateOnly.FromDateTime(DateTime.Today);
 
     await using (var context = new AppDbContext(CreateOptions(connectionString), new FixedTenantContext(tenantId)))
@@ -212,18 +214,21 @@ static async Task VerifyConcurrentGoodsReceiptAndGrniAsync(
         var inventoryAccount = new Account("1300-GRN", "Goods receipt inventory", AccountType.Asset);
         var grniAccount = new Account("2100-GRNI", "Goods received not invoiced", AccountType.Liability);
         var varianceAccount = new Account("5100-PPV", "Purchase price variance", AccountType.Expense);
+        var payableAccount = new Account("2101-AP", "Supplier payable", AccountType.Liability);
         var branch = new Branch("GRN", "Goods receipt branch");
         var warehouse = new Warehouse("Goods receipt warehouse");
         var product = new Product("Concurrent receipt product", "GRN-CONCURRENT", 10m, 15m, 12m,
             measurementUnitId: measurementUnitId);
         var supplier = new Supplier("Concurrent receipt supplier");
-        context.AddRange(inventoryAccount, grniAccount, varianceAccount, branch, warehouse, product, supplier);
+        context.AddRange(inventoryAccount, grniAccount, varianceAccount, payableAccount, branch, warehouse, product, supplier);
         await context.SaveChangesAsync();
 
         warehouse.AssignAccounting(branch.Id, inventoryAccount.Id);
+        supplier.AssignPayableAccount(payableAccount.Id);
         context.AccountingSettings.Add(new AccountingSettings(null, null, null, null, grniAccount.Id, varianceAccount.Id));
         context.DocumentSequences.AddRange(
             DocumentSequence.CreateDefault(DocumentNumberType.GoodsReceipt),
+            DocumentSequence.CreateDefault(DocumentNumberType.VendorBill),
             DocumentSequence.CreateDefault(DocumentNumberType.JournalEntry));
 
         var request = new PurchaseRequest("PRQ-SQL-GRN", warehouse.Id, receiptDate,
@@ -267,6 +272,8 @@ static async Task VerifyConcurrentGoodsReceiptAndGrniAsync(
         warehouseId = warehouse.Id;
         inventoryAccountId = inventoryAccount.Id;
         grniAccountId = grniAccount.Id;
+        varianceAccountId = varianceAccount.Id;
+        payableAccountId = payableAccount.Id;
     }
 
     async Task<bool> TryReceiveAsync()
@@ -331,6 +338,59 @@ static async Task VerifyConcurrentGoodsReceiptAndGrniAsync(
         !journal.Lines.Any(x => x.AccountId == grniAccountId && x.Credit == 9m))
         throw new InvalidOperationException("The winning goods receipt must atomically post one net-cost inventory receipt and one balanced GRNI journal.");
 
+    async Task<bool> TryBillAsync()
+    {
+        await using var billContext = new AppDbContext(CreateOptions(connectionString), new FixedTenantContext(tenantId));
+        var billUnitOfWork = new UnitOfWork(billContext);
+        var billUser = new FixedCurrentUser("integration-biller");
+        var billNumbers = new DocumentNumberService(new DocumentSequenceRepository(billContext));
+        var billFiscalPeriods = new FiscalPeriodService(new FiscalPeriodRepository(billContext), billUnitOfWork, billUser);
+        var billJournals = new JournalPostingService(new JournalEntryRepository(billContext), billNumbers, billFiscalPeriods);
+        var billService = new VendorBillService(
+            new VendorBillRepository(billContext), new PurchaseOrderRepository(billContext), new GoodsReceiptRepository(billContext),
+            new GoodsReceiptReturnRepository(billContext), new SupplierRepository(billContext), new WarehouseRepository(billContext),
+            new TaxRateRepository(billContext), new AccountingSettingsRepository(billContext), billNumbers, billJournals,
+            billUnitOfWork, billUser);
+        try
+        {
+            await billService.CreateAndPostAsync(new CreateVendorBillDto
+            {
+                PurchaseOrderId = purchaseOrderId,
+                SupplierInvoiceNumber = " sql/invoice-001 ",
+                BillDate = receiptDate,
+                Lines = [new CreateVendorBillLineDto
+                {
+                    GoodsReceiptLineId = receipt.Lines.Single().Id,
+                    Quantity = 0.5m,
+                    UnitPrice = 10m
+                }]
+            });
+            return true;
+        }
+        catch (Exception exception) when (exception is InvalidOperationException or DbUpdateException or SqlException)
+        {
+            return false;
+        }
+    }
+
+    var billOutcomes = await Task.WhenAll(TryBillAsync(), TryBillAsync());
+    if (billOutcomes.Count(success => success) != 1)
+        throw new InvalidOperationException("Exactly one concurrent vendor bill with the same supplier invoice number must succeed.");
+
+    await using (var billVerification = new AppDbContext(CreateOptions(connectionString), new FixedTenantContext(tenantId)))
+    {
+        var postedBill = await billVerification.VendorBills.Include(x => x.Lines).SingleAsync(x => x.PurchaseOrderId == purchaseOrderId);
+        var billJournal = await billVerification.JournalEntries.Include(x => x.Lines).SingleAsync(x =>
+            x.SourceType == "VendorBill" && x.SourceReference == postedBill.BillNumber);
+        if (postedBill.Status != VendorBillStatus.Posted || postedBill.NormalizedSupplierInvoiceNumber != "SQLINVOICE001" ||
+            postedBill.Lines.Single().Quantity != 0.5m || postedBill.ReceiptClearingAmount != 4.5m || postedBill.NetAmount != 5m ||
+            billJournal.Lines.Sum(x => x.Debit) != 5m || billJournal.Lines.Sum(x => x.Credit) != 5m ||
+            !billJournal.Lines.Any(x => x.AccountId == grniAccountId && x.Debit == 4.5m) ||
+            !billJournal.Lines.Any(x => x.AccountId == varianceAccountId && x.Debit == 0.5m) ||
+            !billJournal.Lines.Any(x => x.AccountId == payableAccountId && x.Credit == 5m))
+            throw new InvalidOperationException("The winning vendor bill must clear receipt value, isolate price variance and credit supplier payable atomically.");
+    }
+
     async Task<bool> TryReturnAsync()
     {
         await using var returnContext = new AppDbContext(CreateOptions(connectionString), new FixedTenantContext(tenantId));
@@ -350,7 +410,7 @@ static async Task VerifyConcurrentGoodsReceiptAndGrniAsync(
             new InventoryBalanceRepository(returnContext), new ProductStockRepository(returnContext),
             new ProductLocationStockRepository(returnContext));
         var returnService = new GoodsReceiptReturnService(
-            new GoodsReceiptReturnRepository(returnContext), new GoodsReceiptRepository(returnContext),
+            new GoodsReceiptReturnRepository(returnContext), new VendorBillRepository(returnContext), new GoodsReceiptRepository(returnContext),
             new PurchaseOrderRepository(returnContext), new SupplierRepository(returnContext),
             new WarehouseRepository(returnContext), new ProductRepository(returnContext),
             new ProductStockRepository(returnContext), new StockTransactionRepository(returnContext),
@@ -366,7 +426,7 @@ static async Task VerifyConcurrentGoodsReceiptAndGrniAsync(
                 Lines = [new CreateGoodsReceiptReturnLineDto
                 {
                     GoodsReceiptLineId = receipt.Lines.Single().Id,
-                    ReturnQuantity = 1m
+                    ReturnQuantity = 0.5m
                 }]
             });
             return true;
@@ -379,7 +439,7 @@ static async Task VerifyConcurrentGoodsReceiptAndGrniAsync(
 
     var returnOutcomes = await Task.WhenAll(TryReturnAsync(), TryReturnAsync());
     if (returnOutcomes.Count(success => success) != 1)
-        throw new InvalidOperationException("Exactly one concurrent full-quantity goods receipt return must succeed.");
+        throw new InvalidOperationException("Exactly one concurrent return of the remaining unbilled receipt quantity must succeed.");
 
     await using var returnVerification = new AppDbContext(CreateOptions(connectionString), new FixedTenantContext(tenantId));
     var postedReturn = await returnVerification.GoodsReceiptReturns.Include(x => x.Lines)
@@ -389,11 +449,12 @@ static async Task VerifyConcurrentGoodsReceiptAndGrniAsync(
         x.SourceDocumentType == "GoodsReceiptReturn" && x.SourceDocumentId == postedReturn.Id);
     var returnJournal = await returnVerification.JournalEntries.Include(x => x.Lines).SingleAsync(x =>
         x.SourceType == "GoodsReceiptReturn" && x.SourceReference == postedReturn.ReturnNumber);
-    if (postedReturn.Status != GoodsReceiptReturnStatus.Posted || stockAfterReturn.Quantity != 0m ||
+    if (postedReturn.Status != GoodsReceiptReturnStatus.Posted || stockAfterReturn.Quantity != 0.5m ||
         returnMovement.Type != StockMovementType.ReceiptReturnOut ||
-        returnJournal.Lines.Sum(x => x.Debit) != 9m || returnJournal.Lines.Sum(x => x.Credit) != 9m ||
-        !returnJournal.Lines.Any(x => x.AccountId == grniAccountId && x.Debit == 9m) ||
-        !returnJournal.Lines.Any(x => x.AccountId == inventoryAccountId && x.Credit == 9m))
+        returnJournal.Lines.Sum(x => x.Debit) != 4.5m || returnJournal.Lines.Sum(x => x.Credit) != 4.5m ||
+        !returnJournal.Lines.Any(x => x.AccountId == grniAccountId && x.Debit == 4.5m) ||
+        !returnJournal.Lines.Any(x => x.AccountId == inventoryAccountId && x.Credit == 4.5m) ||
+        await TryReturnAsync())
         throw new InvalidOperationException("A receipt-based supplier return must atomically reverse stock and the matching GRNI receipt value.");
 }
 

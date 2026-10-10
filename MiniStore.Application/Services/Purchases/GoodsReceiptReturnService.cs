@@ -5,7 +5,7 @@ using MiniStore.Domain.Interfaces;
 namespace MiniStore.Application.Services;
 
 public sealed class GoodsReceiptReturnService(
-    IGoodsReceiptReturnRepository returns, IGoodsReceiptRepository receipts, IPurchaseOrderRepository orders,
+    IGoodsReceiptReturnRepository returns, IVendorBillRepository bills, IGoodsReceiptRepository receipts, IPurchaseOrderRepository orders,
     ISupplierRepository suppliers, IWarehouseRepository warehouses, IProductRepository products,
     IProductStockRepository stocks, IStockTransactionRepository transactions, IStockMovementRepository movements,
     IAccountingSettingsRepository accountingSettings, InventoryTrackingService tracking,
@@ -36,10 +36,11 @@ public sealed class GoodsReceiptReturnService(
         var order = await orders.GetByIdAsync(receipt.PurchaseOrderId);
         if (order is null) return new() { GoodsReceiptId = goodsReceiptId, Form = form ?? new() { GoodsReceiptId = goodsReceiptId } };
         var returned = await GetReturnedQuantitiesAsync(goodsReceiptId);
+        var billed = await GetBilledQuantitiesAsync(order.Id);
         var lines = receipt.Lines.Select(x => new GoodsReceiptReturnAvailableLineDto
         {
             GoodsReceiptLineId = x.Id, ProductCode = x.ProductCodeSnapshot, ProductName = x.ProductNameSnapshot,
-            UnitName = x.UnitNameSnapshot, RemainingQuantity = Math.Max(0, x.ReceivedQuantity - returned.GetValueOrDefault(x.Id)),
+            UnitName = x.UnitNameSnapshot, RemainingQuantity = Math.Max(0, x.ReceivedQuantity - returned.GetValueOrDefault(x.Id) - billed.GetValueOrDefault(x.Id)),
             ReceivedTracking = x.LotNumber ?? x.SerialNumbers
         }).Where(x => x.RemainingQuantity > 0).ToList();
         return new()
@@ -68,13 +69,14 @@ public sealed class GoodsReceiptReturnService(
             var settings = await accountingSettings.GetAsync() ?? throw new InvalidOperationException("Configure accounting posting accounts before posting a goods receipt return.");
             if (!settings.GoodsReceivedNotInvoicedAccountId.HasValue) throw new InvalidOperationException("Configure a goods received not invoiced account before posting a goods receipt return.");
             var returned = await GetReturnedQuantitiesAsync(receipt.Id);
+            var billed = await GetBilledQuantitiesAsync(order.Id);
             created = new GoodsReceiptReturn(await numbers.GenerateAsync(DocumentNumberType.GoodsReceiptReturn, dto.ReturnDate.ToDateTime(TimeOnly.MinValue)),
                 receipt.Id, order.Id, order.SupplierId, receipt.WarehouseId, dto.ReturnDate, dto.Reason, currentUser.UserId);
             var journalLines = new List<JournalEntryLine>();
             foreach (var input in submitted)
             {
                 var source = receipt.Lines.SingleOrDefault(x => x.Id == input.GoodsReceiptLineId) ?? throw new ArgumentException("One or more return lines do not belong to the goods receipt.");
-                if (input.ReturnQuantity > source.ReceivedQuantity - returned.GetValueOrDefault(source.Id)) throw new InvalidOperationException("Return quantity cannot exceed the remaining received quantity.");
+                if (input.ReturnQuantity > source.ReceivedQuantity - returned.GetValueOrDefault(source.Id) - billed.GetValueOrDefault(source.Id)) throw new InvalidOperationException("Return quantity cannot exceed the remaining unbilled received quantity.");
                 var product = await products.GetByIdAsync(source.ProductId) ?? throw new InvalidOperationException("Returned product was not found.");
                 var stockQuantity = input.ReturnQuantity * source.UnitFactorToBase;
                 var stock = await stocks.GetByProductAndWarehouseAsync(source.ProductId, receipt.WarehouseId) ?? throw new InvalidOperationException("Returned receipt stock was not found.");
@@ -115,6 +117,10 @@ public sealed class GoodsReceiptReturnService(
     private async Task<Dictionary<int, decimal>> GetReturnedQuantitiesAsync(int receiptId) =>
         (await returns.GetByGoodsReceiptIdAsync(receiptId)).Where(x => x.Status == GoodsReceiptReturnStatus.Posted)
             .SelectMany(x => x.Lines).GroupBy(x => x.GoodsReceiptLineId).ToDictionary(x => x.Key, x => x.Sum(y => y.ReturnQuantity));
+
+    private async Task<Dictionary<int, decimal>> GetBilledQuantitiesAsync(int purchaseOrderId) =>
+        (await bills.GetByPurchaseOrderIdAsync(purchaseOrderId)).Where(x => x.Status == VendorBillStatus.Posted)
+            .SelectMany(x => x.Lines).GroupBy(x => x.GoodsReceiptLineId).ToDictionary(x => x.Key, x => x.Sum(y => y.Quantity));
 
     private static GoodsReceiptReturnDto Map(GoodsReceiptReturn x, string receipt, string supplier, string warehouse) => new()
     {

@@ -76,6 +76,7 @@ public static class NavigationDefinitions
             ,new NavigationItem("Purchase orders","bi-file-earmark-text","PurchaseOrders","Index","PurchaseOrders.View",80)
             ,new NavigationItem("Goods receipts","bi-box-arrow-in-down","GoodsReceipts","Index","GoodsReceipts.View",90)
             ,new NavigationItem("Goods receipt returns","bi-box-arrow-up","GoodsReceiptReturns","Index","GoodsReceiptReturns.View",100)
+            ,new NavigationItem("Vendor bills","bi-receipt-cutoff","VendorBills","Index","VendorBills.View",110)
         ),
 
         new NavigationGroup(

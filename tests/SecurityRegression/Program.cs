@@ -1303,6 +1303,31 @@ Check(receiptReturnController.GetMethod(nameof(GoodsReceiptReturnsController.Ind
           .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
       $"{PermissionAuthorizeAttribute.PolicyPrefix}GoodsReceiptReturns.Create",
     "Goods receipt return visibility and posting must use separate server-side permissions");
+var vendorBill = new VendorBill("VB-000001", 1, 5, " sup/inv-001 ", DateOnly.FromDateTime(DateTime.Today), "jod", "First bill", "buyer");
+vendorBill.AddLine(new VendorBillLine(1, 1, 10, 1m, 11.60m, 9m, 1, 16m, 45, true, "P-10", "Coffee beans", "kg"));
+vendorBill.Post("buyer");
+Check(vendorBill.Status == VendorBillStatus.Posted && vendorBill.NormalizedSupplierInvoiceNumber == "SUPINV001" &&
+      vendorBill.NetAmount == 10m && vendorBill.TaxAmount == 1.60m && vendorBill.TotalAmount == 11.60m &&
+      vendorBill.ReceiptClearingAmount == 9m,
+    "Vendor bills must normalize supplier invoice identity and freeze receipt, price and tax values");
+CheckThrows(() => vendorBill.AddLine(new VendorBillLine(2, 2, 11, 1m, 1m, 1m, null, 0, null, false, "P-11", "Tea", "kg")),
+    "Posted vendor bills must be immutable");
+var vendorBillType = db.Model.FindEntityType(typeof(VendorBill))!;
+Check(vendorBillType.FindProperty("TenantId") is { IsNullable: false } &&
+      vendorBillType.FindProperty(nameof(VendorBill.RowVersion))!.IsConcurrencyToken &&
+      vendorBillType.GetIndexes().Any(index => index.IsUnique &&
+          index.Properties.Select(property => property.Name).SequenceEqual(new[] { "TenantId", nameof(VendorBill.SupplierId), nameof(VendorBill.NormalizedSupplierInvoiceNumber) })),
+    "Vendor bills must be tenant-owned, concurrency-protected and database-unique per normalized supplier invoice");
+Check(DocumentSequence.CreateDefault(DocumentNumberType.VendorBill).Preview(DateTime.Today).StartsWith("VB-"),
+    "Vendor bills must use an independent centralized document sequence");
+var vendorBillController = typeof(VendorBillsController);
+Check(vendorBillController.GetMethod(nameof(VendorBillsController.Index))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
+      $"{PermissionAuthorizeAttribute.PolicyPrefix}VendorBills.View" &&
+      vendorBillController.GetMethod(nameof(VendorBillsController.Create), [typeof(CreateVendorBillDto)])!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
+      $"{PermissionAuthorizeAttribute.PolicyPrefix}VendorBills.Create",
+    "Vendor bill visibility and posting must use separate server-side permissions");
 var sourcingController = typeof(PurchaseSourcingController);
 Check(sourcingController.GetMethod(nameof(PurchaseSourcingController.Index))!
           .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==

@@ -1,10 +1,19 @@
 # AI Work Log
 
+## 2026-10-10 — PUR-080 Vendor Bills
+
+- Added tenant-owned Vendor Bills with partial posted-receipt allocations, frozen price/tax/receipt-clearing snapshots and centralized `VB-` document numbering.
+- Active supplier invoice identity is normalized and protected by a database unique index scoped to tenant and supplier. The Application service also checks cumulative returned and billed quantities inside the Serializable transaction.
+- Posting atomically debits GRNI at receipt value, records positive or negative Purchase Price Variance, debits snapshotted input tax and credits the supplier's payable account. Receipt returns now reject quantities already billed so the unbilled GRNI reversal cannot corrupt Accounts Payable; billed returns await a supplier credit-note slice.
+- Added separate view/create permissions, navigation, bilingual list/create/detail screens and an order-detail entry point.
+- Created and applied migration `20261010125824_AddVendorBills` to `AHMAD/MiniStoreDb`; no historical bills were invented or backfilled.
+- Release build passed with zero warnings, 483 focused checks passed and the disposable SQL Server fixture proved exactly one of two concurrent duplicate invoices succeeds with one balanced bill journal; concurrent returns remain limited to the unbilled balance.
+
 ## 2026-10-10 — PUR-070 receipt-based supplier returns
 
 - Added tenant-owned, GRR-numbered immutable returns against posted new-flow Goods Receipts while preserving the legacy Purchase Return model and routes.
-- Return posting caps cumulative receipt-line quantity, converts to base stock quantity, removes available untracked or lot/serial inventory, writes StockTransaction and `ReceiptReturnOut`, then debits GRNI at original receipt value, credits Inventory at actual AVCO removal cost and posts any difference to the new tenant-safe Purchase Price Variance account.
-- Added separate permissions, bilingual list/create/detail UI, navigation, domain/metadata/controller checks and SQL integration proving that two concurrent full-return attempts yield exactly one posted return, zero stock and balanced linked journals.
+- Return posting caps cumulative unbilled receipt-line quantity, converts to base stock quantity, removes available untracked or lot/serial inventory, writes StockTransaction and `ReceiptReturnOut`, then debits GRNI at original receipt value, credits Inventory at actual AVCO removal cost and posts any difference to the new tenant-safe Purchase Price Variance account.
+- Added separate permissions, bilingual list/create/detail UI, navigation, domain/metadata/controller checks and SQL integration proving concurrent attempts cannot exceed the remaining unbilled receipt quantity and keep linked journals balanced.
 - Created and applied migration `20261010124312_AddGoodsReceiptReturns` to `AHMAD/MiniStoreDb`; the migration is additive and does not backfill or mutate historical quantities.
 
 ## 2026-10-10 — PUR-060C SQL concurrency completion
