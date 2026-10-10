@@ -69,6 +69,10 @@ try
         tenantOneId,
         tenantOneFixture.ProductId,
         connectionString);
+    await VerifyReplenishmentPurchaseRequestSourceConcurrencyAsync(
+        tenantOneId,
+        tenantOneFixture.WarehouseId,
+        connectionString);
     await VerifyConcurrentGoodsReceiptAndGrniAsync(
         tenantOneId,
         tenantOneFixture.MeasurementUnitId,
@@ -101,7 +105,7 @@ try
     await VerifyInventoryBalanceProjectionAsync(tenantOneId, tenantOneFixture.ProductId, expectedOnHand: 2m, connectionString);
     await VerifyOpeningTrackingAllocationAsync(tenantOneId, tenantOneFixture.ProductId, tenantOneFixture.WarehouseId, connectionString);
 
-    Console.WriteLine("Passed SQL integration checks: tenant isolation, reconciliation, balances, receipt, vendor-bill and supplier-payment concurrency, three-way matching override evidence, GRNI posting and clearing, payable settlement, receipt-based supplier returns, adjustment posting, tracked operations, quarantine and recall.");
+    Console.WriteLine("Passed SQL integration checks: tenant isolation, reconciliation, balances, replenishment purchase-request source concurrency, receipt, vendor-bill and supplier-payment concurrency, three-way matching override evidence, GRNI posting and clearing, payable settlement, receipt-based supplier returns, adjustment posting, tracked operations, quarantine and recall.");
 }
 finally
 {
@@ -194,6 +198,40 @@ static async Task<(int ProductId, int StockId, int MeasurementUnitId, int Wareho
     await context.SaveChangesAsync();
 
     return (product.Id, stock.Id, unit.Id, warehouse.Id);
+}
+
+static async Task VerifyReplenishmentPurchaseRequestSourceConcurrencyAsync(
+    int tenantId, int warehouseId, string connectionString)
+{
+    var ready = 0;
+    var release = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+
+    async Task<bool> TryCreateAsync(string requestNumber)
+    {
+        await using var context = new AppDbContext(CreateOptions(connectionString), new FixedTenantContext(tenantId));
+        context.PurchaseRequests.Add(new PurchaseRequest(requestNumber, warehouseId,
+            DateOnly.FromDateTime(DateTime.Today.AddDays(7)), PurchaseRequestPriority.Normal,
+            "Replenishment integration demand", null, "integration-user", "ReplenishmentRule", "SQL-RULE-1"));
+        if (Interlocked.Increment(ref ready) == 2) release.SetResult();
+        await release.Task;
+        try
+        {
+            await context.SaveChangesAsync();
+            return true;
+        }
+        catch (DbUpdateException)
+        {
+            return false;
+        }
+    }
+
+    var outcomes = await Task.WhenAll(TryCreateAsync("PRQ-SQL-REPL-1"), TryCreateAsync("PRQ-SQL-REPL-2"));
+    if (outcomes.Count(success => success) != 1)
+        throw new InvalidOperationException("Exactly one active purchase request may reference the same replenishment rule.");
+
+    await using var verification = new AppDbContext(CreateOptions(connectionString), new FixedTenantContext(tenantId));
+    if (await verification.PurchaseRequests.CountAsync(x => x.SourceType == "ReplenishmentRule" && x.SourceReference == "SQL-RULE-1") != 1)
+        throw new InvalidOperationException("The winning replenishment purchase request must retain its source identity.");
 }
 
 static async Task VerifyConcurrentGoodsReceiptAndGrniAsync(

@@ -1029,6 +1029,15 @@ Check(replenishmentDraftPolicies.SetEquals([
         $"{PermissionAuthorizeAttribute.PolicyPrefix}Inventory.Replenishment.Manage",
         $"{PermissionAuthorizeAttribute.PolicyPrefix}StockTransfers.Create"]),
     "Creating a replenishment transfer draft must require both replenishment management and transfer creation permissions");
+var replenishmentPurchaseDraft = typeof(ReplenishmentController).GetMethod(nameof(ReplenishmentController.CreatePurchaseRequestDraft))!;
+var replenishmentPurchaseDraftPolicies = replenishmentPurchaseDraft.GetCustomAttributes<PermissionAuthorizeAttribute>()
+    .Select(x => x.Policy).ToHashSet();
+Check(replenishmentPurchaseDraftPolicies.SetEquals([
+        $"{PermissionAuthorizeAttribute.PolicyPrefix}Inventory.Replenishment.Manage",
+        $"{PermissionAuthorizeAttribute.PolicyPrefix}PurchaseRequests.Create"]),
+    "Creating replenishment purchase demand must require both replenishment management and purchase-request creation permissions");
+Check(ReplenishmentPurchaseDemandService.CalculatePurchaseQuantity(23m, 1m, 10m, 3m, 2m) == 4m,
+    "Replenishment purchase demand must convert stock demand and round up to supplier minimums and order multiples");
 
 var insightsIndex = typeof(InventoryInsightsController).GetMethod(nameof(InventoryInsightsController.Index))!;
 Check(insightsIndex.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
@@ -1131,9 +1140,13 @@ Check(supplierTermsIndexAction.GetCustomAttribute<PermissionAuthorizeAttribute>(
     "Supplier purchasing data must separate view and manage permissions");
 
 var purchaseRequest = new PurchaseRequest("PRQ-000001", 1, DateOnly.FromDateTime(DateTime.Today.AddDays(7)),
-    PurchaseRequestPriority.High, "Restock critical ingredients", null, "requester");
+    PurchaseRequestPriority.High, "Restock critical ingredients", null, "requester", "ReplenishmentRule", "17");
 Check(purchaseRequest.Status == PurchaseRequestStatus.Draft && purchaseRequest.History.Count == 1,
     "A purchase request must begin as a traced draft");
+Check(purchaseRequest.SourceType == "ReplenishmentRule" && purchaseRequest.SourceReference == "17" &&
+      db.Model.FindEntityType(typeof(PurchaseRequest))!.GetIndexes().Any(index => index.IsUnique &&
+          index.Properties.Select(property => property.Name).SequenceEqual(new[] { "TenantId", nameof(PurchaseRequest.SourceType), nameof(PurchaseRequest.SourceReference) })),
+    "Replenishment purchase demand must preserve its source and enforce one active request per tenant and rule");
 CheckThrows(() => purchaseRequest.Submit("requester"),
     "An empty purchase request cannot be submitted");
 purchaseRequest.AddLine(new PurchaseRequestLine(10, 2, 3m, 1000m, 5, "Three kilograms"));

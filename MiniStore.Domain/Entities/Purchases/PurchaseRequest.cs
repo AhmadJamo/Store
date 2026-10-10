@@ -14,6 +14,8 @@ public sealed class PurchaseRequest
     public PurchaseRequestPriority Priority { get; private set; }
     public string Justification { get; private set; }
     public string? Notes { get; private set; }
+    public string? SourceType { get; private set; }
+    public string? SourceReference { get; private set; }
     public PurchaseRequestStatus Status { get; private set; }
     public string CreatedByUserId { get; private set; }
     public DateTime CreatedAtUtc { get; private set; }
@@ -27,7 +29,8 @@ public sealed class PurchaseRequest
     public List<PurchaseRequestHistory> History { get; private set; } = [];
 
     public PurchaseRequest(string requestNumber, int warehouseId, DateOnly neededByDate,
-        PurchaseRequestPriority priority, string justification, string? notes, string createdByUserId)
+        PurchaseRequestPriority priority, string justification, string? notes, string createdByUserId,
+        string? sourceType = null, string? sourceReference = null)
     {
         if (string.IsNullOrWhiteSpace(requestNumber)) throw new ArgumentException("Purchase request number is required.");
         if (warehouseId <= 0) throw new ArgumentException("Destination warehouse is required.");
@@ -35,9 +38,14 @@ public sealed class PurchaseRequest
         if (string.IsNullOrWhiteSpace(justification) || justification.Trim().Length > 500)
             throw new ArgumentException("Purchase request justification is required and cannot exceed 500 characters.");
         if (notes?.Trim().Length > 1000) throw new ArgumentException("Purchase request notes cannot exceed 1000 characters.");
+        if (string.IsNullOrWhiteSpace(sourceType) != string.IsNullOrWhiteSpace(sourceReference))
+            throw new ArgumentException("A purchase request source requires both its type and reference.");
+        if (sourceType?.Trim().Length > 50 || sourceReference?.Trim().Length > 100)
+            throw new ArgumentException("Purchase request source is too long.");
         EnsureUser(createdByUserId);
         RequestNumber = requestNumber.Trim(); WarehouseId = warehouseId; NeededByDate = neededByDate;
         Priority = priority; Justification = justification.Trim(); Notes = Normalize(notes);
+        SourceType = Normalize(sourceType); SourceReference = Normalize(sourceReference);
         CreatedByUserId = createdByUserId; CreatedAtUtc = DateTime.UtcNow; Status = PurchaseRequestStatus.Draft;
         History.Add(new PurchaseRequestHistory(PurchaseRequestStatus.Draft, PurchaseRequestStatus.Draft,
             PurchaseRequestHistoryAction.Created, createdByUserId));

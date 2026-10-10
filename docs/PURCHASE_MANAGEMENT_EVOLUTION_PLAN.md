@@ -238,7 +238,7 @@ Each slice must include rollback/retry analysis and SQL-backed tenant/concurrenc
 | PUR-080 | Vendor Bills | Implemented: partial receipt-line allocations, normalized active supplier-invoice uniqueness, frozen price/tax/clearing snapshots and atomic GRNI/Input Tax/PPV/Accounts Payable posting. SQL concurrency accepts exactly one duplicate-invoice attempt. |
 | PUR-090 | Three-way matching | Implemented: tenant quantity/price tolerances, immutable per-bill match runs and exceptions, normal posting gate and dedicated reasoned override permission. SQL coverage persists the override evidence atomically with the bill. |
 | PUR-100 | Supplier payments | Implemented: partial multi-bill allocations, cumulative outstanding-balance enforcement and atomic Accounts Payable debit / configured Cash or Bank credit. SQL concurrency accepts exactly one competing full-balance payment. |
-| PUR-110 | Replenishment purchase demand | WMS-090C -> Draft Purchase Request |
+| PUR-110 | Replenishment purchase demand | Implemented: reviewed purchase-sourced suggestions create one source-linked Draft Purchase Request using valid preferred-supplier units, minimums, multiples and lead time; database uniqueness blocks concurrent duplicates. |
 | PUR-120 | Agreements and templates | Contract releases and repeat ordering |
 | PUR-130 | Landed costs | Auditable receipt valuation adjustments |
 | PUR-140 | Dashboards and supplier performance | Operational KPIs and drill-down reports |
@@ -260,4 +260,4 @@ Shared accounting, settings, inventory and document-number files are changed onl
 
 ## 10. Immediate next slice
 
-Implement PUR-110 by converting reviewed replenishment demand into a Draft Purchase Request without bypassing the existing approval and sourcing lifecycle. Supplier credit notes for returning already billed receipt quantities remain a later controlled accounting slice; PUR-070 rejects those quantities meanwhile.
+Implement PUR-120 purchasing agreements and repeat-order templates without bypassing the existing request, approval, sourcing and order authorities. Supplier credit notes for returning already billed receipt quantities remain a later controlled accounting slice; PUR-070 rejects those quantities meanwhile.

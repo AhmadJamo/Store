@@ -1199,4 +1199,17 @@
   <data name="Currency is required." xml:space="preserve"><value>العملة مطلوبة.</value></data>
   <data name="Vendor bill is required." xml:space="preserve"><value>فاتورة المورد مطلوبة.</value></data>
   <data name="Vendor bill references are required." xml:space="preserve"><value>مراجع فاتورة المورد مطلوبة.</value></data>
+  <data name="Open purchase request" xml:space="preserve"><value>فتح طلب الشراء</value></data>
+  <data name="Create purchase request draft" xml:space="preserve"><value>إنشاء مسودة طلب شراء</value></data>
+  <data name="Purchase request draft created from the replenishment suggestion." xml:space="preserve"><value>تم إنشاء مسودة طلب شراء من اقتراح إعادة التزويد.</value></data>
+  <data name="Reviewed replenishment suggestion" xml:space="preserve"><value>اقتراح إعادة تزويد تمت مراجعته</value></data>
+  <data name="A purchase request source requires both its type and reference." xml:space="preserve"><value>يتطلب مصدر طلب الشراء نوع المصدر ومرجعه معًا.</value></data>
+  <data name="Purchase request source is too long." xml:space="preserve"><value>بيانات مصدر طلب الشراء طويلة جدًا.</value></data>
+  <data name="An open purchase request already exists for this replenishment rule." xml:space="preserve"><value>يوجد طلب شراء مفتوح مسبقًا لقانون إعادة التزويد هذا.</value></data>
+  <data name="Warehouse-sourced replenishment must use a transfer draft." xml:space="preserve"><value>إعادة التزويد من مستودع يجب أن تستخدم مسودة تحويل.</value></data>
+  <data name="Replenishment purchase demand requires an active purchasable product with a managed stock unit." xml:space="preserve"><value>يتطلب طلب الشراء لإعادة التزويد منتجًا نشطًا قابلًا للشراء وله وحدة مخزون مُدارة.</value></data>
+  <data name="Destination warehouse not found." xml:space="preserve"><value>لم يتم العثور على مستودع الوجهة.</value></data>
+  <data name="Supplier purchase unit was not found." xml:space="preserve"><value>لم يتم العثور على وحدة شراء المورد.</value></data>
+  <data name="Supplier purchase unit is not compatible with the product stock unit." xml:space="preserve"><value>وحدة شراء المورد غير متوافقة مع وحدة مخزون المنتج.</value></data>
+  <data name="Replenishment purchase quantities and conversion factors must be greater than zero." xml:space="preserve"><value>يجب أن تكون كميات شراء إعادة التزويد ومعاملات التحويل أكبر من صفر.</value></data>
 </root>

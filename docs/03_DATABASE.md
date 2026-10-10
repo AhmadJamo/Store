@@ -88,6 +88,8 @@ Migration `20261003214320_AddInventoryBalancesAndDefaultLocations` creates tenan
 ## Replenishment rules
 
 Migration `AddReplenishmentRules` creates tenant-owned `ReplenishmentRules` with one unique Product + destination Warehouse policy per tenant. Composite tenant-safe foreign keys protect Product, destination Warehouse and optional preferred source Warehouse. The additive migration creates no rules and changes no inventory quantities.
+
+Migration `AddReplenishmentPurchaseDemand` adds optional source type/reference provenance to Purchase Requests and a filtered tenant-unique index that permits only one non-cancelled request for a replenishment rule. It was applied to `AHMAD/MiniStoreDb` on 2026-10-10; existing requests remain unchanged with null source fields.
 # PUR-010 supplier purchasing data
 
 Migration `AddSupplierPurchasingData` additively creates tenant-owned `SupplierProductPurchasingInfos`. Composite tenant foreign keys restrict Supplier, Product and MeasurementUnit references to the same company. A tenant-scoped unique index enforces one row per supplier + product + purchase unit; rowversion protects mutable terms. No legacy Purchase, inventory or accounting row is changed or backfilled. The migration was generated, model-verified and applied to `AHMAD/MiniStoreDb` on 2026-10-08 using the authorized host Windows identity.

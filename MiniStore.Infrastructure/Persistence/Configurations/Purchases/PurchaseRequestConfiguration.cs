@@ -11,9 +11,12 @@ public sealed class PurchaseRequestConfiguration : IEntityTypeConfiguration<Purc
     {
         b.HasKey(x => x.Id); b.Property(x => x.RequestNumber).HasMaxLength(50).IsRequired();
         b.Property(x => x.Justification).HasMaxLength(500).IsRequired(); b.Property(x => x.Notes).HasMaxLength(1000);
+        b.Property(x => x.SourceType).HasMaxLength(50); b.Property(x => x.SourceReference).HasMaxLength(100);
         b.Property(x => x.CreatedByUserId).HasMaxLength(450).IsRequired(); b.Property(x => x.SubmittedByUserId).HasMaxLength(450);
         b.Property(x => x.CancelledByUserId).HasMaxLength(450); b.Property(x => x.CancellationReason).HasMaxLength(500);
         b.Property(x => x.RowVersion).IsRowVersion(); b.HasIndex(x => x.RequestNumber).IsUnique();
+        b.HasIndex(x => new { x.SourceType, x.SourceReference }).IsUnique()
+            .HasFilter("[SourceType] IS NOT NULL AND [SourceReference] IS NOT NULL AND [Status] <> 3");
         b.HasOne<Warehouse>().WithMany().HasForeignKey(x => x.WarehouseId).OnDelete(DeleteBehavior.Restrict);
         b.HasMany(x => x.Lines).WithOne().HasForeignKey(x => x.PurchaseRequestId).OnDelete(DeleteBehavior.Cascade);
         b.HasMany(x => x.History).WithOne().HasForeignKey(x => x.PurchaseRequestId).OnDelete(DeleteBehavior.Cascade);

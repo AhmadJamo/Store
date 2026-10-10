@@ -37,7 +37,7 @@
 | `Entities/Inventory/*.cs` | warehouses, operating-policy enums, AVCO balances, locations, putaway rules, availability, reservations, adjustments, lot/serial tracking with persisted removal-strategy audit, recall communication evidence, legacy history, physical movements and transfers | inventory, accounting and stock-transfer docs. |
 | `Entities/Purchases/*.cs`, `Entities/Sales/*.cs` | purchase/supplier-return and sale/customer-return aggregates plus POS experience/order settings | purchase/sales/settings docs. |
 | `Entities/Purchases/SupplierProductPurchasingInfo.cs` | supplier-specific product code, compatible purchase unit, base-currency price, lead time, order policy, validity and preference | PUR-010 purchasing data screen/service. |
-| `Entities/Purchases/PurchaseRequest.cs` | PRQ-numbered Draft/Submitted/Cancelled internal demand, frozen unit conversion lines and immutable action history | PUR-020 purchase-request workflow. |
+| `Entities/Purchases/PurchaseRequest.cs` | PRQ-numbered internal demand, frozen unit conversion, immutable action history and optional source provenance used by replenishment | PUR-020/PUR-110 purchase-request workflow. |
 | `Entities/Purchases/PurchaseApproval.cs` | Warehouse/priority-scoped approval rules, ordered role steps and immutable per-request decision snapshots | PUR-025 approval workflow foundation. |
 | `Entities/Purchases/PurchaseSourcingEvent.cs` | RFX-numbered sourcing event, frozen request-line snapshots and supplier invitations; no price, inventory or accounting authority | PUR-030 sourcing workflow. |
 | `Entities/Purchases/{SupplierQuotation,PurchaseQuotationAward}.cs` | supplier-specific frozen quote header/lines, commercial terms, comparison totals and reasoned selection record | PUR-040 quotation workflow. |
@@ -86,6 +86,7 @@
 | `Services/Inventory/UntrackedInventoryRemovalService.cs` | reservation-aware policy allocation across exact pickable locations and Unassigned, with atomic location-balance removal for non-tracked issues | sales, recipes, purchase returns and legacy adjustments. |
 | `Services/Inventory/PutawayRuleService.cs` | administers product/category/default putaway rules and resolves priority- and capacity-aware active receivable-location suggestions | Unassigned Stock putaway. |
 | `Services/Inventory/ReplenishmentService.cs` | manages product/warehouse replenishment policies and reservation-aware reviewed suggestions | Replenishment screen. |
+| `Services/Purchases/ReplenishmentPurchaseDemandService.cs` | converts a reviewed purchase-sourced suggestion into one traced Draft Purchase Request, applying valid preferred-supplier unit/minimum/multiple terms | PUR-110 replenishment bridge. |
 | `Services/Inventory/{InventoryInsightsService,InventoryActivityClassifier}.cs` | classifies current positive inventory by actual outbound inactivity without mutating stock or valuation | Inventory Insights screen. |
 | `Services/Inventory/{InventoryScanningService,InventoryScanResolver}.cs` | exact adjustment/product/source/destination resolution and safe delegation of scanned putaway, relocation and absolute Draft counts | Inventory Scanning screen and owning inventory services. |
 | `Services/Settings/InventorySettingsService.cs` | rowversion-protected defaults for new warehouse operating policies | SettingsController inventory screen. |

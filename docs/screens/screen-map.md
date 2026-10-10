@@ -15,7 +15,7 @@
 | `Views/ProductStocks/{Index,Create,Edit}.cshtml` | balance, moving average and inventory value list; opening balance/direct adjustment; negative recipe exceptions are highlighted. |
 | `Views/StockTransactions/{Index,Create}.cshtml` | paged/filterable movement list with unit cost, movement value and variance; manual adjustments include reason-required kitchen variance. |
 | `Views/WarehouseLocations/{Index,Create,Edit}.cshtml`, `Views/UnassignedStock/Index.cshtml` | parent-indented location master data plus warehouse/product search, putaway-rule administration and capacity-aware destination suggestions before capability-validated putaway. |
-| `Views/Replenishment/Index.cshtml` | permission-separated min/max management, Approved-transfer forecast and reviewed preferred-source suggestions that may explicitly create Draft transfers. |
+| `Views/Replenishment/Index.cshtml` | permission-separated min/max management and reviewed suggestions that explicitly create either a Draft transfer from a preferred warehouse or a traced Draft Purchase Request when purchasing is the source. |
 | `Views/InventoryInsights/Index.cshtml` | bilingual read-only slow/dead stock analysis with warehouse, product, status and threshold filters. |
 | `Views/InventoryScanning/Index.cshtml` | bilingual adjustment/product/source/destination lookup with permission-gated putaway, relocation or absolute Draft line count; blind counts hide balances. |
 | `Views/LocationMovements/Index.cshtml` | same-warehouse rack/bin relocation form with filtered choices, available quantity and searchable movement history. |

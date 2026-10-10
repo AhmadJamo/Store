@@ -1,5 +1,14 @@
 # AI Work Log
 
+## 2026-10-10 — PUR-110 Replenishment Purchase Demand
+
+- Added an explicit reviewed-suggestion action that creates a Draft Purchase Request only for active purchase-sourced replenishment rules that are still below their minimum.
+- Valid preferred supplier terms select the purchase unit and suggested supplier, round demand up to the configured minimum and order multiple, and use the longer rule/supplier lead time.
+- Purchase Requests now preserve optional source type/reference provenance. A filtered tenant-unique index and Serializable source check prevent concurrent duplicate active requests while allowing replacement after cancellation.
+- The action requires both replenishment-management and purchase-request-create permissions; the replenishment screen links to the open request and the request detail identifies its reviewed source.
+- Created and applied migration `20261010184007_AddReplenishmentPurchaseDemand` to `AHMAD/MiniStoreDb`; existing Purchase Requests remain unchanged.
+- Release build passed without warnings, 503 focused checks passed and the disposable SQL Server fixture accepted exactly one of two concurrent requests for the same replenishment source.
+
 ## 2026-10-10 — PUR-100 Supplier Payments
 
 - Added tenant-owned, centrally numbered Supplier Payments with immutable partial allocations across posted Vendor Bills for one supplier and currency.
