@@ -1262,6 +1262,10 @@ goodsReceipt.Post("receiver");
 Check(goodsReceipt.Status == GoodsReceiptStatus.Posted && goodsReceipt.Lines.Single().StockQuantity == 1m &&
       db.Model.FindEntityType(typeof(GoodsReceipt))!.FindProperty("TenantId") is { IsNullable: false },
     "Posted goods receipts must retain frozen partial receipt evidence inside the tenant boundary");
+var receiptMovement = StockMovement.PostGoodsReceipt(1, 1, 10, 1, 1m, "receiver", "GRN-000001");
+Check(receiptMovement.Type == StockMovementType.ReceiptIn && receiptMovement.Status == StockMovementStatus.Posted &&
+      receiptMovement.SourceDocumentType == "GoodsReceipt" && receiptMovement.SourceDocumentId == 1,
+    "A posted goods receipt must create an idempotent physical receipt movement linked to its source document");
 var sourcingController = typeof(PurchaseSourcingController);
 Check(sourcingController.GetMethod(nameof(PurchaseSourcingController.Index))!
           .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==

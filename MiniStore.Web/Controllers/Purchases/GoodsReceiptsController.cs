@@ -9,6 +9,21 @@ namespace MiniStore.Web.Controllers;
 public sealed class GoodsReceiptsController(GoodsReceiptService service, IStringLocalizer<SharedResource> localizer) : Controller
 {
     [HttpGet]
+    [PermissionAuthorize("GoodsReceipts.View")]
+    public async Task<IActionResult> Index(string? search)
+    {
+        ViewBag.Search = search;
+        return View(await service.GetAllAsync(search));
+    }
+
+    [HttpGet]
+    [PermissionAuthorize("GoodsReceipts.View")]
+    public async Task<IActionResult> Details(int id)
+    {
+        var receipt = await service.GetAsync(id);
+        return receipt is null ? NotFound() : View(receipt);
+    }
+    [HttpGet]
     [PermissionAuthorize("GoodsReceipts.Create")]
     public async Task<IActionResult> Create(int purchaseOrderId)
     {

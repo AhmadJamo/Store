@@ -1,0 +1,6 @@
+@model List<MiniStore.Application.DTOs.Purchases.GoodsReceiptDto>
+@inject Microsoft.Extensions.Localization.IStringLocalizer<MiniStore.Web.SharedResource> Localizer
+@{ ViewData["Title"] = Localizer["Goods receipts"]; }
+<h2>@Localizer["Goods receipts"]</h2>
+<form method="get" class="row g-2 mb-3"><div class="col-md-4"><input name="search" value="@ViewBag.Search" class="form-control" placeholder="@Localizer["Search"]" /></div><div class="col-md-2"><button class="btn btn-outline-primary">@Localizer["Filter"]</button></div></form>
+@if(Model.Count==0){<div class="alert alert-info">@Localizer["No goods receipts found."]</div>}else{<div class="table-responsive"><table class="table align-middle"><thead><tr><th>@Localizer["Goods receipt"]</th><th>@Localizer["Purchase order"]</th><th>@Localizer["Warehouse"]</th><th>@Localizer["Receipt date"]</th><th>@Localizer["Status"]</th><th></th></tr></thead><tbody>@foreach(var item in Model){<tr><td>@item.ReceiptNumber</td><td>@item.PurchaseOrderNumber</td><td>@item.WarehouseName</td><td>@item.ReceiptDate</td><td>@Localizer[item.Status.ToString()]</td><td><a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary">@Localizer["Details"]</a></td></tr>}</tbody></table></div>}

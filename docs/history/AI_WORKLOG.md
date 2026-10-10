@@ -6,6 +6,11 @@
 - Posting occurs in one Serializable transaction, recomputes the open quantity inside that transaction, then updates ProductStock moving average, tracked identity balances and immutable StockTransactions. No GRNI journal is created.
 - Applied `AddGoodsReceiptFoundation` to `AHMAD/MiniStoreDb`; it is additive and creates no demo receipt data.
 
+## 2026-10-10 — PUR-060B receipt history and physical movement
+
+- Added bilingual Goods Receipt list/detail visibility and a `ReceiptIn` StockMovement for every posted GRN line, linked to the persisted document and line with a retry-safe idempotency key.
+- Extended the existing UnitOfWork with an in-transaction flush only so the receipt identity can be assigned before the physical movement is written; the outer transaction still commits or rolls back every effect together.
+
 ## 2026-10-10 — PUR-050B purchase order operation
 
 - Completed the Purchase Order list/detail operation with status/search filtering, supplier and warehouse context, navigation and permission-aware actions.

@@ -10,13 +10,32 @@ public sealed class GoodsReceiptService(
     IPurchaseOrderRepository orders,
     IProductRepository products,
     IProductStockRepository stocks,
+    IWarehouseRepository warehouses,
     IProductLocationStockRepository locationStocks,
     IStockTransactionRepository transactions,
+    IStockMovementRepository movements,
     InventoryTrackingService tracking,
     DocumentNumberService numbers,
     IUnitOfWork unitOfWork,
     ICurrentUserService currentUser)
 {
+    public async Task<List<GoodsReceiptDto>> GetAllAsync(string? search)
+    {
+        var orderNumbers = (await orders.GetAllAsync(null, null)).ToDictionary(x => x.Id, x => x.OrderNumber);
+        var warehouseNames = (await warehouses.GetAllAsync()).ToDictionary(x => x.Id, x => x.Name);
+        return (await receipts.GetAllAsync(search)).Select(receipt => Map(receipt,
+            orderNumbers.GetValueOrDefault(receipt.PurchaseOrderId, $"#{receipt.PurchaseOrderId}"),
+            warehouseNames.GetValueOrDefault(receipt.WarehouseId, $"#{receipt.WarehouseId}"))).ToList();
+    }
+
+    public async Task<GoodsReceiptDto?> GetAsync(int id)
+    {
+        var receipt = await receipts.GetByIdAsync(id);
+        if (receipt is null) return null;
+        var order = await orders.GetByIdAsync(receipt.PurchaseOrderId);
+        var warehouse = await warehouses.GetByIdAsync(receipt.WarehouseId);
+        return Map(receipt, order?.OrderNumber ?? $"#{receipt.PurchaseOrderId}", warehouse?.Name ?? $"#{receipt.WarehouseId}");
+    }
     public async Task<GoodsReceiptCreatePageDto> GetCreatePageAsync(int purchaseOrderId, CreateGoodsReceiptDto? form = null)
     {
         var order = await orders.GetByIdAsync(purchaseOrderId);
@@ -63,8 +82,12 @@ public sealed class GoodsReceiptService(
                 await tracking.ReceiveAsync(product, order.WarehouseId, line.StockQuantity, line.LotNumber, line.SerialNumbers, line.ManufactureDate, line.ExpirationDate, receipt.ReceiptNumber, currentUser.UserId);
                 await transactions.AddAsync(new StockTransaction(product.Id, order.WarehouseId, line.StockQuantity, StockTransactionType.GoodsReceipt, receipt.ReceiptNumber, movement));
             }
-            receipt.Post(currentUser.UserId);
             await receipts.AddAsync(receipt);
+            await unitOfWork.FlushAsync();
+            foreach (var line in receipt.Lines)
+                await movements.AddAsync(StockMovement.PostGoodsReceipt(receipt.Id, line.Id, line.ProductId, receipt.WarehouseId,
+                    line.StockQuantity, currentUser.UserId, receipt.ReceiptNumber));
+            receipt.Post(currentUser.UserId);
         });
         return receipt!.Id;
     }
@@ -78,5 +101,14 @@ public sealed class GoodsReceiptService(
         OrderDate = order.OrderDate, ExpectedDate = order.ExpectedDate, RowVersion = order.RowVersion,
         Lines = order.Lines.Select(line => new PurchaseOrderLineDto { ProductCode = line.ProductCodeSnapshot, ProductName = line.ProductNameSnapshot,
             UnitName = line.UnitNameSnapshot, OrderedQuantity = line.OrderedQuantity, UnitPrice = line.UnitPrice, GrossAmount = line.GrossAmount }).ToList()
+    };
+
+    private static GoodsReceiptDto Map(GoodsReceipt receipt, string orderNumber, string warehouseName) => new()
+    {
+        Id = receipt.Id, ReceiptNumber = receipt.ReceiptNumber, PurchaseOrderNumber = orderNumber, WarehouseName = warehouseName,
+        ReceiptDate = receipt.ReceiptDate, Status = receipt.Status, Notes = receipt.Notes,
+        Lines = receipt.Lines.Select(line => new GoodsReceiptPostedLineDto { ProductCode = line.ProductCodeSnapshot, ProductName = line.ProductNameSnapshot,
+            UnitName = line.UnitNameSnapshot, ReceivedQuantity = line.ReceivedQuantity, StockQuantity = line.StockQuantity, UnitCost = line.UnitCost,
+            LotNumber = line.LotNumber, SerialNumbers = line.SerialNumbers, ManufactureDate = line.ManufactureDate, ExpirationDate = line.ExpirationDate }).ToList()
     };
 }

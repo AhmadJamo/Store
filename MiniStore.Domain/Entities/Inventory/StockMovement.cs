@@ -1,6 +1,6 @@
 namespace MiniStore.Domain.Entities;
 
-public enum StockMovementType { Putaway = 1, Relocation = 2, TransferOutbound = 3, TransferTransit = 4, TransferInbound = 5, AdjustmentIn = 6, AdjustmentOut = 7 }
+public enum StockMovementType { Putaway = 1, Relocation = 2, TransferOutbound = 3, TransferTransit = 4, TransferInbound = 5, AdjustmentIn = 6, AdjustmentOut = 7, ReceiptIn = 8 }
 public enum StockMovementStatus { Planned = 0, Posted = 1, Reversed = 2 }
 
 public sealed class StockMovement
@@ -124,6 +124,22 @@ public sealed class StockMovement
             Reference = Normalize(reference), SourceDocumentType = "InventoryAdjustment",
             SourceDocumentId = checked((int)adjustmentId), SourceLineId = checked((int)sourceLineId),
             StageSequence = 1, CreatedAt = DateTime.UtcNow, PostedAt = DateTime.UtcNow
+        };
+    }
+
+    public static StockMovement PostGoodsReceipt(int goodsReceiptId, int sourceLineId, int productId, int warehouseId,
+        decimal quantity, string userId, string reference)
+    {
+        if (goodsReceiptId <= 0 || sourceLineId <= 0) throw new ArgumentException("Goods receipt and line are required.");
+        if (productId <= 0 || warehouseId <= 0) throw new ArgumentException("Product and warehouse are required.");
+        if (quantity <= 0) throw new ArgumentException("Quantity must be greater than zero.");
+        if (string.IsNullOrWhiteSpace(userId) || string.IsNullOrWhiteSpace(reference)) throw new ArgumentException("Receipt user and reference are required.");
+        return new StockMovement
+        {
+            ProductId = productId, WarehouseId = warehouseId, Quantity = quantity, Type = StockMovementType.ReceiptIn,
+            Status = StockMovementStatus.Posted, IdempotencyKey = $"GRN:{goodsReceiptId}:{sourceLineId}", CreatedByUserId = userId.Trim(),
+            PostedByUserId = userId.Trim(), Reference = Normalize(reference), SourceDocumentType = "GoodsReceipt",
+            SourceDocumentId = goodsReceiptId, SourceLineId = sourceLineId, StageSequence = 1, CreatedAt = DateTime.UtcNow, PostedAt = DateTime.UtcNow
         };
     }
 

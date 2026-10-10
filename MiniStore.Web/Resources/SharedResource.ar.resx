@@ -1063,4 +1063,7 @@
   <data name="Post goods receipt" xml:space="preserve"><value>ترحيل استلام البضاعة</value></data>
   <data name="Goods receipt posted." xml:space="preserve"><value>تم ترحيل استلام البضاعة.</value></data>
   <data name="Enter only quantities physically received. Posting increases inventory and cannot be edited." xml:space="preserve"><value>أدخل الكميات المستلمة فعليًا فقط. الترحيل يزيد المخزون ولا يمكن تعديله.</value></data>
+  <data name="Goods receipts" xml:space="preserve"><value>استلامات البضاعة</value></data>
+  <data name="Goods receipt" xml:space="preserve"><value>استلام بضاعة</value></data>
+  <data name="No goods receipts found." xml:space="preserve"><value>لا توجد استلامات بضاعة.</value></data>
 </root>

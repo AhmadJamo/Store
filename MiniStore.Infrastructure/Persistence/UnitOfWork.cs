@@ -43,4 +43,6 @@ public class UnitOfWork : IUnitOfWork
             throw;
         }
     }
+
+    public Task FlushAsync() => _context.SaveChangesAsync();
 }
