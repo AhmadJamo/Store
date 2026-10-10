@@ -144,6 +144,8 @@ public static class BusinessServicesExtensions
         services.AddScoped<PurchaseOrderService>();
         services.AddScoped<IGoodsReceiptRepository, GoodsReceiptRepository>();
         services.AddScoped<GoodsReceiptService>();
+        services.AddScoped<IGoodsReceiptReturnRepository, GoodsReceiptReturnRepository>();
+        services.AddScoped<GoodsReceiptReturnService>();
         services.AddScoped<IPurchaseRepository, PurchaseRepository>();
         services.AddScoped<IPurchaseReturnRepository, PurchaseReturnRepository>();
         services.AddScoped<PurchaseService>();

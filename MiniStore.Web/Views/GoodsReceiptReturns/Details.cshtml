@@ -1,0 +1,6 @@
+@model MiniStore.Application.DTOs.Purchases.GoodsReceiptReturnDto
+@inject Microsoft.Extensions.Localization.IStringLocalizer<MiniStore.Web.SharedResource> Localizer
+@{ ViewData["Title"] = Model.ReturnNumber; }
+<div class="d-flex justify-content-between"><h2>@Model.ReturnNumber</h2><a asp-action="Index" class="btn btn-outline-secondary">@Localizer["Back"]</a></div>
+<div class="card card-body my-3"><div>@Localizer["Goods receipt"]: @Model.ReceiptNumber</div><div>@Localizer["Supplier"]: @Model.SupplierName</div><div>@Localizer["Warehouse"]: @Model.WarehouseName</div><div>@Localizer["Return date"]: @Model.ReturnDate</div><div>@Localizer["Reason"]: @Model.Reason</div></div>
+<div class="table-responsive"><table class="table"><thead><tr><th>@Localizer["Product"]</th><th>@Localizer["Return quantity"]</th><th>@Localizer["Stock quantity"]</th><th>@Localizer["Original receipt value"]</th><th>@Localizer["Removed inventory cost"]</th><th>@Localizer["Tracking allocations"]</th></tr></thead><tbody>@foreach(var line in Model.Lines){<tr><td>@line.ProductCode — @line.ProductName</td><td>@line.ReturnQuantity @line.UnitName</td><td>@line.StockQuantity</td><td>@line.OriginalInventoryValue</td><td>@line.RemovedInventoryCost</td><td class="text-break">@line.TrackingAllocations</td></tr>}</tbody></table></div>

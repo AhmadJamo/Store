@@ -1,5 +1,18 @@
 # AI Work Log
 
+## 2026-10-10 — PUR-070 receipt-based supplier returns
+
+- Added tenant-owned, GRR-numbered immutable returns against posted new-flow Goods Receipts while preserving the legacy Purchase Return model and routes.
+- Return posting caps cumulative receipt-line quantity, converts to base stock quantity, removes available untracked or lot/serial inventory, writes StockTransaction and `ReceiptReturnOut`, then debits GRNI at original receipt value, credits Inventory at actual AVCO removal cost and posts any difference to the new tenant-safe Purchase Price Variance account.
+- Added separate permissions, bilingual list/create/detail UI, navigation, domain/metadata/controller checks and SQL integration proving that two concurrent full-return attempts yield exactly one posted return, zero stock and balanced linked journals.
+- Created and applied migration `20261010124312_AddGoodsReceiptReturns` to `AHMAD/MiniStoreDb`; the migration is additive and does not backfill or mutate historical quantities.
+
+## 2026-10-10 — PUR-060C SQL concurrency completion
+
+- Extended the disposable SQL Server fixture with a complete tenant-owned request/sourcing/quotation/confirmed-PO setup and two concurrent full-quantity Goods Receipt attempts.
+- Proved exactly one attempt succeeds and atomically leaves one posted GRN, one net-discount-cost ProductStock/StockTransaction update, one physical `ReceiptIn` movement and one balanced Inventory/GRNI journal; the losing attempt leaves no partial facts.
+- The Release integration build passed without warnings and the full disposable SQL fixture passed. PUR-060 is complete; controlled receipt reversal and inventory-to-GL reconciliation reporting remain in PUR-065/PUR-070.
+
 ## 2026-10-10 — PUR-065A GRNI receipt posting
 
 - Added the tenant-safe GRNI account mapping to Accounting Settings and applied `AddGoodsReceiptGrniAccount` to `AHMAD/MiniStoreDb`.

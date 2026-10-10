@@ -26,6 +26,7 @@ Products, Warehouses, ProductStock, StockTransactions, StockMovements, LocationM
 | Products, Warehouses, Suppliers, Product Stocks | View/Create/Edit/Delete controller actions have matching `PermissionAuthorize`. |
 | Purchases | View/Create enforced; Edit/Delete definitions have no controller actions. |
 | Purchase returns | View/Create enforced; Create also requires a posted original purchase and sufficient current stock. |
+| Goods receipt returns | Separate View/Create permissions; Create accepts posted new-flow receipts only and revalidates remaining receipt quantity, current stock, tracking and accounting configuration. |
 | Sales | View/Create enforced; Edit/Delete definitions have no controller actions. |
 | Sales returns | View/Create enforced; the original-sale return action is also hidden without Create. |
 | Stock transactions | View/Create enforced. |
@@ -75,4 +76,5 @@ The Index and mutation actions enforce these policies server-side. Permission se
 - `PurchaseOrders.Create` permits creating one order from the recorded quotation award only.
 - `PurchaseOrders.Approve`, `PurchaseOrders.Confirm` and `PurchaseOrders.Cancel` separately protect the corresponding state transitions; confirmation still has no inventory or accounting effect.
 - `GoodsReceipts.Create` protects both capture and posting of a Goods Receipt; it is limited to confirmed Purchase Orders and invokes the purchasing Application service. `GoodsReceipts.View` reserves separate receipt visibility for the upcoming history screen.
+- `GoodsReceiptReturns.Create` protects capture and immediate posting of a receipt-based supplier return; `GoodsReceiptReturns.View` protects its list/detail history. These permissions are distinct from legacy `PurchaseReturns.*`.
 

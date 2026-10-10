@@ -291,13 +291,11 @@
   <data name="Create sales return" xml:space="preserve"><value>إنشاء مرتجع مبيعات</value></data>
   <data name="Create and post return" xml:space="preserve"><value>إنشاء المرتجع وترحيله</value></data>
   <data name="Sales return created and posted." xml:space="preserve"><value>تم إنشاء مرتجع المبيعات وترحيله.</value></data>
-  <data name="Return number" xml:space="preserve"><value>رقم المرتجع</value></data>
   <data name="Original sale" xml:space="preserve"><value>المبيعة الأصلية</value></data>
   <data name="Refund amount" xml:space="preserve"><value>مبلغ الاسترداد</value></data>
   <data name="Return reason" xml:space="preserve"><value>سبب المرتجع</value></data>
   <data name="Sold quantity" xml:space="preserve"><value>الكمية المباعة</value></data>
   <data name="Already returned" xml:space="preserve"><value>الكمية المرتجعة سابقاً</value></data>
-  <data name="Return quantity" xml:space="preserve"><value>كمية المرتجع</value></data>
   <data name="Restocked" xml:space="preserve"><value>أعيدت للمخزون</value></data>
   <data name="Restocked cost" xml:space="preserve"><value>تكلفة المخزون المعاد</value></data>
   <data name="Select at least one quantity to return." xml:space="preserve"><value>اختر كمية واحدة على الأقل للإرجاع.</value></data>
@@ -350,7 +348,6 @@
   <data name="Original purchase" xml:space="preserve"><value>المشتريات الأصلية</value></data>
   <data name="Purchased quantity" xml:space="preserve"><value>الكمية المشتراة</value></data>
   <data name="Supplier credit" xml:space="preserve"><value>رصيد دائن المورد</value></data>
-  <data name="Removed inventory cost" xml:space="preserve"><value>تكلفة المخزون المُخرج</value></data>
   <data name="Purchase and supplier are required for a purchase return." xml:space="preserve"><value>المشتريات والمورد مطلوبان لمرتجع المشتريات.</value></data>
   <data name="The same purchase item cannot be returned more than once in one document." xml:space="preserve"><value>لا يمكن إرجاع بند المشتريات نفسه أكثر من مرة في المستند الواحد.</value></data>
   <data name="A valid purchase item, product, warehouse and quantity are required." xml:space="preserve"><value>بند مشتريات ومنتج ومستودع وكمية صالحة مطلوبة.</value></data>
@@ -1068,4 +1065,32 @@
   <data name="Goods receipts" xml:space="preserve"><value>استلامات البضاعة</value></data>
   <data name="Goods receipt" xml:space="preserve"><value>استلام بضاعة</value></data>
   <data name="No goods receipts found." xml:space="preserve"><value>لا توجد استلامات بضاعة.</value></data>
+  <data name="Purchase price variance account" xml:space="preserve"><value>حساب فرق سعر الشراء</value></data>
+  <data name="Used when returned inventory cost differs from its original receipt value." xml:space="preserve"><value>يُستخدم عندما تختلف تكلفة المخزون المرتجع عن قيمته في الاستلام الأصلي.</value></data>
+  <data name="Goods receipt returns" xml:space="preserve"><value>مرتجعات استلام البضاعة</value></data>
+  <data name="No goods receipt returns found." xml:space="preserve"><value>لا توجد مرتجعات لاستلام البضاعة.</value></data>
+  <data name="Return received goods" xml:space="preserve"><value>إرجاع البضاعة المستلمة</value></data>
+  <data name="Return number" xml:space="preserve"><value>رقم المرتجع</value></data>
+  <data name="Return date" xml:space="preserve"><value>تاريخ المرتجع</value></data>
+  <data name="Return quantity" xml:space="preserve"><value>كمية المرتجع</value></data>
+  <data name="Original receipt value" xml:space="preserve"><value>قيمة الاستلام الأصلية</value></data>
+  <data name="Removed inventory cost" xml:space="preserve"><value>تكلفة المخزون المُخرج</value></data>
+  <data name="Tracking allocations" xml:space="preserve"><value>تخصيصات التتبع</value></data>
+  <data name="Received tracking" xml:space="preserve"><value>بيانات التتبع المستلمة</value></data>
+  <data name="LOT:QUANTITY or one serial per line" xml:space="preserve"><value>الدفعة:الكمية أو رقم تسلسلي واحد في كل سطر</value></data>
+  <data name="Post goods receipt return" xml:space="preserve"><value>ترحيل مرتجع استلام البضاعة</value></data>
+  <data name="Goods receipt return posted." xml:space="preserve"><value>تم ترحيل مرتجع استلام البضاعة.</value></data>
+  <data name="Select at least one positive return quantity." xml:space="preserve"><value>اختر كمية مرتجع موجبة واحدة على الأقل.</value></data>
+  <data name="Each goods receipt line can be returned only once per document." xml:space="preserve"><value>يمكن إرجاع كل سطر استلام مرة واحدة فقط في المستند.</value></data>
+  <data name="Goods receipt was not found." xml:space="preserve"><value>لم يتم العثور على استلام البضاعة.</value></data>
+  <data name="Only posted goods receipts can be returned." xml:space="preserve"><value>يمكن إرجاع استلامات البضاعة المرحلة فقط.</value></data>
+  <data name="Return date cannot be earlier than the goods receipt date." xml:space="preserve"><value>لا يمكن أن يسبق تاريخ المرتجع تاريخ استلام البضاعة.</value></data>
+  <data name="Configure the receipt warehouse inventory account before posting a return." xml:space="preserve"><value>عيّن حساب مخزون مستودع الاستلام قبل ترحيل المرتجع.</value></data>
+  <data name="Configure accounting posting accounts before posting a goods receipt return." xml:space="preserve"><value>هيّئ حسابات الترحيل المحاسبي قبل ترحيل مرتجع استلام البضاعة.</value></data>
+  <data name="Configure a goods received not invoiced account before posting a goods receipt return." xml:space="preserve"><value>هيّئ حساب البضاعة المستلمة غير المفوترة قبل ترحيل المرتجع.</value></data>
+  <data name="One or more return lines do not belong to the goods receipt." xml:space="preserve"><value>سطر مرتجع واحد أو أكثر لا يتبع استلام البضاعة.</value></data>
+  <data name="Return quantity cannot exceed the remaining received quantity." xml:space="preserve"><value>لا يمكن أن تتجاوز كمية المرتجع الكمية المستلمة المتبقية.</value></data>
+  <data name="Returned receipt stock was not found." xml:space="preserve"><value>لم يتم العثور على مخزون الاستلام المرتجع.</value></data>
+  <data name="Return quantity cannot exceed currently available warehouse stock." xml:space="preserve"><value>لا يمكن أن تتجاوز كمية المرتجع مخزون المستودع المتاح حالياً.</value></data>
+  <data name="Configure a purchase price variance account before posting a return with a cost difference." xml:space="preserve"><value>هيّئ حساب فرق سعر الشراء قبل ترحيل مرتجع يحتوي فرق تكلفة.</value></data>
 </root>

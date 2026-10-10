@@ -1,6 +1,6 @@
 namespace MiniStore.Domain.Entities;
 
-public enum StockMovementType { Putaway = 1, Relocation = 2, TransferOutbound = 3, TransferTransit = 4, TransferInbound = 5, AdjustmentIn = 6, AdjustmentOut = 7, ReceiptIn = 8 }
+public enum StockMovementType { Putaway = 1, Relocation = 2, TransferOutbound = 3, TransferTransit = 4, TransferInbound = 5, AdjustmentIn = 6, AdjustmentOut = 7, ReceiptIn = 8, ReceiptReturnOut = 9 }
 public enum StockMovementStatus { Planned = 0, Posted = 1, Reversed = 2 }
 
 public sealed class StockMovement
@@ -140,6 +140,21 @@ public sealed class StockMovement
             Status = StockMovementStatus.Posted, IdempotencyKey = $"GRN:{goodsReceiptId}:{sourceLineId}", CreatedByUserId = userId.Trim(),
             PostedByUserId = userId.Trim(), Reference = Normalize(reference), SourceDocumentType = "GoodsReceipt",
             SourceDocumentId = goodsReceiptId, SourceLineId = sourceLineId, StageSequence = 1, CreatedAt = DateTime.UtcNow, PostedAt = DateTime.UtcNow
+        };
+    }
+
+    public static StockMovement PostGoodsReceiptReturn(int returnId, int sourceLineId, int productId, int warehouseId,
+        decimal quantity, string userId, string reference)
+    {
+        if (returnId <= 0 || sourceLineId <= 0) throw new ArgumentException("Goods receipt return and line are required.");
+        if (productId <= 0 || warehouseId <= 0 || quantity <= 0) throw new ArgumentException("Return product, warehouse and quantity are required.");
+        if (string.IsNullOrWhiteSpace(userId) || string.IsNullOrWhiteSpace(reference)) throw new ArgumentException("Return user and reference are required.");
+        return new StockMovement
+        {
+            ProductId = productId, WarehouseId = warehouseId, Quantity = quantity, Type = StockMovementType.ReceiptReturnOut,
+            Status = StockMovementStatus.Posted, IdempotencyKey = $"GRR:{returnId}:{sourceLineId}", CreatedByUserId = userId.Trim(),
+            PostedByUserId = userId.Trim(), Reference = Normalize(reference), SourceDocumentType = "GoodsReceiptReturn",
+            SourceDocumentId = returnId, SourceLineId = sourceLineId, StageSequence = 1, CreatedAt = DateTime.UtcNow, PostedAt = DateTime.UtcNow
         };
     }
 

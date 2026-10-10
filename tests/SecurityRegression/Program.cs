@@ -1283,6 +1283,26 @@ Check(receiptJournal.Status == JournalEntryStatus.Posted && receiptJournal.Lines
 var receiptServiceParameters = typeof(GoodsReceiptService).GetConstructors().Single().GetParameters().Select(parameter => parameter.ParameterType).ToHashSet();
 Check(receiptServiceParameters.Contains(typeof(IAccountingSettingsRepository)) && receiptServiceParameters.Contains(typeof(JournalPostingService)),
     "Goods receipt posting must use configured accounts through the central journal gateway");
+var receiptReturn = new GoodsReceiptReturn("GRR-000001", 1, 1, 5, 1, DateOnly.FromDateTime(DateTime.Today), "Damaged goods", "receiver");
+receiptReturn.AddLine(new GoodsReceiptReturnLine(1, 10, 1m, 1m, 9m, 9m, 9m, "P-10", "Coffee beans", "kg", null));
+receiptReturn.Post("receiver");
+Check(receiptReturn.Status == GoodsReceiptReturnStatus.Posted && receiptReturn.Lines.Single().StockQuantity == 1m &&
+      db.Model.FindEntityType(typeof(GoodsReceiptReturn))!.FindProperty("TenantId") is { IsNullable: false },
+    "Receipt-based supplier returns must preserve immutable tenant-owned quantity and valuation evidence");
+var returnMovement = StockMovement.PostGoodsReceiptReturn(1, 1, 10, 1, 1m, "receiver", "GRR-000001");
+Check(returnMovement.Type == StockMovementType.ReceiptReturnOut && returnMovement.SourceDocumentType == "GoodsReceiptReturn" &&
+      returnMovement.Status == StockMovementStatus.Posted,
+    "A posted goods receipt return must create an idempotent outbound physical movement");
+Check(DocumentSequence.CreateDefault(DocumentNumberType.GoodsReceiptReturn).Preview(DateTime.Today).StartsWith("GRR-"),
+    "Goods receipt returns must use an independent centralized document sequence");
+var receiptReturnController = typeof(GoodsReceiptReturnsController);
+Check(receiptReturnController.GetMethod(nameof(GoodsReceiptReturnsController.Index))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
+      $"{PermissionAuthorizeAttribute.PolicyPrefix}GoodsReceiptReturns.View" &&
+      receiptReturnController.GetMethod(nameof(GoodsReceiptReturnsController.Create), [typeof(CreateGoodsReceiptReturnDto)])!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
+      $"{PermissionAuthorizeAttribute.PolicyPrefix}GoodsReceiptReturns.Create",
+    "Goods receipt return visibility and posting must use separate server-side permissions");
 var sourcingController = typeof(PurchaseSourcingController);
 Check(sourcingController.GetMethod(nameof(PurchaseSourcingController.Index))!
           .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==

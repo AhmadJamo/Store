@@ -14,7 +14,9 @@ The inventory/WMS track is paused by product-owner direction. The active planned
 - [x] PUR-030 add sourcing events and supplier invitations from approved Purchase Requests without stock changes.
 - [x] PUR-040 add supplier quotations, comparison and a reasoned award decision.
 - [x] PUR-050 add the Purchase Order lifecycle without stock mutation. Receipt/bill-based closure is deferred to later slices.
-- [-] PUR-060 complete Goods Receipt SQL concurrency coverage; history and physical movement facts are implemented. PUR-065A Inventory/GRNI posting is implemented, while reversal and inventory-to-GL reconciliation remain open.
+- [x] PUR-060 complete partial Goods Receipts, history, physical movement facts and SQL concurrency coverage.
+- [-] PUR-065A Inventory/GRNI posting and SQL atomicity coverage are implemented; controlled reversal and inventory-to-GL reconciliation reporting remain open.
+- [x] PUR-070 add receipt-based supplier returns with quantity caps, inventory/tracking removal and GRNI/PPV reversal while preserving legacy returns.
 - [ ] PUR-080/PUR-090 add Vendor Bills and three-way matching.
 - [ ] Continue PUR-070 and PUR-100 through PUR-150 in the approved plan order.
 

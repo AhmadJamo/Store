@@ -9,20 +9,22 @@ public class AccountingSettings
     public int? SalesRevenueAccountId { get; private set; }
     public int? CostOfSalesAccountId { get; private set; }
     public int? GoodsReceivedNotInvoicedAccountId { get; private set; }
+    public int? PurchasePriceVarianceAccountId { get; private set; }
     private AccountingSettings() { }
-    public AccountingSettings(int? purchaseDiscountAccountId, int? salesDiscountAccountId, int? salesRevenueAccountId, int? costOfSalesAccountId, int? goodsReceivedNotInvoicedAccountId = null)
-    { PurchaseDiscountAccountId = purchaseDiscountAccountId; SalesDiscountAccountId = salesDiscountAccountId; SalesRevenueAccountId = salesRevenueAccountId; CostOfSalesAccountId = costOfSalesAccountId; GoodsReceivedNotInvoicedAccountId = goodsReceivedNotInvoicedAccountId; }
+    public AccountingSettings(int? purchaseDiscountAccountId, int? salesDiscountAccountId, int? salesRevenueAccountId, int? costOfSalesAccountId, int? goodsReceivedNotInvoicedAccountId = null, int? purchasePriceVarianceAccountId = null)
+    { PurchaseDiscountAccountId = purchaseDiscountAccountId; SalesDiscountAccountId = salesDiscountAccountId; SalesRevenueAccountId = salesRevenueAccountId; CostOfSalesAccountId = costOfSalesAccountId; GoodsReceivedNotInvoicedAccountId = goodsReceivedNotInvoicedAccountId; PurchasePriceVarianceAccountId = purchasePriceVarianceAccountId; }
 
     public void ConfigurePostingAccounts(
         int? purchaseDiscountAccountId,
         int? salesDiscountAccountId,
         int? salesRevenueAccountId,
-        int? costOfSalesAccountId, int? goodsReceivedNotInvoicedAccountId)
+        int? costOfSalesAccountId, int? goodsReceivedNotInvoicedAccountId, int? purchasePriceVarianceAccountId)
     {
         PurchaseDiscountAccountId = purchaseDiscountAccountId;
         SalesDiscountAccountId = salesDiscountAccountId;
         SalesRevenueAccountId = salesRevenueAccountId;
         CostOfSalesAccountId = costOfSalesAccountId;
         GoodsReceivedNotInvoicedAccountId = goodsReceivedNotInvoicedAccountId;
+        PurchasePriceVarianceAccountId = purchasePriceVarianceAccountId;
     }
 }

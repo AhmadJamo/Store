@@ -15,7 +15,8 @@ public enum DocumentNumberType
     PurchaseSourcingEvent = 9,
     SupplierQuotation = 10,
     PurchaseOrder = 11,
-    GoodsReceipt = 12
+    GoodsReceipt = 12,
+    GoodsReceiptReturn = 13
 }
 
 public enum DocumentNumberResetPeriod
@@ -135,6 +136,7 @@ public class DocumentSequence
         DocumentNumberType.SupplierQuotation => new(type, "QTN-"),
         DocumentNumberType.PurchaseOrder => new(type, "PO-"),
         DocumentNumberType.GoodsReceipt => new(type, "GRN-"),
+        DocumentNumberType.GoodsReceiptReturn => new(type, "GRR-"),
         _ => throw new ArgumentException("Unsupported document type.", nameof(type))
     };
 

@@ -7,4 +7,5 @@ public class AccountingSettingsDto
     public int? SalesRevenueAccountId { get; set; }
     public int? CostOfSalesAccountId { get; set; }
     public int? GoodsReceivedNotInvoicedAccountId { get; set; }
+    public int? PurchasePriceVarianceAccountId { get; set; }
 }

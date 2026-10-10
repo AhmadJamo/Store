@@ -17,7 +17,8 @@ public class AccountingSettingsService(
             SalesDiscountAccountId = settings.SalesDiscountAccountId,
             SalesRevenueAccountId = settings.SalesRevenueAccountId,
             CostOfSalesAccountId = settings.CostOfSalesAccountId,
-            GoodsReceivedNotInvoicedAccountId = settings.GoodsReceivedNotInvoicedAccountId
+            GoodsReceivedNotInvoicedAccountId = settings.GoodsReceivedNotInvoicedAccountId,
+            PurchasePriceVarianceAccountId = settings.PurchasePriceVarianceAccountId
         };
     }
 
@@ -32,7 +33,7 @@ public class AccountingSettingsService(
                 dto.PurchaseDiscountAccountId,
                 dto.SalesDiscountAccountId,
                 dto.SalesRevenueAccountId,
-                dto.CostOfSalesAccountId, dto.GoodsReceivedNotInvoicedAccountId));
+                dto.CostOfSalesAccountId, dto.GoodsReceivedNotInvoicedAccountId, dto.PurchasePriceVarianceAccountId));
         }
         else
         {
@@ -40,7 +41,7 @@ public class AccountingSettingsService(
                 dto.PurchaseDiscountAccountId,
                 dto.SalesDiscountAccountId,
                 dto.SalesRevenueAccountId,
-                dto.CostOfSalesAccountId, dto.GoodsReceivedNotInvoicedAccountId);
+                dto.CostOfSalesAccountId, dto.GoodsReceivedNotInvoicedAccountId, dto.PurchasePriceVarianceAccountId);
         }
 
         await settingsRepository.SaveChangesAsync();
@@ -51,7 +52,8 @@ public class AccountingSettingsService(
         var ids = new[]
         {
             dto.PurchaseDiscountAccountId, dto.SalesDiscountAccountId,
-            dto.SalesRevenueAccountId, dto.CostOfSalesAccountId, dto.GoodsReceivedNotInvoicedAccountId
+            dto.SalesRevenueAccountId, dto.CostOfSalesAccountId, dto.GoodsReceivedNotInvoicedAccountId,
+            dto.PurchasePriceVarianceAccountId
         }.Where(x => x.HasValue).Select(x => x!.Value).Distinct().ToList();
 
         foreach (var id in ids)

@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using MiniStore.Application.DTOs.Inventory.Reconciliation;
 using MiniStore.Application.DTOs.Inventory.Adjustments;
 using MiniStore.Application.DTOs.Inventory.Tracking;
+using MiniStore.Application.DTOs.Purchases;
 using MiniStore.Application.DTOs.Products;
 using MiniStore.Application.Services;
 using MiniStore.Domain.Entities;
@@ -68,6 +69,10 @@ try
         tenantOneId,
         tenantOneFixture.ProductId,
         connectionString);
+    await VerifyConcurrentGoodsReceiptAndGrniAsync(
+        tenantOneId,
+        tenantOneFixture.MeasurementUnitId,
+        connectionString);
     await VerifyInventoryBalanceProjectionAsync(
         tenantOneId,
         tenantOneFixture.ProductId,
@@ -96,7 +101,7 @@ try
     await VerifyInventoryBalanceProjectionAsync(tenantOneId, tenantOneFixture.ProductId, expectedOnHand: 2m, connectionString);
     await VerifyOpeningTrackingAllocationAsync(tenantOneId, tenantOneFixture.ProductId, tenantOneFixture.WarehouseId, connectionString);
 
-    Console.WriteLine("Passed WMS SQL integration checks: tenant isolation, reconciliation, balances, reservation concurrency, adjustment posting, tracked operations, quarantine and recall.");
+    Console.WriteLine("Passed SQL integration checks: tenant isolation, reconciliation, balances, reservation and goods-receipt concurrency, GRNI posting and reversal, receipt-based supplier returns, adjustment posting, tracked operations, quarantine and recall.");
 }
 finally
 {
@@ -189,6 +194,207 @@ static async Task<(int ProductId, int StockId, int MeasurementUnitId, int Wareho
     await context.SaveChangesAsync();
 
     return (product.Id, stock.Id, unit.Id, warehouse.Id);
+}
+
+static async Task VerifyConcurrentGoodsReceiptAndGrniAsync(
+    int tenantId, int measurementUnitId, string connectionString)
+{
+    int purchaseOrderId;
+    int purchaseOrderLineId;
+    int productId;
+    int warehouseId;
+    int inventoryAccountId;
+    int grniAccountId;
+    var receiptDate = DateOnly.FromDateTime(DateTime.Today);
+
+    await using (var context = new AppDbContext(CreateOptions(connectionString), new FixedTenantContext(tenantId)))
+    {
+        var inventoryAccount = new Account("1300-GRN", "Goods receipt inventory", AccountType.Asset);
+        var grniAccount = new Account("2100-GRNI", "Goods received not invoiced", AccountType.Liability);
+        var varianceAccount = new Account("5100-PPV", "Purchase price variance", AccountType.Expense);
+        var branch = new Branch("GRN", "Goods receipt branch");
+        var warehouse = new Warehouse("Goods receipt warehouse");
+        var product = new Product("Concurrent receipt product", "GRN-CONCURRENT", 10m, 15m, 12m,
+            measurementUnitId: measurementUnitId);
+        var supplier = new Supplier("Concurrent receipt supplier");
+        context.AddRange(inventoryAccount, grniAccount, varianceAccount, branch, warehouse, product, supplier);
+        await context.SaveChangesAsync();
+
+        warehouse.AssignAccounting(branch.Id, inventoryAccount.Id);
+        context.AccountingSettings.Add(new AccountingSettings(null, null, null, null, grniAccount.Id, varianceAccount.Id));
+        context.DocumentSequences.AddRange(
+            DocumentSequence.CreateDefault(DocumentNumberType.GoodsReceipt),
+            DocumentSequence.CreateDefault(DocumentNumberType.JournalEntry));
+
+        var request = new PurchaseRequest("PRQ-SQL-GRN", warehouse.Id, receiptDate,
+            PurchaseRequestPriority.Normal, "SQL receipt concurrency", null, "integration-user");
+        request.AddLine(new PurchaseRequestLine(product.Id, measurementUnitId, 1m, 1m, supplier.Id, null));
+        request.Submit("integration-user");
+        request.Approve("integration-approver");
+        request.StartSourcing("integration-user");
+        context.PurchaseRequests.Add(request);
+        await context.SaveChangesAsync();
+
+        var sourcing = new PurchaseSourcingEvent("RFX-SQL-GRN", request.Id, warehouse.Id,
+            receiptDate, null, "integration-user");
+        sourcing.AddLine(new PurchaseSourcingLine(request.Lines.Single().Id, product.Id, measurementUnitId,
+            1m, 1m, 1m, "GRN-CONCURRENT", product.Name, "Piece", null));
+        sourcing.InviteSupplier(supplier.Id, null);
+        sourcing.Send("integration-user");
+        context.PurchaseSourcingEvents.Add(sourcing);
+        await context.SaveChangesAsync();
+
+        var quotation = new SupplierQuotation("QTN-SQL-GRN", sourcing.Id, supplier.Id, null,
+            receiptDate, receiptDate.AddDays(7), 1, "JOD", null, null, "integration-user");
+        quotation.AddLine(new SupplierQuotationLine(sourcing.Lines.Single().Id, 1m, 10m, 10m, 0m,
+            "GRN-CONCURRENT", product.Name, "Piece"));
+        quotation.Submit();
+        context.SupplierQuotations.Add(quotation);
+        await context.SaveChangesAsync();
+
+        var order = new PurchaseOrder("PO-SQL-GRN", sourcing.Id, quotation.Id, supplier.Id, warehouse.Id,
+            receiptDate, receiptDate.AddDays(1), "JOD", null, "integration-user");
+        order.AddLine(new PurchaseOrderLine(quotation.Lines.Single().Id, product.Id, measurementUnitId,
+            1m, 1m, 1m, 10m, 10m, 0m, "GRN-CONCURRENT", product.Name, "Piece"));
+        order.Approve("integration-approver");
+        order.Confirm("integration-user");
+        context.PurchaseOrders.Add(order);
+        await context.SaveChangesAsync();
+
+        purchaseOrderId = order.Id;
+        purchaseOrderLineId = order.Lines.Single().Id;
+        productId = product.Id;
+        warehouseId = warehouse.Id;
+        inventoryAccountId = inventoryAccount.Id;
+        grniAccountId = grniAccount.Id;
+    }
+
+    async Task<bool> TryReceiveAsync()
+    {
+        await using var context = new AppDbContext(CreateOptions(connectionString), new FixedTenantContext(tenantId));
+        var unitOfWork = new UnitOfWork(context);
+        var currentUser = new FixedCurrentUser("integration-receiver");
+        var numbers = new DocumentNumberService(new DocumentSequenceRepository(context));
+        var tracking = new InventoryTrackingService(
+            new InventoryTrackingRepository(context), new InventoryRecallRepository(context),
+            new ProductRepository(context), new WarehouseRepository(context), new StorageLocationRepository(context),
+            new InventoryBalanceRepository(context), new ProductLocationStockRepository(context),
+            new PurchaseRepository(context), new SupplierRepository(context), new SaleRepository(context),
+            new CustomerRepository(context), unitOfWork);
+        var fiscalPeriods = new FiscalPeriodService(new FiscalPeriodRepository(context), unitOfWork, currentUser);
+        var journals = new JournalPostingService(new JournalEntryRepository(context), numbers, fiscalPeriods);
+        var service = new GoodsReceiptService(
+            new GoodsReceiptRepository(context), new PurchaseOrderRepository(context), new ProductRepository(context),
+            new ProductStockRepository(context), new WarehouseRepository(context),
+            new ProductLocationStockRepository(context), new StockTransactionRepository(context),
+            new StockMovementRepository(context), new AccountingSettingsRepository(context), tracking, numbers,
+            journals, unitOfWork, currentUser);
+        try
+        {
+            await service.CreateAndPostAsync(new CreateGoodsReceiptDto
+            {
+                PurchaseOrderId = purchaseOrderId,
+                ReceiptDate = receiptDate,
+                Lines = [new CreateGoodsReceiptLineDto
+                {
+                    PurchaseOrderLineId = purchaseOrderLineId,
+                    ReceivedQuantity = 1m
+                }]
+            });
+            return true;
+        }
+        catch (Exception exception) when (exception is InvalidOperationException or DbUpdateException or SqlException)
+        {
+            return false;
+        }
+    }
+
+    var outcomes = await Task.WhenAll(TryReceiveAsync(), TryReceiveAsync());
+    if (outcomes.Count(success => success) != 1)
+        throw new InvalidOperationException("Exactly one concurrent full-quantity goods receipt must succeed.");
+
+    await using var verification = new AppDbContext(CreateOptions(connectionString), new FixedTenantContext(tenantId));
+    var receipt = await verification.GoodsReceipts.Include(x => x.Lines)
+        .SingleAsync(x => x.PurchaseOrderId == purchaseOrderId);
+    var stock = await verification.ProductStocks.SingleAsync(x => x.ProductId == productId && x.WarehouseId == warehouseId);
+    var stockTransactions = await verification.StockTransactions
+        .Where(x => x.ProductId == productId && x.Reference == receipt.ReceiptNumber).ToListAsync();
+    var physicalMovements = await verification.StockMovements
+        .Where(x => x.SourceDocumentType == "GoodsReceipt" && x.SourceDocumentId == receipt.Id).ToListAsync();
+    var journal = await verification.JournalEntries.Include(x => x.Lines)
+        .SingleAsync(x => x.SourceType == "GoodsReceipt" && x.SourceReference == receipt.ReceiptNumber);
+    if (receipt.Status != GoodsReceiptStatus.Posted || receipt.Lines.Single().UnitCost != 9m ||
+        stock.Quantity != 1m || stock.AverageUnitCost != 9m || stockTransactions.Count != 1 ||
+        physicalMovements.Count != 1 || journal.Status != JournalEntryStatus.Posted ||
+        journal.Lines.Sum(x => x.Debit) != 9m || journal.Lines.Sum(x => x.Credit) != 9m ||
+        !journal.Lines.Any(x => x.AccountId == inventoryAccountId && x.Debit == 9m) ||
+        !journal.Lines.Any(x => x.AccountId == grniAccountId && x.Credit == 9m))
+        throw new InvalidOperationException("The winning goods receipt must atomically post one net-cost inventory receipt and one balanced GRNI journal.");
+
+    async Task<bool> TryReturnAsync()
+    {
+        await using var returnContext = new AppDbContext(CreateOptions(connectionString), new FixedTenantContext(tenantId));
+        var returnUnitOfWork = new UnitOfWork(returnContext);
+        var returnUser = new FixedCurrentUser("integration-returner");
+        var returnNumbers = new DocumentNumberService(new DocumentSequenceRepository(returnContext));
+        var returnTracking = new InventoryTrackingService(
+            new InventoryTrackingRepository(returnContext), new InventoryRecallRepository(returnContext),
+            new ProductRepository(returnContext), new WarehouseRepository(returnContext), new StorageLocationRepository(returnContext),
+            new InventoryBalanceRepository(returnContext), new ProductLocationStockRepository(returnContext),
+            new PurchaseRepository(returnContext), new SupplierRepository(returnContext), new SaleRepository(returnContext),
+            new CustomerRepository(returnContext), returnUnitOfWork);
+        var returnFiscalPeriods = new FiscalPeriodService(new FiscalPeriodRepository(returnContext), returnUnitOfWork, returnUser);
+        var returnJournals = new JournalPostingService(new JournalEntryRepository(returnContext), returnNumbers, returnFiscalPeriods);
+        var untrackedRemoval = new UntrackedInventoryRemovalService(
+            new WarehouseRepository(returnContext), new StorageLocationRepository(returnContext),
+            new InventoryBalanceRepository(returnContext), new ProductStockRepository(returnContext),
+            new ProductLocationStockRepository(returnContext));
+        var returnService = new GoodsReceiptReturnService(
+            new GoodsReceiptReturnRepository(returnContext), new GoodsReceiptRepository(returnContext),
+            new PurchaseOrderRepository(returnContext), new SupplierRepository(returnContext),
+            new WarehouseRepository(returnContext), new ProductRepository(returnContext),
+            new ProductStockRepository(returnContext), new StockTransactionRepository(returnContext),
+            new StockMovementRepository(returnContext), new AccountingSettingsRepository(returnContext),
+            returnTracking, untrackedRemoval, returnNumbers, returnJournals, returnUnitOfWork, returnUser);
+        try
+        {
+            await returnService.CreateAndPostAsync(new CreateGoodsReceiptReturnDto
+            {
+                GoodsReceiptId = receipt.Id,
+                ReturnDate = receiptDate,
+                Reason = "SQL integration return",
+                Lines = [new CreateGoodsReceiptReturnLineDto
+                {
+                    GoodsReceiptLineId = receipt.Lines.Single().Id,
+                    ReturnQuantity = 1m
+                }]
+            });
+            return true;
+        }
+        catch (Exception exception) when (exception is InvalidOperationException or DbUpdateException or SqlException)
+        {
+            return false;
+        }
+    }
+
+    var returnOutcomes = await Task.WhenAll(TryReturnAsync(), TryReturnAsync());
+    if (returnOutcomes.Count(success => success) != 1)
+        throw new InvalidOperationException("Exactly one concurrent full-quantity goods receipt return must succeed.");
+
+    await using var returnVerification = new AppDbContext(CreateOptions(connectionString), new FixedTenantContext(tenantId));
+    var postedReturn = await returnVerification.GoodsReceiptReturns.Include(x => x.Lines)
+        .SingleAsync(x => x.GoodsReceiptId == receipt.Id);
+    var stockAfterReturn = await returnVerification.ProductStocks.SingleAsync(x => x.ProductId == productId && x.WarehouseId == warehouseId);
+    var returnMovement = await returnVerification.StockMovements.SingleAsync(x =>
+        x.SourceDocumentType == "GoodsReceiptReturn" && x.SourceDocumentId == postedReturn.Id);
+    var returnJournal = await returnVerification.JournalEntries.Include(x => x.Lines).SingleAsync(x =>
+        x.SourceType == "GoodsReceiptReturn" && x.SourceReference == postedReturn.ReturnNumber);
+    if (postedReturn.Status != GoodsReceiptReturnStatus.Posted || stockAfterReturn.Quantity != 0m ||
+        returnMovement.Type != StockMovementType.ReceiptReturnOut ||
+        returnJournal.Lines.Sum(x => x.Debit) != 9m || returnJournal.Lines.Sum(x => x.Credit) != 9m ||
+        !returnJournal.Lines.Any(x => x.AccountId == grniAccountId && x.Debit == 9m) ||
+        !returnJournal.Lines.Any(x => x.AccountId == inventoryAccountId && x.Credit == 9m))
+        throw new InvalidOperationException("A receipt-based supplier return must atomically reverse stock and the matching GRNI receipt value.");
 }
 
 static async Task VerifyConcurrentReservationAsync(
@@ -486,4 +692,9 @@ static async Task VerifyConcurrentLastUnitIssueAsync(
 file sealed class FixedTenantContext(int tenantId) : ITenantContext
 {
     public int? TenantId { get; } = tenantId;
+}
+
+file sealed class FixedCurrentUser(string userId) : ICurrentUserService
+{
+    public string UserId { get; } = userId;
 }
