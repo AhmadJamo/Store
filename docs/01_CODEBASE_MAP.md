@@ -104,7 +104,7 @@
 | Files | Purpose | Consumers |
 |---|---|---|
 | `Persistence/AppDbContext.cs`, `Persistence/TenantIsolationModel.cs` | EF + Identity DbContext/DbSets and immutable business/control-plane entity classification; applies query/write guards and composite tenant relationship convention | all repositories/authorization. |
-| `Persistence/UnitOfWork.cs` | transaction wrapper | purchase/sale/stock/transfer services. |
+| `Persistence/UnitOfWork.cs` | Serializable transaction wrapper with an explicit in-transaction flush for workflows that need generated document identities before recording dependent facts | purchase/sale/stock/transfer services. |
 | `Persistence/AuditSaveChangesInterceptor.cs` | creates AuditLog rows for tracked changes | registered in Program. |
 | `Persistence/{Identity,Permission}Seeder.cs` | default roles/admin and permissions | Program startup. |
 | `Persistence/Configurations/Tenancy/TenantConfiguration.cs` | tenant identity, membership keys, Identity relationships and slug uniqueness | AppDbContext/migration. |

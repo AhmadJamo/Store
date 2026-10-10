@@ -225,6 +225,8 @@
   <data name="Average unit cost" xml:space="preserve"><value>متوسط تكلفة الوحدة</value></data>
   <data name="Inventory value" xml:space="preserve"><value>قيمة المخزون</value></data>
   <data name="Unit cost" xml:space="preserve"><value>تكلفة الوحدة</value></data>
+  <data name="Goods received not invoiced account" xml:space="preserve"><value>حساب البضاعة المستلمة غير المفوترة</value></data>
+  <data name="Credited when a new purchase-order goods receipt increases inventory." xml:space="preserve"><value>يُدائن عند زيادة المخزون من استلام بضاعة لأمر شراء جديد.</value></data>
   <data name="Movement value" xml:space="preserve"><value>قيمة الحركة</value></data>
   <data name="Cost variance" xml:space="preserve"><value>فرق التكلفة</value></data>
   <data name="Cost of goods sold" xml:space="preserve"><value>تكلفة البضاعة المباعة</value></data>

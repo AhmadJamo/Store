@@ -1,5 +1,11 @@
 # AI Work Log
 
+## 2026-10-10 — PUR-065A GRNI receipt posting
+
+- Added the tenant-safe GRNI account mapping to Accounting Settings and applied `AddGoodsReceiptGrniAccount` to `AHMAD/MiniStoreDb`.
+- Positive-value Goods Receipts now create one idempotent, fiscal-period-validated journal in the receipt transaction: debit warehouse Inventory and credit GRNI. Receipt valuation uses the frozen PO unit price after line discount; zero-value receipts do not create invalid zero-amount journal lines.
+- Added regression coverage for the tenant-safe GRNI mapping, balanced receipt journal invariant and central journal-gateway dependency. Vendor-bill clearing, receipt reversal and inventory-to-GL reconciliation remain later work.
+
 ## 2026-10-10 — PUR-060A goods receipt posting foundation
 
 - Added tenant-safe Goods Receipt/line records, GRN numbering, a partial-receipt screen and permissions. Receipt lines freeze PO evidence and accept lot/serial/manufacture/expiry values.

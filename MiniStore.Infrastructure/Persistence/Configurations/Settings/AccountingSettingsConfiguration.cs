@@ -11,5 +11,6 @@ public class AccountingSettingsConfiguration : IEntityTypeConfiguration<Accounti
         builder.HasOne<Account>().WithMany().HasForeignKey(x=>x.SalesDiscountAccountId).OnDelete(DeleteBehavior.Restrict);
         builder.HasOne<Account>().WithMany().HasForeignKey(x=>x.SalesRevenueAccountId).OnDelete(DeleteBehavior.Restrict);
         builder.HasOne<Account>().WithMany().HasForeignKey(x=>x.CostOfSalesAccountId).OnDelete(DeleteBehavior.Restrict);
+        builder.HasOne<Account>().WithMany().HasForeignKey(x=>x.GoodsReceivedNotInvoicedAccountId).OnDelete(DeleteBehavior.Restrict);
     }
 }

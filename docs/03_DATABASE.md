@@ -33,7 +33,7 @@ All business tables have a required `TenantId` foreign key to `Tenants`. EF quer
 | InventoryTrackingTransactions | Immutable lot/serial trace rows include nullable picking-strategy provenance; null identifies history created before `AddTrackedRemovalStrategyAudit`. |
 | StockTransferItems | Transfer lines retain optional manual lot/serial allocation text through draft/edit/post; `AddTransferTrackingAllocations` leaves historic rows null. |
 | PutawayRules | Tenant-owned warehouse location suggestions optionally target a product or category and retain priority/active state. |
-| TaxRates / AccountingSettings | Tax rates require input/output tax accounts; singleton accounting settings reference optional discount, revenue and COGS accounts. |
+| TaxRates / AccountingSettings | Tax rates require input/output tax accounts; singleton accounting settings reference optional discount, revenue, COGS and Goods Received Not Invoiced accounts. |
 | PaymentMethods / Sales | Each payment method references a settlement account; new sales capture a required payment method, optional customer and optional immutable invoice-tax snapshot. |
 | StorageLocations | Warehouse FK Restrict; unique `(WarehouseId, Code)`; zone/aisle/rack/level/bin, type, status and optional quantity capacity. |
 | BranchWarehouseAccesses | composite branch/warehouse key; priority and operation flags; branch cascades, warehouse restricts. |
@@ -49,7 +49,7 @@ All business tables have a required `TenantId` foreign key to `Tenants`. EF quer
 | PurchaseSourcingEvents / Lines / Invitations | RFX-numbered events link one approved request to frozen product/unit/quantity snapshots and invited suppliers. They contain no quotation price, receipt, stock or accounting data. |
 | SupplierQuotations / Lines / PurchaseQuotationAwards | One supplier quote per sourcing event and supplier, immutable submitted commercial snapshots, and one reasoned/actor-stamped award decision per sourcing event. |
 | PurchaseOrders / Lines | One tenant-unique internal order per awarded quotation, with frozen supplier, warehouse, dates, currency, payment terms and commercial line snapshots. The order is commercial intent only; it has no stock or journal relationship. |
-| GoodsReceipts / Lines | Tenant-unique GRN documents linked to a confirmed Purchase Order and warehouse. Lines freeze PO product/unit/cost snapshots and optional lot, serial, manufacture and expiry inputs. Posted rows are receipt evidence; they do not create journal entries in PUR-060. |
+| GoodsReceipts / Lines | Tenant-unique GRN documents linked to a confirmed Purchase Order and warehouse. Lines freeze PO product/unit/net-cost snapshots and optional lot, serial, manufacture and expiry inputs. Posting atomically updates inventory and, for a positive receipt value, creates the PUR-065 Inventory/GRNI journal. |
 | Sales / SaleItems / SalesReturns / SalesReturnItems | sale warehouse and optional TaxRate FKs Restrict; items cascade; sale invoice number unique. Sale freezes tax percentage, output account, inclusive policy and amount. Returns reference the original sale/items, warehouse/payment and freeze refund, tax, revenue, discount and historical restock cost; return numbers are tenant-unique. |
 | StockTransfers / items/history | warehouse FKs Restrict; transfer number unique; StockTransfer rowversion; item/history FKs Restrict; item unique `(StockTransferId, ProductId)`. |
 | StockTransferItem locations | Optional source/destination StorageLocation FKs; when selected, Application validates active locations in the matching warehouses. |
@@ -101,3 +101,5 @@ Migration `AddPurchaseQuotationAward` adds tenant-owned reasoned quotation award
 Migration `AddPurchaseOrderFoundation` creates tenant-owned `PurchaseOrders` and `PurchaseOrderLines`, adds the quotation-line tenant composite key required for its tenant-safe line reference, and applies tenant-aware unique order-number and quotation-order constraints. It was applied to `AHMAD/MiniStoreDb` on 2026-10-10. It creates no orders, goods receipts, inventory movements or accounting entries.
 
 Migration `AddGoodsReceiptFoundation` creates tenant-owned `GoodsReceipts` and `GoodsReceiptLines`, plus the PurchaseOrderLine tenant composite key required for a tenant-safe receipt-line reference. It was applied to `AHMAD/MiniStoreDb` on 2026-10-10. The schema introduces no backfill and no GL posting.
+
+Migration `AddGoodsReceiptGrniAccount` adds the optional tenant-safe GRNI account link to `AccountingSettings`. It was applied to `AHMAD/MiniStoreDb` on 2026-10-10; it does not backfill an account choice, so each tenant must configure GRNI before posting a new-flow Goods Receipt.

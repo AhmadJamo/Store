@@ -233,7 +233,7 @@ Each slice must include rollback/retry analysis and SQL-backed tenant/concurrenc
 | PUR-040 | Supplier quotations and comparison | Implemented: invited supplier quote capture, base-currency snapshots, calculated comparison, immutable submission and one reasoned award decision |
 | PUR-050 | Purchase Order lifecycle | Implemented: one order can be created only from an awarded quotation, freezes commercial snapshots, supports Draft -> Approved -> Confirmed or pre-confirmation cancellation, and provides permission-aware list/detail UI. Closing is deliberately deferred until receipt/billing progress exists. No stock or accounting mutation occurs. |
 | PUR-060 | Partial Goods Receipt | In progress: GRN document, history/listing, partial remaining-quantity control, receipt tracking input and atomic ProductStock/AVCO/tracking/transaction/physical-movement posting are implemented. SQL concurrency coverage remains before completion. |
-| PUR-065 | Receipt accounting | GRNI posting and reconciliation |
+| PUR-065 | Receipt accounting | In progress: configured tenant-safe GRNI mapping and atomic, idempotent positive-value receipt posting debit Inventory and credit GRNI through the central journal gateway; reversal and inventory-to-GL reconciliation remain open. |
 | PUR-070 | Receipt-based supplier returns | New-flow returns without breaking legacy returns |
 | PUR-080 | Vendor Bills | Partial billing, duplicate protection and AP posting |
 | PUR-090 | Three-way matching | Tolerances, exceptions and controlled override |

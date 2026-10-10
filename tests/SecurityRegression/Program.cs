@@ -19,6 +19,7 @@ using MiniStore.Infrastructure.Authorization;
 using MiniStore.Infrastructure.Persistence;
 using MiniStore.Domain.Entities;
 using MiniStore.Domain.Enums;
+using MiniStore.Domain.Interfaces;
 using MiniStore.Web.Authorization;
 using MiniStore.Web.Controllers;
 using MiniStore.Web.Localization;
@@ -1266,6 +1267,22 @@ var receiptMovement = StockMovement.PostGoodsReceipt(1, 1, 10, 1, 1m, "receiver"
 Check(receiptMovement.Type == StockMovementType.ReceiptIn && receiptMovement.Status == StockMovementStatus.Posted &&
       receiptMovement.SourceDocumentType == "GoodsReceipt" && receiptMovement.SourceDocumentId == 1,
     "A posted goods receipt must create an idempotent physical receipt movement linked to its source document");
+var grniSettings = new AccountingSettings(null, null, null, null, 44);
+var accountingSettingsType = db.Model.FindEntityType(typeof(AccountingSettings))!;
+Check(grniSettings.GoodsReceivedNotInvoicedAccountId == 44 &&
+      accountingSettingsType.GetForeignKeys().Any(foreignKey =>
+          foreignKey.Properties.Select(property => property.Name)
+              .SequenceEqual(new[] { "GoodsReceivedNotInvoicedAccountId", "TenantId" })),
+    "GRNI configuration must remain tenant-safe and reference a tenant-owned account");
+var receiptJournal = new JournalEntry("JRN-000001", DateTime.Today, "Goods receipt GRNI", "GoodsReceipt", "GRN-000001");
+receiptJournal.AddLine(new JournalEntryLine(43, 11.25m, 0, 1, 1));
+receiptJournal.AddLine(new JournalEntryLine(44, 0, 11.25m));
+receiptJournal.Post();
+Check(receiptJournal.Status == JournalEntryStatus.Posted && receiptJournal.Lines.Sum(line => line.Debit) == receiptJournal.Lines.Sum(line => line.Credit),
+    "Goods receipt accounting must produce a balanced inventory-to-GRNI journal source");
+var receiptServiceParameters = typeof(GoodsReceiptService).GetConstructors().Single().GetParameters().Select(parameter => parameter.ParameterType).ToHashSet();
+Check(receiptServiceParameters.Contains(typeof(IAccountingSettingsRepository)) && receiptServiceParameters.Contains(typeof(JournalPostingService)),
+    "Goods receipt posting must use configured accounts through the central journal gateway");
 var sourcingController = typeof(PurchaseSourcingController);
 Check(sourcingController.GetMethod(nameof(PurchaseSourcingController.Index))!
           .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==

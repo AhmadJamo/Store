@@ -1,4 +1,5 @@
 @model MiniStore.Application.Dtos.Settings.AccountingSettingsDto
+@inject Microsoft.Extensions.Localization.IStringLocalizer<MiniStore.Web.SharedResource> Localizer
 @{ ViewData["Title"] = "Accounting Posting Settings"; var accounts = ViewBag.Accounts as List<MiniStore.Application.Dtos.Accounting.AccountDto> ?? []; }
 <div class="container mt-4">
     <h2>Accounting Posting Settings</h2>
@@ -12,6 +13,7 @@
         <div class="card mb-3"><div class="card-body"><h5>Sales and inventory accounts</h5>
             <div class="mb-3"><label asp-for="SalesRevenueAccountId" class="form-label">Sales revenue account</label><select asp-for="SalesRevenueAccountId" class="form-select"><option value="">Not configured</option>@foreach (var account in accounts) { <option value="@account.Id">@account.Code — @account.Name</option> }</select></div>
             <div class="mb-3"><label asp-for="CostOfSalesAccountId" class="form-label">Cost of sales account</label><select asp-for="CostOfSalesAccountId" class="form-select"><option value="">Not configured</option>@foreach (var account in accounts) { <option value="@account.Id">@account.Code — @account.Name</option> }</select></div>
+            <div class="mb-3"><label asp-for="GoodsReceivedNotInvoicedAccountId" class="form-label">@Localizer["Goods received not invoiced account"]</label><select asp-for="GoodsReceivedNotInvoicedAccountId" class="form-select"><option value="">@Localizer["Not configured"]</option>@foreach (var account in accounts) { <option value="@account.Id">@account.Code — @account.Name</option> }</select><div class="form-text">@Localizer["Credited when a new purchase-order goods receipt increases inventory."]</div></div>
         </div></div>
         <button type="submit" class="btn btn-primary">Save accounting settings</button>
         <a asp-action="BranchSalesAccounts" class="btn btn-outline-primary">Branch sales accounts</a>

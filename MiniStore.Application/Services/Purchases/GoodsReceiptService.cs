@@ -14,8 +14,10 @@ public sealed class GoodsReceiptService(
     IProductLocationStockRepository locationStocks,
     IStockTransactionRepository transactions,
     IStockMovementRepository movements,
+    IAccountingSettingsRepository accountingSettings,
     InventoryTrackingService tracking,
     DocumentNumberService numbers,
+    JournalPostingService journalPosting,
     IUnitOfWork unitOfWork,
     ICurrentUserService currentUser)
 {
@@ -64,6 +66,7 @@ public sealed class GoodsReceiptService(
         {
             var order = await orders.GetByIdAsync(dto.PurchaseOrderId) ?? throw new InvalidOperationException("Purchase order was not found.");
             if (order.Status != PurchaseOrderStatus.Confirmed) throw new InvalidOperationException("Only confirmed purchase orders can be received.");
+            var warehouse = await warehouses.GetByIdAsync(order.WarehouseId) ?? throw new InvalidOperationException("Receipt warehouse was not found.");
             var received = await GetPostedQuantitiesAsync(order.Id);
             receipt = new GoodsReceipt(await numbers.GenerateAsync(DocumentNumberType.GoodsReceipt, dto.ReceiptDate.ToDateTime(TimeOnly.MinValue)), order.Id, order.WarehouseId, dto.ReceiptDate, dto.Notes, currentUser.UserId);
             foreach (var input in submitted)
@@ -72,7 +75,8 @@ public sealed class GoodsReceiptService(
                 if (input.ReceivedQuantity > orderLine.OrderedQuantity - received.GetValueOrDefault(orderLine.Id)) throw new InvalidOperationException("Received quantity cannot exceed the open ordered quantity.");
                 var product = await products.GetByIdAsync(orderLine.ProductId) ?? throw new InvalidOperationException("Purchase order product was not found.");
                 if (!product.IsActive || product.ProductType == ProductType.PreparedToOrder) throw new InvalidOperationException("The selected product cannot be received.");
-                var line = new GoodsReceiptLine(orderLine.Id, orderLine.ProductId, orderLine.MeasurementUnitId, input.ReceivedQuantity, orderLine.UnitFactorToBase, orderLine.UnitPrice,
+                var netUnitCost = decimal.Round(orderLine.UnitPrice * (1m - orderLine.DiscountPercent / 100m), 6, MidpointRounding.AwayFromZero);
+                var line = new GoodsReceiptLine(orderLine.Id, orderLine.ProductId, orderLine.MeasurementUnitId, input.ReceivedQuantity, orderLine.UnitFactorToBase, netUnitCost,
                     orderLine.ProductCodeSnapshot, orderLine.ProductNameSnapshot, orderLine.UnitNameSnapshot, input.LotNumber, input.SerialNumbers, input.ManufactureDate, input.ExpirationDate);
                 receipt.AddLine(line);
                 var stock = await stocks.GetByProductAndWarehouseAsync(product.Id, order.WarehouseId);
@@ -84,6 +88,21 @@ public sealed class GoodsReceiptService(
             }
             await receipts.AddAsync(receipt);
             await unitOfWork.FlushAsync();
+            var lineValues = receipt.Lines
+                .Select(line => Math.Round(line.ReceivedQuantity * line.UnitCost, 2, MidpointRounding.AwayFromZero))
+                .Where(value => value > 0)
+                .ToList();
+            if (lineValues.Count > 0)
+            {
+                if (!warehouse.InventoryAccountId.HasValue) throw new InvalidOperationException($"Assign an inventory account to warehouse '{warehouse.Name}' before posting goods receipts.");
+                var settings = await accountingSettings.GetAsync() ?? throw new InvalidOperationException("Configure accounting posting accounts before posting goods receipts.");
+                if (!settings.GoodsReceivedNotInvoicedAccountId.HasValue) throw new InvalidOperationException("Configure a goods received not invoiced account before posting goods receipts.");
+                var journalLines = lineValues.Select(value => new JournalEntryLine(warehouse.InventoryAccountId.Value, value, 0, warehouse.BranchId, warehouse.Id,
+                    $"Inventory received on {receipt.ReceiptNumber}")).ToList();
+                var grniTotal = lineValues.Sum();
+                journalLines.Add(new JournalEntryLine(settings.GoodsReceivedNotInvoicedAccountId.Value, 0, grniTotal, null, null, $"GRNI for {receipt.ReceiptNumber}"));
+                await journalPosting.PostAsync(new JournalPostingRequest(dto.ReceiptDate.ToDateTime(TimeOnly.MinValue), $"Goods receipt {receipt.ReceiptNumber}", "GoodsReceipt", receipt.ReceiptNumber, journalLines, "This goods receipt has already been posted to accounting."));
+            }
             foreach (var line in receipt.Lines)
                 await movements.AddAsync(StockMovement.PostGoodsReceipt(receipt.Id, line.Id, line.ProductId, receipt.WarehouseId,
                     line.StockQuantity, currentUser.UserId, receipt.ReceiptNumber));
