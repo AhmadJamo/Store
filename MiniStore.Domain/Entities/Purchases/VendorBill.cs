@@ -74,6 +74,7 @@ public sealed class VendorBillLine
     public decimal Quantity { get; private set; }
     public decimal UnitPrice { get; private set; }
     public decimal ReceiptUnitCost { get; private set; }
+    public decimal ReceiptClearingQuantity { get; private set; }
     public decimal TaxPercent { get; private set; }
     public bool IsTaxInclusive { get; private set; }
     public decimal NetAmount { get; private set; }
@@ -85,23 +86,23 @@ public sealed class VendorBillLine
     public string UnitNameSnapshot { get; private set; }
 
     public VendorBillLine(int goodsReceiptLineId, int purchaseOrderLineId, int productId, decimal quantity, decimal unitPrice,
-        decimal receiptUnitCost, int? taxRateId, decimal taxPercent, int? taxInputAccountId, bool isTaxInclusive,
+        decimal receiptUnitCost, decimal receiptClearingQuantity, int? taxRateId, decimal taxPercent, int? taxInputAccountId, bool isTaxInclusive,
         string productCode, string productName, string unitName)
     {
         if (goodsReceiptLineId <= 0 || purchaseOrderLineId <= 0 || productId <= 0) throw new ArgumentException("Vendor bill line references are required.");
-        if (quantity <= 0 || unitPrice < 0 || receiptUnitCost < 0) throw new ArgumentException("Vendor bill quantity and prices are invalid.");
+        if (quantity <= 0 || unitPrice < 0 || receiptUnitCost < 0 || receiptClearingQuantity <= 0 || receiptClearingQuantity > quantity) throw new ArgumentException("Vendor bill quantity and prices are invalid.");
         if (taxPercent is < 0 or > 100) throw new ArgumentException("Vendor bill tax percentage must be between 0 and 100.");
         if (taxPercent > 0 && (!taxRateId.HasValue || !taxInputAccountId.HasValue)) throw new ArgumentException("A tax rate and input tax account are required for a taxed vendor bill line.");
         if (string.IsNullOrWhiteSpace(productCode) || string.IsNullOrWhiteSpace(productName) || string.IsNullOrWhiteSpace(unitName)) throw new ArgumentException("Vendor bill line snapshots are required.");
         GoodsReceiptLineId = goodsReceiptLineId; PurchaseOrderLineId = purchaseOrderLineId; ProductId = productId; Quantity = quantity;
-        UnitPrice = unitPrice; ReceiptUnitCost = receiptUnitCost; TaxRateId = taxRateId; TaxPercent = taxPercent;
+        UnitPrice = unitPrice; ReceiptUnitCost = receiptUnitCost; ReceiptClearingQuantity = receiptClearingQuantity; TaxRateId = taxRateId; TaxPercent = taxPercent;
         TaxInputAccountId = taxInputAccountId; IsTaxInclusive = isTaxInclusive; ProductCodeSnapshot = productCode.Trim();
         ProductNameSnapshot = productName.Trim(); UnitNameSnapshot = unitName.Trim();
         var enteredAmount = Round(quantity * unitPrice);
         TaxAmount = taxPercent <= 0 ? 0 : isTaxInclusive ? Round(enteredAmount * taxPercent / (100m + taxPercent)) : Round(enteredAmount * taxPercent / 100m);
         NetAmount = isTaxInclusive ? enteredAmount - TaxAmount : enteredAmount;
         GrossAmount = isTaxInclusive ? enteredAmount : enteredAmount + TaxAmount;
-        ReceiptClearingAmount = Round(quantity * receiptUnitCost);
+        ReceiptClearingAmount = Round(receiptClearingQuantity * receiptUnitCost);
     }
     private static decimal Round(decimal value) => Math.Round(value, 2, MidpointRounding.AwayFromZero);
 }

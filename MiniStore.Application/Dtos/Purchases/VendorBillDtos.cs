@@ -40,6 +40,7 @@ public sealed class CreateVendorBillDto
     public string SupplierInvoiceNumber { get; set; } = string.Empty;
     public DateOnly BillDate { get; set; } = DateOnly.FromDateTime(DateTime.Today);
     public string? Notes { get; set; }
+    public string? MatchOverrideReason { get; set; }
     public List<CreateVendorBillLineDto> Lines { get; set; } = [];
 }
 
@@ -66,6 +67,7 @@ public sealed class VendorBillDto
     public decimal TaxAmount { get; init; }
     public decimal TotalAmount { get; init; }
     public decimal ReceiptClearingAmount { get; init; }
+    public PurchaseMatchRunDto? Match { get; init; }
     public List<VendorBillLineDto> Lines { get; init; } = [];
 }
 
@@ -82,4 +84,23 @@ public sealed class VendorBillLineDto
     public decimal TaxAmount { get; init; }
     public decimal GrossAmount { get; init; }
     public decimal ReceiptClearingAmount { get; init; }
+}
+
+public sealed class PurchaseMatchRunDto
+{
+    public decimal QuantityTolerancePercent { get; init; }
+    public decimal PriceTolerancePercent { get; init; }
+    public bool WasOverridden { get; init; }
+    public string? OverrideReason { get; init; }
+    public List<PurchaseMatchExceptionDto> Exceptions { get; init; } = [];
+}
+public sealed class PurchaseMatchExceptionDto
+{
+    public PurchaseMatchExceptionType Type { get; init; }
+    public string ProductCode { get; init; } = string.Empty;
+    public string ProductName { get; init; } = string.Empty;
+    public decimal ExpectedValue { get; init; }
+    public decimal ActualValue { get; init; }
+    public decimal VariancePercent { get; init; }
+    public decimal TolerancePercent { get; init; }
 }

@@ -7,7 +7,8 @@ namespace MiniStore.Application.Services;
 public sealed class VendorBillService(
     IVendorBillRepository bills, IPurchaseOrderRepository orders, IGoodsReceiptRepository receipts,
     IGoodsReceiptReturnRepository receiptReturns, ISupplierRepository suppliers, IWarehouseRepository warehouses,
-    ITaxRateRepository taxRates, IAccountingSettingsRepository accountingSettings, DocumentNumberService numbers,
+    ITaxRateRepository taxRates, IAccountingSettingsRepository accountingSettings, IPurchaseMatchingSettingsRepository matchingSettings,
+    IPurchaseMatchRepository matches, DocumentNumberService numbers,
     JournalPostingService journalPosting, IUnitOfWork unitOfWork, ICurrentUserService currentUser)
 {
     public async Task<List<VendorBillDto>> GetAllAsync(string? search)
@@ -21,7 +22,7 @@ public sealed class VendorBillService(
     {
         var bill = await bills.GetByIdAsync(id); if (bill is null) return null;
         var order = await orders.GetByIdAsync(bill.PurchaseOrderId); var supplier = await suppliers.GetByIdAsync(bill.SupplierId);
-        return Map(bill, order?.OrderNumber ?? "-", supplier?.Name ?? "-");
+        return Map(bill, order?.OrderNumber ?? "-", supplier?.Name ?? "-", await matches.GetByVendorBillIdAsync(bill.Id));
     }
 
     public async Task<VendorBillCreatePageDto> GetCreatePageAsync(int purchaseOrderId, CreateVendorBillDto? form = null)
@@ -43,7 +44,7 @@ public sealed class VendorBillService(
         };
     }
 
-    public async Task<int> CreateAndPostAsync(CreateVendorBillDto dto)
+    public async Task<int> CreateAndPostAsync(CreateVendorBillDto dto, bool allowMatchOverride = false)
     {
         var submitted = dto.Lines?.Where(x => x.Quantity > 0).ToList() ?? [];
         if (submitted.Count == 0) throw new ArgumentException("Enter at least one positive billed quantity.");
@@ -61,6 +62,7 @@ public sealed class VendorBillService(
             var warehouse = await warehouses.GetByIdAsync(order.WarehouseId) ?? throw new InvalidOperationException("Purchase order warehouse was not found.");
             var settings = await accountingSettings.GetAsync() ?? throw new InvalidOperationException("Configure accounting posting accounts before posting a vendor bill.");
             if (!settings.GoodsReceivedNotInvoicedAccountId.HasValue) throw new InvalidOperationException("Configure a goods received not invoiced account before posting a vendor bill.");
+            var tolerances = await matchingSettings.GetAsync() ?? new PurchaseMatchingSettings(0, 0);
 
             var taxMap = (await taxRates.GetAllAsync()).ToDictionary(x => x.Id);
             var receiptList = (await receipts.GetByPurchaseOrderIdAsync(order.Id)).Where(x => x.Status == GoodsReceiptStatus.Posted).ToList();
@@ -69,22 +71,44 @@ public sealed class VendorBillService(
             var billed = await GetBilledQuantitiesAsync(order.Id);
             created = new VendorBill(await numbers.GenerateAsync(DocumentNumberType.VendorBill, dto.BillDate.ToDateTime(TimeOnly.MinValue)),
                 order.Id, order.SupplierId, dto.SupplierInvoiceNumber, dto.BillDate, order.CurrencyCode, dto.Notes, currentUser.UserId);
+            var exceptionSpecs = new List<(VendorBillLine Line, PurchaseMatchExceptionType Type, decimal Expected, decimal Actual, decimal Variance, decimal Tolerance)>();
 
             foreach (var input in submitted)
             {
                 if (!receiptLineMap.TryGetValue(input.GoodsReceiptLineId, out var source)) throw new ArgumentException("One or more vendor bill lines do not belong to a posted receipt for this purchase order.");
                 var remaining = source.ReceivedQuantity - returned.GetValueOrDefault(source.Id) - billed.GetValueOrDefault(source.Id);
-                if (input.Quantity > remaining) throw new InvalidOperationException("Billed quantity cannot exceed the received quantity available for billing.");
+                if (remaining <= 0) throw new InvalidOperationException("This receipt line has no quantity available for billing.");
                 if (input.UnitPrice < 0) throw new ArgumentException("Vendor bill unit price cannot be negative.");
                 TaxRate? tax = null;
                 if (input.TaxRateId.HasValue && !taxMap.TryGetValue(input.TaxRateId.Value, out tax)) throw new InvalidOperationException("The selected purchase tax rate was not found.");
-                created.AddLine(new VendorBillLine(source.Id, source.PurchaseOrderLineId, source.ProductId, input.Quantity, input.UnitPrice,
-                    source.UnitCost, tax?.Id, tax?.Rate ?? 0, tax?.InputAccountId, tax?.IsPriceInclusive ?? false,
-                    source.ProductCodeSnapshot, source.ProductNameSnapshot, source.UnitNameSnapshot));
+                var line = new VendorBillLine(source.Id, source.PurchaseOrderLineId, source.ProductId, input.Quantity, input.UnitPrice,
+                    source.UnitCost, Math.Min(input.Quantity, remaining), tax?.Id, tax?.Rate ?? 0, tax?.InputAccountId,
+                    tax?.IsPriceInclusive ?? false, source.ProductCodeSnapshot, source.ProductNameSnapshot, source.UnitNameSnapshot);
+                created.AddLine(line);
+                if (input.Quantity > remaining)
+                {
+                    var quantityVariance = Percent(input.Quantity - remaining, remaining);
+                    if (quantityVariance > tolerances.QuantityTolerancePercent)
+                        exceptionSpecs.Add((line, PurchaseMatchExceptionType.Quantity, remaining, input.Quantity, quantityVariance, tolerances.QuantityTolerancePercent));
+                }
+                var actualNetUnitPrice = tax is { IsPriceInclusive: true }
+                    ? decimal.Round(input.UnitPrice * 100m / (100m + tax.Rate), 8, MidpointRounding.AwayFromZero)
+                    : input.UnitPrice;
+                var priceVariance = source.UnitCost == 0 ? (actualNetUnitPrice == 0 ? 0 : 100m) : Percent(Math.Abs(actualNetUnitPrice - source.UnitCost), source.UnitCost);
+                if (priceVariance > tolerances.PriceTolerancePercent)
+                    exceptionSpecs.Add((line, PurchaseMatchExceptionType.Price, source.UnitCost, actualNetUnitPrice, priceVariance, tolerances.PriceTolerancePercent));
             }
 
             if (created.TotalAmount <= 0) throw new InvalidOperationException("Vendor bill total must be greater than zero.");
+            if (exceptionSpecs.Count > 0 && !allowMatchOverride) throw new InvalidOperationException("Vendor bill exceeds the configured purchase matching tolerances.");
             await bills.AddAsync(created); await unitOfWork.FlushAsync();
+            var match = new PurchaseMatchRun(created.Id, order.Id, tolerances.QuantityTolerancePercent, tolerances.PriceTolerancePercent, currentUser.UserId);
+            foreach (var exception in exceptionSpecs)
+                match.AddException(new PurchaseMatchException(exception.Line.Id, exception.Line.PurchaseOrderLineId, exception.Line.GoodsReceiptLineId,
+                    exception.Type, exception.Expected, exception.Actual, exception.Variance, exception.Tolerance,
+                    exception.Line.ProductCodeSnapshot, exception.Line.ProductNameSnapshot));
+            if (exceptionSpecs.Count > 0) match.Override(dto.MatchOverrideReason ?? string.Empty, currentUser.UserId);
+            await matches.AddAsync(match);
             var journalLines = new List<JournalEntryLine>();
             if (created.ReceiptClearingAmount > 0) journalLines.Add(new JournalEntryLine(settings.GoodsReceivedNotInvoicedAccountId.Value,
                 created.ReceiptClearingAmount, 0, warehouse.BranchId, warehouse.Id, $"GRNI clearing for {created.BillNumber}"));
@@ -138,7 +162,7 @@ public sealed class VendorBillService(
     private async Task<Dictionary<int, decimal>> GetBilledQuantitiesAsync(int orderId) => (await bills.GetByPurchaseOrderIdAsync(orderId))
         .Where(x => x.Status == VendorBillStatus.Posted).SelectMany(x => x.Lines).GroupBy(x => x.GoodsReceiptLineId).ToDictionary(x => x.Key, x => x.Sum(y => y.Quantity));
 
-    private static VendorBillDto Map(VendorBill x, string orderNumber, string supplierName) => new()
+    private static VendorBillDto Map(VendorBill x, string orderNumber, string supplierName, PurchaseMatchRun? match = null) => new()
     {
         Id = x.Id, BillNumber = x.BillNumber, PurchaseOrderNumber = orderNumber, SupplierName = supplierName,
         SupplierInvoiceNumber = x.SupplierInvoiceNumber, BillDate = x.BillDate, CurrencyCode = x.CurrencyCode, Notes = x.Notes,
@@ -146,7 +170,16 @@ public sealed class VendorBillService(
         Lines = x.Lines.Select(line => new VendorBillLineDto { ProductCode = line.ProductCodeSnapshot, ProductName = line.ProductNameSnapshot,
             UnitName = line.UnitNameSnapshot, Quantity = line.Quantity, UnitPrice = line.UnitPrice, TaxPercent = line.TaxPercent,
             IsTaxInclusive = line.IsTaxInclusive, NetAmount = line.NetAmount, TaxAmount = line.TaxAmount, GrossAmount = line.GrossAmount,
-            ReceiptClearingAmount = line.ReceiptClearingAmount }).ToList()
+            ReceiptClearingAmount = line.ReceiptClearingAmount }).ToList(),
+        Match = match is null ? null : new PurchaseMatchRunDto
+        {
+            QuantityTolerancePercent = match.QuantityTolerancePercent, PriceTolerancePercent = match.PriceTolerancePercent,
+            WasOverridden = match.WasOverridden, OverrideReason = match.OverrideReason,
+            Exceptions = match.Exceptions.Select(value => new PurchaseMatchExceptionDto { Type = value.Type,
+                ProductCode = value.ProductCodeSnapshot, ProductName = value.ProductNameSnapshot, ExpectedValue = value.ExpectedValue,
+                ActualValue = value.ActualValue, VariancePercent = value.VariancePercent, TolerancePercent = value.TolerancePercent }).ToList()
+        }
     };
     private static decimal Round(decimal value) => Math.Round(value, 2, MidpointRounding.AwayFromZero);
+    private static decimal Percent(decimal difference, decimal baseline) => baseline <= 0 ? 100m : decimal.Round(difference / baseline * 100m, 6, MidpointRounding.AwayFromZero);
 }

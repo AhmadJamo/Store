@@ -18,6 +18,7 @@ public sealed class VendorBillConfiguration : IEntityTypeConfiguration<VendorBil
     public void Configure(EntityTypeBuilder<VendorBillLine> b)
     {
         b.HasKey(x => x.Id); b.Property(x => x.Quantity).HasPrecision(18, 6); b.Property(x => x.UnitPrice).HasPrecision(24, 8); b.Property(x => x.ReceiptUnitCost).HasPrecision(24, 8);
+        b.Property(x => x.ReceiptClearingQuantity).HasPrecision(18, 6);
         b.Property(x => x.TaxPercent).HasPrecision(9, 4); b.Property(x => x.NetAmount).HasPrecision(18, 2); b.Property(x => x.TaxAmount).HasPrecision(18, 2);
         b.Property(x => x.GrossAmount).HasPrecision(18, 2); b.Property(x => x.ReceiptClearingAmount).HasPrecision(18, 2);
         b.Property(x => x.ProductCodeSnapshot).HasMaxLength(100).IsRequired(); b.Property(x => x.ProductNameSnapshot).HasMaxLength(250).IsRequired(); b.Property(x => x.UnitNameSnapshot).HasMaxLength(100).IsRequired();

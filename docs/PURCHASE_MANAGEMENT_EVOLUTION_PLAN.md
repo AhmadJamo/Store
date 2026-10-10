@@ -236,7 +236,7 @@ Each slice must include rollback/retry analysis and SQL-backed tenant/concurrenc
 | PUR-065 | Receipt accounting | In progress: configured tenant-safe GRNI/PPV mappings and atomic, idempotent receipt and receipt-return journals are implemented and SQL-tested; inventory-to-GL reconciliation reporting remains open. |
 | PUR-070 | Receipt-based supplier returns | Implemented: immutable receipt-linked returns cap cumulative quantity to the unbilled receipt balance, remove current available stock/tracking, write `ReceiptReturnOut`, reverse GRNI at original value and isolate AVCO difference in PPV without changing legacy returns. SQL concurrency proves two attempts against the remaining unbilled quantity yield exactly one posted result. |
 | PUR-080 | Vendor Bills | Implemented: partial receipt-line allocations, normalized active supplier-invoice uniqueness, frozen price/tax/clearing snapshots and atomic GRNI/Input Tax/PPV/Accounts Payable posting. SQL concurrency accepts exactly one duplicate-invoice attempt. |
-| PUR-090 | Three-way matching | Tolerances, exceptions and controlled override |
+| PUR-090 | Three-way matching | Implemented: tenant quantity/price tolerances, immutable per-bill match runs and exceptions, normal posting gate and dedicated reasoned override permission. SQL coverage persists the override evidence atomically with the bill. |
 | PUR-100 | Supplier payments | AP settlement through Accounting |
 | PUR-110 | Replenishment purchase demand | WMS-090C -> Draft Purchase Request |
 | PUR-120 | Agreements and templates | Contract releases and repeat ordering |
@@ -260,4 +260,4 @@ Shared accounting, settings, inventory and document-number files are changed onl
 
 ## 10. Immediate next slice
 
-Implement PUR-090 three-way matching with tenant-configurable quantity/price tolerances, persisted exceptions and a dedicated reasoned override permission. Supplier credit notes for returning already billed receipt quantities remain a later controlled accounting slice; PUR-070 rejects those quantities meanwhile.
+Implement PUR-100 supplier payments with partial Accounts Payable settlement and Cash/Bank posting. Supplier credit notes for returning already billed receipt quantities remain a later controlled accounting slice; PUR-070 rejects those quantities meanwhile.

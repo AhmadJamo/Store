@@ -1140,4 +1140,30 @@
   <data name="Vendor bill tax percentage must be between 0 and 100." xml:space="preserve"><value>يجب أن تكون نسبة ضريبة فاتورة المورد بين 0 و100.</value></data>
   <data name="A tax rate and input tax account are required for a taxed vendor bill line." xml:space="preserve"><value>نسبة الضريبة وحساب ضريبة المدخلات مطلوبان لسطر فاتورة مورد خاضع للضريبة.</value></data>
   <data name="Vendor bill line snapshots are required." xml:space="preserve"><value>بيانات سطر فاتورة المورد التاريخية مطلوبة.</value></data>
+  <data name="Purchase matching" xml:space="preserve"><value>مطابقة المشتريات</value></data>
+  <data name="Configure quantity and price tolerances for supplier invoices." xml:space="preserve"><value>اضبط حدود سماح الكمية والسعر لفواتير الموردين.</value></data>
+  <data name="Configure the allowed differences between purchase orders, goods receipts and vendor bills." xml:space="preserve"><value>اضبط الفروقات المسموحة بين أوامر الشراء واستلامات البضاعة وفواتير الموردين.</value></data>
+  <data name="Quantity tolerance percent" xml:space="preserve"><value>نسبة سماح الكمية</value></data>
+  <data name="Price tolerance percent" xml:space="preserve"><value>نسبة سماح السعر</value></data>
+  <data name="Differences above these limits require the vendor bill match override permission and a reason." xml:space="preserve"><value>الفروقات التي تتجاوز هذه الحدود تتطلب صلاحية تجاوز مطابقة فاتورة المورد وسببًا موثقًا.</value></data>
+  <data name="Purchase matching settings updated." xml:space="preserve"><value>تم تحديث إعدادات مطابقة المشتريات.</value></data>
+  <data name="Purchase matching tolerances must be between 0 and 100 percent." xml:space="preserve"><value>يجب أن تكون حدود سماح مطابقة المشتريات بين 0 و100 بالمئة.</value></data>
+  <data name="Match override reason" xml:space="preserve"><value>سبب تجاوز المطابقة</value></data>
+  <data name="Post with match override" xml:space="preserve"><value>الترحيل مع تجاوز المطابقة</value></data>
+  <data name="Vendor bill posted with a documented match override." xml:space="preserve"><value>تم ترحيل فاتورة المورد مع توثيق تجاوز المطابقة.</value></data>
+  <data name="Vendor bill exceeds the configured purchase matching tolerances." xml:space="preserve"><value>تتجاوز فاتورة المورد حدود سماح مطابقة المشتريات المضبوطة.</value></data>
+  <data name="This receipt line has no quantity available for billing." xml:space="preserve"><value>لا توجد كمية متاحة للفوترة في سطر الاستلام هذا.</value></data>
+  <data name="Three-way match" xml:space="preserve"><value>المطابقة الثلاثية</value></data>
+  <data name="Matched within configured tolerances." xml:space="preserve"><value>تمت المطابقة ضمن حدود السماح المضبوطة.</value></data>
+  <data name="Exception type" xml:space="preserve"><value>نوع الاستثناء</value></data>
+  <data name="Expected" xml:space="preserve"><value>المتوقع</value></data>
+  <data name="Actual" xml:space="preserve"><value>الفعلي</value></data>
+  <data name="Tolerance" xml:space="preserve"><value>حد السماح</value></data>
+  <data name="Purchase match source and user are required." xml:space="preserve"><value>مصدر مطابقة المشتريات والمستخدم مطلوبان.</value></data>
+  <data name="The same purchase match exception cannot be recorded twice." xml:space="preserve"><value>لا يمكن تسجيل استثناء مطابقة المشتريات نفسه مرتين.</value></data>
+  <data name="A clean purchase match does not require an override." xml:space="preserve"><value>المطابقة السليمة لا تحتاج إلى تجاوز.</value></data>
+  <data name="A match override reason is required and cannot exceed 1000 characters." xml:space="preserve"><value>سبب تجاوز المطابقة مطلوب ولا يجوز أن يتجاوز 1000 حرف.</value></data>
+  <data name="Purchase match line references are required." xml:space="preserve"><value>مراجع سطر مطابقة المشتريات مطلوبة.</value></data>
+  <data name="Purchase match values cannot be negative." xml:space="preserve"><value>لا يمكن أن تكون قيم مطابقة المشتريات سالبة.</value></data>
+  <data name="Purchase match product snapshots are required." xml:space="preserve"><value>بيانات المنتج التاريخية لمطابقة المشتريات مطلوبة.</value></data>
 </root>

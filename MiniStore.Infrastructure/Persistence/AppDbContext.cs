@@ -83,6 +83,9 @@ public class AppDbContext
     public DbSet<GoodsReceiptReturnLine> GoodsReceiptReturnLines => Set<GoodsReceiptReturnLine>();
     public DbSet<VendorBill> VendorBills => Set<VendorBill>();
     public DbSet<VendorBillLine> VendorBillLines => Set<VendorBillLine>();
+    public DbSet<PurchaseMatchRun> PurchaseMatchRuns => Set<PurchaseMatchRun>();
+    public DbSet<PurchaseMatchException> PurchaseMatchExceptions => Set<PurchaseMatchException>();
+    public DbSet<PurchaseMatchingSettings> PurchaseMatchingSettings => Set<PurchaseMatchingSettings>();
 
     public DbSet<Purchase> Purchases
         => Set<Purchase>();

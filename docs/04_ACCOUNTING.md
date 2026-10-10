@@ -38,6 +38,7 @@ Warehouses now have optional BranchId and InventoryAccountId fields. Completing 
 | Goods Receipt GRNI posting | IMPLEMENTED | Posted new-flow GRNs debit the warehouse inventory account and credit the configured Goods Received Not Invoiced account through the central journal gateway. |
 | Receipt-based supplier returns | IMPLEMENTED | Posted new-flow returns debit GRNI at original receipt value, credit Inventory at actual removed AVCO cost and post any difference to the configured Purchase Price Variance account. |
 | Vendor Bill posting | IMPLEMENTED | Posted receipt allocations debit GRNI at receipt value, debit/credit Purchase Price Variance for the bill-net difference, debit snapshotted input tax and credit the supplier's payable account. |
+| Three-way match gate | IMPLEMENTED | Quantity and net-price differences above tenant tolerances block Vendor Bill posting unless a separately authorized, reasoned override is persisted with the exceptions. |
 
 ## Existing rules
 Sales select the product `SalePrice` for retail POS or `WholesalePrice` for wholesale; client-submitted line price is ignored by `SaleService`. Normal stock removal cannot exceed balance. Prepared-product recipe use and kitchen variance may cross zero only for an ingredient explicitly configured for controlled negative consumption, and the negative row remains visible for reconciliation. A transfer creator cannot approve their own submitted transfer. Discount settings can disable types/limits and an override permission is checked.

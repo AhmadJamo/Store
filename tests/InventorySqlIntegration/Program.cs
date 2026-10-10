@@ -101,7 +101,7 @@ try
     await VerifyInventoryBalanceProjectionAsync(tenantOneId, tenantOneFixture.ProductId, expectedOnHand: 2m, connectionString);
     await VerifyOpeningTrackingAllocationAsync(tenantOneId, tenantOneFixture.ProductId, tenantOneFixture.WarehouseId, connectionString);
 
-    Console.WriteLine("Passed SQL integration checks: tenant isolation, reconciliation, balances, receipt and vendor-bill concurrency, GRNI posting and clearing, receipt-based supplier returns, adjustment posting, tracked operations, quarantine and recall.");
+    Console.WriteLine("Passed SQL integration checks: tenant isolation, reconciliation, balances, receipt and vendor-bill concurrency, three-way matching override evidence, GRNI posting and clearing, receipt-based supplier returns, adjustment posting, tracked operations, quarantine and recall.");
 }
 finally
 {
@@ -349,7 +349,8 @@ static async Task VerifyConcurrentGoodsReceiptAndGrniAsync(
         var billService = new VendorBillService(
             new VendorBillRepository(billContext), new PurchaseOrderRepository(billContext), new GoodsReceiptRepository(billContext),
             new GoodsReceiptReturnRepository(billContext), new SupplierRepository(billContext), new WarehouseRepository(billContext),
-            new TaxRateRepository(billContext), new AccountingSettingsRepository(billContext), billNumbers, billJournals,
+            new TaxRateRepository(billContext), new AccountingSettingsRepository(billContext), new PurchaseMatchingSettingsRepository(billContext),
+            new PurchaseMatchRepository(billContext), billNumbers, billJournals,
             billUnitOfWork, billUser);
         try
         {
@@ -358,13 +359,14 @@ static async Task VerifyConcurrentGoodsReceiptAndGrniAsync(
                 PurchaseOrderId = purchaseOrderId,
                 SupplierInvoiceNumber = " sql/invoice-001 ",
                 BillDate = receiptDate,
+                MatchOverrideReason = "Approved integration price variance",
                 Lines = [new CreateVendorBillLineDto
                 {
                     GoodsReceiptLineId = receipt.Lines.Single().Id,
                     Quantity = 0.5m,
                     UnitPrice = 10m
                 }]
-            });
+            }, allowMatchOverride: true);
             return true;
         }
         catch (Exception exception) when (exception is InvalidOperationException or DbUpdateException or SqlException)
@@ -382,12 +384,14 @@ static async Task VerifyConcurrentGoodsReceiptAndGrniAsync(
         var postedBill = await billVerification.VendorBills.Include(x => x.Lines).SingleAsync(x => x.PurchaseOrderId == purchaseOrderId);
         var billJournal = await billVerification.JournalEntries.Include(x => x.Lines).SingleAsync(x =>
             x.SourceType == "VendorBill" && x.SourceReference == postedBill.BillNumber);
+        var matchRun = await billVerification.PurchaseMatchRuns.Include(x => x.Exceptions).SingleAsync(x => x.VendorBillId == postedBill.Id);
         if (postedBill.Status != VendorBillStatus.Posted || postedBill.NormalizedSupplierInvoiceNumber != "SQLINVOICE001" ||
             postedBill.Lines.Single().Quantity != 0.5m || postedBill.ReceiptClearingAmount != 4.5m || postedBill.NetAmount != 5m ||
             billJournal.Lines.Sum(x => x.Debit) != 5m || billJournal.Lines.Sum(x => x.Credit) != 5m ||
             !billJournal.Lines.Any(x => x.AccountId == grniAccountId && x.Debit == 4.5m) ||
             !billJournal.Lines.Any(x => x.AccountId == varianceAccountId && x.Debit == 0.5m) ||
-            !billJournal.Lines.Any(x => x.AccountId == payableAccountId && x.Credit == 5m))
+            !billJournal.Lines.Any(x => x.AccountId == payableAccountId && x.Credit == 5m) ||
+            !matchRun.WasOverridden || matchRun.Exceptions.Count != 1 || matchRun.Exceptions.Single().Type != PurchaseMatchExceptionType.Price)
             throw new InvalidOperationException("The winning vendor bill must clear receipt value, isolate price variance and credit supplier payable atomically.");
     }
 

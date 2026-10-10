@@ -45,6 +45,7 @@
 | `Entities/Purchases/GoodsReceipt.cs` | GRN header/line receipt evidence with frozen PO snapshots and optional inventory-tracking inputs | PUR-060 receipt workflow. |
 | `Entities/Purchases/GoodsReceiptReturn.cs` | immutable receipt-based supplier-return header/lines with frozen quantity, original receipt value and removed inventory cost | PUR-070 return workflow. |
 | `Entities/Purchases/VendorBill.cs` | immutable posted supplier invoice identity and receipt-line allocations with frozen receipt clearing, price, tax and total snapshots | PUR-080 billing workflow. |
+| `Entities/Purchases/PurchaseMatch.cs` | tenant matching settings plus immutable bill match runs, line exceptions and reasoned override evidence | PUR-090 three-way matching. |
 | `Entities/Settings/*.cs` | accounting, discount, inventory-policy defaults, centralized `DocumentSequence`, general settings and supported UI language | settings/database/localization docs. |
 | `Entities/Security/*.cs` | audit, permission catalogue and tenant-owned role/permission entities | permissions/security docs. |
 | `Entities/Tenancy/*.cs` | company tenant, Identity-user membership and tenant-scoped user-role assignments | tenancy/security/database docs. |
@@ -66,6 +67,7 @@
 | `Services/Purchases/GoodsReceiptService.cs` | atomically validates remaining PO quantity and coordinates receipt posting with Inventory-owned stock, valuation and tracking effects | Goods Receipt capture screen. |
 | `Services/Purchases/GoodsReceiptReturnService.cs` | caps returns by the posted, unbilled receipt quantity and atomically coordinates inventory removal, tracking, physical movement and GRNI/PPV accounting | Goods Receipt Return screens. |
 | `Services/Purchases/VendorBillService.cs` | caps receipt-based partial billing, rejects duplicate normalized supplier invoices and atomically clears GRNI, records input tax/PPV and credits supplier payable | Vendor Bill screens. |
+| `Services/Settings/PurchaseMatchingSettingsService.cs` | administers tenant quantity/price matching tolerances | Settings Purchase Matching screen. |
 | `Services/Catalog/RecipeService.cs` | lists and creates immutable active recipe versions with compatible ingredient units | Recipes controller/views and prepared-product sales. |
 | `Services/Catalog/ProductCategoryService.cs` | creates and activates/deactivates tenant product categories used by logistics metadata | ProductCategories controller/view and product forms. |
 | `Services/Catalog/ProductAttributeService.cs` | transactionally creates typed attribute definitions, category links and selection options | ProductAttributes controller/view. |
@@ -154,6 +156,7 @@ Hierarchical location update (2026-09-30): StorageLocation retains its identity 
 | `Repositories/Purchases/GoodsReceiptRepository.cs` | tenant-filtered receipt and posted-receipt quantity reads | PUR-060 receipt service. |
 | `Repositories/Purchases/GoodsReceiptReturnRepository.cs` | tenant-filtered receipt-return reads and cumulative returned-quantity evidence | PUR-070 return service. |
 | `Repositories/Purchases/VendorBillRepository.cs` | tenant-filtered bill reads, cumulative receipt-line billing and active normalized invoice duplicate checks | PUR-080 bill service. |
+| `Repositories/Purchases/PurchaseMatchRepository.cs` | persists match runs/exceptions and the singleton tenant tolerance settings | PUR-090 matching and settings services. |
 | `Authorization/PermissionService.cs` | permission check implementation | SaleService. |
 
 ## Web source map
@@ -178,6 +181,7 @@ Hierarchical location update (2026-09-30): StorageLocation retains its identity 
 | `Controllers/Purchases/GoodsReceiptsController.cs`, `Views/GoodsReceipts/Create.cshtml` | permission-protected partial Goods Receipt capture and immediate posting | PUR-060 receipt service. |
 | `Controllers/Purchases/GoodsReceiptReturnsController.cs`, `Views/GoodsReceiptReturns/*.cshtml` | permission-protected receipt-based supplier return capture, history and detail | PUR-070 return service. |
 | `Controllers/Purchases/VendorBillsController.cs`, `Views/VendorBills/*.cshtml` | permission-protected receipt allocation, immediate posting, history and immutable bill detail | PUR-080 bill service. |
+| `Views/Settings/PurchaseMatching.cshtml` | administration screen for quantity and price tolerance percentages | PUR-090 settings service. |
 | `Areas/Platform/*` | separately authenticated platform-owner control center for plans, companies/subscriptions, promotion codes and pending payment confirmations | SaaS module. |
 | `Controllers/PublicController.cs`, `Controllers/Saas/SubscriptionController.cs` | public landing/pricing and tenant subscription/checkout flows | SaaS module and public/subscription views. |
 | `Middleware/SubscriptionAccessMiddleware.cs` | blocks tenant ERP access when the current subscription is not usable | SaaS module/security. |

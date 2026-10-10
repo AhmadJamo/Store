@@ -1,5 +1,14 @@
 # AI Work Log
 
+## 2026-10-10 — PUR-090 three-way matching
+
+- Added tenant-configurable quantity and net-price tolerance percentages with a bilingual Settings screen and rowversion-protected singleton persistence.
+- Every posted Vendor Bill now owns an immutable match run. Quantity over-allocation and tax-exclusive price differences above tolerance become line exceptions and block normal posting.
+- Added the distinct `VendorBills.OverrideMatch` permission. Authorized overrides require and persist a reason, actor and timestamp together with expected/actual values, variance and the tolerance snapshot used.
+- Extended receipt clearing to freeze the quantity actually backed by the receipt; permitted or overridden excess quantity is isolated from GRNI clearing and flows through the existing variance posting.
+- Created and applied migration `20261010180946_AddPurchaseThreeWayMatching` to `AHMAD/MiniStoreDb`; existing bill lines are safely initialized from their billed quantity, while historical bills are not assigned invented match decisions.
+- Release build passed without warnings, 492 focused checks passed and the disposable SQL Server fixture persisted a price exception and reasoned override atomically with the single winning concurrent Vendor Bill.
+
 ## 2026-10-10 — PUR-080 Vendor Bills
 
 - Added tenant-owned Vendor Bills with partial posted-receipt allocations, frozen price/tax/receipt-clearing snapshots and centralized `VB-` document numbering.

@@ -34,5 +34,12 @@
         </tbody>
     </table></div>
     @if (Model.Lines.Count == 0) { <div class="alert alert-info">@Localizer["There are no received quantities available for billing."]</div> }
-    else { <button class="btn btn-primary">@Localizer["Post vendor bill"]</button> }
+    else
+    {
+        <button class="btn btn-primary">@Localizer["Post vendor bill"]</button>
+        @if (ViewBag.CanOverrideMatch == true)
+        {
+            <div class="card card-body mt-3 border-warning"><label class="form-label">@Localizer["Match override reason"]</label><textarea name="MatchOverrideReason" class="form-control mb-2" maxlength="1000">@Model.Form.MatchOverrideReason</textarea><button asp-action="CreateOverride" class="btn btn-warning">@Localizer["Post with match override"]</button></div>
+        }
+    }
 </form>

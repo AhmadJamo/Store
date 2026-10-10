@@ -65,6 +65,9 @@ public static class BusinessServicesExtensions
         services.AddScoped<TaxRateService>();
         services.AddScoped<IAccountingSettingsRepository, AccountingSettingsRepository>();
         services.AddScoped<AccountingSettingsService>();
+        services.AddScoped<IPurchaseMatchingSettingsRepository, PurchaseMatchingSettingsRepository>();
+        services.AddScoped<IPurchaseMatchRepository, PurchaseMatchRepository>();
+        services.AddScoped<PurchaseMatchingSettingsService>();
         services.AddScoped<IInventorySettingsRepository, InventorySettingsRepository>();
         services.AddScoped<InventorySettingsService>();
         services.AddScoped<IInventoryAccessRepository, InventoryAccessRepository>();

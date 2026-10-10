@@ -1304,13 +1304,13 @@ Check(receiptReturnController.GetMethod(nameof(GoodsReceiptReturnsController.Ind
       $"{PermissionAuthorizeAttribute.PolicyPrefix}GoodsReceiptReturns.Create",
     "Goods receipt return visibility and posting must use separate server-side permissions");
 var vendorBill = new VendorBill("VB-000001", 1, 5, " sup/inv-001 ", DateOnly.FromDateTime(DateTime.Today), "jod", "First bill", "buyer");
-vendorBill.AddLine(new VendorBillLine(1, 1, 10, 1m, 11.60m, 9m, 1, 16m, 45, true, "P-10", "Coffee beans", "kg"));
+vendorBill.AddLine(new VendorBillLine(1, 1, 10, 1m, 11.60m, 9m, 1m, 1, 16m, 45, true, "P-10", "Coffee beans", "kg"));
 vendorBill.Post("buyer");
 Check(vendorBill.Status == VendorBillStatus.Posted && vendorBill.NormalizedSupplierInvoiceNumber == "SUPINV001" &&
       vendorBill.NetAmount == 10m && vendorBill.TaxAmount == 1.60m && vendorBill.TotalAmount == 11.60m &&
       vendorBill.ReceiptClearingAmount == 9m,
     "Vendor bills must normalize supplier invoice identity and freeze receipt, price and tax values");
-CheckThrows(() => vendorBill.AddLine(new VendorBillLine(2, 2, 11, 1m, 1m, 1m, null, 0, null, false, "P-11", "Tea", "kg")),
+CheckThrows(() => vendorBill.AddLine(new VendorBillLine(2, 2, 11, 1m, 1m, 1m, 1m, null, 0, null, false, "P-11", "Tea", "kg")),
     "Posted vendor bills must be immutable");
 var vendorBillType = db.Model.FindEntityType(typeof(VendorBill))!;
 Check(vendorBillType.FindProperty("TenantId") is { IsNullable: false } &&
@@ -1320,14 +1320,28 @@ Check(vendorBillType.FindProperty("TenantId") is { IsNullable: false } &&
     "Vendor bills must be tenant-owned, concurrency-protected and database-unique per normalized supplier invoice");
 Check(DocumentSequence.CreateDefault(DocumentNumberType.VendorBill).Preview(DateTime.Today).StartsWith("VB-"),
     "Vendor bills must use an independent centralized document sequence");
+var matchingSettings = new PurchaseMatchingSettings(2m, 3m);
+Check(matchingSettings.QuantityTolerancePercent == 2m && matchingSettings.PriceTolerancePercent == 3m,
+    "Purchase matching settings must preserve independent quantity and price tolerances");
+var matchRun = new PurchaseMatchRun(1, 1, 2m, 3m, "matcher");
+matchRun.AddException(new PurchaseMatchException(1, 1, 1, PurchaseMatchExceptionType.Price, 9m, 10m, 11.111111m, 3m, "P-10", "Coffee beans"));
+matchRun.Override("Supplier approved market increase", "manager");
+Check(matchRun.WasOverridden && matchRun.Exceptions.Count == 1 && matchRun.OverrideReason == "Supplier approved market increase" &&
+      db.Model.FindEntityType(typeof(PurchaseMatchRun))!.FindProperty("TenantId") is { IsNullable: false },
+    "Purchase match exceptions and reasoned overrides must remain immutable tenant-owned evidence");
+CheckArgumentThrows(() => new PurchaseMatchingSettings(101m, 0m),
+    "Purchase matching tolerances must reject percentages above 100");
 var vendorBillController = typeof(VendorBillsController);
 Check(vendorBillController.GetMethod(nameof(VendorBillsController.Index))!
           .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
       $"{PermissionAuthorizeAttribute.PolicyPrefix}VendorBills.View" &&
       vendorBillController.GetMethod(nameof(VendorBillsController.Create), [typeof(CreateVendorBillDto)])!
           .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
-      $"{PermissionAuthorizeAttribute.PolicyPrefix}VendorBills.Create",
-    "Vendor bill visibility and posting must use separate server-side permissions");
+      $"{PermissionAuthorizeAttribute.PolicyPrefix}VendorBills.Create" &&
+      vendorBillController.GetMethod(nameof(VendorBillsController.CreateOverride))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
+      $"{PermissionAuthorizeAttribute.PolicyPrefix}VendorBills.OverrideMatch",
+    "Vendor bill visibility, posting and match override must use separate server-side permissions");
 var sourcingController = typeof(PurchaseSourcingController);
 Check(sourcingController.GetMethod(nameof(PurchaseSourcingController.Index))!
           .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==

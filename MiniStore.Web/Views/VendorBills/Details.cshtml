@@ -6,3 +6,15 @@
 <div class="table-responsive"><table class="table"><thead><tr><th>@Localizer["Product"]</th><th>@Localizer["Quantity"]</th><th>@Localizer["Unit price"]</th><th>@Localizer["Net amount"]</th><th>@Localizer["Tax"]</th><th>@Localizer["Total"]</th><th>@Localizer["GRNI clearing"]</th></tr></thead><tbody>
 @foreach(var line in Model.Lines){<tr><td>@line.ProductCode — @line.ProductName</td><td>@line.Quantity @line.UnitName</td><td>@line.UnitPrice @Model.CurrencyCode</td><td>@line.NetAmount @Model.CurrencyCode</td><td>@line.TaxAmount @Model.CurrencyCode (@line.TaxPercent%)</td><td>@line.GrossAmount @Model.CurrencyCode</td><td>@line.ReceiptClearingAmount @Model.CurrencyCode</td></tr>}
 </tbody><tfoot><tr class="fw-bold"><td colspan="3">@Localizer["Totals"]</td><td>@Model.NetAmount @Model.CurrencyCode</td><td>@Model.TaxAmount @Model.CurrencyCode</td><td>@Model.TotalAmount @Model.CurrencyCode</td><td>@Model.ReceiptClearingAmount @Model.CurrencyCode</td></tr></tfoot></table></div>
+@if(Model.Match is not null)
+{
+    <div class="card mt-3"><div class="card-header"><strong>@Localizer["Three-way match"]</strong></div><div class="card-body">
+        <p>@Localizer["Quantity tolerance percent"]: @Model.Match.QuantityTolerancePercent% — @Localizer["Price tolerance percent"]: @Model.Match.PriceTolerancePercent%</p>
+        @if(Model.Match.Exceptions.Count == 0){<div class="alert alert-success mb-0">@Localizer["Matched within configured tolerances."]</div>}
+        else
+        {
+            @if(Model.Match.WasOverridden){<div class="alert alert-warning">@Localizer["Match override reason"]: @Model.Match.OverrideReason</div>}
+            <table class="table table-sm"><thead><tr><th>@Localizer["Product"]</th><th>@Localizer["Exception type"]</th><th>@Localizer["Expected"]</th><th>@Localizer["Actual"]</th><th>@Localizer["Variance"]</th><th>@Localizer["Tolerance"]</th></tr></thead><tbody>@foreach(var exception in Model.Match.Exceptions){<tr><td>@exception.ProductCode — @exception.ProductName</td><td>@Localizer[exception.Type.ToString()]</td><td>@exception.ExpectedValue</td><td>@exception.ActualValue</td><td>@exception.VariancePercent%</td><td>@exception.TolerancePercent%</td></tr>}</tbody></table>
+        }
+    </div></div>
+}

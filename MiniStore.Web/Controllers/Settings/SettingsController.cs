@@ -17,6 +17,7 @@ public class SettingsController : Controller
     private readonly GeneralSettingsService _generalSettingsService;
     private readonly DiscountSettingsService _discountSettingsService;
     private readonly AccountingSettingsService _accountingSettingsService;
+    private readonly PurchaseMatchingSettingsService _purchaseMatchingSettingsService;
     private readonly AccountService _accountService;
     private readonly InventorySettingsService _inventorySettingsService;
     private readonly InventoryAccessService _inventoryAccessService;
@@ -32,6 +33,7 @@ public class SettingsController : Controller
         GeneralSettingsService generalSettingsService,
         DiscountSettingsService discountSettingsService,
         AccountingSettingsService accountingSettingsService,
+        PurchaseMatchingSettingsService purchaseMatchingSettingsService,
         AccountService accountService,
         InventorySettingsService inventorySettingsService,
         InventoryAccessService inventoryAccessService,
@@ -46,6 +48,7 @@ public class SettingsController : Controller
         _generalSettingsService = generalSettingsService;
         _discountSettingsService = discountSettingsService;
         _accountingSettingsService = accountingSettingsService;
+        _purchaseMatchingSettingsService = purchaseMatchingSettingsService;
         _accountService = accountService;
         _inventorySettingsService = inventorySettingsService;
         _inventoryAccessService = inventoryAccessService;
@@ -376,6 +379,27 @@ public class SettingsController : Controller
     {
         await LoadAccountsAsync();
         return View(await _accountingSettingsService.GetAsync());
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> PurchaseMatching() => View(await _purchaseMatchingSettingsService.GetAsync());
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> PurchaseMatching(PurchaseMatchingSettingsDto dto)
+    {
+        try
+        {
+            await _purchaseMatchingSettingsService.UpdateAsync(dto);
+            TempData["NotificationType"] = "success";
+            TempData["NotificationMessage"] = _localizer["Purchase matching settings updated."].Value;
+            return RedirectToAction(nameof(PurchaseMatching));
+        }
+        catch (Exception ex) when (ex is ArgumentException or InvalidOperationException)
+        {
+            ModelState.AddModelError(string.Empty, _localizer[ex.Message]);
+            return View(dto);
+        }
     }
 
     [HttpPost]
