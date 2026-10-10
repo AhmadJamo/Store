@@ -86,6 +86,8 @@ public class AppDbContext
     public DbSet<PurchaseMatchRun> PurchaseMatchRuns => Set<PurchaseMatchRun>();
     public DbSet<PurchaseMatchException> PurchaseMatchExceptions => Set<PurchaseMatchException>();
     public DbSet<PurchaseMatchingSettings> PurchaseMatchingSettings => Set<PurchaseMatchingSettings>();
+    public DbSet<SupplierPayment> SupplierPayments => Set<SupplierPayment>();
+    public DbSet<SupplierPaymentLine> SupplierPaymentLines => Set<SupplierPaymentLine>();
 
     public DbSet<Purchase> Purchases
         => Set<Purchase>();

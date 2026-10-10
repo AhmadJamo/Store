@@ -1,5 +1,14 @@
 # AI Work Log
 
+## 2026-10-10 — PUR-100 Supplier Payments
+
+- Added tenant-owned, centrally numbered Supplier Payments with immutable partial allocations across posted Vendor Bills for one supplier and currency.
+- Outstanding balances are recomputed inside the Serializable transaction; allocations above the remaining bill balance are rejected, including competing concurrent full-balance attempts.
+- Posting atomically debits the supplier payable account and credits the cash/bank account mapped by the selected active payment method through the central fiscal-period and idempotency gateway.
+- Added separate view/create permissions, purchasing navigation, a Vendor Bill entry point and bilingual list/create/detail screens.
+- Created and applied migration `20261010182545_AddSupplierPayments` to `AHMAD/MiniStoreDb`; no historical payments were invented.
+- Release build passed with zero warnings, 500 focused checks passed and the disposable SQL Server fixture proved exactly one of two concurrent full-balance payments succeeds with one balanced settlement journal.
+
 ## 2026-10-10 — PUR-090 three-way matching
 
 - Added tenant-configurable quantity and net-price tolerance percentages with a bilingual Settings screen and rowversion-protected singleton persistence.

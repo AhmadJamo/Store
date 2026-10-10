@@ -1342,6 +1342,26 @@ Check(vendorBillController.GetMethod(nameof(VendorBillsController.Index))!
           .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
       $"{PermissionAuthorizeAttribute.PolicyPrefix}VendorBills.OverrideMatch",
     "Vendor bill visibility, posting and match override must use separate server-side permissions");
+var supplierPayment = new SupplierPayment("SPY-000001", 5, 7, DateOnly.FromDateTime(DateTime.Today), "jod", "BANK-77", null, "cashier");
+supplierPayment.AddLine(new SupplierPaymentLine(1, 4m, "VB-000001", "SUP-001"));
+supplierPayment.AddLine(new SupplierPaymentLine(2, 3m, "VB-000002", "SUP-002"));
+supplierPayment.Post("cashier");
+Check(supplierPayment.Status == SupplierPaymentStatus.Posted && supplierPayment.CurrencyCode == "JOD" && supplierPayment.TotalAmount == 7m &&
+      db.Model.FindEntityType(typeof(SupplierPayment))!.FindProperty("TenantId") is { IsNullable: false } &&
+      db.Model.FindEntityType(typeof(SupplierPayment))!.FindProperty(nameof(SupplierPayment.RowVersion))!.IsConcurrencyToken,
+    "Supplier payments must preserve partial bill allocations as tenant-owned, concurrency-protected posting evidence");
+CheckThrows(() => supplierPayment.AddLine(new SupplierPaymentLine(3, 1m, "VB-000003", "SUP-003")),
+    "Posted supplier payments must be immutable");
+Check(DocumentSequence.CreateDefault(DocumentNumberType.SupplierPayment).Preview(DateTime.Today).StartsWith("SPY-"),
+    "Supplier payments must use an independent centralized document sequence");
+var supplierPaymentController = typeof(SupplierPaymentsController);
+Check(supplierPaymentController.GetMethod(nameof(SupplierPaymentsController.Index))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
+      $"{PermissionAuthorizeAttribute.PolicyPrefix}SupplierPayments.View" &&
+      supplierPaymentController.GetMethod(nameof(SupplierPaymentsController.Create), [typeof(CreateSupplierPaymentDto)])!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
+      $"{PermissionAuthorizeAttribute.PolicyPrefix}SupplierPayments.Create",
+    "Supplier payment visibility and posting must use separate server-side permissions");
 var sourcingController = typeof(PurchaseSourcingController);
 Check(sourcingController.GetMethod(nameof(PurchaseSourcingController.Index))!
           .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==

@@ -19,8 +19,8 @@ The inventory/WMS track is paused by product-owner direction. The active planned
 - [x] PUR-070 add receipt-based supplier returns with unbilled-quantity caps, inventory/tracking removal and GRNI/PPV reversal while preserving legacy returns.
 - [x] PUR-080 add receipt-allocated Vendor Bills with normalized duplicate protection and GRNI/Input Tax/PPV/Accounts Payable posting.
 - [x] PUR-090 add three-way matching tolerances, persisted exceptions and controlled override.
-- [ ] PUR-100 add partial supplier payments and Accounts Payable settlement.
-- [ ] Continue PUR-070 and PUR-100 through PUR-150 in the approved plan order.
+- [x] PUR-100 add partial supplier payments and Accounts Payable settlement.
+- [ ] Continue PUR-110 through PUR-150 in the approved plan order.
 
 - [x] WMS-050 reservations and exact transfer allocation with concurrent last-unit protection.
 - [x] WMS-060 blind cycle counts and controlled inventory adjustment posting; scheduling remains deferred.

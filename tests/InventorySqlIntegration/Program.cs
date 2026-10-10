@@ -101,7 +101,7 @@ try
     await VerifyInventoryBalanceProjectionAsync(tenantOneId, tenantOneFixture.ProductId, expectedOnHand: 2m, connectionString);
     await VerifyOpeningTrackingAllocationAsync(tenantOneId, tenantOneFixture.ProductId, tenantOneFixture.WarehouseId, connectionString);
 
-    Console.WriteLine("Passed SQL integration checks: tenant isolation, reconciliation, balances, receipt and vendor-bill concurrency, three-way matching override evidence, GRNI posting and clearing, receipt-based supplier returns, adjustment posting, tracked operations, quarantine and recall.");
+    Console.WriteLine("Passed SQL integration checks: tenant isolation, reconciliation, balances, receipt, vendor-bill and supplier-payment concurrency, three-way matching override evidence, GRNI posting and clearing, payable settlement, receipt-based supplier returns, adjustment posting, tracked operations, quarantine and recall.");
 }
 finally
 {
@@ -207,6 +207,8 @@ static async Task VerifyConcurrentGoodsReceiptAndGrniAsync(
     int grniAccountId;
     int varianceAccountId;
     int payableAccountId;
+    int cashAccountId;
+    int vendorBillId = 0;
     var receiptDate = DateOnly.FromDateTime(DateTime.Today);
 
     await using (var context = new AppDbContext(CreateOptions(connectionString), new FixedTenantContext(tenantId)))
@@ -215,20 +217,23 @@ static async Task VerifyConcurrentGoodsReceiptAndGrniAsync(
         var grniAccount = new Account("2100-GRNI", "Goods received not invoiced", AccountType.Liability);
         var varianceAccount = new Account("5100-PPV", "Purchase price variance", AccountType.Expense);
         var payableAccount = new Account("2101-AP", "Supplier payable", AccountType.Liability);
+        var cashAccount = new Account("1100-CASH", "Supplier payment cash", AccountType.Asset);
         var branch = new Branch("GRN", "Goods receipt branch");
         var warehouse = new Warehouse("Goods receipt warehouse");
         var product = new Product("Concurrent receipt product", "GRN-CONCURRENT", 10m, 15m, 12m,
             measurementUnitId: measurementUnitId);
         var supplier = new Supplier("Concurrent receipt supplier");
-        context.AddRange(inventoryAccount, grniAccount, varianceAccount, payableAccount, branch, warehouse, product, supplier);
+        context.AddRange(inventoryAccount, grniAccount, varianceAccount, payableAccount, cashAccount, branch, warehouse, product, supplier);
         await context.SaveChangesAsync();
 
         warehouse.AssignAccounting(branch.Id, inventoryAccount.Id);
         supplier.AssignPayableAccount(payableAccount.Id);
         context.AccountingSettings.Add(new AccountingSettings(null, null, null, null, grniAccount.Id, varianceAccount.Id));
+        context.PaymentMethods.Add(new PaymentMethod("Supplier bank transfer", cashAccount.Id));
         context.DocumentSequences.AddRange(
             DocumentSequence.CreateDefault(DocumentNumberType.GoodsReceipt),
             DocumentSequence.CreateDefault(DocumentNumberType.VendorBill),
+            DocumentSequence.CreateDefault(DocumentNumberType.SupplierPayment),
             DocumentSequence.CreateDefault(DocumentNumberType.JournalEntry));
 
         var request = new PurchaseRequest("PRQ-SQL-GRN", warehouse.Id, receiptDate,
@@ -274,6 +279,7 @@ static async Task VerifyConcurrentGoodsReceiptAndGrniAsync(
         grniAccountId = grniAccount.Id;
         varianceAccountId = varianceAccount.Id;
         payableAccountId = payableAccount.Id;
+        cashAccountId = cashAccount.Id;
     }
 
     async Task<bool> TryReceiveAsync()
@@ -382,6 +388,7 @@ static async Task VerifyConcurrentGoodsReceiptAndGrniAsync(
     await using (var billVerification = new AppDbContext(CreateOptions(connectionString), new FixedTenantContext(tenantId)))
     {
         var postedBill = await billVerification.VendorBills.Include(x => x.Lines).SingleAsync(x => x.PurchaseOrderId == purchaseOrderId);
+        vendorBillId = postedBill.Id;
         var billJournal = await billVerification.JournalEntries.Include(x => x.Lines).SingleAsync(x =>
             x.SourceType == "VendorBill" && x.SourceReference == postedBill.BillNumber);
         var matchRun = await billVerification.PurchaseMatchRuns.Include(x => x.Exceptions).SingleAsync(x => x.VendorBillId == postedBill.Id);
@@ -393,6 +400,50 @@ static async Task VerifyConcurrentGoodsReceiptAndGrniAsync(
             !billJournal.Lines.Any(x => x.AccountId == payableAccountId && x.Credit == 5m) ||
             !matchRun.WasOverridden || matchRun.Exceptions.Count != 1 || matchRun.Exceptions.Single().Type != PurchaseMatchExceptionType.Price)
             throw new InvalidOperationException("The winning vendor bill must clear receipt value, isolate price variance and credit supplier payable atomically.");
+    }
+
+    async Task<bool> TrySupplierPaymentAsync()
+    {
+        await using var paymentContext = new AppDbContext(CreateOptions(connectionString), new FixedTenantContext(tenantId));
+        var paymentUnitOfWork = new UnitOfWork(paymentContext);
+        var paymentUser = new FixedCurrentUser("integration-cashier");
+        var paymentNumbers = new DocumentNumberService(new DocumentSequenceRepository(paymentContext));
+        var paymentFiscalPeriods = new FiscalPeriodService(new FiscalPeriodRepository(paymentContext), paymentUnitOfWork, paymentUser);
+        var paymentJournals = new JournalPostingService(new JournalEntryRepository(paymentContext), paymentNumbers, paymentFiscalPeriods);
+        var paymentMethod = await paymentContext.PaymentMethods.SingleAsync(x => x.Name == "Supplier bank transfer");
+        var service = new SupplierPaymentService(new SupplierPaymentRepository(paymentContext), new VendorBillRepository(paymentContext),
+            new SupplierRepository(paymentContext), new PaymentMethodRepository(paymentContext), paymentNumbers, paymentJournals,
+            paymentUnitOfWork, paymentUser);
+        try
+        {
+            await service.CreateAndPostAsync(new CreateSupplierPaymentDto
+            {
+                SourceVendorBillId = vendorBillId, PaymentMethodId = paymentMethod.Id, PaymentDate = receiptDate,
+                ExternalReference = "SQL-PAY-001",
+                Lines = [new CreateSupplierPaymentLineDto { VendorBillId = vendorBillId, Amount = 5m }]
+            });
+            return true;
+        }
+        catch (Exception exception) when (exception is InvalidOperationException or DbUpdateException or SqlException)
+        {
+            return false;
+        }
+    }
+
+    var paymentOutcomes = await Task.WhenAll(TrySupplierPaymentAsync(), TrySupplierPaymentAsync());
+    if (paymentOutcomes.Count(success => success) != 1)
+        throw new InvalidOperationException("Exactly one concurrent full-balance supplier payment must succeed.");
+
+    await using (var paymentVerification = new AppDbContext(CreateOptions(connectionString), new FixedTenantContext(tenantId)))
+    {
+        var payment = await paymentVerification.SupplierPayments.Include(x => x.Lines).SingleAsync(x => x.Lines.Any(y => y.VendorBillId == vendorBillId));
+        var paymentJournal = await paymentVerification.JournalEntries.Include(x => x.Lines).SingleAsync(x =>
+            x.SourceType == "SupplierPayment" && x.SourceReference == payment.PaymentNumber);
+        if (payment.Status != SupplierPaymentStatus.Posted || payment.TotalAmount != 5m || payment.Lines.Single().Amount != 5m ||
+            paymentJournal.Lines.Sum(x => x.Debit) != 5m || paymentJournal.Lines.Sum(x => x.Credit) != 5m ||
+            !paymentJournal.Lines.Any(x => x.AccountId == payableAccountId && x.Debit == 5m) ||
+            !paymentJournal.Lines.Any(x => x.AccountId == cashAccountId && x.Credit == 5m))
+            throw new InvalidOperationException("The winning supplier payment must settle the payable and credit its configured cash or bank account atomically.");
     }
 
     async Task<bool> TryReturnAsync()

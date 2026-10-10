@@ -46,6 +46,7 @@
 | `Entities/Purchases/GoodsReceiptReturn.cs` | immutable receipt-based supplier-return header/lines with frozen quantity, original receipt value and removed inventory cost | PUR-070 return workflow. |
 | `Entities/Purchases/VendorBill.cs` | immutable posted supplier invoice identity and receipt-line allocations with frozen receipt clearing, price, tax and total snapshots | PUR-080 billing workflow. |
 | `Entities/Purchases/PurchaseMatch.cs` | tenant matching settings plus immutable bill match runs, line exceptions and reasoned override evidence | PUR-090 three-way matching. |
+| `Entities/Purchases/SupplierPayment.cs` | posted supplier-payment aggregate with immutable partial Vendor Bill allocations | PUR-100 payable settlement. |
 | `Entities/Settings/*.cs` | accounting, discount, inventory-policy defaults, centralized `DocumentSequence`, general settings and supported UI language | settings/database/localization docs. |
 | `Entities/Security/*.cs` | audit, permission catalogue and tenant-owned role/permission entities | permissions/security docs. |
 | `Entities/Tenancy/*.cs` | company tenant, Identity-user membership and tenant-scoped user-role assignments | tenancy/security/database docs. |
@@ -67,6 +68,7 @@
 | `Services/Purchases/GoodsReceiptService.cs` | atomically validates remaining PO quantity and coordinates receipt posting with Inventory-owned stock, valuation and tracking effects | Goods Receipt capture screen. |
 | `Services/Purchases/GoodsReceiptReturnService.cs` | caps returns by the posted, unbilled receipt quantity and atomically coordinates inventory removal, tracking, physical movement and GRNI/PPV accounting | Goods Receipt Return screens. |
 | `Services/Purchases/VendorBillService.cs` | caps receipt-based partial billing, rejects duplicate normalized supplier invoices and atomically clears GRNI, records input tax/PPV and credits supplier payable | Vendor Bill screens. |
+| `Services/Purchases/SupplierPaymentService.cs` | calculates outstanding Vendor Bill balances and atomically settles supplier payable against a configured cash/bank payment method | Supplier Payment screens. |
 | `Services/Settings/PurchaseMatchingSettingsService.cs` | administers tenant quantity/price matching tolerances | Settings Purchase Matching screen. |
 | `Services/Catalog/RecipeService.cs` | lists and creates immutable active recipe versions with compatible ingredient units | Recipes controller/views and prepared-product sales. |
 | `Services/Catalog/ProductCategoryService.cs` | creates and activates/deactivates tenant product categories used by logistics metadata | ProductCategories controller/view and product forms. |
@@ -157,6 +159,7 @@ Hierarchical location update (2026-09-30): StorageLocation retains its identity 
 | `Repositories/Purchases/GoodsReceiptReturnRepository.cs` | tenant-filtered receipt-return reads and cumulative returned-quantity evidence | PUR-070 return service. |
 | `Repositories/Purchases/VendorBillRepository.cs` | tenant-filtered bill reads, cumulative receipt-line billing and active normalized invoice duplicate checks | PUR-080 bill service. |
 | `Repositories/Purchases/PurchaseMatchRepository.cs` | persists match runs/exceptions and the singleton tenant tolerance settings | PUR-090 matching and settings services. |
+| `Repositories/Purchases/SupplierPaymentRepository.cs` | reads payment history and aggregates cumulative allocations by Vendor Bill | PUR-100 payment service. |
 | `Authorization/PermissionService.cs` | permission check implementation | SaleService. |
 
 ## Web source map
@@ -181,6 +184,7 @@ Hierarchical location update (2026-09-30): StorageLocation retains its identity 
 | `Controllers/Purchases/GoodsReceiptsController.cs`, `Views/GoodsReceipts/Create.cshtml` | permission-protected partial Goods Receipt capture and immediate posting | PUR-060 receipt service. |
 | `Controllers/Purchases/GoodsReceiptReturnsController.cs`, `Views/GoodsReceiptReturns/*.cshtml` | permission-protected receipt-based supplier return capture, history and detail | PUR-070 return service. |
 | `Controllers/Purchases/VendorBillsController.cs`, `Views/VendorBills/*.cshtml` | permission-protected receipt allocation, immediate posting, history and immutable bill detail | PUR-080 bill service. |
+| `Controllers/Purchases/SupplierPaymentsController.cs`, `Views/SupplierPayments/*.cshtml` | permission-protected partial allocation, immediate posting, payment history and immutable detail | PUR-100 payment service. |
 | `Views/Settings/PurchaseMatching.cshtml` | administration screen for quantity and price tolerance percentages | PUR-090 settings service. |
 | `Areas/Platform/*` | separately authenticated platform-owner control center for plans, companies/subscriptions, promotion codes and pending payment confirmations | SaaS module. |
 | `Controllers/PublicController.cs`, `Controllers/Saas/SubscriptionController.cs` | public landing/pricing and tenant subscription/checkout flows | SaaS module and public/subscription views. |
@@ -210,7 +214,7 @@ For exact module relationships, use `modules/*.md`; for entity and service detai
 ## Security additions (2026-09-13)
 - `MiniStore.Application/Permissions/AdministrationPermissions.cs`: shared Admin-only identity mutation boundary, consumed by both permission evaluators.
 - `tests/SecurityRegression/{SecurityRegression.csproj,Program.cs}`: standalone executable authorization/action regression checks; references Web; no test-framework dependency.
-- `tests/InventorySqlIntegration/{InventorySqlIntegration.csproj,Program.cs}`: disposable SQL Server fixture for tenant isolation, inventory controls and concurrent Goods Receipt, receipt-return and Vendor Bill accounting/duplicate protection.
+- `tests/InventorySqlIntegration/{InventorySqlIntegration.csproj,Program.cs}`: disposable SQL Server fixture for tenant isolation, inventory controls and concurrent Goods Receipt, receipt-return, Vendor Bill and Supplier Payment accounting/overpayment protection.
 - Runtime login limiter and Identity lockout: `Web/Configuration/{WebPresentation,Security}Extensions.cs` and `Controllers/Security/AccountController.cs`.
 - Bootstrap opt-in: `Infrastructure/Persistence/IdentitySeeder.cs` and Web appsettings.
 - Controller broad-error handling and five index delete forms: see security/controller/screen docs.

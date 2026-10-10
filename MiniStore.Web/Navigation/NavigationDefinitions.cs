@@ -77,6 +77,7 @@ public static class NavigationDefinitions
             ,new NavigationItem("Goods receipts","bi-box-arrow-in-down","GoodsReceipts","Index","GoodsReceipts.View",90)
             ,new NavigationItem("Goods receipt returns","bi-box-arrow-up","GoodsReceiptReturns","Index","GoodsReceiptReturns.View",100)
             ,new NavigationItem("Vendor bills","bi-receipt-cutoff","VendorBills","Index","VendorBills.View",110)
+            ,new NavigationItem("Supplier payments","bi-cash-coin","SupplierPayments","Index","SupplierPayments.View",120)
         ),
 
         new NavigationGroup(

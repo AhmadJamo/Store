@@ -1,0 +1,11 @@
+@model MiniStore.Application.DTOs.Purchases.SupplierPaymentDto
+@inject Microsoft.Extensions.Localization.IStringLocalizer<MiniStore.Web.SharedResource> Localizer
+@{ ViewData["Title"] = Model.PaymentNumber; }
+<div class="d-flex justify-content-between align-items-center mb-3"><h2>@Model.PaymentNumber <span class="badge bg-success">@Localizer[Model.Status.ToString()]</span></h2><a asp-action="Index" class="btn btn-outline-secondary">@Localizer["Back"]</a></div>
+<div class="card card-body mb-3"><div class="row g-2">
+    <div class="col-md-4"><strong>@Localizer["Supplier"]:</strong> @Model.SupplierName</div><div class="col-md-4"><strong>@Localizer["Payment date"]:</strong> @Model.PaymentDate</div><div class="col-md-4"><strong>@Localizer["Payment method"]:</strong> @Model.PaymentMethodName</div>
+    <div class="col-md-4"><strong>@Localizer["External reference"]:</strong> @Model.ExternalReference</div><div class="col-md-8"><strong>@Localizer["Notes"]:</strong> @Model.Notes</div>
+</div></div>
+<div class="table-responsive"><table class="table"><thead><tr><th>@Localizer["Bill number"]</th><th>@Localizer["Supplier invoice number"]</th><th>@Localizer["Allocated amount"]</th></tr></thead>
+<tbody>@foreach(var line in Model.Lines){<tr><td><a asp-controller="VendorBills" asp-action="Details" asp-route-id="@line.VendorBillId">@line.BillNumber</a></td><td>@line.SupplierInvoiceNumber</td><td>@line.Amount @Model.CurrencyCode</td></tr>}</tbody>
+<tfoot><tr class="fw-bold"><td colspan="2">@Localizer["Total"]</td><td>@Model.TotalAmount @Model.CurrencyCode</td></tr></tfoot></table></div>

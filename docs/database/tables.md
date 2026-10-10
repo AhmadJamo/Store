@@ -37,6 +37,7 @@ Schema source is `AppDbContext`, configurations and migrations. Identity's stand
 - **TaxRates:** Name, Rate, OutputAccountId, InputAccountId, IsPriceInclusive.
 - **AccountingSettings:** singleton posting links for purchase discount, sales discount, sales revenue and cost of sales.
 - **PaymentMethods:** Name, AccountId, IsActive; maps cash, bank, card or similar settlement method to a chart account.
+- **SupplierPayments / SupplierPaymentLines:** numbered, rowversion-protected posted settlements by supplier, currency and payment method; child rows freeze each Vendor Bill identity and allocated amount. Tenant-safe foreign keys and Serializable balance checks prevent cross-company or excess settlement.
 - **ProductStocks:** Id, ProductId, WarehouseId, Quantity decimal(18,6), AverageUnitCost, InventoryValue and LastReferenceUnitCost decimal(24,8); unique product/warehouse. Negative values are permitted only through controlled recipe/kitchen methods and retain provisional value.
 - **ProductLocationStocks:** ProductId, WarehouseId, StorageLocationId, Quantity and RowVersion; unique product/location allocation.
 - **LocationMovements:** immutable putaway/relocation audit rows with ProductId, WarehouseId, FromStorageLocationId?, ToStorageLocationId, Quantity, Type, Reference?, Notes?, CreatedByUserId and CreatedAt.

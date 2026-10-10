@@ -1166,4 +1166,37 @@
   <data name="Purchase match line references are required." xml:space="preserve"><value>مراجع سطر مطابقة المشتريات مطلوبة.</value></data>
   <data name="Purchase match values cannot be negative." xml:space="preserve"><value>لا يمكن أن تكون قيم مطابقة المشتريات سالبة.</value></data>
   <data name="Purchase match product snapshots are required." xml:space="preserve"><value>بيانات المنتج التاريخية لمطابقة المشتريات مطلوبة.</value></data>
+  <data name="Supplier payments" xml:space="preserve"><value>دفعات الموردين</value></data>
+  <data name="Create supplier payment" xml:space="preserve"><value>إنشاء دفعة مورد</value></data>
+  <data name="Payment number" xml:space="preserve"><value>رقم الدفعة</value></data>
+  <data name="Payment date" xml:space="preserve"><value>تاريخ الدفعة</value></data>
+  <data name="Payment method" xml:space="preserve"><value>طريقة الدفع</value></data>
+  <data name="External reference" xml:space="preserve"><value>المرجع الخارجي</value></data>
+  <data name="Allocated amount" xml:space="preserve"><value>المبلغ المخصص</value></data>
+  <data name="Select payment method" xml:space="preserve"><value>اختر طريقة الدفع</value></data>
+  <data name="There are no outstanding vendor bills for this supplier and currency." xml:space="preserve"><value>لا توجد فواتير مورد مستحقة لهذا المورد وهذه العملة.</value></data>
+  <data name="Bill total" xml:space="preserve"><value>إجمالي الفاتورة</value></data>
+  <data name="Paid amount" xml:space="preserve"><value>المبلغ المدفوع</value></data>
+  <data name="Outstanding balance" xml:space="preserve"><value>الرصيد المستحق</value></data>
+  <data name="Payment allocation" xml:space="preserve"><value>تخصيص الدفعة</value></data>
+  <data name="Post supplier payment" xml:space="preserve"><value>ترحيل دفعة المورد</value></data>
+  <data name="Pay vendor bill" xml:space="preserve"><value>دفع فاتورة المورد</value></data>
+  <data name="Supplier payment posted." xml:space="preserve"><value>تم ترحيل دفعة المورد.</value></data>
+  <data name="Search by payment number or external reference" xml:space="preserve"><value>ابحث برقم الدفعة أو المرجع الخارجي</value></data>
+  <data name="Enter at least one positive payment allocation." xml:space="preserve"><value>أدخل تخصيص دفعة موجبًا واحدًا على الأقل.</value></data>
+  <data name="A vendor bill can be allocated only once per supplier payment." xml:space="preserve"><value>يمكن تخصيص فاتورة المورد مرة واحدة فقط في كل دفعة مورد.</value></data>
+  <data name="Vendor bill was not found." xml:space="preserve"><value>لم يتم العثور على فاتورة المورد.</value></data>
+  <data name="Only posted vendor bills can be paid." xml:space="preserve"><value>يمكن دفع فواتير الموردين المرحلة فقط.</value></data>
+  <data name="Assign a payable account to the supplier before posting a supplier payment." xml:space="preserve"><value>عيّن حسابًا دائنًا للمورد قبل ترحيل دفعة المورد.</value></data>
+  <data name="Payment method was not found." xml:space="preserve"><value>لم يتم العثور على طريقة الدفع.</value></data>
+  <data name="The selected payment method is inactive." xml:space="preserve"><value>طريقة الدفع المحددة غير نشطة.</value></data>
+  <data name="All payment allocations must belong to posted vendor bills for the same supplier and currency." xml:space="preserve"><value>يجب أن تنتمي جميع تخصيصات الدفعة إلى فواتير مرحلة للمورد والعملة نفسيهما.</value></data>
+  <data name="Payment allocation must be greater than zero." xml:space="preserve"><value>يجب أن يكون تخصيص الدفعة أكبر من صفر.</value></data>
+  <data name="A payment allocation cannot exceed the vendor bill outstanding balance." xml:space="preserve"><value>لا يمكن أن يتجاوز تخصيص الدفعة الرصيد المستحق لفاتورة المورد.</value></data>
+  <data name="Supplier payment total must be greater than zero." xml:space="preserve"><value>يجب أن يكون إجمالي دفعة المورد أكبر من صفر.</value></data>
+  <data name="Only draft supplier payments can be changed." xml:space="preserve"><value>يمكن تعديل دفعات الموردين المسودة فقط.</value></data>
+  <data name="Payment number is required." xml:space="preserve"><value>رقم الدفعة مطلوب.</value></data>
+  <data name="Currency is required." xml:space="preserve"><value>العملة مطلوبة.</value></data>
+  <data name="Vendor bill is required." xml:space="preserve"><value>فاتورة المورد مطلوبة.</value></data>
+  <data name="Vendor bill references are required." xml:space="preserve"><value>مراجع فاتورة المورد مطلوبة.</value></data>
 </root>

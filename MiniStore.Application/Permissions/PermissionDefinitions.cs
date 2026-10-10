@@ -126,6 +126,8 @@ public static class PermissionDefinitions
         new("VendorBills.View", "View Vendor Bills", "Purchases"),
         new("VendorBills.Create", "Create and Post Vendor Bill", "Purchases"),
         new("VendorBills.OverrideMatch", "Override Vendor Bill Match", "Purchases"),
+        new("SupplierPayments.View", "View Supplier Payments", "Purchases"),
+        new("SupplierPayments.Create", "Create and Post Supplier Payment", "Purchases"),
         new("PurchaseReturns.View", "View Purchase Returns", "Purchase Returns"),
         new("PurchaseReturns.Create", "Create Purchase Return", "Purchase Returns"),
 
