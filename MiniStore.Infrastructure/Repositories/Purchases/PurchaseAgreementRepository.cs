@@ -1,0 +1,6 @@
+using Microsoft.EntityFrameworkCore;using MiniStore.Domain.Entities;using MiniStore.Domain.Interfaces;using MiniStore.Infrastructure.Persistence;
+namespace MiniStore.Infrastructure.Repositories;
+public sealed class PurchaseAgreementRepository(AppDbContext context):IPurchaseAgreementRepository
+{public Task<List<PurchaseAgreement>>GetAllAsync()=>context.PurchaseAgreements.Include(x=>x.Lines).OrderByDescending(x=>x.CreatedAtUtc).ToListAsync();public Task<PurchaseAgreement?>GetByIdAsync(int id)=>context.PurchaseAgreements.Include(x=>x.Lines).FirstOrDefaultAsync(x=>x.Id==id);public Task<PurchaseAgreement?>GetByQuotationIdAsync(int quotationId)=>context.PurchaseAgreements.FirstOrDefaultAsync(x=>x.SupplierQuotationId==quotationId);public Task AddAsync(PurchaseAgreement value)=>context.PurchaseAgreements.AddAsync(value).AsTask();}
+public sealed class PurchaseTemplateRepository(AppDbContext context):IPurchaseTemplateRepository
+{public Task<List<PurchaseTemplate>>GetAllAsync()=>context.PurchaseTemplates.Include(x=>x.Lines).OrderBy(x=>x.Name).ToListAsync();public Task<PurchaseTemplate?>GetByIdAsync(int id)=>context.PurchaseTemplates.Include(x=>x.Lines).FirstOrDefaultAsync(x=>x.Id==id);public Task AddAsync(PurchaseTemplate value)=>context.PurchaseTemplates.AddAsync(value).AsTask();}

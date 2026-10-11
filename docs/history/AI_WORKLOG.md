@@ -1,5 +1,14 @@
 # AI Work Log
 
+## 2026-10-11 — PUR-120 Purchase Agreements and Repeat Templates
+
+- Added centrally numbered, tenant-owned Purchase Agreements created only from a recorded winning quotation, with frozen terms, validity, activation/cancellation audit and rowversion protection.
+- Agreement releases recalculate cumulative non-cancelled quantities inside a Serializable transaction, reject quantities above the contracted remainder and create linked Draft Purchase Orders that still require normal approval and confirmation.
+- Added repeat Purchase Templates saved from an existing Purchase Order. Every generation increments a protected counter, revalidates current purchasability and creates a distinctly traced Draft Purchase Request without bypassing submission, approval, sourcing or award.
+- Added separate agreement/template permissions, purchasing navigation, bilingual list/create/detail actions and source links from quotation comparison and Purchase Order details.
+- Created migration `20261010190513_AddPurchaseAgreementsAndTemplates`; it was verified against the current model and is present on `AHMAD/MiniStoreDb` with no historical backfill.
+- Release build passed with zero warnings, 503 focused checks passed, and the disposable SQL Server integration fixture passed its full tenant, concurrency, inventory and purchasing-accounting suite.
+
 ## 2026-10-10 — PUR-110 Replenishment Purchase Demand
 
 - Added an explicit reviewed-suggestion action that creates a Draft Purchase Request only for active purchase-sourced replenishment rules that are still below their minimum.

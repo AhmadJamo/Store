@@ -9,6 +9,7 @@ public sealed class PurchaseOrder
     public string OrderNumber { get; private set; }
     public int PurchaseSourcingEventId { get; private set; }
     public int SupplierQuotationId { get; private set; }
+    public int? PurchaseAgreementId { get; private set; }
     public int SupplierId { get; private set; }
     public int WarehouseId { get; private set; }
     public DateOnly OrderDate { get; private set; }
@@ -27,7 +28,8 @@ public sealed class PurchaseOrder
     public List<PurchaseOrderLine> Lines { get; private set; } = [];
 
     public PurchaseOrder(string orderNumber, int sourcingEventId, int quotationId, int supplierId, int warehouseId,
-        DateOnly orderDate, DateOnly expectedDate, string currencyCode, string? paymentTerms, string createdByUserId)
+        DateOnly orderDate, DateOnly expectedDate, string currencyCode, string? paymentTerms, string createdByUserId,
+        int? purchaseAgreementId = null)
     {
         if (string.IsNullOrWhiteSpace(orderNumber) || orderNumber.Trim().Length > 50) throw new ArgumentException("Purchase order number is required and cannot exceed 50 characters.");
         if (sourcingEventId <= 0 || quotationId <= 0 || supplierId <= 0 || warehouseId <= 0) throw new ArgumentException("Purchase order source, supplier and warehouse are required.");
@@ -35,7 +37,8 @@ public sealed class PurchaseOrder
         if (string.IsNullOrWhiteSpace(currencyCode) || currencyCode.Trim().Length != 3) throw new ArgumentException("Currency code must contain exactly three letters.");
         if (paymentTerms?.Trim().Length > 500) throw new ArgumentException("Payment terms cannot exceed 500 characters.");
         if (string.IsNullOrWhiteSpace(createdByUserId)) throw new ArgumentException("User is required.");
-        OrderNumber=orderNumber.Trim();PurchaseSourcingEventId=sourcingEventId;SupplierQuotationId=quotationId;SupplierId=supplierId;WarehouseId=warehouseId;OrderDate=orderDate;ExpectedDate=expectedDate;CurrencyCode=currencyCode.Trim().ToUpperInvariant();PaymentTermsSnapshot=Normalize(paymentTerms);CreatedByUserId=createdByUserId;CreatedAtUtc=DateTime.UtcNow;Status=PurchaseOrderStatus.Draft;
+        if (purchaseAgreementId <= 0) purchaseAgreementId = null;
+        OrderNumber=orderNumber.Trim();PurchaseSourcingEventId=sourcingEventId;SupplierQuotationId=quotationId;PurchaseAgreementId=purchaseAgreementId;SupplierId=supplierId;WarehouseId=warehouseId;OrderDate=orderDate;ExpectedDate=expectedDate;CurrencyCode=currencyCode.Trim().ToUpperInvariant();PaymentTermsSnapshot=Normalize(paymentTerms);CreatedByUserId=createdByUserId;CreatedAtUtc=DateTime.UtcNow;Status=PurchaseOrderStatus.Draft;
     }
     public void AddLine(PurchaseOrderLine line){EnsureDraft();if(Lines.Any(x=>x.SupplierQuotationLineId==line.SupplierQuotationLineId))throw new InvalidOperationException("Each quotation line can be ordered only once.");Lines.Add(line);}
     public void Approve(string user){EnsureDraft();EnsureUser(user);if(Lines.Count==0)throw new InvalidOperationException("A purchase order must contain at least one line.");Status=PurchaseOrderStatus.Approved;ApprovedByUserId=user;ApprovedAtUtc=DateTime.UtcNow;}
@@ -49,10 +52,10 @@ public sealed class PurchaseOrder
 public sealed class PurchaseOrderLine
 {
     private PurchaseOrderLine(){ProductCodeSnapshot=ProductNameSnapshot=UnitNameSnapshot=string.Empty;}
-    public int Id { get; private set; } public int PurchaseOrderId { get; private set; } public int SupplierQuotationLineId { get; private set; } public int ProductId { get; private set; } public int MeasurementUnitId { get; private set; }
+    public int Id { get; private set; } public int PurchaseOrderId { get; private set; } public int SupplierQuotationLineId { get; private set; } public int? PurchaseAgreementLineId { get; private set; } public int ProductId { get; private set; } public int MeasurementUnitId { get; private set; }
     public decimal OrderedQuantity { get; private set; } public decimal UnitFactorToBase { get; private set; } public decimal StockQuantity { get; private set; } public decimal UnitPrice { get; private set; } public decimal DiscountPercent { get; private set; } public decimal TaxPercent { get; private set; }
     public string ProductCodeSnapshot { get; private set; } public string ProductNameSnapshot { get; private set; } public string UnitNameSnapshot { get; private set; }
     public decimal NetAmount=>decimal.Round(OrderedQuantity*UnitPrice*(1m-DiscountPercent/100m),6); public decimal TaxAmount=>decimal.Round(NetAmount*TaxPercent/100m,6); public decimal GrossAmount=>NetAmount+TaxAmount;
-    public PurchaseOrderLine(int quotationLineId,int productId,int measurementUnitId,decimal orderedQuantity,decimal unitFactorToBase,decimal stockQuantity,decimal unitPrice,decimal discountPercent,decimal taxPercent,string productCode,string productName,string unitName)
-    {if(quotationLineId<=0||productId<=0||measurementUnitId<=0)throw new ArgumentException("Purchase order line references are required.");if(orderedQuantity<=0||unitFactorToBase<=0||stockQuantity<=0||unitPrice<0)throw new ArgumentException("Purchase order quantities and price are invalid.");if(discountPercent is <0 or >100||taxPercent is <0 or >100)throw new ArgumentException("Purchase order discount and tax percentages must be between 0 and 100.");if(string.IsNullOrWhiteSpace(productCode)||string.IsNullOrWhiteSpace(productName)||string.IsNullOrWhiteSpace(unitName))throw new ArgumentException("Purchase order line snapshots are required.");SupplierQuotationLineId=quotationLineId;ProductId=productId;MeasurementUnitId=measurementUnitId;OrderedQuantity=orderedQuantity;UnitFactorToBase=unitFactorToBase;StockQuantity=stockQuantity;UnitPrice=unitPrice;DiscountPercent=discountPercent;TaxPercent=taxPercent;ProductCodeSnapshot=productCode.Trim();ProductNameSnapshot=productName.Trim();UnitNameSnapshot=unitName.Trim();}
+    public PurchaseOrderLine(int quotationLineId,int productId,int measurementUnitId,decimal orderedQuantity,decimal unitFactorToBase,decimal stockQuantity,decimal unitPrice,decimal discountPercent,decimal taxPercent,string productCode,string productName,string unitName,int? purchaseAgreementLineId=null)
+    {if(quotationLineId<=0||productId<=0||measurementUnitId<=0)throw new ArgumentException("Purchase order line references are required.");if(orderedQuantity<=0||unitFactorToBase<=0||stockQuantity<=0||unitPrice<0)throw new ArgumentException("Purchase order quantities and price are invalid.");if(discountPercent is <0 or >100||taxPercent is <0 or >100)throw new ArgumentException("Purchase order discount and tax percentages must be between 0 and 100.");if(string.IsNullOrWhiteSpace(productCode)||string.IsNullOrWhiteSpace(productName)||string.IsNullOrWhiteSpace(unitName))throw new ArgumentException("Purchase order line snapshots are required.");if(purchaseAgreementLineId<=0)purchaseAgreementLineId=null;SupplierQuotationLineId=quotationLineId;PurchaseAgreementLineId=purchaseAgreementLineId;ProductId=productId;MeasurementUnitId=measurementUnitId;OrderedQuantity=orderedQuantity;UnitFactorToBase=unitFactorToBase;StockQuantity=stockQuantity;UnitPrice=unitPrice;DiscountPercent=discountPercent;TaxPercent=taxPercent;ProductCodeSnapshot=productCode.Trim();ProductNameSnapshot=productName.Trim();UnitNameSnapshot=unitName.Trim();}
 }

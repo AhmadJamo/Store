@@ -1212,4 +1212,74 @@
   <data name="Supplier purchase unit was not found." xml:space="preserve"><value>لم يتم العثور على وحدة شراء المورد.</value></data>
   <data name="Supplier purchase unit is not compatible with the product stock unit." xml:space="preserve"><value>وحدة شراء المورد غير متوافقة مع وحدة مخزون المنتج.</value></data>
   <data name="Replenishment purchase quantities and conversion factors must be greater than zero." xml:space="preserve"><value>يجب أن تكون كميات شراء إعادة التزويد ومعاملات التحويل أكبر من صفر.</value></data>
+  <data name="Purchase agreements" xml:space="preserve"><value>اتفاقيات الشراء</value></data>
+  <data name="Agreement number" xml:space="preserve"><value>رقم الاتفاقية</value></data>
+  <data name="Create purchase agreement" xml:space="preserve"><value>إنشاء اتفاقية شراء</value></data>
+  <data name="Maximum contracted quantity" xml:space="preserve"><value>الكمية التعاقدية القصوى</value></data>
+  <data name="Create agreement" xml:space="preserve"><value>إنشاء الاتفاقية</value></data>
+  <data name="Contracted quantity" xml:space="preserve"><value>الكمية المتعاقد عليها</value></data>
+  <data name="Released quantity" xml:space="preserve"><value>الكمية التي تم إصدارها</value></data>
+  <data name="Release quantity" xml:space="preserve"><value>كمية الإصدار</value></data>
+  <data name="Create release order draft" xml:space="preserve"><value>إنشاء مسودة أمر شراء من الاتفاقية</value></data>
+  <data name="Activate agreement" xml:space="preserve"><value>تفعيل الاتفاقية</value></data>
+  <data name="Purchase templates" xml:space="preserve"><value>قوالب الشراء</value></data>
+  <data name="Generated requests" xml:space="preserve"><value>الطلبات المُنشأة</value></data>
+  <data name="Generate purchase request draft" xml:space="preserve"><value>إنشاء مسودة طلب شراء</value></data>
+  <data name="Created from purchase agreement" xml:space="preserve"><value>منشأ من اتفاقية شراء</value></data>
+  <data name="Needed in days" xml:space="preserve"><value>مطلوب خلال أيام</value></data>
+  <data name="Save as purchase template" xml:space="preserve"><value>حفظ كقالب شراء</value></data>
+  <data name="Create purchase agreement from award" xml:space="preserve"><value>إنشاء اتفاقية شراء من العرض الفائز</value></data>
+  <data name="Purchase agreement created." xml:space="preserve"><value>تم إنشاء اتفاقية الشراء.</value></data>
+  <data name="Purchase order draft released from agreement." xml:space="preserve"><value>تم إنشاء مسودة أمر شراء من الاتفاقية.</value></data>
+  <data name="Purchase template created." xml:space="preserve"><value>تم إنشاء قالب الشراء.</value></data>
+  <data name="Purchase request draft generated from template." xml:space="preserve"><value>تم إنشاء مسودة طلب شراء من القالب.</value></data>
+  <data name="A quotation award is required before creating a purchase agreement." xml:space="preserve"><value>يجب اختيار عرض فائز قبل إنشاء اتفاقية شراء.</value></data>
+  <data name="A purchase agreement already exists for this quotation." xml:space="preserve"><value>توجد اتفاقية شراء لهذا العرض مسبقًا.</value></data>
+  <data name="A direct purchase order already exists for this quotation." xml:space="preserve"><value>يوجد أمر شراء مباشر لهذا العرض مسبقًا.</value></data>
+  <data name="A purchase agreement must contain at least one positive maximum quantity." xml:space="preserve"><value>يجب أن تحتوي اتفاقية الشراء على كمية قصوى موجبة واحدة على الأقل.</value></data>
+  <data name="Purchase agreement was not found." xml:space="preserve"><value>لم يتم العثور على اتفاقية الشراء.</value></data>
+  <data name="Only active purchase agreements can be released." xml:space="preserve"><value>يمكن إصدار أوامر من اتفاقيات الشراء النشطة فقط.</value></data>
+  <data name="Purchase agreement is outside its validity period." xml:space="preserve"><value>اتفاقية الشراء خارج فترة صلاحيتها.</value></data>
+  <data name="Enter at least one positive release quantity." xml:space="preserve"><value>أدخل كمية إصدار موجبة واحدة على الأقل.</value></data>
+  <data name="Agreement release quantity exceeds the remaining contracted quantity." xml:space="preserve"><value>تتجاوز كمية الإصدار الكمية التعاقدية المتبقية.</value></data>
+  <data name="Purchase agreement was modified by another user. Reload and try again." xml:space="preserve"><value>تم تعديل اتفاقية الشراء بواسطة مستخدم آخر. أعد التحميل وحاول مجددًا.</value></data>
+  <data name="Purchase template was not found." xml:space="preserve"><value>لم يتم العثور على قالب الشراء.</value></data>
+  <data name="Purchase template is inactive." xml:space="preserve"><value>قالب الشراء غير نشط.</value></data>
+  <data name="Purchase template has no lines." xml:space="preserve"><value>قالب الشراء لا يحتوي على سطور.</value></data>
+  <data name="Purchase agreement number is required and cannot exceed 50 characters." xml:space="preserve"><value>رقم اتفاقية الشراء مطلوب ولا يجوز أن يتجاوز 50 حرفًا.</value></data>
+  <data name="Purchase agreement source, supplier and warehouse are required." xml:space="preserve"><value>مصدر اتفاقية الشراء والمورد والمستودع مطلوبة.</value></data>
+  <data name="Agreement validity cannot end before it starts." xml:space="preserve"><value>لا يمكن أن تنتهي صلاحية الاتفاقية قبل بدايتها.</value></data>
+  <data name="A purchase agreement must contain at least one line." xml:space="preserve"><value>يجب أن تحتوي اتفاقية الشراء على سطر واحد على الأقل.</value></data>
+  <data name="Purchase agreement is already cancelled." xml:space="preserve"><value>اتفاقية الشراء ملغاة مسبقًا.</value></data>
+  <data name="Only draft purchase agreements can be changed." xml:space="preserve"><value>يمكن تعديل اتفاقيات الشراء المسودة فقط.</value></data>
+  <data name="Purchase template number is required and cannot exceed 50 characters." xml:space="preserve"><value>رقم قالب الشراء مطلوب ولا يجوز أن يتجاوز 50 حرفًا.</value></data>
+  <data name="Purchase template name is required and cannot exceed 150 characters." xml:space="preserve"><value>اسم قالب الشراء مطلوب ولا يجوز أن يتجاوز 150 حرفًا.</value></data>
+  <data name="Purchase template source, supplier and warehouse are required." xml:space="preserve"><value>مصدر قالب الشراء والمورد والمستودع مطلوبة.</value></data>
+  <data name="Needed-in days must be between 0 and 3650." xml:space="preserve"><value>يجب أن تكون مدة الاحتياج بين 0 و3650 يومًا.</value></data>
+  <data name="Awarded supplier quotation was not found." xml:space="preserve"><value>لم يتم العثور على عرض المورد الفائز.</value></data>
+  <data name="Cancellation reason is required and cannot exceed 1000 characters." xml:space="preserve"><value>سبب الإلغاء مطلوب ولا يجوز أن يتجاوز 1000 حرف.</value></data>
+  <data name="Destination warehouse was not found." xml:space="preserve"><value>لم يتم العثور على مستودع الوجهة.</value></data>
+  <data name="Each agreement line can appear only once in a release." xml:space="preserve"><value>يمكن أن يظهر كل سطر اتفاقية مرة واحدة فقط في الإصدار.</value></data>
+  <data name="Each quotation line can appear only once in a purchase agreement." xml:space="preserve"><value>يمكن أن يظهر كل سطر عرض مرة واحدة فقط في اتفاقية الشراء.</value></data>
+  <data name="Expected delivery date cannot be earlier than order date." xml:space="preserve"><value>لا يمكن أن يكون تاريخ التسليم المتوقع أسبق من تاريخ الطلب.</value></data>
+  <data name="Generated from repeat purchase template." xml:space="preserve"><value>تم إنشاؤه من قالب شراء متكرر.</value></data>
+  <data name="Repeat purchase template" xml:space="preserve"><value>قالب شراء متكرر</value></data>
+  <data name="One or more purchase agreement lines do not belong to the awarded quotation." xml:space="preserve"><value>سطر واحد أو أكثر من سطور الاتفاقية لا ينتمي إلى العرض الفائز.</value></data>
+  <data name="One or more release lines do not belong to the purchase agreement." xml:space="preserve"><value>سطر واحد أو أكثر من سطور الإصدار لا ينتمي إلى اتفاقية الشراء.</value></data>
+  <data name="Payment terms cannot exceed 500 characters." xml:space="preserve"><value>لا يجوز أن تتجاوز شروط الدفع 500 حرف.</value></data>
+  <data name="Product and requested unit must use managed active units." xml:space="preserve"><value>يجب أن يستخدم المنتج والوحدة المطلوبة وحدات نشطة ومُدارة.</value></data>
+  <data name="Product stock unit was not found." xml:space="preserve"><value>لم يتم العثور على وحدة مخزون المنتج.</value></data>
+  <data name="Purchase agreement discount and tax percentages must be between 0 and 100." xml:space="preserve"><value>يجب أن تكون نسب الخصم والضريبة في اتفاقية الشراء بين 0 و100.</value></data>
+  <data name="Purchase agreement line references are required." xml:space="preserve"><value>مراجع سطر اتفاقية الشراء مطلوبة.</value></data>
+  <data name="Purchase agreement line snapshots are required." xml:space="preserve"><value>بيانات المنتج والوحدة المحفوظة في سطر الاتفاقية مطلوبة.</value></data>
+  <data name="Purchase agreement quantity, conversion and price are invalid." xml:space="preserve"><value>الكمية أو معامل التحويل أو السعر في اتفاقية الشراء غير صالح.</value></data>
+  <data name="Purchase order was not found." xml:space="preserve"><value>لم يتم العثور على أمر الشراء.</value></data>
+  <data name="Purchase request priority is invalid." xml:space="preserve"><value>أولوية طلب الشراء غير صالحة.</value></data>
+  <data name="Purchase requests require an active purchasable product." xml:space="preserve"><value>تتطلب طلبات الشراء منتجًا نشطًا قابلًا للشراء.</value></data>
+  <data name="Purchase template line values are invalid." xml:space="preserve"><value>قيم سطر قالب الشراء غير صالحة.</value></data>
+  <data name="Requested unit and product stock unit must use the same measurement dimension." xml:space="preserve"><value>يجب أن تستخدم الوحدة المطلوبة ووحدة مخزون المنتج بُعد القياس نفسه.</value></data>
+  <data name="Sourcing event was not found." xml:space="preserve"><value>لم يتم العثور على عملية طلب العروض.</value></data>
+  <data name="Suggested supplier was not found." xml:space="preserve"><value>لم يتم العثور على المورد المقترح.</value></data>
+  <data name="The same product and unit cannot be added more than once." xml:space="preserve"><value>لا يمكن إضافة المنتج والوحدة نفسيهما أكثر من مرة.</value></data>
+  <data name="User is required." xml:space="preserve"><value>المستخدم مطلوب.</value></data>
 </root>

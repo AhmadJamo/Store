@@ -1270,6 +1270,61 @@ purchaseOrder.Approve("manager"); purchaseOrder.Confirm("buyer");
 Check(purchaseOrder.Status == PurchaseOrderStatus.Confirmed &&
       db.Model.FindEntityType(typeof(PurchaseOrder))!.FindProperty("TenantId") is { IsNullable: false },
     "A confirmed purchase order must retain its sourced commercial snapshots without stock mutation");
+var agreement = new PurchaseAgreement("AGR-000001", 301, 501, 5, 1,
+    DateOnly.FromDateTime(DateTime.Today), DateOnly.FromDateTime(DateTime.Today.AddMonths(6)),
+    "jod", "30 days", "buyer");
+agreement.AddLine(new PurchaseAgreementLine(601, 10, 2, 12m, 1m, 11.25m, 10m, 16m,
+    "P-10", "Coffee beans", "kg"));
+agreement.Activate("manager");
+Check(agreement.Status == PurchaseAgreementStatus.Active && agreement.CurrencyCode == "JOD" &&
+      agreement.Lines.Single().MaximumQuantity == 12m,
+    "Purchase agreements must freeze awarded terms and require activation before release");
+CheckThrows(
+    () => agreement.AddLine(new PurchaseAgreementLine(602, 11, 2, 1m, 1m, 1m, 0m, 0m, "P-11", "Tea", "kg")),
+    "Active purchase agreements must reject line changes");
+var agreementOrder = new PurchaseOrder("PO-AGR-000001", 301, 501, 5, 1,
+    DateOnly.FromDateTime(DateTime.Today), DateOnly.FromDateTime(DateTime.Today.AddDays(5)),
+    "JOD", "30 days", "buyer", 77);
+agreementOrder.AddLine(new PurchaseOrderLine(601, 10, 2, 3m, 1m, 3m, 11.25m, 10m, 16m,
+    "P-10", "Coffee beans", "kg", 88));
+Check(agreementOrder.PurchaseAgreementId == 77 && agreementOrder.Lines.Single().PurchaseAgreementLineId == 88,
+    "Agreement releases must retain their agreement and contracted-line provenance");
+var purchaseTemplate = new PurchaseTemplate("PTM-000001", "Monthly coffee", 1, 5, 1, 7,
+    PurchaseRequestPriority.Normal, "buyer");
+purchaseTemplate.AddLine(new PurchaseTemplateLine(10, 2, 2m, 1m, 5));
+Check(purchaseTemplate.BeginGeneration() == 1 && purchaseTemplate.BeginGeneration() == 2,
+    "Repeat purchase templates must assign a distinct generation number to every request draft");
+purchaseTemplate.SetActive(false);
+CheckThrows(() => purchaseTemplate.BeginGeneration(),
+    "Inactive repeat purchase templates must reject request generation");
+foreach (var type in new[] { typeof(PurchaseAgreement), typeof(PurchaseAgreementLine), typeof(PurchaseTemplate), typeof(PurchaseTemplateLine) })
+    Check(db.Model.FindEntityType(type)!.FindProperty("TenantId") is { IsNullable: false },
+        $"{type.Name} must be tenant owned");
+Check(db.Model.FindEntityType(typeof(PurchaseAgreement))!.FindProperty(nameof(PurchaseAgreement.RowVersion))!.IsConcurrencyToken &&
+      db.Model.FindEntityType(typeof(PurchaseTemplate))!.FindProperty(nameof(PurchaseTemplate.RowVersion))!.IsConcurrencyToken,
+    "Purchase agreements and templates must use optimistic concurrency");
+Check(DocumentSequence.CreateDefault(DocumentNumberType.PurchaseAgreement).Preview(DateTime.Today).StartsWith("AGR-") &&
+      DocumentSequence.CreateDefault(DocumentNumberType.PurchaseTemplate).Preview(DateTime.Today).StartsWith("PTM-"),
+    "Purchase agreements and templates must use independent centralized document sequences");
+var agreementController = typeof(PurchaseAgreementsController);
+Check(agreementController.GetMethod(nameof(PurchaseAgreementsController.Index))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
+      $"{PermissionAuthorizeAttribute.PolicyPrefix}PurchaseAgreements.View" &&
+      agreementController.GetMethod(nameof(PurchaseAgreementsController.Activate))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
+      $"{PermissionAuthorizeAttribute.PolicyPrefix}PurchaseAgreements.Activate" &&
+      agreementController.GetMethod(nameof(PurchaseAgreementsController.Release))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
+      $"{PermissionAuthorizeAttribute.PolicyPrefix}PurchaseAgreements.Release",
+    "Purchase agreement visibility, activation and releases must use separate server-side permissions");
+var templateController = typeof(PurchaseTemplatesController);
+Check(templateController.GetMethod(nameof(PurchaseTemplatesController.Index))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
+      $"{PermissionAuthorizeAttribute.PolicyPrefix}PurchaseTemplates.View" &&
+      templateController.GetMethod(nameof(PurchaseTemplatesController.Generate))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
+      $"{PermissionAuthorizeAttribute.PolicyPrefix}PurchaseTemplates.Generate",
+    "Purchase template visibility and request generation must use separate server-side permissions");
 var goodsReceipt = new GoodsReceipt("GRN-000001", 1, 1, DateOnly.FromDateTime(DateTime.Today), "Partial delivery", "receiver");
 goodsReceipt.AddLine(new GoodsReceiptLine(1, 10, 2, 1m, 1m, 11.25m, "P-10", "Coffee beans", "kg", "LOT-1", null, null, null));
 goodsReceipt.Post("receiver");

@@ -88,6 +88,10 @@ public class AppDbContext
     public DbSet<PurchaseMatchingSettings> PurchaseMatchingSettings => Set<PurchaseMatchingSettings>();
     public DbSet<SupplierPayment> SupplierPayments => Set<SupplierPayment>();
     public DbSet<SupplierPaymentLine> SupplierPaymentLines => Set<SupplierPaymentLine>();
+    public DbSet<PurchaseAgreement> PurchaseAgreements => Set<PurchaseAgreement>();
+    public DbSet<PurchaseAgreementLine> PurchaseAgreementLines => Set<PurchaseAgreementLine>();
+    public DbSet<PurchaseTemplate> PurchaseTemplates => Set<PurchaseTemplate>();
+    public DbSet<PurchaseTemplateLine> PurchaseTemplateLines => Set<PurchaseTemplateLine>();
 
     public DbSet<Purchase> Purchases
         => Set<Purchase>();

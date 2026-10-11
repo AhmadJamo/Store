@@ -1,7 +1,7 @@
 # MiniStore purchase management evolution plan
-> Status: APPROVED ARCHITECTURAL PLAN — PUR-000 THROUGH PUR-050 IMPLEMENTED
+> Status: APPROVED ARCHITECTURAL PLAN — PUR-000 THROUGH PUR-120 IMPLEMENTED
 > Source of truth: current code and migrations  
-> Last reviewed: 2026-10-08
+> Last reviewed: 2026-10-11
 
 ## 1. Executive decision
 
@@ -239,7 +239,7 @@ Each slice must include rollback/retry analysis and SQL-backed tenant/concurrenc
 | PUR-090 | Three-way matching | Implemented: tenant quantity/price tolerances, immutable per-bill match runs and exceptions, normal posting gate and dedicated reasoned override permission. SQL coverage persists the override evidence atomically with the bill. |
 | PUR-100 | Supplier payments | Implemented: partial multi-bill allocations, cumulative outstanding-balance enforcement and atomic Accounts Payable debit / configured Cash or Bank credit. SQL concurrency accepts exactly one competing full-balance payment. |
 | PUR-110 | Replenishment purchase demand | Implemented: reviewed purchase-sourced suggestions create one source-linked Draft Purchase Request using valid preferred-supplier units, minimums, multiples and lead time; database uniqueness blocks concurrent duplicates. |
-| PUR-120 | Agreements and templates | Contract releases and repeat ordering |
+| PUR-120 | Agreements and templates | Implemented: one agreement per awarded quotation with frozen terms, validity and capped non-cancelled Draft order releases; repeat templates generate uniquely traced Draft Purchase Requests and preserve the normal approval/sourcing path. |
 | PUR-130 | Landed costs | Auditable receipt valuation adjustments |
 | PUR-140 | Dashboards and supplier performance | Operational KPIs and drill-down reports |
 | PUR-150 | Barcode receiving | WMS-100B4 against Goods Receipts |
@@ -260,4 +260,4 @@ Shared accounting, settings, inventory and document-number files are changed onl
 
 ## 10. Immediate next slice
 
-Implement PUR-120 purchasing agreements and repeat-order templates without bypassing the existing request, approval, sourcing and order authorities. Supplier credit notes for returning already billed receipt quantities remain a later controlled accounting slice; PUR-070 rejects those quantities meanwhile.
+Implement PUR-130 landed-cost allocation with auditable receipt valuation adjustments. Supplier credit notes for returning already billed receipt quantities remain a later controlled accounting slice; PUR-070 rejects those quantities meanwhile.

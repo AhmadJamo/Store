@@ -3101,6 +3101,174 @@ namespace MiniStore.Infrastructure.Migrations
                     b.ToTable("Purchases");
                 });
 
+            modelBuilder.Entity("MiniStore.Domain.Entities.PurchaseAgreement", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime?>("ActivatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ActivatedByUserId")
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("AgreementNumber")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("CancellationReason")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedByUserId")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("CurrencyCode")
+                        .IsRequired()
+                        .HasMaxLength(3)
+                        .HasColumnType("nvarchar(3)");
+
+                    b.Property<string>("PaymentTermsSnapshot")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int>("PurchaseSourcingEventId")
+                        .HasColumnType("int");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SupplierId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SupplierQuotationId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TenantId")
+                        .HasColumnType("int");
+
+                    b.Property<DateOnly>("ValidFrom")
+                        .HasColumnType("date");
+
+                    b.Property<DateOnly>("ValidUntil")
+                        .HasColumnType("date");
+
+                    b.Property<int>("WarehouseId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TenantId");
+
+                    b.HasIndex("PurchaseSourcingEventId", "TenantId");
+
+                    b.HasIndex("SupplierId", "TenantId");
+
+                    b.HasIndex("SupplierQuotationId", "TenantId");
+
+                    b.HasIndex("TenantId", "AgreementNumber")
+                        .IsUnique();
+
+                    b.HasIndex("TenantId", "SupplierQuotationId")
+                        .IsUnique();
+
+                    b.HasIndex("WarehouseId", "TenantId");
+
+                    b.ToTable("PurchaseAgreements");
+                });
+
+            modelBuilder.Entity("MiniStore.Domain.Entities.PurchaseAgreementLine", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("DiscountPercent")
+                        .HasPrecision(9, 4)
+                        .HasColumnType("decimal(9,4)");
+
+                    b.Property<decimal>("MaximumQuantity")
+                        .HasPrecision(18, 6)
+                        .HasColumnType("decimal(18,6)");
+
+                    b.Property<int>("MeasurementUnitId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ProductCodeSnapshot")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ProductNameSnapshot")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<int>("PurchaseAgreementId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SupplierQuotationLineId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("TaxPercent")
+                        .HasPrecision(9, 4)
+                        .HasColumnType("decimal(9,4)");
+
+                    b.Property<int>("TenantId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("UnitFactorToBase")
+                        .HasPrecision(24, 12)
+                        .HasColumnType("decimal(24,12)");
+
+                    b.Property<string>("UnitNameSnapshot")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<decimal>("UnitPrice")
+                        .HasPrecision(24, 8)
+                        .HasColumnType("decimal(24,8)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TenantId");
+
+                    b.HasIndex("MeasurementUnitId", "TenantId");
+
+                    b.HasIndex("ProductId", "TenantId");
+
+                    b.HasIndex("PurchaseAgreementId", "TenantId");
+
+                    b.HasIndex("SupplierQuotationLineId", "TenantId");
+
+                    b.HasIndex("TenantId", "PurchaseAgreementId", "SupplierQuotationLineId")
+                        .IsUnique();
+
+                    b.ToTable("PurchaseAgreementLines");
+                });
+
             modelBuilder.Entity("MiniStore.Domain.Entities.PurchaseApprovalInstance", b =>
                 {
                     b.Property<int>("Id")
@@ -3562,6 +3730,9 @@ namespace MiniStore.Infrastructure.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
+                    b.Property<int?>("PurchaseAgreementId")
+                        .HasColumnType("int");
+
                     b.Property<int>("PurchaseSourcingEventId")
                         .HasColumnType("int");
 
@@ -3590,6 +3761,8 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasIndex("TenantId");
 
+                    b.HasIndex("PurchaseAgreementId", "TenantId");
+
                     b.HasIndex("PurchaseSourcingEventId", "TenantId");
 
                     b.HasIndex("SupplierId", "TenantId");
@@ -3600,7 +3773,8 @@ namespace MiniStore.Infrastructure.Migrations
                         .IsUnique();
 
                     b.HasIndex("TenantId", "SupplierQuotationId")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[PurchaseAgreementId] IS NULL");
 
                     b.HasIndex("WarehouseId", "TenantId");
 
@@ -3639,6 +3813,9 @@ namespace MiniStore.Infrastructure.Migrations
                         .HasMaxLength(250)
                         .HasColumnType("nvarchar(250)");
 
+                    b.Property<int?>("PurchaseAgreementLineId")
+                        .HasColumnType("int");
+
                     b.Property<int>("PurchaseOrderId")
                         .HasColumnType("int");
 
@@ -3676,6 +3853,8 @@ namespace MiniStore.Infrastructure.Migrations
                     b.HasIndex("MeasurementUnitId", "TenantId");
 
                     b.HasIndex("ProductId", "TenantId");
+
+                    b.HasIndex("PurchaseAgreementLineId", "TenantId");
 
                     b.HasIndex("PurchaseOrderId", "TenantId");
 
@@ -4237,6 +4416,127 @@ namespace MiniStore.Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("PurchaseSupplierInvitations");
+                });
+
+            modelBuilder.Entity("MiniStore.Domain.Entities.PurchaseTemplate", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedByUserId")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("GenerationCount")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<int>("NeededInDays")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Priority")
+                        .HasColumnType("int");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<int>("SourcePurchaseOrderId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SupplierId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("TemplateNumber")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<int>("TenantId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("WarehouseId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TenantId");
+
+                    b.HasIndex("SourcePurchaseOrderId", "TenantId");
+
+                    b.HasIndex("SupplierId", "TenantId");
+
+                    b.HasIndex("TenantId", "TemplateNumber")
+                        .IsUnique();
+
+                    b.HasIndex("WarehouseId", "TenantId");
+
+                    b.ToTable("PurchaseTemplates");
+                });
+
+            modelBuilder.Entity("MiniStore.Domain.Entities.PurchaseTemplateLine", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("MeasurementUnitId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PurchaseTemplateId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("RequestedQuantity")
+                        .HasPrecision(18, 6)
+                        .HasColumnType("decimal(18,6)");
+
+                    b.Property<int?>("SuggestedSupplierId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TenantId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("UnitFactorToBase")
+                        .HasPrecision(24, 12)
+                        .HasColumnType("decimal(24,12)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TenantId");
+
+                    b.HasIndex("MeasurementUnitId", "TenantId");
+
+                    b.HasIndex("ProductId", "TenantId");
+
+                    b.HasIndex("PurchaseTemplateId", "TenantId");
+
+                    b.HasIndex("SuggestedSupplierId", "TenantId");
+
+                    b.HasIndex("TenantId", "PurchaseTemplateId", "ProductId", "MeasurementUnitId")
+                        .IsUnique();
+
+                    b.ToTable("PurchaseTemplateLines");
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.PutawayRule", b =>
@@ -7167,6 +7467,80 @@ namespace MiniStore.Infrastructure.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("MiniStore.Domain.Entities.PurchaseAgreement", b =>
+                {
+                    b.HasOne("MiniStore.Domain.Entities.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MiniStore.Domain.Entities.PurchaseSourcingEvent", null)
+                        .WithMany()
+                        .HasForeignKey("PurchaseSourcingEventId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MiniStore.Domain.Entities.Supplier", null)
+                        .WithMany()
+                        .HasForeignKey("SupplierId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MiniStore.Domain.Entities.SupplierQuotation", null)
+                        .WithMany()
+                        .HasForeignKey("SupplierQuotationId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MiniStore.Domain.Entities.Warehouse", null)
+                        .WithMany()
+                        .HasForeignKey("WarehouseId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("MiniStore.Domain.Entities.PurchaseAgreementLine", b =>
+                {
+                    b.HasOne("MiniStore.Domain.Entities.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MiniStore.Domain.Entities.MeasurementUnit", null)
+                        .WithMany()
+                        .HasForeignKey("MeasurementUnitId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MiniStore.Domain.Entities.Product", null)
+                        .WithMany()
+                        .HasForeignKey("ProductId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MiniStore.Domain.Entities.PurchaseAgreement", null)
+                        .WithMany("Lines")
+                        .HasForeignKey("PurchaseAgreementId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MiniStore.Domain.Entities.SupplierQuotationLine", null)
+                        .WithMany()
+                        .HasForeignKey("SupplierQuotationLineId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("MiniStore.Domain.Entities.PurchaseApprovalInstance", b =>
                 {
                     b.HasOne("MiniStore.Domain.Entities.Tenant", null)
@@ -7349,6 +7723,12 @@ namespace MiniStore.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("MiniStore.Domain.Entities.PurchaseAgreement", null)
+                        .WithMany()
+                        .HasForeignKey("PurchaseAgreementId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("MiniStore.Domain.Entities.PurchaseSourcingEvent", null)
                         .WithMany()
                         .HasForeignKey("PurchaseSourcingEventId", "TenantId")
@@ -7399,6 +7779,12 @@ namespace MiniStore.Infrastructure.Migrations
                         .HasPrincipalKey("Id", "TenantId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.HasOne("MiniStore.Domain.Entities.PurchaseAgreementLine", null)
+                        .WithMany()
+                        .HasForeignKey("PurchaseAgreementLineId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("MiniStore.Domain.Entities.PurchaseOrder", null)
                         .WithMany("Lines")
@@ -7647,6 +8033,72 @@ namespace MiniStore.Infrastructure.Migrations
                         .HasPrincipalKey("Id", "TenantId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("MiniStore.Domain.Entities.PurchaseTemplate", b =>
+                {
+                    b.HasOne("MiniStore.Domain.Entities.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MiniStore.Domain.Entities.PurchaseOrder", null)
+                        .WithMany()
+                        .HasForeignKey("SourcePurchaseOrderId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MiniStore.Domain.Entities.Supplier", null)
+                        .WithMany()
+                        .HasForeignKey("SupplierId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MiniStore.Domain.Entities.Warehouse", null)
+                        .WithMany()
+                        .HasForeignKey("WarehouseId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("MiniStore.Domain.Entities.PurchaseTemplateLine", b =>
+                {
+                    b.HasOne("MiniStore.Domain.Entities.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MiniStore.Domain.Entities.MeasurementUnit", null)
+                        .WithMany()
+                        .HasForeignKey("MeasurementUnitId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MiniStore.Domain.Entities.Product", null)
+                        .WithMany()
+                        .HasForeignKey("ProductId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MiniStore.Domain.Entities.PurchaseTemplate", null)
+                        .WithMany("Lines")
+                        .HasForeignKey("PurchaseTemplateId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MiniStore.Domain.Entities.Supplier", null)
+                        .WithMany()
+                        .HasForeignKey("SuggestedSupplierId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.PutawayRule", b =>
@@ -8421,6 +8873,11 @@ namespace MiniStore.Infrastructure.Migrations
                     b.Navigation("Items");
                 });
 
+            modelBuilder.Entity("MiniStore.Domain.Entities.PurchaseAgreement", b =>
+                {
+                    b.Navigation("Lines");
+                });
+
             modelBuilder.Entity("MiniStore.Domain.Entities.PurchaseApprovalInstance", b =>
                 {
                     b.Navigation("Steps");
@@ -8457,6 +8914,11 @@ namespace MiniStore.Infrastructure.Migrations
                 {
                     b.Navigation("Invitations");
 
+                    b.Navigation("Lines");
+                });
+
+            modelBuilder.Entity("MiniStore.Domain.Entities.PurchaseTemplate", b =>
+                {
                     b.Navigation("Lines");
                 });
 

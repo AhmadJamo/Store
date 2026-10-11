@@ -1,0 +1,4 @@
+@model List<MiniStore.Application.DTOs.Purchases.PurchaseAgreementDto>
+@inject Microsoft.Extensions.Localization.IStringLocalizer<MiniStore.Web.SharedResource> Localizer
+@{ViewData["Title"]=Localizer["Purchase agreements"];}
+<h2>@Localizer["Purchase agreements"]</h2><div class="table-responsive"><table class="table table-striped"><thead><tr><th>@Localizer["Agreement number"]</th><th>@Localizer["Supplier"]</th><th>@Localizer["Warehouse"]</th><th>@Localizer["Validity"]</th><th>@Localizer["Status"]</th><th></th></tr></thead><tbody>@foreach(var x in Model){<tr><td>@x.AgreementNumber</td><td>@x.SupplierName</td><td>@x.WarehouseName</td><td>@x.ValidFrom — @x.ValidUntil</td><td>@Localizer[x.Status.ToString()]</td><td><a asp-action="Details" asp-route-id="@x.Id" class="btn btn-sm btn-outline-primary">@Localizer["Details"]</a></td></tr>}</tbody></table></div>

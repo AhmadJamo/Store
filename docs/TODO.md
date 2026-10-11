@@ -1,6 +1,6 @@
 # Project TODO
 > Source of truth: Current repository scan  
-> Last reviewed: 2026-10-08
+> Last reviewed: 2026-10-11
 
 The ordered Arabic execution plan, workflow, business rules and rolling suggestion queue are maintained in `ARABIC_SHARED_ROADMAP.md`. This file remains the concise technical backlog.
 
@@ -21,7 +21,8 @@ The inventory/WMS track is paused by product-owner direction. The active planned
 - [x] PUR-090 add three-way matching tolerances, persisted exceptions and controlled override.
 - [x] PUR-100 add partial supplier payments and Accounts Payable settlement.
 - [x] PUR-110 convert reviewed purchase-sourced replenishment into a traceable, duplicate-safe Draft Purchase Request.
-- [ ] Continue PUR-120 through PUR-150 in the approved plan order.
+- [x] PUR-120 add awarded-quotation Purchase Agreements with capped Draft order releases and repeat templates that generate traced Draft Purchase Requests.
+- [ ] Continue PUR-130 through PUR-150 in the approved plan order.
 
 - [x] WMS-050 reservations and exact transfer allocation with concurrent last-unit protection.
 - [x] WMS-060 blind cycle counts and controlled inventory adjustment posting; scheduling remains deferred.

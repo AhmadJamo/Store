@@ -5,5 +5,6 @@ public interface IPurchaseOrderRepository
     Task<List<PurchaseOrder>> GetAllAsync(PurchaseOrderStatus? status, string? search);
     Task<PurchaseOrder?> GetByIdAsync(int id);
     Task<PurchaseOrder?> GetByQuotationIdAsync(int quotationId);
+    Task<List<PurchaseOrder>> GetByAgreementIdAsync(int agreementId);
     Task AddAsync(PurchaseOrder order);
 }

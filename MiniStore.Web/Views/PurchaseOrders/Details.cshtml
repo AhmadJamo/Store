@@ -10,6 +10,7 @@
     var canCancel = (await AuthorizationService.AuthorizeAsync(User, null, "Permission:PurchaseOrders.Cancel")).Succeeded;
     var canReceive = (await AuthorizationService.AuthorizeAsync(User, null, "Permission:GoodsReceipts.Create")).Succeeded;
     var canBill = (await AuthorizationService.AuthorizeAsync(User, null, "Permission:VendorBills.Create")).Succeeded;
+    var canCreateTemplate = (await AuthorizationService.AuthorizeAsync(User, null, "Permission:PurchaseTemplates.Create")).Succeeded;
 }
 <div class="d-flex justify-content-between">
     <h2>@Model.OrderNumber <span class="badge bg-secondary">@Localizer[Model.Status.ToString()]</span></h2>
@@ -18,6 +19,7 @@
 <div class="card card-body my-3">
     <div>@Localizer["Supplier"]: @Model.SupplierName</div><div>@Localizer["Warehouse"]: @Model.WarehouseName</div>
     <div>@Localizer["Order date"]: @Model.OrderDate</div><div>@Localizer["Expected date"]: @Model.ExpectedDate</div>
+    @if(Model.PurchaseAgreementId.HasValue){<div><a asp-controller="PurchaseAgreements" asp-action="Details" asp-route-id="@Model.PurchaseAgreementId">@Localizer["Created from purchase agreement"]</a></div>}
 </div>
 <table class="table"><thead><tr><th>@Localizer["Product"]</th><th>@Localizer["Ordered quantity"]</th><th>@Localizer["Unit price"]</th><th>@Localizer["Gross amount"]</th></tr></thead><tbody>
 @foreach(var line in Model.Lines){<tr><td>@line.ProductCode — @line.ProductName</td><td>@line.OrderedQuantity @line.UnitName</td><td>@line.UnitPrice @Model.CurrencyCode</td><td>@line.GrossAmount @Model.CurrencyCode</td></tr>}
@@ -27,3 +29,4 @@
 @if((Model.Status is PurchaseOrderStatus.Draft or PurchaseOrderStatus.Approved) && canCancel){<form asp-action="Cancel" method="post" class="d-inline"><input type="hidden" name="id" value="@Model.Id"/><input type="hidden" name="rowVersion" value="@rowVersion"/><input required name="reason" maxlength="1000" class="form-control d-inline-block w-auto" placeholder="@Localizer["Cancellation reason"]"/><button class="btn btn-outline-danger">@Localizer["Cancel"]</button></form>}
 @if(Model.Status == PurchaseOrderStatus.Confirmed && canReceive){<a asp-controller="GoodsReceipts" asp-action="Create" asp-route-purchaseOrderId="@Model.Id" class="btn btn-primary">@Localizer["Receive goods"]</a>}
 @if((Model.Status is PurchaseOrderStatus.Confirmed or PurchaseOrderStatus.Closed) && canBill){<a asp-controller="VendorBills" asp-action="Create" asp-route-purchaseOrderId="@Model.Id" class="btn btn-outline-primary">@Localizer["Create vendor bill"]</a>}
+@if(canCreateTemplate){<form asp-controller="PurchaseTemplates" asp-action="CreateFromOrder" method="post" class="card card-body mt-3"><input type="hidden" name="PurchaseOrderId" value="@Model.Id"/><div class="row g-2 align-items-end"><div class="col-md-4"><label class="form-label">@Localizer["Template name"]</label><input name="Name" required maxlength="150" class="form-control"/></div><div class="col-md-2"><label class="form-label">@Localizer["Needed in days"]</label><input name="NeededInDays" type="number" min="0" max="3650" value="7" class="form-control"/></div><div class="col-md-2"><label class="form-label">@Localizer["Priority"]</label><select name="Priority" class="form-select"><option value="2">@Localizer["Normal"]</option><option value="1">@Localizer["Low"]</option><option value="3">@Localizer["High"]</option><option value="4">@Localizer["Urgent"]</option></select></div><div class="col-md-3"><button class="btn btn-outline-primary">@Localizer["Save as purchase template"]</button></div></div></form>}

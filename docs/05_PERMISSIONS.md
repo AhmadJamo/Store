@@ -1,7 +1,7 @@
 # Permissions and authorization
 > Status: PARTIALLY IMPLEMENTED  
 > Source of truth: Code  
-> Last reviewed: 2026-09-29
+> Last reviewed: 2026-10-11
 
 `InventoryReservations.View` protects the read-only inventory reservation history screen.
 
@@ -80,4 +80,9 @@ The Index and mutation actions enforce these policies server-side. Permission se
 - `VendorBills.Create` protects receipt allocation and normal accounting posting; `VendorBills.View` protects bill list/detail history.
 - `VendorBills.OverrideMatch` separately protects posting a Vendor Bill whose quantity or net price exceeds configured three-way-match tolerances; a reason is mandatory and persisted.
 - `SupplierPayments.View` protects payment history/detail; `SupplierPayments.Create` separately protects allocating and immediately posting a partial supplier settlement.
+
+# PUR-120 purchase agreement and template permissions
+
+- `PurchaseAgreements.View`, `Create`, `Activate`, `Release` and `Cancel` separate agreement visibility from every lifecycle command. A release creates only a Draft Purchase Order and does not grant order approval or confirmation.
+- `PurchaseTemplates.View`, `Create`, `Generate` and `Manage` separate template visibility, source-order capture, Draft Purchase Request generation and active-state administration. Generated demand still requires the normal Purchase Request permissions and workflow.
 

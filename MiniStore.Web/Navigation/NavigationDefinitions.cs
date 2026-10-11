@@ -78,6 +78,8 @@ public static class NavigationDefinitions
             ,new NavigationItem("Goods receipt returns","bi-box-arrow-up","GoodsReceiptReturns","Index","GoodsReceiptReturns.View",100)
             ,new NavigationItem("Vendor bills","bi-receipt-cutoff","VendorBills","Index","VendorBills.View",110)
             ,new NavigationItem("Supplier payments","bi-cash-coin","SupplierPayments","Index","SupplierPayments.View",120)
+            ,new NavigationItem("Purchase agreements","bi-file-earmark-check","PurchaseAgreements","Index","PurchaseAgreements.View",130)
+            ,new NavigationItem("Purchase templates","bi-files","PurchaseTemplates","Index","PurchaseTemplates.View",140)
         ),
 
         new NavigationGroup(

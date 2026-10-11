@@ -1,7 +1,7 @@
 # Database
 > Status: IMPLEMENTED  
 > Source of truth: EF Core entities, configurations and migrations  
-> Last reviewed: 2026-10-08
+> Last reviewed: 2026-10-11
 
 WMS-050 adds tenant-owned `InventoryReservations` and `InventoryReservationLines`. Source identity is unique per tenant, quantities are positive, relationships are tenant-safe, exact and Unassigned dimensions are duplicate-protected, and rowversions protect concurrent reservation changes. Migrations `AddInventoryReservations` and `AddUnassignedReservationUniqueness` are additive and are applied to `AHMAD/MiniStoreDb`.
 
@@ -48,7 +48,9 @@ All business tables have a required `TenantId` foreign key to `Tenants`. EF quer
 | PurchaseApprovalInstances / Steps | One tenant-unique approval instance per Purchase Request with frozen rule name and ordered role steps, explicit pending/approved/rejected decisions, actors, timestamps and notes. |
 | PurchaseSourcingEvents / Lines / Invitations | RFX-numbered events link one approved request to frozen product/unit/quantity snapshots and invited suppliers. They contain no quotation price, receipt, stock or accounting data. |
 | SupplierQuotations / Lines / PurchaseQuotationAwards | One supplier quote per sourcing event and supplier, immutable submitted commercial snapshots, and one reasoned/actor-stamped award decision per sourcing event. |
-| PurchaseOrders / Lines | One tenant-unique internal order per awarded quotation, with frozen supplier, warehouse, dates, currency, payment terms and commercial line snapshots. The order is commercial intent only; it has no stock or journal relationship. |
+| PurchaseOrders / Lines | One direct tenant-unique internal order per awarded quotation, or multiple capped releases linked to one Purchase Agreement. Headers and lines preserve agreement provenance and frozen commercial snapshots. The order is commercial intent only; it has no stock or journal relationship. |
+| PurchaseAgreements / Lines | One tenant-unique agreement per awarded quotation with validity, lifecycle audit, rowversion and maximum contracted quantities over frozen awarded terms. |
+| PurchaseTemplates / Lines | Centrally numbered, rowversion-protected repeat-demand definitions sourced from a Purchase Order; generated requests carry a distinct template/generation source reference. |
 | GoodsReceipts / Lines | Tenant-unique GRN documents linked to a confirmed Purchase Order and warehouse. Lines freeze PO product/unit/net-cost snapshots and optional lot, serial, manufacture and expiry inputs. Posting atomically updates inventory and, for a positive receipt value, creates the PUR-065 Inventory/GRNI journal. |
 | GoodsReceiptReturns / Lines | Tenant-unique, receipt-linked supplier returns. Lines freeze returned purchase-unit/base quantity, original receipt cost, actual removed inventory cost and tracking allocation evidence; tenant-composite FKs prevent crossing receipt, PO, supplier, warehouse or product boundaries. |
 | VendorBills / Lines | Tenant-unique posted supplier invoices allocated to posted receipt lines. Lines freeze billed quantity, entered price, receipt clearing cost, tax policy/account and calculated totals. A filtered unique index on tenant, supplier and normalized supplier invoice number protects active invoice identity. |
@@ -117,3 +119,5 @@ Migration `AddVendorBills` creates tenant-owned `VendorBills` and `VendorBillLin
 Migration `AddPurchaseThreeWayMatching` adds receipt-clearing quantity snapshots with a safe existing-line backfill, tenant matching settings, match runs and exception evidence. It was applied to `AHMAD/MiniStoreDb` on 2026-10-10; existing Vendor Bills are not assigned invented match decisions.
 
 Migration `AddSupplierPayments` creates tenant-owned payment headers and bill-allocation lines with tenant-safe supplier, payment-method and Vendor Bill relationships. It was applied to `AHMAD/MiniStoreDb` on 2026-10-10 and creates no historical payments or allocations.
+
+Migration `AddPurchaseAgreementsAndTemplates` creates tenant-owned agreement/template headers and lines, adds agreement provenance to Purchase Orders and their lines, and changes the awarded-quotation unique order index so it applies only to direct orders. Composite tenant foreign keys preserve company boundaries, while agreement/template headers use rowversion. It was applied to `AHMAD/MiniStoreDb` on 2026-10-10 and creates no historical agreements, templates, releases or requests.
