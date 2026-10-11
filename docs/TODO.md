@@ -23,7 +23,8 @@ The inventory/WMS track is paused by product-owner direction. The active planned
 - [x] PUR-110 convert reviewed purchase-sourced replenishment into a traceable, duplicate-safe Draft Purchase Request.
 - [x] PUR-120 add awarded-quotation Purchase Agreements with capped Draft order releases and repeat templates that generate traced Draft Purchase Requests.
 - [x] PUR-130 allocate receipt-linked landed costs with auditable AVCO valuation, consumed-cost expense and balanced clearing journals.
-- [ ] Continue PUR-140 through PUR-150 in the approved plan order.
+- [x] PUR-140 add bounded purchasing dashboards and supplier-performance projections over authoritative tenant-owned operational and financial records.
+- [ ] Continue PUR-150 barcode-assisted Goods Receipt capture in the approved plan order.
 
 - [x] WMS-050 reservations and exact transfer allocation with concurrent last-unit protection.
 - [x] WMS-060 blind cycle counts and controlled inventory adjustment posting; scheduling remains deferred.

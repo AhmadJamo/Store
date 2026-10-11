@@ -1468,6 +1468,15 @@ Check(sourcingController.GetMethod(nameof(PurchaseSourcingController.Index))!
           .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
       $"{PermissionAuthorizeAttribute.PolicyPrefix}PurchaseSourcing.Create",
     "Purchase sourcing visibility and creation must use separate server-side permissions");
+Check(PurchaseAnalyticsService.Rate(8m, 10m) == 80m &&
+      PurchaseAnalyticsService.Rate(2m, 0m) == 0m &&
+      PurchaseAnalyticsService.Rate(12m, 10m) == 100m,
+    "Purchase analytics rates must handle normal, zero-denominator and over-fulfilment cases safely");
+var purchaseAnalyticsController = typeof(PurchaseAnalyticsController);
+Check(purchaseAnalyticsController.GetMethod(nameof(PurchaseAnalyticsController.Index))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
+      $"{PermissionAuthorizeAttribute.PolicyPrefix}PurchaseAnalytics.View",
+    "Purchase analytics must require its dedicated server-side view permission");
 
 Console.WriteLine($"Passed {count} security and inventory regression checks.");
 

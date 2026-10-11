@@ -1346,4 +1346,24 @@
   <data name="Total" xml:space="preserve"><value>الإجمالي</value></data>
   <data name="Type" xml:space="preserve"><value>النوع</value></data>
   <data name="Details" xml:space="preserve"><value>التفاصيل</value></data>
+  <data name="Purchase analytics" xml:space="preserve"><value>تحليلات المشتريات</value></data>
+  <data name="Apply" xml:space="preserve"><value>تطبيق</value></data>
+  <data name="Open confirmed orders" xml:space="preserve"><value>أوامر الشراء المؤكدة المفتوحة</value></data>
+  <data name="Overdue" xml:space="preserve"><value>متأخرة</value></data>
+  <data name="Vendor bill spend" xml:space="preserve"><value>إنفاق فواتير الموردين</value></data>
+  <data name="Outstanding payables" xml:space="preserve"><value>الذمم الدائنة المستحقة</value></data>
+  <data name="Match exceptions" xml:space="preserve"><value>استثناءات المطابقة</value></data>
+  <data name="Overrides" xml:space="preserve"><value>التجاوزات المعتمدة</value></data>
+  <data name="Supplier performance" xml:space="preserve"><value>أداء الموردين</value></data>
+  <data name="Orders" xml:space="preserve"><value>الأوامر</value></data>
+  <data name="Ordered value" xml:space="preserve"><value>قيمة الطلبات</value></data>
+  <data name="Fill rate" xml:space="preserve"><value>نسبة التوريد</value></data>
+  <data name="On-time rate" xml:space="preserve"><value>نسبة الالتزام بالموعد</value></data>
+  <data name="Average delivery days" xml:space="preserve"><value>متوسط أيام التسليم</value></data>
+  <data name="Return rate" xml:space="preserve"><value>نسبة المرتجعات</value></data>
+  <data name="Billed spend" xml:space="preserve"><value>الإنفاق المفوتر</value></data>
+  <data name="Price variance" xml:space="preserve"><value>فرق السعر</value></data>
+  <data name="No purchasing activity in the selected period." xml:space="preserve"><value>لا يوجد نشاط مشتريات في الفترة المحددة.</value></data>
+  <data name="Report end date cannot be earlier than start date." xml:space="preserve"><value>لا يمكن أن يكون تاريخ نهاية التقرير أسبق من تاريخ البداية.</value></data>
+  <data name="Purchase analytics date range cannot exceed two years." xml:space="preserve"><value>لا يمكن أن تتجاوز فترة تحليلات المشتريات سنتين.</value></data>
 </root>

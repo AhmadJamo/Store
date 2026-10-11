@@ -5,6 +5,7 @@ using MiniStore.Infrastructure.Persistence;
 namespace MiniStore.Infrastructure.Repositories;
 public sealed class PurchaseMatchRepository(AppDbContext context) : IPurchaseMatchRepository
 {
+    public Task<List<PurchaseMatchRun>> GetAllAsync() => context.PurchaseMatchRuns.Include(x => x.Exceptions).ToListAsync();
     public Task<PurchaseMatchRun?> GetByVendorBillIdAsync(int vendorBillId) => context.PurchaseMatchRuns.Include(x => x.Exceptions).SingleOrDefaultAsync(x => x.VendorBillId == vendorBillId);
     public Task AddAsync(PurchaseMatchRun run) => context.PurchaseMatchRuns.AddAsync(run).AsTask();
 }

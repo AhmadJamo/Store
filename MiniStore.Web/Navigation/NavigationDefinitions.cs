@@ -81,6 +81,7 @@ public static class NavigationDefinitions
             ,new NavigationItem("Purchase agreements","bi-file-earmark-check","PurchaseAgreements","Index","PurchaseAgreements.View",130)
             ,new NavigationItem("Purchase templates","bi-files","PurchaseTemplates","Index","PurchaseTemplates.View",140)
             ,new NavigationItem("Landed costs","bi-truck","LandedCosts","Index","LandedCosts.View",150)
+            ,new NavigationItem("Purchase analytics","bi-graph-up-arrow","PurchaseAnalytics","Index","PurchaseAnalytics.View",160)
         ),
 
         new NavigationGroup(

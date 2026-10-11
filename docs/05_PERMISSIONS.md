@@ -91,3 +91,7 @@ The Index and mutation actions enforce these policies server-side. Permission se
 - `LandedCosts.View` protects landed-cost history and immutable details.
 - `LandedCosts.Create` protects allocation and immediate inventory/accounting posting from a posted Goods Receipt. It does not grant receipt, return or Accounting Settings administration.
 
+# PUR-140 purchasing analytics permission
+
+- `PurchaseAnalytics.View` protects the read-only purchasing dashboard and supplier-performance projection. It grants no purchasing command, inventory mutation or accounting-posting authority.
+

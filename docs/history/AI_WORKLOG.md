@@ -1,5 +1,14 @@
 # AI Work Log
 
+## 2026-10-11 — PUR-140 Purchasing Analytics and Supplier Performance
+
+- Added a permission-protected, bilingual purchasing analytics screen with a bounded date filter and cards for current open/overdue orders, receipt value, landed costs, billed spend, current payables and matching exceptions/overrides.
+- Added supplier projections for order count/value, fulfilment, on-time delivery, average delivery days, returns, billed spend, price variance, current outstanding balance and matching exceptions.
+- Defined supplier operational rates from the selected-period commercial order cohort plus all posted receipt/return evidence for that cohort; financial period measures follow bill, receipt or landed-cost dates as appropriate.
+- Reused authoritative tenant-filtered repositories with no reporting tables, migration, inventory mutation or accounting side effect; added a dedicated read permission and purchasing navigation entry.
+- Added focused rate/permission checks and extended the disposable SQL Server integration fixture to verify analytics against real receipt, return, bill, payment, matching and landed-cost records.
+- Release build passed without warnings, 540 focused checks passed, Arabic resources had no duplicate or missing analytics keys, and the disposable SQL Server integration fixture passed including the supplier analytics projection.
+
 ## 2026-10-11 — PUR-130 Landed Costs
 
 - Added immutable, centrally numbered Landed Cost documents against posted Goods Receipts with freight, customs, insurance and other component snapshots.

@@ -105,7 +105,7 @@ try
     await VerifyInventoryBalanceProjectionAsync(tenantOneId, tenantOneFixture.ProductId, expectedOnHand: 2m, connectionString);
     await VerifyOpeningTrackingAllocationAsync(tenantOneId, tenantOneFixture.ProductId, tenantOneFixture.WarehouseId, connectionString);
 
-    Console.WriteLine("Passed SQL integration checks: tenant isolation, reconciliation, balances, replenishment purchase-request source concurrency, receipt, vendor-bill and supplier-payment concurrency, three-way matching override evidence, GRNI posting and clearing, payable settlement, receipt-based supplier returns, landed-cost valuation, adjustment posting, tracked operations, quarantine and recall.");
+    Console.WriteLine("Passed SQL integration checks: tenant isolation, reconciliation, balances, replenishment purchase-request source concurrency, receipt, vendor-bill and supplier-payment concurrency, three-way matching override evidence, GRNI posting and clearing, payable settlement, receipt-based supplier returns, landed-cost valuation, purchasing analytics, adjustment posting, tracked operations, quarantine and recall.");
 }
 finally
 {
@@ -248,6 +248,7 @@ static async Task VerifyConcurrentGoodsReceiptAndGrniAsync(
     int cashAccountId;
     int costOfSalesAccountId;
     int landedCostClearingAccountId;
+    int supplierId;
     int vendorBillId = 0;
     var receiptDate = DateOnly.FromDateTime(DateTime.Today);
 
@@ -325,6 +326,7 @@ static async Task VerifyConcurrentGoodsReceiptAndGrniAsync(
         cashAccountId = cashAccount.Id;
         costOfSalesAccountId = costOfSalesAccount.Id;
         landedCostClearingAccountId = landedCostClearingAccount.Id;
+        supplierId = supplier.Id;
     }
 
     async Task<bool> TryReceiveAsync()
@@ -591,6 +593,24 @@ static async Task VerifyConcurrentGoodsReceiptAndGrniAsync(
         !landedJournal.Lines.Any(x => x.AccountId == costOfSalesAccountId && x.Debit == 1m) ||
         !landedJournal.Lines.Any(x => x.AccountId == landedCostClearingAccountId && x.Credit == 2m))
         throw new InvalidOperationException("Landed cost posting must split remaining and consumed receipt cost into inventory and expense with one balanced journal.");
+
+    var analyticsService = new PurchaseAnalyticsService(
+        new SupplierRepository(landedVerification), new PurchaseOrderRepository(landedVerification),
+        new GoodsReceiptRepository(landedVerification), new GoodsReceiptReturnRepository(landedVerification),
+        new VendorBillRepository(landedVerification), new SupplierPaymentRepository(landedVerification),
+        new PurchaseMatchRepository(landedVerification), new LandedCostRepository(landedVerification));
+    var analytics = await analyticsService.GetAsync(new PurchaseAnalyticsQueryDto { From = receiptDate, To = receiptDate });
+    var supplierPerformance = analytics.Suppliers.Single(x => x.SupplierId == supplierId);
+    if (analytics.ReceiptValue < 9m || analytics.VendorBillSpend < 5m ||
+        analytics.LandedCostTotal < 2m || analytics.MatchExceptionCount < 1 || analytics.MatchOverrideCount < 1 ||
+        supplierPerformance.FillRatePercent != 100m || supplierPerformance.OnTimeRatePercent != 100m ||
+        supplierPerformance.ReturnRatePercent != 50m || supplierPerformance.BilledSpend != 5m ||
+        supplierPerformance.PriceVariance != 0.5m || supplierPerformance.OutstandingBalance != 0m)
+        throw new InvalidOperationException($"Purchase analytics must summarize supplier operations and financial evidence from tenant-owned purchasing records. " +
+            $"Receipt={analytics.ReceiptValue}, Bills={analytics.VendorBillSpend}, Landed={analytics.LandedCostTotal}, " +
+            $"Exceptions={analytics.MatchExceptionCount}, Overrides={analytics.MatchOverrideCount}, Fill={supplierPerformance.FillRatePercent}, " +
+            $"OnTime={supplierPerformance.OnTimeRatePercent}, Returns={supplierPerformance.ReturnRatePercent}, Spend={supplierPerformance.BilledSpend}, " +
+            $"Variance={supplierPerformance.PriceVariance}, Balance={supplierPerformance.OutstandingBalance}");
 }
 
 static async Task VerifyConcurrentReservationAsync(

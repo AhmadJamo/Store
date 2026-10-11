@@ -124,3 +124,5 @@ Migration `AddSupplierPayments` creates tenant-owned payment headers and bill-al
 Migration `AddPurchaseAgreementsAndTemplates` creates tenant-owned agreement/template headers and lines, adds agreement provenance to Purchase Orders and their lines, and changes the awarded-quotation unique order index so it applies only to direct orders. Composite tenant foreign keys preserve company boundaries, while agreement/template headers use rowversion. It was applied to `AHMAD/MiniStoreDb` on 2026-10-10 and creates no historical agreements, templates, releases or requests.
 
 Migration `AddLandedCosts` creates tenant-owned Landed Cost headers, component lines and receipt-line allocations, plus a tenant-safe Landed Cost Clearing account reference on Accounting Settings. It was applied to `AHMAD/MiniStoreDb` on 2026-10-11 and does not backfill or revalue historical receipts.
+
+PUR-140 purchasing analytics adds no table, view, reporting store or migration. Its read-only projections use the existing tenant-filtered Purchase Order, Goods Receipt, receipt return, Vendor Bill, supplier payment, match and Landed Cost records as their authoritative sources.

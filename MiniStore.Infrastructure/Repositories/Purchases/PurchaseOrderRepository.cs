@@ -4,7 +4,7 @@ public sealed class PurchaseOrderRepository(AppDbContext context) : IPurchaseOrd
 {
     public Task<List<PurchaseOrder>> GetAllAsync(PurchaseOrderStatus? status, string? search)
     {
-        var query = context.PurchaseOrders.AsQueryable();
+        var query = context.PurchaseOrders.Include(x => x.Lines).AsQueryable();
         if (status.HasValue) query = query.Where(x => x.Status == status);
         if (!string.IsNullOrWhiteSpace(search))
             query = query.Where(x => x.OrderNumber.Contains(search) || x.SupplierQuotationId.ToString().Contains(search));
