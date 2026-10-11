@@ -1,12 +1,46 @@
 @using Microsoft.Extensions.Localization
+@using MiniStore.Web.Guidance
 @inject IStringLocalizer<MiniStore.Web.SharedResource> Localizer
+@inject Microsoft.AspNetCore.Authorization.IAuthorizationService AuthorizationService
 
-@if (TempData["NotificationMessage"] is { } notification)
+@{
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+    var legacySuccess = TempData["Success"];
+    var notification = TempData["NotificationMessage"] ?? legacySuccess;
+    var notificationMessage = notification?.ToString() ?? string.Empty;
+    var type = TempData["NotificationType"]?.ToString() ?? (legacySuccess is null ? "info" : "success");
+    var guidance = ActionableErrorGuidance.Resolve(notificationMessage, currentController, key => Localizer[key].Value);
+    var routeValues = ViewContext.RouteData.Values
+        .Where(value => value.Value is not null)
+        .ToDictionary(value => value.Key, value => value.Value?.ToString(), StringComparer.OrdinalIgnoreCase);
+    foreach (var queryValue in Context.Request.Query)
+    {
+        if (!routeValues.ContainsKey(queryValue.Key)) routeValues[queryValue.Key] = queryValue.Value.ToString();
+    }
+    var nextStep = type == "success"
+        ? WorkflowNextStepGuidance.Resolve(notificationMessage, currentController, routeValues, key => Localizer[key].Value)
+        : null;
+
+    if (guidance is null)
+    {
+        foreach (var error in ViewData.ModelState.Values.SelectMany(value => value.Errors))
+        {
+            guidance = ActionableErrorGuidance.Resolve(error.ErrorMessage, currentController, key => Localizer[key].Value);
+            if (guidance is not null) break;
+        }
+    }
+
+    var canOpenGuidance = guidance is not null &&
+        (await AuthorizationService.AuthorizeAsync(User, null, $"Permission:{guidance.RequiredPermission}")).Succeeded;
+    var canOpenNextStep = nextStep is not null &&
+        (await AuthorizationService.AuthorizeAsync(User, null, $"Permission:{nextStep.RequiredPermission}")).Succeeded;
+}
+
+@if (notification is not null)
 {
-    var type = TempData["NotificationType"]?.ToString() ?? "info";
-    var title = type switch { "success" => "Success", "error" => "Error", "warning" => "Warning", _ => "Information" };
-    var alertClass = type switch { "success" => "alert-success", "error" => "alert-danger", "warning" => "alert-warning", _ => "alert-info" };
-    var message = notification.ToString() ?? string.Empty;
+    var title = type switch { "success" => "Success", "error" or "danger" => "Error", "warning" => "Warning", _ => "Information" };
+    var alertClass = type switch { "success" => "alert-success", "error" or "danger" => "alert-danger", "warning" => "alert-warning", _ => "alert-info" };
+    var message = notificationMessage;
 
     <div class="modal fade" id="notificationModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
@@ -15,8 +49,35 @@
                     <h5 class="modal-title">@Localizer[title]</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="modal-body"><div class="alert @alertClass mb-0">@Localizer[message]</div></div>
-                <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@Localizer["Close"]</button></div>
+                <div class="modal-body">
+                    <div class="alert @alertClass @(nextStep is null ? "mb-0" : "mb-3")">@Localizer[message]</div>
+                    @if (nextStep is not null)
+                    {
+                        <div class="border rounded p-3 bg-body-tertiary">
+                            <h6 class="mb-1">@Localizer["What is the next step?"]</h6>
+                            <p class="mb-0 text-muted">@Localizer[nextStep.DescriptionResourceKey]</p>
+                        </div>
+                    }
+                </div>
+                <div class="modal-footer">
+                    @if (nextStep is not null && canOpenNextStep)
+                    {
+                        <a asp-controller="@nextStep.Controller" asp-action="@nextStep.Action" asp-all-route-data="@nextStep.RouteValues" class="btn btn-primary">@Localizer[nextStep.LabelResourceKey]</a>
+                    }
+                    else if (nextStep is not null)
+                    {
+                        <span class="text-muted me-auto">@Localizer["Ask an authorized user to complete the next step."]</span>
+                    }
+                    else if (guidance is not null && canOpenGuidance)
+                    {
+                        <a asp-controller="@guidance.Controller" asp-action="@guidance.Action" class="btn btn-primary">@Localizer[guidance.LabelResourceKey]</a>
+                    }
+                    else if (guidance is not null)
+                    {
+                        <span class="text-muted me-auto">@Localizer["Ask an administrator to complete the required setup."]</span>
+                    }
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@Localizer["Close"]</button>
+                </div>
             </div>
         </div>
     </div>
@@ -24,4 +85,18 @@
         document.addEventListener('DOMContentLoaded', () =>
             new bootstrap.Modal(document.getElementById('notificationModal')).show());
     </script>
+}
+else if (guidance is not null)
+{
+    <div class="alert alert-warning d-flex flex-wrap justify-content-between align-items-center gap-2" role="alert">
+        <span>@Localizer["This error has a related setup page."]</span>
+        @if (canOpenGuidance)
+        {
+            <a asp-controller="@guidance.Controller" asp-action="@guidance.Action" class="btn btn-sm btn-warning">@Localizer[guidance.LabelResourceKey]</a>
+        }
+        else
+        {
+            <span class="small">@Localizer["Ask an administrator to complete the required setup."]</span>
+        }
+    </div>
 }

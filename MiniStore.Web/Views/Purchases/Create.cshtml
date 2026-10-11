@@ -3,6 +3,7 @@
 @inject Microsoft.Extensions.Localization.IStringLocalizer<MiniStore.Web.SharedResource> Localizer
 @{
     ViewData["Title"] = "Create Purchase";
+    var numberSettings = await GeneralSettingsService.GetAsync();
 }
 
 <h1>Create Purchase</h1>
@@ -190,7 +191,7 @@
                     </h5>
 
                     <h2 id="grandTotal">
-                        0.00
+                        0
                     </h2>
 
                 </div>
@@ -303,7 +304,7 @@
                         <option value="">No tax</option>
                         @foreach (var tax in ViewBag.TaxRates)
                         {
-                            <option value="@tax.Id">@tax.Name (@tax.Rate%)</option>
+                            <option value="@tax.Id">@tax.Name (@tax.Rate.ToDisplayNumber(numberSettings.DecimalPlaces)%)</option>
                         }
                     </select>
                 </td>
@@ -326,7 +327,7 @@
                 <td><input name="Items[${itemIndex}].ManufactureDate" type="date" class="form-control" /></td>
                 <td><input name="Items[${itemIndex}].ExpirationDate" type="date" class="form-control" /></td>
 
-                <td><input type="text" class="form-control row-total" value="0.00" readonly></td>
+                <td><input type="text" class="form-control row-total" value="0" readonly></td>
 
 
                 <td>
@@ -433,7 +434,7 @@
 
 
         row.querySelector(".row-total").value =
-            total.toFixed(2);
+            formatInputNumber(total, @numberSettings.DecimalPlaces);
 
 
         calculateGrandTotal();
@@ -459,8 +460,17 @@
         document
             .getElementById("grandTotal")
             .textContent =
-            total.toFixed(2);
+            new Intl.NumberFormat(document.documentElement.lang, {
+                maximumFractionDigits: @numberSettings.DecimalPlaces
+            }).format(total);
 
+    }
+
+    function formatInputNumber(value, maximumDecimalPlaces) {
+        return value
+            .toFixed(maximumDecimalPlaces)
+            .replace(/\.0+$/, "")
+            .replace(/(\.\d*?)0+$/, "$1");
     }
 
 

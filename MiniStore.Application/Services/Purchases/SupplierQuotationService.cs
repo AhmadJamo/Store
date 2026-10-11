@@ -7,6 +7,7 @@ namespace MiniStore.Application.Services;
 public sealed class SupplierQuotationService(
     ISupplierQuotationRepository quotations, IPurchaseSourcingRepository sourcing,
     ISupplierRepository suppliers, IGeneralSettingsRepository settings,
+    IPurchaseOrderRepository orders, IPurchaseAgreementRepository agreements,
     DocumentNumberService numbers, IUnitOfWork unitOfWork, ICurrentUserService currentUser)
 {
     public async Task<SupplierQuotationCreatePageDto> GetCreatePageAsync(int sourcingEventId, CreateSupplierQuotationDto? form = null)
@@ -51,10 +52,22 @@ public sealed class SupplierQuotationService(
         return created!.Id;
     }
 
-    public async Task<List<SupplierQuotationDto>> GetComparisonAsync(int sourcingEventId)
+    public async Task<SupplierQuotationComparisonPageDto> GetComparisonAsync(int sourcingEventId)
     {
         var names=(await suppliers.GetAllAsync()).ToDictionary(x=>x.Id,x=>x.Name);
-        return (await quotations.GetBySourcingEventAsync(sourcingEventId)).Select(x=>Map(x,names.GetValueOrDefault(x.SupplierId,$"#{x.SupplierId}"))).ToList();
+        var rows = await quotations.GetBySourcingEventAsync(sourcingEventId);
+        var award = await quotations.GetAwardAsync(sourcingEventId);
+        var awardedQuotation = award is null ? null : rows.SingleOrDefault(x => x.Id == award.SupplierQuotationId);
+        var order = awardedQuotation is null ? null : await orders.GetByQuotationIdAsync(awardedQuotation.Id);
+        var agreement = awardedQuotation is null ? null : await agreements.GetByQuotationIdAsync(awardedQuotation.Id);
+        return new SupplierQuotationComparisonPageDto
+        {
+            SourcingEventId = sourcingEventId,
+            AwardedQuotationId = award?.SupplierQuotationId,
+            PurchaseOrderId = order?.Id,
+            PurchaseAgreementId = agreement?.Id,
+            Quotations = rows.Select(x => Map(x, names.GetValueOrDefault(x.SupplierId, $"#{x.SupplierId}"))).ToList()
+        };
     }
     public async Task AwardAsync(int sourcingEventId,int quotationId,string reason)
     {

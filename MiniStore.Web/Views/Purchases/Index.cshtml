@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "Purchases";
+    var numberSettings = await GeneralSettingsService.GetAsync();
 }
 
 <h1>Purchases</h1>
@@ -80,7 +81,7 @@
                     </td>
 
                     <td>
-                        @purchase.TotalAmount.ToString("N2")
+                        @purchase.TotalAmount.ToMoneyDisplay(numberSettings)
                     </td>
 
                     <td>

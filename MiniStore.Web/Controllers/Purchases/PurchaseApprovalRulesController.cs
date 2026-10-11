@@ -39,6 +39,8 @@ public sealed class PurchaseApprovalRulesController(
     public async Task<IActionResult> SetActive(int id, bool active, byte[] rowVersion)
     {
         await service.SetActiveAsync(id, active, rowVersion);
+        TempData["NotificationType"] = "success";
+        TempData["NotificationMessage"] = localizer["Purchase approval rule status updated."].Value;
         return RedirectToAction(nameof(Index));
     }
 }

@@ -6,6 +6,7 @@
 @{
     ViewData["Title"] = "Purchase Details";
     var canCreateReturn = (await AuthorizationService.AuthorizeAsync(User, null, "Permission:PurchaseReturns.Create")).Succeeded;
+    var numberSettings = await GeneralSettingsService.GetAsync();
 }
 
 <h1>Purchase Details</h1>
@@ -85,15 +86,15 @@
                 <td>@item.WarehouseName</td>
 
                 <td>
-                    @item.Quantity
+                    @item.Quantity.ToQuantityDisplay(numberSettings)
                 </td>
 
                 <td>
-                    @item.PurchasePrice.ToString("N2")
+                    @item.PurchasePrice.ToMoneyDisplay(numberSettings)
                 </td>
 
                 <td>
-                    @item.Total.ToString("N2")
+                    @item.Total.ToMoneyDisplay(numberSettings)
                 </td>
 
             </tr>
@@ -114,7 +115,7 @@
 
             <th>
 
-                @Model.TotalAmount.ToString("N2")
+                @Model.TotalAmount.ToMoneyDisplay(numberSettings)
 
             </th>
 
@@ -142,19 +143,19 @@
 
 </a>
 
-@if (ViewBag.IsPosted == true && canCreateReturn)
+@if (ViewBag.IsPosted == true)
 {
-    <span class="badge bg-success ms-2">Posted to general ledger</span>
+    <span class="badge bg-success ms-2">@Localizer["Posted to general ledger"]</span>
 }
 else
 {
     <form asp-action="Post" method="post" class="d-inline ms-2">
         <input type="hidden" name="id" value="@Model.Id" />
-        <button type="submit" class="btn btn-primary">Post to general ledger</button>
+        <button type="submit" class="btn btn-primary">@Localizer["Post to general ledger"]</button>
     </form>
 }
 
-@if (ViewBag.IsPosted == true)
+@if (ViewBag.IsPosted == true && canCreateReturn)
 {
     <a asp-controller="PurchaseReturns" asp-action="Create" asp-route-purchaseId="@Model.Id" class="btn btn-outline-primary ms-2">@Localizer["Purchase return"]</a>
 }

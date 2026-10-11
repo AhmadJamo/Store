@@ -592,3 +592,41 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
 - Defined an intake workflow for future customer-management, pricing, sales, receivables and return prompts so new requirements are assigned to their dependency-correct phase before implementation.
 - Updated the documentation index, codebase map, concise TODO and shared Arabic roadmap to reference the master sequence and replace the stale immediate-priority text.
 - Documentation only; no runtime code, schema, configuration or database data changed.
+
+## 2026-10-11 — Purchase-sourcing submission binding fix
+- Bound the Purchase Sourcing POST action to the create page's nested `Form.*` field prefix, preserving the Purchase Request ID, selected suppliers, invitation message and notes instead of falling through to an HTTP 404 with request ID zero.
+- Hid Start Sourcing on approved Purchase Requests when the current user lacks `PurchaseSourcing.Create`; server-side authorization remains authoritative.
+- Added focused regression coverage for the binding contract and updated the purchase module, controller and screen documentation.
+- Release build passed with zero warnings/errors; the final combined binding-audit verification is recorded below.
+
+## 2026-10-11 — Nested purchase-form binding audit
+- Fixed Supplier Quotation submission to bind the page's nested `Form.*` values, preventing the sourcing-event ID from becoming zero and falling through to an HTTP 404 after Submit Quotation.
+- Applied the same binding contract to manual Goods Receipt submission after auditing the remaining purchase forms; other wrapper pages already override their field names to direct command properties.
+- Made Enter Supplier Quotation and Quotation Comparison links respect their separate permissions and added regression checks for both corrected binding contracts.
+- Release build passed with zero warnings/errors and a freshly rebuilt test executable passed all 548 focused security and inventory regression checks.
+
+## 2026-10-11 — Actionable purchase-error guidance
+- Added a shared resolver that maps recognized purchase prerequisites to accounting, warehouse, approval-rule, payment-method, matching, tax, supplier, product, measurement-unit or document-number screens.
+- Extended the shared notification experience to show a localized resolution button for both modal notifications and page validation errors. Buttons appear only when the user has the target management permission; otherwise the user is directed to an administrator.
+- Kept ordinary validation errors message-only, documented actionable guidance as the default rule for future features and added Arabic labels for every new action.
+- Release build passed with zero warnings/errors and all 555 focused security and inventory regression checks passed.
+
+## 2026-10-11 — Clear purchase number formatting
+- Added one shared formatter for purchase quantities, money, percentages and numeric form values. It respects the existing General Settings maximum decimal places while suppressing insignificant trailing zeros, so `5.0000` displays as `5` and real fractions remain visible.
+- Applied the formatter across requests, sourcing, quotations, orders, agreements, receipts and receipt returns, vendor bills, supplier payments, landed costs, purchase returns, direct purchases, supplier purchasing data and purchase analytics. Updated the direct-purchase browser calculations to follow the same rule.
+- Clarified the bilingual General Settings labels and help text so administrators understand that the configured values are maximum precision, not forced zeros. No schema or stored numeric precision changed.
+- The Web project built with Razor compilation and zero warnings/errors; all 558 focused security and inventory regression checks passed.
+
+## 2026-10-11 — Permission-aware workflow next steps
+- Extended the shared success notification with a localized "What is the next step?" card, short explanation and direct action button. The button is shown only when the current user holds the destination permission; the destination controller still enforces access.
+- Added explicit purchase guidance from request creation through approval, sourcing, quotations, orders, receiving, vendor billing/payment and agreements, plus warehouse-location, unassigned-stock, stock-balance and replenishment guidance.
+- Added a scoped completion filter so successful purchase, inventory and warehouse POST redirects without an existing notification still receive safe generic guidance. Added missing success messages to purchase request/order/agreement/template and approval-rule transitions.
+- Documented next-step guidance as a required principle for future workflow work and added complete Arabic localization.
+- The Web project built with Razor compilation and zero warnings/errors; all 563 focused security and inventory regression checks passed.
+
+## 2026-10-11 — Completed workflow actions replace duplicate buttons
+- Made one-time purchase and inventory actions state-aware: submitted, sourced, approved, confirmed, fully received, counted, activated and posted steps now show a localized completion label after success instead of leaving the old action available.
+- Quotation comparison now loads the recorded award and any resulting Purchase Order or Purchase Agreement. Award/create buttons disappear after completion and the created document is linked for viewing.
+- Vendor Bill details now calculate posted supplier-payment allocations, show paid/outstanding amounts and replace Pay with Paid in full when the balance reaches zero. Fixed direct Purchase details so a posted purchase never shows Post again, including users without return permission.
+- Fully released agreements now show a finished state instead of another release button. Repeatable partial receipt, release and payment actions remain available while a real quantity or balance remains.
+- Documented this as the required UI rule for future workflows. The Web project built with Razor compilation and zero warnings/errors; the focused regression executable passed 565 checks.

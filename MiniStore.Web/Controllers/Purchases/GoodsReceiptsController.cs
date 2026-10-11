@@ -34,7 +34,7 @@ public sealed class GoodsReceiptsController(GoodsReceiptService service, IString
     [HttpPost]
     [ValidateAntiForgeryToken]
     [PermissionAuthorize("GoodsReceipts.Create")]
-    public async Task<IActionResult> Create(CreateGoodsReceiptDto dto)
+    public async Task<IActionResult> Create([Bind(Prefix = "Form")] CreateGoodsReceiptDto dto)
     {
         try
         {

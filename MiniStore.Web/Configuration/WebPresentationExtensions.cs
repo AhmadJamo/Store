@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using MiniStore.Web.Localization;
+using MiniStore.Web.Guidance;
 
 namespace MiniStore.Web.Configuration;
 
@@ -13,8 +14,12 @@ public static class WebPresentationExtensions
         services.AddLocalization(options => options.ResourcesPath = "Resources");
         services.AddMemoryCache();
         services.AddHttpContextAccessor();
+        services.AddScoped<WorkflowCompletionFilter>();
         services.AddControllersWithViews(options =>
-            options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute()))
+        {
+            options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
+            options.Filters.Add<WorkflowCompletionFilter>();
+        })
             .AddViewLocalization()
             .AddDataAnnotationsLocalization();
 

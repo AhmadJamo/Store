@@ -30,6 +30,8 @@
 
 `docs/reference/erp-architecture/` preserves the imported cross-ERP proposed architecture package: system charter, module and ownership maps, workflows, integration contracts, cross-cutting rules, delivery roadmap, agent guidance, test matrix and open decisions. It is a planning reference rather than evidence of implemented code, and its Codex guidance does not supersede repository `AGENTS.md`, accepted ADRs or the required documentation workflow.
 
+`MiniStore.Web/Guidance/ActionableErrorGuidance.cs` maps recognized, user-resolvable purchase errors to permission-protected setup or master-data destinations. The shared notification partial renders the resulting action for both modal notifications and page validation summaries; ordinary validation errors remain message-only.
+
 ## Domain source map
 | Files | Type/purpose | Consumers/docs |
 |---|---|---|
@@ -204,6 +206,9 @@ Hierarchical location update (2026-09-30): StorageLocation retains its identity 
 | `Controllers/PublicController.cs`, `Controllers/Saas/SubscriptionController.cs` | public landing/pricing and tenant subscription/checkout flows | SaaS module and public/subscription views. |
 | `Middleware/SubscriptionAccessMiddleware.cs` | blocks tenant ERP access when the current subscription is not usable | SaaS module/security. |
 | `Localization/*.cs`, `Resources/SharedResource.ar.resx` | supported cultures, cached database-default provider and centralized Arabic translations | shared layout and localized views/controllers. |
+| `Formatting/NumberDisplayExtensions.cs` | culture-aware display and invariant HTML-input formatting with settings-controlled maximum precision and no insignificant trailing zeros | purchase and settings screens. |
+| `Guidance/{ActionableErrorGuidance,WorkflowNextStepGuidance,WorkflowCompletionFilter}.cs` | permission-aware setup links for recognized purchase errors plus centralized next-step prompts and automatic success fallback for purchase/inventory/warehouse POST redirects | shared notification partial, presentation registration and focused regression checks. |
+| Purchase workflow detail/comparison view models and Razor actions | state-aware one-time actions, completed-state labels, downstream document links and outstanding Vendor Bill balances | purchase repositories/services, localized views and regression checks. |
 | `Controllers/Home/{Dashboard,Home}Controller.cs` | authenticated Dashboard entry and legacy Home redirect | Dashboard view and login flow. |
 | `Navigation/*.cs` | navigation metadata | permissions/screens. |
 | `Views/<Module>/*.cshtml` | Razor screens/forms/client JS | `screens/*.md`. |

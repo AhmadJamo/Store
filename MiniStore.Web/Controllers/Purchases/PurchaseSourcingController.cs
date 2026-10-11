@@ -30,7 +30,7 @@ public sealed class PurchaseSourcingController(PurchaseSourcingService service,
     [HttpPost]
     [ValidateAntiForgeryToken]
     [PermissionAuthorize("PurchaseSourcing.Create")]
-    public async Task<IActionResult> Create(CreatePurchaseSourcingDto dto)
+    public async Task<IActionResult> Create([Bind(Prefix = "Form")] CreatePurchaseSourcingDto dto)
     {
         try
         {

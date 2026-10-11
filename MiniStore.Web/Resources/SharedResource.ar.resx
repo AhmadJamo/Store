@@ -43,6 +43,9 @@
   <data name="Users can temporarily switch their language from the navigation bar." xml:space="preserve"><value>يمكن للمستخدمين تبديل لغتهم من شريط التنقل، ويُحفظ اختيارهم على جهازهم.</value></data>
   <data name="Money Decimal Places" xml:space="preserve"><value>المنازل العشرية للمبالغ</value></data>
   <data name="Quantity Decimal Places" xml:space="preserve"><value>المنازل العشرية للكميات</value></data>
+  <data name="Maximum Money Decimal Places" xml:space="preserve"><value>الحد الأقصى للمنازل العشرية للمبالغ</value></data>
+  <data name="Maximum Quantity Decimal Places" xml:space="preserve"><value>الحد الأقصى للمنازل العشرية للكميات</value></data>
+  <data name="Trailing zeros are hidden; the selected value is the maximum shown when a real fraction exists." xml:space="preserve"><value>تُخفى الأصفار الزائدة، والرقم المحدد هو الحد الأقصى الذي يظهر عند وجود كسر فعلي.</value></data>
   <data name="Date Format" xml:space="preserve"><value>تنسيق التاريخ</value></data>
   <data name="Time Zone" xml:space="preserve"><value>المنطقة الزمنية</value></data>
   <data name="Save Settings" xml:space="preserve"><value>حفظ الإعدادات</value></data>
@@ -1022,7 +1025,6 @@
   <data name="This purchase request already has a sourcing event." xml:space="preserve"><value>يوجد حدث توريد لهذا الطلب بالفعل.</value></data>
   <data name="Draft" xml:space="preserve"><value>مسودة</value></data>
   <data name="Sent" xml:space="preserve"><value>مُرسل</value></data>
-  <data name="Enter supplier quotation" xml:space="preserve"><value>إدخال عرض سعر المورد</value></data>
   <data name="Supplier reference" xml:space="preserve"><value>مرجع المورد</value></data>
   <data name="Quotation date" xml:space="preserve"><value>تاريخ العرض</value></data>
   <data name="Valid until" xml:space="preserve"><value>صالح حتى</value></data>
@@ -1179,7 +1181,6 @@
   <data name="Outstanding balance" xml:space="preserve"><value>الرصيد المستحق</value></data>
   <data name="Payment allocation" xml:space="preserve"><value>تخصيص الدفعة</value></data>
   <data name="Post supplier payment" xml:space="preserve"><value>ترحيل دفعة المورد</value></data>
-  <data name="Pay vendor bill" xml:space="preserve"><value>دفع فاتورة المورد</value></data>
   <data name="Supplier payment posted." xml:space="preserve"><value>تم ترحيل دفعة المورد.</value></data>
   <data name="Search by payment number or external reference" xml:space="preserve"><value>ابحث برقم الدفعة أو المرجع الخارجي</value></data>
   <data name="Enter at least one positive payment allocation." xml:space="preserve"><value>أدخل تخصيص دفعة موجبًا واحدًا على الأقل.</value></data>
@@ -1394,4 +1395,87 @@
   <data name="Tracking dates must remain consistent for a scanned receipt line." xml:space="preserve"><value>يجب أن تبقى تواريخ التتبع متطابقة لسطر الاستلام الممسوح.</value></data>
   <data name="Scanned receipt line snapshots do not match the existing draft line." xml:space="preserve"><value>بيانات سطر الاستلام الممسوح لا تطابق سطر المسودة الحالي.</value></data>
   <data name="Scanned serial numbers must not repeat within a draft receipt line." xml:space="preserve"><value>لا يجوز تكرار الأرقام التسلسلية الممسوحة داخل سطر استلام واحد في المسودة.</value></data>
+  <data name="This error has a related setup page." xml:space="preserve"><value>يوجد لهذا الخطأ صفحة إعداد مرتبطة.</value></data>
+  <data name="Ask an administrator to complete the required setup." xml:space="preserve"><value>اطلب من مدير النظام إكمال الإعداد المطلوب.</value></data>
+  <data name="Open accounting settings" xml:space="preserve"><value>فتح إعدادات المحاسبة</value></data>
+  <data name="Open warehouse settings" xml:space="preserve"><value>فتح إعدادات المستودعات</value></data>
+  <data name="Manage warehouses" xml:space="preserve"><value>إدارة المستودعات</value></data>
+  <data name="Open purchase approval rules" xml:space="preserve"><value>فتح قواعد موافقة المشتريات</value></data>
+  <data name="Open purchase matching settings" xml:space="preserve"><value>فتح إعدادات مطابقة المشتريات</value></data>
+  <data name="Manage tax rates" xml:space="preserve"><value>إدارة نسب الضرائب</value></data>
+  <data name="Manage suppliers" xml:space="preserve"><value>إدارة الموردين</value></data>
+  <data name="Open document numbering settings" xml:space="preserve"><value>فتح إعدادات ترقيم المستندات</value></data>
+  <data name="Manage measurement units" xml:space="preserve"><value>إدارة وحدات القياس</value></data>
+  <data name="Manage products" xml:space="preserve"><value>إدارة المنتجات</value></data>
+  <data name="What is the next step?" xml:space="preserve"><value>ما الخطوة التالية؟</value></data>
+  <data name="Ask an authorized user to complete the next step." xml:space="preserve"><value>اطلب من مستخدم مخوّل تنفيذ الخطوة التالية.</value></data>
+  <data name="Review and submit purchase request" xml:space="preserve"><value>مراجعة طلب الشراء وإرساله</value></data>
+  <data name="Review the quantities and dates, then submit the request for approval." xml:space="preserve"><value>راجع الكميات والتواريخ، ثم أرسل الطلب للاعتماد.</value></data>
+  <data name="Track purchase request approval" xml:space="preserve"><value>متابعة اعتماد طلب الشراء</value></data>
+  <data name="The request now follows its configured approval steps." xml:space="preserve"><value>يمر الطلب الآن بخطوات الاعتماد المحددة له.</value></data>
+  <data name="Start supplier sourcing" xml:space="preserve"><value>بدء التوريد من الموردين</value></data>
+  <data name="Invite suppliers to submit quotations for the approved request." xml:space="preserve"><value>ادعُ الموردين لتقديم عروض أسعار للطلب المعتمد.</value></data>
+  <data name="Enter supplier quotation" xml:space="preserve"><value>إدخال عرض سعر المورد</value></data>
+  <data name="Record the first quotation received from an invited supplier." xml:space="preserve"><value>سجّل أول عرض سعر مستلم من أحد الموردين المدعوين.</value></data>
+  <data name="Compare supplier quotations" xml:space="preserve"><value>مقارنة عروض أسعار الموردين</value></data>
+  <data name="Compare submitted prices and terms before recording an award." xml:space="preserve"><value>قارن الأسعار والشروط المقدمة قبل تسجيل قرار الاختيار.</value></data>
+  <data name="Continue from the awarded quotation" xml:space="preserve"><value>المتابعة من عرض السعر المختار</value></data>
+  <data name="Create a purchase order or purchase agreement from the recorded award." xml:space="preserve"><value>أنشئ أمر شراء أو اتفاقية شراء من العرض المختار والمسجل.</value></data>
+  <data name="Review and approve purchase order" xml:space="preserve"><value>مراجعة أمر الشراء واعتماده</value></data>
+  <data name="Review the commercial details, then approve the draft order." xml:space="preserve"><value>راجع التفاصيل التجارية، ثم اعتمد مسودة أمر الشراء.</value></data>
+  <data name="Confirm purchase order" xml:space="preserve"><value>تأكيد أمر الشراء</value></data>
+  <data name="Confirm the approved order so warehouse receiving can begin." xml:space="preserve"><value>أكّد الأمر المعتمد حتى يمكن البدء باستلام البضاعة.</value></data>
+  <data name="Receive purchased goods" xml:space="preserve"><value>استلام البضاعة المشتراة</value></data>
+  <data name="Record only the quantities physically received from the supplier." xml:space="preserve"><value>سجّل فقط الكميات التي استُلِمت فعليًا من المورد.</value></data>
+  <data name="Continue to supplier billing" xml:space="preserve"><value>المتابعة إلى فواتير الموردين</value></data>
+  <data name="Review supplier bills and create the bill for the received order when it arrives." xml:space="preserve"><value>راجع فواتير الموردين وأنشئ فاتورة الأمر المستلم عند وصولها.</value></data>
+  <data name="Continue scanning received goods" xml:space="preserve"><value>متابعة مسح البضاعة المستلمة</value></data>
+  <data name="Scan the next product, then review and post the receipt when receiving is complete." xml:space="preserve"><value>امسح الصنف التالي، ثم راجع سند الاستلام ورحّله عند اكتمال الاستلام.</value></data>
+  <data name="Pay vendor bill" xml:space="preserve"><value>دفع فاتورة المورد</value></data>
+  <data name="Allocate a supplier payment when the posted bill is ready for settlement." xml:space="preserve"><value>خصّص دفعة للمورد عندما تصبح الفاتورة المرحلة جاهزة للتسوية.</value></data>
+  <data name="Review and post purchase" xml:space="preserve"><value>مراجعة المشتريات وترحيلها</value></data>
+  <data name="Review the saved purchase, then post it to the general ledger." xml:space="preserve"><value>راجع عملية الشراء المحفوظة، ثم رحّلها إلى دفتر الأستاذ العام.</value></data>
+  <data name="Activate purchase agreement" xml:space="preserve"><value>تفعيل اتفاقية الشراء</value></data>
+  <data name="Review the agreement limits and validity before activation." xml:space="preserve"><value>راجع حدود الاتفاقية وفترة صلاحيتها قبل التفعيل.</value></data>
+  <data name="Review and submit stock transfer" xml:space="preserve"><value>مراجعة تحويل المخزون وإرساله</value></data>
+  <data name="Review the suggested quantities and locations, then submit the draft transfer." xml:space="preserve"><value>راجع الكميات والمواقع المقترحة، ثم أرسل مسودة التحويل.</value></data>
+  <data name="Configure warehouse locations" xml:space="preserve"><value>إعداد مواقع المستودع</value></data>
+  <data name="Add or review storage locations before assigning stock inside the warehouse." xml:space="preserve"><value>أضف مواقع التخزين أو راجعها قبل توزيع المخزون داخل المستودع.</value></data>
+  <data name="Review unassigned stock" xml:space="preserve"><value>مراجعة المخزون غير المخصص</value></data>
+  <data name="Move received stock from the unassigned position to its storage location." xml:space="preserve"><value>انقل المخزون المستلم من الموقع غير المخصص إلى موقع التخزين المناسب.</value></data>
+  <data name="Review warehouse stock" xml:space="preserve"><value>مراجعة مخزون المستودع</value></data>
+  <data name="Confirm the resulting product balance in the warehouse stock list." xml:space="preserve"><value>تحقق من رصيد الصنف الناتج في قائمة مخزون المستودع.</value></data>
+  <data name="Continue purchase workflow" xml:space="preserve"><value>متابعة مسار المشتريات</value></data>
+  <data name="Review the document status and use the available action to continue the purchase workflow." xml:space="preserve"><value>راجع حالة المستند واستخدم الإجراء المتاح لمتابعة مسار المشتريات.</value></data>
+  <data name="Continue inventory workflow" xml:space="preserve"><value>متابعة مسار المخزون</value></data>
+  <data name="Review the updated record and use the available action to continue inventory work." xml:space="preserve"><value>راجع السجل المحدّث واستخدم الإجراء المتاح لمتابعة عمل المخزون.</value></data>
+  <data name="Purchase request submitted." xml:space="preserve"><value>تم إرسال طلب الشراء.</value></data>
+  <data name="Purchase request approved." xml:space="preserve"><value>تم اعتماد طلب الشراء.</value></data>
+  <data name="Purchase request cancelled." xml:space="preserve"><value>تم إلغاء طلب الشراء.</value></data>
+  <data name="Purchase request rejected." xml:space="preserve"><value>تم رفض طلب الشراء.</value></data>
+  <data name="Purchase order approved." xml:space="preserve"><value>تم اعتماد أمر الشراء.</value></data>
+  <data name="Purchase order confirmed." xml:space="preserve"><value>تم تأكيد أمر الشراء.</value></data>
+  <data name="Purchase order cancelled." xml:space="preserve"><value>تم إلغاء أمر الشراء.</value></data>
+  <data name="Purchase agreement activated." xml:space="preserve"><value>تم تفعيل اتفاقية الشراء.</value></data>
+  <data name="Purchase agreement cancelled." xml:space="preserve"><value>تم إلغاء اتفاقية الشراء.</value></data>
+  <data name="Purchase template status updated." xml:space="preserve"><value>تم تحديث حالة قالب الشراء.</value></data>
+  <data name="Purchase approval rule status updated." xml:space="preserve"><value>تم تحديث حالة قاعدة اعتماد المشتريات.</value></data>
+  <data name="Operation completed successfully." xml:space="preserve"><value>تمت العملية بنجاح.</value></data>
+  <data name="Paid in full" xml:space="preserve"><value>مدفوعة بالكامل</value></data>
+  <data name="Outstanding amount" xml:space="preserve"><value>المبلغ المتبقي</value></data>
+  <data name="Submission completed" xml:space="preserve"><value>تم الإرسال</value></data>
+  <data name="Sourcing started" xml:space="preserve"><value>تم بدء التوريد</value></data>
+  <data name="Approval completed" xml:space="preserve"><value>تم الاعتماد</value></data>
+  <data name="Confirmation completed" xml:space="preserve"><value>تم التأكيد</value></data>
+  <data name="Receiving completed" xml:space="preserve"><value>تم الاستلام بالكامل</value></data>
+  <data name="Agreement activated" xml:space="preserve"><value>تم تفعيل الاتفاقية</value></data>
+  <data name="Agreement completed" xml:space="preserve"><value>الاتفاقية منتهية</value></data>
+  <data name="Receipt posted" xml:space="preserve"><value>تم ترحيل سند الاستلام</value></data>
+  <data name="Award completed" xml:space="preserve"><value>تم اختيار العرض</value></data>
+  <data name="Award a quotation before creating the next purchase document." xml:space="preserve"><value>اختر عرض سعر أولًا قبل إنشاء مستند الشراء التالي.</value></data>
+  <data name="Purchase order created — view" xml:space="preserve"><value>تم إنشاء أمر الشراء — عرض</value></data>
+  <data name="Purchase agreement created — view" xml:space="preserve"><value>تم إنشاء اتفاقية الشراء — عرض</value></data>
+  <data name="Count completed" xml:space="preserve"><value>تم الجرد</value></data>
+  <data name="Adjustment posted" xml:space="preserve"><value>تم ترحيل تسوية المخزون</value></data>
+  <data name="Finished — cancelled" xml:space="preserve"><value>منتهي — ملغي</value></data>
 </root>

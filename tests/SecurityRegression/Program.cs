@@ -23,6 +23,8 @@ using MiniStore.Domain.Interfaces;
 using MiniStore.Web.Authorization;
 using MiniStore.Web.Controllers;
 using MiniStore.Web.Localization;
+using MiniStore.Web.Guidance;
+using MiniStore.Web.Formatting;
 
 var count = 0;
 void Check(bool condition, string message)
@@ -1344,6 +1346,7 @@ Check(scannedDraft.Status == GoodsReceiptStatus.Draft && scannedDraft.Lines.Sing
 CheckArgumentThrows(() => InventoryScanResolver.ValidateGoodsReceiptIdempotencyKey(InventoryScanResolver.NewPutawayIdempotencyKey()),
     "Goods receipt scans must reject retry keys from another scanning workflow");
 var goodsReceiptController = typeof(GoodsReceiptsController);
+var goodsReceiptCreateAction = goodsReceiptController.GetMethod(nameof(GoodsReceiptsController.Create), [typeof(CreateGoodsReceiptDto)])!;
 Check(goodsReceiptController.GetMethod(nameof(GoodsReceiptsController.Scan))!
           .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
       $"{PermissionAuthorizeAttribute.PolicyPrefix}GoodsReceipts.Create" &&
@@ -1354,6 +1357,8 @@ Check(goodsReceiptController.GetMethod(nameof(GoodsReceiptsController.Scan))!
           .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
       $"{PermissionAuthorizeAttribute.PolicyPrefix}GoodsReceipts.Create",
     "Barcode receipt capture and posting must remain behind the existing goods-receipt command permission");
+Check(goodsReceiptCreateAction.GetParameters().Single().GetCustomAttribute<BindAttribute>()?.Prefix == "Form",
+    "Manual goods-receipt submission must bind the nested Form fields posted by the create page");
 var landedStock = new ProductStock(10, 1);
 landedStock.Receive(4m, 10m);
 var landedMovement = landedStock.AddLandedCost(8m);
@@ -1484,13 +1489,107 @@ Check(supplierPaymentController.GetMethod(nameof(SupplierPaymentsController.Inde
       $"{PermissionAuthorizeAttribute.PolicyPrefix}SupplierPayments.Create",
     "Supplier payment visibility and posting must use separate server-side permissions");
 var sourcingController = typeof(PurchaseSourcingController);
+var sourcingCreateAction = sourcingController.GetMethod(nameof(PurchaseSourcingController.Create), [typeof(CreatePurchaseSourcingDto)])!;
 Check(sourcingController.GetMethod(nameof(PurchaseSourcingController.Index))!
           .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
       $"{PermissionAuthorizeAttribute.PolicyPrefix}PurchaseSourcing.View" &&
-      sourcingController.GetMethod(nameof(PurchaseSourcingController.Create), [typeof(CreatePurchaseSourcingDto)])!
+      sourcingCreateAction
           .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
       $"{PermissionAuthorizeAttribute.PolicyPrefix}PurchaseSourcing.Create",
     "Purchase sourcing visibility and creation must use separate server-side permissions");
+Check(sourcingCreateAction.GetParameters().Single().GetCustomAttribute<BindAttribute>()?.Prefix == "Form",
+    "Purchase sourcing submission must bind the nested Form fields posted by the create page");
+var supplierQuotationCreateAction = typeof(SupplierQuotationsController)
+    .GetMethod(nameof(SupplierQuotationsController.Create), [typeof(CreateSupplierQuotationDto)])!;
+Check(supplierQuotationCreateAction.GetParameters().Single().GetCustomAttribute<BindAttribute>()?.Prefix == "Form",
+    "Supplier quotation submission must bind the nested Form fields posted by the create page");
+Check(ActionableErrorGuidance.Resolve(
+          "Configure a goods received not invoiced account before posting goods receipts.",
+          "GoodsReceipts") is { Controller: "Settings", Action: "Accounting", RequiredPermission: "Administration.Access" },
+    "Purchase accounting configuration errors must link to accounting settings");
+Check(ActionableErrorGuidance.Resolve(
+          "Assign an inventory account to warehouse 'Main' before posting goods receipts.",
+          "GoodsReceipts") is { Controller: "Warehouses", Action: "Index", RequiredPermission: "Warehouses.Edit" },
+    "Purchase warehouse-account errors must link to warehouse settings");
+Check(ActionableErrorGuidance.Resolve(
+          "No active approval rule matches this purchase request.",
+          "PurchaseRequests") is { Controller: "PurchaseApprovalRules", Action: "Index" },
+    "Purchase approval prerequisites must link to approval rules");
+Check(ActionableErrorGuidance.Resolve(
+          "Payment method was not found.",
+          "SupplierPayments") is { Controller: "PaymentMethods", Action: "Index" },
+    "Supplier-payment setup errors must link to payment methods");
+Check(ActionableErrorGuidance.Resolve(
+          "Product and requested unit must use managed active units.",
+          "PurchaseRequests") is { Controller: "Settings", Action: "Units" },
+    "Purchase unit setup errors must link to measurement-unit settings");
+Check(ActionableErrorGuidance.Resolve(
+          "Configure a goods received not invoiced account before posting goods receipts.",
+          "Sales") is null,
+    "Purchase error guidance must remain scoped to purchase controllers");
+Check(ActionableErrorGuidance.Resolve(
+          "Quantity must be greater than zero.",
+          "GoodsReceipts") is null,
+    "Ordinary validation errors must not show an unrelated setup link");
+var purchaseNextStep = WorkflowNextStepGuidance.Resolve(
+    "Purchase request approved.",
+    "PurchaseRequests",
+    new Dictionary<string, string?> { ["id"] = "42" });
+Check(purchaseNextStep is
+      {
+          Controller: "PurchaseSourcing",
+          Action: "Create",
+          RequiredPermission: "PurchaseSourcing.Create"
+      } && purchaseNextStep.RouteValues.GetValueOrDefault("purchaseRequestId") == "42",
+    "Approved purchase requests must guide users to supplier sourcing with the document route");
+var warehouseNextStep = WorkflowNextStepGuidance.Resolve(
+    "Warehouse created successfully.",
+    "Warehouses",
+    new Dictionary<string, string?>());
+Check(warehouseNextStep is
+      {
+          Controller: "WarehouseLocations",
+          Action: "Index",
+          RequiredPermission: "Warehouses.View"
+      },
+    "Completed warehouse setup must guide users to storage locations with the correct permission");
+Check(WorkflowNextStepGuidance.Resolve(
+          "Operation completed successfully.",
+          "Sales",
+          new Dictionary<string, string?>()) is null,
+    "Workflow next-step guidance must remain scoped until a future module defines its next actions");
+Check(WorkflowNextStepGuidance.IsSupportedController("VendorBills") &&
+      WorkflowNextStepGuidance.IsSupportedController("StockTransfers") &&
+      WorkflowNextStepGuidance.IsSupportedController("Warehouses") &&
+      !WorkflowNextStepGuidance.IsSupportedController("Sales"),
+    "Automatic completion guidance must cover purchases, inventory and warehouses without changing other modules");
+Check(WorkflowNextStepGuidance.Resolve(
+          "Operation completed successfully.",
+          "InventoryAdjustments",
+          new Dictionary<string, string?> { ["id"] = "9" }) is
+      {
+          Controller: "InventoryAdjustments",
+          Action: "Details",
+          RequiredPermission: "InventoryAdjustments.View"
+      },
+    "Unmapped inventory completions must still guide users back to the updated workflow record");
+var completedAward = new SupplierQuotationComparisonPageDto
+{
+    SourcingEventId = 7,
+    AwardedQuotationId = 11,
+    PurchaseOrderId = 13
+};
+Check(!completedAward.CanAward && !completedAward.CanCreatePurchaseDocument,
+    "Completed quotation award and purchase-document steps must not offer the same action again");
+var settledVendorBill = new VendorBillDto
+{
+    Status = VendorBillStatus.Posted,
+    TotalAmount = 25m,
+    PaidAmount = 25m,
+    OutstandingAmount = 0m
+};
+Check(settledVendorBill.IsPaidInFull,
+    "A fully settled vendor bill must display completion instead of offering another payment");
 Check(PurchaseAnalyticsService.Rate(8m, 10m) == 80m &&
       PurchaseAnalyticsService.Rate(2m, 0m) == 0m &&
       PurchaseAnalyticsService.Rate(12m, 10m) == 100m,
@@ -1500,6 +1599,24 @@ Check(purchaseAnalyticsController.GetMethod(nameof(PurchaseAnalyticsController.I
           .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
       $"{PermissionAuthorizeAttribute.PolicyPrefix}PurchaseAnalytics.View",
     "Purchase analytics must require its dedicated server-side view permission");
+var originalCulture = CultureInfo.CurrentCulture;
+try
+{
+    CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("en-US");
+    var displaySettings = new GeneralSettingsDto { DecimalPlaces = 4, QuantityDecimalPlaces = 4 };
+    Check(5.0000m.ToQuantityDisplay(displaySettings) == "5" &&
+          5.2500m.ToQuantityDisplay(displaySettings) == "5.25",
+        "Purchase quantities must hide trailing zeros while preserving real fractions");
+    Check(1250.0000m.ToMoneyDisplay(displaySettings) == "1,250" &&
+          1250.1250m.ToMoneyDisplay(displaySettings) == "1,250.125",
+        "Purchase amounts must respect the configured maximum decimals without trailing zeros");
+    Check(1250.5000m.ToMoneyInput(displaySettings) == "1250.5",
+        "Numeric form values must be invariant and omit trailing zeros");
+}
+finally
+{
+    CultureInfo.CurrentCulture = originalCulture;
+}
 
 Console.WriteLine($"Passed {count} security and inventory regression checks.");
 

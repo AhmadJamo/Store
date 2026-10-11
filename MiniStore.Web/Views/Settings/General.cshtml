@@ -61,14 +61,15 @@
                     <span asp-validation-for="Currency" class="text-danger"></span>
                 </div>
                 <div class="col-md-4">
-                    <label asp-for="DecimalPlaces" class="form-label">@Localizer["Money Decimal Places"]</label>
+                    <label asp-for="DecimalPlaces" class="form-label">@Localizer["Maximum Money Decimal Places"]</label>
                     <input asp-for="DecimalPlaces" type="number" min="0" max="4" class="form-control" />
                     <span asp-validation-for="DecimalPlaces" class="text-danger"></span>
                 </div>
                 <div class="col-md-4">
-                    <label asp-for="QuantityDecimalPlaces" class="form-label">@Localizer["Quantity Decimal Places"]</label>
+                    <label asp-for="QuantityDecimalPlaces" class="form-label">@Localizer["Maximum Quantity Decimal Places"]</label>
                     <input asp-for="QuantityDecimalPlaces" type="number" min="0" max="4" class="form-control" />
                     <span asp-validation-for="QuantityDecimalPlaces" class="text-danger"></span>
+                    <div class="form-text">@Localizer["Trailing zeros are hidden; the selected value is the maximum shown when a real fraction exists."]</div>
                 </div>
                 <div class="col-md-4">
                     <label asp-for="DateFormat" class="form-label">@Localizer["Date Format"]</label>

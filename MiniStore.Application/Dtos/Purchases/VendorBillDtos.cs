@@ -66,7 +66,10 @@ public sealed class VendorBillDto
     public decimal NetAmount { get; init; }
     public decimal TaxAmount { get; init; }
     public decimal TotalAmount { get; init; }
+    public decimal PaidAmount { get; init; }
+    public decimal OutstandingAmount { get; init; }
     public decimal ReceiptClearingAmount { get; init; }
+    public bool IsPaidInFull => Status == VendorBillStatus.Posted && OutstandingAmount <= 0;
     public PurchaseMatchRunDto? Match { get; init; }
     public List<VendorBillLineDto> Lines { get; init; } = [];
 }

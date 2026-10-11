@@ -1,6 +1,6 @@
 @model MiniStore.Application.DTOs.Purchases.VendorBillCreatePageDto
 @inject Microsoft.Extensions.Localization.IStringLocalizer<MiniStore.Web.SharedResource> Localizer
-@{ ViewData["Title"] = Localizer["Create vendor bill"]; }
+@{ ViewData["Title"] = Localizer["Create vendor bill"]; var numberSettings = await GeneralSettingsService.GetAsync(); }
 <div class="d-flex justify-content-between align-items-center mb-3">
     <div><h2>@Localizer["Create vendor bill"]</h2><p class="text-muted mb-0">@Model.PurchaseOrderNumber — @Model.SupplierName</p></div>
     <a asp-controller="PurchaseOrders" asp-action="Details" asp-route-id="@Model.PurchaseOrderId" class="btn btn-outline-secondary">@Localizer["Back"]</a>
@@ -25,10 +25,10 @@
             var taxRateId = submitted?.TaxRateId ?? line.SuggestedTaxRateId;
             <tr>
                 <td>@line.ReceiptNumber<br/><small class="text-muted">@line.ReceiptDate</small><input type="hidden" name="Lines[@i].GoodsReceiptLineId" value="@line.GoodsReceiptLineId" /></td>
-                <td>@line.ProductCode — @line.ProductName</td><td>@line.RemainingQuantity @line.UnitName</td>
-                <td><input name="Lines[@i].Quantity" value="@(submitted?.Quantity ?? 0)" type="number" class="form-control" min="0" max="@line.RemainingQuantity" step="0.000001" /></td>
-                <td><input name="Lines[@i].UnitPrice" value="@unitPrice" type="number" class="form-control" min="0" step="0.00000001" /></td>
-                <td><select name="Lines[@i].TaxRateId" class="form-select"><option value="">@Localizer["No tax"]</option>@foreach(var tax in Model.TaxRates){<option value="@tax.Id" selected="@(taxRateId == tax.Id)">@tax.Name (@tax.Rate%) @(tax.IsPriceInclusive ? Localizer["Inclusive"] : Localizer["Exclusive"])</option>}</select></td>
+                <td>@line.ProductCode — @line.ProductName</td><td>@line.RemainingQuantity.ToQuantityDisplay(numberSettings) @line.UnitName</td>
+                <td><input name="Lines[@i].Quantity" value="@((submitted?.Quantity ?? 0).ToQuantityInput(numberSettings))" type="number" class="form-control" min="0" max="@line.RemainingQuantity.ToInputNumber()" step="0.000001" /></td>
+                <td><input name="Lines[@i].UnitPrice" value="@unitPrice.ToMoneyInput(numberSettings)" type="number" class="form-control" min="0" step="0.00000001" /></td>
+                <td><select name="Lines[@i].TaxRateId" class="form-select"><option value="">@Localizer["No tax"]</option>@foreach(var tax in Model.TaxRates){<option value="@tax.Id" selected="@(taxRateId == tax.Id)">@tax.Name (@tax.Rate.ToDisplayNumber(numberSettings.DecimalPlaces)%) @(tax.IsPriceInclusive ? Localizer["Inclusive"] : Localizer["Exclusive"])</option>}</select></td>
             </tr>
         }
         </tbody>

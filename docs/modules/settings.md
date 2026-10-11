@@ -1,11 +1,13 @@
 # Settings
-> Status: PARTIALLY IMPLEMENTED | Last reviewed: 2026-09-15
+> Status: PARTIALLY IMPLEMENTED | Last reviewed: 2026-10-11
 
 `SettingsController` is restricted by the active-company Admin permission boundary. General, Discount and Inventory settings use singleton keys and rowversions. Inventory settings define safe defaults for new warehouse type, control mode, picking strategy, POS eligibility, location-capacity enforcement and optional exact transfer-location requirements. Effective operational policy can then be adjusted per warehouse.
 
 Document Numbering is the single administration page for wholesale invoice, POS invoice, stock-transfer and journal-entry sequences. Each type supports prefix, suffix, a tokenized layout (`PREFIX`, `NUMBER`, year/month/day), number padding, forward-only next number, reset starting number and Never/Yearly/Monthly/Daily reset, with a live preview. Missing rows receive safe defaults. Tenant/type uniqueness, rowversion and transactional generation protect against duplicate use and concurrent setting edits. The former InvoiceSettings and DocumentNumberSettings paths are retired; the old Invoices URL redirects to the centralized page.
 
 General Settings stores the company default interface language: English (`en-US`) or Arabic (`ar-JO`). A user can override it with the navigation language switch; the choice is stored in an essential, HttpOnly culture cookie. Arabic requests use RTL markup and Bootstrap RTL. Shared navigation, authentication, notifications, delete confirmation and the Settings hub/general screen use centralized localization resources. Remaining legacy feature screens are migrated when they are next changed.
+
+General Settings also defines the maximum decimal places shown for money and quantities. Purchase screens respect those company choices but suppress insignificant trailing zeros, so configured precision remains available without displaying `5.0000` for a whole-number quantity. Formatting affects presentation and HTML number values only; persisted precision and calculations remain unchanged.
 
 Sources: setting entities, DTOs, services, repository interfaces/implementations/configurations, `SettingsController`, settings views. Number changes affect new sales, transfers and journal entries only; saved documents keep their identifier.
 

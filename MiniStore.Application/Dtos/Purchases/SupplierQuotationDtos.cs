@@ -22,3 +22,15 @@ public sealed class SupplierQuotationLineDto
 { public int PurchaseSourcingLineId { get; init; } public string ProductCode { get; init; }=string.Empty; public string ProductName { get; init; }=string.Empty; public string UnitName { get; init; }=string.Empty; public decimal QuotedQuantity { get; init; } public decimal UnitPrice { get; init; } public decimal DiscountPercent { get; init; } public decimal TaxPercent { get; init; } public decimal GrossAmount { get; init; } }
 public sealed class SupplierQuotationCreatePageDto
 { public CreateSupplierQuotationDto Form { get; init; }=new(); public PurchaseSourcingDto? SourcingEvent { get; init; } public List<PurchaseRequestOptionDto> Suppliers { get; init; }=[]; public string CurrencyCode { get; init; }="JOD"; }
+
+public sealed class SupplierQuotationComparisonPageDto
+{
+    public int SourcingEventId { get; init; }
+    public int? AwardedQuotationId { get; init; }
+    public int? PurchaseOrderId { get; init; }
+    public int? PurchaseAgreementId { get; init; }
+    public List<SupplierQuotationDto> Quotations { get; init; } = [];
+    public bool CanAward => !AwardedQuotationId.HasValue;
+    public bool CanCreatePurchaseDocument => AwardedQuotationId.HasValue &&
+        !PurchaseOrderId.HasValue && !PurchaseAgreementId.HasValue;
+}

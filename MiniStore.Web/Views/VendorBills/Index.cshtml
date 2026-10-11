@@ -1,6 +1,6 @@
 @model List<MiniStore.Application.DTOs.Purchases.VendorBillDto>
 @inject Microsoft.Extensions.Localization.IStringLocalizer<MiniStore.Web.SharedResource> Localizer
-@{ ViewData["Title"] = Localizer["Vendor bills"]; }
+@{ ViewData["Title"] = Localizer["Vendor bills"]; var numberSettings = await GeneralSettingsService.GetAsync(); }
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h2>@Localizer["Vendor bills"]</h2>
 </div>
@@ -13,7 +13,7 @@
     <tbody>
     @foreach (var bill in Model)
     {
-        <tr><td>@bill.BillNumber</td><td>@bill.SupplierInvoiceNumber</td><td>@bill.SupplierName</td><td>@bill.PurchaseOrderNumber</td><td>@bill.BillDate</td><td>@bill.TotalAmount @bill.CurrencyCode</td><td>@Localizer[bill.Status.ToString()]</td><td><a asp-action="Details" asp-route-id="@bill.Id" class="btn btn-sm btn-outline-primary">@Localizer["Details"]</a></td></tr>
+        <tr><td>@bill.BillNumber</td><td>@bill.SupplierInvoiceNumber</td><td>@bill.SupplierName</td><td>@bill.PurchaseOrderNumber</td><td>@bill.BillDate</td><td>@bill.TotalAmount.ToMoneyDisplay(numberSettings) @bill.CurrencyCode</td><td>@Localizer[bill.Status.ToString()]</td><td><a asp-action="Details" asp-route-id="@bill.Id" class="btn btn-sm btn-outline-primary">@Localizer["Details"]</a></td></tr>
     }
     </tbody>
 </table>

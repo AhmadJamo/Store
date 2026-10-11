@@ -1,7 +1,7 @@
 # Security assessment
 > Status: PARTIALLY VERIFIED
 > Source of truth: Static inspection and focused executable regression checks
-> Last reviewed: 2026-09-15
+> Last reviewed: 2026-10-11
 
 WMS-050 reservation writes run inside the existing serializable UnitOfWork. Tenant-scoped source uniqueness, balance and reservation rowversions, positive-quantity constraints and exact-dimension indexes prevent cross-tenant, duplicate and concurrent over-allocation.
 
@@ -22,6 +22,10 @@ WMS-070A requires full dimensional reconciliation before tracking activation, re
 Global MVC antiforgery, local returnUrl validation, Identity password hashing, HTTPS redirection and production HSTS already exist. Inspected active data access uses EF LINQ; no raw SQL found. No confirmed XSS was identified in inspected dynamic row rendering; this is not a penetration-test guarantee.
 
 The language switch is an antiforgery-protected POST, accepts only `en-US` and `ar-JO`, uses `LocalRedirect` after validating the return URL, and stores an essential HttpOnly SameSite=Lax culture cookie. Arabic translation values are output through Razor encoding.
+
+Actionable purchase-error guidance never bypasses authorization. A resolution button is rendered only when the current user satisfies the target screen's existing management permission; otherwise the notification directs the user to an administrator. The destination controller continues to enforce its own server-side permission independently of button visibility.
+
+Successful purchase, inventory and warehouse notifications apply the same boundary to workflow guidance. The next-step description remains visible, but its button is rendered only after authorization against the destination permission; the destination controller independently enforces that permission. The automatic completion filter adds presentation feedback only after successful scoped POST redirects and does not perform or authorize the next mutation.
 
 Business data is isolated by an authenticated tenant claim backed by an active `TenantMembership` and active `Tenant`. Middleware validates that membership on every authenticated request, upgrades older cookies with a valid tenant claim and signs out users with no active company. EF global query filters scope reads; the DbContext stamps inserts and rejects changes made without a tenant or against another tenant. Every tenant-owned table has a restrictive tenant foreign key. Focused checks verify all 34 protected entity types and the no-tenant write guard.
 

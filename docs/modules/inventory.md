@@ -13,6 +13,10 @@ Sales returns create positive `SalesReturn` stock movements for direct stocked p
 
 Flow: controller → `ProductStockService` or `StockTransactionService` → UnitOfWork → repositories → balance/movement tables → views. Permissions: ProductStock.View/Create/Edit/Delete and StockTransactions.View/Create.
 
+Successful inventory and warehouse POST redirects use the shared completion guidance. The notification explains the next operational step and exposes a direct button only when the user holds the destination permission. Explicit mappings connect warehouse setup to storage locations, location updates to unassigned stock, manual stock transactions to balance review and replenishment drafts to transfer/request review; unmapped existing operations return to their updated workflow record or list with a short explanation.
+
+Inventory lifecycle screens follow the same completed-action rule as purchasing. Inventory Adjustment details replace completed count, approval, posting and cancellation buttons with localized state labels; an action remains clickable only while the document status still permits it. Future inventory and warehouse workflows must use the same state-derived pattern.
+
 Sources: `ProductStock.cs`, `StockTransaction.cs`, `StockTransactionType.cs`; ProductStocks DTOs; product-stock/transaction services and repositories; configurations; `ProductStocksController`, `StockTransactionsController`; their views. Changes impact purchases, sales, transfers and accounting docs.
 
 ## Storage locations

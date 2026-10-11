@@ -23,6 +23,8 @@
 | `Views/ProductAttributes/{Index,Values}.cshtml` | bilingual definition administration plus per-product typed value assignment with required/category/option validation. |
 | `Views/ProductTemplates/Index.cshtml` | bilingual template creation, existing-SKU assignment and grouped variant listing. |
 | `Views/Purchases/{Index,Create,Details}.cshtml` | purchase list/detail and client-side dynamic item rows. |
+| `Views/PurchaseRequests/Details.cshtml`, `Views/PurchaseSourcing/{Create,Details}.cshtml`, `Views/SupplierQuotations/Create.cshtml` | permission-aware approved-request sourcing and supplier-quotation entry; nested form fields preserve their source identities and commercial lines during submission. |
+| `Views/Shared/_Notification.cshtml` | shared localized notification modal with permission-aware resolution buttons for recognized actionable errors and a short next-step explanation/button after successful purchase, inventory and warehouse operations. |
 | `Views/GoodsReceiptReturns/{Index,Create,Details}.cshtml` | bilingual receipt-based supplier return capture and immutable posted history. |
 | `Views/VendorBills/{Index,Create,Details}.cshtml` | bilingual receipt-allocation capture, posted bill history and immutable accounting detail. |
 | `Views/SupplierPayments/{Index,Create,Details}.cshtml` | bilingual open-bill allocation, posted payment history and immutable settlement detail. |
@@ -30,7 +32,7 @@
 | `Views/Sales/{Index,Create,Details,Pos}.cshtml` | wholesale sale, detail/list and POS cart; optional inclusive/exclusive invoice tax is selected and previewed, while terminal selection filters warehouses and applies saved order experience. Wholesale/POS tracked direct lines can submit an optional audited lot/serial selection. Details shows tax, product names, POS context, unit cost/COGS and an idempotent general-ledger posting action/status. |
 | `Views/SalesReturns/{Index,Create,Details}.cshtml` | return history, remaining-quantity entry from a posted sale, and posted refund/restock details. |
 | `Views/StockTransfers/{Index,Create,Edit,Details}.cshtml` | transfer list/edit/detail/status actions; client-side product rows/filtering. |
-| `Views/Settings/{Index,DocumentNumbers,General,Discounts,Inventory}.cshtml` | Admin-only forms; DocumentNumbers centrally configures four tenant sequences with format tokens, padding, counters, reset policies and live preview; General selects the English/Arabic company default. |
+| `Views/Settings/{Index,DocumentNumbers,General,Discounts,Inventory}.cshtml` | Admin-only forms; DocumentNumbers centrally configures four tenant sequences with format tokens, padding, counters, reset policies and live preview; General selects the English/Arabic company default and maximum money/quantity display precision. |
 | `Views/Settings/InventoryAccess.cshtml` | branch warehouse operation flags/priorities plus POS terminal creation and prioritized warehouse assignment. |
 | `Views/Settings/Pos.cshtml` | per-terminal business profile, POS appearance and order workflow settings with preset application and live preview. |
 | `Views/Settings/Units.cshtml` | tenant measurement-unit catalogue grouped by dimension; creates custom units and safely deactivates non-system units while showing factors and precision. |
@@ -43,6 +45,10 @@ The `.cshtml.cs` files adjacent to views were included in the repository scan; c
 
 ## UI change rules
 Button/form → inspect its JavaScript/hiddens → action → permission → DTO/service → database effect. Update screen map, relevant module/controller docs, navigation and permissions where applicable.
+
+Every successful workflow action must also answer "What is the next step?" with one short explanation and a permission-aware link. Add a specific shared mapping when the next document/action is known; the generic completion fallback is only for workflows without a more precise transition.
+
+One-time workflow buttons are state-aware: after completion they are replaced by a localized state label (`Completed`, `Posted`, `Finished`, or the business-specific equivalent). A generated downstream document is shown as a view link, not another create action. Partial receipt, release and payment buttons remain only while a server-calculated quantity or balance is still open.
 
 ## Delete forms (2026-09-13)
 Products, Warehouses, Suppliers, ProductStocks and Roles index delete controls use POST forms with generated antiforgery tokens and confirmation. Identity mutation buttons use the Admin-only permission rule through the existing PermissionService.
@@ -67,3 +73,5 @@ Bilingual read-only Product/Warehouse/Location projection showing OnHand, Reserv
 # PUR-010 screen
 
 `Views/SupplierPurchasing/Index.cshtml` is a bilingual RTL-safe Purchasing screen for supplier-specific product codes, compatible purchase units, minimum/order-multiple quantities, base-currency prices, validity, lead time, priority and preferred/active state. Product, supplier and unit names are shown while IDs remain internal. Prepared-to-order products are excluded from selection.
+
+All purchase tables, details and populated numeric inputs use the shared number formatter: General Settings controls maximum money/quantity decimal places and trailing zeros are suppressed without changing stored values.

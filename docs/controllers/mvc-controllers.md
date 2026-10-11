@@ -24,6 +24,8 @@
 | Purchases | Index/Create/Details | Purchases.View/Create; PurchaseService and master repositories for dropdowns. |
 | Sales | Index/Details/Create/Pos/Post | Sales.View/Create; SaleService validates and snapshots optional invoice tax plus POS order context/item notes; SalePostingService creates the one-time balanced revenue, output-tax and COGS journal; PosExperienceSettingsService supplies terminal-specific runtime presentation/workflow. |
 | PurchaseReturns | Index/Details/Create | PurchaseReturns.View/Create; only posted purchases may return remaining quantities covered by current warehouse stock, and creation atomically posts inventory/payable/tax/discount/variance reversal. |
+| PurchaseSourcing | Index/Details/Create | PurchaseSourcing.View/Create; Create binds the sourcing page's `Form` prefix before validating the approved Purchase Request and invited suppliers. |
+| SupplierQuotations | Create/Comparison/Award | SupplierQuotations.Create/View/Award; Create binds the quotation page's `Form` prefix before validating the sourcing event, invited supplier and complete quotation lines. |
 | SalesReturns | Index/Details/Create | SalesReturns.View/Create; SalesReturnService enforces remaining quantity, restores eligible inventory and posts the atomic reversal journal. |
 | StockTransfers | Index/Details/Create/Edit and state POSTs | transfer-specific permissions/service. |
 | Settings | Index/DocumentNumbers/General/Discounts/Inventory/InventoryAccess/Pos/Units/FiscalPeriods plus mutations | active-company Admin policy; centralized document sequences, fiscal-period close controls, inventory defaults, managed measurement units, branch/POS warehouse configuration and rowversion-protected terminal experience settings. Legacy Invoices redirects to DocumentNumbers. |
@@ -32,6 +34,8 @@
 | Roles | Index/Create/Edit/Delete | `[Authorize]` plus Roles permissions; `TenantRoleService` enforces tenant ownership, protected roles, concurrency and permission validation. |
 
 All request flows are controller → service/repository → entity/EF → view/redirect. Most business controllers catch broad exceptions and place message in TempData/ModelState; see security finding. For change impact read matching module doc and relevant view screen.
+
+Purchase request, order, agreement, template and approval-rule state mutations now set explicit localized success messages. A global scoped completion filter supplies a generic success message only when a successful purchase/inventory/warehouse POST redirect did not set one. The shared notification resolves that message and current route into a permission-aware next-step link; controllers and Application services remain the authority for the actual transition.
 
 ## Security update (2026-09-13)
 Roles.Delete now requires POST and antiforgery. User/role mutations require current database Admin membership through permission evaluation. Broad exception handlers log internal details and return generic messages; typed business-validation errors remain. Login POST enables lockout and the named login limiter.
