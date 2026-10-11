@@ -1478,4 +1478,32 @@
   <data name="Count completed" xml:space="preserve"><value>تم الجرد</value></data>
   <data name="Adjustment posted" xml:space="preserve"><value>تم ترحيل تسوية المخزون</value></data>
   <data name="Finished — cancelled" xml:space="preserve"><value>منتهي — ملغي</value></data>
+  <data name="Choose one supplier, manage several products, then save them together." xml:space="preserve"><value>اختر موردًا واحدًا، وأدر عدة منتجات، ثم احفظها معًا.</value></data>
+  <data name="Load supplier products" xml:space="preserve"><value>عرض منتجات المورد</value></data>
+  <data name="Select a supplier to manage purchasing data for multiple products." xml:space="preserve"><value>اختر موردًا لإدارة بيانات الشراء لعدة منتجات معًا.</value></data>
+  <data name="Bulk product management" xml:space="preserve"><value>الإدارة الجماعية للمنتجات</value></data>
+  <data name="Select only the rows you want to save. Changing a field selects its row automatically." xml:space="preserve"><value>حدد الصفوف التي تريد حفظها فقط. تعديل أي حقل يحدد صفه تلقائيًا.</value></data>
+  <data name="Select visible" xml:space="preserve"><value>تحديد الظاهر</value></data>
+  <data name="Clear selection" xml:space="preserve"><value>إلغاء التحديد</value></data>
+  <data name="Saved" xml:space="preserve"><value>محفوظ</value></data>
+  <data name="No products selected" xml:space="preserve"><value>لم يتم تحديد منتجات</value></data>
+  <data name="Selected products" xml:space="preserve"><value>المنتجات المحددة</value></data>
+  <data name="Save selected products" xml:space="preserve"><value>حفظ المنتجات المحددة</value></data>
+  <data name="Saved supplier purchasing rows" xml:space="preserve"><value>بيانات الشراء المحفوظة للمورد</value></data>
+  <data name="Select at least one product to save." xml:space="preserve"><value>حدد منتجًا واحدًا على الأقل للحفظ.</value></data>
+  <data name="Each product and purchase unit can appear only once in the bulk save." xml:space="preserve"><value>لا يمكن تكرار نفس المنتج ووحدة الشراء ضمن الحفظ الجماعي.</value></data>
+  <data name="Only one purchasing row can be preferred for each product." xml:space="preserve"><value>يمكن اعتماد صف شراء مفضل واحد فقط لكل منتج.</value></data>
+  <data name="Bulk purchasing rows must remain with their original supplier and product." xml:space="preserve"><value>يجب أن تبقى صفوف الشراء الجماعية مرتبطة بالمورد والمنتج الأصليين.</value></data>
+  <data name="Saved {0} supplier purchasing rows." xml:space="preserve"><value>تم حفظ {0} من صفوف بيانات شراء المورد.</value></data>
+  <data name="Order in multiples of" xml:space="preserve"><value>الطلب بكميات من مضاعفات</value></data>
+  <data name="Example: 6 means order 6, 12, 18 and so on." xml:space="preserve"><value>مثال: إذا كانت 6، اطلب 6 أو 12 أو 18 وهكذا.</value></data>
+  <data name="Supply lead time (days)" xml:space="preserve"><value>مدة التوريد بالأيام</value></data>
+  <data name="Expected days from sending the purchase order until goods arrive." xml:space="preserve"><value>عدد الأيام المتوقعة من إرسال أمر الشراء حتى وصول البضاعة.</value></data>
+  <data name="Selection order" xml:space="preserve"><value>ترتيب الاختيار</value></data>
+  <data name="A lower number is selected first." xml:space="preserve"><value>الرقم الأصغر يُختار أولًا.</value></data>
+  <data name="Price valid from" xml:space="preserve"><value>السعر ساري من</value></data>
+  <data name="The date when this supplier price starts." xml:space="preserve"><value>التاريخ الذي يبدأ فيه تطبيق سعر المورد.</value></data>
+  <data name="Price valid until (optional)" xml:space="preserve"><value>السعر ساري حتى — اختياري</value></data>
+  <data name="Leave empty when the price has no specified end date." xml:space="preserve"><value>اتركه فارغًا إذا لم يكن للسعر تاريخ انتهاء محدد.</value></data>
+  <data name="Show explanation" xml:space="preserve"><value>عرض الشرح</value></data>
 </root>

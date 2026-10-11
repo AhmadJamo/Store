@@ -9,9 +9,10 @@ public sealed class SupplierPurchasingInfoService(
     ISupplierRepository supplierRepository,
     IProductRepository productRepository,
     IMeasurementUnitRepository unitRepository,
-    IGeneralSettingsRepository generalSettingsRepository)
+    IGeneralSettingsRepository generalSettingsRepository,
+    IUnitOfWork unitOfWork)
 {
-    public async Task<SupplierPurchasingInfoPageDto> GetPageAsync(int? editId = null)
+    public async Task<SupplierPurchasingInfoPageDto> GetPageAsync(int? supplierId = null)
     {
         var infos = await repository.GetAllAsync();
         var suppliers = await supplierRepository.GetAllAsync();
@@ -22,24 +23,19 @@ public sealed class SupplierPurchasingInfoService(
         var productsById = products.ToDictionary(x => x.Id);
         var unitsById = units.ToDictionary(x => x.Id);
 
-        SaveSupplierPurchasingInfoDto form;
-        if (editId.HasValue)
-        {
-            var info = infos.FirstOrDefault(x => x.Id == editId.Value)
-                ?? throw new InvalidOperationException("Supplier purchasing information was not found.");
-            form = MapForm(info);
-        }
-        else
-        {
-            form = new SaveSupplierPurchasingInfoDto
-            {
-                CurrencyCode = NormalizeBaseCurrency(settings?.Currency)
-            };
-        }
+        var baseCurrency = NormalizeBaseCurrency(settings?.Currency);
+        if (supplierId.HasValue && suppliers.All(x => x.Id != supplierId.Value))
+            throw new InvalidOperationException("Supplier was not found.");
+        var selectedInfos = supplierId.HasValue
+            ? infos.Where(x => x.SupplierId == supplierId.Value).ToList()
+            : [];
+        var bulkRows = supplierId.HasValue
+            ? BuildBulkRows(products, units, selectedInfos, baseCurrency)
+            : [];
 
         return new SupplierPurchasingInfoPageDto
         {
-            Rows = infos.Select(info => new SupplierPurchasingInfoDto
+            Rows = selectedInfos.Select(info => new SupplierPurchasingInfoDto
             {
                 Id = info.Id,
                 SupplierId = info.SupplierId,
@@ -73,12 +69,60 @@ public sealed class SupplierPurchasingInfoService(
             Units = units.Where(x => x.IsActive).OrderBy(x => x.Dimension).ThenBy(x => x.Name)
                 .Select(x => new SupplierPurchasingOptionDto(x.Id, $"{x.Name} ({x.Symbol}) — {x.Dimension}"))
                 .ToList(),
-            Form = form,
-            BaseCurrency = NormalizeBaseCurrency(settings?.Currency)
+            Form = new SaveSupplierPurchasingInfoDto { SupplierId = supplierId ?? 0, CurrencyCode = baseCurrency },
+            SelectedSupplierId = supplierId,
+            BulkForm = new BulkSaveSupplierPurchasingInfoDto { SupplierId = supplierId ?? 0, Rows = bulkRows },
+            BaseCurrency = baseCurrency
         };
     }
 
     public async Task SaveAsync(SaveSupplierPurchasingInfoDto dto)
+    {
+        await ApplyAsync(dto, false);
+        await repository.SaveChangesAsync();
+    }
+
+    public async Task<int> SaveBulkAsync(BulkSaveSupplierPurchasingInfoDto dto)
+    {
+        if (await supplierRepository.GetByIdAsync(dto.SupplierId) is null)
+            throw new ArgumentException("Supplier was not found.");
+        var selected = dto.Rows.Where(x => x.Selected).ToList();
+        if (selected.Count == 0)
+            throw new ArgumentException("Select at least one product to save.");
+        if (selected.GroupBy(x => new { x.ProductId, x.PurchaseMeasurementUnitId }).Any(x => x.Count() > 1))
+            throw new ArgumentException("Each product and purchase unit can appear only once in the bulk save.");
+        if (selected.Where(x => x.IsPreferred).GroupBy(x => x.ProductId).Any(x => x.Count() > 1))
+            throw new ArgumentException("Only one purchasing row can be preferred for each product.");
+
+        await unitOfWork.ExecuteInTransactionAsync(async () =>
+        {
+            foreach (var row in selected)
+            {
+                await ApplyAsync(new SaveSupplierPurchasingInfoDto
+                {
+                    Id = row.Id,
+                    SupplierId = dto.SupplierId,
+                    ProductId = row.ProductId,
+                    PurchaseMeasurementUnitId = row.PurchaseMeasurementUnitId,
+                    SupplierProductCode = row.SupplierProductCode,
+                    SupplierDescription = row.SupplierDescription,
+                    MinimumOrderQuantity = row.MinimumOrderQuantity,
+                    OrderMultiple = row.OrderMultiple,
+                    LeadTimeDays = row.LeadTimeDays,
+                    UnitPrice = row.UnitPrice,
+                    CurrencyCode = row.CurrencyCode,
+                    ValidFrom = row.ValidFrom,
+                    ValidTo = row.ValidTo,
+                    IsPreferred = row.IsPreferred,
+                    Priority = row.Priority,
+                    RowVersion = row.RowVersion
+                }, true);
+            }
+        });
+        return selected.Count;
+    }
+
+    private async Task ApplyAsync(SaveSupplierPurchasingInfoDto dto, bool preserveIdentity)
     {
         if (await supplierRepository.GetByIdAsync(dto.SupplierId) is null)
             throw new ArgumentException("Supplier was not found.");
@@ -122,6 +166,8 @@ public sealed class SupplierPurchasingInfoService(
         {
             info = await repository.GetByIdAsync(dto.Id)
                 ?? throw new InvalidOperationException("Supplier purchasing information was not found.");
+            if (preserveIdentity && (info.SupplierId != dto.SupplierId || info.ProductId != dto.ProductId))
+                throw new InvalidOperationException("Bulk purchasing rows must remain with their original supplier and product.");
             if (!info.RowVersion.SequenceEqual(dto.RowVersion))
                 throw new InvalidOperationException("Supplier purchasing information was modified by another user. Reload and try again.");
             info.Update(dto.SupplierId, dto.ProductId, dto.PurchaseMeasurementUnitId,
@@ -136,7 +182,6 @@ public sealed class SupplierPurchasingInfoService(
                 current.SetPreferred(false);
         }
 
-        await repository.SaveChangesAsync();
     }
 
     public async Task SetActiveAsync(int id, bool isActive, byte[] rowVersion)
@@ -152,23 +197,44 @@ public sealed class SupplierPurchasingInfoService(
     private static string NormalizeBaseCurrency(string? currency) =>
         string.IsNullOrWhiteSpace(currency) ? "JOD" : currency.Trim().ToUpperInvariant();
 
-    private static SaveSupplierPurchasingInfoDto MapForm(SupplierProductPurchasingInfo info) => new()
+    private static List<BulkSupplierPurchasingRowDto> BuildBulkRows(
+        List<Product> products, List<MeasurementUnit> units,
+        List<SupplierProductPurchasingInfo> infos, string baseCurrency)
     {
-        Id = info.Id,
-        SupplierId = info.SupplierId,
-        ProductId = info.ProductId,
-        PurchaseMeasurementUnitId = info.PurchaseMeasurementUnitId,
-        SupplierProductCode = info.SupplierProductCode,
-        SupplierDescription = info.SupplierDescription,
-        MinimumOrderQuantity = info.MinimumOrderQuantity,
-        OrderMultiple = info.OrderMultiple,
-        LeadTimeDays = info.LeadTimeDays,
-        UnitPrice = info.UnitPrice,
-        CurrencyCode = info.CurrencyCode,
-        ValidFrom = info.ValidFrom,
-        ValidTo = info.ValidTo,
-        IsPreferred = info.IsPreferred,
-        Priority = info.Priority,
-        RowVersion = info.RowVersion
-    };
+        var activeUnits = units.Where(x => x.IsActive).ToList();
+        var unitsById = units.ToDictionary(x => x.Id);
+        var rows = new List<BulkSupplierPurchasingRowDto>();
+        foreach (var product in products.Where(x => x.IsActive && x.ProductType != ProductType.PreparedToOrder)
+                     .OrderBy(x => x.Name))
+        {
+            if (!product.MeasurementUnitId.HasValue ||
+                !unitsById.TryGetValue(product.MeasurementUnitId.Value, out var stockUnit)) continue;
+            var options = activeUnits.Where(x => x.Dimension == stockUnit.Dimension)
+                .OrderBy(x => x.Name)
+                .Select(x => new SupplierPurchasingOptionDto(x.Id, $"{x.Name} ({x.Symbol})"))
+                .ToList();
+            var existing = infos.Where(x => x.ProductId == product.Id).OrderBy(x => x.Priority).ToList();
+            if (existing.Count == 0)
+            {
+                rows.Add(new BulkSupplierPurchasingRowDto
+                {
+                    ProductId = product.Id, ProductCode = product.ProductCode, ProductName = product.Name,
+                    PurchaseMeasurementUnitId = product.MeasurementUnitId.Value, UnitOptions = options,
+                    SupplierProductCode = product.ProductCode, CurrencyCode = baseCurrency
+                });
+                continue;
+            }
+            rows.AddRange(existing.Select(info => new BulkSupplierPurchasingRowDto
+            {
+                Id = info.Id, ProductId = product.Id, ProductCode = product.ProductCode, ProductName = product.Name,
+                PurchaseMeasurementUnitId = info.PurchaseMeasurementUnitId, UnitOptions = options,
+                SupplierProductCode = info.SupplierProductCode, SupplierDescription = info.SupplierDescription,
+                MinimumOrderQuantity = info.MinimumOrderQuantity, OrderMultiple = info.OrderMultiple,
+                LeadTimeDays = info.LeadTimeDays, UnitPrice = info.UnitPrice, CurrencyCode = info.CurrencyCode,
+                ValidFrom = info.ValidFrom, ValidTo = info.ValidTo, IsPreferred = info.IsPreferred,
+                Priority = info.Priority, IsActive = info.IsActive, RowVersion = info.RowVersion
+            }));
+        }
+        return rows;
+    }
 }

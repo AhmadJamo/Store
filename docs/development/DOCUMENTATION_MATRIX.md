@@ -11,6 +11,7 @@
 | User-facing error or prerequisite | localization, owning screen/controller/module, actionable-error destination when an authorized setup page can resolve it, and regression coverage |
 | Successful workflow step | localization, owning controller/screen/module, permission-aware next-step destination and explanation, shared guidance mapping/filter, and regression coverage |
 | Completed one-time action | owning DTO/service status or remaining balance, screen action visibility, localized completed state, downstream document link, module/screen docs and regression coverage |
+| Bulk editor | nested DTO binding, per-row identity and concurrency validation, atomic transaction, permission/antiforgery, localization, owning module/screen/controller docs and regression coverage |
 | Database | database docs, entity/configuration, migration, modules, accounting where relevant |
 | Permission/role | permissions, controller/screen/navigation, security, module, tests |
 | Configuration/DI | configuration, architecture, dependencies, security |

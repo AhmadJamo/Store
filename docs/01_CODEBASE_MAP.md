@@ -110,7 +110,7 @@
 | `Services/Sales/SalePostingService.cs` | idempotent sale revenue, discount and COGS general-ledger posting | Sales/Details and Sales/Post. |
 | `Services/Sales/SalesReturnService.cs` | cumulative quantity control, identifier-aware tracked restocking, proportional refund and atomic inventory/accounting reversal | SalesReturns controller/views. |
 | `Services/Purchases/PurchaseReturnService.cs` | cumulative supplier-return control, explicit tracked identity issue, moving-average inventory issue and proportional accounting reversal | PurchaseReturns controller/views. |
-| `Services/Purchases/SupplierPurchasingInfoService.cs` | validates and manages supplier/product purchasing terms without stock or accounting effects | SupplierPurchasing controller/view. |
+| `Services/Purchases/SupplierPurchasingInfoService.cs` | validates and atomically manages supplier-first single/bulk product purchasing terms without stock or accounting effects | SupplierPurchasing controller/view. |
 | `Services/Sales/DiscountCalculator.cs` | standalone discount calculation helper; no active consumer found by scan | Unknown. |
 | `Services/Shared/ICurrentUserService.cs` | current-user application contract | Web CurrentUserService. |
 | `Permissions/{PermissionDefinitions,IPermissionService}.cs` | permission catalogue/contract | seeders/auth/services. |
@@ -191,7 +191,7 @@ Hierarchical location update (2026-09-30): StorageLocation retains its identity 
 | `Controllers/Inventory/InventoryReservationsController.cs` | permission-protected read-only reservation history | InventoryReservations view and service. |
 | `Controllers/Inventory/InventoryAdjustmentsController.cs` | permission-split count/approve/post/cancel workflow | InventoryAdjustments views and service. |
 | `Controllers/Inventory/InventoryTrackingController.cs` | permission-protected opening allocation, tracking report and quarantine/release commands | InventoryTracking view and service. |
-| `Controllers/Purchases/SupplierPurchasingController.cs` | permission-split bilingual supplier purchasing-data administration | PUR-010 service and `Views/SupplierPurchasing/Index.cshtml`. |
+| `Controllers/Purchases/SupplierPurchasingController.cs` | permission-split bilingual supplier-first bulk purchasing-data administration | PUR-010 service and `Views/SupplierPurchasing/Index.cshtml`. |
 | `Controllers/Purchases/{SupplierQuotations,PurchaseOrders}Controller.cs`, `Views/SupplierQuotations/*`, `Views/PurchaseOrders/*` | quotation capture/comparison/award and award-derived Purchase Order list/detail/state actions | PUR-040/PUR-050 services and permissions. |
 | `Controllers/Purchases/GoodsReceiptsController.cs`, `Views/GoodsReceipts/Create.cshtml` | permission-protected partial Goods Receipt capture and immediate posting | PUR-060 receipt service. |
 | `Views/GoodsReceipts/Scan.cshtml` and Goods Receipt scan actions | Draft receipt creation, exact product scanning, accumulated-quantity review and explicit final posting | PUR-150 receipt service. |

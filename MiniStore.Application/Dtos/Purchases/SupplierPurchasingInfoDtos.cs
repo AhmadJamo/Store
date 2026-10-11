@@ -49,6 +49,36 @@ public sealed class SaveSupplierPurchasingInfoDto
 
 public sealed record SupplierPurchasingOptionDto(int Id, string Label);
 
+public sealed class BulkSaveSupplierPurchasingInfoDto
+{
+    public int SupplierId { get; set; }
+    public List<BulkSupplierPurchasingRowDto> Rows { get; set; } = [];
+}
+
+public sealed class BulkSupplierPurchasingRowDto
+{
+    public bool Selected { get; set; }
+    public int Id { get; set; }
+    public int ProductId { get; set; }
+    public string ProductCode { get; init; } = string.Empty;
+    public string ProductName { get; init; } = string.Empty;
+    public int PurchaseMeasurementUnitId { get; set; }
+    public List<SupplierPurchasingOptionDto> UnitOptions { get; init; } = [];
+    [StringLength(100)] public string SupplierProductCode { get; set; } = string.Empty;
+    [StringLength(300)] public string? SupplierDescription { get; set; }
+    public decimal MinimumOrderQuantity { get; set; } = 1;
+    public decimal OrderMultiple { get; set; } = 1;
+    public int LeadTimeDays { get; set; }
+    public decimal UnitPrice { get; set; }
+    public string CurrencyCode { get; set; } = "JOD";
+    public DateOnly ValidFrom { get; set; } = DateOnly.FromDateTime(DateTime.Today);
+    public DateOnly? ValidTo { get; set; }
+    public bool IsPreferred { get; set; }
+    public int Priority { get; set; } = 100;
+    public bool IsActive { get; init; } = true;
+    public byte[] RowVersion { get; set; } = [];
+}
+
 public sealed class SupplierPurchasingInfoPageDto
 {
     public List<SupplierPurchasingInfoDto> Rows { get; init; } = [];
@@ -56,5 +86,7 @@ public sealed class SupplierPurchasingInfoPageDto
     public List<SupplierPurchasingOptionDto> Products { get; init; } = [];
     public List<SupplierPurchasingOptionDto> Units { get; init; } = [];
     public SaveSupplierPurchasingInfoDto Form { get; init; } = new();
+    public int? SelectedSupplierId { get; init; }
+    public BulkSaveSupplierPurchasingInfoDto BulkForm { get; init; } = new();
     public string BaseCurrency { get; init; } = "JOD";
 }

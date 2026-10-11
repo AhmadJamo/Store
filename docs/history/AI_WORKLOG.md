@@ -630,3 +630,13 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
 - Vendor Bill details now calculate posted supplier-payment allocations, show paid/outstanding amounts and replace Pay with Paid in full when the balance reaches zero. Fixed direct Purchase details so a posted purchase never shows Post again, including users without return permission.
 - Fully released agreements now show a finished state instead of another release button. Repeatable partial receipt, release and payment actions remain available while a real quantity or balance remains.
 - Documented this as the required UI rule for future workflows. The Web project built with Razor compilation and zero warnings/errors; the focused regression executable passed 565 checks.
+
+## 2026-10-12 — Supplier-first bulk purchasing data
+- Reworked Supplier Purchasing Data around selecting one supplier first, then editing several eligible product rows in one searchable table. Users can select visible rows, clear selection, or change a field to select its row automatically.
+- Added a nested bulk command with explicit model binding, compatible purchase-unit choices per product, existing rowversion protection and server-side supplier/product identity checks.
+- Bulk saves run in one Serializable UnitOfWork transaction: all selected rows succeed together or the full operation rolls back. Existing single-row and active/inactive commands remain supported.
+- Added full Arabic localization, updated purchase/screen/controller/codebase documentation and extended permission/binding regression coverage.
+- The Web project built with Razor compilation and zero warnings/errors; all 566 focused security and inventory regression checks passed.
+- Replaced the wide bulk table and saved-row table with responsive product cards and a wrapping summary list. Field labels now follow a consistent business grouping and the screen no longer requires horizontal scrolling.
+- Reworded price validity, selection order, order multiple and supply lead-time fields in plain business language and added short examples/help under each field in both supported languages.
+- Moved those inline explanations into accessible question-mark tooltips that open on hover or keyboard focus and disappear on leave/blur, reducing vertical clutter in every product card.

@@ -1135,11 +1135,17 @@ var supplierTermsIndexAction = typeof(SupplierPurchasingController)
     .GetMethod(nameof(SupplierPurchasingController.Index))!;
 var supplierTermsSaveAction = typeof(SupplierPurchasingController)
     .GetMethod(nameof(SupplierPurchasingController.Save))!;
+var supplierTermsBulkSaveAction = typeof(SupplierPurchasingController)
+    .GetMethod(nameof(SupplierPurchasingController.SaveBulk))!;
 Check(supplierTermsIndexAction.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
       $"{PermissionAuthorizeAttribute.PolicyPrefix}Purchases.SupplierTerms.View" &&
       supplierTermsSaveAction.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
+      $"{PermissionAuthorizeAttribute.PolicyPrefix}Purchases.SupplierTerms.Manage" &&
+      supplierTermsBulkSaveAction.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
       $"{PermissionAuthorizeAttribute.PolicyPrefix}Purchases.SupplierTerms.Manage",
     "Supplier purchasing data must separate view and manage permissions");
+Check(supplierTermsBulkSaveAction.GetParameters().Single().GetCustomAttribute<BindAttribute>()?.Prefix == "BulkForm",
+    "Bulk supplier purchasing submission must bind the selected supplier and product rows as one form");
 
 var purchaseRequest = new PurchaseRequest("PRQ-000001", 1, DateOnly.FromDateTime(DateTime.Today.AddDays(7)),
     PurchaseRequestPriority.High, "Restock critical ingredients", null, "requester", "ReplenishmentRule", "17");

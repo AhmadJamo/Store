@@ -61,4 +61,4 @@ WMS-060 list/create/details plus antiforgery-protected Count, Approve, Post and 
 WMS-070A bilingual traceability report plus antiforgery-protected opening allocation. All reconciliation and policy activation rules stay in the Application service.
 # PUR-010 controller
 
-`SupplierPurchasingController` exposes a permission-protected Index plus antiforgery-protected Save and SetActive commands. It delegates validation and persistence to `SupplierPurchasingInfoService`, localizes expected business errors and logs unexpected failures without exposing details.
+`SupplierPurchasingController` exposes a permission-protected supplier-filtered Index plus antiforgery-protected SaveBulk, legacy Save and SetActive commands. SaveBulk explicitly binds the nested bulk form, requires the manage permission and delegates an atomic selected-row save to `SupplierPurchasingInfoService`. The service revalidates supplier/product identities, compatible managed units, base currency, uniqueness, preference and rowversions; expected business errors are localized and unexpected failures are logged without exposing details.

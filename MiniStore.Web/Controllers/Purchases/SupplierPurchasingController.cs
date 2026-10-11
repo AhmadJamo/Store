@@ -13,15 +13,40 @@ public sealed class SupplierPurchasingController(
 {
     [HttpGet]
     [PermissionAuthorize("Purchases.SupplierTerms.View")]
-    public async Task<IActionResult> Index(int? editId = null)
+    public async Task<IActionResult> Index(int? supplierId = null)
     {
-        try { return View(await service.GetPageAsync(editId)); }
+        try { return View(await service.GetPageAsync(supplierId)); }
         catch (InvalidOperationException exception)
         {
             TempData["NotificationType"] = "error";
             TempData["NotificationMessage"] = localizer[exception.Message].Value;
             return RedirectToAction(nameof(Index));
         }
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [PermissionAuthorize("Purchases.SupplierTerms.Manage")]
+    public async Task<IActionResult> SaveBulk([Bind(Prefix = "BulkForm")] BulkSaveSupplierPurchasingInfoDto dto)
+    {
+        try
+        {
+            var count = await service.SaveBulkAsync(dto);
+            TempData["NotificationType"] = "success";
+            TempData["NotificationMessage"] = localizer["Saved {0} supplier purchasing rows.", count].Value;
+        }
+        catch (Exception exception) when (exception is ArgumentException or InvalidOperationException)
+        {
+            TempData["NotificationType"] = "error";
+            TempData["NotificationMessage"] = localizer[exception.Message].Value;
+        }
+        catch (Exception exception)
+        {
+            logger.LogError(exception, "Failed to save supplier purchasing rows in bulk");
+            TempData["NotificationType"] = "error";
+            TempData["NotificationMessage"] = localizer["The operation could not be completed. Please try again or contact the administrator."].Value;
+        }
+        return RedirectToAction(nameof(Index), new { supplierId = dto.SupplierId });
     }
 
     [HttpPost]
@@ -47,13 +72,13 @@ public sealed class SupplierPurchasingController(
             TempData["NotificationType"] = "error";
             TempData["NotificationMessage"] = localizer["The operation could not be completed. Please try again or contact the administrator."].Value;
         }
-        return RedirectToAction(nameof(Index), dto.Id > 0 ? new { editId = dto.Id } : null);
+        return RedirectToAction(nameof(Index), new { supplierId = dto.SupplierId });
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
     [PermissionAuthorize("Purchases.SupplierTerms.Manage")]
-    public async Task<IActionResult> SetActive(int id, bool isActive, byte[] rowVersion)
+    public async Task<IActionResult> SetActive(int id, int? supplierId, bool isActive, byte[] rowVersion)
     {
         try
         {
@@ -66,6 +91,6 @@ public sealed class SupplierPurchasingController(
             TempData["NotificationType"] = "error";
             TempData["NotificationMessage"] = localizer[exception.Message].Value;
         }
-        return RedirectToAction(nameof(Index));
+        return RedirectToAction(nameof(Index), new { supplierId });
     }
 }
