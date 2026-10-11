@@ -64,3 +64,7 @@ PUR-005 accepts GRNI as the accounting bridge for the new, separate Goods Receip
 ## PUR-130 landed-cost posting
 
 Posted Landed Costs use the company base currency and one configured clearing account. The system allocates freight, customs, insurance and other components to a posted Goods Receipt by stock quantity or frozen receipt value. The share associated with current positive warehouse stock debits Inventory and increases AVCO without changing quantity; the consumed share debits Cost of Sales. The total credits Landed Cost Clearing. The document, value-only StockTransaction and balanced journal commit atomically, and fiscal-period rules apply through the central journal gateway.
+
+## PUR-150 barcode receipt boundary
+
+Creating a Draft Goods Receipt and recording barcode scans have no stock, valuation or journal effect. The explicit final post revalidates the order and accumulated quantities, then uses the existing atomic Goods Receipt path: Inventory is debited and Goods Received Not Invoiced is credited only when the draft becomes Posted.

@@ -1,5 +1,5 @@
 # MiniStore purchase management evolution plan
-> Status: APPROVED ARCHITECTURAL PLAN — PUR-000 THROUGH PUR-140 IMPLEMENTED
+> Status: APPROVED ARCHITECTURAL PLAN — PUR-000 THROUGH PUR-150 IMPLEMENTED
 > Source of truth: current code and migrations  
 > Last reviewed: 2026-10-11
 
@@ -242,7 +242,7 @@ Each slice must include rollback/retry analysis and SQL-backed tenant/concurrenc
 | PUR-120 | Agreements and templates | Implemented: one agreement per awarded quotation with frozen terms, validity and capped non-cancelled Draft order releases; repeat templates generate uniquely traced Draft Purchase Requests and preserve the normal approval/sourcing path. |
 | PUR-130 | Landed costs | Implemented: receipt-linked freight/customs/insurance/other components allocated by quantity or receipt value; current-stock share updates AVCO through value-only movements, consumed share expenses to Cost of Sales, and one clearing journal balances atomically. |
 | PUR-140 | Dashboards and supplier performance | Implemented: bounded date-filtered operational and financial cards plus supplier order-cohort fulfilment, delivery, return, spend, price-variance, balance and match-exception projections over existing tenant-owned records. |
-| PUR-150 | Barcode receiving | WMS-100B4 against Goods Receipts |
+| PUR-150 | Barcode receiving | Implemented: confirmed-order Draft Goods Receipts accumulate exact barcode/code scans with tenant-unique retry evidence, open-quantity and tracking validation, then post explicitly through the existing atomic inventory/accounting path. |
 
 No slice may claim completion from entity creation alone. It must cross every affected layer, preserve tenant and accounting boundaries, include translations and update documentation.
 
@@ -260,4 +260,4 @@ Shared accounting, settings, inventory and document-number files are changed onl
 
 ## 10. Immediate next slice
 
-Implement PUR-150 barcode-assisted Goods Receipt capture against the existing receipt workflow. Supplier credit notes for returning already billed receipt quantities remain a later controlled accounting slice; PUR-070 rejects those quantities meanwhile.
+The approved PUR-000 through PUR-150 roadmap is complete. A future controlled slice may add supplier credit notes for already billed receipt quantities; PUR-070 continues to reject those quantities until that accounting design is approved.

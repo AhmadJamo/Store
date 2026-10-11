@@ -1366,4 +1366,32 @@
   <data name="No purchasing activity in the selected period." xml:space="preserve"><value>لا يوجد نشاط مشتريات في الفترة المحددة.</value></data>
   <data name="Report end date cannot be earlier than start date." xml:space="preserve"><value>لا يمكن أن يكون تاريخ نهاية التقرير أسبق من تاريخ البداية.</value></data>
   <data name="Purchase analytics date range cannot exceed two years." xml:space="preserve"><value>لا يمكن أن تتجاوز فترة تحليلات المشتريات سنتين.</value></data>
+  <data name="Barcode-assisted receiving" xml:space="preserve"><value>الاستلام بمساعدة الباركود</value></data>
+  <data name="Create a draft, scan each physical item, then review and post the receipt." xml:space="preserve"><value>أنشئ مسودة، وامسح كل صنف مستلم، ثم راجع الاستلام ورحّله.</value></data>
+  <data name="Start barcode receiving" xml:space="preserve"><value>بدء الاستلام بالباركود</value></data>
+  <data name="Continue scanning" xml:space="preserve"><value>متابعة المسح</value></data>
+  <data name="Barcode receiving" xml:space="preserve"><value>الاستلام بالباركود</value></data>
+  <data name="Scanning updates this draft only. Inventory and accounting change after you explicitly post the receipt." xml:space="preserve"><value>يحدّث المسح هذه المسودة فقط. يتغير المخزون والمحاسبة بعد ترحيل الاستلام بشكل صريح.</value></data>
+  <data name="Tracking" xml:space="preserve"><value>التتبع</value></data>
+  <data name="Ordered" xml:space="preserve"><value>المطلوب</value></data>
+  <data name="Previously received" xml:space="preserve"><value>المستلم سابقًا</value></data>
+  <data name="Draft quantity" xml:space="preserve"><value>كمية المسودة</value></data>
+  <data name="Record scan" xml:space="preserve"><value>تسجيل المسحة</value></data>
+  <data name="Review complete — post goods receipt" xml:space="preserve"><value>اكتملت المراجعة — ترحيل استلام البضاعة</value></data>
+  <data name="Product scan recorded." xml:space="preserve"><value>تم تسجيل مسحة المنتج.</value></data>
+  <data name="This purchase order has no remaining quantity to receive." xml:space="preserve"><value>لا توجد كمية متبقية للاستلام في أمر الشراء هذا.</value></data>
+  <data name="Scanned receipt quantity must be greater than zero." xml:space="preserve"><value>يجب أن تكون كمية الاستلام الممسوحة أكبر من صفر.</value></data>
+  <data name="Scan a product barcode or code." xml:space="preserve"><value>امسح باركود المنتج أو أدخل كوده.</value></data>
+  <data name="A valid goods receipt scan request key is required." xml:space="preserve"><value>يلزم مفتاح صالح لطلب مسح استلام البضاعة.</value></data>
+  <data name="This goods receipt scan request key was already used for another scan." xml:space="preserve"><value>استُخدم مفتاح طلب مسح استلام البضاعة هذا لمسحة أخرى.</value></data>
+  <data name="Only draft goods receipts can accept scans." xml:space="preserve"><value>يمكن لمسودات استلام البضاعة فقط قبول المسح.</value></data>
+  <data name="The scanned product is not on this purchase order." xml:space="preserve"><value>المنتج الممسوح غير موجود في أمر الشراء هذا.</value></data>
+  <data name="The scanned product matches more than one purchase order line." xml:space="preserve"><value>المنتج الممسوح يطابق أكثر من سطر في أمر الشراء.</value></data>
+  <data name="Scanned quantity cannot exceed the open ordered quantity." xml:space="preserve"><value>لا يمكن أن تتجاوز الكمية الممسوحة كمية الطلب المفتوحة.</value></data>
+  <data name="Only draft goods receipts can be posted." xml:space="preserve"><value>يمكن ترحيل مسودات استلام البضاعة فقط.</value></data>
+  <data name="Scan at least one product before posting the goods receipt." xml:space="preserve"><value>امسح منتجًا واحدًا على الأقل قبل ترحيل استلام البضاعة.</value></data>
+  <data name="A draft receipt line cannot combine different lot numbers." xml:space="preserve"><value>لا يمكن لسطر استلام واحد في المسودة دمج أرقام دفعات مختلفة.</value></data>
+  <data name="Tracking dates must remain consistent for a scanned receipt line." xml:space="preserve"><value>يجب أن تبقى تواريخ التتبع متطابقة لسطر الاستلام الممسوح.</value></data>
+  <data name="Scanned receipt line snapshots do not match the existing draft line." xml:space="preserve"><value>بيانات سطر الاستلام الممسوح لا تطابق سطر المسودة الحالي.</value></data>
+  <data name="Scanned serial numbers must not repeat within a draft receipt line." xml:space="preserve"><value>لا يجوز تكرار الأرقام التسلسلية الممسوحة داخل سطر استلام واحد في المسودة.</value></data>
 </root>

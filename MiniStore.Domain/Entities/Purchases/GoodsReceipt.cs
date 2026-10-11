@@ -36,6 +36,14 @@ public sealed class GoodsReceipt
         Lines.Add(line);
     }
 
+    public void RecordScan(GoodsReceiptLine scannedLine)
+    {
+        EnsureDraft();
+        var existing = Lines.SingleOrDefault(x => x.PurchaseOrderLineId == scannedLine.PurchaseOrderLineId);
+        if (existing is null) Lines.Add(scannedLine);
+        else existing.AddScannedQuantity(scannedLine);
+    }
+
     public void Post(string userId)
     {
         EnsureDraft();
@@ -77,5 +85,67 @@ public sealed class GoodsReceiptLine
         PurchaseOrderLineId = purchaseOrderLineId; ProductId = productId; MeasurementUnitId = measurementUnitId; ReceivedQuantity = receivedQuantity; UnitFactorToBase = unitFactorToBase;
         StockQuantity = receivedQuantity * unitFactorToBase; UnitCost = unitCost; ProductCodeSnapshot = productCode.Trim(); ProductNameSnapshot = productName.Trim(); UnitNameSnapshot = unitName.Trim();
         LotNumber = string.IsNullOrWhiteSpace(lotNumber) ? null : lotNumber.Trim(); SerialNumbers = string.IsNullOrWhiteSpace(serialNumbers) ? null : serialNumbers.Trim(); ManufactureDate = manufactureDate; ExpirationDate = expirationDate;
+    }
+
+    internal void AddScannedQuantity(GoodsReceiptLine scannedLine)
+    {
+        var quantity = scannedLine.ReceivedQuantity;
+        if (ProductId != scannedLine.ProductId || MeasurementUnitId != scannedLine.MeasurementUnitId ||
+            UnitFactorToBase != scannedLine.UnitFactorToBase || UnitCost != scannedLine.UnitCost ||
+            ProductCodeSnapshot != scannedLine.ProductCodeSnapshot || ProductNameSnapshot != scannedLine.ProductNameSnapshot ||
+            UnitNameSnapshot != scannedLine.UnitNameSnapshot)
+            throw new InvalidOperationException("Scanned receipt line snapshots do not match the existing draft line.");
+        if (quantity <= 0) throw new ArgumentException("Scanned receipt quantity must be greater than zero.");
+        var normalizedLot = string.IsNullOrWhiteSpace(scannedLine.LotNumber) ? null : scannedLine.LotNumber.Trim();
+        var normalizedSerials = string.IsNullOrWhiteSpace(scannedLine.SerialNumbers) ? null : scannedLine.SerialNumbers.Trim();
+        if (LotNumber is not null && normalizedLot is not null && !string.Equals(LotNumber, normalizedLot, StringComparison.OrdinalIgnoreCase))
+            throw new InvalidOperationException("A draft receipt line cannot combine different lot numbers.");
+        if ((ManufactureDate.HasValue && scannedLine.ManufactureDate.HasValue && ManufactureDate != scannedLine.ManufactureDate) ||
+            (ExpirationDate.HasValue && scannedLine.ExpirationDate.HasValue && ExpirationDate != scannedLine.ExpirationDate))
+            throw new InvalidOperationException("Tracking dates must remain consistent for a scanned receipt line.");
+        var mergedManufactureDate = ManufactureDate ?? scannedLine.ManufactureDate;
+        var mergedExpirationDate = ExpirationDate ?? scannedLine.ExpirationDate;
+        if (mergedManufactureDate.HasValue && mergedExpirationDate.HasValue && mergedExpirationDate < mergedManufactureDate)
+            throw new ArgumentException("Expiration date cannot be earlier than manufacture date.");
+        var existingSerials = SplitIdentifiers(SerialNumbers);
+        var addedSerials = SplitIdentifiers(normalizedSerials);
+        if (existingSerials.Intersect(addedSerials, StringComparer.OrdinalIgnoreCase).Any())
+            throw new InvalidOperationException("Scanned serial numbers must not repeat within a draft receipt line.");
+        var combinedSerials = string.Join(Environment.NewLine, new[] { SerialNumbers, normalizedSerials }.Where(x => !string.IsNullOrWhiteSpace(x)));
+        if (combinedSerials.Length > 2000) throw new ArgumentException("Tracking identifiers are too long.");
+        ReceivedQuantity += quantity;
+        StockQuantity = ReceivedQuantity * UnitFactorToBase;
+        LotNumber ??= normalizedLot;
+        SerialNumbers = string.IsNullOrWhiteSpace(combinedSerials) ? null : combinedSerials;
+        ManufactureDate = mergedManufactureDate;
+        ExpirationDate = mergedExpirationDate;
+    }
+
+    private static string[] SplitIdentifiers(string? value) => (value ?? string.Empty)
+        .Split([',', ';', '\n', '\r'], StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+}
+
+public sealed class GoodsReceiptScan
+{
+    private GoodsReceiptScan() { ScanToken = IdempotencyKey = CreatedByUserId = string.Empty; }
+    public long Id { get; private set; }
+    public int GoodsReceiptId { get; private set; }
+    public int PurchaseOrderLineId { get; private set; }
+    public string ScanToken { get; private set; }
+    public decimal Quantity { get; private set; }
+    public string IdempotencyKey { get; private set; }
+    public string CreatedByUserId { get; private set; }
+    public DateTime CreatedAtUtc { get; private set; }
+
+    public GoodsReceiptScan(int goodsReceiptId, int purchaseOrderLineId, string scanToken, decimal quantity,
+        string idempotencyKey, string createdByUserId)
+    {
+        if (goodsReceiptId <= 0 || purchaseOrderLineId <= 0) throw new ArgumentException("Goods receipt scan references are required.");
+        if (string.IsNullOrWhiteSpace(scanToken) || scanToken.Trim().Length > 100) throw new ArgumentException("A valid product scan is required.");
+        if (quantity <= 0) throw new ArgumentException("Scanned receipt quantity must be greater than zero.");
+        if (string.IsNullOrWhiteSpace(idempotencyKey) || idempotencyKey.Trim().Length > 100) throw new ArgumentException("A valid scan request key is required.");
+        if (string.IsNullOrWhiteSpace(createdByUserId)) throw new ArgumentException("User is required.");
+        GoodsReceiptId = goodsReceiptId; PurchaseOrderLineId = purchaseOrderLineId; ScanToken = scanToken.Trim().ToUpperInvariant();
+        Quantity = quantity; IdempotencyKey = idempotencyKey.Trim().ToUpperInvariant(); CreatedByUserId = createdByUserId.Trim(); CreatedAtUtc = DateTime.UtcNow;
     }
 }

@@ -4,7 +4,7 @@ using MiniStore.Domain.Entities;
 
 namespace MiniStore.Infrastructure.Persistence.Configurations;
 
-public sealed class GoodsReceiptConfiguration : IEntityTypeConfiguration<GoodsReceipt>, IEntityTypeConfiguration<GoodsReceiptLine>
+public sealed class GoodsReceiptConfiguration : IEntityTypeConfiguration<GoodsReceipt>, IEntityTypeConfiguration<GoodsReceiptLine>, IEntityTypeConfiguration<GoodsReceiptScan>
 {
     public void Configure(EntityTypeBuilder<GoodsReceipt> builder)
     {
@@ -36,5 +36,17 @@ public sealed class GoodsReceiptConfiguration : IEntityTypeConfiguration<GoodsRe
         builder.HasOne<PurchaseOrderLine>().WithMany().HasForeignKey(x => x.PurchaseOrderLineId).OnDelete(DeleteBehavior.Restrict);
         builder.HasOne<Product>().WithMany().HasForeignKey(x => x.ProductId).OnDelete(DeleteBehavior.Restrict);
         builder.HasOne<MeasurementUnit>().WithMany().HasForeignKey(x => x.MeasurementUnitId).OnDelete(DeleteBehavior.Restrict);
+    }
+
+    public void Configure(EntityTypeBuilder<GoodsReceiptScan> builder)
+    {
+        builder.HasKey(x => x.Id);
+        builder.Property(x => x.ScanToken).HasMaxLength(100).IsRequired();
+        builder.Property(x => x.Quantity).HasPrecision(18, 6);
+        builder.Property(x => x.IdempotencyKey).HasMaxLength(100).IsRequired();
+        builder.Property(x => x.CreatedByUserId).HasMaxLength(450).IsRequired();
+        builder.HasIndex(x => x.IdempotencyKey).IsUnique();
+        builder.HasOne<GoodsReceipt>().WithMany().HasForeignKey(x => x.GoodsReceiptId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasOne<PurchaseOrderLine>().WithMany().HasForeignKey(x => x.PurchaseOrderLineId).OnDelete(DeleteBehavior.Restrict);
     }
 }

@@ -50,4 +50,69 @@ public sealed class GoodsReceiptsController(GoodsReceiptService service, IString
             return page.PurchaseOrder is null ? NotFound() : View(page);
         }
     }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [PermissionAuthorize("GoodsReceipts.Create")]
+    public async Task<IActionResult> CreateScanDraft(CreateGoodsReceiptDraftDto dto)
+    {
+        try
+        {
+            var id = await service.CreateDraftAsync(dto);
+            return RedirectToAction(nameof(Scan), new { id });
+        }
+        catch (Exception exception) when (exception is ArgumentException or InvalidOperationException)
+        {
+            TempData["NotificationType"] = "danger";
+            TempData["NotificationMessage"] = localizer[exception.Message].Value;
+            return RedirectToAction(nameof(Create), new { purchaseOrderId = dto.PurchaseOrderId });
+        }
+    }
+
+    [HttpGet]
+    [PermissionAuthorize("GoodsReceipts.Create")]
+    public async Task<IActionResult> Scan(int id)
+    {
+        var page = await service.GetScanPageAsync(id);
+        return page is null ? NotFound() : View(page);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [PermissionAuthorize("GoodsReceipts.Create")]
+    public async Task<IActionResult> RecordScan(ScanGoodsReceiptDto input)
+    {
+        try
+        {
+            await service.RecordScanAsync(input);
+            TempData["NotificationType"] = "success";
+            TempData["NotificationMessage"] = localizer["Product scan recorded."].Value;
+        }
+        catch (Exception exception) when (exception is ArgumentException or InvalidOperationException)
+        {
+            TempData["NotificationType"] = "danger";
+            TempData["NotificationMessage"] = localizer[exception.Message].Value;
+        }
+        return RedirectToAction(nameof(Scan), new { id = input.GoodsReceiptId });
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [PermissionAuthorize("GoodsReceipts.Create")]
+    public async Task<IActionResult> PostDraft(int id)
+    {
+        try
+        {
+            await service.PostDraftAsync(id);
+            TempData["NotificationType"] = "success";
+            TempData["NotificationMessage"] = localizer["Goods receipt posted."].Value;
+            return RedirectToAction(nameof(Details), new { id });
+        }
+        catch (Exception exception) when (exception is ArgumentException or InvalidOperationException)
+        {
+            TempData["NotificationType"] = "danger";
+            TempData["NotificationMessage"] = localizer[exception.Message].Value;
+            return RedirectToAction(nameof(Scan), new { id });
+        }
+    }
 }

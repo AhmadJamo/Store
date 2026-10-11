@@ -76,6 +76,7 @@ The Index and mutation actions enforce these policies server-side. Permission se
 - `PurchaseOrders.Create` permits creating one order from the recorded quotation award only.
 - `PurchaseOrders.Approve`, `PurchaseOrders.Confirm` and `PurchaseOrders.Cancel` separately protect the corresponding state transitions; confirmation still has no inventory or accounting effect.
 - `GoodsReceipts.Create` protects both capture and posting of a Goods Receipt; it is limited to confirmed Purchase Orders and invokes the purchasing Application service. `GoodsReceipts.View` reserves separate receipt visibility for the upcoming history screen.
+- PUR-150 barcode draft creation, scanning and final posting remain protected by `GoodsReceipts.Create`; scanning does not introduce a broader stock-edit permission or bypass the final receipt-posting checks.
 - `GoodsReceiptReturns.Create` protects capture and immediate posting of a receipt-based supplier return; `GoodsReceiptReturns.View` protects its list/detail history. These permissions are distinct from legacy `PurchaseReturns.*`.
 - `VendorBills.Create` protects receipt allocation and normal accounting posting; `VendorBills.View` protects bill list/detail history.
 - `VendorBills.OverrideMatch` separately protects posting a Vendor Bill whose quantity or net price exceeds configured three-way-match tolerances; a reason is mandatory and persisted.

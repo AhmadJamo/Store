@@ -105,7 +105,7 @@ try
     await VerifyInventoryBalanceProjectionAsync(tenantOneId, tenantOneFixture.ProductId, expectedOnHand: 2m, connectionString);
     await VerifyOpeningTrackingAllocationAsync(tenantOneId, tenantOneFixture.ProductId, tenantOneFixture.WarehouseId, connectionString);
 
-    Console.WriteLine("Passed SQL integration checks: tenant isolation, reconciliation, balances, replenishment purchase-request source concurrency, receipt, vendor-bill and supplier-payment concurrency, three-way matching override evidence, GRNI posting and clearing, payable settlement, receipt-based supplier returns, landed-cost valuation, purchasing analytics, adjustment posting, tracked operations, quarantine and recall.");
+    Console.WriteLine("Passed SQL integration checks: tenant isolation, reconciliation, balances, replenishment purchase-request source concurrency, receipt, vendor-bill and supplier-payment concurrency, three-way matching override evidence, GRNI posting and clearing, payable settlement, receipt-based supplier returns, landed-cost valuation, purchasing analytics, idempotent barcode receipt drafts, adjustment posting, tracked operations, quarantine and recall.");
 }
 finally
 {
@@ -611,6 +611,78 @@ static async Task VerifyConcurrentGoodsReceiptAndGrniAsync(
             $"Exceptions={analytics.MatchExceptionCount}, Overrides={analytics.MatchOverrideCount}, Fill={supplierPerformance.FillRatePercent}, " +
             $"OnTime={supplierPerformance.OnTimeRatePercent}, Returns={supplierPerformance.ReturnRatePercent}, Spend={supplierPerformance.BilledSpend}, " +
             $"Variance={supplierPerformance.PriceVariance}, Balance={supplierPerformance.OutstandingBalance}");
+
+    await using var scanContext = new AppDbContext(CreateOptions(connectionString), new FixedTenantContext(tenantId));
+    var scanRequest = new PurchaseRequest("PRQ-SQL-SCAN", warehouseId, receiptDate,
+        PurchaseRequestPriority.Normal, "Barcode receiving integration", null, "integration-user");
+    scanRequest.AddLine(new PurchaseRequestLine(productId, measurementUnitId, 1m, 1m, supplierId, null));
+    scanRequest.Submit("integration-user");
+    scanRequest.Approve("integration-approver");
+    scanRequest.StartSourcing("integration-user");
+    scanContext.PurchaseRequests.Add(scanRequest);
+    await scanContext.SaveChangesAsync();
+    var scanSourcing = new PurchaseSourcingEvent("RFX-SQL-SCAN", scanRequest.Id, warehouseId,
+        receiptDate, null, "integration-user");
+    scanSourcing.AddLine(new PurchaseSourcingLine(scanRequest.Lines.Single().Id, productId, measurementUnitId,
+        1m, 1m, 1m, "GRN-CONCURRENT", "Concurrent receipt product", "Piece", null));
+    scanSourcing.InviteSupplier(supplierId, null);
+    scanSourcing.Send("integration-user");
+    scanContext.PurchaseSourcingEvents.Add(scanSourcing);
+    await scanContext.SaveChangesAsync();
+    var scanQuotation = new SupplierQuotation("QTN-SQL-SCAN", scanSourcing.Id, supplierId, null,
+        receiptDate, receiptDate.AddDays(7), 1, "JOD", null, null, "integration-user");
+    scanQuotation.AddLine(new SupplierQuotationLine(scanSourcing.Lines.Single().Id, 1m, 10m, 10m, 0m,
+        "GRN-CONCURRENT", "Concurrent receipt product", "Piece"));
+    scanQuotation.Submit();
+    scanContext.SupplierQuotations.Add(scanQuotation);
+    await scanContext.SaveChangesAsync();
+    var scanOrder = new PurchaseOrder("PO-SQL-SCAN", scanSourcing.Id, scanQuotation.Id, supplierId, warehouseId,
+        receiptDate, receiptDate.AddDays(1), "JOD", null, "integration-user");
+    scanOrder.AddLine(new PurchaseOrderLine(scanQuotation.Lines.Single().Id, productId, measurementUnitId,
+        1m, 1m, 1m, 10m, 0m, 0m, "GRN-CONCURRENT", "Concurrent receipt product", "Piece"));
+    scanOrder.Approve("integration-approver");
+    scanOrder.Confirm("integration-user");
+    scanContext.PurchaseOrders.Add(scanOrder);
+    await scanContext.SaveChangesAsync();
+
+    var scanUnitOfWork = new UnitOfWork(scanContext);
+    var scanUser = new FixedCurrentUser("integration-scanner");
+    var scanNumbers = new DocumentNumberService(new DocumentSequenceRepository(scanContext));
+    var scanTracking = new InventoryTrackingService(
+        new InventoryTrackingRepository(scanContext), new InventoryRecallRepository(scanContext),
+        new ProductRepository(scanContext), new WarehouseRepository(scanContext), new StorageLocationRepository(scanContext),
+        new InventoryBalanceRepository(scanContext), new ProductLocationStockRepository(scanContext),
+        new PurchaseRepository(scanContext), new SupplierRepository(scanContext), new SaleRepository(scanContext),
+        new CustomerRepository(scanContext), scanUnitOfWork);
+    var scanPeriods = new FiscalPeriodService(new FiscalPeriodRepository(scanContext), scanUnitOfWork, scanUser);
+    var scanJournals = new JournalPostingService(new JournalEntryRepository(scanContext), scanNumbers, scanPeriods);
+    var scanService = new GoodsReceiptService(
+        new GoodsReceiptRepository(scanContext), new PurchaseOrderRepository(scanContext), new ProductRepository(scanContext),
+        new ProductStockRepository(scanContext), new WarehouseRepository(scanContext), new ProductLocationStockRepository(scanContext),
+        new StockTransactionRepository(scanContext), new StockMovementRepository(scanContext),
+        new AccountingSettingsRepository(scanContext), scanTracking, scanNumbers, scanJournals, scanUnitOfWork, scanUser);
+    var stockBeforeScan = await scanContext.ProductStocks.Where(x => x.ProductId == productId && x.WarehouseId == warehouseId)
+        .Select(x => x.Quantity).SingleAsync();
+    var draftId = await scanService.CreateDraftAsync(new CreateGoodsReceiptDraftDto
+        { PurchaseOrderId = scanOrder.Id, ReceiptDate = receiptDate, Notes = "Scanner draft" });
+    var scanKey = InventoryScanResolver.NewGoodsReceiptIdempotencyKey();
+    var scanInput = new ScanGoodsReceiptDto
+        { GoodsReceiptId = draftId, ProductScan = "GRN-CONCURRENT", Quantity = 1m, IdempotencyKey = scanKey };
+    await scanService.RecordScanAsync(scanInput);
+    await scanService.RecordScanAsync(scanInput);
+    var draftReceipt = await scanContext.GoodsReceipts.Include(x => x.Lines).SingleAsync(x => x.Id == draftId);
+    if (draftReceipt.Status != GoodsReceiptStatus.Draft || draftReceipt.Lines.Single().ReceivedQuantity != 1m ||
+        await scanContext.GoodsReceiptScans.CountAsync(x => x.GoodsReceiptId == draftId) != 1 ||
+        await scanContext.ProductStocks.Where(x => x.ProductId == productId && x.WarehouseId == warehouseId).Select(x => x.Quantity).SingleAsync() != stockBeforeScan)
+        throw new InvalidOperationException("Repeated barcode receipt submissions must be idempotent and must not change stock while the receipt remains draft.");
+    await scanService.PostDraftAsync(draftId);
+    await scanContext.Entry(draftReceipt).ReloadAsync();
+    var stockAfterScanPost = await scanContext.ProductStocks.Where(x => x.ProductId == productId && x.WarehouseId == warehouseId)
+        .Select(x => x.Quantity).SingleAsync();
+    if (draftReceipt.Status != GoodsReceiptStatus.Posted || stockAfterScanPost != stockBeforeScan + 1m ||
+        !await scanContext.StockMovements.AnyAsync(x => x.SourceDocumentType == "GoodsReceipt" && x.SourceDocumentId == draftId) ||
+        !await scanContext.JournalEntries.AnyAsync(x => x.SourceType == "GoodsReceipt" && x.SourceReference == draftReceipt.ReceiptNumber))
+        throw new InvalidOperationException("Posting a scanned receipt draft must atomically create inventory, movement and accounting effects once.");
 }
 
 static async Task VerifyConcurrentReservationAsync(

@@ -16,5 +16,8 @@ public sealed class GoodsReceiptRepository(AppDbContext context) : IGoodsReceipt
     public Task<List<GoodsReceipt>> GetByPurchaseOrderIdAsync(int purchaseOrderId) => context.GoodsReceipts.Include(x => x.Lines)
         .Where(x => x.PurchaseOrderId == purchaseOrderId).OrderByDescending(x => x.CreatedAtUtc).ToListAsync();
     public Task<GoodsReceipt?> GetByIdAsync(int id) => context.GoodsReceipts.Include(x => x.Lines).FirstOrDefaultAsync(x => x.Id == id);
+    public Task<GoodsReceiptScan?> GetScanByIdempotencyKeyAsync(string idempotencyKey) =>
+        context.GoodsReceiptScans.FirstOrDefaultAsync(x => x.IdempotencyKey == idempotencyKey);
     public Task AddAsync(GoodsReceipt receipt) => context.GoodsReceipts.AddAsync(receipt).AsTask();
+    public Task AddScanAsync(GoodsReceiptScan scan) => context.GoodsReceiptScans.AddAsync(scan).AsTask();
 }

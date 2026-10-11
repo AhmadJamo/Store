@@ -45,6 +45,7 @@
 | `Entities/Purchases/PurchaseAgreement.cs` | awarded-quotation agreements with frozen commercial terms and capped release lines, plus repeat-order templates that generate traced demand | PUR-120 agreement/template workflow. |
 | `Entities/Purchases/LandedCost.cs` | immutable receipt-linked landed-cost components and allocation/valuation snapshots | PUR-130 receipt valuation adjustment. |
 | `Entities/Purchases/GoodsReceipt.cs` | GRN header/line receipt evidence with frozen PO snapshots and optional inventory-tracking inputs | PUR-060 receipt workflow. |
+| `Entities/Purchases/GoodsReceiptScan` (in `GoodsReceipt.cs`) | immutable tenant-owned barcode/code scan evidence with a unique retry key | PUR-150 Draft Goods Receipt scanning. |
 | `Entities/Purchases/GoodsReceiptReturn.cs` | immutable receipt-based supplier-return header/lines with frozen quantity, original receipt value and removed inventory cost | PUR-070 return workflow. |
 | `Entities/Purchases/VendorBill.cs` | immutable posted supplier invoice identity and receipt-line allocations with frozen receipt clearing, price, tax and total snapshots | PUR-080 billing workflow. |
 | `Entities/Purchases/PurchaseMatch.cs` | tenant matching settings plus immutable bill match runs, line exceptions and reasoned override evidence | PUR-090 three-way matching. |
@@ -71,6 +72,7 @@
 | `Services/Purchases/LandedCostService.cs` | allocates receipt costs, splits current inventory from consumed expense, records value-only stock movements and posts a balanced clearing journal | PUR-130 landed-cost screens. |
 | `Dtos/Purchases/PurchaseAnalyticsDtos.cs`, `Services/Purchases/PurchaseAnalyticsService.cs` | bounded read-only purchasing cards and supplier order-cohort performance projections over tenant-filtered repositories | PUR-140 analytics screen. |
 | `Services/Purchases/GoodsReceiptService.cs` | atomically validates remaining PO quantity and coordinates receipt posting with Inventory-owned stock, valuation and tracking effects | Goods Receipt capture screen. |
+| `Services/Inventory/InventoryScanResolver.cs` | workflow-scoped retry-key generation/validation and normalized exact scan tokens, including Goods Receipt scans | inventory and PUR-150 scanning flows. |
 | `Services/Purchases/GoodsReceiptReturnService.cs` | caps returns by the posted, unbilled receipt quantity and atomically coordinates inventory removal, tracking, physical movement and GRNI/PPV accounting | Goods Receipt Return screens. |
 | `Services/Purchases/VendorBillService.cs` | caps receipt-based partial billing, rejects duplicate normalized supplier invoices and atomically clears GRNI, records input tax/PPV and credits supplier payable | Vendor Bill screens. |
 | `Services/Purchases/SupplierPaymentService.cs` | calculates outstanding Vendor Bill balances and atomically settles supplier payable against a configured cash/bank payment method | Supplier Payment screens. |
@@ -188,6 +190,7 @@ Hierarchical location update (2026-09-30): StorageLocation retains its identity 
 | `Controllers/Purchases/SupplierPurchasingController.cs` | permission-split bilingual supplier purchasing-data administration | PUR-010 service and `Views/SupplierPurchasing/Index.cshtml`. |
 | `Controllers/Purchases/{SupplierQuotations,PurchaseOrders}Controller.cs`, `Views/SupplierQuotations/*`, `Views/PurchaseOrders/*` | quotation capture/comparison/award and award-derived Purchase Order list/detail/state actions | PUR-040/PUR-050 services and permissions. |
 | `Controllers/Purchases/GoodsReceiptsController.cs`, `Views/GoodsReceipts/Create.cshtml` | permission-protected partial Goods Receipt capture and immediate posting | PUR-060 receipt service. |
+| `Views/GoodsReceipts/Scan.cshtml` and Goods Receipt scan actions | Draft receipt creation, exact product scanning, accumulated-quantity review and explicit final posting | PUR-150 receipt service. |
 | `Controllers/Purchases/GoodsReceiptReturnsController.cs`, `Views/GoodsReceiptReturns/*.cshtml` | permission-protected receipt-based supplier return capture, history and detail | PUR-070 return service. |
 | `Controllers/Purchases/VendorBillsController.cs`, `Views/VendorBills/*.cshtml` | permission-protected receipt allocation, immediate posting, history and immutable bill detail | PUR-080 bill service. |
 | `Controllers/Purchases/SupplierPaymentsController.cs`, `Views/SupplierPayments/*.cshtml` | permission-protected partial allocation, immediate posting, payment history and immutable detail | PUR-100 payment service. |

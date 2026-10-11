@@ -1331,6 +1331,29 @@ goodsReceipt.Post("receiver");
 Check(goodsReceipt.Status == GoodsReceiptStatus.Posted && goodsReceipt.Lines.Single().StockQuantity == 1m &&
       db.Model.FindEntityType(typeof(GoodsReceipt))!.FindProperty("TenantId") is { IsNullable: false },
     "Posted goods receipts must retain frozen partial receipt evidence inside the tenant boundary");
+var scannedDraft = new GoodsReceipt("GRN-000002", 1, 1, DateOnly.FromDateTime(DateTime.Today), null, "receiver");
+scannedDraft.RecordScan(new GoodsReceiptLine(1, 10, 2, 1m, 1m, 11.25m, "P-10", "Coffee beans", "kg", "LOT-1", null, null, null));
+scannedDraft.RecordScan(new GoodsReceiptLine(1, 10, 2, 1m, 1m, 11.25m, "P-10", "Coffee beans", "kg", "LOT-1", null, null, null));
+var goodsReceiptScanKey = InventoryScanResolver.NewGoodsReceiptIdempotencyKey();
+var goodsReceiptScan = new GoodsReceiptScan(1, 1, " coffee-10 ", 1m, goodsReceiptScanKey, "receiver");
+Check(scannedDraft.Status == GoodsReceiptStatus.Draft && scannedDraft.Lines.Single().ReceivedQuantity == 2m &&
+      goodsReceiptScan.ScanToken == "COFFEE-10" &&
+      InventoryScanResolver.ValidateGoodsReceiptIdempotencyKey(goodsReceiptScanKey) == goodsReceiptScanKey &&
+      db.Model.FindEntityType(typeof(GoodsReceiptScan))!.FindProperty("TenantId") is { IsNullable: false },
+    "Barcode receiving must aggregate a draft line and preserve tenant-owned idempotent scan evidence");
+CheckArgumentThrows(() => InventoryScanResolver.ValidateGoodsReceiptIdempotencyKey(InventoryScanResolver.NewPutawayIdempotencyKey()),
+    "Goods receipt scans must reject retry keys from another scanning workflow");
+var goodsReceiptController = typeof(GoodsReceiptsController);
+Check(goodsReceiptController.GetMethod(nameof(GoodsReceiptsController.Scan))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
+      $"{PermissionAuthorizeAttribute.PolicyPrefix}GoodsReceipts.Create" &&
+      goodsReceiptController.GetMethod(nameof(GoodsReceiptsController.RecordScan))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
+      $"{PermissionAuthorizeAttribute.PolicyPrefix}GoodsReceipts.Create" &&
+      goodsReceiptController.GetMethod(nameof(GoodsReceiptsController.PostDraft))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
+      $"{PermissionAuthorizeAttribute.PolicyPrefix}GoodsReceipts.Create",
+    "Barcode receipt capture and posting must remain behind the existing goods-receipt command permission");
 var landedStock = new ProductStock(10, 1);
 landedStock.Receive(4m, 10m);
 var landedMovement = landedStock.AddLandedCost(8m);

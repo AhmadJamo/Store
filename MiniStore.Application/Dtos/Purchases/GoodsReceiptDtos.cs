@@ -23,6 +23,42 @@ public sealed class CreateGoodsReceiptDto
     public string? Notes { get; set; }
     public List<CreateGoodsReceiptLineDto> Lines { get; set; } = [];
 }
+public sealed class CreateGoodsReceiptDraftDto
+{
+    public int PurchaseOrderId { get; set; }
+    public DateOnly ReceiptDate { get; set; } = DateOnly.FromDateTime(DateTime.Today);
+    public string? Notes { get; set; }
+}
+public sealed class GoodsReceiptScanPageDto
+{
+    public GoodsReceiptDto Receipt { get; init; } = new();
+    public List<GoodsReceiptScanLineDto> Lines { get; init; } = [];
+    public string IdempotencyKey { get; init; } = string.Empty;
+}
+public sealed class GoodsReceiptScanLineDto
+{
+    public int PurchaseOrderLineId { get; init; }
+    public string ProductCode { get; init; } = string.Empty;
+    public string ProductName { get; init; } = string.Empty;
+    public string? Barcode { get; init; }
+    public string UnitName { get; init; } = string.Empty;
+    public ProductTrackingPolicy TrackingPolicy { get; init; }
+    public decimal OrderedQuantity { get; init; }
+    public decimal PreviouslyPostedQuantity { get; init; }
+    public decimal DraftQuantity { get; init; }
+    public decimal RemainingQuantity { get; init; }
+}
+public sealed class ScanGoodsReceiptDto
+{
+    public int GoodsReceiptId { get; set; }
+    public string ProductScan { get; set; } = string.Empty;
+    public decimal Quantity { get; set; } = 1m;
+    public string IdempotencyKey { get; set; } = string.Empty;
+    public string? LotNumber { get; set; }
+    public string? SerialNumbers { get; set; }
+    public DateOnly? ManufactureDate { get; set; }
+    public DateOnly? ExpirationDate { get; set; }
+}
 public sealed class CreateGoodsReceiptLineDto
 {
     public int PurchaseOrderLineId { get; set; }

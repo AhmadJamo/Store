@@ -79,6 +79,7 @@ public class AppDbContext
     public DbSet<PurchaseOrderLine> PurchaseOrderLines => Set<PurchaseOrderLine>();
     public DbSet<GoodsReceipt> GoodsReceipts => Set<GoodsReceipt>();
     public DbSet<GoodsReceiptLine> GoodsReceiptLines => Set<GoodsReceiptLine>();
+    public DbSet<GoodsReceiptScan> GoodsReceiptScans => Set<GoodsReceiptScan>();
     public DbSet<GoodsReceiptReturn> GoodsReceiptReturns => Set<GoodsReceiptReturn>();
     public DbSet<GoodsReceiptReturnLine> GoodsReceiptReturnLines => Set<GoodsReceiptReturnLine>();
     public DbSet<VendorBill> VendorBills => Set<VendorBill>();

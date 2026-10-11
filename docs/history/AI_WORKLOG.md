@@ -1,5 +1,15 @@
 # AI Work Log
 
+## 2026-10-11 — PUR-150 Barcode-Assisted Goods Receiving
+
+- Added empty Draft Goods Receipt creation and a bilingual scanner-focused screen that resolves exact tenant product barcode/code matches only within the selected confirmed Purchase Order.
+- Scans accumulate received quantity without changing stock, enforce open-order caps and lot/serial input rules, and reject ambiguous or unrelated products.
+- Added immutable tenant-owned scan evidence with workflow-scoped, tenant-unique retry keys. Replaying the same receipt/token/quantity request is a no-op; reusing its key for a different receipt, product token or quantity is rejected.
+- Final posting revalidates the draft and delegates to the existing atomic Goods Receipt inventory, tracking, AVCO, physical movement and Inventory/GRNI journal path.
+- Added migration `20261011113457_AddGoodsReceiptBarcodeScanning` and applied it to `AHMAD/MiniStoreDb` without backfill or historical receipt changes.
+- Added domain, permission and retry-key checks plus a disposable SQL Server scenario proving duplicate-scan idempotency, zero draft stock effect and one atomic stock/movement/journal effect after posting.
+- Release build passed without warnings, 545 focused checks passed, the migration model is current, Arabic resources have no duplicate or missing receipt-screen keys, and the disposable SQL Server integration fixture passed with the scanned-draft scenario.
+
 ## 2026-10-11 — PUR-140 Purchasing Analytics and Supplier Performance
 
 - Added a permission-protected, bilingual purchasing analytics screen with a bounded date filter and cards for current open/overdue orders, receipt value, landed costs, billed spend, current payables and matching exceptions/overrides.
