@@ -1,5 +1,14 @@
 # AI Work Log
 
+## 2026-10-11 — PUR-130 Landed Costs
+
+- Added immutable, centrally numbered Landed Cost documents against posted Goods Receipts with freight, customs, insurance and other component snapshots.
+- Costs allocate automatically by base-stock quantity or frozen receipt value. The current-stock share raises AVCO through a zero-quantity StockTransaction; the consumed share is frozen as Cost of Sales expense.
+- Posting atomically debits Inventory and/or Cost of Sales and credits the configured Landed Cost Clearing account through the fiscal-period and idempotency gateway.
+- Added normalized tenant-unique external references, tenant-safe relationships, separate view/create permissions, bilingual list/create/detail screens and a Goods Receipt entry point.
+- Created and applied migration `20261011105547_AddLandedCosts` to `AHMAD/MiniStoreDb`; no historical receipt was revalued or backfilled.
+- Release build passed without warnings, 538 focused checks passed, and the disposable SQL Server integration fixture verified the value-only AVCO adjustment, capitalization/expense split and balanced journal posting.
+
 ## 2026-10-11 — PUR-120 Purchase Agreements and Repeat Templates
 
 - Added centrally numbered, tenant-owned Purchase Agreements created only from a recorded winning quotation, with frozen terms, validity, activation/cancellation audit and rowversion protection.

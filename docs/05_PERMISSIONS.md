@@ -86,3 +86,8 @@ The Index and mutation actions enforce these policies server-side. Permission se
 - `PurchaseAgreements.View`, `Create`, `Activate`, `Release` and `Cancel` separate agreement visibility from every lifecycle command. A release creates only a Draft Purchase Order and does not grant order approval or confirmation.
 - `PurchaseTemplates.View`, `Create`, `Generate` and `Manage` separate template visibility, source-order capture, Draft Purchase Request generation and active-state administration. Generated demand still requires the normal Purchase Request permissions and workflow.
 
+# PUR-130 landed-cost permissions
+
+- `LandedCosts.View` protects landed-cost history and immutable details.
+- `LandedCosts.Create` protects allocation and immediate inventory/accounting posting from a posted Goods Receipt. It does not grant receipt, return or Accounting Settings administration.
+

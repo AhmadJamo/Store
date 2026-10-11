@@ -1331,6 +1331,36 @@ goodsReceipt.Post("receiver");
 Check(goodsReceipt.Status == GoodsReceiptStatus.Posted && goodsReceipt.Lines.Single().StockQuantity == 1m &&
       db.Model.FindEntityType(typeof(GoodsReceipt))!.FindProperty("TenantId") is { IsNullable: false },
     "Posted goods receipts must retain frozen partial receipt evidence inside the tenant boundary");
+var landedStock = new ProductStock(10, 1);
+landedStock.Receive(4m, 10m);
+var landedMovement = landedStock.AddLandedCost(8m);
+Check(landedStock.Quantity == 4m && landedStock.InventoryValue == 48m && landedStock.AverageUnitCost == 12m &&
+      landedMovement.QuantityBefore == landedMovement.QuantityAfter && landedMovement.TransactionValue == 8m,
+    "Landed cost capitalization must increase AVCO value without changing stock quantity");
+var landedTransaction = new StockTransaction(10, 1, 0, StockTransactionType.LandedCostAdjustment, "LDC-000001", landedMovement);
+Check(landedTransaction.Quantity == 0 && landedTransaction.InventoryValueAfter == 48m,
+    "Landed cost stock transactions must preserve auditable value-only movement snapshots");
+var landedCost = new LandedCost("LDC-000001", 1, 1, DateOnly.FromDateTime(DateTime.Today), " freight/77 ",
+    LandedCostAllocationMethod.ByReceiptValue, null, "buyer");
+landedCost.AddComponent(new LandedCostComponent(LandedCostType.Freight, 8m, "Freight invoice"));
+landedCost.AddAllocation(new LandedCostAllocation(1, 10, 45m, 8m, 6m, 2m, 10m, 11.5m, "P-10", "Coffee beans"));
+landedCost.EnsureBalanced();
+Check(landedCost.NormalizedExternalReference == "FREIGHT77" && landedCost.TotalAmount == 8m &&
+      landedCost.CapitalizedAmount == 6m && landedCost.ExpensedAmount == 2m,
+    "Landed costs must normalize external identity and preserve a balanced capitalization split");
+foreach (var type in new[] { typeof(LandedCost), typeof(LandedCostComponent), typeof(LandedCostAllocation) })
+    Check(db.Model.FindEntityType(type)!.FindProperty("TenantId") is { IsNullable: false },
+        $"{type.Name} must be tenant owned");
+Check(DocumentSequence.CreateDefault(DocumentNumberType.LandedCost).Preview(DateTime.Today).StartsWith("LDC-"),
+    "Landed costs must use an independent centralized document sequence");
+var landedController = typeof(LandedCostsController);
+Check(landedController.GetMethod(nameof(LandedCostsController.Index))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
+      $"{PermissionAuthorizeAttribute.PolicyPrefix}LandedCosts.View" &&
+      landedController.GetMethod(nameof(LandedCostsController.Create), [typeof(CreateLandedCostDto)])!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
+      $"{PermissionAuthorizeAttribute.PolicyPrefix}LandedCosts.Create",
+    "Landed cost visibility and posting must use separate server-side permissions");
 var receiptMovement = StockMovement.PostGoodsReceipt(1, 1, 10, 1, 1m, "receiver", "GRN-000001");
 Check(receiptMovement.Type == StockMovementType.ReceiptIn && receiptMovement.Status == StockMovementStatus.Posted &&
       receiptMovement.SourceDocumentType == "GoodsReceipt" && receiptMovement.SourceDocumentId == 1,

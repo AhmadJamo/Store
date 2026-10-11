@@ -350,6 +350,9 @@ namespace MiniStore.Infrastructure.Migrations
                     b.Property<int?>("GoodsReceivedNotInvoicedAccountId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("LandedCostClearingAccountId")
+                        .HasColumnType("int");
+
                     b.Property<int?>("PurchaseDiscountAccountId")
                         .HasColumnType("int");
 
@@ -375,6 +378,8 @@ namespace MiniStore.Infrastructure.Migrations
                     b.HasIndex("CostOfSalesAccountId", "TenantId");
 
                     b.HasIndex("GoodsReceivedNotInvoicedAccountId", "TenantId");
+
+                    b.HasIndex("LandedCostClearingAccountId", "TenantId");
 
                     b.HasIndex("PurchaseDiscountAccountId", "TenantId");
 
@@ -1934,6 +1939,180 @@ namespace MiniStore.Infrastructure.Migrations
                     b.HasIndex("WarehouseId", "TenantId");
 
                     b.ToTable("JournalEntryLines");
+                });
+
+            modelBuilder.Entity("MiniStore.Domain.Entities.LandedCost", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AllocationMethod")
+                        .HasColumnType("int");
+
+                    b.Property<DateOnly>("CostDate")
+                        .HasColumnType("date");
+
+                    b.Property<string>("CostNumber")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedByUserId")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ExternalReference")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("GoodsReceiptId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("NormalizedExternalReference")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<int>("TenantId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("WarehouseId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TenantId");
+
+                    b.HasIndex("GoodsReceiptId", "TenantId");
+
+                    b.HasIndex("TenantId", "CostNumber")
+                        .IsUnique();
+
+                    b.HasIndex("TenantId", "NormalizedExternalReference")
+                        .IsUnique();
+
+                    b.HasIndex("WarehouseId", "TenantId");
+
+                    b.ToTable("LandedCosts");
+                });
+
+            modelBuilder.Entity("MiniStore.Domain.Entities.LandedCostAllocation", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("AllocatedAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("AllocationBasis")
+                        .HasPrecision(24, 8)
+                        .HasColumnType("decimal(24,8)");
+
+                    b.Property<decimal>("AverageUnitCostAfter")
+                        .HasPrecision(24, 8)
+                        .HasColumnType("decimal(24,8)");
+
+                    b.Property<decimal>("AverageUnitCostBefore")
+                        .HasPrecision(24, 8)
+                        .HasColumnType("decimal(24,8)");
+
+                    b.Property<decimal>("CapitalizedAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("ExpensedAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("GoodsReceiptLineId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("LandedCostId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ProductCodeSnapshot")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ProductNameSnapshot")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<int>("TenantId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TenantId");
+
+                    b.HasIndex("GoodsReceiptLineId", "TenantId");
+
+                    b.HasIndex("LandedCostId", "TenantId");
+
+                    b.HasIndex("ProductId", "TenantId");
+
+                    b.HasIndex("TenantId", "LandedCostId", "GoodsReceiptLineId")
+                        .IsUnique();
+
+                    b.ToTable("LandedCostAllocations");
+                });
+
+            modelBuilder.Entity("MiniStore.Domain.Entities.LandedCostComponent", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("Amount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<int>("LandedCostId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TenantId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TenantId");
+
+                    b.HasIndex("LandedCostId", "TenantId");
+
+                    b.HasIndex("TenantId", "LandedCostId", "Type")
+                        .IsUnique();
+
+                    b.ToTable("LandedCostComponents");
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.LocationMovement", b =>
@@ -6491,6 +6670,12 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasOne("MiniStore.Domain.Entities.Account", null)
                         .WithMany()
+                        .HasForeignKey("LandedCostClearingAccountId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("MiniStore.Domain.Entities.Account", null)
+                        .WithMany()
                         .HasForeignKey("PurchaseDiscountAccountId", "TenantId")
                         .HasPrincipalKey("Id", "TenantId")
                         .OnDelete(DeleteBehavior.Restrict);
@@ -7029,6 +7214,75 @@ namespace MiniStore.Infrastructure.Migrations
                         .HasForeignKey("WarehouseId", "TenantId")
                         .HasPrincipalKey("Id", "TenantId")
                         .OnDelete(DeleteBehavior.Restrict);
+                });
+
+            modelBuilder.Entity("MiniStore.Domain.Entities.LandedCost", b =>
+                {
+                    b.HasOne("MiniStore.Domain.Entities.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MiniStore.Domain.Entities.GoodsReceipt", null)
+                        .WithMany()
+                        .HasForeignKey("GoodsReceiptId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MiniStore.Domain.Entities.Warehouse", null)
+                        .WithMany()
+                        .HasForeignKey("WarehouseId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("MiniStore.Domain.Entities.LandedCostAllocation", b =>
+                {
+                    b.HasOne("MiniStore.Domain.Entities.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MiniStore.Domain.Entities.GoodsReceiptLine", null)
+                        .WithMany()
+                        .HasForeignKey("GoodsReceiptLineId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MiniStore.Domain.Entities.LandedCost", null)
+                        .WithMany("Allocations")
+                        .HasForeignKey("LandedCostId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MiniStore.Domain.Entities.Product", null)
+                        .WithMany()
+                        .HasForeignKey("ProductId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("MiniStore.Domain.Entities.LandedCostComponent", b =>
+                {
+                    b.HasOne("MiniStore.Domain.Entities.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MiniStore.Domain.Entities.LandedCost", null)
+                        .WithMany("Components")
+                        .HasForeignKey("LandedCostId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.LocationMovement", b =>
@@ -8849,6 +9103,13 @@ namespace MiniStore.Infrastructure.Migrations
             modelBuilder.Entity("MiniStore.Domain.Entities.JournalEntry", b =>
                 {
                     b.Navigation("Lines");
+                });
+
+            modelBuilder.Entity("MiniStore.Domain.Entities.LandedCost", b =>
+                {
+                    b.Navigation("Allocations");
+
+                    b.Navigation("Components");
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.Plan", b =>

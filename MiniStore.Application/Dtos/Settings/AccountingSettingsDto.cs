@@ -8,4 +8,5 @@ public class AccountingSettingsDto
     public int? CostOfSalesAccountId { get; set; }
     public int? GoodsReceivedNotInvoicedAccountId { get; set; }
     public int? PurchasePriceVarianceAccountId { get; set; }
+    public int? LandedCostClearingAccountId { get; set; }
 }

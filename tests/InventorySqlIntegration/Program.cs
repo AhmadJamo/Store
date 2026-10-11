@@ -105,7 +105,7 @@ try
     await VerifyInventoryBalanceProjectionAsync(tenantOneId, tenantOneFixture.ProductId, expectedOnHand: 2m, connectionString);
     await VerifyOpeningTrackingAllocationAsync(tenantOneId, tenantOneFixture.ProductId, tenantOneFixture.WarehouseId, connectionString);
 
-    Console.WriteLine("Passed SQL integration checks: tenant isolation, reconciliation, balances, replenishment purchase-request source concurrency, receipt, vendor-bill and supplier-payment concurrency, three-way matching override evidence, GRNI posting and clearing, payable settlement, receipt-based supplier returns, adjustment posting, tracked operations, quarantine and recall.");
+    Console.WriteLine("Passed SQL integration checks: tenant isolation, reconciliation, balances, replenishment purchase-request source concurrency, receipt, vendor-bill and supplier-payment concurrency, three-way matching override evidence, GRNI posting and clearing, payable settlement, receipt-based supplier returns, landed-cost valuation, adjustment posting, tracked operations, quarantine and recall.");
 }
 finally
 {
@@ -246,6 +246,8 @@ static async Task VerifyConcurrentGoodsReceiptAndGrniAsync(
     int varianceAccountId;
     int payableAccountId;
     int cashAccountId;
+    int costOfSalesAccountId;
+    int landedCostClearingAccountId;
     int vendorBillId = 0;
     var receiptDate = DateOnly.FromDateTime(DateTime.Today);
 
@@ -256,22 +258,25 @@ static async Task VerifyConcurrentGoodsReceiptAndGrniAsync(
         var varianceAccount = new Account("5100-PPV", "Purchase price variance", AccountType.Expense);
         var payableAccount = new Account("2101-AP", "Supplier payable", AccountType.Liability);
         var cashAccount = new Account("1100-CASH", "Supplier payment cash", AccountType.Asset);
+        var costOfSalesAccount = new Account("5000-COGS", "Cost of sales", AccountType.Expense);
+        var landedCostClearingAccount = new Account("2200-LDC", "Landed cost clearing", AccountType.Liability);
         var branch = new Branch("GRN", "Goods receipt branch");
         var warehouse = new Warehouse("Goods receipt warehouse");
         var product = new Product("Concurrent receipt product", "GRN-CONCURRENT", 10m, 15m, 12m,
             measurementUnitId: measurementUnitId);
         var supplier = new Supplier("Concurrent receipt supplier");
-        context.AddRange(inventoryAccount, grniAccount, varianceAccount, payableAccount, cashAccount, branch, warehouse, product, supplier);
+        context.AddRange(inventoryAccount, grniAccount, varianceAccount, payableAccount, cashAccount, costOfSalesAccount, landedCostClearingAccount, branch, warehouse, product, supplier);
         await context.SaveChangesAsync();
 
         warehouse.AssignAccounting(branch.Id, inventoryAccount.Id);
         supplier.AssignPayableAccount(payableAccount.Id);
-        context.AccountingSettings.Add(new AccountingSettings(null, null, null, null, grniAccount.Id, varianceAccount.Id));
+        context.AccountingSettings.Add(new AccountingSettings(null, null, null, costOfSalesAccount.Id, grniAccount.Id, varianceAccount.Id, landedCostClearingAccount.Id));
         context.PaymentMethods.Add(new PaymentMethod("Supplier bank transfer", cashAccount.Id));
         context.DocumentSequences.AddRange(
             DocumentSequence.CreateDefault(DocumentNumberType.GoodsReceipt),
             DocumentSequence.CreateDefault(DocumentNumberType.VendorBill),
             DocumentSequence.CreateDefault(DocumentNumberType.SupplierPayment),
+            DocumentSequence.CreateDefault(DocumentNumberType.LandedCost),
             DocumentSequence.CreateDefault(DocumentNumberType.JournalEntry));
 
         var request = new PurchaseRequest("PRQ-SQL-GRN", warehouse.Id, receiptDate,
@@ -318,6 +323,8 @@ static async Task VerifyConcurrentGoodsReceiptAndGrniAsync(
         varianceAccountId = varianceAccount.Id;
         payableAccountId = payableAccount.Id;
         cashAccountId = cashAccount.Id;
+        costOfSalesAccountId = costOfSalesAccount.Id;
+        landedCostClearingAccountId = landedCostClearingAccount.Id;
     }
 
     async Task<bool> TryReceiveAsync()
@@ -549,6 +556,41 @@ static async Task VerifyConcurrentGoodsReceiptAndGrniAsync(
         !returnJournal.Lines.Any(x => x.AccountId == inventoryAccountId && x.Credit == 4.5m) ||
         await TryReturnAsync())
         throw new InvalidOperationException("A receipt-based supplier return must atomically reverse stock and the matching GRNI receipt value.");
+
+    await using (var landedContext = new AppDbContext(CreateOptions(connectionString), new FixedTenantContext(tenantId)))
+    {
+        var landedUnitOfWork = new UnitOfWork(landedContext);
+        var landedUser = new FixedCurrentUser("integration-landed-cost");
+        var landedNumbers = new DocumentNumberService(new DocumentSequenceRepository(landedContext));
+        var landedPeriods = new FiscalPeriodService(new FiscalPeriodRepository(landedContext), landedUnitOfWork, landedUser);
+        var landedJournals = new JournalPostingService(new JournalEntryRepository(landedContext), landedNumbers, landedPeriods);
+        var landedService = new LandedCostService(new LandedCostRepository(landedContext), new GoodsReceiptRepository(landedContext),
+            new PurchaseOrderRepository(landedContext), new SupplierRepository(landedContext), new WarehouseRepository(landedContext),
+            new ProductStockRepository(landedContext), new StockTransactionRepository(landedContext),
+            new AccountingSettingsRepository(landedContext), landedNumbers, landedJournals, landedUnitOfWork, landedUser);
+        await landedService.CreateAndPostAsync(new CreateLandedCostDto
+        {
+            GoodsReceiptId = receipt.Id, CostDate = receiptDate, ExternalReference = "SQL-FREIGHT-001",
+            AllocationMethod = LandedCostAllocationMethod.ByQuantity,
+            Components = [new CreateLandedCostComponentDto { Type = LandedCostType.Freight, Amount = 2m }]
+        });
+    }
+
+    await using var landedVerification = new AppDbContext(CreateOptions(connectionString), new FixedTenantContext(tenantId));
+    var postedLandedCost = await landedVerification.LandedCosts.Include(x => x.Allocations).SingleAsync();
+    var stockAfterLandedCost = await landedVerification.ProductStocks.SingleAsync(x => x.ProductId == productId && x.WarehouseId == warehouseId);
+    var landedJournal = await landedVerification.JournalEntries.Include(x => x.Lines).SingleAsync(x =>
+        x.SourceType == "LandedCost" && x.SourceReference == postedLandedCost.CostNumber);
+    var landedTransaction = await landedVerification.StockTransactions.SingleAsync(x =>
+        x.Type == StockTransactionType.LandedCostAdjustment && x.Reference == postedLandedCost.CostNumber);
+    if (postedLandedCost.CapitalizedAmount != 1m || postedLandedCost.ExpensedAmount != 1m ||
+        stockAfterLandedCost.Quantity != 0.5m || stockAfterLandedCost.InventoryValue != 5.5m ||
+        landedTransaction.Quantity != 0 || landedTransaction.TransactionValue != 1m ||
+        landedJournal.Lines.Sum(x => x.Debit) != 2m || landedJournal.Lines.Sum(x => x.Credit) != 2m ||
+        !landedJournal.Lines.Any(x => x.AccountId == inventoryAccountId && x.Debit == 1m) ||
+        !landedJournal.Lines.Any(x => x.AccountId == costOfSalesAccountId && x.Debit == 1m) ||
+        !landedJournal.Lines.Any(x => x.AccountId == landedCostClearingAccountId && x.Credit == 2m))
+        throw new InvalidOperationException("Landed cost posting must split remaining and consumed receipt cost into inventory and expense with one balanced journal.");
 }
 
 static async Task VerifyConcurrentReservationAsync(

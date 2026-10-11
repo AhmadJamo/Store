@@ -92,6 +92,9 @@ public class AppDbContext
     public DbSet<PurchaseAgreementLine> PurchaseAgreementLines => Set<PurchaseAgreementLine>();
     public DbSet<PurchaseTemplate> PurchaseTemplates => Set<PurchaseTemplate>();
     public DbSet<PurchaseTemplateLine> PurchaseTemplateLines => Set<PurchaseTemplateLine>();
+    public DbSet<LandedCost> LandedCosts => Set<LandedCost>();
+    public DbSet<LandedCostComponent> LandedCostComponents => Set<LandedCostComponent>();
+    public DbSet<LandedCostAllocation> LandedCostAllocations => Set<LandedCostAllocation>();
 
     public DbSet<Purchase> Purchases
         => Set<Purchase>();

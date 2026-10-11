@@ -1171,7 +1171,6 @@
   <data name="Payment number" xml:space="preserve"><value>رقم الدفعة</value></data>
   <data name="Payment date" xml:space="preserve"><value>تاريخ الدفعة</value></data>
   <data name="Payment method" xml:space="preserve"><value>طريقة الدفع</value></data>
-  <data name="External reference" xml:space="preserve"><value>المرجع الخارجي</value></data>
   <data name="Allocated amount" xml:space="preserve"><value>المبلغ المخصص</value></data>
   <data name="Select payment method" xml:space="preserve"><value>اختر طريقة الدفع</value></data>
   <data name="There are no outstanding vendor bills for this supplier and currency." xml:space="preserve"><value>لا توجد فواتير مورد مستحقة لهذا المورد وهذه العملة.</value></data>
@@ -1282,4 +1281,69 @@
   <data name="Suggested supplier was not found." xml:space="preserve"><value>لم يتم العثور على المورد المقترح.</value></data>
   <data name="The same product and unit cannot be added more than once." xml:space="preserve"><value>لا يمكن إضافة المنتج والوحدة نفسيهما أكثر من مرة.</value></data>
   <data name="User is required." xml:space="preserve"><value>المستخدم مطلوب.</value></data>
+  <data name="Landed costs" xml:space="preserve"><value>التكاليف الإضافية للاستلام</value></data>
+  <data name="Allocate landed costs" xml:space="preserve"><value>توزيع التكاليف الإضافية</value></data>
+  <data name="Landed cost clearing account" xml:space="preserve"><value>حساب تسوية التكاليف الإضافية</value></data>
+  <data name="Credited when landed costs are allocated to received inventory." xml:space="preserve"><value>يُسجل دائنًا عند توزيع التكاليف الإضافية على المخزون المستلم.</value></data>
+  <data name="Capitalized amount" xml:space="preserve"><value>المبلغ المضاف إلى المخزون</value></data>
+  <data name="Expensed amount" xml:space="preserve"><value>المبلغ المحمّل كمصروف</value></data>
+  <data name="External reference" xml:space="preserve"><value>المرجع الخارجي</value></data>
+  <data name="Allocation method" xml:space="preserve"><value>طريقة التوزيع</value></data>
+  <data name="By quantity" xml:space="preserve"><value>حسب الكمية</value></data>
+  <data name="By receipt value" xml:space="preserve"><value>حسب قيمة الاستلام</value></data>
+  <data name="ByQuantity" xml:space="preserve"><value>حسب الكمية</value></data>
+  <data name="ByReceiptValue" xml:space="preserve"><value>حسب قيمة الاستلام</value></data>
+  <data name="Cost components" xml:space="preserve"><value>مكونات التكلفة</value></data>
+  <data name="Freight" xml:space="preserve"><value>الشحن</value></data>
+  <data name="Customs" xml:space="preserve"><value>الجمارك</value></data>
+  <data name="Insurance" xml:space="preserve"><value>التأمين</value></data>
+  <data name="Post landed cost" xml:space="preserve"><value>ترحيل التكلفة الإضافية</value></data>
+  <data name="Landed cost posted." xml:space="preserve"><value>تم ترحيل التكلفة الإضافية.</value></data>
+  <data name="Receipt value" xml:space="preserve"><value>قيمة الاستلام</value></data>
+  <data name="Allocations" xml:space="preserve"><value>التوزيعات</value></data>
+  <data name="Allocation basis" xml:space="preserve"><value>أساس التوزيع</value></data>
+  <data name="Average cost before" xml:space="preserve"><value>متوسط التكلفة قبل</value></data>
+  <data name="Average cost after" xml:space="preserve"><value>متوسط التكلفة بعد</value></data>
+  <data name="Landed cost number is required and cannot exceed 50 characters." xml:space="preserve"><value>رقم التكلفة الإضافية مطلوب ولا يجوز أن يتجاوز 50 حرفًا.</value></data>
+  <data name="Goods receipt and warehouse are required." xml:space="preserve"><value>استلام البضاعة والمستودع مطلوبان.</value></data>
+  <data name="Landed cost external reference is required and cannot exceed 100 characters." xml:space="preserve"><value>المرجع الخارجي للتكلفة الإضافية مطلوب ولا يجوز أن يتجاوز 100 حرف.</value></data>
+  <data name="Landed cost external reference must contain letters or numbers." xml:space="preserve"><value>يجب أن يحتوي المرجع الخارجي للتكلفة الإضافية على أحرف أو أرقام.</value></data>
+  <data name="Landed cost allocation method is invalid." xml:space="preserve"><value>طريقة توزيع التكلفة الإضافية غير صالحة.</value></data>
+  <data name="Landed cost notes cannot exceed 1000 characters." xml:space="preserve"><value>لا يجوز أن تتجاوز ملاحظات التكلفة الإضافية 1000 حرف.</value></data>
+  <data name="Each landed cost type can appear only once per document." xml:space="preserve"><value>يمكن أن يظهر كل نوع تكلفة إضافية مرة واحدة فقط في المستند.</value></data>
+  <data name="Each goods receipt line can be allocated only once per landed cost document." xml:space="preserve"><value>يمكن توزيع كل سطر استلام مرة واحدة فقط في مستند التكلفة الإضافية.</value></data>
+  <data name="A landed cost must contain at least one positive component." xml:space="preserve"><value>يجب أن تحتوي التكلفة الإضافية على مكون موجب واحد على الأقل.</value></data>
+  <data name="Landed cost allocations must equal the component total." xml:space="preserve"><value>يجب أن يساوي مجموع التوزيعات إجمالي مكونات التكلفة الإضافية.</value></data>
+  <data name="Capitalized and expensed landed cost amounts must equal the document total." xml:space="preserve"><value>يجب أن يساوي مجموع المبلغ المضاف للمخزون والمصروف إجمالي المستند.</value></data>
+  <data name="Landed cost component amount must be greater than zero." xml:space="preserve"><value>يجب أن يكون مبلغ مكون التكلفة الإضافية أكبر من صفر.</value></data>
+  <data name="Enter at least one positive landed cost component." xml:space="preserve"><value>أدخل مكون تكلفة إضافية موجبًا واحدًا على الأقل.</value></data>
+  <data name="Landed costs require a posted goods receipt." xml:space="preserve"><value>تتطلب التكاليف الإضافية استلام بضاعة مرحّلًا.</value></data>
+  <data name="Landed cost date cannot be earlier than the goods receipt date." xml:space="preserve"><value>لا يمكن أن يكون تاريخ التكلفة الإضافية أسبق من تاريخ استلام البضاعة.</value></data>
+  <data name="A landed cost with this external reference already exists." xml:space="preserve"><value>توجد تكلفة إضافية بهذا المرجع الخارجي مسبقًا.</value></data>
+  <data name="Configure the receipt warehouse inventory account before posting landed costs." xml:space="preserve"><value>اضبط حساب مخزون مستودع الاستلام قبل ترحيل التكاليف الإضافية.</value></data>
+  <data name="Configure accounting posting accounts before posting landed costs." xml:space="preserve"><value>اضبط حسابات الترحيل المحاسبي قبل ترحيل التكاليف الإضافية.</value></data>
+  <data name="Configure a landed cost clearing account before posting landed costs." xml:space="preserve"><value>اضبط حساب تسوية التكاليف الإضافية قبل ترحيلها.</value></data>
+  <data name="The goods receipt has no positive allocation basis." xml:space="preserve"><value>لا يحتوي استلام البضاعة على أساس توزيع موجب.</value></data>
+  <data name="Received product stock was not found." xml:space="preserve"><value>لم يتم العثور على مخزون المنتج المستلم.</value></data>
+  <data name="Configure a cost of sales account before expensing consumed landed costs." xml:space="preserve"><value>اضبط حساب تكلفة المبيعات قبل تحميل تكلفة إضافية مستهلكة كمصروف.</value></data>
+  <data name="Landed cost adjustment must be greater than zero." xml:space="preserve"><value>يجب أن يكون تعديل التكلفة الإضافية أكبر من صفر.</value></data>
+  <data name="Landed cost cannot be capitalized when warehouse stock is not positive." xml:space="preserve"><value>لا يمكن إضافة التكلفة إلى قيمة المخزون عندما لا تكون كمية المستودع موجبة.</value></data>
+  <data name="Landed cost type is invalid." xml:space="preserve"><value>نوع التكلفة الإضافية غير صالح.</value></data>
+  <data name="Landed cost component description cannot exceed 250 characters." xml:space="preserve"><value>لا يجوز أن يتجاوز وصف مكون التكلفة الإضافية 250 حرفًا.</value></data>
+  <data name="Landed cost allocation references are required." xml:space="preserve"><value>مراجع توزيع التكلفة الإضافية مطلوبة.</value></data>
+  <data name="Landed cost allocation values are invalid." xml:space="preserve"><value>قيم توزيع التكلفة الإضافية غير صالحة.</value></data>
+  <data name="Landed cost allocation capitalization split is invalid." xml:space="preserve"><value>تقسيم توزيع التكلفة بين المخزون والمصروف غير صالح.</value></data>
+  <data name="Landed cost product snapshots are required." xml:space="preserve"><value>بيانات المنتج المحفوظة لتوزيع التكلفة الإضافية مطلوبة.</value></data>
+  <data name="Receipt warehouse was not found." xml:space="preserve"><value>لم يتم العثور على مستودع الاستلام.</value></data>
+  <data name="This landed cost has already been posted to accounting." xml:space="preserve"><value>تم ترحيل هذه التكلفة الإضافية إلى المحاسبة مسبقًا.</value></data>
+  <data name="Supplier" xml:space="preserve"><value>المورد</value></data>
+  <data name="Warehouse" xml:space="preserve"><value>المستودع</value></data>
+  <data name="Date" xml:space="preserve"><value>التاريخ</value></data>
+  <data name="Amount" xml:space="preserve"><value>المبلغ</value></data>
+  <data name="Description" xml:space="preserve"><value>الوصف</value></data>
+  <data name="Notes" xml:space="preserve"><value>ملاحظات</value></data>
+  <data name="Back" xml:space="preserve"><value>رجوع</value></data>
+  <data name="Total" xml:space="preserve"><value>الإجمالي</value></data>
+  <data name="Type" xml:space="preserve"><value>النوع</value></data>
+  <data name="Details" xml:space="preserve"><value>التفاصيل</value></data>
 </root>

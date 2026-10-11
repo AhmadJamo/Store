@@ -20,7 +20,8 @@ public enum DocumentNumberType
     VendorBill = 14,
     SupplierPayment = 15,
     PurchaseAgreement = 16,
-    PurchaseTemplate = 17
+    PurchaseTemplate = 17,
+    LandedCost = 18
 }
 
 public enum DocumentNumberResetPeriod
@@ -145,6 +146,7 @@ public class DocumentSequence
         DocumentNumberType.SupplierPayment => new(type, "SPY-"),
         DocumentNumberType.PurchaseAgreement => new(type, "AGR-"),
         DocumentNumberType.PurchaseTemplate => new(type, "PTM-"),
+        DocumentNumberType.LandedCost => new(type, "LDC-"),
         _ => throw new ArgumentException("Unsupported document type.", nameof(type))
     };
 

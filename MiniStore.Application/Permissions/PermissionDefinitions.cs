@@ -137,6 +137,8 @@ public static class PermissionDefinitions
         new("PurchaseTemplates.Create", "Create Purchase Template", "Purchases"),
         new("PurchaseTemplates.Generate", "Generate Purchase Request From Template", "Purchases"),
         new("PurchaseTemplates.Manage", "Manage Purchase Templates", "Purchases"),
+        new("LandedCosts.View", "View Landed Costs", "Purchases"),
+        new("LandedCosts.Create", "Create and Post Landed Cost", "Purchases"),
         new("PurchaseReturns.View", "View Purchase Returns", "Purchase Returns"),
         new("PurchaseReturns.Create", "Create Purchase Return", "Purchase Returns"),
 

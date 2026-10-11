@@ -18,7 +18,8 @@ public class AccountingSettingsService(
             SalesRevenueAccountId = settings.SalesRevenueAccountId,
             CostOfSalesAccountId = settings.CostOfSalesAccountId,
             GoodsReceivedNotInvoicedAccountId = settings.GoodsReceivedNotInvoicedAccountId,
-            PurchasePriceVarianceAccountId = settings.PurchasePriceVarianceAccountId
+            PurchasePriceVarianceAccountId = settings.PurchasePriceVarianceAccountId,
+            LandedCostClearingAccountId = settings.LandedCostClearingAccountId
         };
     }
 
@@ -33,7 +34,7 @@ public class AccountingSettingsService(
                 dto.PurchaseDiscountAccountId,
                 dto.SalesDiscountAccountId,
                 dto.SalesRevenueAccountId,
-                dto.CostOfSalesAccountId, dto.GoodsReceivedNotInvoicedAccountId, dto.PurchasePriceVarianceAccountId));
+                dto.CostOfSalesAccountId, dto.GoodsReceivedNotInvoicedAccountId, dto.PurchasePriceVarianceAccountId, dto.LandedCostClearingAccountId));
         }
         else
         {
@@ -41,7 +42,7 @@ public class AccountingSettingsService(
                 dto.PurchaseDiscountAccountId,
                 dto.SalesDiscountAccountId,
                 dto.SalesRevenueAccountId,
-                dto.CostOfSalesAccountId, dto.GoodsReceivedNotInvoicedAccountId, dto.PurchasePriceVarianceAccountId);
+                dto.CostOfSalesAccountId, dto.GoodsReceivedNotInvoicedAccountId, dto.PurchasePriceVarianceAccountId, dto.LandedCostClearingAccountId);
         }
 
         await settingsRepository.SaveChangesAsync();
@@ -53,7 +54,7 @@ public class AccountingSettingsService(
         {
             dto.PurchaseDiscountAccountId, dto.SalesDiscountAccountId,
             dto.SalesRevenueAccountId, dto.CostOfSalesAccountId, dto.GoodsReceivedNotInvoicedAccountId,
-            dto.PurchasePriceVarianceAccountId
+            dto.PurchasePriceVarianceAccountId, dto.LandedCostClearingAccountId
         }.Where(x => x.HasValue).Select(x => x!.Value).Distinct().ToList();
 
         foreach (var id in ids)

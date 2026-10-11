@@ -1,7 +1,7 @@
 # Accounting implementation assessment
 > Status: PARTIALLY IMPLEMENTED  
 > Source of truth: Code  
-> Last reviewed: 2026-10-08
+> Last reviewed: 2026-10-11
 
 For the Arabic accounting-cycle, journal examples, international-standard map, mandatory software controls and ordered implementation guide, see [`ACCOUNTING_REFERENCE_AR.md`](ACCOUNTING_REFERENCE_AR.md). That reference describes the target policy and must not be read as an implemented-feature list; the status table below remains the implementation assessment.
 
@@ -60,3 +60,7 @@ Generalized reversals, currency policy and mixed-rate product tax remain planned
 ## Planned procure-to-pay accounting boundary
 
 PUR-005 accepts GRNI as the accounting bridge for the new, separate Goods Receipt and Vendor Bill flow. PO confirmation has no GL effect. A posted GRN debits the warehouse Inventory account and credits the configured Goods Received Not Invoiced account through the central fiscal-period/idempotency gateway. A posted receipt-based return may reverse only the unbilled portion: it reverses GRNI at original receipt value, removes inventory at current AVCO and records the difference in Purchase Price Variance. A posted Vendor Bill clears allocated GRNI, records the difference between bill net and receipt value in Purchase Price Variance, recognizes snapshotted recoverable input tax and credits the supplier's Accounts Payable account. A Supplier Payment then debits that payable account and credits the selected payment method's cash/bank account. SQL integration verifies receipt, bill, payment and unbilled-return journal atomicity plus concurrency protection. Inventory-to-GL reconciliation reporting remains later work. See `PURCHASE_ARCHITECTURE_ALIGNMENT.md` and `decisions/2026-10-08-grni-and-purchase-currency-boundary.md`.
+
+## PUR-130 landed-cost posting
+
+Posted Landed Costs use the company base currency and one configured clearing account. The system allocates freight, customs, insurance and other components to a posted Goods Receipt by stock quantity or frozen receipt value. The share associated with current positive warehouse stock debits Inventory and increases AVCO without changing quantity; the consumed share debits Cost of Sales. The total credits Landed Cost Clearing. The document, value-only StockTransaction and balanced journal commit atomically, and fiscal-period rules apply through the central journal gateway.

@@ -1,0 +1,5 @@
+@model List<MiniStore.Application.DTOs.Purchases.LandedCostDto>
+@inject Microsoft.Extensions.Localization.IStringLocalizer<MiniStore.Web.SharedResource> L
+@{ViewData["Title"]=L["Landed costs"];}
+<div class="d-flex justify-content-between align-items-center mb-3"><h2>@L["Landed costs"]</h2></div>
+<table class="table table-striped"><thead><tr><th>@L["Document number"]</th><th>@L["Goods receipt"]</th><th>@L["Date"]</th><th>@L["External reference"]</th><th>@L["Total"]</th><th>@L["Capitalized amount"]</th><th>@L["Expensed amount"]</th><th></th></tr></thead><tbody>@foreach(var x in Model){<tr><td>@x.CostNumber</td><td>@x.ReceiptNumber</td><td>@x.CostDate</td><td>@x.ExternalReference</td><td>@x.TotalAmount</td><td>@x.CapitalizedAmount</td><td>@x.ExpensedAmount</td><td><a asp-action="Details" asp-route-id="@x.Id" class="btn btn-sm btn-outline-primary">@L["Details"]</a></td></tr>}</tbody></table>

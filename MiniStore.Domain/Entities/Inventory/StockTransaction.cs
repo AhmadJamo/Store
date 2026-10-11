@@ -46,9 +46,9 @@ public class StockTransaction
             throw new ArgumentException(
                 "Warehouse is required.");
 
-        // Zero quantity is allowed only for Opening Balance.
+        // Zero quantity is allowed for opening balances and value-only landed-cost adjustments.
         if (quantity == 0 &&
-            type != StockTransactionType.OpeningBalance)
+            type is not (StockTransactionType.OpeningBalance or StockTransactionType.LandedCostAdjustment))
         {
             throw new ArgumentException(
                 "Quantity cannot be zero.");
