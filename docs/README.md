@@ -26,6 +26,7 @@ The approved procure-to-pay gap analysis, legacy-compatibility boundary, target 
 | [Configuration](08_CONFIGURATION.md) | Runtime composition and protected settings |
 | [Dependencies](09_DEPENDENCIES.md) | Framework and package inventory |
 | [Technical TODO](TODO.md) | Concise implementation backlog |
+| [Arabic/English master roadmap](MASTER_IMPLEMENTATION_ROADMAP_AR_EN.md) | Approved numbered delivery sequence from stabilization through production launch |
 | [Arabic roadmap](ARABIC_SHARED_ROADMAP.md) | Ordered business and technical execution plan |
 | [Arabic accounting reference](ACCOUNTING_REFERENCE_AR.md) | Accounting and ERP design reference |
 | [Purchase management evolution plan](PURCHASE_MANAGEMENT_EVOLUTION_PLAN.md) | Approved ERP procure-to-pay architecture and ordered delivery plan |

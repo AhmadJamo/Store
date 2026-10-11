@@ -2,9 +2,9 @@
 > Source of truth: Current repository scan  
 > Last reviewed: 2026-10-11
 
-The ordered Arabic execution plan, workflow, business rules and rolling suggestion queue are maintained in `ARABIC_SHARED_ROADMAP.md`. This file remains the concise technical backlog.
+The approved numbered Arabic/English delivery sequence is maintained in `MASTER_IMPLEMENTATION_ROADMAP_AR_EN.md`. Detailed working status, business rules and the rolling suggestion queue remain in `ARABIC_SHARED_ROADMAP.md`. This file remains the concise technical backlog.
 
-The inventory/WMS track is paused by product-owner direction. The active planned track is the additive purchase-management evolution in `PURCHASE_MANAGEMENT_EVOLUTION_PLAN.md`.
+The PUR-000 through PUR-150 purchase evolution is implemented. The immediate closure priority is the inventory-to-general-ledger and GRNI reconciliation report required to complete PUR-065, followed by controlled posted-document reversals. Incoming customer-management and sales requirements must be reconciled with master-roadmap steps 7 through 11 before implementation.
 
 - [x] PUR-000 complete purchase architecture review, legacy compatibility boundary, migration strategy and vertical-slice roadmap.
 - [x] PUR-005 fix context ownership, quantity authority, staged currency, approval and GRNI boundaries before runtime implementation.

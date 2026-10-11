@@ -586,3 +586,9 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
 - Added distinct View/Create/Submit/Cancel permissions, navigation, list/create/details screens and Arabic translations.
 - Product, warehouse, unit and optional suggested-supplier identities are validated by name-backed selectors; prepared-to-order products are excluded.
 - Purchase requests remain internal demand only and create no inventory or accounting effect.
+
+## 2026-10-11 — Arabic/English master implementation roadmap
+- Added `MASTER_IMPLEMENTATION_ROADMAP_AR_EN.md` with an approved 18-step delivery sequence from current-state stabilization through production launch.
+- Defined an intake workflow for future customer-management, pricing, sales, receivables and return prompts so new requirements are assigned to their dependency-correct phase before implementation.
+- Updated the documentation index, codebase map, concise TODO and shared Arabic roadmap to reference the master sequence and replace the stale immediate-priority text.
+- Documentation only; no runtime code, schema, configuration or database data changed.

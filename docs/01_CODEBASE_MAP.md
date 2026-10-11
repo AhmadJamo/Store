@@ -16,6 +16,8 @@
 
 `docs/ARABIC_SHARED_ROADMAP.md` is the shared Arabic execution roadmap. It records ordered ERP/SaaS work, business rules, workflow, task status, completion evidence and the rolling five-suggestion queue.
 
+`docs/MASTER_IMPLEMENTATION_ROADMAP_AR_EN.md` is the approved Arabic/English master sequence. It orders stabilization, security, inventory/accounting reconciliation, controlled reversals, financial reporting, company and user administration, customer management, pricing, sales, receivables, returns, warehouse completion, POS, data exchange, integrations, analytics, verification and production launch. It is a planning authority, not evidence that a planned capability is implemented.
+
 `docs/README.md` is the documentation index and recommended reading order for contributors.
 
 `docs/ACCOUNTING_REFERENCE_AR.md` is the shared Arabic accounting and software-design reference. It covers the accounting cycle, example postings, inventory valuation, sales/purchases, close, advanced topics, international-standard mapping, implementation invariants and the ordered accounting delivery plan. It is guidance rather than evidence that a feature is implemented.
