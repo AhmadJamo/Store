@@ -1,0 +1,35 @@
+@model MiniStore.Application.DTOs.Suppliers.CreateSupplierDto
+@using MiniStore.Application.DTOs.Products
+@inject Microsoft.Extensions.Localization.IStringLocalizer<MiniStore.Web.SharedResource> Localizer
+@{
+    var accounts = ViewBag.Accounts as IEnumerable<MiniStore.Application.Dtos.Accounting.AccountDto> ?? [];
+    var products = ViewBag.Products as IEnumerable<ProductDto> ?? [];
+    var selected = Model.ProductIds.ToHashSet();
+}
+<div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+<div class="row g-3">
+    <div class="col-lg-7"><section class="card h-100"><div class="card-header"><h2 class="h5 mb-0">@Localizer["Supplier identity"]</h2></div><div class="card-body row g-3">
+        <div class="col-md-6"><label asp-for="Name" class="form-label">@Localizer["Display name"]</label><input asp-for="Name" class="form-control" required maxlength="200"/><span asp-validation-for="Name" class="text-danger"></span></div>
+        <div class="col-md-6"><label asp-for="LegalName" class="form-label">@Localizer["Legal name"]</label><input asp-for="LegalName" class="form-control" maxlength="200"/></div>
+        <div class="col-md-6"><label asp-for="TaxNumber" class="form-label">@Localizer["Tax number"]</label><input asp-for="TaxNumber" class="form-control" maxlength="100"/></div>
+        <div class="col-md-6"><label asp-for="RegistrationNumber" class="form-label">@Localizer["Registration number"]</label><input asp-for="RegistrationNumber" class="form-control" maxlength="100"/></div>
+        <div class="col-12"><label asp-for="AccountId" class="form-label">@Localizer["Payable account"]</label><select asp-for="AccountId" class="form-select" required><option value="">@Localizer["Select supplier account"]</option>@foreach(var account in accounts){<option value="@account.Id">@account.Code — @account.Name</option>}</select></div>
+    </div></section></div>
+    <div class="col-lg-5"><section class="card h-100"><div class="card-header"><h2 class="h5 mb-0">@Localizer["Contact information"]</h2></div><div class="card-body row g-3">
+        <div class="col-12"><label asp-for="ContactPerson" class="form-label">@Localizer["Contact person"]</label><input asp-for="ContactPerson" class="form-control" maxlength="150"/></div>
+        <div class="col-md-6"><label asp-for="Phone" class="form-label">@Localizer["Phone"]</label><input asp-for="Phone" class="form-control" maxlength="50"/></div>
+        <div class="col-md-6"><label asp-for="Email" class="form-label">@Localizer["Email"]</label><input asp-for="Email" type="email" class="form-control" maxlength="256"/></div>
+        <div class="col-12"><label asp-for="Website" class="form-label">@Localizer["Website"]</label><input asp-for="Website" type="url" class="form-control" maxlength="500" placeholder="https://"/></div>
+    </div></section></div>
+</div>
+<section class="card mt-3"><div class="card-header"><h2 class="h5 mb-0">@Localizer["Commercial details"]</h2></div><div class="card-body row g-3">
+    <div class="col-md-4"><label asp-for="PaymentTermsDays" class="form-label">@Localizer["Payment terms (days)"]</label><input asp-for="PaymentTermsDays" type="number" min="0" max="3650" class="form-control"/></div>
+    <div class="col-md-8"><label asp-for="Address" class="form-label">@Localizer["Address"]</label><input asp-for="Address" class="form-control" maxlength="500"/></div>
+    <div class="col-12"><label asp-for="Notes" class="form-label">@Localizer["Notes"]</label><textarea asp-for="Notes" class="form-control" rows="3" maxlength="1000"></textarea></div>
+    <div class="col-12"><div class="form-check"><input asp-for="IsActive" class="form-check-input"/><label asp-for="IsActive" class="form-check-label">@Localizer["Active supplier"]</label></div></div>
+</div></section>
+<section class="card mt-3" id="supplier-products-section"><div class="card-header"><h2 class="h5 mb-1">@Localizer["Products supplied"]</h2><p class="small text-muted mb-0">@Localizer["Select products supplied by this supplier. The same assignment appears automatically on each product."]</p></div><div class="card-body">
+    <input id="product-assignment-search" type="search" class="form-control mb-3" placeholder="@Localizer["Search products"]"/>
+    <div class="row g-2" id="product-assignment-list">@foreach(var product in products){<div class="col-md-6 col-xl-4 product-assignment-option" data-search="@($"{product.ProductCode} {product.Name} {product.Barcode}".ToLowerInvariant())"><label class="border rounded p-3 d-flex gap-2 h-100"><input type="checkbox" class="form-check-input" name="ProductIds" value="@product.Id" checked="@selected.Contains(product.Id)"/><span><strong>@product.Name</strong><small class="d-block text-muted"><code>@product.ProductCode</code>@if(!string.IsNullOrWhiteSpace(product.Barcode)){<text> · @product.Barcode</text>}</small></span></label></div>}</div>
+    @if(!products.Any()){<div class="text-muted">@Localizer["No eligible active products found."]</div>}
+</div></section>

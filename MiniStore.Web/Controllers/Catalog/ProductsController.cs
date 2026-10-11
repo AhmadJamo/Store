@@ -14,17 +14,20 @@ public class ProductsController : Controller
     private readonly IStringLocalizer<SharedResource> _localizer;
     private readonly MeasurementUnitService _measurementUnitService;
     private readonly ProductCategoryService _productCategoryService;
+    private readonly SupplierService _supplierService;
 
     public ProductsController(
         ProductService productService,
         IStringLocalizer<SharedResource> localizer,
         MeasurementUnitService measurementUnitService,
-        ProductCategoryService productCategoryService)
+        ProductCategoryService productCategoryService,
+        SupplierService supplierService)
     {
         _productService = productService;
         _localizer = localizer;
         _measurementUnitService = measurementUnitService;
         _productCategoryService = productCategoryService;
+        _supplierService = supplierService;
     }
 
     [PermissionAuthorize("Products.View")]
@@ -38,7 +41,7 @@ public class ProductsController : Controller
     public async Task<IActionResult> Create()
     {
         await LoadMeasurementUnitsAsync();
-        return View();
+        return View(new CreateProductDto());
     }
 
    
@@ -133,6 +136,7 @@ public class ProductsController : Controller
             RequiresRefrigeration = product.HandlingRequirements.HasFlag(ProductHandlingRequirements.Refrigerated),
             RequiresFrozenStorage = product.HandlingRequirements.HasFlag(ProductHandlingRequirements.Frozen),
             IsHazardous = product.HandlingRequirements.HasFlag(ProductHandlingRequirements.Hazardous)
+            ,SupplierIds = product.SupplierIds
         };
 
         return View(dto);
@@ -219,5 +223,7 @@ public class ProductsController : Controller
         ViewBag.MassUnits = units.Where(unit => unit.Dimension == MeasurementDimension.Mass).ToList();
         ViewBag.LengthUnits = units.Where(unit => unit.Dimension == MeasurementDimension.Length).ToList();
         ViewBag.ProductCategories = await _productCategoryService.GetAllAsync();
+        ViewBag.Suppliers = (await _supplierService.GetAllAsync())
+            .Where(x => x.IsActive).OrderBy(x => x.Name).ToList();
     }
 }

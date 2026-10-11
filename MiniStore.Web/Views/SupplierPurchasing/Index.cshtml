@@ -24,6 +24,15 @@
 }
 else if(canManage)
 {
+    @if(Model.BulkForm.Rows.Count == 0)
+    {
+        <div class="alert alert-info d-flex flex-wrap justify-content-between align-items-center gap-2">
+            <span>@Localizer["No products are assigned to this supplier. Assign products from the supplier or product page first."]</span>
+            <a asp-controller="Suppliers" asp-action="Edit" asp-route-id="@Model.SelectedSupplierId" class="btn btn-sm btn-primary">@Localizer["Edit supplier products"]</a>
+        </div>
+    }
+    else
+    {
     <form asp-action="SaveBulk" method="post" id="bulk-purchasing-form">
         <input type="hidden" asp-for="BulkForm.SupplierId" />
         <div class="card mb-4">
@@ -62,6 +71,7 @@ else if(canManage)
             <div class="card-footer d-flex flex-wrap justify-content-between align-items-center gap-2"><span id="selected-count" class="text-muted"></span><span id="selected-products-label" class="d-none">@Localizer["Selected products"]</span><button class="btn btn-primary">@Localizer["Save selected products"]</button></div>
         </div>
     </form>
+    }
 }
 
 @if(Model.SelectedSupplierId.HasValue&&Model.Rows.Count>0)

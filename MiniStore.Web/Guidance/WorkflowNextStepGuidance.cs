@@ -129,6 +129,11 @@ public static class WorkflowNextStepGuidance
                 "Add or review storage locations before assigning stock inside the warehouse.",
                 "Warehouses.View", Routes(("warehouseId", Route("warehouseId"))));
 
+        if (Matches(message, localize, "Supplier created successfully.", "Supplier updated successfully."))
+            return new("SupplierPurchasing", "Index", "Configure supplier purchasing data",
+                "Complete prices, order quantities and lead times for the supplier's assigned products.",
+                "Purchases.SupplierTerms.View", Routes(("supplierId", Route("supplierId") ?? Route("id"))));
+
         if (Matches(message, localize, "Storage location updated successfully."))
             return new("UnassignedStock", "Index", "Review unassigned stock",
                 "Move received stock from the unassigned position to its storage location.",

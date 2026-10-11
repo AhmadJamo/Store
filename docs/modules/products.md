@@ -1,5 +1,5 @@
 # Products and recipes
-> Status: IMPLEMENTED | Last reviewed: 2026-10-04
+> Status: IMPLEMENTED | Last reviewed: 2026-10-12
 
 ## Purpose and flow
 Manages database-generated product code, optional barcode, raw/direct/prepared classification, product category, logistics measurements, handling requirements, future tracking policy, active state, POS/sales channel availability, prices and stock unit. `RecipesController` and `RecipeService` create immutable recipe versions for prepared products; saving a recipe automatically marks the product prepared-to-order and clears direct purchase price.
@@ -11,6 +11,8 @@ WMS-015C/D add optional ProductTemplate grouping for existing concrete Product S
 Settings → Measurement Units manages a tenant-local catalogue of count, mass, volume and length units with base conversion factors and precision. Products reference an active managed stock unit. Recipe lines select a compatible managed unit and freeze both authored/stock unit codes and factors with the converted stock quantity, so later configuration changes cannot rewrite historical consumption. Legacy enum columns remain only as a compatibility bridge.
 
 ## Rules and dependencies
+Direct-sale and raw-material forms can select multiple active suppliers. These selections use the same `SupplierProductPurchasingInfo` relationship as the Supplier form, so both screens stay synchronized without duplicate association data. Removing a supplier deactivates and preserves prior purchasing terms. Prepared-to-order products cannot be supplier-assigned because their ingredients are purchased instead.
+
 Name is required; barcode is optional and unique per company when supplied. Category is optional. Weight requires a Mass unit; gross weight cannot be lower than net weight. Length, width and height must be positive and entered together with a Length unit. Refrigerated and Frozen are mutually exclusive. Lot/Serial cannot be enabled for a product with any non-zero warehouse balance, and WMS-005 does not yet execute tracked receipts. Raw materials cannot use sales channels. Direct-sale products retain purchase/wholesale/retail validation, while prepared products have no direct purchase price. Product search covers name, code and barcode with type/category/tracking/status/channel filters, sorting and paging. Recipe lines require distinct stocked ingredients and compatible managed units from the same count/mass/volume dimension. Each product can explicitly allow controlled negative use only through recipe/kitchen workflows. Recipes reuse Products.View/Edit permissions. Product and recipe deletion remains restricted by operational history.
 
 ## Shelf-life policy

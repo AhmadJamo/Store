@@ -1,136 +1,101 @@
-﻿using MiniStore.Application.DTOs.Suppliers;
+using MiniStore.Application.DTOs.Suppliers;
 using MiniStore.Domain.Entities;
 using MiniStore.Domain.Interfaces;
 
 namespace MiniStore.Application.Services;
 
-public class SupplierService
+public class SupplierService(
+    ISupplierRepository supplierRepository,
+    IAccountRepository accountRepository,
+    SupplierProductAssignmentService assignments,
+    IUnitOfWork unitOfWork)
 {
-    private readonly ISupplierRepository _supplierRepository;
-    private readonly IAccountRepository _accountRepository;
-
-    public SupplierService(
-        ISupplierRepository supplierRepository, IAccountRepository accountRepository)
-    {
-        _supplierRepository = supplierRepository;
-        _accountRepository = accountRepository;
-    }
-
     public async Task<List<SupplierDto>> GetAllAsync()
     {
-        var suppliers =
-            await _supplierRepository.GetAllAsync();
-
-        return suppliers
-            .Select(supplier => new SupplierDto
-            {
-                Id = supplier.Id,
-                Name = supplier.Name,
-                Phone = supplier.Phone,
-                Address = supplier.Address, AccountId = supplier.AccountId
-            })
-            .ToList();
+        var suppliers = await supplierRepository.GetAllAsync();
+        var result = new List<SupplierDto>(suppliers.Count);
+        foreach (var supplier in suppliers)
+            result.Add(await MapAsync(supplier));
+        return result;
     }
 
     public async Task<SupplierDto?> GetByIdAsync(int id)
     {
-        var supplier =
-            await _supplierRepository.GetByIdAsync(id);
+        var supplier = await supplierRepository.GetByIdAsync(id);
+        return supplier is null ? null : await MapAsync(supplier);
+    }
 
-        if (supplier == null)
-            return null;
+    public async Task<int> CreateAsync(CreateSupplierDto dto)
+    {
+        await ValidateNameAsync(dto.Name);
+        var supplier = new Supplier(dto.Name, dto.Phone, dto.Address);
+        supplier.UpdateProfile(dto.LegalName, dto.ContactPerson, dto.Phone, dto.Email, dto.Address,
+            dto.TaxNumber, dto.RegistrationNumber, dto.Website, dto.PaymentTermsDays, dto.Notes, dto.IsActive);
+        await AssignAccount(supplier, dto.AccountId);
 
-        return new SupplierDto
+        await unitOfWork.ExecuteInTransactionAsync(async () =>
         {
-            Id = supplier.Id,
-            Name = supplier.Name,
-            Phone = supplier.Phone,
-            Address = supplier.Address, AccountId = supplier.AccountId
-        };
+            await supplierRepository.AddAsync(supplier);
+            await unitOfWork.FlushAsync();
+            await assignments.ApplyForSupplierAsync(supplier.Id, dto.IsActive ? dto.ProductIds : []);
+        });
+        return supplier.Id;
     }
 
-    public async Task CreateAsync(
-        CreateSupplierDto dto)
+    public async Task UpdateAsync(int id, UpdateSupplierDto dto)
     {
-        if (string.IsNullOrWhiteSpace(dto.Name))
-            throw new ArgumentException(
-                "Supplier name is required.");
-
-        var suppliers =
-            await _supplierRepository.GetAllAsync();
-
-        var existingSupplier =
-            suppliers.FirstOrDefault(x =>
-                x.Name.Equals(
-                    dto.Name.Trim(),
-                    StringComparison.OrdinalIgnoreCase));
-
-        if (existingSupplier != null)
-            throw new InvalidOperationException(
-                "A supplier with this name already exists.");
-
-        var supplier = new Supplier(
-            dto.Name,
-            dto.Phone,
-            dto.Address);
+        var supplier = await supplierRepository.GetByIdAsync(id)
+            ?? throw new InvalidOperationException("Supplier not found.");
+        if (!supplier.RowVersion.SequenceEqual(dto.RowVersion))
+            throw new InvalidOperationException("Supplier was modified by another user. Reload and try again.");
+        await ValidateNameAsync(dto.Name, id);
         await AssignAccount(supplier, dto.AccountId);
 
-        await _supplierRepository.AddAsync(supplier);
-
-        await _supplierRepository.SaveChangesAsync();
-    }
-
-    public async Task UpdateAsync(
-        int id,
-        UpdateSupplierDto dto)
-    {
-        var supplier =
-            await _supplierRepository.GetByIdAsync(id);
-
-        if (supplier == null)
-            throw new InvalidOperationException(
-                "Supplier not found.");
-
-        var suppliers =
-            await _supplierRepository.GetAllAsync();
-
-        var existingSupplier =
-            suppliers.FirstOrDefault(x =>
-                x.Id != id &&
-                x.Name.Equals(
-                    dto.Name.Trim(),
-                    StringComparison.OrdinalIgnoreCase));
-
-        if (existingSupplier != null)
-            throw new InvalidOperationException(
-                "A supplier with this name already exists.");
-
-        supplier.ChangeName(dto.Name);
-        supplier.ChangePhone(dto.Phone);
-        supplier.ChangeAddress(dto.Address);
-        await AssignAccount(supplier, dto.AccountId);
-
-        await _supplierRepository.SaveChangesAsync();
+        await unitOfWork.ExecuteInTransactionAsync(async () =>
+        {
+            supplier.ChangeName(dto.Name);
+            supplier.UpdateProfile(dto.LegalName, dto.ContactPerson, dto.Phone, dto.Email, dto.Address,
+                dto.TaxNumber, dto.RegistrationNumber, dto.Website, dto.PaymentTermsDays, dto.Notes, dto.IsActive);
+            await assignments.ApplyForSupplierAsync(id, dto.IsActive ? dto.ProductIds : []);
+        });
     }
 
     public async Task DeleteAsync(int id)
     {
-        var supplier =
-            await _supplierRepository.GetByIdAsync(id);
+        var supplier = await supplierRepository.GetByIdAsync(id)
+            ?? throw new InvalidOperationException("Supplier not found.");
+        await supplierRepository.DeleteAsync(supplier);
+        await supplierRepository.SaveChangesAsync();
+    }
 
-        if (supplier == null)
-            throw new InvalidOperationException(
-                "Supplier not found.");
-
-        await _supplierRepository.DeleteAsync(supplier);
-
-        await _supplierRepository.SaveChangesAsync();
+    private async Task ValidateNameAsync(string name, int? excludingId = null)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+            throw new ArgumentException("Supplier name is required.");
+        if ((await supplierRepository.GetAllAsync()).Any(x => x.Id != excludingId &&
+            x.Name.Equals(name.Trim(), StringComparison.OrdinalIgnoreCase)))
+            throw new InvalidOperationException("A supplier with this name already exists.");
     }
 
     private async Task AssignAccount(Supplier supplier, int accountId)
     {
-        if (await _accountRepository.GetByIdAsync(accountId) == null)
+        if (await accountRepository.GetByIdAsync(accountId) is null)
             throw new InvalidOperationException("Selected supplier account was not found.");
         supplier.AssignPayableAccount(accountId);
+    }
+
+    private async Task<SupplierDto> MapAsync(Supplier supplier)
+    {
+        var productIds = await assignments.GetProductIdsForSupplierAsync(supplier.Id);
+        return new SupplierDto
+        {
+            Id = supplier.Id, Name = supplier.Name, LegalName = supplier.LegalName,
+            ContactPerson = supplier.ContactPerson, Phone = supplier.Phone, Email = supplier.Email,
+            Address = supplier.Address, TaxNumber = supplier.TaxNumber,
+            RegistrationNumber = supplier.RegistrationNumber, Website = supplier.Website,
+            PaymentTermsDays = supplier.PaymentTermsDays, Notes = supplier.Notes,
+            IsActive = supplier.IsActive, AccountId = supplier.AccountId,
+            ProductIds = productIds, ProductCount = productIds.Count, RowVersion = supplier.RowVersion
+        };
     }
 }

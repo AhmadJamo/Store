@@ -1,0 +1,10 @@
+<script>
+document.addEventListener('DOMContentLoaded',()=>{
+ const search=document.getElementById('product-assignment-search'); if(!search)return;
+ const options=[...document.querySelectorAll('.product-assignment-option')];
+ search.addEventListener('input',()=>{const value=search.value.trim().toLowerCase();options.forEach(option=>option.hidden=value&&!option.dataset.search.includes(value));});
+ const active=document.getElementById('IsActive'),section=document.getElementById('supplier-products-section');
+ const refresh=()=>{section.classList.toggle('d-none',!active.checked);if(!active.checked)section.querySelectorAll('input[type="checkbox"]').forEach(x=>x.checked=false);};
+ active.addEventListener('change',refresh);refresh();
+});
+</script>

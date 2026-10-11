@@ -14,6 +14,8 @@ using MiniStore.Application.Permissions;
 using MiniStore.Application.DTOs.Settings;
 using MiniStore.Application.DTOs.Inventory.Tracking;
 using MiniStore.Application.DTOs.Purchases;
+using MiniStore.Application.DTOs.Products;
+using MiniStore.Application.DTOs.Suppliers;
 using MiniStore.Application.Services;
 using MiniStore.Infrastructure.Authorization;
 using MiniStore.Infrastructure.Persistence;
@@ -1131,6 +1133,13 @@ var supplierTermsIndex = supplierTermsType.GetIndexes().Single(index => index.Is
         nameof(SupplierProductPurchasingInfo.PurchaseMeasurementUnitId)]));
 Check(supplierTermsIndex is not null,
     "Supplier/product/purchase-unit identity must be unique per tenant");
+var supplierType = db.Model.FindEntityType(typeof(Supplier))!;
+Check(supplierType.FindProperty(nameof(Supplier.RowVersion))!.IsConcurrencyToken,
+    "Supplier profile updates must be rowversion protected");
+Check(typeof(CreateSupplierDto).GetProperty(nameof(CreateSupplierDto.ProductIds)) is not null &&
+      typeof(CreateProductDto).GetProperty(nameof(CreateProductDto.SupplierIds)) is not null &&
+      typeof(UpdateProductDto).GetProperty(nameof(UpdateProductDto.SupplierIds)) is not null,
+    "Supplier and product forms must expose the same bidirectional assignment relationship");
 var supplierTermsIndexAction = typeof(SupplierPurchasingController)
     .GetMethod(nameof(SupplierPurchasingController.Index))!;
 var supplierTermsSaveAction = typeof(SupplierPurchasingController)
@@ -1559,6 +1568,17 @@ Check(warehouseNextStep is
           RequiredPermission: "Warehouses.View"
       },
     "Completed warehouse setup must guide users to storage locations with the correct permission");
+var supplierNextStep = WorkflowNextStepGuidance.Resolve(
+    "Supplier created successfully.",
+    "Suppliers",
+    new Dictionary<string, string?> { ["supplierId"] = "17" });
+Check(supplierNextStep is
+      {
+          Controller: "SupplierPurchasing",
+          Action: "Index",
+          RequiredPermission: "Purchases.SupplierTerms.View"
+      } && supplierNextStep.RouteValues.GetValueOrDefault("supplierId") == "17",
+    "Completed supplier setup must guide users to purchasing terms for the same supplier");
 Check(WorkflowNextStepGuidance.Resolve(
           "Operation completed successfully.",
           "Sales",

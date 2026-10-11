@@ -5,6 +5,8 @@ namespace MiniStore.Domain.Interfaces;
 public interface ISupplierProductPurchasingInfoRepository
 {
     Task<List<SupplierProductPurchasingInfo>> GetAllAsync();
+    Task<List<SupplierProductPurchasingInfo>> GetBySupplierIdAsync(int supplierId);
+    Task<List<SupplierProductPurchasingInfo>> GetByProductIdAsync(int productId);
     Task<SupplierProductPurchasingInfo?> GetByIdAsync(int id);
     Task<SupplierProductPurchasingInfo?> FindDuplicateAsync(
         int supplierId, int productId, int purchaseMeasurementUnitId, int? excludingId = null);

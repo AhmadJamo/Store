@@ -29,7 +29,7 @@ All business tables have a required `TenantId` foreign key to `Tenants`. EF quer
 | Accounts / Branches / JournalEntries / JournalEntryLines | hierarchical chart; branches optionally reference a sales-revenue subaccount; journal lines hold debit/credit plus optional branch/warehouse dimensions. A journal source type/reference has a filtered unique index to prevent a document from posting twice. |
 | PurchaseReturns / PurchaseReturnItems | immutable tenant-owned supplier-return headers/lines linked to original purchase/items with proportional accounting and actual inventory-cost snapshots. |
 | FiscalPeriods | tenant accounting date ranges with Open/SoftClosed/Closed status, status-change audit metadata, date/status checks and SQL rowversion concurrency. Application validation prevents overlapping ranges. |
-| Warehouses, Suppliers | Warehouses link a branch/inventory account and persist operational type, control mode, picking, POS, capacity and transfer-location policies; suppliers can link a payable account. |
+| Warehouses, Suppliers | Warehouses link a branch/inventory account and persist operational type, control mode, picking, POS, capacity and transfer-location policies; suppliers store legal/contact/tax/commercial profile data, active state, payable account and rowversion. |
 | InventoryTrackingTransactions | Immutable lot/serial trace rows include nullable picking-strategy provenance; null identifies history created before `AddTrackedRemovalStrategyAudit`. |
 | StockTransferItems | Transfer lines retain optional manual lot/serial allocation text through draft/edit/post; `AddTransferTrackingAllocations` leaves historic rows null. |
 | PutawayRules | Tenant-owned warehouse location suggestions optionally target a product or category and retain priority/active state. |
@@ -95,6 +95,8 @@ Migration `AddReplenishmentRules` creates tenant-owned `ReplenishmentRules` with
 
 Migration `AddReplenishmentPurchaseDemand` adds optional source type/reference provenance to Purchase Requests and a filtered tenant-unique index that permits only one non-cancelled request for a replenishment rule. It was applied to `AHMAD/MiniStoreDb` on 2026-10-10; existing requests remain unchanged with null source fields.
 # PUR-010 supplier purchasing data
+
+Migration `EnhanceSupplierProfilesAndProductAssignments` adds nullable legal name, contact, email, tax, registration, website and notes fields plus payment-term days, active state and database-generated rowversion to `Suppliers`. Existing suppliers are backfilled active. Product assignment reuses active `SupplierProductPurchasingInfos`; no second join table or duplicate relationship is introduced. It was applied to local `MiniStoreDb` on 2026-10-12.
 
 Migration `AddSupplierPurchasingData` additively creates tenant-owned `SupplierProductPurchasingInfos`. Composite tenant foreign keys restrict Supplier, Product and MeasurementUnit references to the same company. A tenant-scoped unique index enforces one row per supplier + product + purchase unit; rowversion protects mutable terms. No legacy Purchase, inventory or accounting row is changed or backfilled. The migration was generated, model-verified and applied to `AHMAD/MiniStoreDb` on 2026-10-08 using the authorized host Windows identity.
 

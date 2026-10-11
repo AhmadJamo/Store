@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using MiniStore.Application.DTOs.Suppliers;
 using MiniStore.Application.Services;
 using MiniStore.Web.Authorization;
+using Microsoft.Extensions.Localization;
+using MiniStore.Domain.Entities;
 
 namespace MiniStore.Web.Controllers;
 
@@ -10,12 +12,17 @@ public class SuppliersController : Controller
 {
     private readonly SupplierService _supplierService;
     private readonly AccountService _accountService;
+    private readonly ProductService _productService;
+    private readonly IStringLocalizer<SharedResource> _localizer;
 
     public SuppliersController(
-        SupplierService supplierService, AccountService accountService)
+        SupplierService supplierService, AccountService accountService,
+        ProductService productService, IStringLocalizer<SharedResource> localizer)
     {
         _supplierService = supplierService;
         _accountService = accountService;
+        _productService = productService;
+        _localizer = localizer;
     }
 
     [HttpGet]
@@ -33,8 +40,8 @@ public class SuppliersController : Controller
     [PermissionAuthorize("Suppliers.Create")]
     public async Task<IActionResult> Create()
     {
-        await LoadAccounts();
-        return View();
+        await LoadFormOptions();
+        return View(new CreateSupplierDto());
     }
 
     [HttpPost]
@@ -48,18 +55,23 @@ public class SuppliersController : Controller
             TempData["NotificationMessage"] =
                 "Please check the entered data.";
 
-            await LoadAccounts(); return View(dto);
+            await LoadFormOptions(); return View(dto);
         }
 
         try
         {
-            await _supplierService.CreateAsync(dto);
+            var supplierId = await _supplierService.CreateAsync(dto);
 
             TempData["NotificationType"] = "success";
             TempData["NotificationMessage"] =
                 "Supplier created successfully.";
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Index), new { supplierId });
+        }
+        catch (Exception ex) when (ex is ArgumentException or InvalidOperationException)
+        {
+            ModelState.AddModelError(string.Empty, _localizer[ex.Message]);
+            await LoadFormOptions(); return View(dto);
         }
         catch (Exception ex)
         {
@@ -69,7 +81,7 @@ public class SuppliersController : Controller
             TempData["NotificationMessage"] =
                 "The operation could not be completed. Please try again or contact the administrator.";
 
-            await LoadAccounts(); return View(dto);
+            await LoadFormOptions(); return View(dto);
         }
     }
 
@@ -91,13 +103,15 @@ public class SuppliersController : Controller
 
         var dto = new UpdateSupplierDto
         {
-            Name = supplier.Name,
-            Phone = supplier.Phone,
-            Address = supplier.Address
-            , AccountId = supplier.AccountId ?? 0
+            Name = supplier.Name, LegalName = supplier.LegalName, ContactPerson = supplier.ContactPerson,
+            Phone = supplier.Phone, Email = supplier.Email, Address = supplier.Address,
+            TaxNumber = supplier.TaxNumber, RegistrationNumber = supplier.RegistrationNumber,
+            Website = supplier.Website, PaymentTermsDays = supplier.PaymentTermsDays,
+            Notes = supplier.Notes, IsActive = supplier.IsActive, AccountId = supplier.AccountId ?? 0,
+            ProductIds = supplier.ProductIds, RowVersion = supplier.RowVersion
         };
 
-        await LoadAccounts(); return View(dto);
+        await LoadFormOptions(); return View(dto);
     }
 
     [HttpPost]
@@ -112,7 +126,7 @@ public class SuppliersController : Controller
             TempData["NotificationMessage"] =
                 "Please check the entered data.";
 
-            await LoadAccounts(); return View(dto);
+            await LoadFormOptions(); return View(dto);
         }
 
         try
@@ -123,7 +137,12 @@ public class SuppliersController : Controller
             TempData["NotificationMessage"] =
                 "Supplier updated successfully.";
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Index), new { supplierId = id });
+        }
+        catch (Exception ex) when (ex is ArgumentException or InvalidOperationException)
+        {
+            ModelState.AddModelError(string.Empty, _localizer[ex.Message]);
+            await LoadFormOptions(); return View(dto);
         }
         catch (Exception ex)
         {
@@ -133,7 +152,7 @@ public class SuppliersController : Controller
             TempData["NotificationMessage"] =
                 "The operation could not be completed. Please try again or contact the administrator.";
 
-            await LoadAccounts(); return View(dto);
+            await LoadFormOptions(); return View(dto);
         }
     }
 
@@ -161,5 +180,11 @@ public class SuppliersController : Controller
         return RedirectToAction(nameof(Index));
     }
 
-    private async Task LoadAccounts() => ViewBag.Accounts = await _accountService.GetAllAsync();
+    private async Task LoadFormOptions()
+    {
+        ViewBag.Accounts = await _accountService.GetAllAsync();
+        ViewBag.Products = (await _productService.GetAllAsync(null))
+            .Where(x => x.IsActive && x.ProductType != ProductType.PreparedToOrder)
+            .OrderBy(x => x.Name).ToList();
+    }
 }

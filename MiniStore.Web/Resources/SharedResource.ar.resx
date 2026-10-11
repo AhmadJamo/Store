@@ -1506,4 +1506,65 @@
   <data name="Price valid until (optional)" xml:space="preserve"><value>السعر ساري حتى — اختياري</value></data>
   <data name="Leave empty when the price has no specified end date." xml:space="preserve"><value>اتركه فارغًا إذا لم يكن للسعر تاريخ انتهاء محدد.</value></data>
   <data name="Show explanation" xml:space="preserve"><value>عرض الشرح</value></data>
+  <data name="Create supplier" xml:space="preserve"><value>إنشاء مورد</value></data>
+  <data name="Edit supplier" xml:space="preserve"><value>تعديل المورد</value></data>
+  <data name="Build the supplier profile and choose its products in one place." xml:space="preserve"><value>أنشئ ملف المورد واختر منتجاته من مكان واحد.</value></data>
+  <data name="Update supplier details and product assignments together." xml:space="preserve"><value>حدّث بيانات المورد والمنتجات المرتبطة به معًا.</value></data>
+  <data name="Save supplier" xml:space="preserve"><value>حفظ المورد</value></data>
+  <data name="Supplier identity" xml:space="preserve"><value>بيانات هوية المورد</value></data>
+  <data name="Display name" xml:space="preserve"><value>الاسم الظاهر</value></data>
+  <data name="Legal name" xml:space="preserve"><value>الاسم القانوني</value></data>
+  <data name="Tax number" xml:space="preserve"><value>الرقم الضريبي</value></data>
+  <data name="Registration number" xml:space="preserve"><value>رقم السجل التجاري</value></data>
+  <data name="Payable account" xml:space="preserve"><value>حساب الذمم الدائنة</value></data>
+  <data name="Select supplier account" xml:space="preserve"><value>اختر حساب المورد</value></data>
+  <data name="Contact information" xml:space="preserve"><value>معلومات الاتصال</value></data>
+  <data name="Contact person" xml:space="preserve"><value>مسؤول الاتصال</value></data>
+  <data name="Website" xml:space="preserve"><value>الموقع الإلكتروني</value></data>
+  <data name="Commercial details" xml:space="preserve"><value>التفاصيل التجارية</value></data>
+  <data name="Payment terms (days)" xml:space="preserve"><value>مهلة السداد (بالأيام)</value></data>
+  <data name="Active supplier" xml:space="preserve"><value>مورد نشط</value></data>
+  <data name="Products supplied" xml:space="preserve"><value>المنتجات التي يوردها</value></data>
+  <data name="Select products supplied by this supplier. The same assignment appears automatically on each product." xml:space="preserve"><value>اختر المنتجات التي يوردها هذا المورد. سيظهر الربط نفسه تلقائيًا داخل كل منتج.</value></data>
+  <data name="Search products" xml:space="preserve"><value>البحث في المنتجات</value></data>
+  <data name="No eligible active products found." xml:space="preserve"><value>لا توجد منتجات نشطة مؤهلة.</value></data>
+  <data name="Suppliers for this product" xml:space="preserve"><value>موردو هذا المنتج</value></data>
+  <data name="Select one or more suppliers. The same assignment appears automatically on each supplier profile." xml:space="preserve"><value>اختر موردًا واحدًا أو أكثر. سيظهر الربط نفسه تلقائيًا داخل ملف كل مورد.</value></data>
+  <data name="Search suppliers" xml:space="preserve"><value>البحث في الموردين</value></data>
+  <data name="No contact details" xml:space="preserve"><value>لا توجد بيانات اتصال</value></data>
+  <data name="No active suppliers found." xml:space="preserve"><value>لا يوجد موردون نشطون.</value></data>
+  <data name="Manage supplier profiles, contacts, accounting and supplied products." xml:space="preserve"><value>إدارة ملفات الموردين وبيانات الاتصال والحسابات والمنتجات التي يوردونها.</value></data>
+  <data name="Add supplier" xml:space="preserve"><value>إضافة مورد</value></data>
+  <data name="No suppliers found." xml:space="preserve"><value>لا يوجد موردون.</value></data>
+  <data name="Assigned products" xml:space="preserve"><value>المنتجات المرتبطة</value></data>
+  <data name="days" xml:space="preserve"><value>يوم</value></data>
+  <data name="Edit profile" xml:space="preserve"><value>تعديل الملف</value></data>
+  <data name="Purchasing data" xml:space="preserve"><value>بيانات الشراء</value></data>
+  <data name="Are you sure you want to delete this item?" xml:space="preserve"><value>هل أنت متأكد من حذف هذا العنصر؟</value></data>
+  <data name="Open purchasing data" xml:space="preserve"><value>فتح بيانات الشراء</value></data>
+  <data name="No products are assigned to this supplier. Assign products from the supplier or product page first." xml:space="preserve"><value>لا توجد منتجات مرتبطة بهذا المورد. اربط المنتجات من صفحة المورد أو المنتج أولًا.</value></data>
+  <data name="Edit supplier products" xml:space="preserve"><value>تعديل منتجات المورد</value></data>
+  <data name="Selected supplier was not found." xml:space="preserve"><value>المورد المحدد غير موجود.</value></data>
+  <data name="Selected supplier is inactive." xml:space="preserve"><value>المورد المحدد غير نشط.</value></data>
+  <data name="Selected product was not found." xml:space="preserve"><value>المنتج المحدد غير موجود.</value></data>
+  <data name="Selected product is inactive." xml:space="preserve"><value>المنتج المحدد غير نشط.</value></data>
+  <data name="Prepared-to-order products cannot be assigned to suppliers." xml:space="preserve"><value>لا يمكن ربط المنتجات المحضرة حسب الطلب بالموردين.</value></data>
+  <data name="The product must have an active managed stock unit before assigning a supplier." xml:space="preserve"><value>يجب أن يحتوي المنتج على وحدة مخزون نشطة قبل ربطه بمورد.</value></data>
+  <data name="Supplier was modified by another user. Reload and try again." xml:space="preserve"><value>عُدّلت بيانات المورد من مستخدم آخر. أعد تحميل الصفحة وحاول مجددًا.</value></data>
+  <data name="Supplier legal name cannot exceed 200 characters." xml:space="preserve"><value>لا يجوز أن يتجاوز الاسم القانوني للمورد 200 حرف.</value></data>
+  <data name="Supplier contact person cannot exceed 150 characters." xml:space="preserve"><value>لا يجوز أن يتجاوز اسم مسؤول اتصال المورد 150 حرفًا.</value></data>
+  <data name="Supplier phone cannot exceed 50 characters." xml:space="preserve"><value>لا يجوز أن يتجاوز هاتف المورد 50 حرفًا.</value></data>
+  <data name="Supplier email address is invalid." xml:space="preserve"><value>عنوان البريد الإلكتروني للمورد غير صالح.</value></data>
+  <data name="Supplier address cannot exceed 500 characters." xml:space="preserve"><value>لا يجوز أن يتجاوز عنوان المورد 500 حرف.</value></data>
+  <data name="Supplier tax number cannot exceed 100 characters." xml:space="preserve"><value>لا يجوز أن يتجاوز الرقم الضريبي للمورد 100 حرف.</value></data>
+  <data name="Supplier registration number cannot exceed 100 characters." xml:space="preserve"><value>لا يجوز أن يتجاوز رقم سجل المورد 100 حرف.</value></data>
+  <data name="Supplier website must be a valid HTTP or HTTPS address." xml:space="preserve"><value>يجب أن يكون موقع المورد عنوان HTTP أو HTTPS صالحًا.</value></data>
+  <data name="Supplier payment terms must be between 0 and 3650 days." xml:space="preserve"><value>يجب أن تكون مهلة سداد المورد بين 0 و3650 يومًا.</value></data>
+  <data name="Supplier notes cannot exceed 1000 characters." xml:space="preserve"><value>لا يجوز أن تتجاوز ملاحظات المورد 1000 حرف.</value></data>
+  <data name="Selected supplier account was not found." xml:space="preserve"><value>حساب المورد المحدد غير موجود.</value></data>
+  <data name="Supplier name is required." xml:space="preserve"><value>اسم المورد مطلوب.</value></data>
+  <data name="A supplier with this name already exists." xml:space="preserve"><value>يوجد مورد بهذا الاسم مسبقًا.</value></data>
+  <data name="Supplier not found." xml:space="preserve"><value>المورد غير موجود.</value></data>
+  <data name="Configure supplier purchasing data" xml:space="preserve"><value>تهيئة بيانات شراء المورد</value></data>
+  <data name="Complete prices, order quantities and lead times for the supplier's assigned products." xml:space="preserve"><value>أكمل الأسعار وكميات الطلب ومدد التوريد للمنتجات المرتبطة بالمورد.</value></data>
 </root>

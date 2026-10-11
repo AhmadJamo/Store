@@ -12,6 +12,18 @@ public sealed class SupplierProductPurchasingInfoRepository(AppDbContext context
         .OrderBy(x => x.ProductId).ThenBy(x => x.Priority).ThenBy(x => x.SupplierId)
         .ToListAsync();
 
+    public Task<List<SupplierProductPurchasingInfo>> GetBySupplierIdAsync(int supplierId) =>
+        context.SupplierProductPurchasingInfos
+            .Where(x => x.SupplierId == supplierId)
+            .OrderBy(x => x.ProductId).ThenBy(x => x.Priority)
+            .ToListAsync();
+
+    public Task<List<SupplierProductPurchasingInfo>> GetByProductIdAsync(int productId) =>
+        context.SupplierProductPurchasingInfos
+            .Where(x => x.ProductId == productId)
+            .OrderBy(x => x.Priority).ThenBy(x => x.SupplierId)
+            .ToListAsync();
+
     public Task<SupplierProductPurchasingInfo?> GetByIdAsync(int id) =>
         context.SupplierProductPurchasingInfos.FirstOrDefaultAsync(x => x.Id == id);
 

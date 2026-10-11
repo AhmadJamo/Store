@@ -1,11 +1,6 @@
-﻿namespace MiniStore.Application.DTOs.Suppliers;
+namespace MiniStore.Application.DTOs.Suppliers;
 
-public class UpdateSupplierDto
+public class UpdateSupplierDto : CreateSupplierDto
 {
-    public string Name { get; set; } = string.Empty;
-
-    public string? Phone { get; set; }
-
-    public string? Address { get; set; }
-    public int AccountId { get; set; }
+    public byte[] RowVersion { get; set; } = [];
 }

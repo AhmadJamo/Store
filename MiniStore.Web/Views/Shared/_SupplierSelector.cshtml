@@ -1,0 +1,28 @@
+@model IReadOnlyCollection<int>
+@using MiniStore.Application.DTOs.Suppliers
+@inject Microsoft.Extensions.Localization.IStringLocalizer<MiniStore.Web.SharedResource> Localizer
+@{
+    var suppliers = ViewBag.Suppliers as IEnumerable<SupplierDto> ?? [];
+    var selected = Model.ToHashSet();
+}
+<section id="supplier-assignment" class="card mt-3">
+    <div class="card-header">
+        <h2 class="h5 mb-1">@Localizer["Suppliers for this product"]</h2>
+        <p class="small text-muted mb-0">@Localizer["Select one or more suppliers. The same assignment appears automatically on each supplier profile."]</p>
+    </div>
+    <div class="card-body">
+        <input type="search" class="form-control mb-3 assignment-search" placeholder="@Localizer["Search suppliers"]" aria-label="@Localizer["Search suppliers"]" />
+        <div class="row g-2 assignment-list">
+            @foreach (var supplier in suppliers)
+            {
+                <div class="col-md-6 col-xl-4 assignment-option" data-search="@($"{supplier.Name} {supplier.ContactPerson} {supplier.Phone}".ToLowerInvariant())">
+                    <label class="border rounded p-3 d-flex gap-2 h-100">
+                        <input type="checkbox" class="form-check-input supplier-assignment-check" name="SupplierIds" value="@supplier.Id" checked="@selected.Contains(supplier.Id)" />
+                        <span><strong>@supplier.Name</strong><small class="d-block text-muted">@(supplier.ContactPerson ?? supplier.Phone ?? Localizer["No contact details"])</small></span>
+                    </label>
+                </div>
+            }
+        </div>
+        @if (!suppliers.Any()) { <div class="text-muted">@Localizer["No active suppliers found."]</div> }
+    </div>
+</section>

@@ -32,4 +32,6 @@ public class CreateProductDto : ProductLogisticsInputDto
 
     public bool IsActive { get; set; } = true;
 
+    public List<int> SupplierIds { get; set; } = [];
+
 }

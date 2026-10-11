@@ -640,3 +640,11 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
 - Replaced the wide bulk table and saved-row table with responsive product cards and a wrapping summary list. Field labels now follow a consistent business grouping and the screen no longer requires horizontal scrolling.
 - Reworded price validity, selection order, order multiple and supply lead-time fields in plain business language and added short examples/help under each field in both supported languages.
 - Moved those inline explanations into accessible question-mark tooltips that open on hover or keyboard focus and disappear on leave/blur, reducing vertical clutter in every product card.
+
+## 2026-10-12 — Professional supplier profiles and synchronized product assignment
+- Expanded Supplier master data with legal, tax, registration, contact, website, payment-term, notes, active-state and rowversion fields, presented in responsive bilingual profile sections and summary cards.
+- Added searchable multi-product selection on Supplier create/edit and searchable multi-supplier selection on Product create/edit. Both screens write the same `SupplierProductPurchasingInfo` relationship in one Serializable transaction, so assignments synchronize automatically in both directions.
+- Preserved commercial history by deactivating removed relationships instead of deleting them. Supplier Purchasing Data now shows only active products assigned to the selected supplier and directs empty suppliers back to product assignment.
+- Added and applied the schema migration to local `MiniStoreDb`, plus Arabic localization, supplier module documentation and regression checks for concurrency and bidirectional form contracts.
+- Supplier save completion now guides authorized users directly to the same supplier's purchasing terms to finish prices, quantities and lead times.
+- The Web project built with zero warnings/errors; the focused regression executable passed 569 checks.

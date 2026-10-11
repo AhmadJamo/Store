@@ -7,7 +7,9 @@ namespace MiniStore.Application.Services;
 public class ProductService(
     IProductRepository productRepository,
     IMeasurementUnitRepository measurementUnits,
-    IProductCategoryRepository productCategories)
+    IProductCategoryRepository productCategories,
+    SupplierProductAssignmentService assignments,
+    IUnitOfWork unitOfWork)
 {
     public async Task<List<ProductDto>> GetAllAsync(string? search)
     {
@@ -66,7 +68,10 @@ public class ProductService(
     public async Task<ProductDto?> GetByIdAsync(int id)
     {
         var product = await productRepository.GetByIdAsync(id);
-        return product is null ? null : Map(product, await GetCategoryNamesAsync());
+        if (product is null) return null;
+        var dto = Map(product, await GetCategoryNamesAsync());
+        dto.SupplierIds = await assignments.GetSupplierIdsForProductAsync(id);
+        return dto;
     }
 
     public async Task CreateAsync(CreateProductDto dto)
@@ -112,8 +117,13 @@ public class ProductService(
             MapHandlingRequirements(dto));
         product.ConfigureShelfLife(dto.DefaultShelfLifeDays, dto.RequireExpirationDate, dto.ExpirationWarningDays);
 
-        await productRepository.AddAsync(product);
-        await productRepository.SaveChangesAsync();
+        await unitOfWork.ExecuteInTransactionAsync(async () =>
+        {
+            await productRepository.AddAsync(product);
+            await unitOfWork.FlushAsync();
+            await assignments.ApplyForProductAsync(product.Id,
+                dto.IsActive && dto.ProductType != ProductType.PreparedToOrder ? dto.SupplierIds : []);
+        });
     }
 
     public async Task UpdateAsync(int id, UpdateProductDto dto)
@@ -139,20 +149,6 @@ public class ProductService(
         if (existingProduct is not null && existingProduct.Id != id)
             throw new InvalidOperationException("A product with this barcode already exists.");
 
-        product.ConfigureProduct(
-            dto.Name,
-            normalizedBarcode,
-            dto.PurchasePrice,
-            dto.SalePrice,
-            dto.WholesalePrice,
-            dto.ProductType,
-            MapLegacyUnit(measurementUnit.Code),
-            dto.AllowNegativeRecipeConsumption,
-            dto.IsSellableInPos,
-            dto.IsSellableInSales,
-            dto.IsActive,
-            measurementUnit.Id);
-
         if (product.TrackingPolicy != dto.TrackingPolicy &&
             dto.TrackingPolicy != ProductTrackingPolicy.None &&
             await productRepository.HasNonZeroStockAsync(id))
@@ -161,20 +157,20 @@ public class ProductService(
                 "Lot or serial tracking cannot be enabled while the product has a non-zero stock balance.");
         }
 
-        product.ConfigureLogistics(
-            category?.Id,
-            dto.NetWeight,
-            dto.GrossWeight,
-            weightUnit?.Id,
-            dto.Length,
-            dto.Width,
-            dto.Height,
-            dimensionUnit?.Id,
-            dto.TrackingPolicy,
-            MapHandlingRequirements(dto));
-        product.ConfigureShelfLife(dto.DefaultShelfLifeDays, dto.RequireExpirationDate, dto.ExpirationWarningDays);
-
-        await productRepository.SaveChangesAsync();
+        await unitOfWork.ExecuteInTransactionAsync(async () =>
+        {
+            product.ConfigureProduct(
+                dto.Name, normalizedBarcode, dto.PurchasePrice, dto.SalePrice, dto.WholesalePrice,
+                dto.ProductType, MapLegacyUnit(measurementUnit.Code), dto.AllowNegativeRecipeConsumption,
+                dto.IsSellableInPos, dto.IsSellableInSales, dto.IsActive, measurementUnit.Id);
+            product.ConfigureLogistics(
+                category?.Id, dto.NetWeight, dto.GrossWeight, weightUnit?.Id,
+                dto.Length, dto.Width, dto.Height, dimensionUnit?.Id,
+                dto.TrackingPolicy, MapHandlingRequirements(dto));
+            product.ConfigureShelfLife(dto.DefaultShelfLifeDays, dto.RequireExpirationDate, dto.ExpirationWarningDays);
+            await assignments.ApplyForProductAsync(id,
+                dto.IsActive && dto.ProductType != ProductType.PreparedToOrder ? dto.SupplierIds : []);
+        });
     }
 
     public async Task DeleteAsync(int id)

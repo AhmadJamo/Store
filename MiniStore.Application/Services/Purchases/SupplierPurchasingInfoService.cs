@@ -27,7 +27,7 @@ public sealed class SupplierPurchasingInfoService(
         if (supplierId.HasValue && suppliers.All(x => x.Id != supplierId.Value))
             throw new InvalidOperationException("Supplier was not found.");
         var selectedInfos = supplierId.HasValue
-            ? infos.Where(x => x.SupplierId == supplierId.Value).ToList()
+            ? infos.Where(x => x.SupplierId == supplierId.Value && x.IsActive).ToList()
             : [];
         var bulkRows = supplierId.HasValue
             ? BuildBulkRows(products, units, selectedInfos, baseCurrency)
@@ -62,7 +62,7 @@ public sealed class SupplierPurchasingInfoService(
                 RowVersion = info.RowVersion
             }).ToList(),
             Suppliers = suppliers.Select(x => new SupplierPurchasingOptionDto(x.Id, x.Name)).ToList(),
-            Products = products.Where(x => x.IsActive && x.ProductType != ProductType.PreparedToOrder)
+            Products = products.Where(x => selectedInfos.Any(info => info.ProductId == x.Id))
                 .OrderBy(x => x.Name)
                 .Select(x => new SupplierPurchasingOptionDto(x.Id, $"{x.ProductCode} — {x.Name}"))
                 .ToList(),
@@ -204,7 +204,7 @@ public sealed class SupplierPurchasingInfoService(
         var activeUnits = units.Where(x => x.IsActive).ToList();
         var unitsById = units.ToDictionary(x => x.Id);
         var rows = new List<BulkSupplierPurchasingRowDto>();
-        foreach (var product in products.Where(x => x.IsActive && x.ProductType != ProductType.PreparedToOrder)
+        foreach (var product in products.Where(x => infos.Any(info => info.ProductId == x.Id))
                      .OrderBy(x => x.Name))
         {
             if (!product.MeasurementUnitId.HasValue ||
@@ -214,16 +214,6 @@ public sealed class SupplierPurchasingInfoService(
                 .Select(x => new SupplierPurchasingOptionDto(x.Id, $"{x.Name} ({x.Symbol})"))
                 .ToList();
             var existing = infos.Where(x => x.ProductId == product.Id).OrderBy(x => x.Priority).ToList();
-            if (existing.Count == 0)
-            {
-                rows.Add(new BulkSupplierPurchasingRowDto
-                {
-                    ProductId = product.Id, ProductCode = product.ProductCode, ProductName = product.Name,
-                    PurchaseMeasurementUnitId = product.MeasurementUnitId.Value, UnitOptions = options,
-                    SupplierProductCode = product.ProductCode, CurrencyCode = baseCurrency
-                });
-                continue;
-            }
             rows.AddRange(existing.Select(info => new BulkSupplierPurchasingRowDto
             {
                 Id = info.Id, ProductId = product.Id, ProductCode = product.ProductCode, ProductName = product.Name,

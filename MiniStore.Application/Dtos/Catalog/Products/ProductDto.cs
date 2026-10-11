@@ -48,4 +48,5 @@ public class ProductDto
     public bool RequireExpirationDate { get; set; }
     public int ExpirationWarningDays { get; set; }
     public MiniStore.Domain.Entities.ProductHandlingRequirements HandlingRequirements { get; set; }
+    public List<int> SupplierIds { get; set; } = [];
 }

@@ -73,6 +73,8 @@
     <div id="prepared-help" class="alert alert-info mt-3 d-none">@Localizer["Prepared products do not have a purchase price. Their cost will be calculated from the active recipe and ingredient costs."]</div>
     <div id="raw-help" class="alert alert-secondary mt-3 d-none">@Localizer["Raw materials are stocked ingredients and cannot be sold directly."]</div>
 
+    <partial name="_SupplierSelector" model="Model.SupplierIds" />
+
     <button type="submit" class="btn btn-success mt-3">@Localizer["Save"]</button>
     <a asp-action="Index" class="btn btn-secondary mt-3">@Localizer["Cancel"]</a>
 </form>
@@ -86,6 +88,9 @@
     const preparedHelp = document.getElementById('prepared-help');
     const rawHelp = document.getElementById('raw-help');
     const saleOptions = document.querySelectorAll('.sale-option');
+    const supplierSection = document.getElementById('supplier-assignment');
+    const supplierChecks = document.querySelectorAll('.supplier-assignment-check');
+    const activeProduct = document.getElementById('IsActive');
     const refresh = () => {
         const prepared = type.value === '@((int)ProductType.PreparedToOrder)';
         const raw = type.value === '@((int)ProductType.RawMaterial)';
@@ -95,9 +100,16 @@
         preparedHelp.classList.toggle('d-none', !prepared);
         rawHelp.classList.toggle('d-none', !raw);
         saleOptions.forEach(x => { if (raw) x.checked = false; x.disabled = raw; });
+        const canAssign = !prepared && activeProduct.checked;
+        supplierSection.classList.toggle('d-none', !canAssign);
+        supplierChecks.forEach(x => { if (!canAssign) x.checked = false; x.disabled = !canAssign; });
     };
     type.addEventListener('change', refresh);
+    activeProduct.addEventListener('change', refresh);
     refresh();
+    const supplierSearch=document.querySelector('.assignment-search');
+    const supplierOptions=[...document.querySelectorAll('.assignment-option')];
+    supplierSearch?.addEventListener('input',()=>{const value=supplierSearch.value.trim().toLowerCase();supplierOptions.forEach(option=>option.hidden=value&&!option.dataset.search.includes(value));});
 })();
 </script>
 }
