@@ -119,6 +119,8 @@ public static class PermissionDefinitions
         new("PurchaseOrders.Approve", "Approve Purchase Order", "Purchases"),
         new("PurchaseOrders.Confirm", "Confirm Purchase Order", "Purchases"),
         new("PurchaseOrders.Cancel", "Cancel Purchase Order", "Purchases"),
+        new("PurchaseOrders.Close", "Close Remaining Purchase Order Quantity", "Purchases"),
+        new("PurchaseOrders.Reopen", "Reopen Purchase Order", "Purchases"),
         new("GoodsReceipts.View", "View Goods Receipts", "Purchases"),
         new("GoodsReceipts.Create", "Create and Post Goods Receipt", "Purchases"),
         new("GoodsReceiptReturns.View", "View Goods Receipt Returns", "Purchases"),
@@ -140,6 +142,7 @@ public static class PermissionDefinitions
         new("LandedCosts.View", "View Landed Costs", "Purchases"),
         new("LandedCosts.Create", "Create and Post Landed Cost", "Purchases"),
         new("PurchaseAnalytics.View", "View Purchase Analytics", "Purchases"),
+        new("PurchaseAccountingReconciliation.View", "View Purchase Accounting Reconciliation", "Purchases"),
         new("PurchaseReturns.View", "View Purchase Returns", "Purchase Returns"),
         new("PurchaseReturns.Create", "Create Purchase Return", "Purchase Returns"),
 

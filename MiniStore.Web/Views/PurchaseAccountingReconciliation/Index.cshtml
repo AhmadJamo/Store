@@ -1,0 +1,192 @@
+@model MiniStore.Application.DTOs.Purchases.PurchaseAccountingReconciliationDto
+@inject Microsoft.Extensions.Localization.IStringLocalizer<MiniStore.Web.SharedResource> L
+@inject Microsoft.AspNetCore.Authorization.IAuthorizationService AuthorizationService
+@{
+    ViewData["Title"] = L["Purchase accounting reconciliation"];
+    var numberSettings = await GeneralSettingsService.GetAsync();
+    var canManageAccounting = (await AuthorizationService.AuthorizeAsync(User, null, "Permission:Settings.Edit")).Succeeded;
+    var canViewStock = (await AuthorizationService.AuthorizeAsync(User, null, "Permission:ProductStock.View")).Succeeded;
+    var canEditWarehouses = (await AuthorizationService.AuthorizeAsync(User, null, "Permission:Warehouses.Edit")).Succeeded;
+    var canViewReceipts = (await AuthorizationService.AuthorizeAsync(User, null, "Permission:GoodsReceipts.View")).Succeeded;
+    var canViewOrders = (await AuthorizationService.AuthorizeAsync(User, null, "Permission:PurchaseOrders.View")).Succeeded;
+    var canViewBills = (await AuthorizationService.AuthorizeAsync(User, null, "Permission:VendorBills.View")).Succeeded;
+    var canViewReceiptReturns = (await AuthorizationService.AuthorizeAsync(User, null, "Permission:GoodsReceiptReturns.View")).Succeeded;
+}
+
+<div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-3">
+    <div>
+        <h2 class="mb-1">@L["Purchase accounting reconciliation"]</h2>
+        <p class="text-muted mb-0">@L["Read-only comparison of inventory and GRNI operational values with the general ledger."]</p>
+    </div>
+    <form method="get" class="card card-body d-flex flex-row flex-wrap align-items-end gap-2">
+        <div>
+            <label for="asOfDate" class="form-label">@L["As of date"]</label>
+            <input id="asOfDate" name="asOfDate" type="date" value="@Model.AsOfDate.ToString("yyyy-MM-dd")"
+                   max="@DateOnly.FromDateTime(DateTime.Today).ToString("yyyy-MM-dd")" class="form-control" />
+        </div>
+        <div class="form-check mb-2">
+            <input id="exceptionsOnly" name="exceptionsOnly" value="true" type="checkbox"
+                   class="form-check-input" checked="@Model.ExceptionsOnly" />
+            <input name="exceptionsOnly" value="false" type="hidden" />
+            <label for="exceptionsOnly" class="form-check-label">@L["Exceptions and open receipts only"]</label>
+        </div>
+        <button class="btn btn-primary mb-1">@L["Apply"]</button>
+    </form>
+</div>
+
+<div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+<div class="alert alert-info" role="status">
+    @L["This report never changes inventory or accounting. Differences must be corrected through their source documents or an approved adjustment workflow."]
+    @if (!Model.UsesCurrentInventorySnapshot)
+    {
+        <div class="mt-1"><strong>@L["Historical inventory note:"]</strong> @L["Inventory history uses the recorded movement time, while accounting uses the document posting date. Backdated documents can therefore appear as timing differences."]</div>
+    }
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-6 col-xl-3">
+        <div class="card card-body h-100 border-@(Model.InventoryIsReconciled ? "success" : "danger")">
+            <span class="text-muted">@L["Operational inventory value"]</span>
+            <strong class="fs-4">@Model.OperationalInventoryValue.ToMoneyDisplay(numberSettings)</strong>
+            <small>@L["Warehouse value snapshots"]</small>
+        </div>
+    </div>
+    <div class="col-md-6 col-xl-3">
+        <div class="card card-body h-100 border-@(Model.InventoryIsReconciled ? "success" : "danger")">
+            <span class="text-muted">@L["Inventory ledger balance"]</span>
+            <strong class="fs-4">@Model.LedgerInventoryBalance.ToMoneyDisplay(numberSettings)</strong>
+            <small class="@(Model.InventoryDifference == 0 ? "text-success" : "text-danger")">@L["Difference"]: @Model.InventoryDifference.ToMoneyDisplay(numberSettings)</small>
+        </div>
+    </div>
+    <div class="col-md-6 col-xl-3">
+        <div class="card card-body h-100 border-@(Model.GrniIsReconciled ? "success" : "danger")">
+            <span class="text-muted">@L["Operational GRNI balance"]</span>
+            <strong class="fs-4">@Model.OperationalGrniBalance.ToMoneyDisplay(numberSettings)</strong>
+            <small>@L["Open receipts"]: @Model.GrniOpenReceiptCount</small>
+        </div>
+    </div>
+    <div class="col-md-6 col-xl-3">
+        <div class="card card-body h-100 border-@(Model.GrniIsReconciled ? "success" : "danger")">
+            <span class="text-muted">@L["GRNI ledger balance"]</span>
+            <strong class="fs-4">@Model.LedgerGrniBalance.ToMoneyDisplay(numberSettings)</strong>
+            <small class="@(Model.GrniDifference == 0 ? "text-success" : "text-danger")">@L["Difference"]: @Model.GrniDifference.ToMoneyDisplay(numberSettings)</small>
+        </div>
+    </div>
+</div>
+
+@if (!Model.HasGrniAccount)
+{
+    <div class="alert alert-warning d-flex flex-wrap justify-content-between align-items-center gap-2">
+        <span>@L["Configure a goods received not invoiced account to reconcile GRNI."]</span>
+        @if (canManageAccounting)
+        {
+            <a asp-controller="Settings" asp-action="Accounting" class="btn btn-sm btn-warning">@L["Open accounting settings"]</a>
+        }
+        else
+        {
+            <span>@L["Contact an administrator to complete this setup."]</span>
+        }
+    </div>
+}
+
+<section class="mb-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2">
+        <div>
+            <h3 class="h5 mb-1">@L["Inventory to general ledger"]</h3>
+            <p class="text-muted mb-0">@L["Each warehouse is compared with its assigned inventory account."]</p>
+        </div>
+        <span class="badge text-bg-@(Model.InventoryExceptionCount == 0 ? "success" : "danger")">@L["Exceptions"]: @Model.InventoryExceptionCount</span>
+    </div>
+    <div class="row g-3">
+        @foreach (var row in Model.Inventory)
+        {
+            <div class="col-lg-6">
+                <article class="card h-100 border-@(row.IsReconciled ? "success" : "danger")">
+                    <div class="card-body">
+                        <div class="d-flex flex-wrap justify-content-between gap-2 mb-3">
+                            <div><strong>@row.WarehouseName</strong><div class="text-muted small">@(row.HasInventoryAccount ? row.InventoryAccountDisplay : L["Inventory account is not assigned"])</div></div>
+                            <span class="badge text-bg-@(row.IsReconciled ? "success" : "danger")">@(row.IsReconciled ? L["Matched"] : L["Needs review"])</span>
+                        </div>
+                        <div class="row g-2 text-center">
+                            <div class="col-4"><small class="text-muted d-block">@L["Operational value"]</small><strong>@row.OperationalValue.ToMoneyDisplay(numberSettings)</strong></div>
+                            <div class="col-4"><small class="text-muted d-block">@L["Ledger balance"]</small><strong>@row.LedgerBalance.ToMoneyDisplay(numberSettings)</strong></div>
+                            <div class="col-4"><small class="text-muted d-block">@L["Difference"]</small><strong class="@(row.IsReconciled ? "text-success" : "text-danger")">@row.Difference.ToMoneyDisplay(numberSettings)</strong></div>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-transparent d-flex flex-wrap gap-2">
+                        @if (canViewStock)
+                        {
+                            <a asp-controller="ProductStocks" asp-action="Index" asp-route-warehouseId="@row.WarehouseId" class="btn btn-sm btn-outline-primary">@L["View warehouse stock"]</a>
+                        }
+                        @if (!row.HasInventoryAccount && canEditWarehouses)
+                        {
+                            <a asp-controller="Warehouses" asp-action="Edit" asp-route-id="@row.WarehouseId" class="btn btn-sm btn-outline-warning">@L["Assign inventory account"]</a>
+                        }
+                    </div>
+                </article>
+            </div>
+        }
+        @if (Model.Inventory.Count == 0)
+        {
+            <div class="col-12"><div class="alert alert-success mb-0">@L["No inventory reconciliation exceptions were found."]</div></div>
+        }
+    </div>
+</section>
+
+<section>
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2">
+        <div>
+            <h3 class="h5 mb-1">@L["GRNI receipt details"]</h3>
+            <p class="text-muted mb-0">@L["Receipt value less unbilled returns and vendor bill clearing equals the expected GRNI balance."]</p>
+        </div>
+        @if (Model.HasGrniAccount)
+        {
+            <span class="text-muted small">@L["GRNI account"]: @Model.GrniAccountDisplay</span>
+        }
+    </div>
+    <div class="row g-3">
+        @foreach (var row in Model.GrniReceipts)
+        {
+            <div class="col-xl-6">
+                <article class="card h-100 @(Math.Abs(row.OutstandingValue) > 0.01m ? "border-warning" : "border-success")">
+                    <div class="card-body">
+                        <div class="d-flex flex-wrap justify-content-between gap-2 mb-2">
+                            <div>@if (canViewReceipts) { <a asp-controller="GoodsReceipts" asp-action="Details" asp-route-id="@row.GoodsReceiptId" class="fw-semibold">@row.ReceiptNumber</a> } else { <strong>@row.ReceiptNumber</strong> }<div class="text-muted small">@row.ReceiptDate · @row.SupplierName · @row.WarehouseName</div></div>
+                            <span class="badge text-bg-@(Math.Abs(row.OutstandingValue) > 0.01m ? "warning" : "success")">@(Math.Abs(row.OutstandingValue) > 0.01m ? L["Open"] : L["Cleared"])</span>
+                        </div>
+                        <div class="small mb-3">@L["Purchase order"]: @if (canViewOrders) { <a asp-controller="PurchaseOrders" asp-action="Details" asp-route-id="@row.PurchaseOrderId">@row.PurchaseOrderNumber</a> } else { @row.PurchaseOrderNumber }</div>
+                        <div class="row g-2 text-center">
+                            <div class="col-6 col-md-3"><small class="text-muted d-block">@L["Receipt value"]</small><strong>@row.ReceiptValue.ToMoneyDisplay(numberSettings)</strong></div>
+                            <div class="col-6 col-md-3"><small class="text-muted d-block">@L["Returned"]</small><strong>@row.ReturnedValue.ToMoneyDisplay(numberSettings)</strong></div>
+                            <div class="col-6 col-md-3"><small class="text-muted d-block">@L["Billed clearing"]</small><strong>@row.BilledClearingValue.ToMoneyDisplay(numberSettings)</strong></div>
+                            <div class="col-6 col-md-3"><small class="text-muted d-block">@L["GRNI outstanding"]</small><strong>@row.OutstandingValue.ToMoneyDisplay(numberSettings)</strong></div>
+                        </div>
+                        @if (row.Settlements.Count > 0)
+                        {
+                            <div class="mt-3"><small class="text-muted d-block mb-1">@L["Settlement documents"]</small><div class="d-flex flex-wrap gap-2">
+                                @foreach (var document in row.Settlements)
+                                {
+                                    var controller = document.DocumentType == "VendorBill" ? "VendorBills" : "GoodsReceiptReturns";
+                                    var canViewDocument = document.DocumentType == "VendorBill" ? canViewBills : canViewReceiptReturns;
+                                    @if (canViewDocument)
+                                    {
+                                        <a asp-controller="@controller" asp-action="Details" asp-route-id="@document.DocumentId" class="btn btn-sm btn-outline-secondary">@document.DocumentNumber · @document.Amount.ToMoneyDisplay(numberSettings)</a>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge text-bg-light">@document.DocumentNumber · @document.Amount.ToMoneyDisplay(numberSettings)</span>
+                                    }
+                                }
+                            </div></div>
+                        }
+                    </div>
+                </article>
+            </div>
+        }
+        @if (Model.GrniReceipts.Count == 0)
+        {
+            <div class="col-12"><div class="alert alert-success mb-0">@L["No open GRNI receipts were found."]</div></div>
+        }
+    </div>
+</section>

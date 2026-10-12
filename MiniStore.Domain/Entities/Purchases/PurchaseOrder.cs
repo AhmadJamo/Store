@@ -1,6 +1,8 @@
 namespace MiniStore.Domain.Entities;
 
 public enum PurchaseOrderStatus { Draft = 1, Approved = 2, Confirmed = 3, Cancelled = 4, Closed = 5 }
+public enum PurchaseOrderClosureType { Automatic = 1, RemainingQuantity = 2 }
+public enum PurchaseOrderLifecycleAction { AutomaticallyClosed = 1, RemainingQuantityClosed = 2, Reopened = 3 }
 
 public sealed class PurchaseOrder
 {
@@ -24,8 +26,13 @@ public sealed class PurchaseOrder
     public string? ConfirmedByUserId { get; private set; }
     public DateTime? ConfirmedAtUtc { get; private set; }
     public string? CancellationReason { get; private set; }
+    public PurchaseOrderClosureType? ClosureType { get; private set; }
+    public string? ClosureReason { get; private set; }
+    public string? ClosedByUserId { get; private set; }
+    public DateTime? ClosedAtUtc { get; private set; }
     public byte[] RowVersion { get; private set; } = [];
     public List<PurchaseOrderLine> Lines { get; private set; } = [];
+    public List<PurchaseOrderLifecycleHistory> History { get; private set; } = [];
 
     public PurchaseOrder(string orderNumber, int sourcingEventId, int quotationId, int supplierId, int warehouseId,
         DateOnly orderDate, DateOnly expectedDate, string currencyCode, string? paymentTerms, string createdByUserId,
@@ -44,9 +51,62 @@ public sealed class PurchaseOrder
     public void Approve(string user){EnsureDraft();EnsureUser(user);if(Lines.Count==0)throw new InvalidOperationException("A purchase order must contain at least one line.");Status=PurchaseOrderStatus.Approved;ApprovedByUserId=user;ApprovedAtUtc=DateTime.UtcNow;}
     public void Confirm(string user){if(Status!=PurchaseOrderStatus.Approved)throw new InvalidOperationException("Only approved purchase orders can be confirmed.");EnsureUser(user);Status=PurchaseOrderStatus.Confirmed;ConfirmedByUserId=user;ConfirmedAtUtc=DateTime.UtcNow;}
     public void Cancel(string user,string reason){EnsureUser(user);if(Status is PurchaseOrderStatus.Confirmed or PurchaseOrderStatus.Closed or PurchaseOrderStatus.Cancelled)throw new InvalidOperationException("Only draft or approved purchase orders can be cancelled.");if(string.IsNullOrWhiteSpace(reason)||reason.Trim().Length>1000)throw new ArgumentException("Cancellation reason is required and cannot exceed 1000 characters.");Status=PurchaseOrderStatus.Cancelled;CancellationReason=reason.Trim();}
+    public void CloseAutomatically(string user)
+    {
+        EnsureUser(user);
+        if (Status != PurchaseOrderStatus.Confirmed) throw new InvalidOperationException("Only confirmed purchase orders can be closed.");
+        var from = Status;
+        Status = PurchaseOrderStatus.Closed; ClosureType = PurchaseOrderClosureType.Automatic; ClosureReason = null;
+        ClosedByUserId = user.Trim(); ClosedAtUtc = DateTime.UtcNow;
+        History.Add(new PurchaseOrderLifecycleHistory(from, Status, PurchaseOrderLifecycleAction.AutomaticallyClosed, user, null));
+    }
+    public void CloseRemaining(string user, string reason)
+    {
+        EnsureUser(user);
+        if (Status != PurchaseOrderStatus.Confirmed) throw new InvalidOperationException("Only confirmed purchase orders can be closed.");
+        ValidateReason(reason, "A remaining-quantity closure reason is required and cannot exceed 1000 characters.");
+        var from = Status;
+        Status = PurchaseOrderStatus.Closed; ClosureType = PurchaseOrderClosureType.RemainingQuantity; ClosureReason = reason.Trim();
+        ClosedByUserId = user.Trim(); ClosedAtUtc = DateTime.UtcNow;
+        History.Add(new PurchaseOrderLifecycleHistory(from, Status, PurchaseOrderLifecycleAction.RemainingQuantityClosed, user, ClosureReason));
+    }
+    public void Reopen(string user, string reason)
+    {
+        EnsureUser(user);
+        if (Status != PurchaseOrderStatus.Closed || ClosureType != PurchaseOrderClosureType.RemainingQuantity)
+            throw new InvalidOperationException("Only a purchase order closed with a remaining quantity can be reopened.");
+        ValidateReason(reason, "A purchase order reopen reason is required and cannot exceed 1000 characters.");
+        var from = Status;
+        Status = PurchaseOrderStatus.Confirmed;
+        History.Add(new PurchaseOrderLifecycleHistory(from, Status, PurchaseOrderLifecycleAction.Reopened, user, reason.Trim()));
+        ClosureType = null; ClosureReason = null; ClosedByUserId = null; ClosedAtUtc = null;
+    }
     private void EnsureDraft(){if(Status!=PurchaseOrderStatus.Draft)throw new InvalidOperationException("Only draft purchase orders can be modified.");}
     private static void EnsureUser(string user){if(string.IsNullOrWhiteSpace(user))throw new ArgumentException("User is required.");}
+    private static void ValidateReason(string reason, string message){if(string.IsNullOrWhiteSpace(reason)||reason.Trim().Length>1000)throw new ArgumentException(message);}
     private static string? Normalize(string? value)=>string.IsNullOrWhiteSpace(value)?null:value.Trim();
+}
+
+public sealed class PurchaseOrderLifecycleHistory
+{
+    private PurchaseOrderLifecycleHistory() { UserId = string.Empty; }
+    public int Id { get; private set; }
+    public int PurchaseOrderId { get; private set; }
+    public PurchaseOrderStatus FromStatus { get; private set; }
+    public PurchaseOrderStatus ToStatus { get; private set; }
+    public PurchaseOrderLifecycleAction Action { get; private set; }
+    public string UserId { get; private set; }
+    public string? Reason { get; private set; }
+    public DateTime CreatedAtUtc { get; private set; }
+
+    public PurchaseOrderLifecycleHistory(PurchaseOrderStatus fromStatus, PurchaseOrderStatus toStatus,
+        PurchaseOrderLifecycleAction action, string userId, string? reason)
+    {
+        if (string.IsNullOrWhiteSpace(userId)) throw new ArgumentException("User is required.");
+        if (reason?.Trim().Length > 1000) throw new ArgumentException("Purchase order history reason cannot exceed 1000 characters.");
+        FromStatus = fromStatus; ToStatus = toStatus; Action = action; UserId = userId.Trim();
+        Reason = string.IsNullOrWhiteSpace(reason) ? null : reason.Trim(); CreatedAtUtc = DateTime.UtcNow;
+    }
 }
 
 public sealed class PurchaseOrderLine

@@ -1,7 +1,7 @@
 # Codebase map
 > Status: IMPLEMENTED  
 > Source of truth: Repository scan  
-> Last reviewed: 2026-10-11
+> Last reviewed: 2026-10-12
 
 ## Solution roots
 | Path | Project/layer | Purpose |
@@ -26,6 +26,8 @@
 
 `docs/PURCHASE_MANAGEMENT_EVOLUTION_PLAN.md` is the approved procure-to-pay evolution plan. It records the legacy direct-purchase boundary, capability gaps, target aggregates, inventory/accounting integration contracts, additive migration safeguards and PUR-000 through PUR-150 vertical slices. Planned purchase types are not implemented unless the matching slice is explicitly marked complete.
 
+`docs/PURCHASE_COMPLETION_ROADMAP_AR_EN.md` is the approved Arabic/English post-PUR-150 purchase plan. PUR-160 reconciliation and PUR-165 derived order closure are implemented; it continues with PUR-170 through PUR-280 across supplier credit notes, controlled reversals, multi-currency, flexible RFQs, split awards, service procurement, bulk vendor prices, automated replenishment, advanced receiving, supplier communication, integrations, analytics and legacy-workflow retirement.
+
 `docs/PURCHASE_ARCHITECTURE_ALIGNMENT.md` is the accepted PUR-005 gate. It fixes Supplier compatibility, Purchasing/Inventory/Accounting ownership, derived quantity authorities, staged currency behavior, purchase-first approval boundaries, GRNI, synchronous contracts and deferred event infrastructure before runtime implementation starts.
 
 `docs/reference/erp-architecture/` preserves the imported cross-ERP proposed architecture package: system charter, module and ownership maps, workflows, integration contracts, cross-cutting rules, delivery roadmap, agent guidance, test matrix and open decisions. It is a planning reference rather than evidence of implemented code, and its Codex guidance does not supersede repository `AGENTS.md`, accepted ADRs or the required documentation workflow.
@@ -45,7 +47,7 @@
 | `Entities/Purchases/PurchaseApproval.cs` | Warehouse/priority-scoped approval rules, ordered role steps and immutable per-request decision snapshots | PUR-025 approval workflow foundation. |
 | `Entities/Purchases/PurchaseSourcingEvent.cs` | RFX-numbered sourcing event, frozen request-line snapshots and supplier invitations; no price, inventory or accounting authority | PUR-030 sourcing workflow. |
 | `Entities/Purchases/{SupplierQuotation,PurchaseQuotationAward}.cs` | supplier-specific frozen quote header/lines, commercial terms, comparison totals and reasoned selection record | PUR-040 quotation workflow. |
-| `Entities/Purchases/PurchaseOrder.cs` | awarded-quotation Purchase Order and immutable commercial line snapshots; no receipt or accounting authority | PUR-050 order workflow. |
+| `Entities/Purchases/PurchaseOrder.cs` | awarded-quotation Purchase Order, immutable commercial lines, current closure evidence and tenant-owned lifecycle history; downstream posted documents remain quantity/accounting authority | PUR-050 order workflow and PUR-165 completion. |
 | `Entities/Purchases/PurchaseAgreement.cs` | awarded-quotation agreements with frozen commercial terms and capped release lines, plus repeat-order templates that generate traced demand | PUR-120 agreement/template workflow. |
 | `Entities/Purchases/LandedCost.cs` | immutable receipt-linked landed-cost components and allocation/valuation snapshots | PUR-130 receipt valuation adjustment. |
 | `Entities/Purchases/GoodsReceipt.cs` | GRN header/line receipt evidence with frozen PO snapshots and optional inventory-tracking inputs | PUR-060 receipt workflow. |
@@ -71,10 +73,11 @@
 | `Services/Purchases/PurchaseApprovalService.cs` | approval-rule administration, submit-time rule resolution, frozen instance creation and role-authorized ordered decisions | Purchase Approval Rules and Purchase Request screens. |
 | `Services/Purchases/PurchaseSourcingService.cs` | creates and sends supplier invitations from exactly one approved request, while freezing demand snapshots | Purchase Sourcing screens. |
 | `Services/Purchases/SupplierQuotationService.cs` | validates invited supplier responses, freezes/submits quotations, exposes comparison and records a reasoned award | Supplier Quotation screens. |
-| `Services/Purchases/PurchaseOrderService.cs` | creates one order from an award and governs approve/confirm/cancel transitions without stock or journal mutation | Purchase Order screens. |
+| `Services/Purchases/{PurchaseOrder,PurchaseOrderLifecycle}Service.cs` | creates award-derived orders; derives receipt/return/bill progress; governs approve/confirm/cancel, automatic completion, reasoned remainder close and controlled reopen without direct stock or journal mutation | Purchase Order screens and PUR-165 final bill/return hooks. |
 | `Services/Purchases/{PurchaseAgreement,PurchaseTemplate}Service.cs` | creates and activates awarded agreements, caps Draft order releases, saves repeat templates and generates traced Draft Purchase Requests | PUR-120 agreement/template screens. |
 | `Services/Purchases/LandedCostService.cs` | allocates receipt costs, splits current inventory from consumed expense, records value-only stock movements and posts a balanced clearing journal | PUR-130 landed-cost screens. |
 | `Dtos/Purchases/PurchaseAnalyticsDtos.cs`, `Services/Purchases/PurchaseAnalyticsService.cs` | bounded read-only purchasing cards and supplier order-cohort performance projections over tenant-filtered repositories | PUR-140 analytics screen. |
+| `Dtos/Purchases/PurchaseAccountingReconciliationDtos.cs`, `Services/Purchases/PurchaseAccountingReconciliationService.cs` | rounds and classifies as-of-date warehouse Inventory/GL and receipt-derived GRNI/GL evidence without mutation | PUR-160 reconciliation screen. |
 | `Services/Purchases/GoodsReceiptService.cs` | atomically validates remaining PO quantity and coordinates receipt posting with Inventory-owned stock, valuation and tracking effects | Goods Receipt capture screen. |
 | `Services/Inventory/InventoryScanResolver.cs` | workflow-scoped retry-key generation/validation and normalized exact scan tokens, including Goods Receipt scans | inventory and PUR-150 scanning flows. |
 | `Services/Purchases/GoodsReceiptReturnService.cs` | caps returns by the posted, unbilled receipt quantity and atomically coordinates inventory removal, tracking, physical movement and GRNI/PPV accounting | Goods Receipt Return screens. |
@@ -158,6 +161,7 @@ Hierarchical location update (2026-09-30): StorageLocation retains its identity 
 | `Repositories/Accounting/FiscalPeriodRepository.cs` | tenant period lookup, overlap validation and rowversion handling | FiscalPeriodService. |
 | `Repositories/Inventory/StockTransactionRepository.cs` | inventory movement history plus source/type lookup for accounting settlement | inventory services and `PurchasePostingService`. |
 | `Repositories/Inventory/InventoryReconciliationRepository.cs` | tenant-filtered SQL aggregates for warehouse balances, location allocations, orphan allocations and latest movement snapshots | WMS-000 reconciliation service. |
+| `Repositories/Purchases/PurchaseAccountingReconciliationRepository.cs` | tenant-filtered as-of-date Inventory ledger, operational valuation, receipt, return, bill-clearing and GRNI ledger projections | PUR-160 reconciliation service. |
 | `Repositories/Inventory/StockMovementRepository.cs` | tenant-filtered physical movement persistence and idempotency lookup | WMS-020 StockMovementService. |
 | `Repositories/Inventory/InventoryBalanceRepository.cs` | tenant-filtered current dimensional availability projection reads | WMS-040 InventoryBalanceService. |
 | `Repositories/Inventory/InventoryReservationRepository.cs` | tracked dimensional balances and tenant-filtered reservation aggregate persistence | WMS-050 InventoryReservationService. |
@@ -167,7 +171,7 @@ Hierarchical location update (2026-09-30): StorageLocation retains its identity 
 | `Repositories/Sales/SalesReturnRepository.cs` | immutable return history and original-sale aggregation | `SalesReturnService`. |
 | `Repositories/Purchases/PurchaseReturnRepository.cs` | immutable supplier-return history and original-purchase aggregation | `PurchaseReturnService`. |
 | `Repositories/Purchases/SupplierProductPurchasingInfoRepository.cs` | tenant-filtered purchasing-term persistence, supplier/product assignment reads, uniqueness and preferred-supplier lookup | purchasing-info and assignment services. |
-| `Repositories/Purchases/{SupplierQuotation,PurchaseOrder}Repository.cs` | tenant-filtered quotation award and purchase-order persistence, including one-order-per-quotation enforcement | PUR-040/PUR-050 purchase services. |
+| `Repositories/Purchases/{SupplierQuotation,PurchaseOrder}Repository.cs` | tenant-filtered quotation award and purchase-order persistence, including one-order-per-quotation enforcement and lifecycle history loading | PUR-040/PUR-050/PUR-165 purchase services. |
 | `Repositories/Purchases/GoodsReceiptRepository.cs` | tenant-filtered receipt and posted-receipt quantity reads | PUR-060 receipt service. |
 | `Repositories/Purchases/GoodsReceiptReturnRepository.cs` | tenant-filtered receipt-return reads and cumulative returned-quantity evidence | PUR-070 return service. |
 | `Repositories/Purchases/VendorBillRepository.cs` | tenant-filtered bill reads, cumulative receipt-line billing and active normalized invoice duplicate checks | PUR-080 bill service. |
@@ -193,7 +197,7 @@ Hierarchical location update (2026-09-30): StorageLocation retains its identity 
 | `Controllers/Inventory/InventoryAdjustmentsController.cs` | permission-split count/approve/post/cancel workflow | InventoryAdjustments views and service. |
 | `Controllers/Inventory/InventoryTrackingController.cs` | permission-protected opening allocation, tracking report and quarantine/release commands | InventoryTracking view and service. |
 | `Controllers/Purchases/SupplierPurchasingController.cs` | permission-split bilingual supplier-first bulk purchasing-data administration | PUR-010 service and `Views/SupplierPurchasing/Index.cshtml`. |
-| `Controllers/Purchases/{SupplierQuotations,PurchaseOrders}Controller.cs`, `Views/SupplierQuotations/*`, `Views/PurchaseOrders/*` | quotation capture/comparison/award and award-derived Purchase Order list/detail/state actions | PUR-040/PUR-050 services and permissions. |
+| `Controllers/Purchases/{SupplierQuotations,PurchaseOrders}Controller.cs`, `Views/SupplierQuotations/*`, `Views/PurchaseOrders/*` | quotation capture/comparison/award plus responsive Purchase Order progress, state-aware actions, separately permitted remainder close/reopen and immutable history | PUR-040/PUR-050/PUR-165 services and permissions. |
 | `Controllers/Purchases/GoodsReceiptsController.cs`, `Views/GoodsReceipts/Create.cshtml` | permission-protected partial Goods Receipt capture and immediate posting | PUR-060 receipt service. |
 | `Views/GoodsReceipts/Scan.cshtml` and Goods Receipt scan actions | Draft receipt creation, exact product scanning, accumulated-quantity review and explicit final posting | PUR-150 receipt service. |
 | `Controllers/Purchases/GoodsReceiptReturnsController.cs`, `Views/GoodsReceiptReturns/*.cshtml` | permission-protected receipt-based supplier return capture, history and detail | PUR-070 return service. |
@@ -202,6 +206,7 @@ Hierarchical location update (2026-09-30): StorageLocation retains its identity 
 | `Controllers/Purchases/{PurchaseAgreements,PurchaseTemplates}Controller.cs`, matching views | permission-split agreement creation/activation/release and repeat-template creation/generation | PUR-120 services. |
 | `Controllers/Purchases/LandedCostsController.cs`, `Views/LandedCosts/*` | permission-split landed-cost history, allocation capture and immutable detail | PUR-130 service. |
 | `Controllers/Purchases/PurchaseAnalyticsController.cs`, `Views/PurchaseAnalytics/Index.cshtml` | permission-protected date-filtered purchasing dashboard and supplier-performance table | PUR-140 analytics service. |
+| `Controllers/Purchases/PurchaseAccountingReconciliationController.cs`, `Views/PurchaseAccountingReconciliation/Index.cshtml` | permission-protected read-only Inventory/GL and GRNI/GL reconciliation with responsive evidence cards and setup/source links | PUR-160 reconciliation service. |
 | `Views/Settings/PurchaseMatching.cshtml` | administration screen for quantity and price tolerance percentages | PUR-090 settings service. |
 | `Areas/Platform/*` | separately authenticated platform-owner control center for plans, companies/subscriptions, promotion codes and pending payment confirmations | SaaS module. |
 | `Controllers/PublicController.cs`, `Controllers/Saas/SubscriptionController.cs` | public landing/pricing and tenant subscription/checkout flows | SaaS module and public/subscription views. |

@@ -335,6 +335,10 @@ Check(
     PermissionDefinitions.All.Any(permission =>
         permission.Name == "InventoryReconciliation.View"),
     "Inventory reconciliation view permission must be defined");
+Check(
+    PermissionDefinitions.All.Any(permission =>
+        permission.Name == "PurchaseAccountingReconciliation.View"),
+    "Purchase accounting reconciliation view permission must be defined");
 var knownPermissions = PermissionDefinitions.All.Select(x => x.Name).ToHashSet(StringComparer.Ordinal);
 Check(DashboardDefinitions.All.Count >= 7 &&
       DashboardDefinitions.All.Select(x => x.Title).Distinct(StringComparer.Ordinal).Count() == DashboardDefinitions.All.Count,
@@ -352,6 +356,17 @@ Check(
         .Where(method => method.DeclaringType == typeof(InventoryReconciliationController))
         .All(method => method.GetCustomAttribute<HttpPostAttribute>() is null),
     "Inventory reconciliation controller must remain read-only");
+var purchaseAccountingReconciliationIndex = typeof(PurchaseAccountingReconciliationController)
+    .GetMethod(nameof(PurchaseAccountingReconciliationController.Index))!;
+Check(
+    purchaseAccountingReconciliationIndex.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
+        $"{PermissionAuthorizeAttribute.PolicyPrefix}PurchaseAccountingReconciliation.View",
+    "Purchase accounting reconciliation report must enforce its dedicated view permission");
+Check(
+    typeof(PurchaseAccountingReconciliationController).GetMethods(BindingFlags.Instance | BindingFlags.Public)
+        .Where(method => method.DeclaringType == typeof(PurchaseAccountingReconciliationController))
+        .All(method => method.GetCustomAttribute<HttpPostAttribute>() is null),
+    "Purchase accounting reconciliation controller must remain read-only");
 
 var locationMovement = new LocationMovement(
     productId: 1,
@@ -1294,6 +1309,38 @@ purchaseOrder.Approve("manager"); purchaseOrder.Confirm("buyer");
 Check(purchaseOrder.Status == PurchaseOrderStatus.Confirmed &&
       db.Model.FindEntityType(typeof(PurchaseOrder))!.FindProperty("TenantId") is { IsNullable: false },
     "A confirmed purchase order must retain its sourced commercial snapshots without stock mutation");
+purchaseOrder.CloseRemaining("buyer", "Supplier cannot deliver the remaining quantity");
+Check(purchaseOrder.Status == PurchaseOrderStatus.Closed &&
+      purchaseOrder.ClosureType == PurchaseOrderClosureType.RemainingQuantity &&
+      purchaseOrder.History.Single().Action == PurchaseOrderLifecycleAction.RemainingQuantityClosed,
+    "A reasoned remaining-quantity closure must close the confirmed order and preserve lifecycle history");
+purchaseOrder.Reopen("manager", "Supplier confirmed a new delivery date");
+Check(purchaseOrder.Status == PurchaseOrderStatus.Confirmed && purchaseOrder.ClosureType is null &&
+      purchaseOrder.History.Count == 2 && purchaseOrder.History.Last().Action == PurchaseOrderLifecycleAction.Reopened,
+    "A reasoned reopen must restore the confirmed order while preserving the prior closure history");
+var automaticClosureOrder = new PurchaseOrder("PO-000002", 302, 502, 5, 1,
+    DateOnly.FromDateTime(DateTime.Today), DateOnly.FromDateTime(DateTime.Today.AddDays(5)),
+    "JOD", null, "buyer");
+automaticClosureOrder.AddLine(new PurchaseOrderLine(602, 10, 2, 1m, 1m, 1m, 10m, 0m, 0m,
+    "P-10", "Coffee beans", "kg"));
+automaticClosureOrder.Approve("manager"); automaticClosureOrder.Confirm("buyer");
+automaticClosureOrder.CloseAutomatically("system");
+Check(automaticClosureOrder.Status == PurchaseOrderStatus.Closed &&
+      automaticClosureOrder.ClosureType == PurchaseOrderClosureType.Automatic &&
+      automaticClosureOrder.History.Single().Action == PurchaseOrderLifecycleAction.AutomaticallyClosed,
+    "Automatic completion must record a distinct immutable order lifecycle event");
+CheckThrows(() => automaticClosureOrder.Reopen("manager", "Not permitted"),
+    "An automatically completed purchase order must not be reopened through the remaining-quantity action");
+Check(db.Model.FindEntityType(typeof(PurchaseOrderLifecycleHistory))!.FindProperty("TenantId") is { IsNullable: false },
+    "Purchase order lifecycle history must be tenant owned");
+var purchaseOrderController = typeof(PurchaseOrdersController);
+Check(purchaseOrderController.GetMethod(nameof(PurchaseOrdersController.CloseRemaining))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
+      $"{PermissionAuthorizeAttribute.PolicyPrefix}PurchaseOrders.Close" &&
+      purchaseOrderController.GetMethod(nameof(PurchaseOrdersController.Reopen))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
+      $"{PermissionAuthorizeAttribute.PolicyPrefix}PurchaseOrders.Reopen",
+    "Purchase order closure and reopen must use separate server-side permissions");
 var agreement = new PurchaseAgreement("AGR-000001", 301, 501, 5, 1,
     DateOnly.FromDateTime(DateTime.Today), DateOnly.FromDateTime(DateTime.Today.AddMonths(6)),
     "jod", "30 days", "buyer");
@@ -1586,12 +1633,35 @@ Check(supplierNextStep is
           RequiredPermission: "Purchases.SupplierTerms.View"
       } && supplierNextStep.RouteValues.GetValueOrDefault("supplierId") == "17",
     "Completed supplier setup must guide users to purchasing terms for the same supplier");
+var closedOrderNextStep = WorkflowNextStepGuidance.Resolve(
+    "Purchase order remaining quantity closed.",
+    "PurchaseOrders",
+    new Dictionary<string, string?> { ["id"] = "21" });
+Check(closedOrderNextStep is
+      {
+          Controller: "PurchaseAccountingReconciliation",
+          Action: "Index",
+          RequiredPermission: "PurchaseAccountingReconciliation.View"
+      },
+    "A manually completed purchase order must guide users to purchase accounting reconciliation");
+var reopenedOrderNextStep = WorkflowNextStepGuidance.Resolve(
+    "Purchase order reopened.",
+    "PurchaseOrders",
+    new Dictionary<string, string?> { ["id"] = "21" });
+Check(reopenedOrderNextStep is
+      {
+          Controller: "GoodsReceipts",
+          Action: "Create",
+          RequiredPermission: "GoodsReceipts.Create"
+      } && reopenedOrderNextStep.RouteValues.GetValueOrDefault("purchaseOrderId") == "21",
+    "A reopened purchase order must guide users back to receiving its remaining quantity");
 Check(WorkflowNextStepGuidance.Resolve(
           "Operation completed successfully.",
           "Sales",
           new Dictionary<string, string?>()) is null,
     "Workflow next-step guidance must remain scoped until a future module defines its next actions");
 Check(WorkflowNextStepGuidance.IsSupportedController("VendorBills") &&
+      WorkflowNextStepGuidance.IsSupportedController("PurchaseAccountingReconciliation") &&
       WorkflowNextStepGuidance.IsSupportedController("StockTransfers") &&
       WorkflowNextStepGuidance.IsSupportedController("Warehouses") &&
       !WorkflowNextStepGuidance.IsSupportedController("Sales"),
@@ -1627,6 +1697,25 @@ Check(PurchaseAnalyticsService.Rate(8m, 10m) == 80m &&
       PurchaseAnalyticsService.Rate(2m, 0m) == 0m &&
       PurchaseAnalyticsService.Rate(12m, 10m) == 100m,
     "Purchase analytics rates must handle normal, zero-denominator and over-fulfilment cases safely");
+var reconciliationDate = DateOnly.FromDateTime(DateTime.Today);
+var purchaseReconciliationService = new PurchaseAccountingReconciliationService(
+    new StubPurchaseAccountingReconciliationRepository(new PurchaseAccountingReconciliationSnapshot(
+        [new PurchaseInventoryLedgerSnapshot(1, "Main", 10, "1200", "Inventory", 125.555m, 125.55m)],
+        [new PurchaseGrniReceiptSnapshot(1, "GRN-1", reconciliationDate, 2, "PO-1", 3, "Supplier", 1, "Main",
+            100m, 10m, 40m,
+            [new PurchaseReconciliationDocumentSnapshot("VendorBill", 4, "BILL-1", reconciliationDate, 40m)])],
+        20, "2100", "GRNI", 50m, true)));
+var purchaseReconciliation = await purchaseReconciliationService.GetAsync(
+    new PurchaseAccountingReconciliationQueryDto { AsOfDate = reconciliationDate, ExceptionsOnly = false });
+Check(purchaseReconciliation.OperationalGrniBalance == 50m &&
+      purchaseReconciliation.LedgerGrniBalance == 50m &&
+      purchaseReconciliation.GrniIsReconciled &&
+      purchaseReconciliation.GrniReceipts.Single().OutstandingValue == 50m,
+    "Purchase reconciliation must derive open GRNI from receipt value less returns and bill clearing");
+Check(purchaseReconciliation.InventoryExceptionCount == 0 &&
+      purchaseReconciliation.InventoryIsReconciled &&
+      purchaseReconciliation.Inventory.Single().InventoryAccountDisplay == "1200 — Inventory",
+    "Purchase reconciliation must compare rounded warehouse value with its assigned ledger account");
 var purchaseAnalyticsController = typeof(PurchaseAnalyticsController);
 Check(purchaseAnalyticsController.GetMethod(nameof(PurchaseAnalyticsController.Index))!
           .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
@@ -1692,6 +1781,13 @@ sealed class StubUsers : UserManager<IdentityUser>
 }
 
 sealed class StubTenantContext : MiniStore.Domain.Interfaces.ITenantContext { public int? TenantId => 1; }
+sealed class StubPurchaseAccountingReconciliationRepository(PurchaseAccountingReconciliationSnapshot snapshot)
+    : IPurchaseAccountingReconciliationRepository
+{
+    public Task<PurchaseAccountingReconciliationSnapshot> GetSnapshotAsync(
+        DateOnly asOfDate,
+        CancellationToken cancellationToken = default) => Task.FromResult(snapshot);
+}
 sealed class StubTenantAuthorization(bool admin) : MiniStore.Domain.Interfaces.ITenantAuthorizationRepository
 {
     public Task<bool> HasRoleAsync(int tenantId, string userId, string roleName) => Task.FromResult(admin && roleName == "Admin");

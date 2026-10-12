@@ -77,6 +77,7 @@ public class AppDbContext
     public DbSet<PurchaseQuotationAward> PurchaseQuotationAwards => Set<PurchaseQuotationAward>();
     public DbSet<PurchaseOrder> PurchaseOrders => Set<PurchaseOrder>();
     public DbSet<PurchaseOrderLine> PurchaseOrderLines => Set<PurchaseOrderLine>();
+    public DbSet<PurchaseOrderLifecycleHistory> PurchaseOrderLifecycleHistories => Set<PurchaseOrderLifecycleHistory>();
     public DbSet<GoodsReceipt> GoodsReceipts => Set<GoodsReceipt>();
     public DbSet<GoodsReceiptLine> GoodsReceiptLines => Set<GoodsReceiptLine>();
     public DbSet<GoodsReceiptScan> GoodsReceiptScans => Set<GoodsReceiptScan>();

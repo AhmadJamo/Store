@@ -11,7 +11,7 @@ public sealed class PurchaseOrderRepository(AppDbContext context) : IPurchaseOrd
         return query.OrderByDescending(x => x.CreatedAtUtc).ToListAsync();
     }
 
-    public Task<PurchaseOrder?> GetByIdAsync(int id) => context.PurchaseOrders.Include(x => x.Lines).FirstOrDefaultAsync(x => x.Id == id);
+    public Task<PurchaseOrder?> GetByIdAsync(int id) => context.PurchaseOrders.Include(x => x.Lines).Include(x => x.History).FirstOrDefaultAsync(x => x.Id == id);
     public Task<PurchaseOrder?> GetByQuotationIdAsync(int quotationId) => context.PurchaseOrders.FirstOrDefaultAsync(x => x.SupplierQuotationId == quotationId && x.PurchaseAgreementId == null);
     public Task<List<PurchaseOrder>> GetByAgreementIdAsync(int agreementId) => context.PurchaseOrders.Include(x => x.Lines).Where(x => x.PurchaseAgreementId == agreementId).ToListAsync();
     public Task AddAsync(PurchaseOrder order) => context.PurchaseOrders.AddAsync(order).AsTask();

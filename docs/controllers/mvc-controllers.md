@@ -1,5 +1,5 @@
 # MVC controllers
-> Status: IMPLEMENTED | Last reviewed: 2026-09-30
+> Status: IMPLEMENTED | Last reviewed: 2026-10-12
 
 | Controller | Actions/views | Authorization and dependencies |
 |---|---|---|
@@ -21,11 +21,13 @@
 | ProductTemplates | template creation, existing-SKU assignment/removal and grouped variant listing | Products View/Edit permissions and ProductTemplateService. |
 | LocationMovements | Index/Move | LocationMovements.View/Create and LocationMovementService. |
 | InventoryReconciliation | Index | InventoryReconciliation.View; read-only Application service over tenant-filtered SQL aggregate queries. |
+| PurchaseAccountingReconciliation | Index | PurchaseAccountingReconciliation.View; read-only as-of-date Inventory/GL and receipt-derived GRNI/GL comparison with localized validation. |
 | Purchases | Index/Create/Details | Purchases.View/Create; PurchaseService and master repositories for dropdowns. |
 | Sales | Index/Details/Create/Pos/Post | Sales.View/Create; SaleService validates and snapshots optional invoice tax plus POS order context/item notes; SalePostingService creates the one-time balanced revenue, output-tax and COGS journal; PosExperienceSettingsService supplies terminal-specific runtime presentation/workflow. |
 | PurchaseReturns | Index/Details/Create | PurchaseReturns.View/Create; only posted purchases may return remaining quantities covered by current warehouse stock, and creation atomically posts inventory/payable/tax/discount/variance reversal. |
 | PurchaseSourcing | Index/Details/Create | PurchaseSourcing.View/Create; Create binds the sourcing page's `Form` prefix before validating the approved Purchase Request and invited suppliers. |
 | SupplierQuotations | Create/Comparison/Award | SupplierQuotations.Create/View/Award; Create binds the quotation page's `Form` prefix before validating the sourcing event, invited supplier and complete quotation lines. |
+| PurchaseOrders | Index/Details/CreateFromAward/Approve/Confirm/Cancel/CloseRemaining/Reopen | State-specific permissions; close remaining requires fully settled received quantities plus reason, while reopen has a separate permission and accepts only a reasoned remaining-quantity closure. |
 | SalesReturns | Index/Details/Create | SalesReturns.View/Create; SalesReturnService enforces remaining quantity, restores eligible inventory and posts the atomic reversal journal. |
 | StockTransfers | Index/Details/Create/Edit and state POSTs | transfer-specific permissions/service. |
 | Settings | Index/DocumentNumbers/General/Discounts/Inventory/InventoryAccess/Pos/Units/FiscalPeriods plus mutations | active-company Admin policy; centralized document sequences, fiscal-period close controls, inventory defaults, managed measurement units, branch/POS warehouse configuration and rowversion-protected terminal experience settings. Legacy Invoices redirects to DocumentNumbers. |

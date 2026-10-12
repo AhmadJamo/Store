@@ -1,7 +1,9 @@
 # Database
 > Status: IMPLEMENTED  
 > Source of truth: EF Core entities, configurations and migrations  
-> Last reviewed: 2026-10-11
+> Last reviewed: 2026-10-12
+
+PUR-165 adds nullable current-closure evidence to `PurchaseOrders` and tenant-owned immutable `PurchaseOrderLifecycleHistories`. The history records automatic close, reasoned remaining-quantity close and reasoned reopen transitions through a tenant-composite cascade relationship. Migration `AddPurchaseOrderDerivedClosure` is additive and applied to the local `MiniStoreDb`.
 
 WMS-050 adds tenant-owned `InventoryReservations` and `InventoryReservationLines`. Source identity is unique per tenant, quantities are positive, relationships are tenant-safe, exact and Unassigned dimensions are duplicate-protected, and rowversions protect concurrent reservation changes. Migrations `AddInventoryReservations` and `AddUnassignedReservationUniqueness` are additive and are applied to `AHMAD/MiniStoreDb`.
 
@@ -48,7 +50,7 @@ All business tables have a required `TenantId` foreign key to `Tenants`. EF quer
 | PurchaseApprovalInstances / Steps | One tenant-unique approval instance per Purchase Request with frozen rule name and ordered role steps, explicit pending/approved/rejected decisions, actors, timestamps and notes. |
 | PurchaseSourcingEvents / Lines / Invitations | RFX-numbered events link one approved request to frozen product/unit/quantity snapshots and invited suppliers. They contain no quotation price, receipt, stock or accounting data. |
 | SupplierQuotations / Lines / PurchaseQuotationAwards | One supplier quote per sourcing event and supplier, immutable submitted commercial snapshots, and one reasoned/actor-stamped award decision per sourcing event. |
-| PurchaseOrders / Lines | One direct tenant-unique internal order per awarded quotation, or multiple capped releases linked to one Purchase Agreement. Headers and lines preserve agreement provenance and frozen commercial snapshots. The order is commercial intent only; it has no stock or journal relationship. |
+| PurchaseOrders / Lines / PurchaseOrderLifecycleHistories | One direct tenant-unique internal order per awarded quotation, or multiple capped releases linked to one Purchase Agreement. Headers and lines preserve agreement provenance and frozen commercial snapshots. Closure type/reason/actor/time represent current completion; immutable history preserves automatic close, remaining-quantity close and reopen transitions. Stock and journal facts remain owned by downstream receipt, return and bill documents. |
 | PurchaseAgreements / Lines | One tenant-unique agreement per awarded quotation with validity, lifecycle audit, rowversion and maximum contracted quantities over frozen awarded terms. |
 | PurchaseTemplates / Lines | Centrally numbered, rowversion-protected repeat-demand definitions sourced from a Purchase Order; generated requests carry a distinct template/generation source reference. |
 | LandedCosts / Components / Allocations | Tenant-owned immutable receipt-linked cost headers, typed component amounts and per-receipt-line allocation/capitalization/AVCO snapshots. External references and document numbers are tenant-unique. |
@@ -67,7 +69,7 @@ All business tables have a required `TenantId` foreign key to `Tenants`. EF quer
 | DocumentSequences | one row per tenant/document type; unique `(TenantId, DocumentType)`; customizable template, prefix, suffix, padding, next/reset counters and period state; rowversion protects settings updates. |
 
 ## Migrations
-Migration history is chronological through `AddProductTemplatesAndVariantIdentity`, applied to `AHMAD/MiniStoreDb`. WMS-015 migrations add tenant-owned definitions, options, category applicability, typed product values and optional template grouping with duplicate-safe variant signatures without changing Product IDs. The earlier product-logistics and hierarchical-location migrations are also applied. Migrations are source-controlled under `MiniStore.Infrastructure/Migrations`; generated designers and the model snapshot are metadata, not separate runtime features.
+Migration history includes `20261012122525_AddPurchaseOrderDerivedClosure`, applied to the local `MiniStoreDb`. It adds four nullable closure columns and the tenant-safe lifecycle-history table without rewriting existing orders. Migrations are source-controlled under `MiniStore.Infrastructure/Migrations`; generated designers and the model snapshot are metadata, not separate runtime features.
 
 ## Transactions and concurrency
 `UnitOfWork.ExecuteInTransactionAsync` starts a Serializable database transaction, executes an operation, calls one `SaveChangesAsync`, then commits. Sales, purchases, transfers, putaway and internal location relocation use it. ProductStock, ProductLocationStock and StockTransfer use rowversion concurrency tokens. General, discount, inventory, invoice and POS terminal experience settings use rowversion to varying degrees.

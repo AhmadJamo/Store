@@ -105,7 +105,7 @@ try
     await VerifyInventoryBalanceProjectionAsync(tenantOneId, tenantOneFixture.ProductId, expectedOnHand: 2m, connectionString);
     await VerifyOpeningTrackingAllocationAsync(tenantOneId, tenantOneFixture.ProductId, tenantOneFixture.WarehouseId, connectionString);
 
-    Console.WriteLine("Passed SQL integration checks: tenant isolation, reconciliation, balances, replenishment purchase-request source concurrency, receipt, vendor-bill and supplier-payment concurrency, three-way matching override evidence, GRNI posting and clearing, payable settlement, receipt-based supplier returns, landed-cost valuation, purchasing analytics, idempotent barcode receipt drafts, adjustment posting, tracked operations, quarantine and recall.");
+    Console.WriteLine("Passed SQL integration checks: tenant isolation, reconciliation, balances, replenishment purchase-request source concurrency, receipt, vendor-bill and supplier-payment concurrency, three-way matching override evidence, GRNI posting and clearing, purchase accounting reconciliation, payable settlement, receipt-based supplier returns, landed-cost valuation, purchasing analytics, idempotent barcode receipt drafts, adjustment posting, tracked operations, quarantine and recall.");
 }
 finally
 {
@@ -399,11 +399,14 @@ static async Task VerifyConcurrentGoodsReceiptAndGrniAsync(
         var billNumbers = new DocumentNumberService(new DocumentSequenceRepository(billContext));
         var billFiscalPeriods = new FiscalPeriodService(new FiscalPeriodRepository(billContext), billUnitOfWork, billUser);
         var billJournals = new JournalPostingService(new JournalEntryRepository(billContext), billNumbers, billFiscalPeriods);
+        var billOrderLifecycle = new PurchaseOrderLifecycleService(
+            new PurchaseOrderRepository(billContext), new GoodsReceiptRepository(billContext),
+            new GoodsReceiptReturnRepository(billContext), new VendorBillRepository(billContext), billUnitOfWork, billUser);
         var billService = new VendorBillService(
             new VendorBillRepository(billContext), new PurchaseOrderRepository(billContext), new GoodsReceiptRepository(billContext),
             new GoodsReceiptReturnRepository(billContext), new SupplierRepository(billContext), new WarehouseRepository(billContext),
             new TaxRateRepository(billContext), new AccountingSettingsRepository(billContext), new PurchaseMatchingSettingsRepository(billContext),
-            new PurchaseMatchRepository(billContext), billNumbers, billJournals,
+            new PurchaseMatchRepository(billContext), billNumbers, new SupplierPaymentRepository(billContext), billJournals, billOrderLifecycle,
             billUnitOfWork, billUser);
         try
         {
@@ -511,13 +514,16 @@ static async Task VerifyConcurrentGoodsReceiptAndGrniAsync(
             new WarehouseRepository(returnContext), new StorageLocationRepository(returnContext),
             new InventoryBalanceRepository(returnContext), new ProductStockRepository(returnContext),
             new ProductLocationStockRepository(returnContext));
+        var returnOrderLifecycle = new PurchaseOrderLifecycleService(
+            new PurchaseOrderRepository(returnContext), new GoodsReceiptRepository(returnContext),
+            new GoodsReceiptReturnRepository(returnContext), new VendorBillRepository(returnContext), returnUnitOfWork, returnUser);
         var returnService = new GoodsReceiptReturnService(
             new GoodsReceiptReturnRepository(returnContext), new VendorBillRepository(returnContext), new GoodsReceiptRepository(returnContext),
             new PurchaseOrderRepository(returnContext), new SupplierRepository(returnContext),
             new WarehouseRepository(returnContext), new ProductRepository(returnContext),
             new ProductStockRepository(returnContext), new StockTransactionRepository(returnContext),
             new StockMovementRepository(returnContext), new AccountingSettingsRepository(returnContext),
-            returnTracking, untrackedRemoval, returnNumbers, returnJournals, returnUnitOfWork, returnUser);
+            returnTracking, untrackedRemoval, returnNumbers, returnJournals, returnOrderLifecycle, returnUnitOfWork, returnUser);
         try
         {
             await returnService.CreateAndPostAsync(new CreateGoodsReceiptReturnDto
@@ -546,12 +552,16 @@ static async Task VerifyConcurrentGoodsReceiptAndGrniAsync(
     await using var returnVerification = new AppDbContext(CreateOptions(connectionString), new FixedTenantContext(tenantId));
     var postedReturn = await returnVerification.GoodsReceiptReturns.Include(x => x.Lines)
         .SingleAsync(x => x.GoodsReceiptId == receipt.Id);
+    var closedOrder = await returnVerification.PurchaseOrders.Include(x => x.History)
+        .SingleAsync(x => x.Id == purchaseOrderId);
     var stockAfterReturn = await returnVerification.ProductStocks.SingleAsync(x => x.ProductId == productId && x.WarehouseId == warehouseId);
     var returnMovement = await returnVerification.StockMovements.SingleAsync(x =>
         x.SourceDocumentType == "GoodsReceiptReturn" && x.SourceDocumentId == postedReturn.Id);
     var returnJournal = await returnVerification.JournalEntries.Include(x => x.Lines).SingleAsync(x =>
         x.SourceType == "GoodsReceiptReturn" && x.SourceReference == postedReturn.ReturnNumber);
     if (postedReturn.Status != GoodsReceiptReturnStatus.Posted || stockAfterReturn.Quantity != 0.5m ||
+        closedOrder.Status != PurchaseOrderStatus.Closed || closedOrder.ClosureType != PurchaseOrderClosureType.Automatic ||
+        closedOrder.History.Count != 1 || closedOrder.History.Single().Action != PurchaseOrderLifecycleAction.AutomaticallyClosed ||
         returnMovement.Type != StockMovementType.ReceiptReturnOut ||
         returnJournal.Lines.Sum(x => x.Debit) != 4.5m || returnJournal.Lines.Sum(x => x.Credit) != 4.5m ||
         !returnJournal.Lines.Any(x => x.AccountId == grniAccountId && x.Debit == 4.5m) ||
@@ -611,6 +621,22 @@ static async Task VerifyConcurrentGoodsReceiptAndGrniAsync(
             $"Exceptions={analytics.MatchExceptionCount}, Overrides={analytics.MatchOverrideCount}, Fill={supplierPerformance.FillRatePercent}, " +
             $"OnTime={supplierPerformance.OnTimeRatePercent}, Returns={supplierPerformance.ReturnRatePercent}, Spend={supplierPerformance.BilledSpend}, " +
             $"Variance={supplierPerformance.PriceVariance}, Balance={supplierPerformance.OutstandingBalance}");
+
+    var purchaseReconciliationService = new PurchaseAccountingReconciliationService(
+        new PurchaseAccountingReconciliationRepository(landedVerification));
+    var purchaseReconciliation = await purchaseReconciliationService.GetAsync(
+        new PurchaseAccountingReconciliationQueryDto
+        {
+            AsOfDate = receiptDate,
+            ExceptionsOnly = false
+        });
+    var purchaseInventoryRow = purchaseReconciliation.Inventory.Single(x => x.WarehouseId == warehouseId);
+    var purchaseGrniRow = purchaseReconciliation.GrniReceipts.Single(x => x.GoodsReceiptId == receipt.Id);
+    if (!purchaseInventoryRow.IsReconciled || purchaseInventoryRow.OperationalValue != 5.5m ||
+        purchaseInventoryRow.LedgerBalance != 5.5m || purchaseGrniRow.ReceiptValue != 9m ||
+        purchaseGrniRow.ReturnedValue != 4.5m || purchaseGrniRow.BilledClearingValue != 4.5m ||
+        purchaseGrniRow.OutstandingValue != 0m || !purchaseReconciliation.GrniIsReconciled)
+        throw new InvalidOperationException("Purchase accounting reconciliation must translate on SQL Server and match inventory and GRNI operational evidence to their ledger balances.");
 
     await using var scanContext = new AppDbContext(CreateOptions(connectionString), new FixedTenantContext(tenantId));
     var scanRequest = new PurchaseRequest("PRQ-SQL-SCAN", warehouseId, receiptDate,
@@ -867,10 +893,20 @@ static async Task VerifyTrackedActivationGuardAsync(
     await using var context = new AppDbContext(
         CreateOptions(connectionString),
         new FixedTenantContext(tenantId));
+    var unitOfWork = new UnitOfWork(context);
+    var productRepository = new ProductRepository(context);
+    var measurementUnits = new MeasurementUnitRepository(context);
     var service = new ProductService(
-        new ProductRepository(context),
-        new MeasurementUnitRepository(context),
-        new ProductCategoryRepository(context));
+        productRepository,
+        measurementUnits,
+        new ProductCategoryRepository(context),
+        new SupplierProductAssignmentService(
+            new SupplierProductPurchasingInfoRepository(context),
+            new SupplierRepository(context),
+            productRepository,
+            measurementUnits,
+            new GeneralSettingsRepository(context)),
+        unitOfWork);
 
     try
     {

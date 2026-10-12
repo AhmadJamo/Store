@@ -1,10 +1,10 @@
 # Project TODO
 > Source of truth: Current repository scan  
-> Last reviewed: 2026-10-11
+> Last reviewed: 2026-10-12
 
 The approved numbered Arabic/English delivery sequence is maintained in `MASTER_IMPLEMENTATION_ROADMAP_AR_EN.md`. Detailed working status, business rules and the rolling suggestion queue remain in `ARABIC_SHARED_ROADMAP.md`. This file remains the concise technical backlog.
 
-The PUR-000 through PUR-150 purchase evolution is implemented. The immediate closure priority is the inventory-to-general-ledger and GRNI reconciliation report required to complete PUR-065, followed by controlled posted-document reversals. Incoming customer-management and sales requirements must be reconciled with master-roadmap steps 7 through 11 before implementation.
+The PUR-000 through PUR-165 purchase evolution is implemented. The approved continuation is maintained in `PURCHASE_COMPLETION_ROADMAP_AR_EN.md`. Work continues with PUR-170 Supplier Credit Notes for billed returns, then follows the dependency-ordered slices through PUR-280. Incoming customer-management and sales requirements must be reconciled with master-roadmap steps 7 through 11 before implementation.
 
 - [x] PUR-000 complete purchase architecture review, legacy compatibility boundary, migration strategy and vertical-slice roadmap.
 - [x] PUR-005 fix context ownership, quantity authority, staged currency, approval and GRNI boundaries before runtime implementation.
@@ -15,7 +15,7 @@ The PUR-000 through PUR-150 purchase evolution is implemented. The immediate clo
 - [x] PUR-040 add supplier quotations, comparison and a reasoned award decision.
 - [x] PUR-050 add the Purchase Order lifecycle without stock mutation. Receipt/bill-based closure is deferred to later slices.
 - [x] PUR-060 complete partial Goods Receipts, history, physical movement facts and SQL concurrency coverage.
-- [-] PUR-065 Inventory/GRNI posting, Vendor Bill clearing and unbilled receipt-return reversal are implemented with SQL atomicity coverage; inventory-to-GL reconciliation reporting remains open.
+- [x] PUR-065 complete Inventory/GRNI posting, Vendor Bill clearing, unbilled receipt-return reversal and PUR-160 reconciliation reporting with SQL coverage.
 - [x] PUR-070 add receipt-based supplier returns with unbilled-quantity caps, inventory/tracking removal and GRNI/PPV reversal while preserving legacy returns.
 - [x] PUR-080 add receipt-allocated Vendor Bills with normalized duplicate protection and GRNI/Input Tax/PPV/Accounts Payable posting.
 - [x] PUR-090 add three-way matching tolerances, persisted exceptions and controlled override.
@@ -26,6 +26,20 @@ The PUR-000 through PUR-150 purchase evolution is implemented. The immediate clo
 - [x] PUR-140 add bounded purchasing dashboards and supplier-performance projections over authoritative tenant-owned operational and financial records.
 - [x] PUR-150 add idempotent barcode-assisted Draft Goods Receipt capture with explicit posting through the existing inventory/accounting path.
 - [x] Complete the approved PUR-000 through PUR-150 purchase-management evolution plan.
+- [x] PUR-160 add inventory-to-GL and GRNI reconciliation and close the remaining PUR-065 reporting gap.
+- [x] PUR-165 add derived Purchase Order closure, controlled remaining-quantity closure and permission-gated reopen.
+- [ ] PUR-170 add Supplier Credit Notes for already billed receipt returns.
+- [ ] PUR-180 add controlled posted-document reversal and correction.
+- [ ] PUR-190 add multi-currency purchase, receipt, bill and payment accounting.
+- [ ] PUR-200 add a policy-controlled direct RFQ workspace and fast path.
+- [ ] PUR-210 add line-level and split supplier awards.
+- [ ] PUR-220 add service procurement, per-product billing policy and reviewed Draft Vendor Bills.
+- [ ] PUR-230 add atomic CSV/Excel vendor-price import/export and quantity price breaks.
+- [ ] PUR-240 add scheduled replenishment and historical-demand suggestions.
+- [ ] PUR-250 add configurable receiving/quality routes, demand allocation and dropshipping contracts.
+- [ ] PUR-260 add supplier email, attachments, confirmation tracking and reviewed OCR capture.
+- [ ] PUR-270 add a supplier portal plus secure API/EDI/UBL exchange and reliable outbox delivery.
+- [ ] PUR-280 add advanced purchase analytics and make a documented Legacy Direct Purchase retirement decision.
 
 - [x] WMS-050 reservations and exact transfer allocation with concurrent last-unit protection.
 - [x] WMS-060 blind cycle counts and controlled inventory adjustment posting; scheduling remains deferred.
@@ -85,7 +99,7 @@ The PUR-000 through PUR-150 purchase evolution is implemented. The immediate clo
 - Implemented WMS-010 hierarchical location metadata, barcode, sequence, tree ordering, warehouse-filtered parent selection, operational capabilities, edit workflow and cycle/same-warehouse validation. Putaway/transfers/relocations enforce receive/pick capabilities. Its additive migration is applied to `AHMAD/MiniStoreDb`; authenticated UI smoke remains because no login secret is stored in the repository.
 
 ## In Progress
-- PUR-040 is implemented. Next: PUR-050 Purchase Order lifecycle from the recorded quotation award, without stock mutation.
+- PUR-165 is implemented. Next: PUR-170 Supplier Credit Notes for already billed receipt returns.
 - WMS delivery is paused by product-owner direction. Its remaining items stay documented in `WMS_EVOLUTION_PLAN.md` and resume after the current purchase-management priority.
 - WMS-015A/B/C/D typed definitions, values, ProductTemplate grouping and controlled selection-based variant generation are implemented. Product remains the SKU; proceed to the next WMS slice.
 - WMS-020A physical StockMovement kernel is implemented for idempotent Putaway/Relocation dual-write. Next: authenticated pilot smoke test and WMS-030 transfer/transit integration; do not cut over legacy reads yet.

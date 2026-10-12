@@ -15,7 +15,7 @@ public static class WorkflowNextStepGuidance
         "Purchases", "PurchaseReturns", "Suppliers", "SupplierPurchasing", "PurchaseRequests",
         "PurchaseApprovalRules", "PurchaseSourcing", "SupplierQuotations", "PurchaseOrders",
         "GoodsReceipts", "GoodsReceiptReturns", "VendorBills", "SupplierPayments",
-        "PurchaseAgreements", "PurchaseTemplates", "LandedCosts"
+        "PurchaseAgreements", "PurchaseTemplates", "LandedCosts", "PurchaseAccountingReconciliation"
     };
 
     private static readonly HashSet<string> InventoryControllers = new(StringComparer.OrdinalIgnoreCase)
@@ -91,6 +91,16 @@ public static class WorkflowNextStepGuidance
         if (Matches(message, localize, "Purchase order confirmed."))
             return new("GoodsReceipts", "Create", "Receive purchased goods",
                 "Record only the quantities physically received from the supplier.",
+                "GoodsReceipts.Create", Routes(("purchaseOrderId", Route("id"))));
+
+        if (Matches(message, localize, "Purchase order remaining quantity closed."))
+            return new("PurchaseAccountingReconciliation", "Index", "Review purchase accounting reconciliation",
+                "Confirm that inventory and goods-received-not-invoiced balances agree after completing the order.",
+                "PurchaseAccountingReconciliation.View", []);
+
+        if (Matches(message, localize, "Purchase order reopened."))
+            return new("GoodsReceipts", "Create", "Receive purchased goods",
+                "The order is confirmed again and its remaining quantity can now be received.",
                 "GoodsReceipts.Create", Routes(("purchaseOrderId", Route("id"))));
 
         if (Matches(message, localize, "Goods receipt posted."))

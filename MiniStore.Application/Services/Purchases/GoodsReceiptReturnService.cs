@@ -10,7 +10,8 @@ public sealed class GoodsReceiptReturnService(
     IProductStockRepository stocks, IStockTransactionRepository transactions, IStockMovementRepository movements,
     IAccountingSettingsRepository accountingSettings, InventoryTrackingService tracking,
     UntrackedInventoryRemovalService untrackedRemoval, DocumentNumberService numbers,
-    JournalPostingService journalPosting, IUnitOfWork unitOfWork, ICurrentUserService currentUser)
+    JournalPostingService journalPosting, PurchaseOrderLifecycleService orderLifecycle,
+    IUnitOfWork unitOfWork, ICurrentUserService currentUser)
 {
     public async Task<List<GoodsReceiptReturnDto>> GetAllAsync()
     {
@@ -110,6 +111,8 @@ public sealed class GoodsReceiptReturnService(
                 $"Goods receipt return {created.ReturnNumber}", "GoodsReceiptReturn", created.ReturnNumber, journalLines,
                 "This goods receipt return has already been posted to accounting."));
             created.Post(currentUser.UserId);
+            await unitOfWork.FlushAsync();
+            await orderLifecycle.TryCloseAutomaticallyAsync(order.Id);
         });
         return created!.Id;
     }

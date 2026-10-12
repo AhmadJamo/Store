@@ -260,4 +260,4 @@ Shared accounting, settings, inventory and document-number files are changed onl
 
 ## 10. Immediate next slice
 
-The approved PUR-000 through PUR-150 roadmap is complete. A future controlled slice may add supplier credit notes for already billed receipt quantities; PUR-070 continues to reject those quantities until that accounting design is approved.
+The approved roadmap is implemented through PUR-165, including inventory-to-GL/GRNI reconciliation and derived Purchase Order closure with controlled remaining-quantity close/reopen. The dependency-ordered continuation in `PURCHASE_COMPLETION_ROADMAP_AR_EN.md` proceeds with PUR-170 Supplier Credit Notes for already billed receipt quantities. PUR-070 continues to reject those billed quantities until PUR-170 is implemented.

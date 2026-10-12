@@ -1,5 +1,14 @@
 # AI Work Log
 
+## 2026-10-12 — PUR-165 Derived Purchase Order Closure
+
+- Added per-line derived Purchase Order progress from posted Goods Receipts, receipt returns and Vendor Bill receipt-clearing quantities.
+- Fully received and fully settled confirmed orders now close automatically inside the final bill/return transaction. Partial orders can close their unreceived remainder only after received quantities are settled and a mandatory reason is supplied.
+- Added a separately authorized, reason-required reopen command that applies only to remaining-quantity closures; automatically completed orders remain closed.
+- Added tenant-owned immutable lifecycle history plus current closure metadata, migration `20261012122525_AddPurchaseOrderDerivedClosure`, and applied it to the local `MiniStoreDb` without historical backfill.
+- Reworked Purchase Order details into responsive progress cards without horizontal scrolling. Completed receipt/bill actions disappear and are replaced by completion states; close/reopen success messages provide permission-aware next-step links.
+- The Web project built with zero warnings, 586 focused regression checks passed, Entity Framework reports no pending model changes, and the disposable SQL Server integration fixture proved final return settlement creates exactly one automatic closure event.
+
 ## 2026-10-11 — PUR-150 Barcode-Assisted Goods Receiving
 
 - Added empty Draft Goods Receipt creation and a bilingual scanner-focused screen that resolves exact tenant product barcode/code matches only within the selected confirmed Purchase Order.
@@ -655,3 +664,16 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
 - Filtered every application and shortcut through the existing permission service; each card opens its first authorized destination while controller policies remain authoritative.
 - Added centralized Dashboard application definitions, module/screen/controller/codebase documentation and regression checks ensuring distinct apps and registered shortcut permissions.
 - The Web project built with zero warnings/errors; all 571 focused security and inventory regression checks passed.
+
+## 2026-10-12 — Post-PUR-150 purchase completion roadmap
+- Studied the implemented purchase lifecycle and organized the remaining accounting, commercial, automation, logistics, supplier-collaboration and integration gaps into fourteen dependency-ordered slices from PUR-160 through PUR-280.
+- Added a bilingual Arabic/English roadmap with scope, dependencies and exit gates for reconciliation, order closure, Supplier Credit Notes, controlled reversals, multi-currency, flexible RFQs, split awards, service procurement, bulk vendor prices, replenishment, advanced receiving, supplier communication, integrations, analytics and Legacy Direct Purchase retirement.
+- Set PUR-160 inventory-to-GL and GRNI reconciliation as the single starting slice and linked the plan from the documentation index, codebase map, master roadmap, purchase evolution plan and concise TODO.
+- Documentation only; no runtime code, schema, configuration or database data changed.
+
+## 2026-10-12 — PUR-160 purchase accounting reconciliation
+- Added a dedicated read-only repository and Application service that compare as-of-date warehouse operational Inventory values with each assigned GL account and receipt-derived GRNI with the configured ledger account.
+- Added responsive bilingual evidence cards for warehouse differences and Goods Receipt value less unbilled returns and Vendor Bill clearing, including direct Purchase Order, receipt, bill, return, stock and permission-aware setup links.
+- Added the `PurchaseAccountingReconciliation.View` permission, Purchasing navigation and Dashboard shortcut; the report performs no posting or adjustment and explains historical timing differences caused by movement-recording time versus document date.
+- Extended focused regression coverage and the disposable two-tenant SQL fixture. Release builds passed with zero warnings; 566 focused checks passed, and SQL verified exact Inventory/GL and GRNI/GL agreement after receipt, partial billing, unbilled return and landed-cost capitalization.
+- No schema migration was required; no production or development business data was changed.

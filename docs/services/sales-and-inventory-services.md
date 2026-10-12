@@ -1,7 +1,7 @@
 # Sales and inventory services
 
 `InventoryRemovalAllocator` is the shared tracked-stock ordering policy used by `InventoryTrackingService` for issues and transfers. It converts the source warehouse's configured FIFO, FEFO, location-priority or minimize-locations strategy into a deterministic candidate order; Manual currently falls back to FIFO until the audited override workflow is implemented.
-> Status: IMPLEMENTED WITH REMAINING CONTROLS | Last reviewed: 2026-09-30
+> Status: IMPLEMENTED WITH REMAINING CONTROLS | Last reviewed: 2026-10-12
 
 `SaleService` owns pricing, numbering, discounts, stock decrement and immutable direct/recipe-derived UnitCost/COGS snapshots. `PurchaseService` creates purchases and recalculates product/warehouse moving averages from net line cost; `PurchasePostingService` posts the supplier document separately. `ProductStockService` creates valued opening balances and adjustments. `StockTransactionService` records auditable quantity/average/value snapshots and permits only reasoned manual adjustments. `StockTransferService` carries source cost into the destination average during posting/cancellation. UnitOfWork uses Serializable transactions and converts EF concurrency conflicts to a retryable data-change message.
 
@@ -35,6 +35,10 @@ WMS-100B3 delegates one absolute scanned quantity to `InventoryAdjustmentService
 
 `InventoryReconciliationService` is read-only. It classifies tenant-filtered SQL snapshots from `InventoryReconciliationRepository`, comparing ProductStock quantity/value, aggregated ProductLocationStock, derived Unassigned and the latest StockTransaction snapshot. It applies fixed quantity/value tolerances, exposes exceptions through a paged bilingual report and never performs a correction.
 
+`PurchaseAccountingReconciliationService` is the PUR-160 read-only financial comparison. Its dedicated repository projects warehouse operational Inventory values, posted ledger activity, Goods Receipt values, unbilled return reversals and Vendor Bill GRNI clearing under tenant query filters. The service applies two-decimal accounting tolerance, classifies warehouse exceptions and open receipts, and never creates an adjustment or journal.
+
+`PurchaseOrderLifecycleService` is the PUR-165 completion authority. It derives each order line's received, returned, Vendor-Bill-cleared, remaining-to-receive and unsettled quantities from posted downstream documents. A fully received and fully settled confirmed order closes automatically inside the final bill/return transaction. A partially received order can close its remainder only when all receipts are settled and a reason is supplied; only that closure type can be reopened through its separately authorized, reasoned command.
+
 `ProductService` also validates product logistics against managed units: weights require Mass, dimensions require Length and all three dimensions, and category selection remains tenant-scoped. It refuses a transition from untracked to Lot/Serial while any ProductStock row has a non-zero balance. `ProductCategoryService` creates and activates/deactivates preserved category rows; it never deletes referenced categories.
 
 Storage-location, unassigned-stock, location-movement and transfer services enforce each warehouse's control mode. Simple warehouses bypass location allocation; structured warehouses can require transfer locations. Capacity checks follow the destination warehouse's enforcement policy.
@@ -49,4 +53,4 @@ InventoryAccessService manages branch warehouse permissions, branch priority/def
 
 The POS reads terminal-specific presentation and order-workflow preferences from `PosExperienceSettingsService`. SaleService independently validates the submitted order type, required dine-in service reference, guest-count permission and item-note permission before persisting the context; these preferences do not alter pricing, inventory validation or accounting behavior.
 
-Controllers: Sales, Purchases, ProductStocks, StockTransactions, StockTransfers, UnassignedStock, LocationMovements and InventoryReconciliation. Change any service → inspect its domain entities/DTOs/repositories/configurations, relevant controller/views, permissions, stock concurrency, accounting and module docs.
+Controllers: Sales, Purchases, ProductStocks, StockTransactions, StockTransfers, UnassignedStock, LocationMovements, InventoryReconciliation and PurchaseAccountingReconciliation. Change any service → inspect its domain entities/DTOs/repositories/configurations, relevant controller/views, permissions, stock concurrency, accounting and module docs.

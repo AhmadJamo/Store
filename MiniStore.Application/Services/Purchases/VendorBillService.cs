@@ -10,7 +10,7 @@ public sealed class VendorBillService(
     ITaxRateRepository taxRates, IAccountingSettingsRepository accountingSettings, IPurchaseMatchingSettingsRepository matchingSettings,
     IPurchaseMatchRepository matches, DocumentNumberService numbers,
     ISupplierPaymentRepository payments, JournalPostingService journalPosting,
-    IUnitOfWork unitOfWork, ICurrentUserService currentUser)
+    PurchaseOrderLifecycleService orderLifecycle, IUnitOfWork unitOfWork, ICurrentUserService currentUser)
 {
     public async Task<List<VendorBillDto>> GetAllAsync(string? search)
     {
@@ -128,6 +128,8 @@ public sealed class VendorBillService(
             await journalPosting.PostAsync(new JournalPostingRequest(dto.BillDate.ToDateTime(TimeOnly.MinValue), $"Vendor bill {created.BillNumber}",
                 "VendorBill", created.BillNumber, journalLines, "This vendor bill has already been posted to accounting."));
             created.Post(currentUser.UserId);
+            await unitOfWork.FlushAsync();
+            await orderLifecycle.TryCloseAutomaticallyAsync(order.Id);
         });
         return created!.Id;
     }

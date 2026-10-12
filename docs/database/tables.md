@@ -1,5 +1,5 @@
 # Database tables reference
-> Last reviewed: 2026-10-08
+> Last reviewed: 2026-10-12
 
 Schema source is `AppDbContext`, configurations and migrations. Identity's standard `AspNet*` tables are supplied by IdentityDbContext.
 
@@ -9,6 +9,8 @@ Schema source is `AppDbContext`, configurations and migrations. Identity's stand
 - **InventoryAdjustmentLines:** frozen expected, counted and derived variance quantities per product.
 - **InventoryTrackingBalances:** lot/serial quantities, dimensional position, dates, status, source and concurrency token.
 - **InventoryTrackingTransactions:** immutable lot/serial trace events linked to their balance.
+- **PurchaseOrders / PurchaseOrderLines:** frozen awarded commercial intent plus nullable current closure type, reason, actor and UTC time. Per-line receipt, return and bill progress is derived from downstream posted documents rather than duplicated here.
+- **PurchaseOrderLifecycleHistories:** immutable tenant-owned automatic-close, remaining-quantity-close and reopen events with prior/new status, actor, reason and time.
 
 - **Tenants:** company identity, unique URL-safe Slug, active state, creation time and RowVersion.
 - **TenantMemberships / TenantRoles / TenantRolePermissions / TenantUserRoles:** company membership, tenant-owned role definitions and permission/user assignments; Admin status is evaluated inside the active company.

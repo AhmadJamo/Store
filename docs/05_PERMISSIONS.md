@@ -96,3 +96,12 @@ The Index and mutation actions enforce these policies server-side. Permission se
 
 - `PurchaseAnalytics.View` protects the read-only purchasing dashboard and supplier-performance projection. It grants no purchasing command, inventory mutation or accounting-posting authority.
 
+# PUR-160 purchase accounting reconciliation permission
+
+- `PurchaseAccountingReconciliation.View` protects the read-only Inventory/GL and GRNI/GL comparison. It grants no stock adjustment, journal posting or accounting-setup authority; setup links are shown only when the user separately holds `Settings.Edit` or the matching warehouse permission.
+
+# PUR-165 purchase-order completion permissions
+
+- `PurchaseOrders.Close` permits closing an unreceived remainder only after all received quantities are billed or returned and requires a reason. It does not grant receipt, bill, approval or confirmation authority.
+- `PurchaseOrders.Reopen` separately permits reopening only an order closed through the remaining-quantity action and requires a new reason. Automatically completed orders cannot use this command.
+

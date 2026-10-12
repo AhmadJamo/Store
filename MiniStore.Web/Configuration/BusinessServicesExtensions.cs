@@ -146,6 +146,7 @@ public static class BusinessServicesExtensions
         services.AddScoped<ISupplierQuotationRepository, SupplierQuotationRepository>();
         services.AddScoped<SupplierQuotationService>();
         services.AddScoped<IPurchaseOrderRepository, PurchaseOrderRepository>();
+        services.AddScoped<PurchaseOrderLifecycleService>();
         services.AddScoped<PurchaseOrderService>();
         services.AddScoped<IGoodsReceiptRepository, GoodsReceiptRepository>();
         services.AddScoped<GoodsReceiptService>();
@@ -162,6 +163,8 @@ public static class BusinessServicesExtensions
         services.AddScoped<ILandedCostRepository, LandedCostRepository>();
         services.AddScoped<LandedCostService>();
         services.AddScoped<PurchaseAnalyticsService>();
+        services.AddScoped<IPurchaseAccountingReconciliationRepository, PurchaseAccountingReconciliationRepository>();
+        services.AddScoped<PurchaseAccountingReconciliationService>();
         services.AddScoped<IPurchaseRepository, PurchaseRepository>();
         services.AddScoped<IPurchaseReturnRepository, PurchaseReturnRepository>();
         services.AddScoped<PurchaseService>();

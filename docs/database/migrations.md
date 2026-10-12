@@ -1,5 +1,9 @@
 # Migrations and seeding
-> Last reviewed: 2026-09-28
+> Last reviewed: 2026-10-12
+
+## 20261012122525_AddPurchaseOrderDerivedClosure
+
+Adds nullable current closure type/reason/actor/time columns to existing Purchase Orders and creates the empty tenant-owned `PurchaseOrderLifecycleHistories` table with a tenant-composite cascade relationship. It performs no historical inference or backfill. The model has no pending changes and the migration was applied successfully to the local `MiniStoreDb` on 2026-10-12.
 
 Migrations evolve the schema chronologically from the initial ERP through accounting, inventory/POS, localization and tenancy. The current tail includes `EnforceTenantRoleAssignmentBoundary`, `HardenTenantIsolationRelationships` and `HardenTenantSubscriptionRedemption`. The hardening migrations add alternate tenant keys and composite foreign keys across ERP relationships and the subscription-redemption relationship. Both applied successfully to the local two-company test database. `AppDbContextModelSnapshot.cs` is the latest EF model snapshot.
 

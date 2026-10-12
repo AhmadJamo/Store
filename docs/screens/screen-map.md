@@ -1,5 +1,5 @@
 # Razor screen map
-> Status: IMPLEMENTED | Last reviewed: 2026-09-30
+> Status: IMPLEMENTED | Last reviewed: 2026-10-12
 
 | Screens | Controller flow / notable UI |
 |---|---|
@@ -20,10 +20,12 @@
 | `Views/InventoryScanning/Index.cshtml` | bilingual adjustment/product/source/destination lookup with permission-gated putaway, relocation or absolute Draft line count; blind counts hide balances. |
 | `Views/LocationMovements/Index.cshtml` | same-warehouse rack/bin relocation form with filtered choices, available quantity and searchable movement history. |
 | `Views/InventoryReconciliation/Index.cshtml` | bilingual read-only WMS exception report comparing warehouse quantity/value, assigned/unassigned location quantity and the latest movement snapshot, with warehouse/search/exception/page filters. |
+| `Views/PurchaseAccountingReconciliation/Index.cshtml` | responsive bilingual read-only financial reconciliation cards for warehouse Inventory versus GL and receipt-derived GRNI versus GL, with as-of-date filtering, exception/open-only mode, source-document links and permission-aware setup actions. |
 | `Views/ProductAttributes/{Index,Values}.cshtml` | bilingual definition administration plus per-product typed value assignment with required/category/option validation. |
 | `Views/ProductTemplates/Index.cshtml` | bilingual template creation, existing-SKU assignment and grouped variant listing. |
 | `Views/Purchases/{Index,Create,Details}.cshtml` | purchase list/detail and client-side dynamic item rows. |
 | `Views/PurchaseRequests/Details.cshtml`, `Views/PurchaseSourcing/{Create,Details}.cshtml`, `Views/SupplierQuotations/Create.cshtml` | permission-aware approved-request sourcing and supplier-quotation entry; nested form fields preserve their source identities and commercial lines during submission. |
+| `Views/PurchaseOrders/Details.cshtml` | responsive line cards show ordered, received, returned, billed, remaining-receipt and unsettled quantities without horizontal scrolling. Completed receipt/bill actions are replaced by status badges; separately authorized reason forms handle remaining-quantity closure and reopen, and immutable closure history remains visible. |
 | `Views/Shared/_Notification.cshtml` | shared localized notification modal with permission-aware resolution buttons for recognized actionable errors and a short next-step explanation/button after successful purchase, inventory and warehouse operations. |
 | `Views/GoodsReceiptReturns/{Index,Create,Details}.cshtml` | bilingual receipt-based supplier return capture and immutable posted history. |
 | `Views/VendorBills/{Index,Create,Details}.cshtml` | bilingual receipt-allocation capture, posted bill history and immutable accounting detail. |

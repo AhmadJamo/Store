@@ -1587,4 +1587,84 @@
   <data name="available applications" xml:space="preserve"><value>برامج متاحة</value></data>
   <data name="No applications match your search." xml:space="preserve"><value>لا توجد برامج مطابقة لبحثك.</value></data>
   <data name="No applications are available for your current permissions. Contact an administrator." xml:space="preserve"><value>لا توجد برامج متاحة ضمن صلاحياتك الحالية. تواصل مع مسؤول النظام.</value></data>
+  <data name="Purchase accounting reconciliation" xml:space="preserve"><value>مطابقة المشتريات والمحاسبة</value></data>
+  <data name="Read-only comparison of inventory and GRNI operational values with the general ledger." xml:space="preserve"><value>مقارنة للقراءة فقط بين القيم التشغيلية للمخزون والبضاعة المستلمة غير المفوترة ودفتر الأستاذ العام.</value></data>
+  <data name="As of date" xml:space="preserve"><value>كما في تاريخ</value></data>
+  <data name="Exceptions and open receipts only" xml:space="preserve"><value>الفروقات والاستلامات المفتوحة فقط</value></data>
+  <data name="This report never changes inventory or accounting. Differences must be corrected through their source documents or an approved adjustment workflow." xml:space="preserve"><value>هذا التقرير لا يغير المخزون أو المحاسبة. يجب تصحيح الفروقات من مستنداتها الأصلية أو من خلال مسار تسوية معتمد.</value></data>
+  <data name="Historical inventory note:" xml:space="preserve"><value>ملاحظة المخزون التاريخي:</value></data>
+  <data name="Inventory history uses the recorded movement time, while accounting uses the document posting date. Backdated documents can therefore appear as timing differences." xml:space="preserve"><value>يستخدم سجل المخزون وقت تسجيل الحركة، بينما تستخدم المحاسبة تاريخ ترحيل المستند؛ لذلك قد تظهر المستندات المسجلة بتاريخ سابق كفروقات توقيت.</value></data>
+  <data name="Operational inventory value" xml:space="preserve"><value>قيمة المخزون التشغيلية</value></data>
+  <data name="Warehouse value snapshots" xml:space="preserve"><value>لقطات قيمة المستودعات</value></data>
+  <data name="Inventory ledger balance" xml:space="preserve"><value>رصيد حساب المخزون</value></data>
+  <data name="Operational GRNI balance" xml:space="preserve"><value>رصيد البضاعة المستلمة غير المفوترة التشغيلي</value></data>
+  <data name="Open receipts" xml:space="preserve"><value>الاستلامات المفتوحة</value></data>
+  <data name="GRNI ledger balance" xml:space="preserve"><value>رصيد حساب البضاعة المستلمة غير المفوترة</value></data>
+  <data name="Configure a goods received not invoiced account to reconcile GRNI." xml:space="preserve"><value>هيّئ حساب البضاعة المستلمة غير المفوترة لإجراء المطابقة.</value></data>
+  <data name="Inventory to general ledger" xml:space="preserve"><value>المخزون مقابل دفتر الأستاذ العام</value></data>
+  <data name="Each warehouse is compared with its assigned inventory account." xml:space="preserve"><value>تتم مقارنة كل مستودع مع حساب المخزون المعيّن له.</value></data>
+  <data name="Inventory account is not assigned" xml:space="preserve"><value>حساب المخزون غير معيّن</value></data>
+  <data name="Matched" xml:space="preserve"><value>متطابق</value></data>
+  <data name="Needs review" xml:space="preserve"><value>يحتاج مراجعة</value></data>
+  <data name="Operational value" xml:space="preserve"><value>القيمة التشغيلية</value></data>
+  <data name="Ledger balance" xml:space="preserve"><value>رصيد الحساب</value></data>
+  <data name="View warehouse stock" xml:space="preserve"><value>عرض مخزون المستودع</value></data>
+  <data name="Assign inventory account" xml:space="preserve"><value>تعيين حساب المخزون</value></data>
+  <data name="No inventory reconciliation exceptions were found." xml:space="preserve"><value>لم يتم العثور على فروقات في مطابقة المخزون.</value></data>
+  <data name="GRNI receipt details" xml:space="preserve"><value>تفاصيل الاستلامات غير المفوترة</value></data>
+  <data name="Receipt value less unbilled returns and vendor bill clearing equals the expected GRNI balance." xml:space="preserve"><value>قيمة الاستلام ناقص المرتجعات غير المفوترة وتسويات فواتير المورد تساوي الرصيد المتوقع للبضاعة المستلمة غير المفوترة.</value></data>
+  <data name="GRNI account" xml:space="preserve"><value>حساب البضاعة المستلمة غير المفوترة</value></data>
+  <data name="Cleared" xml:space="preserve"><value>مسوّى</value></data>
+  <data name="Returned" xml:space="preserve"><value>مرتجع</value></data>
+  <data name="Billed clearing" xml:space="preserve"><value>تسوية الفواتير</value></data>
+  <data name="GRNI outstanding" xml:space="preserve"><value>الرصيد غير المفوتر</value></data>
+  <data name="Settlement documents" xml:space="preserve"><value>مستندات التسوية</value></data>
+  <data name="No open GRNI receipts were found." xml:space="preserve"><value>لا توجد استلامات مفتوحة ضمن البضاعة المستلمة غير المفوترة.</value></data>
+  <data name="Reconciliation date cannot be in the future." xml:space="preserve"><value>لا يمكن أن يكون تاريخ المطابقة في المستقبل.</value></data>
+  <data name="Purchase order remaining quantity closed." xml:space="preserve"><value>تم إغلاق الكمية المتبقية من أمر الشراء.</value></data>
+  <data name="Purchase order reopened." xml:space="preserve"><value>تمت إعادة فتح أمر الشراء.</value></data>
+  <data name="Only confirmed purchase orders can be closed." xml:space="preserve"><value>يمكن إغلاق أوامر الشراء المؤكدة فقط.</value></data>
+  <data name="A remaining-quantity closure reason is required and cannot exceed 1000 characters." xml:space="preserve"><value>سبب إغلاق الكمية المتبقية مطلوب ويجب ألا يتجاوز 1000 حرف.</value></data>
+  <data name="Only a purchase order closed with a remaining quantity can be reopened." xml:space="preserve"><value>يمكن إعادة فتح أمر شراء أُغلق بكمية متبقية فقط.</value></data>
+  <data name="A purchase order reopen reason is required and cannot exceed 1000 characters." xml:space="preserve"><value>سبب إعادة فتح أمر الشراء مطلوب ويجب ألا يتجاوز 1000 حرف.</value></data>
+  <data name="Purchase order history reason cannot exceed 1000 characters." xml:space="preserve"><value>يجب ألا يتجاوز سبب سجل أمر الشراء 1000 حرف.</value></data>
+  <data name="Post or return every received quantity before closing the remaining purchase order quantity." xml:space="preserve"><value>رحّل فاتورة أو مرتجعًا لكل كمية مستلمة قبل إغلاق الكمية المتبقية من أمر الشراء.</value></data>
+  <data name="This purchase order is fully received and closes automatically after all received quantities are settled." xml:space="preserve"><value>تم استلام أمر الشراء بالكامل وسيُغلق تلقائيًا بعد تسوية جميع الكميات المستلمة.</value></data>
+  <data name="Completed and closed automatically" xml:space="preserve"><value>مكتمل ومغلق تلقائيًا</value></data>
+  <data name="Remaining quantity closed" xml:space="preserve"><value>تم إغلاق الكمية المتبقية</value></data>
+  <data name="Closure reason" xml:space="preserve"><value>سبب الإغلاق</value></data>
+  <data name="Receiving status" xml:space="preserve"><value>حالة الاستلام</value></data>
+  <data name="Fully received" xml:space="preserve"><value>مستلم بالكامل</value></data>
+  <data name="Receiving in progress" xml:space="preserve"><value>الاستلام قيد التنفيذ</value></data>
+  <data name="Remaining to receive" xml:space="preserve"><value>المتبقي للاستلام</value></data>
+  <data name="Settlement status" xml:space="preserve"><value>حالة التسوية</value></data>
+  <data name="Fully settled" xml:space="preserve"><value>مسوّى بالكامل</value></data>
+  <data name="Settlement in progress" xml:space="preserve"><value>التسوية قيد التنفيذ</value></data>
+  <data name="Received quantity awaiting bill or return" xml:space="preserve"><value>كمية مستلمة تنتظر فاتورة أو مرتجعًا</value></data>
+  <data name="Order status" xml:space="preserve"><value>حالة الأمر</value></data>
+  <data name="No further receipt is allowed" xml:space="preserve"><value>لا يُسمح باستلام إضافي</value></data>
+  <data name="Available actions depend on receiving and settlement progress" xml:space="preserve"><value>تعتمد الإجراءات المتاحة على تقدم الاستلام والتسوية</value></data>
+  <data name="Order lines and progress" xml:space="preserve"><value>بنود الأمر وتقدمها</value></data>
+  <data name="Line completed" xml:space="preserve"><value>البند مكتمل</value></data>
+  <data name="In progress" xml:space="preserve"><value>قيد التنفيذ</value></data>
+  <data name="Received" xml:space="preserve"><value>المستلم</value></data>
+  <data name="Billed" xml:space="preserve"><value>المفوتر</value></data>
+  <data name="Awaiting settlement" xml:space="preserve"><value>بانتظار التسوية</value></data>
+  <data name="Settlement completed" xml:space="preserve"><value>اكتملت التسوية</value></data>
+  <data name="Close remaining quantity" xml:space="preserve"><value>إغلاق الكمية المتبقية</value></data>
+  <data name="Use this when no more quantities will be received. A reason is required and the action remains in the order history." xml:space="preserve"><value>استخدم هذا الإجراء عندما لن تُستلم كميات إضافية. السبب مطلوب وسيبقى الإجراء محفوظًا في سجل الأمر.</value></data>
+  <data name="Remaining quantity closure reason" xml:space="preserve"><value>سبب إغلاق الكمية المتبقية</value></data>
+  <data name="Close remaining" xml:space="preserve"><value>إغلاق المتبقي</value></data>
+  <data name="Reopen purchase order" xml:space="preserve"><value>إعادة فتح أمر الشراء</value></data>
+  <data name="Reopening restores the confirmed state so the remaining quantity can be received. A reason is required." xml:space="preserve"><value>تعيد عملية الفتح الأمر إلى حالة مؤكد حتى يمكن استلام الكمية المتبقية. السبب مطلوب.</value></data>
+  <data name="Reopen reason" xml:space="preserve"><value>سبب إعادة الفتح</value></data>
+  <data name="Reopen" xml:space="preserve"><value>إعادة الفتح</value></data>
+  <data name="Closure history" xml:space="preserve"><value>سجل الإغلاق</value></data>
+  <data name="AutomaticallyClosed" xml:space="preserve"><value>أُغلق تلقائيًا</value></data>
+  <data name="RemainingQuantityClosed" xml:space="preserve"><value>أُغلقت الكمية المتبقية</value></data>
+  <data name="Reopened" xml:space="preserve"><value>أُعيد فتحه</value></data>
+  <data name="Close Remaining Purchase Order Quantity" xml:space="preserve"><value>إغلاق الكمية المتبقية من أمر الشراء</value></data>
+  <data name="Review purchase accounting reconciliation" xml:space="preserve"><value>مراجعة المطابقة المحاسبية للمشتريات</value></data>
+  <data name="Confirm that inventory and goods-received-not-invoiced balances agree after completing the order." xml:space="preserve"><value>تحقق بعد إنهاء الأمر من تطابق أرصدة المخزون والبضاعة المستلمة غير المفوترة.</value></data>
+  <data name="The order is confirmed again and its remaining quantity can now be received." xml:space="preserve"><value>عاد الأمر إلى حالة مؤكد ويمكن الآن استلام الكمية المتبقية.</value></data>
 </root>

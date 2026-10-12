@@ -8,29 +8,95 @@
     var canApprove = (await AuthorizationService.AuthorizeAsync(User, null, "Permission:PurchaseOrders.Approve")).Succeeded;
     var canConfirm = (await AuthorizationService.AuthorizeAsync(User, null, "Permission:PurchaseOrders.Confirm")).Succeeded;
     var canCancel = (await AuthorizationService.AuthorizeAsync(User, null, "Permission:PurchaseOrders.Cancel")).Succeeded;
+    var canClose = (await AuthorizationService.AuthorizeAsync(User, null, "Permission:PurchaseOrders.Close")).Succeeded;
+    var canReopen = (await AuthorizationService.AuthorizeAsync(User, null, "Permission:PurchaseOrders.Reopen")).Succeeded;
     var canReceive = (await AuthorizationService.AuthorizeAsync(User, null, "Permission:GoodsReceipts.Create")).Succeeded;
     var canBill = (await AuthorizationService.AuthorizeAsync(User, null, "Permission:VendorBills.Create")).Succeeded;
     var canCreateTemplate = (await AuthorizationService.AuthorizeAsync(User, null, "Permission:PurchaseTemplates.Create")).Succeeded;
     var numberSettings = await GeneralSettingsService.GetAsync();
+    var remainingToReceive = Model.Lines.Sum(x => x.RemainingToReceive);
+    var unsettledReceived = Model.Lines.Sum(x => x.UnsettledReceivedQuantity);
 }
-<div class="d-flex justify-content-between">
-    <h2>@Model.OrderNumber <span class="badge bg-secondary">@Localizer[Model.Status.ToString()]</span></h2>
+
+<div class="d-flex flex-wrap justify-content-between gap-2 align-items-center">
+    <h2 class="mb-0">@Model.OrderNumber <span class="badge bg-secondary">@Localizer[Model.Status.ToString()]</span></h2>
     <a asp-action="Index" class="btn btn-outline-secondary">@Localizer["Back"]</a>
 </div>
 <div class="card card-body my-3">
-    <div>@Localizer["Supplier"]: @Model.SupplierName</div><div>@Localizer["Warehouse"]: @Model.WarehouseName</div>
-    <div>@Localizer["Order date"]: @Model.OrderDate</div><div>@Localizer["Expected date"]: @Model.ExpectedDate</div>
-    @if(Model.PurchaseAgreementId.HasValue){<div><a asp-controller="PurchaseAgreements" asp-action="Details" asp-route-id="@Model.PurchaseAgreementId">@Localizer["Created from purchase agreement"]</a></div>}
+    <div class="row g-3">
+        <div class="col-sm-6 col-lg-3"><strong>@Localizer["Supplier"]</strong><div>@Model.SupplierName</div></div>
+        <div class="col-sm-6 col-lg-3"><strong>@Localizer["Warehouse"]</strong><div>@Model.WarehouseName</div></div>
+        <div class="col-sm-6 col-lg-3"><strong>@Localizer["Order date"]</strong><div>@Model.OrderDate</div></div>
+        <div class="col-sm-6 col-lg-3"><strong>@Localizer["Expected date"]</strong><div>@Model.ExpectedDate</div></div>
+    </div>
+    @if (Model.PurchaseAgreementId.HasValue) { <div class="mt-3"><a asp-controller="PurchaseAgreements" asp-action="Details" asp-route-id="@Model.PurchaseAgreementId">@Localizer["Created from purchase agreement"]</a></div> }
+    @if (Model.Status == PurchaseOrderStatus.Closed)
+    {
+        <div class="alert alert-success mt-3 mb-0">
+            <strong>@(Model.ClosureType == PurchaseOrderClosureType.Automatic ? Localizer["Completed and closed automatically"] : Localizer["Remaining quantity closed"])</strong>
+            @if (Model.ClosedAtUtc.HasValue) { <span> — @Localizer["Closed at"] @Model.ClosedAtUtc.Value.ToLocalTime()</span> }
+            @if (!string.IsNullOrWhiteSpace(Model.ClosureReason)) { <div class="mt-1">@Localizer["Closure reason"]: @Model.ClosureReason</div> }
+        </div>
+    }
 </div>
-<table class="table"><thead><tr><th>@Localizer["Product"]</th><th>@Localizer["Ordered quantity"]</th><th>@Localizer["Unit price"]</th><th>@Localizer["Gross amount"]</th></tr></thead><tbody>
-@foreach(var line in Model.Lines){<tr><td>@line.ProductCode — @line.ProductName</td><td>@line.OrderedQuantity.ToQuantityDisplay(numberSettings) @line.UnitName</td><td>@line.UnitPrice.ToMoneyDisplay(numberSettings) @Model.CurrencyCode</td><td>@line.GrossAmount.ToMoneyDisplay(numberSettings) @Model.CurrencyCode</td></tr>}
-</tbody></table>
+
+<div class="row g-3 mb-3">
+    <div class="col-md-4"><div class="card h-100 card-body"><strong>@Localizer["Receiving status"]</strong><div class="mt-2"><span class="badge @(Model.Progress.IsFullyReceived ? "bg-success" : "bg-warning text-dark")">@(Model.Progress.IsFullyReceived ? Localizer["Fully received"] : Localizer["Receiving in progress"])</span></div><small class="text-muted mt-2">@Localizer["Remaining to receive"]: @remainingToReceive.ToQuantityDisplay(numberSettings)</small></div></div>
+    <div class="col-md-4"><div class="card h-100 card-body"><strong>@Localizer["Settlement status"]</strong><div class="mt-2"><span class="badge @(Model.Progress.IsFullySettled ? "bg-success" : "bg-warning text-dark")">@(Model.Progress.IsFullySettled ? Localizer["Fully settled"] : Localizer["Settlement in progress"])</span></div><small class="text-muted mt-2">@Localizer["Received quantity awaiting bill or return"]: @unsettledReceived.ToQuantityDisplay(numberSettings)</small></div></div>
+    <div class="col-md-4"><div class="card h-100 card-body"><strong>@Localizer["Order status"]</strong><div class="mt-2"><span class="badge bg-secondary">@Localizer[Model.Status.ToString()]</span></div><small class="text-muted mt-2">@(Model.Status == PurchaseOrderStatus.Closed ? Localizer["No further receipt is allowed"] : Localizer["Available actions depend on receiving and settlement progress"])</small></div></div>
+</div>
+
+<h3 class="h5">@Localizer["Order lines and progress"]</h3>
+<div class="row g-3 mb-3">
+@foreach (var line in Model.Lines)
+{
+    var lineComplete = line.RemainingToReceive <= 0 && line.UnsettledReceivedQuantity <= 0;
+    <div class="col-12 col-xl-6"><div class="card h-100 card-body">
+        <div class="d-flex flex-wrap justify-content-between gap-2"><div><strong>@line.ProductCode — @line.ProductName</strong><div class="text-muted">@line.UnitName</div></div><span class="badge @(lineComplete ? "bg-success" : "bg-warning text-dark")">@(lineComplete ? Localizer["Line completed"] : Localizer["In progress"])</span></div>
+        <div class="row g-2 mt-2 small">
+            <div class="col-6 col-md"><strong>@Localizer["Ordered"]</strong><div>@line.OrderedQuantity.ToQuantityDisplay(numberSettings)</div></div>
+            <div class="col-6 col-md"><strong>@Localizer["Received"]</strong><div>@line.ReceivedQuantity.ToQuantityDisplay(numberSettings)</div></div>
+            <div class="col-6 col-md"><strong>@Localizer["Returned"]</strong><div>@line.ReturnedQuantity.ToQuantityDisplay(numberSettings)</div></div>
+            <div class="col-6 col-md"><strong>@Localizer["Billed"]</strong><div>@line.BilledQuantity.ToQuantityDisplay(numberSettings)</div></div>
+            <div class="col-6 col-md"><strong>@Localizer["Awaiting settlement"]</strong><div>@line.UnsettledReceivedQuantity.ToQuantityDisplay(numberSettings)</div></div>
+        </div>
+        <div class="border-top mt-3 pt-2 small">@Localizer["Unit price"]: @line.UnitPrice.ToMoneyDisplay(numberSettings) @Model.CurrencyCode · @Localizer["Gross amount"]: @line.GrossAmount.ToMoneyDisplay(numberSettings) @Model.CurrencyCode</div>
+    </div></div>
+}
+</div>
+
 <div class="d-flex flex-wrap gap-2 align-items-center">
-@if(Model.Status == PurchaseOrderStatus.Draft && canApprove){<form asp-action="Approve" method="post" class="d-inline"><input type="hidden" name="id" value="@Model.Id"/><input type="hidden" name="rowVersion" value="@rowVersion"/><button class="btn btn-primary">@Localizer["Approve"]</button></form>}else if(Model.Status is PurchaseOrderStatus.Approved or PurchaseOrderStatus.Confirmed or PurchaseOrderStatus.Closed){<span class="badge bg-success">@Localizer["Approval completed"]</span>}
-@if(Model.Status == PurchaseOrderStatus.Approved && canConfirm){<form asp-action="Confirm" method="post" class="d-inline"><input type="hidden" name="id" value="@Model.Id"/><input type="hidden" name="rowVersion" value="@rowVersion"/><button class="btn btn-success">@Localizer["Confirm"]</button></form>}else if(Model.Status is PurchaseOrderStatus.Confirmed or PurchaseOrderStatus.Closed){<span class="badge bg-success">@Localizer["Confirmation completed"]</span>}
-@if((Model.Status is PurchaseOrderStatus.Draft or PurchaseOrderStatus.Approved) && canCancel){<form asp-action="Cancel" method="post" class="d-inline"><input type="hidden" name="id" value="@Model.Id"/><input type="hidden" name="rowVersion" value="@rowVersion"/><input required name="reason" maxlength="1000" class="form-control d-inline-block w-auto" placeholder="@Localizer["Cancellation reason"]"/><button class="btn btn-outline-danger">@Localizer["Cancel"]</button></form>}
-@if(Model.Status == PurchaseOrderStatus.Confirmed && canReceive){<a asp-controller="GoodsReceipts" asp-action="Create" asp-route-purchaseOrderId="@Model.Id" class="btn btn-primary">@Localizer["Receive goods"]</a>}
-@if(Model.Status == PurchaseOrderStatus.Closed){<span class="badge bg-success">@Localizer["Receiving completed"]</span>}
-@if((Model.Status is PurchaseOrderStatus.Confirmed or PurchaseOrderStatus.Closed) && canBill){<a asp-controller="VendorBills" asp-action="Create" asp-route-purchaseOrderId="@Model.Id" class="btn btn-outline-primary">@Localizer["Create vendor bill"]</a>}
+@if (Model.Status == PurchaseOrderStatus.Draft && canApprove) { <form asp-action="Approve" method="post"><input type="hidden" name="id" value="@Model.Id"/><input type="hidden" name="rowVersion" value="@rowVersion"/><button class="btn btn-primary">@Localizer["Approve"]</button></form> }
+else if (Model.Status is PurchaseOrderStatus.Approved or PurchaseOrderStatus.Confirmed or PurchaseOrderStatus.Closed) { <span class="badge bg-success">@Localizer["Approval completed"]</span> }
+@if (Model.Status == PurchaseOrderStatus.Approved && canConfirm) { <form asp-action="Confirm" method="post"><input type="hidden" name="id" value="@Model.Id"/><input type="hidden" name="rowVersion" value="@rowVersion"/><button class="btn btn-success">@Localizer["Confirm"]</button></form> }
+else if (Model.Status is PurchaseOrderStatus.Confirmed or PurchaseOrderStatus.Closed) { <span class="badge bg-success">@Localizer["Confirmation completed"]</span> }
+@if ((Model.Status is PurchaseOrderStatus.Draft or PurchaseOrderStatus.Approved) && canCancel) { <form asp-action="Cancel" method="post" class="d-flex flex-wrap gap-2"><input type="hidden" name="id" value="@Model.Id"/><input type="hidden" name="rowVersion" value="@rowVersion"/><input required name="reason" maxlength="1000" class="form-control w-auto" placeholder="@Localizer["Cancellation reason"]"/><button class="btn btn-outline-danger">@Localizer["Cancel"]</button></form> }
+@if (Model.Status == PurchaseOrderStatus.Confirmed && remainingToReceive > 0 && canReceive) { <a asp-controller="GoodsReceipts" asp-action="Create" asp-route-purchaseOrderId="@Model.Id" class="btn btn-primary">@Localizer["Receive goods"]</a> }
+else if (Model.Progress.IsFullyReceived) { <span class="badge bg-success">@Localizer["Receiving completed"]</span> }
+@if (Model.Status == PurchaseOrderStatus.Confirmed && unsettledReceived > 0 && canBill) { <a asp-controller="VendorBills" asp-action="Create" asp-route-purchaseOrderId="@Model.Id" class="btn btn-outline-primary">@Localizer["Create vendor bill"]</a> }
+else if (Model.Progress.IsFullySettled && Model.Lines.Any(x => x.ReceivedQuantity > 0)) { <span class="badge bg-success">@Localizer["Settlement completed"]</span> }
 </div>
-@if(canCreateTemplate){<form asp-controller="PurchaseTemplates" asp-action="CreateFromOrder" method="post" class="card card-body mt-3"><input type="hidden" name="PurchaseOrderId" value="@Model.Id"/><div class="row g-2 align-items-end"><div class="col-md-4"><label class="form-label">@Localizer["Template name"]</label><input name="Name" required maxlength="150" class="form-control"/></div><div class="col-md-2"><label class="form-label">@Localizer["Needed in days"]</label><input name="NeededInDays" type="number" min="0" max="3650" value="7" class="form-control"/></div><div class="col-md-2"><label class="form-label">@Localizer["Priority"]</label><select name="Priority" class="form-select"><option value="2">@Localizer["Normal"]</option><option value="1">@Localizer["Low"]</option><option value="3">@Localizer["High"]</option><option value="4">@Localizer["Urgent"]</option></select></div><div class="col-md-3"><button class="btn btn-outline-primary">@Localizer["Save as purchase template"]</button></div></div></form>}
+
+@if (Model.Progress.CanCloseRemaining && canClose)
+{
+    <form asp-action="CloseRemaining" method="post" class="card card-body mt-3"><input type="hidden" name="id" value="@Model.Id"/><input type="hidden" name="rowVersion" value="@rowVersion"/><h3 class="h5">@Localizer["Close remaining quantity"]</h3><p class="text-muted">@Localizer["Use this when no more quantities will be received. A reason is required and the action remains in the order history."]</p><div class="row g-2 align-items-end"><div class="col-md-9"><label class="form-label">@Localizer["Remaining quantity closure reason"]</label><textarea name="reason" required maxlength="1000" class="form-control" rows="2"></textarea></div><div class="col-md-3"><button class="btn btn-warning w-100">@Localizer["Close remaining"]</button></div></div></form>
+}
+@if (Model.Progress.CanReopen && canReopen)
+{
+    <form asp-action="Reopen" method="post" class="card card-body mt-3"><input type="hidden" name="id" value="@Model.Id"/><input type="hidden" name="rowVersion" value="@rowVersion"/><h3 class="h5">@Localizer["Reopen purchase order"]</h3><p class="text-muted">@Localizer["Reopening restores the confirmed state so the remaining quantity can be received. A reason is required."]</p><div class="row g-2 align-items-end"><div class="col-md-9"><label class="form-label">@Localizer["Reopen reason"]</label><textarea name="reason" required maxlength="1000" class="form-control" rows="2"></textarea></div><div class="col-md-3"><button class="btn btn-outline-warning w-100">@Localizer["Reopen"]</button></div></div></form>
+}
+
+@if (canCreateTemplate)
+{
+    <form asp-controller="PurchaseTemplates" asp-action="CreateFromOrder" method="post" class="card card-body mt-3"><input type="hidden" name="PurchaseOrderId" value="@Model.Id"/><div class="row g-2 align-items-end"><div class="col-md-4"><label class="form-label">@Localizer["Template name"]</label><input name="Name" required maxlength="150" class="form-control"/></div><div class="col-md-2"><label class="form-label">@Localizer["Needed in days"]</label><input name="NeededInDays" type="number" min="0" max="3650" value="7" class="form-control"/></div><div class="col-md-2"><label class="form-label">@Localizer["Priority"]</label><select name="Priority" class="form-select"><option value="2">@Localizer["Normal"]</option><option value="1">@Localizer["Low"]</option><option value="3">@Localizer["High"]</option><option value="4">@Localizer["Urgent"]</option></select></div><div class="col-md-3"><button class="btn btn-outline-primary">@Localizer["Save as purchase template"]</button></div></div></form>
+}
+
+@if (Model.History.Count > 0)
+{
+    <div class="card card-body mt-3"><h3 class="h5">@Localizer["Closure history"]</h3><div class="list-group list-group-flush">
+    @foreach (var entry in Model.History)
+    {
+        <div class="list-group-item px-0"><div class="d-flex flex-wrap justify-content-between gap-2"><strong>@Localizer[entry.Action.ToString()]</strong><span class="text-muted">@entry.CreatedAtUtc.ToLocalTime()</span></div><div class="small">@Localizer[entry.FromStatus.ToString()] → @Localizer[entry.ToStatus.ToString()] · @entry.UserId</div>@if (!string.IsNullOrWhiteSpace(entry.Reason)) { <div class="mt-1">@entry.Reason</div> }</div>
+    }
+    </div></div>
+}
