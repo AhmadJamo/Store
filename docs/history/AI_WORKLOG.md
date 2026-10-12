@@ -648,3 +648,10 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
 - Added and applied the schema migration to local `MiniStoreDb`, plus Arabic localization, supplier module documentation and regression checks for concurrency and bidirectional form contracts.
 - Supplier save completion now guides authorized users directly to the same supplier's purchasing terms to finish prices, quantities and lead times.
 - The Web project built with zero warnings/errors; the focused regression executable passed 569 checks.
+
+## 2026-10-12 — Permission-aware Dashboard application launcher
+- Replaced the empty authenticated Dashboard with an Odoo-inspired launcher for Point of Sale, Sales, Purchasing, Inventory, Products, Accounting and Administration.
+- Added responsive application cards, distinct visual themes, plain-language descriptions, common-screen shortcuts and instant localized application search in English and Arabic.
+- Filtered every application and shortcut through the existing permission service; each card opens its first authorized destination while controller policies remain authoritative.
+- Added centralized Dashboard application definitions, module/screen/controller/codebase documentation and regression checks ensuring distinct apps and registered shortcut permissions.
+- The Web project built with zero warnings/errors; all 571 focused security and inventory regression checks passed.

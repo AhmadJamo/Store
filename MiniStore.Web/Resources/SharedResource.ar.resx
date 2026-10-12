@@ -1567,4 +1567,24 @@
   <data name="Supplier not found." xml:space="preserve"><value>المورد غير موجود.</value></data>
   <data name="Configure supplier purchasing data" xml:space="preserve"><value>تهيئة بيانات شراء المورد</value></data>
   <data name="Complete prices, order quantities and lead times for the supplier's assigned products." xml:space="preserve"><value>أكمل الأسعار وكميات الطلب ومدد التوريد للمنتجات المرتبطة بالمورد.</value></data>
+  <data name="Point of Sale" xml:space="preserve"><value>نقطة البيع</value></data>
+  <data name="Fast checkout for counter and retail sales." xml:space="preserve"><value>بيع سريع عند الصندوق ولمبيعات التجزئة.</value></data>
+  <data name="Open Point of Sale" xml:space="preserve"><value>فتح نقطة البيع</value></data>
+  <data name="Sales history" xml:space="preserve"><value>سجل المبيعات</value></data>
+  <data name="Manage invoices, customers and sales returns." xml:space="preserve"><value>إدارة الفواتير والعملاء ومرتجعات المبيعات.</value></data>
+  <data name="Manage demand, suppliers, orders, receiving and supplier bills." xml:space="preserve"><value>إدارة الاحتياجات والموردين وأوامر الشراء والاستلام وفواتير الموردين.</value></data>
+  <data name="Control warehouses, stock, transfers, counts and tracking." xml:space="preserve"><value>إدارة المستودعات والمخزون والتحويلات والجرد والتتبع.</value></data>
+  <data name="Manage products, recipes, categories and product variants." xml:space="preserve"><value>إدارة المنتجات والوصفات والتصنيفات ومتغيرات المنتجات.</value></data>
+  <data name="Product templates" xml:space="preserve"><value>قوالب المنتجات</value></data>
+  <data name="Manage the chart of accounts, taxes, branches and payment methods." xml:space="preserve"><value>إدارة شجرة الحسابات والضرائب والفروع وطرق الدفع.</value></data>
+  <data name="Configure company policies, users and access permissions." xml:space="preserve"><value>تهيئة سياسات الشركة والمستخدمين وصلاحيات الوصول.</value></data>
+  <data name="Business management system" xml:space="preserve"><value>نظام إدارة الأعمال</value></data>
+  <data name="Your business applications" xml:space="preserve"><value>برامج أعمالك</value></data>
+  <data name="Choose an application to start working." xml:space="preserve"><value>اختر البرنامج الذي تريد بدء العمل عليه.</value></data>
+  <data name="Search applications" xml:space="preserve"><value>البحث في البرامج</value></data>
+  <data name="Applications" xml:space="preserve"><value>البرامج</value></data>
+  <data name="Only applications you are allowed to use are shown." xml:space="preserve"><value>تظهر فقط البرامج التي تملك صلاحية استخدامها.</value></data>
+  <data name="available applications" xml:space="preserve"><value>برامج متاحة</value></data>
+  <data name="No applications match your search." xml:space="preserve"><value>لا توجد برامج مطابقة لبحثك.</value></data>
+  <data name="No applications are available for your current permissions. Contact an administrator." xml:space="preserve"><value>لا توجد برامج متاحة ضمن صلاحياتك الحالية. تواصل مع مسؤول النظام.</value></data>
 </root>

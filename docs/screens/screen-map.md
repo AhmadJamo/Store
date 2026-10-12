@@ -7,7 +7,7 @@
 | `Views/Public/*`, `_PublicLayout.cshtml` | anonymous bilingual landing and database-backed pricing experience. |
 | `Views/Subscription/{Index,Checkout}.cshtml` | current subscription, plan selection, promo entry and immutable checkout quote. |
 | `Areas/Platform/Views/*` | separately signed-in operator dashboard for plans, promotions, companies/subscriptions and pending payment confirmation; login displays friendly retry feedback when throttled. |
-| `Views/Dashboard/Index.cshtml` | authenticated landing page after login; authenticated requests to Login redirect here. Home remains a compatibility redirect. |
+| `Views/Dashboard/Index.cshtml` | authenticated Odoo-inspired application launcher after login. Responsive cards expose Point of Sale, Sales, Purchasing, Inventory, Products, Accounting and Administration with localized search and independently permission-filtered shortcuts. Home remains a compatibility redirect. |
 | `Views/Products/{Index,Create,Edit,_LogisticsFields}.cshtml`, `Views/Shared/_SupplierSelector.cshtml` | localized catalogue and product forms that configure product details plus multiple active suppliers; the shared relationship is reflected automatically on Supplier forms. |
 | `Views/ProductCategories/Index.cshtml` | category create/list/activate screen with language-neutral codes and preserved inactive categories. |
 | `Views/Recipes/{Index,Edit}.cshtml` | bilingual prepared-product recipe list and dynamic immutable-version editor using active managed units, immutable conversion snapshots and visible negative policy. |

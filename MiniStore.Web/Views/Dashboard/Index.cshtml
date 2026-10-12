@@ -1,7 +1,142 @@
+@using MiniStore.Web.Navigation
 @inject Microsoft.Extensions.Localization.IStringLocalizer<MiniStore.Web.SharedResource> Localizer
-@{ ViewData["Title"] = "Dashboard"; }
+@{
+    ViewData["Title"] = Localizer["Dashboard"];
+    var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "System";
+    var visibleApps = new List<(DashboardAppDefinition App, List<NavigationItem> Items)>();
 
-<div class="py-4">
-    <h1 class="display-6">@Localizer["Dashboard"]</h1>
-    <p class="lead text-muted">@Localizer["Choose a module from the navigation menu to continue."]</p>
+    foreach (var app in DashboardDefinitions.All.OrderBy(x => x.Order))
+    {
+        var visibleItems = new List<NavigationItem>();
+        foreach (var item in app.Items.OrderBy(x => x.Order))
+        {
+            if (await PermissionService.CanAsync(currentUserId, item.Permission))
+                visibleItems.Add(item);
+        }
+
+        if (visibleItems.Count > 0)
+            visibleApps.Add((app, visibleItems));
+    }
+}
+
+<style>
+    .app-launcher-hero {
+        background: linear-gradient(135deg, #222831 0%, #343a46 58%, #3f4856 100%);
+        border-radius: 1.4rem;
+        color: #fff;
+        padding: clamp(1.5rem, 4vw, 3rem);
+        position: relative;
+        overflow: hidden;
+    }
+    .app-launcher-hero::after {
+        content: "";
+        position: absolute;
+        inline-size: 16rem;
+        block-size: 16rem;
+        border-radius: 50%;
+        background: rgba(255,255,255,.07);
+        inset-inline-end: -4rem;
+        inset-block-start: -7rem;
+    }
+    .app-search { max-inline-size: 34rem; position: relative; z-index: 1; }
+    .app-search .form-control { min-block-size: 3.25rem; border: 0; box-shadow: 0 .5rem 1.5rem rgba(0,0,0,.14); }
+    .app-search .input-group-text { border: 0; background: #fff; }
+    .app-card {
+        border: 1px solid rgba(33,37,41,.08);
+        border-radius: 1.15rem;
+        box-shadow: 0 .45rem 1.35rem rgba(31,41,55,.07);
+        transition: transform .18s ease, box-shadow .18s ease;
+        overflow: hidden;
+    }
+    .app-card:hover { transform: translateY(-4px); box-shadow: 0 .9rem 2rem rgba(31,41,55,.13); }
+    .app-card-main { padding: 1.35rem; }
+    .app-icon {
+        inline-size: 4.25rem;
+        block-size: 4.25rem;
+        display: inline-grid;
+        place-items: center;
+        border-radius: 1.1rem;
+        color: #fff;
+        font-size: 2rem;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,.25), 0 .4rem 1rem rgba(0,0,0,.15);
+    }
+    .theme-violet { background: linear-gradient(145deg,#8754c6,#65329b); }
+    .theme-blue { background: linear-gradient(145deg,#3d8bfd,#1768c5); }
+    .theme-orange { background: linear-gradient(145deg,#f59f45,#d86b17); }
+    .theme-teal { background: linear-gradient(145deg,#25a99a,#13776e); }
+    .theme-green { background: linear-gradient(145deg,#55ad68,#2f7d43); }
+    .theme-indigo { background: linear-gradient(145deg,#6677d9,#4051ad); }
+    .theme-slate { background: linear-gradient(145deg,#697586,#404b5a); }
+    .app-title-link { color: var(--bs-body-color); text-decoration: none; }
+    .app-title-link:hover { color: var(--bs-primary); }
+    .app-shortcuts { background: var(--bs-tertiary-bg); border-block-start: 1px solid rgba(33,37,41,.07); padding: .85rem 1.15rem; }
+    .app-shortcut { text-decoration: none; color: var(--bs-secondary-color); font-size: .82rem; white-space: nowrap; }
+    .app-shortcut:hover { color: var(--bs-primary); }
+</style>
+
+<section class="app-launcher-hero mb-4">
+    <div class="position-relative" style="z-index:1">
+        <div class="small fw-semibold opacity-75 mb-2">MiniStore · @Localizer["Business management system"]</div>
+        <h1 class="display-6 fw-bold mb-2">@Localizer["Your business applications"]</h1>
+        <p class="lead opacity-75 mb-4">@Localizer["Choose an application to start working."]</p>
+        <div class="input-group app-search">
+            <span class="input-group-text"><i class="bi bi-search"></i></span>
+            <input id="app-search" type="search" class="form-control" placeholder="@Localizer["Search applications"]" aria-label="@Localizer["Search applications"]" autocomplete="off" />
+        </div>
+    </div>
+</section>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div><h2 class="h4 mb-1">@Localizer["Applications"]</h2><p class="text-muted mb-0">@Localizer["Only applications you are allowed to use are shown."]</p></div>
+    <span class="badge rounded-pill text-bg-light border">@visibleApps.Count @Localizer["available applications"]</span>
 </div>
+
+<div id="app-grid" class="row g-4">
+    @foreach (var entry in visibleApps)
+    {
+        var app = entry.App;
+        var primary = entry.Items[0];
+        <div class="col-md-6 col-xl-4 app-entry" data-search="@($"{Localizer[app.Title]} {Localizer[app.Description]} {string.Join(' ', entry.Items.Select(x => Localizer[x.Title].Value))}".ToLowerInvariant())">
+            <article class="app-card bg-body h-100 d-flex flex-column">
+                <div class="app-card-main flex-grow-1">
+                    <div class="d-flex gap-3 align-items-start">
+                        <div class="app-icon theme-@app.Theme flex-shrink-0"><i class="bi @app.Icon"></i></div>
+                        <div>
+                            <h3 class="h5 mb-2"><a asp-controller="@primary.Controller" asp-action="@primary.Action" class="app-title-link">@Localizer[app.Title]</a></h3>
+                            <p class="text-muted mb-0">@Localizer[app.Description]</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="app-shortcuts d-flex flex-wrap gap-3">
+                    @foreach (var item in entry.Items.Take(4))
+                    {
+                        <a asp-controller="@item.Controller" asp-action="@item.Action" class="app-shortcut"><i class="bi @item.Icon me-1"></i>@Localizer[item.Title]</a>
+                    }
+                </div>
+            </article>
+        </div>
+    }
+</div>
+
+<div id="no-app-results" class="alert alert-info d-none mt-4">@Localizer["No applications match your search."]</div>
+
+@if (visibleApps.Count == 0)
+{
+    <div class="alert alert-warning">@Localizer["No applications are available for your current permissions. Contact an administrator."]</div>
+}
+
+@section Scripts {
+<script>
+document.addEventListener('DOMContentLoaded',()=>{
+    const search=document.getElementById('app-search');
+    const apps=[...document.querySelectorAll('.app-entry')];
+    const empty=document.getElementById('no-app-results');
+    search.addEventListener('input',()=>{
+        const value=search.value.trim().toLocaleLowerCase();
+        let visible=0;
+        apps.forEach(app=>{app.hidden=value.length>0&&!app.dataset.search.includes(value);if(!app.hidden)visible++;});
+        empty.classList.toggle('d-none',visible>0||apps.length===0);
+    });
+});
+</script>
+}

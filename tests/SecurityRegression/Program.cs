@@ -27,6 +27,7 @@ using MiniStore.Web.Controllers;
 using MiniStore.Web.Localization;
 using MiniStore.Web.Guidance;
 using MiniStore.Web.Formatting;
+using MiniStore.Web.Navigation;
 
 var count = 0;
 void Check(bool condition, string message)
@@ -334,6 +335,12 @@ Check(
     PermissionDefinitions.All.Any(permission =>
         permission.Name == "InventoryReconciliation.View"),
     "Inventory reconciliation view permission must be defined");
+var knownPermissions = PermissionDefinitions.All.Select(x => x.Name).ToHashSet(StringComparer.Ordinal);
+Check(DashboardDefinitions.All.Count >= 7 &&
+      DashboardDefinitions.All.Select(x => x.Title).Distinct(StringComparer.Ordinal).Count() == DashboardDefinitions.All.Count,
+    "Dashboard launcher must expose distinct business applications");
+Check(DashboardDefinitions.All.SelectMany(x => x.Items).All(x => knownPermissions.Contains(x.Permission)),
+    "Every Dashboard application shortcut must use a registered permission");
 var reconciliationIndex = typeof(InventoryReconciliationController)
     .GetMethod(nameof(InventoryReconciliationController.Index))!;
 Check(

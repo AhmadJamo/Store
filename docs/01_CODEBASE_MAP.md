@@ -210,8 +210,8 @@ Hierarchical location update (2026-09-30): StorageLocation retains its identity 
 | `Formatting/NumberDisplayExtensions.cs` | culture-aware display and invariant HTML-input formatting with settings-controlled maximum precision and no insignificant trailing zeros | purchase and settings screens. |
 | `Guidance/{ActionableErrorGuidance,WorkflowNextStepGuidance,WorkflowCompletionFilter}.cs` | permission-aware setup links for recognized purchase errors plus centralized next-step prompts and automatic success fallback for purchase/inventory/warehouse POST redirects | shared notification partial, presentation registration and focused regression checks. |
 | Purchase workflow detail/comparison view models and Razor actions | state-aware one-time actions, completed-state labels, downstream document links and outstanding Vendor Bill balances | purchase repositories/services, localized views and regression checks. |
-| `Controllers/Home/{Dashboard,Home}Controller.cs` | authenticated Dashboard entry and legacy Home redirect | Dashboard view and login flow. |
-| `Navigation/*.cs` | navigation metadata | permissions/screens. |
+| `Controllers/Home/{Dashboard,Home}Controller.cs` | authenticated Dashboard application-launcher entry and legacy Home redirect | Dashboard definitions/view and login flow. |
+| `Navigation/*.cs` | navigation metadata plus permission-aware Dashboard application-launcher definitions | permissions/screens/dashboard module. |
 | `Views/<Module>/*.cshtml` | Razor screens/forms/client JS | `screens/*.md`. |
 | `Views/Shared/*.cshtml` | localized LTR/RTL layout, language switch, notifications, validation/error/delete partials | screens/shared-ui.md. |
 
