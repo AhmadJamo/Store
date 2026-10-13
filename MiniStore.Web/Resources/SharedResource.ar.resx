@@ -327,7 +327,6 @@
   <data name="SoftClosed" xml:space="preserve"><value>إغلاق مبدئي</value></data>
   <data name="Closed" xml:space="preserve"><value>مغلقة</value></data>
   <data name="Reason" xml:space="preserve"><value>السبب</value></data>
-  <data name="Update" xml:space="preserve"><value>تحديث</value></data>
   <data name="Last reason" xml:space="preserve"><value>آخر سبب</value></data>
   <data name="No fiscal periods have been configured. Posting remains available for all dates." xml:space="preserve"><value>لم يتم إعداد فترات مالية؛ يبقى الترحيل متاحاً لجميع التواريخ.</value></data>
   <data name="Fiscal period created successfully." xml:space="preserve"><value>تم إنشاء الفترة المالية بنجاح.</value></data>
@@ -1952,4 +1951,47 @@
   <data name="A purchase expense account is required for lines billed without a goods receipt." xml:space="preserve"><value>حساب مصروف شراء مطلوب للبنود المفوترة دون استلام بضاعة.</value></data>
   <data name="Only receipt-based vendor bill lines can clear goods received not invoiced." xml:space="preserve"><value>بنود فاتورة المورد المبنية على الاستلام فقط يمكنها تسوية حساب البضاعة المستلمة غير المفوترة.</value></data>
   <data name="Purchase agreement product was not found." xml:space="preserve"><value>لم يتم العثور على منتج اتفاقية الشراء.</value></data>
+  <data name="CSV import and export" xml:space="preserve"><value>استيراد وتصدير CSV (ملف قيم مفصولة بفواصل)</value></data>
+  <data name="Download the current supplier rows as a template, edit them, then preview every row before importing." xml:space="preserve"><value>نزّل بيانات المورد الحالية كنموذج، عدّلها، ثم عاين كل صف قبل الاستيراد.</value></data>
+  <data name="Download CSV template" xml:space="preserve"><value>تنزيل نموذج CSV</value></data>
+  <data name="Supplier purchasing CSV file" xml:space="preserve"><value>ملف CSV لبيانات شراء المورد</value></data>
+  <data name="Maximum 500 rows and 1 MB. Dates must use yyyy-MM-dd." xml:space="preserve"><value>الحد الأقصى 500 صف و1 ميجابايت. يجب كتابة التاريخ بصيغة سنة-شهر-يوم.</value></data>
+  <data name="Preview import" xml:space="preserve"><value>معاينة الاستيراد</value></data>
+  <data name="Supplier purchasing import preview" xml:space="preserve"><value>معاينة استيراد بيانات شراء المورد</value></data>
+  <data name="Total rows" xml:space="preserve"><value>مجموع الصفوف</value></data>
+  <data name="Valid rows" xml:space="preserve"><value>الصفوف الصحيحة</value></data>
+  <data name="Rows with errors" xml:space="preserve"><value>الصفوف التي تحتوي أخطاء</value></data>
+  <data name="No rows were saved. Correct every error in the CSV file and preview it again." xml:space="preserve"><value>لم يتم حفظ أي صف. صحح جميع الأخطاء في ملف CSV ثم عاينه مرة أخرى.</value></data>
+  <data name="All rows passed validation. Confirm to save the complete file in one transaction." xml:space="preserve"><value>اجتازت جميع الصفوف التحقق. أكّد لحفظ الملف كاملًا ضمن معاملة واحدة.</value></data>
+  <data name="Row" xml:space="preserve"><value>الصف</value></data>
+  <data name="Create" xml:space="preserve"><value>إنشاء</value></data>
+  <data name="Update" xml:space="preserve"><value>تحديث</value></data>
+  <data name="Invalid" xml:space="preserve"><value>غير صالح</value></data>
+  <data name="Confirm complete import" xml:space="preserve"><value>تأكيد الاستيراد الكامل</value></data>
+  <data name="Select a supplier purchasing CSV file." xml:space="preserve"><value>اختر ملف CSV لبيانات شراء المورد.</value></data>
+  <data name="The supplier purchasing CSV file cannot exceed 1 MB." xml:space="preserve"><value>لا يمكن أن يتجاوز ملف CSV لبيانات شراء المورد 1 ميجابايت.</value></data>
+  <data name="Supplier purchasing import accepts CSV files only." xml:space="preserve"><value>استيراد بيانات شراء المورد يقبل ملفات CSV فقط.</value></data>
+  <data name="The CSV file is empty." xml:space="preserve"><value>ملف CSV فارغ.</value></data>
+  <data name="The CSV columns do not match the supplier purchasing template." xml:space="preserve"><value>أعمدة ملف CSV لا تطابق نموذج بيانات شراء المورد.</value></data>
+  <data name="The CSV file does not contain purchasing rows." xml:space="preserve"><value>ملف CSV لا يحتوي صفوف بيانات شراء.</value></data>
+  <data name="A supplier purchasing import cannot exceed 500 rows." xml:space="preserve"><value>لا يمكن أن يتجاوز استيراد بيانات شراء المورد 500 صف.</value></data>
+  <data name="One or more CSV rows contain an invalid number of columns." xml:space="preserve"><value>صف واحد أو أكثر في ملف CSV يحتوي عدد أعمدة غير صحيح.</value></data>
+  <data name="The CSV file contains an unclosed quoted value." xml:space="preserve"><value>ملف CSV يحتوي قيمة مقتبسة غير مغلقة.</value></data>
+  <data name="Product code was not found or is not unique." xml:space="preserve"><value>رمز المنتج غير موجود أو غير فريد.</value></data>
+  <data name="Purchase unit code was not found or is not unique." xml:space="preserve"><value>رمز وحدة الشراء غير موجود أو غير فريد.</value></data>
+  <data name="Minimum order quantity is invalid." xml:space="preserve"><value>الحد الأدنى لكمية الطلب غير صالح.</value></data>
+  <data name="Order multiple is invalid." xml:space="preserve"><value>مضاعف كمية الطلب غير صالح.</value></data>
+  <data name="Lead time is invalid." xml:space="preserve"><value>مدة التوريد غير صالحة.</value></data>
+  <data name="Supplier unit price is invalid." xml:space="preserve"><value>سعر وحدة المورد غير صالح.</value></data>
+  <data name="Valid-from date must use yyyy-MM-dd format." xml:space="preserve"><value>يجب أن يستخدم تاريخ بداية الصلاحية صيغة سنة-شهر-يوم.</value></data>
+  <data name="Valid-to date must use yyyy-MM-dd format." xml:space="preserve"><value>يجب أن يستخدم تاريخ نهاية الصلاحية صيغة سنة-شهر-يوم.</value></data>
+  <data name="Preferred value must be TRUE or FALSE." xml:space="preserve"><value>يجب أن تكون قيمة المورد المفضل TRUE (نعم) أو FALSE (لا).</value></data>
+  <data name="Supplier priority is invalid." xml:space="preserve"><value>أولوية المورد غير صالحة.</value></data>
+  <data name="The product is not assigned to this supplier." xml:space="preserve"><value>المنتج غير مرتبط بهذا المورد.</value></data>
+  <data name="The matching supplier purchasing row is inactive. Activate it before importing." xml:space="preserve"><value>صف بيانات شراء المورد المطابق غير فعال. فعّله قبل الاستيراد.</value></data>
+  <data name="The CSV file contains the same product and purchase unit more than once." xml:space="preserve"><value>ملف CSV يحتوي المنتج ووحدة الشراء نفسيهما أكثر من مرة.</value></data>
+  <data name="Resolve every CSV validation error before importing supplier purchasing data." xml:space="preserve"><value>عالج جميع أخطاء التحقق في ملف CSV قبل استيراد بيانات شراء المورد.</value></data>
+  <data name="Imported {0} supplier purchasing rows." xml:space="preserve"><value>تم استيراد {0} صف من بيانات شراء المورد.</value></data>
+  <data name="Review imported supplier prices" xml:space="preserve"><value>مراجعة أسعار المورد المستوردة</value></data>
+  <data name="Confirm the saved prices, order quantities, validity dates and preferred supplier choices." xml:space="preserve"><value>تأكد من الأسعار وكميات الطلب وفترات الصلاحية وخيارات المورد المفضل التي تم حفظها.</value></data>
 </root>

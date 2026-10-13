@@ -3,6 +3,7 @@ using Microsoft.Extensions.Localization;
 using MiniStore.Application.DTOs.Purchases;
 using MiniStore.Application.Services;
 using MiniStore.Web.Authorization;
+using System.Text;
 
 namespace MiniStore.Web.Controllers;
 
@@ -45,6 +46,67 @@ public sealed class SupplierPurchasingController(
             logger.LogError(exception, "Failed to save supplier purchasing rows in bulk");
             TempData["NotificationType"] = "error";
             TempData["NotificationMessage"] = localizer["The operation could not be completed. Please try again or contact the administrator."].Value;
+        }
+        return RedirectToAction(nameof(Index), new { supplierId = dto.SupplierId });
+    }
+
+    [HttpGet]
+    [PermissionAuthorize("Purchases.SupplierTerms.View")]
+    public async Task<IActionResult> ExportCsv(int supplierId)
+    {
+        try
+        {
+            var csv = await service.ExportCsvAsync(supplierId);
+            return File(new UTF8Encoding(true).GetBytes(csv), "text/csv; charset=utf-8", $"supplier-{supplierId}-purchasing.csv");
+        }
+        catch (Exception exception) when (exception is ArgumentException or InvalidOperationException)
+        {
+            TempData["NotificationType"] = "error";
+            TempData["NotificationMessage"] = localizer[exception.Message].Value;
+            return RedirectToAction(nameof(Index), new { supplierId });
+        }
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [PermissionAuthorize("Purchases.SupplierTerms.Manage")]
+    [RequestFormLimits(MultipartBodyLengthLimit = 1_100_000)]
+    public async Task<IActionResult> PreviewCsv(int supplierId, IFormFile? csvFile)
+    {
+        try
+        {
+            if (csvFile is null || csvFile.Length == 0) throw new ArgumentException("Select a supplier purchasing CSV file.");
+            if (csvFile.Length > 1_048_576) throw new ArgumentException("The supplier purchasing CSV file cannot exceed 1 MB.");
+            if (!string.Equals(Path.GetExtension(csvFile.FileName), ".csv", StringComparison.OrdinalIgnoreCase))
+                throw new ArgumentException("Supplier purchasing import accepts CSV files only.");
+            using var reader = new StreamReader(csvFile.OpenReadStream(), Encoding.UTF8, true);
+            var content = await reader.ReadToEndAsync();
+            return View("ImportPreview", await service.PreviewCsvAsync(supplierId, content, Path.GetFileName(csvFile.FileName)));
+        }
+        catch (Exception exception) when (exception is ArgumentException or InvalidOperationException)
+        {
+            TempData["NotificationType"] = "error";
+            TempData["NotificationMessage"] = localizer[exception.Message].Value;
+            return RedirectToAction(nameof(Index), new { supplierId });
+        }
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [PermissionAuthorize("Purchases.SupplierTerms.Manage")]
+    [RequestFormLimits(ValueLengthLimit = 1_100_000, MultipartBodyLengthLimit = 1_200_000)]
+    public async Task<IActionResult> ImportCsv(ImportSupplierPurchasingCsvDto dto)
+    {
+        try
+        {
+            var count = await service.ImportCsvAsync(dto);
+            TempData["NotificationType"] = "success";
+            TempData["NotificationMessage"] = localizer["Imported {0} supplier purchasing rows.", count].Value;
+        }
+        catch (Exception exception) when (exception is ArgumentException or InvalidOperationException)
+        {
+            TempData["NotificationType"] = "error";
+            TempData["NotificationMessage"] = localizer[exception.Message].Value;
         }
         return RedirectToAction(nameof(Index), new { supplierId = dto.SupplierId });
     }

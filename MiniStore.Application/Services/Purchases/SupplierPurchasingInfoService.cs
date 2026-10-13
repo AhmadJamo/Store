@@ -1,6 +1,7 @@
 using MiniStore.Application.DTOs.Purchases;
 using MiniStore.Domain.Entities;
 using MiniStore.Domain.Interfaces;
+using System.Globalization;
 
 namespace MiniStore.Application.Services;
 
@@ -122,6 +123,141 @@ public sealed class SupplierPurchasingInfoService(
         return selected.Count;
     }
 
+    public async Task<string> ExportCsvAsync(int supplierId)
+    {
+        if (await supplierRepository.GetByIdAsync(supplierId) is null)
+            throw new ArgumentException("Supplier was not found.");
+        var products = (await productRepository.GetAllAsync(null)).ToDictionary(x => x.Id);
+        var units = (await unitRepository.GetAllAsync()).ToDictionary(x => x.Id);
+        var rows = (await repository.GetBySupplierIdAsync(supplierId)).Where(x => x.IsActive)
+            .OrderBy(x => products.GetValueOrDefault(x.ProductId)?.Name).ThenBy(x => x.Priority)
+            .Select(info => (IReadOnlyList<string>)new[]
+            {
+                products.GetValueOrDefault(info.ProductId)?.ProductCode ?? string.Empty,
+                units.GetValueOrDefault(info.PurchaseMeasurementUnitId)?.Code ?? string.Empty,
+                info.SupplierProductCode, info.SupplierDescription ?? string.Empty,
+                Invariant(info.MinimumOrderQuantity), Invariant(info.OrderMultiple),
+                info.LeadTimeDays.ToString(CultureInfo.InvariantCulture), Invariant(info.UnitPrice),
+                info.ValidFrom.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture),
+                info.ValidTo?.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture) ?? string.Empty,
+                info.IsPreferred ? "TRUE" : "FALSE", info.Priority.ToString(CultureInfo.InvariantCulture)
+            }).ToList();
+        return SupplierPurchasingCsvParser.Write(rows);
+    }
+
+    public async Task<SupplierPurchasingCsvPreviewDto> PreviewCsvAsync(
+        int supplierId, string csvContent, string fileName)
+    {
+        if (csvContent.Length > 1_048_576) throw new ArgumentException("The supplier purchasing CSV file cannot exceed 1 MB.");
+        var supplier = await supplierRepository.GetByIdAsync(supplierId)
+            ?? throw new ArgumentException("Supplier was not found.");
+        var parsed = SupplierPurchasingCsvParser.Parse(csvContent);
+        var products = await productRepository.GetAllAsync(null);
+        var units = await unitRepository.GetAllAsync();
+        var existing = await repository.GetBySupplierIdAsync(supplierId);
+        var settings = await generalSettingsRepository.GetAsync();
+        var baseCurrency = NormalizeBaseCurrency(settings?.Currency);
+        var productMap = products.GroupBy(x => x.ProductCode, StringComparer.OrdinalIgnoreCase)
+            .Where(x => x.Count() == 1).ToDictionary(x => x.Key, x => x.Single(), StringComparer.OrdinalIgnoreCase);
+        var unitMap = units.GroupBy(x => x.Code, StringComparer.OrdinalIgnoreCase)
+            .Where(x => x.Count() == 1).ToDictionary(x => x.Key, x => x.Single(), StringComparer.OrdinalIgnoreCase);
+        var previewRows = new List<SupplierPurchasingCsvPreviewRowDto>();
+
+        for (var index = 0; index < parsed.Count; index++)
+        {
+            var source = parsed[index];
+            var errors = new List<string>();
+            productMap.TryGetValue(source["ProductCode"], out var product);
+            unitMap.TryGetValue(source["PurchaseUnitCode"], out var unit);
+            if (product is null) errors.Add("Product code was not found or is not unique.");
+            if (unit is null) errors.Add("Purchase unit code was not found or is not unique.");
+            decimal? minimum = Decimal(source["MinimumOrderQuantity"], "Minimum order quantity is invalid.", errors);
+            decimal? multiple = Decimal(source["OrderMultiple"], "Order multiple is invalid.", errors);
+            int? leadTime = Integer(source["LeadTimeDays"], "Lead time is invalid.", errors);
+            decimal? unitPrice = Decimal(source["UnitPrice"], "Supplier unit price is invalid.", errors);
+            DateOnly? validFrom = Date(source["ValidFrom"], false, "Valid-from date must use yyyy-MM-dd format.", errors);
+            DateOnly? validTo = Date(source["ValidTo"], true, "Valid-to date must use yyyy-MM-dd format.", errors);
+            bool? preferred = Boolean(source["IsPreferred"], "Preferred value must be TRUE or FALSE.", errors);
+            int? priority = Integer(source["Priority"], "Supplier priority is invalid.", errors);
+            SupplierProductPurchasingInfo? current = null;
+            if (product is not null && unit is not null)
+            {
+                if (!existing.Any(x => x.ProductId == product.Id && x.IsActive))
+                    errors.Add("The product is not assigned to this supplier.");
+                current = existing.SingleOrDefault(x => x.ProductId == product.Id && x.PurchaseMeasurementUnitId == unit.Id);
+                if (current is { IsActive: false }) errors.Add("The matching supplier purchasing row is inactive. Activate it before importing.");
+                if (!product.IsActive) errors.Add("Supplier purchasing terms require an active product.");
+                if (product.ProductType == ProductType.PreparedToOrder) errors.Add("Prepared-to-order products are costed from recipes and cannot have supplier purchasing terms.");
+                if (!unit.IsActive) errors.Add("Supplier purchasing terms require an active purchase unit.");
+                if (!product.MeasurementUnitId.HasValue) errors.Add("The product must have a managed stock unit before supplier purchasing terms are added.");
+                else if (units.SingleOrDefault(x => x.Id == product.MeasurementUnitId.Value) is not { } stockUnit)
+                    errors.Add("The product stock unit was not found.");
+                else if (stockUnit.Dimension != unit.Dimension) errors.Add("Purchase unit and product stock unit must use the same measurement dimension.");
+            }
+
+            SaveSupplierPurchasingInfoDto? input = null;
+            if (errors.Count == 0 && product is not null && unit is not null && minimum.HasValue && multiple.HasValue &&
+                leadTime.HasValue && unitPrice.HasValue && validFrom.HasValue && preferred.HasValue && priority.HasValue)
+            {
+                try
+                {
+                    _ = new SupplierProductPurchasingInfo(supplierId, product.Id, unit.Id, source["SupplierProductCode"],
+                        source["SupplierDescription"], minimum.Value, multiple.Value, leadTime.Value, unitPrice.Value,
+                        baseCurrency, validFrom.Value, validTo, preferred.Value, priority.Value);
+                    input = new SaveSupplierPurchasingInfoDto
+                    {
+                        Id = current?.Id ?? 0, SupplierId = supplierId, ProductId = product.Id,
+                        PurchaseMeasurementUnitId = unit.Id, SupplierProductCode = source["SupplierProductCode"],
+                        SupplierDescription = source["SupplierDescription"], MinimumOrderQuantity = minimum.Value,
+                        OrderMultiple = multiple.Value, LeadTimeDays = leadTime.Value, UnitPrice = unitPrice.Value,
+                        CurrencyCode = baseCurrency, ValidFrom = validFrom.Value, ValidTo = validTo,
+                        IsPreferred = preferred.Value, Priority = priority.Value, RowVersion = current?.RowVersion ?? []
+                    };
+                }
+                catch (ArgumentException exception) { errors.Add(exception.Message); }
+            }
+            previewRows.Add(new SupplierPurchasingCsvPreviewRowDto
+            {
+                RowNumber = index + 2, ChangeType = current is null ? "Create" : "Update",
+                ProductCode = source["ProductCode"], ProductName = product?.Name ?? string.Empty,
+                PurchaseUnitCode = source["PurchaseUnitCode"], SupplierProductCode = source["SupplierProductCode"],
+                UnitPrice = unitPrice, CurrencyCode = baseCurrency, Errors = errors, ValidatedInput = input
+            });
+        }
+
+        foreach (var duplicate in previewRows.Where(x => x.ValidatedInput is not null)
+                     .GroupBy(x => new { x.ValidatedInput!.ProductId, x.ValidatedInput.PurchaseMeasurementUnitId }).Where(x => x.Count() > 1))
+            foreach (var row in duplicate) row.Errors.Add("The CSV file contains the same product and purchase unit more than once.");
+        foreach (var duplicate in previewRows.Where(x => x.ValidatedInput?.IsPreferred == true)
+                     .GroupBy(x => x.ValidatedInput!.ProductId).Where(x => x.Count() > 1))
+            foreach (var row in duplicate) row.Errors.Add("Only one purchasing row can be preferred for each product.");
+
+        return new SupplierPurchasingCsvPreviewDto
+        {
+            SupplierId = supplierId, SupplierName = supplier.Name, FileName = fileName.Trim(),
+            CsvContent = csvContent, Rows = previewRows
+        };
+    }
+
+    public async Task<int> ImportCsvAsync(ImportSupplierPurchasingCsvDto dto)
+    {
+        var preview = await PreviewCsvAsync(dto.SupplierId, dto.CsvContent, dto.FileName);
+        if (!preview.CanImport) throw new InvalidOperationException("Resolve every CSV validation error before importing supplier purchasing data.");
+        return await SaveBulkAsync(new BulkSaveSupplierPurchasingInfoDto
+        {
+            SupplierId = dto.SupplierId,
+            Rows = preview.Rows.Select(row => row.ValidatedInput!).Select(input => new BulkSupplierPurchasingRowDto
+            {
+                Selected = true, Id = input.Id, ProductId = input.ProductId,
+                PurchaseMeasurementUnitId = input.PurchaseMeasurementUnitId, SupplierProductCode = input.SupplierProductCode,
+                SupplierDescription = input.SupplierDescription, MinimumOrderQuantity = input.MinimumOrderQuantity,
+                OrderMultiple = input.OrderMultiple, LeadTimeDays = input.LeadTimeDays, UnitPrice = input.UnitPrice,
+                CurrencyCode = input.CurrencyCode, ValidFrom = input.ValidFrom, ValidTo = input.ValidTo,
+                IsPreferred = input.IsPreferred, Priority = input.Priority, RowVersion = input.RowVersion
+            }).ToList()
+        });
+    }
+
     private async Task ApplyAsync(SaveSupplierPurchasingInfoDto dto, bool preserveIdentity)
     {
         if (await supplierRepository.GetByIdAsync(dto.SupplierId) is null)
@@ -196,6 +332,31 @@ public sealed class SupplierPurchasingInfoService(
 
     private static string NormalizeBaseCurrency(string? currency) =>
         string.IsNullOrWhiteSpace(currency) ? "JOD" : currency.Trim().ToUpperInvariant();
+
+    private static string Invariant(decimal value) => value.ToString("0.######", CultureInfo.InvariantCulture);
+    private static decimal? Decimal(string value, string error, List<string> errors)
+    {
+        if (decimal.TryParse(value, NumberStyles.Number, CultureInfo.InvariantCulture, out var parsed)) return parsed;
+        errors.Add(error); return null;
+    }
+    private static int? Integer(string value, string error, List<string> errors)
+    {
+        if (int.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out var parsed)) return parsed;
+        errors.Add(error); return null;
+    }
+    private static DateOnly? Date(string value, bool optional, string error, List<string> errors)
+    {
+        if (optional && string.IsNullOrWhiteSpace(value)) return null;
+        if (DateOnly.TryParseExact(value, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsed)) return parsed;
+        errors.Add(error); return null;
+    }
+    private static bool? Boolean(string value, string error, List<string> errors)
+    {
+        if (bool.TryParse(value, out var parsed)) return parsed;
+        if (value == "1") return true;
+        if (value == "0") return false;
+        errors.Add(error); return null;
+    }
 
     private static List<BulkSupplierPurchasingRowDto> BuildBulkRows(
         List<Product> products, List<MeasurementUnit> units,

@@ -175,6 +175,11 @@ public static class WorkflowNextStepGuidance
                 "Complete prices, order quantities and lead times for the supplier's assigned products.",
                 "Purchases.SupplierTerms.View", Routes(("supplierId", Route("supplierId") ?? Route("id"))));
 
+        if (MatchesPattern(message, localize, "Imported {0} supplier purchasing rows."))
+            return new("SupplierPurchasing", "Index", "Review imported supplier prices",
+                "Confirm the saved prices, order quantities, validity dates and preferred supplier choices.",
+                "Purchases.SupplierTerms.View", Routes(("supplierId", Route("supplierId"))));
+
         if (Matches(message, localize, "Storage location updated successfully."))
             return new("UnassignedStock", "Index", "Review unassigned stock",
                 "Move received stock from the unassigned position to its storage location.",
@@ -235,6 +240,18 @@ public static class WorkflowNextStepGuidance
         "Purchases" or "PurchaseReturns" or "PurchaseRequests" or "PurchaseSourcing" or
         "PurchaseOrders" or "GoodsReceipts" or "GoodsReceiptReturns" or "PurchaseServiceAcceptances" or "VendorBills" or
         "SupplierPayments" or "PurchaseAgreements" or "LandedCosts" or "PurchaseDocumentReversals";
+
+    private static bool MatchesPattern(string message, Func<string, string> localize, string resourceKey)
+    {
+        var template = localize(resourceKey);
+        var marker = "{0}";
+        var markerIndex = template.IndexOf(marker, StringComparison.Ordinal);
+        if (markerIndex < 0) return string.Equals(message, template, StringComparison.OrdinalIgnoreCase);
+        var prefix = template[..markerIndex];
+        var suffix = template[(markerIndex + marker.Length)..];
+        return message.StartsWith(prefix, StringComparison.OrdinalIgnoreCase) &&
+               message.EndsWith(suffix, StringComparison.OrdinalIgnoreCase);
+    }
 
     private static string PurchaseViewPermission(string controller) => controller switch
     {

@@ -90,3 +90,36 @@ public sealed class SupplierPurchasingInfoPageDto
     public BulkSaveSupplierPurchasingInfoDto BulkForm { get; init; } = new();
     public string BaseCurrency { get; init; } = "JOD";
 }
+
+public sealed class SupplierPurchasingCsvPreviewDto
+{
+    public int SupplierId { get; init; }
+    public string SupplierName { get; init; } = string.Empty;
+    public string FileName { get; init; } = string.Empty;
+    public string CsvContent { get; init; } = string.Empty;
+    public List<SupplierPurchasingCsvPreviewRowDto> Rows { get; init; } = [];
+    public int ValidRowCount => Rows.Count(x => x.Errors.Count == 0);
+    public int ErrorRowCount => Rows.Count(x => x.Errors.Count > 0);
+    public bool CanImport => Rows.Count > 0 && ErrorRowCount == 0;
+}
+
+public sealed class SupplierPurchasingCsvPreviewRowDto
+{
+    public int RowNumber { get; init; }
+    public string ChangeType { get; init; } = string.Empty;
+    public string ProductCode { get; init; } = string.Empty;
+    public string ProductName { get; init; } = string.Empty;
+    public string PurchaseUnitCode { get; init; } = string.Empty;
+    public string SupplierProductCode { get; init; } = string.Empty;
+    public decimal? UnitPrice { get; init; }
+    public string CurrencyCode { get; init; } = string.Empty;
+    public List<string> Errors { get; init; } = [];
+    public SaveSupplierPurchasingInfoDto? ValidatedInput { get; init; }
+}
+
+public sealed class ImportSupplierPurchasingCsvDto
+{
+    public int SupplierId { get; set; }
+    public string FileName { get; set; } = string.Empty;
+    public string CsvContent { get; set; } = string.Empty;
+}

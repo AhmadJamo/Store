@@ -8,7 +8,7 @@
 
 <div class="d-flex justify-content-between align-items-start mb-4">
     <div><h2>@Localizer["Supplier purchasing data"]</h2><p class="text-muted mb-0">@Localizer["Choose one supplier, manage several products, then save them together."]</p></div>
-    <a asp-controller="Suppliers" asp-action="Index" class="btn btn-outline-secondary">@Localizer["Back to suppliers"]</a>
+    <div class="d-flex flex-wrap gap-2">@if(Model.SelectedSupplierId.HasValue){<a asp-action="ExportCsv" asp-route-supplierId="@Model.SelectedSupplierId" class="btn btn-outline-primary">@Localizer["Download CSV template"]</a>}<a asp-controller="Suppliers" asp-action="Index" class="btn btn-outline-secondary">@Localizer["Back to suppliers"]</a></div>
 </div>
 
 <form method="get" class="card card-body mb-4">
@@ -24,6 +24,14 @@
 }
 else if(canManage)
 {
+    <div class="card card-body mb-4">
+        <div><h3 class="h5 mb-1">@Localizer["CSV import and export"]</h3><p class="text-muted mb-0">@Localizer["Download the current supplier rows as a template, edit them, then preview every row before importing."]</p></div>
+        <form asp-action="PreviewCsv" method="post" enctype="multipart/form-data" class="row g-3 align-items-end mt-1">
+            <input type="hidden" name="supplierId" value="@Model.SelectedSupplierId"/>
+            <div class="col-lg-8"><label for="csvFile" class="form-label">@Localizer["Supplier purchasing CSV file"]</label><input id="csvFile" name="csvFile" type="file" accept=".csv,text/csv" class="form-control" required/><div class="form-text">@Localizer["Maximum 500 rows and 1 MB. Dates must use yyyy-MM-dd."]</div></div>
+            <div class="col-lg-4"><button class="btn btn-primary w-100">@Localizer["Preview import"]</button></div>
+        </form>
+    </div>
     @if(Model.BulkForm.Rows.Count == 0)
     {
         <div class="alert alert-info d-flex flex-wrap justify-content-between align-items-center gap-2">

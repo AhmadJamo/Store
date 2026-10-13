@@ -1,0 +1,43 @@
+@model MiniStore.Application.DTOs.Purchases.SupplierPurchasingCsvPreviewDto
+@inject Microsoft.Extensions.Localization.IStringLocalizer<MiniStore.Web.SharedResource> Localizer
+@{
+    ViewData["Title"] = Localizer["Supplier purchasing import preview"];
+    var numberSettings = await GeneralSettingsService.GetAsync();
+}
+
+<div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-4">
+    <div><h2>@Localizer["Supplier purchasing import preview"]</h2><p class="text-muted mb-0">@Model.SupplierName — @Model.FileName</p></div>
+    <a asp-action="Index" asp-route-supplierId="@Model.SupplierId" class="btn btn-outline-secondary">@Localizer["Back"]</a>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-4"><div class="card card-body h-100"><span class="text-muted">@Localizer["Total rows"]</span><strong class="fs-4">@Model.Rows.Count</strong></div></div>
+    <div class="col-md-4"><div class="card card-body h-100 border-success"><span class="text-muted">@Localizer["Valid rows"]</span><strong class="fs-4 text-success">@Model.ValidRowCount</strong></div></div>
+    <div class="col-md-4"><div class="card card-body h-100 @(Model.ErrorRowCount > 0 ? "border-danger" : "")"><span class="text-muted">@Localizer["Rows with errors"]</span><strong class="fs-4 @(Model.ErrorRowCount > 0 ? "text-danger" : "")">@Model.ErrorRowCount</strong></div></div>
+</div>
+
+@if(Model.ErrorRowCount > 0)
+{
+    <div class="alert alert-danger">@Localizer["No rows were saved. Correct every error in the CSV file and preview it again."]</div>
+}
+else
+{
+    <div class="alert alert-success">@Localizer["All rows passed validation. Confirm to save the complete file in one transaction."]</div>
+}
+
+<div class="row g-3 mb-4">
+@foreach(var row in Model.Rows)
+{
+    <div class="col-12 col-xl-6"><section class="card h-100 @(row.Errors.Count > 0 ? "border-danger" : "border-success")"><div class="card-header d-flex flex-wrap justify-content-between gap-2"><strong>@Localizer["Row"] @row.RowNumber — @row.ProductCode @if(!string.IsNullOrWhiteSpace(row.ProductName)){<span>— @row.ProductName</span>}</strong><span class="badge @(row.Errors.Count > 0 ? "bg-danger" : row.ChangeType == "Create" ? "bg-primary" : "bg-warning text-dark")">@Localizer[row.Errors.Count > 0 ? "Invalid" : row.ChangeType]</span></div><div class="card-body"><div class="row g-2"><div class="col-sm-6"><strong>@Localizer["Purchase unit"]:</strong> @row.PurchaseUnitCode</div><div class="col-sm-6"><strong>@Localizer["Supplier product code"]:</strong> @row.SupplierProductCode</div><div class="col-sm-6"><strong>@Localizer["Supplier unit price"]:</strong> @(row.UnitPrice?.ToMoneyDisplay(numberSettings) ?? "-") @row.CurrencyCode</div></div>@if(row.Errors.Count > 0){<ul class="text-danger mb-0 mt-3">@foreach(var error in row.Errors){<li>@Localizer[error]</li>}</ul>}</div></section></div>
+}
+</div>
+
+@if(Model.CanImport)
+{
+    <form asp-action="ImportCsv" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="SupplierId" value="@Model.SupplierId"/>
+        <input type="hidden" name="FileName" value="@Model.FileName"/>
+        <textarea name="CsvContent" class="d-none" aria-hidden="true">@Model.CsvContent</textarea>
+        <button class="btn btn-success">@Localizer["Confirm complete import"]</button>
+    </form>
+}

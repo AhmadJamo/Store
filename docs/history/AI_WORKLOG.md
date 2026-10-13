@@ -1,5 +1,13 @@
 # AI Work Log
 
+# 2026-10-14 — PUR-230 supplier-price CSV foundation
+
+- Added supplier-scoped UTF-8 CSV export using the current active purchasing rows as a reusable template; exported cells neutralize spreadsheet-formula prefixes and remain round-trip importable.
+- Added a permission-protected upload preview capped at 1 MB and 500 rows. Responsive cards show Create/Update status and localized row-specific errors without horizontal scrolling.
+- Preview and confirmation resolve product/unit codes, require an active supplier-product assignment, validate managed-unit compatibility and every commercial field, detect duplicate/preferred conflicts and preserve rowversion concurrency.
+- Confirmation reparses the original CSV server-side and uses the existing bulk transaction, so one invalid or concurrently changed row prevents all writes.
+- Added explicit post-import next-step guidance back to the same supplier and regression coverage for permissions, CSV quoting, formula protection, template rejection and guidance.
+
 # 2026-10-13 — PUR-220 mixed purchase billing completion
 
 - Completed policy-aware Vendor Bill sourcing: a single Draft can allocate posted Goods Receipt lines, ordered-quantity Purchase Order lines and immutable Service Completion lines while active Draft/Approved/Posted bills reserve the appropriate source quantity.

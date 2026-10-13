@@ -1185,15 +1185,41 @@ var supplierTermsSaveAction = typeof(SupplierPurchasingController)
     .GetMethod(nameof(SupplierPurchasingController.Save))!;
 var supplierTermsBulkSaveAction = typeof(SupplierPurchasingController)
     .GetMethod(nameof(SupplierPurchasingController.SaveBulk))!;
+var supplierTermsExportAction = typeof(SupplierPurchasingController)
+    .GetMethod(nameof(SupplierPurchasingController.ExportCsv))!;
+var supplierTermsPreviewAction = typeof(SupplierPurchasingController)
+    .GetMethod(nameof(SupplierPurchasingController.PreviewCsv))!;
+var supplierTermsImportAction = typeof(SupplierPurchasingController)
+    .GetMethod(nameof(SupplierPurchasingController.ImportCsv))!;
 Check(supplierTermsIndexAction.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
       $"{PermissionAuthorizeAttribute.PolicyPrefix}Purchases.SupplierTerms.View" &&
       supplierTermsSaveAction.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
       $"{PermissionAuthorizeAttribute.PolicyPrefix}Purchases.SupplierTerms.Manage" &&
       supplierTermsBulkSaveAction.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
+      $"{PermissionAuthorizeAttribute.PolicyPrefix}Purchases.SupplierTerms.Manage" &&
+      supplierTermsExportAction.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
+      $"{PermissionAuthorizeAttribute.PolicyPrefix}Purchases.SupplierTerms.View" &&
+      supplierTermsPreviewAction.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
+      $"{PermissionAuthorizeAttribute.PolicyPrefix}Purchases.SupplierTerms.Manage" &&
+      supplierTermsImportAction.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
       $"{PermissionAuthorizeAttribute.PolicyPrefix}Purchases.SupplierTerms.Manage",
     "Supplier purchasing data must separate view and manage permissions");
 Check(supplierTermsBulkSaveAction.GetParameters().Single().GetCustomAttribute<BindAttribute>()?.Prefix == "BulkForm",
     "Bulk supplier purchasing submission must bind the selected supplier and product rows as one form");
+var supplierCsv = SupplierPurchasingCsvParser.Write([
+    ["P-1", "PCS", "V-1", "Box, large", "1", "6", "4", "12.5", "2026-10-14", "", "TRUE", "10"]
+]);
+var supplierCsvRows = SupplierPurchasingCsvParser.Parse(supplierCsv);
+Check(supplierCsvRows.Count == 1 && supplierCsvRows[0]["SupplierDescription"] == "Box, large" &&
+      supplierCsvRows[0]["IsPreferred"] == "TRUE",
+    "Supplier purchasing CSV must round-trip quoted values through the fixed import template");
+var safeSupplierCsv = SupplierPurchasingCsvParser.Write([
+    ["=FORMULA", "PCS", "V-1", "", "1", "1", "0", "1", "2026-10-14", "", "FALSE", "100"]
+]);
+Check(safeSupplierCsv.Contains("'=FORMULA", StringComparison.Ordinal),
+    "Supplier purchasing CSV export must neutralize spreadsheet formulas");
+CheckArgumentThrows(() => SupplierPurchasingCsvParser.Parse("Wrong,Header\r\n1,2"),
+    "Supplier purchasing CSV must reject files that do not match the controlled template");
 
 var purchaseRequest = new PurchaseRequest("PRQ-000001", 1, DateOnly.FromDateTime(DateTime.Today.AddDays(7)),
     PurchaseRequestPriority.High, "Restock critical ingredients", null, "requester", "ReplenishmentRule", "17");
@@ -1785,6 +1811,17 @@ Check(supplierNextStep is
           RequiredPermission: "Purchases.SupplierTerms.View"
       } && supplierNextStep.RouteValues.GetValueOrDefault("supplierId") == "17",
     "Completed supplier setup must guide users to purchasing terms for the same supplier");
+var supplierImportNextStep = WorkflowNextStepGuidance.Resolve(
+    "Imported 12 supplier purchasing rows.",
+    "SupplierPurchasing",
+    new Dictionary<string, string?> { ["supplierId"] = "17" });
+Check(supplierImportNextStep is
+      {
+          Controller: "SupplierPurchasing",
+          Action: "Index",
+          RequiredPermission: "Purchases.SupplierTerms.View"
+      } && supplierImportNextStep.RouteValues.GetValueOrDefault("supplierId") == "17",
+    "Completed supplier purchasing imports must guide users to review the same supplier prices");
 var closedOrderNextStep = WorkflowNextStepGuidance.Resolve(
     "Purchase order remaining quantity closed.",
     "PurchaseOrders",
