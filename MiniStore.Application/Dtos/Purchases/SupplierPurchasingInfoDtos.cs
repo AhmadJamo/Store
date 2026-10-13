@@ -24,6 +24,7 @@ public sealed class SupplierPurchasingInfoDto
     public bool IsPreferred { get; init; }
     public int Priority { get; init; }
     public bool IsActive { get; init; }
+    public int PriceBreakCount { get; init; }
     public byte[] RowVersion { get; init; } = [];
 }
 
@@ -122,4 +123,34 @@ public sealed class ImportSupplierPurchasingCsvDto
     public int SupplierId { get; set; }
     public string FileName { get; set; } = string.Empty;
     public string CsvContent { get; set; } = string.Empty;
+}
+
+public sealed class SupplierPriceBreakPageDto
+{
+    public int PurchasingInfoId { get; init; }
+    public int SupplierId { get; init; }
+    public string SupplierName { get; init; } = string.Empty;
+    public string ProductLabel { get; init; } = string.Empty;
+    public string PurchaseUnit { get; init; } = string.Empty;
+    public decimal MinimumOrderQuantity { get; init; }
+    public decimal BaseUnitPrice { get; init; }
+    public string CurrencyCode { get; init; } = string.Empty;
+    public bool IsActive { get; init; }
+    public SaveSupplierPriceBreaksDto Form { get; init; } = new();
+}
+
+public sealed class SaveSupplierPriceBreaksDto
+{
+    public int PurchasingInfoId { get; set; }
+    public int SupplierId { get; set; }
+    public byte[] RowVersion { get; set; } = [];
+    public List<SaveSupplierPriceBreakRowDto> Rows { get; set; } = [];
+}
+
+public sealed class SaveSupplierPriceBreakRowDto
+{
+    public bool Selected { get; set; } = true;
+    public decimal MinimumQuantity { get; set; }
+    public decimal UnitPrice { get; set; }
+    public decimal DiscountPercent { get; set; }
 }

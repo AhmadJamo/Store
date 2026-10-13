@@ -1994,4 +1994,35 @@
   <data name="Imported {0} supplier purchasing rows." xml:space="preserve"><value>تم استيراد {0} صف من بيانات شراء المورد.</value></data>
   <data name="Review imported supplier prices" xml:space="preserve"><value>مراجعة أسعار المورد المستوردة</value></data>
   <data name="Confirm the saved prices, order quantities, validity dates and preferred supplier choices." xml:space="preserve"><value>تأكد من الأسعار وكميات الطلب وفترات الصلاحية وخيارات المورد المفضل التي تم حفظها.</value></data>
+  <data name="Price breaks" xml:space="preserve"><value>شرائح السعر</value></data>
+  <data name="Manage price breaks" xml:space="preserve"><value>إدارة شرائح السعر</value></data>
+  <data name="View price breaks" xml:space="preserve"><value>عرض شرائح السعر</value></data>
+  <data name="Supplier price breaks" xml:space="preserve"><value>شرائح سعر المورد</value></data>
+  <data name="Set lower prices or discounts that begin when the purchase quantity reaches a specified level." xml:space="preserve"><value>حدد أسعارًا أقل أو خصومات تبدأ عند وصول كمية الشراء إلى مستوى معين.</value></data>
+  <data name="Back to supplier purchasing data" xml:space="preserve"><value>العودة إلى بيانات شراء المورد</value></data>
+  <data name="Base unit price" xml:space="preserve"><value>سعر الوحدة الأساسي</value></data>
+  <data name="This supplier purchasing row is inactive. Activate it before changing price breaks." xml:space="preserve"><value>صف بيانات شراء المورد غير فعال. فعّله قبل تعديل شرائح السعر.</value></data>
+  <data name="Quantity price breaks" xml:space="preserve"><value>شرائح السعر حسب الكمية</value></data>
+  <data name="Quantities use the purchase unit shown above. The highest eligible break is applied." xml:space="preserve"><value>تُحسب الكميات بوحدة الشراء الموضحة أعلاه، وتُطبق أعلى شريحة مستحقة.</value></data>
+  <data name="Add price break" xml:space="preserve"><value>إضافة شريحة سعر</value></data>
+  <data name="Price break" xml:space="preserve"><value>شريحة السعر</value></data>
+  <data name="Starts at quantity" xml:space="preserve"><value>تبدأ من كمية</value></data>
+  <data name="The minimum purchase-unit quantity required for this price break." xml:space="preserve"><value>أقل كمية بوحدة الشراء مطلوبة لتطبيق شريحة السعر هذه.</value></data>
+  <data name="Tier unit price" xml:space="preserve"><value>سعر الوحدة في الشريحة</value></data>
+  <data name="Discount percent" xml:space="preserve"><value>نسبة الخصم</value></data>
+  <data name="The discount is applied to the tier unit price. Use zero when the entered price is already final." xml:space="preserve"><value>يُطبق الخصم على سعر الوحدة في الشريحة. استخدم صفرًا إذا كان السعر المدخل نهائيًا.</value></data>
+  <data name="No quantity price breaks are configured. The base unit price applies to every quantity." xml:space="preserve"><value>لا توجد شرائح سعر حسب الكمية. سيُطبق سعر الوحدة الأساسي على جميع الكميات.</value></data>
+  <data name="Save price breaks" xml:space="preserve"><value>حفظ شرائح السعر</value></data>
+  <data name="Supplier price breaks saved." xml:space="preserve"><value>تم حفظ شرائح سعر المورد.</value></data>
+  <data name="Price breaks cannot be changed for inactive supplier purchasing information." xml:space="preserve"><value>لا يمكن تعديل شرائح السعر لبيانات شراء مورد غير فعالة.</value></data>
+  <data name="A supplier purchasing row cannot contain more than 20 price breaks." xml:space="preserve"><value>لا يمكن أن يحتوي صف بيانات شراء المورد على أكثر من 20 شريحة سعر.</value></data>
+  <data name="Each price break quantity must be at least the minimum order quantity." xml:space="preserve"><value>يجب ألا تقل كمية كل شريحة سعر عن الحد الأدنى لكمية الطلب.</value></data>
+  <data name="Each price break must use a unique minimum quantity." xml:space="preserve"><value>يجب أن تستخدم كل شريحة سعر كمية بداية مختلفة.</value></data>
+  <data name="Price break minimum quantity must be greater than zero." xml:space="preserve"><value>يجب أن تكون كمية بداية شريحة السعر أكبر من صفر.</value></data>
+  <data name="Price break unit price cannot be negative." xml:space="preserve"><value>لا يمكن أن يكون سعر وحدة الشريحة سالبًا.</value></data>
+  <data name="Price break discount must be between 0 and 100 percent." xml:space="preserve"><value>يجب أن تكون نسبة خصم شريحة السعر بين 0 و100 بالمئة.</value></data>
+  <data name="The price-break supplier does not match the purchasing row." xml:space="preserve"><value>المورد المرسل مع شرائح السعر لا يطابق صف بيانات الشراء.</value></data>
+  <data name="The minimum order quantity cannot exceed an existing price-break quantity." xml:space="preserve"><value>لا يمكن أن يتجاوز الحد الأدنى للطلب كمية شريحة سعر موجودة.</value></data>
+  <data name="Review supplier purchasing data" xml:space="preserve"><value>مراجعة بيانات شراء المورد</value></data>
+  <data name="Review the base price and quantity price breaks saved for the supplier's products." xml:space="preserve"><value>راجع السعر الأساسي وشرائح السعر حسب الكمية المحفوظة لمنتجات المورد.</value></data>
 </root>

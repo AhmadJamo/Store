@@ -180,6 +180,11 @@ public static class WorkflowNextStepGuidance
                 "Confirm the saved prices, order quantities, validity dates and preferred supplier choices.",
                 "Purchases.SupplierTerms.View", Routes(("supplierId", Route("supplierId"))));
 
+        if (Matches(message, localize, "Supplier price breaks saved."))
+            return new("SupplierPurchasing", "Index", "Review supplier purchasing data",
+                "Review the base price and quantity price breaks saved for the supplier's products.",
+                "Purchases.SupplierTerms.View", Routes(("supplierId", Route("supplierId"))));
+
         if (Matches(message, localize, "Storage location updated successfully."))
             return new("UnassignedStock", "Index", "Review unassigned stock",
                 "Move received stock from the unassigned position to its storage location.",

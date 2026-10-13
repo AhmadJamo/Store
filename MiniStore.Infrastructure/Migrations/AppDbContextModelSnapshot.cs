@@ -6738,6 +6738,44 @@ namespace MiniStore.Infrastructure.Migrations
                     b.ToTable("SupplierPaymentLines");
                 });
 
+            modelBuilder.Entity("MiniStore.Domain.Entities.SupplierProductPriceBreak", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("DiscountPercent")
+                        .HasPrecision(9, 4)
+                        .HasColumnType("decimal(9,4)");
+
+                    b.Property<decimal>("MinimumQuantity")
+                        .HasPrecision(18, 6)
+                        .HasColumnType("decimal(18,6)");
+
+                    b.Property<int>("SupplierProductPurchasingInfoId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TenantId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("UnitPrice")
+                        .HasPrecision(19, 4)
+                        .HasColumnType("decimal(19,4)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TenantId");
+
+                    b.HasIndex("SupplierProductPurchasingInfoId", "TenantId");
+
+                    b.HasIndex("TenantId", "SupplierProductPurchasingInfoId", "MinimumQuantity")
+                        .IsUnique();
+
+                    b.ToTable("SupplierProductPriceBreaks");
+                });
+
             modelBuilder.Entity("MiniStore.Domain.Entities.SupplierProductPurchasingInfo", b =>
                 {
                     b.Property<int>("Id")
@@ -6768,6 +6806,9 @@ namespace MiniStore.Infrastructure.Migrations
                     b.Property<decimal>("OrderMultiple")
                         .HasPrecision(18, 6)
                         .HasColumnType("decimal(18,6)");
+
+                    b.Property<int>("PriceBreakRevision")
+                        .HasColumnType("int");
 
                     b.Property<int>("Priority")
                         .HasColumnType("int");
@@ -10096,6 +10137,22 @@ namespace MiniStore.Infrastructure.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("MiniStore.Domain.Entities.SupplierProductPriceBreak", b =>
+                {
+                    b.HasOne("MiniStore.Domain.Entities.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MiniStore.Domain.Entities.SupplierProductPurchasingInfo", null)
+                        .WithMany("PriceBreaks")
+                        .HasForeignKey("SupplierProductPurchasingInfoId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("MiniStore.Domain.Entities.SupplierProductPurchasingInfo", b =>
                 {
                     b.HasOne("MiniStore.Domain.Entities.Tenant", null)
@@ -10535,6 +10592,11 @@ namespace MiniStore.Infrastructure.Migrations
             modelBuilder.Entity("MiniStore.Domain.Entities.SupplierPayment", b =>
                 {
                     b.Navigation("Lines");
+                });
+
+            modelBuilder.Entity("MiniStore.Domain.Entities.SupplierProductPurchasingInfo", b =>
+                {
+                    b.Navigation("PriceBreaks");
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.SupplierQuotation", b =>

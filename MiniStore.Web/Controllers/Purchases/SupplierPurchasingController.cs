@@ -111,6 +111,45 @@ public sealed class SupplierPurchasingController(
         return RedirectToAction(nameof(Index), new { supplierId = dto.SupplierId });
     }
 
+    [HttpGet]
+    [PermissionAuthorize("Purchases.SupplierTerms.View")]
+    public async Task<IActionResult> PriceBreaks(int id)
+    {
+        try { return View(await service.GetPriceBreaksPageAsync(id)); }
+        catch (Exception exception) when (exception is ArgumentException or InvalidOperationException)
+        {
+            TempData["NotificationType"] = "error";
+            TempData["NotificationMessage"] = localizer[exception.Message].Value;
+            return RedirectToAction(nameof(Index));
+        }
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [PermissionAuthorize("Purchases.SupplierTerms.Manage")]
+    public async Task<IActionResult> SavePriceBreaks([Bind(Prefix = "Form")] SaveSupplierPriceBreaksDto dto)
+    {
+        try
+        {
+            var supplierId = await service.SavePriceBreaksAsync(dto);
+            TempData["NotificationType"] = "success";
+            TempData["NotificationMessage"] = localizer["Supplier price breaks saved."].Value;
+            return RedirectToAction(nameof(Index), new { supplierId });
+        }
+        catch (Exception exception) when (exception is ArgumentException or InvalidOperationException)
+        {
+            TempData["NotificationType"] = "error";
+            TempData["NotificationMessage"] = localizer[exception.Message].Value;
+        }
+        catch (Exception exception)
+        {
+            logger.LogError(exception, "Failed to save supplier price breaks");
+            TempData["NotificationType"] = "error";
+            TempData["NotificationMessage"] = localizer["The operation could not be completed. Please try again or contact the administrator."].Value;
+        }
+        return RedirectToAction(nameof(PriceBreaks), new { id = dto.PurchasingInfoId });
+    }
+
     [HttpPost]
     [ValidateAntiForgeryToken]
     [PermissionAuthorize("Purchases.SupplierTerms.Manage")]

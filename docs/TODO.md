@@ -1,10 +1,10 @@
 # Project TODO
 > Source of truth: Current repository scan  
-> Last reviewed: 2026-10-13
+> Last reviewed: 2026-10-14
 
 The approved numbered Arabic/English delivery sequence is maintained in `MASTER_IMPLEMENTATION_ROADMAP_AR_EN.md`. Detailed working status, business rules and the rolling suggestion queue remain in `ARABIC_SHARED_ROADMAP.md`. This file remains the concise technical backlog.
 
-The PUR-000 through PUR-220 purchase evolution is implemented. The approved continuation is maintained in `PURCHASE_COMPLETION_ROADMAP_AR_EN.md`. PUR-230 bulk vendor price management is in progress: controlled CSV export, row-level preview and atomic revalidated import are implemented; price breaks, discounts, history and exception reporting remain. Incoming customer-management and sales requirements must be reconciled with master-roadmap steps 7 through 11 before implementation.
+The PUR-000 through PUR-220 purchase evolution is implemented. The approved continuation is maintained in `PURCHASE_COMPLETION_ROADMAP_AR_EN.md`. PUR-230 bulk vendor price management is in progress: controlled CSV export/import and quantity price breaks with discounts are implemented; native Excel support, immutable history and exception reporting remain. Incoming customer-management and sales requirements must be reconciled with master-roadmap steps 7 through 11 before implementation.
 
 - [x] PUR-000 complete purchase architecture review, legacy compatibility boundary, migration strategy and vertical-slice roadmap.
 - [x] PUR-005 fix context ownership, quantity authority, staged currency, approval and GRNI boundaries before runtime implementation.
@@ -34,8 +34,7 @@ The PUR-000 through PUR-220 purchase evolution is implemented. The approved cont
 - [x] PUR-200 add a policy-controlled direct RFQ workspace and fast path.
 - [x] PUR-210 add line-level and split supplier awards.
 - [x] PUR-220 add service procurement, per-product billing policy, stock-neutral service completion and reviewed mixed-source Draft Vendor Bills with policy-aware GRNI/Expense posting.
-- [ ] PUR-230 complete bulk vendor price management. CSV export/template, 500-row preview, assignment/unit/date/commercial validation and atomic import are implemented; Excel workbook support, quantity price breaks, discounts, change history and expired/duplicate reporting remain.
-- [ ] PUR-230 add atomic CSV/Excel vendor-price import/export and quantity price breaks.
+- [ ] PUR-230 complete bulk vendor price management. CSV export/template, 500-row preview, assignment/unit/date/commercial validation, atomic import and quantity price breaks with discounts are implemented; Excel workbook support, immutable change history and expired/duplicate reporting remain.
 - [ ] PUR-240 add scheduled replenishment and historical-demand suggestions.
 - [ ] PUR-250 add configurable receiving/quality routes, demand allocation and dropshipping contracts.
 - [ ] PUR-260 add supplier email, attachments, confirmation tracking and reviewed OCR capture.

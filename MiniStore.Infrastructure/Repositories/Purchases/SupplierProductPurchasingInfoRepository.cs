@@ -9,23 +9,26 @@ public sealed class SupplierProductPurchasingInfoRepository(AppDbContext context
     : ISupplierProductPurchasingInfoRepository
 {
     public Task<List<SupplierProductPurchasingInfo>> GetAllAsync() => context.SupplierProductPurchasingInfos
+        .Include(x => x.PriceBreaks)
         .OrderBy(x => x.ProductId).ThenBy(x => x.Priority).ThenBy(x => x.SupplierId)
         .ToListAsync();
 
     public Task<List<SupplierProductPurchasingInfo>> GetBySupplierIdAsync(int supplierId) =>
         context.SupplierProductPurchasingInfos
+            .Include(x => x.PriceBreaks)
             .Where(x => x.SupplierId == supplierId)
             .OrderBy(x => x.ProductId).ThenBy(x => x.Priority)
             .ToListAsync();
 
     public Task<List<SupplierProductPurchasingInfo>> GetByProductIdAsync(int productId) =>
         context.SupplierProductPurchasingInfos
+            .Include(x => x.PriceBreaks)
             .Where(x => x.ProductId == productId)
             .OrderBy(x => x.Priority).ThenBy(x => x.SupplierId)
             .ToListAsync();
 
     public Task<SupplierProductPurchasingInfo?> GetByIdAsync(int id) =>
-        context.SupplierProductPurchasingInfos.FirstOrDefaultAsync(x => x.Id == id);
+        context.SupplierProductPurchasingInfos.Include(x => x.PriceBreaks).FirstOrDefaultAsync(x => x.Id == id);
 
     public Task<SupplierProductPurchasingInfo?> FindDuplicateAsync(
         int supplierId, int productId, int purchaseMeasurementUnitId, int? excludingId = null) =>

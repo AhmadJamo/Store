@@ -60,6 +60,7 @@ public sealed class SupplierPurchasingInfoService(
                 IsPreferred = info.IsPreferred,
                 Priority = info.Priority,
                 IsActive = info.IsActive,
+                PriceBreakCount = info.PriceBreaks.Count,
                 RowVersion = info.RowVersion
             }).ToList(),
             Suppliers = suppliers.Select(x => new SupplierPurchasingOptionDto(x.Id, x.Name)).ToList(),
@@ -256,6 +257,61 @@ public sealed class SupplierPurchasingInfoService(
                 IsPreferred = input.IsPreferred, Priority = input.Priority, RowVersion = input.RowVersion
             }).ToList()
         });
+    }
+
+    public async Task<SupplierPriceBreakPageDto> GetPriceBreaksPageAsync(int purchasingInfoId)
+    {
+        var info = await repository.GetByIdAsync(purchasingInfoId)
+            ?? throw new InvalidOperationException("Supplier purchasing information was not found.");
+        var supplier = await supplierRepository.GetByIdAsync(info.SupplierId)
+            ?? throw new InvalidOperationException("Supplier was not found.");
+        var product = await productRepository.GetByIdAsync(info.ProductId)
+            ?? throw new InvalidOperationException("Product was not found.");
+        var unit = await unitRepository.GetByIdAsync(info.PurchaseMeasurementUnitId)
+            ?? throw new InvalidOperationException("Purchase unit was not found.");
+
+        return new SupplierPriceBreakPageDto
+        {
+            PurchasingInfoId = info.Id,
+            SupplierId = info.SupplierId,
+            SupplierName = supplier.Name,
+            ProductLabel = $"{product.ProductCode} — {product.Name}",
+            PurchaseUnit = $"{unit.Name} ({unit.Symbol})",
+            MinimumOrderQuantity = info.MinimumOrderQuantity,
+            BaseUnitPrice = info.UnitPrice,
+            CurrencyCode = info.CurrencyCode,
+            IsActive = info.IsActive,
+            Form = new SaveSupplierPriceBreaksDto
+            {
+                PurchasingInfoId = info.Id,
+                SupplierId = info.SupplierId,
+                RowVersion = info.RowVersion,
+                Rows = info.PriceBreaks.OrderBy(x => x.MinimumQuantity).Select(x => new SaveSupplierPriceBreakRowDto
+                {
+                    Selected = true,
+                    MinimumQuantity = x.MinimumQuantity,
+                    UnitPrice = x.UnitPrice,
+                    DiscountPercent = x.DiscountPercent
+                }).ToList()
+            }
+        };
+    }
+
+    public async Task<int> SavePriceBreaksAsync(SaveSupplierPriceBreaksDto dto)
+    {
+        var info = await repository.GetByIdAsync(dto.PurchasingInfoId)
+            ?? throw new InvalidOperationException("Supplier purchasing information was not found.");
+        if (info.SupplierId != dto.SupplierId)
+            throw new InvalidOperationException("The price-break supplier does not match the purchasing row.");
+        if (!info.RowVersion.SequenceEqual(dto.RowVersion))
+            throw new InvalidOperationException("Supplier purchasing information was modified by another user. Reload and try again.");
+
+        var priceBreaks = dto.Rows.Where(x => x.Selected)
+            .Select(x => new SupplierProductPriceBreak(x.MinimumQuantity, x.UnitPrice, x.DiscountPercent))
+            .ToList();
+        info.ReplacePriceBreaks(priceBreaks);
+        await repository.SaveChangesAsync();
+        return info.SupplierId;
     }
 
     private async Task ApplyAsync(SaveSupplierPurchasingInfoDto dto, bool preserveIdentity)

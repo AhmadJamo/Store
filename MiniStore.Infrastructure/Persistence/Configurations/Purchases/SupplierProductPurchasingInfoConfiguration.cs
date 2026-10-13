@@ -5,7 +5,7 @@ using MiniStore.Domain.Entities;
 namespace MiniStore.Infrastructure.Persistence.Configurations;
 
 public sealed class SupplierProductPurchasingInfoConfiguration
-    : IEntityTypeConfiguration<SupplierProductPurchasingInfo>
+    : IEntityTypeConfiguration<SupplierProductPurchasingInfo>, IEntityTypeConfiguration<SupplierProductPriceBreak>
 {
     public void Configure(EntityTypeBuilder<SupplierProductPurchasingInfo> builder)
     {
@@ -25,5 +25,17 @@ public sealed class SupplierProductPurchasingInfoConfiguration
         builder.HasOne<Product>().WithMany().HasForeignKey(x => x.ProductId).OnDelete(DeleteBehavior.Restrict);
         builder.HasOne<MeasurementUnit>().WithMany().HasForeignKey(x => x.PurchaseMeasurementUnitId)
             .OnDelete(DeleteBehavior.Restrict);
+        builder.HasMany(x => x.PriceBreaks).WithOne()
+            .HasForeignKey(x => x.SupplierProductPurchasingInfoId).OnDelete(DeleteBehavior.Cascade);
+    }
+
+    public void Configure(EntityTypeBuilder<SupplierProductPriceBreak> builder)
+    {
+        builder.HasKey(x => x.Id);
+        builder.Property(x => x.MinimumQuantity).HasPrecision(18, 6);
+        builder.Property(x => x.UnitPrice).HasPrecision(19, 4);
+        builder.Property(x => x.DiscountPercent).HasPrecision(9, 4);
+        builder.Ignore(x => x.NetUnitPrice);
+        builder.HasIndex(x => new { x.SupplierProductPurchasingInfoId, x.MinimumQuantity }).IsUnique();
     }
 }

@@ -1,5 +1,13 @@
 # AI Work Log
 
+# 2026-10-14 — PUR-230 supplier quantity price breaks
+
+- Added tenant-owned supplier/product/unit price-break rows with unique minimum-quantity thresholds, optional discounts and a 20-tier aggregate limit.
+- The domain resolves the highest eligible purchase-unit tier, applies its discount and falls back to the supplier base price when no threshold qualifies.
+- Added a localized responsive editor with explanation tooltips, permission-separated view/manage actions, no horizontal table and explicit return guidance after saving.
+- Replacing tiers advances the parent revision and rowversion so concurrent edits cannot silently overwrite another user's changes; inactive terms cannot be edited.
+- Added migration `AddSupplierQuantityPriceBreaks`; the Web project builds with zero warnings and all 659 security/inventory regression checks pass.
+
 # 2026-10-14 — PUR-230 supplier-price CSV foundation
 
 - Added supplier-scoped UTF-8 CSV export using the current active purchasing rows as a reusable template; exported cells neutralize spreadsheet-formula prefixes and remain round-trip importable.

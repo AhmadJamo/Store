@@ -1,7 +1,7 @@
 # MiniStore project context
 > Status: PARTIALLY IMPLEMENTED  
 > Source of truth: Code  
-> Last reviewed: 2026-10-13
+> Last reviewed: 2026-10-14
 
 ## Project identity
 MiniStore is a server-rendered ASP.NET Core MVC store-management application. It targets .NET 10, uses EF Core 10 with SQL Server, ASP.NET Core Identity, Razor views, and a Domain/Application/Infrastructure/Web layered solution. No public API project is present.
@@ -9,7 +9,7 @@ MiniStore is a server-rendered ASP.NET Core MVC store-management application. It
 ## Current development stage
 The repository implements an operational slice for catalog, warehouses, stock, suppliers, purchases, sales (wholesale and POS), configurable discounts, stock transfers, users/roles, settings and shared-database SaaS tenancy. Public signup, pricing, plans, trials, subscription access, promotion codes and a separate platform-owner control center are implemented. Product classification, generated internal codes, advanced catalog search, managed measurement units, immutable prepared-product recipes, automatic ingredient consumption and controlled kitchen-negative stock are also implemented. It is not yet a complete accounting ERP and does not yet integrate an external payment provider.
 
-The WMS track is temporarily paused after implementing reconciliation, logistics, movements, balances, reservations, counts, lot/serial execution, removal/putaway policies, replenishment transfer/purchase-demand planning, inventory insights and safe scan workflows. The additive procure-to-pay evolution is implemented through PUR-220, and PUR-230 bulk vendor price management is in progress with controlled CSV export, row-level preview and atomic import implemented. Product billing policies, stock-neutral service completion and separately permitted Draft/Approved/Posted Vendor Bills with attachments are implemented. One bill can mix receipt-, order- and service-completion sources; receipt lines clear GRNI while non-receipt lines debit their frozen Expense accounts. Vendor Bill outstanding balances exclude reversed payments and subtract posted credits. The original Purchase workflow remains available as Legacy Direct Purchase.
+The WMS track is temporarily paused after implementing reconciliation, logistics, movements, balances, reservations, counts, lot/serial execution, removal/putaway policies, replenishment transfer/purchase-demand planning, inventory insights and safe scan workflows. The additive procure-to-pay evolution is implemented through PUR-220, and PUR-230 bulk vendor price management is in progress with controlled CSV export, row-level preview, atomic import and supplier/product quantity price breaks with discounts implemented. Product billing policies, stock-neutral service completion and separately permitted Draft/Approved/Posted Vendor Bills with attachments are implemented. One bill can mix receipt-, order- and service-completion sources; receipt lines clear GRNI while non-receipt lines debit their frozen Expense accounts. Vendor Bill outstanding balances exclude reversed payments and subtract posted credits. The original Purchase workflow remains available as Legacy Direct Purchase.
 
 ## Status classification
 - IMPLEMENTED: catalog, warehouses, suppliers, stock balances/movements, purchases, sales, transfer workflow, Identity login, role-permission checks, audit-log rows, Razor UI.
@@ -37,7 +37,7 @@ The WMS track is temporarily paused after implementing reconciliation, logistics
 See `06_SECURITY.md`, `04_ACCOUNTING.md`, and `TODO.md`. Highest-priority findings include rotating previously committed admin credentials on existing deployments, completing inventory valuation and accounting posting, and establishing production deployment/backup/integration-test controls. Identity escalation, role-delete CSRF, login lockout and core inventory concurrency have been addressed; see the security and inventory documentation.
 
 ## Recommended next steps
-1. Continue PUR-230 with price breaks, discounts, price-change history and expired/duplicate reporting after the CSV preview/import foundation.
+1. Continue PUR-230 with native Excel support, immutable price-change history and expired/duplicate reporting after the CSV and quantity-price-break foundations.
 2. Complete company switching, invitations and existing-user role assignment management on top of the tenant-owned role model.
 3. Establish an immutable posted-document and double-entry accounting design before adding more ERP features.
 

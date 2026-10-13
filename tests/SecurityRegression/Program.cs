@@ -1156,11 +1156,32 @@ CheckArgumentThrows(() => new SupplierProductPurchasingInfo(
         1, 2, 3, "SKU", null, 1m, 1m, 0, 1m, "JOD",
         new DateOnly(2026, 2, 1), new DateOnly(2026, 1, 1), false, 100),
     "Supplier purchasing terms must reject an inverted validity period");
+supplierTerms.ReplacePriceBreaks([
+    new SupplierProductPriceBreak(10m, 10m, 0m),
+    new SupplierProductPriceBreak(20m, 8m, 10m)
+]);
+Check(supplierTerms.PriceBreakRevision == 1 && supplierTerms.PriceBreaks.Count == 2 &&
+      supplierTerms.ResolveUnitPrice(9m) == 12.3456m &&
+      supplierTerms.ResolveUnitPrice(10m) == 10m &&
+      supplierTerms.ResolveUnitPrice(25m) == 7.2m,
+    "Supplier price breaks must select the highest eligible quantity tier and apply its discount");
+CheckArgumentThrows(() => supplierTerms.ReplacePriceBreaks([
+        new SupplierProductPriceBreak(4m, 10m, 0m)
+    ]),
+    "Supplier price breaks must not begin below the minimum order quantity");
+CheckArgumentThrows(() => new SupplierProductPriceBreak(10m, 10m, 100.01m),
+    "Supplier price-break discounts must remain between zero and one hundred percent");
+CheckArgumentThrows(() => supplierTerms.Update(
+        1, 2, 3, "vendor-sku", null, 11m, 1m, 0, 12m, "JOD",
+        new DateOnly(2026, 1, 1), null, true, 10),
+    "Supplier minimum-order updates must preserve existing price-break thresholds");
 supplierTerms.SetActive(false);
 Check(!supplierTerms.IsActive && !supplierTerms.IsPreferred,
     "Deactivating supplier purchasing terms must clear preferred status");
 CheckThrows(() => supplierTerms.SetPreferred(true),
     "Inactive supplier purchasing terms cannot become preferred");
+CheckThrows(() => supplierTerms.ReplacePriceBreaks([]),
+    "Inactive supplier purchasing terms must not allow price-break changes");
 var supplierTermsType = db.Model.FindEntityType(typeof(SupplierProductPurchasingInfo))!;
 Check(supplierTermsType.FindProperty("TenantId") is { IsNullable: false } &&
       supplierTermsType.FindProperty(nameof(SupplierProductPurchasingInfo.RowVersion))!.IsConcurrencyToken,
@@ -1172,6 +1193,13 @@ var supplierTermsIndex = supplierTermsType.GetIndexes().Single(index => index.Is
         nameof(SupplierProductPurchasingInfo.PurchaseMeasurementUnitId)]));
 Check(supplierTermsIndex is not null,
     "Supplier/product/purchase-unit identity must be unique per tenant");
+var supplierPriceBreakType = db.Model.FindEntityType(typeof(SupplierProductPriceBreak))!;
+Check(supplierPriceBreakType.FindProperty("TenantId") is { IsNullable: false } &&
+      supplierPriceBreakType.GetIndexes().Any(index => index.IsUnique &&
+          index.Properties.Select(property => property.Name).SequenceEqual([
+              "TenantId", nameof(SupplierProductPriceBreak.SupplierProductPurchasingInfoId),
+              nameof(SupplierProductPriceBreak.MinimumQuantity)])),
+    "Supplier price breaks must be tenant-owned and unique by purchasing row and minimum quantity");
 var supplierType = db.Model.FindEntityType(typeof(Supplier))!;
 Check(supplierType.FindProperty(nameof(Supplier.RowVersion))!.IsConcurrencyToken,
     "Supplier profile updates must be rowversion protected");
@@ -1191,6 +1219,10 @@ var supplierTermsPreviewAction = typeof(SupplierPurchasingController)
     .GetMethod(nameof(SupplierPurchasingController.PreviewCsv))!;
 var supplierTermsImportAction = typeof(SupplierPurchasingController)
     .GetMethod(nameof(SupplierPurchasingController.ImportCsv))!;
+var supplierPriceBreaksAction = typeof(SupplierPurchasingController)
+    .GetMethod(nameof(SupplierPurchasingController.PriceBreaks))!;
+var supplierPriceBreaksSaveAction = typeof(SupplierPurchasingController)
+    .GetMethod(nameof(SupplierPurchasingController.SavePriceBreaks))!;
 Check(supplierTermsIndexAction.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
       $"{PermissionAuthorizeAttribute.PolicyPrefix}Purchases.SupplierTerms.View" &&
       supplierTermsSaveAction.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
@@ -1202,10 +1234,16 @@ Check(supplierTermsIndexAction.GetCustomAttribute<PermissionAuthorizeAttribute>(
       supplierTermsPreviewAction.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
       $"{PermissionAuthorizeAttribute.PolicyPrefix}Purchases.SupplierTerms.Manage" &&
       supplierTermsImportAction.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
+      $"{PermissionAuthorizeAttribute.PolicyPrefix}Purchases.SupplierTerms.Manage" &&
+      supplierPriceBreaksAction.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
+      $"{PermissionAuthorizeAttribute.PolicyPrefix}Purchases.SupplierTerms.View" &&
+      supplierPriceBreaksSaveAction.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
       $"{PermissionAuthorizeAttribute.PolicyPrefix}Purchases.SupplierTerms.Manage",
     "Supplier purchasing data must separate view and manage permissions");
 Check(supplierTermsBulkSaveAction.GetParameters().Single().GetCustomAttribute<BindAttribute>()?.Prefix == "BulkForm",
     "Bulk supplier purchasing submission must bind the selected supplier and product rows as one form");
+Check(supplierPriceBreaksSaveAction.GetParameters().Single().GetCustomAttribute<BindAttribute>()?.Prefix == "Form",
+    "Supplier price-break submission must bind the aggregate and all quantity tiers as one form");
 var supplierCsv = SupplierPurchasingCsvParser.Write([
     ["P-1", "PCS", "V-1", "Box, large", "1", "6", "4", "12.5", "2026-10-14", "", "TRUE", "10"]
 ]);
@@ -1822,6 +1860,17 @@ Check(supplierImportNextStep is
           RequiredPermission: "Purchases.SupplierTerms.View"
       } && supplierImportNextStep.RouteValues.GetValueOrDefault("supplierId") == "17",
     "Completed supplier purchasing imports must guide users to review the same supplier prices");
+var supplierPriceBreakNextStep = WorkflowNextStepGuidance.Resolve(
+    "Supplier price breaks saved.",
+    "SupplierPurchasing",
+    new Dictionary<string, string?> { ["supplierId"] = "17" });
+Check(supplierPriceBreakNextStep is
+      {
+          Controller: "SupplierPurchasing",
+          Action: "Index",
+          RequiredPermission: "Purchases.SupplierTerms.View"
+      } && supplierPriceBreakNextStep.RouteValues.GetValueOrDefault("supplierId") == "17",
+    "Saved supplier price breaks must guide users back to the same supplier purchasing data");
 var closedOrderNextStep = WorkflowNextStepGuidance.Resolve(
     "Purchase order remaining quantity closed.",
     "PurchaseOrders",

@@ -1,0 +1,97 @@
+@model MiniStore.Application.DTOs.Purchases.SupplierPriceBreakPageDto
+@inject Microsoft.Extensions.Localization.IStringLocalizer<MiniStore.Web.SharedResource> Localizer
+@{
+    ViewData["Title"] = Localizer["Supplier price breaks"];
+    var canManage = await PermissionService.CanAsync(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "System", "Purchases.SupplierTerms.Manage");
+    var numberSettings = await GeneralSettingsService.GetAsync();
+}
+
+<div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4">
+    <div>
+        <h2>@Localizer["Supplier price breaks"]</h2>
+        <p class="text-muted mb-0">@Localizer["Set lower prices or discounts that begin when the purchase quantity reaches a specified level."]</p>
+    </div>
+    <a asp-action="Index" asp-route-supplierId="@Model.SupplierId" class="btn btn-outline-secondary">@Localizer["Back to supplier purchasing data"]</a>
+</div>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <div class="row g-3">
+            <div class="col-md-6"><div class="small text-muted">@Localizer["Supplier"]</div><div class="fw-semibold">@Model.SupplierName</div></div>
+            <div class="col-md-6"><div class="small text-muted">@Localizer["Product"]</div><div class="fw-semibold">@Model.ProductLabel</div></div>
+            <div class="col-md-4"><div class="small text-muted">@Localizer["Purchase unit"]</div><div>@Model.PurchaseUnit</div></div>
+            <div class="col-md-4"><div class="small text-muted">@Localizer["Minimum order quantity"]</div><div>@Model.MinimumOrderQuantity.ToQuantityDisplay(numberSettings)</div></div>
+            <div class="col-md-4"><div class="small text-muted">@Localizer["Base unit price"]</div><div>@Model.BaseUnitPrice.ToMoneyDisplay(numberSettings) @Model.CurrencyCode</div></div>
+        </div>
+    </div>
+</div>
+
+@if (!Model.IsActive)
+{
+    <div class="alert alert-warning">@Localizer["This supplier purchasing row is inactive. Activate it before changing price breaks."]</div>
+}
+
+@if (canManage && Model.IsActive)
+{
+    <form asp-action="SavePriceBreaks" method="post" id="price-break-form">
+        <input type="hidden" name="Form.PurchasingInfoId" value="@Model.Form.PurchasingInfoId" />
+        <input type="hidden" name="Form.SupplierId" value="@Model.Form.SupplierId" />
+        <input type="hidden" name="Form.RowVersion" value="@Convert.ToBase64String(Model.Form.RowVersion)" />
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+            <div><h3 class="h5 mb-1">@Localizer["Quantity price breaks"]</h3><div class="small text-muted">@Localizer["Quantities use the purchase unit shown above. The highest eligible break is applied."]</div></div>
+            <button type="button" class="btn btn-outline-primary" id="add-price-break">@Localizer["Add price break"]</button>
+        </div>
+        <div id="price-break-list">
+            @for (var index = 0; index < Model.Form.Rows.Count; index++)
+            {
+                var row = Model.Form.Rows[index];
+                <section class="card mb-3 price-break-row">
+                    <input type="hidden" data-field="Selected" value="true" />
+                    <div class="card-header d-flex justify-content-between align-items-center gap-2"><strong class="price-break-title">@Localizer["Price break"] @(index + 1)</strong><button type="button" class="btn btn-sm btn-outline-danger remove-price-break">@Localizer["Remove"]</button></div>
+                    <div class="card-body"><div class="row g-3">
+                        <div class="col-md-4"><label class="form-label">@Localizer["Starts at quantity"] <button type="button" class="btn btn-sm btn-link text-secondary p-0 border-0 align-baseline" data-bs-toggle="tooltip" title="@Localizer["The minimum purchase-unit quantity required for this price break."]" aria-label="@Localizer["Show explanation"]"><span class="badge rounded-pill text-bg-light border text-secondary">?</span></button></label><input data-field="MinimumQuantity" value="@row.MinimumQuantity.ToQuantityInput(numberSettings)" type="number" min="@Model.MinimumOrderQuantity.ToQuantityInput(numberSettings)" step="0.000001" class="form-control" required /></div>
+                        <div class="col-md-4"><label class="form-label">@Localizer["Tier unit price"]</label><div class="input-group"><input data-field="UnitPrice" value="@row.UnitPrice.ToMoneyInput(numberSettings)" type="number" min="0" step="0.0001" class="form-control" required /><span class="input-group-text">@Model.CurrencyCode</span></div></div>
+                        <div class="col-md-4"><label class="form-label">@Localizer["Discount percent"] <button type="button" class="btn btn-sm btn-link text-secondary p-0 border-0 align-baseline" data-bs-toggle="tooltip" title="@Localizer["The discount is applied to the tier unit price. Use zero when the entered price is already final."]" aria-label="@Localizer["Show explanation"]"><span class="badge rounded-pill text-bg-light border text-secondary">?</span></button></label><div class="input-group"><input data-field="DiscountPercent" value="@row.DiscountPercent.ToMoneyInput(numberSettings)" type="number" min="0" max="100" step="0.0001" class="form-control" required /><span class="input-group-text">%</span></div></div>
+                    </div></div>
+                </section>
+            }
+        </div>
+        <div id="no-price-breaks" class="alert alert-info @(Model.Form.Rows.Count > 0 ? "d-none" : "")">@Localizer["No quantity price breaks are configured. The base unit price applies to every quantity."]</div>
+        <div class="d-flex justify-content-end"><button class="btn btn-primary">@Localizer["Save price breaks"]</button></div>
+    </form>
+
+    <template id="price-break-template">
+        <section class="card mb-3 price-break-row">
+            <input type="hidden" data-field="Selected" value="true" />
+            <div class="card-header d-flex justify-content-between align-items-center gap-2"><strong class="price-break-title"></strong><button type="button" class="btn btn-sm btn-outline-danger remove-price-break">@Localizer["Remove"]</button></div>
+            <div class="card-body"><div class="row g-3">
+                <div class="col-md-4"><label class="form-label">@Localizer["Starts at quantity"] <button type="button" class="btn btn-sm btn-link text-secondary p-0 border-0 align-baseline" data-bs-toggle="tooltip" title="@Localizer["The minimum purchase-unit quantity required for this price break."]" aria-label="@Localizer["Show explanation"]"><span class="badge rounded-pill text-bg-light border text-secondary">?</span></button></label><input data-field="MinimumQuantity" value="@Model.MinimumOrderQuantity.ToQuantityInput(numberSettings)" type="number" min="@Model.MinimumOrderQuantity.ToQuantityInput(numberSettings)" step="0.000001" class="form-control" required /></div>
+                <div class="col-md-4"><label class="form-label">@Localizer["Tier unit price"]</label><div class="input-group"><input data-field="UnitPrice" value="@Model.BaseUnitPrice.ToMoneyInput(numberSettings)" type="number" min="0" step="0.0001" class="form-control" required /><span class="input-group-text">@Model.CurrencyCode</span></div></div>
+                <div class="col-md-4"><label class="form-label">@Localizer["Discount percent"] <button type="button" class="btn btn-sm btn-link text-secondary p-0 border-0 align-baseline" data-bs-toggle="tooltip" title="@Localizer["The discount is applied to the tier unit price. Use zero when the entered price is already final."]" aria-label="@Localizer["Show explanation"]"><span class="badge rounded-pill text-bg-light border text-secondary">?</span></button></label><div class="input-group"><input data-field="DiscountPercent" value="0" type="number" min="0" max="100" step="0.0001" class="form-control" required /><span class="input-group-text">%</span></div></div>
+            </div></div>
+        </section>
+    </template>
+}
+else
+{
+    <h3 class="h5">@Localizer["Quantity price breaks"]</h3>
+    @if (Model.Form.Rows.Count == 0) { <div class="alert alert-info">@Localizer["No quantity price breaks are configured. The base unit price applies to every quantity."]</div> }
+    @foreach (var row in Model.Form.Rows)
+    {
+        <div class="card mb-3"><div class="card-body row g-3"><div class="col-md-4"><span class="text-muted">@Localizer["Starts at quantity"]</span><div>@row.MinimumQuantity.ToQuantityDisplay(numberSettings)</div></div><div class="col-md-4"><span class="text-muted">@Localizer["Tier unit price"]</span><div>@row.UnitPrice.ToMoneyDisplay(numberSettings) @Model.CurrencyCode</div></div><div class="col-md-4"><span class="text-muted">@Localizer["Discount percent"]</span><div>@row.DiscountPercent.ToMoneyDisplay(numberSettings)%</div></div></div></div>
+    }
+}
+
+@section Scripts {
+<script>
+document.addEventListener('DOMContentLoaded',()=>{
+    const form=document.getElementById('price-break-form');if(!form)return;
+    const list=document.getElementById('price-break-list'),empty=document.getElementById('no-price-breaks'),add=document.getElementById('add-price-break'),template=document.getElementById('price-break-template');
+    const title=@Html.Raw(System.Text.Json.JsonSerializer.Serialize(Localizer["Price break"].Value));
+    const refresh=()=>{const rows=[...list.querySelectorAll('.price-break-row')];rows.forEach((row,index)=>{row.querySelector('.price-break-title').textContent=title+' '+(index+1);row.querySelectorAll('[data-field]').forEach(field=>field.name=`Form.Rows[${index}].${field.dataset.field}`);});empty.classList.toggle('d-none',rows.length>0);add.disabled=rows.length>=20;document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(element=>bootstrap.Tooltip.getOrCreateInstance(element,{trigger:'hover focus'}));};
+    list.addEventListener('click',event=>{const button=event.target.closest('.remove-price-break');if(!button)return;button.closest('.price-break-row').remove();refresh();});
+    add.addEventListener('click',()=>{if(list.querySelectorAll('.price-break-row').length>=20)return;list.append(template.content.cloneNode(true));refresh();});
+    form.addEventListener('submit',refresh);refresh();
+});
+</script>
+}
