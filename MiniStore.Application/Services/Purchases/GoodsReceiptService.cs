@@ -45,7 +45,9 @@ public sealed class GoodsReceiptService(
         var order = await orders.GetByIdAsync(purchaseOrderId);
         if (order is null) return new GoodsReceiptCreatePageDto { Form = form ?? new CreateGoodsReceiptDto { PurchaseOrderId = purchaseOrderId } };
         var received = await GetPostedQuantitiesAsync(order.Id);
-        var remainingLines = order.Lines.Select(x => new GoodsReceiptRemainingLineDto
+        var remainingLines = order.Lines
+            .Where(x => x.BillingPolicySnapshot == PurchaseBillingPolicy.ReceivedQuantity)
+            .Select(x => new GoodsReceiptRemainingLineDto
         {
             PurchaseOrderLineId = x.Id,
             ProductCode = x.ProductCodeSnapshot,
@@ -75,7 +77,8 @@ public sealed class GoodsReceiptService(
             if (order.Status != PurchaseOrderStatus.Confirmed)
                 throw new InvalidOperationException("Only confirmed purchase orders can be received.");
             var posted = await GetPostedQuantitiesAsync(order.Id);
-            if (order.Lines.All(x => posted.GetValueOrDefault(x.Id) >= x.OrderedQuantity))
+            var receivableLines = order.Lines.Where(x => x.BillingPolicySnapshot == PurchaseBillingPolicy.ReceivedQuantity).ToList();
+            if (receivableLines.Count == 0 || receivableLines.All(x => posted.GetValueOrDefault(x.Id) >= x.OrderedQuantity))
                 throw new InvalidOperationException("This purchase order has no remaining quantity to receive.");
             var rate = await exchangeRates.ResolveAsync(order.CurrencyCode, dto.ReceiptDate);
             receipt = new GoodsReceipt(
@@ -106,7 +109,7 @@ public sealed class GoodsReceiptService(
         {
             Receipt = Map(receipt, order.OrderNumber, warehouse.Name),
             IdempotencyKey = InventoryScanResolver.NewGoodsReceiptIdempotencyKey(),
-            Lines = order.Lines.Select(line =>
+            Lines = order.Lines.Where(line => line.BillingPolicySnapshot == PurchaseBillingPolicy.ReceivedQuantity).Select(line =>
             {
                 productMap.TryGetValue(line.ProductId, out var product);
                 var postedQuantity = posted.GetValueOrDefault(line.Id);
@@ -168,7 +171,8 @@ public sealed class GoodsReceiptService(
             if (matches.Count > 1) throw new InvalidOperationException("The scanned product matches more than one purchase order line.");
 
             var (line, matchedProduct) = matches.Single();
-            if (!matchedProduct.IsActive || matchedProduct.ProductType == ProductType.PreparedToOrder)
+            if (line.BillingPolicySnapshot != PurchaseBillingPolicy.ReceivedQuantity ||
+                !matchedProduct.IsActive || matchedProduct.InventoryBehavior != ProductInventoryBehavior.Stocked)
                 throw new InvalidOperationException("The selected product cannot be received.");
             ValidateTrackingScan(matchedProduct, input, input.Quantity * line.UnitFactorToBase);
             var posted = await GetPostedQuantitiesAsync(order.Id);
@@ -208,11 +212,13 @@ public sealed class GoodsReceiptService(
             {
                 var orderLine = order.Lines.SingleOrDefault(x => x.Id == input.PurchaseOrderLineId)
                     ?? throw new ArgumentException("One or more receipt lines do not belong to the purchase order.");
+                if (orderLine.BillingPolicySnapshot != PurchaseBillingPolicy.ReceivedQuantity)
+                    throw new InvalidOperationException("Only receipt-based purchase lines can be received into inventory.");
                 if (input.ReceivedQuantity > orderLine.OrderedQuantity - posted.GetValueOrDefault(orderLine.Id))
                     throw new InvalidOperationException("Received quantity cannot exceed the open ordered quantity.");
                 var product = await products.GetByIdAsync(orderLine.ProductId)
                     ?? throw new InvalidOperationException("Purchase order product was not found.");
-                if (!product.IsActive || product.ProductType == ProductType.PreparedToOrder)
+                if (!product.IsActive || product.InventoryBehavior != ProductInventoryBehavior.Stocked)
                     throw new InvalidOperationException("The selected product cannot be received.");
                 var netUnitCost = decimal.Round(orderLine.UnitPrice * (1m - orderLine.DiscountPercent / 100m), 6, MidpointRounding.AwayFromZero);
                 receipt.AddLine(new GoodsReceiptLine(orderLine.Id, orderLine.ProductId, orderLine.MeasurementUnitId,
@@ -248,6 +254,8 @@ public sealed class GoodsReceiptService(
             {
                 var orderLine = order.Lines.SingleOrDefault(x => x.Id == line.PurchaseOrderLineId)
                     ?? throw new InvalidOperationException("One or more receipt lines do not belong to the purchase order.");
+                if (orderLine.BillingPolicySnapshot != PurchaseBillingPolicy.ReceivedQuantity)
+                    throw new InvalidOperationException("Only receipt-based purchase lines can be received into inventory.");
                 if (line.ReceivedQuantity > orderLine.OrderedQuantity - posted.GetValueOrDefault(orderLine.Id))
                     throw new InvalidOperationException("Received quantity cannot exceed the open ordered quantity.");
             }
@@ -261,7 +269,7 @@ public sealed class GoodsReceiptService(
         {
             var product = await products.GetByIdAsync(line.ProductId)
                 ?? throw new InvalidOperationException("Purchase order product was not found.");
-            if (!product.IsActive || product.ProductType == ProductType.PreparedToOrder)
+            if (!product.IsActive || product.InventoryBehavior != ProductInventoryBehavior.Stocked)
                 throw new InvalidOperationException("The selected product cannot be received.");
             var stock = await stocks.GetByProductAndWarehouseAsync(product.Id, order.WarehouseId);
             if (stock is null)

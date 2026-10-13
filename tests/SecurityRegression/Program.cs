@@ -340,6 +340,22 @@ Check(
     PermissionDefinitions.All.Any(permission =>
         permission.Name == "PurchaseAccountingReconciliation.View"),
     "Purchase accounting reconciliation view permission must be defined");
+Check(PermissionDefinitions.All.Any(x => x.Name == "PurchaseServiceAcceptances.View") &&
+      PermissionDefinitions.All.Any(x => x.Name == "PurchaseServiceAcceptances.Create"),
+    "Purchase service completion visibility and entry must use separate permissions");
+var serviceAcceptanceCreate = typeof(PurchaseServiceAcceptancesController)
+    .GetMethods().Single(x => x.Name == nameof(PurchaseServiceAcceptancesController.Create) &&
+                              x.GetCustomAttribute<HttpPostAttribute>() is not null);
+Check(serviceAcceptanceCreate.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
+      $"{PermissionAuthorizeAttribute.PolicyPrefix}PurchaseServiceAcceptances.Create",
+    "Purchase service completion posting must enforce its dedicated create permission");
+var serviceAcceptance = new PurchaseServiceAcceptance("SVC-000001", 1, new DateOnly(2026, 10, 13), null, "tester");
+serviceAcceptance.AddLine(new PurchaseServiceAcceptanceLine(1, 1, 2m, "PRD-1", "Consulting", "Hour"));
+Check(serviceAcceptance.Lines.Single().CompletedQuantity == 2m,
+    "Service completion evidence must preserve completed quantity without creating inventory state");
+CheckArgumentThrows(() => new PurchaseOrderLine(1, 1, 1, 1m, 1m, 1m, 10m, 0m, 0m,
+        "PRD-1", "Consulting", "Hour", null, PurchaseBillingPolicy.ServiceCompletion, null),
+    "A service-policy purchase order line must require a frozen expense account");
 var knownPermissions = PermissionDefinitions.All.Select(x => x.Name).ToHashSet(StringComparer.Ordinal);
 Check(DashboardDefinitions.All.Count >= 7 &&
       DashboardDefinitions.All.Select(x => x.Title).Distinct(StringComparer.Ordinal).Count() == DashboardDefinitions.All.Count,

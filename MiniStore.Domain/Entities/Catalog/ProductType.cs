@@ -4,5 +4,6 @@ public enum ProductType
 {
     RawMaterial = 1,
     DirectSale = 2,
-    PreparedToOrder = 3
+    PreparedToOrder = 3,
+    Service = 4
 }

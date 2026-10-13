@@ -49,6 +49,7 @@ public class ProductConfiguration : IEntityTypeConfiguration<Product>
         builder.Property(x => x.IsSellableInPos).IsRequired();
         builder.Property(x => x.IsSellableInSales).IsRequired();
         builder.Property(x => x.IsActive).IsRequired();
+        builder.Property(x => x.PurchaseBillingPolicy).IsRequired();
         builder.Property(x => x.NetWeight).HasPrecision(18, 6);
         builder.Property(x => x.GrossWeight).HasPrecision(18, 6);
         builder.Property(x => x.Length).HasPrecision(18, 6);
@@ -75,6 +76,11 @@ public class ProductConfiguration : IEntityTypeConfiguration<Product>
         builder.HasOne<MeasurementUnit>()
             .WithMany()
             .HasForeignKey(x => x.WeightMeasurementUnitId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasOne<Account>()
+            .WithMany()
+            .HasForeignKey(x => x.PurchaseExpenseAccountId)
             .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasOne<MeasurementUnit>()

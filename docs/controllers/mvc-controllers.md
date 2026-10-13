@@ -30,6 +30,7 @@
 | PurchaseSourcing | Index/Details/Create | PurchaseSourcing.View/Create; Create binds the sourcing page's `Form` prefix before validating the approved Purchase Request and invited suppliers. |
 | SupplierQuotations | Create/Comparison/Award | SupplierQuotations.Create/View/Award; Create and Award bind their nested `Form` commands. Award validates exact per-line supplier quantities/reasons, records the immutable decision once and returns the comparison with errors without losing input. |
 | PurchaseOrders | Index/Details/CreateFromAward/Approve/Confirm/Cancel/CloseRemaining/Reopen | State-specific permissions; close remaining requires fully settled received quantities plus reason, while reopen has a separate permission and accepts only a reasoned remaining-quantity closure. |
+| PurchaseServiceAcceptances | Index/Details/Create | View/Create permissions are separate; creation accepts only open service-completion lines on a confirmed Purchase Order and produces no inventory or accounting mutation. |
 | SupplierCreditNotes | Index/Details/Create | SupplierCreditNotes.View/Create; Create binds billed-line quantities, revalidates cumulative credit and current stock, then atomically posts inventory/tracking/movement and payable/tax/inventory/PPV accounting effects. |
 | SalesReturns | Index/Details/Create | SalesReturns.View/Create; SalesReturnService enforces remaining quantity, restores eligible inventory and posts the atomic reversal journal. |
 | StockTransfers | Index/Details/Create/Edit and state POSTs | transfer-specific permissions/service. |

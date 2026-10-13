@@ -30,12 +30,14 @@ public sealed class PurchaseOrderConfiguration : IEntityTypeConfiguration<Purcha
         b.HasKey(x => x.Id); b.Property(x => x.OrderedQuantity).HasPrecision(18, 6); b.Property(x => x.UnitFactorToBase).HasPrecision(24, 12);
         b.Property(x => x.StockQuantity).HasPrecision(18, 6); b.Property(x => x.UnitPrice).HasPrecision(24, 8);
         b.Property(x => x.DiscountPercent).HasPrecision(9, 4); b.Property(x => x.TaxPercent).HasPrecision(9, 4);
+        b.Property(x => x.BillingPolicySnapshot).IsRequired();
         b.Property(x => x.ProductCodeSnapshot).HasMaxLength(100).IsRequired(); b.Property(x => x.ProductNameSnapshot).HasMaxLength(250).IsRequired(); b.Property(x => x.UnitNameSnapshot).HasMaxLength(100).IsRequired();
         b.HasIndex(x => new { x.PurchaseOrderId, x.SupplierQuotationLineId }).IsUnique();
         b.HasOne<SupplierQuotationLine>().WithMany().HasForeignKey(x => x.SupplierQuotationLineId).OnDelete(DeleteBehavior.Restrict);
         b.HasOne<PurchaseAgreementLine>().WithMany().HasForeignKey(x => x.PurchaseAgreementLineId).OnDelete(DeleteBehavior.Restrict);
         b.HasOne<Product>().WithMany().HasForeignKey(x => x.ProductId).OnDelete(DeleteBehavior.Restrict);
         b.HasOne<MeasurementUnit>().WithMany().HasForeignKey(x => x.MeasurementUnitId).OnDelete(DeleteBehavior.Restrict);
+        b.HasOne<Account>().WithMany().HasForeignKey(x => x.PurchaseExpenseAccountIdSnapshot).OnDelete(DeleteBehavior.Restrict);
     }
 
     public void Configure(EntityTypeBuilder<PurchaseOrderLifecycleHistory> b)

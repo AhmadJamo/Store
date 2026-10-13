@@ -15,19 +15,22 @@ public class ProductsController : Controller
     private readonly MeasurementUnitService _measurementUnitService;
     private readonly ProductCategoryService _productCategoryService;
     private readonly SupplierService _supplierService;
+    private readonly AccountService _accountService;
 
     public ProductsController(
         ProductService productService,
         IStringLocalizer<SharedResource> localizer,
         MeasurementUnitService measurementUnitService,
         ProductCategoryService productCategoryService,
-        SupplierService supplierService)
+        SupplierService supplierService,
+        AccountService accountService)
     {
         _productService = productService;
         _localizer = localizer;
         _measurementUnitService = measurementUnitService;
         _productCategoryService = productCategoryService;
         _supplierService = supplierService;
+        _accountService = accountService;
     }
 
     [PermissionAuthorize("Products.View")]
@@ -136,7 +139,9 @@ public class ProductsController : Controller
             RequiresRefrigeration = product.HandlingRequirements.HasFlag(ProductHandlingRequirements.Refrigerated),
             RequiresFrozenStorage = product.HandlingRequirements.HasFlag(ProductHandlingRequirements.Frozen),
             IsHazardous = product.HandlingRequirements.HasFlag(ProductHandlingRequirements.Hazardous)
-            ,SupplierIds = product.SupplierIds
+            ,SupplierIds = product.SupplierIds,
+            PurchaseBillingPolicy = product.PurchaseBillingPolicy,
+            PurchaseExpenseAccountId = product.PurchaseExpenseAccountId
         };
 
         return View(dto);
@@ -225,5 +230,7 @@ public class ProductsController : Controller
         ViewBag.ProductCategories = await _productCategoryService.GetAllAsync();
         ViewBag.Suppliers = (await _supplierService.GetAllAsync())
             .Where(x => x.IsActive).OrderBy(x => x.Name).ToList();
+        ViewBag.ExpenseAccounts = (await _accountService.GetAllAsync())
+            .Where(x => x.Type == AccountType.Expense).OrderBy(x => x.Code).ToList();
     }
 }

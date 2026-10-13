@@ -8,6 +8,7 @@ public class ProductService(
     IProductRepository productRepository,
     IMeasurementUnitRepository measurementUnits,
     IProductCategoryRepository productCategories,
+    IAccountRepository accounts,
     SupplierProductAssignmentService assignments,
     IUnitOfWork unitOfWork)
 {
@@ -102,7 +103,9 @@ public class ProductService(
             dto.IsSellableInPos,
             dto.IsSellableInSales,
             dto.IsActive,
-            measurementUnit.Id);
+            measurementUnit.Id,
+            dto.PurchaseBillingPolicy,
+            await ValidateExpenseAccountAsync(dto.PurchaseBillingPolicy, dto.PurchaseExpenseAccountId));
 
         product.ConfigureLogistics(
             category?.Id,
@@ -162,7 +165,9 @@ public class ProductService(
             product.ConfigureProduct(
                 dto.Name, normalizedBarcode, dto.PurchasePrice, dto.SalePrice, dto.WholesalePrice,
                 dto.ProductType, MapLegacyUnit(measurementUnit.Code), dto.AllowNegativeRecipeConsumption,
-                dto.IsSellableInPos, dto.IsSellableInSales, dto.IsActive, measurementUnit.Id);
+                dto.IsSellableInPos, dto.IsSellableInSales, dto.IsActive, measurementUnit.Id,
+                dto.PurchaseBillingPolicy,
+                await ValidateExpenseAccountAsync(dto.PurchaseBillingPolicy, dto.PurchaseExpenseAccountId));
             product.ConfigureLogistics(
                 category?.Id, dto.NetWeight, dto.GrossWeight, weightUnit?.Id,
                 dto.Length, dto.Width, dto.Height, dimensionUnit?.Id,
@@ -218,12 +223,28 @@ public class ProductService(
         RequireExpirationDate = product.RequireExpirationDate,
         ExpirationWarningDays = product.ExpirationWarningDays,
         HandlingRequirements = product.HandlingRequirements
+        ,PurchaseBillingPolicy = product.PurchaseBillingPolicy
+        ,PurchaseExpenseAccountId = product.PurchaseExpenseAccountId
     };
 
-    private static ProductInventoryBehavior MapInventoryBehavior(ProductType productType) =>
-        productType == ProductType.PreparedToOrder
-            ? ProductInventoryBehavior.PreparedToOrder
-            : ProductInventoryBehavior.Stocked;
+    private static ProductInventoryBehavior MapInventoryBehavior(ProductType productType) => productType switch
+    {
+        ProductType.PreparedToOrder => ProductInventoryBehavior.PreparedToOrder,
+        ProductType.Service => ProductInventoryBehavior.NonStocked,
+        _ => ProductInventoryBehavior.Stocked
+    };
+
+    private async Task<int?> ValidateExpenseAccountAsync(PurchaseBillingPolicy policy, int? accountId)
+    {
+        if (policy == PurchaseBillingPolicy.ReceivedQuantity && !accountId.HasValue) return null;
+        if (!accountId.HasValue)
+            throw new InvalidOperationException("Select a purchase expense account for products billed without a goods receipt.");
+        var account = await accounts.GetByIdAsync(accountId.Value)
+            ?? throw new InvalidOperationException("Purchase expense account was not found.");
+        if (account.Type != AccountType.Expense)
+            throw new InvalidOperationException("Purchase expense account must be an expense account.");
+        return account.Id;
+    }
 
     private static string? NormalizeBarcode(string? barcode) =>
         string.IsNullOrWhiteSpace(barcode) ? null : barcode.Trim();

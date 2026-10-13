@@ -1,0 +1,16 @@
+@model MiniStore.Application.DTOs.Purchases.PurchaseServiceAcceptanceCreatePageDto
+@inject Microsoft.Extensions.Localization.IStringLocalizer<MiniStore.Web.SharedResource> Localizer
+@{ ViewData["Title"] = Localizer["Record service completion"]; var numberSettings = await GeneralSettingsService.GetAsync(); }
+<div class="d-flex flex-wrap justify-content-between gap-2"><div><h2>@Localizer["Record service completion"]</h2><p class="text-muted">@Model.PurchaseOrderNumber — @Model.SupplierName</p></div><a asp-controller="PurchaseOrders" asp-action="Details" asp-route-id="@Model.PurchaseOrderId" class="btn btn-outline-secondary align-self-start">@Localizer["Back"]</a></div>
+<div class="alert alert-info">@Localizer["This document confirms service completion only and does not change warehouse stock."]</div>
+<form asp-action="Create" method="post"><input type="hidden" name="PurchaseOrderId" value="@Model.PurchaseOrderId"/><div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+<div class="row g-3 mb-3"><div class="col-md-4"><label class="form-label">@Localizer["Completion date"]</label><input name="CompletionDate" value="@Model.Form.CompletionDate.ToString("yyyy-MM-dd")" type="date" class="form-control" required/></div><div class="col-md-8"><label class="form-label">@Localizer["Notes"]</label><input name="Notes" value="@Model.Form.Notes" maxlength="1000" class="form-control"/></div></div>
+<div class="row g-3 mb-3">
+@for (var i = 0; i < Model.Lines.Count; i++)
+{
+    var line = Model.Lines[i]; var entered = Model.Form.Lines.ElementAtOrDefault(i)?.CompletedQuantity ?? 0;
+    <div class="col-12 col-lg-6"><div class="card h-100 card-body"><strong>@line.ProductCode — @line.ProductName</strong><div class="text-muted mb-3">@line.UnitName</div><div class="row g-2"><div class="col-6"><small class="text-muted">@Localizer["Ordered"]</small><div>@line.OrderedQuantity.ToQuantityDisplay(numberSettings)</div></div><div class="col-6"><small class="text-muted">@Localizer["Previously completed"]</small><div>@line.CompletedQuantity.ToQuantityDisplay(numberSettings)</div></div></div><label class="form-label mt-3">@Localizer["Completed quantity"]</label><input type="hidden" name="Lines[@i].PurchaseOrderLineId" value="@line.PurchaseOrderLineId"/><input name="Lines[@i].CompletedQuantity" value="@entered.ToQuantityInput(numberSettings)" type="number" min="0" max="@line.RemainingQuantity.ToInputNumber()" step="0.000001" class="form-control"/><small class="text-muted">@Localizer["Remaining quantity"]: @line.RemainingQuantity.ToQuantityDisplay(numberSettings)</small></div></div>
+}
+</div>
+@if (Model.Lines.Count > 0) { <button class="btn btn-primary" type="submit">@Localizer["Record completion"]</button> } else { <span class="badge bg-success">@Localizer["Service completion finished"]</span> }
+</form>

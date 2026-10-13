@@ -66,6 +66,10 @@ public class Product
 
     public bool IsActive { get; private set; }
 
+    public PurchaseBillingPolicy PurchaseBillingPolicy { get; private set; } = PurchaseBillingPolicy.ReceivedQuantity;
+
+    public int? PurchaseExpenseAccountId { get; private set; }
+
     //State
     public Product(
         string name,
@@ -80,7 +84,9 @@ public class Product
         bool isSellableInPos = true,
         bool isSellableInSales = true,
         bool isActive = true,
-        int? measurementUnitId = null)
+        int? measurementUnitId = null,
+        PurchaseBillingPolicy? purchaseBillingPolicy = null,
+        int? purchaseExpenseAccountId = null)
     {
         var resolvedProductType = productType ??
             (inventoryBehavior == ProductInventoryBehavior.PreparedToOrder
@@ -116,6 +122,7 @@ public class Product
         IsSellableInPos = isSellableInPos;
         IsSellableInSales = isSellableInSales;
         IsActive = isActive;
+        ConfigurePurchaseBilling(purchaseBillingPolicy ?? DefaultBillingPolicy(resolvedProductType), purchaseExpenseAccountId);
     }
 
     //Behavior
@@ -185,7 +192,9 @@ public class Product
         bool isSellableInPos,
         bool isSellableInSales,
         bool isActive,
-        int measurementUnitId)
+        int measurementUnitId,
+        PurchaseBillingPolicy? purchaseBillingPolicy = null,
+        int? purchaseExpenseAccountId = null)
     {
         var inventoryBehavior = MapInventoryBehavior(productType);
         ValidateName(name);
@@ -218,6 +227,23 @@ public class Product
         IsSellableInPos = isSellableInPos;
         IsSellableInSales = isSellableInSales;
         IsActive = isActive;
+        ConfigurePurchaseBilling(purchaseBillingPolicy ?? DefaultBillingPolicy(productType), purchaseExpenseAccountId);
+    }
+
+    public void ConfigurePurchaseBilling(PurchaseBillingPolicy policy, int? expenseAccountId)
+    {
+        if (!Enum.IsDefined(policy)) throw new ArgumentException("Purchase billing policy is invalid.");
+        if (expenseAccountId <= 0) expenseAccountId = null;
+        if (ProductType == ProductType.PreparedToOrder && policy != PurchaseBillingPolicy.ReceivedQuantity)
+            throw new InvalidOperationException("Prepared products cannot use a purchasing billing policy.");
+        if (ProductType == ProductType.Service && policy == PurchaseBillingPolicy.ReceivedQuantity)
+            throw new InvalidOperationException("Services must be billed by ordered quantity or service completion.");
+        if (ProductType != ProductType.Service && policy == PurchaseBillingPolicy.ServiceCompletion)
+            throw new InvalidOperationException("Service-completion billing can be selected only for service products.");
+        if (policy != PurchaseBillingPolicy.ReceivedQuantity && !expenseAccountId.HasValue)
+            throw new ArgumentException("A purchase expense account is required for products billed without a goods receipt.");
+        PurchaseBillingPolicy = policy;
+        PurchaseExpenseAccountId = expenseAccountId;
     }
 
     public void MarkPreparedToOrder()
@@ -402,10 +428,17 @@ public class Product
             throw new ArgumentException("Purchase price cannot be higher than retail price for a direct-sale product.");
     }
 
-    private static ProductInventoryBehavior MapInventoryBehavior(ProductType productType) =>
-        productType == ProductType.PreparedToOrder
-            ? ProductInventoryBehavior.PreparedToOrder
-            : ProductInventoryBehavior.Stocked;
+    private static ProductInventoryBehavior MapInventoryBehavior(ProductType productType) => productType switch
+    {
+        ProductType.PreparedToOrder => ProductInventoryBehavior.PreparedToOrder,
+        ProductType.Service => ProductInventoryBehavior.NonStocked,
+        _ => ProductInventoryBehavior.Stocked
+    };
+
+    private static PurchaseBillingPolicy DefaultBillingPolicy(ProductType productType) =>
+        productType == ProductType.Service
+            ? PurchaseBillingPolicy.ServiceCompletion
+            : PurchaseBillingPolicy.ReceivedQuantity;
 
     private static string? NormalizeBarcode(string? barcode) =>
         string.IsNullOrWhiteSpace(barcode) ? null : barcode.Trim();

@@ -1,5 +1,13 @@
 # AI Work Log
 
+## 2026-10-13 — PUR-220 service procurement foundation
+
+- Added Service products plus Ordered Quantity, Received Quantity and Service Completion purchase-billing policies, with a required Expense account for policies that bypass Goods Receipt.
+- Froze policy/account authority on new Purchase Order lines and extended lifecycle progress to distinguish physical receipt from completed service.
+- Added tenant-safe, separately numbered Purchase Service Acceptance evidence, permissions, navigation, bilingual responsive screens and next-step guidance. The operation records no stock, tracking, movement, valuation or journal effect.
+- Restricted manual and scanned Goods Receipts to receipt-policy lines backed by active Stocked products.
+- Added migration `20261013162045_AddPurchaseServiceBillingPolicies`; existing products and order lines default safely to Received Quantity. Draft/review/post Vendor Bills and attachments remain the next PUR-220 slice.
+
 ## 2026-10-13 — PUR-210 line-level split supplier awards
 
 - Replaced whole-quotation winner selection with exact line-level quantity allocations that freeze supplier, quoted price, discount, tax, currency, lead time, payment terms, product/unit snapshots and a required selection reason.

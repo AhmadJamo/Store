@@ -1,7 +1,7 @@
 # Product and recipe entities
-> Status: IMPLEMENTED | Last reviewed: 2026-09-30
+> Status: IMPLEMENTED | Last reviewed: 2026-10-13
 
-`Product` has a database-generated internal `ProductCode` (`PRD-########`) and an optional tenant-unique manufacturer barcode. `ProductType` distinguishes RawMaterial, DirectSale and PreparedToOrder; channel flags independently control POS and ordinary sales visibility, while `IsActive` stops new operational use. Raw materials cannot be enabled for direct sale. Prepared products force PurchasePrice to zero, cannot hold direct stock or be purchased, and consume their active recipe instead. Existing stocked rows backfill as direct-sale products and existing prepared rows retain that classification.
+`Product` has a database-generated internal `ProductCode` (`PRD-########`) and an optional tenant-unique manufacturer barcode. `ProductType` distinguishes RawMaterial, DirectSale, PreparedToOrder and Service; channel flags independently control sales visibility. Service maps to NonStocked inventory behavior and defaults to Service Completion billing. Every product also selects Ordered Quantity, Received Quantity or Service Completion purchase billing; policies that bypass Goods Receipt require an Expense account. Prepared products remain excluded from purchasing.
 
 WMS logistics keeps Product as the concrete SKU. An optional ProductCategory organizes future rules. Nullable net/gross weight references a managed Mass unit; nullable length/width/height references a managed Length unit and volume is derived. Handling flags cover fragile, keep-dry, refrigerated, frozen and hazardous requirements. TrackingPolicy is None/Lot/Serial, but WMS-005 stores policy only: switching existing non-zero stock to Lot/Serial is blocked and operational traceability waits for WMS-070.
 

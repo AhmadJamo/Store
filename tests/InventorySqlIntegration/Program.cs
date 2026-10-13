@@ -332,11 +332,12 @@ static async Task VerifyLineLevelSplitAwardAsync(
             new CurrencyExchangeRateRepository(context), new GeneralSettingsRepository(context), unitOfWork, currentUser);
         var lifecycle = new PurchaseOrderLifecycleService(
             new PurchaseOrderRepository(context), new GoodsReceiptRepository(context),
-            new GoodsReceiptReturnRepository(context), new VendorBillRepository(context), unitOfWork, currentUser);
+            new GoodsReceiptReturnRepository(context), new PurchaseServiceAcceptanceRepository(context),
+            new VendorBillRepository(context), unitOfWork, currentUser);
         var service = new PurchaseOrderService(
             new PurchaseOrderRepository(context), new PurchaseAgreementRepository(context),
             new SupplierQuotationRepository(context), new PurchaseSourcingRepository(context),
-            new SupplierRepository(context), new WarehouseRepository(context), numbers, lifecycle,
+            new SupplierRepository(context), new WarehouseRepository(context), new ProductRepository(context), numbers, lifecycle,
             exchangeRates, unitOfWork, currentUser);
         var orderIds = await service.CreateOrdersFromAwardAsync(sourcingEventId);
         if (orderIds.Count != 2) throw new InvalidOperationException("A split award across two suppliers must create two purchase orders.");
@@ -527,7 +528,8 @@ static async Task VerifyConcurrentGoodsReceiptAndGrniAsync(
         var billExchangeRates = new CurrencyExchangeRateService(new CurrencyExchangeRateRepository(billContext), new GeneralSettingsRepository(billContext), billUnitOfWork, billUser);
         var billOrderLifecycle = new PurchaseOrderLifecycleService(
             new PurchaseOrderRepository(billContext), new GoodsReceiptRepository(billContext),
-            new GoodsReceiptReturnRepository(billContext), new VendorBillRepository(billContext), billUnitOfWork, billUser);
+            new GoodsReceiptReturnRepository(billContext), new PurchaseServiceAcceptanceRepository(billContext),
+            new VendorBillRepository(billContext), billUnitOfWork, billUser);
         var billService = new VendorBillService(
             new VendorBillRepository(billContext), new PurchaseOrderRepository(billContext), new GoodsReceiptRepository(billContext),
             new GoodsReceiptReturnRepository(billContext), new SupplierRepository(billContext), new WarehouseRepository(billContext),
@@ -693,7 +695,8 @@ static async Task VerifyConcurrentGoodsReceiptAndGrniAsync(
             new ProductLocationStockRepository(returnContext));
         var returnOrderLifecycle = new PurchaseOrderLifecycleService(
             new PurchaseOrderRepository(returnContext), new GoodsReceiptRepository(returnContext),
-            new GoodsReceiptReturnRepository(returnContext), new VendorBillRepository(returnContext), returnUnitOfWork, returnUser);
+            new GoodsReceiptReturnRepository(returnContext), new PurchaseServiceAcceptanceRepository(returnContext),
+            new VendorBillRepository(returnContext), returnUnitOfWork, returnUser);
         var returnService = new GoodsReceiptReturnService(
             new GoodsReceiptReturnRepository(returnContext), new VendorBillRepository(returnContext), new GoodsReceiptRepository(returnContext),
             new PurchaseOrderRepository(returnContext), new SupplierRepository(returnContext),
@@ -1128,6 +1131,7 @@ static async Task VerifyTrackedActivationGuardAsync(
         productRepository,
         measurementUnits,
         new ProductCategoryRepository(context),
+        new AccountRepository(context),
         new SupplierProductAssignmentService(
             new SupplierProductPurchasingInfoRepository(context),
             new SupplierRepository(context),

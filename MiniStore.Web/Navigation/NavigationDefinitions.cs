@@ -74,6 +74,7 @@ public static class NavigationDefinitions
             new NavigationItem("Purchase approval rules","bi-diagram-3","PurchaseApprovalRules","Index","PurchaseApprovalRules.View",60)
             ,new NavigationItem("Purchase sourcing","bi-send","PurchaseSourcing","Index","PurchaseSourcing.View",70)
             ,new NavigationItem("Purchase orders","bi-file-earmark-text","PurchaseOrders","Index","PurchaseOrders.View",80)
+            ,new NavigationItem("Service completions","bi-clipboard-check","PurchaseServiceAcceptances","Index","PurchaseServiceAcceptances.View",85)
             ,new NavigationItem("Goods receipts","bi-box-arrow-in-down","GoodsReceipts","Index","GoodsReceipts.View",90)
             ,new NavigationItem("Goods receipt returns","bi-box-arrow-up","GoodsReceiptReturns","Index","GoodsReceiptReturns.View",100)
             ,new NavigationItem("Vendor bills","bi-receipt-cutoff","VendorBills","Index","VendorBills.View",110)

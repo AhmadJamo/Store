@@ -1885,4 +1885,32 @@
   <data name="A purchase agreement already exists for one or more awarded quotations." xml:space="preserve"><value>توجد اتفاقية شراء مسبقاً لعرض سعر مُرسّى واحد أو أكثر.</value></data>
   <data name="Purchase agreements require a complete award to one supplier; split awards must create purchase orders." xml:space="preserve"><value>تتطلب اتفاقية الشراء ترسية كاملة على مورد واحد؛ أما الترسية الموزعة فيجب أن تنشئ أوامر شراء.</value></data>
   <data name="Purchase agreement quantity cannot exceed the awarded quantity." xml:space="preserve"><value>لا يمكن أن تتجاوز كمية اتفاقية الشراء الكمية المُرسّاة.</value></data>
+  <data name="Service completions" xml:space="preserve"><value>إنجازات الخدمات</value></data>
+  <data name="Evidence that purchased services were completed without changing warehouse stock." xml:space="preserve"><value>إثبات إنجاز الخدمات المشتراة دون تغيير مخزون المستودعات.</value></data>
+  <data name="No service completions have been recorded." xml:space="preserve"><value>لم يتم تسجيل أي إنجاز للخدمات.</value></data>
+  <data name="Record service completion" xml:space="preserve"><value>تسجيل إنجاز خدمة</value></data>
+  <data name="This document confirms service completion only and does not change warehouse stock." xml:space="preserve"><value>هذا المستند يثبت إنجاز الخدمة فقط ولا يغيّر مخزون المستودعات.</value></data>
+  <data name="Completion date" xml:space="preserve"><value>تاريخ الإنجاز</value></data>
+  <data name="Previously completed" xml:space="preserve"><value>المنجز سابقاً</value></data>
+  <data name="Completed quantity" xml:space="preserve"><value>الكمية المنجزة</value></data>
+  <data name="Record completion" xml:space="preserve"><value>تسجيل الإنجاز</value></data>
+  <data name="Service completion finished" xml:space="preserve"><value>تم إنجاز الخدمة</value></data>
+  <data name="Purchase service completion recorded." xml:space="preserve"><value>تم تسجيل إنجاز خدمة الشراء.</value></data>
+  <data name="Fulfillment status" xml:space="preserve"><value>حالة التنفيذ</value></data>
+  <data name="Fulfillment completed" xml:space="preserve"><value>تم التنفيذ</value></data>
+  <data name="Fulfillment in progress" xml:space="preserve"><value>التنفيذ قيد العمل</value></data>
+  <data name="Remaining service completion" xml:space="preserve"><value>المتبقي من إنجاز الخدمة</value></data>
+  <data name="Service completed" xml:space="preserve"><value>الخدمة المنجزة</value></data>
+  <data name="OrderedQuantity" xml:space="preserve"><value>الفوترة حسب الكمية المطلوبة</value></data>
+  <data name="ReceivedQuantity" xml:space="preserve"><value>الفوترة حسب الكمية المستلمة</value></data>
+  <data name="ServiceCompletion" xml:space="preserve"><value>الفوترة حسب إنجاز الخدمة</value></data>
+  <data name="Only receipt-based purchase lines can be received into inventory." xml:space="preserve"><value>يمكن إدخال بنود الشراء المعتمدة على الاستلام فقط إلى المخزون.</value></data>
+  <data name="A purchase expense account is required for products billed without a goods receipt." xml:space="preserve"><value>حساب مصروف الشراء مطلوب للمنتجات التي تُفوتر دون استلام بضاعة.</value></data>
+  <data name="Enter at least one positive completed service quantity." xml:space="preserve"><value>أدخل كمية خدمة منجزة موجبة واحدة على الأقل.</value></data>
+  <data name="Each purchase order service line can be completed only once per acceptance." xml:space="preserve"><value>يمكن تسجيل بند خدمة أمر الشراء مرة واحدة فقط في مستند الإنجاز الواحد.</value></data>
+  <data name="Only confirmed purchase orders can accept service completion." xml:space="preserve"><value>يمكن تسجيل إنجاز الخدمة لأوامر الشراء المؤكدة فقط.</value></data>
+  <data name="One or more completed service lines do not belong to the purchase order." xml:space="preserve"><value>بند خدمة منجز واحد أو أكثر لا يتبع أمر الشراء.</value></data>
+  <data name="Only service-completion billing lines can use service acceptance." xml:space="preserve"><value>يمكن استخدام إثبات إنجاز الخدمة فقط للبنود التي تُفوتر حسب إنجاز الخدمة.</value></data>
+  <data name="Completed service quantity cannot exceed the open ordered quantity." xml:space="preserve"><value>لا يمكن أن تتجاوز كمية الخدمة المنجزة الكمية المطلوبة المتبقية.</value></data>
+  <data name="The completed service is now eligible for supplier billing." xml:space="preserve"><value>أصبحت الخدمة المنجزة مؤهلة الآن لفوترة المورد.</value></data>
 </root>

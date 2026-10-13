@@ -12,7 +12,8 @@ Schema source is `AppDbContext`, configurations and migrations. Identity's stand
 - **InventoryAdjustmentLines:** frozen expected, counted and derived variance quantities per product.
 - **InventoryTrackingBalances:** lot/serial quantities, dimensional position, dates, status, source and concurrency token.
 - **InventoryTrackingTransactions:** immutable lot/serial trace events linked to their balance.
-- **PurchaseOrders / PurchaseOrderLines:** frozen awarded commercial intent plus nullable current closure type, reason, actor and UTC time. Per-line receipt, return and bill progress is derived from downstream posted documents rather than duplicated here.
+- **PurchaseOrders / PurchaseOrderLines:** frozen awarded commercial intent plus purchase billing-policy/expense-account snapshots and nullable current closure evidence. Per-line receipt, service completion, return and bill progress is derived from downstream documents.
+- **PurchaseServiceAcceptances / PurchaseServiceAcceptanceLines:** tenant-owned, numbered and immutable completed-service evidence linked to confirmed order lines; no inventory or journal effect.
 - **PurchaseOrderLifecycleHistories:** immutable tenant-owned automatic-close, remaining-quantity-close and reopen events with prior/new status, actor, reason and time.
 - **SupplierCreditNotes / SupplierCreditNoteLines:** tenant-owned posted billed-return headers and immutable Vendor Bill line, Goods Receipt line, product, quantity, net/tax/gross, removed-cost and tracking snapshots.
 
@@ -24,7 +25,7 @@ Schema source is `AppDbContext`, configurations and migrations. Identity's stand
 - **BillingCheckoutSessions:** priced monthly/annual quotes with expiry, promotion, status, confirmation reference and rowversion.
 - **Tenant ownership:** every ERP business table below also carries required TenantId with a restrictive Tenant FK. Tenant-aware unique indexes allow each company its own codes, invoice numbers and singleton settings. All relationships between TenantId-bearing records use matching composite foreign keys; the database rejects cross-company references.
 
-- **Products:** Id, SQL-computed ProductCode, optional Barcode, Name, prices, ProductType, InventoryBehavior, StockUnit, optional ProductCategory, nullable net/gross weight and dimensions with managed units, handling flags, None/Lot/Serial policy, POS/sales channel flags, IsActive and AllowNegativeRecipeConsumption. Existing products keep their IDs and default to unknown logistics and no tracking.
+- **Products:** Id, SQL-computed ProductCode, optional Barcode, Name, prices, ProductType including Service, InventoryBehavior, StockUnit, purchase billing policy, optional purchase Expense account, optional ProductCategory, logistics/tracking fields, sales flags and active state. Existing products and orders default to Received Quantity billing.
 - **ProductCategories:** tenant-local unique code/name, active state and rowversion; referenced optionally by products through a tenant-safe Restrict FK.
 - **ProductRecipes / RecipeIngredients:** immutable product recipe versions, yield, creator/time and active state; ingredient lines store a stocked product, authored quantity/unit and converted stock quantity/unit snapshot. One active version is allowed per tenant/product.
 - **MeasurementUnits:** tenant-local unit code/name/symbol, Count/Mass/Volume/Length dimension, decimal(24,12) factor to base, precision, system/active flags. Built-ins are protected from deactivation. Products and recipe ingredients use tenant-safe foreign keys; recipe rows additionally preserve unit-code/factor snapshots.

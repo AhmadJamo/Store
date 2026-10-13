@@ -76,6 +76,7 @@ The Index and mutation actions enforce these policies server-side. Permission se
 - `PurchaseOrders.View` protects order list/detail visibility.
 - `PurchaseOrders.Create` permits creating the complete supplier-grouped set of orders from the recorded line allocations only; it cannot change the award.
 - `PurchaseOrders.Approve`, `PurchaseOrders.Confirm` and `PurchaseOrders.Cancel` separately protect the corresponding state transitions; confirmation still has no inventory or accounting effect.
+- `PurchaseServiceAcceptances.View` protects service-completion history and detail; `PurchaseServiceAcceptances.Create` separately permits recording completion against confirmed service-policy lines. Neither permission grants stock mutation or Vendor Bill posting.
 - `GoodsReceipts.Create` protects both capture and posting of a Goods Receipt; it is limited to confirmed Purchase Orders and invokes the purchasing Application service. `GoodsReceipts.View` reserves separate receipt visibility for the upcoming history screen.
 - PUR-150 barcode draft creation, scanning and final posting remain protected by `GoodsReceipts.Create`; scanning does not introduce a broader stock-edit permission or bypass the final receipt-posting checks.
 - `GoodsReceiptReturns.Create` protects capture and immediate posting of a receipt-based supplier return; `GoodsReceiptReturns.View` protects its list/detail history. These permissions are distinct from legacy `PurchaseReturns.*`.

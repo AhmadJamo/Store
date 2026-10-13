@@ -8,6 +8,7 @@ public sealed class PurchaseOrderLifecycleService(
     IPurchaseOrderRepository orders,
     IGoodsReceiptRepository receipts,
     IGoodsReceiptReturnRepository returns,
+    IPurchaseServiceAcceptanceRepository serviceAcceptances,
     IVendorBillRepository bills,
     IUnitOfWork unitOfWork,
     ICurrentUserService currentUser)
@@ -20,6 +21,8 @@ public sealed class PurchaseOrderLifecycleService(
             .Where(x => x.Status == GoodsReceiptStatus.Posted).ToList();
         var postedBills = (await bills.GetByPurchaseOrderIdAsync(order.Id))
             .Where(x => x.Status == VendorBillStatus.Posted).ToList();
+        var completedServiceLines = (await serviceAcceptances.GetByPurchaseOrderIdAsync(order.Id))
+            .SelectMany(x => x.Lines).ToList();
         var postedReturns = new List<GoodsReceiptReturn>();
         foreach (var receipt in postedReceipts)
             postedReturns.AddRange((await returns.GetByGoodsReceiptIdAsync(receipt.Id))
@@ -39,18 +42,35 @@ public sealed class PurchaseOrderLifecycleService(
             var received = relatedReceipts.Sum(x => x.ReceivedQuantity);
             var returned = relatedReceipts.Sum(x => returnedByReceiptLine.GetValueOrDefault(x.Id));
             var billed = relatedReceipts.Sum(x => billedByReceiptLine.GetValueOrDefault(x.Id));
+            var serviceCompleted = completedServiceLines
+                .Where(x => x.PurchaseOrderLineId == orderLine.Id).Sum(x => x.CompletedQuantity);
+            var remainingToReceive = orderLine.BillingPolicySnapshot == PurchaseBillingPolicy.ReceivedQuantity
+                ? Positive(orderLine.OrderedQuantity - received) : 0m;
+            var remainingToComplete = orderLine.BillingPolicySnapshot == PurchaseBillingPolicy.ServiceCompletion
+                ? Positive(orderLine.OrderedQuantity - serviceCompleted) : 0m;
+            var eligibleToBill = orderLine.BillingPolicySnapshot switch
+            {
+                PurchaseBillingPolicy.OrderedQuantity => orderLine.OrderedQuantity,
+                PurchaseBillingPolicy.ServiceCompletion => serviceCompleted,
+                _ => Positive(received - returned)
+            };
             return new PurchaseOrderLineProgressDto
             {
                 PurchaseOrderLineId = orderLine.Id,
+                BillingPolicy = orderLine.BillingPolicySnapshot,
                 ReceivedQuantity = received,
+                ServiceCompletedQuantity = serviceCompleted,
                 ReturnedQuantity = returned,
                 BilledQuantity = billed,
-                RemainingToReceive = Positive(orderLine.OrderedQuantity - received),
-                UnsettledReceivedQuantity = Positive(received - returned - billed)
+                RemainingToReceive = remainingToReceive,
+                RemainingToComplete = remainingToComplete,
+                AvailableToBill = Positive(eligibleToBill - billed),
+                UnsettledReceivedQuantity = Positive(eligibleToBill - billed)
             };
         }).ToList();
 
-        var fullyReceived = lines.All(x => x.RemainingToReceive <= QuantityTolerance);
+        var fullyReceived = lines.All(x =>
+            x.RemainingToReceive <= QuantityTolerance && x.RemainingToComplete <= QuantityTolerance);
         var fullySettled = lines.All(x => x.UnsettledReceivedQuantity <= QuantityTolerance);
         return new PurchaseOrderProgressDto
         {

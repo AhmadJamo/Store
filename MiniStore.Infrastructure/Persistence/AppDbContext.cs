@@ -78,6 +78,8 @@ public class AppDbContext
     public DbSet<SupplierQuotationLine> SupplierQuotationLines => Set<SupplierQuotationLine>();
     public DbSet<PurchaseQuotationAward> PurchaseQuotationAwards => Set<PurchaseQuotationAward>();
     public DbSet<PurchaseQuotationAwardAllocation> PurchaseQuotationAwardAllocations => Set<PurchaseQuotationAwardAllocation>();
+    public DbSet<PurchaseServiceAcceptance> PurchaseServiceAcceptances => Set<PurchaseServiceAcceptance>();
+    public DbSet<PurchaseServiceAcceptanceLine> PurchaseServiceAcceptanceLines => Set<PurchaseServiceAcceptanceLine>();
     public DbSet<PurchaseOrder> PurchaseOrders => Set<PurchaseOrder>();
     public DbSet<PurchaseOrderLine> PurchaseOrderLines => Set<PurchaseOrderLine>();
     public DbSet<PurchaseOrderLifecycleHistory> PurchaseOrderLifecycleHistories => Set<PurchaseOrderLifecycleHistory>();

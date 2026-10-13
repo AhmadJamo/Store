@@ -14,7 +14,7 @@ public static class WorkflowNextStepGuidance
     {
         "Purchases", "PurchaseReturns", "Suppliers", "SupplierPurchasing", "PurchaseRequests",
         "PurchaseApprovalRules", "PurchaseSourcing", "SupplierQuotations", "PurchaseOrders",
-        "GoodsReceipts", "GoodsReceiptReturns", "VendorBills", "SupplierCreditNotes", "SupplierPayments",
+        "GoodsReceipts", "GoodsReceiptReturns", "PurchaseServiceAcceptances", "VendorBills", "SupplierCreditNotes", "SupplierPayments",
         "PurchaseAgreements", "PurchaseTemplates", "LandedCosts", "PurchaseDocumentReversals", "PurchaseAccountingReconciliation"
     };
 
@@ -112,6 +112,11 @@ public static class WorkflowNextStepGuidance
             return new("VendorBills", "Index", "Continue to supplier billing",
                 "Review supplier bills and create the bill for the received order when it arrives.",
                 "VendorBills.View", []);
+
+        if (Matches(message, localize, "Purchase service completion recorded."))
+            return new("VendorBills", "Create", "Create vendor bill",
+                "The completed service is now eligible for supplier billing.",
+                "VendorBills.Create", Routes(("purchaseOrderId", Route("purchaseOrderId") ?? Route("id"))));
 
         if (Matches(message, localize, "Product scan recorded."))
             return new("GoodsReceipts", "Scan", "Continue scanning received goods",
@@ -217,7 +222,7 @@ public static class WorkflowNextStepGuidance
 
     private static bool HasDetails(string controller) => controller is
         "Purchases" or "PurchaseReturns" or "PurchaseRequests" or "PurchaseSourcing" or
-        "PurchaseOrders" or "GoodsReceipts" or "GoodsReceiptReturns" or "VendorBills" or
+        "PurchaseOrders" or "GoodsReceipts" or "GoodsReceiptReturns" or "PurchaseServiceAcceptances" or "VendorBills" or
         "SupplierPayments" or "PurchaseAgreements" or "LandedCosts" or "PurchaseDocumentReversals";
 
     private static string PurchaseViewPermission(string controller) => controller switch

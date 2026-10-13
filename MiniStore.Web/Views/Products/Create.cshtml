@@ -25,6 +25,7 @@
                 <option value="@((int)ProductType.RawMaterial)">@Localizer["Raw material"]</option>
                 <option value="@((int)ProductType.DirectSale)">@Localizer["Direct-sale product"]</option>
                 <option value="@((int)ProductType.PreparedToOrder)">@Localizer["Prepared to order from a recipe"]</option>
+                <option value="@((int)ProductType.Service)">@Localizer["Service"]</option>
             </select>
         </div>
         <div class="col-md-6">
@@ -37,6 +38,8 @@
             <span asp-validation-for="MeasurementUnitId" class="text-danger"></span>
         </div>
         <partial name="_LogisticsFields" model="Model" />
+        <div class="col-md-6" id="purchase-billing-policy-group"><label asp-for="PurchaseBillingPolicy" class="form-label">@Localizer["Purchase billing policy"]</label><select asp-for="PurchaseBillingPolicy" class="form-select" id="purchase-billing-policy"><option value="@((int)PurchaseBillingPolicy.OrderedQuantity)">@Localizer["Bill ordered quantity"]</option><option value="@((int)PurchaseBillingPolicy.ReceivedQuantity)">@Localizer["Bill received quantity"]</option><option value="@((int)PurchaseBillingPolicy.ServiceCompletion)">@Localizer["Bill completed service quantity"]</option></select><div class="form-text">@Localizer["Choose what evidence makes this product quantity available for supplier billing."]</div></div>
+        <div class="col-md-6" id="purchase-expense-account-group"><label asp-for="PurchaseExpenseAccountId" class="form-label">@Localizer["Purchase expense account"]</label><select asp-for="PurchaseExpenseAccountId" class="form-select"><option value="">@Localizer["Select account"]</option>@foreach(var account in (IEnumerable<MiniStore.Application.Dtos.Accounting.AccountDto>)ViewBag.ExpenseAccounts){<option value="@account.Id">@account.Code — @account.Name</option>}</select><div class="form-text">@Localizer["Required when supplier billing does not clear a goods receipt."]</div></div>
         <div class="col-md-4" id="purchase-price-group">
             <label asp-for="PurchasePrice" class="form-label">@Localizer["Purchase Price"]</label>
             <input asp-for="PurchasePrice" type="number" min="0" step="0.01" class="form-control" />
@@ -87,6 +90,8 @@
     const purchase = document.getElementById('PurchasePrice');
     const preparedHelp = document.getElementById('prepared-help');
     const rawHelp = document.getElementById('raw-help');
+    const billingPolicy = document.getElementById('purchase-billing-policy');
+    const expenseAccountGroup = document.getElementById('purchase-expense-account-group');
     const saleOptions = document.querySelectorAll('.sale-option');
     const supplierSection = document.getElementById('supplier-assignment');
     const supplierChecks = document.querySelectorAll('.supplier-assignment-check');
@@ -94,6 +99,11 @@
     const refresh = () => {
         const prepared = type.value === '@((int)ProductType.PreparedToOrder)';
         const raw = type.value === '@((int)ProductType.RawMaterial)';
+        const service = type.value === '@((int)ProductType.Service)';
+        if (service && billingPolicy.value === '@((int)PurchaseBillingPolicy.ReceivedQuantity)') billingPolicy.value = '@((int)PurchaseBillingPolicy.ServiceCompletion)';
+        if (!service && billingPolicy.value === '@((int)PurchaseBillingPolicy.ServiceCompletion)') billingPolicy.value = '@((int)PurchaseBillingPolicy.ReceivedQuantity)';
+        [...billingPolicy.options].forEach(x => { if (x.value === '@((int)PurchaseBillingPolicy.ReceivedQuantity)') x.disabled = service; if (x.value === '@((int)PurchaseBillingPolicy.ServiceCompletion)') x.disabled = !service; });
+        expenseAccountGroup.classList.toggle('d-none', billingPolicy.value === '@((int)PurchaseBillingPolicy.ReceivedQuantity)');
         purchaseGroup.classList.toggle('d-none', prepared);
         purchase.disabled = prepared;
         if (prepared) purchase.value = '0';
@@ -105,6 +115,7 @@
         supplierChecks.forEach(x => { if (!canAssign) x.checked = false; x.disabled = !canAssign; });
     };
     type.addEventListener('change', refresh);
+    billingPolicy.addEventListener('change', refresh);
     activeProduct.addEventListener('change', refresh);
     refresh();
     const supplierSearch=document.querySelector('.assignment-search');

@@ -34,4 +34,9 @@ public class UpdateProductDto : ProductLogisticsInputDto
 
     public List<int> SupplierIds { get; set; } = [];
 
+    public MiniStore.Domain.Entities.PurchaseBillingPolicy PurchaseBillingPolicy { get; set; } =
+        MiniStore.Domain.Entities.PurchaseBillingPolicy.ReceivedQuantity;
+
+    public int? PurchaseExpenseAccountId { get; set; }
+
 }

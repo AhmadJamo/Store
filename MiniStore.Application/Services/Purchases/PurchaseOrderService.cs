@@ -6,7 +6,7 @@ namespace MiniStore.Application.Services;
 
 public sealed class PurchaseOrderService(
     IPurchaseOrderRepository orders, IPurchaseAgreementRepository agreements, ISupplierQuotationRepository quotations,
-    IPurchaseSourcingRepository sourcing, ISupplierRepository suppliers, IWarehouseRepository warehouses,
+    IPurchaseSourcingRepository sourcing, ISupplierRepository suppliers, IWarehouseRepository warehouses, IProductRepository products,
     DocumentNumberService numbers, PurchaseOrderLifecycleService lifecycle, CurrencyExchangeRateService exchangeRates,
     IUnitOfWork unitOfWork, ICurrentUserService currentUser)
 {
@@ -45,10 +45,13 @@ public sealed class PurchaseOrderService(
                 foreach (var line in quote.Lines)
                 {
                     var sourcingLine = source.Lines.Single(x => x.Id == line.PurchaseSourcingLineId);
+                    var product = await products.GetByIdAsync(sourcingLine.ProductId)
+                        ?? throw new InvalidOperationException("Purchase order product was not found.");
                     legacyOrder.AddLine(new PurchaseOrderLine(line.Id, sourcingLine.ProductId,
                         sourcingLine.MeasurementUnitId, line.QuotedQuantity, sourcingLine.UnitFactorToBase,
                         line.QuotedQuantity * sourcingLine.UnitFactorToBase, line.UnitPrice, line.DiscountPercent,
-                        line.TaxPercent, line.ProductCodeSnapshot, line.ProductNameSnapshot, line.UnitNameSnapshot));
+                        line.TaxPercent, line.ProductCodeSnapshot, line.ProductNameSnapshot, line.UnitNameSnapshot,
+                        billingPolicy: product.PurchaseBillingPolicy, purchaseExpenseAccountId: product.PurchaseExpenseAccountId));
                 }
                 await orders.AddAsync(legacyOrder);
                 created.Add(legacyOrder);
@@ -68,12 +71,15 @@ public sealed class PurchaseOrderService(
                 {
                     var sourcingLine = source.Lines.SingleOrDefault(x => x.Id == allocation.PurchaseSourcingLineId)
                         ?? throw new InvalidOperationException("Awarded sourcing line was not found.");
+                    var product = await products.GetByIdAsync(sourcingLine.ProductId)
+                        ?? throw new InvalidOperationException("Purchase order product was not found.");
                     order.AddLine(new PurchaseOrderLine(allocation.SupplierQuotationLineId,
                         sourcingLine.ProductId, sourcingLine.MeasurementUnitId, allocation.AwardedQuantity,
                         sourcingLine.UnitFactorToBase, allocation.AwardedQuantity * sourcingLine.UnitFactorToBase,
                         allocation.UnitPriceSnapshot, allocation.DiscountPercentSnapshot,
                         allocation.TaxPercentSnapshot, allocation.ProductCodeSnapshot,
-                        allocation.ProductNameSnapshot, allocation.UnitNameSnapshot));
+                        allocation.ProductNameSnapshot, allocation.UnitNameSnapshot,
+                        billingPolicy: product.PurchaseBillingPolicy, purchaseExpenseAccountId: product.PurchaseExpenseAccountId));
                 }
                 await orders.AddAsync(order);
                 created.Add(order);
@@ -144,10 +150,14 @@ public sealed class PurchaseOrderService(
                 return new PurchaseOrderLineDto
                 {
                     Id = line.Id, ProductCode = line.ProductCodeSnapshot, ProductName = line.ProductNameSnapshot,
-                    UnitName = line.UnitNameSnapshot, OrderedQuantity = line.OrderedQuantity, UnitPrice = line.UnitPrice,
+                    UnitName = line.UnitNameSnapshot, BillingPolicy = line.BillingPolicySnapshot,
+                    OrderedQuantity = line.OrderedQuantity, UnitPrice = line.UnitPrice,
                     GrossAmount = line.GrossAmount, ReceivedQuantity = lineProgress?.ReceivedQuantity ?? 0,
                     ReturnedQuantity = lineProgress?.ReturnedQuantity ?? 0, BilledQuantity = lineProgress?.BilledQuantity ?? 0,
                     RemainingToReceive = lineProgress?.RemainingToReceive ?? line.OrderedQuantity,
+                    ServiceCompletedQuantity = lineProgress?.ServiceCompletedQuantity ?? 0,
+                    RemainingToComplete = lineProgress?.RemainingToComplete ?? 0,
+                    AvailableToBill = lineProgress?.AvailableToBill ?? 0,
                     UnsettledReceivedQuantity = lineProgress?.UnsettledReceivedQuantity ?? 0
                 };
             }).ToList(),
