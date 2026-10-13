@@ -5,7 +5,8 @@ using MiniStore.Domain.Entities;
 namespace MiniStore.Infrastructure.Persistence.Configurations;
 
 public sealed class SupplierProductPurchasingInfoConfiguration
-    : IEntityTypeConfiguration<SupplierProductPurchasingInfo>, IEntityTypeConfiguration<SupplierProductPriceBreak>
+    : IEntityTypeConfiguration<SupplierProductPurchasingInfo>, IEntityTypeConfiguration<SupplierProductPriceBreak>,
+      IEntityTypeConfiguration<SupplierProductPriceHistory>, IEntityTypeConfiguration<SupplierProductPriceBreakSnapshot>
 {
     public void Configure(EntityTypeBuilder<SupplierProductPurchasingInfo> builder)
     {
@@ -27,6 +28,8 @@ public sealed class SupplierProductPurchasingInfoConfiguration
             .OnDelete(DeleteBehavior.Restrict);
         builder.HasMany(x => x.PriceBreaks).WithOne()
             .HasForeignKey(x => x.SupplierProductPurchasingInfoId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasMany(x => x.PriceHistory).WithOne()
+            .HasForeignKey(x => x.SupplierProductPurchasingInfoId).OnDelete(DeleteBehavior.Restrict);
     }
 
     public void Configure(EntityTypeBuilder<SupplierProductPriceBreak> builder)
@@ -37,5 +40,32 @@ public sealed class SupplierProductPurchasingInfoConfiguration
         builder.Property(x => x.DiscountPercent).HasPrecision(9, 4);
         builder.Ignore(x => x.NetUnitPrice);
         builder.HasIndex(x => new { x.SupplierProductPurchasingInfoId, x.MinimumQuantity }).IsUnique();
+    }
+
+    public void Configure(EntityTypeBuilder<SupplierProductPriceHistory> builder)
+    {
+        builder.HasKey(x => x.Id);
+        builder.Property(x => x.MinimumOrderQuantity).HasPrecision(18, 6);
+        builder.Property(x => x.BaseUnitPrice).HasPrecision(19, 4);
+        builder.Property(x => x.CurrencyCode).IsRequired().HasMaxLength(3).IsUnicode(false);
+        builder.Property(x => x.ChangedByUserId).IsRequired().HasMaxLength(450);
+        builder.HasIndex(x => new { x.SupplierProductPurchasingInfoId, x.Revision }).IsUnique();
+        builder.HasIndex(x => new { x.SupplierProductPurchasingInfoId, x.ChangedAtUtc });
+        builder.HasOne<Supplier>().WithMany().HasForeignKey(x => x.SupplierId).OnDelete(DeleteBehavior.Restrict);
+        builder.HasOne<Product>().WithMany().HasForeignKey(x => x.ProductId).OnDelete(DeleteBehavior.Restrict);
+        builder.HasOne<MeasurementUnit>().WithMany().HasForeignKey(x => x.PurchaseMeasurementUnitId)
+            .OnDelete(DeleteBehavior.Restrict);
+        builder.HasMany(x => x.PriceBreaks).WithOne()
+            .HasForeignKey(x => x.SupplierProductPriceHistoryId).OnDelete(DeleteBehavior.Cascade);
+    }
+
+    public void Configure(EntityTypeBuilder<SupplierProductPriceBreakSnapshot> builder)
+    {
+        builder.HasKey(x => x.Id);
+        builder.Property(x => x.MinimumQuantity).HasPrecision(18, 6);
+        builder.Property(x => x.UnitPrice).HasPrecision(19, 4);
+        builder.Property(x => x.DiscountPercent).HasPrecision(9, 4);
+        builder.Ignore(x => x.NetUnitPrice);
+        builder.HasIndex(x => new { x.SupplierProductPriceHistoryId, x.MinimumQuantity }).IsUnique();
     }
 }

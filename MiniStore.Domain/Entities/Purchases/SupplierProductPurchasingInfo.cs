@@ -1,5 +1,15 @@
 namespace MiniStore.Domain.Entities;
 
+public enum SupplierPriceChangeSource
+{
+    Assigned = 1,
+    LegacyBaseline = 2,
+    ManualEdit = 3,
+    BulkEdit = 4,
+    CsvImport = 5,
+    PriceBreakEdit = 6
+}
+
 public sealed class SupplierProductPurchasingInfo
 {
     private SupplierProductPurchasingInfo()
@@ -25,8 +35,10 @@ public sealed class SupplierProductPurchasingInfo
     public int Priority { get; private set; }
     public bool IsActive { get; private set; }
     public int PriceBreakRevision { get; private set; }
+    public int PriceHistoryRevision { get; private set; }
     public byte[] RowVersion { get; private set; } = [];
     public List<SupplierProductPriceBreak> PriceBreaks { get; private set; } = [];
+    public List<SupplierProductPriceHistory> PriceHistory { get; private set; } = [];
 
     public SupplierProductPurchasingInfo(
         int supplierId,
@@ -110,6 +122,21 @@ public sealed class SupplierProductPurchasingInfo
             .FirstOrDefault() ?? UnitPrice;
     }
 
+    public void RecordPriceSnapshot(SupplierPriceChangeSource source, string userId)
+    {
+        if (!Enum.IsDefined(source))
+            throw new ArgumentException("Supplier price change source is invalid.");
+        if (string.IsNullOrWhiteSpace(userId))
+            throw new ArgumentException("User is required.");
+
+        PriceHistoryRevision++;
+        PriceHistory.Add(new SupplierProductPriceHistory(
+            PriceHistoryRevision, source, SupplierId, ProductId, PurchaseMeasurementUnitId,
+            MinimumOrderQuantity, UnitPrice, CurrencyCode, ValidFrom, ValidTo,
+            userId, PriceBreaks.Select(x => new SupplierProductPriceBreakSnapshot(
+                x.MinimumQuantity, x.UnitPrice, x.DiscountPercent))));
+    }
+
     private void Configure(
         int supplierId, int productId, int purchaseMeasurementUnitId,
         string supplierProductCode, string? supplierDescription,
@@ -179,6 +206,84 @@ public sealed class SupplierProductPriceBreak
         if (discountPercent is < 0 or > 100)
             throw new ArgumentException("Price break discount must be between 0 and 100 percent.");
 
+        MinimumQuantity = minimumQuantity;
+        UnitPrice = unitPrice;
+        DiscountPercent = discountPercent;
+    }
+}
+
+public sealed class SupplierProductPriceHistory
+{
+    private SupplierProductPriceHistory()
+    {
+        CurrencyCode = ChangedByUserId = string.Empty;
+    }
+
+    public int Id { get; private set; }
+    public int SupplierProductPurchasingInfoId { get; private set; }
+    public int Revision { get; private set; }
+    public SupplierPriceChangeSource Source { get; private set; }
+    public int SupplierId { get; private set; }
+    public int ProductId { get; private set; }
+    public int PurchaseMeasurementUnitId { get; private set; }
+    public decimal MinimumOrderQuantity { get; private set; }
+    public decimal BaseUnitPrice { get; private set; }
+    public string CurrencyCode { get; private set; } = string.Empty;
+    public DateOnly ValidFrom { get; private set; }
+    public DateOnly? ValidTo { get; private set; }
+    public string ChangedByUserId { get; private set; } = string.Empty;
+    public DateTime ChangedAtUtc { get; private set; }
+    public List<SupplierProductPriceBreakSnapshot> PriceBreaks { get; private set; } = [];
+
+    public SupplierProductPriceHistory(
+        int revision, SupplierPriceChangeSource source, int supplierId, int productId,
+        int purchaseMeasurementUnitId, decimal minimumOrderQuantity, decimal baseUnitPrice,
+        string currencyCode, DateOnly validFrom, DateOnly? validTo, string changedByUserId,
+        IEnumerable<SupplierProductPriceBreakSnapshot> priceBreaks)
+    {
+        if (revision <= 0) throw new ArgumentException("Supplier price history revision must be positive.");
+        if (!Enum.IsDefined(source)) throw new ArgumentException("Supplier price change source is invalid.");
+        if (supplierId <= 0 || productId <= 0 || purchaseMeasurementUnitId <= 0)
+            throw new ArgumentException("Supplier price history references are required.");
+        if (minimumOrderQuantity <= 0 || baseUnitPrice < 0)
+            throw new ArgumentException("Supplier price history quantity and price are invalid.");
+        if (string.IsNullOrWhiteSpace(currencyCode) || currencyCode.Trim().Length != 3)
+            throw new ArgumentException("Currency code must contain exactly three letters.");
+        if (validTo.HasValue && validTo.Value < validFrom)
+            throw new ArgumentException("Valid-to date cannot be earlier than valid-from date.");
+        if (string.IsNullOrWhiteSpace(changedByUserId)) throw new ArgumentException("User is required.");
+
+        Revision = revision;
+        Source = source;
+        SupplierId = supplierId;
+        ProductId = productId;
+        PurchaseMeasurementUnitId = purchaseMeasurementUnitId;
+        MinimumOrderQuantity = minimumOrderQuantity;
+        BaseUnitPrice = baseUnitPrice;
+        CurrencyCode = currencyCode.Trim().ToUpperInvariant();
+        ValidFrom = validFrom;
+        ValidTo = validTo;
+        ChangedByUserId = changedByUserId.Trim();
+        ChangedAtUtc = DateTime.UtcNow;
+        PriceBreaks.AddRange(priceBreaks);
+    }
+}
+
+public sealed class SupplierProductPriceBreakSnapshot
+{
+    private SupplierProductPriceBreakSnapshot() { }
+
+    public int Id { get; private set; }
+    public int SupplierProductPriceHistoryId { get; private set; }
+    public decimal MinimumQuantity { get; private set; }
+    public decimal UnitPrice { get; private set; }
+    public decimal DiscountPercent { get; private set; }
+    public decimal NetUnitPrice => decimal.Round(UnitPrice * (1m - DiscountPercent / 100m), 4, MidpointRounding.AwayFromZero);
+
+    public SupplierProductPriceBreakSnapshot(decimal minimumQuantity, decimal unitPrice, decimal discountPercent)
+    {
+        if (minimumQuantity <= 0 || unitPrice < 0 || discountPercent is < 0 or > 100)
+            throw new ArgumentException("Supplier price-break history values are invalid.");
         MinimumQuantity = minimumQuantity;
         UnitPrice = unitPrice;
         DiscountPercent = discountPercent;

@@ -1171,6 +1171,19 @@ CheckArgumentThrows(() => supplierTerms.ReplacePriceBreaks([
     "Supplier price breaks must not begin below the minimum order quantity");
 CheckArgumentThrows(() => new SupplierProductPriceBreak(10m, 10m, 100.01m),
     "Supplier price-break discounts must remain between zero and one hundred percent");
+supplierTerms.RecordPriceSnapshot(SupplierPriceChangeSource.ManualEdit, "buyer");
+var preservedSupplierPrice = supplierTerms.PriceHistory.Single();
+supplierTerms.ReplacePriceBreaks([new SupplierProductPriceBreak(10m, 9m, 5m)]);
+Check(supplierTerms.PriceHistoryRevision == 1 && preservedSupplierPrice.Revision == 1 &&
+      preservedSupplierPrice.ChangedByUserId == "buyer" &&
+      preservedSupplierPrice.PriceBreaks.Count == 2 &&
+      preservedSupplierPrice.PriceBreaks.First().UnitPrice == 10m,
+    "Supplier price history must preserve a complete immutable snapshot when current tiers change");
+Check(typeof(SupplierProductPriceHistory).GetProperty(nameof(SupplierProductPriceHistory.BaseUnitPrice))!
+          .SetMethod?.IsPrivate == true &&
+      typeof(SupplierProductPriceBreakSnapshot).GetProperty(nameof(SupplierProductPriceBreakSnapshot.UnitPrice))!
+          .SetMethod?.IsPrivate == true,
+    "Supplier price history values must not expose public mutation");
 CheckArgumentThrows(() => supplierTerms.Update(
         1, 2, 3, "vendor-sku", null, 11m, 1m, 0, 12m, "JOD",
         new DateOnly(2026, 1, 1), null, true, 10),
@@ -1200,6 +1213,23 @@ Check(supplierPriceBreakType.FindProperty("TenantId") is { IsNullable: false } &
               "TenantId", nameof(SupplierProductPriceBreak.SupplierProductPurchasingInfoId),
               nameof(SupplierProductPriceBreak.MinimumQuantity)])),
     "Supplier price breaks must be tenant-owned and unique by purchasing row and minimum quantity");
+var supplierPriceHistoryType = db.Model.FindEntityType(typeof(SupplierProductPriceHistory))!;
+Check(supplierPriceHistoryType.FindProperty("TenantId") is { IsNullable: false } &&
+      supplierPriceHistoryType.GetIndexes().Any(index => index.IsUnique &&
+          index.Properties.Select(property => property.Name).SequenceEqual([
+              "TenantId", nameof(SupplierProductPriceHistory.SupplierProductPurchasingInfoId),
+              nameof(SupplierProductPriceHistory.Revision)])) &&
+      supplierPriceHistoryType.GetForeignKeys().Any(key =>
+          key.PrincipalEntityType.ClrType == typeof(SupplierProductPurchasingInfo) &&
+          key.DeleteBehavior == DeleteBehavior.Restrict),
+    "Supplier price history must be tenant-owned, revision-unique and protected from parent deletion");
+var supplierPriceBreakSnapshotType = db.Model.FindEntityType(typeof(SupplierProductPriceBreakSnapshot))!;
+Check(supplierPriceBreakSnapshotType.FindProperty("TenantId") is { IsNullable: false } &&
+      supplierPriceBreakSnapshotType.GetIndexes().Any(index => index.IsUnique &&
+          index.Properties.Select(property => property.Name).SequenceEqual([
+              "TenantId", nameof(SupplierProductPriceBreakSnapshot.SupplierProductPriceHistoryId),
+              nameof(SupplierProductPriceBreakSnapshot.MinimumQuantity)])),
+    "Historical supplier price breaks must remain tenant-owned and unique inside a revision");
 var supplierType = db.Model.FindEntityType(typeof(Supplier))!;
 Check(supplierType.FindProperty(nameof(Supplier.RowVersion))!.IsConcurrencyToken,
     "Supplier profile updates must be rowversion protected");
@@ -1223,6 +1253,8 @@ var supplierPriceBreaksAction = typeof(SupplierPurchasingController)
     .GetMethod(nameof(SupplierPurchasingController.PriceBreaks))!;
 var supplierPriceBreaksSaveAction = typeof(SupplierPurchasingController)
     .GetMethod(nameof(SupplierPurchasingController.SavePriceBreaks))!;
+var supplierPriceHistoryAction = typeof(SupplierPurchasingController)
+    .GetMethod(nameof(SupplierPurchasingController.PriceHistory))!;
 Check(supplierTermsIndexAction.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
       $"{PermissionAuthorizeAttribute.PolicyPrefix}Purchases.SupplierTerms.View" &&
       supplierTermsSaveAction.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
@@ -1238,7 +1270,9 @@ Check(supplierTermsIndexAction.GetCustomAttribute<PermissionAuthorizeAttribute>(
       supplierPriceBreaksAction.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
       $"{PermissionAuthorizeAttribute.PolicyPrefix}Purchases.SupplierTerms.View" &&
       supplierPriceBreaksSaveAction.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
-      $"{PermissionAuthorizeAttribute.PolicyPrefix}Purchases.SupplierTerms.Manage",
+      $"{PermissionAuthorizeAttribute.PolicyPrefix}Purchases.SupplierTerms.Manage" &&
+      supplierPriceHistoryAction.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
+      $"{PermissionAuthorizeAttribute.PolicyPrefix}Purchases.SupplierTerms.View",
     "Supplier purchasing data must separate view and manage permissions");
 Check(supplierTermsBulkSaveAction.GetParameters().Single().GetCustomAttribute<BindAttribute>()?.Prefix == "BulkForm",
     "Bulk supplier purchasing submission must bind the selected supplier and product rows as one form");

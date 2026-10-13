@@ -2025,4 +2025,24 @@
   <data name="The minimum order quantity cannot exceed an existing price-break quantity." xml:space="preserve"><value>لا يمكن أن يتجاوز الحد الأدنى للطلب كمية شريحة سعر موجودة.</value></data>
   <data name="Review supplier purchasing data" xml:space="preserve"><value>مراجعة بيانات شراء المورد</value></data>
   <data name="Review the base price and quantity price breaks saved for the supplier's products." xml:space="preserve"><value>راجع السعر الأساسي وشرائح السعر حسب الكمية المحفوظة لمنتجات المورد.</value></data>
+  <data name="Price history" xml:space="preserve"><value>سجل السعر</value></data>
+  <data name="Supplier price history" xml:space="preserve"><value>سجل أسعار المورد</value></data>
+  <data name="This read-only history preserves every recorded price and quantity-break snapshot." xml:space="preserve"><value>يحفظ هذا السجل المخصص للعرض فقط كل لقطة مسجلة للأسعار وشرائح الكمية.</value></data>
+  <data name="No price history has been recorded yet. The current price will be preserved when it is next changed." xml:space="preserve"><value>لم يُسجل تاريخ للأسعار بعد. سيُحفظ السعر الحالي عند تغييره في المرة القادمة.</value></data>
+  <data name="Revision" xml:space="preserve"><value>الإصدار</value></data>
+  <data name="Recorded by" xml:space="preserve"><value>سجله</value></data>
+  <data name="No end date" xml:space="preserve"><value>دون تاريخ انتهاء</value></data>
+  <data name="No quantity price breaks were included in this revision." xml:space="preserve"><value>لم يتضمن هذا الإصدار شرائح سعر حسب الكمية.</value></data>
+  <data name="Net unit price" xml:space="preserve"><value>صافي سعر الوحدة</value></data>
+  <data name="Assigned" xml:space="preserve"><value>ربط المنتج بالمورد</value></data>
+  <data name="LegacyBaseline" xml:space="preserve"><value>الحالة الأساسية السابقة</value></data>
+  <data name="ManualEdit" xml:space="preserve"><value>تعديل يدوي</value></data>
+  <data name="BulkEdit" xml:space="preserve"><value>تعديل جماعي</value></data>
+  <data name="CsvImport" xml:space="preserve"><value>استيراد CSV (ملف قيم مفصولة بفواصل)</value></data>
+  <data name="PriceBreakEdit" xml:space="preserve"><value>تعديل شرائح السعر</value></data>
+  <data name="Supplier price change source is invalid." xml:space="preserve"><value>مصدر تغيير سعر المورد غير صالح.</value></data>
+  <data name="Supplier price history revision must be positive." xml:space="preserve"><value>يجب أن يكون رقم إصدار سجل سعر المورد موجبًا.</value></data>
+  <data name="Supplier price history references are required." xml:space="preserve"><value>مراجع سجل سعر المورد مطلوبة.</value></data>
+  <data name="Supplier price history quantity and price are invalid." xml:space="preserve"><value>كمية أو سعر سجل المورد غير صالح.</value></data>
+  <data name="Supplier price-break history values are invalid." xml:space="preserve"><value>قيم سجل شريحة سعر المورد غير صالحة.</value></data>
 </root>

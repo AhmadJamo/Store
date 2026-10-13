@@ -28,7 +28,16 @@ public sealed class SupplierProductPurchasingInfoRepository(AppDbContext context
             .ToListAsync();
 
     public Task<SupplierProductPurchasingInfo?> GetByIdAsync(int id) =>
-        context.SupplierProductPurchasingInfos.Include(x => x.PriceBreaks).FirstOrDefaultAsync(x => x.Id == id);
+        context.SupplierProductPurchasingInfos
+            .Include(x => x.PriceBreaks)
+            .FirstOrDefaultAsync(x => x.Id == id);
+
+    public Task<List<SupplierProductPriceHistory>> GetPriceHistoryAsync(int purchasingInfoId) =>
+        context.SupplierProductPriceHistories.AsNoTracking()
+            .Include(x => x.PriceBreaks)
+            .Where(x => x.SupplierProductPurchasingInfoId == purchasingInfoId)
+            .OrderByDescending(x => x.Revision)
+            .ToListAsync();
 
     public Task<SupplierProductPurchasingInfo?> FindDuplicateAsync(
         int supplierId, int productId, int purchaseMeasurementUnitId, int? excludingId = null) =>

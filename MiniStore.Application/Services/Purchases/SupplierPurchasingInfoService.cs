@@ -11,7 +11,8 @@ public sealed class SupplierPurchasingInfoService(
     IProductRepository productRepository,
     IMeasurementUnitRepository unitRepository,
     IGeneralSettingsRepository generalSettingsRepository,
-    IUnitOfWork unitOfWork)
+    IUnitOfWork unitOfWork,
+    ICurrentUserService currentUser)
 {
     public async Task<SupplierPurchasingInfoPageDto> GetPageAsync(int? supplierId = null)
     {
@@ -80,11 +81,13 @@ public sealed class SupplierPurchasingInfoService(
 
     public async Task SaveAsync(SaveSupplierPurchasingInfoDto dto)
     {
-        await ApplyAsync(dto, false);
+        await ApplyAsync(dto, false, SupplierPriceChangeSource.ManualEdit);
         await repository.SaveChangesAsync();
     }
 
-    public async Task<int> SaveBulkAsync(BulkSaveSupplierPurchasingInfoDto dto)
+    public async Task<int> SaveBulkAsync(
+        BulkSaveSupplierPurchasingInfoDto dto,
+        SupplierPriceChangeSource source = SupplierPriceChangeSource.BulkEdit)
     {
         if (await supplierRepository.GetByIdAsync(dto.SupplierId) is null)
             throw new ArgumentException("Supplier was not found.");
@@ -118,7 +121,7 @@ public sealed class SupplierPurchasingInfoService(
                     IsPreferred = row.IsPreferred,
                     Priority = row.Priority,
                     RowVersion = row.RowVersion
-                }, true);
+                }, true, source);
             }
         });
         return selected.Count;
@@ -256,7 +259,7 @@ public sealed class SupplierPurchasingInfoService(
                 CurrencyCode = input.CurrencyCode, ValidFrom = input.ValidFrom, ValidTo = input.ValidTo,
                 IsPreferred = input.IsPreferred, Priority = input.Priority, RowVersion = input.RowVersion
             }).ToList()
-        });
+        }, SupplierPriceChangeSource.CsvImport);
     }
 
     public async Task<SupplierPriceBreakPageDto> GetPriceBreaksPageAsync(int purchasingInfoId)
@@ -309,12 +312,60 @@ public sealed class SupplierPurchasingInfoService(
         var priceBreaks = dto.Rows.Where(x => x.Selected)
             .Select(x => new SupplierProductPriceBreak(x.MinimumQuantity, x.UnitPrice, x.DiscountPercent))
             .ToList();
+        if (PriceBreaksMatch(info.PriceBreaks, priceBreaks)) return info.SupplierId;
+        EnsureBaselineSnapshot(info);
         info.ReplacePriceBreaks(priceBreaks);
+        info.RecordPriceSnapshot(SupplierPriceChangeSource.PriceBreakEdit, currentUser.UserId);
         await repository.SaveChangesAsync();
         return info.SupplierId;
     }
 
-    private async Task ApplyAsync(SaveSupplierPurchasingInfoDto dto, bool preserveIdentity)
+    public async Task<SupplierPriceHistoryPageDto> GetPriceHistoryPageAsync(int purchasingInfoId)
+    {
+        var info = await repository.GetByIdAsync(purchasingInfoId)
+            ?? throw new InvalidOperationException("Supplier purchasing information was not found.");
+        var supplier = await supplierRepository.GetByIdAsync(info.SupplierId)
+            ?? throw new InvalidOperationException("Supplier was not found.");
+        var product = await productRepository.GetByIdAsync(info.ProductId)
+            ?? throw new InvalidOperationException("Product was not found.");
+        var unit = await unitRepository.GetByIdAsync(info.PurchaseMeasurementUnitId)
+            ?? throw new InvalidOperationException("Purchase unit was not found.");
+        var history = await repository.GetPriceHistoryAsync(info.Id);
+
+        return new SupplierPriceHistoryPageDto
+        {
+            PurchasingInfoId = info.Id,
+            SupplierId = info.SupplierId,
+            SupplierName = supplier.Name,
+            ProductLabel = $"{product.ProductCode} — {product.Name}",
+            PurchaseUnit = $"{unit.Name} ({unit.Symbol})",
+            Rows = history.Select(x => new SupplierPriceHistoryRowDto
+            {
+                Revision = x.Revision,
+                Source = x.Source,
+                MinimumOrderQuantity = x.MinimumOrderQuantity,
+                BaseUnitPrice = x.BaseUnitPrice,
+                CurrencyCode = x.CurrencyCode,
+                ValidFrom = x.ValidFrom,
+                ValidTo = x.ValidTo,
+                ChangedByUserId = x.ChangedByUserId,
+                ChangedAtUtc = x.ChangedAtUtc,
+                PriceBreaks = x.PriceBreaks.OrderBy(tier => tier.MinimumQuantity)
+                    .Select(tier => new SupplierPriceHistoryBreakDto
+                    {
+                        MinimumQuantity = tier.MinimumQuantity,
+                        UnitPrice = tier.UnitPrice,
+                        DiscountPercent = tier.DiscountPercent,
+                        NetUnitPrice = tier.NetUnitPrice
+                    }).ToList()
+            }).ToList()
+        };
+    }
+
+    private async Task ApplyAsync(
+        SaveSupplierPurchasingInfoDto dto,
+        bool preserveIdentity,
+        SupplierPriceChangeSource source)
     {
         if (await supplierRepository.GetByIdAsync(dto.SupplierId) is null)
             throw new ArgumentException("Supplier was not found.");
@@ -352,6 +403,7 @@ public sealed class SupplierPurchasingInfoService(
                 dto.PurchaseMeasurementUnitId, dto.SupplierProductCode, dto.SupplierDescription,
                 dto.MinimumOrderQuantity, dto.OrderMultiple, dto.LeadTimeDays, dto.UnitPrice,
                 baseCurrency, dto.ValidFrom, dto.ValidTo, dto.IsPreferred, dto.Priority);
+            info.RecordPriceSnapshot(source, currentUser.UserId);
             await repository.AddAsync(info);
         }
         else
@@ -362,10 +414,18 @@ public sealed class SupplierPurchasingInfoService(
                 throw new InvalidOperationException("Bulk purchasing rows must remain with their original supplier and product.");
             if (!info.RowVersion.SequenceEqual(dto.RowVersion))
                 throw new InvalidOperationException("Supplier purchasing information was modified by another user. Reload and try again.");
+            var pricingChanged = info.SupplierId != dto.SupplierId || info.ProductId != dto.ProductId ||
+                                 info.PurchaseMeasurementUnitId != dto.PurchaseMeasurementUnitId ||
+                                 info.MinimumOrderQuantity != dto.MinimumOrderQuantity ||
+                                 info.UnitPrice != dto.UnitPrice ||
+                                 !string.Equals(info.CurrencyCode, baseCurrency, StringComparison.OrdinalIgnoreCase) ||
+                                 info.ValidFrom != dto.ValidFrom || info.ValidTo != dto.ValidTo;
+            if (pricingChanged) EnsureBaselineSnapshot(info);
             info.Update(dto.SupplierId, dto.ProductId, dto.PurchaseMeasurementUnitId,
                 dto.SupplierProductCode, dto.SupplierDescription, dto.MinimumOrderQuantity,
                 dto.OrderMultiple, dto.LeadTimeDays, dto.UnitPrice, baseCurrency,
                 dto.ValidFrom, dto.ValidTo, dto.IsPreferred, dto.Priority);
+            if (pricingChanged) info.RecordPriceSnapshot(source, currentUser.UserId);
         }
 
         if (dto.IsPreferred)
@@ -390,6 +450,18 @@ public sealed class SupplierPurchasingInfoService(
         string.IsNullOrWhiteSpace(currency) ? "JOD" : currency.Trim().ToUpperInvariant();
 
     private static string Invariant(decimal value) => value.ToString("0.######", CultureInfo.InvariantCulture);
+    private void EnsureBaselineSnapshot(SupplierProductPurchasingInfo info)
+    {
+        if (info.PriceHistoryRevision == 0)
+            info.RecordPriceSnapshot(SupplierPriceChangeSource.LegacyBaseline, currentUser.UserId);
+    }
+
+    private static bool PriceBreaksMatch(
+        IEnumerable<SupplierProductPriceBreak> current,
+        IEnumerable<SupplierProductPriceBreak> replacement) =>
+        current.OrderBy(x => x.MinimumQuantity).Select(x => new { x.MinimumQuantity, x.UnitPrice, x.DiscountPercent })
+            .SequenceEqual(replacement.OrderBy(x => x.MinimumQuantity)
+                .Select(x => new { x.MinimumQuantity, x.UnitPrice, x.DiscountPercent }));
     private static decimal? Decimal(string value, string error, List<string> errors)
     {
         if (decimal.TryParse(value, NumberStyles.Number, CultureInfo.InvariantCulture, out var parsed)) return parsed;

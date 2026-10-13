@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using MiniStore.Domain.Entities;
 
 namespace MiniStore.Application.DTOs.Purchases;
 
@@ -153,4 +154,36 @@ public sealed class SaveSupplierPriceBreakRowDto
     public decimal MinimumQuantity { get; set; }
     public decimal UnitPrice { get; set; }
     public decimal DiscountPercent { get; set; }
+}
+
+public sealed class SupplierPriceHistoryPageDto
+{
+    public int PurchasingInfoId { get; init; }
+    public int SupplierId { get; init; }
+    public string SupplierName { get; init; } = string.Empty;
+    public string ProductLabel { get; init; } = string.Empty;
+    public string PurchaseUnit { get; init; } = string.Empty;
+    public List<SupplierPriceHistoryRowDto> Rows { get; init; } = [];
+}
+
+public sealed class SupplierPriceHistoryRowDto
+{
+    public int Revision { get; init; }
+    public SupplierPriceChangeSource Source { get; init; }
+    public decimal MinimumOrderQuantity { get; init; }
+    public decimal BaseUnitPrice { get; init; }
+    public string CurrencyCode { get; init; } = string.Empty;
+    public DateOnly ValidFrom { get; init; }
+    public DateOnly? ValidTo { get; init; }
+    public string ChangedByUserId { get; init; } = string.Empty;
+    public DateTime ChangedAtUtc { get; init; }
+    public List<SupplierPriceHistoryBreakDto> PriceBreaks { get; init; } = [];
+}
+
+public sealed class SupplierPriceHistoryBreakDto
+{
+    public decimal MinimumQuantity { get; init; }
+    public decimal UnitPrice { get; init; }
+    public decimal DiscountPercent { get; init; }
+    public decimal NetUnitPrice { get; init; }
 }

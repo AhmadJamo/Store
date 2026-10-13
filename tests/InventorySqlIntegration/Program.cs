@@ -1140,7 +1140,8 @@ static async Task VerifyTrackedActivationGuardAsync(
             new SupplierRepository(context),
             productRepository,
             measurementUnits,
-            new GeneralSettingsRepository(context)),
+            new GeneralSettingsRepository(context),
+            new FixedCurrentUser("integration")),
         unitOfWork);
 
     try

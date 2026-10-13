@@ -1,0 +1,66 @@
+@model MiniStore.Application.DTOs.Purchases.SupplierPriceHistoryPageDto
+@inject Microsoft.Extensions.Localization.IStringLocalizer<MiniStore.Web.SharedResource> Localizer
+@{
+    ViewData["Title"] = Localizer["Supplier price history"];
+    var numberSettings = await GeneralSettingsService.GetAsync();
+}
+
+<div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4">
+    <div>
+        <h2>@Localizer["Supplier price history"]</h2>
+        <p class="text-muted mb-0">@Localizer["This read-only history preserves every recorded price and quantity-break snapshot."]</p>
+    </div>
+    <a asp-action="Index" asp-route-supplierId="@Model.SupplierId" class="btn btn-outline-secondary">@Localizer["Back to supplier purchasing data"]</a>
+</div>
+
+<div class="card mb-4"><div class="card-body"><div class="row g-3">
+    <div class="col-md-4"><div class="small text-muted">@Localizer["Supplier"]</div><div class="fw-semibold">@Model.SupplierName</div></div>
+    <div class="col-md-4"><div class="small text-muted">@Localizer["Product"]</div><div class="fw-semibold">@Model.ProductLabel</div></div>
+    <div class="col-md-4"><div class="small text-muted">@Localizer["Purchase unit"]</div><div>@Model.PurchaseUnit</div></div>
+</div></div></div>
+
+@if (Model.Rows.Count == 0)
+{
+    <div class="alert alert-info">@Localizer["No price history has been recorded yet. The current price will be preserved when it is next changed."]</div>
+}
+else
+{
+    <div class="vstack gap-3">
+    @foreach (var row in Model.Rows)
+    {
+        <section class="card">
+            <div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-2">
+                <div><strong>@Localizer["Revision"] @row.Revision</strong> <span class="badge text-bg-light border">@Localizer[row.Source.ToString()]</span></div>
+                <div class="small text-muted">@row.ChangedAtUtc.ToLocalTime() · @Localizer["Recorded by"] @row.ChangedByUserId</div>
+            </div>
+            <div class="card-body">
+                <div class="row g-3 mb-3">
+                    <div class="col-sm-6 col-lg-3"><div class="small text-muted">@Localizer["Base unit price"]</div><div class="fw-semibold">@row.BaseUnitPrice.ToMoneyDisplay(numberSettings) @row.CurrencyCode</div></div>
+                    <div class="col-sm-6 col-lg-3"><div class="small text-muted">@Localizer["Minimum order quantity"]</div><div>@row.MinimumOrderQuantity.ToQuantityDisplay(numberSettings)</div></div>
+                    <div class="col-sm-6 col-lg-3"><div class="small text-muted">@Localizer["Price valid from"]</div><div>@row.ValidFrom</div></div>
+                    <div class="col-sm-6 col-lg-3"><div class="small text-muted">@Localizer["Price valid until (optional)"]</div><div>@(row.ValidTo?.ToString() ?? Localizer["No end date"].Value)</div></div>
+                </div>
+                <h3 class="h6">@Localizer["Quantity price breaks"]</h3>
+                @if (row.PriceBreaks.Count == 0)
+                {
+                    <div class="small text-muted">@Localizer["No quantity price breaks were included in this revision."]</div>
+                }
+                else
+                {
+                    <div class="row g-2">
+                    @foreach (var tier in row.PriceBreaks)
+                    {
+                        <div class="col-md-6 col-xl-4"><div class="border rounded p-3 h-100">
+                            <div><span class="text-muted">@Localizer["Starts at quantity"]:</span> @tier.MinimumQuantity.ToQuantityDisplay(numberSettings)</div>
+                            <div><span class="text-muted">@Localizer["Tier unit price"]:</span> @tier.UnitPrice.ToMoneyDisplay(numberSettings) @row.CurrencyCode</div>
+                            <div><span class="text-muted">@Localizer["Discount percent"]:</span> @tier.DiscountPercent.ToMoneyDisplay(numberSettings)%</div>
+                            <div class="fw-semibold"><span class="text-muted fw-normal">@Localizer["Net unit price"]:</span> @tier.NetUnitPrice.ToMoneyDisplay(numberSettings) @row.CurrencyCode</div>
+                        </div></div>
+                    }
+                    </div>
+                }
+            </div>
+        </section>
+    }
+    </div>
+}

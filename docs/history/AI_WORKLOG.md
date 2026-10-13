@@ -1,5 +1,13 @@
 # AI Work Log
 
+# 2026-10-14 — PUR-230 immutable supplier price history
+
+- Added append-only supplier-price revisions that freeze the actor, timestamp, change source, supplier/product/purchase-unit identity, minimum quantity, base price, currency, validity and complete quantity-break set.
+- New supplier-product assignments record their initial price. Existing records automatically preserve their current baseline immediately before the first actual price or tier change; non-price and unchanged saves do not create noise.
+- Manual, bulk, CSV and price-break workflows share the same snapshot authority and remain inside their existing atomic/concurrency-protected save boundary.
+- Added a permission-protected read-only responsive history page with no edit/delete action and an accepted ADR for full-snapshot history ownership.
+- Added migration `AddSupplierPriceHistory`; the Web and SQL integration projects build with zero warnings, all 667 focused checks pass and EF reports no pending model changes.
+
 # 2026-10-14 — PUR-230 supplier quantity price breaks
 
 - Added tenant-owned supplier/product/unit price-break rows with unique minimum-quantity thresholds, optional discounts and a 20-tier aggregate limit.

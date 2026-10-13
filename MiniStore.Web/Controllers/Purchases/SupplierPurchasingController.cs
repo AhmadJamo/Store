@@ -124,6 +124,19 @@ public sealed class SupplierPurchasingController(
         }
     }
 
+    [HttpGet]
+    [PermissionAuthorize("Purchases.SupplierTerms.View")]
+    public async Task<IActionResult> PriceHistory(int id)
+    {
+        try { return View(await service.GetPriceHistoryPageAsync(id)); }
+        catch (Exception exception) when (exception is ArgumentException or InvalidOperationException)
+        {
+            TempData["NotificationType"] = "error";
+            TempData["NotificationMessage"] = localizer[exception.Message].Value;
+            return RedirectToAction(nameof(Index));
+        }
+    }
+
     [HttpPost]
     [ValidateAntiForgeryToken]
     [PermissionAuthorize("Purchases.SupplierTerms.Manage")]

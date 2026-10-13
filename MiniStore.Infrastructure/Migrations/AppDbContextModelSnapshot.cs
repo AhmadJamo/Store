@@ -6776,6 +6776,121 @@ namespace MiniStore.Infrastructure.Migrations
                     b.ToTable("SupplierProductPriceBreaks");
                 });
 
+            modelBuilder.Entity("MiniStore.Domain.Entities.SupplierProductPriceBreakSnapshot", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("DiscountPercent")
+                        .HasPrecision(9, 4)
+                        .HasColumnType("decimal(9,4)");
+
+                    b.Property<decimal>("MinimumQuantity")
+                        .HasPrecision(18, 6)
+                        .HasColumnType("decimal(18,6)");
+
+                    b.Property<int>("SupplierProductPriceHistoryId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TenantId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("UnitPrice")
+                        .HasPrecision(19, 4)
+                        .HasColumnType("decimal(19,4)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TenantId");
+
+                    b.HasIndex("SupplierProductPriceHistoryId", "TenantId");
+
+                    b.HasIndex("TenantId", "SupplierProductPriceHistoryId", "MinimumQuantity")
+                        .IsUnique();
+
+                    b.ToTable("SupplierProductPriceBreakSnapshots");
+                });
+
+            modelBuilder.Entity("MiniStore.Domain.Entities.SupplierProductPriceHistory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("BaseUnitPrice")
+                        .HasPrecision(19, 4)
+                        .HasColumnType("decimal(19,4)");
+
+                    b.Property<DateTime>("ChangedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ChangedByUserId")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("CurrencyCode")
+                        .IsRequired()
+                        .HasMaxLength(3)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(3)");
+
+                    b.Property<decimal>("MinimumOrderQuantity")
+                        .HasPrecision(18, 6)
+                        .HasColumnType("decimal(18,6)");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PurchaseMeasurementUnitId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Revision")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Source")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SupplierId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SupplierProductPurchasingInfoId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TenantId")
+                        .HasColumnType("int");
+
+                    b.Property<DateOnly>("ValidFrom")
+                        .HasColumnType("date");
+
+                    b.Property<DateOnly?>("ValidTo")
+                        .HasColumnType("date");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TenantId");
+
+                    b.HasIndex("ProductId", "TenantId");
+
+                    b.HasIndex("PurchaseMeasurementUnitId", "TenantId");
+
+                    b.HasIndex("SupplierId", "TenantId");
+
+                    b.HasIndex("SupplierProductPurchasingInfoId", "ChangedAtUtc");
+
+                    b.HasIndex("SupplierProductPurchasingInfoId", "TenantId");
+
+                    b.HasIndex("TenantId", "SupplierProductPurchasingInfoId", "Revision")
+                        .IsUnique();
+
+                    b.ToTable("SupplierProductPriceHistories");
+                });
+
             modelBuilder.Entity("MiniStore.Domain.Entities.SupplierProductPurchasingInfo", b =>
                 {
                     b.Property<int>("Id")
@@ -6808,6 +6923,9 @@ namespace MiniStore.Infrastructure.Migrations
                         .HasColumnType("decimal(18,6)");
 
                     b.Property<int>("PriceBreakRevision")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PriceHistoryRevision")
                         .HasColumnType("int");
 
                     b.Property<int>("Priority")
@@ -10153,6 +10271,59 @@ namespace MiniStore.Infrastructure.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("MiniStore.Domain.Entities.SupplierProductPriceBreakSnapshot", b =>
+                {
+                    b.HasOne("MiniStore.Domain.Entities.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MiniStore.Domain.Entities.SupplierProductPriceHistory", null)
+                        .WithMany("PriceBreaks")
+                        .HasForeignKey("SupplierProductPriceHistoryId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("MiniStore.Domain.Entities.SupplierProductPriceHistory", b =>
+                {
+                    b.HasOne("MiniStore.Domain.Entities.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MiniStore.Domain.Entities.Product", null)
+                        .WithMany()
+                        .HasForeignKey("ProductId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MiniStore.Domain.Entities.MeasurementUnit", null)
+                        .WithMany()
+                        .HasForeignKey("PurchaseMeasurementUnitId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MiniStore.Domain.Entities.Supplier", null)
+                        .WithMany()
+                        .HasForeignKey("SupplierId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MiniStore.Domain.Entities.SupplierProductPurchasingInfo", null)
+                        .WithMany("PriceHistory")
+                        .HasForeignKey("SupplierProductPurchasingInfoId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("MiniStore.Domain.Entities.SupplierProductPurchasingInfo", b =>
                 {
                     b.HasOne("MiniStore.Domain.Entities.Tenant", null)
@@ -10594,9 +10765,16 @@ namespace MiniStore.Infrastructure.Migrations
                     b.Navigation("Lines");
                 });
 
+            modelBuilder.Entity("MiniStore.Domain.Entities.SupplierProductPriceHistory", b =>
+                {
+                    b.Navigation("PriceBreaks");
+                });
+
             modelBuilder.Entity("MiniStore.Domain.Entities.SupplierProductPurchasingInfo", b =>
                 {
                     b.Navigation("PriceBreaks");
+
+                    b.Navigation("PriceHistory");
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.SupplierQuotation", b =>

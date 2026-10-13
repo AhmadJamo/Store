@@ -12,7 +12,8 @@ public sealed class SupplierProductAssignmentService(
     ISupplierRepository suppliers,
     IProductRepository products,
     IMeasurementUnitRepository units,
-    IGeneralSettingsRepository settings)
+    IGeneralSettingsRepository settings,
+    ICurrentUserService currentUser)
 {
     public async Task<List<int>> GetProductIdsForSupplierAsync(int supplierId) =>
         (await purchasingInfos.GetBySupplierIdAsync(supplierId))
@@ -79,12 +80,14 @@ public sealed class SupplierProductAssignmentService(
             throw new InvalidOperationException("The product must have an active managed stock unit before assigning a supplier.");
 
         var baseCurrency = (await settings.GetAsync())?.Currency?.Trim().ToUpperInvariant();
-        await purchasingInfos.AddAsync(new SupplierProductPurchasingInfo(
+        var info = new SupplierProductPurchasingInfo(
             supplierId, product.Id, product.MeasurementUnitId.Value,
             string.IsNullOrWhiteSpace(product.ProductCode) ? $"P-{product.Id}" : product.ProductCode,
             null, 1m, 1m, 0, product.PurchasePrice,
             string.IsNullOrWhiteSpace(baseCurrency) ? "JOD" : baseCurrency,
-            DateOnly.FromDateTime(DateTime.Today), null, false, 100));
+            DateOnly.FromDateTime(DateTime.Today), null, false, 100);
+        info.RecordPriceSnapshot(SupplierPriceChangeSource.Assigned, currentUser.UserId);
+        await purchasingInfos.AddAsync(info);
     }
 
     private async Task<Product> GetEligibleProductAsync(int productId)
