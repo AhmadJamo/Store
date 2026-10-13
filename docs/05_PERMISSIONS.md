@@ -72,9 +72,9 @@ The Index and mutation actions enforce these policies server-side. Permission se
 
 - `SupplierQuotations.View` protects quotation comparison visibility.
 - `SupplierQuotations.Create` protects capture and submission of a supplier's invited response.
-- `SupplierQuotations.Award` protects the one-time, reason-required supplier selection. It does not grant Purchase Order, receipt, stock or accounting authority.
+- `SupplierQuotations.Award` protects the one-time, reason-required per-line quantity allocation across invited supplier quotations. It does not grant Purchase Order, receipt, stock or accounting authority.
 - `PurchaseOrders.View` protects order list/detail visibility.
-- `PurchaseOrders.Create` permits creating one order from the recorded quotation award only.
+- `PurchaseOrders.Create` permits creating the complete supplier-grouped set of orders from the recorded line allocations only; it cannot change the award.
 - `PurchaseOrders.Approve`, `PurchaseOrders.Confirm` and `PurchaseOrders.Cancel` separately protect the corresponding state transitions; confirmation still has no inventory or accounting effect.
 - `GoodsReceipts.Create` protects both capture and posting of a Goods Receipt; it is limited to confirmed Purchase Orders and invokes the purchasing Application service. `GoodsReceipts.View` reserves separate receipt visibility for the upcoming history screen.
 - PUR-150 barcode draft creation, scanning and final posting remain protected by `GoodsReceipts.Create`; scanning does not introduce a broader stock-edit permission or bypass the final receipt-posting checks.

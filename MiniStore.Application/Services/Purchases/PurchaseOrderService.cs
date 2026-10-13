@@ -21,29 +21,73 @@ public sealed class PurchaseOrderService(
 
     public async Task<int> CreateFromAwardAsync(int sourcingEventId)
     {
-        PurchaseOrder? order = null;
+        var ids = await CreateOrdersFromAwardAsync(sourcingEventId);
+        return ids[0];
+    }
+
+    public async Task<List<int>> CreateOrdersFromAwardAsync(int sourcingEventId)
+    {
+        var created = new List<PurchaseOrder>();
         await unitOfWork.ExecuteInTransactionAsync(async () =>
         {
             var award = await quotations.GetAwardAsync(sourcingEventId) ?? throw new InvalidOperationException("A quotation award is required before creating a purchase order.");
-            var quote = await quotations.GetByIdAsync(award.SupplierQuotationId) ?? throw new InvalidOperationException("Awarded supplier quotation was not found.");
             var source = await sourcing.GetByIdAsync(sourcingEventId) ?? throw new InvalidOperationException("Sourcing event was not found.");
-            if (await orders.GetByQuotationIdAsync(quote.Id) is not null) throw new InvalidOperationException("A purchase order already exists for this quotation.");
-            if (await agreements.GetByQuotationIdAsync(quote.Id) is not null) throw new InvalidOperationException("A purchase agreement already exists for this quotation.");
             var today = DateOnly.FromDateTime(DateTime.Today);
-            order = new PurchaseOrder(await numbers.GenerateAsync(DocumentNumberType.PurchaseOrder, DateTime.Today),
-                source.Id, quote.Id, quote.SupplierId, source.WarehouseId, today, today.AddDays(quote.LeadTimeDays),
-                quote.CurrencyCode, quote.PaymentTermsSnapshot, currentUser.UserId);
-            foreach (var line in quote.Lines)
+            if (award.Allocations.Count == 0)
             {
-                var sourcingLine = source.Lines.Single(x => x.Id == line.PurchaseSourcingLineId);
-                order.AddLine(new PurchaseOrderLine(line.Id, sourcingLine.ProductId, sourcingLine.MeasurementUnitId,
-                    line.QuotedQuantity, sourcingLine.UnitFactorToBase, line.QuotedQuantity * sourcingLine.UnitFactorToBase,
-                    line.UnitPrice, line.DiscountPercent, line.TaxPercent, line.ProductCodeSnapshot,
-                    line.ProductNameSnapshot, line.UnitNameSnapshot));
+                var quote = await quotations.GetByIdAsync(award.SupplierQuotationId)
+                    ?? throw new InvalidOperationException("Awarded supplier quotation was not found.");
+                await EnsurePurchaseDocumentNotCreatedAsync(quote.Id);
+                var legacyOrder = new PurchaseOrder(
+                    await numbers.GenerateAsync(DocumentNumberType.PurchaseOrder, DateTime.Today), source.Id,
+                    quote.Id, quote.SupplierId, source.WarehouseId, today, today.AddDays(quote.LeadTimeDays),
+                    quote.CurrencyCode, quote.PaymentTermsSnapshot, currentUser.UserId);
+                foreach (var line in quote.Lines)
+                {
+                    var sourcingLine = source.Lines.Single(x => x.Id == line.PurchaseSourcingLineId);
+                    legacyOrder.AddLine(new PurchaseOrderLine(line.Id, sourcingLine.ProductId,
+                        sourcingLine.MeasurementUnitId, line.QuotedQuantity, sourcingLine.UnitFactorToBase,
+                        line.QuotedQuantity * sourcingLine.UnitFactorToBase, line.UnitPrice, line.DiscountPercent,
+                        line.TaxPercent, line.ProductCodeSnapshot, line.ProductNameSnapshot, line.UnitNameSnapshot));
+                }
+                await orders.AddAsync(legacyOrder);
+                created.Add(legacyOrder);
+                return;
             }
-            await orders.AddAsync(order);
+
+            foreach (var group in award.Allocations.GroupBy(x => x.SupplierQuotationId))
+            {
+                var first = group.First();
+                await EnsurePurchaseDocumentNotCreatedAsync(group.Key);
+                var order = new PurchaseOrder(
+                    await numbers.GenerateAsync(DocumentNumberType.PurchaseOrder, DateTime.Today), source.Id,
+                    group.Key, first.SupplierId, source.WarehouseId, today,
+                    today.AddDays(group.Max(x => x.LeadTimeDaysSnapshot)), first.CurrencyCodeSnapshot,
+                    first.PaymentTermsSnapshot, currentUser.UserId);
+                foreach (var allocation in group)
+                {
+                    var sourcingLine = source.Lines.SingleOrDefault(x => x.Id == allocation.PurchaseSourcingLineId)
+                        ?? throw new InvalidOperationException("Awarded sourcing line was not found.");
+                    order.AddLine(new PurchaseOrderLine(allocation.SupplierQuotationLineId,
+                        sourcingLine.ProductId, sourcingLine.MeasurementUnitId, allocation.AwardedQuantity,
+                        sourcingLine.UnitFactorToBase, allocation.AwardedQuantity * sourcingLine.UnitFactorToBase,
+                        allocation.UnitPriceSnapshot, allocation.DiscountPercentSnapshot,
+                        allocation.TaxPercentSnapshot, allocation.ProductCodeSnapshot,
+                        allocation.ProductNameSnapshot, allocation.UnitNameSnapshot));
+                }
+                await orders.AddAsync(order);
+                created.Add(order);
+            }
         });
-        return order!.Id;
+        return created.Select(x => x.Id).ToList();
+
+        async Task EnsurePurchaseDocumentNotCreatedAsync(int quotationId)
+        {
+            if (await orders.GetByQuotationIdAsync(quotationId) is not null)
+                throw new InvalidOperationException("A purchase order already exists for one or more awarded quotations.");
+            if (await agreements.GetByQuotationIdAsync(quotationId) is not null)
+                throw new InvalidOperationException("A purchase agreement already exists for one or more awarded quotations.");
+        }
     }
 
     public async Task ApproveAsync(int id, byte[] rowVersion)

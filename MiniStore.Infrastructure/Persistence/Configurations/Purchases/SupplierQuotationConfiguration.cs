@@ -5,7 +5,8 @@ using MiniStore.Domain.Entities;
 namespace MiniStore.Infrastructure.Persistence.Configurations;
 
 public sealed class SupplierQuotationConfiguration : IEntityTypeConfiguration<SupplierQuotation>,
-    IEntityTypeConfiguration<SupplierQuotationLine>, IEntityTypeConfiguration<PurchaseQuotationAward>
+    IEntityTypeConfiguration<SupplierQuotationLine>, IEntityTypeConfiguration<PurchaseQuotationAward>,
+    IEntityTypeConfiguration<PurchaseQuotationAwardAllocation>
 {
     public void Configure(EntityTypeBuilder<SupplierQuotation> builder)
     {
@@ -50,5 +51,31 @@ public sealed class SupplierQuotationConfiguration : IEntityTypeConfiguration<Su
         builder.HasIndex(x => x.SupplierQuotationId).IsUnique();
         builder.HasOne<PurchaseSourcingEvent>().WithMany().HasForeignKey(x => x.PurchaseSourcingEventId).OnDelete(DeleteBehavior.Restrict);
         builder.HasOne<SupplierQuotation>().WithMany().HasForeignKey(x => x.SupplierQuotationId).OnDelete(DeleteBehavior.Restrict);
+        builder.HasMany(x => x.Allocations).WithOne().HasForeignKey(x => x.PurchaseQuotationAwardId)
+            .OnDelete(DeleteBehavior.Cascade);
+    }
+
+    public void Configure(EntityTypeBuilder<PurchaseQuotationAwardAllocation> builder)
+    {
+        builder.HasKey(x => x.Id);
+        builder.Property(x => x.AwardedQuantity).HasPrecision(18, 6);
+        builder.Property(x => x.UnitPriceSnapshot).HasPrecision(24, 8);
+        builder.Property(x => x.DiscountPercentSnapshot).HasPrecision(9, 4);
+        builder.Property(x => x.TaxPercentSnapshot).HasPrecision(9, 4);
+        builder.Property(x => x.CurrencyCodeSnapshot).HasMaxLength(3).IsRequired();
+        builder.Property(x => x.PaymentTermsSnapshot).HasMaxLength(500);
+        builder.Property(x => x.Reason).HasMaxLength(1000).IsRequired();
+        builder.Property(x => x.ProductCodeSnapshot).HasMaxLength(100).IsRequired();
+        builder.Property(x => x.ProductNameSnapshot).HasMaxLength(250).IsRequired();
+        builder.Property(x => x.UnitNameSnapshot).HasMaxLength(100).IsRequired();
+        builder.HasIndex(x => new { x.PurchaseQuotationAwardId, x.SupplierQuotationLineId }).IsUnique();
+        builder.HasOne<PurchaseSourcingLine>().WithMany().HasForeignKey(x => x.PurchaseSourcingLineId)
+            .OnDelete(DeleteBehavior.Restrict);
+        builder.HasOne<SupplierQuotation>().WithMany().HasForeignKey(x => x.SupplierQuotationId)
+            .OnDelete(DeleteBehavior.Restrict);
+        builder.HasOne<SupplierQuotationLine>().WithMany().HasForeignKey(x => x.SupplierQuotationLineId)
+            .OnDelete(DeleteBehavior.Restrict);
+        builder.HasOne<Supplier>().WithMany().HasForeignKey(x => x.SupplierId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

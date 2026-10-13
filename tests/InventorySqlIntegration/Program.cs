@@ -73,6 +73,11 @@ try
         tenantOneId,
         tenantOneFixture.WarehouseId,
         connectionString);
+    await VerifyLineLevelSplitAwardAsync(
+        tenantOneId,
+        tenantOneFixture.MeasurementUnitId,
+        tenantOneFixture.WarehouseId,
+        connectionString);
     await VerifyConcurrentGoodsReceiptAndGrniAsync(
         tenantOneId,
         tenantOneFixture.MeasurementUnitId,
@@ -105,7 +110,7 @@ try
     await VerifyInventoryBalanceProjectionAsync(tenantOneId, tenantOneFixture.ProductId, expectedOnHand: 2m, connectionString);
     await VerifyOpeningTrackingAllocationAsync(tenantOneId, tenantOneFixture.ProductId, tenantOneFixture.WarehouseId, connectionString);
 
-    Console.WriteLine("Passed SQL integration checks: tenant isolation, reconciliation, balances, replenishment purchase-request source concurrency, receipt, vendor-bill and supplier-payment concurrency, controlled payment reversal and retry, three-way matching override evidence, GRNI posting and clearing, purchase accounting reconciliation, payable settlement, receipt-based supplier returns, landed-cost valuation, purchasing analytics, idempotent barcode receipt drafts, adjustment posting, tracked operations, quarantine and recall.");
+    Console.WriteLine("Passed SQL integration checks: tenant isolation, reconciliation, balances, replenishment purchase-request source concurrency, 3-product/2-supplier split awards, receipt, vendor-bill and supplier-payment concurrency, controlled payment reversal and retry, three-way matching override evidence, GRNI posting and clearing, purchase accounting reconciliation, payable settlement, receipt-based supplier returns, landed-cost valuation, purchasing analytics, idempotent barcode receipt drafts, adjustment posting, tracked operations, quarantine and recall.");
 }
 finally
 {
@@ -232,6 +237,125 @@ static async Task VerifyReplenishmentPurchaseRequestSourceConcurrencyAsync(
     await using var verification = new AppDbContext(CreateOptions(connectionString), new FixedTenantContext(tenantId));
     if (await verification.PurchaseRequests.CountAsync(x => x.SourceType == "ReplenishmentRule" && x.SourceReference == "SQL-RULE-1") != 1)
         throw new InvalidOperationException("The winning replenishment purchase request must retain its source identity.");
+}
+
+static async Task VerifyLineLevelSplitAwardAsync(
+    int tenantId, int measurementUnitId, int warehouseId, string connectionString)
+{
+    int sourcingEventId;
+    int firstQuotationLineId;
+    int secondQuotationLineId;
+    int thirdQuotationLineId;
+    int fourthQuotationLineId;
+
+    await using (var context = new AppDbContext(CreateOptions(connectionString), new FixedTenantContext(tenantId)))
+    {
+        var products = new[]
+        {
+            new Product("Split award product one", "SPLIT-ONE", 10m, 15m, 12m, measurementUnitId: measurementUnitId),
+            new Product("Split award product two", "SPLIT-TWO", 20m, 30m, 25m, measurementUnitId: measurementUnitId),
+            new Product("Split award product three", "SPLIT-THREE", 30m, 45m, 38m, measurementUnitId: measurementUnitId)
+        };
+        var supplierOne = new Supplier("Split award supplier one");
+        var supplierTwo = new Supplier("Split award supplier two");
+        context.AddRange(products[0], products[1], products[2], supplierOne, supplierTwo);
+        context.DocumentSequences.Add(DocumentSequence.CreateDefault(DocumentNumberType.PurchaseOrder));
+        await context.SaveChangesAsync();
+
+        var responseDate = DateOnly.FromDateTime(DateTime.Today.AddDays(5));
+        var deliveryDate = responseDate.AddDays(10);
+        var sourcing = new PurchaseSourcingEvent("RFX-SQL-SPLIT", warehouseId, deliveryDate, responseDate,
+            "SQL-SPLIT", 1000m, 1000m, "Buyer", "Split award integration scenario", "integration-buyer");
+        foreach (var product in products)
+            sourcing.AddLine(new PurchaseSourcingLine(product.Id, measurementUnitId, 10m, 1m, 10m,
+                product.ProductCode, product.Name, "Piece", null));
+        sourcing.InviteSupplier(supplierOne.Id, null);
+        sourcing.InviteSupplier(supplierTwo.Id, null);
+        sourcing.Send("integration-buyer");
+        context.PurchaseSourcingEvents.Add(sourcing);
+        await context.SaveChangesAsync();
+
+        var quotationOne = new SupplierQuotation("QTN-SQL-SPLIT-1", sourcing.Id, supplierOne.Id, null,
+            DateOnly.FromDateTime(DateTime.Today), deliveryDate, 3, "JOD", "30 days", null, "integration-buyer");
+        var quotationTwo = new SupplierQuotation("QTN-SQL-SPLIT-2", sourcing.Id, supplierTwo.Id, null,
+            DateOnly.FromDateTime(DateTime.Today), deliveryDate, 7, "JOD", "45 days", null, "integration-buyer");
+        for (var index = 0; index < sourcing.Lines.Count; index++)
+        {
+            var line = sourcing.Lines[index];
+            quotationOne.AddLine(new SupplierQuotationLine(line.Id, 10m, 10m + index, 0m, 0m,
+                line.ProductCodeSnapshot, line.ProductNameSnapshot, line.UnitNameSnapshot));
+            quotationTwo.AddLine(new SupplierQuotationLine(line.Id, 10m, 9m + index, 0m, 0m,
+                line.ProductCodeSnapshot, line.ProductNameSnapshot, line.UnitNameSnapshot));
+        }
+        quotationOne.Submit();
+        quotationTwo.Submit();
+        context.SupplierQuotations.AddRange(quotationOne, quotationTwo);
+        await context.SaveChangesAsync();
+
+        sourcingEventId = sourcing.Id;
+        firstQuotationLineId = quotationOne.Lines.Single(x => x.ProductNameSnapshot == "Split award product one").Id;
+        secondQuotationLineId = quotationOne.Lines.Single(x => x.ProductNameSnapshot == "Split award product two").Id;
+        thirdQuotationLineId = quotationTwo.Lines.Single(x => x.ProductNameSnapshot == "Split award product two").Id;
+        fourthQuotationLineId = quotationTwo.Lines.Single(x => x.ProductNameSnapshot == "Split award product three").Id;
+    }
+
+    await using (var context = new AppDbContext(CreateOptions(connectionString), new FixedTenantContext(tenantId)))
+    {
+        var unitOfWork = new UnitOfWork(context);
+        var currentUser = new FixedCurrentUser("integration-buyer");
+        var exchangeRates = new CurrencyExchangeRateService(
+            new CurrencyExchangeRateRepository(context), new GeneralSettingsRepository(context), unitOfWork, currentUser);
+        var service = new SupplierQuotationService(
+            new SupplierQuotationRepository(context), new PurchaseSourcingRepository(context),
+            new SupplierRepository(context), new PurchaseOrderRepository(context),
+            new PurchaseAgreementRepository(context),
+            new DocumentNumberService(new DocumentSequenceRepository(context)), exchangeRates, unitOfWork, currentUser);
+        await service.AwardAsync(new CreatePurchaseQuotationAwardDto
+        {
+            SourcingEventId = sourcingEventId,
+            Allocations =
+            [
+                new() { SupplierQuotationLineId = firstQuotationLineId, AwardedQuantity = 10m, Reason = "Best lead time" },
+                new() { SupplierQuotationLineId = secondQuotationLineId, AwardedQuantity = 4m, Reason = "Capacity split" },
+                new() { SupplierQuotationLineId = thirdQuotationLineId, AwardedQuantity = 6m, Reason = "Lower price" },
+                new() { SupplierQuotationLineId = fourthQuotationLineId, AwardedQuantity = 10m, Reason = "Lower price" }
+            ]
+        });
+    }
+
+    await using (var context = new AppDbContext(CreateOptions(connectionString), new FixedTenantContext(tenantId)))
+    {
+        var unitOfWork = new UnitOfWork(context);
+        var currentUser = new FixedCurrentUser("integration-buyer");
+        var numbers = new DocumentNumberService(new DocumentSequenceRepository(context));
+        var exchangeRates = new CurrencyExchangeRateService(
+            new CurrencyExchangeRateRepository(context), new GeneralSettingsRepository(context), unitOfWork, currentUser);
+        var lifecycle = new PurchaseOrderLifecycleService(
+            new PurchaseOrderRepository(context), new GoodsReceiptRepository(context),
+            new GoodsReceiptReturnRepository(context), new VendorBillRepository(context), unitOfWork, currentUser);
+        var service = new PurchaseOrderService(
+            new PurchaseOrderRepository(context), new PurchaseAgreementRepository(context),
+            new SupplierQuotationRepository(context), new PurchaseSourcingRepository(context),
+            new SupplierRepository(context), new WarehouseRepository(context), numbers, lifecycle,
+            exchangeRates, unitOfWork, currentUser);
+        var orderIds = await service.CreateOrdersFromAwardAsync(sourcingEventId);
+        if (orderIds.Count != 2) throw new InvalidOperationException("A split award across two suppliers must create two purchase orders.");
+    }
+
+    await using var verification = new AppDbContext(CreateOptions(connectionString), new FixedTenantContext(tenantId));
+    var source = await verification.PurchaseSourcingEvents.SingleAsync(x => x.Id == sourcingEventId);
+    var orders = await verification.PurchaseOrders.Include(x => x.Lines)
+        .Where(x => x.PurchaseSourcingEventId == sourcingEventId).ToListAsync();
+    var award = await verification.PurchaseQuotationAwards.Include(x => x.Allocations)
+        .SingleAsync(x => x.PurchaseSourcingEventId == sourcingEventId);
+    var awardedBySourceLine = award.Allocations.GroupBy(x => x.PurchaseSourcingLineId)
+        .Select(x => x.Sum(y => y.AwardedQuantity)).OrderBy(x => x).ToList();
+    var orderedByProduct = orders.SelectMany(x => x.Lines).GroupBy(x => x.ProductId)
+        .Select(x => x.Sum(y => y.OrderedQuantity)).OrderBy(x => x).ToList();
+    if (source.Status != PurchaseSourcingStatus.Closed || award.Allocations.Count != 4 || orders.Count != 2 ||
+        awardedBySourceLine.Count != 3 || awardedBySourceLine.Any(x => x != 10m) ||
+        orderedByProduct.Count != 3 || orderedByProduct.Any(x => x != 10m))
+        throw new InvalidOperationException("The 3-product/2-supplier award must preserve exact quantities and traceability without duplication.");
 }
 
 static async Task VerifyConcurrentGoodsReceiptAndGrniAsync(

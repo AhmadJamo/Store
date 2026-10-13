@@ -4390,6 +4390,100 @@ namespace MiniStore.Infrastructure.Migrations
                     b.ToTable("PurchaseQuotationAwards");
                 });
 
+            modelBuilder.Entity("MiniStore.Domain.Entities.PurchaseQuotationAwardAllocation", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("AwardedQuantity")
+                        .HasPrecision(18, 6)
+                        .HasColumnType("decimal(18,6)");
+
+                    b.Property<string>("CurrencyCodeSnapshot")
+                        .IsRequired()
+                        .HasMaxLength(3)
+                        .HasColumnType("nvarchar(3)");
+
+                    b.Property<decimal>("DiscountPercentSnapshot")
+                        .HasPrecision(9, 4)
+                        .HasColumnType("decimal(9,4)");
+
+                    b.Property<int>("LeadTimeDaysSnapshot")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PaymentTermsSnapshot")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("ProductCodeSnapshot")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("ProductNameSnapshot")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<int>("PurchaseQuotationAwardId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PurchaseSourcingLineId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Reason")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<int>("SupplierId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SupplierQuotationId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SupplierQuotationLineId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("TaxPercentSnapshot")
+                        .HasPrecision(9, 4)
+                        .HasColumnType("decimal(9,4)");
+
+                    b.Property<int>("TenantId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UnitNameSnapshot")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<decimal>("UnitPriceSnapshot")
+                        .HasPrecision(24, 8)
+                        .HasColumnType("decimal(24,8)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TenantId");
+
+                    b.HasIndex("PurchaseQuotationAwardId", "TenantId");
+
+                    b.HasIndex("PurchaseSourcingLineId", "TenantId");
+
+                    b.HasIndex("SupplierId", "TenantId");
+
+                    b.HasIndex("SupplierQuotationId", "TenantId");
+
+                    b.HasIndex("SupplierQuotationLineId", "TenantId");
+
+                    b.HasIndex("TenantId", "PurchaseQuotationAwardId", "SupplierQuotationLineId")
+                        .IsUnique();
+
+                    b.ToTable("PurchaseQuotationAwardAllocations");
+                });
+
             modelBuilder.Entity("MiniStore.Domain.Entities.PurchaseRequest", b =>
                 {
                     b.Property<int>("Id")
@@ -8854,6 +8948,50 @@ namespace MiniStore.Infrastructure.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("MiniStore.Domain.Entities.PurchaseQuotationAwardAllocation", b =>
+                {
+                    b.HasOne("MiniStore.Domain.Entities.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MiniStore.Domain.Entities.PurchaseQuotationAward", null)
+                        .WithMany("Allocations")
+                        .HasForeignKey("PurchaseQuotationAwardId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MiniStore.Domain.Entities.PurchaseSourcingLine", null)
+                        .WithMany()
+                        .HasForeignKey("PurchaseSourcingLineId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MiniStore.Domain.Entities.Supplier", null)
+                        .WithMany()
+                        .HasForeignKey("SupplierId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MiniStore.Domain.Entities.SupplierQuotation", null)
+                        .WithMany()
+                        .HasForeignKey("SupplierQuotationId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MiniStore.Domain.Entities.SupplierQuotationLine", null)
+                        .WithMany()
+                        .HasForeignKey("SupplierQuotationLineId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("MiniStore.Domain.Entities.PurchaseRequest", b =>
                 {
                     b.HasOne("MiniStore.Domain.Entities.Tenant", null)
@@ -10038,6 +10176,11 @@ namespace MiniStore.Infrastructure.Migrations
                     b.Navigation("History");
 
                     b.Navigation("Lines");
+                });
+
+            modelBuilder.Entity("MiniStore.Domain.Entities.PurchaseQuotationAward", b =>
+                {
+                    b.Navigation("Allocations");
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.PurchaseRequest", b =>

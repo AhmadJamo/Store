@@ -73,9 +73,14 @@ public static class WorkflowNextStepGuidance
                 "Compare submitted prices and terms before recording an award.",
                 "SupplierQuotations.View", Routes(("sourcingEventId", Route("sourcingEventId"))));
 
-        if (Matches(message, localize, "Supplier quotation awarded."))
+        if (Matches(message, localize, "Supplier quotation awarded.", "Supplier line awards completed."))
             return new("SupplierQuotations", "Comparison", "Continue from the awarded quotation",
-                "Create a purchase order or purchase agreement from the recorded award.",
+                "Create the supplier purchase orders, or a purchase agreement when every line was awarded to one supplier.",
+                "SupplierQuotations.View", Routes(("sourcingEventId", Route("sourcingEventId"))));
+
+        if (Matches(message, localize, "Purchase orders created from line awards."))
+            return new("SupplierQuotations", "Comparison", "Review created purchase orders",
+                "Open each supplier purchase order created from the recorded line allocations.",
                 "SupplierQuotations.View", Routes(("sourcingEventId", Route("sourcingEventId"))));
 
         if (Matches(message, localize, "Purchase order created.", "Purchase order draft released from agreement."))

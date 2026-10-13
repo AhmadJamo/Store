@@ -1323,10 +1323,23 @@ foreach (var type in new[] { typeof(SupplierQuotation), typeof(SupplierQuotation
     Check(db.Model.FindEntityType(type)!.FindProperty("TenantId") is { IsNullable: false },
         $"{type.Name} must be tenant owned");
 var quotationAward = new PurchaseQuotationAward(301, 501, "Best total cost and delivery", "buyer");
+var quotationAllocation = new PurchaseQuotationAwardAllocation(401, 501, 601, 5, 1.25m,
+    11.25m, 10m, 16m, "jod", 5, "30 days", "Best price for this quantity",
+    "P-10", "Coffee beans", "kg");
+quotationAward.AddAllocation(quotationAllocation);
 Check(quotationAward.PurchaseSourcingEventId == 301 && quotationAward.SupplierQuotationId == 501 &&
       quotationAward.Reason == "Best total cost and delivery" &&
-      db.Model.FindEntityType(typeof(PurchaseQuotationAward))!.FindProperty("TenantId") is { IsNullable: false },
-    "Quotation awards must preserve a tenant-owned, reasoned supplier-selection decision");
+      quotationAllocation.AwardedQuantity == 1.25m && quotationAllocation.CurrencyCodeSnapshot == "JOD" &&
+      quotationAllocation.GrossAmount == 14.68125m &&
+      db.Model.FindEntityType(typeof(PurchaseQuotationAward))!.FindProperty("TenantId") is { IsNullable: false } &&
+      db.Model.FindEntityType(typeof(PurchaseQuotationAwardAllocation))!.FindProperty("TenantId") is { IsNullable: false },
+    "Quotation awards must preserve tenant-owned, reasoned quantity allocations and frozen commercial terms");
+CheckThrows(() => quotationAward.AddAllocation(new PurchaseQuotationAwardAllocation(401, 501, 601, 5, 0.75m,
+        11.25m, 10m, 16m, "JOD", 5, null, "Duplicate", "P-10", "Coffee beans", "kg")),
+    "The same supplier quotation line must not be awarded twice");
+directSourcing.CompleteAward();
+Check(directSourcing.Status == PurchaseSourcingStatus.Closed,
+    "Completing line allocations must close the sourcing event so the award action cannot be repeated");
 var purchaseOrder = new PurchaseOrder("PO-000001", 301, 501, 5, 1, DateOnly.FromDateTime(DateTime.Today),
     DateOnly.FromDateTime(DateTime.Today.AddDays(5)), "JOD", "30 days", "buyer");
 purchaseOrder.AddLine(new PurchaseOrderLine(601, 10, 2, 2m, 1m, 2m, 11.25m, 10m, 16m, "P-10", "Coffee beans", "kg"));
@@ -1656,6 +1669,12 @@ var supplierQuotationCreateAction = typeof(SupplierQuotationsController)
     .GetMethod(nameof(SupplierQuotationsController.Create), [typeof(CreateSupplierQuotationDto)])!;
 Check(supplierQuotationCreateAction.GetParameters().Single().GetCustomAttribute<BindAttribute>()?.Prefix == "Form",
     "Supplier quotation submission must bind the nested Form fields posted by the create page");
+var supplierQuotationAwardAction = typeof(SupplierQuotationsController)
+    .GetMethod(nameof(SupplierQuotationsController.Award), [typeof(CreatePurchaseQuotationAwardDto)])!;
+Check(supplierQuotationAwardAction.GetParameters().Single().GetCustomAttribute<BindAttribute>()?.Prefix == "Form" &&
+      supplierQuotationAwardAction.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
+      $"{PermissionAuthorizeAttribute.PolicyPrefix}SupplierQuotations.Award",
+    "Line-level quotation awards must bind nested allocations and enforce the dedicated server-side permission");
 var currencySettingsAction = typeof(SettingsController).GetMethod(nameof(SettingsController.Currencies), [typeof(SaveCurrencyExchangeRateDto)])!;
 Check(currencySettingsAction.GetParameters().Single().GetCustomAttribute<BindAttribute>()?.Prefix == "Form",
     "Currency-rate submission must bind the nested Form fields posted by the settings page");
@@ -1772,6 +1791,24 @@ Check(supplierCreditNextStep is
           RequiredPermission: "VendorBills.View"
       } && supplierCreditNextStep.RouteValues.GetValueOrDefault("id") == "18",
     "A posted supplier credit note must guide users back to the reduced vendor bill balance");
+var awardNextStep = WorkflowNextStepGuidance.Resolve(
+    "Supplier line awards completed.",
+    "SupplierQuotations",
+    new Dictionary<string, string?> { ["sourcingEventId"] = "17" });
+Check(awardNextStep is
+      {
+          Controller: "SupplierQuotations",
+          Action: "Comparison",
+          RequiredPermission: "SupplierQuotations.View"
+      } && awardNextStep.RouteValues.GetValueOrDefault("sourcingEventId") == "17",
+    "Completed split awards must guide users to create and review their supplier-grouped orders");
+var splitOrdersNextStep = WorkflowNextStepGuidance.Resolve(
+    "Purchase orders created from line awards.",
+    "SupplierQuotations",
+    new Dictionary<string, string?> { ["sourcingEventId"] = "17" });
+Check(splitOrdersNextStep is { Controller: "SupplierQuotations", Action: "Comparison" } &&
+      splitOrdersNextStep.RouteValues.GetValueOrDefault("sourcingEventId") == "17",
+    "Generated split-award orders must return the user to links for every created order");
 Check(WorkflowNextStepGuidance.Resolve(
           "Operation completed successfully.",
           "Sales",
@@ -1799,7 +1836,7 @@ var completedAward = new SupplierQuotationComparisonPageDto
 {
     SourcingEventId = 7,
     AwardedQuotationId = 11,
-    PurchaseOrderId = 13
+    PurchaseOrders = [new PurchaseRequestOptionDto(13, "PO-000013")]
 };
 Check(!completedAward.CanAward && !completedAward.CanCreatePurchaseDocument,
     "Completed quotation award and purchase-document steps must not offer the same action again");

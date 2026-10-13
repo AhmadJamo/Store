@@ -15,7 +15,7 @@ public sealed class SupplierQuotationRepository(AppDbContext context) : ISupplie
     public Task<SupplierQuotation?> GetBySourcingAndSupplierAsync(int sourcingEventId, int supplierId) =>
         context.SupplierQuotations.FirstOrDefaultAsync(x => x.PurchaseSourcingEventId == sourcingEventId && x.SupplierId == supplierId);
     public Task<PurchaseQuotationAward?> GetAwardAsync(int sourcingEventId) => context.PurchaseQuotationAwards
-        .SingleOrDefaultAsync(x => x.PurchaseSourcingEventId == sourcingEventId);
+        .Include(x => x.Allocations).SingleOrDefaultAsync(x => x.PurchaseSourcingEventId == sourcingEventId);
     public Task AddAsync(SupplierQuotation quotation) => context.SupplierQuotations.AddAsync(quotation).AsTask();
     public Task AddAwardAsync(PurchaseQuotationAward award) => context.PurchaseQuotationAwards.AddAsync(award).AsTask();
 }

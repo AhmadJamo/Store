@@ -1,9 +1,78 @@
 @model MiniStore.Application.DTOs.Purchases.SupplierQuotationComparisonPageDto
 @inject Microsoft.Extensions.Localization.IStringLocalizer<MiniStore.Web.SharedResource> Localizer
-@{ViewData["Title"]=Localizer["Quotation comparison"];var numberSettings=await GeneralSettingsService.GetAsync();}
-<h2>@Localizer["Quotation comparison"]</h2><p class="text-muted">@Localizer["Select one submitted quotation with a recorded reason before creating a Purchase Order."]</p><table class="table"><thead><tr><th>@Localizer["Supplier"]</th><th>@Localizer["Quotation number"]</th><th>@Localizer["Valid until"]</th><th>@Localizer["Lead time days"]</th><th>@Localizer["Net amount"]</th><th>@Localizer["Tax amount"]</th><th>@Localizer["Gross amount"]</th><th>@Localizer["Company currency equivalent"]</th><th></th></tr></thead><tbody>@foreach(var quote in Model.Quotations.OrderBy(x=>x.CompanyGrossAmount)){<tr><td>@quote.SupplierName</td><td>@quote.QuotationNumber</td><td>@quote.ValidUntilDate</td><td>@quote.LeadTimeDays</td><td>@quote.NetAmount.ToMoneyDisplay(numberSettings) @quote.CurrencyCode</td><td>@quote.TaxAmount.ToMoneyDisplay(numberSettings) @quote.CurrencyCode</td><td>@quote.GrossAmount.ToMoneyDisplay(numberSettings) @quote.CurrencyCode</td><td>@quote.CompanyGrossAmount.ToMoneyDisplay(numberSettings) @quote.CompanyCurrencyCode<br/><small class="text-muted">1 @quote.CurrencyCode = @quote.ComparisonExchangeRate.ToString("0.############") @quote.CompanyCurrencyCode</small></td><td>@if(Model.CanAward){<form asp-action="Award" method="post"><input type="hidden" name="sourcingEventId" value="@Model.SourcingEventId"/><input type="hidden" name="quotationId" value="@quote.Id"/><input required name="reason" maxlength="1000" class="form-control form-control-sm mb-1" placeholder="@Localizer["Award reason"]"/><button class="btn btn-sm btn-success">@Localizer["Award"]</button></form>}else if(Model.AwardedQuotationId==quote.Id){<span class="badge bg-success">@Localizer["Award completed"]</span>}else{<span class="text-muted">—</span>}</td></tr>}</tbody></table>
-@if(Model.Quotations.Count==0){<div class="alert alert-info">@Localizer["No supplier quotations have been entered."]</div>}
-else if(!Model.AwardedQuotationId.HasValue){<div class="alert alert-info">@Localizer["Award a quotation before creating the next purchase document."]</div>}
-else if(Model.PurchaseOrderId.HasValue){<a asp-controller="PurchaseOrders" asp-action="Details" asp-route-id="@Model.PurchaseOrderId" class="btn btn-outline-success">@Localizer["Purchase order created — view"]</a>}
-else if(Model.PurchaseAgreementId.HasValue){<a asp-controller="PurchaseAgreements" asp-action="Details" asp-route-id="@Model.PurchaseAgreementId" class="btn btn-outline-success">@Localizer["Purchase agreement created — view"]</a>}
-else if(Model.CanCreatePurchaseDocument){<div class="d-flex gap-2"><form asp-controller="PurchaseOrders" asp-action="CreateFromAward" method="post"><input type="hidden" name="sourcingEventId" value="@Model.SourcingEventId"/><button class="btn btn-outline-primary">@Localizer["Create purchase order from awarded quotation"]</button></form><a asp-controller="PurchaseAgreements" asp-action="Create" asp-route-sourcingEventId="@Model.SourcingEventId" class="btn btn-outline-primary">@Localizer["Create purchase agreement from award"]</a></div>}
+@inject Microsoft.AspNetCore.Authorization.IAuthorizationService AuthorizationService
+@{
+    ViewData["Title"] = Localizer["Quotation comparison"];
+    var numberSettings = await GeneralSettingsService.GetAsync();
+    var canAward = (await AuthorizationService.AuthorizeAsync(User, null, "Permission:SupplierQuotations.Award")).Succeeded;
+    var canCreateOrder = (await AuthorizationService.AuthorizeAsync(User, null, "Permission:PurchaseOrders.Create")).Succeeded;
+    var canCreateAgreement = (await AuthorizationService.AuthorizeAsync(User, null, "Permission:PurchaseAgreements.Create")).Succeeded;
+    var formValues = Model.Form.Allocations
+        .GroupBy(x => x.SupplierQuotationLineId)
+        .ToDictionary(x => x.Key, x => x.First());
+    var allocationIndex = 0;
+}
+<div class="d-flex flex-wrap justify-content-between gap-2 align-items-start mb-3"><div><h2>@Localizer["Quotation comparison"]</h2><p class="text-muted mb-0">@Localizer["Allocate every requested line to one or more suppliers. The total awarded quantity must equal the requested quantity."]</p></div><a asp-controller="PurchaseSourcing" asp-action="Details" asp-route-id="@Model.SourcingEventId" class="btn btn-outline-secondary">@Localizer["Back"]</a></div>
+<div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+@if(Model.Quotations.Count>0)
+{
+    <section class="mb-3"><h3 class="h5">@Localizer["Supplier quotation totals"]</h3><div class="row g-2">@foreach(var quotation in Model.Quotations){<div class="col-md-6 col-xl-4"><div class="card card-body h-100"><div class="d-flex justify-content-between gap-2"><strong>@quotation.SupplierName</strong><span class="badge bg-light text-dark">@quotation.QuotationNumber</span></div><div class="small text-muted mt-1">@Localizer["Valid until"]: @quotation.ValidUntilDate · @Localizer["Lead time days"]: @quotation.LeadTimeDays</div><div class="row g-2 mt-1 small"><div class="col-4"><span class="text-muted">@Localizer["Net amount"]</span><div>@quotation.NetAmount.ToMoneyDisplay(numberSettings) @quotation.CurrencyCode</div></div><div class="col-4"><span class="text-muted">@Localizer["Tax amount"]</span><div>@quotation.TaxAmount.ToMoneyDisplay(numberSettings) @quotation.CurrencyCode</div></div><div class="col-4"><span class="text-muted">@Localizer["Gross amount"]</span><div class="fw-semibold">@quotation.GrossAmount.ToMoneyDisplay(numberSettings) @quotation.CurrencyCode</div></div></div><div class="small mt-2">@Localizer["Company currency equivalent"]: <strong>@quotation.CompanyGrossAmount.ToMoneyDisplay(numberSettings) @quotation.CompanyCurrencyCode</strong></div></div></div>}</div></section>
+}
+
+@if(Model.Quotations.Count==0)
+{
+    <div class="alert alert-info">@Localizer["No supplier quotations have been entered."]</div>
+}
+else if(Model.CanAward)
+{
+    <form asp-action="Award" method="post">
+        <input type="hidden" name="Form.SourcingEventId" value="@Model.SourcingEventId" />
+        <div class="row g-3">
+        @foreach(var sourceLine in Model.SourcingLines)
+        {
+            var candidates = Model.Quotations.Select(q => new { Quote = q, Line = q.Lines.SingleOrDefault(l => l.PurchaseSourcingLineId == sourceLine.Id) }).Where(x => x.Line is not null).ToList();
+            <div class="col-12"><div class="card shadow-sm"><div class="card-header d-flex flex-wrap justify-content-between gap-2"><strong>@sourceLine.ProductCode — @sourceLine.ProductName</strong><span>@Localizer["Requested quantity"]: @sourceLine.RequestedQuantity.ToQuantityDisplay(numberSettings) @sourceLine.UnitName</span></div><div class="card-body"><div class="row g-3">
+            @foreach(var candidate in candidates)
+            {
+                var line = candidate.Line!;
+                var existing = formValues.GetValueOrDefault(line.Id);
+                <div class="col-md-6 col-xl-4"><div class="border rounded p-3 h-100">
+                    <input type="hidden" name="Form.Allocations[@allocationIndex].SupplierQuotationLineId" value="@line.Id" />
+                    <div class="d-flex justify-content-between gap-2"><strong>@candidate.Quote.SupplierName</strong><span class="badge bg-light text-dark">@candidate.Quote.QuotationNumber</span></div>
+                    <div class="small text-muted mt-1">@Localizer["Quoted quantity"]: @line.QuotedQuantity.ToQuantityDisplay(numberSettings) @line.UnitName · @Localizer["Lead time days"]: @candidate.Quote.LeadTimeDays</div>
+                    <div class="mt-2">@Localizer["Unit price"]: <strong>@line.UnitPrice.ToMoneyDisplay(numberSettings) @candidate.Quote.CurrencyCode</strong></div>
+                    <div class="small">@Localizer["Discount %"]: @line.DiscountPercent.ToDisplayNumber(numberSettings.DecimalPlaces) · @Localizer["Tax %"]: @line.TaxPercent.ToDisplayNumber(numberSettings.DecimalPlaces)</div>
+                    <div class="small">@Localizer["Gross amount"]: @line.GrossAmount.ToMoneyDisplay(numberSettings) @candidate.Quote.CurrencyCode · @line.CompanyGrossAmount.ToMoneyDisplay(numberSettings) @candidate.Quote.CompanyCurrencyCode</div>
+                    <div class="mt-3"><label class="form-label">@Localizer["Awarded quantity"]</label><input name="Form.Allocations[@allocationIndex].AwardedQuantity" value="@(existing?.AwardedQuantity.ToMoneyInput(numberSettings))" type="number" min="0" max="@line.QuotedQuantity.ToMoneyInput(numberSettings)" step="0.000001" class="form-control" /></div>
+                    <div class="mt-2"><label class="form-label">@Localizer["Selection reason"]</label><textarea name="Form.Allocations[@allocationIndex].Reason" maxlength="1000" class="form-control" rows="2">@existing?.Reason</textarea></div>
+                </div></div>
+                allocationIndex++;
+            }
+            @if(candidates.Count==0){<div class="col-12 text-muted">@Localizer["No submitted supplier quote covers this line."]</div>}
+            </div></div></div></div>
+        }
+        </div>
+        @if(canAward){<button class="btn btn-success mt-3">@Localizer["Complete line awards"]</button>}
+    </form>
+}
+else
+{
+    <div class="alert alert-success"><strong>@Localizer["Award completed"]</strong><div>@Localizer["Every requested quantity has a recorded supplier allocation and reason."]</div></div>
+    <div class="row g-3">
+    @foreach(var sourceLine in Model.SourcingLines)
+    {
+        var allocations = Model.AwardAllocations.Where(x => x.PurchaseSourcingLineId == sourceLine.Id).ToList();
+        <div class="col-md-6"><div class="card h-100"><div class="card-header"><strong>@sourceLine.ProductCode — @sourceLine.ProductName</strong><div class="small text-muted">@Localizer["Requested quantity"]: @sourceLine.RequestedQuantity.ToQuantityDisplay(numberSettings) @sourceLine.UnitName</div></div><div class="list-group list-group-flush">@foreach(var allocation in allocations){<div class="list-group-item"><div class="d-flex justify-content-between gap-2"><strong>@allocation.SupplierName</strong><span>@allocation.AwardedQuantity.ToQuantityDisplay(numberSettings) @sourceLine.UnitName</span></div><div class="small">@allocation.UnitPrice.ToMoneyDisplay(numberSettings) @allocation.CurrencyCode · @Localizer["Lead time days"]: @allocation.LeadTimeDays</div><div class="small text-muted">@Localizer["Selection reason"]: @allocation.Reason</div></div>}</div></div></div>
+    }
+    </div>
+}
+
+@if(Model.PurchaseOrders.Count>0)
+{
+    <div class="card card-body mt-3"><h3 class="h5">@Localizer["Created purchase orders"]</h3><div class="d-flex flex-wrap gap-2">@foreach(var order in Model.PurchaseOrders){<a asp-controller="PurchaseOrders" asp-action="Details" asp-route-id="@order.Id" class="btn btn-outline-success">@order.Label</a>}</div></div>
+}
+else if(Model.CanCreatePurchaseDocument && canCreateOrder)
+{
+    <div class="d-flex flex-wrap gap-2 mt-3"><form asp-controller="PurchaseOrders" asp-action="CreateFromAward" method="post"><input type="hidden" name="sourcingEventId" value="@Model.SourcingEventId" /><button class="btn btn-primary">@Localizer["Create purchase orders from line awards"]</button></form>@if(Model.CanCreatePurchaseAgreement && canCreateAgreement){<a asp-controller="PurchaseAgreements" asp-action="Create" asp-route-sourcingEventId="@Model.SourcingEventId" class="btn btn-outline-primary">@Localizer["Create purchase agreement from award"]</a>}</div>
+}

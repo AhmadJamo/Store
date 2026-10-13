@@ -1851,4 +1851,38 @@
   <data name="The selected direct RFQ role was not found." xml:space="preserve"><value>لم يتم العثور على الدور المحدد لطلب عرض السعر المباشر.</value></data>
   <data name="Purchase sourcing policy was modified by another user. Reload and try again." xml:space="preserve"><value>تم تعديل سياسة توريد المشتريات بواسطة مستخدم آخر. أعد تحميل الصفحة وحاول مجدداً.</value></data>
   <data name="Open purchase sourcing policy" xml:space="preserve"><value>فتح سياسة توريد المشتريات</value></data>
+  <data name="Allocate every requested line to one or more suppliers. The total awarded quantity must equal the requested quantity." xml:space="preserve"><value>وزّع كل بند مطلوب على مورد واحد أو أكثر. يجب أن يساوي مجموع الكمية المُرسّاة الكمية المطلوبة.</value></data>
+  <data name="Supplier quotation totals" xml:space="preserve"><value>إجماليات عروض أسعار الموردين</value></data>
+  <data name="Awarded quantity" xml:space="preserve"><value>الكمية المُرسّاة</value></data>
+  <data name="Selection reason" xml:space="preserve"><value>سبب الاختيار</value></data>
+  <data name="No submitted supplier quote covers this line." xml:space="preserve"><value>لا يوجد عرض سعر مورد مُرسل يغطي هذا البند.</value></data>
+  <data name="Complete line awards" xml:space="preserve"><value>إتمام ترسية البنود</value></data>
+  <data name="Every requested quantity has a recorded supplier allocation and reason." xml:space="preserve"><value>تم تسجيل المورد والكمية وسبب الاختيار لكل كمية مطلوبة.</value></data>
+  <data name="Created purchase orders" xml:space="preserve"><value>أوامر الشراء المنشأة</value></data>
+  <data name="Create purchase orders from line awards" xml:space="preserve"><value>إنشاء أوامر الشراء من ترسية البنود</value></data>
+  <data name="Supplier line awards completed." xml:space="preserve"><value>تم إتمام ترسية بنود الموردين.</value></data>
+  <data name="Purchase orders created from line awards." xml:space="preserve"><value>تم إنشاء أوامر الشراء من ترسية البنود.</value></data>
+  <data name="Review created purchase orders" xml:space="preserve"><value>مراجعة أوامر الشراء المنشأة</value></data>
+  <data name="Open each supplier purchase order created from the recorded line allocations." xml:space="preserve"><value>افتح أمر الشراء الخاص بكل مورد والناتج عن توزيع البنود المسجل.</value></data>
+  <data name="Create the supplier purchase orders, or a purchase agreement when every line was awarded to one supplier." xml:space="preserve"><value>أنشئ أوامر شراء الموردين، أو اتفاقية شراء عندما تكون جميع البنود مُرسّاة على مورد واحد.</value></data>
+  <data name="Each supplier quotation line can be awarded only once." xml:space="preserve"><value>يمكن ترسية بند عرض سعر المورد مرة واحدة فقط.</value></data>
+  <data name="Award allocation references are required." xml:space="preserve"><value>مراجع توزيع الترسية مطلوبة.</value></data>
+  <data name="Awarded quantity must be greater than zero." xml:space="preserve"><value>يجب أن تكون الكمية المُرسّاة أكبر من صفر.</value></data>
+  <data name="Awarded unit price cannot be negative." xml:space="preserve"><value>لا يمكن أن يكون سعر الوحدة المُرسّى سالباً.</value></data>
+  <data name="Award discount and tax percentages must be between 0 and 100." xml:space="preserve"><value>يجب أن تكون نسبتا الخصم والضريبة للترسية بين 0 و100.</value></data>
+  <data name="Each award allocation requires a reason up to 1000 characters." xml:space="preserve"><value>يتطلب كل توزيع ترسية سبباً لا يتجاوز 1000 حرف.</value></data>
+  <data name="Award product snapshots are required." xml:space="preserve"><value>بيانات المنتج الثابتة عند الترسية مطلوبة.</value></data>
+  <data name="Only a sent sourcing event can complete its award." xml:space="preserve"><value>يمكن إتمام ترسية عملية توريد مُرسلة فقط.</value></data>
+  <data name="This sourcing event award is already complete." xml:space="preserve"><value>تم إتمام ترسية عملية التوريد هذه مسبقاً.</value></data>
+  <data name="Select at least one positive award allocation." xml:space="preserve"><value>اختر توزيع ترسية واحداً على الأقل بكمية أكبر من صفر.</value></data>
+  <data name="Each supplier quotation line can be allocated only once." xml:space="preserve"><value>يمكن توزيع بند عرض سعر المورد مرة واحدة فقط.</value></data>
+  <data name="One or more award lines do not belong to a submitted quotation for this sourcing event." xml:space="preserve"><value>بند ترسية واحد أو أكثر لا يتبع عرض سعر مُرسلاً لعملية التوريد هذه.</value></data>
+  <data name="Awarded quantity cannot exceed the supplier quoted quantity." xml:space="preserve"><value>لا يمكن أن تتجاوز الكمية المُرسّاة الكمية التي عرضها المورد.</value></data>
+  <data name="Each positive award allocation requires a reason up to 1000 characters." xml:space="preserve"><value>يتطلب كل توزيع ترسية بكمية موجبة سبباً لا يتجاوز 1000 حرف.</value></data>
+  <data name="Award allocations for every sourcing line must equal its requested quantity exactly." xml:space="preserve"><value>يجب أن يساوي مجموع توزيعات الترسية لكل بند توريد كميته المطلوبة تماماً.</value></data>
+  <data name="Awarded sourcing line was not found." xml:space="preserve"><value>لم يتم العثور على بند التوريد المُرسّى.</value></data>
+  <data name="A purchase order already exists for one or more awarded quotations." xml:space="preserve"><value>يوجد أمر شراء مسبقاً لعرض سعر مُرسّى واحد أو أكثر.</value></data>
+  <data name="A purchase agreement already exists for one or more awarded quotations." xml:space="preserve"><value>توجد اتفاقية شراء مسبقاً لعرض سعر مُرسّى واحد أو أكثر.</value></data>
+  <data name="Purchase agreements require a complete award to one supplier; split awards must create purchase orders." xml:space="preserve"><value>تتطلب اتفاقية الشراء ترسية كاملة على مورد واحد؛ أما الترسية الموزعة فيجب أن تنشئ أوامر شراء.</value></data>
+  <data name="Purchase agreement quantity cannot exceed the awarded quantity." xml:space="preserve"><value>لا يمكن أن تتجاوز كمية اتفاقية الشراء الكمية المُرسّاة.</value></data>
 </root>

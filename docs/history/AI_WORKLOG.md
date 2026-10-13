@@ -1,5 +1,13 @@
 # AI Work Log
 
+## 2026-10-13 — PUR-210 line-level split supplier awards
+
+- Replaced whole-quotation winner selection with exact line-level quantity allocations that freeze supplier, quoted price, discount, tax, currency, lead time, payment terms, product/unit snapshots and a required selection reason.
+- Rebuilt quotation comparison as responsive supplier cards, enforced complete requested quantities without over-award, closed completed sourcing events and replaced repeated action buttons with completed allocation evidence.
+- Created one Draft Purchase Order per awarded supplier quotation and exposed every generated order; single-supplier Purchase Agreements now reject split or incomplete awards.
+- Added and applied migration `20261013104238_AddLineLevelSplitAwards`, including safe backfill of existing awards, Arabic localization, next-step guidance and the architectural decision record.
+- Release builds passed with zero warnings/errors; 630 focused regression checks passed, and SQL integration proved the 3-product/2-supplier scenario creates two orders with exact quantities and no duplication.
+
 ## 2026-10-13 — PUR-200 Flexible RFQ Workspace and Fast Path
 
 - Added a separately authorized direct RFQ path alongside approved Purchase Request sourcing. A tenant policy gates it by enable state, estimated company-currency amount, optional tenant role and supplier active state; the Application service rechecks permission and policy before saving.

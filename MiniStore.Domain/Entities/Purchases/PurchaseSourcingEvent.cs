@@ -145,6 +145,13 @@ public sealed class PurchaseSourcingEvent
         Status = PurchaseSourcingStatus.Cancelled;
     }
 
+    public void CompleteAward()
+    {
+        if (Status != PurchaseSourcingStatus.Sent)
+            throw new InvalidOperationException("Only a sent sourcing event can complete its award.");
+        Status = PurchaseSourcingStatus.Closed;
+    }
+
     private void EnsureDraft()
     {
         if (Status != PurchaseSourcingStatus.Draft)
