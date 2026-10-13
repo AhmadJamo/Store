@@ -44,6 +44,13 @@ public sealed class CreateVendorBillDto
     public List<CreateVendorBillLineDto> Lines { get; set; } = [];
 }
 
+public sealed class VendorBillAttachmentInputDto
+{
+    public string FileName { get; init; } = string.Empty;
+    public string? ContentType { get; init; }
+    public byte[] Content { get; init; } = [];
+}
+
 public sealed class CreateVendorBillLineDto
 {
     public int GoodsReceiptLineId { get; set; }
@@ -67,6 +74,14 @@ public sealed class VendorBillDto
     public string ExchangeRateSource { get; init; } = string.Empty;
     public string? Notes { get; init; }
     public VendorBillStatus Status { get; init; }
+    public string? ApprovedByUserId { get; init; }
+    public DateTime? ApprovedAtUtc { get; init; }
+    public string? PostedByUserId { get; init; }
+    public DateTime? PostedAtUtc { get; init; }
+    public string? CancelledByUserId { get; init; }
+    public DateTime? CancelledAtUtc { get; init; }
+    public string? CancellationReason { get; init; }
+    public byte[] RowVersion { get; init; } = [];
     public decimal NetAmount { get; init; }
     public decimal TaxAmount { get; init; }
     public decimal TotalAmount { get; init; }
@@ -82,6 +97,16 @@ public sealed class VendorBillDto
     public bool CanCreateCreditNote { get; init; }
     public PurchaseMatchRunDto? Match { get; init; }
     public List<VendorBillLineDto> Lines { get; init; } = [];
+    public List<VendorBillAttachmentDto> Attachments { get; init; } = [];
+}
+
+public sealed class VendorBillAttachmentDto
+{
+    public int Id { get; init; }
+    public string FileName { get; init; } = string.Empty;
+    public string ContentType { get; init; } = string.Empty;
+    public long Size { get; init; }
+    public DateTime UploadedAtUtc { get; init; }
 }
 
 public sealed class VendorBillLineDto

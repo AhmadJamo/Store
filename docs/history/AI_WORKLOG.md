@@ -1,5 +1,12 @@
 # AI Work Log
 
+## 2026-10-13 — PUR-220 staged Vendor Bill review
+
+- Replaced controller-level immediate posting with Draft entry, matching approval and Approved-only posting, each protected by a separate permission and rowversion.
+- Drafts reserve receipt quantities; normalized supplier invoice identity is rechecked at entry, approval and posting.
+- Added up to ten 5 MB tenant-owned attachments, audited download, responsive no-horizontal-scroll entry cards and localized next-step guidance.
+- Added migration `AddVendorBillReviewWorkflow`. Mixed Ordered Quantity and Service Completion bill sources remain the next PUR-220 increment.
+
 ## 2026-10-13 — PUR-220 service procurement foundation
 
 - Added Service products plus Ordered Quantity, Received Quantity and Service Completion purchase-billing policies, with a required Expense account for policies that bypass Goods Receipt.

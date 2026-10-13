@@ -33,7 +33,7 @@ The PUR-000 through PUR-210 purchase evolution is implemented. The approved cont
 - [x] PUR-190 add multi-currency purchase, receipt, bill and payment accounting.
 - [x] PUR-200 add a policy-controlled direct RFQ workspace and fast path.
 - [x] PUR-210 add line-level and split supplier awards.
-- [ ] PUR-220 add service procurement, per-product billing policy and reviewed Draft Vendor Bills. Product/PO policy snapshots and stock-neutral service completion are implemented; staged Vendor Bills, attachments and mixed-policy posting remain.
+- [ ] PUR-220 add service procurement, per-product billing policy and reviewed Draft Vendor Bills. Policy snapshots, stock-neutral service completion, Draft/Approved/Posted bills and attachments are implemented; mixed-policy bill sources/posting remain.
 - [ ] PUR-230 add atomic CSV/Excel vendor-price import/export and quantity price breaks.
 - [ ] PUR-240 add scheduled replenishment and historical-demand suggestions.
 - [ ] PUR-250 add configurable receiving/quality routes, demand allocation and dropshipping contracts.

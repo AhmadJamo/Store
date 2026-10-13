@@ -5,7 +5,7 @@
     <div><h2>@Localizer["Create vendor bill"]</h2><p class="text-muted mb-0">@Model.PurchaseOrderNumber — @Model.SupplierName</p></div>
     <a asp-controller="PurchaseOrders" asp-action="Details" asp-route-id="@Model.PurchaseOrderId" class="btn btn-outline-secondary">@Localizer["Back"]</a>
 </div>
-<form asp-action="Create" method="post">
+<form asp-action="Create" method="post" enctype="multipart/form-data">
     <input type="hidden" name="PurchaseOrderId" value="@Model.PurchaseOrderId" />
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     <div class="row g-3 mb-3">
@@ -13,33 +13,21 @@
         <div class="col-md-3"><label class="form-label">@Localizer["Bill date"]</label><input name="BillDate" value="@Model.Form.BillDate.ToString("yyyy-MM-dd")" type="date" class="form-control" required /></div>
         <div class="col-md-5"><label class="form-label">@Localizer["Notes"]</label><input name="Notes" value="@Model.Form.Notes" class="form-control" maxlength="1000" /></div>
     </div>
-    <p class="text-muted">@Localizer["Only posted receipt quantities that have not been returned or billed are available."]</p>
-    <div class="table-responsive"><table class="table align-middle">
-        <thead><tr><th>@Localizer["Goods receipt"]</th><th>@Localizer["Product"]</th><th>@Localizer["Available quantity"]</th><th>@Localizer["Bill quantity"]</th><th>@Localizer["Unit price"]</th><th>@Localizer["Purchase tax"]</th></tr></thead>
-        <tbody>
+    <div class="mb-3"><label class="form-label">@Localizer["Attachments"]</label><input name="attachments" type="file" multiple class="form-control"/><small class="text-muted">@Localizer["Up to ten files, maximum 5 MB each."]</small></div>
+    <p class="text-muted">@Localizer["Only posted receipt quantities not reserved by another active bill are available."]</p>
+    <div class="row g-3 mb-3">
         @for (var i = 0; i < Model.Lines.Count; i++)
         {
             var line = Model.Lines[i];
             var submitted = Model.Form.Lines.FirstOrDefault(x => x.GoodsReceiptLineId == line.GoodsReceiptLineId);
             var unitPrice = submitted?.UnitPrice ?? line.SuggestedUnitPrice;
             var taxRateId = submitted?.TaxRateId ?? line.SuggestedTaxRateId;
-            <tr>
-                <td>@line.ReceiptNumber<br/><small class="text-muted">@line.ReceiptDate</small><input type="hidden" name="Lines[@i].GoodsReceiptLineId" value="@line.GoodsReceiptLineId" /></td>
-                <td>@line.ProductCode — @line.ProductName</td><td>@line.RemainingQuantity.ToQuantityDisplay(numberSettings) @line.UnitName</td>
-                <td><input name="Lines[@i].Quantity" value="@((submitted?.Quantity ?? 0).ToQuantityInput(numberSettings))" type="number" class="form-control" min="0" max="@line.RemainingQuantity.ToInputNumber()" step="0.000001" /></td>
-                <td><input name="Lines[@i].UnitPrice" value="@unitPrice.ToMoneyInput(numberSettings)" type="number" class="form-control" min="0" step="0.00000001" /></td>
-                <td><select name="Lines[@i].TaxRateId" class="form-select"><option value="">@Localizer["No tax"]</option>@foreach(var tax in Model.TaxRates){<option value="@tax.Id" selected="@(taxRateId == tax.Id)">@tax.Name (@tax.Rate.ToDisplayNumber(numberSettings.DecimalPlaces)%) @(tax.IsPriceInclusive ? Localizer["Inclusive"] : Localizer["Exclusive"])</option>}</select></td>
-            </tr>
+            <div class="col-12 col-xl-6"><div class="card h-100 card-body"><div class="d-flex flex-wrap justify-content-between gap-2"><div><strong>@line.ProductCode — @line.ProductName</strong><div class="text-muted">@line.ReceiptNumber · @line.ReceiptDate</div></div><span>@line.RemainingQuantity.ToQuantityDisplay(numberSettings) @line.UnitName</span></div><input type="hidden" name="Lines[@i].GoodsReceiptLineId" value="@line.GoodsReceiptLineId"/><div class="row g-3 mt-1"><div class="col-md-4"><label class="form-label">@Localizer["Bill quantity"]</label><input name="Lines[@i].Quantity" value="@((submitted?.Quantity ?? 0).ToQuantityInput(numberSettings))" type="number" class="form-control" min="0" max="@line.RemainingQuantity.ToInputNumber()" step="0.000001"/></div><div class="col-md-4"><label class="form-label">@Localizer["Unit price"]</label><input name="Lines[@i].UnitPrice" value="@unitPrice.ToMoneyInput(numberSettings)" type="number" class="form-control" min="0" step="0.00000001"/></div><div class="col-md-4"><label class="form-label">@Localizer["Purchase tax"]</label><select name="Lines[@i].TaxRateId" class="form-select"><option value="">@Localizer["No tax"]</option>@foreach(var tax in Model.TaxRates){<option value="@tax.Id" selected="@(taxRateId == tax.Id)">@tax.Name (@tax.Rate.ToDisplayNumber(numberSettings.DecimalPlaces)%)</option>}</select></div></div></div></div>
         }
-        </tbody>
-    </table></div>
+    </div>
     @if (Model.Lines.Count == 0) { <div class="alert alert-info">@Localizer["There are no received quantities available for billing."]</div> }
     else
     {
-        <button class="btn btn-primary">@Localizer["Post vendor bill"]</button>
-        @if (ViewBag.CanOverrideMatch == true)
-        {
-            <div class="card card-body mt-3 border-warning"><label class="form-label">@Localizer["Match override reason"]</label><textarea name="MatchOverrideReason" class="form-control mb-2" maxlength="1000">@Model.Form.MatchOverrideReason</textarea><button asp-action="CreateOverride" class="btn btn-warning">@Localizer["Post with match override"]</button></div>
-        }
+        <button class="btn btn-primary">@Localizer["Save vendor bill draft"]</button>
     }
 </form>

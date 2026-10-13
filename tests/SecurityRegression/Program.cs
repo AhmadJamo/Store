@@ -1554,10 +1554,14 @@ Check(receiptReturnController.GetMethod(nameof(GoodsReceiptReturnsController.Ind
     "Goods receipt return visibility and posting must use separate server-side permissions");
 var vendorBill = new VendorBill("VB-000001", 1, 5, " sup/inv-001 ", DateOnly.FromDateTime(DateTime.Today), "jod", "First bill", "buyer");
 vendorBill.AddLine(new VendorBillLine(1, 1, 10, 1m, 11.60m, 9m, 1m, 1, 16m, 45, true, "P-10", "Coffee beans", "kg"));
+vendorBill.AddAttachment(new VendorBillAttachment("invoice.pdf", "application/pdf", [1, 2, 3], "buyer"));
+CheckThrows(() => vendorBill.Post("buyer"), "Draft vendor bills must not bypass approval before posting");
+vendorBill.Approve("approver");
 vendorBill.Post("buyer");
 Check(vendorBill.Status == VendorBillStatus.Posted && vendorBill.NormalizedSupplierInvoiceNumber == "SUPINV001" &&
       vendorBill.NetAmount == 10m && vendorBill.TaxAmount == 1.60m && vendorBill.TotalAmount == 11.60m &&
-      vendorBill.ReceiptClearingAmount == 9m,
+      vendorBill.ReceiptClearingAmount == 9m && vendorBill.Attachments.Single().FileName == "invoice.pdf" &&
+      vendorBill.ApprovedByUserId == "approver",
     "Vendor bills must normalize supplier invoice identity and freeze receipt, price and tax values");
 CheckThrows(() => vendorBill.AddLine(new VendorBillLine(2, 2, 11, 1m, 1m, 1m, 1m, null, 0, null, false, "P-11", "Tea", "kg")),
     "Posted vendor bills must be immutable");
@@ -1567,6 +1571,10 @@ Check(vendorBillType.FindProperty("TenantId") is { IsNullable: false } &&
       vendorBillType.GetIndexes().Any(index => index.IsUnique &&
           index.Properties.Select(property => property.Name).SequenceEqual(new[] { "TenantId", nameof(VendorBill.SupplierId), nameof(VendorBill.NormalizedSupplierInvoiceNumber) })),
     "Vendor bills must be tenant-owned, concurrency-protected and database-unique per normalized supplier invoice");
+Check(db.Model.FindEntityType(typeof(VendorBillAttachment))!.FindProperty("TenantId") is { IsNullable: false } &&
+      PermissionDefinitions.All.Any(x => x.Name == "VendorBills.Approve") &&
+      PermissionDefinitions.All.Any(x => x.Name == "VendorBills.Post"),
+    "Vendor bill attachments must be tenant-owned and approval/posting must use separate permissions");
 Check(DocumentSequence.CreateDefault(DocumentNumberType.VendorBill).Preview(DateTime.Today).StartsWith("VB-"),
     "Vendor bills must use an independent centralized document sequence");
 var supplierCredit = new SupplierCreditNote("SCN-000001", 1, 1, 5, 1, DateOnly.FromDateTime(DateTime.Today),
@@ -1638,16 +1646,19 @@ Check(matchRun.WasOverridden && matchRun.Exceptions.Count == 1 && matchRun.Overr
 CheckArgumentThrows(() => new PurchaseMatchingSettings(101m, 0m),
     "Purchase matching tolerances must reject percentages above 100");
 var vendorBillController = typeof(VendorBillsController);
+var vendorBillCreatePost = vendorBillController.GetMethods().Single(x => x.Name == nameof(VendorBillsController.Create) && x.GetCustomAttribute<HttpPostAttribute>() is not null);
 Check(vendorBillController.GetMethod(nameof(VendorBillsController.Index))!
           .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
       $"{PermissionAuthorizeAttribute.PolicyPrefix}VendorBills.View" &&
-      vendorBillController.GetMethod(nameof(VendorBillsController.Create), [typeof(CreateVendorBillDto)])!
-          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
+      vendorBillCreatePost.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
       $"{PermissionAuthorizeAttribute.PolicyPrefix}VendorBills.Create" &&
-      vendorBillController.GetMethod(nameof(VendorBillsController.CreateOverride))!
+      vendorBillController.GetMethod(nameof(VendorBillsController.ApproveOverride))!
           .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
-      $"{PermissionAuthorizeAttribute.PolicyPrefix}VendorBills.OverrideMatch",
-    "Vendor bill visibility, posting and match override must use separate server-side permissions");
+      $"{PermissionAuthorizeAttribute.PolicyPrefix}VendorBills.OverrideMatch" &&
+      vendorBillController.GetMethod(nameof(VendorBillsController.Approve))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == $"{PermissionAuthorizeAttribute.PolicyPrefix}VendorBills.Approve" &&
+      vendorBillController.GetMethod(nameof(VendorBillsController.Post))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == $"{PermissionAuthorizeAttribute.PolicyPrefix}VendorBills.Post" &&
+      vendorBillController.GetMethod(nameof(VendorBillsController.Cancel))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == $"{PermissionAuthorizeAttribute.PolicyPrefix}VendorBills.Cancel",
+    "Vendor bill visibility, entry, approval, posting and match override must use separate server-side permissions");
 var supplierPayment = new SupplierPayment("SPY-000001", 5, 7, DateOnly.FromDateTime(DateTime.Today), "jod", "BANK-77", null, "cashier");
 supplierPayment.AddLine(new SupplierPaymentLine(1, 4m, "VB-000001", "SUP-001"));
 supplierPayment.AddLine(new SupplierPaymentLine(2, 3m, "VB-000002", "SUP-002"));

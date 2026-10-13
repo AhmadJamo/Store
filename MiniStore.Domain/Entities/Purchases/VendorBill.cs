@@ -1,6 +1,6 @@
 namespace MiniStore.Domain.Entities;
 
-public enum VendorBillStatus { Draft = 1, Posted = 2, Cancelled = 3, Reversed = 4 }
+public enum VendorBillStatus { Draft = 1, Posted = 2, Cancelled = 3, Reversed = 4, Approved = 5 }
 
 public sealed class VendorBill
 {
@@ -23,8 +23,14 @@ public sealed class VendorBill
     public DateTime CreatedAtUtc { get; private set; }
     public string? PostedByUserId { get; private set; }
     public DateTime? PostedAtUtc { get; private set; }
+    public string? ApprovedByUserId { get; private set; }
+    public DateTime? ApprovedAtUtc { get; private set; }
+    public string? CancelledByUserId { get; private set; }
+    public DateTime? CancelledAtUtc { get; private set; }
+    public string? CancellationReason { get; private set; }
     public byte[] RowVersion { get; private set; } = [];
     public List<VendorBillLine> Lines { get; private set; } = [];
+    public List<VendorBillAttachment> Attachments { get; private set; } = [];
     public decimal NetAmount => Lines.Sum(x => x.NetAmount);
     public decimal TaxAmount => Lines.Sum(x => x.TaxAmount);
     public decimal TotalAmount => Lines.Sum(x => x.GrossAmount);
@@ -61,10 +67,32 @@ public sealed class VendorBill
 
     public void Post(string userId)
     {
-        EnsureDraft();
+        if (Status != VendorBillStatus.Approved) throw new InvalidOperationException("Only approved vendor bills can be posted.");
         if (Lines.Count == 0) throw new InvalidOperationException("A vendor bill must contain at least one line.");
         if (string.IsNullOrWhiteSpace(userId)) throw new ArgumentException("User is required.");
         Status = VendorBillStatus.Posted; PostedByUserId = userId.Trim(); PostedAtUtc = DateTime.UtcNow;
+    }
+    public void Approve(string userId)
+    {
+        EnsureDraft();
+        if (Lines.Count == 0) throw new InvalidOperationException("A vendor bill must contain at least one line.");
+        if (string.IsNullOrWhiteSpace(userId)) throw new ArgumentException("User is required.");
+        Status = VendorBillStatus.Approved; ApprovedByUserId = userId.Trim(); ApprovedAtUtc = DateTime.UtcNow;
+    }
+    public void AddAttachment(VendorBillAttachment attachment)
+    {
+        EnsureDraft();
+        if (Attachments.Count >= 10) throw new InvalidOperationException("A vendor bill can contain at most ten attachments.");
+        Attachments.Add(attachment);
+    }
+    public void Cancel(string userId, string reason)
+    {
+        if (Status is not (VendorBillStatus.Draft or VendorBillStatus.Approved))
+            throw new InvalidOperationException("Only draft or approved vendor bills can be cancelled.");
+        if (string.IsNullOrWhiteSpace(userId)) throw new ArgumentException("User is required.");
+        if (string.IsNullOrWhiteSpace(reason) || reason.Trim().Length > 1000)
+            throw new ArgumentException("Vendor bill cancellation reason is required and cannot exceed 1000 characters.");
+        Status = VendorBillStatus.Cancelled; CancelledByUserId = userId.Trim(); CancelledAtUtc = DateTime.UtcNow; CancellationReason = reason.Trim();
     }
     public void Reverse(string userId)
     {
@@ -75,6 +103,30 @@ public sealed class VendorBill
 
     public static string NormalizeInvoiceNumber(string value) => string.Concat((value ?? string.Empty).Trim().ToUpperInvariant().Where(char.IsLetterOrDigit));
     private void EnsureDraft() { if (Status != VendorBillStatus.Draft) throw new InvalidOperationException("Only draft vendor bills can be changed."); }
+}
+
+public sealed class VendorBillAttachment
+{
+    private VendorBillAttachment() { FileName = ContentType = UploadedByUserId = string.Empty; Content = []; }
+    public int Id { get; private set; }
+    public int VendorBillId { get; private set; }
+    public string FileName { get; private set; }
+    public string ContentType { get; private set; }
+    public byte[] Content { get; private set; }
+    public long Size { get; private set; }
+    public string UploadedByUserId { get; private set; }
+    public DateTime UploadedAtUtc { get; private set; }
+
+    public VendorBillAttachment(string fileName, string? contentType, byte[] content, string userId)
+    {
+        fileName = Path.GetFileName(fileName ?? string.Empty);
+        if (string.IsNullOrWhiteSpace(fileName) || fileName.Length > 255) throw new ArgumentException("Attachment file name is required and cannot exceed 255 characters.");
+        if (content is null || content.Length == 0 || content.Length > 5 * 1024 * 1024) throw new ArgumentException("Each vendor bill attachment must be between 1 byte and 5 MB.");
+        if (!string.IsNullOrWhiteSpace(contentType) && contentType.Trim().Length > 150) throw new ArgumentException("Attachment content type cannot exceed 150 characters.");
+        if (string.IsNullOrWhiteSpace(userId)) throw new ArgumentException("User is required.");
+        FileName = fileName; ContentType = string.IsNullOrWhiteSpace(contentType) ? "application/octet-stream" : contentType.Trim();
+        Content = content; Size = content.LongLength; UploadedByUserId = userId.Trim(); UploadedAtUtc = DateTime.UtcNow;
+    }
 }
 
 public sealed class VendorBillLine

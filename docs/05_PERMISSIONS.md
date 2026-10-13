@@ -80,8 +80,10 @@ The Index and mutation actions enforce these policies server-side. Permission se
 - `GoodsReceipts.Create` protects both capture and posting of a Goods Receipt; it is limited to confirmed Purchase Orders and invokes the purchasing Application service. `GoodsReceipts.View` reserves separate receipt visibility for the upcoming history screen.
 - PUR-150 barcode draft creation, scanning and final posting remain protected by `GoodsReceipts.Create`; scanning does not introduce a broader stock-edit permission or bypass the final receipt-posting checks.
 - `GoodsReceiptReturns.Create` protects capture and immediate posting of a receipt-based supplier return; `GoodsReceiptReturns.View` protects its list/detail history. These permissions are distinct from legacy `PurchaseReturns.*`.
-- `VendorBills.Create` protects receipt allocation and normal accounting posting; `VendorBills.View` protects bill list/detail history.
-- `VendorBills.OverrideMatch` separately protects posting a Vendor Bill whose quantity or net price exceeds configured three-way-match tolerances; a reason is mandatory and persisted.
+- `VendorBills.Create` protects Draft entry only; `VendorBills.View` protects history, detail and attachment download.
+- `VendorBills.Approve` protects normal matching review/approval and `VendorBills.Post` separately protects accounting posting of an Approved bill.
+- `VendorBills.Cancel` releases a Draft or Approved bill's reserved quantity and requires a reason; it cannot cancel Posted accounting.
+- `VendorBills.OverrideMatch` protects approval when quantity or net price exceeds configured tolerances; a reason is mandatory and persisted. It does not grant posting.
 - `SupplierPayments.View` protects payment history/detail; `SupplierPayments.Create` separately protects allocating and immediately posting a partial supplier settlement.
 
 # PUR-120 purchase agreement and template permissions

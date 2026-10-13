@@ -31,7 +31,7 @@
 | `Views/PurchaseServiceAcceptances/{Index,Create,Details}.cshtml` | responsive bilingual service-completion capture and immutable evidence; explicitly states that no warehouse stock changes. |
 | `Views/Shared/_Notification.cshtml` | shared localized notification modal with permission-aware resolution buttons for recognized actionable errors and a short next-step explanation/button after successful purchase, inventory and warehouse operations. |
 | `Views/GoodsReceiptReturns/{Index,Create,Details}.cshtml` | bilingual receipt-based supplier return capture and immutable posted history. |
-| `Views/VendorBills/{Index,Create,Details}.cshtml` | bilingual receipt-allocation capture, posted bill history and immutable accounting detail. |
+| `Views/VendorBills/{Index,Create,Details}.cshtml` | responsive bilingual receipt-allocation Draft capture without horizontal scrolling, bounded file upload/download, separate approval/override/post actions and completed-state badges. |
 | `Views/SupplierCreditNotes/{Index,Create,Details}.cshtml` | responsive bilingual billed-return cards with billed/credited/available quantities, optional tracking allocation, immutable accounting/valuation detail and direct Vendor Bill balance link. |
 | `Views/SupplierPayments/{Index,Create,Details}.cshtml` | bilingual open-bill allocation, posted payment history and immutable settlement detail. |
 | `Views/Settings/PurchaseMatching.cshtml` | bilingual tenant quantity/price tolerance administration for three-way matching. |

@@ -1913,4 +1913,28 @@
   <data name="Only service-completion billing lines can use service acceptance." xml:space="preserve"><value>يمكن استخدام إثبات إنجاز الخدمة فقط للبنود التي تُفوتر حسب إنجاز الخدمة.</value></data>
   <data name="Completed service quantity cannot exceed the open ordered quantity." xml:space="preserve"><value>لا يمكن أن تتجاوز كمية الخدمة المنجزة الكمية المطلوبة المتبقية.</value></data>
   <data name="The completed service is now eligible for supplier billing." xml:space="preserve"><value>أصبحت الخدمة المنجزة مؤهلة الآن لفوترة المورد.</value></data>
+  <data name="Vendor bill draft saved." xml:space="preserve"><value>تم حفظ مسودة فاتورة المورد.</value></data>
+  <data name="Vendor bill approved." xml:space="preserve"><value>تم اعتماد فاتورة المورد.</value></data>
+  <data name="Vendor bill approved with a documented match override." xml:space="preserve"><value>تم اعتماد فاتورة المورد مع توثيق تجاوز المطابقة.</value></data>
+  <data name="Save vendor bill draft" xml:space="preserve"><value>حفظ مسودة فاتورة المورد</value></data>
+  <data name="Approve vendor bill" xml:space="preserve"><value>اعتماد فاتورة المورد</value></data>
+  <data name="Approve with match override" xml:space="preserve"><value>اعتماد مع تجاوز المطابقة</value></data>
+  <data name="Posting completed" xml:space="preserve"><value>تم الترحيل</value></data>
+  <data name="Up to ten files, maximum 5 MB each." xml:space="preserve"><value>حتى عشرة ملفات، وبحد أقصى 5 ميجابايت لكل ملف.</value></data>
+  <data name="Only posted receipt quantities not reserved by another active bill are available." xml:space="preserve"><value>تظهر فقط الكميات المستلمة والمرحلة التي لم تحجزها فاتورة مورد فعالة أخرى.</value></data>
+  <data name="Review and approve vendor bill" xml:space="preserve"><value>مراجعة واعتماد فاتورة المورد</value></data>
+  <data name="Review the invoice, matching result and attachments before approval." xml:space="preserve"><value>راجع الفاتورة ونتيجة المطابقة والمرفقات قبل اعتمادها.</value></data>
+  <data name="Post approved vendor bill" xml:space="preserve"><value>ترحيل فاتورة المورد المعتمدة</value></data>
+  <data name="Post the approved bill to create its accounting entry." xml:space="preserve"><value>رحّل الفاتورة المعتمدة لإنشاء قيدها المحاسبي.</value></data>
+  <data name="Only approved vendor bills can be posted." xml:space="preserve"><value>يمكن ترحيل فواتير المورد المعتمدة فقط.</value></data>
+  <data name="A vendor bill can contain at most ten attachments." xml:space="preserve"><value>يمكن أن تحتوي فاتورة المورد على عشرة مرفقات كحد أقصى.</value></data>
+  <data name="Attachment file name is required and cannot exceed 255 characters." xml:space="preserve"><value>اسم ملف المرفق مطلوب ولا يمكن أن يتجاوز 255 حرفاً.</value></data>
+  <data name="Each vendor bill attachment must be between 1 byte and 5 MB." xml:space="preserve"><value>يجب أن يكون حجم مرفق فاتورة المورد بين بايت واحد و5 ميجابايت.</value></data>
+  <data name="Attachment content type cannot exceed 150 characters." xml:space="preserve"><value>لا يمكن أن يتجاوز نوع محتوى المرفق 150 حرفاً.</value></data>
+  <data name="Vendor bill was modified by another user. Reload and try again." xml:space="preserve"><value>تم تعديل فاتورة المورد بواسطة مستخدم آخر. أعد تحميل الصفحة وحاول مرة أخرى.</value></data>
+  <data name="Cancel vendor bill" xml:space="preserve"><value>إلغاء فاتورة المورد</value></data>
+  <data name="Vendor bill cancelled." xml:space="preserve"><value>تم إلغاء فاتورة المورد.</value></data>
+  <data name="Only draft or approved vendor bills can be cancelled." xml:space="preserve"><value>يمكن إلغاء فواتير المورد المسودة أو المعتمدة فقط.</value></data>
+  <data name="Vendor bill cancellation reason is required and cannot exceed 1000 characters." xml:space="preserve"><value>سبب إلغاء فاتورة المورد مطلوب ولا يمكن أن يتجاوز 1000 حرف.</value></data>
+  <data name="Cancel draft or approved vendor bills and reverse posted vendor bills linked to this goods receipt before reversing the receipt." xml:space="preserve"><value>ألغِ فواتير المورد المسودة أو المعتمدة واعكس الفواتير المرحلة المرتبطة بهذا الاستلام قبل عكس الاستلام.</value></data>
 </root>

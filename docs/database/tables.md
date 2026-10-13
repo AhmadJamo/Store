@@ -14,6 +14,7 @@ Schema source is `AppDbContext`, configurations and migrations. Identity's stand
 - **InventoryTrackingTransactions:** immutable lot/serial trace events linked to their balance.
 - **PurchaseOrders / PurchaseOrderLines:** frozen awarded commercial intent plus purchase billing-policy/expense-account snapshots and nullable current closure evidence. Per-line receipt, service completion, return and bill progress is derived from downstream documents.
 - **PurchaseServiceAcceptances / PurchaseServiceAcceptanceLines:** tenant-owned, numbered and immutable completed-service evidence linked to confirmed order lines; no inventory or journal effect.
+- **VendorBills / VendorBillLines / VendorBillAttachments:** receipt-based invoice Drafts reserve quantity, preserve separate approval/posting evidence and store up to ten tenant-owned 5 MB attachments; only Posted bills own accounting effects.
 - **PurchaseOrderLifecycleHistories:** immutable tenant-owned automatic-close, remaining-quantity-close and reopen events with prior/new status, actor, reason and time.
 - **SupplierCreditNotes / SupplierCreditNoteLines:** tenant-owned posted billed-return headers and immutable Vendor Bill line, Goods Receipt line, product, quantity, net/tax/gross, removed-cost and tracking snapshots.
 

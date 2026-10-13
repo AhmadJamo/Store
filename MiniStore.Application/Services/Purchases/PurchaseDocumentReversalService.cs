@@ -101,8 +101,8 @@ public sealed class PurchaseDocumentReversalService(
         if ((await receiptReturns.GetByGoodsReceiptIdAsync(id)).Any(x => x.Status == GoodsReceiptReturnStatus.Posted))
             throw new InvalidOperationException("A goods receipt with posted returns cannot be reversed.");
         var receiptLineIds = receipt.Lines.Select(x => x.Id).ToHashSet();
-        if ((await bills.GetByPurchaseOrderIdAsync(receipt.PurchaseOrderId)).Any(x => x.Status == VendorBillStatus.Posted && x.Lines.Any(line => receiptLineIds.Contains(line.GoodsReceiptLineId))))
-            throw new InvalidOperationException("Reverse vendor bills linked to this goods receipt before reversing the receipt.");
+        if ((await bills.GetByPurchaseOrderIdAsync(receipt.PurchaseOrderId)).Any(x => x.Status != VendorBillStatus.Cancelled && x.Lines.Any(line => receiptLineIds.Contains(line.GoodsReceiptLineId))))
+            throw new InvalidOperationException("Cancel draft or approved vendor bills and reverse posted vendor bills linked to this goods receipt before reversing the receipt.");
         if ((await landedCosts.GetAllAsync()).Any(x => x.GoodsReceiptId == id && x.Status == LandedCostStatus.Posted))
             throw new InvalidOperationException("Reverse landed costs linked to this goods receipt before reversing the receipt.");
         var warehouse = await warehouses.GetByIdAsync(receipt.WarehouseId) ?? throw new InvalidOperationException("Receipt warehouse was not found.");

@@ -90,6 +90,7 @@ public class AppDbContext
     public DbSet<GoodsReceiptReturnLine> GoodsReceiptReturnLines => Set<GoodsReceiptReturnLine>();
     public DbSet<VendorBill> VendorBills => Set<VendorBill>();
     public DbSet<VendorBillLine> VendorBillLines => Set<VendorBillLine>();
+    public DbSet<VendorBillAttachment> VendorBillAttachments => Set<VendorBillAttachment>();
     public DbSet<SupplierCreditNote> SupplierCreditNotes => Set<SupplierCreditNote>();
     public DbSet<SupplierCreditNoteLine> SupplierCreditNoteLines => Set<SupplierCreditNoteLine>();
     public DbSet<PurchaseMatchRun> PurchaseMatchRuns => Set<PurchaseMatchRun>();

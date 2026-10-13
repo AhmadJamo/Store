@@ -15,4 +15,8 @@ Physical receipt remains the only authority allowed to mutate warehouse stock. S
 - Mixed goods and services may share one Purchase Order while retaining distinct operational evidence.
 - Goods Receipt screens and services must reject every non-receipt policy and every non-stocked product.
 - Service completion requires separate view/create permissions and cumulative quantity validation.
-- Vendor Bill Draft/approval/post staging and accounting consumption remain required to finish PUR-220.
+- Vendor Bill Draft/approval/post staging is implemented; policy-aware ordered/service accounting consumption remains required to finish PUR-220.
+
+## Vendor Bill review increment
+
+Vendor Bills now separate Draft entry, matching approval and accounting posting. Attachments belong to the Draft aggregate, and Draft/Approved/Posted rows reserve their receipt allocations. Posting rechecks active supplier invoice identity and requires Approved status. Policy-aware ordered/service sources remain the final increment of this decision.

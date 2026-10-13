@@ -123,6 +123,17 @@ public static class WorkflowNextStepGuidance
                 "Scan the next product, then review and post the receipt when receiving is complete.",
                 "GoodsReceipts.Create", Routes(("id", Route("id"))));
 
+        if (Matches(message, localize, "Vendor bill draft saved."))
+            return new("VendorBills", "Details", "Review and approve vendor bill",
+                "Review the invoice, matching result and attachments before approval.",
+                "VendorBills.View", Routes(("id", Route("id"))));
+
+        if (Matches(message, localize, "Vendor bill approved.",
+                "Vendor bill approved with a documented match override."))
+            return new("VendorBills", "Details", "Post approved vendor bill",
+                "Post the approved bill to create its accounting entry.",
+                "VendorBills.Post", Routes(("id", Route("id"))));
+
         if (Matches(message, localize, "Vendor bill posted.",
                 "Vendor bill posted with a documented match override."))
             return new("SupplierPayments", "Create", "Pay vendor bill",

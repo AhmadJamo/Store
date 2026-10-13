@@ -122,7 +122,7 @@ public sealed class GoodsReceiptReturnService(
             .SelectMany(x => x.Lines).GroupBy(x => x.GoodsReceiptLineId).ToDictionary(x => x.Key, x => x.Sum(y => y.ReturnQuantity));
 
     private async Task<Dictionary<int, decimal>> GetBilledQuantitiesAsync(int purchaseOrderId) =>
-        (await bills.GetByPurchaseOrderIdAsync(purchaseOrderId)).Where(x => x.Status == VendorBillStatus.Posted)
+        (await bills.GetByPurchaseOrderIdAsync(purchaseOrderId)).Where(x => x.Status is VendorBillStatus.Draft or VendorBillStatus.Approved or VendorBillStatus.Posted)
             .SelectMany(x => x.Lines).GroupBy(x => x.GoodsReceiptLineId).ToDictionary(x => x.Key, x => x.Sum(y => y.Quantity));
 
     private static GoodsReceiptReturnDto Map(GoodsReceiptReturn x, string receipt, string supplier, string warehouse) => new()

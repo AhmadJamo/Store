@@ -27,7 +27,8 @@ public sealed class VendorBillService(
         var creditedAmounts = await creditNotes.GetCreditedAmountsAsync([bill.Id]);
         var creditedQuantities = (await creditNotes.GetByVendorBillIdAsync(bill.Id)).Where(x => x.Status == SupplierCreditNoteStatus.Posted)
             .SelectMany(x => x.Lines).GroupBy(x => x.VendorBillLineId).ToDictionary(x => x.Key, x => x.Sum(y => y.Quantity));
-        var canCreateCreditNote = bill.Lines.Any(x => x.Quantity > creditedQuantities.GetValueOrDefault(x.Id));
+        var canCreateCreditNote = bill.Status == VendorBillStatus.Posted &&
+            bill.Lines.Any(x => x.Quantity > creditedQuantities.GetValueOrDefault(x.Id));
         return Map(bill, order?.OrderNumber ?? "-", supplier?.Name ?? "-", await matches.GetByVendorBillIdAsync(bill.Id),
             paidAmounts.GetValueOrDefault(bill.Id), creditedAmounts.GetValueOrDefault(bill.Id), canCreateCreditNote);
     }
@@ -51,7 +52,7 @@ public sealed class VendorBillService(
         };
     }
 
-    public async Task<int> CreateAndPostAsync(CreateVendorBillDto dto, bool allowMatchOverride = false)
+    public async Task<int> CreateDraftAsync(CreateVendorBillDto dto, IReadOnlyList<VendorBillAttachmentInputDto>? attachments = null)
     {
         var submitted = dto.Lines?.Where(x => x.Quantity > 0).ToList() ?? [];
         if (submitted.Count == 0) throw new ArgumentException("Enter at least one positive billed quantity.");
@@ -61,16 +62,10 @@ public sealed class VendorBillService(
         {
             var order = await orders.GetByIdAsync(dto.PurchaseOrderId) ?? throw new InvalidOperationException("Purchase order was not found.");
             if (order.Status is not (PurchaseOrderStatus.Confirmed or PurchaseOrderStatus.Closed)) throw new InvalidOperationException("Only confirmed purchase orders can be billed.");
-            var supplier = await suppliers.GetByIdAsync(order.SupplierId) ?? throw new InvalidOperationException("Supplier was not found.");
-            if (!supplier.AccountId.HasValue) throw new InvalidOperationException("Assign a payable account to the supplier before posting a vendor bill.");
+            _ = await suppliers.GetByIdAsync(order.SupplierId) ?? throw new InvalidOperationException("Supplier was not found.");
             var normalizedInvoice = VendorBill.NormalizeInvoiceNumber(dto.SupplierInvoiceNumber);
             if (normalizedInvoice.Length == 0) throw new ArgumentException("Supplier invoice number must contain at least one letter or number.");
             if (await bills.ExistsActiveSupplierInvoiceAsync(order.SupplierId, normalizedInvoice)) throw new InvalidOperationException("This supplier invoice number has already been used.");
-            var warehouse = await warehouses.GetByIdAsync(order.WarehouseId) ?? throw new InvalidOperationException("Purchase order warehouse was not found.");
-            var settings = await accountingSettings.GetAsync() ?? throw new InvalidOperationException("Configure accounting posting accounts before posting a vendor bill.");
-            if (!settings.GoodsReceivedNotInvoicedAccountId.HasValue) throw new InvalidOperationException("Configure a goods received not invoiced account before posting a vendor bill.");
-            var tolerances = await matchingSettings.GetAsync() ?? new PurchaseMatchingSettings(0, 0);
-
             var taxMap = (await taxRates.GetAllAsync()).ToDictionary(x => x.Id);
             var receiptList = (await receipts.GetByPurchaseOrderIdAsync(order.Id)).Where(x => x.Status == GoodsReceiptStatus.Posted).ToList();
             var receiptLineMap = receiptList.SelectMany(x => x.Lines).ToDictionary(x => x.Id);
@@ -81,8 +76,6 @@ public sealed class VendorBillService(
             created = new VendorBill(await numbers.GenerateAsync(DocumentNumberType.VendorBill, dto.BillDate.ToDateTime(TimeOnly.MinValue)),
                 order.Id, order.SupplierId, dto.SupplierInvoiceNumber, dto.BillDate, order.CurrencyCode, dto.Notes, currentUser.UserId,
                 billRate.CompanyCurrencyCode, billRate.Rate, billRate.RateDate, billRate.Source);
-            var exceptionSpecs = new List<(VendorBillLine Line, PurchaseMatchExceptionType Type, decimal Expected, decimal Actual, decimal Variance, decimal Tolerance)>();
-
             foreach (var input in submitted)
             {
                 if (!receiptLineMap.TryGetValue(input.GoodsReceiptLineId, out var source)) throw new ArgumentException("One or more vendor bill lines do not belong to a posted receipt for this purchase order.");
@@ -96,30 +89,67 @@ public sealed class VendorBillService(
                     tax?.IsPriceInclusive ?? false, source.ProductCodeSnapshot, source.ProductNameSnapshot, source.UnitNameSnapshot,
                     billRate.Rate, receiptRateMap[source.Id]);
                 created.AddLine(line);
-                if (input.Quantity > remaining)
-                {
-                    var quantityVariance = Percent(input.Quantity - remaining, remaining);
-                    if (quantityVariance > tolerances.QuantityTolerancePercent)
-                        exceptionSpecs.Add((line, PurchaseMatchExceptionType.Quantity, remaining, input.Quantity, quantityVariance, tolerances.QuantityTolerancePercent));
-                }
-                var actualNetUnitPrice = tax is { IsPriceInclusive: true }
-                    ? decimal.Round(input.UnitPrice * 100m / (100m + tax.Rate), 8, MidpointRounding.AwayFromZero)
-                    : input.UnitPrice;
-                var priceVariance = source.UnitCost == 0 ? (actualNetUnitPrice == 0 ? 0 : 100m) : Percent(Math.Abs(actualNetUnitPrice - source.UnitCost), source.UnitCost);
-                if (priceVariance > tolerances.PriceTolerancePercent)
-                    exceptionSpecs.Add((line, PurchaseMatchExceptionType.Price, source.UnitCost, actualNetUnitPrice, priceVariance, tolerances.PriceTolerancePercent));
             }
 
             if (created.TotalAmount <= 0) throw new InvalidOperationException("Vendor bill total must be greater than zero.");
-            if (exceptionSpecs.Count > 0 && !allowMatchOverride) throw new InvalidOperationException("Vendor bill exceeds the configured purchase matching tolerances.");
-            await bills.AddAsync(created); await unitOfWork.FlushAsync();
-            var match = new PurchaseMatchRun(created.Id, order.Id, tolerances.QuantityTolerancePercent, tolerances.PriceTolerancePercent, currentUser.UserId);
+            foreach (var attachment in attachments ?? [])
+                created.AddAttachment(new VendorBillAttachment(attachment.FileName, attachment.ContentType, attachment.Content, currentUser.UserId));
+            await bills.AddAsync(created);
+        });
+        return created!.Id;
+    }
+
+    public async Task ApproveAsync(int id, byte[] rowVersion, bool allowMatchOverride = false, string? overrideReason = null)
+    {
+        await unitOfWork.ExecuteInTransactionAsync(async () =>
+        {
+            var bill = await bills.GetByIdAsync(id) ?? throw new InvalidOperationException("Vendor bill was not found.");
+            EnsureVersion(bill, rowVersion);
+            if (await bills.ExistsActiveSupplierInvoiceAsync(bill.SupplierId, bill.NormalizedSupplierInvoiceNumber, bill.Id))
+                throw new InvalidOperationException("This supplier invoice number has already been used.");
+            var tolerances = await matchingSettings.GetAsync() ?? new PurchaseMatchingSettings(0, 0);
+            var exceptionSpecs = new List<(VendorBillLine Line, PurchaseMatchExceptionType Type, decimal Expected, decimal Actual, decimal Variance, decimal Tolerance)>();
+            foreach (var line in bill.Lines)
+            {
+                if (line.Quantity > line.ReceiptClearingQuantity)
+                {
+                    var variance = Percent(line.Quantity - line.ReceiptClearingQuantity, line.ReceiptClearingQuantity);
+                    if (variance > tolerances.QuantityTolerancePercent)
+                        exceptionSpecs.Add((line, PurchaseMatchExceptionType.Quantity, line.ReceiptClearingQuantity, line.Quantity, variance, tolerances.QuantityTolerancePercent));
+                }
+                var actualNetUnitPrice = line.Quantity == 0 ? 0 : line.NetAmount / line.Quantity;
+                var priceVariance = line.ReceiptUnitCost == 0 ? (actualNetUnitPrice == 0 ? 0 : 100m) : Percent(Math.Abs(actualNetUnitPrice - line.ReceiptUnitCost), line.ReceiptUnitCost);
+                if (priceVariance > tolerances.PriceTolerancePercent)
+                    exceptionSpecs.Add((line, PurchaseMatchExceptionType.Price, line.ReceiptUnitCost, actualNetUnitPrice, priceVariance, tolerances.PriceTolerancePercent));
+            }
+            if (exceptionSpecs.Count > 0 && !allowMatchOverride)
+                throw new InvalidOperationException("Vendor bill exceeds the configured purchase matching tolerances.");
+            var match = new PurchaseMatchRun(bill.Id, bill.PurchaseOrderId, tolerances.QuantityTolerancePercent, tolerances.PriceTolerancePercent, currentUser.UserId);
             foreach (var exception in exceptionSpecs)
                 match.AddException(new PurchaseMatchException(exception.Line.Id, exception.Line.PurchaseOrderLineId, exception.Line.GoodsReceiptLineId,
                     exception.Type, exception.Expected, exception.Actual, exception.Variance, exception.Tolerance,
                     exception.Line.ProductCodeSnapshot, exception.Line.ProductNameSnapshot));
-            if (exceptionSpecs.Count > 0) match.Override(dto.MatchOverrideReason ?? string.Empty, currentUser.UserId);
+            if (exceptionSpecs.Count > 0) match.Override(overrideReason ?? string.Empty, currentUser.UserId);
             await matches.AddAsync(match);
+            bill.Approve(currentUser.UserId);
+        });
+    }
+
+    public async Task PostAsync(int id, byte[] rowVersion)
+    {
+        await unitOfWork.ExecuteInTransactionAsync(async () =>
+        {
+            var created = await bills.GetByIdAsync(id) ?? throw new InvalidOperationException("Vendor bill was not found.");
+            EnsureVersion(created, rowVersion);
+            if (created.Status != VendorBillStatus.Approved) throw new InvalidOperationException("Only approved vendor bills can be posted.");
+            if (await bills.ExistsActiveSupplierInvoiceAsync(created.SupplierId, created.NormalizedSupplierInvoiceNumber, created.Id))
+                throw new InvalidOperationException("This supplier invoice number has already been used.");
+            var order = await orders.GetByIdAsync(created.PurchaseOrderId) ?? throw new InvalidOperationException("Purchase order was not found.");
+            var supplier = await suppliers.GetByIdAsync(created.SupplierId) ?? throw new InvalidOperationException("Supplier was not found.");
+            if (!supplier.AccountId.HasValue) throw new InvalidOperationException("Assign a payable account to the supplier before posting a vendor bill.");
+            var warehouse = await warehouses.GetByIdAsync(order.WarehouseId) ?? throw new InvalidOperationException("Purchase order warehouse was not found.");
+            var settings = await accountingSettings.GetAsync() ?? throw new InvalidOperationException("Configure accounting posting accounts before posting a vendor bill.");
+            if (!settings.GoodsReceivedNotInvoicedAccountId.HasValue) throw new InvalidOperationException("Configure a goods received not invoiced account before posting a vendor bill.");
             var journalLines = new List<JournalEntryLine>();
             if (created.ReceiptClearingAmount > 0) journalLines.Add(new JournalEntryLine(settings.GoodsReceivedNotInvoicedAccountId.Value,
                 created.ReceiptClearingAmount, 0, warehouse.BranchId, warehouse.Id, $"GRNI clearing for {created.BillNumber}"));
@@ -136,13 +166,27 @@ public sealed class VendorBillService(
             foreach (var taxGroup in created.Lines.Where(x => x.TaxAmount > 0).GroupBy(x => x.TaxInputAccountId!.Value))
                 journalLines.Add(new JournalEntryLine(taxGroup.Key, taxGroup.Sum(x => x.CompanyTaxAmount), 0, warehouse.BranchId, warehouse.Id, $"Input tax on {created.BillNumber}"));
             journalLines.Add(new JournalEntryLine(supplier.AccountId.Value, 0, created.CompanyTotalAmount, warehouse.BranchId, warehouse.Id, $"Supplier payable for {created.BillNumber}"));
-            await journalPosting.PostAsync(new JournalPostingRequest(dto.BillDate.ToDateTime(TimeOnly.MinValue), $"Vendor bill {created.BillNumber}",
+            await journalPosting.PostAsync(new JournalPostingRequest(created.BillDate.ToDateTime(TimeOnly.MinValue), $"Vendor bill {created.BillNumber}",
                 "VendorBill", created.BillNumber, journalLines, "This vendor bill has already been posted to accounting."));
             created.Post(currentUser.UserId);
-            await unitOfWork.FlushAsync();
             await orderLifecycle.TryCloseAutomaticallyAsync(order.Id);
         });
-        return created!.Id;
+    }
+
+    public Task CancelAsync(int id, byte[] rowVersion, string reason) => unitOfWork.ExecuteInTransactionAsync(async () =>
+    {
+        var bill = await bills.GetByIdAsync(id) ?? throw new InvalidOperationException("Vendor bill was not found.");
+        EnsureVersion(bill, rowVersion); bill.Cancel(currentUser.UserId, reason);
+    });
+
+    public async Task<int> CreateAndPostAsync(CreateVendorBillDto dto, bool allowMatchOverride = false)
+    {
+        var id = await CreateDraftAsync(dto);
+        var draft = await bills.GetByIdAsync(id) ?? throw new InvalidOperationException("Vendor bill was not found.");
+        await ApproveAsync(id, draft.RowVersion, allowMatchOverride, dto.MatchOverrideReason);
+        var approved = await bills.GetByIdAsync(id) ?? throw new InvalidOperationException("Vendor bill was not found.");
+        await PostAsync(id, approved.RowVersion);
+        return id;
     }
 
     private async Task<List<VendorBillAvailableLineDto>> GetAvailableLinesAsync(PurchaseOrder order, List<TaxRate> taxes)
@@ -175,19 +219,25 @@ public sealed class VendorBillService(
     }
 
     private async Task<Dictionary<int, decimal>> GetBilledQuantitiesAsync(int orderId) => (await bills.GetByPurchaseOrderIdAsync(orderId))
-        .Where(x => x.Status == VendorBillStatus.Posted).SelectMany(x => x.Lines).GroupBy(x => x.GoodsReceiptLineId).ToDictionary(x => x.Key, x => x.Sum(y => y.Quantity));
+        .Where(x => x.Status is VendorBillStatus.Draft or VendorBillStatus.Approved or VendorBillStatus.Posted)
+        .SelectMany(x => x.Lines).GroupBy(x => x.GoodsReceiptLineId).ToDictionary(x => x.Key, x => x.Sum(y => y.Quantity));
 
     private static VendorBillDto Map(VendorBill x, string orderNumber, string supplierName, PurchaseMatchRun? match = null, decimal paidAmount = 0, decimal creditedAmount = 0, bool canCreateCreditNote = false) => new()
     {
         Id = x.Id, BillNumber = x.BillNumber, PurchaseOrderNumber = orderNumber, SupplierName = supplierName,
         SupplierInvoiceNumber = x.SupplierInvoiceNumber, BillDate = x.BillDate, CurrencyCode = x.CurrencyCode, CompanyCurrencyCode = x.CompanyCurrencyCode, ExchangeRate = x.ExchangeRate, ExchangeRateDate = x.ExchangeRateDate, ExchangeRateSource = x.ExchangeRateSource, Notes = x.Notes,
-        Status = x.Status, NetAmount = x.NetAmount, TaxAmount = x.TaxAmount, TotalAmount = x.TotalAmount,
+        Status = x.Status, ApprovedByUserId = x.ApprovedByUserId, ApprovedAtUtc = x.ApprovedAtUtc,
+        PostedByUserId = x.PostedByUserId, PostedAtUtc = x.PostedAtUtc,
+        CancelledByUserId = x.CancelledByUserId, CancelledAtUtc = x.CancelledAtUtc, CancellationReason = x.CancellationReason,
+        RowVersion = x.RowVersion,
+        NetAmount = x.NetAmount, TaxAmount = x.TaxAmount, TotalAmount = x.TotalAmount,
         PaidAmount = paidAmount, CreditedAmount = creditedAmount, OutstandingAmount = Math.Max(0, x.TotalAmount - paidAmount - creditedAmount), ReceiptClearingAmount = x.ReceiptClearingAmount,
         CompanyNetAmount = x.CompanyNetAmount, CompanyTaxAmount = x.CompanyTaxAmount, CompanyTotalAmount = x.CompanyTotalAmount, CanCreateCreditNote = canCreateCreditNote,
         Lines = x.Lines.Select(line => new VendorBillLineDto { Id = line.Id, ProductCode = line.ProductCodeSnapshot, ProductName = line.ProductNameSnapshot,
             UnitName = line.UnitNameSnapshot, Quantity = line.Quantity, UnitPrice = line.UnitPrice, TaxPercent = line.TaxPercent,
             IsTaxInclusive = line.IsTaxInclusive, NetAmount = line.NetAmount, TaxAmount = line.TaxAmount, GrossAmount = line.GrossAmount,
             ReceiptClearingAmount = line.ReceiptClearingAmount, CompanyNetAmount = line.CompanyNetAmount, CompanyTaxAmount = line.CompanyTaxAmount, CompanyGrossAmount = line.CompanyGrossAmount }).ToList(),
+        Attachments = x.Attachments.Select(a => new VendorBillAttachmentDto { Id = a.Id, FileName = a.FileName, ContentType = a.ContentType, Size = a.Size, UploadedAtUtc = a.UploadedAtUtc }).ToList(),
         Match = match is null ? null : new PurchaseMatchRunDto
         {
             QuantityTolerancePercent = match.QuantityTolerancePercent, PriceTolerancePercent = match.PriceTolerancePercent,
@@ -197,6 +247,12 @@ public sealed class VendorBillService(
                 ActualValue = value.ActualValue, VariancePercent = value.VariancePercent, TolerancePercent = value.TolerancePercent }).ToList()
         }
     };
+    public async Task<VendorBillAttachment?> GetAttachmentAsync(int billId, int attachmentId) => await bills.GetAttachmentAsync(billId, attachmentId);
+    private static void EnsureVersion(VendorBill bill, byte[] rowVersion)
+    {
+        if (rowVersion is null || !bill.RowVersion.SequenceEqual(rowVersion))
+            throw new InvalidOperationException("Vendor bill was modified by another user. Reload and try again.");
+    }
     private static decimal Round(decimal value) => Math.Round(value, 2, MidpointRounding.AwayFromZero);
     private static void AddExchangeVariance(List<JournalEntryLine> lines, AccountingSettings settings, decimal variance, Warehouse warehouse, string billNumber)
     {
