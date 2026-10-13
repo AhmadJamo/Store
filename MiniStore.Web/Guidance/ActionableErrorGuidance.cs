@@ -33,6 +33,15 @@ public static class ActionableErrorGuidance
             return new("PurchaseApprovalRules", "Index", "Open purchase approval rules", "PurchaseApprovalRules.Manage");
 
         if (Matches(message, localize,
+                "Configure the direct RFQ policy before using the fast path.",
+                "Direct RFQ creation is disabled by company policy. Create a purchase request instead."))
+            return new("Settings", "PurchaseSourcingPolicy", "Open purchase sourcing policy", "Administration.Access");
+
+        if (Matches(message, localize,
+                "The estimated RFQ amount exceeds the direct path limit. Create a purchase request for approval."))
+            return new("PurchaseRequests", "Create", "Create purchase request", "PurchaseRequests.Create");
+
+        if (Matches(message, localize,
                 "Payment method was not found.",
                 "The selected payment method is inactive."))
             return new("PaymentMethods", "Index", "Manage Payment Methods", "Administration.Access");

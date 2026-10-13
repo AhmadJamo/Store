@@ -111,6 +111,7 @@ public static class PermissionDefinitions
         new("PurchaseApprovalRules.Manage", "Manage Purchase Approval Rules", "Purchases"),
         new("PurchaseSourcing.View", "View Purchase Sourcing", "Purchases"),
         new("PurchaseSourcing.Create", "Create Purchase Sourcing", "Purchases"),
+        new("PurchaseSourcing.CreateDirect", "Create Direct RFQ Within Policy", "Purchases"),
         new("SupplierQuotations.View", "View Supplier Quotations", "Purchases"),
         new("SupplierQuotations.Create", "Enter Supplier Quotation", "Purchases"),
         new("SupplierQuotations.Award", "Award Supplier Quotation", "Purchases"),

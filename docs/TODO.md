@@ -4,7 +4,7 @@
 
 The approved numbered Arabic/English delivery sequence is maintained in `MASTER_IMPLEMENTATION_ROADMAP_AR_EN.md`. Detailed working status, business rules and the rolling suggestion queue remain in `ARABIC_SHARED_ROADMAP.md`. This file remains the concise technical backlog.
 
-The PUR-000 through PUR-190 purchase evolution is implemented. The approved continuation is maintained in `PURCHASE_COMPLETION_ROADMAP_AR_EN.md`. Work continues with PUR-200 flexible RFQ workspace and fast path, then follows the dependency-ordered slices through PUR-280. Incoming customer-management and sales requirements must be reconciled with master-roadmap steps 7 through 11 before implementation.
+The PUR-000 through PUR-200 purchase evolution is implemented. The approved continuation is maintained in `PURCHASE_COMPLETION_ROADMAP_AR_EN.md`. Work continues with PUR-210 line-level and split supplier awards, then follows the dependency-ordered slices through PUR-280. Incoming customer-management and sales requirements must be reconciled with master-roadmap steps 7 through 11 before implementation.
 
 - [x] PUR-000 complete purchase architecture review, legacy compatibility boundary, migration strategy and vertical-slice roadmap.
 - [x] PUR-005 fix context ownership, quantity authority, staged currency, approval and GRNI boundaries before runtime implementation.
@@ -31,7 +31,7 @@ The PUR-000 through PUR-190 purchase evolution is implemented. The approved cont
 - [x] PUR-170 add Supplier Credit Notes for already billed receipt returns.
 - [x] PUR-180 add controlled reversal for posted Goods Receipts, Vendor Bills, Supplier Payments and Landed Costs.
 - [x] PUR-190 add multi-currency purchase, receipt, bill and payment accounting.
-- [ ] PUR-200 add a policy-controlled direct RFQ workspace and fast path.
+- [x] PUR-200 add a policy-controlled direct RFQ workspace and fast path.
 - [ ] PUR-210 add line-level and split supplier awards.
 - [ ] PUR-220 add service procurement, per-product billing policy and reviewed Draft Vendor Bills.
 - [ ] PUR-230 add atomic CSV/Excel vendor-price import/export and quantity price breaks.
@@ -99,7 +99,7 @@ The PUR-000 through PUR-190 purchase evolution is implemented. The approved cont
 - Implemented WMS-010 hierarchical location metadata, barcode, sequence, tree ordering, warehouse-filtered parent selection, operational capabilities, edit workflow and cycle/same-warehouse validation. Putaway/transfers/relocations enforce receive/pick capabilities. Its additive migration is applied to `AHMAD/MiniStoreDb`; authenticated UI smoke remains because no login secret is stored in the repository.
 
 ## In Progress
-- PUR-190 is implemented. Next: PUR-200 flexible RFQ workspace and fast path.
+- PUR-200 is implemented. Next: PUR-210 line-level and split supplier awards.
 - WMS delivery is paused by product-owner direction. Its remaining items stay documented in `WMS_EVOLUTION_PLAN.md` and resume after the current purchase-management priority.
 - WMS-015A/B/C/D typed definitions, values, ProductTemplate grouping and controlled selection-based variant generation are implemented. Product remains the SKU; proceed to the next WMS slice.
 - WMS-020A physical StockMovement kernel is implemented for idempotent Putaway/Relocation dual-write. Next: authenticated pilot smoke test and WMS-030 transfer/transit integration; do not cut over legacy reads yet.

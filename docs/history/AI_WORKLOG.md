@@ -1,5 +1,14 @@
 # AI Work Log
 
+## 2026-10-13 — PUR-200 Flexible RFQ Workspace and Fast Path
+
+- Added a separately authorized direct RFQ path alongside approved Purchase Request sourcing. A tenant policy gates it by enable state, estimated company-currency amount, optional tenant role and supplier active state; the Application service rechecks permission and policy before saving.
+- Direct events freeze the applied policy amount/role and commercial context without fabricating approval history. They still require the existing quotation, award and Purchase Order approval/confirmation steps, so the fast path cannot authorize an order.
+- Both sourcing paths now capture supplier-response deadline, expected delivery, buyer reference, estimate, notes and bounded tenant-owned attachments. Details include protected downloads and a bilingual print view that can be printed or saved as PDF.
+- Added responsive card-based sourcing listing, the bilingual policy Settings screen, actionable policy/limit links, exact next-step guidance, the dedicated `PurchaseSourcing.CreateDirect` permission and ADR `2026-10-13-direct-rfq-policy.md`.
+- Added and applied migration `20261013101055_AddFlexibleRfqWorkspace`; it safely backfills existing events as approved-request sourcing and preserves optional-source tenant constraints. Entity Framework reports no pending model changes.
+- Release builds passed with zero warnings, 623 focused regression checks passed and the disposable SQL Server integration suite passed.
+
 ## 2026-10-13 — PUR-190 Multi-Currency Purchasing
 
 - Added tenant-owned dated exchange rates with source/audit evidence and a bilingual Settings screen. Rates use company-currency units per one supplier-currency unit and resolve latest-on-or-before each document date. Supplier quotation entry now selects from configured currencies and comparison ranks normalized company-currency totals rather than incomparable raw amounts.

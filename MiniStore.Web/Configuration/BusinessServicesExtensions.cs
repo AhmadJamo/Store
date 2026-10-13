@@ -144,6 +144,8 @@ public static class BusinessServicesExtensions
         services.AddScoped<PurchaseApprovalService>();
         services.AddScoped<PurchaseRequestService>();
         services.AddScoped<IPurchaseSourcingRepository, PurchaseSourcingRepository>();
+        services.AddScoped<IPurchaseSourcingPolicyRepository, PurchaseSourcingPolicyRepository>();
+        services.AddScoped<PurchaseSourcingPolicyService>();
         services.AddScoped<PurchaseSourcingService>();
         services.AddScoped<ISupplierQuotationRepository, SupplierQuotationRepository>();
         services.AddScoped<SupplierQuotationService>();

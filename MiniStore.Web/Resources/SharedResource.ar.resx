@@ -1796,4 +1796,59 @@
   <data name="Choose the accounts required to post foreign-currency bill and payment differences." xml:space="preserve"><value>اختر الحسابات المطلوبة لترحيل فروق فواتير ودفعات العملات الأجنبية.</value></data>
   <data name="Company currency" xml:space="preserve"><value>عملة الشركة</value></data>
   <data name="Add missing currencies and dated rates from currency settings." xml:space="preserve"><value>أضف العملات الناقصة وأسعارها المؤرخة من إعدادات العملات.</value></data>
+  <data name="Direct RFQ" xml:space="preserve"><value>طلب عرض سعر مباشر</value></data>
+  <data name="Purchase sourcing policy" xml:space="preserve"><value>سياسة توريد المشتريات</value></data>
+  <data name="Control when users may send a direct RFQ and when a purchase request approval is required." xml:space="preserve"><value>تحكم في الحالات التي تسمح بإرسال طلب عرض سعر مباشر والحالات التي تتطلب طلب شراء وموافقة.</value></data>
+  <data name="Choose when a user may send an RFQ directly and when the full purchase request approval path is mandatory." xml:space="preserve"><value>حدد متى يستطيع المستخدم إرسال طلب عرض سعر مباشرة ومتى يكون مسار طلب الشراء والموافقة الكامل إلزامياً.</value></data>
+  <data name="Allow direct RFQ fast path" xml:space="preserve"><value>السماح بالمسار السريع لطلب عرض السعر المباشر</value></data>
+  <data name="Maximum estimated direct RFQ amount" xml:space="preserve"><value>أقصى مبلغ تقديري لطلب عرض السعر المباشر</value></data>
+  <data name="Amounts above this limit must use a purchase request and approval." xml:space="preserve"><value>المبالغ التي تتجاوز هذا الحد يجب أن تمر بطلب شراء وموافقة.</value></data>
+  <data name="Required user role" xml:space="preserve"><value>دور المستخدم المطلوب</value></data>
+  <data name="Any user with direct RFQ permission" xml:space="preserve"><value>أي مستخدم لديه صلاحية طلب عرض السعر المباشر</value></data>
+  <data name="Allow active suppliers only" xml:space="preserve"><value>السماح بالموردين النشطين فقط</value></data>
+  <data name="The direct RFQ permission, amount limit, optional role and supplier status are checked again on the server before sending." xml:space="preserve"><value>يتم التحقق من الصلاحية وحد المبلغ والدور الاختياري وحالة المورد مرة أخرى في الخادم قبل الإرسال.</value></data>
+  <data name="Purchase sourcing policy updated." xml:space="preserve"><value>تم تحديث سياسة توريد المشتريات.</value></data>
+  <data name="Supplier response deadline" xml:space="preserve"><value>الموعد النهائي لرد المورد</value></data>
+  <data name="Response deadline" xml:space="preserve"><value>موعد الرد</value></data>
+  <data name="Expected delivery date" xml:space="preserve"><value>تاريخ التسليم المتوقع</value></data>
+  <data name="Buyer reference" xml:space="preserve"><value>مرجع المشتري</value></data>
+  <data name="Estimated amount" xml:space="preserve"><value>المبلغ التقديري</value></data>
+  <data name="Internal notes" xml:space="preserve"><value>ملاحظات داخلية</value></data>
+  <data name="Attachments" xml:space="preserve"><value>المرفقات</value></data>
+  <data name="Up to 10 files, 5 MB per file." xml:space="preserve"><value>حتى 10 ملفات، وبحد أقصى 5 ميجابايت لكل ملف.</value></data>
+  <data name="Send a request for quotation directly when it is inside the configured company policy." xml:space="preserve"><value>أرسل طلب عرض سعر مباشرة عندما يكون ضمن سياسة الشركة المهيأة.</value></data>
+  <data name="Direct RFQ creation is disabled by company policy. Create a purchase request instead." xml:space="preserve"><value>إنشاء طلب عرض سعر مباشر معطل حسب سياسة الشركة. أنشئ طلب شراء بدلاً منه.</value></data>
+  <data name="Create purchase request" xml:space="preserve"><value>إنشاء طلب شراء</value></data>
+  <data name="Direct RFQ limit" xml:space="preserve"><value>حد طلب عرض السعر المباشر</value></data>
+  <data name="Required role" xml:space="preserve"><value>الدور المطلوب</value></data>
+  <data name="Send direct RFQ" xml:space="preserve"><value>إرسال طلب عرض السعر المباشر</value></data>
+  <data name="Use approval path" xml:space="preserve"><value>استخدام مسار الموافقة</value></data>
+  <data name="Direct RFQ sent within company policy." xml:space="preserve"><value>تم إرسال طلب عرض السعر المباشر ضمن سياسة الشركة.</value></data>
+  <data name="Approved requests and policy-controlled direct RFQs sent to suppliers." xml:space="preserve"><value>طلبات الشراء المعتمدة وطلبات عروض السعر المباشرة المضبوطة بسياسة الشركة.</value></data>
+  <data name="New direct RFQ" xml:space="preserve"><value>طلب عرض سعر مباشر جديد</value></data>
+  <data name="Direct path" xml:space="preserve"><value>المسار المباشر</value></data>
+  <data name="ApprovedPurchaseRequest" xml:space="preserve"><value>طلب شراء معتمد</value></data>
+  <data name="DirectRfq" xml:space="preserve"><value>طلب عرض سعر مباشر</value></data>
+  <data name="Print / Save PDF" xml:space="preserve"><value>طباعة / حفظ PDF</value></data>
+  <data name="Download" xml:space="preserve"><value>تنزيل</value></data>
+  <data name="Request for quotation" xml:space="preserve"><value>طلب عرض سعر</value></data>
+  <data name="Supplier response deadline cannot be in the past." xml:space="preserve"><value>لا يمكن أن يكون الموعد النهائي لرد المورد في الماضي.</value></data>
+  <data name="Expected delivery date cannot be before the supplier response deadline." xml:space="preserve"><value>لا يمكن أن يكون تاريخ التسليم المتوقع قبل الموعد النهائي لرد المورد.</value></data>
+  <data name="Estimated RFQ amount must be greater than zero." xml:space="preserve"><value>يجب أن يكون المبلغ التقديري لطلب عرض السعر أكبر من صفر.</value></data>
+  <data name="Estimated RFQ amount cannot be negative." xml:space="preserve"><value>لا يمكن أن يكون المبلغ التقديري لطلب عرض السعر سالباً.</value></data>
+  <data name="Buyer reference cannot exceed 100 characters." xml:space="preserve"><value>لا يمكن أن يتجاوز مرجع المشتري 100 حرف.</value></data>
+  <data name="An RFQ can contain up to 10 attachments." xml:space="preserve"><value>يمكن أن يحتوي طلب عرض السعر على 10 مرفقات كحد أقصى.</value></data>
+  <data name="An attachment with the same file name already exists." xml:space="preserve"><value>يوجد مرفق بالاسم نفسه.</value></data>
+  <data name="Each RFQ attachment must be between 1 byte and 5 MB." xml:space="preserve"><value>يجب أن يكون حجم كل مرفق بين بايت واحد و5 ميجابايت.</value></data>
+  <data name="Configure the direct RFQ policy before using the fast path." xml:space="preserve"><value>هيّئ سياسة طلب عرض السعر المباشر قبل استخدام المسار السريع.</value></data>
+  <data name="The estimated RFQ amount exceeds the direct path limit. Create a purchase request for approval." xml:space="preserve"><value>يتجاوز المبلغ التقديري حد المسار المباشر. أنشئ طلب شراء للموافقة.</value></data>
+  <data name="The direct RFQ policy requires a different user role." xml:space="preserve"><value>تتطلب سياسة طلب عرض السعر المباشر دور مستخدم مختلفاً.</value></data>
+  <data name="Direct RFQs can invite active suppliers only." xml:space="preserve"><value>يمكن لطلبات عروض السعر المباشرة دعوة الموردين النشطين فقط.</value></data>
+  <data name="An RFQ must contain at least one line." xml:space="preserve"><value>يجب أن يحتوي طلب عرض السعر على سطر واحد على الأقل.</value></data>
+  <data name="Direct RFQs require an active purchasable product." xml:space="preserve"><value>يتطلب طلب عرض السعر المباشر منتجاً نشطاً قابلاً للشراء.</value></data>
+  <data name="Direct RFQ maximum amount cannot be negative." xml:space="preserve"><value>لا يمكن أن يكون الحد الأعلى للمسار المباشر سالباً.</value></data>
+  <data name="Direct RFQ maximum amount must be greater than zero when the fast path is enabled." xml:space="preserve"><value>يجب أن يكون الحد الأعلى لطلب عرض السعر أكبر من صفر عند تفعيل المسار السريع.</value></data>
+  <data name="The selected direct RFQ role was not found." xml:space="preserve"><value>لم يتم العثور على الدور المحدد لطلب عرض السعر المباشر.</value></data>
+  <data name="Purchase sourcing policy was modified by another user. Reload and try again." xml:space="preserve"><value>تم تعديل سياسة توريد المشتريات بواسطة مستخدم آخر. أعد تحميل الصفحة وحاول مجدداً.</value></data>
+  <data name="Open purchase sourcing policy" xml:space="preserve"><value>فتح سياسة توريد المشتريات</value></data>
 </root>

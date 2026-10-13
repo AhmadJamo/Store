@@ -1280,7 +1280,31 @@ Check(sourcingEvent.Status == PurchaseSourcingStatus.Sent && sourcingEvent.Invit
     "Approved demand must become a sent sourcing event without inventory or accounting behavior");
 CheckThrows(() => sourcingEvent.InviteSupplier(6, null),
     "Sent sourcing events must reject further supplier invitation changes");
-foreach (var type in new[] { typeof(PurchaseSourcingEvent), typeof(PurchaseSourcingLine), typeof(PurchaseSupplierInvitation) })
+var directPolicy = new PurchaseSourcingPolicy(true, 500m, "Buyer", true);
+var directSourcing = new PurchaseSourcingEvent("RFX-DIRECT-1", 1,
+    DateOnly.FromDateTime(DateTime.Today.AddDays(14)), DateOnly.FromDateTime(DateTime.Today.AddDays(7)),
+    "BUY-REF-1", 450m, directPolicy.MaximumEstimatedAmountCompanyCurrency, directPolicy.AllowedRoleName,
+    "Fast path", "buyer");
+directSourcing.AddLine(new PurchaseSourcingLine(10, 2, 2m, 1m, 2m,
+    "P-10", "Coffee beans", "kg", null));
+directSourcing.InviteSupplier(5, null);
+directSourcing.AddAttachment(new PurchaseSourcingAttachment("specification.pdf", "application/pdf", [1, 2, 3], "buyer"));
+directSourcing.Send("buyer");
+Check(directSourcing.Path == PurchaseSourcingPath.DirectRfq && directSourcing.PurchaseRequestId is null &&
+      directSourcing.EstimatedAmountCompanyCurrency == 450m && directSourcing.Attachments.Count == 1,
+    "Direct RFQs must freeze the applied policy context and support bounded tenant-owned attachments");
+var directActions = typeof(PurchaseSourcingController).GetMethods()
+    .Where(x => x.Name == nameof(PurchaseSourcingController.Direct)).ToList();
+Check(directActions.Count == 2 && directActions.All(x =>
+          x.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
+          $"{PermissionAuthorizeAttribute.PolicyPrefix}PurchaseSourcing.CreateDirect"),
+    "Direct RFQ GET and POST actions must require the dedicated server-side permission");
+Check(ActionableErrorGuidance.Resolve(
+          "The estimated RFQ amount exceeds the direct path limit. Create a purchase request for approval.",
+          "PurchaseSourcing") is { Controller: "PurchaseRequests", Action: "Create" },
+    "An RFQ blocked by the financial policy must link the user to the controlled purchase-request path");
+foreach (var type in new[] { typeof(PurchaseSourcingEvent), typeof(PurchaseSourcingLine),
+             typeof(PurchaseSupplierInvitation), typeof(PurchaseSourcingAttachment), typeof(PurchaseSourcingPolicy) })
     Check(db.Model.FindEntityType(type)!.FindProperty("TenantId") is { IsNullable: false },
         $"{type.Name} must be tenant owned");
 Check(DocumentSequence.CreateDefault(DocumentNumberType.PurchaseSourcingEvent).Preview(DateTime.Today).StartsWith("RFX-"),
@@ -1616,7 +1640,8 @@ Check(supplierPaymentController.GetMethod(nameof(SupplierPaymentsController.Inde
       $"{PermissionAuthorizeAttribute.PolicyPrefix}SupplierPayments.Create",
     "Supplier payment visibility and posting must use separate server-side permissions");
 var sourcingController = typeof(PurchaseSourcingController);
-var sourcingCreateAction = sourcingController.GetMethod(nameof(PurchaseSourcingController.Create), [typeof(CreatePurchaseSourcingDto)])!;
+var sourcingCreateAction = sourcingController.GetMethods().Single(x =>
+    x.Name == nameof(PurchaseSourcingController.Create) && x.GetCustomAttribute<HttpPostAttribute>() is not null);
 Check(sourcingController.GetMethod(nameof(PurchaseSourcingController.Index))!
           .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
       $"{PermissionAuthorizeAttribute.PolicyPrefix}PurchaseSourcing.View" &&
@@ -1624,7 +1649,8 @@ Check(sourcingController.GetMethod(nameof(PurchaseSourcingController.Index))!
           .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
       $"{PermissionAuthorizeAttribute.PolicyPrefix}PurchaseSourcing.Create",
     "Purchase sourcing visibility and creation must use separate server-side permissions");
-Check(sourcingCreateAction.GetParameters().Single().GetCustomAttribute<BindAttribute>()?.Prefix == "Form",
+Check(sourcingCreateAction.GetParameters().Single(x => x.ParameterType == typeof(CreatePurchaseSourcingDto))
+          .GetCustomAttribute<BindAttribute>()?.Prefix == "Form",
     "Purchase sourcing submission must bind the nested Form fields posted by the create page");
 var supplierQuotationCreateAction = typeof(SupplierQuotationsController)
     .GetMethod(nameof(SupplierQuotationsController.Create), [typeof(CreateSupplierQuotationDto)])!;

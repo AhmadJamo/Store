@@ -65,6 +65,7 @@ The Index and mutation actions enforce these policies server-side. Permission se
 
 - `PurchaseSourcing.View` protects sourcing-event listing and detail visibility.
 - `PurchaseSourcing.Create` protects converting an approved request into exactly one sent supplier-invitation event.
+- `PurchaseSourcing.CreateDirect` separately protects the fast path. The Application service also requires the permission and re-evaluates the tenant amount limit, optional role and supplier-active policy before persisting a direct RFQ.
 - The command remains commercial intent only; it has no inventory or accounting permission because it cannot mutate either area.
 
 # PUR-040 supplier quotation permissions

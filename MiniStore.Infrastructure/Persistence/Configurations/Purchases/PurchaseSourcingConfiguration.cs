@@ -5,13 +5,18 @@ using MiniStore.Domain.Entities;
 namespace MiniStore.Infrastructure.Persistence.Configurations;
 
 public sealed class PurchaseSourcingConfiguration : IEntityTypeConfiguration<PurchaseSourcingEvent>,
-    IEntityTypeConfiguration<PurchaseSourcingLine>, IEntityTypeConfiguration<PurchaseSupplierInvitation>
+    IEntityTypeConfiguration<PurchaseSourcingLine>, IEntityTypeConfiguration<PurchaseSupplierInvitation>,
+    IEntityTypeConfiguration<PurchaseSourcingAttachment>, IEntityTypeConfiguration<PurchaseSourcingPolicy>
 {
     public void Configure(EntityTypeBuilder<PurchaseSourcingEvent> builder)
     {
         builder.HasKey(x => x.Id);
         builder.Property(x => x.SourcingNumber).HasMaxLength(50).IsRequired();
         builder.Property(x => x.Notes).HasMaxLength(1000);
+        builder.Property(x => x.BuyerReference).HasMaxLength(100);
+        builder.Property(x => x.EstimatedAmountCompanyCurrency).HasPrecision(24, 8);
+        builder.Property(x => x.DirectPolicyMaximumAmountSnapshot).HasPrecision(24, 8);
+        builder.Property(x => x.DirectPolicyRoleSnapshot).HasMaxLength(100);
         builder.Property(x => x.CreatedByUserId).HasMaxLength(450).IsRequired();
         builder.Property(x => x.SentByUserId).HasMaxLength(450);
         builder.Property(x => x.RowVersion).IsRowVersion();
@@ -24,6 +29,8 @@ public sealed class PurchaseSourcingConfiguration : IEntityTypeConfiguration<Pur
         builder.HasMany(x => x.Lines).WithOne().HasForeignKey(x => x.PurchaseSourcingEventId)
             .OnDelete(DeleteBehavior.Cascade);
         builder.HasMany(x => x.Invitations).WithOne().HasForeignKey(x => x.PurchaseSourcingEventId)
+            .OnDelete(DeleteBehavior.Cascade);
+        builder.HasMany(x => x.Attachments).WithOne().HasForeignKey(x => x.PurchaseSourcingEventId)
             .OnDelete(DeleteBehavior.Cascade);
     }
 
@@ -51,5 +58,24 @@ public sealed class PurchaseSourcingConfiguration : IEntityTypeConfiguration<Pur
         builder.Property(x => x.Message).HasMaxLength(1000);
         builder.HasIndex(x => new { x.PurchaseSourcingEventId, x.SupplierId }).IsUnique();
         builder.HasOne<Supplier>().WithMany().HasForeignKey(x => x.SupplierId).OnDelete(DeleteBehavior.Restrict);
+    }
+
+    public void Configure(EntityTypeBuilder<PurchaseSourcingAttachment> builder)
+    {
+        builder.HasKey(x => x.Id);
+        builder.Property(x => x.FileName).HasMaxLength(255).IsRequired();
+        builder.Property(x => x.ContentType).HasMaxLength(150).IsRequired();
+        builder.Property(x => x.Content).IsRequired();
+        builder.Property(x => x.UploadedByUserId).HasMaxLength(450).IsRequired();
+        builder.HasIndex(x => new { x.PurchaseSourcingEventId, x.FileName }).IsUnique();
+    }
+
+    public void Configure(EntityTypeBuilder<PurchaseSourcingPolicy> builder)
+    {
+        builder.HasKey(x => x.Id);
+        builder.HasIndex(x => x.SingletonKey).IsUnique();
+        builder.Property(x => x.MaximumEstimatedAmountCompanyCurrency).HasPrecision(24, 8);
+        builder.Property(x => x.AllowedRoleName).HasMaxLength(100);
+        builder.Property(x => x.RowVersion).IsRowVersion();
     }
 }

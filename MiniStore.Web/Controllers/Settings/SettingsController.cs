@@ -18,6 +18,7 @@ public class SettingsController : Controller
     private readonly DiscountSettingsService _discountSettingsService;
     private readonly AccountingSettingsService _accountingSettingsService;
     private readonly PurchaseMatchingSettingsService _purchaseMatchingSettingsService;
+    private readonly PurchaseSourcingPolicyService _purchaseSourcingPolicyService;
     private readonly AccountService _accountService;
     private readonly InventorySettingsService _inventorySettingsService;
     private readonly InventoryAccessService _inventoryAccessService;
@@ -35,6 +36,7 @@ public class SettingsController : Controller
         DiscountSettingsService discountSettingsService,
         AccountingSettingsService accountingSettingsService,
         PurchaseMatchingSettingsService purchaseMatchingSettingsService,
+        PurchaseSourcingPolicyService purchaseSourcingPolicyService,
         AccountService accountService,
         InventorySettingsService inventorySettingsService,
         InventoryAccessService inventoryAccessService,
@@ -51,6 +53,7 @@ public class SettingsController : Controller
         _discountSettingsService = discountSettingsService;
         _accountingSettingsService = accountingSettingsService;
         _purchaseMatchingSettingsService = purchaseMatchingSettingsService;
+        _purchaseSourcingPolicyService = purchaseSourcingPolicyService;
         _accountService = accountService;
         _inventorySettingsService = inventorySettingsService;
         _inventoryAccessService = inventoryAccessService;
@@ -407,6 +410,31 @@ public class SettingsController : Controller
 
     [HttpGet]
     public async Task<IActionResult> PurchaseMatching() => View(await _purchaseMatchingSettingsService.GetAsync());
+
+    [HttpGet]
+    public async Task<IActionResult> PurchaseSourcingPolicy() => View(await _purchaseSourcingPolicyService.GetAsync());
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> PurchaseSourcingPolicy(PurchaseSourcingPolicyDto dto)
+    {
+        try
+        {
+            await _purchaseSourcingPolicyService.UpdateAsync(dto);
+            TempData["NotificationType"] = "success";
+            TempData["NotificationMessage"] = _localizer["Purchase sourcing policy updated."].Value;
+            return RedirectToAction(nameof(PurchaseSourcingPolicy));
+        }
+        catch (Exception ex) when (ex is ArgumentException or InvalidOperationException)
+        {
+            ModelState.AddModelError(string.Empty, _localizer[ex.Message]);
+            var page = await _purchaseSourcingPolicyService.GetAsync();
+            dto.AvailableRoles = page.AvailableRoles;
+            dto.CompanyCurrencyCode = page.CompanyCurrencyCode;
+            dto.RowVersion = page.RowVersion;
+            return View(dto);
+        }
+    }
 
     [HttpPost]
     [ValidateAntiForgeryToken]

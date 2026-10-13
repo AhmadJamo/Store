@@ -3,5 +3,20 @@
 @{ ViewData["Title"] = Localizer["Start sourcing"]; var numberSettings = await GeneralSettingsService.GetAsync(); }
 <h2>@Localizer["Start sourcing"]</h2>
 <p class="text-muted">@Localizer["Create a supplier invitation from an approved purchase request. This does not change inventory or accounting."]</p>
-<div class="card card-body mb-3"><strong>@Model.Request!.RequestNumber</strong><span>@Localizer["Needed by"]: @Model.Request.NeededByDate</span><ul class="mb-0">@foreach(var line in Model.Request.Lines){<li>@line.ProductCode — @line.ProductName: @line.RequestedQuantity.ToQuantityDisplay(numberSettings) @line.UnitName</li>}</ul></div>
-<form asp-action="Create" method="post"><input type="hidden" asp-for="Form.PurchaseRequestId"/><div asp-validation-summary="ModelOnly" class="text-danger"></div><div class="mb-3"><label class="form-label">@Localizer["Invitation message"]</label><textarea asp-for="Form.InvitationMessage" class="form-control" maxlength="1000"></textarea></div><div class="mb-3"><label class="form-label">@Localizer["Notes"]</label><textarea asp-for="Form.Notes" class="form-control" maxlength="1000"></textarea></div><label class="form-label">@Localizer["Suppliers to invite"]</label><div class="card card-body mb-3">@foreach(var supplier in Model.Suppliers){<div class="form-check"><input class="form-check-input" type="checkbox" name="Form.SupplierIds" value="@supplier.Id" id="supplier-@supplier.Id"/><label class="form-check-label" for="supplier-@supplier.Id">@supplier.Label</label></div>}</div><button class="btn btn-primary">@Localizer["Send sourcing invitations"]</button><a asp-controller="PurchaseRequests" asp-action="Details" asp-route-id="@Model.Request.Id" class="btn btn-outline-secondary">@Localizer["Back"]</a></form>
+<div class="card card-body mb-3"><strong>@Model.Request!.RequestNumber</strong><span>@Localizer["Expected delivery date"]: @Model.Request.NeededByDate</span><ul class="mb-0">@foreach(var line in Model.Request.Lines){<li>@line.ProductCode — @line.ProductName: @line.RequestedQuantity.ToQuantityDisplay(numberSettings) @line.UnitName</li>}</ul></div>
+<form asp-action="Create" method="post" enctype="multipart/form-data">
+    <input type="hidden" asp-for="Form.PurchaseRequestId" />
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="row g-3">
+        <div class="col-md-4"><label asp-for="Form.SupplierResponseDeadline" class="form-label">@Localizer["Supplier response deadline"]</label><input asp-for="Form.SupplierResponseDeadline" type="date" class="form-control" required /></div>
+        <div class="col-md-4"><label asp-for="Form.BuyerReference" class="form-label">@Localizer["Buyer reference"]</label><input asp-for="Form.BuyerReference" maxlength="100" class="form-control" /></div>
+        <div class="col-md-4"><label asp-for="Form.EstimatedAmountCompanyCurrency" class="form-label">@Localizer["Estimated amount"] (@Model.CompanyCurrencyCode)</label><input asp-for="Form.EstimatedAmountCompanyCurrency" type="number" min="0" step="0.000001" class="form-control" /></div>
+        <div class="col-md-6"><label asp-for="Form.InvitationMessage" class="form-label">@Localizer["Invitation message"]</label><textarea asp-for="Form.InvitationMessage" class="form-control" maxlength="1000"></textarea></div>
+        <div class="col-md-6"><label asp-for="Form.Notes" class="form-label">@Localizer["Internal notes"]</label><textarea asp-for="Form.Notes" class="form-control" maxlength="1000"></textarea></div>
+        <div class="col-12"><label class="form-label">@Localizer["Attachments"]</label><input name="attachments" type="file" multiple class="form-control" /><div class="form-text">@Localizer["Up to 10 files, 5 MB per file."]</div></div>
+    </div>
+    <label class="form-label mt-3">@Localizer["Suppliers to invite"]</label>
+    <div class="card card-body mb-3">@foreach(var supplier in Model.Suppliers){<div class="form-check"><input class="form-check-input" type="checkbox" name="Form.SupplierIds" value="@supplier.Id" id="supplier-@supplier.Id" checked="@(Model.Form.SupplierIds.Contains(supplier.Id))" /><label class="form-check-label" for="supplier-@supplier.Id">@supplier.Label</label></div>}</div>
+    <button class="btn btn-primary">@Localizer["Send sourcing invitations"]</button>
+    <a asp-controller="PurchaseRequests" asp-action="Details" asp-route-id="@Model.Request.Id" class="btn btn-outline-secondary">@Localizer["Back"]</a>
+</form>

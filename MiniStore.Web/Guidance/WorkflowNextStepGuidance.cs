@@ -63,7 +63,7 @@ public static class WorkflowNextStepGuidance
                 "Invite suppliers to submit quotations for the approved request.",
                 "PurchaseSourcing.Create", Routes(("purchaseRequestId", Route("id"))));
 
-        if (Matches(message, localize, "Purchase sourcing event sent."))
+        if (Matches(message, localize, "Purchase sourcing event sent.", "Direct RFQ sent within company policy."))
             return new("SupplierQuotations", "Create", "Enter supplier quotation",
                 "Record the first quotation received from an invited supplier.",
                 "SupplierQuotations.Create", Routes(("sourcingEventId", Route("id"))));

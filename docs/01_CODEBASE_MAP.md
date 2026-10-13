@@ -26,7 +26,7 @@
 
 `docs/PURCHASE_MANAGEMENT_EVOLUTION_PLAN.md` is the approved procure-to-pay evolution plan. It records the legacy direct-purchase boundary, capability gaps, target aggregates, inventory/accounting integration contracts, additive migration safeguards and PUR-000 through PUR-150 vertical slices. Planned purchase types are not implemented unless the matching slice is explicitly marked complete.
 
-`docs/PURCHASE_COMPLETION_ROADMAP_AR_EN.md` is the approved Arabic/English post-PUR-150 purchase plan. PUR-160 through PUR-190 are implemented, including reconciliation, derived closure, credit notes, controlled reversal and multi-currency purchasing; it continues with PUR-200 through PUR-280 across flexible RFQs, split awards, service procurement, bulk vendor prices, automated replenishment, advanced receiving, supplier communication, integrations, analytics and legacy-workflow retirement.
+`docs/PURCHASE_COMPLETION_ROADMAP_AR_EN.md` is the approved Arabic/English post-PUR-150 purchase plan. PUR-160 through PUR-200 are implemented, including reconciliation, derived closure, credit notes, controlled reversal, multi-currency purchasing and policy-controlled direct RFQs; it continues with PUR-210 through PUR-280 across split awards, service procurement, bulk vendor prices, automated replenishment, advanced receiving, supplier communication, integrations, analytics and legacy-workflow retirement.
 
 `docs/PURCHASE_ARCHITECTURE_ALIGNMENT.md` is the accepted PUR-005 gate. It fixes Supplier compatibility, Purchasing/Inventory/Accounting ownership, derived quantity authorities, staged currency behavior, purchase-first approval boundaries, GRNI, synchronous contracts and deferred event infrastructure before runtime implementation starts.
 
@@ -45,7 +45,7 @@
 | `Entities/Purchases/SupplierProductPurchasingInfo.cs` | supplier-specific product code, compatible purchase unit, base-currency price, lead time, order policy, validity and preference | PUR-010 purchasing data screen/service. |
 | `Entities/Purchases/PurchaseRequest.cs` | PRQ-numbered internal demand, frozen unit conversion, immutable action history and optional source provenance used by replenishment | PUR-020/PUR-110 purchase-request workflow. |
 | `Entities/Purchases/PurchaseApproval.cs` | Warehouse/priority-scoped approval rules, ordered role steps and immutable per-request decision snapshots | PUR-025 approval workflow foundation. |
-| `Entities/Purchases/PurchaseSourcingEvent.cs` | RFX-numbered sourcing event, frozen request-line snapshots and supplier invitations; no price, inventory or accounting authority | PUR-030 sourcing workflow. |
+| `Entities/Purchases/PurchaseSourcingEvent.cs` | RFX-numbered approved-request or direct sourcing event, frozen policy/commercial/line snapshots, supplier invitations and bounded database attachments; no inventory or accounting authority | PUR-030 and PUR-200 sourcing workflows. |
 | `Entities/Purchases/{SupplierQuotation,PurchaseQuotationAward}.cs` | supplier-specific frozen quote header/lines, commercial terms, comparison totals and reasoned selection record | PUR-040 quotation workflow. |
 | `Entities/Purchases/PurchaseOrder.cs` | awarded-quotation Purchase Order, immutable commercial lines, current closure evidence and tenant-owned lifecycle history; downstream posted documents remain quantity/accounting authority | PUR-050 order workflow and PUR-165 completion. |
 | `Entities/Purchases/PurchaseAgreement.cs` | awarded-quotation agreements with frozen commercial terms and capped release lines, plus repeat-order templates that generate traced demand | PUR-120 agreement/template workflow. |
@@ -74,7 +74,8 @@
 |---|---|---|
 | `Services/<Feature>/*.cs` | use-case services grouped as Accounting, Catalog, Customers, Inventory, Purchases, Sales, Settings and Suppliers | matching MVC controllers. |
 | `Services/Purchases/PurchaseApprovalService.cs` | approval-rule administration, submit-time rule resolution, frozen instance creation and role-authorized ordered decisions | Purchase Approval Rules and Purchase Request screens. |
-| `Services/Purchases/PurchaseSourcingService.cs` | creates and sends supplier invitations from exactly one approved request, while freezing demand snapshots | Purchase Sourcing screens. |
+| `Services/Purchases/PurchaseSourcingService.cs` | sends approved-request sourcing or permission/policy-gated direct RFQs, freezing demand, policy and attachment evidence | Purchase Sourcing screens and PUR-200. |
+| `Services/Settings/PurchaseSourcingPolicyService.cs` | manages the tenant direct-RFQ amount, role and supplier-status gate | Purchase sourcing policy Settings screen. |
 | `Services/Purchases/SupplierQuotationService.cs` | validates invited supplier responses, freezes/submits quotations, exposes comparison and records a reasoned award | Supplier Quotation screens. |
 | `Services/Purchases/{PurchaseOrder,PurchaseOrderLifecycle}Service.cs` | creates award-derived orders; derives receipt/return/bill progress; governs approve/confirm/cancel, automatic completion, reasoned remainder close and controlled reopen without direct stock or journal mutation | Purchase Order screens and PUR-165 final bill/return hooks. |
 | `Services/Purchases/{PurchaseAgreement,PurchaseTemplate}Service.cs` | creates and activates awarded agreements, caps Draft order releases, saves repeat templates and generates traced Draft Purchase Requests | PUR-120 agreement/template screens. |

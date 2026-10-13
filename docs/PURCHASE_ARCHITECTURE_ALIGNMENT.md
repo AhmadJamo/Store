@@ -8,7 +8,7 @@
 
 PUR-005 fixes the ownership and integration boundaries that later procure-to-pay slices must follow. It prevents Purchase, Inventory and Accounting from becoming competing sources of truth while preserving MiniStore's implemented Supplier, inventory and journal foundations.
 
-This document remains the accepted ownership contract. Purchase Request through multi-currency purchasing are now implemented through PUR-190; an outbox remains unimplemented unless a later slice explicitly adds it.
+This document remains the accepted ownership contract. Purchase Request through the policy-controlled direct RFQ workspace are now implemented through PUR-200; an outbox remains unimplemented unless a later slice explicitly adds it.
 
 ## 2. Decisions fixed by this gate
 
