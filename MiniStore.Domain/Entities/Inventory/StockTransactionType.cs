@@ -28,5 +28,7 @@ public enum StockTransactionType
 
     GoodsReceiptReturn = 13,
 
-    LandedCostAdjustment = 14
+    LandedCostAdjustment = 14,
+
+    SupplierCreditNoteReturn = 15
 }

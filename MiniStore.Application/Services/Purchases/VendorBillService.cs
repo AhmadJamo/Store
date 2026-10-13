@@ -9,7 +9,7 @@ public sealed class VendorBillService(
     IGoodsReceiptReturnRepository receiptReturns, ISupplierRepository suppliers, IWarehouseRepository warehouses,
     ITaxRateRepository taxRates, IAccountingSettingsRepository accountingSettings, IPurchaseMatchingSettingsRepository matchingSettings,
     IPurchaseMatchRepository matches, DocumentNumberService numbers,
-    ISupplierPaymentRepository payments, JournalPostingService journalPosting,
+    ISupplierPaymentRepository payments, ISupplierCreditNoteRepository creditNotes, JournalPostingService journalPosting,
     PurchaseOrderLifecycleService orderLifecycle, IUnitOfWork unitOfWork, ICurrentUserService currentUser)
 {
     public async Task<List<VendorBillDto>> GetAllAsync(string? search)
@@ -24,7 +24,12 @@ public sealed class VendorBillService(
         var bill = await bills.GetByIdAsync(id); if (bill is null) return null;
         var order = await orders.GetByIdAsync(bill.PurchaseOrderId); var supplier = await suppliers.GetByIdAsync(bill.SupplierId);
         var paidAmounts = await payments.GetPaidAmountsAsync([bill.Id]);
-        return Map(bill, order?.OrderNumber ?? "-", supplier?.Name ?? "-", await matches.GetByVendorBillIdAsync(bill.Id), paidAmounts.GetValueOrDefault(bill.Id));
+        var creditedAmounts = await creditNotes.GetCreditedAmountsAsync([bill.Id]);
+        var creditedQuantities = (await creditNotes.GetByVendorBillIdAsync(bill.Id)).Where(x => x.Status == SupplierCreditNoteStatus.Posted)
+            .SelectMany(x => x.Lines).GroupBy(x => x.VendorBillLineId).ToDictionary(x => x.Key, x => x.Sum(y => y.Quantity));
+        var canCreateCreditNote = bill.Lines.Any(x => x.Quantity > creditedQuantities.GetValueOrDefault(x.Id));
+        return Map(bill, order?.OrderNumber ?? "-", supplier?.Name ?? "-", await matches.GetByVendorBillIdAsync(bill.Id),
+            paidAmounts.GetValueOrDefault(bill.Id), creditedAmounts.GetValueOrDefault(bill.Id), canCreateCreditNote);
     }
 
     public async Task<VendorBillCreatePageDto> GetCreatePageAsync(int purchaseOrderId, CreateVendorBillDto? form = null)
@@ -166,13 +171,14 @@ public sealed class VendorBillService(
     private async Task<Dictionary<int, decimal>> GetBilledQuantitiesAsync(int orderId) => (await bills.GetByPurchaseOrderIdAsync(orderId))
         .Where(x => x.Status == VendorBillStatus.Posted).SelectMany(x => x.Lines).GroupBy(x => x.GoodsReceiptLineId).ToDictionary(x => x.Key, x => x.Sum(y => y.Quantity));
 
-    private static VendorBillDto Map(VendorBill x, string orderNumber, string supplierName, PurchaseMatchRun? match = null, decimal paidAmount = 0) => new()
+    private static VendorBillDto Map(VendorBill x, string orderNumber, string supplierName, PurchaseMatchRun? match = null, decimal paidAmount = 0, decimal creditedAmount = 0, bool canCreateCreditNote = false) => new()
     {
         Id = x.Id, BillNumber = x.BillNumber, PurchaseOrderNumber = orderNumber, SupplierName = supplierName,
         SupplierInvoiceNumber = x.SupplierInvoiceNumber, BillDate = x.BillDate, CurrencyCode = x.CurrencyCode, Notes = x.Notes,
         Status = x.Status, NetAmount = x.NetAmount, TaxAmount = x.TaxAmount, TotalAmount = x.TotalAmount,
-        PaidAmount = paidAmount, OutstandingAmount = Math.Max(0, x.TotalAmount - paidAmount), ReceiptClearingAmount = x.ReceiptClearingAmount,
-        Lines = x.Lines.Select(line => new VendorBillLineDto { ProductCode = line.ProductCodeSnapshot, ProductName = line.ProductNameSnapshot,
+        PaidAmount = paidAmount, CreditedAmount = creditedAmount, OutstandingAmount = Math.Max(0, x.TotalAmount - paidAmount - creditedAmount), ReceiptClearingAmount = x.ReceiptClearingAmount,
+        CanCreateCreditNote = canCreateCreditNote,
+        Lines = x.Lines.Select(line => new VendorBillLineDto { Id = line.Id, ProductCode = line.ProductCodeSnapshot, ProductName = line.ProductNameSnapshot,
             UnitName = line.UnitNameSnapshot, Quantity = line.Quantity, UnitPrice = line.UnitPrice, TaxPercent = line.TaxPercent,
             IsTaxInclusive = line.IsTaxInclusive, NetAmount = line.NetAmount, TaxAmount = line.TaxAmount, GrossAmount = line.GrossAmount,
             ReceiptClearingAmount = line.ReceiptClearingAmount }).ToList(),

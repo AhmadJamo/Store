@@ -67,15 +67,19 @@ public sealed class VendorBillDto
     public decimal TaxAmount { get; init; }
     public decimal TotalAmount { get; init; }
     public decimal PaidAmount { get; init; }
+    public decimal CreditedAmount { get; init; }
     public decimal OutstandingAmount { get; init; }
     public decimal ReceiptClearingAmount { get; init; }
-    public bool IsPaidInFull => Status == VendorBillStatus.Posted && OutstandingAmount <= 0;
+    public bool IsPaidInFull => Status == VendorBillStatus.Posted && OutstandingAmount <= 0 && CreditedAmount == 0;
+    public bool IsSettledInFull => Status == VendorBillStatus.Posted && OutstandingAmount <= 0;
+    public bool CanCreateCreditNote { get; init; }
     public PurchaseMatchRunDto? Match { get; init; }
     public List<VendorBillLineDto> Lines { get; init; } = [];
 }
 
 public sealed class VendorBillLineDto
 {
+    public int Id { get; init; }
     public string ProductCode { get; init; } = string.Empty;
     public string ProductName { get; init; } = string.Empty;
     public string UnitName { get; init; } = string.Empty;

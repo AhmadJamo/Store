@@ -1,6 +1,6 @@
 # خارطة إكمال المشتريات / Purchase Completion Roadmap
-> الحالة / Status: APPROVED IMPLEMENTATION PLAN — PUR-165 IMPLEMENTED  
-> تاريخ المراجعة / Last reviewed: 2026-10-12  
+> الحالة / Status: APPROVED IMPLEMENTATION PLAN — PUR-170 IMPLEMENTED
+> تاريخ المراجعة / Last reviewed: 2026-10-13
 > المصدر التنفيذي / Runtime source of truth: Code and applied migrations
 
 ## 1. الهدف / Purpose
@@ -68,7 +68,7 @@ This roadmap moves Purchasing from the strong procure-to-pay foundation implemen
 
 **Implemented:** line progress is derived from posted receipts, receipt returns and Vendor Bill receipt-clearing quantities. Automatic closure requires all ordered quantity received and every received quantity billed or returned. A separately authorized user may close an unreceived remainder with a mandatory reason only after all receipts are settled, and only that closure type may be reopened with a distinct permission and reason. Every transition is retained in permanent lifecycle history; the responsive details screen hides completed receipt and billing actions.
 
-### الخطوة 3 — PUR-170 إشعار المورد الدائن والإرجاع بعد الفوترة / Supplier Credit Notes and Billed Returns
+### الخطوة 3 — PUR-170 إشعار المورد الدائن والإرجاع بعد الفوترة / Supplier Credit Notes and Billed Returns — مكتمل / Implemented
 
 **الهدف:** السماح بإرجاع كمية تمت فوترتها مع عكس الذمة والضريبة والمخزون بصورة صحيحة.
 
@@ -83,6 +83,10 @@ This roadmap moves Purchasing from the strong procure-to-pay foundation implemen
 **الاعتماد:** `PUR-160`.
 
 **شرط الخروج:** رحلة استلام ← فاتورة ← إرجاع ← إشعار دائن متوازنة محاسبيًا وقابلة للمطابقة دون تعديل المستند الأصلي.
+
+**المنفذ:** ينشأ إشعار مورد دائن مستقل من فاتورة مورد مرحلة، ويحدد الكمية المتاحة من الكمية المفوترة ناقص الإشعارات السابقة. الإرجاع يزيل المخزون الفعلي مع التتبع والموقع، ويخصم ذمة المورد، ويعكس ضريبة المدخلات، ويرحل فرق صافي الفاتورة عن تكلفة المخزون الحالية إلى حساب `PPV` (فرق سعر الشراء). التخصيصات الجزئية تحفظ المبالغ النسبية ويأخذ الجزء الأخير الرصيد الدقيق لمنع فروقات التقريب. تخفض الإشعارات رصيد الفاتورة المتاح للدفع دون تعديل الفاتورة الأصلية.
+
+**Implemented:** a separate immutable Supplier Credit Note is posted from a posted Vendor Bill. Availability equals billed quantity less prior posted credits. The return removes physical/tracked inventory, debits supplier payable, reverses input tax and posts current-cost versus credited-net difference to Purchase Price Variance. Partial allocations freeze proportional values while the final remainder consumes exact residual amounts. Credits reduce the bill balance available for payment without editing the original bill.
 
 ### الخطوة 4 — PUR-180 العكس والتصحيح المضبوط / Controlled Reversal and Correction
 
@@ -263,7 +267,7 @@ This roadmap moves Purchasing from the strong procure-to-pay foundation implemen
 
 | المجموعة / Wave | الشرائح / Slices | النتيجة |
 |---|---|---|
-| A — الإغلاق المحاسبي / Accounting closure | `PUR-160` و`PUR-165` مكتملان؛ `PUR-170` إلى `PUR-190` مخطط | أرقام قابلة للمطابقة، إغلاق صحيح، إشعارات دائنة، عكس مضبوط وعملات متعددة |
+| A — الإغلاق المحاسبي / Accounting closure | `PUR-160` إلى `PUR-170` مكتملة؛ `PUR-180` و`PUR-190` مخططان | أرقام قابلة للمطابقة، إغلاق صحيح، إشعارات دائنة، عكس مضبوط وعملات متعددة |
 | B — المرونة التجارية / Commercial flexibility | `PUR-200` إلى `PUR-230` | طلبات عروض أسرع، ترسية مقسمة، شراء خدمات وإدارة أسعار جماعية |
 | C — الأتمتة واللوجستيات / Automation and logistics | `PUR-240` إلى `PUR-250` | توريد مجدول، تنبؤ، جودة، تخصيص طلب وشحن مباشر |
 | D — التعاون والتكامل / Collaboration and integration | `PUR-260` إلى `PUR-280` | بريد ومرفقات وقراءة فواتير وبوابة وتكاملات وتحليلات وإغلاق المسار القديم |
@@ -285,4 +289,4 @@ This roadmap moves Purchasing from the strong procure-to-pay foundation implemen
 
 ## 6. نقطة البداية الحالية / Current Starting Point
 
-اكتمل `PUR-165`: الإغلاق المشتق لأمر الشراء، إغلاق الكمية المتبقية بسبب موثق، وإعادة الفتح المضبوطة مع سجل دائم وفحص SQL. نقطة البداية الحالية هي `PUR-170` فقط: إشعار المورد الدائن والإرجاع بعد الفوترة. لا يبدأ دعم العملات أو التكامل الخارجي قبل إغلاق شرائح الصحة المحاسبية السابقة.
+اكتمل `PUR-170`: إشعار المورد الدائن والإرجاع بعد الفوترة مع قيد متوازن وحدود كمية وقيمة وربط رصيد الفاتورة. نقطة البداية الحالية هي `PUR-180` فقط: العكس والتصحيح المضبوط للمستندات المرحلة. لا يبدأ دعم العملات أو التكامل الخارجي قبل إغلاق شرائح الصحة المحاسبية السابقة.

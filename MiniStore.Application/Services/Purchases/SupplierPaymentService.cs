@@ -5,7 +5,7 @@ using MiniStore.Domain.Interfaces;
 namespace MiniStore.Application.Services;
 
 public sealed class SupplierPaymentService(
-    ISupplierPaymentRepository payments, IVendorBillRepository bills, ISupplierRepository suppliers,
+    ISupplierPaymentRepository payments, IVendorBillRepository bills, ISupplierCreditNoteRepository creditNotes, ISupplierRepository suppliers,
     IPaymentMethodRepository paymentMethods, DocumentNumberService numbers, JournalPostingService journalPosting,
     IUnitOfWork unitOfWork, ICurrentUserService currentUser)
 {
@@ -32,10 +32,11 @@ public sealed class SupplierPaymentService(
         var candidates = (await bills.GetBySupplierIdAsync(source.SupplierId))
             .Where(x => x.Status == VendorBillStatus.Posted && x.CurrencyCode == source.CurrencyCode).OrderBy(x => x.BillDate).ThenBy(x => x.Id).ToList();
         var paid = await payments.GetPaidAmountsAsync(candidates.Select(x => x.Id));
+        var credited = await creditNotes.GetCreditedAmountsAsync(candidates.Select(x => x.Id));
         var open = candidates.Select(x => new SupplierPaymentOpenBillDto
         {
             VendorBillId = x.Id, BillNumber = x.BillNumber, SupplierInvoiceNumber = x.SupplierInvoiceNumber, BillDate = x.BillDate,
-            TotalAmount = x.TotalAmount, PaidAmount = paid.GetValueOrDefault(x.Id), OutstandingAmount = Round(x.TotalAmount - paid.GetValueOrDefault(x.Id))
+            TotalAmount = x.TotalAmount, PaidAmount = paid.GetValueOrDefault(x.Id), OutstandingAmount = Math.Max(0, Round(x.TotalAmount - paid.GetValueOrDefault(x.Id) - credited.GetValueOrDefault(x.Id)))
         }).Where(x => x.OutstandingAmount > 0).ToList();
         var value = form ?? new CreateSupplierPaymentDto
         {
@@ -67,12 +68,13 @@ public sealed class SupplierPaymentService(
             var supplierBills = await bills.GetBySupplierIdAsync(source.SupplierId);
             var billMap = supplierBills.Where(x => x.Status == VendorBillStatus.Posted && x.CurrencyCode == source.CurrencyCode).ToDictionary(x => x.Id);
             var paid = await payments.GetPaidAmountsAsync(submitted.Select(x => x.VendorBillId));
+            var credited = await creditNotes.GetCreditedAmountsAsync(submitted.Select(x => x.VendorBillId));
             created = new SupplierPayment(await numbers.GenerateAsync(DocumentNumberType.SupplierPayment, dto.PaymentDate.ToDateTime(TimeOnly.MinValue)),
                 source.SupplierId, method.Id, dto.PaymentDate, source.CurrencyCode, dto.ExternalReference, dto.Notes, currentUser.UserId);
             foreach (var input in submitted)
             {
                 if (!billMap.TryGetValue(input.VendorBillId, out var bill)) throw new ArgumentException("All payment allocations must belong to posted vendor bills for the same supplier and currency.");
-                var outstanding = Round(bill.TotalAmount - paid.GetValueOrDefault(bill.Id));
+                var outstanding = Math.Max(0, Round(bill.TotalAmount - paid.GetValueOrDefault(bill.Id) - credited.GetValueOrDefault(bill.Id)));
                 var amount = Round(input.Amount);
                 if (amount <= 0) throw new ArgumentException("Payment allocation must be greater than zero.");
                 if (amount > outstanding) throw new InvalidOperationException("A payment allocation cannot exceed the vendor bill outstanding balance.");

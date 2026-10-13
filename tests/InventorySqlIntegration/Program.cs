@@ -406,7 +406,8 @@ static async Task VerifyConcurrentGoodsReceiptAndGrniAsync(
             new VendorBillRepository(billContext), new PurchaseOrderRepository(billContext), new GoodsReceiptRepository(billContext),
             new GoodsReceiptReturnRepository(billContext), new SupplierRepository(billContext), new WarehouseRepository(billContext),
             new TaxRateRepository(billContext), new AccountingSettingsRepository(billContext), new PurchaseMatchingSettingsRepository(billContext),
-            new PurchaseMatchRepository(billContext), billNumbers, new SupplierPaymentRepository(billContext), billJournals, billOrderLifecycle,
+            new PurchaseMatchRepository(billContext), billNumbers, new SupplierPaymentRepository(billContext),
+            new SupplierCreditNoteRepository(billContext), billJournals, billOrderLifecycle,
             billUnitOfWork, billUser);
         try
         {
@@ -462,7 +463,7 @@ static async Task VerifyConcurrentGoodsReceiptAndGrniAsync(
         var paymentJournals = new JournalPostingService(new JournalEntryRepository(paymentContext), paymentNumbers, paymentFiscalPeriods);
         var paymentMethod = await paymentContext.PaymentMethods.SingleAsync(x => x.Name == "Supplier bank transfer");
         var service = new SupplierPaymentService(new SupplierPaymentRepository(paymentContext), new VendorBillRepository(paymentContext),
-            new SupplierRepository(paymentContext), new PaymentMethodRepository(paymentContext), paymentNumbers, paymentJournals,
+            new SupplierCreditNoteRepository(paymentContext), new SupplierRepository(paymentContext), new PaymentMethodRepository(paymentContext), paymentNumbers, paymentJournals,
             paymentUnitOfWork, paymentUser);
         try
         {
@@ -608,7 +609,7 @@ static async Task VerifyConcurrentGoodsReceiptAndGrniAsync(
         new SupplierRepository(landedVerification), new PurchaseOrderRepository(landedVerification),
         new GoodsReceiptRepository(landedVerification), new GoodsReceiptReturnRepository(landedVerification),
         new VendorBillRepository(landedVerification), new SupplierPaymentRepository(landedVerification),
-        new PurchaseMatchRepository(landedVerification), new LandedCostRepository(landedVerification));
+        new SupplierCreditNoteRepository(landedVerification), new PurchaseMatchRepository(landedVerification), new LandedCostRepository(landedVerification));
     var analytics = await analyticsService.GetAsync(new PurchaseAnalyticsQueryDto { From = receiptDate, To = receiptDate });
     var supplierPerformance = analytics.Suppliers.Single(x => x.SupplierId == supplierId);
     if (analytics.ReceiptValue < 9m || analytics.VendorBillSpend < 5m ||
@@ -637,6 +638,56 @@ static async Task VerifyConcurrentGoodsReceiptAndGrniAsync(
         purchaseGrniRow.ReturnedValue != 4.5m || purchaseGrniRow.BilledClearingValue != 4.5m ||
         purchaseGrniRow.OutstandingValue != 0m || !purchaseReconciliation.GrniIsReconciled)
         throw new InvalidOperationException("Purchase accounting reconciliation must translate on SQL Server and match inventory and GRNI operational evidence to their ledger balances.");
+
+    await using (var creditContext = new AppDbContext(CreateOptions(connectionString), new FixedTenantContext(tenantId)))
+    {
+        var creditUnitOfWork = new UnitOfWork(creditContext);
+        var creditUser = new FixedCurrentUser("integration-credit");
+        var creditNumbers = new DocumentNumberService(new DocumentSequenceRepository(creditContext));
+        var creditPeriods = new FiscalPeriodService(new FiscalPeriodRepository(creditContext), creditUnitOfWork, creditUser);
+        var creditJournals = new JournalPostingService(new JournalEntryRepository(creditContext), creditNumbers, creditPeriods);
+        var creditTracking = new InventoryTrackingService(
+            new InventoryTrackingRepository(creditContext), new InventoryRecallRepository(creditContext),
+            new ProductRepository(creditContext), new WarehouseRepository(creditContext), new StorageLocationRepository(creditContext),
+            new InventoryBalanceRepository(creditContext), new ProductLocationStockRepository(creditContext),
+            new PurchaseRepository(creditContext), new SupplierRepository(creditContext), new SaleRepository(creditContext),
+            new CustomerRepository(creditContext), creditUnitOfWork);
+        var creditRemoval = new UntrackedInventoryRemovalService(
+            new WarehouseRepository(creditContext), new StorageLocationRepository(creditContext),
+            new InventoryBalanceRepository(creditContext), new ProductStockRepository(creditContext),
+            new ProductLocationStockRepository(creditContext));
+        var creditService = new SupplierCreditNoteService(
+            new SupplierCreditNoteRepository(creditContext), new VendorBillRepository(creditContext),
+            new GoodsReceiptRepository(creditContext), new PurchaseOrderRepository(creditContext),
+            new SupplierRepository(creditContext), new WarehouseRepository(creditContext), new ProductRepository(creditContext),
+            new ProductStockRepository(creditContext), new StockTransactionRepository(creditContext),
+            new StockMovementRepository(creditContext), new AccountingSettingsRepository(creditContext),
+            creditTracking, creditRemoval, creditNumbers, creditJournals, creditUnitOfWork, creditUser);
+        var creditPage = await creditService.GetCreatePageAsync(vendorBillId);
+        var billLineId = creditPage.Lines.Single().VendorBillLineId;
+        var creditId = await creditService.CreateAndPostAsync(new CreateSupplierCreditNoteDto
+        {
+            VendorBillId = vendorBillId, CreditDate = receiptDate, SupplierReference = "SUP-CR-001",
+            Reason = "Billed goods returned in SQL integration",
+            Lines = [new CreateSupplierCreditNoteLineDto { VendorBillLineId = billLineId, Quantity = 0.5m }]
+        });
+        var creditNote = await creditContext.SupplierCreditNotes.Include(x => x.Lines).SingleAsync(x => x.Id == creditId);
+        var creditedAmounts = await new SupplierCreditNoteRepository(creditContext).GetCreditedAmountsAsync([vendorBillId]);
+        var creditJournal = await creditContext.JournalEntries.Include(x => x.Lines).SingleAsync(x =>
+            x.SourceType == "SupplierCreditNote" && x.SourceReference == creditNote.CreditNoteNumber);
+        var stockAfterCredit = await creditContext.ProductStocks.SingleAsync(x => x.ProductId == productId && x.WarehouseId == warehouseId);
+        if (creditNote.Status != SupplierCreditNoteStatus.Posted || creditNote.TotalAmount != 5m ||
+            creditNote.Lines.Single().Quantity != 0.5m || creditNote.Lines.Single().RemovedInventoryCost != 5.5m ||
+            stockAfterCredit.Quantity != 0m || creditedAmounts.GetValueOrDefault(vendorBillId) != 5m ||
+            creditJournal.Lines.Sum(x => x.Debit) != 5.5m ||
+            creditJournal.Lines.Sum(x => x.Credit) != 5.5m ||
+            !creditJournal.Lines.Any(x => x.AccountId == payableAccountId && x.Debit == 5m) ||
+            !creditJournal.Lines.Any(x => x.AccountId == inventoryAccountId && x.Credit == 5.5m) ||
+            !creditJournal.Lines.Any(x => x.AccountId == varianceAccountId && x.Debit == 0.5m) ||
+            !await creditContext.StockMovements.AnyAsync(x => x.SourceDocumentType == "SupplierCreditNote" && x.SourceDocumentId == creditId) ||
+            (await creditService.GetCreatePageAsync(vendorBillId)).Lines.Count != 0)
+            throw new InvalidOperationException("A supplier credit note must cap billed returns and atomically reverse payable, inventory and purchase price variance.");
+    }
 
     await using var scanContext = new AppDbContext(CreateOptions(connectionString), new FixedTenantContext(tenantId));
     var scanRequest = new PurchaseRequest("PRQ-SQL-SCAN", warehouseId, receiptDate,

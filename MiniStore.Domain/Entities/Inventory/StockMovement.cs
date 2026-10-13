@@ -158,6 +158,21 @@ public sealed class StockMovement
         };
     }
 
+    public static StockMovement PostSupplierCreditNoteReturn(int creditNoteId, int sourceLineId, int productId, int warehouseId,
+        decimal quantity, string userId, string reference)
+    {
+        if (creditNoteId <= 0 || sourceLineId <= 0) throw new ArgumentException("Supplier credit note and line are required.");
+        if (productId <= 0 || warehouseId <= 0 || quantity <= 0) throw new ArgumentException("Return product, warehouse and quantity are required.");
+        if (string.IsNullOrWhiteSpace(userId) || string.IsNullOrWhiteSpace(reference)) throw new ArgumentException("Return user and reference are required.");
+        return new StockMovement
+        {
+            ProductId = productId, WarehouseId = warehouseId, Quantity = quantity, Type = StockMovementType.ReceiptReturnOut,
+            Status = StockMovementStatus.Posted, IdempotencyKey = $"SCN:{creditNoteId}:{sourceLineId}", CreatedByUserId = userId.Trim(),
+            PostedByUserId = userId.Trim(), Reference = Normalize(reference), SourceDocumentType = "SupplierCreditNote",
+            SourceDocumentId = creditNoteId, SourceLineId = sourceLineId, StageSequence = 1, CreatedAt = DateTime.UtcNow, PostedAt = DateTime.UtcNow
+        };
+    }
+
     public void Post(string userId)
     {
         if (Status != StockMovementStatus.Planned) throw new InvalidOperationException("Only planned movements can be posted.");

@@ -1667,4 +1667,49 @@
   <data name="Review purchase accounting reconciliation" xml:space="preserve"><value>مراجعة المطابقة المحاسبية للمشتريات</value></data>
   <data name="Confirm that inventory and goods-received-not-invoiced balances agree after completing the order." xml:space="preserve"><value>تحقق بعد إنهاء الأمر من تطابق أرصدة المخزون والبضاعة المستلمة غير المفوترة.</value></data>
   <data name="The order is confirmed again and its remaining quantity can now be received." xml:space="preserve"><value>عاد الأمر إلى حالة مؤكد ويمكن الآن استلام الكمية المتبقية.</value></data>
+  <data name="Supplier credit notes" xml:space="preserve"><value>إشعارات المورد الدائنة</value></data>
+  <data name="Posted credits and billed goods returned to suppliers." xml:space="preserve"><value>الإشعارات المرحلة والبضائع المفوترة المعادة إلى الموردين.</value></data>
+  <data name="Credit date" xml:space="preserve"><value>تاريخ الإشعار الدائن</value></data>
+  <data name="No supplier credit notes were found." xml:space="preserve"><value>لا توجد إشعارات دائنة للموردين.</value></data>
+  <data name="Create supplier credit note" xml:space="preserve"><value>إنشاء إشعار دائن للمورد</value></data>
+  <data name="Supplier credit reference" xml:space="preserve"><value>مرجع إشعار المورد</value></data>
+  <data name="Credited" xml:space="preserve"><value>المعاد بإشعار دائن</value></data>
+  <data name="Available to credit" xml:space="preserve"><value>المتاح للإشعار الدائن</value></data>
+  <data name="Return and credit quantity" xml:space="preserve"><value>كمية الإرجاع والإشعار الدائن</value></data>
+  <data name="Post supplier credit note" xml:space="preserve"><value>ترحيل إشعار المورد الدائن</value></data>
+  <data name="Vendor bill is credited in full." xml:space="preserve"><value>تم رد كامل فاتورة المورد بإشعارات دائنة.</value></data>
+  <data name="View vendor bill" xml:space="preserve"><value>عرض فاتورة المورد</value></data>
+  <data name="Settled in full" xml:space="preserve"><value>مسوّاة بالكامل</value></data>
+  <data name="Credited in full" xml:space="preserve"><value>معادة بالكامل بإشعار دائن</value></data>
+  <data name="Credited amount" xml:space="preserve"><value>المبلغ المعاد بإشعار دائن</value></data>
+  <data name="Supplier credit note posted." xml:space="preserve"><value>تم ترحيل إشعار المورد الدائن.</value></data>
+  <data name="Review vendor bill settlement" xml:space="preserve"><value>مراجعة تسوية فاتورة المورد</value></data>
+  <data name="The credit reduced the vendor bill balance; review the remaining payable amount." xml:space="preserve"><value>خفّض الإشعار الدائن رصيد فاتورة المورد؛ راجع مبلغ الذمة المتبقي.</value></data>
+  <data name="View Supplier Credit Notes" xml:space="preserve"><value>عرض إشعارات المورد الدائنة</value></data>
+  <data name="Create and Post Supplier Credit Note" xml:space="preserve"><value>إنشاء وترحيل إشعار دائن للمورد</value></data>
+  <data name="SupplierCreditNoteReturn" xml:space="preserve"><value>إرجاع مفوتر بإشعار دائن</value></data>
+  <data name="Supplier credit note number is required and cannot exceed 50 characters." xml:space="preserve"><value>رقم إشعار المورد الدائن مطلوب ويجب ألا يتجاوز 50 حرفًا.</value></data>
+  <data name="Supplier credit note references are required." xml:space="preserve"><value>مراجع إشعار المورد الدائن مطلوبة.</value></data>
+  <data name="Supplier credit note reference cannot exceed 100 characters." xml:space="preserve"><value>يجب ألا يتجاوز مرجع إشعار المورد الدائن 100 حرف.</value></data>
+  <data name="Supplier credit note reason is required and cannot exceed 1000 characters." xml:space="preserve"><value>سبب إشعار المورد الدائن مطلوب ويجب ألا يتجاوز 1000 حرف.</value></data>
+  <data name="Only draft supplier credit notes can be changed." xml:space="preserve"><value>يمكن تعديل إشعارات المورد الدائنة المسودة فقط.</value></data>
+  <data name="Each vendor bill line can be credited only once per supplier credit note." xml:space="preserve"><value>يمكن إدراج كل بند فاتورة مورد مرة واحدة فقط في إشعار المورد الدائن.</value></data>
+  <data name="A draft supplier credit note needs at least one positive line before posting." xml:space="preserve"><value>يحتاج إشعار المورد الدائن المسودة إلى بند موجب واحد على الأقل قبل الترحيل.</value></data>
+  <data name="Supplier credit note line references are required." xml:space="preserve"><value>مراجع بند إشعار المورد الدائن مطلوبة.</value></data>
+  <data name="Supplier credit note line values are invalid." xml:space="preserve"><value>قيم بند إشعار المورد الدائن غير صالحة.</value></data>
+  <data name="An input tax account is required for a taxed supplier credit note line." xml:space="preserve"><value>حساب ضريبة المدخلات مطلوب لبند إشعار مورد خاضع للضريبة.</value></data>
+  <data name="Supplier credit note line snapshots are required." xml:space="preserve"><value>بيانات بند إشعار المورد الدائن المحفوظة مطلوبة.</value></data>
+  <data name="Enter at least one positive credited return quantity." xml:space="preserve"><value>أدخل كمية إرجاع موجبة واحدة على الأقل للإشعار الدائن.</value></data>
+  <data name="Only posted vendor bills can receive a supplier credit note." xml:space="preserve"><value>يمكن إنشاء إشعار دائن لفواتير المورد المرحلة فقط.</value></data>
+  <data name="Supplier credit note date cannot be earlier than the vendor bill date." xml:space="preserve"><value>لا يمكن أن يسبق تاريخ إشعار المورد الدائن تاريخ فاتورة المورد.</value></data>
+  <data name="Assign a payable account to the supplier before posting a supplier credit note." xml:space="preserve"><value>عيّن حساب ذمم دائنة للمورد قبل ترحيل إشعار المورد الدائن.</value></data>
+  <data name="Configure the purchase order warehouse inventory account before posting a supplier credit note." xml:space="preserve"><value>هيّئ حساب مخزون مستودع أمر الشراء قبل ترحيل إشعار المورد الدائن.</value></data>
+  <data name="Configure accounting posting accounts before posting a supplier credit note." xml:space="preserve"><value>هيّئ حسابات الترحيل المحاسبي قبل ترحيل إشعار المورد الدائن.</value></data>
+  <data name="One or more credit lines do not belong to the vendor bill." xml:space="preserve"><value>بند واحد أو أكثر من بنود الإشعار الدائن لا ينتمي إلى فاتورة المورد.</value></data>
+  <data name="Credited return quantity cannot exceed the remaining billed quantity." xml:space="preserve"><value>لا يمكن أن تتجاوز كمية الإرجاع بالإشعار الدائن الكمية المفوترة المتبقية.</value></data>
+  <data name="The billed goods receipt line was not found." xml:space="preserve"><value>لم يتم العثور على بند استلام البضاعة المفوتر.</value></data>
+  <data name="Credited return quantity cannot exceed currently available warehouse stock." xml:space="preserve"><value>لا يمكن أن تتجاوز كمية الإرجاع بالإشعار الدائن مخزون المستودع المتاح حاليًا.</value></data>
+  <data name="Configure a purchase price variance account before posting a supplier credit note with a cost difference." xml:space="preserve"><value>هيّئ حساب فرق سعر الشراء قبل ترحيل إشعار مورد دائن يحتوي فرق تكلفة.</value></data>
+  <data name="This supplier credit note has already been posted to accounting." xml:space="preserve"><value>تم ترحيل إشعار المورد الدائن هذا محاسبيًا مسبقًا.</value></data>
+  <data name="Supplier credit note line total must equal net amount plus tax." xml:space="preserve"><value>يجب أن يساوي إجمالي بند إشعار المورد الدائن صافي المبلغ مضافًا إليه الضريبة.</value></data>
 </root>

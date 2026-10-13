@@ -11,6 +11,7 @@ public sealed class PurchaseAnalyticsService(
     IGoodsReceiptReturnRepository returns,
     IVendorBillRepository bills,
     ISupplierPaymentRepository payments,
+    ISupplierCreditNoteRepository creditNotes,
     IPurchaseMatchRepository matches,
     ILandedCostRepository landedCosts)
 {
@@ -26,13 +27,16 @@ public sealed class PurchaseAnalyticsService(
         var allReceipts = await receipts.GetAllAsync(null);
         var allReturns = await returns.GetAllAsync();
         var allBills = await bills.GetAllAsync(null);
+        var allCredits = await creditNotes.GetAllAsync();
         var allMatches = await matches.GetAllAsync();
         var allLanded = await landedCosts.GetAllAsync();
 
         var postedReceipts = allReceipts.Where(x => x.Status == GoodsReceiptStatus.Posted).ToList();
         var postedReturns = allReturns.Where(x => x.Status == GoodsReceiptReturnStatus.Posted).ToList();
         var postedBills = allBills.Where(x => x.Status == VendorBillStatus.Posted).ToList();
+        var postedCredits = allCredits.Where(x => x.Status == SupplierCreditNoteStatus.Posted).ToList();
         var paid = await payments.GetPaidAmountsAsync(postedBills.Select(x => x.Id));
+        var credited = await creditNotes.GetCreditedAmountsAsync(postedBills.Select(x => x.Id));
         var orderMap = allOrders.ToDictionary(x => x.Id);
         var billsInPeriod = postedBills.Where(x => IsInPeriod(x.BillDate, query)).ToList();
         var receiptsInPeriod = postedReceipts.Where(x => IsInPeriod(x.ReceiptDate, query)).ToList();
@@ -57,6 +61,7 @@ public sealed class PurchaseAnalyticsService(
             var supplierReceipts = postedReceipts.Where(x => supplierOrderIds.Contains(x.PurchaseOrderId)).ToList();
             var supplierReceiptIds = supplierReceipts.Select(x => x.Id).ToHashSet();
             var supplierReturns = postedReturns.Where(x => supplierReceiptIds.Contains(x.GoodsReceiptId)).ToList();
+            var supplierCredits = postedCredits.Where(x => supplierOrderIds.Contains(x.PurchaseOrderId)).ToList();
             var supplierBills = billsInPeriod.Where(x => x.SupplierId == supplier.Id).ToList();
             var supplierBillIds = supplierBills.Select(x => x.Id).ToHashSet();
             var orderedQuantity = supplierOrders.SelectMany(x => x.Lines).Sum(x => x.OrderedQuantity);
@@ -64,13 +69,14 @@ public sealed class PurchaseAnalyticsService(
             var onTimeQuantity = supplierReceipts
                 .Where(receipt => orderMap.TryGetValue(receipt.PurchaseOrderId, out var order) && receipt.ReceiptDate <= order.ExpectedDate)
                 .SelectMany(x => x.Lines).Sum(x => x.ReceivedQuantity);
-            var returnedQuantity = supplierReturns.SelectMany(x => x.Lines).Sum(x => x.ReturnQuantity);
+            var returnedQuantity = supplierReturns.SelectMany(x => x.Lines).Sum(x => x.ReturnQuantity) +
+                                   supplierCredits.SelectMany(x => x.Lines).Sum(x => x.Quantity);
             var deliveryDays = supplierReceipts
                 .Where(x => orderMap.ContainsKey(x.PurchaseOrderId))
                 .Select(x => (decimal)Math.Max(0, x.ReceiptDate.DayNumber - orderMap[x.PurchaseOrderId].OrderDate.DayNumber))
                 .ToList();
             var currentSupplierBills = postedBills.Where(x => x.SupplierId == supplier.Id).ToList();
-            var outstanding = currentSupplierBills.Sum(x => Math.Max(0, x.TotalAmount - paid.GetValueOrDefault(x.Id)));
+            var outstanding = currentSupplierBills.Sum(x => Math.Max(0, x.TotalAmount - paid.GetValueOrDefault(x.Id) - credited.GetValueOrDefault(x.Id)));
             var supplierMatches = matchesInPeriod.Where(x => supplierBillIds.Contains(x.VendorBillId)).ToList();
 
             if (supplierOrders.Count == 0 && supplierBills.Count == 0)
@@ -102,7 +108,7 @@ public sealed class PurchaseAnalyticsService(
             ReceiptValue = Round(receiptsInPeriod.SelectMany(x => x.Lines).Sum(x => x.ReceivedQuantity * x.UnitCost)),
             VendorBillSpend = Round(billsInPeriod.Sum(x => x.TotalAmount)),
             LandedCostTotal = Round(allLanded.Where(x => IsInPeriod(x.CostDate, query)).Sum(x => x.TotalAmount)),
-            OutstandingPayables = Round(postedBills.Sum(x => Math.Max(0, x.TotalAmount - paid.GetValueOrDefault(x.Id)))),
+            OutstandingPayables = Round(postedBills.Sum(x => Math.Max(0, x.TotalAmount - paid.GetValueOrDefault(x.Id) - credited.GetValueOrDefault(x.Id)))),
             MatchExceptionCount = matchesInPeriod.Sum(x => x.Exceptions.Count),
             MatchOverrideCount = matchesInPeriod.Count(x => x.WasOverridden),
             Suppliers = supplierRows.OrderByDescending(x => x.BilledSpend).ThenBy(x => x.SupplierName).ToList()

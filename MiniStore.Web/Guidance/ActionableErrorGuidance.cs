@@ -12,7 +12,7 @@ public static class ActionableErrorGuidance
     {
         "Purchases", "PurchaseReturns", "SupplierPurchasing", "PurchaseRequests",
         "PurchaseApprovalRules", "PurchaseSourcing", "SupplierQuotations", "PurchaseOrders",
-        "GoodsReceipts", "GoodsReceiptReturns", "VendorBills", "SupplierPayments",
+        "GoodsReceipts", "GoodsReceiptReturns", "VendorBills", "SupplierCreditNotes", "SupplierPayments",
         "PurchaseAgreements", "PurchaseTemplates", "LandedCosts", "PurchaseAnalytics"
     };
 
@@ -123,12 +123,14 @@ public static class ActionableErrorGuidance
             "Configure accounting posting accounts before posting goods receipts.",
             "Configure accounting posting accounts before posting a goods receipt return.",
             "Configure accounting posting accounts before posting a vendor bill.",
+            "Configure accounting posting accounts before posting a supplier credit note.",
             "Configure accounting posting accounts before posting landed costs.",
             "Configure a goods received not invoiced account before posting goods receipts.",
             "Configure a goods received not invoiced account before posting a goods receipt return.",
             "Configure a goods received not invoiced account before posting a vendor bill.",
             "Configure a purchase price variance account before posting a return with a cost difference.",
             "Configure a purchase price variance account before posting a vendor bill with a price difference.",
+            "Configure a purchase price variance account before posting a supplier credit note with a cost difference.",
             "Configure a purchase discount account before posting a discounted purchase.",
             "Configure a purchase discount account before returning a discounted purchase.",
             "Configure a cost of sales account before posting inventory cost variance.",

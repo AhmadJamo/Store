@@ -1,7 +1,7 @@
 # Accounting implementation assessment
 > Status: PARTIALLY IMPLEMENTED  
 > Source of truth: Code  
-> Last reviewed: 2026-10-12
+> Last reviewed: 2026-10-13
 
 For the Arabic accounting-cycle, journal examples, international-standard map, mandatory software controls and ordered implementation guide, see [`ACCOUNTING_REFERENCE_AR.md`](ACCOUNTING_REFERENCE_AR.md). That reference describes the target policy and must not be read as an implemented-feature list; the status table below remains the implementation assessment.
 
@@ -42,6 +42,7 @@ Warehouses now have optional BranchId and InventoryAccountId fields. Completing 
 | Supplier Payment posting | IMPLEMENTED | Each payment debits the supplier payable account and credits the cash/bank account mapped by the selected active payment method; partial allocations are capped by cumulative Vendor Bill outstanding balances. |
 | Purchase Inventory/GRNI reconciliation | IMPLEMENTED | PUR-160 provides an as-of-date, read-only comparison of warehouse operational inventory to assigned Inventory accounts and receipt-derived GRNI to the configured ledger account, with document evidence and SQL coverage. |
 | Derived Purchase Order closure | IMPLEMENTED | PUR-165 closes a fully received order only after every received quantity is billed or returned; reasoned remaining-quantity closure also requires settled receipts. Closure itself creates no journal and preserves downstream accounting documents as authority. |
+| Supplier Credit Notes | IMPLEMENTED | PUR-170 returns billed receipt stock, debits supplier payable, credits snapshotted input tax and current inventory cost, and balances net-versus-current-cost difference through Purchase Price Variance without changing the original bill. |
 
 ## Existing rules
 Sales select the product `SalePrice` for retail POS or `WholesalePrice` for wholesale; client-submitted line price is ignored by `SaleService`. Normal stock removal cannot exceed balance. Prepared-product recipe use and kitchen variance may cross zero only for an ingredient explicitly configured for controlled negative consumption, and the negative row remains visible for reconciliation. A transfer creator cannot approve their own submitted transfer. Discount settings can disable types/limits and an override permission is checked.
@@ -58,7 +59,7 @@ Feature services calculate business amounts and resolve accounts, then send prep
 - Soft Closed currently blocks the same operational posting sources as Closed; a future manual-adjustment workflow may add a narrowly permissioned soft-close override.
 
 ## Before accounting expansion
-Generalized reversals, currency policy and mixed-rate product tax remain planned decisions before broader accounting expansion.
+Generalized reversals, currency policy and mixed-rate product tax remain planned decisions before broader accounting expansion. Supplier Credit Notes now provide the correct billed-return path and must not be replaced by a general reversal.
 ## Planned procure-to-pay accounting boundary
 
 PUR-005 accepts GRNI as the accounting bridge for the new, separate Goods Receipt and Vendor Bill flow. PO confirmation and PUR-165 closure have no GL effect. A posted GRN debits the warehouse Inventory account and credits the configured Goods Received Not Invoiced account through the central fiscal-period/idempotency gateway. A posted receipt-based return may reverse only the unbilled portion: it reverses GRNI at original receipt value, removes inventory at current AVCO and records the difference in Purchase Price Variance. A posted Vendor Bill clears allocated GRNI, records the difference between bill net and receipt value in Purchase Price Variance, recognizes snapshotted recoverable input tax and credits the supplier's Accounts Payable account. A Supplier Payment then debits that payable account and credits the selected payment method's cash/bank account. SQL integration verifies receipt, bill, payment and unbilled-return journal atomicity plus concurrency protection. PUR-160 adds the read-only reconciliation described above; it identifies but never edits differences. See `PURCHASE_ARCHITECTURE_ALIGNMENT.md` and `decisions/2026-10-08-grni-and-purchase-currency-boundary.md`.

@@ -1,5 +1,5 @@
 # Razor screen map
-> Status: IMPLEMENTED | Last reviewed: 2026-10-12
+> Status: IMPLEMENTED | Last reviewed: 2026-10-13
 
 | Screens | Controller flow / notable UI |
 |---|---|
@@ -29,6 +29,7 @@
 | `Views/Shared/_Notification.cshtml` | shared localized notification modal with permission-aware resolution buttons for recognized actionable errors and a short next-step explanation/button after successful purchase, inventory and warehouse operations. |
 | `Views/GoodsReceiptReturns/{Index,Create,Details}.cshtml` | bilingual receipt-based supplier return capture and immutable posted history. |
 | `Views/VendorBills/{Index,Create,Details}.cshtml` | bilingual receipt-allocation capture, posted bill history and immutable accounting detail. |
+| `Views/SupplierCreditNotes/{Index,Create,Details}.cshtml` | responsive bilingual billed-return cards with billed/credited/available quantities, optional tracking allocation, immutable accounting/valuation detail and direct Vendor Bill balance link. |
 | `Views/SupplierPayments/{Index,Create,Details}.cshtml` | bilingual open-bill allocation, posted payment history and immutable settlement detail. |
 | `Views/Settings/PurchaseMatching.cshtml` | bilingual tenant quantity/price tolerance administration for three-way matching. |
 | `Views/Sales/{Index,Create,Details,Pos}.cshtml` | wholesale sale, detail/list and POS cart; optional inclusive/exclusive invoice tax is selected and previewed, while terminal selection filters warehouses and applies saved order experience. Wholesale/POS tracked direct lines can submit an optional audited lot/serial selection. Details shows tax, product names, POS context, unit cost/COGS and an idempotent general-ledger posting action/status. |

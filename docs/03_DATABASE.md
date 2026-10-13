@@ -1,9 +1,11 @@
 # Database
 > Status: IMPLEMENTED  
 > Source of truth: EF Core entities, configurations and migrations  
-> Last reviewed: 2026-10-12
+> Last reviewed: 2026-10-13
 
 PUR-165 adds nullable current-closure evidence to `PurchaseOrders` and tenant-owned immutable `PurchaseOrderLifecycleHistories`. The history records automatic close, reasoned remaining-quantity close and reasoned reopen transitions through a tenant-composite cascade relationship. Migration `AddPurchaseOrderDerivedClosure` is additive and applied to the local `MiniStoreDb`.
+
+PUR-170 adds tenant-owned `SupplierCreditNotes` and `SupplierCreditNoteLines`. Headers reference Vendor Bill, Purchase Order, Supplier and Warehouse; lines reference the billed line, receipt line, product and frozen input-tax account. Tenant-composite foreign keys prevent cross-company allocation. Migration `AddSupplierCreditNotes` is additive and applied to the local `MiniStoreDb`.
 
 WMS-050 adds tenant-owned `InventoryReservations` and `InventoryReservationLines`. Source identity is unique per tenant, quantities are positive, relationships are tenant-safe, exact and Unassigned dimensions are duplicate-protected, and rowversions protect concurrent reservation changes. Migrations `AddInventoryReservations` and `AddUnassignedReservationUniqueness` are additive and are applied to `AHMAD/MiniStoreDb`.
 
@@ -58,6 +60,7 @@ All business tables have a required `TenantId` foreign key to `Tenants`. EF quer
 | GoodsReceipts / Lines | Tenant-unique GRN documents linked to a confirmed Purchase Order and warehouse. Lines freeze PO product/unit/net-cost snapshots and optional lot, serial, manufacture and expiry inputs. Posting atomically updates inventory and, for a positive receipt value, creates the PUR-065 Inventory/GRNI journal. |
 | GoodsReceiptReturns / Lines | Tenant-unique, receipt-linked supplier returns. Lines freeze returned purchase-unit/base quantity, original receipt cost, actual removed inventory cost and tracking allocation evidence; tenant-composite FKs prevent crossing receipt, PO, supplier, warehouse or product boundaries. |
 | VendorBills / Lines | Tenant-unique posted supplier invoices allocated to posted receipt lines. Lines freeze billed quantity, entered price, receipt clearing cost, tax policy/account and calculated totals. A filtered unique index on tenant, supplier and normalized supplier invoice number protects active invoice identity. |
+| SupplierCreditNotes / Lines | Immutable posted billed-return documents linked to one Vendor Bill. Lines freeze credited quantity, proportional net/tax/gross value, current inventory removal cost and optional tracking allocations; cumulative caps are enforced transactionally. |
 | PurchaseMatchingSettings / PurchaseMatchRuns / PurchaseMatchExceptions | Per-tenant quantity/price tolerances and one immutable match result per Vendor Bill. Exceptions freeze expected/actual values, variance and applied tolerance; overrides freeze reason, actor and time. |
 | SupplierPayments / SupplierPaymentLines | Tenant-unique posted payments with rowversion, supplier/payment-method references and immutable partial allocations to Vendor Bills. Composite tenant foreign keys prevent cross-company allocations. |
 | Sales / SaleItems / SalesReturns / SalesReturnItems | sale warehouse and optional TaxRate FKs Restrict; items cascade; sale invoice number unique. Sale freezes tax percentage, output account, inclusive policy and amount. Returns reference the original sale/items, warehouse/payment and freeze refund, tax, revenue, discount and historical restock cost; return numbers are tenant-unique. |
@@ -69,7 +72,7 @@ All business tables have a required `TenantId` foreign key to `Tenants`. EF quer
 | DocumentSequences | one row per tenant/document type; unique `(TenantId, DocumentType)`; customizable template, prefix, suffix, padding, next/reset counters and period state; rowversion protects settings updates. |
 
 ## Migrations
-Migration history includes `20261012122525_AddPurchaseOrderDerivedClosure`, applied to the local `MiniStoreDb`. It adds four nullable closure columns and the tenant-safe lifecycle-history table without rewriting existing orders. Migrations are source-controlled under `MiniStore.Infrastructure/Migrations`; generated designers and the model snapshot are metadata, not separate runtime features.
+Migration history includes `20261012122525_AddPurchaseOrderDerivedClosure` and `20261012125000_AddSupplierCreditNotes`, both applied to the local `MiniStoreDb`. The latter creates empty tenant-safe credit-note tables without rewriting bills or inventory. Migrations are source-controlled under `MiniStore.Infrastructure/Migrations`; generated designers and the model snapshot are metadata, not separate runtime features.
 
 ## Transactions and concurrency
 `UnitOfWork.ExecuteInTransactionAsync` starts a Serializable database transaction, executes an operation, calls one `SaveChangesAsync`, then commits. Sales, purchases, transfers, putaway and internal location relocation use it. ProductStock, ProductLocationStock and StockTransfer use rowversion concurrency tokens. General, discount, inventory, invoice and POS terminal experience settings use rowversion to varying degrees.

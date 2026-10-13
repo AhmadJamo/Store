@@ -1,5 +1,5 @@
 # Purchase and PurchaseItem entities
-> Status: IMPLEMENTED | Last reviewed: 2026-10-12
+> Status: IMPLEMENTED | Last reviewed: 2026-10-13
 
 Purchase holds SupplierId, WarehouseId, supplier invoice number, date/notes, total and items and rejects the same product more than once per warehouse. Item validates product, positive quantity and non-negative price and computes total. Purchases table has a tenant-unique invoice number, supplier/warehouse Restrict FKs and cascading items. Creation immediately receives stock; explicit journal posting must precede a supplier return.
 
@@ -10,3 +10,5 @@ The additive procurement model also includes PurchaseAgreement/PurchaseAgreement
 LandedCost is an immutable posted header linked to one posted Goods Receipt. Components freeze freight/customs/insurance/other amounts; allocations freeze the selected basis, allocated amount, capitalized/expensed split and AVCO before/after for every receipt line. Tenant-unique normalized external references prevent duplicate posting.
 
 PurchaseOrder is the new procure-to-pay commercial intent. Its current completion evidence stores nullable closure type, reason, actor and UTC time. `PurchaseOrderLifecycleHistory` is immutable tenant-owned audit evidence for automatic completion, reasoned remaining-quantity closure and reasoned reopen. The entity enforces valid state transitions and reasons; the Application lifecycle service decides eligibility from authoritative posted receipt, return and bill documents.
+
+SupplierCreditNote is an immutable posted billed-return aggregate linked to one Vendor Bill, Purchase Order, Supplier and Warehouse. Its lines link the exact Vendor Bill and Goods Receipt lines and freeze credited quantity, unit conversion, net/tax/gross amounts, actual removed inventory cost, product labels and tracking allocation. Posting requires at least one positive line; later mutation is rejected.

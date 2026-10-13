@@ -1515,6 +1515,33 @@ Check(vendorBillType.FindProperty("TenantId") is { IsNullable: false } &&
     "Vendor bills must be tenant-owned, concurrency-protected and database-unique per normalized supplier invoice");
 Check(DocumentSequence.CreateDefault(DocumentNumberType.VendorBill).Preview(DateTime.Today).StartsWith("VB-"),
     "Vendor bills must use an independent centralized document sequence");
+var supplierCredit = new SupplierCreditNote("SCN-000001", 1, 1, 5, 1, DateOnly.FromDateTime(DateTime.Today),
+    "jod", "SUP-CR-1", "Billed goods returned", "buyer");
+supplierCredit.AddLine(new SupplierCreditNoteLine(1, 1, 10, 45, 1m, 1m, 10m, 1.60m, 11.60m, 9m,
+    "P-10", "Coffee beans", "kg", null));
+supplierCredit.Post("buyer");
+Check(supplierCredit.Status == SupplierCreditNoteStatus.Posted && supplierCredit.CurrencyCode == "JOD" &&
+      supplierCredit.NetAmount == 10m && supplierCredit.TaxAmount == 1.60m && supplierCredit.TotalAmount == 11.60m &&
+      db.Model.FindEntityType(typeof(SupplierCreditNote))!.FindProperty("TenantId") is { IsNullable: false } &&
+      db.Model.FindEntityType(typeof(SupplierCreditNoteLine))!.FindProperty("TenantId") is { IsNullable: false },
+    "Supplier credit notes must preserve immutable tenant-owned billed-return, tax and valuation evidence");
+CheckThrows(() => supplierCredit.AddLine(new SupplierCreditNoteLine(2, 2, 11, null, 1m, 1m, 1m, 0m, 1m, 1m,
+        "P-11", "Tea", "kg", null)),
+    "Posted supplier credit notes must be immutable");
+var supplierCreditMovement = StockMovement.PostSupplierCreditNoteReturn(1, 1, 10, 1, 1m, "buyer", "SCN-000001");
+Check(supplierCreditMovement.Type == StockMovementType.ReceiptReturnOut &&
+      supplierCreditMovement.SourceDocumentType == "SupplierCreditNote" && supplierCreditMovement.Status == StockMovementStatus.Posted,
+    "A posted supplier credit note must create an idempotent outbound physical movement");
+Check(DocumentSequence.CreateDefault(DocumentNumberType.SupplierCreditNote).Preview(DateTime.Today).StartsWith("SCN-"),
+    "Supplier credit notes must use an independent centralized document sequence");
+var supplierCreditController = typeof(SupplierCreditNotesController);
+Check(supplierCreditController.GetMethod(nameof(SupplierCreditNotesController.Index))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
+      $"{PermissionAuthorizeAttribute.PolicyPrefix}SupplierCreditNotes.View" &&
+      supplierCreditController.GetMethod(nameof(SupplierCreditNotesController.Create), [typeof(CreateSupplierCreditNoteDto)])!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
+      $"{PermissionAuthorizeAttribute.PolicyPrefix}SupplierCreditNotes.Create",
+    "Supplier credit note visibility and posting must use separate server-side permissions");
 var matchingSettings = new PurchaseMatchingSettings(2m, 3m);
 Check(matchingSettings.QuantityTolerancePercent == 2m && matchingSettings.PriceTolerancePercent == 3m,
     "Purchase matching settings must preserve independent quantity and price tolerances");
@@ -1655,12 +1682,24 @@ Check(reopenedOrderNextStep is
           RequiredPermission: "GoodsReceipts.Create"
       } && reopenedOrderNextStep.RouteValues.GetValueOrDefault("purchaseOrderId") == "21",
     "A reopened purchase order must guide users back to receiving its remaining quantity");
+var supplierCreditNextStep = WorkflowNextStepGuidance.Resolve(
+    "Supplier credit note posted.",
+    "SupplierCreditNotes",
+    new Dictionary<string, string?> { ["id"] = "31", ["vendorBillId"] = "18" });
+Check(supplierCreditNextStep is
+      {
+          Controller: "VendorBills",
+          Action: "Details",
+          RequiredPermission: "VendorBills.View"
+      } && supplierCreditNextStep.RouteValues.GetValueOrDefault("id") == "18",
+    "A posted supplier credit note must guide users back to the reduced vendor bill balance");
 Check(WorkflowNextStepGuidance.Resolve(
           "Operation completed successfully.",
           "Sales",
           new Dictionary<string, string?>()) is null,
     "Workflow next-step guidance must remain scoped until a future module defines its next actions");
 Check(WorkflowNextStepGuidance.IsSupportedController("VendorBills") &&
+      WorkflowNextStepGuidance.IsSupportedController("SupplierCreditNotes") &&
       WorkflowNextStepGuidance.IsSupportedController("PurchaseAccountingReconciliation") &&
       WorkflowNextStepGuidance.IsSupportedController("StockTransfers") &&
       WorkflowNextStepGuidance.IsSupportedController("Warehouses") &&

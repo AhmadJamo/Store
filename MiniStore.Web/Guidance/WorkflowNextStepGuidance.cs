@@ -14,7 +14,7 @@ public static class WorkflowNextStepGuidance
     {
         "Purchases", "PurchaseReturns", "Suppliers", "SupplierPurchasing", "PurchaseRequests",
         "PurchaseApprovalRules", "PurchaseSourcing", "SupplierQuotations", "PurchaseOrders",
-        "GoodsReceipts", "GoodsReceiptReturns", "VendorBills", "SupplierPayments",
+        "GoodsReceipts", "GoodsReceiptReturns", "VendorBills", "SupplierCreditNotes", "SupplierPayments",
         "PurchaseAgreements", "PurchaseTemplates", "LandedCosts", "PurchaseAccountingReconciliation"
     };
 
@@ -118,6 +118,11 @@ public static class WorkflowNextStepGuidance
             return new("SupplierPayments", "Create", "Pay vendor bill",
                 "Allocate a supplier payment when the posted bill is ready for settlement.",
                 "SupplierPayments.Create", Routes(("vendorBillId", Route("id"))));
+
+        if (Matches(message, localize, "Supplier credit note posted."))
+            return new("VendorBills", "Details", "Review vendor bill settlement",
+                "The credit reduced the vendor bill balance; review the remaining payable amount.",
+                "VendorBills.View", Routes(("id", Route("vendorBillId"))));
 
         if (Matches(message, localize, "Purchase created successfully."))
             return new("Purchases", "Details", "Review and post purchase",

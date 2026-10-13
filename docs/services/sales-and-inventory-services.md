@@ -1,7 +1,7 @@
 # Sales and inventory services
 
 `InventoryRemovalAllocator` is the shared tracked-stock ordering policy used by `InventoryTrackingService` for issues and transfers. It converts the source warehouse's configured FIFO, FEFO, location-priority or minimize-locations strategy into a deterministic candidate order; Manual currently falls back to FIFO until the audited override workflow is implemented.
-> Status: IMPLEMENTED WITH REMAINING CONTROLS | Last reviewed: 2026-10-12
+> Status: IMPLEMENTED WITH REMAINING CONTROLS | Last reviewed: 2026-10-13
 
 `SaleService` owns pricing, numbering, discounts, stock decrement and immutable direct/recipe-derived UnitCost/COGS snapshots. `PurchaseService` creates purchases and recalculates product/warehouse moving averages from net line cost; `PurchasePostingService` posts the supplier document separately. `ProductStockService` creates valued opening balances and adjustments. `StockTransactionService` records auditable quantity/average/value snapshots and permits only reasoned manual adjustments. `StockTransferService` carries source cost into the destination average during posting/cancellation. UnitOfWork uses Serializable transactions and converts EF concurrency conflicts to a retryable data-change message.
 
@@ -38,6 +38,8 @@ WMS-100B3 delegates one absolute scanned quantity to `InventoryAdjustmentService
 `PurchaseAccountingReconciliationService` is the PUR-160 read-only financial comparison. Its dedicated repository projects warehouse operational Inventory values, posted ledger activity, Goods Receipt values, unbilled return reversals and Vendor Bill GRNI clearing under tenant query filters. The service applies two-decimal accounting tolerance, classifies warehouse exceptions and open receipts, and never creates an adjustment or journal.
 
 `PurchaseOrderLifecycleService` is the PUR-165 completion authority. It derives each order line's received, returned, Vendor-Bill-cleared, remaining-to-receive and unsettled quantities from posted downstream documents. A fully received and fully settled confirmed order closes automatically inside the final bill/return transaction. A partially received order can close its remainder only when all receipts are settled and a reason is supplied; only that closure type can be reopened through its separately authorized, reasoned command.
+
+`SupplierCreditNoteService` is the PUR-170 billed-return authority. It calculates remaining credited quantity per Vendor Bill line, freezes proportional bill values with exact final residual rounding, delegates location and lot/serial removal to existing inventory services, records current-cost stock evidence and posts payable/input-tax/inventory/PPV reversal in the same Serializable transaction. `VendorBillService` and `SupplierPaymentService` subtract posted credit totals before exposing or accepting payment allocation.
 
 `ProductService` also validates product logistics against managed units: weights require Mass, dimensions require Length and all three dimensions, and category selection remains tenant-scoped. It refuses a transition from untracked to Lot/Serial while any ProductStock row has a non-zero balance. `ProductCategoryService` creates and activates/deactivates preserved category rows; it never deletes referenced categories.
 

@@ -92,6 +92,7 @@ public class DocumentNumberService(IDocumentSequenceRepository repository)
             DocumentNumberType.SupplierQuotation => ("Supplier quotation", "عرض سعر مورد"),
             DocumentNumberType.PurchaseOrder => ("Purchase order", "أمر شراء"),
             DocumentNumberType.GoodsReceipt => ("Goods receipt", "استلام بضاعة"),
+            DocumentNumberType.SupplierCreditNote => ("Supplier credit note", "إشعار دائن للمورد"),
             _ => (row.DocumentType.ToString(), row.DocumentType.ToString())
         };
         return new DocumentSequenceDto

@@ -1,5 +1,14 @@
 # AI Work Log
 
+## 2026-10-13 — PUR-170 Supplier Credit Notes and Billed Returns
+
+- Added tenant-owned immutable Supplier Credit Notes linked to the original Vendor Bill, Purchase Order, Goods Receipt lines, supplier and warehouse, with separate View/Create permissions and centralized `SCN-` numbering.
+- Cumulative credited quantity cannot exceed each billed line. Partial credits freeze proportional net/tax/gross values; the final allocation consumes exact remaining values to avoid rounding drift.
+- Posting removes current available stock through existing location and lot/serial controls, records a dedicated stock transaction and outbound physical movement, debits supplier payable, reverses frozen input tax, credits current inventory cost and balances the difference through Purchase Price Variance.
+- Vendor Bill and Supplier Payment balances now subtract posted credit totals. Completed credit actions disappear and bill details show paid, credited and remaining amounts with exact next-step guidance.
+- Added responsive bilingual list/create/detail screens, actionable setup links, Arabic resources, migration `20261012125000_AddSupplierCreditNotes`, and applied it to the local `MiniStoreDb` without historical backfill.
+- 596 focused regression checks passed. The disposable SQL Server fixture proved a fully paid billed return creates the expected supplier credit balance, removes the final stock, records movement evidence and posts a balanced payable/inventory/PPV journal.
+
 ## 2026-10-12 — PUR-165 Derived Purchase Order Closure
 
 - Added per-line derived Purchase Order progress from posted Goods Receipts, receipt returns and Vendor Bill receipt-clearing quantities.

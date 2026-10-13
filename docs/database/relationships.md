@@ -1,5 +1,5 @@
 # Database relationships
-> Source of truth: EF configurations | Last reviewed: 2026-10-12
+> Source of truth: EF configurations | Last reviewed: 2026-10-13
 
 - Tenant → all ERP business settings and documents: required TenantId, Restrict deletion and tenant query filtering. DocumentSequence additionally has one unique row per tenant/document type. Every FK whose dependent and principal both carry tenant ownership appends `TenantId` on both sides; SQL therefore requires the referenced record to belong to the same company.
 
@@ -7,6 +7,7 @@
 - StockTransaction → Product and Warehouse: required FK, Restrict deletion.
 - Purchase → Supplier and Warehouse: required FK, Restrict; Purchase → PurchaseItems: cascade. PurchaseItem → Product: Restrict.
 - PurchaseOrder → PurchaseOrderLines and PurchaseOrderLifecycleHistories: tenant-composite cascade. Lifecycle history is tenant-owned and cannot reference another company's order.
+- SupplierCreditNote → VendorBill, PurchaseOrder, Supplier and Warehouse: tenant-composite Restrict; → lines: tenant-composite cascade. Each line references its VendorBillLine, GoodsReceiptLine, Product and optional frozen input-tax Account through tenant-composite Restrict relationships.
 - Product → MeasurementUnit: optional only for migrated compatibility rows, Restrict. ProductRecipe → prepared Product: Restrict; ProductRecipe → RecipeIngredients: cascade. RecipeIngredient → stocked Product and authored/stock MeasurementUnits: Restrict. All use composite TenantId boundaries.
 - Sale → Warehouse: Restrict; Sale → SaleItems: cascade. SaleItem → Product and optional ProductRecipe version: Restrict.
 - StockTransfer → FromWarehouse and ToWarehouse: Restrict; StockTransfer → Items and History: Restrict. Item → Product: Restrict.

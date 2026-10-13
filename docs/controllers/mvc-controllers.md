@@ -1,5 +1,5 @@
 # MVC controllers
-> Status: IMPLEMENTED | Last reviewed: 2026-10-12
+> Status: IMPLEMENTED | Last reviewed: 2026-10-13
 
 | Controller | Actions/views | Authorization and dependencies |
 |---|---|---|
@@ -28,6 +28,7 @@
 | PurchaseSourcing | Index/Details/Create | PurchaseSourcing.View/Create; Create binds the sourcing page's `Form` prefix before validating the approved Purchase Request and invited suppliers. |
 | SupplierQuotations | Create/Comparison/Award | SupplierQuotations.Create/View/Award; Create binds the quotation page's `Form` prefix before validating the sourcing event, invited supplier and complete quotation lines. |
 | PurchaseOrders | Index/Details/CreateFromAward/Approve/Confirm/Cancel/CloseRemaining/Reopen | State-specific permissions; close remaining requires fully settled received quantities plus reason, while reopen has a separate permission and accepts only a reasoned remaining-quantity closure. |
+| SupplierCreditNotes | Index/Details/Create | SupplierCreditNotes.View/Create; Create binds billed-line quantities, revalidates cumulative credit and current stock, then atomically posts inventory/tracking/movement and payable/tax/inventory/PPV accounting effects. |
 | SalesReturns | Index/Details/Create | SalesReturns.View/Create; SalesReturnService enforces remaining quantity, restores eligible inventory and posts the atomic reversal journal. |
 | StockTransfers | Index/Details/Create/Edit and state POSTs | transfer-specific permissions/service. |
 | Settings | Index/DocumentNumbers/General/Discounts/Inventory/InventoryAccess/Pos/Units/FiscalPeriods plus mutations | active-company Admin policy; centralized document sequences, fiscal-period close controls, inventory defaults, managed measurement units, branch/POS warehouse configuration and rowversion-protected terminal experience settings. Legacy Invoices redirects to DocumentNumbers. |
