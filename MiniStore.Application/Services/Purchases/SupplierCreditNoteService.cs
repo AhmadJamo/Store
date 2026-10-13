@@ -36,10 +36,10 @@ public sealed class SupplierCreditNoteService(
         var receiptLineMap = receiptList.SelectMany(x => x.Lines.Select(line => new { Receipt = x, Line = line })).ToDictionary(x => x.Line.Id);
         var prior = (await creditNotes.GetByVendorBillIdAsync(bill.Id)).Where(x => x.Status == SupplierCreditNoteStatus.Posted)
             .SelectMany(x => x.Lines).GroupBy(x => x.VendorBillLineId).ToDictionary(x => x.Key, x => x.Sum(y => y.Quantity));
-        var lines = bill.Lines.Select(x =>
+        var lines = bill.Lines.Where(x => x.GoodsReceiptLineId.HasValue && x.ReceiptClearingQuantity > 0).Select(x =>
         {
             var credited = prior.GetValueOrDefault(x.Id);
-            var receiptLine = receiptLineMap.GetValueOrDefault(x.GoodsReceiptLineId)?.Line;
+            var receiptLine = receiptLineMap.GetValueOrDefault(x.GoodsReceiptLineId!.Value)?.Line;
             return new SupplierCreditNoteAvailableLineDto { VendorBillLineId = x.Id, ProductCode = x.ProductCodeSnapshot,
                 ProductName = x.ProductNameSnapshot, UnitName = x.UnitNameSnapshot, BilledQuantity = x.Quantity,
                 CreditedQuantity = credited, RemainingQuantity = Math.Max(0, x.ReceiptClearingQuantity - credited),
@@ -85,7 +85,7 @@ public sealed class SupplierCreditNoteService(
                 var creditedQuantity = priorForLine.Sum(x => x.Quantity);
                 var remainingQuantity = source.ReceiptClearingQuantity - creditedQuantity;
                 if (input.Quantity > remainingQuantity) throw new InvalidOperationException("Credited return quantity cannot exceed the remaining billed quantity.");
-                if (!receiptLineMap.TryGetValue(source.GoodsReceiptLineId, out var receiptSource)) throw new InvalidOperationException("The billed goods receipt line was not found.");
+                if (!source.GoodsReceiptLineId.HasValue || !receiptLineMap.TryGetValue(source.GoodsReceiptLineId.Value, out var receiptSource)) throw new InvalidOperationException("Only receipt-based vendor bill lines can be returned through a supplier credit note.");
                 var product = await products.GetByIdAsync(source.ProductId) ?? throw new InvalidOperationException("Returned product was not found.");
                 var stockQuantity = input.Quantity * receiptSource.Line.UnitFactorToBase;
                 var stock = await stocks.GetByProductAndWarehouseAsync(source.ProductId, order.WarehouseId) ?? throw new InvalidOperationException("Returned receipt stock was not found.");
@@ -102,7 +102,7 @@ public sealed class SupplierCreditNoteService(
                 var gross = Round(net + tax);
                 var companyNet = finalRemainder ? source.CompanyNetAmount - priorForLine.Sum(x => x.CompanyNetAmount) : Round(source.CompanyNetAmount * input.Quantity / source.Quantity);
                 var companyTax = finalRemainder ? source.CompanyTaxAmount - priorForLine.Sum(x => x.CompanyTaxAmount) : Round(source.CompanyTaxAmount * input.Quantity / source.Quantity);
-                created.AddLine(new SupplierCreditNoteLine(source.Id, source.GoodsReceiptLineId, source.ProductId, source.TaxInputAccountId,
+                created.AddLine(new SupplierCreditNoteLine(source.Id, source.GoodsReceiptLineId.Value, source.ProductId, source.TaxInputAccountId,
                     input.Quantity, receiptSource.Line.UnitFactorToBase, net, tax, gross, Math.Abs(costMovement.TransactionValue),
                     source.ProductCodeSnapshot, source.ProductNameSnapshot, source.UnitNameSnapshot, input.TrackingAllocations,
                     companyNet, companyTax, companyNet + companyTax));

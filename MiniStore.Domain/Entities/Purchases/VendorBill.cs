@@ -61,7 +61,10 @@ public sealed class VendorBill
     public void AddLine(VendorBillLine line)
     {
         EnsureDraft();
-        if (Lines.Any(x => x.GoodsReceiptLineId == line.GoodsReceiptLineId)) throw new InvalidOperationException("Each goods receipt line can be billed only once per vendor bill.");
+        if (Lines.Any(x => x.PurchaseOrderLineId == line.PurchaseOrderLineId &&
+            x.GoodsReceiptLineId == line.GoodsReceiptLineId &&
+            x.PurchaseServiceAcceptanceLineId == line.PurchaseServiceAcceptanceLineId))
+            throw new InvalidOperationException("Each purchase billing source can be used only once per vendor bill.");
         Lines.Add(line);
     }
 
@@ -134,15 +137,19 @@ public sealed class VendorBillLine
     private VendorBillLine() { ProductCodeSnapshot = ProductNameSnapshot = UnitNameSnapshot = string.Empty; }
     public int Id { get; private set; }
     public int VendorBillId { get; private set; }
-    public int GoodsReceiptLineId { get; private set; }
+    public int? GoodsReceiptLineId { get; private set; }
+    public int? PurchaseServiceAcceptanceLineId { get; private set; }
     public int PurchaseOrderLineId { get; private set; }
     public int ProductId { get; private set; }
+    public PurchaseBillingPolicy BillingPolicySnapshot { get; private set; }
+    public int? PurchaseExpenseAccountIdSnapshot { get; private set; }
     public int? TaxRateId { get; private set; }
     public int? TaxInputAccountId { get; private set; }
     public decimal Quantity { get; private set; }
     public decimal UnitPrice { get; private set; }
     public decimal ReceiptUnitCost { get; private set; }
     public decimal ReceiptClearingQuantity { get; private set; }
+    public decimal BillingBasisQuantity { get; private set; }
     public decimal TaxPercent { get; private set; }
     public bool IsTaxInclusive { get; private set; }
     public decimal NetAmount { get; private set; }
@@ -160,14 +167,38 @@ public sealed class VendorBillLine
     public VendorBillLine(int goodsReceiptLineId, int purchaseOrderLineId, int productId, decimal quantity, decimal unitPrice,
         decimal receiptUnitCost, decimal receiptClearingQuantity, int? taxRateId, decimal taxPercent, int? taxInputAccountId, bool isTaxInclusive,
         string productCode, string productName, string unitName, decimal billExchangeRate = 1m, decimal receiptExchangeRate = 1m)
+        : this(goodsReceiptLineId, null, purchaseOrderLineId, productId, PurchaseBillingPolicy.ReceivedQuantity, null,
+            quantity, unitPrice, receiptUnitCost, receiptClearingQuantity, receiptClearingQuantity, taxRateId,
+            taxPercent, taxInputAccountId, isTaxInclusive, productCode, productName, unitName, billExchangeRate, receiptExchangeRate) { }
+
+    public VendorBillLine(int? goodsReceiptLineId, int? serviceAcceptanceLineId, int purchaseOrderLineId, int productId,
+        PurchaseBillingPolicy billingPolicy, int? expenseAccountId, decimal quantity, decimal unitPrice,
+        decimal expectedUnitCost, decimal receiptClearingQuantity, decimal billingBasisQuantity,
+        int? taxRateId, decimal taxPercent, int? taxInputAccountId, bool isTaxInclusive,
+        string productCode, string productName, string unitName, decimal billExchangeRate = 1m, decimal receiptExchangeRate = 1m)
     {
-        if (goodsReceiptLineId <= 0 || purchaseOrderLineId <= 0 || productId <= 0) throw new ArgumentException("Vendor bill line references are required.");
-        if (quantity <= 0 || unitPrice < 0 || receiptUnitCost < 0 || receiptClearingQuantity <= 0 || receiptClearingQuantity > quantity) throw new ArgumentException("Vendor bill quantity and prices are invalid.");
+        if (purchaseOrderLineId <= 0 || productId <= 0) throw new ArgumentException("Vendor bill line references are required.");
+        if (!Enum.IsDefined(billingPolicy)) throw new ArgumentException("Purchase billing policy is invalid.");
+        if (billingPolicy == PurchaseBillingPolicy.ReceivedQuantity && (!goodsReceiptLineId.HasValue || serviceAcceptanceLineId.HasValue))
+            throw new ArgumentException("Receipt-based vendor bill lines require a goods receipt source.");
+        if (billingPolicy == PurchaseBillingPolicy.ServiceCompletion && (!serviceAcceptanceLineId.HasValue || goodsReceiptLineId.HasValue))
+            throw new ArgumentException("Service-based vendor bill lines require a service completion source.");
+        if (billingPolicy == PurchaseBillingPolicy.OrderedQuantity && (goodsReceiptLineId.HasValue || serviceAcceptanceLineId.HasValue))
+            throw new ArgumentException("Order-based vendor bill lines cannot reference receipt evidence.");
+        if (billingPolicy != PurchaseBillingPolicy.ReceivedQuantity && !expenseAccountId.HasValue)
+            throw new ArgumentException("A purchase expense account is required for lines billed without a goods receipt.");
+        if (quantity <= 0 || unitPrice < 0 || expectedUnitCost < 0 || billingBasisQuantity <= 0 || billingBasisQuantity > quantity || receiptClearingQuantity < 0 || receiptClearingQuantity > quantity)
+            throw new ArgumentException("Vendor bill quantity and prices are invalid.");
+        if (billingPolicy != PurchaseBillingPolicy.ReceivedQuantity && receiptClearingQuantity != 0)
+            throw new ArgumentException("Only receipt-based vendor bill lines can clear goods received not invoiced.");
         if (taxPercent is < 0 or > 100) throw new ArgumentException("Vendor bill tax percentage must be between 0 and 100.");
         if (taxPercent > 0 && (!taxRateId.HasValue || !taxInputAccountId.HasValue)) throw new ArgumentException("A tax rate and input tax account are required for a taxed vendor bill line.");
         if (string.IsNullOrWhiteSpace(productCode) || string.IsNullOrWhiteSpace(productName) || string.IsNullOrWhiteSpace(unitName)) throw new ArgumentException("Vendor bill line snapshots are required.");
-        GoodsReceiptLineId = goodsReceiptLineId; PurchaseOrderLineId = purchaseOrderLineId; ProductId = productId; Quantity = quantity;
-        UnitPrice = unitPrice; ReceiptUnitCost = receiptUnitCost; ReceiptClearingQuantity = receiptClearingQuantity; TaxRateId = taxRateId; TaxPercent = taxPercent;
+        GoodsReceiptLineId = goodsReceiptLineId; PurchaseServiceAcceptanceLineId = serviceAcceptanceLineId;
+        PurchaseOrderLineId = purchaseOrderLineId; ProductId = productId; BillingPolicySnapshot = billingPolicy;
+        PurchaseExpenseAccountIdSnapshot = expenseAccountId; Quantity = quantity;
+        UnitPrice = unitPrice; ReceiptUnitCost = expectedUnitCost; ReceiptClearingQuantity = receiptClearingQuantity;
+        BillingBasisQuantity = billingBasisQuantity; TaxRateId = taxRateId; TaxPercent = taxPercent;
         TaxInputAccountId = taxInputAccountId; IsTaxInclusive = isTaxInclusive; ProductCodeSnapshot = productCode.Trim();
         ProductNameSnapshot = productName.Trim(); UnitNameSnapshot = unitName.Trim();
         var enteredAmount = Round(quantity * unitPrice);
@@ -176,7 +207,7 @@ public sealed class VendorBillLine
         GrossAmount = isTaxInclusive ? enteredAmount : enteredAmount + TaxAmount;
         if (billExchangeRate <= 0 || receiptExchangeRate <= 0) throw new ArgumentException("Exchange rate must be greater than zero.");
         ReceiptExchangeRate = receiptExchangeRate;
-        ReceiptClearingAmount = Round(receiptClearingQuantity * receiptUnitCost * receiptExchangeRate);
+        ReceiptClearingAmount = Round(receiptClearingQuantity * expectedUnitCost * receiptExchangeRate);
         CompanyNetAmount = Round(NetAmount * billExchangeRate); CompanyTaxAmount = Round(TaxAmount * billExchangeRate); CompanyGrossAmount = CompanyNetAmount + CompanyTaxAmount;
     }
     private static decimal Round(decimal value) => Math.Round(value, 2, MidpointRounding.AwayFromZero);

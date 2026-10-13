@@ -1937,4 +1937,19 @@
   <data name="Only draft or approved vendor bills can be cancelled." xml:space="preserve"><value>يمكن إلغاء فواتير المورد المسودة أو المعتمدة فقط.</value></data>
   <data name="Vendor bill cancellation reason is required and cannot exceed 1000 characters." xml:space="preserve"><value>سبب إلغاء فاتورة المورد مطلوب ولا يمكن أن يتجاوز 1000 حرف.</value></data>
   <data name="Cancel draft or approved vendor bills and reverse posted vendor bills linked to this goods receipt before reversing the receipt." xml:space="preserve"><value>ألغِ فواتير المورد المسودة أو المعتمدة واعكس الفواتير المرحلة المرتبطة بهذا الاستلام قبل عكس الاستلام.</value></data>
+  <data name="Available quantities follow each line's billing policy and exclude reservations on active bills." xml:space="preserve"><value>تظهر الكميات المتاحة حسب سياسة فوترة كل بند، مع استبعاد الكميات المحجوزة في فواتير فعالة.</value></data>
+  <data name="There are no purchase quantities available for billing." xml:space="preserve"><value>لا توجد كميات شراء متاحة للفوترة.</value></data>
+  <data name="Posting destination" xml:space="preserve"><value>وجهة الترحيل</value></data>
+  <data name="Purchase expense account" xml:space="preserve"><value>حساب مصروف المشتريات</value></data>
+  <data name="Each purchase billing source can be used only once per vendor bill." xml:space="preserve"><value>يمكن استخدام كل مصدر فوترة شراء مرة واحدة فقط في فاتورة المورد.</value></data>
+  <data name="One or more vendor bill lines do not belong to this purchase order billing policy." xml:space="preserve"><value>بند واحد أو أكثر في فاتورة المورد لا يتبع سياسة فوترة أمر الشراء.</value></data>
+  <data name="One or more vendor bill lines do not belong to a completed service for this purchase order." xml:space="preserve"><value>بند واحد أو أكثر في فاتورة المورد لا يرتبط بخدمة منجزة لهذا الأمر.</value></data>
+  <data name="Order-based vendor bill lines cannot reference receipt evidence." xml:space="preserve"><value>لا يجوز لبنود الفوترة حسب الكمية المطلوبة الارتباط بإثبات استلام.</value></data>
+  <data name="This purchase billing source has no quantity available for billing." xml:space="preserve"><value>لا توجد كمية متاحة للفوترة في مصدر الشراء هذا.</value></data>
+  <data name="Only receipt-based vendor bill lines can be returned through a supplier credit note." xml:space="preserve"><value>يمكن إرجاع بنود فاتورة المورد المرتبطة باستلام بضاعة فقط من خلال إشعار دائن للمورد.</value></data>
+  <data name="Receipt-based vendor bill lines require a goods receipt source." xml:space="preserve"><value>تتطلب بنود فاتورة المورد المبنية على الاستلام مصدر استلام بضاعة.</value></data>
+  <data name="Service-based vendor bill lines require a service completion source." xml:space="preserve"><value>تتطلب بنود فاتورة المورد المبنية على الخدمة إثبات إنجاز خدمة.</value></data>
+  <data name="A purchase expense account is required for lines billed without a goods receipt." xml:space="preserve"><value>حساب مصروف شراء مطلوب للبنود المفوترة دون استلام بضاعة.</value></data>
+  <data name="Only receipt-based vendor bill lines can clear goods received not invoiced." xml:space="preserve"><value>بنود فاتورة المورد المبنية على الاستلام فقط يمكنها تسوية حساب البضاعة المستلمة غير المفوترة.</value></data>
+  <data name="Purchase agreement product was not found." xml:space="preserve"><value>لم يتم العثور على منتج اتفاقية الشراء.</value></data>
 </root>

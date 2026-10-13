@@ -6,7 +6,8 @@ namespace MiniStore.Application.Services;
 
 public sealed class VendorBillService(
     IVendorBillRepository bills, IPurchaseOrderRepository orders, IGoodsReceiptRepository receipts,
-    IGoodsReceiptReturnRepository receiptReturns, ISupplierRepository suppliers, IWarehouseRepository warehouses,
+    IGoodsReceiptReturnRepository receiptReturns, IPurchaseServiceAcceptanceRepository serviceAcceptances,
+    ISupplierRepository suppliers, IWarehouseRepository warehouses,
     ITaxRateRepository taxRates, IAccountingSettingsRepository accountingSettings, IPurchaseMatchingSettingsRepository matchingSettings,
     IPurchaseMatchRepository matches, DocumentNumberService numbers,
     ISupplierPaymentRepository payments, ISupplierCreditNoteRepository creditNotes, JournalPostingService journalPosting,
@@ -28,7 +29,7 @@ public sealed class VendorBillService(
         var creditedQuantities = (await creditNotes.GetByVendorBillIdAsync(bill.Id)).Where(x => x.Status == SupplierCreditNoteStatus.Posted)
             .SelectMany(x => x.Lines).GroupBy(x => x.VendorBillLineId).ToDictionary(x => x.Key, x => x.Sum(y => y.Quantity));
         var canCreateCreditNote = bill.Status == VendorBillStatus.Posted &&
-            bill.Lines.Any(x => x.Quantity > creditedQuantities.GetValueOrDefault(x.Id));
+            bill.Lines.Any(x => x.GoodsReceiptLineId.HasValue && x.ReceiptClearingQuantity > creditedQuantities.GetValueOrDefault(x.Id));
         return Map(bill, order?.OrderNumber ?? "-", supplier?.Name ?? "-", await matches.GetByVendorBillIdAsync(bill.Id),
             paidAmounts.GetValueOrDefault(bill.Id), creditedAmounts.GetValueOrDefault(bill.Id), canCreateCreditNote);
     }
@@ -47,7 +48,12 @@ public sealed class VendorBillService(
             Form = form ?? new CreateVendorBillDto
             {
                 PurchaseOrderId = order.Id,
-                Lines = available.Select(x => new CreateVendorBillLineDto { GoodsReceiptLineId = x.GoodsReceiptLineId, UnitPrice = x.SuggestedUnitPrice, TaxRateId = x.SuggestedTaxRateId }).ToList()
+                Lines = available.Select(x => new CreateVendorBillLineDto
+                {
+                    PurchaseOrderLineId = x.PurchaseOrderLineId, BillingPolicy = x.BillingPolicy,
+                    GoodsReceiptLineId = x.GoodsReceiptLineId, PurchaseServiceAcceptanceLineId = x.PurchaseServiceAcceptanceLineId,
+                    UnitPrice = x.SuggestedUnitPrice, TaxRateId = x.SuggestedTaxRateId
+                }).ToList()
             }
         };
     }
@@ -56,7 +62,7 @@ public sealed class VendorBillService(
     {
         var submitted = dto.Lines?.Where(x => x.Quantity > 0).ToList() ?? [];
         if (submitted.Count == 0) throw new ArgumentException("Enter at least one positive billed quantity.");
-        if (submitted.GroupBy(x => x.GoodsReceiptLineId).Any(x => x.Count() > 1)) throw new ArgumentException("Each goods receipt line can be billed only once per vendor bill.");
+        if (submitted.GroupBy(SourceKey).Any(x => x.Count() > 1)) throw new ArgumentException("Each purchase billing source can be used only once per vendor bill.");
         VendorBill? created = null;
         await unitOfWork.ExecuteInTransactionAsync(async () =>
         {
@@ -70,24 +76,63 @@ public sealed class VendorBillService(
             var receiptList = (await receipts.GetByPurchaseOrderIdAsync(order.Id)).Where(x => x.Status == GoodsReceiptStatus.Posted).ToList();
             var receiptLineMap = receiptList.SelectMany(x => x.Lines).ToDictionary(x => x.Id);
             var receiptRateMap = receiptList.SelectMany(receipt => receipt.Lines.Select(line => new { line.Id, receipt.ExchangeRate })).ToDictionary(x => x.Id, x => x.ExchangeRate);
+            var acceptanceList = await serviceAcceptances.GetByPurchaseOrderIdAsync(order.Id);
+            var acceptanceLineMap = acceptanceList.SelectMany(x => x.Lines).ToDictionary(x => x.Id);
             var returned = await GetReturnedQuantitiesAsync(receiptList);
-            var billed = await GetBilledQuantitiesAsync(order.Id);
+            var activeBillLines = (await bills.GetByPurchaseOrderIdAsync(order.Id))
+                .Where(x => x.Status is VendorBillStatus.Draft or VendorBillStatus.Approved or VendorBillStatus.Posted)
+                .SelectMany(x => x.Lines).ToList();
+            var billedReceipts = activeBillLines.Where(x => x.GoodsReceiptLineId.HasValue)
+                .GroupBy(x => x.GoodsReceiptLineId!.Value).ToDictionary(x => x.Key, x => x.Sum(y => y.Quantity));
+            var billedServices = activeBillLines.Where(x => x.PurchaseServiceAcceptanceLineId.HasValue)
+                .GroupBy(x => x.PurchaseServiceAcceptanceLineId!.Value).ToDictionary(x => x.Key, x => x.Sum(y => y.Quantity));
+            var billedOrders = activeBillLines.Where(x => x.BillingPolicySnapshot == PurchaseBillingPolicy.OrderedQuantity)
+                .GroupBy(x => x.PurchaseOrderLineId).ToDictionary(x => x.Key, x => x.Sum(y => y.Quantity));
+            var orderLineMap = order.Lines.ToDictionary(x => x.Id);
             var billRate = await exchangeRates.ResolveAsync(order.CurrencyCode, dto.BillDate);
             created = new VendorBill(await numbers.GenerateAsync(DocumentNumberType.VendorBill, dto.BillDate.ToDateTime(TimeOnly.MinValue)),
                 order.Id, order.SupplierId, dto.SupplierInvoiceNumber, dto.BillDate, order.CurrencyCode, dto.Notes, currentUser.UserId,
                 billRate.CompanyCurrencyCode, billRate.Rate, billRate.RateDate, billRate.Source);
             foreach (var input in submitted)
             {
-                if (!receiptLineMap.TryGetValue(input.GoodsReceiptLineId, out var source)) throw new ArgumentException("One or more vendor bill lines do not belong to a posted receipt for this purchase order.");
-                var remaining = source.ReceivedQuantity - returned.GetValueOrDefault(source.Id) - billed.GetValueOrDefault(source.Id);
-                if (remaining <= 0) throw new InvalidOperationException("This receipt line has no quantity available for billing.");
+                if (!orderLineMap.TryGetValue(input.PurchaseOrderLineId, out var orderLine) || input.BillingPolicy != orderLine.BillingPolicySnapshot)
+                    throw new ArgumentException("One or more vendor bill lines do not belong to this purchase order billing policy.");
                 if (input.UnitPrice < 0) throw new ArgumentException("Vendor bill unit price cannot be negative.");
                 TaxRate? tax = null;
                 if (input.TaxRateId.HasValue && !taxMap.TryGetValue(input.TaxRateId.Value, out tax)) throw new InvalidOperationException("The selected purchase tax rate was not found.");
-                var line = new VendorBillLine(source.Id, source.PurchaseOrderLineId, source.ProductId, input.Quantity, input.UnitPrice,
-                    source.UnitCost, Math.Min(input.Quantity, remaining), tax?.Id, tax?.Rate ?? 0, tax?.InputAccountId,
-                    tax?.IsPriceInclusive ?? false, source.ProductCodeSnapshot, source.ProductNameSnapshot, source.UnitNameSnapshot,
-                    billRate.Rate, receiptRateMap[source.Id]);
+                var expectedUnitCost = decimal.Round(orderLine.UnitPrice * (1m - orderLine.DiscountPercent / 100m), 8, MidpointRounding.AwayFromZero);
+                decimal remaining;
+                decimal receiptClearingQuantity = 0;
+                decimal receiptRate = order.ExchangeRate;
+                if (orderLine.BillingPolicySnapshot == PurchaseBillingPolicy.ReceivedQuantity)
+                {
+                    if (!input.GoodsReceiptLineId.HasValue || input.PurchaseServiceAcceptanceLineId.HasValue ||
+                        !receiptLineMap.TryGetValue(input.GoodsReceiptLineId.Value, out var receiptLine) || receiptLine.PurchaseOrderLineId != orderLine.Id)
+                        throw new ArgumentException("One or more vendor bill lines do not belong to a posted receipt for this purchase order.");
+                    remaining = receiptLine.ReceivedQuantity - returned.GetValueOrDefault(receiptLine.Id) - billedReceipts.GetValueOrDefault(receiptLine.Id);
+                    expectedUnitCost = receiptLine.UnitCost;
+                    receiptClearingQuantity = Math.Min(input.Quantity, remaining);
+                    receiptRate = receiptRateMap[receiptLine.Id];
+                }
+                else if (orderLine.BillingPolicySnapshot == PurchaseBillingPolicy.ServiceCompletion)
+                {
+                    if (!input.PurchaseServiceAcceptanceLineId.HasValue || input.GoodsReceiptLineId.HasValue ||
+                        !acceptanceLineMap.TryGetValue(input.PurchaseServiceAcceptanceLineId.Value, out var acceptanceLine) || acceptanceLine.PurchaseOrderLineId != orderLine.Id)
+                        throw new ArgumentException("One or more vendor bill lines do not belong to a completed service for this purchase order.");
+                    remaining = acceptanceLine.CompletedQuantity - billedServices.GetValueOrDefault(acceptanceLine.Id);
+                }
+                else
+                {
+                    if (input.GoodsReceiptLineId.HasValue || input.PurchaseServiceAcceptanceLineId.HasValue)
+                        throw new ArgumentException("Order-based vendor bill lines cannot reference receipt evidence.");
+                    remaining = orderLine.OrderedQuantity - billedOrders.GetValueOrDefault(orderLine.Id);
+                }
+                if (remaining <= 0) throw new InvalidOperationException("This purchase billing source has no quantity available for billing.");
+                var line = new VendorBillLine(input.GoodsReceiptLineId, input.PurchaseServiceAcceptanceLineId,
+                    orderLine.Id, orderLine.ProductId, orderLine.BillingPolicySnapshot, orderLine.PurchaseExpenseAccountIdSnapshot,
+                    input.Quantity, input.UnitPrice, expectedUnitCost, receiptClearingQuantity, Math.Min(input.Quantity, remaining),
+                    tax?.Id, tax?.Rate ?? 0, tax?.InputAccountId, tax?.IsPriceInclusive ?? false,
+                    orderLine.ProductCodeSnapshot, orderLine.ProductNameSnapshot, orderLine.UnitNameSnapshot, billRate.Rate, receiptRate);
                 created.AddLine(line);
             }
 
@@ -111,11 +156,11 @@ public sealed class VendorBillService(
             var exceptionSpecs = new List<(VendorBillLine Line, PurchaseMatchExceptionType Type, decimal Expected, decimal Actual, decimal Variance, decimal Tolerance)>();
             foreach (var line in bill.Lines)
             {
-                if (line.Quantity > line.ReceiptClearingQuantity)
+                if (line.Quantity > line.BillingBasisQuantity)
                 {
-                    var variance = Percent(line.Quantity - line.ReceiptClearingQuantity, line.ReceiptClearingQuantity);
+                    var variance = Percent(line.Quantity - line.BillingBasisQuantity, line.BillingBasisQuantity);
                     if (variance > tolerances.QuantityTolerancePercent)
-                        exceptionSpecs.Add((line, PurchaseMatchExceptionType.Quantity, line.ReceiptClearingQuantity, line.Quantity, variance, tolerances.QuantityTolerancePercent));
+                        exceptionSpecs.Add((line, PurchaseMatchExceptionType.Quantity, line.BillingBasisQuantity, line.Quantity, variance, tolerances.QuantityTolerancePercent));
                 }
                 var actualNetUnitPrice = line.Quantity == 0 ? 0 : line.NetAmount / line.Quantity;
                 var priceVariance = line.ReceiptUnitCost == 0 ? (actualNetUnitPrice == 0 ? 0 : 100m) : Percent(Math.Abs(actualNetUnitPrice - line.ReceiptUnitCost), line.ReceiptUnitCost);
@@ -149,11 +194,20 @@ public sealed class VendorBillService(
             if (!supplier.AccountId.HasValue) throw new InvalidOperationException("Assign a payable account to the supplier before posting a vendor bill.");
             var warehouse = await warehouses.GetByIdAsync(order.WarehouseId) ?? throw new InvalidOperationException("Purchase order warehouse was not found.");
             var settings = await accountingSettings.GetAsync() ?? throw new InvalidOperationException("Configure accounting posting accounts before posting a vendor bill.");
-            if (!settings.GoodsReceivedNotInvoicedAccountId.HasValue) throw new InvalidOperationException("Configure a goods received not invoiced account before posting a vendor bill.");
             var journalLines = new List<JournalEntryLine>();
-            if (created.ReceiptClearingAmount > 0) journalLines.Add(new JournalEntryLine(settings.GoodsReceivedNotInvoicedAccountId.Value,
-                created.ReceiptClearingAmount, 0, warehouse.BranchId, warehouse.Id, $"GRNI clearing for {created.BillNumber}"));
-            var purchasePriceVariance = Round(created.Lines.Sum(line => (line.NetAmount - line.ReceiptClearingQuantity * line.ReceiptUnitCost) * created.ExchangeRate));
+            var receiptLines = created.Lines.Where(x => x.BillingPolicySnapshot == PurchaseBillingPolicy.ReceivedQuantity).ToList();
+            var receiptClearingAmount = receiptLines.Sum(x => x.ReceiptClearingAmount);
+            if (receiptClearingAmount > 0)
+            {
+                if (!settings.GoodsReceivedNotInvoicedAccountId.HasValue) throw new InvalidOperationException("Configure a goods received not invoiced account before posting a vendor bill.");
+                journalLines.Add(new JournalEntryLine(settings.GoodsReceivedNotInvoicedAccountId.Value,
+                    receiptClearingAmount, 0, warehouse.BranchId, warehouse.Id, $"GRNI clearing for {created.BillNumber}"));
+            }
+            foreach (var expenseGroup in created.Lines.Where(x => x.BillingPolicySnapshot != PurchaseBillingPolicy.ReceivedQuantity)
+                         .GroupBy(x => x.PurchaseExpenseAccountIdSnapshot!.Value))
+                journalLines.Add(new JournalEntryLine(expenseGroup.Key, expenseGroup.Sum(x => x.CompanyNetAmount), 0,
+                    warehouse.BranchId, warehouse.Id, $"Purchase expense for {created.BillNumber}"));
+            var purchasePriceVariance = Round(receiptLines.Sum(line => (line.NetAmount - line.ReceiptClearingQuantity * line.ReceiptUnitCost) * created.ExchangeRate));
             if (purchasePriceVariance != 0)
             {
                 if (!settings.PurchasePriceVarianceAccountId.HasValue) throw new InvalidOperationException("Configure a purchase price variance account before posting a vendor bill with a price difference.");
@@ -161,7 +215,8 @@ public sealed class VendorBillService(
                     ? new JournalEntryLine(settings.PurchasePriceVarianceAccountId.Value, purchasePriceVariance, 0, warehouse.BranchId, warehouse.Id, $"Purchase price variance on {created.BillNumber}")
                     : new JournalEntryLine(settings.PurchasePriceVarianceAccountId.Value, 0, Math.Abs(purchasePriceVariance), warehouse.BranchId, warehouse.Id, $"Purchase price variance on {created.BillNumber}"));
             }
-            var currencyVariance = Round(created.CompanyNetAmount - created.ReceiptClearingAmount - purchasePriceVariance);
+            var receiptCompanyNetAmount = receiptLines.Sum(x => x.CompanyNetAmount);
+            var currencyVariance = Round(receiptCompanyNetAmount - receiptClearingAmount - purchasePriceVariance);
             AddExchangeVariance(journalLines, settings, currencyVariance, warehouse, created.BillNumber);
             foreach (var taxGroup in created.Lines.Where(x => x.TaxAmount > 0).GroupBy(x => x.TaxInputAccountId!.Value))
                 journalLines.Add(new JournalEntryLine(taxGroup.Key, taxGroup.Sum(x => x.CompanyTaxAmount), 0, warehouse.BranchId, warehouse.Id, $"Input tax on {created.BillNumber}"));
@@ -192,23 +247,44 @@ public sealed class VendorBillService(
     private async Task<List<VendorBillAvailableLineDto>> GetAvailableLinesAsync(PurchaseOrder order, List<TaxRate> taxes)
     {
         var receiptList = (await receipts.GetByPurchaseOrderIdAsync(order.Id)).Where(x => x.Status == GoodsReceiptStatus.Posted).ToList();
-        var returned = await GetReturnedQuantitiesAsync(receiptList); var billed = await GetBilledQuantitiesAsync(order.Id);
+        var acceptanceList = await serviceAcceptances.GetByPurchaseOrderIdAsync(order.Id);
+        var returned = await GetReturnedQuantitiesAsync(receiptList);
+        var activeBillLines = (await bills.GetByPurchaseOrderIdAsync(order.Id))
+            .Where(x => x.Status is VendorBillStatus.Draft or VendorBillStatus.Approved or VendorBillStatus.Posted)
+            .SelectMany(x => x.Lines).ToList();
+        var billedReceipts = activeBillLines.Where(x => x.GoodsReceiptLineId.HasValue)
+            .GroupBy(x => x.GoodsReceiptLineId!.Value).ToDictionary(x => x.Key, x => x.Sum(y => y.Quantity));
+        var billedServices = activeBillLines.Where(x => x.PurchaseServiceAcceptanceLineId.HasValue)
+            .GroupBy(x => x.PurchaseServiceAcceptanceLineId!.Value).ToDictionary(x => x.Key, x => x.Sum(y => y.Quantity));
+        var billedOrders = activeBillLines.Where(x => x.BillingPolicySnapshot == PurchaseBillingPolicy.OrderedQuantity)
+            .GroupBy(x => x.PurchaseOrderLineId).ToDictionary(x => x.Key, x => x.Sum(y => y.Quantity));
         var orderLines = order.Lines.ToDictionary(x => x.Id);
-        return receiptList.SelectMany(receipt => receipt.Lines.Select(line => new { receipt, line }))
+        var available = receiptList.SelectMany(receipt => receipt.Lines.Select(line => new { receipt, line }))
             .Select(x =>
             {
                 var orderLine = orderLines[x.line.PurchaseOrderLineId];
                 return new VendorBillAvailableLineDto
                 {
-                    GoodsReceiptLineId = x.line.Id, ReceiptNumber = x.receipt.ReceiptNumber, ReceiptDate = x.receipt.ReceiptDate,
+                    PurchaseOrderLineId = orderLine.Id, BillingPolicy = orderLine.BillingPolicySnapshot,
+                    GoodsReceiptLineId = x.line.Id, SourceNumber = x.receipt.ReceiptNumber, SourceDate = x.receipt.ReceiptDate,
                     ProductCode = x.line.ProductCodeSnapshot, ProductName = x.line.ProductNameSnapshot, UnitName = x.line.UnitNameSnapshot,
-                    RemainingQuantity = Math.Max(0, x.line.ReceivedQuantity - returned.GetValueOrDefault(x.line.Id) - billed.GetValueOrDefault(x.line.Id)),
+                    RemainingQuantity = Math.Max(0, x.line.ReceivedQuantity - returned.GetValueOrDefault(x.line.Id) - billedReceipts.GetValueOrDefault(x.line.Id)),
                     SuggestedTaxRateId = taxes.FirstOrDefault(t => t.Rate == orderLine.TaxPercent)?.Id,
                     SuggestedUnitPrice = taxes.FirstOrDefault(t => t.Rate == orderLine.TaxPercent) is { IsPriceInclusive: true } inclusiveTax
                         ? decimal.Round(x.line.UnitCost * (1m + inclusiveTax.Rate / 100m), 8, MidpointRounding.AwayFromZero)
                         : x.line.UnitCost
                 };
             }).Where(x => x.RemainingQuantity > 0).ToList();
+        available.AddRange(acceptanceList.SelectMany(acceptance => acceptance.Lines.Select(line => new { acceptance, line }))
+            .Select(x => CreateAvailableLine(orderLines[x.line.PurchaseOrderLineId], taxes,
+                x.line.Id, x.acceptance.AcceptanceNumber, x.acceptance.CompletionDate,
+                Math.Max(0, x.line.CompletedQuantity - billedServices.GetValueOrDefault(x.line.Id))))
+            .Where(x => x.RemainingQuantity > 0));
+        available.AddRange(order.Lines.Where(x => x.BillingPolicySnapshot == PurchaseBillingPolicy.OrderedQuantity)
+            .Select(x => CreateAvailableLine(x, taxes, null, order.OrderNumber, order.OrderDate,
+                Math.Max(0, x.OrderedQuantity - billedOrders.GetValueOrDefault(x.Id))))
+            .Where(x => x.RemainingQuantity > 0));
+        return available.OrderBy(x => x.PurchaseOrderLineId).ThenBy(x => x.SourceDate).ToList();
     }
 
     private async Task<Dictionary<int, decimal>> GetReturnedQuantitiesAsync(List<GoodsReceipt> receiptList)
@@ -218,9 +294,25 @@ public sealed class VendorBillService(
         return all.Where(x => x.Status == GoodsReceiptReturnStatus.Posted).SelectMany(x => x.Lines).GroupBy(x => x.GoodsReceiptLineId).ToDictionary(x => x.Key, x => x.Sum(y => y.ReturnQuantity));
     }
 
-    private async Task<Dictionary<int, decimal>> GetBilledQuantitiesAsync(int orderId) => (await bills.GetByPurchaseOrderIdAsync(orderId))
-        .Where(x => x.Status is VendorBillStatus.Draft or VendorBillStatus.Approved or VendorBillStatus.Posted)
-        .SelectMany(x => x.Lines).GroupBy(x => x.GoodsReceiptLineId).ToDictionary(x => x.Key, x => x.Sum(y => y.Quantity));
+    private static VendorBillAvailableLineDto CreateAvailableLine(PurchaseOrderLine line, List<TaxRate> taxes,
+        int? serviceAcceptanceLineId, string sourceNumber, DateOnly sourceDate, decimal remaining)
+    {
+        var expectedUnitPrice = decimal.Round(line.UnitPrice * (1m - line.DiscountPercent / 100m), 8, MidpointRounding.AwayFromZero);
+        var tax = taxes.FirstOrDefault(x => x.Rate == line.TaxPercent);
+        return new VendorBillAvailableLineDto
+        {
+            PurchaseOrderLineId = line.Id, BillingPolicy = line.BillingPolicySnapshot,
+            PurchaseServiceAcceptanceLineId = serviceAcceptanceLineId, SourceNumber = sourceNumber, SourceDate = sourceDate,
+            ProductCode = line.ProductCodeSnapshot, ProductName = line.ProductNameSnapshot, UnitName = line.UnitNameSnapshot,
+            RemainingQuantity = remaining, SuggestedTaxRateId = tax?.Id,
+            SuggestedUnitPrice = tax is { IsPriceInclusive: true }
+                ? decimal.Round(expectedUnitPrice * (1m + tax.Rate / 100m), 8, MidpointRounding.AwayFromZero)
+                : expectedUnitPrice
+        };
+    }
+
+    private static string SourceKey(CreateVendorBillLineDto line) =>
+        $"{line.PurchaseOrderLineId}:{line.BillingPolicy}:{line.GoodsReceiptLineId?.ToString() ?? "-"}:{line.PurchaseServiceAcceptanceLineId?.ToString() ?? "-"}";
 
     private static VendorBillDto Map(VendorBill x, string orderNumber, string supplierName, PurchaseMatchRun? match = null, decimal paidAmount = 0, decimal creditedAmount = 0, bool canCreateCreditNote = false) => new()
     {
@@ -232,9 +324,10 @@ public sealed class VendorBillService(
         RowVersion = x.RowVersion,
         NetAmount = x.NetAmount, TaxAmount = x.TaxAmount, TotalAmount = x.TotalAmount,
         PaidAmount = paidAmount, CreditedAmount = creditedAmount, OutstandingAmount = Math.Max(0, x.TotalAmount - paidAmount - creditedAmount), ReceiptClearingAmount = x.ReceiptClearingAmount,
-        CompanyNetAmount = x.CompanyNetAmount, CompanyTaxAmount = x.CompanyTaxAmount, CompanyTotalAmount = x.CompanyTotalAmount, CanCreateCreditNote = canCreateCreditNote,
+        CompanyNetAmount = x.CompanyNetAmount, CompanyTaxAmount = x.CompanyTaxAmount, CompanyTotalAmount = x.CompanyTotalAmount,
+        HasReceiptBasedLines = x.Lines.Any(line => line.GoodsReceiptLineId.HasValue && line.ReceiptClearingQuantity > 0), CanCreateCreditNote = canCreateCreditNote,
         Lines = x.Lines.Select(line => new VendorBillLineDto { Id = line.Id, ProductCode = line.ProductCodeSnapshot, ProductName = line.ProductNameSnapshot,
-            UnitName = line.UnitNameSnapshot, Quantity = line.Quantity, UnitPrice = line.UnitPrice, TaxPercent = line.TaxPercent,
+            UnitName = line.UnitNameSnapshot, BillingPolicy = line.BillingPolicySnapshot, Quantity = line.Quantity, UnitPrice = line.UnitPrice, TaxPercent = line.TaxPercent,
             IsTaxInclusive = line.IsTaxInclusive, NetAmount = line.NetAmount, TaxAmount = line.TaxAmount, GrossAmount = line.GrossAmount,
             ReceiptClearingAmount = line.ReceiptClearingAmount, CompanyNetAmount = line.CompanyNetAmount, CompanyTaxAmount = line.CompanyTaxAmount, CompanyGrossAmount = line.CompanyGrossAmount }).ToList(),
         Attachments = x.Attachments.Select(a => new VendorBillAttachmentDto { Id = a.Id, FileName = a.FileName, ContentType = a.ContentType, Size = a.Size, UploadedAtUtc = a.UploadedAtUtc }).ToList(),

@@ -18,6 +18,7 @@
     var remainingToReceive = Model.Lines.Sum(x => x.RemainingToReceive);
     var remainingToComplete = Model.Lines.Sum(x => x.RemainingToComplete);
     var unsettledReceived = Model.Lines.Sum(x => x.UnsettledReceivedQuantity);
+    var availableToBill = Model.Lines.Sum(x => x.AvailableToBill);
 }
 
 <div class="d-flex flex-wrap justify-content-between gap-2 align-items-center">
@@ -79,7 +80,7 @@ else if (Model.Status is PurchaseOrderStatus.Confirmed or PurchaseOrderStatus.Cl
 else if (Model.Lines.Any(x => x.BillingPolicy == PurchaseBillingPolicy.ReceivedQuantity) && remainingToReceive <= 0) { <span class="badge bg-success">@Localizer["Receiving completed"]</span> }
 @if (Model.Status == PurchaseOrderStatus.Confirmed && remainingToComplete > 0 && canCompleteService) { <a asp-controller="PurchaseServiceAcceptances" asp-action="Create" asp-route-purchaseOrderId="@Model.Id" class="btn btn-primary">@Localizer["Record service completion"]</a> }
 else if (Model.Lines.Any(x => x.BillingPolicy == PurchaseBillingPolicy.ServiceCompletion) && remainingToComplete <= 0) { <span class="badge bg-success">@Localizer["Service completion finished"]</span> }
-@if (Model.Status == PurchaseOrderStatus.Confirmed && unsettledReceived > 0 && canBill) { <a asp-controller="VendorBills" asp-action="Create" asp-route-purchaseOrderId="@Model.Id" class="btn btn-outline-primary">@Localizer["Create vendor bill"]</a> }
+@if (Model.Status == PurchaseOrderStatus.Confirmed && availableToBill > 0 && canBill) { <a asp-controller="VendorBills" asp-action="Create" asp-route-purchaseOrderId="@Model.Id" class="btn btn-outline-primary">@Localizer["Create vendor bill"]</a> }
 else if (Model.Progress.IsFullySettled && Model.Lines.Any(x => x.ReceivedQuantity > 0)) { <span class="badge bg-success">@Localizer["Settlement completed"]</span> }
 </div>
 

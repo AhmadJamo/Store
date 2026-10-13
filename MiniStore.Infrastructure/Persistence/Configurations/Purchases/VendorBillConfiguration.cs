@@ -19,14 +19,21 @@ public sealed class VendorBillConfiguration : IEntityTypeConfiguration<VendorBil
     public void Configure(EntityTypeBuilder<VendorBillLine> b)
     {
         b.HasKey(x => x.Id); b.Property(x => x.Quantity).HasPrecision(18, 6); b.Property(x => x.UnitPrice).HasPrecision(24, 8); b.Property(x => x.ReceiptUnitCost).HasPrecision(24, 8);
-        b.Property(x => x.ReceiptClearingQuantity).HasPrecision(18, 6);
+        b.Property(x => x.ReceiptClearingQuantity).HasPrecision(18, 6); b.Property(x => x.BillingBasisQuantity).HasPrecision(18, 6);
         b.Property(x => x.TaxPercent).HasPrecision(9, 4); b.Property(x => x.NetAmount).HasPrecision(18, 2); b.Property(x => x.TaxAmount).HasPrecision(18, 2);
         b.Property(x => x.GrossAmount).HasPrecision(18, 2); b.Property(x => x.ReceiptClearingAmount).HasPrecision(18, 2); b.Property(x => x.CompanyNetAmount).HasPrecision(18,2); b.Property(x => x.CompanyTaxAmount).HasPrecision(18,2); b.Property(x => x.CompanyGrossAmount).HasPrecision(18,2); b.Property(x => x.ReceiptExchangeRate).HasPrecision(24,12);
         b.Property(x => x.ProductCodeSnapshot).HasMaxLength(100).IsRequired(); b.Property(x => x.ProductNameSnapshot).HasMaxLength(250).IsRequired(); b.Property(x => x.UnitNameSnapshot).HasMaxLength(100).IsRequired();
-        b.HasIndex(x => new { x.VendorBillId, x.GoodsReceiptLineId }).IsUnique();
+        b.HasIndex(x => new { x.VendorBillId, x.GoodsReceiptLineId }).IsUnique()
+            .HasFilter("[GoodsReceiptLineId] IS NOT NULL");
+        b.HasIndex(x => new { x.VendorBillId, x.PurchaseServiceAcceptanceLineId }).IsUnique()
+            .HasFilter("[PurchaseServiceAcceptanceLineId] IS NOT NULL");
+        b.HasIndex(x => new { x.VendorBillId, x.PurchaseOrderLineId }).IsUnique()
+            .HasFilter("[GoodsReceiptLineId] IS NULL AND [PurchaseServiceAcceptanceLineId] IS NULL");
         b.HasOne<GoodsReceiptLine>().WithMany().HasForeignKey(x => x.GoodsReceiptLineId).OnDelete(DeleteBehavior.Restrict);
+        b.HasOne<PurchaseServiceAcceptanceLine>().WithMany().HasForeignKey(x => x.PurchaseServiceAcceptanceLineId).OnDelete(DeleteBehavior.Restrict);
         b.HasOne<PurchaseOrderLine>().WithMany().HasForeignKey(x => x.PurchaseOrderLineId).OnDelete(DeleteBehavior.Restrict);
         b.HasOne<Product>().WithMany().HasForeignKey(x => x.ProductId).OnDelete(DeleteBehavior.Restrict);
+        b.HasOne<Account>().WithMany().HasForeignKey(x => x.PurchaseExpenseAccountIdSnapshot).OnDelete(DeleteBehavior.Restrict);
         b.HasOne<TaxRate>().WithMany().HasForeignKey(x => x.TaxRateId).OnDelete(DeleteBehavior.Restrict);
         b.HasOne<Account>().WithMany().HasForeignKey(x => x.TaxInputAccountId).OnDelete(DeleteBehavior.Restrict);
     }

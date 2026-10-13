@@ -1,5 +1,15 @@
 # AI Work Log
 
+# 2026-10-13 — PUR-220 mixed purchase billing completion
+
+- Completed policy-aware Vendor Bill sourcing: a single Draft can allocate posted Goods Receipt lines, ordered-quantity Purchase Order lines and immutable Service Completion lines while active Draft/Approved/Posted bills reserve the appropriate source quantity.
+- Posting now clears GRNI only for receipt-policy lines, isolates their purchase-price/currency variance, and debits each ordered/service line's frozen purchase Expense account; tax and supplier payable cover the complete mixed bill.
+- Purchase Order settlement/automatic closure now derives billed quantity per order line for all three policies. Receipt returns, reversals and stock-return credit notes remain safely scoped to receipt-based allocations.
+- Replaced Vendor Bill line tables with responsive source cards, exposed localized billing-policy/source context, and removed the create action when no billable quantity remains.
+- Agreement releases now freeze the product's current billing policy and required Expense account on the generated Purchase Order line.
+- Added migration `AddMixedPurchaseBillingSources`, safe existing-line backfill, filtered source uniqueness and tenant-composite service/account relationships.
+- Verified the Web and regression projects build with zero warnings; all 645 security/inventory regression checks pass. The SQL integration executable could not connect because the local SQL Server Windows SSPI context failed before database setup.
+
 ## 2026-10-13 — PUR-220 staged Vendor Bill review
 
 - Replaced controller-level immediate posting with Draft entry, matching approval and Approved-only posting, each protected by a separate permission and rowversion.

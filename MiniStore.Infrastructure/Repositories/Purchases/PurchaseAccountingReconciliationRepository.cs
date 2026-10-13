@@ -155,8 +155,8 @@ public sealed class PurchaseAccountingReconciliationRepository(AppDbContext cont
                 from line in context.VendorBillLines.AsNoTracking()
                 join document in context.VendorBills.AsNoTracking() on line.VendorBillId equals document.Id
                 join receiptLine in context.GoodsReceiptLines.AsNoTracking()
-                    on line.GoodsReceiptLineId equals receiptLine.Id
-                where receiptLineIds.Contains(line.GoodsReceiptLineId) &&
+                    on line.GoodsReceiptLineId equals (int?)receiptLine.Id
+                where line.GoodsReceiptLineId.HasValue && receiptLineIds.Contains(line.GoodsReceiptLineId.Value) &&
                       document.Status == VendorBillStatus.Posted &&
                       document.BillDate < asOfDate.AddDays(1)
                 select new ReconciliationSettlementRow(

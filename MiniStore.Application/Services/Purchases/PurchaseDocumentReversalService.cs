@@ -101,7 +101,7 @@ public sealed class PurchaseDocumentReversalService(
         if ((await receiptReturns.GetByGoodsReceiptIdAsync(id)).Any(x => x.Status == GoodsReceiptReturnStatus.Posted))
             throw new InvalidOperationException("A goods receipt with posted returns cannot be reversed.");
         var receiptLineIds = receipt.Lines.Select(x => x.Id).ToHashSet();
-        if ((await bills.GetByPurchaseOrderIdAsync(receipt.PurchaseOrderId)).Any(x => x.Status != VendorBillStatus.Cancelled && x.Lines.Any(line => receiptLineIds.Contains(line.GoodsReceiptLineId))))
+        if ((await bills.GetByPurchaseOrderIdAsync(receipt.PurchaseOrderId)).Any(x => x.Status != VendorBillStatus.Cancelled && x.Lines.Any(line => line.GoodsReceiptLineId.HasValue && receiptLineIds.Contains(line.GoodsReceiptLineId.Value))))
             throw new InvalidOperationException("Cancel draft or approved vendor bills and reverse posted vendor bills linked to this goods receipt before reversing the receipt.");
         if ((await landedCosts.GetAllAsync()).Any(x => x.GoodsReceiptId == id && x.Status == LandedCostStatus.Posted))
             throw new InvalidOperationException("Reverse landed costs linked to this goods receipt before reversing the receipt.");

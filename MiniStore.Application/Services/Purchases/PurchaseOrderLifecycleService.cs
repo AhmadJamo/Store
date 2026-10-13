@@ -32,16 +32,17 @@ public sealed class PurchaseOrderLifecycleService(
         var returnedByReceiptLine = postedReturns.SelectMany(x => x.Lines)
             .GroupBy(x => x.GoodsReceiptLineId)
             .ToDictionary(x => x.Key, x => x.Sum(y => y.ReturnQuantity));
-        var billedByReceiptLine = postedBills.SelectMany(x => x.Lines)
-            .GroupBy(x => x.GoodsReceiptLineId)
-            .ToDictionary(x => x.Key, x => x.Sum(y => y.ReceiptClearingQuantity));
+        var billedByOrderLine = postedBills.SelectMany(x => x.Lines)
+            .GroupBy(x => x.PurchaseOrderLineId)
+            .ToDictionary(x => x.Key, x => x.Sum(y => y.BillingPolicySnapshot == PurchaseBillingPolicy.ReceivedQuantity
+                ? y.ReceiptClearingQuantity : y.Quantity));
 
         var lines = order.Lines.Select(orderLine =>
         {
             var relatedReceipts = receiptLines.Where(x => x.PurchaseOrderLineId == orderLine.Id).ToList();
             var received = relatedReceipts.Sum(x => x.ReceivedQuantity);
             var returned = relatedReceipts.Sum(x => returnedByReceiptLine.GetValueOrDefault(x.Id));
-            var billed = relatedReceipts.Sum(x => billedByReceiptLine.GetValueOrDefault(x.Id));
+            var billed = billedByOrderLine.GetValueOrDefault(orderLine.Id);
             var serviceCompleted = completedServiceLines
                 .Where(x => x.PurchaseOrderLineId == orderLine.Id).Sum(x => x.CompletedQuantity);
             var remainingToReceive = orderLine.BillingPolicySnapshot == PurchaseBillingPolicy.ReceivedQuantity

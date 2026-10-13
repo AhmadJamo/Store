@@ -3930,7 +3930,7 @@ namespace MiniStore.Infrastructure.Migrations
                         .HasPrecision(24, 8)
                         .HasColumnType("decimal(24,8)");
 
-                    b.Property<int>("GoodsReceiptLineId")
+                    b.Property<int?>("GoodsReceiptLineId")
                         .HasColumnType("int");
 
                     b.Property<string>("ProductCodeSnapshot")
@@ -7393,6 +7393,13 @@ namespace MiniStore.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<decimal>("BillingBasisQuantity")
+                        .HasPrecision(18, 6)
+                        .HasColumnType("decimal(18,6)");
+
+                    b.Property<int>("BillingPolicySnapshot")
+                        .HasColumnType("int");
+
                     b.Property<decimal>("CompanyGrossAmount")
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
@@ -7405,7 +7412,7 @@ namespace MiniStore.Infrastructure.Migrations
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int>("GoodsReceiptLineId")
+                    b.Property<int?>("GoodsReceiptLineId")
                         .HasColumnType("int");
 
                     b.Property<decimal>("GrossAmount")
@@ -7432,7 +7439,13 @@ namespace MiniStore.Infrastructure.Migrations
                         .HasMaxLength(250)
                         .HasColumnType("nvarchar(250)");
 
+                    b.Property<int?>("PurchaseExpenseAccountIdSnapshot")
+                        .HasColumnType("int");
+
                     b.Property<int>("PurchaseOrderLineId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("PurchaseServiceAcceptanceLineId")
                         .HasColumnType("int");
 
                     b.Property<decimal>("Quantity")
@@ -7492,7 +7505,11 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasIndex("ProductId", "TenantId");
 
+                    b.HasIndex("PurchaseExpenseAccountIdSnapshot", "TenantId");
+
                     b.HasIndex("PurchaseOrderLineId", "TenantId");
+
+                    b.HasIndex("PurchaseServiceAcceptanceLineId", "TenantId");
 
                     b.HasIndex("TaxInputAccountId", "TenantId");
 
@@ -7501,7 +7518,16 @@ namespace MiniStore.Infrastructure.Migrations
                     b.HasIndex("VendorBillId", "TenantId");
 
                     b.HasIndex("TenantId", "VendorBillId", "GoodsReceiptLineId")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[GoodsReceiptLineId] IS NOT NULL");
+
+                    b.HasIndex("TenantId", "VendorBillId", "PurchaseOrderLineId")
+                        .IsUnique()
+                        .HasFilter("[GoodsReceiptLineId] IS NULL AND [PurchaseServiceAcceptanceLineId] IS NULL");
+
+                    b.HasIndex("TenantId", "VendorBillId", "PurchaseServiceAcceptanceLineId")
+                        .IsUnique()
+                        .HasFilter("[PurchaseServiceAcceptanceLineId] IS NOT NULL");
 
                     b.ToTable("VendorBillLines");
                 });
@@ -8958,8 +8984,7 @@ namespace MiniStore.Infrastructure.Migrations
                         .WithMany()
                         .HasForeignKey("GoodsReceiptLineId", "TenantId")
                         .HasPrincipalKey("Id", "TenantId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("MiniStore.Domain.Entities.PurchaseMatchRun", null)
                         .WithMany("Exceptions")
@@ -10299,8 +10324,7 @@ namespace MiniStore.Infrastructure.Migrations
                         .WithMany()
                         .HasForeignKey("GoodsReceiptLineId", "TenantId")
                         .HasPrincipalKey("Id", "TenantId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("MiniStore.Domain.Entities.Product", null)
                         .WithMany()
@@ -10309,12 +10333,24 @@ namespace MiniStore.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("MiniStore.Domain.Entities.Account", null)
+                        .WithMany()
+                        .HasForeignKey("PurchaseExpenseAccountIdSnapshot", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("MiniStore.Domain.Entities.PurchaseOrderLine", null)
                         .WithMany()
                         .HasForeignKey("PurchaseOrderLineId", "TenantId")
                         .HasPrincipalKey("Id", "TenantId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.HasOne("MiniStore.Domain.Entities.PurchaseServiceAcceptanceLine", null)
+                        .WithMany()
+                        .HasForeignKey("PurchaseServiceAcceptanceLineId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("MiniStore.Domain.Entities.Account", null)
                         .WithMany()

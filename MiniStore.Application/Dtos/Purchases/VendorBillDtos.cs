@@ -15,9 +15,12 @@ public sealed class VendorBillCreatePageDto
 
 public sealed class VendorBillAvailableLineDto
 {
-    public int GoodsReceiptLineId { get; init; }
-    public string ReceiptNumber { get; init; } = string.Empty;
-    public DateOnly ReceiptDate { get; init; }
+    public int PurchaseOrderLineId { get; init; }
+    public PurchaseBillingPolicy BillingPolicy { get; init; }
+    public int? GoodsReceiptLineId { get; init; }
+    public int? PurchaseServiceAcceptanceLineId { get; init; }
+    public string SourceNumber { get; init; } = string.Empty;
+    public DateOnly SourceDate { get; init; }
     public string ProductCode { get; init; } = string.Empty;
     public string ProductName { get; init; } = string.Empty;
     public string UnitName { get; init; } = string.Empty;
@@ -53,7 +56,10 @@ public sealed class VendorBillAttachmentInputDto
 
 public sealed class CreateVendorBillLineDto
 {
-    public int GoodsReceiptLineId { get; set; }
+    public int PurchaseOrderLineId { get; set; }
+    public PurchaseBillingPolicy BillingPolicy { get; set; }
+    public int? GoodsReceiptLineId { get; set; }
+    public int? PurchaseServiceAcceptanceLineId { get; set; }
     public decimal Quantity { get; set; }
     public decimal UnitPrice { get; set; }
     public int? TaxRateId { get; set; }
@@ -94,6 +100,7 @@ public sealed class VendorBillDto
     public decimal CompanyTotalAmount { get; init; }
     public bool IsPaidInFull => Status == VendorBillStatus.Posted && OutstandingAmount <= 0 && CreditedAmount == 0;
     public bool IsSettledInFull => Status == VendorBillStatus.Posted && OutstandingAmount <= 0;
+    public bool HasReceiptBasedLines { get; init; }
     public bool CanCreateCreditNote { get; init; }
     public PurchaseMatchRunDto? Match { get; init; }
     public List<VendorBillLineDto> Lines { get; init; } = [];
@@ -115,6 +122,7 @@ public sealed class VendorBillLineDto
     public string ProductCode { get; init; } = string.Empty;
     public string ProductName { get; init; } = string.Empty;
     public string UnitName { get; init; } = string.Empty;
+    public PurchaseBillingPolicy BillingPolicy { get; init; }
     public decimal Quantity { get; init; }
     public decimal UnitPrice { get; init; }
     public decimal TaxPercent { get; init; }

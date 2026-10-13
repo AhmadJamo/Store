@@ -1934,6 +1934,18 @@ var foreignBillLine = new VendorBillLine(1, 1, 1, 10m, 10m, 10m, 10m, null, 0m, 
     "FX-1", "Foreign item", "Piece", 0.75m, 0.71m);
 Check(foreignBillLine.NetAmount == 100m && foreignBillLine.CompanyNetAmount == 75m && foreignBillLine.ReceiptClearingAmount == 71m,
     "Vendor bills must keep supplier amounts while separately freezing bill and GRNI company-currency values");
+var orderedBillLine = new VendorBillLine(null, null, 2, 2, PurchaseBillingPolicy.OrderedQuantity, 91,
+    3m, 12m, 10m, 0m, 3m, null, 0m, null, false, "ORD-1", "Ordered service", "Hour");
+Check(orderedBillLine.BillingPolicySnapshot == PurchaseBillingPolicy.OrderedQuantity &&
+      orderedBillLine.PurchaseExpenseAccountIdSnapshot == 91 && orderedBillLine.ReceiptClearingAmount == 0m,
+    "Order-based vendor bill lines must post through their frozen purchase expense account without clearing GRNI");
+var serviceBillLine = new VendorBillLine(null, 7, 3, 3, PurchaseBillingPolicy.ServiceCompletion, 92,
+    2m, 15m, 15m, 0m, 2m, null, 0m, null, false, "SVC-1", "Completed service", "Hour");
+Check(serviceBillLine.PurchaseServiceAcceptanceLineId == 7 && serviceBillLine.BillingBasisQuantity == 2m,
+    "Service vendor bill lines must preserve their completion evidence and billable quantity");
+CheckArgumentThrows(() => new VendorBillLine(null, null, 4, 4, PurchaseBillingPolicy.ServiceCompletion, 92,
+        1m, 10m, 10m, 0m, 1m, null, 0m, null, false, "SVC-2", "Missing evidence", "Hour"),
+    "Service vendor bill lines must reject missing completion evidence");
 var foreignPaymentLine = new SupplierPaymentLine(1, 100m, "BILL-FX-1", "SUP-FX-1", 0.78m, 75m);
 Check(foreignPaymentLine.CompanyCurrencyAmount == 78m && foreignPaymentLine.PayableCarryingAmount == 75m,
     "Supplier payments must preserve cash value and payable carrying value for realized exchange differences");

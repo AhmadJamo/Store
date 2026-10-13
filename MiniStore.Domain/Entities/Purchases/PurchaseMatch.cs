@@ -63,7 +63,7 @@ public sealed class PurchaseMatchException
     public int PurchaseMatchRunId { get; private set; }
     public int VendorBillLineId { get; private set; }
     public int PurchaseOrderLineId { get; private set; }
-    public int GoodsReceiptLineId { get; private set; }
+    public int? GoodsReceiptLineId { get; private set; }
     public PurchaseMatchExceptionType Type { get; private set; }
     public decimal ExpectedValue { get; private set; }
     public decimal ActualValue { get; private set; }
@@ -71,7 +71,7 @@ public sealed class PurchaseMatchException
     public decimal TolerancePercent { get; private set; }
     public string ProductCodeSnapshot { get; private set; }
     public string ProductNameSnapshot { get; private set; }
-    public PurchaseMatchException(int vendorBillLineId, int purchaseOrderLineId, int goodsReceiptLineId,
+    public PurchaseMatchException(int vendorBillLineId, int purchaseOrderLineId, int? goodsReceiptLineId,
         PurchaseMatchExceptionType type, decimal expectedValue, decimal actualValue, decimal variancePercent,
         decimal tolerancePercent, string productCode, string productName)
     {

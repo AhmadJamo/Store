@@ -532,7 +532,8 @@ static async Task VerifyConcurrentGoodsReceiptAndGrniAsync(
             new VendorBillRepository(billContext), billUnitOfWork, billUser);
         var billService = new VendorBillService(
             new VendorBillRepository(billContext), new PurchaseOrderRepository(billContext), new GoodsReceiptRepository(billContext),
-            new GoodsReceiptReturnRepository(billContext), new SupplierRepository(billContext), new WarehouseRepository(billContext),
+            new GoodsReceiptReturnRepository(billContext), new PurchaseServiceAcceptanceRepository(billContext),
+            new SupplierRepository(billContext), new WarehouseRepository(billContext),
             new TaxRateRepository(billContext), new AccountingSettingsRepository(billContext), new PurchaseMatchingSettingsRepository(billContext),
             new PurchaseMatchRepository(billContext), billNumbers, new SupplierPaymentRepository(billContext),
             new SupplierCreditNoteRepository(billContext), billJournals, billOrderLifecycle, billExchangeRates,
@@ -547,6 +548,8 @@ static async Task VerifyConcurrentGoodsReceiptAndGrniAsync(
                 MatchOverrideReason = "Approved integration price variance",
                 Lines = [new CreateVendorBillLineDto
                 {
+                    PurchaseOrderLineId = receipt.Lines.Single().PurchaseOrderLineId,
+                    BillingPolicy = PurchaseBillingPolicy.ReceivedQuantity,
                     GoodsReceiptLineId = receipt.Lines.Single().Id,
                     Quantity = 0.5m,
                     UnitPrice = 10m
