@@ -124,6 +124,7 @@ public class AppDbContext
     public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
 
     public DbSet<GeneralSettings> GeneralSettings=> Set<GeneralSettings>();
+    public DbSet<CurrencyExchangeRate> CurrencyExchangeRates => Set<CurrencyExchangeRate>();
 
     public DbSet<DiscountSettings> DiscountSettings { get; set; }
 

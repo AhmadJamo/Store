@@ -260,4 +260,4 @@ Shared accounting, settings, inventory and document-number files are changed onl
 
 ## 10. Immediate next slice
 
-The approved roadmap is implemented through PUR-180, including inventory-to-GL/GRNI reconciliation, derived Purchase Order closure, Supplier Credit Notes for billed receipt returns and controlled posted-document reversal. PUR-070 remains the unbilled-return path; billed quantities use PUR-170. The dependency-ordered continuation in `PURCHASE_COMPLETION_ROADMAP_AR_EN.md` proceeds with PUR-190 multi-currency purchasing.
+The approved roadmap is implemented through PUR-190, including reconciliation, derived Purchase Order closure, Supplier Credit Notes, controlled reversal and dated multi-currency valuation/settlement. PUR-070 remains the unbilled-return path; billed quantities use PUR-170. The dependency-ordered continuation in `PURCHASE_COMPLETION_ROADMAP_AR_EN.md` proceeds with PUR-200 flexible RFQ workspace and fast path.

@@ -26,7 +26,7 @@
 
 `docs/PURCHASE_MANAGEMENT_EVOLUTION_PLAN.md` is the approved procure-to-pay evolution plan. It records the legacy direct-purchase boundary, capability gaps, target aggregates, inventory/accounting integration contracts, additive migration safeguards and PUR-000 through PUR-150 vertical slices. Planned purchase types are not implemented unless the matching slice is explicitly marked complete.
 
-`docs/PURCHASE_COMPLETION_ROADMAP_AR_EN.md` is the approved Arabic/English post-PUR-150 purchase plan. PUR-160 reconciliation, PUR-165 derived order closure, PUR-170 Supplier Credit Notes and PUR-180 controlled reversal are implemented; it continues with PUR-190 through PUR-280 across multi-currency, flexible RFQs, split awards, service procurement, bulk vendor prices, automated replenishment, advanced receiving, supplier communication, integrations, analytics and legacy-workflow retirement.
+`docs/PURCHASE_COMPLETION_ROADMAP_AR_EN.md` is the approved Arabic/English post-PUR-150 purchase plan. PUR-160 through PUR-190 are implemented, including reconciliation, derived closure, credit notes, controlled reversal and multi-currency purchasing; it continues with PUR-200 through PUR-280 across flexible RFQs, split awards, service procurement, bulk vendor prices, automated replenishment, advanced receiving, supplier communication, integrations, analytics and legacy-workflow retirement.
 
 `docs/PURCHASE_ARCHITECTURE_ALIGNMENT.md` is the accepted PUR-005 gate. It fixes Supplier compatibility, Purchasing/Inventory/Accounting ownership, derived quantity authorities, staged currency behavior, purchase-first approval boundaries, GRNI, synchronous contracts and deferred event infrastructure before runtime implementation starts.
 
@@ -58,6 +58,7 @@
 | `Entities/Purchases/PurchaseDocumentReversal.cs` | immutable reasoned reversal identity for receipt, bill, payment and landed-cost documents with retry and opposite-journal evidence | PUR-180 reversal workflow. |
 | `Entities/Purchases/PurchaseMatch.cs` | tenant matching settings plus immutable bill match runs, line exceptions and reasoned override evidence | PUR-090 three-way matching. |
 | `Entities/Purchases/SupplierPayment.cs` | posted supplier-payment aggregate with immutable partial Vendor Bill allocations | PUR-100 payable settlement. |
+| `Entities/Settings/CurrencyExchangeRate.cs` | tenant-owned dated supplier-currency rate, source and audit evidence using company-currency-per-unit convention | PUR-190 multi-currency purchasing. |
 | `Entities/Settings/*.cs` | accounting, discount, inventory-policy defaults, centralized `DocumentSequence`, general settings and supported UI language | settings/database/localization docs. |
 | `Entities/Security/*.cs` | audit, permission catalogue and tenant-owned role/permission entities | permissions/security docs. |
 | `Entities/Tenancy/*.cs` | company tenant, Identity-user membership and tenant-scoped user-role assignments | tenancy/security/database docs. |
@@ -86,6 +87,7 @@
 | `Services/Purchases/VendorBillService.cs` | caps receipt-based partial billing, rejects duplicate normalized supplier invoices and atomically clears GRNI, records input tax/PPV and credits supplier payable | Vendor Bill screens. |
 | `Services/Purchases/SupplierCreditNoteService.cs` | caps cumulative billed returns, removes current stock/tracking and atomically reverses payable/input tax/inventory with PPV balancing | Supplier Credit Note screens. |
 | `Services/Purchases/PurchaseDocumentReversalService.cs` | enforces typed downstream dependencies and unchanged valuation, then atomically records a retry-safe reversal, physical/value correction, opposite journal and original-state transition | PUR-180 reversal screens and original document details. |
+| `Services/Settings/CurrencyExchangeRateService.cs` | manages dated rates and resolves the latest rate on or before each document date; company currency resolves to one | Settings currency screen and PUR-190 document services. |
 | `Services/Purchases/SupplierPaymentService.cs` | calculates outstanding Vendor Bill balances and atomically settles supplier payable against a configured cash/bank payment method | Supplier Payment screens. |
 | `Services/Settings/PurchaseMatchingSettingsService.cs` | administers tenant quantity/price matching tolerances | Settings Purchase Matching screen. |
 | `Services/Catalog/RecipeService.cs` | lists and creates immutable active recipe versions with compatible ingredient units | Recipes controller/views and prepared-product sales. |

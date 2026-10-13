@@ -1,5 +1,14 @@
 # AI Work Log
 
+## 2026-10-13 — PUR-190 Multi-Currency Purchasing
+
+- Added tenant-owned dated exchange rates with source/audit evidence and a bilingual Settings screen. Rates use company-currency units per one supplier-currency unit and resolve latest-on-or-before each document date. Supplier quotation entry now selects from configured currencies and comparison ranks normalized company-currency totals rather than incomparable raw amounts.
+- Confirmed Purchase Orders and posted Goods Receipts, Vendor Bills and Supplier Payments now freeze transaction/company currencies, rate, rate date and source; detail screens show both document value and company-currency equivalent.
+- Inventory and GRNI use the receipt-date value. Vendor Bills separate commercial Purchase Price Variance from receipt-to-bill exchange variance, while Supplier Payments preserve payable carrying value and post realized exchange gain/loss against payment-date cash value.
+- Supplier Credit Notes preserve proportional frozen bill company values, receipt returns/reversals use receipt-rate inventory value, and missing-rate/account errors link to the correct Settings page.
+- Added realized exchange gain/loss account settings, ADR `2026-10-13-purchase-multi-currency-policy.md` and migration `20261013030745_AddPurchaseMultiCurrency`, including safe rate-one backfill for legacy documents. The migration was applied to local `MiniStoreDb`.
+- Release build passed with zero warnings, 610 focused checks passed, the SQL integration suite passed, and Entity Framework reported no pending model changes.
+
 ## 2026-10-13 — PUR-180 Controlled Purchase Document Reversal
 
 - Added immutable tenant-owned `PRV-` reversal records for posted Goods Receipts, Vendor Bills, Supplier Payments and Landed Costs, with mandatory reason, actor/time, original identity, opposite journal number and request-key idempotency.

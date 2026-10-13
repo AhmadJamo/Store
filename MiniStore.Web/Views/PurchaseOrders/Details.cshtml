@@ -28,6 +28,7 @@
         <div class="col-sm-6 col-lg-3"><strong>@Localizer["Warehouse"]</strong><div>@Model.WarehouseName</div></div>
         <div class="col-sm-6 col-lg-3"><strong>@Localizer["Order date"]</strong><div>@Model.OrderDate</div></div>
         <div class="col-sm-6 col-lg-3"><strong>@Localizer["Expected date"]</strong><div>@Model.ExpectedDate</div></div>
+        @if (Model.Status is PurchaseOrderStatus.Confirmed or PurchaseOrderStatus.Closed) { <div class="col-12"><strong>@Localizer["Exchange rate"]</strong><div>1 @Model.CurrencyCode = @Model.ExchangeRate.ToString("0.############") @Model.CompanyCurrencyCode (@Model.ExchangeRateDate · @Model.ExchangeRateSource)</div></div> }
     </div>
     @if (Model.PurchaseAgreementId.HasValue) { <div class="mt-3"><a asp-controller="PurchaseAgreements" asp-action="Details" asp-route-id="@Model.PurchaseAgreementId">@Localizer["Created from purchase agreement"]</a></div> }
     @if (Model.Status == PurchaseOrderStatus.Closed)
@@ -60,7 +61,7 @@
             <div class="col-6 col-md"><strong>@Localizer["Billed"]</strong><div>@line.BilledQuantity.ToQuantityDisplay(numberSettings)</div></div>
             <div class="col-6 col-md"><strong>@Localizer["Awaiting settlement"]</strong><div>@line.UnsettledReceivedQuantity.ToQuantityDisplay(numberSettings)</div></div>
         </div>
-        <div class="border-top mt-3 pt-2 small">@Localizer["Unit price"]: @line.UnitPrice.ToMoneyDisplay(numberSettings) @Model.CurrencyCode · @Localizer["Gross amount"]: @line.GrossAmount.ToMoneyDisplay(numberSettings) @Model.CurrencyCode</div>
+        <div class="border-top mt-3 pt-2 small">@Localizer["Unit price"]: @line.UnitPrice.ToMoneyDisplay(numberSettings) @Model.CurrencyCode · @Localizer["Gross amount"]: @line.GrossAmount.ToMoneyDisplay(numberSettings) @Model.CurrencyCode @if(Model.Status is PurchaseOrderStatus.Confirmed or PurchaseOrderStatus.Closed){<text> · @Localizer["Company currency equivalent"]: @((line.GrossAmount*Model.ExchangeRate).ToMoneyDisplay(numberSettings)) @Model.CompanyCurrencyCode</text>}</div>
     </div></div>
 }
 </div>

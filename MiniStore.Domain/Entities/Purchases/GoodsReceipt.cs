@@ -4,12 +4,17 @@ public enum GoodsReceiptStatus { Draft = 1, Posted = 2, Cancelled = 3, Reversed 
 
 public sealed class GoodsReceipt
 {
-    private GoodsReceipt() { ReceiptNumber = CreatedByUserId = string.Empty; }
+    private GoodsReceipt() { ReceiptNumber = CurrencyCode = CompanyCurrencyCode = ExchangeRateSource = CreatedByUserId = string.Empty; }
     public int Id { get; private set; }
     public string ReceiptNumber { get; private set; }
     public int PurchaseOrderId { get; private set; }
     public int WarehouseId { get; private set; }
     public DateOnly ReceiptDate { get; private set; }
+    public string CurrencyCode { get; private set; }
+    public string CompanyCurrencyCode { get; private set; }
+    public decimal ExchangeRate { get; private set; }
+    public DateOnly ExchangeRateDate { get; private set; }
+    public string ExchangeRateSource { get; private set; }
     public GoodsReceiptStatus Status { get; private set; }
     public string CreatedByUserId { get; private set; }
     public DateTime CreatedAtUtc { get; private set; }
@@ -19,13 +24,18 @@ public sealed class GoodsReceipt
     public byte[] RowVersion { get; private set; } = [];
     public List<GoodsReceiptLine> Lines { get; private set; } = [];
 
-    public GoodsReceipt(string receiptNumber, int purchaseOrderId, int warehouseId, DateOnly receiptDate, string? notes, string createdByUserId)
+    public GoodsReceipt(string receiptNumber, int purchaseOrderId, int warehouseId, DateOnly receiptDate, string? notes, string createdByUserId,
+        string currencyCode = "JOD", string companyCurrencyCode = "JOD", decimal exchangeRate = 1m,
+        DateOnly? exchangeRateDate = null, string exchangeRateSource = "Company currency")
     {
         if (string.IsNullOrWhiteSpace(receiptNumber) || receiptNumber.Trim().Length > 50) throw new ArgumentException("Goods receipt number is required and cannot exceed 50 characters.");
         if (purchaseOrderId <= 0 || warehouseId <= 0) throw new ArgumentException("Purchase order and warehouse are required.");
         if (notes?.Trim().Length > 1000) throw new ArgumentException("Receipt notes cannot exceed 1000 characters.");
         if (string.IsNullOrWhiteSpace(createdByUserId)) throw new ArgumentException("User is required.");
+        if (exchangeRate <= 0) throw new ArgumentException("Exchange rate must be greater than zero.");
         ReceiptNumber = receiptNumber.Trim(); PurchaseOrderId = purchaseOrderId; WarehouseId = warehouseId; ReceiptDate = receiptDate;
+        CurrencyCode = currencyCode.Trim().ToUpperInvariant(); CompanyCurrencyCode = companyCurrencyCode.Trim().ToUpperInvariant(); ExchangeRate = exchangeRate;
+        ExchangeRateDate = exchangeRateDate ?? receiptDate; ExchangeRateSource = exchangeRateSource.Trim();
         Notes = string.IsNullOrWhiteSpace(notes) ? null : notes.Trim(); CreatedByUserId = createdByUserId; CreatedAtUtc = DateTime.UtcNow; Status = GoodsReceiptStatus.Draft;
     }
 

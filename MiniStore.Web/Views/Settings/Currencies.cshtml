@@ -1,0 +1,30 @@
+@model MiniStore.Application.Dtos.Settings.CurrencyExchangeRatePageDto
+@inject Microsoft.Extensions.Localization.IStringLocalizer<MiniStore.Web.SharedResource> Localizer
+@{ ViewData["Title"] = Localizer["Currencies and exchange rates"]; }
+
+<div class="container mt-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+        <div><h2>@Localizer["Currencies and exchange rates"]</h2><p class="text-muted mb-0">@Localizer["One unit of supplier currency equals the entered amount in company currency."] (@Model.CompanyCurrencyCode)</p></div>
+        <a asp-action="Index" class="btn btn-outline-secondary">@Localizer["Back"]</a>
+    </div>
+    <div class="row g-4">
+        <div class="col-12 col-lg-4"><div class="card card-body">
+            <h5>@Localizer["Add or update exchange rate"]</h5>
+            <form asp-action="Currencies" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="mb-3"><label asp-for="Form.CurrencyCode" class="form-label">@Localizer["Supplier currency"]</label><input asp-for="Form.CurrencyCode" maxlength="3" class="form-control text-uppercase" placeholder="USD" required /></div>
+                <div class="mb-3"><label asp-for="Form.EffectiveDate" class="form-label">@Localizer["Effective date"]</label><input asp-for="Form.EffectiveDate" type="date" class="form-control" required /></div>
+                <div class="mb-3"><label asp-for="Form.CompanyCurrencyPerUnit" class="form-label">@Localizer["Company currency per unit"]</label><input asp-for="Form.CompanyCurrencyPerUnit" type="number" min="0.000000000001" step="0.000000000001" class="form-control" required /><div class="form-text">@Localizer["Example: if one USD equals 0.709 JOD, enter 0.709."]</div></div>
+                <div class="mb-3"><label asp-for="Form.Source" class="form-label">@Localizer["Rate source"]</label><input asp-for="Form.Source" maxlength="100" class="form-control" required /></div>
+                <button class="btn btn-primary">@Localizer["Save exchange rate"]</button>
+            </form>
+        </div></div>
+        <div class="col-12 col-lg-8"><div class="card card-body">
+            <h5>@Localizer["Recorded exchange rates"]</h5>
+            <div class="table-responsive"><table class="table align-middle"><thead><tr><th>@Localizer["Currency"]</th><th>@Localizer["Effective date"]</th><th>@Localizer["Rate"]</th><th>@Localizer["Rate source"]</th></tr></thead><tbody>
+            @foreach (var rate in Model.Rates) { <tr><td><strong>@rate.CurrencyCode</strong></td><td>@rate.EffectiveDate</td><td>@rate.CompanyCurrencyPerUnit.ToString("0.############") @Model.CompanyCurrencyCode</td><td>@rate.Source</td></tr> }
+            @if (Model.Rates.Count == 0) { <tr><td colspan="4" class="text-muted text-center py-4">@Localizer["No foreign exchange rates have been recorded."]</td></tr> }
+            </tbody></table></div>
+        </div></div>
+    </div>
+</div>

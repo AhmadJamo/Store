@@ -10,7 +10,7 @@ public sealed class VendorBillService(
     ITaxRateRepository taxRates, IAccountingSettingsRepository accountingSettings, IPurchaseMatchingSettingsRepository matchingSettings,
     IPurchaseMatchRepository matches, DocumentNumberService numbers,
     ISupplierPaymentRepository payments, ISupplierCreditNoteRepository creditNotes, JournalPostingService journalPosting,
-    PurchaseOrderLifecycleService orderLifecycle, IUnitOfWork unitOfWork, ICurrentUserService currentUser)
+    PurchaseOrderLifecycleService orderLifecycle, CurrencyExchangeRateService exchangeRates, IUnitOfWork unitOfWork, ICurrentUserService currentUser)
 {
     public async Task<List<VendorBillDto>> GetAllAsync(string? search)
     {
@@ -74,10 +74,13 @@ public sealed class VendorBillService(
             var taxMap = (await taxRates.GetAllAsync()).ToDictionary(x => x.Id);
             var receiptList = (await receipts.GetByPurchaseOrderIdAsync(order.Id)).Where(x => x.Status == GoodsReceiptStatus.Posted).ToList();
             var receiptLineMap = receiptList.SelectMany(x => x.Lines).ToDictionary(x => x.Id);
+            var receiptRateMap = receiptList.SelectMany(receipt => receipt.Lines.Select(line => new { line.Id, receipt.ExchangeRate })).ToDictionary(x => x.Id, x => x.ExchangeRate);
             var returned = await GetReturnedQuantitiesAsync(receiptList);
             var billed = await GetBilledQuantitiesAsync(order.Id);
+            var billRate = await exchangeRates.ResolveAsync(order.CurrencyCode, dto.BillDate);
             created = new VendorBill(await numbers.GenerateAsync(DocumentNumberType.VendorBill, dto.BillDate.ToDateTime(TimeOnly.MinValue)),
-                order.Id, order.SupplierId, dto.SupplierInvoiceNumber, dto.BillDate, order.CurrencyCode, dto.Notes, currentUser.UserId);
+                order.Id, order.SupplierId, dto.SupplierInvoiceNumber, dto.BillDate, order.CurrencyCode, dto.Notes, currentUser.UserId,
+                billRate.CompanyCurrencyCode, billRate.Rate, billRate.RateDate, billRate.Source);
             var exceptionSpecs = new List<(VendorBillLine Line, PurchaseMatchExceptionType Type, decimal Expected, decimal Actual, decimal Variance, decimal Tolerance)>();
 
             foreach (var input in submitted)
@@ -90,7 +93,8 @@ public sealed class VendorBillService(
                 if (input.TaxRateId.HasValue && !taxMap.TryGetValue(input.TaxRateId.Value, out tax)) throw new InvalidOperationException("The selected purchase tax rate was not found.");
                 var line = new VendorBillLine(source.Id, source.PurchaseOrderLineId, source.ProductId, input.Quantity, input.UnitPrice,
                     source.UnitCost, Math.Min(input.Quantity, remaining), tax?.Id, tax?.Rate ?? 0, tax?.InputAccountId,
-                    tax?.IsPriceInclusive ?? false, source.ProductCodeSnapshot, source.ProductNameSnapshot, source.UnitNameSnapshot);
+                    tax?.IsPriceInclusive ?? false, source.ProductCodeSnapshot, source.ProductNameSnapshot, source.UnitNameSnapshot,
+                    billRate.Rate, receiptRateMap[source.Id]);
                 created.AddLine(line);
                 if (input.Quantity > remaining)
                 {
@@ -119,17 +123,19 @@ public sealed class VendorBillService(
             var journalLines = new List<JournalEntryLine>();
             if (created.ReceiptClearingAmount > 0) journalLines.Add(new JournalEntryLine(settings.GoodsReceivedNotInvoicedAccountId.Value,
                 created.ReceiptClearingAmount, 0, warehouse.BranchId, warehouse.Id, $"GRNI clearing for {created.BillNumber}"));
-            var variance = Round(created.NetAmount - created.ReceiptClearingAmount);
-            if (variance != 0)
+            var purchasePriceVariance = Round(created.Lines.Sum(line => (line.NetAmount - line.ReceiptClearingQuantity * line.ReceiptUnitCost) * created.ExchangeRate));
+            if (purchasePriceVariance != 0)
             {
                 if (!settings.PurchasePriceVarianceAccountId.HasValue) throw new InvalidOperationException("Configure a purchase price variance account before posting a vendor bill with a price difference.");
-                journalLines.Add(variance > 0
-                    ? new JournalEntryLine(settings.PurchasePriceVarianceAccountId.Value, variance, 0, warehouse.BranchId, warehouse.Id, $"Purchase price variance on {created.BillNumber}")
-                    : new JournalEntryLine(settings.PurchasePriceVarianceAccountId.Value, 0, Math.Abs(variance), warehouse.BranchId, warehouse.Id, $"Purchase price variance on {created.BillNumber}"));
+                journalLines.Add(purchasePriceVariance > 0
+                    ? new JournalEntryLine(settings.PurchasePriceVarianceAccountId.Value, purchasePriceVariance, 0, warehouse.BranchId, warehouse.Id, $"Purchase price variance on {created.BillNumber}")
+                    : new JournalEntryLine(settings.PurchasePriceVarianceAccountId.Value, 0, Math.Abs(purchasePriceVariance), warehouse.BranchId, warehouse.Id, $"Purchase price variance on {created.BillNumber}"));
             }
+            var currencyVariance = Round(created.CompanyNetAmount - created.ReceiptClearingAmount - purchasePriceVariance);
+            AddExchangeVariance(journalLines, settings, currencyVariance, warehouse, created.BillNumber);
             foreach (var taxGroup in created.Lines.Where(x => x.TaxAmount > 0).GroupBy(x => x.TaxInputAccountId!.Value))
-                journalLines.Add(new JournalEntryLine(taxGroup.Key, taxGroup.Sum(x => x.TaxAmount), 0, warehouse.BranchId, warehouse.Id, $"Input tax on {created.BillNumber}"));
-            journalLines.Add(new JournalEntryLine(supplier.AccountId.Value, 0, created.TotalAmount, warehouse.BranchId, warehouse.Id, $"Supplier payable for {created.BillNumber}"));
+                journalLines.Add(new JournalEntryLine(taxGroup.Key, taxGroup.Sum(x => x.CompanyTaxAmount), 0, warehouse.BranchId, warehouse.Id, $"Input tax on {created.BillNumber}"));
+            journalLines.Add(new JournalEntryLine(supplier.AccountId.Value, 0, created.CompanyTotalAmount, warehouse.BranchId, warehouse.Id, $"Supplier payable for {created.BillNumber}"));
             await journalPosting.PostAsync(new JournalPostingRequest(dto.BillDate.ToDateTime(TimeOnly.MinValue), $"Vendor bill {created.BillNumber}",
                 "VendorBill", created.BillNumber, journalLines, "This vendor bill has already been posted to accounting."));
             created.Post(currentUser.UserId);
@@ -174,14 +180,14 @@ public sealed class VendorBillService(
     private static VendorBillDto Map(VendorBill x, string orderNumber, string supplierName, PurchaseMatchRun? match = null, decimal paidAmount = 0, decimal creditedAmount = 0, bool canCreateCreditNote = false) => new()
     {
         Id = x.Id, BillNumber = x.BillNumber, PurchaseOrderNumber = orderNumber, SupplierName = supplierName,
-        SupplierInvoiceNumber = x.SupplierInvoiceNumber, BillDate = x.BillDate, CurrencyCode = x.CurrencyCode, Notes = x.Notes,
+        SupplierInvoiceNumber = x.SupplierInvoiceNumber, BillDate = x.BillDate, CurrencyCode = x.CurrencyCode, CompanyCurrencyCode = x.CompanyCurrencyCode, ExchangeRate = x.ExchangeRate, ExchangeRateDate = x.ExchangeRateDate, ExchangeRateSource = x.ExchangeRateSource, Notes = x.Notes,
         Status = x.Status, NetAmount = x.NetAmount, TaxAmount = x.TaxAmount, TotalAmount = x.TotalAmount,
         PaidAmount = paidAmount, CreditedAmount = creditedAmount, OutstandingAmount = Math.Max(0, x.TotalAmount - paidAmount - creditedAmount), ReceiptClearingAmount = x.ReceiptClearingAmount,
-        CanCreateCreditNote = canCreateCreditNote,
+        CompanyNetAmount = x.CompanyNetAmount, CompanyTaxAmount = x.CompanyTaxAmount, CompanyTotalAmount = x.CompanyTotalAmount, CanCreateCreditNote = canCreateCreditNote,
         Lines = x.Lines.Select(line => new VendorBillLineDto { Id = line.Id, ProductCode = line.ProductCodeSnapshot, ProductName = line.ProductNameSnapshot,
             UnitName = line.UnitNameSnapshot, Quantity = line.Quantity, UnitPrice = line.UnitPrice, TaxPercent = line.TaxPercent,
             IsTaxInclusive = line.IsTaxInclusive, NetAmount = line.NetAmount, TaxAmount = line.TaxAmount, GrossAmount = line.GrossAmount,
-            ReceiptClearingAmount = line.ReceiptClearingAmount }).ToList(),
+            ReceiptClearingAmount = line.ReceiptClearingAmount, CompanyNetAmount = line.CompanyNetAmount, CompanyTaxAmount = line.CompanyTaxAmount, CompanyGrossAmount = line.CompanyGrossAmount }).ToList(),
         Match = match is null ? null : new PurchaseMatchRunDto
         {
             QuantityTolerancePercent = match.QuantityTolerancePercent, PriceTolerancePercent = match.PriceTolerancePercent,
@@ -192,5 +198,19 @@ public sealed class VendorBillService(
         }
     };
     private static decimal Round(decimal value) => Math.Round(value, 2, MidpointRounding.AwayFromZero);
+    private static void AddExchangeVariance(List<JournalEntryLine> lines, AccountingSettings settings, decimal variance, Warehouse warehouse, string billNumber)
+    {
+        if (variance == 0) return;
+        if (variance > 0)
+        {
+            if (!settings.RealizedExchangeLossAccountId.HasValue) throw new InvalidOperationException("Configure a realized exchange loss account before posting a foreign-currency vendor bill.");
+            lines.Add(new JournalEntryLine(settings.RealizedExchangeLossAccountId.Value, variance, 0, warehouse.BranchId, warehouse.Id, $"Exchange variance on {billNumber}"));
+        }
+        else
+        {
+            if (!settings.RealizedExchangeGainAccountId.HasValue) throw new InvalidOperationException("Configure a realized exchange gain account before posting a foreign-currency vendor bill.");
+            lines.Add(new JournalEntryLine(settings.RealizedExchangeGainAccountId.Value, 0, Math.Abs(variance), warehouse.BranchId, warehouse.Id, $"Exchange variance on {billNumber}"));
+        }
+    }
     private static decimal Percent(decimal difference, decimal baseline) => baseline <= 0 ? 100m : decimal.Round(difference / baseline * 100m, 6, MidpointRounding.AwayFromZero);
 }

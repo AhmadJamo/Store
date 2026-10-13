@@ -19,7 +19,9 @@ public class AccountingSettingsService(
             CostOfSalesAccountId = settings.CostOfSalesAccountId,
             GoodsReceivedNotInvoicedAccountId = settings.GoodsReceivedNotInvoicedAccountId,
             PurchasePriceVarianceAccountId = settings.PurchasePriceVarianceAccountId,
-            LandedCostClearingAccountId = settings.LandedCostClearingAccountId
+            LandedCostClearingAccountId = settings.LandedCostClearingAccountId,
+            RealizedExchangeGainAccountId = settings.RealizedExchangeGainAccountId,
+            RealizedExchangeLossAccountId = settings.RealizedExchangeLossAccountId
         };
     }
 
@@ -34,7 +36,8 @@ public class AccountingSettingsService(
                 dto.PurchaseDiscountAccountId,
                 dto.SalesDiscountAccountId,
                 dto.SalesRevenueAccountId,
-                dto.CostOfSalesAccountId, dto.GoodsReceivedNotInvoicedAccountId, dto.PurchasePriceVarianceAccountId, dto.LandedCostClearingAccountId));
+                dto.CostOfSalesAccountId, dto.GoodsReceivedNotInvoicedAccountId, dto.PurchasePriceVarianceAccountId, dto.LandedCostClearingAccountId,
+                dto.RealizedExchangeGainAccountId, dto.RealizedExchangeLossAccountId));
         }
         else
         {
@@ -42,7 +45,8 @@ public class AccountingSettingsService(
                 dto.PurchaseDiscountAccountId,
                 dto.SalesDiscountAccountId,
                 dto.SalesRevenueAccountId,
-                dto.CostOfSalesAccountId, dto.GoodsReceivedNotInvoicedAccountId, dto.PurchasePriceVarianceAccountId, dto.LandedCostClearingAccountId);
+                dto.CostOfSalesAccountId, dto.GoodsReceivedNotInvoicedAccountId, dto.PurchasePriceVarianceAccountId, dto.LandedCostClearingAccountId,
+                dto.RealizedExchangeGainAccountId, dto.RealizedExchangeLossAccountId);
         }
 
         await settingsRepository.SaveChangesAsync();
@@ -54,7 +58,7 @@ public class AccountingSettingsService(
         {
             dto.PurchaseDiscountAccountId, dto.SalesDiscountAccountId,
             dto.SalesRevenueAccountId, dto.CostOfSalesAccountId, dto.GoodsReceivedNotInvoicedAccountId,
-            dto.PurchasePriceVarianceAccountId, dto.LandedCostClearingAccountId
+            dto.PurchasePriceVarianceAccountId, dto.LandedCostClearingAccountId, dto.RealizedExchangeGainAccountId, dto.RealizedExchangeLossAccountId
         }.Where(x => x.HasValue).Select(x => x!.Value).Distinct().ToList();
 
         foreach (var id in ids)

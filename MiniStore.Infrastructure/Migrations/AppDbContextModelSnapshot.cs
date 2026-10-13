@@ -359,6 +359,12 @@ namespace MiniStore.Infrastructure.Migrations
                     b.Property<int?>("PurchasePriceVarianceAccountId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("RealizedExchangeGainAccountId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("RealizedExchangeLossAccountId")
+                        .HasColumnType("int");
+
                     b.Property<int?>("SalesDiscountAccountId")
                         .HasColumnType("int");
 
@@ -384,6 +390,10 @@ namespace MiniStore.Infrastructure.Migrations
                     b.HasIndex("PurchaseDiscountAccountId", "TenantId");
 
                     b.HasIndex("PurchasePriceVarianceAccountId", "TenantId");
+
+                    b.HasIndex("RealizedExchangeGainAccountId", "TenantId");
+
+                    b.HasIndex("RealizedExchangeLossAccountId", "TenantId");
 
                     b.HasIndex("SalesDiscountAccountId", "TenantId");
 
@@ -653,6 +663,59 @@ namespace MiniStore.Infrastructure.Migrations
                     b.ToTable("CompanyOnboardings");
                 });
 
+            modelBuilder.Entity("MiniStore.Domain.Entities.CurrencyExchangeRate", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("CompanyCurrencyPerUnit")
+                        .HasPrecision(24, 12)
+                        .HasColumnType("decimal(24,12)");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedByUserId")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("CurrencyCode")
+                        .IsRequired()
+                        .HasMaxLength(3)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(3)");
+
+                    b.Property<DateOnly>("EffectiveDate")
+                        .HasColumnType("date");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<string>("Source")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("TenantId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TenantId");
+
+                    b.HasIndex("TenantId", "CurrencyCode", "EffectiveDate")
+                        .IsUnique();
+
+                    b.ToTable("CurrencyExchangeRates");
+                });
+
             modelBuilder.Entity("MiniStore.Domain.Entities.Customer", b =>
                 {
                     b.Property<int>("Id")
@@ -884,6 +947,11 @@ namespace MiniStore.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("CompanyCurrencyCode")
+                        .IsRequired()
+                        .HasMaxLength(3)
+                        .HasColumnType("nvarchar(3)");
+
                     b.Property<DateTime>("CreatedAtUtc")
                         .HasColumnType("datetime2");
 
@@ -891,6 +959,23 @@ namespace MiniStore.Infrastructure.Migrations
                         .IsRequired()
                         .HasMaxLength(450)
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("CurrencyCode")
+                        .IsRequired()
+                        .HasMaxLength(3)
+                        .HasColumnType("nvarchar(3)");
+
+                    b.Property<decimal>("ExchangeRate")
+                        .HasPrecision(24, 12)
+                        .HasColumnType("decimal(24,12)");
+
+                    b.Property<DateOnly>("ExchangeRateDate")
+                        .HasColumnType("date");
+
+                    b.Property<string>("ExchangeRateSource")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("Notes")
                         .HasMaxLength(1000)
@@ -4024,6 +4109,11 @@ namespace MiniStore.Infrastructure.Migrations
                     b.Property<int?>("ClosureType")
                         .HasColumnType("int");
 
+                    b.Property<string>("CompanyCurrencyCode")
+                        .IsRequired()
+                        .HasMaxLength(3)
+                        .HasColumnType("nvarchar(3)");
+
                     b.Property<DateTime?>("ConfirmedAtUtc")
                         .HasColumnType("datetime2");
 
@@ -4043,6 +4133,18 @@ namespace MiniStore.Infrastructure.Migrations
                         .IsRequired()
                         .HasMaxLength(3)
                         .HasColumnType("nvarchar(3)");
+
+                    b.Property<decimal>("ExchangeRate")
+                        .HasPrecision(24, 12)
+                        .HasColumnType("decimal(24,12)");
+
+                    b.Property<DateOnly>("ExchangeRateDate")
+                        .HasColumnType("date");
+
+                    b.Property<string>("ExchangeRateSource")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateOnly>("ExpectedDate")
                         .HasColumnType("date");
@@ -6063,6 +6165,18 @@ namespace MiniStore.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<decimal>("CompanyGrossAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("CompanyNetAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("CompanyTaxAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<int>("GoodsReceiptLineId")
                         .HasColumnType("int");
 
@@ -6156,6 +6270,11 @@ namespace MiniStore.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("CompanyCurrencyCode")
+                        .IsRequired()
+                        .HasMaxLength(3)
+                        .HasColumnType("nvarchar(3)");
+
                     b.Property<DateTime>("CreatedAtUtc")
                         .HasColumnType("datetime2");
 
@@ -6168,6 +6287,18 @@ namespace MiniStore.Infrastructure.Migrations
                         .IsRequired()
                         .HasMaxLength(3)
                         .HasColumnType("nvarchar(3)");
+
+                    b.Property<decimal>("ExchangeRate")
+                        .HasPrecision(24, 12)
+                        .HasColumnType("decimal(24,12)");
+
+                    b.Property<DateOnly>("ExchangeRateDate")
+                        .HasColumnType("date");
+
+                    b.Property<string>("ExchangeRateSource")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("ExternalReference")
                         .HasMaxLength(100)
@@ -6233,6 +6364,14 @@ namespace MiniStore.Infrastructure.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<decimal>("Amount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("CompanyCurrencyAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("PayableCarryingAmount")
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
@@ -6760,6 +6899,11 @@ namespace MiniStore.Infrastructure.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<string>("CompanyCurrencyCode")
+                        .IsRequired()
+                        .HasMaxLength(3)
+                        .HasColumnType("nvarchar(3)");
+
                     b.Property<DateTime>("CreatedAtUtc")
                         .HasColumnType("datetime2");
 
@@ -6772,6 +6916,18 @@ namespace MiniStore.Infrastructure.Migrations
                         .IsRequired()
                         .HasMaxLength(3)
                         .HasColumnType("nvarchar(3)");
+
+                    b.Property<decimal>("ExchangeRate")
+                        .HasPrecision(24, 12)
+                        .HasColumnType("decimal(24,12)");
+
+                    b.Property<DateOnly>("ExchangeRateDate")
+                        .HasColumnType("date");
+
+                    b.Property<string>("ExchangeRateSource")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("NormalizedSupplierInvoiceNumber")
                         .IsRequired()
@@ -6838,6 +6994,18 @@ namespace MiniStore.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<decimal>("CompanyGrossAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("CompanyNetAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("CompanyTaxAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<int>("GoodsReceiptLineId")
                         .HasColumnType("int");
 
@@ -6879,6 +7047,10 @@ namespace MiniStore.Infrastructure.Migrations
                     b.Property<decimal>("ReceiptClearingQuantity")
                         .HasPrecision(18, 6)
                         .HasColumnType("decimal(18,6)");
+
+                    b.Property<decimal>("ReceiptExchangeRate")
+                        .HasPrecision(24, 12)
+                        .HasColumnType("decimal(24,12)");
 
                     b.Property<decimal>("ReceiptUnitCost")
                         .HasPrecision(24, 8)
@@ -7104,6 +7276,18 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasOne("MiniStore.Domain.Entities.Account", null)
                         .WithMany()
+                        .HasForeignKey("RealizedExchangeGainAccountId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("MiniStore.Domain.Entities.Account", null)
+                        .WithMany()
+                        .HasForeignKey("RealizedExchangeLossAccountId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("MiniStore.Domain.Entities.Account", null)
+                        .WithMany()
                         .HasForeignKey("SalesDiscountAccountId", "TenantId")
                         .HasPrincipalKey("Id", "TenantId")
                         .OnDelete(DeleteBehavior.Restrict);
@@ -7188,6 +7372,15 @@ namespace MiniStore.Infrastructure.Migrations
                         .WithOne()
                         .HasForeignKey("MiniStore.Domain.Entities.CompanyOnboarding", "TenantId")
                         .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("MiniStore.Domain.Entities.CurrencyExchangeRate", b =>
+                {
+                    b.HasOne("MiniStore.Domain.Entities.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 

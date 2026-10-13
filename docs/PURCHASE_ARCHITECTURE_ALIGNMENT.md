@@ -2,13 +2,13 @@
 > Slice: PUR-005  
 > Status: ACCEPTED — DOCUMENTATION-ONLY FOUNDATION  
 > Source of truth: current code, accepted ADRs and migrations  
-> Last reviewed: 2026-10-08
+> Last reviewed: 2026-10-13
 
 ## 1. Purpose
 
 PUR-005 fixes the ownership and integration boundaries that later procure-to-pay slices must follow. It prevents Purchase, Inventory and Accounting from becoming competing sources of truth while preserving MiniStore's implemented Supplier, inventory and journal foundations.
 
-This document is a target contract. It does not assert that Purchase Request, Purchase Order, Goods Receipt, Vendor Bill, approvals, multi-currency or an outbox are currently implemented.
+This document remains the accepted ownership contract. Purchase Request through multi-currency purchasing are now implemented through PUR-190; an outbox remains unimplemented unless a later slice explicitly adds it.
 
 ## 2. Decisions fixed by this gate
 
@@ -58,13 +58,13 @@ Cached totals may be added only as transactionally maintained projections with r
 
 ### 2.5 Currency boundary
 
-PUR-010 does not build a full exchange-rate engine. It introduces only a forward-compatible commercial boundary:
+PUR-010 introduced the forward-compatible commercial boundary below. PUR-190 now activates it under `decisions/2026-10-13-purchase-multi-currency-policy.md`:
 
 - currency is stored as an uppercase, language-neutral `CurrencyCode`;
 - the tenant/company base currency comes from the existing general settings until a dedicated Currency module is accepted;
-- supplier prices may initially use base currency only, or carry a non-base code as non-posting commercial information when the slice explicitly supports it;
-- every confirmed/posted monetary document later freezes transaction currency, base currency, exchange rate, rate date/source and rounding result;
-- no inventory or journal posting in non-base currency is enabled until the accounting currency policy, gain/loss accounts and tests exist;
+- supplier purchasing master prices remain base-currency-only, while sourcing quotations and their downstream documents may use a configured foreign currency;
+- confirmed/posted monetary purchase documents freeze transaction currency, company currency, exchange rate, rate date/source and rounded company values;
+- inventory and journals post only company-currency values; PUR-190 supplies dated rates, gain/loss accounts and regression/integration coverage;
 - money and rates use reviewed decimal precision, never binary floating point.
 
 This boundary avoids pretending that a currency code alone is multi-currency accounting.

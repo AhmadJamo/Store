@@ -343,12 +343,13 @@ static async Task VerifyConcurrentGoodsReceiptAndGrniAsync(
             new CustomerRepository(context), unitOfWork);
         var fiscalPeriods = new FiscalPeriodService(new FiscalPeriodRepository(context), unitOfWork, currentUser);
         var journals = new JournalPostingService(new JournalEntryRepository(context), numbers, fiscalPeriods);
+        var exchangeRates = new CurrencyExchangeRateService(new CurrencyExchangeRateRepository(context), new GeneralSettingsRepository(context), unitOfWork, currentUser);
         var service = new GoodsReceiptService(
             new GoodsReceiptRepository(context), new PurchaseOrderRepository(context), new ProductRepository(context),
             new ProductStockRepository(context), new WarehouseRepository(context),
             new ProductLocationStockRepository(context), new StockTransactionRepository(context),
             new StockMovementRepository(context), new AccountingSettingsRepository(context), tracking, numbers,
-            journals, unitOfWork, currentUser);
+            journals, exchangeRates, unitOfWork, currentUser);
         try
         {
             await service.CreateAndPostAsync(new CreateGoodsReceiptDto
@@ -399,6 +400,7 @@ static async Task VerifyConcurrentGoodsReceiptAndGrniAsync(
         var billNumbers = new DocumentNumberService(new DocumentSequenceRepository(billContext));
         var billFiscalPeriods = new FiscalPeriodService(new FiscalPeriodRepository(billContext), billUnitOfWork, billUser);
         var billJournals = new JournalPostingService(new JournalEntryRepository(billContext), billNumbers, billFiscalPeriods);
+        var billExchangeRates = new CurrencyExchangeRateService(new CurrencyExchangeRateRepository(billContext), new GeneralSettingsRepository(billContext), billUnitOfWork, billUser);
         var billOrderLifecycle = new PurchaseOrderLifecycleService(
             new PurchaseOrderRepository(billContext), new GoodsReceiptRepository(billContext),
             new GoodsReceiptReturnRepository(billContext), new VendorBillRepository(billContext), billUnitOfWork, billUser);
@@ -407,7 +409,7 @@ static async Task VerifyConcurrentGoodsReceiptAndGrniAsync(
             new GoodsReceiptReturnRepository(billContext), new SupplierRepository(billContext), new WarehouseRepository(billContext),
             new TaxRateRepository(billContext), new AccountingSettingsRepository(billContext), new PurchaseMatchingSettingsRepository(billContext),
             new PurchaseMatchRepository(billContext), billNumbers, new SupplierPaymentRepository(billContext),
-            new SupplierCreditNoteRepository(billContext), billJournals, billOrderLifecycle,
+            new SupplierCreditNoteRepository(billContext), billJournals, billOrderLifecycle, billExchangeRates,
             billUnitOfWork, billUser);
         try
         {
@@ -461,9 +463,11 @@ static async Task VerifyConcurrentGoodsReceiptAndGrniAsync(
         var paymentNumbers = new DocumentNumberService(new DocumentSequenceRepository(paymentContext));
         var paymentFiscalPeriods = new FiscalPeriodService(new FiscalPeriodRepository(paymentContext), paymentUnitOfWork, paymentUser);
         var paymentJournals = new JournalPostingService(new JournalEntryRepository(paymentContext), paymentNumbers, paymentFiscalPeriods);
+        var paymentExchangeRates = new CurrencyExchangeRateService(new CurrencyExchangeRateRepository(paymentContext), new GeneralSettingsRepository(paymentContext), paymentUnitOfWork, paymentUser);
         var paymentMethod = await paymentContext.PaymentMethods.SingleAsync(x => x.Name == "Supplier bank transfer");
         var service = new SupplierPaymentService(new SupplierPaymentRepository(paymentContext), new VendorBillRepository(paymentContext),
             new SupplierCreditNoteRepository(paymentContext), new SupplierRepository(paymentContext), new PaymentMethodRepository(paymentContext), paymentNumbers, paymentJournals,
+            new AccountingSettingsRepository(paymentContext), paymentExchangeRates,
             paymentUnitOfWork, paymentUser);
         try
         {
@@ -781,11 +785,12 @@ static async Task VerifyConcurrentGoodsReceiptAndGrniAsync(
         new CustomerRepository(scanContext), scanUnitOfWork);
     var scanPeriods = new FiscalPeriodService(new FiscalPeriodRepository(scanContext), scanUnitOfWork, scanUser);
     var scanJournals = new JournalPostingService(new JournalEntryRepository(scanContext), scanNumbers, scanPeriods);
+    var scanExchangeRates = new CurrencyExchangeRateService(new CurrencyExchangeRateRepository(scanContext), new GeneralSettingsRepository(scanContext), scanUnitOfWork, scanUser);
     var scanService = new GoodsReceiptService(
         new GoodsReceiptRepository(scanContext), new PurchaseOrderRepository(scanContext), new ProductRepository(scanContext),
         new ProductStockRepository(scanContext), new WarehouseRepository(scanContext), new ProductLocationStockRepository(scanContext),
         new StockTransactionRepository(scanContext), new StockMovementRepository(scanContext),
-        new AccountingSettingsRepository(scanContext), scanTracking, scanNumbers, scanJournals, scanUnitOfWork, scanUser);
+        new AccountingSettingsRepository(scanContext), scanTracking, scanNumbers, scanJournals, scanExchangeRates, scanUnitOfWork, scanUser);
     var stockBeforeScan = await scanContext.ProductStocks.Where(x => x.ProductId == productId && x.WarehouseId == warehouseId)
         .Select(x => x.Quantity).SingleAsync();
     var draftId = await scanService.CreateDraftAsync(new CreateGoodsReceiptDraftDto

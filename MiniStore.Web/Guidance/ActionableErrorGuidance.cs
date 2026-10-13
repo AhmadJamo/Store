@@ -41,6 +41,9 @@ public static class ActionableErrorGuidance
                 "Vendor bill exceeds the configured purchase matching tolerances."))
             return new("Settings", "PurchaseMatching", "Open purchase matching settings", "Administration.Access");
 
+        if (message.StartsWith("Configure an exchange rate for ", StringComparison.OrdinalIgnoreCase))
+            return new("Settings", "Currencies", "Open currency settings", "Administration.Access");
+
         if (Matches(message, localize,
                 "A tax rate selected on this purchase no longer exists.",
                 "The original purchase tax rate no longer exists.",
@@ -136,7 +139,12 @@ public static class ActionableErrorGuidance
             "Configure a cost of sales account before posting inventory cost variance.",
             "Configure a cost of sales account before posting purchase return cost variance.",
             "Configure a cost of sales account before expensing consumed landed costs.",
-            "Configure a landed cost clearing account before posting landed costs.");
+            "Configure a landed cost clearing account before posting landed costs.",
+            "Configure accounting posting accounts before posting a foreign-currency supplier payment.",
+            "Configure a realized exchange loss account before posting a foreign-currency vendor bill.",
+            "Configure a realized exchange gain account before posting a foreign-currency vendor bill.",
+            "Configure a realized exchange loss account before posting a foreign-currency supplier payment.",
+            "Configure a realized exchange gain account before posting a foreign-currency supplier payment.");
 
     private static bool Matches(
         string message,

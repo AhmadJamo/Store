@@ -7,6 +7,7 @@ namespace MiniStore.Application.Services;
 public sealed class SupplierPaymentService(
     ISupplierPaymentRepository payments, IVendorBillRepository bills, ISupplierCreditNoteRepository creditNotes, ISupplierRepository suppliers,
     IPaymentMethodRepository paymentMethods, DocumentNumberService numbers, JournalPostingService journalPosting,
+    IAccountingSettingsRepository accountingSettings, CurrencyExchangeRateService exchangeRates,
     IUnitOfWork unitOfWork, ICurrentUserService currentUser)
 {
     public async Task<List<SupplierPaymentDto>> GetAllAsync(string? search)
@@ -69,8 +70,10 @@ public sealed class SupplierPaymentService(
             var billMap = supplierBills.Where(x => x.Status == VendorBillStatus.Posted && x.CurrencyCode == source.CurrencyCode).ToDictionary(x => x.Id);
             var paid = await payments.GetPaidAmountsAsync(submitted.Select(x => x.VendorBillId));
             var credited = await creditNotes.GetCreditedAmountsAsync(submitted.Select(x => x.VendorBillId));
+            var paymentRate = await exchangeRates.ResolveAsync(source.CurrencyCode, dto.PaymentDate);
             created = new SupplierPayment(await numbers.GenerateAsync(DocumentNumberType.SupplierPayment, dto.PaymentDate.ToDateTime(TimeOnly.MinValue)),
-                source.SupplierId, method.Id, dto.PaymentDate, source.CurrencyCode, dto.ExternalReference, dto.Notes, currentUser.UserId);
+                source.SupplierId, method.Id, dto.PaymentDate, source.CurrencyCode, dto.ExternalReference, dto.Notes, currentUser.UserId,
+                paymentRate.CompanyCurrencyCode, paymentRate.Rate, paymentRate.RateDate, paymentRate.Source);
             foreach (var input in submitted)
             {
                 if (!billMap.TryGetValue(input.VendorBillId, out var bill)) throw new ArgumentException("All payment allocations must belong to posted vendor bills for the same supplier and currency.");
@@ -78,13 +81,33 @@ public sealed class SupplierPaymentService(
                 var amount = Round(input.Amount);
                 if (amount <= 0) throw new ArgumentException("Payment allocation must be greater than zero.");
                 if (amount > outstanding) throw new InvalidOperationException("A payment allocation cannot exceed the vendor bill outstanding balance.");
-                created.AddLine(new SupplierPaymentLine(bill.Id, amount, bill.BillNumber, bill.SupplierInvoiceNumber));
+                var carryingAmount = bill.TotalAmount == 0 ? 0 : Round(bill.CompanyTotalAmount * amount / bill.TotalAmount);
+                created.AddLine(new SupplierPaymentLine(bill.Id, amount, bill.BillNumber, bill.SupplierInvoiceNumber,
+                    paymentRate.Rate, carryingAmount));
             }
             await payments.AddAsync(created); await unitOfWork.FlushAsync();
+            var journalLines = new List<JournalEntryLine>
+            {
+                new(supplier.AccountId.Value, created.PayableCarryingAmount, 0, description: $"Supplier payable settlement {created.PaymentNumber}"),
+                new(method.AccountId, 0, created.CompanyCurrencyAmount, description: $"Supplier payment {created.PaymentNumber}")
+            };
+            var exchangeDifference = Round(created.CompanyCurrencyAmount - created.PayableCarryingAmount);
+            if (exchangeDifference != 0)
+            {
+                var settings = await accountingSettings.GetAsync() ?? throw new InvalidOperationException("Configure accounting posting accounts before posting a foreign-currency supplier payment.");
+                if (exchangeDifference > 0)
+                {
+                    if (!settings.RealizedExchangeLossAccountId.HasValue) throw new InvalidOperationException("Configure a realized exchange loss account before posting a foreign-currency supplier payment.");
+                    journalLines.Add(new JournalEntryLine(settings.RealizedExchangeLossAccountId.Value, exchangeDifference, 0, description: $"Realized exchange loss on {created.PaymentNumber}"));
+                }
+                else
+                {
+                    if (!settings.RealizedExchangeGainAccountId.HasValue) throw new InvalidOperationException("Configure a realized exchange gain account before posting a foreign-currency supplier payment.");
+                    journalLines.Add(new JournalEntryLine(settings.RealizedExchangeGainAccountId.Value, 0, Math.Abs(exchangeDifference), description: $"Realized exchange gain on {created.PaymentNumber}"));
+                }
+            }
             await journalPosting.PostAsync(new JournalPostingRequest(dto.PaymentDate.ToDateTime(TimeOnly.MinValue), $"Supplier payment {created.PaymentNumber}",
-                "SupplierPayment", created.PaymentNumber,
-                [new JournalEntryLine(supplier.AccountId.Value, created.TotalAmount, 0, description: $"Supplier payable settlement {created.PaymentNumber}"),
-                 new JournalEntryLine(method.AccountId, 0, created.TotalAmount, description: $"Supplier payment {created.PaymentNumber}")],
+                "SupplierPayment", created.PaymentNumber, journalLines,
                 "This supplier payment has already been posted to accounting."));
             created.Post(currentUser.UserId);
         });
@@ -94,10 +117,12 @@ public sealed class SupplierPaymentService(
     private static SupplierPaymentDto Map(SupplierPayment x, string supplierName, string methodName) => new()
     {
         Id = x.Id, PaymentNumber = x.PaymentNumber, SupplierName = supplierName, PaymentMethodName = methodName,
-        PaymentDate = x.PaymentDate, CurrencyCode = x.CurrencyCode, ExternalReference = x.ExternalReference, Notes = x.Notes,
-        Status = x.Status, TotalAmount = x.TotalAmount,
+        PaymentDate = x.PaymentDate, CurrencyCode = x.CurrencyCode, CompanyCurrencyCode = x.CompanyCurrencyCode, ExchangeRate = x.ExchangeRate,
+        ExchangeRateDate = x.ExchangeRateDate, ExchangeRateSource = x.ExchangeRateSource, ExternalReference = x.ExternalReference, Notes = x.Notes,
+        Status = x.Status, TotalAmount = x.TotalAmount, CompanyCurrencyAmount = x.CompanyCurrencyAmount, PayableCarryingAmount = x.PayableCarryingAmount,
         Lines = x.Lines.Select(line => new SupplierPaymentLineDto { VendorBillId = line.VendorBillId, BillNumber = line.VendorBillNumberSnapshot,
-            SupplierInvoiceNumber = line.SupplierInvoiceNumberSnapshot, Amount = line.Amount }).ToList()
+            SupplierInvoiceNumber = line.SupplierInvoiceNumberSnapshot, Amount = line.Amount, CompanyCurrencyAmount = line.CompanyCurrencyAmount,
+            PayableCarryingAmount = line.PayableCarryingAmount }).ToList()
     };
 
     private static decimal Round(decimal value) => decimal.Round(value, 2, MidpointRounding.AwayFromZero);

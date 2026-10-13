@@ -61,6 +61,10 @@ public sealed class VendorBillDto
     public string SupplierInvoiceNumber { get; init; } = string.Empty;
     public DateOnly BillDate { get; init; }
     public string CurrencyCode { get; init; } = string.Empty;
+    public string CompanyCurrencyCode { get; init; } = string.Empty;
+    public decimal ExchangeRate { get; init; }
+    public DateOnly ExchangeRateDate { get; init; }
+    public string ExchangeRateSource { get; init; } = string.Empty;
     public string? Notes { get; init; }
     public VendorBillStatus Status { get; init; }
     public decimal NetAmount { get; init; }
@@ -70,6 +74,9 @@ public sealed class VendorBillDto
     public decimal CreditedAmount { get; init; }
     public decimal OutstandingAmount { get; init; }
     public decimal ReceiptClearingAmount { get; init; }
+    public decimal CompanyNetAmount { get; init; }
+    public decimal CompanyTaxAmount { get; init; }
+    public decimal CompanyTotalAmount { get; init; }
     public bool IsPaidInFull => Status == VendorBillStatus.Posted && OutstandingAmount <= 0 && CreditedAmount == 0;
     public bool IsSettledInFull => Status == VendorBillStatus.Posted && OutstandingAmount <= 0;
     public bool CanCreateCreditNote { get; init; }
@@ -91,6 +98,9 @@ public sealed class VendorBillLineDto
     public decimal TaxAmount { get; init; }
     public decimal GrossAmount { get; init; }
     public decimal ReceiptClearingAmount { get; init; }
+    public decimal CompanyNetAmount { get; init; }
+    public decimal CompanyTaxAmount { get; init; }
+    public decimal CompanyGrossAmount { get; init; }
 }
 
 public sealed class PurchaseMatchRunDto

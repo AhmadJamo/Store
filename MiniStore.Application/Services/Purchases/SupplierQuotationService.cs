@@ -6,23 +6,25 @@ namespace MiniStore.Application.Services;
 
 public sealed class SupplierQuotationService(
     ISupplierQuotationRepository quotations, IPurchaseSourcingRepository sourcing,
-    ISupplierRepository suppliers, IGeneralSettingsRepository settings,
+    ISupplierRepository suppliers,
     IPurchaseOrderRepository orders, IPurchaseAgreementRepository agreements,
-    DocumentNumberService numbers, IUnitOfWork unitOfWork, ICurrentUserService currentUser)
+    DocumentNumberService numbers, CurrencyExchangeRateService exchangeRates, IUnitOfWork unitOfWork, ICurrentUserService currentUser)
 {
     public async Task<SupplierQuotationCreatePageDto> GetCreatePageAsync(int sourcingEventId, CreateSupplierQuotationDto? form = null)
     {
         var source = await sourcing.GetByIdAsync(sourcingEventId);
-        var currency = (await settings.GetAsync())?.Currency ?? "JOD";
+        var currencyPage = await exchangeRates.GetPageAsync();
+        var currency = currencyPage.CompanyCurrencyCode;
         var supplierNames = (await suppliers.GetAllAsync()).ToDictionary(x => x.Id, x => x.Name);
         return new SupplierQuotationCreatePageDto
         {
-            Form = form ?? new CreateSupplierQuotationDto { PurchaseSourcingEventId = sourcingEventId,
+            Form = form ?? new CreateSupplierQuotationDto { PurchaseSourcingEventId = sourcingEventId, CurrencyCode = currency,
                 Lines = source?.Lines.Select(x => new CreateSupplierQuotationLineDto { PurchaseSourcingLineId=x.Id, QuotedQuantity=x.RequestedQuantity }).ToList() ?? [] },
             SourcingEvent = source is null ? null : MapSource(source),
             Suppliers = source?.Invitations.Select(i => i.SupplierId).Distinct().Select(id =>
                 new PurchaseRequestOptionDto(id, supplierNames.GetValueOrDefault(id, $"#{id}"))).ToList() ?? [],
-            CurrencyCode = currency
+            CompanyCurrencyCode = currency,
+            AvailableCurrencyCodes = currencyPage.Rates.Select(x => x.CurrencyCode).Append(currency).Distinct().OrderBy(x => x).ToList()
         };
     }
 
@@ -36,7 +38,7 @@ public sealed class SupplierQuotationService(
         var inputLines = dto.Lines.Where(x => x.PurchaseSourcingLineId > 0).ToList();
         if (inputLines.Count != source.Lines.Count || inputLines.Select(x => x.PurchaseSourcingLineId).Distinct().Count() != inputLines.Count || inputLines.Any(x => !source.Lines.Any(s => s.Id == x.PurchaseSourcingLineId)))
             throw new ArgumentException("Quotation lines must match every sourcing line exactly once.");
-        var currency = (await settings.GetAsync())?.Currency ?? "JOD";
+        var currency = (await exchangeRates.ResolveAsync(dto.CurrencyCode, dto.QuotationDate)).CurrencyCode;
         SupplierQuotation? created = null;
         await unitOfWork.ExecuteInTransactionAsync(async () =>
         {
@@ -60,13 +62,20 @@ public sealed class SupplierQuotationService(
         var awardedQuotation = award is null ? null : rows.SingleOrDefault(x => x.Id == award.SupplierQuotationId);
         var order = awardedQuotation is null ? null : await orders.GetByQuotationIdAsync(awardedQuotation.Id);
         var agreement = awardedQuotation is null ? null : await agreements.GetByQuotationIdAsync(awardedQuotation.Id);
+        var mapped = new List<SupplierQuotationDto>();
+        foreach (var quotation in rows)
+        {
+            var rate = await exchangeRates.ResolveAsync(quotation.CurrencyCode, quotation.QuotationDate);
+            mapped.Add(Map(quotation, names.GetValueOrDefault(quotation.SupplierId, $"#{quotation.SupplierId}"), rate));
+        }
         return new SupplierQuotationComparisonPageDto
         {
             SourcingEventId = sourcingEventId,
             AwardedQuotationId = award?.SupplierQuotationId,
             PurchaseOrderId = order?.Id,
             PurchaseAgreementId = agreement?.Id,
-            Quotations = rows.Select(x => Map(x, names.GetValueOrDefault(x.SupplierId, $"#{x.SupplierId}"))).ToList()
+            CompanyCurrencyCode = mapped.FirstOrDefault()?.CompanyCurrencyCode ?? (await exchangeRates.GetPageAsync()).CompanyCurrencyCode,
+            Quotations = mapped
         };
     }
     public async Task AwardAsync(int sourcingEventId,int quotationId,string reason)
@@ -78,6 +87,6 @@ public sealed class SupplierQuotationService(
         if(quotation.PurchaseSourcingEventId!=sourcingEventId||quotation.Status!=SupplierQuotationStatus.Submitted)throw new InvalidOperationException("Selected quotation does not belong to this sent sourcing event.");
         await unitOfWork.ExecuteInTransactionAsync(()=>quotations.AddAwardAsync(new PurchaseQuotationAward(sourcingEventId,quotationId,reason,currentUser.UserId)));
     }
-    private static SupplierQuotationDto Map(SupplierQuotation x,string name)=>new(){Id=x.Id,QuotationNumber=x.QuotationNumber,SupplierId=x.SupplierId,SupplierName=name,Status=x.Status,CurrencyCode=x.CurrencyCode,ValidUntilDate=x.ValidUntilDate,LeadTimeDays=x.LeadTimeDays,NetAmount=x.NetAmount,TaxAmount=x.TaxAmount,GrossAmount=x.GrossAmount,Lines=x.Lines.Select(l=>new SupplierQuotationLineDto{PurchaseSourcingLineId=l.PurchaseSourcingLineId,ProductCode=l.ProductCodeSnapshot,ProductName=l.ProductNameSnapshot,UnitName=l.UnitNameSnapshot,QuotedQuantity=l.QuotedQuantity,UnitPrice=l.UnitPrice,DiscountPercent=l.DiscountPercent,TaxPercent=l.TaxPercent,GrossAmount=l.GrossAmount}).ToList()};
+    private static SupplierQuotationDto Map(SupplierQuotation x,string name,ResolvedExchangeRate rate)=>new(){Id=x.Id,QuotationNumber=x.QuotationNumber,SupplierId=x.SupplierId,SupplierName=name,Status=x.Status,CurrencyCode=x.CurrencyCode,CompanyCurrencyCode=rate.CompanyCurrencyCode,ComparisonExchangeRate=rate.Rate,CompanyGrossAmount=rate.Convert(x.GrossAmount),ValidUntilDate=x.ValidUntilDate,LeadTimeDays=x.LeadTimeDays,NetAmount=x.NetAmount,TaxAmount=x.TaxAmount,GrossAmount=x.GrossAmount,Lines=x.Lines.Select(l=>new SupplierQuotationLineDto{PurchaseSourcingLineId=l.PurchaseSourcingLineId,ProductCode=l.ProductCodeSnapshot,ProductName=l.ProductNameSnapshot,UnitName=l.UnitNameSnapshot,QuotedQuantity=l.QuotedQuantity,UnitPrice=l.UnitPrice,DiscountPercent=l.DiscountPercent,TaxPercent=l.TaxPercent,GrossAmount=l.GrossAmount}).ToList()};
     private static PurchaseSourcingDto MapSource(PurchaseSourcingEvent x)=>new(){Id=x.Id,SourcingNumber=x.SourcingNumber,Status=x.Status,Lines=x.Lines.Select(l=>new PurchaseSourcingLineDto{Id=l.Id,ProductCode=l.ProductCodeSnapshot,ProductName=l.ProductNameSnapshot,UnitName=l.UnitNameSnapshot,RequestedQuantity=l.RequestedQuantity,StockQuantity=l.StockQuantity}).ToList()};
 }

@@ -18,6 +18,7 @@ public sealed class GoodsReceiptService(
     InventoryTrackingService tracking,
     DocumentNumberService numbers,
     JournalPostingService journalPosting,
+    CurrencyExchangeRateService exchangeRates,
     IUnitOfWork unitOfWork,
     ICurrentUserService currentUser)
 {
@@ -76,9 +77,11 @@ public sealed class GoodsReceiptService(
             var posted = await GetPostedQuantitiesAsync(order.Id);
             if (order.Lines.All(x => posted.GetValueOrDefault(x.Id) >= x.OrderedQuantity))
                 throw new InvalidOperationException("This purchase order has no remaining quantity to receive.");
+            var rate = await exchangeRates.ResolveAsync(order.CurrencyCode, dto.ReceiptDate);
             receipt = new GoodsReceipt(
                 await numbers.GenerateAsync(DocumentNumberType.GoodsReceipt, dto.ReceiptDate.ToDateTime(TimeOnly.MinValue)),
-                order.Id, order.WarehouseId, dto.ReceiptDate, dto.Notes, currentUser.UserId);
+                order.Id, order.WarehouseId, dto.ReceiptDate, dto.Notes, currentUser.UserId,
+                order.CurrencyCode, rate.CompanyCurrencyCode, rate.Rate, rate.RateDate, rate.Source);
             await receipts.AddAsync(receipt);
         });
         return receipt!.Id;
@@ -196,9 +199,11 @@ public sealed class GoodsReceiptService(
             var warehouse = await warehouses.GetByIdAsync(order.WarehouseId)
                 ?? throw new InvalidOperationException("Receipt warehouse was not found.");
             var posted = await GetPostedQuantitiesAsync(order.Id);
+            var rate = await exchangeRates.ResolveAsync(order.CurrencyCode, dto.ReceiptDate);
             receipt = new GoodsReceipt(
                 await numbers.GenerateAsync(DocumentNumberType.GoodsReceipt, dto.ReceiptDate.ToDateTime(TimeOnly.MinValue)),
-                order.Id, order.WarehouseId, dto.ReceiptDate, dto.Notes, currentUser.UserId);
+                order.Id, order.WarehouseId, dto.ReceiptDate, dto.Notes, currentUser.UserId,
+                order.CurrencyCode, rate.CompanyCurrencyCode, rate.Rate, rate.RateDate, rate.Source);
             foreach (var input in submitted)
             {
                 var orderLine = order.Lines.SingleOrDefault(x => x.Id == input.PurchaseOrderLineId)
@@ -268,7 +273,7 @@ public sealed class GoodsReceiptService(
             {
                 await locationStocks.RemoveAllAsync(product.Id, order.WarehouseId);
             }
-            var movement = stock.Receive(line.StockQuantity, line.UnitCost / line.UnitFactorToBase);
+            var movement = stock.Receive(line.StockQuantity, line.UnitCost * receipt.ExchangeRate / line.UnitFactorToBase);
             await tracking.ReceiveAsync(product, order.WarehouseId, line.StockQuantity, line.LotNumber, line.SerialNumbers,
                 line.ManufactureDate, line.ExpirationDate, receipt.ReceiptNumber, currentUser.UserId);
             await transactions.AddAsync(new StockTransaction(product.Id, order.WarehouseId, line.StockQuantity,
@@ -277,7 +282,7 @@ public sealed class GoodsReceiptService(
 
         await unitOfWork.FlushAsync();
         var lineValues = receipt.Lines.Select(line =>
-                Math.Round(line.ReceivedQuantity * line.UnitCost, 2, MidpointRounding.AwayFromZero))
+                Math.Round(line.ReceivedQuantity * line.UnitCost * receipt.ExchangeRate, 2, MidpointRounding.AwayFromZero))
             .Where(value => value > 0).ToList();
         if (lineValues.Count > 0)
         {
@@ -349,6 +354,11 @@ public sealed class GoodsReceiptService(
         PurchaseOrderNumber = orderNumber,
         WarehouseName = warehouseName,
         ReceiptDate = receipt.ReceiptDate,
+        CurrencyCode = receipt.CurrencyCode,
+        CompanyCurrencyCode = receipt.CompanyCurrencyCode,
+        ExchangeRate = receipt.ExchangeRate,
+        ExchangeRateDate = receipt.ExchangeRateDate,
+        ExchangeRateSource = receipt.ExchangeRateSource,
         Status = receipt.Status,
         Notes = receipt.Notes,
         Lines = receipt.Lines.Select(line => new GoodsReceiptPostedLineDto

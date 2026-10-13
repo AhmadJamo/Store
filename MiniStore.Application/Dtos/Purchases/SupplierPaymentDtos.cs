@@ -52,10 +52,16 @@ public sealed class SupplierPaymentDto
     public string PaymentMethodName { get; init; } = string.Empty;
     public DateOnly PaymentDate { get; init; }
     public string CurrencyCode { get; init; } = string.Empty;
+    public string CompanyCurrencyCode { get; init; } = string.Empty;
+    public decimal ExchangeRate { get; init; }
+    public DateOnly ExchangeRateDate { get; init; }
+    public string ExchangeRateSource { get; init; } = string.Empty;
     public string? ExternalReference { get; init; }
     public string? Notes { get; init; }
     public SupplierPaymentStatus Status { get; init; }
     public decimal TotalAmount { get; init; }
+    public decimal CompanyCurrencyAmount { get; init; }
+    public decimal PayableCarryingAmount { get; init; }
     public List<SupplierPaymentLineDto> Lines { get; init; } = [];
 }
 
@@ -65,4 +71,6 @@ public sealed class SupplierPaymentLineDto
     public string BillNumber { get; init; } = string.Empty;
     public string SupplierInvoiceNumber { get; init; } = string.Empty;
     public decimal Amount { get; init; }
+    public decimal CompanyCurrencyAmount { get; init; }
+    public decimal PayableCarryingAmount { get; init; }
 }

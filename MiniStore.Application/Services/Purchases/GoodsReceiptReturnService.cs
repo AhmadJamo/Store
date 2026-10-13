@@ -86,7 +86,7 @@ public sealed class GoodsReceiptReturnService(
                 var costMovement = stock.RemoveQuantity(stockQuantity);
                 await tracking.ReturnPurchaseAsync(product, receipt.WarehouseId, stockQuantity, input.TrackingAllocations,
                     receipt.ReceiptNumber, created.ReturnNumber, currentUser.UserId);
-                var originalValue = Round(input.ReturnQuantity * source.UnitCost);
+                var originalValue = Round(input.ReturnQuantity * source.UnitCost * receipt.ExchangeRate);
                 var removedCost = Round(Math.Abs(costMovement.TransactionValue));
                 created.AddLine(new GoodsReceiptReturnLine(source.Id, source.ProductId, input.ReturnQuantity,
                     source.UnitFactorToBase, source.UnitCost, originalValue, removedCost, source.ProductCodeSnapshot,

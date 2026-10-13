@@ -100,9 +100,12 @@ public sealed class SupplierCreditNoteService(
                 var net = finalRemainder ? maximumNet - priorForLine.Sum(x => x.NetAmount) : Round(source.NetAmount * input.Quantity / source.Quantity);
                 var tax = finalRemainder ? maximumTax - priorForLine.Sum(x => x.TaxAmount) : Round(source.TaxAmount * input.Quantity / source.Quantity);
                 var gross = Round(net + tax);
+                var companyNet = finalRemainder ? source.CompanyNetAmount - priorForLine.Sum(x => x.CompanyNetAmount) : Round(source.CompanyNetAmount * input.Quantity / source.Quantity);
+                var companyTax = finalRemainder ? source.CompanyTaxAmount - priorForLine.Sum(x => x.CompanyTaxAmount) : Round(source.CompanyTaxAmount * input.Quantity / source.Quantity);
                 created.AddLine(new SupplierCreditNoteLine(source.Id, source.GoodsReceiptLineId, source.ProductId, source.TaxInputAccountId,
                     input.Quantity, receiptSource.Line.UnitFactorToBase, net, tax, gross, Math.Abs(costMovement.TransactionValue),
-                    source.ProductCodeSnapshot, source.ProductNameSnapshot, source.UnitNameSnapshot, input.TrackingAllocations));
+                    source.ProductCodeSnapshot, source.ProductNameSnapshot, source.UnitNameSnapshot, input.TrackingAllocations,
+                    companyNet, companyTax, companyNet + companyTax));
                 await transactions.AddAsync(new StockTransaction(source.ProductId, order.WarehouseId, -stockQuantity,
                     StockTransactionType.SupplierCreditNoteReturn, created.CreditNoteNumber, costMovement));
             }
@@ -112,13 +115,13 @@ public sealed class SupplierCreditNoteService(
                 line.ProductId, created.WarehouseId, line.StockQuantity, currentUser.UserId, created.CreditNoteNumber));
             var journalLines = new List<JournalEntryLine>
             {
-                new(supplier.AccountId.Value, created.TotalAmount, 0, warehouse.BranchId, warehouse.Id, $"Supplier credit {created.CreditNoteNumber}")
+                new(supplier.AccountId.Value, created.Lines.Sum(x => x.CompanyGrossAmount), 0, warehouse.BranchId, warehouse.Id, $"Supplier credit {created.CreditNoteNumber}")
             };
             foreach (var taxGroup in created.Lines.Where(x => x.TaxAmount > 0).GroupBy(x => x.TaxInputAccountId!.Value))
-                journalLines.Add(new JournalEntryLine(taxGroup.Key, 0, taxGroup.Sum(x => x.TaxAmount), warehouse.BranchId, warehouse.Id, $"Input tax reversal on {created.CreditNoteNumber}"));
+                journalLines.Add(new JournalEntryLine(taxGroup.Key, 0, taxGroup.Sum(x => x.CompanyTaxAmount), warehouse.BranchId, warehouse.Id, $"Input tax reversal on {created.CreditNoteNumber}"));
             if (created.RemovedInventoryCost > 0)
                 journalLines.Add(new JournalEntryLine(warehouse.InventoryAccountId.Value, 0, created.RemovedInventoryCost, warehouse.BranchId, warehouse.Id, $"Inventory returned on {created.CreditNoteNumber}"));
-            var variance = Round(created.NetAmount - created.RemovedInventoryCost);
+            var variance = Round(created.Lines.Sum(x => x.CompanyNetAmount) - created.RemovedInventoryCost);
             if (variance != 0)
             {
                 if (!settings.PurchasePriceVarianceAccountId.HasValue) throw new InvalidOperationException("Configure a purchase price variance account before posting a supplier credit note with a cost difference.");

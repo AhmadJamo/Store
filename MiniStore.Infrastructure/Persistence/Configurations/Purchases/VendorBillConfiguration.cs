@@ -8,7 +8,7 @@ public sealed class VendorBillConfiguration : IEntityTypeConfiguration<VendorBil
     {
         b.HasKey(x => x.Id); b.Property(x => x.BillNumber).HasMaxLength(50).IsRequired();
         b.Property(x => x.SupplierInvoiceNumber).HasMaxLength(100).IsRequired(); b.Property(x => x.NormalizedSupplierInvoiceNumber).HasMaxLength(100).IsRequired();
-        b.Property(x => x.CurrencyCode).HasMaxLength(3).IsRequired(); b.Property(x => x.Notes).HasMaxLength(1000);
+        b.Property(x => x.CurrencyCode).HasMaxLength(3).IsRequired(); b.Property(x => x.CompanyCurrencyCode).HasMaxLength(3).IsRequired(); b.Property(x => x.ExchangeRate).HasPrecision(24,12); b.Property(x => x.ExchangeRateSource).HasMaxLength(100).IsRequired(); b.Property(x => x.Notes).HasMaxLength(1000);
         b.Property(x => x.CreatedByUserId).HasMaxLength(450).IsRequired(); b.Property(x => x.PostedByUserId).HasMaxLength(450); b.Property(x => x.RowVersion).IsRowVersion();
         b.HasIndex(x => x.BillNumber).IsUnique(); b.HasIndex(x => new { x.SupplierId, x.NormalizedSupplierInvoiceNumber }).IsUnique().HasFilter("[Status] <> 3");
         b.HasOne<PurchaseOrder>().WithMany().HasForeignKey(x => x.PurchaseOrderId).OnDelete(DeleteBehavior.Restrict);
@@ -20,7 +20,7 @@ public sealed class VendorBillConfiguration : IEntityTypeConfiguration<VendorBil
         b.HasKey(x => x.Id); b.Property(x => x.Quantity).HasPrecision(18, 6); b.Property(x => x.UnitPrice).HasPrecision(24, 8); b.Property(x => x.ReceiptUnitCost).HasPrecision(24, 8);
         b.Property(x => x.ReceiptClearingQuantity).HasPrecision(18, 6);
         b.Property(x => x.TaxPercent).HasPrecision(9, 4); b.Property(x => x.NetAmount).HasPrecision(18, 2); b.Property(x => x.TaxAmount).HasPrecision(18, 2);
-        b.Property(x => x.GrossAmount).HasPrecision(18, 2); b.Property(x => x.ReceiptClearingAmount).HasPrecision(18, 2);
+        b.Property(x => x.GrossAmount).HasPrecision(18, 2); b.Property(x => x.ReceiptClearingAmount).HasPrecision(18, 2); b.Property(x => x.CompanyNetAmount).HasPrecision(18,2); b.Property(x => x.CompanyTaxAmount).HasPrecision(18,2); b.Property(x => x.CompanyGrossAmount).HasPrecision(18,2); b.Property(x => x.ReceiptExchangeRate).HasPrecision(24,12);
         b.Property(x => x.ProductCodeSnapshot).HasMaxLength(100).IsRequired(); b.Property(x => x.ProductNameSnapshot).HasMaxLength(250).IsRequired(); b.Property(x => x.UnitNameSnapshot).HasMaxLength(100).IsRequired();
         b.HasIndex(x => new { x.VendorBillId, x.GoodsReceiptLineId }).IsUnique();
         b.HasOne<GoodsReceiptLine>().WithMany().HasForeignKey(x => x.GoodsReceiptLineId).OnDelete(DeleteBehavior.Restrict);

@@ -9,7 +9,7 @@ public sealed class SupplierPaymentConfiguration : IEntityTypeConfiguration<Supp
     public void Configure(EntityTypeBuilder<SupplierPayment> b)
     {
         b.HasKey(x => x.Id); b.Property(x => x.PaymentNumber).HasMaxLength(50).IsRequired(); b.HasIndex(x => x.PaymentNumber).IsUnique();
-        b.Property(x => x.CurrencyCode).HasMaxLength(3).IsRequired(); b.Property(x => x.ExternalReference).HasMaxLength(100);
+        b.Property(x => x.CurrencyCode).HasMaxLength(3).IsRequired(); b.Property(x => x.CompanyCurrencyCode).HasMaxLength(3).IsRequired(); b.Property(x => x.ExchangeRate).HasPrecision(24,12); b.Property(x => x.ExchangeRateSource).HasMaxLength(100).IsRequired(); b.Property(x => x.ExternalReference).HasMaxLength(100);
         b.Property(x => x.Notes).HasMaxLength(500); b.Property(x => x.CreatedByUserId).HasMaxLength(450).IsRequired(); b.Property(x => x.PostedByUserId).HasMaxLength(450);
         b.Property(x => x.RowVersion).IsRowVersion(); b.Ignore(x => x.TotalAmount);
         b.HasOne<Supplier>().WithMany().HasForeignKey(x => x.SupplierId).OnDelete(DeleteBehavior.Restrict);
@@ -19,7 +19,7 @@ public sealed class SupplierPaymentConfiguration : IEntityTypeConfiguration<Supp
 
     public void Configure(EntityTypeBuilder<SupplierPaymentLine> b)
     {
-        b.HasKey(x => x.Id); b.Property(x => x.Amount).HasPrecision(18, 2);
+        b.HasKey(x => x.Id); b.Property(x => x.Amount).HasPrecision(18, 2); b.Property(x => x.CompanyCurrencyAmount).HasPrecision(18,2); b.Property(x => x.PayableCarryingAmount).HasPrecision(18,2);
         b.Property(x => x.VendorBillNumberSnapshot).HasMaxLength(50).IsRequired();
         b.Property(x => x.SupplierInvoiceNumberSnapshot).HasMaxLength(100).IsRequired();
         b.HasIndex(x => new { x.SupplierPaymentId, x.VendorBillId }).IsUnique();

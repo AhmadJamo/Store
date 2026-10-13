@@ -10,6 +10,10 @@ public sealed class GoodsReceiptConfiguration : IEntityTypeConfiguration<GoodsRe
     {
         builder.HasKey(x => x.Id);
         builder.Property(x => x.ReceiptNumber).HasMaxLength(50).IsRequired();
+        builder.Property(x => x.CurrencyCode).HasMaxLength(3).IsRequired();
+        builder.Property(x => x.CompanyCurrencyCode).HasMaxLength(3).IsRequired();
+        builder.Property(x => x.ExchangeRate).HasPrecision(24, 12);
+        builder.Property(x => x.ExchangeRateSource).HasMaxLength(100).IsRequired();
         builder.Property(x => x.CreatedByUserId).HasMaxLength(450).IsRequired();
         builder.Property(x => x.PostedByUserId).HasMaxLength(450);
         builder.Property(x => x.Notes).HasMaxLength(1000);

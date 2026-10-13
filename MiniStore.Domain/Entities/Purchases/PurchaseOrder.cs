@@ -6,7 +6,7 @@ public enum PurchaseOrderLifecycleAction { AutomaticallyClosed = 1, RemainingQua
 
 public sealed class PurchaseOrder
 {
-    private PurchaseOrder() { OrderNumber = CurrencyCode = CreatedByUserId = string.Empty; }
+    private PurchaseOrder() { OrderNumber = CurrencyCode = CompanyCurrencyCode = ExchangeRateSource = CreatedByUserId = string.Empty; }
     public int Id { get; private set; }
     public string OrderNumber { get; private set; }
     public int PurchaseSourcingEventId { get; private set; }
@@ -17,6 +17,10 @@ public sealed class PurchaseOrder
     public DateOnly OrderDate { get; private set; }
     public DateOnly ExpectedDate { get; private set; }
     public string CurrencyCode { get; private set; }
+    public string CompanyCurrencyCode { get; private set; }
+    public decimal ExchangeRate { get; private set; }
+    public DateOnly ExchangeRateDate { get; private set; }
+    public string ExchangeRateSource { get; private set; }
     public string? PaymentTermsSnapshot { get; private set; }
     public PurchaseOrderStatus Status { get; private set; }
     public string CreatedByUserId { get; private set; }
@@ -36,20 +40,29 @@ public sealed class PurchaseOrder
 
     public PurchaseOrder(string orderNumber, int sourcingEventId, int quotationId, int supplierId, int warehouseId,
         DateOnly orderDate, DateOnly expectedDate, string currencyCode, string? paymentTerms, string createdByUserId,
-        int? purchaseAgreementId = null)
+        int? purchaseAgreementId = null, string? companyCurrencyCode = null, decimal exchangeRate = 1m,
+        DateOnly? exchangeRateDate = null, string exchangeRateSource = "Company currency")
     {
         if (string.IsNullOrWhiteSpace(orderNumber) || orderNumber.Trim().Length > 50) throw new ArgumentException("Purchase order number is required and cannot exceed 50 characters.");
         if (sourcingEventId <= 0 || quotationId <= 0 || supplierId <= 0 || warehouseId <= 0) throw new ArgumentException("Purchase order source, supplier and warehouse are required.");
         if (expectedDate < orderDate) throw new ArgumentException("Expected delivery date cannot be earlier than order date.");
         if (string.IsNullOrWhiteSpace(currencyCode) || currencyCode.Trim().Length != 3) throw new ArgumentException("Currency code must contain exactly three letters.");
+        if (exchangeRate <= 0) throw new ArgumentException("Exchange rate must be greater than zero.");
         if (paymentTerms?.Trim().Length > 500) throw new ArgumentException("Payment terms cannot exceed 500 characters.");
         if (string.IsNullOrWhiteSpace(createdByUserId)) throw new ArgumentException("User is required.");
         if (purchaseAgreementId <= 0) purchaseAgreementId = null;
-        OrderNumber=orderNumber.Trim();PurchaseSourcingEventId=sourcingEventId;SupplierQuotationId=quotationId;PurchaseAgreementId=purchaseAgreementId;SupplierId=supplierId;WarehouseId=warehouseId;OrderDate=orderDate;ExpectedDate=expectedDate;CurrencyCode=currencyCode.Trim().ToUpperInvariant();PaymentTermsSnapshot=Normalize(paymentTerms);CreatedByUserId=createdByUserId;CreatedAtUtc=DateTime.UtcNow;Status=PurchaseOrderStatus.Draft;
+        OrderNumber=orderNumber.Trim();PurchaseSourcingEventId=sourcingEventId;SupplierQuotationId=quotationId;PurchaseAgreementId=purchaseAgreementId;SupplierId=supplierId;WarehouseId=warehouseId;OrderDate=orderDate;ExpectedDate=expectedDate;CurrencyCode=currencyCode.Trim().ToUpperInvariant();
+        CompanyCurrencyCode=(companyCurrencyCode ?? CurrencyCode).Trim().ToUpperInvariant();ExchangeRate=exchangeRate;ExchangeRateDate=exchangeRateDate??orderDate;ExchangeRateSource=exchangeRateSource.Trim();PaymentTermsSnapshot=Normalize(paymentTerms);CreatedByUserId=createdByUserId;CreatedAtUtc=DateTime.UtcNow;Status=PurchaseOrderStatus.Draft;
     }
     public void AddLine(PurchaseOrderLine line){EnsureDraft();if(Lines.Any(x=>x.SupplierQuotationLineId==line.SupplierQuotationLineId))throw new InvalidOperationException("Each quotation line can be ordered only once.");Lines.Add(line);}
     public void Approve(string user){EnsureDraft();EnsureUser(user);if(Lines.Count==0)throw new InvalidOperationException("A purchase order must contain at least one line.");Status=PurchaseOrderStatus.Approved;ApprovedByUserId=user;ApprovedAtUtc=DateTime.UtcNow;}
     public void Confirm(string user){if(Status!=PurchaseOrderStatus.Approved)throw new InvalidOperationException("Only approved purchase orders can be confirmed.");EnsureUser(user);Status=PurchaseOrderStatus.Confirmed;ConfirmedByUserId=user;ConfirmedAtUtc=DateTime.UtcNow;}
+    public void SetExchangeRate(string companyCurrencyCode, decimal exchangeRate, DateOnly exchangeRateDate, string exchangeRateSource)
+    {
+        if (Status is not (PurchaseOrderStatus.Draft or PurchaseOrderStatus.Approved)) throw new InvalidOperationException("Exchange rate can be changed only before purchase order confirmation.");
+        if (string.IsNullOrWhiteSpace(companyCurrencyCode) || companyCurrencyCode.Trim().Length != 3 || exchangeRate <= 0 || string.IsNullOrWhiteSpace(exchangeRateSource)) throw new ArgumentException("A valid purchase order exchange rate is required.");
+        CompanyCurrencyCode = companyCurrencyCode.Trim().ToUpperInvariant(); ExchangeRate = exchangeRate; ExchangeRateDate = exchangeRateDate; ExchangeRateSource = exchangeRateSource.Trim();
+    }
     public void Cancel(string user,string reason){EnsureUser(user);if(Status is PurchaseOrderStatus.Confirmed or PurchaseOrderStatus.Closed or PurchaseOrderStatus.Cancelled)throw new InvalidOperationException("Only draft or approved purchase orders can be cancelled.");if(string.IsNullOrWhiteSpace(reason)||reason.Trim().Length>1000)throw new ArgumentException("Cancellation reason is required and cannot exceed 1000 characters.");Status=PurchaseOrderStatus.Cancelled;CancellationReason=reason.Trim();}
     public void CloseAutomatically(string user)
     {

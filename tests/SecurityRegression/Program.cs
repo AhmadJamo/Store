@@ -12,6 +12,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using MiniStore.Application.Permissions;
 using MiniStore.Application.DTOs.Settings;
+using MiniStore.Application.Dtos.Settings;
 using MiniStore.Application.DTOs.Inventory.Tracking;
 using MiniStore.Application.DTOs.Purchases;
 using MiniStore.Application.DTOs.Products;
@@ -1629,6 +1630,9 @@ var supplierQuotationCreateAction = typeof(SupplierQuotationsController)
     .GetMethod(nameof(SupplierQuotationsController.Create), [typeof(CreateSupplierQuotationDto)])!;
 Check(supplierQuotationCreateAction.GetParameters().Single().GetCustomAttribute<BindAttribute>()?.Prefix == "Form",
     "Supplier quotation submission must bind the nested Form fields posted by the create page");
+var currencySettingsAction = typeof(SettingsController).GetMethod(nameof(SettingsController.Currencies), [typeof(SaveCurrencyExchangeRateDto)])!;
+Check(currencySettingsAction.GetParameters().Single().GetCustomAttribute<BindAttribute>()?.Prefix == "Form",
+    "Currency-rate submission must bind the nested Form fields posted by the settings page");
 Check(ActionableErrorGuidance.Resolve(
           "Configure a goods received not invoiced account before posting goods receipts.",
           "GoodsReceipts") is { Controller: "Settings", Action: "Accounting", RequiredPermission: "Administration.Access" },
@@ -1645,6 +1649,14 @@ Check(ActionableErrorGuidance.Resolve(
           "Payment method was not found.",
           "SupplierPayments") is { Controller: "PaymentMethods", Action: "Index" },
     "Supplier-payment setup errors must link to payment methods");
+Check(ActionableErrorGuidance.Resolve(
+          "Configure an exchange rate for USD on or before 2026-10-13.",
+          "GoodsReceipts") is { Controller: "Settings", Action: "Currencies", RequiredPermission: "Administration.Access" },
+    "Missing purchase exchange rates must link to currency settings");
+Check(ActionableErrorGuidance.Resolve(
+          "Configure a realized exchange loss account before posting a foreign-currency supplier payment.",
+          "SupplierPayments") is { Controller: "Settings", Action: "Accounting", RequiredPermission: "Administration.Access" },
+    "Foreign-exchange account errors must link to accounting settings");
 Check(ActionableErrorGuidance.Resolve(
           "Product and requested unit must use managed active units.",
           "PurchaseRequests") is { Controller: "Settings", Action: "Units" },
@@ -1668,6 +1680,17 @@ Check(purchaseNextStep is
           RequiredPermission: "PurchaseSourcing.Create"
       } && purchaseNextStep.RouteValues.GetValueOrDefault("purchaseRequestId") == "42",
     "Approved purchase requests must guide users to supplier sourcing with the document route");
+var exchangeRateNextStep = WorkflowNextStepGuidance.Resolve(
+    "Exchange rate saved successfully.",
+    "Settings",
+    new Dictionary<string, string?>());
+Check(exchangeRateNextStep is
+      {
+          Controller: "Settings",
+          Action: "Accounting",
+          RequiredPermission: "Administration.Access"
+      },
+    "Saved exchange rates must guide users to configure the required exchange gain and loss accounts");
 var warehouseNextStep = WorkflowNextStepGuidance.Resolve(
     "Warehouse created successfully.",
     "Warehouses",
@@ -1809,6 +1832,21 @@ finally
 {
     CultureInfo.CurrentCulture = originalCulture;
 }
+
+var foreignRate = new CurrencyExchangeRate("usd", new DateOnly(2026, 10, 1), 0.71m, "Central bank", "tester");
+Check(foreignRate.CurrencyCode == "USD" && foreignRate.CompanyCurrencyPerUnit == 0.71m,
+    "Foreign exchange rates must normalize the currency and preserve the company-currency-per-unit convention");
+var foreignReceipt = new GoodsReceipt("GRN-FX-1", 1, 1, new DateOnly(2026, 10, 2), null, "tester",
+    "USD", "JOD", 0.71m, new DateOnly(2026, 10, 1), "Central bank");
+Check(foreignReceipt.ExchangeRate == 0.71m && foreignReceipt.CurrencyCode == "USD" && foreignReceipt.CompanyCurrencyCode == "JOD",
+    "Goods receipts must freeze document currency, company currency, rate, date and source");
+var foreignBillLine = new VendorBillLine(1, 1, 1, 10m, 10m, 10m, 10m, null, 0m, null, false,
+    "FX-1", "Foreign item", "Piece", 0.75m, 0.71m);
+Check(foreignBillLine.NetAmount == 100m && foreignBillLine.CompanyNetAmount == 75m && foreignBillLine.ReceiptClearingAmount == 71m,
+    "Vendor bills must keep supplier amounts while separately freezing bill and GRNI company-currency values");
+var foreignPaymentLine = new SupplierPaymentLine(1, 100m, "BILL-FX-1", "SUP-FX-1", 0.78m, 75m);
+Check(foreignPaymentLine.CompanyCurrencyAmount == 78m && foreignPaymentLine.PayableCarryingAmount == 75m,
+    "Supplier payments must preserve cash value and payable carrying value for realized exchange differences");
 
 Console.WriteLine($"Passed {count} security and inventory regression checks.");
 

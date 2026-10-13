@@ -111,7 +111,7 @@ public sealed class PurchaseDocumentReversalService(
             var stock = await stocks.GetByProductAndWarehouseAsync(group.Key, receipt.WarehouseId)
                 ?? throw new InvalidOperationException("Received product stock was not found.");
             var quantity = group.Sum(x => x.StockQuantity);
-            var originalValue = group.Sum(x => decimal.Round(x.ReceivedQuantity * x.UnitCost, 8, MidpointRounding.AwayFromZero));
+            var originalValue = group.Sum(x => decimal.Round(x.ReceivedQuantity * x.UnitCost * receipt.ExchangeRate, 8, MidpointRounding.AwayFromZero));
             var originalUnitCost = originalValue / quantity;
             if (stock.Quantity + Tolerance < quantity) throw new InvalidOperationException("The goods receipt cannot be reversed because some received stock is no longer available.");
             if (Math.Abs(stock.AverageUnitCost - originalUnitCost) > Tolerance)

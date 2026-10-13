@@ -159,6 +159,11 @@ public static class WorkflowNextStepGuidance
                 "Move received stock from the unassigned position to its storage location.",
                 "ProductStock.View", Routes(("warehouseId", Route("warehouseId"))));
 
+        if (Matches(message, localize, "Exchange rate saved successfully."))
+            return new("Settings", "Accounting", "Configure exchange gain and loss accounts",
+                "Choose the accounts required to post foreign-currency bill and payment differences.",
+                "Administration.Access", []);
+
         if (Matches(message, localize, "Stock transaction created successfully."))
             return new("ProductStocks", "Index", "Review warehouse stock",
                 "Confirm the resulting product balance in the warehouse stock list.",

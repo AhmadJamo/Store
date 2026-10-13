@@ -76,6 +76,11 @@ public sealed class GoodsReceiptDto
     public string PurchaseOrderNumber { get; init; } = string.Empty;
     public string WarehouseName { get; init; } = string.Empty;
     public DateOnly ReceiptDate { get; init; }
+    public string CurrencyCode { get; init; } = string.Empty;
+    public string CompanyCurrencyCode { get; init; } = string.Empty;
+    public decimal ExchangeRate { get; init; }
+    public DateOnly ExchangeRateDate { get; init; }
+    public string ExchangeRateSource { get; init; } = string.Empty;
     public GoodsReceiptStatus Status { get; init; }
     public string? Notes { get; init; }
     public List<GoodsReceiptPostedLineDto> Lines { get; init; } = [];

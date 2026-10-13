@@ -1,7 +1,7 @@
 # GRNI accounting and staged purchase-currency boundary
 
 Date: 2026-10-08  
-Status: Accepted as target; activation deferred to owning slices
+Status: Accepted; GRNI activated by PUR-065 and currency policy superseded by PUR-190 ADR
 
 ## Context
 
@@ -11,7 +11,7 @@ The new purchase flow separates physical receipt from the supplier invoice. Post
 
 Use GRNI for the new procure-to-pay flow. A posted Goods Receipt will debit Inventory and credit GRNI. A posted Vendor Bill will clear GRNI for matched receipt value, recognize recoverable input tax, record purchase-price variance as required and credit Accounts Payable. Supplier payment clears Accounts Payable through Accounting/Treasury behavior. Each posting uses the central journal gateway, fiscal-period validation, stable source type/id and retry-safe posting key.
 
-Currency support is staged. Commercial records carry an uppercase currency code, while confirmed/posted monetary documents eventually freeze transaction currency, base currency, exchange rate, rate date/source and rounding. Non-base-currency inventory or journal posting remains disabled until a dedicated accounting slice implements exchange-rate policy, precision, realized/unrealized gain/loss accounts and reconciliation tests. PUR-010 does not claim full multi-currency support.
+Currency support was staged at this decision. PUR-190 later activated foreign-currency purchasing under `2026-10-13-purchase-multi-currency-policy.md`, which defines rate convention, dated resolution, frozen company values, receipt-rate GRNI and realized exchange differences. PUR-010 by itself did not claim multi-currency support.
 
 ## Alternatives rejected
 

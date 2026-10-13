@@ -4,7 +4,7 @@ public enum VendorBillStatus { Draft = 1, Posted = 2, Cancelled = 3, Reversed = 
 
 public sealed class VendorBill
 {
-    private VendorBill() { BillNumber = SupplierInvoiceNumber = NormalizedSupplierInvoiceNumber = CurrencyCode = CreatedByUserId = string.Empty; }
+    private VendorBill() { BillNumber = SupplierInvoiceNumber = NormalizedSupplierInvoiceNumber = CurrencyCode = CompanyCurrencyCode = ExchangeRateSource = CreatedByUserId = string.Empty; }
     public int Id { get; private set; }
     public string BillNumber { get; private set; }
     public int PurchaseOrderId { get; private set; }
@@ -13,6 +13,10 @@ public sealed class VendorBill
     public string NormalizedSupplierInvoiceNumber { get; private set; }
     public DateOnly BillDate { get; private set; }
     public string CurrencyCode { get; private set; }
+    public string CompanyCurrencyCode { get; private set; }
+    public decimal ExchangeRate { get; private set; }
+    public DateOnly ExchangeRateDate { get; private set; }
+    public string ExchangeRateSource { get; private set; }
     public string? Notes { get; private set; }
     public VendorBillStatus Status { get; private set; }
     public string CreatedByUserId { get; private set; }
@@ -25,9 +29,13 @@ public sealed class VendorBill
     public decimal TaxAmount => Lines.Sum(x => x.TaxAmount);
     public decimal TotalAmount => Lines.Sum(x => x.GrossAmount);
     public decimal ReceiptClearingAmount => Lines.Sum(x => x.ReceiptClearingAmount);
+    public decimal CompanyNetAmount => Lines.Sum(x => x.CompanyNetAmount);
+    public decimal CompanyTaxAmount => Lines.Sum(x => x.CompanyTaxAmount);
+    public decimal CompanyTotalAmount => Lines.Sum(x => x.CompanyGrossAmount);
 
     public VendorBill(string billNumber, int purchaseOrderId, int supplierId, string supplierInvoiceNumber,
-        DateOnly billDate, string currencyCode, string? notes, string userId)
+        DateOnly billDate, string currencyCode, string? notes, string userId, string? companyCurrencyCode = null,
+        decimal exchangeRate = 1m, DateOnly? exchangeRateDate = null, string exchangeRateSource = "Company currency")
     {
         if (string.IsNullOrWhiteSpace(billNumber) || billNumber.Trim().Length > 50) throw new ArgumentException("Vendor bill number is required and cannot exceed 50 characters.");
         if (purchaseOrderId <= 0 || supplierId <= 0) throw new ArgumentException("Purchase order and supplier are required.");
@@ -35,10 +43,12 @@ public sealed class VendorBill
         if (string.IsNullOrWhiteSpace(currencyCode) || currencyCode.Trim().Length != 3) throw new ArgumentException("Currency code must contain exactly three letters.");
         if (notes?.Trim().Length > 1000) throw new ArgumentException("Vendor bill notes cannot exceed 1000 characters.");
         if (string.IsNullOrWhiteSpace(userId)) throw new ArgumentException("User is required.");
+        if (exchangeRate <= 0) throw new ArgumentException("Exchange rate must be greater than zero.");
         BillNumber = billNumber.Trim(); PurchaseOrderId = purchaseOrderId; SupplierId = supplierId;
         SupplierInvoiceNumber = supplierInvoiceNumber.Trim(); NormalizedSupplierInvoiceNumber = NormalizeInvoiceNumber(supplierInvoiceNumber);
         if (NormalizedSupplierInvoiceNumber.Length == 0) throw new ArgumentException("Supplier invoice number must contain at least one letter or number.");
-        BillDate = billDate; CurrencyCode = currencyCode.Trim().ToUpperInvariant(); Notes = string.IsNullOrWhiteSpace(notes) ? null : notes.Trim();
+        BillDate = billDate; CurrencyCode = currencyCode.Trim().ToUpperInvariant(); CompanyCurrencyCode = (companyCurrencyCode ?? CurrencyCode).Trim().ToUpperInvariant();
+        ExchangeRate = exchangeRate; ExchangeRateDate = exchangeRateDate ?? billDate; ExchangeRateSource = exchangeRateSource.Trim(); Notes = string.IsNullOrWhiteSpace(notes) ? null : notes.Trim();
         CreatedByUserId = userId.Trim(); CreatedAtUtc = DateTime.UtcNow; Status = VendorBillStatus.Draft;
     }
 
@@ -87,13 +97,17 @@ public sealed class VendorBillLine
     public decimal TaxAmount { get; private set; }
     public decimal GrossAmount { get; private set; }
     public decimal ReceiptClearingAmount { get; private set; }
+    public decimal CompanyNetAmount { get; private set; }
+    public decimal CompanyTaxAmount { get; private set; }
+    public decimal CompanyGrossAmount { get; private set; }
+    public decimal ReceiptExchangeRate { get; private set; }
     public string ProductCodeSnapshot { get; private set; }
     public string ProductNameSnapshot { get; private set; }
     public string UnitNameSnapshot { get; private set; }
 
     public VendorBillLine(int goodsReceiptLineId, int purchaseOrderLineId, int productId, decimal quantity, decimal unitPrice,
         decimal receiptUnitCost, decimal receiptClearingQuantity, int? taxRateId, decimal taxPercent, int? taxInputAccountId, bool isTaxInclusive,
-        string productCode, string productName, string unitName)
+        string productCode, string productName, string unitName, decimal billExchangeRate = 1m, decimal receiptExchangeRate = 1m)
     {
         if (goodsReceiptLineId <= 0 || purchaseOrderLineId <= 0 || productId <= 0) throw new ArgumentException("Vendor bill line references are required.");
         if (quantity <= 0 || unitPrice < 0 || receiptUnitCost < 0 || receiptClearingQuantity <= 0 || receiptClearingQuantity > quantity) throw new ArgumentException("Vendor bill quantity and prices are invalid.");
@@ -108,7 +122,10 @@ public sealed class VendorBillLine
         TaxAmount = taxPercent <= 0 ? 0 : isTaxInclusive ? Round(enteredAmount * taxPercent / (100m + taxPercent)) : Round(enteredAmount * taxPercent / 100m);
         NetAmount = isTaxInclusive ? enteredAmount - TaxAmount : enteredAmount;
         GrossAmount = isTaxInclusive ? enteredAmount : enteredAmount + TaxAmount;
-        ReceiptClearingAmount = Round(receiptClearingQuantity * receiptUnitCost);
+        if (billExchangeRate <= 0 || receiptExchangeRate <= 0) throw new ArgumentException("Exchange rate must be greater than zero.");
+        ReceiptExchangeRate = receiptExchangeRate;
+        ReceiptClearingAmount = Round(receiptClearingQuantity * receiptUnitCost * receiptExchangeRate);
+        CompanyNetAmount = Round(NetAmount * billExchangeRate); CompanyTaxAmount = Round(TaxAmount * billExchangeRate); CompanyGrossAmount = CompanyNetAmount + CompanyTaxAmount;
     }
     private static decimal Round(decimal value) => Math.Round(value, 2, MidpointRounding.AwayFromZero);
 }

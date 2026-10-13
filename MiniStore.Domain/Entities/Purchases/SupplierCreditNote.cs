@@ -74,6 +74,9 @@ public sealed class SupplierCreditNoteLine
     public decimal NetAmount { get; private set; }
     public decimal TaxAmount { get; private set; }
     public decimal GrossAmount { get; private set; }
+    public decimal CompanyNetAmount { get; private set; }
+    public decimal CompanyTaxAmount { get; private set; }
+    public decimal CompanyGrossAmount { get; private set; }
     public decimal RemovedInventoryCost { get; private set; }
     public string ProductCodeSnapshot { get; private set; }
     public string ProductNameSnapshot { get; private set; }
@@ -82,7 +85,8 @@ public sealed class SupplierCreditNoteLine
 
     public SupplierCreditNoteLine(int vendorBillLineId, int goodsReceiptLineId, int productId, int? taxInputAccountId,
         decimal quantity, decimal unitFactorToBase, decimal netAmount, decimal taxAmount, decimal grossAmount,
-        decimal removedInventoryCost, string productCode, string productName, string unitName, string? trackingAllocations)
+        decimal removedInventoryCost, string productCode, string productName, string unitName, string? trackingAllocations,
+        decimal companyNetAmount = 0m, decimal companyTaxAmount = 0m, decimal companyGrossAmount = 0m)
     {
         if (vendorBillLineId <= 0 || goodsReceiptLineId <= 0 || productId <= 0) throw new ArgumentException("Supplier credit note line references are required.");
         if (quantity <= 0 || unitFactorToBase <= 0 || netAmount < 0 || taxAmount < 0 || grossAmount <= 0 || removedInventoryCost < 0) throw new ArgumentException("Supplier credit note line values are invalid.");
@@ -94,6 +98,9 @@ public sealed class SupplierCreditNoteLine
         TaxInputAccountId = taxInputAccountId; Quantity = quantity; UnitFactorToBase = unitFactorToBase;
         StockQuantity = quantity * unitFactorToBase; NetAmount = Round(netAmount); TaxAmount = Round(taxAmount);
         GrossAmount = Round(grossAmount); RemovedInventoryCost = Round(removedInventoryCost);
+        CompanyNetAmount = companyNetAmount == 0 ? NetAmount : Round(companyNetAmount);
+        CompanyTaxAmount = companyTaxAmount == 0 ? TaxAmount : Round(companyTaxAmount);
+        CompanyGrossAmount = companyGrossAmount == 0 ? GrossAmount : Round(companyGrossAmount);
         ProductCodeSnapshot = productCode.Trim(); ProductNameSnapshot = productName.Trim(); UnitNameSnapshot = unitName.Trim();
         TrackingAllocations = string.IsNullOrWhiteSpace(trackingAllocations) ? null : trackingAllocations.Trim();
     }

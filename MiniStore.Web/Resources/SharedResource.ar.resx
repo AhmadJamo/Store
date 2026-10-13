@@ -1761,4 +1761,39 @@
   <data name="GoodsReceipt" xml:space="preserve"><value>استلام بضاعة</value></data>
   <data name="SupplierPayment" xml:space="preserve"><value>دفعة مورد</value></data>
   <data name="LandedCost" xml:space="preserve"><value>تكلفة إضافية</value></data>
+  <data name="Currencies and exchange rates" xml:space="preserve"><value>العملات وأسعار الصرف</value></data>
+  <data name="Record dated supplier-currency rates against the company currency." xml:space="preserve"><value>سجّل أسعار عملات الموردين المؤرخة مقابل عملة الشركة.</value></data>
+  <data name="Manage exchange rates" xml:space="preserve"><value>إدارة أسعار الصرف</value></data>
+  <data name="One unit of supplier currency equals the entered amount in company currency." xml:space="preserve"><value>تساوي وحدة واحدة من عملة المورد القيمة المدخلة بعملة الشركة.</value></data>
+  <data name="Add or update exchange rate" xml:space="preserve"><value>إضافة أو تحديث سعر صرف</value></data>
+  <data name="Supplier currency" xml:space="preserve"><value>عملة المورد</value></data>
+  <data name="Effective date" xml:space="preserve"><value>تاريخ السريان</value></data>
+  <data name="Company currency per unit" xml:space="preserve"><value>عملة الشركة لكل وحدة</value></data>
+  <data name="Example: if one USD equals 0.709 JOD, enter 0.709." xml:space="preserve"><value>مثال: إذا كان الدولار الأمريكي الواحد يساوي 0.709 دينار أردني، أدخل 0.709.</value></data>
+  <data name="Rate source" xml:space="preserve"><value>مصدر السعر</value></data>
+  <data name="Save exchange rate" xml:space="preserve"><value>حفظ سعر الصرف</value></data>
+  <data name="Recorded exchange rates" xml:space="preserve"><value>أسعار الصرف المسجلة</value></data>
+  <data name="Rate" xml:space="preserve"><value>السعر</value></data>
+  <data name="No foreign exchange rates have been recorded." xml:space="preserve"><value>لم تُسجل أسعار صرف لعملات أجنبية.</value></data>
+  <data name="Exchange rate saved successfully." xml:space="preserve"><value>تم حفظ سعر الصرف بنجاح.</value></data>
+  <data name="Open currency settings" xml:space="preserve"><value>فتح إعدادات العملات</value></data>
+  <data name="The company currency always has an exchange rate of one and does not need a rate entry." xml:space="preserve"><value>سعر صرف عملة الشركة يساوي واحدًا دائمًا ولا تحتاج إلى إدخال سعر لها.</value></data>
+  <data name="Exchange rate must be greater than zero." xml:space="preserve"><value>يجب أن يكون سعر الصرف أكبر من صفر.</value></data>
+  <data name="Exchange rate source is required and cannot exceed 100 characters." xml:space="preserve"><value>مصدر سعر الصرف مطلوب ولا يجوز أن يتجاوز 100 حرف.</value></data>
+  <data name="Exchange rate" xml:space="preserve"><value>سعر الصرف</value></data>
+  <data name="Company currency equivalent" xml:space="preserve"><value>المقابل بعملة الشركة</value></data>
+  <data name="Payable carrying amount" xml:space="preserve"><value>القيمة الدفترية لحساب المورد</value></data>
+  <data name="Realized exchange gain account" xml:space="preserve"><value>حساب أرباح فروق العملة المحققة</value></data>
+  <data name="Realized exchange loss account" xml:space="preserve"><value>حساب خسائر فروق العملة المحققة</value></data>
+  <data name="Credited when paying a foreign supplier costs less in company currency than the payable carrying amount." xml:space="preserve"><value>يُدائن عندما تكون كلفة دفع المورد الأجنبي بعملة الشركة أقل من القيمة الدفترية للمورد.</value></data>
+  <data name="Debited when paying a foreign supplier costs more in company currency than the payable carrying amount." xml:space="preserve"><value>يُمدن عندما تكون كلفة دفع المورد الأجنبي بعملة الشركة أعلى من القيمة الدفترية للمورد.</value></data>
+  <data name="Configure accounting posting accounts before posting a foreign-currency supplier payment." xml:space="preserve"><value>هيّئ حسابات الترحيل المحاسبي قبل ترحيل دفعة مورد بعملة أجنبية.</value></data>
+  <data name="Configure a realized exchange loss account before posting a foreign-currency vendor bill." xml:space="preserve"><value>هيّئ حساب خسائر فروق العملة المحققة قبل ترحيل فاتورة مورد بعملة أجنبية.</value></data>
+  <data name="Configure a realized exchange gain account before posting a foreign-currency vendor bill." xml:space="preserve"><value>هيّئ حساب أرباح فروق العملة المحققة قبل ترحيل فاتورة مورد بعملة أجنبية.</value></data>
+  <data name="Configure a realized exchange loss account before posting a foreign-currency supplier payment." xml:space="preserve"><value>هيّئ حساب خسائر فروق العملة المحققة قبل ترحيل دفعة مورد بعملة أجنبية.</value></data>
+  <data name="Configure a realized exchange gain account before posting a foreign-currency supplier payment." xml:space="preserve"><value>هيّئ حساب أرباح فروق العملة المحققة قبل ترحيل دفعة مورد بعملة أجنبية.</value></data>
+  <data name="Configure exchange gain and loss accounts" xml:space="preserve"><value>تهيئة حسابات أرباح وخسائر فروق العملة</value></data>
+  <data name="Choose the accounts required to post foreign-currency bill and payment differences." xml:space="preserve"><value>اختر الحسابات المطلوبة لترحيل فروق فواتير ودفعات العملات الأجنبية.</value></data>
+  <data name="Company currency" xml:space="preserve"><value>عملة الشركة</value></data>
+  <data name="Add missing currencies and dated rates from currency settings." xml:space="preserve"><value>أضف العملات الناقصة وأسعارها المؤرخة من إعدادات العملات.</value></data>
 </root>

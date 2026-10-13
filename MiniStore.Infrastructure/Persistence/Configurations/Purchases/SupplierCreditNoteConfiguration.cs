@@ -25,6 +25,7 @@ public sealed class SupplierCreditNoteConfiguration : IEntityTypeConfiguration<S
         b.HasKey(x => x.Id); b.Property(x => x.Quantity).HasPrecision(18, 6); b.Property(x => x.UnitFactorToBase).HasPrecision(24, 12);
         b.Property(x => x.StockQuantity).HasPrecision(18, 6); b.Property(x => x.NetAmount).HasPrecision(18, 2);
         b.Property(x => x.TaxAmount).HasPrecision(18, 2); b.Property(x => x.GrossAmount).HasPrecision(18, 2);
+        b.Property(x => x.CompanyNetAmount).HasPrecision(18, 2); b.Property(x => x.CompanyTaxAmount).HasPrecision(18, 2); b.Property(x => x.CompanyGrossAmount).HasPrecision(18, 2);
         b.Property(x => x.RemovedInventoryCost).HasPrecision(18, 2); b.Property(x => x.ProductCodeSnapshot).HasMaxLength(100).IsRequired();
         b.Property(x => x.ProductNameSnapshot).HasMaxLength(250).IsRequired(); b.Property(x => x.UnitNameSnapshot).HasMaxLength(100).IsRequired();
         b.Property(x => x.TrackingAllocations).HasMaxLength(2000); b.HasIndex(x => new { x.SupplierCreditNoteId, x.VendorBillLineId }).IsUnique();

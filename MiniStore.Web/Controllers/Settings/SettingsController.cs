@@ -24,6 +24,7 @@ public class SettingsController : Controller
     private readonly PosExperienceSettingsService _posExperienceSettingsService;
     private readonly MeasurementUnitService _measurementUnitService;
     private readonly FiscalPeriodService _fiscalPeriodService;
+    private readonly CurrencyExchangeRateService _currencyExchangeRateService;
     private readonly IStringLocalizer<SharedResource> _localizer;
     private readonly IMemoryCache _memoryCache;
     private readonly ITenantContext _tenantContext;
@@ -40,6 +41,7 @@ public class SettingsController : Controller
         PosExperienceSettingsService posExperienceSettingsService,
         MeasurementUnitService measurementUnitService,
         FiscalPeriodService fiscalPeriodService,
+        CurrencyExchangeRateService currencyExchangeRateService,
         IStringLocalizer<SharedResource> localizer,
         IMemoryCache memoryCache,
         ITenantContext tenantContext)
@@ -55,6 +57,7 @@ public class SettingsController : Controller
         _posExperienceSettingsService = posExperienceSettingsService;
         _measurementUnitService = measurementUnitService;
         _fiscalPeriodService = fiscalPeriodService;
+        _currencyExchangeRateService = currencyExchangeRateService;
         _localizer = localizer;
         _memoryCache = memoryCache;
         _tenantContext = tenantContext;
@@ -64,6 +67,27 @@ public class SettingsController : Controller
     public IActionResult Index()
     {
         return View();
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Currencies() => View(await _currencyExchangeRateService.GetPageAsync());
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Currencies([Bind(Prefix = "Form")] SaveCurrencyExchangeRateDto dto)
+    {
+        try
+        {
+            await _currencyExchangeRateService.SaveAsync(dto);
+            TempData["NotificationType"] = "success";
+            TempData["NotificationMessage"] = _localizer["Exchange rate saved successfully."].Value;
+            return RedirectToAction(nameof(Currencies));
+        }
+        catch (Exception ex) when (ex is ArgumentException or InvalidOperationException)
+        {
+            ModelState.AddModelError(string.Empty, _localizer[ex.Message]);
+            return View(await _currencyExchangeRateService.GetPageAsync(dto));
+        }
     }
 
     [HttpGet]
