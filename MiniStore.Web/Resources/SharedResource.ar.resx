@@ -1712,4 +1712,53 @@
   <data name="Configure a purchase price variance account before posting a supplier credit note with a cost difference." xml:space="preserve"><value>هيّئ حساب فرق سعر الشراء قبل ترحيل إشعار مورد دائن يحتوي فرق تكلفة.</value></data>
   <data name="This supplier credit note has already been posted to accounting." xml:space="preserve"><value>تم ترحيل إشعار المورد الدائن هذا محاسبيًا مسبقًا.</value></data>
   <data name="Supplier credit note line total must equal net amount plus tax." xml:space="preserve"><value>يجب أن يساوي إجمالي بند إشعار المورد الدائن صافي المبلغ مضافًا إليه الضريبة.</value></data>
+  <data name="Purchase document reversals" xml:space="preserve"><value>عمليات عكس مستندات المشتريات</value></data>
+  <data name="No purchase document reversals were found." xml:space="preserve"><value>لا توجد عمليات عكس لمستندات المشتريات.</value></data>
+  <data name="Reverse purchase document" xml:space="preserve"><value>عكس مستند مشتريات</value></data>
+  <data name="Reverse document" xml:space="preserve"><value>عكس المستند</value></data>
+  <data name="Post reversal" xml:space="preserve"><value>ترحيل العكس</value></data>
+  <data name="Reversal date" xml:space="preserve"><value>تاريخ العكس</value></data>
+  <data name="Reversal reason" xml:space="preserve"><value>سبب العكس</value></data>
+  <data name="Original document date" xml:space="preserve"><value>تاريخ المستند الأصلي</value></data>
+  <data name="Original document" xml:space="preserve"><value>المستند الأصلي</value></data>
+  <data name="View original document" xml:space="preserve"><value>عرض المستند الأصلي</value></data>
+  <data name="View reversal" xml:space="preserve"><value>عرض مستند العكس</value></data>
+  <data name="Document type" xml:space="preserve"><value>نوع المستند</value></data>
+  <data name="Journal entry" xml:space="preserve"><value>القيد المحاسبي</value></data>
+  <data name="Purchase document reversed." xml:space="preserve"><value>تم عكس مستند المشتريات.</value></data>
+  <data name="Reversal preserves the original document and posts an opposite accounting entry. Reverse dependent documents first." xml:space="preserve"><value>يحافظ العكس على المستند الأصلي ويرحّل قيدًا محاسبيًا معاكسًا. اعكس المستندات التابعة أولًا.</value></data>
+  <data name="The original document is preserved and marked reversed; review its final status and audit link." xml:space="preserve"><value>تم الاحتفاظ بالمستند الأصلي وتعليمه كمعكوس؛ راجع حالته النهائية ورابط التدقيق.</value></data>
+  <data name="Purchase document reversal number is required and cannot exceed 50 characters." xml:space="preserve"><value>رقم عكس مستند المشتريات مطلوب ويجب ألا يتجاوز 50 حرفًا.</value></data>
+  <data name="Purchase document reversal source is required." xml:space="preserve"><value>مصدر عكس مستند المشتريات مطلوب.</value></data>
+  <data name="Original purchase document number is required." xml:space="preserve"><value>رقم مستند المشتريات الأصلي مطلوب.</value></data>
+  <data name="Purchase document reversal reason is required and cannot exceed 1000 characters." xml:space="preserve"><value>سبب العكس مطلوب ويجب ألا يتجاوز 1000 حرف.</value></data>
+  <data name="A valid reversal request key is required." xml:space="preserve"><value>مفتاح صالح لطلب العكس مطلوب.</value></data>
+  <data name="Only draft purchase document reversals can be posted." xml:space="preserve"><value>يمكن ترحيل عمليات عكس مستندات المشتريات المسودة فقط.</value></data>
+  <data name="Reversal journal entry number is required." xml:space="preserve"><value>رقم قيد العكس المحاسبي مطلوب.</value></data>
+  <data name="This reversal request key was already used for another document." xml:space="preserve"><value>استُخدم مفتاح طلب العكس هذا لمستند آخر مسبقًا.</value></data>
+  <data name="This purchase document has already been reversed." xml:space="preserve"><value>تم عكس مستند المشتريات هذا مسبقًا.</value></data>
+  <data name="Reversal date cannot be earlier than the original document date." xml:space="preserve"><value>لا يمكن أن يسبق تاريخ العكس تاريخ المستند الأصلي.</value></data>
+  <data name="Unsupported purchase document type." xml:space="preserve"><value>نوع مستند المشتريات غير مدعوم.</value></data>
+  <data name="Only posted supplier payments can be reversed." xml:space="preserve"><value>يمكن عكس دفعات المورد المرحلة فقط.</value></data>
+  <data name="Only posted vendor bills can be reversed." xml:space="preserve"><value>يمكن عكس فواتير المورد المرحلة فقط.</value></data>
+  <data name="Reverse supplier payments allocated to this vendor bill before reversing the bill." xml:space="preserve"><value>اعكس دفعات المورد الموزعة على هذه الفاتورة قبل عكس الفاتورة.</value></data>
+  <data name="A vendor bill with posted supplier credit notes cannot be reversed." xml:space="preserve"><value>لا يمكن عكس فاتورة مورد مرتبطة بإشعارات دائنة مرحلة.</value></data>
+  <data name="Only posted goods receipts can be reversed." xml:space="preserve"><value>يمكن عكس استلامات البضاعة المرحلة فقط.</value></data>
+  <data name="A goods receipt with posted returns cannot be reversed." xml:space="preserve"><value>لا يمكن عكس استلام بضاعة مرتبط بمرتجعات مرحلة.</value></data>
+  <data name="Reverse vendor bills linked to this goods receipt before reversing the receipt." xml:space="preserve"><value>اعكس فواتير المورد المرتبطة بهذا الاستلام قبل عكس الاستلام.</value></data>
+  <data name="Reverse landed costs linked to this goods receipt before reversing the receipt." xml:space="preserve"><value>اعكس التكاليف الإضافية المرتبطة بهذا الاستلام قبل عكس الاستلام.</value></data>
+  <data name="The goods receipt cannot be reversed because some received stock is no longer available." xml:space="preserve"><value>لا يمكن عكس استلام البضاعة لأن جزءًا من المخزون المستلم لم يعد متاحًا.</value></data>
+  <data name="The goods receipt cannot be reversed after later inventory valuation changed its cost." xml:space="preserve"><value>لا يمكن عكس استلام البضاعة بعد أن غيّر تقييم مخزني لاحق تكلفته.</value></data>
+  <data name="Only posted landed costs can be reversed." xml:space="preserve"><value>يمكن عكس التكاليف الإضافية المرحلة فقط.</value></data>
+  <data name="The landed cost cannot be reversed after later inventory valuation changed the product cost." xml:space="preserve"><value>لا يمكن عكس التكلفة الإضافية بعد أن غيّر تقييم مخزني لاحق تكلفة المنتج.</value></data>
+  <data name="The landed cost capitalization history cannot be reversed safely." xml:space="preserve"><value>لا يمكن عكس سجل رسملة التكلفة الإضافية بأمان.</value></data>
+  <data name="The landed cost cannot be reversed after related inventory was consumed." xml:space="preserve"><value>لا يمكن عكس التكلفة الإضافية بعد استهلاك المخزون المرتبط بها.</value></data>
+  <data name="Landed cost reversal must be greater than zero." xml:space="preserve"><value>يجب أن تكون قيمة عكس التكلفة الإضافية أكبر من صفر.</value></data>
+  <data name="Current inventory cannot absorb the landed cost reversal." xml:space="preserve"><value>لا يستطيع المخزون الحالي استيعاب عكس التكلفة الإضافية.</value></data>
+  <data name="The original accounting entry was not found." xml:space="preserve"><value>لم يتم العثور على القيد المحاسبي الأصلي.</value></data>
+  <data name="This document reversal has already been posted to accounting." xml:space="preserve"><value>تم ترحيل عكس هذا المستند محاسبيًا مسبقًا.</value></data>
+  <data name="Only a posted journal entry can be reversed." xml:space="preserve"><value>يمكن عكس القيد المحاسبي المرحل فقط.</value></data>
+  <data name="GoodsReceipt" xml:space="preserve"><value>استلام بضاعة</value></data>
+  <data name="SupplierPayment" xml:space="preserve"><value>دفعة مورد</value></data>
+  <data name="LandedCost" xml:space="preserve"><value>تكلفة إضافية</value></data>
 </root>

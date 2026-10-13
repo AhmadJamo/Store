@@ -105,7 +105,7 @@ try
     await VerifyInventoryBalanceProjectionAsync(tenantOneId, tenantOneFixture.ProductId, expectedOnHand: 2m, connectionString);
     await VerifyOpeningTrackingAllocationAsync(tenantOneId, tenantOneFixture.ProductId, tenantOneFixture.WarehouseId, connectionString);
 
-    Console.WriteLine("Passed SQL integration checks: tenant isolation, reconciliation, balances, replenishment purchase-request source concurrency, receipt, vendor-bill and supplier-payment concurrency, three-way matching override evidence, GRNI posting and clearing, purchase accounting reconciliation, payable settlement, receipt-based supplier returns, landed-cost valuation, purchasing analytics, idempotent barcode receipt drafts, adjustment posting, tracked operations, quarantine and recall.");
+    Console.WriteLine("Passed SQL integration checks: tenant isolation, reconciliation, balances, replenishment purchase-request source concurrency, receipt, vendor-bill and supplier-payment concurrency, controlled payment reversal and retry, three-way matching override evidence, GRNI posting and clearing, purchase accounting reconciliation, payable settlement, receipt-based supplier returns, landed-cost valuation, purchasing analytics, idempotent barcode receipt drafts, adjustment posting, tracked operations, quarantine and recall.");
 }
 finally
 {
@@ -495,7 +495,55 @@ static async Task VerifyConcurrentGoodsReceiptAndGrniAsync(
             !paymentJournal.Lines.Any(x => x.AccountId == payableAccountId && x.Debit == 5m) ||
             !paymentJournal.Lines.Any(x => x.AccountId == cashAccountId && x.Credit == 5m))
             throw new InvalidOperationException("The winning supplier payment must settle the payable and credit its configured cash or bank account atomically.");
+
+        var reversalUnitOfWork = new UnitOfWork(paymentVerification);
+        var reversalUser = new FixedCurrentUser("integration-reversal");
+        var reversalNumbers = new DocumentNumberService(new DocumentSequenceRepository(paymentVerification));
+        var reversalPeriods = new FiscalPeriodService(new FiscalPeriodRepository(paymentVerification), reversalUnitOfWork, reversalUser);
+        var reversalJournals = new JournalPostingService(new JournalEntryRepository(paymentVerification), reversalNumbers, reversalPeriods);
+        var reversalTracking = new InventoryTrackingService(
+            new InventoryTrackingRepository(paymentVerification), new InventoryRecallRepository(paymentVerification),
+            new ProductRepository(paymentVerification), new WarehouseRepository(paymentVerification), new StorageLocationRepository(paymentVerification),
+            new InventoryBalanceRepository(paymentVerification), new ProductLocationStockRepository(paymentVerification),
+            new PurchaseRepository(paymentVerification), new SupplierRepository(paymentVerification), new SaleRepository(paymentVerification),
+            new CustomerRepository(paymentVerification), reversalUnitOfWork);
+        var reversalRemoval = new UntrackedInventoryRemovalService(
+            new WarehouseRepository(paymentVerification), new StorageLocationRepository(paymentVerification),
+            new InventoryBalanceRepository(paymentVerification), new ProductStockRepository(paymentVerification),
+            new ProductLocationStockRepository(paymentVerification));
+        var reversalService = new PurchaseDocumentReversalService(
+            new PurchaseDocumentReversalRepository(paymentVerification), new GoodsReceiptRepository(paymentVerification),
+            new GoodsReceiptReturnRepository(paymentVerification), new VendorBillRepository(paymentVerification),
+            new SupplierPaymentRepository(paymentVerification), new SupplierCreditNoteRepository(paymentVerification),
+            new LandedCostRepository(paymentVerification), new PurchaseOrderRepository(paymentVerification),
+            new WarehouseRepository(paymentVerification), new ProductRepository(paymentVerification),
+            new ProductStockRepository(paymentVerification), new StockTransactionRepository(paymentVerification),
+            new StockMovementRepository(paymentVerification), reversalTracking, reversalRemoval, reversalNumbers,
+            reversalJournals, reversalUnitOfWork, reversalUser);
+        var reversalRequest = new CreatePurchaseDocumentReversalDto
+        {
+            DocumentType = PurchaseDocumentType.SupplierPayment, OriginalDocumentId = payment.Id,
+            ReversalDate = receiptDate, Reason = "Correct duplicate supplier settlement",
+            IdempotencyKey = Guid.NewGuid().ToString("N")
+        };
+        var reversalId = await reversalService.ReverseAsync(reversalRequest);
+        var retryId = await reversalService.ReverseAsync(reversalRequest);
+        var reversal = await paymentVerification.PurchaseDocumentReversals.SingleAsync(x => x.Id == reversalId);
+        var reversedPaymentJournal = await paymentVerification.JournalEntries.Include(x => x.Lines).SingleAsync(x => x.Id == paymentJournal.Id);
+        var oppositePaymentJournal = await paymentVerification.JournalEntries.Include(x => x.Lines).SingleAsync(x =>
+            x.SourceType == "SupplierPaymentReversal" && x.SourceReference == reversal.ReversalNumber);
+        var paidAfterReversal = await new SupplierPaymentRepository(paymentVerification).GetPaidAmountsAsync([vendorBillId]);
+        if (retryId != reversalId || reversal.Status != PurchaseDocumentReversalStatus.Posted ||
+            payment.Status != SupplierPaymentStatus.Reversed || reversedPaymentJournal.Status != JournalEntryStatus.Reversed ||
+            oppositePaymentJournal.Lines.Sum(x => x.Debit) != 5m || oppositePaymentJournal.Lines.Sum(x => x.Credit) != 5m ||
+            !oppositePaymentJournal.Lines.Any(x => x.AccountId == payableAccountId && x.Credit == 5m) ||
+            !oppositePaymentJournal.Lines.Any(x => x.AccountId == cashAccountId && x.Debit == 5m) ||
+            paidAfterReversal.GetValueOrDefault(vendorBillId) != 0m)
+            throw new InvalidOperationException("Supplier payment reversal must be idempotent, preserve the original and restore the bill balance with an opposite journal.");
     }
+
+    if (!await TrySupplierPaymentAsync())
+        throw new InvalidOperationException("A vendor bill must become payable again after its supplier payment is reversed.");
 
     async Task<bool> TryReturnAsync()
     {

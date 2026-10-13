@@ -1,5 +1,14 @@
 # AI Work Log
 
+## 2026-10-13 — PUR-180 Controlled Purchase Document Reversal
+
+- Added immutable tenant-owned `PRV-` reversal records for posted Goods Receipts, Vendor Bills, Supplier Payments and Landed Costs, with mandatory reason, actor/time, original identity, opposite journal number and request-key idempotency.
+- Preserved originals as Reversed and posted exact debit-credit opposite journals in an open fiscal period; reconciliation now includes both the original and opposite entries so their ledger effect nets to zero.
+- Enforced reverse-order dependencies: payments before bills, and bills/returns/landed costs before receipts. Receipt and landed-cost reversals also require the original quantity and valuation to remain safely reversible.
+- Added physical receipt-reversal movement/transaction evidence, landed-cost value reversal, restored Vendor Bill availability after payment reversal and automatic Purchase Order reopening when reversing a completing receipt or bill.
+- Added separate View/Create permissions, bilingual responsive history/create/detail screens, original-document completion links, localized errors, workflow guidance and ADR `2026-10-13-controlled-purchase-document-reversal.md`.
+- Added and applied migration `20261013024801_AddPurchaseDocumentReversals`; Entity Framework reports no pending model changes. Release build has zero warnings, 604 focused regression checks passed and the disposable SQL Server fixture proved idempotent payment reversal, opposite journal and restored bill payment availability.
+
 ## 2026-10-13 — PUR-170 Supplier Credit Notes and Billed Returns
 
 - Added tenant-owned immutable Supplier Credit Notes linked to the original Vendor Bill, Purchase Order, Goods Receipt lines, supplier and warehouse, with separate View/Create permissions and centralized `SCN-` numbering.

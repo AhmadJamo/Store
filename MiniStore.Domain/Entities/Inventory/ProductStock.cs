@@ -133,6 +133,15 @@ public class ProductStock
         return Snapshot(quantityBefore, averageBefore, valueBefore, amount / Quantity, RoundValue(amount), 0);
     }
 
+    public InventoryCostMovement RemoveLandedCost(decimal amount)
+    {
+        if (amount <= 0) throw new ArgumentException("Landed cost reversal must be greater than zero.");
+        if (Quantity <= 0 || amount > InventoryValue) throw new InvalidOperationException("Current inventory cannot absorb the landed cost reversal.");
+        var quantityBefore = Quantity; var averageBefore = AverageUnitCost; var valueBefore = InventoryValue;
+        InventoryValue = RoundValue(valueBefore - amount); AverageUnitCost = RoundCost(InventoryValue / Quantity); LastReferenceUnitCost = AverageUnitCost;
+        return Snapshot(quantityBefore, averageBefore, valueBefore, -(amount / Quantity), -RoundValue(amount), 0);
+    }
+
     private InventoryCostMovement Issue(decimal quantity, bool allowNegative)
     {
         if (quantity <= 0)

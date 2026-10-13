@@ -19,7 +19,10 @@ public sealed class SupplierPaymentRepository(AppDbContext context) : ISupplierP
     public Task<Dictionary<int, decimal>> GetPaidAmountsAsync(IEnumerable<int> vendorBillIds)
     {
         var ids = vendorBillIds.Distinct().ToArray();
-        return context.Set<SupplierPaymentLine>().Where(x => ids.Contains(x.VendorBillId))
+        return context.Set<SupplierPaymentLine>()
+            .Join(context.Set<SupplierPayment>().Where(x => x.Status == SupplierPaymentStatus.Posted),
+                line => line.SupplierPaymentId, payment => payment.Id, (line, payment) => line)
+            .Where(x => ids.Contains(x.VendorBillId))
             .GroupBy(x => x.VendorBillId).Select(x => new { VendorBillId = x.Key, Amount = x.Sum(y => y.Amount) })
             .ToDictionaryAsync(x => x.VendorBillId, x => x.Amount);
     }

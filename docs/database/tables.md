@@ -1,6 +1,9 @@
 # Database tables reference
 > Last reviewed: 2026-10-13
 
+- `PurchaseDocumentReversals`: tenant-owned PUR-180 reversal headers with unique reversal number, original type/id and idempotency key; stores reason, actor/time, state and opposite journal number.
+- `LandedCosts.Status`: Posted/Reversed lifecycle added by PUR-180; existing rows are backfilled Posted.
+
 Schema source is `AppDbContext`, configurations and migrations. Identity's standard `AspNet*` tables are supplied by IdentityDbContext.
 
 - **InventoryReservations:** auditable source-owned Active/Consumed/Released inventory holds with rowversion and tenant-unique source identity.

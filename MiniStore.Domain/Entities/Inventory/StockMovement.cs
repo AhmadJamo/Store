@@ -173,6 +173,21 @@ public sealed class StockMovement
         };
     }
 
+    public static StockMovement PostGoodsReceiptReversal(int reversalId, int sourceLineId, int productId, int warehouseId,
+        decimal quantity, string userId, string reference)
+    {
+        if (reversalId <= 0 || sourceLineId <= 0 || productId <= 0 || warehouseId <= 0 || quantity <= 0)
+            throw new ArgumentException("Goods receipt reversal references and quantity are required.");
+        if (string.IsNullOrWhiteSpace(userId) || string.IsNullOrWhiteSpace(reference)) throw new ArgumentException("Reversal user and reference are required.");
+        return new StockMovement
+        {
+            ProductId = productId, WarehouseId = warehouseId, Quantity = quantity, Type = StockMovementType.ReceiptReturnOut,
+            Status = StockMovementStatus.Posted, IdempotencyKey = $"PDR:{reversalId}:{sourceLineId}", CreatedByUserId = userId.Trim(),
+            PostedByUserId = userId.Trim(), Reference = Normalize(reference), SourceDocumentType = "PurchaseDocumentReversal",
+            SourceDocumentId = reversalId, SourceLineId = sourceLineId, StageSequence = 1, CreatedAt = DateTime.UtcNow, PostedAt = DateTime.UtcNow
+        };
+    }
+
     public void Post(string userId)
     {
         if (Status != StockMovementStatus.Planned) throw new InvalidOperationException("Only planned movements can be posted.");

@@ -6,13 +6,13 @@ using MiniStore.Web.Authorization;
 
 namespace MiniStore.Web.Controllers;
 
-public sealed class SupplierPaymentsController(SupplierPaymentService service, IStringLocalizer<SharedResource> localizer) : Controller
+public sealed class SupplierPaymentsController(SupplierPaymentService service, PurchaseDocumentReversalService reversalService, IStringLocalizer<SharedResource> localizer) : Controller
 {
     [HttpGet, PermissionAuthorize("SupplierPayments.View")]
     public async Task<IActionResult> Index(string? search) { ViewBag.Search = search; return View(await service.GetAllAsync(search)); }
 
     [HttpGet, PermissionAuthorize("SupplierPayments.View")]
-    public async Task<IActionResult> Details(int id) { var payment = await service.GetAsync(id); return payment is null ? NotFound() : View(payment); }
+    public async Task<IActionResult> Details(int id) { var payment = await service.GetAsync(id); ViewBag.Reversal = await reversalService.GetByOriginalAsync(MiniStore.Domain.Entities.PurchaseDocumentType.SupplierPayment, id); return payment is null ? NotFound() : View(payment); }
 
     [HttpGet, PermissionAuthorize("SupplierPayments.Create")]
     public async Task<IActionResult> Create(int vendorBillId)

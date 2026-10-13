@@ -1,6 +1,8 @@
 # Razor screen map
 > Status: IMPLEMENTED | Last reviewed: 2026-10-13
 
+| Purchase document reversals | `/PurchaseDocumentReversals` | Responsive reversal history, confirmation and immutable audit detail for receipts, bills, payments and landed costs; original detail screens hide the action after completion and link to the reversal. |
+
 | Screens | Controller flow / notable UI |
 |---|---|
 | `Views/Account/{Login,Register,AccessDenied}.cshtml` | tenant login and bilingual company/owner registration with plan selection, duplicate-submit protection and friendly rate-limit retry feedback. Register includes an accessible popup explaining the actual company name/address, username, email, password, plan and 14-day trial rules. |

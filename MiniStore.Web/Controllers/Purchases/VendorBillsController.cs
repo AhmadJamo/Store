@@ -6,7 +6,7 @@ using MiniStore.Web.Authorization;
 
 namespace MiniStore.Web.Controllers;
 
-public sealed class VendorBillsController(VendorBillService service, IStringLocalizer<SharedResource> localizer,
+public sealed class VendorBillsController(VendorBillService service, PurchaseDocumentReversalService reversalService, IStringLocalizer<SharedResource> localizer,
     Microsoft.AspNetCore.Authorization.IAuthorizationService authorizationService) : Controller
 {
     [HttpGet]
@@ -22,6 +22,7 @@ public sealed class VendorBillsController(VendorBillService service, IStringLoca
     public async Task<IActionResult> Details(int id)
     {
         var bill = await service.GetAsync(id);
+        ViewBag.Reversal = await reversalService.GetByOriginalAsync(MiniStore.Domain.Entities.PurchaseDocumentType.VendorBill, id);
         return bill is null ? NotFound() : View(bill);
     }
 

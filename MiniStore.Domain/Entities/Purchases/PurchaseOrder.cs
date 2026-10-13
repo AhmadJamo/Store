@@ -81,6 +81,15 @@ public sealed class PurchaseOrder
         History.Add(new PurchaseOrderLifecycleHistory(from, Status, PurchaseOrderLifecycleAction.Reopened, user, reason.Trim()));
         ClosureType = null; ClosureReason = null; ClosedByUserId = null; ClosedAtUtc = null;
     }
+    public void ReopenAfterDownstreamReversal(string user, string reason)
+    {
+        EnsureUser(user);
+        if (Status != PurchaseOrderStatus.Closed || ClosureType != PurchaseOrderClosureType.Automatic) return;
+        ValidateReason(reason, "A purchase order reopen reason is required and cannot exceed 1000 characters.");
+        var from = Status; Status = PurchaseOrderStatus.Confirmed;
+        History.Add(new PurchaseOrderLifecycleHistory(from, Status, PurchaseOrderLifecycleAction.Reopened, user, reason.Trim()));
+        ClosureType = null; ClosureReason = null; ClosedByUserId = null; ClosedAtUtc = null;
+    }
     private void EnsureDraft(){if(Status!=PurchaseOrderStatus.Draft)throw new InvalidOperationException("Only draft purchase orders can be modified.");}
     private static void EnsureUser(string user){if(string.IsNullOrWhiteSpace(user))throw new ArgumentException("User is required.");}
     private static void ValidateReason(string reason, string message){if(string.IsNullOrWhiteSpace(reason)||reason.Trim().Length>1000)throw new ArgumentException(message);}

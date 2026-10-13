@@ -1542,6 +1542,36 @@ Check(supplierCreditController.GetMethod(nameof(SupplierCreditNotesController.In
           .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
       $"{PermissionAuthorizeAttribute.PolicyPrefix}SupplierCreditNotes.Create",
     "Supplier credit note visibility and posting must use separate server-side permissions");
+var purchaseReversal = new PurchaseDocumentReversal("PRV-000001", PurchaseDocumentType.VendorBill, 1,
+    "VB-000001", DateOnly.FromDateTime(DateTime.Today), "Correct duplicate posting", Guid.NewGuid().ToString("N"), "accountant");
+purchaseReversal.Post("JE-000099");
+Check(purchaseReversal.Status == PurchaseDocumentReversalStatus.Posted &&
+      purchaseReversal.ReversalJournalEntryNumber == "JE-000099" &&
+      db.Model.FindEntityType(typeof(PurchaseDocumentReversal))!.FindProperty("TenantId") is { IsNullable: false },
+    "Purchase document reversals must preserve tenant-owned source, reason, actor and opposite journal evidence");
+CheckThrows(() => purchaseReversal.Post("JE-000100"),
+    "A posted purchase document reversal must be immutable and reject duplicate posting");
+var originalEntry = new JournalEntry("JE-000001", DateTime.Today, "Original", "VendorBill", "VB-000001");
+originalEntry.AddLine(new JournalEntryLine(1, 10m, 0)); originalEntry.AddLine(new JournalEntryLine(2, 0, 10m)); originalEntry.Post();
+var oppositeEntry = originalEntry.CreateReversal("JE-000002", DateTime.Today, "Reversal", "VendorBillReversal", "PRV-000001");
+Check(originalEntry.Status == JournalEntryStatus.Reversed && oppositeEntry.Status == JournalEntryStatus.Posted &&
+      oppositeEntry.Lines.Single(x => x.AccountId == 1).Credit == 10m &&
+      oppositeEntry.Lines.Single(x => x.AccountId == 2).Debit == 10m,
+    "Journal reversal must preserve the original entry and post an exact debit-credit opposite");
+var receiptReversalMovement = StockMovement.PostGoodsReceiptReversal(1, 1, 10, 1, 1m, "buyer", "PRV-000001");
+Check(receiptReversalMovement.SourceDocumentType == "PurchaseDocumentReversal" &&
+      receiptReversalMovement.Type == StockMovementType.ReceiptReturnOut,
+    "Goods receipt reversal must create dedicated idempotent outbound movement evidence");
+Check(DocumentSequence.CreateDefault(DocumentNumberType.PurchaseDocumentReversal).Preview(DateTime.Today).StartsWith("PRV-"),
+    "Purchase document reversals must use an independent centralized sequence");
+var reversalController = typeof(PurchaseDocumentReversalsController);
+Check(reversalController.GetMethod(nameof(PurchaseDocumentReversalsController.Index))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
+      $"{PermissionAuthorizeAttribute.PolicyPrefix}PurchaseDocumentReversals.View" &&
+      reversalController.GetMethod(nameof(PurchaseDocumentReversalsController.Create), [typeof(CreatePurchaseDocumentReversalDto)])!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
+      $"{PermissionAuthorizeAttribute.PolicyPrefix}PurchaseDocumentReversals.Create",
+    "Purchase document reversal history and posting must use separate server-side permissions");
 var matchingSettings = new PurchaseMatchingSettings(2m, 3m);
 Check(matchingSettings.QuantityTolerancePercent == 2m && matchingSettings.PriceTolerancePercent == 3m,
     "Purchase matching settings must preserve independent quantity and price tolerances");
@@ -1700,6 +1730,7 @@ Check(WorkflowNextStepGuidance.Resolve(
     "Workflow next-step guidance must remain scoped until a future module defines its next actions");
 Check(WorkflowNextStepGuidance.IsSupportedController("VendorBills") &&
       WorkflowNextStepGuidance.IsSupportedController("SupplierCreditNotes") &&
+      WorkflowNextStepGuidance.IsSupportedController("PurchaseDocumentReversals") &&
       WorkflowNextStepGuidance.IsSupportedController("PurchaseAccountingReconciliation") &&
       WorkflowNextStepGuidance.IsSupportedController("StockTransfers") &&
       WorkflowNextStepGuidance.IsSupportedController("Warehouses") &&

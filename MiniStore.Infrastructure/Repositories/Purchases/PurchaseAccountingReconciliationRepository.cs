@@ -56,7 +56,7 @@ public sealed class PurchaseAccountingReconciliationRepository(AppDbContext cont
         var inventoryLedgerRows = await (
             from line in context.JournalEntryLines.AsNoTracking()
             join entry in context.JournalEntries.AsNoTracking() on line.JournalEntryId equals entry.Id
-            where entry.Status == JournalEntryStatus.Posted && entry.Date < throughExclusive && line.WarehouseId.HasValue
+            where entry.Status != JournalEntryStatus.Draft && entry.Date < throughExclusive && line.WarehouseId.HasValue
             group line by new { WarehouseId = line.WarehouseId!.Value, line.AccountId }
             into grouped
             select new
@@ -92,7 +92,7 @@ public sealed class PurchaseAccountingReconciliationRepository(AppDbContext cont
             ? await (
                 from line in context.JournalEntryLines.AsNoTracking()
                 join entry in context.JournalEntries.AsNoTracking() on line.JournalEntryId equals entry.Id
-                where entry.Status == JournalEntryStatus.Posted && entry.Date < throughExclusive &&
+                where entry.Status != JournalEntryStatus.Draft && entry.Date < throughExclusive &&
                       line.AccountId == grniAccountId.Value
                 select line.Credit - line.Debit)
                 .SumAsync(cancellationToken)

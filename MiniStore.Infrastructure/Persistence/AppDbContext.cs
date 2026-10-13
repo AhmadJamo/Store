@@ -99,6 +99,7 @@ public class AppDbContext
     public DbSet<LandedCost> LandedCosts => Set<LandedCost>();
     public DbSet<LandedCostComponent> LandedCostComponents => Set<LandedCostComponent>();
     public DbSet<LandedCostAllocation> LandedCostAllocations => Set<LandedCostAllocation>();
+    public DbSet<PurchaseDocumentReversal> PurchaseDocumentReversals => Set<PurchaseDocumentReversal>();
 
     public DbSet<Purchase> Purchases
         => Set<Purchase>();

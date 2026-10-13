@@ -143,6 +143,8 @@ public static class PermissionDefinitions
         new("PurchaseTemplates.Manage", "Manage Purchase Templates", "Purchases"),
         new("LandedCosts.View", "View Landed Costs", "Purchases"),
         new("LandedCosts.Create", "Create and Post Landed Cost", "Purchases"),
+        new("PurchaseDocumentReversals.View", "View Purchase Document Reversals", "Purchases"),
+        new("PurchaseDocumentReversals.Create", "Create and Post Purchase Document Reversal", "Purchases"),
         new("PurchaseAnalytics.View", "View Purchase Analytics", "Purchases"),
         new("PurchaseAccountingReconciliation.View", "View Purchase Accounting Reconciliation", "Purchases"),
         new("PurchaseReturns.View", "View Purchase Returns", "Purchase Returns"),

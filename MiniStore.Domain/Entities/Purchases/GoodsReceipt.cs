@@ -1,6 +1,6 @@
 namespace MiniStore.Domain.Entities;
 
-public enum GoodsReceiptStatus { Draft = 1, Posted = 2, Cancelled = 3 }
+public enum GoodsReceiptStatus { Draft = 1, Posted = 2, Cancelled = 3, Reversed = 4 }
 
 public sealed class GoodsReceipt
 {
@@ -50,6 +50,12 @@ public sealed class GoodsReceipt
         if (Lines.Count == 0) throw new InvalidOperationException("A goods receipt must contain at least one line.");
         if (string.IsNullOrWhiteSpace(userId)) throw new ArgumentException("User is required.");
         Status = GoodsReceiptStatus.Posted; PostedByUserId = userId.Trim(); PostedAtUtc = DateTime.UtcNow;
+    }
+    public void Reverse(string userId)
+    {
+        if (Status != GoodsReceiptStatus.Posted) throw new InvalidOperationException("Only posted goods receipts can be reversed.");
+        if (string.IsNullOrWhiteSpace(userId)) throw new ArgumentException("User is required.");
+        Status = GoodsReceiptStatus.Reversed;
     }
     private void EnsureDraft() { if (Status != GoodsReceiptStatus.Draft) throw new InvalidOperationException("Only draft goods receipts can be changed."); }
 }

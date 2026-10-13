@@ -107,7 +107,7 @@ public sealed class PurchaseAnalyticsService(
             OverdueOrders = openOrders.Count(x => x.ExpectedDate < DateOnly.FromDateTime(DateTime.Today)),
             ReceiptValue = Round(receiptsInPeriod.SelectMany(x => x.Lines).Sum(x => x.ReceivedQuantity * x.UnitCost)),
             VendorBillSpend = Round(billsInPeriod.Sum(x => x.TotalAmount)),
-            LandedCostTotal = Round(allLanded.Where(x => IsInPeriod(x.CostDate, query)).Sum(x => x.TotalAmount)),
+            LandedCostTotal = Round(allLanded.Where(x => x.Status == LandedCostStatus.Posted && IsInPeriod(x.CostDate, query)).Sum(x => x.TotalAmount)),
             OutstandingPayables = Round(postedBills.Sum(x => Math.Max(0, x.TotalAmount - paid.GetValueOrDefault(x.Id) - credited.GetValueOrDefault(x.Id)))),
             MatchExceptionCount = matchesInPeriod.Sum(x => x.Exceptions.Count),
             MatchOverrideCount = matchesInPeriod.Count(x => x.WasOverridden),

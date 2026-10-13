@@ -1,6 +1,6 @@
 namespace MiniStore.Domain.Entities;
 
-public enum SupplierPaymentStatus { Draft = 1, Posted = 2 }
+public enum SupplierPaymentStatus { Draft = 1, Posted = 2, Reversed = 3 }
 
 public sealed class SupplierPayment
 {
@@ -50,6 +50,12 @@ public sealed class SupplierPayment
         if (Lines.Count == 0 || TotalAmount <= 0) throw new InvalidOperationException("Supplier payment total must be greater than zero.");
         if (string.IsNullOrWhiteSpace(userId)) throw new ArgumentException("User is required.");
         Status = SupplierPaymentStatus.Posted; PostedByUserId = userId.Trim(); PostedAtUtc = DateTime.UtcNow;
+    }
+    public void Reverse(string userId)
+    {
+        if (Status != SupplierPaymentStatus.Posted) throw new InvalidOperationException("Only posted supplier payments can be reversed.");
+        if (string.IsNullOrWhiteSpace(userId)) throw new ArgumentException("User is required.");
+        Status = SupplierPaymentStatus.Reversed;
     }
 
     private void EnsureDraft()

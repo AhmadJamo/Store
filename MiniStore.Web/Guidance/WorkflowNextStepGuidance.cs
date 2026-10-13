@@ -15,7 +15,7 @@ public static class WorkflowNextStepGuidance
         "Purchases", "PurchaseReturns", "Suppliers", "SupplierPurchasing", "PurchaseRequests",
         "PurchaseApprovalRules", "PurchaseSourcing", "SupplierQuotations", "PurchaseOrders",
         "GoodsReceipts", "GoodsReceiptReturns", "VendorBills", "SupplierCreditNotes", "SupplierPayments",
-        "PurchaseAgreements", "PurchaseTemplates", "LandedCosts", "PurchaseAccountingReconciliation"
+        "PurchaseAgreements", "PurchaseTemplates", "LandedCosts", "PurchaseDocumentReversals", "PurchaseAccountingReconciliation"
     };
 
     private static readonly HashSet<string> InventoryControllers = new(StringComparer.OrdinalIgnoreCase)
@@ -124,6 +124,11 @@ public static class WorkflowNextStepGuidance
                 "The credit reduced the vendor bill balance; review the remaining payable amount.",
                 "VendorBills.View", Routes(("id", Route("vendorBillId"))));
 
+        if (Matches(message, localize, "Purchase document reversed."))
+            return new(Route("originalController") ?? "PurchaseDocumentReversals", "Details", "View original document",
+                "The original document is preserved and marked reversed; review its final status and audit link.",
+                PurchaseViewPermission(Route("originalController") ?? "PurchaseDocumentReversals"), Routes(("id", Route("originalDocumentId"))));
+
         if (Matches(message, localize, "Purchase created successfully."))
             return new("Purchases", "Details", "Review and post purchase",
                 "Review the saved purchase, then post it to the general ledger.",
@@ -203,7 +208,7 @@ public static class WorkflowNextStepGuidance
     private static bool HasDetails(string controller) => controller is
         "Purchases" or "PurchaseReturns" or "PurchaseRequests" or "PurchaseSourcing" or
         "PurchaseOrders" or "GoodsReceipts" or "GoodsReceiptReturns" or "VendorBills" or
-        "SupplierPayments" or "PurchaseAgreements" or "LandedCosts";
+        "SupplierPayments" or "PurchaseAgreements" or "LandedCosts" or "PurchaseDocumentReversals";
 
     private static string PurchaseViewPermission(string controller) => controller switch
     {

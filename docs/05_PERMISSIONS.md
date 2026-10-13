@@ -110,3 +110,8 @@ The Index and mutation actions enforce these policies server-side. Permission se
 - `SupplierCreditNotes.View` protects posted Supplier Credit Note history and immutable details.
 - `SupplierCreditNotes.Create` permits immediate billed-return inventory and accounting posting from a posted Vendor Bill. It does not grant Vendor Bill creation, payment, warehouse setup or accounting-setup authority.
 
+# PUR-180 controlled-reversal permissions
+
+- `PurchaseDocumentReversals.View`: view reversal history and audit details.
+- `PurchaseDocumentReversals.Create`: create and immediately post a reasoned controlled reversal.
+

@@ -1,6 +1,8 @@
 # Database relationships
 > Source of truth: EF configurations | Last reviewed: 2026-10-13
 
+`PurchaseDocumentReversals` belongs to one tenant. Its original document is a polymorphic `DocumentType + OriginalDocumentId` reference enforced by the application transaction rather than a database foreign key; a tenant-scoped unique index permits only one reversal per original document.
+
 - Tenant → all ERP business settings and documents: required TenantId, Restrict deletion and tenant query filtering. DocumentSequence additionally has one unique row per tenant/document type. Every FK whose dependent and principal both carry tenant ownership appends `TenantId` on both sides; SQL therefore requires the referenced record to belong to the same company.
 
 - ProductStock → Product and Warehouse: required FK, Restrict deletion.

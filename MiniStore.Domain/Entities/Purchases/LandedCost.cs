@@ -2,6 +2,7 @@ namespace MiniStore.Domain.Entities;
 
 public enum LandedCostType { Freight = 1, Customs = 2, Insurance = 3, Other = 4 }
 public enum LandedCostAllocationMethod { ByQuantity = 1, ByReceiptValue = 2 }
+public enum LandedCostStatus { Posted = 1, Reversed = 2 }
 
 public sealed class LandedCost
 {
@@ -11,6 +12,7 @@ public sealed class LandedCost
     public int GoodsReceiptId { get; private set; }
     public int WarehouseId { get; private set; }
     public DateOnly CostDate { get; private set; }
+    public LandedCostStatus Status { get; private set; }
     public string ExternalReference { get; private set; }
     public string NormalizedExternalReference { get; private set; }
     public LandedCostAllocationMethod AllocationMethod { get; private set; }
@@ -35,7 +37,7 @@ public sealed class LandedCost
         CostNumber = number.Trim(); GoodsReceiptId = receiptId; WarehouseId = warehouseId; CostDate = date;
         ExternalReference = externalReference.Trim(); NormalizedExternalReference = NormalizeReference(externalReference);
         AllocationMethod = method; Notes = string.IsNullOrWhiteSpace(notes) ? null : notes.Trim();
-        CreatedByUserId = userId.Trim(); CreatedAtUtc = DateTime.UtcNow;
+        CreatedByUserId = userId.Trim(); CreatedAtUtc = DateTime.UtcNow; Status = LandedCostStatus.Posted;
     }
     public void AddComponent(LandedCostComponent value) { if (Components.Any(x => x.Type == value.Type)) throw new InvalidOperationException("Each landed cost type can appear only once per document."); Components.Add(value); }
     public void AddAllocation(LandedCostAllocation value) { if (Allocations.Any(x => x.GoodsReceiptLineId == value.GoodsReceiptLineId)) throw new InvalidOperationException("Each goods receipt line can be allocated only once per landed cost document."); Allocations.Add(value); }
@@ -44,6 +46,12 @@ public sealed class LandedCost
         if (Components.Count == 0 || TotalAmount <= 0) throw new InvalidOperationException("A landed cost must contain at least one positive component.");
         if (Allocations.Count == 0 || Allocations.Sum(x => x.AllocatedAmount) != TotalAmount) throw new InvalidOperationException("Landed cost allocations must equal the component total.");
         if (CapitalizedAmount + ExpensedAmount != TotalAmount) throw new InvalidOperationException("Capitalized and expensed landed cost amounts must equal the document total.");
+    }
+    public void Reverse(string userId)
+    {
+        if (Status != LandedCostStatus.Posted) throw new InvalidOperationException("Only posted landed costs can be reversed.");
+        if (string.IsNullOrWhiteSpace(userId)) throw new ArgumentException("User is required.");
+        Status = LandedCostStatus.Reversed;
     }
     public static string NormalizeReference(string value)
     {

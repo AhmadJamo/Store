@@ -26,7 +26,7 @@
 
 `docs/PURCHASE_MANAGEMENT_EVOLUTION_PLAN.md` is the approved procure-to-pay evolution plan. It records the legacy direct-purchase boundary, capability gaps, target aggregates, inventory/accounting integration contracts, additive migration safeguards and PUR-000 through PUR-150 vertical slices. Planned purchase types are not implemented unless the matching slice is explicitly marked complete.
 
-`docs/PURCHASE_COMPLETION_ROADMAP_AR_EN.md` is the approved Arabic/English post-PUR-150 purchase plan. PUR-160 reconciliation, PUR-165 derived order closure and PUR-170 Supplier Credit Notes are implemented; it continues with PUR-180 through PUR-280 across controlled reversals, multi-currency, flexible RFQs, split awards, service procurement, bulk vendor prices, automated replenishment, advanced receiving, supplier communication, integrations, analytics and legacy-workflow retirement.
+`docs/PURCHASE_COMPLETION_ROADMAP_AR_EN.md` is the approved Arabic/English post-PUR-150 purchase plan. PUR-160 reconciliation, PUR-165 derived order closure, PUR-170 Supplier Credit Notes and PUR-180 controlled reversal are implemented; it continues with PUR-190 through PUR-280 across multi-currency, flexible RFQs, split awards, service procurement, bulk vendor prices, automated replenishment, advanced receiving, supplier communication, integrations, analytics and legacy-workflow retirement.
 
 `docs/PURCHASE_ARCHITECTURE_ALIGNMENT.md` is the accepted PUR-005 gate. It fixes Supplier compatibility, Purchasing/Inventory/Accounting ownership, derived quantity authorities, staged currency behavior, purchase-first approval boundaries, GRNI, synchronous contracts and deferred event infrastructure before runtime implementation starts.
 
@@ -55,6 +55,7 @@
 | `Entities/Purchases/GoodsReceiptReturn.cs` | immutable receipt-based supplier-return header/lines with frozen quantity, original receipt value and removed inventory cost | PUR-070 return workflow. |
 | `Entities/Purchases/VendorBill.cs` | immutable posted supplier invoice identity and receipt-line allocations with frozen receipt clearing, price, tax and total snapshots | PUR-080 billing workflow. |
 | `Entities/Purchases/SupplierCreditNote.cs` | immutable billed-return header/lines with frozen bill/receipt allocation, tax, current inventory cost and tracking evidence | PUR-170 credit-note workflow. |
+| `Entities/Purchases/PurchaseDocumentReversal.cs` | immutable reasoned reversal identity for receipt, bill, payment and landed-cost documents with retry and opposite-journal evidence | PUR-180 reversal workflow. |
 | `Entities/Purchases/PurchaseMatch.cs` | tenant matching settings plus immutable bill match runs, line exceptions and reasoned override evidence | PUR-090 three-way matching. |
 | `Entities/Purchases/SupplierPayment.cs` | posted supplier-payment aggregate with immutable partial Vendor Bill allocations | PUR-100 payable settlement. |
 | `Entities/Settings/*.cs` | accounting, discount, inventory-policy defaults, centralized `DocumentSequence`, general settings and supported UI language | settings/database/localization docs. |
@@ -84,6 +85,7 @@
 | `Services/Purchases/GoodsReceiptReturnService.cs` | caps returns by the posted, unbilled receipt quantity and atomically coordinates inventory removal, tracking, physical movement and GRNI/PPV accounting | Goods Receipt Return screens. |
 | `Services/Purchases/VendorBillService.cs` | caps receipt-based partial billing, rejects duplicate normalized supplier invoices and atomically clears GRNI, records input tax/PPV and credits supplier payable | Vendor Bill screens. |
 | `Services/Purchases/SupplierCreditNoteService.cs` | caps cumulative billed returns, removes current stock/tracking and atomically reverses payable/input tax/inventory with PPV balancing | Supplier Credit Note screens. |
+| `Services/Purchases/PurchaseDocumentReversalService.cs` | enforces typed downstream dependencies and unchanged valuation, then atomically records a retry-safe reversal, physical/value correction, opposite journal and original-state transition | PUR-180 reversal screens and original document details. |
 | `Services/Purchases/SupplierPaymentService.cs` | calculates outstanding Vendor Bill balances and atomically settles supplier payable against a configured cash/bank payment method | Supplier Payment screens. |
 | `Services/Settings/PurchaseMatchingSettingsService.cs` | administers tenant quantity/price matching tolerances | Settings Purchase Matching screen. |
 | `Services/Catalog/RecipeService.cs` | lists and creates immutable active recipe versions with compatible ingredient units | Recipes controller/views and prepared-product sales. |
@@ -178,6 +180,7 @@ Hierarchical location update (2026-09-30): StorageLocation retains its identity 
 | `Repositories/Purchases/GoodsReceiptReturnRepository.cs` | tenant-filtered receipt-return reads and cumulative returned-quantity evidence | PUR-070 return service. |
 | `Repositories/Purchases/VendorBillRepository.cs` | tenant-filtered bill reads, cumulative receipt-line billing and active normalized invoice duplicate checks | PUR-080 bill service. |
 | `Repositories/Purchases/SupplierCreditNoteRepository.cs` | tenant-filtered credit history, per-bill documents and credited-amount aggregates used by payment availability | PUR-170 credit and payment services. |
+| `Repositories/Purchases/PurchaseDocumentReversalRepository.cs` | tenant-filtered reversal history plus original-document and request-key uniqueness lookups | PUR-180 reversal service. |
 | `Repositories/Purchases/PurchaseMatchRepository.cs` | persists match runs/exceptions and the singleton tenant tolerance settings | PUR-090 matching and settings services. |
 | `Repositories/Purchases/SupplierPaymentRepository.cs` | reads payment history and aggregates cumulative allocations by Vendor Bill | PUR-100 payment service. |
 | `Authorization/PermissionService.cs` | permission check implementation | SaleService. |
@@ -206,6 +209,7 @@ Hierarchical location update (2026-09-30): StorageLocation retains its identity 
 | `Controllers/Purchases/GoodsReceiptReturnsController.cs`, `Views/GoodsReceiptReturns/*.cshtml` | permission-protected receipt-based supplier return capture, history and detail | PUR-070 return service. |
 | `Controllers/Purchases/VendorBillsController.cs`, `Views/VendorBills/*.cshtml` | permission-protected receipt allocation, immediate posting, history and immutable bill detail | PUR-080 bill service. |
 | `Controllers/Purchases/SupplierCreditNotesController.cs`, `Views/SupplierCreditNotes/*.cshtml` | permission-protected responsive billed-return capture, immediate posting, history and immutable detail | PUR-170 credit-note service. |
+| `Controllers/Purchases/PurchaseDocumentReversalsController.cs`, `Views/PurchaseDocumentReversals/*.cshtml` | permission-protected responsive reversal confirmation, history and audit detail | PUR-180 reversal service. |
 | `Controllers/Purchases/SupplierPaymentsController.cs`, `Views/SupplierPayments/*.cshtml` | permission-protected partial allocation, immediate posting, payment history and immutable detail | PUR-100 payment service. |
 | `Controllers/Purchases/{PurchaseAgreements,PurchaseTemplates}Controller.cs`, matching views | permission-split agreement creation/activation/release and repeat-template creation/generation | PUR-120 services. |
 | `Controllers/Purchases/LandedCostsController.cs`, `Views/LandedCosts/*` | permission-split landed-cost history, allocation capture and immutable detail | PUR-130 service. |

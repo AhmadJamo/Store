@@ -7,6 +7,8 @@ PUR-165 adds nullable current-closure evidence to `PurchaseOrders` and tenant-ow
 
 PUR-170 adds tenant-owned `SupplierCreditNotes` and `SupplierCreditNoteLines`. Headers reference Vendor Bill, Purchase Order, Supplier and Warehouse; lines reference the billed line, receipt line, product and frozen input-tax account. Tenant-composite foreign keys prevent cross-company allocation. Migration `AddSupplierCreditNotes` is additive and applied to the local `MiniStoreDb`.
 
+PUR-180 adds tenant-owned `PurchaseDocumentReversals` with unique company-scoped reversal number, original document type/id and idempotency key. The polymorphic original reference intentionally has no cross-table foreign key; the application resolves and locks the typed source inside a Serializable transaction. `LandedCosts.Status` is added and existing rows are backfilled Posted. Migration `20261013024801_AddPurchaseDocumentReversals` is applied to local `MiniStoreDb`.
+
 WMS-050 adds tenant-owned `InventoryReservations` and `InventoryReservationLines`. Source identity is unique per tenant, quantities are positive, relationships are tenant-safe, exact and Unassigned dimensions are duplicate-protected, and rowversions protect concurrent reservation changes. Migrations `AddInventoryReservations` and `AddUnassignedReservationUniqueness` are additive and are applied to `AHMAD/MiniStoreDb`.
 
 WMS-060 adds tenant-owned `InventoryAdjustments` and `InventoryAdjustmentLines`, tenant-unique document numbers, workflow rowversion, warehouse/location relationships and one product line per document. Migration `AddInventoryAdjustments` is additive and applied to `AHMAD/MiniStoreDb`.

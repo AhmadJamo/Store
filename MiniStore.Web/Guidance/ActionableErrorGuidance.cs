@@ -13,7 +13,7 @@ public static class ActionableErrorGuidance
         "Purchases", "PurchaseReturns", "SupplierPurchasing", "PurchaseRequests",
         "PurchaseApprovalRules", "PurchaseSourcing", "SupplierQuotations", "PurchaseOrders",
         "GoodsReceipts", "GoodsReceiptReturns", "VendorBills", "SupplierCreditNotes", "SupplierPayments",
-        "PurchaseAgreements", "PurchaseTemplates", "LandedCosts", "PurchaseAnalytics"
+        "PurchaseAgreements", "PurchaseTemplates", "LandedCosts", "PurchaseDocumentReversals", "PurchaseAnalytics"
     };
 
     public static ActionableErrorLink? Resolve(

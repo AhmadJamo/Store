@@ -4,7 +4,7 @@
 
 The approved numbered Arabic/English delivery sequence is maintained in `MASTER_IMPLEMENTATION_ROADMAP_AR_EN.md`. Detailed working status, business rules and the rolling suggestion queue remain in `ARABIC_SHARED_ROADMAP.md`. This file remains the concise technical backlog.
 
-The PUR-000 through PUR-170 purchase evolution is implemented. The approved continuation is maintained in `PURCHASE_COMPLETION_ROADMAP_AR_EN.md`. Work continues with PUR-180 controlled posted-document reversal, then follows the dependency-ordered slices through PUR-280. Incoming customer-management and sales requirements must be reconciled with master-roadmap steps 7 through 11 before implementation.
+The PUR-000 through PUR-180 purchase evolution is implemented. The approved continuation is maintained in `PURCHASE_COMPLETION_ROADMAP_AR_EN.md`. Work continues with PUR-190 multi-currency purchasing, then follows the dependency-ordered slices through PUR-280. Incoming customer-management and sales requirements must be reconciled with master-roadmap steps 7 through 11 before implementation.
 
 - [x] PUR-000 complete purchase architecture review, legacy compatibility boundary, migration strategy and vertical-slice roadmap.
 - [x] PUR-005 fix context ownership, quantity authority, staged currency, approval and GRNI boundaries before runtime implementation.
@@ -29,7 +29,7 @@ The PUR-000 through PUR-170 purchase evolution is implemented. The approved cont
 - [x] PUR-160 add inventory-to-GL and GRNI reconciliation and close the remaining PUR-065 reporting gap.
 - [x] PUR-165 add derived Purchase Order closure, controlled remaining-quantity closure and permission-gated reopen.
 - [x] PUR-170 add Supplier Credit Notes for already billed receipt returns.
-- [ ] PUR-180 add controlled posted-document reversal and correction.
+- [x] PUR-180 add controlled reversal for posted Goods Receipts, Vendor Bills, Supplier Payments and Landed Costs.
 - [ ] PUR-190 add multi-currency purchase, receipt, bill and payment accounting.
 - [ ] PUR-200 add a policy-controlled direct RFQ workspace and fast path.
 - [ ] PUR-210 add line-level and split supplier awards.
@@ -99,7 +99,7 @@ The PUR-000 through PUR-170 purchase evolution is implemented. The approved cont
 - Implemented WMS-010 hierarchical location metadata, barcode, sequence, tree ordering, warehouse-filtered parent selection, operational capabilities, edit workflow and cycle/same-warehouse validation. Putaway/transfers/relocations enforce receive/pick capabilities. Its additive migration is applied to `AHMAD/MiniStoreDb`; authenticated UI smoke remains because no login secret is stored in the repository.
 
 ## In Progress
-- PUR-170 is implemented. Next: PUR-180 controlled posted-document reversal and correction.
+- PUR-180 is implemented. Next: PUR-190 multi-currency purchasing.
 - WMS delivery is paused by product-owner direction. Its remaining items stay documented in `WMS_EVOLUTION_PLAN.md` and resume after the current purchase-management priority.
 - WMS-015A/B/C/D typed definitions, values, ProductTemplate grouping and controlled selection-based variant generation are implemented. Product remains the SKU; proceed to the next WMS slice.
 - WMS-020A physical StockMovement kernel is implemented for idempotent Putaway/Relocation dual-write. Next: authenticated pilot smoke test and WMS-030 transfer/transit integration; do not cut over legacy reads yet.
@@ -122,7 +122,7 @@ The PUR-000 through PUR-170 purchase evolution is implemented. The approved cont
 - Duplicate `PermissionsCodeExport` tree can drift.
 
 ## Accounting Gaps
-- Sales/purchase posting, immutable posted sales/purchase returns and fiscal-period enforcement are implemented; provisional-negative variance settles during purchase posting. Mixed-rate product tax, generalized reversals and financial statements remain pending.
+- Sales/purchase posting, immutable posted returns, fiscal-period enforcement and controlled reversal for four purchase document types are implemented; provisional-negative variance settles during purchase posting. Mixed-rate product tax, reversal coverage outside the current purchase scope and financial statements remain pending.
 
 ## Testing Gaps
 - Security regression executable checks complete entity classification and composite tenant relationships. A live two-company SQL mutation was rejected by the database; comprehensive repository HTTP/database integration and penetration tests remain outstanding.

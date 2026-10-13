@@ -1,6 +1,6 @@
 namespace MiniStore.Domain.Entities;
 
-public enum VendorBillStatus { Draft = 1, Posted = 2, Cancelled = 3 }
+public enum VendorBillStatus { Draft = 1, Posted = 2, Cancelled = 3, Reversed = 4 }
 
 public sealed class VendorBill
 {
@@ -55,6 +55,12 @@ public sealed class VendorBill
         if (Lines.Count == 0) throw new InvalidOperationException("A vendor bill must contain at least one line.");
         if (string.IsNullOrWhiteSpace(userId)) throw new ArgumentException("User is required.");
         Status = VendorBillStatus.Posted; PostedByUserId = userId.Trim(); PostedAtUtc = DateTime.UtcNow;
+    }
+    public void Reverse(string userId)
+    {
+        if (Status != VendorBillStatus.Posted) throw new InvalidOperationException("Only posted vendor bills can be reversed.");
+        if (string.IsNullOrWhiteSpace(userId)) throw new ArgumentException("User is required.");
+        Status = VendorBillStatus.Reversed;
     }
 
     public static string NormalizeInvoiceNumber(string value) => string.Concat((value ?? string.Empty).Trim().ToUpperInvariant().Where(char.IsLetterOrDigit));

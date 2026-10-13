@@ -25,4 +25,17 @@ public class JournalEntry
         if (Lines.Sum(x => x.Debit) != Lines.Sum(x => x.Credit)) throw new InvalidOperationException("Total debit must equal total credit.");
         Status = JournalEntryStatus.Posted;
     }
+    public JournalEntry CreateReversal(string entryNumber, DateTime date, string description, string sourceType, string sourceReference)
+    {
+        if (Status != JournalEntryStatus.Posted) throw new InvalidOperationException("Only a posted journal entry can be reversed.");
+        var reversal = new JournalEntry(entryNumber, date, description, sourceType, sourceReference)
+        {
+            ReversalOfEntryId = Id
+        };
+        foreach (var line in Lines)
+            reversal.AddLine(new JournalEntryLine(line.AccountId, line.Credit, line.Debit, line.BranchId, line.WarehouseId, line.Description));
+        reversal.Post();
+        Status = JournalEntryStatus.Reversed;
+        return reversal;
+    }
 }

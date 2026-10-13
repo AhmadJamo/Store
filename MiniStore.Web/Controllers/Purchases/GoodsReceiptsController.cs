@@ -6,7 +6,7 @@ using MiniStore.Web.Authorization;
 
 namespace MiniStore.Web.Controllers;
 
-public sealed class GoodsReceiptsController(GoodsReceiptService service, IStringLocalizer<SharedResource> localizer) : Controller
+public sealed class GoodsReceiptsController(GoodsReceiptService service, PurchaseDocumentReversalService reversalService, IStringLocalizer<SharedResource> localizer) : Controller
 {
     [HttpGet]
     [PermissionAuthorize("GoodsReceipts.View")]
@@ -21,6 +21,7 @@ public sealed class GoodsReceiptsController(GoodsReceiptService service, IString
     public async Task<IActionResult> Details(int id)
     {
         var receipt = await service.GetAsync(id);
+        ViewBag.Reversal = await reversalService.GetByOriginalAsync(MiniStore.Domain.Entities.PurchaseDocumentType.GoodsReceipt, id);
         return receipt is null ? NotFound() : View(receipt);
     }
     [HttpGet]

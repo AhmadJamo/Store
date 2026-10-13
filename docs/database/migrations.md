@@ -1,6 +1,10 @@
 # Migrations and seeding
 > Last reviewed: 2026-10-13
 
+## 20261013024801_AddPurchaseDocumentReversals
+
+Creates the empty tenant-owned `PurchaseDocumentReversals` audit table with tenant-unique reversal number, request key and original type/id. Adds `LandedCosts.Status` and backfills existing records to Posted. The migration was applied successfully to local `MiniStoreDb` on 2026-10-13.
+
 ## 20261012122525_AddPurchaseOrderDerivedClosure
 
 Adds nullable current closure type/reason/actor/time columns to existing Purchase Orders and creates the empty tenant-owned `PurchaseOrderLifecycleHistories` table with a tenant-composite cascade relationship. It performs no historical inference or backfill. The model has no pending changes and the migration was applied successfully to the local `MiniStoreDb` on 2026-10-12.

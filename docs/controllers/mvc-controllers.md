@@ -1,6 +1,8 @@
 # MVC controllers
 > Status: IMPLEMENTED | Last reviewed: 2026-10-13
 
+`PurchaseDocumentReversalsController` provides permission-separated history/detail and antiforgery-protected creation for PUR-180. Successful posting links back to the preserved original document; errors remain localized and dependency-safe.
+
 | Controller | Actions/views | Authorization and dependencies |
 |---|---|---|
 | AccountController | Login, Register, Logout, AccessDenied | Login issues a validated tenant claim and redirects resolved companies to Dashboard; an already-authenticated Login request redirects instead of showing the login form. Configurable rate-limited registration atomically creates company owner, membership, tenant Admin assignment and trial. |

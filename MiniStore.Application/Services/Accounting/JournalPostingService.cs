@@ -43,4 +43,20 @@ public sealed class JournalPostingService(
         await journalEntryRepository.AddAsync(entry);
         return entry;
     }
+
+    public async Task<JournalEntry> ReverseAsync(string originalSourceType, string originalSourceReference,
+        string reversalNumber, DateTime reversalDate, string reason)
+    {
+        await fiscalPeriods.EnsurePostingAllowedAsync(reversalDate);
+        var original = await journalEntryRepository.GetBySourceAsync(originalSourceType, originalSourceReference)
+            ?? throw new InvalidOperationException("The original accounting entry was not found.");
+        var reversalSourceType = $"{originalSourceType}Reversal";
+        if (await journalEntryRepository.ExistsForSourceAsync(reversalSourceType, reversalNumber))
+            throw new InvalidOperationException("This document reversal has already been posted to accounting.");
+        var entry = original.CreateReversal(
+            await documentNumbers.GenerateAsync(DocumentNumberType.JournalEntry, reversalDate), reversalDate,
+            $"Reversal {reversalNumber}: {reason}", reversalSourceType, reversalNumber);
+        await journalEntryRepository.AddAsync(entry);
+        return entry;
+    }
 }
