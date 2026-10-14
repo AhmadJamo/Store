@@ -50,7 +50,8 @@ public class WarehouseService
             AllowPosSales = warehouse.AllowPosSales,
             EnforceLocationCapacity = warehouse.EnforceLocationCapacity,
             RequireSourceLocationForTransfers = warehouse.RequireSourceLocationForTransfers,
-            RequireDestinationLocationForTransfers = warehouse.RequireDestinationLocationForTransfers
+            RequireDestinationLocationForTransfers = warehouse.RequireDestinationLocationForTransfers,
+            PurchaseReceivingRoute = warehouse.PurchaseReceivingRoute
         }).ToList();
     }
 
@@ -74,7 +75,8 @@ public class WarehouseService
             AllowPosSales = warehouse.AllowPosSales,
             EnforceLocationCapacity = warehouse.EnforceLocationCapacity,
             RequireSourceLocationForTransfers = warehouse.RequireSourceLocationForTransfers,
-            RequireDestinationLocationForTransfers = warehouse.RequireDestinationLocationForTransfers
+            RequireDestinationLocationForTransfers = warehouse.RequireDestinationLocationForTransfers,
+            PurchaseReceivingRoute = warehouse.PurchaseReceivingRoute
         };
     }
 
@@ -104,7 +106,8 @@ public class WarehouseService
             dto.AllowPosSales,
             dto.EnforceLocationCapacity,
             dto.RequireSourceLocationForTransfers,
-            dto.RequireDestinationLocationForTransfers);
+            dto.RequireDestinationLocationForTransfers,
+            dto.PurchaseReceivingRoute);
 
         await _warehouseRepository.AddAsync(warehouse);
 
@@ -148,7 +151,8 @@ public class WarehouseService
             dto.AllowPosSales,
             dto.EnforceLocationCapacity,
             dto.RequireSourceLocationForTransfers,
-            dto.RequireDestinationLocationForTransfers);
+            dto.RequireDestinationLocationForTransfers,
+            dto.PurchaseReceivingRoute);
 
         await _warehouseRepository.SaveChangesAsync();
     }

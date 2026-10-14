@@ -40,9 +40,11 @@ public sealed class GoodsReceiptsController(GoodsReceiptService service, Purchas
         try
         {
             var id = await service.CreateAndPostAsync(dto);
+            var receipt = await service.GetAsync(id);
             TempData["NotificationType"] = "success";
-            TempData["NotificationMessage"] = localizer["Goods receipt posted."].Value;
-            return RedirectToAction("Details", "PurchaseOrders", new { id = dto.PurchaseOrderId });
+            TempData["NotificationMessage"] = localizer[receipt?.Status == MiniStore.Domain.Entities.GoodsReceiptStatus.AwaitingInspection
+                ? "Goods received and awaiting quality inspection." : "Goods receipt posted."].Value;
+            return RedirectToAction(nameof(Details), new { id });
         }
         catch (Exception exception) when (exception is ArgumentException or InvalidOperationException)
         {
@@ -105,8 +107,10 @@ public sealed class GoodsReceiptsController(GoodsReceiptService service, Purchas
         try
         {
             await service.PostDraftAsync(id);
+            var receipt = await service.GetAsync(id);
             TempData["NotificationType"] = "success";
-            TempData["NotificationMessage"] = localizer["Goods receipt posted."].Value;
+            TempData["NotificationMessage"] = localizer[receipt?.Status == MiniStore.Domain.Entities.GoodsReceiptStatus.AwaitingInspection
+                ? "Goods received and awaiting quality inspection." : "Goods receipt posted."].Value;
             return RedirectToAction(nameof(Details), new { id });
         }
         catch (Exception exception) when (exception is ArgumentException or InvalidOperationException)
@@ -115,5 +119,42 @@ public sealed class GoodsReceiptsController(GoodsReceiptService service, Purchas
             TempData["NotificationMessage"] = localizer[exception.Message].Value;
             return RedirectToAction(nameof(Scan), new { id });
         }
+    }
+
+    [HttpPost, ValidateAntiForgeryToken, PermissionAuthorize("GoodsReceipts.Inspect")]
+    public async Task<IActionResult> Inspect(InspectGoodsReceiptDto input)
+    {
+        try
+        {
+            await service.InspectAsync(input);
+            var receipt = await service.GetAsync(input.GoodsReceiptId);
+            TempData["NotificationType"] = "success";
+            TempData["NotificationMessage"] = localizer[receipt?.Status == MiniStore.Domain.Entities.GoodsReceiptStatus.QualityRejected
+                ? "Quality inspection completed with no accepted quantity."
+                : "Quality inspection completed and awaiting storage."].Value;
+        }
+        catch (Exception exception) when (exception is ArgumentException or InvalidOperationException)
+        {
+            TempData["NotificationType"] = "danger";
+            TempData["NotificationMessage"] = localizer[exception.Message].Value;
+        }
+        return RedirectToAction(nameof(Details), new { id = input.GoodsReceiptId });
+    }
+
+    [HttpPost, ValidateAntiForgeryToken, PermissionAuthorize("GoodsReceipts.PutAway")]
+    public async Task<IActionResult> PutAway(int id)
+    {
+        try
+        {
+            await service.PutAwayAsync(id);
+            TempData["NotificationType"] = "success";
+            TempData["NotificationMessage"] = localizer["Quality-approved goods stored and receipt posted."].Value;
+        }
+        catch (Exception exception) when (exception is ArgumentException or InvalidOperationException)
+        {
+            TempData["NotificationType"] = "danger";
+            TempData["NotificationMessage"] = localizer[exception.Message].Value;
+        }
+        return RedirectToAction(nameof(Details), new { id });
     }
 }

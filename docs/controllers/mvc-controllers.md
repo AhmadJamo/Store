@@ -1,5 +1,5 @@
 # MVC controllers
-> Status: IMPLEMENTED | Last reviewed: 2026-10-13
+> Status: IMPLEMENTED | Last reviewed: 2026-10-14
 
 `PurchaseDocumentReversalsController` provides permission-separated history/detail and antiforgery-protected creation for PUR-180. Successful posting links back to the preserved original document; errors remain localized and dependency-safe.
 
@@ -30,6 +30,7 @@
 | PurchaseSourcing | Index/Details/Create | PurchaseSourcing.View/Create; Create binds the sourcing page's `Form` prefix before validating the approved Purchase Request and invited suppliers. |
 | SupplierQuotations | Create/Comparison/Award | SupplierQuotations.Create/View/Award; Create and Award bind their nested `Form` commands. Award validates exact per-line supplier quantities/reasons, records the immutable decision once and returns the comparison with errors without losing input. |
 | PurchaseOrders | Index/Details/CreateFromAward/Approve/Confirm/Cancel/CloseRemaining/Reopen | State-specific permissions; close remaining requires fully settled received quantities plus reason, while reopen has a separate permission and accepts only a reasoned remaining-quantity closure. |
+| GoodsReceipts | Index/Details/Create/CreateScanDraft/Scan/RecordScan/PostDraft/Inspect/PutAway | View/Create/Inspect/PutAway permissions are separate. The Application service freezes the warehouse route, holds staged receipts outside stock through quality inspection, then posts only accepted quantity during storage. |
 | PurchaseServiceAcceptances | Index/Details/Create | View/Create permissions are separate; creation accepts only open service-completion lines on a confirmed Purchase Order and produces no inventory or accounting mutation. |
 | VendorBills | Index/Details/Create/Approve/ApproveOverride/Post/DownloadAttachment | Entry, normal approval, match override, accounting posting and visibility/download use distinct permissions; only Approved may post. |
 | SupplierCreditNotes | Index/Details/Create | SupplierCreditNotes.View/Create; Create binds billed-line quantities, revalidates cumulative credit and current stock, then atomically posts inventory/tracking/movement and payable/tax/inventory/PPV accounting effects. |

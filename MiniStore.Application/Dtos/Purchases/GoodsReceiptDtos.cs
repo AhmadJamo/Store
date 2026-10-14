@@ -5,6 +5,7 @@ namespace MiniStore.Application.DTOs.Purchases;
 public sealed class GoodsReceiptCreatePageDto
 {
     public PurchaseOrderDto? PurchaseOrder { get; init; }
+    public PurchaseReceivingRoute ReceivingRoute { get; init; } = PurchaseReceivingRoute.OneStep;
     public CreateGoodsReceiptDto Form { get; init; } = new();
     public List<GoodsReceiptRemainingLineDto> RemainingLines { get; init; } = [];
 }
@@ -82,19 +83,47 @@ public sealed class GoodsReceiptDto
     public DateOnly ExchangeRateDate { get; init; }
     public string ExchangeRateSource { get; init; } = string.Empty;
     public GoodsReceiptStatus Status { get; init; }
+    public PurchaseReceivingRoute ReceivingRoute { get; init; }
+    public string? InspectedByUserId { get; init; }
+    public DateTime? InspectedAtUtc { get; init; }
+    public string? InspectionNotes { get; init; }
     public string? Notes { get; init; }
     public List<GoodsReceiptPostedLineDto> Lines { get; init; } = [];
 }
 public sealed class GoodsReceiptPostedLineDto
 {
+    public int Id { get; init; }
     public string ProductCode { get; init; } = string.Empty;
     public string ProductName { get; init; } = string.Empty;
     public string UnitName { get; init; } = string.Empty;
     public decimal ReceivedQuantity { get; init; }
+    public decimal DeliveredQuantity { get; init; }
+    public decimal AcceptedQuantity { get; init; }
+    public decimal RejectedQuantity { get; init; }
+    public decimal DamagedQuantity { get; init; }
+    public decimal ShortQuantity { get; init; }
+    public string? DiscrepancyReason { get; init; }
     public decimal StockQuantity { get; init; }
     public decimal UnitCost { get; init; }
     public string? LotNumber { get; init; }
     public string? SerialNumbers { get; init; }
     public DateOnly? ManufactureDate { get; init; }
     public DateOnly? ExpirationDate { get; init; }
+}
+
+public sealed class InspectGoodsReceiptDto
+{
+    public int GoodsReceiptId { get; set; }
+    public string? Notes { get; set; }
+    public List<InspectGoodsReceiptLineDto> Lines { get; set; } = [];
+}
+
+public sealed class InspectGoodsReceiptLineDto
+{
+    public int GoodsReceiptLineId { get; set; }
+    public decimal AcceptedQuantity { get; set; }
+    public decimal RejectedQuantity { get; set; }
+    public decimal DamagedQuantity { get; set; }
+    public decimal ShortQuantity { get; set; }
+    public string? Reason { get; set; }
 }

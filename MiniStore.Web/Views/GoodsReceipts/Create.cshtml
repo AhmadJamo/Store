@@ -1,6 +1,40 @@
 @model MiniStore.Application.DTOs.Purchases.GoodsReceiptCreatePageDto
 @inject Microsoft.Extensions.Localization.IStringLocalizer<MiniStore.Web.SharedResource> Localizer
-@{ ViewData["Title"] = Localizer["Receive goods"]; var numberSettings = await GeneralSettingsService.GetAsync(); }
-<div class="d-flex justify-content-between"><div><h2>@Localizer["Receive goods"]</h2><p class="text-muted">@Model.PurchaseOrder!.OrderNumber</p></div><a asp-controller="PurchaseOrders" asp-action="Details" asp-route-id="@Model.PurchaseOrder.Id" class="btn btn-outline-secondary">@Localizer["Back"]</a></div>
-<div class="card card-body my-3"><div class="d-flex flex-wrap justify-content-between align-items-center gap-3"><div><h5 class="mb-1">@Localizer["Barcode-assisted receiving"]</h5><p class="text-muted mb-0">@Localizer["Create a draft, scan each physical item, then review and post the receipt."]</p></div><form asp-action="CreateScanDraft" method="post"><input type="hidden" name="PurchaseOrderId" value="@Model.PurchaseOrder.Id"/><input type="hidden" name="ReceiptDate" value="@DateOnly.FromDateTime(DateTime.Today).ToString("yyyy-MM-dd")"/><button class="btn btn-outline-primary">@Localizer["Start barcode receiving"]</button></form></div></div>
-<form asp-action="Create" method="post"><input type="hidden" asp-for="Form.PurchaseOrderId"/><div asp-validation-summary="ModelOnly" class="text-danger"></div><div class="row g-3 mb-3"><div class="col-md-4"><label class="form-label">@Localizer["Receipt date"]</label><input asp-for="Form.ReceiptDate" type="date" class="form-control"/></div><div class="col-md-8"><label class="form-label">@Localizer["Notes"]</label><input asp-for="Form.Notes" class="form-control" maxlength="1000"/></div></div><p class="text-muted">@Localizer["Enter only quantities physically received. Posting increases inventory and cannot be edited."]</p><table class="table"><thead><tr><th>@Localizer["Product"]</th><th>@Localizer["Remaining quantity"]</th><th>@Localizer["Receive quantity"]</th><th>@Localizer["Lot number"]</th><th>@Localizer["Serial numbers"]</th><th>@Localizer["Manufacture date"]</th><th>@Localizer["Expiration date"]</th></tr></thead><tbody>@for(var i=0;i<Model.RemainingLines.Count;i++){var line=Model.RemainingLines[i];<tr><td>@line.ProductCode — @line.ProductName<input type="hidden" asp-for="Form.Lines[i].PurchaseOrderLineId" value="@line.PurchaseOrderLineId"/></td><td>@line.RemainingQuantity.ToQuantityDisplay(numberSettings) @line.UnitName</td><td><input asp-for="Form.Lines[i].ReceivedQuantity" value="@Model.Form.Lines[i].ReceivedQuantity.ToQuantityInput(numberSettings)" class="form-control" min="0" max="@line.RemainingQuantity.ToInputNumber()" step="0.000001"/></td><td><input asp-for="Form.Lines[i].LotNumber" class="form-control" maxlength="100"/></td><td><input asp-for="Form.Lines[i].SerialNumbers" class="form-control" maxlength="2000"/></td><td><input asp-for="Form.Lines[i].ManufactureDate" type="date" class="form-control"/></td><td><input asp-for="Form.Lines[i].ExpirationDate" type="date" class="form-control"/></td></tr>}</tbody></table><button class="btn btn-primary">@Localizer["Post goods receipt"]</button></form>
+@{
+    ViewData["Title"] = Localizer["Receive goods"];
+    var numberSettings = await GeneralSettingsService.GetAsync();
+    var staged = Model.ReceivingRoute == MiniStore.Domain.Entities.PurchaseReceivingRoute.ReceiveInspectStore;
+}
+<div class="d-flex flex-wrap justify-content-between gap-2">
+    <div><h2>@Localizer["Receive goods"]</h2><p class="text-muted">@Model.PurchaseOrder!.OrderNumber</p></div>
+    <a asp-controller="PurchaseOrders" asp-action="Details" asp-route-id="@Model.PurchaseOrder.Id" class="btn btn-outline-secondary align-self-start">@Localizer["Back"]</a>
+</div>
+<div class="alert alert-info">@(staged ? Localizer["This warehouse receives goods into quality inspection. Inventory and accounting update only after approval and storage."] : Localizer["This warehouse receives goods directly into stock and posts accounting immediately."])</div>
+<div class="card card-body my-3"><div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+    <div><h5 class="mb-1">@Localizer["Barcode-assisted receiving"]</h5><p class="text-muted mb-0">@(staged ? Localizer["Create a draft, scan each physical item, then send the receipt to quality inspection."] : Localizer["Create a draft, scan each physical item, then review and post the receipt."])</p></div>
+    <form asp-action="CreateScanDraft" method="post"><input type="hidden" name="PurchaseOrderId" value="@Model.PurchaseOrder.Id" /><input type="hidden" name="ReceiptDate" value="@DateOnly.FromDateTime(DateTime.Today).ToString("yyyy-MM-dd")" /><button class="btn btn-outline-primary">@Localizer["Start barcode receiving"]</button></form>
+</div></div>
+<form asp-action="Create" method="post">
+    <input type="hidden" asp-for="Form.PurchaseOrderId" />
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="row g-3 mb-3"><div class="col-md-4"><label class="form-label">@Localizer["Receipt date"]</label><input asp-for="Form.ReceiptDate" type="date" class="form-control" /></div><div class="col-md-8"><label class="form-label">@Localizer["Notes"]</label><input asp-for="Form.Notes" class="form-control" maxlength="1000" /></div></div>
+    <p class="text-muted">@Localizer["Enter only quantities physically received."]</p>
+    <div class="row g-3">
+        @for (var i = 0; i < Model.RemainingLines.Count; i++)
+        {
+            var line = Model.RemainingLines[i];
+            <div class="col-12"><div class="card card-body">
+                <input type="hidden" asp-for="Form.Lines[i].PurchaseOrderLineId" value="@line.PurchaseOrderLineId" />
+                <div class="d-flex flex-wrap justify-content-between gap-2 mb-3"><strong>@line.ProductCode — @line.ProductName</strong><span class="badge text-bg-light">@Localizer["Remaining quantity"]: @line.RemainingQuantity.ToQuantityDisplay(numberSettings) @line.UnitName</span></div>
+                <div class="row g-3">
+                    <div class="col-md-3"><label class="form-label">@Localizer["Receive quantity"]</label><input asp-for="Form.Lines[i].ReceivedQuantity" value="@Model.Form.Lines[i].ReceivedQuantity.ToQuantityInput(numberSettings)" class="form-control" min="0" max="@line.RemainingQuantity.ToInputNumber()" step="0.000001" /></div>
+                    <div class="col-md-3"><label class="form-label">@Localizer["Lot number"]</label><input asp-for="Form.Lines[i].LotNumber" class="form-control" maxlength="100" /></div>
+                    <div class="col-md-6"><label class="form-label">@Localizer["Serial numbers"]</label><input asp-for="Form.Lines[i].SerialNumbers" class="form-control" maxlength="2000" /></div>
+                    <div class="col-md-3"><label class="form-label">@Localizer["Manufacture date"]</label><input asp-for="Form.Lines[i].ManufactureDate" type="date" class="form-control" /></div>
+                    <div class="col-md-3"><label class="form-label">@Localizer["Expiration date"]</label><input asp-for="Form.Lines[i].ExpirationDate" type="date" class="form-control" /></div>
+                </div>
+            </div></div>
+        }
+    </div>
+    <button class="btn btn-primary mt-3">@(staged ? Localizer["Receive and send to inspection"] : Localizer["Post goods receipt"])</button>
+</form>

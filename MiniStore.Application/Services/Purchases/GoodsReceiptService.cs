@@ -44,6 +44,7 @@ public sealed class GoodsReceiptService(
     {
         var order = await orders.GetByIdAsync(purchaseOrderId);
         if (order is null) return new GoodsReceiptCreatePageDto { Form = form ?? new CreateGoodsReceiptDto { PurchaseOrderId = purchaseOrderId } };
+        var warehouse = await warehouses.GetByIdAsync(order.WarehouseId);
         var received = await GetPostedQuantitiesAsync(order.Id);
         var remainingLines = order.Lines
             .Where(x => x.BillingPolicySnapshot == PurchaseBillingPolicy.ReceivedQuantity)
@@ -58,6 +59,7 @@ public sealed class GoodsReceiptService(
         return new GoodsReceiptCreatePageDto
         {
             PurchaseOrder = MapOrder(order),
+            ReceivingRoute = warehouse?.PurchaseReceivingRoute ?? PurchaseReceivingRoute.OneStep,
             Form = form ?? new CreateGoodsReceiptDto
             {
                 PurchaseOrderId = order.Id,
@@ -76,6 +78,9 @@ public sealed class GoodsReceiptService(
                 ?? throw new InvalidOperationException("Purchase order was not found.");
             if (order.Status != PurchaseOrderStatus.Confirmed)
                 throw new InvalidOperationException("Only confirmed purchase orders can be received.");
+            await EnsureNoActiveReceiptAsync(order.Id);
+            var warehouse = await warehouses.GetByIdAsync(order.WarehouseId)
+                ?? throw new InvalidOperationException("Receipt warehouse was not found.");
             var posted = await GetPostedQuantitiesAsync(order.Id);
             var receivableLines = order.Lines.Where(x => x.BillingPolicySnapshot == PurchaseBillingPolicy.ReceivedQuantity).ToList();
             if (receivableLines.Count == 0 || receivableLines.All(x => posted.GetValueOrDefault(x.Id) >= x.OrderedQuantity))
@@ -84,7 +89,8 @@ public sealed class GoodsReceiptService(
             receipt = new GoodsReceipt(
                 await numbers.GenerateAsync(DocumentNumberType.GoodsReceipt, dto.ReceiptDate.ToDateTime(TimeOnly.MinValue)),
                 order.Id, order.WarehouseId, dto.ReceiptDate, dto.Notes, currentUser.UserId,
-                order.CurrencyCode, rate.CompanyCurrencyCode, rate.Rate, rate.RateDate, rate.Source);
+                order.CurrencyCode, rate.CompanyCurrencyCode, rate.Rate, rate.RateDate, rate.Source,
+                warehouse.PurchaseReceivingRoute);
             await receipts.AddAsync(receipt);
         });
         return receipt!.Id;
@@ -200,6 +206,7 @@ public sealed class GoodsReceiptService(
                 ?? throw new InvalidOperationException("Purchase order was not found.");
             if (order.Status != PurchaseOrderStatus.Confirmed)
                 throw new InvalidOperationException("Only confirmed purchase orders can be received.");
+            await EnsureNoActiveReceiptAsync(order.Id);
             var warehouse = await warehouses.GetByIdAsync(order.WarehouseId)
                 ?? throw new InvalidOperationException("Receipt warehouse was not found.");
             var posted = await GetPostedQuantitiesAsync(order.Id);
@@ -207,7 +214,8 @@ public sealed class GoodsReceiptService(
             receipt = new GoodsReceipt(
                 await numbers.GenerateAsync(DocumentNumberType.GoodsReceipt, dto.ReceiptDate.ToDateTime(TimeOnly.MinValue)),
                 order.Id, order.WarehouseId, dto.ReceiptDate, dto.Notes, currentUser.UserId,
-                order.CurrencyCode, rate.CompanyCurrencyCode, rate.Rate, rate.RateDate, rate.Source);
+                order.CurrencyCode, rate.CompanyCurrencyCode, rate.Rate, rate.RateDate, rate.Source,
+                warehouse.PurchaseReceivingRoute);
             foreach (var input in submitted)
             {
                 var orderLine = order.Lines.SingleOrDefault(x => x.Id == input.PurchaseOrderLineId)
@@ -228,7 +236,10 @@ public sealed class GoodsReceiptService(
             }
             await receipts.AddAsync(receipt);
             await unitOfWork.FlushAsync();
-            await ApplyPostingAsync(receipt, order, warehouse);
+            if (receipt.ReceivingRouteSnapshot == PurchaseReceivingRoute.ReceiveInspectStore)
+                receipt.ReceiveForInspection(currentUser.UserId);
+            else
+                await ApplyPostingAsync(receipt, order, warehouse);
         });
         return receipt!.Id;
     }
@@ -259,13 +270,60 @@ public sealed class GoodsReceiptService(
                 if (line.ReceivedQuantity > orderLine.OrderedQuantity - posted.GetValueOrDefault(orderLine.Id))
                     throw new InvalidOperationException("Received quantity cannot exceed the open ordered quantity.");
             }
+            if (receipt.ReceivingRouteSnapshot == PurchaseReceivingRoute.ReceiveInspectStore)
+                receipt.ReceiveForInspection(currentUser.UserId);
+            else
+                await ApplyPostingAsync(receipt, order, warehouse);
+        });
+    }
+
+    public async Task InspectAsync(InspectGoodsReceiptDto dto)
+    {
+        await unitOfWork.ExecuteInTransactionAsync(async () =>
+        {
+            var receipt = await receipts.GetByIdAsync(dto.GoodsReceiptId)
+                ?? throw new InvalidOperationException("Goods receipt was not found.");
+            var order = await orders.GetByIdAsync(receipt.PurchaseOrderId)
+                ?? throw new InvalidOperationException("Purchase order was not found.");
+            var posted = await GetPostedQuantitiesAsync(order.Id);
+            foreach (var input in dto.Lines)
+            {
+                var receiptLine = receipt.Lines.SingleOrDefault(x => x.Id == input.GoodsReceiptLineId)
+                    ?? throw new ArgumentException("One or more inspection lines do not belong to the receipt.");
+                var orderLine = order.Lines.Single(x => x.Id == receiptLine.PurchaseOrderLineId);
+                if (input.ShortQuantity > Math.Max(0, orderLine.OrderedQuantity - posted.GetValueOrDefault(orderLine.Id) - receiptLine.DeliveredQuantity))
+                    throw new ArgumentException("Short quantity cannot exceed the undelivered ordered quantity.");
+                var product = await products.GetByIdAsync(receiptLine.ProductId)
+                    ?? throw new InvalidOperationException("Purchase order product was not found.");
+                if (product.TrackingPolicy == ProductTrackingPolicy.Serial &&
+                    input.AcceptedQuantity != 0 && input.AcceptedQuantity != receiptLine.DeliveredQuantity)
+                    throw new InvalidOperationException("A serial-tracked receipt line must be fully accepted or fully rejected during inspection.");
+            }
+            receipt.CompleteInspection(dto.Lines.Select(x => new GoodsReceiptInspectionDecision(x.GoodsReceiptLineId,
+                x.AcceptedQuantity, x.RejectedQuantity, x.DamagedQuantity, x.ShortQuantity, x.Reason)), dto.Notes,
+                currentUser.UserId);
+        });
+    }
+
+    public async Task PutAwayAsync(int goodsReceiptId)
+    {
+        await unitOfWork.ExecuteInTransactionAsync(async () =>
+        {
+            var receipt = await receipts.GetByIdAsync(goodsReceiptId)
+                ?? throw new InvalidOperationException("Goods receipt was not found.");
+            if (receipt.Status != GoodsReceiptStatus.AwaitingPutaway)
+                throw new InvalidOperationException("Only a quality-approved receipt can be stored.");
+            var order = await orders.GetByIdAsync(receipt.PurchaseOrderId)
+                ?? throw new InvalidOperationException("Purchase order was not found.");
+            var warehouse = await warehouses.GetByIdAsync(receipt.WarehouseId)
+                ?? throw new InvalidOperationException("Receipt warehouse was not found.");
             await ApplyPostingAsync(receipt, order, warehouse);
         });
     }
 
     private async Task ApplyPostingAsync(GoodsReceipt receipt, PurchaseOrder order, Warehouse warehouse)
     {
-        foreach (var line in receipt.Lines)
+        foreach (var line in receipt.Lines.Where(x => x.StockQuantity > 0))
         {
             var product = await products.GetByIdAsync(line.ProductId)
                 ?? throw new InvalidOperationException("Purchase order product was not found.");
@@ -309,7 +367,7 @@ public sealed class GoodsReceiptService(
                 $"Goods receipt {receipt.ReceiptNumber}", "GoodsReceipt", receipt.ReceiptNumber, journalLines,
                 "This goods receipt has already been posted to accounting."));
         }
-        foreach (var line in receipt.Lines)
+        foreach (var line in receipt.Lines.Where(x => x.StockQuantity > 0))
             await movements.AddAsync(StockMovement.PostGoodsReceipt(receipt.Id, line.Id, line.ProductId,
                 receipt.WarehouseId, line.StockQuantity, currentUser.UserId, receipt.ReceiptNumber));
         receipt.Post(currentUser.UserId);
@@ -334,6 +392,14 @@ public sealed class GoodsReceiptService(
         .SelectMany(x => x.Lines)
         .GroupBy(x => x.PurchaseOrderLineId)
         .ToDictionary(x => x.Key, x => x.Sum(y => y.ReceivedQuantity));
+
+    private async Task EnsureNoActiveReceiptAsync(int purchaseOrderId)
+    {
+        var hasActiveReceipt = (await receipts.GetByPurchaseOrderIdAsync(purchaseOrderId)).Any(x =>
+            x.Status is GoodsReceiptStatus.Draft or GoodsReceiptStatus.AwaitingInspection or GoodsReceiptStatus.AwaitingPutaway);
+        if (hasActiveReceipt)
+            throw new InvalidOperationException("Complete the active goods receipt before creating another receipt for this purchase order.");
+    }
 
     private static PurchaseOrderDto MapOrder(PurchaseOrder order) => new()
     {
@@ -368,13 +434,24 @@ public sealed class GoodsReceiptService(
         ExchangeRateDate = receipt.ExchangeRateDate,
         ExchangeRateSource = receipt.ExchangeRateSource,
         Status = receipt.Status,
+        ReceivingRoute = receipt.ReceivingRouteSnapshot,
+        InspectedByUserId = receipt.InspectedByUserId,
+        InspectedAtUtc = receipt.InspectedAtUtc,
+        InspectionNotes = receipt.InspectionNotes,
         Notes = receipt.Notes,
         Lines = receipt.Lines.Select(line => new GoodsReceiptPostedLineDto
         {
+            Id = line.Id,
             ProductCode = line.ProductCodeSnapshot,
             ProductName = line.ProductNameSnapshot,
             UnitName = line.UnitNameSnapshot,
             ReceivedQuantity = line.ReceivedQuantity,
+            DeliveredQuantity = line.DeliveredQuantity,
+            AcceptedQuantity = line.AcceptedQuantity,
+            RejectedQuantity = line.RejectedQuantity,
+            DamagedQuantity = line.DamagedQuantity,
+            ShortQuantity = line.ShortQuantity,
+            DiscrepancyReason = line.DiscrepancyReason,
             StockQuantity = line.StockQuantity,
             UnitCost = line.UnitCost,
             LotNumber = line.LotNumber,

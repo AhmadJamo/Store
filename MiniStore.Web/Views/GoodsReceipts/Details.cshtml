@@ -1,7 +1,77 @@
 @model MiniStore.Application.DTOs.Purchases.GoodsReceiptDto
 @inject Microsoft.Extensions.Localization.IStringLocalizer<MiniStore.Web.SharedResource> Localizer
 @inject Microsoft.AspNetCore.Authorization.IAuthorizationService AuthorizationService
-@{ ViewData["Title"] = Model.ReceiptNumber; var canReceive = (await AuthorizationService.AuthorizeAsync(User, null, "Permission:GoodsReceipts.Create")).Succeeded; var canReturn = (await AuthorizationService.AuthorizeAsync(User, null, "Permission:GoodsReceiptReturns.Create")).Succeeded; var canAllocate = (await AuthorizationService.AuthorizeAsync(User, null, "Permission:LandedCosts.Create")).Succeeded; var canReverse = (await AuthorizationService.AuthorizeAsync(User, null, "Permission:PurchaseDocumentReversals.Create")).Succeeded; var reversal = ViewBag.Reversal as MiniStore.Application.DTOs.Purchases.PurchaseDocumentReversalDto; var numberSettings = await GeneralSettingsService.GetAsync(); }
-<div class="d-flex justify-content-between"><h2>@Model.ReceiptNumber <span class="badge @(Model.Status==MiniStore.Domain.Entities.GoodsReceiptStatus.Posted?"bg-success":"bg-secondary")">@Localizer[Model.Status.ToString()]</span></h2><div class="d-flex flex-wrap gap-2 align-items-center">@if(Model.Status==MiniStore.Domain.Entities.GoodsReceiptStatus.Draft&&canReceive){<a asp-action="Scan" asp-route-id="@Model.Id" class="btn btn-primary">@Localizer["Continue scanning"]</a>}else if(Model.Status==MiniStore.Domain.Entities.GoodsReceiptStatus.Posted){<span class="badge bg-success">@Localizer["Receipt posted"]</span>} @if(Model.Status==MiniStore.Domain.Entities.GoodsReceiptStatus.Posted&&canAllocate){<a asp-controller="LandedCosts" asp-action="Create" asp-route-goodsReceiptId="@Model.Id" class="btn btn-outline-primary">@Localizer["Allocate landed costs"]</a>} @if(Model.Status==MiniStore.Domain.Entities.GoodsReceiptStatus.Posted&&canReturn){<a asp-controller="GoodsReceiptReturns" asp-action="Create" asp-route-goodsReceiptId="@Model.Id" class="btn btn-outline-danger">@Localizer["Return received goods"]</a>} @if(Model.Status==MiniStore.Domain.Entities.GoodsReceiptStatus.Posted&&reversal is null&&canReverse){<a asp-controller="PurchaseDocumentReversals" asp-action="Create" asp-route-documentType="GoodsReceipt" asp-route-originalDocumentId="@Model.Id" class="btn btn-outline-danger">@Localizer["Reverse document"]</a>}else if(reversal is not null){<a asp-controller="PurchaseDocumentReversals" asp-action="Details" asp-route-id="@reversal.Id" class="btn btn-outline-success">@Localizer["Reversed"]</a>} <a asp-action="Index" class="btn btn-outline-secondary">@Localizer["Back"]</a></div></div>
-<div class="card card-body my-3"><div>@Localizer["Purchase order"]: @Model.PurchaseOrderNumber</div><div>@Localizer["Warehouse"]: @Model.WarehouseName</div><div>@Localizer["Receipt date"]: @Model.ReceiptDate</div><div>@Localizer["Exchange rate"]: 1 @Model.CurrencyCode = @Model.ExchangeRate.ToString("0.############") @Model.CompanyCurrencyCode (@Model.ExchangeRateDate · @Model.ExchangeRateSource)</div>@if(!string.IsNullOrWhiteSpace(Model.Notes)){<div>@Localizer["Notes"]: @Model.Notes</div>}</div>
-<div class="table-responsive"><table class="table"><thead><tr><th>@Localizer["Product"]</th><th>@Localizer["Receive quantity"]</th><th>@Localizer["Stock quantity"]</th><th>@Localizer["Unit cost"]</th><th>@Localizer["Company currency equivalent"]</th><th>@Localizer["Lot number"]</th><th>@Localizer["Serial numbers"]</th><th>@Localizer["Manufacture date"]</th><th>@Localizer["Expiration date"]</th></tr></thead><tbody>@foreach(var line in Model.Lines){<tr><td>@line.ProductCode — @line.ProductName</td><td>@line.ReceivedQuantity.ToQuantityDisplay(numberSettings) @line.UnitName</td><td>@line.StockQuantity.ToQuantityDisplay(numberSettings)</td><td>@line.UnitCost.ToMoneyDisplay(numberSettings) @Model.CurrencyCode</td><td>@((line.UnitCost*Model.ExchangeRate).ToMoneyDisplay(numberSettings)) @Model.CompanyCurrencyCode</td><td>@line.LotNumber</td><td class="text-break">@line.SerialNumbers</td><td>@line.ManufactureDate</td><td>@line.ExpirationDate</td></tr>}</tbody></table></div>
+@{
+    ViewData["Title"] = Model.ReceiptNumber;
+    var canReceive = (await AuthorizationService.AuthorizeAsync(User, null, "Permission:GoodsReceipts.Create")).Succeeded;
+    var canInspect = (await AuthorizationService.AuthorizeAsync(User, null, "Permission:GoodsReceipts.Inspect")).Succeeded;
+    var canPutAway = (await AuthorizationService.AuthorizeAsync(User, null, "Permission:GoodsReceipts.PutAway")).Succeeded;
+    var canReturn = (await AuthorizationService.AuthorizeAsync(User, null, "Permission:GoodsReceiptReturns.Create")).Succeeded;
+    var canAllocate = (await AuthorizationService.AuthorizeAsync(User, null, "Permission:LandedCosts.Create")).Succeeded;
+    var canReverse = (await AuthorizationService.AuthorizeAsync(User, null, "Permission:PurchaseDocumentReversals.Create")).Succeeded;
+    var reversal = ViewBag.Reversal as MiniStore.Application.DTOs.Purchases.PurchaseDocumentReversalDto;
+    var numberSettings = await GeneralSettingsService.GetAsync();
+    var isStaged = Model.ReceivingRoute == MiniStore.Domain.Entities.PurchaseReceivingRoute.ReceiveInspectStore;
+    var statusClass = Model.Status switch { MiniStore.Domain.Entities.GoodsReceiptStatus.Posted => "bg-success", MiniStore.Domain.Entities.GoodsReceiptStatus.QualityRejected => "bg-danger", MiniStore.Domain.Entities.GoodsReceiptStatus.AwaitingInspection => "bg-warning text-dark", MiniStore.Domain.Entities.GoodsReceiptStatus.AwaitingPutaway => "bg-info text-dark", _ => "bg-secondary" };
+}
+<div class="d-flex flex-wrap justify-content-between gap-2">
+    <h2>@Model.ReceiptNumber <span class="badge @statusClass">@Localizer[Model.Status.ToString()]</span></h2>
+    <div class="d-flex flex-wrap gap-2 align-items-center">
+        @if (Model.Status == MiniStore.Domain.Entities.GoodsReceiptStatus.Draft && canReceive) { <a asp-action="Scan" asp-route-id="@Model.Id" class="btn btn-primary">@Localizer["Continue scanning"]</a> }
+        @if (Model.Status == MiniStore.Domain.Entities.GoodsReceiptStatus.AwaitingPutaway && canPutAway) { <form asp-action="PutAway" method="post"><input type="hidden" name="id" value="@Model.Id" /><button class="btn btn-success">@Localizer["Store approved goods"]</button></form> }
+        @if (Model.Status == MiniStore.Domain.Entities.GoodsReceiptStatus.Posted && canAllocate) { <a asp-controller="LandedCosts" asp-action="Create" asp-route-goodsReceiptId="@Model.Id" class="btn btn-outline-primary">@Localizer["Allocate landed costs"]</a> }
+        @if (Model.Status == MiniStore.Domain.Entities.GoodsReceiptStatus.Posted && canReturn) { <a asp-controller="GoodsReceiptReturns" asp-action="Create" asp-route-goodsReceiptId="@Model.Id" class="btn btn-outline-danger">@Localizer["Return received goods"]</a> }
+        @if (Model.Status == MiniStore.Domain.Entities.GoodsReceiptStatus.Posted && reversal is null && canReverse) { <a asp-controller="PurchaseDocumentReversals" asp-action="Create" asp-route-documentType="GoodsReceipt" asp-route-originalDocumentId="@Model.Id" class="btn btn-outline-danger">@Localizer["Reverse document"]</a> }
+        else if (reversal is not null) { <a asp-controller="PurchaseDocumentReversals" asp-action="Details" asp-route-id="@reversal.Id" class="btn btn-outline-success">@Localizer["Reversed"]</a> }
+        <a asp-action="Index" class="btn btn-outline-secondary">@Localizer["Back"]</a>
+    </div>
+</div>
+<div class="card card-body my-3">
+    <div class="row g-2"><div class="col-md-4"><strong>@Localizer["Purchase order"]:</strong> @Model.PurchaseOrderNumber</div><div class="col-md-4"><strong>@Localizer["Warehouse"]:</strong> @Model.WarehouseName</div><div class="col-md-4"><strong>@Localizer["Receipt date"]:</strong> @Model.ReceiptDate</div><div class="col-md-4"><strong>@Localizer["Receiving route"]:</strong> @Localizer[Model.ReceivingRoute.ToString()]</div><div class="col-md-8"><strong>@Localizer["Exchange rate"]:</strong> 1 @Model.CurrencyCode = @Model.ExchangeRate.ToString("0.############") @Model.CompanyCurrencyCode (@Model.ExchangeRateDate · @Model.ExchangeRateSource)</div></div>
+    @if (!string.IsNullOrWhiteSpace(Model.Notes)) { <div class="mt-2"><strong>@Localizer["Notes"]:</strong> @Model.Notes</div> }
+    @if (Model.InspectedAtUtc.HasValue) { <div class="mt-2"><strong>@Localizer["Inspected at"]:</strong> @Model.InspectedAtUtc.Value.ToLocalTime()</div> }
+    @if (!string.IsNullOrWhiteSpace(Model.InspectionNotes)) { <div><strong>@Localizer["Inspection notes"]:</strong> @Model.InspectionNotes</div> }
+</div>
+@if (Model.Status == MiniStore.Domain.Entities.GoodsReceiptStatus.AwaitingInspection && canInspect)
+{
+    <form asp-action="Inspect" method="post">
+        <input type="hidden" name="GoodsReceiptId" value="@Model.Id" />
+        <div class="alert alert-warning">@Localizer["Record the quality result for every line. Accepted goods remain outside available stock until they are stored."]</div>
+        <div class="row g-3">
+            @for (var i = 0; i < Model.Lines.Count; i++)
+            {
+                var line = Model.Lines[i];
+                <div class="col-12"><div class="card card-body">
+                    <input type="hidden" name="Lines[@i].GoodsReceiptLineId" value="@line.Id" />
+                    <div class="d-flex flex-wrap justify-content-between gap-2 mb-3"><strong>@line.ProductCode — @line.ProductName</strong><span class="badge text-bg-light">@Localizer["Delivered quantity"]: @line.DeliveredQuantity.ToQuantityDisplay(numberSettings) @line.UnitName</span></div>
+                    <div class="row g-3">
+                        <div class="col-md-2"><label class="form-label">@Localizer["Accepted quantity"]</label><input name="Lines[@i].AcceptedQuantity" type="number" value="@line.DeliveredQuantity.ToQuantityInput(numberSettings)" min="0" max="@line.DeliveredQuantity.ToInputNumber()" step="0.000001" class="form-control" /></div>
+                        <div class="col-md-2"><label class="form-label">@Localizer["Rejected quantity"]</label><input name="Lines[@i].RejectedQuantity" type="number" value="0" min="0" max="@line.DeliveredQuantity.ToInputNumber()" step="0.000001" class="form-control" /></div>
+                        <div class="col-md-2"><label class="form-label">@Localizer["Damaged quantity"]</label><input name="Lines[@i].DamagedQuantity" type="number" value="0" min="0" max="@line.DeliveredQuantity.ToInputNumber()" step="0.000001" class="form-control" /></div>
+                        <div class="col-md-2"><label class="form-label">@Localizer["Short quantity"]</label><input name="Lines[@i].ShortQuantity" type="number" value="0" min="0" step="0.000001" class="form-control" /></div>
+                        <div class="col-md-4"><label class="form-label">@Localizer["Discrepancy reason"]</label><input name="Lines[@i].Reason" maxlength="500" class="form-control" /></div>
+                    </div>
+                </div></div>
+            }
+        </div>
+        <div class="my-3"><label class="form-label">@Localizer["Inspection notes"]</label><textarea name="Notes" maxlength="1000" class="form-control"></textarea></div>
+        <button class="btn btn-primary">@Localizer["Complete quality inspection"]</button>
+    </form>
+}
+else
+{
+    <div class="row g-3">
+        @foreach (var line in Model.Lines)
+        {
+            <div class="col-lg-6"><div class="card card-body h-100">
+                <strong>@line.ProductCode — @line.ProductName</strong>
+                <div class="row g-2 mt-1">
+                    @if (isStaged) { <div class="col-6">@Localizer["Delivered quantity"]: <strong>@line.DeliveredQuantity.ToQuantityDisplay(numberSettings)</strong></div><div class="col-6">@Localizer["Accepted quantity"]: <strong>@line.AcceptedQuantity.ToQuantityDisplay(numberSettings)</strong></div><div class="col-6">@Localizer["Rejected quantity"]: <strong>@line.RejectedQuantity.ToQuantityDisplay(numberSettings)</strong></div><div class="col-6">@Localizer["Damaged quantity"]: <strong>@line.DamagedQuantity.ToQuantityDisplay(numberSettings)</strong></div><div class="col-6">@Localizer["Short quantity"]: <strong>@line.ShortQuantity.ToQuantityDisplay(numberSettings)</strong></div> }
+                    <div class="col-6">@Localizer["Stock quantity"]: <strong>@line.StockQuantity.ToQuantityDisplay(numberSettings)</strong></div><div class="col-6">@Localizer["Unit cost"]: <strong>@line.UnitCost.ToMoneyDisplay(numberSettings) @Model.CurrencyCode</strong></div>
+                </div>
+                @if (!string.IsNullOrWhiteSpace(line.DiscrepancyReason)) { <div class="alert alert-warning py-2 mt-2 mb-0"><strong>@Localizer["Discrepancy reason"]:</strong> @line.DiscrepancyReason</div> }
+                @if (!string.IsNullOrWhiteSpace(line.LotNumber) || !string.IsNullOrWhiteSpace(line.SerialNumbers)) { <div class="small text-muted mt-2">@Localizer["Lot number"]: @line.LotNumber · @Localizer["Serial numbers"]: @line.SerialNumbers</div> }
+            </div></div>
+        }
+    </div>
+}

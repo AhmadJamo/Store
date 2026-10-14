@@ -2154,4 +2154,57 @@
   <data name="SupplierTermsMissing" xml:space="preserve"><value>لا توجد بيانات شراء فعالة ومتوافقة لمورد.</value></data>
   <data name="BelowMaximumTarget" xml:space="preserve"><value>الكمية المتاحة المتوقعة أقل من الحد الأقصى المستهدف.</value></data>
   <data name="BelowForecastTarget" xml:space="preserve"><value>الكمية المتاحة المتوقعة أقل من الطلب المتوقع خلال مدة التغطية والتوريد.</value></data>
+  <data name="Purchase receiving route" xml:space="preserve"><value>مسار استلام المشتريات</value></data>
+  <data name="Receive directly into stock" xml:space="preserve"><value>الاستلام مباشرة إلى المخزون</value></data>
+  <data name="Receive, inspect, then store" xml:space="preserve"><value>الاستلام ثم الفحص ثم التخزين</value></data>
+  <data name="OneStep" xml:space="preserve"><value>استلام مباشر بخطوة واحدة</value></data>
+  <data name="ReceiveInspectStore" xml:space="preserve"><value>استلام وفحص ثم تخزين</value></data>
+  <data name="AwaitingInspection" xml:space="preserve"><value>بانتظار الفحص</value></data>
+  <data name="AwaitingPutaway" xml:space="preserve"><value>بانتظار التخزين</value></data>
+  <data name="QualityRejected" xml:space="preserve"><value>مرفوض بالجودة</value></data>
+  <data name="This warehouse receives goods into quality inspection. Inventory and accounting update only after approval and storage." xml:space="preserve"><value>هذا المستودع يستلم البضاعة للفحص. لا يتحدث المخزون أو الحسابات إلا بعد قبولها وتخزينها.</value></data>
+  <data name="This warehouse receives goods directly into stock and posts accounting immediately." xml:space="preserve"><value>هذا المستودع يستلم البضاعة مباشرة إلى المخزون ويرحّل القيد المحاسبي فورًا.</value></data>
+  <data name="Create a draft, scan each physical item, then send the receipt to quality inspection." xml:space="preserve"><value>أنشئ مسودة وامسح كل صنف مستلم ثم أرسل الاستلام لفحص الجودة.</value></data>
+  <data name="Enter only quantities physically received." xml:space="preserve"><value>أدخل فقط الكميات المستلمة فعليًا.</value></data>
+  <data name="Receive and send to inspection" xml:space="preserve"><value>استلام وإرسال للفحص</value></data>
+  <data name="Scanning updates this draft only. Inventory and accounting change after quality approval and storage." xml:space="preserve"><value>المسح يحدّث هذه المسودة فقط. يتغير المخزون والحسابات بعد قبول الجودة والتخزين.</value></data>
+  <data name="Review complete — send to inspection" xml:space="preserve"><value>اكتملت المراجعة — إرسال للفحص</value></data>
+  <data name="Receiving route" xml:space="preserve"><value>مسار الاستلام</value></data>
+  <data name="Store approved goods" xml:space="preserve"><value>تخزين البضاعة المقبولة</value></data>
+  <data name="Inspected at" xml:space="preserve"><value>وقت الفحص</value></data>
+  <data name="Inspection notes" xml:space="preserve"><value>ملاحظات الفحص</value></data>
+  <data name="Record the quality result for every line. Accepted goods remain outside available stock until they are stored." xml:space="preserve"><value>سجّل نتيجة الجودة لكل سطر. تبقى البضاعة المقبولة خارج المخزون المتاح إلى أن يتم تخزينها.</value></data>
+  <data name="Delivered quantity" xml:space="preserve"><value>الكمية المورّدة</value></data>
+  <data name="Accepted quantity" xml:space="preserve"><value>الكمية المقبولة</value></data>
+  <data name="Rejected quantity" xml:space="preserve"><value>الكمية المرفوضة</value></data>
+  <data name="Damaged quantity" xml:space="preserve"><value>الكمية التالفة</value></data>
+  <data name="Short quantity" xml:space="preserve"><value>الكمية الناقصة</value></data>
+  <data name="Discrepancy reason" xml:space="preserve"><value>سبب الفرق</value></data>
+  <data name="Complete quality inspection" xml:space="preserve"><value>إكمال فحص الجودة</value></data>
+  <data name="Goods received and awaiting quality inspection." xml:space="preserve"><value>تم استلام البضاعة وهي بانتظار فحص الجودة.</value></data>
+  <data name="Quality inspection completed and awaiting storage." xml:space="preserve"><value>اكتمل فحص الجودة والبضاعة المقبولة بانتظار التخزين.</value></data>
+  <data name="Quality inspection completed with no accepted quantity." xml:space="preserve"><value>اكتمل فحص الجودة ولم توجد كمية مقبولة.</value></data>
+  <data name="Quality-approved goods stored and receipt posted." xml:space="preserve"><value>تم تخزين البضاعة المقبولة وترحيل الاستلام.</value></data>
+  <data name="Inspect received goods" xml:space="preserve"><value>فحص البضاعة المستلمة</value></data>
+  <data name="Record accepted, rejected, damaged and short quantities before any stock is made available." xml:space="preserve"><value>سجّل الكميات المقبولة والمرفوضة والتالفة والناقصة قبل إتاحة أي مخزون.</value></data>
+  <data name="Store accepted goods" xml:space="preserve"><value>تخزين البضاعة المقبولة</value></data>
+  <data name="Move the quality-approved quantity into stock and post its accounting entry." xml:space="preserve"><value>انقل الكمية المقبولة إلى المخزون ورحّل قيدها المحاسبي.</value></data>
+  <data name="Review rejected receipt" xml:space="preserve"><value>مراجعة الاستلام المرفوض</value></data>
+  <data name="No quantity entered stock; review the discrepancy evidence and continue with the supplier." xml:space="preserve"><value>لم تدخل أي كمية إلى المخزون؛ راجع إثبات الفرق وتابع مع المورد.</value></data>
+  <data name="Purchase receiving route is invalid." xml:space="preserve"><value>مسار استلام المشتريات غير صالح.</value></data>
+  <data name="Only a one-step draft or quality-approved receipt can be posted." xml:space="preserve"><value>لا يمكن الترحيل إلا لمسودة بخطوة واحدة أو لاستلام مقبول بالجودة.</value></data>
+  <data name="This receipt does not use the inspection route." xml:space="preserve"><value>هذا الاستلام لا يستخدم مسار الفحص.</value></data>
+  <data name="Only a receipt awaiting inspection can be inspected." xml:space="preserve"><value>يمكن فحص الاستلام الذي ينتظر الفحص فقط.</value></data>
+  <data name="Inspection notes cannot exceed 1000 characters." xml:space="preserve"><value>لا يمكن أن تتجاوز ملاحظات الفحص 1000 حرف.</value></data>
+  <data name="Provide one inspection decision for every receipt line." xml:space="preserve"><value>أدخل قرار فحص واحدًا لكل سطر استلام.</value></data>
+  <data name="Inspection quantities cannot be negative." xml:space="preserve"><value>لا يمكن أن تكون كميات الفحص سالبة.</value></data>
+  <data name="Accepted, rejected and damaged quantities must equal the delivered quantity." xml:space="preserve"><value>يجب أن يساوي مجموع المقبول والمرفوض والتالف الكمية المورّدة.</value></data>
+  <data name="A discrepancy reason is required for rejected, damaged or short quantities." xml:space="preserve"><value>سبب الفرق مطلوب عند وجود كمية مرفوضة أو تالفة أو ناقصة.</value></data>
+  <data name="Discrepancy reason cannot exceed 500 characters." xml:space="preserve"><value>لا يمكن أن يتجاوز سبب الفرق 500 حرف.</value></data>
+  <data name="Complete the active goods receipt before creating another receipt for this purchase order." xml:space="preserve"><value>أكمل استلام البضاعة الفعال قبل إنشاء استلام آخر لأمر الشراء نفسه.</value></data>
+  <data name="Short quantity cannot exceed the undelivered ordered quantity." xml:space="preserve"><value>لا يمكن أن تتجاوز الكمية الناقصة الكمية المطلوبة التي لم تُورّد.</value></data>
+  <data name="A serial-tracked receipt line must be fully accepted or fully rejected during inspection." xml:space="preserve"><value>يجب قبول سطر الاستلام المتتبع برقم تسلسلي بالكامل أو رفضه بالكامل أثناء الفحص.</value></data>
+  <data name="Only a quality-approved receipt can be stored." xml:space="preserve"><value>يمكن تخزين الاستلام المقبول بالجودة فقط.</value></data>
+  <data name="Inspect Goods Receipt Quality" xml:space="preserve"><value>فحص جودة استلام البضاعة</value></data>
+  <data name="Store Quality-Approved Goods" xml:space="preserve"><value>تخزين البضاعة المقبولة بالجودة</value></data>
 </root>

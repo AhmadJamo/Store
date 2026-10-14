@@ -129,6 +129,8 @@ public static class PermissionDefinitions
         new("PurchaseServiceAcceptances.Create", "Record Purchase Service Completion", "Purchases"),
         new("GoodsReceipts.View", "View Goods Receipts", "Purchases"),
         new("GoodsReceipts.Create", "Create and Post Goods Receipt", "Purchases"),
+        new("GoodsReceipts.Inspect", "Inspect Goods Receipt Quality", "Purchases"),
+        new("GoodsReceipts.PutAway", "Store Quality-Approved Goods", "Purchases"),
         new("GoodsReceiptReturns.View", "View Goods Receipt Returns", "Purchases"),
         new("GoodsReceiptReturns.Create", "Create and Post Goods Receipt Return", "Purchases"),
         new("VendorBills.View", "View Vendor Bills", "Purchases"),

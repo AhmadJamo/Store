@@ -113,6 +113,7 @@ public class WarehousesController : Controller
             Type = warehouse.Type,
             ControlMode = warehouse.ControlMode,
             PickingStrategy = warehouse.PickingStrategy,
+            PurchaseReceivingRoute = warehouse.PurchaseReceivingRoute,
             AllowPosSales = warehouse.AllowPosSales,
             EnforceLocationCapacity = warehouse.EnforceLocationCapacity,
             RequireSourceLocationForTransfers = warehouse.RequireSourceLocationForTransfers,

@@ -15,4 +15,5 @@ public class WarehouseDto
     public bool EnforceLocationCapacity { get; set; }
     public bool RequireSourceLocationForTransfers { get; set; }
     public bool RequireDestinationLocationForTransfers { get; set; }
+    public PurchaseReceivingRoute PurchaseReceivingRoute { get; set; }
 }

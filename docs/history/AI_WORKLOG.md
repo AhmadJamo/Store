@@ -1,5 +1,14 @@
 # AI Work Log
 
+# 2026-10-14 — PUR-250A staged receiving and quality hold
+
+- Added warehouse-configurable One Step or Receive/Inspect/Store purchase receiving and froze the route on every Goods Receipt.
+- Added separate receipt, quality and storage states with delivered, accepted, rejected, damaged and short evidence plus mandatory discrepancy reasons.
+- Staged receipt and inspection create no inventory, tracking, movement or accounting effect; storage posts only accepted quantity through the existing atomic Inventory/GRNI path. Fully rejected receipts finish with zero stock.
+- Added dedicated inspection/storage permissions, state-aware responsive receipt cards without horizontal scrolling, Arabic localization and permission-aware next-step links. Completed actions disappear from the screen.
+- Added and locally applied migration `20261014153921_AddStagedReceivingQualityHold` with safe one-step defaults, existing-line quantity backfill and active-stage uniqueness. The restricted environment could not negotiate required SQL encryption, while the approved host Windows environment applied it successfully.
+- The solution builds with zero warnings/errors, 695 focused regression checks pass and the fresh Debug EF design-time model reports no pending changes.
+
 # 2026-10-14 — PUR-240 automated replenishment and demand forecasting
 
 - Added tenant-configurable scheduled and manual planning with review-only, Draft Purchase Request and policy-bounded direct RFQ modes.

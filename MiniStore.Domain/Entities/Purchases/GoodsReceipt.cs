@@ -1,6 +1,6 @@
 namespace MiniStore.Domain.Entities;
 
-public enum GoodsReceiptStatus { Draft = 1, Posted = 2, Cancelled = 3, Reversed = 4 }
+public enum GoodsReceiptStatus { Draft = 1, Posted = 2, Cancelled = 3, Reversed = 4, AwaitingInspection = 5, AwaitingPutaway = 6, QualityRejected = 7 }
 
 public sealed class GoodsReceipt
 {
@@ -21,22 +21,29 @@ public sealed class GoodsReceipt
     public string? PostedByUserId { get; private set; }
     public DateTime? PostedAtUtc { get; private set; }
     public string? Notes { get; private set; }
+    public PurchaseReceivingRoute ReceivingRouteSnapshot { get; private set; } = PurchaseReceivingRoute.OneStep;
+    public string? InspectedByUserId { get; private set; }
+    public DateTime? InspectedAtUtc { get; private set; }
+    public string? InspectionNotes { get; private set; }
     public byte[] RowVersion { get; private set; } = [];
     public List<GoodsReceiptLine> Lines { get; private set; } = [];
 
     public GoodsReceipt(string receiptNumber, int purchaseOrderId, int warehouseId, DateOnly receiptDate, string? notes, string createdByUserId,
         string currencyCode = "JOD", string companyCurrencyCode = "JOD", decimal exchangeRate = 1m,
-        DateOnly? exchangeRateDate = null, string exchangeRateSource = "Company currency")
+        DateOnly? exchangeRateDate = null, string exchangeRateSource = "Company currency",
+        PurchaseReceivingRoute receivingRoute = PurchaseReceivingRoute.OneStep)
     {
         if (string.IsNullOrWhiteSpace(receiptNumber) || receiptNumber.Trim().Length > 50) throw new ArgumentException("Goods receipt number is required and cannot exceed 50 characters.");
         if (purchaseOrderId <= 0 || warehouseId <= 0) throw new ArgumentException("Purchase order and warehouse are required.");
         if (notes?.Trim().Length > 1000) throw new ArgumentException("Receipt notes cannot exceed 1000 characters.");
         if (string.IsNullOrWhiteSpace(createdByUserId)) throw new ArgumentException("User is required.");
         if (exchangeRate <= 0) throw new ArgumentException("Exchange rate must be greater than zero.");
+        if (!Enum.IsDefined(receivingRoute)) throw new ArgumentException("Purchase receiving route is invalid.");
         ReceiptNumber = receiptNumber.Trim(); PurchaseOrderId = purchaseOrderId; WarehouseId = warehouseId; ReceiptDate = receiptDate;
         CurrencyCode = currencyCode.Trim().ToUpperInvariant(); CompanyCurrencyCode = companyCurrencyCode.Trim().ToUpperInvariant(); ExchangeRate = exchangeRate;
         ExchangeRateDate = exchangeRateDate ?? receiptDate; ExchangeRateSource = exchangeRateSource.Trim();
-        Notes = string.IsNullOrWhiteSpace(notes) ? null : notes.Trim(); CreatedByUserId = createdByUserId; CreatedAtUtc = DateTime.UtcNow; Status = GoodsReceiptStatus.Draft;
+        Notes = string.IsNullOrWhiteSpace(notes) ? null : notes.Trim(); CreatedByUserId = createdByUserId; CreatedAtUtc = DateTime.UtcNow;
+        ReceivingRouteSnapshot = receivingRoute; Status = GoodsReceiptStatus.Draft;
     }
 
     public void AddLine(GoodsReceiptLine line)
@@ -56,10 +63,40 @@ public sealed class GoodsReceipt
 
     public void Post(string userId)
     {
-        EnsureDraft();
+        if (Status != GoodsReceiptStatus.Draft && Status != GoodsReceiptStatus.AwaitingPutaway)
+            throw new InvalidOperationException("Only a one-step draft or quality-approved receipt can be posted.");
         if (Lines.Count == 0) throw new InvalidOperationException("A goods receipt must contain at least one line.");
         if (string.IsNullOrWhiteSpace(userId)) throw new ArgumentException("User is required.");
         Status = GoodsReceiptStatus.Posted; PostedByUserId = userId.Trim(); PostedAtUtc = DateTime.UtcNow;
+    }
+    public void ReceiveForInspection(string userId)
+    {
+        EnsureDraft();
+        if (ReceivingRouteSnapshot != PurchaseReceivingRoute.ReceiveInspectStore)
+            throw new InvalidOperationException("This receipt does not use the inspection route.");
+        if (Lines.Count == 0) throw new InvalidOperationException("A goods receipt must contain at least one line.");
+        if (string.IsNullOrWhiteSpace(userId)) throw new ArgumentException("User is required.");
+        Status = GoodsReceiptStatus.AwaitingInspection;
+    }
+    public void CompleteInspection(IEnumerable<GoodsReceiptInspectionDecision> decisions, string? notes, string userId)
+    {
+        if (Status != GoodsReceiptStatus.AwaitingInspection)
+            throw new InvalidOperationException("Only a receipt awaiting inspection can be inspected.");
+        if (string.IsNullOrWhiteSpace(userId)) throw new ArgumentException("User is required.");
+        if (notes?.Trim().Length > 1000) throw new ArgumentException("Inspection notes cannot exceed 1000 characters.");
+        var list = decisions.ToList();
+        if (list.Count != Lines.Count || list.Select(x => x.GoodsReceiptLineId).Distinct().Count() != Lines.Count)
+            throw new ArgumentException("Provide one inspection decision for every receipt line.");
+        foreach (var line in Lines)
+        {
+            var decision = list.SingleOrDefault(x => x.GoodsReceiptLineId == line.Id)
+                ?? throw new ArgumentException("Provide one inspection decision for every receipt line.");
+            line.RecordInspection(decision.AcceptedQuantity, decision.RejectedQuantity, decision.DamagedQuantity,
+                decision.ShortQuantity, decision.Reason);
+        }
+        InspectedByUserId = userId.Trim(); InspectedAtUtc = DateTime.UtcNow;
+        InspectionNotes = string.IsNullOrWhiteSpace(notes) ? null : notes.Trim();
+        Status = Lines.Sum(x => x.AcceptedQuantity) > 0 ? GoodsReceiptStatus.AwaitingPutaway : GoodsReceiptStatus.QualityRejected;
     }
     public void Reverse(string userId)
     {
@@ -79,6 +116,12 @@ public sealed class GoodsReceiptLine
     public int ProductId { get; private set; }
     public int MeasurementUnitId { get; private set; }
     public decimal ReceivedQuantity { get; private set; }
+    public decimal DeliveredQuantity { get; private set; }
+    public decimal AcceptedQuantity { get; private set; }
+    public decimal RejectedQuantity { get; private set; }
+    public decimal DamagedQuantity { get; private set; }
+    public decimal ShortQuantity { get; private set; }
+    public string? DiscrepancyReason { get; private set; }
     public decimal UnitFactorToBase { get; private set; }
     public decimal StockQuantity { get; private set; }
     public decimal UnitCost { get; private set; }
@@ -98,7 +141,8 @@ public sealed class GoodsReceiptLine
         if (string.IsNullOrWhiteSpace(productCode) || string.IsNullOrWhiteSpace(productName) || string.IsNullOrWhiteSpace(unitName)) throw new ArgumentException("Goods receipt snapshots are required.");
         if (lotNumber?.Trim().Length > 100 || serialNumbers?.Trim().Length > 2000) throw new ArgumentException("Tracking identifiers are too long.");
         if (manufactureDate.HasValue && expirationDate.HasValue && expirationDate < manufactureDate) throw new ArgumentException("Expiration date cannot be earlier than manufacture date.");
-        PurchaseOrderLineId = purchaseOrderLineId; ProductId = productId; MeasurementUnitId = measurementUnitId; ReceivedQuantity = receivedQuantity; UnitFactorToBase = unitFactorToBase;
+        PurchaseOrderLineId = purchaseOrderLineId; ProductId = productId; MeasurementUnitId = measurementUnitId;
+        DeliveredQuantity = ReceivedQuantity = AcceptedQuantity = receivedQuantity; UnitFactorToBase = unitFactorToBase;
         StockQuantity = receivedQuantity * unitFactorToBase; UnitCost = unitCost; ProductCodeSnapshot = productCode.Trim(); ProductNameSnapshot = productName.Trim(); UnitNameSnapshot = unitName.Trim();
         LotNumber = string.IsNullOrWhiteSpace(lotNumber) ? null : lotNumber.Trim(); SerialNumbers = string.IsNullOrWhiteSpace(serialNumbers) ? null : serialNumbers.Trim(); ManufactureDate = manufactureDate; ExpirationDate = expirationDate;
     }
@@ -130,6 +174,8 @@ public sealed class GoodsReceiptLine
         var combinedSerials = string.Join(Environment.NewLine, new[] { SerialNumbers, normalizedSerials }.Where(x => !string.IsNullOrWhiteSpace(x)));
         if (combinedSerials.Length > 2000) throw new ArgumentException("Tracking identifiers are too long.");
         ReceivedQuantity += quantity;
+        DeliveredQuantity += quantity;
+        AcceptedQuantity += quantity;
         StockQuantity = ReceivedQuantity * UnitFactorToBase;
         LotNumber ??= normalizedLot;
         SerialNumbers = string.IsNullOrWhiteSpace(combinedSerials) ? null : combinedSerials;
@@ -137,9 +183,26 @@ public sealed class GoodsReceiptLine
         ExpirationDate = mergedExpirationDate;
     }
 
+    internal void RecordInspection(decimal accepted, decimal rejected, decimal damaged, decimal shortQuantity, string? reason)
+    {
+        if (accepted < 0 || rejected < 0 || damaged < 0 || shortQuantity < 0)
+            throw new ArgumentException("Inspection quantities cannot be negative.");
+        if (accepted + rejected + damaged != DeliveredQuantity)
+            throw new ArgumentException("Accepted, rejected and damaged quantities must equal the delivered quantity.");
+        if ((rejected > 0 || damaged > 0 || shortQuantity > 0) && string.IsNullOrWhiteSpace(reason))
+            throw new ArgumentException("A discrepancy reason is required for rejected, damaged or short quantities.");
+        if (reason?.Trim().Length > 500) throw new ArgumentException("Discrepancy reason cannot exceed 500 characters.");
+        AcceptedQuantity = ReceivedQuantity = accepted; RejectedQuantity = rejected; DamagedQuantity = damaged;
+        ShortQuantity = shortQuantity; StockQuantity = accepted * UnitFactorToBase;
+        DiscrepancyReason = string.IsNullOrWhiteSpace(reason) ? null : reason.Trim();
+    }
+
     private static string[] SplitIdentifiers(string? value) => (value ?? string.Empty)
         .Split([',', ';', '\n', '\r'], StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 }
+
+public sealed record GoodsReceiptInspectionDecision(int GoodsReceiptLineId, decimal AcceptedQuantity,
+    decimal RejectedQuantity, decimal DamagedQuantity, decimal ShortQuantity, string? Reason);
 
 public sealed class GoodsReceiptScan
 {

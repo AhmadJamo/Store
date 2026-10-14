@@ -26,7 +26,7 @@
 
 `docs/PURCHASE_MANAGEMENT_EVOLUTION_PLAN.md` is the approved procure-to-pay evolution plan. It records the legacy direct-purchase boundary, capability gaps, target aggregates, inventory/accounting integration contracts, additive migration safeguards and PUR-000 through PUR-150 vertical slices. Planned purchase types are not implemented unless the matching slice is explicitly marked complete.
 
-`docs/PURCHASE_COMPLETION_ROADMAP_AR_EN.md` is the approved Arabic/English post-PUR-150 purchase plan. PUR-160 through PUR-240 are implemented; PUR-250 advanced receiving, quality and demand allocation is next.
+`docs/PURCHASE_COMPLETION_ROADMAP_AR_EN.md` is the approved Arabic/English post-PUR-150 purchase plan. PUR-160 through PUR-240 and PUR-250A staged receiving/quality hold are implemented; PUR-250B demand allocation and dropshipping is next.
 
 `docs/decisions/2026-10-14-immutable-supplier-price-snapshots.md` fixes the append-only full-snapshot authority for supplier-price history across manual, bulk, CSV and quantity-break changes.
 
@@ -53,7 +53,7 @@
 | `Entities/Purchases/PurchaseOrder.cs` | awarded-quotation Purchase Order, immutable commercial lines, current closure evidence and tenant-owned lifecycle history; downstream posted documents remain quantity/accounting authority | PUR-050 order workflow and PUR-165 completion. |
 | `Entities/Purchases/PurchaseAgreement.cs` | awarded-quotation agreements with frozen commercial terms and capped release lines, plus repeat-order templates that generate traced demand | PUR-120 agreement/template workflow. |
 | `Entities/Purchases/LandedCost.cs` | immutable receipt-linked landed-cost components and allocation/valuation snapshots | PUR-130 receipt valuation adjustment. |
-| `Entities/Purchases/GoodsReceipt.cs` | GRN header/line receipt evidence with frozen PO snapshots and optional inventory-tracking inputs | PUR-060 receipt workflow. |
+| `Entities/Purchases/GoodsReceipt.cs` | GRN header/line receipt evidence, frozen PO/receiving-route snapshots, quality outcomes and optional inventory-tracking inputs | PUR-060/PUR-250A receipt workflow. |
 | `Entities/Purchases/GoodsReceiptScan` (in `GoodsReceipt.cs`) | immutable tenant-owned barcode/code scan evidence with a unique retry key | PUR-150 Draft Goods Receipt scanning. |
 | `Entities/Purchases/GoodsReceiptReturn.cs` | immutable receipt-based supplier-return header/lines with frozen quantity, original receipt value and removed inventory cost | PUR-070 return workflow. |
 | `Entities/Purchases/VendorBill.cs` | staged supplier invoice identity and mixed receipt/order/service allocations with frozen billing policy, matching basis, Expense/GRNI basis, price, tax and company-currency snapshots | PUR-080/PUR-220 billing workflow. |
@@ -87,7 +87,7 @@
 | `Services/Purchases/LandedCostService.cs` | allocates receipt costs, splits current inventory from consumed expense, records value-only stock movements and posts a balanced clearing journal | PUR-130 landed-cost screens. |
 | `Dtos/Purchases/PurchaseAnalyticsDtos.cs`, `Services/Purchases/PurchaseAnalyticsService.cs` | bounded read-only purchasing cards and supplier order-cohort performance projections over tenant-filtered repositories | PUR-140 analytics screen. |
 | `Dtos/Purchases/PurchaseAccountingReconciliationDtos.cs`, `Services/Purchases/PurchaseAccountingReconciliationService.cs` | rounds and classifies as-of-date warehouse Inventory/GL and receipt-derived GRNI/GL evidence without mutation | PUR-160 reconciliation screen. |
-| `Services/Purchases/GoodsReceiptService.cs` | atomically validates remaining PO quantity and coordinates receipt posting with Inventory-owned stock, valuation and tracking effects | Goods Receipt capture screen. |
+| `Services/Purchases/GoodsReceiptService.cs` | atomically validates remaining PO quantity and coordinates one-step posting or staged receive/inspect/store quality hold with Inventory-owned stock, valuation and tracking effects | Goods Receipt capture, inspection and storage screens. |
 | `Services/Inventory/InventoryScanResolver.cs` | workflow-scoped retry-key generation/validation and normalized exact scan tokens, including Goods Receipt scans | inventory and PUR-150 scanning flows. |
 | `Services/Purchases/GoodsReceiptReturnService.cs` | caps returns by the posted, unbilled receipt quantity and atomically coordinates inventory removal, tracking, physical movement and GRNI/PPV accounting | Goods Receipt Return screens. |
 | `Services/Purchases/VendorBillService.cs` | builds mixed receipt/order/service-source bills as quantity-reserving Drafts with bounded attachments, performs separately authorized matching approval, rechecks duplicate supplier identity, then clears GRNI or debits frozen Expense accounts only from Approved | Vendor Bill screens and PUR-220 staged policy-aware billing. |

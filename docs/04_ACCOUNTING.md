@@ -1,7 +1,7 @@
 # Accounting implementation assessment
 > Status: PARTIALLY IMPLEMENTED  
 > Source of truth: Code  
-> Last reviewed: 2026-10-13
+> Last reviewed: 2026-10-14
 
 For the Arabic accounting-cycle, journal examples, international-standard map, mandatory software controls and ordered implementation guide, see [`ACCOUNTING_REFERENCE_AR.md`](ACCOUNTING_REFERENCE_AR.md). That reference describes the target policy and must not be read as an implemented-feature list; the status table below remains the implementation assessment.
 
@@ -36,6 +36,7 @@ Warehouses now have optional BranchId and InventoryAccountId fields. Completing 
 | Fiscal periods | IMPLEMENTED | Tenant periods cannot overlap; once configured, the central journal gateway accepts postings only inside an Open period. Soft Closed and Closed block operational posting. |
 | Purchase returns | IMPLEMENTED | Immutable partial/full supplier returns reverse payable, input tax and discount, remove stock at current moving average and post the cost difference to COGS. |
 | Goods Receipt GRNI posting | IMPLEMENTED | Posted new-flow GRNs debit the warehouse inventory account and credit the configured Goods Received Not Invoiced account through the central journal gateway. |
+| Staged receipt quality hold | IMPLEMENTED | PUR-250A Receive/Inspect/Store creates no stock or journal during receipt or inspection. Storage posts only accepted quantity to Inventory/GRNI; rejected, damaged and short quantities remain non-financial evidence. |
 | Receipt-based supplier returns | IMPLEMENTED | Posted new-flow returns debit GRNI at original receipt value, credit Inventory at actual removed AVCO cost and post any difference to the configured Purchase Price Variance account. |
 | Vendor Bill posting | IMPLEMENTED | Entry creates a Draft with no journal; matching approval also has no journal. Only the separate Post action on an Approved bill posts accounting. Receipt-policy lines clear GRNI and isolate Purchase Price Variance/exchange variance. Ordered-quantity and service-completion lines debit the frozen line Expense account. Recoverable input tax is debited and supplier payable is credited for the complete mixed bill. |
 | Three-way match gate | IMPLEMENTED | Quantity and net-price differences above tenant tolerances block Vendor Bill posting unless a separately authorized, reasoned override is persisted with the exceptions. |

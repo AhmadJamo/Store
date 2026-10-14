@@ -9,6 +9,7 @@ public sealed class GoodsReceiptConfiguration : IEntityTypeConfiguration<GoodsRe
     public void Configure(EntityTypeBuilder<GoodsReceipt> builder)
     {
         builder.HasKey(x => x.Id);
+        builder.Property<int>("TenantId");
         builder.Property(x => x.ReceiptNumber).HasMaxLength(50).IsRequired();
         builder.Property(x => x.CurrencyCode).HasMaxLength(3).IsRequired();
         builder.Property(x => x.CompanyCurrencyCode).HasMaxLength(3).IsRequired();
@@ -16,9 +17,13 @@ public sealed class GoodsReceiptConfiguration : IEntityTypeConfiguration<GoodsRe
         builder.Property(x => x.ExchangeRateSource).HasMaxLength(100).IsRequired();
         builder.Property(x => x.CreatedByUserId).HasMaxLength(450).IsRequired();
         builder.Property(x => x.PostedByUserId).HasMaxLength(450);
+        builder.Property(x => x.InspectedByUserId).HasMaxLength(450);
+        builder.Property(x => x.InspectionNotes).HasMaxLength(1000);
         builder.Property(x => x.Notes).HasMaxLength(1000);
         builder.Property(x => x.RowVersion).IsRowVersion();
         builder.HasIndex(x => x.ReceiptNumber).IsUnique();
+        builder.HasIndex("TenantId", nameof(GoodsReceipt.PurchaseOrderId)).IsUnique()
+            .HasFilter("[Status] IN (5, 6)");
         builder.HasOne<PurchaseOrder>().WithMany().HasForeignKey(x => x.PurchaseOrderId).OnDelete(DeleteBehavior.Restrict);
         builder.HasOne<Warehouse>().WithMany().HasForeignKey(x => x.WarehouseId).OnDelete(DeleteBehavior.Restrict);
         builder.HasMany(x => x.Lines).WithOne().HasForeignKey(x => x.GoodsReceiptId).OnDelete(DeleteBehavior.Cascade);
@@ -28,6 +33,12 @@ public sealed class GoodsReceiptConfiguration : IEntityTypeConfiguration<GoodsRe
     {
         builder.HasKey(x => x.Id);
         builder.Property(x => x.ReceivedQuantity).HasPrecision(18, 6);
+        builder.Property(x => x.DeliveredQuantity).HasPrecision(18, 6);
+        builder.Property(x => x.AcceptedQuantity).HasPrecision(18, 6);
+        builder.Property(x => x.RejectedQuantity).HasPrecision(18, 6);
+        builder.Property(x => x.DamagedQuantity).HasPrecision(18, 6);
+        builder.Property(x => x.ShortQuantity).HasPrecision(18, 6);
+        builder.Property(x => x.DiscrepancyReason).HasMaxLength(500);
         builder.Property(x => x.UnitFactorToBase).HasPrecision(24, 12);
         builder.Property(x => x.StockQuantity).HasPrecision(18, 6);
         builder.Property(x => x.UnitCost).HasPrecision(24, 8);

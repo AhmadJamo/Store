@@ -1,5 +1,7 @@
 ﻿namespace MiniStore.Domain.Entities;
 
+public enum PurchaseReceivingRoute { OneStep = 1, ReceiveInspectStore = 2 }
+
 public class Warehouse
 {
     public int Id { get; private set; }
@@ -23,6 +25,8 @@ public class Warehouse
     public bool RequireSourceLocationForTransfers { get; private set; }
 
     public bool RequireDestinationLocationForTransfers { get; private set; }
+
+    public PurchaseReceivingRoute PurchaseReceivingRoute { get; private set; } = PurchaseReceivingRoute.OneStep;
 
     public Warehouse(string name)
     {
@@ -57,11 +61,13 @@ public class Warehouse
         bool allowPosSales,
         bool enforceLocationCapacity,
         bool requireSourceLocationForTransfers,
-        bool requireDestinationLocationForTransfers)
+        bool requireDestinationLocationForTransfers,
+        PurchaseReceivingRoute purchaseReceivingRoute = PurchaseReceivingRoute.OneStep)
     {
         if (!Enum.IsDefined(type) ||
             !Enum.IsDefined(controlMode) ||
-            !Enum.IsDefined(pickingStrategy))
+            !Enum.IsDefined(pickingStrategy) ||
+            !Enum.IsDefined(purchaseReceivingRoute))
         {
             throw new ArgumentException("Invalid warehouse inventory policy.");
         }
@@ -80,5 +86,6 @@ public class Warehouse
         EnforceLocationCapacity = enforceLocationCapacity;
         RequireSourceLocationForTransfers = requireSourceLocationForTransfers;
         RequireDestinationLocationForTransfers = requireDestinationLocationForTransfers;
+        PurchaseReceivingRoute = purchaseReceivingRoute;
     }
 }

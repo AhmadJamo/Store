@@ -1,5 +1,6 @@
 ﻿@model MiniStore.Application.DTOs.Warehouses.UpdateWarehouseDto
 
+@inject Microsoft.Extensions.Localization.IStringLocalizer<MiniStore.Web.SharedResource> Localizer
 @{
     ViewData["Title"] = "Edit Warehouse";
 }
@@ -43,6 +44,7 @@
                     <label asp-for="PickingStrategy" class="form-label">Picking strategy</label>
                     <select asp-for="PickingStrategy" asp-items="Html.GetEnumSelectList<MiniStore.Domain.Entities.InventoryPickingStrategy>()" class="form-select"></select>
                 </div>
+                <div class="col-md-4"><label asp-for="PurchaseReceivingRoute" class="form-label">@Localizer["Purchase receiving route"]</label><select asp-for="PurchaseReceivingRoute" class="form-select"><option value="OneStep">@Localizer["Receive directly into stock"]</option><option value="ReceiveInspectStore">@Localizer["Receive, inspect, then store"]</option></select></div>
             </div>
             <div class="form-check form-switch mt-3">
                 <input asp-for="AllowPosSales" class="form-check-input" />

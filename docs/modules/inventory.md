@@ -1,5 +1,5 @@
 # Inventory and stock movements
-> Status: IMPLEMENTED WITH APPROVED WMS EVOLUTION | Last reviewed: 2026-10-04
+> Status: IMPLEMENTED WITH APPROVED WMS EVOLUTION | Last reviewed: 2026-10-14
 
 The approved evolution is documented in `../WMS_EVOLUTION_PLAN.md`. Existing ProductStock, ProductLocationStock, StockTransaction, LocationMovement, warehouse policies and StockTransfer workflows remain authoritative until each WMS vertical slice is implemented and reconciled. WMS-020A now adds the StockMovement kernel for new Putaway and Relocation operations only.
 
@@ -118,3 +118,7 @@ The 2026-09-30 read-only run against the demo database found five explained lega
 `BranchWarehouseAccess` assigns warehouses to a branch with priority and separate permissions for POS sales, purchases, transfer-in, transfer-out and replenishment. One access row may be the branch POS default. `PosTerminalWarehouse` narrows the branch list for each terminal and orders its default and alternatives.
 
 POS sale validation requires warehouse, branch-access and terminal-access approval. Installations with no configured terminal retain transitional legacy POS behavior; after the first terminal is created, terminal selection is mandatory.
+
+## PUR-250A purchase receiving boundary (2026-10-14)
+
+Warehouses now choose either direct one-step purchase receiving or Receive/Inspect/Store. The purchase receipt owns delivery and quality evidence; Inventory remains the only stock mutation owner. Staged receipts create no ProductStock, tracking balance, StockTransaction or StockMovement until the accepted quantity is explicitly stored. Rejected, damaged and short quantities remain purchasing evidence and never become available stock.

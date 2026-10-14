@@ -37,7 +37,7 @@ The WMS track is temporarily paused after implementing reconciliation, logistics
 See `06_SECURITY.md`, `04_ACCOUNTING.md`, and `TODO.md`. Highest-priority findings include rotating previously committed admin credentials on existing deployments, completing inventory valuation and accounting posting, and establishing production deployment/backup/integration-test controls. Identity escalation, role-delete CSRF, login lockout and core inventory concurrency have been addressed; see the security and inventory documentation.
 
 ## Recommended next steps
-1. Start PUR-250 configurable receiving/quality routes, demand allocation and dropshipping contracts on top of completed PUR-240 replenishment automation.
+1. Continue PUR-250B demand allocation and dropshipping contracts; PUR-250A configurable one-step or receive/inspect/store routing and quality hold is implemented.
 2. Complete company switching, invitations and existing-user role assignment management on top of the tenant-owned role model.
 3. Establish an immutable posted-document and double-entry accounting design before adding more ERP features.
 

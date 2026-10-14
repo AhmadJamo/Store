@@ -1,5 +1,5 @@
 # Razor screen map
-> Status: IMPLEMENTED | Last reviewed: 2026-10-13
+> Status: IMPLEMENTED | Last reviewed: 2026-10-14
 
 | Purchase document reversals | `/PurchaseDocumentReversals` | Responsive reversal history, confirmation and immutable audit detail for receipts, bills, payments and landed costs; original detail screens hide the action after completion and link to the reversal. |
 
@@ -28,6 +28,7 @@
 | `Views/Purchases/{Index,Create,Details}.cshtml` | purchase list/detail and client-side dynamic item rows. |
 | `Views/PurchaseRequests/Details.cshtml`, `Views/PurchaseSourcing/{Create,Details}.cshtml`, `Views/SupplierQuotations/{Create,Comparison}.cshtml` | permission-aware approved/direct sourcing and supplier-quotation entry; the responsive comparison allocates exact demand quantities across supplier lines with reasons, then replaces the completed action with allocation evidence and links to every generated order. |
 | `Views/PurchaseOrders/Details.cshtml` | responsive line cards show the frozen billing policy plus physical receipt or service-completion progress without horizontal scrolling. Finished receipt/service actions are replaced by status badges; separately authorized reason forms handle remaining-quantity closure and reopen. |
+| `Views/GoodsReceipts/{Index,Create,Scan,Details}.cshtml` | responsive card-based receiving without horizontal scrolling. The warehouse route clearly distinguishes direct posting from receive/inspect/store; staged details capture accepted/rejected/damaged/short quantities and expose only the currently valid inspection or storage action. |
 | `Views/PurchaseServiceAcceptances/{Index,Create,Details}.cshtml` | responsive bilingual service-completion capture and immutable evidence; explicitly states that no warehouse stock changes. |
 | `Views/Shared/_Notification.cshtml` | shared localized notification modal with permission-aware resolution buttons for recognized actionable errors and a short next-step explanation/button after successful purchase, inventory and warehouse operations. |
 | `Views/GoodsReceiptReturns/{Index,Create,Details}.cshtml` | bilingual receipt-based supplier return capture and immutable posted history. |

@@ -3,4 +3,24 @@
 @{ ViewData["Title"] = Localizer["Goods receipts"]; }
 <h2>@Localizer["Goods receipts"]</h2>
 <form method="get" class="row g-2 mb-3"><div class="col-md-4"><input name="search" value="@ViewBag.Search" class="form-control" placeholder="@Localizer["Search"]" /></div><div class="col-md-2"><button class="btn btn-outline-primary">@Localizer["Filter"]</button></div></form>
-@if(Model.Count==0){<div class="alert alert-info">@Localizer["No goods receipts found."]</div>}else{<div class="table-responsive"><table class="table align-middle"><thead><tr><th>@Localizer["Goods receipt"]</th><th>@Localizer["Purchase order"]</th><th>@Localizer["Warehouse"]</th><th>@Localizer["Receipt date"]</th><th>@Localizer["Status"]</th><th></th></tr></thead><tbody>@foreach(var item in Model){<tr><td>@item.ReceiptNumber</td><td>@item.PurchaseOrderNumber</td><td>@item.WarehouseName</td><td>@item.ReceiptDate</td><td>@Localizer[item.Status.ToString()]</td><td><a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary">@Localizer["Details"]</a></td></tr>}</tbody></table></div>}
+@if (Model.Count == 0)
+{
+    <div class="alert alert-info">@Localizer["No goods receipts found."]</div>
+}
+else
+{
+    <div class="row g-3">
+        @foreach (var item in Model)
+        {
+            var statusClass = item.Status switch { MiniStore.Domain.Entities.GoodsReceiptStatus.Posted => "bg-success", MiniStore.Domain.Entities.GoodsReceiptStatus.QualityRejected => "bg-danger", MiniStore.Domain.Entities.GoodsReceiptStatus.AwaitingInspection => "bg-warning text-dark", MiniStore.Domain.Entities.GoodsReceiptStatus.AwaitingPutaway => "bg-info text-dark", _ => "bg-secondary" };
+            <div class="col-md-6 col-xl-4"><div class="card card-body h-100">
+                <div class="d-flex justify-content-between gap-2"><h5>@item.ReceiptNumber</h5><span class="badge @statusClass align-self-start">@Localizer[item.Status.ToString()]</span></div>
+                <div><strong>@Localizer["Purchase order"]:</strong> @item.PurchaseOrderNumber</div>
+                <div><strong>@Localizer["Warehouse"]:</strong> @item.WarehouseName</div>
+                <div><strong>@Localizer["Receipt date"]:</strong> @item.ReceiptDate</div>
+                <div><strong>@Localizer["Receiving route"]:</strong> @Localizer[item.ReceivingRoute.ToString()]</div>
+                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary mt-3 align-self-start">@Localizer["Details"]</a>
+            </div></div>
+        }
+    </div>
+}

@@ -114,7 +114,22 @@ public static class WorkflowNextStepGuidance
                 "The order is confirmed again and its remaining quantity can now be received.",
                 "GoodsReceipts.Create", Routes(("purchaseOrderId", Route("id"))));
 
-        if (Matches(message, localize, "Goods receipt posted."))
+        if (Matches(message, localize, "Goods received and awaiting quality inspection."))
+            return new("GoodsReceipts", "Details", "Inspect received goods",
+                "Record accepted, rejected, damaged and short quantities before any stock is made available.",
+                "GoodsReceipts.Inspect", Routes(("id", Route("id"))));
+
+        if (Matches(message, localize, "Quality inspection completed and awaiting storage."))
+            return new("GoodsReceipts", "Details", "Store accepted goods",
+                "Move the quality-approved quantity into stock and post its accounting entry.",
+                "GoodsReceipts.PutAway", Routes(("id", Route("id"))));
+
+        if (Matches(message, localize, "Quality inspection completed with no accepted quantity."))
+            return new("GoodsReceipts", "Details", "Review rejected receipt",
+                "No quantity entered stock; review the discrepancy evidence and continue with the supplier.",
+                "GoodsReceipts.View", Routes(("id", Route("id"))));
+
+        if (Matches(message, localize, "Goods receipt posted.", "Quality-approved goods stored and receipt posted."))
             return new("VendorBills", "Index", "Continue to supplier billing",
                 "Review supplier bills and create the bill for the received order when it arrives.",
                 "VendorBills.View", []);

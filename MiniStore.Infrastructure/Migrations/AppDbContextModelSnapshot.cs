@@ -977,6 +977,17 @@ namespace MiniStore.Infrastructure.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<DateTime?>("InspectedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("InspectedByUserId")
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("InspectionNotes")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
                     b.Property<string>("Notes")
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
@@ -999,6 +1010,9 @@ namespace MiniStore.Infrastructure.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<int>("ReceivingRouteSnapshot")
+                        .HasColumnType("int");
+
                     b.Property<byte[]>("RowVersion")
                         .IsConcurrencyToken()
                         .IsRequired()
@@ -1020,6 +1034,10 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasIndex("PurchaseOrderId", "TenantId");
 
+                    b.HasIndex("TenantId", "PurchaseOrderId")
+                        .IsUnique()
+                        .HasFilter("[Status] IN (5, 6)");
+
                     b.HasIndex("TenantId", "ReceiptNumber")
                         .IsUnique();
 
@@ -1035,6 +1053,22 @@ namespace MiniStore.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("AcceptedQuantity")
+                        .HasPrecision(18, 6)
+                        .HasColumnType("decimal(18,6)");
+
+                    b.Property<decimal>("DamagedQuantity")
+                        .HasPrecision(18, 6)
+                        .HasColumnType("decimal(18,6)");
+
+                    b.Property<decimal>("DeliveredQuantity")
+                        .HasPrecision(18, 6)
+                        .HasColumnType("decimal(18,6)");
+
+                    b.Property<string>("DiscrepancyReason")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<DateOnly?>("ExpirationDate")
                         .HasColumnType("date");
@@ -1072,9 +1106,17 @@ namespace MiniStore.Infrastructure.Migrations
                         .HasPrecision(18, 6)
                         .HasColumnType("decimal(18,6)");
 
+                    b.Property<decimal>("RejectedQuantity")
+                        .HasPrecision(18, 6)
+                        .HasColumnType("decimal(18,6)");
+
                     b.Property<string>("SerialNumbers")
                         .HasMaxLength(2000)
                         .HasColumnType("nvarchar(2000)");
+
+                    b.Property<decimal>("ShortQuantity")
+                        .HasPrecision(18, 6)
+                        .HasColumnType("decimal(18,6)");
 
                     b.Property<decimal>("StockQuantity")
                         .HasPrecision(18, 6)
@@ -7953,6 +7995,9 @@ namespace MiniStore.Infrastructure.Migrations
                         .HasColumnType("nvarchar(200)");
 
                     b.Property<int>("PickingStrategy")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PurchaseReceivingRoute")
                         .HasColumnType("int");
 
                     b.Property<bool>("RequireDestinationLocationForTransfers")

@@ -14,4 +14,5 @@ public class CreateWarehouseDto
     public bool EnforceLocationCapacity { get; set; } = true;
     public bool RequireSourceLocationForTransfers { get; set; }
     public bool RequireDestinationLocationForTransfers { get; set; }
+    public PurchaseReceivingRoute PurchaseReceivingRoute { get; set; } = PurchaseReceivingRoute.OneStep;
 }

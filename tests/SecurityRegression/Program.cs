@@ -429,6 +429,11 @@ Check(
     organizedSalesFloor.AllowPosSales &&
     organizedSalesFloor.ControlMode == InventoryControlMode.Hybrid,
     "An organized sales-floor warehouse must be usable by POS");
+organizedSalesFloor.ConfigureInventoryOperations(
+    WarehouseType.SalesFloor, InventoryControlMode.Hybrid, InventoryPickingStrategy.LocationPriority,
+    true, true, false, false, PurchaseReceivingRoute.ReceiveInspectStore);
+Check(organizedSalesFloor.PurchaseReceivingRoute == PurchaseReceivingRoute.ReceiveInspectStore,
+    "A warehouse must preserve its configured purchase receiving route");
 CheckArgumentThrows(
     () => organizedSalesFloor.ConfigureInventoryOperations(
         WarehouseType.Outlet,
@@ -1612,6 +1617,31 @@ goodsReceipt.Post("receiver");
 Check(goodsReceipt.Status == GoodsReceiptStatus.Posted && goodsReceipt.Lines.Single().StockQuantity == 1m &&
       db.Model.FindEntityType(typeof(GoodsReceipt))!.FindProperty("TenantId") is { IsNullable: false },
     "Posted goods receipts must retain frozen partial receipt evidence inside the tenant boundary");
+var inspectedReceipt = new GoodsReceipt("GRN-QUALITY-1", 1, 1, DateOnly.FromDateTime(DateTime.Today), null, "receiver",
+    receivingRoute: PurchaseReceivingRoute.ReceiveInspectStore);
+inspectedReceipt.AddLine(new GoodsReceiptLine(1, 10, 2, 5m, 1m, 11.25m, "P-10", "Coffee beans", "kg", "LOT-2", null, null, null));
+inspectedReceipt.ReceiveForInspection("receiver");
+inspectedReceipt.CompleteInspection([new GoodsReceiptInspectionDecision(0, 3m, 1m, 1m, 2m, "One rejected, one damaged and two not delivered")], "Checked", "inspector");
+Check(inspectedReceipt.Status == GoodsReceiptStatus.AwaitingPutaway &&
+      inspectedReceipt.Lines.Single() is { DeliveredQuantity: 5m, AcceptedQuantity: 3m, ReceivedQuantity: 3m, RejectedQuantity: 1m, DamagedQuantity: 1m, ShortQuantity: 2m, StockQuantity: 3m },
+    "Staged receiving must preserve delivered quality evidence and expose only accepted quantity for later storage");
+inspectedReceipt.Post("receiver");
+Check(inspectedReceipt.Status == GoodsReceiptStatus.Posted,
+    "Only quality-approved staged receipts must advance from inspection to posted storage");
+var rejectedReceipt = new GoodsReceipt("GRN-QUALITY-2", 1, 1, DateOnly.FromDateTime(DateTime.Today), null, "receiver",
+    receivingRoute: PurchaseReceivingRoute.ReceiveInspectStore);
+rejectedReceipt.AddLine(new GoodsReceiptLine(1, 10, 2, 2m, 1m, 11.25m, "P-10", "Coffee beans", "kg", null, null, null, null));
+rejectedReceipt.ReceiveForInspection("receiver");
+rejectedReceipt.CompleteInspection([new GoodsReceiptInspectionDecision(0, 0m, 2m, 0m, 0m, "Quality failed")], null, "inspector");
+Check(rejectedReceipt.Status == GoodsReceiptStatus.QualityRejected && rejectedReceipt.Lines.Single().StockQuantity == 0m,
+    "A fully rejected receipt must finish without creating available stock");
+CheckArgumentThrows(() => {
+        var receipt = new GoodsReceipt("GRN-QUALITY-3", 1, 1, DateOnly.FromDateTime(DateTime.Today), null, "receiver",
+            receivingRoute: PurchaseReceivingRoute.ReceiveInspectStore);
+        receipt.AddLine(new GoodsReceiptLine(1, 10, 2, 1m, 1m, 1m, "P-10", "Coffee beans", "kg", null, null, null, null));
+        receipt.ReceiveForInspection("receiver");
+        receipt.CompleteInspection([new GoodsReceiptInspectionDecision(0, 0m, 1m, 0m, 0m, null)], null, "inspector");
+    }, "Quality discrepancies must require a documented reason");
 var scannedDraft = new GoodsReceipt("GRN-000002", 1, 1, DateOnly.FromDateTime(DateTime.Today), null, "receiver");
 scannedDraft.RecordScan(new GoodsReceiptLine(1, 10, 2, 1m, 1m, 11.25m, "P-10", "Coffee beans", "kg", "LOT-1", null, null, null));
 scannedDraft.RecordScan(new GoodsReceiptLine(1, 10, 2, 1m, 1m, 11.25m, "P-10", "Coffee beans", "kg", "LOT-1", null, null, null));
@@ -1634,8 +1664,19 @@ Check(goodsReceiptController.GetMethod(nameof(GoodsReceiptsController.Scan))!
       $"{PermissionAuthorizeAttribute.PolicyPrefix}GoodsReceipts.Create" &&
       goodsReceiptController.GetMethod(nameof(GoodsReceiptsController.PostDraft))!
           .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
-      $"{PermissionAuthorizeAttribute.PolicyPrefix}GoodsReceipts.Create",
-    "Barcode receipt capture and posting must remain behind the existing goods-receipt command permission");
+      $"{PermissionAuthorizeAttribute.PolicyPrefix}GoodsReceipts.Create" &&
+      goodsReceiptController.GetMethod(nameof(GoodsReceiptsController.Inspect))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
+      $"{PermissionAuthorizeAttribute.PolicyPrefix}GoodsReceipts.Inspect" &&
+      goodsReceiptController.GetMethod(nameof(GoodsReceiptsController.PutAway))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
+      $"{PermissionAuthorizeAttribute.PolicyPrefix}GoodsReceipts.PutAway",
+    "Receipt capture, quality inspection and storage must enforce separate server-side command permissions");
+var activeReceiptIndex = db.Model.FindEntityType(typeof(GoodsReceipt))!.GetIndexes()
+    .Single(index => index.Properties.Select(property => property.Name)
+        .SequenceEqual(["TenantId", nameof(GoodsReceipt.PurchaseOrderId)]));
+Check(activeReceiptIndex.IsUnique && activeReceiptIndex.GetFilter() == "[Status] IN (5, 6)",
+    "Only one staged receipt may await inspection or storage for a purchase order");
 Check(goodsReceiptCreateAction.GetParameters().Single().GetCustomAttribute<BindAttribute>()?.Prefix == "Form",
     "Manual goods-receipt submission must bind the nested Form fields posted by the create page");
 var landedStock = new ProductStock(10, 1);
@@ -1908,6 +1949,19 @@ Check(purchaseNextStep is
           RequiredPermission: "PurchaseSourcing.Create"
       } && purchaseNextStep.RouteValues.GetValueOrDefault("purchaseRequestId") == "42",
     "Approved purchase requests must guide users to supplier sourcing with the document route");
+var inspectionNextStep = WorkflowNextStepGuidance.Resolve(
+    "Goods received and awaiting quality inspection.",
+    "GoodsReceipts",
+    new Dictionary<string, string?> { ["id"] = "71" });
+Check(inspectionNextStep is { Controller: "GoodsReceipts", Action: "Details", RequiredPermission: "GoodsReceipts.Inspect" } &&
+      inspectionNextStep.RouteValues.GetValueOrDefault("id") == "71",
+    "Staged receipt completion must guide the user directly to quality inspection");
+var storageNextStep = WorkflowNextStepGuidance.Resolve(
+    "Quality inspection completed and awaiting storage.",
+    "GoodsReceipts",
+    new Dictionary<string, string?> { ["id"] = "71" });
+Check(storageNextStep is { Controller: "GoodsReceipts", Action: "Details", RequiredPermission: "GoodsReceipts.PutAway" },
+    "Quality approval must guide the user directly to storing accepted goods");
 var replenishmentNextStep = WorkflowNextStepGuidance.Resolve(
     "Replenishment planning run completed.",
     "PurchaseReplenishment",
