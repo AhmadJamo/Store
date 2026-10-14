@@ -70,6 +70,7 @@ public static class NavigationDefinitions
                 "Index",
                 "Purchases.SupplierTerms.View",
                 40),
+            new NavigationItem("Automated replenishment","bi-arrow-repeat","PurchaseReplenishment","Index","PurchaseReplenishment.View",45),
             new NavigationItem("Purchase requests","bi-clipboard-plus","PurchaseRequests","Index","PurchaseRequests.View",50),
             new NavigationItem("Purchase approval rules","bi-diagram-3","PurchaseApprovalRules","Index","PurchaseApprovalRules.View",60)
             ,new NavigationItem("Purchase sourcing","bi-send","PurchaseSourcing","Index","PurchaseSourcing.View",70)

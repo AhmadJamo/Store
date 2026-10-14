@@ -2086,4 +2086,72 @@
   <data name="Previous" xml:space="preserve"><value>السابق</value></data>
   <data name="Next" xml:space="preserve"><value>التالي</value></data>
   <data name="Page {0} of {1}" xml:space="preserve"><value>الصفحة {0} من {1}</value></data>
+  <data name="Automated replenishment" xml:space="preserve"><value>التزويد الآلي</value></data>
+  <data name="Plans purchasing from stock, incoming supply, demand history and seasonality without creating duplicates." xml:space="preserve"><value>يخطط الشراء اعتمادًا على المخزون والتوريد القادم وسجل الطلب والموسمية دون إنشاء مستندات مكررة.</value></data>
+  <data name="Run planning now" xml:space="preserve"><value>شغّل التخطيط الآن</value></data>
+  <data name="Automation settings" xml:space="preserve"><value>إعدادات التشغيل الآلي</value></data>
+  <data name="Enable scheduled planning" xml:space="preserve"><value>تفعيل التخطيط المجدول</value></data>
+  <data name="Frequency (hours)" xml:space="preserve"><value>التكرار (بالساعات)</value></data>
+  <data name="How often the system reviews replenishment rules." xml:space="preserve"><value>عدد الساعات بين كل مراجعة آلية لقواعد التزويد.</value></data>
+  <data name="Demand history (days)" xml:space="preserve"><value>سجل الطلب (بالأيام)</value></data>
+  <data name="Past sales period used to calculate expected demand." xml:space="preserve"><value>فترة المبيعات السابقة المستخدمة لحساب الطلب المتوقع.</value></data>
+  <data name="Creation mode" xml:space="preserve"><value>طريقة الإنشاء</value></data>
+  <data name="Choose review only, draft requests, or direct RFQs when company policy allows." xml:space="preserve"><value>اختر المراجعة فقط، أو مسودات طلبات الشراء، أو طلبات عروض السعر المباشرة عندما تسمح سياسة الشركة.</value></data>
+  <data name="Supplier response days" xml:space="preserve"><value>مهلة رد المورد (بالأيام)</value></data>
+  <data name="Review suggestions only" xml:space="preserve"><value>مراجعة الاقتراحات فقط</value></data>
+  <data name="Create purchase request drafts" xml:space="preserve"><value>إنشاء مسودات طلبات شراء</value></data>
+  <data name="Create direct RFQs within policy, otherwise requests" xml:space="preserve"><value>إنشاء طلبات عرض سعر مباشرة ضمن السياسة، وإلا طلبات شراء</value></data>
+  <data name="Last run" xml:space="preserve"><value>آخر تشغيل</value></data>
+  <data name="Next run" xml:space="preserve"><value>التشغيل القادم</value></data>
+  <data name="Planning history" xml:space="preserve"><value>سجل التخطيط</value></data>
+  <data name="No replenishment planning runs yet." xml:space="preserve"><value>لا توجد عمليات تخطيط تزويد حتى الآن.</value></data>
+  <data name="Scheduled run" xml:space="preserve"><value>تشغيل مجدول</value></data>
+  <data name="Manual run" xml:space="preserve"><value>تشغيل يدوي</value></data>
+  <data name="Completed" xml:space="preserve"><value>مكتمل</value></data>
+  <data name="Running" xml:space="preserve"><value>قيد التشغيل</value></data>
+  <data name="No action needed" xml:space="preserve"><value>لا يلزم إجراء</value></data>
+  <data name="Ready for review" xml:space="preserve"><value>جاهز للمراجعة</value></data>
+  <data name="Purchase request created" xml:space="preserve"><value>تم إنشاء طلب شراء</value></data>
+  <data name="RFQ created and sent" xml:space="preserve"><value>تم إنشاء وإرسال طلب عرض السعر</value></data>
+  <data name="Already covered by an active document" xml:space="preserve"><value>مغطى مسبقًا بمستند فعال</value></data>
+  <data name="Skipped" xml:space="preserve"><value>تم التجاوز</value></data>
+  <data name="Incoming" xml:space="preserve"><value>القادم</value></data>
+  <data name="Historical demand" xml:space="preserve"><value>الطلب التاريخي</value></data>
+  <data name="Seasonal factor" xml:space="preserve"><value>معامل الموسمية</value></data>
+  <data name="Planning target" xml:space="preserve"><value>مستهدف التخطيط</value></data>
+  <data name="Suggested stock quantity" xml:space="preserve"><value>كمية المخزون المقترحة</value></data>
+  <data name="Supplier quantity" xml:space="preserve"><value>كمية المورد</value></data>
+  <data name="Open RFQ" xml:space="preserve"><value>فتح طلب عرض السعر</value></data>
+  <data name="Automated replenishment settings saved." xml:space="preserve"><value>تم حفظ إعدادات التزويد الآلي.</value></data>
+  <data name="Replenishment planning run completed." xml:space="preserve"><value>اكتملت عملية تخطيط التزويد.</value></data>
+  <data name="Projected availability already covers the calculated target." xml:space="preserve"><value>الكمية المتاحة المتوقعة تغطي المستهدف المحسوب.</value></data>
+  <data name="An active replenishment purchase request or RFQ already covers this rule." xml:space="preserve"><value>يوجد طلب شراء أو طلب عرض سعر فعال يغطي قاعدة التزويد هذه.</value></data>
+  <data name="No active compatible supplier purchasing terms are available." xml:space="preserve"><value>لا توجد بيانات شراء فعالة ومتوافقة لمورد.</value></data>
+  <data name="Projected availability is below the maximum target." xml:space="preserve"><value>الكمية المتاحة المتوقعة أقل من الحد الأقصى المستهدف.</value></data>
+  <data name="Projected availability is below forecast demand for the coverage and lead-time horizon." xml:space="preserve"><value>الكمية المتاحة المتوقعة أقل من الطلب المتوقع خلال مدة التغطية والتوريد.</value></data>
+  <data name="Replenishment frequency must be between 1 and 168 hours." xml:space="preserve"><value>يجب أن يكون تكرار التزويد بين ساعة و168 ساعة.</value></data>
+  <data name="Forecast lookback must be between 7 and 730 days." xml:space="preserve"><value>يجب أن تكون فترة سجل التوقع بين 7 و730 يومًا.</value></data>
+  <data name="Supplier response days must be between 1 and 90." xml:space="preserve"><value>يجب أن تكون مهلة رد المورد بين يوم و90 يومًا.</value></data>
+  <data name="Replenishment automation settings were changed by another user. Reload and try again." xml:space="preserve"><value>غيّر مستخدم آخر إعدادات التزويد الآلي. أعد تحميل الصفحة وحاول مجددًا.</value></data>
+  <data name="A scheduled replenishment run cannot exceed 500 active purchase rules." xml:space="preserve"><value>لا يمكن لتشغيل التزويد المجدول معالجة أكثر من 500 قاعدة شراء فعالة.</value></data>
+  <data name="Planning method" xml:space="preserve"><value>طريقة التخطيط</value></data>
+  <data name="Minimum and maximum" xml:space="preserve"><value>الحد الأدنى والأقصى</value></data>
+  <data name="Historical demand forecast" xml:space="preserve"><value>توقع الطلب التاريخي</value></data>
+  <data name="Coverage days" xml:space="preserve"><value>أيام التغطية</value></data>
+  <data name="Use seasonality" xml:space="preserve"><value>استخدام الموسمية</value></data>
+  <data name="Review replenishment results" xml:space="preserve"><value>مراجعة نتائج التزويد</value></data>
+  <data name="Review each calculation and open the purchase request or RFQ created for it." xml:space="preserve"><value>راجع كل عملية حساب وافتح طلب الشراء أو طلب عرض السعر الذي تم إنشاؤه لها.</value></data>
+  <data name="View Automated Replenishment" xml:space="preserve"><value>عرض التزويد الآلي</value></data>
+  <data name="Manage Automated Replenishment" xml:space="preserve"><value>إدارة التزويد الآلي</value></data>
+  <data name="Run Automated Replenishment" xml:space="preserve"><value>تشغيل التزويد الآلي</value></data>
+  <data name="Coverage days must be between 1 and 365." xml:space="preserve"><value>يجب أن تكون أيام التغطية بين يوم و365 يومًا.</value></data>
+  <data name="Replenishment planning method is invalid." xml:space="preserve"><value>طريقة تخطيط التزويد غير صالحة.</value></data>
+  <data name="Purchase currency" xml:space="preserve"><value>عملة الشراء</value></data>
+  <data name="Automated replenishment planning" xml:space="preserve"><value>تخطيط التزويد الآلي</value></data>
+  <data name="AutomatedReplenishmentDemand" xml:space="preserve"><value>حاجة ناتجة عن تخطيط التزويد الآلي</value></data>
+  <data name="TargetAlreadyCovered" xml:space="preserve"><value>الكمية المتاحة المتوقعة تغطي المستهدف المحسوب.</value></data>
+  <data name="ActiveDemandExists" xml:space="preserve"><value>يوجد طلب شراء أو طلب عرض سعر فعال يغطي قاعدة التزويد هذه.</value></data>
+  <data name="SupplierTermsMissing" xml:space="preserve"><value>لا توجد بيانات شراء فعالة ومتوافقة لمورد.</value></data>
+  <data name="BelowMaximumTarget" xml:space="preserve"><value>الكمية المتاحة المتوقعة أقل من الحد الأقصى المستهدف.</value></data>
+  <data name="BelowForecastTarget" xml:space="preserve"><value>الكمية المتاحة المتوقعة أقل من الطلب المتوقع خلال مدة التغطية والتوريد.</value></data>
 </root>

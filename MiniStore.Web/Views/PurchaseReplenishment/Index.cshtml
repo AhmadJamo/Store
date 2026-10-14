@@ -1,0 +1,77 @@
+@using MiniStore.Domain.Entities
+@model MiniStore.Application.DTOs.Purchases.ReplenishmentAutomationPageDto
+@inject Microsoft.Extensions.Localization.IStringLocalizer<MiniStore.Web.SharedResource> Localizer
+@inject Microsoft.AspNetCore.Authorization.IAuthorizationService AuthorizationService
+@{
+    ViewData["Title"] = Localizer["Automated replenishment"];
+    var canManage = (await AuthorizationService.AuthorizeAsync(User, null, "Permission:PurchaseReplenishment.Manage")).Succeeded;
+    var canRun = (await AuthorizationService.AuthorizeAsync(User, null, "Permission:PurchaseReplenishment.Run")).Succeeded;
+    var numberSettings = await GeneralSettingsService.GetAsync();
+    string ModeName(ReplenishmentAutomationMode mode) => Localizer[mode switch {
+        ReplenishmentAutomationMode.ReviewOnly => "Review suggestions only",
+        ReplenishmentAutomationMode.PurchaseRequestDraft => "Create purchase request drafts",
+        _ => "Create direct RFQs within policy, otherwise requests"
+    }];
+    string OutcomeName(ReplenishmentSuggestionOutcome outcome) => Localizer[outcome switch {
+        ReplenishmentSuggestionOutcome.NoAction => "No action needed",
+        ReplenishmentSuggestionOutcome.ReviewRequired => "Ready for review",
+        ReplenishmentSuggestionOutcome.PurchaseRequestCreated => "Purchase request created",
+        ReplenishmentSuggestionOutcome.DirectRfqCreated => "RFQ created and sent",
+        ReplenishmentSuggestionOutcome.ExistingDemand => "Already covered by an active document",
+        _ => "Skipped"
+    }];
+    string ReasonName(ReplenishmentSuggestionReason reason) => Localizer[reason switch {
+        ReplenishmentSuggestionReason.TargetAlreadyCovered => "Projected availability already covers the calculated target.",
+        ReplenishmentSuggestionReason.ActiveDemandExists => "An active replenishment purchase request or RFQ already covers this rule.",
+        ReplenishmentSuggestionReason.SupplierTermsMissing => "No active compatible supplier purchasing terms are available.",
+        ReplenishmentSuggestionReason.BelowMaximumTarget => "Projected availability is below the maximum target.",
+        _ => "Projected availability is below forecast demand for the coverage and lead-time horizon."
+    }];
+}
+<div class="container py-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+        <div><h2 class="mb-1">@Localizer["Automated replenishment"]</h2><p class="text-muted mb-0">@Localizer["Plans purchasing from stock, incoming supply, demand history and seasonality without creating duplicates."]</p></div>
+        @if (canRun) { <form asp-action="RunNow" method="post"><button class="btn btn-primary"><i class="bi bi-play-fill"></i> @Localizer["Run planning now"]</button></form> }
+    </div>
+
+    <div class="card shadow-sm mb-4"><div class="card-body">
+        <h5>@Localizer["Automation settings"]</h5>
+        <form asp-action="SaveSettings" method="post" class="row g-3">
+            <input asp-for="Settings.RowVersion" type="hidden" />
+            <div class="col-12 col-md-3"><div class="form-check form-switch mt-md-4"><input asp-for="Settings.IsEnabled" class="form-check-input" disabled="@(!canManage)"/><label asp-for="Settings.IsEnabled" class="form-check-label">@Localizer["Enable scheduled planning"]</label></div></div>
+            <div class="col-6 col-md-2"><label class="form-label">@Localizer["Frequency (hours)"] <span title="@Localizer["How often the system reviews replenishment rules."]">?</span></label><input asp-for="Settings.FrequencyHours" class="form-control" min="1" max="168" readonly="@(!canManage)"/></div>
+            <div class="col-6 col-md-2"><label class="form-label">@Localizer["Demand history (days)"] <span title="@Localizer["Past sales period used to calculate expected demand."]">?</span></label><input asp-for="Settings.ForecastLookbackDays" class="form-control" min="7" max="730" readonly="@(!canManage)"/></div>
+            <div class="col-12 col-md-3"><label class="form-label">@Localizer["Creation mode"] <span title="@Localizer["Choose review only, draft requests, or direct RFQs when company policy allows."]">?</span></label><select asp-for="Settings.Mode" class="form-select" disabled="@(!canManage)">@foreach(var mode in Enum.GetValues<ReplenishmentAutomationMode>()){<option value="@mode">@ModeName(mode)</option>}</select></div>
+            <div class="col-6 col-md-2"><label class="form-label">@Localizer["Supplier response days"]</label><input asp-for="Settings.SupplierResponseDays" class="form-control" min="1" max="90" readonly="@(!canManage)"/></div>
+            @if (canManage) { <div class="col-12"><button class="btn btn-outline-primary">@Localizer["Save settings"]</button></div> }
+        </form>
+        <div class="small text-muted mt-3">@Localizer["Last run"]: @(Model.LastRunAtUtc?.ToLocalTime().ToString("g") ?? "—") · @Localizer["Next run"]: @(Model.NextRunAtUtc?.ToLocalTime().ToString("g") ?? "—")</div>
+    </div></div>
+
+    <h4>@Localizer["Planning history"]</h4>
+    @if (Model.Runs.Count == 0) { <div class="alert alert-light border">@Localizer["No replenishment planning runs yet."]</div> }
+    @foreach (var run in Model.Runs) {
+        <section class="card shadow-sm mb-3"><div class="card-header d-flex flex-wrap justify-content-between gap-2"><span><strong>#@run.Id</strong> · @ModeName(run.Mode)</span><span class="badge text-bg-success">@Localizer[run.Status.ToString()]</span></div><div class="card-body">
+            <p class="small text-muted">@Localizer[run.IsScheduled ? "Scheduled run" : "Manual run"] · @run.StartedAtUtc.ToLocalTime().ToString("g") · @run.TriggeredByUserId</p>
+            @if (!string.IsNullOrWhiteSpace(run.Error)) { <div class="alert alert-danger">@Localizer[run.Error]</div> }
+            <div class="row g-3">
+            @foreach (var item in run.Suggestions) {
+                <div class="col-12 col-xl-6"><article class="border rounded p-3 h-100">
+                    <div class="d-flex flex-wrap justify-content-between gap-2"><strong>@item.Product</strong><span class="badge text-bg-light border">@OutcomeName(item.Outcome)</span></div>
+                    <div class="text-muted small mb-2">@item.Warehouse · @Localizer["Needed by"] @item.NeededByDate.ToString("d")</div>
+                    <div class="row row-cols-2 row-cols-md-4 g-2 small">
+                        <div><span class="text-muted d-block">@Localizer["Available"]</span>@item.Available.ToQuantityDisplay(numberSettings)</div><div><span class="text-muted d-block">@Localizer["Reserved"]</span>@item.Reserved.ToQuantityDisplay(numberSettings)</div>
+                        <div><span class="text-muted d-block">@Localizer["Incoming"]</span>@item.Incoming.ToQuantityDisplay(numberSettings)</div><div><span class="text-muted d-block">@Localizer["Historical demand"]</span>@item.HistoricalDemand.ToQuantityDisplay(numberSettings)</div>
+                        <div><span class="text-muted d-block">@Localizer["Seasonal factor"]</span>@item.SeasonalFactor.ToQuantityDisplay(numberSettings)</div><div><span class="text-muted d-block">@Localizer["Planning target"]</span>@item.Target.ToQuantityDisplay(numberSettings)</div>
+                        <div><span class="text-muted d-block">@Localizer["Suggested stock quantity"]</span>@item.SuggestedStock.ToQuantityDisplay(numberSettings)</div><div><span class="text-muted d-block">@Localizer["Supplier quantity"]</span>@item.SuggestedPurchase.ToQuantityDisplay(numberSettings) @item.PurchaseUnitSymbol</div>
+                        <div><span class="text-muted d-block">@Localizer["Purchase currency"]</span>@item.CurrencyCode</div>
+                    </div>
+                    <p class="small mt-3 mb-2">@ReasonName(item.ReasonCode)</p>
+                    @if (item.PurchaseRequestId.HasValue) { <a asp-controller="PurchaseRequests" asp-action="Details" asp-route-id="@item.PurchaseRequestId" class="btn btn-sm btn-outline-primary">@Localizer["Open purchase request"]</a> }
+                    else if (item.PurchaseSourcingEventId.HasValue) { <a asp-controller="PurchaseSourcing" asp-action="Details" asp-route-id="@item.PurchaseSourcingEventId" class="btn btn-sm btn-outline-primary">@Localizer["Open RFQ"]</a> }
+                </article></div>
+            }
+            </div>
+        </div></section>
+    }
+</div>

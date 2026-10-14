@@ -9,6 +9,8 @@
 ## Runtime setup
 `Program.cs` only composes five explicit startup concerns. `WebPresentationExtensions` owns MVC, localization, antiforgery, cache and throttling; `PersistenceExtensions` owns DbContext and audit interception; `SecurityExtensions` owns Identity, cookies and authorization; `BusinessServicesExtensions` groups explicit repository/application registrations by feature; and `WebApplicationExtensions` owns startup seeding plus middleware/routes. Tenant-session validation runs after authentication; subscription lifecycle enforcement runs before tenant authorization. Request culture uses the user's cookie then the cached company default. Windows Event Log output is disabled, and startup database initialization failures exit cleanly. Startup runs Identity, permission and configured platform-operator seeders. It does not call `Database.Migrate`; migration deployment remains explicit.
 
+PUR-240 registers one hosted replenishment scanner. It checks due settings once per minute, creates a fresh service scope and explicit ambient tenant scope for each due company, then invokes the Application service. Company frequency remains data-driven (1–168 hours); the one-minute scan interval is not a replenishment frequency setting. Multi-host production deployment must coordinate scheduler ownership or add a distributed lease.
+
 ## Required values
 - SQL Server connection string.
 - Admin bootstrap credentials required only when AdminUser:Enabled is true; provide through protected external configuration.

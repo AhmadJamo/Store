@@ -177,6 +177,9 @@ public class AppDbContext
     public DbSet<InventoryRecallCommunication> InventoryRecallCommunications => Set<InventoryRecallCommunication>();
     public DbSet<PutawayRule> PutawayRules => Set<PutawayRule>();
     public DbSet<ReplenishmentRule> ReplenishmentRules => Set<ReplenishmentRule>();
+    public DbSet<ReplenishmentAutomationSettings> ReplenishmentAutomationSettings => Set<ReplenishmentAutomationSettings>();
+    public DbSet<ReplenishmentRun> ReplenishmentRuns => Set<ReplenishmentRun>();
+    public DbSet<ReplenishmentSuggestion> ReplenishmentSuggestions => Set<ReplenishmentSuggestion>();
 
 
 

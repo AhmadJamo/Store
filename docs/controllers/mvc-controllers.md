@@ -69,3 +69,6 @@ WMS-070A bilingual traceability report plus antiforgery-protected opening alloca
 # PUR-010 controller
 
 `SupplierPurchasingController` exposes a permission-protected supplier-filtered Index containing only that supplier's assigned active products, plus antiforgery-protected SaveBulk, legacy Save and SetActive commands. SaveBulk explicitly binds the nested bulk form, requires the manage permission and delegates an atomic selected-row save to `SupplierPurchasingInfoService`. The service revalidates supplier/product identities, compatible managed units, base currency, uniqueness, preference and rowversions; expected business errors are localized and unexpected failures are logged without exposing details.
+# PUR-240 automated replenishment
+
+`PurchaseReplenishmentController` exposes a permission-protected read page plus antiforgery-protected settings and immediate-run commands. It delegates every read/write to `ReplenishmentAutomationService`; generated purchasing records are opened through their existing detail controllers.

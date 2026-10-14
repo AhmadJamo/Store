@@ -1,5 +1,14 @@
 # AI Work Log
 
+# 2026-10-14 — PUR-240 automated replenishment and demand forecasting
+
+- Added tenant-configurable scheduled and manual planning with review-only, Draft Purchase Request and policy-bounded direct RFQ modes.
+- Extended purchase-sourced replenishment rules with historical-demand coverage and optional seasonality while preserving min/max planning.
+- Calculations store reservation-aware availability, confirmed incoming supply, history, factor, target, rounded supplier quantity, reason and generated-document links.
+- Added grouping by supplier/warehouse/currency/date, active-document duplicate suppression, scheduled-run uniqueness and a responsive bilingual history/settings page.
+- Generated migration `20261014110940_AddAutomatedReplenishmentPlanning`; local application was blocked by the SQL Server Windows-authentication SSPI context.
+- The full solution builds without warnings or errors, 687 focused regression checks pass and EF reports no pending model changes.
+
 # 2026-10-14 — PUR-230 native Excel completion
 
 - Completed PUR-230 with supplier-scoped native XLSX export/import beside the existing CSV workflow. The formatted `SupplierPrices` sheet freezes and filters headers and preserves typed quantities, prices, dates and booleans.

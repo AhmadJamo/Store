@@ -25,7 +25,8 @@ public static class BusinessServicesExtensions
     private static void AddTenantAndSaasServices(this IServiceCollection services)
     {
         services.AddScoped<ICurrentUserService, CurrentUserService>();
-        services.AddScoped<ITenantContext, HttpTenantContext>();
+        services.AddSingleton<HttpTenantContext>();
+        services.AddSingleton<ITenantContext>(provider => provider.GetRequiredService<HttpTenantContext>());
         services.AddScoped<ITenantMembershipRepository, TenantMembershipRepository>();
         services.AddScoped<ITenantAuthorizationRepository, TenantAuthorizationRepository>();
         services.AddScoped<ITenantRoleRepository, TenantRoleRepository>();
@@ -117,6 +118,9 @@ public static class BusinessServicesExtensions
         services.AddScoped<IReplenishmentRuleRepository, ReplenishmentRuleRepository>();
         services.AddScoped<ReplenishmentService>();
         services.AddScoped<ReplenishmentPurchaseDemandService>();
+        services.AddScoped<IReplenishmentAutomationRepository, ReplenishmentAutomationRepository>();
+        services.AddScoped<ReplenishmentAutomationService>();
+        services.AddHostedService<ReplenishmentAutomationWorker>();
         services.AddScoped<InventoryInsightsService>();
         services.AddScoped<InventoryScanningService>();
         services.AddScoped<IInventoryReconciliationRepository, InventoryReconciliationRepository>();

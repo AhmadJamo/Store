@@ -4,7 +4,7 @@
 
 The approved numbered Arabic/English delivery sequence is maintained in `MASTER_IMPLEMENTATION_ROADMAP_AR_EN.md`. Detailed working status, business rules and the rolling suggestion queue remain in `ARABIC_SHARED_ROADMAP.md`. This file remains the concise technical backlog.
 
-The PUR-000 through PUR-230 purchase evolution is implemented. The approved continuation is maintained in `PURCHASE_COMPLETION_ROADMAP_AR_EN.md`; PUR-240 scheduled replenishment and historical-demand suggestions are next. Incoming customer-management and sales requirements must be reconciled with master-roadmap steps 7 through 11 before implementation.
+The PUR-000 through PUR-240 purchase evolution is implemented. The approved continuation is maintained in `PURCHASE_COMPLETION_ROADMAP_AR_EN.md`; PUR-250 advanced receiving, quality and demand allocation is next. Incoming customer-management and sales requirements must be reconciled with master-roadmap steps 7 through 11 before implementation.
 
 - [x] PUR-000 complete purchase architecture review, legacy compatibility boundary, migration strategy and vertical-slice roadmap.
 - [x] PUR-005 fix context ownership, quantity authority, staged currency, approval and GRNI boundaries before runtime implementation.
@@ -35,7 +35,7 @@ The PUR-000 through PUR-230 purchase evolution is implemented. The approved cont
 - [x] PUR-210 add line-level and split supplier awards.
 - [x] PUR-220 add service procurement, per-product billing policy, stock-neutral service completion and reviewed mixed-source Draft Vendor Bills with policy-aware GRNI/Expense posting.
 - [x] PUR-230 complete bulk vendor price management with controlled CSV/native Excel templates, 500-row preview, atomic import, quantity price breaks/discounts, immutable full-snapshot history and expired/duplicate exception reporting.
-- [ ] PUR-240 add scheduled replenishment and historical-demand suggestions.
+- [x] PUR-240 add scheduled tenant-safe replenishment, historical-demand/seasonality suggestions, grouped Draft Purchase Requests or policy-bounded direct RFQs, idempotency and traceability.
 - [ ] PUR-250 add configurable receiving/quality routes, demand allocation and dropshipping contracts.
 - [ ] PUR-260 add supplier email, attachments, confirmation tracking and reviewed OCR capture.
 - [ ] PUR-270 add a supplier portal plus secure API/EDI/UBL exchange and reliable outbox delivery.
@@ -99,7 +99,7 @@ The PUR-000 through PUR-230 purchase evolution is implemented. The approved cont
 - Implemented WMS-010 hierarchical location metadata, barcode, sequence, tree ordering, warehouse-filtered parent selection, operational capabilities, edit workflow and cycle/same-warehouse validation. Putaway/transfers/relocations enforce receive/pick capabilities. Its additive migration is applied to `AHMAD/MiniStoreDb`; authenticated UI smoke remains because no login secret is stored in the repository.
 
 ## In Progress
-- PUR-230 is implemented. Current: begin PUR-240 scheduled replenishment and historical-demand suggestions.
+- PUR-240 is implemented. Current: begin PUR-250 advanced receiving, quality and demand allocation.
 - WMS delivery is paused by product-owner direction. Its remaining items stay documented in `WMS_EVOLUTION_PLAN.md` and resume after the current purchase-management priority.
 - WMS-015A/B/C/D typed definitions, values, ProductTemplate grouping and controlled selection-based variant generation are implemented. Product remains the SKU; proceed to the next WMS slice.
 - WMS-020A physical StockMovement kernel is implemented for idempotent Putaway/Relocation dual-write. Next: authenticated pilot smoke test and WMS-030 transfer/transit integration; do not cut over legacy reads yet.

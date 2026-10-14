@@ -83,7 +83,7 @@ While a recall is Active, authorized users may append immutable communication en
 
 ## Replenishment planning
 
-WMS-090A stores one active/inactive replenishment rule per tenant Product + destination Warehouse with minimum, maximum, safety stock, lead days and an optional preferred source warehouse. The suggestion screen uses reservation-aware Available across all positions. At or below Minimum it suggests replenishing to Maximum and shows preferred-source availability when configured. Suggestions are advisory only and never mutate inventory or create a purchase/transfer document automatically.
+WMS-090A stores one active/inactive replenishment rule per tenant Product + destination Warehouse with minimum, maximum, safety stock, lead days and an optional preferred source warehouse. Purchase-sourced rules also choose min/max or historical-demand planning, coverage days and optional seasonality. The reviewed inventory screen remains explicit; PUR-240 separately schedules purchase planning and may create traced purchasing documents according to company settings.
 
 WMS-090B1 adds a live forecast from Approved stock transfers. Confirmed inbound increases Projected Available; confirmed outbound is displayed separately but is not subtracted from Available again because transfer approval already reserves it. Projected On Hand remains `OnHand + inbound - outbound`. Draft/submitted/rejected/posted/cancelled transfers are excluded: drafts are not confirmed, posted quantities are already in OnHand, and terminal states must not affect the forecast. The current Purchase aggregate is an immediate receipt rather than a purchase-order lifecycle, so it is not falsely presented as future incoming.
 

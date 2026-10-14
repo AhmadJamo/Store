@@ -102,6 +102,12 @@ The Index and mutation actions enforce these policies server-side. Permission se
 
 # PUR-160 purchase accounting reconciliation permission
 
+# PUR-240 automated replenishment permissions
+
+- `PurchaseReplenishment.View` protects settings, run history, calculation evidence and generated-document links.
+- `PurchaseReplenishment.Manage` changes the tenant schedule, forecast horizon and document-creation mode.
+- `PurchaseReplenishment.Run` starts an immediate planning run; the background runner uses the saved tenant policy and does not grant an interactive user any additional permission.
+
 - `PurchaseAccountingReconciliation.View` protects the read-only Inventory/GL and GRNI/GL comparison. It grants no stock adjustment, journal posting or accounting-setup authority; setup links are shown only when the user separately holds `Settings.Edit` or the matching warehouse permission.
 
 # PUR-165 purchase-order completion permissions

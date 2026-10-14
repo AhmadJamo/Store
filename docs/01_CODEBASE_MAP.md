@@ -26,7 +26,7 @@
 
 `docs/PURCHASE_MANAGEMENT_EVOLUTION_PLAN.md` is the approved procure-to-pay evolution plan. It records the legacy direct-purchase boundary, capability gaps, target aggregates, inventory/accounting integration contracts, additive migration safeguards and PUR-000 through PUR-150 vertical slices. Planned purchase types are not implemented unless the matching slice is explicitly marked complete.
 
-`docs/PURCHASE_COMPLETION_ROADMAP_AR_EN.md` is the approved Arabic/English post-PUR-150 purchase plan. PUR-160 through PUR-230 are implemented; PUR-240 scheduled replenishment and demand suggestions are next.
+`docs/PURCHASE_COMPLETION_ROADMAP_AR_EN.md` is the approved Arabic/English post-PUR-150 purchase plan. PUR-160 through PUR-240 are implemented; PUR-250 advanced receiving, quality and demand allocation is next.
 
 `docs/decisions/2026-10-14-immutable-supplier-price-snapshots.md` fixes the append-only full-snapshot authority for supplier-price history across manual, bulk, CSV and quantity-break changes.
 
@@ -46,6 +46,7 @@
 | `Entities/Purchases/*.cs`, `Entities/Sales/*.cs` | purchase/supplier-return and sale/customer-return aggregates plus POS experience/order settings | purchase/sales/settings docs. |
 | `Entities/Purchases/SupplierProductPurchasingInfo.cs` | supplier-specific product code, compatible purchase unit, base-currency price, lead time, order policy, validity/preference, quantity price breaks and immutable full price-history snapshots | PUR-010/PUR-230 purchasing data screens/services. |
 | `Entities/Purchases/PurchaseRequest.cs` | PRQ-numbered internal demand, frozen unit conversion, immutable action history and optional source provenance used by replenishment | PUR-020/PUR-110 purchase-request workflow. |
+| `Entities/Purchases/ReplenishmentAutomation.cs` | tenant schedule, idempotent run and immutable suggestion/calculation evidence with generated-document links | PUR-240 automated replenishment. |
 | `Entities/Purchases/PurchaseApproval.cs` | Warehouse/priority-scoped approval rules, ordered role steps and immutable per-request decision snapshots | PUR-025 approval workflow foundation. |
 | `Entities/Purchases/PurchaseSourcingEvent.cs` | RFX-numbered approved-request or direct sourcing event, frozen policy/commercial/line snapshots, supplier invitations and bounded database attachments; no inventory or accounting authority | PUR-030 and PUR-200 sourcing workflows. |
 | `Entities/Purchases/{SupplierQuotation,PurchaseQuotationAward}.cs` | supplier-specific frozen quote header/lines plus tenant-owned line/quantity award allocations with immutable supplier, price, currency, lead-time and reason evidence | PUR-040 and PUR-210 quotation workflows. |
@@ -112,6 +113,7 @@
 | `Services/Inventory/PutawayRuleService.cs` | administers product/category/default putaway rules and resolves priority- and capacity-aware active receivable-location suggestions | Unassigned Stock putaway. |
 | `Services/Inventory/ReplenishmentService.cs` | manages product/warehouse replenishment policies and reservation-aware reviewed suggestions | Replenishment screen. |
 | `Services/Purchases/ReplenishmentPurchaseDemandService.cs` | converts a reviewed purchase-sourced suggestion into one traced Draft Purchase Request, applying valid preferred-supplier unit/minimum/multiple terms | PUR-110 replenishment bridge. |
+| `Services/Purchases/{ReplenishmentAutomationService,ReplenishmentDemandCalculator}.cs` | calculates scheduled min/max or tested historical/seasonal purchase demand, subtracts available/incoming supply, prevents active duplicates and groups resulting requests/RFQs | PUR-240 automated replenishment page and worker. |
 | `Services/Inventory/{InventoryInsightsService,InventoryActivityClassifier}.cs` | classifies current positive inventory by actual outbound inactivity without mutating stock or valuation | Inventory Insights screen. |
 | `Services/Inventory/{InventoryScanningService,InventoryScanResolver}.cs` | exact adjustment/product/source/destination resolution and safe delegation of scanned putaway, relocation and absolute Draft counts | Inventory Scanning screen and owning inventory services. |
 | `Services/Settings/InventorySettingsService.cs` | rowversion-protected defaults for new warehouse operating policies | SettingsController inventory screen. |
@@ -217,6 +219,7 @@ Hierarchical location update (2026-09-30): StorageLocation retains its identity 
 | `Controllers/Purchases/GoodsReceiptReturnsController.cs`, `Views/GoodsReceiptReturns/*.cshtml` | permission-protected receipt-based supplier return capture, history and detail | PUR-070 return service. |
 | `Controllers/Purchases/VendorBillsController.cs`, `Views/VendorBills/*.cshtml` | responsive card-based mixed-source Draft entry with attachments, separate approval/override/post actions, history, attachment download and immutable posted detail without horizontal line scrolling | PUR-080/PUR-220 bill service. |
 | `Controllers/Purchases/SupplierPurchasingController.cs`, `Views/SupplierPurchasing/*` | supplier-scoped responsive bulk editor, quantity price-break editor, read-only price history, expired/duplicate exception cards, permission-protected CSV/Excel downloads and atomic upload previews | PUR-010/PUR-230 supplier-price management. |
+| `Controllers/Purchases/PurchaseReplenishmentController.cs`, `Views/PurchaseReplenishment/Index.cshtml`, `Services/Purchases/ReplenishmentAutomationWorker.cs` | permission-separated responsive settings/history and tenant-scoped scheduled execution | PUR-240 automated replenishment. |
 | `Controllers/Purchases/SupplierCreditNotesController.cs`, `Views/SupplierCreditNotes/*.cshtml` | permission-protected responsive billed-return capture, immediate posting, history and immutable detail | PUR-170 credit-note service. |
 | `Controllers/Purchases/PurchaseDocumentReversalsController.cs`, `Views/PurchaseDocumentReversals/*.cshtml` | permission-protected responsive reversal confirmation, history and audit detail | PUR-180 reversal service. |
 | `Controllers/Purchases/SupplierPaymentsController.cs`, `Views/SupplierPayments/*.cshtml` | permission-protected partial allocation, immediate posting, payment history and immutable detail | PUR-100 payment service. |

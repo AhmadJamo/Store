@@ -15,7 +15,8 @@ public static class WorkflowNextStepGuidance
         "Purchases", "PurchaseReturns", "Suppliers", "SupplierPurchasing", "PurchaseRequests",
         "PurchaseApprovalRules", "PurchaseSourcing", "SupplierQuotations", "PurchaseOrders",
         "GoodsReceipts", "GoodsReceiptReturns", "PurchaseServiceAcceptances", "VendorBills", "SupplierCreditNotes", "SupplierPayments",
-        "PurchaseAgreements", "PurchaseTemplates", "LandedCosts", "PurchaseDocumentReversals", "PurchaseAccountingReconciliation"
+        "PurchaseAgreements", "PurchaseTemplates", "LandedCosts", "PurchaseDocumentReversals", "PurchaseAccountingReconciliation",
+        "PurchaseReplenishment"
     };
 
     private static readonly HashSet<string> InventoryControllers = new(StringComparer.OrdinalIgnoreCase)
@@ -52,6 +53,11 @@ public static class WorkflowNextStepGuidance
             return new("PurchaseRequests", "Details", "Review and submit purchase request",
                 "Review the quantities and dates, then submit the request for approval.",
                 "PurchaseRequests.View", Routes(("id", Route("id"))));
+
+        if (Matches(message, localize, "Replenishment planning run completed."))
+            return new("PurchaseReplenishment", "Index", "Review replenishment results",
+                "Review each calculation and open the purchase request or RFQ created for it.",
+                "PurchaseReplenishment.View", Routes());
 
         if (Matches(message, localize, "Purchase request submitted."))
             return new("PurchaseRequests", "Details", "Track purchase request approval",

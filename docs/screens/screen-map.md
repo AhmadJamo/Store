@@ -83,3 +83,6 @@ Bilingual read-only Product/Warehouse/Location projection showing OnHand, Reserv
 Business labels avoid ambiguous procurement terms: Order Multiple is presented as "Order in multiples of", Lead Time refers to days from order dispatch to arrival, Priority is "Selection order", and validity dates explicitly refer to the supplier price with an optional end date. Each explanation is behind a keyboard-accessible question-mark tooltip beside its field label; it appears on hover/focus and disappears when the pointer/focus leaves, keeping cards compact.
 
 All purchase tables, details and populated numeric inputs use the shared number formatter: General Settings controls maximum money/quantity decimal places and trailing zeros are suppressed without changing stored values.
+# PUR-240 automated replenishment
+
+`Views/PurchaseReplenishment/Index.cshtml` is a responsive, card-based bilingual settings/history screen without a horizontal table. It explains inputs with transient title help, formats quantities without forced trailing zeros, replaces creation actions with completed status/document links, and shows the evidence and reason behind every suggestion.

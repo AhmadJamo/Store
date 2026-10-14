@@ -1908,6 +1908,17 @@ Check(purchaseNextStep is
           RequiredPermission: "PurchaseSourcing.Create"
       } && purchaseNextStep.RouteValues.GetValueOrDefault("purchaseRequestId") == "42",
     "Approved purchase requests must guide users to supplier sourcing with the document route");
+var replenishmentNextStep = WorkflowNextStepGuidance.Resolve(
+    "Replenishment planning run completed.",
+    "PurchaseReplenishment",
+    new Dictionary<string, string?>());
+Check(replenishmentNextStep is
+      {
+          Controller: "PurchaseReplenishment",
+          Action: "Index",
+          RequiredPermission: "PurchaseReplenishment.View"
+      },
+    "Completed replenishment planning must guide users to its calculation evidence and document links");
 var exchangeRateNextStep = WorkflowNextStepGuidance.Resolve(
     "Exchange rate saved successfully.",
     "Settings",
@@ -2020,6 +2031,7 @@ Check(WorkflowNextStepGuidance.Resolve(
           new Dictionary<string, string?>()) is null,
     "Workflow next-step guidance must remain scoped until a future module defines its next actions");
 Check(WorkflowNextStepGuidance.IsSupportedController("VendorBills") &&
+      WorkflowNextStepGuidance.IsSupportedController("PurchaseReplenishment") &&
       WorkflowNextStepGuidance.IsSupportedController("SupplierCreditNotes") &&
       WorkflowNextStepGuidance.IsSupportedController("PurchaseDocumentReversals") &&
       WorkflowNextStepGuidance.IsSupportedController("PurchaseAccountingReconciliation") &&
@@ -2127,6 +2139,47 @@ CheckArgumentThrows(() => new VendorBillLine(null, null, 4, 4, PurchaseBillingPo
 var foreignPaymentLine = new SupplierPaymentLine(1, 100m, "BILL-FX-1", "SUP-FX-1", 0.78m, 75m);
 Check(foreignPaymentLine.CompanyCurrencyAmount == 78m && foreignPaymentLine.PayableCarryingAmount == 75m,
     "Supplier payments must preserve cash value and payable carrying value for realized exchange differences");
+
+var forecastRule = new ReplenishmentRule(1, 2, null, 5m, 20m, 2m, 4,
+    ReplenishmentPlanningMethod.HistoricalDemand, 30, true);
+Check(forecastRule.PlanningMethod == ReplenishmentPlanningMethod.HistoricalDemand &&
+      forecastRule.CoverageDays == 30 && forecastRule.UseSeasonality,
+    "Replenishment rules must preserve forecast coverage and seasonality choices");
+CheckArgumentThrows(() => new ReplenishmentRule(1, 2, null, 5m, 20m, 2m, 4,
+        ReplenishmentPlanningMethod.HistoricalDemand, 0, true),
+    "Forecast replenishment rules must reject invalid coverage horizons");
+var automationSettings = new ReplenishmentAutomationSettings(true, 12, 90,
+    ReplenishmentAutomationMode.PurchaseRequestDraft, 5, new DateTime(2026, 10, 14, 8, 0, 0, DateTimeKind.Utc));
+Check(automationSettings.NextRunAtUtc == new DateTime(2026, 10, 14, 20, 0, 0, DateTimeKind.Utc),
+    "Automated replenishment must calculate its next scheduled run from the configured frequency");
+automationSettings.MarkRun(new DateTime(2026, 10, 15, 8, 0, 0, DateTimeKind.Utc));
+Check(automationSettings.LastRunAtUtc == new DateTime(2026, 10, 15, 8, 0, 0, DateTimeKind.Utc) &&
+      automationSettings.NextRunAtUtc == new DateTime(2026, 10, 15, 20, 0, 0, DateTimeKind.Utc),
+    "A completed replenishment run must advance the schedule exactly once");
+var seasonalFactor = ReplenishmentDemandCalculator.CalculateSeasonalFactor(90m, 90, 52.5m, 35);
+var forecastTarget = ReplenishmentDemandCalculator.CalculateTarget(ReplenishmentPlanningMethod.HistoricalDemand,
+    10m, 20m, 5m, 5, 30, 90m, 90, seasonalFactor);
+Check(seasonalFactor == 1.5m && forecastTarget == 57.5m &&
+      ReplenishmentDemandCalculator.CalculateSuggestedStock(forecastTarget, 20m, 7.5m) == 30m,
+    "Historical replenishment must apply seasonality, coverage, lead time, safety stock, availability and incoming supply");
+Check(ReplenishmentDemandCalculator.IsActivePurchaseRequest(PurchaseRequestStatus.Approved, false) &&
+      ReplenishmentDemandCalculator.IsActivePurchaseRequest(PurchaseRequestStatus.Sourced, true) &&
+      !ReplenishmentDemandCalculator.IsActivePurchaseRequest(PurchaseRequestStatus.Sourced, false) &&
+      ReplenishmentDemandCalculator.IsActiveSourcing(PurchaseSourcingStatus.Closed, true) &&
+      !ReplenishmentDemandCalculator.IsActiveSourcing(PurchaseSourcingStatus.Closed, false),
+    "Replenishment deduplication must follow demand through requests, sourcing and active purchase orders without blocking future cycles");
+var replenishmentController = typeof(PurchaseReplenishmentController);
+Check(replenishmentController.GetMethod(nameof(PurchaseReplenishmentController.Index))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
+      $"{PermissionAuthorizeAttribute.PolicyPrefix}PurchaseReplenishment.View" &&
+      replenishmentController.GetMethod(nameof(PurchaseReplenishmentController.RunNow))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
+      $"{PermissionAuthorizeAttribute.PolicyPrefix}PurchaseReplenishment.Run",
+    "Automated replenishment pages and execution must enforce dedicated server-side permissions");
+var scheduledRunIndex = db.Model.FindEntityType(typeof(ReplenishmentRun))!.GetIndexes()
+    .Single(x => x.Properties.Select(p => p.Name).SequenceEqual(["TenantId", nameof(ReplenishmentRun.ScheduledForUtc)]));
+Check(scheduledRunIndex.IsUnique,
+    "Scheduled replenishment execution must be idempotent per company and scheduled time");
 
 Console.WriteLine($"Passed {count} security and inventory regression checks.");
 
