@@ -26,7 +26,7 @@
 
 `docs/PURCHASE_MANAGEMENT_EVOLUTION_PLAN.md` is the approved procure-to-pay evolution plan. It records the legacy direct-purchase boundary, capability gaps, target aggregates, inventory/accounting integration contracts, additive migration safeguards and PUR-000 through PUR-150 vertical slices. Planned purchase types are not implemented unless the matching slice is explicitly marked complete.
 
-`docs/PURCHASE_COMPLETION_ROADMAP_AR_EN.md` is the approved Arabic/English post-PUR-150 purchase plan. PUR-160 through PUR-250 are implemented; PUR-260 supplier documents and communication is next.
+`docs/PURCHASE_COMPLETION_ROADMAP_AR_EN.md` is the approved Arabic/English post-PUR-150 purchase plan. PUR-160 through PUR-260 are implemented; PUR-270 supplier portal and external integration is next.
 
 `docs/decisions/2026-10-14-immutable-supplier-price-snapshots.md` fixes the append-only full-snapshot authority for supplier-price history across manual, bulk, CSV and quantity-break changes.
 
@@ -51,12 +51,13 @@
 | `Entities/Purchases/PurchaseSourcingEvent.cs` | RFX-numbered approved-request or direct sourcing event, frozen policy/commercial/line snapshots, supplier invitations and bounded database attachments; no inventory or accounting authority | PUR-030 and PUR-200 sourcing workflows. |
 | `Entities/Purchases/{SupplierQuotation,PurchaseQuotationAward}.cs` | supplier-specific frozen quote header/lines plus tenant-owned line/quantity award allocations with immutable supplier, price, currency, lead-time and reason evidence | PUR-040 and PUR-210 quotation workflows. |
 | `Entities/Purchases/PurchaseOrder.cs` | awarded-quotation Purchase Order, immutable commercial lines, demand ownership, Warehouse/Dropship fulfillment, customer-delivery evidence and lifecycle history | PUR-050/PUR-165/PUR-250B. |
+| `Entities/Purchases/SupplierCommunication.cs` | tenant-owned RFQ/PO bilingual message snapshot, attachments and evidence-based delivery/reply/follow-up history | PUR-260 supplier communication screens. |
 | `Entities/Purchases/PurchaseAgreement.cs` | awarded-quotation agreements with frozen commercial terms and capped release lines, plus repeat-order templates that generate traced demand | PUR-120 agreement/template workflow. |
 | `Entities/Purchases/LandedCost.cs` | immutable receipt-linked landed-cost components and allocation/valuation snapshots | PUR-130 receipt valuation adjustment. |
 | `Entities/Purchases/GoodsReceipt.cs` | GRN header/line receipt evidence, frozen PO/receiving-route snapshots, quality outcomes and optional inventory-tracking inputs | PUR-060/PUR-250A receipt workflow. |
 | `Entities/Purchases/GoodsReceiptScan` (in `GoodsReceipt.cs`) | immutable tenant-owned barcode/code scan evidence with a unique retry key | PUR-150 Draft Goods Receipt scanning. |
 | `Entities/Purchases/GoodsReceiptReturn.cs` | immutable receipt-based supplier-return header/lines with frozen quantity, original receipt value and removed inventory cost | PUR-070 return workflow. |
-| `Entities/Purchases/VendorBill.cs` | staged supplier invoice identity and mixed receipt/order/service allocations with frozen billing policy, matching basis, Expense/GRNI basis, price, tax and company-currency snapshots | PUR-080/PUR-220 billing workflow. |
+| `Entities/Purchases/VendorBill.cs` | staged supplier invoice identity, mixed receipt/order/service allocations and explicitly reviewed attachment-extraction suggestions | PUR-080/PUR-220/PUR-260 billing workflow. |
 | `Entities/Purchases/SupplierCreditNote.cs` | immutable billed-return header/lines with frozen bill/receipt allocation, tax, current inventory cost and tracking evidence | PUR-170 credit-note workflow. |
 | `Entities/Purchases/PurchaseDocumentReversal.cs` | immutable reasoned reversal identity for receipt, bill, payment and landed-cost documents with retry and opposite-journal evidence | PUR-180 reversal workflow. |
 | `Entities/Purchases/PurchaseMatch.cs` | tenant matching settings plus immutable bill match runs, line exceptions and reasoned override evidence | PUR-090 three-way matching. |
@@ -81,6 +82,7 @@
 | `Services/Settings/PurchaseSourcingPolicyService.cs` | manages the tenant direct-RFQ amount, role and supplier-status gate | Purchase sourcing policy Settings screen. |
 | `Services/Purchases/SupplierQuotationService.cs` | validates invited responses, freezes/submits quotations, compares company-currency totals and atomically records exact per-line supplier quantity allocations | Supplier Quotation screens and PUR-210. |
 | `Services/Purchases/{PurchaseOrder,PurchaseOrderLifecycle}Service.cs` | creates supplier-grouped orders, retains demand allocation, configures direct delivery, records delivery evidence and derives receipt/delivery/service/bill progress and closure | Purchase Order screens, PUR-165/PUR-210/PUR-250B. |
+| `Dtos/Purchases/SupplierCommunicationDtos.cs`, `Services/Purchases/SupplierCommunicationService.cs` | prepares bilingual RFQ/PO mailto content and records only user-evidenced send, delivery, reply and follow-up states | Supplier Communication controller/views and PUR-260. |
 | `Services/Purchases/PurchaseServiceAcceptanceService.cs` | validates confirmed-order service lines, caps cumulative completion and records immutable service evidence without inventory mutation | Purchase Service Acceptance screens and PUR-220. |
 | `Dtos/Purchases/SupplierPurchasingInfoDtos.cs`, `Services/Purchases/{SupplierPurchasingInfoService,SupplierPurchasingCsvParser,SupplierPurchasingExcelParser,SupplierPriceExceptionAnalyzer}.cs` | manages supplier-selected product terms, quantity price breaks/discounts, append-only price snapshots, exception analysis and controlled CSV/native Excel export/import with preview | Supplier Purchasing screens and PUR-010/PUR-230. |
 | `Services/Purchases/{PurchaseAgreement,PurchaseTemplate}Service.cs` | creates and activates awarded agreements, caps Draft order releases, saves repeat templates and generates traced Draft Purchase Requests | PUR-120 agreement/template screens. |
@@ -90,7 +92,7 @@
 | `Services/Purchases/GoodsReceiptService.cs` | atomically validates remaining PO quantity and coordinates one-step posting or staged receive/inspect/store quality hold with Inventory-owned stock, valuation and tracking effects | Goods Receipt capture, inspection and storage screens. |
 | `Services/Inventory/InventoryScanResolver.cs` | workflow-scoped retry-key generation/validation and normalized exact scan tokens, including Goods Receipt scans | inventory and PUR-150 scanning flows. |
 | `Services/Purchases/GoodsReceiptReturnService.cs` | caps returns by the posted, unbilled receipt quantity and atomically coordinates inventory removal, tracking, physical movement and GRNI/PPV accounting | Goods Receipt Return screens. |
-| `Services/Purchases/VendorBillService.cs` | builds mixed receipt/order/service/direct-delivery bills, caps Dropship billing by delivery evidence, then clears GRNI or debits frozen Expense accounts only from Approved | Vendor Bill screens and PUR-220/PUR-250B policy-aware billing. |
+| `Services/Purchases/VendorBillService.cs` | builds mixed receipt/order/service/direct-delivery bills, manages bounded attachments and review-first local extraction suggestions, then posts only separately Approved bills | Vendor Bill screens and PUR-220/PUR-250B/PUR-260. |
 | `Services/Purchases/SupplierCreditNoteService.cs` | caps cumulative billed returns, removes current stock/tracking and atomically reverses payable/input tax/inventory with PPV balancing | Supplier Credit Note screens. |
 | `Services/Purchases/PurchaseDocumentReversalService.cs` | enforces typed downstream dependencies and unchanged valuation, then atomically records a retry-safe reversal, physical/value correction, opposite journal and original-state transition | PUR-180 reversal screens and original document details. |
 | `Services/Settings/CurrencyExchangeRateService.cs` | manages dated rates and resolves the latest rate on or before each document date; company currency resolves to one | Settings currency screen and PUR-190 document services. |

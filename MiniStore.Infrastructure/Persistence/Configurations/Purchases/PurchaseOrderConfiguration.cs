@@ -4,7 +4,7 @@ using MiniStore.Domain.Entities;
 
 namespace MiniStore.Infrastructure.Persistence.Configurations;
 
-public sealed class PurchaseOrderConfiguration : IEntityTypeConfiguration<PurchaseOrder>, IEntityTypeConfiguration<PurchaseOrderLine>, IEntityTypeConfiguration<PurchaseOrderLifecycleHistory>, IEntityTypeConfiguration<PurchaseDemandAllocation>, IEntityTypeConfiguration<PurchaseDirectDeliveryEvent>
+public sealed class PurchaseOrderConfiguration : IEntityTypeConfiguration<PurchaseOrder>, IEntityTypeConfiguration<PurchaseOrderLine>, IEntityTypeConfiguration<PurchaseOrderLifecycleHistory>, IEntityTypeConfiguration<PurchaseDemandAllocation>, IEntityTypeConfiguration<PurchaseDirectDeliveryEvent>, IEntityTypeConfiguration<PurchaseOrderSupplierConfirmation>
 {
     public void Configure(EntityTypeBuilder<PurchaseOrder> b)
     {
@@ -24,6 +24,7 @@ public sealed class PurchaseOrderConfiguration : IEntityTypeConfiguration<Purcha
         b.HasOne<Warehouse>().WithMany().HasForeignKey(x => x.WarehouseId).OnDelete(DeleteBehavior.Restrict);
         b.HasMany(x => x.Lines).WithOne().HasForeignKey(x => x.PurchaseOrderId).OnDelete(DeleteBehavior.Cascade);
         b.HasMany(x => x.History).WithOne().HasForeignKey(x => x.PurchaseOrderId).OnDelete(DeleteBehavior.Cascade);
+        b.HasMany(x => x.SupplierConfirmations).WithOne().HasForeignKey(x => x.PurchaseOrderId).OnDelete(DeleteBehavior.Cascade);
     }
 
     public void Configure(EntityTypeBuilder<PurchaseOrderLine> b)
@@ -62,4 +63,5 @@ public sealed class PurchaseOrderConfiguration : IEntityTypeConfiguration<Purcha
         b.Property(x => x.Carrier).HasMaxLength(150); b.Property(x => x.TrackingNumber).HasMaxLength(150); b.Property(x => x.RecordedByUserId).HasMaxLength(450).IsRequired();
         b.HasIndex(x => new { x.PurchaseOrderLineId, x.RecordedAtUtc });
     }
+    public void Configure(EntityTypeBuilder<PurchaseOrderSupplierConfirmation> b){b.HasKey(x=>x.Id);b.Property(x=>x.ConfirmationReference).HasMaxLength(250).IsRequired();b.Property(x=>x.Note).HasMaxLength(1000);b.Property(x=>x.RecordedByUserId).HasMaxLength(450).IsRequired();b.HasIndex(x=>new{x.PurchaseOrderId,x.RecordedAtUtc});}
 }

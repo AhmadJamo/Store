@@ -16,7 +16,7 @@ public static class WorkflowNextStepGuidance
         "PurchaseApprovalRules", "PurchaseSourcing", "SupplierQuotations", "PurchaseOrders",
         "GoodsReceipts", "GoodsReceiptReturns", "PurchaseServiceAcceptances", "VendorBills", "SupplierCreditNotes", "SupplierPayments",
         "PurchaseAgreements", "PurchaseTemplates", "LandedCosts", "PurchaseDocumentReversals", "PurchaseAccountingReconciliation",
-        "PurchaseReplenishment"
+        "PurchaseReplenishment", "SupplierCommunications"
     };
 
     private static readonly HashSet<string> InventoryControllers = new(StringComparer.OrdinalIgnoreCase)
@@ -103,6 +103,26 @@ public static class WorkflowNextStepGuidance
             return new("GoodsReceipts", "Create", "Receive purchased goods",
                 "Record only the quantities physically received from the supplier.",
                 "GoodsReceipts.Create", Routes(("purchaseOrderId", Route("id"))));
+
+        if (Matches(message, localize, "Supplier email prepared. Open it in your email application, then record the actual sending status."))
+            return new("SupplierCommunications", "Details", "Open and send supplier email",
+                "Open the prepared message in your email application, attach the listed files, then record the actual result.",
+                "SupplierCommunications.View", Routes(("id", Route("id"))));
+
+        if (Matches(message, localize, "Supplier communication activity recorded."))
+            return new("SupplierCommunications", "Details", "Review communication history",
+                "Confirm the recorded evidence and add delivery, reply or follow-up only when it actually occurs.",
+                "SupplierCommunications.View", Routes(("id", Route("id"))));
+
+        if (Matches(message, localize, "Supplier delivery date confirmation recorded."))
+            return new("PurchaseOrders", "Details", "Review confirmed delivery date",
+                "The order now shows the supplier-confirmed date and preserves the previous date in history.",
+                "PurchaseOrders.View", Routes(("id", Route("id"))));
+
+        if (Matches(message, localize, "Invoice extraction suggestion created for review."))
+            return new("VendorBills", "Details", "Review invoice extraction suggestion",
+                "Compare the suggested invoice header with the attachment, then apply or reject it explicitly.",
+                "VendorBills.View", Routes(("id", Route("id"))));
 
         if (Matches(message, localize, "Direct delivery configured."))
             return new("PurchaseOrders", "Details", "Review and approve purchase order",
@@ -300,6 +320,7 @@ public static class WorkflowNextStepGuidance
         "SupplierPurchasing" => "Purchases.SupplierTerms.View",
         "PurchaseApprovalRules" => "PurchaseApprovalRules.View",
         "PurchaseTemplates" => "PurchaseTemplates.View",
+        "SupplierCommunications" => "SupplierCommunications.View",
         _ => $"{controller}.View"
     };
 

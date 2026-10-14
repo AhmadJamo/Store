@@ -1,7 +1,9 @@
 # Database
 > Status: IMPLEMENTED  
 > Source of truth: EF Core entities, configurations and migrations  
-> Last reviewed: 2026-10-13
+> Last reviewed: 2026-10-14
+
+PUR-260 migration `20261014202715_AddSupplierCommunicationAndInvoiceExtraction` creates tenant-owned `SupplierCommunications`, activities and attachments; `PurchaseOrderSupplierConfirmations`; and `VendorBillExtractionSuggestions`. Composite tenant foreign keys bind every supplier/document/attachment relationship to the active company. Communication rows snapshot recipient, language, subject and body; activities preserve actual status evidence. Extraction rows preserve source attachment, raw text, suggestions, confidence and explicit review evidence. The migration adds the Vendor Bill attachment tenant alternate key needed for the safe suggestion relationship and was applied to the local `MiniStoreDb` on 2026-10-14.
 
 PUR-165 adds nullable current-closure evidence to `PurchaseOrders` and tenant-owned immutable `PurchaseOrderLifecycleHistories`. The history records automatic close, reasoned remaining-quantity close and reasoned reopen transitions through a tenant-composite cascade relationship. Migration `AddPurchaseOrderDerivedClosure` is additive and applied to the local `MiniStoreDb`.
 

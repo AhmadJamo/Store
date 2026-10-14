@@ -1,6 +1,8 @@
 using MiniStore.Application.DTOs.Purchases;
 using MiniStore.Domain.Entities;
 using MiniStore.Domain.Interfaces;
+using System.Text;
+using System.Text.RegularExpressions;
 
 namespace MiniStore.Application.Services;
 
@@ -151,6 +153,26 @@ public sealed class VendorBillService(
         });
         return created!.Id;
     }
+
+    public Task AddAttachmentAsync(int billId,VendorBillAttachmentInputDto input,byte[] rowVersion)=>unitOfWork.ExecuteInTransactionAsync(async()=>{var bill=await bills.GetByIdAsync(billId)??throw new InvalidOperationException("Vendor bill was not found.");EnsureVersion(bill,rowVersion);bill.AddAttachment(new VendorBillAttachment(input.FileName,input.ContentType,input.Content,currentUser.UserId));});
+
+    public Task GenerateExtractionSuggestionAsync(int billId,int attachmentId,byte[] rowVersion)=>unitOfWork.ExecuteInTransactionAsync(async()=>
+    {
+        var bill=await bills.GetByIdAsync(billId)??throw new InvalidOperationException("Vendor bill was not found.");EnsureVersion(bill,rowVersion);if(bill.Status!=VendorBillStatus.Draft)throw new InvalidOperationException("Invoice extraction is available only while the vendor bill is a draft.");
+        var attachment=bill.Attachments.SingleOrDefault(x=>x.Id==attachmentId)??throw new InvalidOperationException("Vendor bill attachment was not found.");
+        var text=ExtractReadableText(attachment.Content,attachment.ContentType);var invoice=Match(text,@"(?im)(?:invoice|فاتورة)\s*(?:no\.?|number|رقم)?\s*[:#-]?\s*([A-Z0-9][A-Z0-9\-/]{2,29})");
+        DateOnly? date=null;var dateText=Match(text,@"(?im)(?:date|التاريخ|تاريخ)\s*[:#-]?\s*(\d{4}[-/]\d{1,2}[-/]\d{1,2}|\d{1,2}[-/]\d{1,2}[-/]\d{4})");if(DateOnly.TryParse(dateText,out var parsedDate))date=parsedDate;
+        decimal? total=null;var totalText=Match(text,@"(?im)(?:grand\s+total|total|الإجمالي|المجموع)\s*[:#-]?\s*(?:[A-Z]{3}\s*)?([0-9][0-9,]*(?:\.[0-9]{1,2})?)");if(decimal.TryParse(totalText?.Replace(",",string.Empty),System.Globalization.NumberStyles.Number,System.Globalization.CultureInfo.InvariantCulture,out var parsedTotal))total=parsedTotal;
+        var currency=Regex.Match(text,@"(?i)\b(JOD|USD|EUR|SAR|AED)\b").Value.ToUpperInvariant();var found=new object?[]{invoice,date,total,string.IsNullOrWhiteSpace(currency)?null:currency}.Count(x=>x is not null);
+        bill.AddExtractionSuggestion(new VendorBillExtractionSuggestion(attachment.Id,"Local review-first text/OCR (optical character recognition) heuristic",text,invoice,date,total,currency,found*25m));
+    });
+
+    public Task ReviewExtractionAsync(ReviewVendorBillExtractionDto dto)=>unitOfWork.ExecuteInTransactionAsync(async()=>
+    {
+        var bill=await bills.GetByIdAsync(dto.VendorBillId)??throw new InvalidOperationException("Vendor bill was not found.");EnsureVersion(bill,dto.RowVersion);var suggestion=bill.ExtractionSuggestions.SingleOrDefault(x=>x.Id==dto.SuggestionId)??throw new InvalidOperationException("Invoice extraction suggestion was not found.");
+        if(dto.Apply){if(string.IsNullOrWhiteSpace(dto.SupplierInvoiceNumber)||!dto.BillDate.HasValue)throw new ArgumentException("Review and confirm the supplier invoice number and bill date before applying the suggestion.");if(!string.IsNullOrWhiteSpace(dto.CurrencyCode)&&!string.Equals(dto.CurrencyCode.Trim(),bill.CurrencyCode,StringComparison.OrdinalIgnoreCase))throw new InvalidOperationException("Extracted invoice currency does not match the purchase order currency.");var normalized=VendorBill.NormalizeInvoiceNumber(dto.SupplierInvoiceNumber);if(await bills.ExistsActiveSupplierInvoiceAsync(bill.SupplierId,normalized,bill.Id))throw new InvalidOperationException("This supplier invoice number has already been used.");var rate=await exchangeRates.ResolveAsync(bill.CurrencyCode,dto.BillDate.Value);bill.ApplyExtractedHeader(dto.SupplierInvoiceNumber,dto.BillDate.Value,rate.CompanyCurrencyCode,rate.Rate,rate.RateDate,rate.Source);}
+        suggestion.Review(dto.Apply,dto.ReviewNote,currentUser.UserId);
+    });
 
     public async Task ApproveAsync(int id, byte[] rowVersion, bool allowMatchOverride = false, string? overrideReason = null)
     {
@@ -345,6 +367,7 @@ public sealed class VendorBillService(
             IsTaxInclusive = line.IsTaxInclusive, NetAmount = line.NetAmount, TaxAmount = line.TaxAmount, GrossAmount = line.GrossAmount,
             ReceiptClearingAmount = line.ReceiptClearingAmount, CompanyNetAmount = line.CompanyNetAmount, CompanyTaxAmount = line.CompanyTaxAmount, CompanyGrossAmount = line.CompanyGrossAmount }).ToList(),
         Attachments = x.Attachments.Select(a => new VendorBillAttachmentDto { Id = a.Id, FileName = a.FileName, ContentType = a.ContentType, Size = a.Size, UploadedAtUtc = a.UploadedAtUtc }).ToList(),
+        ExtractionSuggestions=x.ExtractionSuggestions.OrderByDescending(s=>s.CreatedAtUtc).Select(s=>new VendorBillExtractionSuggestionDto{Id=s.Id,VendorBillAttachmentId=s.VendorBillAttachmentId,AttachmentName=x.Attachments.FirstOrDefault(a=>a.Id==s.VendorBillAttachmentId)?.FileName??"-",ExtractionMethod=s.ExtractionMethod,SuggestedInvoiceNumber=s.SuggestedInvoiceNumber,SuggestedBillDate=s.SuggestedBillDate,SuggestedTotalAmount=s.SuggestedTotalAmount,SuggestedCurrencyCode=s.SuggestedCurrencyCode,ConfidencePercent=s.ConfidencePercent,Status=s.Status,ReviewNote=s.ReviewNote,CreatedAtUtc=s.CreatedAtUtc}).ToList(),
         Match = match is null ? null : new PurchaseMatchRunDto
         {
             QuantityTolerancePercent = match.QuantityTolerancePercent, PriceTolerancePercent = match.PriceTolerancePercent,
@@ -355,6 +378,12 @@ public sealed class VendorBillService(
         }
     };
     public async Task<VendorBillAttachment?> GetAttachmentAsync(int billId, int attachmentId) => await bills.GetAttachmentAsync(billId, attachmentId);
+
+    private static string ExtractReadableText(byte[] content,string contentType)
+    {
+        if(content.Length==0)return string.Empty;var decoded=Encoding.UTF8.GetString(content);var cleaned=new string(decoded.Select(c=>char.IsLetterOrDigit(c)||char.IsWhiteSpace(c)||"-/:.,#".Contains(c)?c:' ').ToArray());cleaned=Regex.Replace(cleaned,@"\s+"," ").Trim();return cleaned.Length>20000?cleaned[..20000]:cleaned;
+    }
+    private static string? Match(string text,string pattern){var match=Regex.Match(text,pattern);return match.Success?match.Groups[1].Value.Trim():null;}
     private static void EnsureVersion(VendorBill bill, byte[] rowVersion)
     {
         if (rowVersion is null || !bill.RowVersion.SequenceEqual(rowVersion))

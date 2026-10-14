@@ -105,6 +105,7 @@ public sealed class VendorBillDto
     public PurchaseMatchRunDto? Match { get; init; }
     public List<VendorBillLineDto> Lines { get; init; } = [];
     public List<VendorBillAttachmentDto> Attachments { get; init; } = [];
+    public List<VendorBillExtractionSuggestionDto> ExtractionSuggestions { get; init; } = [];
 }
 
 public sealed class VendorBillAttachmentDto
@@ -115,6 +116,8 @@ public sealed class VendorBillAttachmentDto
     public long Size { get; init; }
     public DateTime UploadedAtUtc { get; init; }
 }
+public sealed class VendorBillExtractionSuggestionDto{public int Id{get;init;}public int VendorBillAttachmentId{get;init;}public string AttachmentName{get;init;}=string.Empty;public string ExtractionMethod{get;init;}=string.Empty;public string? SuggestedInvoiceNumber{get;init;}public DateOnly? SuggestedBillDate{get;init;}public decimal? SuggestedTotalAmount{get;init;}public string? SuggestedCurrencyCode{get;init;}public decimal ConfidencePercent{get;init;}public VendorBillExtractionStatus Status{get;init;}public string? ReviewNote{get;init;}public DateTime CreatedAtUtc{get;init;}}
+public sealed class ReviewVendorBillExtractionDto{public int VendorBillId{get;init;}public int SuggestionId{get;init;}public bool Apply{get;init;}public string? SupplierInvoiceNumber{get;init;}public DateOnly? BillDate{get;init;}public decimal? TotalAmount{get;init;}public string? CurrencyCode{get;init;}public string? ReviewNote{get;init;}public byte[] RowVersion{get;init;}=[];}
 
 public sealed class VendorBillLineDto
 {

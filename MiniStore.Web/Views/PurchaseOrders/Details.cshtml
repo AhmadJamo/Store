@@ -2,6 +2,7 @@
 @using MiniStore.Domain.Entities
 @inject Microsoft.Extensions.Localization.IStringLocalizer<MiniStore.Web.SharedResource> Localizer
 @inject Microsoft.AspNetCore.Authorization.IAuthorizationService AuthorizationService
+@inject MiniStore.Application.Services.SupplierCommunicationService SupplierCommunicationService
 @{
     ViewData["Title"] = Model.OrderNumber;
     var rowVersion = Convert.ToBase64String(Model.RowVersion);
@@ -16,6 +17,10 @@
     var canCreateTemplate = (await AuthorizationService.AuthorizeAsync(User, null, "Permission:PurchaseTemplates.Create")).Succeeded;
     var canConfigureFulfillment = (await AuthorizationService.AuthorizeAsync(User, null, "Permission:PurchaseOrders.ConfigureFulfillment")).Succeeded;
     var canRecordDirectDelivery = (await AuthorizationService.AuthorizeAsync(User, null, "Permission:PurchaseOrders.RecordDirectDelivery")).Succeeded;
+    var canPrepareSupplierEmail=(await AuthorizationService.AuthorizeAsync(User,null,"Permission:SupplierCommunications.Prepare")).Succeeded;
+    var canViewSupplierCommunication=(await AuthorizationService.AuthorizeAsync(User,null,"Permission:SupplierCommunications.View")).Succeeded;
+    var canRecordSupplierConfirmation=(await AuthorizationService.AuthorizeAsync(User,null,"Permission:PurchaseOrders.RecordSupplierConfirmation")).Succeeded;
+    var communications=canViewSupplierCommunication?await SupplierCommunicationService.GetByDocumentAsync(SupplierCommunicationDocumentType.PurchaseOrder,Model.Id):new List<MiniStore.Application.DTOs.Purchases.SupplierCommunicationDto>();
     var numberSettings = await GeneralSettingsService.GetAsync();
     var remainingToReceive = Model.Lines.Sum(x => x.RemainingToReceive);
     var remainingToComplete = Model.Lines.Sum(x => x.RemainingToComplete);
@@ -28,6 +33,13 @@
     <h2 class="mb-0">@Model.OrderNumber <span class="badge bg-secondary">@Localizer[Model.Status.ToString()]</span></h2>
     <a asp-action="Index" class="btn btn-outline-secondary">@Localizer["Back"]</a>
 </div>
+
+@if(Model.Status is PurchaseOrderStatus.Approved or PurchaseOrderStatus.Confirmed)
+{
+<div class="card card-body mt-3"><h3 class="h5">@Localizer["Supplier communication and delivery confirmation"]</h3><div class="d-flex flex-wrap gap-2">@if(canPrepareSupplierEmail){<form asp-controller="SupplierCommunications" asp-action="Prepare" method="post"><input type="hidden" name="DocumentType" value="PurchaseOrder"/><input type="hidden" name="DocumentId" value="@Model.Id"/><input type="hidden" name="SupplierId" value="@Model.SupplierId"/><input type="hidden" name="PreferredLanguage" value="ar-JO"/><button class="btn btn-outline-primary">@Localizer["Prepare Arabic PO email"]</button></form><form asp-controller="SupplierCommunications" asp-action="Prepare" method="post"><input type="hidden" name="DocumentType" value="PurchaseOrder"/><input type="hidden" name="DocumentId" value="@Model.Id"/><input type="hidden" name="SupplierId" value="@Model.SupplierId"/><input type="hidden" name="PreferredLanguage" value="en-US"/><button class="btn btn-outline-primary">@Localizer["Prepare English PO email"]</button></form>}</div>@if(canRecordSupplierConfirmation){<form asp-action="RecordSupplierConfirmation" method="post" class="border rounded p-3 mt-3"><input type="hidden" name="PurchaseOrderId" value="@Model.Id"/><input type="hidden" name="RowVersion" value="@rowVersion"/><div class="row g-2 align-items-end"><div class="col-md-3"><label class="form-label">@Localizer["Confirmed delivery date"]</label><input name="ConfirmedExpectedDate" type="date" value="@Model.ExpectedDate.ToString("yyyy-MM-dd")" class="form-control" required/></div><div class="col-md-4"><label class="form-label">@Localizer["Supplier confirmation reference"]</label><input name="ConfirmationReference" maxlength="250" class="form-control" required/></div><div class="col-md-4"><label class="form-label">@Localizer["Confirmation note"]</label><input name="Note" maxlength="1000" class="form-control"/></div><div class="col-md-1"><button class="btn btn-primary w-100">@Localizer["Record"]</button></div></div></form>}</div>
+}
+@if(communications.Count>0){<div class="card card-body mt-3"><h3 class="h5">@Localizer["Communication history"]</h3><div class="row g-2">@foreach(var communication in communications){<div class="col-md-6"><div class="border rounded p-3 h-100"><div class="d-flex flex-wrap justify-content-between gap-2"><strong>@communication.SupplierName</strong><span class="badge bg-secondary">@Localizer[communication.Status.ToString()]</span></div><div class="small text-muted">@communication.PreferredLanguage · @communication.CreatedAtUtc.ToLocalTime()</div><a asp-controller="SupplierCommunications" asp-action="Details" asp-route-id="@communication.Id" class="btn btn-sm btn-outline-secondary mt-2">@Localizer["Open communication"]</a></div></div>}</div></div>}
+@if(Model.SupplierConfirmations.Count>0){<div class="card card-body mt-3"><h3 class="h5">@Localizer["Supplier delivery confirmations"]</h3><div class="list-group list-group-flush">@foreach(var confirmation in Model.SupplierConfirmations){<div class="list-group-item px-0"><strong>@confirmation.ConfirmedExpectedDate</strong> <span class="text-muted">(@confirmation.PreviousExpectedDate → @confirmation.ConfirmedExpectedDate)</span><div>@confirmation.ConfirmationReference</div>@if(!string.IsNullOrWhiteSpace(confirmation.Note)){<small>@confirmation.Note</small>}</div>}</div></div>}
 <div class="card card-body my-3">
     <div class="row g-3">
         <div class="col-sm-6 col-lg-3"><strong>@Localizer["Supplier"]</strong><div>@Model.SupplierName</div></div>

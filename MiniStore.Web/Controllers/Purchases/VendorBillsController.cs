@@ -112,4 +112,19 @@ public sealed class VendorBillsController(VendorBillService service, PurchaseDoc
         var value = await service.GetAttachmentAsync(id, attachmentId);
         return value is null ? NotFound() : File(value.Content, value.ContentType, value.FileName);
     }
+
+    [HttpPost,ValidateAntiForgeryToken,PermissionAuthorize("VendorBills.ManageAttachments")]
+    [RequestFormLimits(MultipartBodyLengthLimit = 5_242_880)]
+    public async Task<IActionResult>AddAttachment(int id,string rowVersion,IFormFile attachment)
+    {
+        try{if(attachment is null||attachment.Length is <=0 or >5*1024*1024)throw new ArgumentException("Each vendor bill attachment must be between 1 byte and 5 MB.");await using var stream=new MemoryStream();await attachment.CopyToAsync(stream);await service.AddAttachmentAsync(id,new VendorBillAttachmentInputDto{FileName=attachment.FileName,ContentType=attachment.ContentType,Content=stream.ToArray()},Convert.FromBase64String(rowVersion));Notify("Vendor bill attachment saved.");}catch(Exception e)when(e is ArgumentException or InvalidOperationException or FormatException){Notify(e.Message,"danger");}return RedirectToAction(nameof(Details),new{id});
+    }
+
+    [HttpPost,ValidateAntiForgeryToken,PermissionAuthorize("VendorBills.ReviewExtraction")]
+    public async Task<IActionResult>GenerateExtraction(int id,int attachmentId,string rowVersion){try{await service.GenerateExtractionSuggestionAsync(id,attachmentId,Convert.FromBase64String(rowVersion));Notify("Invoice extraction suggestion created for review.");}catch(Exception e)when(e is ArgumentException or InvalidOperationException or FormatException){Notify(e.Message,"danger");}return RedirectToAction(nameof(Details),new{id});}
+
+    [HttpPost,ValidateAntiForgeryToken,PermissionAuthorize("VendorBills.ReviewExtraction")]
+    public async Task<IActionResult>ReviewExtraction(ReviewVendorBillExtractionDto dto){try{await service.ReviewExtractionAsync(dto);Notify(dto.Apply?"Invoice extraction suggestion applied after review.":"Invoice extraction suggestion rejected.");}catch(Exception e)when(e is ArgumentException or InvalidOperationException or FormatException){Notify(e.Message,"danger");}return RedirectToAction(nameof(Details),new{id=dto.VendorBillId});}
+
+    private void Notify(string message,string type="success"){TempData["NotificationType"]=type;TempData["NotificationMessage"]=localizer[message].Value;}
 }

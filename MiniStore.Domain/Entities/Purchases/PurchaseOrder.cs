@@ -43,6 +43,7 @@ public sealed class PurchaseOrder
     public byte[] RowVersion { get; private set; } = [];
     public List<PurchaseOrderLine> Lines { get; private set; } = [];
     public List<PurchaseOrderLifecycleHistory> History { get; private set; } = [];
+    public List<PurchaseOrderSupplierConfirmation> SupplierConfirmations { get; private set; } = [];
 
     public PurchaseOrder(string orderNumber, int sourcingEventId, int quotationId, int supplierId, int warehouseId,
         DateOnly orderDate, DateOnly expectedDate, string currencyCode, string? paymentTerms, string createdByUserId,
@@ -125,10 +126,27 @@ public sealed class PurchaseOrder
         History.Add(new PurchaseOrderLifecycleHistory(from, Status, PurchaseOrderLifecycleAction.Reopened, user, reason.Trim()));
         ClosureType = null; ClosureReason = null; ClosedByUserId = null; ClosedAtUtc = null;
     }
+    public void RecordSupplierConfirmation(DateOnly confirmedExpectedDate, string confirmationReference, string? note, string userId)
+    {
+        if (Status is not (PurchaseOrderStatus.Approved or PurchaseOrderStatus.Confirmed)) throw new InvalidOperationException("Supplier delivery confirmation requires an approved or confirmed purchase order.");
+        if (confirmedExpectedDate < OrderDate) throw new ArgumentException("Confirmed supplier delivery date cannot be earlier than the order date.");
+        if (string.IsNullOrWhiteSpace(confirmationReference) || confirmationReference.Trim().Length > 250) throw new ArgumentException("Supplier confirmation reference is required and cannot exceed 250 characters.");
+        if (note?.Trim().Length > 1000) throw new ArgumentException("Supplier confirmation note cannot exceed 1000 characters.");
+        EnsureUser(userId);
+        SupplierConfirmations.Add(new PurchaseOrderSupplierConfirmation(ExpectedDate, confirmedExpectedDate, confirmationReference, note, userId));
+        ExpectedDate = confirmedExpectedDate;
+    }
     private void EnsureDraft(){if(Status!=PurchaseOrderStatus.Draft)throw new InvalidOperationException("Only draft purchase orders can be modified.");}
     private static void EnsureUser(string user){if(string.IsNullOrWhiteSpace(user))throw new ArgumentException("User is required.");}
     private static void ValidateReason(string reason, string message){if(string.IsNullOrWhiteSpace(reason)||reason.Trim().Length>1000)throw new ArgumentException(message);}
     private static string? Normalize(string? value)=>string.IsNullOrWhiteSpace(value)?null:value.Trim();
+}
+
+public sealed class PurchaseOrderSupplierConfirmation
+{
+    private PurchaseOrderSupplierConfirmation(){ConfirmationReference=RecordedByUserId=string.Empty;}
+    public int Id{get;private set;} public int PurchaseOrderId{get;private set;} public DateOnly PreviousExpectedDate{get;private set;} public DateOnly ConfirmedExpectedDate{get;private set;} public string ConfirmationReference{get;private set;} public string? Note{get;private set;} public string RecordedByUserId{get;private set;} public DateTime RecordedAtUtc{get;private set;}
+    public PurchaseOrderSupplierConfirmation(DateOnly previousDate,DateOnly confirmedDate,string reference,string? note,string userId){PreviousExpectedDate=previousDate;ConfirmedExpectedDate=confirmedDate;ConfirmationReference=reference.Trim();Note=string.IsNullOrWhiteSpace(note)?null:note.Trim();RecordedByUserId=userId.Trim();RecordedAtUtc=DateTime.UtcNow;}
 }
 
 public sealed class PurchaseOrderLifecycleHistory

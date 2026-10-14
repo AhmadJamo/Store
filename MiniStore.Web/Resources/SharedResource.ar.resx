@@ -2245,4 +2245,80 @@
   <data name="Continue direct delivery workflow" xml:space="preserve"><value>متابعة مسار الشحن المباشر</value></data>
   <data name="Record any remaining customer delivery quantity, or create the vendor bill for delivered quantities." xml:space="preserve"><value>سجّل أي كمية متبقية لتسليم العميل، أو أنشئ فاتورة المورد للكميات المسلّمة.</value></data>
   <data name="Delivery proof reference is required and cannot exceed 250 characters." xml:space="preserve"><value>مرجع إثبات التسليم مطلوب ولا يمكن أن يتجاوز 250 حرفًا.</value></data>
+  <data name="Supplier communication" xml:space="preserve"><value>مراسلة المورد</value></data>
+  <data name="Back to document" xml:space="preserve"><value>العودة إلى المستند</value></data>
+  <data name="Prepared" xml:space="preserve"><value>مُجهّزة</value></data>
+  <data name="Replied" xml:space="preserve"><value>تم الرد</value></data>
+  <data name="FollowUp" xml:space="preserve"><value>متابعة</value></data>
+  <data name="Prepared does not mean sent" xml:space="preserve"><value>التجهيز لا يعني أن الرسالة أُرسلت</value></data>
+  <data name="The system opens your email application but does not claim sending, delivery or reply. Record each status only from actual evidence." xml:space="preserve"><value>يفتح النظام برنامج البريد لكنه لا يدّعي الإرسال أو التسليم أو الرد. سجّل كل حالة فقط بناءً على دليل فعلي.</value></data>
+  <data name="Recipient email" xml:space="preserve"><value>بريد المستلم</value></data>
+  <data name="Language" xml:space="preserve"><value>اللغة</value></data>
+  <data name="ar-JO" xml:space="preserve"><value>العربية</value></data>
+  <data name="en-US" xml:space="preserve"><value>الإنجليزية</value></data>
+  <data name="Subject" xml:space="preserve"><value>الموضوع</value></data>
+  <data name="Message" xml:space="preserve"><value>الرسالة</value></data>
+  <data name="Open in email application" xml:space="preserve"><value>فتح في برنامج البريد</value></data>
+  <data name="Attachments to add in the email application" xml:space="preserve"><value>مرفقات يجب إضافتها في برنامج البريد</value></data>
+  <data name="Record actual communication activity" xml:space="preserve"><value>تسجيل نشاط المراسلة الفعلي</value></data>
+  <data name="Activity" xml:space="preserve"><value>النشاط</value></data>
+  <data name="Occurred at" xml:space="preserve"><value>وقت الحدوث</value></data>
+  <data name="Evidence reference" xml:space="preserve"><value>مرجع الدليل</value></data>
+  <data name="Summary / note" xml:space="preserve"><value>الملخص أو الملاحظة</value></data>
+  <data name="Record activity" xml:space="preserve"><value>تسجيل النشاط</value></data>
+  <data name="Communication history" xml:space="preserve"><value>سجل المراسلات</value></data>
+  <data name="Open communication" xml:space="preserve"><value>فتح المراسلة</value></data>
+  <data name="No sending status has been recorded yet." xml:space="preserve"><value>لم تُسجل حالة إرسال فعلية بعد.</value></data>
+  <data name="Prepare Arabic RFQ email" xml:space="preserve"><value>تجهيز بريد طلب عرض السعر بالعربية</value></data>
+  <data name="Prepare English RFQ email" xml:space="preserve"><value>تجهيز بريد طلب عرض السعر بالإنجليزية</value></data>
+  <data name="Supplier communication and delivery confirmation" xml:space="preserve"><value>مراسلة المورد وتأكيد موعد التوريد</value></data>
+  <data name="Prepare Arabic PO email" xml:space="preserve"><value>تجهيز بريد أمر الشراء بالعربية</value></data>
+  <data name="Prepare English PO email" xml:space="preserve"><value>تجهيز بريد أمر الشراء بالإنجليزية</value></data>
+  <data name="Confirmed delivery date" xml:space="preserve"><value>موعد التوريد المؤكد</value></data>
+  <data name="Supplier confirmation reference" xml:space="preserve"><value>مرجع تأكيد المورد</value></data>
+  <data name="Confirmation note" xml:space="preserve"><value>ملاحظة التأكيد</value></data>
+  <data name="Supplier delivery confirmations" xml:space="preserve"><value>تأكيدات المورد لموعد التوريد</value></data>
+  <data name="Supplier invoice attachments" xml:space="preserve"><value>مرفقات فاتورة المورد</value></data>
+  <data name="Create extraction suggestion" xml:space="preserve"><value>إنشاء اقتراح استخراج</value></data>
+  <data name="No supplier invoice attachment has been saved yet." xml:space="preserve"><value>لم يُحفظ مرفق لفاتورة المورد بعد.</value></data>
+  <data name="Add supplier invoice attachment" xml:space="preserve"><value>إضافة مرفق فاتورة المورد</value></data>
+  <data name="Save attachment" xml:space="preserve"><value>حفظ المرفق</value></data>
+  <data name="Invoice extraction suggestions" xml:space="preserve"><value>اقتراحات استخراج بيانات الفاتورة</value></data>
+  <data name="Extracted values are suggestions only. Nothing is applied or posted before your explicit review." xml:space="preserve"><value>القيم المستخرجة مجرد اقتراحات. لا يُطبق أو يُرحّل شيء قبل مراجعتك الصريحة.</value></data>
+  <data name="PendingReview" xml:space="preserve"><value>بانتظار المراجعة</value></data>
+  <data name="Applied" xml:space="preserve"><value>تم التطبيق</value></data>
+  <data name="Local review-first text/OCR (optical character recognition) heuristic" xml:space="preserve"><value>استخراج محلي للنص والتعرّف الضوئي على الحروف مع أولوية المراجعة</value></data>
+  <data name="Suggested total" xml:space="preserve"><value>الإجمالي المقترح</value></data>
+  <data name="Review note" xml:space="preserve"><value>ملاحظة المراجعة</value></data>
+  <data name="Apply reviewed header" xml:space="preserve"><value>تطبيق بيانات الرأس بعد المراجعة</value></data>
+  <data name="Reject suggestion" xml:space="preserve"><value>رفض الاقتراح</value></data>
+  <data name="Review completed" xml:space="preserve"><value>اكتملت المراجعة</value></data>
+  <data name="Supplier email prepared. Open it in your email application, then record the actual sending status." xml:space="preserve"><value>تم تجهيز بريد المورد. افتحه في برنامج البريد ثم سجّل حالة الإرسال الفعلية.</value></data>
+  <data name="Supplier communication activity recorded." xml:space="preserve"><value>تم تسجيل نشاط مراسلة المورد.</value></data>
+  <data name="Supplier delivery date confirmation recorded." xml:space="preserve"><value>تم تسجيل تأكيد المورد لموعد التوريد.</value></data>
+  <data name="Vendor bill attachment saved." xml:space="preserve"><value>تم حفظ مرفق فاتورة المورد.</value></data>
+  <data name="Invoice extraction suggestion created for review." xml:space="preserve"><value>تم إنشاء اقتراح استخراج لمراجعته.</value></data>
+  <data name="Invoice extraction suggestion applied after review." xml:space="preserve"><value>تم تطبيق اقتراح الاستخراج بعد المراجعة.</value></data>
+  <data name="Invoice extraction suggestion rejected." xml:space="preserve"><value>تم رفض اقتراح الاستخراج.</value></data>
+  <data name="Open and send supplier email" xml:space="preserve"><value>فتح بريد المورد وإرساله</value></data>
+  <data name="Open the prepared message in your email application, attach the listed files, then record the actual result." xml:space="preserve"><value>افتح الرسالة المجهزة في برنامج البريد وأرفق الملفات المذكورة ثم سجّل النتيجة الفعلية.</value></data>
+  <data name="Review communication history" xml:space="preserve"><value>مراجعة سجل المراسلات</value></data>
+  <data name="Confirm the recorded evidence and add delivery, reply or follow-up only when it actually occurs." xml:space="preserve"><value>تحقق من الدليل المسجل وأضف التسليم أو الرد أو المتابعة فقط عند حدوثه فعليًا.</value></data>
+  <data name="Review confirmed delivery date" xml:space="preserve"><value>مراجعة موعد التوريد المؤكد</value></data>
+  <data name="The order now shows the supplier-confirmed date and preserves the previous date in history." xml:space="preserve"><value>يعرض الأمر الآن الموعد الذي أكده المورد ويحفظ الموعد السابق في السجل.</value></data>
+  <data name="Review invoice extraction suggestion" xml:space="preserve"><value>مراجعة اقتراح استخراج الفاتورة</value></data>
+  <data name="Compare the suggested invoice header with the attachment, then apply or reject it explicitly." xml:space="preserve"><value>قارن بيانات رأس الفاتورة المقترحة بالمرفق ثم طبّقها أو ارفضها صراحةً.</value></data>
+  <data name="Add an email address to the supplier before preparing email communication." xml:space="preserve"><value>أضف عنوان بريد إلكتروني للمورد قبل تجهيز المراسلة.</value></data>
+  <data name="A valid supplier email is required before preparing communication." xml:space="preserve"><value>يلزم بريد إلكتروني صحيح للمورد قبل تجهيز المراسلة.</value></data>
+  <data name="Only sent RFQs can be prepared for supplier email." xml:space="preserve"><value>يمكن تجهيز بريد المورد فقط لطلب عرض سعر تم إرساله.</value></data>
+  <data name="Supplier is not invited to this sourcing event." xml:space="preserve"><value>المورد غير مدعو إلى عملية التوريد هذه.</value></data>
+  <data name="Purchase order email requires an approved or confirmed order." xml:space="preserve"><value>يتطلب بريد أمر الشراء أمرًا معتمدًا أو مؤكدًا.</value></data>
+  <data name="Record sending before delivery, reply or follow-up activity." xml:space="preserve"><value>سجّل الإرسال قبل تسجيل التسليم أو الرد أو المتابعة.</value></data>
+  <data name="Delivery evidence reference is required before marking communication as delivered." xml:space="preserve"><value>مرجع دليل التسليم مطلوب قبل اعتبار المراسلة مُسلّمة.</value></data>
+  <data name="Supplier reply summary is required." xml:space="preserve"><value>ملخص رد المورد مطلوب.</value></data>
+  <data name="Supplier delivery confirmation requires an approved or confirmed purchase order." xml:space="preserve"><value>يتطلب تأكيد موعد المورد أمر شراء معتمدًا أو مؤكدًا.</value></data>
+  <data name="Supplier confirmation reference is required and cannot exceed 250 characters." xml:space="preserve"><value>مرجع تأكيد المورد مطلوب ولا يمكن أن يتجاوز 250 حرفًا.</value></data>
+  <data name="Invoice extraction is available only while the vendor bill is a draft." xml:space="preserve"><value>استخراج بيانات الفاتورة متاح فقط عندما تكون فاتورة المورد مسودة.</value></data>
+  <data name="This attachment already has an extraction suggestion awaiting review." xml:space="preserve"><value>يوجد لهذا المرفق اقتراح استخراج بانتظار المراجعة.</value></data>
+  <data name="Review and confirm the supplier invoice number and bill date before applying the suggestion." xml:space="preserve"><value>راجع وأكد رقم فاتورة المورد وتاريخها قبل تطبيق الاقتراح.</value></data>
 </root>

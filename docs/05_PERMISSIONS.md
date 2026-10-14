@@ -126,3 +126,12 @@ The Index and mutation actions enforce these policies server-side. Permission se
 - `PurchaseDocumentReversals.View`: view reversal history and audit details.
 - `PurchaseDocumentReversals.Create`: create and immediately post a reasoned controlled reversal.
 
+# PUR-260 supplier communication and invoice-extraction permissions
+
+- `SupplierCommunications.View` protects prepared message content, attachments and status evidence.
+- `SupplierCommunications.Prepare` creates a bilingual RFQ/PO message snapshot but does not mark it sent.
+- `SupplierCommunications.RecordActivity` records actual send, delivery, reply, failure and follow-up evidence.
+- `PurchaseOrders.RecordSupplierConfirmation` records a supplier-confirmed delivery date and preserves the previous date.
+- `VendorBills.ManageAttachments` adds bounded attachments to a Draft Vendor Bill.
+- `VendorBills.ReviewExtraction` creates, applies or rejects review-first extraction suggestions; it grants neither approval nor posting.
+

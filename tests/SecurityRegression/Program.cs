@@ -1566,6 +1566,11 @@ CheckArgumentThrows(() => dropshipLine.RecordDirectDelivery(2m, DateOnly.FromDat
 Check(db.Model.FindEntityType(typeof(PurchaseDemandAllocation))!.FindProperty("TenantId") is { IsNullable: false } &&
       db.Model.FindEntityType(typeof(PurchaseDirectDeliveryEvent))!.FindProperty("TenantId") is { IsNullable: false },
     "Demand allocations and direct-delivery evidence must be tenant owned");
+var priorExpectedDate=purchaseOrder.ExpectedDate;purchaseOrder.RecordSupplierConfirmation(priorExpectedDate.AddDays(2),"EMAIL-REF-1","Supplier requested two more days","buyer");
+Check(purchaseOrder.ExpectedDate==priorExpectedDate.AddDays(2)&&purchaseOrder.SupplierConfirmations.Single().PreviousExpectedDate==priorExpectedDate&&db.Model.FindEntityType(typeof(PurchaseOrderSupplierConfirmation))!.FindProperty("TenantId") is{IsNullable:false},"Supplier confirmation must update the current delivery date while preserving tenant-owned prior-date evidence");
+var supplierCommunicationEvidence=new SupplierCommunication(SupplierCommunicationDocumentType.PurchaseOrder,1,5,"PO-1","supplier@example.com","ar-JO","أمر شراء","يرجى تأكيد الأمر","buyer");
+supplierCommunicationEvidence.AddAttachment(new SupplierCommunicationAttachment("order.pdf","application/pdf",[1,2,3],"buyer"));supplierCommunicationEvidence.RecordActivity(SupplierCommunicationStatus.Sent,DateTime.UtcNow,"Sent from Outlook","MSG-1","buyer");supplierCommunicationEvidence.RecordActivity(SupplierCommunicationStatus.Delivered,DateTime.UtcNow,"Delivery receipt","DEL-1","buyer");
+Check(supplierCommunicationEvidence.Status==SupplierCommunicationStatus.Delivered&&supplierCommunicationEvidence.Activities.Count==2&&supplierCommunicationEvidence.Attachments.Count==1&&db.Model.FindEntityType(typeof(SupplierCommunication))!.FindProperty("TenantId") is{IsNullable:false}&&db.Model.FindEntityType(typeof(SupplierCommunicationActivity))!.FindProperty("TenantId") is{IsNullable:false},"Supplier communication must distinguish prepared, sent and evidenced delivery in a tenant-owned trail");
 var purchaseOrderController = typeof(PurchaseOrdersController);
 Check(purchaseOrderController.GetMethod(nameof(PurchaseOrdersController.CloseRemaining))!
           .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
@@ -1798,6 +1803,8 @@ Check(db.Model.FindEntityType(typeof(VendorBillAttachment))!.FindProperty("Tenan
     "Vendor bill attachments must be tenant-owned and approval/posting must use separate permissions");
 Check(DocumentSequence.CreateDefault(DocumentNumberType.VendorBill).Preview(DateTime.Today).StartsWith("VB-"),
     "Vendor bills must use an independent centralized document sequence");
+var extractionBill=new VendorBill("VB-EXTRACT-1",1,5,"TEMP-1",DateOnly.FromDateTime(DateTime.Today),"JOD",null,"buyer");var extractionAttachment=new VendorBillAttachment("invoice.txt","text/plain",[1],"buyer");extractionBill.AddAttachment(extractionAttachment);var extractionSuggestion=new VendorBillExtractionSuggestion(1,"OCR review", "Invoice INV-9", "INV-9",DateOnly.FromDateTime(DateTime.Today),25m,"JOD",75m);extractionBill.AddExtractionSuggestion(extractionSuggestion);extractionBill.ApplyExtractedHeader("INV-9",DateOnly.FromDateTime(DateTime.Today),"JOD",1m,DateOnly.FromDateTime(DateTime.Today),"Company currency");extractionSuggestion.Review(true,"Compared with attachment","buyer");
+Check(extractionBill.SupplierInvoiceNumber=="INV-9"&&extractionSuggestion.Status==VendorBillExtractionStatus.Applied&&db.Model.FindEntityType(typeof(VendorBillExtractionSuggestion))!.FindProperty("TenantId") is{IsNullable:false},"Invoice extraction must remain a tenant-owned suggestion until explicit review applies the header");
 var supplierCredit = new SupplierCreditNote("SCN-000001", 1, 1, 5, 1, DateOnly.FromDateTime(DateTime.Today),
     "jod", "SUP-CR-1", "Billed goods returned", "buyer");
 supplierCredit.AddLine(new SupplierCreditNoteLine(1, 1, 10, 45, 1m, 1m, 10m, 1.60m, 11.60m, 9m,
@@ -1880,6 +1887,7 @@ Check(vendorBillController.GetMethod(nameof(VendorBillsController.Index))!
       vendorBillController.GetMethod(nameof(VendorBillsController.Post))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == $"{PermissionAuthorizeAttribute.PolicyPrefix}VendorBills.Post" &&
       vendorBillController.GetMethod(nameof(VendorBillsController.Cancel))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == $"{PermissionAuthorizeAttribute.PolicyPrefix}VendorBills.Cancel",
     "Vendor bill visibility, entry, approval, posting and match override must use separate server-side permissions");
+var communicationController=typeof(SupplierCommunicationsController);Check(communicationController.GetMethod(nameof(SupplierCommunicationsController.Prepare))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy==$"{PermissionAuthorizeAttribute.PolicyPrefix}SupplierCommunications.Prepare"&&communicationController.GetMethod(nameof(SupplierCommunicationsController.RecordActivity))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy==$"{PermissionAuthorizeAttribute.PolicyPrefix}SupplierCommunications.RecordActivity"&&vendorBillController.GetMethod(nameof(VendorBillsController.ReviewExtraction))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy==$"{PermissionAuthorizeAttribute.PolicyPrefix}VendorBills.ReviewExtraction","Supplier communication and extraction review must use distinct server-side permissions");
 var supplierPayment = new SupplierPayment("SPY-000001", 5, 7, DateOnly.FromDateTime(DateTime.Today), "jod", "BANK-77", null, "cashier");
 supplierPayment.AddLine(new SupplierPaymentLine(1, 4m, "VB-000001", "SUP-001"));
 supplierPayment.AddLine(new SupplierPaymentLine(2, 3m, "VB-000002", "SUP-002"));
@@ -1966,6 +1974,10 @@ Check(ActionableErrorGuidance.Resolve(
           "Configure a purchase expense account for every direct-delivery product before continuing.",
           "PurchaseOrders") is { Controller: "Products", Action: "Index", RequiredPermission: "Products.Edit" },
     "Direct-delivery expense-account setup errors must link to product settings");
+Check(ActionableErrorGuidance.Resolve(
+          "Add an email address to the supplier before preparing email communication.",
+          "SupplierCommunications") is { Controller: "Suppliers", Action: "Index", RequiredPermission: "Suppliers.Edit" },
+    "Missing supplier email errors must link to supplier management");
 var purchaseNextStep = WorkflowNextStepGuidance.Resolve(
     "Purchase request approved.",
     "PurchaseRequests",
@@ -1997,6 +2009,20 @@ var directDeliveryNextStep = WorkflowNextStepGuidance.Resolve(
 Check(directDeliveryNextStep is { Controller: "PurchaseOrders", Action: "Details", RequiredPermission: "PurchaseOrders.RecordDirectDelivery" } &&
       directDeliveryNextStep.RouteValues.GetValueOrDefault("id") == "88",
     "Confirmed direct-delivery orders must guide the user to customer-delivery evidence instead of a goods receipt");
+var preparedCommunicationNextStep = WorkflowNextStepGuidance.Resolve(
+    "Supplier email prepared. Open it in your email application, then record the actual sending status.",
+    "SupplierCommunications",
+    new Dictionary<string, string?> { ["id"] = "91" });
+Check(preparedCommunicationNextStep is { Controller: "SupplierCommunications", Action: "Details", RequiredPermission: "SupplierCommunications.View" } &&
+      preparedCommunicationNextStep.RouteValues.GetValueOrDefault("id") == "91",
+    "Prepared supplier email must guide the user to actual sending and evidence capture");
+var extractionNextStep = WorkflowNextStepGuidance.Resolve(
+    "Invoice extraction suggestion created for review.",
+    "VendorBills",
+    new Dictionary<string, string?> { ["id"] = "92" });
+Check(extractionNextStep is { Controller: "VendorBills", Action: "Details", RequiredPermission: "VendorBills.View" } &&
+      extractionNextStep.RouteValues.GetValueOrDefault("id") == "92",
+    "Invoice extraction must guide the user to explicit review without applying data automatically");
 var replenishmentNextStep = WorkflowNextStepGuidance.Resolve(
     "Replenishment planning run completed.",
     "PurchaseReplenishment",

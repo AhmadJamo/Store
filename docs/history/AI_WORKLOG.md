@@ -1,5 +1,14 @@
 # AI Work Log
 
+# 2026-10-14 — PUR-260 supplier documents and communication
+
+- Added bilingual RFQ and Purchase Order email preparation with tenant-owned message snapshots, downloadable attachments and document-level communication history.
+- Kept Prepared distinct from Sent, Delivered and Replied; users record actual evidence manually, with delivery references and reply notes enforced by the domain.
+- Added Purchase Order supplier delivery-date confirmations that preserve previous/new dates, reference and audit actor/time.
+- Added Draft Vendor Bill attachment management and local review-first invoice extraction suggestions. Applying a reviewed suggestion never approves or posts the bill.
+- Added dedicated permissions, Arabic localization, actionable error and next-step guidance, responsive cards, tenant-safe mappings and migration `20261014202715_AddSupplierCommunicationAndInvoiceExtraction`, applied locally.
+- Release build completed with zero warnings/errors, all 721 focused checks passed, SQL integration completed successfully and the EF model has no pending changes.
+
 # 2026-10-14 — PUR-250B demand allocation and direct delivery
 
 - Added tenant-owned Purchase Order demand allocations and automatically retain the originating Purchase Request line through sourcing and split award creation.

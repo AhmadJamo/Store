@@ -12,7 +12,7 @@ public static class ActionableErrorGuidance
     {
         "Purchases", "PurchaseReturns", "SupplierPurchasing", "PurchaseRequests",
         "PurchaseApprovalRules", "PurchaseSourcing", "SupplierQuotations", "PurchaseOrders",
-        "GoodsReceipts", "GoodsReceiptReturns", "VendorBills", "SupplierCreditNotes", "SupplierPayments",
+        "GoodsReceipts", "GoodsReceiptReturns", "VendorBills", "SupplierCreditNotes", "SupplierPayments", "SupplierCommunications",
         "PurchaseAgreements", "PurchaseTemplates", "LandedCosts", "PurchaseDocumentReversals", "PurchaseAnalytics"
     };
 
@@ -109,6 +109,7 @@ public static class ActionableErrorGuidance
         if (Matches(message, localize,
                 "Supplier not found.",
                 "Supplier was not found.",
+                "Add an email address to the supplier before preparing email communication.",
                 "Suggested supplier was not found.",
                 "One or more suppliers were not found."))
             return new("Suppliers", "Index", "Manage suppliers", "Suppliers.Edit");

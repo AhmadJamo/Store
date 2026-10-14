@@ -1,0 +1,11 @@
+using Microsoft.AspNetCore.Mvc;using Microsoft.Extensions.Localization;using MiniStore.Application.DTOs.Purchases;using MiniStore.Application.Services;using MiniStore.Web.Authorization;
+namespace MiniStore.Web.Controllers;
+public sealed class SupplierCommunicationsController(SupplierCommunicationService service,IStringLocalizer<SharedResource> localizer):Controller
+{
+ [HttpPost,ValidateAntiForgeryToken,PermissionAuthorize("SupplierCommunications.Prepare")]public async Task<IActionResult>Prepare(PrepareSupplierCommunicationDto dto){try{var id=await service.PrepareAsync(dto);Notify("Supplier email prepared. Open it in your email application, then record the actual sending status.");return RedirectToAction(nameof(Details),new{id});}catch(Exception e)when(e is ArgumentException or InvalidOperationException){Notify(e.Message,"danger");return RedirectToDocument(dto.DocumentType,dto.DocumentId);}}
+ [HttpGet,PermissionAuthorize("SupplierCommunications.View")]public async Task<IActionResult>Details(int id){var dto=await service.GetAsync(id);return dto is null?NotFound():View(dto);}
+ [HttpPost,ValidateAntiForgeryToken,PermissionAuthorize("SupplierCommunications.RecordActivity")]public async Task<IActionResult>RecordActivity(RecordSupplierCommunicationActivityDto dto){try{await service.RecordActivityAsync(dto);Notify("Supplier communication activity recorded.");}catch(Exception e)when(e is ArgumentException or InvalidOperationException){Notify(e.Message,"danger");}return RedirectToAction(nameof(Details),new{id=dto.CommunicationId});}
+ [HttpGet,PermissionAuthorize("SupplierCommunications.View")]public async Task<IActionResult>Attachment(int id,int attachmentId){var value=await service.GetAttachmentAsync(id,attachmentId);return value is null?NotFound():File(value.Content,value.ContentType,value.FileName);}
+ private IActionResult RedirectToDocument(MiniStore.Domain.Entities.SupplierCommunicationDocumentType type,int id)=>type==MiniStore.Domain.Entities.SupplierCommunicationDocumentType.Rfq?RedirectToAction("Details","PurchaseSourcing",new{id}):RedirectToAction("Details","PurchaseOrders",new{id});
+ private void Notify(string message,string type="success"){TempData["NotificationType"]=type;TempData["NotificationMessage"]=localizer[message].Value;}
+}

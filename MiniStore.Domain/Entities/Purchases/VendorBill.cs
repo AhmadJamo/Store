@@ -1,6 +1,7 @@
 namespace MiniStore.Domain.Entities;
 
 public enum VendorBillStatus { Draft = 1, Posted = 2, Cancelled = 3, Reversed = 4, Approved = 5 }
+public enum VendorBillExtractionStatus { PendingReview = 1, Applied = 2, Rejected = 3 }
 
 public sealed class VendorBill
 {
@@ -31,6 +32,7 @@ public sealed class VendorBill
     public byte[] RowVersion { get; private set; } = [];
     public List<VendorBillLine> Lines { get; private set; } = [];
     public List<VendorBillAttachment> Attachments { get; private set; } = [];
+    public List<VendorBillExtractionSuggestion> ExtractionSuggestions { get; private set; } = [];
     public decimal NetAmount => Lines.Sum(x => x.NetAmount);
     public decimal TaxAmount => Lines.Sum(x => x.TaxAmount);
     public decimal TotalAmount => Lines.Sum(x => x.GrossAmount);
@@ -88,6 +90,8 @@ public sealed class VendorBill
         if (Attachments.Count >= 10) throw new InvalidOperationException("A vendor bill can contain at most ten attachments.");
         Attachments.Add(attachment);
     }
+    public void AddExtractionSuggestion(VendorBillExtractionSuggestion suggestion){EnsureDraft();if(ExtractionSuggestions.Any(x=>x.VendorBillAttachmentId==suggestion.VendorBillAttachmentId&&x.Status==VendorBillExtractionStatus.PendingReview))throw new InvalidOperationException("This attachment already has an extraction suggestion awaiting review.");ExtractionSuggestions.Add(suggestion);}
+    public void ApplyExtractedHeader(string supplierInvoiceNumber,DateOnly billDate,string companyCurrencyCode,decimal exchangeRate,DateOnly exchangeRateDate,string exchangeRateSource){EnsureDraft();if(string.IsNullOrWhiteSpace(supplierInvoiceNumber)||supplierInvoiceNumber.Trim().Length>100)throw new ArgumentException("Supplier invoice number is required and cannot exceed 100 characters.");if(string.IsNullOrWhiteSpace(companyCurrencyCode)||companyCurrencyCode.Trim().Length!=3||exchangeRate<=0||string.IsNullOrWhiteSpace(exchangeRateSource))throw new ArgumentException("A valid vendor bill exchange rate is required.");SupplierInvoiceNumber=supplierInvoiceNumber.Trim();NormalizedSupplierInvoiceNumber=NormalizeInvoiceNumber(supplierInvoiceNumber);if(NormalizedSupplierInvoiceNumber.Length==0)throw new ArgumentException("Supplier invoice number must contain at least one letter or number.");BillDate=billDate;CompanyCurrencyCode=companyCurrencyCode.Trim().ToUpperInvariant();ExchangeRate=exchangeRate;ExchangeRateDate=exchangeRateDate;ExchangeRateSource=exchangeRateSource.Trim();foreach(var line in Lines)line.ApplyBillExchangeRate(exchangeRate);}
     public void Cancel(string userId, string reason)
     {
         if (Status is not (VendorBillStatus.Draft or VendorBillStatus.Approved))
@@ -106,6 +110,14 @@ public sealed class VendorBill
 
     public static string NormalizeInvoiceNumber(string value) => string.Concat((value ?? string.Empty).Trim().ToUpperInvariant().Where(char.IsLetterOrDigit));
     private void EnsureDraft() { if (Status != VendorBillStatus.Draft) throw new InvalidOperationException("Only draft vendor bills can be changed."); }
+}
+
+public sealed class VendorBillExtractionSuggestion
+{
+    private VendorBillExtractionSuggestion(){ExtractionMethod=RawExtractedText=string.Empty;}
+    public int Id{get;private set;} public int VendorBillId{get;private set;} public int VendorBillAttachmentId{get;private set;} public string ExtractionMethod{get;private set;} public string RawExtractedText{get;private set;} public string? SuggestedInvoiceNumber{get;private set;} public DateOnly? SuggestedBillDate{get;private set;} public decimal? SuggestedTotalAmount{get;private set;} public string? SuggestedCurrencyCode{get;private set;} public decimal ConfidencePercent{get;private set;} public VendorBillExtractionStatus Status{get;private set;} public string? ReviewNote{get;private set;} public string? ReviewedByUserId{get;private set;} public DateTime? ReviewedAtUtc{get;private set;} public DateTime CreatedAtUtc{get;private set;}
+    public VendorBillExtractionSuggestion(int attachmentId,string method,string rawText,string? invoiceNumber,DateOnly? billDate,decimal? total,string? currency,decimal confidence){if(attachmentId<=0)throw new ArgumentException("Vendor bill attachment is required.");if(string.IsNullOrWhiteSpace(method)||method.Trim().Length>100)throw new ArgumentException("Extraction method is required.");if(rawText.Length>20000)rawText=rawText[..20000];if(invoiceNumber?.Trim().Length>100||total<0||confidence is <0 or >100||(!string.IsNullOrWhiteSpace(currency)&&currency.Trim().Length!=3))throw new ArgumentException("Extracted invoice suggestion is invalid.");VendorBillAttachmentId=attachmentId;ExtractionMethod=method.Trim();RawExtractedText=rawText;SuggestedInvoiceNumber=string.IsNullOrWhiteSpace(invoiceNumber)?null:invoiceNumber.Trim();SuggestedBillDate=billDate;SuggestedTotalAmount=total;SuggestedCurrencyCode=string.IsNullOrWhiteSpace(currency)?null:currency.Trim().ToUpperInvariant();ConfidencePercent=confidence;Status=VendorBillExtractionStatus.PendingReview;CreatedAtUtc=DateTime.UtcNow;}
+    public void Review(bool apply,string? note,string userId){if(Status!=VendorBillExtractionStatus.PendingReview)throw new InvalidOperationException("This extraction suggestion has already been reviewed.");if(note?.Trim().Length>1000)throw new ArgumentException("Extraction review note cannot exceed 1000 characters.");if(string.IsNullOrWhiteSpace(userId))throw new ArgumentException("User is required.");Status=apply?VendorBillExtractionStatus.Applied:VendorBillExtractionStatus.Rejected;ReviewNote=string.IsNullOrWhiteSpace(note)?null:note.Trim();ReviewedByUserId=userId.Trim();ReviewedAtUtc=DateTime.UtcNow;}
 }
 
 public sealed class VendorBillAttachment
@@ -211,4 +223,5 @@ public sealed class VendorBillLine
         CompanyNetAmount = Round(NetAmount * billExchangeRate); CompanyTaxAmount = Round(TaxAmount * billExchangeRate); CompanyGrossAmount = CompanyNetAmount + CompanyTaxAmount;
     }
     private static decimal Round(decimal value) => Math.Round(value, 2, MidpointRounding.AwayFromZero);
+    internal void ApplyBillExchangeRate(decimal rate){if(rate<=0)throw new ArgumentException("Exchange rate must be greater than zero.");CompanyNetAmount=Round(NetAmount*rate);CompanyTaxAmount=Round(TaxAmount*rate);CompanyGrossAmount=CompanyNetAmount+CompanyTaxAmount;}
 }

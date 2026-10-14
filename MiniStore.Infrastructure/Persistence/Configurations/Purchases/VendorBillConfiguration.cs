@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using MiniStore.Domain.Entities;
 namespace MiniStore.Infrastructure.Persistence.Configurations;
-public sealed class VendorBillConfiguration : IEntityTypeConfiguration<VendorBill>, IEntityTypeConfiguration<VendorBillLine>, IEntityTypeConfiguration<VendorBillAttachment>
+public sealed class VendorBillConfiguration : IEntityTypeConfiguration<VendorBill>, IEntityTypeConfiguration<VendorBillLine>, IEntityTypeConfiguration<VendorBillAttachment>, IEntityTypeConfiguration<VendorBillExtractionSuggestion>
 {
     public void Configure(EntityTypeBuilder<VendorBill> b)
     {
@@ -15,6 +15,7 @@ public sealed class VendorBillConfiguration : IEntityTypeConfiguration<VendorBil
         b.HasOne<Supplier>().WithMany().HasForeignKey(x => x.SupplierId).OnDelete(DeleteBehavior.Restrict);
         b.HasMany(x => x.Lines).WithOne().HasForeignKey(x => x.VendorBillId).OnDelete(DeleteBehavior.Cascade);
         b.HasMany(x => x.Attachments).WithOne().HasForeignKey(x => x.VendorBillId).OnDelete(DeleteBehavior.Cascade);
+        b.HasMany(x => x.ExtractionSuggestions).WithOne().HasForeignKey(x => x.VendorBillId).OnDelete(DeleteBehavior.Cascade);
     }
     public void Configure(EntityTypeBuilder<VendorBillLine> b)
     {
@@ -44,4 +45,5 @@ public sealed class VendorBillConfiguration : IEntityTypeConfiguration<VendorBil
         b.Property(x => x.UploadedByUserId).HasMaxLength(450).IsRequired();
         b.HasIndex(x => new { x.VendorBillId, x.Id }).IsUnique();
     }
+    public void Configure(EntityTypeBuilder<VendorBillExtractionSuggestion> b){b.HasKey(x=>x.Id);b.Property(x=>x.ExtractionMethod).HasMaxLength(100).IsRequired();b.Property(x=>x.RawExtractedText).HasMaxLength(20000).IsRequired();b.Property(x=>x.SuggestedInvoiceNumber).HasMaxLength(100);b.Property(x=>x.SuggestedTotalAmount).HasPrecision(18,2);b.Property(x=>x.SuggestedCurrencyCode).HasMaxLength(3);b.Property(x=>x.ConfidencePercent).HasPrecision(5,2);b.Property(x=>x.ReviewNote).HasMaxLength(1000);b.Property(x=>x.ReviewedByUserId).HasMaxLength(450);b.HasIndex(x=>new{x.VendorBillAttachmentId,x.Status});b.HasOne<VendorBillAttachment>().WithMany().HasForeignKey(x=>x.VendorBillAttachmentId).OnDelete(DeleteBehavior.Restrict);}
 }

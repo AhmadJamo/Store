@@ -127,6 +127,7 @@ public sealed class PurchaseOrderService(
         var line=order.Lines.SingleOrDefault(x=>x.Id==dto.PurchaseOrderLineId)??throw new ArgumentException("Purchase order line was not found.");
         await unitOfWork.ExecuteInTransactionAsync(async()=>{line.RecordDirectDelivery(dto.Quantity,dto.DeliveryDate,dto.ProofReference,dto.Carrier,dto.TrackingNumber,currentUser.UserId);await unitOfWork.FlushAsync();await lifecycle.TryCloseAutomaticallyAsync(order.Id);});
     }
+    public async Task RecordSupplierConfirmationAsync(RecordPurchaseOrderSupplierConfirmationDto dto){var order=await GetTracked(dto.PurchaseOrderId,dto.RowVersion);await unitOfWork.ExecuteInTransactionAsync(()=>{order.RecordSupplierConfirmation(dto.ConfirmedExpectedDate,dto.ConfirmationReference,dto.Note,currentUser.UserId);return Task.CompletedTask;});}
 
     public async Task ApproveAsync(int id, byte[] rowVersion)
     {
@@ -170,7 +171,7 @@ public sealed class PurchaseOrderService(
         var progressMap = progress.Lines.ToDictionary(x => x.PurchaseOrderLineId);
         return new PurchaseOrderDto
         {
-            Id = order.Id, OrderNumber = order.OrderNumber, PurchaseAgreementId = order.PurchaseAgreementId,
+            Id = order.Id, SupplierId=order.SupplierId, OrderNumber = order.OrderNumber, PurchaseAgreementId = order.PurchaseAgreementId,
             FulfillmentRoute=order.FulfillmentRoute,DropshipRecipientName=order.DropshipRecipientName,DropshipAddress=order.DropshipAddress,DropshipCustomerReference=order.DropshipCustomerReference,
             SupplierName = supplierName, WarehouseName = warehouseName, Status = order.Status,
             CurrencyCode = order.CurrencyCode, CompanyCurrencyCode = order.CompanyCurrencyCode,
@@ -199,6 +200,7 @@ public sealed class PurchaseOrderService(
                     DirectDeliveryEvents=line.DirectDeliveryEvents.OrderByDescending(x=>x.RecordedAtUtc).Select(x=>new PurchaseDirectDeliveryEventDto{Quantity=x.Quantity,DeliveryDate=x.DeliveryDate,ProofReference=x.ProofReference,Carrier=x.Carrier,TrackingNumber=x.TrackingNumber}).ToList()
                 };
             }).ToList(),
+            SupplierConfirmations=order.SupplierConfirmations.OrderByDescending(x=>x.RecordedAtUtc).Select(x=>new PurchaseOrderSupplierConfirmationDto{PreviousExpectedDate=x.PreviousExpectedDate,ConfirmedExpectedDate=x.ConfirmedExpectedDate,ConfirmationReference=x.ConfirmationReference,Note=x.Note,RecordedAtUtc=x.RecordedAtUtc}).ToList(),
             History = order.History.OrderByDescending(x => x.CreatedAtUtc).Select(x => new PurchaseOrderLifecycleHistoryDto
             {
                 FromStatus = x.FromStatus, ToStatus = x.ToStatus, Action = x.Action,

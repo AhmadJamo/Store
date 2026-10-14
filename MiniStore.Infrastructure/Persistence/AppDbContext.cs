@@ -88,6 +88,10 @@ public class AppDbContext
     public DbSet<PurchaseOrderLifecycleHistory> PurchaseOrderLifecycleHistories => Set<PurchaseOrderLifecycleHistory>();
     public DbSet<PurchaseDemandAllocation> PurchaseDemandAllocations => Set<PurchaseDemandAllocation>();
     public DbSet<PurchaseDirectDeliveryEvent> PurchaseDirectDeliveryEvents => Set<PurchaseDirectDeliveryEvent>();
+    public DbSet<PurchaseOrderSupplierConfirmation> PurchaseOrderSupplierConfirmations => Set<PurchaseOrderSupplierConfirmation>();
+    public DbSet<SupplierCommunication> SupplierCommunications => Set<SupplierCommunication>();
+    public DbSet<SupplierCommunicationActivity> SupplierCommunicationActivities => Set<SupplierCommunicationActivity>();
+    public DbSet<SupplierCommunicationAttachment> SupplierCommunicationAttachments => Set<SupplierCommunicationAttachment>();
     public DbSet<GoodsReceipt> GoodsReceipts => Set<GoodsReceipt>();
     public DbSet<GoodsReceiptLine> GoodsReceiptLines => Set<GoodsReceiptLine>();
     public DbSet<GoodsReceiptScan> GoodsReceiptScans => Set<GoodsReceiptScan>();
@@ -96,6 +100,7 @@ public class AppDbContext
     public DbSet<VendorBill> VendorBills => Set<VendorBill>();
     public DbSet<VendorBillLine> VendorBillLines => Set<VendorBillLine>();
     public DbSet<VendorBillAttachment> VendorBillAttachments => Set<VendorBillAttachment>();
+    public DbSet<VendorBillExtractionSuggestion> VendorBillExtractionSuggestions => Set<VendorBillExtractionSuggestion>();
     public DbSet<SupplierCreditNote> SupplierCreditNotes => Set<SupplierCreditNote>();
     public DbSet<SupplierCreditNoteLine> SupplierCreditNoteLines => Set<SupplierCreditNoteLine>();
     public DbSet<PurchaseMatchRun> PurchaseMatchRuns => Set<PurchaseMatchRun>();
