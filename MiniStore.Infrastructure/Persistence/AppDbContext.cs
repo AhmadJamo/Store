@@ -86,6 +86,8 @@ public class AppDbContext
     public DbSet<PurchaseOrder> PurchaseOrders => Set<PurchaseOrder>();
     public DbSet<PurchaseOrderLine> PurchaseOrderLines => Set<PurchaseOrderLine>();
     public DbSet<PurchaseOrderLifecycleHistory> PurchaseOrderLifecycleHistories => Set<PurchaseOrderLifecycleHistory>();
+    public DbSet<PurchaseDemandAllocation> PurchaseDemandAllocations => Set<PurchaseDemandAllocation>();
+    public DbSet<PurchaseDirectDeliveryEvent> PurchaseDirectDeliveryEvents => Set<PurchaseDirectDeliveryEvent>();
     public DbSet<GoodsReceipt> GoodsReceipts => Set<GoodsReceipt>();
     public DbSet<GoodsReceiptLine> GoodsReceiptLines => Set<GoodsReceiptLine>();
     public DbSet<GoodsReceiptScan> GoodsReceiptScans => Set<GoodsReceiptScan>();

@@ -3822,6 +3822,107 @@ namespace MiniStore.Infrastructure.Migrations
                     b.ToTable("PurchaseApprovalSteps");
                 });
 
+            modelBuilder.Entity("MiniStore.Domain.Entities.PurchaseDemandAllocation", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("AllocatedStockQuantity")
+                        .HasPrecision(18, 6)
+                        .HasColumnType("decimal(18,6)");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("PurchaseOrderLineId")
+                        .HasColumnType("int");
+
+                    b.Property<long>("SourceId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("SourceLineId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("SourceReference")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("SourceType")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TenantId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TenantId");
+
+                    b.HasIndex("PurchaseOrderLineId", "TenantId");
+
+                    b.HasIndex("TenantId", "PurchaseOrderLineId", "SourceType", "SourceId", "SourceLineId")
+                        .IsUnique()
+                        .HasFilter("[SourceLineId] IS NOT NULL");
+
+                    b.ToTable("PurchaseDemandAllocations");
+                });
+
+            modelBuilder.Entity("MiniStore.Domain.Entities.PurchaseDirectDeliveryEvent", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Carrier")
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<DateOnly>("DeliveryDate")
+                        .HasColumnType("date");
+
+                    b.Property<string>("ProofReference")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<int>("PurchaseOrderLineId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Quantity")
+                        .HasPrecision(18, 6)
+                        .HasColumnType("decimal(18,6)");
+
+                    b.Property<DateTime>("RecordedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("RecordedByUserId")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("TenantId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("TrackingNumber")
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TenantId");
+
+                    b.HasIndex("PurchaseOrderLineId", "RecordedAtUtc");
+
+                    b.HasIndex("PurchaseOrderLineId", "TenantId");
+
+                    b.ToTable("PurchaseDirectDeliveryEvents");
+                });
+
             modelBuilder.Entity("MiniStore.Domain.Entities.PurchaseDocumentReversal", b =>
                 {
                     b.Property<int>("Id")
@@ -4184,6 +4285,18 @@ namespace MiniStore.Infrastructure.Migrations
                         .HasMaxLength(3)
                         .HasColumnType("nvarchar(3)");
 
+                    b.Property<string>("DropshipAddress")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<string>("DropshipCustomerReference")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("DropshipRecipientName")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
                     b.Property<decimal>("ExchangeRate")
                         .HasPrecision(24, 12)
                         .HasColumnType("decimal(24,12)");
@@ -4198,6 +4311,9 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.Property<DateOnly>("ExpectedDate")
                         .HasColumnType("date");
+
+                    b.Property<int>("FulfillmentRoute")
+                        .HasColumnType("int");
 
                     b.Property<DateOnly>("OrderDate")
                         .HasColumnType("date");
@@ -4318,6 +4434,10 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.Property<int>("BillingPolicySnapshot")
                         .HasColumnType("int");
+
+                    b.Property<decimal>("DirectDeliveredQuantity")
+                        .HasPrecision(18, 6)
+                        .HasColumnType("decimal(18,6)");
 
                     b.Property<decimal>("DiscountPercent")
                         .HasPrecision(9, 4)
@@ -9365,6 +9485,38 @@ namespace MiniStore.Infrastructure.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("MiniStore.Domain.Entities.PurchaseDemandAllocation", b =>
+                {
+                    b.HasOne("MiniStore.Domain.Entities.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MiniStore.Domain.Entities.PurchaseOrderLine", null)
+                        .WithMany("DemandAllocations")
+                        .HasForeignKey("PurchaseOrderLineId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("MiniStore.Domain.Entities.PurchaseDirectDeliveryEvent", b =>
+                {
+                    b.HasOne("MiniStore.Domain.Entities.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MiniStore.Domain.Entities.PurchaseOrderLine", null)
+                        .WithMany("DirectDeliveryEvents")
+                        .HasForeignKey("PurchaseOrderLineId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("MiniStore.Domain.Entities.PurchaseDocumentReversal", b =>
                 {
                     b.HasOne("MiniStore.Domain.Entities.Tenant", null)
@@ -11051,6 +11203,13 @@ namespace MiniStore.Infrastructure.Migrations
                     b.Navigation("History");
 
                     b.Navigation("Lines");
+                });
+
+            modelBuilder.Entity("MiniStore.Domain.Entities.PurchaseOrderLine", b =>
+                {
+                    b.Navigation("DemandAllocations");
+
+                    b.Navigation("DirectDeliveryEvents");
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.PurchaseQuotationAward", b =>

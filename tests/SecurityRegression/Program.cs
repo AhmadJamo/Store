@@ -1548,14 +1548,38 @@ CheckThrows(() => automaticClosureOrder.Reopen("manager", "Not permitted"),
     "An automatically completed purchase order must not be reopened through the remaining-quantity action");
 Check(db.Model.FindEntityType(typeof(PurchaseOrderLifecycleHistory))!.FindProperty("TenantId") is { IsNullable: false },
     "Purchase order lifecycle history must be tenant owned");
+var dropshipOrder = new PurchaseOrder("PO-DIRECT-1", 303, 503, 5, 1,
+    DateOnly.FromDateTime(DateTime.Today), DateOnly.FromDateTime(DateTime.Today.AddDays(2)), "JOD", null, "buyer");
+var dropshipLine = new PurchaseOrderLine(603, 10, 2, 3m, 1m, 3m, 10m, 0m, 0m, "P-10", "Coffee beans", "kg");
+dropshipLine.AddDemandAllocation(new PurchaseDemandAllocation(PurchaseDemandSourceType.PurchaseRequest, 81, 82, "PR-81", 3m));
+dropshipOrder.AddLine(dropshipLine);
+dropshipOrder.ConfigureDropship("Customer A", "Amman", "SO-77", new Dictionary<int, int> { [10] = 901 });
+dropshipOrder.Approve("manager"); dropshipOrder.Confirm("buyer");
+dropshipLine.RecordDirectDelivery(2m, DateOnly.FromDateTime(DateTime.Today), "POD-1", "Carrier", "TRK-1", "buyer");
+Check(dropshipOrder.FulfillmentRoute == PurchaseFulfillmentRoute.Dropship &&
+      dropshipLine.BillingPolicySnapshot == PurchaseBillingPolicy.DirectDelivery &&
+      dropshipLine.DirectDeliveredQuantity == 2m && dropshipLine.DirectDeliveryEvents.Count == 1 &&
+      dropshipLine.DemandAllocations.Single().SourceReference == "PR-81",
+    "Direct delivery must preserve demand ownership and delivery evidence without creating warehouse receipt state");
+CheckArgumentThrows(() => dropshipLine.RecordDirectDelivery(2m, DateOnly.FromDateTime(DateTime.Today), "POD-2", null, null, "buyer"),
+    "Direct delivery evidence must not exceed the open ordered quantity");
+Check(db.Model.FindEntityType(typeof(PurchaseDemandAllocation))!.FindProperty("TenantId") is { IsNullable: false } &&
+      db.Model.FindEntityType(typeof(PurchaseDirectDeliveryEvent))!.FindProperty("TenantId") is { IsNullable: false },
+    "Demand allocations and direct-delivery evidence must be tenant owned");
 var purchaseOrderController = typeof(PurchaseOrdersController);
 Check(purchaseOrderController.GetMethod(nameof(PurchaseOrdersController.CloseRemaining))!
           .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
       $"{PermissionAuthorizeAttribute.PolicyPrefix}PurchaseOrders.Close" &&
       purchaseOrderController.GetMethod(nameof(PurchaseOrdersController.Reopen))!
           .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
-      $"{PermissionAuthorizeAttribute.PolicyPrefix}PurchaseOrders.Reopen",
-    "Purchase order closure and reopen must use separate server-side permissions");
+      $"{PermissionAuthorizeAttribute.PolicyPrefix}PurchaseOrders.Reopen" &&
+      purchaseOrderController.GetMethod(nameof(PurchaseOrdersController.ConfigureDropship))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
+      $"{PermissionAuthorizeAttribute.PolicyPrefix}PurchaseOrders.ConfigureFulfillment" &&
+      purchaseOrderController.GetMethod(nameof(PurchaseOrdersController.RecordDirectDelivery))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
+      $"{PermissionAuthorizeAttribute.PolicyPrefix}PurchaseOrders.RecordDirectDelivery",
+    "Purchase order closure, reopen, fulfillment setup and delivery evidence must use separate server-side permissions");
 var agreement = new PurchaseAgreement("AGR-000001", 301, 501, 5, 1,
     DateOnly.FromDateTime(DateTime.Today), DateOnly.FromDateTime(DateTime.Today.AddMonths(6)),
     "jod", "30 days", "buyer");
@@ -1938,6 +1962,10 @@ Check(ActionableErrorGuidance.Resolve(
           "Quantity must be greater than zero.",
           "GoodsReceipts") is null,
     "Ordinary validation errors must not show an unrelated setup link");
+Check(ActionableErrorGuidance.Resolve(
+          "Configure a purchase expense account for every direct-delivery product before continuing.",
+          "PurchaseOrders") is { Controller: "Products", Action: "Index", RequiredPermission: "Products.Edit" },
+    "Direct-delivery expense-account setup errors must link to product settings");
 var purchaseNextStep = WorkflowNextStepGuidance.Resolve(
     "Purchase request approved.",
     "PurchaseRequests",
@@ -1962,6 +1990,13 @@ var storageNextStep = WorkflowNextStepGuidance.Resolve(
     new Dictionary<string, string?> { ["id"] = "71" });
 Check(storageNextStep is { Controller: "GoodsReceipts", Action: "Details", RequiredPermission: "GoodsReceipts.PutAway" },
     "Quality approval must guide the user directly to storing accepted goods");
+var directDeliveryNextStep = WorkflowNextStepGuidance.Resolve(
+    "Direct-delivery purchase order confirmed.",
+    "PurchaseOrders",
+    new Dictionary<string, string?> { ["id"] = "88" });
+Check(directDeliveryNextStep is { Controller: "PurchaseOrders", Action: "Details", RequiredPermission: "PurchaseOrders.RecordDirectDelivery" } &&
+      directDeliveryNextStep.RouteValues.GetValueOrDefault("id") == "88",
+    "Confirmed direct-delivery orders must guide the user to customer-delivery evidence instead of a goods receipt");
 var replenishmentNextStep = WorkflowNextStepGuidance.Resolve(
     "Replenishment planning run completed.",
     "PurchaseReplenishment",

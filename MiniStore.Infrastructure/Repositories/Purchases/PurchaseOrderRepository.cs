@@ -4,14 +4,14 @@ public sealed class PurchaseOrderRepository(AppDbContext context) : IPurchaseOrd
 {
     public Task<List<PurchaseOrder>> GetAllAsync(PurchaseOrderStatus? status, string? search)
     {
-        var query = context.PurchaseOrders.Include(x => x.Lines).AsQueryable();
+        var query = context.PurchaseOrders.Include(x => x.Lines).ThenInclude(x => x.DemandAllocations).Include(x => x.Lines).ThenInclude(x => x.DirectDeliveryEvents).AsQueryable();
         if (status.HasValue) query = query.Where(x => x.Status == status);
         if (!string.IsNullOrWhiteSpace(search))
             query = query.Where(x => x.OrderNumber.Contains(search) || x.SupplierQuotationId.ToString().Contains(search));
         return query.OrderByDescending(x => x.CreatedAtUtc).ToListAsync();
     }
 
-    public Task<PurchaseOrder?> GetByIdAsync(int id) => context.PurchaseOrders.Include(x => x.Lines).Include(x => x.History).FirstOrDefaultAsync(x => x.Id == id);
+    public Task<PurchaseOrder?> GetByIdAsync(int id) => context.PurchaseOrders.Include(x => x.Lines).ThenInclude(x => x.DemandAllocations).Include(x => x.Lines).ThenInclude(x => x.DirectDeliveryEvents).Include(x => x.History).FirstOrDefaultAsync(x => x.Id == id);
     public Task<PurchaseOrder?> GetByQuotationIdAsync(int quotationId) => context.PurchaseOrders.FirstOrDefaultAsync(x => x.SupplierQuotationId == quotationId && x.PurchaseAgreementId == null);
     public Task<List<PurchaseOrder>> GetBySourcingEventIdAsync(int sourcingEventId) => context.PurchaseOrders
         .Include(x => x.Lines).Where(x => x.PurchaseSourcingEventId == sourcingEventId && x.PurchaseAgreementId == null)

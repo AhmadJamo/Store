@@ -44,6 +44,7 @@ public sealed class GoodsReceiptService(
     {
         var order = await orders.GetByIdAsync(purchaseOrderId);
         if (order is null) return new GoodsReceiptCreatePageDto { Form = form ?? new CreateGoodsReceiptDto { PurchaseOrderId = purchaseOrderId } };
+        EnsureWarehouseReceiptRoute(order);
         var warehouse = await warehouses.GetByIdAsync(order.WarehouseId);
         var received = await GetPostedQuantitiesAsync(order.Id);
         var remainingLines = order.Lines
@@ -76,6 +77,7 @@ public sealed class GoodsReceiptService(
         {
             var order = await orders.GetByIdAsync(dto.PurchaseOrderId)
                 ?? throw new InvalidOperationException("Purchase order was not found.");
+            EnsureWarehouseReceiptRoute(order);
             if (order.Status != PurchaseOrderStatus.Confirmed)
                 throw new InvalidOperationException("Only confirmed purchase orders can be received.");
             await EnsureNoActiveReceiptAsync(order.Id);
@@ -160,6 +162,7 @@ public sealed class GoodsReceiptService(
                 throw new InvalidOperationException("Only draft goods receipts can accept scans.");
             var order = await orders.GetByIdAsync(receipt.PurchaseOrderId)
                 ?? throw new InvalidOperationException("Purchase order was not found.");
+            EnsureWarehouseReceiptRoute(order);
             if (order.Status != PurchaseOrderStatus.Confirmed)
                 throw new InvalidOperationException("Only confirmed purchase orders can be received.");
 
@@ -204,6 +207,7 @@ public sealed class GoodsReceiptService(
         {
             var order = await orders.GetByIdAsync(dto.PurchaseOrderId)
                 ?? throw new InvalidOperationException("Purchase order was not found.");
+            EnsureWarehouseReceiptRoute(order);
             if (order.Status != PurchaseOrderStatus.Confirmed)
                 throw new InvalidOperationException("Only confirmed purchase orders can be received.");
             await EnsureNoActiveReceiptAsync(order.Id);
@@ -256,6 +260,7 @@ public sealed class GoodsReceiptService(
                 throw new InvalidOperationException("Scan at least one product before posting the goods receipt.");
             var order = await orders.GetByIdAsync(receipt.PurchaseOrderId)
                 ?? throw new InvalidOperationException("Purchase order was not found.");
+            EnsureWarehouseReceiptRoute(order);
             if (order.Status != PurchaseOrderStatus.Confirmed)
                 throw new InvalidOperationException("Only confirmed purchase orders can be received.");
             var warehouse = await warehouses.GetByIdAsync(order.WarehouseId)
@@ -460,4 +465,10 @@ public sealed class GoodsReceiptService(
             ExpirationDate = line.ExpirationDate
         }).ToList()
     };
+
+    private static void EnsureWarehouseReceiptRoute(PurchaseOrder order)
+    {
+        if (order.FulfillmentRoute == PurchaseFulfillmentRoute.Dropship)
+            throw new InvalidOperationException("Direct-delivery purchase orders do not create internal goods receipts.");
+    }
 }

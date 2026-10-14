@@ -114,6 +114,7 @@ The Index and mutation actions enforce these policies server-side. Permission se
 
 - `PurchaseOrders.Close` permits closing an unreceived remainder only after all received quantities are billed or returned and requires a reason. It does not grant receipt, bill, approval or confirmation authority.
 - `PurchaseOrders.Reopen` separately permits reopening only an order closed through the remaining-quantity action and requires a new reason. Automatically completed orders cannot use this command.
+- `PurchaseOrders.ConfigureFulfillment` permits the one-time Draft conversion to direct delivery and destination capture. `PurchaseOrders.RecordDirectDelivery` separately permits immutable partial supplier-to-customer proof after confirmation; neither permission grants receipt, billing, approval or confirmation authority.
 
 # PUR-170 supplier-credit-note permissions
 

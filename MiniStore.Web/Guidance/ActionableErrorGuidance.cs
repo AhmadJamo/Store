@@ -99,6 +99,7 @@ public static class ActionableErrorGuidance
                 "Product was not found.",
                 "Purchase request product was not found.",
                 "Purchase order product was not found.",
+                "Configure a purchase expense account for every direct-delivery product before continuing.",
                 "Returned product was not found.",
                 "Purchase requests require an active purchasable product.",
                 "Supplier purchasing terms require an active product.",

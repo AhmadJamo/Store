@@ -104,6 +104,21 @@ public static class WorkflowNextStepGuidance
                 "Record only the quantities physically received from the supplier.",
                 "GoodsReceipts.Create", Routes(("purchaseOrderId", Route("id"))));
 
+        if (Matches(message, localize, "Direct delivery configured."))
+            return new("PurchaseOrders", "Details", "Review and approve purchase order",
+                "The direct-delivery destination is ready; approve and confirm the order before recording customer delivery.",
+                "PurchaseOrders.View", Routes(("id", Route("id"))));
+
+        if (Matches(message, localize, "Direct-delivery purchase order confirmed."))
+            return new("PurchaseOrders", "Details", "Record customer delivery",
+                "Record the supplier delivery proof after the customer receives the goods.",
+                "PurchaseOrders.RecordDirectDelivery", Routes(("id", Route("id"))));
+
+        if (Matches(message, localize, "Direct delivery evidence recorded."))
+            return new("PurchaseOrders", "Details", "Continue direct delivery workflow",
+                "Record any remaining customer delivery quantity, or create the vendor bill for delivered quantities.",
+                "PurchaseOrders.View", Routes(("id", Route("id"))));
+
         if (Matches(message, localize, "Purchase order remaining quantity closed."))
             return new("PurchaseAccountingReconciliation", "Index", "Review purchase accounting reconciliation",
                 "Confirm that inventory and goods-received-not-invoiced balances agree after completing the order.",

@@ -125,6 +125,8 @@ public static class PermissionDefinitions
         new("PurchaseOrders.Cancel", "Cancel Purchase Order", "Purchases"),
         new("PurchaseOrders.Close", "Close Remaining Purchase Order Quantity", "Purchases"),
         new("PurchaseOrders.Reopen", "Reopen Purchase Order", "Purchases"),
+        new("PurchaseOrders.ConfigureFulfillment", "Configure Purchase Fulfillment", "Purchases"),
+        new("PurchaseOrders.RecordDirectDelivery", "Record Direct Delivery", "Purchases"),
         new("PurchaseServiceAcceptances.View", "View Purchase Service Completions", "Purchases"),
         new("PurchaseServiceAcceptances.Create", "Record Purchase Service Completion", "Purchases"),
         new("GoodsReceipts.View", "View Goods Receipts", "Purchases"),

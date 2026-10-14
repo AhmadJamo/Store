@@ -88,6 +88,8 @@ public sealed class VendorBillService(
                 .GroupBy(x => x.PurchaseServiceAcceptanceLineId!.Value).ToDictionary(x => x.Key, x => x.Sum(y => y.Quantity));
             var billedOrders = activeBillLines.Where(x => x.BillingPolicySnapshot == PurchaseBillingPolicy.OrderedQuantity)
                 .GroupBy(x => x.PurchaseOrderLineId).ToDictionary(x => x.Key, x => x.Sum(y => y.Quantity));
+            var billedDeliveries = activeBillLines.Where(x => x.BillingPolicySnapshot == PurchaseBillingPolicy.DirectDelivery)
+                .GroupBy(x => x.PurchaseOrderLineId).ToDictionary(x => x.Key, x => x.Sum(y => y.Quantity));
             var orderLineMap = order.Lines.ToDictionary(x => x.Id);
             var billRate = await exchangeRates.ResolveAsync(order.CurrencyCode, dto.BillDate);
             created = new VendorBill(await numbers.GenerateAsync(DocumentNumberType.VendorBill, dto.BillDate.ToDateTime(TimeOnly.MinValue)),
@@ -120,6 +122,12 @@ public sealed class VendorBillService(
                         !acceptanceLineMap.TryGetValue(input.PurchaseServiceAcceptanceLineId.Value, out var acceptanceLine) || acceptanceLine.PurchaseOrderLineId != orderLine.Id)
                         throw new ArgumentException("One or more vendor bill lines do not belong to a completed service for this purchase order.");
                     remaining = acceptanceLine.CompletedQuantity - billedServices.GetValueOrDefault(acceptanceLine.Id);
+                }
+                else if (orderLine.BillingPolicySnapshot == PurchaseBillingPolicy.DirectDelivery)
+                {
+                    if (input.GoodsReceiptLineId.HasValue || input.PurchaseServiceAcceptanceLineId.HasValue)
+                        throw new ArgumentException("Direct-delivery vendor bill lines cannot reference an internal receipt.");
+                    remaining = orderLine.DirectDeliveredQuantity - billedDeliveries.GetValueOrDefault(orderLine.Id);
                 }
                 else
                 {
@@ -258,6 +266,8 @@ public sealed class VendorBillService(
             .GroupBy(x => x.PurchaseServiceAcceptanceLineId!.Value).ToDictionary(x => x.Key, x => x.Sum(y => y.Quantity));
         var billedOrders = activeBillLines.Where(x => x.BillingPolicySnapshot == PurchaseBillingPolicy.OrderedQuantity)
             .GroupBy(x => x.PurchaseOrderLineId).ToDictionary(x => x.Key, x => x.Sum(y => y.Quantity));
+        var billedDeliveries = activeBillLines.Where(x => x.BillingPolicySnapshot == PurchaseBillingPolicy.DirectDelivery)
+            .GroupBy(x => x.PurchaseOrderLineId).ToDictionary(x => x.Key, x => x.Sum(y => y.Quantity));
         var orderLines = order.Lines.ToDictionary(x => x.Id);
         var available = receiptList.SelectMany(receipt => receipt.Lines.Select(line => new { receipt, line }))
             .Select(x =>
@@ -283,6 +293,10 @@ public sealed class VendorBillService(
         available.AddRange(order.Lines.Where(x => x.BillingPolicySnapshot == PurchaseBillingPolicy.OrderedQuantity)
             .Select(x => CreateAvailableLine(x, taxes, null, order.OrderNumber, order.OrderDate,
                 Math.Max(0, x.OrderedQuantity - billedOrders.GetValueOrDefault(x.Id))))
+            .Where(x => x.RemainingQuantity > 0));
+        available.AddRange(order.Lines.Where(x => x.BillingPolicySnapshot == PurchaseBillingPolicy.DirectDelivery)
+            .Select(x => CreateAvailableLine(x, taxes, null, order.OrderNumber, order.OrderDate,
+                Math.Max(0, x.DirectDeliveredQuantity - billedDeliveries.GetValueOrDefault(x.Id))))
             .Where(x => x.RemainingQuantity > 0));
         return available.OrderBy(x => x.PurchaseOrderLineId).ThenBy(x => x.SourceDate).ToList();
     }

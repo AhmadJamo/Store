@@ -1337,7 +1337,6 @@
   <data name="Receipt warehouse was not found." xml:space="preserve"><value>لم يتم العثور على مستودع الاستلام.</value></data>
   <data name="This landed cost has already been posted to accounting." xml:space="preserve"><value>تم ترحيل هذه التكلفة الإضافية إلى المحاسبة مسبقًا.</value></data>
   <data name="Supplier" xml:space="preserve"><value>المورد</value></data>
-  <data name="Warehouse" xml:space="preserve"><value>المستودع</value></data>
   <data name="Date" xml:space="preserve"><value>التاريخ</value></data>
   <data name="Amount" xml:space="preserve"><value>المبلغ</value></data>
   <data name="Description" xml:space="preserve"><value>الوصف</value></data>
@@ -2207,4 +2206,43 @@
   <data name="Only a quality-approved receipt can be stored." xml:space="preserve"><value>يمكن تخزين الاستلام المقبول بالجودة فقط.</value></data>
   <data name="Inspect Goods Receipt Quality" xml:space="preserve"><value>فحص جودة استلام البضاعة</value></data>
   <data name="Store Quality-Approved Goods" xml:space="preserve"><value>تخزين البضاعة المقبولة بالجودة</value></data>
+  <data name="DirectDelivery" xml:space="preserve"><value>الفوترة حسب التسليم المباشر</value></data>
+  <data name="Warehouse" xml:space="preserve"><value>المستودع</value></data>
+  <data name="Dropship" xml:space="preserve"><value>شحن مباشر من المورد للعميل</value></data>
+  <data name="Fulfillment route" xml:space="preserve"><value>مسار التوريد</value></data>
+  <data name="Direct delivery configured" xml:space="preserve"><value>تم إعداد الشحن المباشر</value></data>
+  <data name="Customer reference" xml:space="preserve"><value>مرجع العميل</value></data>
+  <data name="Supplier delivery to the customer is recorded without internal warehouse stock movement." xml:space="preserve"><value>يُسجل تسليم المورد للعميل من دون إنشاء حركة مخزون داخلية.</value></data>
+  <data name="Remaining to deliver" xml:space="preserve"><value>المتبقي للتسليم للعميل</value></data>
+  <data name="Delivered to customer" xml:space="preserve"><value>المسلّم للعميل</value></data>
+  <data name="Demand allocation" xml:space="preserve"><value>تخصيص الطلب</value></data>
+  <data name="PurchaseRequest" xml:space="preserve"><value>طلب شراء</value></data>
+  <data name="InventoryReservation" xml:space="preserve"><value>حجز مخزون</value></data>
+  <data name="SalesOrder" xml:space="preserve"><value>أمر بيع</value></data>
+  <data name="ProductionOrder" xml:space="preserve"><value>أمر إنتاج</value></data>
+  <data name="Delivery evidence" xml:space="preserve"><value>إثباتات التسليم</value></data>
+  <data name="Configure direct delivery" xml:space="preserve"><value>إعداد الشحن المباشر</value></data>
+  <data name="Use this when the supplier will deliver directly to the customer without entering your warehouse." xml:space="preserve"><value>استخدم هذا المسار عندما يسلّم المورد مباشرة للعميل من دون دخول البضاعة إلى مستودعك.</value></data>
+  <data name="Recipient name" xml:space="preserve"><value>اسم المستلم</value></data>
+  <data name="Delivery address" xml:space="preserve"><value>عنوان التسليم</value></data>
+  <data name="Set as direct delivery" xml:space="preserve"><value>اعتماد الشحن المباشر</value></data>
+  <data name="Record customer delivery" xml:space="preserve"><value>تسجيل التسليم للعميل</value></data>
+  <data name="Record supplier proof only after the customer receives the quantity. This does not add warehouse stock." xml:space="preserve"><value>سجّل إثبات المورد بعد استلام العميل للكمية. لن تضيف هذه العملية مخزونًا للمستودع.</value></data>
+  <data name="Proof reference" xml:space="preserve"><value>مرجع إثبات التسليم</value></data>
+  <data name="Carrier" xml:space="preserve"><value>شركة النقل</value></data>
+  <data name="Tracking number" xml:space="preserve"><value>رقم التتبع</value></data>
+  <data name="Record" xml:space="preserve"><value>تسجيل</value></data>
+  <data name="Customer delivery completed" xml:space="preserve"><value>تم التسليم للعميل</value></data>
+  <data name="Direct delivery configured." xml:space="preserve"><value>تم إعداد الشحن المباشر.</value></data>
+  <data name="Direct-delivery purchase order confirmed." xml:space="preserve"><value>تم تأكيد أمر الشراء ذي الشحن المباشر.</value></data>
+  <data name="Direct delivery evidence recorded." xml:space="preserve"><value>تم تسجيل إثبات التسليم المباشر.</value></data>
+  <data name="Configure a purchase expense account for every direct-delivery product before continuing." xml:space="preserve"><value>هيّئ حساب مصروف شراء لكل منتج سيُشحن مباشرة قبل المتابعة.</value></data>
+  <data name="Direct-delivery purchase orders do not create internal goods receipts." xml:space="preserve"><value>أوامر الشحن المباشر لا تنشئ سندات استلام داخلية.</value></data>
+  <data name="Only confirmed direct-delivery purchase orders can record customer delivery evidence." xml:space="preserve"><value>يمكن تسجيل إثبات تسليم العميل فقط لأمر شراء مؤكد ومساره شحن مباشر.</value></data>
+  <data name="Direct delivered quantity must be positive and cannot exceed the open ordered quantity." xml:space="preserve"><value>يجب أن تكون الكمية المسلّمة مباشرة أكبر من صفر وألا تتجاوز الكمية المطلوبة المفتوحة.</value></data>
+  <data name="The direct-delivery destination is ready; approve and confirm the order before recording customer delivery." xml:space="preserve"><value>وجهة الشحن المباشر جاهزة؛ اعتمد أمر الشراء وأكده قبل تسجيل تسليم العميل.</value></data>
+  <data name="Record the supplier delivery proof after the customer receives the goods." xml:space="preserve"><value>سجّل إثبات تسليم المورد بعد استلام العميل للبضاعة.</value></data>
+  <data name="Continue direct delivery workflow" xml:space="preserve"><value>متابعة مسار الشحن المباشر</value></data>
+  <data name="Record any remaining customer delivery quantity, or create the vendor bill for delivered quantities." xml:space="preserve"><value>سجّل أي كمية متبقية لتسليم العميل، أو أنشئ فاتورة المورد للكميات المسلّمة.</value></data>
+  <data name="Delivery proof reference is required and cannot exceed 250 characters." xml:space="preserve"><value>مرجع إثبات التسليم مطلوب ولا يمكن أن يتجاوز 250 حرفًا.</value></data>
 </root>

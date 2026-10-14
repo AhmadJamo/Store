@@ -3,6 +3,8 @@ namespace MiniStore.Domain.Entities;
 public enum PurchaseOrderStatus { Draft = 1, Approved = 2, Confirmed = 3, Cancelled = 4, Closed = 5 }
 public enum PurchaseOrderClosureType { Automatic = 1, RemainingQuantity = 2 }
 public enum PurchaseOrderLifecycleAction { AutomaticallyClosed = 1, RemainingQuantityClosed = 2, Reopened = 3 }
+public enum PurchaseFulfillmentRoute { Warehouse = 1, Dropship = 2 }
+public enum PurchaseDemandSourceType { PurchaseRequest = 1, InventoryReservation = 2, SalesOrder = 3, ProductionOrder = 4 }
 
 public sealed class PurchaseOrder
 {
@@ -14,6 +16,10 @@ public sealed class PurchaseOrder
     public int? PurchaseAgreementId { get; private set; }
     public int SupplierId { get; private set; }
     public int WarehouseId { get; private set; }
+    public PurchaseFulfillmentRoute FulfillmentRoute { get; private set; } = PurchaseFulfillmentRoute.Warehouse;
+    public string? DropshipRecipientName { get; private set; }
+    public string? DropshipAddress { get; private set; }
+    public string? DropshipCustomerReference { get; private set; }
     public DateOnly OrderDate { get; private set; }
     public DateOnly ExpectedDate { get; private set; }
     public string CurrencyCode { get; private set; }
@@ -55,6 +61,22 @@ public sealed class PurchaseOrder
         CompanyCurrencyCode=(companyCurrencyCode ?? CurrencyCode).Trim().ToUpperInvariant();ExchangeRate=exchangeRate;ExchangeRateDate=exchangeRateDate??orderDate;ExchangeRateSource=exchangeRateSource.Trim();PaymentTermsSnapshot=Normalize(paymentTerms);CreatedByUserId=createdByUserId;CreatedAtUtc=DateTime.UtcNow;Status=PurchaseOrderStatus.Draft;
     }
     public void AddLine(PurchaseOrderLine line){EnsureDraft();if(Lines.Any(x=>x.SupplierQuotationLineId==line.SupplierQuotationLineId))throw new InvalidOperationException("Each quotation line can be ordered only once.");Lines.Add(line);}
+    public void ConfigureDropship(string recipientName, string address, string? customerReference, IReadOnlyDictionary<int, int> expenseAccounts)
+    {
+        EnsureDraft();
+        if (FulfillmentRoute == PurchaseFulfillmentRoute.Dropship) throw new InvalidOperationException("Direct delivery is already configured for this purchase order.");
+        if (string.IsNullOrWhiteSpace(recipientName) || recipientName.Trim().Length > 200) throw new ArgumentException("Direct delivery recipient is required and cannot exceed 200 characters.");
+        if (string.IsNullOrWhiteSpace(address) || address.Trim().Length > 1000) throw new ArgumentException("Direct delivery address is required and cannot exceed 1000 characters.");
+        if (customerReference?.Trim().Length > 100) throw new ArgumentException("Customer reference cannot exceed 100 characters.");
+        foreach (var line in Lines)
+        {
+            if (!expenseAccounts.TryGetValue(line.ProductId, out var accountId) || accountId <= 0)
+                throw new InvalidOperationException("Configure a purchase expense account for every direct-delivery product before continuing.");
+            line.ConfigureDirectDelivery(accountId);
+        }
+        FulfillmentRoute = PurchaseFulfillmentRoute.Dropship;
+        DropshipRecipientName = recipientName.Trim(); DropshipAddress = address.Trim(); DropshipCustomerReference = Normalize(customerReference);
+    }
     public void Approve(string user){EnsureDraft();EnsureUser(user);if(Lines.Count==0)throw new InvalidOperationException("A purchase order must contain at least one line.");Status=PurchaseOrderStatus.Approved;ApprovedByUserId=user;ApprovedAtUtc=DateTime.UtcNow;}
     public void Confirm(string user){if(Status!=PurchaseOrderStatus.Approved)throw new InvalidOperationException("Only approved purchase orders can be confirmed.");EnsureUser(user);Status=PurchaseOrderStatus.Confirmed;ConfirmedByUserId=user;ConfirmedAtUtc=DateTime.UtcNow;}
     public void SetExchangeRate(string companyCurrencyCode, decimal exchangeRate, DateOnly exchangeRateDate, string exchangeRateSource)
@@ -137,8 +159,28 @@ public sealed class PurchaseOrderLine
     public int Id { get; private set; } public int PurchaseOrderId { get; private set; } public int SupplierQuotationLineId { get; private set; } public int? PurchaseAgreementLineId { get; private set; } public int ProductId { get; private set; } public int MeasurementUnitId { get; private set; }
     public decimal OrderedQuantity { get; private set; } public decimal UnitFactorToBase { get; private set; } public decimal StockQuantity { get; private set; } public decimal UnitPrice { get; private set; } public decimal DiscountPercent { get; private set; } public decimal TaxPercent { get; private set; }
     public PurchaseBillingPolicy BillingPolicySnapshot { get; private set; } = PurchaseBillingPolicy.ReceivedQuantity; public int? PurchaseExpenseAccountIdSnapshot { get; private set; }
+    public decimal DirectDeliveredQuantity { get; private set; }
+    public List<PurchaseDemandAllocation> DemandAllocations { get; private set; } = [];
+    public List<PurchaseDirectDeliveryEvent> DirectDeliveryEvents { get; private set; } = [];
     public string ProductCodeSnapshot { get; private set; } public string ProductNameSnapshot { get; private set; } public string UnitNameSnapshot { get; private set; }
     public decimal NetAmount=>decimal.Round(OrderedQuantity*UnitPrice*(1m-DiscountPercent/100m),6); public decimal TaxAmount=>decimal.Round(NetAmount*TaxPercent/100m,6); public decimal GrossAmount=>NetAmount+TaxAmount;
     public PurchaseOrderLine(int quotationLineId,int productId,int measurementUnitId,decimal orderedQuantity,decimal unitFactorToBase,decimal stockQuantity,decimal unitPrice,decimal discountPercent,decimal taxPercent,string productCode,string productName,string unitName,int? purchaseAgreementLineId=null,PurchaseBillingPolicy billingPolicy=PurchaseBillingPolicy.ReceivedQuantity,int? purchaseExpenseAccountId=null)
     {if(quotationLineId<=0||productId<=0||measurementUnitId<=0)throw new ArgumentException("Purchase order line references are required.");if(orderedQuantity<=0||unitFactorToBase<=0||stockQuantity<=0||unitPrice<0)throw new ArgumentException("Purchase order quantities and price are invalid.");if(discountPercent is <0 or >100||taxPercent is <0 or >100)throw new ArgumentException("Purchase order discount and tax percentages must be between 0 and 100.");if(!Enum.IsDefined(billingPolicy))throw new ArgumentException("Purchase billing policy is invalid.");if(billingPolicy!=PurchaseBillingPolicy.ReceivedQuantity&&!purchaseExpenseAccountId.HasValue)throw new ArgumentException("A purchase expense account is required for lines billed without a goods receipt.");if(string.IsNullOrWhiteSpace(productCode)||string.IsNullOrWhiteSpace(productName)||string.IsNullOrWhiteSpace(unitName))throw new ArgumentException("Purchase order line snapshots are required.");if(purchaseAgreementLineId<=0)purchaseAgreementLineId=null;SupplierQuotationLineId=quotationLineId;PurchaseAgreementLineId=purchaseAgreementLineId;ProductId=productId;MeasurementUnitId=measurementUnitId;OrderedQuantity=orderedQuantity;UnitFactorToBase=unitFactorToBase;StockQuantity=stockQuantity;UnitPrice=unitPrice;DiscountPercent=discountPercent;TaxPercent=taxPercent;ProductCodeSnapshot=productCode.Trim();ProductNameSnapshot=productName.Trim();UnitNameSnapshot=unitName.Trim();BillingPolicySnapshot=billingPolicy;PurchaseExpenseAccountIdSnapshot=purchaseExpenseAccountId;}
+    internal void ConfigureDirectDelivery(int expenseAccountId){if(expenseAccountId<=0)throw new ArgumentException("A purchase expense account is required for direct delivery.");BillingPolicySnapshot=PurchaseBillingPolicy.DirectDelivery;PurchaseExpenseAccountIdSnapshot=expenseAccountId;}
+    public void AddDemandAllocation(PurchaseDemandAllocation allocation){if(DemandAllocations.Sum(x=>x.AllocatedStockQuantity)+allocation.AllocatedStockQuantity>StockQuantity)throw new InvalidOperationException("Demand allocation cannot exceed the ordered stock quantity.");DemandAllocations.Add(allocation);}
+    public void RecordDirectDelivery(decimal quantity,DateOnly deliveryDate,string proofReference,string? carrier,string? trackingNumber,string userId){if(BillingPolicySnapshot!=PurchaseBillingPolicy.DirectDelivery)throw new InvalidOperationException("Only direct-delivery lines can record customer delivery evidence.");if(quantity<=0||DirectDeliveredQuantity+quantity>OrderedQuantity)throw new ArgumentException("Direct delivered quantity must be positive and cannot exceed the open ordered quantity.");var entry=new PurchaseDirectDeliveryEvent(quantity,deliveryDate,proofReference,carrier,trackingNumber,userId);DirectDeliveryEvents.Add(entry);DirectDeliveredQuantity+=quantity;}
+}
+
+public sealed class PurchaseDemandAllocation
+{
+    private PurchaseDemandAllocation(){SourceReference=string.Empty;}
+    public int Id{get;private set;} public int PurchaseOrderLineId{get;private set;} public PurchaseDemandSourceType SourceType{get;private set;} public long SourceId{get;private set;} public long? SourceLineId{get;private set;} public string SourceReference{get;private set;} public decimal AllocatedStockQuantity{get;private set;} public DateTime CreatedAtUtc{get;private set;}
+    public PurchaseDemandAllocation(PurchaseDemandSourceType sourceType,long sourceId,long? sourceLineId,string sourceReference,decimal allocatedStockQuantity){if(!Enum.IsDefined(sourceType)||sourceId<=0||sourceLineId<=0||string.IsNullOrWhiteSpace(sourceReference)||sourceReference.Trim().Length>100||allocatedStockQuantity<=0)throw new ArgumentException("A valid demand allocation source and quantity are required.");SourceType=sourceType;SourceId=sourceId;SourceLineId=sourceLineId;SourceReference=sourceReference.Trim();AllocatedStockQuantity=allocatedStockQuantity;CreatedAtUtc=DateTime.UtcNow;}
+}
+
+public sealed class PurchaseDirectDeliveryEvent
+{
+    private PurchaseDirectDeliveryEvent(){ProofReference=RecordedByUserId=string.Empty;}
+    public int Id{get;private set;} public int PurchaseOrderLineId{get;private set;} public decimal Quantity{get;private set;} public DateOnly DeliveryDate{get;private set;} public string ProofReference{get;private set;} public string? Carrier{get;private set;} public string? TrackingNumber{get;private set;} public string RecordedByUserId{get;private set;} public DateTime RecordedAtUtc{get;private set;}
+    public PurchaseDirectDeliveryEvent(decimal quantity,DateOnly deliveryDate,string proofReference,string? carrier,string? trackingNumber,string userId){if(quantity<=0)throw new ArgumentException("Direct delivered quantity must be greater than zero.");if(string.IsNullOrWhiteSpace(proofReference)||proofReference.Trim().Length>250)throw new ArgumentException("Delivery proof reference is required and cannot exceed 250 characters.");if(carrier?.Trim().Length>150||trackingNumber?.Trim().Length>150)throw new ArgumentException("Carrier and tracking number cannot exceed 150 characters.");if(string.IsNullOrWhiteSpace(userId))throw new ArgumentException("User is required.");Quantity=quantity;DeliveryDate=deliveryDate;ProofReference=proofReference.Trim();Carrier=string.IsNullOrWhiteSpace(carrier)?null:carrier.Trim();TrackingNumber=string.IsNullOrWhiteSpace(trackingNumber)?null:trackingNumber.Trim();RecordedByUserId=userId.Trim();RecordedAtUtc=DateTime.UtcNow;}
 }

@@ -49,10 +49,13 @@ public sealed class PurchaseOrderLifecycleService(
                 ? Positive(orderLine.OrderedQuantity - received) : 0m;
             var remainingToComplete = orderLine.BillingPolicySnapshot == PurchaseBillingPolicy.ServiceCompletion
                 ? Positive(orderLine.OrderedQuantity - serviceCompleted) : 0m;
+            var remainingToDeliver = orderLine.BillingPolicySnapshot == PurchaseBillingPolicy.DirectDelivery
+                ? Positive(orderLine.OrderedQuantity - orderLine.DirectDeliveredQuantity) : 0m;
             var eligibleToBill = orderLine.BillingPolicySnapshot switch
             {
                 PurchaseBillingPolicy.OrderedQuantity => orderLine.OrderedQuantity,
                 PurchaseBillingPolicy.ServiceCompletion => serviceCompleted,
+                PurchaseBillingPolicy.DirectDelivery => orderLine.DirectDeliveredQuantity,
                 _ => Positive(received - returned)
             };
             return new PurchaseOrderLineProgressDto
@@ -61,17 +64,19 @@ public sealed class PurchaseOrderLifecycleService(
                 BillingPolicy = orderLine.BillingPolicySnapshot,
                 ReceivedQuantity = received,
                 ServiceCompletedQuantity = serviceCompleted,
+                DirectDeliveredQuantity = orderLine.DirectDeliveredQuantity,
                 ReturnedQuantity = returned,
                 BilledQuantity = billed,
                 RemainingToReceive = remainingToReceive,
                 RemainingToComplete = remainingToComplete,
+                RemainingToDeliver = remainingToDeliver,
                 AvailableToBill = Positive(eligibleToBill - billed),
                 UnsettledReceivedQuantity = Positive(eligibleToBill - billed)
             };
         }).ToList();
 
         var fullyReceived = lines.All(x =>
-            x.RemainingToReceive <= QuantityTolerance && x.RemainingToComplete <= QuantityTolerance);
+            x.RemainingToReceive <= QuantityTolerance && x.RemainingToComplete <= QuantityTolerance && x.RemainingToDeliver <= QuantityTolerance);
         var fullySettled = lines.All(x => x.UnsettledReceivedQuantity <= QuantityTolerance);
         return new PurchaseOrderProgressDto
         {

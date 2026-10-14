@@ -122,3 +122,5 @@ POS sale validation requires warehouse, branch-access and terminal-access approv
 ## PUR-250A purchase receiving boundary (2026-10-14)
 
 Warehouses now choose either direct one-step purchase receiving or Receive/Inspect/Store. The purchase receipt owns delivery and quality evidence; Inventory remains the only stock mutation owner. Staged receipts create no ProductStock, tracking balance, StockTransaction or StockMovement until the accepted quantity is explicitly stored. Rejected, damaged and short quantities remain purchasing evidence and never become available stock.
+
+PUR-250B adds an explicit no-stock boundary for Dropship purchase orders. Supplier-to-customer delivery evidence is owned by Purchasing; Goods Receipt creation rejects the route and no ProductStock, InventoryBalance, tracking transaction, StockTransaction or StockMovement is created. Internal Warehouse remains an organizational dimension on the order, not a claim that the goods entered that warehouse.

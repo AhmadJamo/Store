@@ -336,7 +336,7 @@ static async Task VerifyLineLevelSplitAwardAsync(
             new VendorBillRepository(context), unitOfWork, currentUser);
         var service = new PurchaseOrderService(
             new PurchaseOrderRepository(context), new PurchaseAgreementRepository(context),
-            new SupplierQuotationRepository(context), new PurchaseSourcingRepository(context),
+            new SupplierQuotationRepository(context), new PurchaseRequestRepository(context), new PurchaseSourcingRepository(context),
             new SupplierRepository(context), new WarehouseRepository(context), new ProductRepository(context), numbers, lifecycle,
             exchangeRates, unitOfWork, currentUser);
         var orderIds = await service.CreateOrdersFromAwardAsync(sourcingEventId);

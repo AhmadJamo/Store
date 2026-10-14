@@ -1,5 +1,13 @@
 # AI Work Log
 
+# 2026-10-14 — PUR-250B demand allocation and direct delivery
+
+- Added tenant-owned Purchase Order demand allocations and automatically retain the originating Purchase Request line through sourcing and split award creation.
+- Added Draft-only Dropship configuration with recipient/address capture, product purchase-Expense-account validation and separate fulfillment permission.
+- Added immutable partial supplier-to-customer delivery evidence, cumulative quantity caps, delivery progress, permission-aware next steps and completed-state UI.
+- Blocked Goods Receipts and every internal stock movement for Dropship; Vendor Bills become eligible only up to delivered quantity and post to the frozen Expense account without GRNI.
+- Added and locally applied migration `20261014161000_AddDemandAllocationAndDirectDelivery`, bilingual UI/resources, actionable product-account guidance, security/domain/SQL regression checks and ADR `2026-10-14-dropship-no-stock-boundary.md`.
+
 # 2026-10-14 — PUR-250A staged receiving and quality hold
 
 - Added warehouse-configurable One Step or Receive/Inspect/Store purchase receiving and froze the route on every Goods Receipt.
