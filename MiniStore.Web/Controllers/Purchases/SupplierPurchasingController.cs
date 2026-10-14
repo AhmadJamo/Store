@@ -80,6 +80,24 @@ public sealed class SupplierPurchasingController(
         }
     }
 
+    [HttpGet]
+    [PermissionAuthorize("Purchases.SupplierTerms.View")]
+    public async Task<IActionResult> ExportExcel(int supplierId)
+    {
+        try
+        {
+            var workbook = await service.ExportExcelAsync(supplierId);
+            return File(workbook, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                $"supplier-{supplierId}-purchasing.xlsx");
+        }
+        catch (Exception exception) when (exception is ArgumentException or InvalidOperationException)
+        {
+            TempData["NotificationType"] = "error";
+            TempData["NotificationMessage"] = localizer[exception.Message].Value;
+            return RedirectToAction(nameof(Index), new { supplierId });
+        }
+    }
+
     [HttpPost]
     [ValidateAntiForgeryToken]
     [PermissionAuthorize("Purchases.SupplierTerms.Manage")]
@@ -107,12 +125,56 @@ public sealed class SupplierPurchasingController(
     [HttpPost]
     [ValidateAntiForgeryToken]
     [PermissionAuthorize("Purchases.SupplierTerms.Manage")]
+    [RequestFormLimits(MultipartBodyLengthLimit = 1_100_000)]
+    public async Task<IActionResult> PreviewExcel(int supplierId, IFormFile? excelFile)
+    {
+        try
+        {
+            if (excelFile is null || excelFile.Length == 0) throw new ArgumentException("Select a supplier purchasing Excel file.");
+            if (excelFile.Length > 1_048_576) throw new ArgumentException("The supplier purchasing Excel file cannot exceed 1 MB.");
+            if (!string.Equals(Path.GetExtension(excelFile.FileName), ".xlsx", StringComparison.OrdinalIgnoreCase))
+                throw new ArgumentException("Supplier purchasing Excel import accepts XLSX files only.");
+            using var stream = new MemoryStream();
+            await excelFile.CopyToAsync(stream);
+            return View("ImportPreview", await service.PreviewExcelAsync(supplierId, stream.ToArray(), Path.GetFileName(excelFile.FileName)));
+        }
+        catch (Exception exception) when (exception is ArgumentException or InvalidOperationException)
+        {
+            TempData["NotificationType"] = "error";
+            TempData["NotificationMessage"] = localizer[exception.Message].Value;
+            return RedirectToAction(nameof(Index), new { supplierId });
+        }
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [PermissionAuthorize("Purchases.SupplierTerms.Manage")]
     [RequestFormLimits(ValueLengthLimit = 1_100_000, MultipartBodyLengthLimit = 1_200_000)]
     public async Task<IActionResult> ImportCsv(ImportSupplierPurchasingCsvDto dto)
     {
         try
         {
             var count = await service.ImportCsvAsync(dto);
+            TempData["NotificationType"] = "success";
+            TempData["NotificationMessage"] = localizer["Imported {0} supplier purchasing rows.", count].Value;
+        }
+        catch (Exception exception) when (exception is ArgumentException or InvalidOperationException)
+        {
+            TempData["NotificationType"] = "error";
+            TempData["NotificationMessage"] = localizer[exception.Message].Value;
+        }
+        return RedirectToAction(nameof(Index), new { supplierId = dto.SupplierId });
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [PermissionAuthorize("Purchases.SupplierTerms.Manage")]
+    [RequestFormLimits(ValueLengthLimit = 1_500_000, MultipartBodyLengthLimit = 1_600_000)]
+    public async Task<IActionResult> ImportExcel(ImportSupplierPurchasingExcelDto dto)
+    {
+        try
+        {
+            var count = await service.ImportExcelAsync(dto);
             TempData["NotificationType"] = "success";
             TempData["NotificationMessage"] = localizer["Imported {0} supplier purchasing rows.", count].Value;
         }

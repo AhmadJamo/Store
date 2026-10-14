@@ -102,19 +102,21 @@ public sealed class SupplierPurchasingInfoPageDto
     public int PriceExceptionCount { get; init; }
 }
 
-public sealed class SupplierPurchasingCsvPreviewDto
+public sealed class SupplierPurchasingImportPreviewDto
 {
     public int SupplierId { get; init; }
     public string SupplierName { get; init; } = string.Empty;
     public string FileName { get; init; } = string.Empty;
+    public string FileFormat { get; init; } = "csv";
     public string CsvContent { get; init; } = string.Empty;
-    public List<SupplierPurchasingCsvPreviewRowDto> Rows { get; init; } = [];
+    public string EncodedContent { get; init; } = string.Empty;
+    public List<SupplierPurchasingImportPreviewRowDto> Rows { get; init; } = [];
     public int ValidRowCount => Rows.Count(x => x.Errors.Count == 0);
     public int ErrorRowCount => Rows.Count(x => x.Errors.Count > 0);
     public bool CanImport => Rows.Count > 0 && ErrorRowCount == 0;
 }
 
-public sealed class SupplierPurchasingCsvPreviewRowDto
+public sealed class SupplierPurchasingImportPreviewRowDto
 {
     public int RowNumber { get; init; }
     public string ChangeType { get; init; } = string.Empty;
@@ -133,6 +135,13 @@ public sealed class ImportSupplierPurchasingCsvDto
     public int SupplierId { get; set; }
     public string FileName { get; set; } = string.Empty;
     public string CsvContent { get; set; } = string.Empty;
+}
+
+public sealed class ImportSupplierPurchasingExcelDto
+{
+    public int SupplierId { get; set; }
+    public string FileName { get; set; } = string.Empty;
+    public string EncodedContent { get; set; } = string.Empty;
 }
 
 public sealed class SupplierPriceBreakPageDto

@@ -189,33 +189,40 @@ public sealed class SupplierPurchasingInfoService(
 
     public async Task<string> ExportCsvAsync(int supplierId)
     {
-        if (await supplierRepository.GetByIdAsync(supplierId) is null)
-            throw new ArgumentException("Supplier was not found.");
-        var products = (await productRepository.GetAllAsync(null)).ToDictionary(x => x.Id);
-        var units = (await unitRepository.GetAllAsync()).ToDictionary(x => x.Id);
-        var rows = (await repository.GetBySupplierIdAsync(supplierId)).Where(x => x.IsActive)
-            .OrderBy(x => products.GetValueOrDefault(x.ProductId)?.Name).ThenBy(x => x.Priority)
-            .Select(info => (IReadOnlyList<string>)new[]
-            {
-                products.GetValueOrDefault(info.ProductId)?.ProductCode ?? string.Empty,
-                units.GetValueOrDefault(info.PurchaseMeasurementUnitId)?.Code ?? string.Empty,
-                info.SupplierProductCode, info.SupplierDescription ?? string.Empty,
-                Invariant(info.MinimumOrderQuantity), Invariant(info.OrderMultiple),
-                info.LeadTimeDays.ToString(CultureInfo.InvariantCulture), Invariant(info.UnitPrice),
-                info.ValidFrom.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture),
-                info.ValidTo?.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture) ?? string.Empty,
-                info.IsPreferred ? "TRUE" : "FALSE", info.Priority.ToString(CultureInfo.InvariantCulture)
-            }).ToList();
-        return SupplierPurchasingCsvParser.Write(rows);
+        return SupplierPurchasingCsvParser.Write(await BuildExportRowsAsync(supplierId));
     }
 
-    public async Task<SupplierPurchasingCsvPreviewDto> PreviewCsvAsync(
+    public async Task<byte[]> ExportExcelAsync(int supplierId)
+    {
+        return SupplierPurchasingExcelParser.Write(await BuildExportRowsAsync(supplierId));
+    }
+
+    public async Task<SupplierPurchasingImportPreviewDto> PreviewCsvAsync(
         int supplierId, string csvContent, string fileName)
     {
         if (csvContent.Length > 1_048_576) throw new ArgumentException("The supplier purchasing CSV file cannot exceed 1 MB.");
+        return await PreviewRowsAsync(supplierId, SupplierPurchasingCsvParser.Parse(csvContent), fileName,
+            "csv", csvContent, string.Empty);
+    }
+
+    public async Task<SupplierPurchasingImportPreviewDto> PreviewExcelAsync(
+        int supplierId, byte[] excelContent, string fileName)
+    {
+        if (excelContent.Length > 1_048_576) throw new ArgumentException("The supplier purchasing Excel file cannot exceed 1 MB.");
+        return await PreviewRowsAsync(supplierId, SupplierPurchasingExcelParser.Parse(excelContent), fileName,
+            "xlsx", string.Empty, Convert.ToBase64String(excelContent));
+    }
+
+    private async Task<SupplierPurchasingImportPreviewDto> PreviewRowsAsync(
+        int supplierId,
+        List<IReadOnlyDictionary<string, string>> parsed,
+        string fileName,
+        string fileFormat,
+        string csvContent,
+        string encodedContent)
+    {
         var supplier = await supplierRepository.GetByIdAsync(supplierId)
             ?? throw new ArgumentException("Supplier was not found.");
-        var parsed = SupplierPurchasingCsvParser.Parse(csvContent);
         var products = await productRepository.GetAllAsync(null);
         var units = await unitRepository.GetAllAsync();
         var existing = await repository.GetBySupplierIdAsync(supplierId);
@@ -225,7 +232,7 @@ public sealed class SupplierPurchasingInfoService(
             .Where(x => x.Count() == 1).ToDictionary(x => x.Key, x => x.Single(), StringComparer.OrdinalIgnoreCase);
         var unitMap = units.GroupBy(x => x.Code, StringComparer.OrdinalIgnoreCase)
             .Where(x => x.Count() == 1).ToDictionary(x => x.Key, x => x.Single(), StringComparer.OrdinalIgnoreCase);
-        var previewRows = new List<SupplierPurchasingCsvPreviewRowDto>();
+        var previewRows = new List<SupplierPurchasingImportPreviewRowDto>();
 
         for (var index = 0; index < parsed.Count; index++)
         {
@@ -280,7 +287,7 @@ public sealed class SupplierPurchasingInfoService(
                 }
                 catch (ArgumentException exception) { errors.Add(exception.Message); }
             }
-            previewRows.Add(new SupplierPurchasingCsvPreviewRowDto
+            previewRows.Add(new SupplierPurchasingImportPreviewRowDto
             {
                 RowNumber = index + 2, ChangeType = current is null ? "Create" : "Update",
                 ProductCode = source["ProductCode"], ProductName = product?.Name ?? string.Empty,
@@ -291,25 +298,42 @@ public sealed class SupplierPurchasingInfoService(
 
         foreach (var duplicate in previewRows.Where(x => x.ValidatedInput is not null)
                      .GroupBy(x => new { x.ValidatedInput!.ProductId, x.ValidatedInput.PurchaseMeasurementUnitId }).Where(x => x.Count() > 1))
-            foreach (var row in duplicate) row.Errors.Add("The CSV file contains the same product and purchase unit more than once.");
+            foreach (var row in duplicate) row.Errors.Add("The import file contains the same product and purchase unit more than once.");
         foreach (var duplicate in previewRows.Where(x => x.ValidatedInput?.IsPreferred == true)
                      .GroupBy(x => x.ValidatedInput!.ProductId).Where(x => x.Count() > 1))
             foreach (var row in duplicate) row.Errors.Add("Only one purchasing row can be preferred for each product.");
 
-        return new SupplierPurchasingCsvPreviewDto
+        return new SupplierPurchasingImportPreviewDto
         {
             SupplierId = supplierId, SupplierName = supplier.Name, FileName = fileName.Trim(),
-            CsvContent = csvContent, Rows = previewRows
+            FileFormat = fileFormat, CsvContent = csvContent, EncodedContent = encodedContent, Rows = previewRows
         };
     }
 
     public async Task<int> ImportCsvAsync(ImportSupplierPurchasingCsvDto dto)
     {
         var preview = await PreviewCsvAsync(dto.SupplierId, dto.CsvContent, dto.FileName);
-        if (!preview.CanImport) throw new InvalidOperationException("Resolve every CSV validation error before importing supplier purchasing data.");
+        if (!preview.CanImport) throw new InvalidOperationException("Resolve every import validation error before importing supplier purchasing data.");
+        return await ImportPreviewAsync(preview, SupplierPriceChangeSource.CsvImport);
+    }
+
+    public async Task<int> ImportExcelAsync(ImportSupplierPurchasingExcelDto dto)
+    {
+        byte[] content;
+        try { content = Convert.FromBase64String(dto.EncodedContent); }
+        catch (FormatException exception) { throw new ArgumentException("The Excel file could not be read.", exception); }
+        var preview = await PreviewExcelAsync(dto.SupplierId, content, dto.FileName);
+        if (!preview.CanImport) throw new InvalidOperationException("Resolve every import validation error before importing supplier purchasing data.");
+        return await ImportPreviewAsync(preview, SupplierPriceChangeSource.ExcelImport);
+    }
+
+    private async Task<int> ImportPreviewAsync(
+        SupplierPurchasingImportPreviewDto preview,
+        SupplierPriceChangeSource source)
+    {
         return await SaveBulkAsync(new BulkSaveSupplierPurchasingInfoDto
         {
-            SupplierId = dto.SupplierId,
+            SupplierId = preview.SupplierId,
             Rows = preview.Rows.Select(row => row.ValidatedInput!).Select(input => new BulkSupplierPurchasingRowDto
             {
                 Selected = true, Id = input.Id, ProductId = input.ProductId,
@@ -319,7 +343,28 @@ public sealed class SupplierPurchasingInfoService(
                 CurrencyCode = input.CurrencyCode, ValidFrom = input.ValidFrom, ValidTo = input.ValidTo,
                 IsPreferred = input.IsPreferred, Priority = input.Priority, RowVersion = input.RowVersion
             }).ToList()
-        }, SupplierPriceChangeSource.CsvImport);
+        }, source);
+    }
+
+    private async Task<List<IReadOnlyList<string>>> BuildExportRowsAsync(int supplierId)
+    {
+        if (await supplierRepository.GetByIdAsync(supplierId) is null)
+            throw new ArgumentException("Supplier was not found.");
+        var products = (await productRepository.GetAllAsync(null)).ToDictionary(x => x.Id);
+        var units = (await unitRepository.GetAllAsync()).ToDictionary(x => x.Id);
+        return (await repository.GetBySupplierIdAsync(supplierId)).Where(x => x.IsActive)
+            .OrderBy(x => products.GetValueOrDefault(x.ProductId)?.Name).ThenBy(x => x.Priority)
+            .Select(info => (IReadOnlyList<string>)new[]
+            {
+                products.GetValueOrDefault(info.ProductId)?.ProductCode ?? string.Empty,
+                units.GetValueOrDefault(info.PurchaseMeasurementUnitId)?.Code ?? string.Empty,
+                info.SupplierProductCode, info.SupplierDescription ?? string.Empty,
+                Invariant(info.MinimumOrderQuantity), Invariant(info.OrderMultiple),
+                info.LeadTimeDays.ToString(CultureInfo.InvariantCulture), Invariant(info.UnitPrice),
+                info.ValidFrom.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture),
+                info.ValidTo?.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture) ?? string.Empty,
+                info.IsPreferred ? "TRUE" : "FALSE", info.Priority.ToString(CultureInfo.InvariantCulture)
+            }).ToList();
     }
 
     public async Task<SupplierPriceBreakPageDto> GetPriceBreaksPageAsync(int purchasingInfoId)

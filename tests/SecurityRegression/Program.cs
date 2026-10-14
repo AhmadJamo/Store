@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
+using ClosedXML.Excel;
 using MiniStore.Application.Permissions;
 using MiniStore.Application.DTOs.Settings;
 using MiniStore.Application.Dtos.Settings;
@@ -1274,6 +1275,12 @@ var supplierTermsPreviewAction = typeof(SupplierPurchasingController)
     .GetMethod(nameof(SupplierPurchasingController.PreviewCsv))!;
 var supplierTermsImportAction = typeof(SupplierPurchasingController)
     .GetMethod(nameof(SupplierPurchasingController.ImportCsv))!;
+var supplierTermsExcelExportAction = typeof(SupplierPurchasingController)
+    .GetMethod(nameof(SupplierPurchasingController.ExportExcel))!;
+var supplierTermsExcelPreviewAction = typeof(SupplierPurchasingController)
+    .GetMethod(nameof(SupplierPurchasingController.PreviewExcel))!;
+var supplierTermsExcelImportAction = typeof(SupplierPurchasingController)
+    .GetMethod(nameof(SupplierPurchasingController.ImportExcel))!;
 var supplierPriceBreaksAction = typeof(SupplierPurchasingController)
     .GetMethod(nameof(SupplierPurchasingController.PriceBreaks))!;
 var supplierPriceBreaksSaveAction = typeof(SupplierPurchasingController)
@@ -1293,6 +1300,12 @@ Check(supplierTermsIndexAction.GetCustomAttribute<PermissionAuthorizeAttribute>(
       supplierTermsPreviewAction.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
       $"{PermissionAuthorizeAttribute.PolicyPrefix}Purchases.SupplierTerms.Manage" &&
       supplierTermsImportAction.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
+      $"{PermissionAuthorizeAttribute.PolicyPrefix}Purchases.SupplierTerms.Manage" &&
+      supplierTermsExcelExportAction.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
+      $"{PermissionAuthorizeAttribute.PolicyPrefix}Purchases.SupplierTerms.View" &&
+      supplierTermsExcelPreviewAction.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
+      $"{PermissionAuthorizeAttribute.PolicyPrefix}Purchases.SupplierTerms.Manage" &&
+      supplierTermsExcelImportAction.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
       $"{PermissionAuthorizeAttribute.PolicyPrefix}Purchases.SupplierTerms.Manage" &&
       supplierPriceBreaksAction.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
       $"{PermissionAuthorizeAttribute.PolicyPrefix}Purchases.SupplierTerms.View" &&
@@ -1321,6 +1334,22 @@ Check(safeSupplierCsv.Contains("'=FORMULA", StringComparison.Ordinal),
     "Supplier purchasing CSV export must neutralize spreadsheet formulas");
 CheckArgumentThrows(() => SupplierPurchasingCsvParser.Parse("Wrong,Header\r\n1,2"),
     "Supplier purchasing CSV must reject files that do not match the controlled template");
+var supplierExcel = SupplierPurchasingExcelParser.Write([
+    ["P-1", "PCS", "V-1", "Box, large", "1", "6", "4", "12.5", "2026-10-14", "", "TRUE", "10"]
+]);
+var supplierExcelRows = SupplierPurchasingExcelParser.Parse(supplierExcel);
+Check(supplierExcelRows.Count == 1 && supplierExcelRows[0]["SupplierDescription"] == "Box, large" &&
+      supplierExcelRows[0]["UnitPrice"] == "12.5" && supplierExcelRows[0]["ValidFrom"] == "2026-10-14" &&
+      supplierExcelRows[0]["IsPreferred"] == "TRUE",
+    "Supplier purchasing Excel must preserve typed numbers, dates, booleans and text through the fixed template");
+using var formulaWorkbook = new XLWorkbook(new MemoryStream(supplierExcel));
+formulaWorkbook.Worksheet(SupplierPurchasingExcelParser.WorksheetName).Cell(2, 1).FormulaA1 = "1+1";
+using var formulaWorkbookStream = new MemoryStream();
+formulaWorkbook.SaveAs(formulaWorkbookStream);
+CheckArgumentThrows(() => SupplierPurchasingExcelParser.Parse(formulaWorkbookStream.ToArray()),
+    "Supplier purchasing Excel imports must reject formulas instead of trusting cached workbook values");
+CheckArgumentThrows(() => SupplierPurchasingExcelParser.Parse([1, 2, 3, 4]),
+    "Supplier purchasing Excel imports must reject invalid workbook archives");
 
 var purchaseRequest = new PurchaseRequest("PRQ-000001", 1, DateOnly.FromDateTime(DateTime.Today.AddDays(7)),
     PurchaseRequestPriority.High, "Restock critical ingredients", null, "requester", "ReplenishmentRule", "17");

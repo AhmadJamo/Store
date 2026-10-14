@@ -1952,16 +1952,23 @@
   <data name="Only receipt-based vendor bill lines can clear goods received not invoiced." xml:space="preserve"><value>بنود فاتورة المورد المبنية على الاستلام فقط يمكنها تسوية حساب البضاعة المستلمة غير المفوترة.</value></data>
   <data name="Purchase agreement product was not found." xml:space="preserve"><value>لم يتم العثور على منتج اتفاقية الشراء.</value></data>
   <data name="CSV import and export" xml:space="preserve"><value>استيراد وتصدير CSV (ملف قيم مفصولة بفواصل)</value></data>
+  <data name="Spreadsheet import and export" xml:space="preserve"><value>استيراد وتصدير ملفات الجداول</value></data>
   <data name="Download the current supplier rows as a template, edit them, then preview every row before importing." xml:space="preserve"><value>نزّل بيانات المورد الحالية كنموذج، عدّلها، ثم عاين كل صف قبل الاستيراد.</value></data>
   <data name="Download CSV template" xml:space="preserve"><value>تنزيل نموذج CSV</value></data>
+  <data name="Download Excel template" xml:space="preserve"><value>تنزيل نموذج Excel (إكسل)</value></data>
   <data name="Supplier purchasing CSV file" xml:space="preserve"><value>ملف CSV لبيانات شراء المورد</value></data>
+  <data name="Supplier purchasing Excel file" xml:space="preserve"><value>ملف Excel (إكسل) لبيانات شراء المورد</value></data>
   <data name="Maximum 500 rows and 1 MB. Dates must use yyyy-MM-dd." xml:space="preserve"><value>الحد الأقصى 500 صف و1 ميجابايت. يجب كتابة التاريخ بصيغة سنة-شهر-يوم.</value></data>
+  <data name="Maximum 500 rows and 1 MB. Use the SupplierPrices worksheet and do not add formulas." xml:space="preserve"><value>الحد الأقصى 500 صف و1 ميجابايت. استخدم ورقة SupplierPrices (أسعار المورد) ولا تضف معادلات.</value></data>
   <data name="Preview import" xml:space="preserve"><value>معاينة الاستيراد</value></data>
+  <data name="Preview Excel import" xml:space="preserve"><value>معاينة استيراد Excel (إكسل)</value></data>
+  <data name="Preview CSV import" xml:space="preserve"><value>معاينة استيراد CSV (ملف قيم مفصولة بفواصل)</value></data>
   <data name="Supplier purchasing import preview" xml:space="preserve"><value>معاينة استيراد بيانات شراء المورد</value></data>
   <data name="Total rows" xml:space="preserve"><value>مجموع الصفوف</value></data>
   <data name="Valid rows" xml:space="preserve"><value>الصفوف الصحيحة</value></data>
   <data name="Rows with errors" xml:space="preserve"><value>الصفوف التي تحتوي أخطاء</value></data>
   <data name="No rows were saved. Correct every error in the CSV file and preview it again." xml:space="preserve"><value>لم يتم حفظ أي صف. صحح جميع الأخطاء في ملف CSV ثم عاينه مرة أخرى.</value></data>
+  <data name="No rows were saved. Correct every error in the import file and preview it again." xml:space="preserve"><value>لم يتم حفظ أي صف. صحح جميع الأخطاء في ملف الاستيراد ثم عاينه مرة أخرى.</value></data>
   <data name="All rows passed validation. Confirm to save the complete file in one transaction." xml:space="preserve"><value>اجتازت جميع الصفوف التحقق. أكّد لحفظ الملف كاملًا ضمن معاملة واحدة.</value></data>
   <data name="Row" xml:space="preserve"><value>الصف</value></data>
   <data name="Create" xml:space="preserve"><value>إنشاء</value></data>
@@ -1970,6 +1977,16 @@
   <data name="Confirm complete import" xml:space="preserve"><value>تأكيد الاستيراد الكامل</value></data>
   <data name="Select a supplier purchasing CSV file." xml:space="preserve"><value>اختر ملف CSV لبيانات شراء المورد.</value></data>
   <data name="The supplier purchasing CSV file cannot exceed 1 MB." xml:space="preserve"><value>لا يمكن أن يتجاوز ملف CSV لبيانات شراء المورد 1 ميجابايت.</value></data>
+  <data name="Select a supplier purchasing Excel file." xml:space="preserve"><value>اختر ملف Excel (إكسل) لبيانات شراء المورد.</value></data>
+  <data name="The supplier purchasing Excel file cannot exceed 1 MB." xml:space="preserve"><value>لا يمكن أن يتجاوز ملف Excel (إكسل) لبيانات شراء المورد 1 ميجابايت.</value></data>
+  <data name="Supplier purchasing Excel import accepts XLSX files only." xml:space="preserve"><value>استيراد Excel (إكسل) لبيانات شراء المورد يقبل ملفات XLSX (صيغة ملف إكسل الحديثة) فقط.</value></data>
+  <data name="The Excel file is empty." xml:space="preserve"><value>ملف Excel (إكسل) فارغ.</value></data>
+  <data name="The Excel file does not contain the SupplierPrices worksheet." xml:space="preserve"><value>ملف Excel (إكسل) لا يحتوي ورقة SupplierPrices (أسعار المورد).</value></data>
+  <data name="The Excel columns do not match the supplier purchasing template." xml:space="preserve"><value>أعمدة ملف Excel (إكسل) لا تطابق نموذج بيانات شراء المورد.</value></data>
+  <data name="The Excel file does not contain purchasing rows." xml:space="preserve"><value>ملف Excel (إكسل) لا يحتوي صفوف بيانات شراء.</value></data>
+  <data name="Excel formulas are not allowed in supplier purchasing imports." xml:space="preserve"><value>لا يسمح باستخدام معادلات Excel (إكسل) في استيراد بيانات شراء المورد.</value></data>
+  <data name="The Excel file has an invalid or unsafe structure." xml:space="preserve"><value>بنية ملف Excel (إكسل) غير صالحة أو غير آمنة.</value></data>
+  <data name="The Excel file could not be read." xml:space="preserve"><value>تعذرت قراءة ملف Excel (إكسل).</value></data>
   <data name="Supplier purchasing import accepts CSV files only." xml:space="preserve"><value>استيراد بيانات شراء المورد يقبل ملفات CSV فقط.</value></data>
   <data name="The CSV file is empty." xml:space="preserve"><value>ملف CSV فارغ.</value></data>
   <data name="The CSV columns do not match the supplier purchasing template." xml:space="preserve"><value>أعمدة ملف CSV لا تطابق نموذج بيانات شراء المورد.</value></data>
@@ -1990,7 +2007,9 @@
   <data name="The product is not assigned to this supplier." xml:space="preserve"><value>المنتج غير مرتبط بهذا المورد.</value></data>
   <data name="The matching supplier purchasing row is inactive. Activate it before importing." xml:space="preserve"><value>صف بيانات شراء المورد المطابق غير فعال. فعّله قبل الاستيراد.</value></data>
   <data name="The CSV file contains the same product and purchase unit more than once." xml:space="preserve"><value>ملف CSV يحتوي المنتج ووحدة الشراء نفسيهما أكثر من مرة.</value></data>
+  <data name="The import file contains the same product and purchase unit more than once." xml:space="preserve"><value>ملف الاستيراد يحتوي المنتج ووحدة الشراء نفسيهما أكثر من مرة.</value></data>
   <data name="Resolve every CSV validation error before importing supplier purchasing data." xml:space="preserve"><value>عالج جميع أخطاء التحقق في ملف CSV قبل استيراد بيانات شراء المورد.</value></data>
+  <data name="Resolve every import validation error before importing supplier purchasing data." xml:space="preserve"><value>عالج جميع أخطاء التحقق في ملف الاستيراد قبل استيراد بيانات شراء المورد.</value></data>
   <data name="Imported {0} supplier purchasing rows." xml:space="preserve"><value>تم استيراد {0} صف من بيانات شراء المورد.</value></data>
   <data name="Review imported supplier prices" xml:space="preserve"><value>مراجعة أسعار المورد المستوردة</value></data>
   <data name="Confirm the saved prices, order quantities, validity dates and preferred supplier choices." xml:space="preserve"><value>تأكد من الأسعار وكميات الطلب وفترات الصلاحية وخيارات المورد المفضل التي تم حفظها.</value></data>
@@ -2040,6 +2059,7 @@
   <data name="BulkEdit" xml:space="preserve"><value>تعديل جماعي</value></data>
   <data name="CsvImport" xml:space="preserve"><value>استيراد CSV (ملف قيم مفصولة بفواصل)</value></data>
   <data name="PriceBreakEdit" xml:space="preserve"><value>تعديل شرائح السعر</value></data>
+  <data name="ExcelImport" xml:space="preserve"><value>استيراد Excel (إكسل)</value></data>
   <data name="Supplier price change source is invalid." xml:space="preserve"><value>مصدر تغيير سعر المورد غير صالح.</value></data>
   <data name="Supplier price history revision must be positive." xml:space="preserve"><value>يجب أن يكون رقم إصدار سجل سعر المورد موجبًا.</value></data>
   <data name="Supplier price history references are required." xml:space="preserve"><value>مراجع سجل سعر المورد مطلوبة.</value></data>

@@ -7,7 +7,8 @@ public enum SupplierPriceChangeSource
     ManualEdit = 3,
     BulkEdit = 4,
     CsvImport = 5,
-    PriceBreakEdit = 6
+    PriceBreakEdit = 6,
+    ExcelImport = 7
 }
 
 public sealed class SupplierProductPurchasingInfo

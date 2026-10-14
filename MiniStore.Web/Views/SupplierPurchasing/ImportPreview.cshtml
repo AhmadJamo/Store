@@ -1,4 +1,4 @@
-@model MiniStore.Application.DTOs.Purchases.SupplierPurchasingCsvPreviewDto
+@model MiniStore.Application.DTOs.Purchases.SupplierPurchasingImportPreviewDto
 @inject Microsoft.Extensions.Localization.IStringLocalizer<MiniStore.Web.SharedResource> Localizer
 @{
     ViewData["Title"] = Localizer["Supplier purchasing import preview"];
@@ -18,7 +18,7 @@
 
 @if(Model.ErrorRowCount > 0)
 {
-    <div class="alert alert-danger">@Localizer["No rows were saved. Correct every error in the CSV file and preview it again."]</div>
+    <div class="alert alert-danger">@Localizer["No rows were saved. Correct every error in the import file and preview it again."]</div>
 }
 else
 {
@@ -34,10 +34,17 @@ else
 
 @if(Model.CanImport)
 {
-    <form asp-action="ImportCsv" method="post" enctype="multipart/form-data">
+    <form asp-action="@(Model.FileFormat == "xlsx" ? "ImportExcel" : "ImportCsv")" method="post" enctype="multipart/form-data">
         <input type="hidden" name="SupplierId" value="@Model.SupplierId"/>
         <input type="hidden" name="FileName" value="@Model.FileName"/>
-        <textarea name="CsvContent" class="d-none" aria-hidden="true">@Model.CsvContent</textarea>
+        @if(Model.FileFormat == "xlsx")
+        {
+            <textarea name="EncodedContent" class="d-none" aria-hidden="true">@Model.EncodedContent</textarea>
+        }
+        else
+        {
+            <textarea name="CsvContent" class="d-none" aria-hidden="true">@Model.CsvContent</textarea>
+        }
         <button class="btn btn-success">@Localizer["Confirm complete import"]</button>
     </form>
 }

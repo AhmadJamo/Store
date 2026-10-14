@@ -1,5 +1,13 @@
 # AI Work Log
 
+# 2026-10-14 — PUR-230 native Excel completion
+
+- Completed PUR-230 with supplier-scoped native XLSX export/import beside the existing CSV workflow. The formatted `SupplierPrices` sheet freezes and filters headers and preserves typed quantities, prices, dates and booleans.
+- Excel uploads are capped at 1 MB/500 rows, reject formulas, extra columns, invalid templates and unsafe compressed structures, then reuse the same per-row preview, assignment/domain/concurrency checks and atomic bulk-save authority as CSV.
+- Added separate permission-protected Excel export, preview and confirmation actions, localized responsive controls and a distinct immutable `ExcelImport` history source while retaining existing post-import next-step guidance.
+- Pinned the .NET package family to the repository's existing 10.0.12 baseline and overrode the transitive PKCS package with patched 9.0.21 after the current package audit flagged the older version.
+- The Release solution build passes with zero warnings/errors and all 672 focused security/inventory checks pass. No database migration is required.
+
 # 2026-10-14 — PUR-230 supplier price exception report
 
 - Added a deterministic active-row analyzer for expired prices, prices expiring within 30 days, duplicate case-insensitive supplier product codes within one supplier and multiple preferred purchasing rows for one product.

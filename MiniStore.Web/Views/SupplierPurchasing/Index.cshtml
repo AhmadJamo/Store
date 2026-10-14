@@ -8,7 +8,7 @@
 
 <div class="d-flex justify-content-between align-items-start mb-4">
     <div><h2>@Localizer["Supplier purchasing data"]</h2><p class="text-muted mb-0">@Localizer["Choose one supplier, manage several products, then save them together."]</p></div>
-    <div class="d-flex flex-wrap gap-2"><a asp-action="PriceExceptions" class="btn btn-outline-warning">@Localizer["Price exceptions"] <span class="badge text-bg-warning">@Model.PriceExceptionCount</span></a>@if(Model.SelectedSupplierId.HasValue){<a asp-action="ExportCsv" asp-route-supplierId="@Model.SelectedSupplierId" class="btn btn-outline-primary">@Localizer["Download CSV template"]</a>}<a asp-controller="Suppliers" asp-action="Index" class="btn btn-outline-secondary">@Localizer["Back to suppliers"]</a></div>
+    <div class="d-flex flex-wrap gap-2"><a asp-action="PriceExceptions" class="btn btn-outline-warning">@Localizer["Price exceptions"] <span class="badge text-bg-warning">@Model.PriceExceptionCount</span></a>@if(Model.SelectedSupplierId.HasValue){<a asp-action="ExportExcel" asp-route-supplierId="@Model.SelectedSupplierId" class="btn btn-primary">@Localizer["Download Excel template"]</a><a asp-action="ExportCsv" asp-route-supplierId="@Model.SelectedSupplierId" class="btn btn-outline-primary">@Localizer["Download CSV template"]</a>}<a asp-controller="Suppliers" asp-action="Index" class="btn btn-outline-secondary">@Localizer["Back to suppliers"]</a></div>
 </div>
 
 <form method="get" class="card card-body mb-4">
@@ -25,11 +25,16 @@
 else if(canManage)
 {
     <div class="card card-body mb-4">
-        <div><h3 class="h5 mb-1">@Localizer["CSV import and export"]</h3><p class="text-muted mb-0">@Localizer["Download the current supplier rows as a template, edit them, then preview every row before importing."]</p></div>
-        <form asp-action="PreviewCsv" method="post" enctype="multipart/form-data" class="row g-3 align-items-end mt-1">
+        <div><h3 class="h5 mb-1">@Localizer["Spreadsheet import and export"]</h3><p class="text-muted mb-0">@Localizer["Download the current supplier rows as a template, edit them, then preview every row before importing."]</p></div>
+        <form asp-action="PreviewExcel" method="post" enctype="multipart/form-data" class="row g-3 align-items-end mt-1">
+            <input type="hidden" name="supplierId" value="@Model.SelectedSupplierId"/>
+            <div class="col-lg-8"><label for="excelFile" class="form-label">@Localizer["Supplier purchasing Excel file"]</label><input id="excelFile" name="excelFile" type="file" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" class="form-control" required/><div class="form-text">@Localizer["Maximum 500 rows and 1 MB. Use the SupplierPrices worksheet and do not add formulas."]</div></div>
+            <div class="col-lg-4"><button class="btn btn-primary w-100">@Localizer["Preview Excel import"]</button></div>
+        </form>
+        <form asp-action="PreviewCsv" method="post" enctype="multipart/form-data" class="row g-3 align-items-end mt-1 border-top pt-3">
             <input type="hidden" name="supplierId" value="@Model.SelectedSupplierId"/>
             <div class="col-lg-8"><label for="csvFile" class="form-label">@Localizer["Supplier purchasing CSV file"]</label><input id="csvFile" name="csvFile" type="file" accept=".csv,text/csv" class="form-control" required/><div class="form-text">@Localizer["Maximum 500 rows and 1 MB. Dates must use yyyy-MM-dd."]</div></div>
-            <div class="col-lg-4"><button class="btn btn-primary w-100">@Localizer["Preview import"]</button></div>
+            <div class="col-lg-4"><button class="btn btn-outline-primary w-100">@Localizer["Preview CSV import"]</button></div>
         </form>
     </div>
     @if(Model.BulkForm.Rows.Count == 0)
