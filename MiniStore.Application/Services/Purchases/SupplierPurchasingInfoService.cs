@@ -24,6 +24,8 @@ public sealed class SupplierPurchasingInfoService(
         var supplierNames = suppliers.ToDictionary(x => x.Id, x => x.Name);
         var productsById = products.ToDictionary(x => x.Id);
         var unitsById = units.ToDictionary(x => x.Id);
+        var today = DateOnly.FromDateTime(DateTime.Today);
+        var priceExceptionCount = SupplierPriceExceptionAnalyzer.Analyze(infos, today).Count;
 
         var baseCurrency = NormalizeBaseCurrency(settings?.Currency);
         if (supplierId.HasValue && suppliers.All(x => x.Id != supplierId.Value))
@@ -75,7 +77,65 @@ public sealed class SupplierPurchasingInfoService(
             Form = new SaveSupplierPurchasingInfoDto { SupplierId = supplierId ?? 0, CurrencyCode = baseCurrency },
             SelectedSupplierId = supplierId,
             BulkForm = new BulkSaveSupplierPurchasingInfoDto { SupplierId = supplierId ?? 0, Rows = bulkRows },
-            BaseCurrency = baseCurrency
+            BaseCurrency = baseCurrency,
+            PriceExceptionCount = priceExceptionCount
+        };
+    }
+
+    public async Task<SupplierPriceExceptionPageDto> GetPriceExceptionsPageAsync(
+        SupplierPriceExceptionType? selectedType = null,
+        int page = 1)
+    {
+        if (selectedType.HasValue && !Enum.IsDefined(selectedType.Value))
+            throw new ArgumentException("Supplier price exception filter is invalid.");
+        if (page < 1) throw new ArgumentException("Page number must be positive.");
+        var infos = await repository.GetAllAsync();
+        var suppliers = (await supplierRepository.GetAllAsync()).ToDictionary(x => x.Id);
+        var products = (await productRepository.GetAllAsync(null)).ToDictionary(x => x.Id);
+        var units = (await unitRepository.GetAllAsync()).ToDictionary(x => x.Id);
+        var today = DateOnly.FromDateTime(DateTime.Today);
+        var findings = SupplierPriceExceptionAnalyzer.Analyze(infos, today);
+        var visible = selectedType.HasValue
+            ? findings.Where(x => x.Type == selectedType.Value).ToList()
+            : findings;
+
+        var rows = visible.GroupBy(x => x.PurchasingInfo).Select(group =>
+        {
+            var info = group.Key;
+            var product = products.GetValueOrDefault(info.ProductId);
+            var unit = units.GetValueOrDefault(info.PurchaseMeasurementUnitId);
+            return new SupplierPriceExceptionRowDto
+            {
+                PurchasingInfoId = info.Id,
+                SupplierId = info.SupplierId,
+                SupplierName = suppliers.GetValueOrDefault(info.SupplierId)?.Name ?? $"#{info.SupplierId}",
+                ProductLabel = product is null ? $"#{info.ProductId}" : $"{product.ProductCode} — {product.Name}",
+                PurchaseUnit = unit is null ? $"#{info.PurchaseMeasurementUnitId}" : $"{unit.Name} ({unit.Symbol})",
+                SupplierProductCode = info.SupplierProductCode,
+                UnitPrice = info.UnitPrice,
+                CurrencyCode = info.CurrencyCode,
+                ValidTo = info.ValidTo,
+                IsPreferred = info.IsPreferred,
+                Issues = group.Select(x => x.Type).Distinct().OrderBy(x => x).ToList()
+            };
+        }).OrderBy(x => x.Issues.Min()).ThenBy(x => x.SupplierName).ThenBy(x => x.ProductLabel).ToList();
+        const int pageSize = 50;
+        var totalPages = Math.Max(1, (int)Math.Ceiling(rows.Count / (double)pageSize));
+        page = Math.Min(page, totalPages);
+
+        return new SupplierPriceExceptionPageDto
+        {
+            AsOfDate = today,
+            SelectedType = selectedType,
+            TotalFindingCount = findings.Count,
+            ExpiredCount = findings.Count(x => x.Type == SupplierPriceExceptionType.Expired),
+            ExpiringSoonCount = findings.Count(x => x.Type == SupplierPriceExceptionType.ExpiringSoon),
+            DuplicateSupplierProductCodeCount = findings.Count(x => x.Type == SupplierPriceExceptionType.DuplicateSupplierProductCode),
+            MultiplePreferredRowsCount = findings.Count(x => x.Type == SupplierPriceExceptionType.MultiplePreferredRows),
+            PageNumber = page,
+            PageSize = pageSize,
+            TotalRowCount = rows.Count,
+            Rows = rows.Skip((page - 1) * pageSize).Take(pageSize).ToList()
         };
     }
 

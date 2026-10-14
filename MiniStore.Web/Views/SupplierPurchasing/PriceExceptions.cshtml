@@ -1,0 +1,77 @@
+@model MiniStore.Application.DTOs.Purchases.SupplierPriceExceptionPageDto
+@using MiniStore.Application.DTOs.Purchases
+@inject Microsoft.Extensions.Localization.IStringLocalizer<MiniStore.Web.SharedResource> Localizer
+@{
+    ViewData["Title"] = Localizer["Supplier price exceptions"];
+    var numberSettings = await GeneralSettingsService.GetAsync();
+}
+
+<div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4">
+    <div>
+        <h2>@Localizer["Supplier price exceptions"]</h2>
+        <p class="text-muted mb-0">@Localizer["Review expired, soon-to-expire and potentially duplicated supplier purchasing terms."]</p>
+    </div>
+    <a asp-action="Index" class="btn btn-outline-secondary">@Localizer["Back to supplier purchasing data"]</a>
+</div>
+
+<div class="alert alert-info">
+    @Localizer["The report is calculated as of {0}. Prices expiring within {1} days are shown. Duplicate warnings require review and are never merged automatically.", Model.AsOfDate, Model.ExpiringWithinDays]
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-6 col-xl"><a asp-action="PriceExceptions" class="card card-body h-100 text-decoration-none @(Model.SelectedType is null ? "border-primary" : "")"><span class="text-muted">@Localizer["All exceptions"]</span><strong class="fs-4">@Model.TotalFindingCount</strong></a></div>
+    <div class="col-6 col-xl"><a asp-action="PriceExceptions" asp-route-type="@SupplierPriceExceptionType.Expired" class="card card-body h-100 text-decoration-none @(Model.SelectedType == SupplierPriceExceptionType.Expired ? "border-danger" : "")"><span class="text-muted">@Localizer["Expired prices"]</span><strong class="fs-4 text-danger">@Model.ExpiredCount</strong></a></div>
+    <div class="col-6 col-xl"><a asp-action="PriceExceptions" asp-route-type="@SupplierPriceExceptionType.ExpiringSoon" class="card card-body h-100 text-decoration-none @(Model.SelectedType == SupplierPriceExceptionType.ExpiringSoon ? "border-warning" : "")"><span class="text-muted">@Localizer["Expiring soon"]</span><strong class="fs-4 text-warning">@Model.ExpiringSoonCount</strong></a></div>
+    <div class="col-6 col-xl"><a asp-action="PriceExceptions" asp-route-type="@SupplierPriceExceptionType.DuplicateSupplierProductCode" class="card card-body h-100 text-decoration-none @(Model.SelectedType == SupplierPriceExceptionType.DuplicateSupplierProductCode ? "border-warning" : "")"><span class="text-muted">@Localizer["Duplicate supplier codes"]</span><strong class="fs-4">@Model.DuplicateSupplierProductCodeCount</strong></a></div>
+    <div class="col-6 col-xl"><a asp-action="PriceExceptions" asp-route-type="@SupplierPriceExceptionType.MultiplePreferredRows" class="card card-body h-100 text-decoration-none @(Model.SelectedType == SupplierPriceExceptionType.MultiplePreferredRows ? "border-warning" : "")"><span class="text-muted">@Localizer["Multiple preferred rows"]</span><strong class="fs-4">@Model.MultiplePreferredRowsCount</strong></a></div>
+</div>
+
+@if (Model.Rows.Count == 0)
+{
+    <div class="alert alert-success">@Localizer["No supplier price exceptions match this filter."]</div>
+}
+else
+{
+    <div class="vstack gap-3">
+    @foreach (var row in Model.Rows)
+    {
+        <section class="card">
+            <div class="card-header d-flex flex-wrap justify-content-between align-items-start gap-2">
+                <div><div class="fw-semibold">@row.ProductLabel</div><div class="small text-muted">@row.SupplierName</div></div>
+                <div class="d-flex flex-wrap gap-1">
+                @foreach (var issue in row.Issues)
+                {
+                    var badgeClass = issue == SupplierPriceExceptionType.Expired ? "text-bg-danger" : "text-bg-warning";
+                    var issueLabel = issue switch
+                    {
+                        SupplierPriceExceptionType.Expired => Localizer["Expired"].Value,
+                        SupplierPriceExceptionType.ExpiringSoon => Localizer["Expiring soon"].Value,
+                        SupplierPriceExceptionType.DuplicateSupplierProductCode => Localizer["Duplicate supplier code"].Value,
+                        _ => Localizer["Multiple preferred rows"].Value
+                    };
+                    <span class="badge @badgeClass">@issueLabel</span>
+                }
+                </div>
+            </div>
+            <div class="card-body"><div class="row g-3">
+                <div class="col-sm-6 col-lg-3"><div class="small text-muted">@Localizer["Supplier product code"]</div><div><code>@row.SupplierProductCode</code></div></div>
+                <div class="col-sm-6 col-lg-3"><div class="small text-muted">@Localizer["Purchase unit"]</div><div>@row.PurchaseUnit</div></div>
+                <div class="col-sm-6 col-lg-3"><div class="small text-muted">@Localizer["Supplier unit price"]</div><div>@row.UnitPrice.ToMoneyDisplay(numberSettings) @row.CurrencyCode</div></div>
+                <div class="col-sm-6 col-lg-3"><div class="small text-muted">@Localizer["Price valid until (optional)"]</div><div>@(row.ValidTo?.ToString() ?? Localizer["No end date"].Value)</div></div>
+            </div></div>
+            <div class="card-footer d-flex flex-wrap justify-content-between align-items-center gap-2">
+                @if (row.IsPreferred) { <span class="badge text-bg-primary">@Localizer["Preferred supplier for this product"]</span> } else { <span></span> }
+                <div class="d-flex flex-wrap gap-2"><a asp-action="PriceHistory" asp-route-id="@row.PurchasingInfoId" class="btn btn-sm btn-outline-secondary">@Localizer["Price history"]</a><a asp-action="Index" asp-route-supplierId="@row.SupplierId" class="btn btn-sm btn-primary">@Localizer["Review supplier data"]</a></div>
+            </div>
+        </section>
+    }
+    </div>
+    @if (Model.TotalPages > 1)
+    {
+        <nav class="d-flex justify-content-between align-items-center mt-4" aria-label="@Localizer["Price exception pages"]">
+            <a asp-action="PriceExceptions" asp-route-type="@Model.SelectedType" asp-route-page="@(Model.PageNumber - 1)" class="btn btn-outline-secondary @(Model.PageNumber <= 1 ? "disabled" : "")">@Localizer["Previous"]</a>
+            <span class="text-muted">@Localizer["Page {0} of {1}", Model.PageNumber, Model.TotalPages]</span>
+            <a asp-action="PriceExceptions" asp-route-type="@Model.SelectedType" asp-route-page="@(Model.PageNumber + 1)" class="btn btn-outline-secondary @(Model.PageNumber >= Model.TotalPages ? "disabled" : "")">@Localizer["Next"]</a>
+        </nav>
+    }
+}

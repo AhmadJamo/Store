@@ -1,5 +1,12 @@
 # AI Work Log
 
+# 2026-10-14 — PUR-230 supplier price exception report
+
+- Added a deterministic active-row analyzer for expired prices, prices expiring within 30 days, duplicate case-insensitive supplier product codes within one supplier and multiple preferred purchasing rows for one product.
+- Added global exception counts to Supplier Purchasing and a permission-protected, filterable responsive card report with direct supplier-data and immutable-history links.
+- Duplicate findings are advisory: the report never merges, deactivates or reprices records automatically, and exact supplier/product/unit duplicates remain blocked by the database.
+- The Web project builds with zero warnings and all 669 focused security/inventory checks pass.
+
 # 2026-10-14 — PUR-230 immutable supplier price history
 
 - Added append-only supplier-price revisions that freeze the actor, timestamp, change source, supplier/product/purchase-unit identity, minimum quantity, base price, currency, validity and complete quantity-break set.

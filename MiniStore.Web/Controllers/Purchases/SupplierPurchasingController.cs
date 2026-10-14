@@ -25,6 +25,19 @@ public sealed class SupplierPurchasingController(
         }
     }
 
+    [HttpGet]
+    [PermissionAuthorize("Purchases.SupplierTerms.View")]
+    public async Task<IActionResult> PriceExceptions(SupplierPriceExceptionType? type = null, int page = 1)
+    {
+        try { return View(await service.GetPriceExceptionsPageAsync(type, page)); }
+        catch (ArgumentException exception)
+        {
+            TempData["NotificationType"] = "error";
+            TempData["NotificationMessage"] = localizer[exception.Message].Value;
+            return RedirectToAction(nameof(Index));
+        }
+    }
+
     [HttpPost]
     [ValidateAntiForgeryToken]
     [PermissionAuthorize("Purchases.SupplierTerms.Manage")]

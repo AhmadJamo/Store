@@ -1230,6 +1230,31 @@ Check(supplierPriceBreakSnapshotType.FindProperty("TenantId") is { IsNullable: f
               "TenantId", nameof(SupplierProductPriceBreakSnapshot.SupplierProductPriceHistoryId),
               nameof(SupplierProductPriceBreakSnapshot.MinimumQuantity)])),
     "Historical supplier price breaks must remain tenant-owned and unique inside a revision");
+var priceExceptionDate = new DateOnly(2026, 10, 14);
+var expiredSupplierPrice = new SupplierProductPurchasingInfo(
+    1, 10, 3, "DUP-SKU", null, 1m, 1m, 0, 5m, "JOD",
+    new DateOnly(2026, 1, 1), priceExceptionDate.AddDays(-1), true, 10);
+var expiringSupplierPrice = new SupplierProductPurchasingInfo(
+    1, 11, 3, "dup-sku", null, 1m, 1m, 0, 6m, "JOD",
+    new DateOnly(2026, 1, 1), priceExceptionDate.AddDays(10), false, 20);
+var secondPreferredSupplierPrice = new SupplierProductPurchasingInfo(
+    2, 10, 3, "OTHER-SKU", null, 1m, 1m, 0, 7m, "JOD",
+    new DateOnly(2026, 1, 1), null, true, 30);
+var inactiveExpiredSupplierPrice = new SupplierProductPurchasingInfo(
+    3, 12, 3, "INACTIVE", null, 1m, 1m, 0, 8m, "JOD",
+    new DateOnly(2026, 1, 1), priceExceptionDate.AddDays(-1), false, 40);
+inactiveExpiredSupplierPrice.SetActive(false);
+var supplierPriceFindings = SupplierPriceExceptionAnalyzer.Analyze([
+    expiredSupplierPrice, expiringSupplierPrice, secondPreferredSupplierPrice, inactiveExpiredSupplierPrice
+], priceExceptionDate);
+Check(supplierPriceFindings.Count == 6 &&
+      supplierPriceFindings.Count(x => x.Type == SupplierPriceExceptionType.Expired) == 1 &&
+      supplierPriceFindings.Count(x => x.Type == SupplierPriceExceptionType.ExpiringSoon) == 1 &&
+      supplierPriceFindings.Count(x => x.Type == SupplierPriceExceptionType.DuplicateSupplierProductCode) == 2 &&
+      supplierPriceFindings.Count(x => x.Type == SupplierPriceExceptionType.MultiplePreferredRows) == 2,
+    "Supplier price exception analysis must report active expiry, duplicate-code and preferred-row findings without inactive noise");
+CheckArgumentThrows(() => SupplierPriceExceptionAnalyzer.Analyze([], priceExceptionDate, 0),
+    "Supplier price exception analysis must enforce a bounded expiry horizon");
 var supplierType = db.Model.FindEntityType(typeof(Supplier))!;
 Check(supplierType.FindProperty(nameof(Supplier.RowVersion))!.IsConcurrencyToken,
     "Supplier profile updates must be rowversion protected");
@@ -1255,6 +1280,8 @@ var supplierPriceBreaksSaveAction = typeof(SupplierPurchasingController)
     .GetMethod(nameof(SupplierPurchasingController.SavePriceBreaks))!;
 var supplierPriceHistoryAction = typeof(SupplierPurchasingController)
     .GetMethod(nameof(SupplierPurchasingController.PriceHistory))!;
+var supplierPriceExceptionsAction = typeof(SupplierPurchasingController)
+    .GetMethod(nameof(SupplierPurchasingController.PriceExceptions))!;
 Check(supplierTermsIndexAction.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
       $"{PermissionAuthorizeAttribute.PolicyPrefix}Purchases.SupplierTerms.View" &&
       supplierTermsSaveAction.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
@@ -1272,6 +1299,8 @@ Check(supplierTermsIndexAction.GetCustomAttribute<PermissionAuthorizeAttribute>(
       supplierPriceBreaksSaveAction.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
       $"{PermissionAuthorizeAttribute.PolicyPrefix}Purchases.SupplierTerms.Manage" &&
       supplierPriceHistoryAction.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
+      $"{PermissionAuthorizeAttribute.PolicyPrefix}Purchases.SupplierTerms.View" &&
+      supplierPriceExceptionsAction.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
       $"{PermissionAuthorizeAttribute.PolicyPrefix}Purchases.SupplierTerms.View",
     "Supplier purchasing data must separate view and manage permissions");
 Check(supplierTermsBulkSaveAction.GetParameters().Single().GetCustomAttribute<BindAttribute>()?.Prefix == "BulkForm",

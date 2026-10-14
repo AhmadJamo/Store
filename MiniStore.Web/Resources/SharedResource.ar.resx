@@ -2045,4 +2045,25 @@
   <data name="Supplier price history references are required." xml:space="preserve"><value>مراجع سجل سعر المورد مطلوبة.</value></data>
   <data name="Supplier price history quantity and price are invalid." xml:space="preserve"><value>كمية أو سعر سجل المورد غير صالح.</value></data>
   <data name="Supplier price-break history values are invalid." xml:space="preserve"><value>قيم سجل شريحة سعر المورد غير صالحة.</value></data>
+  <data name="Price exceptions" xml:space="preserve"><value>استثناءات الأسعار</value></data>
+  <data name="Supplier price exceptions" xml:space="preserve"><value>استثناءات أسعار الموردين</value></data>
+  <data name="Review expired, soon-to-expire and potentially duplicated supplier purchasing terms." xml:space="preserve"><value>راجع شروط شراء الموردين المنتهية أو القريبة من الانتهاء أو المحتمل تكرارها.</value></data>
+  <data name="The report is calculated as of {0}. Prices expiring within {1} days are shown. Duplicate warnings require review and are never merged automatically." xml:space="preserve"><value>يُحتسب التقرير بتاريخ {0}. تظهر الأسعار التي ستنتهي خلال {1} يومًا. تحذيرات التكرار تحتاج مراجعة ولا يتم دمجها تلقائيًا.</value></data>
+  <data name="All exceptions" xml:space="preserve"><value>جميع الاستثناءات</value></data>
+  <data name="Expired prices" xml:space="preserve"><value>الأسعار المنتهية</value></data>
+  <data name="Duplicate supplier codes" xml:space="preserve"><value>رموز المورد المكررة</value></data>
+  <data name="Duplicate supplier code" xml:space="preserve"><value>رمز منتج المورد مكرر</value></data>
+  <data name="Multiple preferred rows" xml:space="preserve"><value>أكثر من صف مفضل</value></data>
+  <data name="No supplier price exceptions match this filter." xml:space="preserve"><value>لا توجد استثناءات لأسعار الموردين تطابق هذا التصنيف.</value></data>
+  <data name="Review supplier data" xml:space="preserve"><value>مراجعة بيانات المورد</value></data>
+  <data name="ExpiringSoon" xml:space="preserve"><value>قريب الانتهاء</value></data>
+  <data name="DuplicateSupplierProductCode" xml:space="preserve"><value>رمز منتج المورد مكرر</value></data>
+  <data name="MultiplePreferredRows" xml:space="preserve"><value>أكثر من صف مفضل للمنتج</value></data>
+  <data name="Supplier price expiry horizon must be between 1 and 365 days." xml:space="preserve"><value>يجب أن تكون مدة التنبيه بانتهاء سعر المورد بين يوم واحد و365 يومًا.</value></data>
+  <data name="Supplier price exception filter is invalid." xml:space="preserve"><value>تصنيف استثناءات أسعار المورد غير صالح.</value></data>
+  <data name="Price exception pages" xml:space="preserve"><value>صفحات استثناءات الأسعار</value></data>
+  <data name="Page number must be positive." xml:space="preserve"><value>يجب أن يكون رقم الصفحة موجبًا.</value></data>
+  <data name="Previous" xml:space="preserve"><value>السابق</value></data>
+  <data name="Next" xml:space="preserve"><value>التالي</value></data>
+  <data name="Page {0} of {1}" xml:space="preserve"><value>الصفحة {0} من {1}</value></data>
 </root>

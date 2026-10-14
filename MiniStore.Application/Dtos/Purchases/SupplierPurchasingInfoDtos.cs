@@ -3,6 +3,14 @@ using MiniStore.Domain.Entities;
 
 namespace MiniStore.Application.DTOs.Purchases;
 
+public enum SupplierPriceExceptionType
+{
+    Expired = 1,
+    ExpiringSoon = 2,
+    DuplicateSupplierProductCode = 3,
+    MultiplePreferredRows = 4
+}
+
 public sealed class SupplierPurchasingInfoDto
 {
     public int Id { get; init; }
@@ -91,6 +99,7 @@ public sealed class SupplierPurchasingInfoPageDto
     public int? SelectedSupplierId { get; init; }
     public BulkSaveSupplierPurchasingInfoDto BulkForm { get; init; } = new();
     public string BaseCurrency { get; init; } = "JOD";
+    public int PriceExceptionCount { get; init; }
 }
 
 public sealed class SupplierPurchasingCsvPreviewDto
@@ -186,4 +195,36 @@ public sealed class SupplierPriceHistoryBreakDto
     public decimal UnitPrice { get; init; }
     public decimal DiscountPercent { get; init; }
     public decimal NetUnitPrice { get; init; }
+}
+
+public sealed class SupplierPriceExceptionPageDto
+{
+    public DateOnly AsOfDate { get; init; }
+    public int ExpiringWithinDays { get; init; } = 30;
+    public SupplierPriceExceptionType? SelectedType { get; init; }
+    public List<SupplierPriceExceptionRowDto> Rows { get; init; } = [];
+    public int TotalFindingCount { get; init; }
+    public int ExpiredCount { get; init; }
+    public int ExpiringSoonCount { get; init; }
+    public int DuplicateSupplierProductCodeCount { get; init; }
+    public int MultiplePreferredRowsCount { get; init; }
+    public int PageNumber { get; init; } = 1;
+    public int PageSize { get; init; } = 50;
+    public int TotalRowCount { get; init; }
+    public int TotalPages => Math.Max(1, (int)Math.Ceiling(TotalRowCount / (double)PageSize));
+}
+
+public sealed class SupplierPriceExceptionRowDto
+{
+    public int PurchasingInfoId { get; init; }
+    public int SupplierId { get; init; }
+    public string SupplierName { get; init; } = string.Empty;
+    public string ProductLabel { get; init; } = string.Empty;
+    public string PurchaseUnit { get; init; } = string.Empty;
+    public string SupplierProductCode { get; init; } = string.Empty;
+    public decimal UnitPrice { get; init; }
+    public string CurrencyCode { get; init; } = string.Empty;
+    public DateOnly? ValidTo { get; init; }
+    public bool IsPreferred { get; init; }
+    public List<SupplierPriceExceptionType> Issues { get; init; } = [];
 }
