@@ -864,3 +864,11 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
 - Fixed dated transaction/company-currency snapshots for new commercial documents and retained company-currency Inventory/COGS authority.
 - Added the alignment document and accepted ADR, marked `SAL-005` complete and advanced the next runtime step to `SAL-010` Customer foundation.
 - Documentation only; no runtime code, schema, permission, UI or database data changed.
+
+## 2026-10-15 — CUS-000 Customer and Business Partner audit
+
+- Audited the current minimal Customer entity, service, repository, screens, permissions, tenant boundaries, accounting linkage, Sale references, migrations, audit trail and focused test infrastructure against the supplied enterprise Customer and Business Partner requirements.
+- Classified the professional customer profile, contacts, addresses, searching, customer-specific permissions, receivables, credit, collections, CRM, helpdesk, portal, duplicate merge, Customer 360 and reports by implementation status and dependency.
+- Preserved current Customer and Supplier identifiers and documented the proposed BusinessPartner unification as an independent decision gate with an additive expand-and-contract migration rather than an immediate replacement.
+- Added `CUSTOMER_AND_BUSINESS_PARTNER_AUDIT_AND_IMPLEMENTATION_PLAN.md` with compatibility matrix, conflicts, database risks, target entities, ownership map, permissions, tests, acceptance criteria and `CUS-005` through `CUS-110` phases.
+- Documentation only; no runtime code, schema, permission, UI, configuration or database data changed. Implementation remains paused pending explicit approval.

@@ -37,7 +37,7 @@ The WMS track is temporarily paused after implementing reconciliation, logistics
 See `06_SECURITY.md`, `04_ACCOUNTING.md`, and `TODO.md`. Highest-priority findings include rotating previously committed admin credentials on existing deployments, completing inventory valuation and accounting posting, and establishing production deployment/backup/integration-test controls. Identity escalation, role-delete CSRF, login lockout and core inventory concurrency have been addressed; see the security and inventory documentation.
 
 ## Recommended next steps
-1. Begin `SAL-010` Customer foundation under the accepted `SAL-005` Sales ownership/policy gate, preserving current Customer IDs and Legacy Immediate Sale/POS compatibility.
+1. Approve the documentation-only `CUS-005` Business Partner compatibility gate, then begin `SAL-010`/`CUS-010` Customer foundation while preserving current Customer and Supplier IDs plus Legacy Immediate Sale/POS compatibility.
 2. Complete company switching, invitations and existing-user role assignment management on top of the tenant-owned role model.
 3. Establish an immutable posted-document and double-entry accounting design before adding more ERP features.
 

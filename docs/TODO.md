@@ -46,6 +46,8 @@ The PUR-000 through PUR-280 purchase evolution is implemented. The approved comp
 - [ ] Extend the work procedure catalog to customer management, sales, inventory and accounting as those module requirements are approved.
 - [x] SAL-000 audit the actual Sales, Inventory, Invoicing, Accounting and Payment foundations; document the legacy immediate-sale compatibility boundary and an additive phased implementation plan.
 - [x] SAL-005 approve the Sales context-ownership, invoicing-policy, COGS-timing, currency, reservation and POS boundaries before runtime implementation.
+- [x] CUS-000 audit the Customer and Business Partner requirements against the actual repository and document compatibility, migration safeguards, ownership, tests and a phased implementation plan.
+- [ ] CUS-005 approve the Business Partner compatibility decision, customer-code policy, receivable-account model and archive rules before runtime implementation.
 - [ ] SAL-010 extend the Customer foundation additively while preserving current Customer IDs and Legacy Immediate Sale compatibility.
 - [ ] SAL-020 through SAL-130 implement the approved pricing, quotation, order, reservation, delivery, invoicing, accounting, payment, return, advanced-sales and cutover slices in order after SAL-010.
 

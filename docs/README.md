@@ -12,6 +12,8 @@ The repository-based Sales audit, legacy immediate-sale compatibility boundary, 
 
 The accepted Sales ownership, reservation, delivery, invoicing, COGS, currency and POS decisions are in [SALES_ARCHITECTURE_ALIGNMENT.md](SALES_ARCHITECTURE_ALIGNMENT.md). `SAL-005` is a documentation-only implementation gate; the next runtime slice is `SAL-010` Customer foundation.
 
+The repository-based Customer and Business Partner audit, compatibility matrix, additive migration safeguards, ownership boundaries, test strategy and phased plan are in [CUSTOMER_AND_BUSINESS_PARTNER_AUDIT_AND_IMPLEMENTATION_PLAN.md](CUSTOMER_AND_BUSINESS_PARTNER_AUDIT_AND_IMPLEMENTATION_PLAN.md). `CUS-000` is documentation-only; implementation waits for explicit approval of the `CUS-005` Business Partner decision gate.
+
 ## Start Here
 
 1. [Project context](00_PROJECT_CONTEXT.md)
@@ -40,6 +42,7 @@ The accepted Sales ownership, reservation, delivery, invoicing, COGS, currency a
 | [Purchase architecture alignment](PURCHASE_ARCHITECTURE_ALIGNMENT.md) | Accepted ownership, quantity authority, currency, approval, GRNI and integration gates before purchase implementation |
 | [Sales architecture audit and implementation plan](SALES_ARCHITECTURE_AUDIT_AND_IMPLEMENTATION_PLAN.md) | Repository-based Sales assessment, compatibility strategy, target boundaries, dependencies, risks, tests and ordered vertical slices |
 | [Sales architecture alignment](SALES_ARCHITECTURE_ALIGNMENT.md) | Accepted Sales/Inventory/Invoicing/Accounting ownership, quantity, posting, currency, reservation and POS boundaries |
+| [Customer and Business Partner audit and plan](CUSTOMER_AND_BUSINESS_PARTNER_AUDIT_AND_IMPLEMENTATION_PLAN.md) | Repository-based customer assessment, compatibility matrix, migration risks, target ownership, tests and ordered implementation slices |
 | [Cross-ERP architecture reference](reference/erp-architecture/README.md) | Proposed system-wide charter, module/data maps, workflows, contracts, delivery guidance and test matrix; not implementation evidence |
 
 ## Detailed Documentation
