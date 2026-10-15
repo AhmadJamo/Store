@@ -1,7 +1,7 @@
 # Codebase map
 > Status: IMPLEMENTED  
 > Source of truth: Repository scan  
-> Last reviewed: 2026-10-15
+> Last reviewed: 2026-10-16
 
 ## Solution roots
 | Path | Project/layer | Purpose |
@@ -44,9 +44,9 @@
 
 `docs/reference/erp-saas-foundation/` installs the imported ERP SaaS Foundation Blueprint with provenance hashes, archived non-authoritative source instructions, the original tenant/audit/integrity/DR/approval/configuration/billing/exception/work/import references and an evidence-based MiniStore compatibility overlay. `FND-000` is documentation-only; none of the proposed gaps are implemented by importing the package.
 
-`docs/project-control/` is the consolidated execution-control source for current project status, verified feature inventory, architecture/database/security/business-integrity audits, documentation conflicts, dependencies, one prioritized roadmap, decisions, technical debt, executed test evidence, quick handoff context and exactly one proposed next task. Its `operations/` folder stores secret-free operational evidence for the local Demo credential closure, encrypted backup/restore drill and 112/112 migration/schema reconciliation. It coordinates rather than replaces detailed module plans or historical ADRs.
+`docs/project-control/` is the consolidated execution-control source for current project status, verified feature inventory, architecture/database/security/business-integrity audits, documentation conflicts, dependencies, one prioritized roadmap, decisions, technical debt, executed test evidence, quick handoff context and exactly one proposed next task. Its `operations/` folder stores secret-free operational evidence for the local Demo credential closure, encrypted backup/restore drill, 112/112 reconciliation baseline and implemented audit-event foundation. It coordinates rather than replaces detailed module plans or historical ADRs.
 
-`docs/AUDIT_SECURITY_ARCHITECTURE_AND_IMPLEMENTATION_PLAN.md` and `docs/decisions/2026-10-15-audit-event-v2-boundary.md` are the approved documentation-only `P1-AUD-010` gate. They preserve the legacy `AuditLogs`, keep accounting/inventory/domain histories authoritative, and define an additive semantic `AuditEvent` contract plus redaction, access, retention, integrity, migration, rollback and test gates. No runtime `AuditEvent` type or table exists yet.
+`docs/AUDIT_SECURITY_ARCHITECTURE_AND_IMPLEMENTATION_PLAN.md` and `docs/decisions/2026-10-15-audit-event-v2-boundary.md` define the audit boundary. `P1-AUD-011` implements the additive `AuditEvent` entity/table, Application writer contract, allowlist redactor and keyed integrity service behind a disabled-by-default feature flag. Legacy `AuditLogs` and accounting/inventory/domain histories remain authoritative for their existing facts; service coverage starts at `P1-AUD-012`.
 
 `MiniStore.Web/Guidance/ActionableErrorGuidance.cs` maps recognized, user-resolvable purchase errors to permission-protected setup or master-data destinations. The shared notification partial renders the resulting action for both modal notifications and page validation summaries; ordinary validation errors remain message-only.
 
@@ -149,6 +149,7 @@
 | `Services/Purchases/SupplierProductAssignmentService.cs` | synchronizes many-supplier/many-product selection from both master-data screens through active purchasing-info rows | Suppliers/Products forms and PUR-010. |
 | `Services/Sales/DiscountCalculator.cs` | standalone discount calculation helper; no active consumer found by scan | Unknown. |
 | `Services/Shared/ICurrentUserService.cs` | current-user application contract | Web CurrentUserService. |
+| `Services/Security/AuditEventContracts.cs` | semantic event command plus writer/redactor/integrity contracts | Infrastructure audit-event services; later Application use cases. |
 | `Permissions/{PermissionDefinitions,IPermissionService}.cs` | permission catalogue/contract | seeders/auth/services. |
 | `Tenancy/TenantClaimTypes.cs` | trusted tenant claim names shared by login and request session validation | Web authentication. |
 | `Dtos/Catalog/Products/*.cs` | product request/display plus filtered/sorted/paged catalogue DTOs | catalog services/controllers/views. |
@@ -159,9 +160,10 @@
 ## Infrastructure source map
 | Files | Purpose | Consumers |
 |---|---|---|
-| `Persistence/AppDbContext.cs`, `Persistence/TenantIsolationModel.cs` | EF + Identity DbContext/DbSets and immutable business/control-plane entity classification; applies query/write guards and composite tenant relationship convention | all repositories/authorization. |
+| `Persistence/AppDbContext.cs`, `Persistence/TenantIsolationModel.cs` | EF + Identity DbContext/DbSets and business/control-plane/mixed-scope classification; applies tenant and append-only audit guards plus composite tenant relationship convention | all repositories/authorization. |
 | `Persistence/UnitOfWork.cs` | Serializable transaction wrapper with an explicit in-transaction flush for workflows that need generated document identities before recording dependent facts | purchase/sale/stock/transfer services. |
 | `Persistence/AuditSaveChangesInterceptor.cs` | creates AuditLog rows for tracked changes | registered in Program. |
+| `Services/Security/AuditEvent*.cs`, `Persistence/Configurations/Security/AuditEventConfiguration.cs` | disabled-by-default semantic writer, allowlist redaction, HMAC-SHA256 integrity and mixed Tenant/Platform/System schema | Application audit contract and AppDbContext. |
 | `Persistence/{Identity,Permission}Seeder.cs` | default roles/admin and permissions | Program startup. |
 | `Persistence/Configurations/Tenancy/TenantConfiguration.cs` | tenant identity, membership keys, Identity relationships and slug uniqueness | AppDbContext/migration. |
 | `Persistence/Configurations/<Feature>/*.cs` | per-entity schema mapping grouped by feature | applied automatically by AppDbContext. |

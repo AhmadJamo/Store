@@ -32,4 +32,9 @@ public static class TenantIsolationModel
         typeof(PlatformOperator), typeof(PromotionCode), typeof(PromotionRedemption),
         typeof(BillingCheckoutSession), typeof(CompanyOnboarding)
     }.ToFrozenSet();
+
+    public static IReadOnlySet<Type> MixedScopeTypes { get; } = new Type[]
+    {
+        typeof(AuditEvent)
+    }.ToFrozenSet();
 }

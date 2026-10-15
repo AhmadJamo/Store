@@ -930,3 +930,13 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
 - Defined allowlist redaction, separate successful-transaction versus rejected/failed-security recording paths, permission-separated reading/export, proposed retention classes subject to legal/operational approval and external checkpoints needed before claiming tamper resistance.
 - Added the architecture/implementation plan and ADR with migration, feature-flag rollback, test gates and `P1-AUD-011` through `P1-AUD-016` slices. Advanced the sole proposed task to `P1-AUD-011`.
 - Documentation only; no runtime code, schema, migration, permission, UI, configuration or Demo data changed.
+
+## 2026-10-16 — P1-AUD-011 audit-event foundation
+
+- Added the mixed-scope `AuditEvent` domain model and additive table for Tenant, Platform and System events without changing or backfilling the 707 legacy `AuditLogs` rows.
+- Added an Application-owned writer/redactor/integrity contract and Infrastructure implementation. Writing is disabled by default; enabled use requires a versioned external Base64 key of at least 256 bits.
+- Enforced active-tenant writes, explicit platform/system scope, fail-closed normal reads, append-only DbContext behavior, reason-code-first allowlists, bounded scalar JSON, secret-like field rejection, operation idempotency and versioned HMAC-SHA256 verification.
+- Added migration `20261015173055_AddAuditEventFoundation` with three trusted checks and six enabled indexes, applied it to local Demo as migration 113 and confirmed 0 new events, 707 legacy rows and no pending model change.
+- Extended focused checks to 756 and SQL integration to prove disabled no-op, language-neutral codes, successful atomic commit, transaction rollback, two-tenant isolation, explicit platform bypass, append-only rejection, duplicate-operation rejection, integrity verification after database round-trip and prior-key verification after rotation.
+- No audit reader/export UI or permissions were added, no semantic business service was enrolled and no secret was committed. Advanced the only proposed task to `P1-AUD-012`.
+- Recorded secret-free execution evidence in `project-control/operations/P1-AUD-011-AUDIT-FOUNDATION.md`.

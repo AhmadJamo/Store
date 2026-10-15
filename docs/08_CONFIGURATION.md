@@ -1,10 +1,10 @@
 # Configuration and runtime composition
 > Status: IMPLEMENTED WITH PRODUCTION GAPS  
 > Source of truth: `Program.cs`, `MiniStore.Web/Configuration/*.cs`, project files, appsettings
-> Last reviewed: 2026-09-15
+> Last reviewed: 2026-10-16
 
 ## Configuration
-`MiniStore.Web/appsettings.json` contains `ConnectionStrings:DefaultConnection`, disabled `AdminUser` and `PlatformOwner` bootstrap sections, registration rate-limit values, logging levels and wildcard `AllowedHosts`. No password is stored in current configuration. `PlatformOwner` may explicitly promote a named existing Identity user into the platform allow-list; it is disabled by default. `RateLimiting:Registration:PermitLimit` defaults to 20 and `WindowMinutes` defaults to 60; runtime clamps unsafe values to 5–1000 submissions and 1–1440 minutes.
+`MiniStore.Web/appsettings.json` contains `ConnectionStrings:DefaultConnection`, disabled `AdminUser`, `PlatformOwner` and `AuditEvents` sections, registration rate-limit values, logging levels and wildcard `AllowedHosts`. No password or integrity key is stored in committed configuration. `PlatformOwner` may explicitly promote a named existing Identity user into the platform allow-list; it is disabled by default. `RateLimiting:Registration:PermitLimit` defaults to 20 and `WindowMinutes` defaults to 60; runtime clamps unsafe values to 5–1000 submissions and 1–1440 minutes.
 
 ## Runtime setup
 `Program.cs` only composes five explicit startup concerns. `WebPresentationExtensions` owns MVC, localization, antiforgery, cache and throttling; `PersistenceExtensions` owns DbContext and audit interception; `SecurityExtensions` owns Identity, cookies and authorization; `BusinessServicesExtensions` groups explicit repository/application registrations by feature; and `WebApplicationExtensions` owns startup seeding plus middleware/routes. Tenant-session validation runs after authentication; subscription lifecycle enforcement runs before tenant authorization. Request culture uses the user's cookie then the cached company default. Windows Event Log output is disabled, and startup database initialization failures exit cleanly. Startup runs Identity, permission and configured platform-operator seeders. It does not call `Database.Migrate`; migration deployment remains explicit.
@@ -16,6 +16,7 @@ PUR-240 registers one hosted replenishment scanner. It checks due settings once 
 - Admin bootstrap credentials required only when AdminUser:Enabled is true; provide through protected external configuration.
 - Platform owner username is required only when PlatformOwner:Enabled is true and must already identify an Identity user.
 - Production host names should replace `*`.
+- `AuditEvents:ActiveIntegrityKeyVersion` and a matching entry under `AuditEvents:IntegrityKeys:<version>` containing a Base64 key of at least 256 bits are required from protected external configuration only when `AuditEvents:Enabled=true`. Per-event change/metadata fields and reason text remain denied unless explicitly allowlisted. Rotation adds a new key/version and changes the active version; retained old key entries remain available for verification.
 
 ## Update rules
 DI/configuration changes → update this file, architecture/dependencies/security docs and `AGENTS.md` if operating instructions change.

@@ -1,6 +1,6 @@
 # Add a semantic audit event boundary without reinterpreting legacy audit history
 
-> Status: Accepted for design; runtime implementation pending
+> Status: Accepted; `P1-AUD-011` foundation implemented 2026-10-16
 > Date: 2026-10-15
 
 ## Context
@@ -15,7 +15,8 @@ At the same time, replacing specialized histories with one generic stream would 
 
 ## Decision
 
-Introduce an additive `AuditEvent` boundary in a later implementation slice. Application services emit explicit,
+Introduce an additive `AuditEvent` boundary. The `P1-AUD-011` foundation now provides the entity, schema and writer;
+later Application-service coverage emits explicit,
 semantic events through an Application-owned writer contract; Infrastructure persists and protects them. A single
 table supports Tenant, Platform and System scopes, with a database check constraint coupling scope and nullable
 TenantId. Tenant reads remain fail-closed and platform access uses a separately authorized path.
@@ -32,7 +33,7 @@ context rather than copying their quantities, amounts or lines.
 
 ## Consequences
 
-- Existing 707 Demo audit rows retain their original meaning and identifiers.
+- Existing 707 Demo audit rows retain their original meaning and identifiers; the new table was empty after migration.
 - The migration is expand-only and can be disabled by feature flag without deleting evidence.
 - Application services must name important events explicitly; the EF interceptor is not the long-term authority.
 - Platform-scope support requires dedicated repository/query rules because the ordinary tenant filter is insufficient.

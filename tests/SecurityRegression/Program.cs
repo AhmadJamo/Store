@@ -21,6 +21,7 @@ using MiniStore.Application.DTOs.Suppliers;
 using MiniStore.Application.Services;
 using MiniStore.Infrastructure.Authorization;
 using MiniStore.Infrastructure.Persistence;
+using MiniStore.Infrastructure.Services.Security;
 using MiniStore.Domain.Entities;
 using MiniStore.Domain.Enums;
 using MiniStore.Domain.Interfaces;
@@ -130,12 +131,95 @@ var unclassifiedDomainEntities = db.Model.GetEntityTypes()
     .Select(entity => entity.ClrType)
     .Where(type => type.Assembly == typeof(Product).Assembly &&
                    !TenantIsolationModel.TenantOwnedTypes.Contains(type) &&
-                   !TenantIsolationModel.NonBusinessTypes.Contains(type))
+                   !TenantIsolationModel.NonBusinessTypes.Contains(type) &&
+                   !TenantIsolationModel.MixedScopeTypes.Contains(type))
     .Select(type => type.Name)
     .OrderBy(name => name)
     .ToArray();
 Check(unclassifiedDomainEntities.Length == 0,
     $"Every mapped domain entity must be classified as tenant-owned or shared: {string.Join(", ", unclassifiedDomainEntities)}");
+
+var auditEventMetadata = db.Model.FindEntityType(typeof(AuditEvent))!;
+Check(auditEventMetadata.FindProperty(nameof(AuditEvent.TenantId))?.IsNullable == true &&
+      auditEventMetadata.GetDeclaredQueryFilters().Any(),
+    "Mixed-scope audit events must keep nullable tenant ownership and a fail-closed tenant query filter");
+Check(TenantIsolationModel.MixedScopeTypes.Contains(typeof(AuditEvent)),
+    "AuditEvent must be explicitly classified as a mixed tenant/platform scope type");
+
+var auditOptions = Options.Create(new AuditEventOptions
+{
+    Enabled = true,
+    ActiveIntegrityKeyVersion = "regression-v1",
+    IntegrityKeys = new Dictionary<string, string>
+    {
+        ["regression-v1"] = Convert.ToBase64String(Enumerable.Range(1, 32).Select(value => (byte)value).ToArray())
+    },
+    AllowedChangeFields = new Dictionary<string, string[]>
+    {
+        ["Administration.RoleChanged"] = ["RoleName", "IsActive"]
+    },
+    AllowedMetadataFields = new Dictionary<string, string[]>
+    {
+        ["Administration.RoleChanged"] = ["PermissionCount"]
+    }
+});
+var auditRequest = new AuditEventWriteRequest
+{
+    Scope = AuditEventScope.Tenant,
+    Category = AuditEventCategory.Administration,
+    Severity = AuditEventSeverity.Information,
+    Outcome = AuditEventOutcome.Succeeded,
+    EventType = "Administration.RoleChanged",
+    Action = "Update",
+    ActorType = AuditActorType.User,
+    ActorId = "regression-user",
+    SourceChannel = AuditSourceChannel.Web,
+    CorrelationId = "regression-correlation",
+    ResourceType = "TenantRole",
+    ResourceId = "7",
+    BeforeValues = new Dictionary<string, object?> { ["RoleName"] = "Buyer", ["IsActive"] = true },
+    AfterValues = new Dictionary<string, object?> { ["RoleName"] = "Senior Buyer", ["IsActive"] = true },
+    Metadata = new Dictionary<string, object?> { ["PermissionCount"] = 4 }
+};
+var auditRedactor = new AuditEventRedactor(auditOptions);
+var redactedAudit = auditRedactor.Redact(auditRequest);
+Check(redactedAudit.ChangesJson?.Contains("Senior Buyer", StringComparison.Ordinal) == true &&
+      redactedAudit.MetadataJson?.Contains("PermissionCount", StringComparison.Ordinal) == true,
+    "Audit redaction must preserve only explicitly allowlisted scalar evidence");
+CheckThrows(() => auditRedactor.Redact(auditRequest with
+    {
+        AfterValues = new Dictionary<string, object?> { ["PasswordHash"] = "must-never-appear" }
+    }), "Audit redaction must reject forbidden secret-like fields even when callers submit them");
+CheckThrows(() => auditRedactor.Redact(auditRequest with { ReasonRedacted = "password=must-never-appear" }),
+    "Audit redaction must reject non-allowlisted free-form reason text and prefer reason codes");
+var unsignedAuditEvent = new AuditEvent(
+    Guid.NewGuid(), AuditEventScope.Tenant, 1, DateTime.UtcNow,
+    AuditEventCategory.Administration, AuditEventSeverity.Information, AuditEventOutcome.Succeeded,
+    "Administration.RoleChanged", "Update", AuditActorType.User, "regression-user",
+    AuditSourceChannel.Web, "regression-correlation", "TenantRole", "7",
+    changesRedactedJson: redactedAudit.ChangesJson, metadataRedactedJson: redactedAudit.MetadataJson);
+var auditIntegrity = new AuditEventIntegrityService(auditOptions);
+unsignedAuditEvent.SealIntegrity(auditOptions.Value.ActiveIntegrityKeyVersion, auditIntegrity.CreateHash(unsignedAuditEvent));
+Check(auditIntegrity.Verify(unsignedAuditEvent),
+    "Audit integrity service must verify the canonical HMAC-SHA256 event fingerprint");
+var rotatedAuditIntegrity = new AuditEventIntegrityService(Options.Create(new AuditEventOptions
+{
+    Enabled = true,
+    ActiveIntegrityKeyVersion = "regression-v2",
+    IntegrityKeys = new Dictionary<string, string>
+    {
+        ["regression-v1"] = auditOptions.Value.IntegrityKeys["regression-v1"],
+        ["regression-v2"] = Convert.ToBase64String(Enumerable.Range(65, 32).Select(value => (byte)value).ToArray())
+    }
+}));
+Check(rotatedAuditIntegrity.Verify(unsignedAuditEvent),
+    "Audit integrity verification must retain prior key versions after active-key rotation");
+CheckArgumentThrows(() => new AuditEvent(
+        Guid.NewGuid(), AuditEventScope.Tenant, 1, DateTime.UtcNow,
+        AuditEventCategory.Administration, AuditEventSeverity.Information, AuditEventOutcome.Succeeded,
+        "حدث.تدقيق", "Update", AuditActorType.User, "regression-user",
+        AuditSourceChannel.Web, "regression-correlation", "TenantRole", "7"),
+    "Audit event types must remain language-neutral technical codes");
 
 var unsafeTenantRelationships = db.Model.GetEntityTypes()
     .SelectMany(entity => entity.GetForeignKeys())

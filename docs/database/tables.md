@@ -1,5 +1,5 @@
 # Database tables reference
-> Last reviewed: 2026-10-13
+> Last reviewed: 2026-10-16
 
 - `PurchaseDocumentReversals`: tenant-owned PUR-180 reversal headers with unique reversal number, original type/id and idempotency key; stores reason, actor/time, state and opposite journal number.
 - `LandedCosts.Status`: Posted/Reversed lifecycle added by PUR-180; existing rows are backfilled Posted.
@@ -61,6 +61,7 @@ Schema source is `AppDbContext`, configurations and migrations. Identity's stand
 - **StockTransfers:** identity, transfer number, source/destination warehouse, status, actor/time/reason fields; each item may identify optional exact source and destination storage locations.
 - **Permissions:** global technical permission catalogue selected by tenant-owned role mappings.
 - **AuditLogs:** EntityName, EntityId, Action, UserId, CreatedAt.
+- **AuditEvents:** additive append-only semantic evidence with EventId/schema, Tenant/Platform/System scope, nullable TenantId, actor/channel, outcome/reason, correlation/causation/operation identifiers, resource reference, allowlist-redacted JSON, masked request metadata and versioned HMAC-SHA256 integrity. Normal EF queries expose only the active tenant; platform/system reading requires an explicit future authorized path. The writer is disabled by default and the table is not a financial, inventory or document-history authority.
 - **GeneralSettings / DiscountSettings / InventorySettings:** company settings; GeneralSettings stores the English/Arabic default UI language and InventorySettings stores rowversion-protected defaults for new warehouse operating policies.
 - **DocumentSequences:** tenant-specific numbering for wholesale sales, POS sales, stock transfers and journal entries. Each row stores prefix, suffix, tokenized format, padding length, next number, reset start/period/current period and rowversion.
 

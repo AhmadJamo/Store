@@ -1,5 +1,11 @@
 # Migrations and seeding
-> Last reviewed: 2026-10-13
+> Last reviewed: 2026-10-16
+
+## 20261015173055_AddAuditEventFoundation
+
+Creates the empty additive `AuditEvents` table for Tenant, Platform and System semantic audit evidence. It adds trusted scope/tenant, classification and JSON checks; unique EventId and scope/tenant/OperationId protections; correlation, resource and tenant-time indexes; and a restrictive optional Tenant foreign key. It does not alter or backfill `AuditLogs`. Applied to local `MiniStoreDb` on 2026-10-16 as migration 113; post-apply inspection found 0 new rows, 707 legacy rows, 3 trusted checks and 6 enabled indexes.
+
+The generated Down path may be used only before the feature is enabled and only while `AuditEvents` is proven empty. After the first event exists, rollback means disabling the feature flag and applying a forward fix; deployment procedures must not execute the destructive Down path or delete audit evidence.
 
 ## 20261013024801_AddPurchaseDocumentReversals
 

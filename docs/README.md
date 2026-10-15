@@ -18,7 +18,7 @@ The imported ERP SaaS Foundation Blueprint and its MiniStore-specific capability
 
 The current single project-control view starts at [project-control/PROJECT_CONTEXT.md](project-control/PROJECT_CONTEXT.md). It links the verified status, complete feature inventory, architecture/database/security/business audits, documentation conflicts, dependency map, one master roadmap, decision and debt registers, test baseline and exactly one proposed next task. Detailed module plans remain supporting documents, not competing priority lists.
 
-The approved documentation-only `P1-AUD-010` design is in [AUDIT_SECURITY_ARCHITECTURE_AND_IMPLEMENTATION_PLAN.md](AUDIT_SECURITY_ARCHITECTURE_AND_IMPLEMENTATION_PLAN.md). It separates semantic security/operational audit events from accounting, inventory and document histories, and defines the event contract, redaction, access, proposed retention, tamper-evidence stages, migration/rollback and `P1-AUD-011` through `P1-AUD-016` implementation gates. It is not runtime implementation evidence.
+The approved `P1-AUD-010` design and implemented `P1-AUD-011` foundation are in [AUDIT_SECURITY_ARCHITECTURE_AND_IMPLEMENTATION_PLAN.md](AUDIT_SECURITY_ARCHITECTURE_AND_IMPLEMENTATION_PLAN.md). It separates semantic security/operational audit events from accounting, inventory and document histories, and defines the event contract, redaction, access, proposed retention, tamper-evidence stages, migration/rollback and `P1-AUD-012` through `P1-AUD-016` gates. The foundation is present but disabled by default; semantic service coverage and reading/export remain pending.
 
 ## Start Here
 

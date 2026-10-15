@@ -1,7 +1,7 @@
 # Database
 > Status: IMPLEMENTED  
 > Source of truth: EF Core entities, configurations and migrations  
-> Last reviewed: 2026-10-15
+> Last reviewed: 2026-10-16
 
 PUR-270 migration `20261014205756_AddSupplierPortalAndIntegration` creates tenant-owned `SupplierIntegrationCredentials`, `SupplierPortalAccesses`, `SupplierExternalSubmissions`, `SupplierIntegrationOutboxMessages` and `SupplierExternalAuditEvents`. Credential and portal secrets are stored only as SHA-256 hashes; global unique indexes make cross-tenant token resolution unambiguous. Tenant-composite foreign keys bind suppliers, credentials and outbox messages to one company. Submission channel/identity/idempotency is unique inside the tenant, and outbox idempotency is tenant-unique. The migration is additive, creates no access by default and was applied to local `MiniStoreDb` on 2026-10-15.
 
@@ -87,11 +87,12 @@ All business tables have a required `TenantId` foreign key to `Tenants`. EF quer
 | StockTransferItem locations | Optional source/destination StorageLocation FKs; when selected, Application validates active locations in the matching warehouses. |
 | Permissions | global permission catalogue with unique technical name; company-specific selections live in TenantRolePermissions and restrict permission deletion. |
 | AuditLogs | indexed by CreatedAt and `(EntityName, EntityId)`. |
+| AuditEvents | Additive mixed Tenant/Platform/System semantic events with nullable tenant ownership, redacted bounded JSON, correlation/resource/idempotency indexes and keyed integrity evidence. Normal EF reads expose only the active tenant; rows are append-only through AppDbContext. The feature is disabled and the Demo table is empty. |
 | GeneralSettings / CurrencyExchangeRates / DiscountSettings / InventorySettings | General settings define company currency. Dated exchange rates store company-currency units per one supplier-currency unit with source/audit evidence; other settings retain singleton/concurrency rules. |
 | DocumentSequences | one row per tenant/document type; unique `(TenantId, DocumentType)`; customizable template, prefix, suffix, padding, next/reset counters and period state; rowversion protects settings updates. |
 
 ## Migrations
-The approved `P1-AUD-010` design proposes a new additive `AuditEvents` table rather than changing or backfilling legacy `AuditLogs`. No such table or migration exists yet. The proposed table supports Tenant/Platform/System scope with a scope/TenantId check constraint, redacted bounded JSON, correlation/resource indexes and integrity evidence; implementation is gated as `P1-AUD-011`.
+Migration `20261015173055_AddAuditEventFoundation` creates the additive `AuditEvents` table without changing or backfilling legacy `AuditLogs`. Scope/TenantId, enum-range and valid-JSON checks are trusted; six enabled indexes cover the primary key, EventId, tenant/time, correlation, resource/time and scope/tenant/operation idempotency. It was applied to local `MiniStoreDb` on 2026-10-16 as migration 113; the new table had zero rows and the legacy table remained at 707 rows. The model has no pending changes.
 
 Migration history includes `20261012122525_AddPurchaseOrderDerivedClosure` and `20261012125000_AddSupplierCreditNotes`, both applied to the local `MiniStoreDb`. The latter creates empty tenant-safe credit-note tables without rewriting bills or inventory. Migrations are source-controlled under `MiniStore.Infrastructure/Migrations`; generated designers and the model snapshot are metadata, not separate runtime features.
 

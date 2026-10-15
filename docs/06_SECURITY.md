@@ -1,7 +1,7 @@
 # Security assessment
 > Status: PARTIALLY VERIFIED
 > Source of truth: Static inspection and focused executable regression checks
-> Last reviewed: 2026-10-15
+> Last reviewed: 2026-10-16
 
 WMS-050 reservation writes run inside the existing serializable UnitOfWork. Tenant-scoped source uniqueness, balance and reservation rowversions, positive-quantity constraints and exact-dimension indexes prevent cross-tenant, duplicate and concurrent over-allocation.
 
@@ -59,13 +59,13 @@ Platform login, plan creation and promotion creation forms emit explicit antifor
 - Configure production AllowedHosts; wildcard remains because the deployment hostname is unknown.
 - Supply a production SQL connection string with validated TLS certificates; local development configuration trusts the certificate.
 - Rate limiting is per process and uses the connection IP. Multi-instance/reverse-proxy deployments need trusted proxy configuration and shared edge limits; do not trust arbitrary forwarded headers.
-- The `P1-AUD-010` contract, redaction/access model, proposed retention classes and staged integrity controls are approved in `AUDIT_SECURITY_ARCHITECTURE_AND_IMPLEMENTATION_PLAN.md`, but runtime `AuditEvent` storage, separate SQL identities, external checkpoints and retention enforcement are not implemented. Legacy audit history still lacks before/after values and tamper-evidence.
+- `P1-AUD-011` implements disabled-by-default `AuditEvent` storage, fail-closed tenant/platform scope, allowlist redaction, reason-code-first handling, operation idempotency, append-only context guards and versioned HMAC-SHA256 integrity. Semantic service coverage, reader/export permissions, separate SQL identities, external checkpoints and retention enforcement remain unimplemented. Legacy audit history still lacks before/after values and tamper-evidence.
 - Existing-user role editing, invitations, role data scopes and a before/after authorization audit trail remain future controls.
 - Online payment remains unconfigured. The current checkout is a server-calculated quote followed by explicit platform confirmation; a provider adapter, signed webhook validation, idempotency store and refund/dispute handling are required before accepting card payments.
 - No deployed HTTP/database penetration test performed. Focused tests use a stub Identity manager, real permission evaluators and action metadata.
 
 ## Verification
-Run `dotnet run --project tests/SecurityRegression/SecurityRegression.csproj` and `dotnet build MiniStore.slnx -c Release --no-restore`. The 2026-09-15 run passed 191 focused checks.
+Run `dotnet run --project tests/SecurityRegression/SecurityRegression.csproj` and `dotnet build MiniStore.slnx -c Release --no-restore`. The 2026-10-16 run passed 756 focused checks; SQL integration also passed the audit-event transaction and isolation cases.
 
 ## Company-code login selection (2026-09-15)
 Password validation runs before company selection. A supplied globally unique tenant slug must resolve to an active membership for that user before the TenantId claim is issued. Empty company code retains default-membership behavior. Errors do not expose another company's records.

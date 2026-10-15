@@ -143,6 +143,7 @@ public class AppDbContext
     public DbSet<DocumentSequence> DocumentSequences => Set<DocumentSequence>();
 
     public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
+    public DbSet<AuditEvent> AuditEvents => Set<AuditEvent>();
 
     public DbSet<GeneralSettings> GeneralSettings=> Set<GeneralSettings>();
     public DbSet<CurrencyExchangeRate> CurrencyExchangeRates => Set<CurrencyExchangeRate>();
@@ -208,12 +209,15 @@ public class AppDbContext
             typeof(AppDbContext).Assembly);
 
         ConfigureTenantIsolation(modelBuilder);
+        modelBuilder.Entity<AuditEvent>().HasQueryFilter(auditEvent =>
+            auditEvent.Scope == AuditEventScope.Tenant && auditEvent.TenantId == CurrentTenantId);
     }
 
     public override int SaveChanges(bool acceptAllChangesOnSuccess)
     {
         SynchronizeInventoryBalancesAsync().GetAwaiter().GetResult();
         ApplyTenantBoundary();
+        ApplyAuditEventBoundary();
         return base.SaveChanges(acceptAllChangesOnSuccess);
     }
 
@@ -228,7 +232,30 @@ public class AppDbContext
     {
         await SynchronizeInventoryBalancesAsync(cancellationToken);
         ApplyTenantBoundary();
+        ApplyAuditEventBoundary();
         return await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+    }
+
+    private void ApplyAuditEventBoundary()
+    {
+        foreach (var entry in ChangeTracker.Entries<AuditEvent>()
+                     .Where(entry => entry.State is EntityState.Added or EntityState.Modified or EntityState.Deleted))
+        {
+            if (entry.State != EntityState.Added)
+                throw new InvalidOperationException("Audit events are append-only and cannot be changed or deleted.");
+            if (string.IsNullOrWhiteSpace(entry.Entity.IntegrityHash))
+                throw new InvalidOperationException("Audit events must be integrity-sealed before persistence.");
+
+            if (CurrentTenantId > 0)
+            {
+                if (entry.Entity.Scope != AuditEventScope.Tenant || entry.Entity.TenantId != CurrentTenantId)
+                    throw new InvalidOperationException("Tenant execution may only append audit events for the active tenant.");
+            }
+            else if (entry.Entity.Scope == AuditEventScope.Tenant || entry.Entity.TenantId.HasValue)
+            {
+                throw new InvalidOperationException("Tenant audit events require an active matching tenant.");
+            }
+        }
     }
 
     private async Task SynchronizeInventoryBalancesAsync(CancellationToken cancellationToken = default)

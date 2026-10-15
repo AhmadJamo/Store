@@ -1,5 +1,6 @@
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using MiniStore.Application.DTOs.Inventory.Reconciliation;
 using MiniStore.Application.DTOs.Inventory.Adjustments;
 using MiniStore.Application.DTOs.Inventory.Tracking;
@@ -10,10 +11,17 @@ using MiniStore.Domain.Entities;
 using MiniStore.Domain.Interfaces;
 using MiniStore.Infrastructure.Persistence;
 using MiniStore.Infrastructure.Repositories;
+using MiniStore.Infrastructure.Services.Security;
 
 if (args.Contains("--inspect-current", StringComparer.OrdinalIgnoreCase))
 {
     await InspectCurrentDatabaseAsync();
+    return;
+}
+
+if (args.Contains("--inspect-audit", StringComparer.OrdinalIgnoreCase))
+{
+    await InspectAuditDatabaseAsync();
     return;
 }
 
@@ -65,6 +73,8 @@ try
         "TENANT-TWO",
         connectionString);
 
+    await VerifyAuditEventFoundationAsync(tenantOneId, tenantTwoId, connectionString);
+
     await VerifyTenantIsolationAndReconciliationAsync(
         tenantOneId,
         tenantOneFixture.ProductId,
@@ -110,7 +120,7 @@ try
     await VerifyInventoryBalanceProjectionAsync(tenantOneId, tenantOneFixture.ProductId, expectedOnHand: 2m, connectionString);
     await VerifyOpeningTrackingAllocationAsync(tenantOneId, tenantOneFixture.ProductId, tenantOneFixture.WarehouseId, connectionString);
 
-    Console.WriteLine("Passed SQL integration checks: tenant isolation, reconciliation, balances, replenishment purchase-request source concurrency, 3-product/2-supplier split awards, receipt, vendor-bill and supplier-payment concurrency, controlled payment reversal and retry, three-way matching override evidence, GRNI posting and clearing, purchase accounting reconciliation, payable settlement, receipt-based supplier returns, landed-cost valuation, purchasing analytics, idempotent barcode receipt drafts, adjustment posting, tracked operations, quarantine and recall.");
+    Console.WriteLine("Passed SQL integration checks: audit-event rollback, isolation, append-only and integrity; tenant isolation, reconciliation, balances, replenishment purchase-request source concurrency, 3-product/2-supplier split awards, receipt, vendor-bill and supplier-payment concurrency, controlled payment reversal and retry, three-way matching override evidence, GRNI posting and clearing, purchase accounting reconciliation, payable settlement, receipt-based supplier returns, landed-cost valuation, purchasing analytics, idempotent barcode receipt drafts, adjustment posting, tracked operations, quarantine and recall.");
 }
 finally
 {
@@ -123,6 +133,162 @@ static DbContextOptions<AppDbContext> CreateOptions(string connectionString) =>
         .UseSqlServer(connectionString)
         .EnableDetailedErrors()
         .Options;
+
+static async Task VerifyAuditEventFoundationAsync(int tenantOneId, int tenantTwoId, string connectionString)
+{
+    var configured = new AuditEventOptions
+    {
+        Enabled = true,
+        ActiveIntegrityKeyVersion = "sql-test-v1",
+        IntegrityKeys = new Dictionary<string, string>
+        {
+            ["sql-test-v1"] = Convert.ToBase64String(Enumerable.Range(33, 32).Select(value => (byte)value).ToArray())
+        },
+        AllowedChangeFields = new Dictionary<string, string[]>
+        {
+            ["Administration.RoleChanged"] = ["RoleName", "IsActive"]
+        },
+        AllowedMetadataFields = new Dictionary<string, string[]>
+        {
+            ["Administration.RoleChanged"] = ["PermissionCount"]
+        }
+    };
+    var options = Options.Create(configured);
+
+    static AuditEventWriteRequest Request(string correlationId, string operationId) => new()
+    {
+        Scope = AuditEventScope.Tenant,
+        Category = AuditEventCategory.Administration,
+        Severity = AuditEventSeverity.Information,
+        Outcome = AuditEventOutcome.Succeeded,
+        EventType = "Administration.RoleChanged",
+        Action = "Update",
+        ActorType = AuditActorType.User,
+        SourceChannel = AuditSourceChannel.Web,
+        CorrelationId = correlationId,
+        OperationId = operationId,
+        ResourceType = "TenantRole",
+        ResourceId = "7",
+        BeforeValues = new Dictionary<string, object?> { ["RoleName"] = "Buyer", ["IsActive"] = true },
+        AfterValues = new Dictionary<string, object?> { ["RoleName"] = "Senior Buyer", ["IsActive"] = true },
+        Metadata = new Dictionary<string, object?> { ["PermissionCount"] = 4 }
+    };
+
+    await using (var disabledContext = new AppDbContext(CreateOptions(connectionString), new FixedTenantContext(tenantOneId)))
+    {
+        var disabledOptions = Options.Create(new AuditEventOptions());
+        var disabledWriter = new AuditEventWriter(disabledContext, new FixedTenantContext(tenantOneId),
+            new FixedCurrentUser("disabled-user"), new AuditEventRedactor(disabledOptions),
+            new AuditEventIntegrityService(disabledOptions), disabledOptions);
+        if (await disabledWriter.RecordAsync(Request("disabled", "disabled")) is not null ||
+            disabledContext.ChangeTracker.Entries<AuditEvent>().Any())
+            throw new InvalidOperationException("Disabled audit-event writing must be a no-op and must not require a key.");
+    }
+
+    await using (var context = new AppDbContext(CreateOptions(connectionString), new FixedTenantContext(tenantOneId)))
+    {
+        var integrity = new AuditEventIntegrityService(options);
+        var writer = new AuditEventWriter(context, new FixedTenantContext(tenantOneId),
+            new FixedCurrentUser("audit-user"), new AuditEventRedactor(options), integrity, options);
+        try
+        {
+            await writer.RecordAsync(Request("tenant-platform-attempt", "tenant-platform-attempt") with
+            {
+                Scope = AuditEventScope.Platform,
+                SourceChannel = AuditSourceChannel.Platform
+            });
+            throw new InvalidOperationException("Tenant execution must not create platform audit evidence.");
+        }
+        catch (InvalidOperationException exception) when (exception.Message.Contains("non-tenant execution scope", StringComparison.Ordinal))
+        {
+        }
+        await new UnitOfWork(context).ExecuteInTransactionAsync(() =>
+            writer.RecordAsync(Request("audit-success", "audit-operation-1")).AsTask());
+        var stored = await context.AuditEvents.AsNoTracking().SingleAsync(x => x.CorrelationId == "audit-success");
+        if (stored.TenantId != tenantOneId || stored.ActorId != "audit-user" || !integrity.Verify(stored) ||
+            stored.ChangesRedactedJson?.Contains("Senior Buyer", StringComparison.Ordinal) != true)
+            throw new InvalidOperationException("Committed tenant audit event must retain scoped redacted evidence and a valid integrity hash.");
+
+        context.AuditEvents.Remove(await context.AuditEvents.SingleAsync(x => x.Id == stored.Id));
+        try
+        {
+            await context.SaveChangesAsync();
+            throw new InvalidOperationException("Audit events must reject deletion.");
+        }
+        catch (InvalidOperationException exception) when (exception.Message.Contains("append-only", StringComparison.Ordinal))
+        {
+            context.ChangeTracker.Clear();
+        }
+    }
+
+    await using (var tenantTwoContext = new AppDbContext(CreateOptions(connectionString), new FixedTenantContext(tenantTwoId)))
+    {
+        var writer = new AuditEventWriter(tenantTwoContext, new FixedTenantContext(tenantTwoId),
+            new FixedCurrentUser("tenant-two-audit-user"), new AuditEventRedactor(options),
+            new AuditEventIntegrityService(options), options);
+        await new UnitOfWork(tenantTwoContext).ExecuteInTransactionAsync(() =>
+            writer.RecordAsync(Request("audit-tenant-two", "audit-operation-1")).AsTask());
+    }
+
+    await using (var rollbackContext = new AppDbContext(CreateOptions(connectionString), new FixedTenantContext(tenantOneId)))
+    {
+        var writer = new AuditEventWriter(rollbackContext, new FixedTenantContext(tenantOneId),
+            new FixedCurrentUser("audit-user"), new AuditEventRedactor(options),
+            new AuditEventIntegrityService(options), options);
+        try
+        {
+            await new UnitOfWork(rollbackContext).ExecuteInTransactionAsync(async () =>
+            {
+                await writer.RecordAsync(Request("audit-rollback", "audit-operation-rollback"));
+                throw new InvalidOperationException("forced rollback");
+            });
+        }
+        catch (InvalidOperationException exception) when (exception.Message == "forced rollback")
+        {
+        }
+    }
+
+    await using (var tenantOne = new AppDbContext(CreateOptions(connectionString), new FixedTenantContext(tenantOneId)))
+    await using (var tenantTwo = new AppDbContext(CreateOptions(connectionString), new FixedTenantContext(tenantTwoId)))
+    {
+        if (await tenantOne.AuditEvents.CountAsync() != 1 || await tenantTwo.AuditEvents.CountAsync() != 1 ||
+            !await tenantTwo.AuditEvents.AnyAsync(x => x.CorrelationId == "audit-tenant-two") ||
+            await tenantOne.AuditEvents.AnyAsync(x => x.CorrelationId == "audit-rollback"))
+            throw new InvalidOperationException("Audit events must roll back atomically, isolate tenants and permit the same operation identity in different tenants.");
+    }
+
+    await using (var platformContext = new AppDbContext(CreateOptions(connectionString), new FixedTenantContext(null)))
+    {
+        var writer = new AuditEventWriter(platformContext, new FixedTenantContext(null),
+            new FixedCurrentUser("platform-operator"), new AuditEventRedactor(options),
+            new AuditEventIntegrityService(options), options);
+        var platformRequest = Request("platform-audit", "platform-operation") with
+        {
+            Scope = AuditEventScope.Platform,
+            SourceChannel = AuditSourceChannel.Platform
+        };
+        await new UnitOfWork(platformContext).ExecuteInTransactionAsync(() => writer.RecordAsync(platformRequest).AsTask());
+        if (await platformContext.AuditEvents.AnyAsync() ||
+            await platformContext.AuditEvents.IgnoreQueryFilters().CountAsync() != 3)
+            throw new InvalidOperationException("Platform audit events must require an explicit filter bypass and remain invisible to normal tenant queries.");
+    }
+
+    await using (var duplicateContext = new AppDbContext(CreateOptions(connectionString), new FixedTenantContext(tenantOneId)))
+    {
+        var writer = new AuditEventWriter(duplicateContext, new FixedTenantContext(tenantOneId),
+            new FixedCurrentUser("audit-user"), new AuditEventRedactor(options),
+            new AuditEventIntegrityService(options), options);
+        await writer.RecordAsync(Request("audit-duplicate", "audit-operation-1"));
+        try
+        {
+            await duplicateContext.SaveChangesAsync();
+            throw new InvalidOperationException("Duplicate audit operation identity must be rejected.");
+        }
+        catch (DbUpdateException)
+        {
+        }
+    }
+}
 
 static async Task InspectCurrentDatabaseAsync()
 {
@@ -161,6 +327,29 @@ static async Task InspectCurrentDatabaseAsync()
                 $"issues={string.Join(',', row.Issues)}");
         }
     }
+}
+
+static async Task InspectAuditDatabaseAsync()
+{
+    var configuredConnection = Environment.GetEnvironmentVariable("MINISTORE_AUDIT_INSPECT_CONNECTION") ??
+        "Server=localhost;Database=MiniStoreDb;Trusted_Connection=True;TrustServerCertificate=True;";
+    var builder = new SqlConnectionStringBuilder(configuredConnection) { Encrypt = false };
+    await using var connection = new SqlConnection(builder.ConnectionString);
+    await connection.OpenAsync();
+    await using var command = connection.CreateCommand();
+    command.CommandText = """
+        SELECT
+            (SELECT COUNT_BIG(*) FROM dbo.AuditLogs) AS LegacyRows,
+            (SELECT COUNT_BIG(*) FROM dbo.AuditEvents) AS EventRows,
+            (SELECT COUNT_BIG(*) FROM dbo.__EFMigrationsHistory) AS MigrationRows,
+            (SELECT COUNT_BIG(*) FROM sys.check_constraints WHERE parent_object_id = OBJECT_ID(N'dbo.AuditEvents') AND is_disabled = 0 AND is_not_trusted = 0) AS TrustedChecks,
+            (SELECT COUNT_BIG(*) FROM sys.indexes WHERE object_id = OBJECT_ID(N'dbo.AuditEvents') AND is_disabled = 0 AND index_id > 0) AS EnabledIndexes;
+        """;
+    await using var reader = await command.ExecuteReaderAsync();
+    if (!await reader.ReadAsync()) throw new InvalidOperationException("Audit schema inspection returned no result.");
+    Console.WriteLine(
+        $"Audit schema: legacyRows={reader.GetInt64(0)}, eventRows={reader.GetInt64(1)}, " +
+        $"migrations={reader.GetInt64(2)}, trustedChecks={reader.GetInt64(3)}, enabledIndexes={reader.GetInt64(4)}.");
 }
 
 static async Task<(int ProductId, int StockId, int MeasurementUnitId, int WarehouseId)> SeedTenantAsync(
@@ -1252,7 +1441,7 @@ static async Task VerifyConcurrentLastUnitIssueAsync(
         throw new InvalidOperationException("The concurrent last-unit fixture must end at zero, never negative.");
 }
 
-file sealed class FixedTenantContext(int tenantId) : ITenantContext
+file sealed class FixedTenantContext(int? tenantId) : ITenantContext
 {
     public int? TenantId { get; } = tenantId;
 }

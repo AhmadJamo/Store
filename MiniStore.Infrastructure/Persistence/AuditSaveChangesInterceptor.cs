@@ -43,6 +43,7 @@ public class AuditSaveChangesInterceptor : SaveChangesInterceptor
             .Entries()
             .Where(entry =>
                 entry.Entity is not AuditLog &&
+                entry.Entity is not AuditEvent &&
                 entry.Entity is not Tenant &&
                 entry.State is EntityState.Added or
                     EntityState.Modified or
