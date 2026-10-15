@@ -10,6 +10,7 @@ public class SubscriptionAccessMiddleware(RequestDelegate next)
         var path = context.Request.Path;
         var bypass = path.StartsWithSegments("/subscription") || path.StartsWithSegments("/Account") ||
             path.StartsWithSegments("/platform") || path.StartsWithSegments("/pricing") || path == "/" ||
+            path.StartsWithSegments("/supplier-portal") || path.StartsWithSegments("/api/supplier") ||
             path.StartsWithSegments("/css") || path.StartsWithSegments("/js") || path.StartsWithSegments("/lib");
         if (!bypass && context.User.Identity?.IsAuthenticated == true && context.User.HasClaim(x => x.Type == TenantClaimTypes.TenantId))
         {

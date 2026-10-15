@@ -27,6 +27,7 @@ public static class BusinessServicesExtensions
         services.AddScoped<ICurrentUserService, CurrentUserService>();
         services.AddSingleton<HttpTenantContext>();
         services.AddSingleton<ITenantContext>(provider => provider.GetRequiredService<HttpTenantContext>());
+        services.AddSingleton<ITenantScope>(provider => provider.GetRequiredService<HttpTenantContext>());
         services.AddScoped<ITenantMembershipRepository, TenantMembershipRepository>();
         services.AddScoped<ITenantAuthorizationRepository, TenantAuthorizationRepository>();
         services.AddScoped<ITenantRoleRepository, TenantRoleRepository>();
@@ -158,6 +159,12 @@ public static class BusinessServicesExtensions
         services.AddScoped<PurchaseOrderService>();
         services.AddScoped<ISupplierCommunicationRepository, SupplierCommunicationRepository>();
         services.AddScoped<SupplierCommunicationService>();
+        services.AddScoped<ISupplierIntegrationRepository, SupplierIntegrationRepository>();
+        services.AddScoped<SupplierIntegrationService>();
+        services.AddScoped<SupplierUblService>();
+        services.AddSingleton<ISupplierIntegrationSecretProtector, SupplierIntegrationSecretProtector>();
+        services.AddHttpClient("SupplierOutbox",client=>client.Timeout=TimeSpan.FromSeconds(30)).ConfigurePrimaryHttpMessageHandler(SupplierOutboxWorker.CreateHandler);
+        services.AddHostedService<SupplierOutboxWorker>();
         services.AddScoped<IPurchaseServiceAcceptanceRepository, PurchaseServiceAcceptanceRepository>();
         services.AddScoped<PurchaseServiceAcceptanceService>();
         services.AddScoped<IGoodsReceiptRepository, GoodsReceiptRepository>();

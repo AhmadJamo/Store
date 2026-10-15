@@ -87,6 +87,7 @@ public static class NavigationDefinitions
             ,new NavigationItem("Purchase document reversals","bi-arrow-counterclockwise","PurchaseDocumentReversals","Index","PurchaseDocumentReversals.View",155)
             ,new NavigationItem("Purchase analytics","bi-graph-up-arrow","PurchaseAnalytics","Index","PurchaseAnalytics.View",160)
             ,new NavigationItem("Purchase accounting reconciliation","bi-clipboard2-data","PurchaseAccountingReconciliation","Index","PurchaseAccountingReconciliation.View",170)
+            ,new NavigationItem("Supplier portal and integrations","bi-cloud-arrow-left-right","SupplierIntegrations","Index","SupplierIntegrations.View",180)
         ),
 
         new NavigationGroup(

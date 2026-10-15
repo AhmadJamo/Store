@@ -16,7 +16,7 @@ public static class WorkflowNextStepGuidance
         "PurchaseApprovalRules", "PurchaseSourcing", "SupplierQuotations", "PurchaseOrders",
         "GoodsReceipts", "GoodsReceiptReturns", "PurchaseServiceAcceptances", "VendorBills", "SupplierCreditNotes", "SupplierPayments",
         "PurchaseAgreements", "PurchaseTemplates", "LandedCosts", "PurchaseDocumentReversals", "PurchaseAccountingReconciliation",
-        "PurchaseReplenishment", "SupplierCommunications"
+        "PurchaseReplenishment", "SupplierCommunications", "SupplierIntegrations"
     };
 
     private static readonly HashSet<string> InventoryControllers = new(StringComparer.OrdinalIgnoreCase)
@@ -123,6 +123,16 @@ public static class WorkflowNextStepGuidance
             return new("VendorBills", "Details", "Review invoice extraction suggestion",
                 "Compare the suggested invoice header with the attachment, then apply or reject it explicitly.",
                 "VendorBills.View", Routes(("id", Route("id"))));
+
+        if (Matches(message, localize, "Purchase order queued for reliable external delivery."))
+            return new("SupplierIntegrations", "Index", "Monitor reliable external delivery",
+                "Review delivery attempts and retry only failed messages; the same idempotency key prevents duplicate processing.",
+                "SupplierIntegrations.View", Routes());
+
+        if (Matches(message, localize, "Outbox delivery queued for retry."))
+            return new("SupplierIntegrations", "Index", "Review outbox delivery status",
+                "The background sender will retry the message without creating another business document.",
+                "SupplierIntegrations.View", Routes());
 
         if (Matches(message, localize, "Direct delivery configured."))
             return new("PurchaseOrders", "Details", "Review and approve purchase order",
@@ -321,6 +331,7 @@ public static class WorkflowNextStepGuidance
         "PurchaseApprovalRules" => "PurchaseApprovalRules.View",
         "PurchaseTemplates" => "PurchaseTemplates.View",
         "SupplierCommunications" => "SupplierCommunications.View",
+        "SupplierIntegrations" => "SupplierIntegrations.View",
         _ => $"{controller}.View"
     };
 

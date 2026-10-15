@@ -1,5 +1,15 @@
 # AI Work Log
 
+# 2026-10-15 — PUR-270 supplier portal and external integration
+
+- Added expiring/revocable private supplier portal links for invited RFQs and supplier Purchase Orders, including quotation submission, delivery-date confirmation and review-only delivery notices.
+- Added supplier-bound API keys stored only as hashes, exact operation scopes, separate rate limits and idempotent write commands that reject key reuse with changed content.
+- Added safe UBL 2.1 Purchase Order export plus Order Response and Invoice intake; invoice documents remain immutable review evidence and cannot post stock or accounting.
+- Added a tenant-owned reliable outbox with atomic leases, stable idempotency keys, bounded retry, delivery/error status and manual retry. HTTPS callbacks reject redirects, proxies and private/local network targets.
+- Added external submission payload/fingerprint review, security audit evidence, responsive bilingual screens, dedicated internal permissions and navigation.
+- Replaced completed portal-link and Purchase Order queue actions with active/queued state, and linked missing callback errors directly to integration settings.
+- Generated and locally applied migration `20261014205756_AddSupplierPortalAndIntegration`; Debug and Release builds completed with zero warnings/errors, all 741 focused checks passed, SQL integration completed successfully and the EF model has no pending changes.
+
 # 2026-10-14 — PUR-260 supplier documents and communication
 
 - Added bilingual RFQ and Purchase Order email preparation with tenant-owned message snapshots, downloadable attachments and document-level communication history.

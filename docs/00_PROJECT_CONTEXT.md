@@ -1,7 +1,7 @@
 # MiniStore project context
 > Status: PARTIALLY IMPLEMENTED  
 > Source of truth: Code  
-> Last reviewed: 2026-10-14
+> Last reviewed: 2026-10-15
 
 ## Project identity
 MiniStore is a server-rendered ASP.NET Core MVC store-management application. It targets .NET 10, uses EF Core 10 with SQL Server, ASP.NET Core Identity, Razor views, and a Domain/Application/Infrastructure/Web layered solution. No public API project is present.
@@ -9,7 +9,7 @@ MiniStore is a server-rendered ASP.NET Core MVC store-management application. It
 ## Current development stage
 The repository implements an operational slice for catalog, warehouses, stock, suppliers, purchases, sales (wholesale and POS), configurable discounts, stock transfers, users/roles, settings and shared-database SaaS tenancy. Public signup, pricing, plans, trials, subscription access, promotion codes and a separate platform-owner control center are implemented. Product classification, generated internal codes, advanced catalog search, managed measurement units, immutable prepared-product recipes, automatic ingredient consumption and controlled kitchen-negative stock are also implemented. It is not yet a complete accounting ERP and does not yet integrate an external payment provider.
 
-The WMS track is temporarily paused after implementing reconciliation, logistics, movements, balances, reservations, counts, lot/serial execution, removal/putaway policies, replenishment transfer/purchase-demand planning, inventory insights and safe scan workflows. The additive procure-to-pay evolution is implemented through PUR-260. Supplier RFQ/PO email preparation, evidence-based communication tracking, delivery-date confirmations, Vendor Bill attachments and review-first local extraction suggestions are now available. No message is presented as sent/delivered without recorded evidence, and extracted invoice data is never applied or posted automatically. The original Purchase workflow remains available as Legacy Direct Purchase.
+The WMS track is temporarily paused after implementing reconciliation, logistics, movements, balances, reservations, counts, lot/serial execution, removal/putaway policies, replenishment transfer/purchase-demand planning, inventory insights and safe scan workflows. The additive procure-to-pay evolution is implemented through PUR-270. Suppliers can use expiring private portal links or scoped API credentials to read their documents, submit quotations, confirm dates and provide delivery/invoice evidence. UBL order export, order-confirmation/invoice intake, idempotent external writes, security audit and reliable HTTPS outbox delivery are implemented without granting external stock or accounting authority. The original Purchase workflow remains available as Legacy Direct Purchase.
 
 ## Status classification
 - IMPLEMENTED: catalog, warehouses, suppliers, stock balances/movements, purchases, sales, transfer workflow, Identity login, role-permission checks, audit-log rows, Razor UI.
@@ -37,7 +37,7 @@ The WMS track is temporarily paused after implementing reconciliation, logistics
 See `06_SECURITY.md`, `04_ACCOUNTING.md`, and `TODO.md`. Highest-priority findings include rotating previously committed admin credentials on existing deployments, completing inventory valuation and accounting posting, and establishing production deployment/backup/integration-test controls. Identity escalation, role-delete CSRF, login lockout and core inventory concurrency have been addressed; see the security and inventory documentation.
 
 ## Recommended next steps
-1. Continue PUR-270 with the supplier portal, secure external API/EDI/UBL exchange and reliable outbox delivery on top of PUR-260's communication evidence boundary.
+1. Continue PUR-280 with advanced purchasing analytics, KPI definitions, final procure-to-pay acceptance and a documented Legacy Direct Purchase decision.
 2. Complete company switching, invitations and existing-user role assignment management on top of the tenant-owned role model.
 3. Establish an immutable posted-document and double-entry accounting design before adding more ERP features.
 

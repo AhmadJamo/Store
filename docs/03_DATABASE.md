@@ -1,7 +1,9 @@
 # Database
 > Status: IMPLEMENTED  
 > Source of truth: EF Core entities, configurations and migrations  
-> Last reviewed: 2026-10-14
+> Last reviewed: 2026-10-15
+
+PUR-270 migration `20261014205756_AddSupplierPortalAndIntegration` creates tenant-owned `SupplierIntegrationCredentials`, `SupplierPortalAccesses`, `SupplierExternalSubmissions`, `SupplierIntegrationOutboxMessages` and `SupplierExternalAuditEvents`. Credential and portal secrets are stored only as SHA-256 hashes; global unique indexes make cross-tenant token resolution unambiguous. Tenant-composite foreign keys bind suppliers, credentials and outbox messages to one company. Submission channel/identity/idempotency is unique inside the tenant, and outbox idempotency is tenant-unique. The migration is additive, creates no access by default and was applied to local `MiniStoreDb` on 2026-10-15.
 
 PUR-260 migration `20261014202715_AddSupplierCommunicationAndInvoiceExtraction` creates tenant-owned `SupplierCommunications`, activities and attachments; `PurchaseOrderSupplierConfirmations`; and `VendorBillExtractionSuggestions`. Composite tenant foreign keys bind every supplier/document/attachment relationship to the active company. Communication rows snapshot recipient, language, subject and body; activities preserve actual status evidence. Extraction rows preserve source attachment, raw text, suggestions, confidence and explicit review evidence. The migration adds the Vendor Bill attachment tenant alternate key needed for the safe suggestion relationship and was applied to the local `MiniStoreDb` on 2026-10-14.
 

@@ -1,0 +1,4 @@
+@model MiniStore.Application.DTOs.Purchases.CreatedSupplierPortalAccessDto
+@inject Microsoft.Extensions.Localization.IStringLocalizer<MiniStore.Web.SharedResource> Localizer
+@{ViewData["Title"]=Localizer["Supplier portal link created"];}
+<div class="card card-body mx-auto" style="max-width:760px"><h2>@Localizer["Supplier portal link created"]</h2><div class="alert alert-warning">@Localizer["Copy this private link now. The token is stored only as a secure hash and cannot be shown again."]</div><label class="form-label">@Localizer["Private supplier portal link"]</label><textarea class="form-control" rows="3" readonly>@ViewBag.PortalUrl</textarea><div class="mt-2">@Localizer["Expires at"] @Model.ExpiresAtUtc.ToLocalTime()</div><a asp-action="Index" class="btn btn-primary mt-3 align-self-start">@Localizer["Return to integrations"]</a></div>

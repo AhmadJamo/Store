@@ -4,7 +4,7 @@ using MiniStore.Domain.Interfaces;
 
 namespace MiniStore.Web.Services;
 
-public class HttpTenantContext(IHttpContextAccessor accessor) : ITenantContext
+public class HttpTenantContext(IHttpContextAccessor accessor) : ITenantContext, ITenantScope
 {
     private static readonly AsyncLocal<int?> AmbientTenant = new();
 

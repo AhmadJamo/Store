@@ -1,7 +1,7 @@
 # Security assessment
 > Status: PARTIALLY VERIFIED
 > Source of truth: Static inspection and focused executable regression checks
-> Last reviewed: 2026-10-14
+> Last reviewed: 2026-10-15
 
 WMS-050 reservation writes run inside the existing serializable UnitOfWork. Tenant-scoped source uniqueness, balance and reservation rowversions, positive-quantity constraints and exact-dimension indexes prevent cross-tenant, duplicate and concurrent over-allocation.
 
@@ -38,6 +38,8 @@ PUR-250A separates receipt capture, quality inspection and storage permissions. 
 PUR-250B separates fulfillment configuration and delivery-evidence permissions. The Application service resolves product Expense accounts and the tenant-loaded order/line rather than trusting client policy or account values, enforces Draft-only route selection, confirmed-only evidence and cumulative quantity caps. Tenant-composite relationships isolate allocations/evidence. The Goods Receipt service rejects direct-delivery orders even through a crafted URL.
 
 PUR-260 keeps supplier communication and invoice extraction inside tenant-owned aggregates and separate permissions. Preparing a mailto message never asserts Sent or Delivered; delivery requires an evidence reference and replies require a note. Files are name-sanitized and capped at ten per record and 5 MB each. Invoice extraction remains a Pending Review suggestion tied to the exact bill attachment; only an explicit Apply action can change the Draft header, and it cannot approve or post the bill. Supplier delivery confirmations preserve old/new dates and a required reference.
+
+PUR-270 external access uses 256-bit random secrets shown once and persisted only as SHA-256 hashes. Portal capabilities expire, can be revoked and bind one supplier to one RFQ or Purchase Order. API keys are supplier-bound, expiring/deactivatable and exact-scope checked; write endpoints require a maximum-100-character idempotency key, preserve the request fingerprint and reject reuse with different content. Portal and API have independent fixed-window limits. Portal responses disable caching/referrers/indexing. UBL parsing caps input at 2 MB and prohibits DTD/external resolution. Callback delivery accepts only HTTPS public hostnames, disables redirects and proxies, resolves and pins a public address at connection time, and rejects loopback/private/link-local networks. The outbox atomically claims one message for five minutes, keeps a stable idempotency key and caps automatic attempts at ten. External endpoints cannot mutate inventory or post accounting; inbound invoices remain evidence. Tenant filters, composite foreign keys, global secret-hash uniqueness and focused regression checks protect cross-company isolation.
 
 Vendor Bill entry, approval and posting are separated by `VendorBills.Create`, `VendorBills.Approve` and `VendorBills.Post`; match override remains an additional reason-required permission and never implies posting. Attachments inherit the bill tenant boundary, downloads require View, names are reduced to their final segment, count is capped at ten and each file at 5 MB. Supplier invoice identity is rechecked before approval and posting, while rowversion rejects stale commands.
 

@@ -135,3 +135,11 @@ The Index and mutation actions enforce these policies server-side. Permission se
 - `VendorBills.ManageAttachments` adds bounded attachments to a Draft Vendor Bill.
 - `VendorBills.ReviewExtraction` creates, applies or rejects review-first extraction suggestions; it grants neither approval nor posting.
 
+# PUR-270 supplier portal and integration permissions
+
+- `SupplierIntegrations.View` protects credentials metadata, outbox state, original inbound payloads and security audit evidence. It never reveals stored API or portal secrets because only hashes are retained.
+- `SupplierIntegrations.Manage` creates/deactivates scoped API credentials and creates/revokes expiring portal links.
+- `SupplierIntegrations.Queue` queues an approved/confirmed Purchase Order to a matching supplier callback through the reliable outbox.
+- `SupplierIntegrations.Retry` retries an undelivered outbox message without changing its business identity or idempotency key.
+- Portal/API access is not an internal role permission: each request must independently prove a valid supplier-specific token/key and required external scope.
+

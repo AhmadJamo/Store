@@ -49,7 +49,7 @@ public static class WebPresentationExtensions
         services.AddRateLimiter(options =>
         {
             options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
-            options.OnRejected = (context, _) =>
+            options.OnRejected = async (context, _) =>
             {
                 var retryAfterSeconds = context.Lease.TryGetMetadata(
                     System.Threading.RateLimiting.MetadataName.RetryAfter, out var retryAfter)
@@ -59,13 +59,24 @@ public static class WebPresentationExtensions
                 context.HttpContext.Response.Headers.RetryAfter = retryAfterSeconds.ToString(
                     System.Globalization.CultureInfo.InvariantCulture);
                 var path = context.HttpContext.Request.Path;
+                if (path.StartsWithSegments("/api/supplier"))
+                {
+                    context.HttpContext.Response.StatusCode=StatusCodes.Status429TooManyRequests;
+                    await context.HttpContext.Response.WriteAsJsonAsync(new{error="Supplier API rate limit exceeded.",retryAfterSeconds});
+                    return;
+                }
+                if (path.StartsWithSegments("/supplier-portal"))
+                {
+                    context.HttpContext.Response.StatusCode=StatusCodes.Status429TooManyRequests;
+                    await context.HttpContext.Response.WriteAsync("Supplier portal rate limit exceeded. Please retry later.");
+                    return;
+                }
                 var target = path.StartsWithSegments("/Account/Register")
                     ? $"/Account/Register?rateLimited=true&retryAfterSeconds={retryAfterSeconds}"
                     : path.StartsWithSegments("/platform/account/login")
                         ? $"/platform/account/login?rateLimited=true&retryAfterSeconds={retryAfterSeconds}"
                         : $"/Account/Login?rateLimited=true&retryAfterSeconds={retryAfterSeconds}";
                 context.HttpContext.Response.Redirect(target);
-                return ValueTask.CompletedTask;
             };
 
             options.AddPolicy("login", context =>
@@ -86,6 +97,14 @@ public static class WebPresentationExtensions
                         Window = TimeSpan.FromMinutes(registrationWindowMinutes),
                         QueueLimit = 0
                     }));
+            options.AddPolicy("supplier-portal", context =>
+                System.Threading.RateLimiting.RateLimitPartition.GetFixedWindowLimiter(
+                    Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(System.Text.Encoding.UTF8.GetBytes(context.Request.RouteValues["token"]?.ToString()??context.Connection.RemoteIpAddress?.ToString()??"unknown"))),
+                    _=>new System.Threading.RateLimiting.FixedWindowRateLimiterOptions{PermitLimit=30,Window=TimeSpan.FromMinutes(1),QueueLimit=0}));
+            options.AddPolicy("supplier-api", context =>
+                System.Threading.RateLimiting.RateLimitPartition.GetFixedWindowLimiter(
+                    Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(System.Text.Encoding.UTF8.GetBytes(context.Request.Headers["X-Supplier-Api-Key"].ToString() is {Length:>0} key?key:context.Connection.RemoteIpAddress?.ToString()??"unknown"))),
+                    _=>new System.Threading.RateLimiting.FixedWindowRateLimiterOptions{PermitLimit=60,Window=TimeSpan.FromMinutes(1),QueueLimit=0}));
         });
     }
 }

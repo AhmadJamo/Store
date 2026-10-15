@@ -1571,6 +1571,17 @@ Check(purchaseOrder.ExpectedDate==priorExpectedDate.AddDays(2)&&purchaseOrder.Su
 var supplierCommunicationEvidence=new SupplierCommunication(SupplierCommunicationDocumentType.PurchaseOrder,1,5,"PO-1","supplier@example.com","ar-JO","أمر شراء","يرجى تأكيد الأمر","buyer");
 supplierCommunicationEvidence.AddAttachment(new SupplierCommunicationAttachment("order.pdf","application/pdf",[1,2,3],"buyer"));supplierCommunicationEvidence.RecordActivity(SupplierCommunicationStatus.Sent,DateTime.UtcNow,"Sent from Outlook","MSG-1","buyer");supplierCommunicationEvidence.RecordActivity(SupplierCommunicationStatus.Delivered,DateTime.UtcNow,"Delivery receipt","DEL-1","buyer");
 Check(supplierCommunicationEvidence.Status==SupplierCommunicationStatus.Delivered&&supplierCommunicationEvidence.Activities.Count==2&&supplierCommunicationEvidence.Attachments.Count==1&&db.Model.FindEntityType(typeof(SupplierCommunication))!.FindProperty("TenantId") is{IsNullable:false}&&db.Model.FindEntityType(typeof(SupplierCommunicationActivity))!.FindProperty("TenantId") is{IsNullable:false},"Supplier communication must distinguish prepared, sent and evidenced delivery in a tenant-owned trail");
+var integrationCredential=new SupplierIntegrationCredential(5,"Supplier system","msk_prefix","A".PadLeft(64,'A'),"rfq.read po.read quotation.write","https://supplier.example.com/callback","protected",DateTime.UtcNow.AddDays(30),"admin");
+Check(integrationCredential.IsUsable(DateTime.UtcNow)&&integrationCredential.HasScope("quotation.write")&&!integrationCredential.HasScope("invoice.write"),"Supplier API credentials must enforce active expiry and exact scopes");
+integrationCredential.Deactivate();Check(!integrationCredential.IsUsable(DateTime.UtcNow),"Deactivated supplier API credentials must stop authorizing access");
+var portalAccess=new SupplierPortalAccess(5,SupplierExternalDocumentType.Rfq,303,"RFX-303","B".PadLeft(64,'B'),DateTime.UtcNow.AddDays(7),"buyer");portalAccess.RecordAccess();portalAccess.Revoke();
+Check(!portalAccess.IsUsable(DateTime.UtcNow)&&portalAccess.LastAccessedAtUtc.HasValue,"Supplier portal links must be revocable and retain access evidence");
+var externalSubmission=new SupplierExternalSubmission(5,SupplierExternalChannel.Api,8,SupplierExternalSubmissionType.DeliveryNotice,SupplierExternalDocumentType.PurchaseOrder,1,"retry-key","C".PadLeft(64,'C'),"{}","DN-1","PurchaseOrder",1,"api:8");
+var outboxEvidence=new SupplierIntegrationOutbox(8,"ubl.purchase-order","PurchaseOrder",1,"https://supplier.example.com/callback","protected","<Order />","po:1:ubl:8","buyer");outboxEvidence.StartAttempt();outboxEvidence.MarkFailed("temporary");outboxEvidence.RetryNow();outboxEvidence.StartAttempt();outboxEvidence.MarkDelivered();
+Check(outboxEvidence.Status==SupplierOutboxStatus.Delivered&&outboxEvidence.AttemptCount==2&&externalSubmission.IdempotencyKey=="retry-key","Reliable outbox retries must preserve one message identity and external submissions must retain idempotency evidence");
+Check(db.Model.FindEntityType(typeof(SupplierIntegrationCredential))!.FindProperty("TenantId") is{IsNullable:false}&&db.Model.FindEntityType(typeof(SupplierPortalAccess))!.FindProperty("TenantId") is{IsNullable:false}&&db.Model.FindEntityType(typeof(SupplierExternalSubmission))!.FindProperty("TenantId") is{IsNullable:false}&&db.Model.FindEntityType(typeof(SupplierIntegrationOutbox))!.FindProperty("TenantId") is{IsNullable:false},"Supplier portal, API, idempotency and outbox evidence must remain tenant owned");
+var ublService=new SupplierUblService();var orderXml=ublService.CreatePurchaseOrder(dropshipOrder,"Supplier A");var invoiceUbl=ublService.ParseInvoice("<Invoice xmlns=\"urn:oasis:names:specification:ubl:schema:xsd:Invoice-2\" xmlns:cbc=\"urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2\" xmlns:cac=\"urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2\"><cbc:ID>INV-UBL-1</cbc:ID><cbc:IssueDate>2026-10-14</cbc:IssueDate><cbc:DocumentCurrencyCode>JOD</cbc:DocumentCurrencyCode><cac:OrderReference><cbc:ID>PO-DIRECT-1</cbc:ID></cac:OrderReference><cac:LegalMonetaryTotal><cbc:PayableAmount currencyID=\"JOD\">25.00</cbc:PayableAmount></cac:LegalMonetaryTotal></Invoice>");var confirmationUbl=ublService.ParseOrderConfirmation("<OrderResponse xmlns=\"urn:oasis:names:specification:ubl:schema:xsd:OrderResponse-2\" xmlns:cbc=\"urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2\" xmlns:cac=\"urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2\"><cbc:ID>CONF-1</cbc:ID><cac:OrderReference><cbc:ID>PO-DIRECT-1</cbc:ID></cac:OrderReference><cac:PromisedDeliveryPeriod><cbc:EndDate>2026-10-20</cbc:EndDate></cac:PromisedDeliveryPeriod></OrderResponse>");
+Check(orderXml.Contains("UBLVersionID")&&invoiceUbl.InvoiceNumber=="INV-UBL-1"&&invoiceUbl.PayableAmount==25m&&confirmationUbl.ConfirmationReference=="CONF-1"&&confirmationUbl.ConfirmedDeliveryDate==new DateOnly(2026,10,20),"UBL exchange must generate purchase orders and safely parse invoice and order-confirmation evidence");
 var purchaseOrderController = typeof(PurchaseOrdersController);
 Check(purchaseOrderController.GetMethod(nameof(PurchaseOrdersController.CloseRemaining))!
           .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
@@ -1888,6 +1899,9 @@ Check(vendorBillController.GetMethod(nameof(VendorBillsController.Index))!
       vendorBillController.GetMethod(nameof(VendorBillsController.Cancel))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == $"{PermissionAuthorizeAttribute.PolicyPrefix}VendorBills.Cancel",
     "Vendor bill visibility, entry, approval, posting and match override must use separate server-side permissions");
 var communicationController=typeof(SupplierCommunicationsController);Check(communicationController.GetMethod(nameof(SupplierCommunicationsController.Prepare))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy==$"{PermissionAuthorizeAttribute.PolicyPrefix}SupplierCommunications.Prepare"&&communicationController.GetMethod(nameof(SupplierCommunicationsController.RecordActivity))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy==$"{PermissionAuthorizeAttribute.PolicyPrefix}SupplierCommunications.RecordActivity"&&vendorBillController.GetMethod(nameof(VendorBillsController.ReviewExtraction))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy==$"{PermissionAuthorizeAttribute.PolicyPrefix}VendorBills.ReviewExtraction","Supplier communication and extraction review must use distinct server-side permissions");
+var integrationsController=typeof(SupplierIntegrationsController);var apiController=typeof(SupplierIntegrationApiController);var portalController=typeof(SupplierPortalController);
+Check(integrationsController.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy==$"{PermissionAuthorizeAttribute.PolicyPrefix}SupplierIntegrations.View"&&integrationsController.GetMethod(nameof(SupplierIntegrationsController.CreateCredential))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy==$"{PermissionAuthorizeAttribute.PolicyPrefix}SupplierIntegrations.Manage"&&integrationsController.GetMethod(nameof(SupplierIntegrationsController.QueuePurchaseOrder))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy==$"{PermissionAuthorizeAttribute.PolicyPrefix}SupplierIntegrations.Queue","Supplier integration administration and outbound queueing must use distinct internal permissions");
+Check(apiController.GetCustomAttribute<ApiControllerAttribute>() is not null&&apiController.GetCustomAttribute<AllowAnonymousAttribute>() is not null&&apiController.GetCustomAttribute<IgnoreAntiforgeryTokenAttribute>() is not null&&portalController.GetCustomAttribute<AllowAnonymousAttribute>() is not null,"Supplier API and portal must expose explicit anonymous boundaries while internal administration remains permission protected");
 var supplierPayment = new SupplierPayment("SPY-000001", 5, 7, DateOnly.FromDateTime(DateTime.Today), "jod", "BANK-77", null, "cashier");
 supplierPayment.AddLine(new SupplierPaymentLine(1, 4m, "VB-000001", "SUP-001"));
 supplierPayment.AddLine(new SupplierPaymentLine(2, 3m, "VB-000002", "SUP-002"));
@@ -1978,6 +1992,10 @@ Check(ActionableErrorGuidance.Resolve(
           "Add an email address to the supplier before preparing email communication.",
           "SupplierCommunications") is { Controller: "Suppliers", Action: "Index", RequiredPermission: "Suppliers.Edit" },
     "Missing supplier email errors must link to supplier management");
+Check(ActionableErrorGuidance.Resolve(
+          "Configure an HTTPS callback URL before queueing external delivery.",
+          "PurchaseOrders") is { Controller: "SupplierIntegrations", Action: "Index", RequiredPermission: "SupplierIntegrations.Manage" },
+    "Missing supplier callback errors must link to supplier integration settings");
 var purchaseNextStep = WorkflowNextStepGuidance.Resolve(
     "Purchase request approved.",
     "PurchaseRequests",
@@ -2023,6 +2041,12 @@ var extractionNextStep = WorkflowNextStepGuidance.Resolve(
 Check(extractionNextStep is { Controller: "VendorBills", Action: "Details", RequiredPermission: "VendorBills.View" } &&
       extractionNextStep.RouteValues.GetValueOrDefault("id") == "92",
     "Invoice extraction must guide the user to explicit review without applying data automatically");
+var integrationOutboxNextStep=WorkflowNextStepGuidance.Resolve(
+    "Purchase order queued for reliable external delivery.",
+    "SupplierIntegrations",
+    new Dictionary<string,string?>());
+Check(integrationOutboxNextStep is{Controller:"SupplierIntegrations",Action:"Index",RequiredPermission:"SupplierIntegrations.View"},
+    "Queued supplier integration documents must guide users to reliable delivery evidence");
 var replenishmentNextStep = WorkflowNextStepGuidance.Resolve(
     "Replenishment planning run completed.",
     "PurchaseReplenishment",

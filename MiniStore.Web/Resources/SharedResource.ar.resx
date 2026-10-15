@@ -2321,4 +2321,111 @@
   <data name="Invoice extraction is available only while the vendor bill is a draft." xml:space="preserve"><value>استخراج بيانات الفاتورة متاح فقط عندما تكون فاتورة المورد مسودة.</value></data>
   <data name="This attachment already has an extraction suggestion awaiting review." xml:space="preserve"><value>يوجد لهذا المرفق اقتراح استخراج بانتظار المراجعة.</value></data>
   <data name="Review and confirm the supplier invoice number and bill date before applying the suggestion." xml:space="preserve"><value>راجع وأكد رقم فاتورة المورد وتاريخها قبل تطبيق الاقتراح.</value></data>
+  <data name="Supplier portal and integrations" xml:space="preserve"><value>بوابة المورد والتكاملات</value></data>
+  <data name="Manage supplier API access, callbacks, reliable delivery and external audit evidence." xml:space="preserve"><value>إدارة وصول واجهة المورد البرمجية وعناوين الاستقبال والإرسال الموثوق وأدلة التدقيق الخارجية.</value></data>
+  <data name="Create supplier integration credential" xml:space="preserve"><value>إنشاء بيانات دخول لتكامل المورد</value></data>
+  <data name="Integration name" xml:space="preserve"><value>اسم التكامل</value></data>
+  <data name="HTTPS callback URL" xml:space="preserve"><value>رابط الاستقبال الآمن</value></data>
+  <data name="Callback bearer token" xml:space="preserve"><value>رمز حماية عنوان الاستقبال</value></data>
+  <data name="Expires at" xml:space="preserve"><value>ينتهي في</value></data>
+  <data name="Integration permissions" xml:space="preserve"><value>صلاحيات التكامل</value></data>
+  <data name="Create credential" xml:space="preserve"><value>إنشاء بيانات الدخول</value></data>
+  <data name="Supplier API credentials" xml:space="preserve"><value>بيانات دخول واجهة المورد البرمجية</value></data>
+  <data name="Key prefix" xml:space="preserve"><value>بداية المفتاح</value></data>
+  <data name="Callback" xml:space="preserve"><value>عنوان الاستقبال</value></data>
+  <data name="Last used" xml:space="preserve"><value>آخر استخدام</value></data>
+  <data name="Reliable delivery outbox" xml:space="preserve"><value>سجل الإرسال الموثوق</value></data>
+  <data name="No external deliveries have been queued." xml:space="preserve"><value>لم تُجدول عمليات إرسال خارجية بعد.</value></data>
+  <data name="Attempts" xml:space="preserve"><value>المحاولات</value></data>
+  <data name="Delivered at" xml:space="preserve"><value>تم التسليم في</value></data>
+  <data name="Retry now" xml:space="preserve"><value>إعادة المحاولة الآن</value></data>
+  <data name="External submission audit" xml:space="preserve"><value>تدقيق مدخلات المورد الخارجية</value></data>
+  <data name="No external supplier submissions have been received." xml:space="preserve"><value>لم تصل مدخلات خارجية من الموردين بعد.</value></data>
+  <data name="External security audit" xml:space="preserve"><value>سجل الأمان الخارجي</value></data>
+  <data name="No external security events have been recorded." xml:space="preserve"><value>لم تُسجل أحداث أمان خارجية بعد.</value></data>
+  <data name="Review submission evidence" xml:space="preserve"><value>مراجعة دليل الإدخال</value></data>
+  <data name="External supplier submission" xml:space="preserve"><value>إدخال خارجي من المورد</value></data>
+  <data name="Download original payload" xml:space="preserve"><value>تنزيل المحتوى الأصلي</value></data>
+  <data name="Submission type" xml:space="preserve"><value>نوع الإدخال</value></data>
+  <data name="Channel" xml:space="preserve"><value>القناة</value></data>
+  <data name="Source document" xml:space="preserve"><value>المستند المصدر</value></data>
+  <data name="Received at" xml:space="preserve"><value>وقت الاستلام</value></data>
+  <data name="Idempotency key" xml:space="preserve"><value>مفتاح منع التكرار</value></data>
+  <data name="Request fingerprint" xml:space="preserve"><value>بصمة الطلب</value></data>
+  <data name="Original payload for review" xml:space="preserve"><value>المحتوى الأصلي للمراجعة</value></data>
+  <data name="Supplier API credential created" xml:space="preserve"><value>تم إنشاء بيانات دخول واجهة المورد البرمجية</value></data>
+  <data name="Copy this API key now. It is stored only as a secure hash and cannot be shown again." xml:space="preserve"><value>انسخ مفتاح الواجهة البرمجية الآن. يُحفظ كبصمة آمنة فقط ولا يمكن عرضه مرة أخرى.</value></data>
+  <data name="API key" xml:space="preserve"><value>مفتاح الواجهة البرمجية</value></data>
+  <data name="Return to integrations" xml:space="preserve"><value>العودة إلى التكاملات</value></data>
+  <data name="Supplier portal link created" xml:space="preserve"><value>تم إنشاء رابط بوابة المورد</value></data>
+  <data name="Copy this private link now. The token is stored only as a secure hash and cannot be shown again." xml:space="preserve"><value>انسخ هذا الرابط الخاص الآن. يُحفظ الرمز كبصمة آمنة فقط ولا يمكن عرضه مرة أخرى.</value></data>
+  <data name="Private supplier portal link" xml:space="preserve"><value>رابط بوابة المورد الخاص</value></data>
+  <data name="Supplier portal link unavailable" xml:space="preserve"><value>رابط بوابة المورد غير متاح</value></data>
+  <data name="This private link is invalid, expired or revoked. Contact the purchasing team for a new link." xml:space="preserve"><value>هذا الرابط الخاص غير صحيح أو منتهي أو ملغى. تواصل مع فريق المشتريات للحصول على رابط جديد.</value></data>
+  <data name="Supplier portal" xml:space="preserve"><value>بوابة المورد</value></data>
+  <data name="Document lines" xml:space="preserve"><value>بنود المستند</value></data>
+  <data name="Submit supplier quotation" xml:space="preserve"><value>تقديم عرض سعر المورد</value></data>
+  <data name="Quotation submission completed" xml:space="preserve"><value>تم تقديم عرض السعر</value></data>
+  <data name="Confirm purchase order delivery date" xml:space="preserve"><value>تأكيد موعد توريد أمر الشراء</value></data>
+  <data name="Confirmation reference" xml:space="preserve"><value>مرجع التأكيد</value></data>
+  <data name="Submit delivery notice" xml:space="preserve"><value>تقديم إشعار تسليم</value></data>
+  <data name="Delivery reference" xml:space="preserve"><value>مرجع التسليم</value></data>
+  <data name="Submit for internal review" xml:space="preserve"><value>إرسال للمراجعة الداخلية</value></data>
+  <data name="Create private supplier portal link" xml:space="preserve"><value>إنشاء رابط خاص لبوابة المورد</value></data>
+  <data name="Active portal access" xml:space="preserve"><value>وصول البوابة فعال</value></data>
+  <data name="Revoked" xml:space="preserve"><value>ملغى</value></data>
+  <data name="Revoke" xml:space="preserve"><value>إلغاء</value></data>
+  <data name="Supplier portal and electronic exchange" xml:space="preserve"><value>بوابة المورد والتبادل الإلكتروني</value></data>
+  <data name="Download UBL purchase order" xml:space="preserve"><value>تنزيل أمر الشراء بالصيغة الموحدة لوثائق الأعمال</value></data>
+  <data name="Queue reliable UBL delivery" xml:space="preserve"><value>جدولة إرسال موثوق بالصيغة الموحدة لوثائق الأعمال</value></data>
+  <data name="rfq.read" xml:space="preserve"><value>قراءة طلبات عروض الأسعار</value></data>
+  <data name="quotation.write" xml:space="preserve"><value>تقديم عروض الأسعار</value></data>
+  <data name="po.read" xml:space="preserve"><value>قراءة أوامر الشراء</value></data>
+  <data name="confirmation.write" xml:space="preserve"><value>تأكيد أوامر الشراء</value></data>
+  <data name="delivery.write" xml:space="preserve"><value>تقديم إشعارات التسليم</value></data>
+  <data name="invoice.write" xml:space="preserve"><value>تقديم الفواتير الإلكترونية</value></data>
+  <data name="Api" xml:space="preserve"><value>واجهة برمجية</value></data>
+  <data name="Portal" xml:space="preserve"><value>بوابة المورد</value></data>
+  <data name="Quotation" xml:space="preserve"><value>عرض سعر</value></data>
+  <data name="OrderConfirmation" xml:space="preserve"><value>تأكيد أمر شراء</value></data>
+  <data name="DeliveryNotice" xml:space="preserve"><value>إشعار تسليم</value></data>
+  <data name="InvoiceUbl" xml:space="preserve"><value>فاتورة بالصيغة الموحدة لوثائق الأعمال</value></data>
+  <data name="Processing" xml:space="preserve"><value>قيد الإرسال</value></data>
+  <data name="Delivered" xml:space="preserve"><value>تم التسليم</value></data>
+  <data name="Supplier integration credential deactivated." xml:space="preserve"><value>تم تعطيل بيانات دخول تكامل المورد.</value></data>
+  <data name="Supplier portal access revoked." xml:space="preserve"><value>تم إلغاء وصول بوابة المورد.</value></data>
+  <data name="Purchase order queued for reliable external delivery." xml:space="preserve"><value>تمت جدولة أمر الشراء للإرسال الخارجي الموثوق.</value></data>
+  <data name="Outbox delivery queued for retry." xml:space="preserve"><value>تمت جدولة إعادة محاولة الإرسال.</value></data>
+  <data name="This supplier submission was already received safely." xml:space="preserve"><value>تم استلام هذا الإدخال من المورد سابقًا بأمان.</value></data>
+  <data name="Supplier quotation submitted successfully." xml:space="preserve"><value>تم تقديم عرض سعر المورد بنجاح.</value></data>
+  <data name="Purchase order confirmation submitted successfully." xml:space="preserve"><value>تم تقديم تأكيد أمر الشراء بنجاح.</value></data>
+  <data name="Delivery notice submitted for internal review." xml:space="preserve"><value>تم تقديم إشعار التسليم للمراجعة الداخلية.</value></data>
+  <data name="Supplier must be active before integration access is created." xml:space="preserve"><value>يجب أن يكون المورد فعالًا قبل إنشاء وصول التكامل.</value></data>
+  <data name="Select only supported supplier integration permissions." xml:space="preserve"><value>اختر فقط صلاحيات تكامل المورد المدعومة.</value></data>
+  <data name="Callback URL must use HTTPS and a public hostname." xml:space="preserve"><value>يجب أن يستخدم عنوان الاستقبال اتصالًا آمنًا واسم نطاق عام.</value></data>
+  <data name="Supplier integration credential was not found." xml:space="preserve"><value>لم يتم العثور على بيانات دخول تكامل المورد.</value></data>
+  <data name="Supplier integration credential was modified by another user. Reload and try again." xml:space="preserve"><value>عدّل مستخدم آخر بيانات دخول التكامل. أعد تحميل الصفحة وحاول مجددًا.</value></data>
+  <data name="Portal access validity must be between 1 and 90 days." xml:space="preserve"><value>يجب أن تكون صلاحية وصول البوابة بين يوم واحد و90 يومًا.</value></data>
+  <data name="Supplier must be active before portal access is created." xml:space="preserve"><value>يجب أن يكون المورد فعالًا قبل إنشاء وصول البوابة.</value></data>
+  <data name="Portal access supports RFQs and purchase orders only." xml:space="preserve"><value>يدعم وصول البوابة طلبات عروض الأسعار وأوامر الشراء فقط.</value></data>
+  <data name="Supplier portal access was not found." xml:space="preserve"><value>لم يتم العثور على وصول بوابة المورد.</value></data>
+  <data name="Supplier integration credential is inactive or expired." xml:space="preserve"><value>بيانات دخول تكامل المورد معطلة أو منتهية.</value></data>
+  <data name="Configure an HTTPS callback URL before queueing external delivery." xml:space="preserve"><value>هيّئ عنوان استقبال آمنًا قبل جدولة الإرسال الخارجي.</value></data>
+  <data name="Open supplier integrations" xml:space="preserve"><value>فتح إعدادات تكامل الموردين</value></data>
+  <data name="Reliable UBL delivery already queued" xml:space="preserve"><value>تمت جدولة الإرسال الموثوق بالصيغة الموحدة لوثائق الأعمال</value></data>
+  <data name="Integration credential supplier does not match the purchase order supplier." xml:space="preserve"><value>مورد بيانات دخول التكامل لا يطابق مورد أمر الشراء.</value></data>
+  <data name="Only approved or confirmed purchase orders can be queued." xml:space="preserve"><value>يمكن جدولة أوامر الشراء المعتمدة أو المؤكدة فقط.</value></data>
+  <data name="This purchase order is already queued for this integration destination." xml:space="preserve"><value>أمر الشراء مجدول مسبقًا لوجهة التكامل هذه.</value></data>
+  <data name="Outbox message was not found." xml:space="preserve"><value>لم يتم العثور على رسالة الإرسال الموثوق.</value></data>
+  <data name="This RFQ is not open for this supplier." xml:space="preserve"><value>طلب عرض السعر غير مفتوح لهذا المورد.</value></data>
+  <data name="Idempotency-Key is required and cannot exceed 100 characters." xml:space="preserve"><value>مفتاح منع التكرار مطلوب ولا يمكن أن يتجاوز 100 حرف.</value></data>
+  <data name="Idempotency key was already used with different content." xml:space="preserve"><value>استُخدم مفتاح منع التكرار سابقًا مع محتوى مختلف.</value></data>
+  <data name="Delivery notices require an approved or confirmed purchase order." xml:space="preserve"><value>تتطلب إشعارات التسليم أمر شراء معتمدًا أو مؤكدًا.</value></data>
+  <data name="UBL invoice purchase order reference does not match the requested order." xml:space="preserve"><value>مرجع أمر الشراء في الفاتورة الموحدة لا يطابق الأمر المطلوب.</value></data>
+  <data name="UBL invoice currency does not match the purchase order currency." xml:space="preserve"><value>عملة الفاتورة الموحدة لا تطابق عملة أمر الشراء.</value></data>
+  <data name="UBL order confirmation reference does not match the requested order." xml:space="preserve"><value>مرجع أمر الشراء في التأكيد الموحد لا يطابق الأمر المطلوب.</value></data>
+  <data name="Monitor reliable external delivery" xml:space="preserve"><value>متابعة الإرسال الخارجي الموثوق</value></data>
+  <data name="Review delivery attempts and retry only failed messages; the same idempotency key prevents duplicate processing." xml:space="preserve"><value>راجع محاولات الإرسال وأعد فقط الرسائل الفاشلة؛ يمنع مفتاح منع التكرار معالجة المستند مرتين.</value></data>
+  <data name="Review outbox delivery status" xml:space="preserve"><value>مراجعة حالة سجل الإرسال</value></data>
+  <data name="The background sender will retry the message without creating another business document." xml:space="preserve"><value>سيعيد المرسل الخلفي المحاولة دون إنشاء مستند تجاري آخر.</value></data>
 </root>

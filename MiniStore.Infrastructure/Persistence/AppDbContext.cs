@@ -92,6 +92,11 @@ public class AppDbContext
     public DbSet<SupplierCommunication> SupplierCommunications => Set<SupplierCommunication>();
     public DbSet<SupplierCommunicationActivity> SupplierCommunicationActivities => Set<SupplierCommunicationActivity>();
     public DbSet<SupplierCommunicationAttachment> SupplierCommunicationAttachments => Set<SupplierCommunicationAttachment>();
+    public DbSet<SupplierIntegrationCredential> SupplierIntegrationCredentials => Set<SupplierIntegrationCredential>();
+    public DbSet<SupplierPortalAccess> SupplierPortalAccesses => Set<SupplierPortalAccess>();
+    public DbSet<SupplierExternalSubmission> SupplierExternalSubmissions => Set<SupplierExternalSubmission>();
+    public DbSet<SupplierIntegrationOutbox> SupplierIntegrationOutboxMessages => Set<SupplierIntegrationOutbox>();
+    public DbSet<SupplierExternalAuditEvent> SupplierExternalAuditEvents => Set<SupplierExternalAuditEvent>();
     public DbSet<GoodsReceipt> GoodsReceipts => Set<GoodsReceipt>();
     public DbSet<GoodsReceiptLine> GoodsReceiptLines => Set<GoodsReceiptLine>();
     public DbSet<GoodsReceiptScan> GoodsReceiptScans => Set<GoodsReceiptScan>();

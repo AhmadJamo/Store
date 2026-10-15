@@ -1,7 +1,7 @@
 # Codebase map
 > Status: IMPLEMENTED  
 > Source of truth: Repository scan  
-> Last reviewed: 2026-10-14
+> Last reviewed: 2026-10-15
 
 ## Solution roots
 | Path | Project/layer | Purpose |
@@ -26,7 +26,7 @@
 
 `docs/PURCHASE_MANAGEMENT_EVOLUTION_PLAN.md` is the approved procure-to-pay evolution plan. It records the legacy direct-purchase boundary, capability gaps, target aggregates, inventory/accounting integration contracts, additive migration safeguards and PUR-000 through PUR-150 vertical slices. Planned purchase types are not implemented unless the matching slice is explicitly marked complete.
 
-`docs/PURCHASE_COMPLETION_ROADMAP_AR_EN.md` is the approved Arabic/English post-PUR-150 purchase plan. PUR-160 through PUR-260 are implemented; PUR-270 supplier portal and external integration is next.
+`docs/PURCHASE_COMPLETION_ROADMAP_AR_EN.md` is the approved Arabic/English post-PUR-150 purchase plan. PUR-160 through PUR-270 are implemented; PUR-280 analytics and legacy retirement is next.
 
 `docs/decisions/2026-10-14-immutable-supplier-price-snapshots.md` fixes the append-only full-snapshot authority for supplier-price history across manual, bulk, CSV and quantity-break changes.
 
@@ -52,6 +52,7 @@
 | `Entities/Purchases/{SupplierQuotation,PurchaseQuotationAward}.cs` | supplier-specific frozen quote header/lines plus tenant-owned line/quantity award allocations with immutable supplier, price, currency, lead-time and reason evidence | PUR-040 and PUR-210 quotation workflows. |
 | `Entities/Purchases/PurchaseOrder.cs` | awarded-quotation Purchase Order, immutable commercial lines, demand ownership, Warehouse/Dropship fulfillment, customer-delivery evidence and lifecycle history | PUR-050/PUR-165/PUR-250B. |
 | `Entities/Purchases/SupplierCommunication.cs` | tenant-owned RFQ/PO bilingual message snapshot, attachments and evidence-based delivery/reply/follow-up history | PUR-260 supplier communication screens. |
+| `Entities/Purchases/SupplierIntegration.cs` | scoped API credentials, expiring portal capabilities, idempotent inbound submissions, reliable outbox state and external security audit | PUR-270 portal/API/UBL integration. |
 | `Entities/Purchases/PurchaseAgreement.cs` | awarded-quotation agreements with frozen commercial terms and capped release lines, plus repeat-order templates that generate traced demand | PUR-120 agreement/template workflow. |
 | `Entities/Purchases/LandedCost.cs` | immutable receipt-linked landed-cost components and allocation/valuation snapshots | PUR-130 receipt valuation adjustment. |
 | `Entities/Purchases/GoodsReceipt.cs` | GRN header/line receipt evidence, frozen PO/receiving-route snapshots, quality outcomes and optional inventory-tracking inputs | PUR-060/PUR-250A receipt workflow. |
@@ -83,6 +84,7 @@
 | `Services/Purchases/SupplierQuotationService.cs` | validates invited responses, freezes/submits quotations, compares company-currency totals and atomically records exact per-line supplier quantity allocations | Supplier Quotation screens and PUR-210. |
 | `Services/Purchases/{PurchaseOrder,PurchaseOrderLifecycle}Service.cs` | creates supplier-grouped orders, retains demand allocation, configures direct delivery, records delivery evidence and derives receipt/delivery/service/bill progress and closure | Purchase Order screens, PUR-165/PUR-210/PUR-250B. |
 | `Dtos/Purchases/SupplierCommunicationDtos.cs`, `Services/Purchases/SupplierCommunicationService.cs` | prepares bilingual RFQ/PO mailto content and records only user-evidenced send, delivery, reply and follow-up states | Supplier Communication controller/views and PUR-260. |
+| `Dtos/Purchases/SupplierIntegrationDtos.cs`, `Services/Purchases/{SupplierIntegration,SupplierUbl}Service.cs` | creates hash-only external access, enforces supplier scope/idempotency, maps portal/API commands, parses safe UBL evidence and queues reliable delivery | Supplier Integration/API/Portal controllers and PUR-270. |
 | `Services/Purchases/PurchaseServiceAcceptanceService.cs` | validates confirmed-order service lines, caps cumulative completion and records immutable service evidence without inventory mutation | Purchase Service Acceptance screens and PUR-220. |
 | `Dtos/Purchases/SupplierPurchasingInfoDtos.cs`, `Services/Purchases/{SupplierPurchasingInfoService,SupplierPurchasingCsvParser,SupplierPurchasingExcelParser,SupplierPriceExceptionAnalyzer}.cs` | manages supplier-selected product terms, quantity price breaks/discounts, append-only price snapshots, exception analysis and controlled CSV/native Excel export/import with preview | Supplier Purchasing screens and PUR-010/PUR-230. |
 | `Services/Purchases/{PurchaseAgreement,PurchaseTemplate}Service.cs` | creates and activates awarded agreements, caps Draft order releases, saves repeat templates and generates traced Draft Purchase Requests | PUR-120 agreement/template screens. |

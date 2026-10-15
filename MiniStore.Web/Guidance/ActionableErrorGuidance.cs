@@ -13,7 +13,7 @@ public static class ActionableErrorGuidance
         "Purchases", "PurchaseReturns", "SupplierPurchasing", "PurchaseRequests",
         "PurchaseApprovalRules", "PurchaseSourcing", "SupplierQuotations", "PurchaseOrders",
         "GoodsReceipts", "GoodsReceiptReturns", "VendorBills", "SupplierCreditNotes", "SupplierPayments", "SupplierCommunications",
-        "PurchaseAgreements", "PurchaseTemplates", "LandedCosts", "PurchaseDocumentReversals", "PurchaseAnalytics"
+        "PurchaseAgreements", "PurchaseTemplates", "LandedCosts", "PurchaseDocumentReversals", "PurchaseAnalytics", "SupplierIntegrations"
     };
 
     public static ActionableErrorLink? Resolve(
@@ -113,6 +113,10 @@ public static class ActionableErrorGuidance
                 "Suggested supplier was not found.",
                 "One or more suppliers were not found."))
             return new("Suppliers", "Index", "Manage suppliers", "Suppliers.Edit");
+
+        if (Matches(message, localize,
+                "Configure an HTTPS callback URL before queueing external delivery."))
+            return new("SupplierIntegrations", "Index", "Open supplier integrations", "SupplierIntegrations.Manage");
 
         if (Matches(message, localize,
                 "Destination warehouse not found.",
