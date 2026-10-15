@@ -1,6 +1,8 @@
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging.Abstractions;
 using MiniStore.Application.DTOs.Inventory.Reconciliation;
 using MiniStore.Application.DTOs.Inventory.Adjustments;
 using MiniStore.Application.DTOs.Inventory.Tracking;
@@ -77,6 +79,7 @@ try
 
     await VerifyAuditEventFoundationAsync(tenantOneId, tenantTwoId, connectionString);
     await VerifySemanticAuditCoverageAsync(tenantOneId, tenantTwoId, connectionString);
+    await VerifyIndependentSecurityAuditAsync(tenantOneId, connectionString);
 
     await VerifyTenantIsolationAndReconciliationAsync(
         tenantOneId,
@@ -123,7 +126,7 @@ try
     await VerifyInventoryBalanceProjectionAsync(tenantOneId, tenantOneFixture.ProductId, expectedOnHand: 2m, connectionString);
     await VerifyOpeningTrackingAllocationAsync(tenantOneId, tenantOneFixture.ProductId, tenantOneFixture.WarehouseId, connectionString);
 
-    Console.WriteLine("Passed SQL integration checks: semantic role/settings audit coverage plus audit-event rollback, isolation, append-only and integrity; tenant isolation, reconciliation, balances, replenishment purchase-request source concurrency, 3-product/2-supplier split awards, receipt, vendor-bill and supplier-payment concurrency, controlled payment reversal and retry, three-way matching override evidence, GRNI posting and clearing, purchase accounting reconciliation, payable settlement, receipt-based supplier returns, landed-cost valuation, purchasing analytics, idempotent barcode receipt drafts, adjustment posting, tracked operations, quarantine and recall.");
+    Console.WriteLine("Passed SQL integration checks: semantic role/settings and independent denied-security audit coverage plus audit-event rollback, isolation, append-only and integrity; tenant isolation, reconciliation, balances, replenishment purchase-request source concurrency, 3-product/2-supplier split awards, receipt, vendor-bill and supplier-payment concurrency, controlled payment reversal and retry, three-way matching override evidence, GRNI posting and clearing, purchase accounting reconciliation, payable settlement, receipt-based supplier returns, landed-cost valuation, purchasing analytics, idempotent barcode receipt drafts, adjustment posting, tracked operations, quarantine and recall.");
 }
 finally
 {
@@ -136,6 +139,74 @@ static DbContextOptions<AppDbContext> CreateOptions(string connectionString) =>
         .UseSqlServer(connectionString)
         .EnableDetailedErrors()
         .Options;
+
+static async Task VerifyIndependentSecurityAuditAsync(int tenantId, string connectionString)
+{
+    var configured = new AuditEventOptions
+    {
+        Enabled = true,
+        ActiveIntegrityKeyVersion = "security-sql-v1",
+        IntegrityKeys = new Dictionary<string, string>
+        {
+            ["security-sql-v1"] = Convert.ToBase64String(Enumerable.Range(97, 32).Select(value => (byte)value).ToArray())
+        }
+    };
+    var services = new ServiceCollection();
+    var tenantScope = new AmbientTestTenantScope();
+    services.AddSingleton<ITenantContext>(tenantScope);
+    services.AddSingleton<ITenantScope>(tenantScope);
+    services.AddSingleton<IOptions<AuditEventOptions>>(Options.Create(configured));
+    services.AddScoped<ICurrentUserService>(_ => new FixedCurrentUser("must-not-be-used"));
+    services.AddScoped<IAuditEventRedactor, AuditEventRedactor>();
+    services.AddScoped<IAuditEventIntegrityService, AuditEventIntegrityService>();
+    services.AddScoped<IAuditEventWriter, AuditEventWriter>();
+    services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connectionString));
+    await using var provider = services.BuildServiceProvider();
+    var writer = new SecurityAuditEventWriter(provider.GetRequiredService<IServiceScopeFactory>(),
+        Options.Create(configured), NullLogger<SecurityAuditEventWriter>.Instance);
+    var userAgentHash = Convert.ToHexString(System.Security.Cryptography.SHA256.HashData("sql-agent"u8));
+    var request = new IndependentAuditEventWriteRequest
+    {
+        Scope = AuditEventScope.System,
+        Category = AuditEventCategory.Security,
+        Severity = AuditEventSeverity.Warning,
+        Outcome = AuditEventOutcome.Denied,
+        EventType = SemanticAuditEventTypes.TenantLoginFailed,
+        Action = "Login",
+        ActorType = AuditActorType.External,
+        ActorId = "anonymous",
+        SourceChannel = AuditSourceChannel.Web,
+        CorrelationId = "independent-security-sql",
+        ResourceType = "TenantSession",
+        ResourceId = "login",
+        ReasonCode = "InvalidCredentials",
+        SourceIpMasked = "10.20.30.0/24",
+        UserAgentHash = userAgentHash
+    };
+    await writer.RecordAsync(request);
+    await writer.RecordAsync(request with
+    {
+        Scope = AuditEventScope.Tenant,
+        TenantId = tenantId,
+        EventType = SemanticAuditEventTypes.PrivilegedActionDenied,
+        Action = "Authorize",
+        ActorType = AuditActorType.User,
+        ActorId = "denied-user",
+        ResourceType = "Permission",
+        ResourceId = "Purchases.Manage",
+        ReasonCode = "PermissionDenied"
+    });
+
+    await using var verification = new AppDbContext(CreateOptions(connectionString));
+    var events = await verification.AuditEvents.IgnoreQueryFilters().AsNoTracking()
+        .Where(value => value.CorrelationId == "independent-security-sql")
+        .OrderBy(value => value.Id).ToListAsync();
+    if (events.Count != 2 || events[0].Scope != AuditEventScope.System || events[0].TenantId is not null ||
+        events[1].Scope != AuditEventScope.Tenant || events[1].TenantId != tenantId ||
+        events.Any(value => value.Outcome != AuditEventOutcome.Denied || value.SourceIpMasked != "10.20.30.0/24" ||
+                            value.UserAgentHash != userAgentHash))
+        throw new InvalidOperationException("Independent security audit events must persist once with strict scope and redacted request evidence.");
+}
 
 static async Task VerifyAuditEventFoundationAsync(int tenantOneId, int tenantTwoId, string connectionString)
 {
@@ -1589,4 +1660,29 @@ file sealed class FixedAuditRequestContext(string correlationId, string? request
     public string CorrelationId { get; } = correlationId;
     public string? RequestPathTemplate { get; } = requestPathTemplate;
     public AuditSourceChannel SourceChannel => AuditSourceChannel.Web;
+    public string? SourceIpMasked => null;
+    public string? UserAgentHash => null;
+}
+
+file sealed class AmbientTestTenantScope : ITenantContext, ITenantScope
+{
+    private static readonly AsyncLocal<int?> Active = new();
+    public int? TenantId => Active.Value;
+    public IDisposable BeginScope(int tenantId)
+    {
+        var prior = Active.Value;
+        Active.Value = tenantId;
+        return new CallbackDisposable(() => Active.Value = prior);
+    }
+
+    private sealed class CallbackDisposable(Action callback) : IDisposable
+    {
+        private bool disposed;
+        public void Dispose()
+        {
+            if (disposed) return;
+            disposed = true;
+            callback();
+        }
+    }
 }

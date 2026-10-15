@@ -16,6 +16,7 @@ public static class PersistenceExtensions
         services.AddScoped<IAuditEventRedactor, AuditEventRedactor>();
         services.AddScoped<IAuditEventIntegrityService, AuditEventIntegrityService>();
         services.AddScoped<IAuditEventWriter, AuditEventWriter>();
+        services.AddSingleton<ISecurityAuditEventWriter, SecurityAuditEventWriter>();
         services.AddScoped<IAuditRequestContext, HttpAuditRequestContext>();
         services.AddScoped<SemanticAuditEventService>();
         services.AddScoped<AuditSaveChangesInterceptor>();

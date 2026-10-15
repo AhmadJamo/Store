@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using MiniStore.Infrastructure.Authorization;
 using MiniStore.Infrastructure.Persistence;
 using MiniStore.Web.Authorization;
+using Microsoft.AspNetCore.Authorization.Policy;
 
 namespace MiniStore.Web.Configuration;
 
@@ -56,6 +57,7 @@ public static class SecurityExtensions
 
         services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
         services.AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();
+        services.AddScoped<IAuthorizationMiddlewareResultHandler, AuditingAuthorizationMiddlewareResultHandler>();
         return services;
     }
 }

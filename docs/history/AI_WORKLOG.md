@@ -951,3 +951,12 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
 - Release Web and test-project builds passed with zero warnings/errors; SecurityRegression remained 756/756; SQL integration passed semantic event count/order, tenant/actor/correlation, redaction, database-round-trip integrity and rejected-write rollback together with the existing suite.
 - No schema change or migration was needed; EF reported no pending model changes. Demo inspection after activation showed 113 migrations, 707 legacy rows and 0 semantic rows before the next enrolled user operation. No audit reader/export UI or permission was added, and legacy `AuditLogs` remains unchanged.
 - Recorded secret-free evidence in `project-control/operations/P1-AUD-012-SEMANTIC-AUDIT-COVERAGE.md` and advanced the only proposed task to `P1-AUD-013`.
+
+## 2026-10-16 — P1-AUD-013 authentication, denial, platform and integration audit coverage
+
+- Added fixed security/administration/integration event codes for rejected company and Platform login, lockout, actual endpoint authorization denial, Platform subscription/payment/plan/promotion administration and supplier API-credential/portal-access lifecycle.
+- Added a bounded independent security writer that creates a fresh persistence scope for denied/failed events, enforces explicit Tenant versus Platform/System scope, respects the feature flag, logs persistence failure as Critical and rethrows it.
+- Extended the HTTP audit context to classify Web/Platform/API/Portal channels, mask IPv4 to `/24` and IPv6 to `/64`, and store only a SHA-256 user-agent fingerprint.
+- Kept successful Platform and supplier-access administration events in the same save/transaction as their business operation. No username input, password, cookie, API key, portal token, callback secret/URL or raw request body is copied into `AuditEvent`.
+- Web and SQL-test builds passed with zero warnings/errors. SecurityRegression passed 761 checks. SQL integration passed with two exactly counted independent denied events and strict System/Tenant scope after rerunning under the normal local Windows identity because the sandbox identity could not establish SSPI.
+- No schema change or migration was needed; legacy `AuditLogs` remains unchanged. Recorded evidence in `project-control/operations/P1-AUD-013-SECURITY-AUDIT-COVERAGE.md` and advanced the only proposed task to `P1-AUD-014`.

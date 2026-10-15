@@ -14,6 +14,19 @@ public static class SemanticAuditEventTypes
     public const string InventorySettingsChanged = "Configuration.InventorySettingsChanged";
     public const string PurchaseMatchingSettingsChanged = "Configuration.PurchaseMatchingSettingsChanged";
     public const string PurchaseSourcingPolicyChanged = "Configuration.PurchaseSourcingPolicyChanged";
+    public const string TenantLoginFailed = "Security.TenantLoginFailed";
+    public const string PlatformLoginFailed = "Security.PlatformLoginFailed";
+    public const string PrivilegedActionDenied = "Security.PrivilegedActionDenied";
+    public const string PlatformCompanySubscriptionChanged = "Administration.PlatformCompanySubscriptionChanged";
+    public const string PlatformPaymentConfirmed = "Administration.PlatformPaymentConfirmed";
+    public const string PlatformPlanCreated = "Administration.PlatformPlanCreated";
+    public const string PlatformPromotionCreated = "Administration.PlatformPromotionCreated";
+    public const string SupplierCredentialCreated = "Integration.SupplierCredentialCreated";
+    public const string SupplierCredentialDeactivated = "Integration.SupplierCredentialDeactivated";
+    public const string SupplierPortalAccessCreated = "Integration.SupplierPortalAccessCreated";
+    public const string SupplierPortalAccessRevoked = "Integration.SupplierPortalAccessRevoked";
+    public const string SupplierApiAuthenticationDenied = "Integration.SupplierApiAuthenticationDenied";
+    public const string SupplierPortalAuthenticationDenied = "Integration.SupplierPortalAuthenticationDenied";
 }
 
 public sealed class SemanticAuditEventService(
@@ -48,6 +61,32 @@ public sealed class SemanticAuditEventService(
             BeforeValues = beforeValues,
             AfterValues = afterValues,
             Metadata = metadata,
-            RequestPathTemplate = requestContext.RequestPathTemplate
+            RequestPathTemplate = requestContext.RequestPathTemplate,
+            SourceIpMasked = requestContext.SourceIpMasked,
+            UserAgentHash = requestContext.UserAgentHash
+        }, cancellationToken);
+
+    public ValueTask<Guid?> RecordPlatformSuccessAsync(
+        string eventType,
+        string action,
+        string resourceType,
+        string resourceId,
+        CancellationToken cancellationToken = default) =>
+        writer.RecordAsync(new AuditEventWriteRequest
+        {
+            Scope = AuditEventScope.Platform,
+            Category = AuditEventCategory.Administration,
+            Severity = AuditEventSeverity.Information,
+            Outcome = AuditEventOutcome.Succeeded,
+            EventType = eventType,
+            Action = action,
+            ActorType = AuditActorType.User,
+            SourceChannel = AuditSourceChannel.Platform,
+            CorrelationId = requestContext.CorrelationId,
+            ResourceType = resourceType,
+            ResourceId = resourceId,
+            RequestPathTemplate = requestContext.RequestPathTemplate,
+            SourceIpMasked = requestContext.SourceIpMasked,
+            UserAgentHash = requestContext.UserAgentHash
         }, cancellationToken);
 }

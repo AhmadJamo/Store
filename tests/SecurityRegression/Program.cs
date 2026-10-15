@@ -3,12 +3,15 @@ using System.Globalization;
 using System.Resources;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
+using System.Net;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using ClosedXML.Excel;
 using MiniStore.Application.Permissions;
@@ -31,6 +34,7 @@ using MiniStore.Web.Localization;
 using MiniStore.Web.Guidance;
 using MiniStore.Web.Formatting;
 using MiniStore.Web.Navigation;
+using MiniStore.Web.Services;
 
 var count = 0;
 void Check(bool condition, string message)
@@ -220,6 +224,47 @@ CheckArgumentThrows(() => new AuditEvent(
         "حدث.تدقيق", "Update", AuditActorType.User, "regression-user",
         AuditSourceChannel.Web, "regression-correlation", "TenantRole", "7"),
     "Audit event types must remain language-neutral technical codes");
+
+var auditHttpContext = new DefaultHttpContext();
+auditHttpContext.Connection.RemoteIpAddress = IPAddress.Parse("192.168.77.143");
+auditHttpContext.Request.Path = "/api/supplier/v1/rfqs/77";
+auditHttpContext.Request.Headers.UserAgent = "MiniStore Regression Browser/1.0";
+var httpAuditRequest = new HttpAuditRequestContext(new HttpContextAccessor { HttpContext = auditHttpContext });
+Check(httpAuditRequest.SourceIpMasked == "192.168.77.0/24" &&
+      httpAuditRequest.SourceChannel == AuditSourceChannel.Api &&
+      httpAuditRequest.UserAgentHash is { Length: 64 } &&
+      !httpAuditRequest.UserAgentHash.Contains("Browser", StringComparison.OrdinalIgnoreCase),
+    "HTTP audit context must mask source addresses, classify channels and hash user-agent evidence");
+Check(HttpAuditRequestContext.MaskIpAddress(IPAddress.Parse("2001:db8:abcd:12::99")) == "2001:db8:abcd:12::/64",
+    "HTTP audit context must preserve only the IPv6 network prefix");
+var disabledIndependentWriter = new SecurityAuditEventWriter(
+    new ThrowingScopeFactory(), Options.Create(new AuditEventOptions { Enabled = false }),
+    NullLogger<SecurityAuditEventWriter>.Instance);
+var independentRequest = new IndependentAuditEventWriteRequest
+{
+    Scope = AuditEventScope.System,
+    Category = AuditEventCategory.Security,
+    Severity = AuditEventSeverity.Warning,
+    Outcome = AuditEventOutcome.Denied,
+    EventType = SemanticAuditEventTypes.TenantLoginFailed,
+    Action = "Login",
+    ActorType = AuditActorType.External,
+    ActorId = "anonymous",
+    SourceChannel = AuditSourceChannel.Web,
+    CorrelationId = "independent-regression",
+    ResourceType = "TenantSession",
+    ResourceId = "login",
+    ReasonCode = "InvalidCredentials"
+};
+Check(await disabledIndependentWriter.RecordAsync(independentRequest) is null,
+    "Disabled semantic auditing must not create an independent persistence scope");
+var failingIndependentWriter = new SecurityAuditEventWriter(
+    new ThrowingScopeFactory(), auditOptions, NullLogger<SecurityAuditEventWriter>.Instance);
+await CheckAsyncThrows(() => failingIndependentWriter.RecordAsync(independentRequest),
+    "Independent security audit persistence failures must remain visible to callers");
+await CheckAsyncThrows(() => failingIndependentWriter.RecordAsync(independentRequest with
+    { Scope = AuditEventScope.Tenant, TenantId = null }),
+    "Independent tenant audit events must not permit implicit or missing tenant identity");
 
 var unsafeTenantRelationships = db.Model.GetEntityTypes()
     .SelectMany(entity => entity.GetForeignKeys())
@@ -2455,6 +2500,19 @@ void CheckArgumentThrows(Action action, string message)
     }
 }
 
+async Task CheckAsyncThrows(Func<Task> action, string message)
+{
+    try
+    {
+        await action();
+        throw new Exception(message);
+    }
+    catch (InvalidOperationException)
+    {
+        count++;
+    }
+}
+
 sealed class StubUsers : UserManager<IdentityUser>
 {
     private readonly bool admin;
@@ -2468,6 +2526,10 @@ sealed class StubUsers : UserManager<IdentityUser>
 }
 
 sealed class StubTenantContext : MiniStore.Domain.Interfaces.ITenantContext { public int? TenantId => 1; }
+sealed class ThrowingScopeFactory : IServiceScopeFactory
+{
+    public IServiceScope CreateScope() => throw new InvalidOperationException("Persistence unavailable.");
+}
 sealed class StubPurchaseAccountingReconciliationRepository(PurchaseAccountingReconciliationSnapshot snapshot)
     : IPurchaseAccountingReconciliationRepository
 {

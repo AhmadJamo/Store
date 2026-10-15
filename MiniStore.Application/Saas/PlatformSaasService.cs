@@ -1,5 +1,6 @@
 using MiniStore.Domain.Entities;
 using MiniStore.Domain.Interfaces;
+using MiniStore.Application.Services;
 
 namespace MiniStore.Application.Saas;
 
@@ -9,7 +10,7 @@ public record CreatePromotionCodeDto(string Code, decimal DiscountPercentage, Da
 public record CompanySubscriptionDto(int TenantId, string Name, string Slug, bool IsActive, int? PlanId, string PlanName, SubscriptionStatus? Status, DateTime? PeriodEnd, int UserCount);
 public record UpdateCompanySubscriptionDto(int TenantId, int PlanId, SubscriptionStatus Status, DateTime PeriodEnd, bool CompanyIsActive);
 
-public class PlatformSaasService(ISaasRepository repository)
+public class PlatformSaasService(ISaasRepository repository, SemanticAuditEventService audit)
 {
     public async Task<IReadOnlyList<PlanCardDto>> GetPublicPlansAsync() => Map(await repository.GetPublicPlansAsync());
     public async Task<IReadOnlyList<PlanCardDto>> GetPlansAsync() => Map(await repository.GetPlansAsync());
@@ -34,6 +35,9 @@ public class PlatformSaasService(ISaasRepository repository)
         tenant.SetActive(dto.CompanyIsActive);
         subscription.ChangePlan(dto.PlanId, subscription.BillingCycle, DateTime.UtcNow, dto.PeriodEnd.ToUniversalTime());
         subscription.SetStatus(dto.Status);
+        await audit.RecordPlatformSuccessAsync(
+            SemanticAuditEventTypes.PlatformCompanySubscriptionChanged,
+            "Update", "TenantSubscription", dto.TenantId.ToString(System.Globalization.CultureInfo.InvariantCulture));
         await repository.SaveChangesAsync();
     }
     public async Task CreatePlanAsync(CreatePlanDto dto)
@@ -42,8 +46,15 @@ public class PlatformSaasService(ISaasRepository repository)
         plan.Update(dto.Code, dto.NameEnglish, dto.NameArabic, dto.MonthlyPrice, dto.AnnualPrice, dto.Currency, 100, true, true, dto.DescriptionEnglish, dto.DescriptionArabic);
         plan.SetLimit(SaasLimitKeys.Users, dto.MaxUsers); plan.SetLimit(SaasLimitKeys.Warehouses, dto.MaxWarehouses);
         plan.SetLimit(SaasLimitKeys.Branches, dto.MaxBranches); plan.SetLimit(SaasLimitKeys.PosTerminals, dto.MaxPosTerminals); plan.SetLimit(SaasLimitKeys.Products, dto.MaxProducts);
-        await repository.AddPlanAsync(plan); await repository.SaveChangesAsync();
+        await repository.AddPlanAsync(plan);
+        await audit.RecordPlatformSuccessAsync(SemanticAuditEventTypes.PlatformPlanCreated, "Create", "Plan", dto.Code);
+        await repository.SaveChangesAsync();
     }
-    public async Task CreatePromotionCodeAsync(CreatePromotionCodeDto dto) { await repository.AddPromotionCodeAsync(new PromotionCode(dto.Code, dto.DiscountPercentage, dto.StartsAt.ToUniversalTime(), dto.EndsAt.ToUniversalTime(), dto.MaximumRedemptions, dto.PlanId)); await repository.SaveChangesAsync(); }
+    public async Task CreatePromotionCodeAsync(CreatePromotionCodeDto dto)
+    {
+        await repository.AddPromotionCodeAsync(new PromotionCode(dto.Code, dto.DiscountPercentage, dto.StartsAt.ToUniversalTime(), dto.EndsAt.ToUniversalTime(), dto.MaximumRedemptions, dto.PlanId));
+        await audit.RecordPlatformSuccessAsync(SemanticAuditEventTypes.PlatformPromotionCreated, "Create", "PromotionCode", dto.Code);
+        await repository.SaveChangesAsync();
+    }
     private static IReadOnlyList<PlanCardDto> Map(IReadOnlyList<Plan> plans) => plans.Select(x => new PlanCardDto(x.Id, x.Code, x.NameEnglish, x.NameArabic, x.DescriptionEnglish, x.DescriptionArabic, x.MonthlyPrice, x.AnnualPrice, x.Currency, x.Limits.ToDictionary(l => l.Key, l => l.Value), x.Features.Where(f => f.IsEnabled).Select(f => f.Key).ToArray())).ToList();
 }

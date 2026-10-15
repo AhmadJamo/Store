@@ -1,7 +1,7 @@
 # Tenancy and SaaS foundation
 > Status: PARTIALLY IMPLEMENTED  
 > Source of truth: tenancy entities, AppDbContext and tenant session middleware  
-> Last reviewed: 2026-09-15
+> Last reviewed: 2026-10-16
 
 ## Implemented boundary
 MiniStore uses a shared SQL Server database and shared schema. `Tenant` represents a company and `TenantMembership` links a global Identity user to one or more companies. Login currently selects the owner's membership first and otherwise the lowest active tenant ID. The signed Identity cookie carries the selected tenant ID.
@@ -24,6 +24,8 @@ Explicit company switching, invitations, existing-user assignment management, ro
 
 ## SaaS control plane
 The public root and `/pricing` render bilingual product and pricing pages. `/platform` uses a separate short-lived strict cookie and an explicit PlatformOperator with Owner/Admin/Billing policies; tenant Admin does not grant platform access. Operators manage plans, promotions, companies/subscription states and pending payment confirmations. Tenant checkout calculates and stores a 30-minute monthly/annual quote, validates promotion scope and redeems only after confirmation. Online provider integration remains pending.
+
+`P1-AUD-013` records rejected Platform login/lockout without the submitted username, and records company/subscription updates, payment confirmation, plan creation and promotion creation as Platform-scoped semantic events in the same save or transaction. Tenant-scoped execution cannot create these Platform events; normal tenant reads cannot see them.
 
 Do not add a business entity without classifying it in `TenantIsolationModel`. Regression checks reject unclassified mapped Domain entities and tenant relationships that omit TenantId.
 

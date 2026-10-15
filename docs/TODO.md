@@ -18,7 +18,8 @@ The ERP SaaS Foundation Blueprint is imported as a non-authoritative planning re
 - [x] P1-AUD-010 approve the audit-security design for correlation, outcomes, redaction, access, retention classes, staged tamper evidence, additive migration, rollback and tests without runtime changes.
 - [x] P1-AUD-011 add and apply the AuditEvent schema, core Application writer, allowlist redactor and keyed integrity hash behind a disabled-by-default feature flag; legacy audit history remained unchanged.
 - [x] P1-AUD-012 enabled first semantic audit coverage for tenant role/permission and six sensitive-setting groups with local Demo key material held only in User Secrets; SQL proves one valid event per successful operation and no success event on rejection/rollback.
-- [ ] P1-AUD-013 add authentication, denied privileged action, platform administration and external integration semantic events without adding the reader/export screen; this is the only proposed next task and requires explicit approval.
+- [x] P1-AUD-013 add authentication/lockout, actual denied privileged action, platform administration and external integration semantic events with an independent failure-visible security writer and masked request evidence.
+- [ ] P1-AUD-014 add the permission-aware paginated audit reader/export surface, sensitive-access controls and an audited export action; this is the only proposed next task and requires explicit approval.
 
 - [x] PUR-000 complete purchase architecture review, legacy compatibility boundary, migration strategy and vertical-slice roadmap.
 - [x] PUR-005 fix context ownership, quantity authority, staged currency, approval and GRNI boundaries before runtime implementation.

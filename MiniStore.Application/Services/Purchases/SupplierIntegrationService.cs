@@ -11,7 +11,8 @@ public sealed class SupplierIntegrationService(
     ISupplierIntegrationRepository integrations, ISupplierRepository suppliers, IPurchaseSourcingRepository sourcing,
     ISupplierQuotationRepository quotations, IPurchaseOrderRepository orders, DocumentNumberService numbers,
     CurrencyExchangeRateService exchangeRates, SupplierUblService ubl, ISupplierIntegrationSecretProtector secretProtector,
-    IUnitOfWork unitOfWork, ICurrentUserService currentUser, ITenantScope tenantScope)
+    IUnitOfWork unitOfWork, ICurrentUserService currentUser, ITenantScope tenantScope,
+    SemanticAuditEventService audit)
 {
     public static readonly string[] AllowedScopes=["rfq.read","quotation.write","po.read","confirmation.write","delivery.write","invoice.write"];
 
@@ -36,13 +37,25 @@ public sealed class SupplierIntegrationService(
         string? callback=null;if(!string.IsNullOrWhiteSpace(dto.CallbackUrl)){var uri=ValidateCallback(dto.CallbackUrl);callback=uri.AbsoluteUri;}
         var raw="msk_"+Base64Url(RandomNumberGenerator.GetBytes(32));var prefix=raw[..12];
         var value=new SupplierIntegrationCredential(supplier.Id,dto.Name,prefix,Hash(raw),string.Join(' ',scopes.Order()),callback,string.IsNullOrWhiteSpace(dto.CallbackBearerToken)?null:secretProtector.Protect(dto.CallbackBearerToken.Trim()),dto.ExpiresAtUtc?.ToUniversalTime(),currentUser.UserId);
-        await unitOfWork.ExecuteInTransactionAsync(()=>integrations.AddCredentialAsync(value));return new(value.Id,raw);
+        await unitOfWork.ExecuteInTransactionAsync(async()=>
+        {
+            await integrations.AddCredentialAsync(value);
+            await audit.RecordTenantSuccessAsync(AuditEventCategory.Integration,
+                SemanticAuditEventTypes.SupplierCredentialCreated, "Create", "SupplierIntegrationCredential",
+                supplier.Id.ToString(System.Globalization.CultureInfo.InvariantCulture));
+        });return new(value.Id,raw);
     }
 
     public async Task DeactivateCredentialAsync(int id,byte[] rowVersion)
     {
         var value=await integrations.GetCredentialAsync(id)??throw new InvalidOperationException("Supplier integration credential was not found.");if(!value.RowVersion.SequenceEqual(rowVersion))throw new InvalidOperationException("Supplier integration credential was modified by another user. Reload and try again.");
-        await unitOfWork.ExecuteInTransactionAsync(()=>{value.Deactivate();return Task.CompletedTask;});
+        await unitOfWork.ExecuteInTransactionAsync(async()=>
+        {
+            value.Deactivate();
+            await audit.RecordTenantSuccessAsync(AuditEventCategory.Integration,
+                SemanticAuditEventTypes.SupplierCredentialDeactivated, "Deactivate", "SupplierIntegrationCredential",
+                id.ToString(System.Globalization.CultureInfo.InvariantCulture));
+        });
     }
 
     public async Task<CreatedSupplierPortalAccessDto> CreatePortalAccessAsync(CreateSupplierPortalAccessDto dto)
@@ -54,7 +67,13 @@ public sealed class SupplierIntegrationService(
         else if(dto.DocumentType==SupplierExternalDocumentType.PurchaseOrder){var order=await orders.GetByIdAsync(dto.DocumentId)??throw new InvalidOperationException("Purchase order was not found.");if(order.SupplierId!=supplier.Id)throw new InvalidOperationException("Supplier does not belong to this purchase order.");number=order.OrderNumber;}
         else throw new ArgumentException("Portal access supports RFQs and purchase orders only.");
         var raw="msp_"+Base64Url(RandomNumberGenerator.GetBytes(32));var expires=DateTime.UtcNow.AddDays(dto.ValidDays);var access=new SupplierPortalAccess(supplier.Id,dto.DocumentType,dto.DocumentId,number,Hash(raw),expires,currentUser.UserId);
-        await unitOfWork.ExecuteInTransactionAsync(()=>integrations.AddPortalAccessAsync(access));return new(access.Id,raw,expires);
+        await unitOfWork.ExecuteInTransactionAsync(async()=>
+        {
+            await integrations.AddPortalAccessAsync(access);
+            await audit.RecordTenantSuccessAsync(AuditEventCategory.Integration,
+                SemanticAuditEventTypes.SupplierPortalAccessCreated, "Create", "SupplierPortalAccess",
+                $"{dto.DocumentType}:{dto.DocumentId}");
+        });return new(access.Id,raw,expires);
     }
 
     public Task<List<SupplierPortalAccessDto>> GetPortalAccessesAsync(SupplierExternalDocumentType type,int documentId)=>MapAccesses(type,documentId);
@@ -67,7 +86,17 @@ public sealed class SupplierIntegrationService(
             :[];
         return (await integrations.GetCredentialsAsync()).Where(x=>x.SupplierId==supplierId&&x.IsUsable(DateTime.UtcNow)).Select(x=>new SupplierIntegrationCredentialDto{Id=x.Id,SupplierId=x.SupplierId,SupplierName=names.GetValueOrDefault(x.SupplierId,$"#{x.SupplierId}"),Name=x.Name,KeyPrefix=x.KeyPrefix,Scopes=x.Scopes,CallbackUrl=x.CallbackUrl,IsActive=x.IsActive,ExpiresAtUtc=x.ExpiresAtUtc,LastUsedAtUtc=x.LastUsedAtUtc,CanQueuePurchaseOrder=!queuedCredentialIds.Contains(x.Id),RowVersion=x.RowVersion}).ToList();
     }
-    public async Task RevokePortalAccessAsync(int id){var access=await integrations.GetPortalAccessAsync(id)??throw new InvalidOperationException("Supplier portal access was not found.");await unitOfWork.ExecuteInTransactionAsync(()=>{access.Revoke();return Task.CompletedTask;});}
+    public async Task RevokePortalAccessAsync(int id)
+    {
+        var access=await integrations.GetPortalAccessAsync(id)??throw new InvalidOperationException("Supplier portal access was not found.");
+        await unitOfWork.ExecuteInTransactionAsync(async()=>
+        {
+            access.Revoke();
+            await audit.RecordTenantSuccessAsync(AuditEventCategory.Integration,
+                SemanticAuditEventTypes.SupplierPortalAccessRevoked, "Revoke", "SupplierPortalAccess",
+                id.ToString(System.Globalization.CultureInfo.InvariantCulture));
+        });
+    }
 
     public async Task QueuePurchaseOrderAsync(QueueSupplierPurchaseOrderDto dto)
     {

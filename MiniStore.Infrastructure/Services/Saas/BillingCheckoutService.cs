@@ -1,13 +1,17 @@
 using System.Data;
 using Microsoft.EntityFrameworkCore;
 using MiniStore.Application.Saas;
+using MiniStore.Application.Services;
 using MiniStore.Domain.Entities;
 using MiniStore.Domain.Interfaces;
 using MiniStore.Infrastructure.Persistence;
 
 namespace MiniStore.Infrastructure.Services;
 
-public class BillingCheckoutService(AppDbContext context, ITenantContext tenantContext) : IBillingCheckoutService
+public class BillingCheckoutService(
+    AppDbContext context,
+    ITenantContext tenantContext,
+    SemanticAuditEventService audit) : IBillingCheckoutService
 {
     public async Task<IReadOnlyList<PendingCheckoutDto>> GetPendingAsync() => await context.BillingCheckoutSessions
         .Where(x => x.Status == CheckoutStatus.Pending && x.ExpiresAt > DateTime.UtcNow)
@@ -53,6 +57,9 @@ public class BillingCheckoutService(AppDbContext context, ITenantContext tenantC
             promo.Redeem(DateTime.UtcNow, checkout.PlanId);
             await context.PromotionRedemptions.AddAsync(new PromotionRedemption(promo.Id, checkout.TenantId, subscription.Id, promo.DiscountPercentage));
         }
+        await audit.RecordPlatformSuccessAsync(
+            SemanticAuditEventTypes.PlatformPaymentConfirmed,
+            "Confirm", "BillingCheckoutSession", sessionId.ToString("D"));
         await context.SaveChangesAsync(); await tx.CommitAsync();
     }
 }

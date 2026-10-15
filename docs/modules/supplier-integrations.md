@@ -1,7 +1,7 @@
 # Supplier portal and integrations
 
 > Status: PUR-270 IMPLEMENTED
-> Last reviewed: 2026-10-15
+> Last reviewed: 2026-10-16
 
 ## Internal administration
 
@@ -9,6 +9,8 @@ Authorized users open **Supplier portal and integrations** from Purchasing. A cr
 
 RFQ and Purchase Order detail pages create 1–90 day private portal links. The token is shown once, stored only as a hash and can be revoked from the source document. Existing links show active, expired or revoked state without exposing the token again.
 While an active document link exists, the creation action is replaced by its Active state. After a Purchase Order is queued to one callback credential, that destination is removed from the queue action and the completed delivery state is shown instead. A missing callback configuration error links directly to supplier integration settings.
+
+Creating or deactivating an API credential and creating or revoking portal access now writes one tenant-scoped semantic `AuditEvent` (حدث تدقيق) in the same business transaction. The event identifies only the safe internal resource; it never copies the API key, portal token, callback bearer secret, callback URL or request payload. Rejected anonymous API/portal authentication writes a separate System-scoped denial with a generic reason, masked source network and hashed browser/client signature.
 
 ## Supplier portal
 

@@ -41,6 +41,34 @@ public interface IAuditRequestContext
     string CorrelationId { get; }
     string? RequestPathTemplate { get; }
     AuditSourceChannel SourceChannel { get; }
+    string? SourceIpMasked { get; }
+    string? UserAgentHash { get; }
+}
+
+public sealed record IndependentAuditEventWriteRequest
+{
+    public int? TenantId { get; init; }
+    public required AuditEventScope Scope { get; init; }
+    public required AuditEventCategory Category { get; init; }
+    public required AuditEventSeverity Severity { get; init; }
+    public required AuditEventOutcome Outcome { get; init; }
+    public required string EventType { get; init; }
+    public required string Action { get; init; }
+    public required AuditActorType ActorType { get; init; }
+    public required string ActorId { get; init; }
+    public required AuditSourceChannel SourceChannel { get; init; }
+    public required string CorrelationId { get; init; }
+    public required string ResourceType { get; init; }
+    public required string ResourceId { get; init; }
+    public required string ReasonCode { get; init; }
+    public string? RequestPathTemplate { get; init; }
+    public string? SourceIpMasked { get; init; }
+    public string? UserAgentHash { get; init; }
+}
+
+public interface ISecurityAuditEventWriter
+{
+    Task<Guid?> RecordAsync(IndependentAuditEventWriteRequest request, CancellationToken cancellationToken = default);
 }
 
 public interface IAuditEventRedactor

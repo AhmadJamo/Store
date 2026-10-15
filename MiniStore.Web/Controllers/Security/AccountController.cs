@@ -4,6 +4,8 @@ using System.Security.Claims;
 using MiniStore.Application.Tenancy;
 using MiniStore.Domain.Interfaces;
 using MiniStore.Application.Saas;
+using MiniStore.Application.Services;
+using MiniStore.Domain.Entities;
 
 namespace MiniStore.Web.Controllers;
 
@@ -15,6 +17,8 @@ public class AccountController : Controller
     private readonly ISaasOnboardingService _onboarding;
     private readonly ICompanyOnboardingService _companyOnboarding;
     private readonly PlatformSaasService _saas;
+    private readonly ISecurityAuditEventWriter _securityAudit;
+    private readonly IAuditRequestContext _auditRequest;
 
     public AccountController(
         SignInManager<IdentityUser> signInManager,
@@ -22,7 +26,9 @@ public class AccountController : Controller
         ITenantMembershipRepository memberships,
         ISaasOnboardingService onboarding,
         ICompanyOnboardingService companyOnboarding,
-        PlatformSaasService saas)
+        PlatformSaasService saas,
+        ISecurityAuditEventWriter securityAudit,
+        IAuditRequestContext auditRequest)
     {
         _signInManager = signInManager;
         _userManager = userManager;
@@ -30,6 +36,8 @@ public class AccountController : Controller
         _onboarding = onboarding;
         _companyOnboarding = companyOnboarding;
         _saas = saas;
+        _securityAudit = securityAudit;
+        _auditRequest = auditRequest;
     }
 
     [HttpGet]
@@ -85,6 +93,25 @@ public class AccountController : Controller
                 : await _memberships.GetActiveByCompanyCodeAsync(user!.Id, companyCode);
             if (membership is null)
             {
+                await _securityAudit.RecordAsync(new IndependentAuditEventWriteRequest
+                {
+                    Scope = AuditEventScope.System,
+                    Category = AuditEventCategory.Security,
+                    Severity = AuditEventSeverity.Warning,
+                    Outcome = AuditEventOutcome.Denied,
+                    EventType = SemanticAuditEventTypes.TenantLoginFailed,
+                    Action = "Login",
+                    ActorType = AuditActorType.External,
+                    ActorId = "anonymous",
+                    SourceChannel = AuditSourceChannel.Web,
+                    CorrelationId = _auditRequest.CorrelationId,
+                    ResourceType = "TenantSession",
+                    ResourceId = "login",
+                    ReasonCode = "CompanyAccessDenied",
+                    RequestPathTemplate = _auditRequest.RequestPathTemplate,
+                    SourceIpMasked = _auditRequest.SourceIpMasked,
+                    UserAgentHash = _auditRequest.UserAgentHash
+                }, CancellationToken.None);
                 ViewBag.Error = string.IsNullOrWhiteSpace(companyCode)
                     ? "Your account is not assigned to an active company."
                     : "The company code is invalid or your account is not assigned to it.";
@@ -117,6 +144,26 @@ public class AccountController : Controller
 
         ViewBag.Error =
             "Invalid username or password.";
+
+        await _securityAudit.RecordAsync(new IndependentAuditEventWriteRequest
+        {
+            Scope = AuditEventScope.System,
+            Category = AuditEventCategory.Security,
+            Severity = result.IsLockedOut ? AuditEventSeverity.Critical : AuditEventSeverity.Warning,
+            Outcome = AuditEventOutcome.Denied,
+            EventType = SemanticAuditEventTypes.TenantLoginFailed,
+            Action = "Login",
+            ActorType = AuditActorType.External,
+            ActorId = "anonymous",
+            SourceChannel = AuditSourceChannel.Web,
+            CorrelationId = _auditRequest.CorrelationId,
+            ResourceType = "TenantSession",
+            ResourceId = "login",
+            ReasonCode = result.IsLockedOut ? "AccountLocked" : "InvalidCredentials",
+            RequestPathTemplate = _auditRequest.RequestPathTemplate,
+            SourceIpMasked = _auditRequest.SourceIpMasked,
+            UserAgentHash = _auditRequest.UserAgentHash
+        }, CancellationToken.None);
 
         ViewBag.ReturnUrl = returnUrl;
         ViewBag.CompanyCode = companyCode;
