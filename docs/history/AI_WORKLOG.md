@@ -900,3 +900,14 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
 - Re-tested the historical value and confirmed rejection, then positively authenticated the replacement administrator and observed an authorized redirect.
 - Removed the separate stale `BootstrapAdmin:Password` key identified by the owner from its local User Secrets store without recording its value or changing adjacent JWT keys.
 - Added secret-free operational evidence, closed `P0-SEC-001` for the declared scope and advanced the sole proposed task to `P0-OPS-002` backup/restore verification. No application code, schema, migration or committed runtime configuration changed.
+
+## 2026-10-15 — P0-OPS-002 local Demo backup and restore drill
+
+- Adopted Demo recovery objectives of 24-hour RPO and 4-hour RTO; production values remain an owner/hosting decision.
+- Created a SQL Server master key and dedicated backup certificate, exporting the public certificate and password-encrypted private key while keeping their generated protection secrets in local User Secrets outside the repository.
+- Created a compressed, checksum-protected, `COPY_ONLY` backup of `MiniStoreDb` encrypted with AES-256; `RESTORE VERIFYONLY` passed.
+- Restored the backup under a unique isolated database name, made it read-only and completed `DBCC CHECKDB` successfully.
+- Compared all 147 table row counts and 21 company/user/inventory/ledger/purchase/outbox totals with zero differences; source and restored journal lines were balanced.
+- Safely removed only the restore-drill database after strict name validation. The original database, encrypted backup, certificate and encrypted private key remain.
+- Recorded that same-host backup is proof of recoverability, not protection from host/disk loss. Off-host retention, automation, failure alerts and cross-host restore remain production work.
+- Added secret-free evidence, closed `P0-OPS-002` for the local Demo drill and advanced the sole proposed task to read-only `P0-DB-003` migration/schema reconciliation. No application code, schema migration or committed runtime configuration changed.

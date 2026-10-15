@@ -165,3 +165,15 @@ PUR-140 purchasing analytics adds no table, view, reporting store or migration. 
 Migration `AddGoodsReceiptBarcodeScanning` creates tenant-owned `GoodsReceiptScans` with composite tenant-safe Goods Receipt and Purchase Order line relationships plus a tenant-unique idempotency key. It was applied to `AHMAD/MiniStoreDb` on 2026-10-11. Existing receipts are unchanged and no stock or accounting row is backfilled.
 
 Migration `20261014153921_AddStagedReceivingQualityHold` adds the warehouse route, frozen receipt route, inspector evidence and quality quantities. Existing warehouses/receipts default to one-step and existing receipt lines backfill Delivered/Accepted from Received. A filtered unique tenant/order index permits only one receipt awaiting inspection or storage. It was applied successfully to the local development database on 2026-10-14 using the host Windows environment.
+
+## Local Demo backup and restore evidence (2026-10-15)
+
+`MiniStoreDb` completed an encrypted `COPY_ONLY` backup using `AES_256`, a SQL Server certificate, compression
+and backup checksums. `RESTORE VERIFYONLY` succeeded. The backup was restored under a unique database name,
+set read-only, and passed `DBCC CHECKDB`. Row counts across 147 tables and 21 tenant/inventory/accounting/
+purchase/outbox aggregates matched the source with zero differences; both ledgers remained balanced. The isolated
+restore database was removed only after its name passed a strict safety pattern. The encrypted backup, exported
+certificate and encrypted private key remain in the SQL Server backup directory; protection passwords remain
+outside the repository in local User Secrets. This proves local recoverability only: off-host retention, scheduling,
+failure alerts and another-server restoration remain production work. Full secret-free evidence is in
+`project-control/operations/P0-OPS-002-BACKUP-RESTORE-DRILL.md`.

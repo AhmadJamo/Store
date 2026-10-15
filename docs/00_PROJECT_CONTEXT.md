@@ -11,7 +11,7 @@ The repository implements an operational slice for catalog, warehouses, stock, s
 
 The WMS track is temporarily paused after implementing reconciliation, logistics, movements, balances, reservations, counts, lot/serial execution, removal/putaway policies, replenishment transfer/purchase-demand planning, inventory insights and safe scan workflows. The additive procure-to-pay evolution is implemented through PUR-280. Advanced purchasing analytics expose filterable spend, delay, confirmation, price-variance, supplier, seasonal, buyer-workload and open-exception evidence with source definitions and document links. Creation of new Legacy Direct Purchases is retired; historical records remain visible and users are directed to Purchase Requests for new activity.
 
-The imported ERP SaaS Foundation Blueprint is installed under `docs/reference/erp-saas-foundation/` as a proposed reference, not implementation evidence. Its `FND-000` repository compatibility assessment is complete. The project-control audit under `docs/project-control/` now provides the single current status, feature inventory, audit set, dependency order, master roadmap and next-task gate. `P0-SEC-001` credential-exposure closure is complete for the owner-declared local Demo scope; backup/restore proof is now the only proposed task as `P0-OPS-002`.
+The imported ERP SaaS Foundation Blueprint is installed under `docs/reference/erp-saas-foundation/` as a proposed reference, not implementation evidence. Its `FND-000` repository compatibility assessment is complete. The project-control audit under `docs/project-control/` now provides the single current status, feature inventory, audit set, dependency order, master roadmap and next-task gate. `P0-SEC-001` credential closure and the local encrypted `P0-OPS-002` restore drill are complete for the owner-declared Demo scope; migration/schema reconciliation is now the only proposed task as `P0-DB-003`.
 
 ## Status classification
 - IMPLEMENTED: catalog, warehouses, suppliers, stock balances/movements, purchases, sales, transfer workflow, Identity login, role-permission checks, audit-log rows, Razor UI.
@@ -20,7 +20,7 @@ The imported ERP SaaS Foundation Blueprint is installed under `docs/reference/er
 - IMPLEMENTED: database-enforced tenant relationship boundaries across all current ERP entities and tenant subscription redemptions, with automatic entity classification and relationship regression checks.
 - IMPLEMENTED: posted sales and purchase returns plus tenant fiscal-period posting controls.
 - PLANNED: reversal coverage outside the four supported purchase document types, external payment-provider/webhook integration, API/integrations.
-- UNKNOWN: deployed environment, production migration process, backups, CI/CD, external integrations, and operational ownership.
+- UNKNOWN: production deployment and migration process, off-host scheduled backups, CI/CD, external integrations, and production operational ownership. A local encrypted Demo restore drill is proven.
 
 ## Main modules
 | Module | Status | Core code | Notes |
@@ -36,11 +36,11 @@ The imported ERP SaaS Foundation Blueprint is installed under `docs/reference/er
 | Identity & permissions | PARTIALLY IMPLEMENTED | Identity + `PermissionAuthorizationHandler` | Custom permission rows mapped to roles. |
 
 ## Current problems
-See `06_SECURITY.md`, `04_ACCOUNTING.md`, and `TODO.md`. The historically exposed administrator was closed for the evidenced local Demo environment; any later-discovered external deployment must repeat that check. Highest-priority open findings now include backup/restore proof, production deployment controls and broader integration testing. Identity escalation, role-delete CSRF, login lockout and core inventory concurrency have been addressed; see the security and inventory documentation.
+See `06_SECURITY.md`, `04_ACCOUNTING.md`, and `TODO.md`. The historically exposed administrator was closed for the evidenced local Demo environment, and an encrypted isolated restore drill reconciled without differences. Highest-priority open findings now include migration/schema reconciliation, off-host scheduled backups, production deployment controls and broader integration testing. Identity escalation, role-delete CSRF, login lockout and core inventory concurrency have been addressed; see the security and inventory documentation.
 
 ## Recommended next steps
-1. After explicit approval, execute only `P0-OPS-002` from `project-control/NEXT_TASK.md`: approve recovery objectives and perform an evidenced isolated restore and ERP reconciliation.
-2. Complete `P0-DB-003` against that safe restored copy before any environment schema correction.
+1. After explicit approval, execute only `P0-DB-003` from `project-control/NEXT_TASK.md`: compare EF Core migrations and the local Demo schema without applying changes.
+2. If a difference exists, document a forward-fix and test it on a newly restored copy before touching the original database.
 3. Resume the customer and sales sequence only through the ordering and gates in `project-control/MASTER_ROADMAP.md`.
 
 ## Read first
