@@ -44,6 +44,9 @@ The PUR-000 through PUR-280 purchase evolution is implemented. The approved comp
 - [x] PUR-280 add advanced purchase analytics and make a documented Legacy Direct Purchase retirement decision.
 - [x] Add the bilingual Settings work procedure catalog with the complete purchasing sequence, role ownership, review responsibility, control principles, completion evidence and permission-aware links.
 - [ ] Extend the work procedure catalog to customer management, sales, inventory and accounting as those module requirements are approved.
+- [x] SAL-000 audit the actual Sales, Inventory, Invoicing, Accounting and Payment foundations; document the legacy immediate-sale compatibility boundary and an additive phased implementation plan.
+- [ ] SAL-005 approve the Sales context-ownership, invoicing-policy, COGS-timing, currency, reservation and POS boundaries before runtime implementation.
+- [ ] SAL-010 through SAL-130 implement the approved customer, pricing, quotation, order, reservation, delivery, invoicing, accounting, payment, return, advanced-sales and cutover slices in order.
 
 - [x] WMS-050 reservations and exact transfer allocation with concurrent last-unit protection.
 - [x] WMS-060 blind cycle counts and controlled inventory adjustment posting; scheduling remains deferred.

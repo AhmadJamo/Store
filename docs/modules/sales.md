@@ -1,5 +1,7 @@
 # Sales
-> Status: IMPLEMENTED | Last reviewed: 2026-10-04
+> Status: LEGACY IMMEDIATE SALE IMPLEMENTED; PROFESSIONAL SALES LIFECYCLE PLANNED | Last reviewed: 2026-10-15
+
+The implemented `Sale` flow is classified by the completed `SAL-000` audit as a compatible immediate sale/invoice/payment/stock workflow. It is not a Sales Order and must not be backfilled into invented quotations, deliveries, receivable invoices or payment allocations. The additive target, ownership boundaries, risks, tests and `SAL-005` through `SAL-130` sequence are documented in `SALES_ARCHITECTURE_AUDIT_AND_IMPLEMENTATION_PLAN.md`; those later slices are not implemented until explicitly approved and recorded here.
 
 Wholesale Create and Retail POS call `SalesController.Create` then `SaleService.CreateAsync`. Product choices are limited to active products enabled for the corresponding channel, and the service revalidates those flags against crafted requests. It validates discount rules, generates the tenant document number, chooses the server-side price, applies the optional invoice tax after discounts, decreases stock at the current warehouse average and writes the Sale movement in one UnitOfWork transaction. Sale freezes the selected tax percentage, inclusive policy, output account and amount; SaleItem freezes UnitCost and CostOfGoodsSold. The number, sale, valuation and movement commit or roll back together; ProductStock rowversion detects concurrent writes.
 

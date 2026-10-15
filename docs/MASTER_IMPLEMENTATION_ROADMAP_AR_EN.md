@@ -110,6 +110,8 @@ This roadmap orders the remaining MiniStore work from stabilization of the curre
 
 ### الخطوة 9 — دورة المبيعات / Step 9 — Sales Workflow
 
+> تم إنجاز تدقيق `SAL-000` وخطة التنفيذ المستندة إلى الكود في `SALES_ARCHITECTURE_AUDIT_AND_IMPLEMENTATION_PLAN.md`. لم يبدأ تنفيذ التجمعات الجديدة؛ تبدأ الخطوة التالية ببوابة المحاذاة `SAL-005` بعد الموافقة الصريحة.
+
 التسلسل المستهدف هو: عرض سعر، طلب بيع، حجز مخزون، تجهيز، تسليم، فاتورة مبيعات، تحصيل، ثم إغلاق.
 
 - دعم البيع النقدي والآجل والتسليم الجزئي.

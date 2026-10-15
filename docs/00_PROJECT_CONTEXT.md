@@ -37,7 +37,7 @@ The WMS track is temporarily paused after implementing reconciliation, logistics
 See `06_SECURITY.md`, `04_ACCOUNTING.md`, and `TODO.md`. Highest-priority findings include rotating previously committed admin credentials on existing deployments, completing inventory valuation and accounting posting, and establishing production deployment/backup/integration-test controls. Identity escalation, role-delete CSRF, login lockout and core inventory concurrency have been addressed; see the security and inventory documentation.
 
 ## Recommended next steps
-1. Continue the master roadmap after the completed PUR-000 through PUR-280 purchase evolution; reconcile incoming customer-management and sales requirements before implementation.
+1. Review and approve the completed `SAL-000` repository audit in `SALES_ARCHITECTURE_AUDIT_AND_IMPLEMENTATION_PLAN.md`, then complete the documentation-only `SAL-005` ownership/policy gate before implementing customer or Sales runtime slices.
 2. Complete company switching, invitations and existing-user role assignment management on top of the tenant-owned role model.
 3. Establish an immutable posted-document and double-entry accounting design before adding more ERP features.
 

@@ -849,3 +849,9 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
 - Added the `PurchaseAccountingReconciliation.View` permission, Purchasing navigation and Dashboard shortcut; the report performs no posting or adjustment and explains historical timing differences caused by movement-recording time versus document date.
 - Extended focused regression coverage and the disposable two-tenant SQL fixture. Release builds passed with zero warnings; 566 focused checks passed, and SQL verified exact Inventory/GL and GRNI/GL agreement after receipt, partial billing, unbilled return and landed-cost capitalization.
 - No schema migration was required; no production or development business data was changed.
+## 2026-10-15 — SAL-000 Sales architecture audit and implementation plan
+
+- Audited the implemented Sales, Customer, Catalog, Inventory, Invoicing-like Sale, Accounting, Payment Method, permission, numbering, currency, audit and test foundations against the supplied ERP Sales architecture requirements.
+- Classified the current `Sale` aggregate as a compatible immediate sale/invoice/payment/stock workflow rather than a Sales Order, and prohibited destructive reinterpretation of its history.
+- Added `SALES_ARCHITECTURE_AUDIT_AND_IMPLEMENTATION_PLAN.md` with current strengths, gaps, preserved components, bounded contexts, aggregate and transaction boundaries, internal facts, permissions, migration implications, risks, test requirements, frontend impact, expected file map and `SAL-005` through `SAL-130` vertical slices.
+- Updated the project context, architecture, Sales module, documentation index, codebase map, master roadmap and TODO. No runtime code, schema, permission or UI behavior changed.

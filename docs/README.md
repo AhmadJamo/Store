@@ -8,6 +8,8 @@ The approved procure-to-pay gap analysis, legacy-compatibility boundary, target 
 
 The completed post-`PUR-150` Arabic/English sequence for accounting closure, commercial flexibility, automation, supplier collaboration, integrations and analytics is in [PURCHASE_COMPLETION_ROADMAP_AR_EN.md](PURCHASE_COMPLETION_ROADMAP_AR_EN.md). Its `PUR-160` through `PUR-280` slices are implemented as recorded in code and status documentation.
 
+The repository-based Sales audit, legacy immediate-sale compatibility boundary, target module ownership and phased implementation plan are in [SALES_ARCHITECTURE_AUDIT_AND_IMPLEMENTATION_PLAN.md](SALES_ARCHITECTURE_AUDIT_AND_IMPLEMENTATION_PLAN.md). `SAL-000` is documentation-only; later Sales slices remain planned until explicitly approved and implemented.
+
 ## Start Here
 
 1. [Project context](00_PROJECT_CONTEXT.md)
@@ -34,6 +36,7 @@ The completed post-`PUR-150` Arabic/English sequence for accounting closure, com
 | [Purchase management evolution plan](PURCHASE_MANAGEMENT_EVOLUTION_PLAN.md) | Approved ERP procure-to-pay architecture and ordered delivery plan |
 | [Purchase completion roadmap](PURCHASE_COMPLETION_ROADMAP_AR_EN.md) | Approved Arabic/English post-PUR-150 sequence from reconciliation through supplier integration and legacy retirement |
 | [Purchase architecture alignment](PURCHASE_ARCHITECTURE_ALIGNMENT.md) | Accepted ownership, quantity authority, currency, approval, GRNI and integration gates before purchase implementation |
+| [Sales architecture audit and implementation plan](SALES_ARCHITECTURE_AUDIT_AND_IMPLEMENTATION_PLAN.md) | Repository-based Sales assessment, compatibility strategy, target boundaries, dependencies, risks, tests and ordered vertical slices |
 | [Cross-ERP architecture reference](reference/erp-architecture/README.md) | Proposed system-wide charter, module/data maps, workflows, contracts, delivery guidance and test matrix; not implementation evidence |
 
 ## Detailed Documentation
