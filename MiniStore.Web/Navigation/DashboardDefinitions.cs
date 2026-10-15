@@ -24,7 +24,7 @@ public static class DashboardDefinitions
             new("Goods receipts", "bi-box-arrow-in-down", "GoodsReceipts", "Index", "GoodsReceipts.View", 30),
             new("Vendor bills", "bi-receipt-cutoff", "VendorBills", "Index", "VendorBills.View", 40),
             new("Suppliers", "bi-truck", "Suppliers", "Index", "Suppliers.View", 50),
-            new("Purchases", "bi-bag", "Purchases", "Index", "Purchases.View", 60),
+            new("Legacy direct purchases", "bi-archive", "Purchases", "Index", "Purchases.View", 100),
             new("Purchase analytics", "bi-bar-chart", "PurchaseAnalytics", "Index", "PurchaseAnalytics.View", 70),
             new("Purchase accounting reconciliation", "bi-clipboard2-data", "PurchaseAccountingReconciliation", "Index", "PurchaseAccountingReconciliation.View", 80),
             new("Supplier portal and integrations", "bi-cloud-arrow-left-right", "SupplierIntegrations", "Index", "SupplierIntegrations.View", 90)

@@ -791,11 +791,14 @@ static async Task VerifyConcurrentGoodsReceiptAndGrniAsync(
         new SupplierRepository(landedVerification), new PurchaseOrderRepository(landedVerification),
         new GoodsReceiptRepository(landedVerification), new GoodsReceiptReturnRepository(landedVerification),
         new VendorBillRepository(landedVerification), new SupplierPaymentRepository(landedVerification),
-        new SupplierCreditNoteRepository(landedVerification), new PurchaseMatchRepository(landedVerification), new LandedCostRepository(landedVerification));
+        new SupplierCreditNoteRepository(landedVerification), new PurchaseMatchRepository(landedVerification), new LandedCostRepository(landedVerification),
+        new PurchaseRepository(landedVerification), new PurchaseRequestRepository(landedVerification));
     var analytics = await analyticsService.GetAsync(new PurchaseAnalyticsQueryDto { From = receiptDate, To = receiptDate });
     var supplierPerformance = analytics.Suppliers.Single(x => x.SupplierId == supplierId);
     if (analytics.ReceiptValue < 9m || analytics.VendorBillSpend < 5m ||
         analytics.LandedCostTotal < 2m || analytics.MatchExceptionCount < 1 || analytics.MatchOverrideCount < 1 ||
+        analytics.ModernPurchaseOrderCount < 1 || analytics.Trends.Count == 0 || analytics.BuyerWorkloads.Count == 0 ||
+        analytics.Kpis.Count != 4 || analytics.AcceptanceJourney.Count != 8 ||
         supplierPerformance.FillRatePercent != 100m || supplierPerformance.OnTimeRatePercent != 100m ||
         supplierPerformance.ReturnRatePercent != 50m || supplierPerformance.BilledSpend != 5m ||
         supplierPerformance.PriceVariance != 0.5m || supplierPerformance.OutstandingBalance != 0m)

@@ -6,7 +6,7 @@ The approved Warehouse Management System gap analysis, target architecture, migr
 
 The approved procure-to-pay gap analysis, legacy-compatibility boundary, target domain, accounting/inventory integrations, migration strategy and vertical-slice roadmap are in [PURCHASE_MANAGEMENT_EVOLUTION_PLAN.md](PURCHASE_MANAGEMENT_EVOLUTION_PLAN.md). Planned purchase types in that document are not yet implemented.
 
-The approved post-`PUR-150` Arabic/English sequence for accounting closure, commercial flexibility, automation, supplier collaboration and integrations is in [PURCHASE_COMPLETION_ROADMAP_AR_EN.md](PURCHASE_COMPLETION_ROADMAP_AR_EN.md). Its `PUR-160` through `PUR-280` slices are planned unless explicitly marked otherwise in code and status documentation.
+The completed post-`PUR-150` Arabic/English sequence for accounting closure, commercial flexibility, automation, supplier collaboration, integrations and analytics is in [PURCHASE_COMPLETION_ROADMAP_AR_EN.md](PURCHASE_COMPLETION_ROADMAP_AR_EN.md). Its `PUR-160` through `PUR-280` slices are implemented as recorded in code and status documentation.
 
 ## Start Here
 

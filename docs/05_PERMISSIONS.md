@@ -24,7 +24,7 @@ Products, Warehouses, ProductStock, StockTransactions, StockMovements, LocationM
 | Module | Backend enforcement |
 |---|---|
 | Products, Warehouses, Suppliers, Product Stocks | View/Create/Edit/Delete controller actions have matching `PermissionAuthorize`. |
-| Purchases | View/Create enforced; Edit/Delete definitions have no controller actions. |
+| Legacy direct purchases | View remains enforced for historical records. Create remains defined for compatibility but runtime creation is retired and redirects to permission-protected Purchase Requests; Edit/Delete definitions have no controller actions. |
 | Purchase returns | View/Create enforced; Create also requires a posted original purchase and sufficient current stock. |
 | Goods receipt returns | Separate View/Create permissions; Create accepts posted new-flow receipts only and revalidates remaining receipt quantity, current stock, tracking and accounting configuration. |
 | Sales | View/Create enforced; Edit/Delete definitions have no controller actions. |
@@ -98,7 +98,7 @@ The Index and mutation actions enforce these policies server-side. Permission se
 
 # PUR-140 purchasing analytics permission
 
-- `PurchaseAnalytics.View` protects the read-only purchasing dashboard and supplier-performance projection. It grants no purchasing command, inventory mutation or accounting-posting authority.
+- `PurchaseAnalytics.View` protects the read-only purchasing dashboard, KPI definitions, supplier/cost trends, buyer workload, open exception drill-through and legacy/modern comparison. Source-document links are shown only when the user also holds the destination module's view permission. It grants no purchasing command, inventory mutation or accounting-posting authority.
 
 # PUR-160 purchase accounting reconciliation permission
 

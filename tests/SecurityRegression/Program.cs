@@ -2209,6 +2209,16 @@ Check(PurchaseAnalyticsService.Rate(8m, 10m) == 80m &&
       PurchaseAnalyticsService.Rate(2m, 0m) == 0m &&
       PurchaseAnalyticsService.Rate(12m, 10m) == 100m,
     "Purchase analytics rates must handle normal, zero-denominator and over-fulfilment cases safely");
+var legacyPurchaseService = (PurchaseService)System.Runtime.CompilerServices.RuntimeHelpers.GetUninitializedObject(typeof(PurchaseService));
+Check(!legacyPurchaseService.LegacyDirectPurchaseCreationEnabled,
+    "Legacy direct purchase creation must remain retired after the procure-to-pay cutover");
+Check(ActionableErrorGuidance.Resolve(
+          "Legacy direct purchase creation is retired. Create a purchase request instead.",
+          "Purchases") is { Controller: "PurchaseRequests", Action: "Create", RequiredPermission: "PurchaseRequests.Create" },
+    "Retired legacy purchase creation must guide authorized users to the modern purchase request workflow");
+Check(Enum.GetValues<PurchaseAnalyticsGroupBy>().SequenceEqual(
+          [PurchaseAnalyticsGroupBy.Month, PurchaseAnalyticsGroupBy.Supplier, PurchaseAnalyticsGroupBy.Buyer]),
+    "Advanced purchase analytics must support month, supplier and buyer grouping");
 var reconciliationDate = DateOnly.FromDateTime(DateTime.Today);
 var purchaseReconciliationService = new PurchaseAccountingReconciliationService(
     new StubPurchaseAccountingReconciliationRepository(new PurchaseAccountingReconciliationSnapshot(

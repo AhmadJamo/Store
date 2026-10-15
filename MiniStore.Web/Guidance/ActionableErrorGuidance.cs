@@ -42,6 +42,10 @@ public static class ActionableErrorGuidance
             return new("PurchaseRequests", "Create", "Create purchase request", "PurchaseRequests.Create");
 
         if (Matches(message, localize,
+                "Legacy direct purchase creation is retired. Create a purchase request instead."))
+            return new("PurchaseRequests", "Create", "Create purchase request", "PurchaseRequests.Create");
+
+        if (Matches(message, localize,
                 "Payment method was not found.",
                 "The selected payment method is inactive."))
             return new("PaymentMethods", "Index", "Manage Payment Methods", "Administration.Access");

@@ -26,9 +26,11 @@
 
 `docs/PURCHASE_MANAGEMENT_EVOLUTION_PLAN.md` is the approved procure-to-pay evolution plan. It records the legacy direct-purchase boundary, capability gaps, target aggregates, inventory/accounting integration contracts, additive migration safeguards and PUR-000 through PUR-150 vertical slices. Planned purchase types are not implemented unless the matching slice is explicitly marked complete.
 
-`docs/PURCHASE_COMPLETION_ROADMAP_AR_EN.md` is the approved Arabic/English post-PUR-150 purchase plan. PUR-160 through PUR-270 are implemented; PUR-280 analytics and legacy retirement is next.
+`docs/PURCHASE_COMPLETION_ROADMAP_AR_EN.md` is the approved Arabic/English post-PUR-150 purchase plan. PUR-160 through PUR-280 are implemented, including advanced analytics and retirement of new Legacy Direct Purchase creation.
 
 `docs/decisions/2026-10-14-immutable-supplier-price-snapshots.md` fixes the append-only full-snapshot authority for supplier-price history across manual, bulk, CSV and quantity-break changes.
+
+`docs/decisions/2026-10-15-retire-legacy-direct-purchase-creation.md` retires new Legacy Direct Purchase creation after PUR-280 while preserving historical records and directing new activity to Purchase Requests.
 
 `docs/PURCHASE_ARCHITECTURE_ALIGNMENT.md` is the accepted PUR-005 gate. It fixes Supplier compatibility, Purchasing/Inventory/Accounting ownership, derived quantity authorities, staged currency behavior, purchase-first approval boundaries, GRNI, synchronous contracts and deferred event infrastructure before runtime implementation starts.
 
@@ -89,7 +91,7 @@
 | `Dtos/Purchases/SupplierPurchasingInfoDtos.cs`, `Services/Purchases/{SupplierPurchasingInfoService,SupplierPurchasingCsvParser,SupplierPurchasingExcelParser,SupplierPriceExceptionAnalyzer}.cs` | manages supplier-selected product terms, quantity price breaks/discounts, append-only price snapshots, exception analysis and controlled CSV/native Excel export/import with preview | Supplier Purchasing screens and PUR-010/PUR-230. |
 | `Services/Purchases/{PurchaseAgreement,PurchaseTemplate}Service.cs` | creates and activates awarded agreements, caps Draft order releases, saves repeat templates and generates traced Draft Purchase Requests | PUR-120 agreement/template screens. |
 | `Services/Purchases/LandedCostService.cs` | allocates receipt costs, splits current inventory from consumed expense, records value-only stock movements and posts a balanced clearing journal | PUR-130 landed-cost screens. |
-| `Dtos/Purchases/PurchaseAnalyticsDtos.cs`, `Services/Purchases/PurchaseAnalyticsService.cs` | bounded read-only purchasing cards and supplier order-cohort performance projections over tenant-filtered repositories | PUR-140 analytics screen. |
+| `Dtos/Purchases/PurchaseAnalyticsDtos.cs`, `Services/Purchases/PurchaseAnalyticsService.cs` | bounded, filterable and groupable purchasing KPI, trend, supplier, buyer-workload, exception, legacy-comparison and acceptance projections over tenant-filtered repositories | PUR-140/PUR-280 analytics screen. |
 | `Dtos/Purchases/PurchaseAccountingReconciliationDtos.cs`, `Services/Purchases/PurchaseAccountingReconciliationService.cs` | rounds and classifies as-of-date warehouse Inventory/GL and receipt-derived GRNI/GL evidence without mutation | PUR-160 reconciliation screen. |
 | `Services/Purchases/GoodsReceiptService.cs` | atomically validates remaining PO quantity and coordinates one-step posting or staged receive/inspect/store quality hold with Inventory-owned stock, valuation and tracking effects | Goods Receipt capture, inspection and storage screens. |
 | `Services/Inventory/InventoryScanResolver.cs` | workflow-scoped retry-key generation/validation and normalized exact scan tokens, including Goods Receipt scans | inventory and PUR-150 scanning flows. |
@@ -229,7 +231,7 @@ Hierarchical location update (2026-09-30): StorageLocation retains its identity 
 | `Controllers/Purchases/SupplierPaymentsController.cs`, `Views/SupplierPayments/*.cshtml` | permission-protected partial allocation, immediate posting, payment history and immutable detail | PUR-100 payment service. |
 | `Controllers/Purchases/{PurchaseAgreements,PurchaseTemplates}Controller.cs`, matching views | permission-split agreement creation/activation/release and repeat-template creation/generation | PUR-120 services. |
 | `Controllers/Purchases/LandedCostsController.cs`, `Views/LandedCosts/*` | permission-split landed-cost history, allocation capture and immutable detail | PUR-130 service. |
-| `Controllers/Purchases/PurchaseAnalyticsController.cs`, `Views/PurchaseAnalytics/Index.cshtml` | permission-protected date-filtered purchasing dashboard and supplier-performance table | PUR-140 analytics service. |
+| `Controllers/Purchases/PurchaseAnalyticsController.cs`, `Views/PurchaseAnalytics/Index.cshtml` | permission-protected responsive purchasing dashboard with KPI sources, trends, drill-through exceptions, buyer workload and final lifecycle acceptance | PUR-140/PUR-280 analytics service. |
 | `Controllers/Purchases/PurchaseAccountingReconciliationController.cs`, `Views/PurchaseAccountingReconciliation/Index.cshtml` | permission-protected read-only Inventory/GL and GRNI/GL reconciliation with responsive evidence cards and setup/source links | PUR-160 reconciliation service. |
 | `Views/Settings/PurchaseMatching.cshtml` | administration screen for quantity and price tolerance percentages | PUR-090 settings service. |
 | `Areas/Platform/*` | separately authenticated platform-owner control center for plans, companies/subscriptions, promotion codes and pending payment confirmations | SaaS module. |

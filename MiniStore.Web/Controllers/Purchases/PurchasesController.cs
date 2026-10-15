@@ -49,6 +49,12 @@ public class PurchasesController : Controller
     [PermissionAuthorize("Purchases.Create")]
     public async Task<IActionResult> Create()
     {
+        if (!_purchaseService.LegacyDirectPurchaseCreationEnabled)
+        {
+            TempData["NotificationType"] = "info";
+            TempData["NotificationMessage"] = "Legacy direct purchase creation is retired. Create a purchase request instead.";
+            return RedirectToAction(nameof(Index));
+        }
         await LoadDropdowns();
 
         var dto = new CreatePurchaseDto
@@ -64,6 +70,12 @@ public class PurchasesController : Controller
     public async Task<IActionResult> Create(
         CreatePurchaseDto dto)
     {
+        if (!_purchaseService.LegacyDirectPurchaseCreationEnabled)
+        {
+            TempData["NotificationType"] = "info";
+            TempData["NotificationMessage"] = "Legacy direct purchase creation is retired. Create a purchase request instead.";
+            return RedirectToAction(nameof(Index));
+        }
         if (!ModelState.IsValid)
         {
             await LoadDropdowns();

@@ -4,7 +4,7 @@
 
 The approved numbered Arabic/English delivery sequence is maintained in `MASTER_IMPLEMENTATION_ROADMAP_AR_EN.md`. Detailed working status, business rules and the rolling suggestion queue remain in `ARABIC_SHARED_ROADMAP.md`. This file remains the concise technical backlog.
 
-The PUR-000 through PUR-270 purchase evolution is implemented. The approved continuation is maintained in `PURCHASE_COMPLETION_ROADMAP_AR_EN.md`; PUR-280 analytics and legacy retirement is next. Incoming customer-management and sales requirements must be reconciled with master-roadmap steps 7 through 11 before implementation.
+The PUR-000 through PUR-280 purchase evolution is implemented. The approved completion sequence is maintained in `PURCHASE_COMPLETION_ROADMAP_AR_EN.md`. Incoming customer-management and sales requirements must be reconciled with master-roadmap steps 7 through 11 before implementation.
 
 - [x] PUR-000 complete purchase architecture review, legacy compatibility boundary, migration strategy and vertical-slice roadmap.
 - [x] PUR-005 fix context ownership, quantity authority, staged currency, approval and GRNI boundaries before runtime implementation.
@@ -41,7 +41,7 @@ The PUR-000 through PUR-270 purchase evolution is implemented. The approved cont
   - [x] PUR-250B allocate incoming demand and define the dropshipping contract without internal stock.
 - [x] PUR-260 add supplier email, attachments, confirmation tracking and reviewed OCR capture.
 - [x] PUR-270 add a supplier portal plus secure API/EDI/UBL exchange and reliable outbox delivery.
-- [ ] PUR-280 add advanced purchase analytics and make a documented Legacy Direct Purchase retirement decision.
+- [x] PUR-280 add advanced purchase analytics and make a documented Legacy Direct Purchase retirement decision.
 
 - [x] WMS-050 reservations and exact transfer allocation with concurrent last-unit protection.
 - [x] WMS-060 blind cycle counts and controlled inventory adjustment posting; scheduling remains deferred.
@@ -101,7 +101,7 @@ The PUR-000 through PUR-270 purchase evolution is implemented. The approved cont
 - Implemented WMS-010 hierarchical location metadata, barcode, sequence, tree ordering, warehouse-filtered parent selection, operational capabilities, edit workflow and cycle/same-warehouse validation. Putaway/transfers/relocations enforce receive/pick capabilities. Its additive migration is applied to `AHMAD/MiniStoreDb`; authenticated UI smoke remains because no login secret is stored in the repository.
 
 ## In Progress
-- PUR-270 is implemented. Current: PUR-280 advanced analytics and legacy retirement.
+- PUR-280 is implemented. The purchase completion roadmap is complete; continue from the master roadmap after reconciling customer-management and sales requirements.
 - WMS delivery is paused by product-owner direction. Its remaining items stay documented in `WMS_EVOLUTION_PLAN.md` and resume after the current purchase-management priority.
 - WMS-015A/B/C/D typed definitions, values, ProductTemplate grouping and controlled selection-based variant generation are implemented. Product remains the SKU; proceed to the next WMS slice.
 - WMS-020A physical StockMovement kernel is implemented for idempotent Putaway/Relocation dual-write. Next: authenticated pilot smoke test and WMS-030 transfer/transit integration; do not cut over legacy reads yet.

@@ -1,5 +1,15 @@
 # AI Work Log
 
+# 2026-10-15 — PUR-280 advanced analytics and legacy purchase retirement
+
+- Expanded purchasing analytics with date, supplier, buyer and order-status filters plus month/supplier/buyer grouping.
+- Added spend, cost, seasonality, lead-time, unconfirmed/overdue order, price-variance, buyer-workload and open-match-exception evidence with source-document drill-through.
+- Added explicit KPI source/period/calculation definitions and a permission-aware procure-to-pay acceptance journey from request through matching, payment, return and closure.
+- Added legacy-versus-modern usage comparison and accepted the decision to retire new Legacy Direct Purchase creation while preserving historical records.
+- Enforced retirement in the Application service and controller, relabeled legacy navigation and replaced the creation action with a Purchase Request destination.
+- Updated Arabic localization, responsive card layouts, regression coverage, roadmap status and architectural documentation.
+- Debug/Release builds completed with zero warnings/errors, all 744 focused checks passed, SQL integration including advanced analytics evidence passed and the EF model has no pending changes.
+
 # 2026-10-15 — PUR-270 supplier portal and external integration
 
 - Added expiring/revocable private supplier portal links for invited RFQs and supplier Purchase Orders, including quotation submission, delivery-date confirmation and review-only delivery notices.

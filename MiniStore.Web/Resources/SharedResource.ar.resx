@@ -2428,4 +2428,58 @@
   <data name="Review delivery attempts and retry only failed messages; the same idempotency key prevents duplicate processing." xml:space="preserve"><value>راجع محاولات الإرسال وأعد فقط الرسائل الفاشلة؛ يمنع مفتاح منع التكرار معالجة المستند مرتين.</value></data>
   <data name="Review outbox delivery status" xml:space="preserve"><value>مراجعة حالة سجل الإرسال</value></data>
   <data name="The background sender will retry the message without creating another business document." xml:space="preserve"><value>سيعيد المرسل الخلفي المحاولة دون إنشاء مستند تجاري آخر.</value></data>
+  <data name="Traceable purchasing performance from source documents." xml:space="preserve"><value>أداء مشتريات قابل للتتبع إلى المستندات المصدر.</value></data>
+  <data name="All suppliers" xml:space="preserve"><value>كل الموردين</value></data>
+  <data name="Buyer" xml:space="preserve"><value>المشتري</value></data>
+  <data name="All buyers" xml:space="preserve"><value>كل المشترين</value></data>
+  <data name="Group by" xml:space="preserve"><value>التجميع حسب</value></data>
+  <data name="Analytics group Month" xml:space="preserve"><value>الشهر</value></data>
+  <data name="Analytics group Supplier" xml:space="preserve"><value>المورد</value></data>
+  <data name="Analytics group Buyer" xml:space="preserve"><value>المشتري</value></data>
+  <data name="Reset" xml:space="preserve"><value>إعادة ضبط</value></data>
+  <data name="Unconfirmed" xml:space="preserve"><value>غير مؤكدة</value></data>
+  <data name="Open match exceptions" xml:space="preserve"><value>استثناءات المطابقة المفتوحة</value></data>
+  <data name="Legacy and modern workflow comparison" xml:space="preserve"><value>مقارنة المسار القديم والمسار الحديث</value></data>
+  <data name="New legacy direct purchase creation is retired; prior records remain available for reference." xml:space="preserve"><value>تم إيقاف إنشاء مشتريات مباشرة قديمة جديدة، وتبقى السجلات السابقة متاحة للرجوع إليها.</value></data>
+  <data name="Legacy direct purchases" xml:space="preserve"><value>المشتريات المباشرة القديمة</value></data>
+  <data name="Legacy purchase returns" xml:space="preserve"><value>مرتجعات المشتريات القديمة</value></data>
+  <data name="Modern purchase orders" xml:space="preserve"><value>أوامر الشراء الحديثة</value></data>
+  <data name="Spend, cost and seasonality trends" xml:space="preserve"><value>اتجاهات الإنفاق والتكلفة والموسمية</value></data>
+  <data name="Average unit price" xml:space="preserve"><value>متوسط سعر الوحدة</value></data>
+  <data name="Buyer workload" xml:space="preserve"><value>عبء عمل المشتري</value></data>
+  <data name="No buyer workload in the selected period." xml:space="preserve"><value>لا يوجد عبء عمل للمشترين في الفترة المحددة.</value></data>
+  <data name="Open matching exceptions" xml:space="preserve"><value>استثناءات المطابقة المفتوحة</value></data>
+  <data name="Maximum variance" xml:space="preserve"><value>أعلى فرق</value></data>
+  <data name="Open source document" xml:space="preserve"><value>فتح المستند المصدر</value></data>
+  <data name="No open matching exceptions in the selected period." xml:space="preserve"><value>لا توجد استثناءات مطابقة مفتوحة في الفترة المحددة.</value></data>
+  <data name="KPI definitions and sources" xml:space="preserve"><value>تعريفات مؤشرات الأداء ومصادرها</value></data>
+  <data name="Source" xml:space="preserve"><value>المصدر</value></data>
+  <data name="Period" xml:space="preserve"><value>الفترة</value></data>
+  <data name="Procure-to-pay acceptance journey" xml:space="preserve"><value>رحلة قبول الشراء حتى الدفع</value></data>
+  <data name="Each stage links to its source documents so the result can be verified." xml:space="preserve"><value>ترتبط كل مرحلة بمستنداتها المصدر حتى يمكن التحقق من النتيجة.</value></data>
+  <data name="Open source documents" xml:space="preserve"><value>فتح المستندات المصدر</value></data>
+  <data name="Posted vendor bills" xml:space="preserve"><value>فواتير المورد المرحلة</value></data>
+  <data name="Posted goods receipts and purchase order expected dates" xml:space="preserve"><value>إيصالات البضاعة المرحلة ومواعيد أوامر الشراء المتوقعة</value></data>
+  <data name="Purchase order date and posted goods receipt date" xml:space="preserve"><value>تاريخ أمر الشراء وتاريخ إيصال البضاعة المرحل</value></data>
+  <data name="Latest purchase match runs without an override" xml:space="preserve"><value>عمليات مطابقة الشراء التي لم تُعالج بتجاوز مبرر</value></data>
+  <data name="Sum of posted supplier bill totals in the selected period." xml:space="preserve"><value>مجموع فواتير المورد المرحلة ضمن الفترة المحددة.</value></data>
+  <data name="Received quantity posted on or before the current expected date divided by received quantity." xml:space="preserve"><value>الكمية المستلمة في الموعد المتوقع أو قبله مقسومة على إجمالي الكمية المستلمة.</value></data>
+  <data name="Average calendar days from order date to each posted receipt." xml:space="preserve"><value>متوسط الأيام التقويمية من تاريخ الطلب إلى كل إيصال بضاعة مرحل.</value></data>
+  <data name="Quantity and price exceptions that still require review or a reasoned override." xml:space="preserve"><value>فروق الكمية والسعر التي ما زالت بحاجة إلى مراجعة أو تجاوز مبرر.</value></data>
+  <data name="Internal demand and approval evidence." xml:space="preserve"><value>دليل الطلب الداخلي والاعتماد.</value></data>
+  <data name="Commercial commitment created from sourcing or an agreement." xml:space="preserve"><value>التزام تجاري ناتج عن التوريد أو اتفاقية شراء.</value></data>
+  <data name="Posted receipt and inventory evidence." xml:space="preserve"><value>دليل الاستلام والمخزون المرحل.</value></data>
+  <data name="Approved and posted supplier invoice evidence." xml:space="preserve"><value>دليل فاتورة المورد المعتمدة والمرحلة.</value></data>
+  <data name="Posted payable settlement evidence." xml:space="preserve"><value>دليل تسوية الذمم الدائنة المرحلة.</value></data>
+  <data name="Posted supplier-return evidence." xml:space="preserve"><value>دليل مرتجع المورد المرحل.</value></data>
+  <data name="Completed or reasoned remaining-quantity closure." xml:space="preserve"><value>إغلاق مكتمل أو إغلاق مبرر للكمية المتبقية.</value></data>
+  <data name="Quantity and price comparison evidence." xml:space="preserve"><value>دليل مقارنة الكمية والسعر.</value></data>
+  <data name="New legacy purchase creation is retired" xml:space="preserve"><value>تم إيقاف إنشاء المشتريات القديمة الجديدة</value></data>
+  <data name="Historical direct purchases remain available for reference. New purchasing starts from a purchase request." xml:space="preserve"><value>تبقى المشتريات المباشرة السابقة متاحة للرجوع إليها، وتبدأ المشتريات الجديدة من طلب شراء.</value></data>
+  <data name="Use the controlled procure-to-pay workflow for new purchasing activity." xml:space="preserve"><value>استخدم مسار الشراء حتى الدفع المضبوط لأي عملية شراء جديدة.</value></data>
+  <data name="Legacy" xml:space="preserve"><value>قديم</value></data>
+  <data name="No legacy direct purchases found." xml:space="preserve"><value>لا توجد مشتريات مباشرة قديمة.</value></data>
+  <data name="Legacy direct purchase creation is retired. Create a purchase request instead." xml:space="preserve"><value>تم إيقاف إنشاء الشراء المباشر القديم. أنشئ طلب شراء بدلًا منه.</value></data>
+  <data name="Legacy direct purchase details" xml:space="preserve"><value>تفاصيل الشراء المباشر القديم</value></data>
+  <data name="This is a historical legacy record. New purchasing starts from a purchase request." xml:space="preserve"><value>هذا سجل تاريخي قديم. تبدأ المشتريات الجديدة من طلب شراء.</value></data>
 </root>

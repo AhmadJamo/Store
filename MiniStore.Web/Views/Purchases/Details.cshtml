@@ -4,12 +4,13 @@
 @inject Microsoft.AspNetCore.Authorization.IAuthorizationService AuthorizationService
 
 @{
-    ViewData["Title"] = "Purchase Details";
+    ViewData["Title"] = Localizer["Legacy direct purchase details"];
     var canCreateReturn = (await AuthorizationService.AuthorizeAsync(User, null, "Permission:PurchaseReturns.Create")).Succeeded;
     var numberSettings = await GeneralSettingsService.GetAsync();
 }
 
-<h1>Purchase Details</h1>
+<h1>@Localizer["Legacy direct purchase details"]</h1>
+<div class="alert alert-secondary">@Localizer["This is a historical legacy record. New purchasing starts from a purchase request."]</div>
 
 <div class="row mb-4">
 

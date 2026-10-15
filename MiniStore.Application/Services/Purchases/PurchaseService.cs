@@ -6,6 +6,7 @@ namespace MiniStore.Application.Services;
 
 public class PurchaseService
 {
+    public bool LegacyDirectPurchaseCreationEnabled => false;
     private readonly IPurchaseRepository _purchaseRepository;
 
     private readonly IProductRepository _productRepository;
@@ -222,6 +223,9 @@ public class PurchaseService
     public async Task CreateAsync(
      CreatePurchaseDto dto)
     {
+        if (!LegacyDirectPurchaseCreationEnabled)
+            throw new InvalidOperationException("Legacy direct purchase creation is retired. Create a purchase request instead.");
+
         if (dto.SupplierId <= 0)
             throw new ArgumentException(
                 "Supplier is required.");

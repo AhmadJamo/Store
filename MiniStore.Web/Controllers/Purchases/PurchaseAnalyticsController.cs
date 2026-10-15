@@ -1,6 +1,7 @@
-using Microsoft.AspNetCore.Mvc;using Microsoft.Extensions.Localization;using MiniStore.Application.DTOs.Purchases;using MiniStore.Application.Services;using MiniStore.Web.Authorization;
+using Microsoft.AspNetCore.Identity;using Microsoft.AspNetCore.Mvc;using Microsoft.Extensions.Localization;using MiniStore.Application.DTOs.Purchases;using MiniStore.Application.Services;using MiniStore.Web.Authorization;
 namespace MiniStore.Web.Controllers;
-public sealed class PurchaseAnalyticsController(PurchaseAnalyticsService service,IStringLocalizer<SharedResource>localizer):Controller
+public sealed class PurchaseAnalyticsController(PurchaseAnalyticsService service,IStringLocalizer<SharedResource>localizer,UserManager<IdentityUser> users):Controller
 {
- [HttpGet,PermissionAuthorize("PurchaseAnalytics.View")]public async Task<IActionResult>Index([FromQuery]PurchaseAnalyticsQueryDto query){try{return View(await service.GetAsync(query));}catch(ArgumentException e){TempData["NotificationType"]="danger";TempData["NotificationMessage"]=localizer[e.Message].Value;return View(await service.GetAsync(new()));}}
+ [HttpGet,PermissionAuthorize("PurchaseAnalytics.View")]public async Task<IActionResult>Index([FromQuery]PurchaseAnalyticsQueryDto query){try{return View(await AddBuyerNames(await service.GetAsync(query)));}catch(ArgumentException e){TempData["NotificationType"]="danger";TempData["NotificationMessage"]=localizer[e.Message].Value;return View(await AddBuyerNames(await service.GetAsync(new())));}}
+ private async Task<PurchaseAnalyticsDto>AddBuyerNames(PurchaseAnalyticsDto model){var names=new Dictionary<string,string>();foreach(var id in model.BuyerOptions.Select(x=>x.UserId).Distinct()){var user=await users.FindByIdAsync(id);names[id]=user?.Email??user?.UserName??localizer["Unknown user"].Value;}model.BuyerOptions=model.BuyerOptions.Select(x=>new PurchaseAnalyticsBuyerOptionDto(x.UserId,names.GetValueOrDefault(x.UserId,x.DisplayName))).ToList();foreach(var row in model.BuyerWorkloads)row.BuyerDisplayName=names.GetValueOrDefault(row.BuyerUserId,row.BuyerUserId);return model;}
 }

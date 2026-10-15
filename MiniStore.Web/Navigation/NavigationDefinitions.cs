@@ -40,12 +40,12 @@ public static class NavigationDefinitions
             20,
 
             new NavigationItem(
-                "Purchases",
+                "Legacy direct purchases",
                 "bi-bag-check",
                 "Purchases",
                 "Index",
                 "Purchases.View",
-                10),
+                190),
 
             new NavigationItem(
                 "Suppliers",
@@ -56,7 +56,7 @@ public static class NavigationDefinitions
                 20),
 
             new NavigationItem(
-                "Purchase returns",
+                "Legacy purchase returns",
                 "bi-arrow-counterclockwise",
                 "PurchaseReturns",
                 "Index",
