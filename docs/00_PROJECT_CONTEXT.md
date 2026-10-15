@@ -11,7 +11,7 @@ The repository implements an operational slice for catalog, warehouses, stock, s
 
 The WMS track is temporarily paused after implementing reconciliation, logistics, movements, balances, reservations, counts, lot/serial execution, removal/putaway policies, replenishment transfer/purchase-demand planning, inventory insights and safe scan workflows. The additive procure-to-pay evolution is implemented through PUR-280. Advanced purchasing analytics expose filterable spend, delay, confirmation, price-variance, supplier, seasonal, buyer-workload and open-exception evidence with source definitions and document links. Creation of new Legacy Direct Purchases is retired; historical records remain visible and users are directed to Purchase Requests for new activity.
 
-The imported ERP SaaS Foundation Blueprint is installed under `docs/reference/erp-saas-foundation/` as a proposed reference, not implementation evidence. Its `FND-000` repository compatibility assessment is complete. The project-control audit under `docs/project-control/` now provides the single current status, feature inventory, audit set, dependency order, master roadmap and next-task gate. The local Demo scope completed credential closure, encrypted restore proof and exact 112/112 migration/schema reconciliation. Audit-security design is now the only proposed task as `P1-AUD-010`.
+The imported ERP SaaS Foundation Blueprint is installed under `docs/reference/erp-saas-foundation/` as a proposed reference, not implementation evidence. Its `FND-000` repository compatibility assessment is complete. The project-control audit under `docs/project-control/` now provides the single current status, feature inventory, audit set, dependency order, master roadmap and next-task gate. The local Demo scope completed credential closure, encrypted restore proof and exact 112/112 migration/schema reconciliation. The documentation-only `P1-AUD-010` audit-security design is approved; additive `P1-AUD-011` schema/core-writer implementation is the only proposed next task.
 
 ## Status classification
 - IMPLEMENTED: catalog, warehouses, suppliers, stock balances/movements, purchases, sales, transfer workflow, Identity login, role-permission checks, audit-log rows, Razor UI.
@@ -39,8 +39,8 @@ The imported ERP SaaS Foundation Blueprint is installed under `docs/reference/er
 See `06_SECURITY.md`, `04_ACCOUNTING.md`, and `TODO.md`. The historically exposed administrator was closed for the evidenced local Demo environment, an encrypted isolated restore drill reconciled without differences and all 112 migrations match the database with no pending model change. Highest-priority open findings now include audit evidence, off-host scheduled backups, production deployment controls and broader integration testing. Identity escalation, role-delete CSRF, login lockout and core inventory concurrency have been addressed; see the security and inventory documentation.
 
 ## Recommended next steps
-1. After explicit approval, execute only the design phase of `P1-AUD-010` from `project-control/NEXT_TASK.md`; do not implement a migration or screen yet.
-2. Approve the audit event contract, threat model, redaction and retention decision before selecting the first implementation slice.
+1. After explicit approval, implement only `P1-AUD-011` from `project-control/NEXT_TASK.md`: the additive event schema, core writer, redactor and integrity hash behind a disabled-by-default feature flag.
+2. Do not add the audit reading/export screen or freeze the legacy interceptor in the first implementation slice.
 3. Resume the customer and sales sequence only through the ordering and gates in `project-control/MASTER_ROADMAP.md`.
 
 ## Read first

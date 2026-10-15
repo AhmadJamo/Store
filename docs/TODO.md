@@ -15,7 +15,8 @@ The ERP SaaS Foundation Blueprint is imported as a non-authoritative planning re
 - [x] P0-SEC-001 close the historically published administrator credential on the owner-declared local Demo environment, invalidate sessions, prove old-secret rejection and verify a replacement administrator.
 - [x] P0-OPS-002 create an AES-256 encrypted local Demo backup, verify and restore it in isolation, reconcile 147 tables plus business/accounting totals, and clean up only the restore database.
 - [x] P0-DB-003 prove all 112 EF Core migrations match the local Demo database, no model change is pending and no disabled/untrusted constraint or tenant relationship drift exists.
-- [ ] P1-AUD-010 approve the audit-security design for correlation, outcomes, redaction, retention and tamper evidence; this is the only proposed next task and requires explicit approval.
+- [x] P1-AUD-010 approve the audit-security design for correlation, outcomes, redaction, access, retention classes, staged tamper evidence, additive migration, rollback and tests without runtime changes.
+- [ ] P1-AUD-011 add the AuditEvent schema, core Application writer, allowlist redactor and keyed integrity hash behind a disabled-by-default feature flag; this is the only proposed next task and requires explicit approval.
 
 - [x] PUR-000 complete purchase architecture review, legacy compatibility boundary, migration strategy and vertical-slice roadmap.
 - [x] PUR-005 fix context ownership, quantity authority, staged currency, approval and GRNI boundaries before runtime implementation.

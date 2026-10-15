@@ -46,6 +46,8 @@
 
 `docs/project-control/` is the consolidated execution-control source for current project status, verified feature inventory, architecture/database/security/business-integrity audits, documentation conflicts, dependencies, one prioritized roadmap, decisions, technical debt, executed test evidence, quick handoff context and exactly one proposed next task. Its `operations/` folder stores secret-free operational evidence for the local Demo credential closure, encrypted backup/restore drill and 112/112 migration/schema reconciliation. It coordinates rather than replaces detailed module plans or historical ADRs.
 
+`docs/AUDIT_SECURITY_ARCHITECTURE_AND_IMPLEMENTATION_PLAN.md` and `docs/decisions/2026-10-15-audit-event-v2-boundary.md` are the approved documentation-only `P1-AUD-010` gate. They preserve the legacy `AuditLogs`, keep accounting/inventory/domain histories authoritative, and define an additive semantic `AuditEvent` contract plus redaction, access, retention, integrity, migration, rollback and test gates. No runtime `AuditEvent` type or table exists yet.
+
 `MiniStore.Web/Guidance/ActionableErrorGuidance.cs` maps recognized, user-resolvable purchase errors to permission-protected setup or master-data destinations. The shared notification partial renders the resulting action for both modal notifications and page validation summaries; ordinary validation errors remain message-only.
 
 ## Domain source map

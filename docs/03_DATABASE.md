@@ -91,6 +91,8 @@ All business tables have a required `TenantId` foreign key to `Tenants`. EF quer
 | DocumentSequences | one row per tenant/document type; unique `(TenantId, DocumentType)`; customizable template, prefix, suffix, padding, next/reset counters and period state; rowversion protects settings updates. |
 
 ## Migrations
+The approved `P1-AUD-010` design proposes a new additive `AuditEvents` table rather than changing or backfilling legacy `AuditLogs`. No such table or migration exists yet. The proposed table supports Tenant/Platform/System scope with a scope/TenantId check constraint, redacted bounded JSON, correlation/resource indexes and integrity evidence; implementation is gated as `P1-AUD-011`.
+
 Migration history includes `20261012122525_AddPurchaseOrderDerivedClosure` and `20261012125000_AddSupplierCreditNotes`, both applied to the local `MiniStoreDb`. The latter creates empty tenant-safe credit-note tables without rewriting bills or inventory. Migrations are source-controlled under `MiniStore.Infrastructure/Migrations`; generated designers and the model snapshot are metadata, not separate runtime features.
 
 Migration `20261014161000_AddDemandAllocationAndDirectDelivery` adds the fulfillment route/destination and direct-delivered quantity to existing purchase tables, backfills existing orders as Warehouse route, and creates tenant-safe demand-allocation and delivery-evidence tables. It does not create stock or journals and was applied to the local `MiniStoreDb` on 2026-10-14.

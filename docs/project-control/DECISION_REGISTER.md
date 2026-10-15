@@ -17,5 +17,6 @@
 | RLS/Redis/stamps/microservices | Unresolved ADR triggers (قرارات مستقبلية) | ERP SaaS foundation | لا تعتمد دون قياس وحاجة |
 | مزود الدفع الخارجي | Unresolved (غير محسوم) | SaaS docs | يلزم ADR وأمان webhook |
 | RPO/RTO وسياسة النسخ | Unresolved P0 (غير محسوم حرج) | FND-010 | أول أساس تشغيلي بعد السر |
+| حدث تدقيق دلالي إضافي مع حفظ السجل القديم | Accepted design (تصميم معتمد) | `2026-10-15-audit-event-v2-boundary.md` | Application يكتب السياق؛ القيود والحركات والتواريخ تبقى مصادر الحقيقة |
 
 أي قرار جديد أو تعديل قرار معتمد يحتاج ADR (سجل قرار معماري) ولا يحل بصمت داخل كود مهمة أخرى.

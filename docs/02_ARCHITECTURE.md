@@ -1,7 +1,7 @@
 # Architecture
 > Status: IMPLEMENTED WITH INCONSISTENCIES  
 > Source of truth: Code  
-> Last reviewed: 2026-10-08
+> Last reviewed: 2026-10-15
 
 ## Solution and dependency direction
 `MiniStore.Domain` contains entities, enums, commands and repository/service interfaces. `MiniStore.Application` references Domain and contains DTOs plus use-case services. `MiniStore.Infrastructure` references Application and Domain and implements EF Core persistence, repositories, seeders, authorization service and Unit of Work. `MiniStore.Web` references Application and Infrastructure and is the MVC presentation/composition root.
@@ -62,3 +62,9 @@ PUR-240 introduces the first bounded background planner. The web-hosted scanner 
 ## ERP SaaS foundation reference boundary
 
 `reference/erp-saas-foundation/` is a proposed cross-cutting architecture and operations reference. MiniStore remains a modular monolith; the package does not authorize a public API, microservices, broker, distributed cache, SQL row-level security, object storage or deployment stamps. Those remain ADR triggers that require measured need. The repository-specific `MINISTORE_COMPATIBILITY.md` preserves existing tenant, finance, inventory, purchase approval, guidance and SaaS control-plane implementations while ordering remaining foundation work from operational recovery evidence through audit, performance, provisioning, exceptions/work and safe import/export.
+
+## Audit-security evolution boundary
+
+`AUDIT_SECURITY_ARCHITECTURE_AND_IMPLEMENTATION_PLAN.md` and `decisions/2026-10-15-audit-event-v2-boundary.md` define the accepted documentation-only `P1-AUD-010` boundary. A later additive `AuditEvent` model will carry semantic actor, scope, outcome, reason, correlation, redacted changes and integrity evidence through an Application-owned writer implemented by Infrastructure. Successful mutation events share the business UnitOfWork; denied/failed security attempts use a distinct bounded path and never claim a committed mutation.
+
+The existing EF interceptor and 707 Demo `AuditLogs` remain legacy compatibility evidence and are not reinterpreted or backfilled. Accounting journals, inventory movements and specialized document histories remain authoritative for amounts, quantities and lifecycle facts. A generic audit event stores execution context and references only. Runtime code, schema and permissions remain unimplemented until `P1-AUD-011` is explicitly approved.

@@ -18,6 +18,8 @@ The imported ERP SaaS Foundation Blueprint and its MiniStore-specific capability
 
 The current single project-control view starts at [project-control/PROJECT_CONTEXT.md](project-control/PROJECT_CONTEXT.md). It links the verified status, complete feature inventory, architecture/database/security/business audits, documentation conflicts, dependency map, one master roadmap, decision and debt registers, test baseline and exactly one proposed next task. Detailed module plans remain supporting documents, not competing priority lists.
 
+The approved documentation-only `P1-AUD-010` design is in [AUDIT_SECURITY_ARCHITECTURE_AND_IMPLEMENTATION_PLAN.md](AUDIT_SECURITY_ARCHITECTURE_AND_IMPLEMENTATION_PLAN.md). It separates semantic security/operational audit events from accounting, inventory and document histories, and defines the event contract, redaction, access, proposed retention, tamper-evidence stages, migration/rollback and `P1-AUD-011` through `P1-AUD-016` implementation gates. It is not runtime implementation evidence.
+
 ## Start Here
 
 1. [Quick project-control handoff](project-control/PROJECT_CONTEXT.md)
@@ -49,6 +51,7 @@ The current single project-control view starts at [project-control/PROJECT_CONTE
 | [Sales architecture audit and implementation plan](SALES_ARCHITECTURE_AUDIT_AND_IMPLEMENTATION_PLAN.md) | Repository-based Sales assessment, compatibility strategy, target boundaries, dependencies, risks, tests and ordered vertical slices |
 | [Sales architecture alignment](SALES_ARCHITECTURE_ALIGNMENT.md) | Accepted Sales/Inventory/Invoicing/Accounting ownership, quantity, posting, currency, reservation and POS boundaries |
 | [Customer and Business Partner audit and plan](CUSTOMER_AND_BUSINESS_PARTNER_AUDIT_AND_IMPLEMENTATION_PLAN.md) | Repository-based customer assessment, compatibility matrix, migration risks, target ownership, tests and ordered implementation slices |
+| [Audit security architecture and plan](AUDIT_SECURITY_ARCHITECTURE_AND_IMPLEMENTATION_PLAN.md) | Approved event boundary, threat model, contract, redaction, retention proposal, integrity stages and incremental implementation plan |
 | [Cross-ERP architecture reference](reference/erp-architecture/README.md) | Proposed system-wide charter, module/data maps, workflows, contracts, delivery guidance and test matrix; not implementation evidence |
 | [ERP SaaS foundation reference](reference/erp-saas-foundation/README.md) | Imported platform blueprint, provenance manifest, MiniStore compatibility matrix and gated operations/security/integrity roadmap |
 | [Project-control status](project-control/PROJECT_STATUS.md) | Current evidence-based health, completed scope, gaps, top risks and execution gate |

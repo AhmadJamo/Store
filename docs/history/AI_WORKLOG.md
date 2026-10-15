@@ -921,3 +921,12 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
 - Corrected three stale database-document claims and closed `DOC-002`/`DB-002`; no forward-fix is required.
 - The normal Release output was locked by the user's running MiniStore process, so it was left running and the solution was built to an isolated artifacts path instead; all four projects passed with zero warnings/errors.
 - Added reconciliation evidence, closed `P0-DB-003` for the local Demo database and advanced the sole proposed task to the design-only `P1-AUD-010`. No migration, schema or business data changed.
+
+## 2026-10-15 — P1-AUD-010 audit-security design
+
+- Inventoried the generic `AuditLog`/SaveChanges interceptor, its lack of a read surface and the authoritative accounting, inventory, purchase-lifecycle, supplier-integration and document-status evidence that a general audit stream must not duplicate.
+- Recorded the previously observed local Demo baseline of 707 generic audit rows across four tenants, including 32 System rows and no Unknown identifiers, without exposing personal or secret values.
+- Approved an additive semantic `AuditEvent` boundary with Tenant/Platform/System scope, outcome, reason, correlation, bounded redacted changes, idempotency and staged integrity evidence; legacy rows remain unchanged and are not backfilled or reinterpreted.
+- Defined allowlist redaction, separate successful-transaction versus rejected/failed-security recording paths, permission-separated reading/export, proposed retention classes subject to legal/operational approval and external checkpoints needed before claiming tamper resistance.
+- Added the architecture/implementation plan and ADR with migration, feature-flag rollback, test gates and `P1-AUD-011` through `P1-AUD-016` slices. Advanced the sole proposed task to `P1-AUD-011`.
+- Documentation only; no runtime code, schema, migration, permission, UI, configuration or Demo data changed.

@@ -59,7 +59,7 @@ Platform login, plan creation and promotion creation forms emit explicit antifor
 - Configure production AllowedHosts; wildcard remains because the deployment hostname is unknown.
 - Supply a production SQL connection string with validated TLS certificates; local development configuration trusts the certificate.
 - Rate limiting is per process and uses the connection IP. Multi-instance/reverse-proxy deployments need trusted proxy configuration and shared edge limits; do not trust arbitrary forwarded headers.
-- Audit history lacks before/after values and tamper-evidence. Production secrets, TLS, backups, access controls and log retention are not verified.
+- The `P1-AUD-010` contract, redaction/access model, proposed retention classes and staged integrity controls are approved in `AUDIT_SECURITY_ARCHITECTURE_AND_IMPLEMENTATION_PLAN.md`, but runtime `AuditEvent` storage, separate SQL identities, external checkpoints and retention enforcement are not implemented. Legacy audit history still lacks before/after values and tamper-evidence.
 - Existing-user role editing, invitations, role data scopes and a before/after authorization audit trail remain future controls.
 - Online payment remains unconfigured. The current checkout is a server-calculated quote followed by explicit platform confirmation; a provider adapter, signed webhook validation, idempotency store and refund/dispute handling are required before accepting card payments.
 - No deployed HTTP/database penetration test performed. Focused tests use a stub Identity manager, real permission evaluators and action metadata.
