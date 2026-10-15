@@ -881,3 +881,12 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
 - Added an evidence-based MiniStore compatibility matrix: tenant isolation is implemented with targeted review gaps; audit, financial/inventory integrity, approvals, configuration, provisioning and guidance are partial; exception center and general import/export are missing; backup/restore and production capacity remain unknown until evidenced.
 - Defined `FND-010` through `FND-080`, with operational backup/restore evidence as the first proposed gate and explicit ADR triggers preventing premature microservices, broker, cache, RLS or stamp adoption.
 - Documentation only; no runtime code, schema, permission, UI, configuration, dependency, deployment or database data changed.
+
+## 2026-10-15 — CTRL-000 ERP project recovery and execution control
+
+- Recursively inventoried the four-layer solution, source groups, 115 Domain entities, 87 Application services, 66 repositories, 64 controllers, 163 Razor views, 112 migrations, tests, documentation, duplicate export tree and recent Git history.
+- Executed the Release security/inventory regression program successfully with 748 checks and the disposable SQL integration program successfully across tenant isolation, inventory/accounting reconciliation and concurrent purchase workflows.
+- Added `docs/project-control/` with current status, a module-by-module feature inventory, architecture/database/security/business-integrity audits, documentation conflict register, dependency map, one P0–P4 master roadmap, decision register, technical debt, test evidence, quick context and exactly one proposed next task.
+- Identified historically published administrator credentials as the only recommended next task because source-code removal cannot revoke access on an existing deployment; no credential was read or recorded during this audit.
+- Marked backup/restore, production migrations, CI/CD, observability, performance and penetration testing as unknown or missing evidence rather than claiming production readiness.
+- Documentation only; no application code, schema, migration, permission, runtime configuration, secret or database business data changed. `P0-SEC-001` remains unimplemented pending explicit approval.

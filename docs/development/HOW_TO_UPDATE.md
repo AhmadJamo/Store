@@ -3,6 +3,8 @@
 
 Source code is authoritative. Before code changes read `00_PROJECT_CONTEXT.md`, `01_CODEBASE_MAP.md`, the matching module document and actual source.
 
+The execution-control gate also requires reading `project-control/PROJECT_STATUS.md`, `project-control/MASTER_ROADMAP.md` and `project-control/NEXT_TASK.md`. Implement only the explicitly approved task recorded in `NEXT_TASK.md`; after verification update its status, the project status, test evidence and next-task gate before beginning anything else.
+
 ## By change type
 - **Entity:** review entity/configuration/migration, DTOs, services, repositories, controller/screens, module, `03_DATABASE.md`, `04_ACCOUNTING.md` if financial, map and tests.
 - **DTO/service:** review relevant service/module/controller/screen/map and tests. Preserve Application layer.

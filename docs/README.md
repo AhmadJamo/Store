@@ -16,13 +16,17 @@ The repository-based Customer and Business Partner audit, compatibility matrix, 
 
 The imported ERP SaaS Foundation Blueprint and its MiniStore-specific capability assessment are in [reference/erp-saas-foundation/README.md](reference/erp-saas-foundation/README.md). It is a proposed reference with source provenance, not implementation evidence; `FND-010` operational recovery proof is the first adoption gate.
 
+The current single project-control view starts at [project-control/PROJECT_CONTEXT.md](project-control/PROJECT_CONTEXT.md). It links the verified status, complete feature inventory, architecture/database/security/business audits, documentation conflicts, dependency map, one master roadmap, decision and debt registers, test baseline and exactly one proposed next task. Detailed module plans remain supporting documents, not competing priority lists.
+
 ## Start Here
 
-1. [Project context](00_PROJECT_CONTEXT.md)
-2. [Codebase map](01_CODEBASE_MAP.md)
-3. [Architecture](02_ARCHITECTURE.md)
-4. Read the relevant module and entity documents before changing code.
-5. Follow the [documentation update guide](development/HOW_TO_UPDATE.md) after implementation.
+1. [Quick project-control handoff](project-control/PROJECT_CONTEXT.md)
+2. [Current project status](project-control/PROJECT_STATUS.md)
+3. [Single master roadmap](project-control/MASTER_ROADMAP.md)
+4. [Exactly one next task](project-control/NEXT_TASK.md)
+5. [Project context](00_PROJECT_CONTEXT.md), [codebase map](01_CODEBASE_MAP.md) and [architecture](02_ARCHITECTURE.md)
+6. Read the relevant module and entity documents before changing code.
+7. Follow the [documentation update guide](development/HOW_TO_UPDATE.md) after implementation.
 
 ## Core References
 
@@ -47,6 +51,12 @@ The imported ERP SaaS Foundation Blueprint and its MiniStore-specific capability
 | [Customer and Business Partner audit and plan](CUSTOMER_AND_BUSINESS_PARTNER_AUDIT_AND_IMPLEMENTATION_PLAN.md) | Repository-based customer assessment, compatibility matrix, migration risks, target ownership, tests and ordered implementation slices |
 | [Cross-ERP architecture reference](reference/erp-architecture/README.md) | Proposed system-wide charter, module/data maps, workflows, contracts, delivery guidance and test matrix; not implementation evidence |
 | [ERP SaaS foundation reference](reference/erp-saas-foundation/README.md) | Imported platform blueprint, provenance manifest, MiniStore compatibility matrix and gated operations/security/integrity roadmap |
+| [Project-control status](project-control/PROJECT_STATUS.md) | Current evidence-based health, completed scope, gaps, top risks and execution gate |
+| [Feature inventory](project-control/FEATURE_INVENTORY.md) | Module-by-module COMPLETE/PARTIAL/PLANNED/BROKEN/UNKNOWN classification |
+| [Architecture audit](project-control/ARCHITECTURE_AUDIT.md) | Architecture findings linked to database, security and ERP integrity audits |
+| [Documentation conflicts](project-control/DOCUMENTATION_CONFLICTS.md) | Conflicts, current authority and archive candidates without deleting history |
+| [Master roadmap](project-control/MASTER_ROADMAP.md) | Single P0–P4 priority order with scope, dependencies, acceptance, tests and rollback |
+| [Next task](project-control/NEXT_TASK.md) | The only task proposed for approval before implementation |
 
 ## Detailed Documentation
 

@@ -44,6 +44,8 @@
 
 `docs/reference/erp-saas-foundation/` installs the imported ERP SaaS Foundation Blueprint with provenance hashes, archived non-authoritative source instructions, the original tenant/audit/integrity/DR/approval/configuration/billing/exception/work/import references and an evidence-based MiniStore compatibility overlay. `FND-000` is documentation-only; none of the proposed gaps are implemented by importing the package.
 
+`docs/project-control/` is the consolidated execution-control source for current project status, verified feature inventory, architecture/database/security/business-integrity audits, documentation conflicts, dependencies, one prioritized roadmap, decisions, technical debt, executed test evidence, quick handoff context and exactly one proposed next task. It coordinates rather than replaces detailed module plans or historical ADRs.
+
 `MiniStore.Web/Guidance/ActionableErrorGuidance.cs` maps recognized, user-resolvable purchase errors to permission-protected setup or master-data destinations. The shared notification partial renders the resulting action for both modal notifications and page validation summaries; ordinary validation errors remain message-only.
 
 ## Domain source map

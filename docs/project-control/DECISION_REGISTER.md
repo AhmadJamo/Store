@@ -1,0 +1,21 @@
+# سجل القرارات / Decision Register
+
+| القرار | الحالة | المرجع | الأثر |
+|---|---|---|---|
+| بنية طبقية وتطبيق موحد مقسم | Accepted (معتمد) | `ADR-001-layered-application.md` | لا microservices دون ADR جديد |
+| EF + Identity + permissions | Accepted (معتمد) | `ADR-002-ef-identity-permissions.md` | الهوية الحالية محفوظة |
+| Repository + UnitOfWork | Accepted with inconsistency (معتمد مع تفاوت) | `ADR-003-ef-repository-unit-of-work.md` | توحيد تدريجي لا إعادة كتابة |
+| عزل شركة في قاعدة مشتركة | Accepted (معتمد) | قرارات 2026-09-14/15 | TenantId وعلاقات مركبة إلزامية |
+| مخزون AVCO وحركة فعلية إضافية | Accepted transition (انتقال معتمد) | قرارات WMS | لا cutover بلا مصالحة |
+| دورة شراء إضافية وحفظ التاريخ | Accepted (معتمد) | قرارات 2026-10-08..15 | Purchase القديم تاريخي |
+| إيقاف إنشاء الشراء المباشر القديم | Accepted (معتمد) | 2026-10-15 | طلب شراء هو المدخل الجديد |
+| Sale/POS القديم بيع فوري | Accepted (معتمد) | SAL-005 | لا يعاد تفسير التاريخ |
+| COGS عند التسليم للمبيعات الجديدة | Accepted (معتمد) | SAL-005 | التسليم يملك خروج المخزون |
+| BusinessPartner موحد | Deferred (مؤجل) | CUS-000 | يتطلب CUS-005 ولا يبدل المعرفات فجأة |
+| محرك اعتماد عام | Deferred (مؤجل) | Purchase alignment/FND | يحتاج حالة ثانية مثبتة |
+| outbox عام أو broker | Deferred (مؤجل) | FND-000 | supplier outbox يبقى محدودًا |
+| RLS/Redis/stamps/microservices | Unresolved ADR triggers (قرارات مستقبلية) | ERP SaaS foundation | لا تعتمد دون قياس وحاجة |
+| مزود الدفع الخارجي | Unresolved (غير محسوم) | SaaS docs | يلزم ADR وأمان webhook |
+| RPO/RTO وسياسة النسخ | Unresolved P0 (غير محسوم حرج) | FND-010 | أول أساس تشغيلي بعد السر |
+
+أي قرار جديد أو تعديل قرار معتمد يحتاج ADR (سجل قرار معماري) ولا يحل بصمت داخل كود مهمة أخرى.

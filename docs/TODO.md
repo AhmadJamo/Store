@@ -11,6 +11,9 @@ The ERP SaaS Foundation Blueprint is imported as a non-authoritative planning re
 - [x] FND-000 import the ERP SaaS Foundation Blueprint with provenance and classify its ten capabilities against the actual MiniStore repository.
 - [ ] FND-010 inventory production environments and operational ownership, approve RPO/RTO and backup retention, run an isolated restore drill, reconcile restored financial/inventory/tenant/outbox state and record evidence.
 - [ ] FND-020 through FND-080 incrementally harden audit/security, integrity/idempotency, observability/performance, configuration/approval reuse, provisioning/billing, exception/work guidance and safe import/export after their individual approvals.
+- [x] CTRL-000 complete the repository recovery audit and create the consolidated project-control status, inventory, audits, conflict register, dependency map, single roadmap, decision/debt/test registers and handoff context.
+- [ ] P0-SEC-001 verify and close historically published administrator credential exposure on every deployment; this is the only proposed next task and requires explicit approval.
+- [ ] P0-OPS-002 approve RPO/RTO and complete an isolated restore/reconciliation drill after P0-SEC-001.
 
 - [x] PUR-000 complete purchase architecture review, legacy compatibility boundary, migration strategy and vertical-slice roadmap.
 - [x] PUR-005 fix context ownership, quantity authority, staged currency, approval and GRNI boundaries before runtime implementation.
