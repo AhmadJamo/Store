@@ -313,6 +313,19 @@ foreach (var controller in new[] { typeof(SettingsController), typeof(AccountsCo
     Check(controller.GetCustomAttributes<AuthorizeAttribute>().All(attribute => attribute.Roles is null),
         $"{controller.Name} must not trust a cross-company Identity role claim");
 }
+var workflowCatalogAction = typeof(SettingsController).GetMethod(nameof(SettingsController.WorkflowCatalog))!;
+Check(workflowCatalogAction.GetCustomAttribute<HttpGetAttribute>() is not null,
+    "Workflow catalog must be a read-only settings action");
+var purchasingCatalog = new WorkflowCatalogService().GetPurchasing();
+Check(purchasingCatalog.Steps.Count == 19 &&
+      purchasingCatalog.Steps.Select(x => x.Number).SequenceEqual(Enumerable.Range(1, 19)),
+    "Purchasing workflow catalog must preserve the complete ordered procure-to-pay sequence");
+Check(purchasingCatalog.Steps.Any(x => x.ResponsibleRole.Contains("Requesting department") && x.ReviewerRole == "Department manager") &&
+      purchasingCatalog.Steps.Any(x => x.ResponsibleRole.Contains("Warehouse receiver") && x.ControlPrinciple.Contains("independent from ordering")) &&
+      purchasingCatalog.Steps.Any(x => x.ResponsibleRole.Contains("Treasury") && x.ControlPrinciple.Contains("separate from invoice entry")),
+    "Workflow catalog must explain requester, receiver and payment segregation of duties");
+Check(purchasingCatalog.Steps.All(x => !string.IsNullOrWhiteSpace(x.RequiredPermission) && !string.IsNullOrWhiteSpace(x.Controller)),
+    "Every workflow catalog step must identify its permission-aware work destination");
 
 var stockRowVersion = db.Model.FindEntityType(typeof(ProductStock))!
     .FindProperty(nameof(ProductStock.RowVersion))!;

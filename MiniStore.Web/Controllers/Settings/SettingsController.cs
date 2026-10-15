@@ -26,6 +26,7 @@ public class SettingsController : Controller
     private readonly MeasurementUnitService _measurementUnitService;
     private readonly FiscalPeriodService _fiscalPeriodService;
     private readonly CurrencyExchangeRateService _currencyExchangeRateService;
+    private readonly WorkflowCatalogService _workflowCatalogService;
     private readonly IStringLocalizer<SharedResource> _localizer;
     private readonly IMemoryCache _memoryCache;
     private readonly ITenantContext _tenantContext;
@@ -44,6 +45,7 @@ public class SettingsController : Controller
         MeasurementUnitService measurementUnitService,
         FiscalPeriodService fiscalPeriodService,
         CurrencyExchangeRateService currencyExchangeRateService,
+        WorkflowCatalogService workflowCatalogService,
         IStringLocalizer<SharedResource> localizer,
         IMemoryCache memoryCache,
         ITenantContext tenantContext)
@@ -61,6 +63,7 @@ public class SettingsController : Controller
         _measurementUnitService = measurementUnitService;
         _fiscalPeriodService = fiscalPeriodService;
         _currencyExchangeRateService = currencyExchangeRateService;
+        _workflowCatalogService = workflowCatalogService;
         _localizer = localizer;
         _memoryCache = memoryCache;
         _tenantContext = tenantContext;
@@ -71,6 +74,9 @@ public class SettingsController : Controller
     {
         return View();
     }
+
+    [HttpGet]
+    public IActionResult WorkflowCatalog() => View(_workflowCatalogService.GetPurchasing());
 
     [HttpGet]
     public async Task<IActionResult> Currencies() => View(await _currencyExchangeRateService.GetPageAsync());

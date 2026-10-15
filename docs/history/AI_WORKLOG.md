@@ -1,5 +1,14 @@
 # AI Work Log
 
+# 2026-10-15 — Purchasing work procedure catalog
+
+- Added a bilingual Settings catalog containing the 19-step purchasing sequence from prerequisite setup through management review.
+- Identified the recommended step owner and reviewer/approver beside every step according to accounting segregation and administrative control principles.
+- Added practical instructions, completion evidence, conditional return/credit steps and permission-aware buttons to the actual work screens.
+- Kept the catalog as read-only guidance through the Application layer; transactional services, permissions and domain rules remain authoritative.
+- Added the catalog as the first Settings card and documented future expansion to customer management, sales, inventory and accounting.
+- Release build completed with zero warnings/errors, all 748 focused checks passed and no database migration was required.
+
 # 2026-10-15 — PUR-280 advanced analytics and legacy purchase retirement
 
 - Expanded purchasing analytics with date, supplier, buyer and order-status filters plus month/supplier/buyer grouping.

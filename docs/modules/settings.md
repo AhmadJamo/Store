@@ -1,7 +1,9 @@
 # Settings
-> Status: PARTIALLY IMPLEMENTED | Last reviewed: 2026-10-11
+> Status: PARTIALLY IMPLEMENTED | Last reviewed: 2026-10-15
 
 `SettingsController` is restricted by the active-company Admin permission boundary. General, Discount and Inventory settings use singleton keys and rowversions. Inventory settings define safe defaults for new warehouse type, control mode, picking strategy, POS eligibility, location-capacity enforcement and optional exact transfer-location requirements. Effective operational policy can then be adjusted per warehouse.
+
+The Settings hub includes a bilingual **Work procedure catalog**. Its first module documents the complete 19-step purchasing sequence from setup and demand through sourcing, commitment, receipt, invoice matching, posting, payment, returns, closure, reconciliation and management review. Every step identifies the responsible role, reviewer/approver, required action, completion evidence and accounting/administrative control principle. The catalog emphasizes segregation among requester, approver, buyer, receiver, accounts payable and payment custody. Operational links are permission-aware and do not replace service or domain validation; users without the destination permission see an explanatory locked state.
 
 Document Numbering is the single administration page for wholesale invoice, POS invoice, stock-transfer and journal-entry sequences. Each type supports prefix, suffix, a tokenized layout (`PREFIX`, `NUMBER`, year/month/day), number padding, forward-only next number, reset starting number and Never/Yearly/Monthly/Daily reset, with a live preview. Missing rows receive safe defaults. Tenant/type uniqueness, rowversion and transactional generation protect against duplicate use and concurrent setting edits. The former InvoiceSettings and DocumentNumberSettings paths are retired; the old Invoices URL redirects to the centralized page.
 

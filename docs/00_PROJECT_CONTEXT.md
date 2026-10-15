@@ -30,7 +30,7 @@ The WMS track is temporarily paused after implementing reconciliation, logistics
 | Purchases | IMPLEMENTED | `Purchase`, `PurchaseService`, `PurchaseReturnService` | Receipts increase stock; posted partial/full supplier returns remove available stock at moving-average cost and reverse accounting. |
 | Sales | IMPLEMENTED | `Sale`, `SaleService`, `SalePostingService` | Uses configured channel price, optional frozen inclusive/exclusive tax, decreases stock and posts revenue/output tax/COGS. |
 | Stock transfers | IMPLEMENTED | `StockTransfer`, `StockTransferService` | Draft/submitted/approved/posted/cancelled flow. |
-| Settings | PARTIALLY IMPLEMENTED | settings entities/services | General, discount, inventory, accounting, fiscal periods, POS and centralized document-number settings. |
+| Settings | PARTIALLY IMPLEMENTED | settings entities/services | General, discount, inventory, accounting, fiscal periods, POS, centralized document numbers and a bilingual role-aware work procedure catalog beginning with purchasing. |
 | Identity & permissions | PARTIALLY IMPLEMENTED | Identity + `PermissionAuthorizationHandler` | Custom permission rows mapped to roles. |
 
 ## Current problems

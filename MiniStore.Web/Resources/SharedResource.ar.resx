@@ -2482,4 +2482,131 @@
   <data name="Legacy direct purchase creation is retired. Create a purchase request instead." xml:space="preserve"><value>تم إيقاف إنشاء الشراء المباشر القديم. أنشئ طلب شراء بدلًا منه.</value></data>
   <data name="Legacy direct purchase details" xml:space="preserve"><value>تفاصيل الشراء المباشر القديم</value></data>
   <data name="This is a historical legacy record. New purchasing starts from a purchase request." xml:space="preserve"><value>هذا سجل تاريخي قديم. تبدأ المشتريات الجديدة من طلب شراء.</value></data>
+  <data name="Work procedure catalog" xml:space="preserve"><value>كتالوج إجراءات العمل</value></data>
+  <data name="Learn the correct operational sequence, responsible role and control principle for each business step." xml:space="preserve"><value>تعرّف على التسلسل التشغيلي الصحيح وصاحب الدور وأساس الرقابة لكل خطوة عمل.</value></data>
+  <data name="Open workflow catalog" xml:space="preserve"><value>فتح كتالوج الإجراءات</value></data>
+  <data name="Purchasing workflow catalog" xml:space="preserve"><value>كتالوج دورة عمل المشتريات</value></data>
+  <data name="The recommended administrative and accounting sequence from demand identification through payment, return, closure and management review." xml:space="preserve"><value>التسلسل الإداري والمحاسبي الموصى به من تحديد الحاجة وحتى الدفع والمرتجع والإقفال والمراجعة الإدارية.</value></data>
+  <data name="Setup" xml:space="preserve"><value>التهيئة</value></data>
+  <data name="Demand" xml:space="preserve"><value>الاحتياج</value></data>
+  <data name="Sourcing" xml:space="preserve"><value>التوريد وطلب العروض</value></data>
+  <data name="Commitment" xml:space="preserve"><value>الالتزام الشرائي</value></data>
+  <data name="Invoice" xml:space="preserve"><value>الفاتورة</value></data>
+  <data name="Settlement" xml:space="preserve"><value>التسوية والدفع</value></data>
+  <data name="Exception" xml:space="preserve"><value>الحالات الاستثنائية</value></data>
+  <data name="Closure" xml:space="preserve"><value>الإقفال</value></data>
+  <data name="Reconciliation" xml:space="preserve"><value>المطابقة المحاسبية</value></data>
+  <data name="Management review" xml:space="preserve"><value>المراجعة الإدارية</value></data>
+  <data name="Separation of duties" xml:space="preserve"><value>فصل المهام</value></data>
+  <data name="Whenever staffing permits, the requester, approver, buyer, receiver, invoice accountant and payment custodian should be different people." xml:space="preserve"><value>كلما سمح عدد الموظفين، يُفضّل أن يكون طالب الشراء والمعتمد والمشتري والمستلم ومحاسب الفواتير وأمين الدفع أشخاصًا مختلفين.</value></data>
+  <data name="Conditional step" xml:space="preserve"><value>خطوة حسب الحاجة</value></data>
+  <data name="Open work screen" xml:space="preserve"><value>فتح شاشة العمل</value></data>
+  <data name="You do not have permission to open this work screen" xml:space="preserve"><value>لا تملك صلاحية فتح شاشة العمل هذه</value></data>
+  <data name="Step owner" xml:space="preserve"><value>صاحب الخطوة</value></data>
+  <data name="Reviewer or approver" xml:space="preserve"><value>المراجع أو المعتمد</value></data>
+  <data name="What should happen" xml:space="preserve"><value>ما الذي يجب عمله</value></data>
+  <data name="Completion evidence" xml:space="preserve"><value>دليل اكتمال الخطوة</value></data>
+  <data name="Accounting and administrative principle" xml:space="preserve"><value>الأساس المحاسبي والإداري</value></data>
+  <data name="Catalog expansion" xml:space="preserve"><value>توسعة الكتالوج</value></data>
+  <data name="Purchasing is the first documented module. Customer management, sales, inventory, accounting and other workflows can be added to the same catalog in sequence." xml:space="preserve"><value>المشتريات هي أول قسم موثق. ويمكن إضافة إدارة الزبائن والمبيعات والمخزون والمحاسبة وبقية دورات العمل إلى الكتالوج نفسه بالتتابع.</value></data>
+  <data name="Prepare purchasing and accounting foundations" xml:space="preserve"><value>تهيئة أسس المشتريات والمحاسبة</value></data>
+  <data name="Create the purchase request" xml:space="preserve"><value>إنشاء طلب الشراء</value></data>
+  <data name="Submit the purchase request" xml:space="preserve"><value>إرسال طلب الشراء للاعتماد</value></data>
+  <data name="Approve or reject the request" xml:space="preserve"><value>اعتماد طلب الشراء أو رفضه</value></data>
+  <data name="Prepare and send the request for quotation" xml:space="preserve"><value>إعداد طلب عرض السعر وإرساله</value></data>
+  <data name="Record supplier quotations" xml:space="preserve"><value>تسجيل عروض أسعار الموردين</value></data>
+  <data name="Compare and award quotations" xml:space="preserve"><value>مقارنة العروض وترسيتها</value></data>
+  <data name="Create and approve the purchase order" xml:space="preserve"><value>إنشاء أمر الشراء واعتماده</value></data>
+  <data name="Confirm the order with the supplier" xml:space="preserve"><value>تأكيد أمر الشراء مع المورد</value></data>
+  <data name="Receive and inspect goods" xml:space="preserve"><value>استلام البضاعة وفحصها</value></data>
+  <data name="Enter the supplier invoice" xml:space="preserve"><value>إدخال فاتورة المورد</value></data>
+  <data name="Perform three-way matching" xml:space="preserve"><value>تنفيذ المطابقة الثلاثية</value></data>
+  <data name="Approve and post the vendor bill" xml:space="preserve"><value>اعتماد فاتورة المورد وترحيلها</value></data>
+  <data name="Prepare and post supplier payment" xml:space="preserve"><value>إعداد دفعة المورد وترحيلها</value></data>
+  <data name="Return rejected goods" xml:space="preserve"><value>إرجاع البضاعة المرفوضة</value></data>
+  <data name="Record the supplier credit note" xml:space="preserve"><value>تسجيل الإشعار الدائن للمورد</value></data>
+  <data name="Close the purchase order" xml:space="preserve"><value>إقفال أمر الشراء</value></data>
+  <data name="Reconcile purchasing with accounting" xml:space="preserve"><value>مطابقة المشتريات مع المحاسبة</value></data>
+  <data name="Review supplier and purchasing performance" xml:space="preserve"><value>مراجعة أداء الموردين والمشتريات</value></data>
+  <data name="System administrator and chief accountant" xml:space="preserve"><value>مسؤول النظام ورئيس الحسابات</value></data>
+  <data name="Finance manager" xml:space="preserve"><value>المدير المالي</value></data>
+  <data name="Requesting department or warehouse planner" xml:space="preserve"><value>القسم الطالب أو مخطط المستودع</value></data>
+  <data name="Department manager" xml:space="preserve"><value>مدير القسم</value></data>
+  <data name="Requester" xml:space="preserve"><value>طالب الشراء</value></data>
+  <data name="Department manager or budget owner" xml:space="preserve"><value>مدير القسم أو مسؤول الموازنة</value></data>
+  <data name="Procurement manager" xml:space="preserve"><value>مدير المشتريات</value></data>
+  <data name="Procurement officer" xml:space="preserve"><value>موظف المشتريات</value></data>
+  <data name="Procurement manager or authorized buyer" xml:space="preserve"><value>مدير المشتريات أو المشتري المفوض</value></data>
+  <data name="Budget owner" xml:space="preserve"><value>مسؤول الموازنة</value></data>
+  <data name="Authorized buyer" xml:space="preserve"><value>المشتري المفوض</value></data>
+  <data name="Procurement manager or budget owner" xml:space="preserve"><value>مدير المشتريات أو مسؤول الموازنة</value></data>
+  <data name="Buyer or procurement officer" xml:space="preserve"><value>المشتري أو موظف المشتريات</value></data>
+  <data name="Warehouse receiver and quality inspector" xml:space="preserve"><value>موظف استلام المستودع ومفتش الجودة</value></data>
+  <data name="Warehouse supervisor" xml:space="preserve"><value>مشرف المستودع</value></data>
+  <data name="Accounts payable accountant" xml:space="preserve"><value>محاسب الذمم الدائنة</value></data>
+  <data name="Senior accountant" xml:space="preserve"><value>المحاسب الأول</value></data>
+  <data name="Finance manager or financial controller" xml:space="preserve"><value>المدير المالي أو المراقب المالي</value></data>
+  <data name="Treasury accountant or cashier" xml:space="preserve"><value>محاسب الخزينة أو أمين الصندوق</value></data>
+  <data name="Procurement officer and accounts payable accountant" xml:space="preserve"><value>موظف المشتريات ومحاسب الذمم الدائنة</value></data>
+  <data name="Buyer or procurement manager" xml:space="preserve"><value>المشتري أو مدير المشتريات</value></data>
+  <data name="Chief accountant or financial controller" xml:space="preserve"><value>رئيس الحسابات أو المراقب المالي</value></data>
+  <data name="Procurement manager and financial controller" xml:space="preserve"><value>مدير المشتريات والمراقب المالي</value></data>
+  <data name="General manager" xml:space="preserve"><value>المدير العام</value></data>
+  <data name="Configure suppliers, products, units, warehouses, document numbers, taxes, currencies, approval rules and posting accounts before operational purchasing begins." xml:space="preserve"><value>هيّئ الموردين والمنتجات والوحدات والمستودعات وأرقام المستندات والضرائب والعملات وقواعد الاعتماد وحسابات الترحيل قبل بدء عمليات الشراء.</value></data>
+  <data name="Record the actual need, warehouse, required date, quantities, business justification and suggested supplier when known." xml:space="preserve"><value>سجّل الحاجة الفعلية والمستودع وتاريخ الحاجة والكميات والمبرر الإداري والمورد المقترح إن كان معروفًا.</value></data>
+  <data name="Review the draft for completeness, then submit it into the configured approval sequence." xml:space="preserve"><value>راجع اكتمال المسودة ثم أرسلها إلى تسلسل الاعتماد المهيأ.</value></data>
+  <data name="Confirm business need, budget responsibility and requested timing; reject with a clear reason when the request is not justified." xml:space="preserve"><value>تحقق من الحاجة ومسؤولية الموازنة والموعد المطلوب، وارفض بسبب واضح عندما لا يكون الطلب مبررًا.</value></data>
+  <data name="Create sourcing from an approved request, select eligible suppliers, attach specifications and send the invitation." xml:space="preserve"><value>أنشئ عملية التوريد من طلب معتمد، واختر الموردين المؤهلين وأرفق المواصفات ثم أرسل الدعوة.</value></data>
+  <data name="Enter each supplier response exactly as received, including validity, lead time, currency, price, discount, tax and payment terms." xml:space="preserve"><value>أدخل رد كل مورد كما استُلم، بما في ذلك الصلاحية ومدة التوريد والعملة والسعر والخصم والضريبة وشروط الدفع.</value></data>
+  <data name="Compare price, company-currency value, delivery, quality and commercial terms; split quantities only when justified and record the award reason." xml:space="preserve"><value>قارن السعر والقيمة بعملة الشركة والتسليم والجودة والشروط التجارية، وقسّم الكمية فقط عند وجود مبرر وسجّل سبب الترسية.</value></data>
+  <data name="Create the purchase order from the award, verify supplier, warehouse, quantities, prices, taxes, currency, expected date and fulfillment route, then approve it." xml:space="preserve"><value>أنشئ أمر الشراء من الترسية، وتحقق من المورد والمستودع والكميات والأسعار والضرائب والعملة والموعد المتوقع ومسار التنفيذ ثم اعتمده.</value></data>
+  <data name="Send the approved order, obtain supplier confirmation and record the confirmed date and supplier reference." xml:space="preserve"><value>أرسل الأمر المعتمد، واحصل على تأكيد المورد وسجّل الموعد المؤكد ومرجع المورد.</value></data>
+  <data name="Receive only against the confirmed order, record actual quantity and tracking data, inspect when required, then put away approved goods." xml:space="preserve"><value>استلم فقط مقابل أمر مؤكد، وسجّل الكمية الفعلية وبيانات التتبع، وافحص عند الحاجة ثم خزّن البضاعة المقبولة.</value></data>
+  <data name="Create the vendor bill from the purchase order and receipt or service evidence; record the supplier invoice number, date, currency and allocations without posting immediately." xml:space="preserve"><value>أنشئ فاتورة المورد من أمر الشراء ودليل الاستلام أو الخدمة، وسجّل رقم فاتورة المورد وتاريخها وعملتها وتوزيعاتها دون ترحيلها فورًا.</value></data>
+  <data name="Compare purchase order, goods receipt or service completion, and vendor bill quantities and prices; investigate every exception." xml:space="preserve"><value>قارن أمر الشراء وإيصال البضاعة أو إنجاز الخدمة وفاتورة المورد من حيث الكميات والأسعار، وحقق في كل استثناء.</value></data>
+  <data name="Approve only after successful matching, then post within an open fiscal period using configured payable, tax, inventory, expense, GRNI and variance accounts." xml:space="preserve"><value>اعتمد بعد نجاح المطابقة فقط، ثم رحّل ضمن فترة مالية مفتوحة باستخدام حسابات الدائنين والضريبة والمخزون والمصروف والبضاعة المستلمة غير المفوترة والفروقات المهيأة.</value></data>
+  <data name="Select posted outstanding bills, verify due amounts, payment method, currency, bank or cash evidence and external reference, then post the payment." xml:space="preserve"><value>اختر الفواتير المرحلة غير المسددة، وتحقق من المبالغ المستحقة وطريقة الدفع والعملة ودليل البنك أو الصندوق والمرجع الخارجي ثم رحّل الدفعة.</value></data>
+  <data name="When accepted goods must be returned, create a receipt-based return with exact quantities, tracking identities and reason." xml:space="preserve"><value>عند وجوب إرجاع بضاعة سبق قبولها، أنشئ مرتجعًا مرتبطًا بالإيصال مع الكميات الدقيقة وهويات التتبع والسبب.</value></data>
+  <data name="Create the credit note from billed returned quantities and verify its link to the original bill, receipt and purchase order." xml:space="preserve"><value>أنشئ الإشعار الدائن من الكميات المرتجعة التي سبق فوترتها، وتحقق من ربطه بالفاتورة والإيصال وأمر الشراء الأصلي.</value></data>
+  <data name="Close automatically after all required receipt, service, delivery and billing quantities finish; otherwise close the remaining quantity only with a documented reason." xml:space="preserve"><value>أقفل تلقائيًا بعد اكتمال كميات الاستلام والخدمة والتسليم والفوترة المطلوبة، وإلا فأقفل الكمية المتبقية بسبب موثق فقط.</value></data>
+  <data name="Review inventory valuation, GRNI, vendor bills, payments, credit notes and reversals against the general ledger; resolve differences before period close." xml:space="preserve"><value>راجع تقييم المخزون والبضاعة المستلمة غير المفوترة وفواتير الموردين والمدفوعات والإشعارات الدائنة والعكوس مقابل دفتر الأستاذ، وعالج الفروقات قبل إقفال الفترة.</value></data>
+  <data name="Review spend, delays, confirmations, lead time, price variance, returns, buyer workload and open matching exceptions, then assign corrective actions." xml:space="preserve"><value>راجع الإنفاق والتأخير والتأكيدات ومدة التوريد وفرق السعر والمرتجعات وعبء المشترين واستثناءات المطابقة المفتوحة، ثم عيّن إجراءات تصحيحية.</value></data>
+  <data name="Configuration must be approved before transactions; master data and posting accounts are not completed inside operational documents." xml:space="preserve"><value>يجب اعتماد الإعدادات قبل المعاملات؛ ولا تُستكمل البيانات الأساسية أو حسابات الترحيل داخل المستندات التشغيلية.</value></data>
+  <data name="The requester documents the need but should not approve their own request." xml:space="preserve"><value>يوثق طالب الشراء الحاجة، لكن لا ينبغي أن يعتمد طلبه بنفسه.</value></data>
+  <data name="Submission freezes the request for approval and preserves who requested what and when." xml:space="preserve"><value>يثبت الإرسال الطلب لغرض الاعتماد ويحفظ من طلب ماذا ومتى.</value></data>
+  <data name="Approval must be independent from request preparation whenever staffing permits." xml:space="preserve"><value>يجب فصل الاعتماد عن إعداد الطلب كلما سمح عدد الموظفين بذلك.</value></data>
+  <data name="Competitive sourcing and equal supplier information reduce bias and preserve an audit trail." xml:space="preserve"><value>تقلل المنافسة وتزويد الموردين بالمعلومات نفسها من التحيز وتحفظ مسار تدقيق واضحًا.</value></data>
+  <data name="Supplier offers are evidence; do not overwrite one supplier's commercial terms with another supplier's data." xml:space="preserve"><value>عروض الموردين أدلة؛ فلا تستبدل شروط مورد تجارية ببيانات مورد آخر.</value></data>
+  <data name="The lowest price is not automatically the best value; the award decision must be explainable and traceable." xml:space="preserve"><value>أقل سعر ليس تلقائيًا أفضل قيمة؛ ويجب أن يكون قرار الترسية قابلًا للتفسير والتتبع.</value></data>
+  <data name="A purchase order is the commercial commitment; it must not be created from an unapproved demand or changed silently after approval." xml:space="preserve"><value>أمر الشراء هو الالتزام التجاري؛ فلا يُنشأ من حاجة غير معتمدة ولا يُغيّر بصمت بعد اعتماده.</value></data>
+  <data name="Supplier acknowledgement is operational evidence and must remain distinct from internal approval." xml:space="preserve"><value>تأكيد المورد دليل تشغيلي ويجب أن يبقى منفصلًا عن الاعتماد الداخلي.</value></data>
+  <data name="The buyer should not be the sole receiver; physical receipt must be independent from ordering and invoicing." xml:space="preserve"><value>لا ينبغي أن يكون المشتري هو المستلم الوحيد؛ فالاستلام الفعلي يجب أن يكون مستقلًا عن الطلب والفوترة.</value></data>
+  <data name="Invoice entry records a claim but does not by itself prove receipt, price correctness or authorization to pay." xml:space="preserve"><value>يسجل إدخال الفاتورة مطالبة، لكنه لا يثبت وحده الاستلام أو صحة السعر أو الإذن بالدفع.</value></data>
+  <data name="Quantity and price differences require evidence. Overrides must be exceptional, permission-controlled and reasoned." xml:space="preserve"><value>تتطلب فروق الكمية والسعر دليلًا، ويجب أن يكون التجاوز استثنائيًا ومقيدًا بالصلاحية ومبررًا.</value></data>
+  <data name="Approval and posting establish the accounting liability; the preparer and approver should be separated when possible." xml:space="preserve"><value>يثبت الاعتماد والترحيل الالتزام المحاسبي، ويُفضّل فصل مُعد الفاتورة عن معتمدها كلما أمكن.</value></data>
+  <data name="Payment custody should be separate from invoice entry and approval; never pay an unposted or unsupported bill." xml:space="preserve"><value>يجب فصل حيازة الدفع عن إدخال الفاتورة واعتمادها، ولا تُدفع فاتورة غير مرحلة أو بلا مستندات مؤيدة.</value></data>
+  <data name="A physical return reverses inventory first and must remain linked to the original receipt." xml:space="preserve"><value>يعكس المرتجع الفعلي المخزون أولًا ويجب أن يبقى مرتبطًا بإيصال الاستلام الأصلي.</value></data>
+  <data name="A supplier credit note reduces the liability and must not be replaced by editing the posted invoice." xml:space="preserve"><value>يخفض الإشعار الدائن التزام المورد، ولا يجوز استبداله بتعديل الفاتورة المرحلة.</value></data>
+  <data name="Closure is a control decision, not deletion. Remaining commitments must be explained and retained." xml:space="preserve"><value>الإقفال قرار رقابي وليس حذفًا؛ ويجب تفسير الالتزامات المتبقية والاحتفاظ بها.</value></data>
+  <data name="Subledger totals must reconcile to control accounts and every difference must lead to source evidence." xml:space="preserve"><value>يجب أن تتطابق أرصدة السجلات المساعدة مع حسابات الرقابة، وأن يقود كل فرق إلى دليل مصدر.</value></data>
+  <data name="Management indicators support decisions only when their period, source and calculation are understood." xml:space="preserve"><value>تدعم المؤشرات الإدارية القرار فقط عندما تكون فترتها ومصدرها وطريقة حسابها مفهومة.</value></data>
+  <data name="Required settings and master data are active and reviewed." xml:space="preserve"><value>الإعدادات والبيانات الأساسية المطلوبة فعالة ومراجعة.</value></data>
+  <data name="A draft purchase request exists with complete lines and justification." xml:space="preserve"><value>يوجد طلب شراء مسودة ببنود ومبرر مكتملين.</value></data>
+  <data name="The request status is Submitted and an approval instance exists." xml:space="preserve"><value>حالة الطلب مُرسل ويوجد له مسار اعتماد.</value></data>
+  <data name="The request is Approved or Rejected with actor, time and reason evidence." xml:space="preserve"><value>الطلب معتمد أو مرفوض مع حفظ المنفذ والوقت والسبب.</value></data>
+  <data name="The sourcing event is Sent and supplier invitations are recorded." xml:space="preserve"><value>عملية التوريد مرسلة ودعوات الموردين مسجلة.</value></data>
+  <data name="Submitted quotations exist for the invited suppliers." xml:space="preserve"><value>توجد عروض أسعار مقدمة من الموردين المدعوين.</value></data>
+  <data name="Award allocations equal the required quantity and the decision reason is saved." xml:space="preserve"><value>تساوي توزيعات الترسية الكمية المطلوبة وسبب القرار محفوظ.</value></data>
+  <data name="The purchase order is Approved with frozen commercial snapshots." xml:space="preserve"><value>أمر الشراء معتمد وبياناته التجارية محفوظة كلقطات ثابتة.</value></data>
+  <data name="The order is Confirmed and supplier communication or portal evidence is retained." xml:space="preserve"><value>أمر الشراء مؤكد ودليل تواصل المورد أو البوابة محفوظ.</value></data>
+  <data name="A posted goods receipt and any quality or putaway evidence exist." xml:space="preserve"><value>يوجد إيصال بضاعة مرحل وأدلة الفحص أو التخزين عند الحاجة.</value></data>
+  <data name="A Draft vendor bill exists with source allocations and attachments." xml:space="preserve"><value>توجد فاتورة مورد مسودة بتوزيعاتها ومرفقاتها المصدرية.</value></data>
+  <data name="A match run exists; exceptions are resolved or overridden with a documented reason." xml:space="preserve"><value>توجد عملية مطابقة، والاستثناءات معالجة أو متجاوزة بسبب موثق.</value></data>
+  <data name="The vendor bill is Posted and a balanced journal entry is linked." xml:space="preserve"><value>فاتورة المورد مرحلة ومرتبطة بقيد يومية متوازن.</value></data>
+  <data name="A posted supplier payment reduces the selected payable balances." xml:space="preserve"><value>دفعة المورد مرحلة وتخفض أرصدة الذمم المحددة.</value></data>
+  <data name="A posted goods receipt return and inventory/accounting reversal evidence exist." xml:space="preserve"><value>يوجد مرتجع استلام مرحل ودليل عكس مخزني ومحاسبي.</value></data>
+  <data name="A posted supplier credit note is linked to the billed return." xml:space="preserve"><value>الإشعار الدائن للمورد مرحل ومرتبط بالمرتجع المفوتر.</value></data>
+  <data name="The order status is Closed and its closure type, actor and reason are visible." xml:space="preserve"><value>حالة الأمر مغلق ونوع الإقفال ومنفذه وسببه ظاهرة.</value></data>
+  <data name="Inventory and GRNI reconciliation show no unexplained exceptions." xml:space="preserve"><value>لا تظهر مطابقة المخزون والبضاعة المستلمة غير المفوترة فروقات غير مفسرة.</value></data>
+  <data name="The review is based on traceable KPI sources and open exceptions have owners." xml:space="preserve"><value>تعتمد المراجعة على مصادر مؤشرات أداء قابلة للتتبع، ولكل استثناء مفتوح مسؤول.</value></data>
 </root>

@@ -5,6 +5,7 @@
     ViewData["Title"] = "Settings";
     var cards = new[]
     {
+        new { Icon = "🧭", Title = "Work procedure catalog", Description = "Learn the correct operational sequence, responsible role and control principle for each business step.", Controller = "Settings", Action = "WorkflowCatalog", Button = "Open workflow catalog", Disabled = false },
         new { Icon = "🏢", Title = "General", Description = "Company information, currency, language and general system settings.", Controller = "Settings", Action = "General", Button = "Open Settings", Disabled = false },
         new { Icon = "💱", Title = "Currencies and exchange rates", Description = "Record dated supplier-currency rates against the company currency.", Controller = "Settings", Action = "Currencies", Button = "Manage exchange rates", Disabled = false },
         new { Icon = "🔢", Title = "Numbering", Description = "Configure centralized numbering for sales, transfers and accounting entries.", Controller = "Settings", Action = "DocumentNumbers", Button = "Open Settings", Disabled = false },

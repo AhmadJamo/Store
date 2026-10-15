@@ -1,6 +1,6 @@
 # Project TODO
 > Source of truth: Current repository scan  
-> Last reviewed: 2026-10-14
+> Last reviewed: 2026-10-15
 
 The approved numbered Arabic/English delivery sequence is maintained in `MASTER_IMPLEMENTATION_ROADMAP_AR_EN.md`. Detailed working status, business rules and the rolling suggestion queue remain in `ARABIC_SHARED_ROADMAP.md`. This file remains the concise technical backlog.
 
@@ -42,6 +42,8 @@ The PUR-000 through PUR-280 purchase evolution is implemented. The approved comp
 - [x] PUR-260 add supplier email, attachments, confirmation tracking and reviewed OCR capture.
 - [x] PUR-270 add a supplier portal plus secure API/EDI/UBL exchange and reliable outbox delivery.
 - [x] PUR-280 add advanced purchase analytics and make a documented Legacy Direct Purchase retirement decision.
+- [x] Add the bilingual Settings work procedure catalog with the complete purchasing sequence, role ownership, review responsibility, control principles, completion evidence and permission-aware links.
+- [ ] Extend the work procedure catalog to customer management, sales, inventory and accounting as those module requirements are approved.
 
 - [x] WMS-050 reservations and exact transfer allocation with concurrent last-unit protection.
 - [x] WMS-060 blind cycle counts and controlled inventory adjustment posting; scheduling remains deferred.

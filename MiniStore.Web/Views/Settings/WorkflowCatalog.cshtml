@@ -1,0 +1,64 @@
+@model MiniStore.Application.DTOs.Settings.WorkflowCatalogPageDto
+@inject Microsoft.Extensions.Localization.IStringLocalizer<MiniStore.Web.SharedResource> Localizer
+@inject Microsoft.AspNetCore.Authorization.IAuthorizationService AuthorizationService
+@{
+    ViewData["Title"] = Localizer["Work procedure catalog"];
+    var phases = Model.Steps.Select(x => x.Phase).Distinct().ToList();
+}
+
+<div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4">
+    <div>
+        <div class="text-primary fw-semibold">@Localizer["Work procedure catalog"]</div>
+        <h2 class="mb-2">@Localizer[Model.ModuleName]</h2>
+        <p class="text-muted mb-0">@Localizer[Model.Purpose]</p>
+    </div>
+    <a asp-action="Index" class="btn btn-outline-secondary">@Localizer["Back to settings"]</a>
+</div>
+
+<div class="alert alert-info">
+    <strong>@Localizer["Separation of duties"]</strong>
+    <div>@Localizer["Whenever staffing permits, the requester, approver, buyer, receiver, invoice accountant and payment custodian should be different people."]</div>
+</div>
+
+<div class="d-flex flex-wrap gap-2 mb-4">
+    @foreach(var phase in phases){<a href="#phase-@phase.ToLowerInvariant().Replace(" ","-")" class="btn btn-sm btn-outline-primary">@Localizer[phase]</a>}
+</div>
+
+@foreach(var phase in phases)
+{
+    <section id="phase-@phase.ToLowerInvariant().Replace(" ","-")" class="mb-5">
+        <h3 class="h5 border-bottom pb-2 mb-3">@Localizer[phase]</h3>
+        <div class="row g-3">
+        @foreach(var step in Model.Steps.Where(x=>x.Phase==phase))
+        {
+            var canOpen=(await AuthorizationService.AuthorizeAsync(User,null,$"Permission:{step.RequiredPermission}")).Succeeded;
+            <div class="col-12">
+                <article class="card shadow-sm border-0">
+                    <div class="card-body">
+                        <div class="d-flex flex-wrap justify-content-between align-items-start gap-2">
+                            <div class="d-flex gap-3 align-items-start">
+                                <span class="badge rounded-pill bg-primary fs-6">@step.Number</span>
+                                <div><h4 class="h5 mb-1">@Localizer[step.Title]</h4>@if(step.Conditional){<span class="badge bg-warning text-dark">@Localizer["Conditional step"]</span>}</div>
+                            </div>
+                            @if(canOpen){<a asp-controller="@step.Controller" asp-action="@step.Action" class="btn btn-sm btn-primary">@Localizer["Open work screen"]</a>}
+                            else{<span class="badge bg-secondary">@Localizer["You do not have permission to open this work screen"]</span>}
+                        </div>
+                        <div class="row g-3 mt-1">
+                            <div class="col-md-6 col-xl-3"><div class="p-3 bg-body-tertiary rounded h-100"><small class="text-muted d-block">@Localizer["Step owner"]</small><strong>@Localizer[step.ResponsibleRole]</strong></div></div>
+                            <div class="col-md-6 col-xl-3"><div class="p-3 bg-body-tertiary rounded h-100"><small class="text-muted d-block">@Localizer["Reviewer or approver"]</small><strong>@Localizer[step.ReviewerRole]</strong></div></div>
+                            <div class="col-md-6 col-xl-3"><div class="p-3 bg-body-tertiary rounded h-100"><small class="text-muted d-block">@Localizer["What should happen"]</small><span>@Localizer[step.Instructions]</span></div></div>
+                            <div class="col-md-6 col-xl-3"><div class="p-3 bg-body-tertiary rounded h-100"><small class="text-muted d-block">@Localizer["Completion evidence"]</small><span>@Localizer[step.CompletionEvidence]</span></div></div>
+                        </div>
+                        <div class="alert alert-light border mt-3 mb-0"><strong>@Localizer["Accounting and administrative principle"]:</strong> @Localizer[step.ControlPrinciple]</div>
+                    </div>
+                </article>
+            </div>
+        }
+        </div>
+    </section>
+}
+
+<div class="card card-body border-primary">
+    <h3 class="h5">@Localizer["Catalog expansion"]</h3>
+    <p class="mb-0">@Localizer["Purchasing is the first documented module. Customer management, sales, inventory, accounting and other workflows can be added to the same catalog in sequence."]</p>
+</div>

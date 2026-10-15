@@ -86,6 +86,7 @@ public static class BusinessServicesExtensions
         services.AddScoped<DocumentNumberService>();
         services.AddScoped<IGeneralSettingsRepository, GeneralSettingsRepository>();
         services.AddScoped<GeneralSettingsService>();
+          services.AddScoped<WorkflowCatalogService>();
         services.AddScoped<ICurrencyExchangeRateRepository, CurrencyExchangeRateRepository>();
         services.AddScoped<CurrencyExchangeRateService>();
         services.AddScoped<IDiscountSettingsRepository, DiscountSettingsRepository>();
