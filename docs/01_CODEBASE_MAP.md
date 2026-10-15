@@ -46,7 +46,7 @@
 
 `docs/project-control/` is the consolidated execution-control source for current project status, verified feature inventory, architecture/database/security/business-integrity audits, documentation conflicts, dependencies, one prioritized roadmap, decisions, technical debt, executed test evidence, quick handoff context and exactly one proposed next task. Its `operations/` folder stores secret-free operational evidence for the local Demo credential closure, encrypted backup/restore drill, 112/112 reconciliation baseline and implemented audit-event foundation. It coordinates rather than replaces detailed module plans or historical ADRs.
 
-`docs/AUDIT_SECURITY_ARCHITECTURE_AND_IMPLEMENTATION_PLAN.md` and `docs/decisions/2026-10-15-audit-event-v2-boundary.md` define the audit boundary. `P1-AUD-011` implements the additive `AuditEvent` entity/table, Application writer contract, allowlist redactor and keyed integrity service behind a disabled-by-default feature flag. Legacy `AuditLogs` and accounting/inventory/domain histories remain authoritative for their existing facts; service coverage starts at `P1-AUD-012`.
+`docs/AUDIT_SECURITY_ARCHITECTURE_AND_IMPLEMENTATION_PLAN.md` and `docs/decisions/2026-10-15-audit-event-v2-boundary.md` define the audit boundary. `P1-AUD-011` implements the additive `AuditEvent` entity/table, Application writer contract, allowlist redactor and keyed integrity service. `P1-AUD-012` adds `SemanticAuditEventService`, HTTP correlation context and atomic coverage for tenant roles/permissions and six sensitive-setting groups; local Demo activation lives only in User Secrets. Legacy `AuditLogs` and accounting/inventory/domain histories remain authoritative for their existing facts.
 
 `MiniStore.Web/Guidance/ActionableErrorGuidance.cs` maps recognized, user-resolvable purchase errors to permission-protected setup or master-data destinations. The shared notification partial renders the resulting action for both modal notifications and page validation summaries; ordinary validation errors remain message-only.
 
@@ -140,6 +140,7 @@
 | `Services/Settings/PosExperienceSettingsService.cs` | profile presets, custom terminal appearance persistence and POS runtime projection | Settings/Pos and Sales/Pos. |
 | `Services/Settings/DocumentNumberService.cs` | default creation, validation, administration projection and transactional document-number generation | sales, transfers, purchase posting and Settings/DocumentNumbers. |
 | `Services/Security/TenantRoleService.cs` | tenant-local role CRUD, permission validation, protected-role rules and user assignment options | Roles and Users controllers. |
+| `Services/Security/{AuditEventContracts,SemanticAuditEventService}.cs` | audit writer/request-context contracts, fixed semantic event codes and tenant-success request construction | enrolled security/settings services and Infrastructure writer. |
 | `Services/Accounting/JournalPostingService.cs` | central source-idempotency, numbering, balance/posting and persistence gateway used inside caller transactions | purchase, sale and sales-return posting workflows. |
 | `Services/Settings/FiscalPeriodService.cs` | non-overlapping fiscal-period administration and central posting-date validation | Settings/FiscalPeriods and JournalPostingService. |
 | `Services/Sales/SalePostingService.cs` | idempotent sale revenue, discount and COGS general-ledger posting | Sales/Details and Sales/Post. |
@@ -149,7 +150,7 @@
 | `Services/Purchases/SupplierProductAssignmentService.cs` | synchronizes many-supplier/many-product selection from both master-data screens through active purchasing-info rows | Suppliers/Products forms and PUR-010. |
 | `Services/Sales/DiscountCalculator.cs` | standalone discount calculation helper; no active consumer found by scan | Unknown. |
 | `Services/Shared/ICurrentUserService.cs` | current-user application contract | Web CurrentUserService. |
-| `Services/Security/AuditEventContracts.cs` | semantic event command plus writer/redactor/integrity contracts | Infrastructure audit-event services; later Application use cases. |
+| `Services/Security/AuditEventContracts.cs` | semantic event command plus writer/redactor/integrity/request-context contracts | Infrastructure audit-event services and enrolled Application use cases. |
 | `Permissions/{PermissionDefinitions,IPermissionService}.cs` | permission catalogue/contract | seeders/auth/services. |
 | `Tenancy/TenantClaimTypes.cs` | trusted tenant claim names shared by login and request session validation | Web authentication. |
 | `Dtos/Catalog/Products/*.cs` | product request/display plus filtered/sorted/paged catalogue DTOs | catalog services/controllers/views. |
@@ -221,6 +222,7 @@ Hierarchical location update (2026-09-30): StorageLocation retains its identity 
 | `Program.cs`, `Configuration/*.cs`, `appsettings.json`, `Properties/launchSettings.json` | concise composition entry point plus separated presentation, persistence, security, feature DI, startup seeding, middleware and configurable throttling | configuration/architecture. |
 | `Authorization/*.cs` | dynamic permission policy and handler | permissions/security. |
 | `Services/Security/CurrentUserService.cs` | current Identity user ID for auditing | security/database. |
+| `Services/Security/HttpAuditRequestContext.cs` | trusted HTTP correlation identifier, route template and Web channel projection | Application semantic audit service. |
 | `Services/Tenancy/HttpTenantContext.cs`, `Middleware/TenantSessionMiddleware.cs` | resolve, validate and refresh the authenticated company boundary | AppDbContext, login and localization. |
 | `Controllers/<Feature>/*.cs` | MVC endpoints grouped by business feature; namespaces remain stable | `controllers/*.md`. |
 | `Controllers/Catalog/RecipesController.cs` | bilingual recipe list/version editor using Products permissions | recipe views and RecipeService. |

@@ -940,3 +940,14 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
 - Extended focused checks to 756 and SQL integration to prove disabled no-op, language-neutral codes, successful atomic commit, transaction rollback, two-tenant isolation, explicit platform bypass, append-only rejection, duplicate-operation rejection, integrity verification after database round-trip and prior-key verification after rotation.
 - No audit reader/export UI or permissions were added, no semantic business service was enrolled and no secret was committed. Advanced the only proposed task to `P1-AUD-012`.
 - Recorded secret-free execution evidence in `project-control/operations/P1-AUD-011-AUDIT-FOUNDATION.md`.
+
+## 2026-10-16 — P1-AUD-012 first semantic audit coverage
+
+- Added fixed Application event codes and a semantic event service backed by an Application-owned request-context contract; Web supplies the trusted correlation identifier and route template without introducing an HTTP dependency into Application.
+- Enrolled tenant-role creation, ordinary update, permission-set change and deletion. Refactored role persistence into the shared `UnitOfWork` so the role, permission links and event commit or roll back together.
+- Enrolled Accounting posting accounts, non-personal General operating values, Discount controls, Inventory defaults, Purchase Matching tolerances and Purchase Sourcing policy. Each event shares the existing repository save with its setting change.
+- Added deny-by-default field allowlists. General settings omit company names, phone and address; no password, token, integrity key, attachment or raw request is stored.
+- Generated a random 32-byte Demo integrity key in local User Secrets, selected version `v1` and enabled Demo locally. Committed configuration remains disabled with no key value.
+- Release Web and test-project builds passed with zero warnings/errors; SecurityRegression remained 756/756; SQL integration passed semantic event count/order, tenant/actor/correlation, redaction, database-round-trip integrity and rejected-write rollback together with the existing suite.
+- No schema change or migration was needed; EF reported no pending model changes. Demo inspection after activation showed 113 migrations, 707 legacy rows and 0 semantic rows before the next enrolled user operation. No audit reader/export UI or permission was added, and legacy `AuditLogs` remains unchanged.
+- Recorded secret-free evidence in `project-control/operations/P1-AUD-012-SEMANTIC-AUDIT-COVERAGE.md` and advanced the only proposed task to `P1-AUD-013`.

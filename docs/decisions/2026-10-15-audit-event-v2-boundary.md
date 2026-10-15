@@ -1,6 +1,6 @@
 # Add a semantic audit event boundary without reinterpreting legacy audit history
 
-> Status: Accepted; `P1-AUD-011` foundation implemented 2026-10-16
+> Status: Accepted; `P1-AUD-011` foundation and `P1-AUD-012` first semantic coverage implemented 2026-10-16
 > Date: 2026-10-15
 
 ## Context
@@ -15,9 +15,9 @@ At the same time, replacing specialized histories with one generic stream would 
 
 ## Decision
 
-Introduce an additive `AuditEvent` boundary. The `P1-AUD-011` foundation now provides the entity, schema and writer;
-later Application-service coverage emits explicit,
-semantic events through an Application-owned writer contract; Infrastructure persists and protects them. A single
+Introduce an additive `AuditEvent` boundary. The `P1-AUD-011` foundation provides the entity, schema and writer;
+`P1-AUD-012` adds Application-owned fixed event codes and atomic coverage for tenant roles/permissions plus selected
+sensitive settings. Later coverage continues to emit explicit semantic events through the same Application-owned writer contract; Infrastructure persists and protects them. A single
 table supports Tenant, Platform and System scopes, with a database check constraint coupling scope and nullable
 TenantId. Tenant reads remain fail-closed and platform access uses a separately authorized path.
 
@@ -40,3 +40,4 @@ context rather than copying their quantities, amounts or lines.
 - Audit readers and exports require distinct permissions and are audited themselves.
 - Per-event hashes alone are not described as tamper-proof; deletion detection requires an external checkpoint.
 - Retention defaults remain proposals until legal and operational owners approve them.
+- Demo activation uses only a local User Secrets key; committed configuration stays disabled and secret-free.

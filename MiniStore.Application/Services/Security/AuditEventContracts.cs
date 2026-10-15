@@ -36,6 +36,13 @@ public interface IAuditEventWriter
     ValueTask<Guid?> RecordAsync(AuditEventWriteRequest request, CancellationToken cancellationToken = default);
 }
 
+public interface IAuditRequestContext
+{
+    string CorrelationId { get; }
+    string? RequestPathTemplate { get; }
+    AuditSourceChannel SourceChannel { get; }
+}
+
 public interface IAuditEventRedactor
 {
     RedactedAuditPayload Redact(AuditEventWriteRequest request);

@@ -8,7 +8,8 @@ public sealed class PurchaseSourcingPolicyService(
     IPurchaseSourcingPolicyRepository repository,
     ITenantRoleRepository roles,
     ITenantContext tenantContext,
-    GeneralSettingsService generalSettings)
+    GeneralSettingsService generalSettings,
+    SemanticAuditEventService audit)
 {
     public async Task<PurchaseSourcingPolicyDto> GetAsync()
     {
@@ -35,6 +36,11 @@ public sealed class PurchaseSourcingPolicyService(
         if (!string.IsNullOrWhiteSpace(dto.AllowedRoleName) && !availableRoles.Contains(dto.AllowedRoleName.Trim()))
             throw new ArgumentException("The selected direct RFQ role was not found.");
         var policy = await repository.GetAsync();
+        var before = policy is null ? null : AuditValues(
+            policy.AllowDirectRfq,
+            policy.MaximumEstimatedAmountCompanyCurrency,
+            policy.AllowedRoleName,
+            policy.RequireActiveSuppliers);
         if (policy is null)
             await repository.AddAsync(new PurchaseSourcingPolicy(dto.AllowDirectRfq,
                 dto.MaximumEstimatedAmountCompanyCurrency, dto.AllowedRoleName, dto.RequireActiveSuppliers));
@@ -45,8 +51,29 @@ public sealed class PurchaseSourcingPolicyService(
             policy.Configure(dto.AllowDirectRfq, dto.MaximumEstimatedAmountCompanyCurrency,
                 dto.AllowedRoleName, dto.RequireActiveSuppliers);
         }
+        await audit.RecordTenantSuccessAsync(
+            AuditEventCategory.Configuration,
+            SemanticAuditEventTypes.PurchaseSourcingPolicyChanged,
+            "Update",
+            "PurchaseSourcingPolicy",
+            "Current",
+            before,
+            AuditValues(dto.AllowDirectRfq, dto.MaximumEstimatedAmountCompanyCurrency,
+                dto.AllowedRoleName, dto.RequireActiveSuppliers));
         await repository.SaveChangesAsync();
     }
+
+    private static IReadOnlyDictionary<string, object?> AuditValues(
+        bool allowDirectRfq,
+        decimal maximumAmount,
+        string? allowedRoleName,
+        bool requireActiveSuppliers) => new Dictionary<string, object?>
+    {
+        ["AllowDirectRfq"] = allowDirectRfq,
+        ["MaximumEstimatedAmountCompanyCurrency"] = maximumAmount,
+        ["AllowedRoleName"] = allowedRoleName,
+        ["RequireActiveSuppliers"] = requireActiveSuppliers
+    };
 
     private int RequireTenant() => tenantContext.TenantId
         ?? throw new InvalidOperationException("An active company is required.");

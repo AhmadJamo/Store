@@ -11,7 +11,7 @@ The repository implements an operational slice for catalog, warehouses, stock, s
 
 The WMS track is temporarily paused after implementing reconciliation, logistics, movements, balances, reservations, counts, lot/serial execution, removal/putaway policies, replenishment transfer/purchase-demand planning, inventory insights and safe scan workflows. The additive procure-to-pay evolution is implemented through PUR-280. Advanced purchasing analytics expose filterable spend, delay, confirmation, price-variance, supplier, seasonal, buyer-workload and open-exception evidence with source definitions and document links. Creation of new Legacy Direct Purchases is retired; historical records remain visible and users are directed to Purchase Requests for new activity.
 
-The imported ERP SaaS Foundation Blueprint is installed under `docs/reference/erp-saas-foundation/` as a proposed reference, not implementation evidence. Its `FND-000` repository compatibility assessment is complete. The project-control audit under `docs/project-control/` now provides the single current status, feature inventory, audit set, dependency order, master roadmap and next-task gate. The local Demo scope completed credential closure, encrypted restore proof and the `P0-DB-003` 112/112 reconciliation baseline. `P1-AUD-011` added and applied migration 113 for the disabled-by-default audit-event foundation; `P1-AUD-012` semantic coverage is the only proposed next task.
+The imported ERP SaaS Foundation Blueprint is installed under `docs/reference/erp-saas-foundation/` as a proposed reference, not implementation evidence. Its `FND-000` repository compatibility assessment is complete. The project-control audit under `docs/project-control/` now provides the single current status, feature inventory, audit set, dependency order, master roadmap and next-task gate. The local Demo scope completed credential closure, encrypted restore proof and the `P0-DB-003` 112/112 reconciliation baseline. `P1-AUD-011` added and applied migration 113 for the audit-event foundation; `P1-AUD-012` enabled local Demo writing and enrolled tenant roles/permissions plus six sensitive-setting groups. Authentication, denied, platform and external semantic coverage remains proposed in `P1-AUD-013`.
 
 ## Status classification
 - IMPLEMENTED: catalog, warehouses, suppliers, stock balances/movements, purchases, sales, transfer workflow, Identity login, role-permission checks, audit-log rows, Razor UI.
@@ -36,11 +36,11 @@ The imported ERP SaaS Foundation Blueprint is installed under `docs/reference/er
 | Identity & permissions | PARTIALLY IMPLEMENTED | Identity + `PermissionAuthorizationHandler` | Custom permission rows mapped to roles. |
 
 ## Current problems
-See `06_SECURITY.md`, `04_ACCOUNTING.md`, and `TODO.md`. The historically exposed administrator was closed for the evidenced local Demo environment, an encrypted isolated restore drill reconciled without differences and all 113 current migrations match the database with no pending model change. The audit foundation exists but records no events while its feature flag is disabled. Highest-priority open findings now include semantic audit coverage, off-host scheduled backups, production deployment controls and broader integration testing.
+See `06_SECURITY.md`, `04_ACCOUNTING.md`, and `TODO.md`. The historically exposed administrator was closed for the evidenced local Demo environment, an encrypted isolated restore drill reconciled without differences and all 113 current migrations match the database with no pending model change. The local Demo audit feature is enabled through User Secrets and role/permission plus selected sensitive-setting changes now write atomic semantic events. Authentication/denied/platform/external coverage, a reader, retention and an external checkpoint remain open, together with off-host scheduled backups, production deployment controls and broader integration testing.
 
 ## Recommended next steps
-1. After explicit approval, implement only `P1-AUD-012` from `project-control/NEXT_TASK.md`: semantic events for role/permission and sensitive tenant-setting changes.
-2. Do not add the audit reading/export screen or freeze the legacy interceptor in this slice.
+1. After explicit approval, implement only `P1-AUD-013` from `project-control/NEXT_TASK.md`: authentication, denied privileged action, platform and external audit coverage.
+2. Do not add the audit reading/export screen or freeze the legacy interceptor in that slice.
 3. Resume the customer and sales sequence only through the ordering and gates in `project-control/MASTER_ROADMAP.md`.
 
 ## Read first

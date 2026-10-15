@@ -12,8 +12,7 @@ public interface ITenantRoleRepository
     Task<int> GetUserCountAsync(int tenantId, int roleId);
     Task<int> GetPermissionCountAsync(int roleId);
     Task<IReadOnlyDictionary<string, IReadOnlyList<string>>> GetUserRoleNamesAsync(int tenantId, IReadOnlyCollection<string> userIds);
-    Task CreateAsync(TenantRole role, IReadOnlyCollection<int> permissionIds);
+    Task AddAsync(TenantRole role);
     Task ReplacePermissionsAsync(int roleId, IReadOnlyCollection<int> permissionIds);
     void Remove(TenantRole role);
-    Task SaveChangesAsync();
 }

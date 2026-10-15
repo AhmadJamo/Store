@@ -1,7 +1,7 @@
 # Permissions and authorization
 > Status: PARTIALLY IMPLEMENTED  
 > Source of truth: Code  
-> Last reviewed: 2026-10-11
+> Last reviewed: 2026-10-16
 
 `InventoryReservations.View` protects the read-only inventory reservation history screen.
 
@@ -42,6 +42,8 @@ Products, Warehouses, ProductStock, StockTransactions, StockMovements, LocationM
 
 ## Known inconsistencies
 `Settings.View` and `Settings.Edit` remain mainly navigation capabilities. `Administration.Access` is an internal protected policy key and is absent from the delegable permission catalogue. The Settings workflow catalog uses this same company-admin boundary; links from each documented step are rendered only when the current user also has that operational destination permission. Identity mutations (`Users.Create/Edit/Delete`, `Roles.Create/Edit/Delete`) require tenant Admin membership and are filtered from custom-role editing, regardless of stored data. Assignment validates an active company membership and a role owned by the same tenant.
+
+`P1-AUD-012` does not add an audit-reader permission or screen. Existing `Roles.*` and `Administration.Access` policies still authorize the mutation; the Application service then records one tenant-scoped semantic event in the same transaction/save. Viewing/exporting audit events remains deferred to dedicated `AuditEvents.*` permissions in `P1-AUD-014`.
 
 ## Update rules
 Permission change → `PermissionDefinitions`, seeder, controller attributes, navigation/views, `05_PERMISSIONS.md`, related module/controller/screen docs and tests.

@@ -6,7 +6,8 @@ namespace MiniStore.Application.Services;
 
 public class AccountingSettingsService(
     IAccountingSettingsRepository settingsRepository,
-    IAccountRepository accountRepository)
+    IAccountRepository accountRepository,
+    SemanticAuditEventService audit)
 {
     public async Task<AccountingSettingsDto> GetAsync()
     {
@@ -30,6 +31,7 @@ public class AccountingSettingsService(
         await EnsureAccountsExist(dto);
 
         var settings = await settingsRepository.GetAsync();
+        var before = settings is null ? null : AuditValues(settings);
         if (settings is null)
         {
             await settingsRepository.AddAsync(new AccountingSettings(
@@ -49,8 +51,44 @@ public class AccountingSettingsService(
                 dto.RealizedExchangeGainAccountId, dto.RealizedExchangeLossAccountId);
         }
 
+        await audit.RecordTenantSuccessAsync(
+            AuditEventCategory.Configuration,
+            SemanticAuditEventTypes.AccountingSettingsChanged,
+            "Update",
+            "AccountingSettings",
+            "Current",
+            before,
+            AuditValues(dto));
         await settingsRepository.SaveChangesAsync();
     }
+
+    private static IReadOnlyDictionary<string, object?> AuditValues(AccountingSettings settings) =>
+        AuditValues(new AccountingSettingsDto
+        {
+            PurchaseDiscountAccountId = settings.PurchaseDiscountAccountId,
+            SalesDiscountAccountId = settings.SalesDiscountAccountId,
+            SalesRevenueAccountId = settings.SalesRevenueAccountId,
+            CostOfSalesAccountId = settings.CostOfSalesAccountId,
+            GoodsReceivedNotInvoicedAccountId = settings.GoodsReceivedNotInvoicedAccountId,
+            PurchasePriceVarianceAccountId = settings.PurchasePriceVarianceAccountId,
+            LandedCostClearingAccountId = settings.LandedCostClearingAccountId,
+            RealizedExchangeGainAccountId = settings.RealizedExchangeGainAccountId,
+            RealizedExchangeLossAccountId = settings.RealizedExchangeLossAccountId
+        });
+
+    private static IReadOnlyDictionary<string, object?> AuditValues(AccountingSettingsDto value) =>
+        new Dictionary<string, object?>
+        {
+            ["PurchaseDiscountAccountId"] = value.PurchaseDiscountAccountId,
+            ["SalesDiscountAccountId"] = value.SalesDiscountAccountId,
+            ["SalesRevenueAccountId"] = value.SalesRevenueAccountId,
+            ["CostOfSalesAccountId"] = value.CostOfSalesAccountId,
+            ["GoodsReceivedNotInvoicedAccountId"] = value.GoodsReceivedNotInvoicedAccountId,
+            ["PurchasePriceVarianceAccountId"] = value.PurchasePriceVarianceAccountId,
+            ["LandedCostClearingAccountId"] = value.LandedCostClearingAccountId,
+            ["RealizedExchangeGainAccountId"] = value.RealizedExchangeGainAccountId,
+            ["RealizedExchangeLossAccountId"] = value.RealizedExchangeLossAccountId
+        };
 
     private async Task EnsureAccountsExist(AccountingSettingsDto dto)
     {

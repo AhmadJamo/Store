@@ -6,6 +6,8 @@ using MiniStore.Application.DTOs.Inventory.Adjustments;
 using MiniStore.Application.DTOs.Inventory.Tracking;
 using MiniStore.Application.DTOs.Purchases;
 using MiniStore.Application.DTOs.Products;
+using MiniStore.Application.DTOs.Security;
+using MiniStore.Application.Dtos.Settings;
 using MiniStore.Application.Services;
 using MiniStore.Domain.Entities;
 using MiniStore.Domain.Interfaces;
@@ -74,6 +76,7 @@ try
         connectionString);
 
     await VerifyAuditEventFoundationAsync(tenantOneId, tenantTwoId, connectionString);
+    await VerifySemanticAuditCoverageAsync(tenantOneId, tenantTwoId, connectionString);
 
     await VerifyTenantIsolationAndReconciliationAsync(
         tenantOneId,
@@ -120,7 +123,7 @@ try
     await VerifyInventoryBalanceProjectionAsync(tenantOneId, tenantOneFixture.ProductId, expectedOnHand: 2m, connectionString);
     await VerifyOpeningTrackingAllocationAsync(tenantOneId, tenantOneFixture.ProductId, tenantOneFixture.WarehouseId, connectionString);
 
-    Console.WriteLine("Passed SQL integration checks: audit-event rollback, isolation, append-only and integrity; tenant isolation, reconciliation, balances, replenishment purchase-request source concurrency, 3-product/2-supplier split awards, receipt, vendor-bill and supplier-payment concurrency, controlled payment reversal and retry, three-way matching override evidence, GRNI posting and clearing, purchase accounting reconciliation, payable settlement, receipt-based supplier returns, landed-cost valuation, purchasing analytics, idempotent barcode receipt drafts, adjustment posting, tracked operations, quarantine and recall.");
+    Console.WriteLine("Passed SQL integration checks: semantic role/settings audit coverage plus audit-event rollback, isolation, append-only and integrity; tenant isolation, reconciliation, balances, replenishment purchase-request source concurrency, 3-product/2-supplier split awards, receipt, vendor-bill and supplier-payment concurrency, controlled payment reversal and retry, three-way matching override evidence, GRNI posting and clearing, purchase accounting reconciliation, payable settlement, receipt-based supplier returns, landed-cost valuation, purchasing analytics, idempotent barcode receipt drafts, adjustment posting, tracked operations, quarantine and recall.");
 }
 finally
 {
@@ -288,6 +291,136 @@ static async Task VerifyAuditEventFoundationAsync(int tenantOneId, int tenantTwo
         {
         }
     }
+}
+
+static async Task VerifySemanticAuditCoverageAsync(int tenantOneId, int tenantTwoId, string connectionString)
+{
+    int firstPermissionId;
+    int secondPermissionId;
+    await using (var catalogContext = new AppDbContext(CreateOptions(connectionString)))
+    {
+        var first = new Permission("Products.View", "View products", "Products");
+        var second = new Permission("Warehouses.View", "View warehouses", "Warehouses");
+        catalogContext.Permissions.AddRange(first, second);
+        await catalogContext.SaveChangesAsync();
+        firstPermissionId = first.Id;
+        secondPermissionId = second.Id;
+    }
+
+    var configured = new AuditEventOptions
+    {
+        Enabled = true,
+        ActiveIntegrityKeyVersion = "semantic-sql-v1",
+        IntegrityKeys = new Dictionary<string, string>
+        {
+            ["semantic-sql-v1"] = Convert.ToBase64String(Enumerable.Range(65, 32).Select(value => (byte)value).ToArray())
+        },
+        AllowedChangeFields = new Dictionary<string, string[]>
+        {
+            [SemanticAuditEventTypes.TenantRoleCreated] = ["RoleName", "PermissionSetFingerprint", "PermissionCount"],
+            [SemanticAuditEventTypes.TenantRoleUpdated] = ["RoleName", "PermissionSetFingerprint", "PermissionCount"],
+            [SemanticAuditEventTypes.TenantRolePermissionsChanged] = ["RoleName", "PermissionSetFingerprint", "PermissionCount"],
+            [SemanticAuditEventTypes.TenantRoleDeleted] = ["RoleName", "PermissionSetFingerprint", "PermissionCount"],
+            [SemanticAuditEventTypes.PurchaseMatchingSettingsChanged] = ["QuantityTolerancePercent", "PriceTolerancePercent"]
+        }
+    };
+    var options = Options.Create(configured);
+
+    await using (var context = new AppDbContext(CreateOptions(connectionString), new FixedTenantContext(tenantOneId)))
+    {
+        var user = new FixedCurrentUser("semantic-audit-user");
+        var writer = new AuditEventWriter(context, new FixedTenantContext(tenantOneId), user,
+            new AuditEventRedactor(options), new AuditEventIntegrityService(options), options);
+        var semantic = new SemanticAuditEventService(writer,
+            new FixedAuditRequestContext("semantic-audit-correlation", "/Roles/{action}"));
+        var roles = new TenantRoleRepository(context);
+        var unitOfWork = new UnitOfWork(context);
+        var service = new TenantRoleService(roles, new TenantAuthorizationRepository(context),
+            new FixedTenantContext(tenantOneId), unitOfWork, semantic);
+
+        await service.CreateAsync(new TenantRoleEditDto
+        {
+            Name = "SQL Buyers",
+            SelectedPermissionIds = [firstPermissionId]
+        });
+        var role = await roles.GetByNormalizedNameAsync(tenantOneId, "SQL BUYERS")
+            ?? throw new InvalidOperationException("Semantic role audit fixture was not created.");
+        await service.UpdateAsync(new TenantRoleEditDto
+        {
+            Id = role.Id,
+            Name = "SQL Senior Buyers",
+            RowVersion = role.RowVersion,
+            SelectedPermissionIds = [firstPermissionId, secondPermissionId]
+        });
+        await context.Entry(role).ReloadAsync();
+        await service.DeleteAsync(role.Id);
+
+        var matching = new PurchaseMatchingSettingsService(
+            new PurchaseMatchingSettingsRepository(context), semantic);
+        await matching.UpdateAsync(new PurchaseMatchingSettingsDto
+        {
+            QuantityTolerancePercent = 2.5m,
+            PriceTolerancePercent = 1.5m
+        });
+    }
+
+    await using (var verification = new AppDbContext(CreateOptions(connectionString), new FixedTenantContext(tenantOneId)))
+    {
+        var events = await verification.AuditEvents.AsNoTracking()
+            .Where(value => value.CorrelationId == "semantic-audit-correlation")
+            .OrderBy(value => value.Id)
+            .ToListAsync();
+        var expectedTypes = new[]
+        {
+            SemanticAuditEventTypes.TenantRoleCreated,
+            SemanticAuditEventTypes.TenantRolePermissionsChanged,
+            SemanticAuditEventTypes.TenantRoleDeleted,
+            SemanticAuditEventTypes.PurchaseMatchingSettingsChanged
+        };
+        var integrity = new AuditEventIntegrityService(options);
+        if (events.Count != expectedTypes.Length || !events.Select(value => value.EventType).SequenceEqual(expectedTypes) ||
+            events.Any(value => value.ActorId != "semantic-audit-user" || value.TenantId != tenantOneId || !integrity.Verify(value)) ||
+            events.Any(value => value.ChangesRedactedJson?.Contains("password", StringComparison.OrdinalIgnoreCase) == true) ||
+            events.Single(value => value.EventType == SemanticAuditEventTypes.TenantRolePermissionsChanged)
+                .ChangesRedactedJson?.Contains("PermissionSetFingerprint", StringComparison.Ordinal) != true)
+            throw new InvalidOperationException("Semantic role/settings changes must write one scoped, redacted and integrity-valid event per successful operation.");
+    }
+
+    await using (var rollbackContext = new AppDbContext(CreateOptions(connectionString), new FixedTenantContext(tenantTwoId)))
+    {
+        var invalidOptions = Options.Create(new AuditEventOptions
+        {
+            Enabled = true,
+            ActiveIntegrityKeyVersion = "rollback-v1",
+            IntegrityKeys = new Dictionary<string, string>
+            {
+                ["rollback-v1"] = Convert.ToBase64String(Enumerable.Repeat((byte)7, 32).ToArray())
+            }
+        });
+        var writer = new AuditEventWriter(rollbackContext, new FixedTenantContext(tenantTwoId),
+            new FixedCurrentUser("rollback-user"), new AuditEventRedactor(invalidOptions),
+            new AuditEventIntegrityService(invalidOptions), invalidOptions);
+        var service = new PurchaseMatchingSettingsService(
+            new PurchaseMatchingSettingsRepository(rollbackContext),
+            new SemanticAuditEventService(writer, new FixedAuditRequestContext("semantic-rollback", "/Settings/PurchaseMatching")));
+        try
+        {
+            await service.UpdateAsync(new PurchaseMatchingSettingsDto
+            {
+                QuantityTolerancePercent = 3m,
+                PriceTolerancePercent = 2m
+            });
+            throw new InvalidOperationException("Missing semantic allowlist must fail the settings save.");
+        }
+        catch (InvalidOperationException exception) when (exception.Message.Contains("allowlist", StringComparison.Ordinal))
+        {
+        }
+    }
+
+    await using var rollbackVerification = new AppDbContext(CreateOptions(connectionString), new FixedTenantContext(tenantTwoId));
+    if (await rollbackVerification.PurchaseMatchingSettings.AnyAsync() ||
+        await rollbackVerification.AuditEvents.AnyAsync(value => value.CorrelationId == "semantic-rollback"))
+        throw new InvalidOperationException("A rejected semantic audit write must leave neither the setting nor a success event.");
 }
 
 static async Task InspectCurrentDatabaseAsync()
@@ -1449,4 +1582,11 @@ file sealed class FixedTenantContext(int? tenantId) : ITenantContext
 file sealed class FixedCurrentUser(string userId) : ICurrentUserService
 {
     public string UserId { get; } = userId;
+}
+
+file sealed class FixedAuditRequestContext(string correlationId, string? requestPathTemplate) : IAuditRequestContext
+{
+    public string CorrelationId { get; } = correlationId;
+    public string? RequestPathTemplate { get; } = requestPathTemplate;
+    public AuditSourceChannel SourceChannel => AuditSourceChannel.Web;
 }

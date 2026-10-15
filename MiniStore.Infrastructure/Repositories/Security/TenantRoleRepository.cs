@@ -45,25 +45,7 @@ public class TenantRoleRepository(AppDbContext context) : ITenantRoleRepository
             .ToDictionary(x => x.Key, x => (IReadOnlyList<string>)x.Select(y => y.Name).ToList());
     }
 
-    public async Task CreateAsync(TenantRole role, IReadOnlyCollection<int> permissionIds)
-    {
-        await using var transaction = await context.Database.BeginTransactionAsync();
-        try
-        {
-            await context.TenantRoles.AddAsync(role);
-            await context.SaveChangesAsync();
-            await context.TenantRolePermissions.AddRangeAsync(
-                permissionIds.Select(permissionId => new TenantRolePermission(role.Id, permissionId)));
-            await context.SaveChangesAsync();
-            await transaction.CommitAsync();
-        }
-        catch (DbUpdateException exception)
-        {
-            await transaction.RollbackAsync();
-            throw new InvalidOperationException(
-                "The role could not be created because its name or permissions conflict.", exception);
-        }
-    }
+    public Task AddAsync(TenantRole role) => context.TenantRoles.AddAsync(role).AsTask();
 
     public async Task ReplacePermissionsAsync(int roleId, IReadOnlyCollection<int> permissionIds)
     {
@@ -77,20 +59,4 @@ public class TenantRoleRepository(AppDbContext context) : ITenantRoleRepository
     }
 
     public void Remove(TenantRole role) => context.TenantRoles.Remove(role);
-
-    public async Task SaveChangesAsync()
-    {
-        try
-        {
-            await context.SaveChangesAsync();
-        }
-        catch (DbUpdateConcurrencyException exception)
-        {
-            throw new InvalidOperationException("Role settings changed in another session. Reload and try again.", exception);
-        }
-        catch (DbUpdateException exception)
-        {
-            throw new InvalidOperationException("The role could not be saved because its name or assignments conflict.", exception);
-        }
-    }
 }

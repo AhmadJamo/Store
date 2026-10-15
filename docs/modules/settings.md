@@ -1,5 +1,5 @@
 # Settings
-> Status: PARTIALLY IMPLEMENTED | Last reviewed: 2026-10-15
+> Status: PARTIALLY IMPLEMENTED | Last reviewed: 2026-10-16
 
 `SettingsController` is restricted by the active-company Admin permission boundary. General, Discount and Inventory settings use singleton keys and rowversions. Inventory settings define safe defaults for new warehouse type, control mode, picking strategy, POS eligibility, location-capacity enforcement and optional exact transfer-location requirements. Effective operational policy can then be adjusted per warehouse.
 
@@ -12,6 +12,8 @@ General Settings stores the company default interface language: English (`en-US`
 General Settings also defines the maximum decimal places shown for money and quantities. Purchase screens respect those company choices but suppress insignificant trailing zeros, so configured precision remains available without displaying `5.0000` for a whole-number quantity. Formatting affects presentation and HTML number values only; persisted precision and calculations remain unchanged.
 
 Sources: setting entities, DTOs, services, repository interfaces/implementations/configurations, `SettingsController`, settings views. Number changes affect new sales, transfers and journal entries only; saved documents keep their identifier.
+
+`P1-AUD-012` writes one semantic event in the same database save for Accounting posting accounts, non-personal General operating values, Discount controls, Inventory defaults, Purchase Matching tolerances and Purchase Sourcing policy. General-setting evidence deliberately excludes company names, phone and address. Allowlisted payloads remain scalar and bounded; passwords, tokens, integrity keys, attachments and raw requests are never accepted.
 
 Inventory Access configures branch warehouse operation permissions/priorities, creates POS terminals and assigns each terminal a default and prioritized alternatives.
 

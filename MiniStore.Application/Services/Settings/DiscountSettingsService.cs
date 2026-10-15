@@ -8,17 +8,19 @@ namespace MiniStore.Application.Services;
 public class DiscountSettingsService
 {
     private readonly IDiscountSettingsRepository _repository;
+    private readonly SemanticAuditEventService _audit;
 
     public DiscountSettingsService(
-        IDiscountSettingsRepository repository)
+        IDiscountSettingsRepository repository,
+        SemanticAuditEventService audit)
     {
         _repository = repository;
+        _audit = audit;
     }
 
     public async Task<DiscountSettingsDto> GetAsync()
     {
         var settings = await _repository.GetAsync();
-
         if (settings == null)
         {
             return new DiscountSettingsDto
@@ -61,6 +63,7 @@ public class DiscountSettingsService
         Validate(dto);
 
         var settings = await _repository.GetAsync();
+        var before = settings is null ? null : AuditValues(settings);
 
         if (settings == null)
         {
@@ -79,6 +82,13 @@ public class DiscountSettingsService
                 dto.DiscountOverridePermission);
 
             await _repository.AddAsync(settings);
+            await _audit.RecordTenantSuccessAsync(
+                AuditEventCategory.Configuration,
+                SemanticAuditEventTypes.DiscountSettingsChanged,
+                "Update",
+                "DiscountSettings",
+                "Current",
+                afterValues: AuditValues(dto));
             await _repository.SaveChangesAsync();
 
             return;
@@ -106,8 +116,50 @@ public class DiscountSettingsService
         settings.SetDiscountOverridePermission(
             dto.DiscountOverridePermission);
 
+        await _audit.RecordTenantSuccessAsync(
+            AuditEventCategory.Configuration,
+            SemanticAuditEventTypes.DiscountSettingsChanged,
+            "Update",
+            "DiscountSettings",
+            "Current",
+            before,
+            AuditValues(dto));
         await _repository.SaveChangesAsync();
     }
+
+    private static IReadOnlyDictionary<string, object?> AuditValues(DiscountSettings value) =>
+        new Dictionary<string, object?>
+        {
+            ["Enabled"] = value.Enabled,
+            ["AllowLineDiscount"] = value.AllowLineDiscount,
+            ["AllowInvoiceDiscount"] = value.AllowInvoiceDiscount,
+            ["AllowPercentageDiscount"] = value.AllowPercentageDiscount,
+            ["AllowFixedAmountDiscount"] = value.AllowFixedAmountDiscount,
+            ["DefaultDiscountType"] = value.DefaultDiscountType,
+            ["MaxLineDiscountPercent"] = value.MaxLineDiscountPercent,
+            ["MaxLineDiscountAmount"] = value.MaxLineDiscountAmount,
+            ["MaxInvoiceDiscountPercent"] = value.MaxInvoiceDiscountPercent,
+            ["MaxInvoiceDiscountAmount"] = value.MaxInvoiceDiscountAmount,
+            ["AllowDiscountAboveLimit"] = value.AllowDiscountAboveLimit,
+            ["DiscountOverridePermission"] = value.DiscountOverridePermission
+        };
+
+    private static IReadOnlyDictionary<string, object?> AuditValues(DiscountSettingsDto value) =>
+        new Dictionary<string, object?>
+        {
+            ["Enabled"] = value.Enabled,
+            ["AllowLineDiscount"] = value.AllowLineDiscount,
+            ["AllowInvoiceDiscount"] = value.AllowInvoiceDiscount,
+            ["AllowPercentageDiscount"] = value.AllowPercentageDiscount,
+            ["AllowFixedAmountDiscount"] = value.AllowFixedAmountDiscount,
+            ["DefaultDiscountType"] = value.DefaultDiscountType,
+            ["MaxLineDiscountPercent"] = value.MaxLineDiscountPercent,
+            ["MaxLineDiscountAmount"] = value.MaxLineDiscountAmount,
+            ["MaxInvoiceDiscountPercent"] = value.MaxInvoiceDiscountPercent,
+            ["MaxInvoiceDiscountAmount"] = value.MaxInvoiceDiscountAmount,
+            ["AllowDiscountAboveLimit"] = value.AllowDiscountAboveLimit,
+            ["DiscountOverridePermission"] = value.DiscountOverridePermission
+        };
 
     private static void Validate(DiscountSettingsDto dto)
     {

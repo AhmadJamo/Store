@@ -4,7 +4,9 @@ using MiniStore.Domain.Interfaces;
 
 namespace MiniStore.Application.Services;
 
-public class InventorySettingsService(IInventorySettingsRepository repository)
+public class InventorySettingsService(
+    IInventorySettingsRepository repository,
+    SemanticAuditEventService audit)
 {
     public async Task<InventorySettingsDto> GetAsync()
     {
@@ -15,6 +17,7 @@ public class InventorySettingsService(IInventorySettingsRepository repository)
     public async Task UpdateAsync(InventorySettingsDto dto)
     {
         var settings = await repository.GetAsync();
+        var before = settings is null ? null : AuditValues(settings);
 
         if (settings is null)
         {
@@ -46,8 +49,40 @@ public class InventorySettingsService(IInventorySettingsRepository repository)
                 dto.DefaultRequireDestinationLocationForTransfers);
         }
 
+        await audit.RecordTenantSuccessAsync(
+            AuditEventCategory.Configuration,
+            SemanticAuditEventTypes.InventorySettingsChanged,
+            "Update",
+            "InventorySettings",
+            "Current",
+            before,
+            AuditValues(dto));
         await repository.SaveChangesAsync();
     }
+
+    private static IReadOnlyDictionary<string, object?> AuditValues(InventorySettings value) =>
+        new Dictionary<string, object?>
+        {
+            ["DefaultWarehouseType"] = value.DefaultWarehouseType,
+            ["DefaultControlMode"] = value.DefaultControlMode,
+            ["DefaultPickingStrategy"] = value.DefaultPickingStrategy,
+            ["DefaultAllowPosSales"] = value.DefaultAllowPosSales,
+            ["DefaultEnforceLocationCapacity"] = value.DefaultEnforceLocationCapacity,
+            ["DefaultRequireSourceLocationForTransfers"] = value.DefaultRequireSourceLocationForTransfers,
+            ["DefaultRequireDestinationLocationForTransfers"] = value.DefaultRequireDestinationLocationForTransfers
+        };
+
+    private static IReadOnlyDictionary<string, object?> AuditValues(InventorySettingsDto value) =>
+        new Dictionary<string, object?>
+        {
+            ["DefaultWarehouseType"] = value.DefaultWarehouseType,
+            ["DefaultControlMode"] = value.DefaultControlMode,
+            ["DefaultPickingStrategy"] = value.DefaultPickingStrategy,
+            ["DefaultAllowPosSales"] = value.DefaultAllowPosSales,
+            ["DefaultEnforceLocationCapacity"] = value.DefaultEnforceLocationCapacity,
+            ["DefaultRequireSourceLocationForTransfers"] = value.DefaultRequireSourceLocationForTransfers,
+            ["DefaultRequireDestinationLocationForTransfers"] = value.DefaultRequireDestinationLocationForTransfers
+        };
 
     private static InventorySettingsDto Map(InventorySettings settings) => new()
     {

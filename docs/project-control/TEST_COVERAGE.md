@@ -5,7 +5,7 @@
 | الأمر | النتيجة | التاريخ |
 |---|---|---|
 | `dotnet run --project tests/SecurityRegression/SecurityRegression.csproj -c Debug --no-build` | Passed 756 checks (نجح 756 فحصًا) | 2026-10-16 |
-| `dotnet run --project tests/InventorySqlIntegration/InventorySqlIntegration.csproj -c Debug --no-build` | Passed including audit event rollback/isolation/append-only/idempotency/integrity (نجح) | 2026-10-16 |
+| `dotnet run --project tests/InventorySqlIntegration/InventorySqlIntegration.csproj -c Release --no-build` | Passed including semantic role/settings event count plus rollback/isolation/redaction/append-only/idempotency/integrity (نجح) | 2026-10-16 |
 | Live local historic-credential negative test (اختبار رفض بيانات الدخول التاريخية) | Rejected after remediation (رُفضت بعد المعالجة) | 2026-10-15 |
 | Live local replacement-admin positive test (اختبار دخول المدير البديل) | Passed with authorized redirect (نجح مع تحويل مصرح) | 2026-10-15 |
 | Encrypted backup verify/isolated restore/DBCC (تحقق النسخة والاستعادة المعزولة وسلامة القاعدة) | Passed with AES-256 and checksum (نجح) | 2026-10-15 |
@@ -14,7 +14,7 @@
 | Live schema integrity (سلامة المخطط الحي) | 147 tables, 420 trusted FKs, zero disabled constraints/indexes or unsafe tenant relations | 2026-10-15 |
 | Release build (بناء الإصدار) | 4 projects, zero warnings/errors (نجح) | 2026-10-16 |
 
-اختبار `SQL` (قاعدة البيانات) غطى: عزل الشركات، المصالحة، الأرصدة، تزامن التزويد، تقسيم الجوائز،
+اختبار `SQL` (قاعدة البيانات) غطى: إنشاء/تغيير صلاحيات/حذف الدور وتغيير إعداد حساس مع 4 أحداث متوقعة ورجوع آمن، عزل الشركات، المصالحة، الأرصدة، تزامن التزويد، تقسيم الجوائز،
 الاستلام، فاتورة المورد، دفع المورد، العكس، المطابقة، GRNI (بضاعة مستلمة غير مفوترة)، المرتجع، التكلفة
 الإضافية، التحليل، المسح، الجرد، التتبع، الحجر والاستدعاء.
 

@@ -65,7 +65,7 @@ Platform login, plan creation and promotion creation forms emit explicit antifor
 - No deployed HTTP/database penetration test performed. Focused tests use a stub Identity manager, real permission evaluators and action metadata.
 
 ## Verification
-Run `dotnet run --project tests/SecurityRegression/SecurityRegression.csproj` and `dotnet build MiniStore.slnx -c Release --no-restore`. The 2026-10-16 run passed 756 focused checks; SQL integration also passed the audit-event transaction and isolation cases.
+Run `dotnet run --project tests/SecurityRegression/SecurityRegression.csproj` and `dotnet build MiniStore.slnx -c Release --no-restore`. The 2026-10-16 run passed 756 focused checks; SQL integration also passed semantic role/settings event counts, trusted correlation/actor capture, transaction rollback, tenant isolation, redaction, append-only and integrity cases. Demo enables the feature only through local User Secrets with a 32-byte random key; committed configuration remains disabled and secret-free.
 
 ## Company-code login selection (2026-09-15)
 Password validation runs before company selection. A supplied globally unique tenant slug must resolve to an active membership for that user before the TenantId claim is issued. Empty company code retains default-membership behavior. Errors do not expose another company's records.
