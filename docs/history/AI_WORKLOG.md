@@ -872,3 +872,12 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
 - Preserved current Customer and Supplier identifiers and documented the proposed BusinessPartner unification as an independent decision gate with an additive expand-and-contract migration rather than an immediate replacement.
 - Added `CUSTOMER_AND_BUSINESS_PARTNER_AUDIT_AND_IMPLEMENTATION_PLAN.md` with compatibility matrix, conflicts, database risks, target entities, ownership map, permissions, tests, acceptance criteria and `CUS-005` through `CUS-110` phases.
 - Documentation only; no runtime code, schema, permission, UI, configuration or database data changed. Implementation remains paused pending explicit approval.
+
+## 2026-10-15 — FND-000 ERP SaaS Foundation Blueprint integration
+
+- Studied the supplied ERP SaaS Foundation package and separated its embedded agent prompt/rules from the user's request and the repository's authoritative instructions.
+- Installed the architecture, tenant security, audit, finance/inventory integrity, disaster recovery, approvals, configuration, provisioning/billing, exception, work/guidance, import/export, delivery, test and operations references under `docs/reference/erp-saas-foundation/`.
+- Added source provenance with SHA-256 hashes and preserved the source instruction files under non-authoritative archive names so they cannot be mistaken for active repository instructions.
+- Added an evidence-based MiniStore compatibility matrix: tenant isolation is implemented with targeted review gaps; audit, financial/inventory integrity, approvals, configuration, provisioning and guidance are partial; exception center and general import/export are missing; backup/restore and production capacity remain unknown until evidenced.
+- Defined `FND-010` through `FND-080`, with operational backup/restore evidence as the first proposed gate and explicit ADR triggers preventing premature microservices, broker, cache, RLS or stamp adoption.
+- Documentation only; no runtime code, schema, permission, UI, configuration, dependency, deployment or database data changed.

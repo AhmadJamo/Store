@@ -1,0 +1,2 @@
+# Compatibility and rollback
+Expand schema without removing old columns; backfill in resumable batches with checkpoints and count/hash reconciliation; dual-read or dual-write only with explicit reconciliation and finite cutover period; feature-flag switch by test tenants; observe; contract only after rollback window. Never reverse a financial posting by deleting it. Data migrations that cannot be reversed require restore or forward-fix runbook and explicit approval. Record deployment artifact, schema version, backup point, health thresholds and owner signoff.

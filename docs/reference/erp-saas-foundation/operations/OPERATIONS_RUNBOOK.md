@@ -1,0 +1,4 @@
+# Operations and SRE
+Environments dev/staging/prod isolated; IaC, secret vault, managed identity, encryption, private network access, automated migration checks, canary deployments, dashboards by stamp/tenant (with privacy limits). SLOs defined for availability, latency, data correctness, background job age and restore capability. Alerts on failed postings, ledger/stock mismatches, outbox backlog, backup failure, SQL deadlocks, suspicious cross-tenant access, quota saturation. Runbooks: tenant suspension, incident response, SQL failover, restore, bad deployment rollback, data reconciliation, payment webhook backlog, import quarantine.
+
+Cost controls: per-tenant quotas, bounded queries, queue fairness, rate limits, storage retention, tenant-level metering. Separate noisy tenants when metrics justify.

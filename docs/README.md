@@ -14,6 +14,8 @@ The accepted Sales ownership, reservation, delivery, invoicing, COGS, currency a
 
 The repository-based Customer and Business Partner audit, compatibility matrix, additive migration safeguards, ownership boundaries, test strategy and phased plan are in [CUSTOMER_AND_BUSINESS_PARTNER_AUDIT_AND_IMPLEMENTATION_PLAN.md](CUSTOMER_AND_BUSINESS_PARTNER_AUDIT_AND_IMPLEMENTATION_PLAN.md). `CUS-000` is documentation-only; implementation waits for explicit approval of the `CUS-005` Business Partner decision gate.
 
+The imported ERP SaaS Foundation Blueprint and its MiniStore-specific capability assessment are in [reference/erp-saas-foundation/README.md](reference/erp-saas-foundation/README.md). It is a proposed reference with source provenance, not implementation evidence; `FND-010` operational recovery proof is the first adoption gate.
+
 ## Start Here
 
 1. [Project context](00_PROJECT_CONTEXT.md)
@@ -44,6 +46,7 @@ The repository-based Customer and Business Partner audit, compatibility matrix, 
 | [Sales architecture alignment](SALES_ARCHITECTURE_ALIGNMENT.md) | Accepted Sales/Inventory/Invoicing/Accounting ownership, quantity, posting, currency, reservation and POS boundaries |
 | [Customer and Business Partner audit and plan](CUSTOMER_AND_BUSINESS_PARTNER_AUDIT_AND_IMPLEMENTATION_PLAN.md) | Repository-based customer assessment, compatibility matrix, migration risks, target ownership, tests and ordered implementation slices |
 | [Cross-ERP architecture reference](reference/erp-architecture/README.md) | Proposed system-wide charter, module/data maps, workflows, contracts, delivery guidance and test matrix; not implementation evidence |
+| [ERP SaaS foundation reference](reference/erp-saas-foundation/README.md) | Imported platform blueprint, provenance manifest, MiniStore compatibility matrix and gated operations/security/integrity roadmap |
 
 ## Detailed Documentation
 

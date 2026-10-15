@@ -58,3 +58,7 @@ PUR-240 introduces the first bounded background planner. The web-hosted scanner 
 ## Sales-evolution boundary
 
 `SALES_ARCHITECTURE_AUDIT_AND_IMPLEMENTATION_PLAN.md` records the completed `SAL-000` audit. The current `Sale` aggregate is a compatible immediate sale/invoice/payment/stock workflow and remains authoritative for its existing history; it is not reinterpreted as a quotation, Sales Order, Delivery, receivable Invoice or allocated Payment. The additive evolution reuses Catalog, Inventory reservation/valuation, central numbering, tenant permissions and the journal gateway. The accepted `SAL-005` gate in `SALES_ARCHITECTURE_ALIGNMENT.md` fixes context ownership, delivered-versus-ordered invoicing policy, delivery-time COGS, dated currency snapshots, full-reservation default and continued immediate POS compatibility before `SAL-010` begins.
+
+## ERP SaaS foundation reference boundary
+
+`reference/erp-saas-foundation/` is a proposed cross-cutting architecture and operations reference. MiniStore remains a modular monolith; the package does not authorize a public API, microservices, broker, distributed cache, SQL row-level security, object storage or deployment stamps. Those remain ADR triggers that require measured need. The repository-specific `MINISTORE_COMPATIBILITY.md` preserves existing tenant, finance, inventory, purchase approval, guidance and SaaS control-plane implementations while ordering remaining foundation work from operational recovery evidence through audit, performance, provisioning, exceptions/work and safe import/export.
