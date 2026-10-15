@@ -10,6 +10,8 @@ The completed post-`PUR-150` Arabic/English sequence for accounting closure, com
 
 The repository-based Sales audit, legacy immediate-sale compatibility boundary, target module ownership and phased implementation plan are in [SALES_ARCHITECTURE_AUDIT_AND_IMPLEMENTATION_PLAN.md](SALES_ARCHITECTURE_AUDIT_AND_IMPLEMENTATION_PLAN.md). `SAL-000` is documentation-only; later Sales slices remain planned until explicitly approved and implemented.
 
+The accepted Sales ownership, reservation, delivery, invoicing, COGS, currency and POS decisions are in [SALES_ARCHITECTURE_ALIGNMENT.md](SALES_ARCHITECTURE_ALIGNMENT.md). `SAL-005` is a documentation-only implementation gate; the next runtime slice is `SAL-010` Customer foundation.
+
 ## Start Here
 
 1. [Project context](00_PROJECT_CONTEXT.md)
@@ -37,6 +39,7 @@ The repository-based Sales audit, legacy immediate-sale compatibility boundary, 
 | [Purchase completion roadmap](PURCHASE_COMPLETION_ROADMAP_AR_EN.md) | Approved Arabic/English post-PUR-150 sequence from reconciliation through supplier integration and legacy retirement |
 | [Purchase architecture alignment](PURCHASE_ARCHITECTURE_ALIGNMENT.md) | Accepted ownership, quantity authority, currency, approval, GRNI and integration gates before purchase implementation |
 | [Sales architecture audit and implementation plan](SALES_ARCHITECTURE_AUDIT_AND_IMPLEMENTATION_PLAN.md) | Repository-based Sales assessment, compatibility strategy, target boundaries, dependencies, risks, tests and ordered vertical slices |
+| [Sales architecture alignment](SALES_ARCHITECTURE_ALIGNMENT.md) | Accepted Sales/Inventory/Invoicing/Accounting ownership, quantity, posting, currency, reservation and POS boundaries |
 | [Cross-ERP architecture reference](reference/erp-architecture/README.md) | Proposed system-wide charter, module/data maps, workflows, contracts, delivery guidance and test matrix; not implementation evidence |
 
 ## Detailed Documentation

@@ -36,6 +36,8 @@
 
 `docs/SALES_ARCHITECTURE_AUDIT_AND_IMPLEMENTATION_PLAN.md` is the completed `SAL-000` repository audit and planning authority. It classifies the current `Sale` flow as a compatible immediate-sale/invoice/payment/stock workflow, preserves it, and defines the additive customer, pricing, quotation, sales-order, reservation, delivery, invoicing, receivables, payment, return and cutover sequence. It is not evidence that the planned Sales aggregates are implemented.
 
+`docs/SALES_ARCHITECTURE_ALIGNMENT.md` and `docs/decisions/2026-10-15-sales-lifecycle-context-ownership.md` are the accepted documentation-only `SAL-005` gate. They fix legacy Sale/POS compatibility, context and quantity authority, full-reservation default, delivery-time stock/COGS, policy-based invoicing, receivable/payment separation, currency snapshots and deferred generalizations before `SAL-010` begins.
+
 `docs/reference/erp-architecture/` preserves the imported cross-ERP proposed architecture package: system charter, module and ownership maps, workflows, integration contracts, cross-cutting rules, delivery roadmap, agent guidance, test matrix and open decisions. It is a planning reference rather than evidence of implemented code, and its Codex guidance does not supersede repository `AGENTS.md`, accepted ADRs or the required documentation workflow.
 
 `MiniStore.Web/Guidance/ActionableErrorGuidance.cs` maps recognized, user-resolvable purchase errors to permission-protected setup or master-data destinations. The shared notification partial renders the resulting action for both modal notifications and page validation summaries; ordinary validation errors remain message-only.

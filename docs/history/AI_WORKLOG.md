@@ -855,3 +855,12 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
 - Classified the current `Sale` aggregate as a compatible immediate sale/invoice/payment/stock workflow rather than a Sales Order, and prohibited destructive reinterpretation of its history.
 - Added `SALES_ARCHITECTURE_AUDIT_AND_IMPLEMENTATION_PLAN.md` with current strengths, gaps, preserved components, bounded contexts, aggregate and transaction boundaries, internal facts, permissions, migration implications, risks, test requirements, frontend impact, expected file map and `SAL-005` through `SAL-130` vertical slices.
 - Updated the project context, architecture, Sales module, documentation index, codebase map, master roadmap and TODO. No runtime code, schema, permission or UI behavior changed.
+
+## 2026-10-15 — SAL-005 Sales architecture alignment gate
+
+- Accepted explicit ownership boundaries between Sales, Inventory, Invoicing, Accounting, Payments, Pricing, Customers and shared Foundation services.
+- Preserved the current `Sale` and POS as compatible immediate-sale flows while prohibiting destructive reinterpretation of their history.
+- Fixed the safe default of full reservation with no negative Sales stock, stock/COGS effects only at posted Delivery, delivered-quantity invoicing for stocked goods, ordered-quantity eligibility for configured services and separate receivable/payment authority.
+- Fixed dated transaction/company-currency snapshots for new commercial documents and retained company-currency Inventory/COGS authority.
+- Added the alignment document and accepted ADR, marked `SAL-005` complete and advanced the next runtime step to `SAL-010` Customer foundation.
+- Documentation only; no runtime code, schema, permission, UI or database data changed.
