@@ -890,3 +890,13 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
 - Identified historically published administrator credentials as the only recommended next task because source-code removal cannot revoke access on an existing deployment; no credential was read or recorded during this audit.
 - Marked backup/restore, production migrations, CI/CD, observability, performance and penetration testing as unknown or missing evidence rather than claiming production readiness.
 - Documentation only; no application code, schema, migration, permission, runtime configuration, secret or database business data changed. `P0-SEC-001` remains unimplemented pending explicit approval.
+
+## 2026-10-15 — P0-SEC-001 Demo credential closure
+
+- Recorded the owner's classification that all current users and data belong to the local Demo environment; no staging, production or external deployment artifact was found.
+- Verified without printing the value that the historically published administrator credential still authenticated before remediation, confirming a real local exposure.
+- Disabled password access for the affected `admin` account, permanently locked it, and rotated security/concurrency stamps for all nine pre-existing Demo users to invalidate prior sessions.
+- Created `demo-admin-rotated` through the existing one-time bootstrap using a generated strong password kept only in the local `User Secrets` development store; committed bootstrap configuration remains disabled.
+- Re-tested the historical value and confirmed rejection, then positively authenticated the replacement administrator and observed an authorized redirect.
+- Removed the separate stale `BootstrapAdmin:Password` key identified by the owner from its local User Secrets store without recording its value or changing adjacent JWT keys.
+- Added secret-free operational evidence, closed `P0-SEC-001` for the declared scope and advanced the sole proposed task to `P0-OPS-002` backup/restore verification. No application code, schema, migration or committed runtime configuration changed.

@@ -6,6 +6,8 @@
 |---|---|---|
 | `dotnet run --project tests/SecurityRegression/SecurityRegression.csproj -c Release` | Passed 748 checks (نجح 748 فحصًا) | 2026-10-15 |
 | `dotnet run --project tests/InventorySqlIntegration/InventorySqlIntegration.csproj -c Release` | Passed (نجح) | 2026-10-15 |
+| Live local historic-credential negative test (اختبار رفض بيانات الدخول التاريخية) | Rejected after remediation (رُفضت بعد المعالجة) | 2026-10-15 |
+| Live local replacement-admin positive test (اختبار دخول المدير البديل) | Passed with authorized redirect (نجح مع تحويل مصرح) | 2026-10-15 |
 
 اختبار `SQL` (قاعدة البيانات) غطى: عزل الشركات، المصالحة، الأرصدة، تزامن التزويد، تقسيم الجوائز،
 الاستلام، فاتورة المورد، دفع المورد، العكس، المطابقة، GRNI (بضاعة مستلمة غير مفوترة)، المرتجع، التكلفة

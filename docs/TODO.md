@@ -12,8 +12,8 @@ The ERP SaaS Foundation Blueprint is imported as a non-authoritative planning re
 - [ ] FND-010 inventory production environments and operational ownership, approve RPO/RTO and backup retention, run an isolated restore drill, reconcile restored financial/inventory/tenant/outbox state and record evidence.
 - [ ] FND-020 through FND-080 incrementally harden audit/security, integrity/idempotency, observability/performance, configuration/approval reuse, provisioning/billing, exception/work guidance and safe import/export after their individual approvals.
 - [x] CTRL-000 complete the repository recovery audit and create the consolidated project-control status, inventory, audits, conflict register, dependency map, single roadmap, decision/debt/test registers and handoff context.
-- [ ] P0-SEC-001 verify and close historically published administrator credential exposure on every deployment; this is the only proposed next task and requires explicit approval.
-- [ ] P0-OPS-002 approve RPO/RTO and complete an isolated restore/reconciliation drill after P0-SEC-001.
+- [x] P0-SEC-001 close the historically published administrator credential on the owner-declared local Demo environment, invalidate sessions, prove old-secret rejection and verify a replacement administrator.
+- [ ] P0-OPS-002 approve RPO/RTO and complete an isolated restore/reconciliation drill; this is the only proposed next task and requires explicit approval.
 
 - [x] PUR-000 complete purchase architecture review, legacy compatibility boundary, migration strategy and vertical-slice roadmap.
 - [x] PUR-005 fix context ownership, quantity authority, staged currency, approval and GRNI boundaries before runtime implementation.
@@ -132,7 +132,7 @@ The ERP SaaS Foundation Blueprint is imported as a non-authoritative planning re
 
 ## High Priority
 - Do not begin movement/balance cutover before reconciling ProductStock, ProductLocationStock, implicit Unassigned Stock and latest StockTransaction snapshots per tenant/product/warehouse.
-- Rotate previously committed admin credentials and invalidate sessions on existing deployments (operator action).
+- [x] Disabled the historically exposed local Demo administrator, invalidated existing Demo sessions and verified a replacement administrator; reopen this action if an external deployment is discovered.
 
 
 
