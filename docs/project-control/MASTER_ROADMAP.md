@@ -34,7 +34,8 @@
 
 ### `P0-DB-003` — مطابقة إصدار مخطط كل بيئة
 
-> NEXT PROPOSED TASK (المهمة التالية المقترحة؛ تنتظر الموافقة).
+> COMPLETED 2026-10-15 (مكتملة لقاعدة Demo المحلية). راجع
+> [دليل مطابقة المخطط](operations/P0-DB-003-SCHEMA-RECONCILIATION.md).
 
 - الهدف/السبب: إزالة عدم اليقين حول 112 ترحيلًا.
 - إعادة الاستخدام: `__EFMigrationsHistory` ولقطة EF.
@@ -48,6 +49,8 @@
 ## P1 — الأساسات اللازمة
 
 ### `P1-AUD-010` — تصميم تدقيق أمني/تشغيلي قابل للتحقيق
+
+> NEXT PROPOSED TASK (المهمة التالية المقترحة؛ تنتظر الموافقة).
 
 - الهدف: correlation/outcome/reason/redaction/retention دون نسخ القيود.
 - إعادة الاستخدام: `AuditLog`, histories, supplier external audit.

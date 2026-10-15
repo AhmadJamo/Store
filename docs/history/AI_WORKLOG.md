@@ -911,3 +911,13 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
 - Safely removed only the restore-drill database after strict name validation. The original database, encrypted backup, certificate and encrypted private key remain.
 - Recorded that same-host backup is proof of recoverability, not protection from host/disk loss. Off-host retention, automation, failure alerts and cross-host restore remain production work.
 - Added secret-free evidence, closed `P0-OPS-002` for the local Demo drill and advanced the sole proposed task to read-only `P0-DB-003` migration/schema reconciliation. No application code, schema migration or committed runtime configuration changed.
+
+## 2026-10-15 — P0-DB-003 migration and schema reconciliation
+
+- Compared 112 migration source files, the EF Core migration list and 112 `__EFMigrationsHistory` rows: first/last IDs and every intermediate ID matched with no missing, extra or duplicate migration.
+- Confirmed the runtime model has no changes since the last migration and generated the complete 563,829-character idempotent migration script in memory without storing or executing it.
+- Inspected the live Demo schema: 147 user tables, 420 trusted enabled foreign keys, no disabled/untrusted check constraints, no disabled indexes, no table without a primary key and no unsafe tenant-to-tenant relationship.
+- Completed `DBCC CHECKCONSTRAINTS` without violations. The two recorded EF versions are a normal patch transition: 7 migrations on 10.0.11 and 105 on 10.0.12.
+- Corrected three stale database-document claims and closed `DOC-002`/`DB-002`; no forward-fix is required.
+- The normal Release output was locked by the user's running MiniStore process, so it was left running and the solution was built to an isolated artifacts path instead; all four projects passed with zero warnings/errors.
+- Added reconciliation evidence, closed `P0-DB-003` for the local Demo database and advanced the sole proposed task to the design-only `P1-AUD-010`. No migration, schema or business data changed.

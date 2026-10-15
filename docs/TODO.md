@@ -14,7 +14,8 @@ The ERP SaaS Foundation Blueprint is imported as a non-authoritative planning re
 - [x] CTRL-000 complete the repository recovery audit and create the consolidated project-control status, inventory, audits, conflict register, dependency map, single roadmap, decision/debt/test registers and handoff context.
 - [x] P0-SEC-001 close the historically published administrator credential on the owner-declared local Demo environment, invalidate sessions, prove old-secret rejection and verify a replacement administrator.
 - [x] P0-OPS-002 create an AES-256 encrypted local Demo backup, verify and restore it in isolation, reconcile 147 tables plus business/accounting totals, and clean up only the restore database.
-- [ ] P0-DB-003 reconcile EF Core migrations and the local Demo schema without applying changes; this is the only proposed next task and requires explicit approval.
+- [x] P0-DB-003 prove all 112 EF Core migrations match the local Demo database, no model change is pending and no disabled/untrusted constraint or tenant relationship drift exists.
+- [ ] P1-AUD-010 approve the audit-security design for correlation, outcomes, redaction, retention and tamper evidence; this is the only proposed next task and requires explicit approval.
 
 - [x] PUR-000 complete purchase architecture review, legacy compatibility boundary, migration strategy and vertical-slice roadmap.
 - [x] PUR-005 fix context ownership, quantity authority, staged currency, approval and GRNI boundaries before runtime implementation.
