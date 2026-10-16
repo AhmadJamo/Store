@@ -246,6 +246,10 @@ public static class PermissionDefinitions
         new("Roles.Edit", "Edit Role", "Roles"),
         new("Roles.Delete", "Delete Role", "Roles"),
 
+        new("AuditEvents.View", "View Audit Events", "Administration"),
+        new("AuditEvents.Export", "Export Audit Events", "Administration"),
+        new("AuditEvents.ViewSensitive", "View Sensitive Audit Evidence", "Administration"),
+
         // ==========================================
         // Settings
         // ==========================================

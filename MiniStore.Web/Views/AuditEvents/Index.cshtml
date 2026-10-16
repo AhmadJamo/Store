@@ -1,0 +1,55 @@
+@model MiniStore.Application.Services.AuditEventPageDto
+@using MiniStore.Application.Services
+@using MiniStore.Domain.Entities
+@inject Microsoft.Extensions.Localization.IStringLocalizer<MiniStore.Web.SharedResource> L
+@inject Microsoft.AspNetCore.Authorization.IAuthorizationService AuthorizationService
+@{ ViewData["Title"] = L["Audit events"]; var canExport=(await AuthorizationService.AuthorizeAsync(User,null,"Permission:AuditEvents.Export")).Succeeded; }
+
+<div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-3">
+    <div><h2 class="mb-1">@L["Audit events"]</h2><p class="text-muted mb-0">@L["Review security and administrative evidence for the active company."]</p></div>
+    <span class="badge text-bg-secondary">@L["Total"]: @Model.TotalCount</span>
+</div>
+
+<form method="get" class="card card-body mb-3">
+    <div class="row g-3 align-items-end">
+        <div class="col-sm-6 col-xl-2"><label class="form-label">@L["From"]</label><input type="date" name="From" value="@Model.Query.From?.ToString("yyyy-MM-dd")" class="form-control" /></div>
+        <div class="col-sm-6 col-xl-2"><label class="form-label">@L["To"]</label><input type="date" name="To" value="@Model.Query.To?.ToString("yyyy-MM-dd")" class="form-control" /></div>
+        <div class="col-sm-6 col-xl-2"><label class="form-label">@L["Category"]</label><select name="Category" class="form-select"><option value="">@L["All categories"]</option>@foreach(var item in Enum.GetValues<AuditEventCategory>()){<option value="@item" selected="@(Model.Query.Category==item)">@L[$"Audit category {item}"]</option>}</select></div>
+        <div class="col-sm-6 col-xl-2"><label class="form-label">@L["Outcome"]</label><select name="Outcome" class="form-select"><option value="">@L["All outcomes"]</option>@foreach(var item in Enum.GetValues<AuditEventOutcome>()){<option value="@item" selected="@(Model.Query.Outcome==item)">@L[$"Audit outcome {item}"]</option>}</select></div>
+        <div class="col-sm-6 col-xl-2"><label class="form-label">@L["Event type"]</label><input name="EventType" value="@Model.Query.EventType" class="form-control" maxlength="150" /></div>
+        <div class="col-sm-6 col-xl-2"><label class="form-label">@L["Actor ID"]</label><input name="ActorId" value="@Model.Query.ActorId" class="form-control" maxlength="450" /></div>
+        <div class="col-sm-6 col-xl-2"><label class="form-label">@L["Resource type"]</label><input name="ResourceType" value="@Model.Query.ResourceType" class="form-control" maxlength="150" /></div>
+        <div class="col-sm-6 col-xl-2"><label class="form-label">@L["Resource ID"]</label><input name="ResourceId" value="@Model.Query.ResourceId" class="form-control" maxlength="150" /></div>
+        <div class="col-sm-6 col-xl-3"><label class="form-label">@L["Correlation ID"]</label><input name="CorrelationId" value="@Model.Query.CorrelationId" class="form-control" maxlength="100" /></div>
+        <div class="col-sm-6 col-xl-2"><label class="form-label">@L["Page size"]</label><select name="PageSize" class="form-select">@foreach(var size in new[]{25,50,100}){<option value="@size" selected="@(Model.Query.PageSize==size)">@size</option>}</select></div>
+        <div class="col-12 col-xl-auto"><button class="btn btn-primary"><i class="bi bi-search"></i> @L["Apply"]</button> <a asp-action="Index" class="btn btn-outline-secondary">@L["Reset"]</a></div>
+    </div>
+</form>
+
+@if(canExport)
+{
+    <form asp-action="Export" method="post" class="card card-body mb-3">
+        <input type="hidden" name="From" value="@Model.Query.From?.ToString("yyyy-MM-dd")"/><input type="hidden" name="To" value="@Model.Query.To?.ToString("yyyy-MM-dd")"/>
+        <input type="hidden" name="Category" value="@Model.Query.Category"/><input type="hidden" name="Outcome" value="@Model.Query.Outcome"/>
+        <input type="hidden" name="EventType" value="@Model.Query.EventType"/><input type="hidden" name="ActorId" value="@Model.Query.ActorId"/>
+        <input type="hidden" name="ResourceType" value="@Model.Query.ResourceType"/><input type="hidden" name="ResourceId" value="@Model.Query.ResourceId"/><input type="hidden" name="CorrelationId" value="@Model.Query.CorrelationId"/>
+        <div class="d-flex flex-wrap align-items-end gap-2"><div class="flex-grow-1"><label class="form-label">@L["Export purpose"]</label><select name="purpose" class="form-select" required><option value="">@L["Select purpose"]</option>@foreach(var purpose in AuditEventReadService.ExportPurposes){<option value="@purpose">@L[$"Audit export purpose {purpose}"]</option>}</select></div><button class="btn btn-outline-primary"><i class="bi bi-download"></i> @L["Export CSV"]</button></div>
+        <small class="text-muted mt-2">@L["Exports are limited to 5,000 filtered events and the export itself is audited."]</small>
+    </form>
+}
+
+<div class="row g-3">
+@foreach(var item in Model.Items)
+{
+    var outcomeClass=item.Outcome==AuditEventOutcome.Succeeded?"text-bg-success":item.Outcome==AuditEventOutcome.Denied?"text-bg-warning":"text-bg-danger";
+    <div class="col-12"><article class="card shadow-sm border-0"><div class="card-body">
+        <div class="d-flex flex-wrap justify-content-between gap-2"><div><strong class="text-break">@item.EventType</strong><div class="small text-muted">@item.OccurredAtUtc.ToString("u") · @L[$"Audit channel {item.SourceChannel}"]</div></div><div><span class="badge @outcomeClass">@L[$"Audit outcome {item.Outcome}"]</span> <span class="badge text-bg-light">@L[$"Audit category {item.Category}"]</span></div></div>
+        <div class="row g-2 small mt-2"><div class="col-md-4"><strong>@L["Actor"]:</strong> <span class="text-break">@item.ActorId</span> (@L[$"Audit actor {item.ActorType}"])</div><div class="col-md-4"><strong>@L["Resource"]:</strong> <span class="text-break">@item.ResourceType / @item.ResourceId</span></div><div class="col-md-4"><strong>@L["Correlation ID"]:</strong> <code class="text-break">@item.CorrelationId</code></div>@if(!string.IsNullOrEmpty(item.ReasonCode)){<div class="col-md-4"><strong>@L["Reason code"]:</strong> @item.ReasonCode</div>}@if(!string.IsNullOrEmpty(item.RequestPathTemplate)){<div class="col-md-8"><strong>@L["Route template"]:</strong> <code class="text-break">@item.RequestPathTemplate</code></div>}</div>
+        @if(Model.CanViewSensitive && (!string.IsNullOrEmpty(item.SourceIpMasked)||!string.IsNullOrEmpty(item.UserAgentHash))){<div class="alert alert-light py-2 small mt-3 mb-0"><strong>@L["Restricted request evidence"]:</strong> @L["Masked IP"]: @(item.SourceIpMasked??"—") · @L["User-agent fingerprint"]: <code class="text-break">@(item.UserAgentHash??"—")</code></div>}
+        @if(!string.IsNullOrEmpty(item.ChangesRedactedJson)||!string.IsNullOrEmpty(item.MetadataRedactedJson)){<details class="mt-3"><summary>@L["Redacted evidence"]</summary>@if(!string.IsNullOrEmpty(item.ChangesRedactedJson)){<pre class="small bg-light rounded p-2 mt-2 text-wrap">@item.ChangesRedactedJson</pre>}@if(!string.IsNullOrEmpty(item.MetadataRedactedJson)){<pre class="small bg-light rounded p-2 mt-2 text-wrap">@item.MetadataRedactedJson</pre>}</details>}
+    </div></article></div>
+}
+@if(Model.Items.Count==0){<div class="col-12"><div class="alert alert-info">@L["No audit events match the selected filters."]</div></div>}
+</div>
+
+<nav class="d-flex justify-content-between align-items-center mt-3" aria-label="@L["Audit pagination"]"><span>@L["Page"] @Model.Query.Page @L["of"] @Model.TotalPages</span><div class="btn-group"><a class="btn btn-outline-secondary @(Model.Query.Page<=1?"disabled":"")" asp-action="Index" asp-route-From="@Model.Query.From?.ToString("yyyy-MM-dd")" asp-route-To="@Model.Query.To?.ToString("yyyy-MM-dd")" asp-route-Category="@Model.Query.Category" asp-route-Outcome="@Model.Query.Outcome" asp-route-EventType="@Model.Query.EventType" asp-route-ActorId="@Model.Query.ActorId" asp-route-ResourceType="@Model.Query.ResourceType" asp-route-ResourceId="@Model.Query.ResourceId" asp-route-CorrelationId="@Model.Query.CorrelationId" asp-route-PageSize="@Model.Query.PageSize" asp-route-Page="@(Model.Query.Page-1)">@L["Previous"]</a><a class="btn btn-outline-secondary @(Model.Query.Page>=Model.TotalPages?"disabled":"")" asp-action="Index" asp-route-From="@Model.Query.From?.ToString("yyyy-MM-dd")" asp-route-To="@Model.Query.To?.ToString("yyyy-MM-dd")" asp-route-Category="@Model.Query.Category" asp-route-Outcome="@Model.Query.Outcome" asp-route-EventType="@Model.Query.EventType" asp-route-ActorId="@Model.Query.ActorId" asp-route-ResourceType="@Model.Query.ResourceType" asp-route-ResourceId="@Model.Query.ResourceId" asp-route-CorrelationId="@Model.Query.CorrelationId" asp-route-PageSize="@Model.Query.PageSize" asp-route-Page="@(Model.Query.Page+1)">@L["Next"]</a></div></nav>

@@ -62,6 +62,7 @@ public static class DashboardDefinitions
             new("Settings", "bi-sliders", "Settings", "Index", "Settings.View", 10),
             new("Users", "bi-people", "Users", "Index", "Users.View", 20),
             new("Roles & Permissions", "bi-shield-lock", "Roles", "Index", "Roles.View", 30)
+            ,new("Audit events", "bi-shield-check", "AuditEvents", "Index", "AuditEvents.View", 40)
         ])
     ];
 }

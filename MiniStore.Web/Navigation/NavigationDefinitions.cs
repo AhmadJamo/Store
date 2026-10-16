@@ -262,6 +262,14 @@ public static class NavigationDefinitions
                 20),
 
             new NavigationItem(
+                "Audit events",
+                "bi-shield-check",
+                "AuditEvents",
+                "Index",
+                "AuditEvents.View",
+                25),
+
+            new NavigationItem(
                 "Settings",
                 "bi-sliders",
                 "Settings",

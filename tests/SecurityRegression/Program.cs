@@ -237,6 +237,27 @@ Check(httpAuditRequest.SourceIpMasked == "192.168.77.0/24" &&
     "HTTP audit context must mask source addresses, classify channels and hash user-agent evidence");
 Check(HttpAuditRequestContext.MaskIpAddress(IPAddress.Parse("2001:db8:abcd:12::99")) == "2001:db8:abcd:12::/64",
     "HTTP audit context must preserve only the IPv6 network prefix");
+Check(PermissionDefinitions.All.Any(x => x.Name == "AuditEvents.View") &&
+      PermissionDefinitions.All.Any(x => x.Name == "AuditEvents.Export") &&
+      PermissionDefinitions.All.Any(x => x.Name == "AuditEvents.ViewSensitive"),
+    "Audit reading, exporting and restricted request evidence must use separate tenant permissions");
+var auditController = typeof(AuditEventsController);
+Check(auditController.GetMethod(nameof(AuditEventsController.Index))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:AuditEvents.View" &&
+      auditController.GetMethod(nameof(AuditEventsController.Export))!
+          .GetCustomAttributes<PermissionAuthorizeAttribute>().Select(x => x.Policy).ToHashSet()
+          .SetEquals(["Permission:AuditEvents.View", "Permission:AuditEvents.Export"]) &&
+      auditController.GetMethod(nameof(AuditEventsController.Export))!
+          .GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null,
+    "Audit view and export endpoints must enforce distinct server permissions and antiforgery on export");
+Check(NavigationDefinitions.All.SelectMany(x => x.Items)
+          .Any(x => x.Controller == "AuditEvents" && x.Permission == "AuditEvents.View"),
+    "Audit navigation must remain hidden without the dedicated view permission");
+var platformAuditController = typeof(MiniStore.Web.Areas.Platform.Controllers.PlatformAuditEventsController);
+Check(platformAuditController.GetCustomAttribute<AuthorizeAttribute>()?.Policy == PlatformAuthentication.AuditViewPolicy &&
+      platformAuditController.GetMethod(nameof(MiniStore.Web.Areas.Platform.Controllers.PlatformAuditEventsController.Export))!
+          .GetCustomAttributes<AuthorizeAttribute>().Any(x => x.Policy == PlatformAuthentication.AuditExportPolicy),
+    "Platform audit viewing and exporting must use separate platform policies");
 var disabledIndependentWriter = new SecurityAuditEventWriter(
     new ThrowingScopeFactory(), Options.Create(new AuditEventOptions { Enabled = false }),
     NullLogger<SecurityAuditEventWriter>.Instance);

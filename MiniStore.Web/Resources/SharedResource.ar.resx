@@ -2609,4 +2609,65 @@
   <data name="The order status is Closed and its closure type, actor and reason are visible." xml:space="preserve"><value>حالة الأمر مغلق ونوع الإقفال ومنفذه وسببه ظاهرة.</value></data>
   <data name="Inventory and GRNI reconciliation show no unexplained exceptions." xml:space="preserve"><value>لا تظهر مطابقة المخزون والبضاعة المستلمة غير المفوترة فروقات غير مفسرة.</value></data>
   <data name="The review is based on traceable KPI sources and open exceptions have owners." xml:space="preserve"><value>تعتمد المراجعة على مصادر مؤشرات أداء قابلة للتتبع، ولكل استثناء مفتوح مسؤول.</value></data>
+  <data name="Audit events" xml:space="preserve"><value>سجل التدقيق</value></data>
+  <data name="Review security and administrative evidence for the active company." xml:space="preserve"><value>راجع أدلة الأمان والإدارة الخاصة بالشركة النشطة.</value></data>
+  <data name="Category" xml:space="preserve"><value>التصنيف</value></data>
+  <data name="Outcome" xml:space="preserve"><value>النتيجة</value></data>
+  <data name="All outcomes" xml:space="preserve"><value>كل النتائج</value></data>
+  <data name="Event type" xml:space="preserve"><value>نوع الحدث</value></data>
+  <data name="Actor ID" xml:space="preserve"><value>معرّف المنفذ</value></data>
+  <data name="Resource type" xml:space="preserve"><value>نوع المورد</value></data>
+  <data name="Resource ID" xml:space="preserve"><value>معرّف المورد</value></data>
+  <data name="Correlation ID" xml:space="preserve"><value>معرّف الترابط</value></data>
+  <data name="Export purpose" xml:space="preserve"><value>غرض التصدير</value></data>
+  <data name="Select purpose" xml:space="preserve"><value>اختر الغرض</value></data>
+  <data name="Audit export purpose InternalReview" xml:space="preserve"><value>مراجعة داخلية</value></data>
+  <data name="Audit export purpose SecurityInvestigation" xml:space="preserve"><value>تحقيق أمني</value></data>
+  <data name="Audit export purpose ComplianceReview" xml:space="preserve"><value>مراجعة امتثال</value></data>
+  <data name="Export CSV" xml:space="preserve"><value>تصدير CSV (ملف قيم مفصولة)</value></data>
+  <data name="Exports are limited to 5,000 filtered events and the export itself is audited." xml:space="preserve"><value>يقتصر التصدير على 5,000 حدث مصفّى، وتُسجّل عملية التصدير نفسها.</value></data>
+  <data name="Audit pagination" xml:space="preserve"><value>صفحات سجل التدقيق</value></data>
+  <data name="Page" xml:space="preserve"><value>صفحة</value></data>
+  <data name="of" xml:space="preserve"><value>من</value></data>
+  <data name="Actor" xml:space="preserve"><value>المنفذ</value></data>
+  <data name="Resource" xml:space="preserve"><value>المورد</value></data>
+  <data name="Reason code" xml:space="preserve"><value>رمز السبب</value></data>
+  <data name="Route template" xml:space="preserve"><value>قالب المسار</value></data>
+  <data name="Restricted request evidence" xml:space="preserve"><value>دليل طلب مقيّد</value></data>
+  <data name="Masked IP" xml:space="preserve"><value>عنوان الشبكة المقنّع</value></data>
+  <data name="User-agent fingerprint" xml:space="preserve"><value>بصمة برنامج العميل</value></data>
+  <data name="Redacted evidence" xml:space="preserve"><value>الدليل المنقّح</value></data>
+  <data name="No audit events match the selected filters." xml:space="preserve"><value>لا توجد أحداث تدقيق تطابق عوامل التصفية.</value></data>
+  <data name="Select a valid audit export purpose." xml:space="preserve"><value>اختر غرضًا صالحًا لتصدير سجل التدقيق.</value></data>
+  <data name="Narrow the audit filters before exporting more than 5,000 events." xml:space="preserve"><value>ضيّق عوامل تصفية سجل التدقيق قبل تصدير أكثر من 5,000 حدث.</value></data>
+  <data name="Audit event recording must be enabled before exporting audit evidence." xml:space="preserve"><value>يجب تفعيل تسجيل أحداث التدقيق قبل تصدير أدلة التدقيق.</value></data>
+  <data name="Audit end date cannot be earlier than the start date." xml:space="preserve"><value>لا يمكن أن يسبق تاريخ نهاية التدقيق تاريخ البداية.</value></data>
+  <data name="Audit searches cannot exceed 366 days." xml:space="preserve"><value>لا يمكن أن تتجاوز مدة البحث في التدقيق 366 يومًا.</value></data>
+  <data name="One or more audit filters are too long." xml:space="preserve"><value>عامل تصفية واحد أو أكثر في سجل التدقيق طويل أكثر من المسموح.</value></data>
+  <data name="Audit category Security" xml:space="preserve"><value>الأمان</value></data>
+  <data name="Audit category Administration" xml:space="preserve"><value>الإدارة</value></data>
+  <data name="Audit category Configuration" xml:space="preserve"><value>الإعدادات</value></data>
+  <data name="Audit category Operations" xml:space="preserve"><value>العمليات</value></data>
+  <data name="Audit category Integration" xml:space="preserve"><value>التكامل</value></data>
+  <data name="Audit category DataAccess" xml:space="preserve"><value>الوصول إلى البيانات</value></data>
+  <data name="Audit outcome Succeeded" xml:space="preserve"><value>نجح</value></data>
+  <data name="Audit outcome Denied" xml:space="preserve"><value>مرفوض</value></data>
+  <data name="Audit outcome Failed" xml:space="preserve"><value>فشل</value></data>
+  <data name="Audit outcome Unknown" xml:space="preserve"><value>غير معروف</value></data>
+  <data name="Audit channel Web" xml:space="preserve"><value>الويب</value></data>
+  <data name="Audit channel Worker" xml:space="preserve"><value>مهمة خلفية</value></data>
+  <data name="Audit channel Api" xml:space="preserve"><value>واجهة برمجة التطبيقات</value></data>
+  <data name="Audit channel Portal" xml:space="preserve"><value>البوابة</value></data>
+  <data name="Audit channel Import" xml:space="preserve"><value>الاستيراد</value></data>
+  <data name="Audit channel Platform" xml:space="preserve"><value>المنصة</value></data>
+  <data name="Audit actor User" xml:space="preserve"><value>مستخدم</value></data>
+  <data name="Audit actor System" xml:space="preserve"><value>النظام</value></data>
+  <data name="Audit actor External" xml:space="preserve"><value>جهة خارجية</value></data>
+  <data name="Audit actor Support" xml:space="preserve"><value>الدعم</value></data>
+  <data name="View Audit Events" xml:space="preserve"><value>عرض سجل التدقيق</value></data>
+  <data name="Export Audit Events" xml:space="preserve"><value>تصدير سجل التدقيق</value></data>
+  <data name="View Sensitive Audit Evidence" xml:space="preserve"><value>عرض أدلة التدقيق المقيّدة</value></data>
+  <data name="Platform and system audit events" xml:space="preserve"><value>سجل تدقيق المنصة والنظام</value></data>
+  <data name="Review administrative and security events outside tenant business data." xml:space="preserve"><value>مراجعة أحداث الإدارة والأمان خارج نطاق بيانات الشركات.</value></data>
+  <data name="No matching audit events." xml:space="preserve"><value>لا توجد أحداث تدقيق مطابقة.</value></data>
 </root>

@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using MiniStore.Application.Services;
 using MiniStore.Infrastructure.Persistence;
 using MiniStore.Infrastructure.Services.Security;
+using MiniStore.Infrastructure.Repositories;
 using MiniStore.Web.Services;
 
 namespace MiniStore.Web.Configuration;
@@ -19,6 +20,8 @@ public static class PersistenceExtensions
         services.AddSingleton<ISecurityAuditEventWriter, SecurityAuditEventWriter>();
         services.AddScoped<IAuditRequestContext, HttpAuditRequestContext>();
         services.AddScoped<SemanticAuditEventService>();
+        services.AddScoped<IAuditEventReadRepository, AuditEventReadRepository>();
+        services.AddScoped<AuditEventReadService>();
         services.AddScoped<AuditSaveChangesInterceptor>();
         services.AddDbContext<AppDbContext>((provider, options) =>
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"))

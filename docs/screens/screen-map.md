@@ -87,3 +87,9 @@ All purchase tables, details and populated numeric inputs use the shared number 
 # PUR-240 automated replenishment
 
 `Views/PurchaseReplenishment/Index.cshtml` is a responsive, card-based bilingual settings/history screen without a horizontal table. It explains inputs with transient title help, formats quantities without forced trailing zeros, replaces creation actions with completed status/document links, and shows the evidence and reason behind every suggestion.
+
+## Audit-event readers
+
+- `/AuditEvents` is the tenant reader. It requires `AuditEvents.View`, always applies the active-company boundary and offers bounded filters, deterministic pagination and responsive cards without horizontal scrolling.
+- `/platform/audit-events` is the separate Platform/System reader. It never impersonates a tenant and is protected by Platform audit policies.
+- CSV (ملف قيم مفصولة بفواصل) export is limited to 5,000 rows, requires an allowed purpose and separate export authority, and records one `DataAccess.AuditEventsExported` event after creating the snapshot. Masked source IP and user-agent fingerprint appear only with sensitive-view authority.

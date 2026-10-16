@@ -960,3 +960,12 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
 - Kept successful Platform and supplier-access administration events in the same save/transaction as their business operation. No username input, password, cookie, API key, portal token, callback secret/URL or raw request body is copied into `AuditEvent`.
 - Web and SQL-test builds passed with zero warnings/errors. SecurityRegression passed 761 checks. SQL integration passed with two exactly counted independent denied events and strict System/Tenant scope after rerunning under the normal local Windows identity because the sandbox identity could not establish SSPI.
 - No schema change or migration was needed; legacy `AuditLogs` remains unchanged. Recorded evidence in `project-control/operations/P1-AUD-013-SECURITY-AUDIT-COVERAGE.md` and advanced the only proposed task to `P1-AUD-014`.
+
+## 2026-10-16 — P1-AUD-014 permission-aware audit reader and export
+
+- Added an Application query/export service and an Infrastructure repository that enforce either the active tenant or the separate Platform/System boundary; controllers do not query EF directly and entities are projected to DTOs.
+- Added tenant and Platform readers with fixed date/page limits, deterministic ordering, category/outcome/resource/correlation filters, responsive Arabic/English cards and no horizontal-scroll table.
+- Added separate tenant View, Export and ViewSensitive permissions plus separate Platform policies. Export requires view and export authority, antiforgery and one of three fixed review purposes; sensitive masked request evidence is projected only when explicitly authorized.
+- Added a bounded 5,000-row CSV export with spreadsheet-formula protection. The snapshot is produced before its own event, then exactly one `DataAccess.AuditEventsExported` event records purpose, scope, row count and SHA-256 file fingerprint without copying file content.
+- Web and SQL-test builds passed with zero warnings/errors. SecurityRegression passed 765 checks. SQL integration passed tenant/platform isolation, sensitive suppression/projection and exactly one export event together with the existing suite.
+- No schema change or migration was needed; migration count remains 113 and legacy `AuditLogs` remains unchanged. Recorded evidence in `project-control/operations/P1-AUD-014-AUDIT-READER-EXPORT.md` and advanced the only proposed task to `P1-AUD-015`, which requires owner/legal/hosting decisions before approval.

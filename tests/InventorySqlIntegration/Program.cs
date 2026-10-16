@@ -126,7 +126,7 @@ try
     await VerifyInventoryBalanceProjectionAsync(tenantOneId, tenantOneFixture.ProductId, expectedOnHand: 2m, connectionString);
     await VerifyOpeningTrackingAllocationAsync(tenantOneId, tenantOneFixture.ProductId, tenantOneFixture.WarehouseId, connectionString);
 
-    Console.WriteLine("Passed SQL integration checks: semantic role/settings and independent denied-security audit coverage plus audit-event rollback, isolation, append-only and integrity; tenant isolation, reconciliation, balances, replenishment purchase-request source concurrency, 3-product/2-supplier split awards, receipt, vendor-bill and supplier-payment concurrency, controlled payment reversal and retry, three-way matching override evidence, GRNI posting and clearing, purchase accounting reconciliation, payable settlement, receipt-based supplier returns, landed-cost valuation, purchasing analytics, idempotent barcode receipt drafts, adjustment posting, tracked operations, quarantine and recall.");
+    Console.WriteLine("Passed SQL integration checks: semantic role/settings, independent denied-security and permission-aware audit reader/export coverage plus audit-event rollback, isolation, append-only and integrity; tenant isolation, reconciliation, balances, replenishment purchase-request source concurrency, 3-product/2-supplier split awards, receipt, vendor-bill and supplier-payment concurrency, controlled payment reversal and retry, three-way matching override evidence, GRNI posting and clearing, purchase accounting reconciliation, payable settlement, receipt-based supplier returns, landed-cost valuation, purchasing analytics, idempotent barcode receipt drafts, adjustment posting, tracked operations, quarantine and recall.");
 }
 finally
 {
@@ -149,6 +149,10 @@ static async Task VerifyIndependentSecurityAuditAsync(int tenantId, string conne
         IntegrityKeys = new Dictionary<string, string>
         {
             ["security-sql-v1"] = Convert.ToBase64String(Enumerable.Range(97, 32).Select(value => (byte)value).ToArray())
+        },
+        AllowedMetadataFields = new Dictionary<string, string[]>
+        {
+            [SemanticAuditEventTypes.AuditEventsExported] = ["RecordCount", "FileFingerprint", "ExportScope"]
         }
     };
     var services = new ServiceCollection();
@@ -206,6 +210,69 @@ static async Task VerifyIndependentSecurityAuditAsync(int tenantId, string conne
         events.Any(value => value.Outcome != AuditEventOutcome.Denied || value.SourceIpMasked != "10.20.30.0/24" ||
                             value.UserAgentHash != userAgentHash))
         throw new InvalidOperationException("Independent security audit events must persist once with strict scope and redacted request evidence.");
+
+    var filter = new AuditEventQuerySpec(
+        DateTime.UtcNow.AddDays(-1), DateTime.UtcNow.AddDays(1), null, null, null, null, null, null,
+        "independent-security-sql", 0, 25, false);
+    using (tenantScope.BeginScope(tenantId))
+    {
+        await using var tenantContext = new AppDbContext(CreateOptions(connectionString), tenantScope);
+        var repository = new AuditEventReadRepository(tenantContext, tenantScope);
+        var page = await repository.ReadTenantAsync(filter);
+        if (page.TotalCount != 1 || page.Items.Count != 1 || page.Items[0].Scope != AuditEventScope.Tenant ||
+            page.Items[0].SourceIpMasked is not null || page.Items[0].UserAgentHash is not null)
+            throw new InvalidOperationException("Tenant audit reading must stay tenant-scoped and suppress restricted evidence by default.");
+        try
+        {
+            await repository.ReadPlatformAsync(filter);
+            throw new InvalidOperationException("A tenant execution scope must not read platform/system audit events.");
+        }
+        catch (InvalidOperationException exception) when (exception.Message.StartsWith("Platform audit events", StringComparison.Ordinal))
+        {
+        }
+
+        var options = Options.Create(configured);
+        var exportWriter = new AuditEventWriter(tenantContext, tenantScope, new FixedCurrentUser("audit-exporter"),
+            new AuditEventRedactor(options), new AuditEventIntegrityService(options), options);
+        var exportService = new AuditEventReadService(repository, exportWriter,
+            new FixedAuditRequestContext("audit-export-sql", "/AuditEvents/Export"), new UnitOfWork(tenantContext));
+        var export = await exportService.ExportTenantAsync(new AuditEventQueryDto
+        {
+            From = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(-1)),
+            To = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(1)),
+            CorrelationId = "independent-security-sql"
+        }, "SecurityInvestigation", false);
+        var csv = System.Text.Encoding.UTF8.GetString(export.Content);
+        if (export.RecordCount != 1 || csv.Contains("10.20.30.0/24", StringComparison.Ordinal) ||
+            !csv.Contains(SemanticAuditEventTypes.PrivilegedActionDenied, StringComparison.Ordinal))
+            throw new InvalidOperationException("Audit export must be bounded, filtered and omit restricted evidence without permission.");
+    }
+
+    await using (var platformContext = new AppDbContext(CreateOptions(connectionString), tenantScope))
+    {
+        var repository = new AuditEventReadRepository(platformContext, tenantScope);
+        var page = await repository.ReadPlatformAsync(filter with { IncludeSensitive = true });
+        if (page.TotalCount != 1 || page.Items.Single().Scope != AuditEventScope.System ||
+            page.Items.Single().SourceIpMasked != "10.20.30.0/24")
+            throw new InvalidOperationException("Platform audit reading must expose only platform/system scope and gate restricted evidence explicitly.");
+        try
+        {
+            await repository.ReadTenantAsync(filter);
+            throw new InvalidOperationException("A non-tenant execution scope must not read tenant audit events.");
+        }
+        catch (InvalidOperationException exception) when (exception.Message.StartsWith("An active company", StringComparison.Ordinal))
+        {
+        }
+    }
+
+    await using var exportVerification = new AppDbContext(CreateOptions(connectionString));
+    var exportEvents = await exportVerification.AuditEvents.IgnoreQueryFilters().AsNoTracking()
+        .Where(value => value.CorrelationId == "audit-export-sql" &&
+                        value.EventType == SemanticAuditEventTypes.AuditEventsExported).ToListAsync();
+    if (exportEvents.Count != 1 || exportEvents[0].Scope != AuditEventScope.Tenant ||
+        exportEvents[0].ReasonCode != "SecurityInvestigation" ||
+        exportEvents[0].MetadataRedactedJson?.Contains("FileFingerprint", StringComparison.Ordinal) != true)
+        throw new InvalidOperationException("Every successful audit export must write one tenant-scoped event with bounded count and file fingerprint evidence.");
 }
 
 static async Task VerifyAuditEventFoundationAsync(int tenantOneId, int tenantTwoId, string connectionString)

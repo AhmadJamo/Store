@@ -27,6 +27,7 @@ public static class SemanticAuditEventTypes
     public const string SupplierPortalAccessRevoked = "Integration.SupplierPortalAccessRevoked";
     public const string SupplierApiAuthenticationDenied = "Integration.SupplierApiAuthenticationDenied";
     public const string SupplierPortalAuthenticationDenied = "Integration.SupplierPortalAuthenticationDenied";
+    public const string AuditEventsExported = "DataAccess.AuditEventsExported";
 }
 
 public sealed class SemanticAuditEventService(
