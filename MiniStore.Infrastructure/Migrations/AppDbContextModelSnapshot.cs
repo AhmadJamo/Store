@@ -548,6 +548,73 @@ namespace MiniStore.Infrastructure.Migrations
                         });
                 });
 
+            modelBuilder.Entity("MiniStore.Domain.Entities.AuditLegalHold", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("FromUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("HoldId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("ReasonRedacted")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("ReleaseReasonRedacted")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime?>("ReleasedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ReleasedBy")
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("Scope")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("TenantId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("ToUtc")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("HoldId")
+                        .IsUnique();
+
+                    b.HasIndex("TenantId");
+
+                    b.HasIndex("IsActive", "Scope", "TenantId", "FromUtc", "ToUtc");
+
+                    b.ToTable("AuditLegalHolds", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_AuditLegalHolds_Range", "[ToUtc] >= [FromUtc]");
+
+                            t.HasCheckConstraint("CK_AuditLegalHolds_ScopeTenant", "([Scope] = 1 AND [TenantId] IS NOT NULL AND [TenantId] > 0) OR ([Scope] IN (2, 3) AND [TenantId] IS NULL)");
+                        });
+                });
+
             modelBuilder.Entity("MiniStore.Domain.Entities.AuditLog", b =>
                 {
                     b.Property<long>("Id")
@@ -9071,6 +9138,14 @@ namespace MiniStore.Infrastructure.Migrations
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.AuditEvent", b =>
+                {
+                    b.HasOne("MiniStore.Domain.Entities.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict);
+                });
+
+            modelBuilder.Entity("MiniStore.Domain.Entities.AuditLegalHold", b =>
                 {
                     b.HasOne("MiniStore.Domain.Entities.Tenant", null)
                         .WithMany()

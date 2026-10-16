@@ -35,6 +35,6 @@ public static class TenantIsolationModel
 
     public static IReadOnlySet<Type> MixedScopeTypes { get; } = new Type[]
     {
-        typeof(AuditEvent)
+        typeof(AuditEvent), typeof(AuditLegalHold)
     }.ToFrozenSet();
 }

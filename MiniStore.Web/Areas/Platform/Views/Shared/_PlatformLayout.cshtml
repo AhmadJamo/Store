@@ -16,6 +16,7 @@
         <a href="/platform/promotions">@(ar ? "أكواد الخصم" : "Promo codes")</a>
         <a href="/platform/payments/pending">@(ar ? "الدفعات المعلقة" : "Pending payments")</a>
         @if(User.IsInRole("Owner")||User.IsInRole("Administrator")||User.IsInRole("Billing")){<a href="/platform/audit-events">@(ar ? "سجل التدقيق" : "Audit events")</a>}
+        @if(User.IsInRole("Owner")){<a href="/platform/audit-retention">@(ar ? "الاحتفاظ بالتدقيق" : "Audit retention")</a>}
         <hr class="border-secondary">
         <form action="/Language/Set" method="post" class="mb-3">@Html.AntiForgeryToken()<input type="hidden" name="returnUrl" value="@Context.Request.Path"><input type="hidden" name="culture" value="@(ar?"en-US":"ar-JO")"><button class="btn btn-outline-info w-100">@(ar?"English":"العربية")</button></form>
         <form action="/platform/account/logout" method="post">@Html.AntiForgeryToken()<button class="btn btn-outline-light w-100">@(ar ? "تسجيل الخروج" : "Sign out")</button></form>

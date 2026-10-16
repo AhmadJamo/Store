@@ -44,7 +44,7 @@ try
     await using (var admin = new AppDbContext(adminOptions))
     {
         await admin.Database.EnsureDeletedAsync();
-        await admin.Database.EnsureCreatedAsync();
+        await admin.Database.MigrateAsync();
 
         admin.Tenants.AddRange(
             new Tenant("WMS Integration One", "wms-integration-one"),
@@ -80,6 +80,7 @@ try
     await VerifyAuditEventFoundationAsync(tenantOneId, tenantTwoId, connectionString);
     await VerifySemanticAuditCoverageAsync(tenantOneId, tenantTwoId, connectionString);
     await VerifyIndependentSecurityAuditAsync(tenantOneId, connectionString);
+    await VerifyAuditRetentionAndDatabaseRolesAsync(connectionString);
 
     await VerifyTenantIsolationAndReconciliationAsync(
         tenantOneId,
@@ -126,7 +127,7 @@ try
     await VerifyInventoryBalanceProjectionAsync(tenantOneId, tenantOneFixture.ProductId, expectedOnHand: 2m, connectionString);
     await VerifyOpeningTrackingAllocationAsync(tenantOneId, tenantOneFixture.ProductId, tenantOneFixture.WarehouseId, connectionString);
 
-    Console.WriteLine("Passed SQL integration checks: semantic role/settings, independent denied-security and permission-aware audit reader/export coverage plus audit-event rollback, isolation, append-only and integrity; tenant isolation, reconciliation, balances, replenishment purchase-request source concurrency, 3-product/2-supplier split awards, receipt, vendor-bill and supplier-payment concurrency, controlled payment reversal and retry, three-way matching override evidence, GRNI posting and clearing, purchase accounting reconciliation, payable settlement, receipt-based supplier returns, landed-cost valuation, purchasing analytics, idempotent barcode receipt drafts, adjustment posting, tracked operations, quarantine and recall.");
+    Console.WriteLine("Passed SQL integration checks: semantic role/settings, denied-security, permission-aware audit reader/export, legal hold, signed checkpoint, manifest-before-delete retention and SQL audit-role separation plus audit-event rollback, isolation, append-only and integrity; tenant isolation, reconciliation, balances, replenishment purchase-request source concurrency, 3-product/2-supplier split awards, receipt, vendor-bill and supplier-payment concurrency, controlled payment reversal and retry, three-way matching override evidence, GRNI posting and clearing, purchase accounting reconciliation, payable settlement, receipt-based supplier returns, landed-cost valuation, purchasing analytics, idempotent barcode receipt drafts, adjustment posting, tracked operations, quarantine and recall.");
 }
 finally
 {
@@ -169,6 +170,11 @@ static async Task VerifyIndependentSecurityAuditAsync(int tenantId, string conne
     var writer = new SecurityAuditEventWriter(provider.GetRequiredService<IServiceScopeFactory>(),
         Options.Create(configured), NullLogger<SecurityAuditEventWriter>.Instance);
     var userAgentHash = Convert.ToHexString(System.Security.Cryptography.SHA256.HashData("sql-agent"u8));
+    var auditAccess = new AuditDatabaseAccessOptions
+    {
+        ReadConnectionString = connectionString,
+        MaintenanceConnectionString = connectionString
+    };
     var request = new IndependentAuditEventWriteRequest
     {
         Scope = AuditEventScope.System,
@@ -217,7 +223,7 @@ static async Task VerifyIndependentSecurityAuditAsync(int tenantId, string conne
     using (tenantScope.BeginScope(tenantId))
     {
         await using var tenantContext = new AppDbContext(CreateOptions(connectionString), tenantScope);
-        var repository = new AuditEventReadRepository(tenantContext, tenantScope);
+        var repository = new AuditEventReadRepository(auditAccess, tenantScope);
         var page = await repository.ReadTenantAsync(filter);
         if (page.TotalCount != 1 || page.Items.Count != 1 || page.Items[0].Scope != AuditEventScope.Tenant ||
             page.Items[0].SourceIpMasked is not null || page.Items[0].UserAgentHash is not null)
@@ -250,7 +256,7 @@ static async Task VerifyIndependentSecurityAuditAsync(int tenantId, string conne
 
     await using (var platformContext = new AppDbContext(CreateOptions(connectionString), tenantScope))
     {
-        var repository = new AuditEventReadRepository(platformContext, tenantScope);
+        var repository = new AuditEventReadRepository(auditAccess, tenantScope);
         var page = await repository.ReadPlatformAsync(filter with { IncludeSensitive = true });
         if (page.TotalCount != 1 || page.Items.Single().Scope != AuditEventScope.System ||
             page.Items.Single().SourceIpMasked != "10.20.30.0/24")
@@ -273,6 +279,140 @@ static async Task VerifyIndependentSecurityAuditAsync(int tenantId, string conne
         exportEvents[0].ReasonCode != "SecurityInvestigation" ||
         exportEvents[0].MetadataRedactedJson?.Contains("FileFingerprint", StringComparison.Ordinal) != true)
         throw new InvalidOperationException("Every successful audit export must write one tenant-scoped event with bounded count and file fingerprint evidence.");
+}
+
+static async Task VerifyAuditRetentionAndDatabaseRolesAsync(string connectionString)
+{
+    await using (var connection = new SqlConnection(connectionString))
+    {
+        await connection.OpenAsync();
+        await using var command = connection.CreateCommand();
+        command.CommandText = """
+            SELECT
+              HAS_PERMS_BY_NAME(N'dbo.AuditEvents', N'OBJECT', N'INSERT')
+            FROM sys.database_principals WHERE name = N'MiniStoreAuditWriter';
+            SELECT COUNT_BIG(*) FROM sys.database_principals
+            WHERE name IN (N'MiniStoreAuditWriter', N'MiniStoreAuditReader', N'MiniStoreAuditMaintainer') AND type = 'R';
+            """;
+        await using var reader = await command.ExecuteReaderAsync();
+        if (!await reader.ReadAsync() || await reader.NextResultAsync() is false || !await reader.ReadAsync() || reader.GetInt64(0) != 3)
+            throw new InvalidOperationException("Audit SQL writer, reader and maintainer roles must be created by migration.");
+        await reader.DisposeAsync();
+        await using var roleCommand = connection.CreateCommand();
+        roleCommand.CommandText = """
+            CREATE USER [MiniStoreAuditWriterTest] WITHOUT LOGIN;
+            CREATE USER [MiniStoreAuditReaderTest] WITHOUT LOGIN;
+            CREATE USER [MiniStoreAuditMaintainerTest] WITHOUT LOGIN;
+            ALTER ROLE [MiniStoreAuditWriter] ADD MEMBER [MiniStoreAuditWriterTest];
+            ALTER ROLE [MiniStoreAuditReader] ADD MEMBER [MiniStoreAuditReaderTest];
+            ALTER ROLE [MiniStoreAuditMaintainer] ADD MEMBER [MiniStoreAuditMaintainerTest];
+            EXECUTE AS USER = N'MiniStoreAuditWriterTest';
+            SELECT CONCAT(HAS_PERMS_BY_NAME(N'dbo.AuditEvents',N'OBJECT',N'INSERT'), HAS_PERMS_BY_NAME(N'dbo.AuditEvents',N'OBJECT',N'SELECT'), HAS_PERMS_BY_NAME(N'dbo.AuditEvents',N'OBJECT',N'UPDATE'), HAS_PERMS_BY_NAME(N'dbo.AuditEvents',N'OBJECT',N'DELETE'));
+            REVERT;
+            EXECUTE AS USER = N'MiniStoreAuditReaderTest';
+            SELECT CONCAT(HAS_PERMS_BY_NAME(N'dbo.AuditEvents',N'OBJECT',N'INSERT'), HAS_PERMS_BY_NAME(N'dbo.AuditEvents',N'OBJECT',N'SELECT'), HAS_PERMS_BY_NAME(N'dbo.AuditEvents',N'OBJECT',N'UPDATE'), HAS_PERMS_BY_NAME(N'dbo.AuditEvents',N'OBJECT',N'DELETE'));
+            REVERT;
+            EXECUTE AS USER = N'MiniStoreAuditMaintainerTest';
+            SELECT CONCAT(HAS_PERMS_BY_NAME(N'dbo.AuditEvents',N'OBJECT',N'INSERT'), HAS_PERMS_BY_NAME(N'dbo.AuditEvents',N'OBJECT',N'SELECT'), HAS_PERMS_BY_NAME(N'dbo.AuditEvents',N'OBJECT',N'UPDATE'), HAS_PERMS_BY_NAME(N'dbo.AuditEvents',N'OBJECT',N'DELETE'));
+            REVERT;
+            """;
+        var permissions = new List<string>();
+        await using var roleReader = await roleCommand.ExecuteReaderAsync();
+        do { if (await roleReader.ReadAsync()) permissions.Add(roleReader.GetString(0)); }
+        while (await roleReader.NextResultAsync());
+        if (!permissions.SequenceEqual(["1000", "0100", "0101"]))
+            throw new InvalidOperationException("Audit SQL roles must enforce insert-only writer, select-only reader and delete-capable maintainer boundaries.");
+    }
+
+    var configured = new AuditEventOptions
+    {
+        Enabled = true,
+        ActiveIntegrityKeyVersion = "retention-sql-v1",
+        IntegrityKeys = new Dictionary<string, string>
+        {
+            ["retention-sql-v1"] = Convert.ToBase64String(Enumerable.Range(129, 32).Select(value => (byte)value).ToArray())
+        },
+        AllowedMetadataFields = new Dictionary<string, string[]>
+        {
+            [SemanticAuditEventTypes.AuditLegalHoldCreated] = ["Scope", "TenantId"],
+            [SemanticAuditEventTypes.AuditLegalHoldReleased] = ["Scope", "TenantId"],
+            [SemanticAuditEventTypes.AuditCheckpointCreated] = ["RecordCount", "RootFingerprint"],
+            [SemanticAuditEventTypes.AuditRetentionExecuted] = ["RecordCount", "FileFingerprint"]
+        }
+    };
+    var eventOptions = Options.Create(configured);
+    var tenantScope = new AmbientTestTenantScope();
+    var access = new AuditDatabaseAccessOptions
+    {
+        ReadConnectionString = connectionString,
+        MaintenanceConnectionString = connectionString
+    };
+    var archiveDirectory = Path.Combine(Path.GetTempPath(), $"ministore-audit-retention-{Guid.NewGuid():N}");
+    try
+    {
+        await using var context = new AppDbContext(CreateOptions(connectionString), tenantScope);
+        var writer = new AuditEventWriter(context, tenantScope, new FixedCurrentUser("platform-owner"),
+            new AuditEventRedactor(eventOptions), new AuditEventIntegrityService(eventOptions), eventOptions);
+        await writer.RecordAsync(new AuditEventWriteRequest
+        {
+            Scope = AuditEventScope.System,
+            Category = AuditEventCategory.Security,
+            Severity = AuditEventSeverity.Warning,
+            Outcome = AuditEventOutcome.Denied,
+            EventType = SemanticAuditEventTypes.TenantLoginFailed,
+            Action = "Login",
+            ActorType = AuditActorType.External,
+            ActorId = "anonymous",
+            SourceChannel = AuditSourceChannel.Web,
+            CorrelationId = "retention-expired-login",
+            ResourceType = "TenantSession",
+            ResourceId = "login",
+            ReasonCode = "InvalidCredentials",
+            SourceIpMasked = "192.0.2.0/24",
+            UserAgentHash = Convert.ToHexString(System.Security.Cryptography.SHA256.HashData("expired-agent"u8)),
+            OccurredAtUtc = DateTime.UtcNow.AddDays(-100)
+        });
+        await context.SaveChangesAsync();
+
+        var policy = new AuditRetentionPolicy(true, 7, 3, 90, 1000);
+        var repository = new AuditRetentionRepository(context, access);
+        var archive = new FileAuditArchiveStore(Options.Create(new AuditRetentionOptions
+        {
+            Enabled = true,
+            ArchiveDirectory = archiveDirectory,
+            CheckpointKey = Convert.ToBase64String(Enumerable.Range(193, 32).Select(value => (byte)value).ToArray())
+        }));
+        var service = new AuditRetentionService(repository, archive, policy, writer,
+            new FixedAuditRequestContext("retention-sql", "/platform/audit-retention"),
+            new FixedCurrentUser("platform-owner"), new UnitOfWork(context));
+
+        await service.CreateLegalHoldAsync(new CreateAuditLegalHoldDto(AuditEventScope.System, null,
+            DateTime.UtcNow.AddDays(-120), DateTime.UtcNow.AddDays(-80), "Active investigation"));
+        if ((await repository.GetExpiredCandidatesAsync(DateTime.UtcNow, policy)).Count != 0)
+            throw new InvalidOperationException("An active legal hold must exclude matching audit events from retention.");
+        var hold = (await service.GetStatusAsync()).Holds.Single(value => value.IsActive);
+        await service.ReleaseLegalHoldAsync(hold.Id, "Investigation closed");
+        var result = await service.RunRetentionAsync();
+        if (result.DeletedCount != 1 || result.BatchId is null)
+            throw new InvalidOperationException("Released expired evidence must be removed only after checkpoint and manifest creation.");
+
+        context.ChangeTracker.Clear();
+        if (await context.AuditEvents.IgnoreQueryFilters().AnyAsync(value => value.CorrelationId == "retention-expired-login"))
+            throw new InvalidOperationException("Expired detailed login evidence was not removed by the approved policy.");
+        var files = Directory.GetFiles(archiveDirectory, "*.json", SearchOption.AllDirectories);
+        if (files.Length < 3 || files.Any(path => !File.ReadAllText(path).Contains("\"Signature\"", StringComparison.Ordinal)))
+            throw new InvalidOperationException("Checkpoint, destruction manifest and completion evidence must be externally signed files.");
+        var manifest = files.Single(path => Path.GetFileName(path).StartsWith("retention-", StringComparison.Ordinal) &&
+                                                 !Path.GetFileName(path).StartsWith("retention-completed-", StringComparison.Ordinal));
+        var manifestText = File.ReadAllText(manifest);
+        if (manifestText.Contains("192.0.2.0/24", StringComparison.Ordinal) ||
+            manifestText.Contains("expired-agent", StringComparison.Ordinal))
+            throw new InvalidOperationException("Destruction manifests must not copy expired request evidence.");
+    }
+    finally
+    {
+        if (Directory.Exists(archiveDirectory)) Directory.Delete(archiveDirectory, true);
+    }
 }
 
 static async Task VerifyAuditEventFoundationAsync(int tenantOneId, int tenantTwoId, string connectionString)

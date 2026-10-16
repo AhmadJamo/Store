@@ -1,0 +1,51 @@
+@model MiniStore.Application.Services.AuditRetentionStatusDto
+@using MiniStore.Domain.Entities
+@inject Microsoft.Extensions.Localization.IStringLocalizer<MiniStore.Web.SharedResource> L
+@{ ViewData["Title"] = L["Audit retention and legal holds"]; }
+
+<div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-3">
+    <div><h1>@L["Audit retention and legal holds"]</h1><p class="text-muted mb-0">@L["Owner-only controls for retention, external checkpoints and legal holds."]</p></div>
+    <span class="badge @(Model.Policy.Enabled?"text-bg-success":"text-bg-secondary")">@(Model.Policy.Enabled?L["Enabled"]:L["Disabled"])</span>
+</div>
+@if(TempData["AuditRetentionMessage"] is string message){<div class="alert alert-@(TempData["AuditRetentionType"])">@message</div>}
+
+<div class="row g-3 mb-3">
+    <div class="col-md-4"><div class="card h-100"><div class="card-body"><h2 class="h6">@L["Protected evidence"]</h2><div class="display-6">@Model.Policy.ProtectedRetentionYears</div><p class="text-muted mb-0">@L["years for security, administration and financial decisions"]</p></div></div></div>
+    <div class="col-md-4"><div class="card h-100"><div class="card-body"><h2 class="h6">@L["Operational evidence"]</h2><div class="display-6">@Model.Policy.OperationalRetentionYears</div><p class="text-muted mb-0">@L["years for ordinary operational events"]</p></div></div></div>
+    <div class="col-md-4"><div class="card h-100"><div class="card-body"><h2 class="h6">@L["Detailed login evidence"]</h2><div class="display-6">@Model.Policy.RequestEvidenceDays</div><p class="text-muted mb-0">@L["days before detailed failed-login evidence expires"]</p></div></div></div>
+</div>
+
+<div class="card card-body mb-3">
+    <h2 class="h5">@L["Maintenance actions"]</h2>
+    <p class="text-muted">@L["Retention always creates an externally signed checkpoint and destruction manifest before deleting eligible database rows."]</p>
+    <div class="d-flex flex-wrap gap-2">
+        <form asp-action="Checkpoint" method="post"><button class="btn btn-outline-primary" disabled="@(!Model.Policy.Enabled)">@L["Create checkpoint"]</button></form>
+        <form asp-action="Run" method="post" onsubmit="return confirm('@L["Run approved retention now?"]')"><button class="btn btn-danger" disabled="@(!Model.Policy.Enabled)">@L["Run retention"]</button></form>
+    </div>
+</div>
+
+<div class="card card-body mb-3">
+    <h2 class="h5">@L["Create legal hold"]</h2>
+    <p class="text-muted">@L["A legal hold prevents matching audit events from being removed until the owner releases it."]</p>
+    <form asp-action="CreateHold" method="post" class="row g-3">
+        <div class="col-md-3"><label class="form-label">@L["Scope"]</label><select name="Scope" class="form-select" required>@foreach(var scope in Enum.GetValues<AuditEventScope>()){<option value="@scope">@L[$"Audit scope {scope}"]</option>}</select></div>
+        <div class="col-md-3"><label class="form-label">@L["Tenant ID when scope is Tenant"]</label><input name="TenantId" type="number" min="1" class="form-control" /></div>
+        <div class="col-md-3"><label class="form-label">@L["From"]</label><input name="FromUtc" type="date" class="form-control" required /></div>
+        <div class="col-md-3"><label class="form-label">@L["To"]</label><input name="ToUtc" type="date" class="form-control" required /></div>
+        <div class="col-12"><label class="form-label">@L["Reason"]</label><textarea name="Reason" maxlength="500" class="form-control" required></textarea></div>
+        <div class="col-12"><button class="btn btn-primary">@L["Create legal hold"]</button></div>
+    </form>
+</div>
+
+<div class="row g-3">
+@foreach(var hold in Model.Holds)
+{
+    <div class="col-12"><article class="card"><div class="card-body">
+        <div class="d-flex flex-wrap justify-content-between gap-2"><strong>@L[$"Audit scope {hold.Scope}"] @(hold.TenantId.HasValue?$"/ {L["Tenant"]} {hold.TenantId}":"")</strong><span class="badge @(hold.IsActive?"text-bg-warning":"text-bg-secondary")">@(hold.IsActive?L["Active"]:L["Released"])</span></div>
+        <p class="mb-1">@hold.FromUtc.ToString("u") — @hold.ToUtc.ToString("u")</p><p class="text-muted text-break">@hold.ReasonRedacted</p>
+        @if(hold.IsActive){<form asp-action="ReleaseHold" asp-route-id="@hold.Id" method="post" class="d-flex flex-wrap gap-2"><input name="reason" maxlength="500" class="form-control flex-grow-1" placeholder="@L["Release reason"]" required /><button class="btn btn-outline-danger">@L["Release legal hold"]</button></form>}
+        else {<div class="small text-muted">@L["Released"]: @hold.ReleasedAtUtc?.ToString("u") — @hold.ReleaseReasonRedacted</div>}
+    </div></article></div>
+}
+@if(Model.Holds.Count==0){<div class="col-12"><div class="alert alert-info">@L["No legal holds have been created."]</div></div>}
+</div>

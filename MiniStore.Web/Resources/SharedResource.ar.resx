@@ -2670,4 +2670,38 @@
   <data name="Platform and system audit events" xml:space="preserve"><value>سجل تدقيق المنصة والنظام</value></data>
   <data name="Review administrative and security events outside tenant business data." xml:space="preserve"><value>مراجعة أحداث الإدارة والأمان خارج نطاق بيانات الشركات.</value></data>
   <data name="No matching audit events." xml:space="preserve"><value>لا توجد أحداث تدقيق مطابقة.</value></data>
+  <data name="Audit retention and legal holds" xml:space="preserve"><value>الاحتفاظ بسجل التدقيق والحجوزات القانونية</value></data>
+  <data name="Owner-only controls for retention, external checkpoints and legal holds." xml:space="preserve"><value>ضوابط خاصة بمالك المنصة للاحتفاظ ونقاط التثبيت الخارجية والحجوزات القانونية.</value></data>
+  <data name="Protected evidence" xml:space="preserve"><value>الأدلة المحمية</value></data>
+  <data name="years for security, administration and financial decisions" xml:space="preserve"><value>سنوات لقرارات الأمان والإدارة والقرارات المالية</value></data>
+  <data name="Operational evidence" xml:space="preserve"><value>الأدلة التشغيلية</value></data>
+  <data name="years for ordinary operational events" xml:space="preserve"><value>سنوات للأحداث التشغيلية العادية</value></data>
+  <data name="Detailed login evidence" xml:space="preserve"><value>دليل الدخول التفصيلي</value></data>
+  <data name="days before detailed failed-login evidence expires" xml:space="preserve"><value>يومًا قبل انتهاء دليل فشل الدخول التفصيلي</value></data>
+  <data name="Maintenance actions" xml:space="preserve"><value>إجراءات الصيانة</value></data>
+  <data name="Retention always creates an externally signed checkpoint and destruction manifest before deleting eligible database rows." xml:space="preserve"><value>ينشئ الاحتفاظ دائمًا نقطة تثبيت خارجية موقعة وبيان إتلاف قبل حذف أي صف مؤهل من قاعدة البيانات.</value></data>
+  <data name="Create checkpoint" xml:space="preserve"><value>إنشاء نقطة تثبيت</value></data>
+  <data name="Run approved retention now?" xml:space="preserve"><value>تشغيل سياسة الاحتفاظ المعتمدة الآن؟</value></data>
+  <data name="Run retention" xml:space="preserve"><value>تشغيل الاحتفاظ</value></data>
+  <data name="Create legal hold" xml:space="preserve"><value>إنشاء حجز قانوني</value></data>
+  <data name="A legal hold prevents matching audit events from being removed until the owner releases it." xml:space="preserve"><value>يمنع الحجز القانوني إزالة أحداث التدقيق المطابقة حتى يرفعه مالك المنصة.</value></data>
+  <data name="Scope" xml:space="preserve"><value>النطاق</value></data>
+  <data name="Tenant ID when scope is Tenant" xml:space="preserve"><value>معرّف الشركة عندما يكون النطاق شركة</value></data>
+  <data name="Release reason" xml:space="preserve"><value>سبب رفع الحجز</value></data>
+  <data name="Release legal hold" xml:space="preserve"><value>رفع الحجز القانوني</value></data>
+  <data name="No legal holds have been created." xml:space="preserve"><value>لم يتم إنشاء أي حجوزات قانونية.</value></data>
+  <data name="Legal hold created. Retention will skip every matching audit event." xml:space="preserve"><value>تم إنشاء الحجز القانوني، وستتجاوز سياسة الاحتفاظ كل حدث تدقيق مطابق.</value></data>
+  <data name="Legal hold released. Normal retention rules apply again." xml:space="preserve"><value>تم رفع الحجز القانوني، وعادت قواعد الاحتفاظ العادية للعمل.</value></data>
+  <data name="External audit checkpoint created for {0} events." xml:space="preserve"><value>تم إنشاء نقطة تثبيت خارجية لـ{0} حدث تدقيق.</value></data>
+  <data name="Audit retention completed after a verified external checkpoint; {0} events were removed." xml:space="preserve"><value>اكتمل الاحتفاظ بعد نقطة تثبيت خارجية موثقة؛ تمت إزالة {0} حدث.</value></data>
+  <data name="Legal hold was not found." xml:space="preserve"><value>لم يتم العثور على الحجز القانوني.</value></data>
+  <data name="Audit retention maintenance is disabled." xml:space="preserve"><value>صيانة الاحتفاظ بسجل التدقيق معطلة.</value></data>
+  <data name="Audit archive directory is required when retention is enabled." xml:space="preserve"><value>مسار أرشيف التدقيق مطلوب عند تفعيل الاحتفاظ.</value></data>
+  <data name="Audit checkpoint key must contain at least 256 bits." xml:space="preserve"><value>يجب ألا يقل مفتاح نقطة تثبيت التدقيق عن 256 بت.</value></data>
+  <data name="Audit checkpoint key must be valid Base64." xml:space="preserve"><value>يجب أن يكون مفتاح نقطة تثبيت التدقيق بصيغة Base64 صالحة.</value></data>
+  <data name="Retention candidates changed or became legally held after the archive manifest was written." xml:space="preserve"><value>تغيرت سجلات الاحتفاظ أو أصبحت محجوزة قانونيًا بعد كتابة بيان الأرشيف؛ لم يكتمل الحذف.</value></data>
+  <data name="Audit event recording must be enabled before audit retention maintenance." xml:space="preserve"><value>يجب تفعيل تسجيل أحداث التدقيق قبل تشغيل صيانة الاحتفاظ.</value></data>
+  <data name="Audit scope Tenant" xml:space="preserve"><value>الشركة</value></data>
+  <data name="Audit scope Platform" xml:space="preserve"><value>المنصة</value></data>
+  <data name="Audit scope System" xml:space="preserve"><value>النظام</value></data>
 </root>

@@ -144,6 +144,7 @@ public class AppDbContext
 
     public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
     public DbSet<AuditEvent> AuditEvents => Set<AuditEvent>();
+    public DbSet<AuditLegalHold> AuditLegalHolds => Set<AuditLegalHold>();
 
     public DbSet<GeneralSettings> GeneralSettings=> Set<GeneralSettings>();
     public DbSet<CurrencyExchangeRate> CurrencyExchangeRates => Set<CurrencyExchangeRate>();

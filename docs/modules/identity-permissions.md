@@ -11,5 +11,7 @@ Sources: `Program.cs`, Identity/Permission seeders, tenant role entities/reposit
 
 `P1-AUD-014` adds three tenant permissions: `AuditEvents.View` (عرض سجل التدقيق), `AuditEvents.Export` (تصدير سجل التدقيق) and `AuditEvents.ViewSensitive` (عرض دليل الطلب الحساس المقنّع). The export endpoint requires both View and Export; sensitive request fields are projected only after an explicit sensitive authorization check. Platform policies remain separate from tenant roles: Owner/Administrator/Billing can view, Owner/Administrator can export, and only Owner can view sensitive request evidence.
 
+`P1-AUD-015` restricts legal holds, checkpoints and retention execution to the Platform Owner through `PlatformAuditRetention`. Database roles independently enforce INSERT-only writing, SELECT-only reading and controlled maintenance deletion. Hosting credentials are configuration secrets; no tenant role or ordinary Platform administrator inherits retention authority.
+
 ## Security boundary update (2026-09-13)
 User/role mutations are Admin-only in both permission evaluators, even when custom roles retain mutation permission rows. Read permissions remain delegable. Role deletion is POST-only with antiforgery. Bootstrap is opt-in, has no committed password and refuses existing accounts. See security/configuration docs for operator rotation requirements.

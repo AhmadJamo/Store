@@ -20,7 +20,8 @@ The ERP SaaS Foundation Blueprint is imported as a non-authoritative planning re
 - [x] P1-AUD-012 enabled first semantic audit coverage for tenant role/permission and six sensitive-setting groups with local Demo key material held only in User Secrets; SQL proves one valid event per successful operation and no success event on rejection/rollback.
 - [x] P1-AUD-013 add authentication/lockout, actual denied privileged action, platform administration and external integration semantic events with an independent failure-visible security writer and masked request evidence.
 - [x] P1-AUD-014 add permission-aware tenant/platform audit readers, deterministic pagination, sensitive-access controls and a bounded purpose-required audited export.
-- [ ] P1-AUD-015 add separate SQL reader/writer identities, approved retention and archive execution, and an external integrity checkpoint; this is proposed only and requires owner/legal/hosting decisions before implementation.
+- [x] P1-AUD-015 add SQL writer/reader/maintainer roles and separate connection hooks, approved 7/3-year and 90-day retention, Owner-only legal holds, signed external checkpoints and manifest-before-delete execution.
+- [ ] P1-AUD-016 reconcile critical semantic-event coverage and freeze new legacy `AuditLogs` writes while preserving all historical rows; this is the only proposed next task and requires explicit approval.
 
 - [x] PUR-000 complete purchase architecture review, legacy compatibility boundary, migration strategy and vertical-slice roadmap.
 - [x] PUR-005 fix context ownership, quantity authority, staged currency, approval and GRNI boundaries before runtime implementation.

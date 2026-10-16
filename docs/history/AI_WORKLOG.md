@@ -969,3 +969,13 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
 - Added a bounded 5,000-row CSV export with spreadsheet-formula protection. The snapshot is produced before its own event, then exactly one `DataAccess.AuditEventsExported` event records purpose, scope, row count and SHA-256 file fingerprint without copying file content.
 - Web and SQL-test builds passed with zero warnings/errors. SecurityRegression passed 765 checks. SQL integration passed tenant/platform isolation, sensitive suppression/projection and exactly one export event together with the existing suite.
 - No schema change or migration was needed; migration count remains 113 and legacy `AuditLogs` remains unchanged. Recorded evidence in `project-control/operations/P1-AUD-014-AUDIT-READER-EXPORT.md` and advanced the only proposed task to `P1-AUD-015`, which requires owner/legal/hosting decisions before approval.
+
+## 2026-10-16 — P1-AUD-015 retention, legal hold and external checkpoint
+
+- Recorded owner approval for seven-year protected evidence, three-year ordinary operations, ninety-day detailed failed-login evidence, Owner-only legal holds, daily Demo file checkpoints and separate database roles.
+- Added mixed-scope `AuditLegalHold`, Owner-only bilingual Platform controls and semantic events for hold creation/release, checkpoints and retention execution.
+- Added a daily/manual fail-closed retention pipeline. It writes signed external checkpoint and minimal destruction-manifest files before deletion, then rechecks every ID/integrity fingerprint and legal hold inside the maintenance transaction.
+- Added separate read/maintenance connection hooks and migration-created SQL roles: insert-only writer, select-only reader and controlled maintainer. Production identity assignment remains environment-owned and secret.
+- Applied migration `20261016191833_AddAuditRetentionControls` to local Demo as migration 114. User Secrets holds the enabled flag, archive directory and independent 256-bit checkpoint key; committed configuration is disabled and secret-free.
+- Web and SQL-test builds passed with zero warnings/errors; SecurityRegression passed 768 checks; SQL integration passed migration, role impersonation, legal hold, checkpoint, manifest-before-delete and evidence-minimization cases. EF reported no pending model changes.
+- Started Demo once to produce the first signed checkpoint. Demo then reported 707 unchanged legacy rows, one new maintenance event, 114 migrations and zero eligible deletions. Recorded evidence in `project-control/operations/P1-AUD-015-RETENTION-CHECKPOINT.md` and advanced the proposed task to `P1-AUD-016`.

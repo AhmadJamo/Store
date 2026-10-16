@@ -68,6 +68,11 @@ public static class SecurityExtensions
                 policy.AddAuthenticationSchemes(PlatformAuthentication.Scheme);
                 policy.RequireRole("Owner");
             });
+            options.AddPolicy(PlatformAuthentication.AuditRetentionPolicy, policy =>
+            {
+                policy.AddAuthenticationSchemes(PlatformAuthentication.Scheme);
+                policy.RequireRole("Owner");
+            });
         });
 
         services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();

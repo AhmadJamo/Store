@@ -9,4 +9,5 @@ public static class PlatformAuthentication
     public const string AuditViewPolicy = "PlatformAuditView";
     public const string AuditExportPolicy = "PlatformAuditExport";
     public const string AuditSensitivePolicy = "PlatformAuditSensitive";
+    public const string AuditRetentionPolicy = "PlatformAuditRetention";
 }

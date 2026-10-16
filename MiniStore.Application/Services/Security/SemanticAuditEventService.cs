@@ -28,6 +28,10 @@ public static class SemanticAuditEventTypes
     public const string SupplierApiAuthenticationDenied = "Integration.SupplierApiAuthenticationDenied";
     public const string SupplierPortalAuthenticationDenied = "Integration.SupplierPortalAuthenticationDenied";
     public const string AuditEventsExported = "DataAccess.AuditEventsExported";
+    public const string AuditLegalHoldCreated = "Administration.AuditLegalHoldCreated";
+    public const string AuditLegalHoldReleased = "Administration.AuditLegalHoldReleased";
+    public const string AuditCheckpointCreated = "Security.AuditCheckpointCreated";
+    public const string AuditRetentionExecuted = "Security.AuditRetentionExecuted";
 }
 
 public sealed class SemanticAuditEventService(

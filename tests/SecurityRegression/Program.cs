@@ -149,6 +149,9 @@ Check(auditEventMetadata.FindProperty(nameof(AuditEvent.TenantId))?.IsNullable =
     "Mixed-scope audit events must keep nullable tenant ownership and a fail-closed tenant query filter");
 Check(TenantIsolationModel.MixedScopeTypes.Contains(typeof(AuditEvent)),
     "AuditEvent must be explicitly classified as a mixed tenant/platform scope type");
+Check(TenantIsolationModel.MixedScopeTypes.Contains(typeof(AuditLegalHold)) &&
+      db.Model.FindEntityType(typeof(AuditLegalHold)) is not null,
+    "Audit legal holds must be explicitly mapped as mixed-scope retention controls");
 
 var auditOptions = Options.Create(new AuditEventOptions
 {
@@ -258,6 +261,14 @@ Check(platformAuditController.GetCustomAttribute<AuthorizeAttribute>()?.Policy =
       platformAuditController.GetMethod(nameof(MiniStore.Web.Areas.Platform.Controllers.PlatformAuditEventsController.Export))!
           .GetCustomAttributes<AuthorizeAttribute>().Any(x => x.Policy == PlatformAuthentication.AuditExportPolicy),
     "Platform audit viewing and exporting must use separate platform policies");
+var retentionController = typeof(MiniStore.Web.Areas.Platform.Controllers.PlatformAuditRetentionController);
+Check(retentionController.GetCustomAttribute<AuthorizeAttribute>()?.Policy == PlatformAuthentication.AuditRetentionPolicy &&
+      new[] { "CreateHold", "ReleaseHold", "Checkpoint", "Run" }.All(name =>
+          retentionController.GetMethod(name)!.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null),
+    "Audit retention and legal-hold commands must be Owner-only and antiforgery protected");
+Check(new AuditRetentionPolicy(true, 7, 3, 90, 1000) is
+      { ProtectedRetentionYears: 7, OperationalRetentionYears: 3, RequestEvidenceDays: 90 },
+    "Approved audit retention defaults must remain seven years, three years and ninety days");
 var disabledIndependentWriter = new SecurityAuditEventWriter(
     new ThrowingScopeFactory(), Options.Create(new AuditEventOptions { Enabled = false }),
     NullLogger<SecurityAuditEventWriter>.Instance);
