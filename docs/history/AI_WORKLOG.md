@@ -979,3 +979,11 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
 - Applied migration `20261016191833_AddAuditRetentionControls` to local Demo as migration 114. User Secrets holds the enabled flag, archive directory and independent 256-bit checkpoint key; committed configuration is disabled and secret-free.
 - Web and SQL-test builds passed with zero warnings/errors; SecurityRegression passed 768 checks; SQL integration passed migration, role impersonation, legal hold, checkpoint, manifest-before-delete and evidence-minimization cases. EF reported no pending model changes.
 - Started Demo once to produce the first signed checkpoint. Demo then reported 707 unchanged legacy rows, one new maintenance event, 114 migrations and zero eligible deletions. Recorded evidence in `project-control/operations/P1-AUD-015-RETENTION-CHECKPOINT.md` and advanced the proposed task to `P1-AUD-016`.
+
+## 2026-10-17 — Local Demo Platform Owner activation
+
+- Received explicit owner authorization to promote the rotated local Demo administrator to Platform Owner.
+- Used the existing opt-in `PlatformOperatorSeeder`; startup inserted one active `PlatformOperatorRole.Owner` record for the existing Identity account.
+- Reset `PlatformOwner:Enabled` to false and removed the temporary `PlatformOwner:Username` project secret immediately after activation.
+- Verified a real antiforgery-protected platform login returned HTTP 200 at `/platform` with no invalid-credential response.
+- No application code, schema, migration or committed secret changed. The next-task gate remains `P1-AUD-016` awaiting separate approval.

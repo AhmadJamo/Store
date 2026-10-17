@@ -149,3 +149,10 @@ The Index and mutation actions enforce these policies server-side. Permission se
 - `SupplierIntegrations.Retry` retries an undelivered outbox message without changing its business identity or idempotency key.
 - Portal/API access is not an internal role permission: each request must independently prove a valid supplier-specific token/key and required external scope.
 
+# Platform operator boundary
+
+- Platform control-center access is independent from company `Admin` permissions. A valid Identity account must also have an active `PlatformOperator` record.
+- `PlatformOperatorRole.Owner` is the highest platform role and is required by owner-only audit-retention operations.
+- On 2026-10-17 the owner explicitly authorized promoting the rotated local Demo administrator through the existing one-time `PlatformOperatorSeeder`. The temporary bootstrap flag was disabled afterward, and a real login was verified to reach `/platform`.
+- This local Demo assignment is not production authorization evidence and does not create or configure an external deployment identity.
+

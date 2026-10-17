@@ -1,7 +1,7 @@
 # Configuration and runtime composition
 > Status: IMPLEMENTED WITH PRODUCTION GAPS  
 > Source of truth: `Program.cs`, `MiniStore.Web/Configuration/*.cs`, project files, appsettings
-> Last reviewed: 2026-10-16
+> Last reviewed: 2026-10-17
 
 ## Configuration
 `MiniStore.Web/appsettings.json` contains `ConnectionStrings:DefaultConnection`, disabled `AdminUser`, `PlatformOwner`, `AuditEvents` and `AuditRetention` sections, registration rate-limit values, logging levels and wildcard `AllowedHosts`. No password, integrity key, checkpoint key or local archive path is committed. Audit allowlists and approved 7/3-year, 90-day policy values are schema/policy configuration, not secret material. Optional `AuditReadConnection` and `AuditMaintenanceConnection` are external secrets; absence falls back to the development connection and is not acceptable proof of production identity separation.
@@ -28,5 +28,6 @@ DI/configuration changes → update this file, architecture/dependencies/securit
 ## Security configuration update (2026-09-13)
 AdminUser:Password is no longer stored in appsettings. AdminUser:Enabled defaults to false. For first bootstrap only, provide AdminUser__Enabled=true and AdminUser__Username, AdminUser__Email, AdminUser__Password using protected environment/secret configuration. Use a new username; existing accounts are never promoted. Disable bootstrap and remove its password after success. Existing installations must rotate the former credential separately and invalidate sessions.
 The owner-declared local Demo environment completed that rotation on 2026-10-15. The replacement administrator secret is held only in the local development `User Secrets` store under id `MiniStore-Demo`; bootstrap remains false in committed configuration. A separate stale `BootstrapAdmin:Password` key identified by the owner was removed from its local secret store. No staging or production configuration is evidenced in this repository.
+On 2026-10-17 the owner explicitly authorized using the existing `PlatformOwner` startup seeder once to promote that rotated Demo administrator to active Platform Owner. The local project-secret enable flag was reset to false and the temporary username key was removed after the successful startup. A real platform form login was verified; no credential value was copied into the repository.
 Identity lockout is 5 failures for 15 minutes; tenant and platform login POSTs use the login limiter. Company registration defaults to 20 submissions/hour/IP and can be tuned through the `RateLimiting:Registration` configuration section. A rejected login or registration returns to its form with a bilingual wait message and `Retry-After` response header. Production AllowedHosts, proxy-aware client IP handling and trusted SQL TLS configuration remain operator responsibilities.
 

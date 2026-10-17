@@ -1,7 +1,7 @@
 # Security assessment
 > Status: PARTIALLY VERIFIED
 > Source of truth: Static inspection and focused executable regression checks
-> Last reviewed: 2026-10-16
+> Last reviewed: 2026-10-17
 
 WMS-050 reservation writes run inside the existing serializable UnitOfWork. Tenant-scoped source uniqueness, balance and reservation rowversions, positive-quantity constraints and exact-dimension indexes prevent cross-tenant, duplicate and concurrent over-allocation.
 
@@ -13,6 +13,7 @@ WMS-070A requires full dimensional reconciliation before tracking activation, re
 - **Critical — privilege escalation:** Users.Create could assign Admin; Roles.Edit could grant the caller arbitrary permissions through their role. Both permission evaluators now reserve all Users/Roles mutation permissions for current database Admin members. Read access remains delegable. Stored mappings cannot override this rule.
 - **High — CSRF:** Roles.Delete mutated state through GET, which global antiforgery deliberately skips. It now requires POST and antiforgery. All five list delete controls now submit POST forms with generated antiforgery tokens; other delete endpoints already required POST.
 - **Critical — default credential:** Removed the committed admin password. Bootstrap is disabled by default and requires AdminUser:Enabled plus externally supplied username/email/password. It refuses to promote an existing account. On 2026-10-15 the owner classified the only evidenced local environment and all its data/users as Demo: the exposed account was disabled, nine existing session stamps were rotated, the old value was rejected and a replacement administrator passed login. A separate stale `BootstrapAdmin:Password` key identified by the owner was removed from local User Secrets without exposing its value. Secret-free evidence is in `project-control/operations/P0-SEC-001-CREDENTIAL-CLOSURE.md`; any later-discovered external deployment must repeat the procedure.
+- **Local Demo platform ownership:** On 2026-10-17 the owner explicitly authorized promoting the rotated Demo administrator to the existing `PlatformOperatorRole.Owner`. Promotion used the opt-in seeder, its temporary enable flag was disabled afterward, and an antiforgery-protected login was verified to redirect to `/platform`. No username or password was added to committed configuration or documentation.
 - **High — password guessing:** Failed login attempts now count toward Identity lockout (5 attempts, 15 minutes). Login POST also has a 10 requests/minute/IP fixed-window limiter and no queue; rejection returns to the login form with retry timing. Existing accounts with LockoutEnabled=false require an operator update.
 - **Medium — error disclosure:** Broad catch(Exception) handlers now log the exception server-side and show a generic message. Typed business-validation exceptions remain visible and require review if new infrastructure operations are added to those paths.
 - **Critical — cross-company Admin claim:** Controllers no longer trust the global Identity `Admin` role for company administration. Settings, chart accounts, branches, customers, taxes and payment methods require `Administration.Access`, resolved from `TenantUserRoles` for the active tenant.
