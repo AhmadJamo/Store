@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using MiniStore.Web.Localization;
 using MiniStore.Web.Guidance;
+using MiniStore.Web.Observability;
 
 namespace MiniStore.Web.Configuration;
 
@@ -14,6 +15,13 @@ public static class WebPresentationExtensions
         services.AddLocalization(options => options.ResourcesPath = "Resources");
         services.AddMemoryCache();
         services.AddHttpContextAccessor();
+        services.Configure<ObservabilityOptions>(
+            configuration.GetSection(ObservabilityOptions.SectionName));
+        services.AddHealthChecks()
+            .AddCheck("application", () =>
+                Microsoft.Extensions.Diagnostics.HealthChecks.HealthCheckResult.Healthy(),
+                tags: ["live"])
+            .AddCheck<DatabaseHealthCheck>("database", tags: ["ready"]);
         services.AddScoped<WorkflowCompletionFilter>();
         services.AddControllersWithViews(options =>
         {

@@ -997,3 +997,20 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
 - Created signed Demo checkpoints before and after cutover. Legacy rows remained 710; semantic rows advanced 9→11; catalog reconciliation reported 37 expected, zero gaps and zero unexpected types.
 - Web build passed with zero warnings/errors, SecurityRegression passed 771 checks, SQL integration passed and EF reported no pending model changes. No migration or historical backfill was introduced.
 - Closed `P1-AUD-016`; advanced the sole proposed task to `P1-OBS-020`, awaiting explicit approval and environment decisions.
+
+## 2026-10-18 — P1-OBS-020 local observability and performance gate
+
+- Recorded the owner's decision not to use Git as an execution gate; no hosted workflow was added. GitHub may be used through its connector only if a future remote operation actually requires it.
+- Added secret-free `/health/live` and SQL-aware `/health/ready`, plus vendor-neutral request count/failure/duration/active-request and database-probe metrics.
+- Added structured HTTP 500, slow-request and database-readiness logs. Regression proves that an HTTP 500 emits one failure measurement and an alert log.
+- Added dependency-free `PerformanceSmoke` and the one-command `scripts/verify-local.ps1` gate covering Release build, focused checks, disposable SQL integration, readiness and bounded p95/p99 workload evidence.
+- Full local Windows run passed: zero build warnings/errors, 777 focused checks, complete SQL integration, and 500/500 requests with zero failures, p95 16.85 ms and p99 28.35 ms against limits 250/500 ms.
+- No schema, migration, business state or secret changed. Added a runbook and ADR; closed `P1-OBS-020` for local Demo and advanced the sole proposed task to `P1-ARC-030`, awaiting explicit approval and slice selection.
+
+## 2026-10-18 — P1-ARC-030 Warehouse Locations application boundary
+
+- Selected the smallest useful legacy boundary: WarehouseLocations used `IWarehouseRepository` directly and passed Warehouse/StorageLocation domain entities to Razor.
+- Added Application DTO projections for location rows, warehouse options and parent options. `StorageLocationService` now owns these page reads, and the controller depends only on that service plus localization.
+- Preserved all create/update rules and the existing repository save boundary; no entity, mapping, transaction, schema, migration or user-facing text changed.
+- Release build passed with zero warnings/errors. SecurityRegression passed 780 checks, including three new architecture guards. Runtime readiness and a 500-request smoke passed with zero failures; SQL was intentionally not repeated for this projection-only slice after the immediately preceding full green SQL gate.
+- Recorded closure evidence in `project-control/operations/P1-ARC-030-WAREHOUSE-LOCATIONS.md` and advanced the sole proposed task to the documentation-only `CUS-005` customer identity decision gate.

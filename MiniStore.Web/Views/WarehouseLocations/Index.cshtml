@@ -1,10 +1,10 @@
 @model MiniStore.Application.DTOs.Warehouses.WarehouseInventorySearchDto
-@using MiniStore.Domain.Entities
+@using MiniStore.Application.DTOs.Warehouses
 @inject Microsoft.Extensions.Localization.IStringLocalizer<MiniStore.Web.SharedResource> Localizer
 
 @{
     ViewData["Title"] = Localizer["Warehouse Locations"];
-    var warehouses = ViewBag.Warehouses as List<Warehouse> ?? [];
+    var warehouses = ViewBag.Warehouses as List<StorageLocationWarehouseOptionDto> ?? [];
     int? selectedWarehouseId = ViewBag.WarehouseId;
     string? query = ViewBag.Query;
 }

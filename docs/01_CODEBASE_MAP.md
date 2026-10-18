@@ -13,6 +13,8 @@
 | `MiniStore.Infrastructure/` | Infrastructure | EF DbContext/configurations/migrations/repos/seeders. |
 | `MiniStore.Web/` | Presentation | MVC controllers, Razor views, auth/navigation/runtime composition. |
 | `PermissionsCodeExport/` | Uncompiled export | Duplicate code snapshot; not referenced by active projects. |
+| `tests/PerformanceSmoke/` | Local operations test | Dependency-free HTTP workload with JSON p50/p95/p99 evidence and enforced limits. |
+| `scripts/verify-local.ps1` | Local verification gate | Builds, runs regression and disposable SQL integration, probes readiness and executes the workload. |
 
 `docs/ARABIC_SHARED_ROADMAP.md` is the shared Arabic execution roadmap. It records ordered ERP/SaaS work, business rules, workflow, task status, completion evidence and the rolling five-suggestion queue.
 
@@ -184,7 +186,7 @@ POS order-context update (2026-09-14): Sale/SaleItem persist order type, service
 
 Warehouse location movement update (2026-09-14): `LocationMovement` and its repository/configuration/service record Putaway and Relocation operations. `LocationMovementsController` and `Views/LocationMovements/Index.cshtml` provide internal movement and searchable history. Migration `AddLocationMovementHistory` creates the audit table and indexes.
 
-Hierarchical location update (2026-09-30): StorageLocation retains its identity and structured labels while adding parent, display name, optional barcode, sequence and receive/pick/reserve/ship/count capabilities. WarehouseLocations now supports create/edit and cycle/same-warehouse validation. Migration `AddHierarchicalStorageLocations` is applied to `AHMAD/MiniStoreDb`.
+Hierarchical location update (2026-09-30): StorageLocation retains its identity and structured labels while adding parent, display name, optional barcode, sequence and receive/pick/reserve/ship/count capabilities. WarehouseLocations supports create/edit and cycle/same-warehouse validation. Its 2026-10-18 P1-ARC-030 slice moved warehouse/parent/location read models into `StorageLocationService` DTO projections and removed direct repository/domain-entity exposure from the controller/views. Migration `AddHierarchicalStorageLocations` is applied to `AHMAD/MiniStoreDb`; the architecture slice needed no migration.
 | `Repositories/<Feature>/*.cs` | EF implementations grouped by feature | application services. |
 | `Repositories/Catalog/ProductRecipeRepository.cs` | active/versioned recipe persistence with ingredients | RecipeService and SaleService. |
 | `Repositories/Catalog/ProductAttributeRepository.cs` | tenant-filtered attribute definition, category-applicability and option persistence | ProductAttributeService. |
@@ -286,6 +288,9 @@ For exact module relationships, use `modules/*.md`; for entity and service detai
 - `MiniStore.Application/Permissions/AdministrationPermissions.cs`: shared Admin-only identity mutation boundary, consumed by both permission evaluators.
 - `tests/SecurityRegression/{SecurityRegression.csproj,Program.cs}`: standalone executable authorization/action regression checks; references Web; no test-framework dependency.
 - `tests/InventorySqlIntegration/{InventorySqlIntegration.csproj,Program.cs}`: disposable SQL Server fixture for tenant isolation, inventory controls, replenishment purchase-demand deduplication and concurrent Goods Receipt, receipt-return, Vendor Bill and Supplier Payment accounting/overpayment protection.
+- `MiniStore.Web/Observability/*`: configuration, health, request/error/duration/active-request metrics and structured failure/slow-request logs.
+- `tests/PerformanceSmoke/*`: bounded concurrent local availability workload and JSON p50/p95/p99 result.
+- `scripts/verify-local.ps1`: owner-approved local gate; it does not require Git or a hosted build provider.
 - Runtime login limiter and Identity lockout: `Web/Configuration/{WebPresentation,Security}Extensions.cs` and `Controllers/Security/AccountController.cs`.
 - Bootstrap opt-in: `Infrastructure/Persistence/IdentitySeeder.cs` and Web appsettings.
 - Controller broad-error handling and five index delete forms: see security/controller/screen docs.

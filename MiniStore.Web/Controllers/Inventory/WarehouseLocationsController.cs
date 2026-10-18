@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using MiniStore.Application.DTOs.Warehouses;
 using MiniStore.Application.Services;
-using MiniStore.Domain.Interfaces;
 using MiniStore.Web.Authorization;
 using Microsoft.Extensions.Localization;
 
@@ -9,7 +8,6 @@ namespace MiniStore.Web.Controllers;
 
 public class WarehouseLocationsController(
     StorageLocationService service,
-    IWarehouseRepository warehouseRepository,
     IStringLocalizer<SharedResource> localizer) : Controller
 {
     [HttpGet]
@@ -99,10 +97,9 @@ public class WarehouseLocationsController(
 
     private async Task LoadWarehousesAsync()
     {
-        ViewBag.Warehouses = (await warehouseRepository.GetAllAsync())
-            .Where(warehouse => warehouse.ControlMode != MiniStore.Domain.Entities.InventoryControlMode.Simple)
-            .ToList();
-        ViewBag.ParentLocations = (await service.SearchAsync(null, null)).Locations;
+        var options = await service.GetPageOptionsAsync();
+        ViewBag.Warehouses = options.Warehouses;
+        ViewBag.ParentLocations = options.ParentLocations;
     }
 
     private async Task LoadParentLocationsAsync(int warehouseId, int? excludedId = null)

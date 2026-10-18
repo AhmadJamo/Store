@@ -15,7 +15,7 @@
 | Recipes | Index/Edit | Products.View/Edit; Application service creates immutable versions and validates tenant products and compatible units. |
 | ProductStocks | Index/Create/Edit/Delete | product-stock permissions/service; delete service always refuses. |
 | StockTransactions | Index/Create | movement permissions/service. |
-| WarehouseLocations / UnassignedStock | hierarchical location search/create/edit, putaway-rule administration and capacity-aware suggested putaway | warehouse/product-stock permissions and location/putaway services. |
+| WarehouseLocations / UnassignedStock | hierarchical location search/create/edit, putaway-rule administration and capacity-aware suggested putaway | WarehouseLocations uses DTO-only `StorageLocationService` projections with no direct repository; warehouse/product-stock permissions and location/putaway services. |
 | Replenishment | reviewed shortage suggestions, rule management and explicitly reviewed Draft transfer creation | Inventory.Replenishment.View/Manage plus StockTransfers.Create for draft conversion. |
 | InventoryInsights | read-only positive-stock activity, slow/dead thresholds and movement-history exceptions | InventoryInsights.View. |
 | InventoryScanning | exact adjustment/product/source/destination resolution, availability, putaway, relocation and Draft line counting | InventoryScanning.View; Putaway adds ProductStock.Edit, Relocate adds LocationMovements.Create and Count adds InventoryAdjustments.Count; mutations use antiforgery. |

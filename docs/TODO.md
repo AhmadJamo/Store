@@ -22,7 +22,9 @@ The ERP SaaS Foundation Blueprint is imported as a non-authoritative planning re
 - [x] P1-AUD-014 add permission-aware tenant/platform audit readers, deterministic pagination, sensitive-access controls and a bounded purpose-required audited export.
 - [x] P1-AUD-015 add SQL writer/reader/maintainer roles and separate connection hooks, approved 7/3-year and 90-day retention, Owner-only legal holds, signed external checkpoints and manifest-before-delete execution.
 - [x] P1-AUD-016 reconcile 37 critical controls, preserve 710 historical `AuditLogs` rows, freeze new generic writes behind a reversible independent flag and prove semantic continuity plus rollback in SQL.
-- [ ] P1-OBS-020 add reproducible build/SQL gates, health and telemetry configuration, alerts and measured p95/p99 workloads; proposed and awaiting explicit approval plus environment decisions.
+- [x] P1-OBS-020 add the owner-approved local build/SQL gate, secret-free health checks, vendor-neutral metrics, testable log alerts and a measured p95/p99 availability workload.
+- [x] P1-ARC-030 complete the first bounded architecture slice: WarehouseLocations now receives projected Application DTOs and no longer injects warehouse/location repositories; continue the pattern incrementally when other slices are touched.
+- [ ] P2-CUS-040A approve the documentation-only CUS-005 Business Partner decision gate before implementing the professional customer profile.
 
 - [x] PUR-000 complete purchase architecture review, legacy compatibility boundary, migration strategy and vertical-slice roadmap.
 - [x] PUR-005 fix context ownership, quantity authority, staged currency, approval and GRNI boundaries before runtime implementation.

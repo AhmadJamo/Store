@@ -11,7 +11,7 @@ The repository implements an operational slice for catalog, warehouses, stock, s
 
 The WMS track is temporarily paused after implementing reconciliation, logistics, movements, balances, reservations, counts, lot/serial execution, removal/putaway policies, replenishment transfer/purchase-demand planning, inventory insights and safe scan workflows. The additive procure-to-pay evolution is implemented through PUR-280. Advanced purchasing analytics expose filterable spend, delay, confirmation, price-variance, supplier, seasonal, buyer-workload and open-exception evidence with source definitions and document links. Creation of new Legacy Direct Purchases is retired; historical records remain visible and users are directed to Purchase Requests for new activity.
 
-The imported ERP SaaS Foundation Blueprint is installed under `docs/reference/erp-saas-foundation/` as a proposed reference, not implementation evidence. Its `FND-000` repository compatibility assessment is complete. The project-control audit under `docs/project-control/` now provides the single current status, feature inventory, audit set, dependency order, master roadmap and next-task gate. The local Demo scope completed credential closure, encrypted restore proof and the `P0-DB-003` 112/112 reconciliation baseline. `P1-AUD-011` through `P1-AUD-016` now provide the audit-event foundation, semantic coverage, permission-aware reading/export, approved retention, legal holds, signed external checkpoints, database-role separation, a fixed 37-control coverage catalog and a reversible freeze of new legacy-audit writes. Migration 114 remains current.
+The imported ERP SaaS Foundation Blueprint is installed under `docs/reference/erp-saas-foundation/` as a proposed reference, not implementation evidence. Its `FND-000` repository compatibility assessment is complete. The project-control audit under `docs/project-control/` now provides the single current status, feature inventory, audit set, dependency order, master roadmap and next-task gate. The local Demo scope completed credential closure, encrypted restore proof and the `P0-DB-003` 112/112 reconciliation baseline. `P1-AUD-011` through `P1-AUD-016` provide the audit-event foundation through reversible legacy-writer freeze. `P1-OBS-020` adds a one-command local build/SQL gate, secret-free health checks, vendor-neutral metrics, testable error logs and a measured p95/p99 availability baseline. Migration 114 remains current.
 
 ## Status classification
 - IMPLEMENTED: catalog, warehouses, suppliers, stock balances/movements, purchases, sales, transfer workflow, Identity login, role-permission checks, audit-log rows, Razor UI.
@@ -20,7 +20,7 @@ The imported ERP SaaS Foundation Blueprint is installed under `docs/reference/er
 - IMPLEMENTED: database-enforced tenant relationship boundaries across all current ERP entities and tenant subscription redemptions, with automatic entity classification and relationship regression checks.
 - IMPLEMENTED: posted sales and purchase returns plus tenant fiscal-period posting controls.
 - PLANNED: reversal coverage outside the four supported purchase document types, external payment-provider/webhook integration, API/integrations.
-- UNKNOWN: production deployment and migration process, off-host scheduled backups, CI/CD, external integrations, and production operational ownership. A local encrypted Demo restore drill is proven.
+- UNKNOWN: production deployment and migration process, off-host scheduled backups, hosted monitoring/alerts, external integrations, and production operational ownership. Local encrypted restore and observability drills are proven.
 
 ## Main modules
 | Module | Status | Core code | Notes |
@@ -39,9 +39,9 @@ The imported ERP SaaS Foundation Blueprint is installed under `docs/reference/er
 See `06_SECURITY.md`, `04_ACCOUNTING.md`, and `TODO.md`. The historically exposed administrator was closed for the evidenced local Demo environment, an encrypted isolated restore drill reconciled without differences and all 114 current migrations match the database with no pending model change. The local Demo audit and retention features are enabled through User Secrets. Coverage reconciliation is complete, new legacy writes are frozen behind a reversible flag, and pre/post signed checkpoints preserved all 710 historical legacy rows. Real deployment identities, off-host backup/checkpoint storage, production deployment controls and broader integration testing remain open.
 
 ## Recommended next steps
-1. After explicit approval and environment decisions, implement only `P1-OBS-020`: reproducible build gates, health/telemetry, alerting and measured workload baselines.
-2. Preserve the completed audit controls and reversible legacy-writer flag while adding observability.
-3. Resume the customer and sales sequence only through the ordering and gates in `project-control/MASTER_ROADMAP.md`.
+1. After explicit approval, complete only the documentation decision gate `CUS-005`: preserve Customer/Supplier IDs, expand Customer first and defer a central BusinessPartner identity.
+2. After that gate, implement `CUS-010` as bounded professional-customer slices with additive migrations.
+3. Preserve the completed audit, observability and application-boundary controls throughout the customer/sales sequence.
 
 ## Read first
 Read `project-control/PROJECT_CONTEXT.md`, `project-control/PROJECT_STATUS.md`, `project-control/MASTER_ROADMAP.md` and `project-control/NEXT_TASK.md`; then read `01_CODEBASE_MAP.md`, the relevant module document and actual source.

@@ -47,7 +47,7 @@ WMS-100B3 delegates one absolute scanned quantity to `InventoryAdjustmentService
 
 Storage-location, unassigned-stock, location-movement and transfer services enforce each warehouse's control mode. Simple warehouses bypass location allocation; structured warehouses can require transfer locations. Capacity checks follow the destination warehouse's enforcement policy.
 
-`StorageLocationService` also owns hierarchy mutation rules. It normalizes optional barcodes, enforces warehouse-local barcode uniqueness, requires parents in the same warehouse and prevents self/descendant cycles before saving hierarchy or operational capabilities.
+`StorageLocationService` also owns hierarchy mutation rules and the Warehouse Locations page projection. It returns DTO-only warehouse selectors, parent selectors and location rows, so the controller does not inject repositories or expose persistence entities. It normalizes optional barcodes, enforces warehouse-local barcode uniqueness, requires parents in the same warehouse and prevents self/descendant cycles before saving hierarchy or operational capabilities.
 
 Location search returns parents before children with a calculated display depth. Putaway requires a receivable destination; relocation and transfer validation require pickable sources and receivable destinations in addition to active status, warehouse ownership and capacity rules.
 

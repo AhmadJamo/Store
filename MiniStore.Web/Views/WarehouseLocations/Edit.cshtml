@@ -1,9 +1,9 @@
 @model MiniStore.Application.DTOs.Warehouses.EditStorageLocationDto
-@using MiniStore.Domain.Entities
+@using MiniStore.Application.DTOs.Warehouses
 @inject Microsoft.Extensions.Localization.IStringLocalizer<MiniStore.Web.SharedResource> Localizer
 @{
     ViewData["Title"] = Localizer["Edit storage location"];
-    var parents = ViewBag.ParentLocations as List<StorageLocation> ?? [];
+    var parents = ViewBag.ParentLocations as List<StorageLocationOptionDto> ?? [];
 }
 <div class="container mt-4">
     <h2>@Localizer["Edit storage location"]</h2>
@@ -16,7 +16,7 @@
         <div class="row g-3">
             <div class="col-md-6"><label asp-for="Name" class="form-label">@Localizer["Location name"]</label><input asp-for="Name" class="form-control" required maxlength="120" /></div>
             <div class="col-md-6"><label asp-for="Barcode" class="form-label">@Localizer["Location barcode"]</label><input asp-for="Barcode" class="form-control" maxlength="100" /></div>
-            <div class="col-md-6"><label asp-for="ParentLocationId" class="form-label">@Localizer["Parent location"]</label><select asp-for="ParentLocationId" class="form-select"><option value="">@Localizer["Root location"]</option>@foreach (var parent in parents) { <option value="@parent.Id">@parent.Code — @parent.Name</option> }</select></div>
+            <div class="col-md-6"><label asp-for="ParentLocationId" class="form-label">@Localizer["Parent location"]</label><select asp-for="ParentLocationId" class="form-select"><option value="">@Localizer["Root location"]</option>@foreach (var parent in parents) { <option value="@parent.Id">@parent.Label</option> }</select></div>
             <div class="col-md-3"><label asp-for="Sequence" class="form-label">@Localizer["Sequence"]</label><input asp-for="Sequence" type="number" min="0" class="form-control" /></div>
         </div>
         <div class="card card-body mt-3"><h5>@Localizer["Operational capabilities"]</h5><div class="d-flex flex-wrap gap-3">

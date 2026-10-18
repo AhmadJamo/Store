@@ -2,6 +2,7 @@ using System.Reflection;
 using System.Globalization;
 using System.Resources;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.Metrics;
 using System.Security.Claims;
 using System.Net;
 using Microsoft.AspNetCore.Authorization;
@@ -11,6 +12,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using ClosedXML.Excel;
@@ -21,6 +23,7 @@ using MiniStore.Application.DTOs.Inventory.Tracking;
 using MiniStore.Application.DTOs.Purchases;
 using MiniStore.Application.DTOs.Products;
 using MiniStore.Application.DTOs.Suppliers;
+using MiniStore.Application.DTOs.Warehouses;
 using MiniStore.Application.Services;
 using MiniStore.Infrastructure.Authorization;
 using MiniStore.Infrastructure.Persistence;
@@ -35,6 +38,7 @@ using MiniStore.Web.Guidance;
 using MiniStore.Web.Formatting;
 using MiniStore.Web.Navigation;
 using MiniStore.Web.Services;
+using MiniStore.Web.Observability;
 
 var count = 0;
 void Check(bool condition, string message)
@@ -2524,6 +2528,72 @@ var scheduledRunIndex = db.Model.FindEntityType(typeof(ReplenishmentRun))!.GetIn
 Check(scheduledRunIndex.IsUnique,
     "Scheduled replenishment execution must be idempotent per company and scheduled time");
 
+Check(ObservabilityOptions.SectionName == "Observability" &&
+      new ObservabilityOptions().Enabled &&
+      new ObservabilityOptions().SlowRequestThresholdMilliseconds > 0,
+    "Observability must be enabled by default with a positive slow-request threshold");
+Check(MiniStoreTelemetry.MeterName == "MiniStore.Web",
+    "Operational metrics must use the stable MiniStore meter name");
+Check(typeof(DatabaseHealthCheck).GetInterfaces().Contains(
+        typeof(Microsoft.Extensions.Diagnostics.HealthChecks.IHealthCheck)),
+    "Database readiness must use the standard health-check contract");
+Check(typeof(RequestTelemetryMiddleware).GetMethod(nameof(RequestTelemetryMiddleware.InvokeAsync)) is not null,
+    "Request telemetry middleware must expose the standard invocation contract");
+var telemetryMeasurements = new List<(string Name, long Value)>();
+using (var telemetryListener = new MeterListener())
+{
+    telemetryListener.InstrumentPublished = (instrument, listener) =>
+    {
+        if (instrument.Meter.Name == MiniStoreTelemetry.MeterName)
+            listener.EnableMeasurementEvents(instrument);
+    };
+    telemetryListener.SetMeasurementEventCallback<long>((instrument, measurement, _, _) =>
+        telemetryMeasurements.Add((instrument.Name, measurement)));
+    telemetryListener.Start();
+
+    var alertLogger = new CapturingLogger<RequestTelemetryMiddleware>();
+    var failedRequestContext = new DefaultHttpContext();
+    failedRequestContext.Request.Method = HttpMethods.Get;
+    failedRequestContext.Request.Path = "/regression/server-error";
+    var telemetryMiddleware = new RequestTelemetryMiddleware(
+        context =>
+        {
+            context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+            return Task.CompletedTask;
+        },
+        alertLogger,
+        Microsoft.Extensions.Options.Options.Create(new ObservabilityOptions
+        {
+            Enabled = true,
+            LogServerErrors = true,
+            SlowRequestThresholdMilliseconds = 10_000
+        }));
+
+    await telemetryMiddleware.InvokeAsync(failedRequestContext);
+
+    Check(telemetryMeasurements.Any(x =>
+            x.Name == "ministore.http.server.failures" && x.Value == 1),
+        "HTTP 500 responses must emit a failure measurement for alerting");
+    Check(alertLogger.Messages.Any(message => message.Contains("status 500", StringComparison.Ordinal)),
+        "HTTP 500 responses must emit a testable operational alert log");
+}
+
+var warehouseLocationsController = typeof(WarehouseLocationsController);
+var warehouseLocationConstructorParameters = warehouseLocationsController.GetConstructors().Single()
+    .GetParameters()
+    .Select(parameter => parameter.ParameterType)
+    .ToArray();
+Check(!warehouseLocationConstructorParameters.Any(type =>
+        typeof(MiniStore.Domain.Interfaces.IWarehouseRepository).IsAssignableFrom(type) ||
+        typeof(MiniStore.Domain.Interfaces.IStorageLocationRepository).IsAssignableFrom(type)),
+    "Warehouse location presentation must not access warehouse or location repositories directly");
+Check(typeof(WarehouseInventorySearchDto).GetProperty(nameof(WarehouseInventorySearchDto.Locations))!
+        .PropertyType == typeof(List<StorageLocationRowDto>),
+    "Warehouse location search must project domain locations to application DTOs");
+Check(typeof(StorageLocationService).GetMethod(nameof(StorageLocationService.GetPageOptionsAsync))!
+        .ReturnType == typeof(Task<StorageLocationPageOptionsDto>),
+    "Storage location application service must own warehouse and parent-location page options");
+
 Console.WriteLine($"Passed {count} security and inventory regression checks.");
 
 void CheckThrows(Action action, string message)
@@ -2596,5 +2666,15 @@ sealed class StubTenantAuthorization(bool admin) : MiniStore.Domain.Interfaces.I
     public Task<bool> HasPermissionAsync(int tenantId, string userId, string permission) => Task.FromResult(false);
     public Task AddRoleAsync(TenantUserRole assignment) => Task.CompletedTask;
     public Task SaveChangesAsync() => Task.CompletedTask;
+}
+
+sealed class CapturingLogger<T> : ILogger<T>
+{
+    public List<string> Messages { get; } = [];
+
+    public IDisposable? BeginScope<TState>(TState state) where TState : notnull => null;
+    public bool IsEnabled(LogLevel logLevel) => true;
+    public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception,
+        Func<TState, Exception?, string> formatter) => Messages.Add(formatter(state, exception));
 }
 

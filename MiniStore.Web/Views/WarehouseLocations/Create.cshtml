@@ -1,11 +1,12 @@
 @model MiniStore.Application.DTOs.Warehouses.CreateStorageLocationDto
 @using MiniStore.Domain.Entities
+@using MiniStore.Application.DTOs.Warehouses
 @inject Microsoft.Extensions.Localization.IStringLocalizer<MiniStore.Web.SharedResource> Localizer
 
 @{
     ViewData["Title"] = Localizer["Add Storage Location"];
-    var warehouses = ViewBag.Warehouses as List<Warehouse> ?? [];
-    var parents = ViewBag.ParentLocations as List<StorageLocation> ?? [];
+    var warehouses = ViewBag.Warehouses as List<StorageLocationWarehouseOptionDto> ?? [];
+    var parents = ViewBag.ParentLocations as List<StorageLocationOptionDto> ?? [];
 }
 
 <div class="container mt-4">
@@ -46,7 +47,7 @@
                     <option value="">@Localizer["Root location"]</option>
                     @foreach (var parent in parents)
                     {
-                        <option value="@parent.Id" data-warehouse-id="@parent.WarehouseId">@parent.Code — @parent.Name</option>
+                        <option value="@parent.Id" data-warehouse-id="@parent.WarehouseId">@parent.Label</option>
                     }
                 </select>
                 <div class="form-text">@Localizer["Only a location from the selected warehouse can be used as parent."]</div>

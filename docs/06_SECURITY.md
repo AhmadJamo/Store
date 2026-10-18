@@ -65,9 +65,10 @@ Platform login, plan creation and promotion creation forms emit explicit antifor
 - Existing-user role editing, invitations, role data scopes and a before/after authorization audit trail remain future controls.
 - Online payment remains unconfigured. The current checkout is a server-calculated quote followed by explicit platform confirmation; a provider adapter, signed webhook validation, idempotency store and refund/dispute handling are required before accepting card payments.
 - No deployed HTTP/database penetration test performed. Focused tests use a stub Identity manager, real permission evaluators and action metadata.
+- Local health responses expose only aggregate state and never connection details or exceptions. HTTP 500, slow-request and database-readiness failures are recorded server-side; production still needs a protected durable log/metric collector.
 
 ## Verification
-Run `dotnet run --project tests/SecurityRegression/SecurityRegression.csproj` and `dotnet build MiniStore.slnx -c Release --no-restore`. The 2026-10-18 run passed 771 focused checks; SQL integration also passed all 114 migrations, coverage catalog, legacy freeze/rollback, database-role impersonation, legal-hold exclusion/release, signed checkpoint and manifest-before-delete retention in addition to earlier isolation/redaction/integrity cases. Demo enables semantic audit and retention only through local User Secrets with separate 32-byte random keys; committed legacy generic writing is disabled and all committed configuration remains secret-free.
+Run `pwsh -NoProfile -File scripts/verify-local.ps1`. The 2026-10-18 run built with zero warnings/errors, passed 777 focused checks, passed SQL integration and completed 500 health requests with zero failures (p95 16.85 ms, p99 28.35 ms). Demo enables semantic audit and retention only through local User Secrets with separate 32-byte random keys; committed legacy generic writing is disabled and all committed configuration remains secret-free.
 
 ## Company-code login selection (2026-09-15)
 Password validation runs before company selection. A supplied globally unique tenant slug must resolve to an active membership for that user before the TenantId claim is issued. Empty company code retains default-membership behavior. Errors do not expose another company's records.

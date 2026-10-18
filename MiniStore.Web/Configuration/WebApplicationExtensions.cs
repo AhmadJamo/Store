@@ -1,5 +1,7 @@
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using MiniStore.Infrastructure.Persistence;
 using MiniStore.Web.Middleware;
+using MiniStore.Web.Observability;
 
 namespace MiniStore.Web.Configuration;
 
@@ -35,6 +37,7 @@ public static class WebApplicationExtensions
             app.UseHsts();
         }
 
+        app.UseMiddleware<RequestTelemetryMiddleware>();
         app.UseHttpsRedirection();
         app.UseRouting();
         app.UseRateLimiter();
@@ -44,11 +47,34 @@ public static class WebApplicationExtensions
         app.UseRequestLocalization();
         app.UseAuthorization();
         app.MapStaticAssets();
+        app.MapHealthChecks("/health/live", new HealthCheckOptions
+        {
+            Predicate = registration => registration.Tags.Contains("live"),
+            AllowCachingResponses = false,
+            ResponseWriter = WriteHealthResponseAsync
+        }).AllowAnonymous();
+        app.MapHealthChecks("/health/ready", new HealthCheckOptions
+        {
+            Predicate = registration => registration.Tags.Contains("ready"),
+            AllowCachingResponses = false,
+            ResponseWriter = WriteHealthResponseAsync
+        }).AllowAnonymous();
         app.MapControllers();
         app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}")
             .WithStaticAssets();
         return app;
+    }
+
+    private static Task WriteHealthResponseAsync(HttpContext context,
+        Microsoft.Extensions.Diagnostics.HealthChecks.HealthReport report)
+    {
+        context.Response.ContentType = "application/json; charset=utf-8";
+        context.Response.Headers.CacheControl = "no-store, no-cache";
+        return context.Response.WriteAsJsonAsync(new
+        {
+            status = report.Status.ToString()
+        });
     }
 }

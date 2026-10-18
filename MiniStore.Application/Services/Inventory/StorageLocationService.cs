@@ -41,9 +41,28 @@ public class StorageLocationService(
         var (orderedLocations, depths) = OrderAsTree(locations);
         return new WarehouseInventorySearchDto
         {
-            Locations = orderedLocations,
+            Locations = orderedLocations.Select(MapRow).ToList(),
             LocationDepths = depths,
             Products = productRows
+        };
+    }
+
+    public async Task<StorageLocationPageOptionsDto> GetPageOptionsAsync()
+    {
+        var warehouses = await warehouseRepository.GetAllAsync();
+        var locations = await locationRepository.SearchAsync(null, null);
+        return new StorageLocationPageOptionsDto
+        {
+            Warehouses = warehouses
+                .Where(warehouse => warehouse.ControlMode != InventoryControlMode.Simple)
+                .OrderBy(warehouse => warehouse.Name)
+                .Select(warehouse => new StorageLocationWarehouseOptionDto(
+                    warehouse.Id,
+                    warehouse.Name))
+                .ToList(),
+            ParentLocations = locations
+                .Select(MapOption)
+                .ToList()
         };
     }
 
@@ -147,10 +166,36 @@ public class StorageLocationService(
         await locationRepository.SaveChangesAsync();
     }
 
-    public Task<List<StorageLocation>> GetParentOptionsAsync(int warehouseId)
+    public async Task<List<StorageLocationOptionDto>> GetParentOptionsAsync(int warehouseId)
     {
-        return locationRepository.GetWarehouseLocationsAsync(warehouseId);
+        return (await locationRepository.GetWarehouseLocationsAsync(warehouseId))
+            .Select(MapOption)
+            .ToList();
     }
+
+    private static StorageLocationRowDto MapRow(StorageLocation location) => new()
+    {
+        Id = location.Id,
+        WarehouseId = location.WarehouseId,
+        ParentLocationId = location.ParentLocationId,
+        Code = location.Code,
+        Name = location.Name,
+        Zone = location.Zone,
+        Aisle = location.Aisle,
+        Rack = location.Rack,
+        Level = location.Level,
+        Bin = location.Bin,
+        Type = location.Type,
+        Status = location.Status,
+        IsReceivable = location.IsReceivable,
+        IsPickable = location.IsPickable,
+        IsReservable = location.IsReservable,
+        IsShippable = location.IsShippable,
+        IsCountable = location.IsCountable
+    };
+
+    private static StorageLocationOptionDto MapOption(StorageLocation location) =>
+        new(location.Id, location.WarehouseId, $"{location.Code} — {location.Name}");
 
     private async Task ValidateParentAsync(int warehouseId, int? parentId, int? locationId)
     {

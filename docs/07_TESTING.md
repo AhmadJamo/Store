@@ -3,7 +3,7 @@
 > Source of truth: `tests/SecurityRegression` and build output
 > Last reviewed: 2026-10-18
 
-`tests/SecurityRegression` is a standalone executable test harness. It verifies tenant metadata/query filters and write guards; complete classification of mapped Domain entities; composite TenantId coverage; authorization; destructive action HTTP methods; throttling; SaaS and inventory invariants. The 2026-10-18 run passes 771 checks, including exact semantic-event/catalog parity, unique coverage controls, the reversible legacy-audit flag, mixed-scope audit/legal-hold mapping, separate read/export/sensitive/retention policies, redaction and HMAC-SHA256 integrity.
+`tests/SecurityRegression` is a standalone executable test harness. It verifies tenant metadata/query filters and write guards; complete classification of mapped Domain entities; composite TenantId coverage; authorization; destructive action HTTP methods; throttling; SaaS and inventory invariants. The 2026-10-18 run passes 780 checks, including audit/observability coverage and three WarehouseLocations boundary checks: no repository injection, DTO-projected rows and Application-owned page options.
 
 `tests/InventorySqlIntegration` creates and deletes a process-specific disposable SQL Server database and applies the full migration chain. Audit coverage includes disabled legacy writes with continuing semantic events, enabled rollback adding exactly one future legacy row, rollback/isolation/append-only/integrity, reader/export boundaries, SQL role-member impersonation, legal-hold exclusion and release, signed checkpoint plus manifest-before-delete execution, and omission of expired request evidence from destruction files. Override its local connection with `MINISTORE_WMS_TEST_CONNECTION`; `--inspect-audit` performs repeatable read-only schema, count, catalog, observed-event and unexplained-gap reconciliation.
 
@@ -17,7 +17,9 @@ The same executable accepts `--inspect-current` for a read-only tenant-by-tenant
 
 The 2026-09-15 Release run passed 167 checks, and `dotnet build MiniStore.slnx -c Release --no-restore` completed with zero warnings/errors.
 
-Remaining gaps include full HTTP authentication/authorization journeys, external payment webhook tests, CI/health/telemetry gates, performance/load coverage and penetration testing.
+`tests/PerformanceSmoke` is a dependency-free HTTP workload. The local gate runs 20 warmups followed by 500 requests at concurrency 20 against `/health/live`, fails above p95 250 ms or p99 500 ms and writes `artifacts/verification/performance.json`. The final run completed all 500 requests with zero failures, p95 16.85 ms and p99 28.35 ms. This is an availability regression baseline, not a production-sizing or business-transaction claim.
+
+Run the complete owner-approved local gate with `pwsh -NoProfile -File scripts/verify-local.ps1`. It builds Release, runs the focused executable, uses a disposable SQL database, starts the application, requires healthy readiness and then runs the workload. Remaining gaps include full HTTP authentication/authorization journeys, business-transaction/soak workloads, external payment webhook tests, production monitoring and penetration testing.
 
 ## Guided onboarding verification (2026-09-15)
 Regression coverage checks pending/completed/skipped state, normalization, one-time resolution, invalid currency and rowversion. A local HTTP journey registered a company, reached /onboarding, applied the Cafe/tax/POS template, landed on the dashboard and authenticated again by company code. SQL found 18 accounts, one warehouse, one POS and one tax rate for the test tenant.

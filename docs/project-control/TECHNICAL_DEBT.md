@@ -6,8 +6,8 @@
 | TD-002 | PARTIAL-DEMO | نجحت استعادة محلية مشفرة ضمن RPO/RTO؛ لا نسخة أو تجربة خارج الجهاز | وجهة الاستضافة غير معتمدة | FND-010 production operations |
 | TD-003 | CLOSED-DEMO | خط أساس P0 كان 112/112، والحالة الحالية بعد AuditEvents والاحتفاظ هي 114/114 دون تغيير نموذج معلق | عولج وكررت البوابة في 2026-10-16 | P0-DB-003 + P1-AUD-011/P1-AUD-015 evidence |
 | TD-004 | CLOSED-DEMO | اكتملت سلسلة التدقيق: 37 عنصر تغطية، قارئ/تصدير، احتفاظ وحجز ونقاط تثبيت وتجميد قابل للرجوع؛ تبقى هويات SQL ومخزن خارج الجهاز لكل استضافة | أغلقت محليًا في 2026-10-18؛ متطلبات الاستضافة ضمن OBS/OPS | P1-AUD-013..016 evidence |
-| TD-005 | HIGH | لا CI/CD أو load baseline مثبت | تطور محلي سريع | P1-OBS-020 |
-| TD-006 | MEDIUM | controllers تعتمد على repositories | إرث قبل توسع Application | P1-ARC-030 تدريجيًا |
+| TD-005 | PARTIAL-DEMO | بوابة محلية وحمل p95/p99 مثبتان؛ لا نشر أو مراقبة إنتاج | المالك لا يستخدم Git والبيئة المستضافة غير مختارة | P1-OBS-020 evidence + production operations |
+| TD-006 | PARTIAL | أزيل اعتماد WarehouseLocations المباشر؛ ما زالت متحكمات قديمة أخرى تعتمد على repositories | إرث قبل توسع Application | تطبيق نمط P1-ARC-030 تدريجيًا عند لمس كل شريحة |
 | TD-007 | MEDIUM | SaveChanges في عقود مستودعات كثيرة | حدود معاملات قديمة | P1-ARC-030 تدريجيًا |
 | TD-008 | MEDIUM | GetAll وقوائم بلا pagination | أحجام أولية صغيرة | عند تعديل كل شاشة |
 | TD-009 | MEDIUM | PermissionsCodeExport نسخة مكررة | تصدير تاريخي | أرشفة بعد موافقة |
