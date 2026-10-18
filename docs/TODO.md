@@ -24,7 +24,8 @@ The ERP SaaS Foundation Blueprint is imported as a non-authoritative planning re
 - [x] P1-AUD-016 reconcile 37 critical controls, preserve 710 historical `AuditLogs` rows, freeze new generic writes behind a reversible independent flag and prove semantic continuity plus rollback in SQL.
 - [x] P1-OBS-020 add the owner-approved local build/SQL gate, secret-free health checks, vendor-neutral metrics, testable log alerts and a measured p95/p99 availability workload.
 - [x] P1-ARC-030 complete the first bounded architecture slice: WarehouseLocations now receives projected Application DTOs and no longer injects warehouse/location repositories; continue the pattern incrementally when other slices are touched.
-- [ ] P2-CUS-040A approve the documentation-only CUS-005 Business Partner decision gate before implementing the professional customer profile.
+- [x] P2-CUS-040A / CUS-005 preserve CustomerId/SupplierId, expand Customer first and defer BusinessPartner unification to a separately approved CUS-110 gate.
+- [ ] CUS-010 implement the additive professional customer master with stable ID, code/profile/archive/concurrency, DTO-only paged queries, permissions, localization and regression coverage.
 
 - [x] PUR-000 complete purchase architecture review, legacy compatibility boundary, migration strategy and vertical-slice roadmap.
 - [x] PUR-005 fix context ownership, quantity authority, staged currency, approval and GRNI boundaries before runtime implementation.

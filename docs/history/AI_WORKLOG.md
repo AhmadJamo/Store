@@ -1014,3 +1014,11 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
 - Preserved all create/update rules and the existing repository save boundary; no entity, mapping, transaction, schema, migration or user-facing text changed.
 - Release build passed with zero warnings/errors. SecurityRegression passed 780 checks, including three new architecture guards. Runtime readiness and a 500-request smoke passed with zero failures; SQL was intentionally not repeated for this projection-only slice after the immediately preceding full green SQL gate.
 - Recorded closure evidence in `project-control/operations/P1-ARC-030-WAREHOUSE-LOCATIONS.md` and advanced the sole proposed task to the documentation-only `CUS-005` customer identity decision gate.
+
+## 2026-10-18 — CUS-005 customer and business-partner identity decision
+
+- Approved the documentation-only identity boundary after reconciling the current Customer, Supplier, Sales and Accounting references with the existing SAL-005 decision.
+- Preserved CustomerId and SupplierId as separate compatibility identities. CUS-010 will expand Customer additively and will not create a BusinessPartner table or rewrite historical keys.
+- Reserved an optional future dual-role link for proven need only; actual unification remains a separately approved CUS-110 expand-and-contract migration with reconciliation and rollback evidence.
+- Rejected immediate table replacement, a third competing source of truth, mutable natural-key identity and an editable customer balance.
+- No source code, schema, migration, configuration, permission, user interface, business data or secret changed. Recorded the decision in `ADR-20261018-CUSTOMER-PARTNER-IDENTITY.md` and advanced the sole proposed task to CUS-010.

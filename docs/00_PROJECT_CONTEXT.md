@@ -39,8 +39,8 @@ The imported ERP SaaS Foundation Blueprint is installed under `docs/reference/er
 See `06_SECURITY.md`, `04_ACCOUNTING.md`, and `TODO.md`. The historically exposed administrator was closed for the evidenced local Demo environment, an encrypted isolated restore drill reconciled without differences and all 114 current migrations match the database with no pending model change. The local Demo audit and retention features are enabled through User Secrets. Coverage reconciliation is complete, new legacy writes are frozen behind a reversible flag, and pre/post signed checkpoints preserved all 710 historical legacy rows. Real deployment identities, off-host backup/checkpoint storage, production deployment controls and broader integration testing remain open.
 
 ## Recommended next steps
-1. After explicit approval, complete only the documentation decision gate `CUS-005`: preserve Customer/Supplier IDs, expand Customer first and defer a central BusinessPartner identity.
-2. After that gate, implement `CUS-010` as bounded professional-customer slices with additive migrations.
+1. After explicit approval, implement only `CUS-010`: an additive professional Customer master that preserves CustomerId and all historical sales relationships.
+2. Keep contacts/addresses, commercial terms, credit and receivables outside this first customer slice.
 3. Preserve the completed audit, observability and application-boundary controls throughout the customer/sales sequence.
 
 ## Read first

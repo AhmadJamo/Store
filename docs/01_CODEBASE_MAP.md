@@ -42,6 +42,10 @@
 
 `docs/CUSTOMER_AND_BUSINESS_PARTNER_AUDIT_AND_IMPLEMENTATION_PLAN.md` is the completed documentation-only `CUS-000` customer and business-partner audit. It records the minimal current Customer implementation, compatibility with existing Customer/Supplier IDs, the independent BusinessPartner decision gate, additive migration safeguards, integration ownership, test strategy and the ordered `CUS-005` through `CUS-110` plan. It is not evidence that the planned customer capabilities are implemented.
 
+`docs/decisions/ADR-20261018-CUSTOMER-PARTNER-IDENTITY.md` closes `CUS-005`: CustomerId and SupplierId remain
+separate compatibility identities, CUS-010 expands Customer additively, and actual BusinessPartner unification is
+deferred to a separately approved CUS-110 gate.
+
 `docs/reference/erp-architecture/` preserves the imported cross-ERP proposed architecture package: system charter, module and ownership maps, workflows, integration contracts, cross-cutting rules, delivery roadmap, agent guidance, test matrix and open decisions. It is a planning reference rather than evidence of implemented code, and its Codex guidance does not supersede repository `AGENTS.md`, accepted ADRs or the required documentation workflow.
 
 `docs/reference/erp-saas-foundation/` installs the imported ERP SaaS Foundation Blueprint with provenance hashes, archived non-authoritative source instructions, the original tenant/audit/integrity/DR/approval/configuration/billing/exception/work/import references and an evidence-based MiniStore compatibility overlay. `FND-000` is documentation-only; none of the proposed gaps are implemented by importing the package.
