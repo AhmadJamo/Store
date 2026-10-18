@@ -1,7 +1,7 @@
 # Database
 > Status: IMPLEMENTED  
 > Source of truth: EF Core entities, configurations and migrations  
-> Last reviewed: 2026-10-16
+> Last reviewed: 2026-10-18
 
 PUR-270 migration `20261014205756_AddSupplierPortalAndIntegration` creates tenant-owned `SupplierIntegrationCredentials`, `SupplierPortalAccesses`, `SupplierExternalSubmissions`, `SupplierIntegrationOutboxMessages` and `SupplierExternalAuditEvents`. Credential and portal secrets are stored only as SHA-256 hashes; global unique indexes make cross-tenant token resolution unambiguous. Tenant-composite foreign keys bind suppliers, credentials and outbox messages to one company. Submission channel/identity/idempotency is unique inside the tenant, and outbox idempotency is tenant-unique. The migration is additive, creates no access by default and was applied to local `MiniStoreDb` on 2026-10-15.
 
@@ -86,13 +86,18 @@ All business tables have a required `TenantId` foreign key to `Tenants`. EF quer
 | StockTransfers / items/history | warehouse FKs Restrict; transfer number unique; StockTransfer rowversion; item/history FKs Restrict; item unique `(StockTransferId, ProductId)`. |
 | StockTransferItem locations | Optional source/destination StorageLocation FKs; when selected, Application validates active locations in the matching warehouses. |
 | Permissions | global permission catalogue with unique technical name; company-specific selections live in TenantRolePermissions and restrict permission deletion. |
-| AuditLogs | indexed by CreatedAt and `(EntityName, EntityId)`. |
+| AuditLogs | historical legacy evidence indexed by CreatedAt and `(EntityName, EntityId)`; still mapped/readable, with new writes frozen by default after P1-AUD-016. |
 | AuditEvents / AuditLegalHolds | Mixed Tenant/Platform/System semantic events with keyed integrity plus Owner-managed time-bounded holds. Normal business writes remain append-only; only the maintenance repository may delete an expired, manifested, revalidated and unheld batch. |
 | GeneralSettings / CurrencyExchangeRates / DiscountSettings / InventorySettings | General settings define company currency. Dated exchange rates store company-currency units per one supplier-currency unit with source/audit evidence; other settings retain singleton/concurrency rules. |
 | DocumentSequences | one row per tenant/document type; unique `(TenantId, DocumentType)`; customizable template, prefix, suffix, padding, next/reset counters and period state; rowversion protects settings updates. |
 
 ## Migrations
 Migration `20261015173055_AddAuditEventFoundation` creates the additive `AuditEvents` table without changing or backfilling legacy `AuditLogs`. Scope/TenantId, enum-range and valid-JSON checks are trusted; six enabled indexes cover the primary key, EventId, tenant/time, correlation, resource/time and scope/tenant/operation idempotency. It was applied to local `MiniStoreDb` on 2026-10-16 as migration 113; the new table had zero rows and the legacy table remained at 707 rows. The model has no pending changes.
+
+P1-AUD-016 adds no migration or schema change. The independent `LegacyAudit:WriteEnabled=false` cutover skips only
+future interceptor-created rows. Local Demo retained all 710 historical `AuditLogs` rows before and after cutover,
+while two signed checkpoint events advanced `AuditEvents` from 9 to 11. Re-enabling the flag resumes future legacy
+writes; it never updates, deletes or backfills history. Migration count remains 114 with no pending model change.
 
 Migration `20261016191833_AddAuditRetentionControls` is migration 114. It adds `AuditLegalHolds` with scope/tenant and UTC-range checks, restrictive tenant linkage and active-range indexes. It also creates `MiniStoreAuditWriter` (INSERT only), `MiniStoreAuditReader` (SELECT only) and `MiniStoreAuditMaintainer` (SELECT/DELETE plus legal-hold management) roles with explicit denials. Hosting assigns real identities and supplies optional `AuditReadConnection` and `AuditMaintenanceConnection`; migration/deployment uses a separate privileged account. SQL integration applies all migrations and impersonates role members to prove the permission matrix.
 

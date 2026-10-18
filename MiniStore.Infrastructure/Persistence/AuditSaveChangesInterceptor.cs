@@ -1,8 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.Extensions.Options;
 using MiniStore.Application.Services;
 using MiniStore.Domain.Entities;
 using MiniStore.Domain.Interfaces;
+using MiniStore.Infrastructure.Services.Security;
 
 namespace MiniStore.Infrastructure.Persistence;
 
@@ -10,14 +12,19 @@ public class AuditSaveChangesInterceptor : SaveChangesInterceptor
 {
     private readonly ICurrentUserService _currentUserService;
     private readonly ITenantContext _tenantContext;
+    private readonly LegacyAuditOptions _options;
 
     public AuditSaveChangesInterceptor(
         ICurrentUserService currentUserService,
-        ITenantContext tenantContext)
+        ITenantContext tenantContext,
+        IOptions<LegacyAuditOptions> options)
     {
         _currentUserService = currentUserService;
         _tenantContext = tenantContext;
+        _options = options.Value;
     }
+
+    public bool WriteEnabled => _options.WriteEnabled;
 
     public override ValueTask<InterceptionResult<int>> SavingChangesAsync(
         DbContextEventData eventData,
@@ -34,7 +41,7 @@ public class AuditSaveChangesInterceptor : SaveChangesInterceptor
 
     private void AddAuditLogs(DbContext? context)
     {
-        if (context == null)
+        if (!_options.WriteEnabled || context == null)
             return;
 
         var userId = _currentUserService.UserId;

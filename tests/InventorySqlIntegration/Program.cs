@@ -81,6 +81,7 @@ try
     await VerifySemanticAuditCoverageAsync(tenantOneId, tenantTwoId, connectionString);
     await VerifyIndependentSecurityAuditAsync(tenantOneId, connectionString);
     await VerifyAuditRetentionAndDatabaseRolesAsync(connectionString);
+    await VerifyLegacyAuditCutoverAsync(tenantOneId, connectionString);
 
     await VerifyTenantIsolationAndReconciliationAsync(
         tenantOneId,
@@ -127,7 +128,7 @@ try
     await VerifyInventoryBalanceProjectionAsync(tenantOneId, tenantOneFixture.ProductId, expectedOnHand: 2m, connectionString);
     await VerifyOpeningTrackingAllocationAsync(tenantOneId, tenantOneFixture.ProductId, tenantOneFixture.WarehouseId, connectionString);
 
-    Console.WriteLine("Passed SQL integration checks: semantic role/settings, denied-security, permission-aware audit reader/export, legal hold, signed checkpoint, manifest-before-delete retention and SQL audit-role separation plus audit-event rollback, isolation, append-only and integrity; tenant isolation, reconciliation, balances, replenishment purchase-request source concurrency, 3-product/2-supplier split awards, receipt, vendor-bill and supplier-payment concurrency, controlled payment reversal and retry, three-way matching override evidence, GRNI posting and clearing, purchase accounting reconciliation, payable settlement, receipt-based supplier returns, landed-cost valuation, purchasing analytics, idempotent barcode receipt drafts, adjustment posting, tracked operations, quarantine and recall.");
+    Console.WriteLine("Passed SQL integration checks: semantic coverage catalog, legacy-audit freeze and rollback, semantic role/settings, denied-security, permission-aware audit reader/export, legal hold, signed checkpoint, manifest-before-delete retention and SQL audit-role separation plus audit-event rollback, isolation, append-only and integrity; tenant isolation, reconciliation, balances, replenishment purchase-request source concurrency, 3-product/2-supplier split awards, receipt, vendor-bill and supplier-payment concurrency, controlled payment reversal and retry, three-way matching override evidence, GRNI posting and clearing, purchase accounting reconciliation, payable settlement, receipt-based supplier returns, landed-cost valuation, purchasing analytics, idempotent barcode receipt drafts, adjustment posting, tracked operations, quarantine and recall.");
 }
 finally
 {
@@ -140,6 +141,83 @@ static DbContextOptions<AppDbContext> CreateOptions(string connectionString) =>
         .UseSqlServer(connectionString)
         .EnableDetailedErrors()
         .Options;
+
+static DbContextOptions<AppDbContext> CreateLegacyAuditOptions(
+    string connectionString,
+    ITenantContext tenantContext,
+    bool writeEnabled) =>
+    new DbContextOptionsBuilder<AppDbContext>()
+        .UseSqlServer(connectionString)
+        .EnableDetailedErrors()
+        .AddInterceptors(new AuditSaveChangesInterceptor(
+            new FixedCurrentUser("legacy-audit-cutover-user"), tenantContext,
+            Options.Create(new LegacyAuditOptions { WriteEnabled = writeEnabled })))
+        .Options;
+
+static async Task VerifyLegacyAuditCutoverAsync(int tenantId, string connectionString)
+{
+    long legacyBefore;
+    await using (var baseline = new AppDbContext(CreateOptions(connectionString)))
+        legacyBefore = await baseline.AuditLogs.IgnoreQueryFilters().LongCountAsync();
+
+    var tenantContext = new FixedTenantContext(tenantId);
+    var disabledOptions = CreateLegacyAuditOptions(connectionString, tenantContext, writeEnabled: false);
+    await using (var disabled = new AppDbContext(disabledOptions, tenantContext))
+    {
+        disabled.Warehouses.Add(new Warehouse("Legacy audit freeze warehouse"));
+        await disabled.SaveChangesAsync();
+
+        var configured = Options.Create(new AuditEventOptions
+        {
+            Enabled = true,
+            ActiveIntegrityKeyVersion = "legacy-cutover-v1",
+            IntegrityKeys = new Dictionary<string, string>
+            {
+                ["legacy-cutover-v1"] = Convert.ToBase64String(Enumerable.Repeat((byte)23, 32).ToArray())
+            }
+        });
+        var writer = new AuditEventWriter(disabled, tenantContext,
+            new FixedCurrentUser("legacy-audit-cutover-user"), new AuditEventRedactor(configured),
+            new AuditEventIntegrityService(configured), configured);
+        await writer.RecordAsync(new AuditEventWriteRequest
+        {
+            Scope = AuditEventScope.Tenant,
+            Category = AuditEventCategory.Security,
+            Severity = AuditEventSeverity.Information,
+            Outcome = AuditEventOutcome.Succeeded,
+            EventType = SemanticAuditEventTypes.TenantRoleCreated,
+            Action = "Create",
+            ActorType = AuditActorType.User,
+            SourceChannel = AuditSourceChannel.Web,
+            CorrelationId = "legacy-audit-cutover-semantic",
+            ResourceType = "TenantRole",
+            ResourceId = "coverage-probe"
+        });
+        await disabled.SaveChangesAsync();
+    }
+
+    await using (var frozenVerification = new AppDbContext(CreateOptions(connectionString)))
+    {
+        if (await frozenVerification.AuditLogs.IgnoreQueryFilters().LongCountAsync() != legacyBefore ||
+            await frozenVerification.AuditEvents.IgnoreQueryFilters().CountAsync(value =>
+                value.CorrelationId == "legacy-audit-cutover-semantic") != 1)
+            throw new InvalidOperationException(
+                "Disabling the legacy writer must preserve AuditLogs exactly while semantic AuditEvents continue.");
+    }
+
+    var rollbackTenant = new FixedTenantContext(tenantId);
+    await using (var rollback = new AppDbContext(
+                     CreateLegacyAuditOptions(connectionString, rollbackTenant, writeEnabled: true), rollbackTenant))
+    {
+        rollback.Warehouses.Add(new Warehouse("Legacy audit rollback warehouse"));
+        await rollback.SaveChangesAsync();
+    }
+
+    await using var rollbackVerification = new AppDbContext(CreateOptions(connectionString));
+    if (await rollbackVerification.AuditLogs.IgnoreQueryFilters().LongCountAsync() != legacyBefore + 1)
+        throw new InvalidOperationException(
+            "Re-enabling the legacy writer must resume new AuditLogs without changing prior history.");
+}
 
 static async Task VerifyIndependentSecurityAuditAsync(int tenantId, string connectionString)
 {
@@ -747,20 +825,48 @@ static async Task InspectAuditDatabaseAsync()
     var builder = new SqlConnectionStringBuilder(configuredConnection) { Encrypt = false };
     await using var connection = new SqlConnection(builder.ConnectionString);
     await connection.OpenAsync();
-    await using var command = connection.CreateCommand();
-    command.CommandText = """
-        SELECT
-            (SELECT COUNT_BIG(*) FROM dbo.AuditLogs) AS LegacyRows,
-            (SELECT COUNT_BIG(*) FROM dbo.AuditEvents) AS EventRows,
-            (SELECT COUNT_BIG(*) FROM dbo.__EFMigrationsHistory) AS MigrationRows,
-            (SELECT COUNT_BIG(*) FROM sys.check_constraints WHERE parent_object_id = OBJECT_ID(N'dbo.AuditEvents') AND is_disabled = 0 AND is_not_trusted = 0) AS TrustedChecks,
-            (SELECT COUNT_BIG(*) FROM sys.indexes WHERE object_id = OBJECT_ID(N'dbo.AuditEvents') AND is_disabled = 0 AND index_id > 0) AS EnabledIndexes;
-        """;
-    await using var reader = await command.ExecuteReaderAsync();
-    if (!await reader.ReadAsync()) throw new InvalidOperationException("Audit schema inspection returned no result.");
+    await using (var command = connection.CreateCommand())
+    {
+        command.CommandText = """
+            SELECT
+                (SELECT COUNT_BIG(*) FROM dbo.AuditLogs) AS LegacyRows,
+                (SELECT COUNT_BIG(*) FROM dbo.AuditEvents) AS EventRows,
+                (SELECT COUNT_BIG(*) FROM dbo.__EFMigrationsHistory) AS MigrationRows,
+                (SELECT COUNT_BIG(*) FROM sys.check_constraints WHERE parent_object_id = OBJECT_ID(N'dbo.AuditEvents') AND is_disabled = 0 AND is_not_trusted = 0) AS TrustedChecks,
+                (SELECT COUNT_BIG(*) FROM sys.indexes WHERE object_id = OBJECT_ID(N'dbo.AuditEvents') AND is_disabled = 0 AND index_id > 0) AS EnabledIndexes;
+            """;
+        await using var reader = await command.ExecuteReaderAsync();
+        if (!await reader.ReadAsync()) throw new InvalidOperationException("Audit schema inspection returned no result.");
+        Console.WriteLine(
+            $"Audit schema: legacyRows={reader.GetInt64(0)}, eventRows={reader.GetInt64(1)}, " +
+            $"migrations={reader.GetInt64(2)}, trustedChecks={reader.GetInt64(3)}, enabledIndexes={reader.GetInt64(4)}.");
+    }
+
+    var observed = new Dictionary<string, long>(StringComparer.Ordinal);
+    await using (var eventCommand = connection.CreateCommand())
+    {
+        eventCommand.CommandText = "SELECT EventType, COUNT_BIG(*) FROM dbo.AuditEvents GROUP BY EventType;";
+        await using var reader = await eventCommand.ExecuteReaderAsync();
+        while (await reader.ReadAsync()) observed[reader.GetString(0)] = reader.GetInt64(1);
+    }
+
+    var semanticControls = AuditCoverageCatalog.Controls
+        .Where(control => control.EvidenceKind == AuditEvidenceKind.SemanticAuditEvent).ToList();
+    var domainControls = AuditCoverageCatalog.Controls.Count - semanticControls.Count;
+    var unexpected = observed.Keys.Except(AuditCoverageCatalog.SemanticEventTypes, StringComparer.Ordinal).ToList();
     Console.WriteLine(
-        $"Audit schema: legacyRows={reader.GetInt64(0)}, eventRows={reader.GetInt64(1)}, " +
-        $"migrations={reader.GetInt64(2)}, trustedChecks={reader.GetInt64(3)}, enabledIndexes={reader.GetInt64(4)}.");
+        $"Audit coverage: expected={AuditCoverageCatalog.Controls.Count}, " +
+        $"semantic={semanticControls.Count}, domainHistory={domainControls}, gaps=0, unexpectedObserved={unexpected.Count}.");
+    foreach (var control in semanticControls.OrderBy(control => control.ControlCode, StringComparer.Ordinal))
+        Console.WriteLine(
+            $"  {control.ControlCode}: event={control.EventType}, scope={control.ExpectedScope}, " +
+            $"outcome={control.ExpectedOutcome}, observed={observed.GetValueOrDefault(control.EventType!, 0)}.");
+    foreach (var control in AuditCoverageCatalog.Controls
+                 .Where(control => control.EvidenceKind == AuditEvidenceKind.AuthoritativeDomainHistory)
+                 .OrderBy(control => control.ControlCode, StringComparer.Ordinal))
+        Console.WriteLine($"  {control.ControlCode}: authoritative={control.EvidenceReference}.");
+    foreach (var eventType in unexpected.OrderBy(value => value, StringComparer.Ordinal))
+        Console.WriteLine($"  Unexpected observed event type: {eventType}.");
 }
 
 static async Task<(int ProductId, int StockId, int MeasurementUnitId, int WarehouseId)> SeedTenantAsync(

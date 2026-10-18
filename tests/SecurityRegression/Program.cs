@@ -227,6 +227,26 @@ CheckArgumentThrows(() => new AuditEvent(
         "حدث.تدقيق", "Update", AuditActorType.User, "regression-user",
         AuditSourceChannel.Web, "regression-correlation", "TenantRole", "7"),
     "Audit event types must remain language-neutral technical codes");
+var declaredSemanticEventTypes = typeof(SemanticAuditEventTypes)
+    .GetFields(BindingFlags.Public | BindingFlags.Static)
+    .Where(field => field.IsLiteral && !field.IsInitOnly && field.FieldType == typeof(string))
+    .Select(field => (string)field.GetRawConstantValue()!)
+    .ToHashSet(StringComparer.Ordinal);
+var catalogSemanticControls = AuditCoverageCatalog.Controls
+    .Where(control => control.EvidenceKind == AuditEvidenceKind.SemanticAuditEvent).ToList();
+Check(catalogSemanticControls.Count == declaredSemanticEventTypes.Count &&
+      declaredSemanticEventTypes.SetEquals(AuditCoverageCatalog.SemanticEventTypes),
+    "Every declared semantic audit event must appear exactly once in the critical coverage catalog");
+Check(AuditCoverageCatalog.Controls.Select(control => control.ControlCode).Distinct(StringComparer.Ordinal).Count() ==
+      AuditCoverageCatalog.Controls.Count &&
+      AuditCoverageCatalog.Controls.Any(control => control.EvidenceKind == AuditEvidenceKind.AuthoritativeDomainHistory),
+    "Critical audit coverage controls must be uniquely identified and explain authoritative domain-history evidence");
+var disabledLegacyAudit = new AuditSaveChangesInterceptor(
+    new StubCurrentUser(), new StubTenantContext(), Options.Create(new LegacyAuditOptions { WriteEnabled = false }));
+var enabledLegacyAudit = new AuditSaveChangesInterceptor(
+    new StubCurrentUser(), new StubTenantContext(), Options.Create(new LegacyAuditOptions { WriteEnabled = true }));
+Check(!disabledLegacyAudit.WriteEnabled && enabledLegacyAudit.WriteEnabled,
+    "Legacy AuditLogs writing must have an independent reversible feature flag");
 
 var auditHttpContext = new DefaultHttpContext();
 auditHttpContext.Connection.RemoteIpAddress = IPAddress.Parse("192.168.77.143");
@@ -2558,6 +2578,7 @@ sealed class StubUsers : UserManager<IdentityUser>
 }
 
 sealed class StubTenantContext : MiniStore.Domain.Interfaces.ITenantContext { public int? TenantId => 1; }
+sealed class StubCurrentUser : ICurrentUserService { public string UserId => "regression-user"; }
 sealed class ThrowingScopeFactory : IServiceScopeFactory
 {
     public IServiceScope CreateScope() => throw new InvalidOperationException("Persistence unavailable.");

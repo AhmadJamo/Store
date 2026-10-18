@@ -1,11 +1,11 @@
 # Testing
 > Status: FOCUSED REGRESSION EXECUTABLE IMPLEMENTED
 > Source of truth: `tests/SecurityRegression` and build output
-> Last reviewed: 2026-10-16
+> Last reviewed: 2026-10-18
 
-`tests/SecurityRegression` is a standalone executable test harness. It verifies tenant metadata/query filters and write guards; complete classification of mapped Domain entities; composite TenantId coverage; authorization; destructive action HTTP methods; throttling; SaaS and inventory invariants. The 2026-10-16 run passes 768 checks, including mixed-scope audit/legal-hold mapping, separate read/export/sensitive/retention policies, antiforgery, approved retention values, redaction and HMAC-SHA256 integrity.
+`tests/SecurityRegression` is a standalone executable test harness. It verifies tenant metadata/query filters and write guards; complete classification of mapped Domain entities; composite TenantId coverage; authorization; destructive action HTTP methods; throttling; SaaS and inventory invariants. The 2026-10-18 run passes 771 checks, including exact semantic-event/catalog parity, unique coverage controls, the reversible legacy-audit flag, mixed-scope audit/legal-hold mapping, separate read/export/sensitive/retention policies, redaction and HMAC-SHA256 integrity.
 
-`tests/InventorySqlIntegration` creates and deletes a process-specific disposable SQL Server database and now applies the full migration chain. Audit coverage includes rollback/isolation/append-only/integrity, reader/export boundaries, SQL role-member impersonation, legal-hold exclusion and release, signed checkpoint plus manifest-before-delete execution, and omission of expired request evidence from destruction files. Purchasing/inventory concurrency coverage remains unchanged. Override its local connection with `MINISTORE_WMS_TEST_CONNECTION`; `--inspect-audit` performs a read-only Demo count/constraint/index inspection.
+`tests/InventorySqlIntegration` creates and deletes a process-specific disposable SQL Server database and applies the full migration chain. Audit coverage includes disabled legacy writes with continuing semantic events, enabled rollback adding exactly one future legacy row, rollback/isolation/append-only/integrity, reader/export boundaries, SQL role-member impersonation, legal-hold exclusion and release, signed checkpoint plus manifest-before-delete execution, and omission of expired request evidence from destruction files. Override its local connection with `MINISTORE_WMS_TEST_CONNECTION`; `--inspect-audit` performs repeatable read-only schema, count, catalog, observed-event and unexplained-gap reconciliation.
 
 PUR-240 regression coverage validates forecast-rule horizons and seasonality state, automation schedule advancement, dedicated controller permissions, tenant classification/relationships and the unique tenant/scheduled-time idempotency index. EF migration drift must also report no pending model changes.
 
@@ -17,7 +17,7 @@ The same executable accepts `--inspect-current` for a read-only tenant-by-tenant
 
 The 2026-09-15 Release run passed 167 checks, and `dotnet build MiniStore.slnx -c Release --no-restore` completed with zero warnings/errors.
 
-Remaining gaps include full HTTP authentication/authorization journeys, final semantic-event coverage reconciliation and legacy-audit freeze, external payment webhook tests, performance/load coverage and penetration testing.
+Remaining gaps include full HTTP authentication/authorization journeys, external payment webhook tests, CI/health/telemetry gates, performance/load coverage and penetration testing.
 
 ## Guided onboarding verification (2026-09-15)
 Regression coverage checks pending/completed/skipped state, normalization, one-time resolution, invalid currency and rowversion. A local HTTP journey registered a company, reached /onboarding, applied the Cafe/tax/POS template, landed on the dashboard and authenticated again by company code. SQL found 18 accounts, one warehouse, one POS and one tax rate for the test tenant.

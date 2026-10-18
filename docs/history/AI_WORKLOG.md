@@ -987,3 +987,13 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
 - Reset `PlatformOwner:Enabled` to false and removed the temporary `PlatformOwner:Username` project secret immediately after activation.
 - Verified a real antiforgery-protected platform login returned HTTP 200 at `/platform` with no invalid-credential response.
 - No application code, schema, migration or committed secret changed. The next-task gate remains `P1-AUD-016` awaiting separate approval.
+
+## 2026-10-18 — P1-AUD-016 coverage reconciliation and legacy-audit freeze
+
+- Added a fixed Application coverage catalog for 37 critical controls: 28 semantic event types and nine named authoritative domain-history sources. Reflection checks require exact parity with every declared semantic event constant.
+- Added independent `LegacyAudit:WriteEnabled`; code defaults to compatibility-on when absent, while committed cutover configuration is false. `AuditLogs` remains mapped and readable.
+- Extended the repeatable read-only `--inspect-audit` report with catalog counts, expected scope/outcome, observed semantic counts, authoritative references, gaps and unexpected types.
+- SQL integration proved disabled generic writes with continuing semantic events, then enabled rollback adding exactly one future legacy row without changing history.
+- Created signed Demo checkpoints before and after cutover. Legacy rows remained 710; semantic rows advanced 9→11; catalog reconciliation reported 37 expected, zero gaps and zero unexpected types.
+- Web build passed with zero warnings/errors, SecurityRegression passed 771 checks, SQL integration passed and EF reported no pending model changes. No migration or historical backfill was introduced.
+- Closed `P1-AUD-016`; advanced the sole proposed task to `P1-OBS-020`, awaiting explicit approval and environment decisions.

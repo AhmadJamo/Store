@@ -1,6 +1,6 @@
 # Project TODO
 > Source of truth: Current repository scan  
-> Last reviewed: 2026-10-16
+> Last reviewed: 2026-10-18
 
 The approved numbered Arabic/English delivery sequence is maintained in `MASTER_IMPLEMENTATION_ROADMAP_AR_EN.md`. Detailed working status, business rules and the rolling suggestion queue remain in `ARABIC_SHARED_ROADMAP.md`. This file remains the concise technical backlog.
 
@@ -21,7 +21,8 @@ The ERP SaaS Foundation Blueprint is imported as a non-authoritative planning re
 - [x] P1-AUD-013 add authentication/lockout, actual denied privileged action, platform administration and external integration semantic events with an independent failure-visible security writer and masked request evidence.
 - [x] P1-AUD-014 add permission-aware tenant/platform audit readers, deterministic pagination, sensitive-access controls and a bounded purpose-required audited export.
 - [x] P1-AUD-015 add SQL writer/reader/maintainer roles and separate connection hooks, approved 7/3-year and 90-day retention, Owner-only legal holds, signed external checkpoints and manifest-before-delete execution.
-- [ ] P1-AUD-016 reconcile critical semantic-event coverage and freeze new legacy `AuditLogs` writes while preserving all historical rows; this is the only proposed next task and requires explicit approval.
+- [x] P1-AUD-016 reconcile 37 critical controls, preserve 710 historical `AuditLogs` rows, freeze new generic writes behind a reversible independent flag and prove semantic continuity plus rollback in SQL.
+- [ ] P1-OBS-020 add reproducible build/SQL gates, health and telemetry configuration, alerts and measured p95/p99 workloads; proposed and awaiting explicit approval plus environment decisions.
 
 - [x] PUR-000 complete purchase architecture review, legacy compatibility boundary, migration strategy and vertical-slice roadmap.
 - [x] PUR-005 fix context ownership, quantity authority, staged currency, approval and GRNI boundaries before runtime implementation.

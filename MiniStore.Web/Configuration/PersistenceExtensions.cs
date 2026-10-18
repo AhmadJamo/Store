@@ -15,6 +15,7 @@ public static class PersistenceExtensions
     {
         services.Configure<AuditEventOptions>(configuration.GetSection(AuditEventOptions.SectionName));
         services.Configure<AuditRetentionOptions>(configuration.GetSection(AuditRetentionOptions.SectionName));
+        services.Configure<LegacyAuditOptions>(configuration.GetSection(LegacyAuditOptions.SectionName));
         var retention = configuration.GetSection(AuditRetentionOptions.SectionName).Get<AuditRetentionOptions>() ?? new();
         var defaultConnection = configuration.GetConnectionString("DefaultConnection")
                                 ?? throw new InvalidOperationException("DefaultConnection is required.");

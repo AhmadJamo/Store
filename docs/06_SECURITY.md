@@ -1,7 +1,7 @@
 # Security assessment
 > Status: PARTIALLY VERIFIED
 > Source of truth: Static inspection and focused executable regression checks
-> Last reviewed: 2026-10-17
+> Last reviewed: 2026-10-18
 
 WMS-050 reservation writes run inside the existing serializable UnitOfWork. Tenant-scoped source uniqueness, balance and reservation rowversions, positive-quantity constraints and exact-dimension indexes prevent cross-tenant, duplicate and concurrent over-allocation.
 
@@ -61,12 +61,13 @@ Platform login, plan creation and promotion creation forms emit explicit antifor
 - Supply a production SQL connection string with validated TLS certificates; local development configuration trusts the certificate.
 - Rate limiting is per process and uses the connection IP. Multi-instance/reverse-proxy deployments need trusted proxy configuration and shared edge limits; do not trust arbitrary forwarded headers.
 - `P1-AUD-011` through `P1-AUD-014` implement integrity-sealed semantic events, independent denied-event writing and permission-aware reading/export. `P1-AUD-015` implements the approved 7-year protected, 3-year operational and 90-day detailed-login policy, Owner-only legal holds, a signed external checkpoint, manifest-before-delete retention, and separate writer/reader/maintainer SQL roles and connection hooks. A batch is deleted only after its checkpoint and manifest exist and the maintenance transaction revalidates every ID/hash and legal hold. Local Demo stores its key/path only in User Secrets and produced its first external checkpoint; production must supply real role-mapped identities and off-host durable storage.
+- `P1-AUD-016` fixes a 37-control catalog: 28 semantic event controls plus nine named authoritative domain-history controls. Regression fails when a declared semantic event is absent from the catalog. New generic `AuditLogs` writes are disabled by committed configuration, but the table remains readable and a separate restart-only flag safely restores future writes. Demo pre/post checkpoints retained all 710 legacy rows, produced two new checkpoint events and reported zero unexplained gaps or unexpected event types.
 - Existing-user role editing, invitations, role data scopes and a before/after authorization audit trail remain future controls.
 - Online payment remains unconfigured. The current checkout is a server-calculated quote followed by explicit platform confirmation; a provider adapter, signed webhook validation, idempotency store and refund/dispute handling are required before accepting card payments.
 - No deployed HTTP/database penetration test performed. Focused tests use a stub Identity manager, real permission evaluators and action metadata.
 
 ## Verification
-Run `dotnet run --project tests/SecurityRegression/SecurityRegression.csproj` and `dotnet build MiniStore.slnx -c Release --no-restore`. The 2026-10-16 run passed 768 focused checks; SQL integration also passed all 114 migrations, database-role impersonation, legal-hold exclusion/release, signed checkpoint and manifest-before-delete retention in addition to earlier isolation/redaction/integrity cases. Demo enables audit and retention only through local User Secrets with separate 32-byte random keys; committed configuration remains disabled and secret-free.
+Run `dotnet run --project tests/SecurityRegression/SecurityRegression.csproj` and `dotnet build MiniStore.slnx -c Release --no-restore`. The 2026-10-18 run passed 771 focused checks; SQL integration also passed all 114 migrations, coverage catalog, legacy freeze/rollback, database-role impersonation, legal-hold exclusion/release, signed checkpoint and manifest-before-delete retention in addition to earlier isolation/redaction/integrity cases. Demo enables semantic audit and retention only through local User Secrets with separate 32-byte random keys; committed legacy generic writing is disabled and all committed configuration remains secret-free.
 
 ## Company-code login selection (2026-09-15)
 Password validation runs before company selection. A supplied globally unique tenant slug must resolve to an active membership for that user before the TenantId claim is issued. Empty company code retains default-membership behavior. Errors do not expose another company's records.

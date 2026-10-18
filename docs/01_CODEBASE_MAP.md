@@ -1,7 +1,7 @@
 # Codebase map
 > Status: IMPLEMENTED  
 > Source of truth: Repository scan  
-> Last reviewed: 2026-10-16
+> Last reviewed: 2026-10-18
 
 ## Solution roots
 | Path | Project/layer | Purpose |
@@ -46,7 +46,7 @@
 
 `docs/project-control/` is the consolidated execution-control source for current project status, verified feature inventory, architecture/database/security/business-integrity audits, documentation conflicts, dependencies, one prioritized roadmap, decisions, technical debt, executed test evidence, quick handoff context and exactly one proposed next task. Its `operations/` folder stores secret-free operational evidence for the local Demo credential closure, encrypted backup/restore drill, 112/112 reconciliation baseline and implemented audit-event foundation. It coordinates rather than replaces detailed module plans or historical ADRs.
 
-`docs/AUDIT_SECURITY_ARCHITECTURE_AND_IMPLEMENTATION_PLAN.md` and the audit ADRs define the audit boundary. `P1-AUD-011` through `P1-AUD-014` implement storage, semantic/security coverage and permission-aware reading/export. `P1-AUD-015` adds `AuditLegalHold`, `AuditRetentionService`, a maintenance repository, signed file archive/checkpoint store, daily worker and Owner-only Platform screen. Migration 114 creates the legal-hold table and insert-only writer, select-only reader and controlled maintainer database roles. Separate read/maintenance connection strings may be supplied by hosting; local Demo falls back to its development connection while SQL impersonation tests prove role permissions. Local keys and archive paths live only in User Secrets. Legacy `AuditLogs` and accounting/inventory/domain histories remain authoritative for their existing facts until `P1-AUD-016`.
+`docs/AUDIT_SECURITY_ARCHITECTURE_AND_IMPLEMENTATION_PLAN.md` and the audit ADRs define the audit boundary. `P1-AUD-011` through `P1-AUD-015` implement storage, semantic/security coverage, permission-aware reading/export, retention, legal holds, signed checkpoints and database-role separation. `P1-AUD-016` adds `AuditCoverageCatalog`, repeatable `--inspect-audit` reconciliation and independent `LegacyAuditOptions`; committed configuration freezes new generic `AuditLogs` writes while preserving all historical rows and a configuration-only rollback. Specialized accounting/inventory/purchase/sales histories remain authoritative for detailed facts.
 
 `MiniStore.Web/Guidance/ActionableErrorGuidance.cs` maps recognized, user-resolvable purchase errors to permission-protected setup or master-data destinations. The shared notification partial renders the resulting action for both modal notifications and page validation summaries; ordinary validation errors remain message-only.
 
@@ -140,7 +140,7 @@
 | `Services/Settings/PosExperienceSettingsService.cs` | profile presets, custom terminal appearance persistence and POS runtime projection | Settings/Pos and Sales/Pos. |
 | `Services/Settings/DocumentNumberService.cs` | default creation, validation, administration projection and transactional document-number generation | sales, transfers, purchase posting and Settings/DocumentNumbers. |
 | `Services/Security/TenantRoleService.cs` | tenant-local role CRUD, permission validation, protected-role rules and user assignment options | Roles and Users controllers. |
-| `Services/Security/{AuditEventContracts,SemanticAuditEventService,AuditRetentionService}.cs` | audit writer/request-context contracts, fixed event codes, retention policy/orchestration, legal holds, checkpoints and manifest-before-delete commands | enrolled services and Infrastructure audit implementations. |
+| `Services/Security/{AuditEventContracts,SemanticAuditEventService,AuditRetentionService,AuditCoverageCatalog}.cs` | audit writer/request-context contracts, fixed event codes, 37-control coverage inventory, retention policy/orchestration, legal holds, checkpoints and manifest-before-delete commands | enrolled services, reconciliation and Infrastructure audit implementations. |
 | `Services/Accounting/JournalPostingService.cs` | central source-idempotency, numbering, balance/posting and persistence gateway used inside caller transactions | purchase, sale and sales-return posting workflows. |
 | `Services/Settings/FiscalPeriodService.cs` | non-overlapping fiscal-period administration and central posting-date validation | Settings/FiscalPeriods and JournalPostingService. |
 | `Services/Sales/SalePostingService.cs` | idempotent sale revenue, discount and COGS general-ledger posting | Sales/Details and Sales/Post. |
@@ -164,7 +164,7 @@
 | `Persistence/AppDbContext.cs`, `Persistence/TenantIsolationModel.cs` | EF + Identity DbContext/DbSets and business/control-plane/mixed-scope classification; applies tenant and append-only audit guards plus composite tenant relationship convention | all repositories/authorization. |
 | `Persistence/UnitOfWork.cs` | Serializable transaction wrapper with an explicit in-transaction flush for workflows that need generated document identities before recording dependent facts | purchase/sale/stock/transfer services. |
 | `Persistence/AuditSaveChangesInterceptor.cs` | creates AuditLog rows for tracked changes | registered in Program. |
-| `Services/Security/{AuditEvent*,SecurityAuditEventWriter,FileAuditArchiveStore}.cs`, security repositories/configurations | atomic writers, separate SQL reader connection, allowlist redaction, HMAC-SHA256 integrity, legal-hold-aware retention and signed external evidence | Application audit contracts, AppDbContext and maintenance worker. |
+| `Services/Security/{AuditEvent*,SecurityAuditEventWriter,FileAuditArchiveStore,LegacyAuditOptions}.cs`, security repositories/configurations | atomic writers, separate SQL reader connection, allowlist redaction, HMAC-SHA256 integrity, reversible legacy-writer flag, legal-hold-aware retention and signed external evidence | Application audit contracts, AppDbContext and maintenance worker. |
 | `Persistence/{Identity,Permission}Seeder.cs` | default roles/admin and permissions | Program startup. |
 | `Persistence/Configurations/Tenancy/TenantConfiguration.cs` | tenant identity, membership keys, Identity relationships and slug uniqueness | AppDbContext/migration. |
 | `Persistence/Configurations/<Feature>/*.cs` | per-entity schema mapping grouped by feature | applied automatically by AppDbContext. |

@@ -1,7 +1,7 @@
 # MiniStore project context
 > Status: PARTIALLY IMPLEMENTED  
 > Source of truth: Code  
-> Last reviewed: 2026-10-16
+> Last reviewed: 2026-10-18
 
 ## Project identity
 MiniStore is a server-rendered ASP.NET Core MVC store-management application. It targets .NET 10, uses EF Core 10 with SQL Server, ASP.NET Core Identity, Razor views, and a Domain/Application/Infrastructure/Web layered solution. No public API project is present.
@@ -11,7 +11,7 @@ The repository implements an operational slice for catalog, warehouses, stock, s
 
 The WMS track is temporarily paused after implementing reconciliation, logistics, movements, balances, reservations, counts, lot/serial execution, removal/putaway policies, replenishment transfer/purchase-demand planning, inventory insights and safe scan workflows. The additive procure-to-pay evolution is implemented through PUR-280. Advanced purchasing analytics expose filterable spend, delay, confirmation, price-variance, supplier, seasonal, buyer-workload and open-exception evidence with source definitions and document links. Creation of new Legacy Direct Purchases is retired; historical records remain visible and users are directed to Purchase Requests for new activity.
 
-The imported ERP SaaS Foundation Blueprint is installed under `docs/reference/erp-saas-foundation/` as a proposed reference, not implementation evidence. Its `FND-000` repository compatibility assessment is complete. The project-control audit under `docs/project-control/` now provides the single current status, feature inventory, audit set, dependency order, master roadmap and next-task gate. The local Demo scope completed credential closure, encrypted restore proof and the `P0-DB-003` 112/112 reconciliation baseline. `P1-AUD-011` through `P1-AUD-015` now provide the audit-event foundation, semantic coverage, permission-aware reading/export, approved retention, legal holds, signed external checkpoints and database roles for writer/reader/maintenance separation. Migration 114 is applied locally. Coverage reconciliation and legacy-audit freeze remain proposed in `P1-AUD-016`.
+The imported ERP SaaS Foundation Blueprint is installed under `docs/reference/erp-saas-foundation/` as a proposed reference, not implementation evidence. Its `FND-000` repository compatibility assessment is complete. The project-control audit under `docs/project-control/` now provides the single current status, feature inventory, audit set, dependency order, master roadmap and next-task gate. The local Demo scope completed credential closure, encrypted restore proof and the `P0-DB-003` 112/112 reconciliation baseline. `P1-AUD-011` through `P1-AUD-016` now provide the audit-event foundation, semantic coverage, permission-aware reading/export, approved retention, legal holds, signed external checkpoints, database-role separation, a fixed 37-control coverage catalog and a reversible freeze of new legacy-audit writes. Migration 114 remains current.
 
 ## Status classification
 - IMPLEMENTED: catalog, warehouses, suppliers, stock balances/movements, purchases, sales, transfer workflow, Identity login, role-permission checks, audit-log rows, Razor UI.
@@ -36,11 +36,11 @@ The imported ERP SaaS Foundation Blueprint is installed under `docs/reference/er
 | Identity & permissions | PARTIALLY IMPLEMENTED | Identity + `PermissionAuthorizationHandler` | Custom permission rows mapped to roles. |
 
 ## Current problems
-See `06_SECURITY.md`, `04_ACCOUNTING.md`, and `TODO.md`. The historically exposed administrator was closed for the evidenced local Demo environment, an encrypted isolated restore drill reconciled without differences and all 114 current migrations match the database with no pending model change. The local Demo audit and retention features are enabled through User Secrets; the first signed checkpoint exists outside the database. Separate SQL roles and connection hooks are implemented, while real deployment identities must be supplied by each hosting environment. Coverage reconciliation, legacy-audit freeze, off-host backup, production deployment controls and broader integration testing remain open.
+See `06_SECURITY.md`, `04_ACCOUNTING.md`, and `TODO.md`. The historically exposed administrator was closed for the evidenced local Demo environment, an encrypted isolated restore drill reconciled without differences and all 114 current migrations match the database with no pending model change. The local Demo audit and retention features are enabled through User Secrets. Coverage reconciliation is complete, new legacy writes are frozen behind a reversible flag, and pre/post signed checkpoints preserved all 710 historical legacy rows. Real deployment identities, off-host backup/checkpoint storage, production deployment controls and broader integration testing remain open.
 
 ## Recommended next steps
-1. After explicit approval, implement only `P1-AUD-016`: reconcile critical semantic-event coverage and freeze new legacy `AuditLogs` writes without deleting history.
-2. Preserve the P1-AUD-015 retention policy, legal holds and signed checkpoint evidence during reconciliation.
+1. After explicit approval and environment decisions, implement only `P1-OBS-020`: reproducible build gates, health/telemetry, alerting and measured workload baselines.
+2. Preserve the completed audit controls and reversible legacy-writer flag while adding observability.
 3. Resume the customer and sales sequence only through the ordering and gates in `project-control/MASTER_ROADMAP.md`.
 
 ## Read first
