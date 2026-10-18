@@ -27,9 +27,11 @@ public static class WorkflowNextStepGuidance
         "InventoryActivity", "InventoryReconciliation", "InventoryScanning", "PutawayRules"
     };
 
+    private static readonly HashSet<string> CustomerControllers = new(StringComparer.OrdinalIgnoreCase) { "Customers" };
+
     public static bool IsSupportedController(string? controller) =>
         !string.IsNullOrWhiteSpace(controller) &&
-        (PurchaseControllers.Contains(controller) || InventoryControllers.Contains(controller));
+        (PurchaseControllers.Contains(controller) || InventoryControllers.Contains(controller) || CustomerControllers.Contains(controller));
 
     public static WorkflowNextStepLink? Resolve(
         string? message,
@@ -45,6 +47,12 @@ public static class WorkflowNextStepGuidance
         Dictionary<string, string> Routes(params (string Key, string? Value)[] values) =>
             values.Where(x => !string.IsNullOrWhiteSpace(x.Value))
                 .ToDictionary(x => x.Key, x => x.Value!, StringComparer.OrdinalIgnoreCase);
+
+        if (Matches(message, localize, "Customer created successfully.", "Customer updated successfully.", "Customer restored successfully."))
+            return new("Customers", "Details", "Review customer profile", "Review the customer profile before using it in a new sale.", "Customers.View", Routes(("id", Route("id"))));
+
+        if (Matches(message, localize, "Customer archived successfully."))
+            return new("Customers", "Index", "Return to customer list", "The customer remains in history and is excluded from new sales.", "Customers.View", Routes(("includeArchived", "true")));
 
         if (Matches(message, localize,
                 "Purchase request created.",

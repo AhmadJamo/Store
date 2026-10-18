@@ -97,16 +97,18 @@ Migration `20261015173055_AddAuditEventFoundation` creates the additive `AuditEv
 P1-AUD-016 adds no migration or schema change. The independent `LegacyAudit:WriteEnabled=false` cutover skips only
 future interceptor-created rows. Local Demo retained all 710 historical `AuditLogs` rows before and after cutover,
 while two signed checkpoint events advanced `AuditEvents` from 9 to 11. Re-enabling the flag resumes future legacy
-writes; it never updates, deletes or backfills history. Migration count remains 114 with no pending model change.
+writes; it never updates, deletes or backfills history. Migration count advanced to 115 after the additive customer-master migration, with no pending model change.
 
 Migration `20261016191833_AddAuditRetentionControls` is migration 114. It adds `AuditLegalHolds` with scope/tenant and UTC-range checks, restrictive tenant linkage and active-range indexes. It also creates `MiniStoreAuditWriter` (INSERT only), `MiniStoreAuditReader` (SELECT only) and `MiniStoreAuditMaintainer` (SELECT/DELETE plus legal-hold management) roles with explicit denials. Hosting assigns real identities and supplies optional `AuditReadConnection` and `AuditMaintenanceConnection`; migration/deployment uses a separate privileged account. SQL integration applies all migrations and impersonates role members to prove the permission matrix.
+
+Migration `20261018144824_AddProfessionalCustomerMaster` is migration 115. It preserves every existing `Customers.Id`, `Name`, `AccountId` and sale reference; adds the professional profile, active/archive state and SQL `rowversion`; assigns deterministic tenant-local `CUS-000001` codes to existing rows; creates a Customer document sequence per tenant; and enforces tenant-local code uniqueness. It was applied to local Demo on 2026-10-18: one existing customer remained, had one non-empty unique code and stayed active; the owning tenant sequence advanced to 2 while empty tenants started at 1. EF reported no pending model change.
 
 Migration history includes `20261012122525_AddPurchaseOrderDerivedClosure` and `20261012125000_AddSupplierCreditNotes`, both applied to the local `MiniStoreDb`. The latter creates empty tenant-safe credit-note tables without rewriting bills or inventory. Migrations are source-controlled under `MiniStore.Infrastructure/Migrations`; generated designers and the model snapshot are metadata, not separate runtime features.
 
 Migration `20261014161000_AddDemandAllocationAndDirectDelivery` adds the fulfillment route/destination and direct-delivered quantity to existing purchase tables, backfills existing orders as Warehouse route, and creates tenant-safe demand-allocation and delivery-evidence tables. It does not create stock or journals and was applied to the local `MiniStoreDb` on 2026-10-14.
 
 ## Transactions and concurrency
-`UnitOfWork.ExecuteInTransactionAsync` starts a Serializable database transaction, executes an operation, calls one `SaveChangesAsync`, then commits. Sales, purchases, transfers, putaway and internal location relocation use it. ProductStock, ProductLocationStock and StockTransfer use rowversion concurrency tokens. General, discount, inventory, invoice and POS terminal experience settings use rowversion to varying degrees.
+`UnitOfWork.ExecuteInTransactionAsync` starts a Serializable database transaction, executes an operation, calls one `SaveChangesAsync`, then commits. Sales, purchases, customer create/update/archive/restore, transfers, putaway and internal location relocation use it. Customer, ProductStock, ProductLocationStock and StockTransfer use rowversion concurrency tokens. General, discount, inventory, invoice and POS terminal experience settings use rowversion to varying degrees.
 
 ## Update rules
 Changing an entity/configuration requires a migration, update to this file and `database/tables.md`, affected entity/module docs, and validation of existing data. Never alter a migration already applied to shared environments.

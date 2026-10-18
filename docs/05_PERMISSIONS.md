@@ -18,12 +18,13 @@ Scanned Draft line counting additionally requires `InventoryAdjustments.Count`; 
 Authentication is ASP.NET Core Identity cookie authentication. `PermissionAuthorizeAttribute` creates policies with `Permission:` prefix. Identity owns credentials, while `TenantRole`, `TenantRolePermission` and `TenantUserRole` own authorization inside each company. Both evaluators require an active tenant; Admin receives full access only from that company's protected Admin assignment. Non-Admin permissions resolve only through the active company's role definition.
 
 ## Defined permission groups
-Products, Warehouses, ProductStock, StockTransactions, StockMovements, LocationMovements, InventoryReconciliation, Suppliers, Purchases, PurchaseReturns, Sales, SalesReturns, StockTransfers, Users, Roles, and Settings are defined in `MiniStore.Application/Permissions/PermissionDefinitions.cs`. CRUD permissions exist for several modules even where matching actions do not exist (for example purchase/sale edit/delete). Purchase and sales returns define View/Create. Stock transfer also defines Submit/Approve/Reject/Post/Cancel. Location movements define View/Create. Inventory reconciliation and the physical StockMovement pilot define View only.
+Products, Warehouses, Customers, ProductStock, StockTransactions, StockMovements, LocationMovements, InventoryReconciliation, Suppliers, Purchases, PurchaseReturns, Sales, SalesReturns, StockTransfers, Users, Roles, and Settings are defined in `MiniStore.Application/Permissions/PermissionDefinitions.cs`. Customers separates View, Create, Edit and Archive; Archive also protects Restore because both change availability without deleting history. CRUD permissions exist for several modules even where matching actions do not exist (for example purchase/sale edit/delete). Purchase and sales returns define View/Create. Stock transfer also defines Submit/Approve/Reject/Post/Cancel. Location movements define View/Create. Inventory reconciliation and the physical StockMovement pilot define View only.
 
 ## Enforcement map
 | Module | Backend enforcement |
 |---|---|
 | Products, Warehouses, Suppliers, Product Stocks | View/Create/Edit/Delete controller actions have matching `PermissionAuthorize`. |
+| Customers | View protects list/details, Create protects creation, Edit protects profile/account changes, and Archive protects both archive and restore POST actions. All mutations require antiforgery and tenant resolution. |
 | Legacy direct purchases | View remains enforced for historical records. Create remains defined for compatibility but runtime creation is retired and redirects to permission-protected Purchase Requests; Edit/Delete definitions have no controller actions. |
 | Purchase returns | View/Create enforced; Create also requires a posted original purchase and sufficient current stock. |
 | Goods receipt returns | Separate View/Create permissions; Create accepts posted new-flow receipts only and revalidates remaining receipt quantity, current stock, tracking and accounting configuration. |
@@ -38,7 +39,7 @@ Products, Warehouses, ProductStock, StockTransactions, StockMovements, LocationM
 | Users | View/Create enforced; Edit/Delete definitions have no actions. |
 | Roles | View/Create/Edit/Delete enforced; controller uses `TenantRoleService`, system Admin cannot be edited/deleted and all IDs are resolved inside the active tenant. |
 | Settings | Requires `Administration.Access`, which only an Admin assignment in the active tenant can satisfy. |
-| Accounting master data | Accounts, branches, customers, tax rates and payment methods require the same tenant-Admin boundary; navigation visibility remains separately gated. |
+| Accounting master data | Accounts, branches, tax rates and payment methods require the tenant-Admin boundary. Customers now use the dedicated `Customers.*` permissions; navigation and Dashboard visibility require `Customers.View`. |
 | Audit events | `AuditEvents.View` protects the tenant reader, `AuditEvents.Export` is additionally required for export, and `AuditEvents.ViewSensitive` alone reveals masked request evidence. The repository still enforces the active tenant regardless of permission. Platform policies are separate: Owner/Administrator/Billing may view Platform/System events, Owner/Administrator may export, and only Owner may view sensitive request evidence. |
 | Audit retention | `PlatformAuditRetention` is a separate Platform policy restricted to Owner. Every create/release hold, checkpoint and retention command is server-authorized and antiforgery protected; no tenant permission grants this authority. |
 

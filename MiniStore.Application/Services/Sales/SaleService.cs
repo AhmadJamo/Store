@@ -147,7 +147,7 @@ public class SaleService : ISaleService
         if (dto.Items == null || dto.Items.Count == 0)
             throw new ArgumentException(
                 "Sale must contain at least one item.");
-        if (dto.CustomerId.HasValue && await _customerRepository.GetByIdAsync(dto.CustomerId.Value) is null) throw new ArgumentException("Selected customer was not found.");
+        if (dto.CustomerId.HasValue && await _customerRepository.GetByIdAsync(dto.CustomerId.Value) is not { IsActive: true }) throw new ArgumentException("Selected customer was not found or is archived.");
         if (dto.PaymentMethodId <= 0 || await _paymentMethodRepository.GetByIdAsync(dto.PaymentMethodId) is null) throw new ArgumentException("Select an active payment method.");
         var warehouse = await _warehouseRepository.GetByIdAsync(dto.WarehouseId)
             ?? throw new ArgumentException("Selected warehouse was not found.");

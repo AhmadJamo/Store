@@ -1,0 +1,5 @@
+@model MiniStore.Application.Dtos.Customers.CustomerFormPageDto
+@inject Microsoft.Extensions.Localization.IStringLocalizer<MiniStore.Web.SharedResource> Localizer
+@{ ViewData["Title"] = Localizer["Edit customer"]; }
+<div class="container py-4"><div class="d-flex justify-content-between align-items-center mb-3"><div><h2>@Localizer["Edit customer"]</h2><p class="text-muted mb-0">@Model.Form.CustomerCode</p></div><a asp-action="Details" asp-route-id="@Model.Form.Id" class="btn btn-outline-secondary">@Localizer["Back"]</a></div><form method="post" class="card card-body shadow-sm"><partial name="_Form" model="Model"/><div class="d-flex gap-2 mt-4"><button class="btn btn-primary">@Localizer["Save changes"]</button><a asp-action="Details" asp-route-id="@Model.Form.Id" class="btn btn-secondary">@Localizer["Cancel"]</a></div></form></div>
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

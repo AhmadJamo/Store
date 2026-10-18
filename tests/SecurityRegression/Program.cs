@@ -490,7 +490,7 @@ Check(typeof(MiniStore.Web.Areas.Platform.Controllers.PlatformAccountController)
         .GetParameters().Select(parameter => parameter.Name)
         .Contains("retryAfterSeconds"),
     "Platform login page must accept friendly rate-limit retry information");
-foreach (var controller in new[] { typeof(SettingsController), typeof(AccountsController), typeof(BranchesController), typeof(PaymentMethodsController), typeof(TaxRatesController), typeof(CustomersController) })
+foreach (var controller in new[] { typeof(SettingsController), typeof(AccountsController), typeof(BranchesController), typeof(PaymentMethodsController), typeof(TaxRatesController) })
 {
     var policy = controller.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy;
     Check(policy == $"{PermissionAuthorizeAttribute.PolicyPrefix}Administration.Access",
@@ -498,6 +498,40 @@ foreach (var controller in new[] { typeof(SettingsController), typeof(AccountsCo
     Check(controller.GetCustomAttributes<AuthorizeAttribute>().All(attribute => attribute.Roles is null),
         $"{controller.Name} must not trust a cross-company Identity role claim");
 }
+var customerController = typeof(CustomersController);
+Check(customerController.GetMethod(nameof(CustomersController.Index))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == $"{PermissionAuthorizeAttribute.PolicyPrefix}Customers.View" &&
+      customerController.GetMethods().Single(x => x.Name == nameof(CustomersController.Create) && x.GetCustomAttribute<HttpPostAttribute>() is not null).GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == $"{PermissionAuthorizeAttribute.PolicyPrefix}Customers.Create" &&
+      customerController.GetMethods().Single(x => x.Name == nameof(CustomersController.Edit) && x.GetCustomAttribute<HttpPostAttribute>() is not null).GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == $"{PermissionAuthorizeAttribute.PolicyPrefix}Customers.Edit" &&
+      customerController.GetMethod(nameof(CustomersController.Archive))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == $"{PermissionAuthorizeAttribute.PolicyPrefix}Customers.Archive" &&
+      customerController.GetMethod(nameof(CustomersController.Restore))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == $"{PermissionAuthorizeAttribute.PolicyPrefix}Customers.Archive",
+    "Customer profile actions must enforce separate view, create, edit and archive permissions");
+Check(customerController.GetMethods().Where(x => x.Name is nameof(CustomersController.Create) or nameof(CustomersController.Edit) or nameof(CustomersController.Archive) or nameof(CustomersController.Restore))
+        .Where(x => x.GetCustomAttribute<HttpPostAttribute>() is not null)
+        .All(x => x.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null),
+    "Every customer mutation must require antiforgery validation");
+Check(PermissionDefinitions.All.Count(x => x.Name.StartsWith("Customers.", StringComparison.Ordinal)) == 4,
+    "Customer master must declare exactly four independent permissions");
+
+var customerMaster = new Customer("CUS-000001", "Acme Customer", 1);
+customerMaster.UpdateProfile(CustomerType.Company, "Acme Customer", "Acme Legal", "+962790000000",
+    "customer@example.com", "TAX-1", "REG-1", "https://example.com", "ar-JO", "Asia/Amman", "Priority customer");
+Check(customerMaster.CustomerCode == "CUS-000001" && customerMaster.IsActive && customerMaster.Email == "customer@example.com",
+    "Customer master must preserve generated identity and normalized profile data");
+customerMaster.Archive(new DateTime(2026, 10, 18, 12, 0, 0, DateTimeKind.Utc));
+Check(!customerMaster.IsActive && customerMaster.ArchivedAtUtc.HasValue,
+    "Customer archive must preserve the record while disabling new use");
+customerMaster.Restore();
+Check(customerMaster.IsActive && customerMaster.ArchivedAtUtc is null,
+    "Customer restore must reactivate the same stable identity");
+CheckArgumentThrows(() => new Customer("bad code", "Customer", 1),
+    "Customer codes must reject whitespace and unsafe identity formats");
+CheckArgumentThrows(() => customerMaster.UpdateProfile(CustomerType.Company, "Customer", null, null,
+        "invalid-email", null, null, null, "ar-JO", "Asia/Amman", null),
+    "Customer profile must reject invalid email addresses");
+var customerModel = db.Model.FindEntityType(typeof(Customer))!;
+Check(customerModel.FindProperty(nameof(Customer.RowVersion))!.IsConcurrencyToken &&
+      customerModel.GetIndexes().Any(x => x.IsUnique && x.Properties.Any(p => p.Name == nameof(Customer.CustomerCode))),
+    "Customer model must enforce optimistic concurrency and tenant-safe unique codes");
 var workflowCatalogAction = typeof(SettingsController).GetMethod(nameof(SettingsController.WorkflowCatalog))!;
 Check(workflowCatalogAction.GetCustomAttribute<HttpGetAttribute>() is not null,
     "Workflow catalog must be a read-only settings action");

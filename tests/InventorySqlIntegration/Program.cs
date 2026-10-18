@@ -82,6 +82,7 @@ try
     await VerifyIndependentSecurityAuditAsync(tenantOneId, connectionString);
     await VerifyAuditRetentionAndDatabaseRolesAsync(connectionString);
     await VerifyLegacyAuditCutoverAsync(tenantOneId, connectionString);
+    await VerifyProfessionalCustomerMasterAsync(tenantOneId, tenantTwoId, connectionString);
 
     await VerifyTenantIsolationAndReconciliationAsync(
         tenantOneId,
@@ -128,7 +129,7 @@ try
     await VerifyInventoryBalanceProjectionAsync(tenantOneId, tenantOneFixture.ProductId, expectedOnHand: 2m, connectionString);
     await VerifyOpeningTrackingAllocationAsync(tenantOneId, tenantOneFixture.ProductId, tenantOneFixture.WarehouseId, connectionString);
 
-    Console.WriteLine("Passed SQL integration checks: semantic coverage catalog, legacy-audit freeze and rollback, semantic role/settings, denied-security, permission-aware audit reader/export, legal hold, signed checkpoint, manifest-before-delete retention and SQL audit-role separation plus audit-event rollback, isolation, append-only and integrity; tenant isolation, reconciliation, balances, replenishment purchase-request source concurrency, 3-product/2-supplier split awards, receipt, vendor-bill and supplier-payment concurrency, controlled payment reversal and retry, three-way matching override evidence, GRNI posting and clearing, purchase accounting reconciliation, payable settlement, receipt-based supplier returns, landed-cost valuation, purchasing analytics, idempotent barcode receipt drafts, adjustment posting, tracked operations, quarantine and recall.");
+    Console.WriteLine("Passed SQL integration checks: professional customer tenant isolation, code uniqueness, archive visibility and rowversion concurrency; semantic coverage catalog, legacy-audit freeze and rollback, semantic role/settings, denied-security, permission-aware audit reader/export, legal hold, signed checkpoint, manifest-before-delete retention and SQL audit-role separation plus audit-event rollback, isolation, append-only and integrity; tenant isolation, reconciliation, balances, replenishment purchase-request source concurrency, 3-product/2-supplier split awards, receipt, vendor-bill and supplier-payment concurrency, controlled payment reversal and retry, three-way matching override evidence, GRNI posting and clearing, purchase accounting reconciliation, payable settlement, receipt-based supplier returns, landed-cost valuation, purchasing analytics, idempotent barcode receipt drafts, adjustment posting, tracked operations, quarantine and recall.");
 }
 finally
 {
@@ -909,6 +910,93 @@ static async Task<(int ProductId, int StockId, int MeasurementUnitId, int Wareho
     await context.SaveChangesAsync();
 
     return (product.Id, stock.Id, unit.Id, warehouse.Id);
+}
+
+static async Task VerifyProfessionalCustomerMasterAsync(
+    int tenantOneId,
+    int tenantTwoId,
+    string connectionString)
+{
+    const string sharedCode = "CUS-SQL-001";
+    int tenantOneCustomerId;
+
+    await using (var tenantOne = new AppDbContext(
+                     CreateOptions(connectionString),
+                     new FixedTenantContext(tenantOneId)))
+    {
+        var account = new Account("SQL-CUST-AR", "SQL customer receivable", AccountType.Asset);
+        tenantOne.Accounts.Add(account);
+        await tenantOne.SaveChangesAsync();
+
+        var customer = new Customer(sharedCode, "Tenant One SQL Customer", account.Id);
+        tenantOne.Customers.Add(customer);
+        await tenantOne.SaveChangesAsync();
+        tenantOneCustomerId = customer.Id;
+
+        var duplicateAccount = new Account("SQL-CUST-AR-2", "SQL duplicate customer receivable", AccountType.Asset);
+        tenantOne.Accounts.Add(duplicateAccount);
+        await tenantOne.SaveChangesAsync();
+        tenantOne.Customers.Add(new Customer(sharedCode, "Duplicate SQL Customer", duplicateAccount.Id));
+        try
+        {
+            await tenantOne.SaveChangesAsync();
+            throw new InvalidOperationException("A duplicate customer code in the same tenant must be rejected.");
+        }
+        catch (DbUpdateException)
+        {
+            tenantOne.ChangeTracker.Clear();
+        }
+    }
+
+    await using (var tenantTwo = new AppDbContext(
+                     CreateOptions(connectionString),
+                     new FixedTenantContext(tenantTwoId)))
+    {
+        var account = new Account("SQL-CUST-AR", "SQL customer receivable", AccountType.Asset);
+        tenantTwo.Accounts.Add(account);
+        await tenantTwo.SaveChangesAsync();
+        tenantTwo.Customers.Add(new Customer(sharedCode, "Tenant Two SQL Customer", account.Id));
+        await tenantTwo.SaveChangesAsync();
+
+        if (await tenantTwo.Customers.AnyAsync(customer => customer.Id == tenantOneCustomerId))
+            throw new InvalidOperationException("A tenant must not see another tenant's customer.");
+    }
+
+    await using (var first = new AppDbContext(CreateOptions(connectionString), new FixedTenantContext(tenantOneId)))
+    await using (var second = new AppDbContext(CreateOptions(connectionString), new FixedTenantContext(tenantOneId)))
+    {
+        var firstCopy = await first.Customers.SingleAsync(customer => customer.Id == tenantOneCustomerId);
+        var secondCopy = await second.Customers.SingleAsync(customer => customer.Id == tenantOneCustomerId);
+        firstCopy.UpdateProfile(firstCopy.Type, "Tenant One Customer Updated", null, null, null, null, null, null,
+            firstCopy.PreferredLanguage, firstCopy.TimeZoneId, null);
+        secondCopy.UpdateProfile(secondCopy.Type, "Tenant One Customer Stale", null, null, null, null, null, null,
+            secondCopy.PreferredLanguage, secondCopy.TimeZoneId, null);
+        await first.SaveChangesAsync();
+        try
+        {
+            await second.SaveChangesAsync();
+            throw new InvalidOperationException("A stale customer update must be rejected by rowversion concurrency.");
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            // Expected: the first edit owns the new row version.
+        }
+    }
+
+    await using (var tenantOne = new AppDbContext(
+                     CreateOptions(connectionString),
+                     new FixedTenantContext(tenantOneId)))
+    {
+        var customer = await tenantOne.Customers.SingleAsync(row => row.Id == tenantOneCustomerId);
+        customer.Archive(DateTime.UtcNow);
+        await tenantOne.SaveChangesAsync();
+
+        var repository = new CustomerRepository(tenantOne);
+        if ((await repository.GetAllAsync()).Any(row => row.Id == tenantOneCustomerId))
+            throw new InvalidOperationException("Archived customers must be hidden from normal customer selection.");
+        if (!(await repository.GetAllAsync(includeArchived: true)).Any(row => row.Id == tenantOneCustomerId))
+            throw new InvalidOperationException("Archived customers must remain available for history and administration.");
+    }
 }
 
 static async Task VerifyReplenishmentPurchaseRequestSourceConcurrencyAsync(

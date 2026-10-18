@@ -2704,4 +2704,58 @@
   <data name="Audit scope Tenant" xml:space="preserve"><value>الشركة</value></data>
   <data name="Audit scope Platform" xml:space="preserve"><value>المنصة</value></data>
   <data name="Audit scope System" xml:space="preserve"><value>النظام</value></data>
+  <data name="Customer code" xml:space="preserve"><value>رمز الزبون</value></data>
+  <data name="Generated automatically" xml:space="preserve"><value>يُنشأ تلقائيًا</value></data>
+  <data name="Customer type" xml:space="preserve"><value>نوع الزبون</value></data>
+  <data name="Company" xml:space="preserve"><value>شركة</value></data>
+  <data name="Individual" xml:space="preserve"><value>فرد</value></data>
+  <data name="Preferred language" xml:space="preserve"><value>اللغة المفضلة</value></data>
+  <data name="Customer name" xml:space="preserve"><value>اسم الزبون</value></data>
+  <data name="Receivable account" xml:space="preserve"><value>حساب الذمم المدينة</value></data>
+  <data name="Select customer account" xml:space="preserve"><value>اختر حساب الزبون</value></data>
+  <data name="Add customer" xml:space="preserve"><value>إضافة زبون</value></data>
+  <data name="Edit customer" xml:space="preserve"><value>تعديل الزبون</value></data>
+  <data name="Save customer" xml:space="preserve"><value>حفظ الزبون</value></data>
+  <data name="Create the customer profile; contacts and addresses can be added in a later step." xml:space="preserve"><value>أنشئ ملف الزبون الأساسي؛ يمكن إضافة جهات الاتصال والعناوين في خطوة لاحقة.</value></data>
+  <data name="Search and manage active and archived customer profiles." xml:space="preserve"><value>ابحث في ملفات الزبائن النشطين والمؤرشفين وأدرها.</value></data>
+  <data name="Code, name, phone, email or tax number" xml:space="preserve"><value>الرمز أو الاسم أو الهاتف أو البريد أو الرقم الضريبي</value></data>
+  <data name="Include archived" xml:space="preserve"><value>إظهار المؤرشفين</value></data>
+  <data name="Archived" xml:space="preserve"><value>مؤرشف</value></data>
+  <data name="No customers found." xml:space="preserve"><value>لم يتم العثور على زبائن.</value></data>
+  <data name="Customer pages" xml:space="preserve"><value>صفحات الزبائن</value></data>
+  <data name="Customer profile" xml:space="preserve"><value>ملف الزبون</value></data>
+  <data name="Commercial settings" xml:space="preserve"><value>الإعدادات التجارية</value></data>
+  <data name="Archiving prevents this customer from being selected for new sales while preserving history." xml:space="preserve"><value>تمنع الأرشفة اختيار هذا الزبون في مبيعات جديدة مع الحفاظ على تاريخه.</value></data>
+  <data name="Archive customer" xml:space="preserve"><value>أرشفة الزبون</value></data>
+  <data name="This customer is archived and remains available in historical documents." xml:space="preserve"><value>هذا الزبون مؤرشف ويبقى ظاهرًا في المستندات التاريخية.</value></data>
+  <data name="Restore customer" xml:space="preserve"><value>استعادة الزبون</value></data>
+  <data name="Customer created successfully." xml:space="preserve"><value>تم إنشاء الزبون بنجاح.</value></data>
+  <data name="Customer updated successfully." xml:space="preserve"><value>تم تحديث الزبون بنجاح.</value></data>
+  <data name="Customer archived successfully." xml:space="preserve"><value>تمت أرشفة الزبون بنجاح.</value></data>
+  <data name="Customer restored successfully." xml:space="preserve"><value>تمت استعادة الزبون بنجاح.</value></data>
+  <data name="Review customer profile" xml:space="preserve"><value>مراجعة ملف الزبون</value></data>
+  <data name="Review the customer profile before using it in a new sale." xml:space="preserve"><value>راجع بيانات الزبون قبل استخدامه في عملية بيع جديدة.</value></data>
+  <data name="Return to customer list" xml:space="preserve"><value>العودة إلى قائمة الزبائن</value></data>
+  <data name="The customer remains in history and is excluded from new sales." xml:space="preserve"><value>يبقى الزبون في السجلات التاريخية ويُستبعد من المبيعات الجديدة.</value></data>
+  <data name="Customer receivable account is required." xml:space="preserve"><value>حساب ذمم الزبون مطلوب.</value></data>
+  <data name="Customer type is invalid." xml:space="preserve"><value>نوع الزبون غير صالح.</value></data>
+  <data name="Customer name is required and cannot exceed 200 characters." xml:space="preserve"><value>اسم الزبون مطلوب ولا يجوز أن يتجاوز 200 حرف.</value></data>
+  <data name="Customer legal name cannot exceed 200 characters." xml:space="preserve"><value>لا يجوز أن يتجاوز الاسم القانوني للزبون 200 حرف.</value></data>
+  <data name="Customer phone cannot exceed 50 characters." xml:space="preserve"><value>لا يجوز أن يتجاوز هاتف الزبون 50 حرفًا.</value></data>
+  <data name="Customer email address is invalid." xml:space="preserve"><value>البريد الإلكتروني للزبون غير صالح.</value></data>
+  <data name="Customer tax number cannot exceed 100 characters." xml:space="preserve"><value>لا يجوز أن يتجاوز الرقم الضريبي للزبون 100 حرف.</value></data>
+  <data name="Customer registration number cannot exceed 100 characters." xml:space="preserve"><value>لا يجوز أن يتجاوز رقم تسجيل الزبون 100 حرف.</value></data>
+  <data name="Customer website must be a valid HTTP or HTTPS address." xml:space="preserve"><value>يجب أن يكون موقع الزبون عنوان HTTP أو HTTPS صالحًا.</value></data>
+  <data name="Customer language must be Arabic or English." xml:space="preserve"><value>يجب أن تكون لغة الزبون العربية أو الإنجليزية.</value></data>
+  <data name="Customer time zone is required and cannot exceed 100 characters." xml:space="preserve"><value>المنطقة الزمنية للزبون مطلوبة ولا يجوز أن تتجاوز 100 حرف.</value></data>
+  <data name="Customer notes cannot exceed 1000 characters." xml:space="preserve"><value>لا يجوز أن تتجاوز ملاحظات الزبون 1000 حرف.</value></data>
+  <data name="Customer is already archived." xml:space="preserve"><value>الزبون مؤرشف بالفعل.</value></data>
+  <data name="Customer is already active." xml:space="preserve"><value>الزبون نشط بالفعل.</value></data>
+  <data name="Customer was not found." xml:space="preserve"><value>لم يتم العثور على الزبون.</value></data>
+  <data name="Customer was modified by another user. Reload and try again." xml:space="preserve"><value>عُدّلت بيانات الزبون بواسطة مستخدم آخر. أعد تحميل الصفحة وحاول مجددًا.</value></data>
+  <data name="Selected customer account was not found." xml:space="preserve"><value>لم يتم العثور على حساب الزبون المحدد.</value></data>
+  <data name="Customer receivable account must be a subaccount in the chart of accounts." xml:space="preserve"><value>يجب أن يكون حساب ذمم الزبون حسابًا فرعيًا في شجرة الحسابات.</value></data>
+  <data name="Customer receivable account is already assigned to another customer." xml:space="preserve"><value>حساب الذمم المحدد مرتبط بزبون آخر.</value></data>
+  <data name="Customer name already exists." xml:space="preserve"><value>اسم الزبون موجود مسبقًا.</value></data>
+  <data name="Selected customer was not found or is archived." xml:space="preserve"><value>لم يتم العثور على الزبون المحدد أو أنه مؤرشف.</value></data>
 </root>

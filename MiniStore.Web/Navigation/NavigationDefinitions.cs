@@ -22,7 +22,7 @@ public static class NavigationDefinitions
                 "bi-people",
                 "Customers",
                 "Index",
-                "Settings.View",
+                "Customers.View",
                 20),
 
             new NavigationItem(

@@ -1,0 +1,20 @@
+@model MiniStore.Application.Dtos.Customers.CustomerFormPageDto
+@using MiniStore.Domain.Entities
+@inject Microsoft.Extensions.Localization.IStringLocalizer<MiniStore.Web.SharedResource> Localizer
+<input asp-for="Form.Id" type="hidden" /><input asp-for="Form.RowVersion" type="hidden" />
+<div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+<div class="row g-3">
+ <div class="col-lg-4"><label asp-for="Form.CustomerCode" class="form-label">@Localizer["Customer code"]</label><input asp-for="Form.CustomerCode" class="form-control" readonly placeholder="@Localizer["Generated automatically"]" /></div>
+ <div class="col-lg-4"><label asp-for="Form.Type" class="form-label">@Localizer["Customer type"]</label><select asp-for="Form.Type" class="form-select"><option value="@CustomerType.Company">@Localizer["Company"]</option><option value="@CustomerType.Individual">@Localizer["Individual"]</option></select></div>
+ <div class="col-lg-4"><label asp-for="Form.PreferredLanguage" class="form-label">@Localizer["Preferred language"]</label><select asp-for="Form.PreferredLanguage" class="form-select"><option value="ar-JO">@Localizer["Arabic"]</option><option value="en-US">@Localizer["English"]</option></select></div>
+ <div class="col-lg-6"><label asp-for="Form.Name" class="form-label">@Localizer["Customer name"]</label><input asp-for="Form.Name" class="form-control" /><span asp-validation-for="Form.Name" class="text-danger"></span></div>
+ <div class="col-lg-6"><label asp-for="Form.LegalName" class="form-label">@Localizer["Legal name"]</label><input asp-for="Form.LegalName" class="form-control" /></div>
+ <div class="col-lg-4"><label asp-for="Form.Phone" class="form-label">@Localizer["Phone"]</label><input asp-for="Form.Phone" class="form-control" /></div>
+ <div class="col-lg-4"><label asp-for="Form.Email" class="form-label">@Localizer["Email"]</label><input asp-for="Form.Email" type="email" class="form-control" /><span asp-validation-for="Form.Email" class="text-danger"></span></div>
+ <div class="col-lg-4"><label asp-for="Form.Website" class="form-label">@Localizer["Website"]</label><input asp-for="Form.Website" class="form-control" /><span asp-validation-for="Form.Website" class="text-danger"></span></div>
+ <div class="col-lg-4"><label asp-for="Form.TaxNumber" class="form-label">@Localizer["Tax number"]</label><input asp-for="Form.TaxNumber" class="form-control" /></div>
+ <div class="col-lg-4"><label asp-for="Form.RegistrationNumber" class="form-label">@Localizer["Registration number"]</label><input asp-for="Form.RegistrationNumber" class="form-control" /></div>
+ <div class="col-lg-4"><label asp-for="Form.TimeZoneId" class="form-label">@Localizer["Time Zone"]</label><input asp-for="Form.TimeZoneId" class="form-control" /></div>
+ <div class="col-12"><label asp-for="Form.AccountId" class="form-label">@Localizer["Receivable account"]</label><select asp-for="Form.AccountId" class="form-select"><option value="">@Localizer["Select customer account"]</option>@foreach(var account in Model.Accounts){<option value="@account.Id">@account.Code — @account.Name</option>}</select><span asp-validation-for="Form.AccountId" class="text-danger"></span></div>
+ <div class="col-12"><label asp-for="Form.Notes" class="form-label">@Localizer["Notes"]</label><textarea asp-for="Form.Notes" class="form-control" rows="3"></textarea></div>
+</div>

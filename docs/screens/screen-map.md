@@ -14,6 +14,7 @@
 | `Views/ProductCategories/Index.cshtml` | category create/list/activate screen with language-neutral codes and preserved inactive categories. |
 | `Views/Recipes/{Index,Edit}.cshtml` | bilingual prepared-product recipe list and dynamic immutable-version editor using active managed units, immutable conversion snapshots and visible negative policy. |
 | `Views/Warehouses/*`, `Views/Suppliers/*` | warehouse master data plus responsive supplier profile cards/forms. Supplier forms capture legal, tax, contact, accounting and commercial data and select multiple eligible products with search. |
+| `Views/Customers/{Index,Create,Edit,Details,_Form}.cshtml` | responsive CUS-010 customer master: server-side search/sort/pages, company/individual profile, receivable account, archive/restore state and permission-aware one-time actions without horizontal scrolling. |
 | `Views/ProductStocks/{Index,Create,Edit}.cshtml` | balance, moving average and inventory value list; opening balance/direct adjustment; negative recipe exceptions are highlighted. |
 | `Views/StockTransactions/{Index,Create}.cshtml` | paged/filterable movement list with unit cost, movement value and variance; manual adjustments include reason-required kitchen variance. |
 | `Views/WarehouseLocations/{Index,Create,Edit}.cshtml`, `Views/UnassignedStock/Index.cshtml` | parent-indented location master data plus warehouse/product search; WarehouseLocations receives projected Application DTOs rather than domain entities. Putaway-rule administration and capacity-aware suggestions remain unchanged. |

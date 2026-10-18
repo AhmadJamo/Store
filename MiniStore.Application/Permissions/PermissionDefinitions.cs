@@ -91,6 +91,11 @@ public static class PermissionDefinitions
         new("Suppliers.Edit", "Edit Supplier", "Suppliers"),
         new("Suppliers.Delete", "Delete Supplier", "Suppliers"),
 
+        new("Customers.View", "View Customers", "Customers"),
+        new("Customers.Create", "Create Customer", "Customers"),
+        new("Customers.Edit", "Edit Customer", "Customers"),
+        new("Customers.Archive", "Archive or Restore Customer", "Customers"),
+
         // ==========================================
         // Purchases
         // ==========================================
