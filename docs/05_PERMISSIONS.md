@@ -24,7 +24,7 @@ Products, Warehouses, Customers, ProductStock, StockTransactions, StockMovements
 | Module | Backend enforcement |
 |---|---|
 | Products, Warehouses, Suppliers, Product Stocks | View/Create/Edit/Delete controller actions have matching `PermissionAuthorize`. |
-| Customers | View protects list/details, Create protects creation, Edit protects profile/account changes, and Archive protects both archive and restore POST actions. All mutations require antiforgery and tenant resolution. |
+| Customers | View protects list/details, Create protects creation, Edit protects profile/account/contact/address changes, and Archive protects archive/restore for the customer and its contacts/addresses. All mutations require antiforgery and tenant resolution. |
 | Legacy direct purchases | View remains enforced for historical records. Create remains defined for compatibility but runtime creation is retired and redirects to permission-protected Purchase Requests; Edit/Delete definitions have no controller actions. |
 | Purchase returns | View/Create enforced; Create also requires a posted original purchase and sufficient current stock. |
 | Goods receipt returns | Separate View/Create permissions; Create accepts posted new-flow receipts only and revalidates remaining receipt quantity, current stock, tracking and accounting configuration. |

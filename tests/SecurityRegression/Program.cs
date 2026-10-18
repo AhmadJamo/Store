@@ -509,6 +509,12 @@ Check(customerController.GetMethods().Where(x => x.Name is nameof(CustomersContr
         .Where(x => x.GetCustomAttribute<HttpPostAttribute>() is not null)
         .All(x => x.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null),
     "Every customer mutation must require antiforgery validation");
+Check(customerController.GetMethods().Where(x=>x.Name is nameof(CustomersController.SaveContact) or nameof(CustomersController.SaveAddress))
+        .All(x=>x.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy==$"{PermissionAuthorizeAttribute.PolicyPrefix}Customers.Edit"&&x.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null),
+    "Customer contact and address edits must require edit permission and antiforgery");
+Check(customerController.GetMethods().Where(x=>x.Name is nameof(CustomersController.ArchiveContact) or nameof(CustomersController.RestoreContact) or nameof(CustomersController.ArchiveAddress) or nameof(CustomersController.RestoreAddress))
+        .All(x=>x.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy==$"{PermissionAuthorizeAttribute.PolicyPrefix}Customers.Archive"&&x.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null),
+    "Customer contact and address status changes must require archive permission and antiforgery");
 Check(PermissionDefinitions.All.Count(x => x.Name.StartsWith("Customers.", StringComparison.Ordinal)) == 4,
     "Customer master must declare exactly four independent permissions");
 
@@ -532,6 +538,13 @@ var customerModel = db.Model.FindEntityType(typeof(Customer))!;
 Check(customerModel.FindProperty(nameof(Customer.RowVersion))!.IsConcurrencyToken &&
       customerModel.GetIndexes().Any(x => x.IsUnique && x.Properties.Any(p => p.Name == nameof(Customer.CustomerCode))),
     "Customer model must enforce optimistic concurrency and tenant-safe unique codes");
+var contact=new CustomerContact(1,"Accounts Payable","Finance","0790000000","ap@example.com",true);
+contact.Archive(DateTime.UtcNow); Check(!contact.IsActive&&!contact.IsPrimary,"Archived customer contacts must stop being primary without deletion"); contact.Restore();
+var address=new CustomerAddress(1,CustomerAddressType.Billing,"Head office","Street 1",null,"Amman",null,"11118","jo",true);
+Check(address.CountryCode=="JO"&&address.IsDefault,"Customer addresses must normalize country codes and preserve default type");
+address.Archive(DateTime.UtcNow); Check(!address.IsActive&&!address.IsDefault,"Archived customer addresses must stop being defaults without deletion");
+CheckArgumentThrows(()=>new CustomerAddress(1,CustomerAddressType.Shipping,"Delivery","Street",null,"Amman",null,null,"JOR",false),"Customer addresses must reject invalid country codes");
+Check(db.Model.FindEntityType(typeof(CustomerContact))!.FindProperty(nameof(CustomerContact.RowVersion))!.IsConcurrencyToken&&db.Model.FindEntityType(typeof(CustomerAddress))!.FindProperty(nameof(CustomerAddress.RowVersion))!.IsConcurrencyToken,"Customer contacts and addresses must use rowversion concurrency");
 var workflowCatalogAction = typeof(SettingsController).GetMethod(nameof(SettingsController.WorkflowCatalog))!;
 Check(workflowCatalogAction.GetCustomAttribute<HttpGetAttribute>() is not null,
     "Workflow catalog must be a read-only settings action");

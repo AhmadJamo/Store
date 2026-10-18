@@ -28,7 +28,10 @@ public class CustomerService(ICustomerRepository customers, IAccountRepository a
     {
         var customer = await customers.GetByIdAsync(id); if (customer is null) return null;
         var account = await accounts.GetByIdAsync(customer.AccountId);
-        return MapDetails(customer, account is null ? "—" : $"{account.Code} — {account.Name}");
+        var result=MapDetails(customer, account is null ? "—" : $"{account.Code} — {account.Name}");
+        result.Contacts.AddRange((await customers.GetContactsAsync(id,true)).Select(x=>new CustomerContactDto{Id=x.Id,Name=x.Name,Role=x.Role,Phone=x.Phone,Email=x.Email,IsPrimary=x.IsPrimary,IsActive=x.IsActive,RowVersion=x.RowVersion}));
+        result.Addresses.AddRange((await customers.GetAddressesAsync(id,true)).Select(x=>new CustomerAddressDto{Id=x.Id,Type=x.Type,Label=x.Label,AddressLine1=x.AddressLine1,AddressLine2=x.AddressLine2,City=x.City,StateOrProvince=x.StateOrProvince,PostalCode=x.PostalCode,CountryCode=x.CountryCode,IsDefault=x.IsDefault,IsActive=x.IsActive,RowVersion=x.RowVersion}));
+        return result;
     }
 
     public async Task<int> CreateAsync(CustomerFormDto dto)
@@ -54,6 +57,27 @@ public class CustomerService(ICustomerRepository customers, IAccountRepository a
 
     public async Task ArchiveAsync(CustomerStatusCommandDto dto) => await ChangeStatusAsync(dto, true);
     public async Task RestoreAsync(CustomerStatusCommandDto dto) => await ChangeStatusAsync(dto, false);
+
+    public async Task SaveContactAsync(CustomerContactCommandDto dto)=>await unitOfWork.ExecuteInTransactionAsync(async()=>
+    {
+        _=await customers.GetByIdAsync(dto.CustomerId)??throw new InvalidOperationException("Customer was not found.");
+        CustomerContact contact;
+        if(dto.Id==0){contact=new CustomerContact(dto.CustomerId,dto.Name,dto.Role,dto.Phone,dto.Email,dto.IsPrimary);await customers.AddContactAsync(contact);}
+        else {contact=await customers.GetContactAsync(dto.CustomerId,dto.Id)??throw new InvalidOperationException("Customer contact was not found."); EnsureVersion(contact.RowVersion,dto.RowVersion); contact.Update(dto.Name,dto.Role,dto.Phone,dto.Email,dto.IsPrimary);}
+        if(dto.IsPrimary) foreach(var other in (await customers.GetContactsAsync(dto.CustomerId)).Where(other=>other.Id!=contact.Id&&other.IsPrimary)) other.RemovePrimary();
+    });
+    public async Task SaveAddressAsync(CustomerAddressCommandDto dto)=>await unitOfWork.ExecuteInTransactionAsync(async()=>
+    {
+        _=await customers.GetByIdAsync(dto.CustomerId)??throw new InvalidOperationException("Customer was not found.");
+        CustomerAddress address;
+        if(dto.Id==0){address=new CustomerAddress(dto.CustomerId,dto.Type,dto.Label,dto.AddressLine1,dto.AddressLine2,dto.City,dto.StateOrProvince,dto.PostalCode,dto.CountryCode,dto.IsDefault);await customers.AddAddressAsync(address);}
+        else {address=await customers.GetAddressAsync(dto.CustomerId,dto.Id)??throw new InvalidOperationException("Customer address was not found."); EnsureVersion(address.RowVersion,dto.RowVersion); address.Update(dto.Type,dto.Label,dto.AddressLine1,dto.AddressLine2,dto.City,dto.StateOrProvince,dto.PostalCode,dto.CountryCode,dto.IsDefault);}
+        if(dto.IsDefault) foreach(var other in (await customers.GetAddressesAsync(dto.CustomerId)).Where(other=>other.Id!=address.Id&&other.Type==dto.Type&&other.IsDefault)) other.RemoveDefault();
+    });
+    public async Task ChangeContactStatusAsync(CustomerChildStatusCommandDto dto,bool archive)=>await unitOfWork.ExecuteInTransactionAsync(async()=>{var x=await customers.GetContactAsync(dto.CustomerId,dto.Id)??throw new InvalidOperationException("Customer contact was not found.");EnsureVersion(x.RowVersion,dto.RowVersion);if(archive)x.Archive(DateTime.UtcNow);else x.Restore();});
+    public async Task ChangeAddressStatusAsync(CustomerChildStatusCommandDto dto,bool archive)=>await unitOfWork.ExecuteInTransactionAsync(async()=>{var x=await customers.GetAddressAsync(dto.CustomerId,dto.Id)??throw new InvalidOperationException("Customer address was not found.");EnsureVersion(x.RowVersion,dto.RowVersion);if(archive)x.Archive(DateTime.UtcNow);else x.Restore();});
+
+    private static void EnsureVersion(byte[] current,byte[] submitted){if(submitted.Length==0||!current.SequenceEqual(submitted))throw new InvalidOperationException("Customer information was modified by another user. Reload and try again.");}
 
     private async Task ChangeStatusAsync(CustomerStatusCommandDto dto, bool archive) =>
         await unitOfWork.ExecuteInTransactionAsync(async () =>

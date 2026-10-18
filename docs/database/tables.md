@@ -42,6 +42,8 @@ Schema source is `AppDbContext`, configurations and migrations. Identity's stand
 - **ProductTemplates / Product variant columns:** category-owned template name/code/state plus Product.TemplateId?, VariantSignature? and VariantLabel?. A filtered tenant-safe unique index prevents repeated signatures within one template.
 - **Suppliers:** Id, Name, Phone?, Address?, AccountId?.
 - **Customers:** stable Id, tenant-generated CustomerCode, Company/Individual Type, Name/LegalName, Phone/Email, TaxNumber/RegistrationNumber, Website, PreferredLanguage, TimeZoneId, Notes, AccountId, IsActive/ArchivedAtUtc and RowVersion. Existing sales keep the same CustomerId; archive replaces deletion.
+- **CustomerContacts:** tenant/customer-owned name, neutral role, phone/email, one filtered active primary, archive state and RowVersion.
+- **CustomerAddresses:** tenant/customer-owned General/Billing/Shipping address, country code, one filtered active default per type, archive state and RowVersion.
 - **TaxRates:** Name, Rate, OutputAccountId, InputAccountId, IsPriceInclusive.
 - **AccountingSettings:** singleton posting links for purchase discount, sales discount, sales revenue and cost of sales.
 - **PaymentMethods:** Name, AccountId, IsActive; maps cash, bank, card or similar settlement method to a chart account.

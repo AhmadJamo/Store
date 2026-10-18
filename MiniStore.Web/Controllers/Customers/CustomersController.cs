@@ -42,6 +42,27 @@ public sealed class CustomersController(CustomerService service, IStringLocalize
     [HttpPost, ValidateAntiForgeryToken, PermissionAuthorize("Customers.Archive")]
     public async Task<IActionResult> Restore(CustomerStatusCommandDto command) => await ChangeStatus(command, false);
 
+    [HttpPost,ValidateAntiForgeryToken,PermissionAuthorize("Customers.Edit")]
+    public async Task<IActionResult> SaveContact(CustomerContactCommandDto command)=>await SaveChild(command.CustomerId,()=>service.SaveContactAsync(command),"Customer contact saved successfully.");
+    [HttpPost,ValidateAntiForgeryToken,PermissionAuthorize("Customers.Edit")]
+    public async Task<IActionResult> SaveAddress(CustomerAddressCommandDto command)=>await SaveChild(command.CustomerId,()=>service.SaveAddressAsync(command),"Customer address saved successfully.");
+    [HttpPost,ValidateAntiForgeryToken,PermissionAuthorize("Customers.Archive")]
+    public async Task<IActionResult> ArchiveContact(CustomerChildStatusCommandDto command)=>await SaveChild(command.CustomerId,()=>service.ChangeContactStatusAsync(command,true),"Customer contact archived successfully.");
+    [HttpPost,ValidateAntiForgeryToken,PermissionAuthorize("Customers.Archive")]
+    public async Task<IActionResult> RestoreContact(CustomerChildStatusCommandDto command)=>await SaveChild(command.CustomerId,()=>service.ChangeContactStatusAsync(command,false),"Customer contact restored successfully.");
+    [HttpPost,ValidateAntiForgeryToken,PermissionAuthorize("Customers.Archive")]
+    public async Task<IActionResult> ArchiveAddress(CustomerChildStatusCommandDto command)=>await SaveChild(command.CustomerId,()=>service.ChangeAddressStatusAsync(command,true),"Customer address archived successfully.");
+    [HttpPost,ValidateAntiForgeryToken,PermissionAuthorize("Customers.Archive")]
+    public async Task<IActionResult> RestoreAddress(CustomerChildStatusCommandDto command)=>await SaveChild(command.CustomerId,()=>service.ChangeAddressStatusAsync(command,false),"Customer address restored successfully.");
+
+    private async Task<IActionResult> SaveChild(int customerId,Func<Task> action,string success)
+    {
+        if(!ModelState.IsValid){TempData["NotificationType"]="error";TempData["NotificationMessage"]=localizer["Please correct the entered customer information."].Value;return RedirectToAction(nameof(Details),new{id=customerId});}
+        try{await action();TempData["Success"]=success;}
+        catch(Exception exception) when(exception is ArgumentException or InvalidOperationException){TempData["NotificationType"]="error";TempData["NotificationMessage"]=localizer[exception.Message].Value;}
+        return RedirectToAction(nameof(Details),new{id=customerId});
+    }
+
     private async Task<IActionResult> ChangeStatus(CustomerStatusCommandDto command, bool archive)
     {
         try { if (archive) await service.ArchiveAsync(command); else await service.RestoreAsync(command); TempData["Success"] = archive ? "Customer archived successfully." : "Customer restored successfully."; }

@@ -948,6 +948,26 @@ static async Task VerifyProfessionalCustomerMasterAsync(
         }
     }
 
+    await using (var tenantOne = new AppDbContext(CreateOptions(connectionString), new FixedTenantContext(tenantOneId)))
+    {
+        tenantOne.CustomerContacts.Add(new CustomerContact(tenantOneCustomerId,"SQL Primary Contact","Finance","0790000000","sql-contact@example.com",true));
+        tenantOne.CustomerAddresses.Add(new CustomerAddress(tenantOneCustomerId,CustomerAddressType.Billing,"SQL Billing","Street 1",null,"Amman",null,"11118","JO",true));
+        await tenantOne.SaveChangesAsync();
+    }
+
+    await using (var tenantTwoCheck = new AppDbContext(CreateOptions(connectionString), new FixedTenantContext(tenantTwoId)))
+    {
+        if(await tenantTwoCheck.CustomerContacts.AnyAsync()||await tenantTwoCheck.CustomerAddresses.AnyAsync())
+            throw new InvalidOperationException("Customer contacts and addresses must be isolated by tenant.");
+    }
+
+    await using (var duplicateDefault = new AppDbContext(CreateOptions(connectionString), new FixedTenantContext(tenantOneId)))
+    {
+        duplicateDefault.CustomerAddresses.Add(new CustomerAddress(tenantOneCustomerId,CustomerAddressType.Billing,"Duplicate default","Street 2",null,"Amman",null,null,"JO",true));
+        try { await duplicateDefault.SaveChangesAsync(); throw new InvalidOperationException("Only one active default address per customer and type may exist."); }
+        catch(DbUpdateException) { }
+    }
+
     await using (var tenantTwo = new AppDbContext(
                      CreateOptions(connectionString),
                      new FixedTenantContext(tenantTwoId)))

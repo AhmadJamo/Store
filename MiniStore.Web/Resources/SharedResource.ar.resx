@@ -2758,4 +2758,32 @@
   <data name="Customer receivable account is already assigned to another customer." xml:space="preserve"><value>حساب الذمم المحدد مرتبط بزبون آخر.</value></data>
   <data name="Customer name already exists." xml:space="preserve"><value>اسم الزبون موجود مسبقًا.</value></data>
   <data name="Selected customer was not found or is archived." xml:space="preserve"><value>لم يتم العثور على الزبون المحدد أو أنه مؤرشف.</value></data>
+  <data name="Customer contacts" xml:space="preserve"><value>جهات اتصال الزبون</value></data>
+  <data name="Customer addresses" xml:space="preserve"><value>عناوين الزبون</value></data>
+  <data name="Contact name" xml:space="preserve"><value>اسم جهة الاتصال</value></data>
+  <data name="Role" xml:space="preserve"><value>الدور</value></data>
+  <data name="Primary contact" xml:space="preserve"><value>جهة الاتصال الرئيسية</value></data>
+  <data name="Add contact" xml:space="preserve"><value>إضافة جهة اتصال</value></data>
+  <data name="Address label" xml:space="preserve"><value>اسم العنوان</value></data>
+  <data name="Address line 1" xml:space="preserve"><value>سطر العنوان الأول</value></data>
+  <data name="Address line 2" xml:space="preserve"><value>سطر العنوان الثاني</value></data>
+  <data name="City" xml:space="preserve"><value>المدينة</value></data>
+  <data name="State or province" xml:space="preserve"><value>المحافظة أو الولاية</value></data>
+  <data name="Postal code" xml:space="preserve"><value>الرمز البريدي</value></data>
+  <data name="Country code" xml:space="preserve"><value>رمز الدولة</value></data>
+  <data name="Default address" xml:space="preserve"><value>العنوان الافتراضي</value></data>
+  <data name="Add address" xml:space="preserve"><value>إضافة عنوان</value></data>
+  <data name="Default" xml:space="preserve"><value>افتراضي</value></data>
+  <data name="Billing" xml:space="preserve"><value>فوترة</value></data>
+  <data name="Shipping" xml:space="preserve"><value>تسليم</value></data>
+  <data name="Customer contact saved successfully." xml:space="preserve"><value>تم حفظ جهة اتصال الزبون بنجاح.</value></data>
+  <data name="Customer address saved successfully." xml:space="preserve"><value>تم حفظ عنوان الزبون بنجاح.</value></data>
+  <data name="Customer contact archived successfully." xml:space="preserve"><value>تمت أرشفة جهة اتصال الزبون بنجاح.</value></data>
+  <data name="Customer contact restored successfully." xml:space="preserve"><value>تمت استعادة جهة اتصال الزبون بنجاح.</value></data>
+  <data name="Customer address archived successfully." xml:space="preserve"><value>تمت أرشفة عنوان الزبون بنجاح.</value></data>
+  <data name="Customer address restored successfully." xml:space="preserve"><value>تمت استعادة عنوان الزبون بنجاح.</value></data>
+  <data name="Please correct the entered customer information." xml:space="preserve"><value>يرجى تصحيح بيانات الزبون المدخلة.</value></data>
+  <data name="Customer contact was not found." xml:space="preserve"><value>لم يتم العثور على جهة اتصال الزبون.</value></data>
+  <data name="Customer address was not found." xml:space="preserve"><value>لم يتم العثور على عنوان الزبون.</value></data>
+  <data name="Customer information was modified by another user. Reload and try again." xml:space="preserve"><value>عُدلت بيانات الزبون بواسطة مستخدم آخر. أعد تحميل الصفحة وحاول مجددًا.</value></data>
 </root>

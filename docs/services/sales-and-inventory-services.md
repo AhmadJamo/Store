@@ -7,6 +7,8 @@
 
 `CustomerService` owns the CUS-010 Customer master Application boundary. It returns DTO-only paged/searchable/sortable lists and form/detail models, generates tenant-local Customer numbers inside the existing UnitOfWork, validates receivable-account and uniqueness rules, and performs update/archive/restore with rowversion conflict protection. `SaleService` accepts only an active tenant customer for new sales; archived customers remain readable in historical flows.
 
+CUS-020 extends the same service/repository boundary for atomic contact/address create/update/default switching and archive/restore. It clears the previous active primary/default inside the UnitOfWork, validates submitted rowversion and exposes address snapshot DTOs for future sales documents without yet changing a sale.
+
 `RecipeService` creates a new immutable recipe version, deactivates the old version and validates ingredient/unit compatibility. SaleService reads active recipes and writes aggregated RecipeConsumption movements. StockTransactionService additionally permits a reason-required KitchenVariance movement; it may cross zero only when the ingredient explicitly enables controlled negative recipe consumption.
 
 `JournalPostingService` is the shared posting gateway for purchases, sales and sales returns. It accepts resolved journal lines from the feature workflow and centrally performs source duplicate detection, journal-number generation, balance/post validation and persistence inside the caller's UnitOfWork transaction. Fiscal-period and approval controls will attach here.

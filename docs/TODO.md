@@ -26,7 +26,8 @@ The ERP SaaS Foundation Blueprint is imported as a non-authoritative planning re
 - [x] P1-ARC-030 complete the first bounded architecture slice: WarehouseLocations now receives projected Application DTOs and no longer injects warehouse/location repositories; continue the pattern incrementally when other slices are touched.
 - [x] P2-CUS-040A / CUS-005 preserve CustomerId/SupplierId, expand Customer first and defer BusinessPartner unification to a separately approved CUS-110 gate.
 - [x] CUS-010 implement the additive professional customer master with stable ID, code/profile/archive/concurrency, DTO-only paged queries, permissions, localization and regression coverage.
-- [ ] CUS-020 add tenant-safe customer contacts and billing/shipping addresses with immutable document snapshots; implementation requires separate approval.
+- [x] CUS-020 add tenant-safe customer contacts and billing/shipping addresses with DTO snapshot contracts, defaults, archive and concurrency.
+- [ ] CUS-030 define customer sales/accounting settings and decide the receivable-account pattern before independent receivable invoices; requires separate approval.
 
 - [x] PUR-000 complete purchase architecture review, legacy compatibility boundary, migration strategy and vertical-slice roadmap.
 - [x] PUR-005 fix context ownership, quantity authority, staged currency, approval and GRNI boundaries before runtime implementation.

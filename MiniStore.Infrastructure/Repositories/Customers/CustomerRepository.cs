@@ -19,4 +19,10 @@ public class CustomerRepository(AppDbContext context) : ICustomerRepository
     public Task<bool> NameExistsAsync(string name, int? excludedId = null) => context.Customers.AnyAsync(x => x.Name == name.Trim() && (!excludedId.HasValue || x.Id != excludedId));
     public Task<bool> AccountAssignedAsync(int accountId, int? excludedId = null) => context.Customers.AnyAsync(x => x.AccountId == accountId && (!excludedId.HasValue || x.Id != excludedId));
     public Task AddAsync(Customer customer) => context.Customers.AddAsync(customer).AsTask();
+    public Task<List<CustomerContact>> GetContactsAsync(int customerId, bool includeArchived=false) => context.CustomerContacts.Where(x=>x.CustomerId==customerId&&(includeArchived||x.IsActive)).OrderByDescending(x=>x.IsPrimary).ThenBy(x=>x.Name).ToListAsync();
+    public Task<CustomerContact?> GetContactAsync(int customerId,int id)=>context.CustomerContacts.FirstOrDefaultAsync(x=>x.CustomerId==customerId&&x.Id==id);
+    public Task AddContactAsync(CustomerContact contact)=>context.CustomerContacts.AddAsync(contact).AsTask();
+    public Task<List<CustomerAddress>> GetAddressesAsync(int customerId,bool includeArchived=false)=>context.CustomerAddresses.Where(x=>x.CustomerId==customerId&&(includeArchived||x.IsActive)).OrderBy(x=>x.Type).ThenByDescending(x=>x.IsDefault).ThenBy(x=>x.Label).ToListAsync();
+    public Task<CustomerAddress?> GetAddressAsync(int customerId,int id)=>context.CustomerAddresses.FirstOrDefaultAsync(x=>x.CustomerId==customerId&&x.Id==id);
+    public Task AddAddressAsync(CustomerAddress address)=>context.CustomerAddresses.AddAsync(address).AsTask();
 }

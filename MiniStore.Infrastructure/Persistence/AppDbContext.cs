@@ -166,6 +166,8 @@ public class AppDbContext
     public DbSet<JournalEntryLine> JournalEntryLines => Set<JournalEntryLine>();
     public DbSet<FiscalPeriod> FiscalPeriods => Set<FiscalPeriod>();
     public DbSet<Customer> Customers => Set<Customer>();
+    public DbSet<CustomerContact> CustomerContacts => Set<CustomerContact>();
+    public DbSet<CustomerAddress> CustomerAddresses => Set<CustomerAddress>();
     public DbSet<TaxRate> TaxRates => Set<TaxRate>();
     public DbSet<PosTerminal> PosTerminals => Set<PosTerminal>();
     public DbSet<PosTerminalProduct> PosTerminalProducts => Set<PosTerminalProduct>();
