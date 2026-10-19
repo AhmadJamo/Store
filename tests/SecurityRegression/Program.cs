@@ -538,6 +538,29 @@ CheckArgumentThrows(()=>new SalesPriceList("X","Invalid","JOD",null,null,0.01m),
 CheckArgumentThrows(()=>priceListMaster.AddRule(SalesPriceRuleScope.Product,null,null,1,1m,1,null,null,SalesPriceComputationType.FixedPrice,1m),"Product price rules must require a product target");
 Check(TenantIsolationModel.TenantOwnedTypes.Contains(typeof(SalesPriceList))&&TenantIsolationModel.TenantOwnedTypes.Contains(typeof(SalesPriceRule)),
     "Sales price lists and rules must be tenant owned");
+Check(PermissionDefinitions.All.Count(x=>x.Name.StartsWith("SalesQuotations.",StringComparison.Ordinal))==6,
+    "Sales quotations must separate view, create and lifecycle permissions");
+var salesQuotationController=typeof(SalesQuotationsController);
+Check(salesQuotationController.GetMethod(nameof(SalesQuotationsController.Index))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SalesQuotations.View"&&
+      salesQuotationController.GetMethod(nameof(SalesQuotationsController.Details))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SalesQuotations.View"&&
+      salesQuotationController.GetMethods().Single(x=>x.Name==nameof(SalesQuotationsController.Create)&&x.GetCustomAttribute<HttpPostAttribute>() is not null).GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SalesQuotations.Create",
+    "Sales quotation reads and creation must enforce their dedicated permissions");
+Check(salesQuotationController.GetMethods().Where(x=>x.GetCustomAttribute<HttpPostAttribute>() is not null)
+      .All(x=>x.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null),
+    "Every sales quotation mutation must require antiforgery validation");
+Check(salesQuotationController.GetMethod(nameof(SalesQuotationsController.Expire))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SalesQuotations.Cancel",
+    "Expiring a sales quotation must require the close/cancel authority");
+var quotationCustomer=new Customer("CUS-Q01","Quotation Customer",1);typeof(Customer).GetProperty(nameof(Customer.Id))!.SetValue(quotationCustomer,1);
+var quotationProduct=new Product("Quotation Product",null,5m,10m,8m,measurementUnitId:1);typeof(Product).GetProperty(nameof(Product.Id))!.SetValue(quotationProduct,1);
+var quotationUnit=new MeasurementUnit("PCS","Piece","pc",MeasurementDimension.Count,1m,0);typeof(MeasurementUnit).GetProperty(nameof(MeasurementUnit.Id))!.SetValue(quotationUnit,1);
+var salesQuotation=new SalesQuotation("SQT-000001",Guid.NewGuid().ToString(),quotationCustomer,null,new DateOnly(2026,10,20),new DateOnly(2026,11,20),"JOD",1m,new DateOnly(2026,10,20),"COMPANY_BASE",null,"user");
+salesQuotation.AddLine(new SalesQuotationLine(quotationProduct,quotationUnit,1m,new SalesPriceEvaluationSnapshot(2m,2m,"JOD",null,null,"PRODUCT_CHANNEL_FALLBACK",8m,8m,16m,null,null,null,false,"NO_TAX",null,0m,16m),null));
+salesQuotation.Send("user",new DateOnly(2026,10,20));salesQuotation.Accept("user",new DateOnly(2026,10,20));
+Check(salesQuotation.Status==SalesQuotationStatus.Accepted&&salesQuotation.TotalAmount==16m&&salesQuotation.Lines.Single().ProductName=="Quotation Product"&&salesQuotation.History.Count==3,
+    "Sales quotations must freeze commercial snapshots and enforce the draft-to-sent-to-accepted lifecycle");
+CheckThrows(()=>salesQuotation.Accept("user",new DateOnly(2026,10,20)),"Completed sales quotation actions must not be repeated");
+Check(TenantIsolationModel.TenantOwnedTypes.Contains(typeof(SalesQuotation))&&TenantIsolationModel.TenantOwnedTypes.Contains(typeof(SalesQuotationLine))&&TenantIsolationModel.TenantOwnedTypes.Contains(typeof(SalesQuotationHistory)),
+    "Sales quotation headers, lines and history must be tenant owned");
 
 var customerMaster = new Customer("CUS-000001", "Acme Customer", 1);
 customerMaster.UpdateProfile(CustomerType.Company, "Acme Customer", "Acme Legal", "+962790000000",
@@ -2261,6 +2284,14 @@ Check(ActionableErrorGuidance.Resolve(
           "Selected default price list is inactive.",
           "Customers") is { Controller: "SalesPriceLists", Action: "Index", RequiredPermission: "SalesPricing.View" },
     "Customer default-price-list errors must link to sales price lists");
+Check(ActionableErrorGuidance.Resolve(
+          "Selected quotation address is archived.",
+          "SalesQuotations") is { Controller: "Customers", Action: "Index", RequiredPermission: "Customers.View" },
+    "Sales quotation customer-address errors must link to customer management");
+var salesQuotationDraftNextStep=WorkflowNextStepGuidance.Resolve(
+    "Sales quotation draft created.","SalesQuotations",new Dictionary<string,string?>{{"id","15"}});
+Check(salesQuotationDraftNextStep is {Controller:"SalesQuotations",Action:"Details",RequiredPermission:"SalesQuotations.View"}&&salesQuotationDraftNextStep.RouteValues.GetValueOrDefault("id")=="15",
+    "Created sales quotation drafts must guide the user to review and send them");
 var salesPriceListNextStep = WorkflowNextStepGuidance.Resolve(
     "Price list created successfully.", "SalesPriceLists",
     new Dictionary<string, string?> { ["id"] = "12" });

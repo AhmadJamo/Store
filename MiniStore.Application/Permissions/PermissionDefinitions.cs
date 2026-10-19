@@ -188,6 +188,12 @@ public static class PermissionDefinitions
         new("Sales.Delete", "Delete Sale", "Sales"),
         new("SalesPricing.View", "View Sales Price Lists", "Sales"),
         new("SalesPricing.Manage", "Manage Sales Price Lists", "Sales"),
+        new("SalesQuotations.View", "View Sales Quotations", "Sales"),
+        new("SalesQuotations.Create", "Create Sales Quotation", "Sales"),
+        new("SalesQuotations.Send", "Send Sales Quotation", "Sales"),
+        new("SalesQuotations.Accept", "Accept Sales Quotation", "Sales"),
+        new("SalesQuotations.Reject", "Reject Sales Quotation", "Sales"),
+        new("SalesQuotations.Cancel", "Cancel Sales Quotation", "Sales"),
         new("SalesReturns.View", "View Sales Returns", "Sales Returns"),
         new("SalesReturns.Create", "Create Sales Return", "Sales Returns"),
 

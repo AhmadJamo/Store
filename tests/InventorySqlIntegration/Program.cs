@@ -84,6 +84,7 @@ try
     await VerifyLegacyAuditCutoverAsync(tenantOneId, connectionString);
     await VerifyProfessionalCustomerMasterAsync(tenantOneId, tenantTwoId, connectionString);
     await VerifySalesPricingFoundationAsync(tenantOneId,tenantTwoId,tenantOneFixture.ProductId,connectionString);
+    await VerifySalesQuotationFoundationAsync(tenantOneId,tenantTwoId,tenantOneFixture.ProductId,tenantOneFixture.MeasurementUnitId,connectionString);
 
     await VerifyTenantIsolationAndReconciliationAsync(
         tenantOneId,
@@ -1055,6 +1056,66 @@ static async Task VerifySalesPricingFoundationAsync(int tenantOneId,int tenantTw
         customer.ConfigureCommercialDefaults(0,null,null,false,null,tenantOneListId);
         try{await second.SaveChangesAsync();throw new InvalidOperationException("A customer must not reference another tenant's sales price list.");}
         catch(DbUpdateException){ }
+    }
+}
+
+static async Task VerifySalesQuotationFoundationAsync(int tenantOneId,int tenantTwoId,int productId,int measurementUnitId,string connectionString)
+{
+    const string sharedNumber="SQT-SQL-001";
+    var tenantOneRequestKey=Guid.NewGuid().ToString();
+    int tenantOneQuotationId;
+    int stockCount;
+    int journalCount;
+
+    await using(var tenantOne=new AppDbContext(CreateOptions(connectionString),new FixedTenantContext(tenantOneId)))
+    {
+        var account=new Account("SQL-SQT-AR","SQL quotation customer receivable",AccountType.Asset);
+        tenantOne.Accounts.Add(account);
+        await tenantOne.SaveChangesAsync();
+        var customer=new Customer("CUS-SQT-SQL","SQL Quotation Customer",account.Id);
+        tenantOne.Customers.Add(customer);
+        await tenantOne.SaveChangesAsync();
+        var product=await tenantOne.Products.SingleAsync(x=>x.Id==productId);
+        var unit=await tenantOne.MeasurementUnits.SingleAsync(x=>x.Id==measurementUnitId);
+        stockCount=await tenantOne.StockTransactions.CountAsync();
+        journalCount=await tenantOne.JournalEntries.CountAsync();
+        var quotation=new SalesQuotation(sharedNumber,tenantOneRequestKey,customer,null,
+            new DateOnly(2026,10,20),new DateOnly(2026,11,20),"JOD",1m,new DateOnly(2026,10,20),"COMPANY_BASE",null,"sql-user");
+        quotation.AddLine(new SalesQuotationLine(product,unit,1m,
+            new SalesPriceEvaluationSnapshot(2m,2m,"JOD",null,null,"PRODUCT_CHANNEL_FALLBACK",8m,8m,16m,null,null,null,false,"NO_TAX",null,0m,16m),null));
+        tenantOne.SalesQuotations.Add(quotation);
+        await tenantOne.SaveChangesAsync();
+        tenantOneQuotationId=quotation.Id;
+        quotation.Send("sql-user",new DateOnly(2026,10,20));
+        quotation.Accept("sql-user",new DateOnly(2026,10,20));
+        await tenantOne.SaveChangesAsync();
+        if(await tenantOne.StockTransactions.CountAsync()!=stockCount||await tenantOne.JournalEntries.CountAsync()!=journalCount)
+            throw new InvalidOperationException("Sales quotation lifecycle must not mutate stock or accounting.");
+    }
+
+    await using(var tenantOneDuplicate=new AppDbContext(CreateOptions(connectionString),new FixedTenantContext(tenantOneId)))
+    {
+        var customer=await tenantOneDuplicate.Customers.SingleAsync(x=>x.CustomerCode=="CUS-SQT-SQL");
+        var duplicate=new SalesQuotation("SQT-SQL-002",tenantOneRequestKey,customer,null,
+            new DateOnly(2026,10,20),new DateOnly(2026,11,20),"JOD",1m,new DateOnly(2026,10,20),"COMPANY_BASE",null,"sql-user");
+        tenantOneDuplicate.SalesQuotations.Add(duplicate);
+        try{await tenantOneDuplicate.SaveChangesAsync();throw new InvalidOperationException("A sales quotation request key must be idempotent within its tenant.");}
+        catch(DbUpdateException){ }
+    }
+
+    await using(var tenantTwo=new AppDbContext(CreateOptions(connectionString),new FixedTenantContext(tenantTwoId)))
+    {
+        if(await tenantTwo.SalesQuotations.AnyAsync(x=>x.Id==tenantOneQuotationId))
+            throw new InvalidOperationException("Sales quotations must be isolated by tenant.");
+        var customer=await tenantTwo.Customers.FirstAsync(x=>x.IsActive);
+        var product=await tenantTwo.Products.FirstAsync();
+        var unit=await tenantTwo.MeasurementUnits.FirstAsync();
+        var quotation=new SalesQuotation(sharedNumber,Guid.NewGuid().ToString(),customer,null,
+            new DateOnly(2026,10,20),new DateOnly(2026,11,20),"JOD",1m,new DateOnly(2026,10,20),"COMPANY_BASE",null,"sql-user");
+        quotation.AddLine(new SalesQuotationLine(product,unit,1m,
+            new SalesPriceEvaluationSnapshot(1m,1m,"JOD",null,null,"PRODUCT_CHANNEL_FALLBACK",5m,5m,5m,null,null,null,false,"NO_TAX",null,0m,5m),null));
+        tenantTwo.SalesQuotations.Add(quotation);
+        await tenantTwo.SaveChangesAsync();
     }
 }
 

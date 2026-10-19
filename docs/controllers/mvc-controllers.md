@@ -1,5 +1,5 @@
 # MVC controllers
-> Status: IMPLEMENTED | Last reviewed: 2026-10-14
+> Status: IMPLEMENTED | Last reviewed: 2026-10-20
 
 `PurchaseDocumentReversalsController` provides permission-separated history/detail and antiforgery-protected creation for PUR-180. Successful posting links back to the preserved original document; errors remain localized and dependency-safe.
 
@@ -27,6 +27,7 @@
 | PurchaseAccountingReconciliation | Index | PurchaseAccountingReconciliation.View; read-only as-of-date Inventory/GL and receipt-derived GRNI/GL comparison with localized validation. |
 | Purchases | Index/Create/Details | Purchases.View/Create; PurchaseService and master repositories for dropdowns. |
 | Sales | Index/Details/Create/Pos/Post | Sales.View/Create; SaleService validates and snapshots optional invoice tax plus POS order context/item notes; SalePostingService creates the one-time balanced revenue, output-tax and COGS journal; PosExperienceSettingsService supplies terminal-specific runtime presentation/workflow. |
+| SalesQuotations | Index/Details/Create/Send/Accept/Reject/Expire/Cancel | Six dedicated view/create/lifecycle permissions, antiforgery on every POST, DTO-only SalesQuotationService, request-key idempotency, rowversion and status validation. Quotation acceptance is final evidence only until SAL-040 adds separately authorized order conversion. |
 | PurchaseReturns | Index/Details/Create | PurchaseReturns.View/Create; only posted purchases may return remaining quantities covered by current warehouse stock, and creation atomically posts inventory/payable/tax/discount/variance reversal. |
 | PurchaseSourcing | Index/Details/Create | PurchaseSourcing.View/Create; Create binds the sourcing page's `Form` prefix before validating the approved Purchase Request and invited suppliers. |
 | SupplierQuotations | Create/Comparison/Award | SupplierQuotations.Create/View/Award; Create and Award bind their nested `Form` commands. Award validates exact per-line supplier quantities/reasons, records the immutable decision once and returns the comparison with errors without losing input. |

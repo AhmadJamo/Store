@@ -96,6 +96,7 @@ public class DocumentNumberService(IDocumentSequenceRepository repository)
             DocumentNumberType.PurchaseDocumentReversal => ("Purchase document reversal", "عكس مستند مشتريات"),
             DocumentNumberType.PurchaseServiceAcceptance => ("Purchase service acceptance", "إثبات إنجاز خدمة مشتراة"),
             DocumentNumberType.Customer => ("Customer", "زبون"),
+            DocumentNumberType.SalesQuotation => ("Sales quotation", "عرض سعر مبيعات"),
             _ => (row.DocumentType.ToString(), row.DocumentType.ToString())
         };
         return new DocumentSequenceDto

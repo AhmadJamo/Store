@@ -2924,4 +2924,82 @@
   <data name="Price rule end date cannot be before its start date." xml:space="preserve"><value>لا يمكن أن يسبق تاريخ انتهاء قاعدة السعر تاريخ بدايتها.</value></data>
   <data name="Fixed sale price cannot be negative." xml:space="preserve"><value>لا يمكن أن يكون سعر البيع الثابت سالبًا.</value></data>
   <data name="Percentage adjustment must be between -100% and 10000%." xml:space="preserve"><value>يجب أن يكون التعديل النسبي بين -100% و10000%.</value></data>
+  <data name="Sales quotations" xml:space="preserve"><value>عروض أسعار المبيعات</value></data>
+  <data name="Create sales quotation" xml:space="preserve"><value>إنشاء عرض سعر مبيعات</value></data>
+  <data name="Prepare commercial offers without changing stock or accounting." xml:space="preserve"><value>جهّز العروض التجارية دون تغيير المخزون أو المحاسبة.</value></data>
+  <data name="Quotation number or customer" xml:space="preserve"><value>رقم العرض أو الزبون</value></data>
+  <data name="No sales quotations found." xml:space="preserve"><value>لم يتم العثور على عروض أسعار مبيعات.</value></data>
+  <data name="View quotation" xml:space="preserve"><value>عرض التفاصيل</value></data>
+  <data name="Prices, units, currency, tax and customer details are frozen when the draft is created." xml:space="preserve"><value>تُثبّت الأسعار والوحدات والعملة والضريبة وبيانات الزبون عند إنشاء المسودة.</value></data>
+  <data name="No stock or accounting effect" xml:space="preserve"><value>دون أثر مخزني أو محاسبي</value></data>
+  <data name="Select customer" xml:space="preserve"><value>اختر الزبون</value></data>
+  <data name="Customer address" xml:space="preserve"><value>عنوان الزبون</value></data>
+  <data name="No address" xml:space="preserve"><value>دون عنوان</value></data>
+  <data name="Quotation lines" xml:space="preserve"><value>بنود عرض السعر</value></data>
+  <data name="Search product by name, code or barcode" xml:space="preserve"><value>ابحث عن المنتج بالاسم أو الكود أو الباركود</value></data>
+  <data name="Line notes" xml:space="preserve"><value>ملاحظات البند</value></data>
+  <data name="This quotation has no stock or accounting effect." xml:space="preserve"><value>عرض السعر هذا لا يغيّر المخزون ولا ينشئ قيدًا محاسبيًا.</value></data>
+  <data name="Customer snapshot" xml:space="preserve"><value>لقطة بيانات الزبون</value></data>
+  <data name="Quotation terms" xml:space="preserve"><value>شروط عرض السعر</value></data>
+  <data name="Send quotation" xml:space="preserve"><value>إرسال عرض السعر</value></data>
+  <data name="Draft step completed" xml:space="preserve"><value>تمت مرحلة المسودة</value></data>
+  <data name="Mark expired" xml:space="preserve"><value>تحديد كمنتهي الصلاحية</value></data>
+  <data name="Accept quotation" xml:space="preserve"><value>قبول عرض السعر</value></data>
+  <data name="Reject quotation" xml:space="preserve"><value>رفض عرض السعر</value></data>
+  <data name="Cancel quotation" xml:space="preserve"><value>إلغاء عرض السعر</value></data>
+  <data name="Accepted — ready for sales order conversion in the next phase." xml:space="preserve"><value>تم القبول — جاهز للتحويل إلى طلب بيع في المرحلة التالية.</value></data>
+  <data name="Sales quotation draft created." xml:space="preserve"><value>تم إنشاء مسودة عرض سعر المبيعات.</value></data>
+  <data name="Sales quotation sent." xml:space="preserve"><value>تم إرسال عرض سعر المبيعات.</value></data>
+  <data name="Sales quotation accepted." xml:space="preserve"><value>تم قبول عرض سعر المبيعات.</value></data>
+  <data name="Sales quotation rejected." xml:space="preserve"><value>تم رفض عرض سعر المبيعات.</value></data>
+  <data name="Sales quotation expired." xml:space="preserve"><value>تم إنهاء صلاحية عرض سعر المبيعات.</value></data>
+  <data name="Sales quotation cancelled." xml:space="preserve"><value>تم إلغاء عرض سعر المبيعات.</value></data>
+  <data name="A sales quotation must contain at least one line." xml:space="preserve"><value>يجب أن يحتوي عرض سعر المبيعات على بند واحد على الأقل.</value></data>
+  <data name="Configure a managed measurement unit for the product before adding it to a quotation." xml:space="preserve"><value>هيّئ وحدة قياس مُدارة للمنتج قبل إضافته إلى عرض السعر.</value></data>
+  <data name="Every quotation line must resolve to the same currency and exchange-rate snapshot." xml:space="preserve"><value>يجب أن تستخدم جميع بنود العرض العملة ولقطة سعر الصرف نفسيهما.</value></data>
+  <data name="Sales quotation expiry cannot be before its date." xml:space="preserve"><value>لا يمكن أن يسبق انتهاء عرض السعر تاريخ العرض.</value></data>
+  <data name="Sales quotation request key is invalid." xml:space="preserve"><value>مفتاح منع تكرار عرض السعر غير صالح.</value></data>
+  <data name="Sales quotation was modified by another user. Reload and try again." xml:space="preserve"><value>عدّل مستخدم آخر عرض السعر. أعد التحميل وحاول مجددًا.</value></data>
+  <data name="Sales quotation was not found." xml:space="preserve"><value>لم يتم العثور على عرض سعر المبيعات.</value></data>
+  <data name="Selected quotation address is archived." xml:space="preserve"><value>عنوان عرض السعر المحدد مؤرشف.</value></data>
+  <data name="Selected quotation address was not found for this customer." xml:space="preserve"><value>لم يتم العثور على عنوان عرض السعر لهذا الزبون.</value></data>
+  <data name="Selected quotation customer is archived." xml:space="preserve"><value>زبون عرض السعر المحدد مؤرشف.</value></data>
+  <data name="Selected quotation customer was not found." xml:space="preserve"><value>لم يتم العثور على زبون عرض السعر المحدد.</value></data>
+  <data name="Selected quotation product was not found." xml:space="preserve"><value>لم يتم العثور على منتج عرض السعر المحدد.</value></data>
+  <data name="Selected quotation sales unit was not found." xml:space="preserve"><value>لم يتم العثور على وحدة البيع المحددة لعرض السعر.</value></data>
+  <data name="A reason is required and cannot exceed 500 characters." xml:space="preserve"><value>السبب مطلوب ولا يجوز أن يتجاوز 500 حرف.</value></data>
+  <data name="An active customer is required for a sales quotation." xml:space="preserve"><value>يلزم زبون نشط لإنشاء عرض سعر مبيعات.</value></data>
+  <data name="An expired sales quotation cannot be sent." xml:space="preserve"><value>لا يمكن إرسال عرض سعر منتهي الصلاحية.</value></data>
+  <data name="Every quotation line must use the quotation currency." xml:space="preserve"><value>يجب أن يستخدم كل بند عملة عرض السعر نفسها.</value></data>
+  <data name="Expire the sales quotation before continuing." xml:space="preserve"><value>حدّد عرض السعر كمنتهي الصلاحية قبل المتابعة.</value></data>
+  <data name="Only draft or sent sales quotations can be cancelled." xml:space="preserve"><value>يمكن إلغاء عروض الأسعار المسودة أو المرسلة فقط.</value></data>
+  <data name="Only draft sales quotations can be modified." xml:space="preserve"><value>يمكن تعديل عروض الأسعار المسودة فقط.</value></data>
+  <data name="Only sent sales quotations can complete this action." xml:space="preserve"><value>يمكن تنفيذ هذه العملية على عروض الأسعار المرسلة فقط.</value></data>
+  <data name="Quotation line notes cannot exceed 500 characters." xml:space="preserve"><value>لا يجوز أن تتجاوز ملاحظات بند العرض 500 حرف.</value></data>
+  <data name="Quotation pricing snapshot is invalid." xml:space="preserve"><value>لقطة تسعير عرض السعر غير صالحة.</value></data>
+  <data name="Quotation product is required." xml:space="preserve"><value>منتج عرض السعر مطلوب.</value></data>
+  <data name="Quotation sales unit is required." xml:space="preserve"><value>وحدة بيع عرض السعر مطلوبة.</value></data>
+  <data name="Quotation unit conversion factor must be greater than zero." xml:space="preserve"><value>يجب أن يكون معامل تحويل وحدة العرض أكبر من صفر.</value></data>
+  <data name="Sales quotation currency must contain three letters." xml:space="preserve"><value>يجب أن يتكون رمز عملة عرض السعر من ثلاثة أحرف.</value></data>
+  <data name="Sales quotation exchange rate must be greater than zero." xml:space="preserve"><value>يجب أن يكون سعر صرف عرض السعر أكبر من صفر.</value></data>
+  <data name="Sales quotation exchange-rate source is required." xml:space="preserve"><value>مصدر سعر صرف عرض السعر مطلوب.</value></data>
+  <data name="Sales quotation notes cannot exceed 1000 characters." xml:space="preserve"><value>لا يجوز أن تتجاوز ملاحظات عرض السعر 1000 حرف.</value></data>
+  <data name="Sales quotation number is required." xml:space="preserve"><value>رقم عرض سعر المبيعات مطلوب.</value></data>
+  <data name="Selected quotation address is not active for this customer." xml:space="preserve"><value>عنوان عرض السعر المحدد غير نشط لهذا الزبون.</value></data>
+  <data name="The sales quotation validity period has not ended." xml:space="preserve"><value>لم تنتهِ مدة صلاحية عرض السعر بعد.</value></data>
+  <data name="The same product and sales unit cannot be added twice to a quotation." xml:space="preserve"><value>لا يمكن إضافة المنتج ووحدة البيع نفسيهما مرتين إلى عرض السعر.</value></data>
+  <data name="Accepted" xml:space="preserve"><value>مقبول</value></data>
+  <data name="Review and send sales quotation" xml:space="preserve"><value>مراجعة عرض السعر وإرساله</value></data>
+  <data name="Confirm the frozen customer, lines, prices and taxes, then send the quotation." xml:space="preserve"><value>تحقق من بيانات الزبون والبنود والأسعار والضرائب المثبتة، ثم أرسل عرض السعر.</value></data>
+  <data name="Record customer quotation decision" xml:space="preserve"><value>تسجيل قرار الزبون على عرض السعر</value></data>
+  <data name="Record acceptance or rejection before the quotation validity ends." xml:space="preserve"><value>سجّل القبول أو الرفض قبل انتهاء صلاحية عرض السعر.</value></data>
+  <data name="Review sales quotation pipeline" xml:space="preserve"><value>مراجعة مسار عروض الأسعار</value></data>
+  <data name="The quotation step is complete; review the remaining active quotations." xml:space="preserve"><value>اكتملت خطوة هذا العرض؛ راجع عروض الأسعار النشطة المتبقية.</value></data>
+  <data name="Open customers" xml:space="preserve"><value>فتح إدارة الزبائن</value></data>
+  <data name="Selected sales channel is invalid." xml:space="preserve"><value>قناة البيع المحددة غير صالحة.</value></data>
+  <data name="Customer" xml:space="preserve"><value>الزبون</value></data>
+  <data name="History" xml:space="preserve"><value>السجل</value></data>
+  <data name="Tax rate" xml:space="preserve"><value>نسبة الضريبة</value></data>
+  <data name="Wholesale" xml:space="preserve"><value>بيع بالجملة</value></data>
+  <data name="Created" xml:space="preserve"><value>تم الإنشاء</value></data>
 </root>

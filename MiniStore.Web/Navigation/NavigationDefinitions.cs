@@ -34,6 +34,14 @@ public static class NavigationDefinitions
                 25),
 
             new NavigationItem(
+                "Sales quotations",
+                "bi-file-earmark-text",
+                "SalesQuotations",
+                "Index",
+                "SalesQuotations.View",
+                27),
+
+            new NavigationItem(
                 "Sales Returns",
                 "bi-arrow-counterclockwise",
                 "SalesReturns",

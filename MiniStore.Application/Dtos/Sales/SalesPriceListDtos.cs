@@ -46,5 +46,5 @@ public sealed class SalesPriceEvaluationDto
  public decimal ChannelFallbackCompanyUnitPrice{get;init;}public decimal UnroundedTransactionUnitPrice{get;init;}public decimal UnitPrice{get;init;}public decimal CompanyUnitPrice{get;init;}
  public string TransactionCurrency{get;init;}="";public string CompanyCurrency{get;init;}="";public decimal ExchangeRate{get;init;}public DateOnly ExchangeRateDate{get;init;}public string ExchangeRateSource{get;init;}="";
  public int? PriceListId{get;init;}public string? PriceListName{get;init;}public int? RuleId{get;init;}public string SourceCode{get;init;}="";
- public decimal LineNetAmount{get;init;}public decimal TaxAmount{get;init;}public decimal LineTotal{get;init;}public string TaxSource{get;init;}="";public string? TaxName{get;init;}public decimal? TaxRate{get;init;}public bool TaxInclusive{get;init;}public string? TaxExemptionReason{get;init;}
+ public decimal LineNetAmount{get;init;}public decimal TaxAmount{get;init;}public decimal LineTotal{get;init;}public string TaxSource{get;init;}="";public int? TaxRateId{get;init;}public string? TaxName{get;init;}public decimal? TaxRate{get;init;}public bool TaxInclusive{get;init;}public string? TaxExemptionReason{get;init;}
 }

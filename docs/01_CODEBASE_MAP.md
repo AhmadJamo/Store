@@ -67,6 +67,7 @@ deferred to a separately approved CUS-110 gate.
 | `Entities/Catalog/{Product,ProductTemplate,ProductCategory,ProductAttributeDefinition,ProductAttributeValue,ProductRecipe,RecipeIngredient,MeasurementUnit}.cs` and product type/unit/dimension/behavior/logistics enums | concrete SKU identity, optional variant template grouping, category-scoped typed attributes/options/values, logistics metadata, tracking/shelf-life policy, sale channels, immutable recipes and managed units | products, sales and inventory docs. |
 | `Entities/Customers/{Customer,CustomerContact}.cs`, `Entities/Suppliers/Supplier.cs` | Customer identity, prospective payment/currency/tax defaults, tenant-safe multi-contact and General/Billing/Shipping addresses with defaults, archive and rowversion; suppliers keep their professional profile | customer/sales/purchases/suppliers docs. |
 | `Entities/Sales/SalesPriceList.cs` | tenant-owned price lists and deterministic all-product/category/product rules with quantity, unit, date, currency, rounding and archive controls | SAL-020B pricing service/screen and sales docs. |
+| `Entities/Sales/SalesQuotation.cs` | SAL-030 quotation header, immutable commercial lines and semantic lifecycle history | quotation application service, EF configuration and screens. |
 | `Entities/Inventory/*.cs` | warehouses, operating-policy enums, AVCO balances, locations, putaway rules, availability, reservations, adjustments, lot/serial tracking with persisted removal-strategy audit, recall communication evidence, legacy history, physical movements and transfers | inventory, accounting and stock-transfer docs. |
 | `Entities/Purchases/*.cs`, `Entities/Sales/*.cs` | purchase/supplier-return and sale/customer-return aggregates plus POS experience/order settings | purchase/sales/settings docs. |
 | `Entities/Purchases/SupplierProductPurchasingInfo.cs` | supplier-specific product code, compatible purchase unit, base-currency price, lead time, order policy, validity/preference, quantity price breaks and immutable full price-history snapshots | PUR-010/PUR-230 purchasing data screens/services. |
@@ -105,6 +106,7 @@ deferred to a separately approved CUS-110 gate.
 | `Services/<Feature>/*.cs` | use-case services grouped as Accounting, Catalog, Customers, Inventory, Purchases, Sales, Settings and Suppliers | matching MVC controllers. |
 | `Services/Customers/CustomerService.cs`, `Dtos/Customers/CustomerDtos.cs` | professional customer profile, receivable-policy assignment, contacts/addresses and validated configured-currency/tax commercial defaults | Customers controller and responsive forms/details. |
 | `Services/Sales/SalesPriceListService.cs`, `Dtos/Sales/SalesPriceListDtos.cs` | price-list/rule administration and read-only explainable evaluation across unit conversion, dated currency, deterministic rule selection and tax/customer defaults | SalesPriceLists controller and responsive evaluator. |
+| `Services/Sales/SalesQuotationService.cs`, `Dtos/Sales/SalesQuotationDtos.cs` | idempotent quotation creation from evaluated prices plus DTO-only list/detail and concurrency-protected lifecycle commands | SalesQuotations controller/views. |
 | `Services/Purchases/PurchaseApprovalService.cs` | approval-rule administration, submit-time rule resolution, frozen instance creation and role-authorized ordered decisions | Purchase Approval Rules and Purchase Request screens. |
 | `Services/Purchases/PurchaseSourcingService.cs` | sends approved-request sourcing or permission/policy-gated direct RFQs, freezing demand, policy and attachment evidence | Purchase Sourcing screens and PUR-200. |
 | `Services/Settings/PurchaseSourcingPolicyService.cs` | manages the tenant direct-RFQ amount, role and supplier-status gate | Purchase sourcing policy Settings screen. |
@@ -182,6 +184,7 @@ deferred to a separately approved CUS-110 gate.
 | `Persistence/Configurations/Tenancy/TenantConfiguration.cs` | tenant identity, membership keys, Identity relationships and slug uniqueness | AppDbContext/migration. |
 | `Persistence/Configurations/<Feature>/*.cs` | per-entity schema mapping grouped by feature | applied automatically by AppDbContext. |
 | `Persistence/Configurations/Sales/SalesPriceListConfiguration.cs` | SAL-020B tenant relationships, concurrency and scope-specific rule uniqueness | AppDbContext and migration 119. |
+| `Persistence/Configurations/Sales/SalesQuotationConfiguration.cs` | SAL-030 snapshot precision, tenant relationships, uniqueness, rowversion and aggregate ownership | AppDbContext and migration 120. |
 
 Accounting foundation (2026-09-13): migration `AddAccountingFoundation` adds Accounts, Branches, JournalEntries, JournalEntryLines and optional warehouse branch/inventory-account links. See accounting ADR before adding automated posting.
 | `Migrations/*.cs` and snapshot | schema evolution/model snapshots | EF tooling, deployment. |
@@ -219,6 +222,7 @@ Hierarchical location update (2026-09-30): StorageLocation retains its identity 
 | `Repositories/Inventory/InventoryRecallRepository.cs` | tenant-filtered recall lifecycle persistence and active-identity guard | InventoryTrackingService recall workflow. |
 | `Repositories/Sales/SalesReturnRepository.cs` | immutable return history and original-sale aggregation | `SalesReturnService`. |
 | `Repositories/Sales/SalesPriceListRepository.cs` | tenant-filtered price-list/rule loading, code checks and persistence | `SalesPriceListService`. |
+| `Repositories/Sales/SalesQuotationRepository.cs` | tenant-filtered quotation list/detail, request-key/number lookup and persistence | `SalesQuotationService`. |
 | `Repositories/Purchases/PurchaseReturnRepository.cs` | immutable supplier-return history and original-purchase aggregation | `PurchaseReturnService`. |
 | `Repositories/Purchases/SupplierProductPurchasingInfoRepository.cs` | tenant-filtered purchasing-term persistence, supplier/product assignment reads, price-break/history loading, uniqueness and preferred-supplier lookup | purchasing-info and assignment services. |
 | `Repositories/Purchases/{SupplierQuotation,PurchaseOrder}Repository.cs` | tenant-filtered quote/allocation and purchase-order persistence, source-event order lookup, one-order-per-quotation enforcement and lifecycle history loading | PUR-040/PUR-050/PUR-165/PUR-210 services. |
@@ -245,6 +249,7 @@ Hierarchical location update (2026-09-30): StorageLocation retains its identity 
 | `Controllers/Catalog/ProductAttributesController.cs` | bilingual typed product-attribute administration using Products View/Edit permissions | ProductAttributes view and ProductAttributeService. |
 | `Controllers/Catalog/ProductTemplatesController.cs` | bilingual template creation, existing-SKU assignment and explicit bounded variant preview/generation using Products View/Edit permissions | ProductTemplates view and ProductTemplateService. |
 | `Controllers/Sales/SalesPriceListsController.cs`, `Views/SalesPriceLists/Index.cshtml` | permission-separated list/rule mutations and responsive read-only explainable evaluator | SAL-020B pricing service and sales docs. |
+| `Controllers/Sales/SalesQuotationsController.cs`, `Views/SalesQuotations/*` | permission-separated Draft creation and quotation lifecycle with responsive immutable detail/history | SAL-030 quotation service, permissions and sales docs. |
 | `Controllers/Inventory/StockMovementsController.cs` | permission-protected read-only WMS-020 pilot ledger and legacy-link status | StockMovements view and service. |
 | `Controllers/Inventory/InventoryBalancesController.cs` | permission-protected read-only dimensional inventory availability | InventoryBalances view and service. |
 | `Controllers/Inventory/InventoryReservationsController.cs` | permission-protected read-only reservation history | InventoryReservations view and service. |

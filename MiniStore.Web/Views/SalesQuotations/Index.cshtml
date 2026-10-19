@@ -1,0 +1,13 @@
+@model List<MiniStore.Application.Dtos.Sales.SalesQuotationSummaryDto>
+@using MiniStore.Domain.Entities
+@inject Microsoft.Extensions.Localization.IStringLocalizer<MiniStore.Web.SharedResource> Localizer
+@inject Microsoft.AspNetCore.Authorization.IAuthorizationService Authorization
+@inject MiniStore.Application.Services.GeneralSettingsService GeneralSettingsService
+@{ ViewData["Title"] = Localizer["Sales quotations"]; var canCreate = (await Authorization.AuthorizeAsync(User, null, "Permission:SalesQuotations.Create")).Succeeded; var settings = await GeneralSettingsService.GetAsync(); }
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+ <div><h2 class="mb-1">@Localizer["Sales quotations"]</h2><p class="text-muted mb-0">@Localizer["Prepare commercial offers without changing stock or accounting."]</p></div>
+ @if(canCreate){<a asp-action="Create" class="btn btn-primary">@Localizer["Create sales quotation"]</a>}
+</div>
+<form method="get" class="card card-body mb-3"><div class="row g-2"><div class="col-md-6"><label class="form-label">@Localizer["Search"]</label><input name="search" value="@ViewBag.Search" class="form-control" placeholder="@Localizer["Quotation number or customer"]"/></div><div class="col-md-4"><label class="form-label">@Localizer["Status"]</label><select name="status" class="form-select"><option value="">@Localizer["All statuses"]</option>@foreach(var status in Enum.GetValues<SalesQuotationStatus>()){<option value="@status" selected="@(ViewBag.Status?.ToString()==status.ToString() ? "selected" : null)">@Localizer[status.ToString()]</option>}</select></div><div class="col-md-2 d-flex align-items-end"><button class="btn btn-outline-primary w-100">@Localizer["Apply"]</button></div></div></form>
+@if(Model.Count==0){<div class="alert alert-info">@Localizer["No sales quotations found."]</div>}
+<div class="row g-3">@foreach(var q in Model){<div class="col-md-6 col-xl-4"><div class="card h-100"><div class="card-body"><div class="d-flex justify-content-between gap-2"><h5 class="mb-1">@q.QuotationNumber</h5><span class="badge bg-secondary">@Localizer[q.Status.ToString()]</span></div><div class="text-muted">@q.CustomerCode — @q.CustomerName</div><div class="small mt-2">@Localizer["Quotation date"]: @q.QuotationDate</div><div class="small">@Localizer["Valid until"]: @q.ValidUntil</div><div class="fs-5 mt-2">@q.TotalAmount.ToMoneyDisplay(settings) @q.CurrencyCode</div></div><div class="card-footer bg-transparent"><a asp-action="Details" asp-route-id="@q.Id" class="btn btn-outline-primary w-100">@Localizer["View quotation"]</a></div></div></div>}</div>

@@ -29,7 +29,7 @@ public static class WorkflowNextStepGuidance
 
     private static readonly HashSet<string> CustomerControllers = new(StringComparer.OrdinalIgnoreCase) { "Customers" };
 
-    private static readonly HashSet<string> SalesControllers = new(StringComparer.OrdinalIgnoreCase) { "SalesPriceLists" };
+    private static readonly HashSet<string> SalesControllers = new(StringComparer.OrdinalIgnoreCase) { "SalesPriceLists", "SalesQuotations" };
 
     public static bool IsSupportedController(string? controller) =>
         !string.IsNullOrWhiteSpace(controller) &&
@@ -64,6 +64,22 @@ public static class WorkflowNextStepGuidance
             return new("SalesPriceLists", "Index", "Return to sales price lists",
                 "The archived list remains in history and is unavailable for new pricing.",
                 "SalesPricing.View", Routes());
+
+        if (Matches(message, localize, "Sales quotation draft created."))
+            return new("SalesQuotations", "Details", "Review and send sales quotation",
+                "Confirm the frozen customer, lines, prices and taxes, then send the quotation.",
+                "SalesQuotations.View", Routes(("id", Route("id"))));
+
+        if (Matches(message, localize, "Sales quotation sent."))
+            return new("SalesQuotations", "Details", "Record customer quotation decision",
+                "Record acceptance or rejection before the quotation validity ends.",
+                "SalesQuotations.View", Routes(("id", Route("id"))));
+
+        if (Matches(message, localize, "Sales quotation accepted.", "Sales quotation rejected.",
+                "Sales quotation expired.", "Sales quotation cancelled."))
+            return new("SalesQuotations", "Index", "Review sales quotation pipeline",
+                "The quotation step is complete; review the remaining active quotations.",
+                "SalesQuotations.View", Routes());
 
         if (Matches(message, localize, "Customer created successfully.", "Customer updated successfully.", "Customer restored successfully."))
             return new("Customers", "Details", "Review customer profile", "Review the customer profile before using it in a new sale.", "Customers.View", Routes(("id", Route("id"))));

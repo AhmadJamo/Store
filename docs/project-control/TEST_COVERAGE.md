@@ -4,14 +4,14 @@
 
 | الأمر | النتيجة | التاريخ |
 |---|---|---|
-| `dotnet run --project tests/SecurityRegression/SecurityRegression.csproj -c Release` | Passed 805 checks (نجح 805 فحوص)، تشمل صلاحيات التسعير واختيار القاعدة الحتمي والروابط الإرشادية | 2026-10-20 |
+| `dotnet run --project tests/SecurityRegression/SecurityRegression.csproj -c Release` | Passed 836 checks (نجح 836 فحصًا)، تشمل صلاحيات عروض البيع، دورة الحالات، اللقطات، عزل الأنواع والروابط الإرشادية | 2026-10-20 |
 | `pwsh -NoProfile -File scripts/verify-local.ps1` | Build + 777 + SQL + 500-request workload passed | 2026-10-18 |
-| `dotnet run --project tests/InventorySqlIntegration/InventorySqlIntegration.csproj` | Previous SAL-020B run passed migration 119, price-list tenant isolation/uniqueness and cross-tenant FK rejection; 2026-10-20 rerun blocked before database creation by local SSPI authentication | 2026-10-20 |
+| `dotnet run --project tests/InventorySqlIntegration/InventorySqlIntegration.csproj` | Project builds and includes SAL-030 tenant isolation, idempotency and zero stock/journal assertions; run blocked before database creation by local SSPI authentication | 2026-10-20 |
 | Live local historic-credential negative test (اختبار رفض بيانات الدخول التاريخية) | Rejected after remediation (رُفضت بعد المعالجة) | 2026-10-15 |
 | Live local replacement-admin positive test (اختبار دخول المدير البديل) | Passed with authorized redirect (نجح مع تحويل مصرح) | 2026-10-15 |
 | Encrypted backup verify/isolated restore/DBCC (تحقق النسخة والاستعادة المعزولة وسلامة القاعدة) | Passed with AES-256 and checksum (نجح) | 2026-10-15 |
 | Restored ERP reconciliation (مصالحة النظام المستعاد) | 147 tables and 21 business checks; zero mismatches (صفر فروق) | 2026-10-15 |
-| EF/database migration reconciliation (مطابقة الترحيلات) | P0 baseline 112/112; current Demo 119/119 and no pending model change after SAL-020B | 2026-10-20 |
+| EF/database migration reconciliation (مطابقة الترحيلات) | Source/model 120 with no pending change; Demo 119/120 because local SQL encryption connection blocked applying SAL-030 migration | 2026-10-20 |
 | Live schema integrity (سلامة المخطط الحي) | 147 tables, 420 trusted FKs, zero disabled constraints/indexes or unsafe tenant relations | 2026-10-15 |
 | Web dependency build (بناء الويب واعتماداته) | Release, 4 projects, zero warnings/errors (نجح) | 2026-10-20 |
 
@@ -31,9 +31,9 @@
 | Performance/load (الأداء/التحميل) | حمل توفر محلي: 500 طلب، p95 16.85ms وp99 28.35ms، صفر فشل | مثبت محليًا؛ حمل الأعمال/الإنتاج متبقٍ |
 | Backup/restore (نسخ/استعادة) | نسخة Demo مشفرة، تحقق، استعادة للقراءة فقط، DBCC ومصالحة ثم تنظيف آمن | مثبت محليًا؛ خارج الجهاز مفقود |
 | Penetration (اختراق) | لا اختبار مستقل | مفقود |
-| Sales professional lifecycle (دورة المبيعات الاحترافية) | غير منفذة | غير منطبق الآن |
+| Sales professional lifecycle (دورة المبيعات الاحترافية) | SAL-030 quotation creation/snapshots/status history implemented; orders onward planned | قوي للعروض؛ واجهة E2E وتشغيل SQL المحلي معلقان |
 | Customer master (ملف الزبون) | CUS-010/020/030A/030B: المجال والصلاحيات/antiforgery وعزل SQL وتفرد الكود والافتراضيات والأرشفة وrowversion وسياسة الحساب وإعدادات الدفع/العملة/الضريبة وترحيل Demo | قوي للشرائح المنفذة؛ واجهة E2E ما زالت عامة مفقودة |
-| Sales pricing (تسعير المبيعات) | SAL-020B: قواعد المجال، ترتيب حتمي، صلاحيات/antiforgery، روابط إعداد، عزل/تفرد SQL وعلاقة افتراضي الزبون | قوي للأساس؛ اختبار واجهة E2E وعرض السعر التالي غير منفذين |
+| Sales pricing (تسعير المبيعات) | SAL-020B plus SAL-030 snapshot consumption: deterministic rules, managed units, dated currency, inclusive/exclusive tax net/gross, permissions/antiforgery and setup links | قوي للأساس والعروض؛ اختبار واجهة E2E ما زال مفقودًا |
 | Audit events (أحداث التدقيق) | 37 عنصر تغطية، دلالة وسجلات مجال، عزل، قراءة/تصدير، احتفاظ، حجز، نقطتا تحويل، أدوار SQL وتجميد قابل للرجوع | قوي لبيئة Demo؛ تشغيل الإنتاج الخارجي متبقٍ |
 
 ## قواعد الحالة

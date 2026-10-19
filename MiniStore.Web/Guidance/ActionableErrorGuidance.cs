@@ -14,7 +14,7 @@ public static class ActionableErrorGuidance
         "PurchaseApprovalRules", "PurchaseSourcing", "SupplierQuotations", "PurchaseOrders",
         "GoodsReceipts", "GoodsReceiptReturns", "VendorBills", "SupplierCreditNotes", "SupplierPayments", "SupplierCommunications",
         "PurchaseAgreements", "PurchaseTemplates", "LandedCosts", "PurchaseDocumentReversals", "PurchaseAnalytics", "SupplierIntegrations",
-        "SalesPriceLists", "Customers"
+        "SalesPriceLists", "SalesQuotations", "Customers"
     };
 
     public static ActionableErrorLink? Resolve(
@@ -41,6 +41,8 @@ public static class ActionableErrorGuidance
                 "Selected sales unit is inactive.",
                 "Selected price-rule unit was not found.",
                 "Selected price-rule unit is inactive.",
+                "Selected quotation sales unit was not found.",
+                "Configure a managed measurement unit for the product before adding it to a quotation.",
                 "Configure a managed measurement unit for the product before pricing it.",
                 "Product stock unit was not found.",
                 "Sales unit and product stock unit must use the same measurement dimension."))
@@ -50,7 +52,8 @@ public static class ActionableErrorGuidance
                 "Selected pricing product was not found.",
                 "Selected pricing product is not available for the requested sales channel.",
                 "Selected price-rule product was not found.",
-                "Selected price-rule product is inactive."))
+                "Selected price-rule product is inactive.",
+                "Selected quotation product was not found."))
             return new("Products", "Index", "Manage products", "Products.Edit");
 
         if (Matches(message, localize,
@@ -60,8 +63,18 @@ public static class ActionableErrorGuidance
 
         if (Matches(message, localize,
                 "Selected default price list was not found.",
-                "Selected default price list is inactive."))
+                "Selected default price list is inactive.",
+                "Selected price list was not found.",
+                "Selected price list is inactive.",
+                "Selected price list is not valid on the pricing date."))
             return new("SalesPriceLists", "Index", "Open sales price lists", "SalesPricing.View");
+
+        if (Matches(message, localize,
+                "Selected quotation customer was not found.",
+                "Selected quotation customer is archived.",
+                "Selected quotation address was not found for this customer.",
+                "Selected quotation address is archived."))
+            return new("Customers", "Index", "Open customers", "Customers.View");
 
         if (Matches(message, localize,
                 "No active approval rule matches this purchase request."))
