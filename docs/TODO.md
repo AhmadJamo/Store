@@ -73,7 +73,8 @@ The ERP SaaS Foundation Blueprint is imported as a non-authoritative planning re
 - [x] CUS-000 audit the Customer and Business Partner requirements against the actual repository and document compatibility, migration safeguards, ownership, tests and a phased implementation plan.
 - [x] CUS-005 approve the Business Partner compatibility decision, customer-code policy, receivable-account model and archive rules before runtime implementation.
 - [x] SAL-010 extend the Customer foundation additively while preserving current Customer IDs and Legacy Immediate Sale compatibility (delivered through CUS-010..030B).
-- [ ] SAL-020 through SAL-130 implement the approved pricing, quotation, order, reservation, delivery, invoicing, accounting, payment, return, advanced-sales and cutover slices in order after SAL-010.
+- [x] SAL-020A approve deterministic price-rule priority, unit conversion, dated currency, rounding, tax/exemption snapshots and explainable result contract.
+- [ ] SAL-020B through SAL-130 implement price-list storage/evaluation, quotation, order, reservation, delivery, invoicing, accounting, payment, return, advanced-sales and cutover slices in order.
 
 - [x] WMS-050 reservations and exact transfer allocation with concurrent last-unit protection.
 - [x] WMS-060 blind cycle counts and controlled inventory adjustment posting; scheduling remains deferred.

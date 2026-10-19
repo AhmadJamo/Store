@@ -417,6 +417,8 @@ SalesApprovalRules, SalesApprovalInstances, SalesApprovalSteps
 
 ### `SAL-020` — أساس التسعير والضريبة والوحدة / Pricing, tax and UOM foundation
 
+> `SAL-020A` DESIGN GATE COMPLETE 2026-10-19 — deterministic priority, unit conversion, dated currency, rounding, tax/exemption snapshots and explainable-result contract are accepted in `decisions/ADR-20261019-DETERMINISTIC-SALES-PRICING-TAX-UOM.md`. Runtime list/rule storage and evaluation remain `SAL-020B`.
+
 - محرك سعر حتمي يدعم المنتج/المتغير/الزبون/المجموعة/الكمية/الوحدة/العملة/التاريخ.
 - نتيجة تحمل السعر الأصلي والنهائي والقاعدة والمصدر.
 - حاسبة ضريبة مركزية تنتج لقطة سطر؛ تبدأ بما يلزم للعرض ولا تبني نظام اختصاصات دولي غير مطلوب.
