@@ -18,6 +18,7 @@ public class Customer
     public string TimeZoneId { get; private set; } = "Asia/Amman";
     public string? Notes { get; private set; }
     public int AccountId { get; private set; }
+    public Account? Account { get; private set; }
     public bool IsActive { get; private set; } = true;
     public DateTime? ArchivedAtUtc { get; private set; }
     public byte[] RowVersion { get; private set; } = [];
@@ -31,6 +32,8 @@ public class Customer
         AccountId = accountId;
         UpdateProfile(type, name, null, null, null, null, null, null, "ar-JO", "Asia/Amman", null);
     }
+    public Customer(string customerCode,string name,Account account,CustomerType type=CustomerType.Company)
+    { Account=account??throw new ArgumentNullException(nameof(account)); CustomerCode=NormalizeCode(customerCode); UpdateProfile(type,name,null,null,null,null,null,null,"ar-JO","Asia/Amman",null); }
 
     public void UpdateProfile(CustomerType type, string name, string? legalName, string? phone, string? email,
         string? taxNumber, string? registrationNumber, string? website, string preferredLanguage,

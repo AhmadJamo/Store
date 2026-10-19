@@ -3,7 +3,7 @@ using MiniStore.Application.Dtos.Customers;
 using MiniStore.Domain.Entities;
 using MiniStore.Domain.Interfaces;
 namespace MiniStore.Application.Services;
-public class CustomerService(ICustomerRepository customers, IAccountRepository accounts, IUnitOfWork unitOfWork, DocumentNumberService numbers)
+public class CustomerService(ICustomerRepository customers, IAccountRepository accounts, IAccountingSettingsRepository accountingSettings, IUnitOfWork unitOfWork, DocumentNumberService numbers)
 {
     public async Task<CustomerListPageDto> GetPageAsync(CustomerListQueryDto query)
     {
@@ -39,8 +39,11 @@ public class CustomerService(ICustomerRepository customers, IAccountRepository a
         Customer? created = null;
         await unitOfWork.ExecuteInTransactionAsync(async () =>
         {
-            await ValidateAsync(dto, null);
-            created = new Customer(await numbers.GenerateAsync(DocumentNumberType.Customer, DateTime.Today), dto.Name, dto.AccountId, dto.Type);
+            var customerCode=await numbers.GenerateAsync(DocumentNumberType.Customer, DateTime.Today);
+            var selection=await ResolveCreateAccountAsync(dto,customerCode); dto.AccountId=selection.Id;
+            if(selection.NewAccount is null) await ValidateAsync(dto,null);
+            else if(await customers.NameExistsAsync(dto.Name)) throw new InvalidOperationException("Customer name already exists.");
+            created = selection.NewAccount is null?new Customer(customerCode,dto.Name,dto.AccountId,dto.Type):new Customer(customerCode,dto.Name,selection.NewAccount,dto.Type);
             Apply(created, dto); await customers.AddAsync(created);
         });
         return created!.Id;
@@ -50,7 +53,9 @@ public class CustomerService(ICustomerRepository customers, IAccountRepository a
     {
         await unitOfWork.ExecuteInTransactionAsync(async () =>
         {
-            var customer = await GetCurrentAsync(dto.Id, dto.RowVersion); await ValidateAsync(dto, dto.Id);
+            var customer = await GetCurrentAsync(dto.Id, dto.RowVersion);
+            if((await accountingSettings.GetAsync())?.CustomerReceivableMode is not null and not CustomerReceivableAccountMode.ManualSelection) dto.AccountId=customer.AccountId;
+            await ValidateAsync(dto, dto.Id);
             Apply(customer, dto); customer.ChangeReceivableAccount(dto.AccountId);
         });
     }
@@ -95,8 +100,24 @@ public class CustomerService(ICustomerRepository customers, IAccountRepository a
     {
         var account = await accounts.GetByIdAsync(dto.AccountId) ?? throw new InvalidOperationException("Selected customer account was not found.");
         if (!account.ParentAccountId.HasValue) throw new InvalidOperationException("Customer receivable account must be a subaccount in the chart of accounts.");
-        if (await customers.AccountAssignedAsync(dto.AccountId, excludedId)) throw new InvalidOperationException("Customer receivable account is already assigned to another customer.");
+        var policy=await accountingSettings.GetAsync();
+        if (policy?.CustomerReceivableMode!=CustomerReceivableAccountMode.SharedControlAccount&&await customers.AccountAssignedAsync(dto.AccountId, excludedId)) throw new InvalidOperationException("Customer receivable account is already assigned to another customer.");
         if (await customers.NameExistsAsync(dto.Name, excludedId)) throw new InvalidOperationException("Customer name already exists.");
+    }
+
+    private async Task<(int Id,Account? NewAccount)> ResolveCreateAccountAsync(CustomerFormDto dto,string customerCode)
+    {
+        var policy=await accountingSettings.GetAsync();
+        if(policy?.CustomerReceivableMode is null or CustomerReceivableAccountMode.ManualSelection) return (dto.AccountId,null);
+        if(policy.CustomerReceivableMode==CustomerReceivableAccountMode.SharedControlAccount) return (policy.CustomerReceivableControlAccountId??throw new InvalidOperationException("Configure a shared customer receivable control account before creating customers."),null);
+        var parentId=policy.CustomerReceivableParentAccountId??throw new InvalidOperationException("Configure a parent receivable account before creating automatic customer accounts.");
+        var parent=await accounts.GetByIdAsync(parentId)??throw new InvalidOperationException("The configured parent receivable account was not found.");
+        if(!parent.IsActive||parent.Type!=AccountType.Asset) throw new InvalidOperationException("The configured parent receivable account must be an active asset account.");
+        var accountCode=$"{policy.CustomerAccountCodePrefix}{customerCode}";
+        if(accountCode.Length>50) throw new InvalidOperationException("The automatic customer account code exceeds 50 characters. Shorten the configured prefix.");
+        var account=new Account(accountCode,dto.Name,AccountType.Asset,parentId);
+        await accounts.AddAsync(account);
+        return (0,account);
     }
 
     private async Task<List<AccountDto>> GetAccountOptionsAsync() => (await accounts.GetAllAsync())

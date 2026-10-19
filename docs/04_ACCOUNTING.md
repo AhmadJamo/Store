@@ -23,6 +23,7 @@ Warehouses now have optional BranchId and InventoryAccountId fields. Completing 
 | Chart of accounts and balanced journal-entry foundation | IMPLEMENTED | `Account`, `JournalEntry`, `JournalEntryLine` and administration UI. |
 | Central journal-posting gateway | IMPLEMENTED | `JournalPostingService` owns source idempotency, journal numbering, construction, balance validation, posting and persistence for purchase, sale and sales-return workflows. |
 | Customers and suppliers account linkage | IMPLEMENTED | Customer account is required; supplier payable account is optional. |
+| Configurable customer receivable policy | IMPLEMENTED FOUNDATION | Tenant may choose shared control, automatic individual subaccounts or manual selection prospectively. Existing links/history remain unchanged; later mode changes with dependent sales require a controlled transition. |
 | Tax account mapping | IMPLEMENTED | `TaxRate` stores required input/output tax account IDs. |
 | Discount/revenue/COGS account mapping | IMPLEMENTED | Singleton settings configure company defaults; each branch can override sales revenue with a required subaccount. |
 | Purchase journal posting | IMPLEMENTED | Explicit posting creates a balanced inventory/input-tax/purchase-discount/supplier-payable entry. |

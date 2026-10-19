@@ -347,6 +347,23 @@ namespace MiniStore.Infrastructure.Migrations
                     b.Property<int?>("CostOfSalesAccountId")
                         .HasColumnType("int");
 
+                    b.Property<string>("CustomerAccountCodePrefix")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<DateOnly?>("CustomerPolicyEffectiveFrom")
+                        .HasColumnType("date");
+
+                    b.Property<int?>("CustomerReceivableControlAccountId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CustomerReceivableMode")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CustomerReceivableParentAccountId")
+                        .HasColumnType("int");
+
                     b.Property<int?>("GoodsReceivedNotInvoicedAccountId")
                         .HasColumnType("int");
 
@@ -382,6 +399,10 @@ namespace MiniStore.Infrastructure.Migrations
                     b.HasIndex("TenantId");
 
                     b.HasIndex("CostOfSalesAccountId", "TenantId");
+
+                    b.HasIndex("CustomerReceivableControlAccountId", "TenantId");
+
+                    b.HasIndex("CustomerReceivableParentAccountId", "TenantId");
 
                     b.HasIndex("GoodsReceivedNotInvoicedAccountId", "TenantId");
 
@@ -1005,14 +1026,13 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("AccountId");
+
                     b.HasIndex("TenantId");
 
                     b.HasIndex("AccountId", "TenantId");
 
                     b.HasIndex("IsActive", "Name");
-
-                    b.HasIndex("TenantId", "AccountId")
-                        .IsUnique();
 
                     b.HasIndex("TenantId", "CustomerCode")
                         .IsUnique();
@@ -9289,6 +9309,18 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasOne("MiniStore.Domain.Entities.Account", null)
                         .WithMany()
+                        .HasForeignKey("CustomerReceivableControlAccountId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("MiniStore.Domain.Entities.Account", null)
+                        .WithMany()
+                        .HasForeignKey("CustomerReceivableParentAccountId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("MiniStore.Domain.Entities.Account", null)
+                        .WithMany()
                         .HasForeignKey("GoodsReceivedNotInvoicedAccountId", "TenantId")
                         .HasPrincipalKey("Id", "TenantId")
                         .OnDelete(DeleteBehavior.Restrict);
@@ -9445,12 +9477,14 @@ namespace MiniStore.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("MiniStore.Domain.Entities.Account", null)
+                    b.HasOne("MiniStore.Domain.Entities.Account", "Account")
                         .WithMany()
                         .HasForeignKey("AccountId", "TenantId")
                         .HasPrincipalKey("Id", "TenantId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("Account");
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.CustomerAddress", b =>

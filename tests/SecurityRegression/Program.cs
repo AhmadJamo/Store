@@ -545,6 +545,13 @@ Check(address.CountryCode=="JO"&&address.IsDefault,"Customer addresses must norm
 address.Archive(DateTime.UtcNow); Check(!address.IsActive&&!address.IsDefault,"Archived customer addresses must stop being defaults without deletion");
 CheckArgumentThrows(()=>new CustomerAddress(1,CustomerAddressType.Shipping,"Delivery","Street",null,"Amman",null,null,"JOR",false),"Customer addresses must reject invalid country codes");
 Check(db.Model.FindEntityType(typeof(CustomerContact))!.FindProperty(nameof(CustomerContact.RowVersion))!.IsConcurrencyToken&&db.Model.FindEntityType(typeof(CustomerAddress))!.FindProperty(nameof(CustomerAddress.RowVersion))!.IsConcurrencyToken,"Customer contacts and addresses must use rowversion concurrency");
+var flexibleAccounting=new AccountingSettings(null,null,null,null);
+flexibleAccounting.ConfigureCustomerReceivables(CustomerReceivableAccountMode.SharedControlAccount,10,null,"CUST-",new DateOnly(2026,10,19));
+Check(flexibleAccounting.CustomerReceivableMode==CustomerReceivableAccountMode.SharedControlAccount&&flexibleAccounting.CustomerReceivableControlAccountId==10,"Customer accounting settings must support a shared control account policy");
+flexibleAccounting.ConfigureCustomerReceivables(CustomerReceivableAccountMode.AutomaticIndividualAccount,null,20,"client-",new DateOnly(2026,11,1));
+Check(flexibleAccounting.CustomerAccountCodePrefix=="CLIENT-"&&flexibleAccounting.CustomerReceivableParentAccountId==20,"Customer accounting settings must support automatic individual accounts with a normalized prefix");
+CheckArgumentThrows(()=>flexibleAccounting.ConfigureCustomerReceivables(CustomerReceivableAccountMode.SharedControlAccount,null,null,"CUST-",DateOnly.FromDateTime(DateTime.Today)),"Shared receivables must require a control account");
+Check(!customerModel.GetIndexes().Any(x=>x.IsUnique&&x.Properties.Any(p=>p.Name==nameof(Customer.AccountId))),"Customer accounts must allow reuse when shared-control policy is selected");
 var workflowCatalogAction = typeof(SettingsController).GetMethod(nameof(SettingsController.WorkflowCatalog))!;
 Check(workflowCatalogAction.GetCustomAttribute<HttpGetAttribute>() is not null,
     "Workflow catalog must be a read-only settings action");

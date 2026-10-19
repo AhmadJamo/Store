@@ -1,6 +1,6 @@
 # دراسة وخطة إدارة الزبائن وشركاء الأعمال / Customer & Business Partner Audit and Plan
 
-> الحالة: `CUS-000` و`CUS-005` و`CUS-010` و`CUS-020` مكتملة؛ `CUS-030` هي المرحلة التالية المقترحة وتنتظر الموافقة
+> الحالة: `CUS-000` و`CUS-005` و`CUS-010` و`CUS-020` و`CUS-030A` مكتملة؛ `CUS-030B` هي المرحلة التالية المقترحة
 >
 > تاريخ المراجعة: 2026-10-15
 >
@@ -258,6 +258,13 @@ Customer Master (ملف الزبون)
 
 ### `CUS-030` — إعدادات البيع والمحاسبة / Sales and accounting settings
 
+> APPROVED 2026-10-19 — configurable-policy principle accepted. Customer receivables support shared control,
+> automatic individual account creation or manual selection; existing history is preserved and later unsafe
+> changes require a transition workflow. See `decisions/ADR-20261019-CONFIGURABLE-POLICY-SAFE-HISTORY.md`.
+
+> `CUS-030A` COMPLETE 2026-10-19 — receivable policy foundation and migration 117. Payment terms, currency,
+> price list, salesperson/team and tax defaults remain the bounded `CUS-030B` proposal.
+
 - شروط الدفع والعملات وقائمة السعر والبائع والفريق والوضع الضريبي والحسابات.
 - لا بناء لمحرك سعر أو ضريبة ثانٍ؛ الربط مع `SAL-020` (تأسيس التسعير والضريبة 020).
 - قرار نهائي لنمط حساب الذمم قبل إصدار فواتير الذمم.
@@ -394,7 +401,7 @@ tests/SecurityRegression/Program.cs
 
 ## 14. المطلوب اعتماده قبل التنفيذ
 
-أُغلق `CUS-005` ثم نُفذ `CUS-010` وفق القرار الآتي؛ المرحلة المقترحة التالية هي `CUS-020` ولا تبدأ دون موافقة:
+أُغلق `CUS-005` ونُفذت `CUS-010` و`CUS-020` و`CUS-030A`؛ المرحلة المقترحة التالية هي `CUS-030B` ولا تبدأ دون موافقة:
 
 1. نبدأ بتوسيع `Customer` (الزبون) ونؤجل جدول `BusinessPartner` (شريك الأعمال) الفعلي.
 2. نحافظ على حساب الذمم الحالي في `CUS-010` (ملف الزبون 010)، ونحسم الحساب المشترك/الفرعي قبل `CUS-030` (الإعدادات المحاسبية 030).

@@ -2786,4 +2786,27 @@
   <data name="Customer contact was not found." xml:space="preserve"><value>لم يتم العثور على جهة اتصال الزبون.</value></data>
   <data name="Customer address was not found." xml:space="preserve"><value>لم يتم العثور على عنوان الزبون.</value></data>
   <data name="Customer information was modified by another user. Reload and try again." xml:space="preserve"><value>عُدلت بيانات الزبون بواسطة مستخدم آخر. أعد تحميل الصفحة وحاول مجددًا.</value></data>
+  <data name="Customer receivable policy" xml:space="preserve"><value>سياسة ذمم الزبائن</value></data>
+  <data name="Choose how customer receivable accounts are assigned. The policy applies to future customers and never rewrites posted history." xml:space="preserve"><value>اختر طريقة تعيين حسابات ذمم الزبائن. تطبق السياسة على الزبائن القادمين ولا تعيد كتابة التاريخ المرحّل.</value></data>
+  <data name="Receivable account mode" xml:space="preserve"><value>طريقة حساب الذمم</value></data>
+  <data name="Shared uses one control account; automatic creates a subaccount; manual asks during customer creation." xml:space="preserve"><value>المشترك يستخدم حساب رقابة واحدًا، والتلقائي ينشئ حسابًا فرعيًا، واليدوي يطلب الحساب عند إنشاء الزبون.</value></data>
+  <data name="Legacy manual behavior" xml:space="preserve"><value>السلوك اليدوي القديم</value></data>
+  <data name="Shared control account" xml:space="preserve"><value>حساب رقابة مشترك</value></data>
+  <data name="Automatic individual account" xml:space="preserve"><value>حساب مستقل تلقائي</value></data>
+  <data name="Manual account selection" xml:space="preserve"><value>اختيار الحساب يدويًا</value></data>
+  <data name="Shared receivable control account" xml:space="preserve"><value>حساب رقابة الذمم المشترك</value></data>
+  <data name="Used by all future customers in shared-control mode; customer detail remains in the subledger." xml:space="preserve"><value>يستخدمه جميع الزبائن القادمين في الوضع المشترك، وتبقى تفاصيل كل زبون في دفتر الأستاذ الفرعي.</value></data>
+  <data name="Parent account for automatic customer accounts" xml:space="preserve"><value>الحساب الأب لحسابات الزبائن التلقائية</value></data>
+  <data name="New individual customer accounts are created below this active asset account." xml:space="preserve"><value>تُنشأ حسابات الزبائن المستقلة الجديدة تحت حساب الأصول الفعال هذا.</value></data>
+  <data name="Automatic account code prefix" xml:space="preserve"><value>بادئة رمز الحساب التلقائي</value></data>
+  <data name="Example: CUST-CUS-000123." xml:space="preserve"><value>مثال: CUST-CUS-000123.</value></data>
+  <data name="Effective from" xml:space="preserve"><value>ساري من تاريخ</value></data>
+  <data name="Existing customer accounts and posted documents remain unchanged." xml:space="preserve"><value>تبقى حسابات الزبائن الحالية والمستندات المرحلة دون تغيير.</value></data>
+  <data name="Accounting and customer receivable settings updated successfully." xml:space="preserve"><value>تم تحديث إعدادات المحاسبة وذمم الزبائن بنجاح.</value></data>
+  <data name="Customer receivable policy has dependent sales and requires the controlled transition workflow." xml:space="preserve"><value>ترتبط سياسة ذمم الزبائن بمبيعات قائمة وتتطلب مسار انتقال محاسبي مضبوطًا.</value></data>
+  <data name="A shared customer receivable control account is required." xml:space="preserve"><value>حساب رقابة مشترك لذمم الزبائن مطلوب.</value></data>
+  <data name="A parent receivable account is required for automatic customer accounts." xml:space="preserve"><value>الحساب الأب للذمم مطلوب لإنشاء حسابات الزبائن تلقائيًا.</value></data>
+  <data name="Configure a shared customer receivable control account before creating customers." xml:space="preserve"><value>هيّئ حساب رقابة ذمم الزبائن المشترك قبل إنشاء الزبائن.</value></data>
+  <data name="Configure a parent receivable account before creating automatic customer accounts." xml:space="preserve"><value>هيّئ الحساب الأب للذمم قبل إنشاء حسابات الزبائن تلقائيًا.</value></data>
+  <data name="The automatic customer account code exceeds 50 characters. Shorten the configured prefix." xml:space="preserve"><value>يتجاوز رمز حساب الزبون التلقائي 50 حرفًا. قصّر البادئة المهيأة.</value></data>
 </root>

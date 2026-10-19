@@ -7,6 +7,7 @@ namespace MiniStore.Application.Services;
 public class AccountingSettingsService(
     IAccountingSettingsRepository settingsRepository,
     IAccountRepository accountRepository,
+    ISaleRepository sales,
     SemanticAuditEventService audit)
 {
     public async Task<AccountingSettingsDto> GetAsync()
@@ -22,7 +23,10 @@ public class AccountingSettingsService(
             PurchasePriceVarianceAccountId = settings.PurchasePriceVarianceAccountId,
             LandedCostClearingAccountId = settings.LandedCostClearingAccountId,
             RealizedExchangeGainAccountId = settings.RealizedExchangeGainAccountId,
-            RealizedExchangeLossAccountId = settings.RealizedExchangeLossAccountId
+            RealizedExchangeLossAccountId = settings.RealizedExchangeLossAccountId,
+            CustomerReceivableAccountMode=settings.CustomerReceivableMode, CustomerReceivableControlAccountId=settings.CustomerReceivableControlAccountId,
+            CustomerReceivableParentAccountId=settings.CustomerReceivableParentAccountId,CustomerAccountCodePrefix=settings.CustomerAccountCodePrefix,
+            CustomerPolicyEffectiveFrom=settings.CustomerPolicyEffectiveFrom??DateOnly.FromDateTime(DateTime.Today)
         };
     }
 
@@ -31,16 +35,20 @@ public class AccountingSettingsService(
         await EnsureAccountsExist(dto);
 
         var settings = await settingsRepository.GetAsync();
+        if(settings?.CustomerReceivableMode is { } current&&dto.CustomerReceivableAccountMode is { } requested&&current!=requested&&await sales.GetAllAsync() is {Count:>0})
+            throw new InvalidOperationException("Customer receivable policy has dependent sales and requires the controlled transition workflow.");
         var before = settings is null ? null : AuditValues(settings);
         if (settings is null)
         {
-            await settingsRepository.AddAsync(new AccountingSettings(
+            settings=new AccountingSettings(
                 dto.PurchaseDiscountAccountId,
                 dto.SalesDiscountAccountId,
                 dto.SalesRevenueAccountId,
                 dto.CostOfSalesAccountId, dto.GoodsReceivedNotInvoicedAccountId, dto.PurchasePriceVarianceAccountId, dto.LandedCostClearingAccountId,
-                dto.RealizedExchangeGainAccountId, dto.RealizedExchangeLossAccountId));
+                dto.RealizedExchangeGainAccountId, dto.RealizedExchangeLossAccountId);
+            await settingsRepository.AddAsync(settings);
         }
+        if(dto.CustomerReceivableAccountMode is { } mode) settings.ConfigureCustomerReceivables(mode,dto.CustomerReceivableControlAccountId,dto.CustomerReceivableParentAccountId,dto.CustomerAccountCodePrefix,dto.CustomerPolicyEffectiveFrom);
         else
         {
             settings.ConfigurePostingAccounts(
@@ -73,7 +81,10 @@ public class AccountingSettingsService(
             PurchasePriceVarianceAccountId = settings.PurchasePriceVarianceAccountId,
             LandedCostClearingAccountId = settings.LandedCostClearingAccountId,
             RealizedExchangeGainAccountId = settings.RealizedExchangeGainAccountId,
-            RealizedExchangeLossAccountId = settings.RealizedExchangeLossAccountId
+            RealizedExchangeLossAccountId = settings.RealizedExchangeLossAccountId,
+            CustomerReceivableAccountMode=settings.CustomerReceivableMode,CustomerReceivableControlAccountId=settings.CustomerReceivableControlAccountId,
+            CustomerReceivableParentAccountId=settings.CustomerReceivableParentAccountId,CustomerAccountCodePrefix=settings.CustomerAccountCodePrefix,
+            CustomerPolicyEffectiveFrom=settings.CustomerPolicyEffectiveFrom??DateOnly.FromDateTime(DateTime.Today)
         });
 
     private static IReadOnlyDictionary<string, object?> AuditValues(AccountingSettingsDto value) =>
@@ -87,7 +98,9 @@ public class AccountingSettingsService(
             ["PurchasePriceVarianceAccountId"] = value.PurchasePriceVarianceAccountId,
             ["LandedCostClearingAccountId"] = value.LandedCostClearingAccountId,
             ["RealizedExchangeGainAccountId"] = value.RealizedExchangeGainAccountId,
-            ["RealizedExchangeLossAccountId"] = value.RealizedExchangeLossAccountId
+            ["RealizedExchangeLossAccountId"] = value.RealizedExchangeLossAccountId,
+            ["CustomerReceivableAccountMode"]=value.CustomerReceivableAccountMode,["CustomerReceivableControlAccountId"]=value.CustomerReceivableControlAccountId,
+            ["CustomerReceivableParentAccountId"]=value.CustomerReceivableParentAccountId,["CustomerAccountCodePrefix"]=value.CustomerAccountCodePrefix,["CustomerPolicyEffectiveFrom"]=value.CustomerPolicyEffectiveFrom
         };
 
     private async Task EnsureAccountsExist(AccountingSettingsDto dto)
@@ -96,7 +109,8 @@ public class AccountingSettingsService(
         {
             dto.PurchaseDiscountAccountId, dto.SalesDiscountAccountId,
             dto.SalesRevenueAccountId, dto.CostOfSalesAccountId, dto.GoodsReceivedNotInvoicedAccountId,
-            dto.PurchasePriceVarianceAccountId, dto.LandedCostClearingAccountId, dto.RealizedExchangeGainAccountId, dto.RealizedExchangeLossAccountId
+            dto.PurchasePriceVarianceAccountId, dto.LandedCostClearingAccountId, dto.RealizedExchangeGainAccountId, dto.RealizedExchangeLossAccountId,
+            dto.CustomerReceivableControlAccountId,dto.CustomerReceivableParentAccountId
         }.Where(x => x.HasValue).Select(x => x!.Value).Distinct().ToList();
 
         foreach (var id in ids)
@@ -104,5 +118,9 @@ public class AccountingSettingsService(
             if (await accountRepository.GetByIdAsync(id) is null)
                 throw new InvalidOperationException("A selected posting account was not found.");
         }
+        if(dto.CustomerReceivableAccountMode==CustomerReceivableAccountMode.SharedControlAccount&&dto.CustomerReceivableControlAccountId is { } controlId&&await accountRepository.GetByIdAsync(controlId) is not {IsActive:true,Type:AccountType.Asset,ParentAccountId:not null})
+            throw new InvalidOperationException("The shared customer receivable control account must be an active asset subaccount.");
+        if(dto.CustomerReceivableAccountMode==CustomerReceivableAccountMode.AutomaticIndividualAccount&&dto.CustomerReceivableParentAccountId is { } parentId&&await accountRepository.GetByIdAsync(parentId) is not {IsActive:true,Type:AccountType.Asset})
+            throw new InvalidOperationException("The automatic customer account parent must be an active asset account.");
     }
 }

@@ -46,6 +46,8 @@
 separate compatibility identities, CUS-010 expands Customer additively, and actual BusinessPartner unification is
 deferred to a separately approved CUS-110 gate.
 
+`docs/decisions/ADR-20261019-CONFIGURABLE-POLICY-SAFE-HISTORY.md` establishes configurable policies with immutable posted history and controlled transitions; CUS-030A is its first customer-accounting implementation.
+
 `docs/reference/erp-architecture/` preserves the imported cross-ERP proposed architecture package: system charter, module and ownership maps, workflows, integration contracts, cross-cutting rules, delivery roadmap, agent guidance, test matrix and open decisions. It is a planning reference rather than evidence of implemented code, and its Codex guidance does not supersede repository `AGENTS.md`, accepted ADRs or the required documentation workflow.
 
 `docs/reference/erp-saas-foundation/` installs the imported ERP SaaS Foundation Blueprint with provenance hashes, archived non-authoritative source instructions, the original tenant/audit/integrity/DR/approval/configuration/billing/exception/work/import references and an evidence-based MiniStore compatibility overlay. `FND-000` is documentation-only; none of the proposed gaps are implemented by importing the package.

@@ -15,8 +15,8 @@ public class CustomerConfiguration : IEntityTypeConfiguration<Customer>
         builder.Property(x => x.Website).HasMaxLength(500); builder.Property(x => x.PreferredLanguage).HasMaxLength(10).IsRequired();
         builder.Property(x => x.TimeZoneId).HasMaxLength(100).IsRequired(); builder.Property(x => x.Notes).HasMaxLength(1000);
         builder.Property(x => x.RowVersion).IsRowVersion(); builder.HasIndex(x => x.CustomerCode).IsUnique();
-        builder.HasIndex(x => x.AccountId).IsUnique(); builder.HasIndex(x => new { x.IsActive, x.Name });
-        builder.HasOne<Account>().WithMany().HasForeignKey(x => x.AccountId).OnDelete(DeleteBehavior.Restrict);
+        builder.HasIndex(x => x.AccountId); builder.HasIndex(x => new { x.IsActive, x.Name });
+        builder.HasOne(x=>x.Account).WithMany().HasForeignKey(x => x.AccountId).OnDelete(DeleteBehavior.Restrict);
     }
 }
 public class CustomerContactConfiguration : IEntityTypeConfiguration<CustomerContact>

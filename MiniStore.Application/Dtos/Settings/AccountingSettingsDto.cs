@@ -1,4 +1,5 @@
 namespace MiniStore.Application.Dtos.Settings;
+using MiniStore.Domain.Entities;
 
 public class AccountingSettingsDto
 {
@@ -11,4 +12,9 @@ public class AccountingSettingsDto
     public int? LandedCostClearingAccountId { get; set; }
     public int? RealizedExchangeGainAccountId { get; set; }
     public int? RealizedExchangeLossAccountId { get; set; }
+    public CustomerReceivableAccountMode? CustomerReceivableAccountMode { get; set; }
+    public int? CustomerReceivableControlAccountId { get; set; }
+    public int? CustomerReceivableParentAccountId { get; set; }
+    public string CustomerAccountCodePrefix { get; set; } = "CUST-";
+    public DateOnly CustomerPolicyEffectiveFrom { get; set; } = DateOnly.FromDateTime(DateTime.Today);
 }

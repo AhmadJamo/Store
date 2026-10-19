@@ -468,12 +468,12 @@ public class SettingsController : Controller
         {
             await _accountingSettingsService.UpdateAsync(dto);
             TempData["NotificationType"] = "success";
-            TempData["NotificationMessage"] = "Accounting posting accounts updated successfully.";
+            TempData["NotificationMessage"] = _localizer["Accounting and customer receivable settings updated successfully."].Value;
             return RedirectToAction(nameof(Accounting));
         }
         catch (Exception ex) when (ex is ArgumentException or InvalidOperationException)
         {
-            ModelState.AddModelError(string.Empty, ex.Message);
+            ModelState.AddModelError(string.Empty, _localizer[ex.Message]);
             await LoadAccountsAsync();
             return View(dto);
         }

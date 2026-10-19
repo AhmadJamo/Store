@@ -16,5 +16,8 @@ public class AccountingSettingsConfiguration : IEntityTypeConfiguration<Accounti
         builder.HasOne<Account>().WithMany().HasForeignKey(x=>x.LandedCostClearingAccountId).OnDelete(DeleteBehavior.Restrict);
         builder.HasOne<Account>().WithMany().HasForeignKey(x=>x.RealizedExchangeGainAccountId).OnDelete(DeleteBehavior.Restrict);
         builder.HasOne<Account>().WithMany().HasForeignKey(x=>x.RealizedExchangeLossAccountId).OnDelete(DeleteBehavior.Restrict);
+        builder.Property(x=>x.CustomerAccountCodePrefix).HasMaxLength(20).IsRequired();
+        builder.HasOne<Account>().WithMany().HasForeignKey(x=>x.CustomerReceivableControlAccountId).OnDelete(DeleteBehavior.Restrict);
+        builder.HasOne<Account>().WithMany().HasForeignKey(x=>x.CustomerReceivableParentAccountId).OnDelete(DeleteBehavior.Restrict);
     }
 }

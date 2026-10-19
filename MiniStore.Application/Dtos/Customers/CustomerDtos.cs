@@ -19,7 +19,7 @@ public class CustomerFormDto
     [Required] public string PreferredLanguage { get; set; } = "ar-JO";
     [Required, StringLength(100)] public string TimeZoneId { get; set; } = "Asia/Amman";
     [StringLength(1000)] public string? Notes { get; set; }
-    [Range(1, int.MaxValue)] public int AccountId { get; set; }
+    public int AccountId { get; set; }
     public byte[] RowVersion { get; set; } = [];
 }
 public sealed class CustomerFormPageDto { public CustomerFormDto Form { get; init; } = new(); public List<AccountDto> Accounts { get; init; } = []; }

@@ -919,6 +919,7 @@ static async Task VerifyProfessionalCustomerMasterAsync(
 {
     const string sharedCode = "CUS-SQL-001";
     int tenantOneCustomerId;
+    int tenantOneAccountId;
 
     await using (var tenantOne = new AppDbContext(
                      CreateOptions(connectionString),
@@ -927,6 +928,7 @@ static async Task VerifyProfessionalCustomerMasterAsync(
         var account = new Account("SQL-CUST-AR", "SQL customer receivable", AccountType.Asset);
         tenantOne.Accounts.Add(account);
         await tenantOne.SaveChangesAsync();
+        tenantOneAccountId=account.Id;
 
         var customer = new Customer(sharedCode, "Tenant One SQL Customer", account.Id);
         tenantOne.Customers.Add(customer);
@@ -946,6 +948,13 @@ static async Task VerifyProfessionalCustomerMasterAsync(
         {
             tenantOne.ChangeTracker.Clear();
         }
+    }
+
+    await using (var sharedAccountCheck=new AppDbContext(CreateOptions(connectionString),new FixedTenantContext(tenantOneId)))
+    {
+        sharedAccountCheck.Customers.Add(new Customer("CUS-SQL-SHARED","Shared Control Customer",tenantOneAccountId));
+        await sharedAccountCheck.SaveChangesAsync();
+        if(await sharedAccountCheck.Customers.CountAsync(x=>x.AccountId==tenantOneAccountId)!=2) throw new InvalidOperationException("Shared-control policy must allow multiple customers to use one receivable account.");
     }
 
     await using (var tenantOne = new AppDbContext(CreateOptions(connectionString), new FixedTenantContext(tenantOneId)))
