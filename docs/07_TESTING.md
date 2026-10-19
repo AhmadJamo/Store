@@ -1,9 +1,9 @@
 # Testing
 > Status: FOCUSED REGRESSION EXECUTABLE IMPLEMENTED
 > Source of truth: `tests/SecurityRegression` and build output
-> Last reviewed: 2026-10-18
+> Last reviewed: 2026-10-19
 
-`tests/SecurityRegression` is a standalone executable test harness. It verifies tenant metadata/query filters and write guards; complete classification of mapped Domain entities; composite TenantId coverage; authorization; destructive action HTTP methods; throttling; SaaS and inventory invariants. The 2026-10-18 run passes 787 checks, including audit/observability coverage, the WarehouseLocations Application boundary, Customer domain invariants, four dedicated Customer permissions, antiforgery and action-specific authorization.
+`tests/SecurityRegression` is a standalone executable test harness. It verifies tenant metadata/query filters and write guards; complete classification of mapped Domain entities; composite TenantId coverage; authorization; destructive action HTTP methods; throttling; SaaS and inventory invariants. The 2026-10-19 run passes 805 checks, including Customer commercial-default normalization and rejection of conflicting tax-exempt/default-tax settings.
 
 `tests/InventorySqlIntegration` creates and deletes a process-specific disposable SQL Server database and applies the full migration chain. Customer coverage proves tenant-local code uniqueness, cross-tenant code reuse and read isolation, archive visibility rules and SQL rowversion stale-update rejection. Audit coverage includes disabled legacy writes with continuing semantic events, enabled rollback adding exactly one future legacy row, rollback/isolation/append-only/integrity, reader/export boundaries, SQL role-member impersonation, legal-hold exclusion and release, signed checkpoint plus manifest-before-delete execution, and omission of expired request evidence from destruction files. Override its local connection with `MINISTORE_WMS_TEST_CONNECTION`; `--inspect-audit` performs repeatable read-only schema, count, catalog, observed-event and unexplained-gap reconciliation.
 

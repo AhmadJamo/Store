@@ -19,6 +19,12 @@ public class Customer
     public string? Notes { get; private set; }
     public int AccountId { get; private set; }
     public Account? Account { get; private set; }
+    public int PaymentTermDays { get; private set; }
+    public string? PreferredCurrencyCode { get; private set; }
+    public int? DefaultTaxRateId { get; private set; }
+    public TaxRate? DefaultTaxRate { get; private set; }
+    public bool IsTaxExempt { get; private set; }
+    public string? TaxExemptionReason { get; private set; }
     public bool IsActive { get; private set; } = true;
     public DateTime? ArchivedAtUtc { get; private set; }
     public byte[] RowVersion { get; private set; } = [];
@@ -63,6 +69,24 @@ public class Customer
 
     public void ChangeReceivableAccount(int accountId)
     { if (accountId <= 0) throw new ArgumentException("Customer receivable account is required."); AccountId = accountId; }
+
+    public void ConfigureCommercialDefaults(int paymentTermDays, string? preferredCurrencyCode,
+        int? defaultTaxRateId, bool isTaxExempt, string? taxExemptionReason)
+    {
+        if (paymentTermDays is < 0 or > 3650) throw new ArgumentException("Payment terms must be between 0 and 3650 days.");
+        var currency = Normalize(preferredCurrencyCode)?.ToUpperInvariant();
+        if (currency is not null && (currency.Length != 3 || !currency.All(char.IsLetter)))
+            throw new ArgumentException("Preferred currency must contain exactly three letters.");
+        if (defaultTaxRateId <= 0) defaultTaxRateId = null;
+        if (isTaxExempt && defaultTaxRateId.HasValue)
+            throw new ArgumentException("A tax-exempt customer cannot have a default tax rate.");
+        var reason = Normalize(taxExemptionReason);
+        if (isTaxExempt && string.IsNullOrWhiteSpace(reason))
+            throw new ArgumentException("Tax exemption reason is required for a tax-exempt customer.");
+        if (reason?.Length > 500) throw new ArgumentException("Tax exemption reason cannot exceed 500 characters.");
+        PaymentTermDays = paymentTermDays; PreferredCurrencyCode = currency; DefaultTaxRateId = defaultTaxRateId;
+        IsTaxExempt = isTaxExempt; TaxExemptionReason = isTaxExempt ? reason : null;
+    }
 
     public void Archive(DateTime utcNow)
     { if (!IsActive) throw new InvalidOperationException("Customer is already archived."); IsActive = false; ArchivedAtUtc = utcNow; }

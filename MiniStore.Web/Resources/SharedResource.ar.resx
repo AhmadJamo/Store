@@ -2809,4 +2809,20 @@
   <data name="Configure a shared customer receivable control account before creating customers." xml:space="preserve"><value>هيّئ حساب رقابة ذمم الزبائن المشترك قبل إنشاء الزبائن.</value></data>
   <data name="Configure a parent receivable account before creating automatic customer accounts." xml:space="preserve"><value>هيّئ الحساب الأب للذمم قبل إنشاء حسابات الزبائن تلقائيًا.</value></data>
   <data name="The automatic customer account code exceeds 50 characters. Shorten the configured prefix." xml:space="preserve"><value>يتجاوز رمز حساب الزبون التلقائي 50 حرفًا. قصّر البادئة المهيأة.</value></data>
+  <data name="Commercial defaults" xml:space="preserve"><value>الإعدادات التجارية الافتراضية</value></data>
+  <data name="These values are defaults for future sales documents and do not change posted history." xml:space="preserve"><value>هذه القيم افتراضية لمستندات المبيعات المستقبلية ولا تغيّر السجل المرحّل.</value></data>
+  <data name="Preferred currency" xml:space="preserve"><value>العملة المفضلة</value></data>
+  <data name="Use company currency" xml:space="preserve"><value>استخدم عملة الشركة</value></data>
+  <data name="Default tax rate" xml:space="preserve"><value>نسبة الضريبة الافتراضية</value></data>
+  <data name="No default tax rate" xml:space="preserve"><value>لا توجد ضريبة افتراضية</value></data>
+  <data name="Tax exempt" xml:space="preserve"><value>معفى ضريبيًا</value></data>
+  <data name="Tax exemption reason" xml:space="preserve"><value>سبب الإعفاء الضريبي</value></data>
+  <data name="Tax status" xml:space="preserve"><value>الحالة الضريبية</value></data>
+  <data name="Payment terms must be between 0 and 3650 days." xml:space="preserve"><value>يجب أن تكون مهلة السداد بين 0 و3650 يومًا.</value></data>
+  <data name="Preferred currency must contain exactly three letters." xml:space="preserve"><value>يجب أن يتكون رمز العملة المفضلة من ثلاثة أحرف بالضبط.</value></data>
+  <data name="A tax-exempt customer cannot have a default tax rate." xml:space="preserve"><value>لا يمكن تعيين نسبة ضريبة افتراضية لزبون معفى ضريبيًا.</value></data>
+  <data name="Tax exemption reason is required for a tax-exempt customer." xml:space="preserve"><value>سبب الإعفاء الضريبي مطلوب للزبون المعفى.</value></data>
+  <data name="Tax exemption reason cannot exceed 500 characters." xml:space="preserve"><value>لا يجوز أن يتجاوز سبب الإعفاء الضريبي 500 حرف.</value></data>
+  <data name="Selected preferred currency is not configured." xml:space="preserve"><value>العملة المفضلة المحددة غير مهيأة.</value></data>
+  <data name="Selected default tax rate was not found." xml:space="preserve"><value>لم يتم العثور على نسبة الضريبة الافتراضية المحددة.</value></data>
 </root>

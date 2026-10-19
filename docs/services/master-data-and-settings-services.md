@@ -16,3 +16,7 @@ CompanyOnboardingService applies template version 1 in a Serializable transactio
 # Supplier purchasing information service
 
 `SupplierPurchasingInfoService` manages PUR-010 supplier/product commercial terms. It verifies Supplier/Product/MeasurementUnit existence, rejects prepared products, enforces managed-unit dimension compatibility and company base currency, prevents duplicate identities, clears older preferred records for the product and enforces rowversion on edits/state changes. It has no inventory or accounting side effect.
+# Customer commercial defaults (CUS-030B)
+
+`CustomerService` validates customer payment-term days, resolves preferred currency only from the company currency or configured exchange-rate currencies, and validates the optional default tax through the existing TaxRate repository. Tax exemption is mutually exclusive with a default tax rate and requires a reason. Create/update remain one UnitOfWork transaction; no stock, journal or posted-sale history is changed.
+

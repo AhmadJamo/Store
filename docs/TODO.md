@@ -28,7 +28,7 @@ The ERP SaaS Foundation Blueprint is imported as a non-authoritative planning re
 - [x] CUS-010 implement the additive professional customer master with stable ID, code/profile/archive/concurrency, DTO-only paged queries, permissions, localization and regression coverage.
 - [x] CUS-020 add tenant-safe customer contacts and billing/shipping addresses with DTO snapshot contracts, defaults, archive and concurrency.
 - [x] CUS-030A establish the configurable customer-receivable policy: shared control, automatic individual account or manual selection, with prospective effect and transition guard.
-- [ ] CUS-030B add customer commercial defaults (payment terms, currency, price list and salesperson/team) in coordination with SAL-020; requires the next bounded approval.
+- [x] CUS-030B add prospective customer payment-term, configured-currency and tax/exemption defaults; defer price list and salesperson/team to their owning SAL-020+ capabilities.
 
 - [x] PUR-000 complete purchase architecture review, legacy compatibility boundary, migration strategy and vertical-slice roadmap.
 - [x] PUR-005 fix context ownership, quantity authority, staged currency, approval and GRNI boundaries before runtime implementation.
@@ -71,8 +71,8 @@ The ERP SaaS Foundation Blueprint is imported as a non-authoritative planning re
 - [x] SAL-000 audit the actual Sales, Inventory, Invoicing, Accounting and Payment foundations; document the legacy immediate-sale compatibility boundary and an additive phased implementation plan.
 - [x] SAL-005 approve the Sales context-ownership, invoicing-policy, COGS-timing, currency, reservation and POS boundaries before runtime implementation.
 - [x] CUS-000 audit the Customer and Business Partner requirements against the actual repository and document compatibility, migration safeguards, ownership, tests and a phased implementation plan.
-- [ ] CUS-005 approve the Business Partner compatibility decision, customer-code policy, receivable-account model and archive rules before runtime implementation.
-- [ ] SAL-010 extend the Customer foundation additively while preserving current Customer IDs and Legacy Immediate Sale compatibility.
+- [x] CUS-005 approve the Business Partner compatibility decision, customer-code policy, receivable-account model and archive rules before runtime implementation.
+- [x] SAL-010 extend the Customer foundation additively while preserving current Customer IDs and Legacy Immediate Sale compatibility (delivered through CUS-010..030B).
 - [ ] SAL-020 through SAL-130 implement the approved pricing, quotation, order, reservation, delivery, invoicing, accounting, payment, return, advanced-sales and cutover slices in order after SAL-010.
 
 - [x] WMS-050 reservations and exact transfer allocation with concurrent last-unit protection.

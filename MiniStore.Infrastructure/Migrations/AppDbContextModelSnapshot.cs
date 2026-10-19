@@ -966,11 +966,17 @@ namespace MiniStore.Infrastructure.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<int?>("DefaultTaxRateId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Email")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
                     b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsTaxExempt")
                         .HasColumnType("bit");
 
                     b.Property<string>("LegalName")
@@ -986,9 +992,16 @@ namespace MiniStore.Infrastructure.Migrations
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
 
+                    b.Property<int>("PaymentTermDays")
+                        .HasColumnType("int");
+
                     b.Property<string>("Phone")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("PreferredCurrencyCode")
+                        .HasMaxLength(3)
+                        .HasColumnType("nvarchar(3)");
 
                     b.Property<string>("PreferredLanguage")
                         .IsRequired()
@@ -1004,6 +1017,10 @@ namespace MiniStore.Infrastructure.Migrations
                         .IsRequired()
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("rowversion");
+
+                    b.Property<string>("TaxExemptionReason")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<string>("TaxNumber")
                         .HasMaxLength(100)
@@ -1031,6 +1048,8 @@ namespace MiniStore.Infrastructure.Migrations
                     b.HasIndex("TenantId");
 
                     b.HasIndex("AccountId", "TenantId");
+
+                    b.HasIndex("DefaultTaxRateId", "TenantId");
 
                     b.HasIndex("IsActive", "Name");
 
@@ -9484,7 +9503,15 @@ namespace MiniStore.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("MiniStore.Domain.Entities.TaxRate", "DefaultTaxRate")
+                        .WithMany()
+                        .HasForeignKey("DefaultTaxRateId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.Navigation("Account");
+
+                    b.Navigation("DefaultTaxRate");
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.CustomerAddress", b =>

@@ -1,6 +1,6 @@
 # دراسة وخطة إدارة الزبائن وشركاء الأعمال / Customer & Business Partner Audit and Plan
 
-> الحالة: `CUS-000` و`CUS-005` و`CUS-010` و`CUS-020` و`CUS-030A` مكتملة؛ `CUS-030B` هي المرحلة التالية المقترحة
+> الحالة: `CUS-000` و`CUS-005` و`CUS-010` و`CUS-020` و`CUS-030A` و`CUS-030B` مكتملة
 >
 > تاريخ المراجعة: 2026-10-15
 >
@@ -262,8 +262,9 @@ Customer Master (ملف الزبون)
 > automatic individual account creation or manual selection; existing history is preserved and later unsafe
 > changes require a transition workflow. See `decisions/ADR-20261019-CONFIGURABLE-POLICY-SAFE-HISTORY.md`.
 
-> `CUS-030A` COMPLETE 2026-10-19 — receivable policy foundation and migration 117. Payment terms, currency,
-> price list, salesperson/team and tax defaults remain the bounded `CUS-030B` proposal.
+> `CUS-030A` COMPLETE 2026-10-19 — receivable policy foundation and migration 117.
+>
+> `CUS-030B` COMPLETE 2026-10-19 — نفذت مهلة الدفع والعملة والضريبة/الإعفاء كافتراضات مستقبلية في migration 118؛ تبقى قائمة السعر والبائع/الفريق في شرائح المبيعات المالكة لأنها غير موجودة فعليًا بعد.
 
 - شروط الدفع والعملات وقائمة السعر والبائع والفريق والوضع الضريبي والحسابات.
 - لا بناء لمحرك سعر أو ضريبة ثانٍ؛ الربط مع `SAL-020` (تأسيس التسعير والضريبة 020).
@@ -401,7 +402,7 @@ tests/SecurityRegression/Program.cs
 
 ## 14. المطلوب اعتماده قبل التنفيذ
 
-أُغلق `CUS-005` ونُفذت `CUS-010` و`CUS-020` و`CUS-030A`؛ المرحلة المقترحة التالية هي `CUS-030B` ولا تبدأ دون موافقة:
+أُغلق `CUS-005` ونُفذت `CUS-010` و`CUS-020` و`CUS-030A` و`CUS-030B`. المرحلة المقترحة التالية هي `SAL-020` لتأسيس التسعير والضريبة والوحدة دون محرك موازٍ:
 
 1. نبدأ بتوسيع `Customer` (الزبون) ونؤجل جدول `BusinessPartner` (شريك الأعمال) الفعلي.
 2. نحافظ على حساب الذمم الحالي في `CUS-010` (ملف الزبون 010)، ونحسم الحساب المشترك/الفرعي قبل `CUS-030` (الإعدادات المحاسبية 030).

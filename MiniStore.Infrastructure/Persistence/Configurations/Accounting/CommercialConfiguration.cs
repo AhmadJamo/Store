@@ -14,9 +14,11 @@ public class CustomerConfiguration : IEntityTypeConfiguration<Customer>
         builder.Property(x => x.TaxNumber).HasMaxLength(100); builder.Property(x => x.RegistrationNumber).HasMaxLength(100);
         builder.Property(x => x.Website).HasMaxLength(500); builder.Property(x => x.PreferredLanguage).HasMaxLength(10).IsRequired();
         builder.Property(x => x.TimeZoneId).HasMaxLength(100).IsRequired(); builder.Property(x => x.Notes).HasMaxLength(1000);
+        builder.Property(x=>x.PreferredCurrencyCode).HasMaxLength(3); builder.Property(x=>x.TaxExemptionReason).HasMaxLength(500);
         builder.Property(x => x.RowVersion).IsRowVersion(); builder.HasIndex(x => x.CustomerCode).IsUnique();
         builder.HasIndex(x => x.AccountId); builder.HasIndex(x => new { x.IsActive, x.Name });
         builder.HasOne(x=>x.Account).WithMany().HasForeignKey(x => x.AccountId).OnDelete(DeleteBehavior.Restrict);
+        builder.HasOne(x=>x.DefaultTaxRate).WithMany().HasForeignKey(x=>x.DefaultTaxRateId).OnDelete(DeleteBehavior.Restrict);
     }
 }
 public class CustomerContactConfiguration : IEntityTypeConfiguration<CustomerContact>

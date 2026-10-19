@@ -63,7 +63,7 @@ deferred to a separately approved CUS-110 gate.
 |---|---|---|
 | `Entities/Accounting/*.cs` | chart, branches, journal entries, fiscal periods, tax and payment entities | accounting docs. |
 | `Entities/Catalog/{Product,ProductTemplate,ProductCategory,ProductAttributeDefinition,ProductAttributeValue,ProductRecipe,RecipeIngredient,MeasurementUnit}.cs` and product type/unit/dimension/behavior/logistics enums | concrete SKU identity, optional variant template grouping, category-scoped typed attributes/options/values, logistics metadata, tracking/shelf-life policy, sale channels, immutable recipes and managed units | products, sales and inventory docs. |
-| `Entities/Customers/{Customer,CustomerContact}.cs`, `Entities/Suppliers/Supplier.cs` | Customer identity plus tenant-safe multi-contact and General/Billing/Shipping addresses with defaults, archive and rowversion; suppliers keep their professional profile | customer/sales/purchases/suppliers docs. |
+| `Entities/Customers/{Customer,CustomerContact}.cs`, `Entities/Suppliers/Supplier.cs` | Customer identity, prospective payment/currency/tax defaults, tenant-safe multi-contact and General/Billing/Shipping addresses with defaults, archive and rowversion; suppliers keep their professional profile | customer/sales/purchases/suppliers docs. |
 | `Entities/Inventory/*.cs` | warehouses, operating-policy enums, AVCO balances, locations, putaway rules, availability, reservations, adjustments, lot/serial tracking with persisted removal-strategy audit, recall communication evidence, legacy history, physical movements and transfers | inventory, accounting and stock-transfer docs. |
 | `Entities/Purchases/*.cs`, `Entities/Sales/*.cs` | purchase/supplier-return and sale/customer-return aggregates plus POS experience/order settings | purchase/sales/settings docs. |
 | `Entities/Purchases/SupplierProductPurchasingInfo.cs` | supplier-specific product code, compatible purchase unit, base-currency price, lead time, order policy, validity/preference, quantity price breaks and immutable full price-history snapshots | PUR-010/PUR-230 purchasing data screens/services. |
@@ -100,6 +100,7 @@ deferred to a separately approved CUS-110 gate.
 | Files | Purpose | Used by |
 |---|---|---|
 | `Services/<Feature>/*.cs` | use-case services grouped as Accounting, Catalog, Customers, Inventory, Purchases, Sales, Settings and Suppliers | matching MVC controllers. |
+| `Services/Customers/CustomerService.cs`, `Dtos/Customers/CustomerDtos.cs` | professional customer profile, receivable-policy assignment, contacts/addresses and validated configured-currency/tax commercial defaults | Customers controller and responsive forms/details. |
 | `Services/Purchases/PurchaseApprovalService.cs` | approval-rule administration, submit-time rule resolution, frozen instance creation and role-authorized ordered decisions | Purchase Approval Rules and Purchase Request screens. |
 | `Services/Purchases/PurchaseSourcingService.cs` | sends approved-request sourcing or permission/policy-gated direct RFQs, freezing demand, policy and attachment evidence | Purchase Sourcing screens and PUR-200. |
 | `Services/Settings/PurchaseSourcingPolicyService.cs` | manages the tenant direct-RFQ amount, role and supplier-status gate | Purchase sourcing policy Settings screen. |

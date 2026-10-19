@@ -20,10 +20,16 @@ public class CustomerFormDto
     [Required, StringLength(100)] public string TimeZoneId { get; set; } = "Asia/Amman";
     [StringLength(1000)] public string? Notes { get; set; }
     public int AccountId { get; set; }
+    [Range(0,3650)] public int PaymentTermDays { get; set; }
+    [StringLength(3,MinimumLength=3)] public string? PreferredCurrencyCode { get; set; }
+    public int? DefaultTaxRateId { get; set; }
+    public bool IsTaxExempt { get; set; }
+    [StringLength(500)] public string? TaxExemptionReason { get; set; }
     public byte[] RowVersion { get; set; } = [];
 }
-public sealed class CustomerFormPageDto { public CustomerFormDto Form { get; init; } = new(); public List<AccountDto> Accounts { get; init; } = []; }
-public sealed class CustomerDetailsDto : CustomerListItemDto { public string? LegalName { get; init; } public string? TaxNumber { get; init; } public string? RegistrationNumber { get; init; } public string? Website { get; init; } public string PreferredLanguage { get; init; } = ""; public string TimeZoneId { get; init; } = ""; public string? Notes { get; init; } public DateTime? ArchivedAtUtc { get; init; } public byte[] RowVersion { get; init; } = []; public List<CustomerContactDto> Contacts { get; init; }=[]; public List<CustomerAddressDto> Addresses { get; init; }=[]; }
+public sealed record CustomerTaxRateOptionDto(int Id,string Name,decimal Rate);
+public sealed class CustomerFormPageDto { public CustomerFormDto Form { get; init; } = new(); public List<AccountDto> Accounts { get; init; } = []; public List<string> Currencies {get;init;}=[]; public List<CustomerTaxRateOptionDto> TaxRates {get;init;}=[]; }
+public sealed class CustomerDetailsDto : CustomerListItemDto { public string? LegalName { get; init; } public string? TaxNumber { get; init; } public string? RegistrationNumber { get; init; } public string? Website { get; init; } public string PreferredLanguage { get; init; } = ""; public string TimeZoneId { get; init; } = ""; public string? Notes { get; init; } public int PaymentTermDays {get;init;} public string? PreferredCurrencyCode {get;init;} public string? DefaultTaxRateName {get;set;} public bool IsTaxExempt {get;init;} public string? TaxExemptionReason {get;init;} public DateTime? ArchivedAtUtc { get; init; } public byte[] RowVersion { get; init; } = []; public List<CustomerContactDto> Contacts { get; init; }=[]; public List<CustomerAddressDto> Addresses { get; init; }=[]; }
 public sealed class CustomerStatusCommandDto { [Range(1, int.MaxValue)] public int Id { get; set; } public byte[] RowVersion { get; set; } = []; }
 public sealed class CustomerContactDto { public int Id {get;init;} public string Name {get;init;}=""; public string? Role {get;init;} public string? Phone {get;init;} public string? Email {get;init;} public bool IsPrimary {get;init;} public bool IsActive {get;init;} public byte[] RowVersion {get;init;}=[]; }
 public sealed class CustomerAddressDto { public int Id {get;init;} public CustomerAddressType Type {get;init;} public string Label {get;init;}=""; public string AddressLine1 {get;init;}=""; public string? AddressLine2 {get;init;} public string City {get;init;}=""; public string? StateOrProvince {get;init;} public string? PostalCode {get;init;} public string CountryCode {get;init;}=""; public bool IsDefault {get;init;} public bool IsActive {get;init;} public byte[] RowVersion {get;init;}=[]; public string Snapshot => string.Join(", ",new[]{AddressLine1,AddressLine2,City,StateOrProvince,PostalCode,CountryCode}.Where(x=>!string.IsNullOrWhiteSpace(x))); }

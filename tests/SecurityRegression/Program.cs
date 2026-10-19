@@ -523,6 +523,14 @@ customerMaster.UpdateProfile(CustomerType.Company, "Acme Customer", "Acme Legal"
     "customer@example.com", "TAX-1", "REG-1", "https://example.com", "ar-JO", "Asia/Amman", "Priority customer");
 Check(customerMaster.CustomerCode == "CUS-000001" && customerMaster.IsActive && customerMaster.Email == "customer@example.com",
     "Customer master must preserve generated identity and normalized profile data");
+customerMaster.ConfigureCommercialDefaults(30,"usd",null,false,null);
+Check(customerMaster.PaymentTermDays==30&&customerMaster.PreferredCurrencyCode=="USD"&&!customerMaster.IsTaxExempt,
+    "Customer commercial defaults must normalize payment terms and preferred currency");
+customerMaster.ConfigureCommercialDefaults(0,null,null,true,"Government exemption");
+Check(customerMaster.IsTaxExempt&&customerMaster.TaxExemptionReason=="Government exemption"&&customerMaster.DefaultTaxRateId is null,
+    "Tax-exempt customers must preserve their exemption reason without a default tax rate");
+CheckArgumentThrows(()=>customerMaster.ConfigureCommercialDefaults(30,"USD",1,true,"Conflict"),
+    "Tax-exempt customers must reject a conflicting default tax rate");
 customerMaster.Archive(new DateTime(2026, 10, 18, 12, 0, 0, DateTimeKind.Utc));
 Check(!customerMaster.IsActive && customerMaster.ArchivedAtUtc.HasValue,
     "Customer archive must preserve the record while disabling new use");

@@ -3,7 +3,9 @@ using MiniStore.Application.Dtos.Customers;
 using MiniStore.Domain.Entities;
 using MiniStore.Domain.Interfaces;
 namespace MiniStore.Application.Services;
-public class CustomerService(ICustomerRepository customers, IAccountRepository accounts, IAccountingSettingsRepository accountingSettings, IUnitOfWork unitOfWork, DocumentNumberService numbers)
+public class CustomerService(ICustomerRepository customers, IAccountRepository accounts, IAccountingSettingsRepository accountingSettings,
+    IGeneralSettingsRepository generalSettings, ICurrencyExchangeRateRepository exchangeRates, ITaxRateRepository taxRates,
+    IUnitOfWork unitOfWork, DocumentNumberService numbers)
 {
     public async Task<CustomerListPageDto> GetPageAsync(CustomerListQueryDto query)
     {
@@ -15,13 +17,12 @@ public class CustomerService(ICustomerRepository customers, IAccountRepository a
         return new CustomerListPageDto { Query = query, TotalCount = total, Items = items.Select(x => MapList(x, accountNames.GetValueOrDefault(x.AccountId, "—"))).ToList() };
     }
 
-    public async Task<CustomerFormPageDto> GetCreatePageAsync(CustomerFormDto? form = null) =>
-        new() { Form = form ?? new(), Accounts = await GetAccountOptionsAsync() };
+    public async Task<CustomerFormPageDto> GetCreatePageAsync(CustomerFormDto? form = null) => await BuildFormPageAsync(form ?? new());
 
     public async Task<CustomerFormPageDto?> GetEditPageAsync(int id, CustomerFormDto? form = null)
     {
         var customer = await customers.GetByIdAsync(id); if (customer is null) return null;
-        return new CustomerFormPageDto { Form = form ?? MapForm(customer), Accounts = await GetAccountOptionsAsync() };
+        return await BuildFormPageAsync(form ?? MapForm(customer));
     }
 
     public async Task<CustomerDetailsDto?> GetDetailsAsync(int id)
@@ -29,6 +30,7 @@ public class CustomerService(ICustomerRepository customers, IAccountRepository a
         var customer = await customers.GetByIdAsync(id); if (customer is null) return null;
         var account = await accounts.GetByIdAsync(customer.AccountId);
         var result=MapDetails(customer, account is null ? "—" : $"{account.Code} — {account.Name}");
+        if(customer.DefaultTaxRateId.HasValue) result.DefaultTaxRateName=(await taxRates.GetAllAsync()).FirstOrDefault(x=>x.Id==customer.DefaultTaxRateId)?.Name;
         result.Contacts.AddRange((await customers.GetContactsAsync(id,true)).Select(x=>new CustomerContactDto{Id=x.Id,Name=x.Name,Role=x.Role,Phone=x.Phone,Email=x.Email,IsPrimary=x.IsPrimary,IsActive=x.IsActive,RowVersion=x.RowVersion}));
         result.Addresses.AddRange((await customers.GetAddressesAsync(id,true)).Select(x=>new CustomerAddressDto{Id=x.Id,Type=x.Type,Label=x.Label,AddressLine1=x.AddressLine1,AddressLine2=x.AddressLine2,City=x.City,StateOrProvince=x.StateOrProvince,PostalCode=x.PostalCode,CountryCode=x.CountryCode,IsDefault=x.IsDefault,IsActive=x.IsActive,RowVersion=x.RowVersion}));
         return result;
@@ -42,7 +44,7 @@ public class CustomerService(ICustomerRepository customers, IAccountRepository a
             var customerCode=await numbers.GenerateAsync(DocumentNumberType.Customer, DateTime.Today);
             var selection=await ResolveCreateAccountAsync(dto,customerCode); dto.AccountId=selection.Id;
             if(selection.NewAccount is null) await ValidateAsync(dto,null);
-            else if(await customers.NameExistsAsync(dto.Name)) throw new InvalidOperationException("Customer name already exists.");
+            else await ValidateBusinessDefaultsAsync(dto,null);
             created = selection.NewAccount is null?new Customer(customerCode,dto.Name,dto.AccountId,dto.Type):new Customer(customerCode,dto.Name,selection.NewAccount,dto.Type);
             Apply(created, dto); await customers.AddAsync(created);
         });
@@ -102,7 +104,17 @@ public class CustomerService(ICustomerRepository customers, IAccountRepository a
         if (!account.ParentAccountId.HasValue) throw new InvalidOperationException("Customer receivable account must be a subaccount in the chart of accounts.");
         var policy=await accountingSettings.GetAsync();
         if (policy?.CustomerReceivableMode!=CustomerReceivableAccountMode.SharedControlAccount&&await customers.AccountAssignedAsync(dto.AccountId, excludedId)) throw new InvalidOperationException("Customer receivable account is already assigned to another customer.");
+        await ValidateBusinessDefaultsAsync(dto,excludedId);
+    }
+
+    private async Task ValidateBusinessDefaultsAsync(CustomerFormDto dto,int? excludedId)
+    {
         if (await customers.NameExistsAsync(dto.Name, excludedId)) throw new InvalidOperationException("Customer name already exists.");
+        var supportedCurrencies=await GetCurrencyOptionsAsync();
+        if(!string.IsNullOrWhiteSpace(dto.PreferredCurrencyCode)&&!supportedCurrencies.Contains(dto.PreferredCurrencyCode.Trim().ToUpperInvariant()))
+            throw new InvalidOperationException("Selected preferred currency is not configured.");
+        if(dto.DefaultTaxRateId.HasValue&&(await taxRates.GetAllAsync()).All(x=>x.Id!=dto.DefaultTaxRateId.Value))
+            throw new InvalidOperationException("Selected default tax rate was not found.");
     }
 
     private async Task<(int Id,Account? NewAccount)> ResolveCreateAccountAsync(CustomerFormDto dto,string customerCode)
@@ -124,8 +136,20 @@ public class CustomerService(ICustomerRepository customers, IAccountRepository a
         .Where(x => x.ParentAccountId.HasValue && x.IsActive)
         .Select(x => new AccountDto { Id = x.Id, Code = x.Code, Name = x.Name, Type = x.Type, ParentAccountId = x.ParentAccountId }).ToList();
 
-    private static void Apply(Customer customer, CustomerFormDto dto) => customer.UpdateProfile(dto.Type, dto.Name, dto.LegalName, dto.Phone, dto.Email, dto.TaxNumber, dto.RegistrationNumber, dto.Website, dto.PreferredLanguage, dto.TimeZoneId, dto.Notes);
-    private static CustomerFormDto MapForm(Customer x) => new() { Id = x.Id, CustomerCode = x.CustomerCode, Name = x.Name, Type = x.Type, LegalName = x.LegalName, Phone = x.Phone, Email = x.Email, TaxNumber = x.TaxNumber, RegistrationNumber = x.RegistrationNumber, Website = x.Website, PreferredLanguage = x.PreferredLanguage, TimeZoneId = x.TimeZoneId, Notes = x.Notes, AccountId = x.AccountId, RowVersion = x.RowVersion };
+    private async Task<List<string>> GetCurrencyOptionsAsync()
+    {
+        var companyCurrency=(await generalSettings.GetAsync())?.Currency??"JOD";
+        return (await exchangeRates.GetAllAsync()).Select(x=>x.CurrencyCode).Append(companyCurrency)
+            .Distinct(StringComparer.OrdinalIgnoreCase).OrderBy(x=>x).ToList();
+    }
+    private async Task<CustomerFormPageDto> BuildFormPageAsync(CustomerFormDto form) => new()
+    {
+        Form=form, Accounts=await GetAccountOptionsAsync(), Currencies=await GetCurrencyOptionsAsync(),
+        TaxRates=(await taxRates.GetAllAsync()).Select(x=>new CustomerTaxRateOptionDto(x.Id,x.Name,x.Rate)).ToList()
+    };
+
+    private static void Apply(Customer customer, CustomerFormDto dto) { customer.UpdateProfile(dto.Type, dto.Name, dto.LegalName, dto.Phone, dto.Email, dto.TaxNumber, dto.RegistrationNumber, dto.Website, dto.PreferredLanguage, dto.TimeZoneId, dto.Notes); customer.ConfigureCommercialDefaults(dto.PaymentTermDays,dto.PreferredCurrencyCode,dto.DefaultTaxRateId,dto.IsTaxExempt,dto.TaxExemptionReason); }
+    private static CustomerFormDto MapForm(Customer x) => new() { Id = x.Id, CustomerCode = x.CustomerCode, Name = x.Name, Type = x.Type, LegalName = x.LegalName, Phone = x.Phone, Email = x.Email, TaxNumber = x.TaxNumber, RegistrationNumber = x.RegistrationNumber, Website = x.Website, PreferredLanguage = x.PreferredLanguage, TimeZoneId = x.TimeZoneId, Notes = x.Notes, AccountId = x.AccountId, PaymentTermDays=x.PaymentTermDays, PreferredCurrencyCode=x.PreferredCurrencyCode, DefaultTaxRateId=x.DefaultTaxRateId, IsTaxExempt=x.IsTaxExempt, TaxExemptionReason=x.TaxExemptionReason, RowVersion = x.RowVersion };
     private static CustomerListItemDto MapList(Customer x, string account) => new() { Id = x.Id, CustomerCode = x.CustomerCode, Type = x.Type, Name = x.Name, Phone = x.Phone, Email = x.Email, AccountName = account, IsActive = x.IsActive };
-    private static CustomerDetailsDto MapDetails(Customer x, string account) => new() { Id = x.Id, CustomerCode = x.CustomerCode, Type = x.Type, Name = x.Name, Phone = x.Phone, Email = x.Email, AccountName = account, IsActive = x.IsActive, LegalName = x.LegalName, TaxNumber = x.TaxNumber, RegistrationNumber = x.RegistrationNumber, Website = x.Website, PreferredLanguage = x.PreferredLanguage, TimeZoneId = x.TimeZoneId, Notes = x.Notes, ArchivedAtUtc = x.ArchivedAtUtc, RowVersion = x.RowVersion };
+    private static CustomerDetailsDto MapDetails(Customer x, string account) => new() { Id = x.Id, CustomerCode = x.CustomerCode, Type = x.Type, Name = x.Name, Phone = x.Phone, Email = x.Email, AccountName = account, IsActive = x.IsActive, LegalName = x.LegalName, TaxNumber = x.TaxNumber, RegistrationNumber = x.RegistrationNumber, Website = x.Website, PreferredLanguage = x.PreferredLanguage, TimeZoneId = x.TimeZoneId, Notes = x.Notes, PaymentTermDays=x.PaymentTermDays,PreferredCurrencyCode=x.PreferredCurrencyCode,IsTaxExempt=x.IsTaxExempt,TaxExemptionReason=x.TaxExemptionReason, ArchivedAtUtc = x.ArchivedAtUtc, RowVersion = x.RowVersion };
 }
