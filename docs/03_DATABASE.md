@@ -1,7 +1,7 @@
 # Database
 > Status: IMPLEMENTED  
 > Source of truth: EF Core entities, configurations and migrations  
-> Last reviewed: 2026-10-18
+> Last reviewed: 2026-10-20
 
 PUR-270 migration `20261014205756_AddSupplierPortalAndIntegration` creates tenant-owned `SupplierIntegrationCredentials`, `SupplierPortalAccesses`, `SupplierExternalSubmissions`, `SupplierIntegrationOutboxMessages` and `SupplierExternalAuditEvents`. Credential and portal secrets are stored only as SHA-256 hashes; global unique indexes make cross-tenant token resolution unambiguous. Tenant-composite foreign keys bind suppliers, credentials and outbox messages to one company. Submission channel/identity/idempotency is unique inside the tenant, and outbox idempotency is tenant-unique. The migration is additive, creates no access by default and was applied to local `MiniStoreDb` on 2026-10-15.
 
@@ -108,6 +108,8 @@ Migration `20261018191255_AddCustomerContactsAndAddresses` is migration 116. It 
 Migration `20261019164743_AddConfigurableCustomerReceivablePolicy` is migration 117. It adds the prospective receivable mode, control/parent account links, automatic account prefix and effective date to tenant AccountingSettings. It deliberately leaves existing policies null and customer/account links unchanged until an administrator chooses; the former unique Customer AccountId index becomes non-unique to permit shared-control mode. Demo retained one customer/one account and both settings rows remained unselected with `CUST-` defaults.
 
 Migration `20261019170222_AddCustomerCommercialDefaults` is migration 118. It adds payment-term days, optional preferred currency, optional default TaxRate, tax-exempt state and exemption reason to Customers. The TaxRate relationship uses the tenant-composite foreign key, so a customer cannot reference another company's tax definition. Existing customers receive neutral zero-day/non-exempt defaults with no guessed currency or tax. It was applied to local Demo, and EF reported no pending model changes.
+
+Migration `20261019180400_AddSalesPricingFoundation` is migration 119. It creates tenant-owned `SalesPriceLists` and `SalesPriceRules`, adds the optional customer default price-list reference and enforces tenant-composite restrictive relationships. Scope-specific filtered unique indexes reject equivalent all-product, category and product rules. It is additive, creates no pricing rows, rewrites no Sale/POS history and was applied to local Demo. EF reported no pending model change on 2026-10-20.
 
 Migration history includes `20261012122525_AddPurchaseOrderDerivedClosure` and `20261012125000_AddSupplierCreditNotes`, both applied to the local `MiniStoreDb`. The latter creates empty tenant-safe credit-note tables without rewriting bills or inventory. Migrations are source-controlled under `MiniStore.Infrastructure/Migrations`; generated designers and the model snapshot are metadata, not separate runtime features.
 

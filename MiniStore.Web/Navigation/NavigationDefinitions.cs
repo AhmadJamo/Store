@@ -26,6 +26,14 @@ public static class NavigationDefinitions
                 20),
 
             new NavigationItem(
+                "Sales price lists",
+                "bi-tags",
+                "SalesPriceLists",
+                "Index",
+                "SalesPricing.View",
+                25),
+
+            new NavigationItem(
                 "Sales Returns",
                 "bi-arrow-counterclockwise",
                 "SalesReturns",

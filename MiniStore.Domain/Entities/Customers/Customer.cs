@@ -25,6 +25,8 @@ public class Customer
     public TaxRate? DefaultTaxRate { get; private set; }
     public bool IsTaxExempt { get; private set; }
     public string? TaxExemptionReason { get; private set; }
+    public int? DefaultSalesPriceListId { get; private set; }
+    public SalesPriceList? DefaultSalesPriceList { get; private set; }
     public bool IsActive { get; private set; } = true;
     public DateTime? ArchivedAtUtc { get; private set; }
     public byte[] RowVersion { get; private set; } = [];
@@ -71,7 +73,7 @@ public class Customer
     { if (accountId <= 0) throw new ArgumentException("Customer receivable account is required."); AccountId = accountId; }
 
     public void ConfigureCommercialDefaults(int paymentTermDays, string? preferredCurrencyCode,
-        int? defaultTaxRateId, bool isTaxExempt, string? taxExemptionReason)
+        int? defaultTaxRateId, bool isTaxExempt, string? taxExemptionReason, int? defaultSalesPriceListId=null)
     {
         if (paymentTermDays is < 0 or > 3650) throw new ArgumentException("Payment terms must be between 0 and 3650 days.");
         var currency = Normalize(preferredCurrencyCode)?.ToUpperInvariant();
@@ -86,6 +88,7 @@ public class Customer
         if (reason?.Length > 500) throw new ArgumentException("Tax exemption reason cannot exceed 500 characters.");
         PaymentTermDays = paymentTermDays; PreferredCurrencyCode = currency; DefaultTaxRateId = defaultTaxRateId;
         IsTaxExempt = isTaxExempt; TaxExemptionReason = isTaxExempt ? reason : null;
+        DefaultSalesPriceListId=defaultSalesPriceListId>0?defaultSalesPriceListId:null;
     }
 
     public void Archive(DateTime utcNow)

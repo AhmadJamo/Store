@@ -139,6 +139,8 @@ public class AppDbContext
 
     public DbSet<SalesReturn> SalesReturns => Set<SalesReturn>();
     public DbSet<SalesReturnItem> SalesReturnItems => Set<SalesReturnItem>();
+    public DbSet<SalesPriceList> SalesPriceLists => Set<SalesPriceList>();
+    public DbSet<SalesPriceRule> SalesPriceRules => Set<SalesPriceRule>();
 
     public DbSet<DocumentSequence> DocumentSequences => Set<DocumentSequence>();
 

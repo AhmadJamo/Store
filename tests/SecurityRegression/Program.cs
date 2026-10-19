@@ -517,6 +517,27 @@ Check(customerController.GetMethods().Where(x=>x.Name is nameof(CustomersControl
     "Customer contact and address status changes must require archive permission and antiforgery");
 Check(PermissionDefinitions.All.Count(x => x.Name.StartsWith("Customers.", StringComparison.Ordinal)) == 4,
     "Customer master must declare exactly four independent permissions");
+Check(PermissionDefinitions.All.Count(x=>x.Name.StartsWith("SalesPricing.",StringComparison.Ordinal))==2,
+    "Sales pricing must declare separate view and manage permissions");
+var priceListController=typeof(SalesPriceListsController);
+Check(priceListController.GetMethod(nameof(SalesPriceListsController.Index))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SalesPricing.View"&&
+      priceListController.GetMethod(nameof(SalesPriceListsController.Evaluate))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SalesPricing.View",
+    "Sales pricing list and evaluation reads must require view permission");
+Check(priceListController.GetMethods().Where(x=>x.Name is nameof(SalesPriceListsController.Create) or nameof(SalesPriceListsController.AddRule) or nameof(SalesPriceListsController.SetListActive) or nameof(SalesPriceListsController.SetRuleActive))
+      .All(x=>x.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SalesPricing.Manage"&&x.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null),
+    "Sales price-list mutations must require manage permission and antiforgery");
+
+var priceListMaster=new SalesPriceList("WHOLESALE","Wholesale JOD","jod",new DateOnly(2026,1,1),null,0.01m);
+var broadRule=priceListMaster.AddRule(SalesPriceRuleScope.AllProducts,null,null,null,1m,100,null,null,SalesPriceComputationType.PercentageAdjustment,-5m);
+var fixedRule=priceListMaster.AddRule(SalesPriceRuleScope.Product,1,null,1,10m,50,null,null,SalesPriceComputationType.FixedPrice,12.5m);
+Check(priceListMaster.CurrencyCode=="JOD"&&priceListMaster.IsActive&&priceListMaster.Rules.Count==2&&broadRule.Value==-5m&&fixedRule.Priority==50,
+    "Sales price lists must normalize currency and preserve deterministic rule evidence");
+Check(priceListMaster.SelectRule(1,null,1,10m,new DateOnly(2026,10,19))==fixedRule,
+    "Sales price-rule selection must honor explicit priority and product eligibility deterministically");
+CheckArgumentThrows(()=>new SalesPriceList("X","Invalid","JOD",null,null,0.01m),"Sales price-list codes must reject unsupported short values");
+CheckArgumentThrows(()=>priceListMaster.AddRule(SalesPriceRuleScope.Product,null,null,1,1m,1,null,null,SalesPriceComputationType.FixedPrice,1m),"Product price rules must require a product target");
+Check(TenantIsolationModel.TenantOwnedTypes.Contains(typeof(SalesPriceList))&&TenantIsolationModel.TenantOwnedTypes.Contains(typeof(SalesPriceRule)),
+    "Sales price lists and rules must be tenant owned");
 
 var customerMaster = new Customer("CUS-000001", "Acme Customer", 1);
 customerMaster.UpdateProfile(CustomerType.Company, "Acme Customer", "Acme Legal", "+962790000000",
@@ -2228,6 +2249,30 @@ Check(ActionableErrorGuidance.Resolve(
           "Configure an exchange rate for USD on or before 2026-10-13.",
           "GoodsReceipts") is { Controller: "Settings", Action: "Currencies", RequiredPermission: "Administration.Access" },
     "Missing purchase exchange rates must link to currency settings");
+Check(ActionableErrorGuidance.Resolve(
+          "Configure an exchange rate for USD on or before 2026-10-19.",
+          "SalesPriceLists") is { Controller: "Settings", Action: "Currencies", RequiredPermission: "Administration.Access" },
+    "Missing sales-pricing exchange rates must link to currency settings");
+Check(ActionableErrorGuidance.Resolve(
+          "Selected price-rule category is inactive.",
+          "SalesPriceLists") is { Controller: "ProductCategories", Action: "Index", RequiredPermission: "Products.Edit" },
+    "Sales price-rule category errors must link to product-category management");
+Check(ActionableErrorGuidance.Resolve(
+          "Selected default price list is inactive.",
+          "Customers") is { Controller: "SalesPriceLists", Action: "Index", RequiredPermission: "SalesPricing.View" },
+    "Customer default-price-list errors must link to sales price lists");
+var salesPriceListNextStep = WorkflowNextStepGuidance.Resolve(
+    "Price list created successfully.", "SalesPriceLists",
+    new Dictionary<string, string?> { ["id"] = "12" });
+Check(salesPriceListNextStep is { Controller: "SalesPriceLists", Action: "Index", RequiredPermission: "SalesPricing.Manage" } &&
+      salesPriceListNextStep.RouteValues.GetValueOrDefault("id") == "12",
+    "Created sales price lists must guide the user to configure their rules");
+var salesPriceRuleNextStep = WorkflowNextStepGuidance.Resolve(
+    "Price rule added successfully.", "SalesPriceLists",
+    new Dictionary<string, string?> { ["id"] = "12" });
+Check(salesPriceRuleNextStep is { Controller: "SalesPriceLists", Action: "Index", RequiredPermission: "SalesPricing.View" } &&
+      salesPriceRuleNextStep.RouteValues.GetValueOrDefault("id") == "12",
+    "Saved sales price rules must guide the user to evaluate the resulting price");
 Check(ActionableErrorGuidance.Resolve(
           "Configure a realized exchange loss account before posting a foreign-currency supplier payment.",
           "SupplierPayments") is { Controller: "Settings", Action: "Accounting", RequiredPermission: "Administration.Access" },

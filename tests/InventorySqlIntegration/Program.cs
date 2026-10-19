@@ -83,6 +83,7 @@ try
     await VerifyAuditRetentionAndDatabaseRolesAsync(connectionString);
     await VerifyLegacyAuditCutoverAsync(tenantOneId, connectionString);
     await VerifyProfessionalCustomerMasterAsync(tenantOneId, tenantTwoId, connectionString);
+    await VerifySalesPricingFoundationAsync(tenantOneId,tenantTwoId,tenantOneFixture.ProductId,connectionString);
 
     await VerifyTenantIsolationAndReconciliationAsync(
         tenantOneId,
@@ -129,7 +130,7 @@ try
     await VerifyInventoryBalanceProjectionAsync(tenantOneId, tenantOneFixture.ProductId, expectedOnHand: 2m, connectionString);
     await VerifyOpeningTrackingAllocationAsync(tenantOneId, tenantOneFixture.ProductId, tenantOneFixture.WarehouseId, connectionString);
 
-    Console.WriteLine("Passed SQL integration checks: professional customer tenant isolation, code uniqueness, archive visibility and rowversion concurrency; semantic coverage catalog, legacy-audit freeze and rollback, semantic role/settings, denied-security, permission-aware audit reader/export, legal hold, signed checkpoint, manifest-before-delete retention and SQL audit-role separation plus audit-event rollback, isolation, append-only and integrity; tenant isolation, reconciliation, balances, replenishment purchase-request source concurrency, 3-product/2-supplier split awards, receipt, vendor-bill and supplier-payment concurrency, controlled payment reversal and retry, three-way matching override evidence, GRNI posting and clearing, purchase accounting reconciliation, payable settlement, receipt-based supplier returns, landed-cost valuation, purchasing analytics, idempotent barcode receipt drafts, adjustment posting, tracked operations, quarantine and recall.");
+    Console.WriteLine("Passed SQL integration checks: professional customer and sales-pricing tenant isolation, price-list code/rule uniqueness and cross-tenant linkage protection; semantic coverage catalog, legacy-audit freeze and rollback, semantic role/settings, denied-security, permission-aware audit reader/export, legal hold, signed checkpoint, manifest-before-delete retention and SQL audit-role separation plus audit-event rollback, isolation, append-only and integrity; tenant isolation, reconciliation, balances, replenishment purchase-request source concurrency, 3-product/2-supplier split awards, receipt, vendor-bill and supplier-payment concurrency, controlled payment reversal and retry, three-way matching override evidence, GRNI posting and clearing, purchase accounting reconciliation, payable settlement, receipt-based supplier returns, landed-cost valuation, purchasing analytics, idempotent barcode receipt drafts, adjustment posting, tracked operations, quarantine and recall.");
 }
 finally
 {
@@ -1025,6 +1026,35 @@ static async Task VerifyProfessionalCustomerMasterAsync(
             throw new InvalidOperationException("Archived customers must be hidden from normal customer selection.");
         if (!(await repository.GetAllAsync(includeArchived: true)).Any(row => row.Id == tenantOneCustomerId))
             throw new InvalidOperationException("Archived customers must remain available for history and administration.");
+    }
+}
+
+static async Task VerifySalesPricingFoundationAsync(int tenantOneId,int tenantTwoId,int productId,string connectionString)
+{
+    int tenantOneListId;
+    await using(var first=new AppDbContext(CreateOptions(connectionString),new FixedTenantContext(tenantOneId)))
+    {
+        var list=new SalesPriceList("SQL-PRICE","SQL Price List","JOD",null,null,0.01m);
+        list.AddRule(SalesPriceRuleScope.AllProducts,null,null,null,1m,100,null,null,SalesPriceComputationType.PercentageAdjustment,-5m);
+        list.AddRule(SalesPriceRuleScope.Product,productId,null,null,1m,50,null,null,SalesPriceComputationType.PercentageAdjustment,-7m);
+        first.SalesPriceLists.Add(list);await first.SaveChangesAsync();tenantOneListId=list.Id;
+    }
+    await using(var duplicate=new AppDbContext(CreateOptions(connectionString),new FixedTenantContext(tenantOneId)))
+    {
+        var list=await duplicate.SalesPriceLists.Include(x=>x.Rules).SingleAsync(x=>x.Id==tenantOneListId);
+        list.AddRule(SalesPriceRuleScope.AllProducts,null,null,null,1m,100,null,null,SalesPriceComputationType.PercentageAdjustment,-10m);
+        try{await duplicate.SaveChangesAsync();throw new InvalidOperationException("Equivalent sales price rules must be rejected by SQL uniqueness.");}
+        catch(DbUpdateException){ }
+    }
+    await using(var second=new AppDbContext(CreateOptions(connectionString),new FixedTenantContext(tenantTwoId)))
+    {
+        if(await second.SalesPriceLists.AnyAsync())throw new InvalidOperationException("Sales price lists must be isolated by tenant.");
+        second.SalesPriceLists.Add(new SalesPriceList("SQL-PRICE","Tenant Two Price List","JOD",null,null,0.01m));
+        await second.SaveChangesAsync();
+        var customer=await second.Customers.FirstAsync();
+        customer.ConfigureCommercialDefaults(0,null,null,false,null,tenantOneListId);
+        try{await second.SaveChangesAsync();throw new InvalidOperationException("A customer must not reference another tenant's sales price list.");}
+        catch(DbUpdateException){ }
     }
 }
 

@@ -195,6 +195,8 @@ public static class BusinessServicesExtensions
         services.AddScoped<PurchasePostingService>();
         services.AddScoped<PurchaseReturnService>();
         services.AddScoped<ISaleRepository, SaleRepository>();
+        services.AddScoped<ISalesPriceListRepository, SalesPriceListRepository>();
+        services.AddScoped<SalesPriceListService>();
         services.AddScoped<ISaleService, SaleService>();
         services.AddScoped<SalePostingService>();
         services.AddScoped<ISalesReturnRepository, SalesReturnRepository>();

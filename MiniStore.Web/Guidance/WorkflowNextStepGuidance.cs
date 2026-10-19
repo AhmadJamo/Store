@@ -29,9 +29,11 @@ public static class WorkflowNextStepGuidance
 
     private static readonly HashSet<string> CustomerControllers = new(StringComparer.OrdinalIgnoreCase) { "Customers" };
 
+    private static readonly HashSet<string> SalesControllers = new(StringComparer.OrdinalIgnoreCase) { "SalesPriceLists" };
+
     public static bool IsSupportedController(string? controller) =>
         !string.IsNullOrWhiteSpace(controller) &&
-        (PurchaseControllers.Contains(controller) || InventoryControllers.Contains(controller) || CustomerControllers.Contains(controller));
+        (PurchaseControllers.Contains(controller) || InventoryControllers.Contains(controller) || CustomerControllers.Contains(controller) || SalesControllers.Contains(controller));
 
     public static WorkflowNextStepLink? Resolve(
         string? message,
@@ -47,6 +49,21 @@ public static class WorkflowNextStepGuidance
         Dictionary<string, string> Routes(params (string Key, string? Value)[] values) =>
             values.Where(x => !string.IsNullOrWhiteSpace(x.Value))
                 .ToDictionary(x => x.Key, x => x.Value!, StringComparer.OrdinalIgnoreCase);
+
+        if (Matches(message, localize, "Price list created successfully.", "Price list activated."))
+            return new("SalesPriceLists", "Index", "Add or review price rules",
+                "Define the eligible products, quantities, units and dates before using the list.",
+                "SalesPricing.Manage", Routes(("id", Route("id"))));
+
+        if (Matches(message, localize, "Price rule added successfully.", "Price rule activated.", "Price rule archived."))
+            return new("SalesPriceLists", "Index", "Evaluate the sales price",
+                "Test a product, quantity, unit, date and customer to confirm which rule is selected.",
+                "SalesPricing.View", Routes(("id", Route("id"))));
+
+        if (Matches(message, localize, "Price list archived."))
+            return new("SalesPriceLists", "Index", "Return to sales price lists",
+                "The archived list remains in history and is unavailable for new pricing.",
+                "SalesPricing.View", Routes());
 
         if (Matches(message, localize, "Customer created successfully.", "Customer updated successfully.", "Customer restored successfully."))
             return new("Customers", "Details", "Review customer profile", "Review the customer profile before using it in a new sale.", "Customers.View", Routes(("id", Route("id"))));

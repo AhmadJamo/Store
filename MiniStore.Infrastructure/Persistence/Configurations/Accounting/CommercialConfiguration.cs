@@ -19,6 +19,7 @@ public class CustomerConfiguration : IEntityTypeConfiguration<Customer>
         builder.HasIndex(x => x.AccountId); builder.HasIndex(x => new { x.IsActive, x.Name });
         builder.HasOne(x=>x.Account).WithMany().HasForeignKey(x => x.AccountId).OnDelete(DeleteBehavior.Restrict);
         builder.HasOne(x=>x.DefaultTaxRate).WithMany().HasForeignKey(x=>x.DefaultTaxRateId).OnDelete(DeleteBehavior.Restrict);
+        builder.HasOne(x=>x.DefaultSalesPriceList).WithMany().HasForeignKey(x=>x.DefaultSalesPriceListId).OnDelete(DeleteBehavior.Restrict);
     }
 }
 public class CustomerContactConfiguration : IEntityTypeConfiguration<CustomerContact>

@@ -1,6 +1,6 @@
 # Project TODO
 > Source of truth: Current repository scan  
-> Last reviewed: 2026-10-18
+> Last reviewed: 2026-10-20
 
 The approved numbered Arabic/English delivery sequence is maintained in `MASTER_IMPLEMENTATION_ROADMAP_AR_EN.md`. Detailed working status, business rules and the rolling suggestion queue remain in `ARABIC_SHARED_ROADMAP.md`. This file remains the concise technical backlog.
 
@@ -74,7 +74,8 @@ The ERP SaaS Foundation Blueprint is imported as a non-authoritative planning re
 - [x] CUS-005 approve the Business Partner compatibility decision, customer-code policy, receivable-account model and archive rules before runtime implementation.
 - [x] SAL-010 extend the Customer foundation additively while preserving current Customer IDs and Legacy Immediate Sale compatibility (delivered through CUS-010..030B).
 - [x] SAL-020A approve deterministic price-rule priority, unit conversion, dated currency, rounding, tax/exemption snapshots and explainable result contract.
-- [ ] SAL-020B through SAL-130 implement price-list storage/evaluation, quotation, order, reservation, delivery, invoicing, accounting, payment, return, advanced-sales and cutover slices in order.
+- [x] SAL-020B implement tenant-safe price-list/rule storage, customer default selection and read-only explainable evaluation without changing Legacy Sale/POS.
+- [ ] SAL-030 through SAL-130 implement quotation, order, reservation, delivery, invoicing, accounting, payment, return, advanced-sales and cutover slices in order.
 
 - [x] WMS-050 reservations and exact transfer allocation with concurrent last-unit protection.
 - [x] WMS-060 blind cycle counts and controlled inventory adjustment posting; scheduling remains deferred.

@@ -2825,4 +2825,103 @@
   <data name="Tax exemption reason cannot exceed 500 characters." xml:space="preserve"><value>لا يجوز أن يتجاوز سبب الإعفاء الضريبي 500 حرف.</value></data>
   <data name="Selected preferred currency is not configured." xml:space="preserve"><value>العملة المفضلة المحددة غير مهيأة.</value></data>
   <data name="Selected default tax rate was not found." xml:space="preserve"><value>لم يتم العثور على نسبة الضريبة الافتراضية المحددة.</value></data>
+  <data name="Selected default price list was not found." xml:space="preserve"><value>لم يتم العثور على قائمة الأسعار الافتراضية المحددة.</value></data>
+  <data name="Selected default price list is inactive." xml:space="preserve"><value>قائمة الأسعار الافتراضية المحددة غير نشطة.</value></data>
+  <data name="Sales price lists" xml:space="preserve"><value>قوائم أسعار المبيعات</value></data>
+  <data name="Configure deterministic prices without changing legacy sales." xml:space="preserve"><value>هيّئ أسعارًا حتمية دون تغيير المبيعات السابقة.</value></data>
+  <data name="Read-only evaluation; no stock or accounting effect" xml:space="preserve"><value>تقييم للقراءة فقط؛ دون أثر مخزني أو محاسبي</value></data>
+  <data name="Create price list" xml:space="preserve"><value>إنشاء قائمة أسعار</value></data>
+  <data name="Rounding increment" xml:space="preserve"><value>درجة تقريب السعر</value></data>
+  <data name="The final unit price is rounded to this increment." xml:space="preserve"><value>يُقرّب سعر الوحدة النهائي إلى هذه الدرجة.</value></data>
+  <data name="Price lists" xml:space="preserve"><value>قوائم الأسعار</value></data>
+  <data name="No price lists have been created." xml:space="preserve"><value>لم تُنشأ أي قائمة أسعار.</value></data>
+  <data name="Archive price list" xml:space="preserve"><value>أرشفة قائمة الأسعار</value></data>
+  <data name="Activate price list" xml:space="preserve"><value>تفعيل قائمة الأسعار</value></data>
+  <data name="Price rules" xml:space="preserve"><value>قواعد الأسعار</value></data>
+  <data name="No rules; the product channel price is used as fallback." xml:space="preserve"><value>لا توجد قواعد؛ يُستخدم سعر قناة المنتج كخيار احتياطي.</value></data>
+  <data name="Minimum quantity" xml:space="preserve"><value>الحد الأدنى للكمية</value></data>
+  <data name="Any compatible unit" xml:space="preserve"><value>أي وحدة متوافقة</value></data>
+  <data name="FixedPrice" xml:space="preserve"><value>سعر ثابت</value></data>
+  <data name="PercentageAdjustment" xml:space="preserve"><value>تعديل نسبي</value></data>
+  <data name="Add price rule" xml:space="preserve"><value>إضافة قاعدة سعر</value></data>
+  <data name="Rule scope" xml:space="preserve"><value>نطاق القاعدة</value></data>
+  <data name="Product rules are more specific than category and all-product rules when priority is equal." xml:space="preserve"><value>قاعدة المنتج أكثر تحديدًا من التصنيف وكل المنتجات عند تساوي الأولوية.</value></data>
+  <data name="AllProducts" xml:space="preserve"><value>كل المنتجات</value></data>
+  <data name="ProductCategory" xml:space="preserve"><value>تصنيف المنتج</value></data>
+  <data name="Sales unit" xml:space="preserve"><value>وحدة البيع</value></data>
+  <data name="A lower priority number is evaluated first." xml:space="preserve"><value>رقم الأولوية الأقل يُقيّم أولًا.</value></data>
+  <data name="Computation" xml:space="preserve"><value>طريقة الاحتساب</value></data>
+  <data name="Rule value" xml:space="preserve"><value>قيمة القاعدة</value></data>
+  <data name="Use a negative percentage for a discount and a positive percentage for a markup." xml:space="preserve"><value>استخدم نسبة سالبة للخصم ونسبة موجبة للزيادة.</value></data>
+  <data name="Effective to" xml:space="preserve"><value>ساري حتى</value></data>
+  <data name="Price evaluator" xml:space="preserve"><value>مقيّم السعر</value></data>
+  <data name="This preview explains the selected price and creates no document or transaction." xml:space="preserve"><value>تشرح هذه المعاينة السعر المختار ولا تنشئ مستندًا أو حركة.</value></data>
+  <data name="Price list" xml:space="preserve"><value>قائمة الأسعار</value></data>
+  <data name="Customer default or product fallback" xml:space="preserve"><value>افتراضي الزبون أو سعر المنتج الاحتياطي</value></data>
+  <data name="No customer" xml:space="preserve"><value>دون زبون</value></data>
+  <data name="Pricing date" xml:space="preserve"><value>تاريخ التسعير</value></data>
+  <data name="Base price channel" xml:space="preserve"><value>قناة السعر الأساسي</value></data>
+  <data name="Retail POS" xml:space="preserve"><value>نقطة بيع بالتجزئة</value></data>
+  <data name="Explicit tax override" xml:space="preserve"><value>تجاوز ضريبي صريح</value></data>
+  <data name="Customer default or no tax" xml:space="preserve"><value>ضريبة الزبون الافتراضية أو دون ضريبة</value></data>
+  <data name="Evaluate price" xml:space="preserve"><value>تقييم السعر</value></data>
+  <data name="Evaluation result" xml:space="preserve"><value>نتيجة التقييم</value></data>
+  <data name="Product channel fallback" xml:space="preserve"><value>سعر قناة المنتج الاحتياطي</value></data>
+  <data name="Unit conversion" xml:space="preserve"><value>تحويل الوحدة</value></data>
+  <data name="Default price list" xml:space="preserve"><value>قائمة الأسعار الافتراضية</value></data>
+  <data name="Use product channel price" xml:space="preserve"><value>استخدم سعر قناة المنتج</value></data>
+  <data name="Price list created successfully." xml:space="preserve"><value>تم إنشاء قائمة الأسعار بنجاح.</value></data>
+  <data name="Price list activated." xml:space="preserve"><value>تم تفعيل قائمة الأسعار.</value></data>
+  <data name="Price list archived." xml:space="preserve"><value>تمت أرشفة قائمة الأسعار.</value></data>
+  <data name="Price rule added successfully." xml:space="preserve"><value>تمت إضافة قاعدة السعر بنجاح.</value></data>
+  <data name="Price rule activated." xml:space="preserve"><value>تم تفعيل قاعدة السعر.</value></data>
+  <data name="Price rule archived." xml:space="preserve"><value>تمت أرشفة قاعدة السعر.</value></data>
+  <data name="Price list code already exists." xml:space="preserve"><value>رمز قائمة الأسعار مستخدم مسبقًا.</value></data>
+  <data name="Price list was not found." xml:space="preserve"><value>لم يتم العثور على قائمة الأسعار.</value></data>
+  <data name="Price rule was not found." xml:space="preserve"><value>لم يتم العثور على قاعدة السعر.</value></data>
+  <data name="Activate the price list before adding rules." xml:space="preserve"><value>فعّل قائمة الأسعار قبل إضافة القواعد.</value></data>
+  <data name="An equivalent price rule already exists in this price list." xml:space="preserve"><value>توجد قاعدة سعر مماثلة في هذه القائمة.</value></data>
+  <data name="A fixed-price rule requires a sales unit." xml:space="preserve"><value>قاعدة السعر الثابت تتطلب وحدة بيع.</value></data>
+  <data name="Selected price-rule product was not found." xml:space="preserve"><value>لم يتم العثور على المنتج المحدد لقاعدة السعر.</value></data>
+  <data name="Selected price-rule product is inactive." xml:space="preserve"><value>المنتج المحدد لقاعدة السعر غير نشط.</value></data>
+  <data name="Selected price-rule category was not found." xml:space="preserve"><value>لم يتم العثور على التصنيف المحدد لقاعدة السعر.</value></data>
+  <data name="Selected price-rule category is inactive." xml:space="preserve"><value>التصنيف المحدد لقاعدة السعر غير نشط.</value></data>
+  <data name="Selected price-rule unit was not found." xml:space="preserve"><value>لم يتم العثور على الوحدة المحددة لقاعدة السعر.</value></data>
+  <data name="Selected price-rule unit is inactive." xml:space="preserve"><value>الوحدة المحددة لقاعدة السعر غير نشطة.</value></data>
+  <data name="Manage product categories" xml:space="preserve"><value>إدارة تصنيفات المنتجات</value></data>
+  <data name="Open sales price lists" xml:space="preserve"><value>فتح قوائم أسعار المبيعات</value></data>
+  <data name="Add or review price rules" xml:space="preserve"><value>إضافة قواعد السعر أو مراجعتها</value></data>
+  <data name="Define the eligible products, quantities, units and dates before using the list." xml:space="preserve"><value>حدد المنتجات والكميات والوحدات والتواريخ المؤهلة قبل استخدام القائمة.</value></data>
+  <data name="Evaluate the sales price" xml:space="preserve"><value>تجربة سعر المبيعات</value></data>
+  <data name="Test a product, quantity, unit, date and customer to confirm which rule is selected." xml:space="preserve"><value>جرّب منتجًا وكمية ووحدة وتاريخًا وزبونًا للتأكد من القاعدة التي تم اختيارها.</value></data>
+  <data name="Return to sales price lists" xml:space="preserve"><value>العودة إلى قوائم أسعار المبيعات</value></data>
+  <data name="The archived list remains in history and is unavailable for new pricing." xml:space="preserve"><value>تبقى القائمة المؤرشفة في السجل ولا تتاح للتسعير الجديد.</value></data>
+  <data name="Pricing information was modified by another user. Reload and try again." xml:space="preserve"><value>عدّل مستخدم آخر معلومات التسعير. أعد التحميل وحاول مجددًا.</value></data>
+  <data name="Selected price list is inactive." xml:space="preserve"><value>قائمة الأسعار المحددة غير نشطة.</value></data>
+  <data name="Selected price list is not valid on the pricing date." xml:space="preserve"><value>قائمة الأسعار المحددة غير سارية في تاريخ التسعير.</value></data>
+  <data name="Selected price list was not found." xml:space="preserve"><value>لم يتم العثور على قائمة الأسعار المحددة.</value></data>
+  <data name="Selected pricing product was not found." xml:space="preserve"><value>لم يتم العثور على منتج التسعير المحدد.</value></data>
+  <data name="Selected pricing product is not available for sales." xml:space="preserve"><value>منتج التسعير المحدد غير متاح للبيع.</value></data>
+  <data name="Selected pricing product is not available for the requested sales channel." xml:space="preserve"><value>منتج التسعير المحدد غير متاح لقناة البيع المطلوبة.</value></data>
+  <data name="Selected sales unit was not found." xml:space="preserve"><value>لم يتم العثور على وحدة البيع المحددة.</value></data>
+  <data name="Selected sales unit is inactive." xml:space="preserve"><value>وحدة البيع المحددة غير نشطة.</value></data>
+  <data name="Configure a managed measurement unit for the product before pricing it." xml:space="preserve"><value>هيّئ وحدة قياس مُدارة للمنتج قبل تسعيره.</value></data>
+  <data name="Sales unit and product stock unit must use the same measurement dimension." xml:space="preserve"><value>يجب أن تستخدم وحدة البيع ووحدة مخزون المنتج بُعد القياس نفسه.</value></data>
+  <data name="Pricing quantity is below the supported stock-unit precision." xml:space="preserve"><value>كمية التسعير أقل من دقة وحدة المخزون المدعومة.</value></data>
+  <data name="Selected pricing customer was not found." xml:space="preserve"><value>لم يتم العثور على زبون التسعير المحدد.</value></data>
+  <data name="Selected pricing customer is archived." xml:space="preserve"><value>زبون التسعير المحدد مؤرشف.</value></data>
+  <data name="Selected pricing tax rate was not found." xml:space="preserve"><value>لم يتم العثور على نسبة ضريبة التسعير المحددة.</value></data>
+  <data name="Price list code must use 2 to 30 letters, numbers, hyphens or underscores." xml:space="preserve"><value>يجب أن يستخدم رمز قائمة الأسعار من 2 إلى 30 حرفًا أو رقمًا أو شرطة أو شرطة سفلية.</value></data>
+  <data name="Price list currency must contain exactly three letters." xml:space="preserve"><value>يجب أن يتكون رمز عملة قائمة الأسعار من ثلاثة أحرف.</value></data>
+  <data name="Price list end date cannot be before its start date." xml:space="preserve"><value>لا يمكن أن يسبق تاريخ انتهاء قائمة الأسعار تاريخ بدايتها.</value></data>
+  <data name="Price list name is required and cannot exceed 150 characters." xml:space="preserve"><value>اسم قائمة الأسعار مطلوب ولا يجوز أن يتجاوز 150 حرفًا.</value></data>
+  <data name="Price rounding increment must be greater than zero and no more than 1000." xml:space="preserve"><value>يجب أن تكون درجة تقريب السعر أكبر من صفر ولا تتجاوز 1000.</value></data>
+  <data name="Select a product for a product price rule." xml:space="preserve"><value>اختر منتجًا لقاعدة سعر المنتج.</value></data>
+  <data name="Select a category for a category price rule." xml:space="preserve"><value>اختر تصنيفًا لقاعدة سعر التصنيف.</value></data>
+  <data name="An all-products rule cannot target a product or category." xml:space="preserve"><value>لا يمكن لقاعدة كل المنتجات استهداف منتج أو تصنيف.</value></data>
+  <data name="Price rule minimum quantity must be greater than zero." xml:space="preserve"><value>يجب أن يكون الحد الأدنى لكمية قاعدة السعر أكبر من صفر.</value></data>
+  <data name="Price rule priority must be between 1 and 9999." xml:space="preserve"><value>يجب أن تكون أولوية قاعدة السعر بين 1 و9999.</value></data>
+  <data name="Price rule end date cannot be before its start date." xml:space="preserve"><value>لا يمكن أن يسبق تاريخ انتهاء قاعدة السعر تاريخ بدايتها.</value></data>
+  <data name="Fixed sale price cannot be negative." xml:space="preserve"><value>لا يمكن أن يكون سعر البيع الثابت سالبًا.</value></data>
+  <data name="Percentage adjustment must be between -100% and 10000%." xml:space="preserve"><value>يجب أن يكون التعديل النسبي بين -100% و10000%.</value></data>
 </root>

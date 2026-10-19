@@ -8,12 +8,13 @@ public sealed record ActionableErrorLink(
 
 public static class ActionableErrorGuidance
 {
-    private static readonly HashSet<string> PurchaseControllers = new(StringComparer.OrdinalIgnoreCase)
+    private static readonly HashSet<string> SupportedControllers = new(StringComparer.OrdinalIgnoreCase)
     {
         "Purchases", "PurchaseReturns", "SupplierPurchasing", "PurchaseRequests",
         "PurchaseApprovalRules", "PurchaseSourcing", "SupplierQuotations", "PurchaseOrders",
         "GoodsReceipts", "GoodsReceiptReturns", "VendorBills", "SupplierCreditNotes", "SupplierPayments", "SupplierCommunications",
-        "PurchaseAgreements", "PurchaseTemplates", "LandedCosts", "PurchaseDocumentReversals", "PurchaseAnalytics", "SupplierIntegrations"
+        "PurchaseAgreements", "PurchaseTemplates", "LandedCosts", "PurchaseDocumentReversals", "PurchaseAnalytics", "SupplierIntegrations",
+        "SalesPriceLists", "Customers"
     };
 
     public static ActionableErrorLink? Resolve(
@@ -23,10 +24,44 @@ public static class ActionableErrorGuidance
     {
         if (string.IsNullOrWhiteSpace(message) ||
             string.IsNullOrWhiteSpace(currentController) ||
-            !PurchaseControllers.Contains(currentController))
+            !SupportedControllers.Contains(currentController))
             return null;
 
         localize ??= static value => value;
+
+        if (message.StartsWith("Configure an exchange rate for ", StringComparison.OrdinalIgnoreCase))
+            return new("Settings", "Currencies", "Open currency settings", "Administration.Access");
+
+        if (Matches(message, localize,
+                "Selected pricing tax rate was not found."))
+            return new("TaxRates", "Index", "Manage tax rates", "Administration.Access");
+
+        if (Matches(message, localize,
+                "Selected sales unit was not found.",
+                "Selected sales unit is inactive.",
+                "Selected price-rule unit was not found.",
+                "Selected price-rule unit is inactive.",
+                "Configure a managed measurement unit for the product before pricing it.",
+                "Product stock unit was not found.",
+                "Sales unit and product stock unit must use the same measurement dimension."))
+            return new("Settings", "Units", "Manage measurement units", "Administration.Access");
+
+        if (Matches(message, localize,
+                "Selected pricing product was not found.",
+                "Selected pricing product is not available for the requested sales channel.",
+                "Selected price-rule product was not found.",
+                "Selected price-rule product is inactive."))
+            return new("Products", "Index", "Manage products", "Products.Edit");
+
+        if (Matches(message, localize,
+                "Selected price-rule category was not found.",
+                "Selected price-rule category is inactive."))
+            return new("ProductCategories", "Index", "Manage product categories", "Products.Edit");
+
+        if (Matches(message, localize,
+                "Selected default price list was not found.",
+                "Selected default price list is inactive."))
+            return new("SalesPriceLists", "Index", "Open sales price lists", "SalesPricing.View");
 
         if (Matches(message, localize,
                 "No active approval rule matches this purchase request."))
@@ -53,9 +88,6 @@ public static class ActionableErrorGuidance
         if (Matches(message, localize,
                 "Vendor bill exceeds the configured purchase matching tolerances."))
             return new("Settings", "PurchaseMatching", "Open purchase matching settings", "Administration.Access");
-
-        if (message.StartsWith("Configure an exchange rate for ", StringComparison.OrdinalIgnoreCase))
-            return new("Settings", "Currencies", "Open currency settings", "Administration.Access");
 
         if (Matches(message, localize,
                 "A tax rate selected on this purchase no longer exists.",

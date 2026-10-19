@@ -1,5 +1,5 @@
 # Razor screen map
-> Status: IMPLEMENTED | Last reviewed: 2026-10-14
+> Status: IMPLEMENTED | Last reviewed: 2026-10-20
 
 | Purchase document reversals | `/PurchaseDocumentReversals` | Responsive reversal history, confirmation and immutable audit detail for receipts, bills, payments and landed costs; original detail screens hide the action after completion and link to the reversal. |
 
@@ -14,7 +14,8 @@
 | `Views/ProductCategories/Index.cshtml` | category create/list/activate screen with language-neutral codes and preserved inactive categories. |
 | `Views/Recipes/{Index,Edit}.cshtml` | bilingual prepared-product recipe list and dynamic immutable-version editor using active managed units, immutable conversion snapshots and visible negative policy. |
 | `Views/Warehouses/*`, `Views/Suppliers/*` | warehouse master data plus responsive supplier profile cards/forms. Supplier forms capture legal, tax, contact, accounting and commercial data and select multiple eligible products with search. |
-| `Views/Customers/{Index,Create,Edit,Details,_Form}.cshtml` | responsive CUS-010/020/030B customer master: server-side search/sort/pages, profile, contacts, General/Billing/Shipping addresses, commercial defaults (payment days, configured currency and tax/exemption), archive/restore and permission-aware actions without horizontal scrolling. |
+| `Views/Customers/{Index,Create,Edit,Details,_Form}.cshtml` | responsive CUS-010/020/030B/SAL-020B customer master: server-side search/sort/pages, profile, contacts, General/Billing/Shipping addresses, commercial defaults (payment days, configured currency, tax/exemption and default price list), archive/restore and permission-aware actions without horizontal scrolling. |
+| `Views/SalesPriceLists/Index.cshtml` | responsive bilingual SAL-020B cards for list/rule administration and explainable read-only price evaluation. It supports product/category/all-product scope, units, quantity breaks, dates, currency, tax/customer defaults and compact `0.######` quantity/amount display without horizontal scrolling. Successful list/rule operations show the next permission-aware setup/evaluation step. |
 | `Views/Settings/Accounting.cshtml` | accounting posting accounts plus CUS-030A customer-receivable mode, control/parent account, automatic code prefix and prospective effective date with bilingual help. |
 | `Views/ProductStocks/{Index,Create,Edit}.cshtml` | balance, moving average and inventory value list; opening balance/direct adjustment; negative recipe exceptions are highlighted. |
 | `Views/StockTransactions/{Index,Create}.cshtml` | paged/filterable movement list with unit cost, movement value and variance; manual adjustments include reason-required kitchen variance. |

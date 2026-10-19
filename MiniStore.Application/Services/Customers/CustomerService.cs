@@ -5,6 +5,7 @@ using MiniStore.Domain.Interfaces;
 namespace MiniStore.Application.Services;
 public class CustomerService(ICustomerRepository customers, IAccountRepository accounts, IAccountingSettingsRepository accountingSettings,
     IGeneralSettingsRepository generalSettings, ICurrencyExchangeRateRepository exchangeRates, ITaxRateRepository taxRates,
+    ISalesPriceListRepository priceLists,
     IUnitOfWork unitOfWork, DocumentNumberService numbers)
 {
     public async Task<CustomerListPageDto> GetPageAsync(CustomerListQueryDto query)
@@ -31,6 +32,7 @@ public class CustomerService(ICustomerRepository customers, IAccountRepository a
         var account = await accounts.GetByIdAsync(customer.AccountId);
         var result=MapDetails(customer, account is null ? "—" : $"{account.Code} — {account.Name}");
         if(customer.DefaultTaxRateId.HasValue) result.DefaultTaxRateName=(await taxRates.GetAllAsync()).FirstOrDefault(x=>x.Id==customer.DefaultTaxRateId)?.Name;
+        if(customer.DefaultSalesPriceListId.HasValue){var list=await priceLists.GetByIdAsync(customer.DefaultSalesPriceListId.Value);result.DefaultSalesPriceListName=list is null?null:$"{list.Code} — {list.Name}";}
         result.Contacts.AddRange((await customers.GetContactsAsync(id,true)).Select(x=>new CustomerContactDto{Id=x.Id,Name=x.Name,Role=x.Role,Phone=x.Phone,Email=x.Email,IsPrimary=x.IsPrimary,IsActive=x.IsActive,RowVersion=x.RowVersion}));
         result.Addresses.AddRange((await customers.GetAddressesAsync(id,true)).Select(x=>new CustomerAddressDto{Id=x.Id,Type=x.Type,Label=x.Label,AddressLine1=x.AddressLine1,AddressLine2=x.AddressLine2,City=x.City,StateOrProvince=x.StateOrProvince,PostalCode=x.PostalCode,CountryCode=x.CountryCode,IsDefault=x.IsDefault,IsActive=x.IsActive,RowVersion=x.RowVersion}));
         return result;
@@ -115,6 +117,7 @@ public class CustomerService(ICustomerRepository customers, IAccountRepository a
             throw new InvalidOperationException("Selected preferred currency is not configured.");
         if(dto.DefaultTaxRateId.HasValue&&(await taxRates.GetAllAsync()).All(x=>x.Id!=dto.DefaultTaxRateId.Value))
             throw new InvalidOperationException("Selected default tax rate was not found.");
+        if(dto.DefaultSalesPriceListId.HasValue){var list=await priceLists.GetByIdAsync(dto.DefaultSalesPriceListId.Value)??throw new InvalidOperationException("Selected default price list was not found.");if(!list.IsActive)throw new InvalidOperationException("Selected default price list is inactive.");}
     }
 
     private async Task<(int Id,Account? NewAccount)> ResolveCreateAccountAsync(CustomerFormDto dto,string customerCode)
@@ -146,10 +149,11 @@ public class CustomerService(ICustomerRepository customers, IAccountRepository a
     {
         Form=form, Accounts=await GetAccountOptionsAsync(), Currencies=await GetCurrencyOptionsAsync(),
         TaxRates=(await taxRates.GetAllAsync()).Select(x=>new CustomerTaxRateOptionDto(x.Id,x.Name,x.Rate)).ToList()
+        ,PriceLists=(await priceLists.GetAllAsync()).Select(x=>new CustomerPriceListOptionDto(x.Id,x.Code,x.Name,x.CurrencyCode)).ToList()
     };
 
-    private static void Apply(Customer customer, CustomerFormDto dto) { customer.UpdateProfile(dto.Type, dto.Name, dto.LegalName, dto.Phone, dto.Email, dto.TaxNumber, dto.RegistrationNumber, dto.Website, dto.PreferredLanguage, dto.TimeZoneId, dto.Notes); customer.ConfigureCommercialDefaults(dto.PaymentTermDays,dto.PreferredCurrencyCode,dto.DefaultTaxRateId,dto.IsTaxExempt,dto.TaxExemptionReason); }
-    private static CustomerFormDto MapForm(Customer x) => new() { Id = x.Id, CustomerCode = x.CustomerCode, Name = x.Name, Type = x.Type, LegalName = x.LegalName, Phone = x.Phone, Email = x.Email, TaxNumber = x.TaxNumber, RegistrationNumber = x.RegistrationNumber, Website = x.Website, PreferredLanguage = x.PreferredLanguage, TimeZoneId = x.TimeZoneId, Notes = x.Notes, AccountId = x.AccountId, PaymentTermDays=x.PaymentTermDays, PreferredCurrencyCode=x.PreferredCurrencyCode, DefaultTaxRateId=x.DefaultTaxRateId, IsTaxExempt=x.IsTaxExempt, TaxExemptionReason=x.TaxExemptionReason, RowVersion = x.RowVersion };
+    private static void Apply(Customer customer, CustomerFormDto dto) { customer.UpdateProfile(dto.Type, dto.Name, dto.LegalName, dto.Phone, dto.Email, dto.TaxNumber, dto.RegistrationNumber, dto.Website, dto.PreferredLanguage, dto.TimeZoneId, dto.Notes); customer.ConfigureCommercialDefaults(dto.PaymentTermDays,dto.PreferredCurrencyCode,dto.DefaultTaxRateId,dto.IsTaxExempt,dto.TaxExemptionReason,dto.DefaultSalesPriceListId); }
+    private static CustomerFormDto MapForm(Customer x) => new() { Id = x.Id, CustomerCode = x.CustomerCode, Name = x.Name, Type = x.Type, LegalName = x.LegalName, Phone = x.Phone, Email = x.Email, TaxNumber = x.TaxNumber, RegistrationNumber = x.RegistrationNumber, Website = x.Website, PreferredLanguage = x.PreferredLanguage, TimeZoneId = x.TimeZoneId, Notes = x.Notes, AccountId = x.AccountId, PaymentTermDays=x.PaymentTermDays, PreferredCurrencyCode=x.PreferredCurrencyCode, DefaultTaxRateId=x.DefaultTaxRateId, DefaultSalesPriceListId=x.DefaultSalesPriceListId, IsTaxExempt=x.IsTaxExempt, TaxExemptionReason=x.TaxExemptionReason, RowVersion = x.RowVersion };
     private static CustomerListItemDto MapList(Customer x, string account) => new() { Id = x.Id, CustomerCode = x.CustomerCode, Type = x.Type, Name = x.Name, Phone = x.Phone, Email = x.Email, AccountName = account, IsActive = x.IsActive };
     private static CustomerDetailsDto MapDetails(Customer x, string account) => new() { Id = x.Id, CustomerCode = x.CustomerCode, Type = x.Type, Name = x.Name, Phone = x.Phone, Email = x.Email, AccountName = account, IsActive = x.IsActive, LegalName = x.LegalName, TaxNumber = x.TaxNumber, RegistrationNumber = x.RegistrationNumber, Website = x.Website, PreferredLanguage = x.PreferredLanguage, TimeZoneId = x.TimeZoneId, Notes = x.Notes, PaymentTermDays=x.PaymentTermDays,PreferredCurrencyCode=x.PreferredCurrencyCode,IsTaxExempt=x.IsTaxExempt,TaxExemptionReason=x.TaxExemptionReason, ArchivedAtUtc = x.ArchivedAtUtc, RowVersion = x.RowVersion };
 }

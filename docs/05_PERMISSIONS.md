@@ -1,7 +1,7 @@
 # Permissions and authorization
 > Status: PARTIALLY IMPLEMENTED  
 > Source of truth: Code  
-> Last reviewed: 2026-10-16
+> Last reviewed: 2026-10-20
 
 `InventoryReservations.View` protects the read-only inventory reservation history screen.
 
@@ -18,7 +18,7 @@ Scanned Draft line counting additionally requires `InventoryAdjustments.Count`; 
 Authentication is ASP.NET Core Identity cookie authentication. `PermissionAuthorizeAttribute` creates policies with `Permission:` prefix. Identity owns credentials, while `TenantRole`, `TenantRolePermission` and `TenantUserRole` own authorization inside each company. Both evaluators require an active tenant; Admin receives full access only from that company's protected Admin assignment. Non-Admin permissions resolve only through the active company's role definition.
 
 ## Defined permission groups
-Products, Warehouses, Customers, ProductStock, StockTransactions, StockMovements, LocationMovements, InventoryReconciliation, Suppliers, Purchases, PurchaseReturns, Sales, SalesReturns, StockTransfers, Users, Roles, and Settings are defined in `MiniStore.Application/Permissions/PermissionDefinitions.cs`. Customers separates View, Create, Edit and Archive; Archive also protects Restore because both change availability without deleting history. CRUD permissions exist for several modules even where matching actions do not exist (for example purchase/sale edit/delete). Purchase and sales returns define View/Create. Stock transfer also defines Submit/Approve/Reject/Post/Cancel. Location movements define View/Create. Inventory reconciliation and the physical StockMovement pilot define View only.
+Products, Warehouses, Customers, ProductStock, StockTransactions, StockMovements, LocationMovements, InventoryReconciliation, Suppliers, Purchases, PurchaseReturns, Sales, SalesPricing, SalesReturns, StockTransfers, Users, Roles, and Settings are defined in `MiniStore.Application/Permissions/PermissionDefinitions.cs`. Customers separates View, Create, Edit and Archive; Archive also protects Restore because both change availability without deleting history. SalesPricing separates View/evaluation from Manage mutations. CRUD permissions exist for several modules even where matching actions do not exist (for example purchase/sale edit/delete). Purchase and sales returns define View/Create. Stock transfer also defines Submit/Approve/Reject/Post/Cancel. Location movements define View/Create. Inventory reconciliation and the physical StockMovement pilot define View only.
 
 ## Enforcement map
 | Module | Backend enforcement |
@@ -29,6 +29,7 @@ Products, Warehouses, Customers, ProductStock, StockTransactions, StockMovements
 | Purchase returns | View/Create enforced; Create also requires a posted original purchase and sufficient current stock. |
 | Goods receipt returns | Separate View/Create permissions; Create accepts posted new-flow receipts only and revalidates remaining receipt quantity, current stock, tracking and accounting configuration. |
 | Sales | View/Create enforced; Edit/Delete definitions have no controller actions. |
+| Sales pricing | `SalesPricing.View` protects list visibility and read-only evaluation; `SalesPricing.Manage` protects list/rule create and archive/activate operations. Every mutation requires antiforgery and tenant resolution. |
 | Sales returns | View/Create enforced; the original-sale return action is also hidden without Create. |
 | Stock transactions | View/Create enforced. |
 | Location movements | View/Create enforced for history and internal relocation; putaway continues to require ProductStock.Edit. |
