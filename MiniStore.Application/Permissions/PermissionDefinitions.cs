@@ -200,6 +200,10 @@ public static class PermissionDefinitions
         new("SalesOrders.Cancel", "Cancel Sales Order", "Sales"),
         new("SalesOrders.Reserve", "Reserve Sales Order Inventory", "Sales"),
         new("SalesOrders.ReleaseReservation", "Release Sales Order Reservation", "Sales"),
+        new("SalesDeliveries.View", "View Sales Deliveries", "Sales"),
+        new("SalesDeliveries.Create", "Prepare Sales Delivery", "Sales"),
+        new("SalesDeliveries.Post", "Post Sales Delivery", "Sales"),
+        new("SalesDeliveries.Cancel", "Cancel Sales Delivery Draft", "Sales"),
         new("SalesReturns.View", "View Sales Returns", "Sales Returns"),
         new("SalesReturns.Create", "Create Sales Return", "Sales Returns"),
 

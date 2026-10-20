@@ -98,6 +98,7 @@ public class DocumentNumberService(IDocumentSequenceRepository repository)
             DocumentNumberType.Customer => ("Customer", "زبون"),
             DocumentNumberType.SalesQuotation => ("Sales quotation", "عرض سعر مبيعات"),
             DocumentNumberType.SalesOrder => ("Sales order", "طلب بيع"),
+            DocumentNumberType.SalesDelivery => ("Sales delivery", "تسليم مبيعات"),
             _ => (row.DocumentType.ToString(), row.DocumentType.ToString())
         };
         return new DocumentSequenceDto

@@ -62,6 +62,37 @@ public sealed class UntrackedInventoryRemovalService(
     IProductStockRepository warehouseStocks,
     IProductLocationStockRepository locationStocks)
 {
+    public async Task RemoveReservedAsync(Product product, int warehouseId, int? storageLocationId, decimal quantity)
+    {
+        if (product.TrackingPolicy != ProductTrackingPolicy.None) return;
+        if (quantity <= 0) throw new ArgumentException("Quantity must be greater than zero.");
+        var warehouse = await warehouses.GetByIdAsync(warehouseId)
+            ?? throw new InvalidOperationException("Warehouse not found.");
+        if (warehouse.ControlMode == InventoryControlMode.Simple)
+        {
+            if (storageLocationId.HasValue)
+                throw new InvalidOperationException("A simple warehouse delivery cannot use a storage location.");
+            return;
+        }
+        if (storageLocationId.HasValue)
+        {
+            var location = await locations.GetByIdAsync(storageLocationId.Value)
+                ?? throw new InvalidOperationException("The reserved delivery location was not found.");
+            if (location.WarehouseId != warehouseId || location.Status != StorageLocationStatus.Active || !location.IsPickable)
+                throw new InvalidOperationException("The reserved delivery location is not an active pickable location in the delivery warehouse.");
+            var stock = await locationStocks.GetAsync(product.Id, storageLocationId.Value)
+                ?? throw new InvalidOperationException("Reserved location stock was not found.");
+            if (stock.Quantity < quantity) throw new InvalidOperationException("Insufficient physical stock in the reserved delivery position.");
+            stock.RemoveQuantity(quantity);
+            return;
+        }
+        var warehouseStock = await warehouseStocks.GetByProductAndWarehouseAsync(product.Id, warehouseId)
+            ?? throw new InvalidOperationException("Warehouse stock not found.");
+        var assigned = (await locationStocks.GetWarehouseProductAsync(product.Id, warehouseId)).Sum(x => x.Quantity);
+        if (warehouseStock.Quantity - assigned < quantity)
+            throw new InvalidOperationException("Insufficient physical stock in the reserved unassigned position.");
+    }
+
     public async Task RemoveAsync(
         Product product,
         int warehouseId,

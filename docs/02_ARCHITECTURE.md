@@ -61,6 +61,8 @@ PUR-240 introduces the first bounded background planner. The web-hosted scanner 
 
 SAL-050 keeps InventoryReservation as the only Reserved-balance mutation authority while SalesOrderReservationService owns order-line limits and shortage policy. StockTransfer retains one tenant-unique source record; a SalesOrder may have multiple immutable allocation records for partial release/reallocation, each linked to its exact source line. See `decisions/2026-10-20-sales-order-reservation-allocation.md`.
 
+SAL-060 keeps `SalesDeliveryService` as the fulfillment coordinator while Inventory services remain the only stock/location/tracking mutation authorities and `JournalPostingService` remains the accounting gateway. The delivery aggregate stores immutable source and cost evidence, but does not duplicate balance logic or create invoice/payment state. See `decisions/2026-10-20-sales-delivery-reservation-cost-boundary.md`.
+
 ## ERP SaaS foundation reference boundary
 
 `reference/erp-saas-foundation/` is a proposed cross-cutting architecture and operations reference. MiniStore remains a modular monolith; the package does not authorize a public API, microservices, broker, distributed cache, SQL row-level security, object storage or deployment stamps. Those remain ADR triggers that require measured need. The repository-specific `MINISTORE_COMPATIBILITY.md` preserves existing tenant, finance, inventory, purchase approval, guidance and SaaS control-plane implementations while ordering remaining foundation work from operational recovery evidence through audit, performance, provisioning, exceptions/work and safe import/export.

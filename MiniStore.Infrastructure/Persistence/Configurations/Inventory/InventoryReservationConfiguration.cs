@@ -33,6 +33,8 @@ public sealed class InventoryReservationLineConfiguration : IEntityTypeConfigura
         builder.ToTable("InventoryReservationLines", table =>
             table.HasCheckConstraint("CK_InventoryReservationLines_Quantity", "[Quantity] > 0"));
         builder.HasKey(x => x.Id); builder.Property(x => x.Quantity).HasPrecision(18, 6);
+        builder.Property(x => x.ConsumedQuantity).HasPrecision(18, 6);
+        builder.Ignore(x => x.RemainingQuantity);
         builder.HasIndex(x => new { x.InventoryReservationId, x.ProductId, x.WarehouseId }).IsUnique()
             .HasFilter("[SourceLineId] IS NULL AND [StorageLocationId] IS NULL");
         builder.HasIndex(x => new { x.InventoryReservationId, x.ProductId, x.WarehouseId, x.StorageLocationId }).IsUnique()

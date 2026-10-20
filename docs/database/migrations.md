@@ -1,5 +1,9 @@
 # Migrations and seeding
-> Last reviewed: 2026-10-16
+> Last reviewed: 2026-10-20
+
+## 20261020114141_AddSalesDeliveries
+
+Adds partial `ConsumedQuantity` evidence to reservation lines and creates tenant-owned SalesDelivery headers, lines and histories. Composite foreign keys enforce same-company order, reservation, order-line, reservation-line, product, warehouse and location references; tenant-scoped indexes protect the delivery number, one open Draft per reservation and line uniqueness. Existing reservation rows remain valid with zero consumed quantity. Applied to local Demo as migration 123; EF reports no pending model change.
 
 ## 20261015173055_AddAuditEventFoundation
 

@@ -3102,4 +3102,94 @@
   <data name="Reserve inventory again" xml:space="preserve"><value>إعادة حجز المخزون</value></data>
   <data name="The released quantity is available again; create a new reservation only when the order still requires it." xml:space="preserve"><value>أصبحت الكمية المحررة متاحة مجددًا؛ أنشئ حجزًا جديدًا فقط إذا كان الطلب ما يزال يحتاجها.</value></data>
   <data name="Review inventory availability" xml:space="preserve"><value>مراجعة توفر المخزون</value></data>
+  <data name="Sales deliveries" xml:space="preserve"><value>تسليمات المبيعات</value></data>
+  <data name="Delivery or order number" xml:space="preserve"><value>رقم التسليم أو الطلب</value></data>
+  <data name="Sales order" xml:space="preserve"><value>طلب البيع</value></data>
+  <data name="Delivery date" xml:space="preserve"><value>تاريخ التسليم</value></data>
+  <data name="No sales deliveries were found." xml:space="preserve"><value>لم يتم العثور على تسليمات مبيعات.</value></data>
+  <data name="Prepare sales delivery" xml:space="preserve"><value>تجهيز تسليم مبيعات</value></data>
+  <data name="Reserved at" xml:space="preserve"><value>تم الحجز في</value></data>
+  <data name="View prepared delivery" xml:space="preserve"><value>عرض التسليم المجهز</value></data>
+  <data name="Reserved remaining" xml:space="preserve"><value>المتبقي المحجوز</value></data>
+  <data name="Delivery quantity" xml:space="preserve"><value>كمية التسليم</value></data>
+  <data name="Lot or serial allocation" xml:space="preserve"><value>تخصيص اللوط أو الرقم التسلسلي</value></data>
+  <data name="Leave empty to use the warehouse picking policy, or enter LOT:QUANTITY / one serial per line." xml:space="preserve"><value>اتركه فارغًا لاستخدام سياسة السحب من المستودع، أو أدخل اللوط:الكمية / رقمًا تسلسليًا واحدًا في كل سطر.</value></data>
+  <data name="Help" xml:space="preserve"><value>مساعدة</value></data>
+  <data name="Prepare delivery draft" xml:space="preserve"><value>تجهيز مسودة التسليم</value></data>
+  <data name="No active reserved quantity is available for delivery." xml:space="preserve"><value>لا توجد كمية محجوزة نشطة متاحة للتسليم.</value></data>
+  <data name="Open inventory reservation" xml:space="preserve"><value>فتح حجز المخزون</value></data>
+  <data name="Posting this delivery consumes its reservation, reduces physical stock and records cost of goods sold. It does not create a customer invoice or payment." xml:space="preserve"><value>ترحيل هذا التسليم يستهلك حجزه ويخفض المخزون الفعلي ويسجل تكلفة البضاعة المباعة. ولا ينشئ فاتورة عميل أو دفعة.</value></data>
+  <data name="Cost" xml:space="preserve"><value>التكلفة</value></data>
+  <data name="Tracking allocation" xml:space="preserve"><value>تخصيص التتبع</value></data>
+  <data name="Post sales delivery" xml:space="preserve"><value>ترحيل تسليم المبيعات</value></data>
+  <data name="Cancel delivery draft" xml:space="preserve"><value>إلغاء مسودة التسليم</value></data>
+  <data name="Prepare remaining delivery" xml:space="preserve"><value>تجهيز التسليم المتبقي</value></data>
+  <data name="Delivery draft cancelled" xml:space="preserve"><value>تم إلغاء مسودة التسليم</value></data>
+  <data name="Sales delivery" xml:space="preserve"><value>تسليم المبيعات</value></data>
+  <data name="Delivery completed" xml:space="preserve"><value>اكتمل التسليم</value></data>
+  <data name="View delivery documents" xml:space="preserve"><value>عرض مستندات التسليم</value></data>
+  <data name="Sales delivery draft prepared." xml:space="preserve"><value>تم تجهيز مسودة تسليم المبيعات.</value></data>
+  <data name="Sales delivery posted." xml:space="preserve"><value>تم ترحيل تسليم المبيعات.</value></data>
+  <data name="Sales delivery draft cancelled." xml:space="preserve"><value>تم إلغاء مسودة تسليم المبيعات.</value></data>
+  <data name="Review and post sales delivery" xml:space="preserve"><value>راجع تسليم المبيعات ورحّله</value></data>
+  <data name="Review quantities, warehouse positions and tracking identities, then post the physical delivery." xml:space="preserve"><value>راجع الكميات ومواقع المستودع وهويات التتبع، ثم رحّل التسليم الفعلي.</value></data>
+  <data name="Continue sales order delivery" xml:space="preserve"><value>متابعة تسليم طلب البيع</value></data>
+  <data name="The reservation and physical stock were updated; prepare another delivery only when quantity remains." xml:space="preserve"><value>تم تحديث الحجز والمخزون الفعلي؛ جهّز تسليمًا آخر فقط عندما تبقى كمية.</value></data>
+  <data name="Review cancelled delivery" xml:space="preserve"><value>مراجعة التسليم الملغي</value></data>
+  <data name="The draft is finished and its reservation remains available for a new delivery." xml:space="preserve"><value>انتهت المسودة ويبقى حجزها متاحًا لتسليم جديد.</value></data>
+  <data name="Continue sales workflow" xml:space="preserve"><value>متابعة سير عمل المبيعات</value></data>
+  <data name="Review the document status and use the remaining available action to continue the sales workflow." xml:space="preserve"><value>راجع حالة المستند واستخدم الإجراء المتاح المتبقي لمتابعة سير عمل المبيعات.</value></data>
+  <data name="Only a confirmed non-cancelled sales order can be delivered." xml:space="preserve"><value>يمكن تسليم طلب بيع مؤكد وغير ملغي فقط.</value></data>
+  <data name="Assign the delivery warehouse to a branch and inventory account before posting." xml:space="preserve"><value>اربط مستودع التسليم بفرع وحساب مخزون قبل الترحيل.</value></data>
+  <data name="Configure accounting posting accounts before posting sales deliveries." xml:space="preserve"><value>هيّئ حسابات الترحيل المحاسبي قبل ترحيل تسليمات المبيعات.</value></data>
+  <data name="Configure a cost of sales account before posting sales deliveries." xml:space="preserve"><value>هيّئ حساب تكلفة المبيعات قبل ترحيل تسليمات المبيعات.</value></data>
+  <data name="Delivery warehouse branch was not found." xml:space="preserve"><value>لم يتم العثور على فرع مستودع التسليم.</value></data>
+  <data name="Only an active sales order reservation can be delivered." xml:space="preserve"><value>يمكن تسليم حجز نشط لطلب البيع فقط.</value></data>
+  <data name="Delivery line no longer matches its remaining inventory reservation." xml:space="preserve"><value>لم يعد سطر التسليم مطابقًا لحجز المخزون المتبقي.</value></data>
+  <data name="Insufficient physical stock for the reserved delivery." xml:space="preserve"><value>المخزون الفعلي غير كافٍ للتسليم المحجوز.</value></data>
+  <data name="Insufficient physical stock in the reserved delivery position." xml:space="preserve"><value>المخزون الفعلي غير كافٍ في موقع التسليم المحجوز.</value></data>
+  <data name="Insufficient physical stock in the reserved unassigned position." xml:space="preserve"><value>المخزون الفعلي غير كافٍ في الموقع غير المعيّن المحجوز.</value></data>
+  <data name="Open sales orders" xml:space="preserve"><value>فتح طلبات البيع</value></data>
+  <data name="A delivery reservation must use one warehouse." xml:space="preserve"><value>يجب أن يستخدم حجز التسليم مستودعًا واحدًا.</value></data>
+  <data name="A reservation line does not belong to the selected reservation." xml:space="preserve"><value>سطر الحجز لا ينتمي إلى الحجز المحدد.</value></data>
+  <data name="A reservation line does not belong to this reservation." xml:space="preserve"><value>سطر الحجز لا ينتمي إلى هذا الحجز.</value></data>
+  <data name="A reservation line is not linked to this sales order." xml:space="preserve"><value>سطر الحجز غير مرتبط بطلب البيع هذا.</value></data>
+  <data name="A reserved inventory balance was not found." xml:space="preserve"><value>لم يتم العثور على رصيد المخزون المحجوز.</value></data>
+  <data name="A sales delivery must contain at least one line." xml:space="preserve"><value>يجب أن يحتوي تسليم المبيعات على سطر واحد على الأقل.</value></data>
+  <data name="A simple warehouse delivery cannot use a storage location." xml:space="preserve"><value>لا يمكن لتسليم من مستودع بسيط استخدام موقع تخزين.</value></data>
+  <data name="At least one reservation quantity is required." xml:space="preserve"><value>مطلوب تحديد كمية حجز واحدة على الأقل.</value></data>
+  <data name="Cancellation reason is required and cannot exceed 500 characters." xml:space="preserve"><value>سبب الإلغاء مطلوب ولا يمكن أن يتجاوز 500 حرف.</value></data>
+  <data name="Consumed quantity cannot exceed the remaining reservation quantity." xml:space="preserve"><value>لا يمكن أن تتجاوز الكمية المستهلكة كمية الحجز المتبقية.</value></data>
+  <data name="Consumed reservation quantity must be greater than zero." xml:space="preserve"><value>يجب أن تكون كمية الحجز المستهلكة أكبر من صفر.</value></data>
+  <data name="Delivery inventory cost cannot be negative." xml:space="preserve"><value>لا يمكن أن تكون تكلفة مخزون التسليم سالبة.</value></data>
+  <data name="Delivery line inventory cost has already been posted." xml:space="preserve"><value>تم ترحيل تكلفة مخزون سطر التسليم مسبقًا.</value></data>
+  <data name="Delivery line references are required." xml:space="preserve"><value>مراجع سطر التسليم مطلوبة.</value></data>
+  <data name="Delivery lines are required and cannot be duplicated." xml:space="preserve"><value>أسطر التسليم مطلوبة ولا يمكن تكرارها.</value></data>
+  <data name="Delivery notes cannot exceed 1000 characters." xml:space="preserve"><value>لا يمكن أن تتجاوز ملاحظات التسليم 1000 حرف.</value></data>
+  <data name="Delivery product snapshots are required." xml:space="preserve"><value>بيانات المنتج المثبتة في التسليم مطلوبة.</value></data>
+  <data name="Delivery product was not found." xml:space="preserve"><value>لم يتم العثور على منتج التسليم.</value></data>
+  <data name="Delivery quantity cannot exceed the remaining reservation quantity." xml:space="preserve"><value>لا يمكن أن تتجاوز كمية التسليم كمية الحجز المتبقية.</value></data>
+  <data name="Delivery quantity cannot exceed the remaining sales order quantity." xml:space="preserve"><value>لا يمكن أن تتجاوز كمية التسليم الكمية المتبقية في طلب البيع.</value></data>
+  <data name="Delivery quantity must be greater than zero." xml:space="preserve"><value>يجب أن تكون كمية التسليم أكبر من صفر.</value></data>
+  <data name="Delivery warehouse stock was not found." xml:space="preserve"><value>لم يتم العثور على مخزون مستودع التسليم.</value></data>
+  <data name="Delivery warehouse was not found." xml:space="preserve"><value>لم يتم العثور على مستودع التسليم.</value></data>
+  <data name="Each reservation line can appear only once per delivery." xml:space="preserve"><value>يمكن أن يظهر كل سطر حجز مرة واحدة فقط في التسليم.</value></data>
+  <data name="Enter at least one positive delivery quantity." xml:space="preserve"><value>أدخل كمية تسليم موجبة واحدة على الأقل.</value></data>
+  <data name="Every delivery line must have a posted inventory cost." xml:space="preserve"><value>يجب أن يكون لكل سطر تسليم تكلفة مخزون مرحّلة.</value></data>
+  <data name="Every delivery line must use the delivery warehouse." xml:space="preserve"><value>يجب أن يستخدم كل سطر تسليم مستودع التسليم نفسه.</value></data>
+  <data name="Only a draft sales delivery can be changed." xml:space="preserve"><value>يمكن تعديل مسودة تسليم مبيعات فقط.</value></data>
+  <data name="Only a draft sales delivery can be posted." xml:space="preserve"><value>يمكن ترحيل مسودة تسليم مبيعات فقط.</value></data>
+  <data name="Only an active reservation can be consumed." xml:space="preserve"><value>يمكن استهلاك حجز نشط فقط.</value></data>
+  <data name="Reserved location stock was not found." xml:space="preserve"><value>لم يتم العثور على مخزون الموقع المحجوز.</value></data>
+  <data name="Sales delivery number is required and cannot exceed 50 characters." xml:space="preserve"><value>رقم تسليم المبيعات مطلوب ولا يمكن أن يتجاوز 50 حرفًا.</value></data>
+  <data name="Sales delivery was modified by another user. Reload and try again." xml:space="preserve"><value>تم تعديل تسليم المبيعات بواسطة مستخدم آخر. أعد التحميل وحاول مرة أخرى.</value></data>
+  <data name="Sales delivery was not found." xml:space="preserve"><value>لم يتم العثور على تسليم المبيعات.</value></data>
+  <data name="Sales order, reservation and warehouse are required." xml:space="preserve"><value>طلب البيع والحجز والمستودع مطلوبة.</value></data>
+  <data name="The reserved delivery location is not an active pickable location in the delivery warehouse." xml:space="preserve"><value>موقع التسليم المحجوز ليس موقع سحب نشطًا في مستودع التسليم.</value></data>
+  <data name="The reserved delivery location was not found." xml:space="preserve"><value>لم يتم العثور على موقع التسليم المحجوز.</value></data>
+  <data name="Tracking allocations cannot exceed 4000 characters." xml:space="preserve"><value>لا يمكن أن تتجاوز تخصيصات التتبع 4000 حرف.</value></data>
+  <data name="Insufficient non-expired tracked stock in the reserved delivery position." xml:space="preserve"><value>المخزون المتتبع غير منتهي الصلاحية غير كافٍ في موقع التسليم المحجوز.</value></data>
+  <data name="Insufficient selected lot or serial stock in the reserved delivery position." xml:space="preserve"><value>مخزون اللوط أو الرقم التسلسلي المحدد غير كافٍ في موقع التسليم المحجوز.</value></data>
+  <data name="A sales order with posted deliveries cannot be cancelled. Use the controlled return workflow." xml:space="preserve"><value>لا يمكن إلغاء طلب بيع له تسليمات مرحّلة. استخدم مسار المرتجع المنضبط.</value></data>
+  <data name="Cancellation unavailable after posted delivery" xml:space="preserve"><value>الإلغاء غير متاح بعد ترحيل تسليم</value></data>
 </root>

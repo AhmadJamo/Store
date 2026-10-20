@@ -95,6 +95,23 @@ public sealed class InventoryTrackingService(IInventoryTrackingRepository tracki
   foreach(var allocation in plan){allocation.Balance.Remove(allocation.Quantity);if(allocation.Balance.StorageLocationId.HasValue){var located=await locationStocks.GetAsync(product.Id,allocation.Balance.StorageLocationId.Value)??throw new InvalidOperationException("Tracked location stock is missing.");located.RemoveQuantity(allocation.Quantity);}await tracking.AddTransactionAsync(new InventoryTrackingTransaction(allocation.Balance,-allocation.Quantity,InventoryTrackingTransactionType.Issue,reference,userId,appliedStrategy));}
  }
 
+ public async Task IssueFromPositionAsync(Product product,int warehouseId,int? storageLocationId,decimal quantity,string reference,string userId,string? allocationText=null)
+ {
+  if(product.TrackingPolicy==ProductTrackingPolicy.None)return;
+  if(product.TrackingPolicy==ProductTrackingPolicy.Serial&&quantity!=decimal.Truncate(quantity))throw new InvalidOperationException("Serial-tracked issue quantity must be a whole number.");
+  var warehouse=await warehouses.GetByIdAsync(warehouseId)??throw new InvalidOperationException("Warehouse was not found.");
+  var locationSequences=(await locations.GetWarehouseLocationsAsync(warehouseId)).ToDictionary(x=>x.Id,x=>x.Sequence);
+  var today=DateOnly.FromDateTime(DateTime.Today);
+  var candidates=InventoryRemovalAllocator.Order((await tracking.GetAvailableForUpdateAsync(product.Id,warehouseId))
+   .Where(x=>x.StorageLocationId==storageLocationId&&(!x.ExpirationDate.HasValue||x.ExpirationDate>=today)),warehouse.PickingStrategy,locationSequences).ToList();
+  if(candidates.Sum(x=>x.Quantity)<quantity)throw new InvalidOperationException("Insufficient non-expired tracked stock in the reserved delivery position.");
+  var plan=new List<(InventoryTrackingBalance Balance,decimal Quantity)>();var manual=!string.IsNullOrWhiteSpace(allocationText);
+  if(manual){foreach(var allocation in ParseAllocations(product,allocationText,quantity)){var left=allocation.Quantity;foreach(var balance in candidates.Where(x=>x.Identifier==allocation.Identifier)){if(left<=0)break;var take=Math.Min(balance.Quantity,left);plan.Add((balance,take));left-=take;}if(left>0)throw new InvalidOperationException("Insufficient selected lot or serial stock in the reserved delivery position.");}}
+  else{var left=quantity;foreach(var balance in candidates){if(left<=0)break;var take=Math.Min(balance.Quantity,left);plan.Add((balance,take));left-=take;}}
+  var appliedStrategy=manual?InventoryPickingStrategy.Manual:warehouse.PickingStrategy;
+  foreach(var allocation in plan){allocation.Balance.Remove(allocation.Quantity);if(allocation.Balance.StorageLocationId.HasValue){var located=await locationStocks.GetAsync(product.Id,allocation.Balance.StorageLocationId.Value)??throw new InvalidOperationException("Tracked location stock is missing.");located.RemoveQuantity(allocation.Quantity);}await tracking.AddTransactionAsync(new InventoryTrackingTransaction(allocation.Balance,-allocation.Quantity,InventoryTrackingTransactionType.Issue,reference,userId,appliedStrategy));}
+ }
+
  public async Task TransferAsync(Product product,int fromWarehouseId,int toWarehouseId,int? fromLocationId,int? toLocationId,decimal quantity,string reference,string userId,string? allocationText=null)
  {
   if(product.TrackingPolicy==ProductTrackingPolicy.None)return;

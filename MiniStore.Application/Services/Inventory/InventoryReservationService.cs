@@ -21,7 +21,7 @@ public sealed class InventoryReservationService(
             {
                 Id = x.Id, SourceType = x.SourceType, SourceReference = x.SourceReference,
                 Status = x.Status, CreatedAt = x.CreatedAt, ClosedAt = x.ClosedAt,
-                LineCount = x.Lines.Count, TotalQuantity = x.Lines.Sum(line => line.Quantity)
+                LineCount = x.Lines.Count, TotalQuantity = x.Lines.Sum(line => line.RemainingQuantity)
             }).ToList();
         return new InventoryReservationPageDto { Rows = rows, Status = status, Search = normalized };
     }
@@ -97,15 +97,35 @@ public sealed class InventoryReservationService(
         return CloseAsync(reservation, consume: false, userId, reason);
     }
 
+    public async Task ConsumeAsync(InventoryReservation reservation,
+        IReadOnlyDictionary<long, decimal> quantities, string userId)
+    {
+        if (reservation.Status != InventoryReservationStatus.Active)
+            throw new InvalidOperationException("Only an active reservation can be consumed.");
+        foreach (var allocation in quantities)
+        {
+            var line = reservation.Lines.SingleOrDefault(x => x.Id == allocation.Key)
+                ?? throw new InvalidOperationException("A reservation line does not belong to this reservation.");
+            if (allocation.Value <= 0 || allocation.Value > line.RemainingQuantity)
+                throw new InvalidOperationException("Consumed quantity cannot exceed the remaining reservation quantity.");
+            var balance = await reservations.GetBalanceForUpdateAsync(line.ProductId, line.WarehouseId, line.StorageLocationId)
+                ?? throw new InvalidOperationException("A reserved inventory balance was not found.");
+            if (balance.Reserved < allocation.Value)
+                throw new InvalidOperationException("The inventory reservation balance is inconsistent.");
+            balance.SetReserved(balance.Reserved - allocation.Value);
+        }
+        reservation.Consume(quantities, userId);
+    }
+
     private async Task CloseAsync(InventoryReservation reservation, bool consume, string userId, string? reason)
     {
-        foreach (var line in reservation.Lines)
+        foreach (var line in reservation.Lines.Where(x => x.RemainingQuantity > 0))
         {
             var balance = await reservations.GetBalanceForUpdateAsync(line.ProductId, line.WarehouseId, line.StorageLocationId)
                 ?? throw new InvalidOperationException("A reserved inventory balance was not found.");
-            if (balance.Reserved < line.Quantity)
+            if (balance.Reserved < line.RemainingQuantity)
                 throw new InvalidOperationException("The inventory reservation balance is inconsistent.");
-            balance.SetReserved(balance.Reserved - line.Quantity);
+            balance.SetReserved(balance.Reserved - line.RemainingQuantity);
         }
         if (consume) reservation.Consume(userId); else reservation.Release(userId, reason!);
     }

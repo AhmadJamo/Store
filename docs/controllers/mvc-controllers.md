@@ -28,7 +28,8 @@
 | Purchases | Index/Create/Details | Purchases.View/Create; PurchaseService and master repositories for dropdowns. |
 | Sales | Index/Details/Create/Pos/Post | Sales.View/Create; SaleService validates and snapshots optional invoice tax plus POS order context/item notes; SalePostingService creates the one-time balanced revenue, output-tax and COGS journal; PosExperienceSettingsService supplies terminal-specific runtime presentation/workflow. |
 | SalesQuotations | Index/Details/Create/Send/Accept/Reject/Expire/Cancel | Six dedicated view/create/lifecycle permissions, antiforgery on every POST, DTO-only SalesQuotationService, request-key idempotency, rowversion and status validation. Quotation acceptance is final evidence only until SAL-040 adds separately authorized order conversion. |
-| SalesOrders | Index/Details/CreateFromQuotation/Confirm/Cancel | Four dedicated permissions, antiforgery on every POST, DTO-only SalesOrderService, source-quotation idempotency/SQL uniqueness, rowversion and state validation. Confirmation creates no inventory or accounting effect. |
+| SalesOrders | Index/Details/CreateFromQuotation/Confirm/Cancel/Reserve/ReleaseReservation | View/Create/Confirm/Cancel/Reserve/ReleaseReservation permissions, antiforgery on every POST, DTO-only order/reservation services, source-quotation idempotency/SQL uniqueness, rowversion and state validation. Confirmation creates no inventory or accounting effect. |
+| SalesDeliveries | Index/Details/Create/Post/Cancel | View/Create/Post/Cancel permissions, antiforgery on every POST, DTO-only SalesDeliveryService, exact reservation/warehouse/location validation, rowversion and one-time stock/COGS posting. |
 | PurchaseReturns | Index/Details/Create | PurchaseReturns.View/Create; only posted purchases may return remaining quantities covered by current warehouse stock, and creation atomically posts inventory/payable/tax/discount/variance reversal. |
 | PurchaseSourcing | Index/Details/Create | PurchaseSourcing.View/Create; Create binds the sourcing page's `Form` prefix before validating the approved Purchase Request and invited suppliers. |
 | SupplierQuotations | Create/Comparison/Award | SupplierQuotations.Create/View/Award; Create and Award bind their nested `Form` commands. Award validates exact per-line supplier quantities/reasons, records the immutable decision once and returns the comparison with errors without losing input. |
@@ -67,6 +68,9 @@ Read-only WMS-050 reservation history protected by `InventoryReservations.View`.
 
 ## SalesOrdersController
 SAL-040 list/detail, one-time quotation conversion, confirmation and cancellation plus SAL-050 reservation history/create/release endpoints. The GET reservation page requires SalesOrders.View; mutations use separate Reserve and ReleaseReservation permissions and antiforgery. The controller delegates all order, balance, warehouse/location and cumulative-quantity rules to Application services.
+
+## SalesDeliveriesController
+SAL-060 list/detail, reservation-backed Draft creation, one-time posting and Draft-only cancellation. Every POST is antiforgery-protected and uses a dedicated permission. The controller passes DTOs only and delegates inventory, tracking, accounting, tenant, state and cumulative-quantity rules to `SalesDeliveryService`.
 
 ## InventoryAdjustmentsController
 WMS-060 list/create/details plus antiforgery-protected Count, Approve, Post and Cancel actions. Each mutation has a dedicated permission and delegates all rules to the Application service.

@@ -48,7 +48,24 @@ public sealed class InventoryReservation
     public void Consume(string userId)
     {
         EnsureActiveWithLines(); EnsureUser(userId);
+        foreach (var line in _lines) line.Consume(line.RemainingQuantity);
         Status = InventoryReservationStatus.Consumed; ClosedByUserId = userId.Trim(); ClosedAt = DateTime.UtcNow;
+    }
+
+    public void Consume(IReadOnlyDictionary<long, decimal> quantities, string userId)
+    {
+        EnsureActiveWithLines(); EnsureUser(userId);
+        if (quantities.Count == 0) throw new ArgumentException("At least one reservation quantity is required.");
+        foreach (var allocation in quantities)
+        {
+            var line = _lines.SingleOrDefault(x => x.Id == allocation.Key)
+                ?? throw new InvalidOperationException("A reservation line does not belong to this reservation.");
+            line.Consume(allocation.Value);
+        }
+        if (_lines.All(x => x.RemainingQuantity == 0))
+        {
+            Status = InventoryReservationStatus.Consumed; ClosedByUserId = userId.Trim(); ClosedAt = DateTime.UtcNow;
+        }
     }
 
     public void Release(string userId, string reason)
@@ -81,6 +98,8 @@ public sealed class InventoryReservationLine
     public int? StorageLocationId { get; private set; }
     public int? SourceLineId { get; private set; }
     public decimal Quantity { get; private set; }
+    public decimal ConsumedQuantity { get; private set; }
+    public decimal RemainingQuantity => Quantity - ConsumedQuantity;
 
     internal InventoryReservationLine(int productId, int warehouseId, int? storageLocationId,
         decimal quantity, int? sourceLineId)
@@ -91,5 +110,12 @@ public sealed class InventoryReservationLine
         if (sourceLineId <= 0) sourceLineId = null;
         ProductId = productId; WarehouseId = warehouseId; StorageLocationId = storageLocationId;
         SourceLineId = sourceLineId; Quantity = quantity;
+    }
+
+    internal void Consume(decimal quantity)
+    {
+        if (quantity <= 0) throw new ArgumentException("Consumed reservation quantity must be greater than zero.");
+        if (quantity > RemainingQuantity) throw new InvalidOperationException("Consumed quantity cannot exceed the remaining reservation quantity.");
+        ConsumedQuantity += quantity;
     }
 }

@@ -81,3 +81,14 @@ Creating a Draft Goods Receipt and recording barcode scans have no stock, valuat
 ## SAL-050 sales-order reservation boundary
 
 SAL-050 inventory reservation has no journal authority. Creating or releasing a sales-order reservation changes only `InventoryBalance.Reserved`; `OnHand`, `StockTransaction`, `StockMovement`, revenue, receivable, inventory and COGS accounts remain unchanged. SAL-060 Delivery owns the later physical issue and delivery-time COGS decision.
+
+## SAL-060 sales-delivery posting
+
+Posting a `SalesDelivery` is the physical and cost-recognition boundary for the professional sales workflow. The transaction removes the exact reserved warehouse/location quantity, decreases `OnHand` and `Reserved` together, freezes the current moving-average unit cost on every delivery line and records one source-unique journal:
+
+```text
+Debit:  Cost of Goods Sold
+Credit: Warehouse Inventory
+```
+
+The shared fiscal-period and journal-posting controls apply. Draft creation and Draft cancellation have no stock or accounting effect. A retry cannot post a second journal, stock transaction or physical movement. SAL-060 does not recognize revenue, create accounts receivable or record payment; SAL-070/080 own those later boundaries.

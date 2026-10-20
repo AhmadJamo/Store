@@ -147,6 +147,9 @@ public class AppDbContext
     public DbSet<SalesOrder> SalesOrders => Set<SalesOrder>();
     public DbSet<SalesOrderLine> SalesOrderLines => Set<SalesOrderLine>();
     public DbSet<SalesOrderHistory> SalesOrderHistories => Set<SalesOrderHistory>();
+    public DbSet<SalesDelivery> SalesDeliveries => Set<SalesDelivery>();
+    public DbSet<SalesDeliveryLine> SalesDeliveryLines => Set<SalesDeliveryLine>();
+    public DbSet<SalesDeliveryHistory> SalesDeliveryHistories => Set<SalesDeliveryHistory>();
 
     public DbSet<DocumentSequence> DocumentSequences => Set<DocumentSequence>();
 

@@ -4,14 +4,14 @@
 
 | الأمر | النتيجة | التاريخ |
 |---|---|---|
-| `dotnet run --project tests/SecurityRegression/SecurityRegression.csproj -c Release` | Passed 862 checks (نجح 862 فحصًا)، تشمل صلاحيات طلبات البيع والحجز، مصدر السطر، الفهارس، الحالات، العزل وروابط الأخطاء والخطوات التالية | 2026-10-20 |
+| `dotnet run --project tests/SecurityRegression/SecurityRegression.csproj -c Release` | Passed 884 checks (نجح 884 فحصًا)، تشمل صلاحيات التسليم، دورة الحالة، العزل، الترحيل المانع للتكرار، الاستهلاك الجزئي/الكامل وروابط الأخطاء والخطوات التالية | 2026-10-20 |
 | `pwsh -NoProfile -File scripts/verify-local.ps1` | Build + 777 + SQL + 500-request workload passed | 2026-10-18 |
 | `dotnet run --project tests/InventorySqlIntegration/InventorySqlIntegration.csproj -c Release` | Passed full disposable SQL suite, including SAL-030/040 isolation/uniqueness and SAL-050 partial reservation, release/reallocation, automatic cancellation release, no OnHand/journal effect and concurrent final-unit protection | 2026-10-20 |
 | Live local historic-credential negative test (اختبار رفض بيانات الدخول التاريخية) | Rejected after remediation (رُفضت بعد المعالجة) | 2026-10-15 |
 | Live local replacement-admin positive test (اختبار دخول المدير البديل) | Passed with authorized redirect (نجح مع تحويل مصرح) | 2026-10-15 |
 | Encrypted backup verify/isolated restore/DBCC (تحقق النسخة والاستعادة المعزولة وسلامة القاعدة) | Passed with AES-256 and checksum (نجح) | 2026-10-15 |
 | Restored ERP reconciliation (مصالحة النظام المستعاد) | 147 tables and 21 business checks; zero mismatches (صفر فروق) | 2026-10-15 |
-| EF/database migration reconciliation (مطابقة الترحيلات) | Source/model/Demo 122 with no pending model change; migrations 120–122 applied successfully | 2026-10-20 |
+| EF/database migration reconciliation (مطابقة الترحيلات) | Source/model/Demo 123 with no pending model change; migrations 120–123 applied successfully | 2026-10-20 |
 | Live schema integrity (سلامة المخطط الحي) | 147 tables, 420 trusted FKs, zero disabled constraints/indexes or unsafe tenant relations | 2026-10-15 |
 | Web dependency build (بناء الويب واعتماداته) | Release, 4 projects, zero warnings/errors (نجح) | 2026-10-20 |
 

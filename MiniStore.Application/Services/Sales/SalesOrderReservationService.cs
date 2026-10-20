@@ -38,11 +38,13 @@ public sealed class SalesOrderReservationService(
             x => string.IsNullOrWhiteSpace(x.Name) ? x.Code : $"{x.Code} — {x.Name}");
         var lineMap = order.Lines.ToDictionary(x => x.Id);
         var activeByLine = ActiveReservedByLine(sourceReservations);
+        var consumedByLine = ConsumedByLine(sourceReservations);
         var progress = order.Lines.Select(line =>
         {
             var reserved = activeByLine.GetValueOrDefault(line.Id);
+            var consumed = consumedByLine.GetValueOrDefault(line.Id);
             return new SalesOrderReservationLineProgressDto(line.Id, line.ProductCode, line.ProductName,
-                line.StockQuantity, reserved, Math.Max(0, line.StockQuantity - reserved));
+                line.StockQuantity, reserved, Math.Max(0, line.StockQuantity - reserved - consumed));
         }).ToList();
         var summary = BuildSummary(order, sourceReservations);
         var productIds = order.Lines.Select(x => x.ProductId).ToHashSet();
@@ -79,12 +81,12 @@ public sealed class SalesOrderReservationService(
                     CreatedAt = reservation.CreatedAt,
                     ClosedAt = reservation.ClosedAt,
                     ReleaseReason = reservation.ReleaseReason,
-                    TotalQuantity = reservation.Lines.Sum(x => x.Quantity),
+                    TotalQuantity = reservation.Lines.Sum(x => x.RemainingQuantity),
                     Lines = reservation.Lines.Select(line => new SalesOrderReservationAllocationDto(
                         line.SourceLineId ?? 0,
                         line.SourceLineId.HasValue && lineMap.TryGetValue(line.SourceLineId.Value, out var orderLine)
                             ? orderLine.ProductName : productNames.GetValueOrDefault(line.ProductId, "Unknown product"),
-                        line.Quantity)).ToList()
+                        line.RemainingQuantity)).ToList()
                 };
             }).ToList(),
             Warehouses = warehouseRows.OrderBy(x => x.Name)
@@ -136,9 +138,9 @@ public sealed class SalesOrderReservationService(
         if (dto.Lines.Count == 0 || dto.Lines.GroupBy(x => x.SalesOrderLineId).Any(x => x.Count() > 1))
             throw new ArgumentException("Reservation lines are required and cannot be duplicated.");
 
-        var active = (await reservations.GetAllBySourceAsync(InventoryReservationSourceType.SaleOrder, order.Id))
-            .Where(x => x.Status == InventoryReservationStatus.Active).ToList();
-        var reservedByLine = ActiveReservedByLine(active);
+        var sourceReservations = await reservations.GetAllBySourceAsync(
+            InventoryReservationSourceType.SaleOrder, order.Id);
+        var reservedByLine = CommittedByLine(sourceReservations);
         var orderLines = order.Lines.ToDictionary(x => x.Id);
         var plannedByProduct = new Dictionary<int, decimal>();
         var allocations = new List<InventoryReservationService.Allocation>();
@@ -193,20 +195,39 @@ public sealed class SalesOrderReservationService(
     private static Dictionary<int, decimal> ActiveReservedByLine(IEnumerable<InventoryReservation> source) =>
         source.Where(x => x.Status == InventoryReservationStatus.Active)
             .SelectMany(x => x.Lines).Where(x => x.SourceLineId.HasValue)
-            .GroupBy(x => x.SourceLineId!.Value).ToDictionary(x => x.Key, x => x.Sum(y => y.Quantity));
+            .GroupBy(x => x.SourceLineId!.Value).ToDictionary(x => x.Key, x => x.Sum(y => y.RemainingQuantity));
+
+    private static Dictionary<int, decimal> CommittedByLine(IEnumerable<InventoryReservation> source) =>
+        source.SelectMany(reservation => reservation.Lines
+                .Where(x => x.SourceLineId.HasValue)
+                .Select(line => new
+                {
+                    LineId = line.SourceLineId!.Value,
+                    Quantity = line.ConsumedQuantity +
+                               (reservation.Status == InventoryReservationStatus.Active ? line.RemainingQuantity : 0)
+                }))
+            .GroupBy(x => x.LineId).ToDictionary(x => x.Key, x => x.Sum(y => y.Quantity));
+
+    private static Dictionary<int, decimal> ConsumedByLine(IEnumerable<InventoryReservation> source) =>
+        source.SelectMany(x => x.Lines).Where(x => x.SourceLineId.HasValue)
+            .GroupBy(x => x.SourceLineId!.Value)
+            .ToDictionary(x => x.Key, x => x.Sum(y => y.ConsumedQuantity));
 
     private static SalesOrderReservationSummaryDto BuildSummary(SalesOrder order,
         IEnumerable<InventoryReservation> sourceReservations)
     {
-        var reservedByLine = ActiveReservedByLine(sourceReservations);
+        var activeByLine = ActiveReservedByLine(sourceReservations);
+        var consumedByLine = ConsumedByLine(sourceReservations);
         var required = order.Lines.Sum(x => x.StockQuantity);
-        var reserved = order.Lines.Sum(x => Math.Min(x.StockQuantity, reservedByLine.GetValueOrDefault(x.Id)));
+        var reserved = order.Lines.Sum(x => Math.Min(x.StockQuantity, activeByLine.GetValueOrDefault(x.Id)));
+        var committed = order.Lines.Sum(x => Math.Min(x.StockQuantity,
+            activeByLine.GetValueOrDefault(x.Id) + consumedByLine.GetValueOrDefault(x.Id)));
         return new SalesOrderReservationSummaryDto
         {
             RequiredStockQuantity = required,
             ReservedStockQuantity = reserved,
-            RemainingStockQuantity = Math.Max(0, required - reserved),
-            IsFullyReserved = required > 0 && reserved >= required,
+            RemainingStockQuantity = Math.Max(0, required - committed),
+            IsFullyReserved = required > 0 && committed >= required,
             ActiveReservationCount = sourceReservations.Count(x => x.Status == InventoryReservationStatus.Active)
         };
     }

@@ -133,7 +133,7 @@ try
     await VerifyInventoryBalanceProjectionAsync(tenantOneId, tenantOneFixture.ProductId, expectedOnHand: 2m, connectionString);
     await VerifyOpeningTrackingAllocationAsync(tenantOneId, tenantOneFixture.ProductId, tenantOneFixture.WarehouseId, connectionString);
 
-    Console.WriteLine("Passed SQL integration checks: professional customer and sales-pricing tenant isolation, price-list code/rule uniqueness and cross-tenant linkage protection; semantic coverage catalog, legacy-audit freeze and rollback, semantic role/settings, denied-security, permission-aware audit reader/export, legal hold, signed checkpoint, manifest-before-delete retention and SQL audit-role separation plus audit-event rollback, isolation, append-only and integrity; tenant isolation, reconciliation, balances, replenishment purchase-request source concurrency, 3-product/2-supplier split awards, receipt, vendor-bill and supplier-payment concurrency, controlled payment reversal and retry, three-way matching override evidence, GRNI posting and clearing, purchase accounting reconciliation, payable settlement, receipt-based supplier returns, landed-cost valuation, purchasing analytics, idempotent barcode receipt drafts, adjustment posting, tracked operations, quarantine and recall.");
+    Console.WriteLine("Passed SQL integration checks: professional customer and sales-pricing tenant isolation, price-list code/rule uniqueness and cross-tenant linkage protection, partial/full sales-delivery reservation consumption, physical stock issue and delivery-time COGS posting; semantic coverage catalog, legacy-audit freeze and rollback, semantic role/settings, denied-security, permission-aware audit reader/export, legal hold, signed checkpoint, manifest-before-delete retention and SQL audit-role separation plus audit-event rollback, isolation, append-only and integrity; tenant isolation, reconciliation, balances, replenishment purchase-request source concurrency, 3-product/2-supplier split awards, receipt, vendor-bill and supplier-payment concurrency, controlled payment reversal and retry, three-way matching override evidence, GRNI posting and clearing, purchase accounting reconciliation, payable settlement, receipt-based supplier returns, landed-cost valuation, purchasing analytics, idempotent barcode receipt drafts, adjustment posting, tracked operations, quarantine and recall.");
 }
 finally
 {
@@ -1068,6 +1068,7 @@ static async Task VerifySalesQuotationFoundationAsync(int tenantOneId,int tenant
     var tenantOneRequestKey=Guid.NewGuid().ToString();
     int tenantOneQuotationId;
     int tenantOneOrderId;
+    int tenantOneDeliveryOrderId;
     int stockCount;
     int journalCount;
 
@@ -1148,7 +1149,7 @@ static async Task VerifySalesQuotationFoundationAsync(int tenantOneId,int tenant
             .SingleAsync(x=>x.SourceType==InventoryReservationSourceType.SaleOrder&&x.SourceId==order.Id&&x.Status==InventoryReservationStatus.Active);
         var orderService=new SalesOrderService(new SalesOrderRepository(reservationContext),
             new SalesQuotationRepository(reservationContext),new DocumentNumberService(new DocumentSequenceRepository(reservationContext)),
-            reservationUnitOfWork,reservationUser,reservationService);
+            reservationUnitOfWork,reservationUser,reservationService,new SalesDeliveryRepository(reservationContext));
         await orderService.CancelAsync(new SalesOrderStatusCommandDto
             {Id=order.Id,RowVersion=order.RowVersion,Reason="SQL cancellation releases active reservation"});
         var finalBalance=await reservationContext.InventoryBalances.AsNoTracking().SingleAsync(x=>x.ProductId==productId&&x.WarehouseId==warehouseId&&x.StorageLocationId==null);
@@ -1156,6 +1157,119 @@ static async Task VerifySalesQuotationFoundationAsync(int tenantOneId,int tenant
            second.Status!=InventoryReservationStatus.Released||order.Status!=SalesOrderStatus.Cancelled||
            finalBalance.OnHand!=before.OnHand||finalBalance.Reserved!=before.Reserved)
             throw new InvalidOperationException("Released or cancelled sales-order reservations must restore Available and preserve auditable reallocation history.");
+    }
+
+    await using(var deliverySetup=new AppDbContext(CreateOptions(connectionString),new FixedTenantContext(tenantOneId)))
+    {
+        var inventoryAccount=new Account("SQL-DEL-INV","SQL delivery inventory",AccountType.Asset);
+        var costAccount=new Account("SQL-DEL-COGS","SQL delivery cost of sales",AccountType.Expense);
+        var branch=new Branch("SQL-DEL","SQL Delivery Branch");
+        deliverySetup.Accounts.AddRange(inventoryAccount,costAccount);deliverySetup.Branches.Add(branch);
+        await deliverySetup.SaveChangesAsync();
+        var warehouse=await deliverySetup.Warehouses.SingleAsync(x=>x.Id==warehouseId);
+        warehouse.AssignAccounting(branch.Id,inventoryAccount.Id);
+        deliverySetup.AccountingSettings.Add(new AccountingSettings(null,null,null,costAccount.Id));
+        var customer=await deliverySetup.Customers.SingleAsync(x=>x.CustomerCode=="CUS-SQT-SQL");
+        var product=await deliverySetup.Products.SingleAsync(x=>x.Id==productId);
+        var unit=await deliverySetup.MeasurementUnits.SingleAsync(x=>x.Id==measurementUnitId);
+        var quotation=new SalesQuotation("SQT-SQL-DEL",Guid.NewGuid().ToString(),customer,null,
+            new DateOnly(2026,10,20),new DateOnly(2026,11,20),"JOD",1m,new DateOnly(2026,10,20),"COMPANY_BASE",null,"sql-user");
+        quotation.AddLine(new SalesQuotationLine(product,unit,1m,
+            new SalesPriceEvaluationSnapshot(2m,2m,"JOD",null,null,"PRODUCT_CHANNEL_FALLBACK",8m,8m,16m,null,null,null,false,"NO_TAX",null,0m,16m),null));
+        deliverySetup.SalesQuotations.Add(quotation);await deliverySetup.SaveChangesAsync();
+        quotation.Send("sql-user",new DateOnly(2026,10,20));quotation.Accept("sql-user",new DateOnly(2026,10,20));
+        var order=new SalesOrder("SO-SQL-DEL",quotation,new DateOnly(2026,10,20),"sql-user");
+        deliverySetup.SalesOrders.Add(order);await deliverySetup.SaveChangesAsync();order.Confirm("sql-user");await deliverySetup.SaveChangesAsync();
+        tenantOneDeliveryOrderId=order.Id;
+    }
+
+    await using(var deliveryContext=new AppDbContext(CreateOptions(connectionString),new FixedTenantContext(tenantOneId)))
+    {
+        var reservationRepository=new InventoryReservationRepository(deliveryContext);
+        var locationRepository=new StorageLocationRepository(deliveryContext);
+        var inventoryReservationService=new InventoryReservationService(reservationRepository,locationRepository);
+        var deliveryUnitOfWork=new UnitOfWork(deliveryContext);
+        var deliveryUser=new FixedCurrentUser("sales-delivery-user");
+        var orderRepository=new SalesOrderRepository(deliveryContext);
+        var reservationService=new SalesOrderReservationService(orderRepository,reservationRepository,
+            new InventoryBalanceRepository(deliveryContext),new WarehouseRepository(deliveryContext),locationRepository,
+            inventoryReservationService,deliveryUnitOfWork,deliveryUser);
+        var order=await orderRepository.GetByIdAsync(tenantOneDeliveryOrderId)??throw new InvalidOperationException("SQL delivery order was not found.");
+        var orderLine=order.Lines.Single();
+        await reservationService.ReserveAsync(new CreateSalesOrderReservationDto
+        {
+            SalesOrderId=order.Id,WarehouseId=warehouseId,RowVersion=order.RowVersion,
+            ShortagePolicy=SalesOrderReservationShortagePolicy.BlockEntireReservation,
+            Lines=[new SalesOrderReservationLineInputDto{SalesOrderLineId=orderLine.Id,StockQuantity=1m}]
+        });
+        var reservation=await reservationRepository.GetAllBySourceAsync(InventoryReservationSourceType.SaleOrder,order.Id);
+        var activeReservation=reservation.Single(x=>x.Status==InventoryReservationStatus.Active);
+        var numbers=new DocumentNumberService(new DocumentSequenceRepository(deliveryContext));
+        var tracking=new InventoryTrackingService(new InventoryTrackingRepository(deliveryContext),new InventoryRecallRepository(deliveryContext),
+            new ProductRepository(deliveryContext),new WarehouseRepository(deliveryContext),locationRepository,
+            new InventoryBalanceRepository(deliveryContext),new ProductLocationStockRepository(deliveryContext),
+            new PurchaseRepository(deliveryContext),new SupplierRepository(deliveryContext),new SaleRepository(deliveryContext),
+            new CustomerRepository(deliveryContext),deliveryUnitOfWork);
+        var fiscalPeriods=new FiscalPeriodService(new FiscalPeriodRepository(deliveryContext),deliveryUnitOfWork,deliveryUser);
+        var deliveryRepository=new SalesDeliveryRepository(deliveryContext);
+        var deliveryService=new SalesDeliveryService(deliveryRepository,orderRepository,reservationRepository,
+            new ProductRepository(deliveryContext),new ProductStockRepository(deliveryContext),new WarehouseRepository(deliveryContext),
+            locationRepository,new StockTransactionRepository(deliveryContext),new StockMovementRepository(deliveryContext),
+            new AccountingSettingsRepository(deliveryContext),new BranchRepository(deliveryContext),inventoryReservationService,
+            tracking,new UntrackedInventoryRemovalService(new WarehouseRepository(deliveryContext),locationRepository,
+                new InventoryBalanceRepository(deliveryContext),new ProductStockRepository(deliveryContext),new ProductLocationStockRepository(deliveryContext)),
+            numbers,new JournalPostingService(new JournalEntryRepository(deliveryContext),numbers,fiscalPeriods),
+            deliveryUnitOfWork,deliveryUser);
+        async Task<int> DeliverAsync(decimal quantity)
+        {
+            var currentReservation=await reservationRepository.GetByIdAsync(activeReservation.Id)
+                ??throw new InvalidOperationException("SQL delivery reservation was not found.");
+            var currentLine=currentReservation.Lines.Single();
+            var id=await deliveryService.CreateDraftAsync(new CreateSalesDeliveryDto
+            {
+                SalesOrderId=order.Id,InventoryReservationId=currentReservation.Id,DeliveryDate=new DateOnly(2026,10,20),
+                Lines=[new CreateSalesDeliveryLineDto{InventoryReservationLineId=currentLine.Id,StockQuantity=quantity}]
+            });
+            var details=await deliveryService.GetAsync(id)??throw new InvalidOperationException("SQL delivery draft was not found.");
+            await deliveryService.PostAsync(new SalesDeliveryStatusCommandDto{Id=id,RowVersion=details.RowVersion});
+            return id;
+        }
+        var firstDeliveryId=await DeliverAsync(0.4m);
+        var afterPartial=await reservationRepository.GetByIdAsync(activeReservation.Id)
+            ??throw new InvalidOperationException("SQL partial reservation was not found.");
+        if(afterPartial.Status!=InventoryReservationStatus.Active||afterPartial.Lines.Single().ConsumedQuantity!=0.4m||afterPartial.Lines.Single().RemainingQuantity!=0.6m)
+            throw new InvalidOperationException("A partial sales delivery must consume only its quantity and keep the reservation active.");
+        var secondDeliveryId=await DeliverAsync(0.6m);
+        var finalReservation=await reservationRepository.GetByIdAsync(activeReservation.Id)
+            ??throw new InvalidOperationException("SQL final reservation was not found.");
+        var deliveryReferences=await deliveryContext.SalesDeliveries.AsNoTracking()
+            .Where(x=>x.Id==firstDeliveryId||x.Id==secondDeliveryId).Select(x=>x.DeliveryNumber).ToListAsync();
+        var finalStock=await deliveryContext.ProductStocks.AsNoTracking().SingleAsync(x=>x.ProductId==productId&&x.WarehouseId==warehouseId);
+        var finalBalance=await deliveryContext.InventoryBalances.AsNoTracking().SingleAsync(x=>x.ProductId==productId&&x.WarehouseId==warehouseId&&x.StorageLocationId==null);
+        if(firstDeliveryId==secondDeliveryId||finalReservation.Status!=InventoryReservationStatus.Consumed||finalReservation.Lines.Single().ConsumedQuantity!=1m||
+           finalStock.Quantity!=0m||finalBalance.OnHand!=0m||finalBalance.Reserved!=0m||finalBalance.Available!=0m||
+           await deliveryContext.SalesDeliveries.CountAsync(x=>x.SalesOrderId==order.Id&&x.Status==SalesDeliveryStatus.Posted)!=2||
+           await deliveryContext.StockMovements.CountAsync(x=>x.SourceDocumentType=="SalesDelivery"&&(x.SourceDocumentId==firstDeliveryId||x.SourceDocumentId==secondDeliveryId))!=2||
+           await deliveryContext.StockTransactions.CountAsync(x=>x.Type==StockTransactionType.Sale&&deliveryReferences.Contains(x.Reference!))!=2||
+           await deliveryContext.JournalEntries.CountAsync(x=>x.SourceType=="SalesDelivery")!=2)
+            throw new InvalidOperationException("Full and partial sales deliveries must atomically consume reservations, OnHand, Reserved, stock cost, movement and one journal each.");
+        var orderService=new SalesOrderService(orderRepository,new SalesQuotationRepository(deliveryContext),numbers,
+            deliveryUnitOfWork,deliveryUser,reservationService,new SalesDeliveryRepository(deliveryContext));
+        try
+        {
+            var currentOrder=await orderRepository.GetByIdAsync(order.Id)??throw new InvalidOperationException("SQL delivery order was not found.");
+            await orderService.CancelAsync(new SalesOrderStatusCommandDto{Id=currentOrder.Id,RowVersion=currentOrder.RowVersion,Reason="Must be blocked"});
+            throw new InvalidOperationException("An order with posted deliveries must not be cancelled.");
+        }
+        catch(InvalidOperationException exception) when(exception.Message.Contains("posted deliveries",StringComparison.OrdinalIgnoreCase)){ }
+        var restoreStock=await deliveryContext.ProductStocks.SingleAsync(x=>x.ProductId==productId&&x.WarehouseId==warehouseId);
+        var restoreCost=restoreStock.Receive(1m,10m);
+        deliveryContext.StockTransactions.Add(new StockTransaction(productId,warehouseId,1m,
+            StockTransactionType.AdjustmentIn,"SQL-DELIVERY-TEST-RESTORE",restoreCost));
+        deliveryContext.AccountingSettings.RemoveRange(await deliveryContext.AccountingSettings.ToListAsync());
+        deliveryContext.DocumentSequences.RemoveRange(await deliveryContext.DocumentSequences
+            .Where(x=>x.DocumentType==DocumentNumberType.SalesDelivery).ToListAsync());
+        await deliveryContext.SaveChangesAsync();
     }
 
     await using(var duplicateOrderContext=new AppDbContext(CreateOptions(connectionString),new FixedTenantContext(tenantOneId)))
@@ -1174,6 +1288,8 @@ static async Task VerifySalesQuotationFoundationAsync(int tenantOneId,int tenant
             throw new InvalidOperationException("Sales orders must be isolated by tenant.");
         if(await tenantTwo.InventoryReservations.AnyAsync(x=>x.SourceType==InventoryReservationSourceType.SaleOrder&&x.SourceId==tenantOneOrderId))
             throw new InvalidOperationException("Sales-order reservations must be isolated by tenant.");
+        if(await tenantTwo.SalesDeliveries.AnyAsync(x=>x.SalesOrderId==tenantOneDeliveryOrderId))
+            throw new InvalidOperationException("Sales deliveries must be isolated by tenant.");
         var customer=await tenantTwo.Customers.FirstAsync(x=>x.IsActive);
         var product=await tenantTwo.Products.FirstAsync();
         var unit=await tenantTwo.MeasurementUnits.FirstAsync();
@@ -1387,12 +1503,16 @@ static async Task VerifyConcurrentGoodsReceiptAndGrniAsync(
         supplier.AssignPayableAccount(payableAccount.Id);
         context.AccountingSettings.Add(new AccountingSettings(null, null, null, costOfSalesAccount.Id, grniAccount.Id, varianceAccount.Id, landedCostClearingAccount.Id));
         context.PaymentMethods.Add(new PaymentMethod("Supplier bank transfer", cashAccount.Id));
-        context.DocumentSequences.AddRange(
+        var receiptSequences=new List<DocumentSequence>
+        {
             DocumentSequence.CreateDefault(DocumentNumberType.GoodsReceipt),
             DocumentSequence.CreateDefault(DocumentNumberType.VendorBill),
             DocumentSequence.CreateDefault(DocumentNumberType.SupplierPayment),
-            DocumentSequence.CreateDefault(DocumentNumberType.LandedCost),
-            DocumentSequence.CreateDefault(DocumentNumberType.JournalEntry));
+            DocumentSequence.CreateDefault(DocumentNumberType.LandedCost)
+        };
+        if(!await context.DocumentSequences.AnyAsync(x=>x.DocumentType==DocumentNumberType.JournalEntry))
+            receiptSequences.Add(DocumentSequence.CreateDefault(DocumentNumberType.JournalEntry));
+        context.DocumentSequences.AddRange(receiptSequences);
 
         var request = new PurchaseRequest("PRQ-SQL-GRN", warehouse.Id, receiptDate,
             PurchaseRequestPriority.Normal, "SQL receipt concurrency", null, "integration-user");

@@ -1,5 +1,5 @@
 # Database relationships
-> Source of truth: EF configurations | Last reviewed: 2026-10-13
+> Source of truth: EF configurations | Last reviewed: 2026-10-20
 
 `PurchaseDocumentReversals` belongs to one tenant. Its original document is a polymorphic `DocumentType + OriginalDocumentId` reference enforced by the application transaction rather than a database foreign key; a tenant-scoped unique index permits only one reversal per original document.
 
@@ -13,6 +13,7 @@
 - Product → MeasurementUnit: optional only for migrated compatibility rows, Restrict. ProductRecipe → prepared Product: Restrict; ProductRecipe → RecipeIngredients: cascade. RecipeIngredient → stocked Product and authored/stock MeasurementUnits: Restrict. All use composite TenantId boundaries.
 - Sale → Warehouse: Restrict; Sale → SaleItems: cascade. SaleItem → Product and optional ProductRecipe version: Restrict.
 - StockTransfer → FromWarehouse and ToWarehouse: Restrict; StockTransfer → Items and History: Restrict. Item → Product: Restrict.
+- SalesDelivery → SalesOrder, InventoryReservation and Warehouse: tenant-composite Restrict; → Lines and Histories: aggregate-owned tenant-composite relationships. Each line restricts to its exact SalesOrderLine, InventoryReservationLine, Product, Warehouse and optional StorageLocation in the same tenant.
 - TenantRole → Tenant: cascade when a company is removed. TenantRolePermission → TenantRole cascades and → Permission restricts. TenantUserRole uses `(TenantRoleId, TenantId)` as a composite FK to the matching company role, restricts role deletion until assignments are removed, and links Tenant/IdentityUser with cascades.
 
 Identity relationships are supplied by IdentityDbContext. AuditLog has no foreign-key relationships.

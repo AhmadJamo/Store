@@ -1,0 +1,9 @@
+@model IReadOnlyCollection<MiniStore.Application.Dtos.Sales.SalesDeliverySummaryDto>
+@inject Microsoft.Extensions.Localization.IStringLocalizer<MiniStore.Web.SharedResource> Localizer
+@inject MiniStore.Application.Services.GeneralSettingsService GeneralSettingsService
+@{ ViewData["Title"] = Localizer["Sales deliveries"]; var settings = await GeneralSettingsService.GetAsync(); }
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3"><h2>@Localizer["Sales deliveries"]</h2><form method="get" class="d-flex gap-2"><input name="search" value="@ViewBag.Search" class="form-control" placeholder="@Localizer["Delivery or order number"]"/><button class="btn btn-outline-primary">@Localizer["Search"]</button></form></div>
+<div class="row g-3">
+@foreach(var item in Model){<div class="col-xl-4 col-md-6"><div class="card h-100"><div class="card-body"><div class="d-flex justify-content-between"><strong>@item.DeliveryNumber</strong><span class="badge @(item.Status==MiniStore.Domain.Entities.SalesDeliveryStatus.Posted?"bg-success":item.Status==MiniStore.Domain.Entities.SalesDeliveryStatus.Cancelled?"bg-secondary":"bg-warning text-dark")">@Localizer[item.Status.ToString()]</span></div><div class="mt-2">@Localizer["Sales order"]: @item.OrderNumber</div><div>@Localizer["Warehouse"]: @item.WarehouseName</div><div>@Localizer["Delivery date"]: @item.DeliveryDate</div><div>@Localizer["Quantity"]: @item.StockQuantity.ToQuantityDisplay(settings)</div><div>@Localizer["Cost of goods sold"]: @item.CostOfGoodsSold.ToMoneyDisplay(settings)</div><a asp-action="Details" asp-route-id="@item.Id" class="btn btn-outline-primary mt-3">@Localizer["View details"]</a></div></div></div>}
+</div>
+@if(Model.Count==0){<div class="alert alert-info">@Localizer["No sales deliveries were found."]</div>}

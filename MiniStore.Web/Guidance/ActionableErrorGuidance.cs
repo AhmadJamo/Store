@@ -14,7 +14,7 @@ public static class ActionableErrorGuidance
         "PurchaseApprovalRules", "PurchaseSourcing", "SupplierQuotations", "PurchaseOrders",
         "GoodsReceipts", "GoodsReceiptReturns", "VendorBills", "SupplierCreditNotes", "SupplierPayments", "SupplierCommunications",
         "PurchaseAgreements", "PurchaseTemplates", "LandedCosts", "PurchaseDocumentReversals", "PurchaseAnalytics", "SupplierIntegrations",
-        "SalesPriceLists", "SalesQuotations", "SalesOrders", "Customers"
+        "SalesPriceLists", "SalesQuotations", "SalesOrders", "SalesDeliveries", "Customers"
     };
 
     public static ActionableErrorLink? Resolve(
@@ -91,6 +91,30 @@ public static class ActionableErrorGuidance
         if (Matches(message, localize,
                 "Selected reservation warehouse was not found."))
             return new("Warehouses", "Index", "Manage warehouses", "Warehouses.Edit");
+
+        if (Matches(message, localize,
+                "Delivery warehouse was not found.",
+                "Delivery warehouse branch was not found.",
+                "Assign the delivery warehouse to a branch and inventory account before posting."))
+            return new("Warehouses", "Index", "Open warehouse settings", "Warehouses.Edit");
+
+        if (Matches(message, localize,
+                "Inventory reservation was not found.",
+                "Only an active sales order reservation can be delivered.",
+                "Delivery line no longer matches its remaining inventory reservation."))
+            return new("SalesOrders", "Index", "Open sales orders", "SalesOrders.View");
+
+        if (Matches(message, localize,
+                "A sales order with posted deliveries cannot be cancelled. Use the controlled return workflow."))
+            return new("SalesDeliveries", "Index", "View delivery documents", "SalesDeliveries.View");
+
+        if (Matches(message, localize,
+                "Insufficient physical stock for the reserved delivery.",
+                "Insufficient physical stock in the reserved delivery position.",
+                "Insufficient physical stock in the reserved unassigned position.",
+                "Insufficient non-expired tracked stock in the reserved delivery position.",
+                "Insufficient selected lot or serial stock in the reserved delivery position."))
+            return new("InventoryBalances", "Index", "Review inventory availability", "InventoryBalances.View");
 
         if (Matches(message, localize,
                 "The reservation source location was not found.",
@@ -214,6 +238,8 @@ public static class ActionableErrorGuidance
             "Configure accounting posting accounts before posting a vendor bill.",
             "Configure accounting posting accounts before posting a supplier credit note.",
             "Configure accounting posting accounts before posting landed costs.",
+            "Configure accounting posting accounts before posting sales deliveries.",
+            "Configure a cost of sales account before posting sales deliveries.",
             "Configure a goods received not invoiced account before posting goods receipts.",
             "Configure a goods received not invoiced account before posting a goods receipt return.",
             "Configure a goods received not invoiced account before posting a vendor bill.",

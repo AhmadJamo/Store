@@ -6,14 +6,15 @@ namespace MiniStore.Application.Services;
 
 public sealed class SalesOrderService(ISalesOrderRepository orders,ISalesQuotationRepository quotations,
     DocumentNumberService numbers,IUnitOfWork unitOfWork,ICurrentUserService currentUser,
-    SalesOrderReservationService reservationService)
+    SalesOrderReservationService reservationService,ISalesDeliveryRepository deliveries)
 {
     public async Task<List<SalesOrderSummaryDto>> GetAllAsync(SalesOrderStatus? status,string? search)=>(await orders.GetAllAsync(status,search))
         .Select(x=>new SalesOrderSummaryDto(x.Id,x.OrderNumber,x.SourceQuotationNumber,x.CustomerCode,x.CustomerName,x.OrderDate,x.CurrencyCode,x.TotalAmount,x.Status)).ToList();
     public async Task<SalesOrderDetailsDto?> GetAsync(int id)
     {
         var order=await orders.GetByIdAsync(id);if(order is null)return null;
-        var dto=Map(order);dto.Reservation=await reservationService.GetSummaryAsync(id);return dto;
+        var dto=Map(order);dto.Reservation=await reservationService.GetSummaryAsync(id);
+        dto.Delivery=await GetDeliveryProgressAsync(order);return dto;
     }
 
     public async Task<int> CreateFromQuotationAsync(ConvertSalesQuotationDto dto)
@@ -36,12 +37,25 @@ public sealed class SalesOrderService(ISalesOrderRepository orders,ISalesQuotati
     {
         var order=await orders.GetByIdAsync(dto.Id)??throw new InvalidOperationException("Sales order was not found.");
         EnsureVersion(order.RowVersion,dto.RowVersion,"Sales order was modified by another user. Reload and try again.");
+        if((await deliveries.GetBySalesOrderAsync(order.Id)).Any(x=>x.Status==SalesDeliveryStatus.Posted))
+            throw new InvalidOperationException("A sales order with posted deliveries cannot be cancelled. Use the controlled return workflow.");
         await reservationService.ReleaseAllActiveAsync(order.Id,"Sales order cancelled.");
         order.Cancel(currentUser.UserId,dto.Reason??"");
     });
     private Task ChangeAsync(SalesOrderStatusCommandDto dto,Action<SalesOrder> action)=>unitOfWork.ExecuteInTransactionAsync(async()=>
     {var order=await orders.GetByIdAsync(dto.Id)??throw new InvalidOperationException("Sales order was not found.");EnsureVersion(order.RowVersion,dto.RowVersion,"Sales order was modified by another user. Reload and try again.");action(order);});
     private static void EnsureVersion(byte[] current,byte[] submitted,string message){if(submitted.Length==0||!current.SequenceEqual(submitted))throw new InvalidOperationException(message);}
+
+    private async Task<SalesDeliveryProgressDto> GetDeliveryProgressAsync(SalesOrder order)
+    {
+        var rows=await deliveries.GetBySalesOrderAsync(order.Id);
+        var posted=rows.Where(x=>x.Status==SalesDeliveryStatus.Posted).ToList();
+        var required=order.Lines.Sum(x=>x.StockQuantity);
+        var delivered=posted.Sum(x=>x.Lines.Sum(line=>line.StockQuantity));
+        return new SalesDeliveryProgressDto{RequiredStockQuantity=required,DeliveredStockQuantity=delivered,
+            RemainingStockQuantity=Math.Max(0,required-delivered),IsFullyDelivered=required>0&&delivered>=required,
+            PostedDeliveryCount=posted.Count,DraftDeliveryCount=rows.Count(x=>x.Status==SalesDeliveryStatus.Draft)};
+    }
 
     private static SalesOrderDetailsDto Map(SalesOrder x)=>new()
     {

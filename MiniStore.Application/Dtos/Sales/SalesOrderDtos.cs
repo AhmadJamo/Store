@@ -15,6 +15,7 @@ public sealed class SalesOrderDetailsDto
     public decimal NetAmount{get;init;} public decimal TaxAmount{get;init;} public decimal TotalAmount{get;init;} public string CreatedByUserId{get;init;}=""; public DateTime CreatedAtUtc{get;init;} public string? ConfirmedByUserId{get;init;} public DateTime? ConfirmedAtUtc{get;init;} public byte[] RowVersion{get;init;}=[];
     public List<SalesOrderLineDto> Lines{get;init;}=[]; public List<SalesOrderHistoryDto> History{get;init;}=[];
     public SalesOrderReservationSummaryDto Reservation{get;set;}=new();
+    public SalesDeliveryProgressDto Delivery{get;set;}=new();
 }
 
 public sealed class ConvertSalesQuotationDto

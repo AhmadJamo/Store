@@ -29,7 +29,7 @@ public static class WorkflowNextStepGuidance
 
     private static readonly HashSet<string> CustomerControllers = new(StringComparer.OrdinalIgnoreCase) { "Customers" };
 
-    private static readonly HashSet<string> SalesControllers = new(StringComparer.OrdinalIgnoreCase) { "SalesPriceLists", "SalesQuotations", "SalesOrders" };
+    private static readonly HashSet<string> SalesControllers = new(StringComparer.OrdinalIgnoreCase) { "SalesPriceLists", "SalesQuotations", "SalesOrders", "SalesDeliveries" };
 
     public static bool IsSupportedController(string? controller) =>
         !string.IsNullOrWhiteSpace(controller) &&
@@ -109,6 +109,21 @@ public static class WorkflowNextStepGuidance
             return new("SalesOrders", "Index", "Review sales order pipeline",
                 "The order is closed; review the remaining active sales orders.",
                 "SalesOrders.View", Routes());
+
+        if (Matches(message, localize, "Sales delivery draft prepared."))
+            return new("SalesDeliveries", "Details", "Review and post sales delivery",
+                "Review quantities, warehouse positions and tracking identities, then post the physical delivery.",
+                "SalesDeliveries.View", Routes(("id", Route("id"))));
+
+        if (Matches(message, localize, "Sales delivery posted."))
+            return new("SalesDeliveries", "Details", "Continue sales order delivery",
+                "The reservation and physical stock were updated; prepare another delivery only when quantity remains.",
+                "SalesDeliveries.View", Routes(("id", Route("id"))));
+
+        if (Matches(message, localize, "Sales delivery draft cancelled."))
+            return new("SalesDeliveries", "Details", "Review cancelled delivery",
+                "The draft is finished and its reservation remains available for a new delivery.",
+                "SalesDeliveries.View", Routes(("id", Route("id"))));
 
         if (Matches(message, localize, "Customer created successfully.", "Customer updated successfully.", "Customer restored successfully."))
             return new("Customers", "Details", "Review customer profile", "Review the customer profile before using it in a new sale.", "Customers.View", Routes(("id", Route("id"))));
@@ -342,6 +357,15 @@ public static class WorkflowNextStepGuidance
         if (InventoryControllers.Contains(currentController))
             return InventoryFallback(currentController, Route("id"), Route("warehouseId"));
 
+        if (SalesControllers.Contains(currentController))
+        {
+            var action = !string.IsNullOrWhiteSpace(Route("id")) && currentController is "SalesOrders" or "SalesDeliveries"
+                ? "Details" : "Index";
+            return new(currentController, action, "Continue sales workflow",
+                "Review the document status and use the remaining available action to continue the sales workflow.",
+                $"{currentController}.View", action == "Details" ? Routes(("id", Route("id"))) : Routes());
+        }
+
         return null;
     }
 
@@ -380,7 +404,7 @@ public static class WorkflowNextStepGuidance
     private static bool HasDetails(string controller) => controller is
         "Purchases" or "PurchaseReturns" or "PurchaseRequests" or "PurchaseSourcing" or
         "PurchaseOrders" or "GoodsReceipts" or "GoodsReceiptReturns" or "PurchaseServiceAcceptances" or "VendorBills" or
-        "SupplierPayments" or "PurchaseAgreements" or "LandedCosts" or "PurchaseDocumentReversals";
+        "SupplierPayments" or "PurchaseAgreements" or "LandedCosts" or "PurchaseDocumentReversals" or "SalesDeliveries";
 
     private static bool MatchesPattern(string message, Func<string, string> localize, string resourceKey)
     {

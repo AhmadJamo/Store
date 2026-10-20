@@ -594,6 +594,32 @@ foreach(var type in new[]{typeof(SalesOrder),typeof(SalesOrderLine),typeof(Sales
         $"{type.Name} must be tenant owned");
 Check(DocumentSequence.CreateDefault(DocumentNumberType.SalesOrder).Preview(DateTime.Today).StartsWith("SO-"),
     "Sales orders must use an independent centralized SO document sequence");
+Check(PermissionDefinitions.All.Count(x=>x.Name.StartsWith("SalesDeliveries.",StringComparison.Ordinal))==4,
+    "Sales deliveries must separate view, preparation, posting and cancellation permissions");
+var salesDeliveryController=typeof(SalesDeliveriesController);
+Check(salesDeliveryController.GetMethod(nameof(SalesDeliveriesController.Index))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SalesDeliveries.View"&&
+      salesDeliveryController.GetMethod(nameof(SalesDeliveriesController.Details))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SalesDeliveries.View"&&
+      salesDeliveryController.GetMethods().Single(x=>x.Name==nameof(SalesDeliveriesController.Create)&&x.GetCustomAttribute<HttpPostAttribute>() is not null).GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SalesDeliveries.Create"&&
+      salesDeliveryController.GetMethod(nameof(SalesDeliveriesController.Post))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SalesDeliveries.Post"&&
+      salesDeliveryController.GetMethod(nameof(SalesDeliveriesController.Cancel))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SalesDeliveries.Cancel",
+    "Sales delivery endpoints must enforce dedicated server-side permissions");
+Check(salesDeliveryController.GetMethods().Where(x=>x.GetCustomAttribute<HttpPostAttribute>() is not null)
+      .All(x=>x.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null),
+    "Every sales delivery mutation must require antiforgery validation");
+var salesDelivery=new SalesDelivery("DEL-000001",1,1,1,new DateOnly(2026,10,20),null,"picker");
+var salesDeliveryLine=new SalesDeliveryLine(1,1,1,1,null,2m,"P-1","Product",null);
+salesDelivery.AddLine(salesDeliveryLine);salesDeliveryLine.RecordPostedCost(3m,6m);salesDelivery.Post("poster");
+Check(salesDelivery.Status==SalesDeliveryStatus.Posted&&salesDelivery.TotalCostOfGoodsSold==6m&&salesDelivery.History.Count==2,
+    "Sales deliveries must freeze delivery lines and record one auditable posted transition with inventory cost");
+CheckThrows(()=>salesDelivery.Post("poster"),"A posted sales delivery must reject duplicate posting");
+foreach(var type in new[]{typeof(SalesDelivery),typeof(SalesDeliveryLine),typeof(SalesDeliveryHistory)})
+    Check(TenantIsolationModel.TenantOwnedTypes.Contains(type)&&db.Model.FindEntityType(type)!.FindProperty("TenantId") is {IsNullable:false},
+        $"{type.Name} must be tenant owned");
+Check(DocumentSequence.CreateDefault(DocumentNumberType.SalesDelivery).Preview(DateTime.Today).StartsWith("DEL-"),
+    "Sales deliveries must use an independent centralized DEL document sequence");
+var salesDeliveryMovement=StockMovement.PostSalesDelivery(1,1,1,1,null,2m,"poster","DEL-000001");
+Check(salesDeliveryMovement.Type==StockMovementType.SalesDeliveryOut&&salesDeliveryMovement.SourceDocumentType=="SalesDelivery"&&salesDeliveryMovement.Status==StockMovementStatus.Posted,
+    "Posted sales deliveries must create an immutable outbound physical movement");
 
 var customerMaster = new Customer("CUS-000001", "Acme Customer", 1);
 customerMaster.UpdateProfile(CustomerType.Company, "Acme Customer", "Acme Legal", "+962790000000",
@@ -1239,6 +1265,15 @@ var salesOrderReservation = new InventoryReservation(
 salesOrderReservation.AddLine(1, 1, null, 2m, 200);
 Check(salesOrderReservation.Lines.Single().SourceLineId==200,
     "Sales-order reservation allocations must retain their exact source order line");
+var partialReservation = new InventoryReservation(
+    InventoryReservationSourceType.SaleOrder, 21, "SO-21", "sales-user");
+partialReservation.AddLine(1, 1, null, 5m, 201);
+partialReservation.Consume(new Dictionary<long,decimal>{{0,2m}},"picker");
+Check(partialReservation.Status==InventoryReservationStatus.Active&&partialReservation.Lines.Single().ConsumedQuantity==2m&&partialReservation.Lines.Single().RemainingQuantity==3m,
+    "Partial delivery consumption must keep the reservation active with auditable consumed and remaining quantities");
+partialReservation.Consume(new Dictionary<long,decimal>{{0,3m}},"picker");
+Check(partialReservation.Status==InventoryReservationStatus.Consumed&&partialReservation.ClosedAt.HasValue,
+    "A reservation must close only when every remaining quantity is consumed");
 var inventoryReservationsIndex = typeof(InventoryReservationsController).GetMethod(nameof(InventoryReservationsController.Index))!;
 Check(inventoryReservationsIndex.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
       $"{PermissionAuthorizeAttribute.PolicyPrefix}InventoryReservations.View",
@@ -2362,6 +2397,22 @@ var salesOrderReleasedNextStep=WorkflowNextStepGuidance.Resolve(
     "Sales order inventory reservation released.","SalesOrders",new Dictionary<string,string?>{{"id","25"}});
 Check(salesOrderReleasedNextStep is {Controller:"SalesOrders",Action:"Reserve",RequiredPermission:"SalesOrders.Reserve"},
     "Released sales-order inventory must guide an authorized user to reallocation");
+var salesDeliveryDraftNextStep=WorkflowNextStepGuidance.Resolve(
+    "Sales delivery draft prepared.","SalesDeliveries",new Dictionary<string,string?>{{"id","35"}});
+Check(salesDeliveryDraftNextStep is {Controller:"SalesDeliveries",Action:"Details",RequiredPermission:"SalesDeliveries.View"}&&salesDeliveryDraftNextStep.RouteValues.GetValueOrDefault("id")=="35",
+    "Prepared sales deliveries must guide the user to review and posting");
+var salesDeliveryPostedNextStep=WorkflowNextStepGuidance.Resolve(
+    "Sales delivery posted.","SalesDeliveries",new Dictionary<string,string?>{{"id","35"}});
+Check(salesDeliveryPostedNextStep is {Controller:"SalesDeliveries",Action:"Details",RequiredPermission:"SalesDeliveries.View"},
+    "Posted sales deliveries must guide the user to remaining delivery work");
+Check(ActionableErrorGuidance.Resolve(
+          "Configure a cost of sales account before posting sales deliveries.",
+          "SalesDeliveries") is {Controller:"Settings",Action:"Accounting",RequiredPermission:"Administration.Access"},
+    "Sales delivery accounting prerequisites must link to accounting settings");
+Check(ActionableErrorGuidance.Resolve(
+          "Assign the delivery warehouse to a branch and inventory account before posting.",
+          "SalesDeliveries") is {Controller:"Warehouses",Action:"Index",RequiredPermission:"Warehouses.Edit"},
+    "Sales delivery warehouse prerequisites must link to warehouse settings");
 var salesPriceListNextStep = WorkflowNextStepGuidance.Resolve(
     "Price list created successfully.", "SalesPriceLists",
     new Dictionary<string, string?> { ["id"] = "12" });
