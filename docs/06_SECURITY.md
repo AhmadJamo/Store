@@ -60,6 +60,8 @@ Public company registration uses a configurable fixed-window limit that defaults
 
 Platform login, plan creation and promotion creation forms emit explicit antiforgery tokens. A live GET/POST regression check covers the separate-cookie login form so missing-token failures do not appear as an unexplained HTTP 400.
 
+SAL-070 customer invoices are tenant-owned at header, line, source-allocation and history level. Composite tenant foreign keys prevent cross-company order, customer, product, unit, pricing, tax and delivery references. Tenant-unique invoice numbers and request keys provide identity/idempotency, rowversion rejects stale lifecycle commands, and Serializable creation rechecks cumulative active quantity. Dedicated View/Create/Approve/Cancel permissions and antiforgery protect every controller mutation. Approval cannot create journals or payments, and the company eligibility policy cannot change after dependent invoices exist without a future controlled transition.
+
 ## Remaining risks / deployment work
 - Configure production AllowedHosts; wildcard remains because the deployment hostname is unknown.
 - Supply a production SQL connection string with validated TLS certificates; local development configuration trusts the certificate.

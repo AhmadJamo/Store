@@ -150,6 +150,10 @@ public class AppDbContext
     public DbSet<SalesDelivery> SalesDeliveries => Set<SalesDelivery>();
     public DbSet<SalesDeliveryLine> SalesDeliveryLines => Set<SalesDeliveryLine>();
     public DbSet<SalesDeliveryHistory> SalesDeliveryHistories => Set<SalesDeliveryHistory>();
+    public DbSet<CustomerInvoice> CustomerInvoices => Set<CustomerInvoice>();
+    public DbSet<CustomerInvoiceLine> CustomerInvoiceLines => Set<CustomerInvoiceLine>();
+    public DbSet<CustomerInvoiceSourceAllocation> CustomerInvoiceSourceAllocations => Set<CustomerInvoiceSourceAllocation>();
+    public DbSet<CustomerInvoiceHistory> CustomerInvoiceHistories => Set<CustomerInvoiceHistory>();
 
     public DbSet<DocumentSequence> DocumentSequences => Set<DocumentSequence>();
 

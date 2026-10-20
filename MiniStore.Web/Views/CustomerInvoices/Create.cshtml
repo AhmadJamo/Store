@@ -1,0 +1,32 @@
+@model MiniStore.Application.Dtos.Sales.CustomerInvoiceCreatePageDto
+@inject Microsoft.Extensions.Localization.IStringLocalizer<MiniStore.Web.SharedResource> Localizer
+@inject MiniStore.Application.Services.GeneralSettingsService GeneralSettingsService
+@{ ViewData["Title"] = Localizer["Create customer invoice"]; var settings = await GeneralSettingsService.GetAsync(); var hasEligible = Model.Lines.Any(x=>x.RemainingQuantity>0); }
+
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3"><div><h2>@Localizer["Create customer invoice"]</h2><div class="text-muted">@Model.OrderNumber · @Model.CustomerCode — @Model.CustomerName</div></div><a asp-controller="SalesOrders" asp-action="Details" asp-route-id="@Model.SalesOrderId" class="btn btn-outline-secondary">@Localizer["Back"]</a></div>
+<div class="alert alert-info">@Localizer["Creating or approving this invoice does not change inventory, post accounting or record payment."]</div>
+<div class="card card-body mb-3"><div><strong>@Localizer["Invoice quantity basis"]:</strong> @Localizer[Model.QuantityPolicy.ToString()]</div><div class="small text-muted">@Localizer[Model.QuantityPolicy==MiniStore.Domain.Entities.SalesInvoiceQuantityPolicy.DeliveredQuantity?"Stocked products can be invoiced only up to posted delivery quantities; services use ordered quantity.":"Products and services can be invoiced up to ordered quantities before delivery."]</div></div>
+
+@if(!hasEligible){<div class="alert alert-warning">@Localizer["No quantity is currently eligible for customer invoicing."]</div>}
+else
+{
+<form asp-action="Create" method="post">
+    <input type="hidden" name="SalesOrderId" value="@Model.Form.SalesOrderId" />
+    <input type="hidden" name="RequestKey" value="@Model.Form.RequestKey" />
+    <div class="card card-body mb-3"><div class="row g-3"><div class="col-md-4"><label class="form-label">@Localizer["Invoice date"]</label><input type="date" name="InvoiceDate" value="@Model.Form.InvoiceDate.ToString("yyyy-MM-dd")" class="form-control" required /></div><div class="col-md-8"><label class="form-label">@Localizer["Notes"]</label><input name="Notes" maxlength="1000" class="form-control" /></div></div></div>
+    <div class="row g-3">
+    @for(var i=0;i<Model.Lines.Count;i++)
+    {
+        var line=Model.Lines[i];
+        <div class="col-xl-6"><div class="card h-100"><div class="card-body">
+            <input type="hidden" name="Lines[@i].SalesOrderLineId" value="@line.SalesOrderLineId" />
+            <div class="d-flex justify-content-between gap-2"><strong>@line.ProductCode — @line.ProductName</strong><span class="badge bg-light text-dark">@Localizer[line.QuantityBasis.ToString()]</span></div>
+            <div class="row g-2 mt-2"><div class="col-6"><span class="text-muted">@Localizer["Ordered"]</span><div>@line.OrderedQuantity.ToQuantityDisplay(settings) @line.UnitName</div></div><div class="col-6"><span class="text-muted">@Localizer["Source eligible"]</span><div>@line.SourceEligibleQuantity.ToQuantityDisplay(settings)</div></div><div class="col-6"><span class="text-muted">@Localizer["Already invoiced or committed"]</span><div>@line.CommittedQuantity.ToQuantityDisplay(settings)</div></div><div class="col-6"><span class="text-muted">@Localizer["Remaining eligible"]</span><div>@line.RemainingQuantity.ToQuantityDisplay(settings)</div></div></div>
+            <label class="form-label mt-3">@Localizer["Invoice quantity"]</label><input type="number" name="Lines[@i].Quantity" value="@line.RemainingQuantity.ToString(System.Globalization.CultureInfo.InvariantCulture)" min="0" max="@line.RemainingQuantity.ToString(System.Globalization.CultureInfo.InvariantCulture)" step="0.000001" class="form-control" readonly="@(line.RemainingQuantity<=0)" />
+            <div class="small text-muted mt-1">@Localizer["Unit price"]: @line.UnitPrice.ToMoneyDisplay(settings) @Model.CurrencyCode</div>
+        </div></div></div>
+    }
+    </div>
+    <button class="btn btn-primary mt-3">@Localizer["Create invoice draft"]</button>
+</form>
+}

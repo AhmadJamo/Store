@@ -17,6 +17,7 @@ public static class DashboardDefinitions
             new("Sales price lists", "bi-tags", "SalesPriceLists", "Index", "SalesPricing.View", 25),
             new("Sales quotations", "bi-file-earmark-text", "SalesQuotations", "Index", "SalesQuotations.View", 27),
             new("Sales orders", "bi-clipboard-check", "SalesOrders", "Index", "SalesOrders.View", 28),
+            new("Customer invoices", "bi-receipt-cutoff", "CustomerInvoices", "Index", "CustomerInvoices.View", 29),
             new("Sales Returns", "bi-arrow-counterclockwise", "SalesReturns", "Index", "SalesReturns.View", 30)
         ]),
 

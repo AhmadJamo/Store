@@ -50,6 +50,14 @@ public static class NavigationDefinitions
                 28),
 
             new NavigationItem(
+                "Customer invoices",
+                "bi-receipt-cutoff",
+                "CustomerInvoices",
+                "Index",
+                "CustomerInvoices.View",
+                29),
+
+            new NavigationItem(
                 "Sales Returns",
                 "bi-arrow-counterclockwise",
                 "SalesReturns",

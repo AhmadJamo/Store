@@ -3192,4 +3192,79 @@
   <data name="Insufficient selected lot or serial stock in the reserved delivery position." xml:space="preserve"><value>مخزون اللوط أو الرقم التسلسلي المحدد غير كافٍ في موقع التسليم المحجوز.</value></data>
   <data name="A sales order with posted deliveries cannot be cancelled. Use the controlled return workflow." xml:space="preserve"><value>لا يمكن إلغاء طلب بيع له تسليمات مرحّلة. استخدم مسار المرتجع المنضبط.</value></data>
   <data name="Cancellation unavailable after posted delivery" xml:space="preserve"><value>الإلغاء غير متاح بعد ترحيل تسليم</value></data>
+  <data name="Customer invoices" xml:space="preserve"><value>فواتير الزبائن</value></data>
+  <data name="Customer invoice" xml:space="preserve"><value>فاتورة زبون</value></data>
+  <data name="Review draft, approved and cancelled customer invoice documents." xml:space="preserve"><value>راجع مستندات فواتير الزبائن المسودة والمعتمدة والملغاة.</value></data>
+  <data name="Invoice or order or customer" xml:space="preserve"><value>الفاتورة أو طلب البيع أو الزبون</value></data>
+  <data name="No customer invoices found." xml:space="preserve"><value>لا توجد فواتير زبائن.</value></data>
+  <data name="Invoice date" xml:space="preserve"><value>تاريخ الفاتورة</value></data>
+  <data name="Due date" xml:space="preserve"><value>تاريخ الاستحقاق</value></data>
+  <data name="Create customer invoice" xml:space="preserve"><value>إنشاء فاتورة زبون</value></data>
+  <data name="Create invoice draft" xml:space="preserve"><value>إنشاء مسودة الفاتورة</value></data>
+  <data name="Invoice quantity basis" xml:space="preserve"><value>أساس كمية الفاتورة</value></data>
+  <data name="DeliveredQuantity" xml:space="preserve"><value>الكمية المسلّمة</value></data>
+  <data name="Delivered quantity is the safe default for stocked products; ordered quantity permits invoicing before delivery. Services are invoiced from ordered quantity in both modes." xml:space="preserve"><value>الكمية المسلّمة هي الخيار الآمن افتراضيًا للمنتجات المخزنية؛ أما الكمية المطلوبة فتسمح بإصدار الفاتورة قبل التسليم. تُفوتر الخدمات حسب الكمية المطلوبة في كلا الخيارين.</value></data>
+  <data name="Stocked products can be invoiced only up to posted delivery quantities; services use ordered quantity." xml:space="preserve"><value>لا يمكن فوترة المنتجات المخزنية إلا بحدود كميات التسليم المرحّلة، بينما تستخدم الخدمات الكمية المطلوبة.</value></data>
+  <data name="Products and services can be invoiced up to ordered quantities before delivery." xml:space="preserve"><value>يمكن فوترة المنتجات والخدمات حتى حدود الكميات المطلوبة قبل التسليم.</value></data>
+  <data name="Creating or approving this invoice does not change inventory, post accounting or record payment." xml:space="preserve"><value>إنشاء هذه الفاتورة أو اعتمادها لا يغيّر المخزون ولا يرحّل قيدًا محاسبيًا ولا يسجل دفعة.</value></data>
+  <data name="No quantity is currently eligible for customer invoicing." xml:space="preserve"><value>لا توجد حاليًا كمية مؤهلة لفوترة الزبون.</value></data>
+  <data name="No invoice quantity is currently eligible" xml:space="preserve"><value>لا توجد كمية مؤهلة للفوترة حاليًا</value></data>
+  <data name="Source eligible" xml:space="preserve"><value>المؤهل حسب المصدر</value></data>
+  <data name="Already invoiced or committed" xml:space="preserve"><value>المفوتر أو المحجوز في مسودة</value></data>
+  <data name="Remaining eligible" xml:space="preserve"><value>المؤهل المتبقي</value></data>
+  <data name="Invoice quantity" xml:space="preserve"><value>كمية الفاتورة</value></data>
+  <data name="Customer invoice lines" xml:space="preserve"><value>أسطر فاتورة الزبون</value></data>
+  <data name="Invoice terms" xml:space="preserve"><value>شروط الفاتورة</value></data>
+  <data name="Source deliveries" xml:space="preserve"><value>تسليمات المصدر</value></data>
+  <data name="Approve customer invoice" xml:space="preserve"><value>اعتماد فاتورة الزبون</value></data>
+  <data name="Cancel customer invoice" xml:space="preserve"><value>إلغاء فاتورة الزبون</value></data>
+  <data name="Invoice cancelled" xml:space="preserve"><value>الفاتورة ملغاة</value></data>
+  <data name="This invoice is approved but not posted to accounts receivable. SAL-080 will own revenue, tax and receivable posting." xml:space="preserve"><value>هذه الفاتورة معتمدة لكنها غير مرحّلة إلى ذمم الزبائن. ستتولى المرحلة SAL-080 (المرحلة 080 للمبيعات) ترحيل الإيراد والضريبة والذمم المدينة.</value></data>
+  <data name="Customer invoicing" xml:space="preserve"><value>فوترة الزبون</value></data>
+  <data name="Customer invoicing completed" xml:space="preserve"><value>اكتملت فوترة الزبون</value></data>
+  <data name="Invoiced lines" xml:space="preserve"><value>الأسطر المفوترة</value></data>
+  <data name="Committed amount" xml:space="preserve"><value>المبلغ المحجوز للفوترة</value></data>
+  <data name="View invoice documents" xml:space="preserve"><value>عرض مستندات الفواتير</value></data>
+  <data name="View Customer Invoices" xml:space="preserve"><value>عرض فواتير الزبائن</value></data>
+  <data name="Create Customer Invoice Draft" xml:space="preserve"><value>إنشاء مسودة فاتورة زبون</value></data>
+  <data name="Customer invoice draft created." xml:space="preserve"><value>تم إنشاء مسودة فاتورة الزبون.</value></data>
+  <data name="Customer invoice approved." xml:space="preserve"><value>تم اعتماد فاتورة الزبون.</value></data>
+  <data name="Customer invoice cancelled." xml:space="preserve"><value>تم إلغاء فاتورة الزبون.</value></data>
+  <data name="Review and approve customer invoice" xml:space="preserve"><value>راجع فاتورة الزبون واعتمدها</value></data>
+  <data name="Review quantities, source deliveries, prices and taxes, then approve the invoice document." xml:space="preserve"><value>راجع الكميات وتسليمات المصدر والأسعار والضرائب، ثم اعتمد مستند الفاتورة.</value></data>
+  <data name="Review approved customer invoice" xml:space="preserve"><value>راجع فاتورة الزبون المعتمدة</value></data>
+  <data name="Approval is complete; accounting posting to revenue, tax and receivables remains a separate next stage." xml:space="preserve"><value>اكتمل الاعتماد؛ ويبقى ترحيل الإيراد والضريبة والذمم محاسبيًا مرحلة تالية مستقلة.</value></data>
+  <data name="Review customer invoices" xml:space="preserve"><value>راجع فواتير الزبائن</value></data>
+  <data name="The cancelled quantities are available for a replacement invoice when their source remains eligible." xml:space="preserve"><value>أصبحت الكميات الملغاة متاحة لفاتورة بديلة ما دام مصدرها مؤهلًا.</value></data>
+  <data name="The delivered quantity is now eligible for customer invoicing; invoice only the amount to bill." xml:space="preserve"><value>أصبحت الكمية المسلّمة مؤهلة لفوترة الزبون؛ فوّتِر فقط الكمية المطلوب تحصيلها.</value></data>
+  <data name="Customer invoice number is required and cannot exceed 50 characters." xml:space="preserve"><value>رقم فاتورة الزبون مطلوب ولا يمكن أن يتجاوز 50 حرفًا.</value></data>
+  <data name="Customer invoice request key is required and cannot exceed 100 characters." xml:space="preserve"><value>مفتاح طلب فاتورة الزبون مطلوب ولا يمكن أن يتجاوز 100 حرف.</value></data>
+  <data name="Only a confirmed sales order can be invoiced." xml:space="preserve"><value>لا يمكن إصدار فاتورة إلا لطلب بيع مؤكد.</value></data>
+  <data name="Customer invoice quantity policy is invalid." xml:space="preserve"><value>سياسة كمية فاتورة الزبون غير صالحة.</value></data>
+  <data name="Customer invoice notes cannot exceed 1000 characters." xml:space="preserve"><value>لا يمكن أن تتجاوز ملاحظات فاتورة الزبون 1000 حرف.</value></data>
+  <data name="Customer invoice quantity must be greater than zero." xml:space="preserve"><value>يجب أن تكون كمية فاتورة الزبون أكبر من صفر.</value></data>
+  <data name="Each sales order line can appear only once per customer invoice." xml:space="preserve"><value>يمكن أن يظهر كل سطر من طلب البيع مرة واحدة فقط في فاتورة الزبون.</value></data>
+  <data name="A customer invoice must contain at least one line." xml:space="preserve"><value>يجب أن تحتوي فاتورة الزبون على سطر واحد على الأقل.</value></data>
+  <data name="The customer invoice is already cancelled." xml:space="preserve"><value>فاتورة الزبون ملغاة بالفعل.</value></data>
+  <data name="Customer invoice cancellation reason is required and cannot exceed 500 characters." xml:space="preserve"><value>سبب إلغاء فاتورة الزبون مطلوب ولا يمكن أن يتجاوز 500 حرف.</value></data>
+  <data name="Only a draft customer invoice can be changed." xml:space="preserve"><value>يمكن تغيير مسودة فاتورة زبون فقط.</value></data>
+  <data name="Customer invoice line quantity is invalid." xml:space="preserve"><value>كمية سطر فاتورة الزبون غير صالحة.</value></data>
+  <data name="Customer invoice quantity basis is invalid." xml:space="preserve"><value>أساس كمية فاتورة الزبون غير صالح.</value></data>
+  <data name="Customer invoice line amounts are invalid." xml:space="preserve"><value>مبالغ سطر فاتورة الزبون غير صالحة.</value></data>
+  <data name="Delivered-quantity invoice lines must be fully allocated to posted delivery lines." xml:space="preserve"><value>يجب تخصيص أسطر الفاتورة المبنية على الكمية المسلّمة بالكامل لأسطر تسليم مرحّلة.</value></data>
+  <data name="Ordered-quantity invoice lines cannot contain delivery allocations." xml:space="preserve"><value>لا يمكن لأسطر الفاتورة المبنية على الكمية المطلوبة أن تحتوي تخصيصات تسليم.</value></data>
+  <data name="A valid posted delivery allocation is required." xml:space="preserve"><value>يلزم تخصيص صالح لتسليم مرحّل.</value></data>
+  <data name="Sales invoice quantity policy is invalid." xml:space="preserve"><value>سياسة كمية فاتورة المبيعات غير صالحة.</value></data>
+  <data name="Sales invoice quantity policy has dependent customer invoices and requires the controlled transition workflow." xml:space="preserve"><value>لسياسة كمية فاتورة المبيعات فواتير زبائن تابعة وتتطلب مسار انتقال منضبطًا.</value></data>
+  <data name="Customer invoice product was not found." xml:space="preserve"><value>لم يتم العثور على منتج فاتورة الزبون.</value></data>
+  <data name="Customer invoice lines are required and cannot be duplicated." xml:space="preserve"><value>أسطر فاتورة الزبون مطلوبة ولا يمكن تكرارها.</value></data>
+  <data name="Enter at least one positive customer invoice quantity." xml:space="preserve"><value>أدخل كمية موجبة واحدة على الأقل لفاتورة الزبون.</value></data>
+  <data name="Only a confirmed non-cancelled sales order can be invoiced." xml:space="preserve"><value>لا يمكن إصدار فاتورة إلا لطلب بيع مؤكد وغير ملغى.</value></data>
+  <data name="A customer invoice line does not belong to this sales order." xml:space="preserve"><value>سطر فاتورة الزبون لا يتبع طلب البيع هذا.</value></data>
+  <data name="Customer invoice quantity cannot exceed the remaining eligible source quantity." xml:space="preserve"><value>لا يمكن أن تتجاوز كمية فاتورة الزبون الكمية المؤهلة المتبقية من المصدر.</value></data>
+  <data name="Customer invoice quantity no longer matches the remaining posted delivery quantity." xml:space="preserve"><value>لم تعد كمية فاتورة الزبون تطابق كمية التسليم المرحّلة المتبقية.</value></data>
+  <data name="Customer invoice was not found." xml:space="preserve"><value>لم يتم العثور على فاتورة الزبون.</value></data>
+  <data name="Customer invoice was modified by another user. Reload and try again." xml:space="preserve"><value>تم تعديل فاتورة الزبون بواسطة مستخدم آخر. أعد التحميل وحاول مرة أخرى.</value></data>
+  <data name="A persisted sales order line is required." xml:space="preserve"><value>يلزم سطر طلب بيع محفوظ.</value></data>
+  <data name="All" xml:space="preserve"><value>الكل</value></data>
 </root>

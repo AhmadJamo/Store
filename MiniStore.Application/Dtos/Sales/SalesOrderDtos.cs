@@ -16,6 +16,7 @@ public sealed class SalesOrderDetailsDto
     public List<SalesOrderLineDto> Lines{get;init;}=[]; public List<SalesOrderHistoryDto> History{get;init;}=[];
     public SalesOrderReservationSummaryDto Reservation{get;set;}=new();
     public SalesDeliveryProgressDto Delivery{get;set;}=new();
+    public CustomerInvoiceProgressDto Invoice{get;set;}=new();
 }
 
 public sealed class ConvertSalesQuotationDto

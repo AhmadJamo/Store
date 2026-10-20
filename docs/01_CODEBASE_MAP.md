@@ -70,6 +70,7 @@ deferred to a separately approved CUS-110 gate.
 | `Entities/Sales/SalesQuotation.cs` | SAL-030 quotation header, immutable commercial lines and semantic lifecycle history | quotation application service, EF configuration and screens. |
 | `Entities/Sales/SalesOrder.cs` | SAL-040 one-per-quotation order, copied commercial lines and confirmation/cancellation history; SAL-050/060 derive reservation and delivery progress without duplicating it on the order | order/reservation/delivery application services, EF configuration and screens. |
 | `Entities/Sales/SalesDelivery.cs` | SAL-060 reservation-backed Draft/Posted/Cancelled delivery header, exact-position lines, frozen cost/tracking evidence and semantic history | delivery service, EF configuration, accounting and screens. |
+| `Entities/Sales/CustomerInvoice.cs` | SAL-070 Draft/Approved/Cancelled customer invoice header, frozen lines, exact delivery-source allocations and semantic history | invoice service, EF configuration, accounting and screens. |
 | `Entities/Inventory/*.cs` | warehouses, operating-policy enums, AVCO balances, locations, putaway rules, availability, reservations, adjustments, lot/serial tracking with persisted removal-strategy audit, recall communication evidence, legacy history, physical movements and transfers | inventory, accounting and stock-transfer docs. |
 | `Entities/Purchases/*.cs`, `Entities/Sales/*.cs` | purchase/supplier-return and sale/customer-return aggregates plus POS experience/order settings | purchase/sales/settings docs. |
 | `Entities/Purchases/SupplierProductPurchasingInfo.cs` | supplier-specific product code, compatible purchase unit, base-currency price, lead time, order policy, validity/preference, quantity price breaks and immutable full price-history snapshots | PUR-010/PUR-230 purchasing data screens/services. |
@@ -163,6 +164,7 @@ deferred to a separately approved CUS-110 gate.
 | `Services/Settings/FiscalPeriodService.cs` | non-overlapping fiscal-period administration and central posting-date validation | Settings/FiscalPeriods and JournalPostingService. |
 | `Services/Sales/SalePostingService.cs` | idempotent sale revenue, discount and COGS general-ledger posting | Sales/Details and Sales/Post. |
 | `Services/Sales/SalesDeliveryService.cs` | reservation-backed delivery reads/Draft creation plus atomic exact-position issue, reservation consumption, physical movement and delivery-time COGS posting | SalesDeliveries controller/views and SalesOrder progress. |
+| `Services/Sales/CustomerInvoiceService.cs` | policy-based ordered/delivered eligibility, idempotent partial Draft creation, exact source allocation, approval/cancellation and order progress | CustomerInvoices and SalesOrder/SalesDelivery screens. |
 | `Services/Sales/SalesReturnService.cs` | cumulative quantity control, identifier-aware tracked restocking, proportional refund and atomic inventory/accounting reversal | SalesReturns controller/views. |
 | `Services/Purchases/PurchaseReturnService.cs` | cumulative supplier-return control, explicit tracked identity issue, moving-average inventory issue and proportional accounting reversal | PurchaseReturns controller/views. |
 | `Services/Purchases/SupplierPurchasingInfoService.cs` | validates and atomically manages supplier-first single/bulk product purchasing terms without stock or accounting effects | SupplierPurchasing controller/view. |
@@ -192,9 +194,10 @@ deferred to a separately approved CUS-110 gate.
 | `Persistence/Configurations/Sales/SalesOrderConfiguration.cs` | SAL-040 copied snapshots, tenant/source relationships, one-order uniqueness, rowversion and aggregate ownership | AppDbContext and migration 121. |
 | `Persistence/Configurations/Inventory/InventoryReservationConfiguration.cs` | tenant-safe transfer-source uniqueness plus multiple source-line-aware SalesOrder allocations and exact-dimension duplicate guards | AppDbContext and migration 122. |
 | `Persistence/Configurations/Sales/SalesDeliveryConfiguration.cs` | SAL-060 tenant-safe order/reservation/line/location ownership, open-Draft and line uniqueness, precision and rowversion | AppDbContext and migration 123. |
+| `Persistence/Configurations/Sales/CustomerInvoiceConfiguration.cs` | SAL-070 tenant-safe order/customer/commercial/delivery ownership, source and request uniqueness, precision and rowversion | AppDbContext and migration 124. |
 
 Accounting foundation (2026-09-13): migration `AddAccountingFoundation` adds Accounts, Branches, JournalEntries, JournalEntryLines and optional warehouse branch/inventory-account links. See accounting ADR before adding automated posting.
-| `Migrations/*.cs` and snapshot | schema evolution/model snapshots, currently through `20261020114141_AddSalesDeliveries` (123) | EF tooling, deployment. |
+| `Migrations/*.cs` and snapshot | schema evolution/model snapshots, currently through `20261020202938_AddCustomerInvoicingFoundation` (124) | EF tooling, deployment. |
 
 Inventory concurrency update (2026-09-13): ProductStock and StockTransfer include database-generated rowversions; migration `AddInventoryConcurrency` updates SQL Server. UnitOfWork uses Serializable isolation for atomic inventory workflows. Manual stock transactions accept adjustments only, and purchase/sale aggregates reject duplicate product lines. Focused checks live in `tests/SecurityRegression`.
 
@@ -232,6 +235,7 @@ Hierarchical location update (2026-09-30): StorageLocation retains its identity 
 | `Repositories/Sales/SalesQuotationRepository.cs` | tenant-filtered quotation list/detail, request-key/number lookup and persistence | `SalesQuotationService`. |
 | `Repositories/Sales/SalesOrderRepository.cs` | tenant-filtered order list/detail and source-quotation lookup/persistence | `SalesOrderService` and quotation generated-document link. |
 | `Repositories/Sales/SalesDeliveryRepository.cs` | tenant-filtered delivery list/detail, per-order posted progress and open-Draft lookup/persistence | `SalesDeliveryService` and SalesOrder cancellation/progress. |
+| `Repositories/Sales/CustomerInvoiceRepository.cs` | tenant-filtered aggregate list/detail, request-key and per-order reads with line/source/history loading | `CustomerInvoiceService`. |
 | `Repositories/Purchases/PurchaseReturnRepository.cs` | immutable supplier-return history and original-purchase aggregation | `PurchaseReturnService`. |
 | `Repositories/Purchases/SupplierProductPurchasingInfoRepository.cs` | tenant-filtered purchasing-term persistence, supplier/product assignment reads, price-break/history loading, uniqueness and preferred-supplier lookup | purchasing-info and assignment services. |
 | `Repositories/Purchases/{SupplierQuotation,PurchaseOrder}Repository.cs` | tenant-filtered quote/allocation and purchase-order persistence, source-event order lookup, one-order-per-quotation enforcement and lifecycle history loading | PUR-040/PUR-050/PUR-165/PUR-210 services. |
@@ -261,6 +265,7 @@ Hierarchical location update (2026-09-30): StorageLocation retains its identity 
 | `Controllers/Sales/SalesQuotationsController.cs`, `Views/SalesQuotations/*` | permission-separated Draft creation and quotation lifecycle with responsive immutable detail/history | SAL-030 quotation service, permissions and sales docs. |
 | `Controllers/Sales/SalesOrdersController.cs`, `Views/SalesOrders/*` | one-time quotation conversion, permission-separated confirmation/cancellation and responsive full/partial reservation/release/history workflow | SAL-040/050 order services, permissions and sales docs. |
 | `Controllers/Sales/SalesDeliveriesController.cs`, `Views/SalesDeliveries/*` | permission-separated delivery list/create/detail, Draft cancellation and atomic posting with state-aware completion/next-step guidance | SAL-060 delivery service, permissions, inventory and accounting docs. |
+| `Controllers/Sales/CustomerInvoicesController.cs`, `Views/CustomerInvoices/*` | permission-separated list/create/detail, one-time approval, reasoned cancellation and responsive quantity/source guidance | SAL-070 invoice service, permissions and accounting boundary docs. |
 | `Controllers/Inventory/StockMovementsController.cs` | permission-protected read-only WMS-020 pilot ledger and legacy-link status | StockMovements view and service. |
 | `Controllers/Inventory/InventoryBalancesController.cs` | permission-protected read-only dimensional inventory availability | InventoryBalances view and service. |
 | `Controllers/Inventory/InventoryReservationsController.cs` | permission-protected read-only reservation history | InventoryReservations view and service. |

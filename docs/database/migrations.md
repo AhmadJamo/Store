@@ -5,6 +5,10 @@
 
 Adds partial `ConsumedQuantity` evidence to reservation lines and creates tenant-owned SalesDelivery headers, lines and histories. Composite foreign keys enforce same-company order, reservation, order-line, reservation-line, product, warehouse and location references; tenant-scoped indexes protect the delivery number, one open Draft per reservation and line uniqueness. Existing reservation rows remain valid with zero consumed quantity. Applied to local Demo as migration 123; EF reports no pending model change.
 
+## 20261020202938_AddCustomerInvoicingFoundation
+
+Adds Delivered/Ordered invoice eligibility policy with Delivered default for existing Accounting Settings, creates the four tenant-owned Customer Invoice tables and adds the SalesDeliveryLine composite alternate key required for exact source allocation. Tenant-composite foreign keys and unique indexes protect source ownership, `INV-` number, request idempotency and cumulative document-line identities. Applied to local Demo as migration 124; EF reports no pending model change.
+
 ## 20261015173055_AddAuditEventFoundation
 
 Creates the empty additive `AuditEvents` table for Tenant, Platform and System semantic audit evidence. It adds trusted scope/tenant, classification and JSON checks; unique EventId and scope/tenant/OperationId protections; correlation, resource and tenant-time indexes; and a restrictive optional Tenant foreign key. It does not alter or backfill `AuditLogs`. Applied to local `MiniStoreDb` on 2026-10-16 as migration 113; post-apply inspection found 0 new rows, 707 legacy rows, 3 trusted checks and 6 enabled indexes.

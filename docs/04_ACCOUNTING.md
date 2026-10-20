@@ -92,3 +92,7 @@ Credit: Warehouse Inventory
 ```
 
 The shared fiscal-period and journal-posting controls apply. Draft creation and Draft cancellation have no stock or accounting effect. A retry cannot post a second journal, stock transaction or physical movement. SAL-060 does not recognize revenue, create accounts receivable or record payment; SAL-070/080 own those later boundaries.
+
+SAL-070 creates and approves customer invoice documents but deliberately does not post them. Its company setting chooses Delivered or Ordered quantity eligibility, not an accounting method. Approval freezes billing evidence and reserves source quantity only; it does not debit receivables, credit revenue/output tax or record payment. This prevents a document from appearing financially Posted before a balanced source-unique journal exists.
+
+SAL-080 will own the accounting boundary: debit the resolved customer receivable account and credit frozen revenue and output-tax amounts under fiscal-period controls, then preserve an idempotent invoice↔journal link and controlled reversal. SAL-090 will separately own customer payment and allocation. Neither later step may repeat delivery-time COGS or inventory effects.

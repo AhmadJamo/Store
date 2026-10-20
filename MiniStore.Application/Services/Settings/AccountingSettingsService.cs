@@ -8,6 +8,7 @@ public class AccountingSettingsService(
     IAccountingSettingsRepository settingsRepository,
     IAccountRepository accountRepository,
     ISaleRepository sales,
+    ICustomerInvoiceRepository customerInvoices,
     SemanticAuditEventService audit)
 {
     public async Task<AccountingSettingsDto> GetAsync()
@@ -26,7 +27,8 @@ public class AccountingSettingsService(
             RealizedExchangeLossAccountId = settings.RealizedExchangeLossAccountId,
             CustomerReceivableAccountMode=settings.CustomerReceivableMode, CustomerReceivableControlAccountId=settings.CustomerReceivableControlAccountId,
             CustomerReceivableParentAccountId=settings.CustomerReceivableParentAccountId,CustomerAccountCodePrefix=settings.CustomerAccountCodePrefix,
-            CustomerPolicyEffectiveFrom=settings.CustomerPolicyEffectiveFrom??DateOnly.FromDateTime(DateTime.Today)
+            CustomerPolicyEffectiveFrom=settings.CustomerPolicyEffectiveFrom??DateOnly.FromDateTime(DateTime.Today),
+            SalesInvoiceQuantityPolicy=settings.SalesInvoicePolicy
         };
     }
 
@@ -37,6 +39,8 @@ public class AccountingSettingsService(
         var settings = await settingsRepository.GetAsync();
         if(settings?.CustomerReceivableMode is { } current&&dto.CustomerReceivableAccountMode is { } requested&&current!=requested&&await sales.GetAllAsync() is {Count:>0})
             throw new InvalidOperationException("Customer receivable policy has dependent sales and requires the controlled transition workflow.");
+        if(settings is not null&&settings.SalesInvoicePolicy!=dto.SalesInvoiceQuantityPolicy&&await customerInvoices.GetAllAsync() is {Count:>0})
+            throw new InvalidOperationException("Sales invoice quantity policy has dependent customer invoices and requires the controlled transition workflow.");
         var before = settings is null ? null : AuditValues(settings);
         if (settings is null)
         {
@@ -58,6 +62,7 @@ public class AccountingSettingsService(
                 dto.CostOfSalesAccountId, dto.GoodsReceivedNotInvoicedAccountId, dto.PurchasePriceVarianceAccountId, dto.LandedCostClearingAccountId,
                 dto.RealizedExchangeGainAccountId, dto.RealizedExchangeLossAccountId);
         }
+        settings.ConfigureSalesInvoiceQuantityPolicy(dto.SalesInvoiceQuantityPolicy);
 
         await audit.RecordTenantSuccessAsync(
             AuditEventCategory.Configuration,
@@ -84,7 +89,8 @@ public class AccountingSettingsService(
             RealizedExchangeLossAccountId = settings.RealizedExchangeLossAccountId,
             CustomerReceivableAccountMode=settings.CustomerReceivableMode,CustomerReceivableControlAccountId=settings.CustomerReceivableControlAccountId,
             CustomerReceivableParentAccountId=settings.CustomerReceivableParentAccountId,CustomerAccountCodePrefix=settings.CustomerAccountCodePrefix,
-            CustomerPolicyEffectiveFrom=settings.CustomerPolicyEffectiveFrom??DateOnly.FromDateTime(DateTime.Today)
+            CustomerPolicyEffectiveFrom=settings.CustomerPolicyEffectiveFrom??DateOnly.FromDateTime(DateTime.Today),
+            SalesInvoiceQuantityPolicy=settings.SalesInvoicePolicy
         });
 
     private static IReadOnlyDictionary<string, object?> AuditValues(AccountingSettingsDto value) =>
@@ -100,7 +106,8 @@ public class AccountingSettingsService(
             ["RealizedExchangeGainAccountId"] = value.RealizedExchangeGainAccountId,
             ["RealizedExchangeLossAccountId"] = value.RealizedExchangeLossAccountId,
             ["CustomerReceivableAccountMode"]=value.CustomerReceivableAccountMode,["CustomerReceivableControlAccountId"]=value.CustomerReceivableControlAccountId,
-            ["CustomerReceivableParentAccountId"]=value.CustomerReceivableParentAccountId,["CustomerAccountCodePrefix"]=value.CustomerAccountCodePrefix,["CustomerPolicyEffectiveFrom"]=value.CustomerPolicyEffectiveFrom
+            ["CustomerReceivableParentAccountId"]=value.CustomerReceivableParentAccountId,["CustomerAccountCodePrefix"]=value.CustomerAccountCodePrefix,["CustomerPolicyEffectiveFrom"]=value.CustomerPolicyEffectiveFrom,
+            ["SalesInvoiceQuantityPolicy"]=value.SalesInvoiceQuantityPolicy
         };
 
     private async Task EnsureAccountsExist(AccountingSettingsDto dto)

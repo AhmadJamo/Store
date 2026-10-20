@@ -4,20 +4,20 @@
 
 | الأمر | النتيجة | التاريخ |
 |---|---|---|
-| `dotnet run --project tests/SecurityRegression/SecurityRegression.csproj -c Release` | Passed 884 checks (نجح 884 فحصًا)، تشمل صلاحيات التسليم، دورة الحالة، العزل، الترحيل المانع للتكرار، الاستهلاك الجزئي/الكامل وروابط الأخطاء والخطوات التالية | 2026-10-20 |
+| `dotnet run --project tests/SecurityRegression/SecurityRegression.csproj -c Release` | Passed 908 checks (نجح 908 فحوص)، تشمل صلاحيات الفاتورة، دورة الحالة، عزل الجداول والعلاقات، المصدر، الترقيم وروابط الأخطاء والخطوات التالية | 2026-10-20 |
 | `pwsh -NoProfile -File scripts/verify-local.ps1` | Build + 777 + SQL + 500-request workload passed | 2026-10-18 |
-| `dotnet run --project tests/InventorySqlIntegration/InventorySqlIntegration.csproj -c Release` | Passed full disposable SQL suite, including SAL-030/040 isolation/uniqueness and SAL-050 partial reservation, release/reallocation, automatic cancellation release, no OnHand/journal effect and concurrent final-unit protection | 2026-10-20 |
+| `dotnet run --project tests/InventorySqlIntegration/InventorySqlIntegration.csproj -c Release` | Passed full disposable SQL suite, including 0.4/0.6 customer invoices, exact posted-delivery allocations, over-invoice rejection, cancellation release, idempotency, tenant isolation and no premature stock/journal effect | 2026-10-20 |
 | Live local historic-credential negative test (اختبار رفض بيانات الدخول التاريخية) | Rejected after remediation (رُفضت بعد المعالجة) | 2026-10-15 |
 | Live local replacement-admin positive test (اختبار دخول المدير البديل) | Passed with authorized redirect (نجح مع تحويل مصرح) | 2026-10-15 |
 | Encrypted backup verify/isolated restore/DBCC (تحقق النسخة والاستعادة المعزولة وسلامة القاعدة) | Passed with AES-256 and checksum (نجح) | 2026-10-15 |
 | Restored ERP reconciliation (مصالحة النظام المستعاد) | 147 tables and 21 business checks; zero mismatches (صفر فروق) | 2026-10-15 |
-| EF/database migration reconciliation (مطابقة الترحيلات) | Source/model/Demo 123 with no pending model change; migrations 120–123 applied successfully | 2026-10-20 |
+| EF/database migration reconciliation (مطابقة الترحيلات) | Source/model/Demo 124 with no pending model change; migrations 120–124 applied successfully | 2026-10-20 |
 | Live schema integrity (سلامة المخطط الحي) | 147 tables, 420 trusted FKs, zero disabled constraints/indexes or unsafe tenant relations | 2026-10-15 |
 | Web dependency build (بناء الويب واعتماداته) | Release, 4 projects, zero warnings/errors (نجح) | 2026-10-20 |
 
 اختبار `SQL` (قاعدة البيانات) غطى: إيقاف الكاتب القديم مع استمرار الحدث الدلالي، إعادة تشغيله وإضافة صف مستقبلي واحد فقط، أدوار الكاتب/القارئ/الصيانة، الحجز القانوني، نقطة التثبيت والبيان السابق للحذف، إضافة إلى إنشاء/تغيير صلاحيات/حذف الدور وتغيير إعداد حساس ورجوع آمن، عزل الشركات، المصالحة، الأرصدة، تزامن التزويد، تقسيم الجوائز،
 الاستلام، فاتورة المورد، دفع المورد، العكس، المطابقة، GRNI (بضاعة مستلمة غير مفوترة)، المرتجع، التكلفة
-الإضافية، التحليل، المسح، الجرد، التتبع، الحجر والاستدعاء، إضافة إلى عزل رمز الزبون، الأرشفة وتعارض rowversion، وحجز طلب البيع الجزئي والتحرير وإعادة التخصيص وعزل الشركة ومنع حجز آخر وحدة مرتين دون تغيير OnHand أو القيود.
+الإضافية، التحليل، المسح، الجرد، التتبع، الحجر والاستدعاء، إضافة إلى عزل رمز الزبون، الأرشفة وتعارض rowversion، وحجز/تسليم طلب البيع، والفوترة الجزئية المتعددة مع تخصيص التسليم وعدم تغيير OnHand أو القيود.
 
 ## التغطية حسب المجال
 

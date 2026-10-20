@@ -17,4 +17,5 @@ public class AccountingSettingsDto
     public int? CustomerReceivableParentAccountId { get; set; }
     public string CustomerAccountCodePrefix { get; set; } = "CUST-";
     public DateOnly CustomerPolicyEffectiveFrom { get; set; } = DateOnly.FromDateTime(DateTime.Today);
+    public SalesInvoiceQuantityPolicy SalesInvoiceQuantityPolicy { get; set; } = SalesInvoiceQuantityPolicy.DeliveredQuantity;
 }

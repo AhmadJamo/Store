@@ -6,14 +6,14 @@ using MiniStore.Web.Authorization;
 
 namespace MiniStore.Web.Controllers;
 
-public sealed class SalesDeliveriesController(SalesDeliveryService service,
+public sealed class SalesDeliveriesController(SalesDeliveryService service, CustomerInvoiceService invoiceService,
     IStringLocalizer<SharedResource> localizer) : Controller
 {
     [HttpGet, PermissionAuthorize("SalesDeliveries.View")]
     public async Task<IActionResult> Index(string? search) { ViewBag.Search = search; return View(await service.GetAllAsync(search)); }
 
     [HttpGet, PermissionAuthorize("SalesDeliveries.View")]
-    public async Task<IActionResult> Details(int id) { var dto = await service.GetAsync(id); return dto is null ? NotFound() : View(dto); }
+    public async Task<IActionResult> Details(int id) { var dto = await service.GetAsync(id); if (dto is null) return NotFound(); ViewBag.InvoiceProgress = await invoiceService.GetProgressAsync(dto.SalesOrderId); return View(dto); }
 
     [HttpGet, PermissionAuthorize("SalesDeliveries.Create")]
     public async Task<IActionResult> Create(int salesOrderId)
@@ -36,7 +36,8 @@ public sealed class SalesDeliveriesController(SalesDeliveryService service,
     {
         try { await service.PostAsync(dto); Notify("success", "Sales delivery posted."); }
         catch (Exception ex) when (ex is ArgumentException or InvalidOperationException) { Notify("danger", ex.Message); }
-        return RedirectToAction(nameof(Details), new { id = dto.Id });
+        var delivery = await service.GetAsync(dto.Id);
+        return RedirectToAction(nameof(Details), new { id = dto.Id, salesOrderId = delivery?.SalesOrderId });
     }
 
     [HttpPost, ValidateAntiForgeryToken, PermissionAuthorize("SalesDeliveries.Cancel")]

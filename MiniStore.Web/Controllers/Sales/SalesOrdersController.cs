@@ -7,7 +7,7 @@ using MiniStore.Web.Authorization;
 
 namespace MiniStore.Web.Controllers;
 
-public sealed class SalesOrdersController(SalesOrderService service,SalesOrderReservationService reservationService,
+public sealed class SalesOrdersController(SalesOrderService service,SalesOrderReservationService reservationService,CustomerInvoiceService invoiceService,
     IStringLocalizer<SharedResource> localizer):Controller
 {
     [HttpGet,PermissionAuthorize("SalesOrders.View")]
@@ -15,7 +15,7 @@ public sealed class SalesOrdersController(SalesOrderService service,SalesOrderRe
     {ViewBag.Status=status;ViewBag.Search=search;return View(await service.GetAllAsync(status,search));}
 
     [HttpGet,PermissionAuthorize("SalesOrders.View")]
-    public async Task<IActionResult> Details(int id){var dto=await service.GetAsync(id);return dto is null?NotFound():View(dto);}
+    public async Task<IActionResult> Details(int id){var dto=await service.GetAsync(id);if(dto is null)return NotFound();dto.Invoice=await invoiceService.GetProgressAsync(id);return View(dto);}
 
     [HttpPost,ValidateAntiForgeryToken,PermissionAuthorize("SalesOrders.Create")]
     public async Task<IActionResult> CreateFromQuotation(ConvertSalesQuotationDto dto)

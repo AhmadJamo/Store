@@ -29,7 +29,7 @@ public static class WorkflowNextStepGuidance
 
     private static readonly HashSet<string> CustomerControllers = new(StringComparer.OrdinalIgnoreCase) { "Customers" };
 
-    private static readonly HashSet<string> SalesControllers = new(StringComparer.OrdinalIgnoreCase) { "SalesPriceLists", "SalesQuotations", "SalesOrders", "SalesDeliveries" };
+    private static readonly HashSet<string> SalesControllers = new(StringComparer.OrdinalIgnoreCase) { "SalesPriceLists", "SalesQuotations", "SalesOrders", "SalesDeliveries", "CustomerInvoices" };
 
     public static bool IsSupportedController(string? controller) =>
         !string.IsNullOrWhiteSpace(controller) &&
@@ -116,14 +116,29 @@ public static class WorkflowNextStepGuidance
                 "SalesDeliveries.View", Routes(("id", Route("id"))));
 
         if (Matches(message, localize, "Sales delivery posted."))
-            return new("SalesDeliveries", "Details", "Continue sales order delivery",
-                "The reservation and physical stock were updated; prepare another delivery only when quantity remains.",
-                "SalesDeliveries.View", Routes(("id", Route("id"))));
+            return new("CustomerInvoices", "Create", "Create customer invoice",
+                "The delivered quantity is now eligible for customer invoicing; invoice only the amount to bill.",
+                "CustomerInvoices.Create", Routes(("salesOrderId", Route("salesOrderId"))));
 
         if (Matches(message, localize, "Sales delivery draft cancelled."))
             return new("SalesDeliveries", "Details", "Review cancelled delivery",
                 "The draft is finished and its reservation remains available for a new delivery.",
                 "SalesDeliveries.View", Routes(("id", Route("id"))));
+
+        if (Matches(message, localize, "Customer invoice draft created."))
+            return new("CustomerInvoices", "Details", "Review and approve customer invoice",
+                "Review quantities, source deliveries, prices and taxes, then approve the invoice document.",
+                "CustomerInvoices.View", Routes(("id", Route("id"))));
+
+        if (Matches(message, localize, "Customer invoice approved."))
+            return new("CustomerInvoices", "Details", "Review approved customer invoice",
+                "Approval is complete; accounting posting to revenue, tax and receivables remains a separate next stage.",
+                "CustomerInvoices.View", Routes(("id", Route("id"))));
+
+        if (Matches(message, localize, "Customer invoice cancelled."))
+            return new("CustomerInvoices", "Index", "Review customer invoices",
+                "The cancelled quantities are available for a replacement invoice when their source remains eligible.",
+                "CustomerInvoices.View", Routes());
 
         if (Matches(message, localize, "Customer created successfully.", "Customer updated successfully.", "Customer restored successfully."))
             return new("Customers", "Details", "Review customer profile", "Review the customer profile before using it in a new sale.", "Customers.View", Routes(("id", Route("id"))));
@@ -404,7 +419,7 @@ public static class WorkflowNextStepGuidance
     private static bool HasDetails(string controller) => controller is
         "Purchases" or "PurchaseReturns" or "PurchaseRequests" or "PurchaseSourcing" or
         "PurchaseOrders" or "GoodsReceipts" or "GoodsReceiptReturns" or "PurchaseServiceAcceptances" or "VendorBills" or
-        "SupplierPayments" or "PurchaseAgreements" or "LandedCosts" or "PurchaseDocumentReversals" or "SalesDeliveries";
+        "SupplierPayments" or "PurchaseAgreements" or "LandedCosts" or "PurchaseDocumentReversals" or "SalesDeliveries" or "CustomerInvoices";
 
     private static bool MatchesPattern(string message, Func<string, string> localize, string resourceKey)
     {

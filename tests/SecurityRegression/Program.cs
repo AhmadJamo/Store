@@ -621,6 +621,43 @@ var salesDeliveryMovement=StockMovement.PostSalesDelivery(1,1,1,1,null,2m,"poste
 Check(salesDeliveryMovement.Type==StockMovementType.SalesDeliveryOut&&salesDeliveryMovement.SourceDocumentType=="SalesDelivery"&&salesDeliveryMovement.Status==StockMovementStatus.Posted,
     "Posted sales deliveries must create an immutable outbound physical movement");
 
+Check(PermissionDefinitions.All.Count(x=>x.Name.StartsWith("CustomerInvoices.",StringComparison.Ordinal))==4,
+    "Customer invoices must separate view, draft creation, approval and cancellation permissions");
+var customerInvoiceController=typeof(CustomerInvoicesController);
+Check(customerInvoiceController.GetMethod(nameof(CustomerInvoicesController.Index))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:CustomerInvoices.View"&&
+      customerInvoiceController.GetMethod(nameof(CustomerInvoicesController.Details))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:CustomerInvoices.View"&&
+      customerInvoiceController.GetMethods().Single(x=>x.Name==nameof(CustomerInvoicesController.Create)&&x.GetCustomAttribute<HttpPostAttribute>() is not null).GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:CustomerInvoices.Create"&&
+      customerInvoiceController.GetMethod(nameof(CustomerInvoicesController.Approve))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:CustomerInvoices.Approve"&&
+      customerInvoiceController.GetMethod(nameof(CustomerInvoicesController.Cancel))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:CustomerInvoices.Cancel",
+    "Customer invoice endpoints must enforce dedicated server-side permissions");
+Check(customerInvoiceController.GetMethods().Where(x=>x.GetCustomAttribute<HttpPostAttribute>() is not null)
+      .All(x=>x.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null),
+    "Every customer invoice mutation must require antiforgery validation");
+var invoiceOrder=new SalesOrder("SO-000002",salesQuotation,new DateOnly(2026,10,20),"user");
+typeof(SalesOrder).GetProperty(nameof(SalesOrder.Id))!.SetValue(invoiceOrder,81);
+typeof(SalesOrderLine).GetProperty(nameof(SalesOrderLine.Id))!.SetValue(invoiceOrder.Lines.Single(),82);
+invoiceOrder.Confirm("user");
+var customerInvoice=new CustomerInvoice("INV-000001",Guid.NewGuid().ToString("N"),invoiceOrder,
+    SalesInvoiceQuantityPolicy.DeliveredQuantity,new DateOnly(2026,10,20),null,"billing-user");
+customerInvoice.AddLine(new CustomerInvoiceLine(invoiceOrder.Lines.Single(),1m,1m,
+    SalesInvoiceQuantityBasis.DeliveredQuantity,16m,0m,16m,[new CustomerInvoiceSourceAllocation(1,1,1m)]));
+customerInvoice.Approve("approver");
+Check(customerInvoice.Status==CustomerInvoiceStatus.Approved&&customerInvoice.TotalAmount==16m&&
+      customerInvoice.Lines.Single().SourceAllocations.Single().StockQuantity==1m&&customerInvoice.History.Count==2,
+    "Customer invoices must freeze order amounts and exact posted-delivery quantity evidence before approval");
+CheckThrows(()=>customerInvoice.Approve("approver"),"An approved customer invoice must not expose approval a second time");
+customerInvoice.Cancel("billing-manager","Replaced before accounting posting");
+Check(customerInvoice.Status==CustomerInvoiceStatus.Cancelled&&customerInvoice.CancellationReason=="Replaced before accounting posting",
+    "Unposted customer invoices must release their eligibility through a reasoned cancellation");
+CheckThrows(()=>new CustomerInvoiceLine(invoiceOrder.Lines.Single(),1m,1m,
+    SalesInvoiceQuantityBasis.DeliveredQuantity,16m,0m,16m,[]),
+    "Delivered-basis customer invoice lines must preserve complete source allocations");
+foreach(var type in new[]{typeof(CustomerInvoice),typeof(CustomerInvoiceLine),typeof(CustomerInvoiceSourceAllocation),typeof(CustomerInvoiceHistory)})
+    Check(TenantIsolationModel.TenantOwnedTypes.Contains(type)&&db.Model.FindEntityType(type)!.FindProperty("TenantId") is {IsNullable:false},
+        $"{type.Name} must be tenant owned");
+Check(DocumentSequence.CreateDefault(DocumentNumberType.CustomerInvoice).Preview(DateTime.Today).StartsWith("INV-"),
+    "Customer invoices must use an independent centralized INV document sequence");
+
 var customerMaster = new Customer("CUS-000001", "Acme Customer", 1);
 customerMaster.UpdateProfile(CustomerType.Company, "Acme Customer", "Acme Legal", "+962790000000",
     "customer@example.com", "TAX-1", "REG-1", "https://example.com", "ar-JO", "Asia/Amman", "Priority customer");
@@ -661,6 +698,9 @@ flexibleAccounting.ConfigureCustomerReceivables(CustomerReceivableAccountMode.Sh
 Check(flexibleAccounting.CustomerReceivableMode==CustomerReceivableAccountMode.SharedControlAccount&&flexibleAccounting.CustomerReceivableControlAccountId==10,"Customer accounting settings must support a shared control account policy");
 flexibleAccounting.ConfigureCustomerReceivables(CustomerReceivableAccountMode.AutomaticIndividualAccount,null,20,"client-",new DateOnly(2026,11,1));
 Check(flexibleAccounting.CustomerAccountCodePrefix=="CLIENT-"&&flexibleAccounting.CustomerReceivableParentAccountId==20,"Customer accounting settings must support automatic individual accounts with a normalized prefix");
+flexibleAccounting.ConfigureSalesInvoiceQuantityPolicy(SalesInvoiceQuantityPolicy.OrderedQuantity);
+Check(flexibleAccounting.SalesInvoicePolicy==SalesInvoiceQuantityPolicy.OrderedQuantity,
+    "Accounting settings must support an explicit tenant customer-invoice quantity policy");
 CheckArgumentThrows(()=>flexibleAccounting.ConfigureCustomerReceivables(CustomerReceivableAccountMode.SharedControlAccount,null,null,"CUST-",DateOnly.FromDateTime(DateTime.Today)),"Shared receivables must require a control account");
 Check(!customerModel.GetIndexes().Any(x=>x.IsUnique&&x.Properties.Any(p=>p.Name==nameof(Customer.AccountId))),"Customer accounts must allow reuse when shared-control policy is selected");
 var workflowCatalogAction = typeof(SettingsController).GetMethod(nameof(SettingsController.WorkflowCatalog))!;
@@ -2402,9 +2442,21 @@ var salesDeliveryDraftNextStep=WorkflowNextStepGuidance.Resolve(
 Check(salesDeliveryDraftNextStep is {Controller:"SalesDeliveries",Action:"Details",RequiredPermission:"SalesDeliveries.View"}&&salesDeliveryDraftNextStep.RouteValues.GetValueOrDefault("id")=="35",
     "Prepared sales deliveries must guide the user to review and posting");
 var salesDeliveryPostedNextStep=WorkflowNextStepGuidance.Resolve(
-    "Sales delivery posted.","SalesDeliveries",new Dictionary<string,string?>{{"id","35"}});
-Check(salesDeliveryPostedNextStep is {Controller:"SalesDeliveries",Action:"Details",RequiredPermission:"SalesDeliveries.View"},
-    "Posted sales deliveries must guide the user to remaining delivery work");
+    "Sales delivery posted.","SalesDeliveries",new Dictionary<string,string?>{{"id","35"},{"salesOrderId","25"}});
+Check(salesDeliveryPostedNextStep is {Controller:"CustomerInvoices",Action:"Create",RequiredPermission:"CustomerInvoices.Create"}&&salesDeliveryPostedNextStep.RouteValues.GetValueOrDefault("salesOrderId")=="25",
+    "Posted sales deliveries must guide the user to eligible customer invoicing");
+var customerInvoiceDraftNextStep=WorkflowNextStepGuidance.Resolve(
+    "Customer invoice draft created.","CustomerInvoices",new Dictionary<string,string?>{{"id","45"}});
+Check(customerInvoiceDraftNextStep is {Controller:"CustomerInvoices",Action:"Details",RequiredPermission:"CustomerInvoices.View"}&&customerInvoiceDraftNextStep.RouteValues.GetValueOrDefault("id")=="45",
+    "Created customer invoice drafts must guide the user to review and approval");
+var customerInvoiceApprovedNextStep=WorkflowNextStepGuidance.Resolve(
+    "Customer invoice approved.","CustomerInvoices",new Dictionary<string,string?>{{"id","45"}});
+Check(customerInvoiceApprovedNextStep is {Controller:"CustomerInvoices",Action:"Details",RequiredPermission:"CustomerInvoices.View"},
+    "Approved customer invoices must explain that accounting posting remains separate");
+Check(ActionableErrorGuidance.Resolve(
+          "Customer invoice quantity cannot exceed the remaining eligible source quantity.",
+          "CustomerInvoices") is {Controller:"SalesOrders",Action:"Index",RequiredPermission:"SalesOrders.View"},
+    "Customer-invoice eligibility errors must link back to sales orders");
 Check(ActionableErrorGuidance.Resolve(
           "Configure a cost of sales account before posting sales deliveries.",
           "SalesDeliveries") is {Controller:"Settings",Action:"Accounting",RequiredPermission:"Administration.Access"},
@@ -2631,6 +2683,7 @@ Check(WorkflowNextStepGuidance.IsSupportedController("VendorBills") &&
       WorkflowNextStepGuidance.IsSupportedController("SupplierCreditNotes") &&
       WorkflowNextStepGuidance.IsSupportedController("PurchaseDocumentReversals") &&
       WorkflowNextStepGuidance.IsSupportedController("PurchaseAccountingReconciliation") &&
+      WorkflowNextStepGuidance.IsSupportedController("CustomerInvoices") &&
       WorkflowNextStepGuidance.IsSupportedController("StockTransfers") &&
       WorkflowNextStepGuidance.IsSupportedController("Warehouses") &&
       !WorkflowNextStepGuidance.IsSupportedController("Sales"),

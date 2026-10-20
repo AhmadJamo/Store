@@ -154,6 +154,14 @@ The Index and mutation actions enforce these policies server-side. Permission se
 - `SupplierIntegrations.Retry` retries an undelivered outbox message without changing its business identity or idempotency key.
 - Portal/API access is not an internal role permission: each request must independently prove a valid supplier-specific token/key and required external scope.
 
+# SAL-070 customer invoice permissions
+
+- `CustomerInvoices.View` protects invoice list/detail and source evidence.
+- `CustomerInvoices.Create` permits idempotent Draft creation only within the remaining eligible ordered/delivered quantity.
+- `CustomerInvoices.Approve` permits the one-time commercial approval transition; it grants no accounting-posting or payment authority.
+- `CustomerInvoices.Cancel` permits reasoned cancellation of an unposted Draft or Approved invoice and releases its quantity eligibility.
+- Every mutation requires antiforgery validation and Application-layer state/concurrency checks. SAL-080 must introduce a separate posting permission rather than reuse approval.
+
 # Platform operator boundary
 
 - Platform control-center access is independent from company `Admin` permissions. A valid Identity account must also have an active `PlatformOperator` record.

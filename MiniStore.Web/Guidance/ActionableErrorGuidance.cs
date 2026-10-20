@@ -14,7 +14,7 @@ public static class ActionableErrorGuidance
         "PurchaseApprovalRules", "PurchaseSourcing", "SupplierQuotations", "PurchaseOrders",
         "GoodsReceipts", "GoodsReceiptReturns", "VendorBills", "SupplierCreditNotes", "SupplierPayments", "SupplierCommunications",
         "PurchaseAgreements", "PurchaseTemplates", "LandedCosts", "PurchaseDocumentReversals", "PurchaseAnalytics", "SupplierIntegrations",
-        "SalesPriceLists", "SalesQuotations", "SalesOrders", "SalesDeliveries", "Customers"
+        "SalesPriceLists", "SalesQuotations", "SalesOrders", "SalesDeliveries", "CustomerInvoices", "Customers"
     };
 
     public static ActionableErrorLink? Resolve(
@@ -107,6 +107,16 @@ public static class ActionableErrorGuidance
         if (Matches(message, localize,
                 "A sales order with posted deliveries cannot be cancelled. Use the controlled return workflow."))
             return new("SalesDeliveries", "Index", "View delivery documents", "SalesDeliveries.View");
+
+        if (Matches(message, localize,
+                "Only a confirmed non-cancelled sales order can be invoiced.",
+                "A customer invoice line does not belong to this sales order.",
+                "Customer invoice quantity cannot exceed the remaining eligible source quantity.",
+                "Customer invoice quantity no longer matches the remaining posted delivery quantity."))
+            return new("SalesOrders", "Index", "Open sales orders", "SalesOrders.View");
+
+        if (Matches(message, localize, "Customer invoice product was not found."))
+            return new("Products", "Index", "Manage products", "Products.Edit");
 
         if (Matches(message, localize,
                 "Insufficient physical stock for the reserved delivery.",

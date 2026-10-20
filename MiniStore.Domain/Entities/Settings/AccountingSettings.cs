@@ -20,6 +20,7 @@ public class AccountingSettings
     public int? CustomerReceivableParentAccountId { get; private set; }
     public string CustomerAccountCodePrefix { get; private set; } = "CUST-";
     public DateOnly? CustomerPolicyEffectiveFrom { get; private set; }
+    public SalesInvoiceQuantityPolicy SalesInvoicePolicy { get; private set; } = SalesInvoiceQuantityPolicy.DeliveredQuantity;
     private AccountingSettings() { }
     public AccountingSettings(int? purchaseDiscountAccountId, int? salesDiscountAccountId, int? salesRevenueAccountId, int? costOfSalesAccountId, int? goodsReceivedNotInvoicedAccountId = null, int? purchasePriceVarianceAccountId = null, int? landedCostClearingAccountId = null, int? realizedExchangeGainAccountId = null, int? realizedExchangeLossAccountId = null)
     { PurchaseDiscountAccountId = purchaseDiscountAccountId; SalesDiscountAccountId = salesDiscountAccountId; SalesRevenueAccountId = salesRevenueAccountId; CostOfSalesAccountId = costOfSalesAccountId; GoodsReceivedNotInvoicedAccountId = goodsReceivedNotInvoicedAccountId; PurchasePriceVarianceAccountId = purchasePriceVarianceAccountId; LandedCostClearingAccountId = landedCostClearingAccountId; RealizedExchangeGainAccountId = realizedExchangeGainAccountId; RealizedExchangeLossAccountId = realizedExchangeLossAccountId; }
@@ -50,5 +51,11 @@ public class AccountingSettings
         if(mode==CustomerReceivableAccountMode.AutomaticIndividualAccount&&parentAccountId is null) throw new ArgumentException("A parent receivable account is required for automatic customer accounts.");
         if(mode==CustomerReceivableAccountMode.AutomaticIndividualAccount&&(codePrefix.Length is < 1 or > 20||codePrefix.Any(char.IsWhiteSpace))) throw new ArgumentException("Customer account code prefix must contain 1 to 20 characters without spaces.");
         CustomerReceivableMode=mode; CustomerReceivableControlAccountId=controlAccountId; CustomerReceivableParentAccountId=parentAccountId; CustomerAccountCodePrefix=codePrefix; CustomerPolicyEffectiveFrom=effectiveFrom;
+    }
+
+    public void ConfigureSalesInvoiceQuantityPolicy(SalesInvoiceQuantityPolicy policy)
+    {
+        if (!Enum.IsDefined(policy)) throw new ArgumentException("Sales invoice quantity policy is invalid.");
+        SalesInvoicePolicy = policy;
     }
 }

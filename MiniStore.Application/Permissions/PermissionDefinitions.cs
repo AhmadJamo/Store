@@ -204,6 +204,10 @@ public static class PermissionDefinitions
         new("SalesDeliveries.Create", "Prepare Sales Delivery", "Sales"),
         new("SalesDeliveries.Post", "Post Sales Delivery", "Sales"),
         new("SalesDeliveries.Cancel", "Cancel Sales Delivery Draft", "Sales"),
+        new("CustomerInvoices.View", "View Customer Invoices", "Sales"),
+        new("CustomerInvoices.Create", "Create Customer Invoice Draft", "Sales"),
+        new("CustomerInvoices.Approve", "Approve Customer Invoice", "Sales"),
+        new("CustomerInvoices.Cancel", "Cancel Customer Invoice", "Sales"),
         new("SalesReturns.View", "View Sales Returns", "Sales Returns"),
         new("SalesReturns.Create", "Create Sales Return", "Sales Returns"),
 

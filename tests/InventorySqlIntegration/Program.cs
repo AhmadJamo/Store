@@ -133,7 +133,7 @@ try
     await VerifyInventoryBalanceProjectionAsync(tenantOneId, tenantOneFixture.ProductId, expectedOnHand: 2m, connectionString);
     await VerifyOpeningTrackingAllocationAsync(tenantOneId, tenantOneFixture.ProductId, tenantOneFixture.WarehouseId, connectionString);
 
-    Console.WriteLine("Passed SQL integration checks: professional customer and sales-pricing tenant isolation, price-list code/rule uniqueness and cross-tenant linkage protection, partial/full sales-delivery reservation consumption, physical stock issue and delivery-time COGS posting; semantic coverage catalog, legacy-audit freeze and rollback, semantic role/settings, denied-security, permission-aware audit reader/export, legal hold, signed checkpoint, manifest-before-delete retention and SQL audit-role separation plus audit-event rollback, isolation, append-only and integrity; tenant isolation, reconciliation, balances, replenishment purchase-request source concurrency, 3-product/2-supplier split awards, receipt, vendor-bill and supplier-payment concurrency, controlled payment reversal and retry, three-way matching override evidence, GRNI posting and clearing, purchase accounting reconciliation, payable settlement, receipt-based supplier returns, landed-cost valuation, purchasing analytics, idempotent barcode receipt drafts, adjustment posting, tracked operations, quarantine and recall.");
+    Console.WriteLine("Passed SQL integration checks: professional customer and sales-pricing tenant isolation, price-list code/rule uniqueness and cross-tenant linkage protection, partial/full sales-delivery reservation consumption, physical stock issue and delivery-time COGS posting, partial customer invoicing with exact delivery allocations and no premature accounting; semantic coverage catalog, legacy-audit freeze and rollback, semantic role/settings, denied-security, permission-aware audit reader/export, legal hold, signed checkpoint, manifest-before-delete retention and SQL audit-role separation plus audit-event rollback, isolation, append-only and integrity; tenant isolation, reconciliation, balances, replenishment purchase-request source concurrency, 3-product/2-supplier split awards, receipt, vendor-bill and supplier-payment concurrency, controlled payment reversal and retry, three-way matching override evidence, GRNI posting and clearing, purchase accounting reconciliation, payable settlement, receipt-based supplier returns, landed-cost valuation, purchasing analytics, idempotent barcode receipt drafts, adjustment posting, tracked operations, quarantine and recall.");
 }
 finally
 {
@@ -1253,6 +1253,65 @@ static async Task VerifySalesQuotationFoundationAsync(int tenantOneId,int tenant
            await deliveryContext.StockTransactions.CountAsync(x=>x.Type==StockTransactionType.Sale&&deliveryReferences.Contains(x.Reference!))!=2||
            await deliveryContext.JournalEntries.CountAsync(x=>x.SourceType=="SalesDelivery")!=2)
             throw new InvalidOperationException("Full and partial sales deliveries must atomically consume reservations, OnHand, Reserved, stock cost, movement and one journal each.");
+        var stockTransactionsBeforeInvoices=await deliveryContext.StockTransactions.CountAsync();
+        var journalsBeforeInvoices=await deliveryContext.JournalEntries.CountAsync();
+        var movementsBeforeInvoices=await deliveryContext.StockMovements.CountAsync();
+        var customerInvoiceRepository=new CustomerInvoiceRepository(deliveryContext);
+        var customerInvoiceService=new CustomerInvoiceService(customerInvoiceRepository,orderRepository,deliveryRepository,
+            new ProductRepository(deliveryContext),new AccountingSettingsRepository(deliveryContext),numbers,
+            deliveryUnitOfWork,new FixedCurrentUser("customer-billing-user"));
+        var firstInvoiceRequest=Guid.NewGuid().ToString("N");
+        var firstInvoiceId=await customerInvoiceService.CreateDraftAsync(new CreateCustomerInvoiceDto
+        {
+            SalesOrderId=order.Id,RequestKey=firstInvoiceRequest,InvoiceDate=new DateOnly(2026,10,20),
+            Lines=[new CreateCustomerInvoiceLineDto{SalesOrderLineId=orderLine.Id,Quantity=0.4m}]
+        });
+        if(await customerInvoiceService.CreateDraftAsync(new CreateCustomerInvoiceDto
+           {SalesOrderId=order.Id,RequestKey=firstInvoiceRequest,Lines=[]})!=firstInvoiceId)
+            throw new InvalidOperationException("Customer invoice request keys must be idempotent within their tenant.");
+        var firstInvoice=await customerInvoiceService.GetAsync(firstInvoiceId)
+            ??throw new InvalidOperationException("SQL first customer invoice was not found.");
+        await customerInvoiceService.ApproveAsync(new CustomerInvoiceStatusCommandDto{Id=firstInvoice.Id,RowVersion=firstInvoice.RowVersion});
+        try
+        {
+            await customerInvoiceService.CreateDraftAsync(new CreateCustomerInvoiceDto
+            {
+                SalesOrderId=order.Id,RequestKey=Guid.NewGuid().ToString("N"),InvoiceDate=new DateOnly(2026,10,20),
+                Lines=[new CreateCustomerInvoiceLineDto{SalesOrderLineId=orderLine.Id,Quantity=0.7m}]
+            });
+            throw new InvalidOperationException("Customer invoice quantities must not exceed delivered unbilled quantity.");
+        }
+        catch(InvalidOperationException exception) when(exception.Message.Contains("remaining eligible",StringComparison.OrdinalIgnoreCase)){ }
+        var cancelledInvoiceId=await customerInvoiceService.CreateDraftAsync(new CreateCustomerInvoiceDto
+        {
+            SalesOrderId=order.Id,RequestKey=Guid.NewGuid().ToString("N"),InvoiceDate=new DateOnly(2026,10,20),
+            Lines=[new CreateCustomerInvoiceLineDto{SalesOrderLineId=orderLine.Id,Quantity=0.6m}]
+        });
+        var cancelledInvoice=await customerInvoiceService.GetAsync(cancelledInvoiceId)
+            ??throw new InvalidOperationException("SQL cancellable customer invoice was not found.");
+        await customerInvoiceService.CancelAsync(new CustomerInvoiceStatusCommandDto
+            {Id=cancelledInvoice.Id,RowVersion=cancelledInvoice.RowVersion,Reason="SQL replacement invoice"});
+        var finalInvoiceId=await customerInvoiceService.CreateDraftAsync(new CreateCustomerInvoiceDto
+        {
+            SalesOrderId=order.Id,RequestKey=Guid.NewGuid().ToString("N"),InvoiceDate=new DateOnly(2026,10,20),
+            Lines=[new CreateCustomerInvoiceLineDto{SalesOrderLineId=orderLine.Id,Quantity=0.6m}]
+        });
+        var finalInvoice=await customerInvoiceService.GetAsync(finalInvoiceId)
+            ??throw new InvalidOperationException("SQL final customer invoice was not found.");
+        await customerInvoiceService.ApproveAsync(new CustomerInvoiceStatusCommandDto{Id=finalInvoice.Id,RowVersion=finalInvoice.RowVersion});
+        var invoiceProgress=await customerInvoiceService.GetProgressAsync(order.Id);
+        var activeInvoiceLines=await deliveryContext.CustomerInvoiceLines.AsNoTracking()
+            .Where(x=>x.CustomerInvoiceId==firstInvoiceId||x.CustomerInvoiceId==finalInvoiceId).ToListAsync();
+        var activeSources=await deliveryContext.CustomerInvoiceSourceAllocations.AsNoTracking()
+            .Where(x=>activeInvoiceLines.Select(line=>line.Id).Contains(x.CustomerInvoiceLineId)).ToListAsync();
+        if(invoiceProgress.IsFullyInvoiced||invoiceProgress.HasEligibleRemaining||invoiceProgress.ApprovedInvoiceCount!=2||invoiceProgress.DraftInvoiceCount!=0||
+           activeInvoiceLines.Sum(x=>x.Quantity)!=1m||activeInvoiceLines.Sum(x=>x.TotalAmount)!=8m||
+           activeSources.Sum(x=>x.StockQuantity)!=1m||activeSources.Select(x=>x.SalesDeliveryId).Distinct().Count()!=2||
+           await deliveryContext.CustomerInvoices.CountAsync(x=>x.SalesOrderId==order.Id&&x.Status==CustomerInvoiceStatus.Cancelled)!=1||
+           await deliveryContext.StockTransactions.CountAsync()!=stockTransactionsBeforeInvoices||
+           await deliveryContext.JournalEntries.CountAsync()!=journalsBeforeInvoices||
+           await deliveryContext.StockMovements.CountAsync()!=movementsBeforeInvoices)
+            throw new InvalidOperationException($"Partial customer invoices must consume exact posted-delivery eligibility, release cancellation quantity, preserve totals and avoid stock or accounting posting. Progress={invoiceProgress.IsFullyInvoiced}/{invoiceProgress.ApprovedInvoiceCount}/{invoiceProgress.DraftInvoiceCount}; line quantity={activeInvoiceLines.Sum(x=>x.Quantity)}; total={activeInvoiceLines.Sum(x=>x.TotalAmount)}; source={activeSources.Sum(x=>x.StockQuantity)}/{activeSources.Select(x=>x.SalesDeliveryId).Distinct().Count()}; cancelled={await deliveryContext.CustomerInvoices.CountAsync(x=>x.SalesOrderId==order.Id&&x.Status==CustomerInvoiceStatus.Cancelled)}; stock/journal/movement={await deliveryContext.StockTransactions.CountAsync()}/{await deliveryContext.JournalEntries.CountAsync()}/{await deliveryContext.StockMovements.CountAsync()} expected {stockTransactionsBeforeInvoices}/{journalsBeforeInvoices}/{movementsBeforeInvoices}.");
         var orderService=new SalesOrderService(orderRepository,new SalesQuotationRepository(deliveryContext),numbers,
             deliveryUnitOfWork,deliveryUser,reservationService,new SalesDeliveryRepository(deliveryContext));
         try
@@ -1290,6 +1349,8 @@ static async Task VerifySalesQuotationFoundationAsync(int tenantOneId,int tenant
             throw new InvalidOperationException("Sales-order reservations must be isolated by tenant.");
         if(await tenantTwo.SalesDeliveries.AnyAsync(x=>x.SalesOrderId==tenantOneDeliveryOrderId))
             throw new InvalidOperationException("Sales deliveries must be isolated by tenant.");
+        if(await tenantTwo.CustomerInvoices.AnyAsync(x=>x.SalesOrderId==tenantOneDeliveryOrderId))
+            throw new InvalidOperationException("Customer invoices must be isolated by tenant.");
         var customer=await tenantTwo.Customers.FirstAsync(x=>x.IsActive);
         var product=await tenantTwo.Products.FirstAsync();
         var unit=await tenantTwo.MeasurementUnits.FirstAsync();

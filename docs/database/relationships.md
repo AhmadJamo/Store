@@ -14,6 +14,7 @@
 - Sale → Warehouse: Restrict; Sale → SaleItems: cascade. SaleItem → Product and optional ProductRecipe version: Restrict.
 - StockTransfer → FromWarehouse and ToWarehouse: Restrict; StockTransfer → Items and History: Restrict. Item → Product: Restrict.
 - SalesDelivery → SalesOrder, InventoryReservation and Warehouse: tenant-composite Restrict; → Lines and Histories: aggregate-owned tenant-composite relationships. Each line restricts to its exact SalesOrderLine, InventoryReservationLine, Product, Warehouse and optional StorageLocation in the same tenant.
+- CustomerInvoice → SalesOrder, Customer and optional CustomerAddress: tenant-composite Restrict; → Lines and Histories: aggregate-owned tenant-composite Cascade. Each line restricts to its SalesOrderLine, Product, MeasurementUnit, optional SalesPriceList/Rule and TaxRate; each Delivered-basis source allocation restricts to the exact Posted SalesDelivery and SalesDeliveryLine in the same tenant.
 - TenantRole → Tenant: cascade when a company is removed. TenantRolePermission → TenantRole cascades and → Permission restricts. TenantUserRole uses `(TenantRoleId, TenantId)` as a composite FK to the matching company role, restricts role deletion until assignments are removed, and links Tenant/IdentityUser with cascades.
 
 Identity relationships are supplied by IdentityDbContext. AuditLog has no foreign-key relationships.
