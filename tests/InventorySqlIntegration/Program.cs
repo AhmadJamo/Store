@@ -1064,6 +1064,7 @@ static async Task VerifySalesQuotationFoundationAsync(int tenantOneId,int tenant
     const string sharedNumber="SQT-SQL-001";
     var tenantOneRequestKey=Guid.NewGuid().ToString();
     int tenantOneQuotationId;
+    int tenantOneOrderId;
     int stockCount;
     int journalCount;
 
@@ -1089,8 +1090,14 @@ static async Task VerifySalesQuotationFoundationAsync(int tenantOneId,int tenant
         quotation.Send("sql-user",new DateOnly(2026,10,20));
         quotation.Accept("sql-user",new DateOnly(2026,10,20));
         await tenantOne.SaveChangesAsync();
+        var order=new SalesOrder("SO-SQL-001",quotation,new DateOnly(2026,10,20),"sql-user");
+        tenantOne.SalesOrders.Add(order);
+        await tenantOne.SaveChangesAsync();
+        tenantOneOrderId=order.Id;
+        order.Confirm("sql-user");
+        await tenantOne.SaveChangesAsync();
         if(await tenantOne.StockTransactions.CountAsync()!=stockCount||await tenantOne.JournalEntries.CountAsync()!=journalCount)
-            throw new InvalidOperationException("Sales quotation lifecycle must not mutate stock or accounting.");
+            throw new InvalidOperationException("Sales quotation and order confirmation must not mutate stock or accounting.");
     }
 
     await using(var tenantOneDuplicate=new AppDbContext(CreateOptions(connectionString),new FixedTenantContext(tenantOneId)))
@@ -1103,10 +1110,20 @@ static async Task VerifySalesQuotationFoundationAsync(int tenantOneId,int tenant
         catch(DbUpdateException){ }
     }
 
+    await using(var duplicateOrderContext=new AppDbContext(CreateOptions(connectionString),new FixedTenantContext(tenantOneId)))
+    {
+        var quotation=await duplicateOrderContext.SalesQuotations.Include(x=>x.Lines).SingleAsync(x=>x.Id==tenantOneQuotationId);
+        duplicateOrderContext.SalesOrders.Add(new SalesOrder("SO-SQL-002",quotation,new DateOnly(2026,10,20),"sql-user"));
+        try{await duplicateOrderContext.SaveChangesAsync();throw new InvalidOperationException("An accepted quotation can create only one sales order.");}
+        catch(DbUpdateException){ }
+    }
+
     await using(var tenantTwo=new AppDbContext(CreateOptions(connectionString),new FixedTenantContext(tenantTwoId)))
     {
         if(await tenantTwo.SalesQuotations.AnyAsync(x=>x.Id==tenantOneQuotationId))
             throw new InvalidOperationException("Sales quotations must be isolated by tenant.");
+        if(await tenantTwo.SalesOrders.AnyAsync(x=>x.Id==tenantOneOrderId))
+            throw new InvalidOperationException("Sales orders must be isolated by tenant.");
         var customer=await tenantTwo.Customers.FirstAsync(x=>x.IsActive);
         var product=await tenantTwo.Products.FirstAsync();
         var unit=await tenantTwo.MeasurementUnits.FirstAsync();
@@ -1115,6 +1132,14 @@ static async Task VerifySalesQuotationFoundationAsync(int tenantOneId,int tenant
         quotation.AddLine(new SalesQuotationLine(product,unit,1m,
             new SalesPriceEvaluationSnapshot(1m,1m,"JOD",null,null,"PRODUCT_CHANNEL_FALLBACK",5m,5m,5m,null,null,null,false,"NO_TAX",null,0m,5m),null));
         tenantTwo.SalesQuotations.Add(quotation);
+        await tenantTwo.SaveChangesAsync();
+        quotation.Send("sql-user",new DateOnly(2026,10,20));
+        quotation.Accept("sql-user",new DateOnly(2026,10,20));
+        await tenantTwo.SaveChangesAsync();
+        var order=new SalesOrder("SO-SQL-001",quotation,new DateOnly(2026,10,20),"sql-user");
+        tenantTwo.SalesOrders.Add(order);
+        await tenantTwo.SaveChangesAsync();
+        order.Confirm("sql-user");
         await tenantTwo.SaveChangesAsync();
     }
 }

@@ -144,6 +144,9 @@ public class AppDbContext
     public DbSet<SalesQuotation> SalesQuotations => Set<SalesQuotation>();
     public DbSet<SalesQuotationLine> SalesQuotationLines => Set<SalesQuotationLine>();
     public DbSet<SalesQuotationHistory> SalesQuotationHistories => Set<SalesQuotationHistory>();
+    public DbSet<SalesOrder> SalesOrders => Set<SalesOrder>();
+    public DbSet<SalesOrderLine> SalesOrderLines => Set<SalesOrderLine>();
+    public DbSet<SalesOrderHistory> SalesOrderHistories => Set<SalesOrderHistory>();
 
     public DbSet<DocumentSequence> DocumentSequences => Set<DocumentSequence>();
 

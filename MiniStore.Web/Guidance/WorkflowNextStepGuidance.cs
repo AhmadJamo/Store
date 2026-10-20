@@ -29,7 +29,7 @@ public static class WorkflowNextStepGuidance
 
     private static readonly HashSet<string> CustomerControllers = new(StringComparer.OrdinalIgnoreCase) { "Customers" };
 
-    private static readonly HashSet<string> SalesControllers = new(StringComparer.OrdinalIgnoreCase) { "SalesPriceLists", "SalesQuotations" };
+    private static readonly HashSet<string> SalesControllers = new(StringComparer.OrdinalIgnoreCase) { "SalesPriceLists", "SalesQuotations", "SalesOrders" };
 
     public static bool IsSupportedController(string? controller) =>
         !string.IsNullOrWhiteSpace(controller) &&
@@ -75,11 +75,30 @@ public static class WorkflowNextStepGuidance
                 "Record acceptance or rejection before the quotation validity ends.",
                 "SalesQuotations.View", Routes(("id", Route("id"))));
 
-        if (Matches(message, localize, "Sales quotation accepted.", "Sales quotation rejected.",
-                "Sales quotation expired.", "Sales quotation cancelled."))
+        if (Matches(message, localize, "Sales quotation accepted."))
+            return new("SalesQuotations", "Details", "Create sales order",
+                "The customer accepted the quotation; create the linked sales order once.",
+                "SalesOrders.Create", Routes(("id", Route("id"))));
+
+        if (Matches(message, localize, "Sales quotation rejected.", "Sales quotation expired.", "Sales quotation cancelled."))
             return new("SalesQuotations", "Index", "Review sales quotation pipeline",
                 "The quotation step is complete; review the remaining active quotations.",
                 "SalesQuotations.View", Routes());
+
+        if (Matches(message, localize, "Sales order created from accepted quotation."))
+            return new("SalesOrders", "Details", "Review and confirm sales order",
+                "Review the copied commercial snapshots, then confirm the order without changing stock.",
+                "SalesOrders.View", Routes(("id", Route("id"))));
+
+        if (Matches(message, localize, "Sales order confirmed."))
+            return new("SalesOrders", "Details", "Review confirmed sales order",
+                "The commercial commitment is complete; inventory reservation becomes available in the next phase.",
+                "SalesOrders.View", Routes(("id", Route("id"))));
+
+        if (Matches(message, localize, "Sales order cancelled."))
+            return new("SalesOrders", "Index", "Review sales order pipeline",
+                "The order is closed; review the remaining active sales orders.",
+                "SalesOrders.View", Routes());
 
         if (Matches(message, localize, "Customer created successfully.", "Customer updated successfully.", "Customer restored successfully."))
             return new("Customers", "Details", "Review customer profile", "Review the customer profile before using it in a new sale.", "Customers.View", Routes(("id", Route("id"))));

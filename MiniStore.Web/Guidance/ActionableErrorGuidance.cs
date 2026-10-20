@@ -14,7 +14,7 @@ public static class ActionableErrorGuidance
         "PurchaseApprovalRules", "PurchaseSourcing", "SupplierQuotations", "PurchaseOrders",
         "GoodsReceipts", "GoodsReceiptReturns", "VendorBills", "SupplierCreditNotes", "SupplierPayments", "SupplierCommunications",
         "PurchaseAgreements", "PurchaseTemplates", "LandedCosts", "PurchaseDocumentReversals", "PurchaseAnalytics", "SupplierIntegrations",
-        "SalesPriceLists", "SalesQuotations", "Customers"
+        "SalesPriceLists", "SalesQuotations", "SalesOrders", "Customers"
     };
 
     public static ActionableErrorLink? Resolve(
@@ -75,6 +75,12 @@ public static class ActionableErrorGuidance
                 "Selected quotation address was not found for this customer.",
                 "Selected quotation address is archived."))
             return new("Customers", "Index", "Open customers", "Customers.View");
+
+        if (Matches(message, localize,
+                "Sales quotation was not found.",
+                "Only an accepted sales quotation can be converted to a sales order.",
+                "The accepted sales quotation has no lines."))
+            return new("SalesQuotations", "Index", "Open sales quotations", "SalesQuotations.View");
 
         if (Matches(message, localize,
                 "No active approval rule matches this purchase request."))

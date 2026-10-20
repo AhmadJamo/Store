@@ -3002,4 +3002,43 @@
   <data name="Tax rate" xml:space="preserve"><value>نسبة الضريبة</value></data>
   <data name="Wholesale" xml:space="preserve"><value>بيع بالجملة</value></data>
   <data name="Created" xml:space="preserve"><value>تم الإنشاء</value></data>
+  <data name="Sales orders" xml:space="preserve"><value>طلبات البيع</value></data>
+  <data name="Review commercial commitments created from accepted quotations." xml:space="preserve"><value>راجع الالتزامات التجارية المنشأة من عروض الأسعار المقبولة.</value></data>
+  <data name="Order, quotation or customer" xml:space="preserve"><value>الطلب أو عرض السعر أو الزبون</value></data>
+  <data name="No sales orders found." xml:space="preserve"><value>لا توجد طلبات بيع.</value></data>
+  <data name="Source quotation" xml:space="preserve"><value>عرض السعر المصدر</value></data>
+  <data name="View sales order" xml:space="preserve"><value>عرض طلب البيع</value></data>
+  <data name="View source quotation" xml:space="preserve"><value>عرض عرض السعر المصدر</value></data>
+  <data name="Confirming this sales order does not reserve or reduce stock and does not create accounting entries." xml:space="preserve"><value>تأكيد طلب البيع هذا لا يحجز المخزون ولا ينقصه ولا ينشئ قيودًا محاسبية.</value></data>
+  <data name="Order terms" xml:space="preserve"><value>شروط الطلب</value></data>
+  <data name="Order lines" xml:space="preserve"><value>بنود الطلب</value></data>
+  <data name="Confirm sales order" xml:space="preserve"><value>تأكيد طلب البيع</value></data>
+  <data name="Cancel sales order" xml:space="preserve"><value>إلغاء طلب البيع</value></data>
+  <data name="Order step completed" xml:space="preserve"><value>اكتملت خطوة الطلب</value></data>
+  <data name="Confirmed — ready for inventory reservation in the next phase." xml:space="preserve"><value>تم التأكيد — جاهز لحجز المخزون في المرحلة التالية.</value></data>
+  <data name="Sales order created" xml:space="preserve"><value>تم إنشاء طلب البيع</value></data>
+  <data name="Create sales order" xml:space="preserve"><value>إنشاء طلب بيع</value></data>
+  <data name="Accepted — awaiting authorized sales order conversion." xml:space="preserve"><value>مقبول — بانتظار تحويله إلى طلب بيع من مستخدم مخوّل.</value></data>
+  <data name="Sales order created from accepted quotation." xml:space="preserve"><value>تم إنشاء طلب البيع من عرض السعر المقبول.</value></data>
+  <data name="Sales order confirmed." xml:space="preserve"><value>تم تأكيد طلب البيع.</value></data>
+  <data name="Sales order cancelled." xml:space="preserve"><value>تم إلغاء طلب البيع.</value></data>
+  <data name="Sales order number is required and cannot exceed 50 characters." xml:space="preserve"><value>رقم طلب البيع مطلوب ولا يجوز أن يتجاوز 50 حرفًا.</value></data>
+  <data name="A persisted source quotation is required." xml:space="preserve"><value>يلزم عرض سعر مصدر محفوظ.</value></data>
+  <data name="Only an accepted sales quotation can be converted to a sales order." xml:space="preserve"><value>يمكن تحويل عرض سعر مقبول فقط إلى طلب بيع.</value></data>
+  <data name="The accepted sales quotation has no lines." xml:space="preserve"><value>عرض السعر المقبول لا يحتوي على بنود.</value></data>
+  <data name="Only draft sales orders can be confirmed." xml:space="preserve"><value>يمكن تأكيد طلبات البيع المسودة فقط.</value></data>
+  <data name="A sales order must contain at least one line." xml:space="preserve"><value>يجب أن يحتوي طلب البيع على بند واحد على الأقل.</value></data>
+  <data name="The sales order is already cancelled." xml:space="preserve"><value>طلب البيع ملغي مسبقًا.</value></data>
+  <data name="A sales order cancellation reason is required and cannot exceed 500 characters." xml:space="preserve"><value>سبب إلغاء طلب البيع مطلوب ولا يجوز أن يتجاوز 500 حرف.</value></data>
+  <data name="A persisted quotation line is required." xml:space="preserve"><value>يلزم بند عرض سعر محفوظ.</value></data>
+  <data name="Sales order was not found." xml:space="preserve"><value>طلب البيع غير موجود.</value></data>
+  <data name="Sales order was modified by another user. Reload and try again." xml:space="preserve"><value>عُدّل طلب البيع بواسطة مستخدم آخر. أعد تحميل الصفحة وحاول مجددًا.</value></data>
+  <data name="The customer accepted the quotation; create the linked sales order once." xml:space="preserve"><value>قبل الزبون عرض السعر؛ أنشئ طلب البيع المرتبط مرة واحدة.</value></data>
+  <data name="Review and confirm sales order" xml:space="preserve"><value>مراجعة طلب البيع وتأكيده</value></data>
+  <data name="Review the copied commercial snapshots, then confirm the order without changing stock." xml:space="preserve"><value>راجع اللقطات التجارية المنسوخة، ثم أكد الطلب دون تغيير المخزون.</value></data>
+  <data name="Review confirmed sales order" xml:space="preserve"><value>مراجعة طلب البيع المؤكد</value></data>
+  <data name="The commercial commitment is complete; inventory reservation becomes available in the next phase." xml:space="preserve"><value>اكتمل الالتزام التجاري؛ يصبح حجز المخزون متاحًا في المرحلة التالية.</value></data>
+  <data name="Review sales order pipeline" xml:space="preserve"><value>مراجعة مسار طلبات البيع</value></data>
+  <data name="The order is closed; review the remaining active sales orders." xml:space="preserve"><value>أُغلق الطلب؛ راجع طلبات البيع النشطة المتبقية.</value></data>
+  <data name="Open sales quotations" xml:space="preserve"><value>فتح عروض أسعار المبيعات</value></data>
 </root>

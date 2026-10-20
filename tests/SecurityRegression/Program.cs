@@ -561,6 +561,34 @@ Check(salesQuotation.Status==SalesQuotationStatus.Accepted&&salesQuotation.Total
 CheckThrows(()=>salesQuotation.Accept("user",new DateOnly(2026,10,20)),"Completed sales quotation actions must not be repeated");
 Check(TenantIsolationModel.TenantOwnedTypes.Contains(typeof(SalesQuotation))&&TenantIsolationModel.TenantOwnedTypes.Contains(typeof(SalesQuotationLine))&&TenantIsolationModel.TenantOwnedTypes.Contains(typeof(SalesQuotationHistory)),
     "Sales quotation headers, lines and history must be tenant owned");
+Check(PermissionDefinitions.All.Count(x=>x.Name.StartsWith("SalesOrders.",StringComparison.Ordinal))==4,
+    "Sales orders must separate view, source conversion, confirmation and cancellation permissions");
+var salesOrderController=typeof(SalesOrdersController);
+Check(salesOrderController.GetMethod(nameof(SalesOrdersController.Index))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SalesOrders.View"&&
+      salesOrderController.GetMethod(nameof(SalesOrdersController.Details))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SalesOrders.View"&&
+      salesOrderController.GetMethod(nameof(SalesOrdersController.CreateFromQuotation))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SalesOrders.Create"&&
+      salesOrderController.GetMethod(nameof(SalesOrdersController.Confirm))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SalesOrders.Confirm"&&
+      salesOrderController.GetMethod(nameof(SalesOrdersController.Cancel))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SalesOrders.Cancel",
+    "Sales order endpoints must enforce their dedicated server-side permissions");
+Check(salesOrderController.GetMethods().Where(x=>x.GetCustomAttribute<HttpPostAttribute>() is not null)
+      .All(x=>x.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null),
+    "Every sales order mutation must require antiforgery validation");
+typeof(SalesQuotation).GetProperty(nameof(SalesQuotation.Id))!.SetValue(salesQuotation,71);
+typeof(SalesQuotationLine).GetProperty(nameof(SalesQuotationLine.Id))!.SetValue(salesQuotation.Lines.Single(),72);
+var salesOrder=new SalesOrder("SO-000001",salesQuotation,new DateOnly(2026,10,20),"user");
+salesOrder.Confirm("user");
+Check(salesOrder.Status==SalesOrderStatus.Confirmed&&salesOrder.SourceQuotationId==71&&salesOrder.SourceQuotationNumber=="SQT-000001"&&
+      salesOrder.TotalAmount==salesQuotation.TotalAmount&&salesOrder.Lines.Single().SourceQuotationLineId==72&&salesOrder.History.Count==2,
+    "Sales orders must copy accepted quotation snapshots and confirm without recalculation");
+CheckThrows(()=>salesOrder.Confirm("user"),"A confirmed sales order must not be confirmed twice");
+salesOrder.Cancel("user","Customer withdrew before reservation");
+Check(salesOrder.Status==SalesOrderStatus.Cancelled&&salesOrder.History.Count==3,
+    "A sales order without downstream inventory may be cancelled with immutable reason evidence");
+foreach(var type in new[]{typeof(SalesOrder),typeof(SalesOrderLine),typeof(SalesOrderHistory)})
+    Check(TenantIsolationModel.TenantOwnedTypes.Contains(type)&&db.Model.FindEntityType(type)!.FindProperty("TenantId") is {IsNullable:false},
+        $"{type.Name} must be tenant owned");
+Check(DocumentSequence.CreateDefault(DocumentNumberType.SalesOrder).Preview(DateTime.Today).StartsWith("SO-"),
+    "Sales orders must use an independent centralized SO document sequence");
 
 var customerMaster = new Customer("CUS-000001", "Acme Customer", 1);
 customerMaster.UpdateProfile(CustomerType.Company, "Acme Customer", "Acme Legal", "+962790000000",
@@ -2292,6 +2320,18 @@ var salesQuotationDraftNextStep=WorkflowNextStepGuidance.Resolve(
     "Sales quotation draft created.","SalesQuotations",new Dictionary<string,string?>{{"id","15"}});
 Check(salesQuotationDraftNextStep is {Controller:"SalesQuotations",Action:"Details",RequiredPermission:"SalesQuotations.View"}&&salesQuotationDraftNextStep.RouteValues.GetValueOrDefault("id")=="15",
     "Created sales quotation drafts must guide the user to review and send them");
+var salesQuotationAcceptedNextStep=WorkflowNextStepGuidance.Resolve(
+    "Sales quotation accepted.","SalesQuotations",new Dictionary<string,string?>{{"id","15"}});
+Check(salesQuotationAcceptedNextStep is {Controller:"SalesQuotations",Action:"Details",RequiredPermission:"SalesOrders.Create"}&&salesQuotationAcceptedNextStep.RouteValues.GetValueOrDefault("id")=="15",
+    "Accepted quotations must guide an authorized user to the one-time sales-order conversion");
+var salesOrderCreatedNextStep=WorkflowNextStepGuidance.Resolve(
+    "Sales order created from accepted quotation.","SalesOrders",new Dictionary<string,string?>{{"id","25"}});
+Check(salesOrderCreatedNextStep is {Controller:"SalesOrders",Action:"Details",RequiredPermission:"SalesOrders.View"}&&salesOrderCreatedNextStep.RouteValues.GetValueOrDefault("id")=="25",
+    "Created sales orders must guide the user to review and confirm them");
+Check(ActionableErrorGuidance.Resolve(
+          "Only an accepted sales quotation can be converted to a sales order.",
+          "SalesOrders") is {Controller:"SalesQuotations",Action:"Index",RequiredPermission:"SalesQuotations.View"},
+    "Sales-order source errors must link back to sales quotations");
 var salesPriceListNextStep = WorkflowNextStepGuidance.Resolve(
     "Price list created successfully.", "SalesPriceLists",
     new Dictionary<string, string?> { ["id"] = "12" });

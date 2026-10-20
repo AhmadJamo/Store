@@ -1,0 +1,34 @@
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
+using MiniStore.Application.Dtos.Sales;
+using MiniStore.Application.Services;
+using MiniStore.Domain.Entities;
+using MiniStore.Web.Authorization;
+
+namespace MiniStore.Web.Controllers;
+
+public sealed class SalesOrdersController(SalesOrderService service,IStringLocalizer<SharedResource> localizer):Controller
+{
+    [HttpGet,PermissionAuthorize("SalesOrders.View")]
+    public async Task<IActionResult> Index(SalesOrderStatus? status,string? search)
+    {ViewBag.Status=status;ViewBag.Search=search;return View(await service.GetAllAsync(status,search));}
+
+    [HttpGet,PermissionAuthorize("SalesOrders.View")]
+    public async Task<IActionResult> Details(int id){var dto=await service.GetAsync(id);return dto is null?NotFound():View(dto);}
+
+    [HttpPost,ValidateAntiForgeryToken,PermissionAuthorize("SalesOrders.Create")]
+    public async Task<IActionResult> CreateFromQuotation(ConvertSalesQuotationDto dto)
+    {
+        try{var id=await service.CreateFromQuotationAsync(dto);Notify("success","Sales order created from accepted quotation.");return RedirectToAction(nameof(Details),new{id});}
+        catch(Exception ex)when(ex is ArgumentException or InvalidOperationException){Notify("danger",ex.Message);return RedirectToAction("Details","SalesQuotations",new{id=dto.QuotationId});}
+    }
+
+    [HttpPost,ValidateAntiForgeryToken,PermissionAuthorize("SalesOrders.Confirm")]
+    public Task<IActionResult> Confirm(SalesOrderStatusCommandDto dto)=>Change(dto,service.ConfirmAsync,"Sales order confirmed.");
+    [HttpPost,ValidateAntiForgeryToken,PermissionAuthorize("SalesOrders.Cancel")]
+    public Task<IActionResult> Cancel(SalesOrderStatusCommandDto dto)=>Change(dto,service.CancelAsync,"Sales order cancelled.");
+
+    private async Task<IActionResult> Change(SalesOrderStatusCommandDto dto,Func<SalesOrderStatusCommandDto,Task> command,string success)
+    {try{await command(dto);Notify("success",success);}catch(Exception ex)when(ex is ArgumentException or InvalidOperationException){Notify("danger",ex.Message);}return RedirectToAction(nameof(Details),new{id=dto.Id});}
+    private void Notify(string type,string key){TempData["NotificationType"]=type;TempData["NotificationMessage"]=localizer[key].Value;}
+}

@@ -6587,6 +6587,354 @@ namespace MiniStore.Infrastructure.Migrations
                     b.ToTable("SaleItems", (string)null);
                 });
 
+            modelBuilder.Entity("MiniStore.Domain.Entities.SalesOrder", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AddressLabel")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("AddressLine1")
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<string>("AddressLine2")
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<string>("City")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("ConfirmedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ConfirmedByUserId")
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("CountryCode")
+                        .HasMaxLength(2)
+                        .HasColumnType("nvarchar(2)");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedByUserId")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("CurrencyCode")
+                        .IsRequired()
+                        .HasMaxLength(3)
+                        .HasColumnType("nvarchar(3)");
+
+                    b.Property<int?>("CustomerAddressId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("CustomerCode")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<int>("CustomerId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("CustomerLegalName")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("CustomerName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("CustomerTaxNumber")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<decimal>("ExchangeRate")
+                        .HasPrecision(24, 12)
+                        .HasColumnType("decimal(24,12)");
+
+                    b.Property<DateOnly>("ExchangeRateDate")
+                        .HasColumnType("date");
+
+                    b.Property<string>("ExchangeRateSource")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<decimal>("NetAmount")
+                        .HasPrecision(24, 8)
+                        .HasColumnType("decimal(24,8)");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<DateOnly>("OrderDate")
+                        .HasColumnType("date");
+
+                    b.Property<string>("OrderNumber")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<int>("PaymentTermDays")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PostalCode")
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<int>("SourceQuotationId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SourceQuotationNumber")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("StateOrProvince")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("TaxAmount")
+                        .HasPrecision(24, 8)
+                        .HasColumnType("decimal(24,8)");
+
+                    b.Property<int>("TenantId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("TotalAmount")
+                        .HasPrecision(24, 8)
+                        .HasColumnType("decimal(24,8)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TenantId");
+
+                    b.HasIndex("CustomerAddressId", "TenantId");
+
+                    b.HasIndex("CustomerId", "TenantId");
+
+                    b.HasIndex("SourceQuotationId", "TenantId");
+
+                    b.HasIndex("Status", "CreatedAtUtc");
+
+                    b.HasIndex("TenantId", "OrderNumber")
+                        .IsUnique();
+
+                    b.HasIndex("TenantId", "SourceQuotationId")
+                        .IsUnique();
+
+                    b.ToTable("SalesOrders");
+                });
+
+            modelBuilder.Entity("MiniStore.Domain.Entities.SalesOrderHistory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Action")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("FromStatus")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Reason")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int>("SalesOrderId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TenantId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ToStatus")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TenantId");
+
+                    b.HasIndex("SalesOrderId", "CreatedAtUtc");
+
+                    b.HasIndex("SalesOrderId", "TenantId");
+
+                    b.ToTable("SalesOrderHistories");
+                });
+
+            modelBuilder.Entity("MiniStore.Domain.Entities.SalesOrderLine", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("CompanyUnitPrice")
+                        .HasPrecision(24, 8)
+                        .HasColumnType("decimal(24,8)");
+
+                    b.Property<string>("CurrencyCode")
+                        .IsRequired()
+                        .HasMaxLength(3)
+                        .HasColumnType("nvarchar(3)");
+
+                    b.Property<bool>("IsTaxInclusive")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("MeasurementUnitId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("NetAmount")
+                        .HasPrecision(24, 8)
+                        .HasColumnType("decimal(24,8)");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("PriceSourceCode")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("nvarchar(80)");
+
+                    b.Property<string>("ProductCode")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ProductName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<decimal>("Quantity")
+                        .HasPrecision(24, 6)
+                        .HasColumnType("decimal(24,6)");
+
+                    b.Property<int>("SalesOrderId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("SalesPriceListId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("SalesPriceRuleId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SourceQuotationLineId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("StockQuantity")
+                        .HasPrecision(24, 6)
+                        .HasColumnType("decimal(24,6)");
+
+                    b.Property<decimal>("TaxAmount")
+                        .HasPrecision(24, 8)
+                        .HasColumnType("decimal(24,8)");
+
+                    b.Property<string>("TaxExemptionReason")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("TaxName")
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<int?>("TaxRateId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal?>("TaxRatePercent")
+                        .HasPrecision(9, 4)
+                        .HasColumnType("decimal(9,4)");
+
+                    b.Property<string>("TaxSourceCode")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("nvarchar(80)");
+
+                    b.Property<int>("TenantId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("TotalAmount")
+                        .HasPrecision(24, 8)
+                        .HasColumnType("decimal(24,8)");
+
+                    b.Property<string>("UnitCode")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<decimal>("UnitFactorToStock")
+                        .HasPrecision(24, 12)
+                        .HasColumnType("decimal(24,12)");
+
+                    b.Property<string>("UnitName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<decimal>("UnitPrice")
+                        .HasPrecision(24, 8)
+                        .HasColumnType("decimal(24,8)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TenantId");
+
+                    b.HasIndex("MeasurementUnitId", "TenantId");
+
+                    b.HasIndex("ProductId", "TenantId");
+
+                    b.HasIndex("SalesOrderId", "TenantId");
+
+                    b.HasIndex("SalesPriceListId", "TenantId");
+
+                    b.HasIndex("SalesPriceRuleId", "TenantId");
+
+                    b.HasIndex("SourceQuotationLineId", "TenantId");
+
+                    b.HasIndex("TaxRateId", "TenantId");
+
+                    b.HasIndex("TenantId", "SourceQuotationLineId")
+                        .IsUnique();
+
+                    b.ToTable("SalesOrderLines");
+                });
+
             modelBuilder.Entity("MiniStore.Domain.Entities.SalesPriceList", b =>
                 {
                     b.Property<int>("Id")
@@ -12059,6 +12407,106 @@ namespace MiniStore.Infrastructure.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("MiniStore.Domain.Entities.SalesOrder", b =>
+                {
+                    b.HasOne("MiniStore.Domain.Entities.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MiniStore.Domain.Entities.CustomerAddress", null)
+                        .WithMany()
+                        .HasForeignKey("CustomerAddressId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("MiniStore.Domain.Entities.Customer", null)
+                        .WithMany()
+                        .HasForeignKey("CustomerId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MiniStore.Domain.Entities.SalesQuotation", null)
+                        .WithMany()
+                        .HasForeignKey("SourceQuotationId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("MiniStore.Domain.Entities.SalesOrderHistory", b =>
+                {
+                    b.HasOne("MiniStore.Domain.Entities.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MiniStore.Domain.Entities.SalesOrder", null)
+                        .WithMany("History")
+                        .HasForeignKey("SalesOrderId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("MiniStore.Domain.Entities.SalesOrderLine", b =>
+                {
+                    b.HasOne("MiniStore.Domain.Entities.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MiniStore.Domain.Entities.MeasurementUnit", null)
+                        .WithMany()
+                        .HasForeignKey("MeasurementUnitId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MiniStore.Domain.Entities.Product", null)
+                        .WithMany()
+                        .HasForeignKey("ProductId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MiniStore.Domain.Entities.SalesOrder", null)
+                        .WithMany("Lines")
+                        .HasForeignKey("SalesOrderId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MiniStore.Domain.Entities.SalesPriceList", null)
+                        .WithMany()
+                        .HasForeignKey("SalesPriceListId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("MiniStore.Domain.Entities.SalesPriceRule", null)
+                        .WithMany()
+                        .HasForeignKey("SalesPriceRuleId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("MiniStore.Domain.Entities.SalesQuotationLine", null)
+                        .WithMany()
+                        .HasForeignKey("SourceQuotationLineId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MiniStore.Domain.Entities.TaxRate", null)
+                        .WithMany()
+                        .HasForeignKey("TaxRateId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict);
+                });
+
             modelBuilder.Entity("MiniStore.Domain.Entities.SalesPriceList", b =>
                 {
                     b.HasOne("MiniStore.Domain.Entities.Tenant", null)
@@ -13205,6 +13653,13 @@ namespace MiniStore.Infrastructure.Migrations
             modelBuilder.Entity("MiniStore.Domain.Entities.Sale", b =>
                 {
                     b.Navigation("Items");
+                });
+
+            modelBuilder.Entity("MiniStore.Domain.Entities.SalesOrder", b =>
+                {
+                    b.Navigation("History");
+
+                    b.Navigation("Lines");
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.SalesPriceList", b =>

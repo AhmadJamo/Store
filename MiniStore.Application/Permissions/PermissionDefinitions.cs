@@ -194,6 +194,10 @@ public static class PermissionDefinitions
         new("SalesQuotations.Accept", "Accept Sales Quotation", "Sales"),
         new("SalesQuotations.Reject", "Reject Sales Quotation", "Sales"),
         new("SalesQuotations.Cancel", "Cancel Sales Quotation", "Sales"),
+        new("SalesOrders.View", "View Sales Orders", "Sales"),
+        new("SalesOrders.Create", "Create Sales Order", "Sales"),
+        new("SalesOrders.Confirm", "Confirm Sales Order", "Sales"),
+        new("SalesOrders.Cancel", "Cancel Sales Order", "Sales"),
         new("SalesReturns.View", "View Sales Returns", "Sales Returns"),
         new("SalesReturns.Create", "Create Sales Return", "Sales Returns"),
 

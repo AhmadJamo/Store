@@ -6,14 +6,14 @@ namespace MiniStore.Application.Services;
 
 public sealed class SalesQuotationService(ISalesQuotationRepository quotations, ICustomerRepository customers,
     IProductRepository products, IMeasurementUnitRepository units, SalesPriceListService pricing,
-    DocumentNumberService numbers, IUnitOfWork unitOfWork, ICurrentUserService currentUser)
+    ISalesOrderRepository orders, DocumentNumberService numbers, IUnitOfWork unitOfWork, ICurrentUserService currentUser)
 {
     public async Task<List<SalesQuotationSummaryDto>> GetAllAsync(SalesQuotationStatus? status, string? search) =>
         (await quotations.GetAllAsync(status, search)).Select(x => new SalesQuotationSummaryDto(x.Id, x.QuotationNumber,
             x.CustomerCode, x.CustomerName, x.QuotationDate, x.ValidUntil, x.CurrencyCode, x.TotalAmount, x.Status)).ToList();
 
     public async Task<SalesQuotationDetailsDto?> GetAsync(int id)
-    { var quotation = await quotations.GetByIdAsync(id); return quotation is null ? null : Map(quotation); }
+    { var quotation = await quotations.GetByIdAsync(id); if(quotation is null)return null;var order=await orders.GetBySourceQuotationIdAsync(id);return Map(quotation,order?.Id); }
 
     public async Task<SalesQuotationCreatePageDto> GetCreatePageAsync(CreateSalesQuotationDto? form = null)
     {
@@ -93,14 +93,14 @@ public sealed class SalesQuotationService(ISalesQuotationRepository quotations, 
     { var quotation = await quotations.GetByIdAsync(dto.Id) ?? throw new InvalidOperationException("Sales quotation was not found."); EnsureVersion(quotation.RowVersion, dto.RowVersion); action(quotation); });
     private static void EnsureVersion(byte[] current, byte[] submitted) { if (submitted.Length == 0 || !current.SequenceEqual(submitted)) throw new InvalidOperationException("Sales quotation was modified by another user. Reload and try again."); }
     private static string FormatAddress(CustomerAddress x) => $"{x.Label}: {x.AddressLine1}{(x.AddressLine2 is null ? "" : ", " + x.AddressLine2)}, {x.City}{(x.StateOrProvince is null ? "" : ", " + x.StateOrProvince)} {x.PostalCode}, {x.CountryCode}";
-    private static SalesQuotationDetailsDto Map(SalesQuotation x) => new()
+    private static SalesQuotationDetailsDto Map(SalesQuotation x,int? salesOrderId) => new()
     {
         Id = x.Id, QuotationNumber = x.QuotationNumber, Status = x.Status, CustomerCode = x.CustomerCode, CustomerName = x.CustomerName,
         CustomerLegalName = x.CustomerLegalName, CustomerTaxNumber = x.CustomerTaxNumber,
         Address = x.AddressLine1 is null ? null : $"{x.AddressLabel}: {x.AddressLine1}{(x.AddressLine2 is null ? "" : ", " + x.AddressLine2)}, {x.City}{(x.StateOrProvince is null ? "" : ", " + x.StateOrProvince)} {x.PostalCode}, {x.CountryCode}",
         QuotationDate = x.QuotationDate, ValidUntil = x.ValidUntil, CurrencyCode = x.CurrencyCode, ExchangeRate = x.ExchangeRate,
         ExchangeRateDate = x.ExchangeRateDate, ExchangeRateSource = x.ExchangeRateSource, PaymentTermDays = x.PaymentTermDays, Notes = x.Notes,
-        NetAmount = x.NetAmount, TaxAmount = x.TaxAmount, TotalAmount = x.TotalAmount, CreatedByUserId = x.CreatedByUserId, CreatedAtUtc = x.CreatedAtUtc, RowVersion = x.RowVersion,
+        NetAmount = x.NetAmount, TaxAmount = x.TaxAmount, TotalAmount = x.TotalAmount, CreatedByUserId = x.CreatedByUserId, CreatedAtUtc = x.CreatedAtUtc, RowVersion = x.RowVersion, SalesOrderId=salesOrderId,
         Lines = x.Lines.Select(l => new SalesQuotationLineDto(l.Id, l.ProductCode, l.ProductName, l.UnitCode, l.UnitName, l.Quantity, l.StockQuantity,
             l.UnitPrice, l.CompanyUnitPrice, l.NetAmount, l.PriceSourceCode, l.TaxName, l.TaxRatePercent, l.IsTaxInclusive, l.TaxSourceCode, l.TaxAmount, l.TotalAmount, l.Notes)).ToList(),
         History = x.History.OrderBy(h => h.CreatedAtUtc).Select(h => new SalesQuotationHistoryDto(h.FromStatus, h.ToStatus, h.Action, h.UserId, h.Reason, h.CreatedAtUtc)).ToList()
