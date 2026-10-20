@@ -65,6 +65,9 @@ Read-only WMS-040 availability screen protected by `InventoryBalances.View`. Pro
 ## InventoryReservationsController
 Read-only WMS-050 reservation history protected by `InventoryReservations.View`. Filtering and projection remain in the Application service.
 
+## SalesOrdersController
+SAL-040 list/detail, one-time quotation conversion, confirmation and cancellation plus SAL-050 reservation history/create/release endpoints. The GET reservation page requires SalesOrders.View; mutations use separate Reserve and ReleaseReservation permissions and antiforgery. The controller delegates all order, balance, warehouse/location and cumulative-quantity rules to Application services.
+
 ## InventoryAdjustmentsController
 WMS-060 list/create/details plus antiforgery-protected Count, Approve, Post and Cancel actions. Each mutation has a dedicated permission and delegates all rules to the Application service.
 

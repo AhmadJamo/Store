@@ -7,7 +7,8 @@ using MiniStore.Web.Authorization;
 
 namespace MiniStore.Web.Controllers;
 
-public sealed class SalesOrdersController(SalesOrderService service,IStringLocalizer<SharedResource> localizer):Controller
+public sealed class SalesOrdersController(SalesOrderService service,SalesOrderReservationService reservationService,
+    IStringLocalizer<SharedResource> localizer):Controller
 {
     [HttpGet,PermissionAuthorize("SalesOrders.View")]
     public async Task<IActionResult> Index(SalesOrderStatus? status,string? search)
@@ -27,6 +28,26 @@ public sealed class SalesOrdersController(SalesOrderService service,IStringLocal
     public Task<IActionResult> Confirm(SalesOrderStatusCommandDto dto)=>Change(dto,service.ConfirmAsync,"Sales order confirmed.");
     [HttpPost,ValidateAntiForgeryToken,PermissionAuthorize("SalesOrders.Cancel")]
     public Task<IActionResult> Cancel(SalesOrderStatusCommandDto dto)=>Change(dto,service.CancelAsync,"Sales order cancelled.");
+
+    [HttpGet,PermissionAuthorize("SalesOrders.View")]
+    public async Task<IActionResult> Reserve(int id)
+    {var dto=await reservationService.GetPageAsync(id);return dto is null?NotFound():View(dto);}
+
+    [HttpPost,ValidateAntiForgeryToken,PermissionAuthorize("SalesOrders.Reserve")]
+    public async Task<IActionResult> Reserve(CreateSalesOrderReservationDto dto)
+    {
+        try{await reservationService.ReserveAsync(dto);Notify("success","Sales order inventory reserved.");}
+        catch(Exception ex)when(ex is ArgumentException or InvalidOperationException){Notify("danger",ex.Message);}
+        return RedirectToAction(nameof(Reserve),new{id=dto.SalesOrderId});
+    }
+
+    [HttpPost,ValidateAntiForgeryToken,PermissionAuthorize("SalesOrders.ReleaseReservation")]
+    public async Task<IActionResult> ReleaseReservation(ReleaseSalesOrderReservationDto dto)
+    {
+        try{await reservationService.ReleaseAsync(dto);Notify("success","Sales order inventory reservation released.");}
+        catch(Exception ex)when(ex is ArgumentException or InvalidOperationException){Notify("danger",ex.Message);}
+        return RedirectToAction(nameof(Reserve),new{id=dto.SalesOrderId});
+    }
 
     private async Task<IActionResult> Change(SalesOrderStatusCommandDto dto,Func<SalesOrderStatusCommandDto,Task> command,string success)
     {try{await command(dto);Notify("success",success);}catch(Exception ex)when(ex is ArgumentException or InvalidOperationException){Notify("danger",ex.Message);}return RedirectToAction(nameof(Details),new{id=dto.Id});}

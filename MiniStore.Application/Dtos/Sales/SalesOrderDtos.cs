@@ -14,6 +14,7 @@ public sealed class SalesOrderDetailsDto
     public DateOnly OrderDate{get;init;} public string CurrencyCode{get;init;}=""; public decimal ExchangeRate{get;init;} public DateOnly ExchangeRateDate{get;init;} public string ExchangeRateSource{get;init;}=""; public int PaymentTermDays{get;init;} public string? Notes{get;init;}
     public decimal NetAmount{get;init;} public decimal TaxAmount{get;init;} public decimal TotalAmount{get;init;} public string CreatedByUserId{get;init;}=""; public DateTime CreatedAtUtc{get;init;} public string? ConfirmedByUserId{get;init;} public DateTime? ConfirmedAtUtc{get;init;} public byte[] RowVersion{get;init;}=[];
     public List<SalesOrderLineDto> Lines{get;init;}=[]; public List<SalesOrderHistoryDto> History{get;init;}=[];
+    public SalesOrderReservationSummaryDto Reservation{get;set;}=new();
 }
 
 public sealed class ConvertSalesQuotationDto

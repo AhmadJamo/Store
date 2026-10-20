@@ -3041,4 +3041,65 @@
   <data name="Review sales order pipeline" xml:space="preserve"><value>مراجعة مسار طلبات البيع</value></data>
   <data name="The order is closed; review the remaining active sales orders." xml:space="preserve"><value>أُغلق الطلب؛ راجع طلبات البيع النشطة المتبقية.</value></data>
   <data name="Open sales quotations" xml:space="preserve"><value>فتح عروض أسعار المبيعات</value></data>
+  <data name="Sales order inventory reservation" xml:space="preserve"><value>حجز مخزون طلب البيع</value></data>
+  <data name="Back to sales order" xml:space="preserve"><value>العودة إلى طلب البيع</value></data>
+  <data name="A reservation reduces available stock only. It does not reduce on-hand stock and does not create accounting entries." xml:space="preserve"><value>الحجز ينقص المخزون المتاح فقط، ولا ينقص الرصيد الفعلي ولا ينشئ قيودًا محاسبية.</value></data>
+  <data name="Required stock quantity" xml:space="preserve"><value>كمية المخزون المطلوبة</value></data>
+  <data name="Reserved stock quantity" xml:space="preserve"><value>كمية المخزون المحجوزة</value></data>
+  <data name="Remaining stock quantity" xml:space="preserve"><value>كمية المخزون المتبقية</value></data>
+  <data name="Reservation progress by order line" xml:space="preserve"><value>تقدم الحجز حسب بند الطلب</value></data>
+  <data name="Remaining" xml:space="preserve"><value>المتبقي</value></data>
+  <data name="Reservation completed" xml:space="preserve"><value>اكتمل الحجز</value></data>
+  <data name="Inventory reservation" xml:space="preserve"><value>حجز المخزون</value></data>
+  <data name="Inventory reservation is complete. The next step is delivery preparation." xml:space="preserve"><value>اكتمل حجز المخزون. الخطوة التالية هي تجهيز التسليم.</value></data>
+  <data name="Only a confirmed non-cancelled sales order can reserve inventory." xml:space="preserve"><value>لا يمكن حجز المخزون إلا لطلب بيع مؤكد وغير ملغي.</value></data>
+  <data name="Reserve remaining quantity" xml:space="preserve"><value>حجز الكمية المتبقية</value></data>
+  <data name="Storage location" xml:space="preserve"><value>موقع التخزين</value></data>
+  <data name="Unassigned stock position" xml:space="preserve"><value>موضع المخزون غير المخصص</value></data>
+  <data name="Only active reservable locations in the selected warehouse can be used." xml:space="preserve"><value>يمكن استخدام المواقع النشطة والقابلة للحجز داخل المستودع المحدد فقط.</value></data>
+  <data name="Shortage policy" xml:space="preserve"><value>سياسة النقص</value></data>
+  <data name="Block the entire reservation if stock is insufficient" xml:space="preserve"><value>منع عملية الحجز كاملة إذا كان المخزون غير كافٍ</value></data>
+  <data name="Reserve available quantity and leave the remainder waiting" xml:space="preserve"><value>حجز الكمية المتاحة وترك المتبقي في الانتظار</value></data>
+  <data name="Stock quantity to reserve" xml:space="preserve"><value>كمية المخزون المراد حجزها</value></data>
+  <data name="Maximum remaining" xml:space="preserve"><value>الحد الأقصى المتبقي</value></data>
+  <data name="Create inventory reservation" xml:space="preserve"><value>إنشاء حجز مخزون</value></data>
+  <data name="Ask an authorized user to reserve the remaining inventory." xml:space="preserve"><value>اطلب من مستخدم مخوّل حجز المخزون المتبقي.</value></data>
+  <data name="Available stock positions" xml:space="preserve"><value>مواضع المخزون المتاحة</value></data>
+  <data name="No inventory balance exists for the products on this order." xml:space="preserve"><value>لا يوجد رصيد مخزون لمنتجات هذا الطلب.</value></data>
+  <data name="Reservation history" xml:space="preserve"><value>سجل الحجوزات</value></data>
+  <data name="Release reservation" xml:space="preserve"><value>تحرير الحجز</value></data>
+  <data name="Reservation step completed" xml:space="preserve"><value>اكتملت خطوة الحجز</value></data>
+  <data name="No sales order reservations have been created." xml:space="preserve"><value>لم تُنشأ حجوزات لطلب البيع بعد.</value></data>
+  <data name="Reserve remaining inventory" xml:space="preserve"><value>حجز المخزون المتبقي</value></data>
+  <data name="View reservation history" xml:space="preserve"><value>عرض سجل الحجوزات</value></data>
+  <data name="Confirming this sales order does not reserve or reduce stock and does not create accounting entries. Inventory reservation is a separate next step." xml:space="preserve"><value>تأكيد طلب البيع لا يحجز المخزون ولا ينقصه ولا ينشئ قيودًا محاسبية. حجز المخزون خطوة مستقلة تالية.</value></data>
+  <data name="Sales order inventory reserved." xml:space="preserve"><value>تم حجز مخزون طلب البيع.</value></data>
+  <data name="Sales order inventory reservation released." xml:space="preserve"><value>تم تحرير حجز مخزون طلب البيع.</value></data>
+  <data name="Selected reservation shortage policy is invalid." xml:space="preserve"><value>سياسة نقص الحجز المحددة غير صالحة.</value></data>
+  <data name="Selected reservation warehouse was not found." xml:space="preserve"><value>مستودع الحجز المحدد غير موجود.</value></data>
+  <data name="The reservation source location was not found." xml:space="preserve"><value>موقع مصدر الحجز غير موجود.</value></data>
+  <data name="The reservation source location must belong to the selected warehouse." xml:space="preserve"><value>يجب أن ينتمي موقع مصدر الحجز إلى المستودع المحدد.</value></data>
+  <data name="The selected source location does not allow reservations." xml:space="preserve"><value>موقع المصدر المحدد لا يسمح بالحجوزات.</value></data>
+  <data name="Reservation lines are required and cannot be duplicated." xml:space="preserve"><value>بنود الحجز مطلوبة ولا يجوز تكرارها.</value></data>
+  <data name="A reservation line does not belong to this sales order." xml:space="preserve"><value>أحد بنود الحجز لا ينتمي إلى طلب البيع هذا.</value></data>
+  <data name="Reservation quantity cannot exceed the remaining sales order quantity." xml:space="preserve"><value>لا يجوز أن تتجاوز كمية الحجز الكمية المتبقية في طلب البيع.</value></data>
+  <data name="No available quantity can be reserved for the selected sales order lines." xml:space="preserve"><value>لا توجد كمية متاحة يمكن حجزها لبنود طلب البيع المحددة.</value></data>
+  <data name="Inventory reservation was not found." xml:space="preserve"><value>حجز المخزون غير موجود.</value></data>
+  <data name="Inventory reservation does not belong to this sales order." xml:space="preserve"><value>حجز المخزون لا ينتمي إلى طلب البيع هذا.</value></data>
+  <data name="Only an active reservation can be released." xml:space="preserve"><value>يمكن تحرير الحجز النشط فقط.</value></data>
+  <data name="Reservation must contain at least one positive quantity." xml:space="preserve"><value>يجب أن يحتوي الحجز على كمية موجبة واحدة على الأقل.</value></data>
+  <data name="The inventory balance required for this reservation was not found." xml:space="preserve"><value>رصيد المخزون المطلوب لهذا الحجز غير موجود.</value></data>
+  <data name="Insufficient available stock." xml:space="preserve"><value>المخزون المتاح غير كافٍ.</value></data>
+  <data name="Unknown warehouse" xml:space="preserve"><value>مستودع غير معروف</value></data>
+  <data name="Unknown location" xml:space="preserve"><value>موقع غير معروف</value></data>
+  <data name="Unknown product" xml:space="preserve"><value>منتج غير معروف</value></data>
+  <data name="Multiple warehouses" xml:space="preserve"><value>عدة مستودعات</value></data>
+  <data name="Multiple locations" xml:space="preserve"><value>عدة مواقع</value></data>
+  <data name="Reserve sales order inventory" xml:space="preserve"><value>حجز مخزون طلب البيع</value></data>
+  <data name="Choose the warehouse and reservable position, then reserve all or part of the remaining quantity." xml:space="preserve"><value>اختر المستودع والموضع القابل للحجز، ثم احجز كل الكمية المتبقية أو جزءًا منها.</value></data>
+  <data name="Review inventory reservation" xml:space="preserve"><value>مراجعة حجز المخزون</value></data>
+  <data name="Review the reserved and remaining quantities. Reserve another position only when quantity is still waiting." xml:space="preserve"><value>راجع الكميات المحجوزة والمتبقية، واحجز من موضع آخر فقط عند بقاء كمية في الانتظار.</value></data>
+  <data name="Reserve inventory again" xml:space="preserve"><value>إعادة حجز المخزون</value></data>
+  <data name="The released quantity is available again; create a new reservation only when the order still requires it." xml:space="preserve"><value>أصبحت الكمية المحررة متاحة مجددًا؛ أنشئ حجزًا جديدًا فقط إذا كان الطلب ما يزال يحتاجها.</value></data>
+  <data name="Review inventory availability" xml:space="preserve"><value>مراجعة توفر المخزون</value></data>
 </root>

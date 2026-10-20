@@ -10,6 +10,12 @@ public sealed class InventoryReservationRepository(AppDbContext context) : IInve
     public Task<InventoryReservation?> GetBySourceAsync(InventoryReservationSourceType sourceType, int sourceId) =>
         context.InventoryReservations.Include(x => x.Lines)
             .SingleOrDefaultAsync(x => x.SourceType == sourceType && x.SourceId == sourceId);
+    public Task<InventoryReservation?> GetByIdAsync(long id) => context.InventoryReservations
+        .Include(x => x.Lines).SingleOrDefaultAsync(x => x.Id == id);
+    public Task<List<InventoryReservation>> GetAllBySourceAsync(InventoryReservationSourceType sourceType, int sourceId) =>
+        context.InventoryReservations.Include(x => x.Lines)
+            .Where(x => x.SourceType == sourceType && x.SourceId == sourceId)
+            .OrderByDescending(x => x.CreatedAt).ThenByDescending(x => x.Id).ToListAsync();
     public Task<List<InventoryReservation>> GetAllAsync() => context.InventoryReservations.AsNoTracking()
         .Include(x => x.Lines).OrderByDescending(x => x.CreatedAt).ThenByDescending(x => x.Id).ToListAsync();
     public Task<InventoryBalance?> GetBalanceForUpdateAsync(int productId, int warehouseId, int? storageLocationId) =>

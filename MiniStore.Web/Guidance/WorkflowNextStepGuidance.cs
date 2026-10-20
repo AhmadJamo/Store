@@ -91,9 +91,19 @@ public static class WorkflowNextStepGuidance
                 "SalesOrders.View", Routes(("id", Route("id"))));
 
         if (Matches(message, localize, "Sales order confirmed."))
-            return new("SalesOrders", "Details", "Review confirmed sales order",
-                "The commercial commitment is complete; inventory reservation becomes available in the next phase.",
+            return new("SalesOrders", "Reserve", "Reserve sales order inventory",
+                "Choose the warehouse and reservable position, then reserve all or part of the remaining quantity.",
+                "SalesOrders.Reserve", Routes(("id", Route("id"))));
+
+        if (Matches(message, localize, "Sales order inventory reserved."))
+            return new("SalesOrders", "Reserve", "Review inventory reservation",
+                "Review the reserved and remaining quantities. Reserve another position only when quantity is still waiting.",
                 "SalesOrders.View", Routes(("id", Route("id"))));
+
+        if (Matches(message, localize, "Sales order inventory reservation released."))
+            return new("SalesOrders", "Reserve", "Reserve inventory again",
+                "The released quantity is available again; create a new reservation only when the order still requires it.",
+                "SalesOrders.Reserve", Routes(("id", Route("id"))));
 
         if (Matches(message, localize, "Sales order cancelled."))
             return new("SalesOrders", "Index", "Review sales order pipeline",

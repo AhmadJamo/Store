@@ -21,5 +21,5 @@ Quotation creation and lifecycle transitions do not reserve, issue or receive st
 - Security/inventory regression: 836 checks passed.
 - EF Core model reconciliation: no pending model changes.
 - SQL integration project compiles and now contains quotation tenant-isolation, request-key uniqueness and zero-stock/zero-journal assertions. The disposable run was blocked before database creation by the local Windows SSPI authentication context.
-- Applying migration 120 to local Demo was attempted but blocked by the local SQL Server encryption/connection environment; source and model are at 120 while Demo remains evidenced at 119 until that connection is repaired.
+- At this slice's original close, applying migration 120 was blocked by the local SQL Server connection. Resolution on 2026-10-20: the connection succeeded and migrations 120–122 were applied; current Demo is aligned at 122.
 

@@ -1,0 +1,172 @@
+@model MiniStore.Application.Dtos.Sales.SalesOrderReservationPageDto
+@using MiniStore.Domain.Entities
+@inject Microsoft.Extensions.Localization.IStringLocalizer<MiniStore.Web.SharedResource> Localizer
+@inject Microsoft.AspNetCore.Authorization.IAuthorizationService Authorization
+@inject MiniStore.Application.Services.GeneralSettingsService GeneralSettingsService
+@{
+    ViewData["Title"] = Localizer["Sales order inventory reservation"];
+    var settings = await GeneralSettingsService.GetAsync();
+    var rowVersion = Convert.ToBase64String(Model.RowVersion);
+    async Task<bool> Can(string permission) => (await Authorization.AuthorizeAsync(User, null, $"Permission:{permission}")).Succeeded;
+    var canReserve = await Can("SalesOrders.Reserve");
+    var canRelease = await Can("SalesOrders.ReleaseReservation");
+}
+
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+    <div>
+        <h2 class="mb-1">@Localizer["Sales order inventory reservation"]</h2>
+        <div class="text-muted">@Model.OrderNumber · @Localizer[Model.OrderStatus.ToString()]</div>
+    </div>
+    <a asp-action="Details" asp-route-id="@Model.SalesOrderId" class="btn btn-outline-secondary">@Localizer["Back to sales order"]</a>
+</div>
+
+<div class="alert alert-info">@Localizer["A reservation reduces available stock only. It does not reduce on-hand stock and does not create accounting entries."]</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-4"><div class="card h-100"><div class="card-body"><span class="text-muted">@Localizer["Required stock quantity"]</span><div class="fs-4">@Model.RequiredStockQuantity.ToQuantityDisplay(settings)</div></div></div></div>
+    <div class="col-md-4"><div class="card h-100 border-success"><div class="card-body"><span class="text-muted">@Localizer["Reserved stock quantity"]</span><div class="fs-4 text-success">@Model.ReservedStockQuantity.ToQuantityDisplay(settings)</div></div></div></div>
+    <div class="col-md-4"><div class="card h-100 border-warning"><div class="card-body"><span class="text-muted">@Localizer["Remaining stock quantity"]</span><div class="fs-4 text-warning-emphasis">@Model.RemainingStockQuantity.ToQuantityDisplay(settings)</div></div></div></div>
+</div>
+
+<h5>@Localizer["Reservation progress by order line"]</h5>
+<div class="row g-3 mb-4">
+@foreach (var line in Model.Lines)
+{
+    <div class="col-md-6 col-xl-4"><div class="card h-100"><div class="card-body">
+        <strong>@line.ProductCode — @line.ProductName</strong>
+        <div class="mt-2">@Localizer["Required"]: @line.RequiredStockQuantity.ToQuantityDisplay(settings)</div>
+        <div>@Localizer["Reserved"]: @line.ReservedStockQuantity.ToQuantityDisplay(settings)</div>
+        <div>@Localizer["Remaining"]: @line.RemainingStockQuantity.ToQuantityDisplay(settings)</div>
+        @if (line.RemainingStockQuantity <= 0) { <span class="badge bg-success mt-2">@Localizer["Reservation completed"]</span> }
+    </div></div></div>
+}
+</div>
+
+@if (Model.IsFullyReserved)
+{
+    <div class="alert alert-success">@Localizer["Inventory reservation is complete. The next step is delivery preparation."]</div>
+}
+else if (Model.OrderStatus != SalesOrderStatus.Confirmed)
+{
+    <div class="alert alert-secondary">@Localizer["Only a confirmed non-cancelled sales order can reserve inventory."]</div>
+}
+else if (canReserve)
+{
+    <form asp-action="Reserve" method="post" class="card card-body mb-4">
+        <h5>@Localizer["Reserve remaining quantity"]</h5>
+        <input type="hidden" name="SalesOrderId" value="@Model.SalesOrderId" />
+        <input type="hidden" name="RowVersion" value="@rowVersion" />
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label class="form-label">@Localizer["Warehouse"]</label>
+                <select name="WarehouseId" id="reservationWarehouse" class="form-select" required>
+                    <option value="">@Localizer["Select warehouse"]</option>
+                    @foreach (var warehouse in Model.Warehouses) { <option value="@warehouse.Id">@warehouse.Name</option> }
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">@Localizer["Storage location"]</label>
+                <select name="StorageLocationId" id="reservationLocation" class="form-select">
+                    <option value="">@Localizer["Unassigned stock position"]</option>
+                    @foreach (var location in Model.Locations) { <option value="@location.Id" data-warehouse="@location.WarehouseId">@location.Name</option> }
+                </select>
+                <div class="form-text">@Localizer["Only active reservable locations in the selected warehouse can be used."]</div>
+            </div>
+            <div class="col-12">
+                <label class="form-label">@Localizer["Shortage policy"]</label>
+                <div class="d-flex flex-wrap gap-3">
+                    <label class="form-check"><input class="form-check-input" type="radio" name="ShortagePolicy" value="BlockEntireReservation" checked /><span class="form-check-label">@Localizer["Block the entire reservation if stock is insufficient"]</span></label>
+                    <label class="form-check"><input class="form-check-input" type="radio" name="ShortagePolicy" value="ReserveAvailableQuantity" /><span class="form-check-label">@Localizer["Reserve available quantity and leave the remainder waiting"]</span></label>
+                </div>
+            </div>
+        </div>
+        <div class="row g-3 mt-1">
+        @for (var i = 0; i < Model.Lines.Count; i++)
+        {
+            var line = Model.Lines[i];
+            <div class="col-md-6 col-xl-4"><div class="border rounded p-3 h-100">
+                <strong>@line.ProductName</strong>
+                <input type="hidden" name="Lines[@i].SalesOrderLineId" value="@line.SalesOrderLineId" />
+                @if (line.RemainingStockQuantity > 0)
+                {
+                    <label class="form-label mt-2">@Localizer["Stock quantity to reserve"]</label>
+                    <input type="number" name="Lines[@i].StockQuantity" value="@line.RemainingStockQuantity.ToInputNumber()" min="0" max="@line.RemainingStockQuantity.ToInputNumber()" step="0.000001" class="form-control" />
+                    <div class="form-text">@Localizer["Maximum remaining"]: @line.RemainingStockQuantity.ToQuantityDisplay(settings)</div>
+                }
+                else
+                {
+                    <input type="hidden" name="Lines[@i].StockQuantity" value="0" />
+                    <span class="badge bg-success mt-2">@Localizer["Completed"]</span>
+                }
+            </div></div>
+        }
+        </div>
+        <div class="mt-3"><button class="btn btn-primary">@Localizer["Create inventory reservation"]</button></div>
+    </form>
+}
+else
+{
+    <div class="alert alert-warning">@Localizer["Ask an authorized user to reserve the remaining inventory."]</div>
+}
+
+<h5>@Localizer["Available stock positions"]</h5>
+<div class="row g-3 mb-4">
+@foreach (var position in Model.Positions)
+{
+    <div class="col-md-6 col-xl-4"><div class="card h-100"><div class="card-body">
+        <strong>@position.ProductName</strong>
+        <div>@position.WarehouseName · @Localizer[position.LocationName]</div>
+        <div class="row g-2 mt-2 text-center">
+            <div class="col-4"><small class="text-muted">@Localizer["On hand"]</small><div>@position.OnHand.ToQuantityDisplay(settings)</div></div>
+            <div class="col-4"><small class="text-muted">@Localizer["Reserved"]</small><div>@position.Reserved.ToQuantityDisplay(settings)</div></div>
+            <div class="col-4"><small class="text-muted">@Localizer["Available"]</small><div>@position.Available.ToQuantityDisplay(settings)</div></div>
+        </div>
+    </div></div></div>
+}
+@if (Model.Positions.Count == 0) { <div class="col-12"><div class="alert alert-warning">@Localizer["No inventory balance exists for the products on this order."]</div></div> }
+</div>
+
+<h5>@Localizer["Reservation history"]</h5>
+<div class="row g-3">
+@foreach (var reservation in Model.Reservations)
+{
+    <div class="col-lg-6"><div class="card h-100"><div class="card-body">
+        <div class="d-flex flex-wrap justify-content-between gap-2"><strong>#@reservation.Id · @reservation.WarehouseName · @Localizer[reservation.LocationName]</strong><span class="badge bg-secondary">@Localizer[reservation.Status.ToString()]</span></div>
+        <div class="small text-muted mt-1">@reservation.CreatedAt.ToLocalTime().ToString("g")</div>
+        <ul class="mt-2 mb-2">@foreach (var line in reservation.Lines) { <li>@line.ProductName: @line.Quantity.ToQuantityDisplay(settings)</li> }</ul>
+        @if (reservation.ReleaseReason is not null) { <div>@Localizer["Release reason"]: @Localizer[reservation.ReleaseReason]</div> }
+        @if (reservation.Status == InventoryReservationStatus.Active && canRelease)
+        {
+            <form asp-action="ReleaseReservation" method="post" class="d-flex flex-wrap gap-2 mt-3">
+                <input type="hidden" name="SalesOrderId" value="@Model.SalesOrderId" />
+                <input type="hidden" name="ReservationId" value="@reservation.Id" />
+                <input name="Reason" maxlength="250" required class="form-control flex-grow-1" placeholder="@Localizer["Release reason"]" />
+                <button class="btn btn-outline-danger">@Localizer["Release reservation"]</button>
+            </form>
+        }
+        else if (reservation.Status != InventoryReservationStatus.Active)
+        {
+            <span class="badge bg-light text-dark">@Localizer["Reservation step completed"]</span>
+        }
+    </div></div></div>
+}
+@if (Model.Reservations.Count == 0) { <div class="col-12"><div class="text-muted">@Localizer["No sales order reservations have been created."]</div></div> }
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const warehouse = document.getElementById('reservationWarehouse');
+    const location = document.getElementById('reservationLocation');
+    if (!warehouse || !location) return;
+    const filterLocations = () => {
+        const selected = warehouse.value;
+        for (const option of location.options) {
+            if (!option.dataset.warehouse) continue;
+            option.hidden = option.dataset.warehouse !== selected;
+        }
+        if (location.selectedOptions[0]?.hidden) location.value = '';
+    };
+    warehouse.addEventListener('change', filterLocations);
+    filterLocations();
+});
+</script>

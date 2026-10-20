@@ -77,7 +77,8 @@ The ERP SaaS Foundation Blueprint is imported as a non-authoritative planning re
 - [x] SAL-020B implement tenant-safe price-list/rule storage, customer default selection and read-only explainable evaluation without changing Legacy Sale/POS.
 - [x] SAL-030 implement independent tenant-safe sales quotations with immutable commercial snapshots and no stock/accounting effect.
 - [x] SAL-040 implement one-time accepted-quotation conversion to an independent sales order with no stock/accounting effect.
-- [ ] SAL-050 through SAL-130 implement reservation, delivery, invoicing, accounting, payment, return, advanced-sales and cutover slices in order.
+- [x] SAL-050 implement full/partial sales-order inventory reservation, release/reallocation, tenant-safe source-line audit and concurrent last-unit protection without changing OnHand or accounting.
+- [ ] SAL-060 through SAL-130 implement delivery, invoicing, accounting, payment, return, advanced-sales and cutover slices in order.
 
 - [x] WMS-050 reservations and exact transfer allocation with concurrent last-unit protection.
 - [x] WMS-060 blind cycle counts and controlled inventory adjustment posting; scheduling remains deferred.

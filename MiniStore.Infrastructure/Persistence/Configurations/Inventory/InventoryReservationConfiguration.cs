@@ -14,7 +14,12 @@ public sealed class InventoryReservationConfiguration : IEntityTypeConfiguration
         builder.Property(x => x.ClosedByUserId).HasMaxLength(450);
         builder.Property(x => x.ReleaseReason).HasMaxLength(250);
         builder.Property(x => x.RowVersion).IsRowVersion();
-        builder.HasIndex(x => new { x.SourceType, x.SourceId }).IsUnique();
+        builder.Property<int>("TenantId");
+        builder.HasIndex(["TenantId", nameof(InventoryReservation.SourceType), nameof(InventoryReservation.SourceId), nameof(InventoryReservation.Status)],
+            "IX_InventoryReservations_Tenant_Source_Status");
+        builder.HasIndex(["TenantId", nameof(InventoryReservation.SourceType), nameof(InventoryReservation.SourceId)],
+            "UX_InventoryReservations_StockTransferSource").IsUnique()
+            .HasFilter("[SourceType] = 1");
         builder.HasIndex(x => new { x.Status, x.CreatedAt });
         builder.HasMany(x => x.Lines).WithOne().HasForeignKey(x => x.InventoryReservationId).OnDelete(DeleteBehavior.Restrict);
         builder.Navigation(x => x.Lines).UsePropertyAccessMode(PropertyAccessMode.Field);
@@ -28,9 +33,14 @@ public sealed class InventoryReservationLineConfiguration : IEntityTypeConfigura
         builder.ToTable("InventoryReservationLines", table =>
             table.HasCheckConstraint("CK_InventoryReservationLines_Quantity", "[Quantity] > 0"));
         builder.HasKey(x => x.Id); builder.Property(x => x.Quantity).HasPrecision(18, 6);
-        builder.HasIndex(x => new { x.InventoryReservationId, x.ProductId, x.WarehouseId, x.StorageLocationId }).IsUnique();
         builder.HasIndex(x => new { x.InventoryReservationId, x.ProductId, x.WarehouseId }).IsUnique()
-            .HasFilter("[StorageLocationId] IS NULL");
+            .HasFilter("[SourceLineId] IS NULL AND [StorageLocationId] IS NULL");
+        builder.HasIndex(x => new { x.InventoryReservationId, x.ProductId, x.WarehouseId, x.StorageLocationId }).IsUnique()
+            .HasFilter("[SourceLineId] IS NULL AND [StorageLocationId] IS NOT NULL");
+        builder.HasIndex(x => new { x.InventoryReservationId, x.SourceLineId, x.ProductId, x.WarehouseId }).IsUnique()
+            .HasFilter("[SourceLineId] IS NOT NULL AND [StorageLocationId] IS NULL");
+        builder.HasIndex(x => new { x.InventoryReservationId, x.SourceLineId, x.ProductId, x.WarehouseId, x.StorageLocationId }).IsUnique()
+            .HasFilter("[SourceLineId] IS NOT NULL AND [StorageLocationId] IS NOT NULL");
         builder.HasIndex(x => new { x.WarehouseId, x.StorageLocationId, x.ProductId });
         builder.HasOne<Product>().WithMany().HasForeignKey(x => x.ProductId).OnDelete(DeleteBehavior.Restrict);
         builder.HasOne<Warehouse>().WithMany().HasForeignKey(x => x.WarehouseId).OnDelete(DeleteBehavior.Restrict);

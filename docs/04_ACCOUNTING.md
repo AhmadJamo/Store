@@ -78,3 +78,6 @@ Posted Landed Costs use the company base currency and one configured clearing ac
 ## PUR-150 barcode receipt boundary
 
 Creating a Draft Goods Receipt and recording barcode scans have no stock, valuation or journal effect. The explicit final post revalidates the order and accumulated quantities, then uses the existing atomic Goods Receipt path: Inventory is debited and Goods Received Not Invoiced is credited only when the draft becomes Posted.
+## SAL-050 sales-order reservation boundary
+
+SAL-050 inventory reservation has no journal authority. Creating or releasing a sales-order reservation changes only `InventoryBalance.Reserved`; `OnHand`, `StockTransaction`, `StockMovement`, revenue, receivable, inventory and COGS accounts remain unchanged. SAL-060 Delivery owns the later physical issue and delivery-time COGS decision.

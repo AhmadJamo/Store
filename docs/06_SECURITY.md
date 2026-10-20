@@ -5,6 +5,8 @@
 
 WMS-050 reservation writes run inside the existing serializable UnitOfWork. Tenant-scoped source uniqueness, balance and reservation rowversions, positive-quantity constraints and exact-dimension indexes prevent cross-tenant, duplicate and concurrent over-allocation.
 
+SAL-050 preserves StockTransfer source uniqueness but permits multiple SaleOrder allocation records. Every order allocation stores its exact SourceLineId; the Application layer recomputes active totals inside the serializable transaction and rejects quantities above the remaining order line. Separate Reserve and ReleaseReservation permissions plus antiforgery protect mutations. SQL integration proves tenant isolation, release/reallocation restoration, unchanged OnHand/journal counts and one winner when two contexts claim the final unit.
+
 WMS-060 enforces antiforgery and action-specific permissions, separates counter from approver, rejects stale expected balances and results below Reserved, and posts the document, quantity, valuation and movement evidence in one serializable transaction.
 
 WMS-070A requires full dimensional reconciliation before tracking activation, rejects negative stock, constrains serial quantities and uniqueness in SQL, and writes policy, balances and history in one serializable tenant boundary.

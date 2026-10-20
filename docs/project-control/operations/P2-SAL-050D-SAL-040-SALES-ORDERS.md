@@ -22,5 +22,5 @@ Creating or confirming a Sales Order records commercial intent only. No inventor
 - Security/inventory regression passed 856 checks.
 - EF Core reported no pending model changes after migration 121.
 - The SQL integration project builds and includes same-source uniqueness, cross-tenant reuse/isolation and zero stock/journal assertions. Its execution remains blocked before database creation by the local Windows SSPI authentication context.
-- Local Demo remains at migration 119 because its SQL Server encryption connection also blocks applying migrations 120–121.
+- At this slice's original close, Demo remained at 119 because the SQL Server connection blocked 120–121. Resolution on 2026-10-20: migrations 120–122 were applied successfully and current Demo is aligned at 122.
 

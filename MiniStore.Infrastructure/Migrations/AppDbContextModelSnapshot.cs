@@ -2198,8 +2198,11 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasIndex("Status", "CreatedAt");
 
-                    b.HasIndex("TenantId", "SourceType", "SourceId")
-                        .IsUnique();
+                    b.HasIndex(new[] { "TenantId", "SourceType", "SourceId", "Status" }, "IX_InventoryReservations_Tenant_Source_Status");
+
+                    b.HasIndex(new[] { "TenantId", "SourceType", "SourceId" }, "UX_InventoryReservations_StockTransferSource")
+                        .IsUnique()
+                        .HasFilter("[SourceType] = 1");
 
                     b.ToTable("InventoryReservations", (string)null);
                 });
@@ -2221,6 +2224,9 @@ namespace MiniStore.Infrastructure.Migrations
                     b.Property<decimal>("Quantity")
                         .HasPrecision(18, 6)
                         .HasColumnType("decimal(18,6)");
+
+                    b.Property<int?>("SourceLineId")
+                        .HasColumnType("int");
 
                     b.Property<int?>("StorageLocationId")
                         .HasColumnType("int");
@@ -2247,11 +2253,19 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasIndex("TenantId", "InventoryReservationId", "ProductId", "WarehouseId")
                         .IsUnique()
-                        .HasFilter("[StorageLocationId] IS NULL");
+                        .HasFilter("[SourceLineId] IS NULL AND [StorageLocationId] IS NULL");
 
                     b.HasIndex("TenantId", "InventoryReservationId", "ProductId", "WarehouseId", "StorageLocationId")
                         .IsUnique()
-                        .HasFilter("[StorageLocationId] IS NOT NULL");
+                        .HasFilter("[SourceLineId] IS NULL AND [StorageLocationId] IS NOT NULL");
+
+                    b.HasIndex("TenantId", "InventoryReservationId", "SourceLineId", "ProductId", "WarehouseId")
+                        .IsUnique()
+                        .HasFilter("[SourceLineId] IS NOT NULL AND [StorageLocationId] IS NULL");
+
+                    b.HasIndex("TenantId", "InventoryReservationId", "SourceLineId", "ProductId", "WarehouseId", "StorageLocationId")
+                        .IsUnique()
+                        .HasFilter("[SourceLineId] IS NOT NULL AND [StorageLocationId] IS NOT NULL");
 
                     b.ToTable("InventoryReservationLines", null, t =>
                         {

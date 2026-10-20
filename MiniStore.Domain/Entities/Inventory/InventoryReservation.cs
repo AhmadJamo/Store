@@ -34,12 +34,15 @@ public sealed class InventoryReservation
         CreatedAt = DateTime.UtcNow;
     }
 
-    public void AddLine(int productId, int warehouseId, int? storageLocationId, decimal quantity)
+    public void AddLine(int productId, int warehouseId, int? storageLocationId, decimal quantity,
+        int? sourceLineId = null)
     {
         if (Status != InventoryReservationStatus.Active) throw new InvalidOperationException("Only active reservations can be changed.");
-        if (_lines.Any(x => x.ProductId == productId && x.WarehouseId == warehouseId && x.StorageLocationId == storageLocationId))
+        if (sourceLineId <= 0) sourceLineId = null;
+        if (_lines.Any(x => x.SourceLineId == sourceLineId && x.ProductId == productId &&
+                            x.WarehouseId == warehouseId && x.StorageLocationId == storageLocationId))
             throw new InvalidOperationException("A reservation cannot contain duplicate inventory dimensions.");
-        _lines.Add(new InventoryReservationLine(productId, warehouseId, storageLocationId, quantity));
+        _lines.Add(new InventoryReservationLine(productId, warehouseId, storageLocationId, quantity, sourceLineId));
     }
 
     public void Consume(string userId)
@@ -76,13 +79,17 @@ public sealed class InventoryReservationLine
     public int ProductId { get; private set; }
     public int WarehouseId { get; private set; }
     public int? StorageLocationId { get; private set; }
+    public int? SourceLineId { get; private set; }
     public decimal Quantity { get; private set; }
 
-    internal InventoryReservationLine(int productId, int warehouseId, int? storageLocationId, decimal quantity)
+    internal InventoryReservationLine(int productId, int warehouseId, int? storageLocationId,
+        decimal quantity, int? sourceLineId)
     {
         if (productId <= 0 || warehouseId <= 0) throw new ArgumentException("Product and warehouse are required.");
         if (storageLocationId <= 0) storageLocationId = null;
         if (quantity <= 0) throw new ArgumentException("Reservation quantity must be greater than zero.");
-        ProductId = productId; WarehouseId = warehouseId; StorageLocationId = storageLocationId; Quantity = quantity;
+        if (sourceLineId <= 0) sourceLineId = null;
+        ProductId = productId; WarehouseId = warehouseId; StorageLocationId = storageLocationId;
+        SourceLineId = sourceLineId; Quantity = quantity;
     }
 }

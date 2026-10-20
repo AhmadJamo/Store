@@ -83,6 +83,22 @@ public static class ActionableErrorGuidance
             return new("SalesQuotations", "Index", "Open sales quotations", "SalesQuotations.View");
 
         if (Matches(message, localize,
+                "Insufficient available stock.",
+                "The inventory balance required for this reservation was not found.",
+                "No available quantity can be reserved for the selected sales order lines."))
+            return new("InventoryBalances", "Index", "Review inventory availability", "InventoryBalances.View");
+
+        if (Matches(message, localize,
+                "Selected reservation warehouse was not found."))
+            return new("Warehouses", "Index", "Manage warehouses", "Warehouses.Edit");
+
+        if (Matches(message, localize,
+                "The reservation source location was not found.",
+                "The reservation source location must belong to the selected warehouse.",
+                "The selected source location does not allow reservations."))
+            return new("WarehouseLocations", "Index", "Configure warehouse locations", "Warehouses.Edit");
+
+        if (Matches(message, localize,
                 "No active approval rule matches this purchase request."))
             return new("PurchaseApprovalRules", "Index", "Open purchase approval rules", "PurchaseApprovalRules.Manage");
 

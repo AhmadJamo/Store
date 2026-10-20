@@ -8,6 +8,9 @@ public sealed class InventoryReservationService(
     IInventoryReservationRepository reservations,
     IStorageLocationRepository locations)
 {
+    public sealed record Allocation(int ProductId, int WarehouseId, int? StorageLocationId,
+        decimal Quantity, int? SourceLineId = null);
+
     public async Task<InventoryReservationPageDto> GetPageAsync(InventoryReservationStatus? status, string? search)
     {
         var normalized = search?.Trim() ?? string.Empty;
@@ -32,28 +35,9 @@ public sealed class InventoryReservationService(
             throw new InvalidOperationException("The transfer reservation has already been closed.");
         }
 
-        var reservation = new InventoryReservation(InventoryReservationSourceType.StockTransfer,
-            transfer.Id, transfer.TransferNumber, userId);
-        foreach (var item in transfer.Items)
-        {
-            if (item.SourceLocationId.HasValue)
-            {
-                var location = await locations.GetByIdAsync(item.SourceLocationId.Value)
-                    ?? throw new InvalidOperationException("The reservation source location was not found.");
-                if (!location.IsReservable)
-                    throw new InvalidOperationException("The selected source location does not allow reservations.");
-            }
-
-            var balance = await reservations.GetBalanceForUpdateAsync(
-                item.ProductId, transfer.FromWarehouseId, item.SourceLocationId)
-                ?? throw new InvalidOperationException("The inventory balance required for this reservation was not found.");
-            if (balance.Available < item.Quantity)
-                throw new InvalidOperationException(
-                    $"Insufficient available stock for product ID {item.ProductId}. Available: {balance.Available}, Requested: {item.Quantity}.");
-            balance.SetReserved(balance.Reserved + item.Quantity);
-            reservation.AddLine(item.ProductId, transfer.FromWarehouseId, item.SourceLocationId, item.Quantity);
-        }
-        await reservations.AddAsync(reservation);
+        await ReserveAsync(InventoryReservationSourceType.StockTransfer, transfer.Id, transfer.TransferNumber,
+            userId, transfer.Items.Select(item => new Allocation(item.ProductId, transfer.FromWarehouseId,
+                item.SourceLocationId, item.Quantity)));
     }
 
     public async Task ConsumeTransferAsync(int transferId, string userId)
@@ -73,6 +57,44 @@ public sealed class InventoryReservationService(
         if (reservation.Status != InventoryReservationStatus.Active)
             throw new InvalidOperationException("Only an active transfer reservation can be released.");
         await CloseAsync(reservation, consume: false, userId, reason);
+    }
+
+    public async Task<InventoryReservation> ReserveAsync(InventoryReservationSourceType sourceType,
+        int sourceId, string sourceReference, string userId, IEnumerable<Allocation> requested)
+    {
+        var lines = requested.Where(x => x.Quantity > 0).ToList();
+        if (lines.Count == 0) throw new InvalidOperationException("Reservation must contain at least one positive quantity.");
+        var reservation = new InventoryReservation(sourceType, sourceId, sourceReference, userId);
+        foreach (var line in lines)
+        {
+            if (line.StorageLocationId.HasValue)
+            {
+                var location = await locations.GetByIdAsync(line.StorageLocationId.Value)
+                    ?? throw new InvalidOperationException("The reservation source location was not found.");
+                if (location.WarehouseId != line.WarehouseId)
+                    throw new InvalidOperationException("The reservation source location must belong to the selected warehouse.");
+                if (location.Status != StorageLocationStatus.Active || !location.IsReservable)
+                    throw new InvalidOperationException("The selected source location does not allow reservations.");
+            }
+
+            var balance = await reservations.GetBalanceForUpdateAsync(
+                line.ProductId, line.WarehouseId, line.StorageLocationId)
+                ?? throw new InvalidOperationException("The inventory balance required for this reservation was not found.");
+            if (balance.Available < line.Quantity)
+                throw new InvalidOperationException("Insufficient available stock.");
+            balance.SetReserved(balance.Reserved + line.Quantity);
+            reservation.AddLine(line.ProductId, line.WarehouseId, line.StorageLocationId,
+                line.Quantity, line.SourceLineId);
+        }
+        await reservations.AddAsync(reservation);
+        return reservation;
+    }
+
+    public Task ReleaseAsync(InventoryReservation reservation, string userId, string reason)
+    {
+        if (reservation.Status != InventoryReservationStatus.Active)
+            throw new InvalidOperationException("Only an active reservation can be released.");
+        return CloseAsync(reservation, consume: false, userId, reason);
     }
 
     private async Task CloseAsync(InventoryReservation reservation, bool consume, string userId, string? reason)

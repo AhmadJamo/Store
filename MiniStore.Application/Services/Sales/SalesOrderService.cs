@@ -5,11 +5,16 @@ using MiniStore.Domain.Interfaces;
 namespace MiniStore.Application.Services;
 
 public sealed class SalesOrderService(ISalesOrderRepository orders,ISalesQuotationRepository quotations,
-    DocumentNumberService numbers,IUnitOfWork unitOfWork,ICurrentUserService currentUser)
+    DocumentNumberService numbers,IUnitOfWork unitOfWork,ICurrentUserService currentUser,
+    SalesOrderReservationService reservationService)
 {
     public async Task<List<SalesOrderSummaryDto>> GetAllAsync(SalesOrderStatus? status,string? search)=>(await orders.GetAllAsync(status,search))
         .Select(x=>new SalesOrderSummaryDto(x.Id,x.OrderNumber,x.SourceQuotationNumber,x.CustomerCode,x.CustomerName,x.OrderDate,x.CurrencyCode,x.TotalAmount,x.Status)).ToList();
-    public async Task<SalesOrderDetailsDto?> GetAsync(int id){var order=await orders.GetByIdAsync(id);return order is null?null:Map(order);}
+    public async Task<SalesOrderDetailsDto?> GetAsync(int id)
+    {
+        var order=await orders.GetByIdAsync(id);if(order is null)return null;
+        var dto=Map(order);dto.Reservation=await reservationService.GetSummaryAsync(id);return dto;
+    }
 
     public async Task<int> CreateFromQuotationAsync(ConvertSalesQuotationDto dto)
     {
@@ -27,7 +32,13 @@ public sealed class SalesOrderService(ISalesOrderRepository orders,ISalesQuotati
     }
 
     public Task ConfirmAsync(SalesOrderStatusCommandDto dto)=>ChangeAsync(dto,x=>x.Confirm(currentUser.UserId));
-    public Task CancelAsync(SalesOrderStatusCommandDto dto)=>ChangeAsync(dto,x=>x.Cancel(currentUser.UserId,dto.Reason??""));
+    public Task CancelAsync(SalesOrderStatusCommandDto dto)=>unitOfWork.ExecuteInTransactionAsync(async()=>
+    {
+        var order=await orders.GetByIdAsync(dto.Id)??throw new InvalidOperationException("Sales order was not found.");
+        EnsureVersion(order.RowVersion,dto.RowVersion,"Sales order was modified by another user. Reload and try again.");
+        await reservationService.ReleaseAllActiveAsync(order.Id,"Sales order cancelled.");
+        order.Cancel(currentUser.UserId,dto.Reason??"");
+    });
     private Task ChangeAsync(SalesOrderStatusCommandDto dto,Action<SalesOrder> action)=>unitOfWork.ExecuteInTransactionAsync(async()=>
     {var order=await orders.GetByIdAsync(dto.Id)??throw new InvalidOperationException("Sales order was not found.");EnsureVersion(order.RowVersion,dto.RowVersion,"Sales order was modified by another user. Reload and try again.");action(order);});
     private static void EnsureVersion(byte[] current,byte[] submitted,string message){if(submitted.Length==0||!current.SequenceEqual(submitted))throw new InvalidOperationException(message);}

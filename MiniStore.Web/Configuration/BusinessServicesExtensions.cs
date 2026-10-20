@@ -200,6 +200,7 @@ public static class BusinessServicesExtensions
         services.AddScoped<ISalesQuotationRepository, SalesQuotationRepository>();
         services.AddScoped<SalesQuotationService>();
         services.AddScoped<ISalesOrderRepository, SalesOrderRepository>();
+        services.AddScoped<SalesOrderReservationService>();
         services.AddScoped<SalesOrderService>();
         services.AddScoped<ISaleService, SaleService>();
         services.AddScoped<SalePostingService>();

@@ -561,14 +561,19 @@ Check(salesQuotation.Status==SalesQuotationStatus.Accepted&&salesQuotation.Total
 CheckThrows(()=>salesQuotation.Accept("user",new DateOnly(2026,10,20)),"Completed sales quotation actions must not be repeated");
 Check(TenantIsolationModel.TenantOwnedTypes.Contains(typeof(SalesQuotation))&&TenantIsolationModel.TenantOwnedTypes.Contains(typeof(SalesQuotationLine))&&TenantIsolationModel.TenantOwnedTypes.Contains(typeof(SalesQuotationHistory)),
     "Sales quotation headers, lines and history must be tenant owned");
-Check(PermissionDefinitions.All.Count(x=>x.Name.StartsWith("SalesOrders.",StringComparison.Ordinal))==4,
-    "Sales orders must separate view, source conversion, confirmation and cancellation permissions");
+Check(PermissionDefinitions.All.Count(x=>x.Name.StartsWith("SalesOrders.",StringComparison.Ordinal))==6,
+    "Sales orders must separate view, conversion, confirmation, cancellation, reservation and release permissions");
 var salesOrderController=typeof(SalesOrdersController);
+var salesOrderReserveGet=salesOrderController.GetMethods().Single(x=>x.Name==nameof(SalesOrdersController.Reserve)&&x.GetCustomAttribute<HttpGetAttribute>() is not null);
+var salesOrderReservePost=salesOrderController.GetMethods().Single(x=>x.Name==nameof(SalesOrdersController.Reserve)&&x.GetCustomAttribute<HttpPostAttribute>() is not null);
 Check(salesOrderController.GetMethod(nameof(SalesOrdersController.Index))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SalesOrders.View"&&
       salesOrderController.GetMethod(nameof(SalesOrdersController.Details))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SalesOrders.View"&&
       salesOrderController.GetMethod(nameof(SalesOrdersController.CreateFromQuotation))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SalesOrders.Create"&&
       salesOrderController.GetMethod(nameof(SalesOrdersController.Confirm))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SalesOrders.Confirm"&&
-      salesOrderController.GetMethod(nameof(SalesOrdersController.Cancel))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SalesOrders.Cancel",
+      salesOrderController.GetMethod(nameof(SalesOrdersController.Cancel))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SalesOrders.Cancel"&&
+      salesOrderReserveGet.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SalesOrders.View"&&
+      salesOrderReservePost.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SalesOrders.Reserve"&&
+      salesOrderController.GetMethod(nameof(SalesOrdersController.ReleaseReservation))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SalesOrders.ReleaseReservation",
     "Sales order endpoints must enforce their dedicated server-side permissions");
 Check(salesOrderController.GetMethods().Where(x=>x.GetCustomAttribute<HttpPostAttribute>() is not null)
       .All(x=>x.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null),
@@ -1225,10 +1230,15 @@ Check(reservation.Status == InventoryReservationStatus.Consumed && reservation.C
 CheckThrows(() => reservation.Release("user", "late release"),
     "Closed inventory reservations must reject a second terminal transition");
 var reservationSourceIndex = db.Model.FindEntityType(typeof(InventoryReservation))!.GetIndexes()
-    .Single(index => index.IsUnique && index.Properties.Select(property => property.Name)
+    .Single(index => index.IsUnique && index.GetFilter()=="[SourceType] = 1" && index.Properties.Select(property => property.Name)
         .SequenceEqual(["TenantId", nameof(InventoryReservation.SourceType), nameof(InventoryReservation.SourceId)]));
 Check(reservationSourceIndex is not null,
-    "Reservation sources must be idempotent within each tenant");
+    "Stock-transfer reservation sources must remain idempotent within each tenant");
+var salesOrderReservation = new InventoryReservation(
+    InventoryReservationSourceType.SaleOrder, 20, "SO-20", "sales-user");
+salesOrderReservation.AddLine(1, 1, null, 2m, 200);
+Check(salesOrderReservation.Lines.Single().SourceLineId==200,
+    "Sales-order reservation allocations must retain their exact source order line");
 var inventoryReservationsIndex = typeof(InventoryReservationsController).GetMethod(nameof(InventoryReservationsController.Index))!;
 Check(inventoryReservationsIndex.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
       $"{PermissionAuthorizeAttribute.PolicyPrefix}InventoryReservations.View",
@@ -2332,6 +2342,26 @@ Check(ActionableErrorGuidance.Resolve(
           "Only an accepted sales quotation can be converted to a sales order.",
           "SalesOrders") is {Controller:"SalesQuotations",Action:"Index",RequiredPermission:"SalesQuotations.View"},
     "Sales-order source errors must link back to sales quotations");
+Check(ActionableErrorGuidance.Resolve(
+          "Insufficient available stock.",
+          "SalesOrders") is {Controller:"InventoryBalances",Action:"Index",RequiredPermission:"InventoryBalances.View"},
+    "Sales-order reservation shortages must link to dimensional inventory availability");
+Check(ActionableErrorGuidance.Resolve(
+          "The selected source location does not allow reservations.",
+          "SalesOrders") is {Controller:"WarehouseLocations",Action:"Index",RequiredPermission:"Warehouses.Edit"},
+    "Sales-order reservation location errors must link to warehouse-location setup");
+var salesOrderConfirmedNextStep=WorkflowNextStepGuidance.Resolve(
+    "Sales order confirmed.","SalesOrders",new Dictionary<string,string?>{{"id","25"}});
+Check(salesOrderConfirmedNextStep is {Controller:"SalesOrders",Action:"Reserve",RequiredPermission:"SalesOrders.Reserve"}&&salesOrderConfirmedNextStep.RouteValues.GetValueOrDefault("id")=="25",
+    "Confirmed sales orders must guide an authorized user to inventory reservation");
+var salesOrderReservedNextStep=WorkflowNextStepGuidance.Resolve(
+    "Sales order inventory reserved.","SalesOrders",new Dictionary<string,string?>{{"id","25"}});
+Check(salesOrderReservedNextStep is {Controller:"SalesOrders",Action:"Reserve",RequiredPermission:"SalesOrders.View"},
+    "Completed sales-order reservation commands must guide the user to reserved and remaining quantities");
+var salesOrderReleasedNextStep=WorkflowNextStepGuidance.Resolve(
+    "Sales order inventory reservation released.","SalesOrders",new Dictionary<string,string?>{{"id","25"}});
+Check(salesOrderReleasedNextStep is {Controller:"SalesOrders",Action:"Reserve",RequiredPermission:"SalesOrders.Reserve"},
+    "Released sales-order inventory must guide an authorized user to reallocation");
 var salesPriceListNextStep = WorkflowNextStepGuidance.Resolve(
     "Price list created successfully.", "SalesPriceLists",
     new Dictionary<string, string?> { ["id"] = "12" });

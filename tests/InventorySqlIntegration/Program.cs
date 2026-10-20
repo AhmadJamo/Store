@@ -10,6 +10,7 @@ using MiniStore.Application.DTOs.Purchases;
 using MiniStore.Application.DTOs.Products;
 using MiniStore.Application.DTOs.Security;
 using MiniStore.Application.Dtos.Settings;
+using MiniStore.Application.Dtos.Sales;
 using MiniStore.Application.Services;
 using MiniStore.Domain.Entities;
 using MiniStore.Domain.Interfaces;
@@ -84,7 +85,8 @@ try
     await VerifyLegacyAuditCutoverAsync(tenantOneId, connectionString);
     await VerifyProfessionalCustomerMasterAsync(tenantOneId, tenantTwoId, connectionString);
     await VerifySalesPricingFoundationAsync(tenantOneId,tenantTwoId,tenantOneFixture.ProductId,connectionString);
-    await VerifySalesQuotationFoundationAsync(tenantOneId,tenantTwoId,tenantOneFixture.ProductId,tenantOneFixture.MeasurementUnitId,connectionString);
+    await VerifySalesQuotationFoundationAsync(tenantOneId,tenantTwoId,tenantOneFixture.ProductId,
+        tenantOneFixture.MeasurementUnitId,tenantOneFixture.WarehouseId,connectionString);
 
     await VerifyTenantIsolationAndReconciliationAsync(
         tenantOneId,
@@ -1059,7 +1061,8 @@ static async Task VerifySalesPricingFoundationAsync(int tenantOneId,int tenantTw
     }
 }
 
-static async Task VerifySalesQuotationFoundationAsync(int tenantOneId,int tenantTwoId,int productId,int measurementUnitId,string connectionString)
+static async Task VerifySalesQuotationFoundationAsync(int tenantOneId,int tenantTwoId,int productId,
+    int measurementUnitId,int warehouseId,string connectionString)
 {
     const string sharedNumber="SQT-SQL-001";
     var tenantOneRequestKey=Guid.NewGuid().ToString();
@@ -1110,6 +1113,51 @@ static async Task VerifySalesQuotationFoundationAsync(int tenantOneId,int tenant
         catch(DbUpdateException){ }
     }
 
+    await using(var reservationContext=new AppDbContext(CreateOptions(connectionString),new FixedTenantContext(tenantOneId)))
+    {
+        var order=await reservationContext.SalesOrders.Include(x=>x.Lines).SingleAsync(x=>x.Id==tenantOneOrderId);
+        var line=order.Lines.Single();
+        var reservationRepository=new InventoryReservationRepository(reservationContext);
+        var inventoryReservationService=new InventoryReservationService(reservationRepository,
+            new StorageLocationRepository(reservationContext));
+        var reservationUnitOfWork=new UnitOfWork(reservationContext);
+        var reservationUser=new FixedCurrentUser("sales-reservation-user");
+        var reservationService=new SalesOrderReservationService(new SalesOrderRepository(reservationContext),
+            reservationRepository,new InventoryBalanceRepository(reservationContext),new WarehouseRepository(reservationContext),
+            new StorageLocationRepository(reservationContext),inventoryReservationService,reservationUnitOfWork,reservationUser);
+        var before=await reservationContext.InventoryBalances.AsNoTracking().SingleAsync(x=>x.ProductId==productId&&x.WarehouseId==warehouseId&&x.StorageLocationId==null);
+        var stockTransactions=await reservationContext.StockTransactions.CountAsync();
+        var journals=await reservationContext.JournalEntries.CountAsync();
+        var command=new CreateSalesOrderReservationDto
+        {
+            SalesOrderId=order.Id,WarehouseId=warehouseId,RowVersion=order.RowVersion,
+            ShortagePolicy=SalesOrderReservationShortagePolicy.ReserveAvailableQuantity,
+            Lines=[new SalesOrderReservationLineInputDto{SalesOrderLineId=line.Id,StockQuantity=line.StockQuantity}]
+        };
+        await reservationService.ReserveAsync(command);
+        var first=await reservationContext.InventoryReservations.Include(x=>x.Lines)
+            .SingleAsync(x=>x.SourceType==InventoryReservationSourceType.SaleOrder&&x.SourceId==order.Id&&x.Status==InventoryReservationStatus.Active);
+        var held=await reservationContext.InventoryBalances.AsNoTracking().SingleAsync(x=>x.ProductId==productId&&x.WarehouseId==warehouseId&&x.StorageLocationId==null);
+        if(first.Lines.Single().SourceLineId!=line.Id||first.Lines.Single().Quantity!=1m||held.OnHand!=before.OnHand||held.Reserved!=before.Reserved+1m||
+           await reservationContext.StockTransactions.CountAsync()!=stockTransactions||await reservationContext.JournalEntries.CountAsync()!=journals)
+            throw new InvalidOperationException("A partial sales-order reservation must retain its source line, reduce Available only, and create no stock or accounting entry.");
+        await reservationService.ReleaseAsync(new ReleaseSalesOrderReservationDto
+            {SalesOrderId=order.Id,ReservationId=first.Id,Reason="SQL reallocation check"});
+        await reservationService.ReserveAsync(command);
+        var second=await reservationContext.InventoryReservations.Include(x=>x.Lines)
+            .SingleAsync(x=>x.SourceType==InventoryReservationSourceType.SaleOrder&&x.SourceId==order.Id&&x.Status==InventoryReservationStatus.Active);
+        var orderService=new SalesOrderService(new SalesOrderRepository(reservationContext),
+            new SalesQuotationRepository(reservationContext),new DocumentNumberService(new DocumentSequenceRepository(reservationContext)),
+            reservationUnitOfWork,reservationUser,reservationService);
+        await orderService.CancelAsync(new SalesOrderStatusCommandDto
+            {Id=order.Id,RowVersion=order.RowVersion,Reason="SQL cancellation releases active reservation"});
+        var finalBalance=await reservationContext.InventoryBalances.AsNoTracking().SingleAsync(x=>x.ProductId==productId&&x.WarehouseId==warehouseId&&x.StorageLocationId==null);
+        if(await reservationContext.InventoryReservations.CountAsync(x=>x.SourceType==InventoryReservationSourceType.SaleOrder&&x.SourceId==order.Id)!=2||
+           second.Status!=InventoryReservationStatus.Released||order.Status!=SalesOrderStatus.Cancelled||
+           finalBalance.OnHand!=before.OnHand||finalBalance.Reserved!=before.Reserved)
+            throw new InvalidOperationException("Released or cancelled sales-order reservations must restore Available and preserve auditable reallocation history.");
+    }
+
     await using(var duplicateOrderContext=new AppDbContext(CreateOptions(connectionString),new FixedTenantContext(tenantOneId)))
     {
         var quotation=await duplicateOrderContext.SalesQuotations.Include(x=>x.Lines).SingleAsync(x=>x.Id==tenantOneQuotationId);
@@ -1124,6 +1172,8 @@ static async Task VerifySalesQuotationFoundationAsync(int tenantOneId,int tenant
             throw new InvalidOperationException("Sales quotations must be isolated by tenant.");
         if(await tenantTwo.SalesOrders.AnyAsync(x=>x.Id==tenantOneOrderId))
             throw new InvalidOperationException("Sales orders must be isolated by tenant.");
+        if(await tenantTwo.InventoryReservations.AnyAsync(x=>x.SourceType==InventoryReservationSourceType.SaleOrder&&x.SourceId==tenantOneOrderId))
+            throw new InvalidOperationException("Sales-order reservations must be isolated by tenant.");
         var customer=await tenantTwo.Customers.FirstAsync(x=>x.IsActive);
         var product=await tenantTwo.Products.FirstAsync();
         var unit=await tenantTwo.MeasurementUnits.FirstAsync();
