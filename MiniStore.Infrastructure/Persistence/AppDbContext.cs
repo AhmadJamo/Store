@@ -156,6 +156,9 @@ public class AppDbContext
     public DbSet<CustomerInvoiceHistory> CustomerInvoiceHistories => Set<CustomerInvoiceHistory>();
     public DbSet<CustomerPayment> CustomerPayments => Set<CustomerPayment>();
     public DbSet<CustomerPaymentLine> CustomerPaymentLines => Set<CustomerPaymentLine>();
+    public DbSet<CustomerReturnRequest> CustomerReturnRequests => Set<CustomerReturnRequest>();
+    public DbSet<CustomerReturnRequestLine> CustomerReturnRequestLines => Set<CustomerReturnRequestLine>();
+    public DbSet<CustomerReturnRequestHistory> CustomerReturnRequestHistories => Set<CustomerReturnRequestHistory>();
 
     public DbSet<DocumentSequence> DocumentSequences => Set<DocumentSequence>();
 

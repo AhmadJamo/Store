@@ -1,4 +1,8 @@
 # Database relationships
+## Customer return requests
+
+The header references one Posted delivery, order and customer. Lines reference exact delivery/order lines, product, warehouse and optional location. Business foreign keys include `TenantId`; deletes are restrictive.
+
 > Source of truth: EF configurations | Last reviewed: 2026-10-21
 
 `PurchaseDocumentReversals` belongs to one tenant. Its original document is a polymorphic `DocumentType + OriginalDocumentId` reference enforced by the application transaction rather than a database foreign key; a tenant-scoped unique index permits only one reversal per original document.

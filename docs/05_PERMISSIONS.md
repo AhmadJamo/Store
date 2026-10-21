@@ -1,4 +1,8 @@
 # Permissions and authorization
+## Customer return requests
+
+Dedicated View, Create, Submit, Approve, Reject and Cancel permissions are server-enforced. Mutations use POST plus antiforgery.
+
 > Status: PARTIALLY IMPLEMENTED  
 > Source of truth: Code  
 > Last reviewed: 2026-10-20

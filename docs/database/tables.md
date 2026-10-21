@@ -1,4 +1,10 @@
 # Database tables reference
+## Customer return authorization
+
+- `CustomerReturnRequests`: CRQ header, sources, state, actors and rowversion.
+- `CustomerReturnRequestLines`: exact source-line quantity and frozen product, position, cost and tracking evidence.
+- `CustomerReturnRequestHistories`: immutable lifecycle transitions.
+
 > Last reviewed: 2026-10-20
 
 - `PurchaseDocumentReversals`: tenant-owned PUR-180 reversal headers with unique reversal number, original type/id and idempotency key; stores reason, actor/time, state and opposite journal number.

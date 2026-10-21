@@ -1,4 +1,6 @@
 # Migrations and seeding
+- `20261021121754_AddCustomerReturnRequests` (127): tenant-safe customer-return authorization; applied to local Demo on 2026-10-21.
+
 > Last reviewed: 2026-10-20
 
 ## 20261020114141_AddSalesDeliveries

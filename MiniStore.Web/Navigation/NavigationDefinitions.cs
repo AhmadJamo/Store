@@ -66,6 +66,14 @@ public static class NavigationDefinitions
                 30),
 
             new NavigationItem(
+                "Customer return requests",
+                "bi-arrow-return-left",
+                "CustomerReturnRequests",
+                "Index",
+                "CustomerReturnRequests.View",
+                35),
+
+            new NavigationItem(
                 "Sales Returns",
                 "bi-arrow-counterclockwise",
                 "SalesReturns",

@@ -1,4 +1,8 @@
 # Accounting implementation assessment
+## Customer return authorization boundary
+
+`SAL-100A` produces no journal, stock movement, credit note, refund or customer-balance change. Accounting begins only in later receipt/disposition and credit-note slices.
+
 > Status: PARTIALLY IMPLEMENTED  
 > Source of truth: Code  
 > Last reviewed: 2026-10-21

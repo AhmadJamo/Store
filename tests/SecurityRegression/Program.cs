@@ -642,6 +642,30 @@ Check(customerPaymentController.GetMethod(nameof(CustomerPaymentsController.Inde
       customerPaymentController.GetMethods().Single(x=>x.Name==nameof(CustomerPaymentsController.Create)&&x.GetCustomAttribute<HttpPostAttribute>() is not null).GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:CustomerPayments.Create"&&
       customerPaymentController.GetMethod(nameof(CustomerPaymentsController.Reverse))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:CustomerPayments.Reverse",
     "Customer payment endpoints must enforce dedicated server-side permissions");
+Check(PermissionDefinitions.All.Count(x=>x.Name.StartsWith("CustomerReturnRequests.",StringComparison.Ordinal))==6,
+    "Customer return requests must separate view, creation, submission, approval, rejection and cancellation permissions");
+var customerReturnController=typeof(CustomerReturnRequestsController);
+Check(customerReturnController.GetMethod(nameof(CustomerReturnRequestsController.Index))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:CustomerReturnRequests.View"&&
+      customerReturnController.GetMethods().Single(x=>x.Name==nameof(CustomerReturnRequestsController.Create)&&x.GetCustomAttribute<HttpPostAttribute>() is not null).GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:CustomerReturnRequests.Create"&&
+      customerReturnController.GetMethod(nameof(CustomerReturnRequestsController.Submit))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:CustomerReturnRequests.Submit"&&
+      customerReturnController.GetMethod(nameof(CustomerReturnRequestsController.Approve))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:CustomerReturnRequests.Approve"&&
+      customerReturnController.GetMethod(nameof(CustomerReturnRequestsController.Reject))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:CustomerReturnRequests.Reject"&&
+      customerReturnController.GetMethod(nameof(CustomerReturnRequestsController.Cancel))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:CustomerReturnRequests.Cancel",
+    "Customer return request endpoints must enforce dedicated server-side permissions");
+Check(customerReturnController.GetMethods().Where(x=>x.GetCustomAttribute<HttpPostAttribute>() is not null)
+      .All(x=>x.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null),
+    "Every customer return request mutation must require antiforgery validation");
+var customerReturn=new CustomerReturnRequest("CRQ-000001",1,1,1,"SO-000001","Demo customer",new DateOnly(2026,10,21),"Damaged packaging",null,"sales-user");
+customerReturn.AddLine(new CustomerReturnRequestLine(1,1,1,1,null,1m,3m,3m,"P-1","Product",null));
+customerReturn.Submit("sales-user"); customerReturn.Approve("sales-manager");
+Check(customerReturn.Status==CustomerReturnRequestStatus.Approved&&customerReturn.TotalRequestedQuantity==1m&&customerReturn.History.Count==3,
+    "Customer return requests must preserve source snapshots and auditable draft, submission and approval transitions");
+CheckThrows(()=>customerReturn.Approve("sales-manager"),"An approved customer return request must reject duplicate approval");
+foreach(var type in new[]{typeof(CustomerReturnRequest),typeof(CustomerReturnRequestLine),typeof(CustomerReturnRequestHistory)})
+    Check(TenantIsolationModel.TenantOwnedTypes.Contains(type)&&db.Model.FindEntityType(type)!.FindProperty("TenantId") is {IsNullable:false},
+        $"{type.Name} must be tenant owned");
+Check(DocumentSequence.CreateDefault(DocumentNumberType.CustomerReturnRequest).Preview(DateTime.Today).StartsWith("CRQ-"),
+    "Customer return requests must use an independent centralized CRQ document sequence");
 Check(PermissionDefinitions.All.Count(x=>x.Name=="JournalEntries.View")==1&&
       typeof(JournalEntriesController).GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:JournalEntries.View",
     "Journal-entry evidence must require one dedicated server-side read permission");

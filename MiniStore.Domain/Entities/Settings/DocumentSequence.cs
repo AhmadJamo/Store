@@ -30,7 +30,8 @@ public enum DocumentNumberType
     SalesOrder = 24,
     SalesDelivery = 25,
     CustomerInvoice = 26,
-    CustomerPayment = 27
+    CustomerPayment = 27,
+    CustomerReturnRequest = 28
 }
 
 public enum DocumentNumberResetPeriod
@@ -165,6 +166,7 @@ public class DocumentSequence
         DocumentNumberType.SalesDelivery => new(type, "DEL-"),
         DocumentNumberType.CustomerInvoice => new(type, "INV-"),
         DocumentNumberType.CustomerPayment => new(type, "CPY-"),
+        DocumentNumberType.CustomerReturnRequest => new(type, "CRQ-"),
         _ => throw new ArgumentException("Unsupported document type.", nameof(type))
     };
 

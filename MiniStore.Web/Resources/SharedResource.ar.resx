@@ -3349,4 +3349,40 @@
   <data name="Customer payment reversal reason is required and cannot exceed 500 characters." xml:space="preserve"><value>سبب عكس دفعة الزبون مطلوب ولا يجوز أن يتجاوز 500 حرف.</value></data>
   <data name="Reverse allocated customer payments before reversing the customer invoice." xml:space="preserve"><value>اعكس دفعات الزبون الموزعة قبل عكس فاتورة الزبون.</value></data>
   <data name="CustomerPaymentStatus.Posted" xml:space="preserve"><value>مرحّلة</value></data>
+  <data name="Customer return requests" xml:space="preserve"><value>طلبات مرتجعات الزبائن</value></data>
+  <data name="Create customer return request" xml:space="preserve"><value>إنشاء طلب مرتجع زبون</value></data>
+  <data name="Create return request draft" xml:space="preserve"><value>إنشاء مسودة طلب المرتجع</value></data>
+  <data name="Return, order or customer" xml:space="preserve"><value>رقم المرتجع أو الطلب أو الزبون</value></data>
+  <data name="Request date" xml:space="preserve"><value>تاريخ الطلب</value></data>
+  <data name="Requested return" xml:space="preserve"><value>المرتجع المطلوب</value></data>
+  <data name="Already requested" xml:space="preserve"><value>المطلوب سابقًا</value></data>
+  <data name="Source delivery" xml:space="preserve"><value>التسليم المصدر</value></data>
+  <data name="View source delivery" xml:space="preserve"><value>عرض التسليم المصدر</value></data>
+  <data name="Back to delivery" xml:space="preserve"><value>العودة إلى التسليم</value></data>
+  <data name="Open sales deliveries" xml:space="preserve"><value>فتح تسليمات المبيعات</value></data>
+  <data name="Submit for approval" xml:space="preserve"><value>إرسال للاعتماد</value></data>
+  <data name="Approve return request" xml:space="preserve"><value>اعتماد طلب المرتجع</value></data>
+  <data name="Request closed" xml:space="preserve"><value>الطلب منتهي</value></data>
+  <data name="Return requests control approval before goods are received. They do not change stock, accounting or customer balances." xml:space="preserve"><value>طلبات المرتجعات تضبط الاعتماد قبل استلام البضاعة، ولا تغيّر المخزون أو المحاسبة أو أرصدة الزبائن.</value></data>
+  <data name="This step records the customer's request only. Stock and accounting remain unchanged until approved goods are received and inspected." xml:space="preserve"><value>هذه الخطوة تسجّل طلب الزبون فقط. يبقى المخزون والحسابات دون تغيير حتى استلام البضاعة المعتمدة وفحصها.</value></data>
+  <data name="This request does not change stock, accounting or customer balances. An approved request must be received and inspected in the next step." xml:space="preserve"><value>هذا الطلب لا يغيّر المخزون أو المحاسبة أو رصيد الزبون. يجب استلام الطلب المعتمد وفحصه في الخطوة التالية.</value></data>
+  <data name="Next: receive and inspect the returned goods." xml:space="preserve"><value>التالي: استلام البضاعة المرتجعة وفحصها.</value></data>
+  <data name="No customer return requests were found. Start from a posted sales delivery." xml:space="preserve"><value>لا توجد طلبات مرتجعات زبائن. ابدأ من تسليم مبيعات مُرحّل.</value></data>
+  <data name="This delivery has no remaining returnable quantity." xml:space="preserve"><value>لا توجد في هذا التسليم كمية متبقية قابلة للإرجاع.</value></data>
+  <data name="Select a posted sales delivery before creating a return request." xml:space="preserve"><value>اختر تسليم مبيعات مُرحّلًا قبل إنشاء طلب مرتجع.</value></data>
+  <data name="Customer return request draft created. Review it, then submit it for approval." xml:space="preserve"><value>تم إنشاء مسودة طلب مرتجع الزبون. راجعها ثم أرسلها للاعتماد.</value></data>
+  <data name="Customer return request submitted for approval." xml:space="preserve"><value>تم إرسال طلب مرتجع الزبون للاعتماد.</value></data>
+  <data name="Customer return request approved. The next step is receiving and inspecting the returned goods." xml:space="preserve"><value>تم اعتماد طلب مرتجع الزبون. الخطوة التالية هي استلام البضاعة المرتجعة وفحصها.</value></data>
+  <data name="Customer return request rejected." xml:space="preserve"><value>تم رفض طلب مرتجع الزبون.</value></data>
+  <data name="Customer return request cancelled." xml:space="preserve"><value>تم إلغاء طلب مرتجع الزبون.</value></data>
+  <data name="Customer return request number is required and cannot exceed 50 characters." xml:space="preserve"><value>رقم طلب مرتجع الزبون مطلوب ولا يجوز أن يتجاوز 50 حرفًا.</value></data>
+  <data name="Return reason is required and cannot exceed 500 characters." xml:space="preserve"><value>سبب الإرجاع مطلوب ولا يجوز أن يتجاوز 500 حرف.</value></data>
+  <data name="Return request date cannot be earlier than the delivery date." xml:space="preserve"><value>لا يمكن أن يكون تاريخ طلب المرتجع أسبق من تاريخ التسليم.</value></data>
+  <data name="Enter at least one positive return quantity." xml:space="preserve"><value>أدخل كمية إرجاع موجبة واحدة على الأقل.</value></data>
+  <data name="Only a posted sales delivery can be returned." xml:space="preserve"><value>يمكن الإرجاع من تسليم مبيعات مُرحّل فقط.</value></data>
+  <data name="A selected line does not belong to this delivery." xml:space="preserve"><value>السطر المحدد لا يتبع هذا التسليم.</value></data>
+  <data name="Return quantity cannot exceed the delivery line remaining returnable quantity." xml:space="preserve"><value>لا يمكن أن تتجاوز كمية الإرجاع الكمية المتبقية القابلة للإرجاع في سطر التسليم.</value></data>
+  <data name="Only a submitted return request can be approved." xml:space="preserve"><value>يمكن اعتماد طلب مرتجع مُرسل فقط.</value></data>
+  <data name="Only a submitted return request can be rejected." xml:space="preserve"><value>يمكن رفض طلب مرتجع مُرسل فقط.</value></data>
+  <data name="Customer return request was modified by another user. Reload and try again." xml:space="preserve"><value>عدّل مستخدم آخر طلب المرتجع. أعد تحميل الصفحة وحاول مجددًا.</value></data>
 </root>

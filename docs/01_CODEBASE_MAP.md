@@ -1,4 +1,8 @@
 # Codebase map
+## SAL-100A customer return authorization
+
+Domain aggregate/repository contract, Application DTO/service, Infrastructure repository/configuration/migration and Web controller/views/navigation/localization form the slice. Regression, ADR and operation evidence document it.
+
 > Status: IMPLEMENTED  
 > Source of truth: Repository scan  
 > Last reviewed: 2026-10-20

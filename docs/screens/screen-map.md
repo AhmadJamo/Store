@@ -1,4 +1,10 @@
 # Razor screen map
+## Customer return requests
+
+- Index: responsive search/list and Sales Deliveries empty-state link.
+- Create: Posted delivery only; delivered/requested/remaining quantities without horizontal scrolling.
+- Details: source links, history, state-specific actions and approved receipt/inspection guidance.
+
 > Status: IMPLEMENTED | Last reviewed: 2026-10-21
 
 | Purchase document reversals | `/PurchaseDocumentReversals` | Responsive reversal history, confirmation and immutable audit detail for receipts, bills, payments and landed costs; original detail screens hide the action after completion and link to the reversal. |

@@ -19,6 +19,7 @@ public static class DashboardDefinitions
             new("Sales orders", "bi-clipboard-check", "SalesOrders", "Index", "SalesOrders.View", 28),
             new("Customer invoices", "bi-receipt-cutoff", "CustomerInvoices", "Index", "CustomerInvoices.View", 29),
             new("Customer payments", "bi-cash-coin", "CustomerPayments", "Index", "CustomerPayments.View", 30),
+            new("Customer return requests", "bi-arrow-return-left", "CustomerReturnRequests", "Index", "CustomerReturnRequests.View", 35),
             new("Sales Returns", "bi-arrow-counterclockwise", "SalesReturns", "Index", "SalesReturns.View", 40)
         ]),
 

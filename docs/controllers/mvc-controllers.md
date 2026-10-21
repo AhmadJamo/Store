@@ -1,4 +1,8 @@
 # MVC controllers
+## CustomerReturnRequestsController
+
+Provides protected list/details/create and lifecycle commands. Invalid sources return to Sales Deliveries; completed actions disappear and Details shows the next step.
+
 > Status: IMPLEMENTED | Last reviewed: 2026-10-20
 
 `PurchaseDocumentReversalsController` provides permission-separated history/detail and antiforgery-protected creation for PUR-180. Successful posting links back to the preserved original document; errors remain localized and dependency-safe.
