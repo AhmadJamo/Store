@@ -207,7 +207,13 @@ public static class PermissionDefinitions
         new("CustomerInvoices.View", "View Customer Invoices", "Sales"),
         new("CustomerInvoices.Create", "Create Customer Invoice Draft", "Sales"),
         new("CustomerInvoices.Approve", "Approve Customer Invoice", "Sales"),
+        new("CustomerInvoices.Post", "Post Customer Invoice", "Sales"),
         new("CustomerInvoices.Cancel", "Cancel Customer Invoice", "Sales"),
+        new("CustomerInvoices.Reverse", "Reverse Customer Invoice", "Sales"),
+        new("CustomerPayments.View", "View Customer Payments", "Sales"),
+        new("CustomerPayments.Create", "Create and Post Customer Payment", "Sales"),
+        new("CustomerPayments.Reverse", "Reverse Customer Payment", "Sales"),
+        new("JournalEntries.View", "View Journal Entries", "Accounting"),
         new("SalesReturns.View", "View Sales Returns", "Sales Returns"),
         new("SalesReturns.Create", "Create Sales Return", "Sales Returns"),
 

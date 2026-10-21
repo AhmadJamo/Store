@@ -638,7 +638,7 @@
   <data name="Kernel movements" xml:space="preserve"><value>حركات المحرك</value></data>
   <data name="The linked ledgers are reconciled." xml:space="preserve"><value>السجلات المرتبطة متطابقة.</value></data>
   <data name="Planned" xml:space="preserve"><value>مخططة</value></data>
-  <data name="Posted" xml:space="preserve"><value>مرحلة</value></data>
+  <data name="Posted" xml:space="preserve"><value>مرحّلة</value></data>
   <data name="Reversed" xml:space="preserve"><value>معكوسة</value></data>
   <data name="Putaway" xml:space="preserve"><value>تخزين</value></data>
   <data name="Relocation" xml:space="preserve"><value>نقل داخلي</value></data>
@@ -3267,4 +3267,86 @@
   <data name="Customer invoice was modified by another user. Reload and try again." xml:space="preserve"><value>تم تعديل فاتورة الزبون بواسطة مستخدم آخر. أعد التحميل وحاول مرة أخرى.</value></data>
   <data name="A persisted sales order line is required." xml:space="preserve"><value>يلزم سطر طلب بيع محفوظ.</value></data>
   <data name="All" xml:space="preserve"><value>الكل</value></data>
+  <data name="Customer invoice posted to accounting." xml:space="preserve"><value>تم ترحيل فاتورة الزبون إلى المحاسبة.</value></data>
+  <data name="Customer invoice reversed." xml:space="preserve"><value>تم عكس فاتورة الزبون.</value></data>
+  <data name="Post customer invoice" xml:space="preserve"><value>ترحيل فاتورة الزبون</value></data>
+  <data name="Reverse customer invoice" xml:space="preserve"><value>عكس فاتورة الزبون</value></data>
+  <data name="Accounting posting completed" xml:space="preserve"><value>اكتمل الترحيل المحاسبي</value></data>
+  <data name="Invoice reversed" xml:space="preserve"><value>تم عكس الفاتورة</value></data>
+  <data name="Accounting posting evidence" xml:space="preserve"><value>دليل الترحيل المحاسبي</value></data>
+  <data name="Customer receivable account" xml:space="preserve"><value>حساب ذمم الزبون</value></data>
+  <data name="Sales revenue account" xml:space="preserve"><value>حساب إيراد المبيعات</value></data>
+  <data name="Company-currency total" xml:space="preserve"><value>الإجمالي بعملة الشركة</value></data>
+  <data name="Reversal journal entry" xml:space="preserve"><value>قيد العكس</value></data>
+  <data name="The invoice is approved. Post it to create the customer receivable, revenue and output tax entry; posting does not record payment." xml:space="preserve"><value>الفاتورة معتمدة. رحّلها لإنشاء قيد ذمم الزبون والإيراد وضريبة المخرجات؛ الترحيل لا يسجل دفعة.</value></data>
+  <data name="Accounting posting is complete. The invoice remains unpaid until a customer payment is recorded and allocated." xml:space="preserve"><value>اكتمل الترحيل المحاسبي. تبقى الفاتورة غير مدفوعة حتى تسجيل دفعة زبون وتخصيصها.</value></data>
+  <data name="The accounting effect was reversed. No payment was recorded and the invoiced quantity is available for a replacement invoice when still eligible." xml:space="preserve"><value>تم عكس الأثر المحاسبي. لم تُسجّل دفعة، والكمية المفوترة متاحة لفاتورة بديلة إذا بقيت مؤهلة.</value></data>
+  <data name="Review posted customer invoice" xml:space="preserve"><value>مراجعة فاتورة الزبون المرحّلة</value></data>
+  <data name="Approval is complete; post the invoice to recognize the receivable, revenue and output tax without recording payment." xml:space="preserve"><value>اكتمل الاعتماد؛ رحّل الفاتورة لإثبات الذمة والإيراد وضريبة المخرجات دون تسجيل دفعة.</value></data>
+  <data name="Accounting posting is complete; review the frozen entry evidence. Customer collection remains a separate next stage." xml:space="preserve"><value>اكتمل الترحيل المحاسبي؛ راجع دليل القيد المحفوظ. يبقى تحصيل الزبون مرحلة لاحقة مستقلة.</value></data>
+  <data name="The original accounting effect is reversed; create a replacement invoice only when the source quantity remains eligible." xml:space="preserve"><value>تم عكس الأثر المحاسبي الأصلي؛ أنشئ فاتورة بديلة فقط عندما تبقى كمية المصدر مؤهلة.</value></data>
+  <data name="Assign an active asset receivable account to the customer before posting the customer invoice." xml:space="preserve"><value>عيّن للزبون حساب ذمم نشطًا من نوع الأصول قبل ترحيل فاتورة الزبون.</value></data>
+  <data name="Configure accounting posting accounts before posting a customer invoice." xml:space="preserve"><value>هيّئ حسابات الترحيل المحاسبي قبل ترحيل فاتورة الزبون.</value></data>
+  <data name="Configure a sales revenue account before posting a customer invoice." xml:space="preserve"><value>هيّئ حساب إيراد المبيعات قبل ترحيل فاتورة الزبون.</value></data>
+  <data name="Configure an active revenue account before posting a customer invoice." xml:space="preserve"><value>هيّئ حساب إيراد نشطًا قبل ترحيل فاتورة الزبون.</value></data>
+  <data name="A tax rate selected on this customer invoice no longer exists." xml:space="preserve"><value>لم تعد إحدى نسب الضريبة المختارة في فاتورة الزبون موجودة.</value></data>
+  <data name="Configure an active output tax liability account before posting a customer invoice." xml:space="preserve"><value>هيّئ حساب التزام نشطًا لضريبة المخرجات قبل ترحيل فاتورة الزبون.</value></data>
+  <data name="Configure an output tax account for every taxed customer invoice line before posting." xml:space="preserve"><value>هيّئ حساب ضريبة مخرجات لكل سطر خاضع للضريبة في فاتورة الزبون قبل الترحيل.</value></data>
+  <data name="Open fiscal periods" xml:space="preserve"><value>فتح الفترات المالية</value></data>
+  <data name="Only an approved customer invoice can be posted." xml:space="preserve"><value>يمكن ترحيل فاتورة زبون معتمدة فقط.</value></data>
+  <data name="This customer invoice has already been posted to accounting." xml:space="preserve"><value>تم ترحيل فاتورة الزبون هذه إلى المحاسبة مسبقًا.</value></data>
+  <data name="Only a posted customer invoice can be reversed." xml:space="preserve"><value>يمكن عكس فاتورة زبون مرحّلة فقط.</value></data>
+  <data name="Customer invoice reversal reason is required and cannot exceed 500 characters." xml:space="preserve"><value>سبب عكس فاتورة الزبون مطلوب ولا يجوز أن يتجاوز 500 حرف.</value></data>
+  <data name="Only a draft or approved customer invoice can be cancelled." xml:space="preserve"><value>يمكن إلغاء فاتورة زبون مسودة أو معتمدة فقط.</value></data>
+  <data name="A customer invoice must have a positive balanced posting amount." xml:space="preserve"><value>يجب أن يكون مبلغ ترحيل فاتورة الزبون موجبًا ومتوازنًا.</value></data>
+  <data name="Company currency code must contain exactly three letters." xml:space="preserve"><value>يجب أن يتكون رمز عملة الشركة من ثلاثة أحرف تمامًا.</value></data>
+  <data name="Sales revenue account is required." xml:space="preserve"><value>حساب إيراد المبيعات مطلوب.</value></data>
+  <data name="Customer invoice exchange rate must be greater than zero." xml:space="preserve"><value>يجب أن يكون سعر صرف فاتورة الزبون أكبر من صفر.</value></data>
+  <data name="A taxed customer invoice line requires an output tax account." xml:space="preserve"><value>يتطلب سطر فاتورة الزبون الخاضع للضريبة حساب ضريبة مخرجات.</value></data>
+  <data name="Review draft, approved, posted, reversed and cancelled customer invoice documents." xml:space="preserve"><value>راجع مستندات فواتير الزبائن المسودة والمعتمدة والمرحّلة والمعكوسة والملغاة.</value></data>
+  <data name="Default sales revenue account" xml:space="preserve"><value>حساب إيراد المبيعات الافتراضي</value></data>
+  <data name="Journal lines" xml:space="preserve"><value>سطور القيد</value></data>
+  <data name="A source delivery selected on this customer invoice no longer exists." xml:space="preserve"><value>لم يعد أحد تسليمات المصدر المحددة في فاتورة الزبون موجودًا.</value></data>
+  <data name="Customer invoice source warehouse was not found." xml:space="preserve"><value>لم يتم العثور على مستودع مصدر فاتورة الزبون.</value></data>
+  <data name="Assign the customer invoice source warehouse to a branch before posting." xml:space="preserve"><value>اربط مستودع مصدر فاتورة الزبون بفرع قبل الترحيل.</value></data>
+  <data name="Customer invoice source branch was not found." xml:space="preserve"><value>لم يتم العثور على فرع مصدر فاتورة الزبون.</value></data>
+  <data name="The customer invoice source branch must be active before posting." xml:space="preserve"><value>يجب أن يكون فرع مصدر فاتورة الزبون نشطًا قبل الترحيل.</value></data>
+  <data name="Configure an active sales revenue account for the customer invoice source branch." xml:space="preserve"><value>هيّئ حساب إيراد مبيعات نشطًا لفرع مصدر فاتورة الزبون.</value></data>
+  <data name="Open branches" xml:space="preserve"><value>فتح الفروع</value></data>
+  <data name="Branch" xml:space="preserve"><value>الفرع</value></data>
+  <data name="Debit" xml:space="preserve"><value>مدين</value></data>
+  <data name="Credit" xml:space="preserve"><value>دائن</value></data>
+  <data name="Customer invoice reversal date cannot be earlier than the invoice date." xml:space="preserve"><value>لا يمكن أن يكون تاريخ عكس فاتورة الزبون أسبق من تاريخ الفاتورة.</value></data>
+  <data name="Posting date" xml:space="preserve"><value>تاريخ الترحيل</value></data>
+  <data name="Source reference" xml:space="preserve"><value>مرجع المصدر</value></data>
+  <data name="Total debit" xml:space="preserve"><value>إجمالي المدين</value></data>
+  <data name="Total credit" xml:space="preserve"><value>إجمالي الدائن</value></data>
+  <data name="Customer payments" xml:space="preserve"><value>دفعات الزبائن</value></data>
+  <data name="Record customer payment" xml:space="preserve"><value>تسجيل دفعة زبون</value></data>
+  <data name="Customer payment posted." xml:space="preserve"><value>تم ترحيل دفعة الزبون.</value></data>
+  <data name="Customer payment reversed." xml:space="preserve"><value>تم عكس دفعة الزبون.</value></data>
+  <data name="Customer payment reversed" xml:space="preserve"><value>دفعة الزبون معكوسة</value></data>
+  <data name="Post customer payment" xml:space="preserve"><value>ترحيل دفعة الزبون</value></data>
+  <data name="Reverse customer payment" xml:space="preserve"><value>عكس دفعة الزبون</value></data>
+  <data name="Back to invoice" xml:space="preserve"><value>العودة إلى الفاتورة</value></data>
+  <data name="Invoice allocations" xml:space="preserve"><value>توزيعات الفواتير</value></data>
+  <data name="Invoice total" xml:space="preserve"><value>إجمالي الفاتورة</value></data>
+  <data name="Payment status" xml:space="preserve"><value>حالة السداد</value></data>
+  <data name="Unpaid" xml:space="preserve"><value>غير مدفوعة</value></data>
+  <data name="Partially Paid" xml:space="preserve"><value>مدفوعة جزئيًا</value></data>
+  <data name="Paid" xml:space="preserve"><value>مدفوعة</value></data>
+  <data name="Payment completed" xml:space="preserve"><value>اكتمل السداد</value></data>
+  <data name="Receivable carrying amount" xml:space="preserve"><value>القيمة الدفترية للذمم</value></data>
+  <data name="No customer payments were found. Open a posted customer invoice to record its payment." xml:space="preserve"><value>لا توجد دفعات زبائن. افتح فاتورة زبون مرحّلة لتسجيل دفعتها.</value></data>
+  <data name="There are no outstanding posted invoices for this customer and currency." xml:space="preserve"><value>لا توجد فواتير مرحّلة ذات رصيد متبقٍ لهذا الزبون وهذه العملة.</value></data>
+  <data name="Enter at least one positive customer payment allocation." xml:space="preserve"><value>أدخل توزيع دفعة زبون واحدًا موجبًا على الأقل.</value></data>
+  <data name="A customer invoice can be allocated only once per customer payment." xml:space="preserve"><value>يمكن توزيع دفعة الزبون على الفاتورة نفسها مرة واحدة فقط.</value></data>
+  <data name="Only posted customer invoices can receive payments." xml:space="preserve"><value>يمكن تسجيل الدفعات للفواتير المرحلة فقط.</value></data>
+  <data name="All payment allocations must belong to posted invoices for the same customer and currency." xml:space="preserve"><value>يجب أن تخص جميع التوزيعات فواتير مرحلة للزبون والعملة نفسيهما.</value></data>
+  <data name="A customer payment allocation cannot exceed the invoice outstanding balance." xml:space="preserve"><value>لا يمكن أن يتجاوز توزيع دفعة الزبون الرصيد المتبقي للفاتورة.</value></data>
+  <data name="Only posted customer payments can be reversed." xml:space="preserve"><value>يمكن عكس دفعات الزبائن المرحلة فقط.</value></data>
+  <data name="Customer payment reversal date cannot be earlier than the payment date." xml:space="preserve"><value>لا يمكن أن يكون تاريخ عكس دفعة الزبون أسبق من تاريخ الدفعة.</value></data>
+  <data name="Customer payment reversal reason is required and cannot exceed 500 characters." xml:space="preserve"><value>سبب عكس دفعة الزبون مطلوب ولا يجوز أن يتجاوز 500 حرف.</value></data>
+  <data name="Reverse allocated customer payments before reversing the customer invoice." xml:space="preserve"><value>اعكس دفعات الزبون الموزعة قبل عكس فاتورة الزبون.</value></data>
+  <data name="CustomerPaymentStatus.Posted" xml:space="preserve"><value>مرحّلة</value></data>
 </root>

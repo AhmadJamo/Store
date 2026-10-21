@@ -29,7 +29,7 @@ public static class WorkflowNextStepGuidance
 
     private static readonly HashSet<string> CustomerControllers = new(StringComparer.OrdinalIgnoreCase) { "Customers" };
 
-    private static readonly HashSet<string> SalesControllers = new(StringComparer.OrdinalIgnoreCase) { "SalesPriceLists", "SalesQuotations", "SalesOrders", "SalesDeliveries", "CustomerInvoices" };
+    private static readonly HashSet<string> SalesControllers = new(StringComparer.OrdinalIgnoreCase) { "SalesPriceLists", "SalesQuotations", "SalesOrders", "SalesDeliveries", "CustomerInvoices", "CustomerPayments" };
 
     public static bool IsSupportedController(string? controller) =>
         !string.IsNullOrWhiteSpace(controller) &&
@@ -131,9 +131,19 @@ public static class WorkflowNextStepGuidance
                 "CustomerInvoices.View", Routes(("id", Route("id"))));
 
         if (Matches(message, localize, "Customer invoice approved."))
-            return new("CustomerInvoices", "Details", "Review approved customer invoice",
-                "Approval is complete; accounting posting to revenue, tax and receivables remains a separate next stage.",
-                "CustomerInvoices.View", Routes(("id", Route("id"))));
+            return new("CustomerInvoices", "Details", "Post customer invoice",
+                "Approval is complete; post the invoice to recognize the receivable, revenue and output tax without recording payment.",
+                "CustomerInvoices.Post", Routes(("id", Route("id"))));
+
+        if (Matches(message, localize, "Customer invoice posted to accounting."))
+            return new("CustomerPayments", "Create", "Record customer payment",
+                "Allocate a receipt when the customer pays this posted invoice.",
+                "CustomerPayments.Create", Routes(("customerInvoiceId", Route("id"))));
+
+        if (Matches(message, localize, "Customer invoice reversed."))
+            return new("CustomerInvoices", "Index", "Review customer invoices",
+                "The original accounting effect is reversed; create a replacement invoice only when the source quantity remains eligible.",
+                "CustomerInvoices.View", Routes());
 
         if (Matches(message, localize, "Customer invoice cancelled."))
             return new("CustomerInvoices", "Index", "Review customer invoices",
@@ -310,6 +320,16 @@ public static class WorkflowNextStepGuidance
             return new("VendorBills", "Details", "Review vendor bill settlement",
                 "The credit reduced the vendor bill balance; review the remaining payable amount.",
                 "VendorBills.View", Routes(("id", Route("vendorBillId"))));
+
+        if (Matches(message, localize, "Customer payment posted."))
+            return new("CustomerPayments", "Details", "Review customer payment",
+                "Review the allocations and accounting entry created by the receipt.",
+                "CustomerPayments.View", Routes(("id", Route("id"))));
+
+        if (Matches(message, localize, "Customer payment reversed."))
+            return new("CustomerInvoices", "Index", "Review customer invoice balances",
+                "The reversed allocation no longer reduces invoice balances; review the reopened amounts.",
+                "CustomerInvoices.View", []);
 
         if (Matches(message, localize, "Purchase document reversed."))
             return new(Route("originalController") ?? "PurchaseDocumentReversals", "Details", "View original document",

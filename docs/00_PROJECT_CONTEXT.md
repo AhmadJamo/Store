@@ -1,7 +1,7 @@
 # MiniStore project context
 > Status: PARTIALLY IMPLEMENTED  
 > Source of truth: Code  
-> Last reviewed: 2026-10-20
+> Last reviewed: 2026-10-21
 
 ## Project identity
 MiniStore is a server-rendered ASP.NET Core MVC store-management application. It targets .NET 10, uses EF Core 10 with SQL Server, ASP.NET Core Identity, Razor views, and a Domain/Application/Infrastructure/Web layered solution. No public API project is present.
@@ -11,7 +11,7 @@ The repository implements an operational slice for catalog, warehouses, stock, s
 
 The WMS track is temporarily paused after implementing reconciliation, logistics, movements, balances, reservations, counts, lot/serial execution, removal/putaway policies, replenishment transfer/purchase-demand planning, inventory insights and safe scan workflows. The additive procure-to-pay evolution is implemented through PUR-280. Advanced purchasing analytics expose filterable spend, delay, confirmation, price-variance, supplier, seasonal, buyer-workload and open-exception evidence with source definitions and document links. Creation of new Legacy Direct Purchases is retired; historical records remain visible and users are directed to Purchase Requests for new activity.
 
-The imported ERP SaaS Foundation Blueprint is installed under `docs/reference/erp-saas-foundation/` as a proposed reference, not implementation evidence. Its `FND-000` repository compatibility assessment is complete. The project-control audit under `docs/project-control/` now provides the single current status, feature inventory, audit set, dependency order, master roadmap and next-task gate. The local Demo scope completed credential closure, encrypted restore proof and the `P0-DB-003` 112/112 reconciliation baseline. `P1-AUD-011` through `P1-AUD-016` provide the audit-event foundation through reversible legacy-writer freeze. `P1-OBS-020` adds a one-command local build/SQL gate. CUS-010/020/030A/030B provide the professional Customer master, contacts/addresses, configurable receivable policy and prospective payment/currency/tax defaults without changing historical IDs. SAL-020A/B provide deterministic tenant-safe pricing, SAL-030 adds immutable lifecycle-controlled Sales Quotations, SAL-040 adds one-time copied-snapshot Sales Orders, SAL-050 adds full/partial inventory reservation, SAL-060 adds reservation-backed delivery with physical stock issue and delivery-time COGS, and SAL-070 adds controlled partial/multiple customer invoice documents without accounting posting or payment. Migration source/model and local Demo are aligned at 124; Legacy Sale/POS remains unchanged.
+The imported ERP SaaS Foundation Blueprint is installed under `docs/reference/erp-saas-foundation/` as a proposed reference, not implementation evidence. Its `FND-000` repository compatibility assessment is complete. The project-control audit under `docs/project-control/` now provides the single current status, feature inventory, audit set, dependency order, master roadmap and next-task gate. The local Demo scope completed credential closure, encrypted restore proof and the `P0-DB-003` 112/112 reconciliation baseline. `P1-AUD-011` through `P1-AUD-016` provide the audit-event foundation through reversible legacy-writer freeze. `P1-OBS-020` adds a one-command local build/SQL gate. CUS-010/020/030A/030B provide the professional Customer master and receivable policy. SAL-020A/B through SAL-080 provide pricing through invoice accounting. SAL-090 now adds independent customer receipts, capped partial/multi-invoice allocation, derived payment status, foreign-exchange settlement and exact reversal without inventory mutation. Migration source/model and local Demo are aligned at 126; Legacy Sale/POS remains unchanged.
 
 ## Status classification
 - IMPLEMENTED: catalog, warehouses, suppliers, stock balances/movements, purchases, sales, transfer workflow, Identity login, role-permission checks, audit-log rows, Razor UI.
@@ -30,17 +30,17 @@ The imported ERP SaaS Foundation Blueprint is installed under `docs/reference/er
 | Suppliers | IMPLEMENTED | `Supplier`, `SupplierService` | Supplier master data. |
 | Inventory | PARTIALLY IMPLEMENTED | `ProductStock`, `StockTransaction`, recipes, measurement units | Balances, moving-average valuation, auditable cost movements, managed-unit conversion, prepared recipes, controlled negative variance and purchase-time variance settlement; manual adjustment posting remains pending. |
 | Purchases | IMPLEMENTED | `Purchase`, `PurchaseService`, `PurchaseReturnService` | Receipts increase stock; posted partial/full supplier returns remove available stock at moving-average cost and reverse accounting. |
-| Sales | PARTIALLY IMPLEMENTED | `Sale`, `SalesPriceList`, `SalesQuotation`, `SalesOrder`, `SalesDelivery`, `CustomerInvoice` and services | Legacy immediate sale/POS remains operational; professional pricing through approved invoice documents is implemented, while receivable posting and collection remain staged. |
+| Sales | PARTIALLY IMPLEMENTED | `Sale`, `SalesPriceList`, `SalesQuotation`, `SalesOrder`, `SalesDelivery`, `CustomerInvoice`, `CustomerPayment` and services | Legacy immediate sale/POS remains operational; professional pricing through customer collection/reversal is implemented. Returns/credit notes and credit controls remain staged. |
 | Stock transfers | IMPLEMENTED | `StockTransfer`, `StockTransferService` | Draft/submitted/approved/posted/cancelled flow. |
 | Settings | PARTIALLY IMPLEMENTED | settings entities/services | General, discount, inventory, accounting, fiscal periods, POS, centralized document numbers and a bilingual role-aware work procedure catalog beginning with purchasing. |
 | Identity & permissions | PARTIALLY IMPLEMENTED | Identity + `PermissionAuthorizationHandler` | Custom permission rows mapped to roles. |
 
 ## Current problems
-See `06_SECURITY.md`, `04_ACCOUNTING.md`, and `TODO.md`. The historically exposed administrator was closed for the evidenced local Demo environment, an encrypted isolated restore drill reconciled without differences and migrations through 124 are applied with no pending EF model change. The local Demo audit and retention features are enabled through User Secrets. Coverage reconciliation is complete, new legacy writes are frozen behind a reversible flag, and pre/post signed checkpoints preserved all 710 historical legacy rows. Real deployment identities, off-host backup/checkpoint storage, production deployment controls and broader integration testing remain open.
+See `06_SECURITY.md`, `04_ACCOUNTING.md`, and `TODO.md`. The historically exposed administrator was closed for the evidenced local Demo environment, an encrypted isolated restore drill reconciled without differences and migrations through 126 are applied with no pending EF model change. The local Demo audit and retention features are enabled through User Secrets. Coverage reconciliation is complete, new legacy writes are frozen behind a reversible flag, and pre/post signed checkpoints preserved all 710 historical legacy rows. Real deployment identities, off-host backup/checkpoint storage, production deployment controls and broader integration testing remain open.
 
 ## Recommended next steps
-1. After explicit approval, implement `SAL-080`: post Approved customer invoices to receivables, revenue and output tax without treating posting as payment.
-2. Keep legacy Sale/POS cutover, customer credit and payment allocation outside the invoicing slice.
+1. After explicit approval, implement `SAL-100`: professional sales returns and customer credit notes without replacing the legacy immediate-sale return path.
+2. Keep legacy Sale/POS cutover and customer credit policy outside the collection slice.
 3. Preserve the completed audit, observability and application-boundary controls throughout the customer/sales sequence.
 
 ## Read first

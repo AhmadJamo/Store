@@ -2,8 +2,8 @@ namespace MiniStore.Domain.Entities;
 
 public enum SalesInvoiceQuantityPolicy { DeliveredQuantity = 1, OrderedQuantity = 2 }
 public enum SalesInvoiceQuantityBasis { DeliveredQuantity = 1, OrderedQuantity = 2 }
-public enum CustomerInvoiceStatus { Draft = 1, Approved = 2, Cancelled = 3 }
-public enum CustomerInvoiceHistoryAction { Created = 1, Approved = 2, Cancelled = 3 }
+public enum CustomerInvoiceStatus { Draft = 1, Approved = 2, Cancelled = 3, Posted = 4, Reversed = 5 }
+public enum CustomerInvoiceHistoryAction { Created = 1, Approved = 2, Cancelled = 3, Posted = 4, Reversed = 5 }
 
 public sealed class CustomerInvoice
 {
@@ -42,10 +42,22 @@ public sealed class CustomerInvoice
     public decimal NetAmount { get; private set; }
     public decimal TaxAmount { get; private set; }
     public decimal TotalAmount { get; private set; }
+    public string? CompanyCurrencyCode { get; private set; }
+    public decimal CompanyNetAmount { get; private set; }
+    public decimal CompanyTaxAmount { get; private set; }
+    public decimal CompanyTotalAmount { get; private set; }
+    public int? ReceivableAccountIdSnapshot { get; private set; }
+    public int? SalesRevenueAccountIdSnapshot { get; private set; }
     public string CreatedByUserId { get; private set; } = string.Empty;
     public DateTime CreatedAtUtc { get; private set; }
     public string? ApprovedByUserId { get; private set; }
     public DateTime? ApprovedAtUtc { get; private set; }
+    public string? PostedByUserId { get; private set; }
+    public DateTime? PostedAtUtc { get; private set; }
+    public string? ReversedByUserId { get; private set; }
+    public DateTime? ReversedAtUtc { get; private set; }
+    public DateOnly? ReversalDate { get; private set; }
+    public string? ReversalReason { get; private set; }
     public string? CancelledByUserId { get; private set; }
     public DateTime? CancelledAtUtc { get; private set; }
     public string? CancellationReason { get; private set; }
@@ -99,12 +111,62 @@ public sealed class CustomerInvoice
     public void Cancel(string userId, string reason)
     {
         EnsureUser(userId);
-        if (Status == CustomerInvoiceStatus.Cancelled) throw new InvalidOperationException("The customer invoice is already cancelled.");
+        if (Status is not (CustomerInvoiceStatus.Draft or CustomerInvoiceStatus.Approved))
+            throw new InvalidOperationException("Only a draft or approved customer invoice can be cancelled.");
         if (string.IsNullOrWhiteSpace(reason) || reason.Trim().Length > 500)
             throw new ArgumentException("Customer invoice cancellation reason is required and cannot exceed 500 characters.");
         var from = Status; Status = CustomerInvoiceStatus.Cancelled; CancelledByUserId = userId.Trim();
         CancelledAtUtc = DateTime.UtcNow; CancellationReason = reason.Trim();
         History.Add(new CustomerInvoiceHistory(from, Status, CustomerInvoiceHistoryAction.Cancelled, userId, reason.Trim()));
+    }
+
+    public void Post(string companyCurrencyCode, int receivableAccountId, int salesRevenueAccountId,
+        IReadOnlyDictionary<int, int> taxOutputAccounts, string userId)
+    {
+        EnsureUser(userId);
+        if (Status != CustomerInvoiceStatus.Approved)
+            throw new InvalidOperationException("Only an approved customer invoice can be posted.");
+        if (string.IsNullOrWhiteSpace(companyCurrencyCode) || companyCurrencyCode.Trim().Length != 3)
+            throw new ArgumentException("Company currency code must contain exactly three letters.");
+        if (receivableAccountId <= 0) throw new ArgumentException("Customer receivable account is required.");
+        if (salesRevenueAccountId <= 0) throw new ArgumentException("Sales revenue account is required.");
+
+        foreach (var line in Lines)
+        {
+            int? outputAccountId = null;
+            if (line.TaxAmount > 0)
+            {
+                if (!line.TaxRateId.HasValue || !taxOutputAccounts.TryGetValue(line.TaxRateId.Value, out var resolved))
+                    throw new InvalidOperationException("Configure an output tax account for every taxed customer invoice line before posting.");
+                outputAccountId = resolved;
+            }
+            line.FreezePosting(outputAccountId, ExchangeRate);
+        }
+
+        CompanyCurrencyCode = companyCurrencyCode.Trim().ToUpperInvariant();
+        ReceivableAccountIdSnapshot = receivableAccountId;
+        SalesRevenueAccountIdSnapshot = salesRevenueAccountId;
+        CompanyNetAmount = Lines.Sum(x => x.CompanyNetAmount);
+        CompanyTaxAmount = Lines.Sum(x => x.CompanyTaxAmount);
+        CompanyTotalAmount = Lines.Sum(x => x.CompanyTotalAmount);
+        if (CompanyTotalAmount <= 0 || CompanyTotalAmount != CompanyNetAmount + CompanyTaxAmount)
+            throw new InvalidOperationException("A customer invoice must have a positive balanced posting amount.");
+        var from = Status; Status = CustomerInvoiceStatus.Posted; PostedByUserId = userId.Trim(); PostedAtUtc = DateTime.UtcNow;
+        History.Add(new CustomerInvoiceHistory(from, Status, CustomerInvoiceHistoryAction.Posted, userId));
+    }
+
+    public void Reverse(string userId, DateOnly reversalDate, string reason)
+    {
+        EnsureUser(userId);
+        if (Status != CustomerInvoiceStatus.Posted)
+            throw new InvalidOperationException("Only a posted customer invoice can be reversed.");
+        if (reversalDate < InvoiceDate)
+            throw new ArgumentException("Customer invoice reversal date cannot be earlier than the invoice date.");
+        if (string.IsNullOrWhiteSpace(reason) || reason.Trim().Length > 500)
+            throw new ArgumentException("Customer invoice reversal reason is required and cannot exceed 500 characters.");
+        var from = Status; Status = CustomerInvoiceStatus.Reversed; ReversedByUserId = userId.Trim();
+        ReversedAtUtc = DateTime.UtcNow; ReversalDate = reversalDate; ReversalReason = reason.Trim();
+        History.Add(new CustomerInvoiceHistory(from, Status, CustomerInvoiceHistoryAction.Reversed, userId, reason.Trim()));
     }
 
     private void EnsureDraft()
@@ -151,6 +213,10 @@ public sealed class CustomerInvoiceLine
     public string? TaxExemptionReason { get; private set; }
     public decimal TaxAmount { get; private set; }
     public decimal TotalAmount { get; private set; }
+    public int? TaxOutputAccountIdSnapshot { get; private set; }
+    public decimal CompanyNetAmount { get; private set; }
+    public decimal CompanyTaxAmount { get; private set; }
+    public decimal CompanyTotalAmount { get; private set; }
     public string? Notes { get; private set; }
     public List<CustomerInvoiceSourceAllocation> SourceAllocations { get; private set; } = [];
 
@@ -178,6 +244,17 @@ public sealed class CustomerInvoiceLine
             throw new InvalidOperationException("Delivered-quantity invoice lines must be fully allocated to posted delivery lines.");
         if (quantityBasis == SalesInvoiceQuantityBasis.OrderedQuantity && SourceAllocations.Count > 0)
             throw new InvalidOperationException("Ordered-quantity invoice lines cannot contain delivery allocations.");
+    }
+
+    internal void FreezePosting(int? taxOutputAccountId, decimal exchangeRate)
+    {
+        if (exchangeRate <= 0) throw new ArgumentException("Customer invoice exchange rate must be greater than zero.");
+        if (TaxAmount > 0 && taxOutputAccountId <= 0)
+            throw new InvalidOperationException("A taxed customer invoice line requires an output tax account.");
+        TaxOutputAccountIdSnapshot = taxOutputAccountId;
+        CompanyNetAmount = decimal.Round(NetAmount * exchangeRate, 2, MidpointRounding.AwayFromZero);
+        CompanyTaxAmount = decimal.Round(TaxAmount * exchangeRate, 2, MidpointRounding.AwayFromZero);
+        CompanyTotalAmount = CompanyNetAmount + CompanyTaxAmount;
     }
 }
 

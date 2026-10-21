@@ -58,12 +58,20 @@ public static class NavigationDefinitions
                 29),
 
             new NavigationItem(
+                "Customer payments",
+                "bi-cash-coin",
+                "CustomerPayments",
+                "Index",
+                "CustomerPayments.View",
+                30),
+
+            new NavigationItem(
                 "Sales Returns",
                 "bi-arrow-counterclockwise",
                 "SalesReturns",
                 "Index",
                 "SalesReturns.View",
-                30)
+                40)
         ),
 
         new NavigationGroup(

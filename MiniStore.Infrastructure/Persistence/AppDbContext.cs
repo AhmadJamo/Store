@@ -154,6 +154,8 @@ public class AppDbContext
     public DbSet<CustomerInvoiceLine> CustomerInvoiceLines => Set<CustomerInvoiceLine>();
     public DbSet<CustomerInvoiceSourceAllocation> CustomerInvoiceSourceAllocations => Set<CustomerInvoiceSourceAllocation>();
     public DbSet<CustomerInvoiceHistory> CustomerInvoiceHistories => Set<CustomerInvoiceHistory>();
+    public DbSet<CustomerPayment> CustomerPayments => Set<CustomerPayment>();
+    public DbSet<CustomerPaymentLine> CustomerPaymentLines => Set<CustomerPaymentLine>();
 
     public DbSet<DocumentSequence> DocumentSequences => Set<DocumentSequence>();
 

@@ -50,6 +50,22 @@ public sealed class CustomerInvoicesController(CustomerInvoiceService service,
         return RedirectToAction(nameof(Details), new { id = dto.Id });
     }
 
+    [HttpPost, ValidateAntiForgeryToken, PermissionAuthorize("CustomerInvoices.Post")]
+    public async Task<IActionResult> Post(CustomerInvoiceStatusCommandDto dto)
+    {
+        try { await service.PostAsync(dto); Notify("success", "Customer invoice posted to accounting."); }
+        catch (Exception ex) when (ex is ArgumentException or InvalidOperationException) { Notify("danger", ex.Message); }
+        return RedirectToAction(nameof(Details), new { id = dto.Id });
+    }
+
+    [HttpPost, ValidateAntiForgeryToken, PermissionAuthorize("CustomerInvoices.Reverse")]
+    public async Task<IActionResult> Reverse(ReverseCustomerInvoiceDto dto)
+    {
+        try { await service.ReverseAsync(dto); Notify("success", "Customer invoice reversed."); }
+        catch (Exception ex) when (ex is ArgumentException or InvalidOperationException) { Notify("danger", ex.Message); }
+        return RedirectToAction(nameof(Details), new { id = dto.Id });
+    }
+
     private void Notify(string type, string key)
     { TempData["NotificationType"] = type; TempData["NotificationMessage"] = localizer[key].Value; }
 }

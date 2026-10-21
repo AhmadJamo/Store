@@ -1,0 +1,9 @@
+@model IReadOnlyList<MiniStore.Application.Dtos.Sales.CustomerPaymentDto>
+@using MiniStore.Domain.Entities
+@inject Microsoft.Extensions.Localization.IStringLocalizer<MiniStore.Web.SharedResource> Localizer
+@inject MiniStore.Application.Services.GeneralSettingsService GeneralSettingsService
+@{ ViewData["Title"] = Localizer["Customer payments"]; var settings = await GeneralSettingsService.GetAsync(); }
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3"><h2 class="mb-0">@Localizer["Customer payments"]</h2></div>
+<form method="get" class="row g-2 mb-3"><div class="col-md-6"><input name="search" value="@ViewBag.Search" class="form-control" placeholder="@Localizer["Search by payment number or external reference"]" /></div><div class="col-auto"><button class="btn btn-outline-primary">@Localizer["Search"]</button></div></form>
+@if(Model.Count==0){<div class="alert alert-info">@Localizer["No customer payments were found. Open a posted customer invoice to record its payment."]</div>}
+else{<div class="row g-3">@foreach(var item in Model){var badge=item.Status==CustomerPaymentStatus.Posted?"bg-success":"bg-secondary";<div class="col-lg-6"><div class="card h-100"><div class="card-body"><div class="d-flex justify-content-between gap-2"><div><h5 class="mb-1"><a asp-action="Details" asp-route-id="@item.Id">@item.PaymentNumber</a></h5><div>@item.CustomerName</div></div><span class="badge @badge align-self-start">@Localizer[item.Status.ToString()]</span></div><div class="row g-2 mt-2"><div class="col-6 text-muted">@Localizer["Payment date"]</div><div class="col-6">@item.PaymentDate</div><div class="col-6 text-muted">@Localizer["Payment method"]</div><div class="col-6">@item.PaymentMethodName</div><div class="col-6 text-muted">@Localizer["Total"]</div><div class="col-6">@item.TotalAmount.ToMoneyDisplay(settings) @item.CurrencyCode</div></div></div></div></div>}</div>}

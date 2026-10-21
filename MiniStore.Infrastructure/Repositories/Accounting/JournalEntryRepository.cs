@@ -14,5 +14,8 @@ public class JournalEntryRepository(AppDbContext context) : IJournalEntryReposit
         context.JournalEntries.Include(x => x.Lines)
             .SingleOrDefaultAsync(x => x.SourceType == sourceType && x.SourceReference == sourceReference);
 
+    public Task<JournalEntry?> GetByIdAsync(int id) => context.JournalEntries.AsNoTracking()
+        .Include(x => x.Lines).SingleOrDefaultAsync(x => x.Id == id);
+
     public Task AddAsync(JournalEntry entry) => context.JournalEntries.AddAsync(entry).AsTask();
 }

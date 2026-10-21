@@ -14,7 +14,7 @@ public static class ActionableErrorGuidance
         "PurchaseApprovalRules", "PurchaseSourcing", "SupplierQuotations", "PurchaseOrders",
         "GoodsReceipts", "GoodsReceiptReturns", "VendorBills", "SupplierCreditNotes", "SupplierPayments", "SupplierCommunications",
         "PurchaseAgreements", "PurchaseTemplates", "LandedCosts", "PurchaseDocumentReversals", "PurchaseAnalytics", "SupplierIntegrations",
-        "SalesPriceLists", "SalesQuotations", "SalesOrders", "SalesDeliveries", "CustomerInvoices", "Customers"
+        "SalesPriceLists", "SalesQuotations", "SalesOrders", "SalesDeliveries", "CustomerInvoices", "CustomerPayments", "Customers"
     };
 
     public static ActionableErrorLink? Resolve(
@@ -117,6 +117,45 @@ public static class ActionableErrorGuidance
 
         if (Matches(message, localize, "Customer invoice product was not found."))
             return new("Products", "Index", "Manage products", "Products.Edit");
+
+        if (Matches(message, localize,
+                "Assign an active asset receivable account to the customer before posting the customer invoice."))
+            return new("Customers", "Index", "Open customers", "Customers.Edit");
+
+        if (Matches(message, localize,
+                "Customer invoice source warehouse was not found.",
+                "Assign the customer invoice source warehouse to a branch before posting."))
+            return new("Warehouses", "Index", "Open warehouse settings", "Warehouses.Edit");
+
+        if (Matches(message, localize,
+                "Customer invoice source branch was not found.",
+                "The customer invoice source branch must be active before posting.",
+                "Configure an active sales revenue account for the customer invoice source branch."))
+            return new("Branches", "Index", "Open branches", "Administration.Access");
+
+        if (Matches(message, localize,
+                "A tax rate selected on this customer invoice no longer exists.",
+                "Configure an active output tax liability account before posting a customer invoice.",
+                "Configure an output tax account for every taxed customer invoice line before posting."))
+            return new("TaxRates", "Index", "Manage tax rates", "Administration.Access");
+
+        if (Matches(message, localize,
+                "The posting date is not covered by a fiscal period.",
+                "The fiscal period for the posting date is not open."))
+            return new("Settings", "FiscalPeriods", "Open fiscal periods", "Administration.Access");
+
+        if (Matches(message, localize,
+                "Payment method was not found.",
+                "The selected payment method is inactive.",
+                "Payment method settlement account was not found.",
+                "The payment method settlement account must be an active asset account."))
+            return new("PaymentMethods", "Index", "Manage payment methods", "Administration.Access");
+
+        if (Matches(message, localize,
+                "Configure accounting posting accounts before posting a foreign-currency customer payment.",
+                "Configure a realized exchange gain account before posting a foreign-currency customer payment.",
+                "Configure a realized exchange loss account before posting a foreign-currency customer payment."))
+            return new("Settings", "Accounting", "Open accounting settings", "Administration.Access");
 
         if (Matches(message, localize,
                 "Insufficient physical stock for the reserved delivery.",
@@ -250,6 +289,9 @@ public static class ActionableErrorGuidance
             "Configure accounting posting accounts before posting landed costs.",
             "Configure accounting posting accounts before posting sales deliveries.",
             "Configure a cost of sales account before posting sales deliveries.",
+            "Configure accounting posting accounts before posting a customer invoice.",
+            "Configure a sales revenue account before posting a customer invoice.",
+            "Configure an active revenue account before posting a customer invoice.",
             "Configure a goods received not invoiced account before posting goods receipts.",
             "Configure a goods received not invoiced account before posting a goods receipt return.",
             "Configure a goods received not invoiced account before posting a vendor bill.",

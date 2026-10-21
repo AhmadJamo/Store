@@ -1,7 +1,7 @@
 # Accounting implementation assessment
 > Status: PARTIALLY IMPLEMENTED  
 > Source of truth: Code  
-> Last reviewed: 2026-10-14
+> Last reviewed: 2026-10-21
 
 For the Arabic accounting-cycle, journal examples, international-standard map, mandatory software controls and ordered implementation guide, see [`ACCOUNTING_REFERENCE_AR.md`](ACCOUNTING_REFERENCE_AR.md). That reference describes the target policy and must not be read as an implemented-feature list; the status table below remains the implementation assessment.
 
@@ -32,6 +32,9 @@ Warehouses now have optional BranchId and InventoryAccountId fields. Completing 
 | Moving weighted-average inventory valuation | IMPLEMENTED | Product+warehouse average/value, immutable movement snapshots, source-cost transfers and provisional-negative variance are persisted. |
 | COGS snapshot | IMPLEMENTED | New direct and prepared sale lines freeze unit cost and COGS; prepared cost is derived from current ingredient averages. |
 | Sale revenue, output tax and COGS posting | IMPLEMENTED | Explicit idempotent posting debits settlement and net invoice discount, credits net revenue and frozen output tax, debits COGS and credits warehouse inventory. Inclusive and exclusive invoice tax are supported. |
+| Customer Invoice receivable posting | IMPLEMENTED | SAL-080 separately posts an Approved invoice once: debit the customer asset receivable account, credit branch/default sales revenue and output-tax liability in company currency. Delivered amounts preserve exact source branch/warehouse dimensions; posting does not create a payment or inventory/COGS effect. |
+| Customer payment settlement | IMPLEMENTED | SAL-090 debits the active payment-method asset account, credits each invoice's frozen receivable carrying amount, records explicit realized exchange gain/loss where required and supports exact reversal. Posted allocations derive Unpaid/Partially Paid/Paid and never mutate inventory. |
+| Customer Invoice accounting reversal | IMPLEMENTED | A dated reasoned reversal creates one exact inverse journal, preserves both entries and source evidence, marks the invoice Reversed and releases billing eligibility without deleting history. |
 | Provisional negative-stock cost settlement | IMPLEMENTED | Purchase posting reads receipt cost variances and adjusts COGS against the affected warehouse inventory account in either direction. |
 | Sales returns | IMPLEMENTED | Immutable partial/full return documents cap cumulative quantity, reverse revenue/output tax/discount, and restock direct items with historical-cost COGS reversal. |
 | Fiscal periods | IMPLEMENTED | Tenant periods cannot overlap; once configured, the central journal gateway accepts postings only inside an Open period. Soft Closed and Closed block operational posting. |
@@ -95,4 +98,4 @@ The shared fiscal-period and journal-posting controls apply. Draft creation and 
 
 SAL-070 creates and approves customer invoice documents but deliberately does not post them. Its company setting chooses Delivered or Ordered quantity eligibility, not an accounting method. Approval freezes billing evidence and reserves source quantity only; it does not debit receivables, credit revenue/output tax or record payment. This prevents a document from appearing financially Posted before a balanced source-unique journal exists.
 
-SAL-080 will own the accounting boundary: debit the resolved customer receivable account and credit frozen revenue and output-tax amounts under fiscal-period controls, then preserve an idempotent invoice↔journal link and controlled reversal. SAL-090 will separately own customer payment and allocation. Neither later step may repeat delivery-time COGS or inventory effects.
+SAL-080 owns invoice recognition and SAL-090 separately owns receipt allocation and receivable settlement. Neither repeats delivery-time COGS or inventory effects. An allocated invoice cannot be reversed until its posted customer payments are reversed.

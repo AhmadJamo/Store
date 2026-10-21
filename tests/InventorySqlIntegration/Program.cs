@@ -133,7 +133,7 @@ try
     await VerifyInventoryBalanceProjectionAsync(tenantOneId, tenantOneFixture.ProductId, expectedOnHand: 2m, connectionString);
     await VerifyOpeningTrackingAllocationAsync(tenantOneId, tenantOneFixture.ProductId, tenantOneFixture.WarehouseId, connectionString);
 
-    Console.WriteLine("Passed SQL integration checks: professional customer and sales-pricing tenant isolation, price-list code/rule uniqueness and cross-tenant linkage protection, partial/full sales-delivery reservation consumption, physical stock issue and delivery-time COGS posting, partial customer invoicing with exact delivery allocations and no premature accounting; semantic coverage catalog, legacy-audit freeze and rollback, semantic role/settings, denied-security, permission-aware audit reader/export, legal hold, signed checkpoint, manifest-before-delete retention and SQL audit-role separation plus audit-event rollback, isolation, append-only and integrity; tenant isolation, reconciliation, balances, replenishment purchase-request source concurrency, 3-product/2-supplier split awards, receipt, vendor-bill and supplier-payment concurrency, controlled payment reversal and retry, three-way matching override evidence, GRNI posting and clearing, purchase accounting reconciliation, payable settlement, receipt-based supplier returns, landed-cost valuation, purchasing analytics, idempotent barcode receipt drafts, adjustment posting, tracked operations, quarantine and recall.");
+    Console.WriteLine("Passed SQL integration checks: professional customer and sales-pricing tenant isolation, price-list code/rule uniqueness and cross-tenant linkage protection, partial/full sales-delivery reservation consumption, physical stock issue and delivery-time COGS posting, partial customer invoicing with exact delivery allocations and no premature accounting, one-time receivable/revenue posting and controlled invoice-journal reversal without inventory mutation; semantic coverage catalog, legacy-audit freeze and rollback, semantic role/settings, denied-security, permission-aware audit reader/export, legal hold, signed checkpoint, manifest-before-delete retention and SQL audit-role separation plus audit-event rollback, isolation, append-only and integrity; tenant isolation, reconciliation, balances, replenishment purchase-request source concurrency, 3-product/2-supplier split awards, receipt, vendor-bill and supplier-payment concurrency, controlled payment reversal and retry, three-way matching override evidence, GRNI posting and clearing, purchase accounting reconciliation, payable settlement, receipt-based supplier returns, landed-cost valuation, purchasing analytics, idempotent barcode receipt drafts, adjustment posting, tracked operations, quarantine and recall.");
 }
 finally
 {
@@ -1163,12 +1163,15 @@ static async Task VerifySalesQuotationFoundationAsync(int tenantOneId,int tenant
     {
         var inventoryAccount=new Account("SQL-DEL-INV","SQL delivery inventory",AccountType.Asset);
         var costAccount=new Account("SQL-DEL-COGS","SQL delivery cost of sales",AccountType.Expense);
+        var revenueAccount=new Account("SQL-DEL-REV","SQL delivery sales revenue",AccountType.Revenue);
+        var receiptAccount=new Account("SQL-CUST-CASH","SQL customer receipts",AccountType.Asset);
         var branch=new Branch("SQL-DEL","SQL Delivery Branch");
-        deliverySetup.Accounts.AddRange(inventoryAccount,costAccount);deliverySetup.Branches.Add(branch);
+        deliverySetup.Accounts.AddRange(inventoryAccount,costAccount,revenueAccount,receiptAccount);deliverySetup.Branches.Add(branch);
         await deliverySetup.SaveChangesAsync();
+        deliverySetup.PaymentMethods.Add(new PaymentMethod("SQL customer bank receipt",receiptAccount.Id));
         var warehouse=await deliverySetup.Warehouses.SingleAsync(x=>x.Id==warehouseId);
         warehouse.AssignAccounting(branch.Id,inventoryAccount.Id);
-        deliverySetup.AccountingSettings.Add(new AccountingSettings(null,null,null,costAccount.Id));
+        deliverySetup.AccountingSettings.Add(new AccountingSettings(null,null,revenueAccount.Id,costAccount.Id));
         var customer=await deliverySetup.Customers.SingleAsync(x=>x.CustomerCode=="CUS-SQT-SQL");
         var product=await deliverySetup.Products.SingleAsync(x=>x.Id==productId);
         var unit=await deliverySetup.MeasurementUnits.SingleAsync(x=>x.Id==measurementUnitId);
@@ -1257,9 +1260,18 @@ static async Task VerifySalesQuotationFoundationAsync(int tenantOneId,int tenant
         var journalsBeforeInvoices=await deliveryContext.JournalEntries.CountAsync();
         var movementsBeforeInvoices=await deliveryContext.StockMovements.CountAsync();
         var customerInvoiceRepository=new CustomerInvoiceRepository(deliveryContext);
-        var customerInvoiceService=new CustomerInvoiceService(customerInvoiceRepository,orderRepository,deliveryRepository,
-            new ProductRepository(deliveryContext),new AccountingSettingsRepository(deliveryContext),numbers,
-            deliveryUnitOfWork,new FixedCurrentUser("customer-billing-user"));
+        var customerRepository=new CustomerRepository(deliveryContext);
+        var accountRepository=new AccountRepository(deliveryContext);
+        var taxRateRepository=new TaxRateRepository(deliveryContext);
+        var accountingSettingsRepository=new AccountingSettingsRepository(deliveryContext);
+        var generalSettingsRepository=new GeneralSettingsRepository(deliveryContext);
+        var journalEntryRepository=new JournalEntryRepository(deliveryContext);
+        var customerInvoiceJournalPosting=new JournalPostingService(journalEntryRepository,numbers,fiscalPeriods);
+        var customerInvoiceService=new CustomerInvoiceService(customerInvoiceRepository,new CustomerPaymentRepository(deliveryContext),orderRepository,deliveryRepository,
+            new ProductRepository(deliveryContext),customerRepository,new WarehouseRepository(deliveryContext),
+            new BranchRepository(deliveryContext),accountRepository,taxRateRepository,
+            accountingSettingsRepository,generalSettingsRepository,journalEntryRepository,customerInvoiceJournalPosting,
+            numbers,deliveryUnitOfWork,new FixedCurrentUser("customer-billing-user"));
         var firstInvoiceRequest=Guid.NewGuid().ToString("N");
         var firstInvoiceId=await customerInvoiceService.CreateDraftAsync(new CreateCustomerInvoiceDto
         {
@@ -1312,6 +1324,67 @@ static async Task VerifySalesQuotationFoundationAsync(int tenantOneId,int tenant
            await deliveryContext.JournalEntries.CountAsync()!=journalsBeforeInvoices||
            await deliveryContext.StockMovements.CountAsync()!=movementsBeforeInvoices)
             throw new InvalidOperationException($"Partial customer invoices must consume exact posted-delivery eligibility, release cancellation quantity, preserve totals and avoid stock or accounting posting. Progress={invoiceProgress.IsFullyInvoiced}/{invoiceProgress.ApprovedInvoiceCount}/{invoiceProgress.DraftInvoiceCount}; line quantity={activeInvoiceLines.Sum(x=>x.Quantity)}; total={activeInvoiceLines.Sum(x=>x.TotalAmount)}; source={activeSources.Sum(x=>x.StockQuantity)}/{activeSources.Select(x=>x.SalesDeliveryId).Distinct().Count()}; cancelled={await deliveryContext.CustomerInvoices.CountAsync(x=>x.SalesOrderId==order.Id&&x.Status==CustomerInvoiceStatus.Cancelled)}; stock/journal/movement={await deliveryContext.StockTransactions.CountAsync()}/{await deliveryContext.JournalEntries.CountAsync()}/{await deliveryContext.StockMovements.CountAsync()} expected {stockTransactionsBeforeInvoices}/{journalsBeforeInvoices}/{movementsBeforeInvoices}.");
+
+        var approvedForPosting=await customerInvoiceService.GetAsync(firstInvoiceId)
+            ??throw new InvalidOperationException("SQL approved customer invoice was not found for posting.");
+        await customerInvoiceService.PostAsync(new CustomerInvoiceStatusCommandDto
+            {Id=firstInvoiceId,RowVersion=approvedForPosting.RowVersion});
+        var postedInvoice=await deliveryContext.CustomerInvoices.AsNoTracking().Include(x=>x.Lines).SingleAsync(x=>x.Id==firstInvoiceId);
+        var postingJournal=await deliveryContext.JournalEntries.AsNoTracking().Include(x=>x.Lines)
+            .SingleAsync(x=>x.SourceType=="CustomerInvoice"&&x.SourceReference==postedInvoice.InvoiceNumber);
+        var customerAccountId=(await customerRepository.GetByIdAsync(postedInvoice.CustomerId))!.AccountId;
+        var revenueAccountId=(await accountingSettingsRepository.GetAsync())!.SalesRevenueAccountId;
+        if(postedInvoice.Status!=CustomerInvoiceStatus.Posted||postedInvoice.CompanyTotalAmount!=postedInvoice.TotalAmount*postedInvoice.ExchangeRate||
+           postedInvoice.ReceivableAccountIdSnapshot!=customerAccountId||postedInvoice.SalesRevenueAccountIdSnapshot!=revenueAccountId||
+           postingJournal.Status!=JournalEntryStatus.Posted||postingJournal.Lines.Sum(x=>x.Debit)!=postingJournal.Lines.Sum(x=>x.Credit)||
+           postingJournal.Lines.Single(x=>x.AccountId==customerAccountId).Debit!=postedInvoice.CompanyTotalAmount||
+           postingJournal.Lines.Any(x=>x.BranchId==null||x.WarehouseId!=warehouseId)||
+           await deliveryContext.StockTransactions.CountAsync()!=stockTransactionsBeforeInvoices||
+           await deliveryContext.StockMovements.CountAsync()!=movementsBeforeInvoices)
+            throw new InvalidOperationException("Posting a customer invoice must create one balanced receivable/revenue/tax journal from frozen company-currency evidence without changing inventory.");
+
+        var customerPaymentRepository=new CustomerPaymentRepository(deliveryContext);
+        var customerPaymentService=new CustomerPaymentService(customerPaymentRepository,customerInvoiceRepository,customerRepository,
+            new PaymentMethodRepository(deliveryContext),accountRepository,accountingSettingsRepository,journalEntryRepository,numbers,
+            customerInvoiceJournalPosting,new CurrencyExchangeRateService(new CurrencyExchangeRateRepository(deliveryContext),generalSettingsRepository,
+                deliveryUnitOfWork,new FixedCurrentUser("customer-cashier")),deliveryUnitOfWork,new FixedCurrentUser("customer-cashier"));
+        var customerPaymentMethod=await deliveryContext.PaymentMethods.SingleAsync(x=>x.Name=="SQL customer bank receipt");
+        var customerPaymentId=await customerPaymentService.CreateAndPostAsync(new CreateCustomerPaymentDto
+        {
+            SourceCustomerInvoiceId=firstInvoiceId,PaymentMethodId=customerPaymentMethod.Id,PaymentDate=new DateOnly(2026,10,21),
+            Lines=[new CreateCustomerPaymentLineDto{CustomerInvoiceId=firstInvoiceId,Amount=3m}]
+        });
+        var paidInvoiceDetails=await customerInvoiceService.GetAsync(firstInvoiceId)??throw new InvalidOperationException("SQL paid customer invoice was not found.");
+        var postedCustomerPayment=await customerPaymentService.GetAsync(customerPaymentId)??throw new InvalidOperationException("SQL customer payment was not found.");
+        var customerPaymentJournal=await deliveryContext.JournalEntries.AsNoTracking().Include(x=>x.Lines)
+            .SingleAsync(x=>x.SourceType=="CustomerPayment"&&x.SourceReference==postedCustomerPayment.PaymentNumber);
+        if(postedCustomerPayment.Status!=CustomerPaymentStatus.Posted||paidInvoiceDetails.PaidAmount!=3m||paidInvoiceDetails.OutstandingAmount!=postedInvoice.TotalAmount-3m||
+           customerPaymentJournal.Lines.Sum(x=>x.Debit)!=customerPaymentJournal.Lines.Sum(x=>x.Credit)||
+           customerPaymentJournal.Lines.Single(x=>x.AccountId==postedInvoice.ReceivableAccountIdSnapshot).Credit!=3m)
+            throw new InvalidOperationException("Customer payment posting must partially allocate the posted invoice and create one balanced receipt/receivable journal.");
+        await customerPaymentService.ReverseAsync(new ReverseCustomerPaymentDto{Id=customerPaymentId,RowVersion=postedCustomerPayment.RowVersion,
+            ReversalDate=new DateOnly(2026,10,21),Reason="SQL returned customer receipt"});
+        var reopenedInvoiceDetails=await customerInvoiceService.GetAsync(firstInvoiceId)??throw new InvalidOperationException("SQL reopened customer invoice was not found.");
+        if(reopenedInvoiceDetails.PaidAmount!=0m||reopenedInvoiceDetails.OutstandingAmount!=postedInvoice.TotalAmount||
+           await deliveryContext.JournalEntries.CountAsync(x=>x.SourceType=="CustomerPaymentReversal"&&x.SourceReference==postedCustomerPayment.PaymentNumber)!=1)
+            throw new InvalidOperationException("Reversing a customer payment must reopen its allocations and create the exact accounting reversal.");
+
+        var postedDetails=await customerInvoiceService.GetAsync(firstInvoiceId)
+            ??throw new InvalidOperationException("SQL posted customer invoice details were not found.");
+        await customerInvoiceService.ReverseAsync(new ReverseCustomerInvoiceDto
+            {Id=firstInvoiceId,RowVersion=postedDetails.RowVersion,ReversalDate=new DateOnly(2026,10,21),Reason="SQL controlled invoice reversal"});
+        var reversedInvoice=await deliveryContext.CustomerInvoices.AsNoTracking().SingleAsync(x=>x.Id==firstInvoiceId);
+        var reversedOriginalJournal=await deliveryContext.JournalEntries.AsNoTracking().SingleAsync(x=>x.Id==postingJournal.Id);
+        var reversalJournal=await deliveryContext.JournalEntries.AsNoTracking().Include(x=>x.Lines)
+            .SingleAsync(x=>x.SourceType=="CustomerInvoiceReversal"&&x.SourceReference==postedInvoice.InvoiceNumber);
+        var progressAfterReversal=await customerInvoiceService.GetProgressAsync(order.Id);
+        if(reversedInvoice.Status!=CustomerInvoiceStatus.Reversed||reversedInvoice.ReversalReason!="SQL controlled invoice reversal"||
+           reversedOriginalJournal.Status!=JournalEntryStatus.Reversed||reversalJournal.Status!=JournalEntryStatus.Posted||
+           reversalJournal.ReversalOfEntryId!=postingJournal.Id||reversalJournal.Lines.Sum(x=>x.Debit)!=reversalJournal.Lines.Sum(x=>x.Credit)||
+           !progressAfterReversal.HasEligibleRemaining||progressAfterReversal.CommittedAmount!=finalInvoice.TotalAmount||
+           await deliveryContext.StockTransactions.CountAsync()!=stockTransactionsBeforeInvoices||
+           await deliveryContext.StockMovements.CountAsync()!=movementsBeforeInvoices)
+            throw new InvalidOperationException("Controlled customer-invoice reversal must invert the exact journal, preserve audit evidence, release billing eligibility and leave inventory unchanged.");
         var orderService=new SalesOrderService(orderRepository,new SalesQuotationRepository(deliveryContext),numbers,
             deliveryUnitOfWork,deliveryUser,reservationService,new SalesDeliveryRepository(deliveryContext));
         try

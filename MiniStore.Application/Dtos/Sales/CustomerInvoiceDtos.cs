@@ -5,7 +5,7 @@ namespace MiniStore.Application.Dtos.Sales;
 
 public sealed record CustomerInvoiceSummaryDto(int Id, string InvoiceNumber, int SalesOrderId,
     string OrderNumber, string CustomerCode, string CustomerName, DateOnly InvoiceDate, DateOnly DueDate,
-    string CurrencyCode, decimal TotalAmount, CustomerInvoiceStatus Status);
+    string CurrencyCode, decimal TotalAmount, CustomerInvoiceStatus Status, decimal PaidAmount, decimal OutstandingAmount);
 
 public sealed record CustomerInvoiceSourceDto(int SalesDeliveryId, int SalesDeliveryLineId,
     string DeliveryNumber, decimal StockQuantity);
@@ -19,11 +19,18 @@ public sealed class CustomerInvoiceLineDto
     public decimal UnitPrice { get; init; } public decimal NetAmount { get; init; }
     public string? TaxName { get; init; } public decimal? TaxRatePercent { get; init; }
     public decimal TaxAmount { get; init; } public decimal TotalAmount { get; init; }
+    public int? TaxOutputAccountIdSnapshot { get; init; }
+    public string? TaxOutputAccountDisplay { get; init; }
+    public decimal CompanyNetAmount { get; init; } public decimal CompanyTaxAmount { get; init; }
+    public decimal CompanyTotalAmount { get; init; }
     public List<CustomerInvoiceSourceDto> Sources { get; init; } = [];
 }
 
 public sealed record CustomerInvoiceHistoryDto(CustomerInvoiceStatus FromStatus, CustomerInvoiceStatus ToStatus,
     CustomerInvoiceHistoryAction Action, string UserId, string? Reason, DateTime CreatedAtUtc);
+
+public sealed record CustomerInvoiceJournalLineDto(string AccountDisplay, string? BranchName,
+    string? WarehouseName, decimal Debit, decimal Credit, string? Description);
 
 public sealed class CustomerInvoiceDetailsDto
 {
@@ -38,8 +45,20 @@ public sealed class CustomerInvoiceDetailsDto
     public int PaymentTermDays { get; init; } public string? Notes { get; init; }
     public CustomerInvoiceStatus Status { get; init; } public decimal NetAmount { get; init; }
     public decimal TaxAmount { get; init; } public decimal TotalAmount { get; init; }
+    public decimal PaidAmount { get; init; } public decimal OutstandingAmount { get; init; }
+    public string PaymentStatus { get; init; } = "Unpaid";
+    public string? CompanyCurrencyCode { get; init; } public decimal CompanyNetAmount { get; init; }
+    public decimal CompanyTaxAmount { get; init; } public decimal CompanyTotalAmount { get; init; }
+    public int? ReceivableAccountIdSnapshot { get; init; } public int? SalesRevenueAccountIdSnapshot { get; init; }
+    public string? ReceivableAccountDisplay { get; init; } public string? SalesRevenueAccountDisplay { get; init; }
     public string CreatedByUserId { get; init; } = string.Empty; public DateTime CreatedAtUtc { get; init; }
     public string? ApprovedByUserId { get; init; } public DateTime? ApprovedAtUtc { get; init; }
+    public string? PostedByUserId { get; init; } public DateTime? PostedAtUtc { get; init; }
+    public string? ReversedByUserId { get; init; } public DateTime? ReversedAtUtc { get; init; }
+    public DateOnly? ReversalDate { get; init; } public string? ReversalReason { get; init; }
+    public int? JournalEntryId { get; init; } public string? JournalEntryNumber { get; init; }
+    public int? ReversalJournalEntryId { get; init; } public string? ReversalJournalEntryNumber { get; init; }
+    public List<CustomerInvoiceJournalLineDto> JournalLines { get; init; } = [];
     public string? CancellationReason { get; init; } public byte[] RowVersion { get; init; } = [];
     public List<CustomerInvoiceLineDto> Lines { get; init; } = [];
     public List<CustomerInvoiceHistoryDto> History { get; init; } = [];
@@ -84,6 +103,14 @@ public sealed class CustomerInvoiceStatusCommandDto
     [Range(1, int.MaxValue)] public int Id { get; set; }
     public byte[] RowVersion { get; set; } = [];
     [StringLength(500)] public string? Reason { get; set; }
+}
+
+public sealed class ReverseCustomerInvoiceDto
+{
+    [Range(1, int.MaxValue)] public int Id { get; set; }
+    public byte[] RowVersion { get; set; } = [];
+    public DateOnly ReversalDate { get; set; } = DateOnly.FromDateTime(DateTime.Today);
+    [Required, StringLength(500)] public string Reason { get; set; } = string.Empty;
 }
 
 public sealed class CustomerInvoiceProgressDto

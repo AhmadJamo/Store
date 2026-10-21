@@ -80,7 +80,8 @@ The ERP SaaS Foundation Blueprint is imported as a non-authoritative planning re
 - [x] SAL-050 implement full/partial sales-order inventory reservation, release/reallocation, tenant-safe source-line audit and concurrent last-unit protection without changing OnHand or accounting.
 - [x] SAL-060 implement partial/full reservation-backed delivery, exact-position stock/tracking issue, physical movement and one-time delivery COGS posting without creating an invoice or payment.
 - [x] SAL-070 implement policy-based partial/multiple customer invoice documents with controlled source quantities, Draft/Approved/Cancelled lifecycle, exact delivery allocations and no premature accounting/payment effect. Completed 2026-10-20.
-- [ ] SAL-080 post Approved customer invoices to receivables/revenue/output tax with idempotent Posted/Reversed lifecycle; requires explicit approval before implementation.
+- [x] SAL-080 post Approved customer invoices to receivables/revenue/output tax with idempotent Posted/Reversed lifecycle, branch/warehouse dimensions, frozen journal evidence and no payment/inventory effect. Completed 2026-10-21.
+- [x] SAL-090 add independent customer payments with capped partial/multi-invoice allocation, derived balances, foreign-exchange posting, journal evidence and controlled reversal. Completed 2026-10-21.
 - [ ] SAL-060 through SAL-130 implement delivery, invoicing, accounting, payment, return, advanced-sales and cutover slices in order.
 
 - [x] WMS-050 reservations and exact transfer allocation with concurrent last-unit protection.

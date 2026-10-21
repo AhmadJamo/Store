@@ -1,5 +1,5 @@
 # Razor screen map
-> Status: IMPLEMENTED | Last reviewed: 2026-10-20
+> Status: IMPLEMENTED | Last reviewed: 2026-10-21
 
 | Purchase document reversals | `/PurchaseDocumentReversals` | Responsive reversal history, confirmation and immutable audit detail for receipts, bills, payments and landed costs; original detail screens hide the action after completion and link to the reversal. |
 
@@ -19,7 +19,9 @@
 | `Views/SalesQuotations/{Index,Create,Details}.cshtml` | responsive bilingual SAL-030 quotation list, multi-line entry and immutable snapshot/history detail. Customer addresses filter by customer; products search by name/code/barcode; available lifecycle actions depend on status and permission, and completed actions become state badges. No horizontal scrolling, stock mutation or accounting posting occurs. |
 | `Views/SalesOrders/{Index,Details,Reserve}.cshtml` | responsive bilingual SAL-040/050 order pipeline, immutable copied quotation snapshots/history and card-based reservation workflow without horizontal scrolling. Confirm/cancel/reserve/release actions are status- and permission-aware. The reservation page shows required, reserved, remaining and dimensional availability, supports block/partial shortage policy and replaces completed quantities with status/history links. |
 | `Views/SalesDeliveries/{Index,Create,Details}.cshtml` | responsive bilingual SAL-060 delivery list, reservation-backed partial/full Draft entry and immutable detail/history. Posting explains and atomically performs the physical issue plus COGS; completed actions become Posted/Cancelled state, full delivery hides repeat action, and no customer invoice or payment is implied. |
-| `Views/CustomerInvoices/{Index,Create,Details}.cshtml` | responsive bilingual SAL-070 invoice list, order-scoped partial quantity entry and snapshot/source detail. Approval/cancellation are permission-aware, completed actions become status, amounts use user formatting, and warnings distinguish approval from accounting posting/payment. |
+| `Views/CustomerInvoices/{Index,Create,Details}.cshtml` | responsive bilingual SAL-070/080 invoice list, partial entry and source/accounting detail. Approval, posting, cancellation and reversal are permission/status-aware; completed buttons become state, actual journal lines show account and branch/warehouse evidence without horizontal scrolling, and guidance preserves the payment boundary. |
+| `Views/CustomerPayments/{Index,Create,Details}.cshtml` | responsive bilingual SAL-090 receipt list, partial/multi-invoice allocation, derived invoice balance, journal links and controlled reversal. Completed payments expose status/evidence instead of another posting action. |
+| `Views/JournalEntries/Details.cshtml` | permission-protected read-only linked journal evidence with source, status, responsive account cards, debit/credit totals and optional branch/warehouse dimensions. |
 | `Views/Settings/Accounting.cshtml` | accounting posting accounts plus CUS-030A customer-receivable mode, control/parent account, automatic code prefix and prospective effective date with bilingual help. |
 | `Views/ProductStocks/{Index,Create,Edit}.cshtml` | balance, moving average and inventory value list; opening balance/direct adjustment; negative recipe exceptions are highlighted. |
 | `Views/StockTransactions/{Index,Create}.cshtml` | paged/filterable movement list with unit cost, movement value and variance; manual adjustments include reason-required kitchen variance. |

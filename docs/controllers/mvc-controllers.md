@@ -30,7 +30,9 @@
 | SalesQuotations | Index/Details/Create/Send/Accept/Reject/Expire/Cancel | Six dedicated view/create/lifecycle permissions, antiforgery on every POST, DTO-only SalesQuotationService, request-key idempotency, rowversion and status validation. Quotation acceptance is final evidence only until SAL-040 adds separately authorized order conversion. |
 | SalesOrders | Index/Details/CreateFromQuotation/Confirm/Cancel/Reserve/ReleaseReservation | View/Create/Confirm/Cancel/Reserve/ReleaseReservation permissions, antiforgery on every POST, DTO-only order/reservation services, source-quotation idempotency/SQL uniqueness, rowversion and state validation. Confirmation creates no inventory or accounting effect. |
 | SalesDeliveries | Index/Details/Create/Post/Cancel | View/Create/Post/Cancel permissions, antiforgery on every POST, DTO-only SalesDeliveryService, exact reservation/warehouse/location validation, rowversion and one-time stock/COGS posting. |
-| CustomerInvoices | Index/Details/Create/Approve/Cancel | View/Create/Approve/Cancel permissions, antiforgery on every POST, DTO-only CustomerInvoiceService, idempotent cumulative eligibility, rowversion and no accounting/payment effect. |
+| CustomerInvoices | Index/Details/Create/Approve/Post/Cancel/Reverse | Six dedicated invoice permissions, antiforgery on every POST, DTO-only CustomerInvoiceService, idempotent cumulative eligibility, rowversion, source-unique receivable posting and exact reversal. Posting has no payment or inventory effect. |
+| CustomerPayments | Index/Details/Create/Reverse | Three dedicated permissions, antiforgery mutations and DTO-only CustomerPaymentService. Creation atomically posts a capped receipt across eligible invoices; reversal preserves evidence and reopens balances. |
+| JournalEntries | Details | `JournalEntries.View`; read-only DTO projection of a source-linked entry and its account, debit/credit, branch and warehouse evidence. |
 | PurchaseReturns | Index/Details/Create | PurchaseReturns.View/Create; only posted purchases may return remaining quantities covered by current warehouse stock, and creation atomically posts inventory/payable/tax/discount/variance reversal. |
 | PurchaseSourcing | Index/Details/Create | PurchaseSourcing.View/Create; Create binds the sourcing page's `Form` prefix before validating the approved Purchase Request and invited suppliers. |
 | SupplierQuotations | Create/Comparison/Award | SupplierQuotations.Create/View/Award; Create and Award bind their nested `Form` commands. Award validates exact per-line supplier quantities/reasons, records the immutable decision once and returns the comparison with errors without losing input. |
@@ -73,7 +75,11 @@ SAL-040 list/detail, one-time quotation conversion, confirmation and cancellatio
 ## SalesDeliveriesController
 SAL-060 list/detail, reservation-backed Draft creation, one-time posting and Draft-only cancellation. Every POST is antiforgery-protected and uses a dedicated permission. The controller passes DTOs only and delegates inventory, tracking, accounting, tenant, state and cumulative-quantity rules to `SalesDeliveryService`.
 
-SAL-070 `CustomerInvoicesController` exposes filtered list/detail, order-scoped Draft creation, one-time approval and reasoned cancellation. Completed actions are replaced by status, source and downstream guidance. The controller never accesses EF entities and delegates all policy, idempotency, cumulative quantity, rounding and concurrency rules to `CustomerInvoiceService`.
+SAL-080 `CustomerInvoicesController` exposes filtered list/detail, order-scoped Draft creation, approval, one-time posting, reasoned cancellation and controlled reversal. Completed actions are replaced by Posted/Reversed status, linked journal evidence and payment-boundary guidance. The controller never accesses EF entities and delegates eligibility, currency, account, dimension, fiscal-period, idempotency and concurrency rules to `CustomerInvoiceService`.
+
+SAL-090 `CustomerPaymentsController` exposes a searchable receipt list, invoice-scoped allocation form, immutable details/journal links and reasoned reversal. It never accesses EF directly; the Application service enforces same-customer/currency, outstanding caps, exchange treatment and Serializable concurrency.
+
+`JournalEntriesController` exposes only permission-protected Details and delegates the tenant-filtered read projection to `JournalEntryQueryService`; it has no create/edit/delete action.
 
 ## InventoryAdjustmentsController
 WMS-060 list/create/details plus antiforgery-protected Count, Approve, Post and Cancel actions. Each mutation has a dedicated permission and delegates all rules to the Application service.

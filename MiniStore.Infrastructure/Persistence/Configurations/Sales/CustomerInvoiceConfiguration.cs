@@ -23,11 +23,17 @@ public sealed class CustomerInvoiceConfiguration : IEntityTypeConfiguration<Cust
         b.Property(x => x.CreatedByUserId).HasMaxLength(450).IsRequired(); b.Property(x => x.ApprovedByUserId).HasMaxLength(450);
         b.Property(x => x.CancelledByUserId).HasMaxLength(450); b.Property(x => x.NetAmount).HasPrecision(18, 2);
         b.Property(x => x.TaxAmount).HasPrecision(18, 2); b.Property(x => x.TotalAmount).HasPrecision(18, 2);
+        b.Property(x => x.CompanyCurrencyCode).HasMaxLength(3); b.Property(x => x.CompanyNetAmount).HasPrecision(18, 2);
+        b.Property(x => x.CompanyTaxAmount).HasPrecision(18, 2); b.Property(x => x.CompanyTotalAmount).HasPrecision(18, 2);
+        b.Property(x => x.PostedByUserId).HasMaxLength(450); b.Property(x => x.ReversedByUserId).HasMaxLength(450);
+        b.Property(x => x.ReversalReason).HasMaxLength(500);
         b.Property(x => x.RowVersion).IsRowVersion();
         b.HasIndex(x => x.InvoiceNumber).IsUnique(); b.HasIndex(x => x.RequestKey).IsUnique();
         b.HasIndex(x => new { x.SalesOrderId, x.Status });
         b.HasOne<SalesOrder>().WithMany().HasForeignKey(x => x.SalesOrderId).OnDelete(DeleteBehavior.Restrict);
         b.HasOne<Customer>().WithMany().HasForeignKey(x => x.CustomerId).OnDelete(DeleteBehavior.Restrict);
+        b.HasOne<Account>().WithMany().HasForeignKey(x => x.ReceivableAccountIdSnapshot).OnDelete(DeleteBehavior.Restrict);
+        b.HasOne<Account>().WithMany().HasForeignKey(x => x.SalesRevenueAccountIdSnapshot).OnDelete(DeleteBehavior.Restrict);
         b.HasOne<CustomerAddress>().WithMany().HasForeignKey(x => x.CustomerAddressId).OnDelete(DeleteBehavior.Restrict);
         b.HasMany(x => x.Lines).WithOne().HasForeignKey(x => x.CustomerInvoiceId).OnDelete(DeleteBehavior.Cascade);
         b.HasMany(x => x.History).WithOne().HasForeignKey(x => x.CustomerInvoiceId).OnDelete(DeleteBehavior.Cascade);
@@ -46,6 +52,8 @@ public sealed class CustomerInvoiceConfiguration : IEntityTypeConfiguration<Cust
         b.Property(x => x.UnitPrice).HasPrecision(18, 6); b.Property(x => x.CompanyUnitPrice).HasPrecision(18, 6);
         b.Property(x => x.NetAmount).HasPrecision(18, 2); b.Property(x => x.TaxRatePercent).HasPrecision(9, 4);
         b.Property(x => x.TaxAmount).HasPrecision(18, 2); b.Property(x => x.TotalAmount).HasPrecision(18, 2);
+        b.Property(x => x.CompanyNetAmount).HasPrecision(18, 2); b.Property(x => x.CompanyTaxAmount).HasPrecision(18, 2);
+        b.Property(x => x.CompanyTotalAmount).HasPrecision(18, 2);
         b.HasIndex(x => new { x.CustomerInvoiceId, x.SalesOrderLineId }).IsUnique();
         b.HasOne<SalesOrderLine>().WithMany().HasForeignKey(x => x.SalesOrderLineId).OnDelete(DeleteBehavior.Restrict);
         b.HasOne<Product>().WithMany().HasForeignKey(x => x.ProductId).OnDelete(DeleteBehavior.Restrict);
@@ -53,6 +61,7 @@ public sealed class CustomerInvoiceConfiguration : IEntityTypeConfiguration<Cust
         b.HasOne<SalesPriceList>().WithMany().HasForeignKey(x => x.SalesPriceListId).OnDelete(DeleteBehavior.Restrict);
         b.HasOne<SalesPriceRule>().WithMany().HasForeignKey(x => x.SalesPriceRuleId).OnDelete(DeleteBehavior.Restrict);
         b.HasOne<TaxRate>().WithMany().HasForeignKey(x => x.TaxRateId).OnDelete(DeleteBehavior.Restrict);
+        b.HasOne<Account>().WithMany().HasForeignKey(x => x.TaxOutputAccountIdSnapshot).OnDelete(DeleteBehavior.Restrict);
         b.HasMany(x => x.SourceAllocations).WithOne().HasForeignKey(x => x.CustomerInvoiceLineId).OnDelete(DeleteBehavior.Cascade);
     }
 

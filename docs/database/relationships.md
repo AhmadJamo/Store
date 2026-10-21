@@ -1,5 +1,5 @@
 # Database relationships
-> Source of truth: EF configurations | Last reviewed: 2026-10-20
+> Source of truth: EF configurations | Last reviewed: 2026-10-21
 
 `PurchaseDocumentReversals` belongs to one tenant. Its original document is a polymorphic `DocumentType + OriginalDocumentId` reference enforced by the application transaction rather than a database foreign key; a tenant-scoped unique index permits only one reversal per original document.
 
@@ -14,12 +14,13 @@
 - Sale → Warehouse: Restrict; Sale → SaleItems: cascade. SaleItem → Product and optional ProductRecipe version: Restrict.
 - StockTransfer → FromWarehouse and ToWarehouse: Restrict; StockTransfer → Items and History: Restrict. Item → Product: Restrict.
 - SalesDelivery → SalesOrder, InventoryReservation and Warehouse: tenant-composite Restrict; → Lines and Histories: aggregate-owned tenant-composite relationships. Each line restricts to its exact SalesOrderLine, InventoryReservationLine, Product, Warehouse and optional StorageLocation in the same tenant.
-- CustomerInvoice → SalesOrder, Customer and optional CustomerAddress: tenant-composite Restrict; → Lines and Histories: aggregate-owned tenant-composite Cascade. Each line restricts to its SalesOrderLine, Product, MeasurementUnit, optional SalesPriceList/Rule and TaxRate; each Delivered-basis source allocation restricts to the exact Posted SalesDelivery and SalesDeliveryLine in the same tenant.
+- CustomerInvoice → SalesOrder, Customer, optional CustomerAddress and optional frozen receivable/default-revenue Accounts: tenant-composite Restrict; → Lines and Histories: aggregate-owned tenant-composite Cascade. Each line restricts to its SalesOrderLine, Product, MeasurementUnit, optional SalesPriceList/Rule, TaxRate and frozen output-tax Account; each Delivered-basis source allocation restricts to the exact Posted SalesDelivery and SalesDeliveryLine in the same tenant. Journal linkage is the source-unique `CustomerInvoice`/invoice-number pair; reversal uses `CustomerInvoiceReversal` and references the original JournalEntry.
+- CustomerPayment → Customer, PaymentMethod and frozen settlement Account: tenant-composite Restrict; → CustomerPaymentLines: tenant-composite Cascade. Each line restricts to its CustomerInvoice and frozen receivable Account. Journal linkage uses `CustomerPayment`/payment-number; exact reversal uses `CustomerPaymentReversal` with the same reference.
 - TenantRole → Tenant: cascade when a company is removed. TenantRolePermission → TenantRole cascades and → Permission restricts. TenantUserRole uses `(TenantRoleId, TenantId)` as a composite FK to the matching company role, restricts role deletion until assignments are removed, and links Tenant/IdentityUser with cascades.
 
 Identity relationships are supplied by IdentityDbContext. AuditLog has no foreign-key relationships.
 
-The local schema contains 59 composite tenant foreign keys and zero single-ID relationships between two TenantId-bearing tables. PromotionRedemption → TenantSubscription follows the same rule in the SaaS control plane.
+The local schema contains 65 composite tenant foreign keys and zero single-ID relationships between two TenantId-bearing tables. PromotionRedemption → TenantSubscription follows the same rule in the SaaS control plane.
 
 ## Guided onboarding
 CompanyOnboarding.TenantId is a one-to-one primary/foreign key to Tenant.Id with cascade delete. Template-created ERP rows remain tenant-owned and receive the standard query, write and composite-relationship safeguards.

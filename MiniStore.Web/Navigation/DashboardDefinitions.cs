@@ -18,7 +18,8 @@ public static class DashboardDefinitions
             new("Sales quotations", "bi-file-earmark-text", "SalesQuotations", "Index", "SalesQuotations.View", 27),
             new("Sales orders", "bi-clipboard-check", "SalesOrders", "Index", "SalesOrders.View", 28),
             new("Customer invoices", "bi-receipt-cutoff", "CustomerInvoices", "Index", "CustomerInvoices.View", 29),
-            new("Sales Returns", "bi-arrow-counterclockwise", "SalesReturns", "Index", "SalesReturns.View", 30)
+            new("Customer payments", "bi-cash-coin", "CustomerPayments", "Index", "CustomerPayments.View", 30),
+            new("Sales Returns", "bi-arrow-counterclockwise", "SalesReturns", "Index", "SalesReturns.View", 40)
         ]),
 
         new("Purchasing", "Manage demand, suppliers, orders, receiving and supplier bills.", "bi-bag-check-fill", "orange", 30,

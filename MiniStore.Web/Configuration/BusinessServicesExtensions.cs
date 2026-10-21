@@ -80,6 +80,7 @@ public static class BusinessServicesExtensions
         services.AddScoped<IFiscalPeriodRepository, FiscalPeriodRepository>();
         services.AddScoped<FiscalPeriodService>();
         services.AddScoped<JournalPostingService>();
+        services.AddScoped<JournalEntryQueryService>();
         services.AddScoped<IPaymentMethodRepository, PaymentMethodRepository>();
         services.AddScoped<PaymentMethodService>();
         services.AddScoped<IDocumentSequenceRepository, DocumentSequenceRepository>();
@@ -205,7 +206,9 @@ public static class BusinessServicesExtensions
         services.AddScoped<ISalesDeliveryRepository, SalesDeliveryRepository>();
         services.AddScoped<SalesDeliveryService>();
         services.AddScoped<ICustomerInvoiceRepository, CustomerInvoiceRepository>();
+        services.AddScoped<ICustomerPaymentRepository, CustomerPaymentRepository>();
         services.AddScoped<CustomerInvoiceService>();
+        services.AddScoped<CustomerPaymentService>();
         services.AddScoped<ISaleService, SaleService>();
         services.AddScoped<SalePostingService>();
         services.AddScoped<ISalesReturnRepository, SalesReturnRepository>();

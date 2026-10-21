@@ -621,18 +621,30 @@ var salesDeliveryMovement=StockMovement.PostSalesDelivery(1,1,1,1,null,2m,"poste
 Check(salesDeliveryMovement.Type==StockMovementType.SalesDeliveryOut&&salesDeliveryMovement.SourceDocumentType=="SalesDelivery"&&salesDeliveryMovement.Status==StockMovementStatus.Posted,
     "Posted sales deliveries must create an immutable outbound physical movement");
 
-Check(PermissionDefinitions.All.Count(x=>x.Name.StartsWith("CustomerInvoices.",StringComparison.Ordinal))==4,
-    "Customer invoices must separate view, draft creation, approval and cancellation permissions");
+Check(PermissionDefinitions.All.Count(x=>x.Name.StartsWith("CustomerInvoices.",StringComparison.Ordinal))==6,
+    "Customer invoices must separate view, draft creation, approval, posting, cancellation and reversal permissions");
 var customerInvoiceController=typeof(CustomerInvoicesController);
 Check(customerInvoiceController.GetMethod(nameof(CustomerInvoicesController.Index))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:CustomerInvoices.View"&&
       customerInvoiceController.GetMethod(nameof(CustomerInvoicesController.Details))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:CustomerInvoices.View"&&
       customerInvoiceController.GetMethods().Single(x=>x.Name==nameof(CustomerInvoicesController.Create)&&x.GetCustomAttribute<HttpPostAttribute>() is not null).GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:CustomerInvoices.Create"&&
       customerInvoiceController.GetMethod(nameof(CustomerInvoicesController.Approve))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:CustomerInvoices.Approve"&&
-      customerInvoiceController.GetMethod(nameof(CustomerInvoicesController.Cancel))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:CustomerInvoices.Cancel",
+      customerInvoiceController.GetMethod(nameof(CustomerInvoicesController.Post))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:CustomerInvoices.Post"&&
+      customerInvoiceController.GetMethod(nameof(CustomerInvoicesController.Cancel))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:CustomerInvoices.Cancel"&&
+      customerInvoiceController.GetMethod(nameof(CustomerInvoicesController.Reverse))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:CustomerInvoices.Reverse",
     "Customer invoice endpoints must enforce dedicated server-side permissions");
 Check(customerInvoiceController.GetMethods().Where(x=>x.GetCustomAttribute<HttpPostAttribute>() is not null)
       .All(x=>x.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null),
     "Every customer invoice mutation must require antiforgery validation");
+Check(PermissionDefinitions.All.Count(x=>x.Name.StartsWith("CustomerPayments.",StringComparison.Ordinal))==3,
+    "Customer payments must separate visibility, posting and reversal permissions");
+var customerPaymentController=typeof(CustomerPaymentsController);
+Check(customerPaymentController.GetMethod(nameof(CustomerPaymentsController.Index))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:CustomerPayments.View"&&
+      customerPaymentController.GetMethods().Single(x=>x.Name==nameof(CustomerPaymentsController.Create)&&x.GetCustomAttribute<HttpPostAttribute>() is not null).GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:CustomerPayments.Create"&&
+      customerPaymentController.GetMethod(nameof(CustomerPaymentsController.Reverse))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:CustomerPayments.Reverse",
+    "Customer payment endpoints must enforce dedicated server-side permissions");
+Check(PermissionDefinitions.All.Count(x=>x.Name=="JournalEntries.View")==1&&
+      typeof(JournalEntriesController).GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:JournalEntries.View",
+    "Journal-entry evidence must require one dedicated server-side read permission");
 var invoiceOrder=new SalesOrder("SO-000002",salesQuotation,new DateOnly(2026,10,20),"user");
 typeof(SalesOrder).GetProperty(nameof(SalesOrder.Id))!.SetValue(invoiceOrder,81);
 typeof(SalesOrderLine).GetProperty(nameof(SalesOrderLine.Id))!.SetValue(invoiceOrder.Lines.Single(),82);
@@ -652,11 +664,42 @@ Check(customerInvoice.Status==CustomerInvoiceStatus.Cancelled&&customerInvoice.C
 CheckThrows(()=>new CustomerInvoiceLine(invoiceOrder.Lines.Single(),1m,1m,
     SalesInvoiceQuantityBasis.DeliveredQuantity,16m,0m,16m,[]),
     "Delivered-basis customer invoice lines must preserve complete source allocations");
+var postedCustomerInvoice=new CustomerInvoice("INV-000002",Guid.NewGuid().ToString("N"),invoiceOrder,
+    SalesInvoiceQuantityPolicy.OrderedQuantity,new DateOnly(2026,10,20),null,"billing-user");
+postedCustomerInvoice.AddLine(new CustomerInvoiceLine(invoiceOrder.Lines.Single(),1m,1m,
+    SalesInvoiceQuantityBasis.OrderedQuantity,16m,0m,16m));
+postedCustomerInvoice.Approve("approver");
+postedCustomerInvoice.Post("JOD",101,401,new Dictionary<int,int>(),"accountant");
+Check(postedCustomerInvoice.Status==CustomerInvoiceStatus.Posted&&postedCustomerInvoice.CompanyTotalAmount==16m&&
+      postedCustomerInvoice.ReceivableAccountIdSnapshot==101&&postedCustomerInvoice.SalesRevenueAccountIdSnapshot==401&&
+      postedCustomerInvoice.History.Last().Action==CustomerInvoiceHistoryAction.Posted,
+    "Customer invoice posting must freeze company-currency amounts and receivable/revenue account evidence");
+CheckThrows(()=>postedCustomerInvoice.Post("JOD",101,401,new Dictionary<int,int>(),"accountant"),
+    "A posted customer invoice must reject duplicate posting");
+CheckThrows(()=>postedCustomerInvoice.Cancel("billing-manager","Invalid cancellation"),
+    "A posted customer invoice must require controlled reversal instead of cancellation");
+postedCustomerInvoice.Reverse("accountant",new DateOnly(2026,10,21),"Correct customer billing");
+Check(postedCustomerInvoice.Status==CustomerInvoiceStatus.Reversed&&postedCustomerInvoice.ReversalDate==new DateOnly(2026,10,21)&&
+      postedCustomerInvoice.ReversalReason=="Correct customer billing"&&postedCustomerInvoice.History.Last().Action==CustomerInvoiceHistoryAction.Reversed,
+    "Customer invoice reversal must preserve its date, reason, actor and semantic transition");
 foreach(var type in new[]{typeof(CustomerInvoice),typeof(CustomerInvoiceLine),typeof(CustomerInvoiceSourceAllocation),typeof(CustomerInvoiceHistory)})
     Check(TenantIsolationModel.TenantOwnedTypes.Contains(type)&&db.Model.FindEntityType(type)!.FindProperty("TenantId") is {IsNullable:false},
         $"{type.Name} must be tenant owned");
 Check(DocumentSequence.CreateDefault(DocumentNumberType.CustomerInvoice).Preview(DateTime.Today).StartsWith("INV-"),
     "Customer invoices must use an independent centralized INV document sequence");
+var customerPayment=new CustomerPayment("CPY-000001",1,1,110,new DateOnly(2026,10,21),"JOD","JOD",1m,new DateOnly(2026,10,21),"Company currency",null,null,"cashier");
+customerPayment.AddLine(new CustomerPaymentLine(1,101,"INV-000001",10m,1m,10m));
+customerPayment.Post("cashier");
+Check(customerPayment.Status==CustomerPaymentStatus.Posted&&customerPayment.TotalAmount==10m&&customerPayment.PaymentMethodAccountIdSnapshot==110,
+    "Customer payments must freeze allocation, settlement-account and company-currency evidence");
+customerPayment.Reverse("accountant",new DateOnly(2026,10,21),"Returned receipt");
+Check(customerPayment.Status==CustomerPaymentStatus.Reversed&&customerPayment.ReversalReason=="Returned receipt",
+    "Customer payments must preserve controlled reversal evidence");
+Check(DocumentSequence.CreateDefault(DocumentNumberType.CustomerPayment).Preview(DateTime.Today).StartsWith("CPY-"),
+    "Customer payments must use an independent centralized CPY document sequence");
+foreach(var type in new[]{typeof(CustomerPayment),typeof(CustomerPaymentLine)})
+    Check(TenantIsolationModel.TenantOwnedTypes.Contains(type)&&db.Model.FindEntityType(type)!.FindProperty("TenantId") is {IsNullable:false},
+        $"{type.Name} must be tenant owned");
 
 var customerMaster = new Customer("CUS-000001", "Acme Customer", 1);
 customerMaster.UpdateProfile(CustomerType.Company, "Acme Customer", "Acme Legal", "+962790000000",
@@ -2451,12 +2494,44 @@ Check(customerInvoiceDraftNextStep is {Controller:"CustomerInvoices",Action:"Det
     "Created customer invoice drafts must guide the user to review and approval");
 var customerInvoiceApprovedNextStep=WorkflowNextStepGuidance.Resolve(
     "Customer invoice approved.","CustomerInvoices",new Dictionary<string,string?>{{"id","45"}});
-Check(customerInvoiceApprovedNextStep is {Controller:"CustomerInvoices",Action:"Details",RequiredPermission:"CustomerInvoices.View"},
-    "Approved customer invoices must explain that accounting posting remains separate");
+Check(customerInvoiceApprovedNextStep is {Controller:"CustomerInvoices",Action:"Details",RequiredPermission:"CustomerInvoices.Post"},
+    "Approved customer invoices must guide an authorized user to accounting posting");
+var customerInvoicePostedNextStep=WorkflowNextStepGuidance.Resolve(
+    "Customer invoice posted to accounting.","CustomerInvoices",new Dictionary<string,string?>{{"id","45"}});
+Check(customerInvoicePostedNextStep is {Controller:"CustomerPayments",Action:"Create",RequiredPermission:"CustomerPayments.Create"}&&customerInvoicePostedNextStep.RouteValues.GetValueOrDefault("customerInvoiceId")=="45",
+    "Posted customer invoices must guide an authorized user to customer collection");
+var customerPaymentPostedNextStep=WorkflowNextStepGuidance.Resolve(
+    "Customer payment posted.","CustomerPayments",new Dictionary<string,string?>{{"id","55"}});
+Check(customerPaymentPostedNextStep is {Controller:"CustomerPayments",Action:"Details",RequiredPermission:"CustomerPayments.View"},
+    "Posted customer payments must guide the user to allocations and accounting evidence");
+Check(ActionableErrorGuidance.Resolve(
+          "Configure a realized exchange gain account before posting a foreign-currency customer payment.",
+          "CustomerPayments") is {Controller:"Settings",Action:"Accounting",RequiredPermission:"Administration.Access"},
+    "Customer-payment foreign-exchange setup errors must link to accounting settings");
+var customerInvoiceReversedNextStep=WorkflowNextStepGuidance.Resolve(
+    "Customer invoice reversed.","CustomerInvoices",new Dictionary<string,string?>{{"id","45"}});
+Check(customerInvoiceReversedNextStep is {Controller:"CustomerInvoices",Action:"Index",RequiredPermission:"CustomerInvoices.View"},
+    "Reversed customer invoices must guide the user back to eligible replacement invoicing");
 Check(ActionableErrorGuidance.Resolve(
           "Customer invoice quantity cannot exceed the remaining eligible source quantity.",
           "CustomerInvoices") is {Controller:"SalesOrders",Action:"Index",RequiredPermission:"SalesOrders.View"},
     "Customer-invoice eligibility errors must link back to sales orders");
+Check(ActionableErrorGuidance.Resolve(
+          "Assign an active asset receivable account to the customer before posting the customer invoice.",
+          "CustomerInvoices") is {Controller:"Customers",Action:"Index",RequiredPermission:"Customers.Edit"},
+    "Customer-invoice receivable setup errors must link to customer accounting data");
+Check(ActionableErrorGuidance.Resolve(
+          "Configure an active output tax liability account before posting a customer invoice.",
+          "CustomerInvoices") is {Controller:"TaxRates",Action:"Index",RequiredPermission:"Administration.Access"},
+    "Customer-invoice output-tax setup errors must link to tax settings");
+Check(ActionableErrorGuidance.Resolve(
+          "Assign the customer invoice source warehouse to a branch before posting.",
+          "CustomerInvoices") is {Controller:"Warehouses",Action:"Index",RequiredPermission:"Warehouses.Edit"},
+    "Customer-invoice warehouse dimension errors must link to warehouse settings");
+Check(ActionableErrorGuidance.Resolve(
+          "The fiscal period for the posting date is not open.",
+          "CustomerInvoices") is {Controller:"Settings",Action:"FiscalPeriods",RequiredPermission:"Administration.Access"},
+    "Customer-invoice fiscal-period errors must link to fiscal-period settings");
 Check(ActionableErrorGuidance.Resolve(
           "Configure a cost of sales account before posting sales deliveries.",
           "SalesDeliveries") is {Controller:"Settings",Action:"Accounting",RequiredPermission:"Administration.Access"},

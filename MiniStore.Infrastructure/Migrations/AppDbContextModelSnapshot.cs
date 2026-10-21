@@ -1247,6 +1247,22 @@ namespace MiniStore.Infrastructure.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<string>("CompanyCurrencyCode")
+                        .HasMaxLength(3)
+                        .HasColumnType("nvarchar(3)");
+
+                    b.Property<decimal>("CompanyNetAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("CompanyTaxAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("CompanyTotalAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<string>("CountryCode")
                         .HasMaxLength(2)
                         .HasColumnType("nvarchar(2)");
@@ -1326,13 +1342,37 @@ namespace MiniStore.Infrastructure.Migrations
                         .HasMaxLength(30)
                         .HasColumnType("nvarchar(30)");
 
+                    b.Property<DateTime?>("PostedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("PostedByUserId")
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<int>("QuantityPolicy")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ReceivableAccountIdSnapshot")
                         .HasColumnType("int");
 
                     b.Property<string>("RequestKey")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateOnly?>("ReversalDate")
+                        .HasColumnType("date");
+
+                    b.Property<string>("ReversalReason")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime?>("ReversedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ReversedByUserId")
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<byte[]>("RowVersion")
                         .IsConcurrencyToken()
@@ -1341,6 +1381,9 @@ namespace MiniStore.Infrastructure.Migrations
                         .HasColumnType("rowversion");
 
                     b.Property<int>("SalesOrderId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("SalesRevenueAccountIdSnapshot")
                         .HasColumnType("int");
 
                     b.Property<string>("StateOrProvince")
@@ -1369,9 +1412,13 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasIndex("CustomerId", "TenantId");
 
+                    b.HasIndex("ReceivableAccountIdSnapshot", "TenantId");
+
                     b.HasIndex("SalesOrderId", "Status");
 
                     b.HasIndex("SalesOrderId", "TenantId");
+
+                    b.HasIndex("SalesRevenueAccountIdSnapshot", "TenantId");
 
                     b.HasIndex("TenantId", "InvoiceNumber")
                         .IsUnique();
@@ -1435,6 +1482,18 @@ namespace MiniStore.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("CompanyNetAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("CompanyTaxAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("CompanyTotalAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("CompanyUnitPrice")
                         .HasPrecision(18, 6)
@@ -1512,6 +1571,9 @@ namespace MiniStore.Infrastructure.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<int?>("TaxOutputAccountIdSnapshot")
+                        .HasColumnType("int");
+
                     b.Property<int?>("TaxRateId")
                         .HasColumnType("int");
 
@@ -1565,6 +1627,8 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasIndex("SalesPriceRuleId", "TenantId");
 
+                    b.HasIndex("TaxOutputAccountIdSnapshot", "TenantId");
+
                     b.HasIndex("TaxRateId", "TenantId");
 
                     b.HasIndex("TenantId", "CustomerInvoiceId", "SalesOrderLineId")
@@ -1617,6 +1681,171 @@ namespace MiniStore.Infrastructure.Migrations
                         {
                             t.HasCheckConstraint("CK_CustomerInvoiceSourceAllocations_Quantity", "[StockQuantity] > 0");
                         });
+                });
+
+            modelBuilder.Entity("MiniStore.Domain.Entities.CustomerPayment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CompanyCurrencyCode")
+                        .IsRequired()
+                        .HasMaxLength(3)
+                        .HasColumnType("nvarchar(3)");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedByUserId")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("CurrencyCode")
+                        .IsRequired()
+                        .HasMaxLength(3)
+                        .HasColumnType("nvarchar(3)");
+
+                    b.Property<int>("CustomerId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("ExchangeRate")
+                        .HasPrecision(24, 12)
+                        .HasColumnType("decimal(24,12)");
+
+                    b.Property<DateOnly>("ExchangeRateDate")
+                        .HasColumnType("date");
+
+                    b.Property<string>("ExchangeRateSource")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("ExternalReference")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<DateOnly>("PaymentDate")
+                        .HasColumnType("date");
+
+                    b.Property<int>("PaymentMethodAccountIdSnapshot")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PaymentMethodId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PaymentNumber")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime?>("PostedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("PostedByUserId")
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateOnly?>("ReversalDate")
+                        .HasColumnType("date");
+
+                    b.Property<string>("ReversalReason")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime?>("ReversedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ReversedByUserId")
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TenantId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TenantId");
+
+                    b.HasIndex("CustomerId", "TenantId");
+
+                    b.HasIndex("PaymentMethodAccountIdSnapshot", "TenantId");
+
+                    b.HasIndex("PaymentMethodId", "TenantId");
+
+                    b.HasIndex("TenantId", "PaymentNumber")
+                        .IsUnique();
+
+                    b.ToTable("CustomerPayments");
+                });
+
+            modelBuilder.Entity("MiniStore.Domain.Entities.CustomerPaymentLine", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("Amount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("CompanyCurrencyAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("CustomerInvoiceId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("CustomerInvoiceNumberSnapshot")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<int>("CustomerPaymentId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ReceivableAccountIdSnapshot")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("ReceivableCarryingAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("TenantId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TenantId");
+
+                    b.HasIndex("CustomerInvoiceId", "TenantId");
+
+                    b.HasIndex("CustomerPaymentId", "TenantId");
+
+                    b.HasIndex("ReceivableAccountIdSnapshot", "TenantId");
+
+                    b.HasIndex("TenantId", "CustomerPaymentId", "CustomerInvoiceId")
+                        .IsUnique();
+
+                    b.ToTable("CustomerPaymentLines");
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.DiscountSettings", b =>
@@ -11058,12 +11287,24 @@ namespace MiniStore.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("MiniStore.Domain.Entities.Account", null)
+                        .WithMany()
+                        .HasForeignKey("ReceivableAccountIdSnapshot", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("MiniStore.Domain.Entities.SalesOrder", null)
                         .WithMany()
                         .HasForeignKey("SalesOrderId", "TenantId")
                         .HasPrincipalKey("Id", "TenantId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.HasOne("MiniStore.Domain.Entities.Account", null)
+                        .WithMany()
+                        .HasForeignKey("SalesRevenueAccountIdSnapshot", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.CustomerInvoiceHistory", b =>
@@ -11130,6 +11371,12 @@ namespace MiniStore.Infrastructure.Migrations
                         .HasPrincipalKey("Id", "TenantId")
                         .OnDelete(DeleteBehavior.Restrict);
 
+                    b.HasOne("MiniStore.Domain.Entities.Account", null)
+                        .WithMany()
+                        .HasForeignKey("TaxOutputAccountIdSnapshot", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("MiniStore.Domain.Entities.TaxRate", null)
                         .WithMany()
                         .HasForeignKey("TaxRateId", "TenantId")
@@ -11162,6 +11409,66 @@ namespace MiniStore.Infrastructure.Migrations
                     b.HasOne("MiniStore.Domain.Entities.SalesDeliveryLine", null)
                         .WithMany()
                         .HasForeignKey("SalesDeliveryLineId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("MiniStore.Domain.Entities.CustomerPayment", b =>
+                {
+                    b.HasOne("MiniStore.Domain.Entities.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MiniStore.Domain.Entities.Customer", null)
+                        .WithMany()
+                        .HasForeignKey("CustomerId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MiniStore.Domain.Entities.Account", null)
+                        .WithMany()
+                        .HasForeignKey("PaymentMethodAccountIdSnapshot", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MiniStore.Domain.Entities.PaymentMethod", null)
+                        .WithMany()
+                        .HasForeignKey("PaymentMethodId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("MiniStore.Domain.Entities.CustomerPaymentLine", b =>
+                {
+                    b.HasOne("MiniStore.Domain.Entities.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MiniStore.Domain.Entities.CustomerInvoice", null)
+                        .WithMany()
+                        .HasForeignKey("CustomerInvoiceId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MiniStore.Domain.Entities.CustomerPayment", null)
+                        .WithMany("Lines")
+                        .HasForeignKey("CustomerPaymentId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MiniStore.Domain.Entities.Account", null)
+                        .WithMany()
+                        .HasForeignKey("ReceivableAccountIdSnapshot", "TenantId")
                         .HasPrincipalKey("Id", "TenantId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -14410,6 +14717,11 @@ namespace MiniStore.Infrastructure.Migrations
             modelBuilder.Entity("MiniStore.Domain.Entities.CustomerInvoiceLine", b =>
                 {
                     b.Navigation("SourceAllocations");
+                });
+
+            modelBuilder.Entity("MiniStore.Domain.Entities.CustomerPayment", b =>
+                {
+                    b.Navigation("Lines");
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.GoodsReceipt", b =>

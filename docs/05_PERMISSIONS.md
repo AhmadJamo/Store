@@ -154,13 +154,23 @@ The Index and mutation actions enforce these policies server-side. Permission se
 - `SupplierIntegrations.Retry` retries an undelivered outbox message without changing its business identity or idempotency key.
 - Portal/API access is not an internal role permission: each request must independently prove a valid supplier-specific token/key and required external scope.
 
-# SAL-070 customer invoice permissions
+# SAL-080 customer invoice and journal-evidence permissions
 
 - `CustomerInvoices.View` protects invoice list/detail and source evidence.
 - `CustomerInvoices.Create` permits idempotent Draft creation only within the remaining eligible ordered/delivered quantity.
 - `CustomerInvoices.Approve` permits the one-time commercial approval transition; it grants no accounting-posting or payment authority.
+- `CustomerInvoices.Post` separately permits the one-time accounting transition from Approved to Posted.
 - `CustomerInvoices.Cancel` permits reasoned cancellation of an unposted Draft or Approved invoice and releases its quantity eligibility.
-- Every mutation requires antiforgery validation and Application-layer state/concurrency checks. SAL-080 must introduce a separate posting permission rather than reuse approval.
+- `CustomerInvoices.Reverse` separately permits a dated, reasoned inverse journal for a Posted invoice.
+- `JournalEntries.View` protects the read-only source-linked journal evidence screen, including accounts, debit/credit and branch/warehouse dimensions.
+- Every mutation requires antiforgery validation and Application-layer state/concurrency checks. Posting, reversal and journal evidence never imply payment authority.
+
+# SAL-090 customer payment permissions
+
+- `CustomerPayments.View` protects receipt lists, allocation details and journal links.
+- `CustomerPayments.Create` creates and immediately posts a capped receipt against eligible Posted invoices.
+- `CustomerPayments.Reverse` posts an exact dated reversal and reopens the allocations without deleting history.
+- Permission seeding adds these definitions and grants them to each tenant Admin role at startup.
 
 # Platform operator boundary
 
