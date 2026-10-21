@@ -1,0 +1,6 @@
+@model IReadOnlyList<MiniStore.Application.Dtos.Sales.CustomerCreditNoteSummaryDto>
+@inject Microsoft.Extensions.Localization.IStringLocalizer<MiniStore.Web.SharedResource> Localizer
+@{ViewData["Title"]=Localizer["Customer credit notes"];var settings=await GeneralSettingsService.GetAsync();}
+<div class="mb-3"><h2>@Localizer["Customer credit notes"]</h2><p class="text-muted">@Localizer["Posted customer credits reverse receivables, revenue and output tax without repeating inventory or recording a cash refund."]</p></div>
+<div class="row g-3">@foreach(var x in Model){<div class="col-lg-6"><div class="card card-body h-100"><div class="d-flex justify-content-between"><a asp-action="Details" asp-route-id="@x.Id" class="fw-bold">@x.Number</a><span class="badge bg-success">@Localizer[x.Status.ToString()]</span></div><div>@x.CustomerName</div><div class="text-muted">@Localizer["Customer invoice"]: @x.InvoiceNumber</div><div>@x.CreditDate · @x.TotalAmount.ToMoneyDisplay(settings) @x.CurrencyCode</div></div></div>}</div>
+@if(Model.Count==0){<div class="alert alert-info">@Localizer["No customer credit notes were found."]</div>}

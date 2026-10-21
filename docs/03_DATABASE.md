@@ -1,4 +1,8 @@
 # Database
+## SAL-100D customer credit notes
+
+Migration 130 (`20261021220324_AddCustomerCreditNotes`) creates tenant-owned header and line tables with restrictive tenant-composite links to invoices, invoice lines, return-receipt lines, products, warehouses and frozen accounts. Tenant-unique credit-note numbers and request keys prevent duplicate documents/retries; quantity checks and line uniqueness preserve cumulative allocation evidence. Source/model are at 130 with no pending changes. Applying migrations 129-130 to local Demo was attempted on 2026-10-22 but the host SQL encryption/SSPI failure occurred before execution, so Demo remains evidenced at 128.
+
 ## SAL-100C return disposition posting
 
 Migration 129 (`20261021170925_AddCustomerReturnDispositionPosting`) adds nullable `PostedByUserId` and `PostedAtUtc` evidence to `CustomerReturnReceipts`; enum values are stored through the existing integer columns. The migration is additive, the EF model has no pending changes, and source/model are at 129. Applying it to local Demo was attempted on 2026-10-21 but blocked before execution by the host SQL encryption/SSPI connection failure, so Demo remains evidenced at 128 until connectivity is repaired.

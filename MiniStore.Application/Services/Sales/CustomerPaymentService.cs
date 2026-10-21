@@ -5,7 +5,7 @@ using MiniStore.Domain.Interfaces;
 namespace MiniStore.Application.Services;
 
 public sealed class CustomerPaymentService(
-    ICustomerPaymentRepository payments, ICustomerInvoiceRepository invoices, ICustomerRepository customers,
+    ICustomerPaymentRepository payments, ICustomerInvoiceRepository invoices, ICustomerCreditNoteRepository customerCredits, ICustomerRepository customers,
     IPaymentMethodRepository paymentMethods, IAccountRepository accounts, IAccountingSettingsRepository accountingSettings,
     IJournalEntryRepository journalEntries, DocumentNumberService numbers, JournalPostingService journalPosting,
     CurrencyExchangeRateService exchangeRates, IUnitOfWork unitOfWork, ICurrentUserService currentUser)
@@ -33,10 +33,11 @@ public sealed class CustomerPaymentService(
         var customer = await customers.GetByIdAsync(source.CustomerId);
         var candidates = (await invoices.GetByCustomerAsync(source.CustomerId)).Where(x => x.Status == CustomerInvoiceStatus.Posted && x.CurrencyCode == source.CurrencyCode).ToList();
         var paid = await payments.GetPaidAmountsAsync(candidates.Select(x => x.Id));
+        var credited=await customerCredits.GetPostedAmountsAsync(candidates.Select(x=>x.Id));
         var open = candidates.Select(x => new CustomerPaymentOpenInvoiceDto
         {
             CustomerInvoiceId = x.Id, InvoiceNumber = x.InvoiceNumber, InvoiceDate = x.InvoiceDate, DueDate = x.DueDate,
-            TotalAmount = x.TotalAmount, PaidAmount = paid.GetValueOrDefault(x.Id), OutstandingAmount = Math.Max(0, Round(x.TotalAmount - paid.GetValueOrDefault(x.Id)))
+            TotalAmount = x.TotalAmount, PaidAmount = paid.GetValueOrDefault(x.Id), OutstandingAmount = Math.Max(0, Round(x.TotalAmount - paid.GetValueOrDefault(x.Id)-credited.GetValueOrDefault(x.Id)))
         }).Where(x => x.OutstandingAmount > 0).ToList();
         var value = form ?? new CreateCustomerPaymentDto
         {
@@ -66,6 +67,8 @@ public sealed class CustomerPaymentService(
             if (!methodAccount.IsActive || methodAccount.Type != AccountType.Asset) throw new InvalidOperationException("The payment method settlement account must be an active asset account.");
             var candidateMap = (await invoices.GetByCustomerAsync(source.CustomerId)).Where(x => x.Status == CustomerInvoiceStatus.Posted && x.CurrencyCode == source.CurrencyCode).ToDictionary(x => x.Id);
             var paid = await payments.GetPaidAmountsAsync(submitted.Select(x => x.CustomerInvoiceId));
+            var credited=await customerCredits.GetPostedAmountsAsync(submitted.Select(x=>x.CustomerInvoiceId));
+            var creditedCompany=await customerCredits.GetPostedCompanyAmountsAsync(submitted.Select(x=>x.CustomerInvoiceId));
             var priorCarrying = await payments.GetReceivableCarryingAmountsAsync(submitted.Select(x => x.CustomerInvoiceId));
             var rate = await exchangeRates.ResolveAsync(source.CurrencyCode, dto.PaymentDate);
             created = new CustomerPayment(await numbers.GenerateAsync(DocumentNumberType.CustomerPayment, dto.PaymentDate.ToDateTime(TimeOnly.MinValue)),
@@ -75,10 +78,10 @@ public sealed class CustomerPaymentService(
             {
                 if (!candidateMap.TryGetValue(input.CustomerInvoiceId, out var invoice)) throw new ArgumentException("All payment allocations must belong to posted invoices for the same customer and currency.");
                 if (!invoice.ReceivableAccountIdSnapshot.HasValue || invoice.CompanyTotalAmount <= 0) throw new InvalidOperationException("The customer invoice does not contain complete accounting posting evidence.");
-                var outstanding = Math.Max(0, Round(invoice.TotalAmount - paid.GetValueOrDefault(invoice.Id))); var amount = Round(input.Amount);
+                var outstanding = Math.Max(0, Round(invoice.TotalAmount - paid.GetValueOrDefault(invoice.Id)-credited.GetValueOrDefault(invoice.Id))); var amount = Round(input.Amount);
                 if (amount > outstanding) throw new InvalidOperationException("A customer payment allocation cannot exceed the invoice outstanding balance.");
-                var remainingCarrying = Round(invoice.CompanyTotalAmount - priorCarrying.GetValueOrDefault(invoice.Id));
-                var carrying = amount == outstanding ? remainingCarrying : Round(invoice.CompanyTotalAmount * amount / invoice.TotalAmount);
+                var remainingCarrying = Round(invoice.CompanyTotalAmount-creditedCompany.GetValueOrDefault(invoice.Id) - priorCarrying.GetValueOrDefault(invoice.Id));
+                var carrying = amount == outstanding ? remainingCarrying : Round(remainingCarrying * amount / outstanding);
                 created.AddLine(new CustomerPaymentLine(invoice.Id, invoice.ReceivableAccountIdSnapshot.Value, invoice.InvoiceNumber, amount, rate.Rate, carrying));
             }
             await payments.AddAsync(created); await unitOfWork.FlushAsync();

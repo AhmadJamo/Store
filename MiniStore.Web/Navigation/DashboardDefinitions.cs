@@ -21,6 +21,7 @@ public static class DashboardDefinitions
             new("Customer payments", "bi-cash-coin", "CustomerPayments", "Index", "CustomerPayments.View", 30),
             new("Customer return requests", "bi-arrow-return-left", "CustomerReturnRequests", "Index", "CustomerReturnRequests.View", 35),
             new("Customer return receipts", "bi-box-arrow-in-down-left", "CustomerReturnReceipts", "Index", "CustomerReturnReceipts.View", 36),
+            new("Customer credit notes", "bi-receipt-cutoff", "CustomerCreditNotes", "Index", "CustomerCreditNotes.View", 37),
             new("Sales Returns", "bi-arrow-counterclockwise", "SalesReturns", "Index", "SalesReturns.View", 40)
         ]),
 

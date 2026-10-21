@@ -19,6 +19,7 @@ public static class TenantIsolationModel
         typeof(CustomerPayment), typeof(CustomerPaymentLine),
         typeof(CustomerReturnRequest), typeof(CustomerReturnRequestLine), typeof(CustomerReturnRequestHistory),
         typeof(CustomerReturnReceipt), typeof(CustomerReturnReceiptLine), typeof(CustomerReturnReceiptHistory),
+        typeof(CustomerCreditNote), typeof(CustomerCreditNoteLine),
         typeof(DocumentSequence), typeof(AuditLog), typeof(GeneralSettings), typeof(CurrencyExchangeRate), typeof(DiscountSettings),
         typeof(StockTransfer), typeof(StockTransferItem), typeof(StockTransferHistory),
         typeof(Branch), typeof(Account), typeof(JournalEntry), typeof(JournalEntryLine), typeof(FiscalPeriod),

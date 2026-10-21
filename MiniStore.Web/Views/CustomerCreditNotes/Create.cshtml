@@ -1,0 +1,48 @@
+@model MiniStore.Application.Dtos.Sales.CustomerCreditNoteCreatePageDto
+@inject Microsoft.Extensions.Localization.IStringLocalizer<MiniStore.Web.SharedResource> Localizer
+@{
+    ViewData["Title"] = Localizer["Create customer credit note"];
+    var settings = await GeneralSettingsService.GetAsync();
+}
+<div class="d-flex flex-wrap justify-content-between gap-2">
+    <div><h2>@Localizer["Create customer credit note"]</h2><p class="text-muted">@Model.InvoiceNumber — @Model.CustomerName</p></div>
+    <a asp-controller="CustomerInvoices" asp-action="Details" asp-route-id="@Model.InvoiceId" class="btn btn-outline-secondary">@Localizer["Back"]</a>
+</div>
+<div class="alert alert-info">@Localizer["This posts a financial credit only. Inventory disposition is already controlled by the posted return receipt, and no cash refund is created."]</div>
+<form asp-action="Create" method="post">
+    <input type="hidden" name="CustomerInvoiceId" value="@Model.InvoiceId" />
+    <input type="hidden" name="RequestKey" value="@Model.Form.RequestKey" />
+    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+    <div class="row g-3 mb-3">
+        <div class="col-md-3"><label class="form-label">@Localizer["Credit date"]</label><input type="date" name="CreditDate" value="@Model.Form.CreditDate.ToString("yyyy-MM-dd")" class="form-control" required /></div>
+        <div class="col-md-9"><label class="form-label">@Localizer["Reason"]</label><input name="Reason" value="@Model.Form.Reason" maxlength="1000" required class="form-control" /></div>
+    </div>
+    <div class="row g-3">
+        @for (var i = 0; i < Model.Lines.Count; i++)
+        {
+            var line = Model.Lines[i];
+            var old = Model.Form.Lines.FirstOrDefault(x => x.CustomerInvoiceLineId == line.CustomerInvoiceLineId && x.CustomerReturnReceiptLineId == line.CustomerReturnReceiptLineId);
+            <div class="col-xl-6"><div class="card card-body h-100">
+                <input type="hidden" name="Lines[@i].CustomerInvoiceLineId" value="@line.CustomerInvoiceLineId" />
+                <input type="hidden" name="Lines[@i].CustomerReturnReceiptLineId" value="@line.CustomerReturnReceiptLineId" />
+                <strong>@line.ProductCode — @line.ProductName</strong>
+                <div class="text-muted small">@Localizer["Return receipt"]: @line.ReceiptNumber</div>
+                <div class="row g-2 my-2">
+                    <div class="col-4"><span class="text-muted">@Localizer["Returned"]</span><div>@line.ReturnedStockQuantity.ToQuantityDisplay(settings)</div></div>
+                    <div class="col-4"><span class="text-muted">@Localizer["Credited"]</span><div>@line.AlreadyCreditedStockQuantity.ToQuantityDisplay(settings)</div></div>
+                    <div class="col-4"><span class="text-muted">@Localizer["Available to credit"]</span><div>@line.RemainingQuantity.ToQuantityDisplay(settings) @line.UnitName</div></div>
+                </div>
+                <label class="form-label">@Localizer["Credit quantity"]</label>
+                <input type="number" name="Lines[@i].Quantity" value="@((old?.Quantity ?? 0).ToQuantityInput(settings))" min="0" max="@line.RemainingQuantity.ToInputNumber()" step="0.000001" class="form-control" />
+            </div></div>
+        }
+    </div>
+    @if (Model.Lines.Count > 0)
+    {
+        <button class="btn btn-danger mt-3">@Localizer["Post customer credit note"]</button>
+    }
+    else
+    {
+        <div class="alert alert-success mt-3">@Localizer["No posted returned quantities remain eligible for this invoice."]</div>
+    }
+</form>

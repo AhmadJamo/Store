@@ -1,4 +1,8 @@
 # Permissions and authorization
+## Customer credit notes
+
+`CustomerCreditNotes.View` protects list/detail and accounting-evidence visibility. `CustomerCreditNotes.Create` protects the single create-and-post mutation, which also requires POST antiforgery. Neither permission grants a cash refund, invoice reversal or inventory authority.
+
 ## Customer return requests
 
 Dedicated View, Create, Submit, Approve, Reject and Cancel permissions are server-enforced. Mutations use POST plus antiforgery.

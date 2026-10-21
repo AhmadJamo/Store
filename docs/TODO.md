@@ -1,6 +1,6 @@
 # Project TODO
 > Source of truth: Current repository scan  
-> Last reviewed: 2026-10-20
+> Last reviewed: 2026-10-22
 
 The approved numbered Arabic/English delivery sequence is maintained in `MASTER_IMPLEMENTATION_ROADMAP_AR_EN.md`. Detailed working status, business rules and the rolling suggestion queue remain in `ARABIC_SHARED_ROADMAP.md`. This file remains the concise technical backlog.
 
@@ -85,7 +85,8 @@ The ERP SaaS Foundation Blueprint is imported as a non-authoritative planning re
 - [x] SAL-100A add delivery-backed customer return request Draft/Submit/Approve/Reject/Cancel control with cumulative quantity protection and no stock/accounting effect. Completed 2026-10-21.
 - [x] SAL-100B receive and inspect Approved customer returns, recording explicit Restock/Quarantine/Reject/Destroy disposition and exact tracked identities without stock/accounting/credit-note effect. Completed 2026-10-21.
 - [x] SAL-100C post Inspected return dispositions to inventory/tracking and reverse COGS where appropriate, while keeping credit notes separate. Completed in source 2026-10-21; Demo migration and disposable SQL execution await repair of host SQL encryption/SSPI connectivity.
-- [ ] SAL-100D add independent customer credit notes allocated to posted customer invoice quantities, reversing receivable/revenue/output tax without automatic cash refund or duplicate inventory mutation.
+- [x] SAL-100D add independent retry-safe customer credit notes allocated to posted invoice/return quantities, reversing receivable/revenue/output tax and reducing balances without automatic cash refund or duplicate inventory mutation. Completed in source 2026-10-22; Demo migrations 129-130 and disposable SQL execution await repair of host SQL encryption/SSPI connectivity.
+- [ ] SAL-110 add configurable sales-credit, overdue, price-below-cost, exceptional-discount and margin warning/approval controls after explicit approval.
 - [ ] SAL-060 through SAL-130 implement delivery, invoicing, accounting, payment, return, advanced-sales and cutover slices in order.
 
 - [x] WMS-050 reservations and exact transfer allocation with concurrent last-unit protection.

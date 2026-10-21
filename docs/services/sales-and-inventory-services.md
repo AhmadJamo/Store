@@ -1,4 +1,8 @@
 # Sales and inventory services
+## Customer credit notes (`SAL-100D`)
+
+`CustomerCreditNoteService` derives eligible pairs from Posted invoice lines and Posted return-receipt lines. Inside the shared transaction it revalidates invoice, sales-order line, exact delivery allocation, receipt quantity, prior credits and dates; a unique request key makes repeated submission return the original document. It freezes proportional transaction/company amounts with final-residual handling, posts receivable/revenue/output-tax reversal once and marks the note Posted. `CustomerInvoiceService` and `CustomerPaymentService` subtract posted credits from outstanding balances and block invoice reversal after a credit. No inventory authority is called.
+
 ## Customer return disposition posting (`SAL-100C`)
 
 `CustomerReturnReceiptService.PostAsync` is the single Application-layer transaction boundary for an Inspected receipt. Restock lines restore `ProductStock`, exact location stock and lot/serial identities at the frozen source-delivery unit cost; they write `CustomerReturnDisposition` stock transactions and immutable `CustomerReturnIn` movements. The service posts one source-unique journal that debits the warehouse inventory account and credits Cost of Sales. Quarantine stays custody-only and unavailable; Reject and Destroy create no inventory. Every disposition reaches the immutable Posted state, while credit notes, receivable/tax changes and cash remain separate.

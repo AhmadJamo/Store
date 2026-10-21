@@ -1,4 +1,11 @@
 # Razor screen map
+## Customer credit notes (`SAL-100D`)
+
+- `/CustomerCreditNotes`: permission-protected list with number, invoice, customer, date, status and total.
+- `/CustomerCreditNotes/Create?customerInvoiceId=...`: shows only Posted return quantities still eligible against the exact Posted invoice/delivery allocation, explains the financial-only boundary and preserves a retry key.
+- `/CustomerCreditNotes/Details/{id}`: immutable line, receipt, amount and journal evidence with links back to the invoice/accounting entry.
+- Posted customer-invoice details show credited/outstanding amounts and expose credit creation; reversal disappears once any posted credit exists.
+
 ## Customer return requests
 
 - Index: responsive search/list and Sales Deliveries empty-state link.

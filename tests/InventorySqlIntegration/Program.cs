@@ -1267,7 +1267,7 @@ static async Task VerifySalesQuotationFoundationAsync(int tenantOneId,int tenant
         var generalSettingsRepository=new GeneralSettingsRepository(deliveryContext);
         var journalEntryRepository=new JournalEntryRepository(deliveryContext);
         var customerInvoiceJournalPosting=new JournalPostingService(journalEntryRepository,numbers,fiscalPeriods);
-        var customerInvoiceService=new CustomerInvoiceService(customerInvoiceRepository,new CustomerPaymentRepository(deliveryContext),orderRepository,deliveryRepository,
+        var customerInvoiceService=new CustomerInvoiceService(customerInvoiceRepository,new CustomerPaymentRepository(deliveryContext),new CustomerCreditNoteRepository(deliveryContext),orderRepository,deliveryRepository,
             new ProductRepository(deliveryContext),customerRepository,new WarehouseRepository(deliveryContext),
             new BranchRepository(deliveryContext),accountRepository,taxRateRepository,
             accountingSettingsRepository,generalSettingsRepository,journalEntryRepository,customerInvoiceJournalPosting,
@@ -1344,7 +1344,7 @@ static async Task VerifySalesQuotationFoundationAsync(int tenantOneId,int tenant
             throw new InvalidOperationException("Posting a customer invoice must create one balanced receivable/revenue/tax journal from frozen company-currency evidence without changing inventory.");
 
         var customerPaymentRepository=new CustomerPaymentRepository(deliveryContext);
-        var customerPaymentService=new CustomerPaymentService(customerPaymentRepository,customerInvoiceRepository,customerRepository,
+        var customerPaymentService=new CustomerPaymentService(customerPaymentRepository,customerInvoiceRepository,new CustomerCreditNoteRepository(deliveryContext),customerRepository,
             new PaymentMethodRepository(deliveryContext),accountRepository,accountingSettingsRepository,journalEntryRepository,numbers,
             customerInvoiceJournalPosting,new CurrencyExchangeRateService(new CurrencyExchangeRateRepository(deliveryContext),generalSettingsRepository,
                 deliveryUnitOfWork,new FixedCurrentUser("customer-cashier")),deliveryUnitOfWork,new FixedCurrentUser("customer-cashier"));
@@ -1385,6 +1385,18 @@ static async Task VerifySalesQuotationFoundationAsync(int tenantOneId,int tenant
            await deliveryContext.StockTransactions.CountAsync()!=stockTransactionsBeforeInvoices||
            await deliveryContext.StockMovements.CountAsync()!=movementsBeforeInvoices)
             throw new InvalidOperationException("Controlled customer-invoice reversal must invert the exact journal, preserve audit evidence, release billing eligibility and leave inventory unchanged.");
+
+        var replacementInvoiceId=await customerInvoiceService.CreateDraftAsync(new CreateCustomerInvoiceDto
+        {
+            SalesOrderId=order.Id,RequestKey=Guid.NewGuid().ToString("N"),InvoiceDate=new DateOnly(2026,10,21),
+            Lines=[new CreateCustomerInvoiceLineDto{SalesOrderLineId=orderLine.Id,Quantity=0.4m}]
+        });
+        var replacementInvoice=await customerInvoiceService.GetAsync(replacementInvoiceId)
+            ??throw new InvalidOperationException("SQL replacement customer invoice was not found.");
+        await customerInvoiceService.ApproveAsync(new CustomerInvoiceStatusCommandDto{Id=replacementInvoiceId,RowVersion=replacementInvoice.RowVersion});
+        replacementInvoice=await customerInvoiceService.GetAsync(replacementInvoiceId)
+            ??throw new InvalidOperationException("SQL approved replacement customer invoice was not found.");
+        await customerInvoiceService.PostAsync(new CustomerInvoiceStatusCommandDto{Id=replacementInvoiceId,RowVersion=replacementInvoice.RowVersion});
 
         var returnRequestRepository=new CustomerReturnRequestRepository(deliveryContext);
         var returnReceiptRepository=new CustomerReturnReceiptRepository(deliveryContext);
@@ -1438,6 +1450,36 @@ static async Task VerifySalesQuotationFoundationAsync(int tenantOneId,int tenant
            returnJournal.Lines.Sum(x=>x.Debit)!=2m||returnJournal.Lines.Sum(x=>x.Credit)!=2m||
            returnJournal.Lines.Single(x=>x.AccountId==returnCostAccountId).Credit!=2m)
             throw new InvalidOperationException("Posting a restock customer-return disposition must restore OnHand/Available at historical cost and create one balanced inventory/COGS reversal journal.");
+
+        var stockTransactionsBeforeCredit=await deliveryContext.StockTransactions.CountAsync();
+        var stockMovementsBeforeCredit=await deliveryContext.StockMovements.CountAsync();
+        var customerCreditService=new CustomerCreditNoteService(new CustomerCreditNoteRepository(deliveryContext),customerInvoiceRepository,
+            returnRequestRepository,returnReceiptRepository,new WarehouseRepository(deliveryContext),journalEntryRepository,
+            customerInvoiceJournalPosting,numbers,deliveryUnitOfWork,new FixedCurrentUser("customer-credit-user"));
+        var creditPage=await customerCreditService.GetCreatePageAsync(replacementInvoiceId);
+        var creditLine=creditPage.Lines.Single(x=>x.CustomerReturnReceiptLineId==postedReturn.Lines.Single().Id);
+        var customerCreditCommand=new CreateCustomerCreditNoteDto
+        {
+            CustomerInvoiceId=replacementInvoiceId,CreditDate=new DateOnly(2026,10,21),Reason="SQL returned billed quantity",
+            Lines=[new CreateCustomerCreditNoteLineDto{CustomerInvoiceLineId=creditLine.CustomerInvoiceLineId,
+                CustomerReturnReceiptLineId=creditLine.CustomerReturnReceiptLineId,Quantity=0.2m}]
+        };
+        var customerCreditId=await customerCreditService.CreateAndPostAsync(customerCreditCommand);
+        var retriedCustomerCreditId=await customerCreditService.CreateAndPostAsync(customerCreditCommand);
+        var postedCredit=await customerCreditService.GetAsync(customerCreditId)
+            ??throw new InvalidOperationException("SQL customer credit note was not found.");
+        var creditedInvoice=await customerInvoiceService.GetAsync(replacementInvoiceId)
+            ??throw new InvalidOperationException("SQL credited customer invoice was not found.");
+        var customerCreditJournal=await deliveryContext.JournalEntries.AsNoTracking().Include(x=>x.Lines)
+            .SingleAsync(x=>x.SourceType=="CustomerCreditNote"&&x.SourceReference==postedCredit.Number);
+        if(retriedCustomerCreditId!=customerCreditId||
+           await deliveryContext.CustomerCreditNotes.CountAsync(x=>x.CustomerInvoiceId==replacementInvoiceId)!=1||
+           postedCredit.Status!=CustomerCreditNoteStatus.Posted||postedCredit.TotalAmount!=1.6m||
+           customerCreditJournal.Lines.Sum(x=>x.Debit)!=1.6m||customerCreditJournal.Lines.Sum(x=>x.Credit)!=1.6m||
+           creditedInvoice.CreditedAmount!=1.6m||creditedInvoice.OutstandingAmount!=1.6m||
+           await deliveryContext.StockTransactions.CountAsync()!=stockTransactionsBeforeCredit||
+           await deliveryContext.StockMovements.CountAsync()!=stockMovementsBeforeCredit)
+            throw new InvalidOperationException("Customer credit-note posting must reverse receivable/revenue/tax proportionally, reduce invoice outstanding and never repeat inventory mutation.");
 
         var orderService=new SalesOrderService(orderRepository,new SalesQuotationRepository(deliveryContext),numbers,
             deliveryUnitOfWork,deliveryUser,reservationService,new SalesDeliveryRepository(deliveryContext));

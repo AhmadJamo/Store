@@ -1,4 +1,8 @@
 # Codebase map
+## SAL-100D customer credit notes
+
+Adds the tenant-owned `CustomerCreditNote` aggregate and lines, repository, DTOs and `CustomerCreditNoteService`. Posting starts only from Posted customer-return receipts, caps each quantity by the exact invoice line, delivery allocation and still-uncredited receipt quantity, and uses a tenant-unique request key to make retries idempotent. It debits frozen sales revenue/output tax and credits frozen receivables through `JournalPostingService`; invoice and payment balances subtract posted credits. It does not mutate stock, tracking, movements or cash. `CustomerCreditNotesController`, three Razor screens, two permissions and migration 130 expose the controlled flow.
+
 ## SAL-100C customer return disposition posting
 
 Extends the receipt aggregate with Posted audit evidence; `CustomerReturnReceiptService` coordinates stock, location, tracking, movement, transaction and journal authorities. `CustomerReturnReceiptsController` and Details expose a dedicated permission and immutable result evidence. Migration 129 is additive; regression and disposable SQL scenarios cover the domain/authorization and full Restock path respectively.

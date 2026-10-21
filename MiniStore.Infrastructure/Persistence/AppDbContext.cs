@@ -162,6 +162,8 @@ public class AppDbContext
     public DbSet<CustomerReturnReceipt> CustomerReturnReceipts => Set<CustomerReturnReceipt>();
     public DbSet<CustomerReturnReceiptLine> CustomerReturnReceiptLines => Set<CustomerReturnReceiptLine>();
     public DbSet<CustomerReturnReceiptHistory> CustomerReturnReceiptHistories => Set<CustomerReturnReceiptHistory>();
+    public DbSet<CustomerCreditNote> CustomerCreditNotes => Set<CustomerCreditNote>();
+    public DbSet<CustomerCreditNoteLine> CustomerCreditNoteLines => Set<CustomerCreditNoteLine>();
 
     public DbSet<DocumentSequence> DocumentSequences => Set<DocumentSequence>();
 

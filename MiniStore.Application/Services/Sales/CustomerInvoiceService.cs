@@ -4,7 +4,7 @@ using MiniStore.Domain.Interfaces;
 
 namespace MiniStore.Application.Services;
 
-public sealed class CustomerInvoiceService(ICustomerInvoiceRepository invoices, ICustomerPaymentRepository customerPayments, ISalesOrderRepository orders,
+public sealed class CustomerInvoiceService(ICustomerInvoiceRepository invoices, ICustomerPaymentRepository customerPayments, ICustomerCreditNoteRepository customerCredits, ISalesOrderRepository orders,
     ISalesDeliveryRepository deliveries, IProductRepository products, ICustomerRepository customers,
     IWarehouseRepository warehouses, IBranchRepository branches, IAccountRepository accounts,
     ITaxRateRepository taxRates, IAccountingSettingsRepository accountingSettings,
@@ -17,11 +17,12 @@ public sealed class CustomerInvoiceService(ICustomerInvoiceRepository invoices, 
     {
         var rows = await invoices.GetAllAsync(status, null);
         var paid = await customerPayments.GetPaidAmountsAsync(rows.Select(x => x.Id));
+        var credited = await customerCredits.GetPostedAmountsAsync(rows.Select(x => x.Id));
         var orderNumbers = (await orders.GetAllAsync(null, null)).ToDictionary(x => x.Id, x => x.OrderNumber);
         var result = rows.Select(x => new CustomerInvoiceSummaryDto(x.Id, x.InvoiceNumber, x.SalesOrderId,
             orderNumbers.GetValueOrDefault(x.SalesOrderId, $"#{x.SalesOrderId}"), x.CustomerCode, x.CustomerName,
-            x.InvoiceDate, x.DueDate, x.CurrencyCode, x.TotalAmount, x.Status, paid.GetValueOrDefault(x.Id),
-            Math.Max(0, RoundMoney(x.TotalAmount - paid.GetValueOrDefault(x.Id))))).ToList();
+            x.InvoiceDate, x.DueDate, x.CurrencyCode, x.TotalAmount, x.Status, paid.GetValueOrDefault(x.Id),credited.GetValueOrDefault(x.Id),
+            Math.Max(0, RoundMoney(x.TotalAmount - paid.GetValueOrDefault(x.Id)-credited.GetValueOrDefault(x.Id))))).ToList();
         if (string.IsNullOrWhiteSpace(search)) return result;
         var term = search.Trim();
         return result.Where(x => x.InvoiceNumber.Contains(term, StringComparison.OrdinalIgnoreCase) ||
@@ -34,7 +35,8 @@ public sealed class CustomerInvoiceService(ICustomerInvoiceRepository invoices, 
     {
         var invoice = await invoices.GetByIdAsync(id); if (invoice is null) return null;
         var paidAmount = (await customerPayments.GetPaidAmountsAsync([invoice.Id])).GetValueOrDefault(invoice.Id);
-        var outstandingAmount = Math.Max(0, RoundMoney(invoice.TotalAmount - paidAmount));
+        var creditedAmount=(await customerCredits.GetPostedAmountsAsync([invoice.Id])).GetValueOrDefault(invoice.Id);
+        var outstandingAmount = Math.Max(0, RoundMoney(invoice.TotalAmount - paidAmount-creditedAmount));
         var order = await orders.GetByIdAsync(invoice.SalesOrderId);
         var deliveryNumbers = (await deliveries.GetBySalesOrderAsync(invoice.SalesOrderId))
             .ToDictionary(x => x.Id, x => x.DeliveryNumber);
@@ -56,8 +58,9 @@ public sealed class CustomerInvoiceService(ICustomerInvoiceRepository invoices, 
             ExchangeRateDate = invoice.ExchangeRateDate, ExchangeRateSource = invoice.ExchangeRateSource,
             PaymentTermDays = invoice.PaymentTermDays, Notes = invoice.Notes, Status = invoice.Status,
             NetAmount = invoice.NetAmount, TaxAmount = invoice.TaxAmount, TotalAmount = invoice.TotalAmount,
-            PaidAmount = paidAmount, OutstandingAmount = outstandingAmount,
-            PaymentStatus = paidAmount <= 0 ? "Unpaid" : outstandingAmount > 0 ? "Partially Paid" : "Paid",
+            PaidAmount = paidAmount,CreditedAmount=creditedAmount, OutstandingAmount = outstandingAmount,
+            PaymentStatus = outstandingAmount <= 0 ? (paidAmount > 0 ? "Paid" : "Credited") :
+                (paidAmount > 0 || creditedAmount > 0 ? "Partially Settled" : "Unpaid"),
             CompanyCurrencyCode = invoice.CompanyCurrencyCode, CompanyNetAmount = invoice.CompanyNetAmount,
             CompanyTaxAmount = invoice.CompanyTaxAmount, CompanyTotalAmount = invoice.CompanyTotalAmount,
             ReceivableAccountIdSnapshot = invoice.ReceivableAccountIdSnapshot,
@@ -309,6 +312,8 @@ public sealed class CustomerInvoiceService(ICustomerInvoiceRepository invoices, 
             throw new InvalidOperationException("Only a posted customer invoice can be reversed.");
         if ((await customerPayments.GetPaidAmountsAsync([invoice.Id])).GetValueOrDefault(invoice.Id) > 0)
             throw new InvalidOperationException("Reverse allocated customer payments before reversing the customer invoice.");
+        if ((await customerCredits.GetPostedAmountsAsync([invoice.Id])).GetValueOrDefault(invoice.Id) > 0)
+            throw new InvalidOperationException("A customer invoice with posted credit notes cannot be reversed.");
         await journalPosting.ReverseAsync(JournalSourceType, invoice.InvoiceNumber, invoice.InvoiceNumber,
             dto.ReversalDate.ToDateTime(TimeOnly.MinValue), dto.Reason);
         invoice.Reverse(currentUser.UserId, dto.ReversalDate, dto.Reason);

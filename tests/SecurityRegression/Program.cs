@@ -694,6 +694,19 @@ foreach(var type in new[]{typeof(CustomerReturnReceipt),typeof(CustomerReturnRec
     Check(TenantIsolationModel.TenantOwnedTypes.Contains(type)&&db.Model.FindEntityType(type)!.FindProperty("TenantId") is {IsNullable:false},$"{type.Name} must be tenant owned");
 Check(DocumentSequence.CreateDefault(DocumentNumberType.CustomerReturnReceipt).Preview(DateTime.Today).StartsWith("CRR-"),
     "Customer return receipts must use an independent centralized CRR document sequence");
+Check(PermissionDefinitions.All.Count(x=>x.Name.StartsWith("CustomerCreditNotes.",StringComparison.Ordinal))==2,
+    "Customer credit notes must separate visibility from financial posting authority");
+var customerCreditController=typeof(CustomerCreditNotesController);
+Check(customerCreditController.GetMethod(nameof(CustomerCreditNotesController.Index))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:CustomerCreditNotes.View"&&
+      customerCreditController.GetMethods().Single(x=>x.Name==nameof(CustomerCreditNotesController.Create)&&x.GetCustomAttribute<HttpPostAttribute>() is not null).GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:CustomerCreditNotes.Create"&&
+      customerCreditController.GetMethods().Where(x=>x.GetCustomAttribute<HttpPostAttribute>() is not null).All(x=>x.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null),
+    "Customer credit note endpoints must enforce dedicated permissions and antiforgery");
+foreach(var type in new[]{typeof(CustomerCreditNote),typeof(CustomerCreditNoteLine)})
+    Check(TenantIsolationModel.TenantOwnedTypes.Contains(type)&&db.Model.FindEntityType(type)!.FindProperty("TenantId") is {IsNullable:false},$"{type.Name} must be tenant owned");
+Check(db.Model.FindEntityType(typeof(CustomerCreditNote))!.GetIndexes().Any(index=>index.IsUnique&&index.Properties.Any(property=>property.Name==nameof(CustomerCreditNote.RequestKey))),
+    "Customer credit note posting must enforce a tenant-scoped idempotency key");
+Check(DocumentSequence.CreateDefault(DocumentNumberType.CustomerCreditNote).Preview(DateTime.Today).StartsWith("CCN-"),
+    "Customer credit notes must use an independent centralized CCN document sequence");
 Check(PermissionDefinitions.All.Count(x=>x.Name=="JournalEntries.View")==1&&
       typeof(JournalEntriesController).GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:JournalEntries.View",
     "Journal-entry evidence must require one dedicated server-side read permission");
@@ -722,6 +735,7 @@ postedCustomerInvoice.AddLine(new CustomerInvoiceLine(invoiceOrder.Lines.Single(
     SalesInvoiceQuantityBasis.OrderedQuantity,16m,0m,16m));
 postedCustomerInvoice.Approve("approver");
 postedCustomerInvoice.Post("JOD",101,401,new Dictionary<int,int>(),"accountant");
+typeof(CustomerInvoice).GetProperty(nameof(CustomerInvoice.Id))!.SetValue(postedCustomerInvoice,91);
 Check(postedCustomerInvoice.Status==CustomerInvoiceStatus.Posted&&postedCustomerInvoice.CompanyTotalAmount==16m&&
       postedCustomerInvoice.ReceivableAccountIdSnapshot==101&&postedCustomerInvoice.SalesRevenueAccountIdSnapshot==401&&
       postedCustomerInvoice.History.Last().Action==CustomerInvoiceHistoryAction.Posted,
@@ -730,6 +744,11 @@ CheckThrows(()=>postedCustomerInvoice.Post("JOD",101,401,new Dictionary<int,int>
     "A posted customer invoice must reject duplicate posting");
 CheckThrows(()=>postedCustomerInvoice.Cancel("billing-manager","Invalid cancellation"),
     "A posted customer invoice must require controlled reversal instead of cancellation");
+var customerCreditNote=new CustomerCreditNote("CCN-000001","customer-credit-test",postedCustomerInvoice,new DateOnly(2026,10,21),"Returned goods","credit-user");
+customerCreditNote.AddLine(new CustomerCreditNoteLine(postedCustomerInvoice.Lines.Single().Id==0?1:postedCustomerInvoice.Lines.Single().Id,1,invoiceOrder.Lines.Single().ProductId,1,null,0.5m,0.5m,8m,0m,8m,0m,"P-1","Product","Piece"));
+customerCreditNote.Post("credit-user");
+Check(customerCreditNote.Status==CustomerCreditNoteStatus.Posted&&customerCreditNote.TotalAmount==8m&&customerCreditNote.CompanyTotalAmount==8m&&customerCreditNote.RequestKey=="customer-credit-test",
+    "Customer credit notes must preserve proportional financial evidence without inventory behavior");
 postedCustomerInvoice.Reverse("accountant",new DateOnly(2026,10,21),"Correct customer billing");
 Check(postedCustomerInvoice.Status==CustomerInvoiceStatus.Reversed&&postedCustomerInvoice.ReversalDate==new DateOnly(2026,10,21)&&
       postedCustomerInvoice.ReversalReason=="Correct customer billing"&&postedCustomerInvoice.History.Last().Action==CustomerInvoiceHistoryAction.Reversed,
@@ -2814,6 +2833,13 @@ var splitOrdersNextStep = WorkflowNextStepGuidance.Resolve(
 Check(splitOrdersNextStep is { Controller: "SupplierQuotations", Action: "Comparison" } &&
       splitOrdersNextStep.RouteValues.GetValueOrDefault("sourcingEventId") == "17",
     "Generated split-award orders must return the user to links for every created order");
+var customerCreditNextStep=WorkflowNextStepGuidance.Resolve(
+    "Customer credit note posted. No cash refund was created.",
+    "CustomerCreditNotes",
+    new Dictionary<string,string?>{{"id","37"}});
+Check(customerCreditNextStep is{Controller:"CustomerCreditNotes",Action:"Details",RequiredPermission:"CustomerCreditNotes.View"}&&
+      customerCreditNextStep.RouteValues.GetValueOrDefault("id")=="37",
+    "Posted customer credits must guide users to their accounting evidence");
 Check(WorkflowNextStepGuidance.Resolve(
           "Operation completed successfully.",
           "Sales",
@@ -2825,6 +2851,7 @@ Check(WorkflowNextStepGuidance.IsSupportedController("VendorBills") &&
       WorkflowNextStepGuidance.IsSupportedController("PurchaseDocumentReversals") &&
       WorkflowNextStepGuidance.IsSupportedController("PurchaseAccountingReconciliation") &&
       WorkflowNextStepGuidance.IsSupportedController("CustomerInvoices") &&
+      WorkflowNextStepGuidance.IsSupportedController("CustomerCreditNotes") &&
       WorkflowNextStepGuidance.IsSupportedController("StockTransfers") &&
       WorkflowNextStepGuidance.IsSupportedController("Warehouses") &&
       !WorkflowNextStepGuidance.IsSupportedController("Sales"),

@@ -29,7 +29,7 @@ public static class WorkflowNextStepGuidance
 
     private static readonly HashSet<string> CustomerControllers = new(StringComparer.OrdinalIgnoreCase) { "Customers" };
 
-    private static readonly HashSet<string> SalesControllers = new(StringComparer.OrdinalIgnoreCase) { "SalesPriceLists", "SalesQuotations", "SalesOrders", "SalesDeliveries", "CustomerInvoices", "CustomerPayments", "CustomerReturnReceipts" };
+    private static readonly HashSet<string> SalesControllers = new(StringComparer.OrdinalIgnoreCase) { "SalesPriceLists", "SalesQuotations", "SalesOrders", "SalesDeliveries", "CustomerInvoices", "CustomerPayments", "CustomerReturnReceipts", "CustomerCreditNotes" };
 
     public static bool IsSupportedController(string? controller) =>
         !string.IsNullOrWhiteSpace(controller) &&
@@ -390,6 +390,11 @@ public static class WorkflowNextStepGuidance
             return new("CustomerReturnReceipts", "Details", "Review return posting evidence",
                 "Confirm the restocked quantity, historical cost and linked accounting entry.",
                 "CustomerReturnReceipts.View", Routes(("id", Route("id"))));
+
+        if (Matches(message, localize, "Customer credit note posted. No cash refund was created."))
+            return new("CustomerCreditNotes", "Details", "Review customer credit evidence",
+                "Confirm the receivable, revenue and output-tax reversal; cash refund remains separate.",
+                "CustomerCreditNotes.View", Routes(("id", Route("id"))));
 
         if (PurchaseControllers.Contains(currentController))
             return PurchaseFallback(currentController, Route("id"), Route("sourcingEventId"));

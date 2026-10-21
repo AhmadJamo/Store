@@ -5,7 +5,7 @@ namespace MiniStore.Application.Dtos.Sales;
 
 public sealed record CustomerInvoiceSummaryDto(int Id, string InvoiceNumber, int SalesOrderId,
     string OrderNumber, string CustomerCode, string CustomerName, DateOnly InvoiceDate, DateOnly DueDate,
-    string CurrencyCode, decimal TotalAmount, CustomerInvoiceStatus Status, decimal PaidAmount, decimal OutstandingAmount);
+    string CurrencyCode, decimal TotalAmount, CustomerInvoiceStatus Status, decimal PaidAmount, decimal CreditedAmount, decimal OutstandingAmount);
 
 public sealed record CustomerInvoiceSourceDto(int SalesDeliveryId, int SalesDeliveryLineId,
     string DeliveryNumber, decimal StockQuantity);
@@ -45,7 +45,7 @@ public sealed class CustomerInvoiceDetailsDto
     public int PaymentTermDays { get; init; } public string? Notes { get; init; }
     public CustomerInvoiceStatus Status { get; init; } public decimal NetAmount { get; init; }
     public decimal TaxAmount { get; init; } public decimal TotalAmount { get; init; }
-    public decimal PaidAmount { get; init; } public decimal OutstandingAmount { get; init; }
+    public decimal PaidAmount { get; init; } public decimal CreditedAmount { get; init; } public decimal OutstandingAmount { get; init; }
     public string PaymentStatus { get; init; } = "Unpaid";
     public string? CompanyCurrencyCode { get; init; } public decimal CompanyNetAmount { get; init; }
     public decimal CompanyTaxAmount { get; init; } public decimal CompanyTotalAmount { get; init; }

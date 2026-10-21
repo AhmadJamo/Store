@@ -82,6 +82,14 @@ public static class NavigationDefinitions
                 36),
 
             new NavigationItem(
+                "Customer credit notes",
+                "bi-receipt-cutoff",
+                "CustomerCreditNotes",
+                "Index",
+                "CustomerCreditNotes.View",
+                37),
+
+            new NavigationItem(
                 "Sales Returns",
                 "bi-arrow-counterclockwise",
                 "SalesReturns",

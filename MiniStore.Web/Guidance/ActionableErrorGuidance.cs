@@ -14,7 +14,7 @@ public static class ActionableErrorGuidance
         "PurchaseApprovalRules", "PurchaseSourcing", "SupplierQuotations", "PurchaseOrders",
         "GoodsReceipts", "GoodsReceiptReturns", "VendorBills", "SupplierCreditNotes", "SupplierPayments", "SupplierCommunications",
         "PurchaseAgreements", "PurchaseTemplates", "LandedCosts", "PurchaseDocumentReversals", "PurchaseAnalytics", "SupplierIntegrations",
-        "SalesPriceLists", "SalesQuotations", "SalesOrders", "SalesDeliveries", "CustomerInvoices", "CustomerPayments", "CustomerReturnReceipts", "Customers"
+        "SalesPriceLists", "SalesQuotations", "SalesOrders", "SalesDeliveries", "CustomerInvoices", "CustomerPayments", "CustomerReturnReceipts", "CustomerCreditNotes", "Customers"
     };
 
     public static ActionableErrorLink? Resolve(
@@ -110,6 +110,11 @@ public static class ActionableErrorGuidance
                 "Return storage location was not found.",
                 "The return storage location must be active and belong to the return warehouse."))
             return new("WarehouseLocations", "Index", "Configure warehouse locations", "Warehouses.Edit");
+
+        if (Matches(message, localize,
+                "Customer credit return warehouse was not found.",
+                "Assign the customer credit return warehouse to a branch before posting."))
+            return new("Warehouses", "Index", "Open warehouse settings", "Warehouses.Edit");
 
         if (Matches(message, localize,
                 "Inventory reservation was not found.",

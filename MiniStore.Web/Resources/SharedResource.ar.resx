@@ -3443,4 +3443,48 @@
   <data name="Only active products can be restocked from customer returns." xml:space="preserve"><value>لا يمكن إعادة منتجات مرتجع الزبون إلى المخزون إلا إذا كانت فعالة.</value></data>
   <data name="Only an inspected customer return receipt can post inventory dispositions." xml:space="preserve"><value>لا يمكن ترحيل قرارات المخزون إلا لاستلام مرتجع زبون مكتمل الفحص.</value></data>
   <data name="The returned tracked identity is quarantined and cannot be restocked." xml:space="preserve"><value>هوية التتبع المرتجعة قيد الحجر ولا يمكن إعادتها إلى المخزون.</value></data>
+  <data name="Customer credit notes" xml:space="preserve"><value>الإشعارات الدائنة للزبائن</value></data>
+  <data name="Create customer credit note" xml:space="preserve"><value>إنشاء إشعار دائن للزبون</value></data>
+  <data name="Post customer credit note" xml:space="preserve"><value>ترحيل الإشعار الدائن للزبون</value></data>
+  <data name="View customer invoice" xml:space="preserve"><value>عرض فاتورة الزبون</value></data>
+  <data name="Credit quantity" xml:space="preserve"><value>كمية الإشعار الدائن</value></data>
+  <data name="Return receipt" xml:space="preserve"><value>استلام المرتجع</value></data>
+  <data name="Partially Settled" xml:space="preserve"><value>مسوّاة جزئيًا</value></data>
+  <data name="View Customer Credit Notes" xml:space="preserve"><value>عرض الإشعارات الدائنة للزبائن</value></data>
+  <data name="Create and Post Customer Credit Note" xml:space="preserve"><value>إنشاء وترحيل إشعار دائن للزبون</value></data>
+  <data name="No customer credit notes were found." xml:space="preserve"><value>لا توجد إشعارات دائنة للزبائن.</value></data>
+  <data name="No posted returned quantities remain eligible for this invoice." xml:space="preserve"><value>لا توجد كميات مرتجعة مرحلة متبقية ومؤهلة لهذه الفاتورة.</value></data>
+  <data name="Customer credit note posted. No cash refund was created." xml:space="preserve"><value>تم ترحيل إشعار الزبون الدائن دون إنشاء استرداد نقدي.</value></data>
+  <data name="Posted customer credits reverse receivables, revenue and output tax without repeating inventory or recording a cash refund." xml:space="preserve"><value>تعكس إشعارات الزبائن الدائنة المرحلة الذمم والإيراد وضريبة المخرجات دون تكرار المخزون أو تسجيل استرداد نقدي.</value></data>
+  <data name="This posts a financial credit only. Inventory disposition is already controlled by the posted return receipt, and no cash refund is created." xml:space="preserve"><value>يرحّل هذا الإجراء الأثر المالي فقط؛ قرار المخزون مضبوط مسبقًا باستلام المرتجع المرحل ولا ينشأ استرداد نقدي.</value></data>
+  <data name="The customer credit is posted. Cash refund or application to another balance remains a separate controlled action." xml:space="preserve"><value>تم ترحيل رصيد الزبون الدائن، ويبقى الاسترداد النقدي أو استخدام الرصيد في تسوية أخرى إجراءً رقابيًا منفصلًا.</value></data>
+  <data name="Only a posted customer invoice can receive a customer credit note." xml:space="preserve"><value>لا يمكن إنشاء إشعار دائن إلا لفاتورة زبون مرحلة.</value></data>
+  <data name="Customer credit note date cannot be earlier than the invoice date." xml:space="preserve"><value>لا يمكن أن يسبق تاريخ الإشعار الدائن تاريخ الفاتورة.</value></data>
+  <data name="Customer credit note date cannot be earlier than the return receipt date." xml:space="preserve"><value>لا يمكن أن يسبق تاريخ الإشعار الدائن تاريخ استلام المرتجع.</value></data>
+  <data name="Customer credit note reason is required and cannot exceed 1000 characters." xml:space="preserve"><value>سبب إشعار الزبون الدائن مطلوب ولا يجوز أن يتجاوز 1000 حرف.</value></data>
+  <data name="Enter at least one positive customer credit quantity." xml:space="preserve"><value>أدخل كمية موجبة واحدة على الأقل للإشعار الدائن.</value></data>
+  <data name="Customer credit quantity cannot exceed the remaining posted invoice quantity." xml:space="preserve"><value>لا يمكن أن تتجاوز كمية الإشعار الدائن الكمية المتبقية في الفاتورة المرحلة.</value></data>
+  <data name="Customer credit quantity cannot exceed the remaining posted return quantity." xml:space="preserve"><value>لا يمكن أن تتجاوز كمية الإشعار الدائن كمية المرتجع المرحلة المتبقية.</value></data>
+  <data name="Customer credit quantity cannot exceed the invoice quantity allocated to the returned delivery." xml:space="preserve"><value>لا يمكن أن تتجاوز كمية الإشعار الدائن كمية الفاتورة المخصصة للتسليم المرتجع.</value></data>
+  <data name="The selected returned line was not billed by this customer invoice." xml:space="preserve"><value>لم تتم فوترة سطر المرتجع المحدد ضمن فاتورة الزبون هذه.</value></data>
+  <data name="Customer credit return warehouse was not found." xml:space="preserve"><value>لم يتم العثور على مستودع مرتجع الإشعار الدائن.</value></data>
+  <data name="Assign the customer credit return warehouse to a branch before posting." xml:space="preserve"><value>اربط مستودع مرتجع الإشعار الدائن بفرع قبل الترحيل.</value></data>
+  <data name="A customer invoice with posted credit notes cannot be reversed." xml:space="preserve"><value>لا يمكن عكس فاتورة زبون مرتبطة بإشعارات دائنة مرحلة.</value></data>
+  <data name="Review customer credit evidence" xml:space="preserve"><value>مراجعة دليل إشعار الزبون الدائن</value></data>
+  <data name="Confirm the receivable, revenue and output-tax reversal; cash refund remains separate." xml:space="preserve"><value>تحقق من عكس الذمم والإيراد وضريبة المخرجات؛ ويبقى الاسترداد النقدي إجراءً منفصلًا.</value></data>
+  <data name="Customer credit note number is required and cannot exceed 50 characters." xml:space="preserve"><value>رقم إشعار الزبون الدائن مطلوب ولا يجوز أن يتجاوز 50 حرفًا.</value></data>
+  <data name="Customer credit note request key is required and cannot exceed 100 characters." xml:space="preserve"><value>مفتاح طلب إشعار الزبون الدائن مطلوب ولا يجوز أن يتجاوز 100 حرف.</value></data>
+  <data name="The posted customer invoice accounting evidence is incomplete." xml:space="preserve"><value>الدليل المحاسبي لفاتورة الزبون المرحلة غير مكتمل.</value></data>
+  <data name="Only draft customer credit notes can be changed." xml:space="preserve"><value>يمكن تعديل مسودات إشعارات الزبائن الدائنة فقط.</value></data>
+  <data name="A draft customer credit note needs at least one positive line before posting." xml:space="preserve"><value>تحتاج مسودة إشعار الزبون الدائن إلى سطر موجب واحد على الأقل قبل الترحيل.</value></data>
+  <data name="Customer credit note line references are required." xml:space="preserve"><value>مراجع سطر إشعار الزبون الدائن مطلوبة.</value></data>
+  <data name="Customer credit note line values are invalid." xml:space="preserve"><value>قيم سطر إشعار الزبون الدائن غير صالحة.</value></data>
+  <data name="Customer credit note company-currency values are invalid." xml:space="preserve"><value>قيم إشعار الزبون الدائن بعملة الشركة غير صالحة.</value></data>
+  <data name="A taxed customer credit note line requires the invoice output tax account." xml:space="preserve"><value>يتطلب سطر إشعار الزبون الدائن الخاضع للضريبة حساب ضريبة المخرجات من الفاتورة.</value></data>
+  <data name="A returned invoice line can appear only once per customer credit note." xml:space="preserve"><value>لا يجوز أن يظهر سطر الفاتورة المرتجع أكثر من مرة في إشعار الزبون الدائن نفسه.</value></data>
+  <data name="A selected line does not belong to this customer invoice." xml:space="preserve"><value>السطر المحدد لا ينتمي إلى فاتورة الزبون هذه.</value></data>
+  <data name="The selected posted return line was not found." xml:space="preserve"><value>لم يتم العثور على سطر المرتجع المرحل المحدد.</value></data>
+  <data name="The selected returned line does not belong to the invoice sales order line." xml:space="preserve"><value>سطر المرتجع المحدد لا ينتمي إلى سطر أمر البيع المرتبط بالفاتورة.</value></data>
+  <data name="Customer credit note request key was already used for another invoice." xml:space="preserve"><value>استُخدم مفتاح طلب إشعار الزبون الدائن مسبقًا لفاتورة أخرى.</value></data>
+  <data name="This customer credit note has already been posted to accounting." xml:space="preserve"><value>تم ترحيل إشعار الزبون الدائن هذا محاسبيًا مسبقًا.</value></data>
 </root>
