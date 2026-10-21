@@ -1,5 +1,7 @@
 # Sales
-> Status: LEGACY IMMEDIATE SALE IMPLEMENTED; SAL-020 THROUGH SAL-100D CUSTOMER CREDIT IMPLEMENTED IN SOURCE | Last reviewed: 2026-10-22
+> Status: LEGACY IMMEDIATE SALE IMPLEMENTED; SAL-020 THROUGH SAL-110 CONFIGURABLE CONTROLS IMPLEMENTED IN SOURCE | Last reviewed: 2026-10-22
+
+SAL-110 adds flexible tenant-configured controls at Sales Order confirmation. Each active rule can target every customer or one customer, compare order company amount, credit exposure, overdue days, discount percentage or margin percentage, and Warn, RequireApproval or Block. Approval rules merge into one ordered role workflow with configurable requester self-approval and distinct-approver safeguards. The review freezes measured evidence and decisions; the order remains Draft until final approval and no stock or accounting authority is invoked.
 
 The implemented `Sale` flow is classified by the completed `SAL-000` audit as a compatible immediate sale/invoice/payment/stock workflow. It is not a Sales Order and must not be backfilled into invented quotations, deliveries, receivable invoices or payment allocations. The additive target, risks and sequence are documented in `SALES_ARCHITECTURE_AUDIT_AND_IMPLEMENTATION_PLAN.md`; `SAL-005` fixes the ownership boundaries. Customer foundation CUS-005..030B preserves every historical CustomerId and now provides profile/code/archive/concurrency, contacts/addresses, configurable receivable assignment, payment days, preferred configured currency and tax/exemption defaults. SAL-020B adds an optional prospective default price list. These commercial values do not silently change or rewrite the legacy immediate Sale.
 

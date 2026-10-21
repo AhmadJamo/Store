@@ -20,6 +20,7 @@ public static class TenantIsolationModel
         typeof(CustomerReturnRequest), typeof(CustomerReturnRequestLine), typeof(CustomerReturnRequestHistory),
         typeof(CustomerReturnReceipt), typeof(CustomerReturnReceiptLine), typeof(CustomerReturnReceiptHistory),
         typeof(CustomerCreditNote), typeof(CustomerCreditNoteLine),
+        typeof(SalesApprovalRule), typeof(SalesApprovalRuleStep), typeof(SalesOrderApproval), typeof(SalesOrderApprovalFinding), typeof(SalesOrderApprovalStep),
         typeof(DocumentSequence), typeof(AuditLog), typeof(GeneralSettings), typeof(CurrencyExchangeRate), typeof(DiscountSettings),
         typeof(StockTransfer), typeof(StockTransferItem), typeof(StockTransferHistory),
         typeof(Branch), typeof(Account), typeof(JournalEntry), typeof(JournalEntryLine), typeof(FiscalPeriod),

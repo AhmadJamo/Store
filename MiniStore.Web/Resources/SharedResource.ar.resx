@@ -3487,4 +3487,85 @@
   <data name="The selected returned line does not belong to the invoice sales order line." xml:space="preserve"><value>سطر المرتجع المحدد لا ينتمي إلى سطر أمر البيع المرتبط بالفاتورة.</value></data>
   <data name="Customer credit note request key was already used for another invoice." xml:space="preserve"><value>استُخدم مفتاح طلب إشعار الزبون الدائن مسبقًا لفاتورة أخرى.</value></data>
   <data name="This customer credit note has already been posted to accounting." xml:space="preserve"><value>تم ترحيل إشعار الزبون الدائن هذا محاسبيًا مسبقًا.</value></data>
+  <data name="Sales approval rules" xml:space="preserve"><value>قواعد اعتماد المبيعات</value></data>
+  <data name="Create layered controls for all customers or one customer. Rules can warn, require sequential approval, or block confirmation." xml:space="preserve"><value>أنشئ ضوابط متعددة لكل الزبائن أو لزبون محدد. يمكن للقاعدة التحذير أو طلب اعتماد متسلسل أو منع التأكيد.</value></data>
+  <data name="Customer scope" xml:space="preserve"><value>نطاق الزبائن</value></data>
+  <data name="All customers" xml:space="preserve"><value>كل الزبائن</value></data>
+  <data name="Action" xml:space="preserve"><value>الإجراء</value></data>
+  <data name="Metric" xml:space="preserve"><value>المقياس</value></data>
+  <data name="Comparison" xml:space="preserve"><value>المقارنة</value></data>
+  <data name="Threshold" xml:space="preserve"><value>الحد</value></data>
+  <data name="Sequential approver roles" xml:space="preserve"><value>أدوار المعتمدين بالتسلسل</value></data>
+  <data name="Add approval step" xml:space="preserve"><value>إضافة خطوة اعتماد</value></data>
+  <data name="Approver roles are used only by rules whose action requires approval." xml:space="preserve"><value>تُستخدم أدوار المعتمدين فقط عندما يكون إجراء القاعدة طلب الاعتماد.</value></data>
+  <data name="Effective period" xml:space="preserve"><value>فترة السريان</value></data>
+  <data name="No sales approval rules have been configured." xml:space="preserve"><value>لم يتم إعداد قواعد اعتماد للمبيعات.</value></data>
+  <data name="Sales control evaluation" xml:space="preserve"><value>تقييم ضوابط المبيعات</value></data>
+  <data name="Actual value" xml:space="preserve"><value>القيمة الفعلية</value></data>
+  <data name="Approval note" xml:space="preserve"><value>ملاحظة الاعتماد</value></data>
+  <data name="Approve current step" xml:space="preserve"><value>اعتماد الخطوة الحالية</value></data>
+  <data name="Reject approval" xml:space="preserve"><value>رفض الاعتماد</value></data>
+  <data name="Evaluate and confirm sales order" xml:space="preserve"><value>تقييم طلب البيع وتأكيده</value></data>
+  <data name="Waiting for sales approval" xml:space="preserve"><value>بانتظار اعتماد المبيعات</value></data>
+  <data name="OrderCompanyAmount" xml:space="preserve"><value>قيمة الطلب بعملة الشركة</value></data>
+  <data name="CreditExposure" xml:space="preserve"><value>التعرض الائتماني</value></data>
+  <data name="OverdueDays" xml:space="preserve"><value>أيام التأخر</value></data>
+  <data name="DiscountPercent" xml:space="preserve"><value>نسبة الخصم</value></data>
+  <data name="MarginPercent" xml:space="preserve"><value>نسبة الهامش</value></data>
+  <data name="GreaterThanOrEqual" xml:space="preserve"><value>أكبر من أو يساوي</value></data>
+  <data name="GreaterThan" xml:space="preserve"><value>أكبر من</value></data>
+  <data name="LessThanOrEqual" xml:space="preserve"><value>أقل من أو يساوي</value></data>
+  <data name="LessThan" xml:space="preserve"><value>أقل من</value></data>
+  <data name="Warn" xml:space="preserve"><value>تحذير</value></data>
+  <data name="RequireApproval" xml:space="preserve"><value>يتطلب اعتمادًا</value></data>
+  <data name="Block" xml:space="preserve"><value>منع</value></data>
+  <data name="AutoApproved" xml:space="preserve"><value>معتمد تلقائيًا</value></data>
+  <data name="Blocked" xml:space="preserve"><value>ممنوع</value></data>
+  <data name="Sales approval rule created." xml:space="preserve"><value>تم إنشاء قاعدة اعتماد المبيعات.</value></data>
+  <data name="Sales approval rule status updated." xml:space="preserve"><value>تم تحديث حالة قاعدة اعتماد المبيعات.</value></data>
+  <data name="Sales order submitted for approval." xml:space="preserve"><value>تم إرسال طلب البيع للاعتماد.</value></data>
+  <data name="Sales order confirmation was blocked by a configured control." xml:space="preserve"><value>تم منع تأكيد طلب البيع بواسطة ضابط مهيأ.</value></data>
+  <data name="Sales order approval step completed." xml:space="preserve"><value>اكتملت خطوة اعتماد طلب البيع.</value></data>
+  <data name="Sales order approval rejected." xml:space="preserve"><value>تم رفض اعتماد طلب البيع.</value></data>
+  <data name="Sales order approved and confirmed." xml:space="preserve"><value>تم اعتماد طلب البيع وتأكيده.</value></data>
+  <data name="Track sales order approval" xml:space="preserve"><value>متابعة اعتماد طلب البيع</value></data>
+  <data name="Review the triggered controls and the remaining sequential approval steps." xml:space="preserve"><value>راجع الضوابط المتحققة وخطوات الاعتماد المتسلسلة المتبقية.</value></data>
+  <data name="Approval is complete; reserve all or part of the remaining quantity." xml:space="preserve"><value>اكتمل الاعتماد؛ احجز كل الكمية المتبقية أو جزءًا منها.</value></data>
+  <data name="Approve Sales Order Exception" xml:space="preserve"><value>اعتماد استثناء طلب البيع</value></data>
+  <data name="View Sales Approval Rules" xml:space="preserve"><value>عرض قواعد اعتماد المبيعات</value></data>
+  <data name="Manage Sales Approval Rules" xml:space="preserve"><value>إدارة قواعد اعتماد المبيعات</value></data>
+  <data name="Sales approval rule name is required and cannot exceed 150 characters." xml:space="preserve"><value>اسم قاعدة اعتماد المبيعات مطلوب ولا يجوز أن يتجاوز 150 حرفًا.</value></data>
+  <data name="Sales approval rule condition is invalid." xml:space="preserve"><value>شرط قاعدة اعتماد المبيعات غير صالح.</value></data>
+  <data name="Sales approval threshold must be between zero and 999999999999.999999." xml:space="preserve"><value>يجب أن يكون حد اعتماد المبيعات بين صفر و999999999999.999999.</value></data>
+  <data name="Sales approval rule priority must be between 1 and 9999." xml:space="preserve"><value>يجب أن تكون أولوية قاعدة اعتماد المبيعات بين 1 و9999.</value></data>
+  <data name="Sales approval rule effective date range is invalid." xml:space="preserve"><value>نطاق سريان قاعدة اعتماد المبيعات غير صالح.</value></data>
+  <data name="Approval steps can be added only to rules that require approval." xml:space="preserve"><value>يمكن إضافة خطوات الاعتماد فقط للقواعد التي تتطلب اعتمادًا.</value></data>
+  <data name="Sales approval step sequence must be positive and unique." xml:space="preserve"><value>يجب أن يكون تسلسل خطوة اعتماد المبيعات موجبًا وفريدًا.</value></data>
+  <data name="Sales approval step sequence must be greater than zero." xml:space="preserve"><value>يجب أن يكون تسلسل خطوة اعتماد المبيعات أكبر من صفر.</value></data>
+  <data name="Sales approver role is required and cannot exceed 100 characters." xml:space="preserve"><value>دور معتمد المبيعات مطلوب ولا يجوز أن يتجاوز 100 حرف.</value></data>
+  <data name="Sales order is required for approval evaluation." xml:space="preserve"><value>طلب البيع مطلوب لتقييم الاعتماد.</value></data>
+  <data name="At least one triggered sales control is required." xml:space="preserve"><value>يلزم تحقق ضابط مبيعات واحد على الأقل.</value></data>
+  <data name="A triggered sales approval rule has no approver steps." xml:space="preserve"><value>إحدى قواعد اعتماد المبيعات المتحققة لا تحتوي على خطوات اعتماد.</value></data>
+  <data name="Sales order approval is not pending." xml:space="preserve"><value>اعتماد طلب البيع ليس قيد الانتظار.</value></data>
+  <data name="Sales approval rejection reason is required and cannot exceed 500 characters." xml:space="preserve"><value>سبب رفض اعتماد المبيعات مطلوب ولا يجوز أن يتجاوز 500 حرف.</value></data>
+  <data name="Sales approval step was already decided." xml:space="preserve"><value>تم اتخاذ قرار خطوة اعتماد المبيعات مسبقًا.</value></data>
+  <data name="Selected sales approval customer was not found." xml:space="preserve"><value>لم يتم العثور على زبون قاعدة اعتماد المبيعات المحدد.</value></data>
+  <data name="At least one sales approver role is required for an approval rule." xml:space="preserve"><value>يلزم دور معتمد مبيعات واحد على الأقل للقاعدة التي تتطلب اعتمادًا.</value></data>
+  <data name="Approver roles can be selected only when the rule action requires approval." xml:space="preserve"><value>يمكن اختيار أدوار المعتمدين فقط عندما يتطلب إجراء القاعدة اعتمادًا.</value></data>
+  <data name="Each sales approver role can appear only once in a rule." xml:space="preserve"><value>لا يجوز تكرار دور معتمد المبيعات داخل القاعدة.</value></data>
+  <data name="One or more sales approver roles are invalid." xml:space="preserve"><value>دور واحد أو أكثر من أدوار معتمدي المبيعات غير صالح.</value></data>
+  <data name="Sales approval rule was not found." xml:space="preserve"><value>لم يتم العثور على قاعدة اعتماد المبيعات.</value></data>
+  <data name="Sales approval rule was modified by another user. Reload and try again." xml:space="preserve"><value>عدّل مستخدم آخر قاعدة اعتماد المبيعات. أعد التحميل وحاول مجددًا.</value></data>
+  <data name="Pending sales order approval was not found." xml:space="preserve"><value>لم يتم العثور على اعتماد طلب بيع قيد الانتظار.</value></data>
+  <data name="The current sales approval step requires a different role." xml:space="preserve"><value>تتطلب خطوة اعتماد المبيعات الحالية دورًا مختلفًا.</value></data>
+  <data name="Review sales approval rules" xml:space="preserve"><value>مراجعة قواعد اعتماد المبيعات</value></data>
+  <data name="Review rule priority, scope, threshold, action and sequential approver roles." xml:space="preserve"><value>راجع أولوية القاعدة ونطاقها وحدها وإجراءها وأدوار المعتمدين المتسلسلة.</value></data>
+  <data name="Allow requester approval" xml:space="preserve"><value>السماح باعتماد مقدم الطلب</value></data>
+  <data name="Require different approvers" xml:space="preserve"><value>اشتراط معتمد مختلف لكل خطوة</value></data>
+  <data name="Requester approval allowed" xml:space="preserve"><value>اعتماد مقدم الطلب مسموح</value></data>
+  <data name="Requester approval prohibited" xml:space="preserve"><value>اعتماد مقدم الطلب ممنوع</value></data>
+  <data name="Different approvers required" xml:space="preserve"><value>يلزم معتمدون مختلفون</value></data>
+  <data name="Same approver may complete multiple steps" xml:space="preserve"><value>يمكن للمعتمد نفسه إكمال عدة خطوات</value></data>
+  <data name="The sales order requester cannot approve this control evaluation." xml:space="preserve"><value>لا يمكن لمقدم طلب البيع اعتماد تقييم الضوابط هذا.</value></data>
+  <data name="Each sales approval step requires a different user." xml:space="preserve"><value>تتطلب كل خطوة اعتماد مبيعات مستخدمًا مختلفًا.</value></data>
 </root>

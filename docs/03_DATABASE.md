@@ -1,4 +1,8 @@
 # Database
+## SAL-110 configurable sales controls
+
+Migration 131 (`20261021222759_AddConfigurableSalesControls`) creates tenant-owned approval rules and ordered role steps plus immutable Sales Order reviews, findings and decision steps. Tenant-composite foreign keys bind every row to one company; a filtered unique index permits only one Pending review per order. Rule rows persist scope, metric, comparison, threshold, action, priority, effective dates, activation and self/distinct-approver policy. Review findings freeze the actual measured value and rule evidence so later rule edits cannot rewrite a past decision. Source/model are at 131 with no pending changes; Demo remains evidenced at 128 because the SQL host connection fails before migration execution.
+
 ## SAL-100D customer credit notes
 
 Migration 130 (`20261021220324_AddCustomerCreditNotes`) creates tenant-owned header and line tables with restrictive tenant-composite links to invoices, invoice lines, return-receipt lines, products, warehouses and frozen accounts. Tenant-unique credit-note numbers and request keys prevent duplicate documents/retries; quantity checks and line uniqueness preserve cumulative allocation evidence. Source/model are at 130 with no pending changes. Applying migrations 129-130 to local Demo was attempted on 2026-10-22 but the host SQL encryption/SSPI failure occurred before execution, so Demo remains evidenced at 128.

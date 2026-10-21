@@ -1,7 +1,7 @@
 # MiniStore project context
 > Status: PARTIALLY IMPLEMENTED  
 > Source of truth: Code  
-> Last reviewed: 2026-10-21
+> Last reviewed: 2026-10-22
 
 ## Project identity
 MiniStore is a server-rendered ASP.NET Core MVC store-management application. It targets .NET 10, uses EF Core 10 with SQL Server, ASP.NET Core Identity, Razor views, and a Domain/Application/Infrastructure/Web layered solution. No public API project is present.
@@ -11,7 +11,7 @@ The repository implements an operational slice for catalog, warehouses, stock, s
 
 The WMS track is temporarily paused after implementing reconciliation, logistics, movements, balances, reservations, counts, lot/serial execution, removal/putaway policies, replenishment transfer/purchase-demand planning, inventory insights and safe scan workflows. The additive procure-to-pay evolution is implemented through PUR-280. Advanced purchasing analytics expose filterable spend, delay, confirmation, price-variance, supplier, seasonal, buyer-workload and open-exception evidence with source definitions and document links. Creation of new Legacy Direct Purchases is retired; historical records remain visible and users are directed to Purchase Requests for new activity.
 
-The imported ERP SaaS Foundation Blueprint remains a proposed reference. The project-control audit provides current control evidence. CUS-010/020/030A/030B provide the professional Customer master and receivable policy. SAL-020A/B through SAL-090 provide pricing through collection; SAL-100A/B/C/D now provide return authorization, custody, inspection, controlled Restock inventory/COGS posting and an independent posted customer credit note. The credit reverses receivable/revenue/output tax, reduces invoice balance and never repeats inventory or creates cash automatically. Migration source/model are at 130; local Demo remains evidenced at 128 because the latest application attempt was blocked by host SQL encryption/SSPI connectivity. Legacy Sale/POS remains unchanged.
+The imported ERP SaaS Foundation Blueprint remains a proposed reference. The project-control audit provides current control evidence. CUS-010/020/030A/030B provide the professional Customer master and receivable policy. SAL-020A/B through SAL-100D provide pricing through collection and controlled returns/credits. SAL-110 now adds tenant-configurable order amount, credit exposure, overdue-days, discount and margin controls with customer scope, warning/block/approval actions and arbitrary sequential role steps. Evaluation evidence is frozen; orders remain Draft until the required decision, and no inventory or accounting effect occurs. Migration source/model are at 131; local Demo remains evidenced at 128 because application attempts are blocked by host SQL encryption/SSPI connectivity. Legacy Sale/POS remains unchanged.
 
 ## Status classification
 - IMPLEMENTED: catalog, warehouses, suppliers, stock balances/movements, purchases, sales, transfer workflow, Identity login, role-permission checks, audit-log rows, Razor UI.
@@ -30,17 +30,17 @@ The imported ERP SaaS Foundation Blueprint remains a proposed reference. The pro
 | Suppliers | IMPLEMENTED | `Supplier`, `SupplierService` | Supplier master data. |
 | Inventory | PARTIALLY IMPLEMENTED | `ProductStock`, `StockTransaction`, recipes, measurement units | Balances, moving-average valuation, auditable cost movements, managed-unit conversion, prepared recipes, controlled negative variance and purchase-time variance settlement; manual adjustment posting remains pending. |
 | Purchases | IMPLEMENTED | `Purchase`, `PurchaseService`, `PurchaseReturnService` | Receipts increase stock; posted partial/full supplier returns remove available stock at moving-average cost and reverse accounting. |
-| Sales | PARTIALLY IMPLEMENTED | `Sale`, pricing/order/delivery/invoice/payment and customer-return aggregates | Legacy Sale/POS remains operational; professional lifecycle reaches return inspection. Inventory disposition, credit notes and credit controls remain staged. |
+| Sales | PARTIALLY IMPLEMENTED | `Sale`, pricing/order/delivery/invoice/payment, return and approval aggregates | Legacy Sale/POS remains operational; the professional lifecycle includes configurable pre-confirmation controls through SAL-110. Advanced sales and cutover remain staged. |
 | Stock transfers | IMPLEMENTED | `StockTransfer`, `StockTransferService` | Draft/submitted/approved/posted/cancelled flow. |
 | Settings | PARTIALLY IMPLEMENTED | settings entities/services | General, discount, inventory, accounting, fiscal periods, POS, centralized document numbers and a bilingual role-aware work procedure catalog beginning with purchasing. |
 | Identity & permissions | PARTIALLY IMPLEMENTED | Identity + `PermissionAuthorizationHandler` | Custom permission rows mapped to roles. |
 
 ## Current problems
-See `06_SECURITY.md`, `04_ACCOUNTING.md`, and `TODO.md`. The historically exposed administrator was closed for the evidenced local Demo environment, an encrypted isolated restore drill reconciled without differences and migrations through 126 are applied with no pending EF model change. The local Demo audit and retention features are enabled through User Secrets. Coverage reconciliation is complete, new legacy writes are frozen behind a reversible flag, and pre/post signed checkpoints preserved all 710 historical legacy rows. Real deployment identities, off-host backup/checkpoint storage, production deployment controls and broader integration testing remain open.
+See `06_SECURITY.md`, `04_ACCOUNTING.md`, and `TODO.md`. The historically exposed administrator was closed for the evidenced local Demo environment, an encrypted isolated restore drill reconciled without differences and migrations through 128 are applied; source/model are at 131 with no pending EF model change. The local Demo audit and retention features are enabled through User Secrets. Coverage reconciliation is complete, new legacy writes are frozen behind a reversible flag, and pre/post signed checkpoints preserved all 710 historical legacy rows. Real deployment identities, off-host backup/checkpoint storage, production deployment controls and broader integration testing remain open.
 
 ## Recommended next steps
-1. After explicit approval, implement `SAL-100`: professional sales returns and customer credit notes without replacing the legacy immediate-sale return path.
-2. Keep legacy Sale/POS cutover and customer credit policy outside the collection slice.
+1. After explicit approval, implement `SAL-120`: advanced sales capabilities without replacing the legacy immediate-sale path.
+2. Keep legacy Sale/POS cutover outside the professional order lifecycle until its dedicated gate.
 3. Preserve the completed audit, observability and application-boundary controls throughout the customer/sales sequence.
 
 ## Read first

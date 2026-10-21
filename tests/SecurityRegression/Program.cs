@@ -561,8 +561,10 @@ Check(salesQuotation.Status==SalesQuotationStatus.Accepted&&salesQuotation.Total
 CheckThrows(()=>salesQuotation.Accept("user",new DateOnly(2026,10,20)),"Completed sales quotation actions must not be repeated");
 Check(TenantIsolationModel.TenantOwnedTypes.Contains(typeof(SalesQuotation))&&TenantIsolationModel.TenantOwnedTypes.Contains(typeof(SalesQuotationLine))&&TenantIsolationModel.TenantOwnedTypes.Contains(typeof(SalesQuotationHistory)),
     "Sales quotation headers, lines and history must be tenant owned");
-Check(PermissionDefinitions.All.Count(x=>x.Name.StartsWith("SalesOrders.",StringComparison.Ordinal))==6,
-    "Sales orders must separate view, conversion, confirmation, cancellation, reservation and release permissions");
+Check(PermissionDefinitions.All.Count(x=>x.Name.StartsWith("SalesOrders.",StringComparison.Ordinal))==7,
+    "Sales orders must separate view, conversion, confirmation, exception approval, cancellation, reservation and release permissions");
+Check(PermissionDefinitions.All.Count(x=>x.Name.StartsWith("SalesApprovalRules.",StringComparison.Ordinal))==2,
+    "Sales controls must separate rule visibility from management authority");
 var salesOrderController=typeof(SalesOrdersController);
 var salesOrderReserveGet=salesOrderController.GetMethods().Single(x=>x.Name==nameof(SalesOrdersController.Reserve)&&x.GetCustomAttribute<HttpGetAttribute>() is not null);
 var salesOrderReservePost=salesOrderController.GetMethods().Single(x=>x.Name==nameof(SalesOrdersController.Reserve)&&x.GetCustomAttribute<HttpPostAttribute>() is not null);
@@ -573,7 +575,9 @@ Check(salesOrderController.GetMethod(nameof(SalesOrdersController.Index))!.GetCu
       salesOrderController.GetMethod(nameof(SalesOrdersController.Cancel))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SalesOrders.Cancel"&&
       salesOrderReserveGet.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SalesOrders.View"&&
       salesOrderReservePost.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SalesOrders.Reserve"&&
-      salesOrderController.GetMethod(nameof(SalesOrdersController.ReleaseReservation))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SalesOrders.ReleaseReservation",
+      salesOrderController.GetMethod(nameof(SalesOrdersController.ReleaseReservation))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SalesOrders.ReleaseReservation"&&
+      salesOrderController.GetMethod(nameof(SalesOrdersController.ApproveException))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SalesOrders.ApproveException"&&
+      salesOrderController.GetMethod(nameof(SalesOrdersController.RejectException))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SalesOrders.ApproveException",
     "Sales order endpoints must enforce their dedicated server-side permissions");
 Check(salesOrderController.GetMethods().Where(x=>x.GetCustomAttribute<HttpPostAttribute>() is not null)
       .All(x=>x.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null),
@@ -594,6 +598,34 @@ foreach(var type in new[]{typeof(SalesOrder),typeof(SalesOrderLine),typeof(Sales
         $"{type.Name} must be tenant owned");
 Check(DocumentSequence.CreateDefault(DocumentNumberType.SalesOrder).Preview(DateTime.Today).StartsWith("SO-"),
     "Sales orders must use an independent centralized SO document sequence");
+var salesApprovalController=typeof(SalesApprovalRulesController);
+Check(salesApprovalController.GetMethod(nameof(SalesApprovalRulesController.Index))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SalesApprovalRules.View"&&
+      salesApprovalController.GetMethod(nameof(SalesApprovalRulesController.Create))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SalesApprovalRules.Manage"&&
+      salesApprovalController.GetMethod(nameof(SalesApprovalRulesController.SetActive))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SalesApprovalRules.Manage"&&
+      salesApprovalController.GetMethods().Where(x=>x.GetCustomAttribute<HttpPostAttribute>() is not null).All(x=>x.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null),
+    "Sales approval rule endpoints must enforce dedicated permissions and antiforgery");
+var amountApprovalRule=new SalesApprovalRule("Large customer exposure",null,SalesControlMetric.CreditExposure,
+    SalesControlComparison.GreaterThanOrEqual,100m,SalesControlAction.RequireApproval,10,new DateOnly(2026,1,1),null);
+amountApprovalRule.AddStep(1,"Sales Manager");amountApprovalRule.AddStep(2,"Finance Manager");
+typeof(SalesApprovalRule).GetProperty(nameof(SalesApprovalRule.Id))!.SetValue(amountApprovalRule,1);
+var salesApproval=new SalesOrderApproval(1,"sales-user",[new SalesApprovalTriggeredRule(amountApprovalRule,120m)]);
+Check(salesApproval.Status==SalesOrderApprovalStatus.Pending&&salesApproval.Findings.Single().ActualValue==120m&&salesApproval.CurrentStep().ApproverRoleName=="Sales Manager",
+    "Triggered sales controls must freeze rule/value evidence and begin the configured sequential approval");
+salesApproval.ApproveCurrent("manager-one","Commercial review complete");
+CheckThrows(()=>salesApproval.ApproveCurrent("manager-one",null),"Configured separation of duties must prevent one user from completing multiple sales approval steps");
+salesApproval.ApproveCurrent("manager-two",null);
+Check(salesApproval.Status==SalesOrderApprovalStatus.Approved&&salesApproval.CompletedAtUtc.HasValue,
+    "Sequential sales approval must complete only after every configured role step");
+var blockingRule=new SalesApprovalRule("Overdue hard stop",null,SalesControlMetric.OverdueDays,
+    SalesControlComparison.GreaterThanOrEqual,30m,SalesControlAction.Block,1,null,null);
+typeof(SalesApprovalRule).GetProperty(nameof(SalesApprovalRule.Id))!.SetValue(blockingRule,2);
+var blockedApproval=new SalesOrderApproval(1,"sales-user",[new SalesApprovalTriggeredRule(blockingRule,45m)]);
+Check(blockedApproval.Status==SalesOrderApprovalStatus.Blocked&&blockedApproval.Steps.Count==0,
+    "Configured blocking controls must stop confirmation without inventing approval steps");
+var requesterApproval=new SalesOrderApproval(2,"sales-user",[new SalesApprovalTriggeredRule(amountApprovalRule,150m)]);
+CheckThrows(()=>requesterApproval.ApproveCurrent("sales-user",null),"Requester self-approval must be blocked unless the matching rules explicitly allow it");
+foreach(var type in new[]{typeof(SalesApprovalRule),typeof(SalesApprovalRuleStep),typeof(SalesOrderApproval),typeof(SalesOrderApprovalFinding),typeof(SalesOrderApprovalStep)})
+    Check(TenantIsolationModel.TenantOwnedTypes.Contains(type)&&db.Model.FindEntityType(type)!.FindProperty("TenantId") is{IsNullable:false},$"{type.Name} must be tenant owned");
 Check(PermissionDefinitions.All.Count(x=>x.Name.StartsWith("SalesDeliveries.",StringComparison.Ordinal))==4,
     "Sales deliveries must separate view, preparation, posting and cancellation permissions");
 var salesDeliveryController=typeof(SalesDeliveriesController);
@@ -2543,6 +2575,14 @@ var salesOrderConfirmedNextStep=WorkflowNextStepGuidance.Resolve(
     "Sales order confirmed.","SalesOrders",new Dictionary<string,string?>{{"id","25"}});
 Check(salesOrderConfirmedNextStep is {Controller:"SalesOrders",Action:"Reserve",RequiredPermission:"SalesOrders.Reserve"}&&salesOrderConfirmedNextStep.RouteValues.GetValueOrDefault("id")=="25",
     "Confirmed sales orders must guide an authorized user to inventory reservation");
+var salesOrderApprovalNextStep=WorkflowNextStepGuidance.Resolve(
+    "Sales order submitted for approval.","SalesOrders",new Dictionary<string,string?>{{"id","25"}});
+Check(salesOrderApprovalNextStep is{Controller:"SalesOrders",Action:"Details",RequiredPermission:"SalesOrders.View"}&&salesOrderApprovalNextStep.RouteValues.GetValueOrDefault("id")=="25",
+    "Sales orders awaiting approval must guide users to frozen control evidence and remaining steps");
+var salesOrderApprovedNextStep=WorkflowNextStepGuidance.Resolve(
+    "Sales order approved and confirmed.","SalesOrders",new Dictionary<string,string?>{{"id","25"}});
+Check(salesOrderApprovedNextStep is{Controller:"SalesOrders",Action:"Reserve",RequiredPermission:"SalesOrders.Reserve"},
+    "Fully approved sales orders must continue to inventory reservation");
 var salesOrderReservedNextStep=WorkflowNextStepGuidance.Resolve(
     "Sales order inventory reserved.","SalesOrders",new Dictionary<string,string?>{{"id","25"}});
 Check(salesOrderReservedNextStep is {Controller:"SalesOrders",Action:"Reserve",RequiredPermission:"SalesOrders.View"},
@@ -2852,6 +2892,7 @@ Check(WorkflowNextStepGuidance.IsSupportedController("VendorBills") &&
       WorkflowNextStepGuidance.IsSupportedController("PurchaseAccountingReconciliation") &&
       WorkflowNextStepGuidance.IsSupportedController("CustomerInvoices") &&
       WorkflowNextStepGuidance.IsSupportedController("CustomerCreditNotes") &&
+      WorkflowNextStepGuidance.IsSupportedController("SalesApprovalRules") &&
       WorkflowNextStepGuidance.IsSupportedController("StockTransfers") &&
       WorkflowNextStepGuidance.IsSupportedController("Warehouses") &&
       !WorkflowNextStepGuidance.IsSupportedController("Sales"),

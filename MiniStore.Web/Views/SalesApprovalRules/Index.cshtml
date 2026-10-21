@@ -1,0 +1,56 @@
+@model MiniStore.Application.Dtos.Sales.SalesApprovalRulesPageDto
+@using MiniStore.Domain.Entities
+@inject Microsoft.Extensions.Localization.IStringLocalizer<MiniStore.Web.SharedResource> Localizer
+@inject Microsoft.AspNetCore.Authorization.IAuthorizationService Authorization
+@{
+    ViewData["Title"] = Localizer["Sales approval rules"];
+    var canManage = (await Authorization.AuthorizeAsync(User, null, "Permission:SalesApprovalRules.Manage")).Succeeded;
+    var settings = await GeneralSettingsService.GetAsync();
+}
+<div class="mb-3"><h2>@Localizer["Sales approval rules"]</h2><p class="text-muted">@Localizer["Create layered controls for all customers or one customer. Rules can warn, require sequential approval, or block confirmation."]</p></div>
+@if (canManage)
+{
+    <form asp-action="Create" method="post" class="card card-body mb-4">
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+        <div class="row g-3">
+            <div class="col-lg-4"><label class="form-label">@Localizer["Rule name"]</label><input name="Name" value="@Model.Form.Name" maxlength="150" required class="form-control" /></div>
+            <div class="col-lg-4"><label class="form-label">@Localizer["Customer scope"]</label><select asp-for="Form.CustomerId" name="CustomerId" class="form-select"><option value="">@Localizer["All customers"]</option>@foreach(var customer in Model.Customers){<option value="@customer.Id">@customer.Label</option>}</select></div>
+            <div class="col-lg-2"><label class="form-label">@Localizer["Priority"]</label><input name="Priority" value="@Model.Form.Priority" type="number" min="1" max="9999" required class="form-control" /></div>
+            <div class="col-lg-2"><label class="form-label">@Localizer["Action"]</label><select asp-for="Form.Action" name="Action" class="form-select" asp-items="Html.GetEnumSelectList<SalesControlAction>()"></select></div>
+            <div class="col-lg-4"><label class="form-label">@Localizer["Metric"]</label><select asp-for="Form.Metric" name="Metric" class="form-select" asp-items="Html.GetEnumSelectList<SalesControlMetric>()"></select></div>
+            <div class="col-lg-4"><label class="form-label">@Localizer["Comparison"]</label><select asp-for="Form.Comparison" name="Comparison" class="form-select" asp-items="Html.GetEnumSelectList<SalesControlComparison>()"></select></div>
+            <div class="col-lg-4"><label class="form-label">@Localizer["Threshold"]</label><input name="Threshold" value="@Model.Form.Threshold.ToInputNumber()" type="number" min="0" step="0.000001" required class="form-control" /></div>
+            <div class="col-md-3"><label class="form-label">@Localizer["Effective from"]</label><input name="EffectiveFrom" value="@Model.Form.EffectiveFrom?.ToString("yyyy-MM-dd")" type="date" class="form-control" /></div>
+            <div class="col-md-3"><label class="form-label">@Localizer["Effective to"]</label><input name="EffectiveTo" value="@Model.Form.EffectiveTo?.ToString("yyyy-MM-dd")" type="date" class="form-control" /></div>
+            <div class="col-md-6"><label class="form-label">@Localizer["Sequential approver roles"]</label><div id="approval-roles" class="row g-2">@for(var i=0;i<3;i++){<div class="col-md-4"><select name="ApproverRoles[@i]" class="form-select"><option value="">@Localizer["None"]</option>@foreach(var role in Model.Roles){<option value="@role">@role</option>}</select></div>}</div><button id="add-role" type="button" class="btn btn-sm btn-outline-secondary mt-2">@Localizer["Add approval step"]</button><div class="form-text">@Localizer["Approver roles are used only by rules whose action requires approval."]</div></div>
+            <div class="col-md-3"><div class="form-check mt-4"><input asp-for="Form.AllowRequesterApproval" name="AllowRequesterApproval" class="form-check-input"/><label asp-for="Form.AllowRequesterApproval" class="form-check-label">@Localizer["Allow requester approval"]</label></div></div>
+            <div class="col-md-3"><div class="form-check mt-4"><input asp-for="Form.RequireDistinctApprovers" name="RequireDistinctApprovers" class="form-check-input"/><label asp-for="Form.RequireDistinctApprovers" class="form-check-label">@Localizer["Require different approvers"]</label></div></div>
+        </div>
+        <button class="btn btn-primary mt-3">@Localizer["Create rule"]</button>
+    </form>
+}
+<div class="row g-3">
+@foreach(var rule in Model.Rules)
+{
+    <div class="col-xl-6"><div class="card card-body h-100">
+        <div class="d-flex justify-content-between gap-2"><strong>@rule.Priority · @rule.Name</strong><span class="badge @(rule.IsActive?"bg-success":"bg-secondary")">@Localizer[rule.IsActive?"Active":"Inactive"]</span></div>
+        <div class="text-muted">@Localizer[rule.CustomerName]</div>
+        <div class="mt-2"><span class="badge bg-light text-dark">@Localizer[rule.Metric.ToString()] @Localizer[rule.Comparison.ToString()] @rule.Threshold.ToQuantityDisplay(settings)</span> <span class="badge bg-warning text-dark">@Localizer[rule.Action.ToString()]</span></div>
+        @if(rule.EffectiveFrom.HasValue||rule.EffectiveTo.HasValue){<div class="small mt-2">@Localizer["Effective period"]: @(rule.EffectiveFrom?.ToString()??"—") — @(rule.EffectiveTo?.ToString()??"—")</div>}
+        @if(rule.ApproverRoles.Count>0){<div class="small mt-2">@Localizer["Approval steps"]: @string.Join(" → ",rule.ApproverRoles)</div>}
+        @if(rule.Action==SalesControlAction.RequireApproval){<div class="small mt-1">@Localizer[rule.AllowRequesterApproval?"Requester approval allowed":"Requester approval prohibited"] · @Localizer[rule.RequireDistinctApprovers?"Different approvers required":"Same approver may complete multiple steps"]</div>}
+        @if(canManage){<form asp-action="SetActive" method="post" class="mt-3"><input type="hidden" name="id" value="@rule.Id"/><input type="hidden" name="active" value="@((!rule.IsActive).ToString())"/><input type="hidden" name="rowVersion" value="@Convert.ToBase64String(rule.RowVersion)"/><button class="btn btn-sm btn-outline-secondary">@Localizer[rule.IsActive?"Deactivate":"Activate"]</button></form>}
+    </div></div>
+}
+</div>
+@if(Model.Rules.Count==0){<div class="alert alert-info">@Localizer["No sales approval rules have been configured."]</div>}
+@section Scripts {
+<script>
+(() => {
+  const host=document.getElementById('approval-roles'); const add=document.getElementById('add-role');
+  if(!host||!add)return; let index=host.querySelectorAll('select').length;
+  const options=@Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Roles));
+  add.addEventListener('click',()=>{if(index>=10)return;const cell=document.createElement('div');cell.className='col-md-4';const select=document.createElement('select');select.className='form-select';select.name=`ApproverRoles[${index++}]`;select.append(new Option('@Localizer["None"]',''));for(const role of options)select.append(new Option(role,role));cell.append(select);host.append(cell);});
+})();
+</script>
+}

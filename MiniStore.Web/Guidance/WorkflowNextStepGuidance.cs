@@ -29,7 +29,7 @@ public static class WorkflowNextStepGuidance
 
     private static readonly HashSet<string> CustomerControllers = new(StringComparer.OrdinalIgnoreCase) { "Customers" };
 
-    private static readonly HashSet<string> SalesControllers = new(StringComparer.OrdinalIgnoreCase) { "SalesPriceLists", "SalesQuotations", "SalesOrders", "SalesDeliveries", "CustomerInvoices", "CustomerPayments", "CustomerReturnReceipts", "CustomerCreditNotes" };
+    private static readonly HashSet<string> SalesControllers = new(StringComparer.OrdinalIgnoreCase) { "SalesPriceLists", "SalesQuotations", "SalesOrders", "SalesDeliveries", "CustomerInvoices", "CustomerPayments", "CustomerReturnReceipts", "CustomerCreditNotes", "SalesApprovalRules" };
 
     public static bool IsSupportedController(string? controller) =>
         !string.IsNullOrWhiteSpace(controller) &&
@@ -94,6 +94,21 @@ public static class WorkflowNextStepGuidance
             return new("SalesOrders", "Reserve", "Reserve sales order inventory",
                 "Choose the warehouse and reservable position, then reserve all or part of the remaining quantity.",
                 "SalesOrders.Reserve", Routes(("id", Route("id"))));
+
+        if (Matches(message, localize, "Sales order submitted for approval.", "Sales order approval step completed."))
+            return new("SalesOrders", "Details", "Track sales order approval",
+                "Review the triggered controls and the remaining sequential approval steps.",
+                "SalesOrders.View", Routes(("id", Route("id"))));
+
+        if (Matches(message, localize, "Sales order approved and confirmed."))
+            return new("SalesOrders", "Reserve", "Reserve sales order inventory",
+                "Approval is complete; reserve all or part of the remaining quantity.",
+                "SalesOrders.Reserve", Routes(("id", Route("id"))));
+
+        if (Matches(message, localize, "Sales approval rule created.", "Sales approval rule status updated."))
+            return new("SalesApprovalRules", "Index", "Review sales approval rules",
+                "Review rule priority, scope, threshold, action and sequential approver roles.",
+                "SalesApprovalRules.View", Routes());
 
         if (Matches(message, localize, "Sales order inventory reserved."))
             return new("SalesOrders", "Reserve", "Review inventory reservation",

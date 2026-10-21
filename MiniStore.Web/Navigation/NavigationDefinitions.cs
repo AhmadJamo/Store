@@ -90,6 +90,14 @@ public static class NavigationDefinitions
                 37),
 
             new NavigationItem(
+                "Sales approval rules",
+                "bi-shield-check",
+                "SalesApprovalRules",
+                "Index",
+                "SalesApprovalRules.View",
+                38),
+
+            new NavigationItem(
                 "Sales Returns",
                 "bi-arrow-counterclockwise",
                 "SalesReturns",

@@ -4,18 +4,18 @@
 
 | الأمر | النتيجة | التاريخ |
 |---|---|---|
-| `dotnet run --project tests/SecurityRegression/SecurityRegression.csproj -c Release --no-build` | Passed 980 checks (نجح 980 فحصًا)، تشمل عزل/صلاحيات إشعار الزبون الدائن ومفتاح منع التكرار ودليل الخطوة التالية | 2026-10-22 |
-| `dotnet build MiniStore.slnx -c Release --no-restore` | Passed, 0 warnings/errors after SAL-100D | 2026-10-22 |
-| `dotnet run --project tests/InventorySqlIntegration/InventorySqlIntegration.csproj -c Release --no-build` | BLOCKED before test execution by Windows SQL SSPI; Restock/COGS and customer-credit balance/journal/no-inventory scenarios are present but unverified on SQL | 2026-10-22 |
+| `dotnet run --project tests/SecurityRegression/SecurityRegression.csproj -c Release --no-build` | Passed 1004 checks (نجح 1004 فحوص)، تشمل قواعد SAL-110 والصلاحيات والتسلسل ومنع الموافقة الذاتية وتكرار المعتمد | 2026-10-22 |
+| `dotnet build MiniStore.sln -c Release --no-restore` | Passed, 0 warnings/errors after SAL-110 | 2026-10-22 |
+| `dotnet run --project tests/InventorySqlIntegration/InventorySqlIntegration.csproj -c Release --no-build` | BLOCKED before test execution by Windows SQL SSPI; Restock/credit and configurable sales-control scenarios are present but unverified on SQL | 2026-10-22 |
 | `pwsh -NoProfile -File scripts/verify-local.ps1` | Build + 777 + SQL + 500-request workload passed | 2026-10-18 |
 | `dotnet run --project tests/InventorySqlIntegration/InventorySqlIntegration.csproj -c Release` | Passed full disposable SQL suite, including partial invoices, one-time balanced receivable/revenue posting, branch/warehouse dimensions, exact inverse journal, released eligibility and zero stock/movement mutation | 2026-10-21 |
 | Live local historic-credential negative test (اختبار رفض بيانات الدخول التاريخية) | Rejected after remediation (رُفضت بعد المعالجة) | 2026-10-15 |
 | Live local replacement-admin positive test (اختبار دخول المدير البديل) | Passed with authorized redirect (نجح مع تحويل مصرح) | 2026-10-15 |
 | Encrypted backup verify/isolated restore/DBCC (تحقق النسخة والاستعادة المعزولة وسلامة القاعدة) | Passed with AES-256 and checksum (نجح) | 2026-10-15 |
 | Restored ERP reconciliation (مصالحة النظام المستعاد) | 147 tables and 21 business checks; zero mismatches (صفر فروق) | 2026-10-15 |
-| EF/database migration reconciliation (مطابقة الترحيلات) | Source/model 130 with no pending model changes; Demo evidenced at 128 because update connection failed before execution | 2026-10-22 |
+| EF/database migration reconciliation (مطابقة الترحيلات) | Source/model 131 with no pending model changes; Demo evidenced at 128 because update connection failed before execution | 2026-10-22 |
 | Live schema integrity (سلامة المخطط الحي) | 147 tables, 420 trusted FKs, zero disabled constraints/indexes or unsafe tenant relations | 2026-10-15 |
-| Web dependency build (بناء الويب واعتماداته) | Release, 4 projects, zero warnings/errors after SAL-100D (نجح) | 2026-10-22 |
+| Web dependency build (بناء الويب واعتماداته) | Release, 4 projects, zero warnings/errors after SAL-110 (نجح) | 2026-10-22 |
 
 اختبار `SQL` (قاعدة البيانات) غطى: إيقاف الكاتب القديم مع استمرار الحدث الدلالي، إعادة تشغيله وإضافة صف مستقبلي واحد فقط، أدوار الكاتب/القارئ/الصيانة، الحجز القانوني، نقطة التثبيت والبيان السابق للحذف، إضافة إلى إنشاء/تغيير صلاحيات/حذف الدور وتغيير إعداد حساس ورجوع آمن، عزل الشركات، المصالحة، الأرصدة، تزامن التزويد، تقسيم الجوائز،
 الاستلام، فاتورة المورد، دفع المورد، العكس، المطابقة، GRNI (بضاعة مستلمة غير مفوترة)، المرتجع، التكلفة

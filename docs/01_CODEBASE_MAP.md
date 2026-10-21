@@ -1,4 +1,8 @@
 # Codebase map
+## SAL-110 configurable sales controls
+
+Adds `SalesApprovalRule` and sequential step configuration plus immutable order review, finding and decision evidence. `SalesOrderApprovalService` evaluates company-wide or customer-specific order amount, credit exposure, overdue days, discount and margin thresholds and applies Warn, RequireApproval or Block. Rules support effective dates, priority, activation, requester self-approval policy and distinct-approver policy. `SalesApprovalRulesController` and its bilingual responsive screen manage rules; Sales Order details expose the frozen review and authorized decisions. Migration 131 adds the tenant-isolated schema.
+
 ## SAL-100D customer credit notes
 
 Adds the tenant-owned `CustomerCreditNote` aggregate and lines, repository, DTOs and `CustomerCreditNoteService`. Posting starts only from Posted customer-return receipts, caps each quantity by the exact invoice line, delivery allocation and still-uncredited receipt quantity, and uses a tenant-unique request key to make retries idempotent. It debits frozen sales revenue/output tax and credits frozen receivables through `JournalPostingService`; invoice and payment balances subtract posted credits. It does not mutate stock, tracking, movements or cash. `CustomerCreditNotesController`, three Razor screens, two permissions and migration 130 expose the controlled flow.

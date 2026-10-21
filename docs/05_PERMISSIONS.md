@@ -1,4 +1,8 @@
 # Permissions and authorization
+## Configurable sales controls
+
+`SalesApprovalRules.View` protects rule visibility and `SalesApprovalRules.Manage` protects create/activate/deactivate operations. `SalesOrders.ApproveException` protects approve/reject decisions and is additionally constrained by the current configured role step. Every mutation is POST plus antiforgery. A rule can forbid the original requester from approving and can require a different user at every sequential step; these safeguards are frozen into each review.
+
 ## Customer credit notes
 
 `CustomerCreditNotes.View` protects list/detail and accounting-evidence visibility. `CustomerCreditNotes.Create` protects the single create-and-post mutation, which also requires POST antiforgery. Neither permission grants a cash refund, invoice reversal or inventory authority.
@@ -13,7 +17,7 @@ Return receipts add independently enforced View, Create, Inspect, PostDispositio
 > Source of truth: Code  
 > Last reviewed: 2026-10-20
 
-`InventoryReservations.View` protects the read-only inventory reservation history screen. `SalesDeliveries.View`, `Create`, `Post` and `Cancel` independently protect delivery visibility, Draft creation, physical/accounting posting and Draft cancellation.
+`InventoryReservations.View` protects the read-only inventory reservation history screen. `SalesOrders.ApproveException` is separate from Confirm and applies only to configured exception steps. `SalesApprovalRules.View/Manage` separate rule reading from administration. `SalesDeliveries.View`, `Create`, `Post` and `Cancel` independently protect delivery visibility, Draft creation, physical/accounting posting and Draft cancellation.
 
 Inventory adjustments split `View`, `Create`, `Count`, `Approve`, `Post` and `Cancel` so operational counting and supervisory approval can be assigned separately.
 

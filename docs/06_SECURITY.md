@@ -1,7 +1,9 @@
 # Security assessment
 > Status: PARTIALLY VERIFIED
 > Source of truth: Static inspection and focused executable regression checks
-> Last reviewed: 2026-10-18
+> Last reviewed: 2026-10-22
+
+SAL-110 keeps rule administration, ordinary order confirmation and exception approval as separate permissions. Current-step role membership is rechecked server-side; POST antiforgery protects every decision. Tenant query filters and composite relationships isolate rules/reviews. Per-rule snapshots can prohibit requester self-approval and reuse of one approver across steps, while a filtered database index prevents concurrent duplicate Pending reviews. Blocked or pending evaluations leave the order Draft and cannot mutate inventory or accounting.
 
 WMS-050 reservation writes run inside the existing serializable UnitOfWork. Tenant-scoped source uniqueness, balance and reservation rowversions, positive-quantity constraints and exact-dimension indexes prevent cross-tenant, duplicate and concurrent over-allocation.
 

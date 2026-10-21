@@ -1149,7 +1149,11 @@ static async Task VerifySalesQuotationFoundationAsync(int tenantOneId,int tenant
             .SingleAsync(x=>x.SourceType==InventoryReservationSourceType.SaleOrder&&x.SourceId==order.Id&&x.Status==InventoryReservationStatus.Active);
         var orderService=new SalesOrderService(new SalesOrderRepository(reservationContext),
             new SalesQuotationRepository(reservationContext),new DocumentNumberService(new DocumentSequenceRepository(reservationContext)),
-            reservationUnitOfWork,reservationUser,reservationService,new SalesDeliveryRepository(reservationContext));
+            reservationUnitOfWork,reservationUser,reservationService,new SalesDeliveryRepository(reservationContext),
+            new SalesOrderApprovalService(new SalesApprovalRepository(reservationContext),new SalesOrderRepository(reservationContext),
+                new CustomerRepository(reservationContext),new ProductRepository(reservationContext),new CustomerInvoiceRepository(reservationContext),
+                new CustomerPaymentRepository(reservationContext),new CustomerCreditNoteRepository(reservationContext),new TenantRoleRepository(reservationContext),
+                new TenantAuthorizationRepository(reservationContext),new FixedTenantContext(tenantOneId),reservationUser,reservationUnitOfWork));
         await orderService.CancelAsync(new SalesOrderStatusCommandDto
             {Id=order.Id,RowVersion=order.RowVersion,Reason="SQL cancellation releases active reservation"});
         var finalBalance=await reservationContext.InventoryBalances.AsNoTracking().SingleAsync(x=>x.ProductId==productId&&x.WarehouseId==warehouseId&&x.StorageLocationId==null);
@@ -1184,6 +1188,44 @@ static async Task VerifySalesQuotationFoundationAsync(int tenantOneId,int tenant
         var order=new SalesOrder("SO-SQL-DEL",quotation,new DateOnly(2026,10,20),"sql-user");
         deliverySetup.SalesOrders.Add(order);await deliverySetup.SaveChangesAsync();order.Confirm("sql-user");await deliverySetup.SaveChangesAsync();
         tenantOneDeliveryOrderId=order.Id;
+    }
+
+    await using(var salesControlContext=new AppDbContext(CreateOptions(connectionString),new FixedTenantContext(tenantOneId)))
+    {
+        var controlUnitOfWork=new UnitOfWork(salesControlContext);
+        var controlUser=new FixedCurrentUser("sales-control-requester");
+        var customer=await salesControlContext.Customers.SingleAsync(x=>x.CustomerCode=="CUS-SQT-SQL");
+        var product=await salesControlContext.Products.SingleAsync(x=>x.Id==productId);
+        var unit=await salesControlContext.MeasurementUnits.SingleAsync(x=>x.Id==measurementUnitId);
+        var rule=new SalesApprovalRule("SQL flexible order amount approval",customer.Id,SalesControlMetric.OrderCompanyAmount,
+            SalesControlComparison.GreaterThanOrEqual,1m,SalesControlAction.RequireApproval,10,
+            new DateOnly(2026,1,1),null,false,true);
+        rule.AddStep(1,"SQL Sales Manager");
+        salesControlContext.SalesApprovalRules.Add(rule);
+        var quotation=new SalesQuotation("SQT-SQL-CONTROL",Guid.NewGuid().ToString("N"),customer,null,
+            new DateOnly(2026,10,20),new DateOnly(2026,11,20),"JOD",1m,new DateOnly(2026,10,20),"COMPANY_BASE",null,"sql-user");
+        quotation.AddLine(new SalesQuotationLine(product,unit,1m,
+            new SalesPriceEvaluationSnapshot(2m,2m,"JOD",null,null,"PRODUCT_CHANNEL_FALLBACK",8m,8m,16m,null,null,null,false,"NO_TAX",null,0m,16m),null));
+        salesControlContext.SalesQuotations.Add(quotation);await salesControlContext.SaveChangesAsync();
+        quotation.Send("sql-user",new DateOnly(2026,10,20));quotation.Accept("sql-user",new DateOnly(2026,10,20));
+        var controlledOrder=new SalesOrder("SO-SQL-CONTROL",quotation,new DateOnly(2026,10,20),controlUser.UserId);
+        salesControlContext.SalesOrders.Add(controlledOrder);await salesControlContext.SaveChangesAsync();
+        var approvalService=new SalesOrderApprovalService(new SalesApprovalRepository(salesControlContext),new SalesOrderRepository(salesControlContext),
+            new CustomerRepository(salesControlContext),new ProductRepository(salesControlContext),new CustomerInvoiceRepository(salesControlContext),
+            new CustomerPaymentRepository(salesControlContext),new CustomerCreditNoteRepository(salesControlContext),new TenantRoleRepository(salesControlContext),
+            new TenantAuthorizationRepository(salesControlContext),new FixedTenantContext(tenantOneId),controlUser,controlUnitOfWork);
+        var outcome=SalesOrderConfirmationOutcome.Confirmed;
+        await controlUnitOfWork.ExecuteInTransactionAsync(async () =>
+        {
+            outcome = await approvalService.EvaluateAndConfirmAsync(controlledOrder);
+        });
+        var review=await salesControlContext.SalesOrderApprovals.Include(x=>x.Findings).Include(x=>x.Steps).SingleAsync(x=>x.SalesOrderId==controlledOrder.Id);
+        if(outcome!=SalesOrderConfirmationOutcome.PendingApproval||controlledOrder.Status!=SalesOrderStatus.Draft||
+           review.Status!=SalesOrderApprovalStatus.Pending||review.Findings.Single().ActualValue!=16m||
+           review.Steps.Single().ApproverRoleName!="SQL Sales Manager"||review.AllowRequesterApproval||!review.RequireDistinctApprovers)
+            throw new InvalidOperationException("Configurable sales controls must persist customer scope, measured evidence and sequential approval without confirming the order early.");
+        review.ApproveCurrent("sql-sales-manager","SQL approval evidence");controlledOrder.Confirm("sql-sales-manager");
+        await salesControlContext.SaveChangesAsync();
     }
 
     await using(var deliveryContext=new AppDbContext(CreateOptions(connectionString),new FixedTenantContext(tenantOneId)))
@@ -1482,7 +1524,11 @@ static async Task VerifySalesQuotationFoundationAsync(int tenantOneId,int tenant
             throw new InvalidOperationException("Customer credit-note posting must reverse receivable/revenue/tax proportionally, reduce invoice outstanding and never repeat inventory mutation.");
 
         var orderService=new SalesOrderService(orderRepository,new SalesQuotationRepository(deliveryContext),numbers,
-            deliveryUnitOfWork,deliveryUser,reservationService,new SalesDeliveryRepository(deliveryContext));
+            deliveryUnitOfWork,deliveryUser,reservationService,new SalesDeliveryRepository(deliveryContext),
+            new SalesOrderApprovalService(new SalesApprovalRepository(deliveryContext),orderRepository,new CustomerRepository(deliveryContext),
+                new ProductRepository(deliveryContext),customerInvoiceRepository,new CustomerPaymentRepository(deliveryContext),
+                new CustomerCreditNoteRepository(deliveryContext),new TenantRoleRepository(deliveryContext),new TenantAuthorizationRepository(deliveryContext),
+                new FixedTenantContext(tenantOneId),deliveryUser,deliveryUnitOfWork));
         try
         {
             var currentOrder=await orderRepository.GetByIdAsync(order.Id)??throw new InvalidOperationException("SQL delivery order was not found.");

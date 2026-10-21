@@ -8,6 +8,7 @@
 | المبيعات | استلام وفحص المرتجع | COMPLETE (مكتمل) | `CustomerReturnReceipt*` | طلب معتمد وهويات التسليم | 5 صلاحيات؛ ضمن 980 فحصًا | مكتمل في المصدر؛ Demo عند 128 |
 | المبيعات | ترحيل قرار المرتجع | COMPLETE-SOURCE / DB-UNVERIFIED | `CustomerReturnReceiptService.PostAsync`, `CustomerReturnIn` | استلام مكتمل الفحص وحسابات المستودع/التكلفة | 5 صلاحيات؛ 980 فحصًا؛ سيناريو SQL مضاف | Demo والترابط SQL محجوبان باتصال التشفير/SSPI |
 | المبيعات | إشعار الزبون الدائن | COMPLETE-SOURCE / DB-UNVERIFIED | `CustomerCreditNote*`, الخدمة والشاشات | فاتورة ومرتجع مرحلان وتخصيص التسليم | صلاحيتان؛ مفتاح إعادة محاولة؛ ضمن 980 فحصًا | لا مخزون/نقد تلقائي؛ ترحيل 130 وSQL محجوبان باتصال المضيف |
+| المبيعات | ضوابط الائتمان والاستثناءات | COMPLETE-SOURCE / DB-UNVERIFIED | `SalesApprovalRule*`, `SalesOrderApproval*`, `SalesOrderApprovalService` | الطلب/الزبون/الذمم/الأدوار | 3 صلاحيات؛ ضمن 1004 فحوص؛ خطوات اعتماد مرنة | ترحيل 131 وSQL محجوبان؛ لا أثر مخزون/محاسبة قبل القرار |
 | المنصة | الحل الطبقي | COMPLETE (مكتمل) | `MiniStore.slnx`, ملفات المشاريع | Domain/Application/Infrastructure/Web | يبني ضمن اختبار الانحدار | مستقر؛ توجد تجاوزات مستودع مباشرة من بعض المتحكمات |
 | الشركات | هوية الشركة | COMPLETE (مكتمل) | `Tenant`, `TenantConfiguration` | العضوية والاشتراك | 756 فحصًا + تكامل قاعدة البيانات | تشغيل الإنتاج غير مثبت |
 | الشركات | عزل بيانات الشركة | COMPLETE (مكتمل) | `TenantIsolationModel`, `AppDbContext` | كل الكيانات التشغيلية | اختبار شركتين وعلاقات مركبة ناجح | مسارات `IgnoreQueryFilters` تحتاج تدقيقًا دوريًا |

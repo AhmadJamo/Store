@@ -17,6 +17,7 @@ public sealed class SalesOrderDetailsDto
     public SalesOrderReservationSummaryDto Reservation{get;set;}=new();
     public SalesDeliveryProgressDto Delivery{get;set;}=new();
     public CustomerInvoiceProgressDto Invoice{get;set;}=new();
+    public SalesOrderApprovalDto? Approval{get;set;}
 }
 
 public sealed class ConvertSalesQuotationDto

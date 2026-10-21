@@ -8,7 +8,7 @@ using MiniStore.Web.Authorization;
 namespace MiniStore.Web.Controllers;
 
 public sealed class SalesOrdersController(SalesOrderService service,SalesOrderReservationService reservationService,CustomerInvoiceService invoiceService,
-    IStringLocalizer<SharedResource> localizer):Controller
+    SalesOrderApprovalService approvalService,IStringLocalizer<SharedResource> localizer):Controller
 {
     [HttpGet,PermissionAuthorize("SalesOrders.View")]
     public async Task<IActionResult> Index(SalesOrderStatus? status,string? search)
@@ -25,9 +25,25 @@ public sealed class SalesOrdersController(SalesOrderService service,SalesOrderRe
     }
 
     [HttpPost,ValidateAntiForgeryToken,PermissionAuthorize("SalesOrders.Confirm")]
-    public Task<IActionResult> Confirm(SalesOrderStatusCommandDto dto)=>Change(dto,service.ConfirmAsync,"Sales order confirmed.");
+    public async Task<IActionResult> Confirm(SalesOrderStatusCommandDto dto)
+    {
+        try
+        {
+            var outcome=await service.ConfirmAsync(dto);
+            Notify(outcome==SalesOrderConfirmationOutcome.Confirmed?"success":outcome==SalesOrderConfirmationOutcome.PendingApproval?"warning":"danger",
+                outcome==SalesOrderConfirmationOutcome.Confirmed?"Sales order confirmed.":outcome==SalesOrderConfirmationOutcome.PendingApproval?"Sales order submitted for approval.":"Sales order confirmation was blocked by a configured control.");
+        }
+        catch(Exception ex)when(ex is ArgumentException or InvalidOperationException){Notify("danger",ex.Message);}
+        return RedirectToAction(nameof(Details),new{id=dto.Id});
+    }
     [HttpPost,ValidateAntiForgeryToken,PermissionAuthorize("SalesOrders.Cancel")]
     public Task<IActionResult> Cancel(SalesOrderStatusCommandDto dto)=>Change(dto,service.CancelAsync,"Sales order cancelled.");
+
+    [HttpPost,ValidateAntiForgeryToken,PermissionAuthorize("SalesOrders.ApproveException")]
+    public Task<IActionResult> ApproveException(SalesOrderApprovalDecisionDto dto)=>Decide(dto,true);
+
+    [HttpPost,ValidateAntiForgeryToken,PermissionAuthorize("SalesOrders.ApproveException")]
+    public Task<IActionResult> RejectException(SalesOrderApprovalDecisionDto dto)=>Decide(dto,false);
 
     [HttpGet,PermissionAuthorize("SalesOrders.View")]
     public async Task<IActionResult> Reserve(int id)
@@ -51,5 +67,7 @@ public sealed class SalesOrdersController(SalesOrderService service,SalesOrderRe
 
     private async Task<IActionResult> Change(SalesOrderStatusCommandDto dto,Func<SalesOrderStatusCommandDto,Task> command,string success)
     {try{await command(dto);Notify("success",success);}catch(Exception ex)when(ex is ArgumentException or InvalidOperationException){Notify("danger",ex.Message);}return RedirectToAction(nameof(Details),new{id=dto.Id});}
+    private async Task<IActionResult> Decide(SalesOrderApprovalDecisionDto dto,bool approve)
+    {try{var status=await approvalService.DecideAsync(dto,approve);Notify(approve?"success":"warning",!approve?"Sales order approval rejected.":status==SalesOrderApprovalStatus.Approved?"Sales order approved and confirmed.":"Sales order approval step completed.");}catch(Exception ex)when(ex is ArgumentException or InvalidOperationException or UnauthorizedAccessException){Notify("danger",ex.Message);}return RedirectToAction(nameof(Details),new{id=dto.SalesOrderId});}
     private void Notify(string type,string key){TempData["NotificationType"]=type;TempData["NotificationMessage"]=localizer[key].Value;}
 }

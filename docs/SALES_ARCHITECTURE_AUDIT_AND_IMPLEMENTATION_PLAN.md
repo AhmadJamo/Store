@@ -505,7 +505,7 @@ SalesApprovalRules, SalesApprovalInstances, SalesApprovalSteps
 
 **شرط الخروج:** الكمية والقيمة والذمة والمخزون والقيد قابلة للمطابقة.
 
-### `SAL-110` — الائتمان والتحذيرات والموافقات / Credit, warnings and approvals
+### `SAL-110` — الائتمان والتحذيرات والموافقات / Credit, warnings and approvals — COMPLETED IN SOURCE 2026-10-22
 
 - تعرض ائتماني مستمد، متأخرات، حجز ائتماني وتجاوز بسبب وصلاحية.
 - تحذيرات معلوماتية أو مانعة أو تحتاج موافقة.

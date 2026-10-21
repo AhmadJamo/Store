@@ -86,8 +86,9 @@ The ERP SaaS Foundation Blueprint is imported as a non-authoritative planning re
 - [x] SAL-100B receive and inspect Approved customer returns, recording explicit Restock/Quarantine/Reject/Destroy disposition and exact tracked identities without stock/accounting/credit-note effect. Completed 2026-10-21.
 - [x] SAL-100C post Inspected return dispositions to inventory/tracking and reverse COGS where appropriate, while keeping credit notes separate. Completed in source 2026-10-21; Demo migration and disposable SQL execution await repair of host SQL encryption/SSPI connectivity.
 - [x] SAL-100D add independent retry-safe customer credit notes allocated to posted invoice/return quantities, reversing receivable/revenue/output tax and reducing balances without automatic cash refund or duplicate inventory mutation. Completed in source 2026-10-22; Demo migrations 129-130 and disposable SQL execution await repair of host SQL encryption/SSPI connectivity.
-- [ ] SAL-110 add configurable sales-credit, overdue, price-below-cost, exceptional-discount and margin warning/approval controls after explicit approval.
-- [ ] SAL-060 through SAL-130 implement delivery, invoicing, accounting, payment, return, advanced-sales and cutover slices in order.
+- [x] SAL-110 add configurable company/customer sales-credit, overdue, price-below-cost, exceptional-discount and margin controls with Warn/RequireApproval/Block actions, arbitrary role steps, frozen evidence and configurable self/distinct-approver safeguards. Completed in source 2026-10-22; migration 131 and SQL execution await repair of host SQL encryption/SSPI connectivity.
+- [ ] SAL-120 implement the separately approved advanced-sales slice.
+- [ ] SAL-130 implement analytics and controlled cutover after its own approval.
 
 - [x] WMS-050 reservations and exact transfer allocation with concurrent last-unit protection.
 - [x] WMS-060 blind cycle counts and controlled inventory adjustment posting; scheduling remains deferred.

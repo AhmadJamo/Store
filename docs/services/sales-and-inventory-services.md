@@ -1,4 +1,6 @@
 # Sales and inventory services
+
+`SalesOrderApprovalService` owns SAL-110 rule administration, metric calculation, frozen findings and sequential exception decisions. It evaluates active company/customer rules by priority at confirmation, combines approval roles without weakening any triggered rule's separation-of-duties policy, and confirms only after the final valid step. Warn-only evaluations may confirm with evidence; Block and Pending keep the order Draft. It delegates persistence to the approval repository and never writes inventory, delivery, invoice, journal or cash state.
 ## Customer credit notes (`SAL-100D`)
 
 `CustomerCreditNoteService` derives eligible pairs from Posted invoice lines and Posted return-receipt lines. Inside the shared transaction it revalidates invoice, sales-order line, exact delivery allocation, receipt quantity, prior credits and dates; a unique request key makes repeated submission return the original document. It freezes proportional transaction/company amounts with final-residual handling, posts receivable/revenue/output-tax reversal once and marks the note Posted. `CustomerInvoiceService` and `CustomerPaymentService` subtract posted credits from outstanding balances and block invoice reversal after a credit. No inventory authority is called.

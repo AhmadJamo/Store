@@ -7905,6 +7905,110 @@ namespace MiniStore.Infrastructure.Migrations
                     b.ToTable("SaleItems", (string)null);
                 });
 
+            modelBuilder.Entity("MiniStore.Domain.Entities.SalesApprovalRule", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Action")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("AllowRequesterApproval")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("Comparison")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CustomerId")
+                        .HasColumnType("int");
+
+                    b.Property<DateOnly?>("EffectiveFrom")
+                        .HasColumnType("date");
+
+                    b.Property<DateOnly?>("EffectiveTo")
+                        .HasColumnType("date");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("Metric")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<int>("Priority")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("RequireDistinctApprovers")
+                        .HasColumnType("bit");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<int>("TenantId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Threshold")
+                        .HasPrecision(18, 6)
+                        .HasColumnType("decimal(18,6)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TenantId");
+
+                    b.HasIndex("CustomerId", "TenantId");
+
+                    b.HasIndex("IsActive", "Priority", "Metric");
+
+                    b.ToTable("SalesApprovalRules", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_SalesApprovalRules_ThresholdPriority", "[Threshold] >= 0 AND [Priority] BETWEEN 1 AND 9999");
+                        });
+                });
+
+            modelBuilder.Entity("MiniStore.Domain.Entities.SalesApprovalRuleStep", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ApproverRoleName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("SalesApprovalRuleId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Sequence")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TenantId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TenantId");
+
+                    b.HasIndex("SalesApprovalRuleId", "TenantId");
+
+                    b.HasIndex("TenantId", "SalesApprovalRuleId", "Sequence")
+                        .IsUnique();
+
+                    b.ToTable("SalesApprovalRuleSteps", (string)null);
+                });
+
             modelBuilder.Entity("MiniStore.Domain.Entities.SalesDelivery", b =>
                 {
                     b.Property<int>("Id")
@@ -8281,6 +8385,159 @@ namespace MiniStore.Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("SalesOrders");
+                });
+
+            modelBuilder.Entity("MiniStore.Domain.Entities.SalesOrderApproval", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("AllowRequesterApproval")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("CompletedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("RequestedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("RequestedByUserId")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<bool>("RequireDistinctApprovers")
+                        .HasColumnType("bit");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<int>("SalesOrderId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TenantId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TenantId");
+
+                    b.HasIndex("SalesOrderId", "RequestedAtUtc");
+
+                    b.HasIndex("SalesOrderId", "TenantId");
+
+                    b.HasIndex("TenantId", "SalesOrderId")
+                        .IsUnique()
+                        .HasFilter("[Status] = 2");
+
+                    b.ToTable("SalesOrderApprovals", (string)null);
+                });
+
+            modelBuilder.Entity("MiniStore.Domain.Entities.SalesOrderApprovalFinding", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Action")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("ActualValue")
+                        .HasPrecision(18, 6)
+                        .HasColumnType("decimal(18,6)");
+
+                    b.Property<int>("Comparison")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Metric")
+                        .HasColumnType("int");
+
+                    b.Property<string>("RuleNameSnapshot")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<int>("SalesApprovalRuleId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SalesOrderApprovalId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TenantId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Threshold")
+                        .HasPrecision(18, 6)
+                        .HasColumnType("decimal(18,6)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TenantId");
+
+                    b.HasIndex("SalesApprovalRuleId", "TenantId");
+
+                    b.HasIndex("SalesOrderApprovalId", "TenantId");
+
+                    b.ToTable("SalesOrderApprovalFindings", (string)null);
+                });
+
+            modelBuilder.Entity("MiniStore.Domain.Entities.SalesOrderApprovalStep", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ApproverRoleName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("DecidedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DecidedByUserId")
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Note")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int>("SalesOrderApprovalId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Sequence")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TenantId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TenantId");
+
+                    b.HasIndex("SalesOrderApprovalId", "TenantId");
+
+                    b.HasIndex("TenantId", "SalesOrderApprovalId", "Sequence")
+                        .IsUnique();
+
+                    b.ToTable("SalesOrderApprovalSteps", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.SalesOrderHistory", b =>
@@ -14423,6 +14680,37 @@ namespace MiniStore.Infrastructure.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("MiniStore.Domain.Entities.SalesApprovalRule", b =>
+                {
+                    b.HasOne("MiniStore.Domain.Entities.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MiniStore.Domain.Entities.Customer", null)
+                        .WithMany()
+                        .HasForeignKey("CustomerId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict);
+                });
+
+            modelBuilder.Entity("MiniStore.Domain.Entities.SalesApprovalRuleStep", b =>
+                {
+                    b.HasOne("MiniStore.Domain.Entities.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MiniStore.Domain.Entities.SalesApprovalRule", null)
+                        .WithMany("Steps")
+                        .HasForeignKey("SalesApprovalRuleId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("MiniStore.Domain.Entities.SalesDelivery", b =>
                 {
                     b.HasOne("MiniStore.Domain.Entities.Tenant", null)
@@ -14545,6 +14833,61 @@ namespace MiniStore.Infrastructure.Migrations
                         .HasForeignKey("SourceQuotationId", "TenantId")
                         .HasPrincipalKey("Id", "TenantId")
                         .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("MiniStore.Domain.Entities.SalesOrderApproval", b =>
+                {
+                    b.HasOne("MiniStore.Domain.Entities.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MiniStore.Domain.Entities.SalesOrder", null)
+                        .WithMany()
+                        .HasForeignKey("SalesOrderId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("MiniStore.Domain.Entities.SalesOrderApprovalFinding", b =>
+                {
+                    b.HasOne("MiniStore.Domain.Entities.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MiniStore.Domain.Entities.SalesApprovalRule", null)
+                        .WithMany()
+                        .HasForeignKey("SalesApprovalRuleId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MiniStore.Domain.Entities.SalesOrderApproval", null)
+                        .WithMany("Findings")
+                        .HasForeignKey("SalesOrderApprovalId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("MiniStore.Domain.Entities.SalesOrderApprovalStep", b =>
+                {
+                    b.HasOne("MiniStore.Domain.Entities.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MiniStore.Domain.Entities.SalesOrderApproval", null)
+                        .WithMany("Steps")
+                        .HasForeignKey("SalesOrderApprovalId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
@@ -15803,6 +16146,11 @@ namespace MiniStore.Infrastructure.Migrations
                     b.Navigation("Items");
                 });
 
+            modelBuilder.Entity("MiniStore.Domain.Entities.SalesApprovalRule", b =>
+                {
+                    b.Navigation("Steps");
+                });
+
             modelBuilder.Entity("MiniStore.Domain.Entities.SalesDelivery", b =>
                 {
                     b.Navigation("History");
@@ -15815,6 +16163,13 @@ namespace MiniStore.Infrastructure.Migrations
                     b.Navigation("History");
 
                     b.Navigation("Lines");
+                });
+
+            modelBuilder.Entity("MiniStore.Domain.Entities.SalesOrderApproval", b =>
+                {
+                    b.Navigation("Findings");
+
+                    b.Navigation("Steps");
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.SalesPriceList", b =>

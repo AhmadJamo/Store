@@ -1,4 +1,9 @@
 # Razor screen map
+## Configurable sales controls (`SAL-110`)
+
+- `/SalesApprovalRules`: bilingual responsive builder for company/customer scope, metric, comparison, threshold, action, priority, effective dates and arbitrary sequential role steps; rules are activated/deactivated rather than rewriting past evidence.
+- `/SalesOrders/Details/{id}`: shows frozen measured findings and decision history, suppresses repeat confirmation while Pending and exposes approve/reject only to the authorized current role step.
+
 ## Customer credit notes (`SAL-100D`)
 
 - `/CustomerCreditNotes`: permission-protected list with number, invoice, customer, date, status and total.

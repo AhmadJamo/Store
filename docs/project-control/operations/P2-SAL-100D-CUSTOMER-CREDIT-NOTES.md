@@ -24,4 +24,4 @@ The 2026-10-22 disposable SQL run stopped before test execution with `Cannot gen
 
 ## Next gate
 
-`SAL-110` sales-credit/warning/approval controls are proposed and require explicit approval. Cash refund or applying a customer credit to another balance remains a separate controlled capability.
+`SAL-110` sales-credit/warning/approval controls are now completed in source. Cash refund or applying a customer credit to another balance remains a separate controlled capability.
