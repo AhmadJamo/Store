@@ -14,7 +14,7 @@ public static class ActionableErrorGuidance
         "PurchaseApprovalRules", "PurchaseSourcing", "SupplierQuotations", "PurchaseOrders",
         "GoodsReceipts", "GoodsReceiptReturns", "VendorBills", "SupplierCreditNotes", "SupplierPayments", "SupplierCommunications",
         "PurchaseAgreements", "PurchaseTemplates", "LandedCosts", "PurchaseDocumentReversals", "PurchaseAnalytics", "SupplierIntegrations",
-        "SalesPriceLists", "SalesQuotations", "SalesOrders", "SalesDeliveries", "CustomerInvoices", "CustomerPayments", "Customers"
+        "SalesPriceLists", "SalesQuotations", "SalesOrders", "SalesDeliveries", "CustomerInvoices", "CustomerPayments", "CustomerReturnReceipts", "Customers"
     };
 
     public static ActionableErrorLink? Resolve(
@@ -95,8 +95,21 @@ public static class ActionableErrorGuidance
         if (Matches(message, localize,
                 "Delivery warehouse was not found.",
                 "Delivery warehouse branch was not found.",
-                "Assign the delivery warehouse to a branch and inventory account before posting."))
+                "Assign the delivery warehouse to a branch and inventory account before posting.",
+                "Return warehouse was not found.",
+                "Return warehouse branch was not found.",
+                "Assign the return warehouse to a branch and inventory account before posting."))
             return new("Warehouses", "Index", "Open warehouse settings", "Warehouses.Edit");
+
+        if (Matches(message, localize,
+                "Configure accounting posting accounts before posting customer return dispositions.",
+                "Configure a cost of sales account before posting customer return dispositions."))
+            return new("Settings", "Accounting", "Open accounting settings", "Administration.Access");
+
+        if (Matches(message, localize,
+                "Return storage location was not found.",
+                "The return storage location must be active and belong to the return warehouse."))
+            return new("WarehouseLocations", "Index", "Configure warehouse locations", "Warehouses.Edit");
 
         if (Matches(message, localize,
                 "Inventory reservation was not found.",

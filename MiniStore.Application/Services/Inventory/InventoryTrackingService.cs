@@ -139,6 +139,12 @@ public sealed class InventoryTrackingService(IInventoryTrackingRepository tracki
  }
 
  public async Task ReturnSaleAsync(Product product,int warehouseId,decimal quantity,string? allocationText,string originalReference,string returnReference,string userId)
+ =>await RestoreIssuedAsync(product,warehouseId,null,quantity,allocationText,originalReference,returnReference,userId);
+
+ public async Task ReturnDeliveryAsync(Product product,int warehouseId,int? storageLocationId,decimal quantity,string? allocationText,string originalReference,string returnReference,string userId)
+ =>await RestoreIssuedAsync(product,warehouseId,storageLocationId,quantity,allocationText,originalReference,returnReference,userId);
+
+ private async Task RestoreIssuedAsync(Product product,int warehouseId,int? storageLocationId,decimal quantity,string? allocationText,string originalReference,string returnReference,string userId)
  {
   if(product.TrackingPolicy==ProductTrackingPolicy.None)return;
   var allocations=ParseAllocations(product,allocationText,quantity);
@@ -154,16 +160,25 @@ public sealed class InventoryTrackingService(IInventoryTrackingRepository tracki
    {
     var serial=matches.Single();
     if(serial.Quantity!=0)throw new InvalidOperationException("The selected serial is already available in inventory.");
-    serial.Restore(1);serial.Relocate(warehouseId,null);
+    serial.Restore(1);serial.Relocate(warehouseId,storageLocationId);
+    if(storageLocationId.HasValue)await AddLocationQuantityAsync(product.Id,warehouseId,storageLocationId.Value,1);
     await tracking.AddTransactionAsync(new InventoryTrackingTransaction(serial,1,InventoryTrackingTransactionType.Return,$"{returnReference}|{originalReference}",userId));
    }
    else
    {
-    var source=matches[0];var destination=await tracking.GetBalanceAsync(product.Id,warehouseId,null,allocation.Identifier);
-    if(destination is null){destination=new InventoryTrackingBalance(product.Id,warehouseId,null,ProductTrackingPolicy.Lot,allocation.Identifier,allocation.Quantity,source.ManufactureDate,source.ExpirationDate,returnReference);await tracking.AddBalanceAsync(destination);}else destination.Restore(allocation.Quantity);
+    var source=matches[0];var destination=await tracking.GetBalanceAsync(product.Id,warehouseId,storageLocationId,allocation.Identifier);
+    if(destination is null){destination=new InventoryTrackingBalance(product.Id,warehouseId,storageLocationId,ProductTrackingPolicy.Lot,allocation.Identifier,allocation.Quantity,source.ManufactureDate,source.ExpirationDate,returnReference);await tracking.AddBalanceAsync(destination);}else{if(destination.Status==InventoryTrackingStatus.Quarantined)throw new InvalidOperationException("The returned tracked identity is quarantined and cannot be restocked.");destination.Restore(allocation.Quantity);}
+    if(storageLocationId.HasValue)await AddLocationQuantityAsync(product.Id,warehouseId,storageLocationId.Value,allocation.Quantity);
     await tracking.AddTransactionAsync(new InventoryTrackingTransaction(destination,allocation.Quantity,InventoryTrackingTransactionType.Return,$"{returnReference}|{originalReference}",userId));
    }
   }
+ }
+
+ private async Task AddLocationQuantityAsync(int productId,int warehouseId,int storageLocationId,decimal quantity)
+ {
+  var located=await locationStocks.GetAsync(productId,storageLocationId);
+  if(located is null){located=new ProductLocationStock(productId,warehouseId,storageLocationId);await locationStocks.AddAsync(located);}
+  located.AddQuantity(quantity);
  }
 
  public async Task<Dictionary<string,decimal>> GetIssuedAllocationsAsync(int productId,int warehouseId,int? storageLocationId,string originalReference)

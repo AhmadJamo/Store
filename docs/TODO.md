@@ -84,7 +84,8 @@ The ERP SaaS Foundation Blueprint is imported as a non-authoritative planning re
 - [x] SAL-090 add independent customer payments with capped partial/multi-invoice allocation, derived balances, foreign-exchange posting, journal evidence and controlled reversal. Completed 2026-10-21.
 - [x] SAL-100A add delivery-backed customer return request Draft/Submit/Approve/Reject/Cancel control with cumulative quantity protection and no stock/accounting effect. Completed 2026-10-21.
 - [x] SAL-100B receive and inspect Approved customer returns, recording explicit Restock/Quarantine/Reject/Destroy disposition and exact tracked identities without stock/accounting/credit-note effect. Completed 2026-10-21.
-- [ ] SAL-100C post Inspected return dispositions to inventory/tracking and reverse COGS where appropriate, while keeping credit notes separate.
+- [x] SAL-100C post Inspected return dispositions to inventory/tracking and reverse COGS where appropriate, while keeping credit notes separate. Completed in source 2026-10-21; Demo migration and disposable SQL execution await repair of host SQL encryption/SSPI connectivity.
+- [ ] SAL-100D add independent customer credit notes allocated to posted customer invoice quantities, reversing receivable/revenue/output tax without automatic cash refund or duplicate inventory mutation.
 - [ ] SAL-060 through SAL-130 implement delivery, invoicing, accounting, payment, return, advanced-sales and cutover slices in order.
 
 - [x] WMS-050 reservations and exact transfer allocation with concurrent last-unit protection.

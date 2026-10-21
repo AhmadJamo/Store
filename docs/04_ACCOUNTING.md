@@ -1,4 +1,8 @@
 # Accounting implementation assessment
+## Customer return disposition posting
+
+`SAL-100C` posts only inspected `Restock` lines. It restores inventory at the frozen historical delivery cost and creates one source-unique balanced journal per return receipt: debit the affected warehouse inventory account and credit Cost of Sales, carrying branch and warehouse dimensions. Quarantine, Reject and Destroy produce no inventory or journal value. The posting does not reduce receivables, reverse revenue/output tax, create a credit note or refund cash; those remain the next controlled slice.
+
 ## Customer return authorization boundary
 
 `SAL-100A` produces no journal, stock movement, credit note, refund or customer-balance change. Accounting begins only in later receipt/disposition and credit-note slices.

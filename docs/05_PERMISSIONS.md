@@ -3,7 +3,7 @@
 
 Dedicated View, Create, Submit, Approve, Reject and Cancel permissions are server-enforced. Mutations use POST plus antiforgery.
 
-Return receipts add independently enforced View, Create, Inspect and Cancel permissions; mutations use POST plus antiforgery.
+Return receipts add independently enforced View, Create, Inspect, PostDisposition and Cancel permissions; mutations use POST plus antiforgery. `PostDisposition` is the only authority that can restore approved Restock quantities and reverse COGS.
 
 > Status: PARTIALLY IMPLEMENTED  
 > Source of truth: Code  

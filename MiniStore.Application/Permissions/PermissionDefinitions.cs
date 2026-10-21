@@ -222,6 +222,7 @@ public static class PermissionDefinitions
         new("CustomerReturnReceipts.View", "View Customer Return Receipts", "Sales"),
         new("CustomerReturnReceipts.Create", "Create Customer Return Receipt", "Sales"),
         new("CustomerReturnReceipts.Inspect", "Complete Customer Return Inspection", "Sales"),
+        new("CustomerReturnReceipts.PostDisposition", "Post Customer Return Disposition", "Sales"),
         new("CustomerReturnReceipts.Cancel", "Cancel Customer Return Receipt Draft", "Sales"),
         new("JournalEntries.View", "View Journal Entries", "Accounting"),
         new("SalesReturns.View", "View Sales Returns", "Sales Returns"),

@@ -1,4 +1,8 @@
 # Codebase map
+## SAL-100C customer return disposition posting
+
+Extends the receipt aggregate with Posted audit evidence; `CustomerReturnReceiptService` coordinates stock, location, tracking, movement, transaction and journal authorities. `CustomerReturnReceiptsController` and Details expose a dedicated permission and immutable result evidence. Migration 129 is additive; regression and disposable SQL scenarios cover the domain/authorization and full Restock path respectively.
+
 ## SAL-100A customer return authorization
 
 Domain aggregate/repository contract, Application DTO/service, Infrastructure repository/configuration/migration and Web controller/views/navigation/localization form the slice. Regression, ADR and operation evidence document it.

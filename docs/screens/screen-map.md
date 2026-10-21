@@ -9,7 +9,7 @@
 
 - Index: responsive receipt list and link to return requests.
 - Create: partial quantities, explicit disposition/notes and required tracked identities.
-- Details: frozen inspection evidence, history and one-time completion state.
+- Details: frozen inspection evidence, permission-gated one-time disposition posting, restocked quantity/cost, linked journal evidence, history and a clear separate-credit-note boundary.
 
 > Status: IMPLEMENTED | Last reviewed: 2026-10-21
 

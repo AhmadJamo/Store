@@ -1,8 +1,8 @@
 namespace MiniStore.Domain.Entities;
 
-public enum CustomerReturnReceiptStatus { Draft = 1, Inspected = 2, Cancelled = 3 }
+public enum CustomerReturnReceiptStatus { Draft = 1, Inspected = 2, Cancelled = 3, Posted = 4 }
 public enum CustomerReturnDisposition { Restock = 1, Quarantine = 2, Reject = 3, Destroy = 4 }
-public enum CustomerReturnReceiptHistoryAction { Created = 1, Inspected = 2, Cancelled = 3 }
+public enum CustomerReturnReceiptHistoryAction { Created = 1, Inspected = 2, Cancelled = 3, Posted = 4 }
 
 public sealed class CustomerReturnReceipt
 {
@@ -20,6 +20,8 @@ public sealed class CustomerReturnReceipt
     public string? CancelledByUserId { get; private set; }
     public DateTime? CancelledAtUtc { get; private set; }
     public string? CancellationReason { get; private set; }
+    public string? PostedByUserId { get; private set; }
+    public DateTime? PostedAtUtc { get; private set; }
     public byte[] RowVersion { get; private set; } = [];
     public List<CustomerReturnReceiptLine> Lines { get; private set; } = [];
     public List<CustomerReturnReceiptHistory> History { get; private set; } = [];
@@ -36,6 +38,7 @@ public sealed class CustomerReturnReceipt
     }
     public void AddLine(CustomerReturnReceiptLine line) { EnsureDraft(); if (Lines.Any(x => x.CustomerReturnRequestLineId == line.CustomerReturnRequestLineId)) throw new InvalidOperationException("A return request line can appear only once per receipt."); Lines.Add(line); }
     public void Inspect(string userId) { EnsureDraft(); EnsureUser(userId); if (Lines.Count == 0) throw new InvalidOperationException("A customer return receipt must contain at least one line."); var from = Status; Status = CustomerReturnReceiptStatus.Inspected; InspectedByUserId = userId.Trim(); InspectedAtUtc = DateTime.UtcNow; History.Add(new(from, Status, CustomerReturnReceiptHistoryAction.Inspected, userId)); }
+    public void Post(string userId) { if (Status != CustomerReturnReceiptStatus.Inspected) throw new InvalidOperationException("Only an inspected customer return receipt can post inventory dispositions."); EnsureUser(userId); var from = Status; Status = CustomerReturnReceiptStatus.Posted; PostedByUserId = userId.Trim(); PostedAtUtc = DateTime.UtcNow; History.Add(new(from, Status, CustomerReturnReceiptHistoryAction.Posted, userId)); }
     public void Cancel(string userId, string reason) { EnsureDraft(); EnsureUser(userId); if (string.IsNullOrWhiteSpace(reason) || reason.Trim().Length > 500) throw new ArgumentException("Return receipt cancellation reason is required and cannot exceed 500 characters."); var from = Status; Status = CustomerReturnReceiptStatus.Cancelled; CancelledByUserId = userId.Trim(); CancelledAtUtc = DateTime.UtcNow; CancellationReason = reason.Trim(); History.Add(new(from, Status, CustomerReturnReceiptHistoryAction.Cancelled, userId, reason)); }
     private void EnsureDraft() { if (Status != CustomerReturnReceiptStatus.Draft) throw new InvalidOperationException("Only a draft customer return receipt can be changed."); }
     private static void EnsureUser(string value) { if (string.IsNullOrWhiteSpace(value) || value.Trim().Length > 450) throw new ArgumentException("User is required."); }

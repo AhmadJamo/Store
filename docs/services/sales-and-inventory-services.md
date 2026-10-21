@@ -1,11 +1,15 @@
 # Sales and inventory services
+## Customer return disposition posting (`SAL-100C`)
+
+`CustomerReturnReceiptService.PostAsync` is the single Application-layer transaction boundary for an Inspected receipt. Restock lines restore `ProductStock`, exact location stock and lot/serial identities at the frozen source-delivery unit cost; they write `CustomerReturnDisposition` stock transactions and immutable `CustomerReturnIn` movements. The service posts one source-unique journal that debits the warehouse inventory account and credits Cost of Sales. Quarantine stays custody-only and unavailable; Reject and Destroy create no inventory. Every disposition reaches the immutable Posted state, while credit notes, receivable/tax changes and cash remain separate.
+
 ## CustomerReturnRequestService
 
 Uses CRQ numbering and Serializable UnitOfWork creation. The repository aggregates active Draft/Submitted/Approved quantities per delivery line to prevent over-return. Approval is stock/accounting-neutral.
 
 ## CustomerReturnReceiptService
 
-Uses CRR numbering, caps active receipts to approved request lines and verifies lot/serial identities against actual source-delivery issue transactions. Draft/Inspected receipts reserve eligibility; cancellation releases it. Inspection remains inventory/accounting-neutral.
+Uses CRR numbering, caps active receipts to approved request lines and verifies lot/serial identities against actual source-delivery issue transactions. Draft/Inspected receipts reserve eligibility; cancellation releases it. Inspection remains inventory/accounting-neutral; only explicit disposition posting can restore approved Restock lines.
 
 
 `InventoryRemovalAllocator` is the shared tracked-stock ordering policy used by `InventoryTrackingService` for issues and transfers. It converts the source warehouse's configured FIFO, FEFO, location-priority or minimize-locations strategy into a deterministic candidate order; Manual currently falls back to FIFO until the audited override workflow is implemented.

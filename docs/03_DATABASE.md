@@ -1,4 +1,8 @@
 # Database
+## SAL-100C return disposition posting
+
+Migration 129 (`20261021170925_AddCustomerReturnDispositionPosting`) adds nullable `PostedByUserId` and `PostedAtUtc` evidence to `CustomerReturnReceipts`; enum values are stored through the existing integer columns. The migration is additive, the EF model has no pending changes, and source/model are at 129. Applying it to local Demo was attempted on 2026-10-21 but blocked before execution by the host SQL encryption/SSPI connection failure, so Demo remains evidenced at 128 until connectivity is repaired.
+
 ## SAL-100A customer return authorization (2026-10-21)
 
 Migration 127 adds tenant-owned request, line and history tables. Source relationships are tenant-composite and restrictive; quantities have a positive check, numbers are unique per tenant, source lines are unique per request and headers use rowversion. Local Demo is migrated through 127.

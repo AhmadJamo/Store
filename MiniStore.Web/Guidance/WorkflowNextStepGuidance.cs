@@ -29,7 +29,7 @@ public static class WorkflowNextStepGuidance
 
     private static readonly HashSet<string> CustomerControllers = new(StringComparer.OrdinalIgnoreCase) { "Customers" };
 
-    private static readonly HashSet<string> SalesControllers = new(StringComparer.OrdinalIgnoreCase) { "SalesPriceLists", "SalesQuotations", "SalesOrders", "SalesDeliveries", "CustomerInvoices", "CustomerPayments" };
+    private static readonly HashSet<string> SalesControllers = new(StringComparer.OrdinalIgnoreCase) { "SalesPriceLists", "SalesQuotations", "SalesOrders", "SalesDeliveries", "CustomerInvoices", "CustomerPayments", "CustomerReturnReceipts" };
 
     public static bool IsSupportedController(string? controller) =>
         !string.IsNullOrWhiteSpace(controller) &&
@@ -385,6 +385,11 @@ public static class WorkflowNextStepGuidance
             return new("ProductStocks", "Index", "Review warehouse stock",
                 "Confirm the resulting product balance in the warehouse stock list.",
                 "ProductStock.View", []);
+
+        if (Matches(message, localize, "Customer return dispositions posted. Restocked goods and their cost reversal are now recorded."))
+            return new("CustomerReturnReceipts", "Details", "Review return posting evidence",
+                "Confirm the restocked quantity, historical cost and linked accounting entry.",
+                "CustomerReturnReceipts.View", Routes(("id", Route("id"))));
 
         if (PurchaseControllers.Contains(currentController))
             return PurchaseFallback(currentController, Route("id"), Route("sourcingEventId"));

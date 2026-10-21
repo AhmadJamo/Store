@@ -1,6 +1,6 @@
 namespace MiniStore.Domain.Entities;
 
-public enum StockMovementType { Putaway = 1, Relocation = 2, TransferOutbound = 3, TransferTransit = 4, TransferInbound = 5, AdjustmentIn = 6, AdjustmentOut = 7, ReceiptIn = 8, ReceiptReturnOut = 9, SalesDeliveryOut = 10 }
+public enum StockMovementType { Putaway = 1, Relocation = 2, TransferOutbound = 3, TransferTransit = 4, TransferInbound = 5, AdjustmentIn = 6, AdjustmentOut = 7, ReceiptIn = 8, ReceiptReturnOut = 9, SalesDeliveryOut = 10, CustomerReturnIn = 11 }
 public enum StockMovementStatus { Planned = 0, Posted = 1, Reversed = 2 }
 
 public sealed class StockMovement
@@ -172,6 +172,24 @@ public sealed class StockMovement
             IdempotencyKey = $"DELIVERY:{deliveryId}:{sourceLineId}", CreatedByUserId = userId.Trim(),
             PostedByUserId = userId.Trim(), Reference = Normalize(reference), SourceDocumentType = "SalesDelivery",
             SourceDocumentId = deliveryId, SourceLineId = sourceLineId, StageSequence = 1,
+            CreatedAt = DateTime.UtcNow, PostedAt = DateTime.UtcNow
+        };
+    }
+
+    public static StockMovement PostCustomerReturn(int receiptId, int sourceLineId, int productId,
+        int warehouseId, int? destinationLocationId, decimal quantity, string userId, string reference)
+    {
+        if (receiptId <= 0 || sourceLineId <= 0 || productId <= 0 || warehouseId <= 0 || quantity <= 0)
+            throw new ArgumentException("Customer return references and quantity are required.");
+        if (string.IsNullOrWhiteSpace(userId) || string.IsNullOrWhiteSpace(reference))
+            throw new ArgumentException("Customer return user and reference are required.");
+        return new StockMovement
+        {
+            ProductId = productId, WarehouseId = warehouseId, ToStorageLocationId = destinationLocationId,
+            Quantity = quantity, Type = StockMovementType.CustomerReturnIn, Status = StockMovementStatus.Posted,
+            IdempotencyKey = $"CUSTOMER-RETURN:{receiptId}:{sourceLineId}", CreatedByUserId = userId.Trim(),
+            PostedByUserId = userId.Trim(), Reference = Normalize(reference), SourceDocumentType = "CustomerReturnReceipt",
+            SourceDocumentId = receiptId, SourceLineId = sourceLineId, StageSequence = 1,
             CreatedAt = DateTime.UtcNow, PostedAt = DateTime.UtcNow
         };
     }

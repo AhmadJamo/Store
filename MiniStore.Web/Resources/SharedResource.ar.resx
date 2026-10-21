@@ -3424,4 +3424,23 @@
   <data name="Lot or serial allocations are required for the tracked return receipt." xml:space="preserve"><value>توزيعات اللوط أو الأرقام التسلسلية مطلوبة لاستلام المرتجع المتتبع.</value></data>
   <data name="The selected lot or serial was not issued by the source delivery, or it is already assigned to another return receipt." xml:space="preserve"><value>اللوط أو الرقم التسلسلي المحدد لم يخرج في التسليم المصدر أو تم تخصيصه لاستلام مرتجع آخر.</value></data>
   <data name="Cancel active customer return receipts before cancelling the return request." xml:space="preserve"><value>ألغِ استلامات المرتجع النشطة قبل إلغاء طلب المرتجع.</value></data>
+  <data name="Post Customer Return Disposition" xml:space="preserve"><value>ترحيل قرار مرتجع الزبون</value></data>
+  <data name="Post inventory dispositions" xml:space="preserve"><value>ترحيل قرارات المخزون</value></data>
+  <data name="Disposition posting evidence" xml:space="preserve"><value>دليل ترحيل قرارات المرتجع</value></data>
+  <data name="Disposition posting completed" xml:space="preserve"><value>اكتمل ترحيل قرارات المرتجع</value></data>
+  <data name="Restocked quantity" xml:space="preserve"><value>الكمية المعادة إلى المخزون</value></data>
+  <data name="Credit note processing remains a separate controlled step." xml:space="preserve"><value>تبقى معالجة الإشعار الدائن خطوة رقابية منفصلة.</value></data>
+  <data name="Customer return dispositions posted. Restocked goods and their cost reversal are now recorded." xml:space="preserve"><value>تم ترحيل قرارات مرتجع الزبون، وتسجيل البضاعة المعادة للمخزون وعكس تكلفتها.</value></data>
+  <data name="Review return posting evidence" xml:space="preserve"><value>مراجعة دليل ترحيل المرتجع</value></data>
+  <data name="Confirm the restocked quantity, historical cost and linked accounting entry." xml:space="preserve"><value>تحقق من الكمية المعادة للمخزون والتكلفة التاريخية والقيد المحاسبي المرتبط.</value></data>
+  <data name="Configure accounting posting accounts before posting customer return dispositions." xml:space="preserve"><value>اضبط حسابات الترحيل المحاسبي قبل ترحيل قرارات مرتجع الزبون.</value></data>
+  <data name="Configure a cost of sales account before posting customer return dispositions." xml:space="preserve"><value>اضبط حساب تكلفة المبيعات قبل ترحيل قرارات مرتجع الزبون.</value></data>
+  <data name="Assign the return warehouse to a branch and inventory account before posting." xml:space="preserve"><value>اربط مستودع المرتجع بفرع وحساب مخزون قبل الترحيل.</value></data>
+  <data name="Return warehouse was not found." xml:space="preserve"><value>لم يتم العثور على مستودع المرتجع.</value></data>
+  <data name="Return warehouse branch was not found." xml:space="preserve"><value>لم يتم العثور على فرع مستودع المرتجع.</value></data>
+  <data name="Return storage location was not found." xml:space="preserve"><value>لم يتم العثور على موقع تخزين المرتجع.</value></data>
+  <data name="The return storage location must be active and belong to the return warehouse." xml:space="preserve"><value>يجب أن يكون موقع تخزين المرتجع فعالًا وتابعًا لمستودع المرتجع.</value></data>
+  <data name="Only active products can be restocked from customer returns." xml:space="preserve"><value>لا يمكن إعادة منتجات مرتجع الزبون إلى المخزون إلا إذا كانت فعالة.</value></data>
+  <data name="Only an inspected customer return receipt can post inventory dispositions." xml:space="preserve"><value>لا يمكن ترحيل قرارات المخزون إلا لاستلام مرتجع زبون مكتمل الفحص.</value></data>
+  <data name="The returned tracked identity is quarantined and cannot be restocked." xml:space="preserve"><value>هوية التتبع المرتجعة قيد الحجر ولا يمكن إعادتها إلى المخزون.</value></data>
 </root>

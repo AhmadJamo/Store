@@ -666,12 +666,13 @@ foreach(var type in new[]{typeof(CustomerReturnRequest),typeof(CustomerReturnReq
         $"{type.Name} must be tenant owned");
 Check(DocumentSequence.CreateDefault(DocumentNumberType.CustomerReturnRequest).Preview(DateTime.Today).StartsWith("CRQ-"),
     "Customer return requests must use an independent centralized CRQ document sequence");
-Check(PermissionDefinitions.All.Count(x=>x.Name.StartsWith("CustomerReturnReceipts.",StringComparison.Ordinal))==4,
-    "Customer return receipts must separate view, creation, inspection and cancellation permissions");
+Check(PermissionDefinitions.All.Count(x=>x.Name.StartsWith("CustomerReturnReceipts.",StringComparison.Ordinal))==5,
+    "Customer return receipts must separate view, creation, inspection, disposition posting and cancellation permissions");
 var customerReturnReceiptController=typeof(CustomerReturnReceiptsController);
 Check(customerReturnReceiptController.GetMethod(nameof(CustomerReturnReceiptsController.Index))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:CustomerReturnReceipts.View"&&
       customerReturnReceiptController.GetMethods().Single(x=>x.Name==nameof(CustomerReturnReceiptsController.Create)&&x.GetCustomAttribute<HttpPostAttribute>() is not null).GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:CustomerReturnReceipts.Create"&&
       customerReturnReceiptController.GetMethod(nameof(CustomerReturnReceiptsController.Inspect))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:CustomerReturnReceipts.Inspect"&&
+      customerReturnReceiptController.GetMethod(nameof(CustomerReturnReceiptsController.Post))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:CustomerReturnReceipts.PostDisposition"&&
       customerReturnReceiptController.GetMethod(nameof(CustomerReturnReceiptsController.Cancel))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:CustomerReturnReceipts.Cancel",
     "Customer return receipt endpoints must enforce dedicated server-side permissions");
 Check(customerReturnReceiptController.GetMethods().Where(x=>x.GetCustomAttribute<HttpPostAttribute>() is not null).All(x=>x.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null),
@@ -682,6 +683,13 @@ customerReturnReceipt.Inspect("inspector");
 Check(customerReturnReceipt.Status==CustomerReturnReceiptStatus.Inspected&&customerReturnReceipt.TotalReceivedQuantity==1m&&customerReturnReceipt.Lines.Single().Disposition==CustomerReturnDisposition.Quarantine&&customerReturnReceipt.History.Count==2,
     "Customer return receipts must freeze inspected quantity and disposition evidence without repeating completion");
 CheckThrows(()=>customerReturnReceipt.Inspect("inspector"),"An inspected customer return receipt must reject duplicate inspection");
+customerReturnReceipt.Post("inventory-poster");
+Check(customerReturnReceipt.Status==CustomerReturnReceiptStatus.Posted&&customerReturnReceipt.PostedByUserId=="inventory-poster"&&customerReturnReceipt.PostedAtUtc.HasValue&&customerReturnReceipt.History.Count==3,
+    "Customer return receipts must preserve an auditable transition from inspection to disposition posting");
+CheckThrows(()=>customerReturnReceipt.Post("inventory-poster"),"A posted customer return receipt must reject duplicate disposition posting");
+var customerReturnMovement=StockMovement.PostCustomerReturn(1,1,1,1,null,1m,"inventory-poster","CRR-000001");
+Check(customerReturnMovement.Type==StockMovementType.CustomerReturnIn&&customerReturnMovement.SourceDocumentType=="CustomerReturnReceipt"&&customerReturnMovement.Status==StockMovementStatus.Posted,
+    "Restocked customer returns must create an immutable inbound physical movement");
 foreach(var type in new[]{typeof(CustomerReturnReceipt),typeof(CustomerReturnReceiptLine),typeof(CustomerReturnReceiptHistory)})
     Check(TenantIsolationModel.TenantOwnedTypes.Contains(type)&&db.Model.FindEntityType(type)!.FindProperty("TenantId") is {IsNullable:false},$"{type.Name} must be tenant owned");
 Check(DocumentSequence.CreateDefault(DocumentNumberType.CustomerReturnReceipt).Preview(DateTime.Today).StartsWith("CRR-"),
@@ -2584,6 +2592,20 @@ Check(ActionableErrorGuidance.Resolve(
           "Assign the delivery warehouse to a branch and inventory account before posting.",
           "SalesDeliveries") is {Controller:"Warehouses",Action:"Index",RequiredPermission:"Warehouses.Edit"},
     "Sales delivery warehouse prerequisites must link to warehouse settings");
+var customerReturnPostingNextStep=WorkflowNextStepGuidance.Resolve(
+    "Customer return dispositions posted. Restocked goods and their cost reversal are now recorded.",
+    "CustomerReturnReceipts",new Dictionary<string,string?>{{"id","65"}});
+Check(customerReturnPostingNextStep is {Controller:"CustomerReturnReceipts",Action:"Details",RequiredPermission:"CustomerReturnReceipts.View"}&&
+      customerReturnPostingNextStep.RouteValues.GetValueOrDefault("id")=="65",
+    "Posted customer-return dispositions must guide the user to stock and accounting evidence");
+Check(ActionableErrorGuidance.Resolve(
+          "Configure a cost of sales account before posting customer return dispositions.",
+          "CustomerReturnReceipts") is {Controller:"Settings",Action:"Accounting",RequiredPermission:"Administration.Access"},
+    "Customer-return accounting prerequisites must link to accounting settings");
+Check(ActionableErrorGuidance.Resolve(
+          "Assign the return warehouse to a branch and inventory account before posting.",
+          "CustomerReturnReceipts") is {Controller:"Warehouses",Action:"Index",RequiredPermission:"Warehouses.Edit"},
+    "Customer-return warehouse prerequisites must link to warehouse settings");
 var salesPriceListNextStep = WorkflowNextStepGuidance.Resolve(
     "Price list created successfully.", "SalesPriceLists",
     new Dictionary<string, string?> { ["id"] = "12" });

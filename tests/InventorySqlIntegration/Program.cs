@@ -133,7 +133,7 @@ try
     await VerifyInventoryBalanceProjectionAsync(tenantOneId, tenantOneFixture.ProductId, expectedOnHand: 2m, connectionString);
     await VerifyOpeningTrackingAllocationAsync(tenantOneId, tenantOneFixture.ProductId, tenantOneFixture.WarehouseId, connectionString);
 
-    Console.WriteLine("Passed SQL integration checks: professional customer and sales-pricing tenant isolation, price-list code/rule uniqueness and cross-tenant linkage protection, partial/full sales-delivery reservation consumption, physical stock issue and delivery-time COGS posting, partial customer invoicing with exact delivery allocations and no premature accounting, one-time receivable/revenue posting and controlled invoice-journal reversal without inventory mutation; semantic coverage catalog, legacy-audit freeze and rollback, semantic role/settings, denied-security, permission-aware audit reader/export, legal hold, signed checkpoint, manifest-before-delete retention and SQL audit-role separation plus audit-event rollback, isolation, append-only and integrity; tenant isolation, reconciliation, balances, replenishment purchase-request source concurrency, 3-product/2-supplier split awards, receipt, vendor-bill and supplier-payment concurrency, controlled payment reversal and retry, three-way matching override evidence, GRNI posting and clearing, purchase accounting reconciliation, payable settlement, receipt-based supplier returns, landed-cost valuation, purchasing analytics, idempotent barcode receipt drafts, adjustment posting, tracked operations, quarantine and recall.");
+    Console.WriteLine("Passed SQL integration checks: professional customer and sales-pricing tenant isolation, price-list code/rule uniqueness and cross-tenant linkage protection, partial/full sales-delivery reservation consumption, physical stock issue and delivery-time COGS posting, partial customer invoicing with exact delivery allocations and no premature accounting, one-time receivable/revenue posting and controlled invoice-journal reversal without inventory mutation, inspected customer-return Restock with historical-cost inventory restoration and balanced COGS reversal; semantic coverage catalog, legacy-audit freeze and rollback, semantic role/settings, denied-security, permission-aware audit reader/export, legal hold, signed checkpoint, manifest-before-delete retention and SQL audit-role separation plus audit-event rollback, isolation, append-only and integrity; tenant isolation, reconciliation, balances, replenishment purchase-request source concurrency, 3-product/2-supplier split awards, receipt, vendor-bill and supplier-payment concurrency, controlled payment reversal and retry, three-way matching override evidence, GRNI posting and clearing, purchase accounting reconciliation, payable settlement, receipt-based supplier returns, landed-cost valuation, purchasing analytics, idempotent barcode receipt drafts, adjustment posting, tracked operations, quarantine and recall.");
 }
 finally
 {
@@ -1385,6 +1385,60 @@ static async Task VerifySalesQuotationFoundationAsync(int tenantOneId,int tenant
            await deliveryContext.StockTransactions.CountAsync()!=stockTransactionsBeforeInvoices||
            await deliveryContext.StockMovements.CountAsync()!=movementsBeforeInvoices)
             throw new InvalidOperationException("Controlled customer-invoice reversal must invert the exact journal, preserve audit evidence, release billing eligibility and leave inventory unchanged.");
+
+        var returnRequestRepository=new CustomerReturnRequestRepository(deliveryContext);
+        var returnReceiptRepository=new CustomerReturnReceiptRepository(deliveryContext);
+        var returnUser=new FixedCurrentUser("customer-return-user");
+        var returnRequestService=new CustomerReturnRequestService(returnRequestRepository,returnReceiptRepository,deliveryRepository,
+            orderRepository,new WarehouseRepository(deliveryContext),locationRepository,numbers,deliveryUnitOfWork,returnUser);
+        var sourceDelivery=await deliveryRepository.GetByIdAsync(firstDeliveryId)
+            ??throw new InvalidOperationException("SQL source delivery for customer return was not found.");
+        var sourceDeliveryLine=sourceDelivery.Lines.Single();
+        var returnRequestId=await returnRequestService.CreateAsync(new CreateCustomerReturnRequestDto
+        {
+            SalesDeliveryId=sourceDelivery.Id,RequestDate=new DateOnly(2026,10,21),Reason="SQL inspected customer return",
+            Lines=[new CreateCustomerReturnRequestLineDto{SalesDeliveryLineId=sourceDeliveryLine.Id,StockQuantity=0.2m}]
+        });
+        var returnRequestDetails=await returnRequestService.GetAsync(returnRequestId)
+            ??throw new InvalidOperationException("SQL customer return request was not found.");
+        await returnRequestService.SubmitAsync(new CustomerReturnRequestCommandDto{Id=returnRequestId,RowVersion=returnRequestDetails.RowVersion});
+        returnRequestDetails=await returnRequestService.GetAsync(returnRequestId)
+            ??throw new InvalidOperationException("SQL submitted customer return request was not found.");
+        await returnRequestService.ApproveAsync(new CustomerReturnRequestCommandDto{Id=returnRequestId,RowVersion=returnRequestDetails.RowVersion});
+        returnRequestDetails=await returnRequestService.GetAsync(returnRequestId)
+            ??throw new InvalidOperationException("SQL approved customer return request was not found.");
+        var returnReceiptService=new CustomerReturnReceiptService(returnReceiptRepository,returnRequestRepository,deliveryRepository,
+            new ProductRepository(deliveryContext),new WarehouseRepository(deliveryContext),locationRepository,tracking,
+            new ProductStockRepository(deliveryContext),new ProductLocationStockRepository(deliveryContext),
+            new StockTransactionRepository(deliveryContext),new StockMovementRepository(deliveryContext),
+            accountingSettingsRepository,new BranchRepository(deliveryContext),journalEntryRepository,customerInvoiceJournalPosting,
+            numbers,deliveryUnitOfWork,returnUser);
+        var returnReceiptId=await returnReceiptService.CreateAsync(new CreateCustomerReturnReceiptDto
+        {
+            CustomerReturnRequestId=returnRequestId,ReceiptDate=new DateOnly(2026,10,21),
+            Lines=[new CreateCustomerReturnReceiptLineDto{CustomerReturnRequestLineId=returnRequestDetails.Lines.Single().Id,
+                ReceivedQuantity=0.2m,Disposition=CustomerReturnDisposition.Restock,InspectionNotes="SQL restock approved"}]
+        });
+        var returnReceiptDetails=await returnReceiptService.GetAsync(returnReceiptId)
+            ??throw new InvalidOperationException("SQL customer return receipt was not found.");
+        await returnReceiptService.InspectAsync(new CustomerReturnReceiptCommandDto{Id=returnReceiptId,RowVersion=returnReceiptDetails.RowVersion});
+        returnReceiptDetails=await returnReceiptService.GetAsync(returnReceiptId)
+            ??throw new InvalidOperationException("SQL inspected customer return receipt was not found.");
+        await returnReceiptService.PostAsync(new CustomerReturnReceiptCommandDto{Id=returnReceiptId,RowVersion=returnReceiptDetails.RowVersion});
+        var postedReturn=await deliveryContext.CustomerReturnReceipts.AsNoTracking().Include(x=>x.Lines).SingleAsync(x=>x.Id==returnReceiptId);
+        var returnStock=await deliveryContext.ProductStocks.AsNoTracking().SingleAsync(x=>x.ProductId==productId&&x.WarehouseId==warehouseId);
+        var returnBalance=await deliveryContext.InventoryBalances.AsNoTracking().SingleAsync(x=>x.ProductId==productId&&x.WarehouseId==warehouseId&&x.StorageLocationId==null);
+        var returnJournal=await deliveryContext.JournalEntries.AsNoTracking().Include(x=>x.Lines)
+            .SingleAsync(x=>x.SourceType=="CustomerReturnDisposition"&&x.SourceReference==postedReturn.ReceiptNumber);
+        var returnCostAccountId=(await accountingSettingsRepository.GetAsync())!.CostOfSalesAccountId;
+        if(postedReturn.Status!=CustomerReturnReceiptStatus.Posted||postedReturn.PostedByUserId!="customer-return-user"||
+           returnStock.Quantity!=0.2m||returnBalance.OnHand!=0.2m||returnBalance.Available!=0.2m||
+           await deliveryContext.StockTransactions.CountAsync(x=>x.Type==StockTransactionType.CustomerReturnDisposition&&x.Reference==postedReturn.ReceiptNumber)!=1||
+           await deliveryContext.StockMovements.CountAsync(x=>x.SourceDocumentType=="CustomerReturnReceipt"&&x.SourceDocumentId==returnReceiptId)!=1||
+           returnJournal.Lines.Sum(x=>x.Debit)!=2m||returnJournal.Lines.Sum(x=>x.Credit)!=2m||
+           returnJournal.Lines.Single(x=>x.AccountId==returnCostAccountId).Credit!=2m)
+            throw new InvalidOperationException("Posting a restock customer-return disposition must restore OnHand/Available at historical cost and create one balanced inventory/COGS reversal journal.");
+
         var orderService=new SalesOrderService(orderRepository,new SalesQuotationRepository(deliveryContext),numbers,
             deliveryUnitOfWork,deliveryUser,reservationService,new SalesDeliveryRepository(deliveryContext));
         try
@@ -1395,8 +1449,8 @@ static async Task VerifySalesQuotationFoundationAsync(int tenantOneId,int tenant
         }
         catch(InvalidOperationException exception) when(exception.Message.Contains("posted deliveries",StringComparison.OrdinalIgnoreCase)){ }
         var restoreStock=await deliveryContext.ProductStocks.SingleAsync(x=>x.ProductId==productId&&x.WarehouseId==warehouseId);
-        var restoreCost=restoreStock.Receive(1m,10m);
-        deliveryContext.StockTransactions.Add(new StockTransaction(productId,warehouseId,1m,
+        var restoreCost=restoreStock.Receive(0.8m,10m);
+        deliveryContext.StockTransactions.Add(new StockTransaction(productId,warehouseId,0.8m,
             StockTransactionType.AdjustmentIn,"SQL-DELIVERY-TEST-RESTORE",restoreCost));
         deliveryContext.AccountingSettings.RemoveRange(await deliveryContext.AccountingSettings.ToListAsync());
         deliveryContext.DocumentSequences.RemoveRange(await deliveryContext.DocumentSequences
