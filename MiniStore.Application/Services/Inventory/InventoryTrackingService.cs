@@ -166,6 +166,10 @@ public sealed class InventoryTrackingService(IInventoryTrackingRepository tracki
   }
  }
 
+ public async Task<Dictionary<string,decimal>> GetIssuedAllocationsAsync(int productId,int warehouseId,int? storageLocationId,string originalReference)
+ =>(await tracking.GetTransactionsAsync()).Where(x=>x.ProductId==productId&&x.WarehouseId==warehouseId&&x.StorageLocationId==storageLocationId&&x.Type==InventoryTrackingTransactionType.Issue&&x.SourceReference==originalReference&&x.Quantity<0)
+   .GroupBy(x=>x.Identifier,StringComparer.OrdinalIgnoreCase).ToDictionary(x=>x.Key,x=>-x.Sum(y=>y.Quantity),StringComparer.OrdinalIgnoreCase);
+
  public async Task ReturnPurchaseAsync(Product product,int warehouseId,decimal quantity,string? allocationText,string originalReference,string returnReference,string userId)
  {
   if(product.TrackingPolicy==ProductTrackingPolicy.None)return;

@@ -5,6 +5,10 @@
 - `CustomerReturnRequestLines`: exact source-line quantity and frozen product, position, cost and tracking evidence.
 - `CustomerReturnRequestHistories`: immutable lifecycle transitions.
 
+- `CustomerReturnReceipts`: receipt/inspection header and lifecycle.
+- `CustomerReturnReceiptLines`: quantity, disposition, notes, tracking identities and cost snapshot.
+- `CustomerReturnReceiptHistories`: immutable Created/Inspected/Cancelled evidence.
+
 > Last reviewed: 2026-10-20
 
 - `PurchaseDocumentReversals`: tenant-owned PUR-180 reversal headers with unique reversal number, original type/id and idempotency key; stores reason, actor/time, state and opposite journal number.

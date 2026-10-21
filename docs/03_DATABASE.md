@@ -3,6 +3,10 @@
 
 Migration 127 adds tenant-owned request, line and history tables. Source relationships are tenant-composite and restrictive; quantities have a positive check, numbers are unique per tenant, source lines are unique per request and headers use rowversion. Local Demo is migrated through 127.
 
+## SAL-100B return receipt and inspection
+
+Migration 128 adds tenant-owned receipt, line and history tables with restrictive tenant-composite source links, positive quantities, CRR uniqueness and rowversion. Local Demo is migrated through 128.
+
 > Status: IMPLEMENTED  
 > Source of truth: EF Core entities, configurations and migrations  
 > Last reviewed: 2026-10-20

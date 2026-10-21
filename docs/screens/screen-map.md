@@ -5,6 +5,12 @@
 - Create: Posted delivery only; delivered/requested/remaining quantities without horizontal scrolling.
 - Details: source links, history, state-specific actions and approved receipt/inspection guidance.
 
+## Customer return receipts
+
+- Index: responsive receipt list and link to return requests.
+- Create: partial quantities, explicit disposition/notes and required tracked identities.
+- Details: frozen inspection evidence, history and one-time completion state.
+
 > Status: IMPLEMENTED | Last reviewed: 2026-10-21
 
 | Purchase document reversals | `/PurchaseDocumentReversals` | Responsive reversal history, confirmation and immutable audit detail for receipts, bills, payments and landed costs; original detail screens hide the action after completion and link to the reversal. |

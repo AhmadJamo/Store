@@ -666,6 +666,26 @@ foreach(var type in new[]{typeof(CustomerReturnRequest),typeof(CustomerReturnReq
         $"{type.Name} must be tenant owned");
 Check(DocumentSequence.CreateDefault(DocumentNumberType.CustomerReturnRequest).Preview(DateTime.Today).StartsWith("CRQ-"),
     "Customer return requests must use an independent centralized CRQ document sequence");
+Check(PermissionDefinitions.All.Count(x=>x.Name.StartsWith("CustomerReturnReceipts.",StringComparison.Ordinal))==4,
+    "Customer return receipts must separate view, creation, inspection and cancellation permissions");
+var customerReturnReceiptController=typeof(CustomerReturnReceiptsController);
+Check(customerReturnReceiptController.GetMethod(nameof(CustomerReturnReceiptsController.Index))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:CustomerReturnReceipts.View"&&
+      customerReturnReceiptController.GetMethods().Single(x=>x.Name==nameof(CustomerReturnReceiptsController.Create)&&x.GetCustomAttribute<HttpPostAttribute>() is not null).GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:CustomerReturnReceipts.Create"&&
+      customerReturnReceiptController.GetMethod(nameof(CustomerReturnReceiptsController.Inspect))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:CustomerReturnReceipts.Inspect"&&
+      customerReturnReceiptController.GetMethod(nameof(CustomerReturnReceiptsController.Cancel))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:CustomerReturnReceipts.Cancel",
+    "Customer return receipt endpoints must enforce dedicated server-side permissions");
+Check(customerReturnReceiptController.GetMethods().Where(x=>x.GetCustomAttribute<HttpPostAttribute>() is not null).All(x=>x.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null),
+    "Every customer return receipt mutation must require antiforgery validation");
+var customerReturnReceipt=new CustomerReturnReceipt("CRR-000001",1,new DateOnly(2026,10,21),null,"receiver");
+customerReturnReceipt.AddLine(new CustomerReturnReceiptLine(1,1,1,1,null,1m,CustomerReturnDisposition.Quarantine,"Package damaged",null,3m,"P-1","Product"));
+customerReturnReceipt.Inspect("inspector");
+Check(customerReturnReceipt.Status==CustomerReturnReceiptStatus.Inspected&&customerReturnReceipt.TotalReceivedQuantity==1m&&customerReturnReceipt.Lines.Single().Disposition==CustomerReturnDisposition.Quarantine&&customerReturnReceipt.History.Count==2,
+    "Customer return receipts must freeze inspected quantity and disposition evidence without repeating completion");
+CheckThrows(()=>customerReturnReceipt.Inspect("inspector"),"An inspected customer return receipt must reject duplicate inspection");
+foreach(var type in new[]{typeof(CustomerReturnReceipt),typeof(CustomerReturnReceiptLine),typeof(CustomerReturnReceiptHistory)})
+    Check(TenantIsolationModel.TenantOwnedTypes.Contains(type)&&db.Model.FindEntityType(type)!.FindProperty("TenantId") is {IsNullable:false},$"{type.Name} must be tenant owned");
+Check(DocumentSequence.CreateDefault(DocumentNumberType.CustomerReturnReceipt).Preview(DateTime.Today).StartsWith("CRR-"),
+    "Customer return receipts must use an independent centralized CRR document sequence");
 Check(PermissionDefinitions.All.Count(x=>x.Name=="JournalEntries.View")==1&&
       typeof(JournalEntriesController).GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:JournalEntries.View",
     "Journal-entry evidence must require one dedicated server-side read permission");

@@ -4,16 +4,16 @@
 
 | الأمر | النتيجة | التاريخ |
 |---|---|---|
-| `dotnet run --project tests/SecurityRegression/SecurityRegression.csproj -c Release` | Passed 947 checks (نجح 947 فحصًا)، تشمل دورة طلب المرتجع وصلاحياتها وعزلها وترقيمها إضافة إلى الفاتورة والدفعة | 2026-10-21 |
+| `dotnet run --project tests/SecurityRegression/SecurityRegression.csproj -c Release` | Passed 962 checks (نجح 962 فحصًا)، تشمل طلب المرتجع والاستلام والفحص والصلاحيات والعزل والترقيم | 2026-10-21 |
 | `pwsh -NoProfile -File scripts/verify-local.ps1` | Build + 777 + SQL + 500-request workload passed | 2026-10-18 |
 | `dotnet run --project tests/InventorySqlIntegration/InventorySqlIntegration.csproj -c Release` | Passed full disposable SQL suite, including partial invoices, one-time balanced receivable/revenue posting, branch/warehouse dimensions, exact inverse journal, released eligibility and zero stock/movement mutation | 2026-10-21 |
 | Live local historic-credential negative test (اختبار رفض بيانات الدخول التاريخية) | Rejected after remediation (رُفضت بعد المعالجة) | 2026-10-15 |
 | Live local replacement-admin positive test (اختبار دخول المدير البديل) | Passed with authorized redirect (نجح مع تحويل مصرح) | 2026-10-15 |
 | Encrypted backup verify/isolated restore/DBCC (تحقق النسخة والاستعادة المعزولة وسلامة القاعدة) | Passed with AES-256 and checksum (نجح) | 2026-10-15 |
 | Restored ERP reconciliation (مصالحة النظام المستعاد) | 147 tables and 21 business checks; zero mismatches (صفر فروق) | 2026-10-15 |
-| EF/database migration reconciliation (مطابقة الترحيلات) | Source/model/Demo 127; migration 127 applied successfully | 2026-10-21 |
+| EF/database migration reconciliation (مطابقة الترحيلات) | Source/model/Demo 128; migrations 127–128 applied successfully | 2026-10-21 |
 | Live schema integrity (سلامة المخطط الحي) | 147 tables, 420 trusted FKs, zero disabled constraints/indexes or unsafe tenant relations | 2026-10-15 |
-| Web dependency build (بناء الويب واعتماداته) | Release, 4 projects, zero warnings/errors (نجح) | 2026-10-21 |
+| Web dependency build (بناء الويب واعتماداته) | Release, 4 projects, zero warnings/errors after SAL-100B (نجح) | 2026-10-21 |
 
 اختبار `SQL` (قاعدة البيانات) غطى: إيقاف الكاتب القديم مع استمرار الحدث الدلالي، إعادة تشغيله وإضافة صف مستقبلي واحد فقط، أدوار الكاتب/القارئ/الصيانة، الحجز القانوني، نقطة التثبيت والبيان السابق للحذف، إضافة إلى إنشاء/تغيير صلاحيات/حذف الدور وتغيير إعداد حساس ورجوع آمن، عزل الشركات، المصالحة، الأرصدة، تزامن التزويد، تقسيم الجوائز،
 الاستلام، فاتورة المورد، دفع المورد، العكس، المطابقة، GRNI (بضاعة مستلمة غير مفوترة)، المرتجع، التكلفة

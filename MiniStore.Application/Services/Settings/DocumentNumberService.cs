@@ -102,6 +102,7 @@ public class DocumentNumberService(IDocumentSequenceRepository repository)
             DocumentNumberType.CustomerInvoice => ("Customer invoice", "فاتورة زبون"),
             DocumentNumberType.CustomerPayment => ("Customer payment", "دفعة زبون"),
             DocumentNumberType.CustomerReturnRequest => ("Customer return request", "طلب مرتجع زبون"),
+            DocumentNumberType.CustomerReturnReceipt => ("Customer return receipt", "استلام مرتجع زبون"),
             _ => (row.DocumentType.ToString(), row.DocumentType.ToString())
         };
         return new DocumentSequenceDto

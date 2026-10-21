@@ -159,6 +159,9 @@ public class AppDbContext
     public DbSet<CustomerReturnRequest> CustomerReturnRequests => Set<CustomerReturnRequest>();
     public DbSet<CustomerReturnRequestLine> CustomerReturnRequestLines => Set<CustomerReturnRequestLine>();
     public DbSet<CustomerReturnRequestHistory> CustomerReturnRequestHistories => Set<CustomerReturnRequestHistory>();
+    public DbSet<CustomerReturnReceipt> CustomerReturnReceipts => Set<CustomerReturnReceipt>();
+    public DbSet<CustomerReturnReceiptLine> CustomerReturnReceiptLines => Set<CustomerReturnReceiptLine>();
+    public DbSet<CustomerReturnReceiptHistory> CustomerReturnReceiptHistories => Set<CustomerReturnReceiptHistory>();
 
     public DbSet<DocumentSequence> DocumentSequences => Set<DocumentSequence>();
 

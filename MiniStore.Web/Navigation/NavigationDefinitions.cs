@@ -74,6 +74,14 @@ public static class NavigationDefinitions
                 35),
 
             new NavigationItem(
+                "Customer return receipts",
+                "bi-box-arrow-in-down-left",
+                "CustomerReturnReceipts",
+                "Index",
+                "CustomerReturnReceipts.View",
+                36),
+
+            new NavigationItem(
                 "Sales Returns",
                 "bi-arrow-counterclockwise",
                 "SalesReturns",

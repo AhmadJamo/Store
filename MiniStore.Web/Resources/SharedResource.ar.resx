@@ -1057,7 +1057,6 @@
   <data name="Purchase order created." xml:space="preserve"><value>تم إنشاء أمر الشراء.</value></data>
   <data name="Create purchase order from awarded quotation" xml:space="preserve"><value>إنشاء أمر الشراء من العرض المختار</value></data>
   <data name="Receive goods" xml:space="preserve"><value>استلام بضاعة</value></data>
-  <data name="Receipt date" xml:space="preserve"><value>تاريخ الاستلام</value></data>
   <data name="Remaining quantity" xml:space="preserve"><value>الكمية المتبقية</value></data>
   <data name="Receive quantity" xml:space="preserve"><value>كمية الاستلام</value></data>
   <data name="Post goods receipt" xml:space="preserve"><value>ترحيل استلام البضاعة</value></data>
@@ -3385,4 +3384,44 @@
   <data name="Only a submitted return request can be approved." xml:space="preserve"><value>يمكن اعتماد طلب مرتجع مُرسل فقط.</value></data>
   <data name="Only a submitted return request can be rejected." xml:space="preserve"><value>يمكن رفض طلب مرتجع مُرسل فقط.</value></data>
   <data name="Customer return request was modified by another user. Reload and try again." xml:space="preserve"><value>عدّل مستخدم آخر طلب المرتجع. أعد تحميل الصفحة وحاول مجددًا.</value></data>
+  <data name="Customer return receipts" xml:space="preserve"><value>استلامات مرتجعات الزبائن</value></data>
+  <data name="Customer return receipt" xml:space="preserve"><value>استلام مرتجع زبون</value></data>
+  <data name="Receipt number" xml:space="preserve"><value>رقم الاستلام</value></data>
+  <data name="Return request" xml:space="preserve"><value>طلب المرتجع</value></data>
+  <data name="Receipt date" xml:space="preserve"><value>تاريخ الاستلام</value></data>
+  <data name="Open return requests" xml:space="preserve"><value>فتح طلبات المرتجعات</value></data>
+  <data name="Receive and inspect return" xml:space="preserve"><value>استلام المرتجع وفحصه</value></data>
+  <data name="Back to return request" xml:space="preserve"><value>العودة إلى طلب المرتجع</value></data>
+  <data name="View return request" xml:space="preserve"><value>عرض طلب المرتجع</value></data>
+  <data name="View return receipt" xml:space="preserve"><value>عرض استلام المرتجع</value></data>
+  <data name="Return receipt completed" xml:space="preserve"><value>اكتمل استلام المرتجع</value></data>
+  <data name="Already received" xml:space="preserve"><value>المستلم سابقًا</value></data>
+  <data name="Received quantity" xml:space="preserve"><value>الكمية المستلمة</value></data>
+  <data name="Disposition" xml:space="preserve"><value>قرار مصير البضاعة</value></data>
+  <data name="Restock" xml:space="preserve"><value>إعادة للمخزون</value></data>
+  <data name="Destroy" xml:space="preserve"><value>إتلاف</value></data>
+  <data name="Returned lot or serial allocations" xml:space="preserve"><value>توزيع اللوط أو الأرقام التسلسلية المرتجعة</value></data>
+  <data name="Create inspection draft" xml:space="preserve"><value>إنشاء مسودة الفحص</value></data>
+  <data name="Complete inspection" xml:space="preserve"><value>إكمال الفحص</value></data>
+  <data name="Inspection completed" xml:space="preserve"><value>اكتمل الفحص</value></data>
+  <data name="Cancel receipt draft" xml:space="preserve"><value>إلغاء مسودة الاستلام</value></data>
+  <data name="Receipt draft cancelled" xml:space="preserve"><value>مسودة الاستلام ملغاة</value></data>
+  <data name="Next: post approved inventory dispositions." xml:space="preserve"><value>التالي: ترحيل قرارات المخزون المعتمدة.</value></data>
+  <data name="Return receipts record custody, inspection and disposition decisions. They do not yet increase available stock or create accounting entries." xml:space="preserve"><value>تسجل استلامات المرتجعات الحيازة والفحص وقرار مصير البضاعة، ولا تزيد المخزون المتاح أو تنشئ قيودًا محاسبية بعد.</value></data>
+  <data name="Choose a disposition after physical inspection. This draft records the decision but does not increase available stock or post accounting." xml:space="preserve"><value>اختر مصير البضاعة بعد الفحص الفعلي. تسجل هذه المسودة القرار دون زيادة المخزون المتاح أو ترحيل المحاسبة.</value></data>
+  <data name="Tracking identities must come from the source delivery and exactly match the received quantity." xml:space="preserve"><value>يجب أن تكون هويات التتبع من التسليم المصدر وأن تطابق الكمية المستلمة تمامًا.</value></data>
+  <data name="Inspection evidence is separate from inventory posting. Completing inspection freezes the decisions; the next step applies approved dispositions." xml:space="preserve"><value>دليل الفحص منفصل عن ترحيل المخزون. إكمال الفحص يثبت القرارات، والخطوة التالية تطبق القرارات المعتمدة.</value></data>
+  <data name="No customer return receipts were found. Start from an approved return request." xml:space="preserve"><value>لا توجد استلامات مرتجعات زبائن. ابدأ من طلب مرتجع معتمد.</value></data>
+  <data name="Select an approved customer return request before receiving returned goods." xml:space="preserve"><value>اختر طلب مرتجع زبون معتمدًا قبل استلام البضاعة المرتجعة.</value></data>
+  <data name="Customer return receipt draft created. Review the inspection decisions, then complete inspection." xml:space="preserve"><value>تم إنشاء مسودة استلام المرتجع. راجع قرارات الفحص ثم أكمل الفحص.</value></data>
+  <data name="Customer return inspection completed. The next step is posting the approved inventory dispositions." xml:space="preserve"><value>اكتمل فحص مرتجع الزبون. الخطوة التالية هي ترحيل قرارات المخزون المعتمدة.</value></data>
+  <data name="Customer return receipt draft cancelled." xml:space="preserve"><value>تم إلغاء مسودة استلام مرتجع الزبون.</value></data>
+  <data name="Only an approved customer return request can be received." xml:space="preserve"><value>يمكن استلام طلب مرتجع زبون معتمد فقط.</value></data>
+  <data name="Return receipt date cannot be earlier than the request date." xml:space="preserve"><value>لا يمكن أن يكون تاريخ استلام المرتجع أسبق من تاريخ الطلب.</value></data>
+  <data name="Enter at least one positive received return quantity." xml:space="preserve"><value>أدخل كمية مرتجع مستلمة موجبة واحدة على الأقل.</value></data>
+  <data name="Received return quantity cannot exceed the request line remaining quantity." xml:space="preserve"><value>لا يمكن أن تتجاوز الكمية المستلمة الكمية المتبقية في سطر طلب المرتجع.</value></data>
+  <data name="Inspection notes are required and cannot exceed 500 characters." xml:space="preserve"><value>ملاحظات الفحص مطلوبة ولا يجوز أن تتجاوز 500 حرف.</value></data>
+  <data name="Lot or serial allocations are required for the tracked return receipt." xml:space="preserve"><value>توزيعات اللوط أو الأرقام التسلسلية مطلوبة لاستلام المرتجع المتتبع.</value></data>
+  <data name="The selected lot or serial was not issued by the source delivery, or it is already assigned to another return receipt." xml:space="preserve"><value>اللوط أو الرقم التسلسلي المحدد لم يخرج في التسليم المصدر أو تم تخصيصه لاستلام مرتجع آخر.</value></data>
+  <data name="Cancel active customer return receipts before cancelling the return request." xml:space="preserve"><value>ألغِ استلامات المرتجع النشطة قبل إلغاء طلب المرتجع.</value></data>
 </root>

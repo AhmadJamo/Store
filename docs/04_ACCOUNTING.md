@@ -3,6 +3,8 @@
 
 `SAL-100A` produces no journal, stock movement, credit note, refund or customer-balance change. Accounting begins only in later receipt/disposition and credit-note slices.
 
+`SAL-100B` is also accounting-neutral: inspection freezes custody/disposition evidence but posts no inventory, COGS, receivable, tax, credit or cash.
+
 > Status: PARTIALLY IMPLEMENTED  
 > Source of truth: Code  
 > Last reviewed: 2026-10-21

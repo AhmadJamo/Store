@@ -13,6 +13,7 @@ public sealed class CustomerReturnRequestDetailsDto
     public DateOnly RequestDate { get; init; } public string Reason { get; init; } = string.Empty; public string? Notes { get; init; } public CustomerReturnRequestStatus Status { get; init; }
     public string? DecisionReason { get; init; } public string? CancellationReason { get; init; } public byte[] RowVersion { get; init; } = [];
     public List<CustomerReturnRequestLineDto> Lines { get; init; } = []; public List<CustomerReturnRequestHistoryDto> History { get; init; } = [];
+    public bool HasRemainingReceipt { get; init; } public List<int> ReceiptIds { get; init; } = [];
 }
 public sealed class CreateCustomerReturnRequestLineDto { [Range(1, int.MaxValue)] public int SalesDeliveryLineId { get; set; } [Range(typeof(decimal), "0", "999999999999.999999")] public decimal StockQuantity { get; set; } }
 public sealed class CreateCustomerReturnRequestDto

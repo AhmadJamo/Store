@@ -4,7 +4,7 @@ using MiniStore.Domain.Interfaces;
 
 namespace MiniStore.Application.Services;
 
-public sealed class CustomerReturnRequestService(ICustomerReturnRequestRepository requests, ISalesDeliveryRepository deliveries,
+public sealed class CustomerReturnRequestService(ICustomerReturnRequestRepository requests, ICustomerReturnReceiptRepository receipts, ISalesDeliveryRepository deliveries,
     ISalesOrderRepository orders, IWarehouseRepository warehouses, IStorageLocationRepository locations,
     DocumentNumberService numbers, IUnitOfWork unitOfWork, ICurrentUserService currentUser)
 {
@@ -12,10 +12,10 @@ public sealed class CustomerReturnRequestService(ICustomerReturnRequestRepositor
     public async Task<CustomerReturnRequestDetailsDto?> GetAsync(int id)
     {
         var request = await requests.GetByIdAsync(id); if (request is null) return null;
-        var delivery = await deliveries.GetByIdAsync(request.SalesDeliveryId); var warehouseMap = (await warehouses.GetAllAsync()).ToDictionary(x => x.Id, x => x.Name); var locationMap = (await locations.SearchAsync(null, null)).ToDictionary(x => x.Id, x => $"{x.Code} — {x.Name}"); var deliveryLines = delivery?.Lines.ToDictionary(x => x.Id) ?? [];
+        var delivery = await deliveries.GetByIdAsync(request.SalesDeliveryId); var receiptRows=await receipts.GetByRequestAsync(request.Id);var received=await receipts.GetActiveReceivedQuantitiesAsync(request.Id); var warehouseMap = (await warehouses.GetAllAsync()).ToDictionary(x => x.Id, x => x.Name); var locationMap = (await locations.SearchAsync(null, null)).ToDictionary(x => x.Id, x => $"{x.Code} — {x.Name}"); var deliveryLines = delivery?.Lines.ToDictionary(x => x.Id) ?? [];
         return new() { Id = request.Id, ReturnNumber = request.ReturnNumber, SalesDeliveryId = request.SalesDeliveryId, DeliveryNumber = delivery?.DeliveryNumber ?? $"#{request.SalesDeliveryId}", SalesOrderId = request.SalesOrderId, OrderNumber = request.OrderNumberSnapshot, CustomerName = request.CustomerNameSnapshot, RequestDate = request.RequestDate, Reason = request.Reason, Notes = request.Notes, Status = request.Status, DecisionReason = request.DecisionReason, CancellationReason = request.CancellationReason, RowVersion = request.RowVersion,
             Lines = request.Lines.Select(x => new CustomerReturnRequestLineDto(x.Id, x.SalesDeliveryLineId, x.ProductCodeSnapshot, x.ProductNameSnapshot, warehouseMap.GetValueOrDefault(x.WarehouseId, "—"), x.StorageLocationId.HasValue ? locationMap.GetValueOrDefault(x.StorageLocationId.Value, "—") : "—", deliveryLines.GetValueOrDefault(x.SalesDeliveryLineId)?.StockQuantity ?? 0, x.StockQuantity, x.TrackingAllocationsSnapshot)).ToList(),
-            History = request.History.OrderBy(x => x.CreatedAtUtc).Select(x => new CustomerReturnRequestHistoryDto(x.FromStatus, x.ToStatus, x.Action, x.UserId, x.Reason, x.CreatedAtUtc)).ToList() };
+            History = request.History.OrderBy(x => x.CreatedAtUtc).Select(x => new CustomerReturnRequestHistoryDto(x.FromStatus, x.ToStatus, x.Action, x.UserId, x.Reason, x.CreatedAtUtc)).ToList(),HasRemainingReceipt=request.Lines.Any(x=>received.GetValueOrDefault(x.Id)<x.StockQuantity),ReceiptIds=receiptRows.Where(x=>x.Status!=CustomerReturnReceiptStatus.Cancelled).Select(x=>x.Id).ToList() };
     }
     public async Task<CustomerReturnRequestCreatePageDto?> GetCreatePageAsync(int deliveryId, CreateCustomerReturnRequestDto? form = null)
     {
@@ -42,7 +42,7 @@ public sealed class CustomerReturnRequestService(ICustomerReturnRequestRepositor
     public Task SubmitAsync(CustomerReturnRequestCommandDto dto) => Change(dto, x => x.Submit(currentUser.UserId));
     public Task ApproveAsync(CustomerReturnRequestCommandDto dto) => Change(dto, x => x.Approve(currentUser.UserId));
     public Task RejectAsync(CustomerReturnRequestCommandDto dto) => Change(dto, x => x.Reject(currentUser.UserId, dto.Reason ?? string.Empty));
-    public Task CancelAsync(CustomerReturnRequestCommandDto dto) => Change(dto, x => x.Cancel(currentUser.UserId, dto.Reason ?? string.Empty));
+    public Task CancelAsync(CustomerReturnRequestCommandDto dto) => unitOfWork.ExecuteInTransactionAsync(async () => { var request=await requests.GetByIdAsync(dto.Id)??throw new InvalidOperationException("Customer return request was not found.");EnsureVersion(request.RowVersion,dto.RowVersion);if((await receipts.GetByRequestAsync(request.Id)).Any(x=>x.Status!=CustomerReturnReceiptStatus.Cancelled))throw new InvalidOperationException("Cancel active customer return receipts before cancelling the return request.");request.Cancel(currentUser.UserId,dto.Reason??string.Empty); });
     private Task Change(CustomerReturnRequestCommandDto dto, Action<CustomerReturnRequest> action) => unitOfWork.ExecuteInTransactionAsync(async () => { var request = await requests.GetByIdAsync(dto.Id) ?? throw new InvalidOperationException("Customer return request was not found."); EnsureVersion(request.RowVersion, dto.RowVersion); action(request); });
     private static void EnsureVersion(byte[] current, byte[] submitted) { if (submitted.Length == 0 || !current.SequenceEqual(submitted)) throw new InvalidOperationException("Customer return request was modified by another user. Reload and try again."); }
 }

@@ -1848,6 +1848,211 @@ namespace MiniStore.Infrastructure.Migrations
                     b.ToTable("CustomerPaymentLines");
                 });
 
+            modelBuilder.Entity("MiniStore.Domain.Entities.CustomerReturnReceipt", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CancellationReason")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime?>("CancelledAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CancelledByUserId")
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedByUserId")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("CustomerReturnRequestId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("InspectedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("InspectedByUserId")
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<DateOnly>("ReceiptDate")
+                        .HasColumnType("date");
+
+                    b.Property<string>("ReceiptNumber")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TenantId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TenantId");
+
+                    b.HasIndex("CustomerReturnRequestId", "Status");
+
+                    b.HasIndex("CustomerReturnRequestId", "TenantId");
+
+                    b.HasIndex("TenantId", "ReceiptNumber")
+                        .IsUnique();
+
+                    b.ToTable("CustomerReturnReceipts", (string)null);
+                });
+
+            modelBuilder.Entity("MiniStore.Domain.Entities.CustomerReturnReceiptHistory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Action")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("CustomerReturnReceiptId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("FromStatus")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Reason")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int>("TenantId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ToStatus")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TenantId");
+
+                    b.HasIndex("CustomerReturnReceiptId", "CreatedAtUtc");
+
+                    b.HasIndex("CustomerReturnReceiptId", "TenantId");
+
+                    b.ToTable("CustomerReturnReceiptHistories", (string)null);
+                });
+
+            modelBuilder.Entity("MiniStore.Domain.Entities.CustomerReturnReceiptLine", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CustomerReturnReceiptId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CustomerReturnRequestLineId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Disposition")
+                        .HasColumnType("int");
+
+                    b.Property<string>("InspectionNotes")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("ProductCodeSnapshot")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ProductNameSnapshot")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<decimal>("ReceivedQuantity")
+                        .HasPrecision(18, 6)
+                        .HasColumnType("decimal(18,6)");
+
+                    b.Property<int>("SalesDeliveryLineId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("StorageLocationId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TenantId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("TrackingAllocations")
+                        .HasMaxLength(4000)
+                        .HasColumnType("nvarchar(4000)");
+
+                    b.Property<decimal>("UnitCostSnapshot")
+                        .HasPrecision(18, 8)
+                        .HasColumnType("decimal(18,8)");
+
+                    b.Property<int>("WarehouseId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TenantId");
+
+                    b.HasIndex("CustomerReturnReceiptId", "TenantId");
+
+                    b.HasIndex("CustomerReturnRequestLineId", "TenantId");
+
+                    b.HasIndex("ProductId", "TenantId");
+
+                    b.HasIndex("SalesDeliveryLineId", "TenantId");
+
+                    b.HasIndex("StorageLocationId", "TenantId");
+
+                    b.HasIndex("WarehouseId", "TenantId");
+
+                    b.HasIndex("TenantId", "CustomerReturnReceiptId", "CustomerReturnRequestLineId")
+                        .IsUnique();
+
+                    b.ToTable("CustomerReturnReceiptLines", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_CustomerReturnReceiptLines_Quantity", "[ReceivedQuantity] > 0");
+                        });
+                });
+
             modelBuilder.Entity("MiniStore.Domain.Entities.CustomerReturnRequest", b =>
                 {
                     b.Property<int>("Id")
@@ -11711,6 +11916,88 @@ namespace MiniStore.Infrastructure.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("MiniStore.Domain.Entities.CustomerReturnReceipt", b =>
+                {
+                    b.HasOne("MiniStore.Domain.Entities.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MiniStore.Domain.Entities.CustomerReturnRequest", null)
+                        .WithMany()
+                        .HasForeignKey("CustomerReturnRequestId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("MiniStore.Domain.Entities.CustomerReturnReceiptHistory", b =>
+                {
+                    b.HasOne("MiniStore.Domain.Entities.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MiniStore.Domain.Entities.CustomerReturnReceipt", null)
+                        .WithMany("History")
+                        .HasForeignKey("CustomerReturnReceiptId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("MiniStore.Domain.Entities.CustomerReturnReceiptLine", b =>
+                {
+                    b.HasOne("MiniStore.Domain.Entities.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MiniStore.Domain.Entities.CustomerReturnReceipt", null)
+                        .WithMany("Lines")
+                        .HasForeignKey("CustomerReturnReceiptId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MiniStore.Domain.Entities.CustomerReturnRequestLine", null)
+                        .WithMany()
+                        .HasForeignKey("CustomerReturnRequestLineId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MiniStore.Domain.Entities.Product", null)
+                        .WithMany()
+                        .HasForeignKey("ProductId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MiniStore.Domain.Entities.SalesDeliveryLine", null)
+                        .WithMany()
+                        .HasForeignKey("SalesDeliveryLineId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MiniStore.Domain.Entities.StorageLocation", null)
+                        .WithMany()
+                        .HasForeignKey("StorageLocationId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("MiniStore.Domain.Entities.Warehouse", null)
+                        .WithMany()
+                        .HasForeignKey("WarehouseId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("MiniStore.Domain.Entities.CustomerReturnRequest", b =>
                 {
                     b.HasOne("MiniStore.Domain.Entities.Tenant", null)
@@ -15054,6 +15341,13 @@ namespace MiniStore.Infrastructure.Migrations
 
             modelBuilder.Entity("MiniStore.Domain.Entities.CustomerPayment", b =>
                 {
+                    b.Navigation("Lines");
+                });
+
+            modelBuilder.Entity("MiniStore.Domain.Entities.CustomerReturnReceipt", b =>
+                {
+                    b.Navigation("History");
+
                     b.Navigation("Lines");
                 });
 

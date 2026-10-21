@@ -208,9 +208,11 @@ public static class BusinessServicesExtensions
         services.AddScoped<ICustomerInvoiceRepository, CustomerInvoiceRepository>();
         services.AddScoped<ICustomerPaymentRepository, CustomerPaymentRepository>();
         services.AddScoped<ICustomerReturnRequestRepository, CustomerReturnRequestRepository>();
+        services.AddScoped<ICustomerReturnReceiptRepository, CustomerReturnReceiptRepository>();
         services.AddScoped<CustomerInvoiceService>();
         services.AddScoped<CustomerPaymentService>();
         services.AddScoped<CustomerReturnRequestService>();
+        services.AddScoped<CustomerReturnReceiptService>();
         services.AddScoped<ISaleService, SaleService>();
         services.AddScoped<SalePostingService>();
         services.AddScoped<ISalesReturnRepository, SalesReturnRepository>();

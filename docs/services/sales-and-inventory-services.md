@@ -3,6 +3,10 @@
 
 Uses CRQ numbering and Serializable UnitOfWork creation. The repository aggregates active Draft/Submitted/Approved quantities per delivery line to prevent over-return. Approval is stock/accounting-neutral.
 
+## CustomerReturnReceiptService
+
+Uses CRR numbering, caps active receipts to approved request lines and verifies lot/serial identities against actual source-delivery issue transactions. Draft/Inspected receipts reserve eligibility; cancellation releases it. Inspection remains inventory/accounting-neutral.
+
 
 `InventoryRemovalAllocator` is the shared tracked-stock ordering policy used by `InventoryTrackingService` for issues and transfers. It converts the source warehouse's configured FIFO, FEFO, location-priority or minimize-locations strategy into a deterministic candidate order; Manual currently falls back to FIFO until the audited override workflow is implemented.
 > Status: IMPLEMENTED WITH REMAINING CONTROLS | Last reviewed: 2026-10-13

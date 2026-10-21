@@ -3,6 +3,10 @@
 
 Domain aggregate/repository contract, Application DTO/service, Infrastructure repository/configuration/migration and Web controller/views/navigation/localization form the slice. Regression, ADR and operation evidence document it.
 
+## SAL-100B customer return receipt and inspection
+
+Adds receipt/line/history domain types, repository and service, CRR sequence, four permissions, three Razor screens, migration 128 and source-delivery tracked-identity validation. The inspection-before-stock ADR fixes its authority boundary.
+
 > Status: IMPLEMENTED  
 > Source of truth: Repository scan  
 > Last reviewed: 2026-10-20
