@@ -1,0 +1,37 @@
+@using Microsoft.Extensions.Localization
+@using MiniStore.Domain.Entities
+@model MiniStore.Web.Models.Settings.OrganizationIdentityFieldRowViewModel
+@inject IStringLocalizer<MiniStore.Web.SharedResource> Localizer
+@{
+    var prefix = $"CustomFields[{Model.Index}]";
+    string Name(string property) => $"{prefix}.{property}";
+    string Id(string property) => $"CustomFields_{Model.Index}__{property}";
+}
+<div class="border rounded p-3 position-relative" data-identity-field>
+    <input type="hidden" name="@Name("Sequence")" id="@Id("Sequence")" value="@Model.Field.Sequence" data-sequence />
+    <button type="button" class="btn btn-sm btn-outline-danger position-absolute top-0 end-0 m-2" data-remove-field aria-label="@Localizer["Remove"]">×</button>
+    <div class="row g-3 pe-4">
+        <div class="col-md-4">
+            <label class="form-label" for="@Id("Section")">@Localizer["Section"]</label>
+            <select name="@Name("Section")" id="@Id("Section")" class="form-select">
+                <option value="@((int)OrganizationIdentityFieldSection.Registration)" selected="@(Model.Field.Section == OrganizationIdentityFieldSection.Registration)">@Localizer["Registration"]</option>
+                <option value="@((int)OrganizationIdentityFieldSection.Contact)" selected="@(Model.Field.Section == OrganizationIdentityFieldSection.Contact)">@Localizer["Contact"]</option>
+                <option value="@((int)OrganizationIdentityFieldSection.Address)" selected="@(Model.Field.Section == OrganizationIdentityFieldSection.Address)">@Localizer["Address"]</option>
+                <option value="@((int)OrganizationIdentityFieldSection.Other)" selected="@(Model.Field.Section == OrganizationIdentityFieldSection.Other)">@Localizer["Other"]</option>
+            </select>
+        </div>
+        <div class="col-md-4"><label class="form-label" for="@Id("Label")">@Localizer["Label (English)"]</label><input name="@Name("Label")" id="@Id("Label")" value="@Model.Field.Label" class="form-control" maxlength="100" required /></div>
+        <div class="col-md-4"><label class="form-label" for="@Id("LabelArabic")">@Localizer["Label (Arabic)"]</label><input name="@Name("LabelArabic")" id="@Id("LabelArabic")" value="@Model.Field.LabelArabic" class="form-control" maxlength="100" dir="rtl" /></div>
+        <div class="col-md-6"><label class="form-label" for="@Id("Value")">@Localizer["Value (English)"]</label><input name="@Name("Value")" id="@Id("Value")" value="@Model.Field.Value" class="form-control" maxlength="500" required /></div>
+        <div class="col-md-6"><label class="form-label" for="@Id("ValueArabic")">@Localizer["Value (Arabic)"]</label><input name="@Name("ValueArabic")" id="@Id("ValueArabic")" value="@Model.Field.ValueArabic" class="form-control" maxlength="500" dir="rtl" /></div>
+        <div class="col-12">
+            <div class="small fw-semibold mb-2">@Localizer["Show this field on"]</div>
+            <div class="d-flex flex-wrap gap-3">
+                <label class="form-check"><input type="checkbox" name="@Name("ShowOnSalesDocuments")" value="true" class="form-check-input" checked="@Model.Field.ShowOnSalesDocuments" /> <span class="form-check-label">@Localizer["Sales documents"]</span></label>
+                <label class="form-check"><input type="checkbox" name="@Name("ShowOnPurchaseDocuments")" value="true" class="form-check-input" checked="@Model.Field.ShowOnPurchaseDocuments" /> <span class="form-check-label">@Localizer["Purchasing documents"]</span></label>
+                <label class="form-check"><input type="checkbox" name="@Name("ShowOnReceipts")" value="true" class="form-check-input" checked="@Model.Field.ShowOnReceipts" /> <span class="form-check-label">@Localizer["Receipts"]</span></label>
+                <label class="form-check"><input type="checkbox" name="@Name("ShowInFooter")" value="true" class="form-check-input" checked="@Model.Field.ShowInFooter" /> <span class="form-check-label">@Localizer["Document footer"]</span></label>
+            </div>
+        </div>
+    </div>
+</div>

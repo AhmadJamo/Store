@@ -1091,6 +1091,7 @@ static async Task VerifySalesQuotationFoundationAsync(int tenantOneId,int tenant
         tenantOne.SalesQuotations.Add(quotation);
         await tenantOne.SaveChangesAsync();
         tenantOneQuotationId=quotation.Id;
+        quotation.FreezeDocumentSnapshot("{}", null, null, "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a");
         quotation.Send("sql-user",new DateOnly(2026,10,20));
         quotation.Accept("sql-user",new DateOnly(2026,10,20));
         await tenantOne.SaveChangesAsync();
@@ -1184,7 +1185,7 @@ static async Task VerifySalesQuotationFoundationAsync(int tenantOneId,int tenant
         quotation.AddLine(new SalesQuotationLine(product,unit,1m,
             new SalesPriceEvaluationSnapshot(2m,2m,"JOD",null,null,"PRODUCT_CHANNEL_FALLBACK",8m,8m,16m,null,null,null,false,"NO_TAX",null,0m,16m),null));
         deliverySetup.SalesQuotations.Add(quotation);await deliverySetup.SaveChangesAsync();
-        quotation.Send("sql-user",new DateOnly(2026,10,20));quotation.Accept("sql-user",new DateOnly(2026,10,20));
+        quotation.FreezeDocumentSnapshot("{}", null, null, "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a");quotation.Send("sql-user",new DateOnly(2026,10,20));quotation.Accept("sql-user",new DateOnly(2026,10,20));
         var order=new SalesOrder("SO-SQL-DEL",quotation,new DateOnly(2026,10,20),"sql-user");
         deliverySetup.SalesOrders.Add(order);await deliverySetup.SaveChangesAsync();order.Confirm("sql-user");await deliverySetup.SaveChangesAsync();
         tenantOneDeliveryOrderId=order.Id;
@@ -1228,7 +1229,7 @@ static async Task VerifySalesQuotationFoundationAsync(int tenantOneId,int tenant
         quotation.AddLine(new SalesQuotationLine(product,unit,1m,
             new SalesPriceEvaluationSnapshot(2m,2m,"JOD",null,null,"PRODUCT_CHANNEL_FALLBACK",8m,8m,16m,null,null,null,false,"NO_TAX",null,0m,16m),null));
         salesControlContext.SalesQuotations.Add(quotation);await salesControlContext.SaveChangesAsync();
-        quotation.Send("sql-user",new DateOnly(2026,10,20));quotation.Accept("sql-user",new DateOnly(2026,10,20));
+        quotation.FreezeDocumentSnapshot("{}", null, null, "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a");quotation.Send("sql-user",new DateOnly(2026,10,20));quotation.Accept("sql-user",new DateOnly(2026,10,20));
         var controlledOrder=new SalesOrder("SO-SQL-CONTROL",quotation,new DateOnly(2026,10,20),controlUser.UserId);
         salesControlContext.SalesOrders.Add(controlledOrder);await salesControlContext.SaveChangesAsync();
         var approvalService=new SalesOrderApprovalService(new SalesApprovalRepository(salesControlContext),new SalesOrderRepository(salesControlContext),
@@ -1596,6 +1597,7 @@ static async Task VerifySalesQuotationFoundationAsync(int tenantOneId,int tenant
             new SalesPriceEvaluationSnapshot(1m,1m,"JOD",null,null,"PRODUCT_CHANNEL_FALLBACK",5m,5m,5m,null,null,null,false,"NO_TAX",null,0m,5m),null));
         tenantTwo.SalesQuotations.Add(quotation);
         await tenantTwo.SaveChangesAsync();
+        quotation.FreezeDocumentSnapshot("{}", null, null, "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a");
         quotation.Send("sql-user",new DateOnly(2026,10,20));
         quotation.Accept("sql-user",new DateOnly(2026,10,20));
         await tenantTwo.SaveChangesAsync();

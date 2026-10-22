@@ -15,6 +15,9 @@ public sealed class SalesQuotationRepository(AppDbContext context) : ISalesQuota
         return query.OrderByDescending(x => x.CreatedAtUtc).ToListAsync();
     }
     public Task<SalesQuotation?> GetByIdAsync(int id) => context.SalesQuotations.Include(x => x.Lines).Include(x => x.History).SingleOrDefaultAsync(x => x.Id == id);
+    public Task<SalesQuotation?> GetForDocumentAsync(int id) => context.SalesQuotations
+        .Include(x => x.Lines).Include(x => x.History).Include(x => x.DocumentSnapshot)
+        .SingleOrDefaultAsync(x => x.Id == id);
     public Task<SalesQuotation?> GetByRequestKeyAsync(string requestKey) => context.SalesQuotations.Include(x => x.Lines).SingleOrDefaultAsync(x => x.RequestKey == requestKey.ToLower());
     public Task AddAsync(SalesQuotation quotation) => context.SalesQuotations.AddAsync(quotation).AsTask();
 }

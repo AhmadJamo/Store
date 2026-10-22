@@ -1,7 +1,9 @@
 # Database
-## SAL-120A advanced quotation templates
+## SAL-120B organization identity, document designer and frozen PDF evidence
 
-Migration 132 (`20261021225917_AddAdvancedQuotationTemplates`) creates tenant-owned `SalesQuotationTemplates` and `SalesQuotationTemplateItems`, adds restrictive template/item references plus immutable template-content snapshots to Sales Quotations and their lines, and enforces one code/version and one active default per tenant. Product, unit, price-list, tax and source-template relationships use tenant-composite keys. Active templates are versioned rather than edited; quotations retain their historical snapshots if a template is later archived. Source/model are at 132 with no pending changes. Demo remains evidenced at 128 because the SQL host fails before migration execution.
+Migration 133 (`20261022120233_AddOrganizationIdentityAndDocumentDesigner`) extends tenant `GeneralSettings` with bilingual legal/commercial identity, registration/contact/address fields and document-name policy. It creates tenant-owned `OrganizationIdentityFields`, a separately loaded one-to-one `OrganizationLogos` table, and versioned tenant-owned `DocumentDesigns`/`DocumentDesignSections`. Per-tenant/type/code/version uniqueness and a filtered one-default-per-document-type index protect selection; tenant-composite self/source, section and quotation relationships prevent cross-company references. Quotations and quotation templates have optional restrictive design links, while quotations also freeze design code/version/name/language evidence.
+
+Migration 134 (`20261022122434_AddFrozenSalesQuotationPdf`) creates tenant-owned one-to-one `SalesQuotationDocumentSnapshots`. The row stores bounded JSON containing the effective organization identity, exact design settings/sections and quotation content, plus an optional copied PNG/JPEG logo, SHA-256 content hash and creation time. The snapshot is created atomically before the Draft-to-Sent transition and is required by the domain transition, so later identity/design changes cannot rewrite a historical quotation PDF. Draft preview does not persist a snapshot. Source/model are at 134 with no pending changes. Demo remains evidenced at 128 because the SQL host fails before migration execution.
 
 ## SAL-110 configurable sales controls
 
@@ -112,7 +114,7 @@ All business tables have a required `TenantId` foreign key to `Tenants`. EF quer
 | Permissions | global permission catalogue with unique technical name; company-specific selections live in TenantRolePermissions and restrict permission deletion. |
 | AuditLogs | historical legacy evidence indexed by CreatedAt and `(EntityName, EntityId)`; still mapped/readable, with new writes frozen by default after P1-AUD-016. |
 | AuditEvents / AuditLegalHolds | Mixed Tenant/Platform/System semantic events with keyed integrity plus Owner-managed time-bounded holds. Normal business writes remain append-only; only the maintenance repository may delete an expired, manifested, revalidated and unheld batch. |
-| GeneralSettings / CurrencyExchangeRates / DiscountSettings / InventorySettings | General settings define company currency. Dated exchange rates store company-currency units per one supplier-currency unit with source/audit evidence; other settings retain singleton/concurrency rules. |
+| GeneralSettings / OrganizationIdentityFields / OrganizationLogos / CurrencyExchangeRates / DiscountSettings / InventorySettings | General settings define currency/regional preferences and the reusable bilingual legal/commercial identity. Custom identity fields carry ordered per-document visibility; separately loaded logo bytes are tenant-scoped, rowversioned and capped by the application. Dated exchange rates store company-currency units per one supplier-currency unit; other settings retain singleton/concurrency rules. |
 | DocumentSequences | one row per tenant/document type; unique `(TenantId, DocumentType)`; customizable template, prefix, suffix, padding, next/reset counters and period state; rowversion protects settings updates. |
 
 ## Migrations

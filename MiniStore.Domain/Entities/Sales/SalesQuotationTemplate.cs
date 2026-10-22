@@ -18,6 +18,7 @@ public sealed class SalesQuotationTemplate
     public int ValidityDays { get; private set; }
     public SaleChannel Channel { get; private set; }
     public int? SalesPriceListId { get; private set; }
+    public int? DocumentDesignId { get; private set; }
     public bool AllowAdditionalLines { get; private set; }
     public bool IsDefault { get; private set; }
     public string? Introduction { get; private set; }
@@ -33,7 +34,8 @@ public sealed class SalesQuotationTemplate
     public SalesQuotationTemplate(string code, int version, int? sourceTemplateId, string name,
         string? description, string? category, string? tags, int validityDays, SaleChannel channel,
         int? salesPriceListId, bool allowAdditionalLines, bool isDefault, string? introduction,
-        string? termsAndConditions, string? footerNotes, string createdByUserId)
+        string? termsAndConditions, string? footerNotes, string createdByUserId,
+        int? documentDesignId = null)
     {
         Code = NormalizeRequired(code, 50, "Quotation template code is required and cannot exceed 50 characters.").ToUpperInvariant();
         if (version is < 1 or > 9999) throw new ArgumentException("Quotation template version must be between 1 and 9999.");
@@ -45,6 +47,7 @@ public sealed class SalesQuotationTemplate
         Version = version; SourceTemplateId = sourceTemplateId; Description = Normalize(description, 1000);
         Category = Normalize(category, 100); Tags = Normalize(tags, 500); ValidityDays = validityDays;
         Channel = channel; SalesPriceListId = salesPriceListId; AllowAdditionalLines = allowAdditionalLines;
+        DocumentDesignId = documentDesignId > 0 ? documentDesignId : null;
         IsDefault = isDefault; Introduction = Normalize(introduction, 4000);
         TermsAndConditions = Normalize(termsAndConditions, 8000); FooterNotes = Normalize(footerNotes, 4000);
         Status = SalesQuotationTemplateStatus.Draft; CreatedAtUtc = DateTime.UtcNow;

@@ -353,6 +353,58 @@ Check(generalSettings.DefaultLanguage == UiLanguage.Arabic,
     "General settings must support Arabic as the company default language");
 CheckArgumentThrows(() => generalSettings.SetDefaultLanguage((UiLanguage)999),
     "General settings must reject unsupported interface languages");
+generalSettings.SetOrganizationIdentity(
+    "MiniStore", "ميني ستور", "MiniStore LLC", "شركة ميني ستور",
+    "REG-100", "TAX-200", "info@example.com", "https://example.com",
+    "+962700000000", null, "Amman", "عمّان", "Amman", "عمّان",
+    null, "11118", "jo", OrganizationDocumentNameStyle.TradeAndLegalNames);
+Check(generalSettings.LegalName == "MiniStore LLC" && generalSettings.CountryCode == "JO" &&
+      generalSettings.DocumentNameStyle == OrganizationDocumentNameStyle.TradeAndLegalNames,
+    "Organization identity must preserve legal and trade names and normalize the country code");
+CheckArgumentThrows(() => generalSettings.SetOrganizationIdentity(
+        "MiniStore", null, null, null, null, null, null, null, null, null,
+        null, null, null, null, null, null, null, OrganizationDocumentNameStyle.LegalName),
+    "Organization identity must require a legal name when documents use it");
+var customIdentityField = new OrganizationIdentityField(1, OrganizationIdentityFieldSection.Registration,
+    "License", "الرخصة", "LIC-100", "LIC-100",
+    OrganizationIdentityDocumentScope.Sales | OrganizationIdentityDocumentScope.Footer);
+generalSettings.ReplaceIdentityFields([customIdentityField]);
+Check(generalSettings.IdentityFields.Count == 1 &&
+      generalSettings.IdentityFields[0].DocumentScope.HasFlag(OrganizationIdentityDocumentScope.Sales),
+    "Organization identity custom fields must preserve document visibility");
+generalSettings.SetLogo([0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A], "image/png", "logo.png");
+Check(generalSettings.Logo?.Content is { Length: 8 } && generalSettings.Logo.ContentType == "image/png",
+    "Organization identity must store a bounded reusable logo");
+CheckArgumentThrows(() => generalSettings.SetLogo([1], "image/svg+xml", "logo.svg"),
+    "Organization identity must reject unsupported logo formats");
+var documentDesignForm = new CreateDocumentDesignDto { Name = "Standard quotation" };
+var documentDesign = new DocumentDesign(DocumentDesignType.SalesQuotation, "standard", 1, null,
+    documentDesignForm.Name, "Reusable quotation layout", true, documentDesignForm.ToSettings(), "regression-user");
+documentDesign.AddSection(new DocumentDesignSection(10, DocumentDesignSectionType.LineItems,
+    true, false, "Items", "البنود", null, null));
+documentDesign.AddSection(new DocumentDesignSection(20, DocumentDesignSectionType.Totals,
+    true, false, "Totals", "الإجماليات", null, null));
+Check(documentDesign.Code == "STANDARD" && documentDesign.Sections.Count == 2 &&
+      documentDesign.DefaultLanguage == DocumentLanguage.Bilingual,
+    "Document designs must preserve reusable bilingual layout settings and ordered sections");
+CheckThrows(() => documentDesign.SetDefault(true),
+    "Draft document designs must not become default before activation");
+documentDesign.Activate();
+Check(documentDesign.Status == DocumentDesignStatus.Active && documentDesign.ActivatedAtUtc.HasValue,
+    "A valid document design must activate as an immutable version");
+CheckThrows(() => documentDesign.AddSection(new DocumentDesignSection(30, DocumentDesignSectionType.Custom,
+        true, false, "Late change", null, null, null)),
+    "Active document design versions must reject silent layout changes");
+var invalidCustomPage = new CreateDocumentDesignDto { Name = "Invalid custom page", PageSize = DocumentPageSize.Custom };
+CheckArgumentThrows(() => new DocumentDesign(DocumentDesignType.Custom, "custom", 1, null,
+        invalidCustomPage.Name, null, false, invalidCustomPage.ToSettings(), "regression-user"),
+    "Custom document paper must require bounded width and height");
+Check(TenantIsolationModel.TenantOwnedTypes.Contains(typeof(DocumentDesign)) &&
+      TenantIsolationModel.TenantOwnedTypes.Contains(typeof(DocumentDesignSection)),
+    "Document designs and their sections must be tenant isolated");
+Check(typeof(DocumentDesignsController).GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
+      $"{PermissionAuthorizeAttribute.PolicyPrefix}Administration.Access",
+    "The central document designer must require administration access");
 Check(SupportedUiCultures.Contains("ar-JO") && SupportedUiCultures.Contains("en-US") &&
       !SupportedUiCultures.Contains("fr-FR"),
     "Only Arabic and English UI cultures must be accepted");
@@ -555,7 +607,7 @@ var quotationProduct=new Product("Quotation Product",null,5m,10m,8m,measurementU
 var quotationUnit=new MeasurementUnit("PCS","Piece","pc",MeasurementDimension.Count,1m,0);typeof(MeasurementUnit).GetProperty(nameof(MeasurementUnit.Id))!.SetValue(quotationUnit,1);
 var salesQuotation=new SalesQuotation("SQT-000001",Guid.NewGuid().ToString(),quotationCustomer,null,new DateOnly(2026,10,20),new DateOnly(2026,11,20),"JOD",1m,new DateOnly(2026,10,20),"COMPANY_BASE",null,"user");
 salesQuotation.AddLine(new SalesQuotationLine(quotationProduct,quotationUnit,1m,new SalesPriceEvaluationSnapshot(2m,2m,"JOD",null,null,"PRODUCT_CHANNEL_FALLBACK",8m,8m,16m,null,null,null,false,"NO_TAX",null,0m,16m),null));
-salesQuotation.Send("user",new DateOnly(2026,10,20));salesQuotation.Accept("user",new DateOnly(2026,10,20));
+salesQuotation.FreezeDocumentSnapshot("{}", null, null, "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a");salesQuotation.Send("user",new DateOnly(2026,10,20));salesQuotation.Accept("user",new DateOnly(2026,10,20));
 Check(salesQuotation.Status==SalesQuotationStatus.Accepted&&salesQuotation.TotalAmount==16m&&salesQuotation.Lines.Single().ProductName=="Quotation Product"&&salesQuotation.History.Count==3,
     "Sales quotations must freeze commercial snapshots and enforce the draft-to-sent-to-accepted lifecycle");
 CheckThrows(()=>salesQuotation.Accept("user",new DateOnly(2026,10,20)),"Completed sales quotation actions must not be repeated");

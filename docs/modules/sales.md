@@ -1,5 +1,7 @@
 # Sales
-> Status: LEGACY IMMEDIATE SALE IMPLEMENTED; SAL-020 THROUGH SAL-120A ADVANCED QUOTATION TEMPLATES IMPLEMENTED IN SOURCE | Last reviewed: 2026-10-22
+> Status: LEGACY IMMEDIATE SALE IMPLEMENTED; SAL-020 THROUGH SAL-120B IMPLEMENTED IN SOURCE | Last reviewed: 2026-10-22
+
+`SAL-120B` centralizes organization identity and reusable document design in Settings. The identity source contains bilingual trade/legal names, registration/contact/address details, a separately loaded logo and custom per-document fields. Versioned document designs add paper/language, RTL-ready logical margins, colors/font, header/logo/name placement, visibility controls, cover/header/footer/watermark text and ordered bilingual sections. An active quotation design can be selected by a quotation template or overridden on an individual quotation. Draft quotations have a live PDF preview; sending atomically freezes the effective identity, exact design/sections, customer/content/lines/totals and optional logo in a hash-protected snapshot. Every later PDF is rebuilt from that snapshot, so subsequent settings changes cannot alter history. The reusable PDF engine is feature-neutral and ready for invoices, orders, receipts and reports; no customer portal is active.
 
 SAL-120A adds tenant-owned, versioned quotation templates. A Draft template defines validity, channel, optional price list, reusable introduction/terms/footer, required/optional/alternative products, quantity bounds, fixed or editable quantities, option groups and whether extra lines are allowed. Activation validates the complete configuration, archives an older active version with the same code and can set one active tenant default. Active templates are immutable; change occurs through a higher version.
 

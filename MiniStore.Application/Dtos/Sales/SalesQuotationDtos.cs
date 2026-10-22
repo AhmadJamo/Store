@@ -17,6 +17,7 @@ public sealed class SalesQuotationCreatePageDto
     public List<SalesQuotationOptionDto> PriceLists { get; init; } = [];
     public List<SalesQuotationOptionDto> TaxRates { get; init; } = [];
     public List<SalesQuotationOptionDto> Templates { get; init; } = [];
+    public List<SalesQuotationOptionDto> Designs { get; init; } = [];
     public SalesQuotationAppliedTemplateDto? AppliedTemplate { get; init; }
 }
 
@@ -32,6 +33,7 @@ public sealed class CreateSalesQuotationDto
     [StringLength(1000)] public string? Notes { get; set; }
     public int? SalesQuotationTemplateId { get; set; }
     public int? SalesQuotationTemplateVersion { get; set; }
+    public int? DocumentDesignId { get; set; }
     public List<CreateSalesQuotationLineDto> Lines { get; set; } = [];
 }
 
@@ -74,6 +76,9 @@ public sealed class SalesQuotationDetailsDto
     public int? SalesQuotationTemplateId { get; init; } public string? TemplateCode { get; init; }
     public int? TemplateVersion { get; init; } public string? TemplateName { get; init; }
     public string? Introduction { get; init; } public string? TermsAndConditions { get; init; } public string? FooterNotes { get; init; }
+    public int? DocumentDesignId { get; init; } public string? DesignCode { get; init; }
+    public int? DesignVersion { get; init; } public string? DesignName { get; init; }
+    public DocumentLanguage? DesignLanguage { get; init; }
     public List<SalesQuotationLineDto> Lines { get; init; } = []; public List<SalesQuotationHistoryDto> History { get; init; } = [];
 }
 

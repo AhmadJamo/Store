@@ -105,7 +105,6 @@
   <data name="Ingredients" xml:space="preserve"><value>المكونات</value></data>
   <data name="No prepared products found." xml:space="preserve"><value>لا توجد منتجات محضّرة.</value></data>
   <data name="Not configured" xml:space="preserve"><value>غير معدّة</value></data>
-  <data name="Create new version" xml:space="preserve"><value>إنشاء إصدار جديد</value></data>
   <data name="Configure recipe" xml:space="preserve"><value>إعداد الوصفة</value></data>
   <data name="Recipe for {0}" xml:space="preserve"><value>وصفة {0}</value></data>
   <data name="Saving creates a new immutable version. Current active version: {0}." xml:space="preserve"><value>ينشئ الحفظ إصداراً جديداً غير قابل للتعديل. الإصدار الفعال حالياً: {0}.</value></data>
@@ -3680,4 +3679,235 @@
   <data name="Source quotation template was not found." xml:space="preserve"><value>لم يتم العثور على قالب عرض السعر المصدر.</value></data>
   <data name="Template items cannot be submitted without an active quotation template." xml:space="preserve"><value>لا يمكن إرسال بنود قالب دون قالب عرض سعر فعال.</value></data>
   <data name="Template unit and product stock unit must use the same active measurement dimension." xml:space="preserve"><value>يجب أن تستخدم وحدة القالب ووحدة مخزون المنتج بُعد القياس الفعال نفسه.</value></data>
+  <data name="Organization identity" xml:space="preserve"><value>هوية المنشأة</value></data>
+  <data name="Maintain one trusted identity for quotations, invoices, receipts and purchasing documents." xml:space="preserve"><value>احتفظ بهوية موحدة وموثوقة لعروض الأسعار والفواتير والإيصالات ومستندات المشتريات.</value></data>
+  <data name="Names used on documents" xml:space="preserve"><value>الأسماء المستخدمة على المستندات</value></data>
+  <data name="Keep the commercial brand separate from the registered legal entity, in both supported languages." xml:space="preserve"><value>افصل العلامة التجارية عن الكيان القانوني المسجل باللغتين المدعومتين.</value></data>
+  <data name="Trade name (English)" xml:space="preserve"><value>الاسم التجاري بالإنجليزية</value></data>
+  <data name="Trade name (Arabic)" xml:space="preserve"><value>الاسم التجاري بالعربية</value></data>
+  <data name="Legal name (English)" xml:space="preserve"><value>الاسم القانوني بالإنجليزية</value></data>
+  <data name="Legal name (Arabic)" xml:space="preserve"><value>الاسم القانوني بالعربية</value></data>
+  <data name="Name displayed on documents" xml:space="preserve"><value>الاسم الظاهر على المستندات</value></data>
+  <data name="Trade name" xml:space="preserve"><value>الاسم التجاري</value></data>
+  <data name="Trade and legal names" xml:space="preserve"><value>الاسمان التجاري والقانوني</value></data>
+  <data name="Legal registration" xml:space="preserve"><value>التسجيل القانوني</value></data>
+  <data name="Commercial registration number" xml:space="preserve"><value>رقم السجل التجاري</value></data>
+  <data name="Tax registration number" xml:space="preserve"><value>الرقم الضريبي</value></data>
+  <data name="Contact and address" xml:space="preserve"><value>التواصل والعنوان</value></data>
+  <data name="Primary phone" xml:space="preserve"><value>الهاتف الرئيسي</value></data>
+  <data name="Secondary phone" xml:space="preserve"><value>الهاتف الإضافي</value></data>
+  <data name="Address (English)" xml:space="preserve"><value>العنوان بالإنجليزية</value></data>
+  <data name="Address (Arabic)" xml:space="preserve"><value>العنوان بالعربية</value></data>
+  <data name="City (English)" xml:space="preserve"><value>المدينة بالإنجليزية</value></data>
+  <data name="City (Arabic)" xml:space="preserve"><value>المدينة بالعربية</value></data>
+  <data name="Organization logo" xml:space="preserve"><value>شعار المنشأة</value></data>
+  <data name="Upload a PNG or JPEG image up to 2 MB. The logo is stored per organization and reused by document templates." xml:space="preserve"><value>ارفع صورة PNG أو JPEG بحجم لا يتجاوز 2 ميجابايت. يُحفظ الشعار لكل منشأة وتعيد قوالب المستندات استخدامه.</value></data>
+  <data name="Uploading a new file replaces the current logo." xml:space="preserve"><value>رفع ملف جديد يستبدل الشعار الحالي.</value></data>
+  <data name="Remove current logo" xml:space="preserve"><value>حذف الشعار الحالي</value></data>
+  <data name="Custom identity fields" xml:space="preserve"><value>حقول الهوية المخصصة</value></data>
+  <data name="Add licenses, branch identifiers, social links or any organization-specific detail and choose where it appears." xml:space="preserve"><value>أضف التراخيص أو معرفات الفروع أو روابط التواصل أو أي معلومة خاصة بالمنشأة وحدد أين تظهر.</value></data>
+  <data name="Add custom field" xml:space="preserve"><value>إضافة حقل مخصص</value></data>
+  <data name="Save organization identity" xml:space="preserve"><value>حفظ هوية المنشأة</value></data>
+  <data name="Registration" xml:space="preserve"><value>التسجيل</value></data>
+  <data name="Contact" xml:space="preserve"><value>التواصل</value></data>
+  <data name="Label (English)" xml:space="preserve"><value>عنوان الحقل بالإنجليزية</value></data>
+  <data name="Label (Arabic)" xml:space="preserve"><value>عنوان الحقل بالعربية</value></data>
+  <data name="Value (English)" xml:space="preserve"><value>القيمة بالإنجليزية</value></data>
+  <data name="Value (Arabic)" xml:space="preserve"><value>القيمة بالعربية</value></data>
+  <data name="Show this field on" xml:space="preserve"><value>إظهار هذا الحقل على</value></data>
+  <data name="Sales documents" xml:space="preserve"><value>مستندات المبيعات</value></data>
+  <data name="Purchasing documents" xml:space="preserve"><value>مستندات المشتريات</value></data>
+  <data name="Receipts" xml:space="preserve"><value>الإيصالات</value></data>
+  <data name="Document footer" xml:space="preserve"><value>تذييل المستند</value></data>
+  <data name="Organization identity updated successfully." xml:space="preserve"><value>تم تحديث هوية المنشأة بنجاح.</value></data>
+  <data name="Organization logo must be no larger than 2 MB." xml:space="preserve"><value>يجب ألا يتجاوز حجم شعار المنشأة 2 ميجابايت.</value></data>
+  <data name="Organization logo must be a PNG or JPEG image." xml:space="preserve"><value>يجب أن يكون شعار المنشأة صورة PNG أو JPEG.</value></data>
+  <data name="Organization logo must be a non-empty image no larger than 2 MB." xml:space="preserve"><value>يجب أن يكون شعار المنشأة صورة غير فارغة بحجم لا يتجاوز 2 ميجابايت.</value></data>
+  <data name="The general settings were modified by another user. Please reload the page and try again." xml:space="preserve"><value>عدّل مستخدم آخر الإعدادات العامة. أعد تحميل الصفحة وحاول مرة أخرى.</value></data>
+  <data name="A legal name is required for the selected document-name style." xml:space="preserve"><value>الاسم القانوني مطلوب لنمط الاسم المختار للمستندات.</value></data>
+  <data name="Organization identity is managed separately." xml:space="preserve"><value>تُدار هوية المنشأة في صفحة مستقلة.</value></data>
+  <data name="The trade name, legal name, logo and document details are shared by quotations, invoices and other documents." xml:space="preserve"><value>تُشارك الأسماء التجارية والقانونية والشعار وبيانات المستند بين عروض الأسعار والفواتير وبقية المستندات.</value></data>
+  <data name="Open organization identity" xml:space="preserve"><value>فتح هوية المنشأة</value></data>
+  <data name="Create the legal, commercial and visual identity shared by quotations, invoices and other documents." xml:space="preserve"><value>أنشئ الهوية القانونية والتجارية والبصرية المشتركة بين عروض الأسعار والفواتير وبقية المستندات.</value></data>
+  <data name="Manage organization identity" xml:space="preserve"><value>إدارة هوية المنشأة</value></data>
+  <data name="Currency, language and regional system settings." xml:space="preserve"><value>العملة واللغة والإعدادات الإقليمية للنظام.</value></data>
+  <data name="Configure organization identity before saving general settings." xml:space="preserve"><value>أعدّ هوية المنشأة قبل حفظ الإعدادات العامة.</value></data>
+  <data name="Invalid organization document-name style." xml:space="preserve"><value>نمط اسم المنشأة للمستندات غير صالح.</value></data>
+  <data name="Organization identity cannot contain more than 20 custom fields." xml:space="preserve"><value>لا يمكن أن تحتوي هوية المنشأة على أكثر من 20 حقلاً مخصصاً.</value></data>
+  <data name="Organization identity custom-field order must be unique." xml:space="preserve"><value>يجب أن يكون ترتيب حقول هوية المنشأة المخصصة فريداً.</value></data>
+  <data name="Country code must contain two letters." xml:space="preserve"><value>يجب أن يتكون رمز الدولة من حرفين.</value></data>
+  <data name="Organization identity field order must be between 1 and 100." xml:space="preserve"><value>يجب أن يكون ترتيب حقل هوية المنشأة بين 1 و100.</value></data>
+  <data name="Invalid organization identity field section." xml:space="preserve"><value>قسم حقل هوية المنشأة غير صالح.</value></data>
+  <data name="Invalid organization identity document visibility." xml:space="preserve"><value>إعداد ظهور حقل هوية المنشأة على المستندات غير صالح.</value></data>
+  <data name="Organization logo content does not match its image format." xml:space="preserve"><value>محتوى شعار المنشأة لا يطابق صيغة الصورة.</value></data>
+  <data name="Organization email address is invalid." xml:space="preserve"><value>البريد الإلكتروني للمنشأة غير صالح.</value></data>
+  <data name="Organization website must use an absolute HTTP or HTTPS address." xml:space="preserve"><value>يجب أن يكون موقع المنشأة عنواناً كاملاً يبدأ بـ HTTP أو HTTPS.</value></data>
+  <data name="Document designs" xml:space="preserve"><value>تصاميم المستندات</value></data>
+  <data name="Document designer" xml:space="preserve"><value>مصمم المستندات</value></data>
+  <data name="Create document design" xml:space="preserve"><value>إنشاء تصميم مستند</value></data>
+  <data name="Open document designer" xml:space="preserve"><value>فتح مصمم المستندات</value></data>
+  <data name="Design logos, organization names, headers, footers, colors and sections for every business document." xml:space="preserve"><value>صمم الشعار واسم المنشأة والرأس والتذييل والألوان والأقسام لكل مستند أعمال.</value></data>
+  <data name="Control the visual identity, content and layout of every business document." xml:space="preserve"><value>تحكم بالهوية البصرية والمحتوى وتخطيط كل مستند أعمال.</value></data>
+  <data name="Build a reusable layout without changing historical active versions." xml:space="preserve"><value>أنشئ تخطيطاً قابلاً لإعادة الاستخدام دون تغيير الإصدارات التاريخية الفعالة.</value></data>
+  <data name="Create new version" xml:space="preserve"><value>إنشاء إصدار جديد</value></data>
+  <data name="No document designs were found." xml:space="preserve"><value>لم يتم العثور على تصاميم مستندات.</value></data>
+  <data name="Document design" xml:space="preserve"><value>تصميم المستند</value></data>
+  <data name="Manage document designs" xml:space="preserve"><value>إدارة تصاميم المستندات</value></data>
+  <data name="Use default quotation design" xml:space="preserve"><value>استخدام التصميم الافتراضي لعرض السعر</value></data>
+  <data name="Default quotation design" xml:space="preserve"><value>تصميم عرض السعر الافتراضي</value></data>
+  <data name="No custom design" xml:space="preserve"><value>بدون تصميم مخصص</value></data>
+  <data name="The selected document design version is frozen for this quotation." xml:space="preserve"><value>تم تثبيت إصدار تصميم المستند المحدد لعرض السعر هذا.</value></data>
+  <data name="Design identity" xml:space="preserve"><value>تعريف التصميم</value></data>
+  <data name="Design name" xml:space="preserve"><value>اسم التصميم</value></data>
+  <data name="Default after activation" xml:space="preserve"><value>جعله الافتراضي بعد التفعيل</value></data>
+  <data name="Page and language" xml:space="preserve"><value>الصفحة واللغة</value></data>
+  <data name="Default language" xml:space="preserve"><value>اللغة الافتراضية</value></data>
+  <data name="Allow language override" xml:space="preserve"><value>السماح بتغيير اللغة</value></data>
+  <data name="Paper size" xml:space="preserve"><value>حجم الورق</value></data>
+  <data name="Orientation" xml:space="preserve"><value>الاتجاه</value></data>
+  <data name="Custom width (mm)" xml:space="preserve"><value>العرض المخصص (مم)</value></data>
+  <data name="Custom height (mm)" xml:space="preserve"><value>الارتفاع المخصص (مم)</value></data>
+  <data name="Top margin (mm)" xml:space="preserve"><value>الهامش العلوي (مم)</value></data>
+  <data name="End margin (mm)" xml:space="preserve"><value>هامش النهاية (مم)</value></data>
+  <data name="Bottom margin (mm)" xml:space="preserve"><value>الهامش السفلي (مم)</value></data>
+  <data name="Start margin (mm)" xml:space="preserve"><value>هامش البداية (مم)</value></data>
+  <data name="Brand and header layout" xml:space="preserve"><value>العلامة التجارية وتخطيط الرأس</value></data>
+  <data name="Primary color" xml:space="preserve"><value>اللون الأساسي</value></data>
+  <data name="Accent color" xml:space="preserve"><value>اللون المساند</value></data>
+  <data name="Text color" xml:space="preserve"><value>لون النص</value></data>
+  <data name="Table header text color" xml:space="preserve"><value>لون نص رأس الجدول</value></data>
+  <data name="Font family" xml:space="preserve"><value>نوع الخط</value></data>
+  <data name="Header layout" xml:space="preserve"><value>تخطيط الرأس</value></data>
+  <data name="Logo placement" xml:space="preserve"><value>موضع الشعار</value></data>
+  <data name="Organization name placement" xml:space="preserve"><value>موضع اسم المنشأة</value></data>
+  <data name="Maximum logo height (px)" xml:space="preserve"><value>أقصى ارتفاع للشعار (بكسل)</value></data>
+  <data name="Use organization logo" xml:space="preserve"><value>استخدام شعار المنشأة</value></data>
+  <data name="Visible information" xml:space="preserve"><value>المعلومات الظاهرة</value></data>
+  <data name="Written content" xml:space="preserve"><value>المحتوى المكتوب</value></data>
+  <data name="English header text" xml:space="preserve"><value>نص الرأس بالإنجليزية</value></data>
+  <data name="Arabic header text" xml:space="preserve"><value>نص الرأس بالعربية</value></data>
+  <data name="English footer text" xml:space="preserve"><value>نص التذييل بالإنجليزية</value></data>
+  <data name="Arabic footer text" xml:space="preserve"><value>نص التذييل بالعربية</value></data>
+  <data name="English cover title" xml:space="preserve"><value>عنوان الغلاف بالإنجليزية</value></data>
+  <data name="Arabic cover title" xml:space="preserve"><value>عنوان الغلاف بالعربية</value></data>
+  <data name="English cover subtitle" xml:space="preserve"><value>العنوان الفرعي للغلاف بالإنجليزية</value></data>
+  <data name="Arabic cover subtitle" xml:space="preserve"><value>العنوان الفرعي للغلاف بالعربية</value></data>
+  <data name="English watermark" xml:space="preserve"><value>العلامة المائية بالإنجليزية</value></data>
+  <data name="Arabic watermark" xml:space="preserve"><value>العلامة المائية بالعربية</value></data>
+  <data name="Opacity" xml:space="preserve"><value>الشفافية</value></data>
+  <data name="Document sections" xml:space="preserve"><value>أقسام المستند</value></data>
+  <data name="Add custom section" xml:space="preserve"><value>إضافة قسم مخصص</value></data>
+  <data name="Custom section" xml:space="preserve"><value>قسم مخصص</value></data>
+  <data name="Drag sections to reorder them. Standard sections may appear once; custom sections may be repeated." xml:space="preserve"><value>اسحب الأقسام لإعادة ترتيبها. يظهر كل قسم قياسي مرة واحدة ويمكن تكرار الأقسام المخصصة.</value></data>
+  <data name="Drag to reorder" xml:space="preserve"><value>اسحب لإعادة الترتيب</value></data>
+  <data name="Section type" xml:space="preserve"><value>نوع القسم</value></data>
+  <data name="English title" xml:space="preserve"><value>العنوان بالإنجليزية</value></data>
+  <data name="Arabic title" xml:space="preserve"><value>العنوان بالعربية</value></data>
+  <data name="English custom content" xml:space="preserve"><value>المحتوى المخصص بالإنجليزية</value></data>
+  <data name="Arabic custom content" xml:space="preserve"><value>المحتوى المخصص بالعربية</value></data>
+  <data name="Visible" xml:space="preserve"><value>ظاهر</value></data>
+  <data name="Start on new page" xml:space="preserve"><value>البدء في صفحة جديدة</value></data>
+  <data name="Save draft design" xml:space="preserve"><value>حفظ مسودة التصميم</value></data>
+  <data name="Live preview" xml:space="preserve"><value>معاينة مباشرة</value></data>
+  <data name="Logo" xml:space="preserve"><value>الشعار</value></data>
+  <data name="Sample product" xml:space="preserve"><value>منتج تجريبي</value></data>
+  <data name="Net total" xml:space="preserve"><value>الصافي</value></data>
+  <data name="Tax" xml:space="preserve"><value>الضريبة</value></data>
+  <data name="Grand total" xml:space="preserve"><value>الإجمالي النهائي</value></data>
+  <data name="All document types" xml:space="preserve"><value>كل أنواع المستندات</value></data>
+  <data name="Search by code or name" xml:space="preserve"><value>البحث بالرمز أو الاسم</value></data>
+  <data name="Design settings" xml:space="preserve"><value>إعدادات التصميم</value></data>
+  <data name="Configured sections" xml:space="preserve"><value>الأقسام المعدة</value></data>
+  <data name="This is the default design for this document type." xml:space="preserve"><value>هذا هو التصميم الافتراضي لنوع المستند هذا.</value></data>
+  <data name="Set as default" xml:space="preserve"><value>تعيينه افتراضياً</value></data>
+  <data name="New page" xml:space="preserve"><value>صفحة جديدة</value></data>
+  <data name="sections" xml:space="preserve"><value>أقسام</value></data>
+  <data name="ShowTradeName" xml:space="preserve"><value>إظهار الاسم التجاري</value></data>
+  <data name="ShowLegalName" xml:space="preserve"><value>إظهار الاسم القانوني</value></data>
+  <data name="ShowRegistrationNumber" xml:space="preserve"><value>إظهار رقم السجل التجاري</value></data>
+  <data name="ShowTaxNumber" xml:space="preserve"><value>إظهار الرقم الضريبي</value></data>
+  <data name="ShowAddress" xml:space="preserve"><value>إظهار العنوان</value></data>
+  <data name="ShowContactDetails" xml:space="preserve"><value>إظهار بيانات التواصل</value></data>
+  <data name="ShowCustomIdentityFields" xml:space="preserve"><value>إظهار حقول الهوية المخصصة</value></data>
+  <data name="ShowPageNumbers" xml:space="preserve"><value>إظهار أرقام الصفحات</value></data>
+  <data name="ShowStatusWatermark" xml:space="preserve"><value>إظهار علامة حالة المستند</value></data>
+  <data name="ShowProductCode" xml:space="preserve"><value>إظهار رمز المنتج</value></data>
+  <data name="ShowUnit" xml:space="preserve"><value>إظهار الوحدة</value></data>
+  <data name="ShowLineNotes" xml:space="preserve"><value>إظهار ملاحظات البنود</value></data>
+  <data name="ShowTaxDetails" xml:space="preserve"><value>إظهار تفاصيل الضريبة</value></data>
+  <data name="ShowNetTotal" xml:space="preserve"><value>إظهار صافي الإجمالي</value></data>
+  <data name="ShowTaxTotal" xml:space="preserve"><value>إظهار إجمالي الضريبة</value></data>
+  <data name="ShowQrCode" xml:space="preserve"><value>إظهار رمز QR</value></data>
+  <data name="ShowDocumentBarcode" xml:space="preserve"><value>إظهار باركود المستند</value></data>
+  <data name="SalesQuotation" xml:space="preserve"><value>عرض سعر مبيعات</value></data>
+  <data name="SalesInvoice" xml:space="preserve"><value>فاتورة مبيعات</value></data>
+  <data name="SalesReceipt" xml:space="preserve"><value>إيصال مبيعات</value></data>
+  <data name="CustomerCreditNote" xml:space="preserve"><value>إشعار دائن للعميل</value></data>
+  <data name="PurchaseOrder" xml:space="preserve"><value>أمر شراء</value></data>
+  <data name="SupplierPaymentReceipt" xml:space="preserve"><value>إيصال دفعة مورد</value></data>
+  <data name="InventoryTransfer" xml:space="preserve"><value>تحويل مخزون</value></data>
+  <data name="Custom" xml:space="preserve"><value>مخصص</value></data>
+  <data name="Bilingual" xml:space="preserve"><value>ثنائي اللغة</value></data>
+  <data name="Letter" xml:space="preserve"><value>ليتر</value></data>
+  <data name="Portrait" xml:space="preserve"><value>عمودي</value></data>
+  <data name="Landscape" xml:space="preserve"><value>أفقي</value></data>
+  <data name="NotoSans" xml:space="preserve"><value>نوتو سانس</value></data>
+  <data name="Arial" xml:space="preserve"><value>أريال</value></data>
+  <data name="Tahoma" xml:space="preserve"><value>تاهوما</value></data>
+  <data name="Cairo" xml:space="preserve"><value>كايرو</value></data>
+  <data name="LogoStartIdentityEnd" xml:space="preserve"><value>الشعار في البداية والهوية في النهاية</value></data>
+  <data name="IdentityStartLogoEnd" xml:space="preserve"><value>الهوية في البداية والشعار في النهاية</value></data>
+  <data name="CenteredStacked" xml:space="preserve"><value>مركزي متتابع</value></data>
+  <data name="ThreeColumns" xml:space="preserve"><value>ثلاثة أعمدة</value></data>
+  <data name="Start" xml:space="preserve"><value>البداية</value></data>
+  <data name="Center" xml:space="preserve"><value>الوسط</value></data>
+  <data name="End" xml:space="preserve"><value>النهاية</value></data>
+  <data name="Cover" xml:space="preserve"><value>الغلاف</value></data>
+  <data name="OrganizationIdentity" xml:space="preserve"><value>هوية المنشأة</value></data>
+  <data name="DocumentDetails" xml:space="preserve"><value>بيانات المستند</value></data>
+  <data name="PartyDetails" xml:space="preserve"><value>بيانات الطرف</value></data>
+  <data name="LineItems" xml:space="preserve"><value>بنود المستند</value></data>
+  <data name="PaymentDetails" xml:space="preserve"><value>بيانات الدفع</value></data>
+  <data name="TermsAndConditions" xml:space="preserve"><value>الشروط والأحكام</value></data>
+  <data name="Acceptance" xml:space="preserve"><value>الاعتماد</value></data>
+  <data name="Footer" xml:space="preserve"><value>التذييل</value></data>
+  <data name="Document design draft created." xml:space="preserve"><value>تم إنشاء مسودة تصميم المستند.</value></data>
+  <data name="Document design activated." xml:space="preserve"><value>تم تفعيل تصميم المستند.</value></data>
+  <data name="Document design archived." xml:space="preserve"><value>تمت أرشفة تصميم المستند.</value></data>
+  <data name="Default document design updated." xml:space="preserve"><value>تم تحديث تصميم المستند الافتراضي.</value></data>
+  <data name="Document design was not found." xml:space="preserve"><value>لم يتم العثور على تصميم المستند.</value></data>
+  <data name="Source document design was not found." xml:space="preserve"><value>لم يتم العثور على تصميم المستند المصدر.</value></data>
+  <data name="Selected document design was not found." xml:space="preserve"><value>لم يتم العثور على تصميم المستند المحدد.</value></data>
+  <data name="Selected document design is not active for sales quotations." xml:space="preserve"><value>تصميم المستند المحدد غير فعال لعروض أسعار المبيعات.</value></data>
+  <data name="A document design must contain at least one section." xml:space="preserve"><value>يجب أن يحتوي تصميم المستند على قسم واحد على الأقل.</value></data>
+  <data name="A document design cannot contain more than 30 sections." xml:space="preserve"><value>لا يمكن أن يحتوي تصميم المستند على أكثر من 30 قسماً.</value></data>
+  <data name="An active document design requires one visible line-items section." xml:space="preserve"><value>يتطلب تصميم المستند الفعال قسماً ظاهراً واحداً للبنود.</value></data>
+  <data name="An active document design requires one visible totals section." xml:space="preserve"><value>يتطلب تصميم المستند الفعال قسماً ظاهراً واحداً للإجماليات.</value></data>
+  <data name="Only an active document design can be the default." xml:space="preserve"><value>يمكن تعيين تصميم مستند فعال فقط كافتراضي.</value></data>
+  <data name="Document design was modified by another user. Reload and try again." xml:space="preserve"><value>عُدّل تصميم المستند بواسطة مستخدم آخر. أعد التحميل وحاول مجدداً.</value></data>
+  <data name="This document design code and version already exist for the selected document type." xml:space="preserve"><value>رمز تصميم المستند وإصداره موجودان مسبقاً لنوع المستند المحدد.</value></data>
+  <data name="A new document design version must keep the source document type and code." xml:space="preserve"><value>يجب أن يحافظ إصدار تصميم المستند الجديد على نوع ورمز التصميم المصدر.</value></data>
+  <data name="A new document design version must be greater than the source version." xml:space="preserve"><value>يجب أن يكون إصدار تصميم المستند الجديد أكبر من إصدار المصدر.</value></data>
+  <data name="Document design type is invalid." xml:space="preserve"><value>نوع تصميم المستند غير صالح.</value></data>
+  <data name="Document design code is required and cannot exceed 50 characters." xml:space="preserve"><value>رمز تصميم المستند مطلوب ولا يمكن أن يتجاوز 50 حرفاً.</value></data>
+  <data name="Document design version must be between 1 and 9999." xml:space="preserve"><value>يجب أن يكون إصدار تصميم المستند بين 1 و9999.</value></data>
+  <data name="Document design name is required and cannot exceed 150 characters." xml:space="preserve"><value>اسم تصميم المستند مطلوب ولا يمكن أن يتجاوز 150 حرفاً.</value></data>
+  <data name="Document design creator is required." xml:space="preserve"><value>منشئ تصميم المستند مطلوب.</value></data>
+  <data name="Document design section order must be unique." xml:space="preserve"><value>يجب أن يكون ترتيب أقسام تصميم المستند فريداً.</value></data>
+  <data name="A standard document design section can only be added once." xml:space="preserve"><value>يمكن إضافة القسم القياسي في تصميم المستند مرة واحدة فقط.</value></data>
+  <data name="Document design settings contain an invalid option." xml:space="preserve"><value>تحتوي إعدادات تصميم المستند على خيار غير صالح.</value></data>
+  <data name="Custom document page dimensions must be between 50 and 1000 millimetres." xml:space="preserve"><value>يجب أن تكون أبعاد صفحة المستند المخصصة بين 50 و1000 مليمتر.</value></data>
+  <data name="Document design logo height must be between 24 and 300 pixels." xml:space="preserve"><value>يجب أن يكون ارتفاع شعار تصميم المستند بين 24 و300 بكسل.</value></data>
+  <data name="Document watermark opacity must be between 0.02 and 0.5." xml:space="preserve"><value>يجب أن تكون شفافية العلامة المائية بين 0.02 و0.5.</value></data>
+  <data name="Only a draft document design can be changed." xml:space="preserve"><value>يمكن تعديل مسودة تصميم المستند فقط.</value></data>
+  <data name="Document design margins must be between 0 and 50 millimetres." xml:space="preserve"><value>يجب أن تكون هوامش تصميم المستند بين 0 و50 مليمتر.</value></data>
+  <data name="Document design section order must be between 1 and 1000." xml:space="preserve"><value>يجب أن يكون ترتيب قسم تصميم المستند بين 1 و1000.</value></data>
+  <data name="Document design section type is invalid." xml:space="preserve"><value>نوع قسم تصميم المستند غير صالح.</value></data>
+  <data name="Document design section title is required and cannot exceed 150 characters." xml:space="preserve"><value>عنوان قسم تصميم المستند مطلوب ولا يمكن أن يتجاوز 150 حرفاً.</value></data>
+  <data name="Preview PDF" xml:space="preserve"><value>معاينة PDF</value></data>
+  <data name="Download PDF" xml:space="preserve"><value>تنزيل PDF</value></data>
+  <data name="Configure the organization identity before generating business documents." xml:space="preserve"><value>يرجى إعداد هوية المنشأة قبل إنشاء مستندات الأعمال.</value></data>
+  <data name="The frozen sales quotation document failed its integrity check." xml:space="preserve"><value>فشل التحقق من سلامة النسخة المثبتة لمستند عرض السعر.</value></data>
+  <data name="The frozen sales quotation document could not be read." xml:space="preserve"><value>تعذرت قراءة النسخة المثبتة لمستند عرض السعر.</value></data>
+  <data name="Freeze the sales quotation document before sending it." xml:space="preserve"><value>يجب تثبيت مستند عرض السعر قبل إرساله.</value></data>
 </root>

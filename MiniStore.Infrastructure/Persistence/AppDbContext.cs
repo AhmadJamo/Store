@@ -143,8 +143,11 @@ public class AppDbContext
     public DbSet<SalesPriceRule> SalesPriceRules => Set<SalesPriceRule>();
     public DbSet<SalesQuotation> SalesQuotations => Set<SalesQuotation>();
     public DbSet<SalesQuotationLine> SalesQuotationLines => Set<SalesQuotationLine>();
+    public DbSet<SalesQuotationDocumentSnapshot> SalesQuotationDocumentSnapshots => Set<SalesQuotationDocumentSnapshot>();
     public DbSet<SalesQuotationTemplate> SalesQuotationTemplates => Set<SalesQuotationTemplate>();
     public DbSet<SalesQuotationTemplateItem> SalesQuotationTemplateItems => Set<SalesQuotationTemplateItem>();
+    public DbSet<DocumentDesign> DocumentDesigns => Set<DocumentDesign>();
+    public DbSet<DocumentDesignSection> DocumentDesignSections => Set<DocumentDesignSection>();
     public DbSet<SalesQuotationHistory> SalesQuotationHistories => Set<SalesQuotationHistory>();
     public DbSet<SalesOrder> SalesOrders => Set<SalesOrder>();
     public DbSet<SalesOrderLine> SalesOrderLines => Set<SalesOrderLine>();
@@ -179,6 +182,8 @@ public class AppDbContext
     public DbSet<AuditLegalHold> AuditLegalHolds => Set<AuditLegalHold>();
 
     public DbSet<GeneralSettings> GeneralSettings=> Set<GeneralSettings>();
+    public DbSet<OrganizationIdentityField> OrganizationIdentityFields => Set<OrganizationIdentityField>();
+    public DbSet<OrganizationLogo> OrganizationLogos => Set<OrganizationLogo>();
     public DbSet<CurrencyExchangeRate> CurrencyExchangeRates => Set<CurrencyExchangeRate>();
 
     public DbSet<DiscountSettings> DiscountSettings { get; set; }

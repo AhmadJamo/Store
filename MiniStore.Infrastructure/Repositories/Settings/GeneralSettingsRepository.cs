@@ -21,6 +21,15 @@ public class GeneralSettingsRepository
             .SingleOrDefaultAsync(x => x.SingletonKey == 1);
     }
 
+    public Task<GeneralSettings?> GetIdentityAsync() => _context.GeneralSettings
+        .Include(x => x.IdentityFields)
+        .Include(x => x.Logo)
+        .SingleOrDefaultAsync(x => x.SingletonKey == 1);
+
+    public Task<OrganizationLogo?> GetLogoAsync() => _context.OrganizationLogos
+        .AsNoTracking()
+        .SingleOrDefaultAsync();
+
     public async Task AddAsync(GeneralSettings settings)
     {
         await _context.GeneralSettings.AddAsync(settings);

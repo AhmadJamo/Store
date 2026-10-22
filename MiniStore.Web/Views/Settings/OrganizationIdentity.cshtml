@@ -1,0 +1,181 @@
+@using Microsoft.Extensions.Localization
+@using MiniStore.Domain.Entities
+@model MiniStore.Application.DTOs.Settings.OrganizationIdentityDto
+@inject IStringLocalizer<MiniStore.Web.SharedResource> Localizer
+
+@{
+    ViewData["Title"] = Localizer["Organization identity"];
+}
+
+<div class="container my-4" style="max-width: 1100px;">
+    <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4">
+        <div>
+            <h2 class="mb-1">🏢 @Localizer["Organization identity"]</h2>
+            <p class="text-muted mb-0">@Localizer["Maintain one trusted identity for quotations, invoices, receipts and purchasing documents."]</p>
+        </div>
+        <a asp-action="Index" class="btn btn-outline-secondary">@Localizer["Settings"]</a>
+    </div>
+
+    <form asp-action="OrganizationIdentity" method="post" enctype="multipart/form-data" class="vstack gap-4">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="RowVersion" />
+        <div asp-validation-summary="All" class="alert alert-danger"></div>
+
+        <section class="card shadow-sm border-0">
+            <div class="card-body p-4">
+                <h5 class="mb-1">@Localizer["Names used on documents"]</h5>
+                <p class="text-muted small mb-3">@Localizer["Keep the commercial brand separate from the registered legal entity, in both supported languages."]</p>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label asp-for="TradeName" class="form-label">@Localizer["Trade name (English)"]</label>
+                        <input asp-for="TradeName" class="form-control" />
+                        <span asp-validation-for="TradeName" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="TradeNameArabic" class="form-label">@Localizer["Trade name (Arabic)"]</label>
+                        <input asp-for="TradeNameArabic" class="form-control" dir="rtl" />
+                        <span asp-validation-for="TradeNameArabic" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="LegalName" class="form-label">@Localizer["Legal name (English)"]</label>
+                        <input asp-for="LegalName" class="form-control" />
+                        <span asp-validation-for="LegalName" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="LegalNameArabic" class="form-label">@Localizer["Legal name (Arabic)"]</label>
+                        <input asp-for="LegalNameArabic" class="form-control" dir="rtl" />
+                        <span asp-validation-for="LegalNameArabic" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="DocumentNameStyle" class="form-label">@Localizer["Name displayed on documents"]</label>
+                        <select asp-for="DocumentNameStyle" class="form-select">
+                            <option value="@OrganizationDocumentNameStyle.TradeName">@Localizer["Trade name"]</option>
+                            <option value="@OrganizationDocumentNameStyle.LegalName">@Localizer["Legal name"]</option>
+                            <option value="@OrganizationDocumentNameStyle.TradeAndLegalNames">@Localizer["Trade and legal names"]</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="card shadow-sm border-0">
+            <div class="card-body p-4">
+                <h5 class="mb-3">@Localizer["Legal registration"]</h5>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label asp-for="CommercialRegistrationNumber" class="form-label">@Localizer["Commercial registration number"]</label>
+                        <input asp-for="CommercialRegistrationNumber" class="form-control" />
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="TaxRegistrationNumber" class="form-label">@Localizer["Tax registration number"]</label>
+                        <input asp-for="TaxRegistrationNumber" class="form-control" />
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="card shadow-sm border-0">
+            <div class="card-body p-4">
+                <h5 class="mb-3">@Localizer["Contact and address"]</h5>
+                <div class="row g-3">
+                    <div class="col-md-6"><label asp-for="Phone" class="form-label">@Localizer["Primary phone"]</label><input asp-for="Phone" class="form-control" /></div>
+                    <div class="col-md-6"><label asp-for="SecondaryPhone" class="form-label">@Localizer["Secondary phone"]</label><input asp-for="SecondaryPhone" class="form-control" /></div>
+                    <div class="col-md-6"><label asp-for="Email" class="form-label">@Localizer["Email"]</label><input asp-for="Email" type="email" class="form-control" /><span asp-validation-for="Email" class="text-danger"></span></div>
+                    <div class="col-md-6"><label asp-for="Website" class="form-label">@Localizer["Website"]</label><input asp-for="Website" type="url" class="form-control" placeholder="https://" /><span asp-validation-for="Website" class="text-danger"></span></div>
+                    <div class="col-md-6"><label asp-for="Address" class="form-label">@Localizer["Address (English)"]</label><textarea asp-for="Address" class="form-control" rows="2"></textarea></div>
+                    <div class="col-md-6"><label asp-for="AddressArabic" class="form-label">@Localizer["Address (Arabic)"]</label><textarea asp-for="AddressArabic" class="form-control" rows="2" dir="rtl"></textarea></div>
+                    <div class="col-md-4"><label asp-for="City" class="form-label">@Localizer["City (English)"]</label><input asp-for="City" class="form-control" /></div>
+                    <div class="col-md-4"><label asp-for="CityArabic" class="form-label">@Localizer["City (Arabic)"]</label><input asp-for="CityArabic" class="form-control" dir="rtl" /></div>
+                    <div class="col-md-4"><label asp-for="StateOrProvince" class="form-label">@Localizer["State or province"]</label><input asp-for="StateOrProvince" class="form-control" /></div>
+                    <div class="col-md-4"><label asp-for="PostalCode" class="form-label">@Localizer["Postal code"]</label><input asp-for="PostalCode" class="form-control" /></div>
+                    <div class="col-md-4"><label asp-for="CountryCode" class="form-label">@Localizer["Country code"]</label><input asp-for="CountryCode" class="form-control text-uppercase" maxlength="2" placeholder="JO" /><span asp-validation-for="CountryCode" class="text-danger"></span></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="card shadow-sm border-0">
+            <div class="card-body p-4">
+                <h5 class="mb-1">@Localizer["Organization logo"]</h5>
+                <p class="text-muted small">@Localizer["Upload a PNG or JPEG image up to 2 MB. The logo is stored per organization and reused by document templates."]</p>
+                <div class="row g-3 align-items-center">
+                    @if (Model.HasLogo)
+                    {
+                        <div class="col-md-3">
+                            <div class="border rounded p-3 text-center bg-light">
+                                <img src="@Url.Action("OrganizationLogo", new { v = Model.LogoVersion })" alt="@Localizer["Organization logo"]" style="max-width:100%;max-height:120px;" />
+                            </div>
+                        </div>
+                    }
+                    <div class="@(Model.HasLogo ? "col-md-9" : "col-12")">
+                        <input name="logoFile" type="file" class="form-control" accept="image/png,image/jpeg" />
+                        <div class="form-text">@Localizer["Uploading a new file replaces the current logo."]</div>
+                        @if (Model.HasLogo)
+                        {
+                            <div class="form-check mt-2">
+                                <input id="removeLogo" name="removeLogo" value="true" type="checkbox" class="form-check-input" />
+                                <label for="removeLogo" class="form-check-label">@Localizer["Remove current logo"]</label>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="card shadow-sm border-0">
+            <div class="card-body p-4">
+                <div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-3">
+                    <div>
+                        <h5 class="mb-1">@Localizer["Custom identity fields"]</h5>
+                        <p class="text-muted small mb-0">@Localizer["Add licenses, branch identifiers, social links or any organization-specific detail and choose where it appears."]</p>
+                    </div>
+                    <button type="button" id="add-identity-field" class="btn btn-outline-primary btn-sm">＋ @Localizer["Add custom field"]</button>
+                </div>
+                <div id="identity-fields" class="vstack gap-3">
+                    @for (var i = 0; i < Model.CustomFields.Count; i++)
+                    {
+                        <partial name="_OrganizationIdentityField" model="@(new MiniStore.Web.Models.Settings.OrganizationIdentityFieldRowViewModel(Model.CustomFields[i], i))" />
+                    }
+                </div>
+                <template id="identity-field-template">
+                    <partial name="_OrganizationIdentityField" model="@(new MiniStore.Web.Models.Settings.OrganizationIdentityFieldRowViewModel(new MiniStore.Application.DTOs.Settings.OrganizationIdentityFieldDto(), -1))" />
+                </template>
+            </div>
+        </section>
+
+        <div class="d-flex justify-content-end">
+            <button type="submit" class="btn btn-primary px-4">💾 @Localizer["Save organization identity"]</button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        (() => {
+            const host = document.getElementById('identity-fields');
+            const template = document.getElementById('identity-field-template');
+            const reindex = () => {
+                [...host.querySelectorAll('[data-identity-field]')].forEach((row, index) => {
+                    row.querySelectorAll('[name]').forEach(input => input.name = input.name.replace(/CustomFields\[-?\d+\]/, `CustomFields[${index}]`));
+                    row.querySelectorAll('[id]').forEach(input => input.id = input.id.replace(/CustomFields_-?\d+__/, `CustomFields_${index}__`));
+                    row.querySelectorAll('[for]').forEach(label => label.htmlFor = label.htmlFor.replace(/CustomFields_-?\d+__/, `CustomFields_${index}__`));
+                    const sequence = row.querySelector('[data-sequence]');
+                    if (sequence) sequence.value = index + 1;
+                });
+            };
+            document.getElementById('add-identity-field').addEventListener('click', () => {
+                if (host.children.length >= 20) return;
+                const fragment = template.content.cloneNode(true);
+                host.appendChild(fragment);
+                reindex();
+            });
+            host.addEventListener('click', event => {
+                const button = event.target.closest('[data-remove-field]');
+                if (!button) return;
+                button.closest('[data-identity-field]').remove();
+                reindex();
+            });
+            reindex();
+        })();
+    </script>
+}

@@ -6,7 +6,7 @@ namespace MiniStore.Application.Services;
 
 public sealed class SalesQuotationTemplateService(ISalesQuotationTemplateRepository templates,
     IProductRepository products, IMeasurementUnitRepository units, SalesPriceListService pricing,
-    IUnitOfWork unitOfWork, ICurrentUserService currentUser)
+    IDocumentDesignRepository designs, IUnitOfWork unitOfWork, ICurrentUserService currentUser)
 {
     public async Task<List<SalesQuotationTemplateSummaryDto>> GetAllAsync(SalesQuotationTemplateStatus? status, string? search) =>
         (await templates.GetAllAsync(status, search)).Select(x => new SalesQuotationTemplateSummaryDto(x.Id, x.Code,
@@ -23,6 +23,7 @@ public sealed class SalesQuotationTemplateService(ISalesQuotationTemplateReposit
                 SourceTemplateId = source.Id, Code = source.Code, Version = source.Version + 1,
                 Name = source.Name, Description = source.Description, Category = source.Category, Tags = source.Tags,
                 ValidityDays = source.ValidityDays, Channel = source.Channel, SalesPriceListId = source.SalesPriceListId,
+                DocumentDesignId = source.DocumentDesignId,
                 AllowAdditionalLines = source.AllowAdditionalLines, IsDefault = false, Introduction = source.Introduction,
                 TermsAndConditions = source.TermsAndConditions, FooterNotes = source.FooterNotes,
                 Items = source.Items.OrderBy(x => x.Sequence).Select(MapCreateItem).ToList()
@@ -36,7 +37,9 @@ public sealed class SalesQuotationTemplateService(ISalesQuotationTemplateReposit
             Products = productRows.Select(x => new SalesQuotationOptionDto(x.Id, $"{x.ProductCode} — {x.Name}")).ToList(),
             Units = page.Units.Select(x => new SalesQuotationOptionDto(x.Id, $"{x.Name} ({x.Symbol})")).ToList(),
             PriceLists = page.PriceLists.Where(x => x.IsActive).Select(x => new SalesQuotationOptionDto(x.Id, $"{x.Code} — {x.Name}")).ToList(),
-            TaxRates = page.TaxRates.Select(x => new SalesQuotationOptionDto(x.Id, $"{x.Name} ({x.Rate:0.####}%)")).ToList()
+            TaxRates = page.TaxRates.Select(x => new SalesQuotationOptionDto(x.Id, $"{x.Name} ({x.Rate:0.####}%)")).ToList(),
+            Designs = (await designs.GetAllAsync(DocumentDesignStatus.Active, DocumentDesignType.SalesQuotation, null))
+                .Select(x => new SalesQuotationOptionDto(x.Id, $"{x.Code} v{x.Version} — {x.Name}{(x.IsDefault ? " ★" : "")}")).ToList()
         };
     }
 
@@ -62,10 +65,18 @@ public sealed class SalesQuotationTemplateService(ISalesQuotationTemplateReposit
             if (dto.SalesPriceListId.HasValue && !page.PriceLists.Any(x => x.Id == dto.SalesPriceListId.Value && x.IsActive))
                 throw new InvalidOperationException("Selected quotation template price list was not found or is inactive.");
             var taxIds = page.TaxRates.Select(x => x.Id).ToHashSet();
+            DocumentDesign? design = null;
+            if (dto.DocumentDesignId.HasValue)
+            {
+                design = await designs.GetByIdAsync(dto.DocumentDesignId.Value, false)
+                    ?? throw new InvalidOperationException("Selected document design was not found.");
+                if (design.DocumentType != DocumentDesignType.SalesQuotation || design.Status != DocumentDesignStatus.Active)
+                    throw new InvalidOperationException("Selected document design is not active for sales quotations.");
+            }
             created = new SalesQuotationTemplate(dto.Code, dto.Version, dto.SourceTemplateId, dto.Name,
                 dto.Description, dto.Category, dto.Tags, dto.ValidityDays, dto.Channel, dto.SalesPriceListId,
                 dto.AllowAdditionalLines, dto.IsDefault, dto.Introduction, dto.TermsAndConditions,
-                dto.FooterNotes, currentUser.UserId);
+                dto.FooterNotes, currentUser.UserId, design?.Id);
             foreach (var input in dto.Items.OrderBy(x => x.Sequence))
             {
                 var product = await products.GetByIdAsync(input.ProductId) ?? throw new InvalidOperationException("Selected quotation template product was not found.");
@@ -94,12 +105,14 @@ public sealed class SalesQuotationTemplateService(ISalesQuotationTemplateReposit
     {
         var x = await templates.GetByIdAsync(id, false); if (x is null) return null;
         var priceListName = (await pricing.GetPageAsync()).PriceLists.FirstOrDefault(p => p.Id == x.SalesPriceListId)?.Name;
+        var designName = x.DocumentDesignId.HasValue ? (await designs.GetByIdAsync(x.DocumentDesignId.Value, false))?.Name : null;
         return new SalesQuotationTemplateDetailsDto
         {
             Id = x.Id, Code = x.Code, Version = x.Version, Name = x.Name, Description = x.Description,
             Category = x.Category, Tags = x.Tags, ValidityDays = x.ValidityDays, Channel = x.Channel,
             PriceListName = priceListName, AllowAdditionalLines = x.AllowAdditionalLines, IsDefault = x.IsDefault,
             Introduction = x.Introduction, TermsAndConditions = x.TermsAndConditions, FooterNotes = x.FooterNotes,
+            DocumentDesignId = x.DocumentDesignId, DesignName = designName,
             Status = x.Status, CreatedByUserId = x.CreatedByUserId, CreatedAtUtc = x.CreatedAtUtc,
             ActivatedAtUtc = x.ActivatedAtUtc, RowVersion = x.RowVersion,
             Items = x.Items.OrderBy(i => i.Sequence).Select(i => new SalesQuotationTemplateItemDto(i.Sequence,

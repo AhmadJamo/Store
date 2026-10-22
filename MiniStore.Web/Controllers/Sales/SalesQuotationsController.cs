@@ -28,6 +28,18 @@ public sealed class SalesQuotationsController(SalesQuotationService service, ISt
     [HttpGet, PermissionAuthorize("SalesQuotations.View")]
     public async Task<IActionResult> Details(int id) { var dto = await service.GetAsync(id); return dto is null ? NotFound() : View(dto); }
 
+    [HttpGet, PermissionAuthorize("SalesQuotations.View")]
+    public async Task<IActionResult> DownloadPdf(int id, DocumentLanguage? language, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var result = await service.GeneratePdfAsync(id, language, cancellationToken);
+            return result is null ? NotFound() : File(result.Content, "application/pdf", result.FileName);
+        }
+        catch (Exception ex) when (ex is ArgumentException or InvalidOperationException)
+        { Notify("danger", ex.Message); return RedirectToAction(nameof(Details), new { id }); }
+    }
+
     [HttpPost, ValidateAntiForgeryToken, PermissionAuthorize("SalesQuotations.Send")]
     public Task<IActionResult> Send(SalesQuotationStatusCommandDto dto) => Change(dto, service.SendAsync, "Sales quotation sent.");
     [HttpPost, ValidateAntiForgeryToken, PermissionAuthorize("SalesQuotations.Accept")]

@@ -1,4 +1,8 @@
 # Architecture
+
+## Central document rendering boundary (2026-10-22)
+
+All printable ERP features use the Application-layer `IHtmlToPdfEngine` contract. Infrastructure supplies one singleton `PlaywrightPdfEngine` that owns browser reuse, serialization of rendering calls, paper sizing, logical margins, background printing and page headers/footers. Feature-specific composers, beginning with sales quotations, build encoded HTML and pass only a neutral render request to that engine. This prevents each invoice, order, receipt or report from launching and configuring its own PDF stack. Windows development uses installed Microsoft Edge; Linux/container deployment must install the matching Playwright Chromium runtime. See `decisions/ADR-20261022-CENTRAL-REUSABLE-PDF-AND-FROZEN-QUOTATIONS.md`.
 > Status: IMPLEMENTED WITH INCONSISTENCIES  
 > Source of truth: Code  
 > Last reviewed: 2026-10-15

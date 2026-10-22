@@ -332,38 +332,96 @@ public class SettingsController : Controller
     [HttpGet]
     public async Task<IActionResult> General()
     {
-        return View(await _generalSettingsService.GetAsync());
+        return View(await _generalSettingsService.GetPreferencesAsync());
     }
 
     [HttpPost]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> General(
-        GeneralSettingsDto dto)
+        GeneralSettingsPreferencesDto dto)
     {
         if (!ModelState.IsValid)
             return View(dto);
 
         try
         {
-            await _generalSettingsService.UpdateAsync(dto);
+            await _generalSettingsService.UpdatePreferencesAsync(dto);
             _memoryCache.Remove(
                 MiniStore.Web.Localization.DatabaseRequestCultureProvider.GetCacheKey(_tenantContext.TenantId));
 
             TempData["NotificationType"] = "success";
             TempData["NotificationMessage"] =
-                "General settings updated successfully.";
+                _localizer["General settings updated successfully."].Value;
 
             return RedirectToAction(nameof(General));
         }
         catch (ArgumentException ex)
         {
-            ModelState.AddModelError(string.Empty, ex.Message);
+            ModelState.AddModelError(string.Empty, _localizer[ex.Message]);
             return View(dto);
         }
         catch (InvalidOperationException ex)
         {
-            ModelState.AddModelError(string.Empty, ex.Message);
+            ModelState.AddModelError(string.Empty, _localizer[ex.Message]);
             return View(dto);
         }
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> OrganizationIdentity() =>
+        View(await _generalSettingsService.GetOrganizationIdentityAsync());
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [RequestFormLimits(MultipartBodyLengthLimit = 3 * 1024 * 1024)]
+    public async Task<IActionResult> OrganizationIdentity(OrganizationIdentityDto dto,
+        IFormFile? logoFile, bool removeLogo = false)
+    {
+        if (logoFile is { Length: > 2 * 1024 * 1024 })
+            ModelState.AddModelError(nameof(logoFile), _localizer["Organization logo must be no larger than 2 MB."]);
+        if (!ModelState.IsValid)
+        {
+            await RefreshIdentityPresentationAsync(dto);
+            return View(dto);
+        }
+
+        try
+        {
+            OrganizationLogoUploadDto? logo = null;
+            if (logoFile is { Length: > 0 })
+            {
+                await using var stream = new MemoryStream((int)logoFile.Length);
+                await logoFile.CopyToAsync(stream);
+                logo = new OrganizationLogoUploadDto(stream.ToArray(), logoFile.FileName);
+            }
+            await _generalSettingsService.UpdateOrganizationIdentityAsync(dto, logo, removeLogo);
+            TempData["NotificationType"] = "success";
+            TempData["NotificationMessage"] = _localizer["Organization identity updated successfully."].Value;
+            return RedirectToAction(nameof(OrganizationIdentity));
+        }
+        catch (Exception ex) when (ex is ArgumentException or InvalidOperationException)
+        {
+            ModelState.AddModelError(string.Empty, _localizer[ex.Message]);
+            await RefreshIdentityPresentationAsync(dto);
+            return View(dto);
+        }
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> OrganizationLogo(string? v = null)
+    {
+        var logo = await _generalSettingsService.GetOrganizationLogoAsync();
+        if (logo is null) return NotFound();
+        Response.Headers.CacheControl = "private,max-age=300";
+        Response.Headers.ETag = $"\"{logo.Version}\"";
+        return File(logo.Content, logo.ContentType, enableRangeProcessing: false);
+    }
+
+    private async Task RefreshIdentityPresentationAsync(OrganizationIdentityDto dto)
+    {
+        var current = await _generalSettingsService.GetOrganizationIdentityAsync();
+        dto.HasLogo = current.HasLogo;
+        dto.LogoVersion = current.LogoVersion;
     }
 
 

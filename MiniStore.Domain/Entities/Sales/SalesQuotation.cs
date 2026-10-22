@@ -38,6 +38,11 @@ public sealed class SalesQuotation
     public string? IntroductionSnapshot { get; private set; }
     public string? TermsAndConditionsSnapshot { get; private set; }
     public string? FooterNotesSnapshot { get; private set; }
+    public int? DocumentDesignId { get; private set; }
+    public string? DesignCodeSnapshot { get; private set; }
+    public int? DesignVersionSnapshot { get; private set; }
+    public string? DesignNameSnapshot { get; private set; }
+    public DocumentLanguage? DesignLanguageSnapshot { get; private set; }
     public SalesQuotationStatus Status { get; private set; }
     public decimal NetAmount { get; private set; }
     public decimal TaxAmount { get; private set; }
@@ -47,11 +52,12 @@ public sealed class SalesQuotation
     public byte[] RowVersion { get; private set; } = [];
     public List<SalesQuotationLine> Lines { get; private set; } = [];
     public List<SalesQuotationHistory> History { get; private set; } = [];
+    public SalesQuotationDocumentSnapshot? DocumentSnapshot { get; private set; }
 
     public SalesQuotation(string quotationNumber, string requestKey, Customer customer, CustomerAddress? address,
         DateOnly quotationDate, DateOnly validUntil, string currencyCode, decimal exchangeRate,
         DateOnly exchangeRateDate, string exchangeRateSource, string? notes, string createdByUserId,
-        SalesQuotationTemplate? template = null)
+        SalesQuotationTemplate? template = null, DocumentDesign? design = null)
     {
         if (string.IsNullOrWhiteSpace(quotationNumber)) throw new ArgumentException("Sales quotation number is required.");
         if (!Guid.TryParse(requestKey, out _)) throw new ArgumentException("Sales quotation request key is invalid.");
@@ -76,6 +82,9 @@ public sealed class SalesQuotation
         TemplateVersionSnapshot = template?.Version; TemplateNameSnapshot = template?.Name;
         IntroductionSnapshot = template?.Introduction; TermsAndConditionsSnapshot = template?.TermsAndConditions;
         FooterNotesSnapshot = template?.FooterNotes;
+        DocumentDesignId = design?.Id; DesignCodeSnapshot = design?.Code;
+        DesignVersionSnapshot = design?.Version; DesignNameSnapshot = design?.Name;
+        DesignLanguageSnapshot = design?.DefaultLanguage;
         History.Add(new SalesQuotationHistory(Status, Status, SalesQuotationHistoryAction.Created, createdByUserId));
     }
 
@@ -89,7 +98,14 @@ public sealed class SalesQuotation
     }
 
     public void Send(string userId, DateOnly today)
-    { EnsureDraft(); EnsureUser(userId); EnsureLines(); if (ValidUntil < today) throw new InvalidOperationException("An expired sales quotation cannot be sent."); Change(SalesQuotationStatus.Sent, SalesQuotationHistoryAction.Sent, userId, null); }
+    { EnsureDraft(); EnsureUser(userId); EnsureLines(); if (DocumentSnapshot is null) throw new InvalidOperationException("Freeze the sales quotation document before sending it."); if (ValidUntil < today) throw new InvalidOperationException("An expired sales quotation cannot be sent."); Change(SalesQuotationStatus.Sent, SalesQuotationHistoryAction.Sent, userId, null); }
+
+    public void FreezeDocumentSnapshot(string snapshotJson, byte[]? logoContent, string? logoContentType, string contentHash)
+    {
+        EnsureDraft();
+        if (DocumentSnapshot is not null) throw new InvalidOperationException("The sales quotation document snapshot is already frozen.");
+        DocumentSnapshot = new SalesQuotationDocumentSnapshot(snapshotJson, logoContent, logoContentType, contentHash);
+    }
     public void Accept(string userId, DateOnly today)
     { EnsureUser(userId); EnsureSent(); if (ValidUntil < today) throw new InvalidOperationException("Expire the sales quotation before continuing."); Change(SalesQuotationStatus.Accepted, SalesQuotationHistoryAction.Accepted, userId, null); }
     public void Reject(string userId, string reason)
@@ -109,6 +125,36 @@ public sealed class SalesQuotation
     private static void EnsureUser(string value) { if (string.IsNullOrWhiteSpace(value)) throw new ArgumentException("User is required."); }
     private static string NormalizeCurrency(string value) { value = value?.Trim().ToUpperInvariant() ?? string.Empty; if (value.Length != 3 || !value.All(char.IsLetter)) throw new ArgumentException("Sales quotation currency must contain three letters."); return value; }
     private static string? Normalize(string? value) => string.IsNullOrWhiteSpace(value) ? null : value.Trim();
+}
+
+public sealed class SalesQuotationDocumentSnapshot
+{
+    private SalesQuotationDocumentSnapshot() { SnapshotJson = ContentHash = string.Empty; }
+
+    public int Id { get; private set; }
+    public int SalesQuotationId { get; private set; }
+    public string SnapshotJson { get; private set; } = string.Empty;
+    public byte[]? LogoContent { get; private set; }
+    public string? LogoContentType { get; private set; }
+    public string ContentHash { get; private set; } = string.Empty;
+    public DateTime CreatedAtUtc { get; private set; }
+
+    internal SalesQuotationDocumentSnapshot(string snapshotJson, byte[]? logoContent, string? logoContentType, string contentHash)
+    {
+        if (string.IsNullOrWhiteSpace(snapshotJson) || snapshotJson.Length > 512_000)
+            throw new ArgumentException("Sales quotation document snapshot must be between 1 and 512000 characters.");
+        if (logoContent is { Length: > 2 * 1024 * 1024 })
+            throw new ArgumentException("Sales quotation document snapshot logo cannot exceed 2 MB.");
+        if (logoContent is { Length: > 0 } && logoContentType is not ("image/png" or "image/jpeg"))
+            throw new ArgumentException("Sales quotation document snapshot logo must be a PNG or JPEG image.");
+        if (contentHash?.Length != 64 || contentHash.Any(x => !Uri.IsHexDigit(x)))
+            throw new ArgumentException("Sales quotation document snapshot hash is invalid.");
+        SnapshotJson = snapshotJson;
+        LogoContent = logoContent?.ToArray();
+        LogoContentType = logoContent is { Length: > 0 } ? logoContentType : null;
+        ContentHash = contentHash.ToLowerInvariant();
+        CreatedAtUtc = DateTime.UtcNow;
+    }
 }
 
 public sealed class SalesQuotationLine

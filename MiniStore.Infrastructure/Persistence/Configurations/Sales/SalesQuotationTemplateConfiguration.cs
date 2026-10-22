@@ -18,6 +18,7 @@ public sealed class SalesQuotationTemplateConfiguration : IEntityTypeConfigurati
         b.HasIndex(x => x.IsDefault).HasFilter("[IsDefault] = 1 AND [Status] = 2").IsUnique();
         b.HasOne<SalesQuotationTemplate>().WithMany().HasForeignKey(x => x.SourceTemplateId).OnDelete(DeleteBehavior.Restrict);
         b.HasOne<SalesPriceList>().WithMany().HasForeignKey(x => x.SalesPriceListId).OnDelete(DeleteBehavior.Restrict);
+        b.HasOne<DocumentDesign>().WithMany().HasForeignKey(x => x.DocumentDesignId).OnDelete(DeleteBehavior.Restrict);
         b.HasMany(x => x.Items).WithOne().HasForeignKey(x => x.SalesQuotationTemplateId).OnDelete(DeleteBehavior.Cascade);
     }
 

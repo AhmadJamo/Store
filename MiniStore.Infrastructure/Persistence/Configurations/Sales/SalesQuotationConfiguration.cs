@@ -5,7 +5,8 @@ using MiniStore.Domain.Entities;
 namespace MiniStore.Infrastructure.Persistence.Configurations;
 
 public sealed class SalesQuotationConfiguration : IEntityTypeConfiguration<SalesQuotation>,
-    IEntityTypeConfiguration<SalesQuotationLine>, IEntityTypeConfiguration<SalesQuotationHistory>
+    IEntityTypeConfiguration<SalesQuotationLine>, IEntityTypeConfiguration<SalesQuotationHistory>,
+    IEntityTypeConfiguration<SalesQuotationDocumentSnapshot>
 {
     public void Configure(EntityTypeBuilder<SalesQuotation> b)
     {
@@ -20,13 +21,16 @@ public sealed class SalesQuotationConfiguration : IEntityTypeConfiguration<Sales
         b.Property(x => x.NetAmount).HasPrecision(24, 8); b.Property(x => x.TaxAmount).HasPrecision(24, 8); b.Property(x => x.TotalAmount).HasPrecision(24, 8);
         b.Property(x => x.Notes).HasMaxLength(1000); b.Property(x => x.TemplateCodeSnapshot).HasMaxLength(50); b.Property(x => x.TemplateNameSnapshot).HasMaxLength(150);
         b.Property(x => x.IntroductionSnapshot).HasMaxLength(4000); b.Property(x => x.TermsAndConditionsSnapshot).HasMaxLength(8000); b.Property(x => x.FooterNotesSnapshot).HasMaxLength(4000);
+        b.Property(x => x.DesignCodeSnapshot).HasMaxLength(50); b.Property(x => x.DesignNameSnapshot).HasMaxLength(150);
         b.Property(x => x.CreatedByUserId).HasMaxLength(450).IsRequired(); b.Property(x => x.RowVersion).IsRowVersion();
         b.HasIndex(x => x.QuotationNumber).IsUnique(); b.HasIndex(x => x.RequestKey).IsUnique(); b.HasIndex(x => new { x.Status, x.CreatedAtUtc });
         b.HasOne<Customer>().WithMany().HasForeignKey(x => x.CustomerId).OnDelete(DeleteBehavior.Restrict);
         b.HasOne<CustomerAddress>().WithMany().HasForeignKey(x => x.CustomerAddressId).OnDelete(DeleteBehavior.Restrict);
         b.HasOne<SalesQuotationTemplate>().WithMany().HasForeignKey(x => x.SalesQuotationTemplateId).OnDelete(DeleteBehavior.Restrict);
+        b.HasOne<DocumentDesign>().WithMany().HasForeignKey(x => x.DocumentDesignId).OnDelete(DeleteBehavior.Restrict);
         b.HasMany(x => x.Lines).WithOne().HasForeignKey(x => x.SalesQuotationId).OnDelete(DeleteBehavior.Cascade);
         b.HasMany(x => x.History).WithOne().HasForeignKey(x => x.SalesQuotationId).OnDelete(DeleteBehavior.Cascade);
+        b.HasOne(x => x.DocumentSnapshot).WithOne().HasForeignKey<SalesQuotationDocumentSnapshot>(x => x.SalesQuotationId).OnDelete(DeleteBehavior.Cascade);
     }
 
     public void Configure(EntityTypeBuilder<SalesQuotationLine> b)
@@ -52,5 +56,15 @@ public sealed class SalesQuotationConfiguration : IEntityTypeConfiguration<Sales
     {
         b.HasKey(x => x.Id); b.Property(x => x.UserId).HasMaxLength(450).IsRequired(); b.Property(x => x.Reason).HasMaxLength(500);
         b.HasIndex(x => new { x.SalesQuotationId, x.CreatedAtUtc });
+    }
+
+    public void Configure(EntityTypeBuilder<SalesQuotationDocumentSnapshot> b)
+    {
+        b.HasKey(x => x.Id);
+        b.Property(x => x.SnapshotJson).HasColumnType("nvarchar(max)").IsRequired();
+        b.Property(x => x.LogoContent).HasColumnType("varbinary(max)");
+        b.Property(x => x.LogoContentType).HasMaxLength(50);
+        b.Property(x => x.ContentHash).HasMaxLength(64).IsFixedLength().IsRequired();
+        b.HasIndex(x => x.SalesQuotationId).IsUnique();
     }
 }

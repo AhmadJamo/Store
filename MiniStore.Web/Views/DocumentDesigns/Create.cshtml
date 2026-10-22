@@ -1,0 +1,88 @@
+@model MiniStore.Application.Dtos.Settings.CreateDocumentDesignDto
+@using MiniStore.Application.Dtos.Settings
+@using MiniStore.Domain.Entities
+@using MiniStore.Web.Models.Settings
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizer<MiniStore.Web.SharedResource> Localizer
+@{ ViewData["Title"] = Localizer["Create document design"]; var emptySection = new CreateDocumentDesignSectionDto { Sequence = 999, SectionType = DocumentDesignSectionType.Custom, IsVisible = true, Title = Localizer["Custom section"].Value, TitleArabic = Localizer["Custom section"].Value }; }
+
+<div class="d-flex justify-content-between align-items-center mb-3"><div><h2 class="mb-1">@Localizer["Document designer"]</h2><p class="text-muted mb-0">@Localizer["Build a reusable layout without changing historical active versions."]</p></div><a asp-action="Index" class="btn btn-outline-secondary">@Localizer["Back"]</a></div>
+
+<form asp-action="Create" method="post" id="design-form">
+    <input asp-for="SourceDesignId" type="hidden" />
+    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+    <div class="row g-3">
+        <div class="col-xl-8">
+            <div class="card shadow-sm mb-3"><div class="card-header"><strong>@Localizer["Design identity"]</strong></div><div class="card-body"><div class="row g-3">
+                <div class="col-md-4"><label asp-for="DocumentType" class="form-label">@Localizer["Document type"]</label><select name="DocumentType" class="form-select">@foreach(var x in Enum.GetValues<DocumentDesignType>()){<option value="@x" selected="@(x==Model.DocumentType?"selected":null)">@Localizer[x.ToString()]</option>}</select></div>
+                <div class="col-md-3"><label asp-for="Code" class="form-label">@Localizer["Code"]</label><input asp-for="Code" class="form-control" /></div>
+                <div class="col-md-2"><label asp-for="Version" class="form-label">@Localizer["Version"]</label><input asp-for="Version" class="form-control" /></div>
+                <div class="col-md-3 d-flex align-items-end"><div class="form-check mb-2"><input asp-for="IsDefault" class="form-check-input"/><label asp-for="IsDefault" class="form-check-label">@Localizer["Default after activation"]</label></div></div>
+                <div class="col-md-6"><label asp-for="Name" class="form-label">@Localizer["Design name"]</label><input asp-for="Name" class="form-control" /></div>
+                <div class="col-md-6"><label asp-for="Description" class="form-label">@Localizer["Description"]</label><input asp-for="Description" class="form-control" /></div>
+            </div></div></div>
+
+            <div class="card shadow-sm mb-3"><div class="card-header"><strong>@Localizer["Page and language"]</strong></div><div class="card-body"><div class="row g-3">
+                <div class="col-md-3"><label asp-for="DefaultLanguage" class="form-label">@Localizer["Default language"]</label><select name="DefaultLanguage" class="form-select">@foreach(var x in Enum.GetValues<DocumentLanguage>()){<option value="@x" selected="@(x==Model.DefaultLanguage?"selected":null)">@Localizer[x.ToString()]</option>}</select></div>
+                <div class="col-md-3"><label asp-for="PageSize" class="form-label">@Localizer["Paper size"]</label><select name="PageSize" class="form-select" id="page-size">@foreach(var x in Enum.GetValues<DocumentPageSize>()){<option value="@x" selected="@(x==Model.PageSize?"selected":null)">@Localizer[x.ToString()]</option>}</select></div>
+                <div class="col-md-3"><label asp-for="Orientation" class="form-label">@Localizer["Orientation"]</label><select name="Orientation" class="form-select">@foreach(var x in Enum.GetValues<DocumentPageOrientation>()){<option value="@x" selected="@(x==Model.Orientation?"selected":null)">@Localizer[x.ToString()]</option>}</select></div>
+                <div class="col-md-3 d-flex align-items-end"><div class="form-check mb-2"><input asp-for="AllowLanguageOverride" class="form-check-input"/><label asp-for="AllowLanguageOverride" class="form-check-label">@Localizer["Allow language override"]</label></div></div>
+                <div class="col-md-3 custom-page"><label asp-for="CustomPageWidthMm" class="form-label">@Localizer["Custom width (mm)"]</label><input asp-for="CustomPageWidthMm" class="form-control" /></div>
+                <div class="col-md-3 custom-page"><label asp-for="CustomPageHeightMm" class="form-label">@Localizer["Custom height (mm)"]</label><input asp-for="CustomPageHeightMm" class="form-control" /></div>
+                <div class="col-md-3"><label asp-for="MarginTopMm" class="form-label">@Localizer["Top margin (mm)"]</label><input asp-for="MarginTopMm" class="form-control" /></div>
+                <div class="col-md-3"><label asp-for="MarginEndMm" class="form-label">@Localizer["End margin (mm)"]</label><input asp-for="MarginEndMm" class="form-control" /></div>
+                <div class="col-md-3"><label asp-for="MarginBottomMm" class="form-label">@Localizer["Bottom margin (mm)"]</label><input asp-for="MarginBottomMm" class="form-control" /></div>
+                <div class="col-md-3"><label asp-for="MarginStartMm" class="form-label">@Localizer["Start margin (mm)"]</label><input asp-for="MarginStartMm" class="form-control" /></div>
+            </div></div></div>
+
+            <div class="card shadow-sm mb-3"><div class="card-header"><strong>@Localizer["Brand and header layout"]</strong></div><div class="card-body"><div class="row g-3">
+                <div class="col-md-3"><label asp-for="PrimaryColor" class="form-label">@Localizer["Primary color"]</label><input asp-for="PrimaryColor" type="color" class="form-control form-control-color design-color" /></div>
+                <div class="col-md-3"><label asp-for="AccentColor" class="form-label">@Localizer["Accent color"]</label><input asp-for="AccentColor" type="color" class="form-control form-control-color" /></div>
+                <div class="col-md-3"><label asp-for="TextColor" class="form-label">@Localizer["Text color"]</label><input asp-for="TextColor" type="color" class="form-control form-control-color" /></div>
+                <div class="col-md-3"><label asp-for="TableHeaderTextColor" class="form-label">@Localizer["Table header text color"]</label><input asp-for="TableHeaderTextColor" type="color" class="form-control form-control-color" /></div>
+                <div class="col-md-4"><label asp-for="FontFamily" class="form-label">@Localizer["Font family"]</label><select name="FontFamily" class="form-select">@foreach(var x in Enum.GetValues<DocumentFontFamily>()){<option value="@x" selected="@(x==Model.FontFamily?"selected":null)">@Localizer[x.ToString()]</option>}</select></div>
+                <div class="col-md-4"><label asp-for="HeaderLayout" class="form-label">@Localizer["Header layout"]</label><select name="HeaderLayout" class="form-select">@foreach(var x in Enum.GetValues<DocumentHeaderLayout>()){<option value="@x" selected="@(x==Model.HeaderLayout?"selected":null)">@Localizer[x.ToString()]</option>}</select></div>
+                <div class="col-md-4"><label asp-for="LogoPlacement" class="form-label">@Localizer["Logo placement"]</label><select name="LogoPlacement" class="form-select">@foreach(var x in Enum.GetValues<DocumentElementPlacement>()){<option value="@x" selected="@(x==Model.LogoPlacement?"selected":null)">@Localizer[x.ToString()]</option>}</select></div>
+                <div class="col-md-4"><label asp-for="OrganizationNamePlacement" class="form-label">@Localizer["Organization name placement"]</label><select name="OrganizationNamePlacement" class="form-select">@foreach(var x in Enum.GetValues<DocumentElementPlacement>()){<option value="@x" selected="@(x==Model.OrganizationNamePlacement?"selected":null)">@Localizer[x.ToString()]</option>}</select></div>
+                <div class="col-md-4"><label asp-for="LogoMaximumHeightPx" class="form-label">@Localizer["Maximum logo height (px)"]</label><input asp-for="LogoMaximumHeightPx" class="form-control" /></div>
+                <div class="col-md-4 d-flex align-items-end"><div class="form-check mb-2"><input asp-for="UseOrganizationLogo" class="form-check-input"/><label asp-for="UseOrganizationLogo" class="form-check-label">@Localizer["Use organization logo"]</label></div></div>
+            </div></div></div>
+
+            <div class="card shadow-sm mb-3"><div class="card-header"><strong>@Localizer["Visible information"]</strong></div><div class="card-body"><div class="row row-cols-1 row-cols-md-3 g-2">
+                @foreach (var field in new[]{nameof(Model.ShowTradeName),nameof(Model.ShowLegalName),nameof(Model.ShowRegistrationNumber),nameof(Model.ShowTaxNumber),nameof(Model.ShowAddress),nameof(Model.ShowContactDetails),nameof(Model.ShowCustomIdentityFields),nameof(Model.ShowPageNumbers),nameof(Model.ShowStatusWatermark),nameof(Model.ShowProductCode),nameof(Model.ShowUnit),nameof(Model.ShowLineNotes),nameof(Model.ShowTaxDetails),nameof(Model.ShowNetTotal),nameof(Model.ShowTaxTotal),nameof(Model.ShowQrCode),nameof(Model.ShowDocumentBarcode)})
+                {<div class="col"><div class="form-check">@Html.CheckBox(field, (bool)(Model.GetType().GetProperty(field)?.GetValue(Model) ?? false), new { @class="form-check-input" })<label class="form-check-label" for="@field">@Localizer[field]</label></div></div>}
+            </div></div></div>
+
+            <div class="card shadow-sm mb-3"><div class="card-header"><strong>@Localizer["Written content"]</strong></div><div class="card-body"><div class="row g-3">
+                <div class="col-md-6"><label asp-for="HeaderText" class="form-label">@Localizer["English header text"]</label><textarea asp-for="HeaderText" rows="2" class="form-control"></textarea></div><div class="col-md-6"><label asp-for="HeaderTextArabic" class="form-label">@Localizer["Arabic header text"]</label><textarea asp-for="HeaderTextArabic" rows="2" dir="rtl" class="form-control"></textarea></div>
+                <div class="col-md-6"><label asp-for="FooterText" class="form-label">@Localizer["English footer text"]</label><textarea asp-for="FooterText" rows="3" class="form-control"></textarea></div><div class="col-md-6"><label asp-for="FooterTextArabic" class="form-label">@Localizer["Arabic footer text"]</label><textarea asp-for="FooterTextArabic" rows="3" dir="rtl" class="form-control"></textarea></div>
+                <div class="col-md-6"><label asp-for="CoverTitle" class="form-label">@Localizer["English cover title"]</label><input asp-for="CoverTitle" class="form-control" /></div><div class="col-md-6"><label asp-for="CoverTitleArabic" class="form-label">@Localizer["Arabic cover title"]</label><input asp-for="CoverTitleArabic" dir="rtl" class="form-control" /></div>
+                <div class="col-md-6"><label asp-for="CoverSubtitle" class="form-label">@Localizer["English cover subtitle"]</label><textarea asp-for="CoverSubtitle" rows="2" class="form-control"></textarea></div><div class="col-md-6"><label asp-for="CoverSubtitleArabic" class="form-label">@Localizer["Arabic cover subtitle"]</label><textarea asp-for="CoverSubtitleArabic" rows="2" dir="rtl" class="form-control"></textarea></div>
+                <div class="col-md-5"><label asp-for="WatermarkText" class="form-label">@Localizer["English watermark"]</label><input asp-for="WatermarkText" class="form-control" /></div><div class="col-md-5"><label asp-for="WatermarkTextArabic" class="form-label">@Localizer["Arabic watermark"]</label><input asp-for="WatermarkTextArabic" dir="rtl" class="form-control" /></div><div class="col-md-2"><label asp-for="WatermarkOpacity" class="form-label">@Localizer["Opacity"]</label><input asp-for="WatermarkOpacity" class="form-control" /></div>
+            </div></div></div>
+
+            <div class="card shadow-sm mb-3"><div class="card-header d-flex justify-content-between"><strong>@Localizer["Document sections"]</strong><button type="button" id="add-section" class="btn btn-sm btn-outline-primary">@Localizer["Add custom section"]</button></div><div class="card-body"><p class="text-muted small">@Localizer["Drag sections to reorder them. Standard sections may appear once; custom sections may be repeated."]</p><div id="sections">@for(var i=0;i<Model.Sections.Count;i++){<partial name="_Section" model="new DocumentDesignSectionRowViewModel(i,Model.Sections[i])" />}</div></div></div>
+            <button class="btn btn-primary btn-lg">@Localizer["Save draft design"]</button>
+        </div>
+        <div class="col-xl-4"><div class="card shadow-sm sticky-top" style="top:1rem"><div class="card-header"><strong>@Localizer["Live preview"]</strong></div><div class="card-body bg-light"><div id="design-preview" class="bg-white shadow-sm mx-auto p-3" style="max-width:420px;min-height:560px;border-top:8px solid @Model.PrimaryColor;color:@Model.TextColor">
+            <div class="d-flex justify-content-between gap-3 border-bottom pb-3"><div class="rounded bg-light d-flex align-items-center justify-content-center" style="width:90px;height:60px">@Localizer["Logo"]</div><div class="text-end"><strong>@Localizer["Trade name"]</strong><div class="small text-muted">@Localizer["Legal name"]</div><div class="small">@Localizer["Tax number"]</div></div></div>
+            <div class="my-3"><span class="badge" style="background:@Model.PrimaryColor">@Localizer[Model.DocumentType.ToString()]</span><div class="small text-muted mt-2">DOC-00001 · 2026-10-22</div></div>
+            <table class="table table-sm"><thead><tr style="background:@Model.PrimaryColor;color:@Model.TableHeaderTextColor"><th>@Localizer["Item"]</th><th>@Localizer["Quantity"]</th><th>@Localizer["Total"]</th></tr></thead><tbody><tr><td>@Localizer["Sample product"]</td><td>2</td><td>100.00</td></tr></tbody></table>
+            <div class="ms-auto" style="max-width:220px"><div class="d-flex justify-content-between"><span>@Localizer["Net total"]</span><strong>100.00</strong></div><div class="d-flex justify-content-between"><span>@Localizer["Tax"]</span><strong>16.00</strong></div><div class="d-flex justify-content-between border-top pt-1"><span>@Localizer["Grand total"]</span><strong>116.00</strong></div></div>
+            <div id="preview-footer" class="small text-center text-muted border-top mt-5 pt-2">@Model.FooterText</div>
+        </div></div></div></div>
+    </div>
+</form>
+<template id="section-template"><partial name="_Section" model="new DocumentDesignSectionRowViewModel(9999, emptySection)" /></template>
+
+@section Scripts {<partial name="_ValidationScriptsPartial"/><script>
+(()=>{const box=document.getElementById('sections'),tpl=document.getElementById('section-template'),preview=document.getElementById('design-preview'),page=document.getElementById('page-size');
+function renumber(){[...box.children].forEach((row,i)=>{row.querySelectorAll('[name]').forEach(el=>el.name=el.name.replace(/Sections\[\d+\]/,`Sections[${i}]`));const seq=row.querySelector('.section-sequence');if(seq)seq.value=(i+1)*10;});}
+document.getElementById('add-section').addEventListener('click',()=>{box.insertAdjacentHTML('beforeend',tpl.innerHTML.replaceAll('Sections[9999]',`Sections[${box.children.length}]`));renumber();});
+box.addEventListener('click',e=>{if(e.target.closest('.remove-section')){e.target.closest('.design-section').remove();renumber();}});
+let dragged;box.addEventListener('dragstart',e=>{dragged=e.target.closest('.design-section');});box.addEventListener('dragover',e=>{e.preventDefault();const row=e.target.closest('.design-section');if(row&&row!==dragged)box.insertBefore(dragged,row);});box.addEventListener('drop',()=>renumber());
+function custom(){document.querySelectorAll('.custom-page').forEach(x=>x.classList.toggle('d-none',page.value!=='Custom'));}page.addEventListener('change',custom);custom();
+document.querySelector('[name="PrimaryColor"]').addEventListener('input',e=>preview.style.borderTopColor=e.target.value);
+document.querySelector('[name="TextColor"]').addEventListener('input',e=>preview.style.color=e.target.value);
+document.querySelector('[name="FooterText"]').addEventListener('input',e=>document.getElementById('preview-footer').textContent=e.target.value);
+})();</script>}

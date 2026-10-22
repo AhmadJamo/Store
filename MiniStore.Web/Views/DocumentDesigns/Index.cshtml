@@ -1,0 +1,29 @@
+@model IReadOnlyList<MiniStore.Application.Dtos.Settings.DocumentDesignSummaryDto>
+@using MiniStore.Domain.Entities
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizer<MiniStore.Web.SharedResource> Localizer
+@{ ViewData["Title"] = Localizer["Document designs"]; }
+
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+    <div><h2 class="mb-1">@Localizer["Document designs"]</h2><p class="text-muted mb-0">@Localizer["Control the visual identity, content and layout of every business document."]</p></div>
+    <div class="d-flex gap-2"><a asp-controller="Settings" asp-action="Index" class="btn btn-outline-secondary">@Localizer["Back to settings"]</a><a asp-action="Create" class="btn btn-primary">@Localizer["Create document design"]</a></div>
+</div>
+
+<form method="get" class="card card-body mb-3"><div class="row g-2 align-items-end">
+    <div class="col-lg-4"><label class="form-label">@Localizer["Search"]</label><input name="search" value="@ViewBag.Search" class="form-control" placeholder="@Localizer["Search by code or name"]" /></div>
+    <div class="col-lg-3"><label class="form-label">@Localizer["Document type"]</label><select name="documentType" class="form-select"><option value="">@Localizer["All document types"]</option>@foreach(var x in Enum.GetValues<DocumentDesignType>()){<option value="@x" selected="@(Equals(ViewBag.DocumentType,x)?"selected":null)">@Localizer[x.ToString()]</option>}</select></div>
+    <div class="col-lg-3"><label class="form-label">@Localizer["Status"]</label><select name="status" class="form-select"><option value="">@Localizer["All statuses"]</option>@foreach(var x in Enum.GetValues<DocumentDesignStatus>()){<option value="@x" selected="@(Equals(ViewBag.Status,x)?"selected":null)">@Localizer[x.ToString()]</option>}</select></div>
+    <div class="col-lg-2"><button class="btn btn-outline-primary w-100">@Localizer["Filter"]</button></div>
+</div></form>
+
+<div class="row g-3">
+@foreach (var x in Model)
+{
+    <div class="col-xl-4 col-md-6"><div class="card h-100 shadow-sm" style="border-top:5px solid @x.PrimaryColor">
+        <div class="card-body"><div class="d-flex justify-content-between gap-2"><div><span class="badge bg-light text-dark">@Localizer[x.DocumentType.ToString()]</span><h5 class="mt-2 mb-1">@x.Name</h5><div class="text-muted"><code>@x.Code</code> · v@x.Version</div></div><div class="text-end">@if(x.IsDefault){<span class="badge bg-primary">@Localizer["Default"]</span>}<div class="mt-1"><span class="badge bg-secondary">@Localizer[x.Status.ToString()]</span></div></div></div>
+        <div class="small text-muted mt-3">@Localizer[x.DefaultLanguage.ToString()] · @Localizer[x.PageSize.ToString()] · @Localizer[x.Orientation.ToString()] · @x.SectionCount @Localizer["sections"]</div></div>
+        <div class="card-footer bg-transparent d-flex gap-2"><a asp-action="Details" asp-route-id="@x.Id" class="btn btn-sm btn-outline-primary">@Localizer["Open"]</a><a asp-action="Create" asp-route-sourceDesignId="@x.Id" class="btn btn-sm btn-outline-secondary">@Localizer["Create new version"]</a></div>
+    </div></div>
+}
+</div>
+@if(Model.Count==0){<div class="alert alert-info">@Localizer["No document designs were found."]</div>}

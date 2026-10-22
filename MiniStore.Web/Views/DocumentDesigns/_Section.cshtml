@@ -1,0 +1,18 @@
+@model MiniStore.Web.Models.Settings.DocumentDesignSectionRowViewModel
+@using MiniStore.Domain.Entities
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizer<MiniStore.Web.SharedResource> Localizer
+@{ var p = $"Sections[{Model.Index}]"; var x = Model.Section; }
+<div class="card card-body mb-2 design-section" draggable="true">
+    <div class="d-flex justify-content-between align-items-center mb-2"><span class="drag-handle text-muted" title="@Localizer["Drag to reorder"]">☰ @Localizer["Section"]</span><button type="button" class="btn btn-sm btn-outline-danger remove-section">@Localizer["Remove"]</button></div>
+    <div class="row g-2">
+        <div class="col-md-2"><label class="form-label">@Localizer["Order"]</label><input name="@(p + ".Sequence")" value="@x.Sequence" type="number" min="1" max="1000" class="form-control section-sequence" required /></div>
+        <div class="col-md-4"><label class="form-label">@Localizer["Section type"]</label><select name="@(p + ".SectionType")" class="form-select section-type">@foreach(var t in Enum.GetValues<DocumentDesignSectionType>()){<option value="@t" selected="@(t==x.SectionType?"selected":null)">@Localizer[t.ToString()]</option>}</select></div>
+        <div class="col-md-3 d-flex align-items-end"><div class="form-check mb-2"><input name="@(p + ".IsVisible")" value="true" type="checkbox" checked="@x.IsVisible" class="form-check-input"/><label class="form-check-label">@Localizer["Visible"]</label></div></div>
+        <div class="col-md-3 d-flex align-items-end"><div class="form-check mb-2"><input name="@(p + ".PageBreakBefore")" value="true" type="checkbox" checked="@x.PageBreakBefore" class="form-check-input"/><label class="form-check-label">@Localizer["Start on new page"]</label></div></div>
+        <div class="col-md-6"><label class="form-label">@Localizer["English title"]</label><input name="@(p + ".Title")" value="@x.Title" maxlength="150" class="form-control section-title" required /></div>
+        <div class="col-md-6"><label class="form-label">@Localizer["Arabic title"]</label><input name="@(p + ".TitleArabic")" value="@x.TitleArabic" maxlength="150" dir="rtl" class="form-control" /></div>
+        <div class="col-md-6"><label class="form-label">@Localizer["English custom content"]</label><textarea name="@(p + ".Content")" maxlength="4000" rows="2" class="form-control">@x.Content</textarea></div>
+        <div class="col-md-6"><label class="form-label">@Localizer["Arabic custom content"]</label><textarea name="@(p + ".ContentArabic")" maxlength="4000" rows="2" dir="rtl" class="form-control">@x.ContentArabic</textarea></div>
+    </div>
+</div>

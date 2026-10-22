@@ -10,6 +10,7 @@ public sealed class SalesQuotationTemplatePageDto
     public List<SalesQuotationOptionDto> Units { get; init; } = [];
     public List<SalesQuotationOptionDto> PriceLists { get; init; } = [];
     public List<SalesQuotationOptionDto> TaxRates { get; init; } = [];
+    public List<SalesQuotationOptionDto> Designs { get; init; } = [];
 }
 
 public sealed class CreateSalesQuotationTemplateDto
@@ -24,6 +25,7 @@ public sealed class CreateSalesQuotationTemplateDto
     [Range(0, 3650)] public int ValidityDays { get; set; } = 30;
     public SaleChannel Channel { get; set; } = SaleChannel.Wholesale;
     public int? SalesPriceListId { get; set; }
+    public int? DocumentDesignId { get; set; }
     public bool AllowAdditionalLines { get; set; } = true;
     public bool IsDefault { get; set; }
     [StringLength(4000)] public string? Introduction { get; set; }
@@ -63,6 +65,7 @@ public sealed class SalesQuotationTemplateDetailsDto
     public string? Tags { get; init; } public int ValidityDays { get; init; } public SaleChannel Channel { get; init; }
     public string? PriceListName { get; init; } public bool AllowAdditionalLines { get; init; } public bool IsDefault { get; init; }
     public string? Introduction { get; init; } public string? TermsAndConditions { get; init; } public string? FooterNotes { get; init; }
+    public int? DocumentDesignId { get; init; } public string? DesignName { get; init; }
     public SalesQuotationTemplateStatus Status { get; init; } public string CreatedByUserId { get; init; } = "";
     public DateTime CreatedAtUtc { get; init; } public DateTime? ActivatedAtUtc { get; init; } public byte[] RowVersion { get; init; } = [];
     public List<SalesQuotationTemplateItemDto> Items { get; init; } = [];
