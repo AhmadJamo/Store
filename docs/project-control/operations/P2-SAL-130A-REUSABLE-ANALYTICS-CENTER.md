@@ -16,12 +16,12 @@
 
 - Debug web build: succeeded with zero errors.
 - Release regression build: succeeded with zero warnings and zero errors.
-- Security/inventory regression: 1043 checks passed.
+- Security/inventory regression: 1049 checks passed after the cross-page form/button audit.
 - EF model check: no changes pending after migration 135.
 - Arabic resource XML: valid and duplicate keys removed.
 - `git diff --check`: clean except Git line-ending notices.
 
 ## Operational boundary
 
-Migration 135 was generated but not applied to Demo. Demo remains evidenced at 128 because the known host SQL
-encryption/SSPI connection failure occurs before migration execution. No production readiness claim is made.
+Migration 135 was applied to the local Demo on 2026-10-22 under the interactive Windows identity. EF migration
+reconciliation and application startup succeeded; this remains local development evidence, not a production-readiness claim.

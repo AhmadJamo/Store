@@ -405,6 +405,25 @@ Check(TenantIsolationModel.TenantOwnedTypes.Contains(typeof(DocumentDesign)) &&
 Check(typeof(DocumentDesignsController).GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
       $"{PermissionAuthorizeAttribute.PolicyPrefix}Administration.Access",
     "The central document designer must require administration access");
+var documentDesignCommands = typeof(DocumentDesignsController).GetMethods()
+    .Where(x => x.Name is nameof(DocumentDesignsController.Create) or nameof(DocumentDesignsController.Activate)
+        or nameof(DocumentDesignsController.Archive) or nameof(DocumentDesignsController.SetDefault))
+    .Where(x => x.GetCustomAttribute<HttpPostAttribute>() is not null);
+Check(documentDesignCommands.All(x => x.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null),
+    "Every document designer mutation must require antiforgery validation");
+var organizationIdentityPost = typeof(SettingsController).GetMethods()
+    .Single(x => x.Name == nameof(SettingsController.OrganizationIdentity) && x.GetCustomAttribute<HttpPostAttribute>() is not null);
+Check(organizationIdentityPost.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null,
+    "Organization identity save must require antiforgery validation");
+var analyticsController = typeof(AnalyticsCenterController);
+Check(analyticsController.GetMethod(nameof(AnalyticsCenterController.Index))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == $"{PermissionAuthorizeAttribute.PolicyPrefix}AnalyticsCenter.View" &&
+      analyticsController.GetMethods().Single(x => x.Name == nameof(AnalyticsCenterController.Create) && x.GetCustomAttribute<HttpPostAttribute>() is not null)
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == $"{PermissionAuthorizeAttribute.PolicyPrefix}AnalyticsCenter.Customize",
+    "Analytics center view and workspace creation must enforce their server-side permissions");
+Check(analyticsController.GetMethods().Single(x => x.Name == nameof(AnalyticsCenterController.Create) && x.GetCustomAttribute<HttpPostAttribute>() is not null)
+          .GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null,
+    "Analytics workspace creation must require antiforgery validation");
 Check(SupportedUiCultures.Contains("ar-JO") && SupportedUiCultures.Contains("en-US") &&
       !SupportedUiCultures.Contains("fr-FR"),
     "Only Arabic and English UI cultures must be accepted");
@@ -561,6 +580,11 @@ Check(customerController.GetMethods().Where(x => x.Name is nameof(CustomersContr
         .Where(x => x.GetCustomAttribute<HttpPostAttribute>() is not null)
         .All(x => x.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null),
     "Every customer mutation must require antiforgery validation");
+Check(customerController.GetMethods()
+        .Where(x => x.Name is nameof(CustomersController.Create) or nameof(CustomersController.Edit))
+        .Where(x => x.GetCustomAttribute<HttpPostAttribute>() is not null)
+        .All(x => x.GetParameters().Single().GetCustomAttribute<BindAttribute>()?.Prefix == "Form"),
+    "Customer create and edit must bind the nested Form fields rendered by the shared customer form");
 Check(customerController.GetMethods().Where(x=>x.Name is nameof(CustomersController.SaveContact) or nameof(CustomersController.SaveAddress))
         .All(x=>x.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy==$"{PermissionAuthorizeAttribute.PolicyPrefix}Customers.Edit"&&x.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null),
     "Customer contact and address edits must require edit permission and antiforgery");
@@ -990,6 +1014,15 @@ Check(DashboardDefinitions.All.Count >= 7 &&
     "Dashboard launcher must expose distinct business applications");
 Check(DashboardDefinitions.All.SelectMany(x => x.Items).All(x => knownPermissions.Contains(x.Permission)),
     "Every Dashboard application shortcut must use a registered permission");
+var navigableItems = NavigationDefinitions.All.SelectMany(x => x.Items)
+    .Concat(DashboardDefinitions.All.SelectMany(x => x.Items)).ToList();
+var webControllers = typeof(CustomersController).Assembly.GetTypes()
+    .Where(x => typeof(Controller).IsAssignableFrom(x) && x.Name.EndsWith("Controller", StringComparison.Ordinal))
+    .ToDictionary(x => x.Name[..^"Controller".Length], StringComparer.OrdinalIgnoreCase);
+Check(navigableItems.All(item => webControllers.TryGetValue(item.Controller, out var controller) &&
+        controller.GetMethods(BindingFlags.Instance | BindingFlags.Public)
+            .Any(method => method.Name.Equals(item.Action, StringComparison.OrdinalIgnoreCase))),
+    "Every sidebar and dashboard button must target an existing public controller action");
 var reconciliationIndex = typeof(InventoryReconciliationController)
     .GetMethod(nameof(InventoryReconciliationController.Index))!;
 Check(

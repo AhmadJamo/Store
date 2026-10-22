@@ -24,8 +24,7 @@ Permissions are intentionally separate:
 - `AnalyticsCenter.Manage`: create shared workspaces in addition to personal ones.
 
 Migration 135 creates `AnalyticsWorkspaces` and `AnalyticsWorkspaceWidgets` with tenant-composite relationships,
-rowversion and per-workspace widget-key/order uniqueness. The local Demo remains at migration 128 because of the
-documented SQL encryption/SSPI host issue.
+rowversion and per-workspace widget-key/order uniqueness. The local Demo is reconciled through migration 135.
 
 Editing, cloning, archival, scheduled distribution, exports and a governed semantic-field builder remain later
 increments. They should extend this center rather than create module-specific dashboard infrastructure.

@@ -16,7 +16,7 @@ public sealed class CustomersController(CustomerService service, IStringLocalize
     public async Task<IActionResult> Create() => View(await service.GetCreatePageAsync());
 
     [HttpPost, ValidateAntiForgeryToken, PermissionAuthorize("Customers.Create")]
-    public async Task<IActionResult> Create(CustomerFormDto form)
+    public async Task<IActionResult> Create([Bind(Prefix = "Form")] CustomerFormDto form)
     {
         if (!ModelState.IsValid) return View(await service.GetCreatePageAsync(form));
         try { var id = await service.CreateAsync(form); TempData["Success"] = "Customer created successfully."; return RedirectToAction(nameof(Details), new { id }); }
@@ -28,7 +28,7 @@ public sealed class CustomersController(CustomerService service, IStringLocalize
     public async Task<IActionResult> Edit(int id) => await service.GetEditPageAsync(id) is { } model ? View(model) : NotFound();
 
     [HttpPost, ValidateAntiForgeryToken, PermissionAuthorize("Customers.Edit")]
-    public async Task<IActionResult> Edit(CustomerFormDto form)
+    public async Task<IActionResult> Edit([Bind(Prefix = "Form")] CustomerFormDto form)
     {
         if (!ModelState.IsValid) return View(await service.GetEditPageAsync(form.Id, form) ?? await service.GetCreatePageAsync(form));
         try { await service.UpdateAsync(form); TempData["Success"] = "Customer updated successfully."; return RedirectToAction(nameof(Details), new { id = form.Id }); }

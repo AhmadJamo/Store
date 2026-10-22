@@ -20,6 +20,6 @@ Status: COMPLETED IN SOURCE
 - EF Core: no pending model changes after migration 134.
 - PDF smoke: one bilingual A4 page generated through the central engine, rendered to PNG with Poppler and visually checked for Arabic shaping, RTL alignment, table layout, totals and page numbering.
 
-## Open deployment item
+## Deployment evidence
 
-Demo remains at migration 128 because the known SQL host encryption/SSPI failure occurs before migration execution. Migrations 129-134 must be applied and reconciled after that host issue is repaired.
+Migrations through 134 were applied to the local Demo on 2026-10-22 under the interactive Windows identity and the application starts successfully against the reconciled schema.

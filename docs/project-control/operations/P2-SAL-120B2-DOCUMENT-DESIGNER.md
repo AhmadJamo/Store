@@ -22,7 +22,7 @@ Status: source complete; database application and PDF rendering pending
 - EF pending-model check: no pending changes.
 - Arabic resource XML and duplicate resource keys: valid.
 - Migration review confirmed tenant-composite foreign keys, tenant/type/version uniqueness, per-type filtered default uniqueness and a compatible existing-row default for organization name style.
-- Demo remains at migration 128 because the known SQL encryption/SSPI connection failure occurs before execution; no database success is claimed.
+- Migration 133 was applied to the local Demo on 2026-10-22 under the interactive Windows identity; the application starts successfully against the reconciled schema.
 
 ## Remaining SAL-120B work
 

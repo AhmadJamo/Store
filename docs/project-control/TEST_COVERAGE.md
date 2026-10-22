@@ -13,7 +13,7 @@
 | Live local replacement-admin positive test (اختبار دخول المدير البديل) | Passed with authorized redirect (نجح مع تحويل مصرح) | 2026-10-15 |
 | Encrypted backup verify/isolated restore/DBCC (تحقق النسخة والاستعادة المعزولة وسلامة القاعدة) | Passed with AES-256 and checksum (نجح) | 2026-10-15 |
 | Restored ERP reconciliation (مصالحة النظام المستعاد) | 147 tables and 21 business checks; zero mismatches (صفر فروق) | 2026-10-15 |
-| EF/database migration reconciliation (مطابقة الترحيلات) | Source/model 132 with no pending model changes; Demo evidenced at 128 because update connection failed before execution | 2026-10-22 |
+| EF/database migration reconciliation (مطابقة الترحيلات) | Source/model/local Demo reconciled through migration 135; no pending model changes | 2026-10-22 |
 | Live schema integrity (سلامة المخطط الحي) | 147 tables, 420 trusted FKs, zero disabled constraints/indexes or unsafe tenant relations | 2026-10-15 |
 | Web dependency build (بناء الويب واعتماداته) | Release, 4 projects, zero warnings/errors after SAL-120A (نجح) | 2026-10-22 |
 

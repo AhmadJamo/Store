@@ -5,26 +5,26 @@ Migration 135 (`20261022125125_AddReusableAnalyticsCenter`) creates tenant-owned
 `AnalyticsWorkspaceWidgets`. Workspaces preserve module key, visibility/owner, default status, layout, date window,
 comparison/refresh/definition preferences, creator evidence and rowversion. Widgets preserve stable provider key,
 unique order, visualization, bilingual title overrides, spans, Top-N, legend/comparison, target and accent color.
-Tenant-composite foreign keys and query filters preserve isolation. Source/model are at 135 with no pending changes;
-Demo remains evidenced at 128 due the existing host SQL connection failure.
+Tenant-composite foreign keys and query filters preserve isolation. Source/model and local Demo are reconciled through
+migration 135 with no pending changes as of 2026-10-22.
 
 ## SAL-120B organization identity, document designer and frozen PDF evidence
 
 Migration 133 (`20261022120233_AddOrganizationIdentityAndDocumentDesigner`) extends tenant `GeneralSettings` with bilingual legal/commercial identity, registration/contact/address fields and document-name policy. It creates tenant-owned `OrganizationIdentityFields`, a separately loaded one-to-one `OrganizationLogos` table, and versioned tenant-owned `DocumentDesigns`/`DocumentDesignSections`. Per-tenant/type/code/version uniqueness and a filtered one-default-per-document-type index protect selection; tenant-composite self/source, section and quotation relationships prevent cross-company references. Quotations and quotation templates have optional restrictive design links, while quotations also freeze design code/version/name/language evidence.
 
-Migration 134 (`20261022122434_AddFrozenSalesQuotationPdf`) creates tenant-owned one-to-one `SalesQuotationDocumentSnapshots`. The row stores bounded JSON containing the effective organization identity, exact design settings/sections and quotation content, plus an optional copied PNG/JPEG logo, SHA-256 content hash and creation time. The snapshot is created atomically before the Draft-to-Sent transition and is required by the domain transition, so later identity/design changes cannot rewrite a historical quotation PDF. Draft preview does not persist a snapshot. Source/model are at 134 with no pending changes. Demo remains evidenced at 128 because the SQL host fails before migration execution.
+Migration 134 (`20261022122434_AddFrozenSalesQuotationPdf`) creates tenant-owned one-to-one `SalesQuotationDocumentSnapshots`. The row stores bounded JSON containing the effective organization identity, exact design settings/sections and quotation content, plus an optional copied PNG/JPEG logo, SHA-256 content hash and creation time. The snapshot is created atomically before the Draft-to-Sent transition and is required by the domain transition, so later identity/design changes cannot rewrite a historical quotation PDF. Draft preview does not persist a snapshot. Source/model and local Demo include this migration.
 
 ## SAL-110 configurable sales controls
 
-Migration 131 (`20261021222759_AddConfigurableSalesControls`) creates tenant-owned approval rules and ordered role steps plus immutable Sales Order reviews, findings and decision steps. Tenant-composite foreign keys bind every row to one company; a filtered unique index permits only one Pending review per order. Rule rows persist scope, metric, comparison, threshold, action, priority, effective dates, activation and self/distinct-approver policy. Review findings freeze the actual measured value and rule evidence so later rule edits cannot rewrite a past decision. Source/model are at 131 with no pending changes; Demo remains evidenced at 128 because the SQL host connection fails before migration execution.
+Migration 131 (`20261021222759_AddConfigurableSalesControls`) creates tenant-owned approval rules and ordered role steps plus immutable Sales Order reviews, findings and decision steps. Tenant-composite foreign keys bind every row to one company; a filtered unique index permits only one Pending review per order. Rule rows persist scope, metric, comparison, threshold, action, priority, effective dates, activation and self/distinct-approver policy. Review findings freeze the actual measured value and rule evidence so later rule edits cannot rewrite a past decision. Source/model and local Demo include this migration.
 
 ## SAL-100D customer credit notes
 
-Migration 130 (`20261021220324_AddCustomerCreditNotes`) creates tenant-owned header and line tables with restrictive tenant-composite links to invoices, invoice lines, return-receipt lines, products, warehouses and frozen accounts. Tenant-unique credit-note numbers and request keys prevent duplicate documents/retries; quantity checks and line uniqueness preserve cumulative allocation evidence. Source/model are at 130 with no pending changes. Applying migrations 129-130 to local Demo was attempted on 2026-10-22 but the host SQL encryption/SSPI failure occurred before execution, so Demo remains evidenced at 128.
+Migration 130 (`20261021220324_AddCustomerCreditNotes`) creates tenant-owned header and line tables with restrictive tenant-composite links to invoices, invoice lines, return-receipt lines, products, warehouses and frozen accounts. Tenant-unique credit-note numbers and request keys prevent duplicate documents/retries; quantity checks and line uniqueness preserve cumulative allocation evidence. Source/model and local Demo include this migration; the earlier SQL identity failure was resolved by applying migrations under the interactive Windows identity on 2026-10-22.
 
 ## SAL-100C return disposition posting
 
-Migration 129 (`20261021170925_AddCustomerReturnDispositionPosting`) adds nullable `PostedByUserId` and `PostedAtUtc` evidence to `CustomerReturnReceipts`; enum values are stored through the existing integer columns. The migration is additive, the EF model has no pending changes, and source/model are at 129. Applying it to local Demo was attempted on 2026-10-21 but blocked before execution by the host SQL encryption/SSPI connection failure, so Demo remains evidenced at 128 until connectivity is repaired.
+Migration 129 (`20261021170925_AddCustomerReturnDispositionPosting`) adds nullable `PostedByUserId` and `PostedAtUtc` evidence to `CustomerReturnReceipts`; enum values are stored through the existing integer columns. The migration is additive and is now included in the local Demo database together with all migrations through 135.
 
 ## SAL-100A customer return authorization (2026-10-21)
 
