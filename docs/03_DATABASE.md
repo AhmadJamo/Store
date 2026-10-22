@@ -1,4 +1,13 @@
 # Database
+## SAL-130A reusable Analytics Center
+
+Migration 135 (`20261022125125_AddReusableAnalyticsCenter`) creates tenant-owned `AnalyticsWorkspaces` and
+`AnalyticsWorkspaceWidgets`. Workspaces preserve module key, visibility/owner, default status, layout, date window,
+comparison/refresh/definition preferences, creator evidence and rowversion. Widgets preserve stable provider key,
+unique order, visualization, bilingual title overrides, spans, Top-N, legend/comparison, target and accent color.
+Tenant-composite foreign keys and query filters preserve isolation. Source/model are at 135 with no pending changes;
+Demo remains evidenced at 128 due the existing host SQL connection failure.
+
 ## SAL-120B organization identity, document designer and frozen PDF evidence
 
 Migration 133 (`20261022120233_AddOrganizationIdentityAndDocumentDesigner`) extends tenant `GeneralSettings` with bilingual legal/commercial identity, registration/contact/address fields and document-name policy. It creates tenant-owned `OrganizationIdentityFields`, a separately loaded one-to-one `OrganizationLogos` table, and versioned tenant-owned `DocumentDesigns`/`DocumentDesignSections`. Per-tenant/type/code/version uniqueness and a filtered one-default-per-document-type index protect selection; tenant-composite self/source, section and quotation relationships prevent cross-company references. Quotations and quotation templates have optional restrictive design links, while quotations also freeze design code/version/name/language evidence.

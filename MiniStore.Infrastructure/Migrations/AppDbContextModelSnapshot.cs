@@ -489,6 +489,156 @@ namespace MiniStore.Infrastructure.Migrations
                     b.ToTable("AccountingSettings");
                 });
 
+            modelBuilder.Entity("MiniStore.Domain.Entities.AnalyticsWorkspace", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ComparisonMode")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedByUserId")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("DefaultPeriodDays")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<bool>("IsDefault")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("LayoutColumns")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ModuleKey")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<string>("NameArabic")
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<string>("OwnerUserId")
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("RefreshIntervalMinutes")
+                        .HasColumnType("int");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<bool>("ShowDefinitions")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("TenantId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Visibility")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TenantId");
+
+                    b.HasIndex("ModuleKey", "Visibility");
+
+                    b.HasIndex("OwnerUserId", "ModuleKey");
+
+                    b.ToTable("AnalyticsWorkspaces");
+                });
+
+            modelBuilder.Entity("MiniStore.Domain.Entities.AnalyticsWorkspaceWidget", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AccentColor")
+                        .HasMaxLength(7)
+                        .HasColumnType("nvarchar(7)");
+
+                    b.Property<int>("AnalyticsWorkspaceId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ColumnSpan")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RowSpan")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Sequence")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("ShowComparison")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("ShowLegend")
+                        .HasColumnType("bit");
+
+                    b.Property<decimal?>("TargetValue")
+                        .HasPrecision(24, 8)
+                        .HasColumnType("decimal(24,8)");
+
+                    b.Property<int>("TenantId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("TitleArabicOverride")
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<string>("TitleOverride")
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<int>("TopN")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Visualization")
+                        .HasColumnType("int");
+
+                    b.Property<string>("WidgetKey")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TenantId");
+
+                    b.HasIndex("AnalyticsWorkspaceId", "TenantId");
+
+                    b.HasIndex("TenantId", "AnalyticsWorkspaceId", "Sequence")
+                        .IsUnique();
+
+                    b.HasIndex("TenantId", "AnalyticsWorkspaceId", "WidgetKey")
+                        .IsUnique();
+
+                    b.ToTable("AnalyticsWorkspaceWidgets");
+                });
+
             modelBuilder.Entity("MiniStore.Domain.Entities.AuditEvent", b =>
                 {
                     b.Property<long>("Id")
@@ -12805,6 +12955,31 @@ namespace MiniStore.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict);
                 });
 
+            modelBuilder.Entity("MiniStore.Domain.Entities.AnalyticsWorkspace", b =>
+                {
+                    b.HasOne("MiniStore.Domain.Entities.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("MiniStore.Domain.Entities.AnalyticsWorkspaceWidget", b =>
+                {
+                    b.HasOne("MiniStore.Domain.Entities.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MiniStore.Domain.Entities.AnalyticsWorkspace", null)
+                        .WithMany("Widgets")
+                        .HasForeignKey("AnalyticsWorkspaceId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("MiniStore.Domain.Entities.AuditEvent", b =>
                 {
                     b.HasOne("MiniStore.Domain.Entities.Tenant", null)
@@ -16936,6 +17111,11 @@ namespace MiniStore.Infrastructure.Migrations
                     b.Navigation("IdentityFields");
 
                     b.Navigation("Logo");
+                });
+
+            modelBuilder.Entity("MiniStore.Domain.Entities.AnalyticsWorkspace", b =>
+                {
+                    b.Navigation("Widgets");
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.CustomerCreditNote", b =>

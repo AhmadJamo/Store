@@ -115,6 +115,14 @@ public static class NavigationDefinitions
         ),
 
         new NavigationGroup(
+            "Analytics center",
+            "bi-bar-chart-line",
+            15,
+            new NavigationItem("Analytics center", "bi-grid-1x2", "AnalyticsCenter", "Index", "AnalyticsCenter.View", 10),
+            new NavigationItem("Create analytics workspace", "bi-layout-wtf", "AnalyticsCenter", "Create", "AnalyticsCenter.Customize", 20)
+        ),
+
+        new NavigationGroup(
             "Purchasing",
             "bi-bag",
             20,

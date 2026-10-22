@@ -1,4 +1,9 @@
 # Database tables reference
+## Analytics Center (migration 135)
+
+- `AnalyticsWorkspaces`: tenant-owned personal/shared dashboard definition, default/date/layout/comparison/refresh settings, creator evidence and rowversion.
+- `AnalyticsWorkspaceWidgets`: ordered provider-widget reference plus visualization, bilingual titles, spans, Top-N, legend/comparison, target and color. Tenant/workspace and key/order uniqueness are database enforced.
+
 ## Customer return authorization
 
 - `CustomerReturnRequests`: CRQ header, sources, state, actors and rowversion.

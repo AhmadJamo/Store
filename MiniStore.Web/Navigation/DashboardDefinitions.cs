@@ -25,6 +25,12 @@ public static class DashboardDefinitions
             new("Sales Returns", "bi-arrow-counterclockwise", "SalesReturns", "Index", "SalesReturns.View", 40)
         ]),
 
+        new("Analytics center", "Build flexible reusable dashboards across ERP modules.", "bi-bar-chart-line-fill", "cyan", 25,
+        [
+            new("Open analytics center", "bi-grid-1x2", "AnalyticsCenter", "Index", "AnalyticsCenter.View", 10),
+            new("Create analytics workspace", "bi-layout-wtf", "AnalyticsCenter", "Create", "AnalyticsCenter.Customize", 20)
+        ]),
+
         new("Purchasing", "Manage demand, suppliers, orders, receiving and supplier bills.", "bi-bag-check-fill", "orange", 30,
         [
             new("Purchase requests", "bi-clipboard-plus", "PurchaseRequests", "Index", "PurchaseRequests.View", 10),

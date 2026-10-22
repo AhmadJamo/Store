@@ -148,6 +148,8 @@ public class AppDbContext
     public DbSet<SalesQuotationTemplateItem> SalesQuotationTemplateItems => Set<SalesQuotationTemplateItem>();
     public DbSet<DocumentDesign> DocumentDesigns => Set<DocumentDesign>();
     public DbSet<DocumentDesignSection> DocumentDesignSections => Set<DocumentDesignSection>();
+    public DbSet<AnalyticsWorkspace> AnalyticsWorkspaces => Set<AnalyticsWorkspace>();
+    public DbSet<AnalyticsWorkspaceWidget> AnalyticsWorkspaceWidgets => Set<AnalyticsWorkspaceWidget>();
     public DbSet<SalesQuotationHistory> SalesQuotationHistories => Set<SalesQuotationHistory>();
     public DbSet<SalesOrder> SalesOrders => Set<SalesOrder>();
     public DbSet<SalesOrderLine> SalesOrderLines => Set<SalesOrderLine>();

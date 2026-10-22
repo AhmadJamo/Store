@@ -1,5 +1,9 @@
 # Architecture
 
+## Reusable analytics boundary (2026-10-22)
+
+The central Analytics Center depends only on generic Application DTOs and `IAnalyticsModuleProvider`. Each module owns its calculations and exposes stable dimensions, filters and widget keys; the center owns workspace persistence, layout, date validation and previous-period/year comparison. Sales and Purchasing are registrations, not dependencies of the controller or generic views. Saved workspaces store presentation/query configuration rather than copied analytical facts. See `decisions/ADR-20261022-REUSABLE-ANALYTICS-CENTER.md`.
+
 ## Central document rendering boundary (2026-10-22)
 
 All printable ERP features use the Application-layer `IHtmlToPdfEngine` contract. Infrastructure supplies one singleton `PlaywrightPdfEngine` that owns browser reuse, serialization of rendering calls, paper sizing, logical margins, background printing and page headers/footers. Feature-specific composers, beginning with sales quotations, build encoded HTML and pass only a neutral render request to that engine. This prevents each invoice, order, receipt or report from launching and configuring its own PDF stack. Windows development uses installed Microsoft Edge; Linux/container deployment must install the matching Playwright Chromium runtime. See `decisions/ADR-20261022-CENTRAL-REUSABLE-PDF-AND-FROZEN-QUOTATIONS.md`.

@@ -205,6 +205,11 @@ public static class BusinessServicesExtensions
         services.AddSingleton<IHtmlToPdfEngine, PlaywrightPdfEngine>();
         services.AddScoped<IDocumentPdfRenderer, PlaywrightDocumentPdfRenderer>();
         services.AddScoped<SalesQuotationService>();
+        services.AddScoped<SalesAnalyticsService>();
+        services.AddScoped<IAnalyticsWorkspaceRepository, AnalyticsWorkspaceRepository>();
+        services.AddScoped<IAnalyticsModuleProvider, SalesAnalyticsModuleProvider>();
+        services.AddScoped<IAnalyticsModuleProvider, PurchaseAnalyticsModuleProvider>();
+        services.AddScoped<AnalyticsCenterService>();
         services.AddScoped<SalesQuotationTemplateService>();
         services.AddScoped<DocumentDesignService>();
         services.AddScoped<ISalesOrderRepository, SalesOrderRepository>();

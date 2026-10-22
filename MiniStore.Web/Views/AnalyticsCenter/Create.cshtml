@@ -1,0 +1,76 @@
+@model MiniStore.Application.Dtos.Analytics.AnalyticsWorkspaceCreatePageDto
+@using MiniStore.Domain.Entities
+@inject Microsoft.Extensions.Localization.IStringLocalizer<MiniStore.Web.SharedResource> L
+@inject Microsoft.AspNetCore.Authorization.IAuthorizationService Authorization
+@{
+    ViewData["Title"] = L["Create analytics workspace"];
+    var canShare = (await Authorization.AuthorizeAsync(User, null, "Permission:AnalyticsCenter.Manage")).Succeeded;
+    var rtl = System.Globalization.CultureInfo.CurrentUICulture.TextInfo.IsRightToLeft;
+}
+<h2>@L["Create analytics workspace"]</h2>
+<p class="text-muted">@L["Build a reusable personal or shared dashboard from module-provided widgets."]</p>
+<form method="post" class="card card-body">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="row g-3">
+        <div class="col-md-6"><label asp-for="Form.Name" class="form-label">@L["Name"]</label><input asp-for="Form.Name" name="Name" class="form-control" /></div>
+        <div class="col-md-6"><label asp-for="Form.NameArabic" class="form-label">@L["Arabic name"]</label><input asp-for="Form.NameArabic" name="NameArabic" class="form-control" dir="rtl" /></div>
+        <div class="col-12"><label asp-for="Form.Description" class="form-label">@L["Description"]</label><textarea asp-for="Form.Description" name="Description" class="form-control"></textarea></div>
+        <div class="col-md-4"><label class="form-label">@L["Analytics module"]</label><select asp-for="Form.ModuleKey" name="ModuleKey" class="form-select" id="module-select">@foreach (var x in Model.Modules) { <option value="@x.Key">@(rtl ? x.TitleArabic : x.Title)</option> }</select></div>
+        <div class="col-md-4"><label class="form-label">@L["Visibility"]</label><select asp-for="Form.Visibility" name="Visibility" class="form-select"><option value="Personal">@L["Personal"]</option>@if (canShare) { <option value="Shared">@L["Shared"]</option> }</select></div>
+        <div class="col-md-4 form-check align-self-end mb-2"><input asp-for="Form.IsDefault" name="IsDefault" class="form-check-input" /><label class="form-check-label">@L["Default workspace"]</label></div>
+        <div class="col-md-3"><label class="form-label">@L["Layout columns"]</label><input asp-for="Form.LayoutColumns" name="LayoutColumns" class="form-control" min="1" max="4" /></div>
+        <div class="col-md-3"><label class="form-label">@L["Default period days"]</label><input asp-for="Form.DefaultPeriodDays" name="DefaultPeriodDays" class="form-control" min="1" max="731" /></div>
+        <div class="col-md-3"><label class="form-label">@L["Comparison mode"]</label><select asp-for="Form.ComparisonMode" name="ComparisonMode" class="form-select" asp-items="Html.GetEnumSelectList<AnalyticsComparisonMode>()"></select></div>
+        <div class="col-md-3"><label class="form-label">@L["Refresh interval"]</label><select asp-for="Form.RefreshIntervalMinutes" name="RefreshIntervalMinutes" class="form-select"><option value="0">@L["Manual"]</option><option value="5">5 @L["minutes"]</option><option value="15">15 @L["minutes"]</option><option value="30">30 @L["minutes"]</option><option value="60">60 @L["minutes"]</option></select></div>
+        <div class="col-12 form-check"><input asp-for="Form.ShowDefinitions" name="ShowDefinitions" class="form-check-input" /><label class="form-check-label">@L["Show KPI definitions and sources"]</label></div>
+
+        <div class="col-12">
+            <h3 class="h5">@L["Widgets"]</h3>
+            <p class="text-muted">@L["Select, order and resize the widgets shown in this workspace."]</p>
+            <div class="row g-3" id="widget-list">
+                @for (var i = 0; i < Model.Form.Widgets.Count; i++)
+                {
+                    var w = Model.Form.Widgets[i];
+                    var owner = Model.Modules.First(m => m.Key == w.ModuleKey);
+                    var def = owner.Widgets.First(x => x.Key == w.WidgetKey);
+                    <div class="col-12 widget-row" data-module="@owner.Key">
+                        <div class="border rounded p-3">
+                            <input type="hidden" name="Widgets[@i].ModuleKey" value="@w.ModuleKey" />
+                            <input type="hidden" name="Widgets[@i].WidgetKey" value="@w.WidgetKey" />
+                            <div class="row g-2 align-items-end">
+                                <div class="col-lg-4 form-check ms-2"><input type="checkbox" name="Widgets[@i].IsSelected" value="true" checked="@(w.IsSelected ? "checked" : null)" class="form-check-input" /><label class="form-check-label fw-semibold">@(rtl ? def.TitleArabic : def.Title)</label><div class="small text-muted">@(rtl ? def.DescriptionArabic : def.Description)</div></div>
+                                <div class="col-md-2"><label class="form-label">@L["Order"]</label><input name="Widgets[@i].Sequence" value="@w.Sequence" min="1" max="1000" type="number" class="form-control" /></div>
+                                <div class="col-md-2"><label class="form-label">@L["Visualization"]</label><select name="Widgets[@i].Visualization" class="form-select">@foreach (var visual in Enum.GetValues<AnalyticsVisualizationType>()) { <option value="@visual" selected="@(visual == w.Visualization)">@L[visual.ToString()]</option> }</select></div>
+                                <div class="col-md-2"><label class="form-label">@L["Column span"]</label><input name="Widgets[@i].ColumnSpan" value="@w.ColumnSpan" min="1" max="4" type="number" class="form-control" /></div>
+                                <div class="col-md-2"><label class="form-label">@L["Row span"]</label><input name="Widgets[@i].RowSpan" value="@w.RowSpan" min="1" max="4" type="number" class="form-control" /></div>
+                                <div class="col-md-3"><label class="form-label">@L["English title override"]</label><input name="Widgets[@i].TitleOverride" value="@w.TitleOverride" maxlength="150" class="form-control" /></div>
+                                <div class="col-md-3"><label class="form-label">@L["Arabic title override"]</label><input name="Widgets[@i].TitleArabicOverride" value="@w.TitleArabicOverride" maxlength="150" dir="rtl" class="form-control" /></div>
+                                <div class="col-md-2"><label class="form-label">@L["Top rows"]</label><input name="Widgets[@i].TopN" value="@w.TopN" min="1" max="100" type="number" class="form-control" /></div>
+                                <div class="col-md-2"><label class="form-label">@L["Target value"]</label><input name="Widgets[@i].TargetValue" value="@w.TargetValue" type="number" step="any" class="form-control" /></div>
+                                <div class="col-md-2"><label class="form-label">@L["Accent color"]</label><input name="Widgets[@i].AccentColor" value="@(w.AccentColor ?? "#2563EB")" type="color" class="form-control form-control-color w-100" /></div>
+                                <div class="col-md-3 form-check ms-2"><input type="checkbox" name="Widgets[@i].ShowComparison" value="true" checked="@(w.ShowComparison ? "checked" : null)" class="form-check-input" /><label class="form-check-label">@L["Show period comparison"]</label></div>
+                                <div class="col-md-3 form-check ms-2"><input type="checkbox" name="Widgets[@i].ShowLegend" value="true" checked="@(w.ShowLegend ? "checked" : null)" class="form-check-input" /><label class="form-check-label">@L["Show legend"]</label></div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+        <div class="col-12"><button class="btn btn-primary">@L["Create workspace"]</button> <a asp-action="Index" class="btn btn-outline-secondary">@L["Cancel"]</a></div>
+    </div>
+</form>
+<script nonce="@Context.Items["CspNonce"]">
+    (() => {
+        const select = document.getElementById('module-select');
+        const rows = [...document.querySelectorAll('.widget-row')];
+        function sync(changed) {
+            rows.forEach(row => {
+                const visible = row.dataset.module === select.value;
+                row.hidden = !visible;
+                if (changed) row.querySelector('input[type=checkbox]').checked = visible;
+            });
+        }
+        select.addEventListener('change', () => sync(true));
+        sync(false);
+    })();
+</script>

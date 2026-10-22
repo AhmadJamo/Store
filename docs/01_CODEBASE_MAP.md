@@ -1,4 +1,13 @@
 # Codebase map
+## SAL-130A reusable Analytics Center
+
+`AnalyticsWorkspace` and its widgets persist tenant-owned personal/shared presentation preferences. Generic analytics
+DTOs, `IAnalyticsModuleProvider` and `AnalyticsCenterService` form the reusable Application boundary; Sales and
+Purchasing register as the first providers. `AnalyticsCenterController` and two generic Razor screens render live or
+saved workspaces without depending on a module DTO. Central comparison re-executes the selected provider for the
+previous period/year. Migration 135 adds the isolated workspace schema. See `modules/analytics.md` and the Analytics
+Center ADR.
+
 ## SAL-120B central document identity and designer
 
 `GeneralSettings` owns reusable bilingual trade/legal identity, document-name policy and a bounded logo. `OrganizationIdentityField` adds ordered bilingual custom facts with sales/purchase/receipt/footer visibility. The tenant-owned `DocumentDesign` aggregate adds document type, versioned Draft/Active/Archived lifecycle, per-type default, paper/language/RTL-ready layout, brand colors, font/header/logo/name placement, identity visibility, cover/header/footer/watermark text and up to 30 ordered bilingual sections. `DocumentDesignService`, repository/configuration, administration controller and responsive live-preview editor keep document branding in Settings rather than one sales screen. `IHtmlToPdfEngine` and `PlaywrightPdfEngine` form one reusable HTML-to-PDF boundary for every ERP module; the quotation composer supplies encoded feature-specific HTML. Sending a quotation now freezes the full effective identity, design, content and logo in a SHA-256 protected snapshot, while Draft PDF remains a live preview. Migrations 133-134 contain the additive designer and snapshot schema. See the three SAL-120B ADRs.

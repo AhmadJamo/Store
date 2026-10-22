@@ -3910,4 +3910,128 @@
   <data name="The frozen sales quotation document failed its integrity check." xml:space="preserve"><value>فشل التحقق من سلامة النسخة المثبتة لمستند عرض السعر.</value></data>
   <data name="The frozen sales quotation document could not be read." xml:space="preserve"><value>تعذرت قراءة النسخة المثبتة لمستند عرض السعر.</value></data>
   <data name="Freeze the sales quotation document before sending it." xml:space="preserve"><value>يجب تثبيت مستند عرض السعر قبل إرساله.</value></data>
+  <data name="Analytics center" xml:space="preserve"><value>مركز التحليلات</value></data>
+  <data name="Create analytics workspace" xml:space="preserve"><value>إنشاء مساحة عمل تحليلية</value></data>
+  <data name="Build flexible reusable dashboards across ERP modules." xml:space="preserve"><value>أنشئ لوحات مرنة قابلة لإعادة الاستخدام عبر وحدات النظام.</value></data>
+  <data name="Build a reusable personal or shared dashboard from module-provided widgets." xml:space="preserve"><value>أنشئ لوحة شخصية أو مشتركة قابلة لإعادة الاستخدام من أدوات توفرها الوحدات.</value></data>
+  <data name="Workspace" xml:space="preserve"><value>مساحة العمل</value></data>
+  <data name="Live module view" xml:space="preserve"><value>عرض مباشر للوحدة</value></data>
+  <data name="Analytics module" xml:space="preserve"><value>وحدة التحليل</value></data>
+  <data name="Automatic refresh" xml:space="preserve"><value>التحديث التلقائي</value></data>
+  <data name="Personal" xml:space="preserve"><value>شخصية</value></data>
+  <data name="Shared" xml:space="preserve"><value>مشتركة</value></data>
+  <data name="Default workspace" xml:space="preserve"><value>مساحة العمل الافتراضية</value></data>
+  <data name="Layout columns" xml:space="preserve"><value>أعمدة التخطيط</value></data>
+  <data name="Default period days" xml:space="preserve"><value>أيام الفترة الافتراضية</value></data>
+  <data name="Comparison mode" xml:space="preserve"><value>نمط المقارنة</value></data>
+  <data name="Refresh interval" xml:space="preserve"><value>فترة التحديث</value></data>
+  <data name="Show KPI definitions and sources" xml:space="preserve"><value>إظهار تعريفات ومصادر مؤشرات الأداء</value></data>
+  <data name="Widgets" xml:space="preserve"><value>الأدوات التحليلية</value></data>
+  <data name="Select, order and resize the widgets shown in this workspace." xml:space="preserve"><value>اختر أدوات مساحة العمل ورتبها وحدد أحجامها.</value></data>
+  <data name="Order" xml:space="preserve"><value>الترتيب</value></data>
+  <data name="Visualization" xml:space="preserve"><value>طريقة العرض</value></data>
+  <data name="Column span" xml:space="preserve"><value>عرض الأداة بالأعمدة</value></data>
+  <data name="Top rows" xml:space="preserve"><value>عدد الصفوف الأعلى</value></data>
+  <data name="Create workspace" xml:space="preserve"><value>إنشاء مساحة العمل</value></data>
+  <data name="Funnel" xml:space="preserve"><value>مسار تحويلي</value></data>
+  <data name="Table" xml:space="preserve"><value>جدول</value></data>
+  <data name="Bar" xml:space="preserve"><value>أعمدة</value></data>
+  <data name="Line" xml:space="preserve"><value>خطي</value></data>
+  <data name="Donut" xml:space="preserve"><value>دائري</value></data>
+  <data name="PreviousPeriod" xml:space="preserve"><value>الفترة السابقة</value></data>
+  <data name="PreviousYear" xml:space="preserve"><value>السنة السابقة</value></data>
+  <data name="Sales and quote-to-cash" xml:space="preserve"><value>المبيعات ودورة العرض إلى التحصيل</value></data>
+  <data name="Purchasing and procure-to-pay" xml:space="preserve"><value>المشتريات ودورة الطلب إلى الدفع</value></data>
+  <data name="Quotation value" xml:space="preserve"><value>قيمة عروض الأسعار</value></data>
+  <data name="Quotation acceptance rate" xml:space="preserve"><value>نسبة قبول عروض الأسعار</value></data>
+  <data name="Posted invoice net revenue" xml:space="preserve"><value>صافي إيراد الفواتير المرحلة</value></data>
+  <data name="Collected amount" xml:space="preserve"><value>المبلغ المحصل</value></data>
+  <data name="Outstanding receivables" xml:space="preserve"><value>الذمم المدينة القائمة</value></data>
+  <data name="Gross contribution" xml:space="preserve"><value>المساهمة الإجمالية</value></data>
+  <data name="Quote-to-cash funnel" xml:space="preserve"><value>مسار العرض إلى التحصيل</value></data>
+  <data name="Revenue and collection trends" xml:space="preserve"><value>اتجاهات الإيراد والتحصيل</value></data>
+  <data name="Customer performance" xml:space="preserve"><value>أداء العملاء</value></data>
+  <data name="Product contribution" xml:space="preserve"><value>مساهمة المنتجات</value></data>
+  <data name="Legacy and modern comparison" xml:space="preserve"><value>مقارنة المسار القديم والحديث</value></data>
+  <data name="Open orders" xml:space="preserve"><value>الطلبات المفتوحة</value></data>
+  <data name="Spend and cost trends" xml:space="preserve"><value>اتجاهات الإنفاق والكلفة</value></data>
+  <data name="Procure-to-pay journey" xml:space="preserve"><value>مسار الطلب إلى الدفع</value></data>
+  <data name="No analytics modules are registered." xml:space="preserve"><value>لا توجد وحدات تحليل مسجلة.</value></data>
+  <data name="Analytics workspace was not found or is not available." xml:space="preserve"><value>لم يتم العثور على مساحة العمل التحليلية أو أنها غير متاحة.</value></data>
+  <data name="Analytics module is not registered." xml:space="preserve"><value>وحدة التحليل غير مسجلة.</value></data>
+  <data name="Analytics workspace created." xml:space="preserve"><value>تم إنشاء مساحة العمل التحليلية.</value></data>
+  <data name="You are not authorized to create shared analytics workspaces." xml:space="preserve"><value>لا تملك صلاحية إنشاء مساحات عمل تحليلية مشتركة.</value></data>
+  <data name="Select at least one analytics widget." xml:space="preserve"><value>اختر أداة تحليلية واحدة على الأقل.</value></data>
+  <data name="Analytics widgets cannot be duplicated." xml:space="preserve"><value>لا يمكن تكرار الأدوات التحليلية.</value></data>
+  <data name="Selected analytics widget does not belong to the module." xml:space="preserve"><value>الأداة التحليلية المحددة لا تنتمي إلى الوحدة.</value></data>
+  <data name="Analytics start date cannot be after the end date." xml:space="preserve"><value>لا يمكن أن يكون تاريخ بداية التحليل بعد تاريخ النهاية.</value></data>
+  <data name="Analytics period cannot exceed two years." xml:space="preserve"><value>لا يمكن أن تتجاوز فترة التحليل سنتين.</value></data>
+  <data name="Conversion, revenue, receivables, collection, customer and product contribution." xml:space="preserve"><value>التحويل والإيراد والذمم والتحصيل ومساهمة العملاء والمنتجات.</value></data>
+  <data name="Spend, receiving, supplier, buyer and matching analytics." xml:space="preserve"><value>تحليل الإنفاق والاستلام والموردين والمشترين والمطابقة.</value></data>
+  <data name="Quotation-date cohort value." xml:space="preserve"><value>قيمة مجموعة عروض الأسعار حسب تاريخ العرض.</value></data>
+  <data name="Accepted divided by progressed quotations." xml:space="preserve"><value>العروض المقبولة مقسومة على العروض التي تجاوزت المسودة.</value></data>
+  <data name="Posted company-currency invoice net." xml:space="preserve"><value>صافي الفواتير المرحلة بعملة الشركة.</value></data>
+  <data name="Posted payment carrying amount." xml:space="preserve"><value>القيمة الدفترية للدفعات المرحلة.</value></data>
+  <data name="Posted invoices less payments and credits." xml:space="preserve"><value>الفواتير المرحلة ناقص الدفعات والإشعارات الدائنة.</value></data>
+  <data name="Invoice net less credits and delivery COGS." xml:space="preserve"><value>صافي الفواتير ناقص الإشعارات الدائنة وكلفة البضاعة المسلمة.</value></data>
+  <data name="Cohort progression through linked documents." xml:space="preserve"><value>تقدم المجموعة عبر المستندات المرتبطة.</value></data>
+  <data name="Period activity by the selected dimension." xml:space="preserve"><value>نشاط الفترة حسب البعد المحدد.</value></data>
+  <data name="Revenue, collection, outstanding and overdue evidence." xml:space="preserve"><value>بيانات الإيراد والتحصيل والرصيد والتأخر.</value></data>
+  <data name="Net revenue and delivery cost by product." xml:space="preserve"><value>صافي الإيراد وكلفة التسليم حسب المنتج.</value></data>
+  <data name="Separate historical workflows without invented conversion." xml:space="preserve"><value>مسارات تاريخية منفصلة دون تحويل مصطنع.</value></data>
+  <data name="Auditable calculation definitions." xml:space="preserve"><value>تعريفات حساب قابلة للتدقيق.</value></data>
+  <data name="Analytics workspace option is invalid." xml:space="preserve"><value>خيار مساحة العمل التحليلية غير صالح.</value></data>
+  <data name="Analytics workspace columns must be between 1 and 4." xml:space="preserve"><value>يجب أن يكون عدد أعمدة مساحة العمل بين 1 و4.</value></data>
+  <data name="Analytics workspace default period must be between 1 and 731 days." xml:space="preserve"><value>يجب أن تكون الفترة الافتراضية لمساحة العمل بين يوم و731 يومًا.</value></data>
+  <data name="Analytics workspace refresh interval is invalid." xml:space="preserve"><value>فترة تحديث مساحة العمل التحليلية غير صالحة.</value></data>
+  <data name="An analytics workspace cannot contain more than 30 widgets." xml:space="preserve"><value>لا يمكن أن تحتوي مساحة العمل التحليلية على أكثر من 30 أداة.</value></data>
+  <data name="An analytics widget can be added only once per workspace." xml:space="preserve"><value>يمكن إضافة الأداة التحليلية مرة واحدة فقط في مساحة العمل.</value></data>
+  <data name="Analytics widget order must be unique." xml:space="preserve"><value>يجب أن يكون ترتيب الأدوات التحليلية فريدًا.</value></data>
+  <data name="Analytics widget key is required and cannot exceed 100 characters." xml:space="preserve"><value>مفتاح الأداة التحليلية مطلوب ولا يمكن أن يتجاوز 100 حرف.</value></data>
+  <data name="Analytics widget order must be between 1 and 1000." xml:space="preserve"><value>يجب أن يكون ترتيب الأداة التحليلية بين 1 و1000.</value></data>
+  <data name="Analytics widget visualization is invalid." xml:space="preserve"><value>طريقة عرض الأداة التحليلية غير صالحة.</value></data>
+  <data name="Analytics widget span must be between 1 and 4." xml:space="preserve"><value>يجب أن يكون امتداد الأداة التحليلية بين 1 و4.</value></data>
+  <data name="Analytics widget row limit must be between 1 and 100." xml:space="preserve"><value>يجب أن يكون حد صفوف الأداة التحليلية بين 1 و100.</value></data>
+  <data name="Analytics widget accent color must use #RRGGBB format." xml:space="preserve"><value>يجب أن يستخدم لون الأداة التحليلية صيغة #RRGGBB.</value></data>
+  <data name="Analytics workspace name is required." xml:space="preserve"><value>اسم مساحة العمل التحليلية مطلوب.</value></data>
+  <data name="Analytics module key is required." xml:space="preserve"><value>مفتاح وحدة التحليل مطلوب.</value></data>
+  <data name="Analytics workspace creator is required." xml:space="preserve"><value>منشئ مساحة العمل التحليلية مطلوب.</value></data>
+  <data name="Compared with" xml:space="preserve"><value>مقارنة مع</value></data>
+  <data name="New" xml:space="preserve"><value>جديد</value></data>
+  <data name="Show period comparison" xml:space="preserve"><value>إظهار مقارنة الفترة</value></data>
+  <data name="Arabic name" xml:space="preserve"><value>الاسم بالعربية</value></data>
+  <data name="minutes" xml:space="preserve"><value>دقائق</value></data>
+  <data name="Visibility" xml:space="preserve"><value>نطاق الظهور</value></data>
+  <data name="Quotations" xml:space="preserve"><value>عروض الأسعار</value></data>
+  <data name="Revenue" xml:space="preserve"><value>الإيراد</value></data>
+  <data name="Collected" xml:space="preserve"><value>المحصل</value></data>
+  <data name="Outstanding" xml:space="preserve"><value>القائم</value></data>
+  <data name="Net revenue" xml:space="preserve"><value>صافي الإيراد</value></data>
+  <data name="Delivery cost" xml:space="preserve"><value>كلفة التسليم</value></data>
+  <data name="Contribution" xml:space="preserve"><value>المساهمة</value></data>
+  <data name="Margin %" xml:space="preserve"><value>نسبة الهامش</value></data>
+  <data name="Workflow" xml:space="preserve"><value>مسار العمل</value></data>
+  <data name="Documents" xml:space="preserve"><value>المستندات</value></data>
+  <data name="Value" xml:space="preserve"><value>القيمة</value></data>
+  <data name="KPI" xml:space="preserve"><value>مؤشر الأداء</value></data>
+  <data name="Explanation" xml:space="preserve"><value>الشرح</value></data>
+  <data name="Spend" xml:space="preserve"><value>الإنفاق</value></data>
+  <data name="Fill %" xml:space="preserve"><value>نسبة التوريد</value></data>
+  <data name="On-time %" xml:space="preserve"><value>نسبة الالتزام بالموعد</value></data>
+  <data name="Legacy immediate sales" xml:space="preserve"><value>المبيعات الفورية القديمة</value></data>
+  <data name="Modern posted invoices" xml:space="preserve"><value>الفواتير الحديثة المرحلة</value></data>
+  <data name="Quotations created" xml:space="preserve"><value>عروض الأسعار المنشأة</value></data>
+  <data name="Quotations progressed" xml:space="preserve"><value>عروض الأسعار المتقدمة</value></data>
+  <data name="Quotations accepted" xml:space="preserve"><value>عروض الأسعار المقبولة</value></data>
+  <data name="Orders created" xml:space="preserve"><value>الطلبات المنشأة</value></data>
+  <data name="Orders confirmed" xml:space="preserve"><value>الطلبات المؤكدة</value></data>
+  <data name="Orders delivered" xml:space="preserve"><value>الطلبات المسلمة</value></data>
+  <data name="Orders invoiced" xml:space="preserve"><value>الطلبات المفوترة</value></data>
+  <data name="Invoices collected" xml:space="preserve"><value>الفواتير المحصلة</value></data>
+  <data name="Row span" xml:space="preserve"><value>ارتفاع الأداة بالصفوف</value></data>
+  <data name="English title override" xml:space="preserve"><value>عنوان مخصص بالإنجليزية</value></data>
+  <data name="Arabic title override" xml:space="preserve"><value>عنوان مخصص بالعربية</value></data>
+  <data name="Target value" xml:space="preserve"><value>القيمة المستهدفة</value></data>
+  <data name="Show legend" xml:space="preserve"><value>إظهار وسيلة الإيضاح</value></data>
+  <data name="You are not authorized to use this analytics module." xml:space="preserve"><value>لا تملك صلاحية استخدام وحدة التحليل هذه.</value></data>
 </root>

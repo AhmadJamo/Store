@@ -1,6 +1,8 @@
 # Purchases
 > Status: PROCURE-TO-PAY THROUGH PUR-280 IMPLEMENTED; NEW LEGACY DIRECT PURCHASE CREATION RETIRED | Last reviewed: 2026-10-15
 
+`SAL-130A` reuses the existing purchasing analytics calculations through a generic Analytics Center provider. Spend, receiving, matching exceptions, supplier/buyer performance, journey and legacy/modern evidence can now be composed into the same tenant-owned personal/shared workspace model as other modules; Purchasing does not own a second dashboard framework.
+
 The implemented workflow described below is a direct supplier invoice and inventory receipt, not a Purchase Order lifecycle. The approved additive evolution, compatibility rules and ordered delivery slices are documented in `docs/PURCHASE_MANAGEMENT_EVOLUTION_PLAN.md`. Existing Purchase and PurchaseReturn history will remain valid and will not be fabricated into new procurement documents.
 
 PUR-005 context ownership and accounting gates are accepted in `docs/PURCHASE_ARCHITECTURE_ALIGNMENT.md`: Supplier remains the current counterparty, Purchasing owns requests/sourcing/orders, Inventory owns receipt stock effects, and Accounting/AP owns bills, payables and payments. These are target boundaries, not implemented new documents.

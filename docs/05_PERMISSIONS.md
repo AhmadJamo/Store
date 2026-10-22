@@ -1,4 +1,10 @@
 # Permissions and authorization
+## Analytics Center
+
+- `AnalyticsCenter.View` opens the center and its read-only registered module providers.
+- `AnalyticsCenter.Customize` creates personal workspaces.
+- `AnalyticsCenter.Manage` additionally permits shared workspaces. The controller and Application service both enforce this boundary; a crafted shared-workspace POST cannot rely on presentation visibility alone.
+
 ## Advanced quotation templates
 
 `SalesQuotationTemplates.View` protects the template list and details. `SalesQuotationTemplates.Manage` protects draft creation, new-version cloning, activation, archiving and default selection. All mutations require antiforgery; applying a template still requires `SalesQuotations.Create` because it creates a quotation, not a template-management record.

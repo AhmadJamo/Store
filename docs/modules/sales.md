@@ -1,5 +1,7 @@
 # Sales
-> Status: LEGACY IMMEDIATE SALE IMPLEMENTED; SAL-020 THROUGH SAL-120B IMPLEMENTED IN SOURCE | Last reviewed: 2026-10-22
+> Status: LEGACY IMMEDIATE SALE IMPLEMENTED; SAL-020 THROUGH SAL-130A IMPLEMENTED IN SOURCE | Last reviewed: 2026-10-22
+
+`SAL-130A` exposes quote-to-cash analytics through the generic Analytics Center provider contract. It calculates quotation cohort/value/acceptance, order progression, posted invoice revenue, collection, outstanding/overdue receivables, credits, delivery COGS, contribution, customer/product performance and an explicitly separated legacy/modern comparison. The provider is read-only; it does not invent conversions between legacy immediate sales and the modern document lifecycle.
 
 `SAL-120B` centralizes organization identity and reusable document design in Settings. The identity source contains bilingual trade/legal names, registration/contact/address details, a separately loaded logo and custom per-document fields. Versioned document designs add paper/language, RTL-ready logical margins, colors/font, header/logo/name placement, visibility controls, cover/header/footer/watermark text and ordered bilingual sections. An active quotation design can be selected by a quotation template or overridden on an individual quotation. Draft quotations have a live PDF preview; sending atomically freezes the effective identity, exact design/sections, customer/content/lines/totals and optional logo in a hash-protected snapshot. Every later PDF is rebuilt from that snapshot, so subsequent settings changes cannot alter history. The reusable PDF engine is feature-neutral and ready for invoices, orders, receipts and reports; no customer portal is active.
 
