@@ -143,6 +143,8 @@ public class AppDbContext
     public DbSet<SalesPriceRule> SalesPriceRules => Set<SalesPriceRule>();
     public DbSet<SalesQuotation> SalesQuotations => Set<SalesQuotation>();
     public DbSet<SalesQuotationLine> SalesQuotationLines => Set<SalesQuotationLine>();
+    public DbSet<SalesQuotationTemplate> SalesQuotationTemplates => Set<SalesQuotationTemplate>();
+    public DbSet<SalesQuotationTemplateItem> SalesQuotationTemplateItems => Set<SalesQuotationTemplateItem>();
     public DbSet<SalesQuotationHistory> SalesQuotationHistories => Set<SalesQuotationHistory>();
     public DbSet<SalesOrder> SalesOrders => Set<SalesOrder>();
     public DbSet<SalesOrderLine> SalesOrderLines => Set<SalesOrderLine>();

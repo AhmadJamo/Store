@@ -2772,7 +2772,6 @@
   <data name="Country code" xml:space="preserve"><value>رمز الدولة</value></data>
   <data name="Default address" xml:space="preserve"><value>العنوان الافتراضي</value></data>
   <data name="Add address" xml:space="preserve"><value>إضافة عنوان</value></data>
-  <data name="Default" xml:space="preserve"><value>افتراضي</value></data>
   <data name="Billing" xml:space="preserve"><value>فوترة</value></data>
   <data name="Shipping" xml:space="preserve"><value>تسليم</value></data>
   <data name="Customer contact saved successfully." xml:space="preserve"><value>تم حفظ جهة اتصال الزبون بنجاح.</value></data>
@@ -3568,4 +3567,117 @@
   <data name="Same approver may complete multiple steps" xml:space="preserve"><value>يمكن للمعتمد نفسه إكمال عدة خطوات</value></data>
   <data name="The sales order requester cannot approve this control evaluation." xml:space="preserve"><value>لا يمكن لمقدم طلب البيع اعتماد تقييم الضوابط هذا.</value></data>
   <data name="Each sales approval step requires a different user." xml:space="preserve"><value>تتطلب كل خطوة اعتماد مبيعات مستخدمًا مختلفًا.</value></data>
+  <data name="Quotation templates" xml:space="preserve"><value>قوالب عروض الأسعار</value></data>
+  <data name="Build reusable, versioned offers with required products, options and alternative groups." xml:space="preserve"><value>أنشئ عروضًا قابلة لإعادة الاستخدام والإصدار بمنتجات إلزامية وخيارات ومجموعات بدائل.</value></data>
+  <data name="Create quotation template" xml:space="preserve"><value>إنشاء قالب عرض سعر</value></data>
+  <data name="Code, name, category or tag" xml:space="preserve"><value>الرمز أو الاسم أو التصنيف أو الوسم</value></data>
+  <data name="No quotation templates found." xml:space="preserve"><value>لا توجد قوالب عروض أسعار.</value></data>
+  <data name="Default" xml:space="preserve"><value>افتراضي</value></data>
+  <data name="Items" xml:space="preserve"><value>البنود</value></data>
+  <data name="Options" xml:space="preserve"><value>الخيارات</value></data>
+  <data name="Validity days" xml:space="preserve"><value>أيام الصلاحية</value></data>
+  <data name="View template" xml:space="preserve"><value>عرض القالب</value></data>
+  <data name="Template policy" xml:space="preserve"><value>سياسة القالب</value></data>
+  <data name="Tags" xml:space="preserve"><value>الوسوم</value></data>
+  <data name="Additional products" xml:space="preserve"><value>المنتجات الإضافية</value></data>
+  <data name="Allowed" xml:space="preserve"><value>مسموح</value></data>
+  <data name="Not allowed" xml:space="preserve"><value>غير مسموح</value></data>
+  <data name="Reusable content" xml:space="preserve"><value>المحتوى القابل لإعادة الاستخدام</value></data>
+  <data name="Introduction" xml:space="preserve"><value>المقدمة</value></data>
+  <data name="Terms and conditions" xml:space="preserve"><value>الشروط والأحكام</value></data>
+  <data name="Footer notes" xml:space="preserve"><value>ملاحظات التذييل</value></data>
+  <data name="Template items" xml:space="preserve"><value>بنود القالب</value></data>
+  <data name="Default quantity" xml:space="preserve"><value>الكمية الافتراضية</value></data>
+  <data name="Allowed quantity" xml:space="preserve"><value>الكمية المسموحة</value></data>
+  <data name="Quantity can be changed" xml:space="preserve"><value>يمكن تغيير الكمية</value></data>
+  <data name="Fixed quantity" xml:space="preserve"><value>كمية ثابتة</value></data>
+  <data name="Selected by default" xml:space="preserve"><value>محدد افتراضيًا</value></data>
+  <data name="Not selected by default" xml:space="preserve"><value>غير محدد افتراضيًا</value></data>
+  <data name="Activate template" xml:space="preserve"><value>تفعيل القالب</value></data>
+  <data name="Make default" xml:space="preserve"><value>جعله افتراضيًا</value></data>
+  <data name="Archive template" xml:space="preserve"><value>أرشفة القالب</value></data>
+  <data name="Templates store configuration, not prices. Products are repriced for the customer and quotation date when applied." xml:space="preserve"><value>تخزن القوالب الإعدادات لا الأسعار؛ ويعاد تسعير المنتجات للزبون وتاريخ العرض عند التطبيق.</value></data>
+  <data name="Version" xml:space="preserve"><value>الإصدار</value></data>
+  <data name="Allow additional products" xml:space="preserve"><value>السماح بمنتجات إضافية</value></data>
+  <data name="Make default when activated" xml:space="preserve"><value>جعله افتراضيًا عند التفعيل</value></data>
+  <data name="Section" xml:space="preserve"><value>القسم</value></data>
+  <data name="Maximum quantity" xml:space="preserve"><value>الحد الأعلى للكمية</value></data>
+  <data name="Quantity editable" xml:space="preserve"><value>الكمية قابلة للتعديل</value></data>
+  <data name="Option group code" xml:space="preserve"><value>رمز مجموعة الخيارات</value></data>
+  <data name="Option group name" xml:space="preserve"><value>اسم مجموعة الخيارات</value></data>
+  <data name="Minimum selections" xml:space="preserve"><value>الحد الأدنى للاختيارات</value></data>
+  <data name="Maximum selections" xml:space="preserve"><value>الحد الأعلى للاختيارات</value></data>
+  <data name="Add template item" xml:space="preserve"><value>إضافة بند للقالب</value></data>
+  <data name="Optional" xml:space="preserve"><value>اختياري</value></data>
+  <data name="Alternative" xml:space="preserve"><value>بديل</value></data>
+  <data name="Quotation template draft created." xml:space="preserve"><value>تم إنشاء مسودة قالب عرض السعر.</value></data>
+  <data name="Quotation template activated." xml:space="preserve"><value>تم تفعيل قالب عرض السعر.</value></data>
+  <data name="Quotation template archived." xml:space="preserve"><value>تمت أرشفة قالب عرض السعر.</value></data>
+  <data name="Default quotation template updated." xml:space="preserve"><value>تم تحديث قالب عرض السعر الافتراضي.</value></data>
+  <data name="Quotation template" xml:space="preserve"><value>قالب عرض السعر</value></data>
+  <data name="No template" xml:space="preserve"><value>دون قالب</value></data>
+  <data name="Apply template" xml:space="preserve"><value>تطبيق القالب</value></data>
+  <data name="Additional products allowed" xml:space="preserve"><value>المنتجات الإضافية مسموحة</value></data>
+  <data name="Additional products prohibited" xml:space="preserve"><value>المنتجات الإضافية ممنوعة</value></data>
+  <data name="Template products are repriced for this customer and quotation date." xml:space="preserve"><value>يعاد تسعير منتجات القالب لهذا الزبون وتاريخ العرض.</value></data>
+  <data name="Include in quotation" xml:space="preserve"><value>تضمينه في العرض</value></data>
+  <data name="Add custom line" xml:space="preserve"><value>إضافة بند مخصص</value></data>
+  <data name="Template content and selected options were frozen when this quotation was created." xml:space="preserve"><value>تم تثبيت محتوى القالب والخيارات المحددة عند إنشاء هذا العرض.</value></data>
+  <data name="Proposal content" xml:space="preserve"><value>محتوى العرض</value></data>
+  <data name="View Sales Quotation Templates" xml:space="preserve"><value>عرض قوالب عروض الأسعار</value></data>
+  <data name="Manage Sales Quotation Templates" xml:space="preserve"><value>إدارة قوالب عروض الأسعار</value></data>
+  <data name="A quotation template must contain at least one item." xml:space="preserve"><value>يجب أن يحتوي قالب عرض السعر على بند واحد على الأقل.</value></data>
+  <data name="A quotation template cannot contain more than 100 items." xml:space="preserve"><value>لا يمكن أن يحتوي قالب عرض السعر على أكثر من 100 بند.</value></data>
+  <data name="This quotation template code and version already exist." xml:space="preserve"><value>رمز قالب عرض السعر وإصداره موجودان مسبقًا.</value></data>
+  <data name="Selected quotation template was not found." xml:space="preserve"><value>لم يتم العثور على قالب عرض السعر المحدد.</value></data>
+  <data name="Selected quotation template is not active." xml:space="preserve"><value>قالب عرض السعر المحدد غير نشط.</value></data>
+  <data name="Quotation template changed. Apply it again before creating the quotation." xml:space="preserve"><value>تغير قالب عرض السعر؛ طبقه مجددًا قبل إنشاء العرض.</value></data>
+  <data name="Required quotation template products cannot be removed." xml:space="preserve"><value>لا يمكن إزالة المنتجات الإلزامية من قالب عرض السعر.</value></data>
+  <data name="Selected quotation template quantity is outside its allowed range." xml:space="preserve"><value>كمية منتج القالب المحددة خارج النطاق المسموح.</value></data>
+  <data name="This quotation template product uses a fixed quantity." xml:space="preserve"><value>يستخدم منتج قالب عرض السعر هذا كمية ثابتة.</value></data>
+  <data name="Quotation option-group selections are outside the configured limits." xml:space="preserve"><value>اختيارات مجموعة خيارات العرض خارج الحدود المضبوطة.</value></data>
+  <data name="This quotation template does not allow additional products." xml:space="preserve"><value>لا يسمح قالب عرض السعر هذا بمنتجات إضافية.</value></data>
+  <data name="Select at least one quotation product." xml:space="preserve"><value>حدد منتجًا واحدًا على الأقل للعرض.</value></data>
+  <data name="Review and activate quotation template" xml:space="preserve"><value>مراجعة قالب عرض السعر وتفعيله</value></data>
+  <data name="Review its content, option limits and pricing policy, then activate the version when it is ready for quotations." xml:space="preserve"><value>راجع المحتوى وحدود الخيارات وسياسة التسعير، ثم فعّل الإصدار عندما يصبح جاهزًا للعروض.</value></data>
+  <data name="Create quotation from template" xml:space="preserve"><value>إنشاء عرض سعر من القالب</value></data>
+  <data name="Apply the active template, choose the customer and options, and review the newly evaluated prices." xml:space="preserve"><value>طبّق القالب النشط واختر الزبون والخيارات ثم راجع الأسعار المعاد تقييمها.</value></data>
+  <data name="A new quotation template version must be greater than the source version." xml:space="preserve"><value>يجب أن يكون إصدار قالب عرض السعر الجديد أعلى من إصدار المصدر.</value></data>
+  <data name="A new quotation template version must keep the source template code." xml:space="preserve"><value>يجب أن يحتفظ إصدار قالب عرض السعر الجديد بكود القالب المصدر.</value></data>
+  <data name="A quotation template item was submitted more than once." xml:space="preserve"><value>تم إرسال بند قالب عرض السعر أكثر من مرة.</value></data>
+  <data name="A sales unit is required for a quotation template item." xml:space="preserve"><value>وحدة البيع مطلوبة لبند قالب عرض السعر.</value></data>
+  <data name="Alternative template items require an option group." xml:space="preserve"><value>تتطلب بنود القالب البديلة مجموعة خيارات.</value></data>
+  <data name="An active sales product is required for a quotation template." xml:space="preserve"><value>يتطلب قالب عرض السعر منتجا فعالا ومتاحا للبيع.</value></data>
+  <data name="Configure a managed measurement unit for every template product." xml:space="preserve"><value>اضبط وحدة قياس مُدارة لكل منتج في القالب.</value></data>
+  <data name="Default option-group selections must satisfy the configured limits." xml:space="preserve"><value>يجب أن تحقق اختيارات مجموعة الخيارات الافتراضية الحدود المضبوطة.</value></data>
+  <data name="Default template selections cannot repeat the same product and sales unit." xml:space="preserve"><value>لا يجوز أن تكرر اختيارات القالب الافتراضية المنتج ووحدة البيع نفسيهما.</value></data>
+  <data name="Every item in an option group must use the same selection limits." xml:space="preserve"><value>يجب أن تستخدم كل بنود مجموعة الخيارات حدود الاختيار نفسها.</value></data>
+  <data name="Only a draft quotation template can be changed." xml:space="preserve"><value>يمكن تغيير قالب عرض السعر عندما يكون مسودة فقط.</value></data>
+  <data name="Only an active quotation template can be the default." xml:space="preserve"><value>يمكن تعيين قالب عرض سعر فعال فقط كقالب افتراضي.</value></data>
+  <data name="Option-group maximum selections cannot exceed its item count." xml:space="preserve"><value>لا يمكن أن يتجاوز الحد الأقصى لاختيارات المجموعة عدد بنودها.</value></data>
+  <data name="Option-group minimum selections cannot exceed its item count." xml:space="preserve"><value>لا يمكن أن يتجاوز الحد الأدنى لاختيارات المجموعة عدد بنودها.</value></data>
+  <data name="Quotation template item notes cannot exceed 500 characters." xml:space="preserve"><value>لا يمكن أن تتجاوز ملاحظات بند قالب العرض 500 حرف.</value></data>
+  <data name="Quotation template item sequence must be between 1 and 9999." xml:space="preserve"><value>يجب أن يكون ترتيب بند قالب العرض بين 1 و9999.</value></data>
+  <data name="Quotation template item sequence must be unique." xml:space="preserve"><value>يجب أن يكون ترتيب بند قالب العرض فريدا.</value></data>
+  <data name="Quotation template item type is invalid." xml:space="preserve"><value>نوع بند قالب عرض السعر غير صالح.</value></data>
+  <data name="Quotation template items changed. Apply the template again." xml:space="preserve"><value>تغيرت بنود قالب عرض السعر. أعد تطبيق القالب.</value></data>
+  <data name="Quotation template option-group selection limits are invalid." xml:space="preserve"><value>حدود الاختيار لمجموعة خيارات قالب العرض غير صالحة.</value></data>
+  <data name="Quotation template option-group values are too long." xml:space="preserve"><value>قيم مجموعة خيارات قالب العرض طويلة جدا.</value></data>
+  <data name="Quotation template products must be active and available for sales." xml:space="preserve"><value>يجب أن تكون منتجات قالب عرض السعر فعالة ومتاحة للبيع.</value></data>
+  <data name="Quotation template quantity limits are invalid." xml:space="preserve"><value>حدود الكمية في قالب عرض السعر غير صالحة.</value></data>
+  <data name="Quotation template sales channel is invalid." xml:space="preserve"><value>قناة البيع في قالب عرض السعر غير صالحة.</value></data>
+  <data name="Quotation template section is required and cannot exceed 150 characters." xml:space="preserve"><value>قسم قالب عرض السعر مطلوب ولا يمكن أن يتجاوز 150 حرفا.</value></data>
+  <data name="Quotation template validity must be between 0 and 3650 days." xml:space="preserve"><value>يجب أن تكون صلاحية قالب عرض السعر بين 0 و3650 يوما.</value></data>
+  <data name="Quotation template version must be between 1 and 9999." xml:space="preserve"><value>يجب أن يكون إصدار قالب عرض السعر بين 1 و9999.</value></data>
+  <data name="Quotation template was modified by another user. Reload and try again." xml:space="preserve"><value>عُدّل قالب عرض السعر بواسطة مستخدم آخر. أعد التحميل ثم حاول مجددا.</value></data>
+  <data name="Quotation template was not found." xml:space="preserve"><value>لم يتم العثور على قالب عرض السعر.</value></data>
+  <data name="Selected quotation template price list was not found or is inactive." xml:space="preserve"><value>قائمة أسعار قالب العرض المحددة غير موجودة أو غير فعالة.</value></data>
+  <data name="Selected quotation template product was not found." xml:space="preserve"><value>لم يتم العثور على منتج قالب العرض المحدد.</value></data>
+  <data name="Selected quotation template tax rate was not found." xml:space="preserve"><value>لم يتم العثور على نسبة ضريبة قالب العرض المحددة.</value></data>
+  <data name="Selected quotation template unit is inactive." xml:space="preserve"><value>وحدة قالب عرض السعر المحددة غير فعالة.</value></data>
+  <data name="Selected quotation template unit was not found." xml:space="preserve"><value>لم يتم العثور على وحدة قالب عرض السعر المحددة.</value></data>
+  <data name="Selection limits require an option group." xml:space="preserve"><value>تتطلب حدود الاختيار مجموعة خيارات.</value></data>
+  <data name="Source quotation template was not found." xml:space="preserve"><value>لم يتم العثور على قالب عرض السعر المصدر.</value></data>
+  <data name="Template items cannot be submitted without an active quotation template." xml:space="preserve"><value>لا يمكن إرسال بنود قالب دون قالب عرض سعر فعال.</value></data>
+  <data name="Template unit and product stock unit must use the same active measurement dimension." xml:space="preserve"><value>يجب أن تستخدم وحدة القالب ووحدة مخزون المنتج بُعد القياس الفعال نفسه.</value></data>
 </root>

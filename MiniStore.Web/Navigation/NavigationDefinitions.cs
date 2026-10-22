@@ -42,6 +42,14 @@ public static class NavigationDefinitions
                 27),
 
             new NavigationItem(
+                "Quotation templates",
+                "bi-files",
+                "SalesQuotationTemplates",
+                "Index",
+                "SalesQuotationTemplates.View",
+                26),
+
+            new NavigationItem(
                 "Sales orders",
                 "bi-clipboard-check",
                 "SalesOrders",

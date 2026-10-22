@@ -561,6 +561,32 @@ Check(salesQuotation.Status==SalesQuotationStatus.Accepted&&salesQuotation.Total
 CheckThrows(()=>salesQuotation.Accept("user",new DateOnly(2026,10,20)),"Completed sales quotation actions must not be repeated");
 Check(TenantIsolationModel.TenantOwnedTypes.Contains(typeof(SalesQuotation))&&TenantIsolationModel.TenantOwnedTypes.Contains(typeof(SalesQuotationLine))&&TenantIsolationModel.TenantOwnedTypes.Contains(typeof(SalesQuotationHistory)),
     "Sales quotation headers, lines and history must be tenant owned");
+Check(PermissionDefinitions.All.Count(x=>x.Name.StartsWith("SalesQuotationTemplates.",StringComparison.Ordinal))==2,
+    "Quotation templates must separate visibility from management authority");
+var quotationTemplateController=typeof(SalesQuotationTemplatesController);
+Check(quotationTemplateController.GetMethod(nameof(SalesQuotationTemplatesController.Index))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SalesQuotationTemplates.View"&&
+      quotationTemplateController.GetMethod(nameof(SalesQuotationTemplatesController.Details))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SalesQuotationTemplates.View"&&
+      quotationTemplateController.GetMethods().Single(x=>x.Name==nameof(SalesQuotationTemplatesController.Create)&&x.GetCustomAttribute<HttpPostAttribute>() is not null).GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SalesQuotationTemplates.Manage"&&
+      quotationTemplateController.GetMethods().Where(x=>x.GetCustomAttribute<HttpPostAttribute>() is not null).All(x=>x.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null),
+    "Quotation-template administration must enforce dedicated permissions and antiforgery");
+var advancedTemplate=new SalesQuotationTemplate("ADVANCED",1,null,"Advanced configurable offer",null,"Solutions","bundle,flexible",45,
+    SaleChannel.Wholesale,null,true,true,"Introduction","Terms","Footer","template-user");
+var requiredTemplateItem=new SalesQuotationTemplateItem(1,"Core",quotationProduct,quotationUnit,2m,1m,5m,true,null,
+    SalesQuotationTemplateItemType.Required,false,null,null,0,0,"Core product");
+var optionalTemplateItem=new SalesQuotationTemplateItem(2,"Options",quotationProduct,quotationUnit,1m,1m,2m,false,null,
+    SalesQuotationTemplateItemType.Optional,false,"SUPPORT","Support level",0,1,"Optional support");
+advancedTemplate.AddItem(requiredTemplateItem);advancedTemplate.AddItem(optionalTemplateItem);advancedTemplate.Activate();
+Check(advancedTemplate.Status==SalesQuotationTemplateStatus.Active&&advancedTemplate.Items.Count==2&&requiredTemplateItem.IsDefaultSelected&&advancedTemplate.IsDefault,
+    "Advanced quotation templates must preserve version, content, required/default options and activation policy");
+CheckThrows(()=>advancedTemplate.AddItem(requiredTemplateItem),"Activated quotation templates must be immutable and versioned instead of edited in place");
+var invalidOptionTemplate=new SalesQuotationTemplate("INVALID-OPTIONS",1,null,"Invalid option defaults",null,null,null,30,
+    SaleChannel.Wholesale,null,false,false,null,null,null,"template-user");
+invalidOptionTemplate.AddItem(new SalesQuotationTemplateItem(1,"Options",quotationProduct,quotationUnit,1m,1m,1m,false,null,
+    SalesQuotationTemplateItemType.Optional,false,"MANDATORY","Mandatory choice",1,1,null));
+CheckThrows(()=>invalidOptionTemplate.Activate(),"Quotation-template option groups must satisfy minimum and maximum selections before activation");
+CheckThrows(()=>invalidOptionTemplate.SetDefault(true),"Draft quotation templates cannot become the tenant default before activation");
+Check(TenantIsolationModel.TenantOwnedTypes.Contains(typeof(SalesQuotationTemplate))&&TenantIsolationModel.TenantOwnedTypes.Contains(typeof(SalesQuotationTemplateItem)),
+    "Quotation-template headers and items must be tenant owned");
 Check(PermissionDefinitions.All.Count(x=>x.Name.StartsWith("SalesOrders.",StringComparison.Ordinal))==7,
     "Sales orders must separate view, conversion, confirmation, exception approval, cancellation, reservation and release permissions");
 Check(PermissionDefinitions.All.Count(x=>x.Name.StartsWith("SalesApprovalRules.",StringComparison.Ordinal))==2,
@@ -2555,6 +2581,14 @@ var salesQuotationAcceptedNextStep=WorkflowNextStepGuidance.Resolve(
     "Sales quotation accepted.","SalesQuotations",new Dictionary<string,string?>{{"id","15"}});
 Check(salesQuotationAcceptedNextStep is {Controller:"SalesQuotations",Action:"Details",RequiredPermission:"SalesOrders.Create"}&&salesQuotationAcceptedNextStep.RouteValues.GetValueOrDefault("id")=="15",
     "Accepted quotations must guide an authorized user to the one-time sales-order conversion");
+var quotationTemplateDraftNextStep=WorkflowNextStepGuidance.Resolve(
+    "Quotation template draft created.","SalesQuotationTemplates",new Dictionary<string,string?>{{"id","18"}});
+Check(quotationTemplateDraftNextStep is{Controller:"SalesQuotationTemplates",Action:"Details",RequiredPermission:"SalesQuotationTemplates.View"}&&quotationTemplateDraftNextStep.RouteValues.GetValueOrDefault("id")=="18",
+    "Created quotation templates must guide users to review and activation");
+var quotationTemplateActiveNextStep=WorkflowNextStepGuidance.Resolve(
+    "Quotation template activated.","SalesQuotationTemplates",new Dictionary<string,string?>{{"id","18"}});
+Check(quotationTemplateActiveNextStep is{Controller:"SalesQuotations",Action:"Create",RequiredPermission:"SalesQuotations.Create"}&&quotationTemplateActiveNextStep.RouteValues.GetValueOrDefault("templateId")=="18",
+    "Activated quotation templates must guide users to customer-specific repricing and option selection");
 var salesOrderCreatedNextStep=WorkflowNextStepGuidance.Resolve(
     "Sales order created from accepted quotation.","SalesOrders",new Dictionary<string,string?>{{"id","25"}});
 Check(salesOrderCreatedNextStep is {Controller:"SalesOrders",Action:"Details",RequiredPermission:"SalesOrders.View"}&&salesOrderCreatedNextStep.RouteValues.GetValueOrDefault("id")=="25",
@@ -2893,6 +2927,7 @@ Check(WorkflowNextStepGuidance.IsSupportedController("VendorBills") &&
       WorkflowNextStepGuidance.IsSupportedController("CustomerInvoices") &&
       WorkflowNextStepGuidance.IsSupportedController("CustomerCreditNotes") &&
       WorkflowNextStepGuidance.IsSupportedController("SalesApprovalRules") &&
+      WorkflowNextStepGuidance.IsSupportedController("SalesQuotationTemplates") &&
       WorkflowNextStepGuidance.IsSupportedController("StockTransfers") &&
       WorkflowNextStepGuidance.IsSupportedController("Warehouses") &&
       !WorkflowNextStepGuidance.IsSupportedController("Sales"),

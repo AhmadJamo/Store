@@ -1190,6 +1190,27 @@ static async Task VerifySalesQuotationFoundationAsync(int tenantOneId,int tenant
         tenantOneDeliveryOrderId=order.Id;
     }
 
+    await using(var quotationTemplateContext=new AppDbContext(CreateOptions(connectionString),new FixedTenantContext(tenantOneId)))
+    {
+        var customer=await quotationTemplateContext.Customers.SingleAsync(x=>x.CustomerCode=="CUS-SQT-SQL");
+        var product=await quotationTemplateContext.Products.SingleAsync(x=>x.Id==productId);
+        var unit=await quotationTemplateContext.MeasurementUnits.SingleAsync(x=>x.Id==measurementUnitId);
+        var template=new SalesQuotationTemplate("SQL-ADV",1,null,"SQL advanced quotation",null,"Solutions","sql,options",30,
+            SaleChannel.Wholesale,null,false,true,"SQL introduction","SQL terms","SQL footer","sql-template-user");
+        var item=new SalesQuotationTemplateItem(1,"Core solution",product,unit,2m,1m,5m,true,null,
+            SalesQuotationTemplateItemType.Required,true,null,null,0,0,"SQL template line");
+        template.AddItem(item);template.Activate();quotationTemplateContext.SalesQuotationTemplates.Add(template);
+        await quotationTemplateContext.SaveChangesAsync();
+        var quotation=new SalesQuotation("SQT-SQL-TEMPLATE",Guid.NewGuid().ToString("N"),customer,null,
+            new DateOnly(2026,10,20),new DateOnly(2026,11,19),"JOD",1m,new DateOnly(2026,10,20),"COMPANY_BASE",null,"sql-template-user",template);
+        quotation.AddLine(new SalesQuotationLine(product,unit,1m,
+            new SalesPriceEvaluationSnapshot(2m,2m,"JOD",null,null,"PRODUCT_CHANNEL_FALLBACK",8m,8m,16m,null,null,null,false,"NO_TAX",null,0m,16m),item.Notes,item));
+        quotationTemplateContext.SalesQuotations.Add(quotation);await quotationTemplateContext.SaveChangesAsync();
+        if(quotation.TemplateCodeSnapshot!="SQL-ADV"||quotation.TemplateVersionSnapshot!=1||quotation.IntroductionSnapshot!="SQL introduction"||
+           quotation.Lines.Single().TemplateItemType!=SalesQuotationTemplateItemType.Required||quotation.Lines.Single().TemplateSectionSnapshot!="Core solution")
+            throw new InvalidOperationException("Advanced quotation templates must persist tenant-safe version, content and selected-item snapshots without freezing reusable prices.");
+    }
+
     await using(var salesControlContext=new AppDbContext(CreateOptions(connectionString),new FixedTenantContext(tenantOneId)))
     {
         var controlUnitOfWork=new UnitOfWork(salesControlContext);

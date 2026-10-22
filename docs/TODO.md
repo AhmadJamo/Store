@@ -87,7 +87,8 @@ The ERP SaaS Foundation Blueprint is imported as a non-authoritative planning re
 - [x] SAL-100C post Inspected return dispositions to inventory/tracking and reverse COGS where appropriate, while keeping credit notes separate. Completed in source 2026-10-21; Demo migration and disposable SQL execution await repair of host SQL encryption/SSPI connectivity.
 - [x] SAL-100D add independent retry-safe customer credit notes allocated to posted invoice/return quantities, reversing receivable/revenue/output tax and reducing balances without automatic cash refund or duplicate inventory mutation. Completed in source 2026-10-22; Demo migrations 129-130 and disposable SQL execution await repair of host SQL encryption/SSPI connectivity.
 - [x] SAL-110 add configurable company/customer sales-credit, overdue, price-below-cost, exceptional-discount and margin controls with Warn/RequireApproval/Block actions, arbitrary role steps, frozen evidence and configurable self/distinct-approver safeguards. Completed in source 2026-10-22; migration 131 and SQL execution await repair of host SQL encryption/SSPI connectivity.
-- [ ] SAL-120 implement the separately approved advanced-sales slice.
+- [x] SAL-120A add advanced versioned quotation templates with searchable categories/tags, reusable content, required/optional/alternative products, bounded option groups, quantity policy, optional extra lines, customer/date repricing and frozen applied-template evidence. Completed in source 2026-10-22; migration 132 and SQL execution await repair of host SQL encryption/SSPI connectivity.
+- [ ] SAL-120B add separately approved branded proposal/PDF presentation with frozen layout version and RTL-safe bilingual output; customer portal, signature and payment remain later provider-dependent gates.
 - [ ] SAL-130 implement analytics and controlled cutover after its own approval.
 
 - [x] WMS-050 reservations and exact transfer allocation with concurrent last-unit protection.

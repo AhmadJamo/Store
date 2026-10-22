@@ -333,7 +333,7 @@ namespace MiniStore.Infrastructure.Migrations
                     b.HasIndex("TenantId", "Code")
                         .IsUnique();
 
-                    b.ToTable("Accounts");
+                    b.ToTable("Accounts", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.AccountingSettings", b =>
@@ -428,7 +428,7 @@ namespace MiniStore.Infrastructure.Migrations
                     b.HasIndex("TenantId", "SingletonKey")
                         .IsUnique();
 
-                    b.ToTable("AccountingSettings");
+                    b.ToTable("AccountingSettings", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.AuditEvent", b =>
@@ -753,7 +753,7 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasIndex("TenantId", "CreatedAt");
 
-                    b.ToTable("BillingCheckoutSessions");
+                    b.ToTable("BillingCheckoutSessions", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.Branch", b =>
@@ -792,7 +792,7 @@ namespace MiniStore.Infrastructure.Migrations
                     b.HasIndex("TenantId", "Code")
                         .IsUnique();
 
-                    b.ToTable("Branches");
+                    b.ToTable("Branches", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.BranchWarehouseAccess", b =>
@@ -837,7 +837,7 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasIndex("WarehouseId", "TenantId");
 
-                    b.ToTable("BranchWarehouseAccesses");
+                    b.ToTable("BranchWarehouseAccesses", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.CompanyOnboarding", b =>
@@ -896,7 +896,7 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasKey("TenantId");
 
-                    b.ToTable("CompanyOnboardings");
+                    b.ToTable("CompanyOnboardings", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.CurrencyExchangeRate", b =>
@@ -949,7 +949,7 @@ namespace MiniStore.Infrastructure.Migrations
                     b.HasIndex("TenantId", "CurrencyCode", "EffectiveDate")
                         .IsUnique();
 
-                    b.ToTable("CurrencyExchangeRates");
+                    b.ToTable("CurrencyExchangeRates", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.Customer", b =>
@@ -1066,7 +1066,7 @@ namespace MiniStore.Infrastructure.Migrations
                     b.HasIndex("TenantId", "CustomerCode")
                         .IsUnique();
 
-                    b.ToTable("Customers");
+                    b.ToTable("Customers", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.CustomerAddress", b =>
@@ -1143,7 +1143,7 @@ namespace MiniStore.Infrastructure.Migrations
                         .IsUnique()
                         .HasFilter("[IsDefault] = 1 AND [IsActive] = 1");
 
-                    b.ToTable("CustomerAddresses");
+                    b.ToTable("CustomerAddresses", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.CustomerContact", b =>
@@ -1202,7 +1202,7 @@ namespace MiniStore.Infrastructure.Migrations
                         .IsUnique()
                         .HasFilter("[IsPrimary] = 1 AND [IsActive] = 1");
 
-                    b.ToTable("CustomerContacts");
+                    b.ToTable("CustomerContacts", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.CustomerCreditNote", b =>
@@ -1995,7 +1995,7 @@ namespace MiniStore.Infrastructure.Migrations
                     b.HasIndex("TenantId", "PaymentNumber")
                         .IsUnique();
 
-                    b.ToTable("CustomerPayments");
+                    b.ToTable("CustomerPayments", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.CustomerPaymentLine", b =>
@@ -2048,7 +2048,7 @@ namespace MiniStore.Infrastructure.Migrations
                     b.HasIndex("TenantId", "CustomerPaymentId", "CustomerInvoiceId")
                         .IsUnique();
 
-                    b.ToTable("CustomerPaymentLines");
+                    b.ToTable("CustomerPaymentLines", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.CustomerReturnReceipt", b =>
@@ -2684,7 +2684,7 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasIndex("TenantId", "StartDate", "EndDate");
 
-                    b.ToTable("FiscalPeriods", t =>
+                    b.ToTable("FiscalPeriods", null, t =>
                         {
                             t.HasCheckConstraint("CK_FiscalPeriods_DateRange", "[EndDate] >= [StartDate]");
 
@@ -2796,7 +2796,7 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasIndex("WarehouseId", "TenantId");
 
-                    b.ToTable("GoodsReceipts");
+                    b.ToTable("GoodsReceipts", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.GoodsReceiptLine", b =>
@@ -2906,7 +2906,7 @@ namespace MiniStore.Infrastructure.Migrations
                     b.HasIndex("TenantId", "GoodsReceiptId", "PurchaseOrderLineId")
                         .IsUnique();
 
-                    b.ToTable("GoodsReceiptLines");
+                    b.ToTable("GoodsReceiptLines", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.GoodsReceiptReturn", b =>
@@ -2984,7 +2984,7 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasIndex("WarehouseId", "TenantId");
 
-                    b.ToTable("GoodsReceiptReturns");
+                    b.ToTable("GoodsReceiptReturns", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.GoodsReceiptReturnLine", b =>
@@ -3063,7 +3063,7 @@ namespace MiniStore.Infrastructure.Migrations
                     b.HasIndex("TenantId", "GoodsReceiptReturnId", "GoodsReceiptLineId")
                         .IsUnique();
 
-                    b.ToTable("GoodsReceiptReturnLines");
+                    b.ToTable("GoodsReceiptReturnLines", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.GoodsReceiptScan", b =>
@@ -3116,7 +3116,7 @@ namespace MiniStore.Infrastructure.Migrations
                     b.HasIndex("TenantId", "IdempotencyKey")
                         .IsUnique();
 
-                    b.ToTable("GoodsReceiptScans");
+                    b.ToTable("GoodsReceiptScans", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.InventoryAdjustment", b =>
@@ -3839,7 +3839,7 @@ namespace MiniStore.Infrastructure.Migrations
                         .IsUnique()
                         .HasFilter("[SourceType] IS NOT NULL AND [SourceReference] IS NOT NULL");
 
-                    b.ToTable("JournalEntries");
+                    b.ToTable("JournalEntries", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.JournalEntryLine", b =>
@@ -3889,7 +3889,7 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasIndex("WarehouseId", "TenantId");
 
-                    b.ToTable("JournalEntryLines");
+                    b.ToTable("JournalEntryLines", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.LandedCost", b =>
@@ -3959,7 +3959,7 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasIndex("WarehouseId", "TenantId");
 
-                    b.ToTable("LandedCosts");
+                    b.ToTable("LandedCosts", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.LandedCostAllocation", b =>
@@ -4029,7 +4029,7 @@ namespace MiniStore.Infrastructure.Migrations
                     b.HasIndex("TenantId", "LandedCostId", "GoodsReceiptLineId")
                         .IsUnique();
 
-                    b.ToTable("LandedCostAllocations");
+                    b.ToTable("LandedCostAllocations", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.LandedCostComponent", b =>
@@ -4066,7 +4066,7 @@ namespace MiniStore.Infrastructure.Migrations
                     b.HasIndex("TenantId", "LandedCostId", "Type")
                         .IsUnique();
 
-                    b.ToTable("LandedCostComponents");
+                    b.ToTable("LandedCostComponents", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.LocationMovement", b =>
@@ -4183,7 +4183,7 @@ namespace MiniStore.Infrastructure.Migrations
                     b.HasIndex("TenantId", "Code")
                         .IsUnique();
 
-                    b.ToTable("MeasurementUnits");
+                    b.ToTable("MeasurementUnits", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.PaymentMethod", b =>
@@ -4217,7 +4217,7 @@ namespace MiniStore.Infrastructure.Migrations
                     b.HasIndex("TenantId", "Name")
                         .IsUnique();
 
-                    b.ToTable("PaymentMethods");
+                    b.ToTable("PaymentMethods", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.Permission", b =>
@@ -4317,7 +4317,7 @@ namespace MiniStore.Infrastructure.Migrations
                     b.HasIndex("Code")
                         .IsUnique();
 
-                    b.ToTable("Plans");
+                    b.ToTable("Plans", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.PlanFeature", b =>
@@ -4334,7 +4334,7 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasKey("PlanId", "Key");
 
-                    b.ToTable("PlanFeatures");
+                    b.ToTable("PlanFeatures", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.PlanLimit", b =>
@@ -4351,7 +4351,7 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasKey("PlanId", "Key");
 
-                    b.ToTable("PlanLimits");
+                    b.ToTable("PlanLimits", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.PlatformOperator", b =>
@@ -4370,7 +4370,7 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasKey("UserId");
 
-                    b.ToTable("PlatformOperators");
+                    b.ToTable("PlatformOperators", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.PosTerminal", b =>
@@ -4409,7 +4409,7 @@ namespace MiniStore.Infrastructure.Migrations
                     b.HasIndex("TenantId", "BranchId", "Name")
                         .IsUnique();
 
-                    b.ToTable("PosTerminals");
+                    b.ToTable("PosTerminals", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.PosTerminalProduct", b =>
@@ -4431,7 +4431,7 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasIndex("ProductId", "TenantId");
 
-                    b.ToTable("PosTerminalProducts");
+                    b.ToTable("PosTerminalProducts", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.PosTerminalSettings", b =>
@@ -4516,7 +4516,7 @@ namespace MiniStore.Infrastructure.Migrations
                     b.HasIndex("PosTerminalId", "TenantId")
                         .IsUnique();
 
-                    b.ToTable("PosTerminalSettings");
+                    b.ToTable("PosTerminalSettings", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.PosTerminalWarehouse", b =>
@@ -4543,7 +4543,7 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasIndex("WarehouseId", "TenantId");
 
-                    b.ToTable("PosTerminalWarehouses");
+                    b.ToTable("PosTerminalWarehouses", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.Product", b =>
@@ -4756,7 +4756,7 @@ namespace MiniStore.Infrastructure.Migrations
                     b.HasIndex("TenantId", "Code")
                         .IsUnique();
 
-                    b.ToTable("ProductAttributeDefinitions");
+                    b.ToTable("ProductAttributeDefinitions", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.ProductAttributeOption", b =>
@@ -4798,7 +4798,7 @@ namespace MiniStore.Infrastructure.Migrations
                     b.HasIndex("TenantId", "ProductAttributeDefinitionId", "Code")
                         .IsUnique();
 
-                    b.ToTable("ProductAttributeOptions");
+                    b.ToTable("ProductAttributeOptions", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.ProductAttributeValue", b =>
@@ -4845,7 +4845,7 @@ namespace MiniStore.Infrastructure.Migrations
                     b.HasIndex("TenantId", "ProductId", "ProductAttributeDefinitionId")
                         .IsUnique();
 
-                    b.ToTable("ProductAttributeValues", t =>
+                    b.ToTable("ProductAttributeValues", null, t =>
                         {
                             t.HasCheckConstraint("CK_ProductAttributeValues_ExactlyOneValue", "(CASE WHEN [TextValue] IS NULL THEN 0 ELSE 1 END + CASE WHEN [NumberValue] IS NULL THEN 0 ELSE 1 END + CASE WHEN [BooleanValue] IS NULL THEN 0 ELSE 1 END + CASE WHEN [ProductAttributeOptionId] IS NULL THEN 0 ELSE 1 END) = 1");
                         });
@@ -4891,7 +4891,7 @@ namespace MiniStore.Infrastructure.Migrations
                     b.HasIndex("TenantId", "Name")
                         .IsUnique();
 
-                    b.ToTable("ProductCategories");
+                    b.ToTable("ProductCategories", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.ProductCategoryAttribute", b =>
@@ -4913,7 +4913,7 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasIndex("ProductCategoryId", "TenantId");
 
-                    b.ToTable("ProductCategoryAttributes");
+                    b.ToTable("ProductCategoryAttributes", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.ProductLocationStock", b =>
@@ -4959,7 +4959,7 @@ namespace MiniStore.Infrastructure.Migrations
                     b.HasIndex("TenantId", "ProductId", "StorageLocationId")
                         .IsUnique();
 
-                    b.ToTable("ProductLocationStocks");
+                    b.ToTable("ProductLocationStocks", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.ProductRecipe", b =>
@@ -5007,7 +5007,7 @@ namespace MiniStore.Infrastructure.Migrations
                     b.HasIndex("TenantId", "ProductId", "VersionNumber")
                         .IsUnique();
 
-                    b.ToTable("ProductRecipes");
+                    b.ToTable("ProductRecipes", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.ProductStock", b =>
@@ -5060,7 +5060,7 @@ namespace MiniStore.Infrastructure.Migrations
                     b.HasIndex("TenantId", "ProductId", "WarehouseId")
                         .IsUnique();
 
-                    b.ToTable("ProductStocks");
+                    b.ToTable("ProductStocks", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.ProductTemplate", b =>
@@ -5105,7 +5105,7 @@ namespace MiniStore.Infrastructure.Migrations
                     b.HasIndex("TenantId", "Code")
                         .IsUnique();
 
-                    b.ToTable("ProductTemplates");
+                    b.ToTable("ProductTemplates", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.PromotionCode", b =>
@@ -5156,7 +5156,7 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasIndex("PlanId");
 
-                    b.ToTable("PromotionCodes");
+                    b.ToTable("PromotionCodes", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.PromotionRedemption", b =>
@@ -5192,7 +5192,7 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasIndex("SubscriptionId", "TenantId");
 
-                    b.ToTable("PromotionRedemptions");
+                    b.ToTable("PromotionRedemptions", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.Purchase", b =>
@@ -5239,7 +5239,7 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasIndex("WarehouseId", "TenantId");
 
-                    b.ToTable("Purchases");
+                    b.ToTable("Purchases", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.PurchaseAgreement", b =>
@@ -5331,7 +5331,7 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasIndex("WarehouseId", "TenantId");
 
-                    b.ToTable("PurchaseAgreements");
+                    b.ToTable("PurchaseAgreements", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.PurchaseAgreementLine", b =>
@@ -5407,7 +5407,7 @@ namespace MiniStore.Infrastructure.Migrations
                     b.HasIndex("TenantId", "PurchaseAgreementId", "SupplierQuotationLineId")
                         .IsUnique();
 
-                    b.ToTable("PurchaseAgreementLines");
+                    b.ToTable("PurchaseAgreementLines", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.PurchaseApprovalInstance", b =>
@@ -5463,7 +5463,7 @@ namespace MiniStore.Infrastructure.Migrations
                     b.HasIndex("TenantId", "PurchaseRequestId")
                         .IsUnique();
 
-                    b.ToTable("PurchaseApprovalInstances");
+                    b.ToTable("PurchaseApprovalInstances", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.PurchaseApprovalRule", b =>
@@ -5508,7 +5508,7 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasIndex("WarehouseId", "MinimumPriority", "MaximumPriority", "IsActive");
 
-                    b.ToTable("PurchaseApprovalRules");
+                    b.ToTable("PurchaseApprovalRules", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.PurchaseApprovalRuleStep", b =>
@@ -5542,7 +5542,7 @@ namespace MiniStore.Infrastructure.Migrations
                     b.HasIndex("TenantId", "PurchaseApprovalRuleId", "Sequence")
                         .IsUnique();
 
-                    b.ToTable("PurchaseApprovalRuleSteps");
+                    b.ToTable("PurchaseApprovalRuleSteps", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.PurchaseApprovalStep", b =>
@@ -5590,7 +5590,7 @@ namespace MiniStore.Infrastructure.Migrations
                     b.HasIndex("TenantId", "PurchaseApprovalInstanceId", "Sequence")
                         .IsUnique();
 
-                    b.ToTable("PurchaseApprovalSteps");
+                    b.ToTable("PurchaseApprovalSteps", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.PurchaseDemandAllocation", b =>
@@ -5638,7 +5638,7 @@ namespace MiniStore.Infrastructure.Migrations
                         .IsUnique()
                         .HasFilter("[SourceLineId] IS NOT NULL");
 
-                    b.ToTable("PurchaseDemandAllocations");
+                    b.ToTable("PurchaseDemandAllocations", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.PurchaseDirectDeliveryEvent", b =>
@@ -5691,7 +5691,7 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasIndex("PurchaseOrderLineId", "TenantId");
 
-                    b.ToTable("PurchaseDirectDeliveryEvents");
+                    b.ToTable("PurchaseDirectDeliveryEvents", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.PurchaseDocumentReversal", b =>
@@ -5771,7 +5771,7 @@ namespace MiniStore.Infrastructure.Migrations
                     b.HasIndex("TenantId", "DocumentType", "OriginalDocumentId")
                         .IsUnique();
 
-                    b.ToTable("PurchaseDocumentReversals");
+                    b.ToTable("PurchaseDocumentReversals", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.PurchaseItem", b =>
@@ -5825,7 +5825,7 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasIndex("WarehouseId", "TenantId");
 
-                    b.ToTable("PurchaseItems");
+                    b.ToTable("PurchaseItems", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.PurchaseMatchException", b =>
@@ -5895,7 +5895,7 @@ namespace MiniStore.Infrastructure.Migrations
                     b.HasIndex("TenantId", "PurchaseMatchRunId", "VendorBillLineId", "Type")
                         .IsUnique();
 
-                    b.ToTable("PurchaseMatchExceptions");
+                    b.ToTable("PurchaseMatchExceptions", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.PurchaseMatchRun", b =>
@@ -5957,7 +5957,7 @@ namespace MiniStore.Infrastructure.Migrations
                     b.HasIndex("VendorBillId", "TenantId")
                         .IsUnique();
 
-                    b.ToTable("PurchaseMatchRuns");
+                    b.ToTable("PurchaseMatchRuns", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.PurchaseMatchingSettings", b =>
@@ -5995,7 +5995,7 @@ namespace MiniStore.Infrastructure.Migrations
                     b.HasIndex("TenantId", "SingletonKey")
                         .IsUnique();
 
-                    b.ToTable("PurchaseMatchingSettings");
+                    b.ToTable("PurchaseMatchingSettings", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.PurchaseOrder", b =>
@@ -6146,7 +6146,7 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasIndex("WarehouseId", "TenantId");
 
-                    b.ToTable("PurchaseOrders");
+                    b.ToTable("PurchaseOrders", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.PurchaseOrderLifecycleHistory", b =>
@@ -6192,7 +6192,7 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasIndex("PurchaseOrderId", "TenantId");
 
-                    b.ToTable("PurchaseOrderLifecycleHistories");
+                    b.ToTable("PurchaseOrderLifecycleHistories", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.PurchaseOrderLine", b =>
@@ -6289,7 +6289,7 @@ namespace MiniStore.Infrastructure.Migrations
                     b.HasIndex("TenantId", "PurchaseOrderId", "SupplierQuotationLineId")
                         .IsUnique();
 
-                    b.ToTable("PurchaseOrderLines");
+                    b.ToTable("PurchaseOrderLines", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.PurchaseOrderSupplierConfirmation", b =>
@@ -6337,7 +6337,7 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasIndex("PurchaseOrderId", "TenantId");
 
-                    b.ToTable("PurchaseOrderSupplierConfirmations");
+                    b.ToTable("PurchaseOrderSupplierConfirmations", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.PurchaseQuotationAward", b =>
@@ -6384,7 +6384,7 @@ namespace MiniStore.Infrastructure.Migrations
                     b.HasIndex("TenantId", "SupplierQuotationId")
                         .IsUnique();
 
-                    b.ToTable("PurchaseQuotationAwards");
+                    b.ToTable("PurchaseQuotationAwards", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.PurchaseQuotationAwardAllocation", b =>
@@ -6478,7 +6478,7 @@ namespace MiniStore.Infrastructure.Migrations
                     b.HasIndex("TenantId", "PurchaseQuotationAwardId", "SupplierQuotationLineId")
                         .IsUnique();
 
-                    b.ToTable("PurchaseQuotationAwardAllocations");
+                    b.ToTable("PurchaseQuotationAwardAllocations", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.PurchaseRequest", b =>
@@ -6571,7 +6571,7 @@ namespace MiniStore.Infrastructure.Migrations
                         .IsUnique()
                         .HasFilter("[SourceType] IS NOT NULL AND [SourceReference] IS NOT NULL AND [Status] <> 3");
 
-                    b.ToTable("PurchaseRequests");
+                    b.ToTable("PurchaseRequests", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.PurchaseRequestHistory", b =>
@@ -6617,7 +6617,7 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasIndex("PurchaseRequestId", "TenantId");
 
-                    b.ToTable("PurchaseRequestHistories");
+                    b.ToTable("PurchaseRequestHistories", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.PurchaseRequestLine", b =>
@@ -6674,7 +6674,7 @@ namespace MiniStore.Infrastructure.Migrations
                     b.HasIndex("TenantId", "PurchaseRequestId", "ProductId", "MeasurementUnitId")
                         .IsUnique();
 
-                    b.ToTable("PurchaseRequestLines");
+                    b.ToTable("PurchaseRequestLines", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.PurchaseReturn", b =>
@@ -6738,7 +6738,7 @@ namespace MiniStore.Infrastructure.Migrations
                     b.HasIndex("TenantId", "ReturnNumber")
                         .IsUnique();
 
-                    b.ToTable("PurchaseReturns");
+                    b.ToTable("PurchaseReturns", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.PurchaseReturnItem", b =>
@@ -6803,7 +6803,7 @@ namespace MiniStore.Infrastructure.Migrations
                     b.HasIndex("TenantId", "PurchaseReturnId", "PurchaseItemId")
                         .IsUnique();
 
-                    b.ToTable("PurchaseReturnItems");
+                    b.ToTable("PurchaseReturnItems", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.PurchaseServiceAcceptance", b =>
@@ -6849,7 +6849,7 @@ namespace MiniStore.Infrastructure.Migrations
                     b.HasIndex("TenantId", "AcceptanceNumber")
                         .IsUnique();
 
-                    b.ToTable("PurchaseServiceAcceptances");
+                    b.ToTable("PurchaseServiceAcceptances", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.PurchaseServiceAcceptanceLine", b =>
@@ -6904,7 +6904,7 @@ namespace MiniStore.Infrastructure.Migrations
                     b.HasIndex("TenantId", "PurchaseServiceAcceptanceId", "PurchaseOrderLineId")
                         .IsUnique();
 
-                    b.ToTable("PurchaseServiceAcceptanceLines");
+                    b.ToTable("PurchaseServiceAcceptanceLines", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.PurchaseSourcingAttachment", b =>
@@ -6955,7 +6955,7 @@ namespace MiniStore.Infrastructure.Migrations
                     b.HasIndex("TenantId", "PurchaseSourcingEventId", "FileName")
                         .IsUnique();
 
-                    b.ToTable("PurchaseSourcingAttachments");
+                    b.ToTable("PurchaseSourcingAttachments", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.PurchaseSourcingEvent", b =>
@@ -7048,7 +7048,7 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasIndex("WarehouseId", "TenantId");
 
-                    b.ToTable("PurchaseSourcingEvents");
+                    b.ToTable("PurchaseSourcingEvents", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.PurchaseSourcingLine", b =>
@@ -7121,7 +7121,7 @@ namespace MiniStore.Infrastructure.Migrations
                         .IsUnique()
                         .HasFilter("[PurchaseRequestLineId] IS NOT NULL");
 
-                    b.ToTable("PurchaseSourcingLines");
+                    b.ToTable("PurchaseSourcingLines", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.PurchaseSourcingPolicy", b =>
@@ -7165,7 +7165,7 @@ namespace MiniStore.Infrastructure.Migrations
                     b.HasIndex("TenantId", "SingletonKey")
                         .IsUnique();
 
-                    b.ToTable("PurchaseSourcingPolicies");
+                    b.ToTable("PurchaseSourcingPolicies", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.PurchaseSupplierInvitation", b =>
@@ -7203,7 +7203,7 @@ namespace MiniStore.Infrastructure.Migrations
                     b.HasIndex("TenantId", "PurchaseSourcingEventId", "SupplierId")
                         .IsUnique();
 
-                    b.ToTable("PurchaseSupplierInvitations");
+                    b.ToTable("PurchaseSupplierInvitations", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.PurchaseTemplate", b =>
@@ -7275,7 +7275,7 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasIndex("WarehouseId", "TenantId");
 
-                    b.ToTable("PurchaseTemplates");
+                    b.ToTable("PurchaseTemplates", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.PurchaseTemplateLine", b =>
@@ -7324,7 +7324,7 @@ namespace MiniStore.Infrastructure.Migrations
                     b.HasIndex("TenantId", "PurchaseTemplateId", "ProductId", "MeasurementUnitId")
                         .IsUnique();
 
-                    b.ToTable("PurchaseTemplateLines");
+                    b.ToTable("PurchaseTemplateLines", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.PutawayRule", b =>
@@ -7370,7 +7370,7 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasIndex("WarehouseId", "TenantId");
 
-                    b.ToTable("PutawayRules");
+                    b.ToTable("PutawayRules", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.RecipeIngredient", b =>
@@ -7443,7 +7443,7 @@ namespace MiniStore.Infrastructure.Migrations
                     b.HasIndex("TenantId", "ProductRecipeId", "IngredientProductId")
                         .IsUnique();
 
-                    b.ToTable("RecipeIngredients");
+                    b.ToTable("RecipeIngredients", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.ReplenishmentAutomationSettings", b =>
@@ -7494,7 +7494,7 @@ namespace MiniStore.Infrastructure.Migrations
                     b.HasIndex("TenantId", "SingletonKey")
                         .IsUnique();
 
-                    b.ToTable("ReplenishmentAutomationSettings");
+                    b.ToTable("ReplenishmentAutomationSettings", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.ReplenishmentRule", b =>
@@ -7563,7 +7563,7 @@ namespace MiniStore.Infrastructure.Migrations
                     b.HasIndex("TenantId", "ProductId", "WarehouseId")
                         .IsUnique();
 
-                    b.ToTable("ReplenishmentRules");
+                    b.ToTable("ReplenishmentRules", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.ReplenishmentRun", b =>
@@ -7611,7 +7611,7 @@ namespace MiniStore.Infrastructure.Migrations
                     b.HasIndex("TenantId", "ScheduledForUtc")
                         .IsUnique();
 
-                    b.ToTable("ReplenishmentRuns");
+                    b.ToTable("ReplenishmentRuns", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.ReplenishmentSuggestion", b =>
@@ -7730,7 +7730,7 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasIndex("WarehouseId", "TenantId");
 
-                    b.ToTable("ReplenishmentSuggestions");
+                    b.ToTable("ReplenishmentSuggestions", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.Sale", b =>
@@ -8384,7 +8384,7 @@ namespace MiniStore.Infrastructure.Migrations
                     b.HasIndex("TenantId", "SourceQuotationId")
                         .IsUnique();
 
-                    b.ToTable("SalesOrders");
+                    b.ToTable("SalesOrders", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.SalesOrderApproval", b =>
@@ -8583,7 +8583,7 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasIndex("SalesOrderId", "TenantId");
 
-                    b.ToTable("SalesOrderHistories");
+                    b.ToTable("SalesOrderHistories", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.SalesOrderLine", b =>
@@ -8725,7 +8725,7 @@ namespace MiniStore.Infrastructure.Migrations
                     b.HasIndex("TenantId", "SourceQuotationLineId")
                         .IsUnique();
 
-                    b.ToTable("SalesOrderLines");
+                    b.ToTable("SalesOrderLines", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.SalesPriceList", b =>
@@ -8782,7 +8782,7 @@ namespace MiniStore.Infrastructure.Migrations
                     b.HasIndex("TenantId", "Code")
                         .IsUnique();
 
-                    b.ToTable("SalesPriceLists");
+                    b.ToTable("SalesPriceLists", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.SalesPriceRule", b =>
@@ -8866,7 +8866,7 @@ namespace MiniStore.Infrastructure.Migrations
                         .IsUnique()
                         .HasFilter("[Scope] = 3");
 
-                    b.ToTable("SalesPriceRules");
+                    b.ToTable("SalesPriceRules", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.SalesQuotation", b =>
@@ -8946,6 +8946,14 @@ namespace MiniStore.Infrastructure.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<string>("FooterNotesSnapshot")
+                        .HasMaxLength(4000)
+                        .HasColumnType("nvarchar(4000)");
+
+                    b.Property<string>("IntroductionSnapshot")
+                        .HasMaxLength(4000)
+                        .HasColumnType("nvarchar(4000)");
+
                     b.Property<decimal>("NetAmount")
                         .HasPrecision(24, 8)
                         .HasColumnType("decimal(24,8)");
@@ -8980,6 +8988,9 @@ namespace MiniStore.Infrastructure.Migrations
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("rowversion");
 
+                    b.Property<int?>("SalesQuotationTemplateId")
+                        .HasColumnType("int");
+
                     b.Property<string>("StateOrProvince")
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
@@ -8991,8 +9002,23 @@ namespace MiniStore.Infrastructure.Migrations
                         .HasPrecision(24, 8)
                         .HasColumnType("decimal(24,8)");
 
+                    b.Property<string>("TemplateCodeSnapshot")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("TemplateNameSnapshot")
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<int?>("TemplateVersionSnapshot")
+                        .HasColumnType("int");
+
                     b.Property<int>("TenantId")
                         .HasColumnType("int");
+
+                    b.Property<string>("TermsAndConditionsSnapshot")
+                        .HasMaxLength(8000)
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("TotalAmount")
                         .HasPrecision(24, 8)
@@ -9009,6 +9035,8 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasIndex("CustomerId", "TenantId");
 
+                    b.HasIndex("SalesQuotationTemplateId", "TenantId");
+
                     b.HasIndex("Status", "CreatedAtUtc");
 
                     b.HasIndex("TenantId", "QuotationNumber")
@@ -9017,7 +9045,7 @@ namespace MiniStore.Infrastructure.Migrations
                     b.HasIndex("TenantId", "RequestKey")
                         .IsUnique();
 
-                    b.ToTable("SalesQuotations");
+                    b.ToTable("SalesQuotations", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.SalesQuotationHistory", b =>
@@ -9063,7 +9091,7 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasIndex("SalesQuotationId", "TenantId");
 
-                    b.ToTable("SalesQuotationHistories");
+                    b.ToTable("SalesQuotationHistories", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.SalesQuotationLine", b =>
@@ -9073,6 +9101,9 @@ namespace MiniStore.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("AllowQuantityChangeSnapshot")
+                        .HasColumnType("bit");
 
                     b.Property<decimal>("CompanyUnitPrice")
                         .HasPrecision(24, 8)
@@ -9128,6 +9159,9 @@ namespace MiniStore.Infrastructure.Migrations
                     b.Property<int>("SalesQuotationId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("SalesQuotationTemplateItemId")
+                        .HasColumnType("int");
+
                     b.Property<decimal>("StockQuantity")
                         .HasPrecision(24, 6)
                         .HasColumnType("decimal(24,6)");
@@ -9155,6 +9189,17 @@ namespace MiniStore.Infrastructure.Migrations
                         .IsRequired()
                         .HasMaxLength(80)
                         .HasColumnType("nvarchar(80)");
+
+                    b.Property<int?>("TemplateItemType")
+                        .HasColumnType("int");
+
+                    b.Property<string>("TemplateOptionGroupSnapshot")
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<string>("TemplateSectionSnapshot")
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
 
                     b.Property<int>("TenantId")
                         .HasColumnType("int");
@@ -9195,12 +9240,224 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasIndex("SalesQuotationId", "TenantId");
 
+                    b.HasIndex("SalesQuotationTemplateItemId", "TenantId");
+
                     b.HasIndex("TaxRateId", "TenantId");
 
                     b.HasIndex("TenantId", "SalesQuotationId", "ProductId", "MeasurementUnitId")
                         .IsUnique();
 
-                    b.ToTable("SalesQuotationLines");
+                    b.ToTable("SalesQuotationLines", (string)null);
+                });
+
+            modelBuilder.Entity("MiniStore.Domain.Entities.SalesQuotationTemplate", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime?>("ActivatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("AllowAdditionalLines")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Category")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("Channel")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedByUserId")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<string>("FooterNotes")
+                        .HasMaxLength(4000)
+                        .HasColumnType("nvarchar(4000)");
+
+                    b.Property<string>("Introduction")
+                        .HasMaxLength(4000)
+                        .HasColumnType("nvarchar(4000)");
+
+                    b.Property<bool>("IsDefault")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<int?>("SalesPriceListId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("SourceTemplateId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Tags")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int>("TenantId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("TermsAndConditions")
+                        .HasMaxLength(8000)
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ValidityDays")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Version")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TenantId");
+
+                    b.HasIndex("SalesPriceListId", "TenantId");
+
+                    b.HasIndex("SourceTemplateId", "TenantId");
+
+                    b.HasIndex("Status", "Category");
+
+                    b.HasIndex("TenantId", "IsDefault")
+                        .IsUnique()
+                        .HasFilter("[IsDefault] = 1 AND [Status] = 2");
+
+                    b.HasIndex("TenantId", "Code", "Version")
+                        .IsUnique();
+
+                    b.ToTable("SalesQuotationTemplates", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_SalesQuotationTemplates_VersionValidity", "[Version] BETWEEN 1 AND 9999 AND [ValidityDays] BETWEEN 0 AND 3650");
+                        });
+                });
+
+            modelBuilder.Entity("MiniStore.Domain.Entities.SalesQuotationTemplateItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("AllowQuantityChange")
+                        .HasColumnType("bit");
+
+                    b.Property<decimal>("DefaultQuantity")
+                        .HasPrecision(24, 6)
+                        .HasColumnType("decimal(24,6)");
+
+                    b.Property<int>("GroupMaximumSelections")
+                        .HasColumnType("int");
+
+                    b.Property<int>("GroupMinimumSelections")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsDefaultSelected")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("ItemType")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("MaximumQuantity")
+                        .HasPrecision(24, 6)
+                        .HasColumnType("decimal(24,6)");
+
+                    b.Property<int>("MeasurementUnitId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("MinimumQuantity")
+                        .HasPrecision(24, 6)
+                        .HasColumnType("decimal(24,6)");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("OptionGroupCode")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("OptionGroupName")
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ProductNameSnapshot")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<int>("SalesQuotationTemplateId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SectionTitle")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<int>("Sequence")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("TaxRateId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TenantId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UnitNameSnapshot")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TenantId");
+
+                    b.HasIndex("MeasurementUnitId", "TenantId");
+
+                    b.HasIndex("ProductId", "TenantId");
+
+                    b.HasIndex("SalesQuotationTemplateId", "TenantId");
+
+                    b.HasIndex("TaxRateId", "TenantId");
+
+                    b.HasIndex("TenantId", "SalesQuotationTemplateId", "Sequence")
+                        .IsUnique();
+
+                    b.ToTable("SalesQuotationTemplateItems", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_SalesQuotationTemplateItems_Quantity", "[DefaultQuantity] > 0 AND [MinimumQuantity] > 0 AND [MaximumQuantity] >= [MinimumQuantity] AND [DefaultQuantity] BETWEEN [MinimumQuantity] AND [MaximumQuantity]");
+                        });
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.SalesReturn", b =>
@@ -9533,7 +9790,7 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasIndex("WarehouseId", "TenantId");
 
-                    b.ToTable("StockTransactions");
+                    b.ToTable("StockTransactions", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.StockTransfer", b =>
@@ -9639,7 +9896,7 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasIndex("ToWarehouseId", "TenantId");
 
-                    b.ToTable("StockTransfers");
+                    b.ToTable("StockTransfers", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.StockTransferHistory", b =>
@@ -9685,7 +9942,7 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasIndex("StockTransferId", "TenantId");
 
-                    b.ToTable("StockTransferHistories");
+                    b.ToTable("StockTransferHistories", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.StockTransferItem", b =>
@@ -9734,7 +9991,7 @@ namespace MiniStore.Infrastructure.Migrations
                     b.HasIndex("TenantId", "StockTransferId", "ProductId")
                         .IsUnique();
 
-                    b.ToTable("StockTransferItems");
+                    b.ToTable("StockTransferItems", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.StorageLocation", b =>
@@ -9833,7 +10090,7 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasIndex("WarehouseId", "ParentLocationId", "Sequence");
 
-                    b.ToTable("StorageLocations");
+                    b.ToTable("StorageLocations", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.Supplier", b =>
@@ -9909,7 +10166,7 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasIndex("AccountId", "TenantId");
 
-                    b.ToTable("Suppliers");
+                    b.ToTable("Suppliers", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.SupplierCommunication", b =>
@@ -9976,7 +10233,7 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasIndex("DocumentType", "DocumentId", "CreatedAtUtc");
 
-                    b.ToTable("SupplierCommunications");
+                    b.ToTable("SupplierCommunications", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.SupplierCommunicationActivity", b =>
@@ -10023,7 +10280,7 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasIndex("SupplierCommunicationId", "TenantId");
 
-                    b.ToTable("SupplierCommunicationActivities");
+                    b.ToTable("SupplierCommunicationActivities", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.SupplierCommunicationAttachment", b =>
@@ -10074,7 +10331,7 @@ namespace MiniStore.Infrastructure.Migrations
                     b.HasIndex("TenantId", "SupplierCommunicationId", "Id")
                         .IsUnique();
 
-                    b.ToTable("SupplierCommunicationAttachments");
+                    b.ToTable("SupplierCommunicationAttachments", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.SupplierCreditNote", b =>
@@ -10161,7 +10418,7 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasIndex("WarehouseId", "TenantId");
 
-                    b.ToTable("SupplierCreditNotes");
+                    b.ToTable("SupplierCreditNotes", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.SupplierCreditNoteLine", b =>
@@ -10266,7 +10523,7 @@ namespace MiniStore.Infrastructure.Migrations
                     b.HasIndex("TenantId", "SupplierCreditNoteId", "VendorBillLineId")
                         .IsUnique();
 
-                    b.ToTable("SupplierCreditNoteLines");
+                    b.ToTable("SupplierCreditNoteLines", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.SupplierExternalAuditEvent", b =>
@@ -10324,7 +10581,7 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasIndex("SupplierId", "TenantId");
 
-                    b.ToTable("SupplierExternalAuditEvents");
+                    b.ToTable("SupplierExternalAuditEvents", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.SupplierExternalSubmission", b =>
@@ -10401,7 +10658,7 @@ namespace MiniStore.Infrastructure.Migrations
                     b.HasIndex("TenantId", "Channel", "ChannelIdentityId", "IdempotencyKey")
                         .IsUnique();
 
-                    b.ToTable("SupplierExternalSubmissions");
+                    b.ToTable("SupplierExternalSubmissions", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.SupplierIntegrationCredential", b =>
@@ -10478,7 +10735,7 @@ namespace MiniStore.Infrastructure.Migrations
                     b.HasIndex("TenantId", "KeyHash")
                         .IsUnique();
 
-                    b.ToTable("SupplierIntegrationCredentials");
+                    b.ToTable("SupplierIntegrationCredentials", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.SupplierIntegrationOutbox", b =>
@@ -10562,7 +10819,7 @@ namespace MiniStore.Infrastructure.Migrations
                     b.HasIndex("TenantId", "IdempotencyKey")
                         .IsUnique();
 
-                    b.ToTable("SupplierIntegrationOutboxMessages");
+                    b.ToTable("SupplierIntegrationOutboxMessages", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.SupplierPayment", b =>
@@ -10655,7 +10912,7 @@ namespace MiniStore.Infrastructure.Migrations
                     b.HasIndex("TenantId", "PaymentNumber")
                         .IsUnique();
 
-                    b.ToTable("SupplierPayments");
+                    b.ToTable("SupplierPayments", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.SupplierPaymentLine", b =>
@@ -10708,7 +10965,7 @@ namespace MiniStore.Infrastructure.Migrations
                     b.HasIndex("TenantId", "SupplierPaymentId", "VendorBillId")
                         .IsUnique();
 
-                    b.ToTable("SupplierPaymentLines");
+                    b.ToTable("SupplierPaymentLines", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.SupplierPortalAccess", b =>
@@ -10769,7 +11026,7 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasIndex("DocumentType", "DocumentId", "SupplierId");
 
-                    b.ToTable("SupplierPortalAccesses");
+                    b.ToTable("SupplierPortalAccesses", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.SupplierProductPriceBreak", b =>
@@ -10807,7 +11064,7 @@ namespace MiniStore.Infrastructure.Migrations
                     b.HasIndex("TenantId", "SupplierProductPurchasingInfoId", "MinimumQuantity")
                         .IsUnique();
 
-                    b.ToTable("SupplierProductPriceBreaks");
+                    b.ToTable("SupplierProductPriceBreaks", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.SupplierProductPriceBreakSnapshot", b =>
@@ -10845,7 +11102,7 @@ namespace MiniStore.Infrastructure.Migrations
                     b.HasIndex("TenantId", "SupplierProductPriceHistoryId", "MinimumQuantity")
                         .IsUnique();
 
-                    b.ToTable("SupplierProductPriceBreakSnapshots");
+                    b.ToTable("SupplierProductPriceBreakSnapshots", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.SupplierProductPriceHistory", b =>
@@ -10922,7 +11179,7 @@ namespace MiniStore.Infrastructure.Migrations
                     b.HasIndex("TenantId", "SupplierProductPurchasingInfoId", "Revision")
                         .IsUnique();
 
-                    b.ToTable("SupplierProductPriceHistories");
+                    b.ToTable("SupplierProductPriceHistories", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.SupplierProductPurchasingInfo", b =>
@@ -11017,7 +11274,7 @@ namespace MiniStore.Infrastructure.Migrations
                     b.HasIndex("TenantId", "SupplierId", "ProductId", "PurchaseMeasurementUnitId")
                         .IsUnique();
 
-                    b.ToTable("SupplierProductPurchasingInfos");
+                    b.ToTable("SupplierProductPurchasingInfos", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.SupplierQuotation", b =>
@@ -11102,7 +11359,7 @@ namespace MiniStore.Infrastructure.Migrations
                     b.HasIndex("TenantId", "PurchaseSourcingEventId", "SupplierId")
                         .IsUnique();
 
-                    b.ToTable("SupplierQuotations");
+                    b.ToTable("SupplierQuotations", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.SupplierQuotationLine", b =>
@@ -11164,7 +11421,7 @@ namespace MiniStore.Infrastructure.Migrations
                     b.HasIndex("TenantId", "SupplierQuotationId", "PurchaseSourcingLineId")
                         .IsUnique();
 
-                    b.ToTable("SupplierQuotationLines");
+                    b.ToTable("SupplierQuotationLines", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.TaxRate", b =>
@@ -11204,7 +11461,7 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasIndex("OutputAccountId", "TenantId");
 
-                    b.ToTable("TaxRates");
+                    b.ToTable("TaxRates", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.Tenant", b =>
@@ -11242,7 +11499,7 @@ namespace MiniStore.Infrastructure.Migrations
                     b.HasIndex("Slug")
                         .IsUnique();
 
-                    b.ToTable("Tenants");
+                    b.ToTable("Tenants", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.TenantMembership", b =>
@@ -11267,7 +11524,7 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasIndex("UserId", "IsActive");
 
-                    b.ToTable("TenantMemberships");
+                    b.ToTable("TenantMemberships", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.TenantRole", b =>
@@ -11380,7 +11637,7 @@ namespace MiniStore.Infrastructure.Migrations
                     b.HasIndex("TenantId")
                         .IsUnique();
 
-                    b.ToTable("TenantSubscriptions");
+                    b.ToTable("TenantSubscriptions", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.TenantUserRole", b =>
@@ -11403,7 +11660,7 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasIndex("TenantRoleId", "TenantId");
 
-                    b.ToTable("TenantUserRoles");
+                    b.ToTable("TenantUserRoles", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.VendorBill", b =>
@@ -11524,7 +11781,7 @@ namespace MiniStore.Infrastructure.Migrations
                         .IsUnique()
                         .HasFilter("[Status] <> 3");
 
-                    b.ToTable("VendorBills");
+                    b.ToTable("VendorBills", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.VendorBillAttachment", b =>
@@ -11575,7 +11832,7 @@ namespace MiniStore.Infrastructure.Migrations
                     b.HasIndex("TenantId", "VendorBillId", "Id")
                         .IsUnique();
 
-                    b.ToTable("VendorBillAttachments");
+                    b.ToTable("VendorBillAttachments", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.VendorBillExtractionSuggestion", b =>
@@ -11651,7 +11908,7 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasIndex("VendorBillId", "TenantId");
 
-                    b.ToTable("VendorBillExtractionSuggestions");
+                    b.ToTable("VendorBillExtractionSuggestions", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.VendorBillLine", b =>
@@ -11798,7 +12055,7 @@ namespace MiniStore.Infrastructure.Migrations
                         .IsUnique()
                         .HasFilter("[PurchaseServiceAcceptanceLineId] IS NOT NULL");
 
-                    b.ToTable("VendorBillLines");
+                    b.ToTable("VendorBillLines", (string)null);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.Warehouse", b =>
@@ -11855,7 +12112,7 @@ namespace MiniStore.Infrastructure.Migrations
 
                     b.HasIndex("InventoryAccountId", "TenantId");
 
-                    b.ToTable("Warehouses");
+                    b.ToTable("Warehouses", (string)null);
                 });
 
             modelBuilder.Entity("GeneralSettings", b =>
@@ -15025,6 +15282,12 @@ namespace MiniStore.Infrastructure.Migrations
                         .HasPrincipalKey("Id", "TenantId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.HasOne("MiniStore.Domain.Entities.SalesQuotationTemplate", null)
+                        .WithMany()
+                        .HasForeignKey("SalesQuotationTemplateId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.SalesQuotationHistory", b =>
@@ -15080,6 +15343,69 @@ namespace MiniStore.Infrastructure.Migrations
                     b.HasOne("MiniStore.Domain.Entities.SalesQuotation", null)
                         .WithMany("Lines")
                         .HasForeignKey("SalesQuotationId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MiniStore.Domain.Entities.SalesQuotationTemplateItem", null)
+                        .WithMany()
+                        .HasForeignKey("SalesQuotationTemplateItemId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("MiniStore.Domain.Entities.TaxRate", null)
+                        .WithMany()
+                        .HasForeignKey("TaxRateId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict);
+                });
+
+            modelBuilder.Entity("MiniStore.Domain.Entities.SalesQuotationTemplate", b =>
+                {
+                    b.HasOne("MiniStore.Domain.Entities.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MiniStore.Domain.Entities.SalesPriceList", null)
+                        .WithMany()
+                        .HasForeignKey("SalesPriceListId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("MiniStore.Domain.Entities.SalesQuotationTemplate", null)
+                        .WithMany()
+                        .HasForeignKey("SourceTemplateId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict);
+                });
+
+            modelBuilder.Entity("MiniStore.Domain.Entities.SalesQuotationTemplateItem", b =>
+                {
+                    b.HasOne("MiniStore.Domain.Entities.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MiniStore.Domain.Entities.MeasurementUnit", null)
+                        .WithMany()
+                        .HasForeignKey("MeasurementUnitId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MiniStore.Domain.Entities.Product", null)
+                        .WithMany()
+                        .HasForeignKey("ProductId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MiniStore.Domain.Entities.SalesQuotationTemplate", null)
+                        .WithMany("Items")
+                        .HasForeignKey("SalesQuotationTemplateId", "TenantId")
                         .HasPrincipalKey("Id", "TenantId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -16182,6 +16508,11 @@ namespace MiniStore.Infrastructure.Migrations
                     b.Navigation("History");
 
                     b.Navigation("Lines");
+                });
+
+            modelBuilder.Entity("MiniStore.Domain.Entities.SalesQuotationTemplate", b =>
+                {
+                    b.Navigation("Items");
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.SalesReturn", b =>

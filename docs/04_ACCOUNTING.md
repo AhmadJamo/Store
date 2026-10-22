@@ -1,4 +1,8 @@
 # Accounting implementation assessment
+## Advanced quotation templates
+
+`SAL-120A` quotation templates and their application are commercial preparation only. Template creation, activation, default selection and quotation generation create no reservation, stock movement, delivery, invoice, receivable, journal or payment. The applied template invokes the existing price evaluator and freezes the evaluated quotation snapshots; accounting authority remains with the later invoice-posting service.
+
 ## Configurable sales controls
 
 `SAL-110` evaluates a Draft Sales Order before confirmation. Credit exposure is derived in company currency from posted open receivables after payments/credits plus confirmed unbilled-order exposure and the current order. Discount and margin use the order's frozen company price and current product master sale/cost reference. A warning may allow confirmation, while Block or RequireApproval keeps the order Draft. Evaluation and approval create no inventory movement, delivery, invoice, receivable, journal or cash entry; those remain owned by their later lifecycle services.

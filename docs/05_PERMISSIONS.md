@@ -1,4 +1,8 @@
 # Permissions and authorization
+## Advanced quotation templates
+
+`SalesQuotationTemplates.View` protects the template list and details. `SalesQuotationTemplates.Manage` protects draft creation, new-version cloning, activation, archiving and default selection. All mutations require antiforgery; applying a template still requires `SalesQuotations.Create` because it creates a quotation, not a template-management record.
+
 ## Configurable sales controls
 
 `SalesApprovalRules.View` protects rule visibility and `SalesApprovalRules.Manage` protects create/activate/deactivate operations. `SalesOrders.ApproveException` protects approve/reject decisions and is additionally constrained by the current configured role step. Every mutation is POST plus antiforgery. A rule can forbid the original requester from approving and can require a different user at every sequential step; these safeguards are frozen into each review.
@@ -15,7 +19,7 @@ Return receipts add independently enforced View, Create, Inspect, PostDispositio
 
 > Status: PARTIALLY IMPLEMENTED  
 > Source of truth: Code  
-> Last reviewed: 2026-10-20
+> Last reviewed: 2026-10-22
 
 `InventoryReservations.View` protects the read-only inventory reservation history screen. `SalesOrders.ApproveException` is separate from Confirm and applies only to configured exception steps. `SalesApprovalRules.View/Manage` separate rule reading from administration. `SalesDeliveries.View`, `Create`, `Post` and `Cancel` independently protect delivery visibility, Draft creation, physical/accounting posting and Draft cancellation.
 
@@ -45,6 +49,7 @@ Products, Warehouses, Customers, ProductStock, StockTransactions, StockMovements
 | Sales | View/Create enforced; Edit/Delete definitions have no controller actions. |
 | Sales pricing | `SalesPricing.View` protects list visibility and read-only evaluation; `SalesPricing.Manage` protects list/rule create and archive/activate operations. Every mutation requires antiforgery and tenant resolution. |
 | Sales quotations | `SalesQuotations.View` protects list/detail, Create protects Draft creation, and Send/Accept/Reject/Cancel protect their state transitions. Expire requires Cancel. Every mutation requires antiforgery, tenant resolution, status validation and rowversion. No quotation permission grants stock, order, invoice or accounting authority. |
+| Quotation templates | `SalesQuotationTemplates.View` protects list/detail. Manage protects create/version/activate/archive/default mutations; applying a template is separately protected by `SalesQuotations.Create`. |
 | Sales orders | `SalesOrders.View` protects list/detail/reservation history, Create protects the one-time conversion from an Accepted quotation, Confirm protects commercial confirmation, Cancel protects reasoned closure, Reserve protects new stock holds and ReleaseReservation protects reasoned release/reallocation. Every mutation requires antiforgery and tenant resolution; order-changing commands use rowversion while balance rowversion protects reservation concurrency. No reservation permission grants delivery, invoice, payment or journal authority. |
 | Sales deliveries | `SalesDeliveries.View` protects list/detail, Create protects reservation-backed Draft creation, Post protects the atomic stock/COGS transition and Cancel protects only a reasoned Draft cancellation. Every mutation requires antiforgery, tenant resolution and server-side state/quantity validation; no delivery permission grants customer-invoice, receivable or payment authority. |
 | Sales returns | View/Create enforced; the original-sale return action is also hidden without Create. |

@@ -1,4 +1,8 @@
 # Database
+## SAL-120A advanced quotation templates
+
+Migration 132 (`20261021225917_AddAdvancedQuotationTemplates`) creates tenant-owned `SalesQuotationTemplates` and `SalesQuotationTemplateItems`, adds restrictive template/item references plus immutable template-content snapshots to Sales Quotations and their lines, and enforces one code/version and one active default per tenant. Product, unit, price-list, tax and source-template relationships use tenant-composite keys. Active templates are versioned rather than edited; quotations retain their historical snapshots if a template is later archived. Source/model are at 132 with no pending changes. Demo remains evidenced at 128 because the SQL host fails before migration execution.
+
 ## SAL-110 configurable sales controls
 
 Migration 131 (`20261021222759_AddConfigurableSalesControls`) creates tenant-owned approval rules and ordered role steps plus immutable Sales Order reviews, findings and decision steps. Tenant-composite foreign keys bind every row to one company; a filtered unique index permits only one Pending review per order. Rule rows persist scope, metric, comparison, threshold, action, priority, effective dates, activation and self/distinct-approver policy. Review findings freeze the actual measured value and rule evidence so later rule edits cannot rewrite a past decision. Source/model are at 131 with no pending changes; Demo remains evidenced at 128 because the SQL host connection fails before migration execution.
@@ -21,7 +25,7 @@ Migration 128 adds tenant-owned receipt, line and history tables with restrictiv
 
 > Status: IMPLEMENTED  
 > Source of truth: EF Core entities, configurations and migrations  
-> Last reviewed: 2026-10-20
+> Last reviewed: 2026-10-22
 
 PUR-270 migration `20261014205756_AddSupplierPortalAndIntegration` creates tenant-owned `SupplierIntegrationCredentials`, `SupplierPortalAccesses`, `SupplierExternalSubmissions`, `SupplierIntegrationOutboxMessages` and `SupplierExternalAuditEvents`. Credential and portal secrets are stored only as SHA-256 hashes; global unique indexes make cross-tenant token resolution unambiguous. Tenant-composite foreign keys bind suppliers, credentials and outbox messages to one company. Submission channel/identity/idempotency is unique inside the tenant, and outbox idempotency is tenant-unique. The migration is additive, creates no access by default and was applied to local `MiniStoreDb` on 2026-10-15.
 

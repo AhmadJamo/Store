@@ -31,6 +31,13 @@ public sealed class SalesQuotation
     public string ExchangeRateSource { get; private set; } = string.Empty;
     public int PaymentTermDays { get; private set; }
     public string? Notes { get; private set; }
+    public int? SalesQuotationTemplateId { get; private set; }
+    public string? TemplateCodeSnapshot { get; private set; }
+    public int? TemplateVersionSnapshot { get; private set; }
+    public string? TemplateNameSnapshot { get; private set; }
+    public string? IntroductionSnapshot { get; private set; }
+    public string? TermsAndConditionsSnapshot { get; private set; }
+    public string? FooterNotesSnapshot { get; private set; }
     public SalesQuotationStatus Status { get; private set; }
     public decimal NetAmount { get; private set; }
     public decimal TaxAmount { get; private set; }
@@ -43,7 +50,8 @@ public sealed class SalesQuotation
 
     public SalesQuotation(string quotationNumber, string requestKey, Customer customer, CustomerAddress? address,
         DateOnly quotationDate, DateOnly validUntil, string currencyCode, decimal exchangeRate,
-        DateOnly exchangeRateDate, string exchangeRateSource, string? notes, string createdByUserId)
+        DateOnly exchangeRateDate, string exchangeRateSource, string? notes, string createdByUserId,
+        SalesQuotationTemplate? template = null)
     {
         if (string.IsNullOrWhiteSpace(quotationNumber)) throw new ArgumentException("Sales quotation number is required.");
         if (!Guid.TryParse(requestKey, out _)) throw new ArgumentException("Sales quotation request key is invalid.");
@@ -64,6 +72,10 @@ public sealed class SalesQuotation
         QuotationDate = quotationDate; ValidUntil = validUntil; CurrencyCode = currencyCode; ExchangeRate = exchangeRate;
         ExchangeRateDate = exchangeRateDate; ExchangeRateSource = exchangeRateSource.Trim(); PaymentTermDays = customer.PaymentTermDays;
         Notes = Normalize(notes); CreatedByUserId = createdByUserId; CreatedAtUtc = DateTime.UtcNow; Status = SalesQuotationStatus.Draft;
+        SalesQuotationTemplateId = template?.Id; TemplateCodeSnapshot = template?.Code;
+        TemplateVersionSnapshot = template?.Version; TemplateNameSnapshot = template?.Name;
+        IntroductionSnapshot = template?.Introduction; TermsAndConditionsSnapshot = template?.TermsAndConditions;
+        FooterNotesSnapshot = template?.FooterNotes;
         History.Add(new SalesQuotationHistory(Status, Status, SalesQuotationHistoryAction.Created, createdByUserId));
     }
 
@@ -129,9 +141,14 @@ public sealed class SalesQuotationLine
     public decimal TaxAmount { get; private set; }
     public decimal TotalAmount { get; private set; }
     public string? Notes { get; private set; }
+    public int? SalesQuotationTemplateItemId { get; private set; }
+    public SalesQuotationTemplateItemType? TemplateItemType { get; private set; }
+    public string? TemplateSectionSnapshot { get; private set; }
+    public string? TemplateOptionGroupSnapshot { get; private set; }
+    public bool AllowQuantityChangeSnapshot { get; private set; }
 
     public SalesQuotationLine(Product product, MeasurementUnit unit, decimal unitFactorToStock,
-        SalesPriceEvaluationSnapshot snapshot, string? notes)
+        SalesPriceEvaluationSnapshot snapshot, string? notes, SalesQuotationTemplateItem? templateItem = null)
     {
         if (product is null || product.Id <= 0) throw new ArgumentException("Quotation product is required.");
         if (unit is null || unit.Id <= 0) throw new ArgumentException("Quotation sales unit is required.");
@@ -147,6 +164,9 @@ public sealed class SalesQuotationLine
         TaxRateId = snapshot.TaxRateId; TaxName = snapshot.TaxName; TaxRatePercent = snapshot.TaxRatePercent;
         IsTaxInclusive = snapshot.IsTaxInclusive; TaxSourceCode = snapshot.TaxSourceCode; TaxExemptionReason = snapshot.TaxExemptionReason;
         TaxAmount = snapshot.TaxAmount; TotalAmount = snapshot.TotalAmount; Notes = string.IsNullOrWhiteSpace(notes) ? null : notes.Trim();
+        SalesQuotationTemplateItemId = templateItem?.Id; TemplateItemType = templateItem?.ItemType;
+        TemplateSectionSnapshot = templateItem?.SectionTitle; TemplateOptionGroupSnapshot = templateItem?.OptionGroupName;
+        AllowQuantityChangeSnapshot = templateItem?.AllowQuantityChange ?? true;
     }
 }
 

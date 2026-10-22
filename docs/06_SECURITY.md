@@ -3,6 +3,8 @@
 > Source of truth: Static inspection and focused executable regression checks
 > Last reviewed: 2026-10-22
 
+SAL-120A separates `SalesQuotationTemplates.View` from `SalesQuotationTemplates.Manage`; every mutation is POST plus antiforgery. Tenant query filters and composite foreign keys isolate templates and items. The server reloads the active template, requires the exact template version/item set, enforces required items, quantity and option-group limits, rejects disallowed custom lines and replaces submitted product/unit/tax identifiers with authoritative template values before repricing. This prevents a crafted request from weakening template policy or supplying a stale price.
+
 SAL-110 keeps rule administration, ordinary order confirmation and exception approval as separate permissions. Current-step role membership is rechecked server-side; POST antiforgery protects every decision. Tenant query filters and composite relationships isolate rules/reviews. Per-rule snapshots can prohibit requester self-approval and reuse of one approver across steps, while a filtered database index prevents concurrent duplicate Pending reviews. Blocked or pending evaluations leave the order Draft and cannot mutate inventory or accounting.
 
 WMS-050 reservation writes run inside the existing serializable UnitOfWork. Tenant-scoped source uniqueness, balance and reservation rowversions, positive-quantity constraints and exact-dimension indexes prevent cross-tenant, duplicate and concurrent over-allocation.

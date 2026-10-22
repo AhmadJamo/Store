@@ -199,7 +199,9 @@ public static class BusinessServicesExtensions
         services.AddScoped<ISalesPriceListRepository, SalesPriceListRepository>();
         services.AddScoped<SalesPriceListService>();
         services.AddScoped<ISalesQuotationRepository, SalesQuotationRepository>();
+        services.AddScoped<ISalesQuotationTemplateRepository, SalesQuotationTemplateRepository>();
         services.AddScoped<SalesQuotationService>();
+        services.AddScoped<SalesQuotationTemplateService>();
         services.AddScoped<ISalesOrderRepository, SalesOrderRepository>();
         services.AddScoped<SalesOrderReservationService>();
         services.AddScoped<SalesOrderService>();

@@ -16,6 +16,8 @@ public sealed class SalesQuotationCreatePageDto
     public List<SalesQuotationOptionDto> Units { get; init; } = [];
     public List<SalesQuotationOptionDto> PriceLists { get; init; } = [];
     public List<SalesQuotationOptionDto> TaxRates { get; init; } = [];
+    public List<SalesQuotationOptionDto> Templates { get; init; } = [];
+    public SalesQuotationAppliedTemplateDto? AppliedTemplate { get; init; }
 }
 
 public sealed class CreateSalesQuotationDto
@@ -28,6 +30,8 @@ public sealed class CreateSalesQuotationDto
     public DateOnly ValidUntil { get; set; } = DateOnly.FromDateTime(DateTime.Today.AddDays(30));
     public SaleChannel Channel { get; set; } = SaleChannel.Wholesale;
     [StringLength(1000)] public string? Notes { get; set; }
+    public int? SalesQuotationTemplateId { get; set; }
+    public int? SalesQuotationTemplateVersion { get; set; }
     public List<CreateSalesQuotationLineDto> Lines { get; set; } = [];
 }
 
@@ -38,7 +42,22 @@ public sealed class CreateSalesQuotationLineDto
     [Range(typeof(decimal), "0.000001", "999999999999")] public decimal Quantity { get; set; } = 1m;
     public int? TaxRateId { get; set; }
     [StringLength(500)] public string? Notes { get; set; }
+    public int? SalesQuotationTemplateItemId { get; set; }
+    public bool IsSelected { get; set; } = true;
+    public SalesQuotationTemplateItemType? TemplateItemType { get; set; }
+    public string? TemplateSectionTitle { get; set; }
+    public string? TemplateOptionGroupCode { get; set; }
+    public string? TemplateOptionGroupName { get; set; }
+    public bool AllowQuantityChange { get; set; } = true;
+    public decimal MinimumQuantity { get; set; }
+    public decimal MaximumQuantity { get; set; }
+    public string? ProductLabel { get; set; }
+    public string? UnitLabel { get; set; }
 }
+
+public sealed record SalesQuotationAppliedTemplateDto(int Id, string Code, int Version, string Name,
+    string? Description, string? Category, string? Tags, bool AllowAdditionalLines,
+    string? Introduction, string? TermsAndConditions, string? FooterNotes);
 
 public sealed record SalesQuotationSummaryDto(int Id, string QuotationNumber, string CustomerCode, string CustomerName,
     DateOnly QuotationDate, DateOnly ValidUntil, string CurrencyCode, decimal TotalAmount, SalesQuotationStatus Status);
@@ -52,13 +71,17 @@ public sealed class SalesQuotationDetailsDto
     public int PaymentTermDays { get; init; } public string? Notes { get; init; } public decimal NetAmount { get; init; } public decimal TaxAmount { get; init; } public decimal TotalAmount { get; init; }
     public string CreatedByUserId { get; init; } = ""; public DateTime CreatedAtUtc { get; init; } public byte[] RowVersion { get; init; } = [];
     public int? SalesOrderId { get; init; }
+    public int? SalesQuotationTemplateId { get; init; } public string? TemplateCode { get; init; }
+    public int? TemplateVersion { get; init; } public string? TemplateName { get; init; }
+    public string? Introduction { get; init; } public string? TermsAndConditions { get; init; } public string? FooterNotes { get; init; }
     public List<SalesQuotationLineDto> Lines { get; init; } = []; public List<SalesQuotationHistoryDto> History { get; init; } = [];
 }
 
 public sealed record SalesQuotationLineDto(int Id, string ProductCode, string ProductName, string UnitCode, string UnitName,
     decimal Quantity, decimal StockQuantity, decimal UnitPrice, decimal CompanyUnitPrice, decimal NetAmount,
     string PriceSourceCode, string? TaxName, decimal? TaxRatePercent, bool IsTaxInclusive, string TaxSourceCode,
-    decimal TaxAmount, decimal TotalAmount, string? Notes);
+    decimal TaxAmount, decimal TotalAmount, string? Notes, SalesQuotationTemplateItemType? TemplateItemType,
+    string? TemplateSection, string? TemplateOptionGroup);
 public sealed record SalesQuotationHistoryDto(SalesQuotationStatus FromStatus, SalesQuotationStatus ToStatus,
     SalesQuotationHistoryAction Action, string UserId, string? Reason, DateTime CreatedAtUtc);
 public sealed class SalesQuotationStatusCommandDto

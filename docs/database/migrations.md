@@ -1,11 +1,12 @@
 # Migrations and seeding
+- `20261021225917_AddAdvancedQuotationTemplates` (132): tenant-safe versioned quotation-template headers/items, code/version/default constraints, product/unit/price-list/tax/source relationships and frozen template snapshots on quotation headers/lines; source-only because the Demo SQL connection fails before execution.
 - `20261021222759_AddConfigurableSalesControls` (131): tenant-safe sales-control rules, ordered approver roles, immutable order findings/decisions, one-Pending-review enforcement and frozen self/distinct-approver policy; source-only because the Demo SQL connection fails before execution.
 - `20261021220324_AddCustomerCreditNotes` (130): tenant-safe customer credit-note headers/lines, exact invoice/return evidence and retry-key uniqueness; source-only because the 2026-10-22 Demo update was blocked before execution by host SQL encryption/SSPI.
 - `20261021170925_AddCustomerReturnDispositionPosting` (129): Posted disposition audit evidence; source-only because Demo update is blocked by host SQL connectivity.
 - `20261021121754_AddCustomerReturnRequests` (127): tenant-safe customer-return authorization; applied to local Demo on 2026-10-21.
 - `20261021123236_AddCustomerReturnReceipts` (128): return receipt, inspection and disposition evidence; applied to local Demo on 2026-10-21.
 
-> Last reviewed: 2026-10-20
+> Last reviewed: 2026-10-22
 
 ## 20261020114141_AddSalesDeliveries
 

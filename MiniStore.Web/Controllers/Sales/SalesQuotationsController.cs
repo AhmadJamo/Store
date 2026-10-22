@@ -14,7 +14,8 @@ public sealed class SalesQuotationsController(SalesQuotationService service, ISt
     { ViewBag.Status = status; ViewBag.Search = search; return View(await service.GetAllAsync(status, search)); }
 
     [HttpGet, PermissionAuthorize("SalesQuotations.Create")]
-    public async Task<IActionResult> Create() => View(await service.GetCreatePageAsync());
+    public async Task<IActionResult> Create(int? templateId)
+    { try { return View(await service.GetCreatePageAsync(null, templateId)); } catch (InvalidOperationException ex) { Notify("danger", ex.Message); return RedirectToAction(nameof(Index)); } }
 
     [HttpPost, ValidateAntiForgeryToken, PermissionAuthorize("SalesQuotations.Create")]
     public async Task<IActionResult> Create(CreateSalesQuotationDto dto)

@@ -1,5 +1,9 @@
 # Sales
-> Status: LEGACY IMMEDIATE SALE IMPLEMENTED; SAL-020 THROUGH SAL-110 CONFIGURABLE CONTROLS IMPLEMENTED IN SOURCE | Last reviewed: 2026-10-22
+> Status: LEGACY IMMEDIATE SALE IMPLEMENTED; SAL-020 THROUGH SAL-120A ADVANCED QUOTATION TEMPLATES IMPLEMENTED IN SOURCE | Last reviewed: 2026-10-22
+
+SAL-120A adds tenant-owned, versioned quotation templates. A Draft template defines validity, channel, optional price list, reusable introduction/terms/footer, required/optional/alternative products, quantity bounds, fixed or editable quantities, option groups and whether extra lines are allowed. Activation validates the complete configuration, archives an older active version with the same code and can set one active tenant default. Active templates are immutable; change occurs through a higher version.
+
+Applying a template never trusts stored or browser-submitted prices. `SalesQuotationService` reloads the active template, validates every expected item and group, overrides product/unit/tax identifiers from the server-side template and calls the existing pricing evaluator for the selected customer and quotation date. The resulting quotation freezes the template code/version/name, reusable content and selected-line section/type/group evidence. Creating or applying a template does not reserve stock, create a delivery, post accounting or collect payment. The complete staged plan and competitor research are in `SAL120_ADVANCED_QUOTATION_TEMPLATES_PLAN.md`.
 
 SAL-110 adds flexible tenant-configured controls at Sales Order confirmation. Each active rule can target every customer or one customer, compare order company amount, credit exposure, overdue days, discount percentage or margin percentage, and Warn, RequireApproval or Block. Approval rules merge into one ordered role workflow with configurable requester self-approval and distinct-approver safeguards. The review freezes measured evidence and decisions; the order remains Draft until final approval and no stock or accounting authority is invoked.
 

@@ -1,5 +1,7 @@
 # Sales and inventory services
 
+`SalesQuotationTemplateService` owns SAL-120A template queries, draft/version creation, product/unit/tax validation, activation, archival and one-active-default management. It requires a higher version with the same code when cloning, validates sellability and measurement-dimension compatibility and never stores a final customer price. `SalesQuotationService` is the application boundary for template use: it reloads the exact active version, validates all option and quantity constraints, rejects unauthorized additional lines, reprices the chosen products for the customer/date and constructs the immutable quotation/template snapshots in one UnitOfWork transaction. Neither service writes inventory or accounting.
+
 `SalesOrderApprovalService` owns SAL-110 rule administration, metric calculation, frozen findings and sequential exception decisions. It evaluates active company/customer rules by priority at confirmation, combines approval roles without weakening any triggered rule's separation-of-duties policy, and confirms only after the final valid step. Warn-only evaluations may confirm with evidence; Block and Pending keep the order Draft. It delegates persistence to the approval repository and never writes inventory, delivery, invoice, journal or cash state.
 ## Customer credit notes (`SAL-100D`)
 

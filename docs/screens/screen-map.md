@@ -1,4 +1,12 @@
 # Razor screen map
+## Advanced quotation templates (`SAL-120A`)
+
+- `/SalesQuotationTemplates`: responsive bilingual search/filter cards for code, version, category, tags, item counts, lifecycle and tenant default.
+- `/SalesQuotationTemplates/Create`: creates a Draft or copies an existing template into a higher version, with reusable content, item types, quantity bounds, option-group limits, pricing channel/list and additional-line policy.
+- `/SalesQuotationTemplates/Details/{id}`: immutable configuration evidence with version/activate/archive/default actions gated by status and permission.
+- `/SalesQuotations/Create?templateId=...`: applies the active template, shows required/optional/alternative choices and restrictions, then performs server-side customer/date repricing.
+- `/SalesQuotations/Details/{id}`: shows the frozen template identity, reusable content and selected-line section/type/group evidence.
+
 ## Configurable sales controls (`SAL-110`)
 
 - `/SalesApprovalRules`: bilingual responsive builder for company/customer scope, metric, comparison, threshold, action, priority, effective dates and arbitrary sequential role steps; rules are activated/deactivated rather than rewriting past evidence.

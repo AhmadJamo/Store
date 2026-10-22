@@ -1,4 +1,8 @@
 # Codebase map
+## SAL-120A advanced quotation templates
+
+Adds `SalesQuotationTemplate` and item entities, repository contract/implementation, EF configuration and migration 132; `SalesQuotationTemplateService` owns draft creation, version cloning, activation, archive and default selection. `SalesQuotationService` applies only an active exact version, enforces required/optional/alternative and option-group rules, reprices selected lines and freezes the template evidence. `SalesQuotationTemplatesController` plus three Razor screens provide bilingual management; quotation create/detail screens apply and display the result. The competitive extension plan is `SAL120_ADVANCED_QUOTATION_TEMPLATES_PLAN.md`.
+
 ## SAL-110 configurable sales controls
 
 Adds `SalesApprovalRule` and sequential step configuration plus immutable order review, finding and decision evidence. `SalesOrderApprovalService` evaluates company-wide or customer-specific order amount, credit exposure, overdue days, discount and margin thresholds and applies Warn, RequireApproval or Block. Rules support effective dates, priority, activation, requester self-approval policy and distinct-approver policy. `SalesApprovalRulesController` and its bilingual responsive screen manage rules; Sales Order details expose the frozen review and authorized decisions. Migration 131 adds the tenant-isolated schema.
@@ -21,7 +25,7 @@ Adds receipt/line/history domain types, repository and service, CRR sequence, fo
 
 > Status: IMPLEMENTED  
 > Source of truth: Repository scan  
-> Last reviewed: 2026-10-20
+> Last reviewed: 2026-10-22
 
 ## Solution roots
 | Path | Project/layer | Purpose |
@@ -87,7 +91,7 @@ deferred to a separately approved CUS-110 gate.
 | `Entities/Catalog/{Product,ProductTemplate,ProductCategory,ProductAttributeDefinition,ProductAttributeValue,ProductRecipe,RecipeIngredient,MeasurementUnit}.cs` and product type/unit/dimension/behavior/logistics enums | concrete SKU identity, optional variant template grouping, category-scoped typed attributes/options/values, logistics metadata, tracking/shelf-life policy, sale channels, immutable recipes and managed units | products, sales and inventory docs. |
 | `Entities/Customers/{Customer,CustomerContact}.cs`, `Entities/Suppliers/Supplier.cs` | Customer identity, prospective payment/currency/tax defaults, tenant-safe multi-contact and General/Billing/Shipping addresses with defaults, archive and rowversion; suppliers keep their professional profile | customer/sales/purchases/suppliers docs. |
 | `Entities/Sales/SalesPriceList.cs` | tenant-owned price lists and deterministic all-product/category/product rules with quantity, unit, date, currency, rounding and archive controls | SAL-020B pricing service/screen and sales docs. |
-| `Entities/Sales/SalesQuotation.cs` | SAL-030 quotation header, immutable commercial lines and semantic lifecycle history | quotation application service, EF configuration and screens. |
+| `Entities/Sales/{SalesQuotation,SalesQuotationTemplate}.cs` | SAL-030 quotation snapshots/history plus SAL-120A versioned configurable templates and product-option policy | quotation/template application services, EF configuration and screens. |
 | `Entities/Sales/SalesOrder.cs` | SAL-040 one-per-quotation order, copied commercial lines and confirmation/cancellation history; SAL-050/060 derive reservation and delivery progress without duplicating it on the order | order/reservation/delivery application services, EF configuration and screens. |
 | `Entities/Sales/SalesDelivery.cs` | SAL-060 reservation-backed Draft/Posted/Cancelled delivery header, exact-position lines, frozen cost/tracking evidence and semantic history | delivery service, EF configuration, accounting and screens. |
 | `Entities/Sales/CustomerInvoice.cs` | SAL-070/080 Draft/Approved/Posted/Reversed/Cancelled invoice, frozen commercial/account/company-currency evidence, exact delivery sources and semantic history | invoice service, EF configuration, accounting and screens. |
@@ -130,7 +134,7 @@ deferred to a separately approved CUS-110 gate.
 | `Services/<Feature>/*.cs` | use-case services grouped as Accounting, Catalog, Customers, Inventory, Purchases, Sales, Settings and Suppliers | matching MVC controllers. |
 | `Services/Customers/CustomerService.cs`, `Dtos/Customers/CustomerDtos.cs` | professional customer profile, receivable-policy assignment, contacts/addresses and validated configured-currency/tax commercial defaults | Customers controller and responsive forms/details. |
 | `Services/Sales/SalesPriceListService.cs`, `Dtos/Sales/SalesPriceListDtos.cs` | price-list/rule administration and read-only explainable evaluation across unit conversion, dated currency, deterministic rule selection and tax/customer defaults | SalesPriceLists controller and responsive evaluator. |
-| `Services/Sales/SalesQuotationService.cs`, `Dtos/Sales/SalesQuotationDtos.cs` | idempotent quotation creation from evaluated prices plus DTO-only list/detail and concurrency-protected lifecycle commands | SalesQuotations controller/views. |
+| `Services/Sales/{SalesQuotation,SalesQuotationTemplate}Service.cs`, `Dtos/Sales/SalesQuotation*.cs` | idempotent repriced quotation creation plus versioned template administration, option validation, DTO-only projections and concurrency-protected commands | SalesQuotations and SalesQuotationTemplates controllers/views. |
 | `Services/Sales/{SalesOrder,SalesOrderReservation}Service.cs`, `Dtos/Sales/SalesOrder*.cs` | one-time accepted-quotation conversion plus DTO-only list/detail, confirmation/cancellation and full/partial reservation/release projections and commands | SalesOrders controller/views and InventoryReservationService. |
 | `Services/Purchases/PurchaseApprovalService.cs` | approval-rule administration, submit-time rule resolution, frozen instance creation and role-authorized ordered decisions | Purchase Approval Rules and Purchase Request screens. |
 | `Services/Purchases/PurchaseSourcingService.cs` | sends approved-request sourcing or permission/policy-gated direct RFQs, freezing demand, policy and attachment evidence | Purchase Sourcing screens and PUR-200. |
@@ -254,6 +258,7 @@ Hierarchical location update (2026-09-30): StorageLocation retains its identity 
 | `Repositories/Sales/SalesReturnRepository.cs` | immutable return history and original-sale aggregation | `SalesReturnService`. |
 | `Repositories/Sales/SalesPriceListRepository.cs` | tenant-filtered price-list/rule loading, code checks and persistence | `SalesPriceListService`. |
 | `Repositories/Sales/SalesQuotationRepository.cs` | tenant-filtered quotation list/detail, request-key/number lookup and persistence | `SalesQuotationService`. |
+| `Repositories/Sales/SalesQuotationTemplateRepository.cs` | tenant-filtered template search, exact/default/active-version lookup and persistence | `SalesQuotationTemplateService` and quotation application. |
 | `Repositories/Sales/SalesOrderRepository.cs` | tenant-filtered order list/detail and source-quotation lookup/persistence | `SalesOrderService` and quotation generated-document link. |
 | `Repositories/Sales/SalesDeliveryRepository.cs` | tenant-filtered delivery list/detail, per-order posted progress and open-Draft lookup/persistence | `SalesDeliveryService` and SalesOrder cancellation/progress. |
 | `Repositories/Sales/CustomerInvoiceRepository.cs` | tenant-filtered aggregate list/detail, request-key and per-order reads with line/source/history loading | `CustomerInvoiceService`. |
@@ -284,6 +289,7 @@ Hierarchical location update (2026-09-30): StorageLocation retains its identity 
 | `Controllers/Catalog/ProductTemplatesController.cs` | bilingual template creation, existing-SKU assignment and explicit bounded variant preview/generation using Products View/Edit permissions | ProductTemplates view and ProductTemplateService. |
 | `Controllers/Sales/SalesPriceListsController.cs`, `Views/SalesPriceLists/Index.cshtml` | permission-separated list/rule mutations and responsive read-only explainable evaluator | SAL-020B pricing service and sales docs. |
 | `Controllers/Sales/SalesQuotationsController.cs`, `Views/SalesQuotations/*` | permission-separated Draft creation and quotation lifecycle with responsive immutable detail/history | SAL-030 quotation service, permissions and sales docs. |
+| `Controllers/Sales/SalesQuotationTemplatesController.cs`, `Views/SalesQuotationTemplates/*` | permission-separated template search/create/version/activate/archive/default management | SAL-120A template service, permissions and sales docs. |
 | `Controllers/Sales/SalesOrdersController.cs`, `Views/SalesOrders/*` | one-time quotation conversion, permission-separated confirmation/cancellation and responsive full/partial reservation/release/history workflow | SAL-040/050 order services, permissions and sales docs. |
 | `Controllers/Sales/SalesDeliveriesController.cs`, `Views/SalesDeliveries/*` | permission-separated delivery list/create/detail, Draft cancellation and atomic posting with state-aware completion/next-step guidance | SAL-060 delivery service, permissions, inventory and accounting docs. |
 | `Controllers/Sales/CustomerInvoicesController.cs`, `Views/CustomerInvoices/*` | six-permission invoice lifecycle, responsive source/accounting evidence, one-time post and controlled reversal | SAL-070/080 invoice service and accounting docs. |

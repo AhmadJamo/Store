@@ -29,7 +29,7 @@ public static class WorkflowNextStepGuidance
 
     private static readonly HashSet<string> CustomerControllers = new(StringComparer.OrdinalIgnoreCase) { "Customers" };
 
-    private static readonly HashSet<string> SalesControllers = new(StringComparer.OrdinalIgnoreCase) { "SalesPriceLists", "SalesQuotations", "SalesOrders", "SalesDeliveries", "CustomerInvoices", "CustomerPayments", "CustomerReturnReceipts", "CustomerCreditNotes", "SalesApprovalRules" };
+    private static readonly HashSet<string> SalesControllers = new(StringComparer.OrdinalIgnoreCase) { "SalesPriceLists", "SalesQuotations", "SalesQuotationTemplates", "SalesOrders", "SalesDeliveries", "CustomerInvoices", "CustomerPayments", "CustomerReturnReceipts", "CustomerCreditNotes", "SalesApprovalRules" };
 
     public static bool IsSupportedController(string? controller) =>
         !string.IsNullOrWhiteSpace(controller) &&
@@ -109,6 +109,16 @@ public static class WorkflowNextStepGuidance
             return new("SalesApprovalRules", "Index", "Review sales approval rules",
                 "Review rule priority, scope, threshold, action and sequential approver roles.",
                 "SalesApprovalRules.View", Routes());
+
+        if (Matches(message, localize, "Quotation template draft created."))
+            return new("SalesQuotationTemplates", "Details", "Review and activate quotation template",
+                "Review its content, option limits and pricing policy, then activate the version when it is ready for quotations.",
+                "SalesQuotationTemplates.View", Routes(("id", Route("id"))));
+
+        if (Matches(message, localize, "Quotation template activated.", "Default quotation template updated."))
+            return new("SalesQuotations", "Create", "Create quotation from template",
+                "Apply the active template, choose the customer and options, and review the newly evaluated prices.",
+                "SalesQuotations.Create", Routes(("templateId", Route("id"))));
 
         if (Matches(message, localize, "Sales order inventory reserved."))
             return new("SalesOrders", "Reserve", "Review inventory reservation",
