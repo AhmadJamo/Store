@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MiniStore.Application.DTOs.Suppliers;
 using MiniStore.Application.Services;
@@ -8,6 +8,7 @@ using MiniStore.Domain.Entities;
 
 namespace MiniStore.Web.Controllers;
 
+[AutoValidateAntiforgeryToken]
 public class SuppliersController : Controller
 {
     private readonly SupplierService _supplierService;
@@ -52,8 +53,7 @@ public class SuppliersController : Controller
         if (!ModelState.IsValid)
         {
             TempData["NotificationType"] = "error";
-            TempData["NotificationMessage"] =
-                "Please check the entered data.";
+            TempData["NotificationMessage"] = _localizer["Please check the entered data."].Value;
 
             await LoadFormOptions(); return View(dto);
         }
@@ -63,8 +63,7 @@ public class SuppliersController : Controller
             var supplierId = await _supplierService.CreateAsync(dto);
 
             TempData["NotificationType"] = "success";
-            TempData["NotificationMessage"] =
-                "Supplier created successfully.";
+            TempData["NotificationMessage"] = _localizer["Supplier created successfully."].Value;
 
             return RedirectToAction(nameof(Index), new { supplierId });
         }
@@ -78,8 +77,7 @@ public class SuppliersController : Controller
             HttpContext.RequestServices.GetRequiredService<ILoggerFactory>()
                 .CreateLogger(GetType()).LogError(ex, "Request operation failed");
             TempData["NotificationType"] = "error";
-            TempData["NotificationMessage"] =
-                "The operation could not be completed. Please try again or contact the administrator.";
+            TempData["NotificationMessage"] = _localizer["The operation could not be completed. Please try again or contact the administrator."].Value;
 
             await LoadFormOptions(); return View(dto);
         }
@@ -95,8 +93,7 @@ public class SuppliersController : Controller
         if (supplier == null)
         {
             TempData["NotificationType"] = "error";
-            TempData["NotificationMessage"] =
-                "Supplier not found.";
+            TempData["NotificationMessage"] = _localizer["Supplier not found."].Value;
 
             return RedirectToAction(nameof(Index));
         }
@@ -123,8 +120,7 @@ public class SuppliersController : Controller
         if (!ModelState.IsValid)
         {
             TempData["NotificationType"] = "error";
-            TempData["NotificationMessage"] =
-                "Please check the entered data.";
+            TempData["NotificationMessage"] = _localizer["Please check the entered data."].Value;
 
             await LoadFormOptions(); return View(dto);
         }
@@ -134,8 +130,7 @@ public class SuppliersController : Controller
             await _supplierService.UpdateAsync(id, dto);
 
             TempData["NotificationType"] = "success";
-            TempData["NotificationMessage"] =
-                "Supplier updated successfully.";
+            TempData["NotificationMessage"] = _localizer["Supplier updated successfully."].Value;
 
             return RedirectToAction(nameof(Index), new { supplierId = id });
         }
@@ -149,8 +144,7 @@ public class SuppliersController : Controller
             HttpContext.RequestServices.GetRequiredService<ILoggerFactory>()
                 .CreateLogger(GetType()).LogError(ex, "Request operation failed");
             TempData["NotificationType"] = "error";
-            TempData["NotificationMessage"] =
-                "The operation could not be completed. Please try again or contact the administrator.";
+            TempData["NotificationMessage"] = _localizer["The operation could not be completed. Please try again or contact the administrator."].Value;
 
             await LoadFormOptions(); return View(dto);
         }
@@ -165,16 +159,14 @@ public class SuppliersController : Controller
             await _supplierService.DeleteAsync(id);
 
             TempData["NotificationType"] = "success";
-            TempData["NotificationMessage"] =
-                "Supplier deleted successfully.";
+            TempData["NotificationMessage"] = _localizer["Supplier deleted successfully."].Value;
         }
         catch (Exception ex)
         {
             HttpContext.RequestServices.GetRequiredService<ILoggerFactory>()
                 .CreateLogger(GetType()).LogError(ex, "Request operation failed");
             TempData["NotificationType"] = "error";
-            TempData["NotificationMessage"] =
-                "The operation could not be completed. Please try again or contact the administrator.";
+            TempData["NotificationMessage"] = _localizer["The operation could not be completed. Please try again or contact the administrator."].Value;
         }
 
         return RedirectToAction(nameof(Index));

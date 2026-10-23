@@ -1,7 +1,7 @@
 # MiniStore project context
 > Status: PARTIALLY IMPLEMENTED  
 > Source of truth: Code  
-> Last reviewed: 2026-10-22
+> Last reviewed: 2026-10-23
 
 ## Project identity
 MiniStore is a server-rendered ASP.NET Core MVC store-management application. It targets .NET 10, uses EF Core 10 with SQL Server, ASP.NET Core Identity, Razor views, and a Domain/Application/Infrastructure/Web layered solution. No public API project is present.
@@ -33,7 +33,7 @@ The imported ERP SaaS Foundation Blueprint remains a proposed reference. The pro
 | Sales | PARTIALLY IMPLEMENTED | `Sale`, pricing/order/delivery/invoice/payment, return, approval and quotation-template aggregates | Legacy Sale/POS remains operational; the professional lifecycle includes configurable controls, advanced quotation templates, branded PDF and an Analytics Center provider. Customer collaboration and cutover remain staged. |
 | Analytics | PARTIALLY IMPLEMENTED | `AnalyticsWorkspace`, `AnalyticsCenterService`, module providers | Reusable personal/shared workspaces, advanced widget settings and central time comparison; Sales and Purchasing are the first providers. Editing, scheduled delivery and governed self-service fields remain staged. |
 | Stock transfers | IMPLEMENTED | `StockTransfer`, `StockTransferService` | Draft/submitted/approved/posted/cancelled flow. |
-| Settings | PARTIALLY IMPLEMENTED | settings entities/services | General, discount, inventory, accounting, fiscal periods, POS, centralized document numbers and a bilingual role-aware work procedure catalog beginning with purchasing. |
+| Settings | PARTIALLY IMPLEMENTED | settings entities/services | General, discount, inventory, accounting, fiscal periods, POS, centralized document numbers and a complete bilingual role-aware 62-step work procedure catalog across seven ERP modules. |
 | Identity & permissions | PARTIALLY IMPLEMENTED | Identity + `PermissionAuthorizationHandler` | Custom permission rows mapped to roles. |
 
 ## Current problems

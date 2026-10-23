@@ -1,8 +1,9 @@
-﻿
+
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using MiniStore.Application.DTOs.StockTransfers;
 using MiniStore.Domain.Commands;
 using MiniStore.Domain.Entities;
@@ -18,19 +19,22 @@ public class StockTransfersController : Controller
     private readonly IWarehouseRepository _warehouseRepository;
     private readonly UserManager<IdentityUser> _userManager;
     private readonly IStorageLocationRepository _storageLocationRepository;
+    private readonly IStringLocalizer<SharedResource> _localizer;
 
     public StockTransfersController(
         IStockTransferService stockTransferService,
         IProductRepository productRepository,
         IWarehouseRepository warehouseRepository,
         UserManager<IdentityUser> userManager,
-        IStorageLocationRepository storageLocationRepository)
+        IStorageLocationRepository storageLocationRepository,
+        IStringLocalizer<SharedResource> localizer)
     {
         _stockTransferService = stockTransferService;
         _productRepository = productRepository;
         _warehouseRepository = warehouseRepository;
         _userManager = userManager;
         _storageLocationRepository = storageLocationRepository;
+        _localizer = localizer;
     }
 
     // ============================================================
@@ -132,8 +136,7 @@ public class StockTransfersController : Controller
             TempData["NotificationType"] =
                 "error";
 
-            TempData["NotificationMessage"] =
-                "Stock transfer not found.";
+            TempData["NotificationMessage"] = _localizer["Stock transfer not found."].Value;
 
             return RedirectToAction(
                 nameof(Index));
@@ -459,8 +462,7 @@ public class StockTransfersController : Controller
             TempData["NotificationType"] =
                 "error";
 
-            TempData["NotificationMessage"] =
-                "Please check the entered data.";
+            TempData["NotificationMessage"] = _localizer["Please check the entered data."].Value;
 
             return View(dto);
         }
@@ -474,8 +476,7 @@ public class StockTransfersController : Controller
             TempData["NotificationType"] =
                 "error";
 
-            TempData["NotificationMessage"] =
-                "Current user could not be identified.";
+            TempData["NotificationMessage"] = _localizer["Current user could not be identified."].Value;
 
             return RedirectToAction(
                 nameof(Index));
@@ -511,8 +512,7 @@ public class StockTransfersController : Controller
             TempData["NotificationType"] =
                 "success";
 
-            TempData["NotificationMessage"] =
-                "Stock transfer created successfully.";
+            TempData["NotificationMessage"] = _localizer["Stock transfer created successfully."].Value;
 
             return RedirectToAction(
                 nameof(Details),
@@ -527,8 +527,7 @@ public class StockTransfersController : Controller
             TempData["NotificationType"] =
                 "error";
 
-            TempData["NotificationMessage"] =
-                "The operation could not be completed. Please try again or contact the administrator.";
+            TempData["NotificationMessage"] = _localizer["The operation could not be completed. Please try again or contact the administrator."].Value;
 
             return View(dto);
         }
@@ -552,8 +551,7 @@ public class StockTransfersController : Controller
             TempData["NotificationType"] =
                 "error";
 
-            TempData["NotificationMessage"] =
-                "Stock transfer not found.";
+            TempData["NotificationMessage"] = _localizer["Stock transfer not found."].Value;
 
             return RedirectToAction(
                 nameof(Index));
@@ -564,8 +562,7 @@ public class StockTransfersController : Controller
             TempData["NotificationType"] =
                 "error";
 
-            TempData["NotificationMessage"] =
-                "Only draft transfers can be edited.";
+            TempData["NotificationMessage"] = _localizer["Only draft transfers can be edited."].Value;
 
             return RedirectToAction(
                 nameof(Details),
@@ -641,8 +638,7 @@ public class StockTransfersController : Controller
             TempData["NotificationType"] =
                 "error";
 
-            TempData["NotificationMessage"] =
-                "Please check the entered data.";
+            TempData["NotificationMessage"] = _localizer["Please check the entered data."].Value;
 
             return View(dto);
         }
@@ -678,8 +674,7 @@ public class StockTransfersController : Controller
             TempData["NotificationType"] =
                 "success";
 
-            TempData["NotificationMessage"] =
-                "Stock transfer updated successfully.";
+            TempData["NotificationMessage"] = _localizer["Stock transfer updated successfully."].Value;
 
             return RedirectToAction(
                 nameof(Details),
@@ -699,8 +694,7 @@ public class StockTransfersController : Controller
             TempData["NotificationType"] =
                 "error";
 
-            TempData["NotificationMessage"] =
-                "The operation could not be completed. Please try again or contact the administrator.";
+            TempData["NotificationMessage"] = _localizer["The operation could not be completed. Please try again or contact the administrator."].Value;
 
             return View(dto);
         }
@@ -769,8 +763,7 @@ public class StockTransfersController : Controller
             TempData["NotificationType"] =
                 "error";
 
-            TempData["NotificationMessage"] =
-                "Rejection reason is required.";
+            TempData["NotificationMessage"] = _localizer["Rejection reason is required."].Value;
 
             return RedirectToAction(
                 nameof(Details),
@@ -853,8 +846,7 @@ public class StockTransfersController : Controller
             TempData["NotificationType"] =
                 "error";
 
-            TempData["NotificationMessage"] =
-                "Cancellation reason is required.";
+            TempData["NotificationMessage"] = _localizer["Cancellation reason is required."].Value;
 
             return RedirectToAction(
                 nameof(Details),
@@ -892,8 +884,7 @@ public class StockTransfersController : Controller
             TempData["NotificationType"] =
                 "error";
 
-            TempData["NotificationMessage"] =
-                "Current user could not be identified.";
+            TempData["NotificationMessage"] = _localizer["Current user could not be identified."].Value;
 
             return RedirectToAction(
                 nameof(Index));
@@ -916,8 +907,7 @@ public class StockTransfersController : Controller
             TempData["NotificationType"] =
                 "error";
 
-            TempData["NotificationMessage"] =
-                "The operation could not be completed. Please try again or contact the administrator.";
+            TempData["NotificationMessage"] = _localizer["The operation could not be completed. Please try again or contact the administrator."].Value;
         }
 
         return RedirectToAction(

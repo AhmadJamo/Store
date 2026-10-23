@@ -4,8 +4,8 @@
 
 | الأمر | النتيجة | التاريخ |
 |---|---|---|
-| `dotnet run --project tests/SecurityRegression/SecurityRegression.csproj -c Release --no-build` | Passed 1017 checks (نجح 1017 فحوص)، تشمل دورة القالب والصلاحيات والعزل وحدود مجموعات الخيارات والتوجيه | 2026-10-22 |
-| `dotnet build MiniStore.sln -c Release --no-restore` | Passed, 0 warnings/errors after SAL-120A | 2026-10-22 |
+| `dotnet run --project tests/SecurityRegression/SecurityRegression.csproj -c Release --no-build` | Passed 1060 checks (نجح 1060 فحصًا)، تشمل دورة القالب والصلاحيات والعزل والتوجيه ومطابقة روابط/نماذج Razor وحماية كل POST، تغطية مفاتيح الترجمة العربية وعدم تكرارها، ومنع نصوص الواجهة/الإجراءات غير المترجمة، وصحة وجهات كتالوج الـ62 خطوة | 2026-10-23 |
+| `dotnet build MiniStore.sln -c Release --no-restore` | Passed, 0 warnings/errors after the complete workflow/localization audit | 2026-10-23 |
 | `dotnet run --project tests/InventorySqlIntegration/InventorySqlIntegration.csproj -c Release --no-build` | BLOCKED before test execution by Windows SQL SSPI; quotation-template snapshot scenario is compiled but unverified on SQL | 2026-10-22 |
 | `pwsh -NoProfile -File scripts/verify-local.ps1` | Build + 777 + SQL + 500-request workload passed | 2026-10-18 |
 | `dotnet run --project tests/InventorySqlIntegration/InventorySqlIntegration.csproj -c Release` | Passed full disposable SQL suite, including partial invoices, one-time balanced receivable/revenue posting, branch/warehouse dimensions, exact inverse journal, released eligibility and zero stock/movement mutation | 2026-10-21 |

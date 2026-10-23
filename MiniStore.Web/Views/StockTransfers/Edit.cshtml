@@ -1,4 +1,4 @@
-﻿```cshtml
+```cshtml
 @using MiniStore.Application.DTOs.StockTransfers
 @inject Microsoft.Extensions.Localization.IStringLocalizer<MiniStore.Web.SharedResource> Localizer
 
@@ -17,7 +17,7 @@
 
     <div>
         <h2>
-            Edit Stock Transfer
+            @Localizer["Edit Stock Transfer"]
         </h2>
 
         <div class="text-muted">
@@ -58,7 +58,7 @@
         <div class="card-header">
 
             <h5 class="mb-0">
-                Transfer Information
+                @Localizer["Transfer Information"]
             </h5>
 
         </div>
@@ -72,7 +72,7 @@
                 <div class="col-md-6 mb-3">
 
                     <label class="form-label">
-                        From Warehouse
+                        @Localizer["From Warehouse"]
                     </label>
 
                     <select asp-for="FromWarehouseId"
@@ -105,7 +105,7 @@
                 <div class="col-md-6 mb-3">
 
                     <label class="form-label">
-                        To Warehouse
+                        @Localizer["To Warehouse"]
                     </label>
 
                     <select asp-for="ToWarehouseId"
@@ -140,7 +140,7 @@
                     <label asp-for="Reference"
                            class="form-label">
 
-                        Reference
+                        @Localizer["Reference"]
 
                     </label>
 
@@ -162,7 +162,7 @@
                     <label asp-for="Notes"
                            class="form-label">
 
-                        Notes
+                        @Localizer["Notes"]
 
                     </label>
 
@@ -193,7 +193,7 @@
         <div class="card-header d-flex justify-content-between align-items-center">
 
             <h5 class="mb-0">
-                Transfer Items
+                @Localizer["Transfer Items"]
             </h5>
 
             <button type="button"
@@ -250,7 +250,7 @@
                             <div class="col-md-5 mb-2">
 
                                 <label class="form-label">
-                                    Product
+                                    @Localizer["Product"]
                                 </label>
 
                                 <select name="Items[@i].ProductId"
@@ -295,7 +295,7 @@
                             <div class="col-md-3 mb-2">
 
                                 <label class="form-label">
-                                    Barcode
+                                    @Localizer["Barcode"]
                                 </label>
 
                                 <input type="text"
@@ -310,7 +310,7 @@
                             <div class="col-md-2 mb-2">
 
                                 <label class="form-label">
-                                    Quantity
+                                    @Localizer["Quantity"]
                                 </label>
 
                                 <input type="number"
@@ -360,7 +360,7 @@
                                      ? "display:none;"
                                      : "")">
 
-                No products have been added yet.
+                @Localizer["No products have been added yet."]
 
             </div>
 
@@ -377,7 +377,7 @@
 
         <i class="bi bi-info-circle"></i>
 
-        <strong>Draft Transfer:</strong>
+        <strong>@Localizer["Draft Transfer:"]</strong>
 
         Editing this transfer does not change stock.
         Stock movement occurs only after the transfer
@@ -396,7 +396,7 @@
            asp-route-id="@transferId"
            class="btn btn-secondary">
 
-            Cancel
+            @Localizer["Cancel"]
 
         </a>
 
@@ -823,8 +823,7 @@
 
                             event.preventDefault();
 
-                            alert(
-                                "Source and destination warehouses must be different.");
+                            alert('@Localizer["Source and destination warehouses must be different."]');
 
                             return;
                         }
@@ -841,8 +840,7 @@
 
                             event.preventDefault();
 
-                            alert(
-                                "A transfer must contain at least one product.");
+                            alert('@Localizer["A transfer must contain at least one product."]');
 
                             return;
                         }
@@ -854,8 +852,7 @@
 
                             event.preventDefault();
 
-                            alert(
-                                "The same product cannot be added more than once.");
+                            alert('@Localizer["The same product cannot be added more than once."]');
 
                             return;
                         }
@@ -896,8 +893,7 @@
 
                             event.preventDefault();
 
-                            alert(
-                                "All quantities must be greater than zero.");
+                            alert('@Localizer["All quantities must be greater than zero."]');
 
                             return;
                         }

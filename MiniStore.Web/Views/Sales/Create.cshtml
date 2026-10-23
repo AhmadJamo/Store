@@ -1,4 +1,4 @@
-﻿```cshtml
+```cshtml
 @using System.Globalization
 @using System.Text.Json
 @model MiniStore.Application.DTOs.Sales.CreateSaleDto
@@ -10,7 +10,7 @@
 
 <div class="container mt-4">
 
-    <h2>Create Sale</h2>
+    <h2>@Localizer["Create Sale"]</h2>
 
     <hr />
 
@@ -34,7 +34,7 @@
 
                     <label asp-for="Date"
                            class="form-label">
-                        Date
+                        @Localizer["Date"]
                     </label>
 
                     <input asp-for="Date"
@@ -55,7 +55,7 @@
 
                     <label asp-for="WarehouseId"
                            class="form-label">
-                        Warehouse
+                        @Localizer["Warehouse"]
                     </label>
 
                     <select asp-for="WarehouseId"
@@ -82,9 +82,9 @@
 
             </div>
 
-            <div class="col-md-4"><div class="mb-3"><label asp-for="CustomerId" class="form-label">Customer</label><select asp-for="CustomerId" class="form-select"><option value="">Unknown customer / walk-in</option>@foreach (var customer in ViewBag.Customers) { <option value="@customer.Id">@customer.Name</option> }</select></div></div>
+            <div class="col-md-4"><div class="mb-3"><label asp-for="CustomerId" class="form-label">@Localizer["Customer"]</label><select asp-for="CustomerId" class="form-select"><option value="">@Localizer["Unknown customer / walk-in"]</option>@foreach (var customer in ViewBag.Customers) { <option value="@customer.Id">@customer.Name</option> }</select></div></div>
 
-            <div class="col-md-4"><div class="mb-3"><label asp-for="PaymentMethodId" class="form-label">Payment Method</label><select asp-for="PaymentMethodId" class="form-select" required><option value="">-- Select payment method --</option>@foreach (var method in ViewBag.PaymentMethods) { <option value="@method.Id">@method.Name</option> }</select></div></div>
+            <div class="col-md-4"><div class="mb-3"><label asp-for="PaymentMethodId" class="form-label">@Localizer["Payment method"]</label><select asp-for="PaymentMethodId" class="form-select" required><option value="">-- Select payment method --</option>@foreach (var method in ViewBag.PaymentMethods) { <option value="@method.Id">@method.Name</option> }</select></div></div>
 
             <div class="col-md-4">
                 <div class="mb-3">
@@ -109,7 +109,7 @@
 
             <label asp-for="Notes"
                    class="form-label">
-                Notes
+                @Localizer["Notes"]
             </label>
 
             <textarea asp-for="Notes"
@@ -122,7 +122,7 @@
 
         <!-- Add Item -->
 
-        <h4>Sale Items</h4>
+        <h4>@Localizer["Sale Items"]</h4>
 
         <div class="row align-items-end">
 
@@ -131,12 +131,12 @@
                 <div class="mb-3">
 
                     <label class="form-label">
-                        Product
+                        @Localizer["Product"]
                     </label>
 
                     <input id="productSearch"
                            class="form-control mb-2"
-                           placeholder="Search by product name or barcode"
+                           placeholder="@Localizer["Search by product name or barcode"]"
                            autocomplete="off" />
 
                     <select id="productId"
@@ -169,7 +169,7 @@
                 <div class="mb-3">
 
                     <label class="form-label">
-                        Quantity
+                        @Localizer["Quantity"]
                     </label>
 
                     <input id="quantity"
@@ -188,7 +188,7 @@
                 <div class="mb-3">
 
                     <label class="form-label">
-                        Sale Price
+                        @Localizer["Sale Price"]
                     </label>
 
                     <input id="salePrice"
@@ -207,18 +207,18 @@
                 <div class="mb-3">
 
                     <label class="form-label">
-                        Discount Type
+                        @Localizer["Discount Type"]
                     </label>
 
                     <select id="discountType"
                             class="form-select">
 
                         <option value="1">
-                            Percentage
+                            @Localizer["Percentage"]
                         </option>
 
                         <option value="2">
-                            Fixed Amount
+                            @Localizer["Fixed Amount"]
                         </option>
 
                     </select>
@@ -232,7 +232,7 @@
                 <div class="mb-3">
 
                     <label class="form-label">
-                        Discount
+                        @Localizer["Discount"]
                     </label>
 
                     <input id="discountValue"
@@ -267,7 +267,7 @@
                         id="addItem"
                         class="btn btn-success w-100 mb-3">
 
-                    Add Item
+                    @Localizer["Add Item"]
 
                 </button>
 
@@ -285,14 +285,14 @@
 
                     <tr>
 
-                        <th>Product</th>
-                        <th>Quantity</th>
-                        <th>Sale Price</th>
-                        <th>Gross Total</th>
-                        <th>Discount</th>
-                        <th>Discount Amount</th>
+                        <th>@Localizer["Product"]</th>
+                        <th>@Localizer["Quantity"]</th>
+                        <th>@Localizer["Sale Price"]</th>
+                        <th>@Localizer["Gross Total"]</th>
+                        <th>@Localizer["Discount"]</th>
+                        <th>@Localizer["Discount Amount"]</th>
                         <th>@Localizer["Tracked identity selection"]</th>
-                        <th>Total</th>
+                        <th>@Localizer["Total"]</th>
                         <th></th>
 
                     </tr>
@@ -319,7 +319,7 @@
                     <div class="card-body">
 
                         <h5 class="card-title">
-                            Invoice Discount
+                            @Localizer["Invoice Discount"]
                         </h5>
 
                         <div class="mb-3">
@@ -327,7 +327,7 @@
                             <label asp-for="InvoiceDiscountType"
                                    class="form-label">
 
-                                Discount Type
+                                @Localizer["Discount Type"]
 
                             </label>
 
@@ -336,11 +336,11 @@
                                     class="form-select">
 
                                 <option value="1">
-                                    Percentage
+                                    @Localizer["Percentage"]
                                 </option>
 
                                 <option value="2">
-                                    Fixed Amount
+                                    @Localizer["Fixed Amount"]
                                 </option>
 
                             </select>
@@ -352,7 +352,7 @@
                             <label asp-for="InvoiceDiscountValue"
                                    class="form-label">
 
-                                Discount
+                                @Localizer["Discount"]
 
                             </label>
 
@@ -388,7 +388,7 @@
                         <tr>
 
                             <th>
-                                Subtotal
+                                @Localizer["Subtotal"]
                             </th>
 
                             <td id="subtotal"
@@ -411,7 +411,7 @@
                         <tr>
 
                             <th>
-                                Invoice Discount
+                                @Localizer["Invoice Discount"]
                             </th>
 
                             <td id="invoiceDiscountAmount"
@@ -426,7 +426,7 @@
                         <tr>
 
                             <th>
-                                <strong>Grand Total</strong>
+                                <strong>@Localizer["Grand total"]</strong>
                             </th>
 
                             <td class="text-end">
@@ -450,14 +450,14 @@
         <button type="submit"
                 class="btn btn-primary">
 
-            Save Sale
+            @Localizer["Save Sale"]
 
         </button>
 
         <a asp-action="Index"
            class="btn btn-secondary">
 
-            Cancel
+            @Localizer["Cancel"]
 
         </a>
 
@@ -615,7 +615,7 @@
 
                 if (!productId) {
 
-                    alert("Product is required.");
+                    alert('@Localizer["Product is required."]');
 
                     return;
                 }
@@ -657,9 +657,7 @@
 
                 if (!quantity || quantity <= 0) {
 
-                    alert(
-                        "Quantity must be greater than zero."
-                    );
+                    alert('@Localizer["Quantity must be greater than zero."]');
 
                     return;
                 }
@@ -670,9 +668,7 @@
                     salePrice < 0
                 ) {
 
-                    alert(
-                        "Sale price is invalid."
-                    );
+                    alert('@Localizer["Sale price is invalid."]');
 
                     return;
                 }
@@ -680,9 +676,7 @@
 
                 if (discountValue < 0) {
 
-                    alert(
-                        "Discount cannot be negative."
-                    );
+                    alert('@Localizer["Discount cannot be negative."]');
 
                     return;
                 }
@@ -699,9 +693,7 @@
 
                     if (discountValue > 100) {
 
-                        alert(
-                            "Percentage discount cannot exceed 100%."
-                        );
+                        alert('@Localizer["Percentage discount cannot exceed 100%."]');
 
                         return;
                     }
@@ -903,7 +895,7 @@
                     <button type="button"
                             class="btn btn-danger btn-sm remove-item">
 
-                        Remove
+                        @Localizer["Remove"]
 
                     </button>
 

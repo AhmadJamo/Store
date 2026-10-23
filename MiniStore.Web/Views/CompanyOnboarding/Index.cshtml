@@ -1,3 +1,5 @@
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizer<MiniStore.Web.SharedResource> Localizer
 @model MiniStore.Application.Saas.CompanyOnboardingDto
 @using System.Globalization
 @using MiniStore.Domain.Entities
@@ -63,7 +65,7 @@
                         <label class="form-label">@(ar ? "لغة النظام الافتراضية" : "Default language")</label>
                         <select name="Language" class="form-select" required>
                             <option value="2" selected="@ar">العربية</option>
-                            <option value="1" selected="@(!ar)">English</option>
+                            <option value="1" selected="@(!ar)">@Localizer["English"]</option>
                         </select>
                     </div>
                     <div class="col-md-3">

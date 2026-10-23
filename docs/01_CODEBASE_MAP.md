@@ -38,7 +38,7 @@ Adds receipt/line/history domain types, repository and service, CRR sequence, fo
 
 > Status: IMPLEMENTED  
 > Source of truth: Repository scan  
-> Last reviewed: 2026-10-22
+> Last reviewed: 2026-10-23
 
 ## Solution roots
 | Path | Project/layer | Purpose |
@@ -152,7 +152,7 @@ deferred to a separately approved CUS-110 gate.
 | `Services/Purchases/PurchaseApprovalService.cs` | approval-rule administration, submit-time rule resolution, frozen instance creation and role-authorized ordered decisions | Purchase Approval Rules and Purchase Request screens. |
 | `Services/Purchases/PurchaseSourcingService.cs` | sends approved-request sourcing or permission/policy-gated direct RFQs, freezing demand, policy and attachment evidence | Purchase Sourcing screens and PUR-200. |
 | `Services/Settings/PurchaseSourcingPolicyService.cs` | manages the tenant direct-RFQ amount, role and supplier-status gate | Purchase sourcing policy Settings screen. |
-| `Dtos/Settings/WorkflowCatalogDtos.cs`, `Services/Settings/WorkflowCatalogService.cs` | defines the ordered purchasing procedure, responsible/review roles, segregation principles, completion evidence and permission-aware work destination without duplicating transactional rules | Settings workflow catalog. |
+| `Dtos/Settings/WorkflowCatalogDtos.cs`, `Services/Settings/WorkflowCatalogService.cs` | defines 62 ordered ERP procedure steps across setup, customers, sales, purchasing, inventory, accounting and analytics, with responsible/review roles, segregation principles, completion evidence and permission-aware destinations without duplicating transactional rules | Settings workflow catalog. |
 | `Dtos/Settings/GeneralSettingsDto.cs`, `Services/Settings/GeneralSettingsService.cs` | separates regional preferences from bilingual organization identity, validates/stores logo content and maps flexible document-visible custom fields without exposing EF entities | Settings general/organization-identity screens and future document renderers. |
 | `Dtos/Settings/DocumentDesignDtos.cs`, `Services/Settings/DocumentDesignService.cs` | validates, versions, activates, archives, defaults and projects typed bilingual document layouts without exposing persistence entities | central Document Designs workspace and quotation design selection. |
 | `Dtos/Documents/DocumentPdfDtos.cs`, `Services/Documents/IHtmlToPdfEngine.cs` | reusable feature-neutral HTML/PDF request, page and margin contract | single PDF creation boundary shared by future invoices, orders, receipts and reports. |
@@ -336,7 +336,7 @@ Hierarchical location update (2026-09-30): StorageLocation retains its identity 
 | `Controllers/Purchases/PurchaseAnalyticsController.cs`, `Views/PurchaseAnalytics/Index.cshtml` | permission-protected responsive purchasing dashboard with KPI sources, trends, drill-through exceptions, buyer workload and final lifecycle acceptance | PUR-140/PUR-280 analytics service. |
 | `Controllers/Purchases/PurchaseAccountingReconciliationController.cs`, `Views/PurchaseAccountingReconciliation/Index.cshtml` | permission-protected read-only Inventory/GL and GRNI/GL reconciliation with responsive evidence cards and setup/source links | PUR-160 reconciliation service. |
 | `Views/Settings/PurchaseMatching.cshtml` | administration screen for quantity and price tolerance percentages | PUR-090 settings service. |
-| `Views/Settings/WorkflowCatalog.cshtml` | responsive bilingual procedure catalog showing 19 purchasing steps, step owner, reviewer, control principle, completion evidence and authorized destination | `WorkflowCatalogService`; Administration access. |
+| `Views/Settings/WorkflowCatalog.cshtml` | responsive bilingual 62-step catalog grouped into seven ERP modules and phases, with module navigation, step owner, reviewer, control principle, completion evidence and authorized destination | `WorkflowCatalogService`; Administration access. |
 | `Areas/Platform/*` | separately authenticated platform-owner control center for plans, companies/subscriptions, promotion codes and pending payment confirmations | SaaS module. |
 | `Controllers/PublicController.cs`, `Controllers/Saas/SubscriptionController.cs` | public landing/pricing and tenant subscription/checkout flows | SaaS module and public/subscription views. |
 | `Middleware/SubscriptionAccessMiddleware.cs` | blocks tenant ERP access when the current subscription is not usable | SaaS module/security. |
@@ -377,6 +377,7 @@ For exact module relationships, use `modules/*.md`; for entity and service detai
 - Runtime login limiter and Identity lockout: `Web/Configuration/{WebPresentation,Security}Extensions.cs` and `Controllers/Security/AccountController.cs`.
 - Bootstrap opt-in: `Infrastructure/Persistence/IdentitySeeder.cs` and Web appsettings.
 - Controller broad-error handling and five index delete forms: see security/controller/screen docs.
+- MVC form hardening: every public `[HttpPost]` action is covered by explicit or controller-level antiforgery validation. Regression also parses non-partial Razor files and verifies every static `asp-action`/`asp-controller` target resolves to a public controller action.
 
 ## Guided onboarding additions (2026-09-15)
 - `Domain/Entities/Saas/CompanyOnboarding.cs`: one-time setup state and business-profile choices.

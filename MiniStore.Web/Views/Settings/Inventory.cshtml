@@ -1,3 +1,5 @@
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizer<MiniStore.Web.SharedResource> Localizer
 @model MiniStore.Application.Dtos.Settings.InventorySettingsDto
 @using MiniStore.Domain.Entities
 
@@ -8,14 +10,14 @@
 <div class="container mt-4" style="max-width: 1000px;">
     <div class="d-flex justify-content-between align-items-start mb-4">
         <div>
-            <h2 class="mb-1">Inventory Settings</h2>
-            <p class="text-muted mb-0">Set the defaults used when a new warehouse is created. Each warehouse can override them.</p>
+            <h2 class="mb-1">@Localizer["Inventory Settings"]</h2>
+            <p class="text-muted mb-0">@Localizer["Set the defaults used when a new warehouse is created. Each warehouse can override them."]</p>
         </div>
-        <a asp-action="Index" class="btn btn-outline-secondary">Back to Settings</a>
+        <a asp-action="Index" class="btn btn-outline-secondary">@Localizer["Back to Settings"]</a>
     </div>
 
     <div class="alert alert-info">
-        A product can be stored in multiple locations inside the same warehouse. The warehouse balance remains the total, while location balances show its physical distribution.
+        @Localizer["A product can be stored in multiple locations inside the same warehouse. The warehouse balance remains the total, while location balances show its physical distribution."]
     </div>
 
     <form asp-action="Inventory" method="post">
@@ -23,55 +25,55 @@
         <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
         <div class="card shadow-sm mb-4">
-            <div class="card-header bg-white"><strong>New warehouse defaults</strong></div>
+            <div class="card-header bg-white"><strong>@Localizer["New warehouse defaults"]</strong></div>
             <div class="card-body">
                 <div class="row g-3">
                     <div class="col-md-4">
-                        <label asp-for="DefaultWarehouseType" class="form-label">Operational use</label>
+                        <label asp-for="DefaultWarehouseType" class="form-label">@Localizer["Operational use"]</label>
                         <select asp-for="DefaultWarehouseType" asp-items="Html.GetEnumSelectList<WarehouseType>()" class="form-select"></select>
                     </div>
                     <div class="col-md-4">
-                        <label asp-for="DefaultControlMode" class="form-label">Inventory control mode</label>
+                        <label asp-for="DefaultControlMode" class="form-label">@Localizer["Inventory control mode"]</label>
                         <select asp-for="DefaultControlMode" asp-items="Html.GetEnumSelectList<InventoryControlMode>()" class="form-select" id="controlMode"></select>
                     </div>
                     <div class="col-md-4">
-                        <label asp-for="DefaultPickingStrategy" class="form-label">Picking strategy</label>
+                        <label asp-for="DefaultPickingStrategy" class="form-label">@Localizer["Picking strategy"]</label>
                         <select asp-for="DefaultPickingStrategy" asp-items="Html.GetEnumSelectList<InventoryPickingStrategy>()" class="form-select"></select>
                     </div>
                 </div>
 
                 <div class="mt-3 small text-muted">
-                    Simple keeps one warehouse balance. Location Managed uses exact locations. Hybrid supports exact locations while allowing a temporary unassigned balance for receiving and later putaway.
+                    @Localizer["Simple keeps one warehouse balance. Location Managed uses exact locations. Hybrid supports exact locations while allowing a temporary unassigned balance for receiving and later putaway."]
                 </div>
             </div>
         </div>
 
         <div class="card shadow-sm mb-4">
-            <div class="card-header bg-white"><strong>Operational defaults</strong></div>
+            <div class="card-header bg-white"><strong>@Localizer["Operational defaults"]</strong></div>
             <div class="card-body">
                 <div class="form-check form-switch mb-3">
                     <input asp-for="DefaultAllowPosSales" class="form-check-input" />
-                    <label asp-for="DefaultAllowPosSales" class="form-check-label">Allow direct POS sales from the warehouse</label>
-                    <div class="form-text">This supports simple outlet stores and organized sales-floor warehouses.</div>
+                    <label asp-for="DefaultAllowPosSales" class="form-check-label">@Localizer["Allow direct POS sales from the warehouse"]</label>
+                    <div class="form-text">@Localizer["This supports simple outlet stores and organized sales-floor warehouses."]</div>
                 </div>
                 <div class="form-check form-switch mb-3">
                     <input asp-for="DefaultEnforceLocationCapacity" class="form-check-input" />
-                    <label asp-for="DefaultEnforceLocationCapacity" class="form-check-label">Enforce configured location capacities</label>
+                    <label asp-for="DefaultEnforceLocationCapacity" class="form-check-label">@Localizer["Enforce configured location capacities"]</label>
                 </div>
                 <div class="form-check form-switch mb-3 location-rule">
                     <input asp-for="DefaultRequireSourceLocationForTransfers" class="form-check-input" />
-                    <label asp-for="DefaultRequireSourceLocationForTransfers" class="form-check-label">Require exact source location on transfers</label>
+                    <label asp-for="DefaultRequireSourceLocationForTransfers" class="form-check-label">@Localizer["Require exact source location on transfers"]</label>
                 </div>
                 <div class="form-check form-switch location-rule">
                     <input asp-for="DefaultRequireDestinationLocationForTransfers" class="form-check-input" />
-                    <label asp-for="DefaultRequireDestinationLocationForTransfers" class="form-check-label">Require exact destination location on transfers</label>
+                    <label asp-for="DefaultRequireDestinationLocationForTransfers" class="form-check-label">@Localizer["Require exact destination location on transfers"]</label>
                 </div>
             </div>
         </div>
 
-        <button type="submit" class="btn btn-primary">Save Inventory Settings</button>
-        <a asp-controller="Warehouses" asp-action="Index" class="btn btn-outline-primary">Configure Warehouses</a>
-        <a asp-action="InventoryAccess" class="btn btn-outline-primary">Branch &amp; POS Warehouses</a>
+        <button type="submit" class="btn btn-primary">@Localizer["Save Inventory Settings"]</button>
+        <a asp-controller="Warehouses" asp-action="Index" class="btn btn-outline-primary">@Localizer["Configure Warehouses"]</a>
+        <a asp-action="InventoryAccess" class="btn btn-outline-primary">@Localizer["Branch & POS Warehouses"]</a>
     </form>
 </div>
 

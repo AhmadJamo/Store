@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using MiniStore.Domain.Interfaces;
 using MiniStore.Web.Authorization;
 using MiniStore.Application.Services;
@@ -17,7 +18,8 @@ public class PlatformAccountController(
     SignInManager<IdentityUser> signInManager,
     ISaasRepository saas,
     ISecurityAuditEventWriter securityAudit,
-    IAuditRequestContext auditRequest) : Controller
+    IAuditRequestContext auditRequest,
+    IStringLocalizer<SharedResource> localizer) : Controller
 {
     [AllowAnonymous, HttpGet("login")]
     public IActionResult Login(
@@ -61,7 +63,7 @@ public class PlatformAccountController(
                 SourceIpMasked = auditRequest.SourceIpMasked,
                 UserAgentHash = auditRequest.UserAgentHash
             }, CancellationToken.None);
-            ModelState.AddModelError("", "Invalid platform credentials.");
+            ModelState.AddModelError("", localizer["Invalid platform credentials."]);
             return View();
         }
         var identity = new ClaimsIdentity([new Claim(ClaimTypes.NameIdentifier, user!.Id), new Claim(ClaimTypes.Name, user.UserName!), new Claim(ClaimTypes.Role, op!.Role.ToString())], PlatformAuthentication.Scheme);

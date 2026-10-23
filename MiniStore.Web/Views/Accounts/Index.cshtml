@@ -1,4 +1,6 @@
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizer<MiniStore.Web.SharedResource> Localizer
 @model List<MiniStore.Application.Dtos.Accounting.AccountDto>
 @{ ViewData["Title"] = "Chart of Accounts"; }
-<div class="container mt-4"><div class="d-flex justify-content-between"><h2>Chart of Accounts</h2><a asp-action="Create" class="btn btn-primary">Add Account</a></div>
-<table class="table mt-3"><thead><tr><th>Code</th><th>Name</th><th>Type</th><th>Parent</th></tr></thead><tbody>@foreach(var account in Model){<tr><td>@account.Code</td><td>@account.Name</td><td>@account.Type</td><td>@(account.ParentAccountId?.ToString() ?? "—")</td></tr>}</tbody></table></div>
+<div class="container mt-4"><div class="d-flex justify-content-between"><h2>@Localizer["Chart of Accounts"]</h2><a asp-action="Create" class="btn btn-primary">@Localizer["Add Account"]</a></div>
+<table class="table mt-3"><thead><tr><th>@Localizer["Code"]</th><th>@Localizer["Name"]</th><th>@Localizer["Type"]</th><th>@Localizer["Parent"]</th></tr></thead><tbody>@foreach(var account in Model){<tr><td>@account.Code</td><td>@account.Name</td><td>@account.Type</td><td>@(account.ParentAccountId?.ToString() ?? "—")</td></tr>}</tbody></table></div>

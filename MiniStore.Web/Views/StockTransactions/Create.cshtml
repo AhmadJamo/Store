@@ -1,4 +1,4 @@
-﻿@model MiniStore.Application.DTOs.ProductStocks.CreateStockTransactionDto
+@model MiniStore.Application.DTOs.ProductStocks.CreateStockTransactionDto
 
 @inject Microsoft.Extensions.Localization.IStringLocalizer<MiniStore.Web.SharedResource> Localizer
 
@@ -6,7 +6,7 @@
     ViewData["Title"] = "Create Stock Transaction";
 }
 
-<h1>Create Stock Transaction</h1>
+<h1>@Localizer["Create Stock Transaction"]</h1>
 
 <form asp-action="Create" method="post">
 
@@ -17,7 +17,7 @@
 
         <label asp-for="ProductId"
                class="form-label">
-            Product
+            @Localizer["Product"]
         </label>
 
         <select asp-for="ProductId"
@@ -46,7 +46,7 @@
 
         <label asp-for="WarehouseId"
                class="form-label">
-            Warehouse
+            @Localizer["Warehouse"]
         </label>
 
         <select asp-for="WarehouseId"
@@ -75,7 +75,7 @@
 
         <label asp-for="Type"
                class="form-label">
-            Transaction Type
+            @Localizer["Transaction Type"]
         </label>
 
         <select asp-for="Type"
@@ -86,11 +86,11 @@
             </option>
 
             <option value="6">
-                Adjustment In
+                @Localizer["Adjustment In"]
             </option>
 
             <option value="7">
-                Adjustment Out
+                @Localizer["Adjustment Out"]
             </option>
 
             <option value="8">
@@ -109,14 +109,14 @@
 
         <label asp-for="Quantity"
                class="form-label">
-            Quantity
+            @Localizer["Quantity"]
         </label>
 
         <input asp-for="Quantity"
                type="number"
                step="0.001"
                class="form-control"
-               placeholder="Example: 10" />
+               placeholder="@Localizer["Example: 10"]" />
 
         <div class="form-text">
             Enter the quantity as a positive number.
@@ -134,13 +134,13 @@
 
         <label asp-for="Reference"
                class="form-label">
-            Adjustment reason
+            @Localizer["Adjustment reason"]
         </label>
 
         <input asp-for="Reference"
                class="form-control"
                required
-               placeholder="Example: Physical count correction" />
+               placeholder="@Localizer["Example: Physical count correction"]" />
 
         <span asp-validation-for="Reference"
               class="text-danger">
@@ -150,12 +150,12 @@
 
     <button type="submit"
             class="btn btn-success">
-        Save
+        @Localizer["Save"]
     </button>
 
     <a asp-action="Index"
        class="btn btn-secondary">
-        Cancel
+        @Localizer["Cancel"]
     </a>
 
 </form>

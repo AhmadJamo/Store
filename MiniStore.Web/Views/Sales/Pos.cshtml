@@ -1,4 +1,4 @@
-﻿@using System.Globalization
+@using System.Globalization
 @using System.Text.Json
 @model MiniStore.Application.DTOs.Sales.CreateSaleDto
 @inject Microsoft.Extensions.Localization.IStringLocalizer<MiniStore.Web.SharedResource> Localizer
@@ -144,11 +144,11 @@
         <div class="pos-header mb-4 d-flex flex-wrap gap-3 justify-content-between align-items-center">
             <div>
                 <div class="text-uppercase small opacity-75">MiniStore</div>
-                <h1 class="h3 mb-0" id="posHeaderTitle">Point of Sale</h1>
+                <h1 class="h3 mb-0" id="posHeaderTitle">@Localizer["Point of Sale"]</h1>
             </div>
 
             <a asp-action="Index" class="btn btn-outline-light">
-                Back to Sales
+                @Localizer["Back to Sales"]
             </a>
         </div>
 
@@ -163,7 +163,7 @@
                 <div class="row g-3 align-items-end">
 
                     <div class="col-md-4">
-                        <label asp-for="PosTerminalId" class="form-label fw-semibold">POS Terminal</label>
+                        <label asp-for="PosTerminalId" class="form-label fw-semibold">@Localizer["POS Terminal"]</label>
                         <select asp-for="PosTerminalId" id="posTerminalId" class="form-select" required="@(posTerminals.Count > 0 ? "required" : null)">
                             <option value="">@(posTerminals.Count == 0 ? "Legacy POS — configure terminals in Settings" : "-- Select POS Terminal --")</option>
                             @foreach (var terminal in posTerminals)
@@ -176,7 +176,7 @@
                     <div class="col-md-4">
                         <label asp-for="WarehouseId"
                                class="form-label fw-semibold">
-                            Warehouse
+                            @Localizer["Warehouse"]
                         </label>
 
                         <select asp-for="WarehouseId"
@@ -200,7 +200,7 @@
                     <div class="col-md-4">
                         <label asp-for="Date"
                                class="form-label fw-semibold">
-                            Date
+                            @Localizer["Date"]
                         </label>
 
                         <input asp-for="Date"
@@ -208,9 +208,9 @@
                                type="date" />
                     </div>
 
-                    <div class="col-md-4"><label asp-for="CustomerId" class="form-label fw-semibold">Customer</label><select asp-for="CustomerId" class="form-select"><option value="">Unknown customer / walk-in</option>@foreach (var customer in ViewBag.Customers) { <option value="@customer.Id">@customer.Name</option> }</select></div>
+                    <div class="col-md-4"><label asp-for="CustomerId" class="form-label fw-semibold">@Localizer["Customer"]</label><select asp-for="CustomerId" class="form-select"><option value="">@Localizer["Unknown customer / walk-in"]</option>@foreach (var customer in ViewBag.Customers) { <option value="@customer.Id">@customer.Name</option> }</select></div>
 
-                    <div class="col-md-4"><label asp-for="PaymentMethodId" class="form-label fw-semibold">Payment Method</label><select asp-for="PaymentMethodId" class="form-select" required><option value="">-- Select payment method --</option>@foreach (var method in ViewBag.PaymentMethods) { <option value="@method.Id">@method.Name</option> }</select></div>
+                    <div class="col-md-4"><label asp-for="PaymentMethodId" class="form-label fw-semibold">@Localizer["Payment method"]</label><select asp-for="PaymentMethodId" class="form-select" required><option value="">-- Select payment method --</option>@foreach (var method in ViewBag.PaymentMethods) { <option value="@method.Id">@method.Name</option> }</select></div>
 
                     <div class="col-md-4">
                         <label asp-for="TaxRateId" class="form-label fw-semibold">@Localizer["Sales tax"]</label>
@@ -230,31 +230,31 @@
                     <div class="col-md-4">
                         <label asp-for="Notes"
                                class="form-label fw-semibold">
-                            Notes
+                            @Localizer["Notes"]
                         </label>
 
                         <input asp-for="Notes"
                                class="form-control"
-                               placeholder="Optional note" />
+                               placeholder="@Localizer["Optional note"]" />
                     </div>
 
                     <div class="col-md-4" id="orderTypeGroup">
-                        <label asp-for="PosOrderType" class="form-label fw-semibold">Order Type</label>
+                        <label asp-for="PosOrderType" class="form-label fw-semibold">@Localizer["Order Type"]</label>
                         <select asp-for="PosOrderType" id="posOrderType" class="form-select">
-                            <option value="@((int)MiniStore.Domain.Entities.PosOrderType.WalkIn)">Walk-in</option>
-                            <option value="@((int)MiniStore.Domain.Entities.PosOrderType.DineIn)">Dine-in</option>
-                            <option value="@((int)MiniStore.Domain.Entities.PosOrderType.Takeaway)">Takeaway</option>
-                            <option value="@((int)MiniStore.Domain.Entities.PosOrderType.Delivery)">Delivery</option>
+                            <option value="@((int)MiniStore.Domain.Entities.PosOrderType.WalkIn)">@Localizer["Walk-in"]</option>
+                            <option value="@((int)MiniStore.Domain.Entities.PosOrderType.DineIn)">@Localizer["Dine-in"]</option>
+                            <option value="@((int)MiniStore.Domain.Entities.PosOrderType.Takeaway)">@Localizer["Takeaway"]</option>
+                            <option value="@((int)MiniStore.Domain.Entities.PosOrderType.Delivery)">@Localizer["Delivery"]</option>
                         </select>
                     </div>
 
                     <div class="col-md-4" id="serviceReferenceGroup">
-                        <label asp-for="ServiceReference" class="form-label fw-semibold">Table / Service Reference</label>
-                        <input asp-for="ServiceReference" id="serviceReference" class="form-control" maxlength="80" placeholder="Table 12, pickup name, delivery reference..." />
+                        <label asp-for="ServiceReference" class="form-label fw-semibold">@Localizer["Table / Service Reference"]</label>
+                        <input asp-for="ServiceReference" id="serviceReference" class="form-control" maxlength="80" placeholder="@Localizer["Table 12, pickup name, delivery reference..."]" />
                     </div>
 
                     <div class="col-md-4" id="guestCountGroup">
-                        <label asp-for="GuestCount" class="form-label fw-semibold">Guest Count</label>
+                        <label asp-for="GuestCount" class="form-label fw-semibold">@Localizer["Guest Count"]</label>
                         <input asp-for="GuestCount" id="guestCount" class="form-control" type="number" min="1" max="999" />
                     </div>
 
@@ -276,11 +276,11 @@
 
                             <div>
                                 <h2 class="h5 mb-1">
-                                    Products
+                                    @Localizer["Products"]
                                 </h2>
 
                                 <div class="small text-muted">
-                                    Click a product to add it to the cart.
+                                    @Localizer["Click a product to add it to the cart."]
                                 </div>
                             </div>
 
@@ -293,7 +293,7 @@
 
                                 <input id="productSearch"
                                        class="form-control"
-                                       placeholder="Search by name or barcode"
+                                       placeholder="@Localizer["Search by name or barcode"]"
                                        autocomplete="off" />
 
                             </div>
@@ -329,7 +329,7 @@
                                         </span>
 
                                         <span class="badge text-bg-light border stock-badge mt-2 product-stock">
-                                            Select a warehouse
+                                            @Localizer["Select a warehouse"]
                                         </span>
 
                                     </button>
@@ -342,7 +342,7 @@
                         <div id="noProducts"
                              class="text-center text-muted py-5 d-none">
 
-                            No products match your search.
+                            @Localizer["No products match your search."]
 
                         </div>
 
@@ -365,7 +365,7 @@
                             <div>
 
                                 <h2 class="h5 mb-1">
-                                    Current Cart
+                                    @Localizer["Current Cart"]
                                 </h2>
 
                                 <div class="small text-muted"
@@ -379,7 +379,7 @@
                                     class="btn btn-sm btn-outline-danger"
                                     id="clearCart">
 
-                                Clear
+                                @Localizer["Clear"]
 
                             </button>
 
@@ -390,7 +390,7 @@
 
                             <div class="cart-empty">
 
-                                Your cart is empty.
+                                @Localizer["Your cart is empty."]
                                 <br />
 
                                 Choose products to begin.
@@ -405,7 +405,7 @@
                             <div class="d-flex justify-content-between text-muted">
 
                                 <span>
-                                    Items
+                                    @Localizer["Items"]
                                 </span>
 
                                 <span id="itemCount">
@@ -417,7 +417,7 @@
                             <div class="d-flex justify-content-between align-items-end mt-2">
 
                                 <span class="fw-semibold">
-                                    Grand Total
+                                    @Localizer["Grand total"]
                                 </span>
 
                                 <span class="fs-3 fw-bold text-primary">
@@ -446,7 +446,7 @@
                                 class="btn btn-primary btn-lg w-100 mt-3"
                                 id="saveSale">
 
-                            Complete Sale
+                            @Localizer["Complete Sale"]
 
                         </button>
 
@@ -933,7 +933,7 @@
             if (cart.size === 0) {
 
                 cartItems.innerHTML =
-                    '<div class="cart-empty">Your cart is empty.<br />Choose products to begin.</div>';
+                    '<div class="cart-empty">@Localizer["Your cart is empty."]<br />@Localizer["Choose products to begin."]</div>';
 
             }
 
@@ -970,7 +970,7 @@
                                 type="button"
                                 class="btn btn-sm btn-link text-danger p-0 remove-item">
 
-                                Remove
+                                @Localizer["Remove"]
 
                             </button>
 
@@ -1014,7 +1014,7 @@
 
                         <div class="item-notes mt-2">
                             <input type="text" class="form-control form-control-sm item-notes-input"
-                                   maxlength="200" placeholder="Preparation note for this item" />
+                                   maxlength="200" placeholder="@Localizer["Preparation note for this item"]" />
                         </div>
 
                         <div class="tracking-selection mt-2">

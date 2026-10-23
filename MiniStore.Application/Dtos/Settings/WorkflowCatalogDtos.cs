@@ -8,6 +8,7 @@ public sealed class WorkflowCatalogPageDto
 }
 
 public sealed record WorkflowCatalogStepDto(
+    string Module,
     int Number,
     string Phase,
     string Title,

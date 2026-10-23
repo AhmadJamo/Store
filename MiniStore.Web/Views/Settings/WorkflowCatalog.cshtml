@@ -3,7 +3,7 @@
 @inject Microsoft.AspNetCore.Authorization.IAuthorizationService AuthorizationService
 @{
     ViewData["Title"] = Localizer["Work procedure catalog"];
-    var phases = Model.Steps.Select(x => x.Phase).Distinct().ToList();
+    var modules = Model.Steps.Select(x => x.Module).Distinct().ToList();
 }
 
 <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4">
@@ -12,28 +12,33 @@
         <h2 class="mb-2">@Localizer[Model.ModuleName]</h2>
         <p class="text-muted mb-0">@Localizer[Model.Purpose]</p>
     </div>
-    <a asp-action="Index" class="btn btn-outline-secondary">@Localizer["Back to settings"]</a>
+    <a asp-action="Index" class="btn btn-outline-secondary">@Localizer["Back to Settings"]</a>
 </div>
 
 <div class="alert alert-info">
     <strong>@Localizer["Separation of duties"]</strong>
-    <div>@Localizer["Whenever staffing permits, the requester, approver, buyer, receiver, invoice accountant and payment custodian should be different people."]</div>
+    <div>@Localizer["Whenever staffing permits, preparation, approval, custody, posting and review should be assigned to different people."]</div>
 </div>
 
 <div class="d-flex flex-wrap gap-2 mb-4">
-    @foreach(var phase in phases){<a href="#phase-@phase.ToLowerInvariant().Replace(" ","-")" class="btn btn-sm btn-outline-primary">@Localizer[phase]</a>}
+    @foreach(var module in modules){<a href="#module-@modules.IndexOf(module)" class="btn btn-sm btn-outline-primary">@Localizer[module]</a>}
 </div>
 
-@foreach(var phase in phases)
+@foreach(var module in modules)
 {
-    <section id="phase-@phase.ToLowerInvariant().Replace(" ","-")" class="mb-5">
-        <h3 class="h5 border-bottom pb-2 mb-3">@Localizer[phase]</h3>
-        <div class="row g-3">
-        @foreach(var step in Model.Steps.Where(x=>x.Phase==phase))
+    var moduleSteps=Model.Steps.Where(x=>x.Module==module).ToList();
+    var phases=moduleSteps.Select(x=>x.Phase).Distinct().ToList();
+    <section id="module-@modules.IndexOf(module)" class="mb-5">
+        <h3 class="h4 border-bottom pb-2 mb-3">@Localizer[module]</h3>
+        @foreach(var phase in phases)
         {
-            var canOpen=(await AuthorizationService.AuthorizeAsync(User,null,$"Permission:{step.RequiredPermission}")).Succeeded;
-            <div class="col-12">
-                <article class="card shadow-sm border-0">
+            <h4 class="h6 text-primary mt-4 mb-3">@Localizer[phase]</h4>
+            <div class="row g-3">
+            @foreach(var step in moduleSteps.Where(x=>x.Phase==phase))
+            {
+                var canOpen=(await AuthorizationService.AuthorizeAsync(User,null,$"Permission:{step.RequiredPermission}")).Succeeded;
+                <div class="col-12">
+                  <article class="card shadow-sm border-0">
                     <div class="card-body">
                         <div class="d-flex flex-wrap justify-content-between align-items-start gap-2">
                             <div class="d-flex gap-3 align-items-start">
@@ -51,14 +56,10 @@
                         </div>
                         <div class="alert alert-light border mt-3 mb-0"><strong>@Localizer["Accounting and administrative principle"]:</strong> @Localizer[step.ControlPrinciple]</div>
                     </div>
-                </article>
+                  </article>
+                </div>
+            }
             </div>
         }
-        </div>
     </section>
 }
-
-<div class="card card-body border-primary">
-    <h3 class="h5">@Localizer["Catalog expansion"]</h3>
-    <p class="mb-0">@Localizer["Purchasing is the first documented module. Customer management, sales, inventory, accounting and other workflows can be added to the same catalog in sequence."]</p>
-</div>

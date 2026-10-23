@@ -1,6 +1,6 @@
 # Project TODO
 > Source of truth: Current repository scan  
-> Last reviewed: 2026-10-22
+> Last reviewed: 2026-10-23
 
 The approved numbered Arabic/English delivery sequence is maintained in `MASTER_IMPLEMENTATION_ROADMAP_AR_EN.md`. Detailed working status, business rules and the rolling suggestion queue remain in `ARABIC_SHARED_ROADMAP.md`. This file remains the concise technical backlog.
 
@@ -67,7 +67,7 @@ The ERP SaaS Foundation Blueprint is imported as a non-authoritative planning re
 - [x] PUR-270 add a supplier portal plus secure API/EDI/UBL exchange and reliable outbox delivery.
 - [x] PUR-280 add advanced purchase analytics and make a documented Legacy Direct Purchase retirement decision.
 - [x] Add the bilingual Settings work procedure catalog with the complete purchasing sequence, role ownership, review responsibility, control principles, completion evidence and permission-aware links.
-- [ ] Extend the work procedure catalog to customer management, sales, inventory and accounting as those module requirements are approved.
+- [x] Extend the work procedure catalog into a complete 62-step ERP guide covering setup/administration, customers, sales/receivables, purchasing/payables, inventory/warehouses, accounting/close and analytics/management review. Completed 2026-10-23 with permission-aware real-action links and full Arabic resource coverage.
 - [x] SAL-000 audit the actual Sales, Inventory, Invoicing, Accounting and Payment foundations; document the legacy immediate-sale compatibility boundary and an additive phased implementation plan.
 - [x] SAL-005 approve the Sales context-ownership, invoicing-policy, COGS-timing, currency, reservation and POS boundaries before runtime implementation.
 - [x] CUS-000 audit the Customer and Business Partner requirements against the actual repository and document compatibility, migration safeguards, ownership, tests and a phased implementation plan.
@@ -90,6 +90,7 @@ The ERP SaaS Foundation Blueprint is imported as a non-authoritative planning re
 - [x] SAL-120A add advanced versioned quotation templates with searchable categories/tags, reusable content, required/optional/alternative products, bounded option groups, quantity policy, optional extra lines, customer/date repricing and frozen applied-template evidence. Completed 2026-10-22; migration applied to Demo.
 - [x] SAL-120B central organization identity, highly configurable versioned Document Designs, reusable central HTML-to-PDF engine, bilingual RTL/LTR quotation PDF and hash-protected identity/design/content/logo snapshot frozen at Send. Completed 2026-10-22 with migrations 133-134, Demo application and visual PDF verification. Customer portal, signature and payment remain later provider-dependent gates.
 - [x] SAL-130A reusable provider-based Analytics Center with tenant-owned personal/shared workspaces, advanced widget settings, central previous-period/year comparison, and Sales/Purchasing providers. Completed 2026-10-22 with migration 135 applied to Demo and 1049 passing regression checks.
+- [x] UI-AUDIT-001 verify every navigation, dashboard and static Razor link/form target, enforce antiforgery on every public MVC POST action, complete shared Arabic coverage for Razor/controller/JavaScript UI text, and retain automated regression coverage. Completed 2026-10-23 with 1060 passing checks.
 - [ ] SAL-130B add safe workspace edit/clone/archive, presets, central export and optional scheduled distribution after explicit approval.
 
 - [x] WMS-050 reservations and exact transfer allocation with concurrent last-unit protection.

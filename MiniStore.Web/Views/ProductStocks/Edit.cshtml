@@ -1,15 +1,17 @@
-﻿@model MiniStore.Application.DTOs.ProductStocks.UpdateProductStockDto
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizer<MiniStore.Web.SharedResource> Localizer
+@model MiniStore.Application.DTOs.ProductStocks.UpdateProductStockDto
 
 @{
     ViewData["Title"] = "Edit Stock";
 }
 
-<h1>Edit Stock</h1>
+<h1>@Localizer["Edit Stock"]</h1>
 
 <div class="mb-3">
 
     <label class="form-label">
-        Product
+        @Localizer["Product"]
     </label>
 
     <input type="text"
@@ -22,7 +24,7 @@
 <div class="mb-3">
 
     <label class="form-label">
-        Warehouse
+        @Localizer["Warehouse"]
     </label>
 
     <input type="text"
@@ -39,7 +41,7 @@
 
         <label asp-for="Quantity"
                class="form-label">
-            Quantity
+            @Localizer["Quantity"]
         </label>
 
         <input asp-for="Quantity"
@@ -55,12 +57,12 @@
 
     <button type="submit"
             class="btn btn-success">
-        Save Changes
+        @Localizer["Save Changes"]
     </button>
 
     <a asp-action="Index"
        class="btn btn-secondary">
-        Cancel
+        @Localizer["Cancel"]
     </a>
 
 </form>

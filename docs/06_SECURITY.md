@@ -30,7 +30,7 @@ WMS-070A requires full dimensional reconciliation before tracking activation, re
 - **Critical — global role definitions:** Company authorization now uses tenant-owned roles and permission sets. Names are unique only within a tenant, role IDs are resolved against the active company, assignments require active membership, and the protected Admin role cannot be renamed or deleted.
 
 ## Verified protections and boundaries
-Global MVC antiforgery, local returnUrl validation, Identity password hashing, HTTPS redirection and production HSTS already exist. Inspected active data access uses EF LINQ; no raw SQL found. No confirmed XSS was identified in inspected dynamic row rendering; this is not a penetration-test guarantee.
+MVC antiforgery, local returnUrl validation, Identity password hashing, HTTPS redirection and production HSTS are enforced. The 2026-10-23 UI audit closed legacy gaps by adding controller-level automatic validation to Accounts, Branches, Payment Methods, Tax Rates, Products, Recipes, Product Stocks, Stock Transactions, Warehouses, Purchases, Suppliers, Company Onboarding and Settings. Regression now fails if any public MVC `[HttpPost]` action lacks explicit or controller-level validation. Inspected active data access uses EF LINQ; no raw SQL found. No confirmed XSS was identified in inspected dynamic row rendering; this is not a penetration-test guarantee.
 
 The language switch is an antiforgery-protected POST, accepts only `en-US` and `ar-JO`, uses `LocalRedirect` after validating the return URL, and stores an essential HttpOnly SameSite=Lax culture cookie. Arabic translation values are output through Razor encoding.
 

@@ -1,4 +1,4 @@
-﻿@using MiniStore.Application.DTOs.StockTransfers
+@using MiniStore.Application.DTOs.StockTransfers
 @using MiniStore.Domain.Entities
 @inject Microsoft.Extensions.Localization.IStringLocalizer<MiniStore.Web.SharedResource> Localizer
 
@@ -27,11 +27,11 @@
         <div>
 
             <h2 class="mb-1">
-                New Stock Transfer
+                @Localizer["New Stock Transfer"]
             </h2>
 
             <p class="text-muted mb-0">
-                Transfer multiple products between warehouses.
+                @Localizer["Transfer multiple products between warehouses."]
             </p>
 
         </div>
@@ -68,7 +68,7 @@
             <div class="card-header bg-white">
 
                 <strong>
-                    Transfer Information
+                    @Localizer["Transfer Information"]
                 </strong>
 
             </div>
@@ -86,7 +86,7 @@
                         <label asp-for="FromWarehouseId"
                                class="form-label">
 
-                            From Warehouse
+                            @Localizer["From Warehouse"]
 
                         </label>
 
@@ -128,7 +128,7 @@
                         <label asp-for="ToWarehouseId"
                                class="form-label">
 
-                            To Warehouse
+                            @Localizer["To Warehouse"]
 
                         </label>
 
@@ -170,7 +170,7 @@
                         <label asp-for="Reference"
                                class="form-label">
 
-                            Reference
+                            @Localizer["Reference"]
 
                         </label>
 
@@ -178,7 +178,7 @@
                         <input asp-for="Reference"
                                class="form-control"
                                maxlength="200"
-                               placeholder="Optional reference..." />
+                               placeholder="@Localizer["Optional reference..."]" />
 
 
                         <span asp-validation-for="Reference"
@@ -195,7 +195,7 @@
                         <label asp-for="Notes"
                                class="form-label">
 
-                            Notes
+                            @Localizer["Notes"]
 
                         </label>
 
@@ -203,7 +203,7 @@
                         <input asp-for="Notes"
                                class="form-control"
                                maxlength="1000"
-                               placeholder="Optional notes..." />
+                               placeholder="@Localizer["Optional notes..."]" />
 
 
                         <span asp-validation-for="Notes"
@@ -228,7 +228,7 @@
                 <div class="d-flex justify-content-between align-items-center">
 
                     <strong>
-                        Transfer Items
+                        @Localizer["Transfer Items"]
                     </strong>
 
 
@@ -258,26 +258,26 @@
                             <tr>
 
                                 <th>
-                                    Product
+                                    @Localizer["Product"]
                                 </th>
 
-                                <th>Source location</th>
-                                <th>Destination location</th>
+                                <th>@Localizer["Source location"]</th>
+                                <th>@Localizer["Destination location"]</th>
 
                                 <th style="width: 25%;">
-                                    Quantity
+                                    @Localizer["Quantity"]
                                 </th>
 
                                 <th>@Localizer["Manual lot or serial selection"]</th>
 
                                 <th style="width: 15%;">
-                                    Barcode
+                                    @Localizer["Barcode"]
                                 </th>
 
                                 <th style="width: 10%;"
                                     class="text-end">
 
-                                    Action
+                                    @Localizer["Action"]
 
                                 </th>
 
@@ -302,14 +302,14 @@
 
                     <h6 class="mt-3">
 
-                        No products added
+                        @Localizer["No products added"]
 
                     </h6>
 
 
                     <p class="text-muted mb-0">
 
-                        Add at least one product to create the transfer.
+                        @Localizer["Add at least one product to create the transfer."]
 
                     </p>
 
@@ -343,7 +343,7 @@
         </select>
 
         <select id="locationTemplate" class="d-none">
-            <option value="">Unassigned / choose later</option>
+            <option value="">@Localizer["Unassigned / choose later"]</option>
             @foreach (var location in locations)
             {
                 <option value="@location.Id" data-warehouse-id="@location.WarehouseId">@location.Code</option>
@@ -365,7 +365,7 @@
             <a asp-action="Index"
                class="btn btn-outline-secondary">
 
-                Cancel
+                @Localizer["Cancel"]
 
             </a>
 
@@ -739,9 +739,7 @@
                     event.preventDefault();
 
 
-                    alert(
-                        "Source and destination warehouses must be different."
-                    );
+                    alert('@Localizer["Source and destination warehouses must be different."]');
 
 
                     return;
@@ -762,9 +760,7 @@
                     event.preventDefault();
 
 
-                    alert(
-                        "Add at least one product."
-                    );
+                    alert('@Localizer["Add at least one product."]');
 
 
                     return;
@@ -787,9 +783,7 @@
                     event.preventDefault();
 
 
-                    alert(
-                        "Please select a product for every row."
-                    );
+                    alert('@Localizer["Please select a product for every row."]');
 
 
                     return;
@@ -811,9 +805,7 @@
                     event.preventDefault();
 
 
-                    alert(
-                        "The same product cannot be added more than once."
-                    );
+                    alert('@Localizer["The same product cannot be added more than once."]');
 
 
                     return;
@@ -850,9 +842,7 @@
                     event.preventDefault();
 
 
-                    alert(
-                        "All quantities must be greater than zero."
-                    );
+                    alert('@Localizer["All quantities must be greater than zero."]');
 
 
                     return;

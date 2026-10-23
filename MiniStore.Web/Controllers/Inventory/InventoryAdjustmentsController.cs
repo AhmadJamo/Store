@@ -1,10 +1,11 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using MiniStore.Application.DTOs.Inventory.Adjustments;
 using MiniStore.Application.Services;
 using MiniStore.Web.Authorization;
 namespace MiniStore.Web.Controllers;
-public sealed class InventoryAdjustmentsController(InventoryAdjustmentService service) : Controller
+public sealed class InventoryAdjustmentsController(InventoryAdjustmentService service, IStringLocalizer<SharedResource> localizer) : Controller
 {
     [HttpGet, PermissionAuthorize("InventoryAdjustments.View")]
     public async Task<IActionResult> Index() => View(await service.GetAllAsync());
@@ -27,6 +28,6 @@ public sealed class InventoryAdjustmentsController(InventoryAdjustmentService se
     public async Task<IActionResult> Post(long id) => await Execute(id, () => service.PostAsync(id,UserId()));
     [HttpPost, ValidateAntiForgeryToken, PermissionAuthorize("InventoryAdjustments.Cancel")]
     public async Task<IActionResult> Cancel(long id) => await Execute(id, () => service.CancelAsync(id,UserId()));
-    private async Task<IActionResult> Execute(long id, Func<Task> action) { try { await action(); TempData["NotificationType"]="success"; TempData["NotificationMessage"]="Operation completed successfully."; } catch(Exception ex) when(ex is ArgumentException or InvalidOperationException) { TempData["NotificationType"]="error"; TempData["NotificationMessage"]=ex.Message; } return RedirectToAction(nameof(Details),new{id}); }
+    private async Task<IActionResult> Execute(long id, Func<Task> action) { try { await action(); TempData["NotificationType"]="success"; TempData["NotificationMessage"]=localizer["Operation completed successfully."].Value; } catch(Exception ex) when(ex is ArgumentException or InvalidOperationException) { TempData["NotificationType"]="error"; TempData["NotificationMessage"]=localizer[ex.Message].Value; } return RedirectToAction(nameof(Details),new{id}); }
     private string UserId() => User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new InvalidOperationException("Authenticated user was not found.");
 }

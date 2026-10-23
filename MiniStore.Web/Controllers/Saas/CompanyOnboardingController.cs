@@ -8,6 +8,7 @@ namespace MiniStore.Web.Controllers;
 
 [Authorize]
 [Route("onboarding")]
+[AutoValidateAntiforgeryToken]
 public class CompanyOnboardingController(
     ICompanyOnboardingService onboarding,
     ITenantContext tenantContext,

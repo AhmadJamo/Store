@@ -57,13 +57,13 @@
                     <th>@Localizer["Code"]</th>
                     <th>@Localizer["Name"]</th>
                     <th>@Localizer["Parent location"]</th>
-                    <th>Zone</th>
-                    <th>Aisle</th>
-                    <th>Rack</th>
-                    <th>Level</th>
-                    <th>Bin</th>
-                    <th>Type</th>
-                    <th>Status</th>
+                    <th>@Localizer["Zone"]</th>
+                    <th>@Localizer["Aisle"]</th>
+                    <th>@Localizer["Rack"]</th>
+                    <th>@Localizer["Level"]</th>
+                    <th>@Localizer["Bin"]</th>
+                    <th>@Localizer["Type"]</th>
+                    <th>@Localizer["Status"]</th>
                     <th>@Localizer["Capabilities"]</th>
                     <th>@Localizer["Actions"]</th>
                 </tr>
@@ -103,20 +103,20 @@
         </table>
     </div>
 
-    <h4 class="mt-4">Products in warehouses</h4>
+    <h4 class="mt-4">@Localizer["Products in warehouses"]</h4>
     <div class="alert alert-info">
-        Existing balances appear as Unassigned until putaway and internal movements are enabled.
+        @Localizer["Existing balances appear as Unassigned until putaway and internal movements are enabled."]
     </div>
 
     <div class="table-responsive">
         <table class="table table-bordered">
             <thead>
                 <tr>
-                    <th>Product</th>
-                    <th>Barcode</th>
-                    <th>Warehouse</th>
-                    <th>Quantity</th>
-                    <th>Location</th>
+                    <th>@Localizer["Product"]</th>
+                    <th>@Localizer["Barcode"]</th>
+                    <th>@Localizer["Warehouse"]</th>
+                    <th>@Localizer["Quantity"]</th>
+                    <th>@Localizer["Location"]</th>
                 </tr>
             </thead>
             <tbody>
@@ -134,7 +134,7 @@
                 @if (Model.Products.Count == 0)
                 {
                     <tr>
-                        <td colspan="5" class="text-center text-muted">No products found.</td>
+                        <td colspan="5" class="text-center text-muted">@Localizer["No products found."]</td>
                     </tr>
                 }
             </tbody>

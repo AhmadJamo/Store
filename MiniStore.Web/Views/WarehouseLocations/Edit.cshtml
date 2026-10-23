@@ -22,7 +22,7 @@
         <div class="card card-body mt-3"><h5>@Localizer["Operational capabilities"]</h5><div class="d-flex flex-wrap gap-3">
             <label><input asp-for="IsReceivable" /> @Localizer["Receivable"]</label><label><input asp-for="IsPickable" /> @Localizer["Pickable"]</label><label><input asp-for="IsReservable" /> @Localizer["Reservable"]</label><label><input asp-for="IsShippable" /> @Localizer["Shippable"]</label><label><input asp-for="IsCountable" /> @Localizer["Countable"]</label>
         </div></div>
-        <div class="mt-4"><button class="btn btn-primary">@Localizer["Save changes"]</button> <a asp-action="Index" asp-route-warehouseId="@Model.WarehouseId" class="btn btn-secondary">@Localizer["Cancel"]</a></div>
+        <div class="mt-4"><button class="btn btn-primary">@Localizer["Save Changes"]</button> <a asp-action="Index" asp-route-warehouseId="@Model.WarehouseId" class="btn btn-secondary">@Localizer["Cancel"]</a></div>
     </form>
 </div>
 @section Scripts { <partial name="_ValidationScriptsPartial" /> }

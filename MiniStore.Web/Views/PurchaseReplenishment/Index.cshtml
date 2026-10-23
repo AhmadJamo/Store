@@ -43,7 +43,7 @@
             <div class="col-6 col-md-2"><label class="form-label">@Localizer["Demand history (days)"] <span title="@Localizer["Past sales period used to calculate expected demand."]">?</span></label><input asp-for="Settings.ForecastLookbackDays" class="form-control" min="7" max="730" readonly="@(!canManage)"/></div>
             <div class="col-12 col-md-3"><label class="form-label">@Localizer["Creation mode"] <span title="@Localizer["Choose review only, draft requests, or direct RFQs when company policy allows."]">?</span></label><select asp-for="Settings.Mode" class="form-select" disabled="@(!canManage)">@foreach(var mode in Enum.GetValues<ReplenishmentAutomationMode>()){<option value="@mode">@ModeName(mode)</option>}</select></div>
             <div class="col-6 col-md-2"><label class="form-label">@Localizer["Supplier response days"]</label><input asp-for="Settings.SupplierResponseDays" class="form-control" min="1" max="90" readonly="@(!canManage)"/></div>
-            @if (canManage) { <div class="col-12"><button class="btn btn-outline-primary">@Localizer["Save settings"]</button></div> }
+            @if (canManage) { <div class="col-12"><button class="btn btn-outline-primary">@Localizer["Save Settings"]</button></div> }
         </form>
         <div class="small text-muted mt-3">@Localizer["Last run"]: @(Model.LastRunAtUtc?.ToLocalTime().ToString("g") ?? "—") · @Localizer["Next run"]: @(Model.NextRunAtUtc?.ToLocalTime().ToString("g") ?? "—")</div>
     </div></div>

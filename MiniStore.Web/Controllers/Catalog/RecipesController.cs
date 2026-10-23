@@ -7,6 +7,7 @@ using MiniStore.Web.Authorization;
 
 namespace MiniStore.Web.Controllers;
 
+[AutoValidateAntiforgeryToken]
 public class RecipesController : Controller
 {
     private readonly RecipeService _recipeService;

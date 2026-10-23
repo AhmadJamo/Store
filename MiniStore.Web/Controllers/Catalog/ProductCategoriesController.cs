@@ -23,7 +23,7 @@ public sealed class ProductCategoriesController(
         {
             await service.CreateAsync(dto);
             TempData["NotificationType"] = "success";
-            TempData["NotificationMessage"] = "Product category created successfully.";
+            TempData["NotificationMessage"] = localizer["Product category created successfully."].Value;
         }
         catch (Exception exception) when (exception is ArgumentException or InvalidOperationException)
         {
@@ -42,7 +42,7 @@ public sealed class ProductCategoriesController(
         {
             await service.SetActiveAsync(id, isActive);
             TempData["NotificationType"] = "success";
-            TempData["NotificationMessage"] = "Product category updated successfully.";
+            TempData["NotificationMessage"] = localizer["Product category updated successfully."].Value;
         }
         catch (Exception exception) when (exception is ArgumentException or InvalidOperationException)
         {

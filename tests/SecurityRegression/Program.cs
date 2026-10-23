@@ -1,4 +1,6 @@
 using System.Reflection;
+using System.Text.RegularExpressions;
+using System.Xml.Linq;
 using System.Globalization;
 using System.Resources;
 using System.ComponentModel.DataAnnotations;
@@ -964,6 +966,21 @@ Check(purchasingCatalog.Steps.Any(x => x.ResponsibleRole.Contains("Requesting de
     "Workflow catalog must explain requester, receiver and payment segregation of duties");
 Check(purchasingCatalog.Steps.All(x => !string.IsNullOrWhiteSpace(x.RequiredPermission) && !string.IsNullOrWhiteSpace(x.Controller)),
     "Every workflow catalog step must identify its permission-aware work destination");
+var completeCatalog = new WorkflowCatalogService().GetAll();
+Check(completeCatalog.Steps.Count == 62 && completeCatalog.Steps.Select(x => x.Module).Distinct().Count() == 7,
+    "The workflow catalog must cover all seven ERP operating areas with the complete 62-step guide");
+Check(completeCatalog.Steps.All(x => PermissionDefinitions.All.Any(permission => permission.Name == x.RequiredPermission) ||
+                                     AdministrationPermissions.RequiresAdmin(x.RequiredPermission)),
+    "Every complete workflow catalog destination must use a registered permission");
+var catalogText = completeCatalog.Steps.SelectMany(step => new[]
+    {
+        step.Module, step.Phase, step.Title, step.ResponsibleRole, step.ReviewerRole, step.Instructions,
+        step.ControlPrinciple, step.CompletionEvidence
+    })
+    .Append(completeCatalog.ModuleName)
+    .Append(completeCatalog.Purpose)
+    .Distinct()
+    .ToList();
 
 var stockRowVersion = db.Model.FindEntityType(typeof(ProductStock))!
     .FindProperty(nameof(ProductStock.RowVersion))!;
@@ -1019,10 +1036,115 @@ var navigableItems = NavigationDefinitions.All.SelectMany(x => x.Items)
 var webControllers = typeof(CustomersController).Assembly.GetTypes()
     .Where(x => typeof(Controller).IsAssignableFrom(x) && x.Name.EndsWith("Controller", StringComparison.Ordinal))
     .ToDictionary(x => x.Name[..^"Controller".Length], StringComparer.OrdinalIgnoreCase);
+var unprotectedPostActions = webControllers.Values
+    .SelectMany(controller => controller.GetMethods(BindingFlags.Instance | BindingFlags.Public)
+        .Where(method => method.GetCustomAttribute<HttpPostAttribute>() is not null)
+        .Where(method => method.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is null &&
+                         controller.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is null &&
+                         controller.GetCustomAttribute<AutoValidateAntiforgeryTokenAttribute>() is null)
+        .Select(method => $"{controller.Name}.{method.Name}"))
+    .OrderBy(x => x)
+    .ToList();
+Check(unprotectedPostActions.Count == 0,
+    $"Every MVC POST action must validate antiforgery tokens. Unprotected actions: {string.Join(", ", unprotectedPostActions)}");
+var invalidCatalogTargets = completeCatalog.Steps
+    .Where(step => !webControllers.TryGetValue(step.Controller, out var controller) ||
+                   !controller.GetMethods(BindingFlags.Instance | BindingFlags.Public)
+                       .Any(method => method.Name.Equals(step.Action, StringComparison.OrdinalIgnoreCase)))
+    .Select(step => $"{step.Controller}.{step.Action}")
+    .Distinct(StringComparer.OrdinalIgnoreCase)
+    .OrderBy(x => x)
+    .ToList();
+Check(invalidCatalogTargets.Count == 0,
+    $"Every complete workflow catalog step must target an existing public controller action. Invalid targets: {string.Join(", ", invalidCatalogTargets)}");
 Check(navigableItems.All(item => webControllers.TryGetValue(item.Controller, out var controller) &&
         controller.GetMethods(BindingFlags.Instance | BindingFlags.Public)
             .Any(method => method.Name.Equals(item.Action, StringComparison.OrdinalIgnoreCase))),
     "Every sidebar and dashboard button must target an existing public controller action");
+var repositoryRoot = new DirectoryInfo(AppContext.BaseDirectory);
+while (repositoryRoot is not null && !File.Exists(Path.Combine(repositoryRoot.FullName, "MiniStore.sln")))
+    repositoryRoot = repositoryRoot.Parent;
+Check(repositoryRoot is not null, "Regression checks must locate the repository root");
+var webRoot = Path.Combine(repositoryRoot!.FullName, "MiniStore.Web");
+var arabicResourceDocument = XDocument.Load(Path.Combine(webRoot, "Resources", "SharedResource.ar.resx"));
+var arabicResourceKeys = arabicResourceDocument.Root!.Elements("data")
+    .Select(element => element.Attribute("name")?.Value)
+    .Where(name => name is not null)
+    .ToHashSet(StringComparer.Ordinal);
+var missingCatalogTranslations = catalogText.Where(text => !arabicResourceKeys.Contains(text)).Distinct().OrderBy(x => x).ToList();
+Check(missingCatalogTranslations.Count == 0,
+    $"Every complete workflow catalog label and explanation must have an Arabic shared-resource translation. Missing: {string.Join(", ", missingCatalogTranslations)}");
+Check(arabicResourceDocument.Root!.Elements("data")
+        .Select(element => element.Attribute("name")?.Value)
+        .Where(name => name is not null)
+        .Distinct(StringComparer.OrdinalIgnoreCase).Count() == arabicResourceDocument.Root!.Elements("data").Count(),
+    "Arabic shared resources must not contain duplicate keys, including casing variants");
+var localizableFiles = Directory.EnumerateFiles(webRoot, "*.*", SearchOption.AllDirectories)
+    .Where(path => path.EndsWith(".cs", StringComparison.OrdinalIgnoreCase) ||
+                   path.EndsWith(".cshtml", StringComparison.OrdinalIgnoreCase))
+    .Where(path => !path.Contains($"{Path.DirectorySeparatorChar}bin{Path.DirectorySeparatorChar}") &&
+                   !path.Contains($"{Path.DirectorySeparatorChar}obj{Path.DirectorySeparatorChar}"))
+    .ToList();
+var missingArabicKeys = localizableFiles
+    .SelectMany(path => Regex.Matches(File.ReadAllText(path),
+            "(?:Localizer|localizer|_localizer|L)\\[\"(?<key>(?:\\\\\"|[^\"])*)\"\\]")
+        .Select(match => match.Groups["key"].Value.Replace("\\\"", "\"")))
+    .Distinct(StringComparer.Ordinal)
+    .Where(key => !arabicResourceKeys.Contains(key))
+    .OrderBy(key => key)
+    .ToList();
+Check(missingArabicKeys.Count == 0,
+    $"Every literal shared-localizer key must have an Arabic translation. Missing: {string.Join(", ", missingArabicKeys)}");
+var allowedLiteralUiText = new HashSet<string>(StringComparer.Ordinal)
+{
+    "MiniStore", "MiniStore Control", "app/", "AED", "JOD", "SAR", "USD", "EGP", "UTC", "Asia/Amman",
+    "dd/MM/yyyy", "MM/dd/yyyy", "yyyy-MM-dd", "DOC-00001 · 2026-10-22", "SaaS ERP + POS"
+};
+var untranslatedRazorText = Directory.EnumerateFiles(webRoot, "*.cshtml", SearchOption.AllDirectories)
+    .SelectMany(path => Regex.Matches(File.ReadAllText(path),
+            "<(?:h[1-6]|th|label|button|a|strong|span|p|option|div|td)\\b[^>]*>\\s*(?<text>[A-Za-z][^<@{}]*?)\\s*<",
+            RegexOptions.IgnoreCase)
+        .Select(match => (Path: Path.GetRelativePath(webRoot, path), Text: match.Groups["text"].Value.Trim())))
+    .Where(item => !allowedLiteralUiText.Contains(item.Text) &&
+                   !Regex.IsMatch(item.Text, "^[0-9 .×%:-]+$"))
+    .ToList();
+Check(untranslatedRazorText.Count == 0,
+    $"Razor UI text must use localization resources. Literals: {string.Join(", ", untranslatedRazorText.Select(x => $"{x.Path}: {x.Text}"))}");
+var hardCodedActionMessages = Directory.EnumerateFiles(Path.Combine(webRoot, "Controllers"), "*.cs", SearchOption.AllDirectories)
+    .Concat(Directory.EnumerateFiles(Path.Combine(webRoot, "Areas"), "*.cs", SearchOption.AllDirectories))
+    .Where(path => Regex.IsMatch(File.ReadAllText(path),
+        "TempData\\[\"NotificationMessage\"\\]\\s*=\\s*\"|ModelState\\.AddModelError\\([^,]+,\\s*\""))
+    .Select(path => Path.GetRelativePath(webRoot, path))
+    .ToList();
+Check(hardCodedActionMessages.Count == 0,
+    $"User-facing controller messages must use localization resources. Files: {string.Join(", ", hardCodedActionMessages)}");
+var razorRouteFailures = new List<string>();
+foreach (var viewPath in Directory.EnumerateFiles(webRoot, "*.cshtml", SearchOption.AllDirectories)
+             .Where(path => !Path.GetFileName(path).StartsWith('_')))
+{
+    var relativePath = Path.GetRelativePath(webRoot, viewPath).Replace('\\', '/');
+    var pathParts = relativePath.Split('/');
+    var viewsIndex = Array.FindIndex(pathParts, part => part.Equals("Views", StringComparison.OrdinalIgnoreCase));
+    var defaultController = viewsIndex >= 0 && viewsIndex + 1 < pathParts.Length ? pathParts[viewsIndex + 1] : null;
+    if (defaultController is null or "Shared") continue;
+
+    var content = File.ReadAllText(viewPath);
+    foreach (Match tag in Regex.Matches(content, "<(?:a|form)\\b[^>]*>", RegexOptions.IgnoreCase | RegexOptions.Singleline))
+    {
+        var actionMatch = Regex.Match(tag.Value, "asp-action\\s*=\\s*\"([^\"]+)\"", RegexOptions.IgnoreCase);
+        if (!actionMatch.Success || actionMatch.Groups[1].Value.Contains('@')) continue;
+        var controllerMatch = Regex.Match(tag.Value, "asp-controller\\s*=\\s*\"([^\"]+)\"", RegexOptions.IgnoreCase);
+        var controllerName = controllerMatch.Success ? controllerMatch.Groups[1].Value : defaultController;
+        if (controllerName.Contains('@')) continue;
+        var actionName = actionMatch.Groups[1].Value;
+        if (!webControllers.TryGetValue(controllerName, out var controllerType) ||
+            !controllerType.GetMethods(BindingFlags.Instance | BindingFlags.Public)
+                .Any(method => method.Name.Equals(actionName, StringComparison.OrdinalIgnoreCase)))
+            razorRouteFailures.Add($"{relativePath}: {controllerName}.{actionName}");
+    }
+}
+Check(razorRouteFailures.Count == 0,
+    $"Every static Razor link and form must target an existing public controller action. Invalid targets: {string.Join(", ", razorRouteFailures)}");
 var reconciliationIndex = typeof(InventoryReconciliationController)
     .GetMethod(nameof(InventoryReconciliationController.Index))!;
 Check(

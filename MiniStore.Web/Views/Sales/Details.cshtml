@@ -29,44 +29,44 @@
                     <button type="submit" class="btn btn-primary">@Localizer["Post to general ledger"]</button>
                 </form>
             }
-            <a asp-action="Index" class="btn btn-outline-secondary">Back to Sales</a>
+            <a asp-action="Index" class="btn btn-outline-secondary">@Localizer["Back to Sales"]</a>
         </div>
     </div>
 
     <div class="card shadow-sm border-0 mb-4">
         <div class="card-body">
             <div class="row g-3">
-                <div class="col-md-4"><div class="text-muted small">Warehouse</div><strong>@Model.WarehouseId</strong></div>
+                <div class="col-md-4"><div class="text-muted small">@Localizer["Warehouse"]</div><strong>@Model.WarehouseId</strong></div>
                 @if (Model.PosTerminalId.HasValue)
                 {
-                    <div class="col-md-4"><div class="text-muted small">POS Terminal</div><strong>@Model.PosTerminalId</strong></div>
+                    <div class="col-md-4"><div class="text-muted small">@Localizer["POS Terminal"]</div><strong>@Model.PosTerminalId</strong></div>
                 }
                 @if (Model.PosOrderType.HasValue)
                 {
-                    <div class="col-md-4"><div class="text-muted small">Order Type</div><strong>@Model.PosOrderType</strong></div>
+                    <div class="col-md-4"><div class="text-muted small">@Localizer["Order Type"]</div><strong>@Model.PosOrderType</strong></div>
                 }
                 @if (!string.IsNullOrWhiteSpace(Model.ServiceReference))
                 {
-                    <div class="col-md-4"><div class="text-muted small">Table / Service Reference</div><strong>@Model.ServiceReference</strong></div>
+                    <div class="col-md-4"><div class="text-muted small">@Localizer["Table / Service Reference"]</div><strong>@Model.ServiceReference</strong></div>
                 }
                 @if (Model.GuestCount.HasValue)
                 {
-                    <div class="col-md-4"><div class="text-muted small">Guests</div><strong>@Model.GuestCount</strong></div>
+                    <div class="col-md-4"><div class="text-muted small">@Localizer["Guests"]</div><strong>@Model.GuestCount</strong></div>
                 }
                 @if (!string.IsNullOrWhiteSpace(Model.Notes))
                 {
-                    <div class="col-12"><div class="text-muted small">Sale Notes</div><div>@Model.Notes</div></div>
+                    <div class="col-12"><div class="text-muted small">@Localizer["Sale Notes"]</div><div>@Model.Notes</div></div>
                 }
             </div>
         </div>
     </div>
 
     <div class="card shadow-sm border-0 mb-4">
-        <div class="card-header bg-white"><strong>Items</strong></div>
+        <div class="card-header bg-white"><strong>@Localizer["Items"]</strong></div>
         <div class="table-responsive">
             <table class="table table-hover align-middle mb-0">
                 <thead class="table-light">
-                    <tr><th>Product</th><th>Quantity</th><th>Price</th><th>Gross</th><th>Discount</th><th>Total</th><th>@Localizer["Unit cost"]</th><th>@Localizer["Cost of goods sold"]</th><th>Preparation Notes</th></tr>
+                    <tr><th>@Localizer["Product"]</th><th>@Localizer["Quantity"]</th><th>@Localizer["Price"]</th><th>@Localizer["Gross"]</th><th>@Localizer["Discount"]</th><th>@Localizer["Total"]</th><th>@Localizer["Unit cost"]</th><th>@Localizer["Cost of goods sold"]</th><th>@Localizer["Preparation Notes"]</th></tr>
                 </thead>
                 <tbody>
                     @foreach (var item in Model.Items)
@@ -105,8 +105,8 @@
         <div class="col-md-5 col-lg-4">
             <div class="card shadow-sm border-0">
                 <div class="card-body">
-                    <div class="d-flex justify-content-between"><span>Subtotal</span><strong>@Model.Subtotal.ToString("0.00") JOD</strong></div>
-                    <div class="d-flex justify-content-between mt-2"><span>Invoice Discount</span><strong>@Model.InvoiceDiscountAmount.ToString("0.00") JOD</strong></div>
+                    <div class="d-flex justify-content-between"><span>@Localizer["Subtotal"]</span><strong>@Model.Subtotal.ToString("0.00") JOD</strong></div>
+                    <div class="d-flex justify-content-between mt-2"><span>@Localizer["Invoice Discount"]</span><strong>@Model.InvoiceDiscountAmount.ToString("0.00") JOD</strong></div>
                     <div class="d-flex justify-content-between mt-2">
                         <span>@Localizer["Sales tax"] (@Model.TaxRatePercent.ToString("0.####")%)</span>
                         <strong>@Model.TaxAmount.ToString("0.00") JOD</strong>
@@ -116,7 +116,7 @@
                         <div class="small text-muted mt-1">@(Model.IsTaxInclusive ? Localizer["Tax included in prices"] : Localizer["Tax added to prices"])</div>
                     }
                     <hr />
-                    <div class="d-flex justify-content-between fs-5"><span>Total</span><strong class="text-primary">@Model.TotalAmount.ToString("0.00") JOD</strong></div>
+                    <div class="d-flex justify-content-between fs-5"><span>@Localizer["Total"]</span><strong class="text-primary">@Model.TotalAmount.ToString("0.00") JOD</strong></div>
                 </div>
             </div>
         </div>

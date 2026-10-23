@@ -1,4 +1,4 @@
-﻿@using MiniStore.Domain.Entities
+@using MiniStore.Domain.Entities
 @model MiniStore.Application.DTOs.ProductStocks.StockTransactionPagedResultDto
 @inject Microsoft.Extensions.Localization.IStringLocalizer<MiniStore.Web.SharedResource> Localizer
 
@@ -97,7 +97,7 @@
             </h2>
 
             <p class="text-muted mb-0">
-                View and analyze stock movement history.
+                @Localizer["View and analyze stock movement history."]
             </p>
         </div>
 
@@ -125,14 +125,14 @@
                     <div class="col-md-4">
 
                         <label class="form-label">
-                            Search
+                            @Localizer["Search"]
                         </label>
 
                         <input type="text"
                                name="search"
                                value="@search"
                                class="form-control"
-                               placeholder="Product, warehouse, reference..." />
+                               placeholder="@Localizer["Product, warehouse, reference..."]" />
 
                     </div>
 
@@ -141,7 +141,7 @@
                     <div class="col-md-2">
 
                         <label class="form-label">
-                            Transaction Type
+                            @Localizer["Transaction Type"]
                         </label>
 
                         <select name="type"
@@ -150,13 +150,13 @@
                             @if (!selectedType.HasValue)
                             {
                                 <option value="" selected>
-                                    All Types
+                                    @Localizer["All types"]
                                 </option>
                             }
                             else
                             {
                                 <option value="">
-                                    All Types
+                                    @Localizer["All types"]
                                 </option>
                             }
 
@@ -187,7 +187,7 @@
                     <div class="col-md-2">
 
                         <label class="form-label">
-                            Movement
+                            @Localizer["Movement"]
                         </label>
 
                         <select name="movement"
@@ -196,39 +196,39 @@
                             @if (string.IsNullOrEmpty(movement))
                             {
                                 <option value="" selected>
-                                    All
+                                    @Localizer["All"]
                                 </option>
                             }
                             else
                             {
                                 <option value="">
-                                    All
+                                    @Localizer["All"]
                                 </option>
                             }
 
                             @if (movement == "incoming")
                             {
                                 <option value="incoming" selected>
-                                    Incoming
+                                    @Localizer["Incoming"]
                                 </option>
                             }
                             else
                             {
                                 <option value="incoming">
-                                    Incoming
+                                    @Localizer["Incoming"]
                                 </option>
                             }
 
                             @if (movement == "outgoing")
                             {
                                 <option value="outgoing" selected>
-                                    Outgoing
+                                    @Localizer["Outgoing"]
                                 </option>
                             }
                             else
                             {
                                 <option value="outgoing">
-                                    Outgoing
+                                    @Localizer["Outgoing"]
                                 </option>
                             }
 
@@ -241,7 +241,7 @@
                     <div class="col-md-2">
 
                         <label class="form-label">
-                            From Date
+                            @Localizer["From Date"]
                         </label>
 
                         <input type="date"
@@ -256,7 +256,7 @@
                     <div class="col-md-2">
 
                         <label class="form-label">
-                            To Date
+                            @Localizer["To Date"]
                         </label>
 
                         <input type="date"
@@ -275,7 +275,7 @@
                     <div class="col-md-2">
 
                         <label class="form-label">
-                            Rows per page
+                            @Localizer["Rows per page"]
                         </label>
 
                         <select name="pageSize"
@@ -357,7 +357,7 @@
             @if (Model.TotalCount > 0)
             {
                 <span>
-                    Showing
+                    @Localizer["Showing"]
                     <strong>@startRecord</strong>
                     -
                     <strong>@endRecord</strong>
@@ -369,7 +369,7 @@
             else
             {
                 <span>
-                    No transactions found.
+                    @Localizer["No transactions found."]
                 </span>
             }
 
@@ -380,7 +380,7 @@
         {
             <div class="text-muted">
 
-                Page
+                @Localizer["Page"]
                 <strong>@Model.Page</strong>
                 of
                 <strong>@Model.TotalPages</strong>
@@ -737,11 +737,11 @@
                                         <i class="bi bi-inbox fs-1 d-block mb-2"></i>
 
                                         <h5>
-                                            No transactions found
+                                            @Localizer["No transactions found"]
                                         </h5>
 
                                         <p class="mb-0">
-                                            Try changing your search or filters.
+                                            @Localizer["Try changing your search or filters."]
                                         </p>
 
                                     </div>
@@ -904,7 +904,7 @@
                             <a class="page-link"
                                href="@PageUrl(Model.Page + 1)">
 
-                                Next
+                                @Localizer["Next"]
                                 <i class="bi bi-chevron-right"></i>
 
                             </a>
@@ -917,7 +917,7 @@
 
                             <span class="page-link">
 
-                                Next
+                                @Localizer["Next"]
                                 <i class="bi bi-chevron-right"></i>
 
                             </span>

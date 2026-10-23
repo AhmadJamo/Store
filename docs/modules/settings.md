@@ -1,5 +1,5 @@
 # Settings
-> Status: PARTIALLY IMPLEMENTED | Last reviewed: 2026-10-22
+> Status: PARTIALLY IMPLEMENTED | Last reviewed: 2026-10-23
 
 Organization Identity is now a dedicated bilingual settings screen rather than a small group of fields inside regional settings. It keeps the commercial and registered legal names in English and Arabic, commercial/tax registration numbers, primary and secondary contact details, bilingual address components, country code and the preferred trade/legal display policy. A tenant-scoped PNG/JPEG logo is validated by file signature and capped at 2 MB.
 
@@ -11,7 +11,9 @@ PDF creation is also centralized rather than implemented inside each screen. `IH
 
 `SettingsController` is restricted by the active-company Admin permission boundary. General, Discount and Inventory settings use singleton keys and rowversions. Inventory settings define safe defaults for new warehouse type, control mode, picking strategy, POS eligibility, location-capacity enforcement and optional exact transfer-location requirements. Effective operational policy can then be adjusted per warehouse.
 
-The Settings hub includes a bilingual **Work procedure catalog**. Its first module documents the complete 19-step purchasing sequence from setup and demand through sourcing, commitment, receipt, invoice matching, posting, payment, returns, closure, reconciliation and management review. Every step identifies the responsible role, reviewer/approver, required action, completion evidence and accounting/administrative control principle. The catalog emphasizes segregation among requester, approver, buyer, receiver, accounts payable and payment custody. Operational links are permission-aware and do not replace service or domain validation; users without the destination permission see an explanatory locked state.
+The Settings hub includes a bilingual **Work procedure catalog** with 62 steps across seven modules: setup and administration, customer management, sales and receivables, purchasing and payables, inventory and warehouses, accounting and close, and analytics and management review. Every step identifies the responsible role, reviewer/approver, required action, completion evidence and accounting/administrative control principle. The catalog emphasizes segregation of duties, groups steps by module and phase, and provides permission-aware links to real controller actions without replacing service or domain validation. Users without the destination permission see an explanatory locked state.
+
+All literal shared-localizer keys in Web C#/Razor must have an Arabic resource entry. Regression coverage also rejects direct English text in common Razor UI elements, case-insensitive duplicate resource keys and hard-coded controller notification/validation messages.
 
 Document Numbering is the single administration page for wholesale invoice, POS invoice, stock-transfer and journal-entry sequences. Each type supports prefix, suffix, a tokenized layout (`PREFIX`, `NUMBER`, year/month/day), number padding, forward-only next number, reset starting number and Never/Yearly/Monthly/Daily reset, with a live preview. Missing rows receive safe defaults. Tenant/type uniqueness, rowversion and transactional generation protect against duplicate use and concurrent setting edits. The former InvoiceSettings and DocumentNumberSettings paths are retired; the old Invoices URL redirects to the centralized page.
 

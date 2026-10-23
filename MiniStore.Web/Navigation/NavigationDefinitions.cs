@@ -1,4 +1,4 @@
-﻿namespace MiniStore.Web.Navigation;
+namespace MiniStore.Web.Navigation;
 
 public static class NavigationDefinitions
 {

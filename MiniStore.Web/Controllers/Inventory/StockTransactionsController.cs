@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MiniStore.Application.DTOs.ProductStocks;
 using MiniStore.Application.Services;
@@ -9,6 +9,7 @@ using Microsoft.Extensions.Localization;
 
 namespace MiniStore.Web.Controllers;
 
+[AutoValidateAntiforgeryToken]
 public class StockTransactionsController : Controller
 {
     private readonly StockTransactionService
@@ -102,8 +103,7 @@ public class StockTransactionsController : Controller
             await LoadDropdowns();
 
             TempData["NotificationType"] = "error";
-            TempData["NotificationMessage"] =
-                "Please check the entered data.";
+            TempData["NotificationMessage"] = _localizer["Please check the entered data."].Value;
 
             return View(dto);
         }
@@ -114,8 +114,7 @@ public class StockTransactionsController : Controller
                 .CreateAsync(dto);
 
             TempData["NotificationType"] = "success";
-            TempData["NotificationMessage"] =
-                "Stock transaction created successfully.";
+            TempData["NotificationMessage"] = _localizer["Stock transaction created successfully."].Value;
 
             return RedirectToAction(nameof(Index));
         }
@@ -138,8 +137,7 @@ public class StockTransactionsController : Controller
             await LoadDropdowns();
 
             TempData["NotificationType"] = "error";
-            TempData["NotificationMessage"] =
-                "The operation could not be completed. Please try again or contact the administrator.";
+            TempData["NotificationMessage"] = _localizer["The operation could not be completed. Please try again or contact the administrator."].Value;
 
             return View(dto);
         }

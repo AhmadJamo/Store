@@ -1,4 +1,4 @@
-﻿@model MiniStore.Application.DTOs.Purchases.CreatePurchaseDto
+@model MiniStore.Application.DTOs.Purchases.CreatePurchaseDto
 
 @inject Microsoft.Extensions.Localization.IStringLocalizer<MiniStore.Web.SharedResource> Localizer
 @{
@@ -6,7 +6,7 @@
     var numberSettings = await GeneralSettingsService.GetAsync();
 }
 
-<h1>Create Purchase</h1>
+<h1>@Localizer["Create Purchase"]</h1>
 
 <form asp-action="Create"
       method="post"
@@ -20,7 +20,7 @@
 
             <label asp-for="SupplierId"
                    class="form-label">
-                Supplier
+                @Localizer["Supplier"]
             </label>
 
             <select asp-for="SupplierId"
@@ -50,7 +50,7 @@
 
             <label asp-for="WarehouseId"
                    class="form-label">
-                Default Warehouse
+                @Localizer["Default Warehouse"]
             </label>
 
             <select asp-for="WarehouseId"
@@ -80,7 +80,7 @@
 
             <label asp-for="Date"
                    class="form-label">
-                Date
+                @Localizer["Date"]
             </label>
 
             <input asp-for="Date"
@@ -98,12 +98,12 @@
 
             <label asp-for="InvoiceNumber"
                    class="form-label">
-                Supplier Invoice Number
+                @Localizer["Supplier invoice number"]
             </label>
 
             <input asp-for="InvoiceNumber"
                    class="form-control"
-                   placeholder="Example: INV-2026-001" />
+                   placeholder="@Localizer["Example: INV-2026-001"]" />
 
         </div>
 
@@ -112,12 +112,12 @@
 
             <label asp-for="Notes"
                    class="form-label">
-                Notes
+                @Localizer["Notes"]
             </label>
 
             <input asp-for="Notes"
                    class="form-control"
-                   placeholder="Optional notes" />
+                   placeholder="@Localizer["Optional notes"]" />
 
         </div>
 
@@ -126,7 +126,7 @@
 
     <!-- Items -->
 
-    <h3>Purchase Items</h3>
+    <h3>@Localizer["Purchase Items"]</h3>
 
     <div class="table-responsive">
 
@@ -136,24 +136,24 @@
 
                 <tr>
 
-                    <th>Product</th>
-                    <th>Warehouse</th>
+                    <th>@Localizer["Product"]</th>
+                    <th>@Localizer["Warehouse"]</th>
 
-                    <th>Quantity</th>
+                    <th>@Localizer["Quantity"]</th>
 
-                    <th>Purchase Price</th>
+                    <th>@Localizer["Purchase Price"]</th>
 
-                    <th>Tax</th>
+                    <th>@Localizer["Tax"]</th>
 
-                    <th>Discount</th>
+                    <th>@Localizer["Discount"]</th>
                     <th>@Localizer["Lot number"]</th>
                     <th>@Localizer["Serial numbers"]</th>
                     <th>@Localizer["Manufacture date"]</th>
                     <th>@Localizer["Expiration date"]</th>
 
-                    <th>Total</th>
+                    <th>@Localizer["Total"]</th>
 
-                    <th>Action</th>
+                    <th>@Localizer["Action"]</th>
 
                 </tr>
 
@@ -187,7 +187,7 @@
                 <div class="card-body">
 
                     <h5>
-                        Grand Total
+                        @Localizer["Grand total"]
                     </h5>
 
                     <h2 id="grandTotal">
@@ -208,14 +208,14 @@
         <button type="submit"
                 class="btn btn-success">
 
-            Save Purchase
+            @Localizer["Save Purchase"]
 
         </button>
 
         <a asp-action="Index"
            class="btn btn-secondary">
 
-            Cancel
+            @Localizer["Cancel"]
 
         </a>
 
@@ -301,7 +301,7 @@
 
                 <td>
                     <select name="Items[${itemIndex}].TaxRateId" class="form-select">
-                        <option value="">No tax</option>
+                        <option value="">@Localizer["No tax"]</option>
                         @foreach (var tax in ViewBag.TaxRates)
                         {
                             <option value="@tax.Id">@tax.Name (@tax.Rate.ToDisplayNumber(numberSettings.DecimalPlaces)%)</option>
@@ -336,7 +336,7 @@
                         type="button"
                         class="btn btn-danger btn-sm remove-item">
 
-                        Remove
+                        @Localizer["Remove"]
 
                     </button>
 

@@ -1,4 +1,4 @@
-﻿@model MiniStore.Application.DTOs.Purchases.PurchaseDto
+@model MiniStore.Application.DTOs.Purchases.PurchaseDto
 
 @inject Microsoft.Extensions.Localization.IStringLocalizer<MiniStore.Web.SharedResource> Localizer
 @inject Microsoft.AspNetCore.Authorization.IAuthorizationService AuthorizationService
@@ -16,7 +16,7 @@
 
     <div class="col-md-3">
 
-        <strong>Invoice Number</strong>
+        <strong>@Localizer["Invoice Number"]</strong>
 
         <div>
             @Model.InvoiceNumber
@@ -26,7 +26,7 @@
 
     <div class="col-md-3">
 
-        <strong>Supplier</strong>
+        <strong>@Localizer["Supplier"]</strong>
 
         <div>
             @Model.SupplierName
@@ -36,7 +36,7 @@
 
     <div class="col-md-3">
 
-        <strong>Warehouse</strong>
+        <strong>@Localizer["Warehouse"]</strong>
 
         <div>
             @Model.WarehouseName
@@ -46,7 +46,7 @@
 
     <div class="col-md-3">
 
-        <strong>Date</strong>
+        <strong>@Localizer["Date"]</strong>
 
         <div>
             @Model.Date.ToShortDateString()
@@ -57,7 +57,7 @@
 </div>
 
 
-<h3>Items</h3>
+<h3>@Localizer["Items"]</h3>
 
 <table class="table table-bordered">
 
@@ -65,11 +65,11 @@
 
         <tr>
 
-            <th>Product</th>
-            <th>Warehouse</th>
-            <th>Quantity</th>
-            <th>Purchase Price</th>
-            <th>Total</th>
+            <th>@Localizer["Product"]</th>
+            <th>@Localizer["Warehouse"]</th>
+            <th>@Localizer["Quantity"]</th>
+            <th>@Localizer["Purchase Price"]</th>
+            <th>@Localizer["Total"]</th>
 
         </tr>
 
@@ -110,7 +110,7 @@
             <th colspan="4"
                 class="text-end">
 
-                Grand Total
+                @Localizer["Grand total"]
 
             </th>
 
@@ -130,7 +130,7 @@
 {
     <div class="alert alert-secondary">
 
-        <strong>Notes:</strong>
+        <strong>@Localizer["Notes:"]</strong>
 
         @Model.Notes
 
@@ -140,7 +140,7 @@
 <a asp-action="Index"
    class="btn btn-secondary">
 
-    Back
+    @Localizer["Back"]
 
 </a>
 

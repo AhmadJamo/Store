@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MiniStore.Application.DTOs.Products;
 using MiniStore.Application.Services;
@@ -8,6 +8,7 @@ using Microsoft.Extensions.Localization;
 
 namespace MiniStore.Web.Controllers;
 
+[AutoValidateAntiforgeryToken]
 public class ProductsController : Controller
 {
     private readonly ProductService _productService;
@@ -56,8 +57,7 @@ public class ProductsController : Controller
         {
             await LoadMeasurementUnitsAsync();
             TempData["NotificationType"] = "error";
-            TempData["NotificationMessage"] =
-                "Please check the entered data.";
+            TempData["NotificationMessage"] = _localizer["Please check the entered data."].Value;
 
             return View(dto);
         }
@@ -67,8 +67,7 @@ public class ProductsController : Controller
             await _productService.CreateAsync(dto);
 
             TempData["NotificationType"] = "success";
-            TempData["NotificationMessage"] =
-                "Product created successfully.";
+            TempData["NotificationMessage"] = _localizer["Product created successfully."].Value;
 
             return RedirectToAction(nameof(Index));
         }
@@ -84,8 +83,7 @@ public class ProductsController : Controller
             HttpContext.RequestServices.GetRequiredService<ILoggerFactory>()
                 .CreateLogger(GetType()).LogError(ex, "Request operation failed");
             TempData["NotificationType"] = "error";
-            TempData["NotificationMessage"] =
-                "The operation could not be completed. Please try again or contact the administrator.";
+            TempData["NotificationMessage"] = _localizer["The operation could not be completed. Please try again or contact the administrator."].Value;
 
             return View(dto);
         }
@@ -102,8 +100,7 @@ public class ProductsController : Controller
         if (product == null)
         {
             TempData["NotificationType"] = "error";
-            TempData["NotificationMessage"] =
-                "Product not found.";
+            TempData["NotificationMessage"] = _localizer["Product not found."].Value;
 
             return RedirectToAction(nameof(Index));
         }
@@ -159,8 +156,7 @@ public class ProductsController : Controller
             ViewBag.ProductId = id;
             await LoadMeasurementUnitsAsync();
             TempData["NotificationType"] = "error";
-            TempData["NotificationMessage"] =
-                "Please check the entered data.";
+            TempData["NotificationMessage"] = _localizer["Please check the entered data."].Value;
 
             return View(dto);
         }
@@ -170,8 +166,7 @@ public class ProductsController : Controller
             await _productService.UpdateAsync(id, dto);
 
             TempData["NotificationType"] = "success";
-            TempData["NotificationMessage"] =
-                "Product updated successfully.";
+            TempData["NotificationMessage"] = _localizer["Product updated successfully."].Value;
 
             return RedirectToAction(nameof(Index));
         }
@@ -189,8 +184,7 @@ public class ProductsController : Controller
             HttpContext.RequestServices.GetRequiredService<ILoggerFactory>()
                 .CreateLogger(GetType()).LogError(ex, "Request operation failed");
             TempData["NotificationType"] = "error";
-            TempData["NotificationMessage"] =
-                "The operation could not be completed. Please try again or contact the administrator.";
+            TempData["NotificationMessage"] = _localizer["The operation could not be completed. Please try again or contact the administrator."].Value;
 
             return View(dto);
         }
@@ -206,16 +200,14 @@ public class ProductsController : Controller
             await _productService.DeleteAsync(id);
 
             TempData["NotificationType"] = "success";
-            TempData["NotificationMessage"] =
-                "Product deleted successfully.";
+            TempData["NotificationMessage"] = _localizer["Product deleted successfully."].Value;
         }
         catch (Exception ex)
         {
             HttpContext.RequestServices.GetRequiredService<ILoggerFactory>()
                 .CreateLogger(GetType()).LogError(ex, "Request operation failed");
             TempData["NotificationType"] = "error";
-            TempData["NotificationMessage"] =
-                "The operation could not be completed. Please try again or contact the administrator.";
+            TempData["NotificationMessage"] = _localizer["The operation could not be completed. Please try again or contact the administrator."].Value;
         }
 
         return RedirectToAction(nameof(Index));

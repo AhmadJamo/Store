@@ -12,7 +12,7 @@
 <div class="container mt-4">
     <h2>@Localizer["Add Storage Location"]</h2>
     <p class="text-muted">
-        Create a scannable warehouse position such as MAIN-DRY-A-R03-L02-B04.
+        @Localizer["Create a scannable warehouse position such as MAIN-DRY-A-R03-L02-B04."]
     </p>
 
     <form asp-action="Create" method="post">
@@ -59,7 +59,7 @@
             </div>
 
             <div class="col-md-6">
-                <label asp-for="Code" class="form-label">Location code / barcode</label>
+                <label asp-for="Code" class="form-label">@Localizer["Location code / barcode"]</label>
                 <input asp-for="Code"
                        class="form-control"
                        placeholder="MAIN-A-R03-L02-B04"
@@ -68,32 +68,32 @@
             </div>
 
             <div class="col-md-4">
-                <label asp-for="Zone" class="form-label">Zone</label>
+                <label asp-for="Zone" class="form-label">@Localizer["Zone"]</label>
                 <input asp-for="Zone" class="form-control" />
             </div>
 
             <div class="col-md-4">
-                <label asp-for="Aisle" class="form-label">Aisle</label>
+                <label asp-for="Aisle" class="form-label">@Localizer["Aisle"]</label>
                 <input asp-for="Aisle" class="form-control" />
             </div>
 
             <div class="col-md-4">
-                <label asp-for="Rack" class="form-label">Rack</label>
+                <label asp-for="Rack" class="form-label">@Localizer["Rack"]</label>
                 <input asp-for="Rack" class="form-control" />
             </div>
 
             <div class="col-md-4">
-                <label asp-for="Level" class="form-label">Level / floor</label>
+                <label asp-for="Level" class="form-label">@Localizer["Level / floor"]</label>
                 <input asp-for="Level" class="form-control" />
             </div>
 
             <div class="col-md-4">
-                <label asp-for="Bin" class="form-label">Bin</label>
+                <label asp-for="Bin" class="form-label">@Localizer["Bin"]</label>
                 <input asp-for="Bin" class="form-control" />
             </div>
 
             <div class="col-md-4">
-                <label asp-for="Type" class="form-label">Location type</label>
+                <label asp-for="Type" class="form-label">@Localizer["Location type"]</label>
                 <select asp-for="Type"
                         asp-items="Html.GetEnumSelectList<StorageLocationType>()"
                         class="form-select">
@@ -101,7 +101,7 @@
             </div>
 
             <div class="col-md-4">
-                <label asp-for="MaximumQuantity" class="form-label">Maximum quantity</label>
+                <label asp-for="MaximumQuantity" class="form-label">@Localizer["Maximum quantity"]</label>
                 <input asp-for="MaximumQuantity"
                        type="number"
                        min="0"
@@ -123,8 +123,8 @@
         </div>
 
         <div class="mt-4">
-            <button class="btn btn-primary">Save location</button>
-            <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+            <button class="btn btn-primary">@Localizer["Save location"]</button>
+            <a asp-action="Index" class="btn btn-secondary">@Localizer["Cancel"]</a>
         </div>
     </form>
 </div>

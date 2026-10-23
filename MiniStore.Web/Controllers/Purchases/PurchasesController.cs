@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using MiniStore.Application.DTOs.Purchases;
 using MiniStore.Application.Services;
 using MiniStore.Domain.Interfaces;
@@ -7,6 +8,7 @@ using MiniStore.Web.Authorization;
 
 namespace MiniStore.Web.Controllers;
 
+[AutoValidateAntiforgeryToken]
 public class PurchasesController : Controller
 {
     private readonly PurchaseService _purchaseService;
@@ -18,13 +20,15 @@ public class PurchasesController : Controller
     private readonly IProductRepository _productRepository;
     private readonly TaxRateService _taxRateService;
     private readonly PurchasePostingService _purchasePostingService;
+    private readonly IStringLocalizer<SharedResource> _localizer;
 
     public PurchasesController(
         PurchaseService purchaseService,
         ISupplierRepository supplierRepository,
         IWarehouseRepository warehouseRepository,
         IProductRepository productRepository, TaxRateService taxRateService,
-        PurchasePostingService purchasePostingService)
+        PurchasePostingService purchasePostingService,
+        IStringLocalizer<SharedResource> localizer)
     {
         _purchaseService = purchaseService;
         _supplierRepository = supplierRepository;
@@ -32,6 +36,7 @@ public class PurchasesController : Controller
         _productRepository = productRepository;
         _taxRateService = taxRateService;
         _purchasePostingService = purchasePostingService;
+        _localizer = localizer;
     }
 
     [HttpGet]
@@ -52,7 +57,7 @@ public class PurchasesController : Controller
         if (!_purchaseService.LegacyDirectPurchaseCreationEnabled)
         {
             TempData["NotificationType"] = "info";
-            TempData["NotificationMessage"] = "Legacy direct purchase creation is retired. Create a purchase request instead.";
+            TempData["NotificationMessage"] = _localizer["Legacy direct purchase creation is retired. Create a purchase request instead."].Value;
             return RedirectToAction(nameof(Index));
         }
         await LoadDropdowns();
@@ -73,7 +78,7 @@ public class PurchasesController : Controller
         if (!_purchaseService.LegacyDirectPurchaseCreationEnabled)
         {
             TempData["NotificationType"] = "info";
-            TempData["NotificationMessage"] = "Legacy direct purchase creation is retired. Create a purchase request instead.";
+            TempData["NotificationMessage"] = _localizer["Legacy direct purchase creation is retired. Create a purchase request instead."].Value;
             return RedirectToAction(nameof(Index));
         }
         if (!ModelState.IsValid)
@@ -82,7 +87,7 @@ public class PurchasesController : Controller
 
             TempData["NotificationType"] = "error";
             TempData["NotificationMessage"] =
-                "Please check the entered data.";
+                _localizer["Please check the entered data."].Value;
 
             return View(dto);
         }
@@ -93,7 +98,7 @@ public class PurchasesController : Controller
 
             TempData["NotificationType"] = "success";
             TempData["NotificationMessage"] =
-                "Purchase created successfully.";
+                _localizer["Purchase created successfully."].Value;
 
             return RedirectToAction(nameof(Index));
         }
@@ -105,7 +110,7 @@ public class PurchasesController : Controller
 
             TempData["NotificationType"] = "error";
             TempData["NotificationMessage"] =
-                "The operation could not be completed. Please try again or contact the administrator.";
+                _localizer["The operation could not be completed. Please try again or contact the administrator."].Value;
 
             return View(dto);
         }
@@ -122,7 +127,7 @@ public class PurchasesController : Controller
         {
             TempData["NotificationType"] = "error";
             TempData["NotificationMessage"] =
-                "Purchase not found.";
+                _localizer["Purchase not found."].Value;
 
             return RedirectToAction(nameof(Index));
         }
@@ -140,12 +145,12 @@ public class PurchasesController : Controller
         {
             await _purchasePostingService.PostAsync(id);
             TempData["NotificationType"] = "success";
-            TempData["NotificationMessage"] = "Purchase posted to the general ledger.";
+            TempData["NotificationMessage"] = _localizer["Purchase posted to the general ledger."].Value;
         }
         catch (Exception ex) when (ex is ArgumentException or InvalidOperationException)
         {
             TempData["NotificationType"] = "error";
-            TempData["NotificationMessage"] = ex.Message;
+            TempData["NotificationMessage"] = _localizer[ex.Message].Value;
         }
         return RedirectToAction(nameof(Details), new { id });
     }

@@ -175,7 +175,7 @@
   <data name="Search" xml:space="preserve"><value>بحث</value></data>
   <data name="Search by name, product code, or barcode..." xml:space="preserve"><value>ابحث بالاسم أو كود المنتج أو الباركود...</value></data>
   <data name="All types" xml:space="preserve"><value>كل الأنواع</value></data>
-  <data name="Availability" xml:space="preserve"><value>حالة التفعيل</value></data>
+  <data name="Availability" xml:space="preserve"><value>التوفر</value></data>
   <data name="Active" xml:space="preserve"><value>فعال</value></data>
   <data name="Inactive" xml:space="preserve"><value>موقوف</value></data>
   <data name="Sales channel" xml:space="preserve"><value>قناة البيع</value></data>
@@ -3869,7 +3869,7 @@
   <data name="LineItems" xml:space="preserve"><value>بنود المستند</value></data>
   <data name="PaymentDetails" xml:space="preserve"><value>بيانات الدفع</value></data>
   <data name="TermsAndConditions" xml:space="preserve"><value>الشروط والأحكام</value></data>
-  <data name="Acceptance" xml:space="preserve"><value>الاعتماد</value></data>
+  <data name="Acceptance" xml:space="preserve"><value>القبول</value></data>
   <data name="Footer" xml:space="preserve"><value>التذييل</value></data>
   <data name="Document design draft created." xml:space="preserve"><value>تم إنشاء مسودة تصميم المستند.</value></data>
   <data name="Document design activated." xml:space="preserve"><value>تم تفعيل تصميم المستند.</value></data>
@@ -4034,4 +4034,599 @@
   <data name="Target value" xml:space="preserve"><value>القيمة المستهدفة</value></data>
   <data name="Show legend" xml:space="preserve"><value>إظهار وسيلة الإيضاح</value></data>
   <data name="You are not authorized to use this analytics module." xml:space="preserve"><value>لا تملك صلاحية استخدام وحدة التحليل هذه.</value></data>
+  <data name="Complete ERP workflow catalog" xml:space="preserve"><value>كتالوج إجراءات نظام ERP الكامل</value></data>
+  <data name="A role-aware operating guide covering setup, customers, sales, purchasing, inventory, accounting, administration and analytics from preparation through review." xml:space="preserve"><value>دليل تشغيلي واعٍ بالصلاحيات يغطي التأسيس والزبائن والمبيعات والمشتريات والمخزون والمحاسبة والإدارة والتحليلات من التحضير حتى المراجعة.</value></data>
+  <data name="Setup and administration" xml:space="preserve"><value>التأسيس والإدارة</value></data>
+  <data name="Customer management" xml:space="preserve"><value>إدارة الزبائن</value></data>
+  <data name="Sales and receivables" xml:space="preserve"><value>المبيعات والذمم المدينة</value></data>
+  <data name="Purchasing and payables" xml:space="preserve"><value>المشتريات والذمم الدائنة</value></data>
+  <data name="Inventory and warehouses" xml:space="preserve"><value>المخزون والمستودعات</value></data>
+  <data name="Accounting and close" xml:space="preserve"><value>المحاسبة والإغلاق</value></data>
+  <data name="Analytics and management review" xml:space="preserve"><value>التحليلات والمراجعة الإدارية</value></data>
+  <data name="Whenever staffing permits, preparation, approval, custody, posting and review should be assigned to different people." xml:space="preserve"><value>كلما سمح عدد الموظفين، يجب توزيع التحضير والاعتماد والحيازة والترحيل والمراجعة على أشخاص مختلفين.</value></data>
+  <data name="Company owner" xml:space="preserve"><value>مالك الشركة</value></data>
+  <data name="System administrator" xml:space="preserve"><value>مسؤول النظام</value></data>
+  <data name="Security administrator" xml:space="preserve"><value>مسؤول الأمن</value></data>
+  <data name="Chief accountant" xml:space="preserve"><value>رئيس المحاسبين</value></data>
+  <data name="Finance reviewer" xml:space="preserve"><value>المراجع المالي</value></data>
+  <data name="General accountant" xml:space="preserve"><value>المحاسب العام</value></data>
+  <data name="Receivables accountant" xml:space="preserve"><value>محاسب الذمم المدينة</value></data>
+  <data name="Payables accountant" xml:space="preserve"><value>محاسب الذمم الدائنة</value></data>
+  <data name="Credit controller" xml:space="preserve"><value>مراقب الائتمان</value></data>
+  <data name="Sales administrator" xml:space="preserve"><value>مسؤول إدارة المبيعات</value></data>
+  <data name="Sales manager" xml:space="preserve"><value>مدير المبيعات</value></data>
+  <data name="Sales manager or configured approver" xml:space="preserve"><value>مدير المبيعات أو المعتمد المحدد</value></data>
+  <data name="Sales representative" xml:space="preserve"><value>مندوب المبيعات</value></data>
+  <data name="Customer service" xml:space="preserve"><value>خدمة الزبائن</value></data>
+  <data name="Customer account owner" xml:space="preserve"><value>مسؤول حساب الزبون</value></data>
+  <data name="Inventory manager" xml:space="preserve"><value>مدير المخزون</value></data>
+  <data name="Inventory planner" xml:space="preserve"><value>مخطط المخزون</value></data>
+  <data name="Inventory accountant" xml:space="preserve"><value>محاسب المخزون</value></data>
+  <data name="Operations manager" xml:space="preserve"><value>مدير العمليات</value></data>
+  <data name="Warehouse operator" xml:space="preserve"><value>مشغل المستودع</value></data>
+  <data name="Warehouse dispatcher" xml:space="preserve"><value>مسؤول إرسال المستودع</value></data>
+  <data name="Receiving warehouse supervisor" xml:space="preserve"><value>مشرف المستودع المستلم</value></data>
+  <data name="Warehouse picker" xml:space="preserve"><value>محضر طلبات المستودع</value></data>
+  <data name="Warehouse receiver" xml:space="preserve"><value>مستلم المستودع</value></data>
+  <data name="Independent counter" xml:space="preserve"><value>مسؤول الجرد المستقل</value></data>
+  <data name="Quality manager" xml:space="preserve"><value>مدير الجودة</value></data>
+  <data name="Business analyst" xml:space="preserve"><value>محلل الأعمال</value></data>
+  <data name="Module manager" xml:space="preserve"><value>مدير الوحدة</value></data>
+  <data name="Internal reviewer" xml:space="preserve"><value>المراجع الداخلي</value></data>
+  <data name="Treasury supervisor" xml:space="preserve"><value>مشرف الخزينة</value></data>
+  <data name="Company setup" xml:space="preserve"><value>إعداد الشركة</value></data>
+  <data name="Complete guided company setup" xml:space="preserve"><value>إكمال الإعداد الموجه للشركة</value></data>
+  <data name="Identity" xml:space="preserve"><value>الهوية</value></data>
+  <data name="Define organization identity" xml:space="preserve"><value>تعريف هوية المنشأة</value></data>
+  <data name="Financial foundation" xml:space="preserve"><value>الأساس المالي</value></data>
+  <data name="Prepare accounts, branches, taxes and payment methods" xml:space="preserve"><value>تحضير الحسابات والفروع والضرائب وطرق الدفع</value></data>
+  <data name="Inventory foundation" xml:space="preserve"><value>أساس المخزون</value></data>
+  <data name="Prepare products, units, warehouses and locations" xml:space="preserve"><value>تحضير المنتجات والوحدات والمستودعات والمواقع</value></data>
+  <data name="Document control" xml:space="preserve"><value>ضبط المستندات</value></data>
+  <data name="Configure numbering and document designs" xml:space="preserve"><value>إعداد الترقيم وتصاميم المستندات</value></data>
+  <data name="Access control" xml:space="preserve"><value>ضبط الوصول</value></data>
+  <data name="Create users, roles and permissions" xml:space="preserve"><value>إنشاء المستخدمين والأدوار والصلاحيات</value></data>
+  <data name="Control period" xml:space="preserve"><value>فترة الرقابة</value></data>
+  <data name="Open fiscal periods and operating policies" xml:space="preserve"><value>فتح الفترات المالية والسياسات التشغيلية</value></data>
+  <data name="Review audit and security evidence" xml:space="preserve"><value>مراجعة أدلة التدقيق والأمن</value></data>
+  <data name="Master data" xml:space="preserve"><value>البيانات الرئيسية</value></data>
+  <data name="Create the customer profile" xml:space="preserve"><value>إنشاء ملف الزبون</value></data>
+  <data name="Communication" xml:space="preserve"><value>التواصل</value></data>
+  <data name="Add customer contacts and addresses" xml:space="preserve"><value>إضافة جهات اتصال وعناوين الزبون</value></data>
+  <data name="Credit setup" xml:space="preserve"><value>إعداد الائتمان</value></data>
+  <data name="Assign receivable and commercial defaults" xml:space="preserve"><value>تعيين افتراضيات الذمم والشروط التجارية</value></data>
+  <data name="Review customer exposure and activity" xml:space="preserve"><value>مراجعة تعرض الزبون ونشاطه</value></data>
+  <data name="Lifecycle" xml:space="preserve"><value>دورة الحياة</value></data>
+  <data name="Archive or restore the customer" xml:space="preserve"><value>أرشفة الزبون أو استعادته</value></data>
+  <data name="Maintain sales price lists and rules" xml:space="preserve"><value>إدارة قوائم وقواعد أسعار البيع</value></data>
+  <data name="Quotation setup" xml:space="preserve"><value>إعداد عروض الأسعار</value></data>
+  <data name="Prepare quotation templates" xml:space="preserve"><value>تحضير قوالب عروض الأسعار</value></data>
+  <data name="Create and send the quotation" xml:space="preserve"><value>إنشاء عرض السعر وإرساله</value></data>
+  <data name="Record the customer decision" xml:space="preserve"><value>تسجيل قرار الزبون</value></data>
+  <data name="Create and confirm the sales order" xml:space="preserve"><value>إنشاء طلب البيع وتأكيده</value></data>
+  <data name="Reserve inventory for the order" xml:space="preserve"><value>حجز المخزون للطلب</value></data>
+  <data name="Prepare and post delivery" xml:space="preserve"><value>تحضير التسليم وترحيله</value></data>
+  <data name="Create, approve and post the customer invoice" xml:space="preserve"><value>إنشاء فاتورة الزبون واعتمادها وترحيلها</value></data>
+  <data name="Record and allocate customer payment" xml:space="preserve"><value>تسجيل دفعة الزبون وتوزيعها</value></data>
+  <data name="Return authorization" xml:space="preserve"><value>تصريح المرتجع</value></data>
+  <data name="Authorize a customer return" xml:space="preserve"><value>اعتماد مرتجع الزبون</value></data>
+  <data name="Receive, inspect and post disposition" xml:space="preserve"><value>استلام المرتجع وفحصه وترحيل قراره</value></data>
+  <data name="Customer credit" xml:space="preserve"><value>إشعار الزبون الدائن</value></data>
+  <data name="Issue the customer credit note" xml:space="preserve"><value>إصدار إشعار الزبون الدائن</value></data>
+  <data name="Structure" xml:space="preserve"><value>الهيكل</value></data>
+  <data name="Maintain warehouses and storage locations" xml:space="preserve"><value>إدارة المستودعات ومواقع التخزين</value></data>
+  <data name="Opening control" xml:space="preserve"><value>ضبط الأرصدة الافتتاحية</value></data>
+  <data name="Establish stock and tracking identities" xml:space="preserve"><value>تأسيس المخزون وهويات التتبع</value></data>
+  <data name="Move stock between locations" xml:space="preserve"><value>نقل المخزون بين المواقع</value></data>
+  <data name="Execute warehouse transfer" xml:space="preserve"><value>تنفيذ التحويل بين المستودعات</value></data>
+  <data name="Counting" xml:space="preserve"><value>الجرد</value></data>
+  <data name="Count and adjust inventory" xml:space="preserve"><value>جرد المخزون وتسويته</value></data>
+  <data name="Monitor balances and reservations" xml:space="preserve"><value>مراقبة الأرصدة والحجوزات</value></data>
+  <data name="Review replenishment suggestions" xml:space="preserve"><value>مراجعة اقتراحات التزويد</value></data>
+  <data name="Manage quarantine and recalls" xml:space="preserve"><value>إدارة الحجر والاستدعاءات</value></data>
+  <data name="Reconcile inventory authorities" xml:space="preserve"><value>مطابقة مصادر حقيقة المخزون</value></data>
+  <data name="Configuration" xml:space="preserve"><value>التهيئة</value></data>
+  <data name="Approve posting accounts and policies" xml:space="preserve"><value>اعتماد حسابات وسياسات الترحيل</value></data>
+  <data name="Period control" xml:space="preserve"><value>ضبط الفترات</value></data>
+  <data name="Manage fiscal periods" xml:space="preserve"><value>إدارة الفترات المالية</value></data>
+  <data name="Journal review" xml:space="preserve"><value>مراجعة القيود</value></data>
+  <data name="Review source-linked journal entries" xml:space="preserve"><value>مراجعة القيود المرتبطة بمصادرها</value></data>
+  <data name="Receivables" xml:space="preserve"><value>الذمم المدينة</value></data>
+  <data name="Reconcile customer receivables" xml:space="preserve"><value>مطابقة ذمم الزبائن</value></data>
+  <data name="Payables" xml:space="preserve"><value>الذمم الدائنة</value></data>
+  <data name="Reconcile supplier payables and GRNI" xml:space="preserve"><value>مطابقة ذمم الموردين والبضاعة المستلمة غير المفوترة</value></data>
+  <data name="Perform management review and close" xml:space="preserve"><value>تنفيذ المراجعة الإدارية والإغلاق</value></data>
+  <data name="Create governed analytics workspaces" xml:space="preserve"><value>إنشاء مساحات تحليل محكومة</value></data>
+  <data name="Review operational and financial KPIs" xml:space="preserve"><value>مراجعة مؤشرات الأداء التشغيلية والمالية</value></data>
+  <data name="Reconcile decisions to source documents" xml:space="preserve"><value>مطابقة القرارات مع مستندات المصدر</value></data>
+  <data name="A customer must have one stable tenant-owned identity." xml:space="preserve"><value>يجب أن يمتلك الزبون هوية واحدة ثابتة تابعة للشركة.</value></data>
+  <data name="A KPI supports decisions only when its scope and calculation are understood." xml:space="preserve"><value>يدعم مؤشر الأداء القرار فقط عندما يكون نطاقه وطريقة حسابه مفهومين.</value></data>
+  <data name="A personal or shared workspace has approved content." xml:space="preserve"><value>تحتوي مساحة التحليل الشخصية أو المشتركة على محتوى معتمد.</value></data>
+  <data name="A Posted adjustment explains every difference." xml:space="preserve"><value>تشرح تسوية المخزون المرحلة كل فرق.</value></data>
+  <data name="A Posted customer credit note is linked to its invoice and return." xml:space="preserve"><value>يرتبط إشعار الزبون الدائن المرحل بفاتورته ومرتجعه.</value></data>
+  <data name="A Posted delivery is linked to stock movement and COGS journal." xml:space="preserve"><value>يرتبط التسليم المرحل بحركة المخزون وقيد تكلفة البضاعة المباعة.</value></data>
+  <data name="A Posted payment reduces the selected invoice balances." xml:space="preserve"><value>تخفض الدفعة المرحلة أرصدة الفواتير المحددة.</value></data>
+  <data name="A quotation creates no inventory or accounting effect." xml:space="preserve"><value>لا ينشئ عرض السعر أثراً مخزونياً أو محاسبياً.</value></data>
+  <data name="Accepted suggestions link to their generated demand." xml:space="preserve"><value>ترتبط الاقتراحات المقبولة بطلبات التزويد التي أنشأتها.</value></data>
+  <data name="Accounts, branches, taxes and payment methods are active." xml:space="preserve"><value>الحسابات والفروع والضرائب وطرق الدفع فعالة.</value></data>
+  <data name="Active products and named storage destinations are ready for use." xml:space="preserve"><value>المنتجات الفعالة ووجهات التخزين المسماة جاهزة للاستخدام.</value></data>
+  <data name="Active reservations cover the intended order quantities." xml:space="preserve"><value>تغطي الحجوزات الفعالة كميات الطلب المقصودة.</value></data>
+  <data name="Active rules have clear priority, currency and validity." xml:space="preserve"><value>للقواعد الفعالة أولوية وعملة وفترة صلاحية واضحة.</value></data>
+  <data name="Active template versions are immutable and historical use is frozen." xml:space="preserve"><value>إصدارات القوالب الفعالة غير قابلة للتعديل ويثبت استخدامها التاريخي.</value></data>
+  <data name="Add active contacts plus billing and shipping addresses with clear defaults." xml:space="preserve"><value>أضف جهات اتصال فعالة وعناوين فوترة وشحن مع افتراضيات واضحة.</value></data>
+  <data name="All required posting accounts are valid and active." xml:space="preserve"><value>جميع حسابات الترحيل المطلوبة صحيحة وفعالة.</value></data>
+  <data name="Allocate a received payment to posted invoices using the actual method, currency and reference." xml:space="preserve"><value>وزع الدفعة المستلمة على الفواتير المرحلة باستخدام طريقة الدفع والعملة والمرجع الفعلي.</value></data>
+  <data name="An approved active template is available." xml:space="preserve"><value>يتوفر قالب فعال ومعتمد.</value></data>
+  <data name="An Approved return request records the decision trail." xml:space="preserve"><value>يسجل طلب المرتجع المعتمد مسار القرار.</value></data>
+  <data name="Analytics remain read-only and tenant-filtered through registered providers." xml:space="preserve"><value>تبقى التحليلات للقراءة فقط ومعزولة حسب الشركة عبر المزودات المسجلة.</value></data>
+  <data name="Archive inactive customers without deleting history; restore only after review." xml:space="preserve"><value>أرشف الزبائن غير النشطين دون حذف التاريخ، ولا تستعدهم إلا بعد المراجعة.</value></data>
+  <data name="Archived customers remain available to historical documents but not new sales." xml:space="preserve"><value>يبقى الزبائن المؤرشفون متاحين للمستندات التاريخية دون المبيعات الجديدة.</value></data>
+  <data name="Audit evidence is read-only, permission-controlled and retained by policy." xml:space="preserve"><value>دليل التدقيق للقراءة فقط ومحكوم بالصلاحيات ومحفوظ حسب السياسة.</value></data>
+  <data name="Authorization alone does not change stock, accounting or customer balance." xml:space="preserve"><value>لا يغير التصريح وحده المخزون أو المحاسبة أو رصيد الزبون.</value></data>
+  <data name="Automation proposes actions but approved workflows execute them." xml:space="preserve"><value>تقترح الأتمتة الإجراءات لكن مسارات العمل المعتمدة هي التي تنفذها.</value></data>
+  <data name="Availability is derived from authoritative balances and active reservations." xml:space="preserve"><value>يشتق التوفر من الأرصدة الموثوقة والحجوزات الفعالة.</value></data>
+  <data name="Billing accountant" xml:space="preserve"><value>محاسب الفوترة</value></data>
+  <data name="Choose an authorized provider, period, dimension, comparison and reusable widgets." xml:space="preserve"><value>اختر مزوداً وفترة وبعداً ومقارنة وأدوات قابلة لإعادة الاستخدام ضمن الصلاحية.</value></data>
+  <data name="Choose the business profile, country, currency, language and starter configuration before operational work begins." xml:space="preserve"><value>اختر ملف النشاط والدولة والعملة واللغة والإعداد الابتدائي قبل بدء العمل التشغيلي.</value></data>
+  <data name="Closed periods reject new operational postings." xml:space="preserve"><value>ترفض الفترات المغلقة الترحيلات التشغيلية الجديدة.</value></data>
+  <data name="Collection custody and invoice preparation should be separated." xml:space="preserve"><value>يجب فصل حيازة التحصيل عن إعداد الفاتورة.</value></data>
+  <data name="Company setup is completed and the tenant dashboard is available." xml:space="preserve"><value>اكتمل إعداد الشركة وأصبحت لوحة الشركة متاحة.</value></data>
+  <data name="Compare product stock, location balances, tracking, movements and inventory GL control accounts." xml:space="preserve"><value>قارن مخزون المنتجات وأرصدة المواقع والتتبع والحركات وحسابات رقابة المخزون في الأستاذ العام.</value></data>
+  <data name="Configure document sequences, organization branding and active document designs for each document type." xml:space="preserve"><value>اضبط تسلسلات المستندات وهوية المنشأة والتصميم الفعال لكل نوع مستند.</value></data>
+  <data name="Confirmation creates a commitment but no stock or journal entry." xml:space="preserve"><value>ينشئ التأكيد التزاماً دون تغيير المخزون أو إنشاء قيد.</value></data>
+  <data name="Contact and address history is archived rather than deleted." xml:space="preserve"><value>يؤرشف تاريخ جهات الاتصال والعناوين بدلاً من حذفه.</value></data>
+  <data name="Convert an accepted quotation once, evaluate controls and confirm only after required approvals." xml:space="preserve"><value>حوّل عرض السعر المقبول مرة واحدة وقيّم الضوابط ولا تؤكد إلا بعد الاعتمادات المطلوبة.</value></data>
+  <data name="Create and activate reusable versioned content, options, quantities and document design choices." xml:space="preserve"><value>أنشئ وفعّل محتوى وخيارات وكميات وتصميماً ذا إصدارات وقابلاً لإعادة الاستخدام.</value></data>
+  <data name="Create approved opening balances and allocate required lot or serial identities." xml:space="preserve"><value>أنشئ أرصدة افتتاحية معتمدة ووزع هويات التشغيلات أو الأرقام التسلسلية المطلوبة.</value></data>
+  <data name="Create fiscal periods and approve sales, purchasing, inventory and accounting policies." xml:space="preserve"><value>أنشئ الفترات المالية واعتمد سياسات المبيعات والمشتريات والمخزون والمحاسبة.</value></data>
+  <data name="Create from eligible order or delivery quantities, approve and post within an open period." xml:space="preserve"><value>أنشئ من كميات الطلب أو التسليم المؤهلة ثم اعتمد ورحّل ضمن فترة مفتوحة.</value></data>
+  <data name="Create products, managed units, warehouses, storage locations and tracking policies." xml:space="preserve"><value>أنشئ المنتجات والوحدات المدارة والمستودعات ومواقع التخزين وسياسات التتبع.</value></data>
+  <data name="Create the chart of accounts, operating branches, tax rates and settlement methods before posting." xml:space="preserve"><value>أنشئ شجرة الحسابات والفروع التشغيلية ونسب الضرائب وطرق التسوية قبل الترحيل.</value></data>
+  <data name="Create the count, record actual quantities, approve differences and post the adjustment." xml:space="preserve"><value>أنشئ الجرد وسجل الكميات الفعلية واعتمد الفروقات ثم رحّل التسوية.</value></data>
+  <data name="Create users and assign the minimum roles and permissions needed for their duties." xml:space="preserve"><value>أنشئ المستخدمين وامنحهم الحد الأدنى من الأدوار والصلاحيات اللازمة لمهامهم.</value></data>
+  <data name="Create, submit and approve the request against exact delivered quantities." xml:space="preserve"><value>أنشئ الطلب وقدمه واعتمده مقابل كميات التسليم الدقيقة.</value></data>
+  <data name="Create, submit, approve, dispatch and receive the transfer through its controlled stages." xml:space="preserve"><value>أنشئ التحويل وقدمه واعتمده وأرسله واستلمه عبر مراحله المضبوطة.</value></data>
+  <data name="Credit and accounting defaults are prospective and must not rewrite historical documents." xml:space="preserve"><value>تطبق افتراضيات الائتمان والمحاسبة مستقبلاً ولا تعيد كتابة المستندات التاريخية.</value></data>
+  <data name="Credit decisions use current authoritative balances." xml:space="preserve"><value>تستخدم قرارات الائتمان الأرصدة الحالية الموثوقة.</value></data>
+  <data name="Credit only eligible posted invoice and returned quantities; handle cash refund separately." xml:space="preserve"><value>امنح الائتمان فقط لكميات الفاتورة المرحلة والمرتجعات المؤهلة، وعالج رد النقد بشكل منفصل.</value></data>
+  <data name="Credit reverses receivable, revenue and tax without repeating inventory." xml:space="preserve"><value>يعكس الإشعار الذمم والإيراد والضريبة دون تكرار أثر المخزون.</value></data>
+  <data name="Customer balances are derived from posted allocations and credits." xml:space="preserve"><value>تشتق أرصدة الزبائن من التوزيعات والإشعارات المرحلة.</value></data>
+  <data name="Customer subledger equals the general ledger control balance." xml:space="preserve"><value>يساوي دفتر الزبائن المساعد رصيد حساب الرقابة في الأستاذ العام.</value></data>
+  <data name="Dashboards do not replace accounting or operational source evidence." xml:space="preserve"><value>لا تستبدل لوحات المعلومات دليل المصدر المحاسبي أو التشغيلي.</value></data>
+  <data name="Define dated customer, product, category, unit and quantity pricing rules." xml:space="preserve"><value>عرّف قواعد تسعير مؤرخة حسب الزبون والمنتج والفئة والوحدة والكمية.</value></data>
+  <data name="Define named warehouses, hierarchical locations and receive, pick and reserve capabilities." xml:space="preserve"><value>عرّف مستودعات مسماة ومواقع هرمية وقدرات الاستلام والالتقاط والحجز.</value></data>
+  <data name="Delivery owns inventory issue and COGS; it must use exact reserved sources." xml:space="preserve"><value>يمتلك التسليم إخراج المخزون وتكلفة البضاعة المباعة ويجب أن يستخدم مصادر الحجز الدقيقة.</value></data>
+  <data name="Document numbers and active layouts must remain versioned and auditable." xml:space="preserve"><value>يجب أن تبقى أرقام المستندات والتخطيطات الفعالة ذات إصدارات وقابلة للتدقيق.</value></data>
+  <data name="Each required document type has a valid sequence and active default design." xml:space="preserve"><value>لكل نوع مستند مطلوب تسلسل صحيح وتصميم افتراضي فعال.</value></data>
+  <data name="Enter legal and trade names, registrations, contacts, addresses, logo and reusable document fields." xml:space="preserve"><value>أدخل الأسماء القانونية والتجارية والتسجيلات وبيانات الاتصال والعناوين والشعار وحقول المستندات القابلة لإعادة الاستخدام.</value></data>
+  <data name="Every active user has an approved role assignment." xml:space="preserve"><value>لكل مستخدم فعال تعيين دور معتمد.</value></data>
+  <data name="Every active warehouse has valid operating locations." xml:space="preserve"><value>لكل مستودع فعال مواقع تشغيل صحيحة.</value></data>
+  <data name="Every physical move must create immutable movement evidence." xml:space="preserve"><value>يجب أن تنشئ كل حركة فعلية دليلاً غير قابل للتعديل.</value></data>
+  <data name="Every quarantine or recall has a resolved state and evidence." xml:space="preserve"><value>لكل حجر أو استدعاء حالة محلولة ودليل.</value></data>
+  <data name="Every sampled entry is balanced and traceable to its source." xml:space="preserve"><value>كل قيد تمت مراجعته متوازن وقابل للتتبع إلى مصدره.</value></data>
+  <data name="Exceptions are resolved or routed to approval." xml:space="preserve"><value>تحل الاستثناءات أو تحال للاعتماد.</value></data>
+  <data name="Exceptions have owners and documented follow-up." xml:space="preserve"><value>للاستثناءات مسؤولون ومتابعة موثقة.</value></data>
+  <data name="Foundation settings must be reviewed before users create transactions." xml:space="preserve"><value>يجب مراجعة الإعدادات الأساسية قبل إنشاء المستخدمين للعمليات.</value></data>
+  <data name="Identity is maintained once and reused by every supported document." xml:space="preserve"><value>تدار الهوية مرة واحدة ويعاد استخدامها في كل مستند مدعوم.</value></data>
+  <data name="In-transit custody must remain visible and quantities cannot be received twice." xml:space="preserve"><value>يجب أن تبقى حيازة البضاعة قيد النقل ظاهرة ولا يمكن استلام الكمية مرتين.</value></data>
+  <data name="Least privilege and separation of duties reduce unauthorized operations." xml:space="preserve"><value>يقلل الحد الأدنى للصلاحيات وفصل المهام العمليات غير المصرح بها.</value></data>
+  <data name="Lifecycle decisions are append-only and cannot be inferred from later documents." xml:space="preserve"><value>قرارات دورة الحياة تراكمية ولا يجوز استنتاجها من مستندات لاحقة.</value></data>
+  <data name="Location balances and movement history are updated." xml:space="preserve"><value>تتحدث أرصدة المواقع وسجل الحركات.</value></data>
+  <data name="Map inventory, revenue, discount, tax, receivable, payable, GRNI, variance and settlement accounts." xml:space="preserve"><value>اربط حسابات المخزون والإيراد والخصم والضريبة والذمم والبضاعة المستلمة غير المفوترة والفروقات والتسوية.</value></data>
+  <data name="Material decisions are traceable to authorized records." xml:space="preserve"><value>يمكن تتبع القرارات الجوهرية إلى سجلات مصرح بها.</value></data>
+  <data name="Negative or unassigned exceptions have an owner." xml:space="preserve"><value>للاستثناءات السالبة أو غير الموزعة مسؤول محدد.</value></data>
+  <data name="No unexplained quantity or value differences remain." xml:space="preserve"><value>لا تبقى فروقات كمية أو قيمة غير مفسرة.</value></data>
+  <data name="On-hand, location and tracking totals agree." xml:space="preserve"><value>تتطابق إجماليات المتاح والمواقع والتتبع.</value></data>
+  <data name="Open audit exceptions have an owner and resolution." xml:space="preserve"><value>لاستثناءات التدقيق المفتوحة مسؤول وحل.</value></data>
+  <data name="Open source documents behind material indicators and verify the decision trail." xml:space="preserve"><value>افتح مستندات المصدر خلف المؤشرات الجوهرية وتحقق من مسار القرار.</value></data>
+  <data name="Open the working period, soft close for review and close only after reconciliations." xml:space="preserve"><value>افتح فترة العمل وأغلقها إغلاقاً مرناً للمراجعة ولا تغلقها نهائياً إلا بعد المطابقات.</value></data>
+  <data name="Opening quantities must reconcile to detailed locations and tracking." xml:space="preserve"><value>يجب أن تتطابق الكميات الافتتاحية مع تفاصيل المواقع والتتبع.</value></data>
+  <data name="Operational and financial inventory must reconcile before period close." xml:space="preserve"><value>يجب مطابقة المخزون التشغيلي والمالي قبل إغلاق الفترة.</value></data>
+  <data name="Operational services post only through approved accounting configuration." xml:space="preserve"><value>ترحّل الخدمات التشغيلية فقط عبر إعداد محاسبي معتمد.</value></data>
+  <data name="Payables and GRNI reports have no unexplained differences." xml:space="preserve"><value>لا تحتوي تقارير الذمم الدائنة والبضاعة المستلمة غير المفوترة على فروقات غير مفسرة.</value></data>
+  <data name="Period close follows reconciliation and approval, not calendar date alone." xml:space="preserve"><value>يتبع إغلاق الفترة المطابقة والاعتماد وليس التاريخ وحده.</value></data>
+  <data name="Period status changes retain actor, time and reason." xml:space="preserve"><value>تحفظ تغييرات حالة الفترة المنفذ والوقت والسبب.</value></data>
+  <data name="Physical custody and financial credit remain separate authorities." xml:space="preserve"><value>تبقى الحيازة الفعلية والائتمان المالي صلاحيتين منفصلتين.</value></data>
+  <data name="Posted journals are corrected by controlled reversal, never silent editing." xml:space="preserve"><value>تصحح القيود المرحلة بعكس مضبوط وليس بتعديل صامت.</value></data>
+  <data name="Posting authorities must reference approved master data rather than free text." xml:space="preserve"><value>يجب أن تستخدم صلاحيات الترحيل بيانات رئيسية معتمدة بدلاً من النص الحر.</value></data>
+  <data name="Posting establishes receivable, revenue and tax without changing inventory." xml:space="preserve"><value>يثبت الترحيل الذمم والإيراد والضريبة دون تغيير المخزون.</value></data>
+  <data name="Prepare the delivery from active reservations, allocate tracking identities and post physical issue." xml:space="preserve"><value>حضّر التسليم من الحجوزات الفعالة ووزع هويات التتبع ورحّل الإخراج الفعلي.</value></data>
+  <data name="Product and warehouse identities are controlled master data." xml:space="preserve"><value>هويات المنتجات والمستودعات بيانات رئيسية مضبوطة.</value></data>
+  <data name="Quarantine suspect identities, release only after evidence and execute recalls with communication logs." xml:space="preserve"><value>احجر الهويات المشتبه بها ولا تحررها إلا بدليل ونفذ الاستدعاءات مع سجلات التواصل.</value></data>
+  <data name="Receipt, inspection and disposition evidence are complete." xml:space="preserve"><value>أدلة الاستلام والفحص وقرار التصرف مكتملة.</value></data>
+  <data name="Receivable and commercial defaults are approved." xml:space="preserve"><value>افتراضيات الذمم والشروط التجارية معتمدة.</value></data>
+  <data name="Receive approved quantities, verify tracking, inspect and post Restock, Quarantine, Reject or Destroy disposition." xml:space="preserve"><value>استلم الكميات المعتمدة وتحقق من التتبع وافحص ورحّل قرار الإعادة للمخزون أو الحجر أو الرفض أو الإتلاف.</value></data>
+  <data name="Reconcile invoices, payments, credits and reversals to the receivable control accounts." xml:space="preserve"><value>طابق الفواتير والدفعات والإشعارات والعكوس مع حسابات رقابة الذمم المدينة.</value></data>
+  <data name="Reconcile receipts, vendor bills, payments, returns, credits and GRNI." xml:space="preserve"><value>طابق الاستلامات وفواتير الموردين والدفعات والمرتجعات والإشعارات والبضاعة المستلمة غير المفوترة.</value></data>
+  <data name="Record acceptance, rejection, expiry or cancellation using the actual customer decision." xml:space="preserve"><value>سجل القبول أو الرفض أو الانتهاء أو الإلغاء وفق قرار الزبون الفعلي.</value></data>
+  <data name="Record internal movements with source, destination, quantity and reference." xml:space="preserve"><value>سجل الحركات الداخلية مع المصدر والوجهة والكمية والمرجع.</value></data>
+  <data name="Record the customer code, identity, language, contacts and tax information." xml:space="preserve"><value>سجل رمز الزبون وهويته ولغته وبيانات اتصاله ومعلوماته الضريبية.</value></data>
+  <data name="Required default contacts and addresses are available." xml:space="preserve"><value>جهات الاتصال والعناوين الافتراضية المطلوبة متاحة.</value></data>
+  <data name="Reservation changes availability but not on-hand quantity or accounting." xml:space="preserve"><value>يغير الحجز التوفر دون تغيير الكمية المتاحة فعلياً أو المحاسبة.</value></data>
+  <data name="Reserve available stock by warehouse and location using the approved shortage policy." xml:space="preserve"><value>احجز المخزون المتوفر حسب المستودع والموقع باستخدام سياسة العجز المعتمدة.</value></data>
+  <data name="Resolve exceptions, review taxes and margins, retain evidence and close the period." xml:space="preserve"><value>حل الاستثناءات وراجع الضرائب والهوامش واحفظ الأدلة ثم أغلق الفترة.</value></data>
+  <data name="Review balanced entries, sources, branches, warehouses, currencies and reversal links." xml:space="preserve"><value>راجع توازن القيود ومصادرها وفروعها ومستودعاتها وعملاتها وروابط عكسها.</value></data>
+  <data name="Review definitions, sources, trends, targets and exceptions before acting." xml:space="preserve"><value>راجع التعريفات والمصادر والاتجاهات والأهداف والاستثناءات قبل اتخاذ الإجراء.</value></data>
+  <data name="Review min/max, demand and seasonality suggestions before creating transfers or purchase demand." xml:space="preserve"><value>راجع اقتراحات الحد الأدنى والأقصى والطلب والموسمية قبل إنشاء التحويلات أو طلب الشراء.</value></data>
+  <data name="Review on-hand, reserved, available and unassigned quantities by product, warehouse and location." xml:space="preserve"><value>راجع الكميات الفعلية والمحجوزة والمتوفرة وغير الموزعة حسب المنتج والمستودع والموقع.</value></data>
+  <data name="Review open invoices, overdue exposure, quotations, orders, payments and credits before new commitments." xml:space="preserve"><value>راجع الفواتير المفتوحة والتأخر وعروض الأسعار والطلبات والدفعات والإشعارات قبل التزامات جديدة.</value></data>
+  <data name="Review sensitive configuration changes, denied actions, exports and integration activity regularly." xml:space="preserve"><value>راجع دورياً تغييرات الإعدادات الحساسة والإجراءات المرفوضة والتصديرات ونشاط التكامل.</value></data>
+  <data name="Select the customer and template, review repriced lines, validity, taxes and terms, then send." xml:space="preserve"><value>اختر الزبون والقالب وراجع إعادة التسعير والصلاحية والضرائب والشروط ثم أرسل.</value></data>
+  <data name="Set payment terms, receivable policy, currency, tax exemption and default price list." xml:space="preserve"><value>حدد شروط الدفع وسياسة الذمم والعملة والإعفاء الضريبي وقائمة الأسعار الافتراضية.</value></data>
+  <data name="The active customer profile is complete." xml:space="preserve"><value>ملف الزبون الفعال مكتمل.</value></data>
+  <data name="The counter should not approve their own material variance." xml:space="preserve"><value>يجب ألا يعتمد منفذ الجرد فرقاً جوهرياً سجله بنفسه.</value></data>
+  <data name="The current period is open and policy settings are reviewed." xml:space="preserve"><value>الفترة الحالية مفتوحة وإعدادات السياسات مراجعة.</value></data>
+  <data name="The invoice is Posted with a balanced journal." xml:space="preserve"><value>الفاتورة مرحلة مع قيد متوازن.</value></data>
+  <data name="The lifecycle state and actor evidence are retained." xml:space="preserve"><value>حالة دورة الحياة ودليل المنفذ محفوظان.</value></data>
+  <data name="The order is Confirmed with approval evidence." xml:space="preserve"><value>الطلب مؤكد مع دليل الاعتماد.</value></data>
+  <data name="The organization identity screen contains reviewed bilingual details." xml:space="preserve"><value>تحتوي شاشة هوية المنشأة على بيانات ثنائية اللغة تمت مراجعتها.</value></data>
+  <data name="The period is Closed with approved review evidence." xml:space="preserve"><value>الفترة مغلقة مع دليل مراجعة معتمد.</value></data>
+  <data name="The quotation has a final traceable status." xml:space="preserve"><value>لعرض السعر حالة نهائية قابلة للتتبع.</value></data>
+  <data name="The quotation is Sent with frozen commercial and document evidence." xml:space="preserve"><value>عرض السعر مرسل مع دليل تجاري ومستندي ثابت.</value></data>
+  <data name="The server recalculates prices; users do not supply authoritative prices." xml:space="preserve"><value>يعيد الخادم حساب الأسعار ولا يقدم المستخدمون أسعاراً مرجعية.</value></data>
+  <data name="The transfer is Posted or closed with complete movement evidence." xml:space="preserve"><value>التحويل مرحل أو مغلق مع دليل حركة مكتمل.</value></data>
+  <data name="Tracked safety decisions must be identity-specific and auditable." xml:space="preserve"><value>يجب أن تكون قرارات السلامة المتتبعة محددة بالهوية وقابلة للتدقيق.</value></data>
+  <data name="Transactions must use approved policies and an open accounting period." xml:space="preserve"><value>يجب أن تستخدم العمليات سياسات معتمدة وفترة محاسبية مفتوحة.</value></data>
+  <data name="Unbilled receipts and supplier liabilities remain distinct." xml:space="preserve"><value>تبقى الاستلامات غير المفوترة والتزامات الموردين منفصلة.</value></data>
+  <data name="Users select business names while internal IDs remain hidden." xml:space="preserve"><value>يختار المستخدمون الأسماء التجارية بينما تبقى المعرفات الداخلية مخفية.</value></data>
+  <data name="Review balanced entries, sources, branches, warehouses, currencies and reversal links from the governed analytics workspace and open their source evidence." xml:space="preserve"><value>راجع القيود المتوازنة ومصادرها وفروعها ومستودعاتها وعملاتها وروابط عكسها من مساحة التحليلات المحكومة، ثم افتح أدلة مصادرها.</value></data>
+  <data name="A product can be stored in multiple locations inside the same warehouse. The warehouse balance remains the total, while location balances show its physical distribution." xml:space="preserve"><value>يمكن تخزين المنتج في عدة مواقع داخل المستودع نفسه. يبقى رصيد المستودع هو الإجمالي، بينما توضح أرصدة المواقع توزيعه الفعلي.</value></data>
+  <data name="Accent" xml:space="preserve"><value>اللون المميز</value></data>
+  <data name="Accounting Posting Settings" xml:space="preserve"><value>إعدادات الترحيل المحاسبي</value></data>
+  <data name="Activate rule" xml:space="preserve"><value>تفعيل القاعدة</value></data>
+  <data name="Add" xml:space="preserve"><value>إضافة</value></data>
+  <data name="Add Account" xml:space="preserve"><value>إضافة حساب</value></data>
+  <data name="Add at least one product to create the transfer." xml:space="preserve"><value>أضف منتجاً واحداً على الأقل لإنشاء التحويل.</value></data>
+  <data name="Add Branch" xml:space="preserve"><value>إضافة فرع</value></data>
+  <data name="Add exact barcode immediately when Enter is pressed" xml:space="preserve"><value>إضافة الباركود المطابق فور الضغط على Enter</value></data>
+  <data name="Add Item" xml:space="preserve"><value>إضافة صنف</value></data>
+  <data name="Add location" xml:space="preserve"><value>إضافة موقع</value></data>
+  <data name="Add Payment Method" xml:space="preserve"><value>إضافة طريقة دفع</value></data>
+  <data name="Add Stock" xml:space="preserve"><value>إضافة مخزون</value></data>
+  <data name="Add Storage Location" xml:space="preserve"><value>إضافة موقع تخزين</value></data>
+  <data name="Add Tax Rate" xml:space="preserve"><value>إضافة نسبة ضريبة</value></data>
+  <data name="Add Warehouse" xml:space="preserve"><value>إضافة مستودع</value></data>
+  <data name="Adjustment In" xml:space="preserve"><value>تسوية بالزيادة</value></data>
+  <data name="Adjustment Out" xml:space="preserve"><value>تسوية بالنقص</value></data>
+  <data name="Adjustment reason" xml:space="preserve"><value>سبب التسوية</value></data>
+  <data name="Aisle" xml:space="preserve"><value>ممر</value></data>
+  <data name="All products" xml:space="preserve"><value>جميع المنتجات</value></data>
+  <data name="Allow direct POS sales from the warehouse" xml:space="preserve"><value>السماح بمبيعات نقطة البيع المباشرة من المستودع</value></data>
+  <data name="Allow Discount Above Limit" xml:space="preserve"><value>السماح بخصم يتجاوز الحد</value></data>
+  <data name="Allow discount to be applied to individual sale items." xml:space="preserve"><value>السماح بتطبيق الخصم على أصناف البيع منفردة.</value></data>
+  <data name="Allow discount to be applied to the entire invoice." xml:space="preserve"><value>السماح بتطبيق الخصم على كامل الفاتورة.</value></data>
+  <data name="Allow Invoice Discount" xml:space="preserve"><value>السماح بخصم الفاتورة</value></data>
+  <data name="Allow Line Discount" xml:space="preserve"><value>السماح بخصم السطر</value></data>
+  <data name="Allow preparation notes per item" xml:space="preserve"><value>السماح بملاحظات التحضير لكل صنف</value></data>
+  <data name="Allow this warehouse to supply POS sales" xml:space="preserve"><value>السماح لهذا المستودع بتغذية مبيعات نقطة البيع</value></data>
+  <data name="Allowed warehouses by priority" xml:space="preserve"><value>المستودعات المسموحة حسب الأولوية</value></data>
+  <data name="Apply Profile Defaults" xml:space="preserve"><value>تطبيق افتراضيات الملف</value></data>
+  <data name="Applying a profile resets this terminal's appearance to a practical starting point. You can customize it afterward." xml:space="preserve"><value>يؤدي تطبيق الملف إلى إعادة مظهر هذه النقطة إلى إعداد عملي مبدئي، ويمكنك تخصيصه لاحقاً.</value></data>
+  <data name="Approved By" xml:space="preserve"><value>اعتمد بواسطة</value></data>
+  <data name="Archive" xml:space="preserve"><value>أرشفة</value></data>
+  <data name="Archive rule" xml:space="preserve"><value>أرشفة القاعدة</value></data>
+  <data name="Available: 12" xml:space="preserve"><value>المتاح: 12</value></data>
+  <data name="Back to Sales" xml:space="preserve"><value>العودة إلى المبيعات</value></data>
+  <data name="Bill completed service quantity" xml:space="preserve"><value>فوترة كمية الخدمة المكتملة</value></data>
+  <data name="Bill ordered quantity" xml:space="preserve"><value>فوترة الكمية المطلوبة</value></data>
+  <data name="Bill received quantity" xml:space="preserve"><value>فوترة الكمية المستلمة</value></data>
+  <data name="Bin" xml:space="preserve"><value>حاوية</value></data>
+  <data name="Branch &amp; POS Warehouses" xml:space="preserve"><value>مستودعات الفروع ونقاط البيع</value></data>
+  <data name="Branch Sales Accounts" xml:space="preserve"><value>حسابات مبيعات الفروع</value></data>
+  <data name="Business profile" xml:space="preserve"><value>ملف النشاط</value></data>
+  <data name="Cancel Stock Transfer" xml:space="preserve"><value>إلغاء تحويل المخزون</value></data>
+  <data name="Cancel Transfer" xml:space="preserve"><value>إلغاء التحويل</value></data>
+  <data name="Cancellation Information" xml:space="preserve"><value>معلومات الإلغاء</value></data>
+  <data name="Cancelled At:" xml:space="preserve"><value>أُلغي في:</value></data>
+  <data name="Cancelled By" xml:space="preserve"><value>أُلغي بواسطة</value></data>
+  <data name="Cancelled By:" xml:space="preserve"><value>أُلغي بواسطة:</value></data>
+  <data name="Cancelling this transfer will reverse the stock movement. The original transfer will not be deleted." xml:space="preserve"><value>سيؤدي إلغاء هذا التحويل إلى عكس حركة المخزون، ولن يُحذف التحويل الأصلي.</value></data>
+  <data name="Capture guest count" xml:space="preserve"><value>تسجيل عدد الضيوف</value></data>
+  <data name="Cart position" xml:space="preserve"><value>موضع السلة</value></data>
+  <data name="Cash or bank account" xml:space="preserve"><value>حساب النقد أو البنك</value></data>
+  <data name="Choose a business profile, then customize the terminal layout." xml:space="preserve"><value>اختر ملف النشاط ثم خصص تخطيط نقطة البيع.</value></data>
+  <data name="Choose products to begin." xml:space="preserve"><value>اختر المنتجات للبدء.</value></data>
+  <data name="Choose the chart-of-account destinations used when sales and purchases are posted. Tax accounts are set separately on each tax rate." xml:space="preserve"><value>اختر حسابات الوجهة المستخدمة عند ترحيل المبيعات والمشتريات. تُحدد حسابات الضريبة بشكل منفصل لكل نسبة.</value></data>
+  <data name="Choose what evidence makes this product quantity available for supplier billing." xml:space="preserve"><value>اختر الدليل الذي يجعل كمية هذا المنتج متاحة لفوترة المورد.</value></data>
+  <data name="Click a product to add it to the cart." xml:space="preserve"><value>اضغط على منتج لإضافته إلى السلة.</value></data>
+  <data name="Columns" xml:space="preserve"><value>الأعمدة</value></data>
+  <data name="Compact product cards" xml:space="preserve"><value>بطاقات منتجات مدمجة</value></data>
+  <data name="Complete Sale" xml:space="preserve"><value>إتمام البيع</value></data>
+  <data name="Configure branch access above before creating its POS." xml:space="preserve"><value>اضبط صلاحية الفرع أعلاه قبل إنشاء نقطة البيع التابعة له.</value></data>
+  <data name="Configure how discounts are allowed and controlled in the system." xml:space="preserve"><value>اضبط كيفية السماح بالخصومات والتحكم بها في النظام.</value></data>
+  <data name="Configure Warehouses" xml:space="preserve"><value>إعداد المستودعات</value></data>
+  <data name="Configured POS terminals" xml:space="preserve"><value>نقاط البيع المهيأة</value></data>
+  <data name="Control" xml:space="preserve"><value>التحكم</value></data>
+  <data name="Control mode" xml:space="preserve"><value>نمط التحكم</value></data>
+  <data name="Control which warehouses each branch and POS may use, and in what order." xml:space="preserve"><value>حدد المستودعات التي يجوز لكل فرع ونقطة بيع استخدامها وترتيب أولويتها.</value></data>
+  <data name="Cost of sales account" xml:space="preserve"><value>حساب تكلفة المبيعات</value></data>
+  <data name="Create a POS terminal in Branch &amp; POS Warehouses before configuring its experience." xml:space="preserve"><value>أنشئ نقطة بيع في مستودعات الفروع ونقاط البيع قبل تخصيص تجربتها.</value></data>
+  <data name="Create a scannable warehouse position such as MAIN-DRY-A-R03-L02-B04." xml:space="preserve"><value>أنشئ موقعاً مستودعياً قابلاً للمسح مثل MAIN-DRY-A-R03-L02-B04.</value></data>
+  <data name="Create POS Terminal" xml:space="preserve"><value>إنشاء نقطة بيع</value></data>
+  <data name="Create Purchase" xml:space="preserve"><value>إنشاء عملية شراء</value></data>
+  <data name="Create Sale" xml:space="preserve"><value>إنشاء عملية بيع</value></data>
+  <data name="Create Stock" xml:space="preserve"><value>إنشاء رصيد مخزون</value></data>
+  <data name="Create Stock Transaction" xml:space="preserve"><value>إنشاء حركة مخزون</value></data>
+  <data name="Create Warehouse" xml:space="preserve"><value>إنشاء مستودع</value></data>
+  <data name="Created By" xml:space="preserve"><value>أنشئ بواسطة</value></data>
+  <data name="Current Cart" xml:space="preserve"><value>السلة الحالية</value></data>
+  <data name="Customer invoicing policy" xml:space="preserve"><value>سياسة فوترة العميل</value></data>
+  <data name="Default Discount Type" xml:space="preserve"><value>نوع الخصم الافتراضي</value></data>
+  <data name="Default order type" xml:space="preserve"><value>نوع الطلب الافتراضي</value></data>
+  <data name="Default Warehouse" xml:space="preserve"><value>المستودع الافتراضي</value></data>
+  <data name="Delivery" xml:space="preserve"><value>توصيل</value></data>
+  <data name="Dine-in" xml:space="preserve"><value>داخل المطعم</value></data>
+  <data name="Discount" xml:space="preserve"><value>الخصم</value></data>
+  <data name="Discount accounts" xml:space="preserve"><value>حسابات الخصم</value></data>
+  <data name="Discount Amount" xml:space="preserve"><value>قيمة الخصم</value></data>
+  <data name="Discount Application" xml:space="preserve"><value>تطبيق الخصم</value></data>
+  <data name="Discount Override" xml:space="preserve"><value>تجاوز حد الخصم</value></data>
+  <data name="Discount Settings" xml:space="preserve"><value>إعدادات الخصم</value></data>
+  <data name="Discount Type" xml:space="preserve"><value>نوع الخصم</value></data>
+  <data name="Discount Types" xml:space="preserve"><value>أنواع الخصم</value></data>
+  <data name="Draft Transfer:" xml:space="preserve"><value>تحويل مسودة:</value></data>
+  <data name="Edit Stock" xml:space="preserve"><value>تعديل المخزون</value></data>
+  <data name="Edit Stock Transfer" xml:space="preserve"><value>تعديل تحويل المخزون</value></data>
+  <data name="Edit Warehouse" xml:space="preserve"><value>تعديل المستودع</value></data>
+  <data name="Enable Discounts" xml:space="preserve"><value>تفعيل الخصومات</value></data>
+  <data name="Enabled order types" xml:space="preserve"><value>أنواع الطلبات المفعلة</value></data>
+  <data name="Enforce configured location capacities" xml:space="preserve"><value>فرض السعات المحددة للمواقع</value></data>
+  <data name="Enforce location capacity" xml:space="preserve"><value>فرض سعة الموقع</value></data>
+  <data name="Existing balances appear as Unassigned until putaway and internal movements are enabled." xml:space="preserve"><value>تظهر الأرصدة الحالية كغير موزعة حتى يتم تفعيل التخزين والحركات الداخلية.</value></data>
+  <data name="Filter" xml:space="preserve"><value>تصفية</value></data>
+  <data name="Fixed Amount" xml:space="preserve"><value>مبلغ ثابت</value></data>
+  <data name="Fixed Amount Discount" xml:space="preserve"><value>خصم بمبلغ ثابت</value></data>
+  <data name="Focus search on start" xml:space="preserve"><value>تركيز البحث عند البدء</value></data>
+  <data name="Font" xml:space="preserve"><value>الخط</value></data>
+  <data name="From Date" xml:space="preserve"><value>من تاريخ</value></data>
+  <data name="From location" xml:space="preserve"><value>من الموقع</value></data>
+  <data name="From Warehouse" xml:space="preserve"><value>من المستودع</value></data>
+  <data name="Gross" xml:space="preserve"><value>الإجمالي قبل الخصم</value></data>
+  <data name="Gross Total" xml:space="preserve"><value>الإجمالي قبل الخصم</value></data>
+  <data name="Guest Count" xml:space="preserve"><value>عدد الضيوف</value></data>
+  <data name="Guests" xml:space="preserve"><value>الضيوف</value></data>
+  <data name="Header title" xml:space="preserve"><value>عنوان الرأس</value></data>
+  <data name="Hybrid mode supports organized locations and a temporary Unassigned Stock queue. Products may occupy multiple locations." xml:space="preserve"><value>يدعم النمط الهجين المواقع المنظمة وقائمة مؤقتة للمخزون غير الموزع، ويمكن أن يوجد المنتج في عدة مواقع.</value></data>
+  <data name="Id" xml:space="preserve"><value>المعرّف</value></data>
+  <data name="Input tax account" xml:space="preserve"><value>حساب ضريبة المدخلات</value></data>
+  <data name="Inventory account" xml:space="preserve"><value>حساب المخزون</value></data>
+  <data name="Inventory control mode" xml:space="preserve"><value>نمط التحكم بالمخزون</value></data>
+  <data name="Inventory Operations" xml:space="preserve"><value>عمليات المخزون</value></data>
+  <data name="Inventory Settings" xml:space="preserve"><value>إعدادات المخزون</value></data>
+  <data name="Invoice Discount" xml:space="preserve"><value>خصم الفاتورة</value></data>
+  <data name="Invoice Discount Limits" xml:space="preserve"><value>حدود خصم الفاتورة</value></data>
+  <data name="Invoice Number" xml:space="preserve"><value>رقم الفاتورة</value></data>
+  <data name="Item" xml:space="preserve"><value>الصنف</value></data>
+  <data name="Layout and theme" xml:space="preserve"><value>التخطيط والمظهر</value></data>
+  <data name="Level" xml:space="preserve"><value>المستوى</value></data>
+  <data name="Level / floor" xml:space="preserve"><value>المستوى / الطابق</value></data>
+  <data name="Line Discount Limits" xml:space="preserve"><value>حدود خصم السطر</value></data>
+  <data name="Link each branch to its dedicated sales-revenue subaccount." xml:space="preserve"><value>اربط كل فرع بحساب إيراد المبيعات الفرعي المخصص له.</value></data>
+  <data name="Location" xml:space="preserve"><value>الموقع</value></data>
+  <data name="Location code / barcode" xml:space="preserve"><value>رمز الموقع / الباركود</value></data>
+  <data name="Location type" xml:space="preserve"><value>نوع الموقع</value></data>
+  <data name="Locations &amp; product search" xml:space="preserve"><value>المواقع والبحث عن المنتجات</value></data>
+  <data name="Manage warehouse-to-warehouse stock transfers." xml:space="preserve"><value>إدارة تحويلات المخزون بين المستودعات.</value></data>
+  <data name="Maximum Invoice Discount %" xml:space="preserve"><value>الحد الأقصى لنسبة خصم الفاتورة %</value></data>
+  <data name="Maximum Invoice Discount Amount" xml:space="preserve"><value>الحد الأقصى لقيمة خصم الفاتورة</value></data>
+  <data name="Maximum Line Discount %" xml:space="preserve"><value>الحد الأقصى لنسبة خصم السطر %</value></data>
+  <data name="Maximum Line Discount Amount" xml:space="preserve"><value>الحد الأقصى لقيمة خصم السطر</value></data>
+  <data name="Move stock" xml:space="preserve"><value>نقل المخزون</value></data>
+  <data name="Move stock between exact locations without changing the warehouse balance." xml:space="preserve"><value>انقل المخزون بين مواقع محددة دون تغيير رصيد المستودع الإجمالي.</value></data>
+  <data name="Movement" xml:space="preserve"><value>الحركة</value></data>
+  <data name="Movement history" xml:space="preserve"><value>سجل الحركات</value></data>
+  <data name="New internal movement" xml:space="preserve"><value>حركة داخلية جديدة</value></data>
+  <data name="New Sale" xml:space="preserve"><value>عملية بيع جديدة</value></data>
+  <data name="New Stock Transfer" xml:space="preserve"><value>تحويل مخزون جديد</value></data>
+  <data name="New warehouse defaults" xml:space="preserve"><value>افتراضيات المستودع الجديد</value></data>
+  <data name="No branch warehouse access configured." xml:space="preserve"><value>لم يتم إعداد صلاحيات مستودعات للفروع.</value></data>
+  <data name="No items found." xml:space="preserve"><value>لم يتم العثور على أصناف.</value></data>
+  <data name="No location movements found." xml:space="preserve"><value>لم يتم العثور على حركات مواقع.</value></data>
+  <data name="No POS terminals configured." xml:space="preserve"><value>لم يتم إعداد نقاط بيع.</value></data>
+  <data name="No products added" xml:space="preserve"><value>لم تُضف منتجات</value></data>
+  <data name="No products have been added yet." xml:space="preserve"><value>لم تتم إضافة منتجات بعد.</value></data>
+  <data name="No products match your search." xml:space="preserve"><value>لا توجد منتجات تطابق بحثك.</value></data>
+  <data name="No sales found." xml:space="preserve"><value>لم يتم العثور على مبيعات.</value></data>
+  <data name="No stock records found." xml:space="preserve"><value>لم يتم العثور على سجلات مخزون.</value></data>
+  <data name="No stock transfers found" xml:space="preserve"><value>لم يتم العثور على تحويلات مخزون</value></data>
+  <data name="No transactions found" xml:space="preserve"><value>لم يتم العثور على حركات</value></data>
+  <data name="No transactions found." xml:space="preserve"><value>لم يتم العثور على حركات.</value></data>
+  <data name="No warehouses found." xml:space="preserve"><value>لم يتم العثور على مستودعات.</value></data>
+  <data name="No workflow history found." xml:space="preserve"><value>لم يتم العثور على سجل لسير العمل.</value></data>
+  <data name="Note" xml:space="preserve"><value>ملاحظة</value></data>
+  <data name="Notes:" xml:space="preserve"><value>ملاحظات:</value></data>
+  <data name="Open POS" xml:space="preserve"><value>فتح نقطة البيع</value></data>
+  <data name="Operational defaults" xml:space="preserve"><value>الافتراضيات التشغيلية</value></data>
+  <data name="Operational use" xml:space="preserve"><value>الاستخدام التشغيلي</value></data>
+  <data name="Order Type" xml:space="preserve"><value>نوع الطلب</value></data>
+  <data name="Order workflow" xml:space="preserve"><value>سير عمل الطلب</value></data>
+  <data name="Outgoing" xml:space="preserve"><value>صادر</value></data>
+  <data name="Output tax account" xml:space="preserve"><value>حساب ضريبة المخرجات</value></data>
+  <data name="Override Permission" xml:space="preserve"><value>صلاحية التجاوز</value></data>
+  <data name="Paper" xml:space="preserve"><value>الورق</value></data>
+  <data name="Parent" xml:space="preserve"><value>الأصل</value></data>
+  <data name="Parent account" xml:space="preserve"><value>الحساب الأب</value></data>
+  <data name="Percentage" xml:space="preserve"><value>نسبة مئوية</value></data>
+  <data name="Percentage Discount" xml:space="preserve"><value>خصم بالنسبة المئوية</value></data>
+  <data name="Permission required to exceed the configured discount limits." xml:space="preserve"><value>الصلاحية المطلوبة لتجاوز حدود الخصم المحددة.</value></data>
+  <data name="POS &amp; Warehouse Access" xml:space="preserve"><value>صلاحيات نقاط البيع والمستودعات</value></data>
+  <data name="POS Terminal" xml:space="preserve"><value>نقطة البيع</value></data>
+  <data name="Post" xml:space="preserve"><value>ترحيل</value></data>
+  <data name="Posted By" xml:space="preserve"><value>رُحّل بواسطة</value></data>
+  <data name="Preparation Notes" xml:space="preserve"><value>ملاحظات التحضير</value></data>
+  <data name="Price inclusive" xml:space="preserve"><value>السعر شامل</value></data>
+  <data name="Prices include tax" xml:space="preserve"><value>الأسعار تشمل الضريبة</value></data>
+  <data name="Product layout" xml:space="preserve"><value>تخطيط المنتجات</value></data>
+  <data name="Products in warehouses" xml:space="preserve"><value>المنتجات في المستودعات</value></data>
+  <data name="Profile" xml:space="preserve"><value>الملف</value></data>
+  <data name="Purchase billing policy" xml:space="preserve"><value>سياسة فوترة المشتريات</value></data>
+  <data name="Purchase discount account" xml:space="preserve"><value>حساب خصم المشتريات</value></data>
+  <data name="Purchase Items" xml:space="preserve"><value>أصناف الشراء</value></data>
+  <data name="Rack" xml:space="preserve"><value>رف</value></data>
+  <data name="Rate %" xml:space="preserve"><value>النسبة %</value></data>
+  <data name="Reason:" xml:space="preserve"><value>السبب:</value></data>
+  <data name="Reference" xml:space="preserve"><value>المرجع</value></data>
+  <data name="Reject Stock Transfer" xml:space="preserve"><value>رفض تحويل المخزون</value></data>
+  <data name="Rejected At:" xml:space="preserve"><value>رُفض في:</value></data>
+  <data name="Rejected By:" xml:space="preserve"><value>رُفض بواسطة:</value></data>
+  <data name="Rejection Information" xml:space="preserve"><value>معلومات الرفض</value></data>
+  <data name="Require exact destination location for transfers" xml:space="preserve"><value>طلب موقع الوجهة الدقيق للتحويلات</value></data>
+  <data name="Require exact destination location on transfers" xml:space="preserve"><value>اشتراط موقع الوجهة الدقيق في التحويلات</value></data>
+  <data name="Require exact source location for transfers" xml:space="preserve"><value>طلب موقع المصدر الدقيق للتحويلات</value></data>
+  <data name="Require exact source location on transfers" xml:space="preserve"><value>اشتراط موقع المصدر الدقيق في التحويلات</value></data>
+  <data name="Require table/service reference for dine-in" xml:space="preserve"><value>اشتراط مرجع الطاولة أو الخدمة للطلبات الداخلية</value></data>
+  <data name="Required when supplier billing does not clear a goods receipt." xml:space="preserve"><value>مطلوب عندما لا تؤدي فوترة المورد إلى تسوية استلام البضاعة.</value></data>
+  <data name="Restore" xml:space="preserve"><value>استعادة</value></data>
+  <data name="Return to Draft" xml:space="preserve"><value>إعادة إلى مسودة</value></data>
+  <data name="Rows per page" xml:space="preserve"><value>الصفوف في الصفحة</value></data>
+  <data name="Sale Items" xml:space="preserve"><value>أصناف البيع</value></data>
+  <data name="Sale Notes" xml:space="preserve"><value>ملاحظات البيع</value></data>
+  <data name="Sale Price" xml:space="preserve"><value>سعر البيع</value></data>
+  <data name="Sales and inventory accounts" xml:space="preserve"><value>حسابات المبيعات والمخزون</value></data>
+  <data name="Sales discount account" xml:space="preserve"><value>حساب خصم المبيعات</value></data>
+  <data name="Sales revenue subaccount" xml:space="preserve"><value>حساب إيراد المبيعات الفرعي</value></data>
+  <data name="Save accounting settings" xml:space="preserve"><value>حفظ إعدادات المحاسبة</value></data>
+  <data name="Save Branch Access" xml:space="preserve"><value>حفظ صلاحية الفرع</value></data>
+  <data name="Save Inventory Settings" xml:space="preserve"><value>حفظ إعدادات المخزون</value></data>
+  <data name="Save location" xml:space="preserve"><value>حفظ الموقع</value></data>
+  <data name="Save POS Settings" xml:space="preserve"><value>حفظ إعدادات نقطة البيع</value></data>
+  <data name="Save POS Warehouse" xml:space="preserve"><value>حفظ مستودع نقطة البيع</value></data>
+  <data name="Save Purchase" xml:space="preserve"><value>حفظ الشراء</value></data>
+  <data name="Save Sale" xml:space="preserve"><value>حفظ البيع</value></data>
+  <data name="Select a warehouse" xml:space="preserve"><value>اختر مستودعاً</value></data>
+  <data name="Select account" xml:space="preserve"><value>اختر حساباً</value></data>
+  <data name="Select an allowed POS warehouse" xml:space="preserve"><value>اختر مستودعاً مسموحاً لنقطة البيع</value></data>
+  <data name="Select branch" xml:space="preserve"><value>اختر فرعاً</value></data>
+  <data name="Select destination location" xml:space="preserve"><value>اختر موقع الوجهة</value></data>
+  <data name="Select inventory account" xml:space="preserve"><value>اختر حساب المخزون</value></data>
+  <data name="Select POS" xml:space="preserve"><value>اختر نقطة بيع</value></data>
+  <data name="Select source location" xml:space="preserve"><value>اختر موقع المصدر</value></data>
+  <data name="Select terminal" xml:space="preserve"><value>اختر نقطة البيع</value></data>
+  <data name="Service" xml:space="preserve"><value>خدمة</value></data>
+  <data name="Set the defaults used when a new warehouse is created. Each warehouse can override them." xml:space="preserve"><value>حدد الافتراضيات المستخدمة عند إنشاء مستودع جديد، ويمكن لكل مستودع تجاوزها.</value></data>
+  <data name="Settlement account ID" xml:space="preserve"><value>معرّف حساب التسوية</value></data>
+  <data name="Show barcode" xml:space="preserve"><value>إظهار الباركود</value></data>
+  <data name="Show price" xml:space="preserve"><value>إظهار السعر</value></data>
+  <data name="Show stock" xml:space="preserve"><value>إظهار المخزون</value></data>
+  <data name="Showing" xml:space="preserve"><value>عرض</value></data>
+  <data name="Simple keeps one warehouse balance. Location Managed uses exact locations. Hybrid supports exact locations while allowing a temporary unassigned balance for receiving and later putaway." xml:space="preserve"><value>يحافظ النمط البسيط على رصيد واحد للمستودع، ويستخدم نمط المواقع مواقع دقيقة، ويدعم النمط الهجين المواقع الدقيقة مع رصيد مؤقت غير موزع للاستلام والتخزين لاحقاً.</value></data>
+  <data name="Source location" xml:space="preserve"><value>موقع المصدر</value></data>
+  <data name="Status:" xml:space="preserve"><value>الحالة:</value></data>
+  <data name="Stock" xml:space="preserve"><value>المخزون</value></data>
+  <data name="Stock Transfer" xml:space="preserve"><value>تحويل المخزون</value></data>
+  <data name="Submit" xml:space="preserve"><value>إرسال</value></data>
+  <data name="Submitted By" xml:space="preserve"><value>أُرسل بواسطة</value></data>
+  <data name="Subscription" xml:space="preserve"><value>الاشتراك</value></data>
+  <data name="Subtotal" xml:space="preserve"><value>المجموع الفرعي</value></data>
+  <data name="Table / Service Reference" xml:space="preserve"><value>مرجع الطاولة / الخدمة</value></data>
+  <data name="Takeaway" xml:space="preserve"><value>سفري</value></data>
+  <data name="Tax percent" xml:space="preserve"><value>نسبة الضريبة</value></data>
+  <data name="Terminal name" xml:space="preserve"><value>اسم نقطة البيع</value></data>
+  <data name="Theme" xml:space="preserve"><value>المظهر</value></data>
+  <data name="There are no transfers matching the current filters." xml:space="preserve"><value>لا توجد تحويلات تطابق عوامل التصفية الحالية.</value></data>
+  <data name="This supports simple outlet stores and organized sales-floor warehouses." xml:space="preserve"><value>يدعم هذا متاجر المنافذ البسيطة ومستودعات صالات البيع المنظمة.</value></data>
+  <data name="This type will be selected by default when creating a discount." xml:space="preserve"><value>سيُختار هذا النوع افتراضياً عند إنشاء خصم.</value></data>
+  <data name="To Date" xml:space="preserve"><value>إلى تاريخ</value></data>
+  <data name="To location" xml:space="preserve"><value>إلى الموقع</value></data>
+  <data name="To Warehouse" xml:space="preserve"><value>إلى المستودع</value></data>
+  <data name="Top-level account" xml:space="preserve"><value>حساب رئيسي</value></data>
+  <data name="Total 5.00" xml:space="preserve"><value>الإجمالي 5.00</value></data>
+  <data name="Touch optimized controls" xml:space="preserve"><value>عناصر تحكم محسنة للمس</value></data>
+  <data name="Transaction Type" xml:space="preserve"><value>نوع الحركة</value></data>
+  <data name="Transfer #" xml:space="preserve"><value>رقم التحويل</value></data>
+  <data name="Transfer Information" xml:space="preserve"><value>معلومات التحويل</value></data>
+  <data name="Transfer Items" xml:space="preserve"><value>أصناف التحويل</value></data>
+  <data name="Transfer multiple products between warehouses." xml:space="preserve"><value>حوّل عدة منتجات بين المستودعات.</value></data>
+  <data name="Transfer Number" xml:space="preserve"><value>رقم التحويل</value></data>
+  <data name="Transfers" xml:space="preserve"><value>التحويلات</value></data>
+  <data name="Try changing your search or filters." xml:space="preserve"><value>جرّب تغيير البحث أو عوامل التصفية.</value></data>
+  <data name="Unassigned / choose later" xml:space="preserve"><value>غير موزع / اختر لاحقاً</value></data>
+  <data name="Unknown customer / walk-in" xml:space="preserve"><value>عميل غير معروف / زبون عابر</value></data>
+  <data name="Unknown User" xml:space="preserve"><value>مستخدم غير معروف</value></data>
+  <data name="Use" xml:space="preserve"><value>الاستخدام</value></data>
+  <data name="Used for line and invoice discounts when sale posting is enabled." xml:space="preserve"><value>يُستخدم لخصومات السطور والفواتير عند تفعيل ترحيل المبيعات.</value></data>
+  <data name="Used for supplier discounts when purchase posting is enabled." xml:space="preserve"><value>يُستخدم لخصومات الموردين عند تفعيل ترحيل المشتريات.</value></data>
+  <data name="User" xml:space="preserve"><value>المستخدم</value></data>
+  <data name="Users with the configured permission can exceed the normal discount limits." xml:space="preserve"><value>يمكن للمستخدمين ذوي الصلاحية المحددة تجاوز حدود الخصم العادية.</value></data>
+  <data name="View" xml:space="preserve"><value>عرض</value></data>
+  <data name="View and analyze stock movement history." xml:space="preserve"><value>عرض سجل حركات المخزون وتحليله.</value></data>
+  <data name="View details" xml:space="preserve"><value>عرض التفاصيل</value></data>
+  <data name="Visible information and interaction" xml:space="preserve"><value>المعلومات الظاهرة والتفاعل</value></data>
+  <data name="Walk-in" xml:space="preserve"><value>زبون عابر</value></data>
+  <data name="Warehouse Name" xml:space="preserve"><value>اسم المستودع</value></data>
+  <data name="Workflow History" xml:space="preserve"><value>سجل سير العمل</value></data>
+  <data name="Workflow Summary" xml:space="preserve"><value>ملخص سير العمل</value></data>
+  <data name="Your cart is empty." xml:space="preserve"><value>سلتك فارغة.</value></data>
+  <data name="Zone" xml:space="preserve"><value>منطقة</value></data>
+  <data name="POS sales" xml:space="preserve"><value>مبيعات نقطة البيع</value></data>
+  <data name="Branch POS default" xml:space="preserve"><value>الافتراضي لنقطة بيع الفرع</value></data>
+  <data name="Transfer out" xml:space="preserve"><value>تحويل صادر</value></data>
+  <data name="Transfer in" xml:space="preserve"><value>تحويل وارد</value></data>
+  <data name="Make this the POS default" xml:space="preserve"><value>اجعل هذا الافتراضي لنقطة البيع</value></data>
+  <data name="A transfer must contain at least one product." xml:space="preserve"><value>يجب أن يحتوي التحويل على منتج واحد على الأقل.</value></data>
+  <data name="Add at least one product." xml:space="preserve"><value>أضف منتجاً واحداً على الأقل.</value></data>
+  <data name="All quantities must be greater than zero." xml:space="preserve"><value>يجب أن تكون جميع الكميات أكبر من صفر.</value></data>
+  <data name="Cash, bank transfer, card" xml:space="preserve"><value>نقداً، حوالة بنكية، بطاقة</value></data>
+  <data name="Discount cannot be negative." xml:space="preserve"><value>لا يمكن أن يكون الخصم سالباً.</value></data>
+  <data name="Example: 10" xml:space="preserve"><value>مثال: 10</value></data>
+  <data name="Example: INV-2026-001" xml:space="preserve"><value>مثال: INV-2026-001</value></data>
+  <data name="Example: Physical count correction" xml:space="preserve"><value>مثال: تصحيح الجرد الفعلي</value></data>
+  <data name="Optional note" xml:space="preserve"><value>ملاحظة اختيارية</value></data>
+  <data name="Optional notes" xml:space="preserve"><value>ملاحظات اختيارية</value></data>
+  <data name="Optional notes..." xml:space="preserve"><value>ملاحظات اختيارية...</value></data>
+  <data name="Optional reference..." xml:space="preserve"><value>مرجع اختياري...</value></data>
+  <data name="Percentage discount cannot exceed 100%." xml:space="preserve"><value>لا يمكن أن تتجاوز نسبة الخصم 100%.</value></data>
+  <data name="Pick list or request number" xml:space="preserve"><value>قائمة الالتقاط أو رقم الطلب</value></data>
+  <data name="Please select a product for every row." xml:space="preserve"><value>يرجى اختيار منتج لكل سطر.</value></data>
+  <data name="Preparation note for this item" xml:space="preserve"><value>ملاحظة تحضير لهذا الصنف</value></data>
+  <data name="Product name, barcode or reference" xml:space="preserve"><value>اسم المنتج أو الباركود أو المرجع</value></data>
+  <data name="Product, warehouse, reference..." xml:space="preserve"><value>المنتج، المستودع، المرجع...</value></data>
+  <data name="Reason or handling instructions" xml:space="preserve"><value>السبب أو تعليمات المناولة</value></data>
+  <data name="Sale price is invalid." xml:space="preserve"><value>سعر البيع غير صالح.</value></data>
+  <data name="Search by name or barcode" xml:space="preserve"><value>البحث بالاسم أو الباركود</value></data>
+  <data name="Search by product name or barcode" xml:space="preserve"><value>البحث باسم المنتج أو الباركود</value></data>
+  <data name="Table 12, pickup name, delivery reference..." xml:space="preserve"><value>طاولة 12، اسم الاستلام، مرجع التوصيل...</value></data>
+  <data name="The same product cannot be added more than once." xml:space="preserve"><value>لا يمكن إضافة المنتج نفسه أكثر من مرة.</value></data>
+  <data name="Transfer number or reference..." xml:space="preserve"><value>رقم التحويل أو المرجع...</value></data>
+  <data name="Branch sales account updated." xml:space="preserve"><value>تم تحديث حساب مبيعات الفرع.</value></data>
+  <data name="Document numbering settings updated successfully." xml:space="preserve"><value>تم تحديث إعدادات ترقيم المستندات بنجاح.</value></data>
+  <data name="Inventory settings updated successfully." xml:space="preserve"><value>تم تحديث إعدادات المخزون بنجاح.</value></data>
+  <data name="Please check the entered data." xml:space="preserve"><value>يرجى التحقق من البيانات المدخلة.</value></data>
+  <data name="Purchase created successfully." xml:space="preserve"><value>تم إنشاء عملية الشراء بنجاح.</value></data>
+  <data name="Purchase not found." xml:space="preserve"><value>لم يتم العثور على عملية الشراء.</value></data>
+  <data name="Purchase posted to the general ledger." xml:space="preserve"><value>تم ترحيل عملية الشراء إلى دفتر الأستاذ العام.</value></data>
+  <data name="The operation could not be completed. Please try again or contact the administrator." xml:space="preserve"><value>تعذر إكمال العملية. يرجى المحاولة مرة أخرى أو التواصل مع المسؤول.</value></data>
+  <data name="Invalid platform credentials." xml:space="preserve"><value>بيانات دخول المنصة غير صحيحة.</value></data>
+  <data name="Collection" xml:space="preserve"><value>التحصيل</value></data>
+  <data name="Invoicing" xml:space="preserve"><value>الفوترة</value></data>
+  <data name="Pricing" xml:space="preserve"><value>التسعير</value></data>
+  <data name="Quality" xml:space="preserve"><value>الجودة</value></data>
+  <data name="Reservation" xml:space="preserve"><value>الحجز</value></data>
+  <data name="Review" xml:space="preserve"><value>المراجعة</value></data>
+  <data name="Contact an administrator to complete this setup." xml:space="preserve"><value>تواصل مع المسؤول لإكمال هذا الإعداد.</value></data>
+  <data name="Difference" xml:space="preserve"><value>الفرق</value></data>
+  <data name="Disabled" xml:space="preserve"><value>معطل</value></data>
+  <data name="Enabled" xml:space="preserve"><value>مفعل</value></data>
+  <data name="Tenant" xml:space="preserve"><value>المنشأة</value></data>
+  <data name="Cancellation reason is required." xml:space="preserve"><value>سبب الإلغاء مطلوب.</value></data>
+  <data name="Current user could not be identified." xml:space="preserve"><value>تعذر تحديد المستخدم الحالي.</value></data>
+  <data name="Only draft transfers can be edited." xml:space="preserve"><value>يمكن تعديل التحويلات المسودة فقط.</value></data>
+  <data name="Product created successfully." xml:space="preserve"><value>تم إنشاء المنتج بنجاح.</value></data>
+  <data name="Product deleted successfully." xml:space="preserve"><value>تم حذف المنتج بنجاح.</value></data>
+  <data name="Product updated successfully." xml:space="preserve"><value>تم تحديث المنتج بنجاح.</value></data>
+  <data name="Rejection reason is required." xml:space="preserve"><value>سبب الرفض مطلوب.</value></data>
+  <data name="Stock created successfully." xml:space="preserve"><value>تم إنشاء رصيد المخزون بنجاح.</value></data>
+  <data name="Stock deleted successfully." xml:space="preserve"><value>تم حذف رصيد المخزون بنجاح.</value></data>
+  <data name="Stock record not found." xml:space="preserve"><value>لم يتم العثور على سجل المخزون.</value></data>
+  <data name="Stock transaction created successfully." xml:space="preserve"><value>تم إنشاء حركة المخزون بنجاح.</value></data>
+  <data name="Stock transfer created successfully." xml:space="preserve"><value>تم إنشاء تحويل المخزون بنجاح.</value></data>
+  <data name="Stock transfer not found." xml:space="preserve"><value>لم يتم العثور على تحويل المخزون.</value></data>
+  <data name="Stock transfer updated successfully." xml:space="preserve"><value>تم تحديث تحويل المخزون بنجاح.</value></data>
+  <data name="Stock updated successfully." xml:space="preserve"><value>تم تحديث المخزون بنجاح.</value></data>
+  <data name="Supplier created successfully." xml:space="preserve"><value>تم إنشاء المورد بنجاح.</value></data>
+  <data name="Supplier deleted successfully." xml:space="preserve"><value>تم حذف المورد بنجاح.</value></data>
+  <data name="Supplier updated successfully." xml:space="preserve"><value>تم تحديث المورد بنجاح.</value></data>
+  <data name="Warehouse created successfully." xml:space="preserve"><value>تم إنشاء المستودع بنجاح.</value></data>
+  <data name="Warehouse deleted successfully." xml:space="preserve"><value>تم حذف المستودع بنجاح.</value></data>
+  <data name="Warehouse updated successfully." xml:space="preserve"><value>تم تحديث المستودع بنجاح.</value></data>
 </root>

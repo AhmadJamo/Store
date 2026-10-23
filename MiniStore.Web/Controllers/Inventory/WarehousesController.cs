@@ -1,28 +1,33 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using MiniStore.Application.DTOs.Warehouses;
 using MiniStore.Application.Services;
 using MiniStore.Web.Authorization;
 
 namespace MiniStore.Web.Controllers;
 
+[AutoValidateAntiforgeryToken]
 public class WarehousesController : Controller
 {
     private readonly WarehouseService _warehouseService;
     private readonly BranchService _branchService;
     private readonly AccountService _accountService;
     private readonly InventorySettingsService _inventorySettingsService;
+    private readonly IStringLocalizer<SharedResource> _localizer;
 
     public WarehousesController(
         WarehouseService warehouseService,
         BranchService branchService,
         AccountService accountService,
-        InventorySettingsService inventorySettingsService)
+        InventorySettingsService inventorySettingsService,
+        IStringLocalizer<SharedResource> localizer)
     {
         _warehouseService = warehouseService;
         _branchService = branchService;
         _accountService = accountService;
         _inventorySettingsService = inventorySettingsService;
+        _localizer = localizer;
     }
 
     [HttpGet]
@@ -61,8 +66,7 @@ public class WarehousesController : Controller
         if (!ModelState.IsValid)
         {
             TempData["NotificationType"] = "error";
-            TempData["NotificationMessage"] =
-                "Please check the entered data.";
+            TempData["NotificationMessage"] = _localizer["Please check the entered data."].Value;
 
             await LoadAccountingOptions(); return View(dto);
         }
@@ -72,8 +76,7 @@ public class WarehousesController : Controller
             await _warehouseService.CreateAsync(dto);
 
             TempData["NotificationType"] = "success";
-            TempData["NotificationMessage"] =
-                "Warehouse created successfully.";
+            TempData["NotificationMessage"] = _localizer["Warehouse created successfully."].Value;
 
             return RedirectToAction(nameof(Index));
         }
@@ -82,8 +85,7 @@ public class WarehousesController : Controller
             HttpContext.RequestServices.GetRequiredService<ILoggerFactory>()
                 .CreateLogger(GetType()).LogError(ex, "Request operation failed");
             TempData["NotificationType"] = "error";
-            TempData["NotificationMessage"] =
-                "The operation could not be completed. Please try again or contact the administrator.";
+            TempData["NotificationMessage"] = _localizer["The operation could not be completed. Please try again or contact the administrator."].Value;
 
             await LoadAccountingOptions(); return View(dto);
         }
@@ -99,8 +101,7 @@ public class WarehousesController : Controller
         if (warehouse == null)
         {
             TempData["NotificationType"] = "error";
-            TempData["NotificationMessage"] =
-                "Warehouse not found.";
+            TempData["NotificationMessage"] = _localizer["Warehouse not found."].Value;
 
             return RedirectToAction(nameof(Index));
         }
@@ -132,8 +133,7 @@ public class WarehousesController : Controller
         if (!ModelState.IsValid)
         {
             TempData["NotificationType"] = "error";
-            TempData["NotificationMessage"] =
-                "Please check the entered data.";
+            TempData["NotificationMessage"] = _localizer["Please check the entered data."].Value;
 
             await LoadAccountingOptions(); return View(dto);
         }
@@ -143,8 +143,7 @@ public class WarehousesController : Controller
             await _warehouseService.UpdateAsync(id, dto);
 
             TempData["NotificationType"] = "success";
-            TempData["NotificationMessage"] =
-                "Warehouse updated successfully.";
+            TempData["NotificationMessage"] = _localizer["Warehouse updated successfully."].Value;
 
             return RedirectToAction(nameof(Index));
         }
@@ -153,8 +152,7 @@ public class WarehousesController : Controller
             HttpContext.RequestServices.GetRequiredService<ILoggerFactory>()
                 .CreateLogger(GetType()).LogError(ex, "Request operation failed");
             TempData["NotificationType"] = "error";
-            TempData["NotificationMessage"] =
-                "The operation could not be completed. Please try again or contact the administrator.";
+            TempData["NotificationMessage"] = _localizer["The operation could not be completed. Please try again or contact the administrator."].Value;
 
             await LoadAccountingOptions(); return View(dto);
         }
@@ -169,16 +167,14 @@ public class WarehousesController : Controller
             await _warehouseService.DeleteAsync(id);
 
             TempData["NotificationType"] = "success";
-            TempData["NotificationMessage"] =
-                "Warehouse deleted successfully.";
+            TempData["NotificationMessage"] = _localizer["Warehouse deleted successfully."].Value;
         }
         catch (Exception ex)
         {
             HttpContext.RequestServices.GetRequiredService<ILoggerFactory>()
                 .CreateLogger(GetType()).LogError(ex, "Request operation failed");
             TempData["NotificationType"] = "error";
-            TempData["NotificationMessage"] =
-                "The operation could not be completed. Please try again or contact the administrator.";
+            TempData["NotificationMessage"] = _localizer["The operation could not be completed. Please try again or contact the administrator."].Value;
         }
 
         return RedirectToAction(nameof(Index));

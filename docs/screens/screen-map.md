@@ -1,4 +1,8 @@
 # Razor screen map
+
+The 2026-10-23 UI action audit verifies every static Razor link/form target against the compiled controller actions and every MVC POST against antiforgery validation. Dynamic client-only buttons were separately inventoried; the only submit-style button outside a form is the intentionally disabled Settings placeholder. The same automated gate now verifies Arabic entries for every literal shared-localizer key, rejects common direct-English Razor UI text and hard-coded controller action messages, and detects case-insensitive duplicate resource keys.
+
+`/Settings/WorkflowCatalog` is the complete bilingual ERP guide: 62 permission-aware steps grouped into seven modules and their operational phases, with owner, reviewer, instructions, control principle, completion evidence and a link to the real destination action.
 ## Advanced quotation templates (`SAL-120A`)
 
 - `/SalesQuotationTemplates`: responsive bilingual search/filter cards for code, version, category, tags, item counts, lifecycle and tenant default.

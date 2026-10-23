@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using MiniStore.Application.Dtos.Settings;
@@ -11,6 +11,7 @@ using Microsoft.Extensions.Localization;
 namespace MiniStore.Web.Controllers;
 
 [PermissionAuthorize("Administration.Access")]
+[AutoValidateAntiforgeryToken]
 public class SettingsController : Controller
 {
     private readonly DocumentNumberService _documentNumberService;
@@ -76,7 +77,7 @@ public class SettingsController : Controller
     }
 
     [HttpGet]
-    public IActionResult WorkflowCatalog() => View(_workflowCatalogService.GetPurchasing());
+    public IActionResult WorkflowCatalog() => View(_workflowCatalogService.GetAll());
 
     [HttpGet]
     public async Task<IActionResult> Currencies() => View(await _currencyExchangeRateService.GetPageAsync());
@@ -203,7 +204,7 @@ public class SettingsController : Controller
         {
             await _inventorySettingsService.UpdateAsync(dto);
             TempData["NotificationType"] = "success";
-            TempData["NotificationMessage"] = "Inventory settings updated successfully.";
+            TempData["NotificationMessage"] = _localizer["Inventory settings updated successfully."].Value;
             return RedirectToAction(nameof(Inventory));
         }
         catch (Exception ex) when (ex is ArgumentException or InvalidOperationException)
@@ -244,7 +245,7 @@ public class SettingsController : Controller
         try
         {
             await _inventoryAccessService.CreatePosTerminalAsync(dto);
-            SetInventoryAccessMessage("success", "POS terminal created.");
+            SetInventoryAccessMessage("success", "POS Terminal created.");
         }
         catch (Exception ex) when (ex is ArgumentException or InvalidOperationException)
         {
@@ -319,7 +320,7 @@ public class SettingsController : Controller
         {
             await _documentNumberService.UpdateAsync(dto);
             TempData["NotificationType"] = "success";
-            TempData["NotificationMessage"] = "Document numbering settings updated successfully.";
+            TempData["NotificationMessage"] = _localizer["Document numbering settings updated successfully."].Value;
             return RedirectToAction(nameof(DocumentNumbers));
         }
         catch (Exception ex) when (ex is ArgumentException or InvalidOperationException)
@@ -558,7 +559,7 @@ public class SettingsController : Controller
         {
             await branches.ConfigureSalesAccountAsync(branchId, accountId);
             TempData["NotificationType"] = "success";
-            TempData["NotificationMessage"] = "Branch sales account updated.";
+            TempData["NotificationMessage"] = _localizer["Branch sales account updated."].Value;
         }
         catch (Exception ex) when (ex is ArgumentException or InvalidOperationException)
         {

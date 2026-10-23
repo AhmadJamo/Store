@@ -4,6 +4,7 @@ using MiniStore.Application.Services;
 using MiniStore.Web.Authorization;
 namespace MiniStore.Web.Controllers;
 [PermissionAuthorize("Administration.Access")]
+[AutoValidateAntiforgeryToken]
 public class PaymentMethodsController(PaymentMethodService service, AccountService accounts) : Controller
 {
     public async Task<IActionResult> Index() => View(await service.GetAllAsync());

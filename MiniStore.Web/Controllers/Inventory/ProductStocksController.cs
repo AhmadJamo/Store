@@ -1,5 +1,6 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using MiniStore.Application.DTOs.ProductStocks;
 using MiniStore.Application.Services;
 using MiniStore.Domain.Interfaces;
@@ -7,20 +8,24 @@ using MiniStore.Web.Authorization;
 
 namespace MiniStore.Web.Controllers;
 
+[AutoValidateAntiforgeryToken]
 public class ProductStocksController : Controller
 {
     private readonly ProductStockService _productStockService;
     private readonly IProductRepository _productRepository;
     private readonly IWarehouseRepository _warehouseRepository;
+    private readonly IStringLocalizer<SharedResource> _localizer;
 
     public ProductStocksController(
         ProductStockService productStockService,
         IProductRepository productRepository,
-        IWarehouseRepository warehouseRepository)
+        IWarehouseRepository warehouseRepository,
+        IStringLocalizer<SharedResource> localizer)
     {
         _productStockService = productStockService;
         _productRepository = productRepository;
         _warehouseRepository = warehouseRepository;
+        _localizer = localizer;
     }
 
     [HttpGet]
@@ -63,8 +68,7 @@ public class ProductStocksController : Controller
             await LoadDropdowns();
 
             TempData["NotificationType"] = "error";
-            TempData["NotificationMessage"] =
-                "Please check the entered data.";
+            TempData["NotificationMessage"] = _localizer["Please check the entered data."].Value;
 
             return View(dto);
         }
@@ -74,8 +78,7 @@ public class ProductStocksController : Controller
             await _productStockService.CreateAsync(dto);
 
             TempData["NotificationType"] = "success";
-            TempData["NotificationMessage"] =
-                "Stock created successfully.";
+            TempData["NotificationMessage"] = _localizer["Stock created successfully."].Value;
 
             return RedirectToAction(nameof(Index));
         }
@@ -86,8 +89,7 @@ public class ProductStocksController : Controller
             await LoadDropdowns();
 
             TempData["NotificationType"] = "error";
-            TempData["NotificationMessage"] =
-                "The operation could not be completed. Please try again or contact the administrator.";
+            TempData["NotificationMessage"] = _localizer["The operation could not be completed. Please try again or contact the administrator."].Value;
 
             return View(dto);
         }
@@ -103,8 +105,7 @@ public class ProductStocksController : Controller
         if (stock == null)
         {
             TempData["NotificationType"] = "error";
-            TempData["NotificationMessage"] =
-                "Stock record not found.";
+            TempData["NotificationMessage"] = _localizer["Stock record not found."].Value;
 
             return RedirectToAction(nameof(Index));
         }
@@ -138,8 +139,7 @@ public class ProductStocksController : Controller
             }
 
             TempData["NotificationType"] = "error";
-            TempData["NotificationMessage"] =
-                "Please check the entered data.";
+            TempData["NotificationMessage"] = _localizer["Please check the entered data."].Value;
 
             return View(dto);
         }
@@ -149,8 +149,7 @@ public class ProductStocksController : Controller
             await _productStockService.UpdateAsync(id, dto);
 
             TempData["NotificationType"] = "success";
-            TempData["NotificationMessage"] =
-                "Stock updated successfully.";
+            TempData["NotificationMessage"] = _localizer["Stock updated successfully."].Value;
 
             return RedirectToAction(nameof(Index));
         }
@@ -168,8 +167,7 @@ public class ProductStocksController : Controller
             }
 
             TempData["NotificationType"] = "error";
-            TempData["NotificationMessage"] =
-                "The operation could not be completed. Please try again or contact the administrator.";
+            TempData["NotificationMessage"] = _localizer["The operation could not be completed. Please try again or contact the administrator."].Value;
 
             return View(dto);
         }
@@ -184,16 +182,14 @@ public class ProductStocksController : Controller
             await _productStockService.DeleteAsync(id);
 
             TempData["NotificationType"] = "success";
-            TempData["NotificationMessage"] =
-                "Stock deleted successfully.";
+            TempData["NotificationMessage"] = _localizer["Stock deleted successfully."].Value;
         }
         catch (Exception ex)
         {
             HttpContext.RequestServices.GetRequiredService<ILoggerFactory>()
                 .CreateLogger(GetType()).LogError(ex, "Request operation failed");
             TempData["NotificationType"] = "error";
-            TempData["NotificationMessage"] =
-                "The operation could not be completed. Please try again or contact the administrator.";
+            TempData["NotificationMessage"] = _localizer["The operation could not be completed. Please try again or contact the administrator."].Value;
         }
 
         return RedirectToAction(nameof(Index));
