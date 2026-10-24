@@ -2,8 +2,8 @@
   <aside class="sidebar" [attr.aria-label]="i18n.text('workspace')">
     <div class="brand"><span class="brand-mark">M</span><span>{{ i18n.text('appName') }}</span></div>
     <nav>
-      @for (item of navigation; track item.key) {
-        <a class="nav-item" [routerLink]="item.route" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: item.route === '/' }"><span aria-hidden="true">{{ item.icon }}</span>{{ i18n.text(item.key) }}</a>
+      @for (item of navigation.visibleItems(); track item.id) {
+        <a class="nav-item" [routerLink]="item.route" (click)="openNavigation($event, item)" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: item.route === '/' }"><span aria-hidden="true">{{ item.icon }}</span>{{ i18n.text(item.labelKey) }}</a>
       }
     </nav>
     <div class="sidebar-note"><strong>{{ i18n.text('ready') }}</strong><span>{{ i18n.text('protected') }}</span></div>
@@ -25,13 +25,37 @@
       </div>
     </header>
 
-    <div class="tabs" aria-label="Workspace tabs">
+    <div class="workspace-toolbar" role="toolbar" [attr.aria-label]="i18n.text('workspaceTabs')">
+      <button type="button" (click)="back()" [disabled]="!workspace.canGoBack()" [attr.aria-label]="i18n.text('back')" [title]="i18n.text('back')">←</button>
+      <button type="button" (click)="forward()" [disabled]="!workspace.canGoForward()" [attr.aria-label]="i18n.text('forward')" [title]="i18n.text('forward')">→</button>
+      <button type="button" (click)="reopen()" [disabled]="workspace.recentlyClosed().length === 0" [attr.aria-label]="i18n.text('reopenClosed')" [title]="i18n.text('reopenClosed')">↶</button>
+    </div>
+    <div class="tabs" role="tablist" [attr.aria-label]="i18n.text('workspaceTabs')">
       @if (workspace.tabs().length === 0) { <span>{{ i18n.text('noTabs') }}</span> }
-      @for (tab of workspace.tabs(); track tab.id) {
-        <button type="button" (click)="workspace.activate(tab.id)">{{ tab.title }}</button>
+      @for (tab of workspace.tabs(); track tab.id; let index = $index) {
+        <div class="workspace-tab" role="presentation" [class.active]="workspace.activeTab()?.id === tab.id">
+          <button type="button" role="tab" [attr.aria-selected]="workspace.activeTab()?.id === tab.id" [attr.tabindex]="workspace.activeTab()?.id === tab.id ? 0 : -1" (click)="activate(tab)" (keydown)="onTabKeydown($event, index)">
+            {{ i18n.text(tab.titleKey) }} @if (tab.dirty) { <span class="dirty" [attr.aria-label]="i18n.text('dirty')">●</span> }
+          </button>
+          <button type="button" class="tab-close" (click)="close($event, tab)" [attr.aria-label]="i18n.text('close') + ' ' + i18n.text(tab.titleKey)">×</button>
+          <button type="button" class="tab-more" (click)="closeOthers(tab)" [attr.aria-label]="i18n.text('closeOthers')" [title]="i18n.text('closeOthers')">⋯</button>
+        </div>
       }
     </div>
 
     <main><router-outlet /></main>
   </section>
 </div>
+
+@if (workspace.pendingCloseTab(); as pendingTab) {
+  <div class="dialog-backdrop">
+    <section class="confirm-dialog" role="alertdialog" aria-modal="true" [attr.aria-labelledby]="'unsaved-title'" [attr.aria-describedby]="'unsaved-description'">
+      <h2 id="unsaved-title">{{ i18n.text('unsavedTitle') }}</h2>
+      <p id="unsaved-description">{{ i18n.text('unsavedDescription') }}</p>
+      <div class="dialog-actions">
+        <button type="button" class="ui-button secondary" (click)="workspace.cancelClose()">{{ i18n.text('cancel') }}</button>
+        <button type="button" class="ui-button primary" (click)="confirmClose()">{{ i18n.text('continueAction') }}</button>
+      </div>
+    </section>
+  </div>
+}

@@ -7,6 +7,8 @@ The in-repository workspace `MiniStore Front-End` is the isolated Angular 22 pre
 
 `MiniStore Front-End/src/app/core/preferences` owns versioned, non-sensitive theme/density preferences and system-theme resolution. Global semantic tokens provide light/dark palettes, density dimensions, focus, reduced-motion and forced-color behavior. The lazy `/design-system` page is the bilingual RTL/LTR visual-state reference for shared buttons, badges, fields and empty/loading/error patterns. See `docs/modernization/PHASE_03_VISUAL_SYSTEM.md`.
 
+`MiniStore Front-End/src/app/workspace` owns the reusable Angular workspace engine. Its navigation registry is session-permission aware and is also the restoration allowlist; its Signals state provides stable context identities, deduplication, bounded per-tab history, configurable tab/recent limits, safe versioned restoration, close/reopen and dirty-state protection. The shell supplies localized ARIA tabs, direction-aware keyboard movement and explicit unsaved-change decisions. No permissions or business payloads are persisted. See `docs/modernization/PHASE_04_WORKSPACE_ENGINE.md`.
+
 ## SAL-130A reusable Analytics Center
 
 `AnalyticsWorkspace` and its widgets persist tenant-owned personal/shared presentation preferences. Generic analytics

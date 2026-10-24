@@ -19,6 +19,10 @@ const messages = {
     formExample: 'مثال الحقول', customerName: 'اسم الزبون', customerNamePlaceholder: 'أدخل اسم الزبون', save: 'حفظ',
     emptyTitle: 'لا توجد نتائج', emptyDescription: 'غيّر معايير البحث أو أنشئ سجلًا جديدًا عند توفر الصلاحية.',
     loading: 'جارٍ التحميل', errorTitle: 'تعذر تحميل البيانات', errorDescription: 'يمكن إعادة المحاولة دون فقدان التغييرات المحلية.', retry: 'إعادة المحاولة',
+    workspaceTabs: 'تبويبات مساحة العمل', back: 'السابق', forward: 'التالي', close: 'إغلاق', closeOthers: 'إغلاق التبويبات الأخرى',
+    reopenClosed: 'إعادة فتح آخر تبويب', unsavedTitle: 'تغييرات غير محفوظة',
+    unsavedDescription: 'يحتوي هذا التبويب على تغييرات غير محفوظة. هل تريد المتابعة؟',
+    continueAction: 'متابعة', cancel: 'إلغاء', dirty: 'غير محفوظ',
   },
   'en-US': {
     appName: 'MiniStore ERP', workspace: 'Workspace', dashboard: 'Home', search: 'Quick search', language: 'العربية',
@@ -35,6 +39,10 @@ const messages = {
     formExample: 'Field example', customerName: 'Customer name', customerNamePlaceholder: 'Enter customer name', save: 'Save',
     emptyTitle: 'No results', emptyDescription: 'Change the search criteria or create a new record when permitted.',
     loading: 'Loading', errorTitle: 'Data could not be loaded', errorDescription: 'You can retry without losing local changes.', retry: 'Retry',
+    workspaceTabs: 'Workspace tabs', back: 'Back', forward: 'Forward', close: 'Close', closeOthers: 'Close other tabs',
+    reopenClosed: 'Reopen last closed tab', unsavedTitle: 'Unsaved changes',
+    unsavedDescription: 'This tab contains unsaved changes. Do you want to continue?',
+    continueAction: 'Continue', cancel: 'Cancel', dirty: 'Unsaved',
   },
 } as const;
 

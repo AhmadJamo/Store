@@ -6,7 +6,7 @@
 >
 > مصدر الحقيقة: الكود، ترحيلات `EF Core` (إطار ربط الكائنات بقاعدة البيانات)، والاختبارات المنفذة
 
-> مسار التحديث: اكتمل `MOD-003` على الفرع `codex/angular-modernization-foundation`: API foundation آمن ونظام تصميم Angular مرن يدعم theme/density وRTL/LTR والوصولية، مع بقاء MVC وقاعدة البيانات وقواعد الأعمال دون تغيير.
+> مسار التحديث: اكتمل `MOD-004` على الفرع `codex/angular-modernization-foundation`: API foundation آمن، نظام تصميم مرن ومحرك Workspace مركزي بصلاحيات وتبويبات وتاريخ واستعادة آمنة وحماية تغييرات، مع بقاء MVC وقاعدة البيانات وقواعد الأعمال دون تغيير.
 
 ## الملخص التنفيذي
 
@@ -93,4 +93,4 @@
 
 ## المهمة المعتمدة الحالية
 
-اكتمل التسلسل التشغيلي حتى `SAL-130A` واكتمل مسار التحديث `MOD-001`. يوجد الآن Angular 22 foundation مستقل ببنية standalone/lazy، shell عربي RTL وإنجليزي LTR، design tokens وSignals workspace boundary. نجح Angular production build واختباره الأول، ونجح backend Release build دون warnings/errors مع 1066 فحصًا. لم يتغير MVC أوdatabase أوbusiness rules. [NEXT_TASK.md](NEXT_TASK.md) يقترح `MOD-002` API foundation وينتظر الاعتماد.
+اكتمل التسلسل التشغيلي حتى `SAL-130A` واكتمل مسار التحديث حتى `MOD-004`. يوجد Angular 22 foundation مستقل مع API داخلي آمن ونظام تصميم ومحرك Workspace قابل لإعادة الاستخدام. نجح Angular production build دون تحذيرات، ونجحت 12/12 اختبارات Angular و1072 فحص backend. لم يتغير MVC أو database أو business rules. [NEXT_TASK.md](NEXT_TASK.md) يقترح `MOD-005` كأول Customers vertical slice وينتظر الاعتماد.

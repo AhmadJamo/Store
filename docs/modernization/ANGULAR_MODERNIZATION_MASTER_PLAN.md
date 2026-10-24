@@ -40,7 +40,7 @@ Angular workspace
 | 1 | فرع معزول، وثائق، Angular foundation وبنية build | build/test ناجحان ولا تغيير backend runtime |
 | 2 | API conventions، session/CSRF، permissions، ProblemDetails وOpenAPI | مكتمل 2026-10-24؛ build و1072 regression وlive 401 ناجحة |
 | 3 | design tokens، RTL/LTR، themes، density وaccessibility | مكتمل 2026-10-24؛ build و6 tests ومراجعة visual/AX ناجحة |
-| 4 | sidebar، tabs، history مستقل، restoration وdirty guard | workspace unit/E2E tests |
+| 4 | sidebar، tabs، history مستقل، restoration وdirty guard | مكتمل 2026-10-24؛ build و12 tests و1072 regression ناجحة |
 | 5 | Customers vertical slice مع بقاء MVC | API/UI parity وconcurrency |
 | 6 | shared forms/tables مستخرجة من استخدامين فعليين | لا generic CRUD engine |
 | 7 | نقل الوحدات تدريجيًا حسب المخاطر | موافقة لكل milestone |
