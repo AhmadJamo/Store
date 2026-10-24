@@ -3429,6 +3429,25 @@ CheckArgumentThrows(
     "API paging contract must reject undeclared sort fields");
 Check(typeof(IPermissionService).GetMethod(nameof(IPermissionService.GetGrantedAsync)) is not null,
     "Session composition must use the shared application permission boundary");
+var customersApi = typeof(CustomersApiController);
+Check(customersApi.GetCustomAttribute<ApiControllerAttribute>() is not null &&
+      customersApi.GetCustomAttribute<AuthorizeAttribute>() is not null &&
+      customersApi.GetCustomAttribute<RouteAttribute>()?.Template == "api/v1/customers",
+    "Customer API must remain authenticated and explicitly versioned");
+Check(customersApi.GetMethod(nameof(CustomersApiController.GetPage))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:Customers.View" &&
+      customersApi.GetMethod(nameof(CustomersApiController.Create))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:Customers.Create" &&
+      customersApi.GetMethod(nameof(CustomersApiController.Update))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:Customers.Edit",
+    "Customer API must preserve operation-specific permissions");
+Check(customersApi.GetMethod(nameof(CustomersApiController.Create))!
+          .GetCustomAttribute<IgnoreAntiforgeryTokenAttribute>() is null &&
+      customersApi.GetMethod(nameof(CustomersApiController.Update))!
+          .GetCustomAttribute<IgnoreAntiforgeryTokenAttribute>() is null,
+    "Customer API mutations must retain global antiforgery validation");
+Check(typeof(CustomerConcurrencyException).IsSubclassOf(typeof(InvalidOperationException)),
+    "Customer concurrency must remain explicit while preserving MVC compatibility");
 
 Console.WriteLine($"Passed {count} security and inventory regression checks.");
 

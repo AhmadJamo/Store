@@ -9,6 +9,8 @@ The in-repository workspace `MiniStore Front-End` is the isolated Angular 22 pre
 
 `MiniStore Front-End/src/app/workspace` owns the reusable Angular workspace engine. Its navigation registry is session-permission aware and is also the restoration allowlist; its Signals state provides stable context identities, deduplication, bounded per-tab history, configurable tab/recent limits, safe versioned restoration, close/reopen and dirty-state protection. The shell supplies localized ARIA tabs, direction-aware keyboard movement and explicit unsaved-change decisions. No permissions or business payloads are persisted. See `docs/modernization/PHASE_04_WORKSPACE_ENGINE.md`.
 
+`MiniStore.Web/Controllers/Api/V1/CustomersController.cs` exposes permission-separated Customer list/details/form/create/update contracts through the existing `CustomerService`; it does not access EF or repositories. `MiniStore Front-End/src/app/features/customers` is the first business vertical slice, with an isolated typed client, responsive list/details/create/edit pages, external SCSS, Problem Details field feedback, row-version concurrency and workspace dirty-state integration. MVC Customers remains the rollback path. See `docs/modernization/PHASE_05_CUSTOMERS_VERTICAL_SLICE.md`.
+
 ## SAL-130A reusable Analytics Center
 
 `AnalyticsWorkspace` and its widgets persist tenant-owned personal/shared presentation preferences. Generic analytics

@@ -18,6 +18,24 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/design-system/design-system-page').then((module) => module.DesignSystemPage),
       },
+      {
+        path: 'customers',
+        loadComponent: () => import('./features/customers/customer-list-page').then((module) => module.CustomerListPageComponent),
+      },
+      {
+        path: 'customers/new',
+        canDeactivate: [(component) => component.canDeactivate()],
+        loadComponent: () => import('./features/customers/customer-form-page').then((module) => module.CustomerFormPageComponent),
+      },
+      {
+        path: 'customers/:id/edit',
+        canDeactivate: [(component) => component.canDeactivate()],
+        loadComponent: () => import('./features/customers/customer-form-page').then((module) => module.CustomerFormPageComponent),
+      },
+      {
+        path: 'customers/:id',
+        loadComponent: () => import('./features/customers/customer-details-page').then((module) => module.CustomerDetailsPageComponent),
+      },
     ],
   },
   { path: '**', redirectTo: '' },

@@ -9,8 +9,9 @@
 - `MOD-002` — COMPLETED 2026-10-24: versioned internal API foundation للمصادقة same-origin وCSRF والصلاحيات وProblemDetails وOpenAPI وAngular central clients، دون migration أو تغيير MVC.
 - `MOD-003` — COMPLETED 2026-10-24: semantic visual system مع system/light/dark themes وcomfortable/compact density وRTL/LTR وaccessibility preview واختبارات ناجحة.
 - `MOD-004` — COMPLETED 2026-10-24: reusable permission-aware workspace engine للتبويبات والتاريخ والاستعادة الآمنة وحماية التغييرات غير المحفوظة.
-- `MOD-005` — PROPOSED: أول Customers Angular vertical slice مع بقاء MVC. راجع `NEXT_TASK.md`.
-- `MOD-006..019` — GATED: المكونات المشتركة، الترحيل التدريجي، الإنتاجية، الشفافية، التقارير، القبول وتقييم تقاعد MVC كما في خطة التحديث الرئيسية.
+- `MOD-005` — COMPLETED 2026-10-24: أول Customers Angular vertical slice مع API صريح وvalidation/concurrency وبقاء MVC.
+- `MOD-006` — PROPOSED: استخراج المكونات المشتركة المثبتة من استخدام فعلي والتحقق منها في مستهلك أعمال ثانٍ. راجع `NEXT_TASK.md`.
+- `MOD-007..019` — GATED: الترحيل التدريجي، الإنتاجية، الشفافية، التقارير، القبول وتقييم تقاعد MVC كما في خطة التحديث الرئيسية.
 
 ## P0 — مخاطر حرجة
 

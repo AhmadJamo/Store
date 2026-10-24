@@ -41,7 +41,7 @@ Angular workspace
 | 2 | API conventions، session/CSRF، permissions، ProblemDetails وOpenAPI | مكتمل 2026-10-24؛ build و1072 regression وlive 401 ناجحة |
 | 3 | design tokens، RTL/LTR، themes، density وaccessibility | مكتمل 2026-10-24؛ build و6 tests ومراجعة visual/AX ناجحة |
 | 4 | sidebar، tabs، history مستقل، restoration وdirty guard | مكتمل 2026-10-24؛ build و12 tests و1072 regression ناجحة |
-| 5 | Customers vertical slice مع بقاء MVC | API/UI parity وconcurrency |
+| 5 | Customers vertical slice مع بقاء MVC | مكتمل 2026-10-24؛ API/UI parity وconcurrency و17 tests و1076 regression ناجحة |
 | 6 | shared forms/tables مستخرجة من استخدامين فعليين | لا generic CRUD engine |
 | 7 | نقل الوحدات تدريجيًا حسب المخاطر | موافقة لكل milestone |
 | 8 | Command Center، Quick Preview، favorites وsnapshots | authorization لكل نتيجة |

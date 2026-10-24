@@ -13,7 +13,8 @@ The ERP SaaS Foundation Blueprint is imported as a non-authoritative planning re
 - [x] MOD-002 add the versioned internal API foundation: same-origin session/CSRF contracts, permission/tenant enforcement, standardized ProblemDetails, authenticated internal-only OpenAPI, bounded paging conventions, Angular clients and focused security/live HTTP checks. Completed 2026-10-24.
 - [x] MOD-003 establish the reusable visual-system foundation: semantic tokens, system/light/dark themes, comfortable/compact density, persisted RTL/LTR preferences, focus/motion/forced-color rules and a bilingual state preview. Completed 2026-10-24.
 - [x] MOD-004 build the reusable workspace engine: permission-aware sidebar metadata, tab identity/deduplication, per-tab history, close/close-others, refresh restoration and dirty-state navigation guard. Completed 2026-10-24 with 12 Angular tests and unchanged backend behavior.
-- [ ] MOD-005 deliver the first Customers Angular vertical slice with explicit API DTOs, server-side paging/search, validation, concurrency and MVC parity. Awaiting explicit approval.
+- [x] MOD-005 deliver the first Customers Angular vertical slice with explicit API DTOs, server-side paging/search, validation, concurrency and MVC parity. Completed 2026-10-24 with 17 Angular tests and 1076 backend checks.
+- [ ] MOD-006 extract only proven shared form/table primitives and validate them against a second real feature consumer. Awaiting explicit approval.
 
 - [x] FND-000 import the ERP SaaS Foundation Blueprint with provenance and classify its ten capabilities against the actual MiniStore repository.
 - [ ] FND-010 inventory production environments and operational ownership, approve RPO/RTO and backup retention, run an isolated restore drill, reconcile restored financial/inventory/tenant/outbox state and record evidence.

@@ -1,41 +1,38 @@
 # المهمة التالية الوحيدة / Next Task
 
-## `MOD-005` — Customers Angular vertical slice
+## `MOD-006` — Proven shared form and table primitives
 
 > الحالة: PROPOSED — AWAITING EXPLICIT APPROVAL
 
-### آخر شريحة منجزة: MOD-004
+### آخر شريحة منجزة: MOD-005
 
-أُنشئ محرك Workspace مركزي مبني على metadata والصلاحيات، مع هوية تبويب مستقرة، منع التكرار، تاريخ مستقل،
-إغلاق وإعادة فتح واستعادة آمنة وحماية للتغييرات غير المحفوظة. نجح Angular build دون تحذيرات و12/12 tests،
-ونجح 1072 backend checks وبقي production npm audit دون ثغرات.
+أُنجزت أول شريحة أعمال Angular للزبائن: قائمة خادمية، تفاصيل، إنشاء وتعديل عبر API داخلي محمي يستخدم
+`CustomerService` نفسه، مع validation و`409` للتزامن وحماية dirty form. نجح Web/Angular build، و17/17 tests،
+و1076 backend checks، وبقي MVC وقاعدة البيانات وقواعد الأعمال دون تغيير.
 
 ### الهدف المقترح التالي
 
-تنفيذ أول vertical slice فعلي للزبائن على Angular مع إبقاء شاشة MVC الحالية كمسار رجوع:
+استخراج المكونات المشتركة التي أثبتتها شاشة الزبائن والتحقق منها في مستهلك أعمال ثانٍ محدود:
 
-- عقود API DTO صريحة عبر Application layer للقائمة والتفاصيل والإنشاء والتعديل؛
-- بحث وفرز وتقسيم صفحات خادمي bounded مع صلاحيات وعزل الشركة؛
-- قائمة وتفاصيل ونموذج إنشاء/تعديل ثنائي اللغة ومتجاوب؛
-- إبقاء CustomerCode المولد وإعدادات الذمم/الضريبة الاختيارية محكومة بالخلفية؛
-- عرض validation/ProblemDetails عند الحقول وملخص واضح؛
-- optimistic concurrency مع رسالة استعادة/إعادة تحميل مفهومة؛
-- ربط الشاشة بمحرك Workspace وdirty guard؛
-- اختبارات API وAngular وحالات الحفظ الناجح والفاشل.
+- primitives صغيرة للعنوان، الفلاتر، حالة التحميل/الفراغ/الخطأ، الجدول وpager؛
+- form error summary وfield error mapping قابلان لإعادة الاستخدام؛
+- تجربة الاستخدام في شاشة أعمال ثانية قبل تعميم أي abstraction؛
+- configuration مرنة للأعمدة والإجراءات دون تمرير صلاحيات كسلطة؛
+- RTL/LTR، keyboard وresponsive behavior؛
+- اختبارات للمكونات المشتركة وللمستهلكين الفعليين.
 
 ### حدود التنفيذ
 
-- لا حذف أو تعطيل شاشة MVC الحالية.
-- لا تغيير قواعد Customer أو الترقيم أو الذمم أو الضرائب.
-- لا حفظ نموذج الزبون أو أي payload أعمال في browser storage.
+- لا generic CRUD engine أو schema-driven business forms.
+- لا نقل validation أو permissions أو paging authority إلى الواجهة.
+- لا تغيير API أو business rules لمجرد ملاءمة component عام.
 - لا قاعدة بيانات أو migration.
-- لا generic CRUD framework؛ يعاد الاستخدام فقط عند ظهور حاجة فعلية.
+- CSS يبقى في ملفات SCSS منفصلة؛ لا inline CSS داخل HTML.
 
 ### بوابة القبول
 
-- list/search/paging/details/create/edit تعمل ضمن صلاحيات وعزل الشركة.
-- رمز الزبون المولد لا يُطلب من المستخدم والحقول الاختيارية تبقى اختيارية.
-- أخطاء validation والتزامن تظهر بوضوح ولا تختفي بصمت.
-- dirty form لا يفقد إدخاله دون قرار واضح.
-- API لا يعرض EF entities وMVC يبقى عاملًا دون تغير.
-- Angular build/tests وAPI/backend regression تبقى ناجحة.
+- يستخدم كل primitive مستهلكان حقيقيان أو يبقى محليًا ولا يُعمم.
+- التخصيص لا يضع business rules داخل component المشترك.
+- RTL/LTR والوصولية والاستجابة تعمل دون inline styles.
+- شاشة الزبائن لا تفقد أي سلوك أو validation أو حماية dirty state.
+- Angular build/tests وbackend regression تبقى ناجحة.

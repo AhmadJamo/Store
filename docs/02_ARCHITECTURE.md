@@ -6,6 +6,8 @@ During migration, `MiniStore.Web` remains the composition and same-origin host f
 
 The Angular visual layer uses semantic CSS custom properties as its stable component contract. Runtime theme and density choices alter root data attributes and tokens rather than duplicating markup. Locale owns `lang`/`dir`; components use logical CSS. Browser storage contains only versioned, non-sensitive UI preferences and is never an authority for permissions or business state. See `modernization/PHASE_03_VISUAL_SYSTEM.md`.
 
+The first business slice, Customers, proves coexistence rather than replacement. MVC and `/api/v1/customers` share the same Application service and DTO authority; Angular adds no direct repository or EF path. Server-side paging, numbering, policy resolution, validation, transaction and concurrency remain behind that boundary. The Angular feature keeps API models/client, presentation components and a separate stylesheet within one feature folder and integrates with the reusable workspace without persisting form payloads.
+
 ## Reusable analytics boundary (2026-10-22)
 
 The central Analytics Center depends only on generic Application DTOs and `IAnalyticsModuleProvider`. Each module owns its calculations and exposes stable dimensions, filters and widget keys; the center owns workspace persistence, layout, date validation and previous-period/year comparison. Sales and Purchasing are registrations, not dependencies of the controller or generic views. Saved workspaces store presentation/query configuration rather than copied analytical facts. See `decisions/ADR-20261022-REUSABLE-ANALYTICS-CENTER.md`.
