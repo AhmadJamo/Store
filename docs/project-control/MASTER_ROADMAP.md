@@ -22,7 +22,11 @@
 - `MOD-015` — COMPLETED 2026-10-24: Analytics Angular مع group/period comparison/allowlisted drill-down وbounded export preview.
 - `MOD-016` — COMPLETED 2026-10-24: مراقبة ثلاثة hosted workers حقيقيين وruntime SLA وخطط refresh صادقة دون scheduled delivery وهمي.
 - `MOD-017` — NEXT: report builder وdelegation وfinancial preview ضمن موافقات وحدود مستقلة.
-- `MOD-018..019` — GATED: القبول الشامل وتقييم تقاعد MVC كما في خطة التحديث الرئيسية.
+- `MOD-018` — GATED: بوابة قبول security/performance/accessibility/browser/E2E قابلة للتكرار.
+- `MOD-019` — GATED: جرد كل MVC route/view/action وإنشاء migration registry وcutover controls.
+- `MOD-020..028` — APPROVED PROGRAM: نقل الهوية والإعدادات والكتالوج والمخزون والمشتريات والمبيعات وPOS والمحاسبة وSaaS وكل الشاشات المشتركة والمتبقية إلى Angular على موجات، مع functional parity وإعادة تصميم كاملة وفق Angular design system لا نسخ Razor.
+- `MOD-029` — GATED: قبول شامل وdual-run reconciliation وتجربة cutover/rollback.
+- `MOD-030` — EXPLICIT FINAL GATE: Angular-only وإزالة MVC presentation تدريجيًا بعد صفر فجوات.
 
 ## P0 — مخاطر حرجة
 

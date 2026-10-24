@@ -26,6 +26,11 @@ The ERP SaaS Foundation Blueprint is imported as a non-authoritative planning re
 - [x] MOD-015 expose the reusable Analytics Center through Angular with server grouping/comparison, allowlisted drill-down and bounded export preview. Completed 2026-10-24.
 - [x] MOD-016 add permission-filtered runtime monitoring for real hosted workers, SLA state and truthful analytics refresh plans without pretending report delivery exists. Completed 2026-10-24.
 - [ ] MOD-017 add a governed report-builder foundation, delegation and financial preview without browser-authored financial calculations. Next approved modernization slice.
+- [ ] MOD-018 build the reusable security/performance/accessibility/browser/E2E acceptance gate used by every remaining migration wave.
+- [ ] MOD-019 inventory every MVC route/view/action/control and create the central migration registry plus reversible route cutover controls.
+- [ ] MOD-020 through MOD-028 migrate every remaining tenant, public and platform MVC workflow to Angular by the approved module waves, including actions, permissions, localization, files, PDF and edge states.
+- [ ] MOD-029 prove full-system parity through dual-run reconciliation, performance/security/accessibility evidence and cutover/rollback rehearsals.
+- [ ] MOD-030 make Angular the only presentation and retire MVC incrementally only after explicit approval and zero registry gaps.
 
 - [x] FND-000 import the ERP SaaS Foundation Blueprint with provenance and classify its ten capabilities against the actual MiniStore repository.
 - [ ] FND-010 inventory production environments and operational ownership, approve RPO/RTO and backup retention, run an isolated restore drill, reconcile restored financial/inventory/tenant/outbox state and record evidence.

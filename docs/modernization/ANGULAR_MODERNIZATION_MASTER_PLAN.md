@@ -7,7 +7,10 @@
 
 ## الهدف
 
-تحديث طبقة العرض تدريجيًا من Razor MVC إلى Angular مع ASP.NET Core API، مع إبقاء MVC عاملًا إلى أن تثبت مطابقة الوظائف والأمان. لا تعيد الخطة كتابة Domain أو Application services أو الحسابات المحاسبية والمخزنية.
+تحديث طبقة العرض تدريجيًا من Razor MVC إلى Angular مع ASP.NET Core API، ثم نقل جميع صفحات وإجراءات MVC
+حتى تصبح Angular واجهة ERP الوحيدة بعد إثبات المطابقة الكاملة. يبقى MVC عاملًا لكل وحدة إلى أن تثبت مطابقة
+وظائفها وأمانها ويُفعّل cutover قابل للرجوع. لا تعيد الخطة كتابة Domain أو Application services أو الحسابات
+المحاسبية والمخزنية. التفاصيل الملزمة في `FULL_MVC_TO_ANGULAR_MIGRATION_PLAN.md`.
 
 ## الحدود الثابتة
 
@@ -17,6 +20,9 @@
 - لا إزالة لمسار MVC قبل اكتمال parity وخطة rollback معتمدة.
 - Angular لا يخزن long-lived credentials أو financial payloads حساسة في browser storage.
 - reuse قبل الإنشاء، واستخراج المكونات المشتركة بعد ظهور استخدام حقيقي.
+- تُنقل وظائف MVC كاملة لكن يُعاد تصميم الشاشات حصريًا حسب خط Angular الذي بنيناه؛ MVC ليس مرجعًا بصريًا
+  ولا تُطلب visual parity معه، بل functional parity فقط.
+- كل CSS/SCSS منفصل عن HTML، وكل شاشة تجتاز responsive وRTL/LTR وtheme/density وaccessibility acceptance.
 
 ## المعمارية المستهدفة
 
@@ -54,8 +60,19 @@ Angular workspace
 | 15 | group/drill-down/period comparison/export preview | مكتمل 2026-10-24؛ مزودات backend وحفر/معاينة محدودة |
 | 16 | background job center، refresh plans وruntime SLA | مكتمل 2026-10-24؛ ثلاثة workers حقيقيين ولا ادعاء scheduled delivery |
 | 17 | report builder، delegation وfinancial preview | موافقات مستقلة |
-| 18 | security/performance/accessibility/compatibility acceptance | evidence كاملة |
-| 19 | MVC retirement assessment | explicit approval فقط |
+| 18 | بوابة قبول security/performance/accessibility/browser/E2E مشتركة | evidence قابلة للتكرار قبل كل cutover |
+| 19 | جرد MVC الكامل وmigration registry وroute cutover controls | لا شاشة أو action خارج السجل |
+| 20 | الهوية والمستخدمون والأدوار وonboarding وإعدادات المنشأة | parity + rollback لكل route |
+| 21 | الكتالوج والبيانات الأساسية والفروع والمستودعات | parity كاملة |
+| 22 | المخزون وWMS | مصالحة كمية/تتبع/تزامن |
+| 23 | المشتريات والتكاملات | procure-to-pay كامل |
+| 24 | المبيعات الاحترافية والذمم | quote-to-cash كامل |
+| 25 | Legacy Sales وPOS | تشغيل وطباعة وإغلاق كامل |
+| 26 | المحاسبة والإقفال والتدقيق | مصالحة مالية وأدلة مصدر |
+| 27 | SaaS والعام وPlatform owner | فصل auth/tenant/platform محفوظ |
+| 28 | المصمم وPDF والملفات والاستيراد/التصدير وكل الصفحات المتبقية | صفر فجوات في registry |
+| 29 | قبول شامل وdual-run وتجربة cutover/rollback | كل الوحدات Parity Proven |
+| 30 | Angular-only cutover وإزالة MVC تدريجيًا | موافقة صريحة فقط |
 
 ## MVP
 
@@ -91,13 +108,13 @@ Angular workspace
 
 - نقطة الأساس: commit `fd0deb7082bcc7c8cd5ae19061a33c300d6aad6e` على `master`.
 - التطوير على `codex/angular-modernization-foundation`.
-- MVC يبقى هو المسار التشغيلي حتى اعتماد parity.
+- MVC يبقى مسار الرجوع لكل وحدة حتى اعتماد parity ونجاح cutover الخاص بها، ثم يبقى الكود حتى `MOD-030`.
 - يمكن تعطيل Angular route/proxy دون تغيير Domain أو database.
 - أي schema change مستقبلي يحتاج migration إضافية وخطة rollback مستقلة.
 
 ## المخاطر
 
-- ازدواجية مؤقتة بين MVC وAngular.
+- ازدواجية مؤقتة طويلة نسبيًا بين MVC وAngular حتى اكتمال موجات `MOD-020..029`.
 - CSRF/CORS إن فُصلت النطاقات؛ same-origin هو الافتراضي.
 - تضخم API إن تم نسخ ViewModels دون تصميم contracts.
 - overengineering في workspace/shared components.

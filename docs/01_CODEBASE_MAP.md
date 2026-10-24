@@ -42,6 +42,11 @@ Angular analytics route calls the existing generic `AnalyticsCenterService`, and
 `OperationsCenterService` filters snapshots and analytics refresh plans by existing permissions before Angular
 `features/operations-center` renders them. See `docs/modernization/PHASE_16_BACKGROUND_OPERATIONS.md`.
 
+`docs/modernization/FULL_MVC_TO_ANGULAR_MIGRATION_PLAN.md` is the approved presentation-migration program. It extends
+the work through `MOD-030`: shared acceptance and complete MVC inventory, nine module/cross-cutting migration waves,
+full dual-run reconciliation and an explicit final Angular-only cutover. A page is not complete until its actions,
+permissions, localization, files, edge states and tests reach parity.
+
 ## SAL-130A reusable Analytics Center
 
 `AnalyticsWorkspace` and its widgets persist tenant-owned personal/shared presentation preferences. Generic analytics

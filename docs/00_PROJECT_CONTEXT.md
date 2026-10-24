@@ -40,9 +40,9 @@ The imported ERP SaaS Foundation Blueprint remains a proposed reference. The pro
 See `06_SECURITY.md`, `04_ACCOUNTING.md`, and `TODO.md`. The historically exposed administrator was closed for the evidenced local Demo environment, an encrypted isolated restore drill reconciled without differences and migrations through 135 are applied with no pending EF model change. The local Demo audit and retention features are enabled through User Secrets. Coverage reconciliation is complete, new legacy writes are frozen behind a reversible flag, and pre/post signed checkpoints preserved all 710 historical legacy rows. Real deployment identities, off-host backup/checkpoint storage, production deployment controls and broader integration testing remain open.
 
 ## Recommended next steps
-1. Continue `SAL-130` with workspace editing/cloning, exports/scheduling and governed reusable semantic fields.
-2. Keep legacy Sale/POS cutover outside the professional order lifecycle until its dedicated gate.
-3. Preserve the completed audit, observability and application-boundary controls throughout analytics and cutover.
+1. Complete `MOD-017..019`, then execute the full MVC-to-Angular module waves `MOD-020..028`.
+2. Prove full dual-run parity in `MOD-029`; keep legacy Sale/POS cutover inside its dedicated `MOD-025` gate.
+3. Make Angular the only presentation only in explicit `MOD-030`, preserving audit, observability and rollback controls.
 
 ## Read first
 Read `project-control/PROJECT_CONTEXT.md`, `project-control/PROJECT_STATUS.md`, `project-control/MASTER_ROADMAP.md` and `project-control/NEXT_TASK.md`; then read `01_CODEBASE_MAP.md`, the relevant module document and actual source.
