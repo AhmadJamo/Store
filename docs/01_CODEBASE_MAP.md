@@ -1,4 +1,8 @@
 # Codebase map
+## Angular modernization foundation
+
+The in-repository workspace `MiniStore Front-End` is the isolated Angular 22 presentation target. It uses standalone components, strict TypeScript, lazy routes, SCSS design tokens, an Arabic RTL/English LTR localization boundary, a responsive shell and a small Signals-owned workspace state contract. Its development proxy is limited to `/api` and `/Account`. The existing `MiniStore.Web` MVC host remains operational and no backend runtime, database or business rule changed in Phase 1. See `docs/modernization/` and the 2026-10-24 same-origin modernization ADR.
+
 ## SAL-130A reusable Analytics Center
 
 `AnalyticsWorkspace` and its widgets persist tenant-owned personal/shared presentation preferences. Generic analytics

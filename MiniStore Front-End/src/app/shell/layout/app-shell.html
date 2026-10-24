@@ -1,0 +1,28 @@
+<div class="shell" [attr.dir]="i18n.direction()">
+  <aside class="sidebar" aria-label="Main navigation">
+    <div class="brand"><span class="brand-mark">M</span><span>{{ i18n.text('appName') }}</span></div>
+    <nav>
+      @for (item of navigation; track item.key) {
+        <button type="button" class="nav-item"><span aria-hidden="true">{{ item.icon }}</span>{{ i18n.text(item.key) }}</button>
+      }
+    </nav>
+    <div class="sidebar-note"><strong>{{ i18n.text('ready') }}</strong><span>{{ i18n.text('protected') }}</span></div>
+  </aside>
+
+  <section class="workspace">
+    <header class="topbar">
+      <div><span class="eyebrow">{{ i18n.text('workspace') }}</span><strong>{{ i18n.text('phaseTitle') }}</strong></div>
+      <label class="search"><span aria-hidden="true">⌕</span><input [placeholder]="i18n.text('search')" disabled /></label>
+      <button type="button" class="language" (click)="i18n.toggle()">{{ i18n.text('language') }}</button>
+    </header>
+
+    <div class="tabs" aria-label="Workspace tabs">
+      @if (workspace.tabs().length === 0) { <span>{{ i18n.text('noTabs') }}</span> }
+      @for (tab of workspace.tabs(); track tab.id) {
+        <button type="button" (click)="workspace.activate(tab.id)">{{ tab.title }}</button>
+      }
+    </div>
+
+    <main><router-outlet /></main>
+  </section>
+</div>

@@ -1,7 +1,7 @@
 # Configuration and runtime composition
 > Status: IMPLEMENTED WITH PRODUCTION GAPS  
 > Source of truth: `Program.cs`, `MiniStore.Web/Configuration/*.cs`, project files, appsettings
-> Last reviewed: 2026-10-18
+> Last reviewed: 2026-10-24
 
 ## Configuration
 `MiniStore.Web/appsettings.json` contains `ConnectionStrings:DefaultConnection`, disabled `AdminUser`, `PlatformOwner`, `AuditEvents` and `AuditRetention` sections, `Observability`, registration rate-limit values, logging levels and wildcard `AllowedHosts`. No password, integrity key, checkpoint key or local archive path is committed. Audit allowlists and approved 7/3-year, 90-day policy values are schema/policy configuration, not secret material. Optional `AuditReadConnection` and `AuditMaintenanceConnection` are external secrets; absence falls back to the development connection and is not acceptable proof of production identity separation.
@@ -21,6 +21,10 @@ health endpoints remain available if request instrumentation is disabled. Produc
 `P1-AUD-015` registers one retention worker. When `AuditRetention:Enabled=true`, it runs immediately and then every configured 1–168 hours (24 by default). Each run creates a signed external checkpoint before selecting candidates; no row is removed unless a signed destruction manifest exists and the maintenance transaction revalidates its ID, integrity fingerprint and absence of an active legal hold.
 
 PUR-240 registers one hosted replenishment scanner. It checks due settings once per minute, creates a fresh service scope and explicit ambient tenant scope for each due company, then invokes the Application service. Company frequency remains data-driven (1–168 hours); the one-minute scan interval is not a replenishment frequency setting. Multi-host production deployment must coordinate scheduler ownership or add a distributed lease.
+
+## Angular development configuration
+
+`MiniStore Front-End/proxy.conf.json` proxies only `/api` and `/Account` to the local HTTPS ASP.NET Core host. The target is a local-development value, contains no credential and must be aligned with the backend launch profile when that profile changes. Production uses a same-origin deployment or trusted reverse proxy; enabling broad CORS is not the default. `.nvmrc` pins Node 24.20.0 and `package.json` restricts the supported major line to Node 24.
 
 ## Required values
 - SQL Server connection string.

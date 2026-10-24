@@ -8,6 +8,10 @@ The PUR-000 through PUR-280 purchase evolution is implemented. The approved comp
 
 The ERP SaaS Foundation Blueprint is imported as a non-authoritative planning reference. `FND-000` reconciles it with current code; later `FND` slices are not implemented until explicitly approved and evidenced.
 
+- [x] MOD-000 complete the read-only MVC-to-API/Angular repository audit, target architecture, dependency graph, workspace design, MVP, feature matrix and risk assessment. Completed 2026-10-24.
+- [x] MOD-001 create the isolated modernization branch and Angular 22 foundation in `MiniStore Front-End`, with strict standalone architecture, lazy routing, RTL/LTR shell, design tokens, restricted dev proxy, Signals workspace boundary, documentation, rollback and verified frontend/backend builds. Completed 2026-10-24.
+- [ ] MOD-002 add the versioned internal API foundation: same-origin session/CSRF contracts, permission/tenant enforcement, standardized ProblemDetails, OpenAPI and focused integration tests. Awaiting explicit approval.
+
 - [x] FND-000 import the ERP SaaS Foundation Blueprint with provenance and classify its ten capabilities against the actual MiniStore repository.
 - [ ] FND-010 inventory production environments and operational ownership, approve RPO/RTO and backup retention, run an isolated restore drill, reconcile restored financial/inventory/tenant/outbox state and record evidence.
 - [ ] FND-020 through FND-080 incrementally harden audit/security, integrity/idempotency, observability/performance, configuration/approval reuse, provisioning/billing, exception/work guidance and safe import/export after their individual approvals.

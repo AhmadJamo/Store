@@ -1,0 +1,35 @@
+:root {
+  color-scheme: light;
+  --erp-color-primary: #1f5f57;
+  --erp-color-primary-strong: #174940;
+  --erp-color-accent: #c9892b;
+  --erp-color-canvas: #f4f7f6;
+  --erp-color-surface: #ffffff;
+  --erp-color-surface-muted: #eef3f1;
+  --erp-color-text: #17231f;
+  --erp-color-text-muted: #62716c;
+  --erp-color-border: #d9e2df;
+  --erp-color-success: #1f7a53;
+  --erp-color-warning: #a86516;
+  --erp-color-danger: #ad343e;
+  --erp-shadow-sm: 0 1px 3px rgb(23 35 31 / 8%);
+  --erp-shadow-md: 0 12px 32px rgb(23 35 31 / 10%);
+  --erp-radius-sm: 0.5rem;
+  --erp-radius-md: 0.875rem;
+  --erp-space-1: 0.25rem;
+  --erp-space-2: 0.5rem;
+  --erp-space-3: 0.75rem;
+  --erp-space-4: 1rem;
+  --erp-space-5: 1.5rem;
+  --erp-space-6: 2rem;
+  font-family: Inter, "Segoe UI", Tahoma, Arial, sans-serif;
+  background: var(--erp-color-canvas);
+  color: var(--erp-color-text);
+}
+
+* { box-sizing: border-box; }
+html, body { min-height: 100%; margin: 0; }
+body { background: var(--erp-color-canvas); }
+button, input, select, textarea { font: inherit; }
+button, a { -webkit-tap-highlight-color: transparent; }
+:focus-visible { outline: 3px solid color-mix(in srgb, var(--erp-color-accent) 70%, white); outline-offset: 2px; }

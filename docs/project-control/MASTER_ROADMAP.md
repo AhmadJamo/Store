@@ -2,6 +2,13 @@
 
 > هذه الوثيقة ترتب الأولوية فقط. الخطط التخصصية تبقى تفاصيل، ولا تبدأ مهمة دون أن تكون في `NEXT_TASK.md`.
 
+## مسار تحديث الواجهة / MOD
+
+- `MOD-000` — COMPLETED 2026-10-24: مراجعة read-only للانتقال من MVC إلى API + Angular، مع المعمارية والاعتماديات والمخاطر وMVP.
+- `MOD-001` — COMPLETED 2026-10-24: فرع معزول، Angular 22 foundation مستقل، standalone/lazy structure، RTL/LTR shell، design tokens، proxy محدود، Signals workspace boundary واختبارات frontend/backend ناجحة دون تغيير MVC أوdatabase.
+- `MOD-002` — PROPOSED: versioned internal API foundation للمصادقة same-origin وCSRF والصلاحيات وProblemDetails وOpenAPI. راجع `NEXT_TASK.md`.
+- `MOD-003..019` — GATED: design system، workspace، Customers vertical slice، الترحيل التدريجي، الإنتاجية، الشفافية، التقارير، القبول وتقييم تقاعد MVC كما في خطة التحديث الرئيسية.
+
 ## P0 — مخاطر حرجة
 
 ### `P0-SEC-001` — إغلاق أثر بيانات دخول المسؤول التاريخية

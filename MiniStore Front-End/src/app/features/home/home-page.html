@@ -1,0 +1,13 @@
+<section class="hero">
+  <div><span class="phase">Phase 1</span><h1>{{ i18n.text('phaseTitle') }}</h1><p>{{ i18n.text('phaseDescription') }}</p></div>
+  <div class="status"><span class="status-dot"></span><div><strong>{{ i18n.text('ready') }}</strong><small>{{ i18n.text('protected') }}</small></div></div>
+</section>
+<section class="milestones" aria-label="Modernization milestones">
+  @for (milestone of milestones; track milestone.order) {
+    <article [class.complete]="milestone.state === 'done'">
+      <span class="number">{{ milestone.order }}</span>
+      <h2>{{ i18n.text(milestone.key) }}</h2>
+      <span class="state">{{ milestone.state === 'done' ? '✓' : '→' }}</span>
+    </article>
+  }
+</section>

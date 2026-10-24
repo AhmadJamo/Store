@@ -1,26 +1,41 @@
 # المهمة التالية الوحيدة / Next Task
 
-## `P2-SAL-130B` — دورة حياة مساحات التحليل والتوزيع
+## `MOD-002` — Versioned internal API foundation
 
 > الحالة: PROPOSED — AWAITING EXPLICIT APPROVAL
 
-### آخر شريحة منجزة: SAL-130A
+### آخر شريحة منجزة: MOD-001
 
-أصبح للنظام مركز تحليلات عام قابل لإعادة الاستخدام وليس شاشة مبيعات خاصة. المبيعات والمشتريات مزودان
-مستقلان ضمن عقد موحد. يمكن إنشاء مساحة شخصية أو مشتركة وضبط الفترة والبعد والمقارنة والتحديث، ثم اختيار
-الأدوات وترتيبها وتغيير عناوينها الثنائية وأحجامها وألوانها وأهدافها وعدد نتائجها وإظهار المقارنة والتعريفات.
-المقارنة مع الفترة السابقة أو السنة السابقة تنفذ مركزيًا وتفيد أي مزود جديد.
+أُنشئ فرع `codex/angular-modernization-foundation` ومشروع Angular 22 مستقل في `MiniStore Front-End` مع
+standalone components وstrict TypeScript وlazy routing وSCSS design tokens وواجهة responsive عربية RTL وإنجليزية LTR.
+أُضيف عقد حالة Workspace صغير قائم على Signals وdevelopment proxy محدود إلى `/api` و`/Account`.
 
-الترحيل 135 مولد والنموذج وقاعدة Demo متطابقان دون تغييرات معلقة. نجح بناء Release بلا أخطاء أو تحذيرات
-ونجح 1066 فحص انحدار بعد تدقيق روابط ونماذج Razor وإجراءات POST، وإكمال الترجمة العربية، والتحقق من كتالوج ERP الكامل، وتثبيت إرسال نموذج الزبون وحقول الرمز/الحساب التلقائية والتحقق العشري المستقل عن ثقافة الواجهة.
+نجح Angular production build بحزمة أولية 229.81 kB raw، ونجح 1/1 frontend test، كما نجح backend Release build
+دون warnings/errors ونجح 1066 فحص انحدار. لم يتغير MVC أوdatabase schema أوbusiness rules.
 
 ### الهدف المقترح التالي
 
-إكمال دورة حياة مساحة التحليل: تعديل آمن بـ RowVersion، نسخ مساحة، أرشفة/استعادة، ترتيب تفاعلي، قوالب جاهزة،
-تصدير CSV/PDF باستخدام المحرك المركزي، وجدولة إرسال اختيارية مع سجل تنفيذ وصلاحيات مستقلة. يبقى تعريف الحقول
-والمعادلات الذاتية محكومًا بكتالوج دلالي آمن حتى لا يسمح بقراءة بيانات عشوائية أو تجاوز عزل الشركات.
+إضافة أساس API داخلي versioned داخل `MiniStore.Web` لإعادة استخدام المصادقة والصلاحيات وعزل الشركات الحالي:
 
-### متابعة تشغيلية
+- `/api/v1/session` يعرض هوية المستخدم والشركة واللغة والصلاحيات اللازمة للواجهة دون بيانات حساسة.
+- CSRF contract آمن لطلبات Angular mutation مع cookies same-origin.
+- `ProblemDetails` موحد مع validation errors وcorrelation ID دون كشف الاستثناءات.
+- OpenAPI للـinternal API فقط مع عقود DTO صريحة.
+- conventions للpagination/sorting/filtering وcancellation.
+- integration/regression tests للمصادقة و401/403 وtenant isolation وantiforgery.
 
-طُبقت الترحيلات 129-135 على Demo وثبت إقلاع التطبيق تحت هوية ويندوز التفاعلية. تبقى سيناريوهات SQL المجمعة
-واختبارات الواجهة الموثقة ضمن فجوات الاختبار العامة، ولا تمنع فتح الشريحة التالية بعد اعتمادها.
+### حدود التنفيذ
+
+- لا Customer API أونقل شاشة قبل قبول foundation.
+- لا تغيير لقواعد Identity أوpermissions أوtenant middleware.
+- لا database migration.
+- لا JWT أوtoken في localStorage.
+- لا إزالة أوتعديل لمسارات MVC الحالية.
+
+### بوابة القبول
+
+- frontend يستطيع قراءة session contract عبر dev proxy.
+- mutation probe محمي من CSRF ويُختبر دون تغيير business data.
+- كل endpoint يفرض backend authorization.
+- OpenAPI وProblemDetails موثقان ومختبران.
+- backend وfrontend builds/tests تظل ناجحة.

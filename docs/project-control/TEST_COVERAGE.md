@@ -5,6 +5,8 @@
 | الأمر | النتيجة | التاريخ |
 |---|---|---|
 | `dotnet run --project tests/SecurityRegression/SecurityRegression.csproj -c Release --no-build` | Passed 1066 checks (نجح 1066 فحصًا)، تشمل صلاحيات/عزل/توجيه وروابط ونماذج Razor وحماية POST والترجمة وكتالوج الـ62 خطوة، إضافة إلى تطابق نموذج إرسال الزبون، وعدم طلب الرمز التلقائي أو الحساب المحسوم بالسياسة أثناء الربط، وفحص كل حدود decimal تحت الثقافة العربية، وظهور ملخص/حقول التحقق وأزرار الإرسال الصريحة | 2026-10-24 |
+| `npm run build` in `MiniStore Front-End` | Passed Angular 22 production build; 229.81 kB raw initial bundle and lazy shell/home chunks | 2026-10-24 |
+| `npm test -- --watch=false` in `MiniStore Front-End` | Passed 1/1 Vitest file and 1/1 test | 2026-10-24 |
 | `dotnet build MiniStore.sln -c Release --no-restore` | Passed, 0 warnings/errors after the complete workflow/localization audit | 2026-10-23 |
 | `dotnet run --project tests/InventorySqlIntegration/InventorySqlIntegration.csproj -c Release --no-build` | BLOCKED before test execution by Windows SQL SSPI; quotation-template snapshot scenario is compiled but unverified on SQL | 2026-10-22 |
 | `pwsh -NoProfile -File scripts/verify-local.ps1` | Build + 777 + SQL + 500-request workload passed | 2026-10-18 |
