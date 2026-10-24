@@ -1,0 +1,15 @@
+.operations-page, .operations-section, .job-grid, .plan-list { display: grid; gap: 1rem; }
+.operations-section > header h2, .operations-section > header p, .job-grid h3, .plan-list h3, .plan-list p { margin: 0; }
+.operations-section > header p, .plan-list p { color: var(--erp-color-text-muted); }
+.job-grid { grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr)); }
+.job-grid article, .plan-list article { padding: 1rem; border: 1px solid var(--erp-color-border); border-radius: 0.8rem; background: var(--erp-color-surface); }
+.job-grid article > header { display: flex; align-items: start; justify-content: space-between; gap: 0.75rem; }
+.status { padding: 0.25rem 0.5rem; border-radius: 999px; background: var(--erp-color-success-soft); color: var(--erp-color-success); }
+.status[data-state='at-risk'] { background: var(--erp-color-warning-soft); color: var(--erp-color-warning); }
+.status[data-state='breached'] { background: var(--erp-color-danger-soft); color: var(--erp-color-danger); }
+.status[data-state='disabled'] { background: var(--erp-color-surface-muted); color: var(--erp-color-text-muted); }
+dl { display: grid; gap: 0.55rem; margin-block-end: 0; }
+dl div { display: flex; justify-content: space-between; gap: 1rem; }
+dt { color: var(--erp-color-text-muted); } dd { margin: 0; text-align: end; }
+.plan-list article { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; gap: 1rem; }
+@media (max-width: 680px) { .plan-list article { grid-template-columns: 1fr; } }

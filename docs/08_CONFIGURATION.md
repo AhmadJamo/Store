@@ -22,13 +22,21 @@ health endpoints remain available if request instrumentation is disabled. Produc
 
 PUR-240 registers one hosted replenishment scanner. It checks due settings once per minute, creates a fresh service scope and explicit ambient tenant scope for each due company, then invokes the Application service. Company frequency remains data-driven (1–168 hours); the one-minute scan interval is not a replenishment frequency setting. Multi-host production deployment must coordinate scheduler ownership or add a distributed lease.
 
+Supplier integration registers a 30-second hosted outbox dispatcher. MOD-016 registers one singleton
+`IBackgroundJobMonitor` implementation shared by the retention, replenishment and supplier-outbox workers plus the
+scoped Operations Center service. The monitor stores sanitized process-local timestamps/state only; it has no secret,
+database table or configuration section and resets on restart.
+
 ## Angular development configuration
 
 `MiniStore Front-End/proxy.conf.json` proxies only `/api` and `/Account` to `https://localhost:54052`, matching the committed `MiniStore.Web` launch profile. The target is a local-development value and contains no credential; it must remain aligned if the backend launch profile changes. Run the backend first, then `npm start`, and open Angular at `http://localhost:4200`. Production uses a same-origin deployment or trusted reverse proxy; enabling broad CORS is not the default. `.nvmrc` pins Node 24.20.0 and `package.json` restricts the supported major line to Node 24.
 
 The internal API uses the existing Identity cookie plus `MiniStore.Antiforgery`, a strict same-site HttpOnly antiforgery cookie. Angular obtains the request token from `/api/v1/security/csrf` and sends it in `X-CSRF-TOKEN` for unsafe `/api/` methods. No token or secret is stored in browser local storage. OpenAPI is available at `/openapi/internal-v1.json` only after authentication.
 
-Angular stores only versioned display preferences: `ministore.ui.preferences.v1` for theme/density and `ministore.ui.locale` for the supported UI locale. Corrupt or inaccessible storage falls back to safe defaults; reset removes the visual preference. These keys must never contain identity, permissions, API tokens or business payloads.
+Angular stores only versioned display preferences: `ministore.ui.preferences.v2` for theme/density/sidebar/content
+width, `ministore.workspace.profile` for the allowlisted workspace profile/split view and
+`ministore.ui.locale` for the supported UI locale. Corrupt or inaccessible storage falls back to safe defaults;
+reset removes the visual preference. These keys must never contain identity, permissions, API tokens or business payloads.
 
 ## Required values
 - SQL Server connection string.

@@ -12,6 +12,7 @@ public sealed class AnalyticsCenterQueryDto
     public DateOnly? From { get; set; }
     public DateOnly? To { get; set; }
     public string? Dimension { get; set; }
+    public AnalyticsComparisonMode? ComparisonMode { get; set; }
     public Dictionary<string, string> Filters { get; set; } = new(StringComparer.OrdinalIgnoreCase);
 }
 

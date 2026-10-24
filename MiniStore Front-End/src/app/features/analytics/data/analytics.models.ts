@@ -1,0 +1,5 @@
+export interface AnalyticsPoint { label: string; value: number; linkController?: string; linkId?: number; }
+export interface AnalyticsRow { cells: readonly string[]; linkController?: string; linkId?: number; }
+export interface AnalyticsWidget { key: string; title: string; titleArabic: string; definition?: string; definitionArabic?: string; visualization: number; value?: number; textValue?: string; comparisonValue?: number; comparisonDeltaPercent?: number; sequence: number; columnSpan: number; points: readonly AnalyticsPoint[]; columns: readonly string[]; rows: readonly AnalyticsRow[]; }
+export interface AnalyticsModule { key: string; title: string; titleArabic: string; description: string; descriptionArabic: string; dimensions: readonly { key: string; label: string; labelArabic: string }[]; }
+export interface AnalyticsPage { query: { moduleKey: string; from: string; to: string; dimension?: string; comparisonMode?: number }; dataset: { moduleKey: string; title: string; titleArabic: string; widgets: readonly AnalyticsWidget[] }; modules: readonly AnalyticsModule[]; module: AnalyticsModule; layoutColumns: number; }

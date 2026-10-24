@@ -26,6 +26,22 @@ Problem Details classification and correlation metadata. Angular `core/api/ApiEr
 `shared/ui/api-recovery` presents only permitted recovery intent. Customer and Supplier lists/forms prove reuse while
 preserving failed input and prohibiting automatic mutation retry. See `docs/modernization/PHASE_11_DATA_QUALITY_RECOVERY.md`.
 
+`DocumentEvidenceService` composes read-only Sales Order and Customer Invoice journey, relation and explained-number
+evidence from existing Application DTOs. `DocumentEvidenceApiController` exposes four explicit permission-protected
+routes; Angular `features/document-evidence` and `shared/ui/document-evidence` render the two proven consumers without
+client calculations or generic graph traversal. See `docs/modernization/PHASE_12_DOCUMENT_EVIDENCE.md`.
+
+`WorkCenterService` composes permission-filtered Sales Order and Customer Invoice actions from existing Application
+decisions; Angular `features/work-center` adds contextual guidance without executing mutations. Versioned
+`WorkspaceProfileService` reorders only visible navigation and controls a responsive context panel. The protected
+Angular analytics route calls the existing generic `AnalyticsCenterService`, and drill-down remains allowlisted. See
+`docs/modernization/PHASE_13_WORK_CENTER.md` through `PHASE_15_ANALYTICS_EXPLORATION.md`.
+
+`IBackgroundJobMonitor` is an Application-owned runtime observation contract implemented by the singleton Web
+`BackgroundJobMonitor`. The replenishment, supplier-outbox and audit-retention hosted workers publish sanitized state;
+`OperationsCenterService` filters snapshots and analytics refresh plans by existing permissions before Angular
+`features/operations-center` renders them. See `docs/modernization/PHASE_16_BACKGROUND_OPERATIONS.md`.
+
 ## SAL-130A reusable Analytics Center
 
 `AnalyticsWorkspace` and its widgets persist tenant-owned personal/shared presentation preferences. Generic analytics

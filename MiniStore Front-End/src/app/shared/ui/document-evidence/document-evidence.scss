@@ -1,0 +1,14 @@
+.evidence-grid, .explain-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+.evidence-card { padding: 1rem; border: 1px solid var(--erp-color-border); border-radius: 0.85rem; background: var(--erp-color-surface); }
+.evidence-card h2 { margin-block: 0 1rem; font-size: 1.05rem; }
+.journey, .related-list, .explain ol { display: grid; gap: 0.8rem; margin: 0; padding: 0; list-style: none; }
+.journey li { display: grid; grid-template-columns: 0.75rem minmax(0, 1fr); gap: 0.65rem; }
+.journey-marker { inline-size: 0.7rem; block-size: 0.7rem; margin-block-start: 0.3rem; border-radius: 50%; background: var(--erp-color-primary); }
+.journey li div, .related-list li span { display: grid; gap: 0.2rem; }
+.journey small, .related-list small, .explain small { color: var(--erp-color-text-muted); }
+.related-list li, .explain li, .explain article header { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; }
+.explain { margin-block-start: 1rem; }
+.explain article { padding: 0.9rem; border: 1px solid var(--erp-color-border); border-radius: 0.7rem; }
+.explain article > p { color: var(--erp-color-text-muted); }
+.explain li { flex-wrap: wrap; border-block-start: 1px solid var(--erp-color-border); padding-block-start: 0.5rem; }
+@media (max-width: 680px) { .evidence-grid, .explain-grid { grid-template-columns: 1fr; } }

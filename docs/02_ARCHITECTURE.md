@@ -23,6 +23,20 @@ Application services still decide validation, duplicate and concurrency outcomes
 and Angular maps those codes to non-destructive actions. The reusable recovery component cannot retry mutations,
 override row versions, merge duplicates or grant navigation. See `modernization/PHASE_11_DATA_QUALITY_RECOVERY.md`.
 
+Document transparency is a read-only Application composition boundary. It reuses authoritative Sales Order and
+Customer Invoice DTOs, emits typed journey/relationship/number evidence and applies source and target View permissions.
+Angular formats and localizes the evidence but never recalculates totals, outstanding balances or relationships.
+
+The work center and workspace profiles remain presentation orchestration. Server services select actionable records
+using existing View/action permissions; local profiles can only reorder the resulting allowlisted destinations. The
+Angular Analytics experience reuses the generic provider boundary and accepts only server datasets and allowlisted
+drill targets. See modernization phases 13-15.
+
+Background operation observation uses an Application interface implemented by a Web singleton because hosted-worker
+runtime state belongs to the process, not the database or Domain. Workers publish start/success/failure timestamps only;
+the Application service applies user permissions and adds tenant-owned analytics refresh-plan metadata. This state is
+not durable scheduling evidence and raw exceptions never cross the API. See `modernization/PHASE_16_BACKGROUND_OPERATIONS.md`.
+
 ## Reusable analytics boundary (2026-10-22)
 
 The central Analytics Center depends only on generic Application DTOs and `IAnalyticsModuleProvider`. Each module owns its calculations and exposes stable dimensions, filters and widget keys; the center owns workspace persistence, layout, date validation and previous-period/year comparison. Sales and Purchasing are registrations, not dependencies of the controller or generic views. Saved workspaces store presentation/query configuration rather than copied analytical facts. See `decisions/ADR-20261022-REUSABLE-ANALYTICS-CENTER.md`.

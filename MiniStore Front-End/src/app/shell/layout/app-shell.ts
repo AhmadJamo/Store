@@ -5,6 +5,7 @@ import { filter } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { LocalizationService } from '../../core/localization/localization.service';
 import { ContentWidthPreference, DensityPreference, SidebarPreference, ThemePreference, UiPreferencesService } from '../../core/preferences/ui-preferences.service';
+import { WorkspaceProfile, WorkspaceProfileService } from '../../core/preferences/workspace-profile.service';
 import { NavigationRegistryService } from '../../workspace/navigation/navigation-registry.service';
 import { NavigationItem, WorkspaceTab } from '../../workspace/state/workspace.models';
 import { WorkspaceService } from '../../workspace/state/workspace.service';
@@ -21,6 +22,7 @@ export class AppShell implements OnInit {
   protected readonly workspace = inject(WorkspaceService);
   protected readonly preferences = inject(UiPreferencesService);
   protected readonly navigation = inject(NavigationRegistryService);
+  protected readonly workspaceProfile = inject(WorkspaceProfileService);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
   private readonly document = inject(DOCUMENT);
@@ -99,4 +101,5 @@ export class AppShell implements OnInit {
   protected setDensity(value: string): void { this.preferences.setDensity(value as DensityPreference); }
   protected setSidebar(value: string): void { this.preferences.setSidebar(value as SidebarPreference); }
   protected setContentWidth(value: string): void { this.preferences.setContentWidth(value as ContentWidthPreference); }
+  protected setWorkspaceProfile(value: string): void { this.workspaceProfile.setProfile(value as WorkspaceProfile); }
 }

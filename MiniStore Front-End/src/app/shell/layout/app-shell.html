@@ -29,6 +29,8 @@
         <label><span>{{ i18n.text('contentWidth') }}</span><select [value]="preferences.contentWidth()" (change)="setContentWidth($any($event.target).value)">
           <option value="fluid">{{ i18n.text('contentFluid') }}</option><option value="contained">{{ i18n.text('contentContained') }}</option>
         </select></label>
+        <label><span>{{ i18n.text('workspaceProfile') }}</span><select [value]="workspaceProfile.profile()" (change)="setWorkspaceProfile($any($event.target).value)"><option value="focused">{{ i18n.text('profileFocused') }}</option><option value="operator">{{ i18n.text('profileOperator') }}</option><option value="analyst">{{ i18n.text('profileAnalyst') }}</option></select></label>
+        <label class="split-toggle"><input type="checkbox" [checked]="workspaceProfile.splitView()" (change)="workspaceProfile.setSplitView($any($event.target).checked)" /> {{ i18n.text('splitView') }}</label>
         <button type="button" class="icon-action" (click)="preferences.reset()" [attr.aria-label]="i18n.text('resetPreferences')" [title]="i18n.text('resetPreferences')">↺</button>
         <button type="button" class="language" (click)="i18n.toggle()">{{ i18n.text('language') }}</button>
         </div>
@@ -53,7 +55,7 @@
       }
     </div>
 
-    <main id="main-content" tabindex="-1"><router-outlet /></main>
+    <div class="content-frame"><main id="main-content" tabindex="-1"><router-outlet /></main><aside class="split-panel" [attr.aria-label]="i18n.text('contextPanel')"><h2>{{ i18n.text('contextPanel') }}</h2><p>{{ i18n.text('contextPanelDescription') }}</p><nav>@for (item of navigation.visibleItems(); track item.id) { @if (item.id === 'work-center' || item.id === 'documents') { <a [routerLink]="item.route">{{ i18n.text(item.labelKey) }}</a> } }</nav></aside></div>
   </section>
 </div>
 

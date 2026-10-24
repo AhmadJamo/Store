@@ -16,8 +16,13 @@
 - `MOD-009` — COMPLETED 2026-10-24: smart-form productivity مع no-local-draft policy وأخطاء/تركيز/اختصار حفظ وفلاتر آمنة.
 - `MOD-010` — COMPLETED 2026-10-24: responsive layout preferences وmobile navigation وskip/route/dialog focus وreduced-motion/forced-colors.
 - `MOD-011` — COMPLETED 2026-10-24: stable Problem Details codes وrecovery عام قابل لإعادة الاستخدام على Customers/Suppliers دون retry للـmutations.
-- `MOD-012` — APPROVED: رحلة المستند وrelated records وExplain This Number فوق أدلة backend المعتمدة.
-- `MOD-013..019` — GATED: مركز الإجراءات، الشفافية، التقارير، القبول وتقييم تقاعد MVC كما في خطة التحديث الرئيسية.
+- `MOD-012` — COMPLETED 2026-10-24: رحلة مستند وعلاقات وشرح أرقام خادمي لطلبات البيع وفواتير الزبائن.
+- `MOD-013` — COMPLETED 2026-10-24: action/exception center وcontextual help بصلاحيات وقرارات backend.
+- `MOD-014` — COMPLETED 2026-10-24: split workspace وملفات Focused/Operator/Analyst لا تمنح صلاحيات.
+- `MOD-015` — COMPLETED 2026-10-24: Analytics Angular مع group/period comparison/allowlisted drill-down وbounded export preview.
+- `MOD-016` — COMPLETED 2026-10-24: مراقبة ثلاثة hosted workers حقيقيين وruntime SLA وخطط refresh صادقة دون scheduled delivery وهمي.
+- `MOD-017` — NEXT: report builder وdelegation وfinancial preview ضمن موافقات وحدود مستقلة.
+- `MOD-018..019` — GATED: القبول الشامل وتقييم تقاعد MVC كما في خطة التحديث الرئيسية.
 
 ## P0 — مخاطر حرجة
 

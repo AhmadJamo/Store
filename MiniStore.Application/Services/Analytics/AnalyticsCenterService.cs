@@ -30,9 +30,10 @@ public sealed class AnalyticsCenterService(IEnumerable<IAnalyticsModuleProvider>
         query.Dimension = provider.Definition.Dimensions.Any(x => x.Key.Equals(query.Dimension, StringComparison.OrdinalIgnoreCase))
             ? query.Dimension : provider.Definition.Dimensions.FirstOrDefault()?.Key;
         var dataset = await provider.GetAsync(query);
-        if (workspace is not null && workspace.ComparisonMode != AnalyticsComparisonMode.None)
+        var comparisonMode = workspace?.ComparisonMode ?? query.ComparisonMode ?? AnalyticsComparisonMode.None;
+        if (comparisonMode != AnalyticsComparisonMode.None)
         {
-            var comparisonQuery = BuildComparisonQuery(query, workspace.ComparisonMode);
+            var comparisonQuery = BuildComparisonQuery(query, comparisonMode);
             var comparisonDataset = await provider.GetAsync(comparisonQuery);
             ApplyComparisons(dataset, comparisonDataset, comparisonQuery);
         }

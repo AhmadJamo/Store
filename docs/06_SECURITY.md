@@ -20,6 +20,19 @@ stack traces. Angular offers retry only for transient read requests; failed muta
 explicit new save. Concurrency opens the already-authorized record route in a separate tab and never bypasses the
 server row version. Forbidden and permanent failures expose no retry or setup action.
 
+MOD-012 exposes no generic entity lookup. Sales Order and Customer Invoice evidence use separate routes and matching
+View policies; cross-document links require the destination View permission. Lists are capped, tenant filters remain in
+the reused services/repositories, and the contract contains display snapshots rather than mutable entity instances.
+
+MOD-013 action items require both the source View permission and the matching action permission before the server emits
+them. Contextual links open read-only document evidence; Angular never performs the mutation. MOD-014 profiles persist
+only allowlisted presentation values and reorder an already permission-filtered navigation list.
+
+MOD-015 keeps `AnalyticsCenter.View` on the API and repeats provider permission filtering in the Application service.
+Only Customer and Supplier Angular routes are valid drill targets, and export preview displays the bounded returned
+dataset without fetching hidden rows or generating a file. MOD-016 filters each worker by its existing module View
+permission, returns no exception text or tenant payload, and clearly marks analytics refresh plans as non-delivery.
+
 The Customers API independently applies `Customers.View`, `Customers.Create` and `Customers.Edit` to its matching operations. Sidebar visibility is only guidance; every endpoint reauthorizes. POST/PUT retain global antiforgery, DTO validation and tenant-filtered Application/repository access. Customer form data and row versions are never written to browser storage; stale updates return a correlation-bearing `409` response.
 
 SAL-130A analytics remain read-only and pass through tenant-filtered repositories in the Application layer. Saved workspaces are tenant-owned; personal rows are owner-filtered and shared creation requires a separate management permission rechecked in the Application service. The center filters and executes providers only after checking each provider-declared permission, including during crafted workspace creation. Date windows are capped at two years, module/widget keys are validated against the registered provider catalog, and database constraints prevent duplicate widget keys/orders. Comparison queries reuse the same tenant-scoped provider and filters for the derived prior period.

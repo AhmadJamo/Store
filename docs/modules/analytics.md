@@ -26,5 +26,7 @@ Permissions are intentionally separate:
 Migration 135 creates `AnalyticsWorkspaces` and `AnalyticsWorkspaceWidgets` with tenant-composite relationships,
 rowversion and per-workspace widget-key/order uniqueness. The local Demo is reconciled through migration 135.
 
-Editing, cloning, archival, scheduled distribution, exports and a governed semantic-field builder remain later
+Angular exploration now reuses this service for provider/group/date/comparison selection, bounded export preview and
+allowlisted Customer/Supplier drill-down. Saved refresh intervals appear in the Operations Center as refresh plans only.
+Editing, cloning, archival, scheduled distribution, real file exports and a governed semantic-field builder remain later
 increments. They should extend this center rather than create module-specific dashboard infrastructure.

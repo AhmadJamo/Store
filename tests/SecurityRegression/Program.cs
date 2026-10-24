@@ -28,6 +28,7 @@ using MiniStore.Application.DTOs.Products;
 using MiniStore.Application.DTOs.Suppliers;
 using MiniStore.Application.DTOs.Warehouses;
 using MiniStore.Application.DTOs.Api;
+using MiniStore.Application.Dtos.Shared;
 using MiniStore.Application.Services;
 using MiniStore.Infrastructure.Authorization;
 using MiniStore.Infrastructure.Persistence;
@@ -3489,6 +3490,46 @@ Check(suppliersApi.GetMethod(nameof(SuppliersApiController.Create))!
     "Supplier API mutations must retain global antiforgery validation");
 Check(typeof(SupplierConcurrencyException).IsSubclassOf(typeof(InvalidOperationException)),
     "Supplier concurrency must remain explicit while preserving MVC compatibility");
+var evidenceApi = typeof(DocumentEvidenceApiController);
+Check(evidenceApi.GetCustomAttribute<ApiControllerAttribute>() is not null &&
+      evidenceApi.GetCustomAttribute<AuthorizeAttribute>() is not null &&
+      evidenceApi.GetCustomAttribute<RouteAttribute>()?.Template == "api/v1/document-evidence",
+    "Document evidence API must remain authenticated and explicitly versioned");
+Check(evidenceApi.GetMethod(nameof(DocumentEvidenceApiController.GetSalesOrders))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:SalesOrders.View" &&
+      evidenceApi.GetMethod(nameof(DocumentEvidenceApiController.GetSalesOrder))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:SalesOrders.View" &&
+      evidenceApi.GetMethod(nameof(DocumentEvidenceApiController.GetCustomerInvoices))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:CustomerInvoices.View" &&
+      evidenceApi.GetMethod(nameof(DocumentEvidenceApiController.GetCustomerInvoice))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:CustomerInvoices.View",
+    "Document evidence endpoints must retain source-document view permissions");
+Check(typeof(DocumentEvidenceDto).GetProperty(nameof(DocumentEvidenceDto.ExplainedNumbers)) is not null &&
+      typeof(DocumentEvidenceDto).GetProperty(nameof(DocumentEvidenceDto.RelatedDocuments)) is not null,
+    "Document evidence contract must keep related records and explained numbers server-authored");
+var workCenterApi = typeof(WorkCenterApiController);
+Check(workCenterApi.GetCustomAttribute<ApiControllerAttribute>() is not null &&
+      workCenterApi.GetCustomAttribute<AuthorizeAttribute>() is not null &&
+      workCenterApi.GetCustomAttribute<RouteAttribute>()?.Template == "api/v1/work-center",
+    "Work center API must remain authenticated and explicitly versioned");
+Check(typeof(WorkCenterItemDto).GetProperty(nameof(WorkCenterItemDto.RequiredPermission)) is not null,
+    "Work center items must retain the server-checked permission that made the action eligible");
+var analyticsApi = typeof(AnalyticsCenterApiController);
+Check(analyticsApi.GetCustomAttribute<ApiControllerAttribute>() is not null &&
+      analyticsApi.GetCustomAttribute<AuthorizeAttribute>() is not null &&
+      analyticsApi.GetCustomAttribute<RouteAttribute>()?.Template == "api/v1/analytics-center" &&
+      analyticsApi.GetMethod(nameof(AnalyticsCenterApiController.Get))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:AnalyticsCenter.View",
+    "Analytics API must remain authenticated, versioned and protected by the existing analytics permission");
+var operationsApi = typeof(OperationsCenterApiController);
+Check(operationsApi.GetCustomAttribute<ApiControllerAttribute>() is not null &&
+      operationsApi.GetCustomAttribute<AuthorizeAttribute>() is not null &&
+      operationsApi.GetCustomAttribute<RouteAttribute>()?.Template == "api/v1/operations-center",
+    "Operations center API must remain authenticated and explicitly versioned");
+Check(typeof(BackgroundJobStatusDto).GetProperty("Error") is null &&
+      typeof(BackgroundJobStatusDto).GetProperty(nameof(BackgroundJobStatusDto.Permission)) is not null &&
+      typeof(IBackgroundJobMonitor).GetMethod(nameof(IBackgroundJobMonitor.Snapshot)) is not null,
+    "Background job monitoring must remain permission-filterable and must not expose raw worker failures");
 Check(typeof(ISupplierRepository).GetMethod(nameof(ISupplierRepository.GetPagedAsync)) is not null &&
       typeof(SupplierService).GetMethod(nameof(SupplierService.GetPageAsync))!
           .ReturnType == typeof(Task<SupplierListPageDto>) &&

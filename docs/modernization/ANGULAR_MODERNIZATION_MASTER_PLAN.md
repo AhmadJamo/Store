@@ -48,11 +48,11 @@ Angular workspace
 | 9 | smart forms، saved filters، keyboard entry وdraft policy | مكتمل 2026-10-24؛ no-local-draft policy وsafe shortcuts/errors/preferences و36 اختبار Angular |
 | 10 | dashboard/density/focus/layout preferences | مكتمل 2026-10-24؛ versioned layout وmobile navigation وskip/dialog focus و39 اختبار Angular |
 | 11 | duplicate/conflict/data-quality/error recovery | مكتمل 2026-10-24؛ stable codes وrecovery عام و52 اختبار Angular |
-| 12 | document journey، related records وExplain This Number | backend authoritative evidence |
-| 13 | action/exception center وcontextual help | permission-aware tasks |
-| 14 | split workspace وrole profiles | لا permission grants من profiles |
-| 15 | group/drill-down/period comparison/export preview | bounded server queries |
-| 16 | background job center، scheduled reports وSLA | موافقة scheduler/retention |
+| 12 | document journey، related records وExplain This Number | مكتمل 2026-10-24؛ Sales Order/Customer Invoice evidence خادمي وصلاحيات مستقلة |
+| 13 | action/exception center وcontextual help | مكتمل 2026-10-24؛ قرارات backend وصلاحيات View/action |
+| 14 | split workspace وrole profiles | مكتمل 2026-10-24؛ ملفات allowlisted لا تمنح صلاحيات |
+| 15 | group/drill-down/period comparison/export preview | مكتمل 2026-10-24؛ مزودات backend وحفر/معاينة محدودة |
+| 16 | background job center، refresh plans وruntime SLA | مكتمل 2026-10-24؛ ثلاثة workers حقيقيين ولا ادعاء scheduled delivery |
 | 17 | report builder، delegation وfinancial preview | موافقات مستقلة |
 | 18 | security/performance/accessibility/compatibility acceptance | evidence كاملة |
 | 19 | MVC retirement assessment | explicit approval فقط |

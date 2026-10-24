@@ -6,6 +6,7 @@ export interface NavigationItem {
   readonly labelKey: MessageKey;
   readonly icon: string;
   readonly requiredPermission?: string;
+  readonly requiredAnyPermissions?: readonly string[];
 }
 
 export interface WorkspaceHistoryEntry {

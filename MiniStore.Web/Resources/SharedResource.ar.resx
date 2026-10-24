@@ -4640,4 +4640,5 @@
   <data name="The route customer does not match the submitted customer." xml:space="preserve"><value>الزبون في المسار لا يطابق الزبون المرسل.</value></data>
   <data name="The customer changed since you opened it." xml:space="preserve"><value>تغيرت بيانات الزبون منذ فتح الصفحة.</value></data>
   <data name="The supplier changed since you opened it." xml:space="preserve"><value>تغيرت بيانات المورد منذ فتح الصفحة.</value></data>
+  <data name="Document evidence was not found." xml:space="preserve"><value>لم يتم العثور على دليل المستند.</value></data>
 </root>

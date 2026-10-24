@@ -20,7 +20,12 @@ The ERP SaaS Foundation Blueprint is imported as a non-authoritative planning re
 - [x] MOD-009 add reusable smart-form productivity: explicit draft policy, saved non-sensitive filters and keyboard-first entry without automatic posting. Completed 2026-10-24 with 36 Angular tests.
 - [x] MOD-010 complete responsive dashboard, density, focus and layout preferences with safe reset and accessibility evidence. Completed 2026-10-24 with visual review and 39 Angular tests.
 - [x] MOD-011 add reusable duplicate/conflict/data-quality and recovery presentation over authoritative backend evidence. Completed 2026-10-24 with stable API codes, typed duplicate outcomes, reusable Customer/Supplier recovery, 52 Angular tests and 1084 backend checks.
-- [ ] MOD-012 add reusable document journey, related-record evidence and Explain This Number presentation over authoritative backend evidence. Pre-approved for continuous execution.
+- [x] MOD-012 add reusable document journey, related-record evidence and Explain This Number presentation over authoritative backend evidence. Completed 2026-10-24 on Sales Orders and Customer Invoices without database changes.
+- [x] MOD-013 add a permission-aware action/exception center and contextual help over existing server decisions. Completed 2026-10-24.
+- [x] MOD-014 add allowlisted Focused/Operator/Analyst workspace profiles and a responsive split context panel without changing permissions. Completed 2026-10-24.
+- [x] MOD-015 expose the reusable Analytics Center through Angular with server grouping/comparison, allowlisted drill-down and bounded export preview. Completed 2026-10-24.
+- [x] MOD-016 add permission-filtered runtime monitoring for real hosted workers, SLA state and truthful analytics refresh plans without pretending report delivery exists. Completed 2026-10-24.
+- [ ] MOD-017 add a governed report-builder foundation, delegation and financial preview without browser-authored financial calculations. Next approved modernization slice.
 
 - [x] FND-000 import the ERP SaaS Foundation Blueprint with provenance and classify its ten capabilities against the actual MiniStore repository.
 - [ ] FND-010 inventory production environments and operational ownership, approve RPO/RTO and backup retention, run an isolated restore drill, reconcile restored financial/inventory/tenant/outbox state and record evidence.

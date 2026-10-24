@@ -126,6 +126,8 @@ public static class BusinessServicesExtensions
         services.AddScoped<ReplenishmentPurchaseDemandService>();
         services.AddScoped<IReplenishmentAutomationRepository, ReplenishmentAutomationRepository>();
         services.AddScoped<ReplenishmentAutomationService>();
+        services.AddSingleton<IBackgroundJobMonitor, BackgroundJobMonitor>();
+        services.AddScoped<OperationsCenterService>();
         services.AddHostedService<ReplenishmentAutomationWorker>();
         services.AddScoped<InventoryInsightsService>();
         services.AddScoped<InventoryScanningService>();
@@ -226,6 +228,8 @@ public static class BusinessServicesExtensions
         services.AddScoped<ICustomerCreditNoteRepository, CustomerCreditNoteRepository>();
         services.AddScoped<ISalesApprovalRepository, SalesApprovalRepository>();
         services.AddScoped<CustomerInvoiceService>();
+        services.AddScoped<DocumentEvidenceService>();
+        services.AddScoped<WorkCenterService>();
         services.AddScoped<CustomerPaymentService>();
         services.AddScoped<CustomerReturnRequestService>();
         services.AddScoped<CustomerReturnReceiptService>();

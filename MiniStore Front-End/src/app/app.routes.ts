@@ -54,6 +54,26 @@ export const routes: Routes = [
         path: 'suppliers/:id',
         loadComponent: () => import('./features/suppliers/supplier-details-page').then((module) => module.SupplierDetailsPageComponent),
       },
+      {
+        path: 'documents',
+        loadComponent: () => import('./features/document-evidence/document-evidence-page').then((module) => module.DocumentEvidencePageComponent),
+      },
+      {
+        path: 'documents/:kind/:id',
+        loadComponent: () => import('./features/document-evidence/document-evidence-page').then((module) => module.DocumentEvidencePageComponent),
+      },
+      {
+        path: 'work-center',
+        loadComponent: () => import('./features/work-center/work-center-page').then((module) => module.WorkCenterPageComponent),
+      },
+      {
+        path: 'analytics',
+        loadComponent: () => import('./features/analytics/analytics-page').then((module) => module.AnalyticsPageComponent),
+      },
+      {
+        path: 'operations-center',
+        loadComponent: () => import('./features/operations-center/operations-center-page').then((module) => module.OperationsCenterPageComponent),
+      },
     ],
   },
   { path: '**', redirectTo: '' },

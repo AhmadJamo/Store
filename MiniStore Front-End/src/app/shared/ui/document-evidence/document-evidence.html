@@ -1,0 +1,9 @@
+<div class="evidence-grid">
+  <section class="evidence-card" aria-labelledby="journey-title"><h2 id="journey-title">{{ i18n.text('documentJourney') }}</h2>
+    @if (evidence().journey.length === 0) { <p>{{ i18n.text('noJourneyEvents') }}</p> } @else { <ol class="journey">@for (step of evidence().journey; track step.occurredAtUtc + step.eventKey) { <li><span class="journey-marker" aria-hidden="true"></span><div><strong>{{ label(step.eventKey) }}</strong><span>{{ label(step.fromStatus) }} → {{ label(step.toStatus) }}</span><small>{{ date(step.occurredAtUtc) }} · {{ step.actorUserId }}</small>@if (step.reason) { <p>{{ step.reason }}</p> }</div></li> }</ol> }
+  </section>
+  <section class="evidence-card" aria-labelledby="related-title"><h2 id="related-title">{{ i18n.text('relatedDocuments') }}</h2>
+    @if (evidence().relatedDocuments.length === 0) { <p>{{ i18n.text('noRelatedDocuments') }}</p> } @else { <ul class="related-list">@for (record of evidence().relatedDocuments; track record.kind + record.id) { <li><span><strong>{{ record.number }}</strong><small>{{ label(record.relationshipKey) }}</small></span>@if (record.canOpen && routeFor(record.kind, record.id); as route) { <a [routerLink]="route">{{ i18n.text('viewEvidence') }}</a> }</li> }</ul> }
+  </section>
+</div>
+<section class="evidence-card explain" aria-labelledby="explain-title"><h2 id="explain-title">{{ i18n.text('explainThisNumber') }}</h2><div class="explain-grid">@for (item of evidence().explainedNumbers; track item.numberKey) { <article><header><span>{{ label(item.numberKey) }}</span><strong>{{ number(item.value, item.decimalPlaces) }} {{ item.currencyCode }}</strong></header><p>{{ label(item.formulaKey) }}</p><ol>@for (part of item.parts; track part.partKey) { <li><span>{{ label(part.operation) }} · {{ label(part.partKey) }}</span><strong>{{ number(part.amount, item.decimalPlaces) }}</strong><small>{{ label(part.sourceKey) }}</small></li> }</ol></article> }</div></section>

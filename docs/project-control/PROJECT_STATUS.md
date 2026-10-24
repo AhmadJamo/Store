@@ -6,7 +6,7 @@
 >
 > مصدر الحقيقة: الكود، ترحيلات `EF Core` (إطار ربط الكائنات بقاعدة البيانات)، والاختبارات المنفذة
 
-> مسار التحديث: اكتمل `MOD-011` على الفرع `codex/angular-modernization-foundation`: Customers وSuppliers ومركز الأوامر وإنتاجية آمنة وتخطيط responsive وتعافٍ موحد من الأخطاء، وبقاء MVC ودون generic CRUD أو تغيير قاعدة البيانات.
+> مسار التحديث: اكتمل `MOD-016` على الفرع `codex/angular-modernization-foundation`: Customers وSuppliers ومركز الأوامر وشفافية المستندات ومركز العمل وملفات مساحة العمل والتحليلات ومراقبة العمال، مع بقاء MVC ودون generic CRUD أو تغيير قاعدة البيانات.
 
 ## الملخص التنفيذي
 
@@ -93,4 +93,4 @@
 
 ## المهمة المعتمدة الحالية
 
-اكتمل التسلسل التشغيلي حتى `SAL-130A` واكتمل مسار التحديث حتى `MOD-011`. أضيفت رموز Problem Details ثابتة للتصنيف ونتائج duplicate صريحة، ومعالج Angular مركزي ومكوّن recovery ثنائي اللغة يعرض retry للقراءات المؤقتة فقط ويحافظ على مدخلات validation/duplicate/concurrency، مع correlation ID قابل للنسخ وفتح أحدث سجل للمقارنة عند توفر صلاحية العرض ودون تجاوز rowversion. نجح Web Release build وAngular production build، و52/52 اختبار Angular و1084 فحص backend. لم تتغير قاعدة البيانات أو قواعد الأعمال. [NEXT_TASK.md](NEXT_TASK.md) يسجل `MOD-012` المعتمد لرحلة المستند وrelated records وExplain This Number.
+اكتمل التسلسل التشغيلي حتى `SAL-130A` واكتمل مسار التحديث حتى `MOD-016`. أضيفت رحلة مستند وشرح أرقام خادميان، مركز عمل بصلاحيات، ملفات مساحة عمل مرنة لا تغيّر الصلاحيات، استكشاف Angular فوق مركز التحليلات العام، ومركز عمليات يعرض حالة ثلاثة hosted workers حقيقيين وخطط refresh دون ادعاء إرسال مجدول. نجح Web Release build وAngular production build دون تحذيرات، و55/55 اختبار Angular و1092 فحص backend. لم تتغير قاعدة البيانات أو قواعد الأعمال. [NEXT_TASK.md](NEXT_TASK.md) يسجل `MOD-017` كالشريحة التالية.
