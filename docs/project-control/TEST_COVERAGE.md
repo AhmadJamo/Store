@@ -4,7 +4,7 @@
 
 | الأمر | النتيجة | التاريخ |
 |---|---|---|
-| `dotnet run --project tests/SecurityRegression/SecurityRegression.csproj -c Release --no-build` | Passed 1060 checks (نجح 1060 فحصًا)، تشمل دورة القالب والصلاحيات والعزل والتوجيه ومطابقة روابط/نماذج Razor وحماية كل POST، تغطية مفاتيح الترجمة العربية وعدم تكرارها، ومنع نصوص الواجهة/الإجراءات غير المترجمة، وصحة وجهات كتالوج الـ62 خطوة | 2026-10-23 |
+| `dotnet run --project tests/SecurityRegression/SecurityRegression.csproj -c Release --no-build` | Passed 1062 checks (نجح 1062 فحصًا)، تشمل صلاحيات/عزل/توجيه وروابط ونماذج Razor وحماية POST والترجمة وكتالوج الـ62 خطوة، إضافة إلى تطابق نموذج إرسال الزبون وظهور ملخص/حقول التحقق وأزرار الإرسال الصريحة | 2026-10-24 |
 | `dotnet build MiniStore.sln -c Release --no-restore` | Passed, 0 warnings/errors after the complete workflow/localization audit | 2026-10-23 |
 | `dotnet run --project tests/InventorySqlIntegration/InventorySqlIntegration.csproj -c Release --no-build` | BLOCKED before test execution by Windows SQL SSPI; quotation-template snapshot scenario is compiled but unverified on SQL | 2026-10-22 |
 | `pwsh -NoProfile -File scripts/verify-local.ps1` | Build + 777 + SQL + 500-request workload passed | 2026-10-18 |

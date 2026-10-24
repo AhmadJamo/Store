@@ -1,6 +1,6 @@
 # Project TODO
 > Source of truth: Current repository scan  
-> Last reviewed: 2026-10-23
+> Last reviewed: 2026-10-24
 
 The approved numbered Arabic/English delivery sequence is maintained in `MASTER_IMPLEMENTATION_ROADMAP_AR_EN.md`. Detailed working status, business rules and the rolling suggestion queue remain in `ARABIC_SHARED_ROADMAP.md`. This file remains the concise technical backlog.
 
@@ -90,7 +90,7 @@ The ERP SaaS Foundation Blueprint is imported as a non-authoritative planning re
 - [x] SAL-120A add advanced versioned quotation templates with searchable categories/tags, reusable content, required/optional/alternative products, bounded option groups, quantity policy, optional extra lines, customer/date repricing and frozen applied-template evidence. Completed 2026-10-22; migration applied to Demo.
 - [x] SAL-120B central organization identity, highly configurable versioned Document Designs, reusable central HTML-to-PDF engine, bilingual RTL/LTR quotation PDF and hash-protected identity/design/content/logo snapshot frozen at Send. Completed 2026-10-22 with migrations 133-134, Demo application and visual PDF verification. Customer portal, signature and payment remain later provider-dependent gates.
 - [x] SAL-130A reusable provider-based Analytics Center with tenant-owned personal/shared workspaces, advanced widget settings, central previous-period/year comparison, and Sales/Purchasing providers. Completed 2026-10-22 with migration 135 applied to Demo and 1049 passing regression checks.
-- [x] UI-AUDIT-001 verify every navigation, dashboard and static Razor link/form target, enforce antiforgery on every public MVC POST action, complete shared Arabic coverage for Razor/controller/JavaScript UI text, and retain automated regression coverage. Completed 2026-10-23 with 1060 passing checks.
+- [x] UI-AUDIT-001 verify every navigation, dashboard and static Razor link/form target, enforce antiforgery on every public MVC POST action, complete shared Arabic coverage, and protect customer create/edit binding plus visible validation feedback. Audit completed 2026-10-23; customer save remediation verified 2026-10-24 with 1062 passing checks.
 - [ ] SAL-130B add safe workspace edit/clone/archive, presets, central export and optional scheduled distribution after explicit approval.
 
 - [x] WMS-050 reservations and exact transfer allocation with concurrent last-unit protection.

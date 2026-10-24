@@ -1,7 +1,7 @@
 # MiniStore project context
 > Status: PARTIALLY IMPLEMENTED  
 > Source of truth: Code  
-> Last reviewed: 2026-10-23
+> Last reviewed: 2026-10-24
 
 ## Project identity
 MiniStore is a server-rendered ASP.NET Core MVC store-management application. It targets .NET 10, uses EF Core 10 with SQL Server, ASP.NET Core Identity, Razor views, and a Domain/Application/Infrastructure/Web layered solution. No public API project is present.

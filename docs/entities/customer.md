@@ -1,5 +1,5 @@
 # Customer entity
-> Status: CUS-010, CUS-020, CUS-030A, CUS-030B AND SAL-020B DEFAULT PRICING IMPLEMENTED | Last reviewed: 2026-10-20
+> Status: CUS-010, CUS-020, CUS-030A, CUS-030B AND SAL-020B DEFAULT PRICING IMPLEMENTED | Last reviewed: 2026-10-24
 
 `Customer` is the tenant-owned sales-party identity. `Id` remains the compatibility key used by historical `Sale` rows; CUS-010 did not create a competing BusinessPartner table or rewrite a sale reference.
 
@@ -16,3 +16,5 @@ CUS-030A makes receivable assignment configurable per tenant: shared control, au
 CUS-030B adds prospective commercial defaults: payment-term days, optional preferred configured currency, optional tenant-safe default TaxRate, or a mutually exclusive tax-exempt status with a required reason. SAL-020B adds an optional tenant-safe active default SalesPriceList. These fields are defaults for future documents only; they do not edit a posted Sale or create inventory/accounting effects. Salesperson/team ownership remains deferred until that sales capability exists.
 
 Change impact: entity/configuration/migration, Customer DTO/service/repository, Sales validation, controller/views, permissions/navigation, localization, numbering, tests and customer/database documentation.
+
+The MVC create/edit contract uses `CustomerFormPostDto.Form` to match the Razor `Form.*` field names exactly. Every invalid submission returns the populated page model and exposes both the complete validation summary and field-level errors; successful creation redirects to the saved customer details page with a localized notification.

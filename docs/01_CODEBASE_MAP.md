@@ -38,7 +38,7 @@ Adds receipt/line/history domain types, repository and service, CRR sequence, fo
 
 > Status: IMPLEMENTED  
 > Source of truth: Repository scan  
-> Last reviewed: 2026-10-23
+> Last reviewed: 2026-10-24
 
 ## Solution roots
 | Path | Project/layer | Purpose |
@@ -96,6 +96,8 @@ deferred to a separately approved CUS-110 gate.
 `docs/AUDIT_SECURITY_ARCHITECTURE_AND_IMPLEMENTATION_PLAN.md` and the audit ADRs define the audit boundary. `P1-AUD-011` through `P1-AUD-015` implement storage, semantic/security coverage, permission-aware reading/export, retention, legal holds, signed checkpoints and database-role separation. `P1-AUD-016` adds `AuditCoverageCatalog`, repeatable `--inspect-audit` reconciliation and independent `LegacyAuditOptions`; committed configuration freezes new generic `AuditLogs` writes while preserving all historical rows and a configuration-only rollback. Specialized accounting/inventory/purchase/sales histories remain authoritative for detailed facts.
 
 `MiniStore.Web/Guidance/ActionableErrorGuidance.cs` maps recognized, user-resolvable purchase, sales-pricing/customer-default and sales-delivery errors to permission-protected setup, inventory or document destinations. The shared notification partial renders the resulting action for both modal notifications and page validation summaries; ordinary validation errors remain message-only.
+
+Customer create/edit Razor forms post the explicit nested `CustomerFormPostDto.Form` contract through `CustomersController`, matching their `Form.*` field names. Invalid submissions rebuild the complete page model and expose localized summary and field-level errors instead of failing silently.
 
 ## Domain source map
 | Files | Type/purpose | Consumers/docs |

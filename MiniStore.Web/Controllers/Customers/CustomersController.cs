@@ -16,10 +16,15 @@ public sealed class CustomersController(CustomerService service, IStringLocalize
     public async Task<IActionResult> Create() => View(await service.GetCreatePageAsync());
 
     [HttpPost, ValidateAntiForgeryToken, PermissionAuthorize("Customers.Create")]
-    public async Task<IActionResult> Create([Bind(Prefix = "Form")] CustomerFormDto form)
+    public async Task<IActionResult> Create(CustomerFormPostDto input)
     {
-        if (!ModelState.IsValid) return View(await service.GetCreatePageAsync(form));
-        try { var id = await service.CreateAsync(form); TempData["Success"] = "Customer created successfully."; return RedirectToAction(nameof(Details), new { id }); }
+        var form = input.Form;
+        if (!ModelState.IsValid)
+        {
+            ModelState.AddModelError(string.Empty, localizer["Please correct the highlighted customer fields and try again."]);
+            return View(await service.GetCreatePageAsync(form));
+        }
+        try { var id = await service.CreateAsync(form); TempData["NotificationType"] = "success"; TempData["NotificationMessage"] = localizer["Customer created successfully."].Value; return RedirectToAction(nameof(Details), new { id }); }
         catch (Exception exception) when (exception is ArgumentException or InvalidOperationException)
         { ModelState.AddModelError(string.Empty, localizer[exception.Message]); return View(await service.GetCreatePageAsync(form)); }
     }
@@ -28,10 +33,15 @@ public sealed class CustomersController(CustomerService service, IStringLocalize
     public async Task<IActionResult> Edit(int id) => await service.GetEditPageAsync(id) is { } model ? View(model) : NotFound();
 
     [HttpPost, ValidateAntiForgeryToken, PermissionAuthorize("Customers.Edit")]
-    public async Task<IActionResult> Edit([Bind(Prefix = "Form")] CustomerFormDto form)
+    public async Task<IActionResult> Edit(CustomerFormPostDto input)
     {
-        if (!ModelState.IsValid) return View(await service.GetEditPageAsync(form.Id, form) ?? await service.GetCreatePageAsync(form));
-        try { await service.UpdateAsync(form); TempData["Success"] = "Customer updated successfully."; return RedirectToAction(nameof(Details), new { id = form.Id }); }
+        var form = input.Form;
+        if (!ModelState.IsValid)
+        {
+            ModelState.AddModelError(string.Empty, localizer["Please correct the highlighted customer fields and try again."]);
+            return View(await service.GetEditPageAsync(form.Id, form) ?? await service.GetCreatePageAsync(form));
+        }
+        try { await service.UpdateAsync(form); TempData["NotificationType"] = "success"; TempData["NotificationMessage"] = localizer["Customer updated successfully."].Value; return RedirectToAction(nameof(Details), new { id = form.Id }); }
         catch (Exception exception) when (exception is ArgumentException or InvalidOperationException)
         { ModelState.AddModelError(string.Empty, localizer[exception.Message]); return View(await service.GetEditPageAsync(form.Id, form) ?? await service.GetCreatePageAsync(form)); }
     }

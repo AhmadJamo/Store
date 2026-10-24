@@ -21,6 +21,7 @@ using ClosedXML.Excel;
 using MiniStore.Application.Permissions;
 using MiniStore.Application.DTOs.Settings;
 using MiniStore.Application.Dtos.Settings;
+using MiniStore.Application.Dtos.Customers;
 using MiniStore.Application.DTOs.Inventory.Tracking;
 using MiniStore.Application.DTOs.Purchases;
 using MiniStore.Application.DTOs.Products;
@@ -585,8 +586,8 @@ Check(customerController.GetMethods().Where(x => x.Name is nameof(CustomersContr
 Check(customerController.GetMethods()
         .Where(x => x.Name is nameof(CustomersController.Create) or nameof(CustomersController.Edit))
         .Where(x => x.GetCustomAttribute<HttpPostAttribute>() is not null)
-        .All(x => x.GetParameters().Single().GetCustomAttribute<BindAttribute>()?.Prefix == "Form"),
-    "Customer create and edit must bind the nested Form fields rendered by the shared customer form");
+        .All(x => x.GetParameters().Single().ParameterType == typeof(CustomerFormPostDto)),
+    "Customer create and edit must accept the explicit nested Form post model rendered by the shared customer form");
 Check(customerController.GetMethods().Where(x=>x.Name is nameof(CustomersController.SaveContact) or nameof(CustomersController.SaveAddress))
         .All(x=>x.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy==$"{PermissionAuthorizeAttribute.PolicyPrefix}Customers.Edit"&&x.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null),
     "Customer contact and address edits must require edit permission and antiforgery");
@@ -1066,6 +1067,18 @@ while (repositoryRoot is not null && !File.Exists(Path.Combine(repositoryRoot.Fu
     repositoryRoot = repositoryRoot.Parent;
 Check(repositoryRoot is not null, "Regression checks must locate the repository root");
 var webRoot = Path.Combine(repositoryRoot!.FullName, "MiniStore.Web");
+var customerFormView = File.ReadAllText(Path.Combine(webRoot, "Views", "Customers", "_Form.cshtml"));
+var customerCreateView = File.ReadAllText(Path.Combine(webRoot, "Views", "Customers", "Create.cshtml"));
+var customerEditView = File.ReadAllText(Path.Combine(webRoot, "Views", "Customers", "Edit.cshtml"));
+Check(customerFormView.Contains("asp-validation-summary=\"All\"", StringComparison.Ordinal) &&
+      customerFormView.Contains("asp-validation-for=\"Form.Name\"", StringComparison.Ordinal) &&
+      customerFormView.Contains("asp-validation-for=\"Form.TimeZoneId\"", StringComparison.Ordinal),
+    "Customer form must display both the complete validation summary and field-level errors");
+Check(customerCreateView.Contains("<form asp-action=\"Create\" method=\"post\"", StringComparison.Ordinal) &&
+      customerCreateView.Contains("<button type=\"submit\"", StringComparison.Ordinal) &&
+      customerEditView.Contains("<form asp-action=\"Edit\" method=\"post\"", StringComparison.Ordinal) &&
+      customerEditView.Contains("<button type=\"submit\"", StringComparison.Ordinal),
+    "Customer create and edit pages must post explicitly with visible submit actions");
 var arabicResourceDocument = XDocument.Load(Path.Combine(webRoot, "Resources", "SharedResource.ar.resx"));
 var arabicResourceKeys = arabicResourceDocument.Root!.Elements("data")
     .Select(element => element.Attribute("name")?.Value)
