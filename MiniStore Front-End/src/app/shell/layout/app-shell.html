@@ -1,3 +1,4 @@
+<a class="skip-link" href="#main-content">{{ i18n.text('skipToContent') }}</a>
 <div class="shell" [attr.dir]="i18n.direction()">
   <aside class="sidebar" [attr.aria-label]="i18n.text('workspace')">
     <div class="brand"><span class="brand-mark">M</span><span>{{ i18n.text('appName') }}</span></div>
@@ -13,16 +14,25 @@
     <header class="topbar">
       <div><span class="eyebrow">{{ i18n.text('workspace') }}</span><strong>{{ i18n.text('phaseTitle') }}</strong></div>
       <label class="search"><span aria-hidden="true">⌕</span><input [placeholder]="i18n.text('search')" disabled /></label>
-      <div class="preferences" role="group" [attr.aria-label]="i18n.text('theme')">
+      <details class="preference-menu">
+        <summary class="icon-action" [attr.aria-label]="i18n.text('displayPreferences')" [title]="i18n.text('displayPreferences')">⚙</summary>
+        <div class="preferences" role="group" [attr.aria-label]="i18n.text('displayPreferences')">
         <label><span>{{ i18n.text('theme') }}</span><select [value]="preferences.theme()" (change)="setTheme($any($event.target).value)">
           <option value="system">{{ i18n.text('themeSystem') }}</option><option value="light">{{ i18n.text('themeLight') }}</option><option value="dark">{{ i18n.text('themeDark') }}</option>
         </select></label>
         <label><span>{{ i18n.text('density') }}</span><select [value]="preferences.density()" (change)="setDensity($any($event.target).value)">
           <option value="comfortable">{{ i18n.text('densityComfortable') }}</option><option value="compact">{{ i18n.text('densityCompact') }}</option>
         </select></label>
+        <label><span>{{ i18n.text('sidebarLayout') }}</span><select [value]="preferences.sidebar()" (change)="setSidebar($any($event.target).value)">
+          <option value="expanded">{{ i18n.text('sidebarExpanded') }}</option><option value="compact">{{ i18n.text('sidebarCompact') }}</option>
+        </select></label>
+        <label><span>{{ i18n.text('contentWidth') }}</span><select [value]="preferences.contentWidth()" (change)="setContentWidth($any($event.target).value)">
+          <option value="fluid">{{ i18n.text('contentFluid') }}</option><option value="contained">{{ i18n.text('contentContained') }}</option>
+        </select></label>
         <button type="button" class="icon-action" (click)="preferences.reset()" [attr.aria-label]="i18n.text('resetPreferences')" [title]="i18n.text('resetPreferences')">↺</button>
         <button type="button" class="language" (click)="i18n.toggle()">{{ i18n.text('language') }}</button>
-      </div>
+        </div>
+      </details>
     </header>
 
     <div class="workspace-toolbar" role="toolbar" [attr.aria-label]="i18n.text('workspaceTabs')">
@@ -38,22 +48,22 @@
             {{ i18n.text(tab.titleKey) }} @if (tab.dirty) { <span class="dirty" [attr.aria-label]="i18n.text('dirty')">●</span> }
           </button>
           <button type="button" class="tab-close" (click)="close($event, tab)" [attr.aria-label]="i18n.text('close') + ' ' + i18n.text(tab.titleKey)">×</button>
-          <button type="button" class="tab-more" (click)="closeOthers(tab)" [attr.aria-label]="i18n.text('closeOthers')" [title]="i18n.text('closeOthers')">⋯</button>
+          <button type="button" class="tab-more" (click)="closeOthers($event, tab)" [attr.aria-label]="i18n.text('closeOthers')" [title]="i18n.text('closeOthers')">⋯</button>
         </div>
       }
     </div>
 
-    <main><router-outlet /></main>
+    <main id="main-content" tabindex="-1"><router-outlet /></main>
   </section>
 </div>
 
 @if (workspace.pendingCloseTab(); as pendingTab) {
-  <div class="dialog-backdrop">
+  <div class="dialog-backdrop" (keydown)="onDialogKeydown($event)">
     <section class="confirm-dialog" role="alertdialog" aria-modal="true" [attr.aria-labelledby]="'unsaved-title'" [attr.aria-describedby]="'unsaved-description'">
       <h2 id="unsaved-title">{{ i18n.text('unsavedTitle') }}</h2>
       <p id="unsaved-description">{{ i18n.text('unsavedDescription') }}</p>
       <div class="dialog-actions">
-        <button type="button" class="ui-button secondary" (click)="workspace.cancelClose()">{{ i18n.text('cancel') }}</button>
+        <button type="button" class="ui-button secondary" (click)="cancelClose()">{{ i18n.text('cancel') }}</button>
         <button type="button" class="ui-button primary" (click)="confirmClose()">{{ i18n.text('continueAction') }}</button>
       </div>
     </section>

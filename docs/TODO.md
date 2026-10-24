@@ -18,7 +18,8 @@ The ERP SaaS Foundation Blueprint is imported as a non-authoritative planning re
 - [x] MOD-007 complete Suppliers as the next Angular migration slice: details/create/edit, validation, concurrency and MVC parity. Completed 2026-10-24 with 26 Angular tests and 1081 backend checks.
 - [x] MOD-008 add a permission-aware Command Center foundation with reusable quick preview, favorites and bounded user snapshots. Completed 2026-10-24 with 30 Angular tests.
 - [x] MOD-009 add reusable smart-form productivity: explicit draft policy, saved non-sensitive filters and keyboard-first entry without automatic posting. Completed 2026-10-24 with 36 Angular tests.
-- [ ] MOD-010 complete responsive dashboard, density, focus and layout preferences with safe reset and accessibility evidence. Pre-approved for continuous execution.
+- [x] MOD-010 complete responsive dashboard, density, focus and layout preferences with safe reset and accessibility evidence. Completed 2026-10-24 with visual review and 39 Angular tests.
+- [ ] MOD-011 add reusable duplicate/conflict/data-quality and recovery presentation over authoritative backend evidence. Pre-approved for continuous execution.
 
 - [x] FND-000 import the ERP SaaS Foundation Blueprint with provenance and classify its ten capabilities against the actual MiniStore repository.
 - [ ] FND-010 inventory production environments and operational ownership, approve RPO/RTO and backup retention, run an isolated restore drill, reconcile restored financial/inventory/tenant/outbox state and record evidence.

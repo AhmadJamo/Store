@@ -19,6 +19,8 @@ The in-repository workspace `MiniStore Front-End` is the isolated Angular 22 pre
 
 `MiniStore Front-End/src/app/shared/forms` contains the proven Customer/Supplier safe save shortcut, accessible error summary/focus behavior and allowlisted list-view preferences. It never persists form payloads or search text. See `docs/modernization/PHASE_09_SMART_FORM_PRODUCTIVITY.md`.
 
+`MiniStore Front-End/src/app/core/preferences` and `shell/layout` now also own allowlisted sidebar/content-width state, a compact settings panel, mobile navigation preservation, skip navigation, route focus and trapped/restored unsaved-dialog focus. Global tokens cover compact density, reduced motion and forced colors. See `docs/modernization/PHASE_10_RESPONSIVE_ACCESSIBILITY_PREFERENCES.md`.
+
 ## SAL-130A reusable Analytics Center
 
 `AnalyticsWorkspace` and its widgets persist tenant-owned personal/shared presentation preferences. Generic analytics

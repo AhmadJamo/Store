@@ -56,6 +56,9 @@ const messages = {
     noSnapshots: 'لا توجد لقطات محفوظة.', removeSnapshot: 'حذف لقطة العرض',
     saveShortcutHint: 'اختصار الحفظ: Ctrl + S أو ⌘ + S',
     saveView: 'حفظ طريقة العرض', resetView: 'إعادة ضبط العرض',
+    skipToContent: 'انتقل إلى المحتوى الرئيسي', sidebarLayout: 'القائمة الجانبية', sidebarExpanded: 'موسعة', sidebarCompact: 'مضغوطة',
+    contentWidth: 'عرض المحتوى', contentFluid: 'مرن', contentContained: 'محدد',
+    displayPreferences: 'تفضيلات العرض',
   },
   'en-US': {
     appName: 'MiniStore ERP', workspace: 'Workspace', dashboard: 'Home', search: 'Quick search', language: 'العربية',
@@ -109,6 +112,9 @@ const messages = {
     noSnapshots: 'No saved snapshots.', removeSnapshot: 'Remove view snapshot',
     saveShortcutHint: 'Save shortcut: Ctrl + S or ⌘ + S',
     saveView: 'Save view', resetView: 'Reset view',
+    skipToContent: 'Skip to main content', sidebarLayout: 'Sidebar', sidebarExpanded: 'Expanded', sidebarCompact: 'Compact',
+    contentWidth: 'Content width', contentFluid: 'Fluid', contentContained: 'Contained',
+    displayPreferences: 'Display preferences',
   },
 } as const;
 

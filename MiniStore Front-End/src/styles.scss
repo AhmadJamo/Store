@@ -79,6 +79,7 @@
   --erp-card-padding: .875rem;
   --erp-font-size-body: .925rem;
   --erp-space-4: .75rem;
+  --erp-space-3: .5rem;
   --erp-space-5: 1rem;
   --erp-space-6: 1.5rem;
 }
@@ -89,6 +90,13 @@ body { background: var(--erp-color-canvas); color: var(--erp-color-text); font-s
 button, input, select, textarea { font: inherit; }
 button, a { -webkit-tap-highlight-color: transparent; }
 :focus-visible { outline: 3px solid color-mix(in srgb, var(--erp-color-accent) 70%, white); outline-offset: 2px; }
+.skip-link { position: fixed; inset-block-start: var(--erp-space-2); inset-inline-start: var(--erp-space-2); z-index: 200; padding: var(--erp-space-3); border-radius: var(--erp-radius-sm); color: var(--erp-color-on-primary); background: var(--erp-color-primary); transform: translateY(-150%); transition: transform var(--erp-transition-fast); }
+.skip-link:focus { transform: translateY(0); }
+html[data-sidebar='compact'] app-shell .shell { grid-template-columns: 4.5rem minmax(0, 1fr); }
+html[data-sidebar='compact'] app-shell .brand span:last-child, html[data-sidebar='compact'] app-shell .nav-item { font-size: 0; justify-content: center; padding-inline: 0; }
+html[data-sidebar='compact'] app-shell .nav-item span { font-size: 1rem; }
+html[data-sidebar='compact'] app-shell .sidebar-note { display: none; }
+html[data-content-width='contained'] app-shell main { width: min(100%, 100rem); margin-inline: auto; }
 
 .ui-button { min-height: var(--erp-control-height); padding-inline: var(--erp-space-4); border: 1px solid transparent; border-radius: var(--erp-radius-sm); font-weight: 700; cursor: pointer; transition: background-color var(--erp-transition-fast), border-color var(--erp-transition-fast), transform var(--erp-transition-fast); }
 .ui-button:active:not(:disabled) { transform: translateY(1px); }
@@ -110,5 +118,19 @@ button, a { -webkit-tap-highlight-color: transparent; }
 
 @media (forced-colors: active) {
   :focus-visible { outline-color: Highlight; }
-  .ui-button, .ui-card, input, select { border: 1px solid CanvasText; }
+  .ui-button, .ui-card, input, select, textarea { border: 1px solid CanvasText; }
+  .ui-badge { border: 1px solid currentColor; }
+  app-shell .nav-item.active, app-shell .workspace-tab.active { border: 2px solid Highlight; }
+  app-shell .dialog-backdrop { background: Canvas; }
+}
+
+@media (max-width: 680px) {
+  html[data-sidebar='compact'] app-shell .shell { display: block; }
+  html[data-sidebar='compact'] app-shell .nav-item { flex: 0 0 auto; min-width: 3rem; padding-inline: var(--erp-space-3); font-size: .8rem; justify-content: center; }
+}
+
+@media (max-width: 390px) {
+  app-shell .preferences { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  app-shell .topbar, app-shell main { padding: var(--erp-space-3); }
+  app-shell .workspace-toolbar, app-shell .tabs { padding-inline: var(--erp-space-3); }
 }

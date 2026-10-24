@@ -46,7 +46,7 @@ Angular workspace
 | 7 | نقل الوحدات تدريجيًا حسب المخاطر | بدأ التنفيذ؛ MOD-007 أكمل Suppliers list/details/create/edit مع MVC rollback و26 اختبار Angular و1081 فحص backend |
 | 8 | Command Center، Quick Preview، favorites وsnapshots | مكتمل 2026-10-24؛ مزودا Customers/Suppliers وallowlisted preferences و30 اختبار Angular |
 | 9 | smart forms، saved filters، keyboard entry وdraft policy | مكتمل 2026-10-24؛ no-local-draft policy وsafe shortcuts/errors/preferences و36 اختبار Angular |
-| 10 | dashboard/density/focus/layout preferences | reset وسلوك responsive |
+| 10 | dashboard/density/focus/layout preferences | مكتمل 2026-10-24؛ versioned layout وmobile navigation وskip/dialog focus و39 اختبار Angular |
 | 11 | duplicate/conflict/data-quality/error recovery | read-only أو قواعد معتمدة |
 | 12 | document journey، related records وExplain This Number | backend authoritative evidence |
 | 13 | action/exception center وcontextual help | permission-aware tasks |

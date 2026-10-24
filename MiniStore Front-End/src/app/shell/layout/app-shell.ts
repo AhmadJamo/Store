@@ -1,9 +1,10 @@
+import { DOCUMENT } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, HostListener, inject, OnInit } from '@angular/core';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { LocalizationService } from '../../core/localization/localization.service';
-import { DensityPreference, ThemePreference, UiPreferencesService } from '../../core/preferences/ui-preferences.service';
+import { ContentWidthPreference, DensityPreference, SidebarPreference, ThemePreference, UiPreferencesService } from '../../core/preferences/ui-preferences.service';
 import { NavigationRegistryService } from '../../workspace/navigation/navigation-registry.service';
 import { NavigationItem, WorkspaceTab } from '../../workspace/state/workspace.models';
 import { WorkspaceService } from '../../workspace/state/workspace.service';
@@ -22,13 +23,15 @@ export class AppShell implements OnInit {
   protected readonly navigation = inject(NavigationRegistryService);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly document = inject(DOCUMENT);
+  private dialogOpener: HTMLElement | null = null;
 
   ngOnInit(): void {
     this.workspace.syncRoute(this.router.url);
     this.router.events.pipe(
       filter((event): event is NavigationEnd => event instanceof NavigationEnd),
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe((event) => this.workspace.syncRoute(event.urlAfterRedirects));
+    ).subscribe((event) => { this.workspace.syncRoute(event.urlAfterRedirects); this.focusMain(); });
   }
 
   @HostListener('window:beforeunload', ['$event'])
@@ -53,11 +56,13 @@ export class AppShell implements OnInit {
   protected close(event: Event, tab: WorkspaceTab): void {
     event.stopPropagation();
     const result = this.workspace.requestClose(tab.id);
+    if (result === 'confirmation-required') this.openDialogFrom(event);
     if (result === 'closed') this.navigateToActive();
   }
 
-  protected confirmClose(): void { this.workspace.confirmClose(); this.navigateToActive(); }
-  protected closeOthers(tab: WorkspaceTab): void { this.workspace.closeOthers(tab.id); }
+  protected confirmClose(): void { this.workspace.confirmClose(); this.navigateToActive(); this.restoreDialogFocus(); }
+  protected cancelClose(): void { this.workspace.cancelClose(); this.restoreDialogFocus(); }
+  protected closeOthers(event: Event, tab: WorkspaceTab): void { if (this.workspace.closeOthers(tab.id) === 'confirmation-required') this.openDialogFrom(event); }
   protected reopen(): void { const tab = this.workspace.reopenLastClosed(); if (tab) void this.router.navigateByUrl(tab.route); }
   protected back(): void { if (this.confirmHistoryMove()) { const tab = this.workspace.back(); if (tab) void this.router.navigateByUrl(tab.route); } }
   protected forward(): void { if (this.confirmHistoryMove()) { const tab = this.workspace.forward(); if (tab) void this.router.navigateByUrl(tab.route); } }
@@ -73,10 +78,25 @@ export class AppShell implements OnInit {
     if (next) this.activate(next);
   }
 
+  protected onDialogKeydown(event: KeyboardEvent): void {
+    if (event.key === 'Escape') { event.preventDefault(); this.cancelClose(); return; }
+    if (event.key !== 'Tab') return;
+    const buttons = [...this.document.querySelectorAll<HTMLElement>('.confirm-dialog button:not(:disabled)')];
+    if (!buttons.length) return;
+    const index = buttons.indexOf(this.document.activeElement as HTMLElement);
+    const next = event.shiftKey ? (index <= 0 ? buttons.length - 1 : index - 1) : (index >= buttons.length - 1 ? 0 : index + 1);
+    event.preventDefault(); buttons[next].focus();
+  }
+
   private confirmHistoryMove(): boolean { return !this.workspace.activeTab()?.dirty || globalThis.confirm(this.i18n.text('unsavedDescription')); }
   private confirmLeave(targetId: string): boolean { return !this.workspace.requiresLeaveConfirmation(targetId) || globalThis.confirm(this.i18n.text('unsavedDescription')); }
   private navigateToActive(): void { const active = this.workspace.activeTab(); void this.router.navigateByUrl(active?.route ?? '/'); }
+  private focusMain(): void { queueMicrotask(() => this.document.getElementById('main-content')?.focus()); }
+  private openDialogFrom(event: Event): void { this.dialogOpener = event.currentTarget as HTMLElement; queueMicrotask(() => this.document.querySelector<HTMLElement>('.confirm-dialog button')?.focus()); }
+  private restoreDialogFocus(): void { const opener = this.dialogOpener; this.dialogOpener = null; queueMicrotask(() => opener?.isConnected && opener.focus()); }
 
   protected setTheme(value: string): void { this.preferences.setTheme(value as ThemePreference); }
   protected setDensity(value: string): void { this.preferences.setDensity(value as DensityPreference); }
+  protected setSidebar(value: string): void { this.preferences.setSidebar(value as SidebarPreference); }
+  protected setContentWidth(value: string): void { this.preferences.setContentWidth(value as ContentWidthPreference); }
 }

@@ -4,11 +4,15 @@ import { computed, inject, Injectable, signal } from '@angular/core';
 export type ThemePreference = 'system' | 'light' | 'dark';
 export type ResolvedTheme = 'light' | 'dark';
 export type DensityPreference = 'comfortable' | 'compact';
+export type SidebarPreference = 'expanded' | 'compact';
+export type ContentWidthPreference = 'fluid' | 'contained';
 
 interface StoredPreferences {
-  version: 1;
+  version: 2;
   theme: ThemePreference;
   density: DensityPreference;
+  sidebar: SidebarPreference;
+  contentWidth: ContentWidthPreference;
 }
 
 const storageKey = 'ministore.ui.preferences.v1';
@@ -19,6 +23,8 @@ export class UiPreferencesService {
   private readonly systemDark = signal(false);
   readonly theme = signal<ThemePreference>('system');
   readonly density = signal<DensityPreference>('comfortable');
+  readonly sidebar = signal<SidebarPreference>('expanded');
+  readonly contentWidth = signal<ContentWidthPreference>('fluid');
   readonly resolvedTheme = computed<ResolvedTheme>(() => {
     const preference = this.theme();
     return preference === 'system' ? (this.systemDark() ? 'dark' : 'light') : preference;
@@ -49,9 +55,23 @@ export class UiPreferencesService {
     this.persistAndApply();
   }
 
+  setSidebar(sidebar: SidebarPreference): void {
+    if (!['expanded', 'compact'].includes(sidebar)) return;
+    this.sidebar.set(sidebar);
+    this.persistAndApply();
+  }
+
+  setContentWidth(contentWidth: ContentWidthPreference): void {
+    if (!['fluid', 'contained'].includes(contentWidth)) return;
+    this.contentWidth.set(contentWidth);
+    this.persistAndApply();
+  }
+
   reset(): void {
     this.theme.set('system');
     this.density.set('comfortable');
+    this.sidebar.set('expanded');
+    this.contentWidth.set('fluid');
     this.removeStoredValue();
     this.apply();
   }
@@ -60,10 +80,12 @@ export class UiPreferencesService {
     try {
       const raw = globalThis.localStorage?.getItem(storageKey);
       if (!raw) return;
-      const stored = JSON.parse(raw) as Partial<StoredPreferences>;
-      if (stored.version !== 1) return;
+      const stored = JSON.parse(raw) as { version?: number; theme?: ThemePreference; density?: DensityPreference; sidebar?: SidebarPreference; contentWidth?: ContentWidthPreference };
+      if (stored.version !== 1 && stored.version !== 2) return;
       if (stored.theme && ['system', 'light', 'dark'].includes(stored.theme)) this.theme.set(stored.theme);
       if (stored.density && ['comfortable', 'compact'].includes(stored.density)) this.density.set(stored.density);
+      if (stored.version === 2 && stored.sidebar && ['expanded', 'compact'].includes(stored.sidebar)) this.sidebar.set(stored.sidebar);
+      if (stored.version === 2 && stored.contentWidth && ['fluid', 'contained'].includes(stored.contentWidth)) this.contentWidth.set(stored.contentWidth);
     } catch {
       this.removeStoredValue();
     }
@@ -71,7 +93,7 @@ export class UiPreferencesService {
 
   private persistAndApply(): void {
     try {
-      const value: StoredPreferences = { version: 1, theme: this.theme(), density: this.density() };
+      const value: StoredPreferences = { version: 2, theme: this.theme(), density: this.density(), sidebar: this.sidebar(), contentWidth: this.contentWidth() };
       globalThis.localStorage?.setItem(storageKey, JSON.stringify(value));
     } catch {
       // Preferences remain active in memory when storage is unavailable.
@@ -88,5 +110,7 @@ export class UiPreferencesService {
     root.dataset['theme'] = this.resolvedTheme();
     root.dataset['themePreference'] = this.theme();
     root.dataset['density'] = this.density();
+    root.dataset['sidebar'] = this.sidebar();
+    root.dataset['contentWidth'] = this.contentWidth();
   }
 }
