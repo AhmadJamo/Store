@@ -19,14 +19,23 @@ The existing ASP.NET Core MVC application remains operational and authoritative.
 
 ## Local commands
 
-```bash
-npm ci
-npm start
-npm test -- --watch=false
-npm run build
+Start the backend from the repository root in the first terminal:
+
+```powershell
+dotnet run --project MiniStore.Web --launch-profile MiniStore.Web
 ```
 
-`npm start` proxies `/api` and `/Account` to the local ASP.NET Core host configured in `proxy.conf.json`.
+Start Angular in a second terminal:
+
+```powershell
+Set-Location "MiniStore Front-End"
+npm ci
+npm start
+```
+
+Open `http://localhost:4200`. The backend profile listens at `https://localhost:54052`; `npm start` proxies `/api` and `/Account` to that address. If HTTPS is not trusted on the computer, run `dotnet dev-certs https --trust` once. Sign in through `https://localhost:54052/Account/Login`, then return to Angular.
+
+Tests and production build remain available through `npm test` and `npm run build`.
 
 ## Planned structure
 

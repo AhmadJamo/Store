@@ -1,11 +1,11 @@
 {
   "/api": {
-    "target": "https://localhost:7097",
+    "target": "https://localhost:54052",
     "secure": false,
     "changeOrigin": true
   },
   "/Account": {
-    "target": "https://localhost:7097",
+    "target": "https://localhost:54052",
     "secure": false,
     "changeOrigin": true
   }

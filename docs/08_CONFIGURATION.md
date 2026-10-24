@@ -24,7 +24,7 @@ PUR-240 registers one hosted replenishment scanner. It checks due settings once 
 
 ## Angular development configuration
 
-`MiniStore Front-End/proxy.conf.json` proxies only `/api` and `/Account` to the local HTTPS ASP.NET Core host. The target is a local-development value, contains no credential and must be aligned with the backend launch profile when that profile changes. Production uses a same-origin deployment or trusted reverse proxy; enabling broad CORS is not the default. `.nvmrc` pins Node 24.20.0 and `package.json` restricts the supported major line to Node 24.
+`MiniStore Front-End/proxy.conf.json` proxies only `/api` and `/Account` to `https://localhost:54052`, matching the committed `MiniStore.Web` launch profile. The target is a local-development value and contains no credential; it must remain aligned if the backend launch profile changes. Run the backend first, then `npm start`, and open Angular at `http://localhost:4200`. Production uses a same-origin deployment or trusted reverse proxy; enabling broad CORS is not the default. `.nvmrc` pins Node 24.20.0 and `package.json` restricts the supported major line to Node 24.
 
 The internal API uses the existing Identity cookie plus `MiniStore.Antiforgery`, a strict same-site HttpOnly antiforgery cookie. Angular obtains the request token from `/api/v1/security/csrf` and sends it in `X-CSRF-TOKEN` for unsafe `/api/` methods. No token or secret is stored in browser local storage. OpenAPI is available at `/openapi/internal-v1.json` only after authentication.
 
