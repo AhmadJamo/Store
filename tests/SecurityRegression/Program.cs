@@ -3448,6 +3448,37 @@ Check(customersApi.GetMethod(nameof(CustomersApiController.Create))!
     "Customer API mutations must retain global antiforgery validation");
 Check(typeof(CustomerConcurrencyException).IsSubclassOf(typeof(InvalidOperationException)),
     "Customer concurrency must remain explicit while preserving MVC compatibility");
+var suppliersApi = typeof(SuppliersApiController);
+Check(suppliersApi.GetCustomAttribute<ApiControllerAttribute>() is not null &&
+      suppliersApi.GetCustomAttribute<AuthorizeAttribute>() is not null &&
+      suppliersApi.GetCustomAttribute<RouteAttribute>()?.Template == "api/v1/suppliers",
+    "Supplier list API must remain authenticated and explicitly versioned");
+Check(suppliersApi.GetMethod(nameof(SuppliersApiController.GetPage))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:Suppliers.View" &&
+      suppliersApi.GetMethod(nameof(SuppliersApiController.Get))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:Suppliers.View" &&
+      suppliersApi.GetMethod(nameof(SuppliersApiController.GetCreateForm))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:Suppliers.Create" &&
+      suppliersApi.GetMethod(nameof(SuppliersApiController.GetEditForm))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:Suppliers.Edit" &&
+      suppliersApi.GetMethod(nameof(SuppliersApiController.Create))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:Suppliers.Create" &&
+      suppliersApi.GetMethod(nameof(SuppliersApiController.Update))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:Suppliers.Edit",
+    "Supplier API must preserve operation-specific permissions");
+Check(suppliersApi.GetMethod(nameof(SuppliersApiController.Create))!
+          .GetCustomAttribute<IgnoreAntiforgeryTokenAttribute>() is null &&
+      suppliersApi.GetMethod(nameof(SuppliersApiController.Update))!
+          .GetCustomAttribute<IgnoreAntiforgeryTokenAttribute>() is null,
+    "Supplier API mutations must retain global antiforgery validation");
+Check(typeof(SupplierConcurrencyException).IsSubclassOf(typeof(InvalidOperationException)),
+    "Supplier concurrency must remain explicit while preserving MVC compatibility");
+Check(typeof(ISupplierRepository).GetMethod(nameof(ISupplierRepository.GetPagedAsync)) is not null &&
+      typeof(SupplierService).GetMethod(nameof(SupplierService.GetPageAsync))!
+          .ReturnType == typeof(Task<SupplierListPageDto>) &&
+      typeof(SupplierService).GetMethod(nameof(SupplierService.GetFormPageAsync))!
+          .ReturnType == typeof(Task<SupplierFormPageDto>),
+    "Supplier paging and form options must remain behind the Application and repository boundaries");
 
 Console.WriteLine($"Passed {count} security and inventory regression checks.");
 

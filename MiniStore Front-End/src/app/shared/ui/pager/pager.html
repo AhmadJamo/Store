@@ -1,0 +1,1 @@
+<footer class="pager"><span>{{ totalLabel() }}: {{ totalCount() }}</span><div><button type="button" (click)="pageChange.emit(page() - 1)" [disabled]="page() <= 1">{{ previousLabel() }}</button><span>{{ page() }} / {{ totalPages() || 1 }}</span><button type="button" (click)="pageChange.emit(page() + 1)" [disabled]="page() >= totalPages()">{{ nextLabel() }}</button></div></footer>

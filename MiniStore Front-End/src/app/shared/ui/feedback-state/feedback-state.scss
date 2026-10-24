@@ -1,0 +1,4 @@
+.feedback { display: grid; gap: var(--erp-space-2); place-items: center; min-height: 10rem; padding: var(--erp-space-5); border: 1px dashed var(--erp-color-border); border-radius: var(--erp-radius-md); color: var(--erp-color-text-muted); background: var(--erp-color-surface); text-align: center; }
+.feedback.error { color: var(--erp-color-danger); border-color: var(--erp-color-danger-border); background: var(--erp-color-danger-soft); }
+.spinner { width: 1.5rem; aspect-ratio: 1; border: 3px solid var(--erp-color-border); border-block-start-color: var(--erp-color-primary); border-radius: 50%; animation: spin .8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }

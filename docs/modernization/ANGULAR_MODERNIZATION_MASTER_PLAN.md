@@ -42,10 +42,10 @@ Angular workspace
 | 3 | design tokens، RTL/LTR، themes، density وaccessibility | مكتمل 2026-10-24؛ build و6 tests ومراجعة visual/AX ناجحة |
 | 4 | sidebar، tabs، history مستقل، restoration وdirty guard | مكتمل 2026-10-24؛ build و12 tests و1072 regression ناجحة |
 | 5 | Customers vertical slice مع بقاء MVC | مكتمل 2026-10-24؛ API/UI parity وconcurrency و17 tests و1076 regression ناجحة |
-| 6 | shared forms/tables مستخرجة من استخدامين فعليين | لا generic CRUD engine |
-| 7 | نقل الوحدات تدريجيًا حسب المخاطر | موافقة لكل milestone |
-| 8 | Command Center، Quick Preview، favorites وsnapshots | authorization لكل نتيجة |
-| 9 | smart forms، saved filters، keyboard entry وdraft policy | لا posting تلقائي |
+| 6 | shared forms/tables مستخرجة من استخدامين فعليين | مكتمل 2026-10-24؛ أربعة presentation primitives وCustomers/Suppliers دون generic CRUD |
+| 7 | نقل الوحدات تدريجيًا حسب المخاطر | بدأ التنفيذ؛ MOD-007 أكمل Suppliers list/details/create/edit مع MVC rollback و26 اختبار Angular و1081 فحص backend |
+| 8 | Command Center، Quick Preview، favorites وsnapshots | مكتمل 2026-10-24؛ مزودا Customers/Suppliers وallowlisted preferences و30 اختبار Angular |
+| 9 | smart forms، saved filters، keyboard entry وdraft policy | مكتمل 2026-10-24؛ no-local-draft policy وsafe shortcuts/errors/preferences و36 اختبار Angular |
 | 10 | dashboard/density/focus/layout preferences | reset وسلوك responsive |
 | 11 | duplicate/conflict/data-quality/error recovery | read-only أو قواعد معتمدة |
 | 12 | document journey، related records وExplain This Number | backend authoritative evidence |

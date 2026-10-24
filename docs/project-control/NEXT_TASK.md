@@ -1,38 +1,38 @@
 # المهمة التالية الوحيدة / Next Task
 
-## `MOD-006` — Proven shared form and table primitives
+## `MOD-010` — Responsive layout and accessibility preferences
 
-> الحالة: PROPOSED — AWAITING EXPLICIT APPROVAL
+> الحالة: APPROVED — CONTINUOUS EXECUTION
 
-### آخر شريحة منجزة: MOD-005
+### آخر شريحة منجزة: MOD-009
 
-أُنجزت أول شريحة أعمال Angular للزبائن: قائمة خادمية، تفاصيل، إنشاء وتعديل عبر API داخلي محمي يستخدم
-`CustomerService` نفسه، مع validation و`409` للتزامن وحماية dirty form. نجح Web/Angular build، و17/17 tests،
-و1076 backend checks، وبقي MVC وقاعدة البيانات وقواعد الأعمال دون تغيير.
+اكتملت إنتاجية النماذج والقوائم المشتركة: اختصار حفظ آمن، أخطاء قابلة للتركيز، saved filters allowlisted
+وسياسة تمنع حفظ business drafts محلياً. نجح Angular build و36/36 tests، وبقيت 1081 backend checks ناجحة.
 
-### الهدف المقترح التالي
+### الهدف التالي
 
-استخراج المكونات المشتركة التي أثبتتها شاشة الزبائن والتحقق منها في مستهلك أعمال ثانٍ محدود:
+إكمال تفضيلات التخطيط وإمكانية الوصول عبر Angular workspace:
 
-- primitives صغيرة للعنوان، الفلاتر، حالة التحميل/الفراغ/الخطأ، الجدول وpager؛
-- form error summary وfield error mapping قابلان لإعادة الاستخدام؛
-- تجربة الاستخدام في شاشة أعمال ثانية قبل تعميم أي abstraction؛
-- configuration مرنة للأعمدة والإجراءات دون تمرير صلاحيات كسلطة؛
-- RTL/LTR، keyboard وresponsive behavior؛
-- اختبارات للمكونات المشتركة وللمستهلكين الفعليين.
+- تفضيلات sidebar/layout responsive ومحدودة القيم؛
+- density موحدة تؤثر فعلياً في الجداول والنماذج وCommand Center؛
+- focus-visible وskip navigation وإدارة focus عند التنقل/الحوارات؛
+- احترام reduced-motion وforced-colors والتكبير والشاشات الصغيرة؛
+- reset مركزي واضح لكل تفضيلات العرض غير الحساسة؛
+- فحوصات accessibility مركزة وRTL/LTR.
 
 ### حدود التنفيذ
 
-- لا generic CRUD engine أو schema-driven business forms.
-- لا نقل validation أو permissions أو paging authority إلى الواجهة.
-- لا تغيير API أو business rules لمجرد ملاءمة component عام.
-- لا قاعدة بيانات أو migration.
-- CSS يبقى في ملفات SCSS منفصلة؛ لا inline CSS داخل HTML.
+- لا تخزين بيانات أعمال أو صلاحيات ضمن layout preferences.
+- لا profile يمنح permission أو يغير business workflow.
+- لا قاعدة بيانات أو endpoint جديد في هذه المرحلة.
+- MVC يبقى عاملاً، وCSS في ملفات SCSS منفصلة فقط.
 
 ### بوابة القبول
 
-- يستخدم كل primitive مستهلكان حقيقيان أو يبقى محليًا ولا يُعمم.
-- التخصيص لا يضع business rules داخل component المشترك.
-- RTL/LTR والوصولية والاستجابة تعمل دون inline styles.
-- شاشة الزبائن لا تفقد أي سلوك أو validation أو حماية dirty state.
-- Angular build/tests وbackend regression تبقى ناجحة.
+- التفضيلات versioned/allowlisted/resettable وتتعافى من storage تالف.
+- كل المسارات الأساسية قابلة للوحة المفاتيح مع focus مرئي ومنطقي.
+- لا overflow غير مقصود عند 320px أو تكبير 200% في shell والصفحات المنقولة.
+- reduced-motion/forced-colors/RTL/LTR تعمل دون فقد معنى أو إجراء.
+- Angular/Web build والاختبارات والانحدار تبقى ناجحة.
+- Angular/Web build والاختبارات والانحدار تبقى ناجحة.
+- التعقيد: عالٍ.

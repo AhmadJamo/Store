@@ -27,6 +27,29 @@ public class SupplierRepository : ISupplierRepository
             .ToListAsync();
     }
 
+    public async Task<(List<Supplier> Items, int TotalCount)> GetPagedAsync(SupplierSearchCriteria criteria)
+    {
+        var query = _context.Suppliers.AsNoTracking()
+            .Where(x => criteria.IncludeInactive || x.IsActive);
+        if (!string.IsNullOrWhiteSpace(criteria.Search))
+        {
+            var term = criteria.Search.Trim();
+            query = query.Where(x => x.Name.Contains(term) ||
+                (x.LegalName != null && x.LegalName.Contains(term)) ||
+                (x.ContactPerson != null && x.ContactPerson.Contains(term)) ||
+                (x.Phone != null && x.Phone.Contains(term)) ||
+                (x.Email != null && x.Email.Contains(term)) ||
+                (x.TaxNumber != null && x.TaxNumber.Contains(term)));
+        }
+
+        var totalCount = await query.CountAsync();
+        var items = await query.OrderBy(x => x.Name)
+            .Skip((criteria.Page - 1) * criteria.PageSize)
+            .Take(criteria.PageSize)
+            .ToListAsync();
+        return (items, totalCount);
+    }
+
     public async Task AddAsync(Supplier supplier)
     {
         await _context.Suppliers.AddAsync(supplier);

@@ -1,0 +1,5 @@
+<div class="feedback" [class.error]="kind() === 'error'" [attr.role]="kind() === 'error' ? 'alert' : 'status'" [attr.aria-live]="kind() === 'loading' ? 'polite' : null" [attr.aria-busy]="kind() === 'loading'">
+  @if (kind() === 'loading') { <span class="spinner" aria-hidden="true"></span> }
+  <strong>{{ title() }}</strong>@if (description()) { <span>{{ description() }}</span> }
+  @if (kind() === 'error' && retryLabel()) { <button class="ui-button secondary" type="button" (click)="retry.emit()">{{ retryLabel() }}</button> }
+</div>

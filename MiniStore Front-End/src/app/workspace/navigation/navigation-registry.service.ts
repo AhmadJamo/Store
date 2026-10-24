@@ -5,6 +5,7 @@ import { NavigationItem } from '../state/workspace.models';
 const navigationItems: readonly NavigationItem[] = [
   { id: 'home', route: '/', labelKey: 'dashboard', icon: '⌂' },
   { id: 'customers', route: '/customers', labelKey: 'customersTitle', icon: '♙', requiredPermission: 'Customers.View' },
+  { id: 'suppliers', route: '/suppliers', labelKey: 'suppliersTitle', icon: '♧', requiredPermission: 'Suppliers.View' },
   { id: 'design-system', route: '/design-system', labelKey: 'designSystem', icon: '◇' },
 ];
 

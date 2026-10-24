@@ -36,6 +36,24 @@ export const routes: Routes = [
         path: 'customers/:id',
         loadComponent: () => import('./features/customers/customer-details-page').then((module) => module.CustomerDetailsPageComponent),
       },
+      {
+        path: 'suppliers',
+        loadComponent: () => import('./features/suppliers/supplier-list-page').then((module) => module.SupplierListPageComponent),
+      },
+      {
+        path: 'suppliers/new',
+        canDeactivate: [(component) => component.canDeactivate()],
+        loadComponent: () => import('./features/suppliers/supplier-form-page').then((module) => module.SupplierFormPageComponent),
+      },
+      {
+        path: 'suppliers/:id/edit',
+        canDeactivate: [(component) => component.canDeactivate()],
+        loadComponent: () => import('./features/suppliers/supplier-form-page').then((module) => module.SupplierFormPageComponent),
+      },
+      {
+        path: 'suppliers/:id',
+        loadComponent: () => import('./features/suppliers/supplier-details-page').then((module) => module.SupplierDetailsPageComponent),
+      },
     ],
   },
   { path: '**', redirectTo: '' },

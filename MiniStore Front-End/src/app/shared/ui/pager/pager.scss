@@ -1,0 +1,5 @@
+.pager { display: flex; justify-content: space-between; align-items: center; gap: var(--erp-space-3); }
+.pager div { display: flex; align-items: center; gap: var(--erp-space-2); }
+.pager button { min-height: 2.25rem; border: 1px solid var(--erp-color-border); border-radius: var(--erp-radius-sm); color: var(--erp-color-text); background: var(--erp-color-surface); cursor: pointer; }
+.pager button:disabled { opacity: .45; cursor: not-allowed; }
+@media (max-width: 680px) { .pager { align-items: stretch; flex-direction: column; } }

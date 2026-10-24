@@ -1,0 +1,9 @@
+<section class="supplier-page">
+  @if (problem()) { <app-feedback-state kind="error" [title]="problem()" /> }
+  @else if (!supplier()) { <app-feedback-state kind="loading" [title]="i18n.text('loading')" /> }
+  @else if (supplier(); as item) {
+    <app-page-header eyebrow="P2P" [title]="item.name" [description]="item.legalName || i18n.text('supplierProfile')"><a class="ui-button secondary" routerLink="/suppliers">{{ i18n.text('backToSuppliers') }}</a>@if (session.can('Suppliers.Edit')) { <a class="ui-button primary" [routerLink]="['/suppliers', item.id, 'edit']">{{ i18n.text('edit') }}</a> }</app-page-header>
+    <div class="details-grid"><article class="ui-card"><h2>{{ i18n.text('profile') }}</h2><dl><div><dt>{{ i18n.text('status') }}</dt><dd>{{ item.isActive ? i18n.text('active') : i18n.text('inactive') }}</dd></div><div><dt>{{ i18n.text('contactPerson') }}</dt><dd>{{ item.contactPerson || '—' }}</dd></div><div><dt>{{ i18n.text('phone') }}</dt><dd>{{ item.phone || '—' }}</dd></div><div><dt>{{ i18n.text('email') }}</dt><dd>{{ item.email || '—' }}</dd></div><div><dt>{{ i18n.text('website') }}</dt><dd>{{ item.website || '—' }}</dd></div><div><dt>{{ i18n.text('address') }}</dt><dd>{{ item.address || '—' }}</dd></div></dl></article>
+      <article class="ui-card"><h2>{{ i18n.text('commercialDefaults') }}</h2><dl><div><dt>{{ i18n.text('paymentTermDays') }}</dt><dd>{{ item.paymentTermsDays }}</dd></div><div><dt>{{ i18n.text('taxNumber') }}</dt><dd>{{ item.taxNumber || '—' }}</dd></div><div><dt>{{ i18n.text('registrationNumber') }}</dt><dd>{{ item.registrationNumber || '—' }}</dd></div><div><dt>{{ i18n.text('assignedProducts') }}</dt><dd>{{ item.productCount }}</dd></div></dl></article></div>
+  }
+</section>

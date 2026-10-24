@@ -11,6 +11,14 @@ The in-repository workspace `MiniStore Front-End` is the isolated Angular 22 pre
 
 `MiniStore.Web/Controllers/Api/V1/CustomersController.cs` exposes permission-separated Customer list/details/form/create/update contracts through the existing `CustomerService`; it does not access EF or repositories. `MiniStore Front-End/src/app/features/customers` is the first business vertical slice, with an isolated typed client, responsive list/details/create/edit pages, external SCSS, Problem Details field feedback, row-version concurrency and workspace dirty-state integration. MVC Customers remains the rollback path. See `docs/modernization/PHASE_05_CUSTOMERS_VERTICAL_SLICE.md`.
 
+`MiniStore Front-End/src/app/shared/ui` contains only proven presentation primitives for page headers, feedback states, overflow table regions and server-driven pagers. Customers and the read-only `features/suppliers` directory are the first two consumers. `SuppliersApiController` calls `SupplierService.GetPageAsync`; supplier search/count/order/page remains behind the Application/repository boundary. See `docs/modernization/PHASE_06_SHARED_UI_PRIMITIVES.md`.
+
+`MiniStore Front-End/src/app/features/suppliers` now owns the complete supplier list/details/create/edit Angular slice. `SuppliersApiController` delegates form options and mutations to `SupplierService`; account validation, product assignments, tenant filtering and transactions remain server-owned. Explicit Problem Details and HTTP 409 row-version conflicts keep failed edits recoverable. MVC remains the rollback path. See `docs/modernization/PHASE_07_SUPPLIERS_VERTICAL_SLICE.md`.
+
+`MiniStore Front-End/src/app/features/command-center` owns the typed quick-preview provider registry and versioned personal favorite/snapshot preferences. The home page consumes it for permission-aware commands and bounded Customer/Supplier previews. Only allowlisted navigation/provider identifiers and view mode persist; records, search terms, URLs and permissions do not. See `docs/modernization/PHASE_08_COMMAND_CENTER_FOUNDATION.md`.
+
+`MiniStore Front-End/src/app/shared/forms` contains the proven Customer/Supplier safe save shortcut, accessible error summary/focus behavior and allowlisted list-view preferences. It never persists form payloads or search text. See `docs/modernization/PHASE_09_SMART_FORM_PRODUCTIVITY.md`.
+
 ## SAL-130A reusable Analytics Center
 
 `AnalyticsWorkspace` and its widgets persist tenant-owned personal/shared presentation preferences. Generic analytics

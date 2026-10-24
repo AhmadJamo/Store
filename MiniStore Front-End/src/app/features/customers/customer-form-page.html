@@ -1,9 +1,9 @@
 <section class="customer-page" aria-labelledby="customer-form-title">
   <header class="page-header"><div><span class="eyebrow">CRM</span><h1 id="customer-form-title">{{ i18n.text(id ? 'editCustomer' : 'newCustomer') }}</h1><p>{{ i18n.text('customerFormDescription') }}</p></div><a class="ui-button secondary" routerLink="/customers">{{ i18n.text('cancel') }}</a></header>
   @if (!page() && !problem()) { <div class="state" aria-live="polite">{{ i18n.text('loading') }}</div> }
-  @if (problem()) { <div class="validation-summary" role="alert"><strong>{{ problem() }}</strong></div> }
+  @if (problem()) { <app-form-error-summary [title]="problem()" [errors]="fieldErrors()" (fieldRequested)="focusField($event)" /> }
   @if (page(); as options) {
-    <form [formGroup]="form" (ngSubmit)="save()" novalidate>
+    <form appSafeFormShortcuts [saving]="saving()" (saveShortcut)="save()" [formGroup]="form" (ngSubmit)="save()" novalidate>
       <fieldset><legend>{{ i18n.text('profile') }}</legend><div class="form-grid">
         @if (id) { <label class="ui-field"><span>{{ i18n.text('customerCode') }}</span><input formControlName="customerCode" readonly /></label> }
         <label class="ui-field"><span>{{ i18n.text('customerName') }} *</span><input formControlName="name" autocomplete="organization" />@if (errorFor('name')) { <small>{{ errorFor('name') }}</small> }</label>
@@ -27,7 +27,7 @@
         <label class="check-field"><input formControlName="isTaxExempt" type="checkbox" /> {{ i18n.text('taxExempt') }}</label>
         @if (form.controls.isTaxExempt.value) { <label class="ui-field full"><span>{{ i18n.text('taxExemptionReason') }}</span><textarea formControlName="taxExemptionReason" rows="2"></textarea></label> }
       </div></fieldset>
-      <footer class="form-actions"><a class="ui-button secondary" routerLink="/customers">{{ i18n.text('cancel') }}</a><button class="ui-button primary" type="submit" [disabled]="saving()">{{ saving() ? i18n.text('saving') : i18n.text('save') }}</button></footer>
+      <footer class="form-actions"><span class="shortcut-hint">{{ i18n.text('saveShortcutHint') }}</span><a class="ui-button secondary" routerLink="/customers">{{ i18n.text('cancel') }}</a><button class="ui-button primary" type="submit" [disabled]="saving()">{{ saving() ? i18n.text('saving') : i18n.text('save') }}</button></footer>
     </form>
   }
 </section>

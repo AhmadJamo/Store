@@ -10,8 +10,12 @@
 - `MOD-003` — COMPLETED 2026-10-24: semantic visual system مع system/light/dark themes وcomfortable/compact density وRTL/LTR وaccessibility preview واختبارات ناجحة.
 - `MOD-004` — COMPLETED 2026-10-24: reusable permission-aware workspace engine للتبويبات والتاريخ والاستعادة الآمنة وحماية التغييرات غير المحفوظة.
 - `MOD-005` — COMPLETED 2026-10-24: أول Customers Angular vertical slice مع API صريح وvalidation/concurrency وبقاء MVC.
-- `MOD-006` — PROPOSED: استخراج المكونات المشتركة المثبتة من استخدام فعلي والتحقق منها في مستهلك أعمال ثانٍ. راجع `NEXT_TASK.md`.
-- `MOD-007..019` — GATED: الترحيل التدريجي، الإنتاجية، الشفافية، التقارير، القبول وتقييم تقاعد MVC كما في خطة التحديث الرئيسية.
+- `MOD-006` — COMPLETED 2026-10-24: أربعة presentation primitives مثبتة في Customers/Suppliers مع قائمة موردين خادمية محدودة.
+- `MOD-007` — COMPLETED 2026-10-24: Suppliers list/details/create/edit مع صلاحيات منفصلة وvalidation و409 concurrency وبقاء MVC.
+- `MOD-008` — COMPLETED 2026-10-24: Command Center عام مع bounded quick preview وallowlisted favorites/snapshots وصلاحيات خادمية.
+- `MOD-009` — COMPLETED 2026-10-24: smart-form productivity مع no-local-draft policy وأخطاء/تركيز/اختصار حفظ وفلاتر آمنة.
+- `MOD-010` — APPROVED: responsive dashboard وdensity/focus/layout preferences مع reset وإثبات accessibility.
+- `MOD-011..019` — GATED: جودة البيانات، الشفافية، التقارير، القبول وتقييم تقاعد MVC كما في خطة التحديث الرئيسية.
 
 ## P0 — مخاطر حرجة
 

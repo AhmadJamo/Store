@@ -4639,4 +4639,5 @@
   <data name="Please try again. If the problem continues, contact support." xml:space="preserve"><value>يرجى المحاولة مرة أخرى. إذا استمرت المشكلة فتواصل مع الدعم.</value></data>
   <data name="The route customer does not match the submitted customer." xml:space="preserve"><value>الزبون في المسار لا يطابق الزبون المرسل.</value></data>
   <data name="The customer changed since you opened it." xml:space="preserve"><value>تغيرت بيانات الزبون منذ فتح الصفحة.</value></data>
+  <data name="The supplier changed since you opened it." xml:space="preserve"><value>تغيرت بيانات المورد منذ فتح الصفحة.</value></data>
 </root>

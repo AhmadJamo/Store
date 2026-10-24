@@ -14,7 +14,11 @@ The ERP SaaS Foundation Blueprint is imported as a non-authoritative planning re
 - [x] MOD-003 establish the reusable visual-system foundation: semantic tokens, system/light/dark themes, comfortable/compact density, persisted RTL/LTR preferences, focus/motion/forced-color rules and a bilingual state preview. Completed 2026-10-24.
 - [x] MOD-004 build the reusable workspace engine: permission-aware sidebar metadata, tab identity/deduplication, per-tab history, close/close-others, refresh restoration and dirty-state navigation guard. Completed 2026-10-24 with 12 Angular tests and unchanged backend behavior.
 - [x] MOD-005 deliver the first Customers Angular vertical slice with explicit API DTOs, server-side paging/search, validation, concurrency and MVC parity. Completed 2026-10-24 with 17 Angular tests and 1076 backend checks.
-- [ ] MOD-006 extract only proven shared form/table primitives and validate them against a second real feature consumer. Awaiting explicit approval.
+- [x] MOD-006 extract only proven shared form/table primitives and validate them against a second real feature consumer. Completed 2026-10-24 with Customers/Suppliers, 22 Angular tests and 1079 backend checks.
+- [x] MOD-007 complete Suppliers as the next Angular migration slice: details/create/edit, validation, concurrency and MVC parity. Completed 2026-10-24 with 26 Angular tests and 1081 backend checks.
+- [x] MOD-008 add a permission-aware Command Center foundation with reusable quick preview, favorites and bounded user snapshots. Completed 2026-10-24 with 30 Angular tests.
+- [x] MOD-009 add reusable smart-form productivity: explicit draft policy, saved non-sensitive filters and keyboard-first entry without automatic posting. Completed 2026-10-24 with 36 Angular tests.
+- [ ] MOD-010 complete responsive dashboard, density, focus and layout preferences with safe reset and accessibility evidence. Pre-approved for continuous execution.
 
 - [x] FND-000 import the ERP SaaS Foundation Blueprint with provenance and classify its ten capabilities against the actual MiniStore repository.
 - [ ] FND-010 inventory production environments and operational ownership, approve RPO/RTO and backup retention, run an isolated restore drill, reconcile restored financial/inventory/tenant/outbox state and record evidence.
