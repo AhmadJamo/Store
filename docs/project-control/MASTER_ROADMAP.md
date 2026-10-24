@@ -6,8 +6,10 @@
 
 - `MOD-000` — COMPLETED 2026-10-24: مراجعة read-only للانتقال من MVC إلى API + Angular، مع المعمارية والاعتماديات والمخاطر وMVP.
 - `MOD-001` — COMPLETED 2026-10-24: فرع معزول، Angular 22 foundation مستقل، standalone/lazy structure، RTL/LTR shell، design tokens، proxy محدود، Signals workspace boundary واختبارات frontend/backend ناجحة دون تغيير MVC أوdatabase.
-- `MOD-002` — PROPOSED: versioned internal API foundation للمصادقة same-origin وCSRF والصلاحيات وProblemDetails وOpenAPI. راجع `NEXT_TASK.md`.
-- `MOD-003..019` — GATED: design system، workspace، Customers vertical slice، الترحيل التدريجي، الإنتاجية، الشفافية، التقارير، القبول وتقييم تقاعد MVC كما في خطة التحديث الرئيسية.
+- `MOD-002` — COMPLETED 2026-10-24: versioned internal API foundation للمصادقة same-origin وCSRF والصلاحيات وProblemDetails وOpenAPI وAngular central clients، دون migration أو تغيير MVC.
+- `MOD-003` — COMPLETED 2026-10-24: semantic visual system مع system/light/dark themes وcomfortable/compact density وRTL/LTR وaccessibility preview واختبارات ناجحة.
+- `MOD-004` — PROPOSED: reusable workspace engine للتبويبات والتاريخ والاستعادة وحماية التغييرات غير المحفوظة. راجع `NEXT_TASK.md`.
+- `MOD-005..019` — GATED: Customers vertical slice، الترحيل التدريجي، الإنتاجية، الشفافية، التقارير، القبول وتقييم تقاعد MVC كما في خطة التحديث الرئيسية.
 
 ## P0 — مخاطر حرجة
 

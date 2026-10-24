@@ -1,0 +1,48 @@
+<section class="preview-page" aria-labelledby="preview-title">
+  <header class="page-heading">
+    <span class="eyebrow">MiniStore UI</span>
+    <h1 id="preview-title">{{ i18n.text('visualTitle') }}</h1>
+    <p>{{ i18n.text('visualDescription') }}</p>
+  </header>
+
+  <div class="preview-grid">
+    <article class="ui-card">
+      <h2>{{ i18n.text('actions') }}</h2>
+      <div class="row">
+        <button class="ui-button primary" type="button">{{ i18n.text('primaryAction') }}</button>
+        <button class="ui-button secondary" type="button">{{ i18n.text('secondaryAction') }}</button>
+        <button class="ui-button secondary" type="button" disabled>{{ i18n.text('disabledAction') }}</button>
+      </div>
+    </article>
+
+    <article class="ui-card">
+      <h2>{{ i18n.text('statuses') }}</h2>
+      <div class="row">
+        <span class="ui-badge success">{{ i18n.text('statusSuccess') }}</span>
+        <span class="ui-badge warning">{{ i18n.text('statusWarning') }}</span>
+        <span class="ui-badge danger">{{ i18n.text('statusDanger') }}</span>
+        <span class="ui-badge info">{{ i18n.text('statusInfo') }}</span>
+      </div>
+    </article>
+
+    <article class="ui-card">
+      <h2>{{ i18n.text('formExample') }}</h2>
+      <label class="ui-field"><span>{{ i18n.text('customerName') }}</span><input [placeholder]="i18n.text('customerNamePlaceholder')" /></label>
+      <button class="ui-button primary" type="button">{{ i18n.text('save') }}</button>
+    </article>
+
+    <article class="ui-card state-card" role="status">
+      <span class="state-icon" aria-hidden="true">◇</span>
+      <div><h2>{{ i18n.text('emptyTitle') }}</h2><p>{{ i18n.text('emptyDescription') }}</p></div>
+    </article>
+
+    <article class="ui-card state-card" aria-live="polite" aria-busy="true">
+      <span class="spinner" aria-hidden="true"></span><strong>{{ i18n.text('loading') }}</strong>
+    </article>
+
+    <article class="ui-card state-card error" role="alert">
+      <span class="state-icon" aria-hidden="true">!</span>
+      <div><h2>{{ i18n.text('errorTitle') }}</h2><p>{{ i18n.text('errorDescription') }}</p><button class="ui-button secondary" type="button">{{ i18n.text('retry') }}</button></div>
+    </article>
+  </div>
+</section>

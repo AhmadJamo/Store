@@ -1,41 +1,41 @@
 # المهمة التالية الوحيدة / Next Task
 
-## `MOD-002` — Versioned internal API foundation
+## `MOD-004` — Reusable workspace engine
 
 > الحالة: PROPOSED — AWAITING EXPLICIT APPROVAL
 
-### آخر شريحة منجزة: MOD-001
+### آخر شريحة منجزة: MOD-003
 
-أُنشئ فرع `codex/angular-modernization-foundation` ومشروع Angular 22 مستقل في `MiniStore Front-End` مع
-standalone components وstrict TypeScript وlazy routing وSCSS design tokens وواجهة responsive عربية RTL وإنجليزية LTR.
-أُضيف عقد حالة Workspace صغير قائم على Signals وdevelopment proxy محدود إلى `/api` و`/Account`.
-
-نجح Angular production build بحزمة أولية 229.81 kB raw، ونجح 1/1 frontend test، كما نجح backend Release build
-دون warnings/errors ونجح 1066 فحص انحدار. لم يتغير MVC أوdatabase schema أوbusiness rules.
+أُنشئ نظام تصميم semantic يدعم system/light/dark وcomfortable/compact وRTL/LTR، مع حفظ تفضيلات العرض غير
+الحساسة وreset وحالات وصولية وصفحة معاينة ثنائية اللغة. نجح Angular build و6/6 tests، ونجح 1072 backend checks،
+وبقي production npm audit دون ثغرات. تمت مراجعة الواجهة العربية RTL بصريًا ومن خلال accessibility tree.
 
 ### الهدف المقترح التالي
 
-إضافة أساس API داخلي versioned داخل `MiniStore.Web` لإعادة استخدام المصادقة والصلاحيات وعزل الشركات الحالي:
+إنشاء محرك Workspace مركزي قابل لإعادة الاستخدام لكل الوحدات:
 
-- `/api/v1/session` يعرض هوية المستخدم والشركة واللغة والصلاحيات اللازمة للواجهة دون بيانات حساسة.
-- CSRF contract آمن لطلبات Angular mutation مع cookies same-origin.
-- `ProblemDetails` موحد مع validation errors وcorrelation ID دون كشف الاستثناءات.
-- OpenAPI للـinternal API فقط مع عقود DTO صريحة.
-- conventions للpagination/sorting/filtering وcancellation.
-- integration/regression tests للمصادقة و401/403 وtenant isolation وantiforgery.
+- navigation registry مبني على metadata ومحكوم بصلاحيات session؛
+- تبويبات قابلة للفتح والتنشيط والإغلاق ومنع التكرار؛
+- tab identity مستقرة تفصل route عن query/context؛
+- تاريخ Back/Forward مستقل لكل تبويب؛
+- close، close others، reopen recently closed وحدود قصوى قابلة للتهيئة؛
+- حفظ آمن لحالة التنقل غير الحساسة واستعادتها بعد refresh؛
+- dirty-state guard يمنع فقدان إدخال غير محفوظ؛
+- keyboard navigation وARIA للتبويبات والقوائم؛
+- اختبارات unit للحالة والاستعادة والتكرار والحماية.
 
 ### حدود التنفيذ
 
-- لا Customer API أونقل شاشة قبل قبول foundation.
-- لا تغيير لقواعد Identity أوpermissions أوtenant middleware.
-- لا database migration.
-- لا JWT أوtoken في localStorage.
-- لا إزالة أوتعديل لمسارات MVC الحالية.
+- لا Customer API أو شاشة زبائن بعد.
+- لا حفظ payloads أو permissions أو أسرار في browser storage.
+- لا منح صلاحية من الواجهة؛ backend يبقى المرجع النهائي.
+- لا قاعدة بيانات أو migration.
+- لا تغيير MVC أو business rules.
 
 ### بوابة القبول
 
-- frontend يستطيع قراءة session contract عبر dev proxy.
-- mutation probe محمي من CSRF ويُختبر دون تغيير business data.
-- كل endpoint يفرض backend authorization.
-- OpenAPI وProblemDetails موثقان ومختبران.
-- backend وfrontend builds/tests تظل ناجحة.
+- فتح المسار نفسه لا ينشئ تبويبًا مكررًا دون اختلاف context مقصود.
+- refresh يعيد التبويبات الآمنة والمسار النشط فقط.
+- dirty tab لا يغلق أو ينتقل دون قرار مستخدم واضح.
+- sidebar يخفي غير المسموح بصريًا مع بقاء backend authorization إلزاميًا.
+- Angular build/tests وbackend regression تبقى ناجحة.

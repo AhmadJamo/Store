@@ -3,6 +3,10 @@
 > Source of truth: Static inspection and focused executable regression checks
 > Last reviewed: 2026-10-22
 
+## Internal Angular API boundary (2026-10-24)
+
+The same-origin `/api/v1` boundary reuses the Identity application cookie, tenant session middleware and backend permission service. Authentication and authorization failures return RFC Problem Details JSON with a correlation ID instead of redirecting API callers to MVC pages. Unsafe methods remain under the global antiforgery filter; Angular retrieves a request token from an authenticated endpoint and sends it through `X-CSRF-TOKEN`. OpenAPI requires authentication and contains only internal v1 routes. No JWT, local-storage credential, broad CORS policy or client-authoritative permission decision was added.
+
 SAL-130A analytics remain read-only and pass through tenant-filtered repositories in the Application layer. Saved workspaces are tenant-owned; personal rows are owner-filtered and shared creation requires a separate management permission rechecked in the Application service. The center filters and executes providers only after checking each provider-declared permission, including during crafted workspace creation. Date windows are capped at two years, module/widget keys are validated against the registered provider catalog, and database constraints prevent duplicate widget keys/orders. Comparison queries reuse the same tenant-scoped provider and filters for the derived prior period.
 
 SAL-120A separates `SalesQuotationTemplates.View` from `SalesQuotationTemplates.Manage`; every mutation is POST plus antiforgery. Tenant query filters and composite foreign keys isolate templates and items. The server reloads the active template, requires the exact template version/item set, enforces required items, quantity and option-group limits, rejects disallowed custom lines and replaces submitted product/unit/tax identifiers with authoritative template values before repricing. This prevents a crafted request from weakening template policy or supplying a stale price.

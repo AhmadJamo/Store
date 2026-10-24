@@ -4631,4 +4631,10 @@
   <data name="Warehouse updated successfully." xml:space="preserve"><value>تم تحديث المستودع بنجاح.</value></data>
   <data name="Please correct the highlighted customer fields and try again." xml:space="preserve"><value>يرجى تصحيح حقول الزبون المحددة ثم المحاولة مرة أخرى.</value></data>
   <data name="Select a customer receivable account." xml:space="preserve"><value>يرجى اختيار حساب ذمم مدينة للزبون.</value></data>
+  <data name="One or more validation errors occurred." xml:space="preserve"><value>حدث خطأ واحد أو أكثر في التحقق من البيانات.</value></data>
+  <data name="The request is invalid." xml:space="preserve"><value>الطلب غير صالح.</value></data>
+  <data name="Authentication is required." xml:space="preserve"><value>تسجيل الدخول مطلوب.</value></data>
+  <data name="Access is denied." xml:space="preserve"><value>الوصول مرفوض.</value></data>
+  <data name="An unexpected error occurred." xml:space="preserve"><value>حدث خطأ غير متوقع.</value></data>
+  <data name="Please try again. If the problem continues, contact support." xml:space="preserve"><value>يرجى المحاولة مرة أخرى. إذا استمرت المشكلة فتواصل مع الدعم.</value></data>
 </root>

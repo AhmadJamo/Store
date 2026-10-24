@@ -12,6 +12,12 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/home/home-page').then((module) => module.HomePage),
       },
+      {
+        path: 'design-system',
+        title: 'MiniStore Design System',
+        loadComponent: () =>
+          import('./features/design-system/design-system-page').then((module) => module.DesignSystemPage),
+      },
     ],
   },
   { path: '**', redirectTo: '' },

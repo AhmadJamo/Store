@@ -11,6 +11,14 @@ const messages = {
     foundation: 'الأساس التقني', api: 'عقد API آمن', navigation: 'محرك مساحة العمل', customers: 'أول مسار فعلي: الزبائن',
     ready: 'تم تجهيز Angular foundation', protected: 'MVC وقواعد الأعمال وقاعدة البيانات لم تتغير.',
     noTabs: 'ستظهر الصفحات المفتوحة هنا عند بدء محرك مساحة العمل.',
+    designSystem: 'نظام التصميم', theme: 'المظهر', density: 'كثافة العرض', resetPreferences: 'إعادة الضبط',
+    themeSystem: 'حسب النظام', themeLight: 'فاتح', themeDark: 'داكن', densityComfortable: 'مريح', densityCompact: 'مضغوط',
+    visualTitle: 'معاينة نظام التصميم', visualDescription: 'مرجع حي للحالات المشتركة قبل بناء شاشات الأعمال.',
+    actions: 'الإجراءات', primaryAction: 'إجراء رئيسي', secondaryAction: 'إجراء ثانوي', disabledAction: 'إجراء غير متاح',
+    statuses: 'الحالات', statusSuccess: 'مكتمل', statusWarning: 'يحتاج مراجعة', statusDanger: 'متعذر', statusInfo: 'معلومة',
+    formExample: 'مثال الحقول', customerName: 'اسم الزبون', customerNamePlaceholder: 'أدخل اسم الزبون', save: 'حفظ',
+    emptyTitle: 'لا توجد نتائج', emptyDescription: 'غيّر معايير البحث أو أنشئ سجلًا جديدًا عند توفر الصلاحية.',
+    loading: 'جارٍ التحميل', errorTitle: 'تعذر تحميل البيانات', errorDescription: 'يمكن إعادة المحاولة دون فقدان التغييرات المحلية.', retry: 'إعادة المحاولة',
   },
   'en-US': {
     appName: 'MiniStore ERP', workspace: 'Workspace', dashboard: 'Home', search: 'Quick search', language: 'العربية',
@@ -19,6 +27,14 @@ const messages = {
     foundation: 'Technical foundation', api: 'Secure API contract', navigation: 'Workspace engine', customers: 'First real slice: Customers',
     ready: 'Angular foundation is ready', protected: 'MVC, business rules, and the database remain unchanged.',
     noTabs: 'Open pages will appear here when the workspace engine begins.',
+    designSystem: 'Design system', theme: 'Theme', density: 'Display density', resetPreferences: 'Reset',
+    themeSystem: 'System', themeLight: 'Light', themeDark: 'Dark', densityComfortable: 'Comfortable', densityCompact: 'Compact',
+    visualTitle: 'Design system preview', visualDescription: 'A live reference for shared states before business screens are built.',
+    actions: 'Actions', primaryAction: 'Primary action', secondaryAction: 'Secondary action', disabledAction: 'Unavailable action',
+    statuses: 'Statuses', statusSuccess: 'Complete', statusWarning: 'Needs review', statusDanger: 'Blocked', statusInfo: 'Information',
+    formExample: 'Field example', customerName: 'Customer name', customerNamePlaceholder: 'Enter customer name', save: 'Save',
+    emptyTitle: 'No results', emptyDescription: 'Change the search criteria or create a new record when permitted.',
+    loading: 'Loading', errorTitle: 'Data could not be loaded', errorDescription: 'You can retry without losing local changes.', retry: 'Retry',
   },
 } as const;
 
@@ -27,12 +43,21 @@ export type MessageKey = keyof (typeof messages)['en-US'];
 @Injectable({ providedIn: 'root' })
 export class LocalizationService {
   private readonly document = inject(DOCUMENT);
-  readonly locale = signal<UiLocale>('ar-JO');
+  readonly locale = signal<UiLocale>(this.restoreLocale());
   readonly direction = computed(() => (this.locale() === 'ar-JO' ? 'rtl' : 'ltr'));
 
   constructor() { this.applyDocumentLanguage(); }
   text(key: MessageKey): string { return messages[this.locale()][key]; }
-  toggle(): void { this.locale.update((value) => value === 'ar-JO' ? 'en-US' : 'ar-JO'); this.applyDocumentLanguage(); }
+  toggle(): void {
+    this.locale.update((value) => value === 'ar-JO' ? 'en-US' : 'ar-JO');
+    try { globalThis.localStorage?.setItem('ministore.ui.locale', this.locale()); } catch { /* in-memory fallback */ }
+    this.applyDocumentLanguage();
+  }
+
+  private restoreLocale(): UiLocale {
+    try { return globalThis.localStorage?.getItem('ministore.ui.locale') === 'en-US' ? 'en-US' : 'ar-JO'; }
+    catch { return 'ar-JO'; }
+  }
 
   private applyDocumentLanguage(): void {
     this.document.documentElement.lang = this.locale();

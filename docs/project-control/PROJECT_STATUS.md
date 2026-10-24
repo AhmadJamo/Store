@@ -6,7 +6,7 @@
 >
 > مصدر الحقيقة: الكود، ترحيلات `EF Core` (إطار ربط الكائنات بقاعدة البيانات)، والاختبارات المنفذة
 
-> مسار التحديث: اكتمل `MOD-001` على الفرع `codex/angular-modernization-foundation` بإنشاء Angular 22 foundation مستقل، مع بقاء MVC وقاعدة البيانات وقواعد الأعمال دون تغيير.
+> مسار التحديث: اكتمل `MOD-003` على الفرع `codex/angular-modernization-foundation`: API foundation آمن ونظام تصميم Angular مرن يدعم theme/density وRTL/LTR والوصولية، مع بقاء MVC وقاعدة البيانات وقواعد الأعمال دون تغيير.
 
 ## الملخص التنفيذي
 

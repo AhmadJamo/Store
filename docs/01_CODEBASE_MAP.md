@@ -1,7 +1,11 @@
 # Codebase map
 ## Angular modernization foundation
 
-The in-repository workspace `MiniStore Front-End` is the isolated Angular 22 presentation target. It uses standalone components, strict TypeScript, lazy routes, SCSS design tokens, an Arabic RTL/English LTR localization boundary, a responsive shell and a small Signals-owned workspace state contract. Its development proxy is limited to `/api` and `/Account`. The existing `MiniStore.Web` MVC host remains operational and no backend runtime, database or business rule changed in Phase 1. See `docs/modernization/` and the 2026-10-24 same-origin modernization ADR.
+The in-repository workspace `MiniStore Front-End` is the isolated Angular 22 presentation target. It uses standalone components, strict TypeScript, lazy routes, SCSS design tokens, an Arabic RTL/English LTR localization boundary, a responsive shell and a small Signals-owned workspace state contract. Its central API clients bootstrap the user/tenant/permission session, normalize Problem Details and attach the server-issued CSRF token to unsafe internal API calls. Its development proxy is limited to `/api` and `/Account`.
+
+`MiniStore.Web/Controllers/Api/V1` exposes the authenticated session and CSRF foundation. `InternalApiSessionService` composes explicit Application DTOs through tenant and permission boundaries. `InternalApiExceptionMiddleware`, cookie events and API behavior options keep errors JSON-based with correlation IDs. Authenticated OpenAPI is filtered to `/api/v1`; reusable bounded paging contracts live in `MiniStore.Application/DTOs/Api`. MVC remains operational and Phase 2 adds no database migration or business-rule change. See `docs/modernization/PHASE_02_API_FOUNDATION.md`.
+
+`MiniStore Front-End/src/app/core/preferences` owns versioned, non-sensitive theme/density preferences and system-theme resolution. Global semantic tokens provide light/dark palettes, density dimensions, focus, reduced-motion and forced-color behavior. The lazy `/design-system` page is the bilingual RTL/LTR visual-state reference for shared buttons, badges, fields and empty/loading/error patterns. See `docs/modernization/PHASE_03_VISUAL_SYSTEM.md`.
 
 ## SAL-130A reusable Analytics Center
 

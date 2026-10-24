@@ -27,6 +27,7 @@ using MiniStore.Application.DTOs.Purchases;
 using MiniStore.Application.DTOs.Products;
 using MiniStore.Application.DTOs.Suppliers;
 using MiniStore.Application.DTOs.Warehouses;
+using MiniStore.Application.DTOs.Api;
 using MiniStore.Application.Services;
 using MiniStore.Infrastructure.Authorization;
 using MiniStore.Infrastructure.Persistence;
@@ -42,6 +43,7 @@ using MiniStore.Web.Formatting;
 using MiniStore.Web.Navigation;
 using MiniStore.Web.Services;
 using MiniStore.Web.Observability;
+using MiniStore.Web.Controllers.Api.V1;
 
 var count = 0;
 void Check(bool condition, string message)
@@ -3404,6 +3406,30 @@ Check(typeof(StorageLocationService).GetMethod(nameof(StorageLocationService.Get
         .ReturnType == typeof(Task<StorageLocationPageOptionsDto>),
     "Storage location application service must own warehouse and parent-location page options");
 
+var sessionApi = typeof(SessionController);
+Check(sessionApi.GetCustomAttribute<ApiControllerAttribute>() is not null &&
+      sessionApi.GetCustomAttribute<AuthorizeAttribute>() is not null &&
+      sessionApi.GetCustomAttribute<AllowAnonymousAttribute>() is null,
+    "Internal session API must require authenticated access");
+Check(sessionApi.GetCustomAttribute<RouteAttribute>()?.Template == "api/v1/session",
+    "Internal session API must remain explicitly versioned");
+var securityApi = typeof(SecurityController);
+var mutationProbe = securityApi.GetMethod(nameof(SecurityController.MutationProbe))!;
+Check(securityApi.GetCustomAttribute<AuthorizeAttribute>() is not null &&
+      mutationProbe.GetCustomAttribute<HttpPostAttribute>() is not null &&
+      mutationProbe.GetCustomAttribute<IgnoreAntiforgeryTokenAttribute>() is null,
+    "Internal mutation probe must require authentication and global antiforgery validation");
+var normalizedPage = new PageRequest(0, 999, "name", "  customer  ")
+    .Normalize(new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "name" });
+Check(normalizedPage.Page == 1 && normalizedPage.PageSize == PageRequest.MaximumPageSize &&
+      normalizedPage.Search == "customer" && normalizedPage.Sort == "name",
+    "API paging contract must clamp bounds and normalize search input");
+CheckArgumentThrows(
+    () => new PageRequest(Sort: "unsafe").Normalize(new HashSet<string> { "name" }),
+    "API paging contract must reject undeclared sort fields");
+Check(typeof(IPermissionService).GetMethod(nameof(IPermissionService.GetGrantedAsync)) is not null,
+    "Session composition must use the shared application permission boundary");
+
 Console.WriteLine($"Passed {count} security and inventory regression checks.");
 
 void CheckThrows(Action action, string message)
@@ -3474,6 +3500,8 @@ sealed class StubTenantAuthorization(bool admin) : MiniStore.Domain.Interfaces.I
 {
     public Task<bool> HasRoleAsync(int tenantId, string userId, string roleName) => Task.FromResult(admin && roleName == "Admin");
     public Task<bool> HasPermissionAsync(int tenantId, string userId, string permission) => Task.FromResult(false);
+    public Task<IReadOnlyList<string>> GetGrantedPermissionsAsync(int tenantId, string userId) =>
+        Task.FromResult<IReadOnlyList<string>>([]);
     public Task AddRoleAsync(TenantUserRole assignment) => Task.CompletedTask;
     public Task SaveChangesAsync() => Task.CompletedTask;
 }

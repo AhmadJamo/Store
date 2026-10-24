@@ -4,6 +4,7 @@ using MiniStore.Infrastructure.Authorization;
 using MiniStore.Infrastructure.Persistence;
 using MiniStore.Web.Authorization;
 using Microsoft.AspNetCore.Authorization.Policy;
+using MiniStore.Web.Middleware.Api;
 
 namespace MiniStore.Web.Configuration;
 
@@ -34,6 +35,10 @@ public static class SecurityExtensions
         {
             options.LoginPath = "/Account/Login";
             options.AccessDeniedPath = "/Account/AccessDenied";
+            options.Events.OnRedirectToLogin = context =>
+                WriteApiStatusOrRedirectAsync(context, StatusCodes.Status401Unauthorized);
+            options.Events.OnRedirectToAccessDenied = context =>
+                WriteApiStatusOrRedirectAsync(context, StatusCodes.Status403Forbidden);
         });
 
         services.AddAuthorization(options =>
@@ -79,5 +84,24 @@ public static class SecurityExtensions
         services.AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();
         services.AddScoped<IAuthorizationMiddlewareResultHandler, AuditingAuthorizationMiddlewareResultHandler>();
         return services;
+    }
+
+    private static Task WriteApiStatusOrRedirectAsync(
+        Microsoft.AspNetCore.Authentication.RedirectContext<Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationOptions> context,
+        int apiStatusCode)
+    {
+        if (!context.Request.Path.StartsWithSegments("/api/v1") &&
+            !context.Request.Path.StartsWithSegments("/openapi"))
+        {
+            context.Response.Redirect(context.RedirectUri);
+            return Task.CompletedTask;
+        }
+
+        return InternalApiProblemWriter.WriteAsync(
+            context.HttpContext,
+            apiStatusCode,
+            apiStatusCode == StatusCodes.Status401Unauthorized
+                ? "Authentication is required."
+                : "Access is denied.");
     }
 }

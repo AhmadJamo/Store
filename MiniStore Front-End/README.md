@@ -9,8 +9,10 @@ Angular workspace for the incremental MiniStore ERP presentation modernization.
 - lazy feature routing
 - Angular Signals for synchronous workspace state
 - RxJS-ready HTTP boundary
-- SCSS design tokens
-- Arabic RTL and English LTR foundation
+- semantic SCSS tokens with system/light/dark themes and comfortable/compact density
+- persisted Arabic RTL and English LTR display preferences
+- accessible focus, reduced-motion, forced-colors and shared component-state patterns
+- lazy `/design-system` visual reference
 - same-origin cookie/API strategy through the development proxy
 
 The existing ASP.NET Core MVC application remains operational and authoritative. This project must not reproduce accounting, inventory, pricing, authorization, numbering, concurrency or tenant-isolation rules in the browser.

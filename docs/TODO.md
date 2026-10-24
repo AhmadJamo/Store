@@ -10,7 +10,9 @@ The ERP SaaS Foundation Blueprint is imported as a non-authoritative planning re
 
 - [x] MOD-000 complete the read-only MVC-to-API/Angular repository audit, target architecture, dependency graph, workspace design, MVP, feature matrix and risk assessment. Completed 2026-10-24.
 - [x] MOD-001 create the isolated modernization branch and Angular 22 foundation in `MiniStore Front-End`, with strict standalone architecture, lazy routing, RTL/LTR shell, design tokens, restricted dev proxy, Signals workspace boundary, documentation, rollback and verified frontend/backend builds. Completed 2026-10-24.
-- [ ] MOD-002 add the versioned internal API foundation: same-origin session/CSRF contracts, permission/tenant enforcement, standardized ProblemDetails, OpenAPI and focused integration tests. Awaiting explicit approval.
+- [x] MOD-002 add the versioned internal API foundation: same-origin session/CSRF contracts, permission/tenant enforcement, standardized ProblemDetails, authenticated internal-only OpenAPI, bounded paging conventions, Angular clients and focused security/live HTTP checks. Completed 2026-10-24.
+- [x] MOD-003 establish the reusable visual-system foundation: semantic tokens, system/light/dark themes, comfortable/compact density, persisted RTL/LTR preferences, focus/motion/forced-color rules and a bilingual state preview. Completed 2026-10-24.
+- [ ] MOD-004 build the reusable workspace engine: permission-aware sidebar metadata, tab identity/deduplication, per-tab history, close/close-others, refresh restoration and dirty-state navigation guard. Awaiting explicit approval.
 
 - [x] FND-000 import the ERP SaaS Foundation Blueprint with provenance and classify its ten capabilities against the actual MiniStore repository.
 - [ ] FND-010 inventory production environments and operational ownership, approve RPO/RTO and backup retention, run an isolated restore drill, reconcile restored financial/inventory/tenant/outbox state and record evidence.

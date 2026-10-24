@@ -1,6 +1,7 @@
 using MiniStore.Application.Permissions;
 using MiniStore.Application.Saas;
 using MiniStore.Application.Services;
+using MiniStore.Application.Services.Api;
 using MiniStore.Domain.Interfaces;
 using MiniStore.Infrastructure.Authorization;
 using MiniStore.Infrastructure.Documents;
@@ -40,6 +41,7 @@ public static class BusinessServicesExtensions
         services.AddScoped<ICompanyOnboardingService, CompanyOnboardingService>();
         services.AddScoped<IBillingCheckoutService, BillingCheckoutService>();
         services.AddScoped<IPermissionService, PermissionService>();
+        services.AddScoped<InternalApiSessionService>();
     }
 
     private static void AddCatalogServices(this IServiceCollection services)

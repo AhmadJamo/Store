@@ -1,5 +1,9 @@
 # AI Work Log
 
+- 2026-10-24: Completed approved `MOD-003`. Added versioned non-sensitive UI preferences, system/light/dark theme resolution, comfortable/compact density, persisted locale direction, expanded semantic tokens and accessible focus/reduced-motion/forced-color behavior. Added a lazy bilingual design-system preview for actions, statuses, fields and empty/loading/error states. Angular production build passed at 256.08 kB raw initial, 4/4 files and 6/6 tests passed, production dependency audit remained zero, backend 1072 regression checks passed, and a live Arabic RTL visual/accessibility-tree review succeeded. No backend, database or MVC behavior changed.
+
+- 2026-10-24: Completed approved `MOD-002`. Added the versioned same-origin internal API foundation in the existing Web host: tenant-aware session and granted-permission DTOs through Application/repository boundaries, CSRF bootstrap and side-effect-free protected probe, localized RFC Problem Details with correlation IDs, JSON 401/403 behavior, authenticated v1-only OpenAPI and bounded paging/sort contracts. Angular now bootstraps session/CSRF, centralizes API errors and attaches CSRF headers to unsafe internal requests. No migration or MVC/business-rule change. Web/SecurityRegression build passed with zero warnings/errors, 1072 checks passed, Angular build (232.18 kB initial raw) and 2/2 files with 3/3 tests passed, and live anonymous session/CSRF/OpenAPI probes returned `401 application/problem+json`.
+
 # 2026-10-15 — Purchasing work procedure catalog
 
 - Added a bilingual Settings catalog containing the 19-step purchasing sequence from prerequisite setup through management review.

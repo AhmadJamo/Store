@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using MiniStore.Infrastructure.Persistence;
 using MiniStore.Web.Middleware;
 using MiniStore.Web.Observability;
+using MiniStore.Web.Middleware.Api;
 
 namespace MiniStore.Web.Configuration;
 
@@ -37,6 +38,7 @@ public static class WebApplicationExtensions
             app.UseHsts();
         }
 
+        app.UseMiddleware<InternalApiExceptionMiddleware>();
         app.UseMiddleware<RequestTelemetryMiddleware>();
         app.UseHttpsRedirection();
         app.UseRouting();
@@ -60,6 +62,7 @@ public static class WebApplicationExtensions
             ResponseWriter = WriteHealthResponseAsync
         }).AllowAnonymous();
         app.MapControllers();
+        app.MapOpenApi("/openapi/{documentName}.json").RequireAuthorization();
         app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}")

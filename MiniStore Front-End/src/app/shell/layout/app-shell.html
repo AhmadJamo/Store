@@ -1,9 +1,9 @@
 <div class="shell" [attr.dir]="i18n.direction()">
-  <aside class="sidebar" aria-label="Main navigation">
+  <aside class="sidebar" [attr.aria-label]="i18n.text('workspace')">
     <div class="brand"><span class="brand-mark">M</span><span>{{ i18n.text('appName') }}</span></div>
     <nav>
       @for (item of navigation; track item.key) {
-        <button type="button" class="nav-item"><span aria-hidden="true">{{ item.icon }}</span>{{ i18n.text(item.key) }}</button>
+        <a class="nav-item" [routerLink]="item.route" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: item.route === '/' }"><span aria-hidden="true">{{ item.icon }}</span>{{ i18n.text(item.key) }}</a>
       }
     </nav>
     <div class="sidebar-note"><strong>{{ i18n.text('ready') }}</strong><span>{{ i18n.text('protected') }}</span></div>
@@ -13,7 +13,16 @@
     <header class="topbar">
       <div><span class="eyebrow">{{ i18n.text('workspace') }}</span><strong>{{ i18n.text('phaseTitle') }}</strong></div>
       <label class="search"><span aria-hidden="true">⌕</span><input [placeholder]="i18n.text('search')" disabled /></label>
-      <button type="button" class="language" (click)="i18n.toggle()">{{ i18n.text('language') }}</button>
+      <div class="preferences" role="group" [attr.aria-label]="i18n.text('theme')">
+        <label><span>{{ i18n.text('theme') }}</span><select [value]="preferences.theme()" (change)="setTheme($any($event.target).value)">
+          <option value="system">{{ i18n.text('themeSystem') }}</option><option value="light">{{ i18n.text('themeLight') }}</option><option value="dark">{{ i18n.text('themeDark') }}</option>
+        </select></label>
+        <label><span>{{ i18n.text('density') }}</span><select [value]="preferences.density()" (change)="setDensity($any($event.target).value)">
+          <option value="comfortable">{{ i18n.text('densityComfortable') }}</option><option value="compact">{{ i18n.text('densityCompact') }}</option>
+        </select></label>
+        <button type="button" class="icon-action" (click)="preferences.reset()" [attr.aria-label]="i18n.text('resetPreferences')" [title]="i18n.text('resetPreferences')">↺</button>
+        <button type="button" class="language" (click)="i18n.toggle()">{{ i18n.text('language') }}</button>
+      </div>
     </header>
 
     <div class="tabs" aria-label="Workspace tabs">

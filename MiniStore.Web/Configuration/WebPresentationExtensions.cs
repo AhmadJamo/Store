@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using MiniStore.Web.Localization;
 using MiniStore.Web.Guidance;
 using MiniStore.Web.Observability;
+using Microsoft.Extensions.Localization;
 
 namespace MiniStore.Web.Configuration;
 
@@ -15,6 +16,31 @@ public static class WebPresentationExtensions
         services.AddLocalization(options => options.ResourcesPath = "Resources");
         services.AddMemoryCache();
         services.AddHttpContextAccessor();
+        services.AddAntiforgery(options =>
+        {
+            options.HeaderName = "X-CSRF-TOKEN";
+            options.Cookie.Name = "MiniStore.Antiforgery";
+            options.Cookie.HttpOnly = true;
+            options.Cookie.SameSite = SameSiteMode.Strict;
+            options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+        });
+        services.AddProblemDetails(options => options.CustomizeProblemDetails = context =>
+        {
+            context.ProblemDetails.Extensions["correlationId"] = context.HttpContext.TraceIdentifier;
+        });
+        services.AddOpenApi("internal-v1", options =>
+        {
+            options.AddDocumentTransformer((document, _, _) =>
+            {
+                foreach (var path in document.Paths.Keys
+                             .Where(path => !path.StartsWith("/api/v1", StringComparison.OrdinalIgnoreCase))
+                             .ToList())
+                    document.Paths.Remove(path);
+                document.Info.Title = "MiniStore Internal API";
+                document.Info.Version = "v1";
+                return Task.CompletedTask;
+            });
+        });
         services.Configure<ObservabilityOptions>(
             configuration.GetSection(ObservabilityOptions.SectionName));
         services.AddHealthChecks()
@@ -30,6 +56,21 @@ public static class WebPresentationExtensions
         })
             .AddViewLocalization()
             .AddDataAnnotationsLocalization();
+        services.Configure<ApiBehaviorOptions>(options =>
+        {
+            options.InvalidModelStateResponseFactory = context =>
+            {
+                var localizer = context.HttpContext.RequestServices.GetRequiredService<IStringLocalizer<SharedResource>>();
+                var details = new ValidationProblemDetails(context.ModelState)
+                {
+                    Status = StatusCodes.Status400BadRequest,
+                    Title = localizer["One or more validation errors occurred."],
+                    Type = "https://www.rfc-editor.org/rfc/rfc9110#name-400-bad-request"
+                };
+                details.Extensions["correlationId"] = context.HttpContext.TraceIdentifier;
+                return new BadRequestObjectResult(details);
+            };
+        });
 
         services.Configure<RequestLocalizationOptions>(options =>
         {

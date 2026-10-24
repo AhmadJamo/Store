@@ -20,6 +20,13 @@ public class TenantAuthorizationRepository(AppDbContext context) : ITenantAuthor
             .Join(context.TenantRolePermissions, x => x.TenantRoleId, x => x.TenantRoleId, (_, rp) => rp)
             .Join(context.Permissions, x => x.PermissionId, x => x.Id, (_, p) => p)
             .AnyAsync(x => x.Name == permission);
+    public async Task<IReadOnlyList<string>> GetGrantedPermissionsAsync(int tenantId, string userId) =>
+        await context.TenantUserRoles.Where(x => x.TenantId == tenantId && x.UserId == userId)
+            .Join(context.TenantRolePermissions, x => x.TenantRoleId, x => x.TenantRoleId, (_, rp) => rp)
+            .Join(context.Permissions, x => x.PermissionId, x => x.Id, (_, permission) => permission.Name)
+            .Distinct()
+            .OrderBy(x => x)
+            .ToListAsync();
     public async Task AddRoleAsync(TenantUserRole assignment)
     {
         var hasMembership = context.TenantMemberships.Local.Any(x =>

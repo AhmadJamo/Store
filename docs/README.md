@@ -18,7 +18,7 @@ The imported ERP SaaS Foundation Blueprint and its MiniStore-specific capability
 
 The current single project-control view starts at [project-control/PROJECT_CONTEXT.md](project-control/PROJECT_CONTEXT.md). It links the verified status, complete feature inventory, architecture/database/security/business audits, documentation conflicts, dependency map, one master roadmap, decision and debt registers, test baseline and exactly one proposed next task. Detailed module plans remain supporting documents, not competing priority lists.
 
-The approved incremental ASP.NET Core API + Angular modernization is governed by [modernization/ANGULAR_MODERNIZATION_MASTER_PLAN.md](modernization/ANGULAR_MODERNIZATION_MASTER_PLAN.md). Phase 1 establishes the isolated `MiniStore Front-End` Angular workspace, design tokens, RTL/LTR shell, lazy routing and workspace-state boundary while preserving MVC and all backend business authorities.
+The approved incremental ASP.NET Core API + Angular modernization is governed by [modernization/ANGULAR_MODERNIZATION_MASTER_PLAN.md](modernization/ANGULAR_MODERNIZATION_MASTER_PLAN.md). Phases 1-3 establish the in-repository Angular workspace, protected versioned API foundation and reusable accessible visual system while preserving MVC and all backend business authorities.
 
 The approved `P1-AUD-010` design and implemented `P1-AUD-011..012` foundation/first coverage are in [AUDIT_SECURITY_ARCHITECTURE_AND_IMPLEMENTATION_PLAN.md](AUDIT_SECURITY_ARCHITECTURE_AND_IMPLEMENTATION_PLAN.md). It separates semantic security/operational audit events from accounting, inventory and document histories, and defines the event contract, redaction, access, proposed retention, tamper-evidence stages and rollback gates. Tenant roles/permissions and six sensitive-setting groups now write atomic events when enabled; authentication/platform/external coverage and reading/export remain pending.
 
@@ -64,6 +64,8 @@ The approved `P1-AUD-010` design and implemented `P1-AUD-011..012` foundation/fi
 | [Next task](project-control/NEXT_TASK.md) | The only task proposed for approval before implementation |
 | [Angular modernization master plan](modernization/ANGULAR_MODERNIZATION_MASTER_PLAN.md) | Approved target architecture, phases, MVP, state ownership, tests and rollback |
 | [Angular Phase 1 foundation](modernization/PHASE_01_FOUNDATION.md) | Executed isolated frontend foundation and acceptance evidence |
+| [Angular Phase 2 API foundation](modernization/PHASE_02_API_FOUNDATION.md) | Executed internal API, security contracts, Angular clients and acceptance evidence |
+| [Angular Phase 3 visual system](modernization/PHASE_03_VISUAL_SYSTEM.md) | Semantic tokens, themes, density, RTL/LTR, accessibility and visual evidence |
 
 ## Detailed Documentation
 
