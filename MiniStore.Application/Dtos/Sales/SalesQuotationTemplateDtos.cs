@@ -40,9 +40,9 @@ public sealed class CreateSalesQuotationTemplateItemDto
     [Required, StringLength(150)] public string SectionTitle { get; set; } = string.Empty;
     [Range(1, int.MaxValue)] public int ProductId { get; set; }
     [Range(1, int.MaxValue)] public int MeasurementUnitId { get; set; }
-    [Range(typeof(decimal), "0.000001", "999999999999")] public decimal DefaultQuantity { get; set; } = 1;
-    [Range(typeof(decimal), "0.000001", "999999999999")] public decimal MinimumQuantity { get; set; } = 1;
-    [Range(typeof(decimal), "0.000001", "999999999999")] public decimal MaximumQuantity { get; set; } = 1;
+    [Range(typeof(decimal), "0.000001", "999999999999", ParseLimitsInInvariantCulture = true, ConvertValueInInvariantCulture = true)] public decimal DefaultQuantity { get; set; } = 1;
+    [Range(typeof(decimal), "0.000001", "999999999999", ParseLimitsInInvariantCulture = true, ConvertValueInInvariantCulture = true)] public decimal MinimumQuantity { get; set; } = 1;
+    [Range(typeof(decimal), "0.000001", "999999999999", ParseLimitsInInvariantCulture = true, ConvertValueInInvariantCulture = true)] public decimal MaximumQuantity { get; set; } = 1;
     public bool AllowQuantityChange { get; set; }
     public int? TaxRateId { get; set; }
     public SalesQuotationTemplateItemType ItemType { get; set; } = SalesQuotationTemplateItemType.Required;

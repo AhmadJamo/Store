@@ -1,5 +1,7 @@
 # Inventory and stock movements
-> Status: IMPLEMENTED WITH APPROVED WMS EVOLUTION | Last reviewed: 2026-10-14
+> Status: IMPLEMENTED WITH APPROVED WMS EVOLUTION | Last reviewed: 2026-10-24
+
+Inventory quantity DTOs use culture-invariant decimal range limits and value conversion. Arabic requests therefore reach ordinary model validation rather than throwing while parsing limits such as `0.000001`.
 
 The approved evolution is documented in `../WMS_EVOLUTION_PLAN.md`. Existing ProductStock, ProductLocationStock, StockTransaction, LocationMovement, warehouse policies and StockTransfer workflows remain authoritative until each WMS vertical slice is implemented and reconciled. WMS-020A now adds the StockMovement kernel for new Putaway and Relocation operations only.
 

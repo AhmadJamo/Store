@@ -41,7 +41,7 @@ public sealed class CreateSalesQuotationLineDto
 {
     [Range(1, int.MaxValue)] public int ProductId { get; set; }
     [Range(1, int.MaxValue)] public int MeasurementUnitId { get; set; }
-    [Range(typeof(decimal), "0.000001", "999999999999")] public decimal Quantity { get; set; } = 1m;
+    [Range(typeof(decimal), "0.000001", "999999999999", ParseLimitsInInvariantCulture = true, ConvertValueInInvariantCulture = true)] public decimal Quantity { get; set; } = 1m;
     public int? TaxRateId { get; set; }
     [StringLength(500)] public string? Notes { get; set; }
     public int? SalesQuotationTemplateItemId { get; set; }

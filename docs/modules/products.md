@@ -1,5 +1,7 @@
 # Products and recipes
-> Status: IMPLEMENTED | Last reviewed: 2026-10-12
+> Status: IMPLEMENTED | Last reviewed: 2026-10-24
+
+Recipe yields, ingredient quantities and measurement-unit conversion factors use culture-invariant decimal validation, so Arabic UI culture cannot turn valid dot-based HTML values into a validation exception.
 
 ## Purpose and flow
 Manages database-generated product code, optional barcode, raw/direct/prepared classification, product category, logistics measurements, handling requirements, future tracking policy, active state, POS/sales channel availability, prices and stock unit. `RecipesController` and `RecipeService` create immutable recipe versions for prepared products; saving a recipe automatically marks the product prepared-to-order and clears direct purchase price.

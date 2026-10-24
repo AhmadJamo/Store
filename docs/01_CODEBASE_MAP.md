@@ -99,6 +99,8 @@ deferred to a separately approved CUS-110 gate.
 
 Customer create/edit Razor forms post the explicit nested `CustomerFormPostDto.Form` contract through `CustomersController`, matching their `Form.*` field names. The form keeps generated `CustomerCode` and policy-resolved `AccountId` nullable at the presentation boundary; `CustomerService` generates the code and requires an account only for manual-selection policy. Invalid submissions rebuild the complete page model and expose localized summary and field-level errors instead of failing silently.
 
+All Application DTO decimal `RangeAttribute` contracts parse their declared limits and submitted values with invariant culture. This prevents Arabic UI culture from throwing during MVC validation for quantities, rates, dimensions, prices and other decimals; regression reflects over the complete Application assembly to enforce the rule.
+
 ## Domain source map
 | Files | Type/purpose | Consumers/docs |
 |---|---|---|

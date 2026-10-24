@@ -9,7 +9,7 @@ public sealed class OpenTrackingAllocationLineDto
 {
  [Range(1,int.MaxValue)] public int WarehouseId{get;set;} public int? StorageLocationId{get;set;}
  [Required,StringLength(100)] public string Identifier{get;set;}="";
- [Range(typeof(decimal),"0.000001","999999999999")] public decimal Quantity{get;set;}
+ [Range(typeof(decimal),"0.000001","999999999999",ParseLimitsInInvariantCulture=true,ConvertValueInInvariantCulture=true)] public decimal Quantity{get;set;}
  public DateOnly? ManufactureDate{get;set;} public DateOnly? ExpirationDate{get;set;}
 }
 public sealed class InventoryTrackingPageDto

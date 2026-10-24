@@ -31,7 +31,7 @@ public sealed class SalesDeliveryDetailsDto
 public sealed class CreateSalesDeliveryLineDto
 {
     [Range(1, long.MaxValue)] public long InventoryReservationLineId { get; set; }
-    [Range(typeof(decimal), "0", "999999999999.999999")] public decimal StockQuantity { get; set; }
+    [Range(typeof(decimal), "0", "999999999999.999999", ParseLimitsInInvariantCulture = true, ConvertValueInInvariantCulture = true)] public decimal StockQuantity { get; set; }
     [StringLength(4000)] public string? TrackingAllocations { get; set; }
 }
 public sealed class CreateSalesDeliveryDto

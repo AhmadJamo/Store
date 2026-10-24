@@ -10,7 +10,7 @@ public sealed class CreateInventoryAdjustmentDto
     public List<int> ProductIds { get; set; } = [];
 }
 public sealed class RecordInventoryCountsDto { public List<InventoryCountInputDto> Lines { get; set; } = []; }
-public sealed class InventoryCountInputDto { public int ProductId { get; set; } [Range(typeof(decimal), "0", "999999999999")] public decimal CountedQuantity { get; set; } }
+public sealed class InventoryCountInputDto { public int ProductId { get; set; } [Range(typeof(decimal), "0", "999999999999", ParseLimitsInInvariantCulture = true, ConvertValueInInvariantCulture = true)] public decimal CountedQuantity { get; set; } }
 public class InventoryAdjustmentRowDto
 {
     public long Id { get; set; } public string Number { get; set; } = string.Empty; public string Warehouse { get; set; } = string.Empty;

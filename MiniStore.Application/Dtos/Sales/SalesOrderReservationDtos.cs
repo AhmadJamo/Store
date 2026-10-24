@@ -12,7 +12,7 @@ public enum SalesOrderReservationShortagePolicy
 public sealed class SalesOrderReservationLineInputDto
 {
     [Range(1, int.MaxValue)] public int SalesOrderLineId { get; set; }
-    [Range(typeof(decimal), "0", "999999999999.999999")] public decimal StockQuantity { get; set; }
+    [Range(typeof(decimal), "0", "999999999999.999999", ParseLimitsInInvariantCulture = true, ConvertValueInInvariantCulture = true)] public decimal StockQuantity { get; set; }
 }
 
 public sealed class CreateSalesOrderReservationDto

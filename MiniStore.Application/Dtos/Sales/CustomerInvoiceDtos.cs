@@ -86,7 +86,7 @@ public sealed class CustomerInvoiceCreatePageDto
 public sealed class CreateCustomerInvoiceLineDto
 {
     [Range(1, int.MaxValue)] public int SalesOrderLineId { get; set; }
-    [Range(typeof(decimal), "0", "999999999999.999999")] public decimal Quantity { get; set; }
+    [Range(typeof(decimal), "0", "999999999999.999999", ParseLimitsInInvariantCulture = true, ConvertValueInInvariantCulture = true)] public decimal Quantity { get; set; }
 }
 
 public sealed class CreateCustomerInvoiceDto

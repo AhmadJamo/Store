@@ -478,6 +478,34 @@ finally
 {
     CultureInfo.CurrentCulture = previousCulture;
 }
+var decimalRangeContracts = typeof(CustomerFormDto).Assembly.GetTypes()
+    .SelectMany(type => type.GetProperties().Select(property => new
+    {
+        Name = $"{type.FullName}.{property.Name}",
+        Range = property.GetCustomAttribute<RangeAttribute>()
+    }))
+    .Where(item => item.Range?.OperandType == typeof(decimal))
+    .ToList();
+Check(decimalRangeContracts.Count > 0 && decimalRangeContracts.All(item =>
+        item.Range!.ParseLimitsInInvariantCulture && item.Range.ConvertValueInInvariantCulture),
+    "Every decimal RangeAttribute must parse limits and submitted values independently of UI culture");
+var decimalRangesValidateInArabic = true;
+try
+{
+    CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("ar-JO");
+    foreach (var contract in decimalRangeContracts)
+        _ = contract.Range!.IsValid(0m);
+}
+catch (ArgumentException)
+{
+    decimalRangesValidateInArabic = false;
+}
+finally
+{
+    CultureInfo.CurrentCulture = previousCulture;
+}
+Check(decimalRangesValidateInArabic,
+    "Decimal range validation must not throw while the Arabic UI culture is active");
 CheckThrows(() => documentSequence.MoveNextNumberForward(50),
     "The next document number must never move backwards");
 CheckThrows(() => documentSequence.GenerateNext(new DateTime(2025, 12, 31)),

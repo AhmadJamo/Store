@@ -1,5 +1,5 @@
 # Settings
-> Status: PARTIALLY IMPLEMENTED | Last reviewed: 2026-10-23
+> Status: PARTIALLY IMPLEMENTED | Last reviewed: 2026-10-24
 
 Organization Identity is now a dedicated bilingual settings screen rather than a small group of fields inside regional settings. It keeps the commercial and registered legal names in English and Arabic, commercial/tax registration numbers, primary and secondary contact details, bilingual address components, country code and the preferred trade/legal display policy. A tenant-scoped PNG/JPEG logo is validated by file signature and capped at 2 MB.
 
@@ -20,6 +20,8 @@ Document Numbering is the single administration page for wholesale invoice, POS 
 General Settings stores regional preferences, including the company default interface language: English (`en-US`) or Arabic (`ar-JO`). A user can override it with the navigation language switch; the choice is stored in an essential, HttpOnly culture cookie. Arabic requests use RTL markup and Bootstrap RTL. Shared navigation, authentication, notifications, delete confirmation and the Settings hub/general/identity screens use centralized localization resources. Remaining legacy feature screens are migrated when they are next changed.
 
 General Settings also defines the maximum decimal places shown for money and quantities. Purchase screens respect those company choices but suppress insignificant trailing zeros, so configured precision remains available without displaying `5.0000` for a whole-number quantity. Formatting affects presentation and HTML number values only; persisted precision and calculations remain unchanged.
+
+Decimal validation limits are parsed with invariant culture while displayed messages and layout follow the selected UI language. Arabic requests therefore validate dot-based HTML decimal values safely, including document-design dimensions and watermark opacity.
 
 Sources: setting entities, DTOs, services, repository interfaces/implementations/configurations, `SettingsController`, settings views. Number changes affect new sales, transfers and journal entries only; saved documents keep their identifier.
 

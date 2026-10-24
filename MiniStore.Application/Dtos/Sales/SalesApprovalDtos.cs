@@ -9,7 +9,7 @@ public sealed class CreateSalesApprovalRuleDto
     public int? CustomerId { get; set; }
     public SalesControlMetric Metric { get; set; } = SalesControlMetric.CreditExposure;
     public SalesControlComparison Comparison { get; set; } = SalesControlComparison.GreaterThanOrEqual;
-    [Range(typeof(decimal), "0", "999999999999.999999")] public decimal Threshold { get; set; }
+    [Range(typeof(decimal), "0", "999999999999.999999", ParseLimitsInInvariantCulture = true, ConvertValueInInvariantCulture = true)] public decimal Threshold { get; set; }
     public SalesControlAction Action { get; set; } = SalesControlAction.RequireApproval;
     [Range(1, 9999)] public int Priority { get; set; } = 100;
     public DateOnly? EffectiveFrom { get; set; }

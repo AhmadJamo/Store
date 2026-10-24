@@ -23,21 +23,21 @@ public sealed class SaveSalesPriceListDto
 {
  [Required,StringLength(30,MinimumLength=2)] public string Code{get;set;}="";[Required,StringLength(150)]public string Name{get;set;}="";
  [Required,StringLength(3,MinimumLength=3)]public string CurrencyCode{get;set;}="JOD";public DateOnly? ValidFrom{get;set;}public DateOnly? ValidTo{get;set;}
- [Range(typeof(decimal),"0.000001","1000")]public decimal RoundingIncrement{get;set;}=0.01m;
+ [Range(typeof(decimal),"0.000001","1000",ParseLimitsInInvariantCulture=true,ConvertValueInInvariantCulture=true)]public decimal RoundingIncrement{get;set;}=0.01m;
 }
 public sealed class SaveSalesPriceRuleDto
 {
  [Range(1,int.MaxValue)]public int SalesPriceListId{get;set;}public SalesPriceRuleScope Scope{get;set;}=SalesPriceRuleScope.AllProducts;
  public int? ProductId{get;set;}public int? ProductCategoryId{get;set;}public int? MeasurementUnitId{get;set;}
- [Range(typeof(decimal),"0.000001","999999999999")]public decimal MinimumQuantity{get;set;}=1m;[Range(1,9999)]public int Priority{get;set;}=100;
+ [Range(typeof(decimal),"0.000001","999999999999",ParseLimitsInInvariantCulture=true,ConvertValueInInvariantCulture=true)]public decimal MinimumQuantity{get;set;}=1m;[Range(1,9999)]public int Priority{get;set;}=100;
  public DateOnly? EffectiveFrom{get;set;}public DateOnly? EffectiveTo{get;set;}public SalesPriceComputationType ComputationType{get;set;}=SalesPriceComputationType.PercentageAdjustment;
- [Range(typeof(decimal),"-100","10000")]public decimal Value{get;set;}
+ [Range(typeof(decimal),"-100","10000",ParseLimitsInInvariantCulture=true,ConvertValueInInvariantCulture=true)]public decimal Value{get;set;}
 }
 public sealed class SalesPricingStatusDto { [Range(1,int.MaxValue)]public int Id{get;set;} public bool Active{get;set;} public byte[] RowVersion{get;set;}=[]; public int? PriceListId{get;set;} }
 public sealed class EvaluateSalesPriceDto
 {
  public int? PriceListId{get;set;}public int? CustomerId{get;set;}[Range(1,int.MaxValue)]public int ProductId{get;set;}[Range(1,int.MaxValue)]public int MeasurementUnitId{get;set;}
- [Range(typeof(decimal),"0.000001","999999999999")]public decimal Quantity{get;set;}=1m;public DateOnly PricingDate{get;set;}=DateOnly.FromDateTime(DateTime.Today);
+ [Range(typeof(decimal),"0.000001","999999999999",ParseLimitsInInvariantCulture=true,ConvertValueInInvariantCulture=true)]public decimal Quantity{get;set;}=1m;public DateOnly PricingDate{get;set;}=DateOnly.FromDateTime(DateTime.Today);
  public SaleChannel Channel{get;set;}=SaleChannel.Wholesale;public int? TaxRateId{get;set;}
 }
 public sealed class SalesPriceEvaluationDto

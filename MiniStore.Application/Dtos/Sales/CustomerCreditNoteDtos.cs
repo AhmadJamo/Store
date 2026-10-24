@@ -14,7 +14,7 @@ public sealed class CustomerCreditNoteAvailableLineDto
 }
 public sealed class CreateCustomerCreditNoteLineDto
 {
- [Range(1,int.MaxValue)]public int CustomerInvoiceLineId{get;set;}[Range(1,int.MaxValue)]public int CustomerReturnReceiptLineId{get;set;}[Range(typeof(decimal),"0","999999999999.999999")]public decimal Quantity{get;set;}
+ [Range(1,int.MaxValue)]public int CustomerInvoiceLineId{get;set;}[Range(1,int.MaxValue)]public int CustomerReturnReceiptLineId{get;set;}[Range(typeof(decimal),"0","999999999999.999999",ParseLimitsInInvariantCulture=true,ConvertValueInInvariantCulture=true)]public decimal Quantity{get;set;}
 }
 public sealed class CreateCustomerCreditNoteDto
 {

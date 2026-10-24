@@ -16,12 +16,12 @@ public sealed class CreateDocumentDesignDto
     public bool AllowLanguageOverride { get; set; } = true;
     public DocumentPageSize PageSize { get; set; } = DocumentPageSize.A4;
     public DocumentPageOrientation Orientation { get; set; } = DocumentPageOrientation.Portrait;
-    [Range(typeof(decimal), "50", "1000")] public decimal? CustomPageWidthMm { get; set; }
-    [Range(typeof(decimal), "50", "1000")] public decimal? CustomPageHeightMm { get; set; }
-    [Range(typeof(decimal), "0", "50")] public decimal MarginTopMm { get; set; } = 12;
-    [Range(typeof(decimal), "0", "50")] public decimal MarginEndMm { get; set; } = 12;
-    [Range(typeof(decimal), "0", "50")] public decimal MarginBottomMm { get; set; } = 15;
-    [Range(typeof(decimal), "0", "50")] public decimal MarginStartMm { get; set; } = 12;
+    [Range(typeof(decimal), "50", "1000", ParseLimitsInInvariantCulture = true, ConvertValueInInvariantCulture = true)] public decimal? CustomPageWidthMm { get; set; }
+    [Range(typeof(decimal), "50", "1000", ParseLimitsInInvariantCulture = true, ConvertValueInInvariantCulture = true)] public decimal? CustomPageHeightMm { get; set; }
+    [Range(typeof(decimal), "0", "50", ParseLimitsInInvariantCulture = true, ConvertValueInInvariantCulture = true)] public decimal MarginTopMm { get; set; } = 12;
+    [Range(typeof(decimal), "0", "50", ParseLimitsInInvariantCulture = true, ConvertValueInInvariantCulture = true)] public decimal MarginEndMm { get; set; } = 12;
+    [Range(typeof(decimal), "0", "50", ParseLimitsInInvariantCulture = true, ConvertValueInInvariantCulture = true)] public decimal MarginBottomMm { get; set; } = 15;
+    [Range(typeof(decimal), "0", "50", ParseLimitsInInvariantCulture = true, ConvertValueInInvariantCulture = true)] public decimal MarginStartMm { get; set; } = 12;
     [Required, RegularExpression("^#[0-9A-Fa-f]{6}$")] public string PrimaryColor { get; set; } = "#1F4E78";
     [Required, RegularExpression("^#[0-9A-Fa-f]{6}$")] public string AccentColor { get; set; } = "#D9EAF7";
     [Required, RegularExpression("^#[0-9A-Fa-f]{6}$")] public string TextColor { get; set; } = "#1F2937";
@@ -59,7 +59,7 @@ public sealed class CreateDocumentDesignDto
     [StringLength(1000)] public string? FooterTextArabic { get; set; }
     [StringLength(100)] public string? WatermarkText { get; set; }
     [StringLength(100)] public string? WatermarkTextArabic { get; set; }
-    [Range(typeof(decimal), "0.02", "0.5")] public decimal WatermarkOpacity { get; set; } = 0.12m;
+    [Range(typeof(decimal), "0.02", "0.5", ParseLimitsInInvariantCulture = true, ConvertValueInInvariantCulture = true)] public decimal WatermarkOpacity { get; set; } = 0.12m;
     public List<CreateDocumentDesignSectionDto> Sections { get; set; } = DefaultSections();
 
     public static List<CreateDocumentDesignSectionDto> DefaultSections() =>

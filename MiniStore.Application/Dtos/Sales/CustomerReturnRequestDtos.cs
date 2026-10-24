@@ -15,7 +15,7 @@ public sealed class CustomerReturnRequestDetailsDto
     public List<CustomerReturnRequestLineDto> Lines { get; init; } = []; public List<CustomerReturnRequestHistoryDto> History { get; init; } = [];
     public bool HasRemainingReceipt { get; init; } public List<int> ReceiptIds { get; init; } = [];
 }
-public sealed class CreateCustomerReturnRequestLineDto { [Range(1, int.MaxValue)] public int SalesDeliveryLineId { get; set; } [Range(typeof(decimal), "0", "999999999999.999999")] public decimal StockQuantity { get; set; } }
+public sealed class CreateCustomerReturnRequestLineDto { [Range(1, int.MaxValue)] public int SalesDeliveryLineId { get; set; } [Range(typeof(decimal), "0", "999999999999.999999", ParseLimitsInInvariantCulture = true, ConvertValueInInvariantCulture = true)] public decimal StockQuantity { get; set; } }
 public sealed class CreateCustomerReturnRequestDto
 {
     [Range(1, int.MaxValue)] public int SalesDeliveryId { get; set; } public DateOnly RequestDate { get; set; } = DateOnly.FromDateTime(DateTime.Today);
