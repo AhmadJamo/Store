@@ -4630,4 +4630,5 @@
   <data name="Warehouse deleted successfully." xml:space="preserve"><value>تم حذف المستودع بنجاح.</value></data>
   <data name="Warehouse updated successfully." xml:space="preserve"><value>تم تحديث المستودع بنجاح.</value></data>
   <data name="Please correct the highlighted customer fields and try again." xml:space="preserve"><value>يرجى تصحيح حقول الزبون المحددة ثم المحاولة مرة أخرى.</value></data>
+  <data name="Select a customer receivable account." xml:space="preserve"><value>يرجى اختيار حساب ذمم مدينة للزبون.</value></data>
 </root>

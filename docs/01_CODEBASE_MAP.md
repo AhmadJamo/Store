@@ -97,7 +97,7 @@ deferred to a separately approved CUS-110 gate.
 
 `MiniStore.Web/Guidance/ActionableErrorGuidance.cs` maps recognized, user-resolvable purchase, sales-pricing/customer-default and sales-delivery errors to permission-protected setup, inventory or document destinations. The shared notification partial renders the resulting action for both modal notifications and page validation summaries; ordinary validation errors remain message-only.
 
-Customer create/edit Razor forms post the explicit nested `CustomerFormPostDto.Form` contract through `CustomersController`, matching their `Form.*` field names. Invalid submissions rebuild the complete page model and expose localized summary and field-level errors instead of failing silently.
+Customer create/edit Razor forms post the explicit nested `CustomerFormPostDto.Form` contract through `CustomersController`, matching their `Form.*` field names. The form keeps generated `CustomerCode` and policy-resolved `AccountId` nullable at the presentation boundary; `CustomerService` generates the code and requires an account only for manual-selection policy. Invalid submissions rebuild the complete page model and expose localized summary and field-level errors instead of failing silently.
 
 ## Domain source map
 | Files | Type/purpose | Consumers/docs |

@@ -7,7 +7,7 @@ public class CustomerListItemDto { public int Id { get; init; } public string Cu
 public sealed class CustomerListPageDto { public CustomerListQueryDto Query { get; init; } = new(); public List<CustomerListItemDto> Items { get; init; } = []; public int TotalCount { get; init; } public int TotalPages => Math.Max(1, (int)Math.Ceiling(TotalCount / (double)Query.PageSize)); }
 public class CustomerFormDto
 {
-    public int Id { get; set; } public string CustomerCode { get; set; } = "";
+    public int Id { get; set; } public string? CustomerCode { get; set; }
     [Required, StringLength(200)] public string Name { get; set; } = "";
     public CustomerType Type { get; set; } = CustomerType.Company;
     [StringLength(200)] public string? LegalName { get; set; }
@@ -19,7 +19,7 @@ public class CustomerFormDto
     [Required] public string PreferredLanguage { get; set; } = "ar-JO";
     [Required, StringLength(100)] public string TimeZoneId { get; set; } = "Asia/Amman";
     [StringLength(1000)] public string? Notes { get; set; }
-    public int AccountId { get; set; }
+    public int? AccountId { get; set; }
     [Range(0,3650)] public int PaymentTermDays { get; set; }
     [StringLength(3,MinimumLength=3)] public string? PreferredCurrencyCode { get; set; }
     public int? DefaultTaxRateId { get; set; }

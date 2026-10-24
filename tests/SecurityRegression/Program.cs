@@ -588,6 +588,12 @@ Check(customerController.GetMethods()
         .Where(x => x.GetCustomAttribute<HttpPostAttribute>() is not null)
         .All(x => x.GetParameters().Single().ParameterType == typeof(CustomerFormPostDto)),
     "Customer create and edit must accept the explicit nested Form post model rendered by the shared customer form");
+var customerFormContract = typeof(CustomerFormDto);
+var customerFormNullability = new NullabilityInfoContext();
+Check(customerFormNullability.Create(customerFormContract.GetProperty(nameof(CustomerFormDto.CustomerCode))!).WriteState == NullabilityState.Nullable,
+    "Generated customer code must not be required by MVC before CustomerService assigns it");
+Check(customerFormContract.GetProperty(nameof(CustomerFormDto.AccountId))!.PropertyType == typeof(int?),
+    "Customer account selection must accept an empty post when receivable policy resolves the account automatically");
 Check(customerController.GetMethods().Where(x=>x.Name is nameof(CustomersController.SaveContact) or nameof(CustomersController.SaveAddress))
         .All(x=>x.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy==$"{PermissionAuthorizeAttribute.PolicyPrefix}Customers.Edit"&&x.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null),
     "Customer contact and address edits must require edit permission and antiforgery");
