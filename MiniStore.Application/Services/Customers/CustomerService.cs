@@ -113,7 +113,7 @@ public class CustomerService(ICustomerRepository customers, IAccountRepository a
 
     private async Task ValidateBusinessDefaultsAsync(CustomerFormDto dto,int? excludedId)
     {
-        if (await customers.NameExistsAsync(dto.Name, excludedId)) throw new InvalidOperationException("Customer name already exists.");
+        if (await customers.NameExistsAsync(dto.Name, excludedId)) throw new CustomerDuplicateException("Customer name already exists.");
         var supportedCurrencies=await GetCurrencyOptionsAsync();
         if(!string.IsNullOrWhiteSpace(dto.PreferredCurrencyCode)&&!supportedCurrencies.Contains(dto.PreferredCurrencyCode.Trim().ToUpperInvariant()))
             throw new InvalidOperationException("Selected preferred currency is not configured.");

@@ -18,6 +18,11 @@ Shared form productivity remains presentation orchestration: keyboard save emits
 
 UI layout state remains in the Core preference boundary, not feature or workspace business state. Versioned theme/density/sidebar/content-width enums apply semantic document data attributes consumed by external SCSS. Responsive behavior can override presentation at small widths, but stored preferences never alter navigation authorization, feature availability or backend behavior. Route and modal focus management remains shell-owned.
 
+Recovery presentation uses a stable internal Problem Details `code` plus HTTP status, not translated-message matching.
+Application services still decide validation, duplicate and concurrency outcomes; Web maps them to presentation codes,
+and Angular maps those codes to non-destructive actions. The reusable recovery component cannot retry mutations,
+override row versions, merge duplicates or grant navigation. See `modernization/PHASE_11_DATA_QUALITY_RECOVERY.md`.
+
 ## Reusable analytics boundary (2026-10-22)
 
 The central Analytics Center depends only on generic Application DTOs and `IAnalyticsModuleProvider`. Each module owns its calculations and exposes stable dimensions, filters and widget keys; the center owns workspace persistence, layout, date validation and previous-period/year comparison. Sales and Purchasing are registrations, not dependencies of the controller or generic views. Saved workspaces store presentation/query configuration rather than copied analytical facts. See `decisions/ADR-20261022-REUSABLE-ANALYTICS-CENTER.md`.

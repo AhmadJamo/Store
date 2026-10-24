@@ -43,6 +43,7 @@ using MiniStore.Web.Formatting;
 using MiniStore.Web.Navigation;
 using MiniStore.Web.Services;
 using MiniStore.Web.Observability;
+using MiniStore.Web.Middleware.Api;
 using MiniStore.Web.Controllers.Api.V1;
 
 var count = 0;
@@ -3448,6 +3449,21 @@ Check(customersApi.GetMethod(nameof(CustomersApiController.Create))!
     "Customer API mutations must retain global antiforgery validation");
 Check(typeof(CustomerConcurrencyException).IsSubclassOf(typeof(InvalidOperationException)),
     "Customer concurrency must remain explicit while preserving MVC compatibility");
+Check(typeof(CustomerDuplicateException).IsSubclassOf(typeof(InvalidOperationException)) &&
+      typeof(SupplierDuplicateException).IsSubclassOf(typeof(InvalidOperationException)),
+    "Duplicate classification must use explicit Application outcomes while preserving MVC compatibility");
+Check(InternalApiProblemCodes.FromStatus(StatusCodes.Status400BadRequest) == InternalApiProblemCodes.Validation &&
+      InternalApiProblemCodes.FromStatus(StatusCodes.Status401Unauthorized) == InternalApiProblemCodes.Unauthorized &&
+      InternalApiProblemCodes.FromStatus(StatusCodes.Status403Forbidden) == InternalApiProblemCodes.Forbidden &&
+      InternalApiProblemCodes.FromStatus(StatusCodes.Status404NotFound) == InternalApiProblemCodes.NotFound &&
+      InternalApiProblemCodes.FromStatus(StatusCodes.Status503ServiceUnavailable) == InternalApiProblemCodes.Transient,
+    "Internal API problem codes must remain stable and status-aware");
+var problemContext = new DefaultHttpContext { TraceIdentifier = "regression-trace" };
+var stableProblem = (ProblemDetails)InternalApiProblemFactory.Create(
+    problemContext, StatusCodes.Status409Conflict, "Changed", InternalApiProblemCodes.Concurrency).Value!;
+Check(stableProblem.Extensions["code"]?.ToString() == InternalApiProblemCodes.Concurrency &&
+      stableProblem.Extensions["correlationId"]?.ToString() == "regression-trace",
+    "Internal API problems must expose a stable code and support correlation without exception details");
 var suppliersApi = typeof(SuppliersApiController);
 Check(suppliersApi.GetCustomAttribute<ApiControllerAttribute>() is not null &&
       suppliersApi.GetCustomAttribute<AuthorizeAttribute>() is not null &&

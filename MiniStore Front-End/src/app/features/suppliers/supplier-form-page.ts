@@ -3,21 +3,25 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ApiErrorService } from '../../core/api/api-error.service';
+import { NormalizedApiProblem } from '../../core/api/api.models';
+import { ApiSessionService } from '../../core/api/api-session.service';
 import { LocalizationService } from '../../core/localization/localization.service';
 import { FormErrorSummaryComponent } from '../../shared/forms/form-error-summary';
 import { FormFocusService } from '../../shared/forms/form-focus.service';
 import { SafeFormShortcutsDirective } from '../../shared/forms/safe-form-shortcuts.directive';
 import { FeedbackStateComponent } from '../../shared/ui/feedback-state/feedback-state';
 import { PageHeaderComponent } from '../../shared/ui/page-header/page-header';
+import { ApiRecoveryComponent } from '../../shared/ui/api-recovery/api-recovery';
 import { WorkspaceService } from '../../workspace/state/workspace.service';
 import { SupplierApiService } from './data/supplier-api.service';
 import { SupplierCommand, SupplierDetails, SupplierFormPage } from './data/supplier.models';
 
-@Component({ selector: 'app-supplier-form-page', imports: [ReactiveFormsModule, RouterLink, PageHeaderComponent, FeedbackStateComponent, FormErrorSummaryComponent, SafeFormShortcutsDirective], templateUrl: './supplier-form-page.html', styleUrl: './supplier-form-page.scss', changeDetection: ChangeDetectionStrategy.OnPush })
+@Component({ selector: 'app-supplier-form-page', imports: [ReactiveFormsModule, RouterLink, PageHeaderComponent, FeedbackStateComponent, FormErrorSummaryComponent, SafeFormShortcutsDirective, ApiRecoveryComponent], templateUrl: './supplier-form-page.html', styleUrl: './supplier-form-page.scss', changeDetection: ChangeDetectionStrategy.OnPush })
 export class SupplierFormPageComponent {
   protected readonly i18n = inject(LocalizationService);
   private readonly api = inject(SupplierApiService);
   private readonly errors = inject(ApiErrorService);
+  private readonly session = inject(ApiSessionService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly workspace = inject(WorkspaceService);
@@ -28,6 +32,8 @@ export class SupplierFormPageComponent {
   protected readonly page = signal<SupplierFormPage | null>(null);
   protected readonly saving = signal(false);
   protected readonly problem = signal('');
+  protected readonly recovery = signal<NormalizedApiProblem | null>(null);
+  protected readonly recoveryAllowsRetry = signal(false);
   protected readonly fieldErrors = signal<Record<string, readonly string[]>>({});
   protected readonly form = inject(FormBuilder).nonNullable.group({
     name: ['', [Validators.required, Validators.maxLength(200)]], legalName: ['', Validators.maxLength(200)],
@@ -38,19 +44,21 @@ export class SupplierFormPageComponent {
   });
 
   constructor() {
-    this.api.getForm(this.id).subscribe({ next: (page) => { this.page.set(page); this.form.reset(this.toControls(page.form)); this.form.markAsPristine(); }, error: (error) => this.problem.set(this.errors.normalize(error).title ?? this.i18n.text('errorDescription')) });
+    this.loadForm();
     this.form.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => this.setWorkspaceDirty(this.form.dirty));
   }
   canDeactivate(): boolean { return !this.form.dirty || globalThis.confirm(this.i18n.text('unsavedDescription')); }
   protected save(): void {
     if (this.saving()) return;
-    this.problem.set(''); this.fieldErrors.set({});
+    this.problem.set(''); this.fieldErrors.set({}); this.recovery.set(null); this.recoveryAllowsRetry.set(false);
     if (this.form.invalid) { this.form.markAllAsTouched(); this.fieldErrors.set(this.clientErrors()); this.problem.set(this.i18n.text('correctSupplierFields')); this.focus.focusFirstInvalid(this.host.nativeElement); return; }
     this.saving.set(true);
     const command = this.toCommand();
     const request = this.id ? this.api.update(this.id, command) : this.api.create(command);
-    request.subscribe({ next: (supplier) => { this.form.markAsPristine(); this.setWorkspaceDirty(false); this.saving.set(false); void this.router.navigate(['/suppliers', supplier.id]); }, error: (error) => { const problem = this.errors.normalize(error); const fieldErrors = problem.errors ?? {}; this.fieldErrors.set(fieldErrors); this.problem.set(problem.detail ?? problem.title ?? this.i18n.text('errorDescription')); this.saving.set(false); const first = Object.keys(fieldErrors)[0]; if (first) this.focus.focusField(this.host.nativeElement, first); } });
+    request.subscribe({ next: (supplier) => { this.form.markAsPristine(); this.setWorkspaceDirty(false); this.saving.set(false); void this.router.navigate(['/suppliers', supplier.id]); }, error: (error) => { const problem = this.errors.normalize(error); const fieldErrors = problem.errors ?? {}; this.recovery.set(problem); this.fieldErrors.set(fieldErrors); this.problem.set(problem.detail ?? problem.title ?? this.i18n.text('errorDescription')); this.saving.set(false); const first = Object.keys(fieldErrors)[0]; if (first) this.focus.focusField(this.host.nativeElement, first); } });
   }
+  protected loadForm(): void { this.problem.set(''); this.recovery.set(null); this.recoveryAllowsRetry.set(false); this.api.getForm(this.id).subscribe({ next: (page) => { this.page.set(page); this.form.reset(this.toControls(page.form)); this.form.markAsPristine(); }, error: (error) => { const problem = this.errors.normalize(error); this.recovery.set(problem); this.recoveryAllowsRetry.set(true); this.problem.set(problem.title ?? this.i18n.text('errorDescription')); } }); }
+  protected latestRecordUrl(): string | null { return this.id && this.recovery()?.kind === 'concurrency' && this.session.can('Suppliers.View') ? `/suppliers/${this.id}` : null; }
   protected errorFor(name: string): string { const server = this.fieldErrors()[name] ?? this.fieldErrors()[name[0].toUpperCase() + name.slice(1)]; if (server?.length) return server[0]; const control = this.form.get(name); return control?.touched && control.invalid ? this.i18n.text('invalidField') : ''; }
   protected focusField(name: string): void { this.focus.focusField(this.host.nativeElement, name); }
   private setWorkspaceDirty(dirty: boolean): void { const tab = this.workspace.activeTab(); if (tab) this.workspace.markDirty(tab.id, dirty); }

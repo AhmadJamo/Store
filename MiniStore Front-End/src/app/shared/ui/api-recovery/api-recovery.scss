@@ -1,0 +1,13 @@
+.api-recovery {
+  display: grid;
+  gap: 0.75rem;
+  padding: 1rem;
+  border: 1px solid var(--color-danger-border, #d88);
+  border-radius: 0.75rem;
+  background: var(--color-danger-surface, #fff4f4);
+}
+
+.api-recovery p { margin-block: 0.35rem 0; }
+.recovery-actions, .reference { display: flex; flex-wrap: wrap; gap: 0.65rem; align-items: center; }
+.reference { font-size: 0.875rem; overflow-wrap: anywhere; }
+.reference button { border: 0; background: transparent; color: var(--color-primary, #2456a6); cursor: pointer; text-decoration: underline; }

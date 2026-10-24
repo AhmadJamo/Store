@@ -47,7 +47,7 @@ Angular workspace
 | 8 | Command Center، Quick Preview، favorites وsnapshots | مكتمل 2026-10-24؛ مزودا Customers/Suppliers وallowlisted preferences و30 اختبار Angular |
 | 9 | smart forms، saved filters، keyboard entry وdraft policy | مكتمل 2026-10-24؛ no-local-draft policy وsafe shortcuts/errors/preferences و36 اختبار Angular |
 | 10 | dashboard/density/focus/layout preferences | مكتمل 2026-10-24؛ versioned layout وmobile navigation وskip/dialog focus و39 اختبار Angular |
-| 11 | duplicate/conflict/data-quality/error recovery | read-only أو قواعد معتمدة |
+| 11 | duplicate/conflict/data-quality/error recovery | مكتمل 2026-10-24؛ stable codes وrecovery عام و52 اختبار Angular |
 | 12 | document journey، related records وExplain This Number | backend authoritative evidence |
 | 13 | action/exception center وcontextual help | permission-aware tasks |
 | 14 | split workspace وrole profiles | لا permission grants من profiles |

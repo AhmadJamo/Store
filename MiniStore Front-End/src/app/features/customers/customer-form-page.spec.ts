@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute, Router } from '@angular/router';
 import { of, throwError } from 'rxjs';
 import { ApiErrorService } from '../../core/api/api-error.service';
+import { ApiSessionService } from '../../core/api/api-session.service';
 import { WorkspaceService } from '../../workspace/state/workspace.service';
 import { CustomerFormPageComponent } from './customer-form-page';
 import { CustomerApiService } from './data/customer-api.service';
@@ -26,6 +27,7 @@ describe('CustomerFormPageComponent', () => {
         { provide: Router, useValue: router },
         { provide: WorkspaceService, useValue: workspace },
         { provide: ApiErrorService, useValue: { normalize: (error: unknown) => error } },
+        { provide: ApiSessionService, useValue: { can: () => true } },
       ],
     }).compileComponents();
   });

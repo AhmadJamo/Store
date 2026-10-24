@@ -15,8 +15,9 @@
 - `MOD-008` — COMPLETED 2026-10-24: Command Center عام مع bounded quick preview وallowlisted favorites/snapshots وصلاحيات خادمية.
 - `MOD-009` — COMPLETED 2026-10-24: smart-form productivity مع no-local-draft policy وأخطاء/تركيز/اختصار حفظ وفلاتر آمنة.
 - `MOD-010` — COMPLETED 2026-10-24: responsive layout preferences وmobile navigation وskip/route/dialog focus وreduced-motion/forced-colors.
-- `MOD-011` — APPROVED: duplicate/conflict/data-quality/error recovery presentation عام فوق أدلة backend المعتمدة.
-- `MOD-012..019` — GATED: رحلة المستند، الشفافية، التقارير، القبول وتقييم تقاعد MVC كما في خطة التحديث الرئيسية.
+- `MOD-011` — COMPLETED 2026-10-24: stable Problem Details codes وrecovery عام قابل لإعادة الاستخدام على Customers/Suppliers دون retry للـmutations.
+- `MOD-012` — APPROVED: رحلة المستند وrelated records وExplain This Number فوق أدلة backend المعتمدة.
+- `MOD-013..019` — GATED: مركز الإجراءات، الشفافية، التقارير، القبول وتقييم تقاعد MVC كما في خطة التحديث الرئيسية.
 
 ## P0 — مخاطر حرجة
 

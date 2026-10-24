@@ -16,7 +16,8 @@ public static class InternalApiProblemWriter
             ProblemDetails = new ProblemDetails
             {
                 Status = statusCode,
-                Title = localizer[titleKey].Value
+                Title = localizer[titleKey].Value,
+                Extensions = { ["code"] = InternalApiProblemCodes.FromStatus(statusCode) }
             }
         }).AsTask();
     }

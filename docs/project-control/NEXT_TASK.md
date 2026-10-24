@@ -1,38 +1,38 @@
 # المهمة التالية الوحيدة / Next Task
 
-## `MOD-011` — Data quality and recovery presentation
+## `MOD-012` — Document journey, related records and Explain This Number
 
 > الحالة: APPROVED — CONTINUOUS EXECUTION
 
-### آخر شريحة منجزة: MOD-010
+### آخر شريحة منجزة: MOD-011
 
-اكتملت تفضيلات theme/density/sidebar/content-width والتجاوب وmobile navigation وإدارة focus وforced-colors.
-نجح البناء دون تحذيرات و39/39 Angular tests و1081 backend checks، ونجحت مراجعة بصرية عربية.
+اكتمل عقد Problem Details ثابت ومركزي وتصنيف Angular ومكوّن recovery قابل لإعادة الاستخدام على Customers وSuppliers.
+نجح Web Release build وAngular production build و52/52 اختبار Angular و1084 فحص backend دون تغيير قاعدة البيانات.
 
 ### الهدف التالي
 
-إنشاء طبقة عرض وتعافٍ عامة لمشاكل جودة البيانات دون اختراع قواعد جديدة:
+إنشاء طبقة عرض عامة للأدلة المترابطة والشفافية دون إعادة حساب قواعد الأعمال في المتصفح:
 
-- تصنيف موحد لـvalidation وduplicate وconcurrency وnot-found وforbidden وtransient؛
-- recovery actions واضحة ومسموح بها مثل reload/retry/open source؛
-- correlation ID قابل للنسخ للدعم دون كشف stack trace؛
-- conflict presentation يحافظ على إدخال المستخدم ويشرح الخطوة التالية؛
-- إثبات reusable contract على Customers وSuppliers؛
-- عدم عرض زر أو علاج لا تسمح به الصلاحيات الحالية.
+- مكوّن document journey يعرض المصدر والحالة والخطوات أو المستندات المرتبطة زمنيًا؛
+- related-records contract عام يدعم روابط مسموحة ومصنفة بدل روابط hard-coded داخل كل صفحة؛
+- Explain This Number يعرض عناصر المبلغ ومصدرها وتقريبها وعملتها من دليل backend معتمد؛
+- حالات loading وempty وerror وrecovery ثنائية اللغة ومتوافقة مع RTL/LTR ولوحة المفاتيح؛
+- إثبات إعادة الاستخدام على مسارين حقيقيين يملكان evidence حاليًا، دون اختراع endpoint عام أو حساب بديل؛
+- إخفاء كل سجل أو رابط أو إجراء لا تسمح به صلاحية المستخدم الحالية.
 
 ### حدود التنفيذ
 
-- backend Problem Details وقواعد Application هي المرجع الوحيد.
-- لا duplicate matching أو merge تلقائي من المتصفح.
-- لا retry تلقائي لعمليات mutation ولا تجاوز rowversion.
-- لا قاعدة بيانات أو endpoint عام جديد دون حاجة مثبتة.
-- MVC يبقى عاملاً، وCSS في ملفات SCSS منفصلة فقط.
+- backend Application evidence هو المرجع الوحيد للحالة والعلاقات والأرقام.
+- لا graph traversal حر، ولا generic entity endpoint، ولا استعلام EF من controller.
+- لا إعادة حساب سعر أو ضريبة أو رصيد في Angular، ولا استنتاج علاقة من أرقام أو نصوص.
+- الروابط allowlisted والـAPI يعيد التحقق من tenant والpermission لكل وجهة.
+- MVC يبقى عاملاً، وكل CSS في ملفات SCSS منفصلة.
 
 ### بوابة القبول
 
-- الأخطاء المعروفة تُصنف حتمياً وتعرض رسالة وعلاجاً مناسبين.
-- validation/concurrency لا يفقدان مدخلات النموذج.
-- retry لا يظهر لخطأ دائم، والإجراءات permission-aware.
-- correlation ID يظهر دون تفاصيل داخلية، وRTL/LTR/keyboard تعمل.
+- الرحلة والعلاقات والأرقام المعروضة تطابق دليل backend ويمكن تفسير مصدر كل قيمة.
+- المكوّن reusable مثبت على استخدامين فعليين دون ربطه بوحدة واحدة.
+- لا تعرض الواجهة رابطًا غير مصرح ولا stack trace أو معرّفًا داخليًا غير ضروري.
+- RTL/LTR واللوحة والموبايل وحالات empty/error تعمل.
 - Angular/Web build والاختبارات والانحدار تبقى ناجحة.
 - التعقيد: عالٍ.

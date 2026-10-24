@@ -4,6 +4,7 @@ using Microsoft.Extensions.Localization;
 using MiniStore.Application.DTOs.Suppliers;
 using MiniStore.Application.Services;
 using MiniStore.Web.Authorization;
+using MiniStore.Web.Middleware.Api;
 
 namespace MiniStore.Web.Controllers.Api.V1;
 
@@ -61,9 +62,10 @@ public sealed class SuppliersApiController(
         }
         catch (SupplierConcurrencyException exception)
         {
-            return Problem(statusCode: StatusCodes.Status409Conflict,
-                title: localizer["The supplier changed since you opened it."],
-                detail: localizer[exception.Message]);
+            return InternalApiProblemFactory.Create(HttpContext, StatusCodes.Status409Conflict,
+                localizer["The supplier changed since you opened it."],
+                InternalApiProblemCodes.Concurrency,
+                localizer[exception.Message]);
         }
         catch (Exception exception) when (exception is ArgumentException or InvalidOperationException)
         {
@@ -74,10 +76,14 @@ public sealed class SuppliersApiController(
     private ActionResult BusinessProblem(Exception exception)
     {
         ModelState.AddModelError(string.Empty, localizer[exception.Message]);
-        return ValidationProblem(ModelState);
+        var code = exception is SupplierDuplicateException
+            ? InternalApiProblemCodes.Duplicate
+            : InternalApiProblemCodes.Validation;
+        return InternalApiProblemFactory.Validation(HttpContext, ModelState,
+            localizer["One or more validation errors occurred."], code);
     }
 
-    private ObjectResult NotFoundProblem() => Problem(
-        statusCode: StatusCodes.Status404NotFound,
-        title: localizer["Supplier not found."]);
+    private ObjectResult NotFoundProblem() => InternalApiProblemFactory.Create(
+        HttpContext, StatusCodes.Status404NotFound, localizer["Supplier not found."],
+        InternalApiProblemCodes.NotFound);
 }

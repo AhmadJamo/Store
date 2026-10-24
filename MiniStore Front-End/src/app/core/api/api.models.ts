@@ -29,5 +29,21 @@ export interface ApiProblem {
   status?: number;
   detail?: string;
   correlationId?: string;
+  code?: string;
   errors?: Record<string, readonly string[]>;
+}
+
+export type ApiProblemKind =
+  | 'validation'
+  | 'duplicate'
+  | 'concurrency'
+  | 'notFound'
+  | 'unauthorized'
+  | 'forbidden'
+  | 'transient'
+  | 'unknown';
+
+export interface NormalizedApiProblem extends ApiProblem {
+  kind: ApiProblemKind;
+  canRetry: boolean;
 }

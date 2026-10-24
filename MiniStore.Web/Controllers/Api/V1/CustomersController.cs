@@ -4,6 +4,7 @@ using Microsoft.Extensions.Localization;
 using MiniStore.Application.Dtos.Customers;
 using MiniStore.Application.Services;
 using MiniStore.Web.Authorization;
+using MiniStore.Web.Middleware.Api;
 
 namespace MiniStore.Web.Controllers.Api.V1;
 
@@ -69,7 +70,8 @@ public sealed class CustomersApiController(
         if (id != form.Id)
         {
             ModelState.AddModelError(nameof(form.Id), localizer["The route customer does not match the submitted customer."]);
-            return ValidationProblem(ModelState);
+            return InternalApiProblemFactory.Validation(HttpContext, ModelState,
+                localizer["One or more validation errors occurred."]);
         }
 
         try
@@ -79,10 +81,10 @@ public sealed class CustomersApiController(
         }
         catch (CustomerConcurrencyException exception)
         {
-            return Problem(
-                statusCode: StatusCodes.Status409Conflict,
-                title: localizer["The customer changed since you opened it."],
-                detail: localizer[exception.Message]);
+            return InternalApiProblemFactory.Create(HttpContext, StatusCodes.Status409Conflict,
+                localizer["The customer changed since you opened it."],
+                InternalApiProblemCodes.Concurrency,
+                localizer[exception.Message]);
         }
         catch (Exception exception) when (exception is ArgumentException or InvalidOperationException)
         {
@@ -93,10 +95,14 @@ public sealed class CustomersApiController(
     private ActionResult BusinessProblem(Exception exception)
     {
         ModelState.AddModelError(string.Empty, localizer[exception.Message]);
-        return ValidationProblem(ModelState);
+        var code = exception is CustomerDuplicateException
+            ? InternalApiProblemCodes.Duplicate
+            : InternalApiProblemCodes.Validation;
+        return InternalApiProblemFactory.Validation(HttpContext, ModelState,
+            localizer["One or more validation errors occurred."], code);
     }
 
-    private ObjectResult NotFoundProblem() => Problem(
-        statusCode: StatusCodes.Status404NotFound,
-        title: localizer["Customer was not found."]);
+    private ObjectResult NotFoundProblem() => InternalApiProblemFactory.Create(
+        HttpContext, StatusCodes.Status404NotFound, localizer["Customer was not found."],
+        InternalApiProblemCodes.NotFound);
 }

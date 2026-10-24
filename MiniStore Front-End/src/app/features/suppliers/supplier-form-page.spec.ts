@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute, Router } from '@angular/router';
 import { of, throwError } from 'rxjs';
 import { ApiErrorService } from '../../core/api/api-error.service';
+import { ApiSessionService } from '../../core/api/api-session.service';
 import { WorkspaceService } from '../../workspace/state/workspace.service';
 import { SupplierApiService } from './data/supplier-api.service';
 import { SupplierFormPageComponent } from './supplier-form-page';
@@ -18,12 +19,14 @@ describe('SupplierFormPageComponent', () => {
   const api = { getForm: vi.fn(() => of(page)), create: vi.fn(), update: vi.fn() };
   const router = { navigate: vi.fn(() => Promise.resolve(true)) };
   const workspace = { activeTab: vi.fn(() => ({ id: 'suppliers::default' })), markDirty: vi.fn() };
+  const session = { can: vi.fn(() => true) };
   let routeId: string | null;
 
   beforeEach(async () => {
     vi.clearAllMocks();
     routeId = null;
     api.getForm.mockReturnValue(of(page));
+    session.can.mockReturnValue(true);
     await TestBed.configureTestingModule({
       imports: [SupplierFormPageComponent],
       providers: [
@@ -32,6 +35,7 @@ describe('SupplierFormPageComponent', () => {
         { provide: Router, useValue: router },
         { provide: WorkspaceService, useValue: workspace },
         { provide: ApiErrorService, useValue: { normalize: (error: unknown) => error } },
+        { provide: ApiSessionService, useValue: session },
       ],
     }).compileComponents();
   });
@@ -68,7 +72,7 @@ describe('SupplierFormPageComponent', () => {
   it('keeps the edit form recoverable after a concurrency conflict', () => {
     routeId = '8';
     api.update.mockReturnValue(throwError(() => ({
-      status: 409, title: 'Supplier changed', detail: 'Reload the supplier and try again.',
+      status: 409, title: 'Supplier changed', detail: 'Reload the supplier and try again.', kind: 'concurrency', canRetry: false,
     })));
     const component = TestBed.createComponent(SupplierFormPageComponent).componentInstance as any;
     component.form.patchValue({ name: 'Edited name', accountId: 12, rowVersion: 'stale' });
@@ -78,5 +82,15 @@ describe('SupplierFormPageComponent', () => {
     expect(component.problem()).toContain('Reload');
     expect(component.form.controls.name.value).toBe('Edited name');
     expect(component.form.dirty).toBe(true);
+  });
+
+  it('does not offer a latest-record link without view permission', () => {
+    routeId = '8';
+    session.can.mockReturnValue(false);
+    api.update.mockReturnValue(throwError(() => ({ kind: 'concurrency', canRetry: false, status: 409 })));
+    const component = TestBed.createComponent(SupplierFormPageComponent).componentInstance as any;
+    component.form.patchValue({ name: 'Edited name', accountId: 12, rowVersion: 'stale' });
+    component.save();
+    expect(component.latestRecordUrl()).toBeNull();
   });
 });

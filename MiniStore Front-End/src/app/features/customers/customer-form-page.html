@@ -2,6 +2,7 @@
   <header class="page-header"><div><span class="eyebrow">CRM</span><h1 id="customer-form-title">{{ i18n.text(id ? 'editCustomer' : 'newCustomer') }}</h1><p>{{ i18n.text('customerFormDescription') }}</p></div><a class="ui-button secondary" routerLink="/customers">{{ i18n.text('cancel') }}</a></header>
   @if (!page() && !problem()) { <div class="state" aria-live="polite">{{ i18n.text('loading') }}</div> }
   @if (problem()) { <app-form-error-summary [title]="problem()" [errors]="fieldErrors()" (fieldRequested)="focusField($event)" /> }
+  @if (recovery(); as failure) { <app-api-recovery [problem]="failure" [allowRetry]="recoveryAllowsRetry()" [sourceUrl]="latestRecordUrl()" (retry)="loadForm()" /> }
   @if (page(); as options) {
     <form appSafeFormShortcuts [saving]="saving()" (saveShortcut)="save()" [formGroup]="form" (ngSubmit)="save()" novalidate>
       <fieldset><legend>{{ i18n.text('profile') }}</legend><div class="form-grid">

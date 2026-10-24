@@ -110,7 +110,7 @@ public class SupplierService(
             throw new ArgumentException("Supplier name is required.");
         if ((await supplierRepository.GetAllAsync()).Any(x => x.Id != excludingId &&
             x.Name.Equals(name.Trim(), StringComparison.OrdinalIgnoreCase)))
-            throw new InvalidOperationException("A supplier with this name already exists.");
+            throw new SupplierDuplicateException("A supplier with this name already exists.");
     }
 
     private async Task AssignAccount(Supplier supplier, int accountId)

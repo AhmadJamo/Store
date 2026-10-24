@@ -21,6 +21,11 @@ The in-repository workspace `MiniStore Front-End` is the isolated Angular 22 pre
 
 `MiniStore Front-End/src/app/core/preferences` and `shell/layout` now also own allowlisted sidebar/content-width state, a compact settings panel, mobile navigation preservation, skip navigation, route focus and trapped/restored unsaved-dialog focus. Global tokens cover compact density, reduced motion and forced colors. See `docs/modernization/PHASE_10_RESPONSIVE_ACCESSIBILITY_PREFERENCES.md`.
 
+`MiniStore.Web/Middleware/Api/InternalApiProblemCodes.cs` and `InternalApiProblemFactory.cs` own stable internal
+Problem Details classification and correlation metadata. Angular `core/api/ApiErrorService` normalizes that contract;
+`shared/ui/api-recovery` presents only permitted recovery intent. Customer and Supplier lists/forms prove reuse while
+preserving failed input and prohibiting automatic mutation retry. See `docs/modernization/PHASE_11_DATA_QUALITY_RECOVERY.md`.
+
 ## SAL-130A reusable Analytics Center
 
 `AnalyticsWorkspace` and its widgets persist tenant-owned personal/shared presentation preferences. Generic analytics

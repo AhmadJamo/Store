@@ -15,6 +15,11 @@ MOD-009 keeps Customer/Supplier draft payloads in memory only. Saved list prefer
 
 MOD-010 layout preferences accept only explicit theme, density, sidebar and content-width enum values. They cannot grant permissions, reveal hidden navigation or store tenant/business payloads. Legacy version recovery imports only valid presentation values; reset removes the stored preference object. Mobile navigation remains filtered by the same session-aware registry.
 
+MOD-011 adds stable language-neutral Problem Details codes and correlation IDs without exposing exception types or
+stack traces. Angular offers retry only for transient read requests; failed mutations retain user input but require an
+explicit new save. Concurrency opens the already-authorized record route in a separate tab and never bypasses the
+server row version. Forbidden and permanent failures expose no retry or setup action.
+
 The Customers API independently applies `Customers.View`, `Customers.Create` and `Customers.Edit` to its matching operations. Sidebar visibility is only guidance; every endpoint reauthorizes. POST/PUT retain global antiforgery, DTO validation and tenant-filtered Application/repository access. Customer form data and row versions are never written to browser storage; stale updates return a correlation-bearing `409` response.
 
 SAL-130A analytics remain read-only and pass through tenant-filtered repositories in the Application layer. Saved workspaces are tenant-owned; personal rows are owner-filtered and shared creation requires a separate management permission rechecked in the Application service. The center filters and executes providers only after checking each provider-declared permission, including during crafted workspace creation. Date windows are capped at two years, module/widget keys are validated against the registered provider catalog, and database constraints prevent duplicate widget keys/orders. Comparison queries reuse the same tenant-scoped provider and filters for the derived prior period.

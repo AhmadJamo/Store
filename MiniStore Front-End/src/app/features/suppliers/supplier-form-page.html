@@ -2,6 +2,7 @@
   <app-page-header eyebrow="P2P" [title]="i18n.text(id ? 'editSupplier' : 'newSupplier')" [description]="i18n.text('supplierFormDescription')"><a class="ui-button secondary" routerLink="/suppliers">{{ i18n.text('cancel') }}</a></app-page-header>
   @if (!page() && !problem()) { <app-feedback-state kind="loading" [title]="i18n.text('loading')" /> }
   @if (problem()) { <app-form-error-summary [title]="problem()" [errors]="fieldErrors()" (fieldRequested)="focusField($event)" /> }
+  @if (recovery(); as failure) { <app-api-recovery [problem]="failure" [allowRetry]="recoveryAllowsRetry()" [sourceUrl]="latestRecordUrl()" (retry)="loadForm()" /> }
   @if (page(); as options) {
     <form appSafeFormShortcuts [saving]="saving()" (saveShortcut)="save()" [formGroup]="form" (ngSubmit)="save()" novalidate>
       <fieldset><legend>{{ i18n.text('profile') }}</legend><div class="form-grid">

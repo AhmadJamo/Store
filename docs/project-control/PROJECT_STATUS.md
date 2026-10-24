@@ -6,7 +6,7 @@
 >
 > مصدر الحقيقة: الكود، ترحيلات `EF Core` (إطار ربط الكائنات بقاعدة البيانات)، والاختبارات المنفذة
 
-> مسار التحديث: اكتمل `MOD-010` على الفرع `codex/angular-modernization-foundation`: Customers وSuppliers ومركز الأوامر وإنتاجية آمنة مع تخطيط responsive وتفضيلات وصول، وبقاء MVC ودون generic CRUD أو تغيير قاعدة البيانات.
+> مسار التحديث: اكتمل `MOD-011` على الفرع `codex/angular-modernization-foundation`: Customers وSuppliers ومركز الأوامر وإنتاجية آمنة وتخطيط responsive وتعافٍ موحد من الأخطاء، وبقاء MVC ودون generic CRUD أو تغيير قاعدة البيانات.
 
 ## الملخص التنفيذي
 
@@ -93,4 +93,4 @@
 
 ## المهمة المعتمدة الحالية
 
-اكتمل التسلسل التشغيلي حتى `SAL-130A` واكتمل مسار التحديث حتى `MOD-010`. أضيفت تفضيلات theme/density/sidebar/content-width محددة، mobile navigation بدل إخفائها، skip/route focus وحوار محصور التركيز مع reduced-motion/forced-colors. نجح Web Release build وAngular production build دون تحذيرات، و39/39 اختبار Angular و1081 فحص backend، كما نجحت مراجعة بصرية عربية بعد تصغير لوحة الإعدادات. لم تتغير قاعدة البيانات أو قواعد الأعمال. [NEXT_TASK.md](NEXT_TASK.md) يسجل `MOD-011` المعتمد لجودة البيانات والتعافي.
+اكتمل التسلسل التشغيلي حتى `SAL-130A` واكتمل مسار التحديث حتى `MOD-011`. أضيفت رموز Problem Details ثابتة للتصنيف ونتائج duplicate صريحة، ومعالج Angular مركزي ومكوّن recovery ثنائي اللغة يعرض retry للقراءات المؤقتة فقط ويحافظ على مدخلات validation/duplicate/concurrency، مع correlation ID قابل للنسخ وفتح أحدث سجل للمقارنة عند توفر صلاحية العرض ودون تجاوز rowversion. نجح Web Release build وAngular production build، و52/52 اختبار Angular و1084 فحص backend. لم تتغير قاعدة البيانات أو قواعد الأعمال. [NEXT_TASK.md](NEXT_TASK.md) يسجل `MOD-012` المعتمد لرحلة المستند وrelated records وExplain This Number.

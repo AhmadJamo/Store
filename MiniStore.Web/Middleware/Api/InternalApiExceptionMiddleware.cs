@@ -42,7 +42,8 @@ public sealed class InternalApiExceptionMiddleware(
                             : "An unexpected error occurred."],
                     Detail = status >= 500
                         ? localizer["Please try again. If the problem continues, contact support."].Value
-                        : null
+                        : null,
+                    Extensions = { ["code"] = InternalApiProblemCodes.FromStatus(status) }
                 }
             });
         }

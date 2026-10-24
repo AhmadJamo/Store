@@ -4,6 +4,7 @@ using MiniStore.Web.Localization;
 using MiniStore.Web.Guidance;
 using MiniStore.Web.Observability;
 using Microsoft.Extensions.Localization;
+using MiniStore.Web.Middleware.Api;
 
 namespace MiniStore.Web.Configuration;
 
@@ -61,14 +62,10 @@ public static class WebPresentationExtensions
             options.InvalidModelStateResponseFactory = context =>
             {
                 var localizer = context.HttpContext.RequestServices.GetRequiredService<IStringLocalizer<SharedResource>>();
-                var details = new ValidationProblemDetails(context.ModelState)
-                {
-                    Status = StatusCodes.Status400BadRequest,
-                    Title = localizer["One or more validation errors occurred."],
-                    Type = "https://www.rfc-editor.org/rfc/rfc9110#name-400-bad-request"
-                };
-                details.Extensions["correlationId"] = context.HttpContext.TraceIdentifier;
-                return new BadRequestObjectResult(details);
+                return InternalApiProblemFactory.Validation(
+                    context.HttpContext,
+                    context.ModelState,
+                    localizer["One or more validation errors occurred."]);
             };
         });
 
