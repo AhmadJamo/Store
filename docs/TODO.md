@@ -25,10 +25,12 @@ The ERP SaaS Foundation Blueprint is imported as a non-authoritative planning re
 - [x] MOD-014 add allowlisted Focused/Operator/Analyst workspace profiles and a responsive split context panel without changing permissions. Completed 2026-10-24.
 - [x] MOD-015 expose the reusable Analytics Center through Angular with server grouping/comparison, allowlisted drill-down and bounded export preview. Completed 2026-10-24.
 - [x] MOD-016 add permission-filtered runtime monitoring for real hosted workers, SLA state and truthful analytics refresh plans without pretending report delivery exists. Completed 2026-10-24.
-- [ ] MOD-017 add a governed report-builder foundation, delegation and financial preview without browser-authored financial calculations. Next approved modernization slice.
-- [ ] MOD-018 build the reusable security/performance/accessibility/browser/E2E acceptance gate used by every remaining migration wave.
-- [ ] MOD-019 inventory every MVC route/view/action/control and create the central migration registry plus reversible route cutover controls.
-- [ ] MOD-020 through MOD-028 migrate every remaining tenant, public and platform MVC workflow to Angular by the approved module waves, including actions, permissions, localization, files, PDF and edge states.
+- [ ] MOD-017 IN PROGRESS: governed Angular workspace builder/save is implemented; add delegation expiry/revocation and backend-authored financial preview metadata.
+- [ ] MOD-018 IN PROGRESS: reusable build/regression/Angular/SCSS gate is implemented; add performance, accessibility, browser and E2E evidence.
+- [ ] MOD-019 IN PROGRESS: generated registry covers 89 MVC controllers and 189 user-facing views; add action/control parity and reversible cutover controls.
+- [ ] MOD-020 IN PROGRESS: Angular settings overview reads organization identity and operating preferences; migrate edits and every remaining settings workflow.
+- [ ] MOD-021 IN PROGRESS: Angular product catalog list supports server search/status/paging; migrate product detail/edit and the remaining catalog surfaces.
+- [ ] MOD-022 through MOD-028 migrate every remaining tenant, public and platform MVC workflow to Angular by the approved module waves, including actions, permissions, localization, files, PDF and edge states.
 - [ ] MOD-029 prove full-system parity through dual-run reconciliation, performance/security/accessibility evidence and cutover/rollback rehearsals.
 - [ ] MOD-030 make Angular the only presentation and retire MVC incrementally only after explicit approval and zero registry gaps.
 

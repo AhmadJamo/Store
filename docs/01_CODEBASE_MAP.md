@@ -437,3 +437,16 @@ For exact module relationships, use `modules/*.md`; for entity and service detai
 - `Infrastructure/Services/Saas/CompanyOnboardingService.cs`: versioned transactional starter template.
 - `Web/Controllers/Saas/CompanyOnboardingController.cs` and `Views/CompanyOnboarding/Index.cshtml`: authenticated bilingual setup/skip flow.
 - `AddCompanyGuidedOnboarding`: onboarding table and compatible existing-tenant backfill.
+
+## Angular modernization additions — 2026-10-25
+
+- `MiniStore.Web/Controllers/Api/V1/AnalyticsCenterApiController.cs`: analytics read, builder catalog and workspace-create API.
+- `MiniStore.Web/Controllers/Api/V1/SettingsApiController.cs`: protected identity/preferences read API for the first settings slice.
+- `MiniStore.Web/Controllers/Api/V1/ProductsApiController.cs`: protected paged product read API for the first catalog slice.
+- `MiniStore Front-End/src/app/features/analytics/report-builder-page.*`: governed workspace builder with external SCSS.
+- `MiniStore Front-End/src/app/features/settings/`: read-only organization/settings Angular feature.
+- `MiniStore Front-End/src/app/features/products/`: paged product-catalog Angular feature.
+- `scripts/verify-angular-modernization.ps1`: reusable migration acceptance command.
+- `scripts/generate-mvc-migration-registry.ps1`: source-driven MVC view/controller inventory generator.
+- `docs/modernization/MVC_MIGRATION_REGISTRY.md`: generated functional migration registry; do not edit rows manually.
+- `docs/modernization/MOD-017-021-FOUNDATION.md`: scope, evidence and remaining gates for this bundle.

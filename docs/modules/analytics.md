@@ -3,6 +3,15 @@
 > Status: IMPLEMENTED (first reusable slice)  
 > Last reviewed: 2026-10-22
 
+## Angular report-builder foundation (2026-10-25)
+
+`/analytics/builder` now reads the authorized provider/widget catalog through
+`GET /api/v1/analytics-center/builder` and saves a personal/shared workspace through
+`POST /api/v1/analytics-center/workspaces`. The API reuses `AnalyticsCenterService`; it does not accept SQL,
+entity names or arbitrary expressions, and it rechecks provider permission and shared-workspace authority.
+The Angular editor exposes bounded layout, period, refresh and widget selection values with bilingual RTL/LTR
+presentation and external SCSS. Delegation and explicit financial-preview metadata remain `MOD-017B` work.
+
 The Analytics Center is a module-neutral reporting surface. `AnalyticsCenterService` discovers registered
 `IAnalyticsModuleProvider` implementations; the web layer does not depend on Sales or Purchasing DTOs.
 Sales and Purchasing are the first providers and future modules can join through the same definition/data contract.

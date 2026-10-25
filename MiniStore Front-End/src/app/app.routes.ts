@@ -71,6 +71,18 @@ export const routes: Routes = [
         loadComponent: () => import('./features/analytics/analytics-page').then((module) => module.AnalyticsPageComponent),
       },
       {
+        path: 'analytics/builder',
+        loadComponent: () => import('./features/analytics/report-builder-page').then((module) => module.ReportBuilderPageComponent),
+      },
+      {
+        path: 'settings',
+        loadComponent: () => import('./features/settings/settings-overview-page').then((module) => module.SettingsOverviewPageComponent),
+      },
+      {
+        path: 'products',
+        loadComponent: () => import('./features/products/product-list-page').then((module) => module.ProductListPageComponent),
+      },
+      {
         path: 'operations-center',
         loadComponent: () => import('./features/operations-center/operations-center-page').then((module) => module.OperationsCenterPageComponent),
       },

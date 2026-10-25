@@ -10,6 +10,8 @@ const navigationItems: readonly NavigationItem[] = [
   { id: 'documents', route: '/documents', labelKey: 'documentEvidence', icon: '▤', requiredAnyPermissions: ['SalesOrders.View', 'CustomerInvoices.View'] },
   { id: 'work-center', route: '/work-center', labelKey: 'workCenter', icon: '!', requiredAnyPermissions: ['SalesOrders.Confirm', 'CustomerInvoices.Approve', 'CustomerInvoices.Post', 'CustomerPayments.Create'] },
   { id: 'analytics', route: '/analytics', labelKey: 'analyticsCenter', icon: '◫', requiredPermission: 'AnalyticsCenter.View' },
+  { id: 'settings', route: '/settings', labelKey: 'settings', icon: '⚙', requiredPermission: 'Administration.Access' },
+  { id: 'products', route: '/products', labelKey: 'products', icon: '▦', requiredPermission: 'Products.View' },
   { id: 'operations-center', route: '/operations-center', labelKey: 'operationsCenter', icon: '◉', requiredAnyPermissions: ['PurchaseReplenishment.View', 'SupplierIntegrations.View', 'AuditEvents.View', 'AnalyticsCenter.View'] },
   { id: 'design-system', route: '/design-system', labelKey: 'designSystem', icon: '◇' },
 ];
@@ -19,7 +21,7 @@ export class NavigationRegistryService {
   readonly items = navigationItems;
   readonly visibleItems = computed(() => {
     const visible = this.items.filter((item) => this.canAccess(item));
-    const priorities: Record<string, readonly string[]> = { focused: ['home', 'customers', 'suppliers', 'documents', 'work-center', 'analytics', 'operations-center', 'design-system'], operator: ['work-center', 'operations-center', 'documents', 'customers', 'suppliers', 'home', 'analytics', 'design-system'], analyst: ['analytics', 'operations-center', 'documents', 'work-center', 'home', 'customers', 'suppliers', 'design-system'] };
+    const priorities: Record<string, readonly string[]> = { focused: ['home', 'customers', 'suppliers', 'products', 'documents', 'work-center', 'analytics', 'settings', 'operations-center', 'design-system'], operator: ['work-center', 'operations-center', 'documents', 'products', 'customers', 'suppliers', 'home', 'analytics', 'settings', 'design-system'], analyst: ['analytics', 'operations-center', 'documents', 'work-center', 'home', 'products', 'customers', 'suppliers', 'settings', 'design-system'] };
     const order = priorities[this.profiles.profile()];
     return [...visible].sort((a, b) => order.indexOf(a.id) - order.indexOf(b.id));
   });

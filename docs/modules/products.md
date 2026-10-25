@@ -1,6 +1,13 @@
 # Products and recipes
 > Status: IMPLEMENTED | Last reviewed: 2026-10-24
 
+## Angular migration foundation (2026-10-25)
+
+The first `MOD-021` slice adds `/products`, backed by `GET /api/v1/products` and `ProductService.SearchAsync`.
+It preserves server paging, search, active-status filtering and `Products.View`; names remain user-facing while
+IDs stay internal. Product details, create/edit, categories, units, templates, attributes and recipes remain
+on MVC until their complete functional-parity slices are implemented.
+
 Recipe yields, ingredient quantities and measurement-unit conversion factors use culture-invariant decimal validation, so Arabic UI culture cannot turn valid dot-based HTML values into a validation exception.
 
 ## Purpose and flow

@@ -21,10 +21,12 @@
 - `MOD-014` — COMPLETED 2026-10-24: split workspace وملفات Focused/Operator/Analyst لا تمنح صلاحيات.
 - `MOD-015` — COMPLETED 2026-10-24: Analytics Angular مع group/period comparison/allowlisted drill-down وbounded export preview.
 - `MOD-016` — COMPLETED 2026-10-24: مراقبة ثلاثة hosted workers حقيقيين وruntime SLA وخطط refresh صادقة دون scheduled delivery وهمي.
-- `MOD-017` — NEXT: report builder وdelegation وfinancial preview ضمن موافقات وحدود مستقلة.
-- `MOD-018` — GATED: بوابة قبول security/performance/accessibility/browser/E2E قابلة للتكرار.
-- `MOD-019` — GATED: جرد كل MVC route/view/action وإنشاء migration registry وcutover controls.
-- `MOD-020..028` — APPROVED PROGRAM: نقل الهوية والإعدادات والكتالوج والمخزون والمشتريات والمبيعات وPOS والمحاسبة وSaaS وكل الشاشات المشتركة والمتبقية إلى Angular على موجات، مع functional parity وإعادة تصميم كاملة وفق Angular design system لا نسخ Razor.
+- `MOD-017` — IN PROGRESS: منشئ Angular يحفظ workspace محكوم من كتالوج المزودين اكتمل؛ delegation والمعاينة المالية ما زالا باقيين.
+- `MOD-018` — IN PROGRESS: بوابة موحدة للبناء والانحدار واختبارات Angular وسياسة SCSS اكتملت؛ الأداء/accessibility/browser/E2E ما زالت مطلوبة.
+- `MOD-019` — IN PROGRESS: سجل آلي يغطي 89 controller و189 view أضيف؛ action/control inventory وcutover controls ما زالت مطلوبة.
+- `MOD-020` — IN PROGRESS: أول settings slice يعرض هوية المنشأة وتفضيلات التشغيل من Application API محمي؛ بقية دورة الإعدادات والتحرير لم تنقل.
+- `MOD-021` — IN PROGRESS: أول catalog slice يعرض قائمة منتجات خادمية قابلة للبحث/التصفية؛ التفاصيل والتحرير وبقية الكتالوج لم تنقل.
+- `MOD-022..028` — APPROVED PROGRAM: نقل المخزون والمشتريات والمبيعات وPOS والمحاسبة وSaaS وكل الشاشات المشتركة والمتبقية إلى Angular على موجات، مع functional parity وإعادة تصميم كاملة وفق Angular design system لا نسخ Razor.
 - `MOD-029` — GATED: قبول شامل وdual-run reconciliation وتجربة cutover/rollback.
 - `MOD-030` — EXPLICIT FINAL GATE: Angular-only وإزالة MVC presentation تدريجيًا بعد صفر فجوات.
 

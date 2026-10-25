@@ -1,0 +1,2 @@
+export interface Product { id:number; productCode:string; name:string; barcode?:string; salePrice:number; purchasePrice:number; wholesalePrice:number; productType:number; productCategoryName?:string; trackingPolicy:number; isSellableInPos:boolean; isSellableInSales:boolean; isActive:boolean; }
+export interface ProductPage { query:{page:number;pageSize:number;search?:string;isActive?:boolean;sortBy:string;sortDescending:boolean};items:readonly Product[];totalCount:number;totalPages:number;categories:readonly {id:number;name:string}[]; }

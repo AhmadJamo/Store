@@ -3521,6 +3521,29 @@ Check(analyticsApi.GetCustomAttribute<ApiControllerAttribute>() is not null &&
       analyticsApi.GetMethod(nameof(AnalyticsCenterApiController.Get))!
           .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:AnalyticsCenter.View",
     "Analytics API must remain authenticated, versioned and protected by the existing analytics permission");
+Check(analyticsApi.GetMethod(nameof(AnalyticsCenterApiController.GetBuilder))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:AnalyticsCenter.Customize" &&
+      analyticsApi.GetMethod(nameof(AnalyticsCenterApiController.CreateWorkspace))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:AnalyticsCenter.Customize",
+    "Analytics workspace discovery and creation must retain the customize permission");
+var settingsApi = typeof(SettingsApiController);
+Check(settingsApi.GetCustomAttribute<ApiControllerAttribute>() is not null &&
+      settingsApi.GetCustomAttribute<AuthorizeAttribute>() is not null &&
+      settingsApi.GetCustomAttribute<RouteAttribute>()?.Template == "api/v1/settings" &&
+      settingsApi.GetMethod(nameof(SettingsApiController.GetOrganizationIdentity))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:Administration.Access" &&
+      settingsApi.GetMethod(nameof(SettingsApiController.GetPreferences))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:Administration.Access",
+    "Angular settings reads must remain authenticated and administration protected");
+var productsApi = typeof(ProductsApiController);
+Check(productsApi.GetCustomAttribute<ApiControllerAttribute>() is not null &&
+      productsApi.GetCustomAttribute<AuthorizeAttribute>() is not null &&
+      productsApi.GetCustomAttribute<RouteAttribute>()?.Template == "api/v1/products" &&
+      productsApi.GetMethod(nameof(ProductsApiController.GetPage))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:Products.View" &&
+      productsApi.GetMethod(nameof(ProductsApiController.Get))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:Products.View",
+    "Angular product reads must remain authenticated and product-view protected");
 var operationsApi = typeof(OperationsCenterApiController);
 Check(operationsApi.GetCustomAttribute<ApiControllerAttribute>() is not null &&
       operationsApi.GetCustomAttribute<AuthorizeAttribute>() is not null &&
