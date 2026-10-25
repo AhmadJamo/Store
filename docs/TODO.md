@@ -25,7 +25,7 @@ The ERP SaaS Foundation Blueprint is imported as a non-authoritative planning re
 - [x] MOD-014 add allowlisted Focused/Operator/Analyst workspace profiles and a responsive split context panel without changing permissions. Completed 2026-10-24.
 - [x] MOD-015 expose the reusable Analytics Center through Angular with server grouping/comparison, allowlisted drill-down and bounded export preview. Completed 2026-10-24.
 - [x] MOD-016 add permission-filtered runtime monitoring for real hosted workers, SLA state and truthful analytics refresh plans without pretending report delivery exists. Completed 2026-10-24.
-- [ ] MOD-017 IN PROGRESS: governed Angular workspace builder/save is implemented; add delegation expiry/revocation and backend-authored financial preview metadata.
+- [ ] MOD-017 IN PROGRESS: governed Angular workspace builder/save and backend-authored financial preview are implemented; add delegation expiry/revocation with source-permission rechecks.
 - [ ] MOD-018 IN PROGRESS: reusable build/regression/Angular/SCSS gate is implemented; add performance, accessibility, browser and E2E evidence.
 - [ ] MOD-019 IN PROGRESS: generated registry covers 89 MVC controllers and 189 user-facing views; add action/control parity and reversible cutover controls.
 - [ ] MOD-020 IN PROGRESS: Angular settings overview reads organization identity and operating preferences; migrate edits and every remaining settings workflow.

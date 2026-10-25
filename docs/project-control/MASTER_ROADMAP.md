@@ -21,7 +21,7 @@
 - `MOD-014` — COMPLETED 2026-10-24: split workspace وملفات Focused/Operator/Analyst لا تمنح صلاحيات.
 - `MOD-015` — COMPLETED 2026-10-24: Analytics Angular مع group/period comparison/allowlisted drill-down وbounded export preview.
 - `MOD-016` — COMPLETED 2026-10-24: مراقبة ثلاثة hosted workers حقيقيين وruntime SLA وخطط refresh صادقة دون scheduled delivery وهمي.
-- `MOD-017` — IN PROGRESS: منشئ Angular يحفظ workspace محكوم من كتالوج المزودين اكتمل؛ delegation والمعاينة المالية ما زالا باقيين.
+- `MOD-017` — IN PROGRESS: منشئ Angular والحفظ والمعاينة المالية الخادمية اكتملت؛ delegation للمستخدم/الدور مع الانتهاء والإلغاء ما زال باقيًا.
 - `MOD-018` — IN PROGRESS: بوابة موحدة للبناء والانحدار واختبارات Angular وسياسة SCSS اكتملت؛ الأداء/accessibility/browser/E2E ما زالت مطلوبة.
 - `MOD-019` — IN PROGRESS: سجل آلي يغطي 89 controller و189 view أضيف؛ action/control inventory وcutover controls ما زالت مطلوبة.
 - `MOD-020` — IN PROGRESS: أول settings slice يعرض هوية المنشأة وتفضيلات التشغيل من Application API محمي؛ بقية دورة الإعدادات والتحرير لم تنقل.

@@ -450,3 +450,4 @@ For exact module relationships, use `modules/*.md`; for entity and service detai
 - `scripts/generate-mvc-migration-registry.ps1`: source-driven MVC view/controller inventory generator.
 - `docs/modernization/MVC_MIGRATION_REGISTRY.md`: generated functional migration registry; do not edit rows manually.
 - `docs/modernization/MOD-017-021-FOUNDATION.md`: scope, evidence and remaining gates for this bundle.
+- `docs/modernization/MOD-017B-FINANCIAL-PREVIEW.md`: server-authored financial provenance and presentation evidence.

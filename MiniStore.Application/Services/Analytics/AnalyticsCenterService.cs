@@ -7,7 +7,7 @@ namespace MiniStore.Application.Services;
 
 public sealed class AnalyticsCenterService(IEnumerable<IAnalyticsModuleProvider> moduleProviders,
     IAnalyticsWorkspaceRepository workspaces, IUnitOfWork unitOfWork, ICurrentUserService currentUser,
-    IPermissionService permissionService)
+    IPermissionService permissionService, GeneralSettingsService generalSettings)
 {
     private Dictionary<string, IAnalyticsModuleProvider> Providers => moduleProviders.ToDictionary(x => x.Definition.Key, StringComparer.OrdinalIgnoreCase);
 
@@ -38,13 +38,16 @@ public sealed class AnalyticsCenterService(IEnumerable<IAnalyticsModuleProvider>
             ApplyComparisons(dataset, comparisonDataset, comparisonQuery);
         }
         ApplyWorkspace(dataset, workspace, provider.Definition);
+        var preferences = await generalSettings.GetPreferencesAsync();
         return new AnalyticsCenterPageDto
         {
             Query = query, Dataset = dataset, Workspace = workspace is null ? null : Map(workspace),
             Workspaces = available.Select(Map).ToList(), Modules = providers.Values.Select(x => x.Definition).OrderBy(x => x.Title).ToList(),
             Module = provider.Definition, LayoutColumns = workspace?.LayoutColumns ?? 4,
             RefreshIntervalMinutes = workspace?.RefreshIntervalMinutes ?? 0,
-            ShowDefinitions = workspace?.ShowDefinitions ?? true
+            ShowDefinitions = workspace?.ShowDefinitions ?? true,
+            FinancialPreview = BuildFinancialPreview(dataset, provider.Definition, query,
+                preferences.Currency, preferences.DecimalPlaces)
         };
     }
 
@@ -174,5 +177,38 @@ public sealed class AnalyticsCenterService(IEnumerable<IAnalyticsModuleProvider>
     {
         if (query.From > query.To) throw new ArgumentException("Analytics start date cannot be after the end date.");
         if (query.To!.Value.DayNumber - query.From!.Value.DayNumber > 731) throw new ArgumentException("Analytics period cannot exceed two years.");
+    }
+
+    private static AnalyticsFinancialPreviewDto BuildFinancialPreview(
+        AnalyticsDatasetDto dataset,
+        AnalyticsModuleDefinitionDto module,
+        AnalyticsCenterQueryDto query,
+        string currency,
+        int decimalPlaces)
+    {
+        var definitions = module.Widgets.ToDictionary(x => x.Key, StringComparer.OrdinalIgnoreCase);
+        var items = dataset.Widgets
+            .Where(x => x.ValueFormat == AnalyticsValueFormat.Money && x.Value.HasValue)
+            .Select(x =>
+            {
+                var definition = definitions[x.Key];
+                return new AnalyticsFinancialPreviewItemDto(x.Key, x.Title, x.TitleArabic,
+                    decimal.Round(x.Value!.Value, decimalPlaces, MidpointRounding.AwayFromZero),
+                    definition.Description, definition.DescriptionArabic);
+            })
+            .ToList();
+
+        return new AnalyticsFinancialPreviewDto
+        {
+            ProviderKey = module.Key,
+            Source = module.Title,
+            SourceArabic = module.TitleArabic,
+            Currency = currency,
+            DecimalPlaces = decimalPlaces,
+            From = query.From!.Value,
+            To = query.To!.Value,
+            GeneratedAtUtc = DateTime.UtcNow,
+            Items = items
+        };
     }
 }

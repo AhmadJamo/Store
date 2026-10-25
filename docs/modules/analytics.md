@@ -10,7 +10,12 @@
 `POST /api/v1/analytics-center/workspaces`. The API reuses `AnalyticsCenterService`; it does not accept SQL,
 entity names or arbitrary expressions, and it rechecks provider permission and shared-workspace authority.
 The Angular editor exposes bounded layout, period, refresh and widget selection values with bilingual RTL/LTR
-presentation and external SCSS. Delegation and explicit financial-preview metadata remain `MOD-017B` work.
+presentation and external SCSS.
+
+`MOD-017B` adds a server-authored financial preview to every analytics response. `AnalyticsCenterService` selects
+only money-formatted authorized widgets after provider execution and workspace filtering, rounds them using the
+organization decimal setting, and returns currency, period, provider source, bilingual definitions and generation
+time. Angular renders this immutable preview and performs no financial calculation. Delegation remains `MOD-017C`.
 
 The Analytics Center is a module-neutral reporting surface. `AnalyticsCenterService` discovers registered
 `IAnalyticsModuleProvider` implementations; the web layer does not depend on Sales or Purchasing DTOs.

@@ -22,6 +22,7 @@ using MiniStore.Application.Permissions;
 using MiniStore.Application.DTOs.Settings;
 using MiniStore.Application.Dtos.Settings;
 using MiniStore.Application.Dtos.Customers;
+using MiniStore.Application.Dtos.Analytics;
 using MiniStore.Application.DTOs.Inventory.Tracking;
 using MiniStore.Application.DTOs.Purchases;
 using MiniStore.Application.DTOs.Products;
@@ -3526,6 +3527,11 @@ Check(analyticsApi.GetMethod(nameof(AnalyticsCenterApiController.GetBuilder))!
       analyticsApi.GetMethod(nameof(AnalyticsCenterApiController.CreateWorkspace))!
           .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:AnalyticsCenter.Customize",
     "Analytics workspace discovery and creation must retain the customize permission");
+Check(typeof(AnalyticsCenterPageDto).GetProperty(nameof(AnalyticsCenterPageDto.FinancialPreview)) is not null &&
+      typeof(AnalyticsFinancialPreviewDto).GetProperty(nameof(AnalyticsFinancialPreviewDto.Currency)) is not null &&
+      typeof(AnalyticsFinancialPreviewDto).GetProperty(nameof(AnalyticsFinancialPreviewDto.DecimalPlaces)) is not null &&
+      typeof(AnalyticsFinancialPreviewDto).GetProperty(nameof(AnalyticsFinancialPreviewDto.ValuesAreServerAuthored)) is not null,
+    "Analytics financial preview must retain server-authored currency, rounding and provenance metadata");
 var settingsApi = typeof(SettingsApiController);
 Check(settingsApi.GetCustomAttribute<ApiControllerAttribute>() is not null &&
       settingsApi.GetCustomAttribute<AuthorizeAttribute>() is not null &&

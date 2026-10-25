@@ -18,13 +18,13 @@ MVC remains the rollback path. The generated registry is in `MVC_MIGRATION_REGIS
 ## Verification evidence
 
 - Web Release build: passed with zero warnings and zero errors.
-- Security/inventory regression: 1095 checks passed.
+- Security/inventory regression: 1096 checks passed.
 - Angular production build: passed.
 - Angular tests: 59/59 passed.
 - External-style policy: passed; no Angular HTML `style=` attributes or component `styles:` blocks.
 
 ## Remaining gates
 
-Delegation and financial metadata (`MOD-017`), performance/accessibility/browser/E2E coverage (`MOD-018`),
+Delegation (`MOD-017`), performance/accessibility/browser/E2E coverage (`MOD-018`),
 action/control registry and cutover controls (`MOD-019`), and complete settings/catalog functional parity
 (`MOD-020..021`) remain open.

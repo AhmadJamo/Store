@@ -80,7 +80,25 @@ public sealed class AnalyticsCenterPageDto
     public int LayoutColumns { get; init; } = 4;
     public int RefreshIntervalMinutes { get; init; }
     public bool ShowDefinitions { get; init; } = true;
+    public AnalyticsFinancialPreviewDto FinancialPreview { get; init; } = new();
 }
+
+public sealed class AnalyticsFinancialPreviewDto
+{
+    public string ProviderKey { get; init; } = string.Empty;
+    public string Source { get; init; } = string.Empty;
+    public string SourceArabic { get; init; } = string.Empty;
+    public string Currency { get; init; } = string.Empty;
+    public int DecimalPlaces { get; init; }
+    public DateOnly From { get; init; }
+    public DateOnly To { get; init; }
+    public DateTime GeneratedAtUtc { get; init; }
+    public bool ValuesAreServerAuthored { get; init; } = true;
+    public List<AnalyticsFinancialPreviewItemDto> Items { get; init; } = [];
+}
+
+public sealed record AnalyticsFinancialPreviewItemDto(string Key, string Title, string TitleArabic,
+    decimal Value, string Definition, string DefinitionArabic);
 
 public sealed record AnalyticsWorkspaceDto(int Id, string Name, string? NameArabic, string ModuleKey,
     AnalyticsWorkspaceVisibility Visibility, bool IsDefault, int LayoutColumns, int DefaultPeriodDays,
