@@ -49,6 +49,11 @@ export class AppShell implements OnInit {
     if (tab) void this.router.navigateByUrl(tab.route);
   }
 
+  protected skipToMain(event: Event): void {
+    event.preventDefault();
+    this.focusMain();
+  }
+
   protected activate(tab: WorkspaceTab): void {
     if (!this.confirmLeave(tab.id)) return;
     this.workspace.activate(tab.id);

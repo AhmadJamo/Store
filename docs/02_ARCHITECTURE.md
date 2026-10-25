@@ -4,6 +4,11 @@
 
 During migration, `MiniStore.Web` remains the composition and same-origin host for both MVC and the versioned internal `/api/v1` surface. API controllers use explicit Application DTOs/services; repositories and EF Core are not exposed to presentation. The existing Identity cookie, tenant middleware and permission authority remain authoritative. Angular owns presentation state only, bootstraps its server session and CSRF token centrally, and treats returned permissions as display guidance while every server endpoint reauthorizes independently. OpenAPI is authenticated and filtered to internal v1 paths. See `modernization/PHASE_02_API_FOUNDATION.md` and the same-origin modernization ADR.
 
+Presentation cutover is an MVC-layer concern. A global action filter consults per-surface `Mvc`, `AngularPilot`, or
+`AngularDefault` configuration, but redirects only GET/HEAD actions in the code-owned route allowlist. Mutations,
+downloads, missing route values and unknown actions remain MVC. All committed modes are `Mvc`; MOD-029/030 still
+govern default-route changes and retirement. See `decisions/ADR-20261025-REVERSIBLE-PRESENTATION-CUTOVER.md`.
+
 The Angular visual layer uses semantic CSS custom properties as its stable component contract. Runtime theme and density choices alter root data attributes and tokens rather than duplicating markup. Locale owns `lang`/`dir`; components use logical CSS. Browser storage contains only versioned, non-sensitive UI preferences and is never an authority for permissions or business state. See `modernization/PHASE_03_VISUAL_SYSTEM.md`.
 
 The first business slice, Customers, proves coexistence rather than replacement. MVC and `/api/v1/customers` share the same Application service and DTO authority; Angular adds no direct repository or EF path. Server-side paging, numbering, policy resolution, validation, transaction and concurrency remain behind that boundary. The Angular feature keeps API models/client, presentation components and a separate stylesheet within one feature folder and integrates with the reusable workspace without persisting form payloads.

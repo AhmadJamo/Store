@@ -47,6 +47,7 @@ using MiniStore.Web.Services;
 using MiniStore.Web.Observability;
 using MiniStore.Web.Middleware.Api;
 using MiniStore.Web.Controllers.Api.V1;
+using MiniStore.Web.Presentation.Cutover;
 
 var count = 0;
 void Check(bool condition, string message)
@@ -54,6 +55,60 @@ void Check(bool condition, string message)
     if (!condition) throw new Exception(message);
     count++;
 }
+
+var mvcCutoverResolver = new PresentationCutoverResolver(Options.Create(
+    new PresentationCutoverOptions
+    {
+        AngularBasePath = "/app",
+        Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["Customers"] = PresentationCutoverMode.Mvc
+        }
+    }));
+var cutoverContext = new DefaultHttpContext();
+cutoverContext.Request.Method = HttpMethods.Get;
+cutoverContext.Request.QueryString = new QueryString("?page=2");
+Check(mvcCutoverResolver.Resolve(
+        cutoverContext.Request, "Customers", "Index", new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null,
+    "MVC cutover mode must preserve the existing MVC route");
+var pilotCutoverResolver = new PresentationCutoverResolver(Options.Create(
+    new PresentationCutoverOptions
+    {
+        Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["Customers"] = PresentationCutoverMode.AngularPilot
+        }
+    }));
+Check(pilotCutoverResolver.Resolve(
+        cutoverContext.Request, "Customers", "Index", new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null,
+    "Angular pilot mode must collect evidence without replacing the MVC route");
+
+var angularCutoverResolver = new PresentationCutoverResolver(Options.Create(
+    new PresentationCutoverOptions
+    {
+        AngularBasePath = "/app",
+        Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["Customers"] = PresentationCutoverMode.AngularDefault
+        }
+    }));
+Check(angularCutoverResolver.Resolve(
+        cutoverContext.Request, "Customers", "Index", new Microsoft.AspNetCore.Routing.RouteValueDictionary()) == "/app/customers?page=2",
+    "Angular-default GET actions must resolve to the allowlisted Angular route and preserve the query string");
+Check(angularCutoverResolver.Resolve(
+        cutoverContext.Request, "Customers", "Details", new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 17 }) == "/app/customers/17?page=2",
+    "Angular-default detail actions must resolve route values without exposing an arbitrary redirect target");
+Check(angularCutoverResolver.Resolve(
+        cutoverContext.Request, "Customers", "Details", new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = "../admin" }) is null,
+    "Angular-default detail actions must reject unsafe route values");
+cutoverContext.Request.Method = HttpMethods.Post;
+Check(angularCutoverResolver.Resolve(
+        cutoverContext.Request, "Customers", "Index", new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null,
+    "Presentation cutover must never redirect mutation requests");
+cutoverContext.Request.Method = HttpMethods.Get;
+Check(angularCutoverResolver.Resolve(
+        cutoverContext.Request, "Customers", "Export", new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null,
+    "Presentation cutover must keep non-allowlisted actions on MVC");
 
 using var db = new AppDbContext(
     new DbContextOptionsBuilder<AppDbContext>()
@@ -3580,8 +3635,12 @@ Check(settingsApi.GetCustomAttribute<ApiControllerAttribute>() is not null &&
       settingsApi.GetMethod(nameof(SettingsApiController.GetOrganizationIdentity))!
           .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:Administration.Access" &&
       settingsApi.GetMethod(nameof(SettingsApiController.GetPreferences))!
-          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:Administration.Access",
-    "Angular settings reads must remain authenticated and administration protected");
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:Administration.Access" &&
+      settingsApi.GetMethod(nameof(SettingsApiController.UpdatePreferences))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:Administration.Access" &&
+      settingsApi.GetMethod(nameof(SettingsApiController.UpdatePreferences))!
+          .GetCustomAttribute<HttpPutAttribute>()?.Template == "preferences",
+    "Angular settings reads and writes must remain authenticated and administration protected");
 var productsApi = typeof(ProductsApiController);
 Check(productsApi.GetCustomAttribute<ApiControllerAttribute>() is not null &&
       productsApi.GetCustomAttribute<AuthorizeAttribute>() is not null &&

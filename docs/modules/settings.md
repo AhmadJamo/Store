@@ -3,11 +3,12 @@
 
 ## Angular migration foundation (2026-10-25)
 
-The first `MOD-020` slice is a read-only `/settings` overview. Authenticated users with
-`Administration.Access` can read organization identity and operating preferences through explicit versioned
-API endpoints backed by `GeneralSettingsService`. It shows reusable identity fields without exposing EF
-entities. Mutation, logo upload, document design and the remaining settings workflows stay on MVC until their
-individual Angular parity gates pass.
+The first `MOD-020` slices provide a `/settings` overview plus a complete operating-preferences edit cycle.
+Authenticated users with `Administration.Access` read identity/preferences and update currency, price/quantity
+precision, date format, time zone and default language through explicit versioned API endpoints backed by
+`GeneralSettingsService`. The Angular form preserves rowversion concurrency, semantic audit, validation, culture-cache
+invalidation, dirty-state navigation protection and bilingual status/error presentation without exposing EF entities.
+Identity mutation, logo upload, document design and the remaining workflows stay on MVC until their parity gates pass.
 
 Organization Identity is now a dedicated bilingual settings screen rather than a small group of fields inside regional settings. It keeps the commercial and registered legal names in English and Arabic, commercial/tax registration numbers, primary and secondary contact details, bilingual address components, country code and the preferred trade/legal display policy. A tenant-scoped PNG/JPEG logo is validated by file signature and capped at 2 MB.
 

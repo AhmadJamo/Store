@@ -1,4 +1,4 @@
-<a class="skip-link" href="#main-content">{{ i18n.text('skipToContent') }}</a>
+<a class="skip-link" href="#main-content" (click)="skipToMain($event)">{{ i18n.text('skipToContent') }}</a>
 <div class="shell" [attr.dir]="i18n.direction()">
   <aside class="sidebar" [attr.aria-label]="i18n.text('workspace')">
     <div class="brand"><span class="brand-mark">M</span><span>{{ i18n.text('appName') }}</span></div>

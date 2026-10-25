@@ -1,1 +1,27 @@
-<section class="settings-page"><app-page-header eyebrow="ADMIN" [title]="i18n.text('settings')" [description]="i18n.text('settingsDescription')" />@if(loading()){<app-feedback-state kind="loading" [title]="i18n.text('loading')"/>}@else if(problem();as failure){<app-api-recovery [problem]="failure" (retry)="load()"/>}@else if(identity();as company){<div class="settings-grid"><article class="identity-card"><header><span class="company-mark">{{ companyName(company).slice(0,1) }}</span><div><h2>{{ companyName(company) }}</h2><p>{{ company.legalName || i18n.text('notConfigured') }}</p></div></header><dl><div><dt>{{ i18n.text('registrationNumber') }}</dt><dd>{{ company.commercialRegistrationNumber || '—' }}</dd></div><div><dt>{{ i18n.text('taxNumber') }}</dt><dd>{{ company.taxRegistrationNumber || '—' }}</dd></div><div><dt>{{ i18n.text('contact') }}</dt><dd>{{ company.phone || company.email || '—' }}</dd></div><div><dt>{{ i18n.text('address') }}</dt><dd>{{ company.address || company.city || '—' }}</dd></div></dl></article>@if(preferences();as prefs){<article><h2>{{ i18n.text('operatingPreferences') }}</h2><dl><div><dt>{{ i18n.text('currency') }}</dt><dd>{{ prefs.currency }}</dd></div><div><dt>{{ i18n.text('decimalPlaces') }}</dt><dd>{{ prefs.decimalPlaces }}</dd></div><div><dt>{{ i18n.text('quantityDecimalPlaces') }}</dt><dd>{{ prefs.quantityDecimalPlaces }}</dd></div><div><dt>{{ i18n.text('dateFormat') }}</dt><dd>{{ prefs.dateFormat }}</dd></div><div><dt>{{ i18n.text('timeZone') }}</dt><dd>{{ prefs.timeZone }}</dd></div></dl></article>}<article class="wide"><h2>{{ i18n.text('documentIdentityFields') }}</h2>@if(company.customFields.length){<div class="field-list">@for(field of company.customFields;track field.sequence){<div><strong>{{ i18n.locale()==='ar-JO'?(field.labelArabic||field.label):field.label }}</strong><span>{{ i18n.locale()==='ar-JO'?(field.valueArabic||field.value):field.value }}</span></div>}</div>}@else{<p>{{ i18n.text('noIdentityFields') }}</p>}</article></div>}</section>
+<section class="settings-page">
+  <app-page-header eyebrow="ADMIN" [title]="i18n.text('settings')" [description]="i18n.text('settingsDescription')" />
+  @if (loading()) { <app-feedback-state kind="loading" [title]="i18n.text('loading')"/> }
+  @else if (problem(); as failure) { <app-api-recovery [problem]="failure" (retry)="load()"/> }
+  @else if (identity(); as company) {
+    <div class="settings-grid">
+      <article class="identity-card"><header><span class="company-mark">{{ companyName(company).slice(0,1) }}</span><div><h2>{{ companyName(company) }}</h2><p>{{ company.legalName || i18n.text('notConfigured') }}</p></div></header><dl><div><dt>{{ i18n.text('registrationNumber') }}</dt><dd>{{ company.commercialRegistrationNumber || '—' }}</dd></div><div><dt>{{ i18n.text('taxNumber') }}</dt><dd>{{ company.taxRegistrationNumber || '—' }}</dd></div><div><dt>{{ i18n.text('contact') }}</dt><dd>{{ company.phone || company.email || '—' }}</dd></div><div><dt>{{ i18n.text('address') }}</dt><dd>{{ company.address || company.city || '—' }}</dd></div></dl></article>
+      <article>
+        <h2>{{ i18n.text('operatingPreferences') }}</h2>
+        @if (saveProblem(); as failure) { <app-api-recovery [problem]="failure" [allowRetry]="false"/> }
+        @if (saved()) { <p class="save-status" role="status">{{ i18n.text('settingsSaved') }}</p> }
+        <form appSafeFormShortcuts [saving]="saving()" (saveShortcut)="save()" [formGroup]="form" (ngSubmit)="save()" novalidate>
+          <div class="preferences-form">
+            <label class="ui-field"><span>{{ i18n.text('currency') }}</span><input formControlName="currency" maxlength="10" /></label>
+            <label class="ui-field"><span>{{ i18n.text('decimalPlaces') }}</span><input formControlName="decimalPlaces" type="number" min="0" max="4" /></label>
+            <label class="ui-field"><span>{{ i18n.text('quantityDecimalPlaces') }}</span><input formControlName="quantityDecimalPlaces" type="number" min="0" max="4" /></label>
+            <label class="ui-field"><span>{{ i18n.text('dateFormat') }}</span><input formControlName="dateFormat" maxlength="50" /></label>
+            <label class="ui-field"><span>{{ i18n.text('timeZone') }}</span><input formControlName="timeZone" maxlength="100" /></label>
+            <label class="ui-field"><span>{{ i18n.text('defaultLanguage') }}</span><select formControlName="defaultLanguage"><option [value]="1">English</option><option [value]="2">العربية</option></select></label>
+          </div>
+          <button class="ui-button primary" type="submit" [disabled]="saving() || form.invalid || !form.dirty">{{ saving() ? i18n.text('saving') : i18n.text('savePreferences') }}</button>
+        </form>
+      </article>
+      <article class="wide"><h2>{{ i18n.text('documentIdentityFields') }}</h2>@if(company.customFields.length){<div class="field-list">@for(field of company.customFields;track field.sequence){<div><strong>{{ i18n.locale()==='ar-JO'?(field.labelArabic||field.label):field.label }}</strong><span>{{ i18n.locale()==='ar-JO'?(field.valueArabic||field.value):field.value }}</span></div>}</div>}@else{<p>{{ i18n.text('noIdentityFields') }}</p>}</article>
+    </div>
+  }
+</section>

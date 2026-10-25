@@ -5,9 +5,10 @@
 This bundle deliberately starts five dependent phases without claiming their broad completion:
 
 - `MOD-017`: completed governed Angular workspace builder, server-authored financial preview and user/role delegation;
-- `MOD-018`: one reusable verification command for backend build/regression, Angular tests/build and external-SCSS policy;
-- `MOD-019`: source-generated registry of 89 MVC controllers and 189 user-facing views;
-- `MOD-020`: read-only Angular organization identity and operating-preferences overview;
+- `MOD-018`: completed reusable build/regression/style/bundle/accessibility/browser gate with anonymous and authenticated API evidence plus local performance;
+- `MOD-019`: completed source-generated inventory of 89 controllers (79 MVC/10 API), 189 user-facing views,
+  344 MVC actions and 198 Razor control rows, plus reversible per-surface cutover controls;
+- `MOD-020`: Angular organization overview plus rowversion/audited operating-preferences editing; remaining settings workflows are staged;
 - `MOD-021`: server-paged Angular product list with search and status filtering.
 
 All API endpoints are authenticated, permission protected and call Application services. No EF entity is
@@ -19,13 +20,11 @@ generated registry is in `MVC_MIGRATION_REGISTRY.md` and is refreshed with
 ## Verification evidence
 
 - Web Release build: passed with zero warnings and zero errors.
-- Security/inventory regression: 1106 checks passed.
+- Security/inventory regression: 1113 checks passed after the cutover safety assertions.
 - Angular production build: passed.
-- Angular tests: 61/61 passed.
+- Angular tests: 64/64 passed across 24 files after MOD-020A.
 - External-style policy: passed; no Angular HTML `style=` attributes or component `styles:` blocks.
 
 ## Remaining gates
 
-Performance/accessibility/browser/E2E coverage (`MOD-018`), action/control registry and cutover controls (`MOD-019`),
-and complete settings/catalog functional parity
-(`MOD-020..021`) remain open.
+Complete settings/catalog functional parity (`MOD-020..021`) remains open.

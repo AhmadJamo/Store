@@ -1,7 +1,7 @@
 # Testing
 > Status: FOCUSED REGRESSION EXECUTABLE IMPLEMENTED
 > Source of truth: `tests/SecurityRegression` and build output
-> Last reviewed: 2026-10-21
+> Last reviewed: 2026-10-25
 
 `tests/SecurityRegression` is a standalone executable test harness. It verifies tenant metadata/query filters and write guards; complete classification of mapped Domain entities; composite TenantId coverage; authorization; destructive action HTTP methods; throttling; SaaS and inventory invariants. The 2026-10-21 run passes 932 checks, including customer-invoice/payment permissions, tenant ownership, receipt evidence, reversal, actionable links and next-step guidance.
 
@@ -22,6 +22,29 @@ The 2026-09-15 Release run passed 167 checks, and `dotnet build MiniStore.slnx -
 `tests/PerformanceSmoke` is a dependency-free HTTP workload. The local gate runs 20 warmups followed by 500 requests at concurrency 20 against `/health/live`, fails above p95 250 ms or p99 500 ms and writes `artifacts/verification/performance.json`. The final run completed all 500 requests with zero failures, p95 16.85 ms and p99 28.35 ms. This is an availability regression baseline, not a production-sizing or business-transaction claim.
 
 Run the complete owner-approved local gate with `pwsh -NoProfile -File scripts/verify-local.ps1`. It builds Release, runs the focused executable, uses a disposable SQL database, starts the application, requires healthy readiness and then runs the workload. Remaining gaps include full HTTP authentication/authorization journeys, business-transaction/soak workloads, external payment webhook tests, production monitoring and penetration testing.
+
+## Angular migration acceptance
+
+Run `pwsh -NoProfile -File scripts/verify-angular-modernization.ps1` before an Angular cutover increment. The command
+writes one ignored JSON report under `artifacts/verification/angular-acceptance`, fails on real build, regression,
+style, accessibility, bundle or browser failures, and records unavailable environment-dependent evidence as skipped.
+Its Playwright pass covers RTL/LTR, keyboard skip focus, representative loading/empty/error states and a 390px viewport.
+Pass `-ApiUrl` for the real anonymous session and bounded performance checks; pass an external
+`-AuthenticatedStorageState` file for the authorized session plus allowlisted read probes. Never commit that file.
+
+The final 2026-10-25 MOD-018B run passed eleven outer results with zero failures and zero skips. The browser passed four
+UI checks plus the real anonymous 401 session contract, the authenticated session and three permitted read probes.
+Initial bundle size was 290,987/358,400 bytes and the largest lazy chunk was 52,866/81,920 bytes. The 100-request,
+concurrency-10 live availability smoke had zero failures, p95 40.37 ms and p99 61.85 ms. The interactive wrapper deleted
+its temporary storage state after completion; credentials and cookies were not written to the repository or report.
+
+MOD-019 raised the focused regression total to 1113. Its resolver checks prove that MVC and pilot modes do not redirect,
+Angular-default GET preserves a query string and resolves allowlisted route values, POST never redirects, and an
+unlisted action remains MVC. Regenerate `MVC_MIGRATION_REGISTRY.md` before reviewing migration coverage.
+
+MOD-020A passes 64/64 Angular tests across 24 files. Coverage verifies that the settings PUT carries the rowversion,
+adopts the refreshed token after success, clears dirty state, and preserves edited input after a concurrency failure.
+Security regression keeps the PUT under authenticated `Administration.Access`; Web Release and Angular production build pass.
 
 ## Guided onboarding verification (2026-09-15)
 Regression coverage checks pending/completed/skipped state, normalization, one-time resolution, invalid currency and rowversion. A local HTTP journey registered a company, reached /onboarding, applied the Cafe/tax/POS template, landed on the dashboard and authenticated again by company code. SQL found 18 accounts, one warehouse, one POS and one tax rate for the test tenant.

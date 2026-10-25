@@ -80,6 +80,7 @@ export const routes: Routes = [
       },
       {
         path: 'settings',
+        canDeactivate: [(component) => component.canDeactivate()],
         loadComponent: () => import('./features/settings/settings-overview-page').then((module) => module.SettingsOverviewPageComponent),
       },
       {

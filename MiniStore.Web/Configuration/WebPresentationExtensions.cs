@@ -5,6 +5,7 @@ using MiniStore.Web.Guidance;
 using MiniStore.Web.Observability;
 using Microsoft.Extensions.Localization;
 using MiniStore.Web.Middleware.Api;
+using MiniStore.Web.Presentation.Cutover;
 
 namespace MiniStore.Web.Configuration;
 
@@ -44,16 +45,29 @@ public static class WebPresentationExtensions
         });
         services.Configure<ObservabilityOptions>(
             configuration.GetSection(ObservabilityOptions.SectionName));
+        services.AddOptions<PresentationCutoverOptions>()
+            .Bind(configuration.GetSection(PresentationCutoverOptions.SectionName))
+            .Validate(
+                options => !string.IsNullOrWhiteSpace(options.AngularBasePath) &&
+                           options.AngularBasePath.StartsWith('/') &&
+                           !options.AngularBasePath.StartsWith("//", StringComparison.Ordinal) &&
+                           options.AngularBasePath.All(character =>
+                               char.IsLetterOrDigit(character) || character is '/' or '-' or '_'),
+                "PresentationCutover:AngularBasePath must be a local absolute path.")
+            .ValidateOnStart();
         services.AddHealthChecks()
             .AddCheck("application", () =>
                 Microsoft.Extensions.Diagnostics.HealthChecks.HealthCheckResult.Healthy(),
                 tags: ["live"])
             .AddCheck<DatabaseHealthCheck>("database", tags: ["ready"]);
         services.AddScoped<WorkflowCompletionFilter>();
+        services.AddScoped<PresentationCutoverResolver>();
+        services.AddScoped<PresentationCutoverFilter>();
         services.AddControllersWithViews(options =>
         {
             options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
             options.Filters.Add<WorkflowCompletionFilter>();
+            options.Filters.Add<PresentationCutoverFilter>();
         })
             .AddViewLocalization()
             .AddDataAnnotationsLocalization();

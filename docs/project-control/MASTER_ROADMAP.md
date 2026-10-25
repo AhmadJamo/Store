@@ -22,9 +22,9 @@
 - `MOD-015` — COMPLETED 2026-10-24: Analytics Angular مع group/period comparison/allowlisted drill-down وbounded export preview.
 - `MOD-016` — COMPLETED 2026-10-24: مراقبة ثلاثة hosted workers حقيقيين وruntime SLA وخطط refresh صادقة دون scheduled delivery وهمي.
 - `MOD-017` — COMPLETED 2026-10-25: منشئ Angular، الحفظ، المعاينة المالية الخادمية، وتفويض المستخدم/الدور مع البدء/الانتهاء والإلغاء وإعادة فحص صلاحية المصدر.
-- `MOD-018` — IN PROGRESS: بوابة موحدة للبناء والانحدار واختبارات Angular وسياسة SCSS اكتملت؛ الأداء/accessibility/browser/E2E ما زالت مطلوبة.
-- `MOD-019` — IN PROGRESS: سجل آلي يغطي 89 controller و189 view أضيف؛ action/control inventory وcutover controls ما زالت مطلوبة.
-- `MOD-020` — IN PROGRESS: أول settings slice يعرض هوية المنشأة وتفضيلات التشغيل من Application API محمي؛ بقية دورة الإعدادات والتحرير لم تنقل.
+- `MOD-018` — COMPLETE: البوابة الموحدة نجحت 11/11 بلا فشل أو تخطي، بما فيها Edge وanonymous 401 والجلسة المصرح بها وثلاث واجهات قراءة والأداء المحلي؛ حُذفت الجلسة المؤقتة بعد التشغيل.
+- `MOD-019` — COMPLETE: السجل المولد يغطي 89 controller (79 MVC/10 API) و189 view و344 MVC action و198 Razor control row؛ أضيف تحويل تدريجي قابل للرجوع، GET-only وقائم على allowlist، مع بقاء MVC هو الافتراضي.
+- `MOD-020` — IN PROGRESS: يعرض هوية المنشأة، واكتملت دورة تعديل تفضيلات التشغيل عبر Application service مع rowversion/audit/cache invalidation؛ تبقى هوية المنشأة والشعار وبقية تدفقات الإعدادات.
 - `MOD-021` — IN PROGRESS: أول catalog slice يعرض قائمة منتجات خادمية قابلة للبحث/التصفية؛ التفاصيل والتحرير وبقية الكتالوج لم تنقل.
 - `MOD-022..028` — APPROVED PROGRAM: نقل المخزون والمشتريات والمبيعات وPOS والمحاسبة وSaaS وكل الشاشات المشتركة والمتبقية إلى Angular على موجات، مع functional parity وإعادة تصميم كاملة وفق Angular design system لا نسخ Razor.
 - `MOD-029` — GATED: قبول شامل وdual-run reconciliation وتجربة cutover/rollback.

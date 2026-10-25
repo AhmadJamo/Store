@@ -39,7 +39,7 @@ describe('AppShell accessibility', () => {
     const main = fixture.nativeElement.querySelector('#main-content') as HTMLElement;
     expect(skip.getAttribute('href')).toBe('#main-content');
     expect(main.tabIndex).toBe(-1);
-    (fixture.componentInstance as any).focusMain(); await Promise.resolve();
+    skip.click(); await Promise.resolve();
     expect(document.activeElement).toBe(main);
   });
 

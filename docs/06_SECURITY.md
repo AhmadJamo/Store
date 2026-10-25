@@ -7,6 +7,10 @@
 
 The same-origin `/api/v1` boundary reuses the Identity application cookie, tenant session middleware and backend permission service. Authentication and authorization failures return RFC Problem Details JSON with a correlation ID instead of redirecting API callers to MVC pages. Unsafe methods remain under the global antiforgery filter; Angular retrieves a request token from an authenticated endpoint and sends it through `X-CSRF-TOKEN`. OpenAPI requires authentication and contains only internal v1 routes. No JWT, local-storage credential, broad CORS policy or client-authoritative permission decision was added.
 
+The MOD-019 presentation cutover filter runs after authorization and cannot supply an arbitrary destination. It accepts
+only a validated local Angular base path and a code-owned controller/action allowlist, encodes route values, and ignores
+POST plus every unlisted action. Enabling a surface therefore cannot redirect a mutation or replace endpoint permission checks.
+
 Customer and Supplier Angular slices use operation-specific View/Create/Edit permissions on every endpoint. Supplier form options are projected by the Application layer, and submitted account/product identifiers are revalidated by existing services; client filtering is never treated as authorization. Supplier stale-write failures return HTTP 409 while keeping global antiforgery and tenant repository filters intact.
 
 The Command Center never aggregates unauthorized backend data: its provider list is session-permission filtered and its previews call the already-protected Customer/Supplier APIs with bounded paging. Local Command Center persistence contains only validated navigation/provider identifiers and view mode; restoration drops unknown, unauthorized, oversized or injected values. Record payloads, search terms, arbitrary URLs and permission decisions are not stored.

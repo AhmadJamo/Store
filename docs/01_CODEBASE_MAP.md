@@ -42,6 +42,13 @@ Angular analytics route calls the existing generic `AnalyticsCenterService`, and
 `OperationsCenterService` filters snapshots and analytics refresh plans by existing permissions before Angular
 `features/operations-center` renders them. See `docs/modernization/PHASE_16_BACKGROUND_OPERATIONS.md`.
 
+`scripts/verify-angular-modernization.ps1` is the MOD-018 acceptance orchestrator. It combines Release/backend
+regression, Angular tests/build, external-SCSS and static accessibility policies, explicit bundle budgets, the existing
+performance workload and `tests/AngularBrowserAcceptance`. The browser executable reuses Microsoft.Playwright already
+present in the repository and emits only ignored verification artifacts. See `PHASE_18_ACCEPTANCE_GATE.md`.
+`scripts/Invoke-AngularAuthenticatedAcceptance.ps1` adds the safe interactive MOD-018B path: Edge captures login state
+only under the Windows temporary directory, the orchestrator consumes it, and `finally` deletes it.
+
 `docs/modernization/FULL_MVC_TO_ANGULAR_MIGRATION_PLAN.md` is the approved presentation-migration program. It extends
 the work through `MOD-030`: shared acceptance and complete MVC inventory, nine module/cross-cutting migration waves,
 full dual-run reconciliation and an explicit final Angular-only cutover. A page is not complete until its actions,
@@ -447,14 +454,20 @@ For exact module relationships, use `modules/*.md`; for entity and service detai
 
 - `MiniStore.Web/Controllers/Api/V1/AnalyticsCenterApiController.cs`: analytics read, builder, workspace-create and governed access/delegation API.
 - `MiniStore.Web/Controllers/Api/V1/SettingsApiController.cs`: protected identity/preferences read API for the first settings slice.
+- `MiniStore Front-End/src/app/features/settings/`: bilingual identity overview and editable operating preferences with
+  rowversion, save feedback and workspace dirty-state protection; mutations reuse `GeneralSettingsService`.
 - `MiniStore.Web/Controllers/Api/V1/ProductsApiController.cs`: protected paged product read API for the first catalog slice.
 - `MiniStore Front-End/src/app/features/analytics/report-builder-page.*`: governed workspace builder with external SCSS.
 - `MiniStore Front-End/src/app/features/analytics/workspace-access-page.*`: bilingual user/role delegation, schedule, expiry, revoke and evidence UI with external SCSS.
 - `MiniStore Front-End/src/app/features/settings/`: read-only organization/settings Angular feature.
 - `MiniStore Front-End/src/app/features/products/`: paged product-catalog Angular feature.
 - `scripts/verify-angular-modernization.ps1`: reusable migration acceptance command.
-- `scripts/generate-mvc-migration-registry.ps1`: source-driven MVC view/controller inventory generator.
-- `docs/modernization/MVC_MIGRATION_REGISTRY.md`: generated functional migration registry; do not edit rows manually.
+- `scripts/generate-mvc-migration-registry.ps1`: source-driven MVC view, action and Razor-control inventory generator.
+- `MiniStore.Web/Presentation/Cutover/`: validated per-surface presentation modes, code-owned Angular route allowlist,
+  GET/HEAD resolver and global MVC cutover filter. Committed modes remain MVC.
+- `docs/modernization/MVC_MIGRATION_REGISTRY.md`: generated 89-controller, 189-view, 344-MVC-action and
+  198-Razor-file migration registry; do not edit rows manually.
+- `docs/decisions/ADR-20261025-REVERSIBLE-PRESENTATION-CUTOVER.md`: cutover/rollback boundary and rationale.
 - `docs/modernization/MOD-017-021-FOUNDATION.md`: scope, evidence and remaining gates for this bundle.
 - `docs/modernization/MOD-017B-FINANCIAL-PREVIEW.md`: server-authored financial provenance and presentation evidence.
 - `docs/modernization/MOD-017C-GOVERNED-DELEGATION.md`: tenancy, permission, migration and verification evidence.
