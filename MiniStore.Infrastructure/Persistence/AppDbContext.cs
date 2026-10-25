@@ -150,6 +150,7 @@ public class AppDbContext
     public DbSet<DocumentDesignSection> DocumentDesignSections => Set<DocumentDesignSection>();
     public DbSet<AnalyticsWorkspace> AnalyticsWorkspaces => Set<AnalyticsWorkspace>();
     public DbSet<AnalyticsWorkspaceWidget> AnalyticsWorkspaceWidgets => Set<AnalyticsWorkspaceWidget>();
+    public DbSet<AnalyticsWorkspaceDelegation> AnalyticsWorkspaceDelegations => Set<AnalyticsWorkspaceDelegation>();
     public DbSet<SalesQuotationHistory> SalesQuotationHistories => Set<SalesQuotationHistory>();
     public DbSet<SalesOrder> SalesOrders => Set<SalesOrder>();
     public DbSet<SalesOrderLine> SalesOrderLines => Set<SalesOrderLine>();

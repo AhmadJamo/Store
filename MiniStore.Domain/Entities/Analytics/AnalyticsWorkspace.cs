@@ -3,6 +3,7 @@ namespace MiniStore.Domain.Entities;
 public enum AnalyticsWorkspaceVisibility { Personal = 1, Shared = 2 }
 public enum AnalyticsVisualizationType { Metric = 1, Funnel = 2, Table = 3, Bar = 4, Line = 5, Donut = 6, Comparison = 7 }
 public enum AnalyticsComparisonMode { None = 1, PreviousPeriod = 2, PreviousYear = 3 }
+public enum AnalyticsDelegationTargetType { User = 1, Role = 2 }
 
 public sealed class AnalyticsWorkspace
 {
@@ -22,8 +23,10 @@ public sealed class AnalyticsWorkspace
     public bool ShowDefinitions { get; private set; }
     public string CreatedByUserId { get; private set; } = string.Empty;
     public DateTime CreatedAtUtc { get; private set; }
+    public int DelegationRevision { get; private set; }
     public byte[] RowVersion { get; private set; } = [];
     public List<AnalyticsWorkspaceWidget> Widgets { get; private set; } = [];
+    public List<AnalyticsWorkspaceDelegation> Delegations { get; private set; } = [];
 
     public AnalyticsWorkspace(string name, string? nameArabic, string? description, string moduleKey,
         AnalyticsWorkspaceVisibility visibility, string userId, bool isDefault, int layoutColumns,
@@ -55,8 +58,74 @@ public sealed class AnalyticsWorkspace
     }
 
     public void ClearDefault() => IsDefault = false;
+    public void AddDelegation(AnalyticsWorkspaceDelegation delegation)
+    {
+        var now = DateTime.UtcNow;
+        if (Delegations.Count(x => x.RevokedAtUtc is null &&
+                (!x.ExpiresAtUtc.HasValue || x.ExpiresAtUtc > now)) >= 100)
+            throw new InvalidOperationException("An analytics workspace cannot have more than 100 active delegations.");
+        if (Delegations.Any(x => x.RevokedAtUtc is null &&
+                (!x.ExpiresAtUtc.HasValue || x.ExpiresAtUtc > now) && x.HasSameTarget(delegation)))
+            throw new InvalidOperationException("This analytics workspace is already delegated to the selected target.");
+        Delegations.Add(delegation);
+        DelegationRevision++;
+    }
+    public void RevokeDelegation(int delegationId, string userId, DateTime nowUtc)
+    {
+        var delegation = Delegations.SingleOrDefault(x => x.Id == delegationId)
+            ?? throw new InvalidOperationException("Analytics delegation was not found.");
+        delegation.Revoke(userId, nowUtc);
+        DelegationRevision++;
+    }
     private static string Required(string? value, int max, string label) { if (string.IsNullOrWhiteSpace(value)) throw new ArgumentException($"{label} is required."); var x=value.Trim(); if(x.Length>max)throw new ArgumentException($"{label} cannot exceed {max} characters."); return x; }
     private static string? Optional(string? value, int max, string label) { if(string.IsNullOrWhiteSpace(value))return null;var x=value.Trim();if(x.Length>max)throw new ArgumentException($"{label} cannot exceed {max} characters.");return x; }
+}
+
+public sealed class AnalyticsWorkspaceDelegation
+{
+    private AnalyticsWorkspaceDelegation() { CreatedByUserId = string.Empty; }
+    public int Id { get; private set; }
+    public int AnalyticsWorkspaceId { get; private set; }
+    public AnalyticsDelegationTargetType TargetType { get; private set; }
+    public string? TargetUserId { get; private set; }
+    public int? TargetRoleId { get; private set; }
+    public DateTime StartsAtUtc { get; private set; }
+    public DateTime? ExpiresAtUtc { get; private set; }
+    public string CreatedByUserId { get; private set; } = string.Empty;
+    public DateTime CreatedAtUtc { get; private set; }
+    public string? RevokedByUserId { get; private set; }
+    public DateTime? RevokedAtUtc { get; private set; }
+
+    public AnalyticsWorkspaceDelegation(AnalyticsDelegationTargetType targetType, string? targetUserId,
+        int? targetRoleId, DateTime startsAtUtc, DateTime? expiresAtUtc, string createdByUserId)
+    {
+        if (!Enum.IsDefined(targetType)) throw new ArgumentException("Analytics delegation target type is invalid.");
+        if (targetType == AnalyticsDelegationTargetType.User && string.IsNullOrWhiteSpace(targetUserId))
+            throw new ArgumentException("Select a user for this analytics delegation.");
+        if (targetType == AnalyticsDelegationTargetType.Role && targetRoleId is null or <= 0)
+            throw new ArgumentException("Select a role for this analytics delegation.");
+        if (targetType == AnalyticsDelegationTargetType.User && targetRoleId.HasValue ||
+            targetType == AnalyticsDelegationTargetType.Role && !string.IsNullOrWhiteSpace(targetUserId))
+            throw new ArgumentException("Analytics delegation must target either one user or one role.");
+        if (expiresAtUtc.HasValue && expiresAtUtc.Value <= startsAtUtc)
+            throw new ArgumentException("Analytics delegation expiry must be after its start time.");
+        if (string.IsNullOrWhiteSpace(createdByUserId)) throw new ArgumentException("Analytics delegation creator is required.");
+        TargetType = targetType; TargetUserId = targetUserId?.Trim(); TargetRoleId = targetRoleId;
+        StartsAtUtc = DateTime.SpecifyKind(startsAtUtc, DateTimeKind.Utc);
+        ExpiresAtUtc = expiresAtUtc.HasValue ? DateTime.SpecifyKind(expiresAtUtc.Value, DateTimeKind.Utc) : null;
+        CreatedByUserId = createdByUserId.Trim(); CreatedAtUtc = DateTime.UtcNow;
+    }
+
+    public bool IsActive(DateTime nowUtc) => RevokedAtUtc is null && StartsAtUtc <= nowUtc &&
+        (!ExpiresAtUtc.HasValue || ExpiresAtUtc > nowUtc);
+    public bool HasSameTarget(AnalyticsWorkspaceDelegation other) => TargetType == other.TargetType &&
+        TargetUserId == other.TargetUserId && TargetRoleId == other.TargetRoleId;
+    public void Revoke(string userId, DateTime nowUtc)
+    {
+        if (RevokedAtUtc.HasValue) throw new InvalidOperationException("Analytics delegation is already revoked.");
+        if (string.IsNullOrWhiteSpace(userId)) throw new ArgumentException("Analytics delegation revoker is required.");
+        RevokedByUserId = userId.Trim(); RevokedAtUtc = nowUtc;
+    }
 }
 
 public sealed class AnalyticsWorkspaceWidget

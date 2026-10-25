@@ -56,6 +56,11 @@ saved workspaces without depending on a module DTO. Central comparison re-execut
 previous period/year. Migration 135 adds the isolated workspace schema. See `modules/analytics.md` and the Analytics
 Center ADR.
 
+`AnalyticsWorkspaceDelegation` adds time-bounded, revocable user/tenant-role access inside the same aggregate.
+`AnalyticsCenterService` authorizes owner/manager administration, `IAnalyticsPrincipalDirectory` supplies only active
+tenant choices, and repository availability combines owner/shared/current user/current role grants before the existing
+provider-permission recheck. Source migration `20261025025522_AddAnalyticsWorkspaceDelegation` is additive.
+
 ## SAL-120B central document identity and designer
 
 `GeneralSettings` owns reusable bilingual trade/legal identity, document-name policy and a bounded logo. `OrganizationIdentityField` adds ordered bilingual custom facts with sales/purchase/receipt/footer visibility. The tenant-owned `DocumentDesign` aggregate adds document type, versioned Draft/Active/Archived lifecycle, per-type default, paper/language/RTL-ready layout, brand colors, font/header/logo/name placement, identity visibility, cover/header/footer/watermark text and up to 30 ordered bilingual sections. `DocumentDesignService`, repository/configuration, administration controller and responsive live-preview editor keep document branding in Settings rather than one sales screen. `IHtmlToPdfEngine` and `PlaywrightPdfEngine` form one reusable HTML-to-PDF boundary for every ERP module; the quotation composer supplies encoded feature-specific HTML. Sending a quotation now freezes the full effective identity, design, content and logo in a SHA-256 protected snapshot, while Draft PDF remains a live preview. Migrations 133-134 contain the additive designer and snapshot schema. See the three SAL-120B ADRs.
@@ -440,10 +445,11 @@ For exact module relationships, use `modules/*.md`; for entity and service detai
 
 ## Angular modernization additions — 2026-10-25
 
-- `MiniStore.Web/Controllers/Api/V1/AnalyticsCenterApiController.cs`: analytics read, builder catalog and workspace-create API.
+- `MiniStore.Web/Controllers/Api/V1/AnalyticsCenterApiController.cs`: analytics read, builder, workspace-create and governed access/delegation API.
 - `MiniStore.Web/Controllers/Api/V1/SettingsApiController.cs`: protected identity/preferences read API for the first settings slice.
 - `MiniStore.Web/Controllers/Api/V1/ProductsApiController.cs`: protected paged product read API for the first catalog slice.
 - `MiniStore Front-End/src/app/features/analytics/report-builder-page.*`: governed workspace builder with external SCSS.
+- `MiniStore Front-End/src/app/features/analytics/workspace-access-page.*`: bilingual user/role delegation, schedule, expiry, revoke and evidence UI with external SCSS.
 - `MiniStore Front-End/src/app/features/settings/`: read-only organization/settings Angular feature.
 - `MiniStore Front-End/src/app/features/products/`: paged product-catalog Angular feature.
 - `scripts/verify-angular-modernization.ps1`: reusable migration acceptance command.
@@ -451,3 +457,4 @@ For exact module relationships, use `modules/*.md`; for entity and service detai
 - `docs/modernization/MVC_MIGRATION_REGISTRY.md`: generated functional migration registry; do not edit rows manually.
 - `docs/modernization/MOD-017-021-FOUNDATION.md`: scope, evidence and remaining gates for this bundle.
 - `docs/modernization/MOD-017B-FINANCIAL-PREVIEW.md`: server-authored financial provenance and presentation evidence.
+- `docs/modernization/MOD-017C-GOVERNED-DELEGATION.md`: tenancy, permission, migration and verification evidence.

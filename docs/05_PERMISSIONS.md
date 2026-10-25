@@ -2,8 +2,9 @@
 ## Analytics Center
 
 - `AnalyticsCenter.View` opens the center and its read-only registered module providers.
-- `AnalyticsCenter.Customize` creates personal workspaces.
-- `AnalyticsCenter.Manage` additionally permits shared workspaces. The controller and Application service both enforce this boundary; a crafted shared-workspace POST cannot rely on presentation visibility alone.
+- `AnalyticsCenter.Customize` creates personal workspaces and permits an owner to view, grant and revoke access to that owner's workspace.
+- `AnalyticsCenter.Manage` additionally permits shared workspaces and delegation management for any workspace in the active company. The controller and Application service both enforce this boundary; a crafted shared-workspace or delegation request cannot rely on presentation visibility alone.
+- Delegation is not a permission grant. A delegated user still needs `AnalyticsCenter.View` and the registered provider's source permission every time the workspace runs.
 
 ## Advanced quotation templates
 

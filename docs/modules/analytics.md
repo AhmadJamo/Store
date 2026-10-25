@@ -15,7 +15,14 @@ presentation and external SCSS.
 `MOD-017B` adds a server-authored financial preview to every analytics response. `AnalyticsCenterService` selects
 only money-formatted authorized widgets after provider execution and workspace filtering, rounds them using the
 organization decimal setting, and returns currency, period, provider source, bilingual definitions and generation
-time. Angular renders this immutable preview and performs no financial calculation. Delegation remains `MOD-017C`.
+time. Angular renders this immutable preview and performs no financial calculation.
+
+`MOD-017C` completes the governed delegation slice. A workspace owner, or a user with
+`AnalyticsCenter.Manage`, can delegate a saved workspace to an active company member or tenant-owned role with an
+optional future start and expiry, then revoke it immediately. Each row preserves creator/revoker and UTC timestamps.
+Availability checks active user and role delegations, while provider permission is still rechecked before every
+execution; delegation therefore shares a report definition but never grants source-data authority. Angular provides a
+bilingual RTL/LTR access screen backed by server-supplied user/role choices and external SCSS.
 
 The Analytics Center is a module-neutral reporting surface. `AnalyticsCenterService` discovers registered
 `IAnalyticsModuleProvider` implementations; the web layer does not depend on Sales or Purchasing DTOs.
@@ -34,11 +41,13 @@ metadata. Calculations are read-only and use tenant-filtered repositories throug
 Permissions are intentionally separate:
 
 - `AnalyticsCenter.View`: open the center and execute registered read-only providers.
-- `AnalyticsCenter.Customize`: create personal workspaces.
-- `AnalyticsCenter.Manage`: create shared workspaces in addition to personal ones.
+- `AnalyticsCenter.Customize`: create personal workspaces and manage delegation for workspaces the user owns.
+- `AnalyticsCenter.Manage`: create shared workspaces and manage delegation for any workspace in the company.
 
 Migration 135 creates `AnalyticsWorkspaces` and `AnalyticsWorkspaceWidgets` with tenant-composite relationships,
 rowversion and per-workspace widget-key/order uniqueness. The local Demo is reconciled through migration 135.
+Source migration `20261025025522_AddAnalyticsWorkspaceDelegation` adds tenant-owned delegation rows with
+tenant-composite workspace/role relationships and user/role active-lookup indexes; it has not been applied to Demo.
 
 Angular exploration now reuses this service for provider/group/date/comparison selection, bounded export preview and
 allowlisted Customer/Supplier drill-down. Saved refresh intervals appear in the Operations Center as refresh plans only.

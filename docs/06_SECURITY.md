@@ -33,6 +33,13 @@ Only Customer and Supplier Angular routes are valid drill targets, and export pr
 dataset without fetching hidden rows or generating a file. MOD-016 filters each worker by its existing module View
 permission, returns no exception text or tenant payload, and clearly marks analytics refresh plans as non-delivery.
 
+MOD-017C stores delegation inside the tenant-owned workspace aggregate. Only the owner or
+`AnalyticsCenter.Manage` may administer it, and all access endpoints additionally require
+`AnalyticsCenter.Customize`. Target users must be active company members; target roles are resolved inside the active
+tenant and protected by a tenant-composite foreign key. Revoked, expired and not-yet-active grants are excluded.
+Workspace discovery evaluates current user and role grants, but execution independently rechecks the provider's source
+permission, so delegation cannot elevate data access. Rowversion rejects stale grant/revoke commands.
+
 The Customers API independently applies `Customers.View`, `Customers.Create` and `Customers.Edit` to its matching operations. Sidebar visibility is only guidance; every endpoint reauthorizes. POST/PUT retain global antiforgery, DTO validation and tenant-filtered Application/repository access. Customer form data and row versions are never written to browser storage; stale updates return a correlation-bearing `409` response.
 
 SAL-130A analytics remain read-only and pass through tenant-filtered repositories in the Application layer. Saved workspaces are tenant-owned; personal rows are owner-filtered and shared creation requires a separate management permission rechecked in the Application service. The center filters and executes providers only after checking each provider-declared permission, including during crafted workspace creation. Date windows are capped at two years, module/widget keys are validated against the registered provider catalog, and database constraints prevent duplicate widget keys/orders. Comparison queries reuse the same tenant-scoped provider and filters for the derived prior period.

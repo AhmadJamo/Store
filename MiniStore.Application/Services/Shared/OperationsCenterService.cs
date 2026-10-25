@@ -8,7 +8,9 @@ public sealed class OperationsCenterService(
     IBackgroundJobMonitor monitor,
     IAnalyticsWorkspaceRepository workspaces,
     IPermissionService permissions,
-    ICurrentUserService currentUser)
+    ICurrentUserService currentUser,
+    ITenantAuthorizationRepository tenantAuthorization,
+    ITenantContext tenantContext)
 {
     public async Task<OperationsCenterDto> GetAsync()
     {
@@ -21,7 +23,9 @@ public sealed class OperationsCenterService(
         var plans = new List<AnalyticsRefreshPlanDto>();
         if (granted.Contains("AnalyticsCenter.View"))
         {
-            plans = (await workspaces.GetAvailableAsync(currentUser.UserId))
+            var tenantId = tenantContext.TenantId ?? throw new InvalidOperationException("An active company is required.");
+            var roleIds = await tenantAuthorization.GetRoleIdsAsync(tenantId, currentUser.UserId);
+            plans = (await workspaces.GetAvailableAsync(currentUser.UserId, roleIds, DateTime.UtcNow))
                 .Where(x => x.RefreshIntervalMinutes > 0)
                 .OrderBy(x => x.Name)
                 .Select(x => new AnalyticsRefreshPlanDto(

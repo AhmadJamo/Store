@@ -143,3 +143,37 @@ public sealed class AnalyticsWorkspaceCreatePageDto
     public CreateAnalyticsWorkspaceDto Form { get; init; } = new();
     public List<AnalyticsModuleDefinitionDto> Modules { get; init; } = [];
 }
+
+public sealed class AnalyticsWorkspaceAccessDto
+{
+    public int WorkspaceId { get; init; }
+    public string Name { get; init; } = string.Empty;
+    public bool CanManage { get; init; }
+    public byte[] RowVersion { get; init; } = [];
+    public List<AnalyticsDelegationDto> Delegations { get; init; } = [];
+    public List<AnalyticsPrincipalOptionDto> Users { get; init; } = [];
+    public List<AnalyticsPrincipalOptionDto> Roles { get; init; } = [];
+}
+
+public sealed record AnalyticsPrincipalOptionDto(string Id, string DisplayName);
+
+public sealed record AnalyticsDelegationDto(int Id, AnalyticsDelegationTargetType TargetType,
+    string? TargetUserId, int? TargetRoleId, DateTime StartsAtUtc, DateTime? ExpiresAtUtc,
+    string CreatedByUserId, DateTime CreatedAtUtc, string? RevokedByUserId, DateTime? RevokedAtUtc,
+    bool IsActive);
+
+public sealed class CreateAnalyticsDelegationDto
+{
+    public AnalyticsDelegationTargetType TargetType { get; set; }
+    [StringLength(450)] public string? TargetUserId { get; set; }
+    public int? TargetRoleId { get; set; }
+    public DateTime? StartsAtUtc { get; set; }
+    public DateTime? ExpiresAtUtc { get; set; }
+    [Required] public byte[] RowVersion { get; set; } = [];
+}
+
+public sealed class RevokeAnalyticsDelegationDto
+{
+    [Range(1, int.MaxValue)] public int DelegationId { get; set; }
+    [Required] public byte[] RowVersion { get; set; } = [];
+}

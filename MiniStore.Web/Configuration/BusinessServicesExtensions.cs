@@ -211,6 +211,7 @@ public static class BusinessServicesExtensions
         services.AddScoped<SalesQuotationService>();
         services.AddScoped<SalesAnalyticsService>();
         services.AddScoped<IAnalyticsWorkspaceRepository, AnalyticsWorkspaceRepository>();
+        services.AddScoped<IAnalyticsPrincipalDirectory, AnalyticsPrincipalDirectory>();
         services.AddScoped<IAnalyticsModuleProvider, SalesAnalyticsModuleProvider>();
         services.AddScoped<IAnalyticsModuleProvider, PurchaseAnalyticsModuleProvider>();
         services.AddScoped<AnalyticsCenterService>();

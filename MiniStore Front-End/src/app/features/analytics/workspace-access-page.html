@@ -1,0 +1,22 @@
+<section class="access-page">
+  <app-page-header eyebrow="BI" [title]="i18n.text('manageAnalyticsAccess')" [description]="i18n.text('analyticsAccessDescription')"><a class="ui-button secondary" [routerLink]="['/analytics']" [queryParams]="{ workspaceId: workspaceId }">{{ i18n.text('backToAnalytics') }}</a></app-page-header>
+  @if (loading()) { <app-feedback-state kind="loading" [title]="i18n.text('loading')" /> }
+  @else if (problem(); as failure) { <app-api-recovery [problem]="failure" (retry)="load()" /> }
+  @else if (access(); as current) {
+    <section class="access-card">
+      <header><div><span class="eyebrow">{{ i18n.text('workspaceIdentity') }}</span><h2>{{ current.name }}</h2></div><span class="security-note">{{ i18n.text('delegationPermissionNote') }}</span></header>
+      <form (submit)="$event.preventDefault(); save()">
+        <label><span>{{ i18n.text('delegateTo') }}</span><select [value]="targetType" (change)="setTargetType($any($event.target).value)"><option value="1">{{ i18n.text('user') }}</option><option value="2">{{ i18n.text('role') }}</option></select></label>
+        <label><span>{{ targetType === 1 ? i18n.text('user') : i18n.text('role') }}</span><select required [value]="targetId" (change)="setTarget($any($event.target).value)">@for (option of principals(); track option.id) { <option [value]="option.id">{{ option.displayName }}</option> }</select></label>
+        <label><span>{{ i18n.text('startsAt') }}</span><input type="datetime-local" [value]="startsAt" (input)="startsAt = $any($event.target).value" /></label>
+        <label><span>{{ i18n.text('expiresAt') }}</span><input type="datetime-local" [value]="expiresAt" (input)="expiresAt = $any($event.target).value" /></label>
+        <button class="ui-button primary" type="submit" [disabled]="saving() || !targetId">{{ saving() ? i18n.text('saving') : i18n.text('grantAccess') }}</button>
+      </form>
+    </section>
+    <section class="access-card">
+      <header><div><span class="eyebrow">{{ i18n.text('accessEvidence') }}</span><h2>{{ i18n.text('analyticsDelegations') }}</h2></div></header>
+      @if (current.delegations.length === 0) { <app-feedback-state kind="empty" [title]="i18n.text('noDelegations')" [description]="i18n.text('noDelegationsDescription')" /> }
+      @else { <div class="delegation-list">@for (delegation of current.delegations; track delegation.id) { <article><div><strong>{{ targetName(delegation) }}</strong><span>{{ delegation.targetType === 1 ? i18n.text('user') : i18n.text('role') }}</span></div><dl><div><dt>{{ i18n.text('startsAt') }}</dt><dd>{{ delegation.startsAtUtc }}</dd></div><div><dt>{{ i18n.text('expiresAt') }}</dt><dd>{{ delegation.expiresAtUtc || i18n.text('noExpiry') }}</dd></div><div><dt>{{ i18n.text('createdAt') }}</dt><dd>{{ delegation.createdAtUtc }}</dd></div></dl><span class="status" [class.active]="delegation.isActive">{{ i18n.text(statusKey(delegation)) }}</span><button class="ui-button secondary" type="button" [disabled]="saving() || !!delegation.revokedAtUtc" (click)="revoke(delegation)">{{ i18n.text('revokeAccess') }}</button></article> }</div> }
+    </section>
+  }
+</section>

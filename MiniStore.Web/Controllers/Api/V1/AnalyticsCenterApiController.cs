@@ -32,4 +32,28 @@ public sealed class AnalyticsCenterApiController(
         var id = await analytics.CreateAsync(dto, canManage);
         return CreatedAtAction(nameof(Get), new { workspaceId = id }, new { id });
     }
+
+    [HttpGet("workspaces/{workspaceId:int}/access")]
+    [PermissionAuthorize("AnalyticsCenter.Customize")]
+    public async Task<ActionResult<AnalyticsWorkspaceAccessDto>> GetAccess(int workspaceId) =>
+        Ok(await analytics.GetAccessAsync(workspaceId, await CanManageAsync()));
+
+    [HttpPost("workspaces/{workspaceId:int}/delegations")]
+    [PermissionAuthorize("AnalyticsCenter.Customize")]
+    public async Task<IActionResult> CreateDelegation(int workspaceId, CreateAnalyticsDelegationDto dto)
+    {
+        await analytics.CreateDelegationAsync(workspaceId, dto, await CanManageAsync());
+        return NoContent();
+    }
+
+    [HttpPost("workspaces/{workspaceId:int}/delegations/revoke")]
+    [PermissionAuthorize("AnalyticsCenter.Customize")]
+    public async Task<IActionResult> RevokeDelegation(int workspaceId, RevokeAnalyticsDelegationDto dto)
+    {
+        await analytics.RevokeDelegationAsync(workspaceId, dto, await CanManageAsync());
+        return NoContent();
+    }
+
+    private async Task<bool> CanManageAsync() => (await authorization.AuthorizeAsync(
+        User, null, "Permission:AnalyticsCenter.Manage")).Succeeded;
 }

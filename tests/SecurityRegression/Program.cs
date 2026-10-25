@@ -3527,6 +3527,47 @@ Check(analyticsApi.GetMethod(nameof(AnalyticsCenterApiController.GetBuilder))!
       analyticsApi.GetMethod(nameof(AnalyticsCenterApiController.CreateWorkspace))!
           .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:AnalyticsCenter.Customize",
     "Analytics workspace discovery and creation must retain the customize permission");
+Check(analyticsApi.GetMethod(nameof(AnalyticsCenterApiController.GetAccess))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:AnalyticsCenter.Customize" &&
+      analyticsApi.GetMethod(nameof(AnalyticsCenterApiController.CreateDelegation))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:AnalyticsCenter.Customize" &&
+      analyticsApi.GetMethod(nameof(AnalyticsCenterApiController.RevokeDelegation))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:AnalyticsCenter.Customize",
+    "Analytics delegation reads, grants and revocations must retain the customize permission");
+var analyticsWorkspace = new AnalyticsWorkspace("Owner workspace", null, null, "sales",
+    AnalyticsWorkspaceVisibility.Personal, "owner", false, 2, 30,
+    AnalyticsComparisonMode.PreviousPeriod, 0, true);
+var analyticsDelegation = new AnalyticsWorkspaceDelegation(AnalyticsDelegationTargetType.User,
+    "member", null, DateTime.UtcNow.AddMinutes(-1), DateTime.UtcNow.AddDays(1), "owner");
+analyticsWorkspace.AddDelegation(analyticsDelegation);
+Check(analyticsDelegation.IsActive(DateTime.UtcNow),
+    "A current analytics delegation must be active inside its bounded period");
+CheckThrows(() => analyticsWorkspace.AddDelegation(new AnalyticsWorkspaceDelegation(
+        AnalyticsDelegationTargetType.User, "member", null, DateTime.UtcNow, null, "owner")),
+    "A workspace must reject duplicate active delegation targets");
+analyticsDelegation.Revoke("owner", DateTime.UtcNow);
+Check(!analyticsDelegation.IsActive(DateTime.UtcNow),
+    "A revoked analytics delegation must stop immediately");
+var revisionWorkspace = new AnalyticsWorkspace("Revision workspace", null, null, "sales",
+    AnalyticsWorkspaceVisibility.Personal, "owner", false, 2, 30,
+    AnalyticsComparisonMode.PreviousPeriod, 0, true);
+var revisionBeforeGrant = revisionWorkspace.DelegationRevision;
+revisionWorkspace.AddDelegation(new AnalyticsWorkspaceDelegation(AnalyticsDelegationTargetType.User,
+    "second-member", null, DateTime.UtcNow, null, "owner"));
+Check(revisionWorkspace.DelegationRevision == revisionBeforeGrant + 1,
+    "Adding an analytics delegation must advance the workspace concurrency revision");
+revisionWorkspace.RevokeDelegation(0, "owner", DateTime.UtcNow);
+Check(revisionWorkspace.DelegationRevision == revisionBeforeGrant + 2,
+    "Revoking an analytics delegation must advance the workspace concurrency revision");
+CheckArgumentThrows(() => new AnalyticsWorkspaceDelegation(AnalyticsDelegationTargetType.Role,
+        "crafted-user", 7, DateTime.UtcNow, null, "owner"),
+    "An analytics delegation must reject mixed user and role targets");
+var delegationMetadata = db.Model.FindEntityType(typeof(AnalyticsWorkspaceDelegation))!;
+Check(TenantIsolationModel.TenantOwnedTypes.Contains(typeof(AnalyticsWorkspaceDelegation)) &&
+      delegationMetadata.GetDeclaredQueryFilters().Any() &&
+      delegationMetadata.GetIndexes().Any(index => index.Properties.Any(p => p.Name == nameof(AnalyticsWorkspaceDelegation.TargetUserId))) &&
+      delegationMetadata.GetIndexes().Any(index => index.Properties.Any(p => p.Name == nameof(AnalyticsWorkspaceDelegation.TargetRoleId))),
+    "Analytics delegations must remain tenant-filtered and indexed for user and role lookup");
 Check(typeof(AnalyticsCenterPageDto).GetProperty(nameof(AnalyticsCenterPageDto.FinancialPreview)) is not null &&
       typeof(AnalyticsFinancialPreviewDto).GetProperty(nameof(AnalyticsFinancialPreviewDto.Currency)) is not null &&
       typeof(AnalyticsFinancialPreviewDto).GetProperty(nameof(AnalyticsFinancialPreviewDto.DecimalPlaces)) is not null &&
@@ -3638,6 +3679,8 @@ sealed class StubTenantAuthorization(bool admin) : MiniStore.Domain.Interfaces.I
     public Task<bool> HasPermissionAsync(int tenantId, string userId, string permission) => Task.FromResult(false);
     public Task<IReadOnlyList<string>> GetGrantedPermissionsAsync(int tenantId, string userId) =>
         Task.FromResult<IReadOnlyList<string>>([]);
+    public Task<IReadOnlyList<int>> GetRoleIdsAsync(int tenantId, string userId) =>
+        Task.FromResult<IReadOnlyList<int>>([]);
     public Task AddRoleAsync(TenantUserRole assignment) => Task.CompletedTask;
     public Task SaveChangesAsync() => Task.CompletedTask;
 }

@@ -27,6 +27,9 @@ public class TenantAuthorizationRepository(AppDbContext context) : ITenantAuthor
             .Distinct()
             .OrderBy(x => x)
             .ToListAsync();
+    public async Task<IReadOnlyList<int>> GetRoleIdsAsync(int tenantId, string userId) =>
+        await context.TenantUserRoles.Where(x => x.TenantId == tenantId && x.UserId == userId)
+            .Select(x => x.TenantRoleId).Distinct().ToListAsync();
     public async Task AddRoleAsync(TenantUserRole assignment)
     {
         var hasMembership = context.TenantMemberships.Local.Any(x =>

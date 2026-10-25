@@ -7,7 +7,10 @@ namespace MiniStore.Application.Services;
 
 public sealed class AnalyticsCenterService(IEnumerable<IAnalyticsModuleProvider> moduleProviders,
     IAnalyticsWorkspaceRepository workspaces, IUnitOfWork unitOfWork, ICurrentUserService currentUser,
-    IPermissionService permissionService, GeneralSettingsService generalSettings)
+    IPermissionService permissionService, GeneralSettingsService generalSettings,
+    ITenantAuthorizationRepository tenantAuthorization, ITenantContext tenantContext,
+    ITenantMembershipRepository memberships, ITenantRoleRepository roles,
+    IAnalyticsPrincipalDirectory principalDirectory)
 {
     private Dictionary<string, IAnalyticsModuleProvider> Providers => moduleProviders.ToDictionary(x => x.Definition.Key, StringComparer.OrdinalIgnoreCase);
 
@@ -15,7 +18,9 @@ public sealed class AnalyticsCenterService(IEnumerable<IAnalyticsModuleProvider>
     {
         var providers = await GetAuthorizedProvidersAsync();
         if (providers.Count == 0) throw new InvalidOperationException("No analytics modules are registered.");
-        var available = await workspaces.GetAvailableAsync(currentUser.UserId);
+        var tenantId = tenantContext.TenantId ?? throw new InvalidOperationException("An active company is required.");
+        var roleIds = await tenantAuthorization.GetRoleIdsAsync(tenantId, currentUser.UserId);
+        var available = await workspaces.GetAvailableAsync(currentUser.UserId, roleIds, DateTime.UtcNow);
         AnalyticsWorkspace? workspace = null;
         if (query.WorkspaceId.HasValue)
             workspace = available.SingleOrDefault(x => x.Id == query.WorkspaceId.Value) ?? throw new InvalidOperationException("Analytics workspace was not found or is not available.");
@@ -88,6 +93,77 @@ public sealed class AnalyticsCenterService(IEnumerable<IAnalyticsModuleProvider>
             await workspaces.AddAsync(created);
         });
         return created!.Id;
+    }
+
+    public async Task<AnalyticsWorkspaceAccessDto> GetAccessAsync(int workspaceId, bool canManageAll)
+    {
+        var workspace = await workspaces.GetByIdAsync(workspaceId)
+            ?? throw new InvalidOperationException("Analytics workspace was not found.");
+        EnsureCanManage(workspace, canManageAll);
+        var now = DateTime.UtcNow;
+        var tenantId = tenantContext.TenantId ?? throw new InvalidOperationException("An active company is required.");
+        var users = await principalDirectory.GetUsersAsync(tenantId);
+        var roleOptions = await principalDirectory.GetRolesAsync(tenantId);
+        return new AnalyticsWorkspaceAccessDto
+        {
+            WorkspaceId = workspace.Id, Name = workspace.Name, CanManage = true,
+            RowVersion = workspace.RowVersion,
+            Delegations = workspace.Delegations.OrderByDescending(x => x.CreatedAtUtc)
+                .Select(x => new AnalyticsDelegationDto(x.Id, x.TargetType, x.TargetUserId,
+                    x.TargetRoleId, x.StartsAtUtc, x.ExpiresAtUtc, x.CreatedByUserId, x.CreatedAtUtc,
+                    x.RevokedByUserId, x.RevokedAtUtc, x.IsActive(now))).ToList(),
+            Users = users.Select(x => new AnalyticsPrincipalOptionDto(x.Id, x.DisplayName)).ToList(),
+            Roles = roleOptions.Select(x => new AnalyticsPrincipalOptionDto(x.Id, x.DisplayName)).ToList()
+        };
+    }
+
+    public async Task CreateDelegationAsync(int workspaceId, CreateAnalyticsDelegationDto dto, bool canManageAll)
+    {
+        var tenantId = tenantContext.TenantId ?? throw new InvalidOperationException("An active company is required.");
+        if (dto.TargetType == AnalyticsDelegationTargetType.User)
+        {
+            if (string.IsNullOrWhiteSpace(dto.TargetUserId) || !await memberships.ExistsAsync(tenantId, dto.TargetUserId))
+                throw new InvalidOperationException("Selected analytics delegation user is not an active company member.");
+        }
+        else if (dto.TargetType == AnalyticsDelegationTargetType.Role)
+        {
+            if (!dto.TargetRoleId.HasValue || await roles.GetAsync(tenantId, dto.TargetRoleId.Value) is null)
+                throw new InvalidOperationException("Selected analytics delegation role does not belong to this company.");
+        }
+        var workspace = await workspaces.GetForUpdateAsync(workspaceId)
+            ?? throw new InvalidOperationException("Analytics workspace was not found.");
+        EnsureCanManage(workspace, canManageAll); EnsureVersion(workspace, dto.RowVersion);
+        var start = dto.StartsAtUtc?.ToUniversalTime() ?? DateTime.UtcNow;
+        await unitOfWork.ExecuteInTransactionAsync(() =>
+        {
+            workspace.AddDelegation(new AnalyticsWorkspaceDelegation(dto.TargetType, dto.TargetUserId,
+                dto.TargetRoleId, start, dto.ExpiresAtUtc?.ToUniversalTime(), currentUser.UserId));
+            return Task.CompletedTask;
+        });
+    }
+
+    public async Task RevokeDelegationAsync(int workspaceId, RevokeAnalyticsDelegationDto dto, bool canManageAll)
+    {
+        var workspace = await workspaces.GetForUpdateAsync(workspaceId)
+            ?? throw new InvalidOperationException("Analytics workspace was not found.");
+        EnsureCanManage(workspace, canManageAll); EnsureVersion(workspace, dto.RowVersion);
+        await unitOfWork.ExecuteInTransactionAsync(() =>
+        {
+            workspace.RevokeDelegation(dto.DelegationId, currentUser.UserId, DateTime.UtcNow);
+            return Task.CompletedTask;
+        });
+    }
+
+    private void EnsureCanManage(AnalyticsWorkspace workspace, bool canManageAll)
+    {
+        if (!canManageAll && workspace.OwnerUserId != currentUser.UserId)
+            throw new InvalidOperationException("Only the workspace owner or analytics manager can manage delegations.");
+    }
+
+    private static void EnsureVersion(AnalyticsWorkspace workspace, byte[] submitted)
+    {
+        if (submitted.Length == 0 || !workspace.RowVersion.SequenceEqual(submitted))
+            throw new InvalidOperationException("Analytics workspace changed in another session. Reload and try again.");
     }
 
     private static void ApplyWorkspace(AnalyticsDatasetDto data, AnalyticsWorkspace? workspace, AnalyticsModuleDefinitionDto module)

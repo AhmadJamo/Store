@@ -75,6 +75,10 @@ export const routes: Routes = [
         loadComponent: () => import('./features/analytics/report-builder-page').then((module) => module.ReportBuilderPageComponent),
       },
       {
+        path: 'analytics/workspaces/:id/access',
+        loadComponent: () => import('./features/analytics/workspace-access-page').then((module) => module.WorkspaceAccessPageComponent),
+      },
+      {
         path: 'settings',
         loadComponent: () => import('./features/settings/settings-overview-page').then((module) => module.SettingsOverviewPageComponent),
       },

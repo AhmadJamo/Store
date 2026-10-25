@@ -8,6 +8,14 @@ unique order, visualization, bilingual title overrides, spans, Top-N, legend/com
 Tenant-composite foreign keys and query filters preserve isolation. Source/model and local Demo are reconciled through
 migration 135 with no pending changes as of 2026-10-22.
 
+`MOD-017C` source migration `20261025025522_AddAnalyticsWorkspaceDelegation` creates
+`AnalyticsWorkspaceDelegations`. Each tenant-owned row targets exactly one company member or tenant role, records a
+UTC start, optional expiry, creator evidence and optional revocation evidence, and belongs to one workspace through a
+tenant-composite cascade. The optional role reference is also tenant-composite, preventing cross-company crafted
+references. `AnalyticsWorkspaces.DelegationRevision` forces the parent rowversion to advance on grant/revoke, so stale
+access commands conflict reliably. User/role activity lookup indexes support authorization checks. The migration is additive and is not yet
+applied to the local Demo database. EF reports no pending model changes after this source migration.
+
 ## SAL-120B organization identity, document designer and frozen PDF evidence
 
 Migration 133 (`20261022120233_AddOrganizationIdentityAndDocumentDesigner`) extends tenant `GeneralSettings` with bilingual legal/commercial identity, registration/contact/address fields and document-name policy. It creates tenant-owned `OrganizationIdentityFields`, a separately loaded one-to-one `OrganizationLogos` table, and versioned tenant-owned `DocumentDesigns`/`DocumentDesignSections`. Per-tenant/type/code/version uniqueness and a filtered one-default-per-document-type index protect selection; tenant-composite self/source, section and quotation relationships prevent cross-company references. Quotations and quotation templates have optional restrictive design links, while quotations also freeze design code/version/name/language evidence.
