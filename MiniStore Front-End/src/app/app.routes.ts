@@ -1,8 +1,31 @@
 import { Routes } from '@angular/router';
+import { anonymousOnlyGuard, authGuard } from './core/api/auth.guard';
 
 export const routes: Routes = [
   {
+    path: 'login',
+    canActivate: [anonymousOnlyGuard],
+    loadComponent: () => import('./features/account/login-page').then(module => module.LoginPageComponent),
+  },
+  {
+    path: 'register',
+    canActivate: [anonymousOnlyGuard],
+    loadComponent: () => import('./features/onboarding/registration-page').then(module => module.RegistrationPageComponent),
+  },
+  {
+    path: 'onboarding',
+    canActivate: [authGuard],
+    canDeactivate: [(component) => component.canDeactivate()],
+    loadComponent: () => import('./features/onboarding/company-onboarding-page').then(module => module.CompanyOnboardingPageComponent),
+  },
+  {
+    path: 'access-denied',
+    loadComponent: () => import('./features/account/access-denied-page').then(module => module.AccessDeniedPageComponent),
+  },
+  {
     path: '',
+    canActivate: [authGuard],
+    canActivateChild: [authGuard],
     loadComponent: () =>
       import('./shell/layout/app-shell').then((module) => module.AppShell),
     children: [
@@ -83,6 +106,70 @@ export const routes: Routes = [
         canDeactivate: [(component) => component.canDeactivate()],
         loadComponent: () => import('./features/settings/settings-overview-page').then((module) => module.SettingsOverviewPageComponent),
       },
+      { path: 'users', loadComponent: () => import('./features/identity/user-list-page').then(m => m.UserListPageComponent) },
+      { path: 'users/new', canDeactivate: [(component) => component.canDeactivate()], loadComponent: () => import('./features/identity/user-form-page').then(m => m.UserFormPageComponent) },
+      { path: 'roles', loadComponent: () => import('./features/identity/role-list-page').then(m => m.RoleListPageComponent) },
+      { path: 'roles/new', canDeactivate: [(component) => component.canDeactivate()], loadComponent: () => import('./features/identity/role-form-page').then(m => m.RoleFormPageComponent) },
+      { path: 'roles/:id/edit', canDeactivate: [(component) => component.canDeactivate()], loadComponent: () => import('./features/identity/role-form-page').then(m => m.RoleFormPageComponent) },
+      {
+        path: 'settings/identity', canDeactivate: [(component) => component.canDeactivate()],
+        loadComponent: () => import('./features/settings/organization-identity-page').then((module) => module.OrganizationIdentityPageComponent),
+      },
+      {
+        path: 'settings/discounts', canDeactivate: [(component) => component.canDeactivate()],
+        loadComponent: () => import('./features/settings/discount-settings-page').then((module) => module.DiscountSettingsPageComponent),
+      },
+      {
+        path: 'settings/purchase-matching', canDeactivate: [(component) => component.canDeactivate()],
+        loadComponent: () => import('./features/settings/purchase-matching-settings-page').then((module) => module.PurchaseMatchingSettingsPageComponent),
+      },
+      {
+        path: 'settings/inventory', canDeactivate: [(component) => component.canDeactivate()],
+        loadComponent: () => import('./features/settings/inventory-settings-page').then((module) => module.InventorySettingsPageComponent),
+      },
+      {
+        path: 'settings/purchase-sourcing', canDeactivate: [(component) => component.canDeactivate()],
+        loadComponent: () => import('./features/settings/purchase-sourcing-settings-page').then((module) => module.PurchaseSourcingSettingsPageComponent),
+      },
+      {
+        path: 'settings/document-numbers', canDeactivate: [(component) => component.canDeactivate()],
+        loadComponent: () => import('./features/settings/document-number-settings-page').then((module) => module.DocumentNumberSettingsPageComponent),
+      },
+      {
+        path: 'settings/fiscal-periods', canDeactivate: [(component) => component.canDeactivate()],
+        loadComponent: () => import('./features/settings/fiscal-periods-page').then((module) => module.FiscalPeriodsPageComponent),
+      },
+      {
+        path: 'settings/currency-exchange-rates', canDeactivate: [(component) => component.canDeactivate()],
+        loadComponent: () => import('./features/settings/currency-exchange-rates-page').then((module) => module.CurrencyExchangeRatesPageComponent),
+      },
+      {
+        path: 'settings/measurement-units', canDeactivate: [(component) => component.canDeactivate()],
+        loadComponent: () => import('./features/settings/measurement-units-page').then((module) => module.MeasurementUnitsPageComponent),
+      },
+      {
+        path: 'settings/accounting', canDeactivate: [(component) => component.canDeactivate()],
+        loadComponent: () => import('./features/settings/accounting-settings-page').then((module) => module.AccountingSettingsPageComponent),
+      },
+      {
+        path: 'settings/branch-sales-accounts', canDeactivate: [(component) => component.canDeactivate()],
+        loadComponent: () => import('./features/settings/branch-sales-accounts-page').then((module) => module.BranchSalesAccountsPageComponent),
+      },
+      {
+        path: 'settings/inventory-access', canDeactivate: [(component) => component.canDeactivate()],
+        loadComponent: () => import('./features/settings/inventory-access-page').then((module) => module.InventoryAccessPageComponent),
+      },
+      {
+        path: 'settings/pos-experience', canDeactivate: [(component) => component.canDeactivate()],
+        loadComponent: () => import('./features/settings/pos-experience-page').then((module) => module.PosExperiencePageComponent),
+      },
+      {
+        path: 'settings/workflow-catalog',
+        loadComponent: () => import('./features/settings/workflow-catalog-page').then((module) => module.WorkflowCatalogPageComponent),
+      },
+      { path: 'settings/document-designs', loadComponent: () => import('./features/document-designs/document-design-list-page').then(m => m.DocumentDesignListPageComponent) },
+      { path: 'settings/document-designs/new', canDeactivate: [(component) => component.canDeactivate()], loadComponent: () => import('./features/document-designs/document-design-form-page').then(m => m.DocumentDesignFormPageComponent) },
+      { path: 'settings/document-designs/:id', loadComponent: () => import('./features/document-designs/document-design-details-page').then(m => m.DocumentDesignDetailsPageComponent) },
       {
         path: 'products',
         loadComponent: () => import('./features/products/product-list-page').then((module) => module.ProductListPageComponent),

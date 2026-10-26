@@ -1,166 +1,53 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using MiniStore.Application.DTOs.Security;
 using MiniStore.Web.Authorization;
-using MiniStore.Domain.Entities;
-using MiniStore.Domain.Interfaces;
-using MiniStore.Application.Saas;
-using MiniStore.Application.Services;
 
 namespace MiniStore.Web.Controllers;
 
 [Authorize]
-public class UsersController : Controller
+public class UsersController(ITenantUserAdministrationService users) : Controller
 {
-    private readonly UserManager<IdentityUser> _userManager;
-    private readonly TenantRoleService _roles;
-    private readonly ITenantContext _tenantContext;
-    private readonly ITenantMembershipRepository _memberships;
-    private readonly EntitlementService _entitlements;
-
-    public UsersController(
-        UserManager<IdentityUser> userManager,
-        TenantRoleService roles,
-        ITenantContext tenantContext,
-        ITenantMembershipRepository memberships,
-        EntitlementService entitlements)
-    {
-        _userManager = userManager;
-        _roles = roles;
-        _tenantContext = tenantContext;
-        _memberships = memberships;
-        _entitlements = entitlements;
-    }
-
-    // GET: /Users
     [HttpGet]
     [PermissionAuthorize("Users.View")]
-    public async Task<IActionResult> Index()
-    {
-        var tenantId = _tenantContext.TenantId
-            ?? throw new InvalidOperationException("An active company is required.");
-        var tenantUserIds = await _memberships.GetActiveUserIdsAsync(tenantId);
-        var users =
-            await _userManager.Users
-                .Where(x => tenantUserIds.Contains(x.Id))
-                .OrderBy(x => x.UserName)
-                .ToListAsync();
+    public async Task<IActionResult> Index() => View((await users.GetAllAsync()).ToList());
 
-        ViewBag.UserRoles = await _roles.GetUserRoleNamesAsync(users.Select(x => x.Id).ToArray());
-
-        return View(users);
-    }
-
-    // GET: /Users/Create
     [HttpGet]
     [PermissionAuthorize("Users.Create")]
     public async Task<IActionResult> Create()
     {
-        ViewBag.Roles = await _roles.GetOptionsAsync();
-
-        return View();
+        ViewBag.Roles = (await users.GetCreateAsync()).Roles.ToList();
+        return View(new CreateTenantUserDto());
     }
 
-    // POST: /Users/Create
     [HttpPost]
     [ValidateAntiForgeryToken]
     [PermissionAuthorize("Users.Create")]
-    public async Task<IActionResult> Create(
-        string username,
-        string email,
-        string password,
-        int roleId)
+    public async Task<IActionResult> Create(CreateTenantUserDto dto)
     {
+        if (!ModelState.IsValid)
+        {
+            ViewBag.Error = "All fields are required.";
+            return await Rebuild(dto);
+        }
+
         try
         {
-            await _entitlements.EnsureLimitAsync(SaasLimitKeys.Users);
+            await users.CreateAsync(dto);
+            TempData["Success"] = "User created successfully.";
+            return RedirectToAction(nameof(Index));
         }
-        catch (InvalidOperationException exception)
+        catch (Exception exception) when (exception is ArgumentException or InvalidOperationException)
         {
             ViewBag.Error = exception.Message;
-            await LoadRoles();
-            return View();
+            return await Rebuild(dto);
         }
-        if (string.IsNullOrWhiteSpace(username) ||
-            string.IsNullOrWhiteSpace(email) ||
-            string.IsNullOrWhiteSpace(password) ||
-            roleId <= 0)
-        {
-            ViewBag.Error =
-                "All fields are required.";
-
-            await LoadRoles();
-
-            return View();
-        }
-
-        var existingUser =
-            await _userManager.FindByNameAsync(
-                username);
-
-        if (existingUser != null)
-        {
-            ViewBag.Error =
-                "Username already exists.";
-
-            await LoadRoles();
-
-            return View();
-        }
-
-        var selectedRole = (await _roles.GetOptionsAsync()).SingleOrDefault(x => x.Id == roleId);
-        if (selectedRole is null)
-        {
-            ViewBag.Error =
-                "Selected role does not exist.";
-
-            await LoadRoles();
-
-            return View();
-        }
-
-        var user =
-            new IdentityUser
-            {
-                UserName = username,
-                Email = email,
-                EmailConfirmed = true
-            };
-
-        var result =
-            await _userManager.CreateAsync(
-                user,
-                password);
-
-        if (!result.Succeeded)
-        {
-            ViewBag.Error =
-                string.Join(
-                    " ",
-                    result.Errors.Select(
-                        x => x.Description));
-
-            await LoadRoles();
-
-            return View();
-        }
-
-        var tenantId = _tenantContext.TenantId
-            ?? throw new InvalidOperationException("An active company is required.");
-        await _memberships.AddAsync(new TenantMembership(tenantId, user.Id));
-        await _roles.AssignUserAsync(user.Id, selectedRole.Id);
-        await _memberships.SaveChangesAsync();
-
-        TempData["Success"] =
-            "User created successfully.";
-
-        return RedirectToAction(
-            nameof(Index));
     }
 
-    private async Task LoadRoles()
+    private async Task<IActionResult> Rebuild(CreateTenantUserDto dto)
     {
-        ViewBag.Roles = await _roles.GetOptionsAsync();
+        dto.Password = string.Empty;
+        ViewBag.Roles = (await users.GetCreateAsync()).Roles.ToList();
+        return View(dto);
     }
 }

@@ -42,11 +42,20 @@ MOD-019 raised the focused regression total to 1113. Its resolver checks prove t
 Angular-default GET preserves a query string and resolves allowlisted route values, POST never redirects, and an
 unlisted action remains MVC. Regenerate `MVC_MIGRATION_REGISTRY.md` before reviewing migration coverage.
 
-MOD-020A passes 64/64 Angular tests across 24 files. Coverage verifies that the settings PUT carries the rowversion,
-adopts the refreshed token after success, clears dirty state, and preserves edited input after a concurrency failure.
-Security regression keeps the PUT under authenticated `Administration.Access`; Web Release and Angular production build pass.
+MOD-020A..L pass 85/85 Angular tests across 25 files. Coverage verifies preferences, identity/custom fields, logo
+upload/delete, discount and purchase-matching mutations, including submitted/refreshed rowversions, clean dirty state
+after success and retained input after rejection. Fiscal-period coverage proves GET, POST create and reasoned status PUT,
+including the current rowversion and preserved drafts after rejection. Currency coverage proves GET/POST upsert,
+client normalization, refreshed results and preserved values after validation rejection. Security regression passes
+Measurement-unit coverage proves GET/create/deactivate, full field submission, system-unit protection and retained
+failed create input. Security regression passes 1144 checks and fixes every settings
+route to its intended GET/PUT/POST/DELETE verb under authenticated `Administration.Access`. Web Release and Angular
+production builds pass; 34 templates pass static accessibility. The production initial bundle is 293,121/358,400
+bytes and the largest lazy chunk is 54,668/81,920 bytes.
 
-## Guided onboarding verification (2026-09-15)
+## Guided onboarding verification (updated 2026-10-27)
 Regression coverage checks pending/completed/skipped state, normalization, one-time resolution, invalid currency and rowversion. A local HTTP journey registered a company, reached /onboarding, applied the Cafe/tax/POS template, landed on the dashboard and authenticated again by company code. SQL found 18 accounts, one warehouse, one POS and one tax rate for the test tenant.
+
+`MOD-020U` adds API metadata checks for anonymous/versioned registration, CSRF, the independent registration rate limit, required secret/slug validation, the authenticated tenant-Admin onboarding boundary and antiforgery on both Complete and Skip. Angular tests cover every registration/onboarding endpoint, rejected-password clearing with non-secret field preservation, automatic session reload/routing, the complete payload and confirmed skip. Final evidence is 1182 backend checks, 122/122 Angular tests across 37 files, 50 accessible templates, external SCSS, and production bundles of 297,465 initial / 80,866 largest lazy bytes.
 
 Cafe recipe, product-catalog and managed-unit coverage validates conversion, classification, channel rules, immutable snapshots, controlled negatives and Arabic decimal handling. Moving-average coverage verifies `10@5 + 20@8 = 7`, a 4-unit issue at value 28, remaining value 182, and provisional-negative variance settlement. Posting coverage verifies immutable line COGS, balanced sale and cost-variance journals, inclusive/exclusive tax and balanced return reversals. The current executable passes 260 checks; EF reports no pending model changes after `AddProductLogisticsFoundation`.

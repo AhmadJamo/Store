@@ -24,6 +24,7 @@ public static class AuditCoverageCatalog
         Event("SEC-ROLE-UPDATE", SemanticAuditEventTypes.TenantRoleUpdated, "TenantRoleService.UpdateAsync", "Tenant", AuditEventOutcome.Succeeded),
         Event("SEC-ROLE-PERMISSIONS", SemanticAuditEventTypes.TenantRolePermissionsChanged, "TenantRoleService.UpdateAsync", "Tenant", AuditEventOutcome.Succeeded),
         Event("SEC-ROLE-DELETE", SemanticAuditEventTypes.TenantRoleDeleted, "TenantRoleService.DeleteAsync", "Tenant", AuditEventOutcome.Succeeded),
+        Event("SEC-USER-CREATE", SemanticAuditEventTypes.TenantUserCreated, "TenantUserAdministrationService.CreateAsync", "Tenant", AuditEventOutcome.Succeeded),
         Event("CFG-ACCOUNTING", SemanticAuditEventTypes.AccountingSettingsChanged, "AccountingSettingsService.UpdateAsync", "Tenant", AuditEventOutcome.Succeeded),
         Event("CFG-GENERAL", SemanticAuditEventTypes.GeneralSettingsChanged, "GeneralSettingsService.UpdateAsync", "Tenant", AuditEventOutcome.Succeeded),
         Event("CFG-DISCOUNT", SemanticAuditEventTypes.DiscountSettingsChanged, "DiscountSettingsService.UpdateAsync", "Tenant", AuditEventOutcome.Succeeded),

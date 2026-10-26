@@ -1081,3 +1081,108 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
 - 2026-10-25: Completed `MOD-019` without changing the active presentation. Expanded the generated migration registry from view counts to 89 controllers (79 MVC/10 API), 189 user-facing views, 344 MVC actions and control summaries for 198 Razor files. Added validated per-surface `Mvc`/`AngularPilot`/`AngularDefault` configuration and a code-owned allowlist that can redirect only GET/HEAD actions under a local `/app` base; POST, downloads, missing values and unknown actions remain MVC. All committed surface modes are `Mvc`. Added an ADR and regression assertions; Release built with zero warnings/errors and all 1113 focused checks passed. `MOD-018B` remains open because no external authenticated storage state was supplied.
 - 2026-10-25: Completed `MOD-018B` with a real authorized local session without storing credentials. Added an interactive Edge capture mode and wrapper that writes Playwright state only to a unique Windows temporary directory, runs the established gate and deletes the directory in `finally`. The final report passed 11/11 with zero failures/skips: Release, 1113 backend checks, 61/61 Angular tests, SCSS/accessibility/bundle/browser checks, anonymous 401, authenticated session, three permission-allowed read endpoints and 100/100 availability requests (p95 40.37 ms, p99 61.85 ms). Confirmed the temporary session directory was deleted; advanced to `MOD-020`.
 - 2026-10-25: Completed `MOD-020A`, the first writable Angular settings slice. Added an authenticated `Administration.Access` PUT for operating preferences through the existing `GeneralSettingsService`; rowversion validation, semantic audit and tenant isolation stay authoritative, and the API invalidates the company-culture cache just like MVC. The bilingual/RTL Angular form covers currency, decimal precision, date format, time zone and default language with Ctrl+S, duplicate-submit prevention, success/error states and dirty navigation protection. Web Release passed with zero warnings/errors, SecurityRegression passed 1113 checks, Angular passed 64/64 tests across 24 files, production build/accessibility/bundle budgets passed, and Settings remains `Mvc` by default.
+- 2026-10-25: Completed five additional `MOD-020B..F` settings slices under the rule that Angular migration means
+  every applicable operation, not GET-only. Added bilingual responsive forms and explicit protected APIs for organization
+  identity, up to 20 custom identity fields, PNG/JPEG logo upload/removal, discount controls and purchase-matching
+  tolerances. All mutations delegate to existing Application services, preserve semantic audit and antiforgery, return
+  refreshed DTOs, retain failed edits and use rowversion concurrency; purchase matching now carries its existing database
+  rowversion and all stale settings writes return coded HTTP 409 instead of 500. Settings remains `Mvc` by default and
+  no schema/business rule changed. Web Release passed with zero warnings/errors, SecurityRegression passed 1124 checks,
+  Angular passed 69/69 tests across 25 files, 28 templates passed static accessibility, and production bundle evidence
+  was 291,518/358,400 initial with a 54,678/81,920 largest lazy chunk. Advanced to `MOD-020G` complete inventory settings.
+- 2026-10-25: Completed `MOD-020G` inventory settings as a full Angular GET/PUT cycle. The bilingual form covers all
+  warehouse type, control mode, picking and operational defaults, clears incompatible exact-location flags in Simple
+  mode, preserves semantic audit and rowversion, and maps stale writes to HTTP 409. MVC remains the rollback path and
+  cutover remains disabled. Web Release passed, Angular passed 72/72 tests and production build passed; security
+  regression passed 1127 checks. Advanced to `MOD-020H` purchase-sourcing policy.
+- 2026-10-25: Completed `MOD-020H` purchase-sourcing policy with protected Angular GET/PUT operations. The form uses
+  server-provided tenant roles and company currency, preserves the direct-RFQ amount/role/supplier rules, semantic audit
+  and rowversion, and maps stale writes to 409. Web Release passed, Angular passed 73/73 tests and SecurityRegression
+  passed 1130 checks. MVC remains default; advanced to `MOD-020I` document numbering.
+- 2026-10-25: Completed `MOD-020I` document numbering with protected GET and atomic PUT for all 30 supported document
+  types. Angular edits prefix, suffix, template, length, forward-only next number, reset start/period and displays the
+  server preview; every row retains its rowversion and refreshed evidence. Stale writes return 409 and MVC remains the
+  default. SecurityRegression passed 1133 checks, Angular passed 75/75 tests, 31 templates passed accessibility, and
+  bundle evidence was 292,010/358,400 initial with a 54,678/81,920 largest lazy chunk.
+- 2026-10-26: Completed `MOD-020J` fiscal periods with protected Angular GET, POST create and PUT status operations.
+  The bilingual responsive screen preserves non-overlap and Open/Soft Closed/Closed domain rules, requires a reason for
+  status changes, sends the current rowversion, keeps failed drafts and maps stale writes to coded HTTP 409. MVC remains
+  the default. Web Release passed with zero warnings/errors, SecurityRegression passed 1137 checks, Angular passed
+  78/78 tests across 25 files, 32 templates passed accessibility, and bundle evidence was 292,786/358,400 initial with
+  a 54,668/81,920 largest lazy chunk. Advanced to `MOD-020K` currency exchange rates.
+- 2026-10-26: Completed `MOD-020K` currency exchange rates with protected Angular GET and POST upsert operations.
+  The bilingual responsive screen shows the company currency and records a normalized three-letter foreign currency,
+  effective date, positive company-currency rate and bounded source through the existing Application/domain rules.
+  Failed validation preserves the form and MVC remains default. Web Release passed with zero warnings/errors,
+  SecurityRegression passed 1140 checks, Angular passed 81/81 tests across 25 files, 33 templates passed accessibility,
+  and bundle evidence was 292,959/358,400 initial with a 54,668/81,920 largest lazy chunk. Advanced to
+  `MOD-020L` measurement units.
+- 2026-10-26: Completed `MOD-020L` measurement units with protected Angular GET, create POST and deactivate POST.
+  The bilingual responsive screen covers code/name/symbol, Count/Mass/Volume/Length, positive base factor and zero-to-six
+  decimals; built-in units cannot be deactivated and custom deactivation requires confirmation plus a domain recheck.
+  Failed creates preserve input and MVC remains default. Web Release passed with zero warnings/errors,
+  SecurityRegression passed 1144 checks, Angular passed 85/85 tests across 25 files, 34 templates passed accessibility,
+  and bundle evidence was 293,121/358,400 initial with a 54,668/81,920 largest lazy chunk. Advanced to
+  `MOD-020M` accounting settings.
+- 2026-10-26: Completed `MOD-020N` branch sales accounts with an Application-owned DTO projection, protected Angular
+  GET and per-branch PUT assignment. The UI uses server-provided account options, preserves unsaved row selections and
+  never exposes Branch entities. Web Release passed with zero warnings/errors, SecurityRegression passed 1150 checks,
+  Angular passed 89/89 tests, 36 templates passed accessibility and bundle evidence was 293,447/358,400 initial with
+  a 54,668/81,920 largest lazy chunk. MVC remains default; advanced to `MOD-020O` inventory access and terminals.
+- 2026-10-26: Completed `MOD-020M` accounting settings with protected Angular GET/PUT over the existing Application
+  service. The complete posting-account, customer-receivable and invoice-quantity policy contract is server-authored;
+  the service now consistently applies posting accounts even when receivable mode is supplied. Failed controlled
+  transitions preserve input and MVC remains default.
+- 2026-10-26: Completed `MOD-020O` inventory access and terminals with protected Angular GET, branch-access PUT,
+  terminal-create POST and terminal-warehouse PUT. The bilingual RTL-ready screen covers every operation flag,
+  priority/default selection and filters POS warehouses from server-provided branch access while the Application service
+  revalidates every boundary. Rejected writes preserve the submitted form. Web Release passed with zero warnings/errors,
+  SecurityRegression passed 1155 checks, Angular passed 94/94 tests across 25 files, 37 templates passed accessibility,
+  and bundle evidence was 293,607/358,400 initial with a 57,784/81,920 largest lazy chunk. MVC remains default;
+  advanced to `MOD-020P` POS experience settings.
+- 2026-10-26: Completed `MOD-020P` POS experience with protected Angular GET/PUT, terminal selection, full appearance
+  and order-workflow editing, explicit server-side profile-default application and a responsive live preview. Corrected
+  stale rowversion handling to the shared settings concurrency exception so the API returns coded HTTP 409. Web Release
+  passed without warnings/errors, SecurityRegression passed 1158 checks, Angular passed 98/98 tests, 38 templates
+  passed accessibility and bundles stayed within budget.
+- 2026-10-26: Completed `MOD-020Q` workflow catalog as its truthful read-only Angular surface. The server localizes all
+  code-defined steps and emits destination URLs only after the existing permission policy succeeds; Angular groups the
+  62 steps by module and phase without inventing mutation operations. SecurityRegression passed 1161 checks, Angular
+  passed 100/100 tests across 26 files, 39 templates passed accessibility and bundle evidence was 293,933/358,400
+  initial with a 63,998/81,920 largest lazy chunk. All `SettingsController` flows now have Angular parity; advanced to
+  `MOD-020R` document-design administration while MVC remains default.
+- 2026-10-26: Completed `MOD-020R` document-design administration with protected list/filter, create-form defaults,
+  details, full create/clone, activate, archive and set-default API operations over `DocumentDesignService`. Angular now
+  provides the complete bilingual RTL-ready editor for page/language/margins/brand/header/identity visibility/written
+  content and up to 30 ordered sections with a live preview. Stale lifecycle commands return coded HTTP 409 and rejected
+  creates retain the complete draft. Web Release passed with zero warnings/errors, SecurityRegression passed 1163 checks,
+  Angular passed 104/104 tests across 28 files, 42 templates passed accessibility and bundle evidence was
+  294,996/358,400 initial with a 75,003/81,920 largest lazy chunk. MVC remains default; advanced to `MOD-020S` account
+  and session flows.
+- 2026-10-26: Completed `MOD-020S` account and session flows without changing ASP.NET Core Identity or the database.
+  Extracted one audited tenant authentication service shared by MVC and API, added rate-limited and CSRF-protected
+  login plus authenticated logout, made only antiforgery-token issuance anonymous, and returned localized Problem
+  Details for API rate limits. Angular now provides bilingual RTL/LTR login and access-denied pages, authenticated route
+  guards, current user/company evidence, protected logout and expired-session return routing. Passwords and tokens are
+  never persisted in browser storage; the HttpOnly cookie and server session remain authoritative. Web Release passed
+  with zero warnings/errors, SecurityRegression passed 1168 checks, Angular passed 111/111 tests across 32 files,
+  43 templates passed accessibility, and production bundles passed at 296,570/358,400 initial with a
+  77,410/81,920 largest lazy chunk. A live proxy probe issued an anonymous CSRF token and returned HTTP 400 Problem
+  Details for an invalid protected login request. MVC remains default; advanced to `MOD-020T` users, roles and permissions.
+- 2026-10-26: Completed `MOD-020T` users, roles and permissions for every operation present in the MVC source: tenant-user
+  list/create and tenant-role list/create/edit/delete. Added explicit Application/API DTOs, a shared MVC/API user
+  administration service with subscription/tenant-role validation and compensating Identity cleanup, code-only permission
+  projection, antiforgery-protected mutations, system-role guards and HTTP 409 role concurrency. Angular adds bilingual
+  RTL-ready lists/forms and permission-aware navigation/settings destinations; rejected user creation clears the password
+  while retaining non-secret fields. Web Release passed with zero warnings/errors, SecurityRegression passed 1175 checks,
+  Angular passed 115/115 tests across 34 files, 47 templates passed accessibility and production bundles passed at
+  297.21 kB initial with an 80.87 kB largest lazy chunk. MVC remains default; advanced to `MOD-020U` registration/onboarding.
+- 2026-10-27: Completed `MOD-020U` registration and guided company onboarding. Added public plan/read and CSRF/rate-limited
+  registration API contracts, one MVC/API registration-and-cookie-sign-in service, and tenant-Admin protected GET,
+  Complete and Skip onboarding operations over the existing serializable setup service. Angular now owns bilingual
+  RTL/LTR registration, secret-safe rejection recovery, selected-plan trial entry, business preset choices, tax/POS/
+  inventory/fiscal inputs, explicit skip and pending-login resume. Feature copy is lazy so the bundle gate remains within
+  budget; access-denied presentation was also moved to external HTML/SCSS. Web Release passed without warnings/errors,
+  SecurityRegression passed 1182 checks, Angular passed 122/122 tests across 37 files, 50 templates passed accessibility,
+  external SCSS passed, and bundles measured 297,465/358,400 initial and 80,866/81,920 largest lazy bytes. `MOD-020`
+  is functionally complete with MVC still default; advanced to `MOD-021A` product master operations.

@@ -14,6 +14,13 @@
     <header class="topbar">
       <div><span class="eyebrow">{{ i18n.text('workspace') }}</span><strong>{{ i18n.text('phaseTitle') }}</strong></div>
       <label class="search"><span aria-hidden="true">⌕</span><input [placeholder]="i18n.text('search')" disabled /></label>
+      @if (session.session(); as currentSession) {
+        <div class="session-summary">
+          <span><small>{{ i18n.text('signedInCompany') }}</small><strong>{{ currentSession.tenant.name }}</strong></span>
+          <span><small>{{ i18n.text('signedInUser') }}</small><strong>{{ currentSession.user.userName || currentSession.user.email }}</strong></span>
+          <button type="button" class="ui-button secondary" (click)="signOut()" [disabled]="signingOut()">{{ signingOut() ? i18n.text('signingOut') : i18n.text('signOut') }}</button>
+        </div>
+      }
       <details class="preference-menu">
         <summary class="icon-action" [attr.aria-label]="i18n.text('displayPreferences')" [title]="i18n.text('displayPreferences')">⚙</summary>
         <div class="preferences" role="group" [attr.aria-label]="i18n.text('displayPreferences')">
@@ -36,6 +43,7 @@
         </div>
       </details>
     </header>
+    @if(signOutFailed()){<p class="session-error" role="alert">{{i18n.text('signOutFailed')}}</p>}
 
     <div class="workspace-toolbar" role="toolbar" [attr.aria-label]="i18n.text('workspaceTabs')">
       <button type="button" (click)="back()" [disabled]="!workspace.canGoBack()" [attr.aria-label]="i18n.text('back')" [title]="i18n.text('back')">←</button>

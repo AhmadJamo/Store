@@ -3,10 +3,12 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using MiniStore.Application.Saas;
 using MiniStore.Domain.Interfaces;
+using MiniStore.Web.Authorization;
 
 namespace MiniStore.Web.Controllers;
 
 [Authorize]
+[PermissionAuthorize("Administration.Access")]
 [Route("onboarding")]
 [AutoValidateAntiforgeryToken]
 public class CompanyOnboardingController(

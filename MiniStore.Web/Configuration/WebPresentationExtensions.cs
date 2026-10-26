@@ -119,6 +119,14 @@ public static class WebPresentationExtensions
                 context.HttpContext.Response.Headers.RetryAfter = retryAfterSeconds.ToString(
                     System.Globalization.CultureInfo.InvariantCulture);
                 var path = context.HttpContext.Request.Path;
+                if (path.StartsWithSegments("/api/v1"))
+                {
+                    await InternalApiProblemWriter.WriteAsync(
+                        context.HttpContext,
+                        StatusCodes.Status429TooManyRequests,
+                        "Too many attempts. Try again later.");
+                    return;
+                }
                 if (path.StartsWithSegments("/api/supplier"))
                 {
                     context.HttpContext.Response.StatusCode=StatusCodes.Status429TooManyRequests;

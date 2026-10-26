@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 import { of, throwError } from 'rxjs';
 import { ApiErrorService } from '../../core/api/api-error.service';
 import { WorkspaceService } from '../../workspace/state/workspace.service';
@@ -17,6 +18,7 @@ describe('SettingsOverviewPageComponent', () => {
     await TestBed.configureTestingModule({
       imports: [SettingsOverviewPageComponent],
       providers: [
+        provideRouter([]),
         { provide: SettingsApiService, useValue: api },
         { provide: WorkspaceService, useValue: workspace },
         { provide: ApiErrorService, useValue: { normalize: (error: unknown) => error } },

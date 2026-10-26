@@ -37,4 +37,9 @@ export class ApiSessionService {
   can(permission: string): boolean {
     return this.sessionState()?.permissions.includes(permission) ?? false;
   }
+
+  clear(): void {
+    this.sessionState.set(null);
+    this.errorState.set(null);
+  }
 }

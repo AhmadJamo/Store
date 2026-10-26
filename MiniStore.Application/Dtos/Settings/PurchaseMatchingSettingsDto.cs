@@ -3,4 +3,5 @@ public sealed class PurchaseMatchingSettingsDto
 {
     public decimal QuantityTolerancePercent { get; set; }
     public decimal PriceTolerancePercent { get; set; }
+    public byte[] RowVersion { get; set; } = [];
 }

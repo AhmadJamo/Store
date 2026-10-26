@@ -52,16 +52,13 @@ public class AccountingSettingsService(
                 dto.RealizedExchangeGainAccountId, dto.RealizedExchangeLossAccountId);
             await settingsRepository.AddAsync(settings);
         }
+        settings.ConfigurePostingAccounts(
+            dto.PurchaseDiscountAccountId,
+            dto.SalesDiscountAccountId,
+            dto.SalesRevenueAccountId,
+            dto.CostOfSalesAccountId, dto.GoodsReceivedNotInvoicedAccountId, dto.PurchasePriceVarianceAccountId, dto.LandedCostClearingAccountId,
+            dto.RealizedExchangeGainAccountId, dto.RealizedExchangeLossAccountId);
         if(dto.CustomerReceivableAccountMode is { } mode) settings.ConfigureCustomerReceivables(mode,dto.CustomerReceivableControlAccountId,dto.CustomerReceivableParentAccountId,dto.CustomerAccountCodePrefix,dto.CustomerPolicyEffectiveFrom);
-        else
-        {
-            settings.ConfigurePostingAccounts(
-                dto.PurchaseDiscountAccountId,
-                dto.SalesDiscountAccountId,
-                dto.SalesRevenueAccountId,
-                dto.CostOfSalesAccountId, dto.GoodsReceivedNotInvoicedAccountId, dto.PurchasePriceVarianceAccountId, dto.LandedCostClearingAccountId,
-                dto.RealizedExchangeGainAccountId, dto.RealizedExchangeLossAccountId);
-        }
         settings.ConfigureSalesInvoiceQuantityPolicy(dto.SalesInvoiceQuantityPolicy);
 
         await audit.RecordTenantSuccessAsync(

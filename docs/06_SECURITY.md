@@ -1,7 +1,7 @@
 # Security assessment
 > Status: PARTIALLY VERIFIED
 > Source of truth: Static inspection and focused executable regression checks
-> Last reviewed: 2026-10-22
+> Last reviewed: 2026-10-27
 
 ## Internal Angular API boundary (2026-10-24)
 
@@ -12,6 +12,15 @@ only a validated local Angular base path and a code-owned controller/action allo
 POST plus every unlisted action. Enabling a surface therefore cannot redirect a mutation or replace endpoint permission checks.
 
 Customer and Supplier Angular slices use operation-specific View/Create/Edit permissions on every endpoint. Supplier form options are projected by the Application layer, and submitted account/product identifiers are revalidated by existing services; client filtering is never treated as authorization. Supplier stale-write failures return HTTP 409 while keeping global antiforgery and tenant repository filters intact.
+
+Angular user/role administration repeats exact `Users.*` and `Roles.*` policies on every API operation; navigation visibility cannot authorize a request. Unsafe operations require antiforgery, system roles cannot be mutated, role updates use rowversion with HTTP 409 on stale data, and all supplied role/permission identifiers are resolved server-side. User creation shares one Application contract with MVC, checks the tenant subscription limit and active company role, and commits membership, assignment and sanitized semantic audit evidence in one `UnitOfWork`. If that tenant binding fails after Identity account creation, the new account is removed after clearing the rolled-back tracker state. Passwords are never returned, logged, or stored by Angular and are cleared from the form after rejection.
+
+The Angular settings mutation surface requires authenticated `Administration.Access` for every identity, logo,
+preferences, discount and purchase-matching operation. Unsafe PUT/POST/DELETE requests use the shared antiforgery
+interceptor/filter. Logo content is limited to 2 MB and validated by PNG/JPEG signature in the Application service.
+General, discount and purchase-matching writes carry database rowversions; stale submissions return coded HTTP 409,
+and semantic audit remains inside the existing Application save path. The client never treats route visibility as
+authorization and never writes EF entities directly.
 
 The Command Center never aggregates unauthorized backend data: its provider list is session-permission filtered and its previews call the already-protected Customer/Supplier APIs with bounded paging. Local Command Center persistence contains only validated navigation/provider identifiers and view mode; restoration drops unknown, unauthorized, oversized or injected values. Record payloads, search terms, arbitrary URLs and permission decisions are not stored.
 
@@ -107,11 +116,28 @@ Database relationship hardening appends TenantId to every relationship between t
 
 Public company registration uses a configurable fixed-window limit that defaults to 20 submissions per hour per connection IP and creates the user, company, owner membership, tenant Admin assignment and trial inside one database transaction. Rejections redirect to the bilingual registration page with the server-calculated retry time instead of exposing a raw HTTP 429 browser page. Platform login has its own cookie, lockout-aware password check, rate limit and role policies, and uses the same friendly rejection flow. Subscription middleware denies tenant ERP routes when the subscription is suspended, cancelled or expired while preserving login, public, platform and subscription-management routes.
 
+The Angular registration API keeps the same independent limiter and adds explicit antiforgery to the anonymous POST; API rejection is localized RFC Problem Details rather than an MVC redirect. MVC and API share `TenantCompanyRegistrationService` for provisioning plus cookie/tenant-claim sign-in, and the API response never returns the Identity user ID or a credential. Guided Complete and Skip require authentication, `Administration.Access` and antiforgery, then delegate to the existing serializable setup service. Angular retains non-secret rejected registration values but clears the password and stores no token or setup payload.
+
 Platform login, plan creation and promotion creation forms emit explicit antiforgery tokens. A live GET/POST regression check covers the separate-cookie login form so missing-token failures do not appear as an unexplained HTTP 400.
 
 SAL-070 customer invoices are tenant-owned at header, line, source-allocation and history level. Composite tenant foreign keys prevent cross-company order, customer, product, unit, pricing, tax and delivery references. Tenant-unique invoice numbers and request keys provide identity/idempotency, rowversion rejects stale lifecycle commands, and Serializable creation rechecks cumulative active quantity. Dedicated View/Create/Approve/Cancel permissions and antiforgery protect every controller mutation. Approval cannot create journals or payments, and the company eligibility policy cannot change after dependent invoices exist without a future controlled transition.
 
 ## Remaining risks / deployment work
+
+Angular fiscal-period administration is authenticated and requires `Administration.Access` for list, create and
+status change. The API delegates only to `FiscalPeriodService`, keeps global antiforgery enforcement for POST/PUT,
+rejects overlaps and invalid transitions server-side, requires a reason for status changes and maps a stale rowversion
+to coded HTTP 409 without exposing EF entities.
+
+Angular currency exchange-rate reads and upserts also require `Administration.Access` and use the global unsafe-method
+antiforgery contract. The API accepts only the explicit Application DTO and delegates to
+`CurrencyExchangeRateService`; server/domain validation normalizes three-letter codes, requires a positive rate and
+bounded source, and prevents a redundant rate for the company currency.
+
+Angular measurement-unit list, create and deactivate operations require `Administration.Access`; POST commands remain
+under antiforgery. The API delegates to `MeasurementUnitService`, which normalizes and rejects duplicate codes, while
+the domain validates dimensions/factors/precision and independently blocks deactivation of built-in units.
+
 - Configure production AllowedHosts; wildcard remains because the deployment hostname is unknown.
 - Supply a production SQL connection string with validated TLS certificates; local development configuration trusts the certificate.
 - Rate limiting is per process and uses the connection IP. Multi-instance/reverse-proxy deployments need trusted proxy configuration and shared edge limits; do not trust arbitrary forwarded headers.

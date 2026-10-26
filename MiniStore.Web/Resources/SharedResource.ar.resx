@@ -4635,10 +4635,48 @@
   <data name="The request is invalid." xml:space="preserve"><value>الطلب غير صالح.</value></data>
   <data name="Authentication is required." xml:space="preserve"><value>تسجيل الدخول مطلوب.</value></data>
   <data name="Access is denied." xml:space="preserve"><value>الوصول مرفوض.</value></data>
+  <data name="Too many attempts. Try again later." xml:space="preserve"><value>تم تسجيل محاولات كثيرة. حاول مرة أخرى لاحقًا.</value></data>
+  <data name="The company code is invalid or your account is not assigned to it." xml:space="preserve"><value>رمز الشركة غير صحيح أو أن حسابك غير مرتبط بها.</value></data>
+  <data name="All fields are required." xml:space="preserve"><value>جميع الحقول مطلوبة.</value></data>
+  <data name="Username already exists." xml:space="preserve"><value>اسم المستخدم موجود مسبقًا.</value></data>
+  <data name="Selected role does not exist." xml:space="preserve"><value>الدور المحدد غير موجود.</value></data>
+  <data name="The password does not meet the account security requirements." xml:space="preserve"><value>كلمة المرور لا تحقق متطلبات أمان الحساب.</value></data>
+  <data name="The user limit for the current plan has been reached." xml:space="preserve"><value>تم بلوغ حد المستخدمين في الخطة الحالية.</value></data>
+  <data name="System roles cannot be edited." xml:space="preserve"><value>لا يمكن تعديل أدوار النظام.</value></data>
+  <data name="System roles cannot be deleted." xml:space="preserve"><value>لا يمكن حذف أدوار النظام.</value></data>
+  <data name="A role with this name already exists in this company." xml:space="preserve"><value>يوجد دور بهذا الاسم في الشركة الحالية.</value></data>
+  <data name="Role settings changed in another session. Reload and try again." xml:space="preserve"><value>تغيرت إعدادات الدور في جلسة أخرى. أعد التحميل وحاول مجددًا.</value></data>
+  <data name="Role settings changed since you opened this page." xml:space="preserve"><value>تغيرت إعدادات الدور منذ فتح هذه الصفحة.</value></data>
+  <data name="Role was not found in this company." xml:space="preserve"><value>لم يتم العثور على الدور في هذه الشركة.</value></data>
+  <data name="Remove all users from this role before deleting it." xml:space="preserve"><value>أزل جميع المستخدمين من هذا الدور قبل حذفه.</value></data>
+  <data name="One or more selected permissions are invalid." xml:space="preserve"><value>صلاحية محددة واحدة أو أكثر غير صحيحة.</value></data>
+  <data name="The requested role was not found." xml:space="preserve"><value>لم يتم العثور على الدور المطلوب.</value></data>
   <data name="An unexpected error occurred." xml:space="preserve"><value>حدث خطأ غير متوقع.</value></data>
   <data name="Please try again. If the problem continues, contact support." xml:space="preserve"><value>يرجى المحاولة مرة أخرى. إذا استمرت المشكلة فتواصل مع الدعم.</value></data>
   <data name="The route customer does not match the submitted customer." xml:space="preserve"><value>الزبون في المسار لا يطابق الزبون المرسل.</value></data>
   <data name="The customer changed since you opened it." xml:space="preserve"><value>تغيرت بيانات الزبون منذ فتح الصفحة.</value></data>
   <data name="The supplier changed since you opened it." xml:space="preserve"><value>تغيرت بيانات المورد منذ فتح الصفحة.</value></data>
   <data name="Document evidence was not found." xml:space="preserve"><value>لم يتم العثور على دليل المستند.</value></data>
+  <data name="Settings changed since you opened this page." xml:space="preserve"><value>تغيّرت الإعدادات منذ فتح هذه الصفحة.</value></data>
+  <data name="Discount settings were modified by another user. Please reload the page and try again." xml:space="preserve"><value>عدّل مستخدم آخر إعدادات الخصم. أعد تحميل الصفحة وحاول مرة أخرى.</value></data>
+  <data name="Purchase matching settings were modified by another user. Please reload the page and try again." xml:space="preserve"><value>عدّل مستخدم آخر إعدادات مطابقة المشتريات. أعد تحميل الصفحة وحاول مرة أخرى.</value></data>
+  <data name="The route and payload identifiers do not match." xml:space="preserve"><value>المعرّف في المسار لا يطابق المعرّف المرسل.</value></data>
+  <data name="Owner username and email are required." xml:space="preserve"><value>اسم مستخدم المالك والبريد الإلكتروني مطلوبان.</value></data>
+  <data name="This username is already registered." xml:space="preserve"><value>اسم المستخدم هذا مسجل مسبقًا.</value></data>
+  <data name="This email is already registered." xml:space="preserve"><value>البريد الإلكتروني هذا مرتبط بحساب مسبقًا.</value></data>
+  <data name="This company address is already used." xml:space="preserve"><value>عنوان الشركة هذا مستخدم مسبقًا.</value></data>
+  <data name="The selected plan is unavailable." xml:space="preserve"><value>الخطة المحددة غير متاحة.</value></data>
+  <data name="Tenant name is required and cannot exceed 200 characters." xml:space="preserve"><value>اسم الشركة مطلوب ويجب ألا يتجاوز 200 حرف.</value></data>
+  <data name="Tenant slug must contain 3-63 lowercase letters, numbers or hyphens." xml:space="preserve"><value>عنوان الشركة يجب أن يتكون من 3 إلى 63 حرفًا إنجليزيًا صغيرًا أو رقمًا أو شرطة.</value></data>
+  <data name="Select valid setup options." xml:space="preserve"><value>اختر خيارات تجهيز صحيحة.</value></data>
+  <data name="Use Skip to configure the company manually." xml:space="preserve"><value>استخدم التخطي لإعداد الشركة يدويًا.</value></data>
+  <data name="The active company does not match the setup request." xml:space="preserve"><value>الشركة النشطة لا تطابق طلب التجهيز.</value></data>
+  <data name="Company setup record was not found." xml:space="preserve"><value>لم يتم العثور على سجل تجهيز الشركة.</value></data>
+  <data name="Company setup has already been resolved." xml:space="preserve"><value>تم حسم تجهيز الشركة مسبقًا.</value></data>
+  <data name="Country code must contain 2 or 3 letters." xml:space="preserve"><value>رمز الدولة يجب أن يتكون من حرفين أو ثلاثة.</value></data>
+  <data name="Currency must contain 3 letters." xml:space="preserve"><value>رمز العملة يجب أن يتكون من ثلاثة أحرف.</value></data>
+  <data name="Fiscal year start month must be between 1 and 12." xml:space="preserve"><value>شهر بداية السنة المالية يجب أن يكون بين 1 و12.</value></data>
+  <data name="Tax rate must be between 0 and 100." xml:space="preserve"><value>نسبة الضريبة يجب أن تكون بين 0 و100.</value></data>
+  <data name="An active company is required." xml:space="preserve"><value>يلزم وجود شركة نشطة.</value></data>
+  <data name="A signed-in user is required." xml:space="preserve"><value>يلزم تسجيل دخول مستخدم.</value></data>
 </root>

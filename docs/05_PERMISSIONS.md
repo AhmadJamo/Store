@@ -66,8 +66,8 @@ Products, Warehouses, Customers, ProductStock, StockTransactions, StockMovements
 | Inventory insights | Dedicated View permission protects the read-only activity report; thresholds and filters do not mutate stock. |
 | Inventory scanning | View protects resolution; putaway adds ProductStock.Edit, relocation adds LocationMovements.Create and Draft line counting adds InventoryAdjustments.Count. Every mutation uses antiforgery; movement commands use scoped keys and counts use absolute state assignment. |
 | Stock transfers | View/Create/Edit/Submit/Approve/Reject/Post/Cancel enforced. |
-| Users | View/Create enforced; Edit/Delete definitions have no actions. |
-| Roles | View/Create/Edit/Delete enforced; controller uses `TenantRoleService`, system Admin cannot be edited/deleted and all IDs are resolved inside the active tenant. |
+| Users | View/Create enforced in MVC and `/api/v1/users`; Edit/Delete definitions have no current MVC or Angular actions. Creation is delegated to the shared `ITenantUserAdministrationService`, which validates the active company, user limit and tenant-owned active role. |
+| Roles | View/Create/Edit/Delete enforced in MVC and `/api/v1/roles`; both presentations use `TenantRoleService`, system roles cannot be edited/deleted and all role/permission IDs are resolved inside the active tenant/application catalogue. |
 | Settings | Requires `Administration.Access`, which only an Admin assignment in the active tenant can satisfy. |
 | Accounting master data | Accounts, branches, tax rates and payment methods require the tenant-Admin boundary. Customers now use the dedicated `Customers.*` permissions; navigation and Dashboard visibility require `Customers.View`. |
 | Audit events | `AuditEvents.View` protects the tenant reader, `AuditEvents.Export` is additionally required for export, and `AuditEvents.ViewSensitive` alone reveals masked request evidence. The repository still enforces the active tenant regardless of permission. Platform policies are separate: Owner/Administrator/Billing may view Platform/System events, Owner/Administrator may export, and only Owner may view sensitive request evidence. |
@@ -75,6 +75,8 @@ Products, Warehouses, Customers, ProductStock, StockTransactions, StockMovements
 
 ## Known inconsistencies
 `Settings.View` and `Settings.Edit` remain mainly navigation capabilities. `Administration.Access` is an internal protected policy key and is absent from the delegable permission catalogue. The Settings workflow catalog uses this same company-admin boundary; links from each documented step are rendered only when the current user also has that operational destination permission. Identity mutations (`Users.Create/Edit/Delete`, `Roles.Create/Edit/Delete`) require tenant Admin membership and are filtered from custom-role editing, regardless of stored data. Assignment validates an active company membership and a role owned by the same tenant.
+
+Angular identity navigation is visibility only, never authorization. `UsersApiController` and `RolesApiController` repeat the operation-specific policy on every action, and all create/update/delete operations require antiforgery. Role form contracts expose stable permission codes, not stored permission entities, and the server re-resolves the submitted codes before saving.
 
 `P1-AUD-014` adds the dedicated `AuditEvents.View`, `AuditEvents.Export` and `AuditEvents.ViewSensitive` permissions. Export requires both View and Export at the server action, an antiforgery token and a fixed purpose; possessing View alone cannot export. No permission exists to update or delete an audit event.
 

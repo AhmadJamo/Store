@@ -10,11 +10,12 @@ import { routes } from './app.routes';
 import { ApiSecurityService } from './core/api/api-security.service';
 import { ApiSessionService } from './core/api/api-session.service';
 import { csrfInterceptor } from './core/api/csrf.interceptor';
+import { authFailureInterceptor } from './core/api/auth-failure.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
-    provideHttpClient(withFetch(), withInterceptors([csrfInterceptor])),
+    provideHttpClient(withFetch(), withInterceptors([csrfInterceptor, authFailureInterceptor])),
     provideAppInitializer(() => {
       const security = inject(ApiSecurityService);
       const session = inject(ApiSessionService);

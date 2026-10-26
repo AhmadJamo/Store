@@ -98,7 +98,7 @@ public class DiscountSettingsService
             dto.RowVersion.Length == 0 ||
             !settings.RowVersion.SequenceEqual(dto.RowVersion))
         {
-            throw new InvalidOperationException(
+            throw new SettingsConcurrencyException(
                 "Discount settings were modified by another user. Please reload the page and try again.");
         }
 

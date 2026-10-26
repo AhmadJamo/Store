@@ -44,7 +44,7 @@ public class DocumentNumberService(IDocumentSequenceRepository repository)
             }
             else if (input.RowVersion.Length == 0 || !row.RowVersion.SequenceEqual(input.RowVersion))
             {
-                throw new InvalidOperationException("Document numbering settings changed in another session. Reload and try again.");
+                throw new SettingsConcurrencyException("Document numbering settings changed in another session. Reload and try again.");
             }
 
             row.Configure(input.Prefix, input.Suffix, input.FormatTemplate, input.NumberLength, input.ResetPeriod, input.ResetStartNumber);
@@ -89,9 +89,16 @@ public class DocumentNumberService(IDocumentSequenceRepository repository)
             DocumentNumberType.PurchaseReturn => ("Purchase return", "مرتجع مشتريات"),
             DocumentNumberType.InventoryAdjustment => ("Inventory adjustment", "تسوية مخزون"),
             DocumentNumberType.PurchaseRequest => ("Purchase request", "طلب شراء"),
+            DocumentNumberType.PurchaseSourcingEvent => ("Purchase sourcing event", "حدث توريد مشتريات"),
             DocumentNumberType.SupplierQuotation => ("Supplier quotation", "عرض سعر مورد"),
             DocumentNumberType.PurchaseOrder => ("Purchase order", "أمر شراء"),
             DocumentNumberType.GoodsReceipt => ("Goods receipt", "استلام بضاعة"),
+            DocumentNumberType.GoodsReceiptReturn => ("Goods receipt return", "مرتجع استلام بضاعة"),
+            DocumentNumberType.VendorBill => ("Vendor bill", "فاتورة مورد"),
+            DocumentNumberType.SupplierPayment => ("Supplier payment", "دفعة مورد"),
+            DocumentNumberType.PurchaseAgreement => ("Purchase agreement", "اتفاقية شراء"),
+            DocumentNumberType.PurchaseTemplate => ("Purchase template", "قالب شراء"),
+            DocumentNumberType.LandedCost => ("Landed cost", "تكلفة واصلة"),
             DocumentNumberType.SupplierCreditNote => ("Supplier credit note", "إشعار دائن للمورد"),
             DocumentNumberType.PurchaseDocumentReversal => ("Purchase document reversal", "عكس مستند مشتريات"),
             DocumentNumberType.PurchaseServiceAcceptance => ("Purchase service acceptance", "إثبات إنجاز خدمة مشتراة"),
@@ -103,6 +110,7 @@ public class DocumentNumberService(IDocumentSequenceRepository repository)
             DocumentNumberType.CustomerPayment => ("Customer payment", "دفعة زبون"),
             DocumentNumberType.CustomerReturnRequest => ("Customer return request", "طلب مرتجع زبون"),
             DocumentNumberType.CustomerReturnReceipt => ("Customer return receipt", "استلام مرتجع زبون"),
+            DocumentNumberType.CustomerCreditNote => ("Customer credit note", "إشعار دائن للزبون"),
             _ => (row.DocumentType.ToString(), row.DocumentType.ToString())
         };
         return new DocumentSequenceDto

@@ -1,7 +1,9 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { ApiErrorService } from '../../core/api/api-error.service';
+import { ApiSessionService } from '../../core/api/api-session.service';
 import { NormalizedApiProblem } from '../../core/api/api.models';
 import { LocalizationService } from '../../core/localization/localization.service';
 import { SafeFormShortcutsDirective } from '../../shared/forms/safe-form-shortcuts.directive';
@@ -12,9 +14,10 @@ import { WorkspaceService } from '../../workspace/state/workspace.service';
 import { SettingsApiService } from './data/settings-api.service';
 import { GeneralPreferences, OrganizationIdentity } from './data/settings.models';
 
-@Component({ selector: 'app-settings-overview-page', imports: [ReactiveFormsModule, SafeFormShortcutsDirective, PageHeaderComponent, ApiRecoveryComponent, FeedbackStateComponent], templateUrl: './settings-overview-page.html', styleUrl: './settings-overview-page.scss', changeDetection: ChangeDetectionStrategy.OnPush })
+@Component({ selector: 'app-settings-overview-page', imports: [ReactiveFormsModule, RouterLink, SafeFormShortcutsDirective, PageHeaderComponent, ApiRecoveryComponent, FeedbackStateComponent], templateUrl: './settings-overview-page.html', styleUrl: './settings-overview-page.scss', changeDetection: ChangeDetectionStrategy.OnPush })
 export class SettingsOverviewPageComponent {
   protected readonly i18n = inject(LocalizationService);
+  protected readonly session = inject(ApiSessionService);
   private readonly api = inject(SettingsApiService);
   private readonly errors = inject(ApiErrorService);
   private readonly workspace = inject(WorkspaceService);

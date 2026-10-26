@@ -6,6 +6,8 @@ import { UiPreferencesService } from '../../core/preferences/ui-preferences.serv
 import { NavigationRegistryService } from '../../workspace/navigation/navigation-registry.service';
 import { WorkspaceService } from '../../workspace/state/workspace.service';
 import { AppShell } from './app-shell';
+import { AccountApiService } from '../../core/api/account-api.service';
+import { ApiSessionService } from '../../core/api/api-session.service';
 
 @Component({ template: '' }) class EmptyRoute {}
 
@@ -29,6 +31,8 @@ describe('AppShell accessibility', () => {
         { provide: NavigationRegistryService, useValue: { visibleItems: signal([]) } },
         { provide: LocalizationService, useValue: { direction: signal('ltr'), text: (key: string) => key, toggle: vi.fn() } },
         { provide: UiPreferencesService, useValue: { theme: signal('system'), density: signal('comfortable'), sidebar: signal('expanded'), contentWidth: signal('fluid'), reset: vi.fn(), setTheme: vi.fn(), setDensity: vi.fn(), setSidebar: vi.fn(), setContentWidth: vi.fn() } },
+        { provide: ApiSessionService, useValue: { session: signal(null), clear: vi.fn() } },
+        { provide: AccountApiService, useValue: { logout: vi.fn() } },
       ],
     }).compileComponents();
     fixture = TestBed.createComponent(AppShell); fixture.detectChanges();

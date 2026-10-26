@@ -1,0 +1,28 @@
+<section class="settings-form-page">
+  <app-page-header eyebrow="ADMIN" [title]="i18n.text('measurementUnits')" [description]="i18n.text('measurementUnitsDescription')" />
+  @if (loading()) { <app-feedback-state kind="loading" [title]="i18n.text('loading')" /> } @else {
+    @if (problem(); as failure) { <app-api-recovery [problem]="failure" [allowRetry]="false" /> }
+    @if (message() === 'created') { <p class="save-status" role="status">{{ i18n.text('measurementUnitSaved') }}</p> }
+    @if (message() === 'deactivated') { <p class="save-status" role="status">{{ i18n.text('measurementUnitDeactivated') }}</p> }
+    <form class="form-card" [formGroup]="form" appSafeFormShortcuts [saving]="saving()" (saveShortcut)="create()" (ngSubmit)="create()">
+      <h2>{{ i18n.text('addMeasurementUnit') }}</h2>
+      <div class="form-grid">
+        <label class="ui-field"><span>{{ i18n.text('unitCode') }}</span><input formControlName="code" maxlength="20" /></label>
+        <label class="ui-field"><span>{{ i18n.text('unitName') }}</span><input formControlName="name" maxlength="100" /></label>
+        <label class="ui-field"><span>{{ i18n.text('unitSymbol') }}</span><input formControlName="symbol" maxlength="20" /></label>
+        <label class="ui-field"><span>{{ i18n.text('dimension') }}</span><select formControlName="dimension"><option [ngValue]="1">{{ dimensionName(1) }}</option><option [ngValue]="2">{{ dimensionName(2) }}</option><option [ngValue]="3">{{ dimensionName(3) }}</option><option [ngValue]="4">{{ dimensionName(4) }}</option></select></label>
+        <label class="ui-field"><span>{{ i18n.text('factorToBaseUnit') }}</span><input type="number" min="0.000000000001" step="0.000000000001" formControlName="factorToBaseUnit" /></label>
+        <label class="ui-field"><span>{{ i18n.text('unitDecimals') }}</span><input type="number" min="0" max="6" step="1" formControlName="decimalPlaces" /></label>
+      </div>
+      <button class="ui-button primary" type="submit" [disabled]="saving() || form.invalid">{{ i18n.text('addUnit') }}</button>
+    </form>
+    <section class="form-card"><h2>{{ i18n.text('configuredUnits') }}</h2>
+      @if (units().length === 0) { <p>{{ i18n.text('noMeasurementUnits') }}</p> } @else {
+        <div class="table-scroll"><table><thead><tr><th scope="col">{{ i18n.text('unitCode') }}</th><th scope="col">{{ i18n.text('unitName') }}</th><th scope="col">{{ i18n.text('unitSymbol') }}</th><th scope="col">{{ i18n.text('dimension') }}</th><th scope="col">{{ i18n.text('factorToBaseUnit') }}</th><th scope="col">{{ i18n.text('unitDecimals') }}</th><th scope="col">{{ i18n.text('status') }}</th><th scope="col">{{ i18n.text('actions') }}</th></tr></thead><tbody>
+          @for (unit of units(); track unit.id) { <tr><td><strong>{{ unit.code }}</strong></td><td>{{ unit.name }}</td><td>{{ unit.symbol }}</td><td>{{ dimensionName(unit.dimension) }}</td><td>{{ unit.factorToBaseUnit }}</td><td>{{ unit.decimalPlaces }}</td><td>{{ i18n.text(unit.isActive ? 'active' : 'inactive') }} @if (unit.isSystem) { · {{ i18n.text('builtIn') }} }</td><td>@if (!unit.isSystem && unit.isActive) { <button class="ui-button secondary" type="button" [disabled]="saving()" (click)="deactivate(unit)">{{ i18n.text('deactivate') }}</button> }</td></tr> }
+        </tbody></table></div>
+      }
+    </section>
+    <footer class="form-actions"><a class="ui-button secondary" routerLink="/settings">{{ i18n.text('back') }}</a></footer>
+  }
+</section>

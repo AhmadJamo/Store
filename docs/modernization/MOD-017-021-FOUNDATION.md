@@ -8,7 +8,8 @@ This bundle deliberately starts five dependent phases without claiming their bro
 - `MOD-018`: completed reusable build/regression/style/bundle/accessibility/browser gate with anonymous and authenticated API evidence plus local performance;
 - `MOD-019`: completed source-generated inventory of 89 controllers (79 MVC/10 API), 189 user-facing views,
   344 MVC actions and 198 Razor control rows, plus reversible per-surface cutover controls;
-- `MOD-020`: Angular organization overview plus rowversion/audited operating-preferences editing; remaining settings workflows are staged;
+- `MOD-020`: complete Angular functional parity for Settings, Document Design, account/session, current user/role administration,
+  public company registration and guided onboarding; MVC remains the committed default;
 - `MOD-021`: server-paged Angular product list with search and status filtering.
 
 All API endpoints are authenticated, permission protected and call Application services. No EF entity is
@@ -20,11 +21,12 @@ generated registry is in `MVC_MIGRATION_REGISTRY.md` and is refreshed with
 ## Verification evidence
 
 - Web Release build: passed with zero warnings and zero errors.
-- Security/inventory regression: 1113 checks passed after the cutover safety assertions.
+- Security/inventory regression: 1182 checks passed, including settings, identity, registration/onboarding permissions,
+  verbs, CSRF/rate-limit metadata and MVC/Angular concurrency assertions.
 - Angular production build: passed.
-- Angular tests: 64/64 passed across 24 files after MOD-020A.
+- Angular tests: 122/122 passed across 37 files after MOD-020A..U.
 - External-style policy: passed; no Angular HTML `style=` attributes or component `styles:` blocks.
 
 ## Remaining gates
 
-Complete settings/catalog functional parity (`MOD-020..021`) remains open.
+`MOD-020` functional parity is complete. Catalog functional parity (`MOD-021`) remains open.

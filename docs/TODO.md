@@ -1,6 +1,6 @@
 # Project TODO
 > Source of truth: Current repository scan  
-> Last reviewed: 2026-10-24
+> Last reviewed: 2026-10-27
 
 The approved numbered Arabic/English delivery sequence is maintained in `MASTER_IMPLEMENTATION_ROADMAP_AR_EN.md`. Detailed working status, business rules and the rolling suggestion queue remain in `ARABIC_SHARED_ROADMAP.md`. This file remains the concise technical backlog.
 
@@ -29,7 +29,9 @@ The ERP SaaS Foundation Blueprint is imported as a non-authoritative planning re
 - [x] MOD-018A reusable acceptance gate: Release/regression, Angular tests/build, external SCSS, explicit initial/lazy budgets, static accessibility and real Edge RTL/LTR/keyboard/state/mobile checks with one passed/failed/skipped report. Completed 2026-10-25.
 - [x] MOD-018B prove the real authenticated session and three permission-allowed read endpoints with an external short-lived storage state; the final gate passed 11/11 with zero skips and deleted the temporary state. Completed 2026-10-25.
 - [x] MOD-019 generate the complete 89-controller/189-view/344-MVC-action/198-Razor-file registry and add reversible, GET-only, allowlisted per-surface cutover controls with MVC committed as the default. Completed 2026-10-25.
-- [ ] MOD-020 IN PROGRESS: Angular settings overview plus the rowversion/audited operating-preferences edit cycle are complete; migrate organization identity, logo and every remaining settings workflow.
+- [x] MOD-020 complete all current Settings/Document Design, account/session, tenant-user/role, public registration and
+  guided onboarding operations in Angular. Identity, tenant membership, provisioning, lockout/audit, CSRF and HttpOnly
+  cookies remain server-owned; MVC remains the default until a later cutover gate. Completed 2026-10-27.
 - [ ] MOD-021 IN PROGRESS: Angular product catalog list supports server search/status/paging; migrate product detail/edit and the remaining catalog surfaces.
 - [ ] MOD-022 through MOD-028 migrate every remaining tenant, public and platform MVC workflow to Angular by the approved module waves, including actions, permissions, localization, files, PDF and edge states.
 - [ ] MOD-029 prove full-system parity through dual-run reconciliation, performance/security/accessibility evidence and cutover/rollback rehearsals.

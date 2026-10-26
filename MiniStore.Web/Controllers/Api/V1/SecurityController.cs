@@ -11,6 +11,7 @@ namespace MiniStore.Web.Controllers.Api.V1;
 public sealed class SecurityController(IAntiforgery antiforgery) : ControllerBase
 {
     [HttpGet("csrf")]
+    [AllowAnonymous]
     [ProducesResponseType<AntiforgeryTokenDto>(StatusCodes.Status200OK)]
     public ActionResult<AntiforgeryTokenDto> GetCsrfToken()
     {

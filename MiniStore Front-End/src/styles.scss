@@ -102,6 +102,12 @@ app-shell .split-panel { display: none; min-width: 0; padding: var(--erp-space-5
 app-shell .split-panel h2 { margin-block-start: 0; font-size: 1rem; }
 app-shell .split-panel nav { display: grid; gap: var(--erp-space-2); }
 app-shell .split-panel a { color: var(--erp-color-primary-strong); }
+app-shell .session-summary { display: flex; align-items: center; gap: var(--erp-space-3); }
+app-shell .session-summary > span { display: grid; min-width: 0; }
+app-shell .session-summary small { color: var(--erp-color-text-muted); font-size: .68rem; }
+app-shell .session-summary strong { max-width: 10rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: .8rem; }
+app-shell .session-summary .ui-button { min-height: 2.25rem; white-space: nowrap; }
+app-shell .session-error { margin: 0; padding: var(--erp-space-2) var(--erp-space-6); color: var(--erp-color-danger); background: var(--erp-color-danger-soft); }
 html[data-split-view='true'] app-shell .content-frame { grid-template-columns: minmax(0, 1fr) minmax(14rem, 22rem); }
 html[data-split-view='true'] app-shell .split-panel { display: block; }
 html[data-workspace-profile='analyst'] app-shell main { max-width: 100%; }
@@ -139,6 +145,8 @@ html[data-workspace-profile='operator'] app-shell .workspace-toolbar { backgroun
   html[data-sidebar='compact'] app-shell .shell { display: block; }
   html[data-sidebar='compact'] app-shell .nav-item { flex: 0 0 auto; min-width: 3rem; padding-inline: var(--erp-space-3); font-size: .8rem; justify-content: center; }
 }
+
+@media (max-width: 1200px) { app-shell .session-summary > span { display: none; } }
 
 @media (max-width: 390px) {
   app-shell .preferences { grid-template-columns: repeat(2, minmax(0, 1fr)); }

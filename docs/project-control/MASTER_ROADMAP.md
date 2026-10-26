@@ -24,7 +24,8 @@
 - `MOD-017` — COMPLETED 2026-10-25: منشئ Angular، الحفظ، المعاينة المالية الخادمية، وتفويض المستخدم/الدور مع البدء/الانتهاء والإلغاء وإعادة فحص صلاحية المصدر.
 - `MOD-018` — COMPLETE: البوابة الموحدة نجحت 11/11 بلا فشل أو تخطي، بما فيها Edge وanonymous 401 والجلسة المصرح بها وثلاث واجهات قراءة والأداء المحلي؛ حُذفت الجلسة المؤقتة بعد التشغيل.
 - `MOD-019` — COMPLETE: السجل المولد يغطي 89 controller (79 MVC/10 API) و189 view و344 MVC action و198 Razor control row؛ أضيف تحويل تدريجي قابل للرجوع، GET-only وقائم على allowlist، مع بقاء MVC هو الافتراضي.
-- `MOD-020` — IN PROGRESS: يعرض هوية المنشأة، واكتملت دورة تعديل تفضيلات التشغيل عبر Application service مع rowversion/audit/cache invalidation؛ تبقى هوية المنشأة والشعار وبقية تدفقات الإعدادات.
+- `MOD-020` — COMPLETE 2026-10-27: اكتملت عمليات Angular لكل تدفقات الإعدادات ومصمم المستندات والحساب والجلسة،
+  وعمليات المستخدمين/الأدوار الحالية، والتسجيل وonboarding الكامل مع complete/skip/resume؛ بقي MVC افتراضيًا حتى cutover مستقل.
 - `MOD-021` — IN PROGRESS: أول catalog slice يعرض قائمة منتجات خادمية قابلة للبحث/التصفية؛ التفاصيل والتحرير وبقية الكتالوج لم تنقل.
 - `MOD-022..028` — APPROVED PROGRAM: نقل المخزون والمشتريات والمبيعات وPOS والمحاسبة وSaaS وكل الشاشات المشتركة والمتبقية إلى Angular على موجات، مع functional parity وإعادة تصميم كاملة وفق Angular design system لا نسخ Razor.
 - `MOD-029` — GATED: قبول شامل وdual-run reconciliation وتجربة cutover/rollback.

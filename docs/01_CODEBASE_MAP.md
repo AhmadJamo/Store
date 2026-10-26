@@ -3,7 +3,7 @@
 
 The in-repository workspace `MiniStore Front-End` is the isolated Angular 22 presentation target. It uses standalone components, strict TypeScript, lazy routes, SCSS design tokens, an Arabic RTL/English LTR localization boundary, a responsive shell and a small Signals-owned workspace state contract. Its central API clients bootstrap the user/tenant/permission session, normalize Problem Details and attach the server-issued CSRF token to unsafe internal API calls. Its development proxy is limited to `/api` and `/Account`.
 
-`MiniStore.Web/Controllers/Api/V1` exposes the authenticated session and CSRF foundation. `InternalApiSessionService` composes explicit Application DTOs through tenant and permission boundaries. `InternalApiExceptionMiddleware`, cookie events and API behavior options keep errors JSON-based with correlation IDs. Authenticated OpenAPI is filtered to `/api/v1`; reusable bounded paging contracts live in `MiniStore.Application/DTOs/Api`. MVC remains operational and Phase 2 adds no database migration or business-rule change. See `docs/modernization/PHASE_02_API_FOUNDATION.md`.
+`MiniStore.Web/Controllers/Api/V1` exposes the authenticated session and CSRF foundation. `AuthenticationApiController` adds rate-limited, antiforgery-protected login and authenticated logout; `TenantAccountAuthenticationService` is the single MVC/API owner of Identity password checks, company membership selection, tenant claim creation, onboarding detection and denied-login audit evidence. `InternalApiSessionService` composes explicit Application DTOs through tenant and permission boundaries. Angular `core/api` owns CSRF attachment, in-memory session state, authenticated/anonymous guards and expired-session routing, while `features/account` owns login and access-denied presentation. No credentials or tokens enter browser storage. `InternalApiExceptionMiddleware`, cookie events and API behavior options keep errors JSON-based with correlation IDs. Authenticated OpenAPI is filtered to `/api/v1`; reusable bounded paging contracts live in `MiniStore.Application/DTOs/Api`. MVC remains operational and no database migration or business-rule change was introduced. See `docs/modernization/PHASE_02_API_FOUNDATION.md`.
 
 `MiniStore Front-End/src/app/core/preferences` owns versioned, non-sensitive theme/density preferences and system-theme resolution. Global semantic tokens provide light/dark palettes, density dimensions, focus, reduced-motion and forced-color behavior. The lazy `/design-system` page is the bilingual RTL/LTR visual-state reference for shared buttons, badges, fields and empty/loading/error patterns. See `docs/modernization/PHASE_03_VISUAL_SYSTEM.md`.
 
@@ -53,6 +53,27 @@ only under the Windows temporary directory, the orchestrator consumes it, and `f
 the work through `MOD-030`: shared acceptance and complete MVC inventory, nine module/cross-cutting migration waves,
 full dual-run reconciliation and an explicit final Angular-only cutover. A page is not complete until its actions,
 permissions, localization, files, edge states and tests reach parity.
+
+`MiniStore Front-End/src/app/features/settings` now contains the Angular settings overview plus complete forms for
+operating preferences, organization identity/custom fields/logo, discount controls, purchase-matching tolerances,
+inventory defaults, purchase sourcing, document numbering, fiscal-period list/create/status operations and
+currency exchange-rate list/upsert, measurement-unit list/create/deactivate, accounting settings, branch sales accounts,
+branch/POS inventory-access configuration and terminal creation, per-terminal POS experience/profile updates, and the
+server-localized permission-aware workflow catalog.
+`MiniStore Front-End/src/app/features/document-designs` now supplies list/filter, details, create/clone editor, ordered
+sections, live preview and activate/archive/default lifecycle operations through `DocumentDesignsApiController`, which
+delegates exclusively to `DocumentDesignService` and preserves rowversion conflicts and version immutability.
+`SettingsApiController` exposes explicit protected read/write/upload/delete contracts and delegates to
+`GeneralSettingsService`, `DiscountSettingsService`, `PurchaseMatchingSettingsService`, `InventorySettingsService`,
+`PurchaseSourcingPolicyService`, `DocumentNumberService`, `FiscalPeriodService` and
+`CurrencyExchangeRateService`, `MeasurementUnitService`, `AccountingSettingsService`, `BranchService` and
+`InventoryAccessService`; mutation paths
+retain semantic audit and stale-write protection. `SettingsConcurrencyException` is translated to RFC Problem Details
+409, while validation remains 400. Settings stays `Mvc` in committed cutover configuration.
+
+`MiniStore Front-End/src/app/features/identity` owns tenant-user list/create and tenant-role list/create/edit/delete presentation. `UsersApiController` delegates both MVC and API user creation to the Application-owned `ITenantUserAdministrationService`; `RolesApiController` delegates to `TenantRoleService` and maps Domain permissions to explicit code-only API DTOs. Identity creation compensates a failed tenant binding, and `UnitOfWork` clears tracked state after rollback before that cleanup. Angular routes, settings links and navigation are permission filtered, while endpoint policies and antiforgery remain authoritative. Existing-user edit/delete are intentionally absent because the current MVC source surface does not implement them.
+
+`MiniStore Front-End/src/app/features/onboarding` owns anonymous company registration and authenticated guided setup/skip. `RegistrationApiController` exposes public plans and a CSRF/rate-limited registration POST through the shared `TenantCompanyRegistrationService`, so MVC and API reuse the same atomic SaaS provisioning and cookie/tenant-claim sign-in. `CompanyOnboardingApiController` requires `Administration.Access` and delegates complete/skip to the existing transactional `ICompanyOnboardingService`. Feature-local bilingual copy remains lazy while sharing the global locale/direction signal, keeping the established bundle budget. See `docs/modernization/PHASE_20_ADMINISTRATION_SETTINGS.md`.
 
 ## SAL-130A reusable Analytics Center
 

@@ -47,7 +47,7 @@ public sealed class PurchaseSourcingPolicyService(
         else
         {
             if (!policy.RowVersion.SequenceEqual(dto.RowVersion))
-                throw new InvalidOperationException("Purchase sourcing policy was modified by another user. Reload and try again.");
+                throw new SettingsConcurrencyException("Purchase sourcing policy was modified by another user. Reload and try again.");
             policy.Configure(dto.AllowDirectRfq, dto.MaximumEstimatedAmountCompanyCurrency,
                 dto.AllowedRoleName, dto.RequireActiveSuppliers);
         }

@@ -1,4 +1,5 @@
 using MiniStore.Application.Permissions;
+using MiniStore.Application.DTOs.Security;
 using MiniStore.Application.Saas;
 using MiniStore.Application.Services;
 using MiniStore.Application.Services.Api;
@@ -42,6 +43,9 @@ public static class BusinessServicesExtensions
         services.AddScoped<IBillingCheckoutService, BillingCheckoutService>();
         services.AddScoped<IPermissionService, PermissionService>();
         services.AddScoped<InternalApiSessionService>();
+        services.AddScoped<TenantAccountAuthenticationService>();
+        services.AddScoped<TenantCompanyRegistrationService>();
+        services.AddScoped<ITenantUserAdministrationService, TenantUserAdministrationService>();
     }
 
     private static void AddCatalogServices(this IServiceCollection services)

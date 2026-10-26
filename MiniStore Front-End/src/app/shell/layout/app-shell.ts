@@ -1,5 +1,5 @@
 import { DOCUMENT } from '@angular/common';
-import { ChangeDetectionStrategy, Component, DestroyRef, HostListener, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, HostListener, inject, OnInit, signal } from '@angular/core';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -9,6 +9,8 @@ import { WorkspaceProfile, WorkspaceProfileService } from '../../core/preference
 import { NavigationRegistryService } from '../../workspace/navigation/navigation-registry.service';
 import { NavigationItem, WorkspaceTab } from '../../workspace/state/workspace.models';
 import { WorkspaceService } from '../../workspace/state/workspace.service';
+import { AccountApiService } from '../../core/api/account-api.service';
+import { ApiSessionService } from '../../core/api/api-session.service';
 
 @Component({
   selector: 'app-shell',
@@ -23,6 +25,10 @@ export class AppShell implements OnInit {
   protected readonly preferences = inject(UiPreferencesService);
   protected readonly navigation = inject(NavigationRegistryService);
   protected readonly workspaceProfile = inject(WorkspaceProfileService);
+  protected readonly session = inject(ApiSessionService);
+  protected readonly signingOut = signal(false);
+  protected readonly signOutFailed = signal(false);
+  private readonly account = inject(AccountApiService);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
   private readonly document = inject(DOCUMENT);
@@ -107,4 +113,22 @@ export class AppShell implements OnInit {
   protected setSidebar(value: string): void { this.preferences.setSidebar(value as SidebarPreference); }
   protected setContentWidth(value: string): void { this.preferences.setContentWidth(value as ContentWidthPreference); }
   protected setWorkspaceProfile(value: string): void { this.workspaceProfile.setProfile(value as WorkspaceProfile); }
+
+  protected signOut(): void {
+    if (this.signingOut()) return;
+    if (this.workspace.tabs().some(tab => tab.dirty) && !globalThis.confirm(this.i18n.text('unsavedDescription'))) return;
+    this.signingOut.set(true);
+    this.signOutFailed.set(false);
+    this.account.logout().subscribe({
+      next: () => {
+        this.session.clear();
+        this.signingOut.set(false);
+        void this.router.navigate(['/login']);
+      },
+      error: () => {
+        this.signingOut.set(false);
+        this.signOutFailed.set(true);
+      },
+    });
+  }
 }

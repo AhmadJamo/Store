@@ -23,6 +23,16 @@ export interface AntiforgeryToken {
   headerName: string;
 }
 
+export interface TenantLoginRequest {
+  userName: string;
+  password: string;
+  companyCode?: string | null;
+}
+
+export interface TenantLoginResult {
+  requiresCompanyOnboarding: boolean;
+}
+
 export interface ApiProblem {
   type?: string;
   title?: string;
