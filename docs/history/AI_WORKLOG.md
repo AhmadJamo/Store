@@ -1195,3 +1195,11 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   checks, Angular passed 127/127 tests across 38 files, 52 templates passed accessibility, external SCSS passed, and
   bundles measured 297,865/358,400 initial and 80,866/81,920 largest lazy bytes. MVC remains default; advanced to
   `MOD-021B` product-category operations.
+- 2026-10-27: Completed `MOD-021B` product-category functional parity. Added an authenticated versioned API and
+  bilingual RTL-ready Angular `/products/categories` surface for list, create and activate/deactivate operations over
+  `ProductCategoryService`. Reads require `Products.View`; mutations require `Products.Edit` plus antiforgery. Category
+  codes are language-neutral and server-normalized, duplicate failures retain the form, and inactive history is
+  preserved without inventing delete. Web Release passed without warnings/errors, SecurityRegression passed 1189
+  checks, Angular passed 131/131 tests across 40 files, 53 templates passed accessibility, external SCSS passed, and
+  bundles measured 298,021/358,400 initial and 80,866/81,920 largest lazy bytes. MVC remains default; advanced to
+  `MOD-021C` product attributes and values.

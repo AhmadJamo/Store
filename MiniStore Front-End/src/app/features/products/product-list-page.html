@@ -1,5 +1,6 @@
 <section class="products-page">
   <app-page-header eyebrow="CATALOG" [title]="i18n.text('products')" [description]="i18n.text('productsDescription')">
+    <a class="ui-button secondary" routerLink="/products/categories">{{ i18n.text('productCategories') }}</a>
     @if (session.can('Products.Create')) { <a class="ui-button primary" routerLink="/products/new">{{ i18n.text('addProduct') }}</a> }
   </app-page-header>
   <div class="filters">

@@ -26,7 +26,7 @@
 - `MOD-019` — COMPLETE: السجل المولد يغطي 89 controller (79 MVC/10 API) و189 view و344 MVC action و198 Razor control row؛ أضيف تحويل تدريجي قابل للرجوع، GET-only وقائم على allowlist، مع بقاء MVC هو الافتراضي.
 - `MOD-020` — COMPLETE 2026-10-27: اكتملت عمليات Angular لكل تدفقات الإعدادات ومصمم المستندات والحساب والجلسة،
   وعمليات المستخدمين/الأدوار الحالية، والتسجيل وonboarding الكامل مع complete/skip/resume؛ بقي MVC افتراضيًا حتى cutover مستقل.
-- `MOD-021` — IN PROGRESS: اكتمل `MOD-021A` لسجل المنتجات الكامل list/details/create/edit/delete بكل خياراته وصلاحياته؛ التالي `MOD-021B` لتصنيفات المنتجات ثم بقية الكتالوج.
+- `MOD-021` — IN PROGRESS: اكتمل `MOD-021A..B` لسجل المنتجات وتصنيفاته بعمليات كاملة؛ التالي `MOD-021C` لتعريفات السمات وخياراتها وقيم المنتجات ثم القوالب والوصفات وبقية الكتالوج.
 - `MOD-022..028` — APPROVED PROGRAM: نقل المخزون والمشتريات والمبيعات وPOS والمحاسبة وSaaS وكل الشاشات المشتركة والمتبقية إلى Angular على موجات، مع functional parity وإعادة تصميم كاملة وفق Angular design system لا نسخ Razor.
 - `MOD-029` — GATED: قبول شامل وdual-run reconciliation وتجربة cutover/rollback.
 - `MOD-030` — EXPLICIT FINAL GATE: Angular-only وإزالة MVC presentation تدريجيًا بعد صفر فجوات.

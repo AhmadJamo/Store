@@ -82,6 +82,11 @@ supplier, tracking, shelf-life and logistics rules. The Application form-page DT
 expense-account options and product details expose display names rather than internal IDs. See
 `docs/modernization/PHASE_21_CATALOG.md`.
 
+`ProductCategoriesApiController` and Angular `/products/categories` complete category list/create/status parity over
+`ProductCategoryService`. Reads use `Products.View`; create and activate/deactivate use `Products.Edit` plus
+antiforgery. Neutral category codes are DTO/domain validated and inactive categories remain preserved for historical
+references.
+
 ## SAL-130A reusable Analytics Center
 
 `AnalyticsWorkspace` and its widgets persist tenant-owned personal/shared presentation preferences. Generic analytics

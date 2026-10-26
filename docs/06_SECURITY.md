@@ -161,3 +161,9 @@ Product reads and form-option projections remain authenticated and require their
 Create, update and delete use independent server permissions and explicit antiforgery validation. The controller accepts
 Application DTOs, delegates to `ProductService`, returns normalized validation/not-found/conflict Problem Details and
 never exposes persistence exceptions or EF entities. Tenant query and write guards remain authoritative.
+
+## MOD-021B product-category boundary (2026-10-27)
+
+The versioned category API requires authentication and `Products.View` for reads. Create and status changes both require
+`Products.Edit` and explicit antiforgery. The DTO/domain enforce a language-neutral bounded code, duplicate validation
+is localized, and the API returns only Application DTOs. Angular visibility is guidance only and cannot grant access.

@@ -3916,6 +3916,25 @@ Check(typeof(ProductService).GetMethod(nameof(ProductService.GetFormPageAsync))!
       typeof(ProductFormPageDto).GetProperty(nameof(ProductFormPageDto.Suppliers)) is not null &&
       typeof(ProductFormPageDto).GetProperty(nameof(ProductFormPageDto.ExpenseAccounts)) is not null,
     "Product form options must remain an explicit Application DTO contract");
+var productCategoriesApi = typeof(ProductCategoriesApiController);
+Check(productCategoriesApi.GetCustomAttribute<ApiControllerAttribute>() is not null &&
+      productCategoriesApi.GetCustomAttribute<AuthorizeAttribute>() is not null &&
+      productCategoriesApi.GetCustomAttribute<RouteAttribute>()?.Template == "api/v1/product-categories" &&
+      productCategoriesApi.GetMethod(nameof(ProductCategoriesApiController.GetAll))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:Products.View",
+    "Angular product-category reads must remain authenticated and Products.View protected");
+Check(new[]
+    {
+        productCategoriesApi.GetMethod(nameof(ProductCategoriesApiController.Create))!,
+        productCategoriesApi.GetMethod(nameof(ProductCategoriesApiController.SetStatus))!
+    }.All(method => method.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:Products.Edit" &&
+        method.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null),
+    "Product-category creation and status changes must require Products.Edit and antiforgery");
+Check(typeof(CreateProductCategoryDto).GetProperty(nameof(CreateProductCategoryDto.Code))!
+          .GetCustomAttribute<RegularExpressionAttribute>()?.Pattern == "^[A-Za-z0-9][A-Za-z0-9_-]*$" &&
+      typeof(CreateProductCategoryDto).GetProperty(nameof(CreateProductCategoryDto.Name))!
+          .GetCustomAttribute<RequiredAttribute>() is not null,
+    "Product-category API input must require a name and language-neutral code");
 var operationsApi = typeof(OperationsCenterApiController);
 Check(operationsApi.GetCustomAttribute<ApiControllerAttribute>() is not null &&
       operationsApi.GetCustomAttribute<AuthorizeAttribute>() is not null &&

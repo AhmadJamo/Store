@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace MiniStore.Application.DTOs.Products;
 
 public sealed class ProductCategoryDto
@@ -10,6 +12,15 @@ public sealed class ProductCategoryDto
 
 public sealed class CreateProductCategoryDto
 {
+    [Required, StringLength(100)]
     public string Name { get; set; } = string.Empty;
+
+    [Required, StringLength(30)]
+    [RegularExpression("^[A-Za-z0-9][A-Za-z0-9_-]*$")]
     public string Code { get; set; } = string.Empty;
+}
+
+public sealed class SetProductCategoryStatusDto
+{
+    public bool IsActive { get; set; }
 }

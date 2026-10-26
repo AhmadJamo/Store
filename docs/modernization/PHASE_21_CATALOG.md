@@ -1,6 +1,6 @@
 # MOD-021 — Catalog migration
 
-> Status: IN PROGRESS — `MOD-021A` completed 2026-10-27  
+> Status: IN PROGRESS — `MOD-021A..B` completed 2026-10-27
 > Presentation default: MVC until an explicit cutover gate
 
 ## Scope and sequence
@@ -8,11 +8,12 @@
 | Slice | Surface | Status |
 |---|---|---|
 | `MOD-021A` | Product list, details, create, edit and delete | COMPLETE |
-| `MOD-021B` | Product-category create/list/activate/deactivate | NEXT |
-| `MOD-021C` | Product attributes, values, templates and controlled variant creation | PLANNED |
-| `MOD-021D` | Prepared-product recipes and immutable recipe versions | PLANNED |
-| `MOD-021E` | Tax rates, payment methods and branch master data | PLANNED |
-| `MOD-021F` | Warehouse master data | PLANNED |
+| `MOD-021B` | Product-category create/list/activate/deactivate | COMPLETE |
+| `MOD-021C` | Product attribute definitions, options and per-product values | NEXT |
+| `MOD-021D` | Product templates and controlled variant creation | PLANNED |
+| `MOD-021E` | Prepared-product recipes and immutable recipe versions | PLANNED |
+| `MOD-021F` | Tax rates, payment methods and branch master data | PLANNED |
+| `MOD-021G` | Warehouse master data | PLANNED |
 
 Measurement-unit operations were already completed in `MOD-020L`; this wave reuses that Angular surface instead of
 creating a duplicate unit editor.
@@ -48,12 +49,22 @@ creating a duplicate unit editor.
 ## Verification evidence
 
 - Web Release: passed, zero warnings and zero errors.
-- Security/inventory regression: 1186 checks passed.
-- Angular: 127/127 tests across 38 files passed.
-- Static accessibility: 52 templates passed; external-SCSS policy passed.
-- Production bundle: 297,865 / 358,400 initial bytes; largest lazy chunk 80,866 / 81,920 bytes.
+- Security/inventory regression: 1189 checks passed.
+- Angular: 131/131 tests across 40 files passed.
+- Static accessibility: 53 templates passed; external-SCSS policy passed.
+- Production bundle: 298,021 / 358,400 initial bytes; largest lazy chunk 80,866 / 81,920 bytes.
+
+## `MOD-021B` delivered behavior
+
+- Angular `/products/categories` provides the complete existing list, create and activate/deactivate operations.
+- The page is read-only under `Products.View`; creation and status controls appear only with `Products.Edit`, while the
+  API repeats both policies and validates antiforgery on every mutation.
+- Category code is normalized server-side and constrained to language-neutral letters, numbers, hyphens and underscores.
+  Duplicate name/code validation returns localized Problem Details and preserves the failed form.
+- Deactivation retains historical rows and product references; no delete operation was invented because MVC/domain do
+  not provide one.
 
 ## Remaining work
 
-Proceed with `MOD-021B` product categories. Do not declare the catalog wave complete until every listed slice reaches
+Proceed with `MOD-021C` product attributes and values. Do not declare the catalog wave complete until every listed slice reaches
 functional parity and its own verification evidence is recorded.

@@ -180,6 +180,11 @@ export const routes: Routes = [
         loadComponent: () => import('./features/products/product-form-page').then((module) => module.ProductFormPageComponent),
       },
       {
+        path: 'products/categories',
+        canDeactivate: [(component) => component.canDeactivate()],
+        loadComponent: () => import('./features/products/product-categories-page').then((module) => module.ProductCategoriesPageComponent),
+      },
+      {
         path: 'products/:id/edit',
         canDeactivate: [(component) => component.canDeactivate()],
         loadComponent: () => import('./features/products/product-form-page').then((module) => module.ProductFormPageComponent),
