@@ -155,3 +155,9 @@ Run `pwsh -NoProfile -File scripts/verify-local.ps1`. The 2026-10-18 run built w
 Password validation runs before company selection. A supplied globally unique tenant slug must resolve to an active membership for that user before the TenantId claim is issued. Empty company code retains default-membership behavior. Errors do not expose another company's records.
 WMS-020A uses a dedicated `StockMovements.View` permission for its read-only ledger. Putaway and Relocation retain their existing mutation permissions. Server-side tenant filters, composite tenant foreign keys, antiforgery-protected forms and tenant-unique idempotency keys prevent cross-company linkage and repeated submissions.
 WMS-040 availability is read-only under `InventoryBalances.View`. Tenant filters and composite foreign keys isolate dimensions; filtered unique indexes prevent duplicate Unassigned/exact-location rows, and rowversion plus database reservation constraints protect future concurrent allocation.
+## MOD-021A product API boundary (2026-10-27)
+
+Product reads and form-option projections remain authenticated and require their matching View/Create/Edit permission.
+Create, update and delete use independent server permissions and explicit antiforgery validation. The controller accepts
+Application DTOs, delegates to `ProductService`, returns normalized validation/not-found/conflict Problem Details and
+never exposes persistence exceptions or EF entities. Tenant query and write guards remain authoritative.

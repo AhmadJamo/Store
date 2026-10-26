@@ -4614,6 +4614,8 @@
   <data name="Product created successfully." xml:space="preserve"><value>تم إنشاء المنتج بنجاح.</value></data>
   <data name="Product deleted successfully." xml:space="preserve"><value>تم حذف المنتج بنجاح.</value></data>
   <data name="Product updated successfully." xml:space="preserve"><value>تم تحديث المنتج بنجاح.</value></data>
+  <data name="Product cannot be deleted." xml:space="preserve"><value>لا يمكن حذف المنتج.</value></data>
+  <data name="The product is used by existing operations and cannot be deleted." xml:space="preserve"><value>المنتج مستخدم في عمليات موجودة ولا يمكن حذفه.</value></data>
   <data name="Rejection reason is required." xml:space="preserve"><value>سبب الرفض مطلوب.</value></data>
   <data name="Stock created successfully." xml:space="preserve"><value>تم إنشاء رصيد المخزون بنجاح.</value></data>
   <data name="Stock deleted successfully." xml:space="preserve"><value>تم حذف رصيد المخزون بنجاح.</value></data>

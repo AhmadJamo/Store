@@ -75,6 +75,13 @@ retain semantic audit and stale-write protection. `SettingsConcurrencyException`
 
 `MiniStore Front-End/src/app/features/onboarding` owns anonymous company registration and authenticated guided setup/skip. `RegistrationApiController` exposes public plans and a CSRF/rate-limited registration POST through the shared `TenantCompanyRegistrationService`, so MVC and API reuse the same atomic SaaS provisioning and cookie/tenant-claim sign-in. `CompanyOnboardingApiController` requires `Administration.Access` and delegates complete/skip to the existing transactional `ICompanyOnboardingService`. Feature-local bilingual copy remains lazy while sharing the global locale/direction signal, keeping the established bundle budget. See `docs/modernization/PHASE_20_ADMINISTRATION_SETTINGS.md`.
 
+`MiniStore Front-End/src/app/features/products` now owns the complete product-master list/details/create/edit/delete
+slice. `ProductsApiController` exposes explicit permission-separated form and mutation contracts with antiforgery and
+Problem Details, while `ProductService` remains the owner of barcode uniqueness, managed units, type/pricing/channel,
+supplier, tracking, shelf-life and logistics rules. The Application form-page DTO projects category, unit, supplier and
+expense-account options and product details expose display names rather than internal IDs. See
+`docs/modernization/PHASE_21_CATALOG.md`.
+
 ## SAL-130A reusable Analytics Center
 
 `AnalyticsWorkspace` and its widgets persist tenant-owned personal/shared presentation preferences. Generic analytics

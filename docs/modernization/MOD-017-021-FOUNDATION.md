@@ -10,7 +10,8 @@ This bundle deliberately starts five dependent phases without claiming their bro
   344 MVC actions and 198 Razor control rows, plus reversible per-surface cutover controls;
 - `MOD-020`: complete Angular functional parity for Settings, Document Design, account/session, current user/role administration,
   public company registration and guided onboarding; MVC remains the committed default;
-- `MOD-021`: server-paged Angular product list with search and status filtering.
+- `MOD-021`: `MOD-021A` completes product list/details/create/edit/delete with all current product form options;
+  remaining catalog masters and recipes are staged in `PHASE_21_CATALOG.md`.
 
 All API endpoints are authenticated, permission protected and call Application services. No EF entity is
 returned and no financial value is calculated in the browser. MOD-017C adds one additive tenant-owned delegation
@@ -21,12 +22,13 @@ generated registry is in `MVC_MIGRATION_REGISTRY.md` and is refreshed with
 ## Verification evidence
 
 - Web Release build: passed with zero warnings and zero errors.
-- Security/inventory regression: 1182 checks passed, including settings, identity, registration/onboarding permissions,
-  verbs, CSRF/rate-limit metadata and MVC/Angular concurrency assertions.
+- Security/inventory regression: 1186 checks passed, including permission-separated and antiforgery-protected product
+  mutations in addition to the completed administration/onboarding controls.
 - Angular production build: passed.
-- Angular tests: 122/122 passed across 37 files after MOD-020A..U.
+- Angular tests: 127/127 passed across 38 files after `MOD-021A`.
 - External-style policy: passed; no Angular HTML `style=` attributes or component `styles:` blocks.
 
 ## Remaining gates
 
-`MOD-020` functional parity is complete. Catalog functional parity (`MOD-021`) remains open.
+`MOD-020` functional parity is complete. Product master operations are complete in `MOD-021A`; catalog functional
+parity remains open beginning with `MOD-021B` product categories.

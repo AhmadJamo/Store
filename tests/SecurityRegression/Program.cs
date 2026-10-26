@@ -3891,6 +3891,31 @@ Check(productsApi.GetCustomAttribute<ApiControllerAttribute>() is not null &&
       productsApi.GetMethod(nameof(ProductsApiController.Get))!
           .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:Products.View",
     "Angular product reads must remain authenticated and product-view protected");
+Check(productsApi.GetMethod(nameof(ProductsApiController.GetCreateForm))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:Products.Create" &&
+      productsApi.GetMethod(nameof(ProductsApiController.GetEditForm))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:Products.Edit",
+    "Angular product form options must enforce separate create and edit permissions");
+Check(productsApi.GetMethod(nameof(ProductsApiController.Create))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:Products.Create" &&
+      productsApi.GetMethod(nameof(ProductsApiController.Update))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:Products.Edit" &&
+      productsApi.GetMethod(nameof(ProductsApiController.Delete))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:Products.Delete",
+    "Angular product mutations must preserve independent create, edit and delete permissions");
+Check(new[]
+    {
+        productsApi.GetMethod(nameof(ProductsApiController.Create))!,
+        productsApi.GetMethod(nameof(ProductsApiController.Update))!,
+        productsApi.GetMethod(nameof(ProductsApiController.Delete))!
+    }.All(method => method.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null),
+    "Every Angular product mutation must require antiforgery validation");
+Check(typeof(ProductService).GetMethod(nameof(ProductService.GetFormPageAsync))!
+          .ReturnType == typeof(Task<ProductFormPageDto>) &&
+      typeof(ProductFormPageDto).GetProperty(nameof(ProductFormPageDto.MeasurementUnits)) is not null &&
+      typeof(ProductFormPageDto).GetProperty(nameof(ProductFormPageDto.Suppliers)) is not null &&
+      typeof(ProductFormPageDto).GetProperty(nameof(ProductFormPageDto.ExpenseAccounts)) is not null,
+    "Product form options must remain an explicit Application DTO contract");
 var operationsApi = typeof(OperationsCenterApiController);
 Check(operationsApi.GetCustomAttribute<ApiControllerAttribute>() is not null &&
       operationsApi.GetCustomAttribute<AuthorizeAttribute>() is not null &&

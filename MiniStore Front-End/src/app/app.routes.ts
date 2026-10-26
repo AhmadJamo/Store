@@ -175,6 +175,20 @@ export const routes: Routes = [
         loadComponent: () => import('./features/products/product-list-page').then((module) => module.ProductListPageComponent),
       },
       {
+        path: 'products/new',
+        canDeactivate: [(component) => component.canDeactivate()],
+        loadComponent: () => import('./features/products/product-form-page').then((module) => module.ProductFormPageComponent),
+      },
+      {
+        path: 'products/:id/edit',
+        canDeactivate: [(component) => component.canDeactivate()],
+        loadComponent: () => import('./features/products/product-form-page').then((module) => module.ProductFormPageComponent),
+      },
+      {
+        path: 'products/:id',
+        loadComponent: () => import('./features/products/product-details-page').then((module) => module.ProductDetailsPageComponent),
+      },
+      {
         path: 'operations-center',
         loadComponent: () => import('./features/operations-center/operations-center-page').then((module) => module.OperationsCenterPageComponent),
       },

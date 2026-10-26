@@ -1,12 +1,14 @@
 # Products and recipes
-> Status: IMPLEMENTED | Last reviewed: 2026-10-24
+> Status: IMPLEMENTED | Last reviewed: 2026-10-27
 
 ## Angular migration foundation (2026-10-25)
 
-The first `MOD-021` slice adds `/products`, backed by `GET /api/v1/products` and `ProductService.SearchAsync`.
-It preserves server paging, search, active-status filtering and `Products.View`; names remain user-facing while
-IDs stay internal. Product details, create/edit, categories, units, templates, attributes and recipes remain
-on MVC until their complete functional-parity slices are implemented.
+`MOD-021A` completes product-master parity in Angular: server-paged list/search, details, create, edit and confirmed
+delete. The API delegates to `ProductService`, separates View/Create/Edit/Delete permissions and validates antiforgery
+on every mutation. The form includes all current MVC fields and server-provided category, managed-unit, supplier and
+expense-account options; user-facing details show names while IDs remain transport-only. Categories, templates,
+attributes and recipes remain on MVC for later `MOD-021` slices. Measurement-unit operations are already Angular-owned
+from `MOD-020L`. MVC remains the committed default. See `modernization/PHASE_21_CATALOG.md`.
 
 Recipe yields, ingredient quantities and measurement-unit conversion factors use culture-invariant decimal validation, so Arabic UI culture cannot turn valid dot-based HTML values into a validation exception.
 

@@ -1,7 +1,7 @@
 # Testing
 > Status: FOCUSED REGRESSION EXECUTABLE IMPLEMENTED
 > Source of truth: `tests/SecurityRegression` and build output
-> Last reviewed: 2026-10-25
+> Last reviewed: 2026-10-27
 
 `tests/SecurityRegression` is a standalone executable test harness. It verifies tenant metadata/query filters and write guards; complete classification of mapped Domain entities; composite TenantId coverage; authorization; destructive action HTTP methods; throttling; SaaS and inventory invariants. The 2026-10-21 run passes 932 checks, including customer-invoice/payment permissions, tenant ownership, receipt evidence, reversal, actionable links and next-step guidance.
 
@@ -59,3 +59,12 @@ Regression coverage checks pending/completed/skipped state, normalization, one-t
 `MOD-020U` adds API metadata checks for anonymous/versioned registration, CSRF, the independent registration rate limit, required secret/slug validation, the authenticated tenant-Admin onboarding boundary and antiforgery on both Complete and Skip. Angular tests cover every registration/onboarding endpoint, rejected-password clearing with non-secret field preservation, automatic session reload/routing, the complete payload and confirmed skip. Final evidence is 1182 backend checks, 122/122 Angular tests across 37 files, 50 accessible templates, external SCSS, and production bundles of 297,465 initial / 80,866 largest lazy bytes.
 
 Cafe recipe, product-catalog and managed-unit coverage validates conversion, classification, channel rules, immutable snapshots, controlled negatives and Arabic decimal handling. Moving-average coverage verifies `10@5 + 20@8 = 7`, a 4-unit issue at value 28, remaining value 182, and provisional-negative variance settlement. Posting coverage verifies immutable line COGS, balanced sale and cost-variance journals, inclusive/exclusive tax and balanced return reversals. The current executable passes 260 checks; EF reports no pending model changes after `AddProductLogisticsFoundation`.
+## MOD-021A product-master evidence (2026-10-27)
+
+- Web Release passed with zero warnings/errors.
+- SecurityRegression passed 1186 checks, including product form permissions, independent mutation permissions,
+  antiforgery metadata and the Application-owned form contract.
+- Angular passed 127/127 tests across 38 files; API tests cover GET/form/POST/PUT/DELETE and component tests cover
+  successful create/update, retained validation input and raw/prepared product rules.
+- 52 Angular templates passed static accessibility; external SCSS and production bundle budgets passed.
+- Bundle evidence: 297,865/358,400 initial bytes and 80,866/81,920 largest lazy bytes.

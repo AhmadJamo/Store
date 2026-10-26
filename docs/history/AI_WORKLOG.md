@@ -1186,3 +1186,12 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   SecurityRegression passed 1182 checks, Angular passed 122/122 tests across 37 files, 50 templates passed accessibility,
   external SCSS passed, and bundles measured 297,465/358,400 initial and 80,866/81,920 largest lazy bytes. `MOD-020`
   is functionally complete with MVC still default; advanced to `MOD-021A` product master operations.
+- 2026-10-27: Completed `MOD-021A` product-master functional parity. `ProductsApiController` now exposes authenticated,
+  permission-separated details/form/create/update/delete contracts with explicit antiforgery and localized Problem
+  Details, while `ProductService` remains the owner of barcode, unit, category, price, channel, purchasing, supplier,
+  tracking, shelf-life and logistics rules. Angular adds bilingual RTL-ready list/details/create/edit/delete routes,
+  all current MVC fields, dirty-form protection, confirmed deletion and feature-local lazy copy; display names replace
+  internal IDs in user-facing evidence. Web Release passed with zero warnings/errors, SecurityRegression passed 1186
+  checks, Angular passed 127/127 tests across 38 files, 52 templates passed accessibility, external SCSS passed, and
+  bundles measured 297,865/358,400 initial and 80,866/81,920 largest lazy bytes. MVC remains default; advanced to
+  `MOD-021B` product-category operations.
