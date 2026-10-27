@@ -12,7 +12,8 @@ definition/options/status and typed per-product values with category applicabili
 server-authoritative. `MOD-021D` completes template creation, SKU assignment, preview and bounded controlled variant
 generation without copying stock/history/barcode/recipes. `MOD-021E` completes prepared-product recipe list/edit and
 immutable-version save while conversion remains server-owned. Measurement-unit operations are already Angular-owned
-from `MOD-020L`. MVC remains the committed default. See `modernization/PHASE_21_CATALOG.md`.
+from `MOD-020L`. `MOD-021F` also completes tax-rate, payment-method and branch list/create operations through explicit
+DTOs and named account choices. MVC remains the committed default. See `modernization/PHASE_21_CATALOG.md`.
 
 Recipe yields, ingredient quantities and measurement-unit conversion factors use culture-invariant decimal validation, so Arabic UI culture cannot turn valid dot-based HTML values into a validation exception.
 

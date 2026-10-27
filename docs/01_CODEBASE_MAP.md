@@ -102,6 +102,10 @@ recipe list/editor/immutable-version save over `RecipeService`. Stocked-ingredie
 conversion snapshots, positive quantities and version transactions remain server-owned; save uses `Products.Edit`
 and antiforgery.
 
+`CatalogMastersApiController` and Angular `/products/catalog-masters` complete current tax-rate, payment-method and
+branch list/create operations. Application projections expose account names instead of entity/account IDs as evidence;
+the whole API requires `Administration.Access`, and each mutation validates antiforgery.
+
 ## SAL-130A reusable Analytics Center
 
 `AnalyticsWorkspace` and its widgets persist tenant-owned personal/shared presentation preferences. Generic analytics

@@ -32,9 +32,9 @@ The ERP SaaS Foundation Blueprint is imported as a non-authoritative planning re
 - [x] MOD-020 complete all current Settings/Document Design, account/session, tenant-user/role, public registration and
   guided onboarding operations in Angular. Identity, tenant membership, provisioning, lockout/audit, CSRF and HttpOnly
   cookies remain server-owned; MVC remains the default until a later cutover gate. Completed 2026-10-27.
-- [ ] MOD-021 IN PROGRESS: `MOD-021A..E` completed Angular product master, categories, attributes/values,
-  templates/variants and immutable recipe versions with separate permissions, CSRF and tests. Continue with tax rates,
-  payment methods, branches and warehouses. Completed A/B/C/D/E on 2026-10-27.
+- [ ] MOD-021 IN PROGRESS: `MOD-021A..F` completed Angular product master through recipes plus tax/payment/branch
+  masters with separate permissions, CSRF and tests. Continue with warehouse master data. Completed A/B/C/D/E/F on
+  2026-10-27.
 - [ ] MOD-022 through MOD-028 migrate every remaining tenant, public and platform MVC workflow to Angular by the approved module waves, including actions, permissions, localization, files, PDF and edge states.
 - [ ] MOD-029 prove full-system parity through dual-run reconciliation, performance/security/accessibility evidence and cutover/rollback rehearsals.
 - [ ] MOD-030 make Angular the only presentation and retire MVC incrementally only after explicit approval and zero registry gaps.

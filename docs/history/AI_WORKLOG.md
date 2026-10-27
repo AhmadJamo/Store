@@ -1228,3 +1228,11 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   errors, SecurityRegression passed 1198 checks, Angular passed 144/144 tests across 47 files, 58 templates passed
   accessibility, external SCSS passed, and bundles measured 298,961/358,400 initial and 80,866/81,920 largest lazy
   bytes. MVC remains default; advanced to `MOD-021F` tax rates, payment methods and branches.
+- 2026-10-27: Completed `MOD-021F` tax-rate, payment-method and branch master parity. Added an authenticated,
+  `Administration.Access`-protected DTO API and bilingual RTL-ready Angular `/products/catalog-masters` surface for all
+  three current list/create workflows. Named accounts replace exposed account IDs, tax input uses invariant 0–100
+  validation, branch code is language-neutral and normalized, and every mutation validates antiforgery while existing
+  account/duplicate/domain rules remain server-owned. Web Release passed with zero warnings/errors,
+  SecurityRegression passed 1201 checks, Angular passed 147/147 tests across 49 files, 59 templates passed
+  accessibility, external SCSS passed, and bundles measured 299,119/358,400 initial and 80,866/81,920 largest lazy
+  bytes. MVC remains default; advanced to `MOD-021G` warehouse master data.

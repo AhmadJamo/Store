@@ -3999,6 +3999,23 @@ Check(typeof(RecipeEditorDto).GetProperty(nameof(RecipeEditorDto.YieldQuantity))
       typeof(RecipeIngredientInputDto).GetProperty(nameof(RecipeIngredientInputDto.Quantity))!
           .GetCustomAttribute<RangeAttribute>() is not null,
     "Recipe API input must retain invariant positive yield and ingredient quantity validation");
+var catalogMastersApi = typeof(CatalogMastersApiController);
+Check(catalogMastersApi.GetCustomAttribute<ApiControllerAttribute>() is not null &&
+      catalogMastersApi.GetCustomAttributes<AuthorizeAttribute>().Any() &&
+      catalogMastersApi.GetCustomAttribute<RouteAttribute>()?.Template == "api/v1/catalog-masters" &&
+      catalogMastersApi.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:Administration.Access",
+    "Angular catalog masters must remain authenticated and Administration.Access protected");
+Check(new[]
+    {
+        catalogMastersApi.GetMethod(nameof(CatalogMastersApiController.CreateTaxRate))!,
+        catalogMastersApi.GetMethod(nameof(CatalogMastersApiController.CreatePaymentMethod))!,
+        catalogMastersApi.GetMethod(nameof(CatalogMastersApiController.CreateBranch))!
+    }.All(method => method.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null),
+    "Every tax-rate, payment-method and branch mutation must validate antiforgery");
+Check(typeof(CreateTaxRateDto).GetProperty(nameof(CreateTaxRateDto.Rate))!.GetCustomAttribute<RangeAttribute>() is not null &&
+      typeof(CreateBranchDto).GetProperty(nameof(CreateBranchDto.Code))!.GetCustomAttribute<RegularExpressionAttribute>()?.Pattern == "^[A-Za-z0-9][A-Za-z0-9_-]*$" &&
+      typeof(CatalogMastersPageDto).GetProperty(nameof(CatalogMastersPageDto.Accounts)) is not null,
+    "Catalog-master API input and account-name projection must remain explicit DTO contracts");
 var operationsApi = typeof(OperationsCenterApiController);
 Check(operationsApi.GetCustomAttribute<ApiControllerAttribute>() is not null &&
       operationsApi.GetCustomAttribute<AuthorizeAttribute>() is not null &&

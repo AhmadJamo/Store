@@ -189,3 +189,10 @@ Recipe list reads require authentication and `Products.View`; editor reads and i
 `Products.Edit`, with explicit antiforgery on save. `RecipeService` revalidates product/ingredient tenancy through
 repositories, stocked eligibility, active managed units, matching dimensions and positive quantities transactionally.
 Angular receives DTOs only and cannot author trusted conversion snapshots or recipe cost.
+
+## MOD-021F catalog-master boundary (2026-10-27)
+
+The combined tax/payment/branch API requires authentication and `Administration.Access` at controller level; every
+create action explicitly validates antiforgery. Explicit Application DTOs project named accounts and avoid exposing
+domain/EF entities. Account existence, duplicate payment/branch rules and invariant 0–100 tax validation are repeated
+server-side; the Angular permission check only controls navigation visibility.

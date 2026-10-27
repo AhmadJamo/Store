@@ -1,6 +1,6 @@
 # MOD-021 — Catalog migration
 
-> Status: IN PROGRESS — `MOD-021A..E` completed 2026-10-27
+> Status: IN PROGRESS — `MOD-021A..F` completed 2026-10-27
 > Presentation default: MVC until an explicit cutover gate
 
 ## Scope and sequence
@@ -12,8 +12,8 @@
 | `MOD-021C` | Product attribute definitions, options and per-product values | COMPLETE |
 | `MOD-021D` | Product templates and controlled variant creation | COMPLETE |
 | `MOD-021E` | Prepared-product recipes and immutable recipe versions | COMPLETE |
-| `MOD-021F` | Tax rates, payment methods and branch master data | NEXT |
-| `MOD-021G` | Warehouse master data | PLANNED |
+| `MOD-021F` | Tax rates, payment methods and branch master data | COMPLETE |
+| `MOD-021G` | Warehouse master data | NEXT |
 
 Measurement-unit operations were already completed in `MOD-020L`; this wave reuses that Angular surface instead of
 creating a duplicate unit editor.
@@ -49,10 +49,10 @@ creating a duplicate unit editor.
 ## Verification evidence
 
 - Web Release: passed, zero warnings and zero errors.
-- Security/inventory regression: 1198 checks passed.
-- Angular: 144/144 tests across 47 files passed.
-- Static accessibility: 58 templates passed; external-SCSS policy passed.
-- Production bundle: 298,961 / 358,400 initial bytes; largest lazy chunk 80,866 / 81,920 bytes.
+- Security/inventory regression: 1201 checks passed.
+- Angular: 147/147 tests across 49 files passed.
+- Static accessibility: 59 templates passed; external-SCSS policy passed.
+- Production bundle: 299,119 / 358,400 initial bytes; largest lazy chunk 80,866 / 81,920 bytes.
 
 ## `MOD-021B` delivered behavior
 
@@ -96,7 +96,16 @@ creating a duplicate unit editor.
 - The browser displays product/unit names and never calculates converted stock quantity or recipe cost. Reads require
   `Products.View`; editor/save require `Products.Edit`, and save validates antiforgery.
 
+## `MOD-021F` delivered behavior
+
+- Angular `/products/catalog-masters` provides all current tax-rate, payment-method and branch list/create operations in
+  one administration-protected surface without inventing edit/delete/status operations absent from MVC.
+- Explicit Application DTOs replace entity exposure and project account code/name for tax and settlement choices.
+  Tax percentage uses invariant decimal validation; branch codes are normalized language-neutral values.
+- The API requires `Administration.Access` and antiforgery on each of the three mutations. Existing accounting/account
+  existence, duplicate-name/code and domain rules remain server-owned.
+
 ## Remaining work
 
-Proceed with `MOD-021F` tax rates, payment methods and branch master data. Do not declare the catalog wave complete until every listed slice reaches
+Proceed with `MOD-021G` warehouse master data. Do not declare the catalog wave complete until every listed slice reaches
 functional parity and its own verification evidence is recorded.
