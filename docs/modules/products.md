@@ -15,6 +15,10 @@ immutable-version save while conversion remains server-owned. Measurement-unit o
 from `MOD-020L`. `MOD-021F` also completes tax-rate, payment-method and branch list/create operations through explicit
 DTOs and named account choices. MVC remains the committed default. See `modernization/PHASE_21_CATALOG.md`.
 
+`MOD-021G` completes warehouse list/create/edit/delete in Angular with branch/account names and all current operational,
+control, picking, receiving, POS, capacity and transfer-location settings. Server-side entitlement and inventory guards
+remain authoritative. The complete `MOD-021A..G` catalog wave is now functionally complete.
+
 Recipe yields, ingredient quantities and measurement-unit conversion factors use culture-invariant decimal validation, so Arabic UI culture cannot turn valid dot-based HTML values into a validation exception.
 
 ## Purpose and flow

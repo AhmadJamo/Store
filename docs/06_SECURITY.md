@@ -196,3 +196,10 @@ The combined tax/payment/branch API requires authentication and `Administration.
 create action explicitly validates antiforgery. Explicit Application DTOs project named accounts and avoid exposing
 domain/EF entities. Account existence, duplicate payment/branch rules and invariant 0–100 tax validation are repeated
 server-side; the Angular permission check only controls navigation visibility.
+
+## MOD-021G warehouse boundary (2026-10-27)
+
+Warehouse list/create-form/edit-form/create/update/delete endpoints require their independent
+`Warehouses.View/Create/Edit/Delete` permissions. Every mutation validates antiforgery. Application DTOs expose named
+branch/account options while `WarehouseService` repeats SaaS entitlement, tenant/account, duplicate, location/control,
+POS-access and deletion constraints; client-side disabled fields are guidance only.

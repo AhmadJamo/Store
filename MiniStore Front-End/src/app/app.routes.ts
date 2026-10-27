@@ -203,6 +203,7 @@ export const routes: Routes = [
         canDeactivate: [(component) => component.canDeactivate()],
         loadComponent: () => import('./features/products/catalog-masters-page').then((module) => module.CatalogMastersPageComponent),
       },
+      { path: 'warehouses', canDeactivate: [(component) => component.canDeactivate()], loadComponent: () => import('./features/products/warehouses-page').then(module => module.WarehousesPageComponent) },
       {
         path: 'products/recipes/:productId',
         canDeactivate: [(component) => component.canDeactivate()],

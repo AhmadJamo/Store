@@ -10,8 +10,7 @@ This bundle deliberately starts five dependent phases without claiming their bro
   344 MVC actions and 198 Razor control rows, plus reversible per-surface cutover controls;
 - `MOD-020`: complete Angular functional parity for Settings, Document Design, account/session, current user/role administration,
   public company registration and guided onboarding; MVC remains the committed default;
-- `MOD-021`: `MOD-021A..F` complete product master through recipes plus tax/payment/branch masters; warehouse master
-  remains staged in `PHASE_21_CATALOG.md`.
+- `MOD-021`: complete product/catalog migration through warehouse CRUD (`MOD-021A..G`); MVC remains default.
 
 All API endpoints are authenticated, permission protected and call Application services. No EF entity is
 returned and no financial value is calculated in the browser. MOD-017C adds one additive tenant-owned delegation
@@ -22,12 +21,12 @@ generated registry is in `MVC_MIGRATION_REGISTRY.md` and is refreshed with
 ## Verification evidence
 
 - Web Release build: passed with zero warnings and zero errors.
-- Security/inventory regression: 1201 checks passed, including the administration-protected master operations.
+- Security/inventory regression: 1204 checks passed, including independent warehouse CRUD permissions.
 - Angular production build: passed.
-- Angular tests: 147/147 passed across 49 files after `MOD-021F`.
+- Angular tests: 150/150 passed across 51 files after `MOD-021G`.
 - External-style policy: passed; no Angular HTML `style=` attributes or component `styles:` blocks.
 
 ## Remaining gates
 
-`MOD-020` functional parity is complete. Catalog operations are complete through `MOD-021F`; parity remains open only
-for `MOD-021G` warehouse master data in this wave.
+`MOD-017..021` are functionally complete. MVC remains the default until a separate cutover decision; proceed to the
+approved `MOD-022` module wave.

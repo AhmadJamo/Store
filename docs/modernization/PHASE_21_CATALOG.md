@@ -1,6 +1,6 @@
 # MOD-021 — Catalog migration
 
-> Status: IN PROGRESS — `MOD-021A..F` completed 2026-10-27
+> Status: COMPLETE — `MOD-021A..G` completed 2026-10-27
 > Presentation default: MVC until an explicit cutover gate
 
 ## Scope and sequence
@@ -13,7 +13,7 @@
 | `MOD-021D` | Product templates and controlled variant creation | COMPLETE |
 | `MOD-021E` | Prepared-product recipes and immutable recipe versions | COMPLETE |
 | `MOD-021F` | Tax rates, payment methods and branch master data | COMPLETE |
-| `MOD-021G` | Warehouse master data | NEXT |
+| `MOD-021G` | Warehouse master data | COMPLETE |
 
 Measurement-unit operations were already completed in `MOD-020L`; this wave reuses that Angular surface instead of
 creating a duplicate unit editor.
@@ -49,10 +49,10 @@ creating a duplicate unit editor.
 ## Verification evidence
 
 - Web Release: passed, zero warnings and zero errors.
-- Security/inventory regression: 1201 checks passed.
-- Angular: 147/147 tests across 49 files passed.
-- Static accessibility: 59 templates passed; external-SCSS policy passed.
-- Production bundle: 299,119 / 358,400 initial bytes; largest lazy chunk 80,866 / 81,920 bytes.
+- Security/inventory regression: 1204 checks passed.
+- Angular: 150/150 tests across 51 files passed.
+- Static accessibility: 60 templates passed; external-SCSS policy passed.
+- Production bundle: 299,259 / 358,400 initial bytes; largest lazy chunk 80,866 / 81,920 bytes.
 
 ## `MOD-021B` delivered behavior
 
@@ -105,7 +105,16 @@ creating a duplicate unit editor.
 - The API requires `Administration.Access` and antiforgery on each of the three mutations. Existing accounting/account
   existence, duplicate-name/code and domain rules remain server-owned.
 
-## Remaining work
+## `MOD-021G` delivered behavior
 
-Proceed with `MOD-021G` warehouse master data. Do not declare the catalog wave complete until every listed slice reaches
-functional parity and its own verification evidence is recorded.
+- Angular `/warehouses` provides list/create/edit/delete with named branch and inventory-account options, all current
+  operational type/control/picking/receiving/POS/capacity/location fields and dirty/rejected-form recovery.
+- `WarehouseService` remains authoritative for SaaS limits, duplicate names, accounting assignments, unsafe Simple-mode
+  transitions, POS-access dependencies and deletion constraints. Display DTOs now include names rather than exposing IDs.
+- API reads/forms/mutations preserve independent `Warehouses.View/Create/Edit/Delete` permissions; every mutation uses
+  antiforgery. No schema, stock balance or history behavior changed.
+
+## Completion
+
+Every approved `MOD-021A..G` slice reached current MVC functional parity with its own verification evidence. MVC remains
+the presentation default until an explicit cutover gate; the modernization program proceeds to `MOD-022`.

@@ -1236,3 +1236,11 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   SecurityRegression passed 1201 checks, Angular passed 147/147 tests across 49 files, 59 templates passed
   accessibility, external SCSS passed, and bundles measured 299,119/358,400 initial and 80,866/81,920 largest lazy
   bytes. MVC remains default; advanced to `MOD-021G` warehouse master data.
+- 2026-10-27: Completed `MOD-021G` and closed the full `MOD-021A..G` catalog wave. Added authenticated versioned DTO
+  endpoints and bilingual RTL-ready Angular `/warehouses` list/create/edit/delete with named branch/account options and
+  every current operational type, control mode, picking, receiving, POS, capacity and transfer-location field.
+  `WarehouseService` retains SaaS limits, duplicate/accounting checks, unsafe control-mode and POS transitions and
+  deletion constraints; API operations preserve independent View/Create/Edit/Delete permissions and antiforgery.
+  Web Release passed with zero warnings/errors, SecurityRegression passed 1204 checks, Angular passed 150/150 tests
+  across 51 files, 60 templates passed accessibility, external SCSS passed, and bundles measured 299,259/358,400
+  initial and 80,866/81,920 largest lazy bytes. MVC remains default; advanced to `MOD-022A` inventory ledger.

@@ -5,6 +5,7 @@
     <a class="ui-button secondary" routerLink="/products/templates">{{ i18n.text('productTemplates') }}</a>
     <a class="ui-button secondary" routerLink="/products/recipes">{{ i18n.text('recipes') }}</a>
     @if (session.can('Administration.Access')) { <a class="ui-button secondary" routerLink="/products/catalog-masters">{{ i18n.text('catalogMasters') }}</a> }
+    @if (session.can('Warehouses.View')) { <a class="ui-button secondary" routerLink="/warehouses">{{ i18n.text('warehouses') }}</a> }
     @if (session.can('Products.Create')) { <a class="ui-button primary" routerLink="/products/new">{{ i18n.text('addProduct') }}</a> }
   </app-page-header>
   <div class="filters">

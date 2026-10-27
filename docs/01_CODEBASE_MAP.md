@@ -106,6 +106,10 @@ and antiforgery.
 branch list/create operations. Application projections expose account names instead of entity/account IDs as evidence;
 the whole API requires `Administration.Access`, and each mutation validates antiforgery.
 
+`WarehousesApiController` and Angular `/warehouses` complete warehouse list/create/edit/delete over `WarehouseService`.
+Form DTOs project branch/account names; SaaS limits, accounting validation, control-mode/POS transition guards and
+delete constraints remain server-owned with operation-specific permissions and antiforgery.
+
 ## SAL-130A reusable Analytics Center
 
 `AnalyticsWorkspace` and its widgets persist tenant-owned personal/shared presentation preferences. Generic analytics
