@@ -215,3 +215,10 @@ The Index and mutation actions enforce these policies server-side. Permission se
 - The ledger endpoint provides no mutation methods. `StockTransactions.Create` does not imply ledger-view access and
   remains reserved for the separately migrated manual-adjustment workflow.
 
+## MOD-022B product-stock and adjustment permissions (2026-10-27)
+
+Angular `/inventory/stocks` requires `ProductStock.View`. Opening stock, balance correction and delete attempt are independently
+protected by `ProductStock.Create`, `ProductStock.Edit` and `ProductStock.Delete`; delete authority does not bypass the existing
+Application rule that stock records are retained and adjusted to zero. Manual Adjustment In/Out and Kitchen Variance require
+`StockTransactions.Create`. Navigation and buttons are permission-filtered, but each API endpoint remains the authoritative check.
+

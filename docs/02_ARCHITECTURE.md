@@ -133,3 +133,8 @@ Inventory Angular routes are presentation clients only. `MOD-022A` calls an auth
 delegates to `StockTransactionService`; the controller and Angular client never access EF or recompute quantity, moving
 average cost, inventory value or variance. StockTransaction remains immutable evidence and the first ledger endpoint is
 GET-only. MVC stays the committed default until explicit cutover and rollback acceptance.
+
+`MOD-022B` keeps Angular as a presentation client for ProductStock and manual adjustment operations. Form option DTOs expose
+names with internal identifiers, while `ProductStockService` and `StockTransactionService` remain the only business-command
+owners. Controllers do not read EF, direct delete keeps the existing Application rejection, and all balance, location, tracking,
+AVCO and accounting effects remain inside the established inventory transaction boundary.

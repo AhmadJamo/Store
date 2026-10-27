@@ -37,7 +37,9 @@ The ERP SaaS Foundation Blueprint is imported as a non-authoritative planning re
   `MOD-021A..G` on 2026-10-27; MVC remains default pending cutover.
 - [x] MOD-022A migrate the read-only inventory transaction ledger with server paging/search/type/direction/date filters,
   sorting, cost/value evidence, permission-aware navigation, bilingual RTL UI and full verification. Completed 2026-10-27.
-- [ ] MOD-022B through MOD-028 migrate the remaining inventory/WMS, purchasing, sales, POS, accounting, tenant/public,
+- [x] MOD-022B migrate all current ProductStock operations and reason-required manual stock adjustments with explicit API
+  DTOs, permissions, CSRF, retained server rules and bilingual Angular UI. Completed 2026-10-27.
+- [ ] MOD-022C through MOD-028 migrate the remaining inventory/WMS, purchasing, sales, POS, accounting, tenant/public,
   platform and shared MVC workflows to Angular, including every operation, permission, localization, file/PDF and edge state.
 - [ ] MOD-029 prove full-system parity through dual-run reconciliation, performance/security/accessibility evidence and cutover/rollback rehearsals.
 - [ ] MOD-030 make Angular the only presentation and retire MVC incrementally only after explicit approval and zero registry gaps.

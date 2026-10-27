@@ -30,6 +30,18 @@ IDs stay internal. Quantity, unit cost, movement value and cost variance are ser
 recalculate balances or valuation. The API is intentionally GET-only because StockTransaction history is immutable evidence.
 MVC remains the presentation default until the separate cutover gate.
 
+## Angular product stock operations (`MOD-022B`)
+
+`/inventory/stocks` exposes current product/warehouse balance review, opening stock, quantity correction, the existing protected
+delete attempt and reason-required Adjustment In/Out or Kitchen Variance entry. Angular sends explicit DTOs through versioned API
+controllers; ProductStockService and StockTransactionService retain all validation and persistence ownership. Product and warehouse
+names are displayed while IDs remain transport details. The server continues to own negative-stock policy, exact-location removal,
+tracking, moving-average cost and stock value; deleting historical stock rows remains rejected with actionable feedback.
+
+The feature is permission-split across ProductStock View/Create/Edit/Delete and StockTransactions.Create, and every unsafe call
+requires CSRF. Rejected inputs remain editable, all labels/messages are Arabic and English, and the responsive layout uses logical
+direction-aware styling. No schema or inventory/accounting rule changed.
+
 ## Storage locations
 Warehouses have hierarchical structured locations with a unique code, optional unique barcode, display name, parent, sequence, zone, aisle, rack, level, bin, operational type, status, optional capacity and explicit receive/pick/reserve/ship/count capabilities. Existing IDs and codes remain stable. The Warehouse Locations screen searches these fields, creates roots/children and edits hierarchy/capabilities. `StorageLocationService` owns its warehouse/parent selectors and projects location rows to Application DTOs; the controller and Razor views no longer receive repository dependencies or domain entities for this slice. The Application layer rejects self-parenting, descendant cycles and parents from another warehouse. Unassigned Stock calculates warehouse quantity minus allocated location quantities, supports warehouse/name/barcode filters and sorting, and lets authorized staff allocate all or part of the balance to an active location without changing the warehouse total. Capacity validation uses the total quantity of all products in the destination location.
 

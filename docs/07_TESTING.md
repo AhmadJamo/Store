@@ -125,3 +125,12 @@ Cafe recipe, product-catalog and managed-unit coverage validates conversion, cla
 - 61 templates passed static accessibility; external SCSS passed.
 - Bundle evidence: 302,834/358,400 initial bytes and 80,941/81,920 largest lazy bytes.
 - Live Angular route returned 200 and anonymous API access returned 401.
+
+## MOD-022B product-stock operations evidence (2026-10-27)
+
+- Web Release passed with zero warnings/errors; SecurityRegression passed 1210 checks covering route authorization, operation
+  permissions, antiforgery and invariant quantity validation.
+- Angular passed 155/155 tests across 54 files, including typed endpoints, opening stock, edit rejection recovery and manual adjustment.
+- Static accessibility passed 62 templates and the external-SCSS policy passed.
+- Production build passed at 302,983/358,400 initial bytes and 81,017/81,920 largest lazy bytes.
+- Live `/inventory/stocks` returned 200; anonymous ProductStock and manual-adjustment API calls returned 401.

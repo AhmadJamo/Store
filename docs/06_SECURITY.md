@@ -210,3 +210,11 @@ POS-access and deletion constraints; client-side disabled fields are guidance on
 no POST, PUT, PATCH or DELETE route, so the Angular ledger cannot mutate historical StockTransaction evidence. Paging,
 search, direction/type/date filters and sort columns are bounded by the existing Application/repository path and tenant
 query filters. Product/warehouse names and valuation snapshots are DTO projections; anonymous live access returns 401.
+
+## MOD-022B stock-mutation boundary (2026-10-27)
+
+ProductStock and manual-adjustment APIs require authentication, tenant context and operation-specific permissions. POST, PUT and
+DELETE require antiforgery; explicit DTOs use invariant non-negative quantity validation and return JSON Problem Details without
+exposing entities. Controllers call Application services only. Tenant filtering, serializable UnitOfWork behavior, rowversion,
+location/tracking allocation, negative-stock policy and moving-average valuation remain server-owned. The delete endpoint deliberately
+preserves the service rejection, so authorization never becomes permission to erase stock history.

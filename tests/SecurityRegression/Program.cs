@@ -26,6 +26,7 @@ using MiniStore.Application.Dtos.Analytics;
 using MiniStore.Application.DTOs.Inventory.Tracking;
 using MiniStore.Application.DTOs.Purchases;
 using MiniStore.Application.DTOs.Products;
+using MiniStore.Application.DTOs.ProductStocks;
 using MiniStore.Application.DTOs.Recipes;
 using MiniStore.Application.DTOs.Suppliers;
 using MiniStore.Application.DTOs.Security;
@@ -4026,8 +4027,29 @@ Check(stockTransactionsApi.GetCustomAttribute<ApiControllerAttribute>() is not n
       stockTransactionsApi.GetCustomAttribute<RouteAttribute>()?.Template == "api/v1/stock-transactions" &&
       stockTransactionsApi.GetMethod(nameof(StockTransactionsApiController.GetPage))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:StockTransactions.View",
     "Angular inventory ledger must remain authenticated, versioned and StockTransactions.View protected");
-Check(stockTransactionsApi.GetMethods().All(method => method.GetCustomAttribute<HttpPostAttribute>() is null && method.GetCustomAttribute<HttpPutAttribute>() is null && method.GetCustomAttribute<HttpDeleteAttribute>() is null),
-    "Inventory ledger API must remain read-only so Angular cannot mutate historical movement evidence");
+var stockLedgerMethod = stockTransactionsApi.GetMethod(nameof(StockTransactionsApiController.GetPage))!;
+Check(stockLedgerMethod.GetCustomAttribute<HttpPostAttribute>() is null && stockLedgerMethod.GetCustomAttribute<HttpPutAttribute>() is null && stockLedgerMethod.GetCustomAttribute<HttpDeleteAttribute>() is null,
+    "Inventory ledger endpoint must remain read-only so Angular cannot mutate historical movement evidence");
+Check(stockTransactionsApi.GetMethod(nameof(StockTransactionsApiController.GetManualForm))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:StockTransactions.Create" &&
+      stockTransactionsApi.GetMethod(nameof(StockTransactionsApiController.CreateManual))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:StockTransactions.Create" &&
+      stockTransactionsApi.GetMethod(nameof(StockTransactionsApiController.CreateManual))!.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null,
+    "Manual Angular stock adjustments must require StockTransactions.Create and antiforgery");
+var productStocksApi = typeof(ProductStocksApiController);
+Check(productStocksApi.GetCustomAttribute<ApiControllerAttribute>() is not null && productStocksApi.GetCustomAttribute<AuthorizeAttribute>() is not null &&
+      productStocksApi.GetCustomAttribute<RouteAttribute>()?.Template == "api/v1/product-stocks" &&
+      productStocksApi.GetMethod(nameof(ProductStocksApiController.GetAll))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:ProductStock.View",
+    "Angular product-stock reads must remain authenticated, versioned and ProductStock.View protected");
+Check(productStocksApi.GetMethod(nameof(ProductStocksApiController.Create))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:ProductStock.Create" &&
+      productStocksApi.GetMethod(nameof(ProductStocksApiController.Update))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:ProductStock.Edit" &&
+      productStocksApi.GetMethod(nameof(ProductStocksApiController.Delete))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:ProductStock.Delete" &&
+      new[] { productStocksApi.GetMethod(nameof(ProductStocksApiController.Create))!, productStocksApi.GetMethod(nameof(ProductStocksApiController.Update))!, productStocksApi.GetMethod(nameof(ProductStocksApiController.Delete))! }
+          .All(method => method.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null),
+    "Product-stock operations must preserve independent permissions and antiforgery");
+Check(typeof(CreateProductStockDto).GetProperty(nameof(CreateProductStockDto.ProductId))!.GetCustomAttribute<RangeAttribute>() is not null &&
+      typeof(CreateProductStockDto).GetProperty(nameof(CreateProductStockDto.Quantity))!.GetCustomAttribute<RangeAttribute>() is not null &&
+      typeof(UpdateProductStockDto).GetProperty(nameof(UpdateProductStockDto.Quantity))!.GetCustomAttribute<RangeAttribute>() is not null &&
+      typeof(ProductStockFormPageDto).GetProperty(nameof(ProductStockFormPageDto.Products)) is not null,
+    "Product-stock API must use validated inputs and named product/warehouse option DTOs");
 var operationsApi = typeof(OperationsCenterApiController);
 Check(operationsApi.GetCustomAttribute<ApiControllerAttribute>() is not null &&
       operationsApi.GetCustomAttribute<AuthorizeAttribute>() is not null &&

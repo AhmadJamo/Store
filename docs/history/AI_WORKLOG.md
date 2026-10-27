@@ -1254,3 +1254,11 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   61 templates passed accessibility, external SCSS passed, and bundles measured 302,834/358,400 initial and
   80,941/81,920 largest lazy bytes. Live route returned 200 and anonymous API access returned 401. MVC remains default;
   advanced to `MOD-022B` product stock balances and manual adjustments.
+- 2026-10-27: Completed `MOD-022B`. Added versioned, permission-separated and CSRF-protected ProductStock form/create/update/delete
+  contracts plus manual Adjustment In/Out and Kitchen Variance form/command contracts over the existing Application services. Added
+  bilingual RTL-ready `/inventory/stocks` with named product/warehouse choices, opening balance, correction, preserved delete refusal,
+  reason-required adjustment, dirty protection and rejected-input recovery. No schema, balance, location, tracking, AVCO or accounting
+  rule changed and MVC remains default. Web Release passed with zero warnings/errors, SecurityRegression passed 1210 checks, Angular
+  passed 155/155 tests across 54 files, accessibility passed 62 templates, external SCSS and production budgets passed at
+  302,983/358,400 initial and 81,017/81,920 largest lazy bytes, and live 200/401 checks passed. Advanced to `MOD-022C` availability
+  and reservation history.

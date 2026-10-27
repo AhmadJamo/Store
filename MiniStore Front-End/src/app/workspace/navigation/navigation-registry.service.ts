@@ -15,6 +15,7 @@ const navigationItems: readonly NavigationItem[] = [
   { id: 'roles', route: '/roles', labelKey: 'rolesPermissions', icon: '♜', requiredPermission: 'Roles.View' },
   { id: 'products', route: '/products', labelKey: 'products', icon: '▦', requiredPermission: 'Products.View' },
   { id: 'inventory-ledger', route: '/inventory/transactions', labelKey: 'inventoryLedger', icon: '⇄', requiredPermission: 'StockTransactions.View' },
+  { id: 'inventory-stock', route: '/inventory/stocks', labelKey: 'inventoryStock', icon: '▥', requiredPermission: 'ProductStock.View' },
   { id: 'operations-center', route: '/operations-center', labelKey: 'operationsCenter', icon: '◉', requiredAnyPermissions: ['PurchaseReplenishment.View', 'SupplierIntegrations.View', 'AuditEvents.View', 'AnalyticsCenter.View'] },
   { id: 'design-system', route: '/design-system', labelKey: 'designSystem', icon: '◇' },
 ];
@@ -24,7 +25,7 @@ export class NavigationRegistryService {
   readonly items = navigationItems;
   readonly visibleItems = computed(() => {
     const visible = this.items.filter((item) => this.canAccess(item));
-    const priorities: Record<string, readonly string[]> = { focused: ['home', 'customers', 'suppliers', 'products', 'inventory-ledger', 'documents', 'work-center', 'analytics', 'settings', 'users', 'roles', 'operations-center', 'design-system'], operator: ['work-center', 'operations-center', 'inventory-ledger', 'documents', 'products', 'customers', 'suppliers', 'home', 'analytics', 'settings', 'users', 'roles', 'design-system'], analyst: ['analytics', 'inventory-ledger', 'operations-center', 'documents', 'work-center', 'home', 'products', 'customers', 'suppliers', 'settings', 'users', 'roles', 'design-system'] };
+    const priorities: Record<string, readonly string[]> = { focused: ['home', 'customers', 'suppliers', 'products', 'inventory-stock', 'inventory-ledger', 'documents', 'work-center', 'analytics', 'settings', 'users', 'roles', 'operations-center', 'design-system'], operator: ['work-center', 'operations-center', 'inventory-stock', 'inventory-ledger', 'documents', 'products', 'customers', 'suppliers', 'home', 'analytics', 'settings', 'users', 'roles', 'design-system'], analyst: ['analytics', 'inventory-ledger', 'inventory-stock', 'operations-center', 'documents', 'work-center', 'home', 'products', 'customers', 'suppliers', 'settings', 'users', 'roles', 'design-system'] };
     const order = priorities[this.profiles.profile()];
     return [...visible].sort((a, b) => order.indexOf(a.id) - order.indexOf(b.id));
   });

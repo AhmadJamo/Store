@@ -1,0 +1,11 @@
+:host { display: block; }
+.stocks-page { display: grid; gap: 1rem; }
+.operation-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; align-items: start; }
+.operation-form { display: grid; gap: 0.9rem; padding: 1rem; }
+.operation-form h2, .operation-form p { margin: 0; }
+.form-actions, .row-actions { display: flex; flex-wrap: wrap; gap: 0.65rem; }
+.row-actions button { border: 0; background: transparent; color: var(--ui-link, #1456a0); cursor: pointer; text-decoration: underline; }
+.success-message { border-inline-start: 0.25rem solid var(--ui-success, #19733b); margin: 0; padding: 0.75rem 1rem; background: color-mix(in srgb, var(--ui-success, #19733b) 10%, transparent); }
+.negative { color: var(--ui-danger, #b42318); font-weight: 700; }
+td { white-space: nowrap; }
+@media (max-width: 900px) { .operation-grid { grid-template-columns: 1fr; } }

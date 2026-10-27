@@ -67,6 +67,7 @@ The UI action audit, last verified on 2026-10-24, checks every static Razor link
 | `Views/JournalEntries/Details.cshtml` | permission-protected read-only linked journal evidence with source, status, responsive account cards, debit/credit totals and optional branch/warehouse dimensions. |
 | `Views/Settings/Accounting.cshtml` | accounting posting accounts plus CUS-030A customer-receivable mode, control/parent account, automatic code prefix and prospective effective date with bilingual help. |
 | `Views/ProductStocks/{Index,Create,Edit}.cshtml` | balance, moving average and inventory value list; opening balance/direct adjustment; negative recipe exceptions are highlighted. |
+| Angular `/inventory/stocks` | permission-aware bilingual product/warehouse balance list plus opening stock, quantity correction, protected delete feedback and reason-required manual Adjustment In/Out or Kitchen Variance. Names stay user-facing, rejected forms stay editable and server-owned quantity/location/tracking/AVCO rules remain authoritative. MVC remains default. |
 | `Views/StockTransactions/{Index,Create}.cshtml` | paged/filterable movement list with unit cost, movement value and variance; manual adjustments include reason-required kitchen variance. |
 | `Views/WarehouseLocations/{Index,Create,Edit}.cshtml`, `Views/UnassignedStock/Index.cshtml` | parent-indented location master data plus warehouse/product search; WarehouseLocations receives projected Application DTOs rather than domain entities. Putaway-rule administration and capacity-aware suggestions remain unchanged. |
 | `Views/Replenishment/Index.cshtml` | permission-separated min/max management and reviewed suggestions that explicitly create either a Draft transfer from a preferred warehouse or a traced Draft Purchase Request when purchasing is the source. |
@@ -147,9 +148,10 @@ All purchase tables, details and populated numeric inputs use the shared number 
 - CSV (ملف قيم مفصولة بفواصل) export is limited to 5,000 rows, requires an allowed purpose and separate export authority, and records one `DataAccess.AuditEventsExported` event after creating the snapshot. Masked source IP and user-agent fingerprint appear only with sensitive-view authority.
 - `/platform/audit-retention` is an Owner-only responsive control screen. It displays the approved 7-year/3-year/90-day policy, creates and releases scoped legal holds, creates a signed checkpoint and runs retention. Retention is unavailable when its local/hosting secret configuration is disabled.
 
-## Angular inventory ledger
+## Angular inventory workflows
 
 - `/inventory/transactions` requires `StockTransactions.View` and displays the immutable inventory transaction history.
 - The responsive bilingual screen provides debounced product/warehouse/reference search, type and direction filters,
   inclusive from/to dates, page-size control, server sorting and paging, plus server-authored cost/value/variance columns.
-- The screen is read-only; authorized manual adjustments remain in the owning workflow until `MOD-022B`.
+- The transaction ledger stays read-only. `/inventory/stocks` now owns the Angular presentation for all current ProductStock
+  operations and authorized manual adjustments; every mutation uses CSRF and its separate server permission.
