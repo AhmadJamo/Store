@@ -138,6 +138,9 @@ Blind Draft counts hide expected quantity, completed actions become status badge
 
 ## Lot and serial tracking
 `InventoryTracking/Index` shows current lot/serial positions, expiration highlighting and immutable history. Its opening form captures all dimensional allocations required to activate tracking on legacy stock.
+Angular `/inventory/tracking` now exposes the same complete current workflow: opening activation, expiration evidence,
+reasoned quarantine/release, recall impact and immutable manual communication history. Controls are permission-filtered, but the API
+rechecks every permission and antiforgery token. Recall closure explicitly leaves quarantine unchanged; MVC remains default.
 # PUR-010 screen
 
 `Views/SupplierPurchasing/Index.cshtml` is a bilingual RTL-safe, supplier-first bulk Purchasing screen. It lists only products already assigned to the selected supplier from either master-data form, then lets the user search, select and edit their purchasing terms together. When none are assigned it links directly to Supplier edit. The responsive card grid avoids horizontal scrolling. Product, supplier and unit names are shown while IDs remain internal; prepared-to-order products are excluded.

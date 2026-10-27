@@ -127,6 +127,11 @@ Recall impact resolves immutable tracking references into purchase/sale/transfer
 
 While a recall is Active, authorized users may append immutable communication entries containing party, phone/email/address, channel, outcome, notes, actor and UTC time. Communication history remains visible after closure and cannot be edited. Automated sending is not implied; entries record actual manual or externally completed contact.
 
+`MOD-022E` adds an Angular pilot at `/inventory/tracking` and a versioned internal API for all of these existing operations. The API
+uses explicit named option and command DTOs, keeps `View`, `Open`, `ManageQuarantine` and `ManageRecall` separate, validates CSRF on
+every mutation and delegates exclusively to `InventoryTrackingService`. Angular displays server-authored balances, alerts, trace and
+recall impact; it does not calculate availability, expiration eligibility or quarantine effects. MVC remains the default.
+
 ## Warehouse operating policies
 
 ## Replenishment planning

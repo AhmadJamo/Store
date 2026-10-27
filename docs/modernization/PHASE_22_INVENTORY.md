@@ -1,6 +1,6 @@
 # Phase 22 — Inventory and WMS Angular migration
 
-> Status: IN PROGRESS — `MOD-022A..D` COMPLETE on 2026-10-27
+> Status: IN PROGRESS — `MOD-022A..E` COMPLETE on 2026-10-27
 >
 > Presentation default: MVC until a separate cutover approval.
 
@@ -73,7 +73,28 @@ never recomputes authoritative quantity, cost or value.
 - Separation of duties, frozen expected quantity, reservations, location/tracking updates, AVCO, stock transactions/movements and
   atomic posting remain server-owned. No schema or domain/accounting rule changed; MVC remains default.
 
+## `MOD-022E` delivered — inventory tracking and quality controls
+
+- Added authenticated `GET` plus CSRF-protected opening allocation, quarantine/release, recall create/close and recall-communication
+  endpoints under `/api/v1/inventory-tracking`; each operation preserves its independent `InventoryTracking.*` permission.
+- The API maps tuple-backed service choices to explicit named DTOs and delegates every command to `InventoryTrackingService`; no
+  controller accesses EF or repositories and no tracking, expiration, dimensional balance or recall rule moved into Angular.
+- Added permission-aware `/inventory/tracking` with dynamic opening allocations, live expiration alerts, current balances and trace
+  history, reasoned quarantine/release, recall impact evidence, manual communication logging and explicit closure guidance.
+- Product, warehouse and location names are user-facing while identifiers remain transport values. Rejected and dirty opening/recall
+  forms remain recoverable. Arabic/English, RTL, responsive external SCSS and accessibility contracts are included.
+- Recall closure deliberately does not release quarantined inventory. MVC remains the default presentation and no schema changed.
+
+## Current evidence
+
+- Web Release build: zero warnings and zero errors.
+- Security/inventory regression: 1219 checks passed.
+- Angular: 164/164 tests across 61 files passed.
+- Static accessibility: 68 templates passed; external-SCSS policy passed.
+- Production bundles: 303,857/358,400 initial bytes and 81,401/81,920 largest lazy bytes.
+- Live checks: Angular tracking route returned 200; anonymous tracking read/write requests returned 401.
+
 ## Next slice
 
-`MOD-022E` migrates inventory tracking visibility and current opening-allocation, quarantine/release and recall lifecycle operations,
-while preserving lot/serial identity, shelf-life, dimensional balance and permission authority on the server.
+`MOD-022F` migrates warehouse locations, Unassigned Stock putaway and exact-location relocation/history operations while preserving
+capacity, receive/pick capability, idempotency, dimensional balance and physical-movement authority on the server.

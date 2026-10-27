@@ -34,6 +34,9 @@ Inventory adjustments split `View`, `Create`, `Count`, `Approve`, `Post` and `Ca
 
 Inventory tracking uses `InventoryTracking.View` for traceability, `InventoryTracking.Open` for the high-impact opening allocation/policy activation and `InventoryTracking.ManageQuarantine` for reasoned quarantine/release transitions.
 `InventoryTracking.ManageRecall` controls recall creation and closure. Recall visibility follows `InventoryTracking.View`; closing a recall never grants or implies quarantine release authority.
+The Angular `/inventory/tracking` route is hidden without `InventoryTracking.View`; its opening, quarantine and recall controls are
+independently hidden by their matching permissions. `/api/v1/inventory-tracking` rechecks the same boundaries, and every mutation
+also requires antiforgery validation, so client-side visibility is never treated as authorization.
 `Inventory.Replenishment.View` protects reviewed replenishment suggestions; `Inventory.Replenishment.Manage` separately protects rule create/update and activation changes. Creating a transfer draft additionally requires `StockTransfers.Create`; creating purchase demand additionally requires `PurchaseRequests.Create`.
 `InventoryInsights.View` protects the read-only slow/dead inventory activity report; it grants no stock mutation capability.
 `InventoryScanning.View` protects the scan console. Scanned putaway additionally requires `ProductStock.Edit`; both policies are enforced on the POST action and the form is hidden without edit authority.

@@ -19,6 +19,7 @@ const navigationItems: readonly NavigationItem[] = [
   { id: 'inventory-availability', route: '/inventory/availability', labelKey: 'inventoryAvailability', icon: '▦', requiredPermission: 'InventoryBalances.View' },
   { id: 'inventory-reservations', route: '/inventory/reservations', labelKey: 'inventoryReservations', icon: '⌁', requiredPermission: 'InventoryReservations.View' },
   { id: 'inventory-adjustments', route: '/inventory/adjustments', labelKey: 'inventoryAdjustments', icon: '✓', requiredPermission: 'InventoryAdjustments.View' },
+  { id: 'inventory-tracking', route: '/inventory/tracking', labelKey: 'inventoryTracking', icon: '⌘', requiredPermission: 'InventoryTracking.View' },
   { id: 'operations-center', route: '/operations-center', labelKey: 'operationsCenter', icon: '◉', requiredAnyPermissions: ['PurchaseReplenishment.View', 'SupplierIntegrations.View', 'AuditEvents.View', 'AnalyticsCenter.View'] },
   { id: 'design-system', route: '/design-system', labelKey: 'designSystem', icon: '◇' },
 ];
@@ -28,7 +29,7 @@ export class NavigationRegistryService {
   readonly items = navigationItems;
   readonly visibleItems = computed(() => {
     const visible = this.items.filter((item) => this.canAccess(item));
-    const priorities: Record<string, readonly string[]> = { focused: ['home', 'customers', 'suppliers', 'products', 'inventory-stock', 'inventory-availability', 'inventory-reservations', 'inventory-adjustments', 'inventory-ledger', 'documents', 'work-center', 'analytics', 'settings', 'users', 'roles', 'operations-center', 'design-system'], operator: ['work-center', 'operations-center', 'inventory-adjustments', 'inventory-stock', 'inventory-availability', 'inventory-reservations', 'inventory-ledger', 'documents', 'products', 'customers', 'suppliers', 'home', 'analytics', 'settings', 'users', 'roles', 'design-system'], analyst: ['analytics', 'inventory-availability', 'inventory-reservations', 'inventory-adjustments', 'inventory-ledger', 'inventory-stock', 'operations-center', 'documents', 'work-center', 'home', 'products', 'customers', 'suppliers', 'settings', 'users', 'roles', 'design-system'] };
+    const priorities: Record<string, readonly string[]> = { focused: ['home', 'customers', 'suppliers', 'products', 'inventory-stock', 'inventory-availability', 'inventory-reservations', 'inventory-adjustments', 'inventory-tracking', 'inventory-ledger', 'documents', 'work-center', 'analytics', 'settings', 'users', 'roles', 'operations-center', 'design-system'], operator: ['work-center', 'operations-center', 'inventory-adjustments', 'inventory-tracking', 'inventory-stock', 'inventory-availability', 'inventory-reservations', 'inventory-ledger', 'documents', 'products', 'customers', 'suppliers', 'home', 'analytics', 'settings', 'users', 'roles', 'design-system'], analyst: ['analytics', 'inventory-availability', 'inventory-reservations', 'inventory-adjustments', 'inventory-tracking', 'inventory-ledger', 'inventory-stock', 'operations-center', 'documents', 'work-center', 'home', 'products', 'customers', 'suppliers', 'settings', 'users', 'roles', 'design-system'] };
     const order = priorities[this.profiles.profile()];
     return [...visible].sort((a, b) => order.indexOf(a.id) - order.indexOf(b.id));
   });

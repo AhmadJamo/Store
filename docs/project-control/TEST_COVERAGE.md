@@ -2,6 +2,11 @@
 
 ## آخر خط أساس منفذ
 
+أحدث بوابة `MOD-022E` في 2026-10-27: Web Release نجح بلا تحذيرات أو أخطاء، وSecurityRegression نجح في 1219 فحصًا،
+وAngular نجح في 164/164 اختبارًا عبر 61 ملفًا. نجح فحص الوصول الثابت لـ68 قالبًا وسياسة SCSS الخارجي، ونجحت ميزانية
+الإنتاج عند 303,857/358,400 بايت أولية و81,401/81,920 لأكبر lazy chunk. أعاد المسار الحي 200، ورفض API القراءة
+والكتابة المجهولتين بـ401.
+
 | الأمر | النتيجة | التاريخ |
 |---|---|---|
 | `dotnet run --project tests/SecurityRegression/SecurityRegression.csproj -c Release --no-build` | Passed 1072 checks (نجح 1072 فحصًا)، وتشمل الآن versioned authenticated session API، حماية mutation بـantiforgery، paging bounds/sort allow-list، واستخدام permission boundary المشترك | 2026-10-24 |

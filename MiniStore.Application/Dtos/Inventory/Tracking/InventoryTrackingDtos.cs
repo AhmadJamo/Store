@@ -55,3 +55,25 @@ public sealed class TrackingTransactionRowDto
  public string Product{get;set;}="";public string Identifier{get;set;}="";public decimal Quantity{get;set;}public InventoryTrackingTransactionType Type{get;set;}
  public InventoryPickingStrategy? PickingStrategy{get;set;} public string Reference{get;set;}="";public DateTime CreatedAt{get;set;}
 }
+public sealed record InventoryTrackingOptionDto(int Id,string Name);
+public sealed record InventoryTrackingLocationOptionDto(int Id,int WarehouseId,string Name);
+public sealed class InventoryTrackingApiPageDto
+{
+ public OpenTrackingAllocationDto Input{get;set;}=new();public List<InventoryTrackingOptionDto> Products{get;set;}=[];public List<InventoryTrackingOptionDto> TrackedProducts{get;set;}=[];
+ public List<InventoryTrackingOptionDto> Warehouses{get;set;}=[];public List<InventoryTrackingLocationOptionDto> Locations{get;set;}=[];
+ public List<TrackingBalanceRowDto> Balances{get;set;}=[];public List<TrackingTransactionRowDto> Transactions{get;set;}=[];public int ExpiredCount{get;set;}public int ExpiringSoonCount{get;set;}
+ public List<ExpirationAlertRowDto> ExpirationAlerts{get;set;}=[];public List<InventoryRecallRowDto> Recalls{get;set;}=[];
+}
+public sealed class TrackingReasonDto{[Required,StringLength(90,MinimumLength=3)]public string Reason{get;set;}="";}
+public sealed class CreateInventoryRecallDto
+{
+ [Required,StringLength(50)]public string Reference{get;set;}="";[Range(1,int.MaxValue)]public int ProductId{get;set;}
+ [Required,StringLength(100)]public string Identifier{get;set;}="";[Required,StringLength(250)]public string Reason{get;set;}="";
+}
+public sealed class CloseInventoryRecallDto{[Required,StringLength(250)]public string Notes{get;set;}="";}
+public sealed class RecordRecallCommunicationDto
+{
+ [Required,StringLength(200)]public string PartyName{get;set;}="";[StringLength(200)]public string? ChannelAddress{get;set;}
+ public RecallCommunicationChannel Channel{get;set;}public RecallCommunicationOutcome Outcome{get;set;}
+ [Required,StringLength(500)]public string Notes{get;set;}="";
+}

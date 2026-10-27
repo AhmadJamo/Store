@@ -1279,3 +1279,12 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   Angular passed 161/161 tests across 59 files, accessibility passed 67 templates, external SCSS passed, bundles measured
   303,702/358,400 initial and 81,296/81,920 largest lazy bytes, and live 200/401 checks passed. Advanced to `MOD-022E` inventory
   tracking and quality controls.
+- 2026-10-27: Completed `MOD-022E`. Added authenticated, versioned and permission-separated inventory-tracking read/open,
+  quarantine/release and recall create/close/communication endpoints, with antiforgery on every mutation and explicit named/validated
+  DTOs. Added bilingual RTL-ready Angular `/inventory/tracking` for dynamic full-balance opening allocation, live expiration alerts,
+  current balances and trace, reasoned quarantine/release, recall impact, manual communication evidence and closure that deliberately
+  does not release quarantine. `InventoryTrackingService` remains authoritative and no schema/domain/accounting rule changed; MVC
+  remains default. Web Release passed with zero warnings/errors, SecurityRegression passed 1219 checks, Angular passed 164/164 tests
+  across 61 files, accessibility passed 68 templates, external SCSS passed, bundles measured 303,857/358,400 initial and
+  81,401/81,920 largest lazy bytes, and live Angular 200 plus anonymous API read/write 401 checks passed. Advanced to `MOD-022F`
+  warehouse locations, Unassigned putaway and exact-location relocation/history.

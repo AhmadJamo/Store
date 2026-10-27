@@ -531,7 +531,11 @@ For exact module relationships, use `modules/*.md`; for entity and service detai
 - `MiniStore.Web/Controllers/Api/V1/ProductStocksApiController.cs` and `MiniStore.Application/Dtos/Inventory/ProductStocks/ProductStockFormPageDto.cs`: permission-separated balance/form/create/update/delete API contracts with named choices over Application services and preserved delete refusal.
 - `MiniStore.Web/Controllers/Api/V1/{InventoryBalancesApiController,InventoryReservationsApiController}.cs`: authenticated GET-only, independently permission-protected paging contracts over the existing availability/reservation Application services.
 - `MiniStore.Web/Controllers/Api/V1/InventoryAdjustmentsApiController.cs`: authenticated list/create/details/count/approve/post/cancel contract with independent permissions and CSRF over `InventoryAdjustmentService`.
+- `MiniStore.Web/Controllers/Api/V1/InventoryTrackingApiController.cs`: authenticated tracking report plus permission-separated,
+  CSRF-protected opening allocation, quarantine/release and recall lifecycle/communication commands over `InventoryTrackingService`.
 - `MiniStore Front-End/src/app/features/inventory/`: bilingual Angular inventory ledger plus complete ProductStock/manual-adjustment presentation, typed clients, permission navigation, dirty/rejected-input recovery and external responsive SCSS.
 - `MiniStore Front-End/src/app/features/inventory/{inventory-availability-page,inventory-reservations-page,inventory-read-page}.*`: bilingual read-only dimensional availability and reservation-history routes with named filters, paging and shared external responsive styling.
 - `MiniStore Front-End/src/app/features/inventory/inventory-adjustment*`: bilingual list/create/details cycle-counting workflow with blind-count handling, dynamic line entry, completed-action states and external responsive SCSS.
+- `MiniStore Front-End/src/app/features/inventory/inventory-tracking*` and `data/inventory-tracking*`: bilingual lot/serial,
+  expiration, quarantine and recall workspace, typed client/models, dirty-form recovery and external responsive SCSS.
 - `docs/modernization/PHASE_22_INVENTORY.md`: inventory/WMS Angular migration scope, completed slices, evidence and next gate.
