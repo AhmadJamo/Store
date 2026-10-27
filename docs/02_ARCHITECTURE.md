@@ -138,3 +138,7 @@ GET-only. MVC stays the committed default until explicit cutover and rollback ac
 names with internal identifiers, while `ProductStockService` and `StockTransactionService` remain the only business-command
 owners. Controllers do not read EF, direct delete keeps the existing Application rejection, and all balance, location, tracking,
 AVCO and accounting effects remain inside the established inventory transaction boundary.
+
+`MOD-022C` exposes read-only dimensional availability and reservation history through versioned controllers that call paged
+Application-service methods. Angular never derives Available, changes Reserved or resolves tenant dimensions. The existing
+repositories, tenant filters, rowversions and reservation workflows remain authoritative; both controllers are GET-only.

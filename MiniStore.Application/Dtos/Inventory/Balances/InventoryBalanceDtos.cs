@@ -20,3 +20,15 @@ public sealed class InventoryBalancePageDto
     public int? WarehouseId { get; set; }
     public string Search { get; set; } = string.Empty;
 }
+
+public sealed record InventoryWarehouseOptionDto(int Id, string Name);
+
+public sealed class InventoryBalancePagedResultDto
+{
+    public List<InventoryBalanceRowDto> Items { get; set; } = [];
+    public List<InventoryWarehouseOptionDto> Warehouses { get; set; } = [];
+    public int TotalCount { get; set; }
+    public int Page { get; set; }
+    public int PageSize { get; set; }
+    public int TotalPages { get; set; }
+}

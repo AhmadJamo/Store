@@ -42,6 +42,15 @@ The feature is permission-split across ProductStock View/Create/Edit/Delete and 
 requires CSRF. Rejected inputs remain editable, all labels/messages are Arabic and English, and the responsive layout uses logical
 direction-aware styling. No schema or inventory/accounting rule changed.
 
+## Angular availability and reservations (`MOD-022C`)
+
+`/inventory/availability` displays server-authored OnHand, Reserved and Available quantities by product, warehouse and exact
+location or protected Unassigned position. Product name/code/barcode search, named warehouse filter and bounded page sizes run
+through `InventoryBalanceService`. `/inventory/reservations` displays source reference/type, Active/Consumed/Released status,
+line count, remaining quantity and lifecycle timestamps through `InventoryReservationService`, with reference/status filters and
+bounded paging. Both routes are GET-only and independently permission-protected. Angular does not calculate availability, reserve,
+consume or release stock. No schema, concurrency, valuation or accounting behavior changed.
+
 ## Storage locations
 Warehouses have hierarchical structured locations with a unique code, optional unique barcode, display name, parent, sequence, zone, aisle, rack, level, bin, operational type, status, optional capacity and explicit receive/pick/reserve/ship/count capabilities. Existing IDs and codes remain stable. The Warehouse Locations screen searches these fields, creates roots/children and edits hierarchy/capabilities. `StorageLocationService` owns its warehouse/parent selectors and projects location rows to Application DTOs; the controller and Razor views no longer receive repository dependencies or domain entities for this slice. The Application layer rejects self-parenting, descendant cycles and parents from another warehouse. Unassigned Stock calculates warehouse quantity minus allocated location quantities, supports warehouse/name/barcode filters and sorting, and lets authorized staff allocate all or part of the balance to an active location without changing the warehouse total. Capacity validation uses the total quantity of all products in the destination location.
 

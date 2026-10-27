@@ -125,6 +125,10 @@ Bilingual read-only Product/Warehouse/Location projection showing OnHand, Reserv
 
 `InventoryReservations/Index` is a bilingual, permission-protected audit list of source reference, lifecycle status, line count, total quantity and create/close times.
 
+Angular `/inventory/availability` is the bilingual, permission-protected dimensional availability list with product search, named
+warehouse filtering and paging. Angular `/inventory/reservations` is the matching reservation-history list with reference and
+status filters and paging. Both show server-authored values, use RTL-safe responsive tables and remain read-only; MVC is default.
+
 ## Inventory adjustments
 `InventoryAdjustments/Index`, `Create` and `Details` implement the bilingual count workflow. Blind Draft documents hide expected quantities; later states expose expected, counted and variance values plus allowed workflow actions.
 
@@ -155,3 +159,5 @@ All purchase tables, details and populated numeric inputs use the shared number 
   inclusive from/to dates, page-size control, server sorting and paging, plus server-authored cost/value/variance columns.
 - The transaction ledger stays read-only. `/inventory/stocks` now owns the Angular presentation for all current ProductStock
   operations and authorized manual adjustments; every mutation uses CSRF and its separate server permission.
+- `/inventory/availability` requires `InventoryBalances.View`; `/inventory/reservations` requires
+  `InventoryReservations.View`. Both provide loading, empty and recovery states and bounded server paging.

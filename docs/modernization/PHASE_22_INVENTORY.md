@@ -1,6 +1,6 @@
 # Phase 22 — Inventory and WMS Angular migration
 
-> Status: IN PROGRESS — `MOD-022A..B` COMPLETE on 2026-10-27
+> Status: IN PROGRESS — `MOD-022A..C` COMPLETE on 2026-10-27
 >
 > Presentation default: MVC until a separate cutover approval.
 
@@ -44,13 +44,25 @@ never recomputes authoritative quantity, cost or value.
 ## Current evidence
 
 - Web Release build: zero warnings and zero errors.
-- Security/inventory regression: 1210 checks passed.
-- Angular: 155/155 tests across 54 files passed.
-- Static accessibility: 62 templates passed; external-SCSS policy passed.
-- Production bundles: 302,983/358,400 initial bytes and 81,017/81,920 largest lazy bytes.
-- Live checks: `/inventory/stocks` returned 200; anonymous ProductStock and manual-adjustment API requests returned 401.
+- Security/inventory regression: 1213 checks passed.
+- Angular: 159/159 tests across 57 files passed.
+- Static accessibility: 64 templates passed; external-SCSS policy passed.
+- Production bundles: 303,235/358,400 initial bytes and 81,211/81,920 largest lazy bytes.
+- Live checks: both Angular routes returned 200; anonymous availability/reservation API requests returned 401.
+
+## `MOD-022C` delivered — availability and reservation history
+
+- Added authenticated, versioned, GET-only availability and reservation endpoints protected independently by
+  `InventoryBalances.View` and `InventoryReservations.View`.
+- Paging remains behind `InventoryBalanceService` and `InventoryReservationService`; controllers do not access repositories or EF.
+- Added permission-aware `/inventory/availability` with product search, named warehouse filtering, paging and server-authored
+  On Hand, Reserved and Available quantities by named location, including the protected Unassigned position.
+- Added permission-aware `/inventory/reservations` with reference search, Active/Consumed/Released filtering, paging, named source
+  types, line counts, remaining total quantity and lifecycle timestamps.
+- Both responsive screens are Arabic/English, RTL-safe and read-only. No schema, balance, reservation, tracking, valuation or
+  accounting behavior changed; MVC remains the default presentation.
 
 ## Next slice
 
-`MOD-022C` migrates dimensional inventory availability and reservation history as read-only Angular workflows while preserving
-all projection, reservation, tenant, permission and concurrency authority on the server.
+`MOD-022D` migrates the complete inventory-adjustment and cycle-counting workflow, including Draft creation, counting, approval,
+posting and cancellation, while preserving dimensional stock mutation and separation-of-duties rules on the server.

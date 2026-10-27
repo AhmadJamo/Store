@@ -218,3 +218,10 @@ DELETE require antiforgery; explicit DTOs use invariant non-negative quantity va
 exposing entities. Controllers call Application services only. Tenant filtering, serializable UnitOfWork behavior, rowversion,
 location/tracking allocation, negative-stock policy and moving-average valuation remain server-owned. The delete endpoint deliberately
 preserves the service rejection, so authorization never becomes permission to erase stock history.
+
+## MOD-022C read-only inventory projections (2026-10-27)
+
+Availability and reservation endpoints are authenticated, tenant-filtered, versioned and GET-only. Their independent View
+permissions are enforced at the controller, paging is bounded in the Application services and explicit DTOs expose names and
+quantities without returning entities. Angular cannot change OnHand, Reserved or Available, and it cannot reserve, consume or
+release stock. Existing tenant filters, composite keys, rowversions and reservation concurrency constraints remain authoritative.

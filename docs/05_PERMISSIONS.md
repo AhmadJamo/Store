@@ -222,3 +222,10 @@ protected by `ProductStock.Create`, `ProductStock.Edit` and `ProductStock.Delete
 Application rule that stock records are retained and adjusted to zero. Manual Adjustment In/Out and Kitchen Variance require
 `StockTransactions.Create`. Navigation and buttons are permission-filtered, but each API endpoint remains the authoritative check.
 
+## MOD-022C availability and reservation permissions (2026-10-27)
+
+Angular `/inventory/availability` and `GET /api/v1/inventory-balances` require `InventoryBalances.View`. Angular
+`/inventory/reservations` and `GET /api/v1/inventory-reservations` separately require `InventoryReservations.View`. Neither
+permission grants balance mutation, reservation creation/consumption/release or source-document authority. Navigation filtering is
+only presentation convenience; both APIs repeat authentication, tenant and permission checks.
+

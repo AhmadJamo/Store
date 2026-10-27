@@ -1262,3 +1262,11 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   passed 155/155 tests across 54 files, accessibility passed 62 templates, external SCSS and production budgets passed at
   302,983/358,400 initial and 81,017/81,920 largest lazy bytes, and live 200/401 checks passed. Advanced to `MOD-022C` availability
   and reservation history.
+- 2026-10-27: Completed `MOD-022C`. Added authenticated, versioned and GET-only availability and reservation APIs with independent
+  View permissions and bounded Application-service paging. Added bilingual RTL-ready Angular `/inventory/availability` and
+  `/inventory/reservations` with product/reference search, named warehouse/status filters, paging, server-authored dimensional
+  quantities and reservation lifecycle evidence. Angular cannot mutate balances or reservations; no schema, tracking, valuation or
+  accounting rule changed and MVC remains default. Web Release passed with zero warnings/errors, isolated SecurityRegression passed
+  1213 checks, Angular passed 159/159 tests across 57 files, accessibility passed 64 templates, external SCSS passed, bundles measured
+  303,235/358,400 initial and 81,211/81,920 largest lazy bytes, and live 200/401 checks passed. Advanced to `MOD-022D` inventory
+  adjustments and cycle counting.

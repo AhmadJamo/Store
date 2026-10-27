@@ -4050,6 +4050,23 @@ Check(typeof(CreateProductStockDto).GetProperty(nameof(CreateProductStockDto.Pro
       typeof(UpdateProductStockDto).GetProperty(nameof(UpdateProductStockDto.Quantity))!.GetCustomAttribute<RangeAttribute>() is not null &&
       typeof(ProductStockFormPageDto).GetProperty(nameof(ProductStockFormPageDto.Products)) is not null,
     "Product-stock API must use validated inputs and named product/warehouse option DTOs");
+var inventoryBalancesApi = typeof(InventoryBalancesApiController);
+Check(inventoryBalancesApi.GetCustomAttribute<ApiControllerAttribute>() is not null &&
+      inventoryBalancesApi.GetCustomAttribute<AuthorizeAttribute>() is not null &&
+      inventoryBalancesApi.GetCustomAttribute<RouteAttribute>()?.Template == "api/v1/inventory-balances" &&
+      inventoryBalancesApi.GetMethod(nameof(InventoryBalancesApiController.GetPage))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:InventoryBalances.View",
+    "Angular inventory availability must remain authenticated, versioned and InventoryBalances.View protected");
+var inventoryReservationsApi = typeof(InventoryReservationsApiController);
+Check(inventoryReservationsApi.GetCustomAttribute<ApiControllerAttribute>() is not null &&
+      inventoryReservationsApi.GetCustomAttribute<AuthorizeAttribute>() is not null &&
+      inventoryReservationsApi.GetCustomAttribute<RouteAttribute>()?.Template == "api/v1/inventory-reservations" &&
+      inventoryReservationsApi.GetMethod(nameof(InventoryReservationsApiController.GetPage))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:InventoryReservations.View",
+    "Angular inventory reservations must remain authenticated, versioned and InventoryReservations.View protected");
+Check(typeof(InventoryBalanceService).GetMethod(nameof(InventoryBalanceService.GetPagedAsync)) is not null &&
+      typeof(InventoryReservationService).GetMethod(nameof(InventoryReservationService.GetPagedAsync)) is not null,
+    "Inventory availability and reservation paging must remain behind the Application boundary");
 var operationsApi = typeof(OperationsCenterApiController);
 Check(operationsApi.GetCustomAttribute<ApiControllerAttribute>() is not null &&
       operationsApi.GetCustomAttribute<AuthorizeAttribute>() is not null &&
