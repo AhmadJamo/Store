@@ -92,6 +92,11 @@ selection-option, status and typed per-product value parity over `ProductAttribu
 applicability, required/type/option checks and assigned-template variant refresh remain server-owned. Mutations require
 `Products.Edit` and antiforgery; Angular preserves rejected input and uses bilingual external SCSS.
 
+`ProductTemplatesApiController` and Angular `/products/templates` complete template create, SKU assignment/removal,
+variant list, bounded preview and explicit generation over `ProductTemplateService`. The server recomputes neutral
+signatures and combination plans, enforces the 50-row cap and prevents unsafe cloning. All mutations use
+`Products.Edit` and antiforgery.
+
 ## SAL-130A reusable Analytics Center
 
 `AnalyticsWorkspace` and its widgets persist tenant-owned personal/shared presentation preferences. Generic analytics

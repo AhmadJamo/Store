@@ -2,6 +2,7 @@
   <app-page-header eyebrow="CATALOG" [title]="i18n.text('products')" [description]="i18n.text('productsDescription')">
     <a class="ui-button secondary" routerLink="/products/categories">{{ i18n.text('productCategories') }}</a>
     <a class="ui-button secondary" routerLink="/products/attributes">{{ i18n.text('productAttributes') }}</a>
+    <a class="ui-button secondary" routerLink="/products/templates">{{ i18n.text('productTemplates') }}</a>
     @if (session.can('Products.Create')) { <a class="ui-button primary" routerLink="/products/new">{{ i18n.text('addProduct') }}</a> }
   </app-page-header>
   <div class="filters">

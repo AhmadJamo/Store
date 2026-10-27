@@ -190,6 +190,11 @@ export const routes: Routes = [
         loadComponent: () => import('./features/products/product-attributes-page').then((module) => module.ProductAttributesPageComponent),
       },
       {
+        path: 'products/templates',
+        canDeactivate: [(component) => component.canDeactivate()],
+        loadComponent: () => import('./features/products/product-templates-page').then((module) => module.ProductTemplatesPageComponent),
+      },
+      {
         path: 'products/:id/attributes',
         canDeactivate: [(component) => component.canDeactivate()],
         loadComponent: () => import('./features/products/product-attribute-values-page').then((module) => module.ProductAttributeValuesPageComponent),

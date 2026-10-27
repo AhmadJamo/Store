@@ -175,3 +175,10 @@ creation/status and all per-product value reads/writes require `Products.Edit`; 
 antiforgery. Neutral codes and bounded input are DTO-validated, while `ProductAttributeService` revalidates category
 applicability, required/type rules, option ownership and template variant refresh transactionally. No EF entity or
 client-computed variant signature crosses the API boundary.
+
+## MOD-021D product-template boundary (2026-10-27)
+
+Template reads require authentication and `Products.View`. Create, assignment/removal, preview and generation require
+`Products.Edit` and antiforgery even though preview has no persistence effect. Angular never calculates a trusted
+variant identity: `ProductTemplateService` rechecks category/source/template relationships, values/options, neutral
+SHA-256 signatures, duplicate combinations and the 50-combination limit, then rebuilds the plan inside generation.

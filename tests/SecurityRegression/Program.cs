@@ -3959,6 +3959,26 @@ Check(typeof(CreateProductAttributeDto).GetProperty(nameof(CreateProductAttribut
       typeof(ProductAttributeService).GetMethod(nameof(ProductAttributeService.CreateAsync))!
           .ReturnType == typeof(Task<int>),
     "Product-attribute creation must validate its API contract and return the persisted identifier through the Application layer");
+var productTemplatesApi = typeof(ProductTemplatesApiController);
+Check(productTemplatesApi.GetCustomAttribute<ApiControllerAttribute>() is not null &&
+      productTemplatesApi.GetCustomAttribute<AuthorizeAttribute>() is not null &&
+      productTemplatesApi.GetCustomAttribute<RouteAttribute>()?.Template == "api/v1/product-templates" &&
+      productTemplatesApi.GetMethod(nameof(ProductTemplatesApiController.GetPage))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:Products.View",
+    "Angular product-template reads must remain authenticated and Products.View protected");
+Check(new[]
+    {
+        productTemplatesApi.GetMethod(nameof(ProductTemplatesApiController.Create))!,
+        productTemplatesApi.GetMethod(nameof(ProductTemplatesApiController.Assign))!,
+        productTemplatesApi.GetMethod(nameof(ProductTemplatesApiController.Preview))!,
+        productTemplatesApi.GetMethod(nameof(ProductTemplatesApiController.Generate))!
+    }.All(method => method.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:Products.Edit" &&
+        method.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null),
+    "Template create/assignment/preview/generation must require Products.Edit and antiforgery");
+Check(typeof(CreateProductTemplateDto).GetProperty(nameof(CreateProductTemplateDto.Code))!
+          .GetCustomAttribute<RegularExpressionAttribute>()?.Pattern == "^[A-Za-z0-9][A-Za-z0-9_-]*$" &&
+      ProductTemplateService.MaximumGeneratedVariants == 50,
+    "Template inputs must keep neutral codes and variant generation must remain bounded to 50 combinations");
 var operationsApi = typeof(OperationsCenterApiController);
 Check(operationsApi.GetCustomAttribute<ApiControllerAttribute>() is not null &&
       operationsApi.GetCustomAttribute<AuthorizeAttribute>() is not null &&

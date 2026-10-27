@@ -1212,3 +1212,11 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   checks, Angular passed 137/137 tests across 43 files, 55 templates passed accessibility, external SCSS passed, and
   bundles measured 298,342/358,400 initial and 80,866/81,920 largest lazy bytes. Live Angular routes returned 200 and
   the anonymous API returned 401. MVC remains default; advanced to `MOD-021D` product templates and variants.
+- 2026-10-27: Completed `MOD-021D` product-template and controlled-variant parity. Added authenticated versioned DTO
+  endpoints and bilingual RTL-ready Angular `/products/templates` for template creation, existing-SKU assignment/removal,
+  grouped variants, bounded preview and explicit generation. `ProductTemplateService` remains authoritative for category
+  matching, required variant values, neutral SHA-256 identity, duplicate prevention, source membership, the 50-row cap
+  and safe cloning exclusions; Angular submits no trusted signature or calculated product. Web Release passed with zero
+  warnings/errors, SecurityRegression passed 1195 checks, Angular passed 141/141 tests across 45 files, 56 templates
+  passed accessibility, external SCSS passed, and bundles measured 298,693/358,400 initial and 80,866/81,920 largest
+  lazy bytes. MVC remains default; advanced to `MOD-021E` prepared-product recipes.

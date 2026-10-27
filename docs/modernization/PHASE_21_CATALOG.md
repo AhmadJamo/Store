@@ -1,6 +1,6 @@
 # MOD-021 — Catalog migration
 
-> Status: IN PROGRESS — `MOD-021A..C` completed 2026-10-27
+> Status: IN PROGRESS — `MOD-021A..D` completed 2026-10-27
 > Presentation default: MVC until an explicit cutover gate
 
 ## Scope and sequence
@@ -10,8 +10,8 @@
 | `MOD-021A` | Product list, details, create, edit and delete | COMPLETE |
 | `MOD-021B` | Product-category create/list/activate/deactivate | COMPLETE |
 | `MOD-021C` | Product attribute definitions, options and per-product values | COMPLETE |
-| `MOD-021D` | Product templates and controlled variant creation | NEXT |
-| `MOD-021E` | Prepared-product recipes and immutable recipe versions | PLANNED |
+| `MOD-021D` | Product templates and controlled variant creation | COMPLETE |
+| `MOD-021E` | Prepared-product recipes and immutable recipe versions | NEXT |
 | `MOD-021F` | Tax rates, payment methods and branch master data | PLANNED |
 | `MOD-021G` | Warehouse master data | PLANNED |
 
@@ -49,10 +49,10 @@ creating a duplicate unit editor.
 ## Verification evidence
 
 - Web Release: passed, zero warnings and zero errors.
-- Security/inventory regression: 1192 checks passed.
-- Angular: 137/137 tests across 43 files passed.
-- Static accessibility: 55 templates passed; external-SCSS policy passed.
-- Production bundle: 298,342 / 358,400 initial bytes; largest lazy chunk 80,866 / 81,920 bytes.
+- Security/inventory regression: 1195 checks passed.
+- Angular: 141/141 tests across 45 files passed.
+- Static accessibility: 56 templates passed; external-SCSS policy passed.
+- Production bundle: 298,693 / 358,400 initial bytes; largest lazy chunk 80,866 / 81,920 bytes.
 
 ## `MOD-021B` delivered behavior
 
@@ -75,7 +75,19 @@ creating a duplicate unit editor.
   validates antiforgery, and the API returns explicit DTOs and localized Problem Details rather than domain entities.
 - Product list/details expose permission-aware value links. MVC remains the rollback/default presentation.
 
+## `MOD-021D` delivered behavior
+
+- Angular `/products/templates` provides the complete template create, existing-SKU assignment/removal, grouped variant
+  list, bounded combination preview and explicit generation operations.
+- The browser submits only template/source/option identifiers. `ProductTemplateService` rechecks category equality,
+  complete variant-defining values, neutral SHA-256 signatures, duplicate combinations, source membership and the
+  50-combination bound, then recomputes the plan during generation.
+- Generated products copy only the established safe commercial/unit/logistics fields and non-variant values. Barcode,
+  stock, recipe and history are not copied; prepared-to-order and non-Selection automatic generation remain rejected.
+- Reads require `Products.View`; create/assign/preview/generate require `Products.Edit` plus antiforgery. MVC remains
+  the rollback/default presentation.
+
 ## Remaining work
 
-Proceed with `MOD-021D` product templates and controlled variants. Do not declare the catalog wave complete until every listed slice reaches
+Proceed with `MOD-021E` prepared-product recipes and immutable versions. Do not declare the catalog wave complete until every listed slice reaches
 functional parity and its own verification evidence is recorded.

@@ -84,3 +84,11 @@ Cafe recipe, product-catalog and managed-unit coverage validates conversion, cla
   GET/PUT, normalization, category selection, status confirmation, typed value save and rejected-input preservation.
 - 55 templates passed static accessibility; external SCSS passed.
 - Bundle evidence: 298,342/358,400 initial bytes and 80,866/81,920 largest lazy bytes.
+
+## MOD-021D product-template evidence (2026-10-27)
+
+- Web Release passed with zero warnings/errors; SecurityRegression passed 1195 checks.
+- Angular passed 141/141 tests across 45 files, including all GET/create/assignment/preview/generate requests, normalized
+  template creation, assignment and rejected-form retention.
+- 56 templates passed static accessibility; external SCSS passed.
+- Bundle evidence: 298,693/358,400 initial bytes and 80,866/81,920 largest lazy bytes.
