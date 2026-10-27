@@ -544,3 +544,13 @@ For exact module relationships, use `modules/*.md`; for entity and service detai
   and `data/warehouse-operations*`: typed, bilingual location master, putaway/rule and internal/physical movement Angular operations
   with permission-aware commands, idempotency, dirty-form recovery and shared external responsive SCSS.
 - `docs/modernization/PHASE_22_INVENTORY.md`: inventory/WMS Angular migration scope, completed slices, evidence and next gate.
+- `MiniStore.Web/Controllers/Api/V1/PurchaseRequestsApiController.cs`: authenticated, permission-separated Purchase Request
+  list/details/create/submit/cancel contract over `PurchaseRequestService`, with antiforgery and row-version evidence.
+- `MiniStore Front-End/src/app/features/purchases/purchase-request*`: bilingual typed Purchase Request list/create/details workspace,
+  dynamic named lines, lifecycle actions, history, dirty recovery and external responsive SCSS.
+- `docs/modernization/PHASE_23_PURCHASING.md`: purchasing Angular migration slices, evidence and next gate.
+- `MiniStore.Web/Controllers/Api/V1/PurchaseRequestsApiController.cs`: authenticated, permission-separated Purchase Request
+  list/details/create/submit/cancel contract over `PurchaseRequestService`, with antiforgery and row-version evidence.
+- `MiniStore Front-End/src/app/features/purchases/purchase-request*`: bilingual typed Purchase Request list/create/details workspace,
+  dynamic named lines, lifecycle actions, history, dirty recovery and external responsive SCSS.
+- `docs/modernization/PHASE_23_PURCHASING.md`: purchasing Angular migration slices, evidence and next gate.

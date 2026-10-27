@@ -246,3 +246,9 @@ reads require `ProductStock.View`; assignment and putaway-rule create/activation
 relocation require `LocationMovements.View` and `LocationMovements.Create`; the physical ledger separately requires
 `StockMovements.View`. Every mutation validates antiforgery. Navigation/action filtering never replaces API authorization.
 
+## MOD-023A Purchase Request permissions (2026-10-27)
+
+Angular list/details require `PurchaseRequests.View`; create options and creation require `PurchaseRequests.Create`; Draft submission
+requires `PurchaseRequests.Submit`; and reasoned Draft/Submitted cancellation requires `PurchaseRequests.Cancel`. Every command
+validates antiforgery. Navigation and button visibility are convenience only; the API repeats exact authorization.
+

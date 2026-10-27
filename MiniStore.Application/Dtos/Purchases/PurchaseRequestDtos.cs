@@ -1,9 +1,9 @@
-using MiniStore.Domain.Entities;
+using System.ComponentModel.DataAnnotations;using MiniStore.Domain.Entities;
 namespace MiniStore.Application.DTOs.Purchases;
 public sealed class CreatePurchaseRequestDto
-{ public int WarehouseId{get;set;} public DateOnly NeededByDate{get;set;}=DateOnly.FromDateTime(DateTime.Today.AddDays(7)); public PurchaseRequestPriority Priority{get;set;}=PurchaseRequestPriority.Normal; public string Justification{get;set;}=string.Empty; public string? Notes{get;set;} public List<CreatePurchaseRequestLineDto> Lines{get;set;}=[]; }
+{ [Range(1,int.MaxValue)]public int WarehouseId{get;set;} public DateOnly NeededByDate{get;set;}=DateOnly.FromDateTime(DateTime.Today.AddDays(7)); public PurchaseRequestPriority Priority{get;set;}=PurchaseRequestPriority.Normal; [Required,StringLength(500)]public string Justification{get;set;}=string.Empty; [StringLength(1000)]public string? Notes{get;set;} [MinLength(1)]public List<CreatePurchaseRequestLineDto> Lines{get;set;}=[]; }
 public sealed class CreatePurchaseRequestLineDto
-{ public int ProductId{get;set;} public int MeasurementUnitId{get;set;} public decimal RequestedQuantity{get;set;} public int? SuggestedSupplierId{get;set;} public string? Notes{get;set;} }
+{ [Range(1,int.MaxValue)]public int ProductId{get;set;} [Range(1,int.MaxValue)]public int MeasurementUnitId{get;set;} [Range(typeof(decimal),"0.000001","999999999999",ParseLimitsInInvariantCulture=true,ConvertValueInInvariantCulture=true)]public decimal RequestedQuantity{get;set;} public int? SuggestedSupplierId{get;set;} [StringLength(500)]public string? Notes{get;set;} }
 public sealed class PurchaseRequestDto
 { public int Id{get;init;} public string RequestNumber{get;init;}=string.Empty; public int WarehouseId{get;init;} public string WarehouseName{get;init;}=string.Empty; public DateOnly NeededByDate{get;init;} public PurchaseRequestPriority Priority{get;init;} public string Justification{get;init;}=string.Empty; public string? Notes{get;init;} public string? SourceType{get;init;} public string? SourceReference{get;init;} public PurchaseRequestStatus Status{get;init;} public string CreatedByUserId{get;init;}=string.Empty; public DateTime CreatedAtUtc{get;init;} public byte[] RowVersion{get;init;}=[]; public PurchaseApprovalInstanceDto? Approval{get;set;} public List<PurchaseRequestLineDto> Lines{get;init;}=[]; public List<PurchaseRequestHistoryDto> History{get;init;}=[]; }
 public sealed class PurchaseRequestLineDto
@@ -13,3 +13,4 @@ public sealed class PurchaseRequestHistoryDto
 public sealed record PurchaseRequestOptionDto(int Id,string Label);
 public sealed class PurchaseRequestCreatePageDto
 { public CreatePurchaseRequestDto Form{get;init;}=new(); public List<PurchaseRequestOptionDto> Warehouses{get;init;}=[]; public List<PurchaseRequestOptionDto> Products{get;init;}=[]; public List<PurchaseRequestOptionDto> Units{get;init;}=[]; public List<PurchaseRequestOptionDto> Suppliers{get;init;}=[]; }
+public sealed class PurchaseRequestStatusCommandDto{[Range(1,int.MaxValue)]public int Id{get;set;}[Required]public byte[] RowVersion{get;set;}=[];[StringLength(500)]public string? Reason{get;set;}}

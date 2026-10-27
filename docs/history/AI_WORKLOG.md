@@ -1296,3 +1296,11 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   schema changed. Web Release passed with zero warnings/errors, SecurityRegression passed 1224 checks, Angular passed 165/165 tests
   across 62 files, accessibility passed 71 templates, external SCSS passed, and bundles measured 304,437/358,400 initial and
   81,662/81,920 largest lazy bytes. Advanced to `MOD-023A` Purchase Requests.
+- 2026-10-27: Completed `MOD-023A`, the first purchasing Angular slice. Added authenticated, versioned Purchase Request list,
+  details, named create options, create, submit and cancel contracts over `PurchaseRequestService`, preserving independent permissions,
+  antiforgery, row-version concurrency, numbering, purchasability and managed-unit conversion. Added one bilingual responsive Angular
+  workspace for searchable list, dynamic multi-line Draft creation, details, approval/history evidence and eligible Submit/Cancel
+  commands with dirty/rejected-input recovery and external RTL-safe SCSS. MVC remains default and no schema/inventory/accounting rule
+  changed. Web Release passed without warnings/errors, SecurityRegression passed 1227 checks, Angular passed 166/166 tests across
+  63 files, accessibility passed 72 templates, external SCSS passed, bundles measured 304,833/358,400 initial and 81,742/81,920
+  largest lazy bytes, and live Angular 200 plus anonymous API read/write 401 checks passed. Advanced to `MOD-023B` approvals.

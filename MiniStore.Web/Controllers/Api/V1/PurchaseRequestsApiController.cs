@@ -1,0 +1,13 @@
+using Microsoft.AspNetCore.Authorization;using Microsoft.AspNetCore.Mvc;using Microsoft.Extensions.Localization;using MiniStore.Application.DTOs.Purchases;using MiniStore.Application.Services;using MiniStore.Domain.Entities;using MiniStore.Web.Authorization;using MiniStore.Web.Middleware.Api;
+namespace MiniStore.Web.Controllers.Api.V1;
+[ApiController,Authorize,Route("api/v1/purchase-requests")]public sealed class PurchaseRequestsApiController(PurchaseRequestService requests,IStringLocalizer<SharedResource> localizer):ControllerBase
+{
+ [HttpGet,PermissionAuthorize("PurchaseRequests.View")]public async Task<ActionResult<List<PurchaseRequestDto>>> GetAll(PurchaseRequestStatus? status,string? search)=>Ok(await requests.GetAllAsync(status,search));
+ [HttpGet("{id:int}"),PermissionAuthorize("PurchaseRequests.View")]public async Task<ActionResult<PurchaseRequestDto>> Get(int id){var item=await requests.GetAsync(id);return item is null?NotFound():Ok(item);}
+ [HttpGet("create-form"),PermissionAuthorize("PurchaseRequests.Create")]public async Task<ActionResult<PurchaseRequestCreatePageDto>> GetCreateForm()=>Ok(await requests.GetCreatePageAsync());
+ [HttpPost,ValidateAntiForgeryToken,PermissionAuthorize("PurchaseRequests.Create")]public async Task<IActionResult> Create(CreatePurchaseRequestDto input){try{return Ok(new{id=await requests.CreateAsync(input)});}catch(Exception e)when(e is ArgumentException or InvalidOperationException){return Validation(e);}}
+ [HttpPost("{id:int}/submit"),ValidateAntiForgeryToken,PermissionAuthorize("PurchaseRequests.Submit")]public Task<IActionResult> Submit(int id,PurchaseRequestStatusCommandDto input)=>Run(id,input,()=>requests.SubmitAsync(id,input.RowVersion));
+ [HttpPost("{id:int}/cancel"),ValidateAntiForgeryToken,PermissionAuthorize("PurchaseRequests.Cancel")]public Task<IActionResult> Cancel(int id,PurchaseRequestStatusCommandDto input)=>Run(id,input,()=>requests.CancelAsync(id,input.Reason??string.Empty,input.RowVersion));
+ private async Task<IActionResult> Run(int id,PurchaseRequestStatusCommandDto input,Func<Task> action){if(id!=input.Id)return Validation(new ArgumentException("Route and payload identifiers do not match."));try{await action();return NoContent();}catch(Exception e)when(e is ArgumentException or InvalidOperationException){return Validation(e);}}
+ private IActionResult Validation(Exception e){ModelState.AddModelError(string.Empty,localizer[e.Message]);return InternalApiProblemFactory.Validation(HttpContext,ModelState,localizer["One or more validation errors occurred."],InternalApiProblemCodes.Validation);}
+}

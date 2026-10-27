@@ -46,6 +46,7 @@ The ERP SaaS Foundation Blueprint is imported as a non-authoritative planning re
 - [x] MOD-022E migrate all current lot/serial visibility, opening allocation, expiration, quarantine/release, recall lifecycle and
   manual recall communication operations with independent permissions and server-owned rules. Completed 2026-10-27.
 - [x] MOD-022F migrate warehouse locations, Unassigned Stock putaway/rules, relocation and Location/Stock Movement history with all current operations and server-owned invariants. Completed 2026-10-27.
+- [x] MOD-023A migrate Purchase Request list/create/details/submit/cancel with named dynamic lines, concurrency, independent permissions and server-owned rules. Completed 2026-10-27.
 - [ ] MOD-023 through MOD-028 migrate purchasing, sales, POS, accounting, tenant/public,
   platform and shared MVC workflows to Angular, including every operation, permission, localization, file/PDF and edge state.
 - [ ] MOD-029 prove full-system parity through dual-run reconciliation, performance/security/accessibility evidence and cutover/rollback rehearsals.

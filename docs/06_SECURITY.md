@@ -240,3 +240,10 @@ all POST/PUT commands validate antiforgery. Explicit DTOs validate identifiers, 
 controllers call Application services only. The server owns same-warehouse hierarchy, cycle/duplicate checks, active receive/pick
 capabilities, total destination capacity, exact source quantity, serializable transactions, dimensional balances and immutable linked
 movement facts. Replaying a putaway/relocation key cannot apply stock twice; Angular cannot grant authority through navigation state.
+
+## MOD-023A Purchase Request command boundary (2026-10-27)
+
+The versioned API requires authentication and tenant context, exposes DTOs only and delegates to `PurchaseRequestService`. Create,
+Submit and Cancel require independent permissions plus antiforgery; status commands carry route-matched identity and row-version
+evidence. Server-side rules revalidate warehouse, active purchasable product, managed-unit dimension, supplier, positive quantity,
+duplicate line, numbering and eligible state. Angular cannot author trusted conversion, approval or inventory/accounting effects.

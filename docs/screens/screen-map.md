@@ -117,6 +117,12 @@ Products, Warehouses, Suppliers, ProductStocks and Roles index delete controls u
 /onboarding is a bilingual, responsive post-registration screen with business-type cards, country/currency/language/fiscal choices, tax and POS switches, inventory control level, transactional Apply and explicit manual-setup Skip.
 ## WMS-015D Product Templates
 The Product Templates screen supports a two-step selection-variant workflow: choose an assigned source SKU and options, inspect the bounded preview, then explicitly create missing products. Existing combinations are labelled and skipped.
+
+## Purchase Requests Angular
+
+Angular `/purchases/requests` provides the permission-aware searchable list, `/purchases/requests/new` creates a named warehouse and
+multi-line Draft, and `/purchases/requests/:id` shows lines, approval/history evidence and only currently available Submit/Cancel
+commands. Rejected forms stay editable, completed actions disappear with the status, and MVC remains the default presentation.
 ## Physical Stock Movements
 Bilingual read-only ledger showing Putaway/Relocation plus Planned, Posted or Reversed transfer outbound/transit/inbound stages, product, warehouse, locations, quantity and reference. It intentionally reports historic legacy rows without backfilling them.
 

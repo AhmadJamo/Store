@@ -215,6 +215,9 @@ export const routes: Routes = [
       { path: 'inventory/locations', canDeactivate: [(component) => component.canDeactivate()], loadComponent: () => import('./features/inventory/warehouse-locations-page').then(module => module.WarehouseLocationsPageComponent) },
       { path: 'inventory/putaway', canDeactivate: [(component) => component.canDeactivate()], loadComponent: () => import('./features/inventory/unassigned-stock-page').then(module => module.UnassignedStockPageComponent) },
       { path: 'inventory/location-movements', canDeactivate: [(component) => component.canDeactivate()], loadComponent: () => import('./features/inventory/location-movements-page').then(module => module.LocationMovementsPageComponent) },
+      { path: 'purchases/requests', loadComponent: () => import('./features/purchases/purchase-requests-page').then(module => module.PurchaseRequestsPageComponent) },
+      { path: 'purchases/requests/new', canDeactivate: [(component) => component.canDeactivate()], loadComponent: () => import('./features/purchases/purchase-requests-page').then(module => module.PurchaseRequestsPageComponent) },
+      { path: 'purchases/requests/:id', loadComponent: () => import('./features/purchases/purchase-requests-page').then(module => module.PurchaseRequestsPageComponent) },
       {
         path: 'products/recipes/:productId',
         canDeactivate: [(component) => component.canDeactivate()],
