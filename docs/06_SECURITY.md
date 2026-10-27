@@ -225,3 +225,10 @@ Availability and reservation endpoints are authenticated, tenant-filtered, versi
 permissions are enforced at the controller, paging is bounded in the Application services and explicit DTOs expose names and
 quantities without returning entities. Angular cannot change OnHand, Reserved or Available, and it cannot reserve, consume or
 release stock. Existing tenant filters, composite keys, rowversions and reservation concurrency constraints remain authoritative.
+
+## MOD-022D inventory-adjustment command boundary (2026-10-27)
+
+All adjustment endpoints require authentication and tenant context. Create, Count, Approve, Post and Cancel have separate permissions
+and antiforgery checks; explicit DTOs validate invariant non-negative counts and named options avoid exposing entities. Controllers
+call `InventoryAdjustmentService` only. Domain status checks, creator/counter approval separation, frozen-stock revalidation, reserved
+floor protection, serializable UnitOfWork and rowversion remain authoritative. Angular cannot skip a state or author variance/cost.

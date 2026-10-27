@@ -208,6 +208,9 @@ export const routes: Routes = [
       { path: 'inventory/stocks', canDeactivate: [(component) => component.canDeactivate()], loadComponent: () => import('./features/inventory/product-stocks-page').then(module => module.ProductStocksPageComponent) },
       { path: 'inventory/availability', loadComponent: () => import('./features/inventory/inventory-availability-page').then(module => module.InventoryAvailabilityPageComponent) },
       { path: 'inventory/reservations', loadComponent: () => import('./features/inventory/inventory-reservations-page').then(module => module.InventoryReservationsPageComponent) },
+      { path: 'inventory/adjustments', loadComponent: () => import('./features/inventory/inventory-adjustments-page').then(module => module.InventoryAdjustmentsPageComponent) },
+      { path: 'inventory/adjustments/new', canDeactivate: [(component) => component.canDeactivate()], loadComponent: () => import('./features/inventory/inventory-adjustment-form-page').then(module => module.InventoryAdjustmentFormPageComponent) },
+      { path: 'inventory/adjustments/:id', canDeactivate: [(component) => component.canDeactivate()], loadComponent: () => import('./features/inventory/inventory-adjustment-details-page').then(module => module.InventoryAdjustmentDetailsPageComponent) },
       {
         path: 'products/recipes/:productId',
         canDeactivate: [(component) => component.canDeactivate()],

@@ -1,0 +1,12 @@
+<section class="adjustments-page" aria-label="New inventory count">
+  <app-page-header eyebrow="INVENTORY" [title]="i18n.text('newInventoryCount')" [description]="i18n.text('newInventoryCountDescription')"><a class="ui-button secondary" routerLink="/inventory/adjustments">{{ i18n.text('backToAdjustments') }}</a></app-page-header>
+  @if (problem()) { <app-form-error-summary [title]="problem()" [errors]="{}" /> }
+  @if (!page()) { <app-feedback-state kind="loading" [title]="i18n.text('loadingAdjustmentForm')" /> }
+  @else { <form class="ui-card adjustment-form" [formGroup]="form" (ngSubmit)="save()">
+    <div class="form-grid"><label class="ui-field"><span>{{ i18n.text('warehouse') }}</span><select formControlName="warehouseId"><option [ngValue]="0">{{ i18n.text('selectWarehouse') }}</option>@for (warehouse of page()!.warehouses; track warehouse.id) { <option [ngValue]="warehouse.id">{{ warehouse.name }}</option> }</select></label><label class="ui-field"><span>{{ i18n.text('location') }}</span><select formControlName="storageLocationId"><option [ngValue]="null">{{ i18n.text('unassignedSystem') }}</option>@for (location of locations(); track location.id) { <option [ngValue]="location.id">{{ location.name }}</option> }</select></label></div>
+    <label class="ui-field"><span>{{ i18n.text('reason') }}</span><input formControlName="reason" maxlength="250" /></label>
+    <label class="check-row"><input type="checkbox" formControlName="isBlindCount" /> <span>{{ i18n.text('blindCountHelp') }}</span></label>
+    <fieldset><legend>{{ i18n.text('products') }}</legend><p>{{ i18n.text('selectProductsHelp') }}</p><div class="product-grid">@for (product of page()!.products; track product.id) { <label class="check-row"><input #choice type="checkbox" [checked]="selectedProducts().has(product.id)" (change)="toggleProduct(product.id, choice.checked)" /> <span>{{ product.name }}</span></label> }</div></fieldset>
+    <div class="form-actions"><a class="ui-button secondary" routerLink="/inventory/adjustments">{{ i18n.text('cancel') }}</a><button class="ui-button primary" [disabled]="saving()">{{ saving() ? i18n.text('saving') : i18n.text('createInventoryCount') }}</button></div>
+  </form> }
+</section>

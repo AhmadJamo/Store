@@ -1,6 +1,6 @@
 # Phase 22 — Inventory and WMS Angular migration
 
-> Status: IN PROGRESS — `MOD-022A..C` COMPLETE on 2026-10-27
+> Status: IN PROGRESS — `MOD-022A..D` COMPLETE on 2026-10-27
 >
 > Presentation default: MVC until a separate cutover approval.
 
@@ -44,11 +44,11 @@ never recomputes authoritative quantity, cost or value.
 ## Current evidence
 
 - Web Release build: zero warnings and zero errors.
-- Security/inventory regression: 1213 checks passed.
-- Angular: 159/159 tests across 57 files passed.
-- Static accessibility: 64 templates passed; external-SCSS policy passed.
-- Production bundles: 303,235/358,400 initial bytes and 81,211/81,920 largest lazy bytes.
-- Live checks: both Angular routes returned 200; anonymous availability/reservation API requests returned 401.
+- Security/inventory regression: 1216 checks passed.
+- Angular: 161/161 tests across 59 files passed.
+- Static accessibility: 67 templates passed; external-SCSS policy passed.
+- Production bundles: 303,702/358,400 initial bytes and 81,296/81,920 largest lazy bytes.
+- Live checks: adjustment list/create Angular routes returned 200; anonymous adjustment APIs returned 401.
 
 ## `MOD-022C` delivered — availability and reservation history
 
@@ -62,7 +62,18 @@ never recomputes authoritative quantity, cost or value.
 - Both responsive screens are Arabic/English, RTL-safe and read-only. No schema, balance, reservation, tracking, valuation or
   accounting behavior changed; MVC remains the default presentation.
 
+## `MOD-022D` delivered — inventory adjustments and cycle counting
+
+- Added an authenticated versioned API for adjustment list, named create options, create, details, count, approve, post and cancel.
+- Each mutation keeps its independent `InventoryAdjustments.*` permission and CSRF protection and delegates to
+  `InventoryAdjustmentService`; the controller does not access repositories or EF.
+- Added permission-aware Angular list, create and details routes with warehouse/location/product names, blind-count behavior,
+  dynamic full-line count entry, variance evidence, completed-action states and separate approve/post/cancel controls.
+- Rejected commands retain correctable input and render normalized Problem Details. Dirty count/create forms are protected.
+- Separation of duties, frozen expected quantity, reservations, location/tracking updates, AVCO, stock transactions/movements and
+  atomic posting remain server-owned. No schema or domain/accounting rule changed; MVC remains default.
+
 ## Next slice
 
-`MOD-022D` migrates the complete inventory-adjustment and cycle-counting workflow, including Draft creation, counting, approval,
-posting and cancellation, while preserving dimensional stock mutation and separation-of-duties rules on the server.
+`MOD-022E` migrates inventory tracking visibility and current opening-allocation, quarantine/release and recall lifecycle operations,
+while preserving lot/serial identity, shelf-life, dimensional balance and permission authority on the server.

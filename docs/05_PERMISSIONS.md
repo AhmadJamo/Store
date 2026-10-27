@@ -229,3 +229,10 @@ Angular `/inventory/availability` and `GET /api/v1/inventory-balances` require `
 permission grants balance mutation, reservation creation/consumption/release or source-document authority. Navigation filtering is
 only presentation convenience; both APIs repeat authentication, tenant and permission checks.
 
+## MOD-022D inventory-adjustment permissions (2026-10-27)
+
+Angular adjustment list/details require `InventoryAdjustments.View`; named create form and creation require Create; recording every
+Draft line requires Count; Counted approval requires Approve; Approved dimensional posting requires Post; and pre-Posted cancellation
+requires Cancel. Every unsafe endpoint validates antiforgery. Navigation and action visibility are conveniences only; the API repeats
+the exact permission. Domain separation of duties still prevents the creator/counter from approving their own count.
+

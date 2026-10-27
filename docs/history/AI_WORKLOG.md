@@ -1270,3 +1270,12 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   1213 checks, Angular passed 159/159 tests across 57 files, accessibility passed 64 templates, external SCSS passed, bundles measured
   303,235/358,400 initial and 81,211/81,920 largest lazy bytes, and live 200/401 checks passed. Advanced to `MOD-022D` inventory
   adjustments and cycle counting.
+- 2026-10-27: Completed `MOD-022D`. Added an authenticated versioned inventory-adjustment API and bilingual RTL-ready Angular list,
+  create and detail/count routes for every current operation: Draft creation, full-line counting, approval, posting and cancellation.
+  Every command retains its independent permission and CSRF; completed actions become status evidence and rejected/dirty forms retain
+  input. `InventoryAdjustmentService` and Domain remain authoritative for blind expected values, separation of duties, unchanged-stock
+  and reservation validation, dimensional balance/location/tracking, AVCO and atomic movement posting. No schema or business rule
+  changed and MVC remains default. Web Release passed with zero warnings/errors, isolated SecurityRegression passed 1216 checks,
+  Angular passed 161/161 tests across 59 files, accessibility passed 67 templates, external SCSS passed, bundles measured
+  303,702/358,400 initial and 81,296/81,920 largest lazy bytes, and live 200/401 checks passed. Advanced to `MOD-022E` inventory
+  tracking and quality controls.

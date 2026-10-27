@@ -41,7 +41,9 @@ The ERP SaaS Foundation Blueprint is imported as a non-authoritative planning re
   DTOs, permissions, CSRF, retained server rules and bilingual Angular UI. Completed 2026-10-27.
 - [x] MOD-022C migrate dimensional availability and reservation history with Application-owned paging, independent permissions,
   named dimensions, bilingual read-only Angular routes and full verification. Completed 2026-10-27.
-- [ ] MOD-022D through MOD-028 migrate the remaining inventory/WMS, purchasing, sales, POS, accounting, tenant/public,
+- [x] MOD-022D migrate the complete inventory-adjustment lifecycle: create, count, approve, post and cancel with independent
+  permissions, CSRF, completed-action states and server-owned dimensional posting. Completed 2026-10-27.
+- [ ] MOD-022E through MOD-028 migrate the remaining inventory/WMS, purchasing, sales, POS, accounting, tenant/public,
   platform and shared MVC workflows to Angular, including every operation, permission, localization, file/PDF and edge state.
 - [ ] MOD-029 prove full-system parity through dual-run reconciliation, performance/security/accessibility evidence and cutover/rollback rehearsals.
 - [ ] MOD-030 make Angular the only presentation and retire MVC incrementally only after explicit approval and zero registry gaps.

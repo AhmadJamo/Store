@@ -142,3 +142,8 @@ AVCO and accounting effects remain inside the established inventory transaction 
 `MOD-022C` exposes read-only dimensional availability and reservation history through versioned controllers that call paged
 Application-service methods. Angular never derives Available, changes Reserved or resolves tenant dimensions. The existing
 repositories, tenant filters, rowversions and reservation workflows remain authoritative; both controllers are GET-only.
+
+`MOD-022D` keeps the inventory-adjustment lifecycle behind `InventoryAdjustmentService`. The versioned controller only maps named
+create options and delegates create/count/approve/post/cancel commands. Angular conditionally presents each independently authorized
+state transition; it does not calculate variance or mutate balance/location/tracking/valuation facts. Separation of duties and atomic
+posting remain Domain/Application responsibilities.

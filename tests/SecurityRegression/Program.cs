@@ -24,6 +24,7 @@ using MiniStore.Application.Dtos.Settings;
 using MiniStore.Application.Dtos.Customers;
 using MiniStore.Application.Dtos.Analytics;
 using MiniStore.Application.DTOs.Inventory.Tracking;
+using MiniStore.Application.DTOs.Inventory.Adjustments;
 using MiniStore.Application.DTOs.Purchases;
 using MiniStore.Application.DTOs.Products;
 using MiniStore.Application.DTOs.ProductStocks;
@@ -4067,6 +4068,31 @@ Check(inventoryReservationsApi.GetCustomAttribute<ApiControllerAttribute>() is n
 Check(typeof(InventoryBalanceService).GetMethod(nameof(InventoryBalanceService.GetPagedAsync)) is not null &&
       typeof(InventoryReservationService).GetMethod(nameof(InventoryReservationService.GetPagedAsync)) is not null,
     "Inventory availability and reservation paging must remain behind the Application boundary");
+var inventoryAdjustmentsApi = typeof(InventoryAdjustmentsApiController);
+Check(inventoryAdjustmentsApi.GetCustomAttribute<ApiControllerAttribute>() is not null &&
+      inventoryAdjustmentsApi.GetCustomAttribute<AuthorizeAttribute>() is not null &&
+      inventoryAdjustmentsApi.GetCustomAttribute<RouteAttribute>()?.Template == "api/v1/inventory-adjustments" &&
+      inventoryAdjustmentsApi.GetMethod(nameof(InventoryAdjustmentsApiController.GetAll))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:InventoryAdjustments.View" &&
+      inventoryAdjustmentsApi.GetMethod(nameof(InventoryAdjustmentsApiController.GetDetails))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:InventoryAdjustments.View",
+    "Angular inventory-adjustment reads must remain authenticated and InventoryAdjustments.View protected");
+Check(inventoryAdjustmentsApi.GetMethod(nameof(InventoryAdjustmentsApiController.Create))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:InventoryAdjustments.Create" &&
+      inventoryAdjustmentsApi.GetMethod(nameof(InventoryAdjustmentsApiController.Count))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:InventoryAdjustments.Count" &&
+      inventoryAdjustmentsApi.GetMethod(nameof(InventoryAdjustmentsApiController.Approve))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:InventoryAdjustments.Approve" &&
+      inventoryAdjustmentsApi.GetMethod(nameof(InventoryAdjustmentsApiController.Post))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:InventoryAdjustments.Post" &&
+      inventoryAdjustmentsApi.GetMethod(nameof(InventoryAdjustmentsApiController.Cancel))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:InventoryAdjustments.Cancel" &&
+      new[] { nameof(InventoryAdjustmentsApiController.Create), nameof(InventoryAdjustmentsApiController.Count), nameof(InventoryAdjustmentsApiController.Approve), nameof(InventoryAdjustmentsApiController.Post), nameof(InventoryAdjustmentsApiController.Cancel) }
+          .Select(name => inventoryAdjustmentsApi.GetMethod(name)!).All(method => method.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null),
+    "Every inventory-adjustment mutation must preserve its independent permission and antiforgery");
+Check(typeof(InventoryAdjustmentCreateApiPageDto).GetProperty(nameof(InventoryAdjustmentCreateApiPageDto.Warehouses)) is not null &&
+      typeof(InventoryCountInputDto).GetProperty(nameof(InventoryCountInputDto.CountedQuantity))!.GetCustomAttribute<RangeAttribute>() is not null,
+    "Inventory-adjustment API must expose named options and invariant count validation");
 var operationsApi = typeof(OperationsCenterApiController);
 Check(operationsApi.GetCustomAttribute<ApiControllerAttribute>() is not null &&
       operationsApi.GetCustomAttribute<AuthorizeAttribute>() is not null &&

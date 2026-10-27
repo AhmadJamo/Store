@@ -130,6 +130,10 @@ warehouse filtering and paging. Angular `/inventory/reservations` is the matchin
 status filters and paging. Both show server-authored values, use RTL-safe responsive tables and remain read-only; MVC is default.
 
 ## Inventory adjustments
+
+Angular `/inventory/adjustments` provides the permission-aware list, `/inventory/adjustments/new` creates a named warehouse/location
+and multi-product count, and `/inventory/adjustments/:id` records every line then exposes only the valid approve/post/cancel action.
+Blind Draft counts hide expected quantity, completed actions become status badges, rejected inputs stay editable and MVC remains default.
 `InventoryAdjustments/Index`, `Create` and `Details` implement the bilingual count workflow. Blind Draft documents hide expected quantities; later states expose expected, counted and variance values plus allowed workflow actions.
 
 ## Lot and serial tracking
