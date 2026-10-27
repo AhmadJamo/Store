@@ -195,6 +195,15 @@ export const routes: Routes = [
         loadComponent: () => import('./features/products/product-templates-page').then((module) => module.ProductTemplatesPageComponent),
       },
       {
+        path: 'products/recipes',
+        loadComponent: () => import('./features/products/recipe-list-page').then((module) => module.RecipeListPageComponent),
+      },
+      {
+        path: 'products/recipes/:productId',
+        canDeactivate: [(component) => component.canDeactivate()],
+        loadComponent: () => import('./features/products/recipe-editor-page').then((module) => module.RecipeEditorPageComponent),
+      },
+      {
         path: 'products/:id/attributes',
         canDeactivate: [(component) => component.canDeactivate()],
         loadComponent: () => import('./features/products/product-attribute-values-page').then((module) => module.ProductAttributeValuesPageComponent),

@@ -1220,3 +1220,11 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   warnings/errors, SecurityRegression passed 1195 checks, Angular passed 141/141 tests across 45 files, 56 templates
   passed accessibility, external SCSS passed, and bundles measured 298,693/358,400 initial and 80,866/81,920 largest
   lazy bytes. MVC remains default; advanced to `MOD-021E` prepared-product recipes.
+- 2026-10-27: Completed `MOD-021E` prepared-product recipe parity. Added authenticated versioned DTO endpoints and
+  bilingual RTL-ready Angular `/products/recipes` list plus dynamic editor for yield, ingredient products, compatible
+  managed units and negative-policy guidance. Saving still creates a new immutable version through `RecipeService`,
+  which owns stocked eligibility, unit-dimension conversion snapshots, positive quantities, domain duplication rules,
+  product classification and the transaction; rejected rows remain editable. Web Release passed with zero warnings/
+  errors, SecurityRegression passed 1198 checks, Angular passed 144/144 tests across 47 files, 58 templates passed
+  accessibility, external SCSS passed, and bundles measured 298,961/358,400 initial and 80,866/81,920 largest lazy
+  bytes. MVC remains default; advanced to `MOD-021F` tax rates, payment methods and branches.

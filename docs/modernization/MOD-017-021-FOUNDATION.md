@@ -10,8 +10,8 @@ This bundle deliberately starts five dependent phases without claiming their bro
   344 MVC actions and 198 Razor control rows, plus reversible per-surface cutover controls;
 - `MOD-020`: complete Angular functional parity for Settings, Document Design, account/session, current user/role administration,
   public company registration and guided onboarding; MVC remains the committed default;
-- `MOD-021`: `MOD-021A..D` complete product master, categories, attributes/values and templates/controlled variants;
-  remaining recipes and catalog masters are staged in `PHASE_21_CATALOG.md`.
+- `MOD-021`: `MOD-021A..E` complete product master, categories, attributes/values, templates/variants and recipes;
+  remaining catalog masters are staged in `PHASE_21_CATALOG.md`.
 
 All API endpoints are authenticated, permission protected and call Application services. No EF entity is
 returned and no financial value is calculated in the browser. MOD-017C adds one additive tenant-owned delegation
@@ -22,13 +22,13 @@ generated registry is in `MVC_MIGRATION_REGISTRY.md` and is refreshed with
 ## Verification evidence
 
 - Web Release build: passed with zero warnings and zero errors.
-- Security/inventory regression: 1195 checks passed, including permission-separated and antiforgery-protected product,
-  category, attribute and template/variant operations.
+- Security/inventory regression: 1198 checks passed, including permission-separated and antiforgery-protected product,
+  category, attribute, template/variant and recipe operations.
 - Angular production build: passed.
-- Angular tests: 141/141 passed across 45 files after `MOD-021D`.
+- Angular tests: 144/144 passed across 47 files after `MOD-021E`.
 - External-style policy: passed; no Angular HTML `style=` attributes or component `styles:` blocks.
 
 ## Remaining gates
 
-`MOD-020` functional parity is complete. Product, category, attribute/value and template/variant operations are complete
-through `MOD-021D`; catalog functional parity remains open beginning with `MOD-021E` prepared-product recipes.
+`MOD-020` functional parity is complete. Product through recipe operations are complete through `MOD-021E`; catalog
+functional parity remains open beginning with `MOD-021F` tax rates, payment methods and branch master data.

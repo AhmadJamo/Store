@@ -1,6 +1,6 @@
 # MOD-021 — Catalog migration
 
-> Status: IN PROGRESS — `MOD-021A..D` completed 2026-10-27
+> Status: IN PROGRESS — `MOD-021A..E` completed 2026-10-27
 > Presentation default: MVC until an explicit cutover gate
 
 ## Scope and sequence
@@ -11,8 +11,8 @@
 | `MOD-021B` | Product-category create/list/activate/deactivate | COMPLETE |
 | `MOD-021C` | Product attribute definitions, options and per-product values | COMPLETE |
 | `MOD-021D` | Product templates and controlled variant creation | COMPLETE |
-| `MOD-021E` | Prepared-product recipes and immutable recipe versions | NEXT |
-| `MOD-021F` | Tax rates, payment methods and branch master data | PLANNED |
+| `MOD-021E` | Prepared-product recipes and immutable recipe versions | COMPLETE |
+| `MOD-021F` | Tax rates, payment methods and branch master data | NEXT |
 | `MOD-021G` | Warehouse master data | PLANNED |
 
 Measurement-unit operations were already completed in `MOD-020L`; this wave reuses that Angular surface instead of
@@ -49,10 +49,10 @@ creating a duplicate unit editor.
 ## Verification evidence
 
 - Web Release: passed, zero warnings and zero errors.
-- Security/inventory regression: 1195 checks passed.
-- Angular: 141/141 tests across 45 files passed.
-- Static accessibility: 56 templates passed; external-SCSS policy passed.
-- Production bundle: 298,693 / 358,400 initial bytes; largest lazy chunk 80,866 / 81,920 bytes.
+- Security/inventory regression: 1198 checks passed.
+- Angular: 144/144 tests across 47 files passed.
+- Static accessibility: 58 templates passed; external-SCSS policy passed.
+- Production bundle: 298,961 / 358,400 initial bytes; largest lazy chunk 80,866 / 81,920 bytes.
 
 ## `MOD-021B` delivered behavior
 
@@ -87,7 +87,16 @@ creating a duplicate unit editor.
 - Reads require `Products.View`; create/assign/preview/generate require `Products.Edit` plus antiforgery. MVC remains
   the rollback/default presentation.
 
+## `MOD-021E` delivered behavior
+
+- Angular `/products/recipes` lists every prepared product and active recipe summary; `/products/recipes/:productId`
+  provides dynamic ingredient rows, compatible unit filtering, yield, negative-policy guidance and dirty-form recovery.
+- Saving creates a new immutable version through `RecipeService`; the server revalidates stocked ingredients, active
+  units, matching dimensions, positive invariant quantities, duplicate/domain rules and transaction ownership.
+- The browser displays product/unit names and never calculates converted stock quantity or recipe cost. Reads require
+  `Products.View`; editor/save require `Products.Edit`, and save validates antiforgery.
+
 ## Remaining work
 
-Proceed with `MOD-021E` prepared-product recipes and immutable versions. Do not declare the catalog wave complete until every listed slice reaches
+Proceed with `MOD-021F` tax rates, payment methods and branch master data. Do not declare the catalog wave complete until every listed slice reaches
 functional parity and its own verification evidence is recorded.

@@ -26,6 +26,7 @@ using MiniStore.Application.Dtos.Analytics;
 using MiniStore.Application.DTOs.Inventory.Tracking;
 using MiniStore.Application.DTOs.Purchases;
 using MiniStore.Application.DTOs.Products;
+using MiniStore.Application.DTOs.Recipes;
 using MiniStore.Application.DTOs.Suppliers;
 using MiniStore.Application.DTOs.Security;
 using MiniStore.Application.DTOs.Warehouses;
@@ -3979,6 +3980,25 @@ Check(typeof(CreateProductTemplateDto).GetProperty(nameof(CreateProductTemplateD
           .GetCustomAttribute<RegularExpressionAttribute>()?.Pattern == "^[A-Za-z0-9][A-Za-z0-9_-]*$" &&
       ProductTemplateService.MaximumGeneratedVariants == 50,
     "Template inputs must keep neutral codes and variant generation must remain bounded to 50 combinations");
+var recipesApi = typeof(RecipesApiController);
+Check(recipesApi.GetCustomAttribute<ApiControllerAttribute>() is not null &&
+      recipesApi.GetCustomAttribute<AuthorizeAttribute>() is not null &&
+      recipesApi.GetCustomAttribute<RouteAttribute>()?.Template == "api/v1/recipes" &&
+      recipesApi.GetMethod(nameof(RecipesApiController.GetAll))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:Products.View",
+    "Angular recipe list must remain authenticated and Products.View protected");
+Check(recipesApi.GetMethod(nameof(RecipesApiController.GetEditor))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:Products.Edit" &&
+      recipesApi.GetMethod(nameof(RecipesApiController.Save))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:Products.Edit" &&
+      recipesApi.GetMethod(nameof(RecipesApiController.Save))!
+          .GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null,
+    "Recipe editor and immutable-version save must require Products.Edit and writes must validate antiforgery");
+Check(typeof(RecipeEditorDto).GetProperty(nameof(RecipeEditorDto.YieldQuantity))!
+          .GetCustomAttribute<RangeAttribute>() is not null &&
+      typeof(RecipeIngredientInputDto).GetProperty(nameof(RecipeIngredientInputDto.Quantity))!
+          .GetCustomAttribute<RangeAttribute>() is not null,
+    "Recipe API input must retain invariant positive yield and ingredient quantity validation");
 var operationsApi = typeof(OperationsCenterApiController);
 Check(operationsApi.GetCustomAttribute<ApiControllerAttribute>() is not null &&
       operationsApi.GetCustomAttribute<AuthorizeAttribute>() is not null &&

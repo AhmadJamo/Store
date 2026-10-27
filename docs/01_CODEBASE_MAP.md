@@ -97,6 +97,11 @@ variant list, bounded preview and explicit generation over `ProductTemplateServi
 signatures and combination plans, enforces the 50-row cap and prevents unsafe cloning. All mutations use
 `Products.Edit` and antiforgery.
 
+`RecipesApiController` and Angular `/products/recipes` plus `/products/recipes/:productId` complete prepared-product
+recipe list/editor/immutable-version save over `RecipeService`. Stocked-ingredient eligibility, unit dimensions,
+conversion snapshots, positive quantities and version transactions remain server-owned; save uses `Products.Edit`
+and antiforgery.
+
 ## SAL-130A reusable Analytics Center
 
 `AnalyticsWorkspace` and its widgets persist tenant-owned personal/shared presentation preferences. Generic analytics

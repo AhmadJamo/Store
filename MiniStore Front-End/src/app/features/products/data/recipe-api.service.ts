@@ -1,0 +1,2 @@
+import { HttpClient } from '@angular/common/http'; import { Injectable } from '@angular/core'; import { RecipeEditor, RecipeListItem } from './recipe.models';
+@Injectable({ providedIn: 'root' }) export class RecipeApiService { constructor(private readonly http: HttpClient) {} getAll() { return this.http.get<readonly RecipeListItem[]>('/api/v1/recipes'); } getEditor(productId: number) { return this.http.get<RecipeEditor>(`/api/v1/recipes/${productId}`); } save(editor: RecipeEditor) { return this.http.put<RecipeEditor>(`/api/v1/recipes/${editor.productId}`, editor); } }

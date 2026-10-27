@@ -182,3 +182,10 @@ Template reads require authentication and `Products.View`. Create, assignment/re
 `Products.Edit` and antiforgery even though preview has no persistence effect. Angular never calculates a trusted
 variant identity: `ProductTemplateService` rechecks category/source/template relationships, values/options, neutral
 SHA-256 signatures, duplicate combinations and the 50-combination limit, then rebuilds the plan inside generation.
+
+## MOD-021E recipe boundary (2026-10-27)
+
+Recipe list reads require authentication and `Products.View`; editor reads and immutable-version saves require
+`Products.Edit`, with explicit antiforgery on save. `RecipeService` revalidates product/ingredient tenancy through
+repositories, stocked eligibility, active managed units, matching dimensions and positive quantities transactionally.
+Angular receives DTOs only and cannot author trusted conversion snapshots or recipe cost.
