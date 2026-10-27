@@ -232,3 +232,11 @@ All adjustment endpoints require authentication and tenant context. Create, Coun
 and antiforgery checks; explicit DTOs validate invariant non-negative counts and named options avoid exposing entities. Controllers
 call `InventoryAdjustmentService` only. Domain status checks, creator/counter approval separation, frozen-stock revalidation, reserved
 floor protection, serializable UnitOfWork and rowversion remain authoritative. Angular cannot skip a state or author variance/cost.
+
+## MOD-022F warehouse-operation command boundary (2026-10-27)
+
+Location, Unassigned Stock, relocation and physical-ledger APIs require authentication, tenant context and independent permissions;
+all POST/PUT commands validate antiforgery. Explicit DTOs validate identifiers, quantities, lengths and idempotency keys, and API
+controllers call Application services only. The server owns same-warehouse hierarchy, cycle/duplicate checks, active receive/pick
+capabilities, total destination capacity, exact source quantity, serializable transactions, dimensional balances and immutable linked
+movement facts. Replaying a putaway/relocation key cannot apply stock twice; Angular cannot grant authority through navigation state.

@@ -119,6 +119,11 @@ Products, Warehouses, Suppliers, ProductStocks and Roles index delete controls u
 The Product Templates screen supports a two-step selection-variant workflow: choose an assigned source SKU and options, inspect the bounded preview, then explicitly create missing products. Existing combinations are labelled and skipped.
 ## Physical Stock Movements
 Bilingual read-only ledger showing Putaway/Relocation plus Planned, Posted or Reversed transfer outbound/transit/inbound stages, product, warehouse, locations, quantity and reference. It intentionally reports historic legacy rows without backfilling them.
+
+Angular `/inventory/locations` manages the location hierarchy, barcode and operational capabilities. Angular `/inventory/putaway`
+assigns Unassigned Stock and manages product/category/default putaway rules. Angular `/inventory/location-movements` performs exact
+same-warehouse relocation and combines searchable LocationMovement history with the read-only physical StockMovement ledger.
+Buttons and navigation are permission-filtered; APIs remain authoritative and MVC is still the default presentation.
 ## Inventory Availability
 Bilingual read-only Product/Warehouse/Location projection showing OnHand, Reserved and Available. The system-owned Unassigned row is visibly distinguished and cannot be managed as a normal storage location.
 ## Inventory reservations

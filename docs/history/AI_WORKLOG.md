@@ -1288,3 +1288,11 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   across 61 files, accessibility passed 68 templates, external SCSS passed, bundles measured 303,857/358,400 initial and
   81,401/81,920 largest lazy bytes, and live Angular 200 plus anonymous API read/write 401 checks passed. Advanced to `MOD-022F`
   warehouse locations, Unassigned putaway and exact-location relocation/history.
+- 2026-10-27: Completed `MOD-022F` and the current inventory/WMS Angular wave. Added explicit validated Application DTO/page contracts
+  and authenticated versioned APIs for location search/create/edit, Unassigned Stock assignment and putaway-rule create/activation,
+  exact-location relocation/history and the read-only physical ledger. Added bilingual permission-aware Angular location, putaway and
+  movement workspaces with hierarchy/barcode/capabilities, suggestions, idempotency, dirty recovery and external RTL-safe SCSS.
+  Capacity, receive/pick eligibility, dimensional balances and movement authority remain server-owned; MVC remains default and no
+  schema changed. Web Release passed with zero warnings/errors, SecurityRegression passed 1224 checks, Angular passed 165/165 tests
+  across 62 files, accessibility passed 71 templates, external SCSS passed, and bundles measured 304,437/358,400 initial and
+  81,662/81,920 largest lazy bytes. Advanced to `MOD-023A` Purchase Requests.

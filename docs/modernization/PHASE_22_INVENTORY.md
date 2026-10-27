@@ -1,6 +1,6 @@
 # Phase 22 — Inventory and WMS Angular migration
 
-> Status: IN PROGRESS — `MOD-022A..E` COMPLETE on 2026-10-27
+> Status: COMPLETE — `MOD-022A..F` COMPLETE on 2026-10-27
 >
 > Presentation default: MVC until a separate cutover approval.
 
@@ -94,7 +94,28 @@ never recomputes authoritative quantity, cost or value.
 - Production bundles: 303,857/358,400 initial bytes and 81,401/81,920 largest lazy bytes.
 - Live checks: Angular tracking route returned 200; anonymous tracking read/write requests returned 401.
 
-## Next slice
+## `MOD-022F` delivered — warehouse locations and internal movement
 
-`MOD-022F` migrates warehouse locations, Unassigned Stock putaway and exact-location relocation/history operations while preserving
-capacity, receive/pick capability, idempotency, dimensional balance and physical-movement authority on the server.
+- Added authenticated, versioned APIs for location search/create/edit, Unassigned Stock assignment and putaway rules, exact-location
+  relocation history and the physical StockMovement ledger. Controllers delegate to existing Application services only.
+- Added permission-aware Angular `/inventory/locations`, `/inventory/putaway` and `/inventory/location-movements` routes covering
+  location hierarchy/barcode/capabilities, suggested/manual putaway, rule create/activate/deactivate, relocation and both ledgers.
+- Every mutation preserves antiforgery and its existing permission. Putaway/relocation use retry-safe idempotency keys; warehouse,
+  product and location names remain user-facing while identifiers stay internal transport values.
+- Capacity, receive/pick eligibility, hierarchy/cycle checks, dimensional balance, ProductStock totals and immutable movement facts
+  remain server-owned. Arabic/English, RTL, dirty-form recovery, responsive external SCSS and accessibility are included.
+- No schema or domain/accounting rule changed; MVC remains the default presentation.
+
+## Final evidence
+
+- Web Release build: zero warnings and zero errors.
+- Security/inventory regression: 1224 checks passed.
+- Angular: 165/165 tests across 62 files passed.
+- Static accessibility: 71 templates passed; external-SCSS policy passed.
+- Production bundles: 304,437/358,400 initial bytes and 81,662/81,920 largest lazy bytes.
+- Live checks: all three Angular routes return 200 and anonymous location/putaway/movement API requests return 401.
+
+## Next phase
+
+`MOD-023A` starts the purchasing migration with Purchase Request list/create/details and its submit/cancel lifecycle, preserving
+approval, frozen-unit, numbering and server-owned state-transition rules. MVC remains default until a separate cutover approval.

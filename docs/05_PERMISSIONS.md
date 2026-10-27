@@ -239,3 +239,10 @@ Draft line requires Count; Counted approval requires Approve; Approved dimension
 requires Cancel. Every unsafe endpoint validates antiforgery. Navigation and action visibility are conveniences only; the API repeats
 the exact permission. Domain separation of duties still prevents the creator/counter from approving their own count.
 
+## MOD-022F warehouse-operation permissions (2026-10-27)
+
+Angular location reads/create/edit use `Warehouses.View`, `Warehouses.Create` and `Warehouses.Edit` independently. Unassigned Stock
+reads require `ProductStock.View`; assignment and putaway-rule create/activation require `ProductStock.Edit`. Location history and
+relocation require `LocationMovements.View` and `LocationMovements.Create`; the physical ledger separately requires
+`StockMovements.View`. Every mutation validates antiforgery. Navigation/action filtering never replaces API authorization.
+
