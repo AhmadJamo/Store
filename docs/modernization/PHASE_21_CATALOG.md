@@ -1,6 +1,6 @@
 # MOD-021 — Catalog migration
 
-> Status: IN PROGRESS — `MOD-021A..B` completed 2026-10-27
+> Status: IN PROGRESS — `MOD-021A..C` completed 2026-10-27
 > Presentation default: MVC until an explicit cutover gate
 
 ## Scope and sequence
@@ -9,8 +9,8 @@
 |---|---|---|
 | `MOD-021A` | Product list, details, create, edit and delete | COMPLETE |
 | `MOD-021B` | Product-category create/list/activate/deactivate | COMPLETE |
-| `MOD-021C` | Product attribute definitions, options and per-product values | NEXT |
-| `MOD-021D` | Product templates and controlled variant creation | PLANNED |
+| `MOD-021C` | Product attribute definitions, options and per-product values | COMPLETE |
+| `MOD-021D` | Product templates and controlled variant creation | NEXT |
 | `MOD-021E` | Prepared-product recipes and immutable recipe versions | PLANNED |
 | `MOD-021F` | Tax rates, payment methods and branch master data | PLANNED |
 | `MOD-021G` | Warehouse master data | PLANNED |
@@ -49,10 +49,10 @@ creating a duplicate unit editor.
 ## Verification evidence
 
 - Web Release: passed, zero warnings and zero errors.
-- Security/inventory regression: 1189 checks passed.
-- Angular: 131/131 tests across 40 files passed.
-- Static accessibility: 53 templates passed; external-SCSS policy passed.
-- Production bundle: 298,021 / 358,400 initial bytes; largest lazy chunk 80,866 / 81,920 bytes.
+- Security/inventory regression: 1192 checks passed.
+- Angular: 137/137 tests across 43 files passed.
+- Static accessibility: 55 templates passed; external-SCSS policy passed.
+- Production bundle: 298,342 / 358,400 initial bytes; largest lazy chunk 80,866 / 81,920 bytes.
 
 ## `MOD-021B` delivered behavior
 
@@ -64,7 +64,18 @@ creating a duplicate unit editor.
 - Deactivation retains historical rows and product references; no delete operation was invented because MVC/domain do
   not provide one.
 
+## `MOD-021C` delivered behavior
+
+- Angular `/products/attributes` provides definition list/create/activate/deactivate, typed Text/Number/Boolean/Selection
+  rules, ordered selection options, required/variant flags and optional category applicability.
+- Angular `/products/:id/attributes` renders the server-authoritative applicable fields and saves typed values while
+  preserving rejected input. The Application service continues to validate required values, type parsing, selection
+  ownership, category applicability and assigned-template variant refresh inside its transaction.
+- Reads require `Products.View`; definition and per-product value operations require `Products.Edit`. Every mutation
+  validates antiforgery, and the API returns explicit DTOs and localized Problem Details rather than domain entities.
+- Product list/details expose permission-aware value links. MVC remains the rollback/default presentation.
+
 ## Remaining work
 
-Proceed with `MOD-021C` product attributes and values. Do not declare the catalog wave complete until every listed slice reaches
+Proceed with `MOD-021D` product templates and controlled variants. Do not declare the catalog wave complete until every listed slice reaches
 functional parity and its own verification evidence is recorded.

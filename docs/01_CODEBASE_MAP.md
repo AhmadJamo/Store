@@ -87,6 +87,11 @@ expense-account options and product details expose display names rather than int
 antiforgery. Neutral category codes are DTO/domain validated and inactive categories remain preserved for historical
 references.
 
+`ProductAttributesApiController` and Angular `/products/attributes` plus `/products/:id/attributes` complete definition,
+selection-option, status and typed per-product value parity over `ProductAttributeService`. DTO validation, category
+applicability, required/type/option checks and assigned-template variant refresh remain server-owned. Mutations require
+`Products.Edit` and antiforgery; Angular preserves rejected input and uses bilingual external SCSS.
+
 ## SAL-130A reusable Analytics Center
 
 `AnalyticsWorkspace` and its widgets persist tenant-owned personal/shared presentation preferences. Generic analytics

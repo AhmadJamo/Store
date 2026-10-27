@@ -6,9 +6,10 @@
 `MOD-021A` completes product-master parity in Angular: server-paged list/search, details, create, edit and confirmed
 delete. The API delegates to `ProductService`, separates View/Create/Edit/Delete permissions and validates antiforgery
 on every mutation. The form includes all current MVC fields and server-provided category, managed-unit, supplier and
-expense-account options; user-facing details show names while IDs remain transport-only. Categories, templates,
-`MOD-021B` also completes category list/create/activate/deactivate with neutral-code validation and preserved inactive
-rows. Templates, attributes and recipes remain on MVC for later `MOD-021` slices. Measurement-unit operations are already Angular-owned
+expense-account options; user-facing details show names while IDs remain transport-only. `MOD-021B` completes category
+list/create/activate/deactivate with neutral-code validation and preserved inactive rows. `MOD-021C` completes attribute
+definition/options/status and typed per-product values with category applicability and variant refresh remaining
+server-authoritative. Templates and recipes remain on MVC for later `MOD-021` slices. Measurement-unit operations are already Angular-owned
 from `MOD-020L`. MVC remains the committed default. See `modernization/PHASE_21_CATALOG.md`.
 
 Recipe yields, ingredient quantities and measurement-unit conversion factors use culture-invariant decimal validation, so Arabic UI culture cannot turn valid dot-based HTML values into a validation exception.

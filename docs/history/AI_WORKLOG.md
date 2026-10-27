@@ -1203,3 +1203,12 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   checks, Angular passed 131/131 tests across 40 files, 53 templates passed accessibility, external SCSS passed, and
   bundles measured 298,021/358,400 initial and 80,866/81,920 largest lazy bytes. MVC remains default; advanced to
   `MOD-021C` product attributes and values.
+- 2026-10-27: Completed `MOD-021C` product-attribute functional parity. Added authenticated versioned Application-DTO
+  endpoints and bilingual RTL-ready Angular `/products/attributes` and `/products/:id/attributes` surfaces for
+  definition list/create/status, ordered Selection options, category applicability and typed per-product values.
+  `ProductAttributeService` remains authoritative for neutral-code uniqueness, required/type/option/category rules,
+  transactions and assigned-template variant refresh; every mutation requires `Products.Edit` and antiforgery, and
+  rejected forms/values remain editable. Web Release passed without warnings/errors, SecurityRegression passed 1192
+  checks, Angular passed 137/137 tests across 43 files, 55 templates passed accessibility, external SCSS passed, and
+  bundles measured 298,342/358,400 initial and 80,866/81,920 largest lazy bytes. Live Angular routes returned 200 and
+  the anonymous API returned 401. MVC remains default; advanced to `MOD-021D` product templates and variants.

@@ -3935,6 +3935,30 @@ Check(typeof(CreateProductCategoryDto).GetProperty(nameof(CreateProductCategoryD
       typeof(CreateProductCategoryDto).GetProperty(nameof(CreateProductCategoryDto.Name))!
           .GetCustomAttribute<RequiredAttribute>() is not null,
     "Product-category API input must require a name and language-neutral code");
+var productAttributesApi = typeof(ProductAttributesApiController);
+Check(productAttributesApi.GetCustomAttribute<ApiControllerAttribute>() is not null &&
+      productAttributesApi.GetCustomAttribute<AuthorizeAttribute>() is not null &&
+      productAttributesApi.GetCustomAttribute<RouteAttribute>()?.Template == "api/v1/product-attributes" &&
+      productAttributesApi.GetMethod(nameof(ProductAttributesApiController.GetPage))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:Products.View",
+    "Angular product-attribute definitions must remain authenticated and Products.View protected");
+Check(new[]
+    {
+        productAttributesApi.GetMethod(nameof(ProductAttributesApiController.Create))!,
+        productAttributesApi.GetMethod(nameof(ProductAttributesApiController.SetStatus))!,
+        productAttributesApi.GetMethod(nameof(ProductAttributesApiController.SaveValues))!
+    }.All(method => method.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:Products.Edit" &&
+        method.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null) &&
+      productAttributesApi.GetMethod(nameof(ProductAttributesApiController.GetValues))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:Products.Edit",
+    "Product-attribute definitions and values must require Products.Edit and every mutation must validate antiforgery");
+Check(typeof(CreateProductAttributeDto).GetProperty(nameof(CreateProductAttributeDto.Code))!
+          .GetCustomAttribute<RegularExpressionAttribute>()?.Pattern == "^[A-Za-z0-9][A-Za-z0-9_-]*$" &&
+      typeof(CreateProductAttributeDto).GetProperty(nameof(CreateProductAttributeDto.Name))!
+          .GetCustomAttribute<RequiredAttribute>() is not null &&
+      typeof(ProductAttributeService).GetMethod(nameof(ProductAttributeService.CreateAsync))!
+          .ReturnType == typeof(Task<int>),
+    "Product-attribute creation must validate its API contract and return the persisted identifier through the Application layer");
 var operationsApi = typeof(OperationsCenterApiController);
 Check(operationsApi.GetCustomAttribute<ApiControllerAttribute>() is not null &&
       operationsApi.GetCustomAttribute<AuthorizeAttribute>() is not null &&

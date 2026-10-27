@@ -4,7 +4,7 @@
   @else if (product(); as item) {
     <app-page-header eyebrow="CATALOG" [title]="item.name" [description]="item.productCode">
       <a class="ui-button secondary" routerLink="/products">{{ i18n.text('backToProducts') }}</a>
-      @if (session.can('Products.Edit')) { <a class="ui-button primary" [routerLink]="['/products', item.id, 'edit']">{{ i18n.text('edit') }}</a> }
+      @if (session.can('Products.Edit')) { <a class="ui-button secondary" [routerLink]="['/products', item.id, 'attributes']">{{ i18n.text('attributes') }}</a><a class="ui-button primary" [routerLink]="['/products', item.id, 'edit']">{{ i18n.text('edit') }}</a> }
     </app-page-header>
     <div class="details-grid">
       <article class="ui-card"><h2>{{ i18n.text('productDetails') }}</h2><dl><div><dt>{{ i18n.text('productCode') }}</dt><dd><code>{{ item.productCode }}</code></dd></div><div><dt>{{ i18n.text('barcode') }}</dt><dd>{{ item.barcode || '—' }}</dd></div><div><dt>{{ i18n.text('productType') }}</dt><dd>{{ typeName(item.productType) }}</dd></div><div><dt>{{ i18n.text('category') }}</dt><dd>{{ item.productCategoryName || i18n.text('noCategory') }}</dd></div><div><dt>{{ i18n.text('status') }}</dt><dd><span class="ui-badge" [class.success]="item.isActive" [class.warning]="!item.isActive">{{ item.isActive ? i18n.text('active') : i18n.text('inactive') }}</span></dd></div></dl></article>

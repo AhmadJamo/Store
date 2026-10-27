@@ -10,8 +10,8 @@ This bundle deliberately starts five dependent phases without claiming their bro
   344 MVC actions and 198 Razor control rows, plus reversible per-surface cutover controls;
 - `MOD-020`: complete Angular functional parity for Settings, Document Design, account/session, current user/role administration,
   public company registration and guided onboarding; MVC remains the committed default;
-- `MOD-021`: `MOD-021A..B` complete product list/details/create/edit/delete plus category list/create/status;
-  remaining attributes/templates/recipes and catalog masters are staged in `PHASE_21_CATALOG.md`.
+- `MOD-021`: `MOD-021A..C` complete product master, categories, attribute definitions/options and per-product values;
+  remaining templates/recipes and catalog masters are staged in `PHASE_21_CATALOG.md`.
 
 All API endpoints are authenticated, permission protected and call Application services. No EF entity is
 returned and no financial value is calculated in the browser. MOD-017C adds one additive tenant-owned delegation
@@ -22,13 +22,13 @@ generated registry is in `MVC_MIGRATION_REGISTRY.md` and is refreshed with
 ## Verification evidence
 
 - Web Release build: passed with zero warnings and zero errors.
-- Security/inventory regression: 1189 checks passed, including permission-separated and antiforgery-protected product
-  and category mutations in addition to the completed administration/onboarding controls.
+- Security/inventory regression: 1192 checks passed, including permission-separated and antiforgery-protected product,
+  category and product-attribute mutations in addition to the completed administration/onboarding controls.
 - Angular production build: passed.
-- Angular tests: 131/131 passed across 40 files after `MOD-021B`.
+- Angular tests: 137/137 passed across 43 files after `MOD-021C`.
 - External-style policy: passed; no Angular HTML `style=` attributes or component `styles:` blocks.
 
 ## Remaining gates
 
-`MOD-020` functional parity is complete. Product master operations are complete in `MOD-021A`; catalog functional
-parity remains open beginning with `MOD-021C` product attributes and values.
+`MOD-020` functional parity is complete. Product, category and attribute/value operations are complete through
+`MOD-021C`; catalog functional parity remains open beginning with `MOD-021D` product templates and variants.

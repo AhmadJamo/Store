@@ -167,3 +167,11 @@ never exposes persistence exceptions or EF entities. Tenant query and write guar
 The versioned category API requires authentication and `Products.View` for reads. Create and status changes both require
 `Products.Edit` and explicit antiforgery. The DTO/domain enforce a language-neutral bounded code, duplicate validation
 is localized, and the API returns only Application DTOs. Angular visibility is guidance only and cannot grant access.
+
+## MOD-021C product-attribute boundary (2026-10-27)
+
+The versioned attribute API requires authentication and `Products.View` for the definition directory. Definition
+creation/status and all per-product value reads/writes require `Products.Edit`; POST/PUT operations explicitly validate
+antiforgery. Neutral codes and bounded input are DTO-validated, while `ProductAttributeService` revalidates category
+applicability, required/type rules, option ownership and template variant refresh transactionally. No EF entity or
+client-computed variant signature crosses the API boundary.
