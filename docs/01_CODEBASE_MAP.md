@@ -527,3 +527,6 @@ For exact module relationships, use `modules/*.md`; for entity and service detai
 - `docs/modernization/MOD-017-021-FOUNDATION.md`: scope, evidence and remaining gates for this bundle.
 - `docs/modernization/MOD-017B-FINANCIAL-PREVIEW.md`: server-authored financial provenance and presentation evidence.
 - `docs/modernization/MOD-017C-GOVERNED-DELEGATION.md`: tenancy, permission, migration and verification evidence.
+- `MiniStore.Web/Controllers/Api/V1/StockTransactionsApiController.cs`: authenticated, permission-protected, read-only inventory-ledger paging/filter contract over `StockTransactionService`.
+- `MiniStore Front-End/src/app/features/inventory/`: bilingual Angular inventory ledger, typed query client, server paging/filtering/sorting and external responsive SCSS.
+- `docs/modernization/PHASE_22_INVENTORY.md`: inventory/WMS Angular migration scope, completed slices, evidence and next gate.

@@ -1,0 +1,11 @@
+:host { display: block; }
+.ledger-page { display: grid; gap: 1rem; }
+.filters { display: grid; grid-template-columns: minmax(15rem, 2fr) repeat(5, minmax(9rem, 1fr)); gap: 0.85rem; align-items: end; padding: 1rem; }
+.clear-button { min-height: 2.7rem; justify-self: start; }
+.quantity.incoming { color: var(--ui-success, #19733b); }
+.quantity.outgoing { color: var(--ui-danger, #b42318); }
+.variance { color: var(--ui-warning, #9a6700); font-weight: 700; }
+th button { border: 0; background: transparent; color: inherit; font: inherit; font-weight: 700; cursor: pointer; padding: 0; text-align: start; }
+td { white-space: nowrap; }
+@media (max-width: 1100px) { .filters { grid-template-columns: repeat(3, minmax(10rem, 1fr)); } .search-field { grid-column: span 2; } }
+@media (max-width: 680px) { .filters { grid-template-columns: 1fr; } .search-field { grid-column: auto; } }

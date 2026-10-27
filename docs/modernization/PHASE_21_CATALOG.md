@@ -118,3 +118,6 @@ creating a duplicate unit editor.
 
 Every approved `MOD-021A..G` slice reached current MVC functional parity with its own verification evidence. MVC remains
 the presentation default until an explicit cutover gate; the modernization program proceeds to `MOD-022`.
+
+Handoff update (2026-10-27): `MOD-022A` is now complete and documented in `PHASE_22_INVENTORY.md`; no catalog
+behavior or cutover mode changed during the inventory-ledger slice.

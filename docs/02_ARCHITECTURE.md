@@ -126,3 +126,10 @@ SAL-090 keeps `CustomerPaymentService` as the collection coordinator. It reads i
 `AUDIT_SECURITY_ARCHITECTURE_AND_IMPLEMENTATION_PLAN.md` and `decisions/2026-10-15-audit-event-v2-boundary.md` define the accepted documentation-only `P1-AUD-010` boundary. A later additive `AuditEvent` model will carry semantic actor, scope, outcome, reason, correlation, redacted changes and integrity evidence through an Application-owned writer implemented by Infrastructure. Successful mutation events share the business UnitOfWork; denied/failed security attempts use a distinct bounded path and never claim a committed mutation.
 
 The existing EF interceptor and 707 Demo `AuditLogs` remain legacy compatibility evidence and are not reinterpreted or backfilled. Accounting journals, inventory movements and specialized document histories remain authoritative for amounts, quantities and lifecycle facts. `P1-AUD-011` implements the additive mixed-scope entity, schema, writer, redactor and keyed integrity service. `P1-AUD-012` keeps semantic construction in Application services, obtains request correlation through an Application contract implemented by Web, and persists enrolled role/permission and sensitive-setting events in the same transaction/save as their business change. Authentication/platform/external coverage, reading permissions/screens, retention and external checkpoints remain gated by `P1-AUD-013..016`.
+
+## MOD-022 inventory Angular boundary
+
+Inventory Angular routes are presentation clients only. `MOD-022A` calls an authenticated versioned controller that
+delegates to `StockTransactionService`; the controller and Angular client never access EF or recompute quantity, moving
+average cost, inventory value or variance. StockTransaction remains immutable evidence and the first ledger endpoint is
+GET-only. MVC stays the committed default until explicit cutover and rollback acceptance.

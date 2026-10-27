@@ -4020,6 +4020,14 @@ var warehousesApi = typeof(WarehousesApiController);
 Check(warehousesApi.GetCustomAttribute<ApiControllerAttribute>() is not null && warehousesApi.GetCustomAttribute<AuthorizeAttribute>() is not null && warehousesApi.GetCustomAttribute<RouteAttribute>()?.Template=="api/v1/warehouses" && warehousesApi.GetMethod(nameof(WarehousesApiController.GetAll))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:Warehouses.View", "Angular warehouse reads must remain authenticated and Warehouses.View protected");
 Check(warehousesApi.GetMethod(nameof(WarehousesApiController.Create))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:Warehouses.Create" && warehousesApi.GetMethod(nameof(WarehousesApiController.Update))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:Warehouses.Edit" && warehousesApi.GetMethod(nameof(WarehousesApiController.Delete))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:Warehouses.Delete" && new[]{warehousesApi.GetMethod(nameof(WarehousesApiController.Create))!,warehousesApi.GetMethod(nameof(WarehousesApiController.Update))!,warehousesApi.GetMethod(nameof(WarehousesApiController.Delete))!}.All(x=>x.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null), "Warehouse CRUD must preserve independent permissions and antiforgery");
 Check(typeof(CreateWarehouseDto).GetProperty(nameof(CreateWarehouseDto.Name))!.GetCustomAttribute<RequiredAttribute>() is not null && typeof(WarehouseDto).GetProperty(nameof(WarehouseDto.BranchName)) is not null && typeof(WarehouseFormPageDto).GetProperty(nameof(WarehouseFormPageDto.Accounts)) is not null, "Warehouse API must use validated input and named form projections");
+var stockTransactionsApi = typeof(StockTransactionsApiController);
+Check(stockTransactionsApi.GetCustomAttribute<ApiControllerAttribute>() is not null &&
+      stockTransactionsApi.GetCustomAttribute<AuthorizeAttribute>() is not null &&
+      stockTransactionsApi.GetCustomAttribute<RouteAttribute>()?.Template == "api/v1/stock-transactions" &&
+      stockTransactionsApi.GetMethod(nameof(StockTransactionsApiController.GetPage))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:StockTransactions.View",
+    "Angular inventory ledger must remain authenticated, versioned and StockTransactions.View protected");
+Check(stockTransactionsApi.GetMethods().All(method => method.GetCustomAttribute<HttpPostAttribute>() is null && method.GetCustomAttribute<HttpPutAttribute>() is null && method.GetCustomAttribute<HttpDeleteAttribute>() is null),
+    "Inventory ledger API must remain read-only so Angular cannot mutate historical movement evidence");
 var operationsApi = typeof(OperationsCenterApiController);
 Check(operationsApi.GetCustomAttribute<ApiControllerAttribute>() is not null &&
       operationsApi.GetCustomAttribute<AuthorizeAttribute>() is not null &&

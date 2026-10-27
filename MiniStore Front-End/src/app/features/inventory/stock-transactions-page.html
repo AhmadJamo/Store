@@ -1,0 +1,36 @@
+<section class="ledger-page" aria-labelledby="inventory-ledger-title">
+  <app-page-header eyebrow="INVENTORY" [title]="i18n.text('inventoryLedger')" [description]="i18n.text('inventoryLedgerDescription')" />
+  <section class="filters ui-card" [attr.aria-label]="i18n.text('searchLedger')">
+    <label class="ui-field search-field"><span>{{ i18n.text('searchLedger') }}</span><input #searchBox type="search" [value]="query.search || ''" (input)="search(searchBox.value)" [placeholder]="i18n.text('searchLedgerPlaceholder')" /></label>
+    <label class="ui-field"><span>{{ i18n.text('transactionType') }}</span><select #typeSelect [value]="query.type || ''" (change)="filterType(typeSelect.value)"><option value="">{{ i18n.text('allTypes') }}</option>@for (type of types; track type) { <option [value]="type">{{ typeName(type) }}</option> }</select></label>
+    <label class="ui-field"><span>{{ i18n.text('movement') }}</span><select #movementSelect [value]="query.movement || ''" (change)="filterMovement(movementSelect.value)"><option value="">{{ i18n.text('allMovements') }}</option><option value="incoming">{{ i18n.text('incoming') }}</option><option value="outgoing">{{ i18n.text('outgoing') }}</option></select></label>
+    <label class="ui-field"><span>{{ i18n.text('fromDate') }}</span><input #fromInput type="date" [value]="query.fromDate || ''" (change)="filterFrom(fromInput.value)" /></label>
+    <label class="ui-field"><span>{{ i18n.text('toDate') }}</span><input #toInput type="date" [value]="query.toDate || ''" (change)="filterTo(toInput.value)" /></label>
+    <label class="ui-field"><span>{{ i18n.text('rowsPerPage') }}</span><select #sizeSelect [value]="query.pageSize" (change)="resize(sizeSelect.value)">@for (size of [25, 50, 100, 250]; track size) { <option [value]="size">{{ size }}</option> }</select></label>
+    <button class="ui-button secondary clear-button" type="button" (click)="clearFilters()">{{ i18n.text('clearFilters') }}</button>
+  </section>
+  @if (loading()) { <app-feedback-state kind="loading" [title]="i18n.text('loading')" /> }
+  @else if (problem(); as failure) { <app-api-recovery [problem]="failure" (retry)="load()" /> }
+  @else if (page(); as result) {
+    @if (result.items.length === 0) { <app-feedback-state kind="empty" [title]="i18n.text('noTransactions')" [description]="i18n.text('noTransactionsDescription')" /> }
+    @else {
+      <app-data-table [label]="i18n.text('inventoryLedger')"><table><thead><tr>
+        <th><button type="button" (click)="sort('id')" [attr.aria-label]="i18n.text('id') + ' ' + sortLabel('id')">{{ i18n.text('id') }}</button></th>
+        <th><button type="button" (click)="sort('product')" [attr.aria-label]="i18n.text('product') + ' ' + sortLabel('product')">{{ i18n.text('product') }}</button></th>
+        <th><button type="button" (click)="sort('warehouse')" [attr.aria-label]="i18n.text('warehouse') + ' ' + sortLabel('warehouse')">{{ i18n.text('warehouse') }}</button></th>
+        <th><button type="button" (click)="sort('quantity')" [attr.aria-label]="i18n.text('quantity') + ' ' + sortLabel('quantity')">{{ i18n.text('quantity') }}</button></th>
+        <th>{{ i18n.text('unitCost') }}</th><th>{{ i18n.text('movementValue') }}</th><th>{{ i18n.text('costVariance') }}</th>
+        <th><button type="button" (click)="sort('type')" [attr.aria-label]="i18n.text('type') + ' ' + sortLabel('type')">{{ i18n.text('type') }}</button></th>
+        <th><button type="button" (click)="sort('reference')" [attr.aria-label]="i18n.text('reference') + ' ' + sortLabel('reference')">{{ i18n.text('reference') }}</button></th>
+        <th><button type="button" (click)="sort('date')" [attr.aria-label]="i18n.text('date') + ' ' + sortLabel('date')">{{ i18n.text('date') }}</button></th>
+      </tr></thead><tbody>@for (transaction of result.items; track transaction.id) { <tr>
+        <td><code>{{ transaction.id }}</code></td><td><strong>{{ transaction.productName }}</strong></td><td>{{ transaction.warehouseName }}</td>
+        <td><strong class="quantity" [class.incoming]="transaction.quantity > 0" [class.outgoing]="transaction.quantity < 0">{{ transaction.quantity > 0 ? '+' : '' }}{{ transaction.quantity | number:'1.0-6' }}</strong></td>
+        <td>{{ transaction.unitCost | number:'1.0-8' }}</td><td>{{ transaction.transactionValue | number:'1.0-8' }}</td><td [class.variance]="transaction.costVariance !== 0">{{ transaction.costVariance | number:'1.0-8' }}</td>
+        <td><span class="ui-badge" [class.success]="transaction.quantity > 0" [class.danger]="transaction.quantity < 0">{{ typeName(transaction.type) }}</span></td>
+        <td>{{ transaction.reference || '—' }}</td><td>{{ transaction.createdAt | date:'dd/MM/yyyy HH:mm:ss' }}</td>
+      </tr> }</tbody></table></app-data-table>
+    }
+    <app-pager [page]="result.page" [totalPages]="result.totalPages" [totalCount]="result.totalCount" [totalLabel]="i18n.text('totalRecords')" [previousLabel]="i18n.text('previous')" [nextLabel]="i18n.text('next')" (pageChange)="move($event)" />
+  }
+</section>

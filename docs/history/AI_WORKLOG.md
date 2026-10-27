@@ -1244,3 +1244,13 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   Web Release passed with zero warnings/errors, SecurityRegression passed 1204 checks, Angular passed 150/150 tests
   across 51 files, 60 templates passed accessibility, external SCSS passed, and bundles measured 299,259/358,400
   initial and 80,866/81,920 largest lazy bytes. MVC remains default; advanced to `MOD-022A` inventory ledger.
+- 2026-10-27: Completed `MOD-022A`, the first inventory Angular slice. Added authenticated, versioned, GET-only
+  `/api/v1/stock-transactions` over `StockTransactionService`, protected by `StockTransactions.View`, plus a
+  permission-aware bilingual RTL Angular `/inventory/transactions` route. The screen supports debounced product,
+  warehouse, reference and type search; all 18 current transaction types; incoming/outgoing and inclusive date filters;
+  allowlisted sorting, page sizes and paging; and server-authored quantity, unit-cost, movement-value and cost-variance
+  evidence. Angular never recomputes balance or valuation and the API exposes no mutation path. Web Release passed
+  with zero warnings/errors, SecurityRegression passed 1206 checks, Angular passed 151/151 tests across 52 files,
+  61 templates passed accessibility, external SCSS passed, and bundles measured 302,834/358,400 initial and
+  80,941/81,920 largest lazy bytes. Live route returned 200 and anonymous API access returned 401. MVC remains default;
+  advanced to `MOD-022B` product stock balances and manual adjustments.

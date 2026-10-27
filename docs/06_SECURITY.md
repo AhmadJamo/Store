@@ -203,3 +203,10 @@ Warehouse list/create-form/edit-form/create/update/delete endpoints require thei
 `Warehouses.View/Create/Edit/Delete` permissions. Every mutation validates antiforgery. Application DTOs expose named
 branch/account options while `WarehouseService` repeats SaaS entitlement, tenant/account, duplicate, location/control,
 POS-access and deletion constraints; client-side disabled fields are guidance only.
+
+## MOD-022A inventory-ledger boundary (2026-10-27)
+
+`GET /api/v1/stock-transactions` requires an authenticated tenant session and `StockTransactions.View`. The API exposes
+no POST, PUT, PATCH or DELETE route, so the Angular ledger cannot mutate historical StockTransaction evidence. Paging,
+search, direction/type/date filters and sort columns are bounded by the existing Application/repository path and tenant
+query filters. Product/warehouse names and valuation snapshots are DTO projections; anonymous live access returns 401.

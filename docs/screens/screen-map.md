@@ -146,3 +146,10 @@ All purchase tables, details and populated numeric inputs use the shared number 
 - `/platform/audit-events` is the separate Platform/System reader. It never impersonates a tenant and is protected by Platform audit policies.
 - CSV (ملف قيم مفصولة بفواصل) export is limited to 5,000 rows, requires an allowed purpose and separate export authority, and records one `DataAccess.AuditEventsExported` event after creating the snapshot. Masked source IP and user-agent fingerprint appear only with sensitive-view authority.
 - `/platform/audit-retention` is an Owner-only responsive control screen. It displays the approved 7-year/3-year/90-day policy, creates and releases scoped legal holds, creates a signed checkpoint and runs retention. Retention is unavailable when its local/hosting secret configuration is disabled.
+
+## Angular inventory ledger
+
+- `/inventory/transactions` requires `StockTransactions.View` and displays the immutable inventory transaction history.
+- The responsive bilingual screen provides debounced product/warehouse/reference search, type and direction filters,
+  inclusive from/to dates, page-size control, server sorting and paging, plus server-authored cost/value/variance columns.
+- The screen is read-only; authorized manual adjustments remain in the owning workflow until `MOD-022B`.

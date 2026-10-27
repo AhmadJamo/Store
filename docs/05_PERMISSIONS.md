@@ -207,3 +207,11 @@ The Index and mutation actions enforce these policies server-side. Permission se
 - On 2026-10-17 the owner explicitly authorized promoting the rotated local Demo administrator through the existing one-time `PlatformOperatorSeeder`. The temporary bootstrap flag was disabled afterward, and a real login was verified to reach `/platform`.
 - This local Demo assignment is not production authorization evidence and does not create or configure an external deployment identity.
 
+# MOD-022A inventory-ledger permission
+
+- `StockTransactions.View` controls both the Angular navigation item and `GET /api/v1/stock-transactions`.
+- Navigation filtering is convenience only; the API repeats authorization for every request and tenant query filters
+  remain authoritative.
+- The ledger endpoint provides no mutation methods. `StockTransactions.Create` does not imply ledger-view access and
+  remains reserved for the separately migrated manual-adjustment workflow.
+

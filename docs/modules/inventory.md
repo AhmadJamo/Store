@@ -21,6 +21,15 @@ Inventory lifecycle screens follow the same completed-action rule as purchasing.
 
 Sources: `ProductStock.cs`, `StockTransaction.cs`, `StockTransactionType.cs`; ProductStocks DTOs; product-stock/transaction services and repositories; configurations; `ProductStocksController`, `StockTransactionsController`; their views. Changes impact purchases, sales, transfers and accounting docs.
 
+## Angular inventory ledger (`MOD-022A`)
+
+The permission-aware `/inventory/transactions` route reads `GET /api/v1/stock-transactions` through an explicit typed client.
+Search, all current transaction types, incoming/outgoing direction, inclusive date filtering, allowlisted sorting, page size and
+paging are executed by the existing `StockTransactionService` and repository. Product and warehouse names are displayed while
+IDs stay internal. Quantity, unit cost, movement value and cost variance are server-authored DTO evidence; Angular does not
+recalculate balances or valuation. The API is intentionally GET-only because StockTransaction history is immutable evidence.
+MVC remains the presentation default until the separate cutover gate.
+
 ## Storage locations
 Warehouses have hierarchical structured locations with a unique code, optional unique barcode, display name, parent, sequence, zone, aisle, rack, level, bin, operational type, status, optional capacity and explicit receive/pick/reserve/ship/count capabilities. Existing IDs and codes remain stable. The Warehouse Locations screen searches these fields, creates roots/children and edits hierarchy/capabilities. `StorageLocationService` owns its warehouse/parent selectors and projects location rows to Application DTOs; the controller and Razor views no longer receive repository dependencies or domain entities for this slice. The Application layer rejects self-parenting, descendant cycles and parents from another warehouse. Unassigned Stock calculates warehouse quantity minus allocated location quantities, supports warehouse/name/barcode filters and sorting, and lets authorized staff allocate all or part of the balance to an active location without changing the warehouse total. Capacity validation uses the total quantity of all products in the destination location.
 

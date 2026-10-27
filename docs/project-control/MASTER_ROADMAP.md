@@ -27,7 +27,8 @@
 - `MOD-020` — COMPLETE 2026-10-27: اكتملت عمليات Angular لكل تدفقات الإعدادات ومصمم المستندات والحساب والجلسة،
   وعمليات المستخدمين/الأدوار الحالية، والتسجيل وonboarding الكامل مع complete/skip/resume؛ بقي MVC افتراضيًا حتى cutover مستقل.
 - `MOD-021` — COMPLETE 2026-10-27: اكتمل `MOD-021A..G` لكل عمليات الكتالوج الحالية حتى المستودعات، مع بقاء MVC افتراضيًا.
-- `MOD-022..028` — APPROVED PROGRAM: نقل المخزون والمشتريات والمبيعات وPOS والمحاسبة وSaaS وكل الشاشات المشتركة والمتبقية إلى Angular على موجات، مع functional parity وإعادة تصميم كاملة وفق Angular design system لا نسخ Razor.
+- `MOD-022` — IN PROGRESS 2026-10-27: اكتمل `MOD-022A` لسجل حركات المخزون والمرشحات والتصفح والقيم المحسوبة من الخادم؛ التالي `MOD-022B` لأرصدة المنتجات وعمليات التسوية اليدوية الحالية.
+- `MOD-023..028` — APPROVED PROGRAM: نقل المشتريات والمبيعات وPOS والمحاسبة وSaaS وكل الشاشات المشتركة والمتبقية إلى Angular على موجات، مع functional parity وإعادة تصميم كاملة وفق Angular design system لا نسخ Razor.
 - `MOD-029` — GATED: قبول شامل وdual-run reconciliation وتجربة cutover/rollback.
 - `MOD-030` — EXPLICIT FINAL GATE: Angular-only وإزالة MVC presentation تدريجيًا بعد صفر فجوات.
 

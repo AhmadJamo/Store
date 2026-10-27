@@ -35,7 +35,10 @@ The ERP SaaS Foundation Blueprint is imported as a non-authoritative planning re
 - [x] MOD-021 complete Angular product master, categories, attributes/values, templates/variants, recipes,
   tax/payment/branch masters and warehouse CRUD with explicit DTOs, separate permissions, CSRF and tests. Completed
   `MOD-021A..G` on 2026-10-27; MVC remains default pending cutover.
-- [ ] MOD-022 through MOD-028 migrate every remaining tenant, public and platform MVC workflow to Angular by the approved module waves, including actions, permissions, localization, files, PDF and edge states.
+- [x] MOD-022A migrate the read-only inventory transaction ledger with server paging/search/type/direction/date filters,
+  sorting, cost/value evidence, permission-aware navigation, bilingual RTL UI and full verification. Completed 2026-10-27.
+- [ ] MOD-022B through MOD-028 migrate the remaining inventory/WMS, purchasing, sales, POS, accounting, tenant/public,
+  platform and shared MVC workflows to Angular, including every operation, permission, localization, file/PDF and edge state.
 - [ ] MOD-029 prove full-system parity through dual-run reconciliation, performance/security/accessibility evidence and cutover/rollback rehearsals.
 - [ ] MOD-030 make Angular the only presentation and retire MVC incrementally only after explicit approval and zero registry gaps.
 
