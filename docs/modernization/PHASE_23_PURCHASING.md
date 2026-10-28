@@ -1,6 +1,6 @@
 # Phase 23 — Purchasing Angular migration
 
-> Status: IN PROGRESS — `MOD-023A..J` COMPLETE on 2026-10-28
+> Status: IN PROGRESS — `MOD-023A..K` COMPLETE on 2026-10-28
 >
 > Presentation default: MVC until a separate cutover approval.
 
@@ -175,7 +175,23 @@ supplier sourcing, inventory/accounting posting, concurrency and tenant authorit
 - Bundles: 309,114/358,400 initial bytes and 81,743/81,920 largest lazy bytes.
 - Live checks: Angular reversal list returned 200; anonymous API read returned 401.
 
+## `MOD-023K` delivered — Landed Costs
+
+- Added authenticated list/details/create-form and atomic create-and-post APIs over `LandedCostService`.
+- Angular provides bilingual RTL-safe `/purchases/landed-costs`, `/new` and `/:id` routes with receipt evidence, typed components,
+  quantity/value allocation choice, capitalization/expense split and before/after AVCO evidence.
+- Posted receipts link to landed-cost allocation, and posted landed costs link to controlled reversal. Independent permissions,
+  antiforgery and DTO validation remain enforced. Allocation, current-stock split, AVCO, value-only movements, clearing/expense
+  accounts and balanced journals remain server-owned. No schema/business-rule change; MVC remains default.
+
+## Current `MOD-023K` evidence
+
+- Web Release: zero warnings/errors; SecurityRegression: 1257 checks.
+- Angular: 176/176 tests across 72 files; 81 templates passed accessibility; external SCSS passed.
+- Bundles: 309,507/358,400 initial bytes and 81,743/81,920 largest lazy bytes.
+- Live checks: Angular landed-cost list returned 200; anonymous API read returned 401.
+
 ## Next slice
 
-`MOD-023K` migrates Landed Cost list/details/create-and-post and connects its controlled reversal path while keeping allocation basis,
-capitalized-versus-consumed split, AVCO revaluation, clearing/expense accounts, value-only movements and journals server-owned.
+`MOD-023L` migrates Purchase Service Acceptance list/details/create while keeping confirmed-order eligibility, service-line remaining
+quantity, immutable completion evidence and the no-inventory-effect boundary server-owned.

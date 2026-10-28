@@ -49,6 +49,11 @@ bills and payments to the reversal confirmation. `PurchaseDocumentReversalServic
 validation, unchanged valuation and stock-availability gates, exact physical/value corrections, opposite journal posting,
 idempotency and original-state transitions. Independent View/Create permissions and antiforgery remain mandatory; MVC is default.
 
+`MOD-023K` exposes Landed Cost list/details/create-and-post through Angular and links posted receipts to allocation and posted costs
+to controlled reversal. `LandedCostService` still owns quantity/value allocation, current-stock capitalization versus consumed-cost
+expense, AVCO revaluation, value-only stock movements, clearing/expense accounts and balanced journals. Permissions and CSRF remain
+mandatory; MVC is default.
+
 Angular `/purchases/requests` now covers the current request list/search/status filter, named multi-line Draft creation, details,
 approval/history evidence, Submit and reasoned Cancel operations. The versioned API repeats independent permissions and antiforgery,
 and `PurchaseRequestService` still owns numbering, active purchasable products, compatible managed-unit conversion, supplier validity,

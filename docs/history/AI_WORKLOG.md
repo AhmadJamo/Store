@@ -1368,3 +1368,10 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   Web Release passed with zero warnings/errors, SecurityRegression passed 1254 checks, Angular passed 175/175 tests across 71 files,
   80 templates passed accessibility, external SCSS passed and bundles measured 309,114/358,400 initial and 81,743/81,920 largest
   lazy bytes. Live Angular returned 200 and anonymous API returned 401. MVC remains default. Advanced to `MOD-023K` Landed Costs.
+- 2026-10-28: Completed approved `MOD-023K`. Added authenticated Landed Cost list/details/create-form and atomic post API plus
+  bilingual RTL-safe Angular routes, a permission-aware receipt link and controlled-reversal link. `LandedCostService` remains
+  authoritative for quantity/value allocation, current-stock capitalization versus consumed expense, AVCO, value-only movements,
+  clearing/expense accounts and journals. Web Release passed with zero warnings/errors, SecurityRegression passed 1257 checks,
+  Angular passed 176/176 tests across 72 files, 81 templates passed accessibility, external SCSS passed and bundles measured
+  309,507/358,400 initial and 81,743/81,920 largest lazy bytes. Live Angular returned 200 and anonymous API returned 401. MVC remains
+  default. Advanced to `MOD-023L` Purchase Service Acceptances.
