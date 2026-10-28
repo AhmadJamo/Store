@@ -1,6 +1,6 @@
 # Phase 23 — Purchasing Angular migration
 
-> Status: IN PROGRESS — `MOD-023A..E` COMPLETE on 2026-10-28
+> Status: IN PROGRESS — `MOD-023A..F` COMPLETE on 2026-10-28
 >
 > Presentation default: MVC until a separate cutover approval.
 
@@ -95,7 +95,24 @@ supplier sourcing, inventory/accounting posting, concurrency and tenant authorit
 - Angular: 170/170 tests across 66 files; 75 templates passed accessibility; external SCSS passed.
 - Bundles: 306,587/358,400 initial bytes and 81,742/81,920 largest lazy bytes.
 
+## `MOD-023F` delivered — Vendor Bills
+
+- Added authenticated list/details/create-form and multipart draft-create APIs plus approve, reasoned match override, post,
+  reasoned cancel, attachment download/upload, extraction generation and explicit extraction review operations.
+- Independent `VendorBills.*` permissions, antiforgery, row-version concurrency and file count/size limits remain enforced.
+  Receipt/service allocation, available quantities, duplicate supplier invoice protection, tax, matching tolerances, PPV,
+  GRNI, payable and balanced journal posting remain server-owned.
+- Added bilingual RTL-safe Angular `/purchases/bills`, `/new` and `/:id` routes with dynamic source lines, editable
+  extraction review, matching evidence, dirty navigation protection and an eligible-order link.
+- No schema or business-rule change; MVC remains default.
+
+## Current `MOD-023F` evidence
+
+- Web Release: zero warnings/errors; SecurityRegression: 1242 checks.
+- Angular: 171/171 tests across 67 files; 76 templates passed accessibility; external SCSS passed.
+- Bundles: 307,621/358,400 initial bytes and 81,743/81,920 largest lazy bytes.
+
 ## Next slice
 
-`MOD-023F` migrates Vendor Bill list/details/create, approval/match override/post/cancel and current attachment/extraction-review
-operations while keeping receipt allocation, tolerance, tax, PPV, GRNI, payable and journal authority on the server.
+`MOD-023G` migrates Supplier Payment list/details/create and current allocation/posting evidence while keeping open-bill
+eligibility, currency, overpayment prevention, payable/cash-bank journal posting and idempotency server-owned.

@@ -230,6 +230,9 @@ export const routes: Routes = [
       { path: 'purchases/receipts/new', canDeactivate: [(component) => component.canDeactivate()], loadComponent: () => import('./features/purchases/goods-receipts-page').then(module => module.GoodsReceiptsPageComponent) },
       { path: 'purchases/receipts/:id', canDeactivate: [(component) => component.canDeactivate()], loadComponent: () => import('./features/purchases/goods-receipts-page').then(module => module.GoodsReceiptsPageComponent) },
       { path: 'purchases/receipts/:id/scan', canDeactivate: [(component) => component.canDeactivate()], loadComponent: () => import('./features/purchases/goods-receipts-page').then(module => module.GoodsReceiptsPageComponent) },
+      { path: 'purchases/bills', loadComponent: () => import('./features/purchases/vendor-bills-page').then(module => module.VendorBillsPageComponent) },
+      { path: 'purchases/bills/new', canDeactivate: [(component) => component.canDeactivate()], loadComponent: () => import('./features/purchases/vendor-bills-page').then(module => module.VendorBillsPageComponent) },
+      { path: 'purchases/bills/:id', loadComponent: () => import('./features/purchases/vendor-bills-page').then(module => module.VendorBillsPageComponent) },
       {
         path: 'products/recipes/:productId',
         canDeactivate: [(component) => component.canDeactivate()],

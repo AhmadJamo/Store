@@ -1333,3 +1333,10 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   Angular passed 170/170 tests across 66 files, 75 templates passed accessibility, external SCSS passed, and bundles measured
   306,587/358,400 initial and 81,742/81,920 largest lazy bytes. No schema/business-rule change; MVC remains default. Advanced to
   `MOD-023F` Vendor Bills.
+- 2026-10-28: Completed approved `MOD-023F`. Added authenticated Vendor Bill list/details/create-form and multipart draft APIs,
+  independent approve/match-override/post/cancel commands, bounded attachment download/upload, extraction generation and explicit
+  editable review. Angular adds bilingual RTL-safe list/create/details routes and matching/settlement evidence. `VendorBillService`
+  remains authoritative for allocations, duplicate supplier invoice protection, matching tolerances, tax, PPV, GRNI, payable and
+  balanced journals. Web Release passed with zero warnings/errors, SecurityRegression passed 1242 checks, Angular passed 171/171
+  tests across 67 files, 76 templates passed accessibility, external SCSS passed, and bundles measured 307,621/358,400 initial and
+  81,743/81,920 largest lazy bytes. No schema/business-rule change; MVC remains default. Advanced to `MOD-023G` Supplier Payments.

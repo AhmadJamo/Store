@@ -25,6 +25,11 @@ eligibility, remaining quantity, unit conversion, lot/serial/date rules, idempot
 quality-state transitions remain in `GoodsReceiptService` and Inventory/Accounting services. Independent View/Create/Inspect/PutAway
 permissions and antiforgery remain mandatory, and MVC remains the default presentation.
 
+`MOD-023F` exposes the current Vendor Bill list/details/create, approval, reasoned match override, posting, cancellation,
+attachments and extraction-review operations through Angular. Multipart files remain bounded to ten initial attachments and 5 MB each,
+and extracted values remain untrusted suggestions until explicit review. `VendorBillService` still owns allocation availability,
+supplier invoice uniqueness, three-way matching, taxes, PPV, GRNI, payable and journal effects; Angular cannot calculate or post them.
+
 Angular `/purchases/requests` now covers the current request list/search/status filter, named multi-line Draft creation, details,
 approval/history evidence, Submit and reasoned Cancel operations. The versioned API repeats independent permissions and antiforgery,
 and `PurchaseRequestService` still owns numbering, active purchasable products, compatible managed-unit conversion, supplier validity,

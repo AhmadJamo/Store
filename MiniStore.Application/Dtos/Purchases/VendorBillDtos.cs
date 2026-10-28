@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using MiniStore.Domain.Entities;
 
 namespace MiniStore.Application.DTOs.Purchases;
@@ -39,12 +40,31 @@ public sealed class VendorBillTaxRateDto
 
 public sealed class CreateVendorBillDto
 {
+    [Range(1, int.MaxValue)]
     public int PurchaseOrderId { get; set; }
+    [Required, StringLength(100)]
     public string SupplierInvoiceNumber { get; set; } = string.Empty;
     public DateOnly BillDate { get; set; } = DateOnly.FromDateTime(DateTime.Today);
+    [StringLength(1000)]
     public string? Notes { get; set; }
+    [StringLength(1000)]
     public string? MatchOverrideReason { get; set; }
+    [MinLength(1)]
     public List<CreateVendorBillLineDto> Lines { get; set; } = [];
+}
+
+public sealed class VendorBillCommandDto
+{
+    [Range(1, int.MaxValue)] public int Id { get; init; }
+    [Required] public byte[] RowVersion { get; init; } = [];
+    [StringLength(1000)] public string? Reason { get; init; }
+}
+
+public sealed class GenerateVendorBillExtractionDto
+{
+    [Range(1, int.MaxValue)] public int VendorBillId { get; init; }
+    [Range(1, int.MaxValue)] public int AttachmentId { get; init; }
+    [Required] public byte[] RowVersion { get; init; } = [];
 }
 
 public sealed class VendorBillAttachmentInputDto
@@ -56,12 +76,19 @@ public sealed class VendorBillAttachmentInputDto
 
 public sealed class CreateVendorBillLineDto
 {
+    [Range(1, int.MaxValue)]
     public int PurchaseOrderLineId { get; set; }
+    [EnumDataType(typeof(PurchaseBillingPolicy))]
     public PurchaseBillingPolicy BillingPolicy { get; set; }
+    [Range(1, int.MaxValue)]
     public int? GoodsReceiptLineId { get; set; }
+    [Range(1, int.MaxValue)]
     public int? PurchaseServiceAcceptanceLineId { get; set; }
+    [Range(typeof(decimal), "0", "999999999999", ParseLimitsInInvariantCulture = true, ConvertValueInInvariantCulture = true)]
     public decimal Quantity { get; set; }
+    [Range(typeof(decimal), "0", "999999999999", ParseLimitsInInvariantCulture = true, ConvertValueInInvariantCulture = true)]
     public decimal UnitPrice { get; set; }
+    [Range(1, int.MaxValue)]
     public int? TaxRateId { get; set; }
 }
 
@@ -117,7 +144,7 @@ public sealed class VendorBillAttachmentDto
     public DateTime UploadedAtUtc { get; init; }
 }
 public sealed class VendorBillExtractionSuggestionDto{public int Id{get;init;}public int VendorBillAttachmentId{get;init;}public string AttachmentName{get;init;}=string.Empty;public string ExtractionMethod{get;init;}=string.Empty;public string? SuggestedInvoiceNumber{get;init;}public DateOnly? SuggestedBillDate{get;init;}public decimal? SuggestedTotalAmount{get;init;}public string? SuggestedCurrencyCode{get;init;}public decimal ConfidencePercent{get;init;}public VendorBillExtractionStatus Status{get;init;}public string? ReviewNote{get;init;}public DateTime CreatedAtUtc{get;init;}}
-public sealed class ReviewVendorBillExtractionDto{public int VendorBillId{get;init;}public int SuggestionId{get;init;}public bool Apply{get;init;}public string? SupplierInvoiceNumber{get;init;}public DateOnly? BillDate{get;init;}public decimal? TotalAmount{get;init;}public string? CurrencyCode{get;init;}public string? ReviewNote{get;init;}public byte[] RowVersion{get;init;}=[];}
+public sealed class ReviewVendorBillExtractionDto{[Range(1,int.MaxValue)]public int VendorBillId{get;init;}[Range(1,int.MaxValue)]public int SuggestionId{get;init;}public bool Apply{get;init;}[StringLength(100)]public string? SupplierInvoiceNumber{get;init;}public DateOnly? BillDate{get;init;}[Range(typeof(decimal),"0","999999999999",ParseLimitsInInvariantCulture=true,ConvertValueInInvariantCulture=true)]public decimal? TotalAmount{get;init;}[StringLength(10)]public string? CurrencyCode{get;init;}[StringLength(1000)]public string? ReviewNote{get;init;}[Required]public byte[] RowVersion{get;init;}=[];}
 
 public sealed class VendorBillLineDto
 {

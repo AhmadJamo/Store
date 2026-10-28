@@ -10,8 +10,13 @@ const copy = {
   }
 } as const;
 export type PurchaseOrderKey = keyof typeof copy.en;
+type PurchaseOrderExtraKey = 'createBill';
+const extra = { en: { createBill: 'Create vendor bill' }, ar: { createBill: 'إنشاء فاتورة مورد' } } as const;
 @Injectable({ providedIn:'root' })
 export class PurchaseOrderLocalizationService {
   private readonly session = inject(ApiSessionService);
-  text(key: PurchaseOrderKey) { return copy[this.session.session()?.culture?.startsWith('ar') ? 'ar' : 'en'][key]; }
+  text(key: PurchaseOrderKey | PurchaseOrderExtraKey) {
+    const culture = this.session.session()?.culture?.startsWith('ar') ? 'ar' : 'en';
+    return key === 'createBill' ? extra[culture][key] : copy[culture][key];
+  }
 }
