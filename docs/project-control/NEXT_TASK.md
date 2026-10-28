@@ -1,10 +1,10 @@
 # المهمة التالية الوحيدة / Next Task
 
-## `MOD-023O` — التزويد الآلي / Automated replenishment
+## `MOD-023P` — تحليلات المشتريات / Purchasing analytics
 
 > الحالة: APPROVED — NEXT INCREMENT ضمن موجة المشتريات
 
-اكتمل `MOD-023A..N`: المسار حتى بيانات وأسعار شراء الموردين يعمل في Angular، وبقي MVC افتراضياً.
+اكتمل `MOD-023A..O`: المسار حتى التزويد الآلي يعمل في Angular، وبقي MVC افتراضياً.
 
 ### الهدف
 

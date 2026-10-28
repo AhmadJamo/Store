@@ -68,6 +68,8 @@ current product/unit eligibility. These commercial/demand operations create no d
 price exceptions and bounded CSV/XLSX preview/import/export through Angular. `SupplierPurchasingInfoService` still owns product/unit
 compatibility, duplicates, preferred rows, concurrency, validity, base currency, atomic imports and audit snapshots; MVC is default.
 
+`MOD-023O` exposes automated replenishment settings, manual execution and run/suggestion history through Angular. Scheduling, demand calculation and duplicate prevention remain server-owned; MVC is default.
+
 Angular `/purchases/requests` now covers the current request list/search/status filter, named multi-line Draft creation, details,
 approval/history evidence, Submit and reasoned Cancel operations. The versioned API repeats independent permissions and antiforgery,
 and `PurchaseRequestService` still owns numbering, active purchasable products, compatible managed-unit conversion, supplier validity,

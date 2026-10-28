@@ -254,6 +254,7 @@ export const routes: Routes = [
       { path: 'purchases/supplier-terms/exceptions', loadComponent: () => import('./features/purchases/supplier-purchasing-page').then(module => module.SupplierPurchasingPageComponent) },
       { path: 'purchases/supplier-terms/:id/price-breaks', canDeactivate: [(component) => component.canDeactivate()], loadComponent: () => import('./features/purchases/supplier-purchasing-page').then(module => module.SupplierPurchasingPageComponent) },
       { path: 'purchases/supplier-terms/:id/history', loadComponent: () => import('./features/purchases/supplier-purchasing-page').then(module => module.SupplierPurchasingPageComponent) },
+      { path: 'purchases/replenishment', canDeactivate: [(component) => component.canDeactivate()], loadComponent: () => import('./features/purchases/purchase-replenishment-page').then(module => module.PurchaseReplenishmentPageComponent) },
       { path: 'purchases/payments', loadComponent: () => import('./features/purchases/supplier-payments-page').then(module => module.SupplierPaymentsPageComponent) },
       { path: 'purchases/payments/new', canDeactivate: [(component) => component.canDeactivate()], loadComponent: () => import('./features/purchases/supplier-payments-page').then(module => module.SupplierPaymentsPageComponent) },
       { path: 'purchases/payments/:id', loadComponent: () => import('./features/purchases/supplier-payments-page').then(module => module.SupplierPaymentsPageComponent) },

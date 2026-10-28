@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using MiniStore.Domain.Entities;
 
 namespace MiniStore.Application.DTOs.Purchases;
@@ -5,10 +6,10 @@ namespace MiniStore.Application.DTOs.Purchases;
 public sealed class SaveReplenishmentAutomationSettingsDto
 {
     public bool IsEnabled { get; set; }
-    public int FrequencyHours { get; set; } = 24;
-    public int ForecastLookbackDays { get; set; } = 90;
+    [Range(1,168)] public int FrequencyHours { get; set; } = 24;
+    [Range(7,730)] public int ForecastLookbackDays { get; set; } = 90;
     public ReplenishmentAutomationMode Mode { get; set; } = ReplenishmentAutomationMode.ReviewOnly;
-    public int SupplierResponseDays { get; set; } = 7;
+    [Range(1,90)] public int SupplierResponseDays { get; set; } = 7;
     public byte[] RowVersion { get; set; } = [];
 }
 

@@ -1,6 +1,6 @@
 # Phase 23 — Purchasing Angular migration
 
-> Status: IN PROGRESS — `MOD-023A..N` COMPLETE on 2026-10-28
+> Status: IN PROGRESS — `MOD-023A..O` COMPLETE on 2026-10-28
 >
 > Presentation default: MVC until a separate cutover approval.
 
@@ -240,7 +240,14 @@ supplier sourcing, inventory/accounting posting, concurrency and tenant authorit
 - Bundles: 311,304/358,400 initial bytes and 81,743/81,920 largest lazy bytes.
 - Live checks: Angular route returned 200; anonymous API read returned 401.
 
+## `MOD-023O` delivered — automated replenishment
+
+- Added authenticated settings/read and separately permitted save/run APIs over `ReplenishmentAutomationService`.
+- Added bilingual RTL-safe Angular settings, manual run, history, suggestion evidence and generated request/RFQ links.
+- Scheduling, demand calculation, duplicate prevention and document generation remain server-owned; MVC remains default.
+- Evidence: Release zero warnings/errors; 1271 regression checks; Angular 180/180 across 76 files; 86 templates; bundles
+  311,468/358,400 initial and 81,743/81,920 largest lazy bytes.
+
 ## Next slice
 
-`MOD-023O` migrates automated replenishment settings, manual/scheduled execution and run history while keeping tenant scheduling,
-warehouse/product demand calculation and request-generation idempotency server-owned.
+`MOD-023P` migrates purchasing analytics and remaining purchasing read surfaces while keeping calculations server-owned.
