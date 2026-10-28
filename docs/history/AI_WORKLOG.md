@@ -1391,3 +1391,11 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   passed with zero warnings/errors, SecurityRegression passed 1266 checks, Angular passed 178/178 tests across 74 files, 84 templates
   passed accessibility, external SCSS passed and bundles measured 310,690/358,400 initial and 81,743/81,920 largest lazy bytes.
   Both Angular routes returned 200 and both anonymous APIs returned 401. MVC remains default. Advanced to `MOD-023N` supplier terms.
+- 2026-10-28: Completed approved `MOD-023N`. Added authenticated supplier purchasing page, exceptions, price-break and history APIs
+  plus atomic bulk save, active state, bounded CSV/XLSX preview/import and export. Added a bilingual RTL-safe Angular bulk editor,
+  named supplier/unit choices, import validation evidence, exception filters and immutable price history. Server services remain
+  authoritative for unit compatibility, duplicates/preferred rules, concurrency, validity, base currency, atomic imports and price
+  snapshots. Web Release passed with zero warnings/errors, SecurityRegression passed 1269 checks, Angular passed 179/179 tests across
+  75 files, 85 templates passed accessibility, external SCSS passed and bundles measured 311,304/358,400 initial and
+  81,743/81,920 largest lazy bytes. Live Angular returned 200 and anonymous API returned 401. MVC remains default. Advanced to
+  `MOD-023O` automated replenishment.

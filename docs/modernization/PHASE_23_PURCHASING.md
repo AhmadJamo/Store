@@ -1,6 +1,6 @@
 # Phase 23 — Purchasing Angular migration
 
-> Status: IN PROGRESS — `MOD-023A..M` COMPLETE on 2026-10-28
+> Status: IN PROGRESS — `MOD-023A..N` COMPLETE on 2026-10-28
 >
 > Presentation default: MVC until a separate cutover approval.
 
@@ -224,7 +224,23 @@ supplier sourcing, inventory/accounting posting, concurrency and tenant authorit
 - Bundles: 310,690/358,400 initial bytes and 81,743/81,920 largest lazy bytes.
 - Live checks: both Angular routes returned 200; both anonymous API reads returned 401.
 
+## `MOD-023N` delivered — supplier purchasing terms and prices
+
+- Added authenticated page, exception, price-break and price-history APIs plus atomic bulk save, active state, bounded CSV/XLSX
+  preview/import and export operations over `SupplierPurchasingInfoService`.
+- Angular provides a bilingual RTL-safe bulk product editor, named supplier/unit choices, import validation evidence, exception filters,
+  quantity-price breaks and immutable price history. View/Manage permissions, antiforgery and 1 MB preview limits remain enforced.
+- Product/unit compatibility, duplicate/preferred rules, concurrency, validity, base currency, atomic import and price snapshots remain
+  server-owned. No schema/business-rule change; MVC remains default.
+
+## Current `MOD-023N` evidence
+
+- Web Release: zero warnings/errors; SecurityRegression: 1269 checks.
+- Angular: 179/179 tests across 75 files; 85 templates passed accessibility; external SCSS passed.
+- Bundles: 311,304/358,400 initial bytes and 81,743/81,920 largest lazy bytes.
+- Live checks: Angular route returned 200; anonymous API read returned 401.
+
 ## Next slice
 
-`MOD-023N` migrates supplier purchasing terms and price-break administration, including supplier/product assignment, atomic bulk save,
-active state, price history and bounded import/export while keeping unit compatibility, validity and tenant rules server-owned.
+`MOD-023O` migrates automated replenishment settings, manual/scheduled execution and run history while keeping tenant scheduling,
+warehouse/product demand calculation and request-generation idempotency server-owned.
