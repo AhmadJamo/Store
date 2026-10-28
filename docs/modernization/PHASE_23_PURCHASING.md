@@ -1,6 +1,6 @@
 # Phase 23 — Purchasing Angular migration
 
-> Status: IN PROGRESS — `MOD-023A..O` COMPLETE on 2026-10-28
+> Status: IN PROGRESS — `MOD-023A..P` COMPLETE on 2026-10-28
 >
 > Presentation default: MVC until a separate cutover approval.
 
@@ -248,6 +248,23 @@ supplier sourcing, inventory/accounting posting, concurrency and tenant authorit
 - Evidence: Release zero warnings/errors; 1271 regression checks; Angular 180/180 across 76 files; 86 templates; bundles
   311,468/358,400 initial and 81,743/81,920 largest lazy bytes.
 
+## `MOD-023P` delivered — purchasing analytics
+
+- Added an authenticated `PurchaseAnalytics.View` API over the existing `PurchaseAnalyticsService`; filters, KPI calculations,
+  supplier and buyer grouping, matching exceptions and acceptance-stage counts remain server-owned.
+- Added a bilingual RTL-safe Angular analytics workspace with date/supplier/buyer/status/group filters, operational cards, trends,
+  buyer workload, supplier performance, source-document links and localized KPI/acceptance evidence.
+- Buyer identities are resolved to display names server-side, permission-aware journey links remain protected and validation uses
+  localized Problem Details. This is read-only and introduces no schema, inventory or accounting change; MVC remains default.
+
+## Current `MOD-023P` evidence
+
+- Web Release: zero warnings/errors; SecurityRegression: 1272 checks.
+- Angular: 181/181 tests across 77 files; 87 templates passed accessibility; external SCSS passed.
+- Bundles: 311,587/358,400 initial bytes and 81,743/81,920 largest lazy bytes.
+- Live checks: Angular route returned 200; anonymous API read returned 401.
+
 ## Next slice
 
-`MOD-023P` migrates purchasing analytics and remaining purchasing read surfaces while keeping calculations server-owned.
+`MOD-023Q` migrates Purchase Accounting Reconciliation as the next read-only purchasing evidence surface while keeping all
+Inventory/GL and GRNI/GL reconciliation calculations server-owned.

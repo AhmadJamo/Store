@@ -61,6 +61,8 @@ The ERP SaaS Foundation Blueprint is imported as a non-authoritative planning re
 - [x] MOD-023M migrate Purchase Agreements and repeat Purchase Templates with full lifecycle/release/generation operations and server-owned award, concurrency and quantity rules. Completed 2026-10-28.
 - [x] MOD-023N migrate supplier purchasing terms, bulk save, price breaks/history/exceptions and bounded CSV/XLSX import/export. Completed 2026-10-28.
 - [x] MOD-023O migrate automated replenishment settings, manual execution and run/suggestion history. Completed 2026-10-28.
+- [x] MOD-023P migrate purchasing analytics filters, KPIs, trends, supplier/buyer performance, matching exceptions and acceptance journey. Completed 2026-10-28.
+- [ ] MOD-023Q migrate Purchase Accounting Reconciliation as a read-only Angular evidence surface with server-owned reconciliation calculations.
 - [ ] MOD-023 through MOD-028 migrate purchasing, sales, POS, accounting, tenant/public,
   platform and shared MVC workflows to Angular, including every operation, permission, localization, file/PDF and edge state.
 - [ ] MOD-029 prove full-system parity through dual-run reconciliation, performance/security/accessibility evidence and cutover/rollback rehearsals.

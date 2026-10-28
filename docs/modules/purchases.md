@@ -70,6 +70,12 @@ compatibility, duplicates, preferred rows, concurrency, validity, base currency,
 
 `MOD-023O` exposes automated replenishment settings, manual execution and run/suggestion history through Angular. Scheduling, demand calculation and duplicate prevention remain server-owned; MVC is default.
 
+`MOD-023P` exposes the existing purchasing analytics projection through an authenticated, read-only Angular workspace. Date,
+supplier, buyer, order-status and grouping filters are submitted to `PurchaseAnalyticsService`; the server remains authoritative for
+spend, receipts, payables, matching exceptions, supplier performance, buyer workload, trends, KPI definitions and acceptance-stage
+counts. Buyer display names and localized KPI/source explanations are prepared by the API, and drill-through links remain separately
+permission protected. No schema, inventory or accounting effect was introduced; MVC is default.
+
 Angular `/purchases/requests` now covers the current request list/search/status filter, named multi-line Draft creation, details,
 approval/history evidence, Submit and reasoned Cancel operations. The versioned API repeats independent permissions and antiforgery,
 and `PurchaseRequestService` still owns numbering, active purchasable products, compatible managed-unit conversion, supplier validity,
