@@ -1,6 +1,6 @@
 # Phase 23 — Purchasing Angular migration
 
-> Status: IN PROGRESS — `MOD-023A..K` COMPLETE on 2026-10-28
+> Status: IN PROGRESS — `MOD-023A..L` COMPLETE on 2026-10-28
 >
 > Presentation default: MVC until a separate cutover approval.
 
@@ -191,7 +191,23 @@ supplier sourcing, inventory/accounting posting, concurrency and tenant authorit
 - Bundles: 309,507/358,400 initial bytes and 81,743/81,920 largest lazy bytes.
 - Live checks: Angular landed-cost list returned 200; anonymous API read returned 401.
 
+## `MOD-023L` delivered — Purchase Service Acceptances
+
+- Added authenticated list/details/create-form and create APIs over `PurchaseServiceAcceptanceService`.
+- Angular provides bilingual RTL-safe `/purchases/service-acceptances`, `/new` and `/:id` routes with ordered, previously completed and
+  remaining service quantities, immutable completion evidence and a permission-aware link from eligible confirmed Purchase Orders.
+- `PurchaseServiceAcceptances.View/Create`, antiforgery and DTO validation remain enforced. Confirmed-order eligibility,
+  service-completion billing policy, cumulative quantity limits and the no-inventory-effect boundary remain server-owned.
+  No schema/business-rule change; MVC remains default.
+
+## Current `MOD-023L` evidence
+
+- Web Release: zero warnings/errors; SecurityRegression: 1260 checks.
+- Angular: 177/177 tests across 73 files; 82 templates passed accessibility; external SCSS passed.
+- Bundles: 309,966/358,400 initial bytes and 81,743/81,920 largest lazy bytes.
+- Live checks: Angular service-acceptance list returned 200; anonymous API read returned 401.
+
 ## Next slice
 
-`MOD-023L` migrates Purchase Service Acceptance list/details/create while keeping confirmed-order eligibility, service-line remaining
-quantity, immutable completion evidence and the no-inventory-effect boundary server-owned.
+`MOD-023M` migrates Purchase Agreements and repeat Purchase Templates while keeping award-only agreement creation, capped releases,
+row-version lifecycle control, traced request generation and all no-stock/no-accounting boundaries server-owned.

@@ -54,6 +54,11 @@ to controlled reversal. `LandedCostService` still owns quantity/value allocation
 expense, AVCO revaluation, value-only stock movements, clearing/expense accounts and balanced journals. Permissions and CSRF remain
 mandatory; MVC is default.
 
+`MOD-023L` exposes Purchase Service Acceptance list/details/create through Angular and links eligible confirmed Purchase Orders to
+service completion. `PurchaseServiceAcceptanceService` still owns confirmed-order and service-policy eligibility, cumulative remaining
+quantities and immutable completion evidence. The operation deliberately creates no warehouse stock movement or accounting entry.
+Independent View/Create permissions and antiforgery remain mandatory; MVC is default.
+
 Angular `/purchases/requests` now covers the current request list/search/status filter, named multi-line Draft creation, details,
 approval/history evidence, Submit and reasoned Cancel operations. The versioned API repeats independent permissions and antiforgery,
 and `PurchaseRequestService` still owns numbering, active purchasable products, compatible managed-unit conversion, supplier validity,

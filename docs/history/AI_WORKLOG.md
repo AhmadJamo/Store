@@ -1375,3 +1375,11 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   Angular passed 176/176 tests across 72 files, 81 templates passed accessibility, external SCSS passed and bundles measured
   309,507/358,400 initial and 81,743/81,920 largest lazy bytes. Live Angular returned 200 and anonymous API returned 401. MVC remains
   default. Advanced to `MOD-023L` Purchase Service Acceptances.
+- 2026-10-28: Completed approved `MOD-023L`. Added authenticated Purchase Service Acceptance list/details/create-form and create API,
+  bilingual RTL-safe Angular routes and a permission-aware link from eligible confirmed Purchase Orders. The UI shows ordered,
+  previously completed and remaining service quantities plus immutable completion evidence; `PurchaseServiceAcceptanceService`
+  remains authoritative for confirmed-order eligibility, service billing policy and cumulative limits, and no stock movement is
+  created. Web Release passed with zero warnings/errors, SecurityRegression passed 1260 checks, Angular passed 177/177 tests across
+  73 files, 82 templates passed accessibility, external SCSS passed and bundles measured 309,966/358,400 initial and
+  81,743/81,920 largest lazy bytes. Live Angular returned 200 and anonymous API returned 401. MVC remains default. Advanced to
+  `MOD-023M` Purchase Agreements and repeat templates.
