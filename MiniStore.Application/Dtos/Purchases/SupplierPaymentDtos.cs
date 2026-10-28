@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using MiniStore.Domain.Entities;
 
 namespace MiniStore.Application.DTOs.Purchases;
@@ -30,17 +31,24 @@ public sealed class SupplierPaymentMethodDto
 
 public sealed class CreateSupplierPaymentDto
 {
+    [Range(1, int.MaxValue)]
     public int SourceVendorBillId { get; set; }
+    [Range(1, int.MaxValue)]
     public int PaymentMethodId { get; set; }
     public DateOnly PaymentDate { get; set; } = DateOnly.FromDateTime(DateTime.Today);
+    [StringLength(100)]
     public string? ExternalReference { get; set; }
+    [StringLength(1000)]
     public string? Notes { get; set; }
+    [MinLength(1)]
     public List<CreateSupplierPaymentLineDto> Lines { get; set; } = [];
 }
 
 public sealed class CreateSupplierPaymentLineDto
 {
+    [Range(1, int.MaxValue)]
     public int VendorBillId { get; set; }
+    [Range(typeof(decimal), "0", "999999999999", ParseLimitsInInvariantCulture = true, ConvertValueInInvariantCulture = true)]
     public decimal Amount { get; set; }
 }
 

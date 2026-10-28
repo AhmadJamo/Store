@@ -233,6 +233,9 @@ export const routes: Routes = [
       { path: 'purchases/bills', loadComponent: () => import('./features/purchases/vendor-bills-page').then(module => module.VendorBillsPageComponent) },
       { path: 'purchases/bills/new', canDeactivate: [(component) => component.canDeactivate()], loadComponent: () => import('./features/purchases/vendor-bills-page').then(module => module.VendorBillsPageComponent) },
       { path: 'purchases/bills/:id', loadComponent: () => import('./features/purchases/vendor-bills-page').then(module => module.VendorBillsPageComponent) },
+      { path: 'purchases/payments', loadComponent: () => import('./features/purchases/supplier-payments-page').then(module => module.SupplierPaymentsPageComponent) },
+      { path: 'purchases/payments/new', canDeactivate: [(component) => component.canDeactivate()], loadComponent: () => import('./features/purchases/supplier-payments-page').then(module => module.SupplierPaymentsPageComponent) },
+      { path: 'purchases/payments/:id', loadComponent: () => import('./features/purchases/supplier-payments-page').then(module => module.SupplierPaymentsPageComponent) },
       {
         path: 'products/recipes/:productId',
         canDeactivate: [(component) => component.canDeactivate()],

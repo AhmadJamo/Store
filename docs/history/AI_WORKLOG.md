@@ -1340,3 +1340,9 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   balanced journals. Web Release passed with zero warnings/errors, SecurityRegression passed 1242 checks, Angular passed 171/171
   tests across 67 files, 76 templates passed accessibility, external SCSS passed, and bundles measured 307,621/358,400 initial and
   81,743/81,920 largest lazy bytes. No schema/business-rule change; MVC remains default. Advanced to `MOD-023G` Supplier Payments.
+- 2026-10-28: Completed approved `MOD-023G`. Added authenticated Supplier Payment list/details/create-form and atomic create/post API
+  plus bilingual RTL-safe Angular routes with named active payment methods, multi-bill allocation and company-currency/carrying evidence.
+  `SupplierPaymentService` remains authoritative for same-supplier/currency eligibility, paid/credited recalculation, overpayment,
+  exchange gains/losses, payable and cash/bank journals. Web Release passed with zero warnings/errors, SecurityRegression passed 1245
+  checks, Angular passed 172/172 tests across 68 files, 77 templates passed accessibility, external SCSS passed, and bundles measured
+  308,019/358,400 initial and 81,743/81,920 largest lazy bytes. MVC remains default. Advanced to `MOD-023H` Goods Receipt Returns.

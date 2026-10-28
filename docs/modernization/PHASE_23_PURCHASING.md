@@ -1,6 +1,6 @@
 # Phase 23 — Purchasing Angular migration
 
-> Status: IN PROGRESS — `MOD-023A..F` COMPLETE on 2026-10-28
+> Status: IN PROGRESS — `MOD-023A..G` COMPLETE on 2026-10-28
 >
 > Presentation default: MVC until a separate cutover approval.
 
@@ -114,5 +114,22 @@ supplier sourcing, inventory/accounting posting, concurrency and tenant authorit
 
 ## Next slice
 
-`MOD-023G` migrates Supplier Payment list/details/create and current allocation/posting evidence while keeping open-bill
-eligibility, currency, overpayment prevention, payable/cash-bank journal posting and idempotency server-owned.
+## `MOD-023G` delivered — Supplier Payments
+
+- Added authenticated list/details/create-form and atomic create-and-post APIs over `SupplierPaymentService`.
+- Angular provides bilingual RTL-safe `/purchases/payments`, `/new` and `/:id` routes, named payment methods,
+  multi-bill allocation bounded by server-projected open balances and company-currency/carrying evidence.
+- `SupplierPayments.View/Create`, antiforgery and validated IDs/amounts remain enforced. Same-supplier/currency eligibility,
+  paid/credited recalculation, overpayment prevention, exchange differences, payable/cash-bank accounts and balanced journals
+  remain server-owned. No schema/business-rule change; MVC remains default.
+
+## Current `MOD-023G` evidence
+
+- Web Release: zero warnings/errors; SecurityRegression: 1245 checks.
+- Angular: 172/172 tests across 68 files; 77 templates passed accessibility; external SCSS passed.
+- Bundles: 308,019/358,400 initial bytes and 81,743/81,920 largest lazy bytes.
+
+## Next slice
+
+`MOD-023H` migrates the modern Goods Receipt Return list/details/create flow while keeping returnable quantity, billed-quantity
+gates, availability, location/tracking removal, AVCO, GRNI/PPV and journal posting server-owned.
