@@ -1,14 +1,14 @@
-using MiniStore.Domain.Entities;
+using System.ComponentModel.DataAnnotations;using MiniStore.Domain.Entities;
 
 namespace MiniStore.Application.DTOs.Purchases;
 
 public sealed class CreatePurchaseApprovalRuleDto
 {
-    public string Name { get; set; } = string.Empty;
+    [Required,StringLength(150)]public string Name { get; set; } = string.Empty;
     public int? WarehouseId { get; set; }
     public PurchaseRequestPriority MinimumPriority { get; set; } = PurchaseRequestPriority.Low;
     public PurchaseRequestPriority MaximumPriority { get; set; } = PurchaseRequestPriority.Urgent;
-    public List<string> ApproverRoles { get; set; } = [];
+    [MinLength(1),MaxLength(3)]public List<string> ApproverRoles { get; set; } = [];
 }
 
 public sealed class PurchaseApprovalRuleDto
@@ -49,3 +49,5 @@ public sealed class PurchaseApprovalStepDto
     public DateTime? DecidedAtUtc { get; init; }
     public string? Note { get; init; }
 }
+public sealed class SetPurchaseApprovalRuleActiveDto{[Range(1,int.MaxValue)]public int Id{get;set;}public bool Active{get;set;}[Required]public byte[] RowVersion{get;set;}=[];}
+public sealed class PurchaseRequestDecisionDto{[Range(1,int.MaxValue)]public int Id{get;set;}[StringLength(500)]public string? Note{get;set;}}

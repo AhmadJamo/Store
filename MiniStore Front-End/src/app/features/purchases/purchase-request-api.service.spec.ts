@@ -41,4 +41,27 @@ describe('PurchaseRequestApiService', () => {
     expect(request.request.method).toBe('POST');
     expect(request.request.body.reason).toBe('No longer needed');
   });
+  it('uses approval decision and rule endpoints', () => {
+    api.approve(4, 'Looks good').subscribe();
+    let request = http.expectOne('/api/v1/purchase-requests/4/approve');
+    expect(request.request.method).toBe('POST');
+    api.reject(4, 'Budget').subscribe();
+    request = http.expectOne('/api/v1/purchase-requests/4/reject');
+    expect(request.request.method).toBe('POST');
+    api.getApprovalRules().subscribe();
+    expect(http.expectOne('/api/v1/purchase-approval-rules').request.method).toBe('GET');
+    api
+      .createApprovalRule({
+        name: 'Standard',
+        minimumPriority: 1,
+        maximumPriority: 4,
+        approverRoles: ['Manager'],
+      })
+      .subscribe();
+    expect(http.expectOne('/api/v1/purchase-approval-rules').request.method).toBe('POST');
+    api.setApprovalRuleActive(3, false, 'AQID').subscribe();
+    request = http.expectOne('/api/v1/purchase-approval-rules/3/active');
+    expect(request.request.method).toBe('PUT');
+    expect(request.request.body.rowVersion).toBe('AQID');
+  });
 });

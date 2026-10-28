@@ -1304,3 +1304,11 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   changed. Web Release passed without warnings/errors, SecurityRegression passed 1227 checks, Angular passed 166/166 tests across
   63 files, accessibility passed 72 templates, external SCSS passed, bundles measured 304,833/358,400 initial and 81,742/81,920
   largest lazy bytes, and live Angular 200 plus anonymous API read/write 401 checks passed. Advanced to `MOD-023B` approvals.
+- 2026-10-27: Completed `MOD-023B`. Added authenticated APIs for Purchase Approval Rule list/create/activate/deactivate and separately
+  permissioned Purchase Request approve/reject commands, all with antiforgery and rule concurrency evidence. Extended the bilingual
+  Angular purchasing workspace with warehouse/priority-scoped ordered-role rules, active-state control, current-role/step evidence and
+  eligible decisions. `PurchaseApprovalService` still freezes rule instances, verifies the current tenant role and advances/rejects
+  request and approval atomically; no schema or business rule changed and MVC remains default. Web Release passed without warnings/
+  errors, SecurityRegression passed 1230 checks, Angular passed 167/167 tests across 63 files, accessibility passed 72 templates,
+  external SCSS passed, bundles measured 305,003/358,400 initial and 81,742/81,920 largest lazy bytes, and live route 200 plus
+  anonymous read 401 checks passed. Advanced to `MOD-023C` sourcing and supplier quotations.

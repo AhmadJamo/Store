@@ -11,7 +11,12 @@ import { FeedbackStateComponent } from '../../shared/ui/feedback-state/feedback-
 import { PageHeaderComponent } from '../../shared/ui/page-header/page-header';
 import { WorkspaceService } from '../../workspace/state/workspace.service';
 import { PurchaseRequestApiService } from './purchase-request-api.service';
-import { CreateRequestLine, CreateRequestPage, PurchaseRequest } from './purchase-request.models';
+import {
+  ApprovalRulesPage,
+  CreateRequestLine,
+  CreateRequestPage,
+  PurchaseRequest,
+} from './purchase-request.models';
 import {
   PurchaseRequestKey,
   PurchaseRequestLocalizationService,
@@ -42,10 +47,11 @@ export class PurchaseRequestsPageComponent {
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
   private readonly fb = inject(FormBuilder);
-  protected readonly mode = signal<'list' | 'create' | 'details'>('list');
+  protected readonly mode = signal<'list' | 'create' | 'details' | 'rules'>('list');
   protected readonly rows = signal<PurchaseRequest[]>([]);
   protected readonly detail = signal<PurchaseRequest | null>(null);
   protected readonly options = signal<CreateRequestPage | null>(null);
+  protected readonly rulesPage = signal<ApprovalRulesPage | null>(null);
   protected readonly loading = signal(true);
   protected readonly loadingProblem = signal<any>(null);
   protected readonly saving = signal(false);
@@ -60,14 +66,28 @@ export class PurchaseRequestsPageComponent {
     notes: ['', Validators.maxLength(1000)],
     lines: this.fb.array([]),
   });
+  protected readonly ruleForm = this.fb.nonNullable.group({
+    name: ['', [Validators.required, Validators.maxLength(150)]],
+    warehouseId: [0],
+    minimumPriority: [1],
+    maximumPriority: [4],
+    role1: [''],
+    role2: [''],
+    role3: [''],
+  });
   constructor() {
     this.form.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.markDirty());
+    this.ruleForm.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.markDirty());
     this.route.url.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => this.resolve());
   }
   canDeactivate() {
-    return !this.form.dirty || globalThis.confirm(this.i18n.text('unsaved'));
+    return (
+      !(this.form.dirty || this.ruleForm.dirty) || globalThis.confirm(this.i18n.text('unsaved'))
+    );
   }
   protected get lines(): FormArray {
     return this.form.controls.lines;
@@ -154,6 +174,78 @@ export class PurchaseRequestsPageComponent {
     }
     this.command(() => this.api.cancel(x.id, x.rowVersion, reason.trim()), 'cancelled');
   }
+  protected decide(approve: boolean, note: string) {
+    const x = this.detail();
+    if (!x || (!approve && !note.trim())) {
+      this.problem.set(this.i18n.text('fix'));
+      return;
+    }
+    this.command(
+      () =>
+        approve
+          ? this.api.approve(x.id, note.trim() || undefined)
+          : this.api.reject(x.id, note.trim()),
+      approve ? 'approvedMessage' : 'rejectedMessage',
+    );
+  }
+  protected createRule() {
+    if (this.ruleForm.invalid) {
+      this.ruleForm.markAllAsTouched();
+      this.problem.set(this.i18n.text('fix'));
+      return;
+    }
+    const v = this.ruleForm.getRawValue();
+    const roles = [v.role1, v.role2, v.role3].map((x) => x.trim()).filter(Boolean);
+    if (!roles.length || v.minimumPriority > v.maximumPriority) {
+      this.problem.set(this.i18n.text('fix'));
+      return;
+    }
+    this.saving.set(true);
+    this.api
+      .createApprovalRule({
+        name: v.name.trim(),
+        warehouseId: v.warehouseId || undefined,
+        minimumPriority: v.minimumPriority,
+        maximumPriority: v.maximumPriority,
+        approverRoles: roles,
+      })
+      .subscribe({
+        next: () => {
+          this.saving.set(false);
+          this.success.set(this.i18n.text('ruleCreated'));
+          this.ruleForm.reset({
+            name: '',
+            warehouseId: 0,
+            minimumPriority: 1,
+            maximumPriority: 4,
+            role1: '',
+            role2: '',
+            role3: '',
+          });
+          this.ruleForm.markAsPristine();
+          this.markDirty();
+          this.loadRules();
+        },
+        error: (e) => {
+          this.saving.set(false);
+          this.showError(e);
+        },
+      });
+  }
+  protected toggleRule(id: number, active: boolean, rowVersion: string) {
+    this.saving.set(true);
+    this.api.setApprovalRuleActive(id, active, rowVersion).subscribe({
+      next: () => {
+        this.saving.set(false);
+        this.success.set(this.i18n.text('ruleChanged'));
+        this.loadRules();
+      },
+      error: (e) => {
+        this.saving.set(false);
+        this.showError(e);
+      },
+    });
+  }
   protected statusName(v: number) {
     return this.i18n.text(
       (
@@ -194,14 +286,21 @@ export class PurchaseRequestsPageComponent {
   }
   protected approvalStatusName(v: number) {
     return this.i18n.text(
-      ({ 1: 'pendingApproval', 2: 'approvedApproval', 3: 'rejectedApproval' } as Record<
-        number,
-        PurchaseRequestKey
-      >)[v] ?? 'pendingApproval',
+      (
+        { 1: 'pendingApproval', 2: 'approvedApproval', 3: 'rejectedApproval' } as Record<
+          number,
+          PurchaseRequestKey
+        >
+      )[v] ?? 'pendingApproval',
     );
   }
   private resolve() {
     const id = Number(this.route.snapshot.paramMap.get('id'));
+    if (this.route.snapshot.routeConfig?.path === 'purchases/approval-rules') {
+      this.mode.set('rules');
+      this.loadRules();
+      return;
+    }
     if (this.route.snapshot.routeConfig?.path?.endsWith('new')) {
       this.mode.set('create');
       this.start();
@@ -232,6 +331,16 @@ export class PurchaseRequestsPageComponent {
     }
     this.mode.set('list');
     this.loadList();
+  }
+  private loadRules() {
+    this.start();
+    this.api.getApprovalRules().subscribe({
+      next: (p) => {
+        this.rulesPage.set(p);
+        this.loading.set(false);
+      },
+      error: (e) => this.fail(e),
+    });
   }
   private loadDetail(id: number) {
     this.start();
@@ -277,6 +386,6 @@ export class PurchaseRequestsPageComponent {
   }
   private markDirty() {
     const tab = this.workspace.activeTab();
-    if (tab) this.workspace.markDirty(tab.id, this.form.dirty);
+    if (tab) this.workspace.markDirty(tab.id, this.form.dirty || this.ruleForm.dirty);
   }
 }

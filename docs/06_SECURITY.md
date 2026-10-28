@@ -247,3 +247,10 @@ The versioned API requires authentication and tenant context, exposes DTOs only 
 Submit and Cancel require independent permissions plus antiforgery; status commands carry route-matched identity and row-version
 evidence. Server-side rules revalidate warehouse, active purchasable product, managed-unit dimension, supplier, positive quantity,
 duplicate line, numbering and eligible state. Angular cannot author trusted conversion, approval or inventory/accounting effects.
+
+## MOD-023B approval command boundary (2026-10-27)
+
+Rule and decision APIs require authentication, tenant context, independent permissions and antiforgery. Rule commands validate name,
+one-to-three ordered tenant roles, warehouse scope, priority range and row-version activation. Decision commands route-match identity,
+bound notes and return forbid when the user lacks the frozen current role. `PurchaseApprovalService` re-resolves tenant roles and
+advances/rejects the instance and request transactionally; Angular visibility cannot skip or fabricate an approval step.

@@ -16,6 +16,11 @@ approval/history evidence, Submit and reasoned Cancel operations. The versioned 
 and `PurchaseRequestService` still owns numbering, active purchasable products, compatible managed-unit conversion, supplier validity,
 row-version concurrency and lifecycle transitions. Angular computes no trusted quantity conversion or approval state; MVC is default.
 
+Angular `/purchases/approval-rules` now administers the existing warehouse/priority-scoped ordered role rules, including activation
+with row-version evidence. Request details expose current-role and immutable step evidence and show Approve/Reject only when both the
+API-authored role eligibility and independent permission allow it. `PurchaseApprovalService` still freezes rule snapshots and advances
+or rejects the request/instance atomically; the browser cannot select a rule, skip a step or impersonate an approver.
+
 Recognized purchase prerequisite errors are actionable in the shared notification experience. Accounting, warehouse-account, approval-rule, payment-method, matching-tolerance, tax, supplier, product, measurement-unit and document-number failures link to their owning setup or master-data screen when the current user has the required management permission; otherwise the user is told to contact an administrator. Quantity, date and other ordinary validation errors do not receive unrelated setup links. This is the default pattern for future user-resolvable errors.
 
 Successful purchase transitions now include a localized "What is the next step?" explanation and permission-aware action. Specific mappings guide users through request submission/approval, supplier sourcing, quotation entry/comparison/award, order approval/confirmation, goods receipt, vendor billing, payment and agreement activation. Other successful purchase POST redirects receive a safe document/list fallback so the workflow never ends without guidance; destination controllers remain authoritative for access.

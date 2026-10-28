@@ -77,3 +77,25 @@ export interface PurchaseRequest {
   lines: RequestLine[];
   history: RequestHistory[];
 }
+export interface ApprovalRule {
+  id: number;
+  name: string;
+  warehouseName: string;
+  minimumPriority: number;
+  maximumPriority: number;
+  isActive: boolean;
+  rowVersion: string;
+  approverRoles: string[];
+}
+export interface ApprovalRulesPage {
+  form: {
+    name: string;
+    warehouseId?: number;
+    minimumPriority: number;
+    maximumPriority: number;
+    approverRoles: string[];
+  };
+  rules: ApprovalRule[];
+  warehouses: RequestOption[];
+  roles: string[];
+}

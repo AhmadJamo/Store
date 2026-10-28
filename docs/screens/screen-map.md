@@ -123,6 +123,8 @@ The Product Templates screen supports a two-step selection-variant workflow: cho
 Angular `/purchases/requests` provides the permission-aware searchable list, `/purchases/requests/new` creates a named warehouse and
 multi-line Draft, and `/purchases/requests/:id` shows lines, approval/history evidence and only currently available Submit/Cancel
 commands. Rejected forms stay editable, completed actions disappear with the status, and MVC remains the default presentation.
+Angular `/purchases/approval-rules` is linked from that workspace for authorized viewers and covers named scope, priority range,
+ordered roles, create and active-state control. Request details show frozen approval steps and eligible Approve/Reject decisions.
 ## Physical Stock Movements
 Bilingual read-only ledger showing Putaway/Relocation plus Planned, Posted or Reversed transfer outbound/transit/inbound stages, product, warehouse, locations, quantity and reference. It intentionally reports historic legacy rows without backfilling them.
 

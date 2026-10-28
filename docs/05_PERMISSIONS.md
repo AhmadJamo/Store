@@ -252,3 +252,9 @@ Angular list/details require `PurchaseRequests.View`; create options and creatio
 requires `PurchaseRequests.Submit`; and reasoned Draft/Submitted cancellation requires `PurchaseRequests.Cancel`. Every command
 validates antiforgery. Navigation and button visibility are convenience only; the API repeats exact authorization.
 
+## MOD-023B purchase-approval permissions (2026-10-27)
+
+Approval-rule reads require `PurchaseApprovalRules.View`; create and activate/deactivate require `PurchaseApprovalRules.Manage` plus
+antiforgery. Request decisions separately require `PurchaseRequests.Approve` or `PurchaseRequests.Reject` and antiforgery. The server
+also requires the signed-in user to hold the current frozen step role; either permission or role alone is insufficient.
+

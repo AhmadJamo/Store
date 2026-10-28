@@ -218,6 +218,7 @@ export const routes: Routes = [
       { path: 'purchases/requests', loadComponent: () => import('./features/purchases/purchase-requests-page').then(module => module.PurchaseRequestsPageComponent) },
       { path: 'purchases/requests/new', canDeactivate: [(component) => component.canDeactivate()], loadComponent: () => import('./features/purchases/purchase-requests-page').then(module => module.PurchaseRequestsPageComponent) },
       { path: 'purchases/requests/:id', loadComponent: () => import('./features/purchases/purchase-requests-page').then(module => module.PurchaseRequestsPageComponent) },
+      { path: 'purchases/approval-rules', canDeactivate: [(component) => component.canDeactivate()], loadComponent: () => import('./features/purchases/purchase-requests-page').then(module => module.PurchaseRequestsPageComponent) },
       {
         path: 'products/recipes/:productId',
         canDeactivate: [(component) => component.canDeactivate()],
