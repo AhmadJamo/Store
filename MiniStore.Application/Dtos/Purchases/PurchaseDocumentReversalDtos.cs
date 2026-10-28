@@ -1,13 +1,18 @@
+using System.ComponentModel.DataAnnotations;
 using MiniStore.Domain.Entities;
 
 namespace MiniStore.Application.DTOs.Purchases;
 
 public sealed class CreatePurchaseDocumentReversalDto
 {
+    [Range(1, 4)]
     public PurchaseDocumentType DocumentType { get; set; }
+    [Range(1, int.MaxValue)]
     public int OriginalDocumentId { get; set; }
     public DateOnly ReversalDate { get; set; } = DateOnly.FromDateTime(DateTime.Today);
+    [Required, StringLength(1000)]
     public string Reason { get; set; } = string.Empty;
+    [Required, StringLength(100, MinimumLength = 16)]
     public string IdempotencyKey { get; set; } = Guid.NewGuid().ToString("N");
 }
 

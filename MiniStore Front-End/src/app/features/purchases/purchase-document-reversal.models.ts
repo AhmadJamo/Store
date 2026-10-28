@@ -1,0 +1,2 @@
+export interface PurchaseDocumentReversalPage{form:{documentType:number;originalDocumentId:number;reversalDate:string;reason:string;idempotencyKey:string};originalDocumentNumber:string;originalDocumentDate:string;originalController:string;existingReversalId?:number}
+export interface PurchaseDocumentReversal{id:number;reversalNumber:string;documentType:number;originalDocumentId:number;originalDocumentNumber:string;reversalDate:string;reason:string;status:number;createdByUserId:string;createdAtUtc:string;reversalJournalEntryNumber?:string;originalController:string}

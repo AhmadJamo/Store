@@ -1,6 +1,6 @@
 # Phase 23 — Purchasing Angular migration
 
-> Status: IN PROGRESS — `MOD-023A..I` COMPLETE on 2026-10-28
+> Status: IN PROGRESS — `MOD-023A..J` COMPLETE on 2026-10-28
 >
 > Presentation default: MVC until a separate cutover approval.
 
@@ -159,8 +159,23 @@ supplier sourcing, inventory/accounting posting, concurrency and tenant authorit
 - Bundles: 308,688/358,400 initial bytes and 81,743/81,920 largest lazy bytes.
 - Live checks: Angular credit-note list returned 200; anonymous API read returned 401.
 
+## `MOD-023J` delivered — Purchase Document Reversals
+
+- Added authenticated list/details/create-form and idempotent reversal APIs over `PurchaseDocumentReversalService`.
+- Angular provides bilingual RTL-safe `/purchases/reversals`, `/new` and `/:id` routes with original-document, reason, actor and
+  opposite-journal evidence. Posted Goods Receipt, Vendor Bill and Supplier Payment details expose permission-aware reversal links.
+- `PurchaseDocumentReversals.View/Create`, antiforgery, bounded reason and idempotency validation remain enforced. Dependency order,
+  fiscal period, unchanged valuation, stock availability, physical/value corrections, opposite journals and original-state changes
+  remain server-owned. No schema/business-rule change; MVC remains default.
+
+## Current `MOD-023J` evidence
+
+- Web Release: zero warnings/errors; SecurityRegression: 1254 checks.
+- Angular: 175/175 tests across 71 files; 80 templates passed accessibility; external SCSS passed.
+- Bundles: 309,114/358,400 initial bytes and 81,743/81,920 largest lazy bytes.
+- Live checks: Angular reversal list returned 200; anonymous API read returned 401.
+
 ## Next slice
 
-`MOD-023J` migrates controlled Purchase Document Reversal list/details/create flow for posted Goods Receipts, Vendor Bills,
-Supplier Payments and Landed Costs while keeping dependency gates, unchanged valuation, opposite journals, physical corrections,
-idempotency and original-state transitions server-owned.
+`MOD-023K` migrates Landed Cost list/details/create-and-post and connects its controlled reversal path while keeping allocation basis,
+capitalized-versus-consumed split, AVCO revaluation, clearing/expense accounts, value-only movements and journals server-owned.

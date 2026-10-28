@@ -1,0 +1,9 @@
+using Microsoft.AspNetCore.Authorization;using Microsoft.AspNetCore.Mvc;using Microsoft.Extensions.Localization;using MiniStore.Application.DTOs.Purchases;using MiniStore.Application.Services;using MiniStore.Domain.Entities;using MiniStore.Web.Authorization;using MiniStore.Web.Middleware.Api;
+namespace MiniStore.Web.Controllers.Api.V1;
+[ApiController,Authorize,Route("api/v1/purchase-document-reversals")]
+public sealed class PurchaseDocumentReversalsApiController(PurchaseDocumentReversalService service,IStringLocalizer<SharedResource> localizer):ControllerBase{
+[HttpGet,PermissionAuthorize("PurchaseDocumentReversals.View")]public async Task<ActionResult<List<PurchaseDocumentReversalDto>>>GetAll()=>Ok(await service.GetAllAsync());
+[HttpGet("{id:int}"),PermissionAuthorize("PurchaseDocumentReversals.View")]public async Task<ActionResult<PurchaseDocumentReversalDto>>Get(int id){var x=await service.GetAsync(id);return x is null?NotFound():Ok(x);}
+[HttpGet("create-form"),PermissionAuthorize("PurchaseDocumentReversals.Create")]public async Task<IActionResult>GetCreateForm(PurchaseDocumentType documentType,int originalDocumentId){try{return Ok(await service.GetCreatePageAsync(documentType,originalDocumentId));}catch(Exception e)when(e is ArgumentException or InvalidOperationException){return NotFound();}}
+[HttpPost,ValidateAntiForgeryToken,PermissionAuthorize("PurchaseDocumentReversals.Create")]public async Task<IActionResult>Create(CreatePurchaseDocumentReversalDto input){try{return Ok(new{id=await service.ReverseAsync(input)});}catch(Exception e)when(e is ArgumentException or InvalidOperationException){ModelState.AddModelError(string.Empty,localizer[e.Message]);return InternalApiProblemFactory.Validation(HttpContext,ModelState,localizer["One or more validation errors occurred."],InternalApiProblemCodes.Validation);}}
+}

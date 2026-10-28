@@ -1361,3 +1361,10 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   174/174 tests across 70 files, 79 templates passed accessibility, external SCSS passed and bundles measured 308,688/358,400
   initial and 81,743/81,920 largest lazy bytes. Live Angular returned 200 and anonymous API returned 401. MVC remains default.
   Advanced to `MOD-023J` controlled Purchase Document Reversals.
+- 2026-10-28: Completed approved `MOD-023J`. Added authenticated Purchase Document Reversal list/details/create-form and idempotent
+  post API plus bilingual RTL-safe Angular routes and permission-aware reversal links from posted Goods Receipts, Vendor Bills and
+  Supplier Payments. `PurchaseDocumentReversalService` remains authoritative for downstream dependency order, fiscal periods,
+  valuation and availability gates, physical/value corrections, opposite journals, original-state transitions and retry safety.
+  Web Release passed with zero warnings/errors, SecurityRegression passed 1254 checks, Angular passed 175/175 tests across 71 files,
+  80 templates passed accessibility, external SCSS passed and bundles measured 309,114/358,400 initial and 81,743/81,920 largest
+  lazy bytes. Live Angular returned 200 and anonymous API returned 401. MVC remains default. Advanced to `MOD-023K` Landed Costs.

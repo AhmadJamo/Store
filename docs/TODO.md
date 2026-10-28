@@ -55,6 +55,7 @@ The ERP SaaS Foundation Blueprint is imported as a non-authoritative planning re
 - [x] MOD-023G migrate Supplier Payment list/details/create-and-post with named methods, bounded multi-bill allocation and server-owned balances, exchange differences and journals. Completed 2026-10-28.
 - [x] MOD-023H migrate Goods Receipt Return list/details/create-and-post with explicit tracking allocations and server-owned unbilled limits, availability, valuation, movements and journals. Completed 2026-10-28.
 - [x] MOD-023I migrate Supplier Credit Note list/details/create-and-post with explicit tracking allocations and server-owned bill limits, stock availability, tax, valuation, payable and journals. Completed 2026-10-28.
+- [x] MOD-023J migrate controlled Purchase Document Reversal list/details/create for receipts, bills, payments and landed costs with server-owned dependencies, valuation, corrections, opposite journals and idempotency. Completed 2026-10-28.
 - [ ] MOD-023 through MOD-028 migrate purchasing, sales, POS, accounting, tenant/public,
   platform and shared MVC workflows to Angular, including every operation, permission, localization, file/PDF and edge state.
 - [ ] MOD-029 prove full-system parity through dual-run reconciliation, performance/security/accessibility evidence and cutover/rollback rehearsals.

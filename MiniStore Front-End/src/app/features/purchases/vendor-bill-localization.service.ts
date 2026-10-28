@@ -79,6 +79,7 @@ const c = {
     tooManyFiles: 'A bill can contain at most ten attachments.',
     payBill: 'Pay vendor bill',
     createCreditNote: 'Create supplier credit note',
+    reverseDocument: 'Reverse vendor bill',
   },
   ar: {
     title: 'فواتير المورد',
@@ -157,6 +158,7 @@ const c = {
     tooManyFiles: 'يمكن أن تحتوي الفاتورة على عشرة مرفقات كحد أقصى.',
     payBill: 'دفع فاتورة المورد',
     createCreditNote: 'إنشاء إشعار دائن للمورد',
+    reverseDocument: 'عكس فاتورة المورد',
   },
 } as const;
 export type VendorBillKey = keyof typeof c.en;
