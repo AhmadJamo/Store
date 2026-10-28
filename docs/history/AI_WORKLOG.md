@@ -1444,3 +1444,10 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   files, 92 templates passed accessibility, external SCSS passed and bundles measured 313,034/358,400 initial and 81,743/81,920
   largest lazy bytes. Five Angular routes returned 200 and both anonymous APIs returned 401. MVC remains default. Advanced to
   `MOD-024A` Sales Price Lists and pricing evaluation.
+- 2026-10-29: Completed `MOD-024A` Sales Price Lists and pricing evaluation. Added an authenticated permission-separated API and a
+  bilingual RTL-safe lazy Angular workspace covering list creation/activation/archive, rule creation/activation/archive and complete
+  read-only evaluation evidence. `SalesPriceListService` remains authoritative for precedence, units, quantities, dates, customer
+  defaults/exemption, currency, rounding and tax; evaluation has no document, stock, accounting or payment effect. Release passed
+  with zero warnings/errors, SecurityRegression passed 1284 checks, Angular passed 187/187 tests across 83 files, 93 templates passed
+  accessibility, external SCSS passed and bundles measured 313,179/358,400 initial and 81,743/81,920 largest lazy bytes. Live Angular
+  returned 200 and anonymous API returned 401. MVC remains default. Advanced to `MOD-024B` Sales Quotations.
