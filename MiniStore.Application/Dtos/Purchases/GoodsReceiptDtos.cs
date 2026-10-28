@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using MiniStore.Domain.Entities;
 
 namespace MiniStore.Application.DTOs.Purchases;
@@ -19,15 +20,20 @@ public sealed class GoodsReceiptRemainingLineDto
 }
 public sealed class CreateGoodsReceiptDto
 {
+    [Range(1, int.MaxValue)]
     public int PurchaseOrderId { get; set; }
     public DateOnly ReceiptDate { get; set; } = DateOnly.FromDateTime(DateTime.Today);
+    [StringLength(1000)]
     public string? Notes { get; set; }
+    [MinLength(1)]
     public List<CreateGoodsReceiptLineDto> Lines { get; set; } = [];
 }
 public sealed class CreateGoodsReceiptDraftDto
 {
+    [Range(1, int.MaxValue)]
     public int PurchaseOrderId { get; set; }
     public DateOnly ReceiptDate { get; set; } = DateOnly.FromDateTime(DateTime.Today);
+    [StringLength(1000)]
     public string? Notes { get; set; }
 }
 public sealed class GoodsReceiptScanPageDto
@@ -51,20 +57,30 @@ public sealed class GoodsReceiptScanLineDto
 }
 public sealed class ScanGoodsReceiptDto
 {
+    [Range(1, int.MaxValue)]
     public int GoodsReceiptId { get; set; }
+    [Required, StringLength(100)]
     public string ProductScan { get; set; } = string.Empty;
+    [Range(typeof(decimal), "0.000001", "999999999999", ParseLimitsInInvariantCulture = true, ConvertValueInInvariantCulture = true)]
     public decimal Quantity { get; set; } = 1m;
+    [Required, StringLength(100, MinimumLength = 16)]
     public string IdempotencyKey { get; set; } = string.Empty;
+    [StringLength(100)]
     public string? LotNumber { get; set; }
+    [StringLength(2000)]
     public string? SerialNumbers { get; set; }
     public DateOnly? ManufactureDate { get; set; }
     public DateOnly? ExpirationDate { get; set; }
 }
 public sealed class CreateGoodsReceiptLineDto
 {
+    [Range(1, int.MaxValue)]
     public int PurchaseOrderLineId { get; set; }
+    [Range(typeof(decimal), "0", "999999999999", ParseLimitsInInvariantCulture = true, ConvertValueInInvariantCulture = true)]
     public decimal ReceivedQuantity { get; set; }
+    [StringLength(100)]
     public string? LotNumber { get; set; }
+    [StringLength(2000)]
     public string? SerialNumbers { get; set; }
     public DateOnly? ManufactureDate { get; set; }
     public DateOnly? ExpirationDate { get; set; }
@@ -113,17 +129,26 @@ public sealed class GoodsReceiptPostedLineDto
 
 public sealed class InspectGoodsReceiptDto
 {
+    [Range(1, int.MaxValue)]
     public int GoodsReceiptId { get; set; }
+    [StringLength(1000)]
     public string? Notes { get; set; }
+    [MinLength(1)]
     public List<InspectGoodsReceiptLineDto> Lines { get; set; } = [];
 }
 
 public sealed class InspectGoodsReceiptLineDto
 {
+    [Range(1, int.MaxValue)]
     public int GoodsReceiptLineId { get; set; }
+    [Range(typeof(decimal), "0", "999999999999", ParseLimitsInInvariantCulture = true, ConvertValueInInvariantCulture = true)]
     public decimal AcceptedQuantity { get; set; }
+    [Range(typeof(decimal), "0", "999999999999", ParseLimitsInInvariantCulture = true, ConvertValueInInvariantCulture = true)]
     public decimal RejectedQuantity { get; set; }
+    [Range(typeof(decimal), "0", "999999999999", ParseLimitsInInvariantCulture = true, ConvertValueInInvariantCulture = true)]
     public decimal DamagedQuantity { get; set; }
+    [Range(typeof(decimal), "0", "999999999999", ParseLimitsInInvariantCulture = true, ConvertValueInInvariantCulture = true)]
     public decimal ShortQuantity { get; set; }
+    [StringLength(500)]
     public string? Reason { get; set; }
 }

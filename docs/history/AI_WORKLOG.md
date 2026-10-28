@@ -1325,3 +1325,11 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   inventory or accounting effect. Web Release passed with zero warnings/errors, SecurityRegression passed 1236 checks, Angular passed
   169/169 tests across 65 files, 74 templates passed accessibility, external SCSS passed and bundles measured 306,260/358,400 initial and
   81,742/81,920 largest lazy bytes. No schema/business-rule change; MVC remains default. Advanced to `MOD-023E` Goods Receipts.
+- 2026-10-28: Completed approved `MOD-023E`. Added authenticated Goods Receipt list/details/create-form APIs and Angular routes for
+  direct create/post, idempotent barcode or product-code scanning drafts, final posting, staged quality inspection and accepted-stock
+  put-away. Independent View/Create/Inspect/PutAway permissions and antiforgery are preserved; `GoodsReceiptService`, Inventory and
+  Accounting remain authoritative for eligible confirmed orders, remaining quantities, tracking/date evidence, valuation, movements,
+  GRNI journals and staged state transitions. Web Release passed with zero warnings/errors, SecurityRegression passed 1239 checks,
+  Angular passed 170/170 tests across 66 files, 75 templates passed accessibility, external SCSS passed, and bundles measured
+  306,587/358,400 initial and 81,742/81,920 largest lazy bytes. No schema/business-rule change; MVC remains default. Advanced to
+  `MOD-023F` Vendor Bills.

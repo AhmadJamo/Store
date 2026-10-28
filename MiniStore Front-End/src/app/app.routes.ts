@@ -226,8 +226,10 @@ export const routes: Routes = [
       { path: 'purchases/sourcing/:id/comparison', canDeactivate: [(component) => component.canDeactivate()], loadComponent: () => import('./features/purchases/purchase-sourcing-page').then(module => module.PurchaseSourcingPageComponent) },
       { path: 'purchases/orders', loadComponent: () => import('./features/purchases/purchase-orders-page').then(module => module.PurchaseOrdersPageComponent) },
       { path: 'purchases/orders/:id', canDeactivate: [(component) => component.canDeactivate()], loadComponent: () => import('./features/purchases/purchase-orders-page').then(module => module.PurchaseOrdersPageComponent) },
-      { path: 'purchases/orders', loadComponent: () => import('./features/purchases/purchase-orders-page').then(module => module.PurchaseOrdersPageComponent) },
-      { path: 'purchases/orders/:id', canDeactivate: [(component) => component.canDeactivate()], loadComponent: () => import('./features/purchases/purchase-orders-page').then(module => module.PurchaseOrdersPageComponent) },
+      { path: 'purchases/receipts', loadComponent: () => import('./features/purchases/goods-receipts-page').then(module => module.GoodsReceiptsPageComponent) },
+      { path: 'purchases/receipts/new', canDeactivate: [(component) => component.canDeactivate()], loadComponent: () => import('./features/purchases/goods-receipts-page').then(module => module.GoodsReceiptsPageComponent) },
+      { path: 'purchases/receipts/:id', canDeactivate: [(component) => component.canDeactivate()], loadComponent: () => import('./features/purchases/goods-receipts-page').then(module => module.GoodsReceiptsPageComponent) },
+      { path: 'purchases/receipts/:id/scan', canDeactivate: [(component) => component.canDeactivate()], loadComponent: () => import('./features/purchases/goods-receipts-page').then(module => module.GoodsReceiptsPageComponent) },
       {
         path: 'products/recipes/:productId',
         canDeactivate: [(component) => component.canDeactivate()],

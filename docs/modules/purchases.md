@@ -19,6 +19,12 @@ eligibility, invitation membership, currency/rates, complete quotation lines, ex
 fulfillment and supplier-confirmation mutation still delegate to `PurchaseOrderService`; independent permissions, antiforgery and
 row-version evidence are mandatory. Confirmation remains commercial only and does not mutate inventory or accounting.
 
+`MOD-023E` exposes the existing Goods Receipt list/details, direct receipt, barcode/product-code scanning draft, post, staged quality
+inspection and put-away operations through authenticated Angular routes. The browser submits physical evidence only; confirmed-order
+eligibility, remaining quantity, unit conversion, lot/serial/date rules, idempotency, location, AVCO, stock movement, GRNI posting and
+quality-state transitions remain in `GoodsReceiptService` and Inventory/Accounting services. Independent View/Create/Inspect/PutAway
+permissions and antiforgery remain mandatory, and MVC remains the default presentation.
+
 Angular `/purchases/requests` now covers the current request list/search/status filter, named multi-line Draft creation, details,
 approval/history evidence, Submit and reasoned Cancel operations. The versioned API repeats independent permissions and antiforgery,
 and `PurchaseRequestService` still owns numbering, active purchasable products, compatible managed-unit conversion, supplier validity,

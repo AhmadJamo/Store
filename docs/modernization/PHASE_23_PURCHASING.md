@@ -1,6 +1,6 @@
 # Phase 23 — Purchasing Angular migration
 
-> Status: IN PROGRESS — `MOD-023A..D` COMPLETE on 2026-10-28
+> Status: IN PROGRESS — `MOD-023A..E` COMPLETE on 2026-10-28
 >
 > Presentation default: MVC until a separate cutover approval.
 
@@ -78,7 +78,24 @@ supplier sourcing, inventory/accounting posting, concurrency and tenant authorit
 - Angular: 169/169 tests across 65 files; 74 templates passed accessibility; external SCSS passed.
 - Bundles: 306,260/358,400 initial bytes and 81,742/81,920 largest lazy bytes.
 
+## `MOD-023E` delivered — Goods Receipts
+
+- Added authenticated Goods Receipt list/details/create-form APIs plus direct create/post, scanning draft, idempotent product
+  scan, final post, staged quality inspection and accepted-stock put-away operations.
+- Every mutation retains antiforgery and its existing `GoodsReceipts.Create/Inspect/PutAway` permission. Confirmed-order
+  eligibility, remaining quantities, managed units, lot/serial/date requirements, inventory valuation, physical movements,
+  GRNI journal posting, staged status transitions and exact accepted/rejected/damaged/short totals remain server-owned.
+- Added bilingual RTL-safe Angular `/purchases/receipts`, `/new`, `/:id` and `/:id/scan` routes with rejected-input
+  preservation, dirty navigation protection and a permission-aware Receive Goods link from eligible confirmed orders.
+- No schema or business-rule change; MVC remains default.
+
+## Current `MOD-023E` evidence
+
+- Web Release: zero warnings/errors; SecurityRegression: 1239 checks.
+- Angular: 170/170 tests across 66 files; 75 templates passed accessibility; external SCSS passed.
+- Bundles: 306,587/358,400 initial bytes and 81,742/81,920 largest lazy bytes.
+
 ## Next slice
 
-`MOD-023E` migrates Goods Receipt list/details/create/post/reversal-compatible evidence and its staged receiving/quality operations while
-keeping location, lot/serial, inventory costing and posting rules server-owned.
+`MOD-023F` migrates Vendor Bill list/details/create, approval/match override/post/cancel and current attachment/extraction-review
+operations while keeping receipt allocation, tolerance, tax, PPV, GRNI, payable and journal authority on the server.

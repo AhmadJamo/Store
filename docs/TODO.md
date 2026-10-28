@@ -50,6 +50,7 @@ The ERP SaaS Foundation Blueprint is imported as a non-authoritative planning re
 - [x] MOD-023B migrate approval-rule list/create/activation and Purchase Request approve/reject decisions with frozen ordered roles and independent permissions. Completed 2026-10-27.
 - [x] MOD-023C migrate sourcing list/details/create, invited-supplier quotation capture/comparison and reason-required exact-quantity award with independent permissions and server-owned commercial rules. Completed 2026-10-28.
 - [x] MOD-023D migrate Purchase Order list/details/create-from-award and approve/confirm/cancel/close/reopen/direct-delivery/supplier-confirmation operations with independent permissions and server-owned lifecycle rules. Completed 2026-10-28.
+- [x] MOD-023E migrate Goods Receipt list/details/direct create, scanning draft/post, staged inspection and put-away with independent permissions and server-owned quantity/tracking/inventory/accounting rules. Completed 2026-10-28.
 - [ ] MOD-023 through MOD-028 migrate purchasing, sales, POS, accounting, tenant/public,
   platform and shared MVC workflows to Angular, including every operation, permission, localization, file/PDF and edge state.
 - [ ] MOD-029 prove full-system parity through dual-run reconciliation, performance/security/accessibility evidence and cutover/rollback rehearsals.
