@@ -266,3 +266,9 @@ also requires the signed-in user to hold the current frozen step role; either pe
 - `SupplierQuotations.Create` protects invited quotation options and submission; `SupplierQuotations.View` protects comparison;
   `SupplierQuotations.Award` alone permits the antiforgery-protected one-time award.
 - Angular permission checks only hide ineligible actions. Controller policies and Application/Domain validation remain authoritative.
+
+## MOD-023D Purchase Order API permissions (2026-10-28)
+
+Reads require `PurchaseOrders.View`. Create-from-award, approve, confirm, cancel, close, reopen, configure fulfillment, record direct
+delivery and record supplier confirmation each retain their distinct `PurchaseOrders.*` permission and antiforgery. UI visibility is
+convenience only; controller authorization and server lifecycle checks are authoritative.

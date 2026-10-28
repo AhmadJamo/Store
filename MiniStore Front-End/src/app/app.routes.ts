@@ -224,6 +224,10 @@ export const routes: Routes = [
       { path: 'purchases/sourcing/:id', loadComponent: () => import('./features/purchases/purchase-sourcing-page').then(module => module.PurchaseSourcingPageComponent) },
       { path: 'purchases/sourcing/:id/quotation', canDeactivate: [(component) => component.canDeactivate()], loadComponent: () => import('./features/purchases/purchase-sourcing-page').then(module => module.PurchaseSourcingPageComponent) },
       { path: 'purchases/sourcing/:id/comparison', canDeactivate: [(component) => component.canDeactivate()], loadComponent: () => import('./features/purchases/purchase-sourcing-page').then(module => module.PurchaseSourcingPageComponent) },
+      { path: 'purchases/orders', loadComponent: () => import('./features/purchases/purchase-orders-page').then(module => module.PurchaseOrdersPageComponent) },
+      { path: 'purchases/orders/:id', canDeactivate: [(component) => component.canDeactivate()], loadComponent: () => import('./features/purchases/purchase-orders-page').then(module => module.PurchaseOrdersPageComponent) },
+      { path: 'purchases/orders', loadComponent: () => import('./features/purchases/purchase-orders-page').then(module => module.PurchaseOrdersPageComponent) },
+      { path: 'purchases/orders/:id', canDeactivate: [(component) => component.canDeactivate()], loadComponent: () => import('./features/purchases/purchase-orders-page').then(module => module.PurchaseOrdersPageComponent) },
       {
         path: 'products/recipes/:productId',
         canDeactivate: [(component) => component.canDeactivate()],

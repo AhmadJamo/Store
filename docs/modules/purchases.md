@@ -15,6 +15,10 @@ The additive procurement workflow now also supports internal Purchase Requests, 
 domain logic. Angular can select only the suppliers and commercial inputs; the Application services still validate approved-request
 eligibility, invitation membership, currency/rates, complete quotation lines, exact allocation totals and required award reasons.
 
+`MOD-023D` exposes all current Purchase Order operations through a dedicated Angular API/page. Award materialization and every lifecycle,
+fulfillment and supplier-confirmation mutation still delegate to `PurchaseOrderService`; independent permissions, antiforgery and
+row-version evidence are mandatory. Confirmation remains commercial only and does not mutate inventory or accounting.
+
 Angular `/purchases/requests` now covers the current request list/search/status filter, named multi-line Draft creation, details,
 approval/history evidence, Submit and reasoned Cancel operations. The versioned API repeats independent permissions and antiforgery,
 and `PurchaseRequestService` still owns numbering, active purchasable products, compatible managed-unit conversion, supplier validity,

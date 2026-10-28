@@ -1,6 +1,6 @@
 # Phase 23 — Purchasing Angular migration
 
-> Status: IN PROGRESS — `MOD-023A..C` COMPLETE on 2026-10-28
+> Status: IN PROGRESS — `MOD-023A..D` COMPLETE on 2026-10-28
 >
 > Presentation default: MVC until a separate cutover approval.
 
@@ -63,7 +63,22 @@ supplier sourcing, inventory/accounting posting, concurrency and tenant authorit
 - Angular: 168/168 tests across 64 files; 73 templates passed accessibility; external SCSS passed.
 - Production bundles: 305,736/358,400 initial bytes and 81,742/81,920 largest lazy bytes.
 
+## `MOD-023D` delivered — Purchase Orders
+
+- Added authenticated list/details and create-from-award APIs plus approve, confirm, cancel, close/reopen remaining quantity,
+  direct-delivery configuration/evidence and supplier delivery-date confirmation.
+- Every command has its own existing `PurchaseOrders.*` permission, antiforgery and validated concurrency evidence. The Angular screen
+  hides completed actions and exposes supplier, warehouse, currency, fulfillment progress, commercial lines and lifecycle history.
+- `PurchaseOrderService` and Domain remain authoritative for award materialization, snapshots, status, direct delivery and quantities.
+  Approval/confirmation still changes neither stock nor accounting. No schema/business-rule change; MVC remains default.
+
+## Current `MOD-023D` evidence
+
+- Web Release: zero warnings/errors; SecurityRegression: 1236 checks.
+- Angular: 169/169 tests across 65 files; 74 templates passed accessibility; external SCSS passed.
+- Bundles: 306,260/358,400 initial bytes and 81,742/81,920 largest lazy bytes.
+
 ## Next slice
 
-`MOD-023D` migrates Purchase Order list/details, materialization from a completed award and the existing approve/confirm/cancel and
-remainder-close/reopen lifecycle while preserving frozen commercial data and keeping inventory/accounting effects out of confirmation.
+`MOD-023E` migrates Goods Receipt list/details/create/post/reversal-compatible evidence and its staged receiving/quality operations while
+keeping location, lot/serial, inventory costing and posting rules server-owned.

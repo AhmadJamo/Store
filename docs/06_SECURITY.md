@@ -101,6 +101,13 @@ antiforgery and model bounds before delegating to the existing Application servi
 Supplier identity is resolved against recorded invitations, quotation lines must match the event exactly, monetary decimal validation is
 culture-invariant, and award identities/quantities/reasons are revalidated server-side. The Angular client cannot close an event directly.
 
+## MOD-023D Angular Purchase Order boundary (2026-10-28)
+
+The Purchase Order API is authenticated, versioned and delegates only to `PurchaseOrderService`. All nine mutations require independent
+permissions and antiforgery; route/payload IDs, row-version bytes, reasons and bounded delivery/supplier evidence are validated. The server
+re-resolves award eligibility, status, open quantities, fulfillment route and expense-account prerequisites. Angular cannot post stock or
+accounting through approval/confirmation.
+
 PUR-220 service evidence separates `PurchaseServiceAcceptances.View` from `PurchaseServiceAcceptances.Create`. The Application service resolves every supplied line through the current tenant's confirmed Purchase Order, requires the frozen Service Completion policy and caps cumulative completion. Goods Receipt paths independently reject non-receipt policies and non-stocked products, so a crafted request cannot turn a service into warehouse stock.
 
 PUR-250A separates receipt capture, quality inspection and storage permissions. The Application service requires the exact state at every transition, validates every submitted receipt line against the tenant-loaded aggregate and Purchase Order, requires discrepancy reasons and caps shortage evidence. A filtered tenant/order uniqueness boundary prevents competing staged receipts. No client-submitted status or route is trusted, and stock/accounting effects remain inside the serializable storage transaction.
