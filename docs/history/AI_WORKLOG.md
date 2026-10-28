@@ -1414,3 +1414,10 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   Angular passed 182/182 tests across 78 files, 88 templates passed accessibility, external SCSS passed and bundles measured
   311,737/358,400 initial and 81,743/81,920 largest lazy bytes. Live Angular returned 200 and anonymous API returned 401. MVC remains
   default. Advanced to `MOD-023R` Supplier Communications.
+- 2026-10-28: Completed `MOD-023R` Supplier Communications. Added authenticated APIs and bilingual RTL-safe Angular preparation,
+  document-history and detail workspaces, immutable RFQ attachment downloads and explicit activity evidence. Named supplier links were
+  added to RFQ and Purchase Order details. Server rules still own eligibility, snapshots, activity ordering and required evidence;
+  opening the mail client never claims sending. Release passed with zero warnings/errors, SecurityRegression passed 1275 checks,
+  Angular passed 183/183 tests across 79 files, 89 templates passed accessibility, external SCSS passed and bundles measured
+  312,007/358,400 initial and 81,743/81,920 largest lazy bytes. Live Angular returned 200 and anonymous API returned 401. MVC remains
+  default. Advanced to `MOD-023S` Supplier Integrations.

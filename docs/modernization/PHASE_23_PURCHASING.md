@@ -1,6 +1,6 @@
 # Phase 23 — Purchasing Angular migration
 
-> Status: IN PROGRESS — `MOD-023A..Q` COMPLETE on 2026-10-28
+> Status: IN PROGRESS — `MOD-023A..R` COMPLETE on 2026-10-28
 >
 > Presentation default: MVC until a separate cutover approval.
 
@@ -274,7 +274,15 @@ supplier sourcing, inventory/accounting posting, concurrency and tenant authorit
 - Evidence: Release zero warnings/errors; SecurityRegression 1273; Angular 182/182 across 78 files; 88 templates; bundles
   311,737/358,400 initial and 81,743/81,920 largest lazy bytes; live Angular 200 and anonymous API 401.
 
+## `MOD-023R` delivered — supplier communications
+
+- Added authenticated APIs for communication detail/document history, preparation, activity recording and attachment download.
+- Added bilingual RTL-safe Angular preparation/history/detail workspaces linked by supplier name from RFQ and Purchase Order details.
+- Preparation and activity commands retain independent permissions and antiforgery. Eligibility, immutable message/attachment snapshots,
+  status ordering and evidence requirements remain server-owned; opening the mail client never claims delivery. MVC remains default.
+- Evidence: Release zero warnings/errors; SecurityRegression 1275; Angular 183/183 across 79 files; 89 templates; bundles
+  312,007/358,400 initial and 81,743/81,920 largest lazy bytes; live Angular 200 and anonymous API 401.
+
 ## Next slice
 
-`MOD-023R` migrates supplier communication preparation, immutable attachments and recorded delivery/activity evidence while keeping
-all document eligibility and audit rules server-owned.
+`MOD-023S` migrates supplier credentials, private portal access, external submission queue/retry and immutable payload downloads.

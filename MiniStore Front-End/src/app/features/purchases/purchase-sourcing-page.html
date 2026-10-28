@@ -173,7 +173,26 @@
       <h2>{{ i18n.text('suppliers') }}</h2>
       <ul>
         @for (s of x.invitations; track s.supplierId) {
-          <li>{{ s.supplierName }}</li>
+          <li>
+            {{ s.supplierName }}
+            @if (
+              session.can('SupplierCommunications.Prepare') ||
+              session.can('SupplierCommunications.View')
+            ) {
+              <a
+                class="ui-button secondary"
+                routerLink="/purchases/communications/prepare"
+                [queryParams]="{
+                  documentType: 1,
+                  documentId: x.id,
+                  supplierId: s.supplierId,
+                  supplierName: s.supplierName,
+                  documentNumber: x.sourcingNumber,
+                }"
+                >{{ i18n.text('supplierCommunication') }}</a
+              >
+            }
+          </li>
         }
       </ul>
     </section>

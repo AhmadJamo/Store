@@ -257,6 +257,8 @@ export const routes: Routes = [
       { path: 'purchases/replenishment', canDeactivate: [(component) => component.canDeactivate()], loadComponent: () => import('./features/purchases/purchase-replenishment-page').then(module => module.PurchaseReplenishmentPageComponent) },
       { path: 'purchases/analytics', loadComponent: () => import('./features/purchases/purchase-analytics-page').then(module => module.PurchaseAnalyticsPageComponent) },
       { path: 'purchases/accounting-reconciliation', loadComponent: () => import('./features/purchases/purchase-accounting-reconciliation-page').then(module => module.PurchaseAccountingReconciliationPageComponent) },
+      { path: 'purchases/communications/prepare', loadComponent: () => import('./features/purchases/supplier-communications-page').then(module => module.SupplierCommunicationsPageComponent) },
+      { path: 'purchases/communications/:id', loadComponent: () => import('./features/purchases/supplier-communications-page').then(module => module.SupplierCommunicationsPageComponent) },
       { path: 'purchases/payments', loadComponent: () => import('./features/purchases/supplier-payments-page').then(module => module.SupplierPaymentsPageComponent) },
       { path: 'purchases/payments/new', canDeactivate: [(component) => component.canDeactivate()], loadComponent: () => import('./features/purchases/supplier-payments-page').then(module => module.SupplierPaymentsPageComponent) },
       { path: 'purchases/payments/:id', loadComponent: () => import('./features/purchases/supplier-payments-page').then(module => module.SupplierPaymentsPageComponent) },

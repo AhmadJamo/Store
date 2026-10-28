@@ -82,6 +82,12 @@ for historical/current inventory valuation, warehouse ledger balances, GRNI rece
 all differences. Source and setup links are independently permission-aware. No reconciliation value is derived in Angular and no
 schema, inventory or accounting effect was introduced; MVC is default.
 
+`MOD-023R` exposes supplier communication preparation, document history, immutable RFQ attachment downloads and explicit activity
+recording through Angular. RFQ and Purchase Order pages link by named supplier to bilingual preparation/history. The Application/domain
+layer remains authoritative for supplier/document eligibility, email presence, approved/sent states, immutable subject/body/attachment
+snapshots and the rule that sending precedes delivery, reply or follow-up evidence. Opening a local email application is never treated
+as proof of sending. Independent Prepare/View/RecordActivity permissions and antiforgery remain mandatory; MVC is default.
+
 Angular `/purchases/requests` now covers the current request list/search/status filter, named multi-line Draft creation, details,
 approval/history evidence, Submit and reasoned Cancel operations. The versioned API repeats independent permissions and antiforgery,
 and `PurchaseRequestService` still owns numbering, active purchasable products, compatible managed-unit conversion, supplier validity,

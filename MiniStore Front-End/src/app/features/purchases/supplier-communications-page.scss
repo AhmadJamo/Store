@@ -1,0 +1,58 @@
+.communications-page {
+  display: grid;
+  gap: 1.25rem;
+}
+.top,
+.actions,
+.ui-card header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+.prepare,
+.warning,
+.message {
+  display: grid;
+  gap: 0.75rem;
+}
+.warning {
+  border-inline-start: 0.3rem solid var(--color-warning, #d97706);
+}
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  gap: 1rem;
+}
+.message dl,
+.activity {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  gap: 1rem;
+}
+.message dl div {
+  display: grid;
+  gap: 0.25rem;
+}
+.message dd {
+  margin: 0;
+  font-weight: 700;
+}
+.message h2,
+.message p,
+.message pre,
+.message > a,
+.activity h2 {
+  grid-column: 1/-1;
+}
+.message pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  padding: 1rem;
+  background: var(--surface-muted, #f5f5f5);
+  border-radius: 0.5rem;
+}
+.message > a,
+.activity button {
+  justify-self: start;
+}

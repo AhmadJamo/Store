@@ -115,6 +115,25 @@
         <div>
           <dt>{{ i18n.text('supplier') }}</dt>
           <dd>{{ x.supplierName }}</dd>
+          @if (
+            session.can('SupplierCommunications.Prepare') ||
+            session.can('SupplierCommunications.View')
+          ) {
+            <dd>
+              <a
+                class="ui-button secondary"
+                routerLink="/purchases/communications/prepare"
+                [queryParams]="{
+                  documentType: 2,
+                  documentId: x.id,
+                  supplierId: x.supplierId,
+                  supplierName: x.supplierName,
+                  documentNumber: x.orderNumber,
+                }"
+                >{{ i18n.text('supplierCommunication') }}</a
+              >
+            </dd>
+          }
         </div>
         <div>
           <dt>{{ i18n.text('warehouse') }}</dt>
