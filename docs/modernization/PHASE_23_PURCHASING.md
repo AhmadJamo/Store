@@ -1,6 +1,6 @@
 # Phase 23 — Purchasing Angular migration
 
-> Status: IN PROGRESS — `MOD-023A..T` COMPLETE on 2026-10-28
+> Status: COMPLETE — `MOD-023A..U` COMPLETE on 2026-10-29
 >
 > Presentation default: MVC until a separate cutover approval.
 
@@ -306,5 +306,19 @@ supplier sourcing, inventory/accounting posting, concurrency and tenant authorit
 
 ## Next slice
 
-`MOD-023U` migrates the remaining historical Legacy Direct Purchase register/details/posting evidence and its posted Purchase Return
-list/details/create-and-post operations. Legacy purchase creation remains retired and directs users to Purchase Requests.
+## `MOD-023U` delivered — legacy direct purchases and returns
+
+- Added authenticated, permission-separated APIs and bilingual RTL-safe Angular list/detail experiences for historical direct
+  purchases and their posted returns.
+- Historical purchases retain their one-time general-ledger posting operation. New legacy purchase creation remains deliberately
+  unavailable and the list directs authorized users to Purchase Requests.
+- Added create-form and create-and-post return operations with remaining-quantity evidence, bounded tracking allocation input and
+  dirty-form protection. `PurchaseReturnService` remains authoritative for original posting, cumulative quantity, live stock,
+  tracked identity, moving-average removal, supplier/tax/discount reversal, cost variance and balanced journal posting.
+- Evidence: Release zero warnings/errors; SecurityRegression 1282; Angular 186/186 across 82 files; 92 templates; bundles
+  313,034/358,400 initial and 81,743/81,920 largest lazy bytes. Five Angular routes returned 200 and both anonymous APIs returned 401.
+  MVC remains default.
+
+## Next phase
+
+`MOD-024A` begins the sales wave with tenant price lists, pricing rules and server-authored pricing evaluation before quotation entry.

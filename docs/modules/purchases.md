@@ -100,6 +100,12 @@ may read only its RFQ or Purchase Order and may submit the existing quotation, o
 eligibility rules. Writes retain antiforgery and rate limiting; responses are no-store/no-referrer/noindex, denied tokens are audited,
 and the portal cannot create or post an internal financial document by itself. MVC is default.
 
+`MOD-023U` completes the remaining legacy direct-purchase presentation in Angular: historical list/details, one-time ledger posting,
+posted Purchase Return list/details and create-and-post. New direct-purchase creation remains retired and users are directed to
+Purchase Requests. `PurchasePostingService` and `PurchaseReturnService` retain posting, quantity, availability, tracking, valuation,
+tax, payable and balanced-journal authority. Independent view/create permissions and antiforgery protect both mutations; MVC remains
+default.
+
 Angular `/purchases/requests` now covers the current request list/search/status filter, named multi-line Draft creation, details,
 approval/history evidence, Submit and reasoned Cancel operations. The versioned API repeats independent permissions and antiforgery,
 and `PurchaseRequestService` still owns numbering, active purchasable products, compatible managed-unit conversion, supplier validity,

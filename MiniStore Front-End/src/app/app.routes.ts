@@ -268,6 +268,11 @@ export const routes: Routes = [
       { path: 'purchases/receipt-returns', loadComponent: () => import('./features/purchases/goods-receipt-returns-page').then(module => module.GoodsReceiptReturnsPageComponent) },
       { path: 'purchases/receipt-returns/new', canDeactivate: [(component) => component.canDeactivate()], loadComponent: () => import('./features/purchases/goods-receipt-returns-page').then(module => module.GoodsReceiptReturnsPageComponent) },
       { path: 'purchases/receipt-returns/:id', loadComponent: () => import('./features/purchases/goods-receipt-returns-page').then(module => module.GoodsReceiptReturnsPageComponent) },
+      { path: 'purchases/legacy', loadComponent: () => import('./features/purchases/legacy-purchases-page').then(module => module.LegacyPurchasesPageComponent) },
+      { path: 'purchases/legacy/:id', loadComponent: () => import('./features/purchases/legacy-purchases-page').then(module => module.LegacyPurchasesPageComponent) },
+      { path: 'purchases/legacy/:id/return', canDeactivate: [(component) => component.canDeactivate()], loadComponent: () => import('./features/purchases/legacy-purchases-page').then(module => module.LegacyPurchasesPageComponent) },
+      { path: 'purchases/legacy-returns', loadComponent: () => import('./features/purchases/legacy-purchases-page').then(module => module.LegacyPurchasesPageComponent) },
+      { path: 'purchases/legacy-returns/:id', loadComponent: () => import('./features/purchases/legacy-purchases-page').then(module => module.LegacyPurchasesPageComponent) },
       {
         path: 'products/recipes/:productId',
         canDeactivate: [(component) => component.canDeactivate()],

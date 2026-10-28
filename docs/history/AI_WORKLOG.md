@@ -1436,3 +1436,11 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   files, 91 templates passed accessibility, external SCSS passed and bundles measured 312,392/358,400 initial and 81,743/81,920
   largest lazy bytes. Live public Angular returned 200; an invalid anonymous API token returned 404 with privacy headers. MVC remains
   default. Advanced to `MOD-023U` legacy direct purchase history and returns.
+- 2026-10-29: Completed `MOD-023U` and the purchasing Angular wave. Added authenticated permission-separated APIs and a bilingual
+  RTL-safe lazy Angular workspace for historical direct-purchase list/details, one-time ledger posting, Purchase Return list/details
+  and create-and-post with remaining quantities and bounded tracking evidence. New legacy purchase creation remains retired.
+  Application services retain posting, cumulative quantity, stock, tracked identity, valuation, tax, payable, variance and journal
+  authority. Release passed with zero warnings/errors, SecurityRegression passed 1282 checks, Angular passed 186/186 tests across 82
+  files, 92 templates passed accessibility, external SCSS passed and bundles measured 313,034/358,400 initial and 81,743/81,920
+  largest lazy bytes. Five Angular routes returned 200 and both anonymous APIs returned 401. MVC remains default. Advanced to
+  `MOD-024A` Sales Price Lists and pricing evaluation.

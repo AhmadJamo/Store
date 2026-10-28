@@ -5,7 +5,7 @@ using MiniStore.Domain.Interfaces;
 namespace MiniStore.Application.Services;
 
 public sealed class PurchaseReturnService(
-    IPurchaseReturnRepository returns, IPurchaseRepository purchases, ISupplierRepository suppliers,
+    IPurchaseReturnRepository returns, PurchaseService purchaseService, IPurchaseRepository purchases, ISupplierRepository suppliers,
     IProductRepository products, IWarehouseRepository warehouses, IProductStockRepository stocks,
     IStockTransactionRepository transactions, ITaxRateRepository taxRates,
     IAccountingSettingsRepository accountingSettings, JournalPostingService journalPosting,
@@ -13,6 +13,28 @@ public sealed class PurchaseReturnService(
     UntrackedInventoryRemovalService untrackedInventoryRemoval,
     ICurrentUserService currentUser, IUnitOfWork unitOfWork)
 {
+    public async Task<PurchaseReturnCreatePageDto?> GetCreatePageAsync(int purchaseId)
+    {
+        var purchase = await purchaseService.GetByIdAsync(purchaseId);
+        if (purchase is null) return null;
+        if (!await journalPosting.IsPostedAsync("Purchase", purchase.InvoiceNumber))
+            throw new InvalidOperationException("Post the original purchase before creating a return.");
+        var returned = await GetReturnedQuantitiesAsync(purchaseId);
+        return new PurchaseReturnCreatePageDto
+        {
+            Purchase = purchase,
+            Date = DateTime.Today,
+            Lines = purchase.Items.Select(item => new PurchaseReturnCreateLineDto
+            {
+                PurchaseItemId = item.Id,
+                ProductName = item.ProductName,
+                WarehouseName = item.WarehouseName,
+                PurchasedQuantity = item.Quantity,
+                AlreadyReturnedQuantity = returned.GetValueOrDefault(item.Id)
+            }).ToList()
+        };
+    }
+
     public async Task<List<PurchaseReturnDto>> GetAllAsync()
     {
         var values = await returns.GetAllAsync();
