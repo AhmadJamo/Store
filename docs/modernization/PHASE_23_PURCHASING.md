@@ -1,6 +1,6 @@
 # Phase 23 — Purchasing Angular migration
 
-> Status: IN PROGRESS — `MOD-023A..H` COMPLETE on 2026-10-28
+> Status: IN PROGRESS — `MOD-023A..I` COMPLETE on 2026-10-28
 >
 > Presentation default: MVC until a separate cutover approval.
 
@@ -143,7 +143,24 @@ supplier sourcing, inventory/accounting posting, concurrency and tenant authorit
 - Bundles: 308,271/358,400 initial bytes and 81,743/81,920 largest lazy bytes.
 - Live checks: Angular return list returned 200; anonymous API read returned 401.
 
+## `MOD-023I` delivered — Supplier Credit Notes
+
+- Added authenticated list/details/create-form and atomic create-and-post APIs over `SupplierCreditNoteService`.
+- Angular provides bilingual RTL-safe `/purchases/credit-notes`, `/new` and `/:id` routes with billed/credited/remaining quantities,
+  received tracking, explicit removal allocations, payable/tax totals and removed inventory-cost evidence.
+- A posted eligible Vendor Bill now exposes a permission-aware credit-note link. `SupplierCreditNotes.View/Create`, antiforgery and
+  DTO validation remain enforced. Bill eligibility, current stock/tracking availability, prorated tax, AVCO removal, payable,
+  input-tax and PPV journal lines remain server-owned. No schema/business-rule change; MVC remains default.
+
+## Current `MOD-023I` evidence
+
+- Web Release: zero warnings/errors; SecurityRegression: 1251 checks.
+- Angular: 174/174 tests across 70 files; 79 templates passed accessibility; external SCSS passed.
+- Bundles: 308,688/358,400 initial bytes and 81,743/81,920 largest lazy bytes.
+- Live checks: Angular credit-note list returned 200; anonymous API read returned 401.
+
 ## Next slice
 
-`MOD-023I` migrates Supplier Credit Note list/details/create-and-post while keeping bill eligibility, credited-quantity limits,
-tracking/location availability, tax reversal, inventory-cost removal, payable/GRNI/PPV and balanced journal posting server-owned.
+`MOD-023J` migrates controlled Purchase Document Reversal list/details/create flow for posted Goods Receipts, Vendor Bills,
+Supplier Payments and Landed Costs while keeping dependency gates, unchanged valuation, opposite journals, physical corrections,
+idempotency and original-state transitions server-owned.

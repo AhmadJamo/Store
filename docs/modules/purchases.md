@@ -39,6 +39,11 @@ received tracking evidence and explicit location/tracking removal allocations. `
 receipt eligibility, unbilled quantity, current availability and tracking identity, then owns AVCO removal, physical movement,
 GRNI/PPV and balanced journal effects. Independent View/Create permissions and antiforgery remain mandatory; MVC remains default.
 
+`MOD-023I` exposes Supplier Credit Note list/details/create-and-post through Angular with billed, credited and remaining line
+quantities plus received/removal tracking and financial evidence. `SupplierCreditNoteService` still validates posted receipt-based
+bills and current stock/tracking availability, prorates tax and document values, removes inventory at AVCO and posts payable,
+input-tax, inventory and PPV lines atomically. Independent View/Create permissions and antiforgery remain mandatory; MVC is default.
+
 Angular `/purchases/requests` now covers the current request list/search/status filter, named multi-line Draft creation, details,
 approval/history evidence, Submit and reasoned Cancel operations. The versioned API repeats independent permissions and antiforgery,
 and `PurchaseRequestService` still owns numbering, active purchasable products, compatible managed-unit conversion, supplier validity,

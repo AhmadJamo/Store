@@ -78,6 +78,7 @@ const c = {
     fileTooLarge: 'Every attachment must be 5 MB or smaller.',
     tooManyFiles: 'A bill can contain at most ten attachments.',
     payBill: 'Pay vendor bill',
+    createCreditNote: 'Create supplier credit note',
   },
   ar: {
     title: 'فواتير المورد',
@@ -155,6 +156,7 @@ const c = {
     fileTooLarge: 'يجب ألا يتجاوز كل مرفق 5 ميجابايت.',
     tooManyFiles: 'يمكن أن تحتوي الفاتورة على عشرة مرفقات كحد أقصى.',
     payBill: 'دفع فاتورة المورد',
+    createCreditNote: 'إنشاء إشعار دائن للمورد',
   },
 } as const;
 export type VendorBillKey = keyof typeof c.en;

@@ -1353,3 +1353,11 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   SecurityRegression passed 1248 checks, Angular passed 173/173 tests across 69 files, 78 templates passed accessibility, external
   SCSS passed, and bundles measured 308,271/358,400 initial and 81,743/81,920 largest lazy bytes. Live Angular returned 200 and the
   anonymous API returned 401. MVC remains default. Advanced to `MOD-023I` Supplier Credit Notes.
+- 2026-10-28: Completed approved `MOD-023I`. Added authenticated Supplier Credit Note list/details/create-form and atomic post API,
+  bilingual RTL-safe Angular list/create/details routes and a permission-aware link from eligible posted Vendor Bills. Billed,
+  credited and remaining quantities, received/removal tracking, tax, totals and inventory-cost evidence are visible, while
+  `SupplierCreditNoteService` remains authoritative for bill eligibility, stock/tracking availability, proration, AVCO, payable,
+  input-tax and PPV journals. Web Release passed with zero warnings/errors, SecurityRegression passed 1251 checks, Angular passed
+  174/174 tests across 70 files, 79 templates passed accessibility, external SCSS passed and bundles measured 308,688/358,400
+  initial and 81,743/81,920 largest lazy bytes. Live Angular returned 200 and anonymous API returned 401. MVC remains default.
+  Advanced to `MOD-023J` controlled Purchase Document Reversals.
