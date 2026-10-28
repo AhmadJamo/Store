@@ -1346,3 +1346,10 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   exchange gains/losses, payable and cash/bank journals. Web Release passed with zero warnings/errors, SecurityRegression passed 1245
   checks, Angular passed 172/172 tests across 68 files, 77 templates passed accessibility, external SCSS passed, and bundles measured
   308,019/358,400 initial and 81,743/81,920 largest lazy bytes. MVC remains default. Advanced to `MOD-023H` Goods Receipt Returns.
+- 2026-10-28: Completed approved `MOD-023H`. Added authenticated Goods Receipt Return list/details/create-form and create-and-post API
+  plus bilingual RTL-safe Angular routes with receipt-line remaining quantities, received tracking evidence and explicit removal
+  allocations. `GoodsReceiptReturnService` remains authoritative for posted-receipt eligibility, unbilled return limits, current
+  availability, tracking/location removal, AVCO, GRNI/PPV and balanced journals. Web Release passed with zero warnings/errors,
+  SecurityRegression passed 1248 checks, Angular passed 173/173 tests across 69 files, 78 templates passed accessibility, external
+  SCSS passed, and bundles measured 308,271/358,400 initial and 81,743/81,920 largest lazy bytes. Live Angular returned 200 and the
+  anonymous API returned 401. MVC remains default. Advanced to `MOD-023I` Supplier Credit Notes.

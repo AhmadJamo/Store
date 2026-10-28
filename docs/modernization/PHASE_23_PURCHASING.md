@@ -1,6 +1,6 @@
 # Phase 23 — Purchasing Angular migration
 
-> Status: IN PROGRESS — `MOD-023A..G` COMPLETE on 2026-10-28
+> Status: IN PROGRESS — `MOD-023A..H` COMPLETE on 2026-10-28
 >
 > Presentation default: MVC until a separate cutover approval.
 
@@ -112,8 +112,6 @@ supplier sourcing, inventory/accounting posting, concurrency and tenant authorit
 - Angular: 171/171 tests across 67 files; 76 templates passed accessibility; external SCSS passed.
 - Bundles: 307,621/358,400 initial bytes and 81,743/81,920 largest lazy bytes.
 
-## Next slice
-
 ## `MOD-023G` delivered — Supplier Payments
 
 - Added authenticated list/details/create-form and atomic create-and-post APIs over `SupplierPaymentService`.
@@ -129,7 +127,23 @@ supplier sourcing, inventory/accounting posting, concurrency and tenant authorit
 - Angular: 172/172 tests across 68 files; 77 templates passed accessibility; external SCSS passed.
 - Bundles: 308,019/358,400 initial bytes and 81,743/81,920 largest lazy bytes.
 
+## `MOD-023H` delivered — Goods Receipt Returns
+
+- Added authenticated list/details/create-form and create-and-post APIs over `GoodsReceiptReturnService`.
+- Angular provides bilingual RTL-safe `/purchases/receipt-returns`, `/new` and `/:id` routes, receipt-line remaining quantities,
+  received tracking evidence, explicit removal allocations and inventory/accounting evidence.
+- `GoodsReceiptReturns.View/Create`, antiforgery and validated IDs/quantities remain enforced. Posted-receipt eligibility,
+  unbilled return limits, current availability, location/tracking removal, AVCO, GRNI/PPV and balanced journals remain server-owned.
+  No schema/business-rule change; MVC remains default.
+
+## Current `MOD-023H` evidence
+
+- Web Release: zero warnings/errors; SecurityRegression: 1248 checks.
+- Angular: 173/173 tests across 69 files; 78 templates passed accessibility; external SCSS passed.
+- Bundles: 308,271/358,400 initial bytes and 81,743/81,920 largest lazy bytes.
+- Live checks: Angular return list returned 200; anonymous API read returned 401.
+
 ## Next slice
 
-`MOD-023H` migrates the modern Goods Receipt Return list/details/create flow while keeping returnable quantity, billed-quantity
-gates, availability, location/tracking removal, AVCO, GRNI/PPV and journal posting server-owned.
+`MOD-023I` migrates Supplier Credit Note list/details/create-and-post while keeping bill eligibility, credited-quantity limits,
+tracking/location availability, tax reversal, inventory-cost removal, payable/GRNI/PPV and balanced journal posting server-owned.

@@ -236,6 +236,9 @@ export const routes: Routes = [
       { path: 'purchases/payments', loadComponent: () => import('./features/purchases/supplier-payments-page').then(module => module.SupplierPaymentsPageComponent) },
       { path: 'purchases/payments/new', canDeactivate: [(component) => component.canDeactivate()], loadComponent: () => import('./features/purchases/supplier-payments-page').then(module => module.SupplierPaymentsPageComponent) },
       { path: 'purchases/payments/:id', loadComponent: () => import('./features/purchases/supplier-payments-page').then(module => module.SupplierPaymentsPageComponent) },
+      { path: 'purchases/receipt-returns', loadComponent: () => import('./features/purchases/goods-receipt-returns-page').then(module => module.GoodsReceiptReturnsPageComponent) },
+      { path: 'purchases/receipt-returns/new', canDeactivate: [(component) => component.canDeactivate()], loadComponent: () => import('./features/purchases/goods-receipt-returns-page').then(module => module.GoodsReceiptReturnsPageComponent) },
+      { path: 'purchases/receipt-returns/:id', loadComponent: () => import('./features/purchases/goods-receipt-returns-page').then(module => module.GoodsReceiptReturnsPageComponent) },
       {
         path: 'products/recipes/:productId',
         canDeactivate: [(component) => component.canDeactivate()],

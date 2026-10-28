@@ -34,6 +34,11 @@ supplier invoice uniqueness, three-way matching, taxes, PPV, GRNI, payable and j
 across eligible open bills for the same supplier and currency. The server recalculates paid/credited balances transactionally, blocks
 overpayment and owns exchange-rate, realized gain/loss, payable and cash/bank journal lines. Angular displays but never derives them.
 
+`MOD-023H` exposes Goods Receipt Return list/details/create-and-post through Angular with receipt-line remaining quantities,
+received tracking evidence and explicit location/tracking removal allocations. `GoodsReceiptReturnService` still validates posted
+receipt eligibility, unbilled quantity, current availability and tracking identity, then owns AVCO removal, physical movement,
+GRNI/PPV and balanced journal effects. Independent View/Create permissions and antiforgery remain mandatory; MVC remains default.
+
 Angular `/purchases/requests` now covers the current request list/search/status filter, named multi-line Draft creation, details,
 approval/history evidence, Submit and reasoned Cancel operations. The versioned API repeats independent permissions and antiforgery,
 and `PurchaseRequestService` still owns numbering, active purchasable products, compatible managed-unit conversion, supplier validity,
