@@ -1383,3 +1383,11 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   73 files, 82 templates passed accessibility, external SCSS passed and bundles measured 309,966/358,400 initial and
   81,743/81,920 largest lazy bytes. Live Angular returned 200 and anonymous API returned 401. MVC remains default. Advanced to
   `MOD-023M` Purchase Agreements and repeat templates.
+- 2026-10-28: Completed approved `MOD-023M`. Added authenticated Purchase Agreement list/details/create-form/create, activate,
+  cancel and capped release APIs plus Purchase Template list, create-from-order, generate-request and active-state APIs. Added
+  bilingual RTL-safe Angular workspaces and permission-aware links from single-supplier awards and Purchase Orders. Existing
+  Application services remain authoritative for award exclusivity, row-version lifecycle, validity, contracted remaining quantity,
+  traced request generation and current product/unit eligibility; no direct inventory/accounting effect was introduced. Web Release
+  passed with zero warnings/errors, SecurityRegression passed 1266 checks, Angular passed 178/178 tests across 74 files, 84 templates
+  passed accessibility, external SCSS passed and bundles measured 310,690/358,400 initial and 81,743/81,920 largest lazy bytes.
+  Both Angular routes returned 200 and both anonymous APIs returned 401. MVC remains default. Advanced to `MOD-023N` supplier terms.

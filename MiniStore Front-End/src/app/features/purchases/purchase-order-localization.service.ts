@@ -5,6 +5,7 @@ const copy = {
   en: {
     receiveGoods: 'Receive goods',
     recordServiceCompletion: 'Record service completion',
+    createTemplate: 'Create repeat template',
     title: 'Purchase orders',
     description:
       'Control commercial commitments, fulfillment route and delivery evidence without premature stock or accounting effects.',
@@ -64,6 +65,7 @@ const copy = {
   ar: {
     receiveGoods: 'استلام البضاعة',
     recordServiceCompletion: 'تسجيل إكمال خدمة',
+    createTemplate: 'إنشاء قالب تكرار',
     title: 'أوامر الشراء',
     description: 'اضبط الالتزام التجاري ومسار التنفيذ ودليل التسليم دون أثر مخزني أو محاسبي مبكر.',
     search: 'بحث',

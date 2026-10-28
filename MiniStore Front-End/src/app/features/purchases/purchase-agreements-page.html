@@ -1,0 +1,194 @@
+<section class="agreements-page" [attr.aria-label]="i18n.text('title')">
+  <app-page-header
+    eyebrow="PURCHASING"
+    [title]="page() ? i18n.text('new') : i18n.text('title')"
+    [description]="i18n.text('description')"
+  />
+  @if (problem()) {
+    <p class="message error" role="alert">{{ problem() }}</p>
+  }
+  @if (loading()) {
+    <app-feedback-state kind="loading" [title]="i18n.text('loading')" />
+  } @else if (loadingProblem(); as failure) {
+    <app-api-recovery [problem]="failure" (retry)="retry()" />
+  } @else if (page(); as p) {
+    <div class="actions">
+      <a class="ui-button secondary" routerLink="/purchases/agreements">{{ i18n.text('back') }}</a>
+    </div>
+    <section class="ui-card summary">
+      <h2>
+        <code>{{ p.quotationNumber }}</code>
+      </h2>
+      <p>
+        {{ i18n.text('supplier') }}: {{ p.supplierName }} · {{ i18n.text('warehouse') }}:
+        {{ p.warehouseName }}
+      </p>
+    </section>
+    <form class="ui-card" [formGroup]="form" (ngSubmit)="create()">
+      <div class="form-grid">
+        <label class="ui-field"
+          ><span>{{ i18n.text('validFrom') }}</span
+          ><input type="date" formControlName="validFrom" /></label
+        ><label class="ui-field"
+          ><span>{{ i18n.text('validUntil') }}</span
+          ><input type="date" formControlName="validUntil"
+        /></label>
+      </div>
+      <div formArrayName="lines">
+        <app-data-table [label]="i18n.text('title')"
+          ><table>
+            <thead>
+              <tr>
+                <th>{{ i18n.text('product') }}</th>
+                <th>{{ i18n.text('quoted') }}</th>
+                <th>{{ i18n.text('maximum') }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (l of p.lines; track l.supplierQuotationLineId; let i = $index) {
+                <tr [formGroupName]="i">
+                  <td>{{ l.product }}</td>
+                  <td>{{ l.quotedQuantity | number: '1.0-6' }} {{ l.unitName }}</td>
+                  <td>
+                    <input
+                      type="number"
+                      min="0"
+                      [max]="l.quotedQuantity"
+                      step="0.000001"
+                      formControlName="maximumQuantity"
+                    />
+                  </td>
+                </tr>
+              }
+            </tbody></table
+        ></app-data-table>
+      </div>
+      <button class="ui-button primary" [disabled]="saving()">{{ i18n.text('create') }}</button>
+    </form>
+  } @else if (detail(); as x) {
+    <div class="actions">
+      <a class="ui-button secondary" routerLink="/purchases/agreements">{{ i18n.text('back') }}</a>
+    </div>
+    <section class="ui-card summary">
+      <header>
+        <h2>
+          <code>{{ x.agreementNumber }}</code>
+        </h2>
+        <span class="ui-badge">{{ statusName(x.status) }}</span>
+      </header>
+      <p>
+        {{ i18n.text('supplier') }}: {{ x.supplierName }} · {{ i18n.text('warehouse') }}:
+        {{ x.warehouseName }}
+      </p>
+      <p>
+        {{ i18n.text('validity') }}: {{ x.validFrom | date: 'dd/MM/yyyy' }} —
+        {{ x.validUntil | date: 'dd/MM/yyyy' }}
+      </p>
+    </section>
+    <form class="ui-card" [formGroup]="releaseForm" (ngSubmit)="release(x)">
+      <label class="ui-field"
+        ><span>{{ i18n.text('expected') }}</span
+        ><input type="date" formControlName="expectedDate"
+      /></label>
+      <div formArrayName="lines">
+        <app-data-table [label]="i18n.text('lines')"
+          ><table>
+            <thead>
+              <tr>
+                <th>{{ i18n.text('product') }}</th>
+                <th>{{ i18n.text('maximum') }}</th>
+                <th>{{ i18n.text('released') }}</th>
+                <th>{{ i18n.text('remaining') }}</th>
+                <th>{{ i18n.text('release') }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (l of x.lines; track l.id; let i = $index) {
+                <tr [formGroupName]="i">
+                  <td>{{ l.product }}</td>
+                  <td>{{ l.maximumQuantity | number: '1.0-6' }}</td>
+                  <td>{{ l.releasedQuantity | number: '1.0-6' }}</td>
+                  <td>{{ l.remainingQuantity | number: '1.0-6' }} {{ l.unitName }}</td>
+                  <td>
+                    <input
+                      type="number"
+                      min="0"
+                      [max]="l.remainingQuantity"
+                      step="0.000001"
+                      formControlName="quantity"
+                    />
+                  </td>
+                </tr>
+              }
+            </tbody></table
+        ></app-data-table>
+      </div>
+      @if (
+        x.status === 2 &&
+        x.lines.some((l) => l.remainingQuantity > 0) &&
+        session.can('PurchaseAgreements.Release')
+      ) {
+        <button class="ui-button primary" [disabled]="saving()">{{ i18n.text('release') }}</button>
+      } @else if (x.status === 2 && !x.lines.some((l) => l.remainingQuantity > 0)) {
+        <span class="ui-badge">{{ i18n.text('completed') }}</span>
+      }
+    </form>
+    <section class="ui-card actions">
+      @if (x.status === 1 && session.can('PurchaseAgreements.Activate')) {
+        <button class="ui-button primary" [disabled]="saving()" (click)="activate(x)">
+          {{ i18n.text('activate') }}
+        </button>
+      }
+      @if (x.status !== 3 && session.can('PurchaseAgreements.Cancel')) {
+        <label class="ui-field"
+          ><span>{{ i18n.text('reason') }}</span
+          ><input #reason maxlength="1000" /></label
+        ><button class="ui-button danger" [disabled]="saving()" (click)="cancel(x, reason.value)">
+          {{ i18n.text('cancel') }}
+        </button>
+      }
+    </section>
+  } @else {
+    <div class="actions">
+      <a class="ui-button secondary" routerLink="/purchases/templates">{{
+        i18n.text('templates')
+      }}</a>
+    </div>
+    <section class="ui-card">
+      <app-data-table [label]="i18n.text('title')"
+        ><table>
+          <thead>
+            <tr>
+              <th>{{ i18n.text('number') }}</th>
+              <th>{{ i18n.text('supplier') }}</th>
+              <th>{{ i18n.text('warehouse') }}</th>
+              <th>{{ i18n.text('validity') }}</th>
+              <th>{{ i18n.text('status') }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (x of rows(); track x.id) {
+              <tr>
+                <td>
+                  <a [routerLink]="['/purchases/agreements', x.id]"
+                    ><code>{{ x.agreementNumber }}</code></a
+                  >
+                </td>
+                <td>{{ x.supplierName }}</td>
+                <td>{{ x.warehouseName }}</td>
+                <td>
+                  {{ x.validFrom | date: 'dd/MM/yyyy' }} — {{ x.validUntil | date: 'dd/MM/yyyy' }}
+                </td>
+                <td>{{ statusName(x.status) }}</td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="5">{{ i18n.text('noRows') }}</td>
+              </tr>
+            }
+          </tbody>
+        </table></app-data-table
+      >
+    </section>
+  }
+</section>

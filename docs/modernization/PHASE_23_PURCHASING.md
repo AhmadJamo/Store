@@ -1,6 +1,6 @@
 # Phase 23 — Purchasing Angular migration
 
-> Status: IN PROGRESS — `MOD-023A..L` COMPLETE on 2026-10-28
+> Status: IN PROGRESS — `MOD-023A..M` COMPLETE on 2026-10-28
 >
 > Presentation default: MVC until a separate cutover approval.
 
@@ -207,7 +207,24 @@ supplier sourcing, inventory/accounting posting, concurrency and tenant authorit
 - Bundles: 309,966/358,400 initial bytes and 81,743/81,920 largest lazy bytes.
 - Live checks: Angular service-acceptance list returned 200; anonymous API read returned 401.
 
+## `MOD-023M` delivered — Purchase Agreements and repeat templates
+
+- Added authenticated Agreement list/details/create-form/create, activate, cancel and capped release APIs plus Template list,
+  create-from-order, generate-request and active-state APIs over the existing Application services.
+- Angular provides bilingual RTL-safe agreement and template workspaces, links a single-supplier award to agreement creation and links
+  Purchase Orders to repeat-template capture. Every command retains its independent permission and antiforgery.
+- Award exclusivity, row-version lifecycle control, contracted remaining quantity, validity, current product/unit eligibility,
+  monotonic generation references and the normal request/approval/sourcing path remain server-owned. No inventory/accounting effect
+  or schema/business-rule change was introduced; MVC remains default.
+
+## Current `MOD-023M` evidence
+
+- Web Release: zero warnings/errors; SecurityRegression: 1266 checks.
+- Angular: 178/178 tests across 74 files; 84 templates passed accessibility; external SCSS passed.
+- Bundles: 310,690/358,400 initial bytes and 81,743/81,920 largest lazy bytes.
+- Live checks: both Angular routes returned 200; both anonymous API reads returned 401.
+
 ## Next slice
 
-`MOD-023M` migrates Purchase Agreements and repeat Purchase Templates while keeping award-only agreement creation, capped releases,
-row-version lifecycle control, traced request generation and all no-stock/no-accounting boundaries server-owned.
+`MOD-023N` migrates supplier purchasing terms and price-break administration, including supplier/product assignment, atomic bulk save,
+active state, price history and bounded import/export while keeping unit compatibility, validity and tenant rules server-owned.

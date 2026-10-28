@@ -95,6 +95,14 @@
           >{{ i18n.text('recordServiceCompletion') }}</a
         >
       }
+      @if (session.can('PurchaseTemplates.Create')) {
+        <a
+          class="ui-button secondary"
+          [routerLink]="['/purchases/templates/new']"
+          [queryParams]="{ purchaseOrderId: x.id }"
+          >{{ i18n.text('createTemplate') }}</a
+        >
+      }
     </div>
     <section class="ui-card summary">
       <header>

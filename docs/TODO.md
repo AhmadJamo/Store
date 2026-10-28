@@ -58,6 +58,7 @@ The ERP SaaS Foundation Blueprint is imported as a non-authoritative planning re
 - [x] MOD-023J migrate controlled Purchase Document Reversal list/details/create for receipts, bills, payments and landed costs with server-owned dependencies, valuation, corrections, opposite journals and idempotency. Completed 2026-10-28.
 - [x] MOD-023K migrate Landed Cost list/details/create-and-post with receipt/reversal links and server-owned allocation, capitalization/expense split, AVCO, movements and journals. Completed 2026-10-28.
 - [x] MOD-023L migrate Purchase Service Acceptance list/details/create with eligible-order link, remaining service quantities, immutable evidence and no inventory effect. Completed 2026-10-28.
+- [x] MOD-023M migrate Purchase Agreements and repeat Purchase Templates with full lifecycle/release/generation operations and server-owned award, concurrency and quantity rules. Completed 2026-10-28.
 - [ ] MOD-023 through MOD-028 migrate purchasing, sales, POS, accounting, tenant/public,
   platform and shared MVC workflows to Angular, including every operation, permission, localization, file/PDF and edge state.
 - [ ] MOD-029 prove full-system parity through dual-run reconciliation, performance/security/accessibility evidence and cutover/rollback rehearsals.
