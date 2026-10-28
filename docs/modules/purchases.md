@@ -94,6 +94,12 @@ external audit evidence. RFQ and Purchase Order pages enter the context by named
 secret hashing/protection, HTTPS callback validation, document/supplier eligibility, one-time token behavior, idempotency and retry
 state. Independent View/Manage/Queue/Retry permissions and antiforgery remain mandatory; MVC is default.
 
+`MOD-023T` exposes the public supplier portal through a lazy Angular route outside the employee sign-in guard. A capability token
+may read only its RFQ or Purchase Order and may submit the existing quotation, order-confirmation or delivery-notice command.
+`SupplierIntegrationService` still owns the hash-only token, tenant/supplier/document boundary, expiry/revocation, idempotency and
+eligibility rules. Writes retain antiforgery and rate limiting; responses are no-store/no-referrer/noindex, denied tokens are audited,
+and the portal cannot create or post an internal financial document by itself. MVC is default.
+
 Angular `/purchases/requests` now covers the current request list/search/status filter, named multi-line Draft creation, details,
 approval/history evidence, Submit and reasoned Cancel operations. The versioned API repeats independent permissions and antiforgery,
 and `PurchaseRequestService` still owns numbering, active purchasable products, compatible managed-unit conversion, supplier validity,

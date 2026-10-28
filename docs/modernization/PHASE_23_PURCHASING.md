@@ -1,6 +1,6 @@
 # Phase 23 — Purchasing Angular migration
 
-> Status: IN PROGRESS — `MOD-023A..S` COMPLETE on 2026-10-28
+> Status: IN PROGRESS — `MOD-023A..T` COMPLETE on 2026-10-28
 >
 > Presentation default: MVC until a separate cutover approval.
 
@@ -292,6 +292,19 @@ supplier sourcing, inventory/accounting posting, concurrency and tenant authorit
 - Evidence: Release zero warnings/errors; SecurityRegression 1277; Angular 184/184 across 80 files; 90 templates; bundles
   312,273/358,400 initial and 81,743/81,920 largest lazy bytes; live Angular 200 and anonymous API 401. MVC remains default.
 
+## `MOD-023T` delivered — supplier portal
+
+- Added an anonymous, token-scoped and rate-limited API plus a public Angular route outside the employee authentication guard for
+  RFQ/Purchase Order viewing, quotation submission, order confirmation and non-financial delivery notices.
+- The bilingual RTL-safe page keeps all four current portal operations together. Every mutation retains antiforgery and a fresh
+  idempotency key; invalid, expired or revoked tokens return localized Problem Details and create denied security-audit evidence.
+- `SupplierIntegrationService` remains authoritative for token hashing, tenant/document/supplier scope, expiry/revocation,
+  submission eligibility, quantities and immutable external evidence. Responses are no-store/no-referrer/noindex.
+- Evidence: Release zero warnings/errors; SecurityRegression 1279; Angular 185/185 across 81 files; 91 templates; bundles
+  312,392/358,400 initial and 81,743/81,920 largest lazy bytes; live public Angular route returned 200 and an invalid anonymous token
+  returned 404 with all privacy headers. MVC remains default.
+
 ## Next slice
 
-`MOD-023T` migrates the token-scoped supplier portal quotation, order-confirmation and delivery-notice experiences to Angular.
+`MOD-023U` migrates the remaining historical Legacy Direct Purchase register/details/posting evidence and its posted Purchase Return
+list/details/create-and-post operations. Legacy purchase creation remains retired and directs users to Purchase Requests.

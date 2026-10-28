@@ -1428,3 +1428,11 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   passed 1277 checks, Angular passed 184/184 tests across 80 files, 90 templates passed accessibility, external SCSS passed and bundles
   measured 312,273/358,400 initial and 81,743/81,920 largest lazy bytes. Live Angular returned 200 and anonymous API returned 401.
   MVC remains default. Advanced to `MOD-023T` Supplier Portal.
+- 2026-10-28: Completed `MOD-023T` Supplier Portal. Added an anonymous token-scoped and rate-limited API plus a bilingual RTL-safe
+  public Angular route outside the employee authentication guard for RFQ/PO viewing, quotation submission, order confirmation and
+  delivery notices. Mutations retain antiforgery and idempotency; server services retain token, tenant, supplier, document and
+  eligibility authority. Invalid tokens produce localized Problem Details, denied security audit and no-store/no-referrer/noindex
+  headers. Release passed with zero warnings/errors, SecurityRegression passed 1279 checks, Angular passed 185/185 tests across 81
+  files, 91 templates passed accessibility, external SCSS passed and bundles measured 312,392/358,400 initial and 81,743/81,920
+  largest lazy bytes. Live public Angular returned 200; an invalid anonymous API token returned 404 with privacy headers. MVC remains
+  default. Advanced to `MOD-023U` legacy direct purchase history and returns.

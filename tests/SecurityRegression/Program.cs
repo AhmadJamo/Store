@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Logging;
@@ -4177,6 +4178,9 @@ Check(supplierCommunicationsApi.GetMethod(nameof(SupplierCommunicationsApiContro
 var supplierIntegrationsManagementApi=typeof(SupplierIntegrationsManagementApiController);
 Check(supplierIntegrationsManagementApi.GetCustomAttribute<ApiControllerAttribute>() is not null&&supplierIntegrationsManagementApi.GetCustomAttribute<AuthorizeAttribute>() is not null,"Angular supplier integrations management must require authentication");
 Check(new[]{nameof(SupplierIntegrationsManagementApiController.CreateCredential),nameof(SupplierIntegrationsManagementApiController.Deactivate),nameof(SupplierIntegrationsManagementApiController.CreateAccess),nameof(SupplierIntegrationsManagementApiController.Revoke),nameof(SupplierIntegrationsManagementApiController.Queue),nameof(SupplierIntegrationsManagementApiController.Retry)}.All(name=>supplierIntegrationsManagementApi.GetMethod(name)!.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null),"Angular supplier integration mutations must retain antiforgery");
+var supplierPortalApi=typeof(SupplierPortalApiController);
+Check(supplierPortalApi.GetCustomAttribute<AllowAnonymousAttribute>() is not null&&supplierPortalApi.GetCustomAttribute<EnableRateLimitingAttribute>()?.PolicyName=="supplier-portal","Angular supplier portal must remain anonymous-token scoped and rate limited");
+Check(new[]{nameof(SupplierPortalApiController.Quotation),nameof(SupplierPortalApiController.Confirm),nameof(SupplierPortalApiController.Delivery)}.All(name=>supplierPortalApi.GetMethod(name)!.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null),"Angular supplier portal mutations must retain antiforgery");
 Check(typeof(CreateGoodsReceiptReturnDto).GetProperty(nameof(CreateGoodsReceiptReturnDto.Reason))!.GetCustomAttribute<RequiredAttribute>() is not null&&typeof(CreateGoodsReceiptReturnDto).GetProperty(nameof(CreateGoodsReceiptReturnDto.Lines))!.GetCustomAttribute<MinLengthAttribute>()?.Length==1&&typeof(CreateGoodsReceiptReturnLineDto).GetProperty(nameof(CreateGoodsReceiptReturnLineDto.ReturnQuantity))!.GetCustomAttribute<RangeAttribute>() is not null&&typeof(CreateGoodsReceiptReturnLineDto).GetProperty(nameof(CreateGoodsReceiptReturnLineDto.TrackingAllocations))!.GetCustomAttribute<StringLengthAttribute>()?.MaximumLength==2000,"Receipt-return commands must validate reason, lines, quantities and bounded tracking evidence");
 var operationsApi = typeof(OperationsCenterApiController);
 Check(operationsApi.GetCustomAttribute<ApiControllerAttribute>() is not null &&

@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { anonymousOnlyGuard, authGuard } from './core/api/auth.guard';
 
 export const routes: Routes = [
+  { path: 'supplier-portal/:token', loadComponent: () => import('./features/purchases/supplier-portal-page').then(module => module.SupplierPortalPageComponent) },
   {
     path: 'login',
     canActivate: [anonymousOnlyGuard],

@@ -1,0 +1,139 @@
+<main class="portal-page">
+  <app-page-header
+    eyebrow="MINISTORE"
+    [title]="i18n.text('title')"
+    [description]="i18n.text('description')"
+  />
+  @if (loading()) {
+    <app-feedback-state kind="loading" [title]="i18n.text('loading')" />
+  } @else if (failure(); as p) {
+    <app-api-recovery [problem]="p" (retry)="load()" />
+  } @else if (page(); as p) {
+    @if (success()) {
+      <p class="ui-card success">{{ success() }}</p>
+    }
+    <section class="ui-card summary">
+      <h2>{{ p.documentNumber }} — {{ p.supplierName }}</h2>
+      @if (p.responseDeadline) {
+        <p>{{ i18n.text('deadline') }}: {{ p.responseDeadline }}</p>
+      }
+      @if (p.expectedDate) {
+        <p>{{ i18n.text('expected') }}: {{ p.expectedDate }}</p>
+      }
+      <p>{{ i18n.text('currency') }}: {{ p.currencyCode }}</p>
+    </section>
+    <section>
+      <h2>{{ i18n.text('lines') }}</h2>
+      <div class="cards">
+        @for (x of p.lines; track x.id) {
+          <article class="ui-card">
+            <strong>{{ x.productCode }} — {{ x.productName }}</strong>
+            <p>{{ i18n.text('quantity') }}: {{ x.quantity | number: '1.0-6' }} {{ x.unitName }}</p>
+            @if (x.unitPrice !== null) {
+              <p>
+                {{ i18n.text('unitPrice') }}: {{ x.unitPrice | number: '1.0-6' }}
+                {{ p.currencyCode }}
+              </p>
+            }
+          </article>
+        }
+      </div>
+    </section>
+    @if (p.documentType === 1 && p.canSubmitQuotation) {
+      <form class="ui-card form" [formGroup]="quote" (ngSubmit)="submitQuote()">
+        <h2>{{ i18n.text('quotation') }}</h2>
+        <label class="ui-field"
+          ><span>{{ i18n.text('currency') }}</span
+          ><input formControlName="currencyCode" maxlength="3" /></label
+        ><label class="ui-field"
+          ><span>{{ i18n.text('reference') }}</span
+          ><input formControlName="supplierReference" maxlength="100" /></label
+        ><label class="ui-field"
+          ><span>{{ i18n.text('quotationDate') }}</span
+          ><input type="date" formControlName="quotationDate" /></label
+        ><label class="ui-field"
+          ><span>{{ i18n.text('validUntil') }}</span
+          ><input type="date" formControlName="validUntilDate" /></label
+        ><label class="ui-field"
+          ><span>{{ i18n.text('lead') }}</span
+          ><input type="number" min="0" max="3650" formControlName="leadTimeDays" /></label
+        ><label class="ui-field"
+          ><span>{{ i18n.text('payment') }}</span
+          ><input formControlName="paymentTerms" maxlength="500"
+        /></label>
+        <div class="lines" formArrayName="lines">
+          @for (line of quoteLines.controls; track $index; let i = $index) {
+            <fieldset [formGroupName]="i">
+              <legend>{{ p.lines[i].productCode }} — {{ p.lines[i].productName }}</legend>
+              <label class="ui-field"
+                ><span>{{ i18n.text('quantity') }}</span
+                ><input
+                  type="number"
+                  min=".000001"
+                  step=".000001"
+                  formControlName="quantity" /></label
+              ><label class="ui-field"
+                ><span>{{ i18n.text('unitPrice') }}</span
+                ><input type="number" min="0" step=".000001" formControlName="unitPrice" /></label
+              ><label class="ui-field"
+                ><span>{{ i18n.text('discount') }}</span
+                ><input type="number" min="0" max="100" formControlName="discountPercent" /></label
+              ><label class="ui-field"
+                ><span>{{ i18n.text('tax') }}</span
+                ><input type="number" min="0" max="100" formControlName="taxPercent"
+              /></label>
+            </fieldset>
+          }
+        </div>
+        <label class="ui-field wide"
+          ><span>{{ i18n.text('notes') }}</span
+          ><textarea formControlName="notes" maxlength="1000"></textarea></label
+        ><button class="ui-button primary" [disabled]="saving() || quote.invalid">
+          {{ saving() ? i18n.text('saving') : i18n.text('submitQuote') }}
+        </button>
+      </form>
+    } @else if (p.documentType === 1) {
+      <p class="ui-card success">{{ i18n.text('completed') }}</p>
+    }
+    @if (p.documentType === 2 && p.canConfirmOrder) {
+      <form class="ui-card form" [formGroup]="confirmation" (ngSubmit)="confirm()">
+        <h2>{{ i18n.text('confirmTitle') }}</h2>
+        <label class="ui-field"
+          ><span>{{ i18n.text('confirmedDate') }}</span
+          ><input type="date" formControlName="confirmedExpectedDate" /></label
+        ><label class="ui-field"
+          ><span>{{ i18n.text('confirmationRef') }}</span
+          ><input formControlName="confirmationReference" maxlength="250" /></label
+        ><label class="ui-field"
+          ><span>{{ i18n.text('notes') }}</span
+          ><input formControlName="note" maxlength="1000" /></label
+        ><button class="ui-button primary" [disabled]="saving() || confirmation.invalid">
+          {{ saving() ? i18n.text('saving') : i18n.text('confirm') }}
+        </button>
+      </form>
+    }
+    @if (p.documentType === 2 && p.canSubmitDeliveryNotice) {
+      <form class="ui-card form" [formGroup]="notice" (ngSubmit)="delivery()">
+        <h2>{{ i18n.text('deliveryTitle') }}</h2>
+        <label class="ui-field"
+          ><span>{{ i18n.text('deliveryDate') }}</span
+          ><input type="date" formControlName="deliveryDate" /></label
+        ><label class="ui-field"
+          ><span>{{ i18n.text('deliveryRef') }}</span
+          ><input formControlName="reference" maxlength="250" /></label
+        ><label class="ui-field"
+          ><span>{{ i18n.text('carrier') }}</span
+          ><input formControlName="carrier" maxlength="150" /></label
+        ><label class="ui-field"
+          ><span>{{ i18n.text('tracking') }}</span
+          ><input formControlName="trackingNumber" maxlength="150" /></label
+        ><label class="ui-field wide"
+          ><span>{{ i18n.text('notes') }}</span
+          ><textarea formControlName="note" maxlength="1000"></textarea></label
+        ><button class="ui-button primary" [disabled]="saving() || notice.invalid">
+          {{ saving() ? i18n.text('saving') : i18n.text('deliverySubmit') }}
+        </button>
+      </form>
+    }
+  }
+</main>
