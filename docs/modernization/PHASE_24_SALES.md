@@ -1,6 +1,6 @@
 # Phase 24 — Sales Angular migration
 
-> Status: IN PROGRESS — `MOD-024A..B` COMPLETE on 2026-10-29
+> Status: IN PROGRESS — `MOD-024A..C` COMPLETE on 2026-10-29
 >
 > Presentation default: MVC until a separate cutover approval.
 
@@ -29,13 +29,23 @@ Application/Domain and the server.
   tax, immutable commercial snapshots, transition eligibility and frozen PDF evidence. Quotations have no inventory, accounting or
   payment effect.
 
+## `MOD-024C` delivered — sales orders and control approvals
+
+- Added authenticated list/details, accepted-quotation conversion, confirmation, cancellation and approval-decision APIs. Each
+  mutation retains its independent permission, antiforgery and the existing concurrency contract.
+- Added bilingual RTL-safe Angular list/detail workspaces with source quotation navigation, immutable commercial lines, lifecycle
+  history, control findings/steps, eligible approval decisions and reservation/delivery/invoice progress evidence.
+- `SalesOrderService` and `SalesOrderApprovalService` remain authoritative for one-time conversion, frozen source snapshots,
+  numbering, control evaluation, approval order, confirmation and cancellation eligibility. Confirmation creates no reservation,
+  stock movement or accounting entry.
+
 ## Evidence
 
-- Web Release: zero warnings/errors; SecurityRegression: 1287 checks.
-- Angular: 188/188 tests across 84 files; 96 templates passed accessibility; external SCSS passed.
-- Bundles: 313,579/358,400 initial bytes and 81,743/81,920 largest lazy bytes.
+- Web Release: zero warnings/errors; SecurityRegression: 1290 checks.
+- Angular: 189/189 tests across 85 files; 97 templates passed accessibility; external SCSS passed.
+- Bundles: 313,941/358,400 initial bytes and 81,743/81,920 largest lazy bytes.
 
 ## Next slice
 
-`MOD-024C` migrates Sales Order list/details, accepted-quotation conversion, confirmation and cancellation while keeping source
-snapshots, numbering, approvals, concurrency and state authority server-side.
+`MOD-024D` migrates Sales Order reservation page, reserve and release operations while keeping warehouse/location eligibility,
+remaining quantities, tracking, concurrency and stock authority server-side.

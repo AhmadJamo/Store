@@ -1458,3 +1458,11 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   added. Web Release passed with zero warnings/errors, SecurityRegression passed 1287 checks, Angular passed 188/188 tests across
   84 files, 96 templates passed accessibility, external SCSS passed and bundles measured 313,579/358,400 initial and
   81,743/81,920 largest lazy bytes. MVC remains default. Advanced to `MOD-024C` Sales Orders.
+- 2026-10-29: Completed `MOD-024C` Sales Orders. Added authenticated list/details, one-time accepted-quotation conversion,
+  confirmation/cancellation and approval decision APIs plus a bilingual RTL-safe Angular workspace with source links, immutable
+  commercial evidence, control findings/steps, history and downstream reservation/delivery/invoice progress. Application services
+  remain authoritative for numbering, source snapshots, concurrency, control evaluation, approval order and transition eligibility;
+  conversion/confirmation create no reservation, stock movement or accounting entry. Web Release passed with zero warnings/errors,
+  SecurityRegression passed 1290 checks, Angular passed 189/189 tests across 85 files, 97 templates passed accessibility, external
+  SCSS passed and bundles measured 313,941/358,400 initial and 81,743/81,920 largest lazy bytes. MVC remains default. Advanced to
+  `MOD-024D` Sales Order Reservations.

@@ -69,7 +69,8 @@ The ERP SaaS Foundation Blueprint is imported as a non-authoritative planning re
 - [x] MOD-023U migrate the remaining Legacy Direct Purchase history/details/post evidence and posted Purchase Return list/details/create-and-post operations; keep new legacy purchase creation retired. Completed 2026-10-29.
 - [x] MOD-024A migrate Sales Price Lists, pricing rules, lifecycle operations and server-authored pricing evaluation as the first sales slice. Completed 2026-10-29.
 - [x] MOD-024B migrate Sales Quotation list/details/create, lifecycle transitions and PDF preview/download with server-owned pricing and snapshots. Completed 2026-10-29.
-- [ ] MOD-024C migrate Sales Order list/details, accepted-quotation conversion, confirmation and cancellation with server-owned source snapshots and approvals.
+- [x] MOD-024C migrate Sales Order list/details, accepted-quotation conversion, confirmation/cancellation and control approvals with server-owned source snapshots. Completed 2026-10-29.
+- [ ] MOD-024D migrate Sales Order inventory reservation page, reserve and release operations with named warehouses/locations and server-owned remaining quantities.
 - [ ] MOD-023 through MOD-028 migrate purchasing, sales, POS, accounting, tenant/public,
   platform and shared MVC workflows to Angular, including every operation, permission, localization, file/PDF and edge state.
 - [ ] MOD-029 prove full-system parity through dual-run reconciliation, performance/security/accessibility evidence and cutover/rollback rehearsals.

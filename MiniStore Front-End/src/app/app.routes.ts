@@ -277,6 +277,8 @@ export const routes: Routes = [
       { path: 'sales/quotations', loadComponent: () => import('./features/sales/sales-quotations-list-page').then(module => module.SalesQuotationsListPageComponent) },
       { path: 'sales/quotations/new', canDeactivate: [(component) => component.canDeactivate()], loadComponent: () => import('./features/sales/sales-quotation-form-page').then(module => module.SalesQuotationFormPageComponent) },
       { path: 'sales/quotations/:id', loadComponent: () => import('./features/sales/sales-quotation-details-page').then(module => module.SalesQuotationDetailsPageComponent) },
+      { path: 'sales/orders', loadComponent: () => import('./features/sales/sales-orders-page').then(module => module.SalesOrdersPageComponent) },
+      { path: 'sales/orders/:id', loadComponent: () => import('./features/sales/sales-orders-page').then(module => module.SalesOrdersPageComponent) },
       {
         path: 'products/recipes/:productId',
         canDeactivate: [(component) => component.canDeactivate()],
