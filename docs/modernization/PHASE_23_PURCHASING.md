@@ -1,6 +1,6 @@
 # Phase 23 — Purchasing Angular migration
 
-> Status: IN PROGRESS — `MOD-023A..B` COMPLETE on 2026-10-27
+> Status: IN PROGRESS — `MOD-023A..C` COMPLETE on 2026-10-28
 >
 > Presentation default: MVC until a separate cutover approval.
 
@@ -47,7 +47,23 @@ supplier sourcing, inventory/accounting posting, concurrency and tenant authorit
 - Production bundles: 305,003/358,400 initial bytes and 81,742/81,920 largest lazy bytes.
 - Live checks: approval-rules Angular route returned 200; anonymous approval/request reads returned 401.
 
+## `MOD-023C` delivered — sourcing, quotations and award
+
+- Added authenticated versioned APIs and Angular routes for sourcing list/details/create-from-approved-request, supplier invitation,
+  quotation capture/comparison and one-time reasoned line allocation.
+- Every command uses the existing Application services, independent `PurchaseSourcing.*` / `SupplierQuotations.*` permissions and
+  antiforgery. Request eligibility, invited-supplier checks, commercial snapshots, exchange rates, exact demand allocation and state
+  transitions remain server-owned.
+- The bilingual RTL-safe workspace exposes names and commercial evidence rather than user-facing IDs, retains rejected input, hides the
+  award action after completion and displays the frozen allocation evidence. No schema or business rule changed; MVC remains default.
+
+## Current evidence
+
+- Web Release: zero warnings/errors; SecurityRegression: 1233 checks.
+- Angular: 168/168 tests across 64 files; 73 templates passed accessibility; external SCSS passed.
+- Production bundles: 305,736/358,400 initial bytes and 81,742/81,920 largest lazy bytes.
+
 ## Next slice
 
-`MOD-023C` migrates Purchase Sourcing events, supplier invitations, Supplier Quotations and reasoned award/comparison while preserving
-request eligibility, frozen commercial snapshots, quantity/currency rules and server-owned state transitions.
+`MOD-023D` migrates Purchase Order list/details, materialization from a completed award and the existing approve/confirm/cancel and
+remainder-close/reopen lifecycle while preserving frozen commercial data and keeping inventory/accounting effects out of confirmation.

@@ -219,6 +219,11 @@ export const routes: Routes = [
       { path: 'purchases/requests/new', canDeactivate: [(component) => component.canDeactivate()], loadComponent: () => import('./features/purchases/purchase-requests-page').then(module => module.PurchaseRequestsPageComponent) },
       { path: 'purchases/requests/:id', loadComponent: () => import('./features/purchases/purchase-requests-page').then(module => module.PurchaseRequestsPageComponent) },
       { path: 'purchases/approval-rules', canDeactivate: [(component) => component.canDeactivate()], loadComponent: () => import('./features/purchases/purchase-requests-page').then(module => module.PurchaseRequestsPageComponent) },
+      { path: 'purchases/sourcing', loadComponent: () => import('./features/purchases/purchase-sourcing-page').then(module => module.PurchaseSourcingPageComponent) },
+      { path: 'purchases/sourcing/new', canDeactivate: [(component) => component.canDeactivate()], loadComponent: () => import('./features/purchases/purchase-sourcing-page').then(module => module.PurchaseSourcingPageComponent) },
+      { path: 'purchases/sourcing/:id', loadComponent: () => import('./features/purchases/purchase-sourcing-page').then(module => module.PurchaseSourcingPageComponent) },
+      { path: 'purchases/sourcing/:id/quotation', canDeactivate: [(component) => component.canDeactivate()], loadComponent: () => import('./features/purchases/purchase-sourcing-page').then(module => module.PurchaseSourcingPageComponent) },
+      { path: 'purchases/sourcing/:id/comparison', canDeactivate: [(component) => component.canDeactivate()], loadComponent: () => import('./features/purchases/purchase-sourcing-page').then(module => module.PurchaseSourcingPageComponent) },
       {
         path: 'products/recipes/:productId',
         canDeactivate: [(component) => component.canDeactivate()],

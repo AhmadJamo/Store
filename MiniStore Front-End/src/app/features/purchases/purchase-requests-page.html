@@ -261,6 +261,9 @@
   } @else if (detail(); as x) {
     <div class="actions">
       <a class="ui-button secondary" routerLink="/purchases/requests">{{ i18n.text('back') }}</a>
+      @if (x.status === 4 && session.can('PurchaseSourcing.Create')) {
+        <a class="ui-button primary" [routerLink]="['/purchases/sourcing/new']" [queryParams]="{purchaseRequestId:x.id}">{{ i18n.text('startSourcing') }}</a>
+      }
     </div>
     <section class="ui-card summary">
       <header>

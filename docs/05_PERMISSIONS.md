@@ -258,3 +258,11 @@ Approval-rule reads require `PurchaseApprovalRules.View`; create and activate/de
 antiforgery. Request decisions separately require `PurchaseRequests.Approve` or `PurchaseRequests.Reject` and antiforgery. The server
 also requires the signed-in user to hold the current frozen step role; either permission or role alone is insufficient.
 
+
+## MOD-023C sourcing and quotation API permissions (2026-10-28)
+
+- `PurchaseSourcing.View` protects Angular sourcing list/details; `PurchaseSourcing.Create` separately protects create-form data and
+  create/send. The POST is antiforgery-protected and delegates only to `PurchaseSourcingService`.
+- `SupplierQuotations.Create` protects invited quotation options and submission; `SupplierQuotations.View` protects comparison;
+  `SupplierQuotations.Award` alone permits the antiforgery-protected one-time award.
+- Angular permission checks only hide ineligible actions. Controller policies and Application/Domain validation remain authoritative.

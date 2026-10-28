@@ -11,6 +11,10 @@ PUR-010 adds tenant-safe supplier/product purchasing information with purchase u
 
 The additive procurement workflow now also supports internal Purchase Requests, configurable approvals, sourcing invitations, submitted supplier quotations, a reasoned quotation award and a new Purchase Order. Sourcing and Supplier Quotation create actions bind their create pages' nested `Form.*` fields explicitly, so source identities, invited suppliers and commercial quotation lines survive submission; action links are shown only with their matching permissions. A Purchase Order is created only from the recorded award, freezes its supplier, warehouse, currency, dates, payment terms and commercial line data, and moves through Draft -> Approved -> Confirmed (or a reasoned cancellation before confirmation). The list/detail UI respects distinct view/create/approve/confirm/cancel permissions. A confirmed order remains a commercial commitment: it does not change inventory, AVCO, stock movements or accounting. Receipt/billing-derived completion is intentionally deferred to PUR-060 onward.
 
+`MOD-023C` exposes that existing sourcing/quotation/award behavior through authenticated Angular APIs without duplicating persistence or
+domain logic. Angular can select only the suppliers and commercial inputs; the Application services still validate approved-request
+eligibility, invitation membership, currency/rates, complete quotation lines, exact allocation totals and required award reasons.
+
 Angular `/purchases/requests` now covers the current request list/search/status filter, named multi-line Draft creation, details,
 approval/history evidence, Submit and reasoned Cancel operations. The versioned API repeats independent permissions and antiforgery,
 and `PurchaseRequestService` still owns numbering, active purchasable products, compatible managed-unit conversion, supplier validity,

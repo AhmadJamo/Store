@@ -94,6 +94,13 @@ PUR-200 direct RFQs require the dedicated `PurchaseSourcing.CreateDirect` contro
 
 PUR-210 split awards require `SupplierQuotations.Award`, bind only the nested allocation command and resolve every supplied quotation-line identity inside the current tenant and sourcing event. The Application service rejects duplicates, non-submitted quotes, missing reasons, quantities above a supplier quote and any sourcing line whose awarded total differs from the approved requested quantity. The sourcing event closes in the same Serializable transaction as its immutable allocation evidence. `PurchaseOrders.Create` remains separate and can only materialize supplier-grouped orders from those frozen allocations; split awards cannot be converted into a single-supplier agreement.
 
+## MOD-023C Angular sourcing boundary (2026-10-28)
+
+The versioned sourcing and quotation controllers require authentication and exact read/create/award permissions. Every mutation validates
+antiforgery and model bounds before delegating to the existing Application services; controllers do not access EF or repositories.
+Supplier identity is resolved against recorded invitations, quotation lines must match the event exactly, monetary decimal validation is
+culture-invariant, and award identities/quantities/reasons are revalidated server-side. The Angular client cannot close an event directly.
+
 PUR-220 service evidence separates `PurchaseServiceAcceptances.View` from `PurchaseServiceAcceptances.Create`. The Application service resolves every supplied line through the current tenant's confirmed Purchase Order, requires the frozen Service Completion policy and caps cumulative completion. Goods Receipt paths independently reject non-receipt policies and non-stocked products, so a crafted request cannot turn a service into warehouse stock.
 
 PUR-250A separates receipt capture, quality inspection and storage permissions. The Application service requires the exact state at every transition, validates every submitted receipt line against the tenant-loaded aggregate and Purchase Order, requires discrepancy reasons and caps shortage evidence. A filtered tenant/order uniqueness boundary prevents competing staged receipts. No client-submitted status or route is trusted, and stock/accounting effects remain inside the serializable storage transaction.

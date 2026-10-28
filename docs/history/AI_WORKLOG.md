@@ -1312,3 +1312,10 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   errors, SecurityRegression passed 1230 checks, Angular passed 167/167 tests across 63 files, accessibility passed 72 templates,
   external SCSS passed, bundles measured 305,003/358,400 initial and 81,742/81,920 largest lazy bytes, and live route 200 plus
   anonymous read 401 checks passed. Advanced to `MOD-023C` sourcing and supplier quotations.
+- 2026-10-28: Completed approved `MOD-023C`. Added authenticated Angular sourcing list/details/create-from-approved-request,
+  invited supplier quotation entry, comparable company-currency evidence and reason-required exact-quantity award through the existing
+  `PurchaseSourcingService` and `SupplierQuotationService`. Independent permissions and antiforgery protect every command; request and
+  supplier eligibility, commercial snapshots, currency/tax calculations and state transitions remain server-owned. Web Release passed
+  with zero warnings/errors, SecurityRegression passed 1233 checks, Angular passed 168/168 tests across 64 files, 73 templates passed
+  accessibility, external SCSS passed and bundles measured 305,736/358,400 initial and 81,742/81,920 largest lazy bytes. No schema or
+  business-rule change; MVC remains default. Advanced the gate to `MOD-023D` Purchase Orders.

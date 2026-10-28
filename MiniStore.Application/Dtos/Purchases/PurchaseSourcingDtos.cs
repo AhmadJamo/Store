@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using MiniStore.Domain.Entities;
 using MiniStore.Application.Dtos.Settings;
 
@@ -5,12 +6,18 @@ namespace MiniStore.Application.DTOs.Purchases;
 
 public sealed class CreatePurchaseSourcingDto
 {
+    [Range(1, int.MaxValue)]
     public int PurchaseRequestId { get; set; }
     public DateOnly SupplierResponseDeadline { get; set; } = DateOnly.FromDateTime(DateTime.Today.AddDays(7));
+    [StringLength(100)]
     public string? BuyerReference { get; set; }
+    [Range(typeof(decimal), "0", "79228162514264337593543950335", ParseLimitsInInvariantCulture = true, ConvertValueInInvariantCulture = true)]
     public decimal EstimatedAmountCompanyCurrency { get; set; }
+    [StringLength(1000)]
     public string? Notes { get; set; }
+    [StringLength(1000)]
     public string? InvitationMessage { get; set; }
+    [MinLength(1)]
     public List<int> SupplierIds { get; set; } = [];
     public List<PurchaseSourcingAttachmentInputDto> Attachments { get; set; } = [];
 }
