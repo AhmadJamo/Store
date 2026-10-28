@@ -1,6 +1,6 @@
 # Phase 23 — Purchasing Angular migration
 
-> Status: IN PROGRESS — `MOD-023A..P` COMPLETE on 2026-10-28
+> Status: IN PROGRESS — `MOD-023A..Q` COMPLETE on 2026-10-28
 >
 > Presentation default: MVC until a separate cutover approval.
 
@@ -264,7 +264,17 @@ supplier sourcing, inventory/accounting posting, concurrency and tenant authorit
 - Bundles: 311,587/358,400 initial bytes and 81,743/81,920 largest lazy bytes.
 - Live checks: Angular route returned 200; anonymous API read returned 401.
 
+## `MOD-023Q` delivered — Purchase Accounting Reconciliation
+
+- Added an authenticated `PurchaseAccountingReconciliation.View` API over the existing Application service and repository projection.
+- Added a bilingual RTL-safe Angular workspace for as-of/exceptions filters, inventory-to-ledger evidence, GRNI receipt balances,
+  settlement documents and permission-aware source/setup links.
+- Historical timing notes, missing-account guidance and every reconciliation total/difference remain server-owned. The screen is
+  read-only and introduces no schema, inventory or accounting change; MVC remains default.
+- Evidence: Release zero warnings/errors; SecurityRegression 1273; Angular 182/182 across 78 files; 88 templates; bundles
+  311,737/358,400 initial and 81,743/81,920 largest lazy bytes; live Angular 200 and anonymous API 401.
+
 ## Next slice
 
-`MOD-023Q` migrates Purchase Accounting Reconciliation as the next read-only purchasing evidence surface while keeping all
-Inventory/GL and GRNI/GL reconciliation calculations server-owned.
+`MOD-023R` migrates supplier communication preparation, immutable attachments and recorded delivery/activity evidence while keeping
+all document eligibility and audit rules server-owned.

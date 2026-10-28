@@ -1407,3 +1407,10 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   passed 1272 checks, Angular passed 181/181 tests across 77 files, 87 templates passed accessibility, external SCSS passed and bundles
   measured 311,587/358,400 initial and 81,743/81,920 largest lazy bytes. Live Angular returned 200 and anonymous API returned 401.
   MVC remains default. Advanced to `MOD-023Q` Purchase Accounting Reconciliation.
+- 2026-10-28: Completed `MOD-023Q` Purchase Accounting Reconciliation. Added an authenticated read-only API and bilingual RTL-safe
+  Angular workspace for as-of/exceptions filtering, warehouse inventory-to-ledger evidence, GRNI receipt balances, settlement documents
+  and permission-aware source/setup links. Existing Application/repository calculations remain authoritative; Angular derives no
+  trusted balance and the feature has no mutation. Release passed with zero warnings/errors, SecurityRegression passed 1273 checks,
+  Angular passed 182/182 tests across 78 files, 88 templates passed accessibility, external SCSS passed and bundles measured
+  311,737/358,400 initial and 81,743/81,920 largest lazy bytes. Live Angular returned 200 and anonymous API returned 401. MVC remains
+  default. Advanced to `MOD-023R` Supplier Communications.

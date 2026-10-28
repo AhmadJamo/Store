@@ -256,6 +256,7 @@ export const routes: Routes = [
       { path: 'purchases/supplier-terms/:id/history', loadComponent: () => import('./features/purchases/supplier-purchasing-page').then(module => module.SupplierPurchasingPageComponent) },
       { path: 'purchases/replenishment', canDeactivate: [(component) => component.canDeactivate()], loadComponent: () => import('./features/purchases/purchase-replenishment-page').then(module => module.PurchaseReplenishmentPageComponent) },
       { path: 'purchases/analytics', loadComponent: () => import('./features/purchases/purchase-analytics-page').then(module => module.PurchaseAnalyticsPageComponent) },
+      { path: 'purchases/accounting-reconciliation', loadComponent: () => import('./features/purchases/purchase-accounting-reconciliation-page').then(module => module.PurchaseAccountingReconciliationPageComponent) },
       { path: 'purchases/payments', loadComponent: () => import('./features/purchases/supplier-payments-page').then(module => module.SupplierPaymentsPageComponent) },
       { path: 'purchases/payments/new', canDeactivate: [(component) => component.canDeactivate()], loadComponent: () => import('./features/purchases/supplier-payments-page').then(module => module.SupplierPaymentsPageComponent) },
       { path: 'purchases/payments/:id', loadComponent: () => import('./features/purchases/supplier-payments-page').then(module => module.SupplierPaymentsPageComponent) },

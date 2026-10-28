@@ -1,0 +1,216 @@
+<section class="reconciliation-page" [attr.aria-label]="i18n.text('title')">
+  <app-page-header
+    eyebrow="PURCHASING"
+    [title]="i18n.text('title')"
+    [description]="i18n.text('description')"
+  />
+  <form class="ui-card filters" [formGroup]="form" (ngSubmit)="load()">
+    <label class="ui-field"
+      ><span>{{ i18n.text('asOf') }}</span
+      ><input type="date" formControlName="asOfDate" [max]="today"
+    /></label>
+    <label class="checkbox"
+      ><input type="checkbox" formControlName="exceptionsOnly" />
+      <span>{{ i18n.text('exceptionsOnly') }}</span></label
+    >
+    <button class="ui-button primary">{{ i18n.text('apply') }}</button>
+  </form>
+  @if (loading()) {
+    <app-feedback-state kind="loading" [title]="i18n.text('loading')" />
+  } @else if (failure(); as problem) {
+    <app-api-recovery [problem]="problem" (retry)="load()" />
+  } @else if (page(); as p) {
+    <aside class="ui-card notice">
+      <p>{{ i18n.text('readOnly') }}</p>
+      @if (!p.usesCurrentInventorySnapshot) {
+        <p>
+          <strong>{{ i18n.text('historicalTitle') }}</strong> {{ i18n.text('historical') }}
+        </p>
+      }
+    </aside>
+    <div class="metrics">
+      <article class="ui-card" [class.ok]="p.inventoryIsReconciled">
+        <span>{{ i18n.text('operationalInventory') }}</span
+        ><strong>{{ p.operationalInventoryValue | number: '1.2-2' }}</strong
+        ><small>{{ i18n.text('warehouseSnapshots') }}</small>
+      </article>
+      <article class="ui-card" [class.ok]="p.inventoryIsReconciled">
+        <span>{{ i18n.text('inventoryLedger') }}</span
+        ><strong>{{ p.ledgerInventoryBalance | number: '1.2-2' }}</strong
+        ><small>{{ i18n.text('difference') }}: {{ p.inventoryDifference | number: '1.2-2' }}</small>
+      </article>
+      <article class="ui-card" [class.ok]="p.grniIsReconciled">
+        <span>{{ i18n.text('operationalGrni') }}</span
+        ><strong>{{ p.operationalGrniBalance | number: '1.2-2' }}</strong
+        ><small>{{ i18n.text('openReceipts') }}: {{ p.grniOpenReceiptCount }}</small>
+      </article>
+      <article class="ui-card" [class.ok]="p.grniIsReconciled">
+        <span>{{ i18n.text('grniLedger') }}</span
+        ><strong>{{ p.ledgerGrniBalance | number: '1.2-2' }}</strong
+        ><small>{{ i18n.text('difference') }}: {{ p.grniDifference | number: '1.2-2' }}</small>
+      </article>
+    </div>
+    @if (!p.hasGrniAccount) {
+      <aside class="ui-card warning">
+        <span>{{ i18n.text('configureGrni') }}</span>
+        @if (session.can('Settings.Edit')) {
+          <a class="ui-button secondary" routerLink="/settings/accounting">{{
+            i18n.text('accountingSettings')
+          }}</a>
+        } @else {
+          <strong>{{ i18n.text('contactAdmin') }}</strong>
+        }
+      </aside>
+    }
+    <section>
+      <header class="section-header">
+        <div>
+          <h2>{{ i18n.text('inventoryToLedger') }}</h2>
+          <p>{{ i18n.text('inventoryDescription') }}</p>
+        </div>
+        <span class="ui-badge">{{ i18n.text('exceptions') }}: {{ p.inventoryExceptionCount }}</span>
+      </header>
+      <div class="cards">
+        @for (row of p.inventory; track row.warehouseId) {
+          <article class="ui-card evidence" [class.ok]="row.isReconciled">
+            <header>
+              <div>
+                <strong>{{ row.warehouseName }}</strong
+                ><small>{{
+                  row.hasInventoryAccount
+                    ? row.inventoryAccountDisplay
+                    : i18n.text('accountMissing')
+                }}</small>
+              </div>
+              <span class="ui-badge">{{
+                row.isReconciled ? i18n.text('matched') : i18n.text('review')
+              }}</span>
+            </header>
+            <dl>
+              <div>
+                <dt>{{ i18n.text('operationalValue') }}</dt>
+                <dd>{{ row.operationalValue | number: '1.2-2' }}</dd>
+              </div>
+              <div>
+                <dt>{{ i18n.text('ledgerBalance') }}</dt>
+                <dd>{{ row.ledgerBalance | number: '1.2-2' }}</dd>
+              </div>
+              <div>
+                <dt>{{ i18n.text('difference') }}</dt>
+                <dd>{{ row.difference | number: '1.2-2' }}</dd>
+              </div>
+            </dl>
+            <footer>
+              @if (session.can('ProductStock.View')) {
+                <a
+                  class="ui-button secondary"
+                  routerLink="/inventory/stocks"
+                  [queryParams]="{ warehouseId: row.warehouseId }"
+                  >{{ i18n.text('viewStock') }}</a
+                >
+              }
+              @if (!row.hasInventoryAccount && session.can('Warehouses.Edit')) {
+                <a
+                  class="ui-button secondary"
+                  routerLink="/warehouses"
+                  [queryParams]="{ edit: row.warehouseId }"
+                  >{{ i18n.text('assignAccount') }}</a
+                >
+              }
+            </footer>
+          </article>
+        } @empty {
+          <p class="ui-card empty">{{ i18n.text('noInventoryExceptions') }}</p>
+        }
+      </div>
+    </section>
+    <section>
+      <header class="section-header">
+        <div>
+          <h2>{{ i18n.text('grniDetails') }}</h2>
+          <p>{{ i18n.text('grniDescription') }}</p>
+        </div>
+        @if (p.hasGrniAccount) {
+          <small>{{ i18n.text('grniAccount') }}: {{ p.grniAccountDisplay }}</small>
+        }
+      </header>
+      <div class="cards">
+        @for (row of p.grniReceipts; track row.goodsReceiptId) {
+          <article class="ui-card evidence" [class.ok]="Math.abs(row.outstandingValue) <= 0.01">
+            <header>
+              <div>
+                @if (session.can('GoodsReceipts.View')) {
+                  <a [routerLink]="['/purchases/receipts', row.goodsReceiptId]"
+                    ><strong>{{ row.receiptNumber }}</strong></a
+                  >
+                } @else {
+                  <strong>{{ row.receiptNumber }}</strong>
+                }
+                <small
+                  >{{ row.receiptDate | date: 'mediumDate' }} · {{ row.supplierName }} ·
+                  {{ row.warehouseName }}</small
+                >
+              </div>
+              <span class="ui-badge">{{
+                Math.abs(row.outstandingValue) > 0.01 ? i18n.text('open') : i18n.text('cleared')
+              }}</span>
+            </header>
+            <p>
+              {{ i18n.text('purchaseOrder') }}:
+              @if (session.can('PurchaseOrders.View')) {
+                <a [routerLink]="['/purchases/orders', row.purchaseOrderId]">{{
+                  row.purchaseOrderNumber
+                }}</a>
+              } @else {
+                <span>{{ row.purchaseOrderNumber }}</span>
+              }
+            </p>
+            <dl>
+              <div>
+                <dt>{{ i18n.text('receiptValue') }}</dt>
+                <dd>{{ row.receiptValue | number: '1.2-2' }}</dd>
+              </div>
+              <div>
+                <dt>{{ i18n.text('returned') }}</dt>
+                <dd>{{ row.returnedValue | number: '1.2-2' }}</dd>
+              </div>
+              <div>
+                <dt>{{ i18n.text('billedClearing') }}</dt>
+                <dd>{{ row.billedClearingValue | number: '1.2-2' }}</dd>
+              </div>
+              <div>
+                <dt>{{ i18n.text('outstanding') }}</dt>
+                <dd>{{ row.outstandingValue | number: '1.2-2' }}</dd>
+              </div>
+            </dl>
+            @if (row.settlements.length) {
+              <footer class="settlements">
+                <span>{{ i18n.text('settlements') }}</span>
+                @for (
+                  document of row.settlements;
+                  track document.documentType + document.documentId
+                ) {
+                  @if (
+                    (document.documentType === 'VendorBill' && session.can('VendorBills.View')) ||
+                    (document.documentType !== 'VendorBill' &&
+                      session.can('GoodsReceiptReturns.View'))
+                  ) {
+                    <a class="ui-button secondary" [routerLink]="settlementRoute(document)"
+                      >{{ document.documentNumber }} · {{ document.amount | number: '1.2-2' }}</a
+                    >
+                  } @else {
+                    <span class="ui-badge"
+                      >{{ document.documentNumber }} · {{ document.amount | number: '1.2-2' }}</span
+                    >
+                  }
+                }
+              </footer>
+            }
+          </article>
+        } @empty {
+          <p class="ui-card empty">{{ i18n.text('noOpenReceipts') }}</p>
+        }
+      </div>
+    </section>
+  }
+</section>

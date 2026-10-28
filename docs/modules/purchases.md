@@ -76,6 +76,12 @@ spend, receipts, payables, matching exceptions, supplier performance, buyer work
 counts. Buyer display names and localized KPI/source explanations are prepared by the API, and drill-through links remain separately
 permission protected. No schema, inventory or accounting effect was introduced; MVC is default.
 
+`MOD-023Q` exposes Purchase Accounting Reconciliation through an authenticated, read-only Angular workspace. The browser submits only
+the as-of date and exception filter; `PurchaseAccountingReconciliationService` and its tenant-filtered repository remain authoritative
+for historical/current inventory valuation, warehouse ledger balances, GRNI receipts, returns, bill clearing, settlement evidence and
+all differences. Source and setup links are independently permission-aware. No reconciliation value is derived in Angular and no
+schema, inventory or accounting effect was introduced; MVC is default.
+
 Angular `/purchases/requests` now covers the current request list/search/status filter, named multi-line Draft creation, details,
 approval/history evidence, Submit and reasoned Cancel operations. The versioned API repeats independent permissions and antiforgery,
 and `PurchaseRequestService` still owns numbering, active purchasable products, compatible managed-unit conversion, supplier validity,
