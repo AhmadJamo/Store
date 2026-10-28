@@ -1,6 +1,6 @@
 # Phase 23 — Purchasing Angular migration
 
-> Status: IN PROGRESS — `MOD-023A..R` COMPLETE on 2026-10-28
+> Status: IN PROGRESS — `MOD-023A..S` COMPLETE on 2026-10-28
 >
 > Presentation default: MVC until a separate cutover approval.
 
@@ -283,6 +283,15 @@ supplier sourcing, inventory/accounting posting, concurrency and tenant authorit
 - Evidence: Release zero warnings/errors; SecurityRegression 1275; Angular 183/183 across 79 files; 89 templates; bundles
   312,007/358,400 initial and 81,743/81,920 largest lazy bytes; live Angular 200 and anonymous API 401.
 
+## `MOD-023S` delivered — supplier integrations management
+
+- Added authenticated management APIs and a bilingual RTL-safe Angular dashboard for credentials, one-time API keys, deactivation,
+  portal access creation/revocation, Purchase Order queueing, retry, UBL/payload downloads, submissions and external security audit.
+- RFQ and Purchase Order details link named suppliers to their integration context; private links and API keys are returned once with
+  no-store/no-referrer protection. Secret hashing/protection, idempotency, eligibility and retry rules remain server-owned.
+- Evidence: Release zero warnings/errors; SecurityRegression 1277; Angular 184/184 across 80 files; 90 templates; bundles
+  312,273/358,400 initial and 81,743/81,920 largest lazy bytes; live Angular 200 and anonymous API 401. MVC remains default.
+
 ## Next slice
 
-`MOD-023S` migrates supplier credentials, private portal access, external submission queue/retry and immutable payload downloads.
+`MOD-023T` migrates the token-scoped supplier portal quotation, order-confirmation and delivery-notice experiences to Angular.

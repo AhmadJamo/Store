@@ -1,0 +1,236 @@
+<section class="integrations-page">
+  <app-page-header
+    eyebrow="PURCHASING"
+    [title]="i18n.text(detail() ? 'details' : 'title')"
+    [description]="i18n.text('description')"
+  />
+  @if (loading()) {
+    <app-feedback-state kind="loading" [title]="i18n.text('loading')" />
+  } @else if (failure(); as p) {
+    <app-api-recovery [problem]="p" (retry)="load()" />
+  } @else if (detail(); as x) {
+    <div class="actions">
+      <a class="ui-button primary" [href]="download(x.id)">{{ i18n.text('download') }}</a
+      ><a class="ui-button secondary" routerLink="/purchases/integrations">{{
+        i18n.text('back')
+      }}</a>
+    </div>
+    <article class="ui-card">
+      <dl>
+        <div>
+          <dt>{{ i18n.text('supplier') }}</dt>
+          <dd>{{ x.supplierName }}</dd>
+        </div>
+        <div>
+          <dt>{{ i18n.text('type') }}</dt>
+          <dd>{{ x.type }}</dd>
+        </div>
+        <div>
+          <dt>{{ i18n.text('channel') }}</dt>
+          <dd>{{ x.channel }}</dd>
+        </div>
+        <div>
+          <dt>{{ i18n.text('document') }}</dt>
+          <dd>{{ x.documentType }} #{{ x.documentId }}</dd>
+        </div>
+        <div>
+          <dt>{{ i18n.text('external') }}</dt>
+          <dd>{{ x.externalReference || '—' }}</dd>
+        </div>
+        <div>
+          <dt>{{ i18n.text('received') }}</dt>
+          <dd>{{ x.createdAtUtc | date: 'medium' }}</dd>
+        </div>
+      </dl>
+      <p>
+        <strong>{{ i18n.text('idempotency') }}:</strong> <code>{{ x.idempotencyKey }}</code>
+      </p>
+      <p>
+        <strong>{{ i18n.text('fingerprint') }}:</strong> <code>{{ x.requestHash }}</code>
+      </p>
+      <h2>{{ i18n.text('payload') }}</h2>
+      <pre>{{ x.payload }}</pre>
+    </article>
+  } @else if (page(); as p) {
+    @if (secret()) {
+      <aside class="ui-card secret">
+        <strong>{{ i18n.text('secret') }}</strong
+        ><textarea readonly [value]="secret()"></textarea
+        ><button class="ui-button primary" (click)="secret.set('')">
+          {{ i18n.text('close') }}
+        </button>
+      </aside>
+    }
+    @if (portalSecret()) {
+      <aside class="ui-card secret">
+        <strong>{{ i18n.text('portalSecret') }}</strong
+        ><textarea readonly [value]="portalSecret()"></textarea
+        ><button class="ui-button primary" (click)="portalSecret.set('')">
+          {{ i18n.text('close') }}
+        </button>
+      </aside>
+    }
+    @if (documentType && documentId) {
+      <section class="ui-card context">
+        <h2>{{ i18n.text('portal') }} — {{ documentNumber }}</h2>
+        <p>
+          <strong>{{ i18n.text('supplier') }}:</strong> {{ supplierName }}
+        </p>
+        @if (session.can('SupplierIntegrations.Manage')) {
+          <label class="ui-field"
+            ><span>{{ i18n.text('validDays') }}</span
+            ><input
+              type="number"
+              min="1"
+              max="90"
+              [formControl]="contextForm.controls.validDays" /></label
+          ><button class="ui-button primary" (click)="createAccess()">
+            {{ i18n.text('createPortal') }}
+          </button>
+        }
+        <div class="actions">
+          @for (x of accesses(); track x.id) {
+            <span class="ui-badge"
+              >{{ x.documentNumber }} · {{ x.expiresAtUtc | date: 'medium' }}</span
+            >
+            @if (!x.isRevoked && session.can('SupplierIntegrations.Manage')) {
+              <button class="ui-button secondary" (click)="revoke(x.id)">
+                {{ i18n.text('revoke') }}
+              </button>
+            }
+          } @empty {
+            <span>{{ i18n.text('noAccess') }}</span>
+          }
+        </div>
+        @if (documentType === 2 && session.can('SupplierIntegrations.Queue')) {
+          <label class="ui-field"
+            ><span>{{ i18n.text('destination') }}</span
+            ><select [formControl]="contextForm.controls.credentialId">
+              <option [ngValue]="0">{{ i18n.text('select') }}</option>
+              @for (x of destinations(); track x.id) {
+                <option [ngValue]="x.id" [disabled]="!x.canQueuePurchaseOrder">{{ x.name }}</option>
+              }
+            </select></label
+          ><button class="ui-button primary" (click)="queue()">{{ i18n.text('queue') }}</button>
+        }
+      </section>
+    }
+    @if (session.can('SupplierIntegrations.Manage')) {
+      <form class="ui-card form" [formGroup]="form" (ngSubmit)="create()">
+        <h2>{{ i18n.text('create') }}</h2>
+        <label class="ui-field"
+          ><span>{{ i18n.text('supplier') }}</span
+          ><select formControlName="supplierId">
+            <option [ngValue]="0">{{ i18n.text('select') }}</option>
+            @for (s of p.suppliers; track s.id) {
+              <option [ngValue]="s.id">{{ s.label }}</option>
+            }
+          </select></label
+        ><label class="ui-field"
+          ><span>{{ i18n.text('name') }}</span
+          ><input formControlName="name" maxlength="150" /></label
+        ><label class="ui-field"
+          ><span>{{ i18n.text('callback') }}</span
+          ><input type="url" formControlName="callbackUrl" maxlength="1000" /></label
+        ><label class="ui-field"
+          ><span>{{ i18n.text('token') }}</span
+          ><input
+            type="password"
+            formControlName="callbackBearerToken"
+            maxlength="2000"
+            autocomplete="new-password" /></label
+        ><label class="ui-field"
+          ><span>{{ i18n.text('expires') }}</span
+          ><input type="datetime-local" formControlName="expiresAtUtc"
+        /></label>
+        <fieldset>
+          <legend>{{ i18n.text('scopes') }}</legend>
+          @for (scope of scopes; track scope) {
+            <label
+              ><input
+                type="checkbox"
+                [checked]="form.controls.scopes.value.includes(scope)"
+                (change)="toggle(scope, $any($event.target).checked)"
+              />
+              {{ scope }}</label
+            >
+          }
+        </fieldset>
+        <button class="ui-button primary" [disabled]="saving()">{{ i18n.text('save') }}</button>
+      </form>
+    }
+    <h2>{{ i18n.text('credentials') }}</h2>
+    <div class="cards">
+      @for (x of p.credentials; track x.id) {
+        <article class="ui-card">
+          <header>
+            <strong>{{ x.name }} — {{ x.supplierName }}</strong
+            ><span class="ui-badge">{{ i18n.text(x.isActive ? 'active' : 'inactive') }}</span>
+          </header>
+          <p>
+            {{ i18n.text('prefix') }}: <code>{{ x.keyPrefix }}</code>
+          </p>
+          <p>{{ x.scopes }}</p>
+          @if (x.isActive && session.can('SupplierIntegrations.Manage')) {
+            <button class="ui-button secondary" (click)="deactivate(x)">
+              {{ i18n.text('deactivate') }}
+            </button>
+          }
+        </article>
+      }
+    </div>
+    <h2>{{ i18n.text('outbox') }}</h2>
+    <div class="cards">
+      @for (x of p.outbox; track x.id) {
+        <article class="ui-card">
+          <header>
+            <strong>{{ x.messageType }} — {{ x.supplierName }}</strong
+            ><span class="ui-badge">{{ x.status }}</span>
+          </header>
+          <p>
+            {{ x.aggregateType }} #{{ x.aggregateId }} · {{ i18n.text('attempts') }}:
+            {{ x.attemptCount }}
+          </p>
+          @if (x.lastError) {
+            <p class="error">{{ x.lastError }}</p>
+          }
+          @if (x.status !== 3 && session.can('SupplierIntegrations.Retry')) {
+            <button class="ui-button secondary" (click)="retry(x.id)">
+              {{ i18n.text('retry') }}
+            </button>
+          }
+        </article>
+      } @empty {
+        <p class="ui-card">{{ i18n.text('noneOutbox') }}</p>
+      }
+    </div>
+    <h2>{{ i18n.text('submissions') }}</h2>
+    <div class="cards">
+      @for (x of p.submissions; track x.id) {
+        <article class="ui-card">
+          <strong>{{ x.supplierName }}</strong>
+          <p>{{ x.documentReference }} · {{ x.createdAtUtc | date: 'medium' }}</p>
+          <a
+            class="ui-button secondary"
+            [routerLink]="['/purchases/integrations/submissions', x.id]"
+            >{{ i18n.text('review') }}</a
+          >
+        </article>
+      } @empty {
+        <p class="ui-card">{{ i18n.text('noneSubmissions') }}</p>
+      }
+    </div>
+    <h2>{{ i18n.text('audit') }}</h2>
+    <div class="cards">
+      @for (x of p.auditEvents; track x.correlationId + x.createdAtUtc) {
+        <article class="ui-card">
+          <strong>{{ x.supplierName }} — {{ x.action }}</strong>
+          <p>{{ x.outcome }} · {{ x.createdAtUtc | date: 'medium' }}</p>
+          <code>{{ x.correlationId }}</code>
+        </article>
+      } @empty {
+        <p class="ui-card">{{ i18n.text('noneAudit') }}</p>
+      }
+    </div>
+  }
+</section>

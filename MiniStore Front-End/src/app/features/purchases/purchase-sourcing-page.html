@@ -192,6 +192,20 @@
                 >{{ i18n.text('supplierCommunication') }}</a
               >
             }
+            @if (session.can('SupplierIntegrations.View')) {
+              <a
+                class="ui-button secondary"
+                routerLink="/purchases/integrations"
+                [queryParams]="{
+                  documentType: 1,
+                  documentId: x.id,
+                  supplierId: s.supplierId,
+                  supplierName: s.supplierName,
+                  documentNumber: x.sourcingNumber,
+                }"
+                >{{ i18n.text('supplierIntegration') }}</a
+              >
+            }
           </li>
         }
       </ul>

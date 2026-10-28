@@ -134,6 +134,22 @@
               >
             </dd>
           }
+          @if (session.can('SupplierIntegrations.View')) {
+            <dd>
+              <a
+                class="ui-button secondary"
+                routerLink="/purchases/integrations"
+                [queryParams]="{
+                  documentType: 2,
+                  documentId: x.id,
+                  supplierId: x.supplierId,
+                  supplierName: x.supplierName,
+                  documentNumber: x.orderNumber,
+                }"
+                >{{ i18n.text('supplierIntegration') }}</a
+              >
+            </dd>
+          }
         </div>
         <div>
           <dt>{{ i18n.text('warehouse') }}</dt>

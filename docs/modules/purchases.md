@@ -88,6 +88,12 @@ layer remains authoritative for supplier/document eligibility, email presence, a
 snapshots and the rule that sending precedes delivery, reply or follow-up evidence. Opening a local email application is never treated
 as proof of sending. Independent Prepare/View/RecordActivity permissions and antiforgery remain mandatory; MVC is default.
 
+`MOD-023S` exposes supplier integration management through Angular: credential creation/deactivation, one-time API-key display,
+document-scoped private portal links, Purchase Order reliable-delivery queue/retry, UBL and immutable submission payload downloads plus
+external audit evidence. RFQ and Purchase Order pages enter the context by named supplier. The Application/domain layer still owns
+secret hashing/protection, HTTPS callback validation, document/supplier eligibility, one-time token behavior, idempotency and retry
+state. Independent View/Manage/Queue/Retry permissions and antiforgery remain mandatory; MVC is default.
+
 Angular `/purchases/requests` now covers the current request list/search/status filter, named multi-line Draft creation, details,
 approval/history evidence, Submit and reasoned Cancel operations. The versioned API repeats independent permissions and antiforgery,
 and `PurchaseRequestService` still owns numbering, active purchasable products, compatible managed-unit conversion, supplier validity,
