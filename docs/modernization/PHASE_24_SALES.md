@@ -1,6 +1,6 @@
 # Phase 24 — Sales Angular migration
 
-> Status: IN PROGRESS — `MOD-024A` COMPLETE on 2026-10-29
+> Status: IN PROGRESS — `MOD-024A..B` COMPLETE on 2026-10-29
 >
 > Presentation default: MVC until a separate cutover approval.
 
@@ -19,14 +19,23 @@ Application/Domain and the server.
 - Rule precedence, target/unit/date/quantity eligibility, customer defaults/exemption, exchange-rate direction and rounding remain
   server-owned. Evaluation creates no document, stock movement, journal or payment.
 
+## `MOD-024B` delivered — sales quotations
+
+- Added authenticated, permission-separated list/details/create-form/create and PDF endpoints plus independent Send, Accept,
+  Reject, Expire and Cancel commands. Every mutation retains antiforgery and optimistic-concurrency evidence.
+- Added bilingual RTL-safe Angular list/filter, complete quotation composer and detail/history workspaces. Creation supports named
+  customers and addresses, active templates/designs/price lists, product/unit/tax selection, template option evidence and custom lines.
+- `SalesQuotationService` remains authoritative for idempotency, numbering, template/design eligibility, repricing, units, currency,
+  tax, immutable commercial snapshots, transition eligibility and frozen PDF evidence. Quotations have no inventory, accounting or
+  payment effect.
+
 ## Evidence
 
-- Web Release: zero warnings/errors; SecurityRegression: 1284 checks.
-- Angular: 187/187 tests across 83 files; 93 templates passed accessibility; external SCSS passed.
-- Bundles: 313,179/358,400 initial bytes and 81,743/81,920 largest lazy bytes.
-- Live checks: Angular route returned 200; anonymous API read returned 401.
+- Web Release: zero warnings/errors; SecurityRegression: 1287 checks.
+- Angular: 188/188 tests across 84 files; 96 templates passed accessibility; external SCSS passed.
+- Bundles: 313,579/358,400 initial bytes and 81,743/81,920 largest lazy bytes.
 
 ## Next slice
 
-`MOD-024B` migrates Sales Quotation list/details/create, lifecycle transitions and PDF preview/download while keeping pricing,
-snapshot, template, numbering and state authority server-side.
+`MOD-024C` migrates Sales Order list/details, accepted-quotation conversion, confirmation and cancellation while keeping source
+snapshots, numbering, approvals, concurrency and state authority server-side.

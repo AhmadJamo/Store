@@ -274,6 +274,9 @@ export const routes: Routes = [
       { path: 'purchases/legacy-returns', loadComponent: () => import('./features/purchases/legacy-purchases-page').then(module => module.LegacyPurchasesPageComponent) },
       { path: 'purchases/legacy-returns/:id', loadComponent: () => import('./features/purchases/legacy-purchases-page').then(module => module.LegacyPurchasesPageComponent) },
       { path: 'sales/pricing', canDeactivate: [(component) => component.canDeactivate()], loadComponent: () => import('./features/sales/sales-pricing-page').then(module => module.SalesPricingPageComponent) },
+      { path: 'sales/quotations', loadComponent: () => import('./features/sales/sales-quotations-list-page').then(module => module.SalesQuotationsListPageComponent) },
+      { path: 'sales/quotations/new', canDeactivate: [(component) => component.canDeactivate()], loadComponent: () => import('./features/sales/sales-quotation-form-page').then(module => module.SalesQuotationFormPageComponent) },
+      { path: 'sales/quotations/:id', loadComponent: () => import('./features/sales/sales-quotation-details-page').then(module => module.SalesQuotationDetailsPageComponent) },
       {
         path: 'products/recipes/:productId',
         canDeactivate: [(component) => component.canDeactivate()],

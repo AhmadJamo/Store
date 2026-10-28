@@ -1451,3 +1451,10 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   with zero warnings/errors, SecurityRegression passed 1284 checks, Angular passed 187/187 tests across 83 files, 93 templates passed
   accessibility, external SCSS passed and bundles measured 313,179/358,400 initial and 81,743/81,920 largest lazy bytes. Live Angular
   returned 200 and anonymous API returned 401. MVC remains default. Advanced to `MOD-024B` Sales Quotations.
+- 2026-10-29: Completed `MOD-024B` Sales Quotations. Added authenticated, permission-separated list/details/create-form/create,
+  PDF and Send/Accept/Reject/Expire/Cancel endpoints plus bilingual RTL-safe Angular list, composer and details/history workspaces.
+  `SalesQuotationService` remains authoritative for idempotency, numbering, templates/designs, repricing, unit/currency/tax evidence,
+  immutable snapshots, concurrency, transition eligibility and frozen PDF generation; no inventory, accounting or payment effect was
+  added. Web Release passed with zero warnings/errors, SecurityRegression passed 1287 checks, Angular passed 188/188 tests across
+  84 files, 96 templates passed accessibility, external SCSS passed and bundles measured 313,579/358,400 initial and
+  81,743/81,920 largest lazy bytes. MVC remains default. Advanced to `MOD-024C` Sales Orders.

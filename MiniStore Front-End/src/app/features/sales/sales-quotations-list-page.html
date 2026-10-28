@@ -1,0 +1,8 @@
+<main class="quotations-page">
+@if(loading()){<app-feedback-state kind="loading" [title]="i18n.text('title')"/>}
+@else if(failure();as p){<app-api-recovery [problem]="p" (retry)="load()"/>}
+@else{<app-page-header eyebrow="SALES" [title]="i18n.text('title')" [description]="i18n.text('description')"/>
+<div class="top-actions">@if(session.can('SalesQuotations.Create')){<a class="ui-button primary" routerLink="/sales/quotations/new">{{i18n.text('create')}}</a>}</div>
+<form class="ui-card filters" [formGroup]="filters" (ngSubmit)="load()"><label class="ui-field"><span>{{i18n.text('search')}}</span><input formControlName="search" [placeholder]="i18n.text('searchHint')"/></label><label class="ui-field"><span>{{i18n.text('status')}}</span><select formControlName="status"><option [ngValue]="0">{{i18n.text('all')}}</option>@for(s of [1,2,3,4,5,6];track s){<option [ngValue]="s">{{i18n.status(s)}}</option>}</select></label><button class="ui-button" type="submit">{{i18n.text('apply')}}</button></form>
+@if(!rows().length){<app-feedback-state kind="empty" [title]="i18n.text('empty')"/>}@else{<div class="grid">@for(q of rows();track q.id){<article class="ui-card"><div class="heading"><h2>{{q.quotationNumber}}</h2><span class="status">{{i18n.status(q.status)}}</span></div><p>{{q.customerCode}} — {{q.customerName}}</p><dl><div><dt>{{i18n.text('date')}}</dt><dd>{{q.quotationDate}}</dd></div><div><dt>{{i18n.text('validUntil')}}</dt><dd>{{q.validUntil}}</dd></div><div><dt>{{i18n.text('total')}}</dt><dd>{{q.totalAmount|number:'1.2-6'}} {{q.currencyCode}}</dd></div></dl><a class="ui-button" [routerLink]="['/sales/quotations',q.id]">{{i18n.text('view')}}</a></article>}</div>}}
+</main>
