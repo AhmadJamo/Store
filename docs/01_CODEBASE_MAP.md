@@ -9,6 +9,11 @@ The in-repository workspace `MiniStore Front-End` is the isolated Angular 22 pre
 
 `MiniStore Front-End/src/app/workspace` owns the reusable Angular workspace engine. Its navigation registry is session-permission aware and is also the restoration allowlist; its Signals state provides stable context identities, deduplication, bounded per-tab history, configurable tab/recent limits, safe versioned restoration, close/reopen and dirty-state protection. The shell supplies localized ARIA tabs, direction-aware keyboard movement and explicit unsaved-change decisions. No permissions or business payloads are persisted. See `docs/modernization/PHASE_04_WORKSPACE_ENGINE.md`.
 
+`scripts/generate-mvc-migration-registry.ps1` now inventories conventional MVC and `Areas` controllers/views, validates
+declared counterparts against the actual Angular route file and reads the cutover catalog separately. Its generated
+`docs/modernization/MVC_MIGRATION_REGISTRY.md` is the source-authoritative parity inventory; the ordered remaining work and
+cross-surface file gaps are documented in `docs/modernization/PHASE_28_REMAINING.md`.
+
 `MiniStore.Web/Controllers/Api/V1/CustomersController.cs` exposes permission-separated Customer list/details/form/create/update contracts through the existing `CustomerService`; it does not access EF or repositories. `MiniStore Front-End/src/app/features/customers` is the first business vertical slice, with an isolated typed client, responsive list/details/create/edit pages, external SCSS, Problem Details field feedback, row-version concurrency and workspace dirty-state integration. MVC Customers remains the rollback path. See `docs/modernization/PHASE_05_CUSTOMERS_VERTICAL_SLICE.md`.
 
 `MiniStore Front-End/src/app/shared/ui` contains only proven presentation primitives for page headers, feedback states, overflow table regions and server-driven pagers. Customers and the read-only `features/suppliers` directory are the first two consumers. `SuppliersApiController` calls `SupplierService.GetPageAsync`; supplier search/count/order/page remains behind the Application/repository boundary. See `docs/modernization/PHASE_06_SHARED_UI_PRIMITIVES.md`.

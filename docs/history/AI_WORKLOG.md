@@ -1594,3 +1594,10 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   authority. Release passed with zero warnings/errors, SecurityRegression passed 1311 checks, Angular passed 207/207 across
   101 files, 117 templates passed accessibility and bundles measured 324,732/358,400 initial and 81,744/81,920 largest lazy
   bytes. MVC remains default. Completed `MOD-027` and advanced to `MOD-028A` source/registry reconciliation.
+- 2026-10-30: Completed `MOD-028A` source/registry reconciliation. Rebuilt the generator to include MVC Areas, verify
+  declared counterparts against 171 actual Angular routes and separate pilot coverage from the 11-action cutover allowlist.
+  The reproducible inventory now records 160 controllers, 199 views, 358 MVC actions and 209 Razor control rows. It found
+  six remaining surfaces: Stock Transfers, Inventory Scanning, Inventory Insights, Inventory Reconciliation, tenant Audit
+  Events and server Language synchronization. It also exposed Purchase Sourcing attachment upload/download and print as a
+  cross-surface parity gap. No business code, schema, permission or presentation default changed. Approved `MOD-028B`
+  Stock Transfers as the largest and highest-risk operational gap.

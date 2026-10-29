@@ -4,6 +4,11 @@
 >
 > Presentation default: MVC until a separate cutover approval.
 
+> Reconciliation note (2026-10-30): `MOD-022A..F` are complete for their recorded slices, but the source-authoritative
+> `MOD-028A` registry found four older inventory surfaces outside those slices: Stock Transfers, Inventory Scanning,
+> Inventory Insights and Inventory Reconciliation. They are queued in `MOD-028B..D`; this note corrects the earlier broad
+> wording that implied every inventory MVC surface had migrated.
+
 ## Scope
 
 Move the existing inventory and WMS workflows to Angular in bounded slices while preserving ProductStock, StockTransaction,
