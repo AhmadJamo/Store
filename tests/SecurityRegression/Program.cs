@@ -2089,6 +2089,29 @@ Check(scanningCountPolicies.SetEquals([
         $"{PermissionAuthorizeAttribute.PolicyPrefix}InventoryScanning.View",
         $"{PermissionAuthorizeAttribute.PolicyPrefix}InventoryAdjustments.Count"]),
     "Scanned counting must require scan visibility and inventory count permission");
+var scanningApi = typeof(InventoryScanningApiController);
+Check(scanningApi.GetCustomAttribute<RouteAttribute>()?.Template == "api/v1/inventory-scanning" &&
+      scanningApi.GetMethod(nameof(InventoryScanningApiController.Resolve))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
+          $"{PermissionAuthorizeAttribute.PolicyPrefix}InventoryScanning.View",
+    "Angular inventory scanning must use the versioned route and dedicated lookup permission");
+var scanningApiPolicies = new Dictionary<string, string>
+{
+    [nameof(InventoryScanningApiController.Putaway)] = "ProductStock.Edit",
+    [nameof(InventoryScanningApiController.Relocate)] = "LocationMovements.Create",
+    [nameof(InventoryScanningApiController.Count)] = "InventoryAdjustments.Count"
+};
+Check(scanningApiPolicies.All(expected =>
+    {
+        var method = scanningApi.GetMethod(expected.Key)!;
+        var policies = method.GetCustomAttributes<PermissionAuthorizeAttribute>()
+            .Select(x => x.Policy).ToHashSet();
+        return policies.SetEquals([
+            $"{PermissionAuthorizeAttribute.PolicyPrefix}InventoryScanning.View",
+            $"{PermissionAuthorizeAttribute.PolicyPrefix}{expected.Value}"]) &&
+            method.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null;
+    }),
+    "Every Angular scan command must retain both permissions and antiforgery validation");
 var scannedAdjustment = new InventoryAdjustment("ADJ-SCAN", 1, null, true, "Blind scan test", "creator");
 scannedAdjustment.AddLine(10, 5m);
 scannedAdjustment.RecordLineCount(10, 4m, "counter");

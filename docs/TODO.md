@@ -91,7 +91,8 @@ The ERP SaaS Foundation Blueprint is imported as a non-authoritative planning re
 - [x] MOD-027E migrate Platform audit-event reading/export and retention/legal-hold operations. Completed 2026-10-30.
 - [x] MOD-028A reconcile the generated migration registry with every actual shared and remaining MVC surface, classify parity and approve the first bounded implementation slice. Completed 2026-10-30.
 - [x] MOD-028B migrate Stock Transfer list/details/create/edit and its full submit/approve/reject/return/post/cancel lifecycle through an Application-owned API. Completed 2026-10-30.
-- [ ] MOD-028C migrate Inventory Scanning resolution, putaway, relocation and absolute draft-count operations with independent permissions.
+- [x] MOD-028C migrate Inventory Scanning resolution, putaway, relocation and absolute draft-count operations with independent permissions. Completed 2026-10-30.
+- [ ] MOD-028D migrate Inventory Insights and Inventory Reconciliation as independent read-only Angular evidence surfaces.
 - [ ] MOD-023 through MOD-028 migrate purchasing, sales, POS, accounting, tenant/public,
   platform and shared MVC workflows to Angular, including every operation, permission, localization, file/PDF and edge state.
 - [ ] MOD-029 prove full-system parity through dual-run reconciliation, performance/security/accessibility evidence and cutover/rollback rehearsals.

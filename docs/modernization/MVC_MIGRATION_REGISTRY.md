@@ -4,16 +4,16 @@
 
 ## Reconciliation
 
-- Controllers discovered: 161 total; 83 MVC; 78 API.
+- Controllers discovered: 162 total; 83 MVC; 79 API.
 - User-facing MVC views discovered: 199.
 - MVC actions discovered: 358.
 - Razor files included in the control inventory: 209.
-- Angular application routes discovered: 175.
-- MVC surfaces with a verified Angular counterpart: 77.
-- Remaining MVC surfaces without a mapped Angular counterpart: 5.
+- Angular application routes discovered: 176.
+- MVC surfaces with a verified Angular counterpart: 78.
+- Remaining MVC surfaces without a mapped Angular counterpart: 4.
 - Allowlisted Angular-default cutover actions: 11.
 
-Remaining surfaces: AuditEvents, InventoryInsights, InventoryReconciliation, InventoryScanning, Language.
+Remaining surfaces: AuditEvents, InventoryInsights, InventoryReconciliation, Language.
 
 Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, Parity Proven, Angular Default, MVC Retired. A pilot status does not change the default MVC route.
 
@@ -70,7 +70,7 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | InventoryInsights | Index.cshtml | Inventoried | — | MiniStore.Web/Views/InventoryInsights/Index.cshtml |
 | InventoryReconciliation | Index.cshtml | Inventoried | — | MiniStore.Web/Views/InventoryReconciliation/Index.cshtml |
 | InventoryReservations | Index.cshtml | Angular Pilot | /inventory/reservations | MiniStore.Web/Views/InventoryReservations/Index.cshtml |
-| InventoryScanning | Index.cshtml | Inventoried | — | MiniStore.Web/Views/InventoryScanning/Index.cshtml |
+| InventoryScanning | Index.cshtml | Angular Pilot | /inventory/scanning | MiniStore.Web/Views/InventoryScanning/Index.cshtml |
 | InventoryTracking | Index.cshtml | Angular Pilot | /inventory/tracking | MiniStore.Web/Views/InventoryTracking/Index.cshtml |
 | JournalEntries | Details.cshtml | Angular Pilot | /accounting/journal-entries/:id | MiniStore.Web/Views/JournalEntries/Details.cshtml |
 | LandedCosts | Create.cshtml | Angular Pilot | /purchases/landed-costs | MiniStore.Web/Views/LandedCosts/Create.cshtml |
@@ -310,10 +310,10 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | InventoryInsights | Index | GET | Inventoried | — | — | MiniStore.Web/Controllers/Inventory/InventoryInsightsController.cs |
 | InventoryReconciliation | Index | GET | Inventoried | — | — | MiniStore.Web/Controllers/Inventory/InventoryReconciliationController.cs |
 | InventoryReservations | Index | GET | Angular Pilot | /inventory/reservations | — | MiniStore.Web/Controllers/Inventory/InventoryReservationsController.cs |
-| InventoryScanning | Count | POST | Inventoried | — | — | MiniStore.Web/Controllers/Inventory/InventoryScanningController.cs |
-| InventoryScanning | Index | GET | Inventoried | — | — | MiniStore.Web/Controllers/Inventory/InventoryScanningController.cs |
-| InventoryScanning | Putaway | POST | Inventoried | — | — | MiniStore.Web/Controllers/Inventory/InventoryScanningController.cs |
-| InventoryScanning | Relocate | POST | Inventoried | — | — | MiniStore.Web/Controllers/Inventory/InventoryScanningController.cs |
+| InventoryScanning | Count | POST | Angular Pilot | /inventory/scanning | — | MiniStore.Web/Controllers/Inventory/InventoryScanningController.cs |
+| InventoryScanning | Index | GET | Angular Pilot | /inventory/scanning | — | MiniStore.Web/Controllers/Inventory/InventoryScanningController.cs |
+| InventoryScanning | Putaway | POST | Angular Pilot | /inventory/scanning | — | MiniStore.Web/Controllers/Inventory/InventoryScanningController.cs |
+| InventoryScanning | Relocate | POST | Angular Pilot | /inventory/scanning | — | MiniStore.Web/Controllers/Inventory/InventoryScanningController.cs |
 | InventoryTracking | CloseRecall | POST | Angular Pilot | /inventory/tracking | — | MiniStore.Web/Controllers/Inventory/InventoryTrackingController.cs |
 | InventoryTracking | CreateRecall | POST | Angular Pilot | /inventory/tracking | — | MiniStore.Web/Controllers/Inventory/InventoryTrackingController.cs |
 | InventoryTracking | Open | GET, POST | Angular Pilot | /inventory/tracking | — | MiniStore.Web/Controllers/Inventory/InventoryTrackingController.cs |

@@ -1610,3 +1610,11 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   warnings/errors, SecurityRegression passed 1,315 checks, Angular passed 208/208 tests across 102 files, 118 templates passed
   accessibility and bundles measured 325,287/358,400 initial and 81,824/81,920 largest lazy bytes. The generated registry now
   reports 175 Angular routes and five remaining MVC surfaces. MVC remains default; advanced to `MOD-028C` Inventory Scanning.
+- 2026-10-30: Completed `MOD-028C` Inventory Scanning. Added a versioned authenticated API over the existing exact resolver
+  and Application service for lookup, putaway, relocation and absolute Draft-count entry. The three commands retain both the
+  scan permission and their independent stock/movement/count permission plus antiforgery. Angular adds a bilingual RTL-safe,
+  scanner/keyboard-first route with explicit empty/resolved/not-found/ambiguous states, named balance evidence, blind-count
+  hiding, server-issued workflow-scoped idempotency keys and duplicate-submit suppression. No schema or inventory rule changed.
+  Release passed with zero warnings/errors, SecurityRegression passed 1,317 checks, Angular passed 209/209 tests across 103
+  files, 119 templates passed accessibility and bundles measured 325,405/358,400 initial and 81,911/81,920 largest lazy bytes.
+  The generated registry now reports 176 routes and four remaining surfaces. MVC remains default; advanced to `MOD-028D`.

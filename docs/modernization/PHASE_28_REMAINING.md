@@ -1,6 +1,6 @@
 # Phase 28 — Shared and remaining Angular migration
 
-> Status: IN PROGRESS — `MOD-028B` Stock Transfers complete on 2026-10-30
+> Status: IN PROGRESS — `MOD-028C` Inventory Scanning complete on 2026-10-30
 >
 > Presentation default: MVC until a separate cutover approval.
 
@@ -34,11 +34,24 @@ state/permission-aware workflow actions.
 The regenerated registry now contains 161 controllers, 175 Angular routes, 77 verified counterparts and five remaining
 surfaces containing nine MVC action rows. MVC remains the presentation default.
 
+## `MOD-028C` delivered — Inventory Scanning
+
+The authenticated `/api/v1/inventory-scanning` contract delegates exact scan resolution, putaway, relocation and absolute
+Draft-count entry to the existing `InventoryScanningService`. Lookup retains `InventoryScanning.View`; each mutation also
+retains its existing Product Stock, Location Movement or Inventory Adjustment permission and requires antiforgery validation.
+
+Angular `/inventory/scanning` provides bilingual RTL-safe, keyboard/scanner-first entry, explicit empty/resolved/not-found/
+ambiguous states, named product/warehouse/location evidence, blind-count balance hiding and permission-aware action cards.
+Putaway and relocation reuse server-issued workflow-scoped idempotency keys, disable duplicate submission while in flight and
+obtain a new key only after success.
+
+The registry now contains 162 controllers, 176 Angular routes, 78 verified counterparts and four remaining surfaces containing
+five MVC action rows. MVC remains the presentation default.
+
 ## Confirmed remaining surfaces
 
 | Surface | Views | MVC actions | Required parity |
 |---|---:|---:|---|
-| `InventoryScanning` | 1 | 4 | resolve scans plus putaway, count and relocate with their independent permissions |
 | `InventoryInsights` | 1 | 1 | warehouse/search/activity/attention analysis |
 | `InventoryReconciliation` | 1 | 1 | paged balance/ledger exception reconciliation |
 | tenant `AuditEvents` | 1 | 2 | tenant-scoped read/filter and purpose-bound export with sensitive-field policy |
@@ -60,8 +73,8 @@ vendor-bill attachments, supplier integration payloads, and supplier purchasing 
 ## Approved execution order
 
 1. `MOD-028B` — COMPLETE: Stock Transfers.
-2. `MOD-028C` — NEXT: Inventory Scanning.
-3. `MOD-028D` — Inventory Insights and Reconciliation.
+2. `MOD-028C` — COMPLETE: Inventory Scanning.
+3. `MOD-028D` — NEXT: Inventory Insights and Reconciliation.
 4. `MOD-028E` — tenant Audit Events.
 5. `MOD-028F` — Purchase Sourcing attachments/print.
 6. `MOD-028G` — server-culture synchronization and final registry reconciliation.
@@ -79,3 +92,6 @@ This order closes the highest-risk operational omission first. It does not autho
 - Production bundles measured 325,287/358,400 initial bytes and 81,824/81,920 largest-lazy bytes.
 - Browser and performance checks were intentionally skipped under the standard per-slice gate flags; 7 automated sections
   passed, none failed, and MVC remains default.
+- `MOD-028C` passed Release with zero warnings/errors, 1,317 backend checks, 209/209 Angular tests across 103 files,
+  119 accessibility templates and the external-SCSS policy.
+- Production bundles measured 325,405/358,400 initial bytes and 81,911/81,920 largest-lazy bytes.

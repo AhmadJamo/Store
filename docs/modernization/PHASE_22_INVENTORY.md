@@ -135,3 +135,11 @@ approval, frozen-unit, numbering and server-owned state-transition rules. MVC re
   in `StockTransferService`; no schema or business transition changed.
 - Full gate passed: Release clean, 1,315 backend checks, 208/208 Angular tests, 118 templates, 325,287 initial bytes and
   81,824 largest-lazy bytes. MVC remains default.
+## MOD-028C — Inventory Scanning parity
+
+- Added an authenticated read/command API over `InventoryScanningService` without moving scan resolution or stock rules into Web.
+- Preserved the base scan permission plus independent putaway, relocation and count permissions and antiforgery on every command.
+- Added a bilingual RTL-safe scanner/keyboard Angular route with exact/ambiguous/not-found states, blind-count protection,
+  server-issued idempotency keys, duplicate-submit suppression and named balance evidence.
+- Full gate passed: Release clean, 1,317 backend checks, 209/209 Angular tests, 119 templates, 325,405 initial bytes and
+  81,911 largest-lazy bytes. MVC remains default.

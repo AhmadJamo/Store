@@ -502,6 +502,13 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'inventory/scanning',
+        loadComponent: () =>
+          import('./features/inventory/inventory-scanning-page').then(
+            (module) => module.InventoryScanningPageComponent,
+          ),
+      },
+      {
         path: 'inventory/adjustments',
         loadComponent: () =>
           import('./features/inventory/inventory-adjustments-page').then(

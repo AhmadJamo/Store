@@ -31,6 +31,7 @@ Home|/
 InventoryAdjustments|/inventory/adjustments
 InventoryBalances|/inventory/availability
 InventoryReservations|/inventory/reservations
+InventoryScanning|/inventory/scanning
 InventoryTracking|/inventory/tracking
 JournalEntries|/accounting/journal-entries/:id
 LandedCosts|/purchases/landed-costs

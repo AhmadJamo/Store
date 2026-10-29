@@ -6,6 +6,7 @@ export type UiLocale = 'ar-JO' | 'en-US';
 const messages = {
   'ar-JO': {
     stockTransfers: 'تحويلات المخزون',
+    inventoryScanning: 'المسح التشغيلي',
     appName: 'MiniStore ERP', workspace: 'مساحة العمل', dashboard: 'الرئيسية', search: 'بحث سريع', language: 'English',
     phaseTitle: 'تحديث تدريجي وآمن',
     phaseDescription: 'يتم بناء واجهة Angular مع الحفاظ على نظام MVC الحالي وقواعد الأعمال دون تغيير.',
@@ -121,6 +122,7 @@ const messages = {
   },
   'en-US': {
     stockTransfers: 'Stock transfers',
+    inventoryScanning: 'Inventory scanning',
     appName: 'MiniStore ERP', workspace: 'Workspace', dashboard: 'Home', search: 'Quick search', language: 'العربية',
     phaseTitle: 'Safe incremental modernization',
     phaseDescription: 'The Angular experience is being built while preserving the existing MVC system and business rules.',
