@@ -67,7 +67,7 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | InventoryReservations | Index.cshtml | Inventoried | — | `MiniStore.Web/Views/InventoryReservations/Index.cshtml` |
 | InventoryScanning | Index.cshtml | Inventoried | — | `MiniStore.Web/Views/InventoryScanning/Index.cshtml` |
 | InventoryTracking | Index.cshtml | Inventoried | — | `MiniStore.Web/Views/InventoryTracking/Index.cshtml` |
-| JournalEntries | Details.cshtml | Inventoried | — | `MiniStore.Web/Views/JournalEntries/Details.cshtml` |
+| JournalEntries | Details.cshtml | Angular Pilot | /accounting/journal-entries/{id} | `MiniStore.Web/Views/JournalEntries/Details.cshtml` |
 | LandedCosts | Create.cshtml | Inventoried | — | `MiniStore.Web/Views/LandedCosts/Create.cshtml` |
 | LandedCosts | Details.cshtml | Inventoried | — | `MiniStore.Web/Views/LandedCosts/Details.cshtml` |
 | LandedCosts | Index.cshtml | Inventoried | — | `MiniStore.Web/Views/LandedCosts/Index.cshtml` |
@@ -307,7 +307,7 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | InventoryTracking | Quarantine | POST | Inventoried | — | `MiniStore.Web/Controllers/Inventory/InventoryTrackingController.cs` |
 | InventoryTracking | RecordRecallCommunication | POST | Inventoried | — | `MiniStore.Web/Controllers/Inventory/InventoryTrackingController.cs` |
 | InventoryTracking | Release | POST | Inventoried | — | `MiniStore.Web/Controllers/Inventory/InventoryTrackingController.cs` |
-| JournalEntries | Details | GET | Inventoried | — | `MiniStore.Web/Controllers/Accounting/JournalEntriesController.cs` |
+| JournalEntries | Details | GET | Angular Pilot | /accounting/journal-entries/{id} | `MiniStore.Web/Controllers/Accounting/JournalEntriesController.cs` |
 | Language | Set | POST | Inventoried | — | `MiniStore.Web/Controllers/Settings/LanguageController.cs` |
 | LocationMovements | Index | GET | Inventoried | — | `MiniStore.Web/Controllers/Inventory/LocationMovementsController.cs` |
 | LocationMovements | Move | POST | Inventoried | — | `MiniStore.Web/Controllers/Inventory/LocationMovementsController.cs` |

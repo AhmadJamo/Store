@@ -1558,3 +1558,9 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   SecurityRegression passed 1302 checks, Angular passed 202/202 tests across 97 files, 109 templates passed accessibility, external
   SCSS passed and bundles measured 318,327/358,400 initial and 81,743/81,920 largest lazy bytes. MVC remains default. Advanced to
   `MOD-026B` Journal Entry details.
+- 2026-10-29: Completed `MOD-026B` Journal Entry Details. Added a read-only permission-protected API and bilingual RTL-safe Angular
+  evidence screen for entry status/date/source, named accounts, branch/warehouse dimensions, line descriptions and debit/credit
+  totals. No mutation was introduced; accounting services retain posting, uniqueness and reversal authority. Web Release passed
+  with zero warnings/errors, SecurityRegression passed 1302 checks, Angular passed 203/203 tests across 98 files, 110 templates
+  passed accessibility, external SCSS passed and bundles measured 318,598/358,400 initial and 81,743/81,920 largest lazy bytes.
+  MVC remains default. Completed `MOD-026` and advanced to `MOD-027A` tenant subscription/checkout.

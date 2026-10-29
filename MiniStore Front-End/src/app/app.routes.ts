@@ -1172,6 +1172,13 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'accounting/journal-entries/:id',
+        loadComponent: () =>
+          import('./features/accounting/journal-entry-page').then(
+            (module) => module.JournalEntryPageComponent,
+          ),
+      },
+      {
         path: 'products/recipes/:productId',
         canDeactivate: [(component) => component.canDeactivate()],
         loadComponent: () =>

@@ -1,0 +1,50 @@
+:host {
+  display: block;
+}
+.journal-page {
+  display: grid;
+  gap: var(--space-5);
+  max-width: var(--layout-content-max);
+  margin-inline: auto;
+}
+.status {
+  justify-self: start;
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  background: var(--color-success-soft);
+  color: var(--color-success-strong);
+}
+.facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  gap: var(--space-4);
+}
+.facts div {
+  display: grid;
+  gap: var(--space-1);
+}
+.facts span {
+  color: var(--color-text-muted);
+}
+.wide {
+  grid-column: 1/-1;
+}
+.table-wrap {
+  overflow: auto;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+th,
+td {
+  text-align: start;
+  padding: var(--space-3);
+  border-block-end: 1px solid var(--color-border);
+}
+.totals {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-6);
+  flex-wrap: wrap;
+}

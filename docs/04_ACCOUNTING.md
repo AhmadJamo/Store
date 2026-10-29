@@ -124,3 +124,7 @@ SAL-080 owns invoice recognition and SAL-090 separately owns receipt allocation 
 `MOD-026A` exposes the current Chart of Accounts list/create surface through an Application-owned API and bilingual RTL-safe
 Angular workspace. Parent accounts are selected and displayed by code/name while IDs remain internal. `AccountService` retains
 duplicate-code, parent-existence and entity validation. MVC remains default until a separate cutover approval.
+
+`MOD-026B` exposes immutable Journal Entry details through a read-only permission-protected API and bilingual Angular evidence
+screen. Account, branch and warehouse IDs are projected to names; source type/reference, descriptions, debit/credit and balanced
+totals are visible. The screen adds no mutation and leaves posting, uniqueness and reversal authority in accounting services.
