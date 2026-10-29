@@ -1601,3 +1601,12 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   Events and server Language synchronization. It also exposed Purchase Sourcing attachment upload/download and print as a
   cross-surface parity gap. No business code, schema, permission or presentation default changed. Approved `MOD-028B`
   Stock Transfers as the largest and highest-risk operational gap.
+- 2026-10-30: Completed `MOD-028B` Stock Transfers. Added Application-owned list/details/form projections and removed
+  repository and Identity-user composition from the MVC controller. Added the authenticated, permission-separated and
+  antiforgery-protected API for list/details/create/edit plus submit/approve/reject/return-to-draft/post/cancel. Angular now
+  provides bilingual RTL-safe list/create/edit/details routes with named warehouses/products/locations, tracking allocations,
+  dirty-form protection and state-aware actions. Existing numbering, reservations, movements, tracking, valuation, posting and
+  reversal rules remain in `StockTransferService`; no schema or business transition changed. Release passed with zero
+  warnings/errors, SecurityRegression passed 1,315 checks, Angular passed 208/208 tests across 102 files, 118 templates passed
+  accessibility and bundles measured 325,287/358,400 initial and 81,824/81,920 largest lazy bytes. The generated registry now
+  reports 175 Angular routes and five remaining MVC surfaces. MVC remains default; advanced to `MOD-028C` Inventory Scanning.

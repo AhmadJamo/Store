@@ -14,6 +14,12 @@ declared counterparts against the actual Angular route file and reads the cutove
 `docs/modernization/MVC_MIGRATION_REGISTRY.md` is the source-authoritative parity inventory; the ordered remaining work and
 cross-surface file gaps are documented in `docs/modernization/PHASE_28_REMAINING.md`.
 
+`MiniStore.Application/Services/Inventory/StockTransferPageService.cs` owns Stock Transfer list/details/form projections
+with named warehouses, products, locations and tenant users. `StockTransfersApiController` exposes the permission-separated
+and antiforgery-protected lifecycle while `StockTransferService` retains all mutation authority. Angular
+`features/inventory/stock-transfers-page.*` and `data/stock-transfer*` own the bilingual list/create/edit/details workspace,
+typed API client and lifecycle tests. MVC consumes the same Application projection and remains the default.
+
 `MiniStore.Web/Controllers/Api/V1/CustomersController.cs` exposes permission-separated Customer list/details/form/create/update contracts through the existing `CustomerService`; it does not access EF or repositories. `MiniStore Front-End/src/app/features/customers` is the first business vertical slice, with an isolated typed client, responsive list/details/create/edit pages, external SCSS, Problem Details field feedback, row-version concurrency and workspace dirty-state integration. MVC Customers remains the rollback path. See `docs/modernization/PHASE_05_CUSTOMERS_VERTICAL_SLICE.md`.
 
 `MiniStore Front-End/src/app/shared/ui` contains only proven presentation primitives for page headers, feedback states, overflow table regions and server-driven pagers. Customers and the read-only `features/suppliers` directory are the first two consumers. `SuppliersApiController` calls `SupplierService.GetPageAsync`; supplier search/count/order/page remains behind the Application/repository boundary. See `docs/modernization/PHASE_06_SHARED_UI_PRIMITIVES.md`.
@@ -579,6 +585,7 @@ For exact module relationships, use `modules/*.md`; for entity and service detai
 - `MiniStore.Web/Controllers/Api/V1/ProductStocksApiController.cs` and `MiniStore.Application/Dtos/Inventory/ProductStocks/ProductStockFormPageDto.cs`: permission-separated balance/form/create/update/delete API contracts with named choices over Application services and preserved delete refusal.
 - `MiniStore.Web/Controllers/Api/V1/{InventoryBalancesApiController,InventoryReservationsApiController}.cs`: authenticated GET-only, independently permission-protected paging contracts over the existing availability/reservation Application services.
 - `MiniStore.Web/Controllers/Api/V1/InventoryAdjustmentsApiController.cs`: authenticated list/create/details/count/approve/post/cancel contract with independent permissions and CSRF over `InventoryAdjustmentService`.
+- `MiniStore.Web/Controllers/Api/V1/StockTransfersApiController.cs` and `MiniStore.Application/Services/Inventory/StockTransferPageService.cs`: named list/details/form projections plus the complete permission-separated, antiforgery-protected transfer lifecycle over the existing mutation service.
 - `MiniStore.Web/Controllers/Api/V1/InventoryTrackingApiController.cs`: authenticated tracking report plus permission-separated,
   CSRF-protected opening allocation, quarantine/release and recall lifecycle/communication commands over `InventoryTrackingService`.
 - `MiniStore.Web/Controllers/Api/V1/{WarehouseLocationsApiController,UnassignedStockApiController,LocationMovementsApiController,StockMovementsApiController}.cs`:
@@ -586,6 +593,7 @@ For exact module relationships, use `modules/*.md`; for entity and service detai
 - `MiniStore Front-End/src/app/features/inventory/`: bilingual Angular inventory ledger plus complete ProductStock/manual-adjustment presentation, typed clients, permission navigation, dirty/rejected-input recovery and external responsive SCSS.
 - `MiniStore Front-End/src/app/features/inventory/{inventory-availability-page,inventory-reservations-page,inventory-read-page}.*`: bilingual read-only dimensional availability and reservation-history routes with named filters, paging and shared external responsive styling.
 - `MiniStore Front-End/src/app/features/inventory/inventory-adjustment*`: bilingual list/create/details cycle-counting workflow with blind-count handling, dynamic line entry, completed-action states and external responsive SCSS.
+- `MiniStore Front-End/src/app/features/inventory/stock-transfers-page.*` and `data/stock-transfer*`: bilingual list/create/edit/details transfer workflow with named dimensions, tracking allocation entry, state-aware actions and external responsive SCSS.
 - `MiniStore Front-End/src/app/features/inventory/inventory-tracking*` and `data/inventory-tracking*`: bilingual lot/serial,
   expiration, quarantine and recall workspace, typed client/models, dirty-form recovery and external responsive SCSS.
 - `MiniStore Front-End/src/app/features/inventory/{warehouse-locations-page,unassigned-stock-page,location-movements-page,warehouse-operations*}`

@@ -145,6 +145,7 @@ public static class BusinessServicesExtensions
         services.AddScoped<StockTransactionService>();
         services.AddScoped<IStockTransferRepository, StockTransferRepository>();
         services.AddScoped<IStockTransferService, StockTransferService>();
+        services.AddScoped<StockTransferPageService>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
     }
 

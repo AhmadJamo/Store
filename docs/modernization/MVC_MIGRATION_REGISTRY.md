@@ -4,16 +4,16 @@
 
 ## Reconciliation
 
-- Controllers discovered: 160 total; 83 MVC; 77 API.
+- Controllers discovered: 161 total; 83 MVC; 78 API.
 - User-facing MVC views discovered: 199.
 - MVC actions discovered: 358.
 - Razor files included in the control inventory: 209.
-- Angular application routes discovered: 171.
-- MVC surfaces with a verified Angular counterpart: 76.
-- Remaining MVC surfaces without a mapped Angular counterpart: 6.
+- Angular application routes discovered: 175.
+- MVC surfaces with a verified Angular counterpart: 77.
+- Remaining MVC surfaces without a mapped Angular counterpart: 5.
 - Allowlisted Angular-default cutover actions: 11.
 
-Remaining surfaces: AuditEvents, InventoryInsights, InventoryReconciliation, InventoryScanning, Language, StockTransfers.
+Remaining surfaces: AuditEvents, InventoryInsights, InventoryReconciliation, InventoryScanning, Language.
 
 Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, Parity Proven, Angular Default, MVC Retired. A pilot status does not change the default MVC route.
 
@@ -177,10 +177,10 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | StockMovements | Index.cshtml | Angular Pilot | /inventory/location-movements | MiniStore.Web/Views/StockMovements/Index.cshtml |
 | StockTransactions | Create.cshtml | Angular Pilot | /inventory/transactions | MiniStore.Web/Views/StockTransactions/Create.cshtml |
 | StockTransactions | Index.cshtml | Angular Pilot | /inventory/transactions | MiniStore.Web/Views/StockTransactions/Index.cshtml |
-| StockTransfers | Create.cshtml | Inventoried | — | MiniStore.Web/Views/StockTransfers/Create.cshtml |
-| StockTransfers | Details.cshtml | Inventoried | — | MiniStore.Web/Views/StockTransfers/Details.cshtml |
-| StockTransfers | Edit.cshtml | Inventoried | — | MiniStore.Web/Views/StockTransfers/Edit.cshtml |
-| StockTransfers | Index.cshtml | Inventoried | — | MiniStore.Web/Views/StockTransfers/Index.cshtml |
+| StockTransfers | Create.cshtml | Angular Pilot | /inventory/transfers | MiniStore.Web/Views/StockTransfers/Create.cshtml |
+| StockTransfers | Details.cshtml | Angular Pilot | /inventory/transfers | MiniStore.Web/Views/StockTransfers/Details.cshtml |
+| StockTransfers | Edit.cshtml | Angular Pilot | /inventory/transfers | MiniStore.Web/Views/StockTransfers/Edit.cshtml |
+| StockTransfers | Index.cshtml | Angular Pilot | /inventory/transfers | MiniStore.Web/Views/StockTransfers/Index.cshtml |
 | Subscription | Checkout.cshtml | Angular Pilot | /subscription | MiniStore.Web/Views/Subscription/Checkout.cshtml |
 | Subscription | Index.cshtml | Angular Pilot | /subscription | MiniStore.Web/Views/Subscription/Index.cshtml |
 | SupplierCommunications | Details.cshtml | Angular Pilot | /purchases/communications/prepare | MiniStore.Web/Views/SupplierCommunications/Details.cshtml |
@@ -501,18 +501,18 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | StockTransactions | Create | GET | Angular Pilot | /inventory/transactions | — | MiniStore.Web/Controllers/Inventory/StockTransactionsController.cs |
 | StockTransactions | Create | POST | Angular Pilot | /inventory/transactions | — | MiniStore.Web/Controllers/Inventory/StockTransactionsController.cs |
 | StockTransactions | Index | GET | Angular Pilot | /inventory/transactions | — | MiniStore.Web/Controllers/Inventory/StockTransactionsController.cs |
-| StockTransfers | Approve | POST | Inventoried | — | — | MiniStore.Web/Controllers/Inventory/StockTransfersController.cs |
-| StockTransfers | Cancel | POST | Inventoried | — | — | MiniStore.Web/Controllers/Inventory/StockTransfersController.cs |
-| StockTransfers | Create | GET | Inventoried | — | — | MiniStore.Web/Controllers/Inventory/StockTransfersController.cs |
-| StockTransfers | Create | POST | Inventoried | — | — | MiniStore.Web/Controllers/Inventory/StockTransfersController.cs |
-| StockTransfers | Details | GET | Inventoried | — | — | MiniStore.Web/Controllers/Inventory/StockTransfersController.cs |
-| StockTransfers | Edit | GET | Inventoried | — | — | MiniStore.Web/Controllers/Inventory/StockTransfersController.cs |
-| StockTransfers | Edit | POST | Inventoried | — | — | MiniStore.Web/Controllers/Inventory/StockTransfersController.cs |
-| StockTransfers | Index | GET | Inventoried | — | — | MiniStore.Web/Controllers/Inventory/StockTransfersController.cs |
-| StockTransfers | Post | POST | Inventoried | — | — | MiniStore.Web/Controllers/Inventory/StockTransfersController.cs |
-| StockTransfers | Reject | POST | Inventoried | — | — | MiniStore.Web/Controllers/Inventory/StockTransfersController.cs |
-| StockTransfers | ReturnToDraft | POST | Inventoried | — | — | MiniStore.Web/Controllers/Inventory/StockTransfersController.cs |
-| StockTransfers | Submit | POST | Inventoried | — | — | MiniStore.Web/Controllers/Inventory/StockTransfersController.cs |
+| StockTransfers | Approve | POST | Angular Pilot | /inventory/transfers | — | MiniStore.Web/Controllers/Inventory/StockTransfersController.cs |
+| StockTransfers | Cancel | POST | Angular Pilot | /inventory/transfers | — | MiniStore.Web/Controllers/Inventory/StockTransfersController.cs |
+| StockTransfers | Create | GET | Angular Pilot | /inventory/transfers | — | MiniStore.Web/Controllers/Inventory/StockTransfersController.cs |
+| StockTransfers | Create | POST | Angular Pilot | /inventory/transfers | — | MiniStore.Web/Controllers/Inventory/StockTransfersController.cs |
+| StockTransfers | Details | GET | Angular Pilot | /inventory/transfers | — | MiniStore.Web/Controllers/Inventory/StockTransfersController.cs |
+| StockTransfers | Edit | GET | Angular Pilot | /inventory/transfers | — | MiniStore.Web/Controllers/Inventory/StockTransfersController.cs |
+| StockTransfers | Edit | POST | Angular Pilot | /inventory/transfers | — | MiniStore.Web/Controllers/Inventory/StockTransfersController.cs |
+| StockTransfers | Index | GET | Angular Pilot | /inventory/transfers | — | MiniStore.Web/Controllers/Inventory/StockTransfersController.cs |
+| StockTransfers | Post | POST | Angular Pilot | /inventory/transfers | — | MiniStore.Web/Controllers/Inventory/StockTransfersController.cs |
+| StockTransfers | Reject | POST | Angular Pilot | /inventory/transfers | — | MiniStore.Web/Controllers/Inventory/StockTransfersController.cs |
+| StockTransfers | ReturnToDraft | POST | Angular Pilot | /inventory/transfers | — | MiniStore.Web/Controllers/Inventory/StockTransfersController.cs |
+| StockTransfers | Submit | POST | Angular Pilot | /inventory/transfers | — | MiniStore.Web/Controllers/Inventory/StockTransfersController.cs |
 | Subscription | Checkout | GET, POST | Angular Pilot | /subscription | — | MiniStore.Web/Controllers/Saas/SubscriptionController.cs |
 | SupplierCreditNotes | Create | GET | Angular Pilot | /purchases/credit-notes | — | MiniStore.Web/Controllers/Purchases/SupplierCreditNotesController.cs |
 | SupplierCreditNotes | Create | POST | Angular Pilot | /purchases/credit-notes | — | MiniStore.Web/Controllers/Purchases/SupplierCreditNotesController.cs |

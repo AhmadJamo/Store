@@ -1810,6 +1810,46 @@ var inventoryReservationsIndex = typeof(InventoryReservationsController).GetMeth
 Check(inventoryReservationsIndex.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
       $"{PermissionAuthorizeAttribute.PolicyPrefix}InventoryReservations.View",
     "Inventory reservation history must require its dedicated view permission");
+var stockTransferApi = typeof(StockTransfersApiController);
+Check(stockTransferApi.GetCustomAttribute<RouteAttribute>()?.Template == "api/v1/stock-transfers",
+    "Stock-transfer Angular traffic must use the versioned internal API route");
+var stockTransferPolicies = new Dictionary<string, string>
+{
+    [nameof(StockTransfersApiController.GetAll)] = "StockTransfers.View",
+    [nameof(StockTransfersApiController.Get)] = "StockTransfers.View",
+    [nameof(StockTransfersApiController.GetCreateForm)] = "StockTransfers.Create",
+    [nameof(StockTransfersApiController.GetEditForm)] = "StockTransfers.Edit",
+    [nameof(StockTransfersApiController.Create)] = "StockTransfers.Create",
+    [nameof(StockTransfersApiController.Update)] = "StockTransfers.Edit",
+    [nameof(StockTransfersApiController.Submit)] = "StockTransfers.Submit",
+    [nameof(StockTransfersApiController.Approve)] = "StockTransfers.Approve",
+    [nameof(StockTransfersApiController.Reject)] = "StockTransfers.Reject",
+    [nameof(StockTransfersApiController.ReturnToDraft)] = "StockTransfers.Edit",
+    [nameof(StockTransfersApiController.Post)] = "StockTransfers.Post",
+    [nameof(StockTransfersApiController.Cancel)] = "StockTransfers.Cancel"
+};
+Check(stockTransferPolicies.All(expected =>
+        stockTransferApi.GetMethod(expected.Key)!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
+        $"{PermissionAuthorizeAttribute.PolicyPrefix}{expected.Value}"),
+    "Every stock-transfer query and workflow command must enforce its dedicated server-side permission");
+var stockTransferMutations = new[]
+{
+    nameof(StockTransfersApiController.Create),
+    nameof(StockTransfersApiController.Update),
+    nameof(StockTransfersApiController.Submit),
+    nameof(StockTransfersApiController.Approve),
+    nameof(StockTransfersApiController.Reject),
+    nameof(StockTransfersApiController.ReturnToDraft),
+    nameof(StockTransfersApiController.Post),
+    nameof(StockTransfersApiController.Cancel)
+};
+Check(stockTransferMutations.All(name =>
+        stockTransferApi.GetMethod(name)!.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null),
+    "Every stock-transfer mutation must require antiforgery validation");
+Check(typeof(StockTransfersController).GetConstructors().Single().GetParameters()
+        .All(parameter => !parameter.ParameterType.Name.Contains("Repository", StringComparison.Ordinal) &&
+                          !parameter.ParameterType.Name.StartsWith("UserManager", StringComparison.Ordinal)),
+    "The MVC stock-transfer compatibility surface must compose reads through the Application layer");
 var adjustment = new InventoryAdjustment("ADJ-000001", 1, null, true, "Annual count", "counter");
 adjustment.AddLine(1, 10m);
 adjustment.RecordCounts([(1, 8m)], "counter");

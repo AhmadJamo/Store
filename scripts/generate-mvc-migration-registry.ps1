@@ -69,6 +69,7 @@ SalesReturns|/sales/legacy-returns
 Settings|/settings
 StockMovements|/inventory/location-movements
 StockTransactions|/inventory/transactions
+StockTransfers|/inventory/transfers
 Subscription|/subscription
 SupplierCommunications|/purchases/communications/prepare
 SupplierCreditNotes|/purchases/credit-notes

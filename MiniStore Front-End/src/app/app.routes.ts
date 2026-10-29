@@ -472,6 +472,36 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'inventory/transfers',
+        loadComponent: () =>
+          import('./features/inventory/stock-transfers-page').then(
+            (module) => module.StockTransfersPageComponent,
+          ),
+      },
+      {
+        path: 'inventory/transfers/new',
+        canDeactivate: [(component) => component.canDeactivate()],
+        loadComponent: () =>
+          import('./features/inventory/stock-transfers-page').then(
+            (module) => module.StockTransfersPageComponent,
+          ),
+      },
+      {
+        path: 'inventory/transfers/:id/edit',
+        canDeactivate: [(component) => component.canDeactivate()],
+        loadComponent: () =>
+          import('./features/inventory/stock-transfers-page').then(
+            (module) => module.StockTransfersPageComponent,
+          ),
+      },
+      {
+        path: 'inventory/transfers/:id',
+        loadComponent: () =>
+          import('./features/inventory/stock-transfers-page').then(
+            (module) => module.StockTransfersPageComponent,
+          ),
+      },
+      {
         path: 'inventory/adjustments',
         loadComponent: () =>
           import('./features/inventory/inventory-adjustments-page').then(

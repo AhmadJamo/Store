@@ -124,3 +124,14 @@ never recomputes authoritative quantity, cost or value.
 
 `MOD-023A` starts the purchasing migration with Purchase Request list/create/details and its submit/cancel lifecycle, preserving
 approval, frozen-unit, numbering and server-owned state-transition rules. MVC remains default until a separate cutover approval.
+## MOD-028B — Stock Transfers parity
+
+- Added Application-owned list/details/form projections and removed repository/UserManager composition from the MVC controller.
+- Added a permission-separated, antiforgery-protected internal API for create/edit and the complete
+  submit/approve/reject/return-to-draft/post/cancel lifecycle.
+- Added bilingual RTL-safe Angular list/create/edit/details routes with named warehouses, products and storage locations,
+  tracking allocations, dirty-form protection and state-aware actions.
+- Existing numbering, reservations, warehouse/location validation, tracking, movements, valuation and posting authority remain
+  in `StockTransferService`; no schema or business transition changed.
+- Full gate passed: Release clean, 1,315 backend checks, 208/208 Angular tests, 118 templates, 325,287 initial bytes and
+  81,824 largest-lazy bytes. MVC remains default.
