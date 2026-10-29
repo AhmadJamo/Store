@@ -19,8 +19,8 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | Account | AccessDenied.cshtml | Inventoried | — | `MiniStore.Web/Views/Account/AccessDenied.cshtml` |
 | Account | Login.cshtml | Inventoried | — | `MiniStore.Web/Views/Account/Login.cshtml` |
 | Account | Register.cshtml | Inventoried | — | `MiniStore.Web/Views/Account/Register.cshtml` |
-| Accounts | Create.cshtml | Inventoried | — | `MiniStore.Web/Views/Accounts/Create.cshtml` |
-| Accounts | Index.cshtml | Inventoried | — | `MiniStore.Web/Views/Accounts/Index.cshtml` |
+| Accounts | Create.cshtml | Angular Pilot | /accounting/accounts | `MiniStore.Web/Views/Accounts/Create.cshtml` |
+| Accounts | Index.cshtml | Angular Pilot | /accounting/accounts | `MiniStore.Web/Views/Accounts/Index.cshtml` |
 | AnalyticsCenter | Create.cshtml | Angular Pilot | /analytics | `MiniStore.Web/Views/AnalyticsCenter/Create.cshtml` |
 | AnalyticsCenter | Index.cshtml | Angular Pilot | /analytics | `MiniStore.Web/Views/AnalyticsCenter/Index.cshtml` |
 | AuditEvents | Index.cshtml | Inventoried | — | `MiniStore.Web/Views/AuditEvents/Index.cshtml` |
@@ -216,7 +216,9 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | Account | Logout | POST | Inventoried | — | `MiniStore.Web/Controllers/Security/AccountController.cs` |
 | Account | Register | GET | Inventoried | — | `MiniStore.Web/Controllers/Security/AccountController.cs` |
 | Account | Register | POST | Inventoried | — | `MiniStore.Web/Controllers/Security/AccountController.cs` |
-| Accounts | Index | ANY | Inventoried | — | `MiniStore.Web/Controllers/Accounting/AccountsController.cs` |
+| Accounts | Create | GET | Angular Pilot | /accounting/accounts | `MiniStore.Web/Controllers/Accounting/AccountsController.cs` |
+| Accounts | Create | POST | Angular Pilot | /accounting/accounts | `MiniStore.Web/Controllers/Accounting/AccountsController.cs` |
+| Accounts | Index | ANY | Angular Pilot | /accounting/accounts | `MiniStore.Web/Controllers/Accounting/AccountsController.cs` |
 | AnalyticsCenter | Create | GET | Angular Pilot | /analytics/builder | `MiniStore.Web/Controllers/Analytics/AnalyticsCenterController.cs` |
 | AnalyticsCenter | Create | POST | Angular Pilot | /analytics/builder | `MiniStore.Web/Controllers/Analytics/AnalyticsCenterController.cs` |
 | AnalyticsCenter | Index | GET | Angular Pilot | /analytics | `MiniStore.Web/Controllers/Analytics/AnalyticsCenterController.cs` |

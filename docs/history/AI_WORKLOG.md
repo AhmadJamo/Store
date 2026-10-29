@@ -1552,3 +1552,9 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   1302 checks, Angular passed 201/201 tests across 96 files, 108 templates passed accessibility, external SCSS passed and bundles
   measured 318,180/358,400 initial and 81,743/81,920 largest lazy bytes. No independent POS close/print surface exists in source;
   `MOD-025` completed and execution advanced to `MOD-026A` chart of accounts.
+- 2026-10-29: Completed `MOD-026A` Chart of Accounts. Added an Application-authored named-hierarchy projection and authenticated
+  list/create API plus a bilingual RTL-safe Angular workspace for codes, names, localized account types and parent selection.
+  `AccountService` retains duplicate-code, parent and entity validation. Web Release passed with zero warnings/errors,
+  SecurityRegression passed 1302 checks, Angular passed 202/202 tests across 97 files, 109 templates passed accessibility, external
+  SCSS passed and bundles measured 318,327/358,400 initial and 81,743/81,920 largest lazy bytes. MVC remains default. Advanced to
+  `MOD-026B` Journal Entry details.

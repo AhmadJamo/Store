@@ -1,0 +1,70 @@
+<main class="accounts-page">
+  <app-page-header
+    [eyebrow]="i18n.text('area')"
+    [title]="i18n.text('title')"
+    [description]="i18n.text('description')"
+  />
+  @if (problem(); as issue) {
+    <app-api-recovery [problem]="issue" (retry)="load()" />
+  }
+  @if (loading()) {
+    <app-feedback-state kind="loading" [title]="i18n.text('title')" />
+  } @else if (page(); as p) {
+    <button class="ui-button primary add" (click)="showForm.set(!showForm())">
+      {{ i18n.text('add') }}
+    </button>
+    @if (showForm()) {
+      <form class="ui-card form" [formGroup]="form" (ngSubmit)="create()">
+        <label class="ui-field"
+          ><span>{{ i18n.text('code') }}</span
+          ><input formControlName="code" /></label
+        ><label class="ui-field"
+          ><span>{{ i18n.text('name') }}</span
+          ><input formControlName="name" /></label
+        ><label class="ui-field"
+          ><span>{{ i18n.text('type') }}</span
+          ><select formControlName="type">
+            @for (v of [1, 2, 3, 4, 5]; track v) {
+              <option [ngValue]="v">{{ i18n.type(v) }}</option>
+            }
+          </select></label
+        ><label class="ui-field"
+          ><span>{{ i18n.text('parent') }}</span
+          ><select formControlName="parentAccountId">
+            <option [ngValue]="null">{{ i18n.text('top') }}</option>
+            @for (a of p.accounts; track a.id) {
+              <option [ngValue]="a.id">{{ a.code }} — {{ a.name }}</option>
+            }
+          </select></label
+        ><button class="ui-button primary" [disabled]="saving() || form.invalid">
+          {{ i18n.text('save') }}
+        </button>
+      </form>
+    }
+    @if (!p.accounts.length) {
+      <app-feedback-state kind="empty" [title]="i18n.text('empty')" />
+    }
+    <section class="ui-card table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>{{ i18n.text('code') }}</th>
+            <th>{{ i18n.text('name') }}</th>
+            <th>{{ i18n.text('type') }}</th>
+            <th>{{ i18n.text('parent') }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (a of p.accounts; track a.id) {
+            <tr>
+              <td>{{ a.code }}</td>
+              <td>{{ a.name }}</td>
+              <td>{{ i18n.type(a.type) }}</td>
+              <td>{{ a.parentAccountName || i18n.text('top') }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </section>
+  }
+</main>

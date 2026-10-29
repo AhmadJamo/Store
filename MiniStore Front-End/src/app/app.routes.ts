@@ -1164,6 +1164,14 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'accounting/accounts',
+        canDeactivate: [(component) => component.canDeactivate()],
+        loadComponent: () =>
+          import('./features/accounting/accounts-page').then(
+            (module) => module.AccountsPageComponent,
+          ),
+      },
+      {
         path: 'products/recipes/:productId',
         canDeactivate: [(component) => component.canDeactivate()],
         loadComponent: () =>
