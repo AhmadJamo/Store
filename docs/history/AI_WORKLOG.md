@@ -1587,3 +1587,10 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   confirmation sends only the provider reference and reuses the serializable server transaction. Release passed cleanly,
   SecurityRegression passed 1309 checks, Angular passed 207/207 across 101 files, 115 templates passed accessibility and bundles
   measured 324,362/358,400 initial and 81,744/81,920 largest lazy bytes. Advanced to `MOD-027E`.
+- 2026-10-30: Completed `MOD-027E` Platform Audit and Retention. Added isolated Platform-cookie APIs and bilingual RTL-safe
+  Angular workspaces for filtered/paged audit evidence, purpose-bound CSV export, retention-policy evidence, legal-hold
+  creation/release, external checkpoints and retention runs. AuditView/Export/Sensitive/Retention remain independent;
+  sensitive inclusion is server-derived and every mutation retains antiforgery and the existing Application audit/retention
+  authority. Release passed with zero warnings/errors, SecurityRegression passed 1311 checks, Angular passed 207/207 across
+  101 files, 117 templates passed accessibility and bundles measured 324,732/358,400 initial and 81,744/81,920 largest lazy
+  bytes. MVC remains default. Completed `MOD-027` and advanced to `MOD-028A` source/registry reconciliation.

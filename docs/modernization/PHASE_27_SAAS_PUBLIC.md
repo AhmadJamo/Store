@@ -1,6 +1,6 @@
 # Phase 27 — SaaS and public Angular migration
 
-> Status: IN PROGRESS — `MOD-027A..D` COMPLETE on 2026-10-30
+> Status: COMPLETE — `MOD-027A..E` delivered on 2026-10-30
 >
 > Presentation default: MVC until a separate cutover approval.
 
@@ -76,4 +76,24 @@ pricing, promotion redemption, payment confirmation and Platform authorization r
 
 ## Next slice
 
-`MOD-027E` migrates Platform audit-event reading/export and retention/legal-hold operations.
+## `MOD-027E` delivered — Platform audit and retention
+
+- Added isolated Platform-cookie APIs for filtered/paged audit evidence and purpose-bound CSV export. The server derives
+  sensitive-field inclusion from `AuditSensitive`; Angular cannot request or infer it.
+- Preserved separate `AuditView` and `AuditExport` authorization, antiforgery on export, the 5,000-record limit,
+  redaction and the semantic export event.
+- Added an owner-only retention API and bilingual RTL-safe workspace for policy evidence, legal-hold creation/release,
+  external integrity checkpoints and retention execution. Every mutation retains antiforgery and uses
+  `AuditRetentionService`, including audit receipts and legal-hold rechecks.
+- Platform navigation exposes management, audit and retention destinations only as session guidance; every API
+  independently authorizes the isolated Platform cookie and policy. MVC remains the default presentation.
+
+## MOD-027E evidence
+
+- Web Release: zero warnings/errors; SecurityRegression: 1311 checks.
+- Angular: 207/207 tests across 101 files; 117 templates passed accessibility; external SCSS passed.
+- Bundles: 324,732/358,400 initial bytes and 81,744/81,920 largest lazy bytes.
+- Browser and performance checks were skipped by the standard local step flags; all seven applicable gate stages passed.
+
+`MOD-027` is complete. Execution advances to `MOD-028A`, a source-authoritative reconciliation of shared and remaining
+MVC surfaces before selecting their implementation slices.

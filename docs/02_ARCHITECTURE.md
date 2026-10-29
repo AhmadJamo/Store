@@ -4,6 +4,11 @@
 
 During migration, `MiniStore.Web` remains the composition and same-origin host for both MVC and the versioned internal `/api/v1` surface. API controllers use explicit Application DTOs/services; repositories and EF Core are not exposed to presentation. The existing Identity cookie, tenant middleware and permission authority remain authoritative. Angular owns presentation state only, bootstraps its server session and CSRF token centrally, and treats returned permissions as display guidance while every server endpoint reauthorizes independently. OpenAPI is authenticated and filtered to internal v1 paths. See `modernization/PHASE_02_API_FOUNDATION.md` and the same-origin modernization ADR.
 
+The Platform Angular boundary uses its separate `PlatformCookie`, never the tenant Identity cookie. Audit reads delegate to
+`AuditEventReadService`; only the server's `AuditSensitive` authorization decision enables sensitive redacted fields.
+Exports remain purpose-bound and self-auditing. Retention commands delegate unchanged to `AuditRetentionService`, which owns
+legal holds, signed external checkpoints, destruction manifests and transactional semantic audit evidence.
+
 Presentation cutover is an MVC-layer concern. A global action filter consults per-surface `Mvc`, `AngularPilot`, or
 `AngularDefault` configuration, but redirects only GET/HEAD actions in the code-owned route allowlist. Mutations,
 downloads, missing route values and unknown actions remain MVC. All committed modes are `Mvc`; MOD-029/030 still

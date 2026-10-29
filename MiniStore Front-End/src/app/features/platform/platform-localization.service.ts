@@ -25,6 +25,8 @@ const copy = {
     language: 'العربية',
     summary: 'Platform summary',
     management: 'Management',
+    audit: 'Audit evidence',
+    retention: 'Retention',
   },
   ar: {
     product: 'إدارة MiniStore',
@@ -49,6 +51,8 @@ const copy = {
     language: 'English',
     summary: 'ملخص المنصة',
     management: 'الإدارة',
+    audit: 'أدلة التدقيق',
+    retention: 'الاحتفاظ',
   },
 } as const;
 export type PlatformCopyKey = keyof typeof copy.en;

@@ -24,6 +24,20 @@ export const routes: Routes = [
       ),
   },
   {
+    path: 'platform-audit',
+    loadComponent: () =>
+      import('./features/platform/platform-audit-page').then(
+        (module) => module.PlatformAuditPageComponent,
+      ),
+  },
+  {
+    path: 'platform-retention',
+    loadComponent: () =>
+      import('./features/platform/platform-retention-page').then(
+        (module) => module.PlatformRetentionPageComponent,
+      ),
+  },
+  {
     path: 'welcome',
     data: { view: 'welcome' },
     loadComponent: () =>

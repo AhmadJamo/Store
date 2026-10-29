@@ -4257,6 +4257,22 @@ Check(new[] { nameof(PlatformManagementApiController.UpdateCompany), nameof(Plat
       platformManagementApi.GetMethod(nameof(PlatformManagementApiController.ConfirmPayment))!
           .GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null,
     "Platform mutations must preserve Management/Billing policies and antiforgery");
+var platformAuditApi = typeof(PlatformAuditEventsApiController);
+Check(platformAuditApi.GetCustomAttribute<AuthorizeAttribute>()?.AuthenticationSchemes == PlatformAuthentication.Scheme &&
+      platformAuditApi.GetCustomAttribute<AuthorizeAttribute>()?.Policy == PlatformAuthentication.AuditViewPolicy &&
+      platformAuditApi.GetCustomAttribute<RouteAttribute>()?.Template == "api/v1/platform/audit-events" &&
+      platformAuditApi.GetMethod(nameof(PlatformAuditEventsApiController.Export))!
+          .GetCustomAttribute<AuthorizeAttribute>()?.Policy == PlatformAuthentication.AuditExportPolicy &&
+      platformAuditApi.GetMethod(nameof(PlatformAuditEventsApiController.Export))!
+          .GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null,
+    "Angular platform audit evidence must preserve isolated View/Export policies and antiforgery");
+var platformRetentionApi = typeof(PlatformAuditRetentionApiController);
+Check(platformRetentionApi.GetCustomAttribute<AuthorizeAttribute>()?.AuthenticationSchemes == PlatformAuthentication.Scheme &&
+      platformRetentionApi.GetCustomAttribute<AuthorizeAttribute>()?.Policy == PlatformAuthentication.AuditRetentionPolicy &&
+      platformRetentionApi.GetCustomAttribute<RouteAttribute>()?.Template == "api/v1/platform/audit-retention" &&
+      new[] { nameof(PlatformAuditRetentionApiController.CreateHold), nameof(PlatformAuditRetentionApiController.ReleaseHold), nameof(PlatformAuditRetentionApiController.Checkpoint), nameof(PlatformAuditRetentionApiController.RunRetention) }
+          .All(name => platformRetentionApi.GetMethod(name)!.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null),
+    "Angular platform retention maintenance must require the owner policy and antiforgery on every mutation");
 var operationsApi = typeof(OperationsCenterApiController);
 Check(operationsApi.GetCustomAttribute<ApiControllerAttribute>() is not null &&
       operationsApi.GetCustomAttribute<AuthorizeAttribute>() is not null &&

@@ -48,3 +48,11 @@ APIs remain blocked when the subscription is unusable. Manual Platform confirmat
 The anonymous `/api/v1/public/plans` endpoint now projects the same public plan cards through `PlatformSaasService` for the
 Angular welcome/pricing pilot. It exposes no mutation and no private plan. Registration links carry only a plan ID and the
 registration service reloads plan eligibility before provisioning.
+
+## Angular Platform control plane (2026-10-30)
+
+The isolated Platform cookie now supports Angular session/overview, role-separated SaaS management, audit search/export and
+owner retention workspaces. Audit evidence is projected by `AuditEventReadService`; the API alone evaluates
+`AuditSensitive`, while export requires its separate policy, antiforgery, an approved purpose and writes its own audit event.
+Legal holds, releases, external checkpoints and retention runs remain owned by `AuditRetentionService`; Angular supplies
+commands only and cannot delete evidence directly. MVC remains the default rollback presentation.

@@ -134,6 +134,11 @@ The Angular registration API keeps the same independent limiter and adds explici
 
 Platform login, plan creation and promotion creation forms emit explicit antiforgery tokens. A live GET/POST regression check covers the separate-cookie login form so missing-token failures do not appear as an unexplained HTTP 400.
 
+Platform audit Angular endpoints preserve four independent policies: `AuditView` for search, `AuditExport` plus antiforgery
+for CSV, `AuditSensitive` as a server-derived field gate, and `AuditRetention` for owner maintenance. The client cannot
+request sensitive inclusion. Legal-hold creation/release, checkpoint creation and retention execution all require antiforgery
+and reuse the Application service that records semantic evidence, verifies the external checkpoint and rechecks holds before deletion.
+
 SAL-070 customer invoices are tenant-owned at header, line, source-allocation and history level. Composite tenant foreign keys prevent cross-company order, customer, product, unit, pricing, tax and delivery references. Tenant-unique invoice numbers and request keys provide identity/idempotency, rowversion rejects stale lifecycle commands, and Serializable creation rechecks cumulative active quantity. Dedicated View/Create/Approve/Cancel permissions and antiforgery protect every controller mutation. Approval cannot create journals or payments, and the company eligibility policy cannot change after dependent invoices exist without a future controlled transition.
 
 ## Remaining risks / deployment work
