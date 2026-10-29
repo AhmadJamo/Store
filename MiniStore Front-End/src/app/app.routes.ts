@@ -17,6 +17,13 @@ export const routes: Routes = [
       ),
   },
   {
+    path: 'platform-management',
+    loadComponent: () =>
+      import('./features/platform/platform-management-page').then(
+        (module) => module.PlatformManagementPageComponent,
+      ),
+  },
+  {
     path: 'welcome',
     data: { view: 'welcome' },
     loadComponent: () =>

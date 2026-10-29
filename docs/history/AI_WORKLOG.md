@@ -1582,3 +1582,8 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   authentication service; added isolated Platform-cookie login/session/overview/logout APIs and bilingual Angular screens.
   Release passed cleanly, SecurityRegression passed 1307 checks, Angular passed 207/207 across 101 files, 114 templates passed
   accessibility and bundles measured 323,961/358,400 initial and 81,744/81,920 largest lazy bytes. Advanced to `MOD-027D`.
+- 2026-10-30: Completed `MOD-027D` Platform Management. Added Platform-cookie APIs and a bilingual role-aware Angular workspace
+  for companies/subscriptions, plans, promotions and pending payments. Management and Billing policies remain separate; payment
+  confirmation sends only the provider reference and reuses the serializable server transaction. Release passed cleanly,
+  SecurityRegression passed 1309 checks, Angular passed 207/207 across 101 files, 115 templates passed accessibility and bundles
+  measured 324,362/358,400 initial and 81,744/81,920 largest lazy bytes. Advanced to `MOD-027E`.

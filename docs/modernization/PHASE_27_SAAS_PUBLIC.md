@@ -1,6 +1,6 @@
 # Phase 27 — SaaS and public Angular migration
 
-> Status: IN PROGRESS — `MOD-027A..C` COMPLETE on 2026-10-30
+> Status: IN PROGRESS — `MOD-027A..D` COMPLETE on 2026-10-30
 >
 > Presentation default: MVC until a separate cutover approval.
 
@@ -61,4 +61,19 @@ pricing, promotion redemption, payment confirmation and Platform authorization r
 
 ## Next slice
 
-`MOD-027D` migrates privileged Platform companies, plans, promotions and pending-payment operations.
+## `MOD-027D` delivered — Platform management operations
+
+- Added a Platform-cookie management API covering companies/subscriptions, plans, promotions and pending checkout reads.
+- Added Management-protected company update, plan creation and promotion creation commands plus Billing-protected payment confirmation; every mutation retains antiforgery.
+- Added a bilingual role-aware Angular management workspace. The browser never supplies a trusted checkout amount or payment state.
+- Existing SaaS services and the serializable payment-completion transaction remain authoritative for subscription activation and promotion redemption.
+
+## MOD-027D evidence
+
+- Web Release: zero warnings/errors; SecurityRegression: 1309 checks.
+- Angular: 207/207 tests across 101 files; 115 templates passed accessibility; external SCSS passed.
+- Bundles: 324,362/358,400 initial bytes and 81,744/81,920 largest lazy bytes.
+
+## Next slice
+
+`MOD-027E` migrates Platform audit-event reading/export and retention/legal-hold operations.

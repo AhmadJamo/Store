@@ -24,6 +24,7 @@ const copy = {
     signOut: 'Sign out',
     language: 'العربية',
     summary: 'Platform summary',
+    management: 'Management',
   },
   ar: {
     product: 'إدارة MiniStore',
@@ -47,6 +48,7 @@ const copy = {
     signOut: 'تسجيل الخروج',
     language: 'English',
     summary: 'ملخص المنصة',
+    management: 'الإدارة',
   },
 } as const;
 export type PlatformCopyKey = keyof typeof copy.en;

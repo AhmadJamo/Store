@@ -4686,4 +4686,16 @@
   <data name="Plan is unavailable." xml:space="preserve"><value>الخطة غير متاحة.</value></data>
   <data name="Promotion code is invalid, expired or already used by this company." xml:space="preserve"><value>رمز العرض غير صالح أو منتهي أو مستخدم مسبقًا لهذه الشركة.</value></data>
   <data name="Subscription plan was not found." xml:space="preserve"><value>لم يتم العثور على خطة الاشتراك.</value></data>
+  <data name="Company not found." xml:space="preserve"><value>لم يتم العثور على الشركة.</value></data>
+  <data name="Subscription not found." xml:space="preserve"><value>لم يتم العثور على الاشتراك.</value></data>
+  <data name="Plan not found." xml:space="preserve"><value>لم يتم العثور على الخطة.</value></data>
+  <data name="Invalid plan code." xml:space="preserve"><value>رمز الخطة غير صالح.</value></data>
+  <data name="Plan names are required in both languages." xml:space="preserve"><value>اسما الخطة مطلوبان باللغتين.</value></data>
+  <data name="Plan prices cannot be negative." xml:space="preserve"><value>لا يمكن أن تكون أسعار الخطة سالبة.</value></data>
+  <data name="Invalid promotion code." xml:space="preserve"><value>رمز العرض غير صالح.</value></data>
+  <data name="Discount percentage must be between 0 and 100." xml:space="preserve"><value>نسبة الخصم يجب أن تكون بين 0 و100.</value></data>
+  <data name="Invalid promotion validity or redemption limit." xml:space="preserve"><value>مدة العرض أو حد استخدامه غير صالح.</value></data>
+  <data name="Checkout not found." xml:space="preserve"><value>لم يتم العثور على طلب الدفع.</value></data>
+  <data name="Checkout is no longer payable." xml:space="preserve"><value>طلب الدفع لم يعد قابلًا للسداد.</value></data>
+  <data name="Payment reference is required." xml:space="preserve"><value>مرجع الدفع مطلوب.</value></data>
 </root>

@@ -9,12 +9,17 @@ public record CreatePlanDto(string Code, string NameEnglish, string NameArabic, 
 public record CreatePromotionCodeDto(string Code, decimal DiscountPercentage, DateTime StartsAt, DateTime EndsAt, int? MaximumRedemptions, int? PlanId);
 public record CompanySubscriptionDto(int TenantId, string Name, string Slug, bool IsActive, int? PlanId, string PlanName, SubscriptionStatus? Status, DateTime? PeriodEnd, int UserCount);
 public record UpdateCompanySubscriptionDto(int TenantId, int PlanId, SubscriptionStatus Status, DateTime PeriodEnd, bool CompanyIsActive);
+public record PlatformPromotionDto(int Id, string Code, decimal DiscountPercentage, DateTime StartsAt, DateTime EndsAt, int? MaximumRedemptions, int RedemptionCount, int? PlanId, bool IsActive);
 
 public class PlatformSaasService(ISaasRepository repository, SemanticAuditEventService audit)
 {
     public async Task<IReadOnlyList<PlanCardDto>> GetPublicPlansAsync() => Map(await repository.GetPublicPlansAsync());
     public async Task<IReadOnlyList<PlanCardDto>> GetPlansAsync() => Map(await repository.GetPlansAsync());
     public Task<IReadOnlyList<PromotionCode>> GetPromotionCodesAsync() => repository.GetPromotionCodesAsync();
+    public async Task<IReadOnlyList<PlatformPromotionDto>> GetPromotionDtosAsync() =>
+        (await repository.GetPromotionCodesAsync()).Select(x => new PlatformPromotionDto(
+            x.Id, x.Code, x.DiscountPercentage, x.StartsAt, x.EndsAt, x.MaximumRedemptions,
+            x.RedemptionCount, x.PlanId, x.IsActive)).ToList();
     public async Task<IReadOnlyList<CompanySubscriptionDto>> GetCompaniesAsync()
     {
         var plans = await repository.GetPlansAsync();

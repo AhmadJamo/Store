@@ -4245,6 +4245,18 @@ Check(new[] { nameof(PlatformSessionApiController.Session), nameof(PlatformSessi
       platformSessionApi.GetMethod(nameof(PlatformSessionApiController.Logout))!
           .GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null,
     "Angular platform session must require the separate Platform cookie and protect logout");
+var platformManagementApi = typeof(PlatformManagementApiController);
+Check(platformManagementApi.GetCustomAttribute<AuthorizeAttribute>()?.AuthenticationSchemes == PlatformAuthentication.Scheme &&
+      platformManagementApi.GetCustomAttribute<RouteAttribute>()?.Template == "api/v1/platform/management",
+    "Angular platform management must require the isolated Platform cookie");
+Check(new[] { nameof(PlatformManagementApiController.UpdateCompany), nameof(PlatformManagementApiController.CreatePlan), nameof(PlatformManagementApiController.CreatePromotion) }
+      .All(name => platformManagementApi.GetMethod(name)!.GetCustomAttribute<AuthorizeAttribute>()?.Policy == PlatformAuthentication.ManagementPolicy &&
+                   platformManagementApi.GetMethod(name)!.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null) &&
+      platformManagementApi.GetMethod(nameof(PlatformManagementApiController.ConfirmPayment))!
+          .GetCustomAttribute<AuthorizeAttribute>()?.Policy == PlatformAuthentication.BillingPolicy &&
+      platformManagementApi.GetMethod(nameof(PlatformManagementApiController.ConfirmPayment))!
+          .GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null,
+    "Platform mutations must preserve Management/Billing policies and antiforgery");
 var operationsApi = typeof(OperationsCenterApiController);
 Check(operationsApi.GetCustomAttribute<ApiControllerAttribute>() is not null &&
       operationsApi.GetCustomAttribute<AuthorizeAttribute>() is not null &&

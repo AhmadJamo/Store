@@ -1,13 +1,13 @@
 import { DecimalPipe, KeyValuePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { PlatformApiService } from './platform-api.service';
 import { PlatformLocalizationService } from './platform-localization.service';
 import { PlatformOverview, PlatformPlan } from './platform.models';
 
 @Component({
   selector: 'app-platform-overview-page',
-  imports: [DecimalPipe, KeyValuePipe],
+  imports: [DecimalPipe, KeyValuePipe, RouterLink],
   templateUrl: './platform-overview-page.html',
   styleUrl: './platform-pages.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
