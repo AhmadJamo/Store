@@ -66,6 +66,8 @@ const m = {
     partiallySettled: 'Partially settled',
     paidStatus: 'Paid',
     creditedStatus: 'Credited',
+    recordPayment: 'Record customer payment',
+    paymentCompleted: 'Payment completed',
   },
   ar: {
     area: 'المبيعات',
@@ -131,6 +133,8 @@ const m = {
     partiallySettled: 'مسددة جزئيًا',
     paidStatus: 'مدفوعة',
     creditedStatus: 'مسددة بإشعار دائن',
+    recordPayment: 'تسجيل دفعة عميل',
+    paymentCompleted: 'اكتمل السداد',
   },
 } as const;
 export type InvoiceKey = keyof typeof m.en;

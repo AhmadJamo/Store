@@ -610,6 +610,19 @@ export const routes: Routes = [
         loadComponent: () => import('./features/sales/customer-invoices-page').then((module) => module.CustomerInvoicesPageComponent),
       },
       {
+        path: 'sales/payments',
+        loadComponent: () => import('./features/sales/customer-payments-page').then((module) => module.CustomerPaymentsPageComponent),
+      },
+      {
+        path: 'sales/payments/new',
+        canDeactivate: [(component) => component.canDeactivate()],
+        loadComponent: () => import('./features/sales/customer-payments-page').then((module) => module.CustomerPaymentsPageComponent),
+      },
+      {
+        path: 'sales/payments/:id',
+        loadComponent: () => import('./features/sales/customer-payments-page').then((module) => module.CustomerPaymentsPageComponent),
+      },
+      {
         path: 'products/recipes/:productId',
         canDeactivate: [(component) => component.canDeactivate()],
         loadComponent: () => import('./features/products/recipe-editor-page').then((module) => module.RecipeEditorPageComponent),

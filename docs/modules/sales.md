@@ -57,6 +57,12 @@ documents and remains authoritative for eligibility, pricing/tax/currency snapsh
 reversal and outstanding balances. Permissions remain independent and every mutation retains antiforgery and concurrency evidence;
 no invoice operation changes inventory or records a customer payment. MVC remains default.
 
+`MOD-024G` exposes Customer Payment list/details, create-and-post allocation and Reverse through Angular. Operators start from one
+posted invoice and can allocate the receipt across open posted invoices for the same customer and currency using a named active
+payment method. The server remains authoritative for outstanding balances, credit-note deductions, carrying-value allocation,
+exchange rates, realized exchange gain/loss, numbering, journal posting and exact reversal. Create/Post and Reverse retain separate
+permissions and antiforgery; collection changes receivables/accounting only and never inventory. MVC remains default.
+
 Sales quantity, threshold, price-rule and document-line decimal ranges parse limits and submitted values with invariant culture. Arabic UI requests no longer throw before controller execution when validating dot-based HTML decimals.
 
 Wholesale Create and Retail POS call `SalesController.Create` then `SaleService.CreateAsync`. Product choices are limited to active products enabled for the corresponding channel, and the service revalidates those flags against crafted requests. It validates discount rules, generates the tenant document number, chooses the server-side price, applies the optional invoice tax after discounts, decreases stock at the current warehouse average and writes the Sale movement in one UnitOfWork transaction. Sale freezes the selected tax percentage, inclusive policy, output account and amount; SaleItem freezes UnitCost and CostOfGoodsSold. The number, sale, valuation and movement commit or roll back together; ProductStock rowversion detects concurrent writes.

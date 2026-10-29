@@ -1,6 +1,6 @@
 # Phase 24 — Sales Angular migration
 
-> Status: IN PROGRESS — `MOD-024A..F` COMPLETE on 2026-10-29
+> Status: IN PROGRESS — `MOD-024A..G` COMPLETE on 2026-10-29
 >
 > Presentation default: MVC until a separate cutover approval.
 
@@ -67,13 +67,21 @@ Application/Domain and the server.
 - `CustomerInvoiceService` remains authoritative for source eligibility, cumulative limits, pricing/tax/currency snapshots,
   numbering, posting, reversal and outstanding balances. Angular does not calculate trusted eligibility, totals or accounting.
 
+## `MOD-024G` delivered — customer payments
+
+- Added authenticated list/details/create-form/create-and-post and Reverse APIs with independent permissions and antiforgery.
+- Added a bilingual RTL-safe Angular workspace for same-customer/currency open invoices, partial or multi-invoice allocation,
+  payment-method selection, exchange-rate evidence, receivable carrying amounts, journals and exact reversal.
+- `CustomerPaymentService` remains authoritative for outstanding balances, allocation eligibility, currency rates, realized exchange
+  gain/loss, numbering, posting and reversal. Collection changes receivables and accounting only, never inventory.
+
 ## Evidence
 
-- Web Release: zero warnings/errors; SecurityRegression: 1299 checks.
-- Angular: 192/192 tests across 88 files; 100 templates passed accessibility; external SCSS passed.
-- Bundles: 315,181/358,400 initial bytes and 81,743/81,920 largest lazy bytes.
+- Web Release: zero warnings/errors; SecurityRegression: 1302 checks.
+- Angular: 193/193 tests across 89 files; 101 templates passed accessibility; external SCSS passed.
+- Bundles: 315,565/358,400 initial bytes and 81,743/81,920 largest lazy bytes.
 
 ## Next slice
 
-`MOD-024G` migrates Customer Payment list/details/create, allocation, posting and reversal while keeping invoice balances, currency,
-realized exchange differences, accounting and state authority server-side.
+`MOD-024H` migrates Customer Return Request list/details/create, submit/approve/reject/cancel and returnable-quantity evidence while
+keeping delivery ownership, cumulative eligibility, authorization and state authority server-side.

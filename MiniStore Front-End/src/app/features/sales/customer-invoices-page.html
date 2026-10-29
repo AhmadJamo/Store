@@ -128,6 +128,16 @@
       </section>
     }
     <section class="ui-card actions">
+      @if (x.status === 4 && x.outstandingAmount > 0 && session.can('CustomerPayments.Create')) {
+        <a
+          class="ui-button primary"
+          routerLink="/sales/payments/new"
+          [queryParams]="{ customerInvoiceId: x.id }"
+          >{{ i18n.text('recordPayment') }}</a
+        >
+      } @else if (x.status === 4 && x.outstandingAmount <= 0) {
+        <strong>{{ i18n.text('paymentCompleted') }}</strong>
+      }
       @if (x.status === 1 && session.can('CustomerInvoices.Approve')) {
         <button class="ui-button primary" [disabled]="saving()" (click)="command('approve')">
           {{ i18n.text('approve') }}
