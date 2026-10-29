@@ -1572,3 +1572,9 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   block the rest of the ERP. Web Release passed with zero warnings/errors, SecurityRegression passed 1304 checks, Angular passed
   204/204 tests across 99 files, 111 templates passed accessibility, external SCSS passed and bundles measured
   318,742/358,400 initial and 81,743/81,920 largest lazy bytes. MVC remains default. Advanced to `MOD-027B` public landing/pricing.
+- 2026-10-29: Completed `MOD-027B` Public Landing and Pricing. Added an anonymous versioned read-only plan API over
+  `PlatformSaasService` plus bilingual RTL-safe Angular welcome and pricing routes outside the authenticated shell. Plan names,
+  descriptions, limits and monthly/annual prices remain server-authored; registration receives only a plan ID and validates it
+  again. Web Release passed with zero warnings/errors, SecurityRegression passed 1305 checks, Angular passed 205/205 tests across
+  100 files, 112 templates passed accessibility, external SCSS passed and bundles measured 318,986/358,400 initial and
+  81,743/81,920 largest lazy bytes. MVC remains default. Advanced to `MOD-027C` Platform sign-in/session and read-only shell.

@@ -3,6 +3,22 @@ import { anonymousOnlyGuard, authGuard } from './core/api/auth.guard';
 
 export const routes: Routes = [
   {
+    path: 'welcome',
+    data: { view: 'welcome' },
+    loadComponent: () =>
+      import('./features/public-site/public-site-page').then(
+        (module) => module.PublicSitePageComponent,
+      ),
+  },
+  {
+    path: 'pricing',
+    data: { view: 'pricing' },
+    loadComponent: () =>
+      import('./features/public-site/public-site-page').then(
+        (module) => module.PublicSitePageComponent,
+      ),
+  },
+  {
     path: 'supplier-portal/:token',
     loadComponent: () =>
       import('./features/purchases/supplier-portal-page').then(

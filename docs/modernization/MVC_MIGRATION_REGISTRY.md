@@ -84,8 +84,8 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | ProductStocks | Edit.cshtml | Inventoried | — | `MiniStore.Web/Views/ProductStocks/Edit.cshtml` |
 | ProductStocks | Index.cshtml | Inventoried | — | `MiniStore.Web/Views/ProductStocks/Index.cshtml` |
 | ProductTemplates | Index.cshtml | Inventoried | — | `MiniStore.Web/Views/ProductTemplates/Index.cshtml` |
-| Public | Index.cshtml | Inventoried | — | `MiniStore.Web/Views/Public/Index.cshtml` |
-| Public | Pricing.cshtml | Inventoried | — | `MiniStore.Web/Views/Public/Pricing.cshtml` |
+| Public | Index.cshtml | Angular Pilot | /welcome | `MiniStore.Web/Views/Public/Index.cshtml` |
+| Public | Pricing.cshtml | Angular Pilot | /pricing | `MiniStore.Web/Views/Public/Pricing.cshtml` |
 | PurchaseAccountingReconciliation | Index.cshtml | Inventoried | — | `MiniStore.Web/Views/PurchaseAccountingReconciliation/Index.cshtml` |
 | PurchaseAgreements | Create.cshtml | Inventoried | — | `MiniStore.Web/Views/PurchaseAgreements/Create.cshtml` |
 | PurchaseAgreements | Details.cshtml | Inventoried | — | `MiniStore.Web/Views/PurchaseAgreements/Details.cshtml` |
@@ -337,8 +337,8 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | ProductTemplates | Generate | POST | Inventoried | — | `MiniStore.Web/Controllers/Catalog/ProductTemplatesController.cs` |
 | ProductTemplates | Index | GET | Inventoried | — | `MiniStore.Web/Controllers/Catalog/ProductTemplatesController.cs` |
 | ProductTemplates | Preview | POST | Inventoried | — | `MiniStore.Web/Controllers/Catalog/ProductTemplatesController.cs` |
-| Public | Index | GET | Inventoried | — | `MiniStore.Web/Controllers/PublicController.cs` |
-| Public | Pricing | GET | Inventoried | — | `MiniStore.Web/Controllers/PublicController.cs` |
+| Public | Index | GET | Angular Pilot | /welcome | `MiniStore.Web/Controllers/PublicController.cs` |
+| Public | Pricing | GET | Angular Pilot | /pricing | `MiniStore.Web/Controllers/PublicController.cs` |
 | PurchaseAccountingReconciliation | Index | GET | Inventoried | — | `MiniStore.Web/Controllers/Purchases/PurchaseAccountingReconciliationController.cs` |
 | PurchaseApprovalRules | Create | POST | Inventoried | — | `MiniStore.Web/Controllers/Purchases/PurchaseApprovalRulesController.cs` |
 | PurchaseApprovalRules | Index | GET | Inventoried | — | `MiniStore.Web/Controllers/Purchases/PurchaseApprovalRulesController.cs` |

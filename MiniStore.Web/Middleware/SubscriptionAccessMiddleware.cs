@@ -11,6 +11,7 @@ public class SubscriptionAccessMiddleware(RequestDelegate next)
         var path = context.Request.Path;
         var bypass = path.StartsWithSegments("/subscription") || path.StartsWithSegments("/app/subscription") ||
             path.StartsWithSegments("/api/v1/subscription") || path.StartsWithSegments("/api/v1/session") ||
+            path.StartsWithSegments("/api/v1/public") ||
             path.StartsWithSegments("/Account") ||
             path.StartsWithSegments("/platform") || path.StartsWithSegments("/pricing") || path == "/" ||
             path.StartsWithSegments("/supplier-portal") || path.StartsWithSegments("/api/supplier") ||

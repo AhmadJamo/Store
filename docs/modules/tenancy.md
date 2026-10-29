@@ -44,3 +44,7 @@ company. Its antiforgery-protected checkout command accepts only plan ID, billin
 The Angular `/subscription` pilot presents the bilingual lifecycle evidence and server quote without storing payment authority.
 Entitlement middleware bypasses only the session bootstrap, subscription API and subscription page needed for recovery; other ERP
 APIs remain blocked when the subscription is unusable. Manual Platform confirmation remains authoritative until a provider exists.
+
+The anonymous `/api/v1/public/plans` endpoint now projects the same public plan cards through `PlatformSaasService` for the
+Angular welcome/pricing pilot. It exposes no mutation and no private plan. Registration links carry only a plan ID and the
+registration service reloads plan eligibility before provisioning.

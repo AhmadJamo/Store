@@ -1,6 +1,6 @@
 # Phase 27 — SaaS and public Angular migration
 
-> Status: IN PROGRESS — `MOD-027A` COMPLETE on 2026-10-29
+> Status: IN PROGRESS — `MOD-027A..B` COMPLETE on 2026-10-29
 >
 > Presentation default: MVC until a separate cutover approval.
 
@@ -29,6 +29,21 @@ pricing, promotion redemption, payment confirmation and Platform authorization r
 - Bundles: 318,742/358,400 initial bytes and 81,743/81,920 largest lazy bytes.
 - Browser and performance checks were skipped by the standard local step flags; all seven applicable gate stages passed.
 
+## `MOD-027B` delivered — public landing and pricing
+
+- Added an anonymous read-only versioned API that projects public plan cards through `PlatformSaasService`.
+- Added bilingual RTL-safe Angular welcome and pricing routes outside the authenticated ERP shell, with localized navigation,
+  features, plan names/descriptions, known limit labels and monthly/annual prices.
+- Registration destinations remain local and pass only the selected plan ID; registration reloads and validates plan authority.
+- Authenticated tenants with unusable subscriptions may still read the public-plan endpoint, without bypassing any business API.
+
+## MOD-027B evidence
+
+- Web Release: zero warnings/errors; SecurityRegression: 1305 checks.
+- Angular: 205/205 tests across 100 files; 112 templates passed accessibility; external SCSS passed.
+- Bundles: 318,986/358,400 initial bytes and 81,743/81,920 largest lazy bytes.
+- Browser and performance checks were skipped by the standard local step flags; all seven applicable gate stages passed.
+
 ## Next slice
 
-`MOD-027B` migrates the public landing and pricing surfaces while registration remains on its existing Angular flow.
+`MOD-027C` establishes Platform sign-in/session and a read-only control-center shell before migrating privileged mutations.

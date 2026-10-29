@@ -4222,6 +4222,13 @@ Check(subscriptionApi.GetCustomAttribute<ApiControllerAttribute>() is not null &
 Check(subscriptionApi.GetMethod(nameof(SubscriptionApiController.CreateCheckout))!
           .GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null,
     "Angular subscription checkout creation must retain antiforgery validation");
+var publicPlansApi = typeof(PublicPlansApiController);
+Check(publicPlansApi.GetCustomAttribute<ApiControllerAttribute>() is not null &&
+      publicPlansApi.GetCustomAttribute<AllowAnonymousAttribute>() is not null &&
+      publicPlansApi.GetCustomAttribute<RouteAttribute>()?.Template == "api/v1/public/plans" &&
+      publicPlansApi.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly)
+          .All(method => method.GetCustomAttribute<HttpGetAttribute>() is not null),
+    "Angular public plan API must remain anonymous, versioned and read-only");
 var operationsApi = typeof(OperationsCenterApiController);
 Check(operationsApi.GetCustomAttribute<ApiControllerAttribute>() is not null &&
       operationsApi.GetCustomAttribute<AuthorizeAttribute>() is not null &&
