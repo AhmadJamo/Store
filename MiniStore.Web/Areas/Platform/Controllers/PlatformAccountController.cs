@@ -1,24 +1,16 @@
-using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
-using MiniStore.Domain.Interfaces;
 using MiniStore.Web.Authorization;
-using MiniStore.Application.Services;
-using MiniStore.Domain.Entities;
+using MiniStore.Web.Services;
 
 namespace MiniStore.Web.Areas.Platform.Controllers;
 
 [Area("Platform")]
 [Route("platform/account")]
 public class PlatformAccountController(
-    UserManager<IdentityUser> users,
-    SignInManager<IdentityUser> signInManager,
-    ISaasRepository saas,
-    ISecurityAuditEventWriter securityAudit,
-    IAuditRequestContext auditRequest,
+    PlatformAccountAuthenticationService authentication,
     IStringLocalizer<SharedResource> localizer) : Controller
 {
     [AllowAnonymous, HttpGet("login")]
@@ -37,37 +29,13 @@ public class PlatformAccountController(
     [AllowAnonymous, HttpPost("login"), ValidateAntiForgeryToken, Microsoft.AspNetCore.RateLimiting.EnableRateLimiting("login")]
     public async Task<IActionResult> Login(string username, string password, string? returnUrl = null)
     {
-        var user = await users.FindByNameAsync(username);
-        var op = user is null ? null : await saas.GetOperatorAsync(user.Id);
-        var result = user is null || op is null
-            ? Microsoft.AspNetCore.Identity.SignInResult.Failed
-            : await signInManager.CheckPasswordSignInAsync(user, password, lockoutOnFailure: true);
+        var result = await authentication.AuthenticateAsync(username, password, HttpContext.RequestAborted);
         if (!result.Succeeded)
         {
-            await securityAudit.RecordAsync(new IndependentAuditEventWriteRequest
-            {
-                Scope = AuditEventScope.Platform,
-                Category = AuditEventCategory.Security,
-                Severity = result.IsLockedOut ? AuditEventSeverity.Critical : AuditEventSeverity.Warning,
-                Outcome = AuditEventOutcome.Denied,
-                EventType = SemanticAuditEventTypes.PlatformLoginFailed,
-                Action = "Login",
-                ActorType = AuditActorType.External,
-                ActorId = "anonymous",
-                SourceChannel = AuditSourceChannel.Platform,
-                CorrelationId = auditRequest.CorrelationId,
-                ResourceType = "PlatformSession",
-                ResourceId = "login",
-                ReasonCode = result.IsLockedOut ? "AccountLocked" : "InvalidCredentials",
-                RequestPathTemplate = auditRequest.RequestPathTemplate,
-                SourceIpMasked = auditRequest.SourceIpMasked,
-                UserAgentHash = auditRequest.UserAgentHash
-            }, CancellationToken.None);
             ModelState.AddModelError("", localizer["Invalid platform credentials."]);
             return View();
         }
-        var identity = new ClaimsIdentity([new Claim(ClaimTypes.NameIdentifier, user!.Id), new Claim(ClaimTypes.Name, user.UserName!), new Claim(ClaimTypes.Role, op!.Role.ToString())], PlatformAuthentication.Scheme);
-        await HttpContext.SignInAsync(PlatformAuthentication.Scheme, new ClaimsPrincipal(identity));
+        await HttpContext.SignInAsync(PlatformAuthentication.Scheme, result.Principal!);
         return LocalRedirect(Url.IsLocalUrl(returnUrl) ? returnUrl! : "/platform");
     }
 

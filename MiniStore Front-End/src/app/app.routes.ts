@@ -3,6 +3,20 @@ import { anonymousOnlyGuard, authGuard } from './core/api/auth.guard';
 
 export const routes: Routes = [
   {
+    path: 'platform-login',
+    loadComponent: () =>
+      import('./features/platform/platform-login-page').then(
+        (module) => module.PlatformLoginPageComponent,
+      ),
+  },
+  {
+    path: 'platform-control',
+    loadComponent: () =>
+      import('./features/platform/platform-overview-page').then(
+        (module) => module.PlatformOverviewPageComponent,
+      ),
+  },
+  {
     path: 'welcome',
     data: { view: 'welcome' },
     loadComponent: () =>

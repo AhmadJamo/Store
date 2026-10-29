@@ -86,7 +86,8 @@ The ERP SaaS Foundation Blueprint is imported as a non-authoritative planning re
 - [x] MOD-026B migrate Journal Entry details with named accounts, branch/warehouse dimensions and immutable source evidence. Completed 2026-10-29.
 - [x] MOD-027A migrate tenant subscription summary and checkout with server-owned plan, promotion and payment-state validation. Completed 2026-10-29.
 - [x] MOD-027B migrate the public landing and pricing surfaces with server-authored bilingual plan cards and registration destinations. Completed 2026-10-29.
-- [ ] MOD-027C migrate Platform sign-in/session and the read-only control-center overview with its separate operator boundary.
+- [x] MOD-027C migrate Platform sign-in/session and the read-only control-center overview with its separate operator boundary. Completed 2026-10-30.
+- [ ] MOD-027D migrate Platform companies, plans, promotions and pending-payment operations with role-specific policies.
 - [ ] MOD-023 through MOD-028 migrate purchasing, sales, POS, accounting, tenant/public,
   platform and shared MVC workflows to Angular, including every operation, permission, localization, file/PDF and edge state.
 - [ ] MOD-029 prove full-system parity through dual-run reconciliation, performance/security/accessibility evidence and cutover/rollback rehearsals.

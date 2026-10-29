@@ -1578,3 +1578,7 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   again. Web Release passed with zero warnings/errors, SecurityRegression passed 1305 checks, Angular passed 205/205 tests across
   100 files, 112 templates passed accessibility, external SCSS passed and bundles measured 318,986/358,400 initial and
   81,743/81,920 largest lazy bytes. MVC remains default. Advanced to `MOD-027C` Platform sign-in/session and read-only shell.
+- 2026-10-30: Completed `MOD-027C` Platform Sign-in and Session. Shared MVC/API lockout and denied-login auditing through one
+  authentication service; added isolated Platform-cookie login/session/overview/logout APIs and bilingual Angular screens.
+  Release passed cleanly, SecurityRegression passed 1307 checks, Angular passed 207/207 across 101 files, 114 templates passed
+  accessibility and bundles measured 323,961/358,400 initial and 81,744/81,920 largest lazy bytes. Advanced to `MOD-027D`.

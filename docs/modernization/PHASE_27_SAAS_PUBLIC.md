@@ -1,6 +1,6 @@
 # Phase 27 — SaaS and public Angular migration
 
-> Status: IN PROGRESS — `MOD-027A..B` COMPLETE on 2026-10-29
+> Status: IN PROGRESS — `MOD-027A..C` COMPLETE on 2026-10-30
 >
 > Presentation default: MVC until a separate cutover approval.
 
@@ -46,4 +46,19 @@ pricing, promotion redemption, payment confirmation and Platform authorization r
 
 ## Next slice
 
-`MOD-027C` establishes Platform sign-in/session and a read-only control-center shell before migrating privileged mutations.
+## `MOD-027C` delivered — Platform sign-in and session
+
+- Extracted the existing lockout and denied-login audit behavior into one shared Platform authentication service used by MVC and API.
+- Added isolated Platform-cookie login, session, overview and logout endpoints; login remains rate-limited and both mutations retain antiforgery.
+- Added bilingual Angular sign-in and read-only overview/plan evidence outside the tenant shell. Tenant cookies never satisfy Platform authorization.
+- Platform cookie redirects now return API-native 401/403 responses, while MVC redirects remain unchanged.
+
+## MOD-027C evidence
+
+- Web Release: zero warnings/errors; SecurityRegression: 1307 checks.
+- Angular: 207/207 tests across 101 files; 114 templates passed accessibility; external SCSS passed.
+- Bundles: 323,961/358,400 initial bytes and 81,744/81,920 largest lazy bytes.
+
+## Next slice
+
+`MOD-027D` migrates privileged Platform companies, plans, promotions and pending-payment operations.

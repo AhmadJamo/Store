@@ -4229,6 +4229,22 @@ Check(publicPlansApi.GetCustomAttribute<ApiControllerAttribute>() is not null &&
       publicPlansApi.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly)
           .All(method => method.GetCustomAttribute<HttpGetAttribute>() is not null),
     "Angular public plan API must remain anonymous, versioned and read-only");
+var platformSessionApi = typeof(PlatformSessionApiController);
+Check(platformSessionApi.GetCustomAttribute<ApiControllerAttribute>() is not null &&
+      platformSessionApi.GetCustomAttribute<RouteAttribute>()?.Template == "api/v1/platform" &&
+      platformSessionApi.GetMethod(nameof(PlatformSessionApiController.Login))!
+          .GetCustomAttribute<AllowAnonymousAttribute>() is not null &&
+      platformSessionApi.GetMethod(nameof(PlatformSessionApiController.Login))!
+          .GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null &&
+      platformSessionApi.GetMethod(nameof(PlatformSessionApiController.Login))!
+          .GetCustomAttribute<EnableRateLimitingAttribute>()?.PolicyName == "login",
+    "Angular platform login must remain isolated, rate limited and antiforgery protected");
+Check(new[] { nameof(PlatformSessionApiController.Session), nameof(PlatformSessionApiController.Overview), nameof(PlatformSessionApiController.Logout) }
+      .All(name => platformSessionApi.GetMethod(name)!
+          .GetCustomAttribute<AuthorizeAttribute>()?.AuthenticationSchemes == PlatformAuthentication.Scheme) &&
+      platformSessionApi.GetMethod(nameof(PlatformSessionApiController.Logout))!
+          .GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null,
+    "Angular platform session must require the separate Platform cookie and protect logout");
 var operationsApi = typeof(OperationsCenterApiController);
 Check(operationsApi.GetCustomAttribute<ApiControllerAttribute>() is not null &&
       operationsApi.GetCustomAttribute<AuthorizeAttribute>() is not null &&

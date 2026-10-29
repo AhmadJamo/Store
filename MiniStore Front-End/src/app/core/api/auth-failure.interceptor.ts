@@ -8,7 +8,10 @@ export const authFailureInterceptor: HttpInterceptorFn = (request, next) => {
   const session = inject(ApiSessionService);
   const router = inject(Router);
   return next(request).pipe(catchError(error => {
-    const anonymousBootstrap = request.url === '/api/v1/auth/login' || request.url === '/api/v1/session';
+    const anonymousBootstrap =
+      request.url === '/api/v1/auth/login' ||
+      request.url === '/api/v1/session' ||
+      request.url.startsWith('/api/v1/platform');
     if (error instanceof HttpErrorResponse && error.status === 401 && !anonymousBootstrap) {
       session.clear();
       const returnUrl = router.url.startsWith('/') && router.url !== '/login' ? router.url : undefined;

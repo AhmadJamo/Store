@@ -51,4 +51,19 @@ describe('authFailureInterceptor', () => {
     expect(session.clear).not.toHaveBeenCalled();
     expect(router.navigate).not.toHaveBeenCalled();
   });
+
+  it('leaves platform authentication failures to the isolated platform flow', () => {
+    const session = { clear: vi.fn() };
+    const router = { url: '/platform-login', navigate: vi.fn() };
+    TestBed.configureTestingModule({ providers: [
+      { provide: ApiSessionService, useValue: session },
+      { provide: Router, useValue: router },
+    ] });
+    TestBed.runInInjectionContext(() => authFailureInterceptor(
+      new HttpRequest('GET', '/api/v1/platform/session'),
+      () => throwError(() => new HttpErrorResponse({ status: 401 })),
+    ).subscribe({ error: () => undefined }));
+    expect(session.clear).not.toHaveBeenCalled();
+    expect(router.navigate).not.toHaveBeenCalled();
+  });
 });

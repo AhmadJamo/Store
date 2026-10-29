@@ -30,6 +30,10 @@ public static class SecurityExtensions
             options.SlidingExpiration = false;
             options.Cookie.HttpOnly = true;
             options.Cookie.SameSite = SameSiteMode.Strict;
+            options.Events.OnRedirectToLogin = context =>
+                WriteApiStatusOrRedirectAsync(context, StatusCodes.Status401Unauthorized);
+            options.Events.OnRedirectToAccessDenied = context =>
+                WriteApiStatusOrRedirectAsync(context, StatusCodes.Status403Forbidden);
         });
         services.ConfigureApplicationCookie(options =>
         {

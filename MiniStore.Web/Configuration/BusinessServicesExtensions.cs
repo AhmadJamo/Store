@@ -45,6 +45,7 @@ public static class BusinessServicesExtensions
         services.AddScoped<IPermissionService, PermissionService>();
         services.AddScoped<InternalApiSessionService>();
         services.AddScoped<TenantAccountAuthenticationService>();
+        services.AddScoped<PlatformAccountAuthenticationService>();
         services.AddScoped<TenantCompanyRegistrationService>();
         services.AddScoped<ITenantUserAdministrationService, TenantUserAdministrationService>();
     }
