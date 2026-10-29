@@ -37,6 +37,12 @@ rowversion, configured control findings, ordered role approvals and posted-deliv
 workspace reports reservation, delivery and invoice progress but does not mutate those later workflows. Converting or confirming a
 Sales Order does not reserve/reduce stock or create accounting; MVC remains default.
 
+`MOD-024D` exposes the confirmed Sales Order reservation page plus Reserve and Release through Angular. Operators choose warehouses
+and reservable locations by name, review OnHand/Reserved/Available evidence and request per-line remaining stock quantities using the
+existing block-all or reserve-available shortage policy. The server rechecks order rowversion, cumulative committed quantity,
+warehouse/location eligibility and locked balance availability. Reserve and Release permissions remain independent and both posts
+retain antiforgery. A reservation changes Reserved/Available only, never OnHand or accounting; MVC remains default.
+
 Sales quantity, threshold, price-rule and document-line decimal ranges parse limits and submitted values with invariant culture. Arabic UI requests no longer throw before controller execution when validating dot-based HTML decimals.
 
 Wholesale Create and Retail POS call `SalesController.Create` then `SaleService.CreateAsync`. Product choices are limited to active products enabled for the corresponding channel, and the service revalidates those flags against crafted requests. It validates discount rules, generates the tenant document number, chooses the server-side price, applies the optional invoice tax after discounts, decreases stock at the current warehouse average and writes the Sale movement in one UnitOfWork transaction. Sale freezes the selected tax percentage, inclusive policy, output account and amount; SaleItem freezes UnitCost and CostOfGoodsSold. The number, sale, valuation and movement commit or roll back together; ProductStock rowversion detects concurrent writes.

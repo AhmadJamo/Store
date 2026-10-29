@@ -1,6 +1,6 @@
 # Phase 24 — Sales Angular migration
 
-> Status: IN PROGRESS — `MOD-024A..C` COMPLETE on 2026-10-29
+> Status: IN PROGRESS — `MOD-024A..D` COMPLETE on 2026-10-29
 >
 > Presentation default: MVC until a separate cutover approval.
 
@@ -39,13 +39,22 @@ Application/Domain and the server.
   numbering, control evaluation, approval order, confirmation and cancellation eligibility. Confirmation creates no reservation,
   stock movement or accounting entry.
 
+## `MOD-024D` delivered — sales order inventory reservations
+
+- Added authenticated reservation-page, Reserve and Release APIs with independent permissions and antiforgery.
+- Added a bilingual RTL-safe Angular reservation workspace with named warehouses/locations, shortage policy, per-line remaining
+  quantities, stock-position evidence and active/history release controls.
+- `SalesOrderReservationService` remains authoritative for confirmed-order eligibility, warehouse/location eligibility, rowversion,
+  cumulative committed quantities, balance locking and shortage handling. Reservations change Reserved/Available only; they do not
+  reduce OnHand or create accounting entries.
+
 ## Evidence
 
-- Web Release: zero warnings/errors; SecurityRegression: 1290 checks.
-- Angular: 189/189 tests across 85 files; 97 templates passed accessibility; external SCSS passed.
-- Bundles: 313,941/358,400 initial bytes and 81,743/81,920 largest lazy bytes.
+- Web Release: zero warnings/errors; SecurityRegression: 1293 checks.
+- Angular: 190/190 tests across 86 files; 98 templates passed accessibility; external SCSS passed.
+- Bundles: 314,140/358,400 initial bytes and 81,743/81,920 largest lazy bytes.
 
 ## Next slice
 
-`MOD-024D` migrates Sales Order reservation page, reserve and release operations while keeping warehouse/location eligibility,
-remaining quantities, tracking, concurrency and stock authority server-side.
+`MOD-024E` migrates Sales Delivery list/details/create, posting and cancellation while keeping reservations, tracking, valuation,
+physical stock movement and COGS posting authority server-side.

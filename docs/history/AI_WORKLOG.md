@@ -1466,3 +1466,10 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   SecurityRegression passed 1290 checks, Angular passed 189/189 tests across 85 files, 97 templates passed accessibility, external
   SCSS passed and bundles measured 313,941/358,400 initial and 81,743/81,920 largest lazy bytes. MVC remains default. Advanced to
   `MOD-024D` Sales Order Reservations.
+- 2026-10-29: Completed `MOD-024D` Sales Order Reservations. Added authenticated reservation-page, Reserve and Release APIs plus a
+  bilingual RTL-safe Angular workspace for named warehouses/locations, shortage policy, per-line remaining quantities, stock-position
+  evidence and reservation history. `SalesOrderReservationService` remains authoritative for confirmed-order eligibility,
+  rowversion, cumulative committed quantities, locked balance availability and release ownership; reservations change Reserved only,
+  not OnHand or accounting. Web Release passed with zero warnings/errors, SecurityRegression passed 1293 checks, Angular passed
+  190/190 tests across 86 files, 98 templates passed accessibility, external SCSS passed and bundles measured 314,140/358,400 initial
+  and 81,743/81,920 largest lazy bytes. MVC remains default. Advanced to `MOD-024E` Sales Deliveries.
