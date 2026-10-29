@@ -166,8 +166,8 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | StockTransfers | Details.cshtml | Inventoried | — | `MiniStore.Web/Views/StockTransfers/Details.cshtml` |
 | StockTransfers | Edit.cshtml | Inventoried | — | `MiniStore.Web/Views/StockTransfers/Edit.cshtml` |
 | StockTransfers | Index.cshtml | Inventoried | — | `MiniStore.Web/Views/StockTransfers/Index.cshtml` |
-| Subscription | Checkout.cshtml | Inventoried | — | `MiniStore.Web/Views/Subscription/Checkout.cshtml` |
-| Subscription | Index.cshtml | Inventoried | — | `MiniStore.Web/Views/Subscription/Index.cshtml` |
+| Subscription | Checkout.cshtml | Angular Pilot | /subscription | `MiniStore.Web/Views/Subscription/Checkout.cshtml` |
+| Subscription | Index.cshtml | Angular Pilot | /subscription | `MiniStore.Web/Views/Subscription/Index.cshtml` |
 | SupplierCommunications | Details.cshtml | Inventoried | — | `MiniStore.Web/Views/SupplierCommunications/Details.cshtml` |
 | SupplierCreditNotes | Create.cshtml | Inventoried | — | `MiniStore.Web/Views/SupplierCreditNotes/Create.cshtml` |
 | SupplierCreditNotes | Details.cshtml | Inventoried | — | `MiniStore.Web/Views/SupplierCreditNotes/Details.cshtml` |
@@ -486,7 +486,7 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | StockTransfers | Reject | POST | Inventoried | — | `MiniStore.Web/Controllers/Inventory/StockTransfersController.cs` |
 | StockTransfers | ReturnToDraft | POST | Inventoried | — | `MiniStore.Web/Controllers/Inventory/StockTransfersController.cs` |
 | StockTransfers | Submit | POST | Inventoried | — | `MiniStore.Web/Controllers/Inventory/StockTransfersController.cs` |
-| Subscription | Checkout | GET, POST | Inventoried | — | `MiniStore.Web/Controllers/Saas/SubscriptionController.cs` |
+| Subscription | Checkout | GET, POST | Angular Pilot | /subscription | `MiniStore.Web/Controllers/Saas/SubscriptionController.cs` |
 | SupplierCreditNotes | Create | GET | Inventoried | — | `MiniStore.Web/Controllers/Purchases/SupplierCreditNotesController.cs` |
 | SupplierCreditNotes | Create | POST | Inventoried | — | `MiniStore.Web/Controllers/Purchases/SupplierCreditNotesController.cs` |
 | SupplierCreditNotes | Details | GET | Inventoried | — | `MiniStore.Web/Controllers/Purchases/SupplierCreditNotesController.cs` |

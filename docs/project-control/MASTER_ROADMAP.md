@@ -32,7 +32,7 @@
 - `MOD-024` — COMPLETE 2026-10-29: اكتمل `MOD-024A..L` لكل واجهات المبيعات الاحترافية والذمم الحالية، مع بقاء MVC افتراضياً.
 - `MOD-025` — COMPLETE 2026-10-29: اكتمل `MOD-025A..C` للبيع الفوري بالجملة وPOS والمرتجع؛ لا توجد شاشة إغلاق/طباعة مستقلة في المصدر.
 - `MOD-026` — COMPLETE 2026-10-29: اكتمل `MOD-026A..B` لشجرة الحسابات وتفاصيل القيود؛ بقية إعدادات المحاسبة والفترات كانت مرحلة سابقاً.
-- `MOD-027` — IN PROGRESS 2026-10-29: يبدأ `MOD-027A` بملخص الاشتراك وcheckout للشركة.
+- `MOD-027` — IN PROGRESS 2026-10-29: اكتمل `MOD-027A` لملخص الاشتراك وcheckout؛ التالي `MOD-027B` للواجهة العامة والأسعار.
 - `MOD-023..028` — APPROVED PROGRAM: نقل المشتريات والمبيعات وPOS والمحاسبة وSaaS وكل الشاشات المشتركة والمتبقية إلى Angular على موجات، مع functional parity وإعادة تصميم كاملة وفق Angular design system لا نسخ Razor.
 - `MOD-029` — GATED: قبول شامل وdual-run reconciliation وتجربة cutover/rollback.
 - `MOD-030` — EXPLICIT FINAL GATE: Angular-only وإزالة MVC presentation تدريجيًا بعد صفر فجوات.

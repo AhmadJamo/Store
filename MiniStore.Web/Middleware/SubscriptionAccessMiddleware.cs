@@ -9,7 +9,9 @@ public class SubscriptionAccessMiddleware(RequestDelegate next)
     public async Task InvokeAsync(HttpContext context, EntitlementService entitlements)
     {
         var path = context.Request.Path;
-        var bypass = path.StartsWithSegments("/subscription") || path.StartsWithSegments("/Account") ||
+        var bypass = path.StartsWithSegments("/subscription") || path.StartsWithSegments("/app/subscription") ||
+            path.StartsWithSegments("/api/v1/subscription") || path.StartsWithSegments("/api/v1/session") ||
+            path.StartsWithSegments("/Account") ||
             path.StartsWithSegments("/platform") || path.StartsWithSegments("/pricing") || path == "/" ||
             path.StartsWithSegments("/supplier-portal") || path.StartsWithSegments("/api/supplier") ||
             path.StartsWithSegments("/css") || path.StartsWithSegments("/js") || path.StartsWithSegments("/lib");

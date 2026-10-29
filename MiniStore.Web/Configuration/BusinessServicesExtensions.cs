@@ -38,6 +38,7 @@ public static class BusinessServicesExtensions
         services.AddScoped<ISaasRepository, SaasRepository>();
         services.AddScoped<EntitlementService>();
         services.AddScoped<PlatformSaasService>();
+        services.AddScoped<TenantSubscriptionPageService>();
         services.AddScoped<ISaasOnboardingService, SaasOnboardingService>();
         services.AddScoped<ICompanyOnboardingService, CompanyOnboardingService>();
         services.AddScoped<IBillingCheckoutService, BillingCheckoutService>();

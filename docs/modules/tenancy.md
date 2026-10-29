@@ -1,7 +1,7 @@
 # Tenancy and SaaS foundation
 > Status: PARTIALLY IMPLEMENTED  
 > Source of truth: tenancy entities, AppDbContext and tenant session middleware  
-> Last reviewed: 2026-10-27
+> Last reviewed: 2026-10-29
 
 ## Implemented boundary
 MiniStore uses a shared SQL Server database and shared schema. `Tenant` represents a company and `TenantMembership` links a global Identity user to one or more companies. Login selects the requested active company membership when a company slug is supplied; otherwise it selects the owner's membership first and then the lowest active tenant ID. MVC and Angular use the same authentication service, and the signed Identity cookie carries the selected tenant ID.
@@ -35,3 +35,12 @@ Registration creates a Pending onboarding record and keeps the owner signed in f
 Angular now covers the same complete journey. The anonymous `/api/v1/registration` GET exposes public plan DTOs, while its CSRF-protected and rate-limited POST calls the same provisioning service as MVC and issues the same HttpOnly Identity cookie with the validated tenant claim. The protected `/api/v1/company-onboarding` contract requires the tenant `Administration.Access` boundary and exposes GET plus explicit Complete and Skip mutations through `ICompanyOnboardingService`. Passwords are cleared after rejection and are never stored; pending login returns to `/onboarding`, and resolved setup returns to the Angular workspace. MVC remains the default rollback presentation.
 
 The Angular login flow preserves that contract through the shared server service. The company code is never trusted as a tenant selector on later requests: the resulting Identity cookie carries the validated tenant claim, and normal tenant middleware revalidates membership and active company status. Angular stores neither that code as session authority nor any credential/token; its session signal is reconstructed from `/api/v1/session`.
+
+## Angular subscription and checkout (2026-10-29)
+
+`/api/v1/subscription` returns an Application-authored current-subscription summary and the public plan cards for the active
+company. Its antiforgery-protected checkout command accepts only plan ID, billing cycle and an optional promotion code;
+`BillingCheckoutService` reloads the public plan and calculates price, discount, currency, expiry and pending state on the server.
+The Angular `/subscription` pilot presents the bilingual lifecycle evidence and server quote without storing payment authority.
+Entitlement middleware bypasses only the session bootstrap, subscription API and subscription page needed for recovery; other ERP
+APIs remain blocked when the subscription is unusable. Manual Platform confirmation remains authoritative until a provider exists.

@@ -4682,4 +4682,8 @@
   <data name="An active company is required." xml:space="preserve"><value>يلزم وجود شركة نشطة.</value></data>
   <data name="A signed-in user is required." xml:space="preserve"><value>يلزم تسجيل دخول مستخدم.</value></data>
   <data name="Route and payload identifiers do not match." xml:space="preserve"><value>معرّف المسار لا يطابق معرّف البيانات المرسلة.</value></data>
+  <data name="Invalid billing cycle." xml:space="preserve"><value>دورة الفوترة غير صالحة.</value></data>
+  <data name="Plan is unavailable." xml:space="preserve"><value>الخطة غير متاحة.</value></data>
+  <data name="Promotion code is invalid, expired or already used by this company." xml:space="preserve"><value>رمز العرض غير صالح أو منتهي أو مستخدم مسبقًا لهذه الشركة.</value></data>
+  <data name="Subscription plan was not found." xml:space="preserve"><value>لم يتم العثور على خطة الاشتراك.</value></data>
 </root>

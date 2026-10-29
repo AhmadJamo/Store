@@ -1564,3 +1564,11 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   with zero warnings/errors, SecurityRegression passed 1302 checks, Angular passed 203/203 tests across 98 files, 110 templates
   passed accessibility, external SCSS passed and bundles measured 318,598/358,400 initial and 81,743/81,920 largest lazy bytes.
   MVC remains default. Completed `MOD-026` and advanced to `MOD-027A` tenant subscription/checkout.
+- 2026-10-29: Completed `MOD-027A` Tenant Subscription and Checkout. Added an Application-authored current-subscription summary,
+  an authenticated read API and antiforgery-protected checkout command, plus a bilingual RTL-safe Angular workspace for lifecycle
+  evidence, public plan selection, promotion entry and the resulting 30-minute quote. The client submits no price, discount,
+  currency, expiry or payment state; `BillingCheckoutService` reloads and validates all commercial inputs and persists Pending.
+  Entitlement recovery now permits only session bootstrap, subscription API and the subscription Angular route while continuing to
+  block the rest of the ERP. Web Release passed with zero warnings/errors, SecurityRegression passed 1304 checks, Angular passed
+  204/204 tests across 99 files, 111 templates passed accessibility, external SCSS passed and bundles measured
+  318,742/358,400 initial and 81,743/81,920 largest lazy bytes. MVC remains default. Advanced to `MOD-027B` public landing/pricing.

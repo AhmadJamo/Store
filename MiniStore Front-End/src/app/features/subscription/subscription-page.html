@@ -1,0 +1,113 @@
+<main class="subscription-page">
+  <app-page-header
+    [eyebrow]="i18n.text('area')"
+    [title]="i18n.text('title')"
+    [description]="i18n.text('description')"
+  />
+
+  @if (problem(); as issue) {
+    <app-api-recovery [problem]="issue" (retry)="load()" />
+  }
+
+  @if (loading()) {
+    <app-feedback-state kind="loading" [title]="i18n.text('title')" />
+  } @else if (page(); as data) {
+    <section class="ui-card current" aria-labelledby="current-subscription-title">
+      <h2 id="current-subscription-title">{{ i18n.text('current') }}</h2>
+      @if (data.currentSubscription; as current) {
+        <dl class="facts">
+          <div>
+            <dt>{{ i18n.text('plan') }}</dt>
+            <dd>{{ i18n.isArabic() ? current.planNameArabic : current.planNameEnglish }}</dd>
+          </div>
+          <div>
+            <dt>{{ i18n.text('status') }}</dt>
+            <dd>{{ i18n.status(current.status) }}</dd>
+          </div>
+          <div>
+            <dt>{{ i18n.text('cycle') }}</dt>
+            <dd>{{ i18n.cycle(current.billingCycle) }}</dd>
+          </div>
+          <div>
+            <dt>{{ i18n.text('period') }}</dt>
+            <dd>
+              {{ current.currentPeriodStart | date: 'mediumDate' }} —
+              {{ current.currentPeriodEnd | date: 'mediumDate' }}
+            </dd>
+          </div>
+          <div>
+            <dt>{{ i18n.text('available') }}</dt>
+            <dd [class.unavailable]="!current.allowsUse">
+              {{ i18n.text(current.allowsUse ? 'availableYes' : 'availableNo') }}
+            </dd>
+          </div>
+        </dl>
+      } @else {
+        <p>{{ i18n.text('noCurrent') }}</p>
+      }
+    </section>
+
+    @if (quote(); as result) {
+      <section class="ui-card quote" aria-labelledby="checkout-quote-title" aria-live="polite">
+        <h2 id="checkout-quote-title">{{ i18n.text('quote') }}</h2>
+        <p>{{ i18n.text('quoteDescription') }}</p>
+        <dl class="facts">
+          <div><dt>{{ i18n.text('plan') }}</dt><dd>{{ quotePlanName(result) }}</dd></div>
+          <div><dt>{{ i18n.text('cycle') }}</dt><dd>{{ i18n.cycle(result.cycle) }}</dd></div>
+          <div><dt>{{ i18n.text('subtotal') }}</dt><dd>{{ result.subtotal | number: '1.2-2' }} {{ result.currency }}</dd></div>
+          <div><dt>{{ i18n.text('discount') }}</dt><dd>-{{ result.discountAmount | number: '1.2-2' }} {{ result.currency }}</dd></div>
+          <div class="total"><dt>{{ i18n.text('total') }}</dt><dd>{{ result.total | number: '1.2-2' }} {{ result.currency }}</dd></div>
+          <div><dt>{{ i18n.text('expires') }}</dt><dd>{{ result.expiresAt | date: 'medium' }}</dd></div>
+        </dl>
+        <p class="manual">{{ i18n.text('manual') }}</p>
+        <p class="reference"><strong>{{ i18n.text('reference') }}:</strong> <code>{{ result.sessionId }}</code></p>
+      </section>
+    }
+
+    <section aria-labelledby="available-plans-title">
+      <h2 id="available-plans-title">{{ i18n.text('plans') }}</h2>
+      @if (!data.plans.length) {
+        <app-feedback-state kind="empty" [title]="i18n.text('empty')" />
+      } @else {
+        <div class="plans">
+          @for (plan of data.plans; track plan.id) {
+            <article class="ui-card plan">
+              <h3>{{ planName(plan) }}</h3>
+              <p>{{ planDescription(plan) }}</p>
+              <div class="prices">
+                <span><strong>{{ plan.monthlyPrice | number: '1.2-2' }}</strong> {{ plan.currency }} / {{ i18n.text('monthly') }}</span>
+                <span><strong>{{ plan.annualPrice | number: '1.2-2' }}</strong> {{ plan.currency }} / {{ i18n.text('annual') }}</span>
+              </div>
+              <button class="ui-button primary" type="button" (click)="select(plan)">
+                {{ i18n.text('choose') }}
+              </button>
+            </article>
+          }
+        </div>
+      }
+    </section>
+
+    @if (selected(); as plan) {
+      <form class="ui-card checkout" [formGroup]="form" (ngSubmit)="checkout()">
+        <h2>{{ planName(plan) }}</h2>
+        <label class="ui-field">
+          <span>{{ i18n.text('cycle') }}</span>
+          <select formControlName="cycle">
+            <option [ngValue]="1">{{ i18n.text('monthly') }} — {{ plan.monthlyPrice | number: '1.2-2' }} {{ plan.currency }}</option>
+            <option [ngValue]="2">{{ i18n.text('annual') }} — {{ plan.annualPrice | number: '1.2-2' }} {{ plan.currency }}</option>
+          </select>
+        </label>
+        <label class="ui-field">
+          <span>{{ i18n.text('promo') }} ({{ i18n.text('promoHint') }})</span>
+          <input formControlName="promotionCode" maxlength="40" autocomplete="off" />
+        </label>
+        <div class="actions">
+          <button class="ui-button primary" [disabled]="saving() || form.invalid">
+            {{ i18n.text('continue') }}
+          </button>
+          <button class="ui-button" type="button" (click)="cancel()">{{ i18n.text('cancel') }}</button>
+        </div>
+      </form>
+    }
+  }
+</main>

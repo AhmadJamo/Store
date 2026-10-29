@@ -4214,6 +4214,14 @@ Check(customerPaymentsApi.GetCustomAttribute<AuthorizeAttribute>() is not null&&
 Check(new[]{nameof(CustomerPaymentsApiController.Create),nameof(CustomerPaymentsApiController.Reverse)}.All(name=>customerPaymentsApi.GetMethod(name)!.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null),"Every Angular customer payment mutation must retain antiforgery");
 Check(customerPaymentsApi.GetMethod(nameof(CustomerPaymentsApiController.Create))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:CustomerPayments.Create"&&customerPaymentsApi.GetMethod(nameof(CustomerPaymentsApiController.Reverse))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:CustomerPayments.Reverse","Angular customer payment posting and reversal must preserve independent permissions");
 Check(typeof(CreateGoodsReceiptReturnDto).GetProperty(nameof(CreateGoodsReceiptReturnDto.Reason))!.GetCustomAttribute<RequiredAttribute>() is not null&&typeof(CreateGoodsReceiptReturnDto).GetProperty(nameof(CreateGoodsReceiptReturnDto.Lines))!.GetCustomAttribute<MinLengthAttribute>()?.Length==1&&typeof(CreateGoodsReceiptReturnLineDto).GetProperty(nameof(CreateGoodsReceiptReturnLineDto.ReturnQuantity))!.GetCustomAttribute<RangeAttribute>() is not null&&typeof(CreateGoodsReceiptReturnLineDto).GetProperty(nameof(CreateGoodsReceiptReturnLineDto.TrackingAllocations))!.GetCustomAttribute<StringLengthAttribute>()?.MaximumLength==2000,"Receipt-return commands must validate reason, lines, quantities and bounded tracking evidence");
+var subscriptionApi = typeof(SubscriptionApiController);
+Check(subscriptionApi.GetCustomAttribute<ApiControllerAttribute>() is not null &&
+      subscriptionApi.GetCustomAttribute<AuthorizeAttribute>() is not null &&
+      subscriptionApi.GetCustomAttribute<RouteAttribute>()?.Template == "api/v1/subscription",
+    "Angular tenant subscription API must remain authenticated and explicitly versioned");
+Check(subscriptionApi.GetMethod(nameof(SubscriptionApiController.CreateCheckout))!
+          .GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null,
+    "Angular subscription checkout creation must retain antiforgery validation");
 var operationsApi = typeof(OperationsCenterApiController);
 Check(operationsApi.GetCustomAttribute<ApiControllerAttribute>() is not null &&
       operationsApi.GetCustomAttribute<AuthorizeAttribute>() is not null &&

@@ -1179,6 +1179,14 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'subscription',
+        canDeactivate: [(component) => component.canDeactivate()],
+        loadComponent: () =>
+          import('./features/subscription/subscription-page').then(
+            (module) => module.SubscriptionPageComponent,
+          ),
+      },
+      {
         path: 'products/recipes/:productId',
         canDeactivate: [(component) => component.canDeactivate()],
         loadComponent: () =>
