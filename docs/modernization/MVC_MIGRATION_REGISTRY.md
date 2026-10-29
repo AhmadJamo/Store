@@ -122,9 +122,9 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | Roles | Create.cshtml | Inventoried | — | `MiniStore.Web/Views/Roles/Create.cshtml` |
 | Roles | Edit.cshtml | Inventoried | — | `MiniStore.Web/Views/Roles/Edit.cshtml` |
 | Roles | Index.cshtml | Inventoried | — | `MiniStore.Web/Views/Roles/Index.cshtml` |
-| Sales | Create.cshtml | Inventoried | — | `MiniStore.Web/Views/Sales/Create.cshtml` |
-| Sales | Details.cshtml | Inventoried | — | `MiniStore.Web/Views/Sales/Details.cshtml` |
-| Sales | Index.cshtml | Inventoried | — | `MiniStore.Web/Views/Sales/Index.cshtml` |
+| Sales | Create.cshtml | Angular Pilot | /sales/legacy/new | `MiniStore.Web/Views/Sales/Create.cshtml` |
+| Sales | Details.cshtml | Angular Pilot | /sales/legacy/{id} | `MiniStore.Web/Views/Sales/Details.cshtml` |
+| Sales | Index.cshtml | Angular Pilot | /sales/legacy | `MiniStore.Web/Views/Sales/Index.cshtml` |
 | Sales | Pos.cshtml | Inventoried | — | `MiniStore.Web/Views/Sales/Pos.cshtml` |
 | SalesApprovalRules | Index.cshtml | Inventoried | — | `MiniStore.Web/Views/SalesApprovalRules/Index.cshtml` |
 | SalesDeliveries | Create.cshtml | Inventoried | — | `MiniStore.Web/Views/SalesDeliveries/Create.cshtml` |
@@ -380,12 +380,12 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | Roles | Edit | GET | Inventoried | — | `MiniStore.Web/Controllers/Security/RolesController.cs` |
 | Roles | Edit | POST | Inventoried | — | `MiniStore.Web/Controllers/Security/RolesController.cs` |
 | Roles | Index | GET | Inventoried | — | `MiniStore.Web/Controllers/Security/RolesController.cs` |
-| Sales | Create | ANY | Inventoried | — | `MiniStore.Web/Controllers/Sales/SalesController.cs` |
-| Sales | Create | POST | Inventoried | — | `MiniStore.Web/Controllers/Sales/SalesController.cs` |
-| Sales | Details | ANY | Inventoried | — | `MiniStore.Web/Controllers/Sales/SalesController.cs` |
-| Sales | Index | ANY | Inventoried | — | `MiniStore.Web/Controllers/Sales/SalesController.cs` |
+| Sales | Create | ANY | Angular Pilot | /sales/legacy/new | `MiniStore.Web/Controllers/Sales/SalesController.cs` |
+| Sales | Create | POST | Angular Pilot | /sales/legacy/new | `MiniStore.Web/Controllers/Sales/SalesController.cs` |
+| Sales | Details | ANY | Angular Pilot | /sales/legacy/{id} | `MiniStore.Web/Controllers/Sales/SalesController.cs` |
+| Sales | Index | ANY | Angular Pilot | /sales/legacy | `MiniStore.Web/Controllers/Sales/SalesController.cs` |
 | Sales | Pos | GET | Inventoried | — | `MiniStore.Web/Controllers/Sales/SalesController.cs` |
-| Sales | Post | POST | Inventoried | — | `MiniStore.Web/Controllers/Sales/SalesController.cs` |
+| Sales | Post | POST | Angular Pilot | /sales/legacy/{id} | `MiniStore.Web/Controllers/Sales/SalesController.cs` |
 | SalesApprovalRules | Create | POST | Inventoried | — | `MiniStore.Web/Controllers/Sales/SalesApprovalRulesController.cs` |
 | SalesApprovalRules | Index | GET | Inventoried | — | `MiniStore.Web/Controllers/Sales/SalesApprovalRulesController.cs` |
 | SalesApprovalRules | SetActive | POST | Inventoried | — | `MiniStore.Web/Controllers/Sales/SalesApprovalRulesController.cs` |

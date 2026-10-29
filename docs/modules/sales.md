@@ -94,6 +94,12 @@ groups, price-list and document-design selection. `SalesQuotationTemplateService
 product/unit/tax/design validation, lifecycle concurrency and default exclusivity; Angular does not reprice quotations. MVC remains
 default.
 
+`MOD-025A` exposes legacy immediate-sale history/details, Wholesale creation and one-time accounting posting through Angular. The
+workspace displays named warehouse/customer/payment/tax choices, product name/code/barcode search and optional lot/serial evidence.
+`LegacySaleWorkspaceService` owns presentation projections while `SaleService` remains authoritative for wholesale price, discounts,
+tax, numbering, stock, tracking and frozen cost in one transaction; `SalePostingService` owns idempotent balanced GL posting. The
+legacy `Sale` remains an immediate sale and is not reinterpreted as a Sales Order or receivable invoice. MVC remains default.
+
 Sales quantity, threshold, price-rule and document-line decimal ranges parse limits and submitted values with invariant culture. Arabic UI requests no longer throw before controller execution when validating dot-based HTML decimals.
 
 Wholesale Create and Retail POS call `SalesController.Create` then `SaleService.CreateAsync`. Product choices are limited to active products enabled for the corresponding channel, and the service revalidates those flags against crafted requests. It validates discount rules, generates the tenant document number, chooses the server-side price, applies the optional invoice tax after discounts, decreases stock at the current warehouse average and writes the Sale movement in one UnitOfWork transaction. Sale freezes the selected tax percentage, inclusive policy, output account and amount; SaleItem freezes UnitCost and CostOfGoodsSold. The number, sale, valuation and movement commit or roll back together; ProductStock rowversion detects concurrent writes.

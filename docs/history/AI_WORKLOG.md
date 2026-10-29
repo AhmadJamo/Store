@@ -1531,3 +1531,10 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   198/198 tests across 94 files, 106 templates passed accessibility, external SCSS passed and bundles measured 317,266/358,400
   initial and 81,743/81,920 largest lazy bytes. MVC remains default. Completed `MOD-024` and advanced to `MOD-025A` legacy
   immediate-sale history/details, wholesale creation and one-time posting.
+- 2026-10-29: Completed `MOD-025A` Legacy Wholesale Immediate Sale. Added an Application-owned workspace projection and authenticated
+  list/details/create-form/create/post APIs plus a bilingual RTL-safe Angular workspace with named warehouse/customer/payment/tax
+  choices, product name/code/barcode search, tracked-identity evidence and immutable accounting status. `SaleService` remains
+  authoritative for server-side wholesale price, discounts, tax, numbering, inventory, tracking, valuation and atomic creation;
+  `SalePostingService` retains idempotent balanced GL posting. Web Release passed with zero warnings/errors, SecurityRegression
+  passed 1302 checks, Angular passed 199/199 tests across 95 files, 107 templates passed accessibility, external SCSS passed and
+  bundles measured 317,629/358,400 initial and 81,743/81,920 largest lazy bytes. MVC remains default. Advanced to `MOD-025B` POS.

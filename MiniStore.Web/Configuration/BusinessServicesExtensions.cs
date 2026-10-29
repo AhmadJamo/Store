@@ -242,6 +242,7 @@ public static class BusinessServicesExtensions
         services.AddScoped<SalesOrderApprovalService>();
         services.AddScoped<ISaleService, SaleService>();
         services.AddScoped<SalePostingService>();
+        services.AddScoped<LegacySaleWorkspaceService>();
         services.AddScoped<ISalesReturnRepository, SalesReturnRepository>();
         services.AddScoped<SalesReturnService>();
     }
