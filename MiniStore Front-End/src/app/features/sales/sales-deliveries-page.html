@@ -81,6 +81,14 @@
       }
       @if (d.status === 2) {
         <strong>{{ i18n.text('completed') }}</strong>
+        @if (session.can('CustomerReturnRequests.Create')) {
+          <a
+            class="ui-button"
+            routerLink="/sales/return-requests/new"
+            [queryParams]="{ salesDeliveryId: d.id }"
+            >{{ i18n.text('returnRequest') }}</a
+          >
+        }
         @if (d.hasRemainingDelivery && session.can('SalesDeliveries.Create')) {
           <a
             class="ui-button"

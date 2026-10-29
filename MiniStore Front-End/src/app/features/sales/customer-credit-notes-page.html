@@ -1,0 +1,186 @@
+<main class="credit-notes-page">
+  @if (loading()) {
+    <app-feedback-state kind="loading" [title]="i18n.text('title')" />
+  } @else if (failure(); as issue) {
+    <app-api-recovery [problem]="issue" (retry)="load()" />
+  } @else if (item(); as note) {
+    <app-page-header
+      [eyebrow]="i18n.text('area')"
+      [title]="note.number"
+      [description]="i18n.text('description')"
+    />
+    <div class="heading">
+      <span class="status">{{ i18n.status(note.status) }}</span>
+      <div class="links">
+        <a class="ui-button" [routerLink]="['/sales/invoices', note.invoiceId]">{{
+          i18n.text('invoice')
+        }}</a
+        ><a class="ui-button" routerLink="/sales/credit-notes">{{ i18n.text('back') }}</a>
+      </div>
+    </div>
+    <p class="ui-card safe">{{ i18n.text('safe') }}</p>
+    <section class="ui-card facts">
+      <div>
+        <span>{{ i18n.text('customer') }}</span
+        ><strong>{{ note.customerName }}</strong>
+      </div>
+      <div>
+        <span>{{ i18n.text('invoice') }}</span
+        ><strong>{{ note.invoiceNumber }}</strong>
+      </div>
+      <div>
+        <span>{{ i18n.text('creditDate') }}</span
+        ><strong>{{ note.creditDate }}</strong>
+      </div>
+      <div>
+        <span>{{ i18n.text('net') }}</span
+        ><strong>{{ note.netAmount | number: '1.2-6' }} {{ note.currencyCode }}</strong>
+      </div>
+      <div>
+        <span>{{ i18n.text('tax') }}</span
+        ><strong>{{ note.taxAmount | number: '1.2-6' }} {{ note.currencyCode }}</strong>
+      </div>
+      <div>
+        <span>{{ i18n.text('total') }}</span
+        ><strong>{{ note.totalAmount | number: '1.2-6' }} {{ note.currencyCode }}</strong>
+      </div>
+      <div>
+        <span>{{ i18n.text('companyTotal') }}</span
+        ><strong>{{ note.companyTotalAmount | number: '1.2-6' }}</strong>
+      </div>
+      <div>
+        <span>{{ i18n.text('journal') }}</span
+        ><strong>{{ note.journalEntryNumber || '—' }}</strong>
+      </div>
+      <div class="wide">
+        <span>{{ i18n.text('reason') }}</span
+        ><strong>{{ note.reason }}</strong>
+      </div>
+    </section>
+    <div class="cards">
+      @for (line of note.lines; track $index) {
+        <article class="ui-card">
+          <strong>{{ line.productCode }} — {{ line.productName }}</strong>
+          <p>{{ i18n.text('receipt') }}: {{ line.receiptNumber }}</p>
+          <dl>
+            <div>
+              <dt>{{ i18n.text('quantity') }}</dt>
+              <dd>{{ line.quantity | number: '1.0-6' }} {{ line.unitName }}</dd>
+            </div>
+            <div>
+              <dt>{{ i18n.text('net') }}</dt>
+              <dd>{{ line.netAmount | number: '1.2-6' }}</dd>
+            </div>
+            <div>
+              <dt>{{ i18n.text('tax') }}</dt>
+              <dd>{{ line.taxAmount | number: '1.2-6' }}</dd>
+            </div>
+            <div>
+              <dt>{{ i18n.text('total') }}</dt>
+              <dd>{{ line.grossAmount | number: '1.2-6' }}</dd>
+            </div>
+          </dl>
+        </article>
+      }
+    </div>
+  } @else if (page(); as page) {
+    <app-page-header
+      [eyebrow]="i18n.text('area')"
+      [title]="i18n.text('create')"
+      [description]="page.invoiceNumber + ' · ' + page.customerName"
+    />
+    <a class="ui-button back" [routerLink]="['/sales/invoices', page.invoiceId]">{{
+      i18n.text('back')
+    }}</a>
+    <p class="ui-card safe">{{ i18n.text('safe') }}</p>
+    @if (problem(); as issue) {
+      <app-api-recovery [problem]="issue" [allowRetry]="false" />
+    }
+    <form [formGroup]="form" (ngSubmit)="create()">
+      <section class="ui-card form-head">
+        <label class="ui-field"
+          ><span>{{ i18n.text('creditDate') }}</span
+          ><input type="date" formControlName="creditDate" /></label
+        ><label class="ui-field"
+          ><span>{{ i18n.text('reason') }}</span
+          ><input formControlName="reason" maxlength="1000"
+        /></label>
+      </section>
+      <div class="cards" formArrayName="lines">
+        @for (group of lines.controls; track group; let index = $index) {
+          <article class="ui-card" [formGroupName]="index">
+            <strong
+              >{{ page.lines[index].productCode }} — {{ page.lines[index].productName }}</strong
+            >
+            <p>{{ i18n.text('receipt') }}: {{ page.lines[index].receiptNumber }}</p>
+            <dl>
+              <div>
+                <dt>{{ i18n.text('returned') }}</dt>
+                <dd>{{ page.lines[index].returnedStockQuantity | number: '1.0-6' }}</dd>
+              </div>
+              <div>
+                <dt>{{ i18n.text('credited') }}</dt>
+                <dd>{{ page.lines[index].alreadyCreditedStockQuantity | number: '1.0-6' }}</dd>
+              </div>
+              <div>
+                <dt>{{ i18n.text('available') }}</dt>
+                <dd>
+                  {{ page.lines[index].remainingQuantity | number: '1.0-6' }}
+                  {{ page.lines[index].unitName }}
+                </dd>
+              </div>
+            </dl>
+            <label class="ui-field"
+              ><span>{{ i18n.text('quantity') }}</span
+              ><input
+                type="number"
+                min="0"
+                [max]="page.lines[index].remainingQuantity"
+                step=".000001"
+                formControlName="quantity"
+            /></label>
+          </article>
+        }
+      </div>
+      @if (!page.lines.length) {
+        <app-feedback-state kind="empty" [title]="i18n.text('noEligible')" />
+      }
+      <div class="ui-card submit">
+        <strong>{{ i18n.text('quantity') }}: {{ quantityTotal() | number: '1.0-6' }}</strong
+        ><button
+          class="ui-button primary"
+          [disabled]="saving() || form.invalid || quantityTotal() <= 0"
+        >
+          {{ i18n.text('post') }}
+        </button>
+      </div>
+    </form>
+  } @else {
+    <app-page-header
+      [eyebrow]="i18n.text('area')"
+      [title]="i18n.text('title')"
+      [description]="i18n.text('description')"
+    />
+    @if (!rows().length) {
+      <app-feedback-state kind="empty" [title]="i18n.text('empty')" />
+    }
+    <div class="cards">
+      @for (note of rows(); track note.id) {
+        <article class="ui-card">
+          <div class="heading">
+            <strong>{{ note.number }}</strong
+            ><span class="status">{{ i18n.status(note.status) }}</span>
+          </div>
+          <p>{{ note.customerName }}</p>
+          <p>{{ i18n.text('invoice') }}: {{ note.invoiceNumber }}</p>
+          <p>
+            {{ note.creditDate }} · {{ note.totalAmount | number: '1.2-6' }} {{ note.currencyCode }}
+          </p>
+          <a class="ui-button" [routerLink]="['/sales/credit-notes', note.id]">{{
+            i18n.text('view')
+          }}</a>
+        </article>
+      }
+    </div>
+  }
+</main>

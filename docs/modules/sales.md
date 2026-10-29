@@ -63,6 +63,31 @@ payment method. The server remains authoritative for outstanding balances, credi
 exchange rates, realized exchange gain/loss, numbering, journal posting and exact reversal. Create/Post and Reverse retain separate
 permissions and antiforgery; collection changes receivables/accounting only and never inventory. MVC remains default.
 
+`MOD-024H` exposes Customer Return Request list/details/create plus Submit, Approve, Reject and Cancel through Angular. Creation
+starts from one Posted Sales Delivery and presents server-authored delivered, already-requested and remaining quantities by named
+product, warehouse and location. `CustomerReturnRequestService` reloads the delivery, rechecks cumulative active requests inside the
+existing transaction, owns numbering and state transitions, and enforces rowversion on every lifecycle command. Authorization changes
+no stock, tracking, accounting, invoice balance, credit note or cash; those effects remain in later receipt/disposition/credit slices.
+MVC remains default.
+
+`MOD-024I` exposes Customer Return Receipt list/details/create plus Inspect, Post Disposition and Cancel through Angular. Operators
+start from an Approved return request, select only server-authored remaining quantities, record Restock/Quarantine/Reject/Destroy
+decisions and provide exact source-delivery lot/serial evidence when required. `CustomerReturnReceiptService` remains authoritative
+for cumulative receipt limits, tracking identity ownership, rowversion, stock/location/tracking updates, historical cost, movements
+and COGS reversal. Completing inspection freezes evidence without stock or accounting effect; only disposition posting applies
+Restock lines. MVC remains default.
+
+`MOD-024J` exposes Customer Credit Note list/details/create-and-post through Angular. Operators start from one Posted customer
+invoice and select only server-authored quantities backed by Posted return receipts. `CustomerCreditNoteService` remains authoritative
+for invoice/order/delivery/receipt ownership, cumulative per-receipt/per-delivery/per-invoice limits, proportional currency/tax
+snapshots, request-key idempotency, numbering, branch dimensions and journal posting. The operation reverses receivables, revenue and
+output tax only; it never repeats inventory or creates a cash refund. MVC remains default.
+
+`MOD-024K` exposes Sales Approval Rule list/create/activation management through Angular. The workspace covers all-customer or
+named-customer scope, five server-defined metrics, comparison/threshold, Warn/Require Approval/Block effect, priority, effective
+dates and ordered approver roles. `SalesOrderApprovalService` retains customer/tenant-role validation, action-step compatibility,
+unique ordered roles, rowversion and later Sales Order evaluation. Angular does not evaluate or confirm orders. MVC remains default.
+
 Sales quantity, threshold, price-rule and document-line decimal ranges parse limits and submitted values with invariant culture. Arabic UI requests no longer throw before controller execution when validating dot-based HTML decimals.
 
 Wholesale Create and Retail POS call `SalesController.Create` then `SaleService.CreateAsync`. Product choices are limited to active products enabled for the corresponding channel, and the service revalidates those flags against crafted requests. It validates discount rules, generates the tenant document number, chooses the server-side price, applies the optional invoice tax after discounts, decreases stock at the current warehouse average and writes the Sale movement in one UnitOfWork transaction. Sale freezes the selected tax percentage, inclusive policy, output account and amount; SaleItem freezes UnitCost and CostOfGoodsSold. The number, sale, valuation and movement commit or roll back together; ProductStock rowversion detects concurrent writes.

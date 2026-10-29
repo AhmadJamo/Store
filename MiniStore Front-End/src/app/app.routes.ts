@@ -4,27 +4,40 @@ import { anonymousOnlyGuard, authGuard } from './core/api/auth.guard';
 export const routes: Routes = [
   {
     path: 'supplier-portal/:token',
-    loadComponent: () => import('./features/purchases/supplier-portal-page').then((module) => module.SupplierPortalPageComponent),
+    loadComponent: () =>
+      import('./features/purchases/supplier-portal-page').then(
+        (module) => module.SupplierPortalPageComponent,
+      ),
   },
   {
     path: 'login',
     canActivate: [anonymousOnlyGuard],
-    loadComponent: () => import('./features/account/login-page').then((module) => module.LoginPageComponent),
+    loadComponent: () =>
+      import('./features/account/login-page').then((module) => module.LoginPageComponent),
   },
   {
     path: 'register',
     canActivate: [anonymousOnlyGuard],
-    loadComponent: () => import('./features/onboarding/registration-page').then((module) => module.RegistrationPageComponent),
+    loadComponent: () =>
+      import('./features/onboarding/registration-page').then(
+        (module) => module.RegistrationPageComponent,
+      ),
   },
   {
     path: 'onboarding',
     canActivate: [authGuard],
     canDeactivate: [(component) => component.canDeactivate()],
-    loadComponent: () => import('./features/onboarding/company-onboarding-page').then((module) => module.CompanyOnboardingPageComponent),
+    loadComponent: () =>
+      import('./features/onboarding/company-onboarding-page').then(
+        (module) => module.CompanyOnboardingPageComponent,
+      ),
   },
   {
     path: 'access-denied',
-    loadComponent: () => import('./features/account/access-denied-page').then((module) => module.AccessDeniedPageComponent),
+    loadComponent: () =>
+      import('./features/account/access-denied-page').then(
+        (module) => module.AccessDeniedPageComponent,
+      ),
   },
   {
     path: '',
@@ -40,610 +53,1079 @@ export const routes: Routes = [
       {
         path: 'design-system',
         title: 'MiniStore Design System',
-        loadComponent: () => import('./features/design-system/design-system-page').then((module) => module.DesignSystemPage),
+        loadComponent: () =>
+          import('./features/design-system/design-system-page').then(
+            (module) => module.DesignSystemPage,
+          ),
       },
       {
         path: 'customers',
-        loadComponent: () => import('./features/customers/customer-list-page').then((module) => module.CustomerListPageComponent),
+        loadComponent: () =>
+          import('./features/customers/customer-list-page').then(
+            (module) => module.CustomerListPageComponent,
+          ),
       },
       {
         path: 'customers/new',
         canDeactivate: [(component) => component.canDeactivate()],
-        loadComponent: () => import('./features/customers/customer-form-page').then((module) => module.CustomerFormPageComponent),
+        loadComponent: () =>
+          import('./features/customers/customer-form-page').then(
+            (module) => module.CustomerFormPageComponent,
+          ),
       },
       {
         path: 'customers/:id/edit',
         canDeactivate: [(component) => component.canDeactivate()],
-        loadComponent: () => import('./features/customers/customer-form-page').then((module) => module.CustomerFormPageComponent),
+        loadComponent: () =>
+          import('./features/customers/customer-form-page').then(
+            (module) => module.CustomerFormPageComponent,
+          ),
       },
       {
         path: 'customers/:id',
-        loadComponent: () => import('./features/customers/customer-details-page').then((module) => module.CustomerDetailsPageComponent),
+        loadComponent: () =>
+          import('./features/customers/customer-details-page').then(
+            (module) => module.CustomerDetailsPageComponent,
+          ),
       },
       {
         path: 'suppliers',
-        loadComponent: () => import('./features/suppliers/supplier-list-page').then((module) => module.SupplierListPageComponent),
+        loadComponent: () =>
+          import('./features/suppliers/supplier-list-page').then(
+            (module) => module.SupplierListPageComponent,
+          ),
       },
       {
         path: 'suppliers/new',
         canDeactivate: [(component) => component.canDeactivate()],
-        loadComponent: () => import('./features/suppliers/supplier-form-page').then((module) => module.SupplierFormPageComponent),
+        loadComponent: () =>
+          import('./features/suppliers/supplier-form-page').then(
+            (module) => module.SupplierFormPageComponent,
+          ),
       },
       {
         path: 'suppliers/:id/edit',
         canDeactivate: [(component) => component.canDeactivate()],
-        loadComponent: () => import('./features/suppliers/supplier-form-page').then((module) => module.SupplierFormPageComponent),
+        loadComponent: () =>
+          import('./features/suppliers/supplier-form-page').then(
+            (module) => module.SupplierFormPageComponent,
+          ),
       },
       {
         path: 'suppliers/:id',
-        loadComponent: () => import('./features/suppliers/supplier-details-page').then((module) => module.SupplierDetailsPageComponent),
+        loadComponent: () =>
+          import('./features/suppliers/supplier-details-page').then(
+            (module) => module.SupplierDetailsPageComponent,
+          ),
       },
       {
         path: 'documents',
-        loadComponent: () => import('./features/document-evidence/document-evidence-page').then((module) => module.DocumentEvidencePageComponent),
+        loadComponent: () =>
+          import('./features/document-evidence/document-evidence-page').then(
+            (module) => module.DocumentEvidencePageComponent,
+          ),
       },
       {
         path: 'documents/:kind/:id',
-        loadComponent: () => import('./features/document-evidence/document-evidence-page').then((module) => module.DocumentEvidencePageComponent),
+        loadComponent: () =>
+          import('./features/document-evidence/document-evidence-page').then(
+            (module) => module.DocumentEvidencePageComponent,
+          ),
       },
       {
         path: 'work-center',
-        loadComponent: () => import('./features/work-center/work-center-page').then((module) => module.WorkCenterPageComponent),
+        loadComponent: () =>
+          import('./features/work-center/work-center-page').then(
+            (module) => module.WorkCenterPageComponent,
+          ),
       },
       {
         path: 'analytics',
-        loadComponent: () => import('./features/analytics/analytics-page').then((module) => module.AnalyticsPageComponent),
+        loadComponent: () =>
+          import('./features/analytics/analytics-page').then(
+            (module) => module.AnalyticsPageComponent,
+          ),
       },
       {
         path: 'analytics/builder',
-        loadComponent: () => import('./features/analytics/report-builder-page').then((module) => module.ReportBuilderPageComponent),
+        loadComponent: () =>
+          import('./features/analytics/report-builder-page').then(
+            (module) => module.ReportBuilderPageComponent,
+          ),
       },
       {
         path: 'analytics/workspaces/:id/access',
-        loadComponent: () => import('./features/analytics/workspace-access-page').then((module) => module.WorkspaceAccessPageComponent),
+        loadComponent: () =>
+          import('./features/analytics/workspace-access-page').then(
+            (module) => module.WorkspaceAccessPageComponent,
+          ),
       },
       {
         path: 'settings',
         canDeactivate: [(component) => component.canDeactivate()],
-        loadComponent: () => import('./features/settings/settings-overview-page').then((module) => module.SettingsOverviewPageComponent),
+        loadComponent: () =>
+          import('./features/settings/settings-overview-page').then(
+            (module) => module.SettingsOverviewPageComponent,
+          ),
       },
       {
         path: 'users',
-        loadComponent: () => import('./features/identity/user-list-page').then((m) => m.UserListPageComponent),
+        loadComponent: () =>
+          import('./features/identity/user-list-page').then((m) => m.UserListPageComponent),
       },
       {
         path: 'users/new',
         canDeactivate: [(component) => component.canDeactivate()],
-        loadComponent: () => import('./features/identity/user-form-page').then((m) => m.UserFormPageComponent),
+        loadComponent: () =>
+          import('./features/identity/user-form-page').then((m) => m.UserFormPageComponent),
       },
       {
         path: 'roles',
-        loadComponent: () => import('./features/identity/role-list-page').then((m) => m.RoleListPageComponent),
+        loadComponent: () =>
+          import('./features/identity/role-list-page').then((m) => m.RoleListPageComponent),
       },
       {
         path: 'roles/new',
         canDeactivate: [(component) => component.canDeactivate()],
-        loadComponent: () => import('./features/identity/role-form-page').then((m) => m.RoleFormPageComponent),
+        loadComponent: () =>
+          import('./features/identity/role-form-page').then((m) => m.RoleFormPageComponent),
       },
       {
         path: 'roles/:id/edit',
         canDeactivate: [(component) => component.canDeactivate()],
-        loadComponent: () => import('./features/identity/role-form-page').then((m) => m.RoleFormPageComponent),
+        loadComponent: () =>
+          import('./features/identity/role-form-page').then((m) => m.RoleFormPageComponent),
       },
       {
         path: 'settings/identity',
         canDeactivate: [(component) => component.canDeactivate()],
-        loadComponent: () => import('./features/settings/organization-identity-page').then((module) => module.OrganizationIdentityPageComponent),
+        loadComponent: () =>
+          import('./features/settings/organization-identity-page').then(
+            (module) => module.OrganizationIdentityPageComponent,
+          ),
       },
       {
         path: 'settings/discounts',
         canDeactivate: [(component) => component.canDeactivate()],
-        loadComponent: () => import('./features/settings/discount-settings-page').then((module) => module.DiscountSettingsPageComponent),
+        loadComponent: () =>
+          import('./features/settings/discount-settings-page').then(
+            (module) => module.DiscountSettingsPageComponent,
+          ),
       },
       {
         path: 'settings/purchase-matching',
         canDeactivate: [(component) => component.canDeactivate()],
-        loadComponent: () => import('./features/settings/purchase-matching-settings-page').then((module) => module.PurchaseMatchingSettingsPageComponent),
+        loadComponent: () =>
+          import('./features/settings/purchase-matching-settings-page').then(
+            (module) => module.PurchaseMatchingSettingsPageComponent,
+          ),
       },
       {
         path: 'settings/inventory',
         canDeactivate: [(component) => component.canDeactivate()],
-        loadComponent: () => import('./features/settings/inventory-settings-page').then((module) => module.InventorySettingsPageComponent),
+        loadComponent: () =>
+          import('./features/settings/inventory-settings-page').then(
+            (module) => module.InventorySettingsPageComponent,
+          ),
       },
       {
         path: 'settings/purchase-sourcing',
         canDeactivate: [(component) => component.canDeactivate()],
-        loadComponent: () => import('./features/settings/purchase-sourcing-settings-page').then((module) => module.PurchaseSourcingSettingsPageComponent),
+        loadComponent: () =>
+          import('./features/settings/purchase-sourcing-settings-page').then(
+            (module) => module.PurchaseSourcingSettingsPageComponent,
+          ),
       },
       {
         path: 'settings/document-numbers',
         canDeactivate: [(component) => component.canDeactivate()],
-        loadComponent: () => import('./features/settings/document-number-settings-page').then((module) => module.DocumentNumberSettingsPageComponent),
+        loadComponent: () =>
+          import('./features/settings/document-number-settings-page').then(
+            (module) => module.DocumentNumberSettingsPageComponent,
+          ),
       },
       {
         path: 'settings/fiscal-periods',
         canDeactivate: [(component) => component.canDeactivate()],
-        loadComponent: () => import('./features/settings/fiscal-periods-page').then((module) => module.FiscalPeriodsPageComponent),
+        loadComponent: () =>
+          import('./features/settings/fiscal-periods-page').then(
+            (module) => module.FiscalPeriodsPageComponent,
+          ),
       },
       {
         path: 'settings/currency-exchange-rates',
         canDeactivate: [(component) => component.canDeactivate()],
-        loadComponent: () => import('./features/settings/currency-exchange-rates-page').then((module) => module.CurrencyExchangeRatesPageComponent),
+        loadComponent: () =>
+          import('./features/settings/currency-exchange-rates-page').then(
+            (module) => module.CurrencyExchangeRatesPageComponent,
+          ),
       },
       {
         path: 'settings/measurement-units',
         canDeactivate: [(component) => component.canDeactivate()],
-        loadComponent: () => import('./features/settings/measurement-units-page').then((module) => module.MeasurementUnitsPageComponent),
+        loadComponent: () =>
+          import('./features/settings/measurement-units-page').then(
+            (module) => module.MeasurementUnitsPageComponent,
+          ),
       },
       {
         path: 'settings/accounting',
         canDeactivate: [(component) => component.canDeactivate()],
-        loadComponent: () => import('./features/settings/accounting-settings-page').then((module) => module.AccountingSettingsPageComponent),
+        loadComponent: () =>
+          import('./features/settings/accounting-settings-page').then(
+            (module) => module.AccountingSettingsPageComponent,
+          ),
       },
       {
         path: 'settings/branch-sales-accounts',
         canDeactivate: [(component) => component.canDeactivate()],
-        loadComponent: () => import('./features/settings/branch-sales-accounts-page').then((module) => module.BranchSalesAccountsPageComponent),
+        loadComponent: () =>
+          import('./features/settings/branch-sales-accounts-page').then(
+            (module) => module.BranchSalesAccountsPageComponent,
+          ),
       },
       {
         path: 'settings/inventory-access',
         canDeactivate: [(component) => component.canDeactivate()],
-        loadComponent: () => import('./features/settings/inventory-access-page').then((module) => module.InventoryAccessPageComponent),
+        loadComponent: () =>
+          import('./features/settings/inventory-access-page').then(
+            (module) => module.InventoryAccessPageComponent,
+          ),
       },
       {
         path: 'settings/pos-experience',
         canDeactivate: [(component) => component.canDeactivate()],
-        loadComponent: () => import('./features/settings/pos-experience-page').then((module) => module.PosExperiencePageComponent),
+        loadComponent: () =>
+          import('./features/settings/pos-experience-page').then(
+            (module) => module.PosExperiencePageComponent,
+          ),
       },
       {
         path: 'settings/workflow-catalog',
-        loadComponent: () => import('./features/settings/workflow-catalog-page').then((module) => module.WorkflowCatalogPageComponent),
+        loadComponent: () =>
+          import('./features/settings/workflow-catalog-page').then(
+            (module) => module.WorkflowCatalogPageComponent,
+          ),
       },
       {
         path: 'settings/document-designs',
-        loadComponent: () => import('./features/document-designs/document-design-list-page').then((m) => m.DocumentDesignListPageComponent),
+        loadComponent: () =>
+          import('./features/document-designs/document-design-list-page').then(
+            (m) => m.DocumentDesignListPageComponent,
+          ),
       },
       {
         path: 'settings/document-designs/new',
         canDeactivate: [(component) => component.canDeactivate()],
-        loadComponent: () => import('./features/document-designs/document-design-form-page').then((m) => m.DocumentDesignFormPageComponent),
+        loadComponent: () =>
+          import('./features/document-designs/document-design-form-page').then(
+            (m) => m.DocumentDesignFormPageComponent,
+          ),
       },
       {
         path: 'settings/document-designs/:id',
-        loadComponent: () => import('./features/document-designs/document-design-details-page').then((m) => m.DocumentDesignDetailsPageComponent),
+        loadComponent: () =>
+          import('./features/document-designs/document-design-details-page').then(
+            (m) => m.DocumentDesignDetailsPageComponent,
+          ),
       },
       {
         path: 'products',
-        loadComponent: () => import('./features/products/product-list-page').then((module) => module.ProductListPageComponent),
+        loadComponent: () =>
+          import('./features/products/product-list-page').then(
+            (module) => module.ProductListPageComponent,
+          ),
       },
       {
         path: 'products/new',
         canDeactivate: [(component) => component.canDeactivate()],
-        loadComponent: () => import('./features/products/product-form-page').then((module) => module.ProductFormPageComponent),
+        loadComponent: () =>
+          import('./features/products/product-form-page').then(
+            (module) => module.ProductFormPageComponent,
+          ),
       },
       {
         path: 'products/categories',
         canDeactivate: [(component) => component.canDeactivate()],
-        loadComponent: () => import('./features/products/product-categories-page').then((module) => module.ProductCategoriesPageComponent),
+        loadComponent: () =>
+          import('./features/products/product-categories-page').then(
+            (module) => module.ProductCategoriesPageComponent,
+          ),
       },
       {
         path: 'products/attributes',
         canDeactivate: [(component) => component.canDeactivate()],
-        loadComponent: () => import('./features/products/product-attributes-page').then((module) => module.ProductAttributesPageComponent),
+        loadComponent: () =>
+          import('./features/products/product-attributes-page').then(
+            (module) => module.ProductAttributesPageComponent,
+          ),
       },
       {
         path: 'products/templates',
         canDeactivate: [(component) => component.canDeactivate()],
-        loadComponent: () => import('./features/products/product-templates-page').then((module) => module.ProductTemplatesPageComponent),
+        loadComponent: () =>
+          import('./features/products/product-templates-page').then(
+            (module) => module.ProductTemplatesPageComponent,
+          ),
       },
       {
         path: 'products/recipes',
-        loadComponent: () => import('./features/products/recipe-list-page').then((module) => module.RecipeListPageComponent),
+        loadComponent: () =>
+          import('./features/products/recipe-list-page').then(
+            (module) => module.RecipeListPageComponent,
+          ),
       },
       {
         path: 'products/catalog-masters',
         canDeactivate: [(component) => component.canDeactivate()],
-        loadComponent: () => import('./features/products/catalog-masters-page').then((module) => module.CatalogMastersPageComponent),
+        loadComponent: () =>
+          import('./features/products/catalog-masters-page').then(
+            (module) => module.CatalogMastersPageComponent,
+          ),
       },
       {
         path: 'warehouses',
         canDeactivate: [(component) => component.canDeactivate()],
-        loadComponent: () => import('./features/products/warehouses-page').then((module) => module.WarehousesPageComponent),
+        loadComponent: () =>
+          import('./features/products/warehouses-page').then(
+            (module) => module.WarehousesPageComponent,
+          ),
       },
       {
         path: 'inventory/transactions',
-        loadComponent: () => import('./features/inventory/stock-transactions-page').then((module) => module.StockTransactionsPageComponent),
+        loadComponent: () =>
+          import('./features/inventory/stock-transactions-page').then(
+            (module) => module.StockTransactionsPageComponent,
+          ),
       },
       {
         path: 'inventory/stocks',
         canDeactivate: [(component) => component.canDeactivate()],
-        loadComponent: () => import('./features/inventory/product-stocks-page').then((module) => module.ProductStocksPageComponent),
+        loadComponent: () =>
+          import('./features/inventory/product-stocks-page').then(
+            (module) => module.ProductStocksPageComponent,
+          ),
       },
       {
         path: 'inventory/availability',
-        loadComponent: () => import('./features/inventory/inventory-availability-page').then((module) => module.InventoryAvailabilityPageComponent),
+        loadComponent: () =>
+          import('./features/inventory/inventory-availability-page').then(
+            (module) => module.InventoryAvailabilityPageComponent,
+          ),
       },
       {
         path: 'inventory/reservations',
-        loadComponent: () => import('./features/inventory/inventory-reservations-page').then((module) => module.InventoryReservationsPageComponent),
+        loadComponent: () =>
+          import('./features/inventory/inventory-reservations-page').then(
+            (module) => module.InventoryReservationsPageComponent,
+          ),
       },
       {
         path: 'inventory/adjustments',
-        loadComponent: () => import('./features/inventory/inventory-adjustments-page').then((module) => module.InventoryAdjustmentsPageComponent),
+        loadComponent: () =>
+          import('./features/inventory/inventory-adjustments-page').then(
+            (module) => module.InventoryAdjustmentsPageComponent,
+          ),
       },
       {
         path: 'inventory/adjustments/new',
         canDeactivate: [(component) => component.canDeactivate()],
-        loadComponent: () => import('./features/inventory/inventory-adjustment-form-page').then((module) => module.InventoryAdjustmentFormPageComponent),
+        loadComponent: () =>
+          import('./features/inventory/inventory-adjustment-form-page').then(
+            (module) => module.InventoryAdjustmentFormPageComponent,
+          ),
       },
       {
         path: 'inventory/adjustments/:id',
         canDeactivate: [(component) => component.canDeactivate()],
-        loadComponent: () => import('./features/inventory/inventory-adjustment-details-page').then((module) => module.InventoryAdjustmentDetailsPageComponent),
+        loadComponent: () =>
+          import('./features/inventory/inventory-adjustment-details-page').then(
+            (module) => module.InventoryAdjustmentDetailsPageComponent,
+          ),
       },
       {
         path: 'inventory/tracking',
         canDeactivate: [(component) => component.canDeactivate()],
-        loadComponent: () => import('./features/inventory/inventory-tracking-page').then((module) => module.InventoryTrackingPageComponent),
+        loadComponent: () =>
+          import('./features/inventory/inventory-tracking-page').then(
+            (module) => module.InventoryTrackingPageComponent,
+          ),
       },
       {
         path: 'inventory/locations',
         canDeactivate: [(component) => component.canDeactivate()],
-        loadComponent: () => import('./features/inventory/warehouse-locations-page').then((module) => module.WarehouseLocationsPageComponent),
+        loadComponent: () =>
+          import('./features/inventory/warehouse-locations-page').then(
+            (module) => module.WarehouseLocationsPageComponent,
+          ),
       },
       {
         path: 'inventory/putaway',
         canDeactivate: [(component) => component.canDeactivate()],
-        loadComponent: () => import('./features/inventory/unassigned-stock-page').then((module) => module.UnassignedStockPageComponent),
+        loadComponent: () =>
+          import('./features/inventory/unassigned-stock-page').then(
+            (module) => module.UnassignedStockPageComponent,
+          ),
       },
       {
         path: 'inventory/location-movements',
         canDeactivate: [(component) => component.canDeactivate()],
-        loadComponent: () => import('./features/inventory/location-movements-page').then((module) => module.LocationMovementsPageComponent),
+        loadComponent: () =>
+          import('./features/inventory/location-movements-page').then(
+            (module) => module.LocationMovementsPageComponent,
+          ),
       },
       {
         path: 'purchases/requests',
-        loadComponent: () => import('./features/purchases/purchase-requests-page').then((module) => module.PurchaseRequestsPageComponent),
+        loadComponent: () =>
+          import('./features/purchases/purchase-requests-page').then(
+            (module) => module.PurchaseRequestsPageComponent,
+          ),
       },
       {
         path: 'purchases/requests/new',
         canDeactivate: [(component) => component.canDeactivate()],
-        loadComponent: () => import('./features/purchases/purchase-requests-page').then((module) => module.PurchaseRequestsPageComponent),
+        loadComponent: () =>
+          import('./features/purchases/purchase-requests-page').then(
+            (module) => module.PurchaseRequestsPageComponent,
+          ),
       },
       {
         path: 'purchases/requests/:id',
-        loadComponent: () => import('./features/purchases/purchase-requests-page').then((module) => module.PurchaseRequestsPageComponent),
+        loadComponent: () =>
+          import('./features/purchases/purchase-requests-page').then(
+            (module) => module.PurchaseRequestsPageComponent,
+          ),
       },
       {
         path: 'purchases/approval-rules',
         canDeactivate: [(component) => component.canDeactivate()],
-        loadComponent: () => import('./features/purchases/purchase-requests-page').then((module) => module.PurchaseRequestsPageComponent),
+        loadComponent: () =>
+          import('./features/purchases/purchase-requests-page').then(
+            (module) => module.PurchaseRequestsPageComponent,
+          ),
       },
       {
         path: 'purchases/sourcing',
-        loadComponent: () => import('./features/purchases/purchase-sourcing-page').then((module) => module.PurchaseSourcingPageComponent),
+        loadComponent: () =>
+          import('./features/purchases/purchase-sourcing-page').then(
+            (module) => module.PurchaseSourcingPageComponent,
+          ),
       },
       {
         path: 'purchases/sourcing/new',
         canDeactivate: [(component) => component.canDeactivate()],
-        loadComponent: () => import('./features/purchases/purchase-sourcing-page').then((module) => module.PurchaseSourcingPageComponent),
+        loadComponent: () =>
+          import('./features/purchases/purchase-sourcing-page').then(
+            (module) => module.PurchaseSourcingPageComponent,
+          ),
       },
       {
         path: 'purchases/sourcing/:id',
-        loadComponent: () => import('./features/purchases/purchase-sourcing-page').then((module) => module.PurchaseSourcingPageComponent),
+        loadComponent: () =>
+          import('./features/purchases/purchase-sourcing-page').then(
+            (module) => module.PurchaseSourcingPageComponent,
+          ),
       },
       {
         path: 'purchases/sourcing/:id/quotation',
         canDeactivate: [(component) => component.canDeactivate()],
-        loadComponent: () => import('./features/purchases/purchase-sourcing-page').then((module) => module.PurchaseSourcingPageComponent),
+        loadComponent: () =>
+          import('./features/purchases/purchase-sourcing-page').then(
+            (module) => module.PurchaseSourcingPageComponent,
+          ),
       },
       {
         path: 'purchases/sourcing/:id/comparison',
         canDeactivate: [(component) => component.canDeactivate()],
-        loadComponent: () => import('./features/purchases/purchase-sourcing-page').then((module) => module.PurchaseSourcingPageComponent),
+        loadComponent: () =>
+          import('./features/purchases/purchase-sourcing-page').then(
+            (module) => module.PurchaseSourcingPageComponent,
+          ),
       },
       {
         path: 'purchases/orders',
-        loadComponent: () => import('./features/purchases/purchase-orders-page').then((module) => module.PurchaseOrdersPageComponent),
+        loadComponent: () =>
+          import('./features/purchases/purchase-orders-page').then(
+            (module) => module.PurchaseOrdersPageComponent,
+          ),
       },
       {
         path: 'purchases/orders/:id',
         canDeactivate: [(component) => component.canDeactivate()],
-        loadComponent: () => import('./features/purchases/purchase-orders-page').then((module) => module.PurchaseOrdersPageComponent),
+        loadComponent: () =>
+          import('./features/purchases/purchase-orders-page').then(
+            (module) => module.PurchaseOrdersPageComponent,
+          ),
       },
       {
         path: 'purchases/receipts',
-        loadComponent: () => import('./features/purchases/goods-receipts-page').then((module) => module.GoodsReceiptsPageComponent),
+        loadComponent: () =>
+          import('./features/purchases/goods-receipts-page').then(
+            (module) => module.GoodsReceiptsPageComponent,
+          ),
       },
       {
         path: 'purchases/receipts/new',
         canDeactivate: [(component) => component.canDeactivate()],
-        loadComponent: () => import('./features/purchases/goods-receipts-page').then((module) => module.GoodsReceiptsPageComponent),
+        loadComponent: () =>
+          import('./features/purchases/goods-receipts-page').then(
+            (module) => module.GoodsReceiptsPageComponent,
+          ),
       },
       {
         path: 'purchases/receipts/:id',
         canDeactivate: [(component) => component.canDeactivate()],
-        loadComponent: () => import('./features/purchases/goods-receipts-page').then((module) => module.GoodsReceiptsPageComponent),
+        loadComponent: () =>
+          import('./features/purchases/goods-receipts-page').then(
+            (module) => module.GoodsReceiptsPageComponent,
+          ),
       },
       {
         path: 'purchases/receipts/:id/scan',
         canDeactivate: [(component) => component.canDeactivate()],
-        loadComponent: () => import('./features/purchases/goods-receipts-page').then((module) => module.GoodsReceiptsPageComponent),
+        loadComponent: () =>
+          import('./features/purchases/goods-receipts-page').then(
+            (module) => module.GoodsReceiptsPageComponent,
+          ),
       },
       {
         path: 'purchases/bills',
-        loadComponent: () => import('./features/purchases/vendor-bills-page').then((module) => module.VendorBillsPageComponent),
+        loadComponent: () =>
+          import('./features/purchases/vendor-bills-page').then(
+            (module) => module.VendorBillsPageComponent,
+          ),
       },
       {
         path: 'purchases/bills/new',
         canDeactivate: [(component) => component.canDeactivate()],
-        loadComponent: () => import('./features/purchases/vendor-bills-page').then((module) => module.VendorBillsPageComponent),
+        loadComponent: () =>
+          import('./features/purchases/vendor-bills-page').then(
+            (module) => module.VendorBillsPageComponent,
+          ),
       },
       {
         path: 'purchases/bills/:id',
-        loadComponent: () => import('./features/purchases/vendor-bills-page').then((module) => module.VendorBillsPageComponent),
+        loadComponent: () =>
+          import('./features/purchases/vendor-bills-page').then(
+            (module) => module.VendorBillsPageComponent,
+          ),
       },
       {
         path: 'purchases/credit-notes',
-        loadComponent: () => import('./features/purchases/supplier-credit-notes-page').then((module) => module.SupplierCreditNotesPageComponent),
+        loadComponent: () =>
+          import('./features/purchases/supplier-credit-notes-page').then(
+            (module) => module.SupplierCreditNotesPageComponent,
+          ),
       },
       {
         path: 'purchases/credit-notes/new',
         canDeactivate: [(component) => component.canDeactivate()],
-        loadComponent: () => import('./features/purchases/supplier-credit-notes-page').then((module) => module.SupplierCreditNotesPageComponent),
+        loadComponent: () =>
+          import('./features/purchases/supplier-credit-notes-page').then(
+            (module) => module.SupplierCreditNotesPageComponent,
+          ),
       },
       {
         path: 'purchases/credit-notes/:id',
-        loadComponent: () => import('./features/purchases/supplier-credit-notes-page').then((module) => module.SupplierCreditNotesPageComponent),
+        loadComponent: () =>
+          import('./features/purchases/supplier-credit-notes-page').then(
+            (module) => module.SupplierCreditNotesPageComponent,
+          ),
       },
       {
         path: 'purchases/reversals',
-        loadComponent: () => import('./features/purchases/purchase-document-reversals-page').then((module) => module.PurchaseDocumentReversalsPageComponent),
+        loadComponent: () =>
+          import('./features/purchases/purchase-document-reversals-page').then(
+            (module) => module.PurchaseDocumentReversalsPageComponent,
+          ),
       },
       {
         path: 'purchases/reversals/new',
         canDeactivate: [(component) => component.canDeactivate()],
-        loadComponent: () => import('./features/purchases/purchase-document-reversals-page').then((module) => module.PurchaseDocumentReversalsPageComponent),
+        loadComponent: () =>
+          import('./features/purchases/purchase-document-reversals-page').then(
+            (module) => module.PurchaseDocumentReversalsPageComponent,
+          ),
       },
       {
         path: 'purchases/reversals/:id',
-        loadComponent: () => import('./features/purchases/purchase-document-reversals-page').then((module) => module.PurchaseDocumentReversalsPageComponent),
+        loadComponent: () =>
+          import('./features/purchases/purchase-document-reversals-page').then(
+            (module) => module.PurchaseDocumentReversalsPageComponent,
+          ),
       },
       {
         path: 'purchases/landed-costs',
-        loadComponent: () => import('./features/purchases/landed-costs-page').then((module) => module.LandedCostsPageComponent),
+        loadComponent: () =>
+          import('./features/purchases/landed-costs-page').then(
+            (module) => module.LandedCostsPageComponent,
+          ),
       },
       {
         path: 'purchases/landed-costs/new',
         canDeactivate: [(component) => component.canDeactivate()],
-        loadComponent: () => import('./features/purchases/landed-costs-page').then((module) => module.LandedCostsPageComponent),
+        loadComponent: () =>
+          import('./features/purchases/landed-costs-page').then(
+            (module) => module.LandedCostsPageComponent,
+          ),
       },
       {
         path: 'purchases/landed-costs/:id',
-        loadComponent: () => import('./features/purchases/landed-costs-page').then((module) => module.LandedCostsPageComponent),
+        loadComponent: () =>
+          import('./features/purchases/landed-costs-page').then(
+            (module) => module.LandedCostsPageComponent,
+          ),
       },
       {
         path: 'purchases/service-acceptances',
-        loadComponent: () => import('./features/purchases/purchase-service-acceptances-page').then((module) => module.PurchaseServiceAcceptancesPageComponent),
+        loadComponent: () =>
+          import('./features/purchases/purchase-service-acceptances-page').then(
+            (module) => module.PurchaseServiceAcceptancesPageComponent,
+          ),
       },
       {
         path: 'purchases/service-acceptances/new',
         canDeactivate: [(component) => component.canDeactivate()],
-        loadComponent: () => import('./features/purchases/purchase-service-acceptances-page').then((module) => module.PurchaseServiceAcceptancesPageComponent),
+        loadComponent: () =>
+          import('./features/purchases/purchase-service-acceptances-page').then(
+            (module) => module.PurchaseServiceAcceptancesPageComponent,
+          ),
       },
       {
         path: 'purchases/service-acceptances/:id',
-        loadComponent: () => import('./features/purchases/purchase-service-acceptances-page').then((module) => module.PurchaseServiceAcceptancesPageComponent),
+        loadComponent: () =>
+          import('./features/purchases/purchase-service-acceptances-page').then(
+            (module) => module.PurchaseServiceAcceptancesPageComponent,
+          ),
       },
       {
         path: 'purchases/agreements',
-        loadComponent: () => import('./features/purchases/purchase-agreements-page').then((module) => module.PurchaseAgreementsPageComponent),
+        loadComponent: () =>
+          import('./features/purchases/purchase-agreements-page').then(
+            (module) => module.PurchaseAgreementsPageComponent,
+          ),
       },
       {
         path: 'purchases/agreements/new',
         canDeactivate: [(component) => component.canDeactivate()],
-        loadComponent: () => import('./features/purchases/purchase-agreements-page').then((module) => module.PurchaseAgreementsPageComponent),
+        loadComponent: () =>
+          import('./features/purchases/purchase-agreements-page').then(
+            (module) => module.PurchaseAgreementsPageComponent,
+          ),
       },
       {
         path: 'purchases/agreements/:id',
         canDeactivate: [(component) => component.canDeactivate()],
-        loadComponent: () => import('./features/purchases/purchase-agreements-page').then((module) => module.PurchaseAgreementsPageComponent),
+        loadComponent: () =>
+          import('./features/purchases/purchase-agreements-page').then(
+            (module) => module.PurchaseAgreementsPageComponent,
+          ),
       },
       {
         path: 'purchases/templates',
-        loadComponent: () => import('./features/purchases/purchase-templates-page').then((module) => module.PurchaseTemplatesPageComponent),
+        loadComponent: () =>
+          import('./features/purchases/purchase-templates-page').then(
+            (module) => module.PurchaseTemplatesPageComponent,
+          ),
       },
       {
         path: 'purchases/templates/new',
         canDeactivate: [(component) => component.canDeactivate()],
-        loadComponent: () => import('./features/purchases/purchase-templates-page').then((module) => module.PurchaseTemplatesPageComponent),
+        loadComponent: () =>
+          import('./features/purchases/purchase-templates-page').then(
+            (module) => module.PurchaseTemplatesPageComponent,
+          ),
       },
       {
         path: 'purchases/supplier-terms',
         canDeactivate: [(component) => component.canDeactivate()],
-        loadComponent: () => import('./features/purchases/supplier-purchasing-page').then((module) => module.SupplierPurchasingPageComponent),
+        loadComponent: () =>
+          import('./features/purchases/supplier-purchasing-page').then(
+            (module) => module.SupplierPurchasingPageComponent,
+          ),
       },
       {
         path: 'purchases/supplier-terms/exceptions',
-        loadComponent: () => import('./features/purchases/supplier-purchasing-page').then((module) => module.SupplierPurchasingPageComponent),
+        loadComponent: () =>
+          import('./features/purchases/supplier-purchasing-page').then(
+            (module) => module.SupplierPurchasingPageComponent,
+          ),
       },
       {
         path: 'purchases/supplier-terms/:id/price-breaks',
         canDeactivate: [(component) => component.canDeactivate()],
-        loadComponent: () => import('./features/purchases/supplier-purchasing-page').then((module) => module.SupplierPurchasingPageComponent),
+        loadComponent: () =>
+          import('./features/purchases/supplier-purchasing-page').then(
+            (module) => module.SupplierPurchasingPageComponent,
+          ),
       },
       {
         path: 'purchases/supplier-terms/:id/history',
-        loadComponent: () => import('./features/purchases/supplier-purchasing-page').then((module) => module.SupplierPurchasingPageComponent),
+        loadComponent: () =>
+          import('./features/purchases/supplier-purchasing-page').then(
+            (module) => module.SupplierPurchasingPageComponent,
+          ),
       },
       {
         path: 'purchases/replenishment',
         canDeactivate: [(component) => component.canDeactivate()],
-        loadComponent: () => import('./features/purchases/purchase-replenishment-page').then((module) => module.PurchaseReplenishmentPageComponent),
+        loadComponent: () =>
+          import('./features/purchases/purchase-replenishment-page').then(
+            (module) => module.PurchaseReplenishmentPageComponent,
+          ),
       },
       {
         path: 'purchases/analytics',
-        loadComponent: () => import('./features/purchases/purchase-analytics-page').then((module) => module.PurchaseAnalyticsPageComponent),
+        loadComponent: () =>
+          import('./features/purchases/purchase-analytics-page').then(
+            (module) => module.PurchaseAnalyticsPageComponent,
+          ),
       },
       {
         path: 'purchases/accounting-reconciliation',
-        loadComponent: () => import('./features/purchases/purchase-accounting-reconciliation-page').then((module) => module.PurchaseAccountingReconciliationPageComponent),
+        loadComponent: () =>
+          import('./features/purchases/purchase-accounting-reconciliation-page').then(
+            (module) => module.PurchaseAccountingReconciliationPageComponent,
+          ),
       },
       {
         path: 'purchases/communications/prepare',
-        loadComponent: () => import('./features/purchases/supplier-communications-page').then((module) => module.SupplierCommunicationsPageComponent),
+        loadComponent: () =>
+          import('./features/purchases/supplier-communications-page').then(
+            (module) => module.SupplierCommunicationsPageComponent,
+          ),
       },
       {
         path: 'purchases/communications/:id',
-        loadComponent: () => import('./features/purchases/supplier-communications-page').then((module) => module.SupplierCommunicationsPageComponent),
+        loadComponent: () =>
+          import('./features/purchases/supplier-communications-page').then(
+            (module) => module.SupplierCommunicationsPageComponent,
+          ),
       },
       {
         path: 'purchases/integrations',
-        loadComponent: () => import('./features/purchases/supplier-integrations-page').then((module) => module.SupplierIntegrationsPageComponent),
+        loadComponent: () =>
+          import('./features/purchases/supplier-integrations-page').then(
+            (module) => module.SupplierIntegrationsPageComponent,
+          ),
       },
       {
         path: 'purchases/integrations/submissions/:id',
-        loadComponent: () => import('./features/purchases/supplier-integrations-page').then((module) => module.SupplierIntegrationsPageComponent),
+        loadComponent: () =>
+          import('./features/purchases/supplier-integrations-page').then(
+            (module) => module.SupplierIntegrationsPageComponent,
+          ),
       },
       {
         path: 'purchases/payments',
-        loadComponent: () => import('./features/purchases/supplier-payments-page').then((module) => module.SupplierPaymentsPageComponent),
+        loadComponent: () =>
+          import('./features/purchases/supplier-payments-page').then(
+            (module) => module.SupplierPaymentsPageComponent,
+          ),
       },
       {
         path: 'purchases/payments/new',
         canDeactivate: [(component) => component.canDeactivate()],
-        loadComponent: () => import('./features/purchases/supplier-payments-page').then((module) => module.SupplierPaymentsPageComponent),
+        loadComponent: () =>
+          import('./features/purchases/supplier-payments-page').then(
+            (module) => module.SupplierPaymentsPageComponent,
+          ),
       },
       {
         path: 'purchases/payments/:id',
-        loadComponent: () => import('./features/purchases/supplier-payments-page').then((module) => module.SupplierPaymentsPageComponent),
+        loadComponent: () =>
+          import('./features/purchases/supplier-payments-page').then(
+            (module) => module.SupplierPaymentsPageComponent,
+          ),
       },
       {
         path: 'purchases/receipt-returns',
-        loadComponent: () => import('./features/purchases/goods-receipt-returns-page').then((module) => module.GoodsReceiptReturnsPageComponent),
+        loadComponent: () =>
+          import('./features/purchases/goods-receipt-returns-page').then(
+            (module) => module.GoodsReceiptReturnsPageComponent,
+          ),
       },
       {
         path: 'purchases/receipt-returns/new',
         canDeactivate: [(component) => component.canDeactivate()],
-        loadComponent: () => import('./features/purchases/goods-receipt-returns-page').then((module) => module.GoodsReceiptReturnsPageComponent),
+        loadComponent: () =>
+          import('./features/purchases/goods-receipt-returns-page').then(
+            (module) => module.GoodsReceiptReturnsPageComponent,
+          ),
       },
       {
         path: 'purchases/receipt-returns/:id',
-        loadComponent: () => import('./features/purchases/goods-receipt-returns-page').then((module) => module.GoodsReceiptReturnsPageComponent),
+        loadComponent: () =>
+          import('./features/purchases/goods-receipt-returns-page').then(
+            (module) => module.GoodsReceiptReturnsPageComponent,
+          ),
       },
       {
         path: 'purchases/legacy',
-        loadComponent: () => import('./features/purchases/legacy-purchases-page').then((module) => module.LegacyPurchasesPageComponent),
+        loadComponent: () =>
+          import('./features/purchases/legacy-purchases-page').then(
+            (module) => module.LegacyPurchasesPageComponent,
+          ),
       },
       {
         path: 'purchases/legacy/:id',
-        loadComponent: () => import('./features/purchases/legacy-purchases-page').then((module) => module.LegacyPurchasesPageComponent),
+        loadComponent: () =>
+          import('./features/purchases/legacy-purchases-page').then(
+            (module) => module.LegacyPurchasesPageComponent,
+          ),
       },
       {
         path: 'purchases/legacy/:id/return',
         canDeactivate: [(component) => component.canDeactivate()],
-        loadComponent: () => import('./features/purchases/legacy-purchases-page').then((module) => module.LegacyPurchasesPageComponent),
+        loadComponent: () =>
+          import('./features/purchases/legacy-purchases-page').then(
+            (module) => module.LegacyPurchasesPageComponent,
+          ),
       },
       {
         path: 'purchases/legacy-returns',
-        loadComponent: () => import('./features/purchases/legacy-purchases-page').then((module) => module.LegacyPurchasesPageComponent),
+        loadComponent: () =>
+          import('./features/purchases/legacy-purchases-page').then(
+            (module) => module.LegacyPurchasesPageComponent,
+          ),
       },
       {
         path: 'purchases/legacy-returns/:id',
-        loadComponent: () => import('./features/purchases/legacy-purchases-page').then((module) => module.LegacyPurchasesPageComponent),
+        loadComponent: () =>
+          import('./features/purchases/legacy-purchases-page').then(
+            (module) => module.LegacyPurchasesPageComponent,
+          ),
       },
       {
         path: 'sales/pricing',
         canDeactivate: [(component) => component.canDeactivate()],
-        loadComponent: () => import('./features/sales/sales-pricing-page').then((module) => module.SalesPricingPageComponent),
+        loadComponent: () =>
+          import('./features/sales/sales-pricing-page').then(
+            (module) => module.SalesPricingPageComponent,
+          ),
       },
       {
         path: 'sales/quotations',
-        loadComponent: () => import('./features/sales/sales-quotations-list-page').then((module) => module.SalesQuotationsListPageComponent),
+        loadComponent: () =>
+          import('./features/sales/sales-quotations-list-page').then(
+            (module) => module.SalesQuotationsListPageComponent,
+          ),
       },
       {
         path: 'sales/quotations/new',
         canDeactivate: [(component) => component.canDeactivate()],
-        loadComponent: () => import('./features/sales/sales-quotation-form-page').then((module) => module.SalesQuotationFormPageComponent),
+        loadComponent: () =>
+          import('./features/sales/sales-quotation-form-page').then(
+            (module) => module.SalesQuotationFormPageComponent,
+          ),
       },
       {
         path: 'sales/quotations/:id',
-        loadComponent: () => import('./features/sales/sales-quotation-details-page').then((module) => module.SalesQuotationDetailsPageComponent),
+        loadComponent: () =>
+          import('./features/sales/sales-quotation-details-page').then(
+            (module) => module.SalesQuotationDetailsPageComponent,
+          ),
       },
       {
         path: 'sales/orders',
-        loadComponent: () => import('./features/sales/sales-orders-page').then((module) => module.SalesOrdersPageComponent),
+        loadComponent: () =>
+          import('./features/sales/sales-orders-page').then(
+            (module) => module.SalesOrdersPageComponent,
+          ),
       },
       {
         path: 'sales/orders/:id',
-        loadComponent: () => import('./features/sales/sales-orders-page').then((module) => module.SalesOrdersPageComponent),
+        loadComponent: () =>
+          import('./features/sales/sales-orders-page').then(
+            (module) => module.SalesOrdersPageComponent,
+          ),
       },
       {
         path: 'sales/orders/:id/reservations',
         canDeactivate: [(component) => component.canDeactivate()],
-        loadComponent: () => import('./features/sales/sales-order-reservations-page').then((module) => module.SalesOrderReservationsPageComponent),
+        loadComponent: () =>
+          import('./features/sales/sales-order-reservations-page').then(
+            (module) => module.SalesOrderReservationsPageComponent,
+          ),
       },
       {
         path: 'sales/deliveries',
-        loadComponent: () => import('./features/sales/sales-deliveries-page').then((module) => module.SalesDeliveriesPageComponent),
+        loadComponent: () =>
+          import('./features/sales/sales-deliveries-page').then(
+            (module) => module.SalesDeliveriesPageComponent,
+          ),
       },
       {
         path: 'sales/deliveries/new',
         canDeactivate: [(component) => component.canDeactivate()],
-        loadComponent: () => import('./features/sales/sales-deliveries-page').then((module) => module.SalesDeliveriesPageComponent),
+        loadComponent: () =>
+          import('./features/sales/sales-deliveries-page').then(
+            (module) => module.SalesDeliveriesPageComponent,
+          ),
       },
       {
         path: 'sales/deliveries/:id',
-        loadComponent: () => import('./features/sales/sales-deliveries-page').then((module) => module.SalesDeliveriesPageComponent),
+        loadComponent: () =>
+          import('./features/sales/sales-deliveries-page').then(
+            (module) => module.SalesDeliveriesPageComponent,
+          ),
       },
       {
         path: 'sales/invoices',
-        loadComponent: () => import('./features/sales/customer-invoices-page').then((module) => module.CustomerInvoicesPageComponent),
+        loadComponent: () =>
+          import('./features/sales/customer-invoices-page').then(
+            (module) => module.CustomerInvoicesPageComponent,
+          ),
       },
       {
         path: 'sales/invoices/new',
         canDeactivate: [(component) => component.canDeactivate()],
-        loadComponent: () => import('./features/sales/customer-invoices-page').then((module) => module.CustomerInvoicesPageComponent),
+        loadComponent: () =>
+          import('./features/sales/customer-invoices-page').then(
+            (module) => module.CustomerInvoicesPageComponent,
+          ),
       },
       {
         path: 'sales/invoices/:id',
-        loadComponent: () => import('./features/sales/customer-invoices-page').then((module) => module.CustomerInvoicesPageComponent),
+        loadComponent: () =>
+          import('./features/sales/customer-invoices-page').then(
+            (module) => module.CustomerInvoicesPageComponent,
+          ),
       },
       {
         path: 'sales/payments',
-        loadComponent: () => import('./features/sales/customer-payments-page').then((module) => module.CustomerPaymentsPageComponent),
+        loadComponent: () =>
+          import('./features/sales/customer-payments-page').then(
+            (module) => module.CustomerPaymentsPageComponent,
+          ),
       },
       {
         path: 'sales/payments/new',
         canDeactivate: [(component) => component.canDeactivate()],
-        loadComponent: () => import('./features/sales/customer-payments-page').then((module) => module.CustomerPaymentsPageComponent),
+        loadComponent: () =>
+          import('./features/sales/customer-payments-page').then(
+            (module) => module.CustomerPaymentsPageComponent,
+          ),
       },
       {
         path: 'sales/payments/:id',
-        loadComponent: () => import('./features/sales/customer-payments-page').then((module) => module.CustomerPaymentsPageComponent),
+        loadComponent: () =>
+          import('./features/sales/customer-payments-page').then(
+            (module) => module.CustomerPaymentsPageComponent,
+          ),
+      },
+      {
+        path: 'sales/return-requests',
+        loadComponent: () =>
+          import('./features/sales/customer-return-requests-page').then(
+            (module) => module.CustomerReturnRequestsPageComponent,
+          ),
+      },
+      {
+        path: 'sales/return-requests/new',
+        canDeactivate: [(component) => component.canDeactivate()],
+        loadComponent: () =>
+          import('./features/sales/customer-return-requests-page').then(
+            (module) => module.CustomerReturnRequestsPageComponent,
+          ),
+      },
+      {
+        path: 'sales/return-requests/:id',
+        loadComponent: () =>
+          import('./features/sales/customer-return-requests-page').then(
+            (module) => module.CustomerReturnRequestsPageComponent,
+          ),
+      },
+      {
+        path: 'sales/return-receipts',
+        loadComponent: () =>
+          import('./features/sales/customer-return-receipts-page').then(
+            (module) => module.CustomerReturnReceiptsPageComponent,
+          ),
+      },
+      {
+        path: 'sales/return-receipts/new',
+        canDeactivate: [(component) => component.canDeactivate()],
+        loadComponent: () =>
+          import('./features/sales/customer-return-receipts-page').then(
+            (module) => module.CustomerReturnReceiptsPageComponent,
+          ),
+      },
+      {
+        path: 'sales/return-receipts/:id',
+        loadComponent: () =>
+          import('./features/sales/customer-return-receipts-page').then(
+            (module) => module.CustomerReturnReceiptsPageComponent,
+          ),
+      },
+      {
+        path: 'sales/credit-notes',
+        loadComponent: () =>
+          import('./features/sales/customer-credit-notes-page').then(
+            (module) => module.CustomerCreditNotesPageComponent,
+          ),
+      },
+      {
+        path: 'sales/credit-notes/new',
+        canDeactivate: [(component) => component.canDeactivate()],
+        loadComponent: () =>
+          import('./features/sales/customer-credit-notes-page').then(
+            (module) => module.CustomerCreditNotesPageComponent,
+          ),
+      },
+      {
+        path: 'sales/credit-notes/:id',
+        loadComponent: () =>
+          import('./features/sales/customer-credit-notes-page').then(
+            (module) => module.CustomerCreditNotesPageComponent,
+          ),
+      },
+      {
+        path: 'sales/approval-rules',
+        canDeactivate: [(component) => component.canDeactivate()],
+        loadComponent: () =>
+          import('./features/sales/sales-approval-rules-page').then(
+            (module) => module.SalesApprovalRulesPageComponent,
+          ),
       },
       {
         path: 'products/recipes/:productId',
         canDeactivate: [(component) => component.canDeactivate()],
-        loadComponent: () => import('./features/products/recipe-editor-page').then((module) => module.RecipeEditorPageComponent),
+        loadComponent: () =>
+          import('./features/products/recipe-editor-page').then(
+            (module) => module.RecipeEditorPageComponent,
+          ),
       },
       {
         path: 'products/:id/attributes',
         canDeactivate: [(component) => component.canDeactivate()],
-        loadComponent: () => import('./features/products/product-attribute-values-page').then((module) => module.ProductAttributeValuesPageComponent),
+        loadComponent: () =>
+          import('./features/products/product-attribute-values-page').then(
+            (module) => module.ProductAttributeValuesPageComponent,
+          ),
       },
       {
         path: 'products/:id/edit',
         canDeactivate: [(component) => component.canDeactivate()],
-        loadComponent: () => import('./features/products/product-form-page').then((module) => module.ProductFormPageComponent),
+        loadComponent: () =>
+          import('./features/products/product-form-page').then(
+            (module) => module.ProductFormPageComponent,
+          ),
       },
       {
         path: 'products/:id',
-        loadComponent: () => import('./features/products/product-details-page').then((module) => module.ProductDetailsPageComponent),
+        loadComponent: () =>
+          import('./features/products/product-details-page').then(
+            (module) => module.ProductDetailsPageComponent,
+          ),
       },
       {
         path: 'operations-center',
-        loadComponent: () => import('./features/operations-center/operations-center-page').then((module) => module.OperationsCenterPageComponent),
+        loadComponent: () =>
+          import('./features/operations-center/operations-center-page').then(
+            (module) => module.OperationsCenterPageComponent,
+          ),
       },
     ],
   },

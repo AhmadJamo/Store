@@ -1494,3 +1494,32 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   SecurityRegression passed 1302 checks, Angular passed 193/193 tests across 89 files, 101 templates passed accessibility, external
   SCSS passed and bundles measured 315,565/358,400 initial and 81,743/81,920 largest lazy bytes. MVC remains default. Advanced to
   `MOD-024H` Customer Return Requests.
+- 2026-10-29: Completed `MOD-024H` Customer Return Requests. Added authenticated list/details/create-form/create and independent
+  Submit/Approve/Reject/Cancel APIs plus a bilingual RTL-safe Angular workspace for posted-delivery eligibility, cumulative
+  returnable quantities, authorization history and downstream receipt evidence. `CustomerReturnRequestService` remains authoritative
+  for delivery ownership, numbering, cumulative active requests, lifecycle and concurrency; authorization changes no inventory,
+  accounting, invoice balance, credit note or cash. Web Release passed with zero warnings/errors, SecurityRegression passed 1302
+  checks, Angular passed 194/194 tests across 90 files, 102 templates passed accessibility, external SCSS passed and bundles measured
+  315,842/358,400 initial and 81,743/81,920 largest lazy bytes. MVC remains default. Advanced to `MOD-024I` Customer Return Receipts.
+- 2026-10-29: Completed `MOD-024I` Customer Return Receipts. Added authenticated list/details/create-form/create and independent
+  Inspect/Post Disposition/Cancel APIs plus a bilingual RTL-safe Angular workspace for remaining approved quantities, inspection
+  decisions, exact tracked identities, restock/cost evidence and journal reference. `CustomerReturnReceiptService` remains
+  authoritative for cumulative limits, tracking ownership, stock/location/tracking updates, historical valuation, movements and COGS
+  reversal; inspection alone has no inventory or accounting effect. Web Release passed with zero warnings/errors,
+  SecurityRegression passed 1302 checks, Angular passed 195/195 tests across 91 files, 103 templates passed accessibility, external
+  SCSS passed and bundles measured 316,265/358,400 initial and 81,743/81,920 largest lazy bytes. MVC remains default. Advanced to
+  `MOD-024J` Customer Credit Notes.
+- 2026-10-29: Completed `MOD-024J` Customer Credit Notes. Added authenticated list/details/create-form/create-and-post APIs plus a
+  bilingual RTL-safe Angular workspace for posted invoice/return eligibility, remaining quantities, immutable financial reversal
+  evidence and journal reference. `CustomerCreditNoteService` remains authoritative for invoice/delivery/receipt ownership,
+  cumulative limits, proportional currency/tax snapshots, request-key idempotency, numbering and accounting; the operation never
+  repeats inventory or creates cash refund. Web Release passed with zero warnings/errors, SecurityRegression passed 1302 checks,
+  Angular passed 196/196 tests across 92 files, 104 templates passed accessibility, external SCSS passed and bundles measured
+  316,670/358,400 initial and 81,743/81,920 largest lazy bytes. MVC remains default. Advanced to `MOD-024K` Sales Approval Rules.
+- 2026-10-29: Completed `MOD-024K` Sales Approval Rules. Added authenticated rule-page/create/active-state APIs plus a bilingual
+  RTL-safe Angular workspace for customer scope, metrics, comparisons, thresholds, effects, effective dates, priority and ordered
+  approver roles. `SalesOrderApprovalService` remains authoritative for customer/role validity, action-step compatibility,
+  concurrency and order evaluation; Angular never evaluates or confirms orders. Web Release passed with zero warnings/errors,
+  SecurityRegression passed 1302 checks, Angular passed 197/197 tests across 93 files, 105 templates passed accessibility, external
+  SCSS passed and bundles measured 316,828/358,400 initial and 81,743/81,920 largest lazy bytes. MVC remains default. Advanced to
+  `MOD-024L` Sales Quotation Templates.

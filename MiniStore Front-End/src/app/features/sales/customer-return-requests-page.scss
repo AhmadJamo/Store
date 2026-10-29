@@ -1,0 +1,95 @@
+.return-requests-page {
+  display: grid;
+  gap: 1rem;
+}
+.heading,
+.links,
+.submit,
+.actions,
+.history {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+.heading,
+.submit {
+  justify-content: space-between;
+}
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
+  gap: 1rem;
+}
+.facts,
+.form-head {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  gap: 1rem;
+}
+.facts div {
+  display: grid;
+  gap: 0.25rem;
+}
+.facts span,
+dt {
+  color: var(--text-muted);
+}
+.wide {
+  grid-column: 1 / -1;
+}
+dl {
+  display: grid;
+  gap: 0.5rem;
+}
+dl div {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.status {
+  padding: 0.3rem 0.65rem;
+  border-radius: 999px;
+  background: var(--surface-muted);
+}
+.safe {
+  border-inline-start: 0.25rem solid var(--color-success);
+}
+.filters {
+  display: flex;
+  align-items: end;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+.ui-field {
+  min-width: 12rem;
+  flex: 1;
+}
+.back {
+  justify-self: start;
+}
+.danger {
+  color: var(--color-danger);
+}
+pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+h2 {
+  margin-block: 0.25rem;
+}
+@media (max-width: 42rem) {
+  .facts,
+  .form-head {
+    grid-template-columns: 1fr;
+  }
+  .heading,
+  .submit {
+    align-items: stretch;
+  }
+  .links,
+  .heading .ui-button,
+  .submit .ui-button {
+    width: 100%;
+  }
+}

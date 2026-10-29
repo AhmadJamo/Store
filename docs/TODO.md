@@ -74,7 +74,11 @@ The ERP SaaS Foundation Blueprint is imported as a non-authoritative planning re
 - [x] MOD-024E migrate Sales Delivery list/details/create, posting and cancellation with server-owned reservation, tracking, valuation, stock and COGS authority. Completed 2026-10-29.
 - [x] MOD-024F migrate Customer Invoice list/details/create, approval/cancellation, posting and reversal with server-owned cumulative eligibility, frozen commercial evidence and accounting. Completed 2026-10-29.
 - [x] MOD-024G migrate Customer Payment list/details/create, allocation, posting and reversal with server-owned balances, FX and accounting. Completed 2026-10-29.
-- [ ] MOD-024H migrate Customer Return Request list/details/create and authorization lifecycle with server-owned returnable quantities.
+- [x] MOD-024H migrate Customer Return Request list/details/create and authorization lifecycle with server-owned returnable quantities. Completed 2026-10-29.
+- [x] MOD-024I migrate Customer Return Receipt list/details/create, inspection, cancellation and disposition posting with server-owned quantities, tracking, inventory and accounting. Completed 2026-10-29.
+- [x] MOD-024J migrate Customer Credit Note list/details/create-and-post with server-owned eligibility, cumulative credits and accounting. Completed 2026-10-29.
+- [x] MOD-024K migrate Sales Approval Rule list/create/activation management with server-owned scope, threshold and ordered-step validation. Completed 2026-10-29.
+- [ ] MOD-024L migrate Sales Quotation Template list/details/create, version cloning and lifecycle management with server-owned template validation.
 - [ ] MOD-023 through MOD-028 migrate purchasing, sales, POS, accounting, tenant/public,
   platform and shared MVC workflows to Angular, including every operation, permission, localization, file/PDF and edge state.
 - [ ] MOD-029 prove full-system parity through dual-run reconciliation, performance/security/accessibility evidence and cutover/rollback rehearsals.

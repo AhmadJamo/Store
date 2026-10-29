@@ -1,0 +1,97 @@
+import { inject, Injectable } from '@angular/core';
+import { ApiSessionService } from '../../core/api/api-session.service';
+const m = {
+  en: {
+    area: 'Sales',
+    title: 'Customer return requests',
+    description: 'Authorize returns against exact posted delivery quantities.',
+    search: 'Return, order or customer',
+    apply: 'Apply',
+    empty: 'No return requests found.',
+    view: 'Details',
+    back: 'Back',
+    create: 'Create customer return request',
+    safe: 'This request does not change stock, accounting or customer balances.',
+    requestDate: 'Request date',
+    reason: 'Return reason',
+    notes: 'Notes',
+    delivered: 'Delivered',
+    requested: 'Already requested',
+    remaining: 'Remaining',
+    quantity: 'Return quantity',
+    createDraft: 'Create return request draft',
+    draft: 'Draft',
+    submitted: 'Submitted',
+    approved: 'Approved',
+    rejected: 'Rejected',
+    cancelled: 'Cancelled',
+    delivery: 'Source delivery',
+    order: 'Sales order',
+    customer: 'Customer',
+    lines: 'Return lines',
+    submit: 'Submit for approval',
+    approve: 'Approve return request',
+    reject: 'Reject',
+    cancel: 'Cancel request',
+    decisionReason: 'Decision reason',
+    cancellationReason: 'Cancellation reason',
+    history: 'History',
+    unsaved: 'Discard unsaved return request changes?',
+    completed: 'Approval completed',
+    receipts: 'Return receipts',
+    receive: 'Receive and inspect return',
+  },
+  ar: {
+    area: 'المبيعات',
+    title: 'طلبات مرتجعات العملاء',
+    description: 'صرّح بالمرتجعات مقابل كميات التسليم المرحلة الدقيقة.',
+    search: 'رقم المرتجع أو الطلب أو العميل',
+    apply: 'تطبيق',
+    empty: 'لا توجد طلبات مرتجعات.',
+    view: 'التفاصيل',
+    back: 'رجوع',
+    create: 'إنشاء طلب مرتجع عميل',
+    safe: 'هذا الطلب لا يغيّر المخزون أو المحاسبة أو رصيد العميل.',
+    requestDate: 'تاريخ الطلب',
+    reason: 'سبب المرتجع',
+    notes: 'ملاحظات',
+    delivered: 'المسلّم',
+    requested: 'المطلوب سابقًا',
+    remaining: 'المتبقي',
+    quantity: 'كمية المرتجع',
+    createDraft: 'إنشاء مسودة طلب المرتجع',
+    draft: 'مسودة',
+    submitted: 'مرسل',
+    approved: 'معتمد',
+    rejected: 'مرفوض',
+    cancelled: 'ملغي',
+    delivery: 'التسليم المصدر',
+    order: 'طلب البيع',
+    customer: 'العميل',
+    lines: 'بنود المرتجع',
+    submit: 'إرسال للاعتماد',
+    approve: 'اعتماد طلب المرتجع',
+    reject: 'رفض',
+    cancel: 'إلغاء الطلب',
+    decisionReason: 'سبب القرار',
+    cancellationReason: 'سبب الإلغاء',
+    history: 'السجل',
+    unsaved: 'هل تريد تجاهل تغييرات طلب المرتجع؟',
+    completed: 'اكتمل الاعتماد',
+    receipts: 'استلامات المرتجع',
+    receive: 'استلام وفحص المرتجع',
+  },
+} as const;
+export type ReturnKey = keyof typeof m.en;
+@Injectable({ providedIn: 'root' })
+export class CustomerReturnRequestsLocalizationService {
+  private readonly s = inject(ApiSessionService);
+  text(k: ReturnKey) {
+    return m[this.s.session()?.culture?.startsWith('ar') ? 'ar' : 'en'][k];
+  }
+  status(v: number) {
+    return this.text(
+      (['', 'draft', 'submitted', 'approved', 'rejected', 'cancelled'][v] ?? 'draft') as ReturnKey,
+    );
+  }
+}

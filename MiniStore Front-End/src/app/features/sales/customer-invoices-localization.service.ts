@@ -67,6 +67,7 @@ const m = {
     paidStatus: 'Paid',
     creditedStatus: 'Credited',
     recordPayment: 'Record customer payment',
+    createCreditNote: 'Create customer credit note',
     paymentCompleted: 'Payment completed',
   },
   ar: {
@@ -134,6 +135,7 @@ const m = {
     paidStatus: 'مدفوعة',
     creditedStatus: 'مسددة بإشعار دائن',
     recordPayment: 'تسجيل دفعة عميل',
+    createCreditNote: 'إنشاء إشعار دائن للعميل',
     paymentCompleted: 'اكتمل السداد',
   },
 } as const;
