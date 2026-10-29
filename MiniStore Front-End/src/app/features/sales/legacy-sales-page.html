@@ -101,7 +101,7 @@
   } @else if (page(); as p) {
     <app-page-header
       [eyebrow]="i18n.text('area')"
-      [title]="i18n.text('create')"
+      [title]="i18n.text(isPos ? 'posCreate' : 'create')"
       [description]="i18n.text('description')"
     />
     @if (problem(); as issue) {
@@ -109,6 +109,18 @@
     }
     <form [formGroup]="form" (ngSubmit)="create()">
       <section class="form-grid ui-card">
+        @if (isPos && posPage(); as pos) {
+          <label class="ui-field"
+            ><span>{{ i18n.text('terminal') }}</span
+            ><select formControlName="posTerminalId" (change)="terminalChanged()">
+              @for (terminal of pos.terminals; track terminal.id) {
+                <option [ngValue]="terminal.id">
+                  {{ terminal.branchName }} · {{ terminal.name }}
+                </option>
+              }
+            </select></label
+          >
+        }
         <label class="ui-field"
           ><span>{{ i18n.text('date') }}</span
           ><input type="date" formControlName="date"
@@ -116,11 +128,39 @@
         <label class="ui-field"
           ><span>{{ i18n.text('warehouse') }}</span
           ><select formControlName="warehouseId">
-            @for (o of p.warehouses; track o.id) {
-              <option [ngValue]="o.id">{{ o.label }}</option>
+            @if (isPos) {
+              @for (o of terminalWarehouses(); track o.warehouseId) {
+                <option [ngValue]="o.warehouseId">{{ o.warehouseName }}</option>
+              }
+            } @else {
+              @for (o of p.warehouses; track o.id) {
+                <option [ngValue]="o.id">{{ o.label }}</option>
+              }
             }
           </select></label
         >
+        @if (isPos) {
+          <label class="ui-field"
+            ><span>{{ i18n.text('orderType') }}</span
+            ><select formControlName="posOrderType">
+              @for (value of orderTypes(); track value) {
+                <option [ngValue]="value">{{ i18n.orderType(value) }}</option>
+              }
+            </select></label
+          >
+          @if (runtime()?.requireServiceReference || form.controls.posOrderType.value === 2) {
+            <label class="ui-field"
+              ><span>{{ i18n.text('serviceReference') }}</span
+              ><input formControlName="serviceReference"
+            /></label>
+          }
+          @if (runtime()?.enableGuestCount && form.controls.posOrderType.value === 2) {
+            <label class="ui-field"
+              ><span>{{ i18n.text('guestCount') }}</span
+              ><input type="number" min="1" max="999" formControlName="guestCount"
+            /></label>
+          }
+        }
         <label class="ui-field"
           ><span>{{ i18n.text('customer') }}</span
           ><select formControlName="customerId">
@@ -165,6 +205,29 @@
         ><span>{{ i18n.text('productSearch') }}</span
         ><input [formControl]="productSearch"
       /></label>
+      @if (isPos) {
+        <section
+          class="product-catalog"
+          [class.compact]="runtime()?.compactProductCards"
+          [style.--pos-columns]="runtime()?.productColumns || 4"
+        >
+          @for (product of filteredProducts(p); track product.id) {
+            <button type="button" class="product-card ui-card" (click)="addProduct(product)">
+              <strong>{{ product.name }}</strong
+              ><span>{{ product.code }}</span>
+              @if (runtime()?.showBarcode && product.barcode) {
+                <small>{{ product.barcode }}</small>
+              }
+              @if (runtime()?.showPrice) {
+                <b>{{ product.retailPrice | number: '1.2-2' }}</b>
+              }
+              @if (runtime()?.showStock) {
+                <small>{{ i18n.text('stock') }}: {{ stock(product.id) | number: '1.0-6' }}</small>
+              }
+            </button>
+          }
+        </section>
+      }
       <div class="line-list" formArrayName="items">
         @for (group of items.controls; track group; let i = $index) {
           <article class="line ui-card" [formGroupName]="i">
@@ -174,7 +237,7 @@
                 @for (o of filteredProducts(p); track o.id) {
                   <option [ngValue]="o.id">
                     {{ o.code }} — {{ o.name }}
-                    @if (o.barcode) {
+                    @if (o.barcode && (!isPos || runtime()?.showBarcode)) {
                       ({{ o.barcode }})
                     }
                   </option>
@@ -185,10 +248,18 @@
               ><span>{{ i18n.text('quantity') }}</span
               ><input type="number" step=".000001" formControlName="quantity"
             /></label>
-            <label class="ui-field"
-              ><span>{{ i18n.text('price') }}</span
-              ><input type="number" formControlName="salePrice" readonly
-            /></label>
+            @if (!isPos || runtime()?.showPrice) {
+              <label class="ui-field"
+                ><span>{{ i18n.text('price') }}</span
+                ><input type="number" formControlName="salePrice" readonly
+              /></label>
+            }
+            @if (isPos && runtime()?.showStock) {
+              <p class="stock">
+                {{ i18n.text('stock') }}:
+                {{ stock(group.get('productId')?.value) | number: '1.0-6' }}
+              </p>
+            }
             <label class="ui-field"
               ><span>{{ i18n.text('discountType') }}</span
               ><select formControlName="discountType">
@@ -200,10 +271,12 @@
               ><span>{{ i18n.text('discount') }}</span
               ><input type="number" step=".01" formControlName="discountValue"
             /></label>
-            <label class="ui-field"
-              ><span>{{ i18n.text('lineNotes') }}</span
-              ><input formControlName="notes"
-            /></label>
+            @if (!isPos || runtime()?.enableItemNotes) {
+              <label class="ui-field"
+                ><span>{{ i18n.text('lineNotes') }}</span
+                ><input formControlName="notes"
+              /></label>
+            }
             @if (isTracked(i)) {
               <label class="ui-field wide"
                 ><span>{{ i18n.text('tracking') }}</span

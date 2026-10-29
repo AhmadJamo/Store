@@ -13,6 +13,9 @@ public sealed class LegacySaleWorkspaceService(
     ICustomerRepository customers,
     IPaymentMethodRepository paymentMethods,
     ITaxRateRepository taxRates,
+    IProductStockRepository productStocks,
+    InventoryAccessService inventoryAccess,
+    PosExperienceSettingsService posExperience,
     ICurrentUserService currentUser)
 {
     public async Task<List<LegacySaleSummaryDto>> GetAllAsync()
@@ -70,7 +73,7 @@ public sealed class LegacySaleWorkspaceService(
         {
             Form = form ?? new CreateSaleDto { Date = DateTime.Today },
             Products = productRows.Select(x => new LegacySaleProductOptionDto(
-                x.Id, x.ProductCode, x.Name, x.Barcode, x.WholesalePrice, x.TrackingPolicy)).ToList(),
+                x.Id, x.ProductCode, x.Name, x.Barcode, x.WholesalePrice, x.SalePrice, x.TrackingPolicy)).ToList(),
             Warehouses = (await warehouses.GetAllAsync()).OrderBy(x => x.Name)
                 .Select(x => new LegacySaleOptionDto(x.Id, x.Name)).ToList(),
             Customers = (await customers.GetAllAsync()).Where(x => x.IsActive).OrderBy(x => x.Name)
@@ -84,6 +87,42 @@ public sealed class LegacySaleWorkspaceService(
 
     public Task<int> CreateAsync(CreateSaleDto input) =>
         saleService.CreateAsync(input, SaleChannel.Wholesale, currentUser.UserId);
+
+    public async Task<LegacyPosCreatePageDto> GetPosPageAsync(CreateSaleDto? form = null)
+    {
+        var access = await inventoryAccess.GetPageAsync();
+        var productRows = (await products.GetAllAsync(null))
+            .Where(x => x.IsActive && x.IsSellableInPos)
+            .OrderBy(x => x.Name)
+            .ToList();
+        var activeTerminals = access.PosTerminals.Where(x => x.IsActive).ToList();
+        var effectiveForm = form ?? new CreateSaleDto { Date = DateTime.Today };
+        if (!effectiveForm.PosTerminalId.HasValue) effectiveForm.PosTerminalId = activeTerminals.FirstOrDefault()?.Id;
+        var selected = activeTerminals.FirstOrDefault(x => x.Id == effectiveForm.PosTerminalId);
+        if (effectiveForm.WarehouseId <= 0) effectiveForm.WarehouseId = selected?.DefaultWarehouseId ?? 0;
+
+        return new LegacyPosCreatePageDto
+        {
+            Form = effectiveForm,
+            Products = productRows.Select(x => new LegacySaleProductOptionDto(
+                x.Id, x.ProductCode, x.Name, x.Barcode, x.WholesalePrice, x.SalePrice, x.TrackingPolicy)).ToList(),
+            Warehouses = access.Warehouses.Where(x => x.AllowPosSales).OrderBy(x => x.Name)
+                .Select(x => new LegacySaleOptionDto(x.Id, x.Name)).ToList(),
+            Customers = (await customers.GetAllAsync()).Where(x => x.IsActive).OrderBy(x => x.Name)
+                .Select(x => new LegacySaleOptionDto(x.Id, $"{x.CustomerCode} — {x.Name}")).ToList(),
+            PaymentMethods = (await paymentMethods.GetAllAsync()).Where(x => x.IsActive).OrderBy(x => x.Name)
+                .Select(x => new LegacySaleOptionDto(x.Id, x.Name)).ToList(),
+            TaxRates = (await taxRates.GetAllAsync()).OrderBy(x => x.Name)
+                .Select(x => new LegacySaleTaxOptionDto(x.Id, x.Name, x.Rate, x.IsPriceInclusive)).ToList(),
+            Terminals = activeTerminals,
+            RuntimeSettings = await posExperience.GetRuntimeSettingsAsync(),
+            Stocks = (await productStocks.GetAllAsync())
+                .Select(x => new LegacyPosStockDto(x.ProductId, x.WarehouseId, x.Quantity)).ToList()
+        };
+    }
+
+    public Task<int> CreatePosAsync(CreateSaleDto input) =>
+        saleService.CreateAsync(input, SaleChannel.RetailPos, currentUser.UserId);
 
     public Task PostAsync(int id) => posting.PostAsync(id);
 }

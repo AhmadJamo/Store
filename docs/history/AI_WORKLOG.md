@@ -1538,3 +1538,10 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   `SalePostingService` retains idempotent balanced GL posting. Web Release passed with zero warnings/errors, SecurityRegression
   passed 1302 checks, Angular passed 199/199 tests across 95 files, 107 templates passed accessibility, external SCSS passed and
   bundles measured 317,629/358,400 initial and 81,743/81,920 largest lazy bytes. MVC remains default. Advanced to `MOD-025B` POS.
+- 2026-10-29: Completed `MOD-025B` Retail POS. Extended the bounded sale workspace/API with active terminals, allowed warehouses,
+  runtime experience settings, stock evidence and an explicit RetailPos command. Added a bilingual touch-friendly Angular POS with
+  configured product layout/density/visibility, name/code/barcode search, quick barcode add, cart discounts/tracking and enabled
+  order context. `SaleService` remains authoritative for access, retail price, recipes, stock, tracking, cost and numbering. Web
+  Release passed with zero warnings/errors, SecurityRegression passed 1302 checks, Angular passed 200/200 tests across 95 files,
+  107 templates passed accessibility, external SCSS passed and bundles measured 317,769/358,400 initial and 81,743/81,920 largest
+  lazy bytes. MVC remains default. Advanced to `MOD-025C` immediate-sale returns.

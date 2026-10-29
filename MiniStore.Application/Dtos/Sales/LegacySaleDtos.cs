@@ -1,5 +1,6 @@
 using MiniStore.Domain.Entities;
 using MiniStore.Domain.Enums;
+using MiniStore.Application.Dtos.Settings;
 
 namespace MiniStore.Application.DTOs.Sales;
 
@@ -11,7 +12,10 @@ public sealed record LegacySaleProductOptionDto(
     string Name,
     string? Barcode,
     decimal WholesalePrice,
+    decimal RetailPrice,
     ProductTrackingPolicy TrackingPolicy);
+
+public sealed record LegacyPosStockDto(int ProductId, int WarehouseId, decimal Quantity);
 
 public sealed record LegacySaleTaxOptionDto(
     int Id,
@@ -40,7 +44,7 @@ public sealed class LegacySaleDetailsPageDto
     public bool IsPosted { get; init; }
 }
 
-public sealed class LegacySaleCreatePageDto
+public class LegacySaleCreatePageDto
 {
     public CreateSaleDto Form { get; init; } = new() { Date = DateTime.Today };
     public List<LegacySaleProductOptionDto> Products { get; init; } = [];
@@ -48,4 +52,11 @@ public sealed class LegacySaleCreatePageDto
     public List<LegacySaleOptionDto> Customers { get; init; } = [];
     public List<LegacySaleOptionDto> PaymentMethods { get; init; } = [];
     public List<LegacySaleTaxOptionDto> TaxRates { get; init; } = [];
+}
+
+public sealed class LegacyPosCreatePageDto : LegacySaleCreatePageDto
+{
+    public List<PosTerminalAccessDto> Terminals { get; init; } = [];
+    public List<PosRuntimeSettingsDto> RuntimeSettings { get; init; } = [];
+    public List<LegacyPosStockDto> Stocks { get; init; } = [];
 }

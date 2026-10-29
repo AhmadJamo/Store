@@ -7,6 +7,16 @@ const copy = {
     description:
       'Create and review immediate wholesale and POS sales while pricing, stock and accounting stay server-owned.',
     create: 'Create wholesale sale',
+    posCreate: 'Point of sale',
+    terminal: 'POS terminal',
+    orderType: 'Order type',
+    walkInOrder: 'Walk-in',
+    dineIn: 'Dine-in',
+    takeaway: 'Takeaway',
+    delivery: 'Delivery',
+    serviceReference: 'Table or service reference',
+    guestCount: 'Guest count',
+    stock: 'Stock',
     back: 'Back',
     view: 'View sale',
     empty: 'No immediate sales found.',
@@ -59,6 +69,16 @@ const copy = {
     description:
       'أنشئ وراجع مبيعات الجملة ونقطة البيع مع بقاء التسعير والمخزون والمحاسبة داخل الخادم.',
     create: 'إنشاء بيع جملة',
+    posCreate: 'نقطة البيع',
+    terminal: 'طرفية نقطة البيع',
+    orderType: 'نوع الطلب',
+    walkInOrder: 'حضور مباشر',
+    dineIn: 'داخل المكان',
+    takeaway: 'سفري',
+    delivery: 'توصيل',
+    serviceReference: 'الطاولة أو مرجع الخدمة',
+    guestCount: 'عدد الضيوف',
+    stock: 'الرصيد',
     back: 'رجوع',
     view: 'عرض البيع',
     empty: 'لا توجد مبيعات فورية.',
@@ -118,5 +138,11 @@ export class LegacySalesLocalizationService {
   }
   discount(value: number) {
     return this.text(value === 2 ? 'fixed' : 'percentage');
+  }
+  orderType(value: number) {
+    return this.text(
+      (['walkInOrder', 'walkInOrder', 'dineIn', 'takeaway', 'delivery'][value] ??
+        'walkInOrder') as LegacySalesKey,
+    );
   }
 }

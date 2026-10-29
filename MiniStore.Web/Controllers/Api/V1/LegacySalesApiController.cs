@@ -27,9 +27,17 @@ public sealed class LegacySalesApiController(
     public async Task<ActionResult<LegacySaleCreatePageDto>> GetCreateForm() =>
         Ok(await service.GetCreatePageAsync());
 
+    [HttpGet("pos-form"), PermissionAuthorize("Sales.Create")]
+    public async Task<ActionResult<LegacyPosCreatePageDto>> GetPosForm() =>
+        Ok(await service.GetPosPageAsync());
+
     [HttpPost, ValidateAntiForgeryToken, PermissionAuthorize("Sales.Create")]
     public Task<IActionResult> Create(CreateSaleDto input) =>
         Run(async () => Ok(new { id = await service.CreateAsync(input) }));
+
+    [HttpPost("pos"), ValidateAntiForgeryToken, PermissionAuthorize("Sales.Create")]
+    public Task<IActionResult> CreatePos(CreateSaleDto input) =>
+        Run(async () => Ok(new { id = await service.CreatePosAsync(input) }));
 
     [HttpPost("{id:int}/post"), ValidateAntiForgeryToken, PermissionAuthorize("Sales.Create")]
     public Task<IActionResult> Post(int id) => Run(async () =>

@@ -8,6 +8,7 @@ export interface LegacySaleProductOption {
   name: string;
   barcode: string | null;
   wholesalePrice: number;
+  retailPrice: number;
   trackingPolicy: number;
 }
 export interface LegacySaleTaxOption extends LegacySaleOption {
@@ -46,6 +47,52 @@ export interface LegacySaleCreatePage {
   customers: LegacySaleOption[];
   paymentMethods: LegacySaleOption[];
   taxRates: LegacySaleTaxOption[];
+}
+export interface LegacyPosWarehouse {
+  warehouseId: number;
+  warehouseName: string;
+  priority: number;
+}
+export interface LegacyPosTerminal {
+  id: number;
+  name: string;
+  branchId: number;
+  branchName: string;
+  defaultWarehouseId: number;
+  defaultWarehouseName: string;
+  isActive: boolean;
+  warehouses: LegacyPosWarehouse[];
+}
+export interface LegacyPosRuntimeSettings {
+  posTerminalId: number;
+  productLayout: number;
+  theme: number;
+  cartPosition: number;
+  accentColor: string;
+  headerTitle: string;
+  productColumns: number;
+  compactProductCards: boolean;
+  showBarcode: boolean;
+  showPrice: boolean;
+  showStock: boolean;
+  autoFocusSearch: boolean;
+  touchOptimized: boolean;
+  enabledOrderTypes: number;
+  defaultOrderType: number;
+  requireServiceReference: boolean;
+  enableGuestCount: boolean;
+  enableItemNotes: boolean;
+  quickAddOnBarcodeScan: boolean;
+}
+export interface LegacyPosStock {
+  productId: number;
+  warehouseId: number;
+  quantity: number;
+}
+export interface LegacyPosCreatePage extends LegacySaleCreatePage {
+  terminals: LegacyPosTerminal[];
+  runtimeSettings: LegacyPosRuntimeSettings[];
+  stocks: LegacyPosStock[];
 }
 export interface LegacySaleSummary {
   id: number;

@@ -1,6 +1,6 @@
 # Phase 25 — Legacy immediate sales and POS Angular migration
 
-> Status: IN PROGRESS — `MOD-025A` COMPLETE on 2026-10-29
+> Status: IN PROGRESS — `MOD-025A..B` COMPLETE on 2026-10-29
 >
 > Presentation default: MVC until a separate cutover approval.
 
@@ -20,12 +20,21 @@ discount, tax, stock, valuation, numbering, transaction and accounting authority
   consumes stock/tracking, freezes cost and numbering, and commits atomically. `SalePostingService` retains balanced, idempotent GL
   posting and source evidence.
 
+## `MOD-025B` delivered — retail POS composer
+
+- Extended the Application-owned workspace with active terminals, terminal warehouse allow-lists, runtime experience settings,
+  per-warehouse stock evidence and an explicit RetailPos create command.
+- Added a bilingual RTL-safe POS route with touch-friendly product cards, configured columns/density, price/barcode/stock visibility,
+  name/code/barcode search, quick barcode add, cart quantities/discounts/tracking and terminal-enabled order context.
+- `SaleService` revalidates terminal/warehouse/product access, order-type requirements, recipes, tracking, server retail price,
+  inventory and cost inside the existing transaction. Browser settings grant no authority.
+
 ## Evidence
 
 - Web Release: zero warnings/errors; SecurityRegression: 1302 checks.
-- Angular: 199/199 tests across 95 files; 107 templates passed accessibility; external SCSS passed.
-- Bundles: 317,629/358,400 initial bytes and 81,743/81,920 largest lazy bytes.
+- Angular: 200/200 tests across 95 files; 107 templates passed accessibility; external SCSS passed.
+- Bundles: 317,769/358,400 initial bytes and 81,743/81,920 largest lazy bytes.
 
 ## Next slice
 
-`MOD-025B` migrates the retail POS composer and its terminal-specific warehouse, order-context, layout and tracked-selection behavior.
+`MOD-025C` migrates posted immediate-sale return history/details/create-and-post with cumulative quantity and accounting evidence.

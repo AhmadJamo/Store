@@ -5,6 +5,7 @@ import {
   LegacySaleCreatePage,
   LegacySaleDetailsPage,
   LegacySaleSummary,
+  LegacyPosCreatePage,
 } from './legacy-sales.models';
 
 @Injectable({ providedIn: 'root' })
@@ -22,6 +23,12 @@ export class LegacySalesApiService {
   }
   create(input: LegacySaleCreateInput) {
     return this.http.post<{ id: number }>(this.base, input);
+  }
+  posForm() {
+    return this.http.get<LegacyPosCreatePage>(`${this.base}/pos-form`);
+  }
+  createPos(input: LegacySaleCreateInput) {
+    return this.http.post<{ id: number }>(`${this.base}/pos`, input);
   }
   post(id: number) {
     return this.http.post<void>(`${this.base}/${id}/post`, {});

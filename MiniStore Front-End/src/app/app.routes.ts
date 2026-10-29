@@ -1134,6 +1134,14 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'sales/pos',
+        canDeactivate: [(component) => component.canDeactivate()],
+        loadComponent: () =>
+          import('./features/sales/legacy-sales-page').then(
+            (module) => module.LegacySalesPageComponent,
+          ),
+      },
+      {
         path: 'products/recipes/:productId',
         canDeactivate: [(component) => component.canDeactivate()],
         loadComponent: () =>
