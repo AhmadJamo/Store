@@ -137,9 +137,9 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | SalesQuotations | Create.cshtml | Inventoried | — | `MiniStore.Web/Views/SalesQuotations/Create.cshtml` |
 | SalesQuotations | Details.cshtml | Inventoried | — | `MiniStore.Web/Views/SalesQuotations/Details.cshtml` |
 | SalesQuotations | Index.cshtml | Inventoried | — | `MiniStore.Web/Views/SalesQuotations/Index.cshtml` |
-| SalesQuotationTemplates | Create.cshtml | Inventoried | — | `MiniStore.Web/Views/SalesQuotationTemplates/Create.cshtml` |
-| SalesQuotationTemplates | Details.cshtml | Inventoried | — | `MiniStore.Web/Views/SalesQuotationTemplates/Details.cshtml` |
-| SalesQuotationTemplates | Index.cshtml | Inventoried | — | `MiniStore.Web/Views/SalesQuotationTemplates/Index.cshtml` |
+| SalesQuotationTemplates | Create.cshtml | Angular Pilot | /sales/quotation-templates/new | `MiniStore.Web/Views/SalesQuotationTemplates/Create.cshtml` |
+| SalesQuotationTemplates | Details.cshtml | Angular Pilot | /sales/quotation-templates/{id} | `MiniStore.Web/Views/SalesQuotationTemplates/Details.cshtml` |
+| SalesQuotationTemplates | Index.cshtml | Angular Pilot | /sales/quotation-templates | `MiniStore.Web/Views/SalesQuotationTemplates/Index.cshtml` |
 | SalesReturns | Create.cshtml | Inventoried | — | `MiniStore.Web/Views/SalesReturns/Create.cshtml` |
 | SalesReturns | Details.cshtml | Inventoried | — | `MiniStore.Web/Views/SalesReturns/Details.cshtml` |
 | SalesReturns | Index.cshtml | Inventoried | — | `MiniStore.Web/Views/SalesReturns/Index.cshtml` |
@@ -421,13 +421,13 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | SalesQuotations | Index | GET | Inventoried | — | `MiniStore.Web/Controllers/Sales/SalesQuotationsController.cs` |
 | SalesQuotations | Reject | POST | Inventoried | — | `MiniStore.Web/Controllers/Sales/SalesQuotationsController.cs` |
 | SalesQuotations | Send | POST | Inventoried | — | `MiniStore.Web/Controllers/Sales/SalesQuotationsController.cs` |
-| SalesQuotationTemplates | Activate | POST | Inventoried | — | `MiniStore.Web/Controllers/Sales/SalesQuotationTemplatesController.cs` |
-| SalesQuotationTemplates | Archive | POST | Inventoried | — | `MiniStore.Web/Controllers/Sales/SalesQuotationTemplatesController.cs` |
-| SalesQuotationTemplates | Create | GET | Inventoried | — | `MiniStore.Web/Controllers/Sales/SalesQuotationTemplatesController.cs` |
-| SalesQuotationTemplates | Create | POST | Inventoried | — | `MiniStore.Web/Controllers/Sales/SalesQuotationTemplatesController.cs` |
-| SalesQuotationTemplates | Details | GET | Inventoried | — | `MiniStore.Web/Controllers/Sales/SalesQuotationTemplatesController.cs` |
-| SalesQuotationTemplates | Index | GET | Inventoried | — | `MiniStore.Web/Controllers/Sales/SalesQuotationTemplatesController.cs` |
-| SalesQuotationTemplates | SetDefault | POST | Inventoried | — | `MiniStore.Web/Controllers/Sales/SalesQuotationTemplatesController.cs` |
+| SalesQuotationTemplates | Activate | POST | Angular Pilot | /sales/quotation-templates/{id} | `MiniStore.Web/Controllers/Sales/SalesQuotationTemplatesController.cs` |
+| SalesQuotationTemplates | Archive | POST | Angular Pilot | /sales/quotation-templates/{id} | `MiniStore.Web/Controllers/Sales/SalesQuotationTemplatesController.cs` |
+| SalesQuotationTemplates | Create | GET | Angular Pilot | /sales/quotation-templates/new | `MiniStore.Web/Controllers/Sales/SalesQuotationTemplatesController.cs` |
+| SalesQuotationTemplates | Create | POST | Angular Pilot | /sales/quotation-templates/new | `MiniStore.Web/Controllers/Sales/SalesQuotationTemplatesController.cs` |
+| SalesQuotationTemplates | Details | GET | Angular Pilot | /sales/quotation-templates/{id} | `MiniStore.Web/Controllers/Sales/SalesQuotationTemplatesController.cs` |
+| SalesQuotationTemplates | Index | GET | Angular Pilot | /sales/quotation-templates | `MiniStore.Web/Controllers/Sales/SalesQuotationTemplatesController.cs` |
+| SalesQuotationTemplates | SetDefault | POST | Angular Pilot | /sales/quotation-templates/{id} | `MiniStore.Web/Controllers/Sales/SalesQuotationTemplatesController.cs` |
 | SalesReturns | Create | ANY | Inventoried | — | `MiniStore.Web/Controllers/Sales/SalesReturnsController.cs` |
 | SalesReturns | Create | POST | Inventoried | — | `MiniStore.Web/Controllers/Sales/SalesReturnsController.cs` |
 | SalesReturns | Details | ANY | Inventoried | — | `MiniStore.Web/Controllers/Sales/SalesReturnsController.cs` |

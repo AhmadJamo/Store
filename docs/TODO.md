@@ -78,7 +78,8 @@ The ERP SaaS Foundation Blueprint is imported as a non-authoritative planning re
 - [x] MOD-024I migrate Customer Return Receipt list/details/create, inspection, cancellation and disposition posting with server-owned quantities, tracking, inventory and accounting. Completed 2026-10-29.
 - [x] MOD-024J migrate Customer Credit Note list/details/create-and-post with server-owned eligibility, cumulative credits and accounting. Completed 2026-10-29.
 - [x] MOD-024K migrate Sales Approval Rule list/create/activation management with server-owned scope, threshold and ordered-step validation. Completed 2026-10-29.
-- [ ] MOD-024L migrate Sales Quotation Template list/details/create, version cloning and lifecycle management with server-owned template validation.
+- [x] MOD-024L migrate Sales Quotation Template list/details/create, version cloning and lifecycle management with server-owned template validation. Completed 2026-10-29.
+- [ ] MOD-025A migrate legacy immediate-sale history/details, wholesale creation and one-time posting while preserving server-owned pricing, stock, tracking and accounting.
 - [ ] MOD-023 through MOD-028 migrate purchasing, sales, POS, accounting, tenant/public,
   platform and shared MVC workflows to Angular, including every operation, permission, localization, file/PDF and edge state.
 - [ ] MOD-029 prove full-system parity through dual-run reconciliation, performance/security/accessibility evidence and cutover/rollback rehearsals.

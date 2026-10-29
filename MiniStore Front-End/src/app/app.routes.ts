@@ -1090,6 +1090,28 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'sales/quotation-templates',
+        loadComponent: () =>
+          import('./features/sales/sales-quotation-templates-page').then(
+            (module) => module.SalesQuotationTemplatesPageComponent,
+          ),
+      },
+      {
+        path: 'sales/quotation-templates/new',
+        canDeactivate: [(component) => component.canDeactivate()],
+        loadComponent: () =>
+          import('./features/sales/sales-quotation-templates-page').then(
+            (module) => module.SalesQuotationTemplatesPageComponent,
+          ),
+      },
+      {
+        path: 'sales/quotation-templates/:id',
+        loadComponent: () =>
+          import('./features/sales/sales-quotation-templates-page').then(
+            (module) => module.SalesQuotationTemplatesPageComponent,
+          ),
+      },
+      {
         path: 'products/recipes/:productId',
         canDeactivate: [(component) => component.canDeactivate()],
         loadComponent: () =>

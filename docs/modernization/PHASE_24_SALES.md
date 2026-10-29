@@ -1,6 +1,6 @@
 # Phase 24 — Sales Angular migration
 
-> Status: IN PROGRESS — `MOD-024A..K` COMPLETE on 2026-10-29
+> Status: COMPLETE — `MOD-024A..L` COMPLETE on 2026-10-29
 >
 > Presentation default: MVC until a separate cutover approval.
 
@@ -111,12 +111,21 @@ Application/Domain and the server.
 - `SalesOrderApprovalService` remains authoritative for customer/role validity, action-step compatibility, distinct ordered roles,
   rule concurrency and later order evaluation. Angular does not evaluate or confirm Sales Orders.
 
+## `MOD-024L` delivered — sales quotation templates
+
+- Added authenticated list/details/create-form/create APIs plus independent activate, archive and set-default commands with
+  View/Manage permissions, antiforgery and rowversion evidence.
+- Added a bilingual RTL-safe Angular workspace for search/status filters, reusable content, required/optional/alternative items,
+  quantity and option-group policies, price-list/document-design selection and cloning a source into a higher version.
+- `SalesQuotationTemplateService` remains authoritative for unique code/version pairs, immutable version lineage, products, units,
+  taxes, active designs, lifecycle concurrency and default-template exclusivity. Angular never reprices a quotation.
+
 ## Evidence
 
 - Web Release: zero warnings/errors; SecurityRegression: 1302 checks.
-- Angular: 197/197 tests across 93 files; 105 templates passed accessibility; external SCSS passed.
-- Bundles: 316,828/358,400 initial bytes and 81,743/81,920 largest lazy bytes.
+- Angular: 198/198 tests across 94 files; 106 templates passed accessibility; external SCSS passed.
+- Bundles: 317,266/358,400 initial bytes and 81,743/81,920 largest lazy bytes.
 
-## Next slice
+## Next phase
 
-`MOD-024L` migrates Sales Quotation Template list/details/create, activation/archive/default and version-clone management.
+`MOD-025A` starts the legacy immediate-sale/POS wave with sale history/details, wholesale creation and one-time general-ledger posting.

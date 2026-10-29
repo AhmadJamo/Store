@@ -1,0 +1,67 @@
+.templates-page {
+  display: grid;
+  gap: 1rem;
+}
+.heading,
+.links,
+.actions,
+.filters {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 24rem), 1fr));
+  gap: 1rem;
+}
+.facts,
+.form,
+.item {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  gap: 1rem;
+}
+.facts div {
+  display: grid;
+  gap: 0.25rem;
+}
+.facts span {
+  color: var(--text-muted);
+}
+.wide {
+  grid-column: 1/-1;
+}
+.check {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.status {
+  padding: 0.3rem 0.65rem;
+  border-radius: 999px;
+  background: var(--surface-muted);
+}
+.danger {
+  color: var(--color-danger);
+}
+.submit {
+  margin-block-start: 1rem;
+}
+@media (max-width: 42rem) {
+  .facts,
+  .form,
+  .item {
+    grid-template-columns: 1fr;
+  }
+  .heading,
+  .links,
+  .filters {
+    align-items: stretch;
+  }
+  .ui-button {
+    width: 100%;
+  }
+}
