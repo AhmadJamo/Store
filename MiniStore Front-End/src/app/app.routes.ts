@@ -280,6 +280,9 @@ export const routes: Routes = [
       { path: 'sales/orders', loadComponent: () => import('./features/sales/sales-orders-page').then(module => module.SalesOrdersPageComponent) },
       { path: 'sales/orders/:id', loadComponent: () => import('./features/sales/sales-orders-page').then(module => module.SalesOrdersPageComponent) },
       { path: 'sales/orders/:id/reservations', canDeactivate: [(component) => component.canDeactivate()], loadComponent: () => import('./features/sales/sales-order-reservations-page').then(module => module.SalesOrderReservationsPageComponent) },
+      { path: 'sales/deliveries', loadComponent: () => import('./features/sales/sales-deliveries-page').then(module => module.SalesDeliveriesPageComponent) },
+      { path: 'sales/deliveries/new', canDeactivate: [(component) => component.canDeactivate()], loadComponent: () => import('./features/sales/sales-deliveries-page').then(module => module.SalesDeliveriesPageComponent) },
+      { path: 'sales/deliveries/:id', loadComponent: () => import('./features/sales/sales-deliveries-page').then(module => module.SalesDeliveriesPageComponent) },
       {
         path: 'products/recipes/:productId',
         canDeactivate: [(component) => component.canDeactivate()],

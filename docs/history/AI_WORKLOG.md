@@ -1473,3 +1473,10 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   not OnHand or accounting. Web Release passed with zero warnings/errors, SecurityRegression passed 1293 checks, Angular passed
   190/190 tests across 86 files, 98 templates passed accessibility, external SCSS passed and bundles measured 314,140/358,400 initial
   and 81,743/81,920 largest lazy bytes. MVC remains default. Advanced to `MOD-024E` Sales Deliveries.
+- 2026-10-29: Completed `MOD-024E` Sales Deliveries. Added authenticated list/details/create-form/create, Post and Cancel APIs plus a
+  bilingual RTL-safe Angular workspace for reservation selection, partial quantities, lot/serial allocation, immutable cost evidence,
+  history and remaining-delivery continuation. `SalesDeliveryService` remains authoritative for reservation consumption, quantity
+  limits, physical/tracked stock issue, valuation, movement and COGS posting; no invoice or payment is created. Web Release passed
+  with zero warnings/errors, SecurityRegression passed 1296 checks, Angular passed 191/191 tests across 87 files, 99 templates passed
+  accessibility, external SCSS passed and bundles measured 314,527/358,400 initial and 81,743/81,920 largest lazy bytes. MVC remains
+  default. Advanced to `MOD-024F` Customer Invoices.

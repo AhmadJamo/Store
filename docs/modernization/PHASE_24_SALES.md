@@ -1,6 +1,6 @@
 # Phase 24 — Sales Angular migration
 
-> Status: IN PROGRESS — `MOD-024A..D` COMPLETE on 2026-10-29
+> Status: IN PROGRESS — `MOD-024A..E` COMPLETE on 2026-10-29
 >
 > Presentation default: MVC until a separate cutover approval.
 
@@ -48,13 +48,22 @@ Application/Domain and the server.
   cumulative committed quantities, balance locking and shortage handling. Reservations change Reserved/Available only; they do not
   reduce OnHand or create accounting entries.
 
+## `MOD-024E` delivered — sales deliveries
+
+- Added authenticated list/details/create-form/create, Post and Cancel APIs with independent permissions and antiforgery.
+- Added a bilingual RTL-safe Angular delivery workspace for reservation selection, partial quantities, lot/serial allocation,
+  immutable line evidence, lifecycle history, posting/cancellation and remaining-delivery continuation.
+- `SalesDeliveryService` remains authoritative for reservation ownership/consumption, quantity limits, tracking issue, physical stock
+  removal, moving-average cost, movement evidence, COGS journal posting, idempotency and concurrency. Posting does not create an
+  invoice or payment.
+
 ## Evidence
 
-- Web Release: zero warnings/errors; SecurityRegression: 1293 checks.
-- Angular: 190/190 tests across 86 files; 98 templates passed accessibility; external SCSS passed.
-- Bundles: 314,140/358,400 initial bytes and 81,743/81,920 largest lazy bytes.
+- Web Release: zero warnings/errors; SecurityRegression: 1296 checks.
+- Angular: 191/191 tests across 87 files; 99 templates passed accessibility; external SCSS passed.
+- Bundles: 314,527/358,400 initial bytes and 81,743/81,920 largest lazy bytes.
 
 ## Next slice
 
-`MOD-024E` migrates Sales Delivery list/details/create, posting and cancellation while keeping reservations, tracking, valuation,
-physical stock movement and COGS posting authority server-side.
+`MOD-024F` migrates Customer Invoice list/details/create, approval/cancellation and eligible delivered/ordered quantity evidence while
+keeping pricing snapshots, cumulative limits, numbering and state authority server-side.

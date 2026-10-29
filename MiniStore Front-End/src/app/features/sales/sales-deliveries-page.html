@@ -1,0 +1,216 @@
+<main class="deliveries-page">
+  @if (loading()) {
+    <app-feedback-state kind="loading" [title]="i18n.text('title')" />
+  } @else if (failure(); as p) {
+    <app-api-recovery [problem]="p" (retry)="load()" />
+  } @else if (item(); as d) {
+    <app-page-header
+      eyebrow="SALES"
+      [title]="d.deliveryNumber"
+      [description]="i18n.text('description')"
+    />
+    <div class="heading">
+      <span class="status">{{ i18n.status(d.status) }}</span>
+      <div>
+        <a class="ui-button" [routerLink]="['/sales/orders', d.salesOrderId]">{{
+          i18n.text('order')
+        }}</a>
+        <a class="ui-button" routerLink="/sales/deliveries">{{ i18n.text('back') }}</a>
+      </div>
+    </div>
+    <p class="ui-card safe">{{ i18n.text('safe') }}</p>
+    @if (problem(); as issue) {
+      <app-api-recovery [problem]="issue" [allowRetry]="false" />
+    }
+    <section class="ui-card facts">
+      <div>
+        <span>{{ i18n.text('order') }}</span
+        ><strong>{{ d.orderNumber }}</strong>
+      </div>
+      <div>
+        <span>{{ i18n.text('warehouse') }}</span
+        ><strong>{{ d.warehouseName }}</strong>
+      </div>
+      <div>
+        <span>{{ i18n.text('date') }}</span
+        ><strong>{{ d.deliveryDate }}</strong>
+      </div>
+      <div>
+        <span>{{ i18n.text('cogs') }}</span
+        ><strong>{{ d.totalCostOfGoodsSold | number: '1.2-6' }}</strong>
+      </div>
+    </section>
+    <div class="cards">
+      @for (x of d.lines; track x.id) {
+        <article class="ui-card">
+          <strong>{{ x.productCode }} — {{ x.productName }}</strong>
+          <p>{{ x.warehouseName }} · {{ x.locationName }}</p>
+          <dl>
+            <div>
+              <dt>{{ i18n.text('quantity') }}</dt>
+              <dd>{{ x.stockQuantity | number: '1.0-6' }}</dd>
+            </div>
+            <div>
+              <dt>{{ i18n.text('unitCost') }}</dt>
+              <dd>{{ x.unitCost | number: '1.2-6' }}</dd>
+            </div>
+            <div>
+              <dt>{{ i18n.text('cost') }}</dt>
+              <dd>{{ x.costOfGoodsSold | number: '1.2-6' }}</dd>
+            </div>
+          </dl>
+          @if (x.trackingAllocations) {
+            <pre>{{ x.trackingAllocations }}</pre>
+          }
+        </article>
+      }
+    </div>
+    <section class="ui-card actions">
+      @if (d.status === 1 && session.can('SalesDeliveries.Post')) {
+        <button class="ui-button primary" [disabled]="saving()" (click)="command('post')">
+          {{ i18n.text('post') }}
+        </button>
+      }
+      @if (d.status === 1 && session.can('SalesDeliveries.Cancel')) {
+        <label class="ui-field"
+          ><span>{{ i18n.text('reason') }}</span
+          ><input [formControl]="reason" maxlength="500" /></label
+        ><button class="ui-button danger" [disabled]="saving()" (click)="command('cancel')">
+          {{ i18n.text('cancel') }}
+        </button>
+      }
+      @if (d.status === 2) {
+        <strong>{{ i18n.text('completed') }}</strong>
+        @if (d.hasRemainingDelivery && session.can('SalesDeliveries.Create')) {
+          <a
+            class="ui-button"
+            routerLink="/sales/deliveries/new"
+            [queryParams]="{ salesOrderId: d.salesOrderId }"
+            >{{ i18n.text('prepareRemaining') }}</a
+          >
+        }
+      }
+    </section>
+    <section>
+      <h2>{{ i18n.text('history') }}</h2>
+      @for (h of d.history; track h.createdAtUtc) {
+        <article class="ui-card history">
+          <strong>{{ i18n.status(h.toStatus) }}</strong
+          ><span>{{ h.userId }}</span
+          ><time>{{ h.createdAtUtc | date: 'medium' }}</time>
+          @if (h.reason) {
+            <p>{{ h.reason }}</p>
+          }
+        </article>
+      }
+    </section>
+  } @else if (createPage(); as p) {
+    <app-page-header
+      eyebrow="SALES"
+      [title]="i18n.text('prepare')"
+      [description]="p.orderNumber"
+    /><a class="ui-button back" [routerLink]="['/sales/orders', p.salesOrderId]">{{
+      i18n.text('back')
+    }}</a>
+    @if (problem(); as issue) {
+      <app-api-recovery [problem]="issue" [allowRetry]="false" />
+    }
+    <div class="cards">
+      @for (r of p.reservations; track r.reservationId) {
+        <article class="ui-card">
+          <div class="heading">
+            <strong>{{ r.warehouseName }}</strong
+            ><span>{{ i18n.text('reservedAt') }} {{ r.reservedAt | date: 'short' }}</span>
+          </div>
+          @if (r.hasOpenDraft) {
+            <a class="ui-button" [routerLink]="['/sales/deliveries', r.openDraftId]">{{
+              i18n.text('openDraft')
+            }}</a>
+          } @else {
+            <button class="ui-button" (click)="choose(r)">{{ i18n.text('prepare') }}</button>
+          }
+        </article>
+      }
+    </div>
+    @if (!p.reservations.length) {
+      <app-feedback-state kind="empty" [title]="i18n.text('noReservations')" />
+    }
+    @if (selected(); as r) {
+      <form class="ui-card form" [formGroup]="form" (ngSubmit)="create()">
+        <label class="ui-field"
+          ><span>{{ i18n.text('date') }}</span
+          ><input type="date" formControlName="deliveryDate" /></label
+        ><label class="ui-field"
+          ><span>{{ i18n.text('notes') }}</span
+          ><input formControlName="notes" maxlength="1000"
+        /></label>
+        <div class="cards wide" formArrayName="lines">
+          @for (g of lines.controls; track g; let i = $index) {
+            <article [formGroupName]="i">
+              <strong>{{ r.lines[i].productCode }} — {{ r.lines[i].productName }}</strong>
+              <p>{{ r.warehouseName }} · {{ r.lines[i].locationName }}</p>
+              <label class="ui-field"
+                ><span
+                  >{{ i18n.text('deliveryQuantity') }} ({{ i18n.text('remaining') }}:
+                  {{ r.lines[i].remainingQuantity | number: '1.0-6' }})</span
+                ><input
+                  type="number"
+                  min="0"
+                  [max]="r.lines[i].remainingQuantity"
+                  step=".000001"
+                  formControlName="stockQuantity"
+              /></label>
+              @if (r.lines[i].trackingPolicy !== 0) {
+                <label class="ui-field"
+                  ><span>{{ i18n.text('tracking') }}</span
+                  ><textarea
+                    formControlName="trackingAllocations"
+                    maxlength="4000"
+                    [placeholder]="i18n.text('trackingHelp')"
+                  ></textarea>
+                </label>
+              }
+            </article>
+          }
+        </div>
+        <button class="ui-button primary wide" [disabled]="saving() || form.invalid">
+          {{ i18n.text('create') }}
+        </button>
+      </form>
+    }
+  } @else {
+    <app-page-header
+      eyebrow="SALES"
+      [title]="i18n.text('title')"
+      [description]="i18n.text('description')"
+    />
+    <form class="ui-card search" (ngSubmit)="load()">
+      <label class="ui-field"
+        ><span>{{ i18n.text('search') }}</span
+        ><input [formControl]="search" /></label
+      ><button class="ui-button">{{ i18n.text('search') }}</button>
+    </form>
+    @if (!rows().length) {
+      <app-feedback-state kind="empty" [title]="i18n.text('empty')" />
+    }
+    <div class="cards">
+      @for (x of rows(); track x.id) {
+        <article class="ui-card">
+          <div class="heading">
+            <strong>{{ x.deliveryNumber }}</strong
+            ><span class="status">{{ i18n.status(x.status) }}</span>
+          </div>
+          <p>{{ i18n.text('order') }}: {{ x.orderNumber }}</p>
+          <p>{{ i18n.text('warehouse') }}: {{ x.warehouseName }}</p>
+          <p>
+            {{ i18n.text('quantity') }}: {{ x.stockQuantity | number: '1.0-6' }} ·
+            {{ i18n.text('cogs') }}: {{ x.costOfGoodsSold | number: '1.2-6' }}
+          </p>
+          <a class="ui-button" [routerLink]="['/sales/deliveries', x.id]">{{
+            i18n.text('view')
+          }}</a>
+        </article>
+      }
+    </div>
+  }
+</main>

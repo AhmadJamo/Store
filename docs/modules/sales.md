@@ -43,6 +43,13 @@ existing block-all or reserve-available shortage policy. The server rechecks ord
 warehouse/location eligibility and locked balance availability. Reserve and Release permissions remain independent and both posts
 retain antiforgery. A reservation changes Reserved/Available only, never OnHand or accounting; MVC remains default.
 
+`MOD-024E` exposes Sales Delivery list/details, draft preparation from an active reservation, Post and draft Cancel through Angular.
+The composer supports partial quantities and lot/serial allocation only for tracked products, while named warehouse/location evidence
+remains visible. The server rechecks reservation/order ownership and remaining quantities, performs tracked or untracked physical
+issue, consumes the reservation, updates stock/movements, freezes moving-average cost and posts COGS exactly once. Post and Cancel
+retain separate permissions, antiforgery and rowversion. Delivery posting does not create a customer invoice or payment; MVC remains
+default.
+
 Sales quantity, threshold, price-rule and document-line decimal ranges parse limits and submitted values with invariant culture. Arabic UI requests no longer throw before controller execution when validating dot-based HTML decimals.
 
 Wholesale Create and Retail POS call `SalesController.Create` then `SaleService.CreateAsync`. Product choices are limited to active products enabled for the corresponding channel, and the service revalidates those flags against crafted requests. It validates discount rules, generates the tenant document number, chooses the server-side price, applies the optional invoice tax after discounts, decreases stock at the current warehouse average and writes the Sale movement in one UnitOfWork transaction. Sale freezes the selected tax percentage, inclusive policy, output account and amount; SaleItem freezes UnitCost and CostOfGoodsSold. The number, sale, valuation and movement commit or roll back together; ProductStock rowversion detects concurrent writes.
