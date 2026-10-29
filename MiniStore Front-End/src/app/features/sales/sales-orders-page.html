@@ -20,9 +20,12 @@
             i18n.text('reservation')
           }}</a>
           @if (q.reservation.activeReservationCount > 0 && session.can('SalesDeliveries.Create')) {
-            <a class="ui-button" routerLink="/sales/deliveries/new" [queryParams]="{ salesOrderId: q.id }">{{
-              i18n.text('delivery')
-            }}</a>
+            <a
+              class="ui-button"
+              routerLink="/sales/deliveries/new"
+              [queryParams]="{ salesOrderId: q.id }"
+              >{{ i18n.text('delivery') }}</a
+            >
           }
         }
         <a class="ui-button" routerLink="/sales/orders">{{ i18n.text('back') }}</a>
@@ -208,6 +211,14 @@
             {{ i18n.text('committed') }}: {{ q.invoice.committedAmount | number: '1.2-6' }}
             {{ q.currencyCode }}
           </p>
+          @if (q.invoice.hasEligibleRemaining && session.can('CustomerInvoices.Create')) {
+            <a
+              class="ui-button"
+              [routerLink]="['/sales/invoices/new']"
+              [queryParams]="{ salesOrderId: q.id }"
+              >{{ i18n.text('createInvoice') }}</a
+            >
+          }
         </section>
       </div>
     }

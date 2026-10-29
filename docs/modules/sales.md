@@ -1,5 +1,5 @@
 # Sales
-> Status: LEGACY IMMEDIATE SALE IMPLEMENTED; SAL-020 THROUGH SAL-130A IMPLEMENTED IN SOURCE | Last reviewed: 2026-10-24
+> Status: LEGACY IMMEDIATE SALE IMPLEMENTED; SAL-020 THROUGH SAL-130A IMPLEMENTED IN SOURCE | Last reviewed: 2026-10-29
 
 `SAL-130A` exposes quote-to-cash analytics through the generic Analytics Center provider contract. It calculates quotation cohort/value/acceptance, order progression, posted invoice revenue, collection, outstanding/overdue receivables, credits, delivery COGS, contribution, customer/product performance and an explicitly separated legacy/modern comparison. The provider is read-only; it does not invent conversions between legacy immediate sales and the modern document lifecycle.
 
@@ -49,6 +49,13 @@ remains visible. The server rechecks reservation/order ownership and remaining q
 issue, consumes the reservation, updates stock/movements, freezes moving-average cost and posts COGS exactly once. Post and Cancel
 retain separate permissions, antiforgery and rowversion. Delivery posting does not create a customer invoice or payment; MVC remains
 default.
+
+`MOD-024F` exposes Customer Invoice list/details, draft creation from an eligible Sales Order, Approve, Cancel, Post and Reverse
+through Angular. The workspace shows ordered/delivered quantity policy, cumulative committed and remaining quantities, frozen
+customer/commercial evidence, source deliveries, settlement balances and immutable journal evidence. The server reloads source
+documents and remains authoritative for eligibility, pricing/tax/currency snapshots, numbering, cumulative limits, accounting,
+reversal and outstanding balances. Permissions remain independent and every mutation retains antiforgery and concurrency evidence;
+no invoice operation changes inventory or records a customer payment. MVC remains default.
 
 Sales quantity, threshold, price-rule and document-line decimal ranges parse limits and submitted values with invariant culture. Arabic UI requests no longer throw before controller execution when validating dot-based HTML decimals.
 

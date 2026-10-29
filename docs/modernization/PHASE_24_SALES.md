@@ -1,6 +1,6 @@
 # Phase 24 — Sales Angular migration
 
-> Status: IN PROGRESS — `MOD-024A..E` COMPLETE on 2026-10-29
+> Status: IN PROGRESS — `MOD-024A..F` COMPLETE on 2026-10-29
 >
 > Presentation default: MVC until a separate cutover approval.
 
@@ -57,13 +57,23 @@ Application/Domain and the server.
   removal, moving-average cost, movement evidence, COGS journal posting, idempotency and concurrency. Posting does not create an
   invoice or payment.
 
+## `MOD-024F` delivered — customer invoices
+
+- Added authenticated list/details/create-form/create APIs plus independent Approve, Cancel, Post and Reverse commands. Every
+  mutation retains antiforgery, its existing permission and rowversion/idempotency evidence where applicable.
+- Added a bilingual RTL-safe Angular invoice workspace for ordered/delivered eligibility, partial quantities, customer and commercial
+  snapshots, source-delivery links, lifecycle history, settlement balances and immutable journal evidence. Eligible Sales Orders now
+  expose a permission-aware create-invoice continuation.
+- `CustomerInvoiceService` remains authoritative for source eligibility, cumulative limits, pricing/tax/currency snapshots,
+  numbering, posting, reversal and outstanding balances. Angular does not calculate trusted eligibility, totals or accounting.
+
 ## Evidence
 
-- Web Release: zero warnings/errors; SecurityRegression: 1296 checks.
-- Angular: 191/191 tests across 87 files; 99 templates passed accessibility; external SCSS passed.
-- Bundles: 314,527/358,400 initial bytes and 81,743/81,920 largest lazy bytes.
+- Web Release: zero warnings/errors; SecurityRegression: 1299 checks.
+- Angular: 192/192 tests across 88 files; 100 templates passed accessibility; external SCSS passed.
+- Bundles: 315,181/358,400 initial bytes and 81,743/81,920 largest lazy bytes.
 
 ## Next slice
 
-`MOD-024F` migrates Customer Invoice list/details/create, approval/cancellation and eligible delivered/ordered quantity evidence while
-keeping pricing snapshots, cumulative limits, numbering and state authority server-side.
+`MOD-024G` migrates Customer Payment list/details/create, allocation, posting and reversal while keeping invoice balances, currency,
+realized exchange differences, accounting and state authority server-side.

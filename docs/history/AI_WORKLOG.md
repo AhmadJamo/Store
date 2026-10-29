@@ -1480,3 +1480,10 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   with zero warnings/errors, SecurityRegression passed 1296 checks, Angular passed 191/191 tests across 87 files, 99 templates passed
   accessibility, external SCSS passed and bundles measured 314,527/358,400 initial and 81,743/81,920 largest lazy bytes. MVC remains
   default. Advanced to `MOD-024F` Customer Invoices.
+- 2026-10-29: Completed `MOD-024F` Customer Invoices. Added authenticated list/details/create-form/create and independent
+  Approve/Cancel/Post/Reverse APIs plus a bilingual RTL-safe Angular workspace for eligible quantities, frozen customer/commercial
+  evidence, source deliveries, settlement balances, lifecycle history and journal evidence. `CustomerInvoiceService` remains
+  authoritative for cumulative eligibility, numbering, snapshots, accounting, reversal and outstanding balances. Web Release passed
+  with zero warnings/errors, SecurityRegression passed 1299 checks, Angular passed 192/192 tests across 88 files, 100 templates
+  passed accessibility, external SCSS passed and bundles measured 315,181/358,400 initial and 81,743/81,920 largest lazy bytes.
+  MVC remains default. Advanced to `MOD-024G` Customer Payments.
