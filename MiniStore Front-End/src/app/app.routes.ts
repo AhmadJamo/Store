@@ -1142,6 +1142,28 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'sales/legacy-returns',
+        loadComponent: () =>
+          import('./features/sales/legacy-sales-returns-page').then(
+            (module) => module.LegacySalesReturnsPageComponent,
+          ),
+      },
+      {
+        path: 'sales/legacy-returns/:id',
+        loadComponent: () =>
+          import('./features/sales/legacy-sales-returns-page').then(
+            (module) => module.LegacySalesReturnsPageComponent,
+          ),
+      },
+      {
+        path: 'sales/legacy/:saleId/return',
+        canDeactivate: [(component) => component.canDeactivate()],
+        loadComponent: () =>
+          import('./features/sales/legacy-sales-returns-page').then(
+            (module) => module.LegacySalesReturnsPageComponent,
+          ),
+      },
+      {
         path: 'products/recipes/:productId',
         canDeactivate: [(component) => component.canDeactivate()],
         loadComponent: () =>

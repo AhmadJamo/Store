@@ -140,9 +140,9 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | SalesQuotationTemplates | Create.cshtml | Angular Pilot | /sales/quotation-templates/new | `MiniStore.Web/Views/SalesQuotationTemplates/Create.cshtml` |
 | SalesQuotationTemplates | Details.cshtml | Angular Pilot | /sales/quotation-templates/{id} | `MiniStore.Web/Views/SalesQuotationTemplates/Details.cshtml` |
 | SalesQuotationTemplates | Index.cshtml | Angular Pilot | /sales/quotation-templates | `MiniStore.Web/Views/SalesQuotationTemplates/Index.cshtml` |
-| SalesReturns | Create.cshtml | Inventoried | — | `MiniStore.Web/Views/SalesReturns/Create.cshtml` |
-| SalesReturns | Details.cshtml | Inventoried | — | `MiniStore.Web/Views/SalesReturns/Details.cshtml` |
-| SalesReturns | Index.cshtml | Inventoried | — | `MiniStore.Web/Views/SalesReturns/Index.cshtml` |
+| SalesReturns | Create.cshtml | Angular Pilot | /sales/legacy/{saleId}/return | `MiniStore.Web/Views/SalesReturns/Create.cshtml` |
+| SalesReturns | Details.cshtml | Angular Pilot | /sales/legacy-returns/{id} | `MiniStore.Web/Views/SalesReturns/Details.cshtml` |
+| SalesReturns | Index.cshtml | Angular Pilot | /sales/legacy-returns | `MiniStore.Web/Views/SalesReturns/Index.cshtml` |
 | Settings | Accounting.cshtml | Angular Pilot | /settings | `MiniStore.Web/Views/Settings/Accounting.cshtml` |
 | Settings | BranchSalesAccounts.cshtml | Angular Pilot | /settings | `MiniStore.Web/Views/Settings/BranchSalesAccounts.cshtml` |
 | Settings | Currencies.cshtml | Angular Pilot | /settings | `MiniStore.Web/Views/Settings/Currencies.cshtml` |
@@ -428,10 +428,10 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | SalesQuotationTemplates | Details | GET | Angular Pilot | /sales/quotation-templates/{id} | `MiniStore.Web/Controllers/Sales/SalesQuotationTemplatesController.cs` |
 | SalesQuotationTemplates | Index | GET | Angular Pilot | /sales/quotation-templates | `MiniStore.Web/Controllers/Sales/SalesQuotationTemplatesController.cs` |
 | SalesQuotationTemplates | SetDefault | POST | Angular Pilot | /sales/quotation-templates/{id} | `MiniStore.Web/Controllers/Sales/SalesQuotationTemplatesController.cs` |
-| SalesReturns | Create | ANY | Inventoried | — | `MiniStore.Web/Controllers/Sales/SalesReturnsController.cs` |
-| SalesReturns | Create | POST | Inventoried | — | `MiniStore.Web/Controllers/Sales/SalesReturnsController.cs` |
-| SalesReturns | Details | ANY | Inventoried | — | `MiniStore.Web/Controllers/Sales/SalesReturnsController.cs` |
-| SalesReturns | Index | ANY | Inventoried | — | `MiniStore.Web/Controllers/Sales/SalesReturnsController.cs` |
+| SalesReturns | Create | ANY | Angular Pilot | /sales/legacy/{saleId}/return | `MiniStore.Web/Controllers/Sales/SalesReturnsController.cs` |
+| SalesReturns | Create | POST | Angular Pilot | /sales/legacy/{saleId}/return | `MiniStore.Web/Controllers/Sales/SalesReturnsController.cs` |
+| SalesReturns | Details | ANY | Angular Pilot | /sales/legacy-returns/{id} | `MiniStore.Web/Controllers/Sales/SalesReturnsController.cs` |
+| SalesReturns | Index | ANY | Angular Pilot | /sales/legacy-returns | `MiniStore.Web/Controllers/Sales/SalesReturnsController.cs` |
 | Settings | Accounting | GET | Angular Pilot | — | `MiniStore.Web/Controllers/Settings/SettingsController.cs` |
 | Settings | Accounting | POST | Angular Pilot | — | `MiniStore.Web/Controllers/Settings/SettingsController.cs` |
 | Settings | BranchSalesAccounts | GET | Angular Pilot | — | `MiniStore.Web/Controllers/Settings/SettingsController.cs` |

@@ -1,6 +1,6 @@
 # Phase 25 — Legacy immediate sales and POS Angular migration
 
-> Status: IN PROGRESS — `MOD-025A..B` COMPLETE on 2026-10-29
+> Status: COMPLETE — `MOD-025A..C` COMPLETE on 2026-10-29
 >
 > Presentation default: MVC until a separate cutover approval.
 
@@ -29,12 +29,22 @@ discount, tax, stock, valuation, numbering, transaction and accounting authority
 - `SaleService` revalidates terminal/warehouse/product access, order-type requirements, recipes, tracking, server retail price,
   inventory and cost inside the existing transaction. Browser settings grant no authority.
 
+## `MOD-025C` delivered — immediate-sale returns
+
+- Added an Application-authored create projection and authenticated list/details/create-form/create-and-post API with independent
+  View/Create permissions and antiforgery.
+- Added a bilingual RTL-safe Angular return workspace with original-sale continuation, sold/returned/remaining quantities, tracked
+  identity capture and immutable refund/tax/restock/cost evidence.
+- `SalesReturnService` remains authoritative for cumulative quantities, original issued identities, proportional commercial values,
+  inventory restoration, historical cost and balanced posting in one transaction.
+
 ## Evidence
 
 - Web Release: zero warnings/errors; SecurityRegression: 1302 checks.
-- Angular: 200/200 tests across 95 files; 107 templates passed accessibility; external SCSS passed.
-- Bundles: 317,769/358,400 initial bytes and 81,743/81,920 largest lazy bytes.
+- Angular: 201/201 tests across 96 files; 108 templates passed accessibility; external SCSS passed.
+- Bundles: 318,180/358,400 initial bytes and 81,743/81,920 largest lazy bytes.
 
-## Next slice
+## Scope closure
 
-`MOD-025C` migrates posted immediate-sale return history/details/create-and-post with cumulative quantity and accounting evidence.
+The repository has no independent POS shift-close or print controller/view/action to migrate. No synthetic workflow was introduced.
+`MOD-026A` starts accounting presentation migration with the current chart-of-accounts list/create surface.

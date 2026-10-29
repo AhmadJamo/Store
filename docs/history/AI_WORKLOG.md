@@ -1545,3 +1545,10 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   Release passed with zero warnings/errors, SecurityRegression passed 1302 checks, Angular passed 200/200 tests across 95 files,
   107 templates passed accessibility, external SCSS passed and bundles measured 317,769/358,400 initial and 81,743/81,920 largest
   lazy bytes. MVC remains default. Advanced to `MOD-025C` immediate-sale returns.
+- 2026-10-29: Completed `MOD-025C` Immediate-Sale Returns. Added an Application-authored create projection and authenticated
+  list/details/create-form/create-and-post API plus a bilingual Angular workspace for sold/returned/remaining quantities, tracking
+  capture and immutable refund/tax/restock/cost evidence. `SalesReturnService` retains cumulative limits, tracking provenance,
+  inventory restoration, valuation and balanced accounting. Web Release passed with zero warnings/errors, SecurityRegression passed
+  1302 checks, Angular passed 201/201 tests across 96 files, 108 templates passed accessibility, external SCSS passed and bundles
+  measured 318,180/358,400 initial and 81,743/81,920 largest lazy bytes. No independent POS close/print surface exists in source;
+  `MOD-025` completed and execution advanced to `MOD-026A` chart of accounts.

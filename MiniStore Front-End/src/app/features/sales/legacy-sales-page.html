@@ -98,6 +98,11 @@
         {{ i18n.text('post') }}
       </button>
     }
+    @if (page.isPosted && session.can('SalesReturns.Create')) {
+      <a class="ui-button" [routerLink]="['/sales/legacy', page.sale.id, 'return']">{{
+        i18n.text('createReturn')
+      }}</a>
+    }
   } @else if (page(); as p) {
     <app-page-header
       [eyebrow]="i18n.text('area')"

@@ -1,5 +1,22 @@
 namespace MiniStore.Application.DTOs.Sales;
 
+public sealed class SalesReturnCreatePageDto
+{
+    public int SaleId { get; init; }
+    public string SaleInvoiceNumber { get; init; } = string.Empty;
+    public DateTime Date { get; init; } = DateTime.Today;
+    public List<SalesReturnCreateLineDto> Lines { get; init; } = [];
+}
+
+public sealed record SalesReturnCreateLineDto(
+    int SaleItemId,
+    int ProductId,
+    string ProductName,
+    decimal SoldQuantity,
+    decimal ReturnedQuantity,
+    decimal RemainingQuantity,
+    MiniStore.Domain.Entities.ProductTrackingPolicy TrackingPolicy);
+
 public class SalesReturnDto
 {
     public int Id { get; set; }
