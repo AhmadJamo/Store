@@ -4,9 +4,9 @@
 
 ## Reconciliation
 
-- Controllers discovered: 164 total; 83 MVC; 81 API.
+- Controllers discovered: 164 total; 82 MVC; 82 API.
 - User-facing MVC views discovered: 199.
-- MVC actions discovered: 358.
+- MVC actions discovered: 411.
 - Razor files included in the control inventory: 209.
 - Angular application routes discovered: 180.
 - MVC surfaces with a verified Angular counterpart: 82.
@@ -231,15 +231,19 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | Account | Logout | POST | Angular Pilot | /login, /register, /access-denied | — | MiniStore.Web/Controllers/Security/AccountController.cs |
 | Account | Register | GET | Angular Pilot | /login, /register, /access-denied | — | MiniStore.Web/Controllers/Security/AccountController.cs |
 | Account | Register | POST | Angular Pilot | /login, /register, /access-denied | — | MiniStore.Web/Controllers/Security/AccountController.cs |
+| Accounts | Create | GET | Angular Pilot | /accounting/accounts | — | MiniStore.Web/Controllers/Accounting/AccountsController.cs |
+| Accounts | Create | GET, POST | Angular Pilot | /accounting/accounts | — | MiniStore.Web/Controllers/Accounting/AccountsController.cs |
 | Accounts | Index | ANY | Angular Pilot | /accounting/accounts | — | MiniStore.Web/Controllers/Accounting/AccountsController.cs |
 | AnalyticsCenter | Create | GET | Angular Pilot | /analytics | /analytics/builder | MiniStore.Web/Controllers/Analytics/AnalyticsCenterController.cs |
 | AnalyticsCenter | Create | POST | Angular Pilot | /analytics | /analytics/builder | MiniStore.Web/Controllers/Analytics/AnalyticsCenterController.cs |
 | AnalyticsCenter | Index | GET | Angular Pilot | /analytics | /analytics | MiniStore.Web/Controllers/Analytics/AnalyticsCenterController.cs |
 | AuditEvents | Export | POST | Angular Pilot | /audit-events | — | MiniStore.Web/Controllers/Security/AuditEventsController.cs |
 | AuditEvents | Index | GET | Angular Pilot | /audit-events | — | MiniStore.Web/Controllers/Security/AuditEventsController.cs |
+| Branches | BranchesController | ANY | Angular Pilot | /products/catalog-masters | — | MiniStore.Web/Controllers/Accounting/BranchesController.cs |
 | CompanyOnboarding | Complete | POST | Angular Pilot | /onboarding | — | MiniStore.Web/Controllers/Saas/CompanyOnboardingController.cs |
 | CompanyOnboarding | Index | GET | Angular Pilot | /onboarding | — | MiniStore.Web/Controllers/Saas/CompanyOnboardingController.cs |
 | CompanyOnboarding | Skip | POST | Angular Pilot | /onboarding | — | MiniStore.Web/Controllers/Saas/CompanyOnboardingController.cs |
+| CustomerCreditNotes | RedirectToAction | GET, POST | Angular Pilot | /sales/credit-notes | — | MiniStore.Web/Controllers/Sales/CustomerCreditNotesController.cs |
 | CustomerInvoices | Approve | POST | Angular Pilot | /sales/invoices | — | MiniStore.Web/Controllers/Sales/CustomerInvoicesController.cs |
 | CustomerInvoices | Cancel | POST | Angular Pilot | /sales/invoices | — | MiniStore.Web/Controllers/Sales/CustomerInvoicesController.cs |
 | CustomerInvoices | Create | GET | Angular Pilot | /sales/invoices | — | MiniStore.Web/Controllers/Sales/CustomerInvoicesController.cs |
@@ -253,6 +257,9 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | CustomerPayments | Details | GET | Angular Pilot | /sales/payments | — | MiniStore.Web/Controllers/Sales/CustomerPaymentsController.cs |
 | CustomerPayments | Index | GET | Angular Pilot | /sales/payments | — | MiniStore.Web/Controllers/Sales/CustomerPaymentsController.cs |
 | CustomerPayments | Reverse | POST | Angular Pilot | /sales/payments | — | MiniStore.Web/Controllers/Sales/CustomerPaymentsController.cs |
+| CustomerReturnReceipts | RedirectToAction | GET | Angular Pilot | /sales/return-receipts | — | MiniStore.Web/Controllers/Sales/CustomerReturnReceiptsController.cs |
+| CustomerReturnReceipts | RedirectToAction | GET, POST | Angular Pilot | /sales/return-receipts | — | MiniStore.Web/Controllers/Sales/CustomerReturnReceiptsController.cs |
+| CustomerReturnReceipts | View | GET | Angular Pilot | /sales/return-receipts | — | MiniStore.Web/Controllers/Sales/CustomerReturnReceiptsController.cs |
 | CustomerReturnRequests | Approve | POST | Angular Pilot | /sales/return-requests | — | MiniStore.Web/Controllers/Sales/CustomerReturnRequestsController.cs |
 | CustomerReturnRequests | Cancel | POST | Angular Pilot | /sales/return-requests | — | MiniStore.Web/Controllers/Sales/CustomerReturnRequestsController.cs |
 | CustomerReturnRequests | Create | GET | Angular Pilot | /sales/return-requests | — | MiniStore.Web/Controllers/Sales/CustomerReturnRequestsController.cs |
@@ -316,18 +323,29 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | InventoryScanning | Relocate | POST | Angular Pilot | /inventory/scanning | — | MiniStore.Web/Controllers/Inventory/InventoryScanningController.cs |
 | InventoryTracking | CloseRecall | POST | Angular Pilot | /inventory/tracking | — | MiniStore.Web/Controllers/Inventory/InventoryTrackingController.cs |
 | InventoryTracking | CreateRecall | POST | Angular Pilot | /inventory/tracking | — | MiniStore.Web/Controllers/Inventory/InventoryTrackingController.cs |
+| InventoryTracking | Index | GET | Angular Pilot | /inventory/tracking | — | MiniStore.Web/Controllers/Inventory/InventoryTrackingController.cs |
 | InventoryTracking | Open | GET, POST | Angular Pilot | /inventory/tracking | — | MiniStore.Web/Controllers/Inventory/InventoryTrackingController.cs |
 | InventoryTracking | Quarantine | POST | Angular Pilot | /inventory/tracking | — | MiniStore.Web/Controllers/Inventory/InventoryTrackingController.cs |
 | InventoryTracking | RecordRecallCommunication | POST | Angular Pilot | /inventory/tracking | — | MiniStore.Web/Controllers/Inventory/InventoryTrackingController.cs |
 | InventoryTracking | Release | POST | Angular Pilot | /inventory/tracking | — | MiniStore.Web/Controllers/Inventory/InventoryTrackingController.cs |
 | JournalEntries | Details | GET | Angular Pilot | /accounting/journal-entries/:id | — | MiniStore.Web/Controllers/Accounting/JournalEntriesController.cs |
+| LandedCosts | RedirectToAction | GET, POST | Angular Pilot | /purchases/landed-costs | — | MiniStore.Web/Controllers/Purchases/LandedCostsController.cs |
 | Language | Set | POST | Angular Pilot | / | — | MiniStore.Web/Controllers/Settings/LanguageController.cs |
 | LocationMovements | Index | GET | Angular Pilot | /inventory/location-movements | — | MiniStore.Web/Controllers/Inventory/LocationMovementsController.cs |
 | LocationMovements | Move | POST | Angular Pilot | /inventory/location-movements | — | MiniStore.Web/Controllers/Inventory/LocationMovementsController.cs |
+| PaymentMethods | Create | GET | Angular Pilot | /products/catalog-masters | — | MiniStore.Web/Controllers/Accounting/PaymentMethodsController.cs |
+| PaymentMethods | Create | GET, POST | Angular Pilot | /products/catalog-masters | — | MiniStore.Web/Controllers/Accounting/PaymentMethodsController.cs |
 | PaymentMethods | Index | ANY | Angular Pilot | /products/catalog-masters | — | MiniStore.Web/Controllers/Accounting/PaymentMethodsController.cs |
+| Platform/Platform | Companies | GET | Angular Pilot | /platform-control, /platform-management | — | MiniStore.Web/Areas/Platform/Controllers/PlatformController.cs |
 | Platform/Platform | ConfirmPayment | GET, POST | Angular Pilot | /platform-control, /platform-management | — | MiniStore.Web/Areas/Platform/Controllers/PlatformController.cs |
+| Platform/Platform | CreatePlan | GET | Angular Pilot | /platform-control, /platform-management | — | MiniStore.Web/Areas/Platform/Controllers/PlatformController.cs |
 | Platform/Platform | CreatePlan | GET, POST | Angular Pilot | /platform-control, /platform-management | — | MiniStore.Web/Areas/Platform/Controllers/PlatformController.cs |
+| Platform/Platform | CreatePromotion | GET | Angular Pilot | /platform-control, /platform-management | — | MiniStore.Web/Areas/Platform/Controllers/PlatformController.cs |
 | Platform/Platform | CreatePromotion | GET, POST | Angular Pilot | /platform-control, /platform-management | — | MiniStore.Web/Areas/Platform/Controllers/PlatformController.cs |
+| Platform/Platform | Index | GET | Angular Pilot | /platform-control, /platform-management | — | MiniStore.Web/Areas/Platform/Controllers/PlatformController.cs |
+| Platform/Platform | PendingPayments | GET | Angular Pilot | /platform-control, /platform-management | — | MiniStore.Web/Areas/Platform/Controllers/PlatformController.cs |
+| Platform/Platform | Plans | GET | Angular Pilot | /platform-control, /platform-management | — | MiniStore.Web/Areas/Platform/Controllers/PlatformController.cs |
+| Platform/Platform | Promotions | GET | Angular Pilot | /platform-control, /platform-management | — | MiniStore.Web/Areas/Platform/Controllers/PlatformController.cs |
 | Platform/Platform | UpdateCompany | GET, POST | Angular Pilot | /platform-control, /platform-management | — | MiniStore.Web/Areas/Platform/Controllers/PlatformController.cs |
 | Platform/PlatformAccount | Login | GET | Angular Pilot | /platform-login | — | MiniStore.Web/Areas/Platform/Controllers/PlatformAccountController.cs |
 | Platform/PlatformAccount | Login | POST | Angular Pilot | /platform-login | — | MiniStore.Web/Areas/Platform/Controllers/PlatformAccountController.cs |
@@ -367,6 +385,11 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | Public | Index | GET | Angular Pilot | /welcome, /pricing | — | MiniStore.Web/Controllers/PublicController.cs |
 | Public | Pricing | GET | Angular Pilot | /welcome, /pricing | — | MiniStore.Web/Controllers/PublicController.cs |
 | PurchaseAccountingReconciliation | Index | GET | Angular Pilot | /purchases/accounting-reconciliation | — | MiniStore.Web/Controllers/Purchases/PurchaseAccountingReconciliationController.cs |
+| PurchaseAgreements | RedirectToAction | GET, POST | Angular Pilot | /purchases/agreements | — | MiniStore.Web/Controllers/Purchases/PurchaseAgreementsController.cs |
+| PurchaseAgreements | RedirectToAction | GET, POST | Angular Pilot | /purchases/agreements | — | MiniStore.Web/Controllers/Purchases/PurchaseAgreementsController.cs |
+| PurchaseAgreements | RedirectToAction | GET, POST | Angular Pilot | /purchases/agreements | — | MiniStore.Web/Controllers/Purchases/PurchaseAgreementsController.cs |
+| PurchaseAgreements | RedirectToAction | GET, POST | Angular Pilot | /purchases/agreements | — | MiniStore.Web/Controllers/Purchases/PurchaseAgreementsController.cs |
+| PurchaseAnalytics | View | GET | Angular Pilot | /purchases/analytics | — | MiniStore.Web/Controllers/Purchases/PurchaseAnalyticsController.cs |
 | PurchaseApprovalRules | Create | POST | Angular Pilot | /purchases/approval-rules | — | MiniStore.Web/Controllers/Purchases/PurchaseApprovalRulesController.cs |
 | PurchaseApprovalRules | Index | GET | Angular Pilot | /purchases/approval-rules | — | MiniStore.Web/Controllers/Purchases/PurchaseApprovalRulesController.cs |
 | PurchaseApprovalRules | SetActive | POST | Angular Pilot | /purchases/approval-rules | — | MiniStore.Web/Controllers/Purchases/PurchaseApprovalRulesController.cs |
@@ -374,9 +397,26 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | PurchaseDocumentReversals | Create | POST | Angular Pilot | /purchases/reversals | — | MiniStore.Web/Controllers/Purchases/PurchaseDocumentReversalsController.cs |
 | PurchaseDocumentReversals | Details | GET | Angular Pilot | /purchases/reversals | — | MiniStore.Web/Controllers/Purchases/PurchaseDocumentReversalsController.cs |
 | PurchaseDocumentReversals | Index | GET | Angular Pilot | /purchases/reversals | — | MiniStore.Web/Controllers/Purchases/PurchaseDocumentReversalsController.cs |
+| PurchaseOrders | Details | GET, POST | Angular Pilot | /purchases/orders | — | MiniStore.Web/Controllers/Purchases/PurchaseOrdersController.cs |
+| PurchaseOrders | RedirectToAction | GET, POST | Angular Pilot | /purchases/orders | — | MiniStore.Web/Controllers/Purchases/PurchaseOrdersController.cs |
+| PurchaseOrders | RedirectToAction | GET, POST | Angular Pilot | /purchases/orders | — | MiniStore.Web/Controllers/Purchases/PurchaseOrdersController.cs |
+| PurchaseOrders | RedirectToAction | GET, POST | Angular Pilot | /purchases/orders | — | MiniStore.Web/Controllers/Purchases/PurchaseOrdersController.cs |
+| PurchaseOrders | RedirectToAction | GET, POST | Angular Pilot | /purchases/orders | — | MiniStore.Web/Controllers/Purchases/PurchaseOrdersController.cs |
+| PurchaseOrders | RedirectToAction | GET, POST | Angular Pilot | /purchases/orders | — | MiniStore.Web/Controllers/Purchases/PurchaseOrdersController.cs |
+| PurchaseOrders | RedirectToAction | GET, POST | Angular Pilot | /purchases/orders | — | MiniStore.Web/Controllers/Purchases/PurchaseOrdersController.cs |
+| PurchaseOrders | RedirectToAction | GET, POST | Angular Pilot | /purchases/orders | — | MiniStore.Web/Controllers/Purchases/PurchaseOrdersController.cs |
+| PurchaseOrders | RedirectToAction | GET, POST | Angular Pilot | /purchases/orders | — | MiniStore.Web/Controllers/Purchases/PurchaseOrdersController.cs |
+| PurchaseOrders | RedirectToAction | GET, POST | Angular Pilot | /purchases/orders | — | MiniStore.Web/Controllers/Purchases/PurchaseOrdersController.cs |
+| PurchaseOrders | View | GET | Angular Pilot | /purchases/orders | — | MiniStore.Web/Controllers/Purchases/PurchaseOrdersController.cs |
 | PurchaseReplenishment | Index | GET | Angular Pilot | /purchases/replenishment | — | MiniStore.Web/Controllers/Purchases/PurchaseReplenishmentController.cs |
 | PurchaseReplenishment | RunNow | POST | Angular Pilot | /purchases/replenishment | — | MiniStore.Web/Controllers/Purchases/PurchaseReplenishmentController.cs |
 | PurchaseReplenishment | SaveSettings | POST | Angular Pilot | /purchases/replenishment | — | MiniStore.Web/Controllers/Purchases/PurchaseReplenishmentController.cs |
+| PurchaseRequests | Index | GET | Angular Pilot | /purchases/requests | — | MiniStore.Web/Controllers/Purchases/PurchaseRequestsController.cs |
+| PurchaseRequests | RedirectToAction | GET, POST | Angular Pilot | /purchases/requests | — | MiniStore.Web/Controllers/Purchases/PurchaseRequestsController.cs |
+| PurchaseRequests | RedirectToAction | GET, POST | Angular Pilot | /purchases/requests | — | MiniStore.Web/Controllers/Purchases/PurchaseRequestsController.cs |
+| PurchaseRequests | RedirectToAction | GET, POST | Angular Pilot | /purchases/requests | — | MiniStore.Web/Controllers/Purchases/PurchaseRequestsController.cs |
+| PurchaseRequests | RedirectToAction | GET, POST | Angular Pilot | /purchases/requests | — | MiniStore.Web/Controllers/Purchases/PurchaseRequestsController.cs |
+| PurchaseRequests | RedirectToAction | GET, POST | Angular Pilot | /purchases/requests | — | MiniStore.Web/Controllers/Purchases/PurchaseRequestsController.cs |
 | PurchaseReturns | Create | ANY | Angular Pilot | /purchases/legacy-returns | — | MiniStore.Web/Controllers/Purchases/PurchaseReturnsController.cs |
 | PurchaseReturns | Create | POST | Angular Pilot | /purchases/legacy-returns | — | MiniStore.Web/Controllers/Purchases/PurchaseReturnsController.cs |
 | PurchaseReturns | Details | ANY | Angular Pilot | /purchases/legacy-returns | — | MiniStore.Web/Controllers/Purchases/PurchaseReturnsController.cs |
@@ -398,11 +438,17 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | PurchaseSourcing | Direct | POST | Angular Pilot | /purchases/sourcing | — | MiniStore.Web/Controllers/Purchases/PurchaseSourcingController.cs |
 | PurchaseSourcing | Index | GET | Angular Pilot | /purchases/sourcing | — | MiniStore.Web/Controllers/Purchases/PurchaseSourcingController.cs |
 | PurchaseSourcing | Print | GET | Angular Pilot | /purchases/sourcing | — | MiniStore.Web/Controllers/Purchases/PurchaseSourcingController.cs |
+| PurchaseTemplates | RedirectToAction | GET, POST | Angular Pilot | /purchases/templates | — | MiniStore.Web/Controllers/Purchases/PurchaseTemplatesController.cs |
+| PurchaseTemplates | RedirectToAction | GET, POST | Angular Pilot | /purchases/templates | — | MiniStore.Web/Controllers/Purchases/PurchaseTemplatesController.cs |
+| PurchaseTemplates | RedirectToAction | GET, POST | Angular Pilot | /purchases/templates | — | MiniStore.Web/Controllers/Purchases/PurchaseTemplatesController.cs |
 | Recipes | Edit | GET | Angular Pilot | /products/recipes | — | MiniStore.Web/Controllers/Catalog/RecipesController.cs |
 | Recipes | Edit | POST | Angular Pilot | /products/recipes | — | MiniStore.Web/Controllers/Catalog/RecipesController.cs |
 | Recipes | Index | GET | Angular Pilot | /products/recipes | — | MiniStore.Web/Controllers/Catalog/RecipesController.cs |
 | Replenishment | CreatePurchaseRequestDraft | POST | Angular Pilot | /purchases/replenishment | — | MiniStore.Web/Controllers/Inventory/ReplenishmentController.cs |
 | Replenishment | CreateTransferDraft | GET, POST | Angular Pilot | /purchases/replenishment | — | MiniStore.Web/Controllers/Inventory/ReplenishmentController.cs |
+| Replenishment | Index | GET | Angular Pilot | /purchases/replenishment | — | MiniStore.Web/Controllers/Inventory/ReplenishmentController.cs |
+| Replenishment | Save | GET, POST | Angular Pilot | /purchases/replenishment | — | MiniStore.Web/Controllers/Inventory/ReplenishmentController.cs |
+| Replenishment | SetActive | GET, POST | Angular Pilot | /purchases/replenishment | — | MiniStore.Web/Controllers/Inventory/ReplenishmentController.cs |
 | Roles | Create | GET | Angular Pilot | /roles | — | MiniStore.Web/Controllers/Security/RolesController.cs |
 | Roles | Create | POST | Angular Pilot | /roles | — | MiniStore.Web/Controllers/Security/RolesController.cs |
 | Roles | Delete | POST | Angular Pilot | /roles | — | MiniStore.Web/Controllers/Security/RolesController.cs |
@@ -514,6 +560,9 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | StockTransfers | ReturnToDraft | POST | Angular Pilot | /inventory/transfers | — | MiniStore.Web/Controllers/Inventory/StockTransfersController.cs |
 | StockTransfers | Submit | POST | Angular Pilot | /inventory/transfers | — | MiniStore.Web/Controllers/Inventory/StockTransfersController.cs |
 | Subscription | Checkout | GET, POST | Angular Pilot | /subscription | — | MiniStore.Web/Controllers/Saas/SubscriptionController.cs |
+| Subscription | Index | GET | Angular Pilot | /subscription | — | MiniStore.Web/Controllers/Saas/SubscriptionController.cs |
+| SupplierCommunications | RedirectToAction | POST | Angular Pilot | /purchases/communications/prepare | — | MiniStore.Web/Controllers/Purchases/SupplierCommunicationsController.cs |
+| SupplierCommunications | RedirectToAction | POST, GET | Angular Pilot | /purchases/communications/prepare | — | MiniStore.Web/Controllers/Purchases/SupplierCommunicationsController.cs |
 | SupplierCreditNotes | Create | GET | Angular Pilot | /purchases/credit-notes | — | MiniStore.Web/Controllers/Purchases/SupplierCreditNotesController.cs |
 | SupplierCreditNotes | Create | POST | Angular Pilot | /purchases/credit-notes | — | MiniStore.Web/Controllers/Purchases/SupplierCreditNotesController.cs |
 | SupplierCreditNotes | Details | GET | Angular Pilot | /purchases/credit-notes | — | MiniStore.Web/Controllers/Purchases/SupplierCreditNotesController.cs |
@@ -547,12 +596,16 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | SupplierPurchasing | SaveBulk | POST | Angular Pilot | /purchases/supplier-terms | — | MiniStore.Web/Controllers/Purchases/SupplierPurchasingController.cs |
 | SupplierPurchasing | SavePriceBreaks | POST | Angular Pilot | /purchases/supplier-terms | — | MiniStore.Web/Controllers/Purchases/SupplierPurchasingController.cs |
 | SupplierPurchasing | SetActive | POST | Angular Pilot | /purchases/supplier-terms | — | MiniStore.Web/Controllers/Purchases/SupplierPurchasingController.cs |
+| SupplierQuotations | RedirectToAction | GET, POST | Angular Pilot | /purchases/sourcing | — | MiniStore.Web/Controllers/Purchases/SupplierQuotationsController.cs |
+| SupplierQuotations | RedirectToAction | GET, POST | Angular Pilot | /purchases/sourcing | — | MiniStore.Web/Controllers/Purchases/SupplierQuotationsController.cs |
 | Suppliers | Create | GET | Angular Pilot | /suppliers | /suppliers/new | MiniStore.Web/Controllers/Suppliers/SuppliersController.cs |
 | Suppliers | Create | POST | Angular Pilot | /suppliers | /suppliers/new | MiniStore.Web/Controllers/Suppliers/SuppliersController.cs |
 | Suppliers | Delete | POST | Angular Pilot | /suppliers | — | MiniStore.Web/Controllers/Suppliers/SuppliersController.cs |
 | Suppliers | Edit | GET | Angular Pilot | /suppliers | /suppliers/{id}/edit | MiniStore.Web/Controllers/Suppliers/SuppliersController.cs |
 | Suppliers | Edit | POST | Angular Pilot | /suppliers | /suppliers/{id}/edit | MiniStore.Web/Controllers/Suppliers/SuppliersController.cs |
 | Suppliers | Index | GET | Angular Pilot | /suppliers | /suppliers | MiniStore.Web/Controllers/Suppliers/SuppliersController.cs |
+| TaxRates | Create | GET | Angular Pilot | /products/catalog-masters | — | MiniStore.Web/Controllers/Accounting/TaxRatesController.cs |
+| TaxRates | Create | GET, POST | Angular Pilot | /products/catalog-masters | — | MiniStore.Web/Controllers/Accounting/TaxRatesController.cs |
 | TaxRates | Index | ANY | Angular Pilot | /products/catalog-masters | — | MiniStore.Web/Controllers/Accounting/TaxRatesController.cs |
 | UnassignedStock | Assign | POST | Angular Pilot | /inventory/putaway | — | MiniStore.Web/Controllers/Inventory/UnassignedStockController.cs |
 | UnassignedStock | CreateRule | POST | Angular Pilot | /inventory/putaway | — | MiniStore.Web/Controllers/Inventory/UnassignedStockController.cs |

@@ -1,5 +1,8 @@
 [CmdletBinding()]
-param([string]$OutputPath = "docs/modernization/MVC_MIGRATION_REGISTRY.md")
+param(
+    [string]$OutputPath = "docs/modernization/MVC_MIGRATION_REGISTRY.md",
+    [string]$AcceptanceMatrixPath = "docs/modernization/DUAL_RUN_ACCEPTANCE_MATRIX.md"
+)
 
 $ErrorActionPreference = "Stop"
 $repoRoot = Split-Path -Parent $PSScriptRoot
@@ -7,6 +10,7 @@ $webRoot = Join-Path $repoRoot "MiniStore.Web"
 $angularRoutesPath = Join-Path $repoRoot "MiniStore Front-End/src/app/app.routes.ts"
 $cutoverCatalogPath = Join-Path $webRoot "Presentation/Cutover/PresentationCutoverRouteCatalog.cs"
 $output = Join-Path $repoRoot $OutputPath
+$acceptanceOutput = Join-Path $repoRoot $AcceptanceMatrixPath
 
 # Semantic MVC surface -> existing Angular counterpart. Every mapped route is verified against app.routes.ts.
 # A counterpart means Angular Pilot only; it never changes the MVC-default cutover mode.
@@ -153,18 +157,23 @@ $allControllers = @(
     Get-ChildItem (Join-Path $webRoot "Controllers") -Recurse -Filter *Controller.cs
     Get-ChildItem (Join-Path $webRoot "Areas") -Recurse -Filter *Controller.cs
 )
-$mvcControllers = $allControllers | Where-Object { $_.FullName -notmatch '[\\/]Controllers[\\/]Api[\\/]' }
+$mvcControllers = $allControllers | Where-Object {
+    $_.FullName -notmatch '[\\/]Controllers[\\/]Api[\\/]' -and
+    (Get-Content $_.FullName -Raw) -notmatch '\[ApiController(?:Attribute)?\b'
+}
 $actionRows = foreach ($file in $mvcControllers) {
     $surface = Get-Surface $file $true
     $controller = $file.BaseName -replace 'Controller$', ''
     $source = $file.FullName.Substring($repoRoot.Length + 1).Replace('\','/')
     $fileLines = Get-Content $file.FullName
     for ($index = 0; $index -lt $fileLines.Count; $index++) {
-        if ($fileLines[$index] -notmatch '^\s*public\s+(?:async\s+)?(?:Task<)?(?:IActionResult|ActionResult|FileResult|JsonResult|ContentResult|RedirectToActionResult)') { continue }
-        $signature = $fileLines[$index]; $cursor = $index + 1
+        if ($fileLines[$index] -notmatch '\bpublic\s+(?:async\s+)?(?:Task<)?(?:IActionResult|ActionResult|FileResult|JsonResult|ContentResult|RedirectToActionResult)') { continue }
+        $publicOffset = $fileLines[$index].IndexOf('public', [StringComparison]::Ordinal)
+        $signature = $fileLines[$index].Substring($publicOffset); $cursor = $index + 1
         while ($signature -notmatch '\)' -and $cursor -lt $fileLines.Count) { $signature += ' ' + $fileLines[$cursor]; $cursor++ }
         if ($signature -notmatch '\s(?<name>[A-Za-z_][A-Za-z0-9_]*)\s*\(') { continue }
-        $action = $Matches.name; $attributeText = ''
+        $action = $Matches.name
+        $attributeText = if ($publicOffset -gt 0) { $fileLines[$index].Substring(0, $publicOffset) } else { '' }
         for ($back = $index - 1; $back -ge [Math]::Max(0, $index - 12); $back--) {
             if ($fileLines[$back] -match '^\s*\[' -or ($attributeText -and $fileLines[$back] -notmatch '[;{}]\s*$')) {
                 $attributeText = $fileLines[$back] + ' ' + $attributeText; continue
@@ -202,6 +211,68 @@ $controlRows = $viewFiles | Where-Object { $_.Directory.Name -ne "Shared" } | Fo
 $allSurfaces = @($viewRows.Surface) + @($actionRows.Surface) | Sort-Object -Unique
 $remainingSurfaces = @($allSurfaces | Where-Object { -not $surfaceRoutes.ContainsKey($_) })
 $pilotSurfaces = @($allSurfaces | Where-Object { $surfaceRoutes.ContainsKey($_) })
+
+function Get-MvcRouteFamily([string]$surface) {
+    switch ($surface) {
+        'Account' { return '/Account' }
+        'Dashboard' { return '/Dashboard' }
+        'Home' { return '/' }
+        'Language' { return '/Language/Set' }
+        'Public' { return '/' }
+        'Platform/Platform' { return '/platform' }
+        'Platform/PlatformAccount' { return '/platform/account' }
+        'Platform/PlatformAuditEvents' { return '/platform/audit-events' }
+        'Platform/PlatformAuditRetention' { return '/platform/audit-retention' }
+        default { return "/$surface" }
+    }
+}
+
+function Get-AcceptanceRisk([string]$surface) {
+    if ($surface -match '^(Account$|CompanyOnboarding$|Language$|Subscription$|Platform/)') { return 'Identity/tenant' }
+    if ($surface -match '(Accounts|Invoice|Payment|CreditNote|Journal|LandedCost|VendorBill|Accounting|DocumentReversal)') { return 'Financial' }
+    if ($surface -match '(Inventory|Stock|Warehouse|Location|Replenishment|Tracking)') { return 'Inventory' }
+    return 'Standard'
+}
+
+$matrixRows = foreach ($surface in $pilotSurfaces) {
+    $surfaceActions = @($actionRows | Where-Object Surface -eq $surface)
+    $surfaceViews = @($viewRows | Where-Object Surface -eq $surface)
+    $sourcePaths = @($surfaceActions.Source | Sort-Object -Unique)
+    $permissionReferences = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::OrdinalIgnoreCase)
+    foreach ($sourcePath in $sourcePaths) {
+        $content = Get-Content (Join-Path $repoRoot $sourcePath) -Raw
+        foreach ($match in [regex]::Matches($content, 'PermissionCodes\.(?<name>[A-Za-z0-9_]+)')) {
+            [void]$permissionReferences.Add($match.Groups['name'].Value)
+        }
+        foreach ($match in [regex]::Matches($content, 'PermissionAuthorize\s*\(\s*"(?<name>[^"]+)"')) {
+            [void]$permissionReferences.Add($match.Groups['name'].Value)
+        }
+        foreach ($match in [regex]::Matches($content, 'Authorize\s*\(\s*Policy\s*=\s*"(?<name>[^"]+)"')) {
+            [void]$permissionReferences.Add($match.Groups['name'].Value)
+        }
+    }
+    $hasMutation = @($surfaceActions | Where-Object { $_.Verbs -match 'POST|PUT|DELETE|PATCH|ANY' }).Count -gt 0
+    [pscustomobject]@{
+        Surface = $surface
+        MvcRoute = Get-MvcRouteFamily $surface
+        AngularRoute = Get-Routes $surface
+        Operation = if ($hasMutation) { 'Read/write' } else { 'Read-only' }
+        Permissions = if ($permissionReferences.Count) { @($permissionReferences | Sort-Object) -join ', ' } else { 'Public/session boundary' }
+        Risk = Get-AcceptanceRisk $surface
+        Evidence = "$($surfaceViews.Count) view(s); $($surfaceActions.Count) action(s); route/source gate"
+    }
+}
+
+if ($matrixRows.Count -ne $pilotSurfaces.Count) {
+    throw "Acceptance matrix row count $($matrixRows.Count) does not match counterpart count $($pilotSurfaces.Count)."
+}
+foreach ($row in $matrixRows) {
+    foreach ($field in 'Surface','MvcRoute','AngularRoute','Operation','Permissions','Risk','Evidence') {
+        if ([string]::IsNullOrWhiteSpace($row.$field) -or $row.$field -eq '—') {
+            throw "Acceptance matrix has unknown $field evidence for '$($row.Surface)'."
+        }
+    }
+}
 
 $lines = [System.Collections.Generic.List[string]]::new()
 $lines.Add("# MVC to Angular migration registry")
@@ -245,4 +316,24 @@ $lines.Add("The cutover allowlist applies only to GET/HEAD requests. Mutations, 
 
 New-Item -ItemType Directory -Force -Path (Split-Path -Parent $output) | Out-Null
 $lines | Set-Content -Path $output -Encoding utf8
+
+$matrixLines = [System.Collections.Generic.List[string]]::new()
+$matrixLines.Add('# Dual-run acceptance matrix')
+$matrixLines.Add('')
+$matrixLines.Add('> Generated from source by scripts/generate-mvc-migration-registry.ps1. Do not edit rows manually.')
+$matrixLines.Add('')
+$matrixLines.Add("- Counterparts covered: $($matrixRows.Count).")
+$matrixLines.Add('- Presentation default: MVC.')
+$matrixLines.Add('- Evidence baseline: generated MVC view/action inventory, verified Angular route, controller permission references and acceptance gate.')
+$matrixLines.Add('- Runtime dual-run samples and cutover rehearsal results are appended by the MOD-029 acceptance workflow; this static matrix performs no mutation.')
+$matrixLines.Add('')
+$matrixLines.Add('| MVC surface | MVC route family | Angular counterpart | Operation class | Permission boundary references | Risk class | Static evidence |')
+$matrixLines.Add('|---|---|---|---|---|---|---|')
+foreach ($row in $matrixRows | Sort-Object Surface) {
+    $matrixLines.Add("| $($row.Surface) | $($row.MvcRoute) | $($row.AngularRoute) | $($row.Operation) | $($row.Permissions) | $($row.Risk) | $($row.Evidence) |")
+}
+New-Item -ItemType Directory -Force -Path (Split-Path -Parent $acceptanceOutput) | Out-Null
+$matrixLines | Set-Content -Path $acceptanceOutput -Encoding utf8
+
 Write-Host "Generated $OutputPath with $($viewRows.Count) views, $($actionRows.Count) MVC actions, $($controlRows.Count) Razor control rows, and $($remainingSurfaces.Count) remaining surfaces."
+Write-Host "Generated $AcceptanceMatrixPath with $($matrixRows.Count) counterpart rows and no unknown evidence fields."

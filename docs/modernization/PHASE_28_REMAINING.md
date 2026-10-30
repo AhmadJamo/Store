@@ -97,8 +97,8 @@ At bootstrap, the server session culture is authoritative over the non-sensitive
 
 `UiCultureStateService` keeps the shared locale signal independent from HTTP/session services, avoiding an interceptor
 dependency cycle while keeping session consumers, document `lang` and `dir`, and feature-local translators aligned. No token,
-credential, permission or business data is stored in browser storage. The generated registry now contains 164 controllers
-(83 MVC/81 API), 199 views, 358 MVC actions, 209 Razor control rows, 180 Angular routes and 82 verified counterparts, with
+credential, permission or business data is stored in browser storage. The corrected source generator now contains 164 controllers
+(82 MVC/82 API), 199 views, 411 MVC actions, 209 Razor control rows, 180 Angular routes and 82 verified counterparts, with
 zero remaining surfaces. MVC remains the presentation default.
 
 ## Confirmed remaining surfaces
