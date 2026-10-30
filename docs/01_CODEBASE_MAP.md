@@ -15,6 +15,10 @@ one, it uses a bounded synthetic session only for design-system presentation che
 skipped. `scripts/Test-DualRunReadOnly.ps1` separately verifies live zero-mutation identity, financial and inventory access
 boundaries; the main modernization gate runs it whenever an API URL is supplied.
 
+`scripts/Invoke-AuthenticatedDualRun.ps1` is the secret-safe MOD-029B entry point. It requires an existing external or
+git-ignored Playwright state, then runs the full gate. The browser runner reconciles culture, customer-invoice identity and
+total, and inventory product/warehouse/on-hand values without serializing compared business values or authentication data.
+
 `MiniStore Front-End/src/app/core/preferences` owns versioned, non-sensitive theme/density preferences and system-theme resolution. Global semantic tokens provide light/dark palettes, density dimensions, focus, reduced-motion and forced-color behavior. The lazy `/design-system` page is the bilingual RTL/LTR visual-state reference for shared buttons, badges, fields and empty/loading/error patterns. See `docs/modernization/PHASE_03_VISUAL_SYSTEM.md`.
 
 `MiniStore Front-End/src/app/workspace` owns the reusable Angular workspace engine. Its navigation registry is session-permission aware and is also the restoration allowlist; its Signals state provides stable context identities, deduplication, bounded per-tab history, configurable tab/recent limits, safe versioned restoration, close/reopen and dirty-state protection. The shell supplies localized ARIA tabs, direction-aware keyboard movement and explicit unsaved-change decisions. No permissions or business payloads are persisted. See `docs/modernization/PHASE_04_WORKSPACE_ENGINE.md`.

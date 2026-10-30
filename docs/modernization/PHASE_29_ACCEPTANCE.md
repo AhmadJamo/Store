@@ -39,3 +39,11 @@ and performance were intentionally deferred to the runtime portion below rather 
 
 `MOD-029A` is complete within its available environment. `MOD-029B` owns authenticated same-data reconciliation and must
 not convert the missing external session into a false pass.
+
+## MOD-029B authenticated runner
+
+The browser acceptance runner now uses an operator-supplied storage-state to compare the authenticated session culture
+with MVC, the first available customer invoice identity/customer/total with MVC, and the first inventory insight
+product/warehouse/on-hand quantity with MVC. Reports contain only check names and outcomes; compared values, cookies and
+tokens are never written. `scripts/Invoke-AuthenticatedDualRun.ps1` rejects a missing state and refuses any in-repository
+state that is not git-ignored before invoking the full gate.

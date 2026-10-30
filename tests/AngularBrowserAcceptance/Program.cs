@@ -1,4 +1,7 @@
 using System.Text.Json;
+using System.Globalization;
+using System.Net;
+using System.Text.RegularExpressions;
 using Microsoft.Playwright;
 
 var options = Arguments.Parse(args);
@@ -212,6 +215,100 @@ static async Task RunApiAsync(IPlaywright playwright, Arguments options, List<Ch
     Require(executed > 0, "The session has none of the allowlisted read permissions used by this smoke test.");
     checks.Add(new("api-session-authenticated", "passed",
         $"Authenticated session and {executed} permitted read endpoint(s) passed."));
+    await RunAuthenticatedReconciliationAsync(authenticated, session, permissions, checks);
+}
+
+static async Task RunAuthenticatedReconciliationAsync(
+    IAPIRequestContext authenticated,
+    JsonDocument session,
+    HashSet<string> permissions,
+    List<CheckResult> checks)
+{
+    var culture = session.RootElement.GetProperty("culture").GetString();
+    Require(culture is "ar-JO" or "en-US", "Authenticated session returned an unsupported culture.");
+    var dashboard = await authenticated.GetAsync("/Dashboard");
+    Require(dashboard.Ok, $"Authenticated MVC dashboard returned {dashboard.Status}.");
+    var dashboardHtml = await dashboard.TextAsync();
+    Require(dashboardHtml.Contains($"lang=\"{culture}\"", StringComparison.OrdinalIgnoreCase),
+        "MVC culture does not match the authenticated API session culture.");
+    checks.Add(new("dual-run-identity-culture", "passed",
+        "MVC and API used the same authenticated session culture."));
+
+    if (permissions.Contains("CustomerInvoices.View"))
+    {
+        var invoiceApi = await authenticated.GetAsync("/api/v1/customer-invoices");
+        Require(invoiceApi.Ok, $"Customer invoice API returned {invoiceApi.Status}.");
+        using var invoices = JsonDocument.Parse(await invoiceApi.TextAsync());
+        Require(invoices.RootElement.ValueKind == JsonValueKind.Array && invoices.RootElement.GetArrayLength() > 0,
+            "No customer invoice exists for authenticated same-data reconciliation.");
+        var invoice = invoices.RootElement[0];
+        var invoiceNumber = invoice.GetProperty("invoiceNumber").GetString() ?? "";
+        var customerName = invoice.GetProperty("customerName").GetString() ?? "";
+        var totalAmount = invoice.GetProperty("totalAmount").GetDecimal();
+        var invoiceMvc = await authenticated.GetAsync("/CustomerInvoices");
+        Require(invoiceMvc.Ok, $"Customer invoice MVC read returned {invoiceMvc.Status}.");
+        var invoiceHtml = await invoiceMvc.TextAsync();
+        Require(ContainsEncoded(invoiceHtml, invoiceNumber) && ContainsEncoded(invoiceHtml, customerName),
+            "MVC/API customer invoice identity fields did not reconcile.");
+        Require(ContainsNumber(invoiceHtml, totalAmount),
+            "MVC/API customer invoice amount did not reconcile.");
+        checks.Add(new("dual-run-financial-invoice", "passed",
+            "Invoice number, customer and total amount matched across MVC and API."));
+    }
+    else
+    {
+        checks.Add(new("dual-run-financial-invoice", "skipped",
+            "Authenticated session lacks CustomerInvoices.View."));
+    }
+
+    if (permissions.Contains("InventoryInsights.View"))
+    {
+        var inventoryApi = await authenticated.GetAsync("/api/v1/inventory-insights");
+        Require(inventoryApi.Ok, $"Inventory insights API returned {inventoryApi.Status}.");
+        using var inventory = JsonDocument.Parse(await inventoryApi.TextAsync());
+        var rows = inventory.RootElement.GetProperty("rows");
+        Require(rows.GetArrayLength() > 0, "No inventory insight exists for authenticated same-data reconciliation.");
+        var row = rows[0];
+        var productName = row.GetProperty("productName").GetString() ?? "";
+        var warehouseName = row.GetProperty("warehouseName").GetString() ?? "";
+        var onHand = row.GetProperty("onHand").GetDecimal();
+        var inventoryMvc = await authenticated.GetAsync("/InventoryInsights");
+        Require(inventoryMvc.Ok, $"Inventory insights MVC read returned {inventoryMvc.Status}.");
+        var inventoryHtml = await inventoryMvc.TextAsync();
+        Require(ContainsEncoded(inventoryHtml, productName) && ContainsEncoded(inventoryHtml, warehouseName),
+            "MVC/API inventory identity fields did not reconcile.");
+        Require(ContainsNumber(inventoryHtml, onHand), "MVC/API on-hand quantity did not reconcile.");
+        checks.Add(new("dual-run-inventory-insights", "passed",
+            "Product, warehouse and on-hand quantity matched across MVC and API."));
+    }
+    else
+    {
+        checks.Add(new("dual-run-inventory-insights", "skipped",
+            "Authenticated session lacks InventoryInsights.View."));
+    }
+}
+
+static bool ContainsEncoded(string html, string value) =>
+    !string.IsNullOrWhiteSpace(value) &&
+    html.Contains(WebUtility.HtmlEncode(value), StringComparison.OrdinalIgnoreCase);
+
+static bool ContainsNumber(string html, decimal expected)
+{
+    var decoded = WebUtility.HtmlDecode(html)
+        .Replace("٬", "", StringComparison.Ordinal)
+        .Replace(",", "", StringComparison.Ordinal)
+        .Replace("٫", ".", StringComparison.Ordinal);
+    decoded = string.Concat(decoded.Select(character => character switch
+    {
+        >= '\u0660' and <= '\u0669' => (char)('0' + character - '\u0660'),
+        >= '\u06F0' and <= '\u06F9' => (char)('0' + character - '\u06F0'),
+        _ => character
+    }));
+    return Regex.Matches(decoded, @"-?\d+(?:\.\d+)?")
+        .Select(match => decimal.TryParse(match.Value, NumberStyles.Number, CultureInfo.InvariantCulture, out var value)
+            ? value
+            : (decimal?)null)
+        .Any(value => value == expected);
 }
 
 static void Require(bool condition, string message)
