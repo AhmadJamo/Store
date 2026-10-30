@@ -105,8 +105,9 @@ The ERP SaaS Foundation Blueprint is imported as a non-authoritative planning re
     - [x] Add a secret-safe runner, git-ignore enforcement and identity/financial/inventory value comparisons. Completed 2026-10-30.
     - [x] Capture an operator-authenticated state and execute the runner against Demo: 9/9 authenticated checks, zero skips; financial empty-state and real inventory same-data evidence passed. Completed 2026-10-30.
   - [x] MOD-029C run permission-driven read-only acceptance across the high-risk sales, purchasing, inventory, accounting and administration cohorts. Completed 2026-10-30 with 15/15 browser checks and zero skips.
-  - [ ] MOD-029D rehearse live process-level AngularDefault cutover and MVC rollback for allowlisted GET routes without committing a default change.
+  - [x] MOD-029D rehearse live process-level AngularDefault cutover and MVC rollback for allowlisted GET routes without committing a default change. Completed 2026-10-30 on 10 authorized routes; applied additive migration 136 after the rehearsal exposed Demo drift.
 - [ ] MOD-030 make Angular the only presentation and retire MVC incrementally only after explicit approval and zero registry gaps.
+  - [ ] MOD-030A host the production Angular build under `/app`, prove deep-link/assets/API separation and cut over the first reversible route cohort.
 
 - [x] FND-000 import the ERP SaaS Foundation Blueprint with provenance and classify its ten capabilities against the actual MiniStore repository.
 - [ ] FND-010 inventory production environments and operational ownership, approve RPO/RTO and backup retention, run an isolated restore drill, reconcile restored financial/inventory/tenant/outbox state and record evidence.

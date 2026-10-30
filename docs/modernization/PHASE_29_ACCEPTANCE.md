@@ -1,6 +1,6 @@
 # MOD-029 — full-system acceptance and dual-run reconciliation
 
-> Status: IN PROGRESS — `MOD-029A..C` complete on 2026-10-30; live cutover/rollback rehearsal moves to `MOD-029D`
+> Status: COMPLETE — `MOD-029A..D` completed on 2026-10-30; execution moves to the explicit `MOD-030` final gate
 
 ## MOD-029A baseline delivered
 
@@ -67,3 +67,18 @@ all passed on Demo; the threshold requires at least three covered cohorts and mi
 The complete browser run passed 15/15 with zero skips, while the read-only boundary and 100-request performance checks
 continued to pass (p95 16.24 ms, p99 18.10 ms). No mutation or presentation-default change occurred. `MOD-029D` owns
 the live process-level AngularDefault-to-MVC rollback rehearsal.
+
+## MOD-029D live cutover and rollback
+
+The browser runner now has an outcome-only cutover mode that disables redirect following and checks the actual server
+response. With process-local AngularDefault overrides, 10 permission-allowed routes across Customers, Suppliers,
+Analytics Center and Products redirected to their exact `/app` targets, including preserved query strings and resolved
+IDs. Settings was not claimed because the operator session lacks `Administration.Access`. After restarting with committed
+MVC defaults, the same 10 routes returned 200.
+
+The first rollback run exposed a real Demo schema drift: `AnalyticsWorkspaceDelegations` was missing, so MVC Analytics
+returned 500 after AngularDefault stopped masking execution. Migration 136 was inspected as additive, applied, and EF now
+reports no pending migrations. The repeated rollback passed. A final static gate passed Release with zero warnings/errors,
+1,345 backend checks, 214/214 Angular tests, 121 accessibility templates and the existing bundle limits. No presentation
+default was committed. `MOD-029` is complete; `MOD-030A` must first host the production Angular build under `/app` before
+any irreversible MVC retirement.

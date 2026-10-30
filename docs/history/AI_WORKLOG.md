@@ -1,5 +1,14 @@
 # AI Work Log
 
+- 2026-10-30: Completed `MOD-029D` live cutover/rollback rehearsal. Added an outcome-only browser-runner mode that
+  disables redirects and verifies exact Angular targets or MVC 200 responses for permission-allowed allowlisted GET routes.
+  Process-local AngularDefault overrides passed 10 routes; committed configuration remained MVC. The first rollback exposed
+  Demo schema drift because additive migration 136 (`AddAnalyticsWorkspaceDelegation`) had not been applied and MVC
+  Analytics returned 500. Inspected and applied the additive column/table/index migration, verified EF has no pending
+  migrations, and repeated rollback successfully on the same 10 routes. The final full gate passed Release cleanly,
+  1,345 backend checks, 214/214 Angular tests, 121 templates and bundle limits. `MOD-029` is complete; execution advances
+  to `MOD-030A` production Angular hosting before any MVC retirement.
+
 - 2026-10-30: Completed `MOD-029C` high-risk module acceptance. Added permission-driven, GET-only JSON probes for
   sales, purchasing, inventory, accounting and administration with an explicit three-cohort minimum and skipped outcomes
   for unavailable permissions. The Demo operator covered all five cohorts; the authenticated browser report passed 15/15

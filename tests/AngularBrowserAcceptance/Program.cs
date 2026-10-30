@@ -22,8 +22,15 @@ try
         Headless = true,
         Channel = options.BrowserChannel
     });
-    await RunUiAsync(browser, options, checks);
-    await RunApiAsync(playwright, options, checks);
+    if (string.IsNullOrWhiteSpace(options.CutoverMode))
+    {
+        await RunUiAsync(browser, options, checks);
+        await RunApiAsync(playwright, options, checks);
+    }
+    else
+    {
+        await RunLiveCutoverAsync(playwright, options, checks);
+    }
 }
 catch (Exception exception)
 {
@@ -81,6 +88,94 @@ static async Task CaptureAuthenticatedStateAsync(Arguments options)
     }
 
     throw new TimeoutException("Timed out waiting for the interactive sign-in to complete.");
+}
+
+static async Task RunLiveCutoverAsync(
+    IPlaywright playwright,
+    Arguments options,
+    List<CheckResult> checks)
+{
+    Require(options.CutoverMode is "angular" or "mvc", "--cutover-mode must be angular or mvc.");
+    Require(!string.IsNullOrWhiteSpace(options.ApiUrl), "--api-url is required for cutover rehearsal.");
+    Require(!string.IsNullOrWhiteSpace(options.StorageStatePath) && File.Exists(options.StorageStatePath),
+        "An authenticated storage-state is required for cutover rehearsal.");
+
+    await using var authenticated = await playwright.APIRequest.NewContextAsync(new APIRequestNewContextOptions
+    {
+        BaseURL = options.ApiUrl,
+        IgnoreHTTPSErrors = true,
+        StorageStatePath = options.StorageStatePath
+    });
+    var sessionResponse = await authenticated.GetAsync("/api/v1/session");
+    Require(sessionResponse.Ok, $"Authenticated session returned {sessionResponse.Status}.");
+    using var session = JsonDocument.Parse(await sessionResponse.TextAsync());
+    var permissions = session.RootElement.GetProperty("permissions").EnumerateArray()
+        .Select(x => x.GetString()).Where(x => x is not null).Cast<string>()
+        .ToHashSet(StringComparer.Ordinal);
+
+    var routes = new List<CutoverProbe>
+    {
+        new("/Customers?search=cutover-rehearsal", "/app/customers?search=cutover-rehearsal", "Customers.View"),
+        new("/Customers/Create", "/app/customers/new", "Customers.Create"),
+        new("/Suppliers", "/app/suppliers", "Suppliers.View"),
+        new("/Suppliers/Create", "/app/suppliers/new", "Suppliers.Create"),
+        new("/AnalyticsCenter", "/app/analytics", "AnalyticsCenter.View"),
+        new("/AnalyticsCenter/Create", "/app/analytics/builder", "AnalyticsCenter.Customize"),
+        new("/Settings", "/app/settings", "Administration.Access"),
+        new("/Products", "/app/products", "Products.View")
+    };
+
+    if (permissions.Contains("Customers.View"))
+    {
+        var response = await authenticated.GetAsync("/api/v1/customers?page=1&pageSize=1");
+        Require(response.Ok, $"Customer cutover fixture read returned {response.Status}.");
+        using var page = JsonDocument.Parse(await response.TextAsync());
+        var items = page.RootElement.GetProperty("items");
+        if (items.GetArrayLength() > 0)
+        {
+            var id = items[0].GetProperty("id").GetInt32();
+            routes.Add(new($"/Customers/Details/{id}", $"/app/customers/{id}", "Customers.View"));
+            routes.Add(new($"/Customers/Edit/{id}", $"/app/customers/{id}/edit", "Customers.Edit"));
+        }
+    }
+    if (permissions.Contains("Suppliers.View"))
+    {
+        var response = await authenticated.GetAsync("/api/v1/suppliers?page=1&pageSize=1");
+        Require(response.Ok, $"Supplier cutover fixture read returned {response.Status}.");
+        using var page = JsonDocument.Parse(await response.TextAsync());
+        var items = page.RootElement.GetProperty("items");
+        if (items.GetArrayLength() > 0)
+        {
+            var id = items[0].GetProperty("id").GetInt32();
+            routes.Add(new($"/Suppliers/Edit/{id}", $"/app/suppliers/{id}/edit", "Suppliers.Edit"));
+        }
+    }
+
+    var executed = 0;
+    foreach (var probe in routes.Where(x => permissions.Contains(x.Permission)))
+    {
+        var surface = probe.MvcPath.Split('/', StringSplitOptions.RemoveEmptyEntries)[0];
+        var response = await authenticated.GetAsync(probe.MvcPath,
+            new APIRequestContextOptions { MaxRedirects = 0 });
+        if (options.CutoverMode == "angular")
+        {
+            Require(response.Status is 301 or 302 or 307 or 308,
+                $"AngularDefault surface {surface} returned {response.Status} instead of a redirect.");
+            Require(response.Headers.TryGetValue("location", out var location) &&
+                    string.Equals(location, probe.AngularPath, StringComparison.Ordinal),
+                $"AngularDefault surface {surface} returned an unexpected target.");
+        }
+        else
+        {
+            Require(response.Status == 200,
+                $"MVC rollback surface {surface} returned {response.Status} instead of 200.");
+        }
+        executed++;
+    }
+
+    Require(executed >= 5, $"Cutover rehearsal covered {executed} routes; at least 5 are required.");
+    checks.Add(new($"live-cutover-{options.CutoverMode}", "passed",
+        $"{executed} authorized allowlisted GET routes matched the expected presentation mode."));
 }
 
 static async Task RunUiAsync(IBrowser browser, Arguments options, List<CheckResult> checks)
@@ -414,6 +509,8 @@ sealed record CheckResult(string Name, string Status, string Detail);
 
 sealed record CohortProbe(string Cohort, string Permission, string Path);
 
+sealed record CutoverProbe(string MvcPath, string AngularPath, string Permission);
+
 sealed record Arguments(
     string FrontendUrl,
     string? ApiUrl,
@@ -421,7 +518,8 @@ sealed record Arguments(
     string? CaptureStorageStatePath,
     int CaptureTimeoutSeconds,
     string OutputDirectory,
-    string? BrowserChannel)
+    string? BrowserChannel,
+    string? CutoverMode)
 {
     public static Arguments Parse(string[] args)
     {
@@ -437,6 +535,7 @@ sealed record Arguments(
                 ? Math.Clamp(timeoutSeconds, 30, 900)
                 : 300,
             Path.GetFullPath(Read("--output") ?? Path.Combine("artifacts", "verification", "angular-browser")),
-            Read("--browser-channel") ?? (OperatingSystem.IsWindows() ? "msedge" : null));
+            Read("--browser-channel") ?? (OperatingSystem.IsWindows() ? "msedge" : null),
+            Read("--cutover-mode")?.ToLowerInvariant());
     }
 }

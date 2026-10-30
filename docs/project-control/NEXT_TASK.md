@@ -1,22 +1,22 @@
 # المهمة التالية الوحيدة / Next Task
 
-## `MOD-029D` — تمرين التحويل والرجوع الحي / Live Cutover and Rollback Rehearsal
+## `MOD-030A` — استضافة Angular وبوابة التحويل النهائي / Angular Hosting and Final Cutover Gate
 
 > الحالة: APPROVED — NEXT INCREMENT ضمن موجة القبول الشامل
 
-اكتمل `MOD-029C`: نجحت 15/15 فحوص متصفح بلا تخطٍ، وشملت قراءات مصرح بها للمبيعات والمشتريات
-والمخزون والمحاسبة والإدارة دون mutation أو كشف قيم الأعمال.
+اكتمل `MOD-029D`: نجح AngularDefault ثم MVC rollback على 10 مسارات GET مصرح بها. كشف التمرين ترحيل
+Analytics delegation المعلق؛ طُبق الترحيل 136 الإضافي وأصبحت قاعدة Demo مطابقة بلا pending migrations.
 
 ### الهدف
 
-- تشغيل خادم مؤقت بإعداد AngularDefault لسطح allowlisted واحد ثم مجموعة صغيرة، والتحقق من redirect الفعلي.
-- إعادة تشغيله بوضع MVC والتحقق من أن المسارات نفسها تعود للعرض القديم بلا تغيير إعداد committed.
-- إبقاء التمرين GET-only واستخدام جلسة المشغل الحالية دون mutation أو كشف أسرار.
-- تسجيل نتيجة التحويل والرجوع كدليل outcome-only تمهيدًا لبوابة MOD-030.
+- استضافة build Angular الإنتاجي فعليًا تحت `/app` مع SPA fallback آمن لا يبتلع API/MVC.
+- توسيع cutover catalog من allowlist التجريبية إلى route families المثبتة تدريجيًا، مع بقاء rollback.
+- تشغيل قبول مصرح به على Angular المستضاف لا dev server، ثم تحويل الدفعة الأولى فقط.
+- عدم حذف MVC حتى يثبت كل surface تحت الاستضافة الإنتاجية ويُسجل rollback لكل دفعة.
 
 ### القبول
 
-- AngularDefault يعيد توجيه كل GET allowlisted إلى مسار `/app` الصحيح ويحفظ query/id الآمن.
-- وضع MVC يعيد 200 لنفس المسارات بعد الرجوع، ولا يبقى متغير بيئة أو إعداد committed.
-- لا mutation ولا كتابة قاعدة بيانات ولا POST/PUT/PATCH/DELETE.
-- بوابات MOD-029B/C تبقيان ناجحتين؛ أي فرق يمنع الانتقال إلى MOD-030.
+- `/app` وdeep links تعيد Angular production index/assets بنجاح، بينما `/api` وMVC تبقيان منفصلتين.
+- الدفعة الأولى تتحول بـGET allowlist فقط، وتحافظ على query/id والصلاحيات، ويظل rollback قابلًا للتشغيل.
+- البوابة الكاملة وMOD-029B..D تنجح على الخادم المستضاف.
+- لا حذف Razor/controller قبل إغلاق سجل كل surface وإثبات مسار الرجوع.
