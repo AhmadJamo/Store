@@ -1269,6 +1269,16 @@ Check(
         .Where(method => method.DeclaringType == typeof(InventoryReconciliationController))
         .All(method => method.GetCustomAttribute<HttpPostAttribute>() is null),
     "Inventory reconciliation controller must remain read-only");
+Check(
+    typeof(InventoryReconciliationApiController).GetCustomAttribute<RouteAttribute>()?.Template ==
+        "api/v1/inventory-reconciliation" &&
+    typeof(InventoryReconciliationApiController).GetMethod(nameof(InventoryReconciliationApiController.Get))!
+        .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
+        $"{PermissionAuthorizeAttribute.PolicyPrefix}InventoryReconciliation.View" &&
+    typeof(InventoryReconciliationApiController).GetMethods(BindingFlags.Instance | BindingFlags.Public)
+        .Where(method => method.DeclaringType == typeof(InventoryReconciliationApiController))
+        .All(method => method.GetCustomAttribute<HttpPostAttribute>() is null),
+    "Angular inventory reconciliation must remain a dedicated permission-protected read contract");
 var purchaseAccountingReconciliationIndex = typeof(PurchaseAccountingReconciliationController)
     .GetMethod(nameof(PurchaseAccountingReconciliationController.Index))!;
 Check(
@@ -2041,6 +2051,12 @@ var insightsIndex = typeof(InventoryInsightsController).GetMethod(nameof(Invento
 Check(insightsIndex.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
       $"{PermissionAuthorizeAttribute.PolicyPrefix}InventoryInsights.View",
     "Inventory insights must require its dedicated view permission");
+Check(typeof(InventoryInsightsApiController).GetCustomAttribute<RouteAttribute>()?.Template ==
+      "api/v1/inventory-insights" &&
+      typeof(InventoryInsightsApiController).GetMethod(nameof(InventoryInsightsApiController.Get))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
+          $"{PermissionAuthorizeAttribute.PolicyPrefix}InventoryInsights.View",
+    "Angular inventory insights must remain a dedicated permission-protected read contract");
 Check(InventoryActivityClassifier.Classify(null, DateTime.UtcNow.AddDays(-40), DateTime.UtcNow, 30, 90) ==
       MiniStore.Application.DTOs.Inventory.Insights.InventoryActivityState.NeverIssued,
     "Old stock with no outbound movement must remain visibly distinct from dead stock");

@@ -1618,3 +1618,11 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   Release passed with zero warnings/errors, SecurityRegression passed 1,317 checks, Angular passed 209/209 tests across 103
   files, 119 templates passed accessibility and bundles measured 325,405/358,400 initial and 81,911/81,920 largest lazy bytes.
   The generated registry now reports 176 routes and four remaining surfaces. MVC remains default; advanced to `MOD-028D`.
+- 2026-10-30: Completed `MOD-028D` Inventory Insights and Reconciliation. Added two independently permission-protected,
+  GET-only APIs over the existing Application services and bilingual RTL-safe Angular routes for warehouse/search/activity
+  thresholds, server-authored KPI values, issue evidence, exception filtering and bounded paging. Replaced the Insights
+  warehouse tuple with an explicit API DTO; no classification, tolerance, value or paging rule moved to Angular and no mutation
+  was introduced. Removed four proven-unused foundation localization strings to restore lazy-budget headroom without raising
+  limits. Release passed with zero warnings/errors, SecurityRegression passed 1,319 checks, Angular passed 210/210 tests across
+  104 files, 120 templates passed accessibility and bundles measured 325,647/358,400 initial and 81,537/81,920 largest lazy
+  bytes. The registry now reports 178 routes and two remaining surfaces. MVC remains default; advanced to `MOD-028E`.

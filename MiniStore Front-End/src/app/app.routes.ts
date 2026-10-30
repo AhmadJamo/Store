@@ -509,6 +509,20 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'inventory/insights',
+        loadComponent: () =>
+          import('./features/inventory/inventory-analysis-page').then(
+            (module) => module.InventoryAnalysisPageComponent,
+          ),
+      },
+      {
+        path: 'inventory/reconciliation',
+        loadComponent: () =>
+          import('./features/inventory/inventory-analysis-page').then(
+            (module) => module.InventoryAnalysisPageComponent,
+          ),
+      },
+      {
         path: 'inventory/adjustments',
         loadComponent: () =>
           import('./features/inventory/inventory-adjustments-page').then(

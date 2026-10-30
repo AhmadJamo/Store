@@ -1,6 +1,6 @@
 # Phase 28 — Shared and remaining Angular migration
 
-> Status: IN PROGRESS — `MOD-028C` Inventory Scanning complete on 2026-10-30
+> Status: IN PROGRESS — `MOD-028D` Inventory Insights and Reconciliation complete on 2026-10-30
 >
 > Presentation default: MVC until a separate cutover approval.
 
@@ -48,12 +48,26 @@ obtain a new key only after success.
 The registry now contains 162 controllers, 176 Angular routes, 78 verified counterparts and four remaining surfaces containing
 five MVC action rows. MVC remains the presentation default.
 
+## `MOD-028D` delivered — Inventory Insights and Reconciliation
+
+Two authenticated GET-only APIs now expose the existing `InventoryInsightsService` and
+`InventoryReconciliationService` with their independent permissions. Activity classification, threshold validation,
+inventory/attention value, issue detection, tolerances, exception filtering and bounded paging all remain server-authored.
+The Insights warehouse tuple was replaced with an explicit named DTO so the JSON contract exposes no persistence entity or
+runtime-specific tuple shape.
+
+Angular `/inventory/insights` and `/inventory/reconciliation` provide bilingual RTL-safe filters, KPI and named evidence
+tables, exception labels and bounded previous/next paging. They link to each other only when the matching permission exists
+and introduce no mutation. Four unused foundation-era global localization strings were removed after reference analysis,
+restoring lazy-bundle headroom without raising the budget.
+
+The registry now contains 178 Angular routes, 80 verified counterparts and two remaining surfaces containing three MVC action
+rows. MVC remains the presentation default.
+
 ## Confirmed remaining surfaces
 
 | Surface | Views | MVC actions | Required parity |
 |---|---:|---:|---|
-| `InventoryInsights` | 1 | 1 | warehouse/search/activity/attention analysis |
-| `InventoryReconciliation` | 1 | 1 | paged balance/ledger exception reconciliation |
 | tenant `AuditEvents` | 1 | 2 | tenant-scoped read/filter and purpose-bound export with sensitive-field policy |
 | `Language` | 0 | 1 | synchronize Angular locale with server culture so localized API messages match the UI |
 
@@ -74,8 +88,8 @@ vendor-bill attachments, supplier integration payloads, and supplier purchasing 
 
 1. `MOD-028B` — COMPLETE: Stock Transfers.
 2. `MOD-028C` — COMPLETE: Inventory Scanning.
-3. `MOD-028D` — NEXT: Inventory Insights and Reconciliation.
-4. `MOD-028E` — tenant Audit Events.
+3. `MOD-028D` — COMPLETE: Inventory Insights and Reconciliation.
+4. `MOD-028E` — NEXT: tenant Audit Events.
 5. `MOD-028F` — Purchase Sourcing attachments/print.
 6. `MOD-028G` — server-culture synchronization and final registry reconciliation.
 
@@ -95,3 +109,6 @@ This order closes the highest-risk operational omission first. It does not autho
 - `MOD-028C` passed Release with zero warnings/errors, 1,317 backend checks, 209/209 Angular tests across 103 files,
   119 accessibility templates and the external-SCSS policy.
 - Production bundles measured 325,405/358,400 initial bytes and 81,911/81,920 largest-lazy bytes.
+- `MOD-028D` passed Release with zero warnings/errors, 1,319 backend checks, 210/210 Angular tests across 104 files,
+  120 accessibility templates and the external-SCSS policy.
+- Production bundles measured 325,647/358,400 initial bytes and 81,537/81,920 largest-lazy bytes.

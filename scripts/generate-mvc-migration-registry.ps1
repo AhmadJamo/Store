@@ -30,6 +30,8 @@ GoodsReceipts|/purchases/receipts
 Home|/
 InventoryAdjustments|/inventory/adjustments
 InventoryBalances|/inventory/availability
+InventoryInsights|/inventory/insights
+InventoryReconciliation|/inventory/reconciliation
 InventoryReservations|/inventory/reservations
 InventoryScanning|/inventory/scanning
 InventoryTracking|/inventory/tracking

@@ -143,3 +143,12 @@ approval, frozen-unit, numbering and server-owned state-transition rules. MVC re
   server-issued idempotency keys, duplicate-submit suppression and named balance evidence.
 - Full gate passed: Release clean, 1,317 backend checks, 209/209 Angular tests, 119 templates, 325,405 initial bytes and
   81,911 largest-lazy bytes. MVC remains default.
+## MOD-028D — Inventory Insights and Reconciliation parity
+
+- Added two independent permission-protected GET-only APIs over the existing Application services.
+- Added bilingual RTL-safe Angular routes for activity thresholds/KPIs and paged reconciliation exceptions.
+- Classification, values, reconciliation tolerances, issue detection and paging remain server-authored; no mutation exists.
+- Replaced the Insights warehouse tuple with an explicit API DTO and removed four proven-unused foundation localization strings
+  to restore lazy-budget headroom without raising limits.
+- Full gate passed: Release clean, 1,319 backend checks, 210/210 Angular tests, 120 templates, 325,647 initial bytes and
+  81,537 largest-lazy bytes. MVC remains default.
