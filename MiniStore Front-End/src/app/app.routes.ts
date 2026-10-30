@@ -443,6 +443,13 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'audit-events',
+        loadComponent: () =>
+          import('./features/audit/audit-events-page').then(
+            (module) => module.AuditEventsPageComponent,
+          ),
+      },
+      {
         path: 'inventory/transactions',
         loadComponent: () =>
           import('./features/inventory/stock-transactions-page').then(

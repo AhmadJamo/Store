@@ -4,16 +4,16 @@
 
 ## Reconciliation
 
-- Controllers discovered: 162 total; 83 MVC; 79 API.
+- Controllers discovered: 163 total; 83 MVC; 80 API.
 - User-facing MVC views discovered: 199.
 - MVC actions discovered: 358.
 - Razor files included in the control inventory: 209.
-- Angular application routes discovered: 178.
-- MVC surfaces with a verified Angular counterpart: 80.
-- Remaining MVC surfaces without a mapped Angular counterpart: 2.
+- Angular application routes discovered: 179.
+- MVC surfaces with a verified Angular counterpart: 81.
+- Remaining MVC surfaces without a mapped Angular counterpart: 1.
 - Allowlisted Angular-default cutover actions: 11.
 
-Remaining surfaces: AuditEvents, Language.
+Remaining surfaces: Language.
 
 Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, Parity Proven, Angular Default, MVC Retired. A pilot status does not change the default MVC route.
 
@@ -28,7 +28,7 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | Accounts | Index.cshtml | Angular Pilot | /accounting/accounts | MiniStore.Web/Views/Accounts/Index.cshtml |
 | AnalyticsCenter | Create.cshtml | Angular Pilot | /analytics | MiniStore.Web/Views/AnalyticsCenter/Create.cshtml |
 | AnalyticsCenter | Index.cshtml | Angular Pilot | /analytics | MiniStore.Web/Views/AnalyticsCenter/Index.cshtml |
-| AuditEvents | Index.cshtml | Inventoried | — | MiniStore.Web/Views/AuditEvents/Index.cshtml |
+| AuditEvents | Index.cshtml | Angular Pilot | /audit-events | MiniStore.Web/Views/AuditEvents/Index.cshtml |
 | Branches | Create.cshtml | Angular Pilot | /products/catalog-masters | MiniStore.Web/Views/Branches/Create.cshtml |
 | Branches | Index.cshtml | Angular Pilot | /products/catalog-masters | MiniStore.Web/Views/Branches/Index.cshtml |
 | CompanyOnboarding | Index.cshtml | Angular Pilot | /onboarding | MiniStore.Web/Views/CompanyOnboarding/Index.cshtml |
@@ -235,8 +235,8 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | AnalyticsCenter | Create | GET | Angular Pilot | /analytics | /analytics/builder | MiniStore.Web/Controllers/Analytics/AnalyticsCenterController.cs |
 | AnalyticsCenter | Create | POST | Angular Pilot | /analytics | /analytics/builder | MiniStore.Web/Controllers/Analytics/AnalyticsCenterController.cs |
 | AnalyticsCenter | Index | GET | Angular Pilot | /analytics | /analytics | MiniStore.Web/Controllers/Analytics/AnalyticsCenterController.cs |
-| AuditEvents | Export | POST | Inventoried | — | — | MiniStore.Web/Controllers/Security/AuditEventsController.cs |
-| AuditEvents | Index | GET | Inventoried | — | — | MiniStore.Web/Controllers/Security/AuditEventsController.cs |
+| AuditEvents | Export | POST | Angular Pilot | /audit-events | — | MiniStore.Web/Controllers/Security/AuditEventsController.cs |
+| AuditEvents | Index | GET | Angular Pilot | /audit-events | — | MiniStore.Web/Controllers/Security/AuditEventsController.cs |
 | CompanyOnboarding | Complete | POST | Angular Pilot | /onboarding | — | MiniStore.Web/Controllers/Saas/CompanyOnboardingController.cs |
 | CompanyOnboarding | Index | GET | Angular Pilot | /onboarding | — | MiniStore.Web/Controllers/Saas/CompanyOnboardingController.cs |
 | CompanyOnboarding | Skip | POST | Angular Pilot | /onboarding | — | MiniStore.Web/Controllers/Saas/CompanyOnboardingController.cs |

@@ -13,6 +13,7 @@ $output = Join-Path $repoRoot $OutputPath
 $surfaceRoutes = @{}
 @'
 Account|/login,/register,/access-denied
+AuditEvents|/audit-events
 Accounts|/accounting/accounts
 AnalyticsCenter|/analytics
 Branches|/products/catalog-masters

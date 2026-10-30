@@ -1626,3 +1626,12 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   limits. Release passed with zero warnings/errors, SecurityRegression passed 1,319 checks, Angular passed 210/210 tests across
   104 files, 120 templates passed accessibility and bundles measured 325,647/358,400 initial and 81,537/81,920 largest lazy
   bytes. The registry now reports 178 routes and two remaining surfaces. MVC remains default; advanced to `MOD-028E`.
+- 2026-10-30: Completed `MOD-028E` Tenant Audit Events. Added authenticated tenant audit search/paging and purpose-bound
+  CSV export over the existing Application service. View/export/sensitive permissions remain independent, export retains
+  antiforgery, sensitive inclusion is derived server-side and the client request has no sensitive toggle. Angular adds a
+  bilingual RTL-safe route with filters, paging, redacted evidence and permission-aware safe download. Existing date bounds,
+  5,000-row limit, approved purposes, CSV formula protection and semantic export evidence remain unchanged. Release passed
+  with zero warnings/errors, SecurityRegression passed 1,321 checks, Angular passed 211/211 tests across 105 files, 121
+  templates passed accessibility and bundles measured 325,733/358,400 initial and 81,600/81,920 largest lazy bytes. The
+  registry now reports 179 routes and only Language remains unmapped. MVC remains default; advanced to `MOD-028F` sourcing
+  attachments and print parity.

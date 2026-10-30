@@ -74,6 +74,13 @@ const navigationItems: readonly NavigationItem[] = [
     requiredPermission: 'Products.View',
   },
   {
+    id: 'audit-events',
+    route: '/audit-events',
+    labelKey: 'auditEvents',
+    icon: '◎',
+    requiredPermission: 'AuditEvents.View',
+  },
+  {
     id: 'inventory-ledger',
     route: '/inventory/transactions',
     labelKey: 'inventoryLedger',
@@ -217,6 +224,7 @@ export class NavigationRegistryService {
         'settings',
         'users',
         'roles',
+        'audit-events',
         'operations-center',
         'design-system',
       ],
@@ -246,6 +254,7 @@ export class NavigationRegistryService {
         'settings',
         'users',
         'roles',
+        'audit-events',
         'design-system',
       ],
       analyst: [
@@ -274,6 +283,7 @@ export class NavigationRegistryService {
         'settings',
         'users',
         'roles',
+        'audit-events',
         'design-system',
       ],
     };

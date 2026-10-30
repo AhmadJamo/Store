@@ -29,6 +29,11 @@ ambiguity rejection, blind-count hiding and idempotency remain Application-owned
 their Application services. Angular `features/inventory/inventory-analysis*` and `data/inventory-analysis*` own bilingual
 activity/KPI and paged reconciliation evidence. Classification, values, tolerances, issues and paging remain server-owned.
 
+`AuditEventsApiController` exposes tenant-scoped audit search and purpose-bound CSV export over `AuditEventReadService`.
+Angular `features/audit/audit-events*` owns bilingual filters, paging, permission-aware evidence and safe download. View,
+export and sensitive-evidence permissions remain independent; sensitive inclusion is derived only on the server, exports
+remain bounded to 5,000 rows and the existing Application service records their semantic evidence.
+
 `MiniStore.Web/Controllers/Api/V1/CustomersController.cs` exposes permission-separated Customer list/details/form/create/update contracts through the existing `CustomerService`; it does not access EF or repositories. `MiniStore Front-End/src/app/features/customers` is the first business vertical slice, with an isolated typed client, responsive list/details/create/edit pages, external SCSS, Problem Details field feedback, row-version concurrency and workspace dirty-state integration. MVC Customers remains the rollback path. See `docs/modernization/PHASE_05_CUSTOMERS_VERTICAL_SLICE.md`.
 
 `MiniStore Front-End/src/app/shared/ui` contains only proven presentation primitives for page headers, feedback states, overflow table regions and server-driven pagers. Customers and the read-only `features/suppliers` directory are the first two consumers. `SuppliersApiController` calls `SupplierService.GetPageAsync`; supplier search/count/order/page remains behind the Application/repository boundary. See `docs/modernization/PHASE_06_SHARED_UI_PRIMITIVES.md`.

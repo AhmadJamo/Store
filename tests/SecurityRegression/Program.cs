@@ -346,6 +346,21 @@ Check(auditController.GetMethod(nameof(AuditEventsController.Index))!
       auditController.GetMethod(nameof(AuditEventsController.Export))!
           .GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null,
     "Audit view and export endpoints must enforce distinct server permissions and antiforgery on export");
+var auditApi = typeof(AuditEventsApiController);
+Check(auditApi.GetCustomAttribute<ApiControllerAttribute>() is not null &&
+      auditApi.GetCustomAttribute<AuthorizeAttribute>() is not null &&
+      auditApi.GetCustomAttribute<RouteAttribute>()?.Template == "api/v1/audit-events" &&
+      auditApi.GetMethod(nameof(AuditEventsApiController.Get))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:AuditEvents.View",
+    "Angular tenant audit reads must remain authenticated, versioned and view protected");
+Check(auditApi.GetMethod(nameof(AuditEventsApiController.Export))!
+          .GetCustomAttributes<PermissionAuthorizeAttribute>().Select(x => x.Policy).ToHashSet()
+          .SetEquals(["Permission:AuditEvents.View", "Permission:AuditEvents.Export"]) &&
+      auditApi.GetMethod(nameof(AuditEventsApiController.Export))!
+          .GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null &&
+      typeof(AuditEventExportRequest).GetProperties().Select(x => x.Name).ToHashSet()
+          .SetEquals([nameof(AuditEventExportRequest.Query), nameof(AuditEventExportRequest.Purpose)]),
+    "Angular tenant audit export must preserve separate permissions, antiforgery and a server-owned sensitive-evidence decision");
 Check(NavigationDefinitions.All.SelectMany(x => x.Items)
           .Any(x => x.Controller == "AuditEvents" && x.Permission == "AuditEvents.View"),
     "Audit navigation must remain hidden without the dedicated view permission");
