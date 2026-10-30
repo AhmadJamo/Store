@@ -223,6 +223,50 @@ static async Task RunApiAsync(IPlaywright playwright, Arguments options, List<Ch
     checks.Add(new("api-session-authenticated", "passed",
         $"Authenticated session and {executed} permitted read endpoint(s) passed."));
     await RunAuthenticatedReconciliationAsync(authenticated, session, permissions, checks);
+    await RunHighRiskCohortAcceptanceAsync(authenticated, permissions, checks);
+}
+
+static async Task RunHighRiskCohortAcceptanceAsync(
+    IAPIRequestContext authenticated,
+    HashSet<string> permissions,
+    List<CheckResult> checks)
+{
+    var candidates = new[]
+    {
+        new CohortProbe("sales", "CustomerInvoices.View", "/api/v1/customer-invoices"),
+        new CohortProbe("purchasing", "PurchaseRequests.View", "/api/v1/purchase-requests"),
+        new CohortProbe("purchasing", "PurchaseOrders.View", "/api/v1/purchase-orders"),
+        new CohortProbe("inventory", "InventoryInsights.View", "/api/v1/inventory-insights"),
+        new CohortProbe("accounting", "PurchaseAccountingReconciliation.View", "/api/v1/purchase-accounting-reconciliation"),
+        new CohortProbe("accounting", "Administration.Access", "/api/v1/accounts"),
+        new CohortProbe("administration", "Users.View", "/api/v1/users"),
+        new CohortProbe("administration", "AuditEvents.View", "/api/v1/audit-events?page=1&pageSize=1")
+    };
+    var covered = 0;
+    foreach (var cohort in candidates.GroupBy(x => x.Cohort, StringComparer.Ordinal))
+    {
+        var probe = cohort.FirstOrDefault(x => permissions.Contains(x.Permission));
+        if (probe is null)
+        {
+            checks.Add(new($"high-risk-{cohort.Key}", "skipped",
+                "The authenticated session has no allowlisted read permission for this cohort."));
+            continue;
+        }
+
+        var response = await authenticated.GetAsync(probe.Path);
+        Require(response.Ok, $"High-risk {probe.Cohort} read returned {response.Status}.");
+        Require(response.Headers.TryGetValue("content-type", out var contentType) &&
+                contentType.Contains("application/json", StringComparison.OrdinalIgnoreCase),
+            $"High-risk {probe.Cohort} read did not return JSON.");
+        checks.Add(new($"high-risk-{probe.Cohort}", "passed",
+            "A permission-allowed, read-only JSON endpoint passed."));
+        covered++;
+    }
+
+    Require(covered >= 3,
+        $"High-risk acceptance covered {covered} business cohorts; at least 3 are required.");
+    checks.Add(new("high-risk-cohort-threshold", "passed",
+        $"{covered} permission-allowed business cohorts passed read-only acceptance."));
 }
 
 static async Task RunAuthenticatedReconciliationAsync(
@@ -367,6 +411,8 @@ static void Require(bool condition, string message)
 }
 
 sealed record CheckResult(string Name, string Status, string Detail);
+
+sealed record CohortProbe(string Cohort, string Permission, string Path);
 
 sealed record Arguments(
     string FrontendUrl,

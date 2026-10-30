@@ -1,6 +1,6 @@
 # MOD-029 — full-system acceptance and dual-run reconciliation
 
-> Status: IN PROGRESS — `MOD-029A` and authenticated `MOD-029B` complete on 2026-10-30; high-risk cohorts move to `MOD-029C`
+> Status: IN PROGRESS — `MOD-029A..C` complete on 2026-10-30; live cutover/rollback rehearsal moves to `MOD-029D`
 
 ## MOD-029A baseline delivered
 
@@ -58,3 +58,12 @@ Before the live run, the complete static gate passed: Release build with zero wa
 214/214 Angular tests across 106 files, 121 accessibility templates, and bundle limits at 326,764/358,400 initial bytes
 and 81,880/81,920 largest lazy bytes. MVC remains default. `MOD-029C` owns permission-driven read-only acceptance across
 the high-risk sales, purchasing, inventory, accounting and administration cohorts.
+
+## MOD-029C high-risk cohorts
+
+The authenticated runner now selects one permission-allowed GET endpoint per high-risk business cohort and verifies a
+successful JSON response without serializing its payload. Sales, purchasing, inventory, accounting and administration
+all passed on Demo; the threshold requires at least three covered cohorts and missing permissions remain explicit skips.
+The complete browser run passed 15/15 with zero skips, while the read-only boundary and 100-request performance checks
+continued to pass (p95 16.24 ms, p99 18.10 ms). No mutation or presentation-default change occurred. `MOD-029D` owns
+the live process-level AngularDefault-to-MVC rollback rehearsal.

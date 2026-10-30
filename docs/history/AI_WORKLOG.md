@@ -1,5 +1,12 @@
 # AI Work Log
 
+- 2026-10-30: Completed `MOD-029C` high-risk module acceptance. Added permission-driven, GET-only JSON probes for
+  sales, purchasing, inventory, accounting and administration with an explicit three-cohort minimum and skipped outcomes
+  for unavailable permissions. The Demo operator covered all five cohorts; the authenticated browser report passed 15/15
+  with zero skips, existing identity/financial/inventory reconciliation remained green, and 100/100 availability requests
+  passed at p95 16.24 ms and p99 18.10 ms. No payload values, secrets, mutations or presentation-default changes were
+  introduced. Execution advances to `MOD-029D` live cutover/rollback rehearsal.
+
 - 2026-10-30: Completed `MOD-029B` with an operator-authenticated, git-ignored Playwright state. Fixed the browser
   acceptance runner to await the real asynchronous culture response and to compare decoded rendered text rather than one
   HTML-entity representation. The live gate passed 9/9 authenticated checks with zero skips: MVC/API culture matched, the
