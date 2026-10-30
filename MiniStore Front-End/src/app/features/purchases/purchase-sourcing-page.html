@@ -4,6 +4,8 @@
     [title]="
       mode() === 'create'
         ? i18n.text('new')
+        : mode() === 'print'
+          ? i18n.text('printTitle')
         : mode() === 'quote'
           ? i18n.text('quote')
           : mode() === 'compare'
@@ -108,6 +110,7 @@
           ><textarea maxlength="1000" formControlName="invitationMessage"></textarea>
         </label>
       </div>
+      <label class="ui-field wide file-field"><span>{{ i18n.text('attachments') }}</span><input type="file" multiple (change)="chooseAttachments($any($event.target).files)" /><small>{{ i18n.text('attachmentHelp') }}</small>@if (attachments().length) { <strong>{{ attachments().length }} / 10</strong> }</label>
       <fieldset>
         <legend>{{ i18n.text('selectSuppliers') }}</legend>
         <div class="check-grid">
@@ -130,6 +133,7 @@
   } @else if (mode() === 'details' && detail(); as x) {
     <div class="actions">
       <a class="ui-button secondary" routerLink="/purchases/sourcing">{{ i18n.text('back') }}</a>
+      <a class="ui-button secondary" [routerLink]="['/purchases/sourcing', x.id, 'print']" target="_blank" rel="noopener">{{ i18n.text('print') }}</a>
       @if (x.status === 2 && session.can('SupplierQuotations.Create')) {
         <a class="ui-button primary" [routerLink]="['/purchases/sourcing', x.id, 'quotation']">{{
           i18n.text('quote')
@@ -169,6 +173,9 @@
         </div>
       </dl>
     </section>
+    @if (x.attachments.length) {
+      <section class="ui-card attachments"><h2>{{ i18n.text('attachments') }}</h2><ul>@for (attachment of x.attachments; track attachment.id) { <li><span>{{ attachment.fileName }} <small>({{ attachment.size / 1024 | number:'1.0-1' }} KB)</small></span><a class="ui-button secondary" [href]="attachmentUrl(x.id, attachment.id)">{{ i18n.text('download') }}</a></li> }</ul></section>
+    }
     <section class="ui-card">
       <h2>{{ i18n.text('suppliers') }}</h2>
       <ul>
@@ -234,6 +241,14 @@
         </table></app-data-table
       >
     </section>
+  } @else if (mode() === 'print' && detail(); as x) {
+    <article class="print-sheet">
+      <div class="print-actions"><button class="ui-button primary" type="button" (click)="print()">{{ i18n.text('print') }}</button></div>
+      <header><div><h1>{{ i18n.text('printTitle') }}</h1><strong>{{ x.sourcingNumber }}</strong></div><span>{{ i18n.text(x.path === 1 ? 'approvedRequest' : 'direct') }}</span></header>
+      <dl><div><dt>{{ i18n.text('warehouse') }}</dt><dd>{{ x.warehouseName }}</dd></div><div><dt>{{ i18n.text('buyerRef') }}</dt><dd>{{ x.buyerReference || '—' }}</dd></div><div><dt>{{ i18n.text('deadline') }}</dt><dd>{{ x.supplierResponseDeadline | date:'dd/MM/yyyy' }}</dd></div><div><dt>{{ i18n.text('expectedDelivery') }}</dt><dd>{{ x.requestedByDate | date:'dd/MM/yyyy' }}</dd></div></dl>
+      <table><thead><tr><th>{{ i18n.text('product') }}</th><th>{{ i18n.text('requested') }}</th><th>{{ i18n.text('notes') }}</th></tr></thead><tbody>@for (line of x.lines; track line.id) { <tr><td>{{ line.productCode }} — {{ line.productName }}</td><td>{{ line.requestedQuantity | number:'1.0-6' }} {{ line.unitName }}</td><td>{{ line.notes || '—' }}</td></tr> }</tbody></table>
+      <h2>{{ i18n.text('suppliers') }}</h2><ul>@for (supplier of x.invitations; track supplier.supplierId) { <li>{{ supplier.supplierName }}</li> }</ul>
+    </article>
   } @else if (mode() === 'quote' && quotePage(); as page) {
     <div class="actions">
       <a

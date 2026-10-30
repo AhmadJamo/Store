@@ -147,6 +147,11 @@ html[data-workspace-profile='operator'] app-shell .workspace-toolbar { backgroun
 }
 
 @media (max-width: 1200px) { app-shell .session-summary > span { display: none; } }
+@media print {
+  app-shell .sidebar, app-shell .topbar, app-shell .workspace-toolbar, app-shell .tabs, app-shell .split-panel, app-shell .skip-link { display: none !important; }
+  app-shell .shell, app-shell .content-frame { display: block !important; }
+  app-shell main { padding: 0 !important; }
+}
 
 @media (max-width: 390px) {
   app-shell .preferences { grid-template-columns: repeat(2, minmax(0, 1fr)); }

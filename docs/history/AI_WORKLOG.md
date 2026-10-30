@@ -1635,3 +1635,11 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   templates passed accessibility and bundles measured 325,733/358,400 initial and 81,600/81,920 largest lazy bytes. The
   registry now reports 179 routes and only Language remains unmapped. MVC remains default; advanced to `MOD-028F` sourcing
   attachments and print parity.
+- 2026-10-30: Completed `MOD-028F` Purchase Sourcing attachment/print parity. Replaced the API's attachment clearing with
+  bounded multipart binding under the existing Create permission and antiforgery, added tenant-filtered View-protected
+  downloads with safe filename/media-type handling, and kept the Application/domain ten-file and 5 MB limits authoritative.
+  Angular now selects/submits files, lists immutable metadata, downloads evidence and renders a bilingual RTL-safe RFQ
+  print/save-PDF route without a mutation or new document. Release passed with zero warnings/errors, SecurityRegression
+  passed 1,322 checks, Angular passed 211/211 tests across 105 files, 121 templates passed accessibility and bundles measured
+  326,124/358,400 initial and 81,600/81,920 largest lazy bytes. The registry reports 180 routes; only Language remains
+  unmapped and no inspected cross-surface file/print gap remains. MVC remains default; advanced to `MOD-028G`.

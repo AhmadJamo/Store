@@ -637,6 +637,13 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'purchases/sourcing/:id/print',
+        loadComponent: () =>
+          import('./features/purchases/purchase-sourcing-page').then(
+            (module) => module.PurchaseSourcingPageComponent,
+          ),
+      },
+      {
         path: 'purchases/sourcing/:id/quotation',
         canDeactivate: [(component) => component.canDeactivate()],
         loadComponent: () =>

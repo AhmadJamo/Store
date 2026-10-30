@@ -8,7 +8,7 @@
 - User-facing MVC views discovered: 199.
 - MVC actions discovered: 358.
 - Razor files included in the control inventory: 209.
-- Angular application routes discovered: 179.
+- Angular application routes discovered: 180.
 - MVC surfaces with a verified Angular counterpart: 81.
 - Remaining MVC surfaces without a mapped Angular counterpart: 1.
 - Allowlisted Angular-default cutover actions: 11.

@@ -101,6 +101,11 @@ antiforgery and model bounds before delegating to the existing Application servi
 Supplier identity is resolved against recorded invitations, quotation lines must match the event exactly, monetary decimal validation is
 culture-invariant, and award identities/quantities/reasons are revalidated server-side. The Angular client cannot close an event directly.
 
+`MOD-028F` preserves RFQ uploads through bounded multipart input instead of accepting file bytes in JSON: at most ten
+non-empty files of 5 MB each, final-segment names and parseable media types reach the Application/domain boundary. Attachment
+download re-resolves the RFQ and attachment through the tenant-filtered repository and requires `PurchaseSourcing.View`; storage
+paths are never exposed. The Angular print route reuses the authorized DTO and performs no mutation.
+
 ## MOD-023D Angular Purchase Order boundary (2026-10-28)
 
 The Purchase Order API is authenticated, versioned and delegates only to `PurchaseOrderService`. All nine mutations require independent

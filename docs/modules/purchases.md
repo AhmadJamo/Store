@@ -100,6 +100,12 @@ may read only its RFQ or Purchase Order and may submit the existing quotation, o
 eligibility rules. Writes retain antiforgery and rate limiting; responses are no-store/no-referrer/noindex, denied tokens are audited,
 and the portal cannot create or post an internal financial document by itself. MVC is default.
 
+`MOD-028F` closes the remaining sourcing file/print parity gap. Angular approved-request RFQ creation now submits a bounded
+multipart contract, so the API no longer discards attachments. Detail pages expose only tenant-filtered attachment metadata and
+permission-protected downloads; filenames are reduced to their final segment, content types are normalized and each RFQ remains
+limited to ten 5 MB files by both presentation and domain rules. A dedicated bilingual RTL-safe route renders the authorized RFQ
+snapshot for browser print/save-PDF without adding a new business document or mutation.
+
 `MOD-023U` completes the remaining legacy direct-purchase presentation in Angular: historical list/details, one-time ledger posting,
 posted Purchase Return list/details and create-and-post. New direct-purchase creation remains retired and users are directed to
 Purchase Requests. `PurchasePostingService` and `PurchaseReturnService` retain posting, quantity, availability, tracking, valuation,

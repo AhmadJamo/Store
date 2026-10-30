@@ -1,6 +1,6 @@
 # Phase 28 — Shared and remaining Angular migration
 
-> Status: IN PROGRESS — `MOD-028E` tenant Audit Events complete on 2026-10-30
+> Status: IN PROGRESS — `MOD-028F` Purchase Sourcing attachments/print complete on 2026-10-30
 >
 > Presentation default: MVC until a separate cutover approval.
 
@@ -76,6 +76,18 @@ Angular `/audit-events` provides bilingual RTL-safe filters, loading/error/empty
 redacted detail and safe file download. The generated registry now contains 163 controllers, 179 Angular routes, 81 verified
 counterparts and one remaining surface containing one MVC action row. MVC remains the presentation default.
 
+## `MOD-028F` delivered — Purchase Sourcing attachments and print
+
+The existing `/api/v1/purchase-sourcing` create operation now accepts bounded multipart input instead of clearing attachment
+evidence. It preserves the existing ten-file, 5 MB-per-file domain limits, final-segment filename rule, tenant ownership,
+`PurchaseSourcing.Create` and antiforgery. A `PurchaseSourcing.View` download endpoint re-resolves the exact tenant RFQ and
+attachment, normalizes the response media type and exposes no storage path.
+
+Angular approved-request creation now validates and submits selected files, details list immutable attachment metadata and
+permission-protected downloads, and `/purchases/sourcing/:id/print` renders a bilingual RTL-safe authorized RFQ snapshot for
+browser print/save-PDF. The route adds no mutation or new document. The registry now contains 180 Angular routes; Language
+remains the only unmapped surface and the previously recorded cross-surface file/print gap is closed.
+
 ## Confirmed remaining surfaces
 
 | Surface | Views | MVC actions | Required parity |
@@ -86,11 +98,10 @@ The shared MVC layout/error/notification partials are presentation infrastructur
 has shell, normalized Problem Details and recovery presentation. Health endpoints are machine endpoints and do not need a
 user-facing Angular page.
 
-## Cross-surface operation gap
+## Cross-surface operation reconciliation
 
-`PurchaseSourcing` has an Angular pilot, but its API currently clears submitted attachments and exposes neither MVC's
-attachment download nor its printable RFQ view. Those three file/print capabilities remain an explicit parity gap and cannot
-be hidden by marking the whole sourcing surface as a pilot.
+`PurchaseSourcing` multipart upload, tenant-safe attachment download and printable RFQ now have API/Angular counterparts.
+No inspected cross-surface file/print gap remains.
 
 Other inspected file operations have API/Angular counterparts: quotation PDF, organization logo, supplier communication and
 vendor-bill attachments, supplier integration payloads, and supplier purchasing CSV/XLSX import/export.
@@ -101,8 +112,8 @@ vendor-bill attachments, supplier integration payloads, and supplier purchasing 
 2. `MOD-028C` — COMPLETE: Inventory Scanning.
 3. `MOD-028D` — COMPLETE: Inventory Insights and Reconciliation.
 4. `MOD-028E` — COMPLETE: tenant Audit Events.
-5. `MOD-028F` — NEXT: Purchase Sourcing attachments/print.
-6. `MOD-028G` — server-culture synchronization and final registry reconciliation.
+5. `MOD-028F` — COMPLETE: Purchase Sourcing attachments/print.
+6. `MOD-028G` — NEXT: server-culture synchronization and final registry reconciliation.
 
 This order closes the highest-risk operational omission first. It does not authorize a cutover or removal of MVC.
 
@@ -126,3 +137,6 @@ This order closes the highest-risk operational omission first. It does not autho
 - `MOD-028E` passed Release with zero warnings/errors, 1,321 backend checks, 211/211 Angular tests across 105 files,
   121 accessibility templates and the external-SCSS policy.
 - Production bundles measured 325,733/358,400 initial bytes and 81,600/81,920 largest-lazy bytes.
+- `MOD-028F` passed Release with zero warnings/errors, 1,322 backend checks, 211/211 Angular tests across 105 files,
+  121 accessibility templates and the external-SCSS policy.
+- Production bundles measured 326,124/358,400 initial bytes and 81,600/81,920 largest-lazy bytes.

@@ -65,6 +65,7 @@ const copy = {
     path: 'Path',
     approvedRequest: 'Approved request',
     direct: 'Direct RFQ',
+    attachments: 'Attachments', attachmentHelp: 'Up to 10 files, 5 MB per file.', attachmentInvalid: 'Select at most 10 non-empty files, no larger than 5 MB each.', download: 'Download', print: 'Print / Save PDF', printTitle: 'Request for quotation', expectedDelivery: 'Expected delivery date', fileSize: 'Size',
   },
   ar: {
     title: 'التوريد وطلبات الأسعار',
@@ -129,6 +130,7 @@ const copy = {
     path: 'المسار',
     approvedRequest: 'طلب معتمد',
     direct: 'طلب سعر مباشر',
+    attachments: 'المرفقات', attachmentHelp: 'حتى 10 ملفات، وبحد أقصى 5 ميجابايت لكل ملف.', attachmentInvalid: 'اختر 10 ملفات غير فارغة كحد أقصى، ولا يتجاوز أي ملف 5 ميجابايت.', download: 'تنزيل', print: 'طباعة / حفظ PDF', printTitle: 'طلب عرض سعر', expectedDelivery: 'تاريخ التسليم المتوقع', fileSize: 'الحجم',
   },
 } as const;
 export type SourcingKey = keyof typeof copy.en;

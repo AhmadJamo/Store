@@ -51,13 +51,14 @@ export class PurchaseSourcingPageComponent {
   private readonly fb = inject(FormBuilder);
   private readonly workspace = inject(WorkspaceService);
   private readonly destroyRef = inject(DestroyRef);
-  protected readonly mode = signal<'list' | 'create' | 'details' | 'quote' | 'compare'>('list');
+  protected readonly mode = signal<'list' | 'create' | 'details' | 'print' | 'quote' | 'compare'>('list');
   protected readonly rows = signal<PurchaseSourcing[]>([]);
   protected readonly detail = signal<PurchaseSourcing | null>(null);
   protected readonly createPage = signal<SourcingCreatePage | null>(null);
   protected readonly quotePage = signal<QuotationCreatePage | null>(null);
   protected readonly comparison = signal<QuotationComparison | null>(null);
   protected readonly selectedSuppliers = signal<number[]>([]);
+  protected readonly attachments = signal<readonly File[]>([]);
   protected readonly loading = signal(true);
   protected readonly loadingProblem = signal<any>(null);
   protected readonly saving = signal(false);
@@ -122,6 +123,16 @@ export class PurchaseSourcingPageComponent {
     this.selectedSuppliers.update((ids) => (checked ? [...ids, id] : ids.filter((x) => x !== id)));
     this.sourcingForm.markAsDirty();
   }
+  protected chooseAttachments(files: FileList | null) {
+    const selected = Array.from(files ?? []);
+    if (selected.length > 10 || selected.some(file => file.size <= 0 || file.size > 5 * 1024 * 1024)) {
+      this.attachments.set([]);
+      this.problem.set(this.i18n.text('attachmentInvalid'));
+      return;
+    }
+    this.attachments.set(selected);
+    this.sourcingForm.markAsDirty();
+  }
   protected create() {
     const page = this.createPage();
     if (!page || this.sourcingForm.invalid || !this.selectedSuppliers().length) {
@@ -138,9 +149,10 @@ export class PurchaseSourcingPageComponent {
         notes: v.notes.trim() || undefined,
         invitationMessage: v.invitationMessage.trim() || undefined,
         supplierIds: this.selectedSuppliers(),
-      }),
+      }, this.attachments()),
       (r) => {
         this.sourcingForm.markAsPristine();
+        this.attachments.set([]);
         void this.router.navigate(['/purchases/sourcing', r.id]);
       },
       'created',
@@ -216,6 +228,8 @@ export class PurchaseSourcingPageComponent {
         'draft',
     );
   }
+  protected attachmentUrl(id: number, attachmentId: number) { return this.api.attachmentUrl(id, attachmentId); }
+  protected print() { globalThis.print(); }
   protected retry() {
     this.resolve();
   }
@@ -235,6 +249,11 @@ export class PurchaseSourcingPageComponent {
     if (path.endsWith('comparison')) {
       this.mode.set('compare');
       this.loadComparison(id);
+      return;
+    }
+    if (path.endsWith('print')) {
+      this.mode.set('print');
+      this.loadDetail(id);
       return;
     }
     if (id) {
