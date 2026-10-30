@@ -186,6 +186,18 @@ try {
     }
     else { Skip-GateStep "browser-acceptance" "Browser acceptance was skipped by request." }
 
+    if ([string]::IsNullOrWhiteSpace($ApiUrl)) {
+        Skip-GateStep "dual-run-read-only" "No API base URL was supplied; no live dual-run boundary claim was made."
+    }
+    elseif (-not (Test-Endpoint "$($ApiUrl.TrimEnd('/'))/health/ready")) {
+        Skip-GateStep "dual-run-read-only" "The supplied API readiness endpoint is unavailable; no live dual-run boundary claim was made."
+    }
+    else {
+        [void](Invoke-GateStep "dual-run-read-only" "Read-only identity, financial and inventory dual-run boundaries" {
+            & (Join-Path $PSScriptRoot "Test-DualRunReadOnly.ps1") -BaseUrl $ApiUrl
+        })
+    }
+
     if ($SkipPerformance) {
         Skip-GateStep "performance" "Performance smoke was skipped by request."
     }

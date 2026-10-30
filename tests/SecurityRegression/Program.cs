@@ -115,6 +115,33 @@ cutoverContext.Request.Method = HttpMethods.Get;
 Check(angularCutoverResolver.Resolve(
         cutoverContext.Request, "Customers", "Export", new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null,
     "Presentation cutover must keep non-allowlisted actions on MVC");
+foreach (var entry in PresentationCutoverRouteCatalog.All)
+{
+    var keyParts = entry.Key.Split(':', 2);
+    var routeValues = new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 1 };
+    var rehearsalAngular = new PresentationCutoverResolver(Options.Create(
+        new PresentationCutoverOptions
+        {
+            AngularBasePath = "/app",
+            Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
+            {
+                [keyParts[0]] = PresentationCutoverMode.AngularDefault
+            }
+        }));
+    Check(rehearsalAngular.Resolve(cutoverContext.Request, keyParts[0], keyParts[1], routeValues) is not null,
+        $"Cutover rehearsal must resolve allowlisted GET {entry.Key}");
+    var rehearsalRollback = new PresentationCutoverResolver(Options.Create(
+        new PresentationCutoverOptions
+        {
+            AngularBasePath = "/app",
+            Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
+            {
+                [keyParts[0]] = PresentationCutoverMode.Mvc
+            }
+        }));
+    Check(rehearsalRollback.Resolve(cutoverContext.Request, keyParts[0], keyParts[1], routeValues) is null,
+        $"Rollback rehearsal must restore MVC for {entry.Key}");
+}
 
 using var db = new AppDbContext(
     new DbContextOptionsBuilder<AppDbContext>()

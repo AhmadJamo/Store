@@ -100,7 +100,8 @@ The ERP SaaS Foundation Blueprint is imported as a non-authoritative planning re
   platform and shared MVC workflows to Angular, including every operation, permission, localization, file/PDF and edge state.
 - [ ] MOD-029 prove full-system parity through dual-run reconciliation, performance/security/accessibility evidence and cutover/rollback rehearsals.
   - [x] MOD-029A1 generate and gate an 82-counterpart static acceptance matrix; correct compact-action/API classification. Completed 2026-10-30.
-  - [ ] MOD-029A2 run high-risk dual-run browser/API samples, bounded performance and route-level rollback rehearsal.
+  - [x] MOD-029A2 run public/high-risk boundary browser/API samples, bounded performance and route-level rollback rehearsal. Completed 2026-10-30; authenticated data evidence moves to MOD-029B.
+  - [ ] MOD-029B reconcile authenticated same-data identity, financial and inventory reads with an operator-supplied Playwright session.
 - [ ] MOD-030 make Angular the only presentation and retire MVC incrementally only after explicit approval and zero registry gaps.
 
 - [x] FND-000 import the ERP SaaS Foundation Blueprint with provenance and classify its ten capabilities against the actual MiniStore repository.

@@ -85,8 +85,32 @@ static async Task RunUiAsync(IBrowser browser, Arguments options, List<CheckResu
     await using var context = await browser.NewContextAsync(new BrowserNewContextOptions
     {
         ViewportSize = new ViewportSize { Width = 1440, Height = 1000 },
-        ColorScheme = ColorScheme.Light
+        ColorScheme = ColorScheme.Light,
+        StorageStatePath = string.IsNullOrWhiteSpace(options.StorageStatePath)
+            ? null
+            : options.StorageStatePath
     });
+    if (string.IsNullOrWhiteSpace(options.StorageStatePath))
+    {
+        await context.RouteAsync("**/api/v1/session", route => route.FulfillAsync(new RouteFulfillOptions
+        {
+            Status = 200,
+            ContentType = "application/json",
+            Body = """{"user":{"id":"acceptance-ui","userName":"acceptance","email":null},"tenant":{"id":1,"name":"Acceptance","code":"acceptance"},"culture":"ar-JO","direction":"rtl","permissions":[]}"""
+        }));
+        await context.RouteAsync("**/api/v1/security/csrf", route => route.FulfillAsync(new RouteFulfillOptions
+        {
+            Status = 200,
+            ContentType = "application/json",
+            Body = """{"token":"acceptance-token","headerName":"X-CSRF-TOKEN"}"""
+        }));
+        await context.RouteAsync("**/api/v1/culture", route => route.FulfillAsync(new RouteFulfillOptions
+        {
+            Status = 204
+        }));
+        checks.Add(new("ui-session-boundary", "passed",
+            "Presentation-only checks used a bounded synthetic session; live API checks remain separate."));
+    }
     var page = await context.NewPageAsync();
     await page.GotoAsync($"{options.FrontendUrl.TrimEnd('/')}/design-system",
         new PageGotoOptions { WaitUntil = WaitUntilState.NetworkIdle });
