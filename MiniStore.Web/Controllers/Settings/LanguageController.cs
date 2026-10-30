@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using MiniStore.Web.Localization;
 
@@ -10,20 +9,11 @@ public class LanguageController : Controller
     [ValidateAntiForgeryToken]
     public IActionResult Set(string culture, string? returnUrl)
     {
-        if (!SupportedUiCultures.Contains(culture))
+        var normalized = SupportedUiCultures.Normalize(culture);
+        if (normalized is null)
             return BadRequest();
 
-        Response.Cookies.Append(
-            CookieRequestCultureProvider.DefaultCookieName,
-            CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(culture)),
-            new CookieOptions
-            {
-                Expires = DateTimeOffset.UtcNow.AddYears(1),
-                IsEssential = true,
-                HttpOnly = true,
-                SameSite = SameSiteMode.Lax,
-                Secure = Request.IsHttps
-            });
+        UiCultureCookie.Append(Response, normalized, Request.IsHttps);
 
         return LocalRedirect(Url.IsLocalUrl(returnUrl) ? returnUrl! : "/");
     }

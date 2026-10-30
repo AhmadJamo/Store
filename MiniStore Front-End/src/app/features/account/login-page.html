@@ -3,8 +3,9 @@
     <header class="auth-header">
       <div class="auth-brand" aria-hidden="true">M</div>
       <div><span class="eyebrow">MiniStore ERP</span><h1 id="sign-in-title">{{ i18n.text('signIn') }}</h1></div>
-      <button type="button" class="language" (click)="i18n.toggle()">{{ i18n.text('language') }}</button>
+      <button type="button" class="language" [disabled]="i18n.switching()" (click)="i18n.toggle()">{{ i18n.text('language') }}</button>
     </header>
+    @if(i18n.switchError()){<p class="auth-error" role="alert">{{i18n.text('errorDescription')}}</p>}
     <p class="auth-description">{{ i18n.text('signInDescription') }}</p>
     @if (problem(); as message) { <div class="auth-error" role="alert">{{ message }}</div> }
     <form [formGroup]="form" (ngSubmit)="submit()">

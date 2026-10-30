@@ -2,8 +2,9 @@
   <section class="onboarding-card setup-card" aria-labelledby="setup-title">
     <header class="public-header">
       <div><span class="eyebrow">{{ copy.text('finalSetupStep') }}</span><h1 id="setup-title">{{ copy.text('prepareCompany') }} {{ tenantName() }}</h1></div>
-      <button type="button" class="language" (click)="i18n.toggle()">{{ i18n.text('language') }}</button>
+      <button type="button" class="language" [disabled]="i18n.switching()" (click)="i18n.toggle()">{{ i18n.text('language') }}</button>
     </header>
+    @if(i18n.switchError()){<p class="field-error" role="alert">{{i18n.text('errorDescription')}}</p>}
     <p class="lead">{{ copy.text('setupDescription') }}</p>
     @if (loading()) { <app-feedback-state kind="loading" [title]="i18n.text('loading')"/> }
     @else {

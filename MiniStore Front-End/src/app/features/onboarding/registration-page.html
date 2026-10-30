@@ -2,8 +2,9 @@
   <section class="onboarding-card registration-card" aria-labelledby="registration-title">
     <header class="public-header">
       <div><span class="eyebrow">MiniStore ERP</span><h1 id="registration-title">{{ copy.text('registrationTitle') }}</h1></div>
-      <button type="button" class="language" (click)="i18n.toggle()">{{ i18n.text('language') }}</button>
+      <button type="button" class="language" [disabled]="i18n.switching()" (click)="i18n.toggle()">{{ i18n.text('language') }}</button>
     </header>
+    @if(i18n.switchError()){<p class="field-error" role="alert">{{i18n.text('errorDescription')}}</p>}
     <p class="lead">{{ copy.text('registrationDescription') }}</p>
     <button type="button" class="rules-toggle" (click)="showRules.set(!showRules())" [attr.aria-expanded]="showRules()">{{ copy.text('registrationRules') }}</button>
     @if (showRules()) { <aside class="rules" [attr.aria-label]="copy.text('registrationRules')"><ul><li>{{ copy.text('companyRule') }}</li><li>{{ copy.text('slugRule') }}</li><li>{{ copy.text('ownerRule') }}</li><li>{{ copy.text('passwordRule') }}</li><li>{{ copy.text('trialRule') }}</li></ul></aside> }

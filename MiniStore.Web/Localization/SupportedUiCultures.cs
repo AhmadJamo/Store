@@ -19,4 +19,7 @@ public static class SupportedUiCultures
 
     public static bool Contains(string culture) =>
         All.Any(x => string.Equals(x.Name, culture, StringComparison.OrdinalIgnoreCase));
+
+    public static string? Normalize(string? culture) =>
+        All.FirstOrDefault(x => string.Equals(x.Name, culture, StringComparison.OrdinalIgnoreCase))?.Name;
 }

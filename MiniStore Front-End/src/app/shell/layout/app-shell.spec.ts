@@ -29,7 +29,7 @@ describe('AppShell accessibility', () => {
         provideRouter([{ path: '', component: EmptyRoute }]),
         { provide: WorkspaceService, useValue: workspace },
         { provide: NavigationRegistryService, useValue: { visibleItems: signal([]) } },
-        { provide: LocalizationService, useValue: { direction: signal('ltr'), text: (key: string) => key, toggle: vi.fn() } },
+        { provide: LocalizationService, useValue: { direction: signal('ltr'), text: (key: string) => key, toggle: vi.fn(), switching: signal(false), switchError: signal(false) } },
         { provide: UiPreferencesService, useValue: { theme: signal('system'), density: signal('comfortable'), sidebar: signal('expanded'), contentWidth: signal('fluid'), reset: vi.fn(), setTheme: vi.fn(), setDensity: vi.fn(), setSidebar: vi.fn(), setContentWidth: vi.fn() } },
         { provide: ApiSessionService, useValue: { session: signal(null), clear: vi.fn() } },
         { provide: AccountApiService, useValue: { logout: vi.fn() } },

@@ -2,6 +2,10 @@
 
 The UI action audit, last verified on 2026-10-24, checks every static Razor link/form target against the compiled controller actions and every MVC POST against antiforgery validation. Dynamic client-only buttons were separately inventoried; the only submit-style button outside a form is the intentionally disabled Settings placeholder. The same automated gate now verifies Arabic entries for every literal shared-localizer key, rejects common direct-English Razor UI text and hard-coded controller action messages, detects case-insensitive duplicate resource keys, and protects the explicit nested customer form contract plus visible validation feedback.
 
+Angular shell, login, registration and onboarding language controls synchronize the server culture cookie before changing
+the visible locale. While the request is pending the control is disabled; failure retains the current language and shows
+localized feedback. The session culture is authoritative on startup, and `lang`/`dir` remain aligned for Arabic RTL and English LTR.
+
 `/Settings/WorkflowCatalog` is the complete bilingual ERP guide: 62 permission-aware steps grouped into seven modules and their operational phases, with owner, reviewer, instructions, control principle, completion evidence and a link to the real destination action.
 ## Advanced quotation templates (`SAL-120A`)
 

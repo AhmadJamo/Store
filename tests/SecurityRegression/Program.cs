@@ -361,6 +361,13 @@ Check(auditApi.GetMethod(nameof(AuditEventsApiController.Export))!
       typeof(AuditEventExportRequest).GetProperties().Select(x => x.Name).ToHashSet()
           .SetEquals([nameof(AuditEventExportRequest.Query), nameof(AuditEventExportRequest.Purpose)]),
     "Angular tenant audit export must preserve separate permissions, antiforgery and a server-owned sensitive-evidence decision");
+var cultureApi = typeof(CultureApiController);
+Check(cultureApi.GetCustomAttribute<ApiControllerAttribute>() is not null &&
+      cultureApi.GetCustomAttribute<RouteAttribute>()?.Template == "api/v1/culture" &&
+      cultureApi.GetMethod(nameof(CultureApiController.Set))!.GetCustomAttribute<HttpPostAttribute>() is not null &&
+      cultureApi.GetMethod(nameof(CultureApiController.Set))!.GetCustomAttribute<AllowAnonymousAttribute>() is not null &&
+      cultureApi.GetMethod(nameof(CultureApiController.Set))!.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null,
+    "Angular culture synchronization must preserve the public language switch with antiforgery and no unsafe GET mutation");
 Check(NavigationDefinitions.All.SelectMany(x => x.Items)
           .Any(x => x.Controller == "AuditEvents" && x.Permission == "AuditEvents.View"),
     "Audit navigation must remain hidden without the dedicated view permission");

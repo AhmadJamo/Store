@@ -4,16 +4,16 @@
 
 ## Reconciliation
 
-- Controllers discovered: 163 total; 83 MVC; 80 API.
+- Controllers discovered: 164 total; 83 MVC; 81 API.
 - User-facing MVC views discovered: 199.
 - MVC actions discovered: 358.
 - Razor files included in the control inventory: 209.
 - Angular application routes discovered: 180.
-- MVC surfaces with a verified Angular counterpart: 81.
-- Remaining MVC surfaces without a mapped Angular counterpart: 1.
+- MVC surfaces with a verified Angular counterpart: 82.
+- Remaining MVC surfaces without a mapped Angular counterpart: 0.
 - Allowlisted Angular-default cutover actions: 11.
 
-Remaining surfaces: Language.
+Remaining surfaces: none.
 
 Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, Parity Proven, Angular Default, MVC Retired. A pilot status does not change the default MVC route.
 
@@ -321,7 +321,7 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | InventoryTracking | RecordRecallCommunication | POST | Angular Pilot | /inventory/tracking | — | MiniStore.Web/Controllers/Inventory/InventoryTrackingController.cs |
 | InventoryTracking | Release | POST | Angular Pilot | /inventory/tracking | — | MiniStore.Web/Controllers/Inventory/InventoryTrackingController.cs |
 | JournalEntries | Details | GET | Angular Pilot | /accounting/journal-entries/:id | — | MiniStore.Web/Controllers/Accounting/JournalEntriesController.cs |
-| Language | Set | POST | Inventoried | — | — | MiniStore.Web/Controllers/Settings/LanguageController.cs |
+| Language | Set | POST | Angular Pilot | / | — | MiniStore.Web/Controllers/Settings/LanguageController.cs |
 | LocationMovements | Index | GET | Angular Pilot | /inventory/location-movements | — | MiniStore.Web/Controllers/Inventory/LocationMovementsController.cs |
 | LocationMovements | Move | POST | Angular Pilot | /inventory/location-movements | — | MiniStore.Web/Controllers/Inventory/LocationMovementsController.cs |
 | PaymentMethods | Index | ANY | Angular Pilot | /products/catalog-masters | — | MiniStore.Web/Controllers/Accounting/PaymentMethodsController.cs |

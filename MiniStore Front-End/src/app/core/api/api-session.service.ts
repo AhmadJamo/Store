@@ -1,8 +1,9 @@
 import { HttpClient } from '@angular/common/http';
-import { computed, Injectable, signal } from '@angular/core';
+import { computed, effect, Injectable, signal, untracked } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { ApiErrorService } from './api-error.service';
 import { ApiProblem, ApiSession } from './api.models';
+import { UiCultureStateService } from '../localization/ui-culture-state.service';
 
 @Injectable({ providedIn: 'root' })
 export class ApiSessionService {
@@ -17,14 +18,24 @@ export class ApiSessionService {
 
   constructor(
     private readonly http: HttpClient,
-    private readonly errors: ApiErrorService
-  ) {}
+    private readonly errors: ApiErrorService,
+    private readonly cultureState: UiCultureStateService,
+  ) {
+    effect(() => {
+      const culture = this.cultureState.locale();
+      untracked(() => this.sessionState.update(session => session
+        ? { ...session, culture, direction: culture === 'ar-JO' ? 'rtl' : 'ltr' }
+        : session));
+    });
+  }
 
   async load(): Promise<void> {
     this.loadingState.set(true);
     this.errorState.set(null);
     try {
-      this.sessionState.set(await firstValueFrom(this.http.get<ApiSession>('/api/v1/session')));
+      const session = await firstValueFrom(this.http.get<ApiSession>('/api/v1/session'));
+      if (session.culture === 'ar-JO' || session.culture === 'en-US') this.cultureState.set(session.culture);
+      this.sessionState.set(session);
     } catch (error) {
       this.sessionState.set(null);
       this.errorState.set(this.errors.normalize(error));

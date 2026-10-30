@@ -39,7 +39,8 @@
         <label><span>{{ i18n.text('workspaceProfile') }}</span><select [value]="workspaceProfile.profile()" (change)="setWorkspaceProfile($any($event.target).value)"><option value="focused">{{ i18n.text('profileFocused') }}</option><option value="operator">{{ i18n.text('profileOperator') }}</option><option value="analyst">{{ i18n.text('profileAnalyst') }}</option></select></label>
         <label class="split-toggle"><input type="checkbox" [checked]="workspaceProfile.splitView()" (change)="workspaceProfile.setSplitView($any($event.target).checked)" /> {{ i18n.text('splitView') }}</label>
         <button type="button" class="icon-action" (click)="preferences.reset()" [attr.aria-label]="i18n.text('resetPreferences')" [title]="i18n.text('resetPreferences')">↺</button>
-        <button type="button" class="language" (click)="i18n.toggle()">{{ i18n.text('language') }}</button>
+        <button type="button" class="language" [disabled]="i18n.switching()" (click)="i18n.toggle()">{{ i18n.text('language') }}</button>
+        @if(i18n.switchError()){<span class="field-error" role="alert">{{i18n.text('errorDescription')}}</span>}
         </div>
       </details>
     </header>

@@ -37,6 +37,7 @@ InventoryReservations|/inventory/reservations
 InventoryScanning|/inventory/scanning
 InventoryTracking|/inventory/tracking
 JournalEntries|/accounting/journal-entries/:id
+Language|/
 LandedCosts|/purchases/landed-costs
 LocationMovements|/inventory/location-movements
 PaymentMethods|/products/catalog-masters

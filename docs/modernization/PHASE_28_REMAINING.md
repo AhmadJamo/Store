@@ -1,6 +1,6 @@
 # Phase 28 — Shared and remaining Angular migration
 
-> Status: IN PROGRESS — `MOD-028F` Purchase Sourcing attachments/print complete on 2026-10-30
+> Status: COMPLETE — `MOD-028A..G` complete on 2026-10-30; generated registry has zero remaining surfaces
 >
 > Presentation default: MVC until a separate cutover approval.
 
@@ -88,11 +88,22 @@ permission-protected downloads, and `/purchases/sourcing/:id/print` renders a bi
 browser print/save-PDF. The route adds no mutation or new document. The registry now contains 180 Angular routes; Language
 remains the only unmapped surface and the previously recorded cross-surface file/print gap is closed.
 
+## `MOD-028G` delivered — server culture synchronization
+
+`POST /api/v1/culture` now preserves the public language-switch boundary while requiring antiforgery, accepting only
+normalized `ar-JO` or `en-US`, and writing the same essential HttpOnly SameSite=Lax culture cookie as MVC. Angular changes
+its visible locale only after that server write succeeds; failures retain the current language and expose localized feedback.
+At bootstrap, the server session culture is authoritative over the non-sensitive local presentation preference.
+
+`UiCultureStateService` keeps the shared locale signal independent from HTTP/session services, avoiding an interceptor
+dependency cycle while keeping session consumers, document `lang` and `dir`, and feature-local translators aligned. No token,
+credential, permission or business data is stored in browser storage. The generated registry now contains 164 controllers
+(83 MVC/81 API), 199 views, 358 MVC actions, 209 Razor control rows, 180 Angular routes and 82 verified counterparts, with
+zero remaining surfaces. MVC remains the presentation default.
+
 ## Confirmed remaining surfaces
 
-| Surface | Views | MVC actions | Required parity |
-|---|---:|---:|---|
-| `Language` | 0 | 1 | synchronize Angular locale with server culture so localized API messages match the UI |
+None. The final generated reconciliation reports zero unmapped MVC surfaces.
 
 The shared MVC layout/error/notification partials are presentation infrastructure, not independent routes. Angular already
 has shell, normalized Problem Details and recovery presentation. Health endpoints are machine endpoints and do not need a
@@ -113,7 +124,7 @@ vendor-bill attachments, supplier integration payloads, and supplier purchasing 
 3. `MOD-028D` — COMPLETE: Inventory Insights and Reconciliation.
 4. `MOD-028E` — COMPLETE: tenant Audit Events.
 5. `MOD-028F` — COMPLETE: Purchase Sourcing attachments/print.
-6. `MOD-028G` — NEXT: server-culture synchronization and final registry reconciliation.
+6. `MOD-028G` — COMPLETE: server-culture synchronization and final registry reconciliation.
 
 This order closes the highest-risk operational omission first. It does not authorize a cutover or removal of MVC.
 
@@ -140,3 +151,7 @@ This order closes the highest-risk operational omission first. It does not autho
 - `MOD-028F` passed Release with zero warnings/errors, 1,322 backend checks, 211/211 Angular tests across 105 files,
   121 accessibility templates and the external-SCSS policy.
 - Production bundles measured 326,124/358,400 initial bytes and 81,600/81,920 largest-lazy bytes.
+- `MOD-028G` passed Release with zero warnings/errors, 1,323 backend checks, 214/214 Angular tests across 106 files,
+  121 accessibility templates and the external-SCSS policy.
+- Production bundles measured 326,764/358,400 initial bytes and 81,880/81,920 largest-lazy bytes. Browser and performance
+  checks were intentionally skipped under the standard per-slice flags; 7 automated sections passed and none failed.

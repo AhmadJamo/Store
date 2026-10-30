@@ -1,7 +1,9 @@
 import { DOCUMENT } from '@angular/common';
-import { computed, inject, Injectable, signal } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { computed, effect, inject, Injectable, signal } from '@angular/core';
+import { UiCultureStateService, UiLocale } from './ui-culture-state.service';
 
-export type UiLocale = 'ar-JO' | 'en-US';
+export type { UiLocale } from './ui-culture-state.service';
 
 const messages = {
   'ar-JO': {
@@ -245,24 +247,40 @@ export type MessageKey = keyof (typeof messages)['en-US'];
 @Injectable({ providedIn: 'root' })
 export class LocalizationService {
   private readonly document = inject(DOCUMENT);
-  readonly locale = signal<UiLocale>(this.restoreLocale());
+  private readonly http = inject(HttpClient);
+  private readonly cultureState = inject(UiCultureStateService);
+  readonly locale = this.cultureState.locale;
   readonly direction = computed(() => (this.locale() === 'ar-JO' ? 'rtl' : 'ltr'));
+  readonly switching = signal(false);
+  readonly switchError = signal(false);
 
-  constructor() { this.applyDocumentLanguage(); }
+  constructor() {
+    this.applyDocumentLanguage();
+    effect(() => { this.locale(); this.applyDocumentLanguage(); });
+  }
   text(key: MessageKey): string { return messages[this.locale()][key]; }
   toggle(): void {
-    this.locale.update((value) => value === 'ar-JO' ? 'en-US' : 'ar-JO');
-    try { globalThis.localStorage?.setItem('ministore.ui.locale', this.locale()); } catch { /* in-memory fallback */ }
-    this.applyDocumentLanguage();
+    if (this.switching()) return;
+    const target = this.locale() === 'ar-JO' ? 'en-US' : 'ar-JO';
+    this.switching.set(true);
+    this.switchError.set(false);
+    this.http.post<void>('/api/v1/culture', { culture: target }).subscribe({
+      next: () => { this.applyLocale(target); this.switching.set(false); },
+      error: () => { this.switchError.set(true); this.switching.set(false); },
+    });
   }
 
-  private restoreLocale(): UiLocale {
-    try { return globalThis.localStorage?.getItem('ministore.ui.locale') === 'en-US' ? 'en-US' : 'ar-JO'; }
-    catch { return 'ar-JO'; }
+  synchronize(culture: string | null | undefined): void {
+    if (culture === 'ar-JO' || culture === 'en-US') this.applyLocale(culture);
   }
 
   private applyDocumentLanguage(): void {
     this.document.documentElement.lang = this.locale();
     this.document.documentElement.dir = this.direction();
+  }
+
+  private applyLocale(locale: UiLocale): void {
+    this.cultureState.set(locale);
+    this.applyDocumentLanguage();
   }
 }
