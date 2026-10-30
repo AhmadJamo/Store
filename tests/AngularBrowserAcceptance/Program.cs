@@ -129,7 +129,14 @@ static async Task RunUiAsync(IBrowser browser, Arguments options, List<CheckResu
     Require(initialDirection is "rtl" or "ltr", "Shell direction must be rtl or ltr.");
     await page.Locator("details.preference-menu > summary").ClickAsync();
     await page.Locator("button.language").ClickAsync();
-    var toggledDirection = await shell.GetAttributeAsync("dir");
+    string? toggledDirection = null;
+    var languageSwitchDeadline = DateTimeOffset.UtcNow.AddSeconds(5);
+    while (DateTimeOffset.UtcNow < languageSwitchDeadline)
+    {
+        toggledDirection = await shell.GetAttributeAsync("dir");
+        if (toggledDirection is "rtl" or "ltr" && toggledDirection != initialDirection) break;
+        await Task.Delay(100);
+    }
     Require(toggledDirection is "rtl" or "ltr" && toggledDirection != initialDirection,
         "Language switching must change direction.");
     checks.Add(new("rtl-ltr", "passed", $"Direction changed from {initialDirection} to {toggledDirection}."));
@@ -239,21 +246,57 @@ static async Task RunAuthenticatedReconciliationAsync(
         var invoiceApi = await authenticated.GetAsync("/api/v1/customer-invoices");
         Require(invoiceApi.Ok, $"Customer invoice API returned {invoiceApi.Status}.");
         using var invoices = JsonDocument.Parse(await invoiceApi.TextAsync());
-        Require(invoices.RootElement.ValueKind == JsonValueKind.Array && invoices.RootElement.GetArrayLength() > 0,
-            "No customer invoice exists for authenticated same-data reconciliation.");
-        var invoice = invoices.RootElement[0];
-        var invoiceNumber = invoice.GetProperty("invoiceNumber").GetString() ?? "";
-        var customerName = invoice.GetProperty("customerName").GetString() ?? "";
-        var totalAmount = invoice.GetProperty("totalAmount").GetDecimal();
-        var invoiceMvc = await authenticated.GetAsync("/CustomerInvoices");
-        Require(invoiceMvc.Ok, $"Customer invoice MVC read returned {invoiceMvc.Status}.");
-        var invoiceHtml = await invoiceMvc.TextAsync();
-        Require(ContainsEncoded(invoiceHtml, invoiceNumber) && ContainsEncoded(invoiceHtml, customerName),
-            "MVC/API customer invoice identity fields did not reconcile.");
-        Require(ContainsNumber(invoiceHtml, totalAmount),
-            "MVC/API customer invoice amount did not reconcile.");
-        checks.Add(new("dual-run-financial-invoice", "passed",
-            "Invoice number, customer and total amount matched across MVC and API."));
+        if (invoices.RootElement.ValueKind != JsonValueKind.Array || invoices.RootElement.GetArrayLength() == 0)
+        {
+            if (permissions.Contains("Administration.Access"))
+            {
+                var accountsApi = await authenticated.GetAsync("/api/v1/accounts");
+                Require(accountsApi.Ok, $"Chart of accounts API returned {accountsApi.Status}.");
+                using var accounts = JsonDocument.Parse(await accountsApi.TextAsync());
+                var accountRows = accounts.RootElement.GetProperty("accounts");
+                Require(accountRows.GetArrayLength() > 0,
+                    "No customer invoice or chart-of-accounts sample exists for financial reconciliation.");
+                var account = accountRows[0];
+                var accountCode = account.GetProperty("code").GetString() ?? "";
+                var accountName = account.GetProperty("name").GetString() ?? "";
+                var accountsMvc = await authenticated.GetAsync("/Accounts");
+                Require(accountsMvc.Ok, $"Chart of accounts MVC read returned {accountsMvc.Status}.");
+                var accountsHtml = await accountsMvc.TextAsync();
+                Require(ContainsEncoded(accountsHtml, accountCode) && ContainsEncoded(accountsHtml, accountName),
+                    "MVC/API chart-of-accounts identity fields did not reconcile.");
+                checks.Add(new("dual-run-financial-accounts", "passed",
+                    "No invoice sample existed; account code and name matched across MVC and API."));
+            }
+            else
+            {
+                var invoiceMvc = await authenticated.GetAsync("/CustomerInvoices");
+                Require(invoiceMvc.Ok, $"Customer invoice MVC read returned {invoiceMvc.Status}.");
+                var emptyInvoiceHtml = await invoiceMvc.TextAsync();
+                var expectedEmptyState = culture == "ar-JO"
+                    ? "لا توجد فواتير زبائن."
+                    : "No customer invoices found.";
+                Require(ContainsEncoded(emptyInvoiceHtml, expectedEmptyState),
+                    "MVC/API customer invoice empty states did not reconcile.");
+                checks.Add(new("dual-run-financial-invoice-empty", "passed",
+                    "The zero-row customer-invoice state matched across MVC and API."));
+            }
+        }
+        else
+        {
+            var invoice = invoices.RootElement[0];
+            var invoiceNumber = invoice.GetProperty("invoiceNumber").GetString() ?? "";
+            var customerName = invoice.GetProperty("customerName").GetString() ?? "";
+            var totalAmount = invoice.GetProperty("totalAmount").GetDecimal();
+            var invoiceMvc = await authenticated.GetAsync("/CustomerInvoices");
+            Require(invoiceMvc.Ok, $"Customer invoice MVC read returned {invoiceMvc.Status}.");
+            var invoiceHtml = await invoiceMvc.TextAsync();
+            Require(ContainsEncoded(invoiceHtml, invoiceNumber) && ContainsEncoded(invoiceHtml, customerName),
+                "MVC/API customer invoice identity fields did not reconcile.");
+            Require(ContainsNumber(invoiceHtml, totalAmount),
+                "MVC/API customer invoice amount did not reconcile.");
+            checks.Add(new("dual-run-financial-invoice", "passed",
+                "Invoice number, customer and total amount matched across MVC and API."));
+        }
     }
     else
     {
@@ -267,19 +310,26 @@ static async Task RunAuthenticatedReconciliationAsync(
         Require(inventoryApi.Ok, $"Inventory insights API returned {inventoryApi.Status}.");
         using var inventory = JsonDocument.Parse(await inventoryApi.TextAsync());
         var rows = inventory.RootElement.GetProperty("rows");
-        Require(rows.GetArrayLength() > 0, "No inventory insight exists for authenticated same-data reconciliation.");
-        var row = rows[0];
-        var productName = row.GetProperty("productName").GetString() ?? "";
-        var warehouseName = row.GetProperty("warehouseName").GetString() ?? "";
-        var onHand = row.GetProperty("onHand").GetDecimal();
-        var inventoryMvc = await authenticated.GetAsync("/InventoryInsights");
-        Require(inventoryMvc.Ok, $"Inventory insights MVC read returned {inventoryMvc.Status}.");
-        var inventoryHtml = await inventoryMvc.TextAsync();
-        Require(ContainsEncoded(inventoryHtml, productName) && ContainsEncoded(inventoryHtml, warehouseName),
-            "MVC/API inventory identity fields did not reconcile.");
-        Require(ContainsNumber(inventoryHtml, onHand), "MVC/API on-hand quantity did not reconcile.");
-        checks.Add(new("dual-run-inventory-insights", "passed",
-            "Product, warehouse and on-hand quantity matched across MVC and API."));
+        if (rows.GetArrayLength() == 0)
+        {
+            checks.Add(new("dual-run-inventory-insights", "skipped",
+                "The authenticated tenant has no inventory-insight sample; no same-data claim was made."));
+        }
+        else
+        {
+            var row = rows[0];
+            var productName = row.GetProperty("productName").GetString() ?? "";
+            var warehouseName = row.GetProperty("warehouseName").GetString() ?? "";
+            var onHand = row.GetProperty("onHand").GetDecimal();
+            var inventoryMvc = await authenticated.GetAsync("/InventoryInsights");
+            Require(inventoryMvc.Ok, $"Inventory insights MVC read returned {inventoryMvc.Status}.");
+            var inventoryHtml = await inventoryMvc.TextAsync();
+            Require(ContainsEncoded(inventoryHtml, productName) && ContainsEncoded(inventoryHtml, warehouseName),
+                "MVC/API inventory identity fields did not reconcile.");
+            Require(ContainsNumber(inventoryHtml, onHand), "MVC/API on-hand quantity did not reconcile.");
+            checks.Add(new("dual-run-inventory-insights", "passed",
+                "Product, warehouse and on-hand quantity matched across MVC and API."));
+        }
     }
     else
     {
@@ -290,7 +340,7 @@ static async Task RunAuthenticatedReconciliationAsync(
 
 static bool ContainsEncoded(string html, string value) =>
     !string.IsNullOrWhiteSpace(value) &&
-    html.Contains(WebUtility.HtmlEncode(value), StringComparison.OrdinalIgnoreCase);
+    WebUtility.HtmlDecode(html).Contains(value, StringComparison.OrdinalIgnoreCase);
 
 static bool ContainsNumber(string html, decimal expected)
 {

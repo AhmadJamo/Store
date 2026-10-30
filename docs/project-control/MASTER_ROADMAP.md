@@ -35,7 +35,7 @@
 - `MOD-027` — COMPLETE 2026-10-30: اكتمل `MOD-027A..E` للاشتراك والواجهة العامة وكل أسطح إدارة المنصة الحالية، بما فيها التدقيق والاحتفاظ.
 - `MOD-028` — COMPLETE 2026-10-30: اكتملت `MOD-028A..G`، تزامنت ثقافة Angular والخادم، وأغلق السجل المولد بصفر أسطح متبقية مع بقاء MVC افتراضيًا.
 - `MOD-023..028` — APPROVED PROGRAM: نقل المشتريات والمبيعات وPOS والمحاسبة وSaaS وكل الشاشات المشتركة والمتبقية إلى Angular على موجات، مع functional parity وإعادة تصميم كاملة وفق Angular design system لا نسخ Razor.
-- `MOD-029` — IN PROGRESS: اكتمل `MOD-029A` للbaseline والمتصفح والأداء وتمرين الرجوع؛ التالي `MOD-029B` لمصالحة same-data المصرح بها دون تغيير presentation default.
+- `MOD-029` — IN PROGRESS: اكتمل `MOD-029A` للbaseline والمتصفح والأداء والرجوع، واكتمل `MOD-029B` لمصالحة الهوية/المالية/المخزون المصرح بها؛ التالي `MOD-029C` لقبول مجموعات الوحدات عالية المخاطر دون تغيير presentation default.
 - `MOD-030` — EXPLICIT FINAL GATE: Angular-only وإزالة MVC presentation تدريجيًا بعد صفر فجوات.
 
 ## P0 — مخاطر حرجة

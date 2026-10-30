@@ -2,12 +2,14 @@
 
 ## آخر خط أساس منفذ
 
-أحدث بوابة `MOD-023D` في 2026-10-28: Web Release نجح بلا تحذيرات أو أخطاء، وSecurityRegression نجح في 1236 فحصًا،
-وAngular نجح في 169/169 اختبارًا عبر 65 ملفًا. نجح فحص الوصول الثابت لـ74 قالبًا وسياسة SCSS الخارجي، ونجحت ميزانية
-الإنتاج عند 306,260/358,400 بايت أولية و81,742/81,920 لأكبر lazy chunk.
+أحدث بوابة كاملة قبل `MOD-029B` في 2026-10-30: Release نجح بلا تحذيرات أو أخطاء، وSecurityRegression نجح في
+1,345 فحصًا، وAngular نجح في 214/214 اختبارًا عبر 106 ملفات. نجح فحص الوصول الثابت لـ121 قالبًا، ونجحت ميزانية
+الإنتاج عند 326,764/358,400 بايت أولية و81,880/81,920 لأكبر lazy chunk. تشغيل Demo المصرح به نجح 9/9 بلا
+تخطٍ للهوية/المالية/المخزون، و100/100 أداء عند p95 14.24 ms وp99 16.79 ms.
 
 | الأمر | النتيجة | التاريخ |
 |---|---|---|
+| Authenticated MOD-029B dual-run gate | 9/9 browser checks, zero skips; culture, financial empty-state and real inventory row reconciled across MVC/API; 100/100 performance requests passed | 2026-10-30 |
 | `dotnet run --project tests/SecurityRegression/SecurityRegression.csproj -c Release --no-build` | Passed 1072 checks (نجح 1072 فحصًا)، وتشمل الآن versioned authenticated session API، حماية mutation بـantiforgery، paging bounds/sort allow-list، واستخدام permission boundary المشترك | 2026-10-24 |
 | `dotnet build tests/SecurityRegression/SecurityRegression.csproj -c Release --no-restore` | Passed Web and dependencies, 0 warnings/errors after MOD-002 | 2026-10-24 |
 | Live anonymous internal API probes | session، CSRF وOpenAPI أعادت `401 application/problem+json` دون HTML redirects | 2026-10-24 |

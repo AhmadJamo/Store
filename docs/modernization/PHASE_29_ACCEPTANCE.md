@@ -1,6 +1,6 @@
 # MOD-029 — full-system acceptance and dual-run reconciliation
 
-> Status: IN PROGRESS — `MOD-029A` baseline/runtime acceptance complete on 2026-10-30; authenticated reconciliation moves to `MOD-029B`
+> Status: IN PROGRESS — `MOD-029A` and authenticated `MOD-029B` complete on 2026-10-30; high-risk cohorts move to `MOD-029C`
 
 ## MOD-029A baseline delivered
 
@@ -47,3 +47,14 @@ with MVC, the first available customer invoice identity/customer/total with MVC,
 product/warehouse/on-hand quantity with MVC. Reports contain only check names and outcomes; compared values, cookies and
 tokens are never written. `scripts/Invoke-AuthenticatedDualRun.ps1` rejects a missing state and refuses any in-repository
 state that is not git-ignored before invoking the full gate.
+
+The live Demo execution completed with 9/9 authenticated browser checks and no skips. Culture matched across MVC/API;
+the tenant's zero-row customer-invoice result matched the localized MVC empty state; and a real inventory row matched
+product, warehouse and on-hand quantity. The runner now waits for the real culture response and compares decoded HTML
+text so transport latency and equivalent Razor entity encodings cannot create false failures. The separate six
+zero-mutation boundary probes passed, as did 100/100 availability requests at p95 14.24 ms and p99 16.79 ms.
+
+Before the live run, the complete static gate passed: Release build with zero warnings/errors, 1,345 backend checks,
+214/214 Angular tests across 106 files, 121 accessibility templates, and bundle limits at 326,764/358,400 initial bytes
+and 81,880/81,920 largest lazy bytes. MVC remains default. `MOD-029C` owns permission-driven read-only acceptance across
+the high-risk sales, purchasing, inventory, accounting and administration cohorts.

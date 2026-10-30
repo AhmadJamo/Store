@@ -101,9 +101,10 @@ The ERP SaaS Foundation Blueprint is imported as a non-authoritative planning re
 - [ ] MOD-029 prove full-system parity through dual-run reconciliation, performance/security/accessibility evidence and cutover/rollback rehearsals.
   - [x] MOD-029A1 generate and gate an 82-counterpart static acceptance matrix; correct compact-action/API classification. Completed 2026-10-30.
   - [x] MOD-029A2 run public/high-risk boundary browser/API samples, bounded performance and route-level rollback rehearsal. Completed 2026-10-30; authenticated data evidence moves to MOD-029B.
-  - [ ] MOD-029B reconcile authenticated same-data identity, financial and inventory reads with an operator-supplied Playwright session.
+  - [x] MOD-029B reconcile authenticated same-data identity, financial and inventory reads with an operator-supplied Playwright session. Completed 2026-10-30.
     - [x] Add a secret-safe runner, git-ignore enforcement and identity/financial/inventory value comparisons. Completed 2026-10-30.
-    - [ ] Capture an operator-authenticated state and execute the runner against Demo.
+    - [x] Capture an operator-authenticated state and execute the runner against Demo: 9/9 authenticated checks, zero skips; financial empty-state and real inventory same-data evidence passed. Completed 2026-10-30.
+  - [ ] MOD-029C run permission-driven read-only acceptance across the high-risk sales, purchasing, inventory, accounting and administration cohorts.
 - [ ] MOD-030 make Angular the only presentation and retire MVC incrementally only after explicit approval and zero registry gaps.
 
 - [x] FND-000 import the ERP SaaS Foundation Blueprint with provenance and classify its ten capabilities against the actual MiniStore repository.

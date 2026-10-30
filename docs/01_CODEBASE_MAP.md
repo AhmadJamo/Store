@@ -17,7 +17,10 @@ boundaries; the main modernization gate runs it whenever an API URL is supplied.
 
 `scripts/Invoke-AuthenticatedDualRun.ps1` is the secret-safe MOD-029B entry point. It requires an existing external or
 git-ignored Playwright state, then runs the full gate. The browser runner reconciles culture, customer-invoice identity and
-total, and inventory product/warehouse/on-hand values without serializing compared business values or authentication data.
+total (or the localized zero-row state and an authorized chart-of-accounts fallback), and inventory
+product/warehouse/on-hand values without serializing compared business values or authentication data. It waits for the
+real culture response and decodes rendered HTML before text comparison so network timing and equivalent entity encodings
+cannot create false failures.
 
 `MiniStore Front-End/src/app/core/preferences` owns versioned, non-sensitive theme/density preferences and system-theme resolution. Global semantic tokens provide light/dark palettes, density dimensions, focus, reduced-motion and forced-color behavior. The lazy `/design-system` page is the bilingual RTL/LTR visual-state reference for shared buttons, badges, fields and empty/loading/error patterns. See `docs/modernization/PHASE_03_VISUAL_SYSTEM.md`.
 

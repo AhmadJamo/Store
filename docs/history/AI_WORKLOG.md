@@ -1,5 +1,14 @@
 # AI Work Log
 
+- 2026-10-30: Completed `MOD-029B` with an operator-authenticated, git-ignored Playwright state. Fixed the browser
+  acceptance runner to await the real asynchronous culture response and to compare decoded rendered text rather than one
+  HTML-entity representation. The live gate passed 9/9 authenticated checks with zero skips: MVC/API culture matched, the
+  tenant's zero-row customer-invoice result matched the localized MVC empty state, and a real inventory row matched product,
+  warehouse and on-hand quantity. Six anonymous/read-only boundaries and 100/100 health requests also passed at p95 14.24 ms
+  and p99 16.79 ms. The preceding full gate passed Release with zero warnings/errors, 1,345 backend checks, 214/214 Angular
+  tests, 121 accessibility templates and the 326,764/81,880-byte bundle limits. Reports contain outcomes only; no cookie,
+  token or compared business value was committed. MVC remains default; execution advances to `MOD-029C`.
+
 - 2026-10-30: Completed approved `MOD-028G` and therefore the full `MOD-028A..G` remaining-surface wave. Added an antiforgery-protected, allowlisted culture API sharing the MVC essential HttpOnly SameSite=Lax cookie; Angular now changes locale only after server success and treats session culture as authoritative. A neutral shared culture signal avoids the HTTP interceptor/session dependency cycle and keeps document direction plus feature session consumers aligned. The later `MOD-029A` parser correction established the authoritative registry at 164 controllers (82 MVC/82 API), 199 views, 411 MVC actions, 209 Razor controls, 180 Angular routes, 82 counterparts and zero remaining surfaces. Release passed with zero warnings/errors, 1,323 backend checks, 214/214 Angular tests across 106 files, 121 accessibility templates, and bundle measurements of 326,764/358,400 initial and 81,880/81,920 largest lazy bytes. MVC remains the default; execution advances to `MOD-029A` acceptance baseline and dual-run reconciliation.
 
 - 2026-10-30: Started approved `MOD-029A`. Hardened the source generator to inventory compact same-line MVC actions and classify `[ApiController]` endpoints outside the conventional API folder correctly, exposing and resolving the prior `SupplierIntegrationApi` false MVC surface. Added an 82-row generated dual-run acceptance matrix with MVC/Angular route families, read/write class, permission references, risk and non-empty static evidence. The acceptance gate now regenerates both artifacts and fails when committed evidence is stale. The corrected baseline is 82 MVC controllers, 82 API controllers and 411 MVC actions; presentation remains MVC and no runtime mutation or cutover occurred.
