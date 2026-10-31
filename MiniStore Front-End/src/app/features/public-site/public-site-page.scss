@@ -1,0 +1,35 @@
+:host { display: block; min-height: 100vh; background: #0d2d29; color: #f3faf8; }
+.public-site { min-height: 100vh; }
+header { display: flex; align-items: center; gap: 1.5rem; max-inline-size: 76rem; margin-inline: auto; padding: 1rem 1.5rem; }
+.brand { color: inherit; font-size: 1.2rem; font-weight: 800; text-decoration: none; }
+nav { display: flex; gap: 1rem; margin-inline-end: auto; }
+header a, header button { color: #d9ebe7; }
+header button { border: 0; background: transparent; cursor: pointer; }
+.header-actions { display: flex; align-items: center; gap: 1rem; }
+main { max-inline-size: 76rem; margin-inline: auto; padding: 2rem 1.5rem 5rem; }
+.hero { display: grid; grid-template-columns: 1.4fr .6fr; gap: 3rem; align-items: center; min-height: 30rem; }
+.hero h1, .pricing-heading h1 { max-inline-size: 14ch; margin-block: 1rem; font-size: clamp(2.6rem, 7vw, 5.5rem); line-height: 1; }
+.hero p, .pricing-heading p { max-inline-size: 46rem; color: #bed4cf; font-size: 1.15rem; line-height: 1.7; }
+.badge { display: inline-flex; padding: .4rem .75rem; border-radius: 999px; background: #1f5f57; }
+.hero-actions, .header-actions { display: flex; flex-wrap: wrap; gap: .75rem; }
+.hero-actions a { display: inline-flex; align-items: center; text-decoration: none; }
+.hero aside { display: grid; grid-template-columns: 1fr auto; gap: 1rem; padding: 2rem; border: 1px solid #52756e; border-radius: 1rem; background: rgb(255 255 255 / 7%); }
+.hero aside strong { color: #efbb68; font-size: 1.5rem; }
+.features, .plans { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
+.features article, .plans article { padding: 1.5rem; border: 1px solid #52756e; border-radius: 1rem; background: rgb(255 255 255 / 7%); }
+.features p, .plans p { color: #bed4cf; }
+.pricing-heading { padding-block: 3rem; text-align: center; }
+.pricing-heading h1, .pricing-heading p { margin-inline: auto; }
+.plans article { display: grid; align-content: start; gap: 1rem; }
+.plans h2, .plans p { margin: 0; }
+.price { display: flex; align-items: baseline; gap: .5rem; }
+.price strong { color: #efbb68; font-size: 2.4rem; }
+.plans ul { display: grid; gap: .7rem; padding: 0; list-style: none; }
+.plans li { display: flex; justify-content: space-between; gap: 1rem; padding-block-end: .7rem; border-block-end: 1px solid #52756e; }
+.plans .ui-button { display: inline-flex; justify-content: center; align-items: center; margin-block-start: auto; text-decoration: none; }
+@media (max-width: 50rem) {
+  header { flex-wrap: wrap; }
+  nav { order: 3; inline-size: 100%; }
+  .hero, .features, .plans { grid-template-columns: 1fr; }
+  .hero { min-height: auto; padding-block: 3rem; }
+}

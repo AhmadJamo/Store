@@ -1,0 +1,82 @@
+<a class="skip-link" href="#main-content" (click)="skipToMain($event)">{{ i18n.text('skipToContent') }}</a>
+<div class="shell" [attr.dir]="i18n.direction()">
+  <aside class="sidebar" [attr.aria-label]="i18n.text('workspace')">
+    <div class="brand"><span class="brand-mark">M</span><span>{{ i18n.text('appName') }}</span></div>
+    <nav>
+      @for (item of navigation.visibleItems(); track item.id) {
+        <a class="nav-item" [routerLink]="item.route" (click)="openNavigation($event, item)" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: item.route === '/' }"><span aria-hidden="true">{{ item.icon }}</span>{{ i18n.text(item.labelKey) }}</a>
+      }
+    </nav>
+    <div class="sidebar-note"><strong>{{ i18n.text('ready') }}</strong><span>{{ i18n.text('protected') }}</span></div>
+  </aside>
+
+  <section class="workspace">
+    <header class="topbar">
+      <div><span class="eyebrow">{{ i18n.text('workspace') }}</span><strong>{{ i18n.text('phaseTitle') }}</strong></div>
+      <label class="search"><span aria-hidden="true">⌕</span><input [placeholder]="i18n.text('search')" disabled /></label>
+      @if (session.session(); as currentSession) {
+        <div class="session-summary">
+          <span><small>{{ i18n.text('signedInCompany') }}</small><strong>{{ currentSession.tenant.name }}</strong></span>
+          <span><small>{{ i18n.text('signedInUser') }}</small><strong>{{ currentSession.user.userName || currentSession.user.email }}</strong></span>
+          <button type="button" class="ui-button secondary" (click)="signOut()" [disabled]="signingOut()">{{ signingOut() ? i18n.text('signingOut') : i18n.text('signOut') }}</button>
+        </div>
+      }
+      <details class="preference-menu">
+        <summary class="icon-action" [attr.aria-label]="i18n.text('displayPreferences')" [title]="i18n.text('displayPreferences')">⚙</summary>
+        <div class="preferences" role="group" [attr.aria-label]="i18n.text('displayPreferences')">
+        <label><span>{{ i18n.text('theme') }}</span><select [value]="preferences.theme()" (change)="setTheme($any($event.target).value)">
+          <option value="system">{{ i18n.text('themeSystem') }}</option><option value="light">{{ i18n.text('themeLight') }}</option><option value="dark">{{ i18n.text('themeDark') }}</option>
+        </select></label>
+        <label><span>{{ i18n.text('density') }}</span><select [value]="preferences.density()" (change)="setDensity($any($event.target).value)">
+          <option value="comfortable">{{ i18n.text('densityComfortable') }}</option><option value="compact">{{ i18n.text('densityCompact') }}</option>
+        </select></label>
+        <label><span>{{ i18n.text('sidebarLayout') }}</span><select [value]="preferences.sidebar()" (change)="setSidebar($any($event.target).value)">
+          <option value="expanded">{{ i18n.text('sidebarExpanded') }}</option><option value="compact">{{ i18n.text('sidebarCompact') }}</option>
+        </select></label>
+        <label><span>{{ i18n.text('contentWidth') }}</span><select [value]="preferences.contentWidth()" (change)="setContentWidth($any($event.target).value)">
+          <option value="fluid">{{ i18n.text('contentFluid') }}</option><option value="contained">{{ i18n.text('contentContained') }}</option>
+        </select></label>
+        <label><span>{{ i18n.text('workspaceProfile') }}</span><select [value]="workspaceProfile.profile()" (change)="setWorkspaceProfile($any($event.target).value)"><option value="focused">{{ i18n.text('profileFocused') }}</option><option value="operator">{{ i18n.text('profileOperator') }}</option><option value="analyst">{{ i18n.text('profileAnalyst') }}</option></select></label>
+        <label class="split-toggle"><input type="checkbox" [checked]="workspaceProfile.splitView()" (change)="workspaceProfile.setSplitView($any($event.target).checked)" /> {{ i18n.text('splitView') }}</label>
+        <button type="button" class="icon-action" (click)="preferences.reset()" [attr.aria-label]="i18n.text('resetPreferences')" [title]="i18n.text('resetPreferences')">↺</button>
+        <button type="button" class="language" [disabled]="i18n.switching()" (click)="i18n.toggle()">{{ i18n.text('language') }}</button>
+        @if(i18n.switchError()){<span class="field-error" role="alert">{{i18n.text('errorDescription')}}</span>}
+        </div>
+      </details>
+    </header>
+    @if(signOutFailed()){<p class="session-error" role="alert">{{i18n.text('signOutFailed')}}</p>}
+
+    <div class="workspace-toolbar" role="toolbar" [attr.aria-label]="i18n.text('workspaceTabs')">
+      <button type="button" (click)="back()" [disabled]="!workspace.canGoBack()" [attr.aria-label]="i18n.text('back')" [title]="i18n.text('back')">←</button>
+      <button type="button" (click)="forward()" [disabled]="!workspace.canGoForward()" [attr.aria-label]="i18n.text('forward')" [title]="i18n.text('forward')">→</button>
+      <button type="button" (click)="reopen()" [disabled]="workspace.recentlyClosed().length === 0" [attr.aria-label]="i18n.text('reopenClosed')" [title]="i18n.text('reopenClosed')">↶</button>
+    </div>
+    <div class="tabs" role="tablist" [attr.aria-label]="i18n.text('workspaceTabs')">
+      @if (workspace.tabs().length === 0) { <span>{{ i18n.text('noTabs') }}</span> }
+      @for (tab of workspace.tabs(); track tab.id; let index = $index) {
+        <div class="workspace-tab" role="presentation" [class.active]="workspace.activeTab()?.id === tab.id">
+          <button type="button" role="tab" [attr.aria-selected]="workspace.activeTab()?.id === tab.id" [attr.tabindex]="workspace.activeTab()?.id === tab.id ? 0 : -1" (click)="activate(tab)" (keydown)="onTabKeydown($event, index)">
+            {{ i18n.text(tab.titleKey) }} @if (tab.dirty) { <span class="dirty" [attr.aria-label]="i18n.text('dirty')">●</span> }
+          </button>
+          <button type="button" class="tab-close" (click)="close($event, tab)" [attr.aria-label]="i18n.text('close') + ' ' + i18n.text(tab.titleKey)">×</button>
+          <button type="button" class="tab-more" (click)="closeOthers($event, tab)" [attr.aria-label]="i18n.text('closeOthers')" [title]="i18n.text('closeOthers')">⋯</button>
+        </div>
+      }
+    </div>
+
+    <div class="content-frame"><main id="main-content" tabindex="-1"><router-outlet /></main><aside class="split-panel" [attr.aria-label]="i18n.text('contextPanel')"><h2>{{ i18n.text('contextPanel') }}</h2><p>{{ i18n.text('contextPanelDescription') }}</p><nav>@for (item of navigation.visibleItems(); track item.id) { @if (item.id === 'work-center' || item.id === 'documents') { <a [routerLink]="item.route">{{ i18n.text(item.labelKey) }}</a> } }</nav></aside></div>
+  </section>
+</div>
+
+@if (workspace.pendingCloseTab(); as pendingTab) {
+  <div class="dialog-backdrop" (keydown)="onDialogKeydown($event)">
+    <section class="confirm-dialog" role="alertdialog" aria-modal="true" [attr.aria-labelledby]="'unsaved-title'" [attr.aria-describedby]="'unsaved-description'">
+      <h2 id="unsaved-title">{{ i18n.text('unsavedTitle') }}</h2>
+      <p id="unsaved-description">{{ i18n.text('unsavedDescription') }}</p>
+      <div class="dialog-actions">
+        <button type="button" class="ui-button secondary" (click)="cancelClose()">{{ i18n.text('cancel') }}</button>
+        <button type="button" class="ui-button primary" (click)="confirmClose()">{{ i18n.text('continueAction') }}</button>
+      </div>
+    </section>
+  </div>
+}

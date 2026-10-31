@@ -48,6 +48,33 @@ public sealed class SalesReturnService(
             .GroupBy(x => x.SaleItemId)
             .ToDictionary(x => x.Key, x => x.Sum(i => i.Quantity));
 
+    public async Task<SalesReturnCreatePageDto?> GetCreatePageAsync(int saleId)
+    {
+        var sale = await saleRepository.GetByIdAsync(saleId);
+        if (sale is null) return null;
+        var returned = await GetReturnedQuantitiesAsync(saleId);
+        var products = (await productRepository.GetAllAsync(null)).ToDictionary(x => x.Id);
+        return new SalesReturnCreatePageDto
+        {
+            SaleId = sale.Id,
+            SaleInvoiceNumber = sale.InvoiceNumber,
+            Date = DateTime.Today,
+            Lines = sale.Items.Select(x =>
+            {
+                var product = products.GetValueOrDefault(x.ProductId);
+                var already = returned.GetValueOrDefault(x.Id);
+                return new SalesReturnCreateLineDto(
+                    x.Id,
+                    x.ProductId,
+                    product?.Name ?? x.ProductId.ToString(),
+                    x.Quantity,
+                    already,
+                    Math.Max(0, x.Quantity - already),
+                    product?.TrackingPolicy ?? ProductTrackingPolicy.None);
+            }).ToList()
+        };
+    }
+
     public async Task<int> CreateAsync(CreateSalesReturnDto dto)
     {
         if (dto.Items.Count == 0 || dto.Items.All(x => x.Quantity <= 0))

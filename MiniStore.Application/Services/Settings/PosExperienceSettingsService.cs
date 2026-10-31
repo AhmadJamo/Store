@@ -48,7 +48,7 @@ public class PosExperienceSettingsService(
         }
         else if (!settings.RowVersion.SequenceEqual(dto.RowVersion))
         {
-            throw new InvalidOperationException(
+            throw new SettingsConcurrencyException(
                 "POS settings were changed by another user. Reload the page and try again.");
         }
 

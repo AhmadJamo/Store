@@ -1,0 +1,115 @@
+:host {
+  display: block;
+}
+.invoices-page {
+  display: grid;
+  gap: 1rem;
+}
+.heading,
+.actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.status {
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
+  background: var(--surface-muted, #eef2f6);
+}
+.safe {
+  border-inline-start: 0.3rem solid #0e9384;
+}
+.facts,
+.cards {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+.facts h2 {
+  font-size: 1rem;
+}
+.cards article {
+  display: grid;
+  gap: 0.6rem;
+}
+dl {
+  display: grid;
+  gap: 0.4rem;
+}
+dl div {
+  display: flex;
+  justify-content: space-between;
+}
+dd {
+  margin: 0;
+}
+.source {
+  display: block;
+  margin-block-start: 0.35rem;
+}
+.totals {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  text-align: center;
+}
+.totals div,
+.settlement div {
+  display: grid;
+  gap: 0.4rem;
+}
+.settlement {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  text-align: center;
+}
+.actions {
+  justify-content: flex-start;
+}
+.actions form {
+  display: flex;
+  gap: 0.6rem;
+  align-items: end;
+  flex-wrap: wrap;
+}
+.danger {
+  color: #b42318;
+}
+.history {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 1rem;
+  margin-block-end: 0.6rem;
+}
+.history p {
+  grid-column: 1/-1;
+}
+.form-head,
+.filters {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 1rem;
+}
+.filters {
+  grid-template-columns: 2fr 1fr auto;
+  align-items: end;
+}
+.submit,
+.back {
+  justify-self: start;
+  margin-block-start: 1rem;
+}
+@media (max-width: 48rem) {
+  .facts,
+  .cards,
+  .totals,
+  .settlement,
+  .form-head,
+  .filters {
+    grid-template-columns: 1fr;
+  }
+  .history {
+    grid-template-columns: 1fr;
+  }
+}

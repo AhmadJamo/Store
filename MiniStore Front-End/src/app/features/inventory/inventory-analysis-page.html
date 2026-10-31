@@ -1,0 +1,54 @@
+<section class="analysis-page" [attr.aria-label]="i18n.text(isReconciliation ? 'reconciliation' : 'insights')">
+  <app-page-header eyebrow="INVENTORY" [title]="i18n.text(isReconciliation ? 'reconciliation' : 'insights')" [description]="i18n.text(isReconciliation ? 'reconciliationDescription' : 'insightsDescription')">
+    @if (isReconciliation && session.can('InventoryInsights.View')) { <a class="ui-button secondary" routerLink="/inventory/insights">{{ i18n.text('openInsights') }}</a> }
+    @if (!isReconciliation && session.can('InventoryReconciliation.View')) { <a class="ui-button secondary" routerLink="/inventory/reconciliation">{{ i18n.text('openReconciliation') }}</a> }
+  </app-page-header>
+
+  @if (isReconciliation) {
+    <form class="filters ui-panel" [formGroup]="reconciliationForm" (ngSubmit)="load(1)">
+      <label>{{ i18n.text('warehouse') }}<select formControlName="warehouseId"><option [ngValue]="null">{{ i18n.text('allWarehouses') }}</option>@for (warehouse of reconciliation()?.warehouses; track warehouse.id) { <option [ngValue]="warehouse.id">{{ warehouse.name }}</option> }</select></label>
+      <label>{{ i18n.text('search') }}<input formControlName="search" [placeholder]="i18n.text('searchPlaceholder')" /></label>
+      <label>{{ i18n.text('pageSize') }}<select formControlName="pageSize">@for (size of [25,50,100,200]; track size) { <option [ngValue]="size">{{ size }}</option> }</select></label>
+      <label class="check"><input type="checkbox" formControlName="exceptionsOnly" /> {{ i18n.text('exceptionsOnly') }}</label>
+      <button class="ui-button primary">{{ i18n.text('apply') }}</button>
+    </form>
+  } @else {
+    <form class="filters insight-filters ui-panel" [formGroup]="insightsForm" (ngSubmit)="load()">
+      <label>{{ i18n.text('search') }}<input formControlName="search" [placeholder]="i18n.text('searchPlaceholder')" /></label>
+      <label>{{ i18n.text('warehouse') }}<select formControlName="warehouseId"><option [ngValue]="null">{{ i18n.text('allWarehouses') }}</option>@for (warehouse of insights()?.warehouses; track warehouse.id) { <option [ngValue]="warehouse.id">{{ warehouse.name }}</option> }</select></label>
+      <label>{{ i18n.text('status') }}<select formControlName="state"><option [ngValue]="null">{{ i18n.text('allStatuses') }}</option>@for (state of [0,1,2,3,4]; track state) { <option [ngValue]="state">{{ stateName(state) }}</option> }</select></label>
+      <label>{{ i18n.text('slowDays') }}<input type="number" min="1" max="3649" formControlName="slowDays" /></label>
+      <label>{{ i18n.text('deadDays') }}<input type="number" min="2" max="3650" formControlName="deadDays" /></label>
+      <label class="check"><input type="checkbox" formControlName="attentionOnly" /> {{ i18n.text('attentionOnly') }}</label>
+      <button class="ui-button primary">{{ i18n.text('apply') }}</button>
+    </form>
+  }
+
+  @if (loading()) {
+    <app-feedback-state kind="loading" [title]="i18n.text('loading')" />
+  } @else if (problem(); as failure) {
+    <app-api-recovery [problem]="failure" (retry)="load()" />
+  } @else if (!isReconciliation && insights(); as report) {
+    <div class="kpi-grid">
+      <article class="ui-panel"><span>{{ i18n.text('totalValue') }}</span><strong>{{ report.totalValue | number:'1.2-2' }}</strong></article>
+      <article class="ui-panel"><span>{{ i18n.text('attentionValue') }}</span><strong>{{ report.attentionValue | number:'1.2-2' }}</strong></article>
+      <article class="ui-panel"><span>{{ i18n.text('slow') }}</span><strong>{{ report.slowCount }}</strong></article>
+      <article class="ui-panel"><span>{{ i18n.text('dead') }}</span><strong>{{ report.deadCount }}</strong></article>
+      <article class="ui-panel"><span>{{ i18n.text('neverIssued') }} / {{ i18n.text('noMovement') }}</span><strong>{{ report.neverIssuedCount }} / {{ report.noMovementHistoryCount }}</strong></article>
+    </div>
+    <app-data-table [label]="i18n.text('insights')"><table><thead><tr><th>{{ i18n.text('product') }}</th><th>{{ i18n.text('warehouse') }}</th><th>{{ i18n.text('onHand') }}</th><th>{{ i18n.text('inventoryValue') }}</th><th>{{ i18n.text('lastOutbound') }}</th><th>{{ i18n.text('daysSinceActivity') }}</th><th>{{ i18n.text('status') }}</th></tr></thead>
+    <tbody>@for (row of report.rows; track row.productId + '-' + row.warehouseId) { <tr><td><strong>{{ row.productName }}</strong><small>{{ row.productCode }}</small></td><td>{{ row.warehouseName }}</td><td>{{ row.onHand | number:'1.0-6' }}</td><td>{{ row.inventoryValue | number:'1.2-2' }}</td><td>{{ row.lastOutboundAt ? (row.lastOutboundAt | date:'dd/MM/yyyy') : i18n.text('never') }}</td><td>{{ row.daysSinceActivity ?? '—' }}</td><td><span class="ui-badge" [class.success]="row.state === 0" [class.warning]="row.state === 1" [class.danger]="row.state === 2">{{ stateName(row.state) }}</span></td></tr> } @empty { <tr><td colspan="7">{{ i18n.text('noInsights') }}</td></tr> }</tbody></table></app-data-table>
+  } @else if (reconciliation(); as report) {
+    <div class="report-summary"><span class="ui-badge danger">{{ i18n.text('exceptions') }}: {{ report.exceptionCount }}</span><span class="ui-badge">{{ i18n.text('displayedRows') }}: {{ report.totalCount }}</span></div>
+    <div class="ui-alert" role="status">{{ i18n.text('readOnlyHelp') }}</div>
+    <app-data-table [label]="i18n.text('reconciliation')"><table><thead><tr><th>{{ i18n.text('status') }}</th><th>{{ i18n.text('product') }}</th><th>{{ i18n.text('warehouse') }}</th><th>{{ i18n.text('warehouseQuantity') }}</th><th>{{ i18n.text('assignedQuantity') }}</th><th>{{ i18n.text('unassignedQuantity') }}</th><th>{{ i18n.text('latestQuantity') }}</th><th>{{ i18n.text('inventoryValue') }}</th><th>{{ i18n.text('latestMovement') }}</th></tr></thead>
+    <tbody>@for (row of report.items; track row.productId + '-' + row.warehouseId) { <tr [class.exception]="!row.isConsistent"><td>@if (row.isConsistent) { <span class="ui-badge success">{{ i18n.text('consistent') }}</span> } @else { @for (issue of row.issues; track issue) { <span class="ui-badge danger issue">{{ issueName(issue) }}</span> } }</td><td><strong>{{ row.productName }}</strong><small>{{ row.productCode }} {{ row.barcode }}</small></td><td>{{ row.warehouseName }}</td><td>{{ row.warehouseQuantity | number:'1.0-3' }}</td><td>{{ row.assignedLocationQuantity | number:'1.0-3' }}</td><td>{{ row.unassignedQuantity | number:'1.0-3' }}</td><td>{{ row.latestQuantityAfter === null || row.latestQuantityAfter === undefined ? '—' : (row.latestQuantityAfter | number:'1.0-3') }}</td><td>{{ row.inventoryValue | number:'1.2-2' }}</td><td>@if (row.latestTransactionId) { #{{ row.latestTransactionId }}<small>{{ row.latestTransactionAt | date:'dd/MM/yyyy HH:mm' }}</small> } @else { — }</td></tr> } @empty { <tr><td colspan="9">{{ i18n.text('noReconciliation') }}</td></tr> }</tbody></table></app-data-table>
+    @if (report.totalPages > 1) {
+      <nav class="pager" [attr.aria-label]="i18n.text('page')">
+        <button class="ui-button secondary" [disabled]="report.page <= 1" (click)="load(report.page - 1)">{{ i18n.text('previous') }}</button>
+        <span>{{ i18n.text('page') }} {{ report.page }} / {{ report.totalPages }}</span>
+        <button class="ui-button secondary" [disabled]="report.page >= report.totalPages" (click)="load(report.page + 1)">{{ i18n.text('next') }}</button>
+      </nav>
+    }
+  }
+</section>

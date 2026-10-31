@@ -15,7 +15,7 @@ public static class TenantIsolationModel
         typeof(SalesQuotation), typeof(SalesQuotationLine), typeof(SalesQuotationHistory), typeof(SalesQuotationDocumentSnapshot),
         typeof(SalesQuotationTemplate), typeof(SalesQuotationTemplateItem),
         typeof(DocumentDesign), typeof(DocumentDesignSection),
-        typeof(AnalyticsWorkspace), typeof(AnalyticsWorkspaceWidget),
+        typeof(AnalyticsWorkspace), typeof(AnalyticsWorkspaceWidget), typeof(AnalyticsWorkspaceDelegation),
         typeof(SalesOrder), typeof(SalesOrderLine), typeof(SalesOrderHistory),
         typeof(SalesDelivery), typeof(SalesDeliveryLine), typeof(SalesDeliveryHistory),
         typeof(CustomerInvoice), typeof(CustomerInvoiceLine), typeof(CustomerInvoiceSourceAllocation), typeof(CustomerInvoiceHistory),

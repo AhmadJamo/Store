@@ -1,0 +1,41 @@
+<section class="command-center">
+  <app-page-header eyebrow="ERP" [title]="i18n.text('commandCenter')" [description]="i18n.text('commandCenterDescription')">
+    <button class="ui-button secondary" type="button" (click)="preferences.reset()">{{ i18n.text('resetCommandCenter') }}</button>
+  </app-page-header>
+
+  <section class="command-search" aria-labelledby="command-search-title">
+    <div><h2 id="command-search-title">{{ i18n.text('quickCommand') }}</h2><p>{{ i18n.text('quickCommandDescription') }}</p></div>
+    <form (ngSubmit)="loadPreview()" role="search">
+      <label class="ui-field"><span>{{ i18n.text('search') }}</span><input name="commandSearch" [ngModel]="search()" (ngModelChange)="search.set($event)" [placeholder]="i18n.text('commandSearchPlaceholder')" maxlength="100" /></label>
+      <button class="ui-button primary" type="submit">{{ i18n.text('preview') }}</button>
+    </form>
+    <nav class="command-results" [attr.aria-label]="i18n.text('availableDestinations')">
+      @for (item of matchingCommands(); track item.id) {
+        <div class="command-item"><a [routerLink]="item.route"><span aria-hidden="true">{{ item.icon }}</span><strong>{{ i18n.text(item.labelKey) }}</strong></a><button type="button" (click)="preferences.toggleFavorite(item.id)" [attr.aria-pressed]="preferences.isFavorite(item.id)" [title]="i18n.text(preferences.isFavorite(item.id) ? 'removeFavorite' : 'addFavorite')">{{ preferences.isFavorite(item.id) ? '★' : '☆' }}</button></div>
+      }
+    </nav>
+  </section>
+
+  <div class="center-grid">
+    <section class="preview-panel" aria-labelledby="preview-title">
+      <header><div><h2 id="preview-title">{{ i18n.text('quickPreview') }}</h2><p>{{ i18n.text('quickPreviewDescription') }}</p></div><div class="panel-actions"><button type="button" class="ui-button secondary" (click)="toggleViewMode()">{{ i18n.text(viewMode() === 'comfortable' ? 'compactView' : 'comfortableView') }}</button><button type="button" class="ui-button secondary" (click)="saveSnapshot()" [disabled]="!selectedProvider()">{{ i18n.text('saveSnapshot') }}</button></div></header>
+      <div class="provider-tabs" role="tablist" [attr.aria-label]="i18n.text('previewSources')">
+        @for (provider of registry.availableProviders(); track provider.id) {
+          <button type="button" role="tab" [attr.aria-selected]="selectedProvider() === provider.id" (click)="chooseProvider(provider.id)">{{ i18n.text(provider.labelKey) }}</button>
+        }
+      </div>
+      @if (loading()) { <app-feedback-state kind="loading" [title]="i18n.text('loading')" /> }
+      @else if (problem()) { <app-feedback-state kind="error" [title]="i18n.text('errorTitle')" [description]="problem()" [retryLabel]="i18n.text('retry')" (retry)="loadPreview()" /> }
+      @else if (preview(); as result) {
+        <p class="result-count">{{ i18n.text('showingPreview') }} {{ result.rows.length }} / {{ result.totalCount }}</p>
+        @if (!result.rows.length) { <app-feedback-state kind="empty" [title]="i18n.text('emptyTitle')" [description]="i18n.text('emptyDescription')" /> }
+        @else { <div class="preview-list" [class.compact]="viewMode() === 'compact'">@for (row of result.rows; track row.id) { <a [routerLink]="row.route"><div><strong>{{ row.title }}</strong>@if (row.reference) { <span>{{ row.reference }}</span> }</div><small>{{ row.secondary || i18n.text('noContactInformation') }}</small><span class="state" [class.inactive]="!row.active">{{ i18n.text(row.active ? 'active' : 'inactive') }}</span></a> }</div> }
+      } @else if (!registry.availableProviders().length) { <app-feedback-state kind="empty" [title]="i18n.text('noPreviewPermission')" /> }
+    </section>
+
+    <aside class="personal-panel">
+      <section><h2>{{ i18n.text('favorites') }}</h2><p>{{ i18n.text('favoritesDescription') }}</p>@if (!preferences.favoriteItems().length) { <small>{{ i18n.text('noFavorites') }}</small> }<div class="personal-list">@for (item of preferences.favoriteItems(); track item.id) { <a [routerLink]="item.route"><span>{{ item.icon }}</span>{{ i18n.text(item.labelKey) }}</a> }</div></section>
+      <section><h2>{{ i18n.text('savedSnapshots') }}</h2><p>{{ i18n.text('snapshotsDescription') }}</p>@if (!preferences.snapshots().length) { <small>{{ i18n.text('noSnapshots') }}</small> }<div class="personal-list">@for (snapshot of preferences.snapshots(); track snapshot.id) { <div class="snapshot"><button type="button" (click)="applySnapshot(snapshot.providerId, snapshot.viewMode)">{{ i18n.text(snapshot.providerId === 'customers' ? 'customersTitle' : 'suppliersTitle') }} · {{ i18n.text(snapshot.viewMode === 'compact' ? 'compactView' : 'comfortableView') }}</button><button type="button" class="remove" (click)="preferences.removeSnapshot(snapshot.id)" [title]="i18n.text('removeSnapshot')">×</button></div> }</div></section>
+    </aside>
+  </div>
+</section>

@@ -39,7 +39,7 @@ public sealed class InventoryInsightsPageDto
 {
     public InventoryInsightsQueryDto Query { get; init; } = new();
     public List<InventoryInsightRowDto> Rows { get; init; } = [];
-    public List<(int Id, string Name)> Warehouses { get; init; } = [];
+    public List<InventoryInsightsWarehouseDto> Warehouses { get; init; } = [];
     public decimal TotalValue { get; init; }
     public decimal AttentionValue { get; init; }
     public int SlowCount { get; init; }
@@ -47,3 +47,5 @@ public sealed class InventoryInsightsPageDto
     public int NeverIssuedCount { get; init; }
     public int NoMovementHistoryCount { get; init; }
 }
+
+public sealed record InventoryInsightsWarehouseDto(int Id, string Name);

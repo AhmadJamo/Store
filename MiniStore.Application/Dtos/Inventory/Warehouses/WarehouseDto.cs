@@ -7,7 +7,9 @@ public class WarehouseDto
     public int Id { get; set; }
     public string Name { get; set; } = string.Empty;
     public int? BranchId { get; set; }
+    public string? BranchName { get; set; }
     public int? InventoryAccountId { get; set; }
+    public string? InventoryAccountName { get; set; }
     public WarehouseType Type { get; set; }
     public InventoryControlMode ControlMode { get; set; }
     public InventoryPickingStrategy PickingStrategy { get; set; }

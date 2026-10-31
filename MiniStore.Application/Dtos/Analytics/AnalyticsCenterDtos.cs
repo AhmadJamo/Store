@@ -12,6 +12,7 @@ public sealed class AnalyticsCenterQueryDto
     public DateOnly? From { get; set; }
     public DateOnly? To { get; set; }
     public string? Dimension { get; set; }
+    public AnalyticsComparisonMode? ComparisonMode { get; set; }
     public Dictionary<string, string> Filters { get; set; } = new(StringComparer.OrdinalIgnoreCase);
 }
 
@@ -79,7 +80,25 @@ public sealed class AnalyticsCenterPageDto
     public int LayoutColumns { get; init; } = 4;
     public int RefreshIntervalMinutes { get; init; }
     public bool ShowDefinitions { get; init; } = true;
+    public AnalyticsFinancialPreviewDto FinancialPreview { get; init; } = new();
 }
+
+public sealed class AnalyticsFinancialPreviewDto
+{
+    public string ProviderKey { get; init; } = string.Empty;
+    public string Source { get; init; } = string.Empty;
+    public string SourceArabic { get; init; } = string.Empty;
+    public string Currency { get; init; } = string.Empty;
+    public int DecimalPlaces { get; init; }
+    public DateOnly From { get; init; }
+    public DateOnly To { get; init; }
+    public DateTime GeneratedAtUtc { get; init; }
+    public bool ValuesAreServerAuthored { get; init; } = true;
+    public List<AnalyticsFinancialPreviewItemDto> Items { get; init; } = [];
+}
+
+public sealed record AnalyticsFinancialPreviewItemDto(string Key, string Title, string TitleArabic,
+    decimal Value, string Definition, string DefinitionArabic);
 
 public sealed record AnalyticsWorkspaceDto(int Id, string Name, string? NameArabic, string ModuleKey,
     AnalyticsWorkspaceVisibility Visibility, bool IsDefault, int LayoutColumns, int DefaultPeriodDays,
@@ -123,4 +142,38 @@ public sealed class AnalyticsWorkspaceCreatePageDto
 {
     public CreateAnalyticsWorkspaceDto Form { get; init; } = new();
     public List<AnalyticsModuleDefinitionDto> Modules { get; init; } = [];
+}
+
+public sealed class AnalyticsWorkspaceAccessDto
+{
+    public int WorkspaceId { get; init; }
+    public string Name { get; init; } = string.Empty;
+    public bool CanManage { get; init; }
+    public byte[] RowVersion { get; init; } = [];
+    public List<AnalyticsDelegationDto> Delegations { get; init; } = [];
+    public List<AnalyticsPrincipalOptionDto> Users { get; init; } = [];
+    public List<AnalyticsPrincipalOptionDto> Roles { get; init; } = [];
+}
+
+public sealed record AnalyticsPrincipalOptionDto(string Id, string DisplayName);
+
+public sealed record AnalyticsDelegationDto(int Id, AnalyticsDelegationTargetType TargetType,
+    string? TargetUserId, int? TargetRoleId, DateTime StartsAtUtc, DateTime? ExpiresAtUtc,
+    string CreatedByUserId, DateTime CreatedAtUtc, string? RevokedByUserId, DateTime? RevokedAtUtc,
+    bool IsActive);
+
+public sealed class CreateAnalyticsDelegationDto
+{
+    public AnalyticsDelegationTargetType TargetType { get; set; }
+    [StringLength(450)] public string? TargetUserId { get; set; }
+    public int? TargetRoleId { get; set; }
+    public DateTime? StartsAtUtc { get; set; }
+    public DateTime? ExpiresAtUtc { get; set; }
+    [Required] public byte[] RowVersion { get; set; } = [];
+}
+
+public sealed class RevokeAnalyticsDelegationDto
+{
+    [Range(1, int.MaxValue)] public int DelegationId { get; set; }
+    [Required] public byte[] RowVersion { get; set; } = [];
 }

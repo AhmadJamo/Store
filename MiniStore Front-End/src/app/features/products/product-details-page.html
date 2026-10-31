@@ -1,0 +1,16 @@
+<section class="product-page">
+  @if (problem(); as failure) { <app-api-recovery [problem]="failure" (retry)="load()" /> }
+  @else if (!product()) { <app-feedback-state kind="loading" [title]="i18n.text('loading')" /> }
+  @else if (product(); as item) {
+    <app-page-header eyebrow="CATALOG" [title]="item.name" [description]="item.productCode">
+      <a class="ui-button secondary" routerLink="/products">{{ i18n.text('backToProducts') }}</a>
+      @if (session.can('Products.Edit')) { <a class="ui-button secondary" [routerLink]="['/products', item.id, 'attributes']">{{ i18n.text('attributes') }}</a><a class="ui-button primary" [routerLink]="['/products', item.id, 'edit']">{{ i18n.text('edit') }}</a> }
+    </app-page-header>
+    <div class="details-grid">
+      <article class="ui-card"><h2>{{ i18n.text('productDetails') }}</h2><dl><div><dt>{{ i18n.text('productCode') }}</dt><dd><code>{{ item.productCode }}</code></dd></div><div><dt>{{ i18n.text('barcode') }}</dt><dd>{{ item.barcode || '—' }}</dd></div><div><dt>{{ i18n.text('productType') }}</dt><dd>{{ typeName(item.productType) }}</dd></div><div><dt>{{ i18n.text('category') }}</dt><dd>{{ item.productCategoryName || i18n.text('noCategory') }}</dd></div><div><dt>{{ i18n.text('status') }}</dt><dd><span class="ui-badge" [class.success]="item.isActive" [class.warning]="!item.isActive">{{ item.isActive ? i18n.text('active') : i18n.text('inactive') }}</span></dd></div></dl></article>
+      <article class="ui-card"><h2>{{ i18n.text('commercialData') }}</h2><dl><div><dt>{{ i18n.text('purchasePriceLabel') }}</dt><dd>{{ item.purchasePrice }}</dd></div><div><dt>{{ i18n.text('wholesalePriceLabel') }}</dt><dd>{{ item.wholesalePrice }}</dd></div><div><dt>{{ i18n.text('retailPrice') }}</dt><dd>{{ item.salePrice }}</dd></div><div><dt>{{ i18n.text('sellInPos') }}</dt><dd>{{ yesNo(item.isSellableInPos) }}</dd></div><div><dt>{{ i18n.text('sellInSales') }}</dt><dd>{{ yesNo(item.isSellableInSales) }}</dd></div><div><dt>{{ i18n.text('assignedSuppliers') }}</dt><dd>{{ item.supplierNames.length ? item.supplierNames.join('، ') : i18n.text('none') }}</dd></div></dl></article>
+      <article class="ui-card"><h2>{{ i18n.text('inventoryAndLogistics') }}</h2><dl><div><dt>{{ i18n.text('measurementUnit') }}</dt><dd>{{ item.measurementUnitName || '—' }}</dd></div><div><dt>{{ i18n.text('tracking') }}</dt><dd>{{ trackingName(item.trackingPolicy) }}</dd></div><div><dt>{{ i18n.text('defaultShelfLife') }}</dt><dd>{{ item.defaultShelfLifeDays || '—' }}</dd></div><div><dt>{{ i18n.text('expirationWarning') }}</dt><dd>{{ item.expirationWarningDays }}</dd></div><div><dt>{{ i18n.text('requireExpiration') }}</dt><dd>{{ yesNo(item.requireExpirationDate) }}</dd></div><div><dt>{{ i18n.text('allowNegativeRecipe') }}</dt><dd>{{ yesNo(item.allowNegativeRecipeConsumption) }}</dd></div></dl></article>
+    </div>
+    @if (session.can('Products.Delete')) { <section class="danger-zone"><h2>{{ i18n.text('deleteProduct') }}</h2><button class="ui-button danger" type="button" [disabled]="deleting()" (click)="deleteProduct()">{{ deleting() ? i18n.text('deleting') : i18n.text('deleteProduct') }}</button></section> }
+  }
+</section>

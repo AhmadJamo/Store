@@ -9,14 +9,16 @@ public class ProductService(
     IMeasurementUnitRepository measurementUnits,
     IProductCategoryRepository productCategories,
     IAccountRepository accounts,
+    ISupplierRepository suppliers,
     SupplierProductAssignmentService assignments,
     IUnitOfWork unitOfWork)
 {
     public async Task<List<ProductDto>> GetAllAsync(string? search)
     {
         var categoryNames = await GetCategoryNamesAsync();
+        var unitNames = await GetUnitNamesAsync();
         return (await productRepository.GetAllAsync(search))
-            .Select(product => Map(product, categoryNames))
+            .Select(product => Map(product, categoryNames, unitNames))
             .ToList();
     }
 
@@ -48,10 +50,11 @@ public class ProductService(
             query.PageSize));
 
         var categoryNames = await GetCategoryNamesAsync();
+        var unitNames = await GetUnitNamesAsync();
         return new ProductListPageDto
         {
             Query = query,
-            Items = page.Items.Select(product => Map(product, categoryNames)).ToList(),
+            Items = page.Items.Select(product => Map(product, categoryNames, unitNames)).ToList(),
             Categories = (await productCategories.GetAllAsync())
                 .Select(category => new ProductCategoryDto
                 {
@@ -70,12 +73,84 @@ public class ProductService(
     {
         var product = await productRepository.GetByIdAsync(id);
         if (product is null) return null;
-        var dto = Map(product, await GetCategoryNamesAsync());
+        var dto = Map(product, await GetCategoryNamesAsync(), await GetUnitNamesAsync());
         dto.SupplierIds = await assignments.GetSupplierIdsForProductAsync(id);
+        var supplierNames = (await suppliers.GetAllAsync()).ToDictionary(x => x.Id, x => x.Name);
+        dto.SupplierNames = dto.SupplierIds
+            .Select(supplierId => supplierNames.GetValueOrDefault(supplierId))
+            .Where(name => name is not null)
+            .Cast<string>()
+            .ToList();
         return dto;
     }
 
-    public async Task CreateAsync(CreateProductDto dto)
+    public async Task<ProductFormPageDto?> GetFormPageAsync(int? id = null)
+    {
+        ProductDto form;
+        if (id.HasValue)
+        {
+            var existing = await GetByIdAsync(id.Value);
+            if (existing is null) return null;
+            form = existing;
+        }
+        else
+        {
+            form = new ProductDto
+            {
+                ProductType = ProductType.DirectSale,
+                InventoryBehavior = ProductInventoryBehavior.Stocked,
+                IsSellableInPos = true,
+                IsSellableInSales = true,
+                IsActive = true,
+                PurchaseBillingPolicy = PurchaseBillingPolicy.ReceivedQuantity,
+                ExpirationWarningDays = 30
+            };
+        }
+
+        return new ProductFormPageDto
+        {
+            Form = form,
+            MeasurementUnits = (await measurementUnits.GetActiveAsync())
+                .Select(unit => new MiniStore.Application.DTOs.Settings.MeasurementUnitDto
+                {
+                    Id = unit.Id,
+                    Code = unit.Code,
+                    Name = unit.Name,
+                    Symbol = unit.Symbol,
+                    Dimension = unit.Dimension,
+                    FactorToBaseUnit = unit.FactorToBaseUnit,
+                    DecimalPlaces = unit.DecimalPlaces,
+                    IsSystem = unit.IsSystem,
+                    IsActive = unit.IsActive
+                }).ToList(),
+            Categories = (await productCategories.GetAllAsync())
+                .Select(category => new ProductCategoryDto
+                {
+                    Id = category.Id,
+                    Name = category.Name,
+                    Code = category.Code,
+                    IsActive = category.IsActive
+                }).ToList(),
+            Suppliers = (await suppliers.GetAllAsync())
+                .Where(supplier => supplier.IsActive)
+                .OrderBy(supplier => supplier.Name)
+                .Select(supplier => new ProductSupplierOptionDto(supplier.Id, supplier.Name))
+                .ToList(),
+            ExpenseAccounts = (await accounts.GetAllAsync())
+                .Where(account => account.IsActive && account.Type == AccountType.Expense)
+                .OrderBy(account => account.Code)
+                .Select(account => new MiniStore.Application.Dtos.Accounting.AccountDto
+                {
+                    Id = account.Id,
+                    Code = account.Code,
+                    Name = account.Name,
+                    Type = account.Type,
+                    ParentAccountId = account.ParentAccountId
+                }).ToList()
+        };
+    }
+
+    public async Task<int> CreateAsync(CreateProductDto dto)
     {
         var measurementUnit = await GetActiveUnitAsync(dto.MeasurementUnitId);
         var category = await GetActiveCategoryAsync(dto.ProductCategoryId);
@@ -127,6 +202,7 @@ public class ProductService(
             await assignments.ApplyForProductAsync(product.Id,
                 dto.IsActive && dto.ProductType != ProductType.PreparedToOrder ? dto.SupplierIds : []);
         });
+        return product.Id;
     }
 
     public async Task UpdateAsync(int id, UpdateProductDto dto)
@@ -188,7 +264,8 @@ public class ProductService(
 
     private static ProductDto Map(
         Product product,
-        IReadOnlyDictionary<int, string> categoryNames) => new()
+        IReadOnlyDictionary<int, string> categoryNames,
+        IReadOnlyDictionary<int, string> unitNames) => new()
     {
         Id = product.Id,
         ProductCode = product.ProductCode,
@@ -201,6 +278,9 @@ public class ProductService(
         ProductType = product.ProductType,
         StockUnit = product.StockUnit,
         MeasurementUnitId = product.MeasurementUnitId,
+        MeasurementUnitName = product.MeasurementUnitId.HasValue
+            ? unitNames.GetValueOrDefault(product.MeasurementUnitId.Value)
+            : null,
         AllowNegativeRecipeConsumption = product.AllowNegativeRecipeConsumption,
         IsSellableInPos = product.IsSellableInPos,
         IsSellableInSales = product.IsSellableInSales,
@@ -291,6 +371,10 @@ public class ProductService(
     private async Task<Dictionary<int, string>> GetCategoryNamesAsync() =>
         (await productCategories.GetAllAsync())
             .ToDictionary(category => category.Id, category => category.Name);
+
+    private async Task<Dictionary<int, string>> GetUnitNamesAsync() =>
+        (await measurementUnits.GetAllAsync())
+            .ToDictionary(unit => unit.Id, unit => $"{unit.Name} ({unit.Symbol})");
 
     private static ProductHandlingRequirements MapHandlingRequirements(CreateProductDto dto) =>
         (dto.IsFragile ? ProductHandlingRequirements.Fragile : 0) |

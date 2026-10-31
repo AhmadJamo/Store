@@ -41,7 +41,7 @@ public sealed class ProductAttributeService(
         };
     }
 
-    public async Task CreateAsync(CreateProductAttributeDto dto)
+    public async Task<int> CreateAsync(CreateProductAttributeDto dto)
     {
         var normalizedCode = dto.Code.Trim().ToUpperInvariant();
         if (await repository.CodeExistsAsync(normalizedCode))
@@ -60,10 +60,12 @@ public sealed class ProductAttributeService(
         if (dto.DataType != ProductAttributeDataType.Selection && parsedOptions.Count > 0)
             throw new ArgumentException("Options can only be added to a selection attribute.");
 
+        ProductAttributeDefinition? created = null;
         await unitOfWork.ExecuteInTransactionAsync(async () =>
         {
             var definition = new ProductAttributeDefinition(dto.Name, normalizedCode, dto.DataType,
                 dto.IsRequired, dto.IsVariantDefining, dto.DisplayOrder);
+            created = definition;
             await repository.AddDefinitionAsync(definition);
             await repository.SaveChangesAsync();
             foreach (var categoryId in distinctCategoryIds)
@@ -72,6 +74,7 @@ public sealed class ProductAttributeService(
                 await repository.AddOptionAsync(new ProductAttributeOption(
                     definition.Id, parsedOptions[index].Name, parsedOptions[index].Code, index));
         });
+        return created!.Id;
     }
 
     public async Task SetActiveAsync(int id, bool isActive)

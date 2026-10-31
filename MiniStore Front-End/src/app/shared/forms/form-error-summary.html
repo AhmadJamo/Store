@@ -1,0 +1,4 @@
+<div class="form-error-summary" role="alert" tabindex="-1">
+  <strong>{{ title() }}</strong>
+  @if (entries().length) { <ul>@for (entry of entries(); track entry.field + entry.message) { <li><button type="button" (click)="fieldRequested.emit(entry.field)">{{ entry.message }}</button></li> }</ul> }
+</div>

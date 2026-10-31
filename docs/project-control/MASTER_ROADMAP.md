@@ -2,6 +2,42 @@
 
 > هذه الوثيقة ترتب الأولوية فقط. الخطط التخصصية تبقى تفاصيل، ولا تبدأ مهمة دون أن تكون في `NEXT_TASK.md`.
 
+## مسار تحديث الواجهة / MOD
+
+- `MOD-000` — COMPLETED 2026-10-24: مراجعة read-only للانتقال من MVC إلى API + Angular، مع المعمارية والاعتماديات والمخاطر وMVP.
+- `MOD-001` — COMPLETED 2026-10-24: فرع معزول، Angular 22 foundation مستقل، standalone/lazy structure، RTL/LTR shell، design tokens، proxy محدود، Signals workspace boundary واختبارات frontend/backend ناجحة دون تغيير MVC أوdatabase.
+- `MOD-002` — COMPLETED 2026-10-24: versioned internal API foundation للمصادقة same-origin وCSRF والصلاحيات وProblemDetails وOpenAPI وAngular central clients، دون migration أو تغيير MVC.
+- `MOD-003` — COMPLETED 2026-10-24: semantic visual system مع system/light/dark themes وcomfortable/compact density وRTL/LTR وaccessibility preview واختبارات ناجحة.
+- `MOD-004` — COMPLETED 2026-10-24: reusable permission-aware workspace engine للتبويبات والتاريخ والاستعادة الآمنة وحماية التغييرات غير المحفوظة.
+- `MOD-005` — COMPLETED 2026-10-24: أول Customers Angular vertical slice مع API صريح وvalidation/concurrency وبقاء MVC.
+- `MOD-006` — COMPLETED 2026-10-24: أربعة presentation primitives مثبتة في Customers/Suppliers مع قائمة موردين خادمية محدودة.
+- `MOD-007` — COMPLETED 2026-10-24: Suppliers list/details/create/edit مع صلاحيات منفصلة وvalidation و409 concurrency وبقاء MVC.
+- `MOD-008` — COMPLETED 2026-10-24: Command Center عام مع bounded quick preview وallowlisted favorites/snapshots وصلاحيات خادمية.
+- `MOD-009` — COMPLETED 2026-10-24: smart-form productivity مع no-local-draft policy وأخطاء/تركيز/اختصار حفظ وفلاتر آمنة.
+- `MOD-010` — COMPLETED 2026-10-24: responsive layout preferences وmobile navigation وskip/route/dialog focus وreduced-motion/forced-colors.
+- `MOD-011` — COMPLETED 2026-10-24: stable Problem Details codes وrecovery عام قابل لإعادة الاستخدام على Customers/Suppliers دون retry للـmutations.
+- `MOD-012` — COMPLETED 2026-10-24: رحلة مستند وعلاقات وشرح أرقام خادمي لطلبات البيع وفواتير الزبائن.
+- `MOD-013` — COMPLETED 2026-10-24: action/exception center وcontextual help بصلاحيات وقرارات backend.
+- `MOD-014` — COMPLETED 2026-10-24: split workspace وملفات Focused/Operator/Analyst لا تمنح صلاحيات.
+- `MOD-015` — COMPLETED 2026-10-24: Analytics Angular مع group/period comparison/allowlisted drill-down وbounded export preview.
+- `MOD-016` — COMPLETED 2026-10-24: مراقبة ثلاثة hosted workers حقيقيين وruntime SLA وخطط refresh صادقة دون scheduled delivery وهمي.
+- `MOD-017` — COMPLETED 2026-10-25: منشئ Angular، الحفظ، المعاينة المالية الخادمية، وتفويض المستخدم/الدور مع البدء/الانتهاء والإلغاء وإعادة فحص صلاحية المصدر.
+- `MOD-018` — COMPLETE: البوابة الموحدة نجحت 11/11 بلا فشل أو تخطي، بما فيها Edge وanonymous 401 والجلسة المصرح بها وثلاث واجهات قراءة والأداء المحلي؛ حُذفت الجلسة المؤقتة بعد التشغيل.
+- `MOD-019` — COMPLETE: السجل المولد يغطي 89 controller (79 MVC/10 API) و189 view و344 MVC action و198 Razor control row؛ أضيف تحويل تدريجي قابل للرجوع، GET-only وقائم على allowlist، مع بقاء MVC هو الافتراضي.
+- `MOD-020` — COMPLETE 2026-10-27: اكتملت عمليات Angular لكل تدفقات الإعدادات ومصمم المستندات والحساب والجلسة،
+  وعمليات المستخدمين/الأدوار الحالية، والتسجيل وonboarding الكامل مع complete/skip/resume؛ بقي MVC افتراضيًا حتى cutover مستقل.
+- `MOD-021` — COMPLETE 2026-10-27: اكتمل `MOD-021A..G` لكل عمليات الكتالوج الحالية حتى المستودعات، مع بقاء MVC افتراضيًا.
+- `MOD-022` — COMPLETE FOR RECORDED A..F SLICES 2026-10-27: أكملت المواقع والتسكين والنقل الداخلي والسجلات؛ مصالحة `MOD-028A` اكتشفت تحويلات المخزون والمسح والرؤى والمصالحة القديمة خارج نطاق تلك الشرائح.
+- `MOD-023` — COMPLETE 2026-10-29: اكتمل `MOD-023A..U` لكل واجهات وعمليات المشتريات الحالية، مع بقاء MVC افتراضياً.
+- `MOD-024` — COMPLETE 2026-10-29: اكتمل `MOD-024A..L` لكل واجهات المبيعات الاحترافية والذمم الحالية، مع بقاء MVC افتراضياً.
+- `MOD-025` — COMPLETE 2026-10-29: اكتمل `MOD-025A..C` للبيع الفوري بالجملة وPOS والمرتجع؛ لا توجد شاشة إغلاق/طباعة مستقلة في المصدر.
+- `MOD-026` — COMPLETE 2026-10-29: اكتمل `MOD-026A..B` لشجرة الحسابات وتفاصيل القيود؛ بقية إعدادات المحاسبة والفترات كانت مرحلة سابقاً.
+- `MOD-027` — COMPLETE 2026-10-30: اكتمل `MOD-027A..E` للاشتراك والواجهة العامة وكل أسطح إدارة المنصة الحالية، بما فيها التدقيق والاحتفاظ.
+- `MOD-028` — COMPLETE 2026-10-30: اكتملت `MOD-028A..G`، تزامنت ثقافة Angular والخادم، وأغلق السجل المولد بصفر أسطح متبقية مع بقاء MVC افتراضيًا.
+- `MOD-023..028` — APPROVED PROGRAM: نقل المشتريات والمبيعات وPOS والمحاسبة وSaaS وكل الشاشات المشتركة والمتبقية إلى Angular على موجات، مع functional parity وإعادة تصميم كاملة وفق Angular design system لا نسخ Razor.
+- `MOD-029` — COMPLETE 2026-10-30: اكتملت `MOD-029A..D` للمصفوفة والمصالحة المصرح بها ومجموعات المخاطر والتحويل/الرجوع الحي؛ MVC ما زال default.
+- `MOD-030` — EXPLICIT FINAL GATE IN PROGRESS: اكتمل `MOD-030A..C` باستضافة Angular production وتحويل Customers/Suppliers/Products/AnalyticsCenter؛ التالي `MOD-030D` لـSettings بجلسة Administration.Access، ثم إزالة MVC تدريجيًا فقط بعد إثبات الدفعة ورجوعها.
+
 ## P0 — مخاطر حرجة
 
 ### `P0-SEC-001` — إغلاق أثر بيانات دخول المسؤول التاريخية

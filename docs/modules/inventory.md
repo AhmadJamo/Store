@@ -21,10 +21,57 @@ Inventory lifecycle screens follow the same completed-action rule as purchasing.
 
 Sources: `ProductStock.cs`, `StockTransaction.cs`, `StockTransactionType.cs`; ProductStocks DTOs; product-stock/transaction services and repositories; configurations; `ProductStocksController`, `StockTransactionsController`; their views. Changes impact purchases, sales, transfers and accounting docs.
 
+## Angular inventory ledger (`MOD-022A`)
+
+The permission-aware `/inventory/transactions` route reads `GET /api/v1/stock-transactions` through an explicit typed client.
+Search, all current transaction types, incoming/outgoing direction, inclusive date filtering, allowlisted sorting, page size and
+paging are executed by the existing `StockTransactionService` and repository. Product and warehouse names are displayed while
+IDs stay internal. Quantity, unit cost, movement value and cost variance are server-authored DTO evidence; Angular does not
+recalculate balances or valuation. The API is intentionally GET-only because StockTransaction history is immutable evidence.
+MVC remains the presentation default until the separate cutover gate.
+
+## Angular product stock operations (`MOD-022B`)
+
+`/inventory/stocks` exposes current product/warehouse balance review, opening stock, quantity correction, the existing protected
+delete attempt and reason-required Adjustment In/Out or Kitchen Variance entry. Angular sends explicit DTOs through versioned API
+controllers; ProductStockService and StockTransactionService retain all validation and persistence ownership. Product and warehouse
+names are displayed while IDs remain transport details. The server continues to own negative-stock policy, exact-location removal,
+tracking, moving-average cost and stock value; deleting historical stock rows remains rejected with actionable feedback.
+
+The feature is permission-split across ProductStock View/Create/Edit/Delete and StockTransactions.Create, and every unsafe call
+requires CSRF. Rejected inputs remain editable, all labels/messages are Arabic and English, and the responsive layout uses logical
+direction-aware styling. No schema or inventory/accounting rule changed.
+
+## Angular availability and reservations (`MOD-022C`)
+
+`/inventory/availability` displays server-authored OnHand, Reserved and Available quantities by product, warehouse and exact
+location or protected Unassigned position. Product name/code/barcode search, named warehouse filter and bounded page sizes run
+through `InventoryBalanceService`. `/inventory/reservations` displays source reference/type, Active/Consumed/Released status,
+line count, remaining quantity and lifecycle timestamps through `InventoryReservationService`, with reference/status filters and
+bounded paging. Both routes are GET-only and independently permission-protected. Angular does not calculate availability, reserve,
+consume or release stock. No schema, concurrency, valuation or accounting behavior changed.
+
+## Angular inventory adjustments (`MOD-022D`)
+
+`/inventory/adjustments`, `/inventory/adjustments/new` and `/inventory/adjustments/:id` cover the current list, named-option create,
+blind/non-blind count, full-line count completion, approval, posting and cancellation workflow. Buttons appear only for the exact
+permission and current lifecycle state; completed operations become status evidence. Rejected commands retain entered values and
+dirty create/count forms block accidental navigation. The API repeats View/Create/Count/Approve/Post/Cancel authorization and CSRF.
+
+Expected quantity remains frozen by `InventoryAdjustmentService`; blind Draft details hide it from the counter. Domain separation
+prevents creator/counter self-approval. Posting revalidates unchanged stock and reservation floors, then atomically applies dimensional
+balance/location/tracking, AVCO, StockTransaction and StockMovement effects. Angular calculates none of these facts. No schema or
+business/accounting rule changed.
+
 ## Storage locations
 Warehouses have hierarchical structured locations with a unique code, optional unique barcode, display name, parent, sequence, zone, aisle, rack, level, bin, operational type, status, optional capacity and explicit receive/pick/reserve/ship/count capabilities. Existing IDs and codes remain stable. The Warehouse Locations screen searches these fields, creates roots/children and edits hierarchy/capabilities. `StorageLocationService` owns its warehouse/parent selectors and projects location rows to Application DTOs; the controller and Razor views no longer receive repository dependencies or domain entities for this slice. The Application layer rejects self-parenting, descendant cycles and parents from another warehouse. Unassigned Stock calculates warehouse quantity minus allocated location quantities, supports warehouse/name/barcode filters and sorting, and lets authorized staff allocate all or part of the balance to an active location without changing the warehouse total. Capacity validation uses the total quantity of all products in the destination location.
 
 The location list is ordered as a visual parent/child tree. Creation filters parent choices to the selected warehouse. Putaway and transfer destinations must be receivable; relocation and transfer sources must be pickable. Reservable, shippable and countable are persisted for their later owning workflows and are not silently treated as equivalent to receive/pick permission.
+
+Angular `/inventory/locations` now provides the current location list/create/edit operations, including hierarchy, barcode, type,
+capacity and receive/pick/reserve/ship/count capabilities. `/inventory/putaway` exposes unassigned quantity, server suggestions,
+operator-confirmed assignment and product/category/default rule create/activation. Both use named choices, localized Problem Details,
+dirty-form protection and external RTL-safe SCSS; the server repeats every invariant and permission.
 
 When a product's warehouse balance is zero, its previous rack/bin allocations are no longer physically valid. The next purchase receipt for that product and warehouse removes those stale allocations inside the purchase transaction, so the entire newly received quantity returns to Unassigned Stock for a fresh putaway.
 
@@ -34,6 +81,10 @@ Inter-warehouse transfer locations are optional. When a location is provided, it
 The Location Movements screen moves a selected product between two active locations in the same warehouse. It shows only source locations holding a positive balance for the selected product, displays available quantity, filters destination locations by warehouse and rejects identical locations, insufficient source quantity or destination-capacity overflow. The Serializable UnitOfWork transaction updates both location balances and writes one immutable `LocationMovement` history row while leaving `ProductStock` unchanged.
 
 Every assignment from Unassigned Stock also writes a `Putaway` history row. History can be filtered by warehouse and searched by product name, barcode or reference, and records quantity, source, destination, UTC creation time, user, reference and notes. Permissions are `LocationMovements.View` and `LocationMovements.Create`.
+
+Angular `/inventory/location-movements` provides the existing relocation command, source availability, searchable legacy location
+history and permission-independent physical StockMovement ledger/reconciliation totals. It generates a stable command idempotency key
+and never changes ProductStock totals or computes trusted capacity/eligibility client-side.
 
 ## Physical movement kernel pilot
 New Putaway and Relocation requests carry a server-rendered idempotency key. Inside the existing Serializable transaction, the services first reject a repeated key, update location quantities, preserve the legacy LocationMovement row and write one linked Posted StockMovement. Tenant-aware foreign keys and unique indexes enforce the source linkage and idempotency boundary. Historic LocationMovement rows are not backfilled. The read-only Physical Stock Movements screen uses `StockMovements.View` and reports linked pilot rows alongside the legacy count.
@@ -84,6 +135,11 @@ The expiration alert center is a live tenant-safe projection over positive track
 Recall impact resolves immutable tracking references into purchase/sale/transfer/return document types. Purchase receipts show the supplier and stored phone when available; sale issues show the customer name or an explicit walk-in customer label. Quantity is aggregated per document and transfer source/destination legs are counted once. The report is operational evidence, not an automated outbound message.
 
 While a recall is Active, authorized users may append immutable communication entries containing party, phone/email/address, channel, outcome, notes, actor and UTC time. Communication history remains visible after closure and cannot be edited. Automated sending is not implied; entries record actual manual or externally completed contact.
+
+`MOD-022E` adds an Angular pilot at `/inventory/tracking` and a versioned internal API for all of these existing operations. The API
+uses explicit named option and command DTOs, keeps `View`, `Open`, `ManageQuarantine` and `ManageRecall` separate, validates CSRF on
+every mutation and delegates exclusively to `InventoryTrackingService`. Angular displays server-authored balances, alerts, trace and
+recall impact; it does not calculate availability, expiration eligibility or quarantine effects. MVC remains the default.
 
 ## Warehouse operating policies
 

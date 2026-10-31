@@ -1,0 +1,394 @@
+<section class="request-page" [attr.aria-label]="i18n.text('title')">
+  <app-page-header
+    eyebrow="PURCHASING"
+    [title]="
+      mode() === 'create'
+        ? i18n.text('new')
+        : mode() === 'rules'
+          ? i18n.text('rulesTitle')
+          : i18n.text('title')
+    "
+    [description]="mode() === 'rules' ? i18n.text('rulesDescription') : i18n.text('description')"
+  />
+  @if (problem()) {
+    <p class="message error" role="alert">{{ problem() }}</p>
+  }
+  @if (success()) {
+    <p class="message success" role="status">{{ success() }}</p>
+  }
+  @if (loading()) {
+    <app-feedback-state kind="loading" [title]="i18n.text('loading')" />
+  } @else if (loadingProblem(); as failure) {
+    <app-api-recovery [problem]="failure" (retry)="retry()" />
+  } @else if (mode() === 'list') {
+    <div class="actions">
+      @if (session.can('PurchaseApprovalRules.View')) {<a class="ui-button secondary" routerLink="/purchases/approval-rules">{{i18n.text('rulesTitle')}}</a>}
+      @if (session.can('PurchaseRequests.Create')) {
+        <a class="ui-button primary" routerLink="/purchases/requests/new">{{ i18n.text('new') }}</a>
+      }
+    </div>
+    <form class="filters" [formGroup]="filter" (ngSubmit)="loadList()">
+      <label class="ui-field"
+        ><span>{{ i18n.text('search') }}</span
+        ><input formControlName="search" /></label
+      ><label class="ui-field"
+        ><span>{{ i18n.text('status') }}</span
+        ><select formControlName="status">
+          <option [ngValue]="0">{{ i18n.text('allStatuses') }}</option>
+          @for (x of [1, 2, 3, 4, 5, 6]; track x) {
+            <option [ngValue]="x">{{ statusName(x) }}</option>
+          }
+        </select></label
+      ><button class="ui-button secondary">{{ i18n.text('search') }}</button>
+    </form>
+    <section class="ui-card table-section">
+      <app-data-table [label]="i18n.text('title')"
+        ><table>
+          <thead>
+            <tr>
+              <th>{{ i18n.text('number') }}</th>
+              <th>{{ i18n.text('warehouse') }}</th>
+              <th>{{ i18n.text('needed') }}</th>
+              <th>{{ i18n.text('priority') }}</th>
+              <th>{{ i18n.text('status') }}</th>
+              <th>{{ i18n.text('lines') }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (x of rows(); track x.id) {
+              <tr>
+                <td>
+                  <a [routerLink]="['/purchases/requests', x.id]"
+                    ><code>{{ x.requestNumber }}</code></a
+                  >
+                </td>
+                <td>{{ x.warehouseName }}</td>
+                <td>{{ x.neededByDate | date: 'dd/MM/yyyy' }}</td>
+                <td>{{ priorityName(x.priority) }}</td>
+                <td>
+                  <span class="ui-badge">{{ statusName(x.status) }}</span>
+                </td>
+                <td>{{ x.lines.length }}</td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="6">{{ i18n.text('noRows') }}</td>
+              </tr>
+            }
+          </tbody>
+        </table></app-data-table
+      >
+    </section>
+  } @else if (mode() === 'rules' && rulesPage(); as rules) {
+    @if (session.can('PurchaseApprovalRules.Manage')) {
+      <form class="ui-card request-form" [formGroup]="ruleForm" (ngSubmit)="createRule()">
+        <div class="form-grid">
+          <label class="ui-field"
+            ><span>{{ i18n.text('ruleName') }}</span
+            ><input formControlName="name" maxlength="150" /></label
+          ><label class="ui-field"
+            ><span>{{ i18n.text('scope') }}</span
+            ><select formControlName="warehouseId">
+              <option [ngValue]="0">{{ i18n.text('allWarehouses') }}</option>
+              @for (x of rules.warehouses; track x.id) {
+                <option [ngValue]="x.id">{{ x.label }}</option>
+              }
+            </select></label
+          ><label class="ui-field"
+            ><span>{{ i18n.text('minimumPriority') }}</span
+            ><select formControlName="minimumPriority">
+              @for (x of [1, 2, 3, 4]; track x) {
+                <option [ngValue]="x">{{ priorityName(x) }}</option>
+              }
+            </select></label
+          ><label class="ui-field"
+            ><span>{{ i18n.text('maximumPriority') }}</span
+            ><select formControlName="maximumPriority">
+              @for (x of [1, 2, 3, 4]; track x) {
+                <option [ngValue]="x">{{ priorityName(x) }}</option>
+              }
+            </select></label
+          >
+          @for (control of ['role1', 'role2', 'role3']; track control; let i = $index) {
+            <label class="ui-field"
+              ><span>{{ i18n.text('approvalStep') }} {{ i + 1 }}</span
+              ><select [formControlName]="control">
+                <option value="">{{ i18n.text('none') }}</option>
+                @for (role of rules.roles; track role) {
+                  <option [value]="role">{{ role }}</option>
+                }
+              </select></label
+            >
+          }
+        </div>
+        <div class="actions">
+          <button class="ui-button primary" [disabled]="saving()">
+            {{ i18n.text('createRule') }}
+          </button>
+        </div>
+      </form>
+    }
+    <section class="ui-card table-section">
+      <app-data-table [label]="i18n.text('rulesTitle')"
+        ><table>
+          <thead>
+            <tr>
+              <th>{{ i18n.text('ruleName') }}</th>
+              <th>{{ i18n.text('scope') }}</th>
+              <th>{{ i18n.text('priority') }}</th>
+              <th>{{ i18n.text('steps') }}</th>
+              <th>{{ i18n.text('status') }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (rule of rules.rules; track rule.id) {
+              <tr>
+                <td>{{ rule.name }}</td>
+            <td>{{ rule.warehouseName==='All warehouses'?i18n.text('allWarehouses'):rule.warehouseName }}</td>
+                <td>
+                  {{ priorityName(rule.minimumPriority) }} —
+                  {{ priorityName(rule.maximumPriority) }}
+                </td>
+                <td>{{ rule.approverRoles.join(' → ') }}</td>
+                <td>
+                  <span class="ui-badge">{{rule.isActive?i18n.text('active'):i18n.text('inactive')}}</span>
+                  <button
+                    type="button"
+                    class="ui-button secondary"
+                    [disabled]="!session.can('PurchaseApprovalRules.Manage') || saving()"
+                    (click)="toggleRule(rule.id, !rule.isActive, rule.rowVersion)"
+                  >
+                    {{ rule.isActive ? i18n.text('deactivate') : i18n.text('activate') }}
+                  </button>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="5">{{ i18n.text('noRules') }}</td>
+              </tr>
+            }
+          </tbody>
+        </table></app-data-table
+      >
+    </section>
+  } @else if (mode() === 'create' && options(); as data) {
+    <form class="ui-card request-form" [formGroup]="form" (ngSubmit)="create()">
+      <div class="form-grid">
+        <label class="ui-field"
+          ><span>{{ i18n.text('destination') }}</span
+          ><select formControlName="warehouseId">
+            <option [ngValue]="0">{{ i18n.text('selectWarehouse') }}</option>
+            @for (x of data.warehouses; track x.id) {
+              <option [ngValue]="x.id">{{ x.label }}</option>
+            }
+          </select></label
+        ><label class="ui-field"
+          ><span>{{ i18n.text('needed') }}</span
+          ><input type="date" formControlName="neededByDate" /></label
+        ><label class="ui-field"
+          ><span>{{ i18n.text('priority') }}</span
+          ><select formControlName="priority">
+            @for (x of [1, 2, 3, 4]; track x) {
+              <option [ngValue]="x">{{ priorityName(x) }}</option>
+            }
+          </select></label
+        ><label class="ui-field wide"
+          ><span>{{ i18n.text('justification') }}</span
+          ><textarea formControlName="justification" maxlength="500"></textarea></label
+        ><label class="ui-field wide"
+          ><span>{{ i18n.text('notes') }}</span
+          ><textarea formControlName="notes" maxlength="1000"></textarea>
+        </label>
+      </div>
+      <h2>{{ i18n.text('requestLines') }}</h2>
+      <div formArrayName="lines" class="line-list">
+        @for (line of lines.controls; track line; let i = $index) {
+          <fieldset [formGroupName]="i">
+            <legend>{{ i18n.text('lines') }} {{ i + 1 }}</legend>
+            <div class="line-grid">
+              <label class="ui-field"
+                ><span>{{ i18n.text('product') }}</span
+                ><select formControlName="productId">
+                  <option [ngValue]="0">{{ i18n.text('selectProduct') }}</option>
+                  @for (x of data.products; track x.id) {
+                    <option [ngValue]="x.id">{{ x.label }}</option>
+                  }
+                </select></label
+              ><label class="ui-field"
+                ><span>{{ i18n.text('unit') }}</span
+                ><select formControlName="measurementUnitId">
+                  <option [ngValue]="0">{{ i18n.text('selectUnit') }}</option>
+                  @for (x of data.units; track x.id) {
+                    <option [ngValue]="x.id">{{ x.label }}</option>
+                  }
+                </select></label
+              ><label class="ui-field"
+                ><span>{{ i18n.text('quantity') }}</span
+                ><input
+                  type="number"
+                  min="0.000001"
+                  step="0.000001"
+                  formControlName="requestedQuantity" /></label
+              ><label class="ui-field"
+                ><span>{{ i18n.text('supplier') }}</span
+                ><select formControlName="suggestedSupplierId">
+                  <option [ngValue]="0">—</option>
+                  @for (x of data.suppliers; track x.id) {
+                    <option [ngValue]="x.id">{{ x.label }}</option>
+                  }
+                </select></label
+              ><label class="ui-field"
+                ><span>{{ i18n.text('notes') }}</span
+                ><input formControlName="notes" maxlength="500" /></label
+              ><button
+                type="button"
+                class="ui-button danger"
+                [disabled]="lines.length === 1"
+                (click)="removeLine(i)"
+              >
+                {{ i18n.text('remove') }}
+              </button>
+            </div>
+          </fieldset>
+        }
+      </div>
+      <div class="actions">
+        <button type="button" class="ui-button secondary" (click)="addLine()">
+          {{ i18n.text('addLine') }}</button
+        ><button class="ui-button primary" [disabled]="saving()">{{ i18n.text('create') }}</button>
+      </div>
+    </form>
+  } @else if (detail(); as x) {
+    <div class="actions">
+      <a class="ui-button secondary" routerLink="/purchases/requests">{{ i18n.text('back') }}</a>
+      @if (x.status === 4 && session.can('PurchaseSourcing.Create')) {
+        <a class="ui-button primary" [routerLink]="['/purchases/sourcing/new']" [queryParams]="{purchaseRequestId:x.id}">{{ i18n.text('startSourcing') }}</a>
+      }
+    </div>
+    <section class="ui-card summary">
+      <header>
+        <h2>
+          <code>{{ x.requestNumber }}</code>
+        </h2>
+        <span class="ui-badge">{{ statusName(x.status) }}</span>
+      </header>
+      <dl>
+        <div>
+          <dt>{{ i18n.text('warehouse') }}</dt>
+          <dd>{{ x.warehouseName }}</dd>
+        </div>
+        <div>
+          <dt>{{ i18n.text('needed') }}</dt>
+          <dd>{{ x.neededByDate | date: 'dd/MM/yyyy' }}</dd>
+        </div>
+        <div>
+          <dt>{{ i18n.text('priority') }}</dt>
+          <dd>{{ priorityName(x.priority) }}</dd>
+        </div>
+        <div class="wide">
+          <dt>{{ i18n.text('justification') }}</dt>
+          <dd>{{ x.justification }}</dd>
+        </div>
+      </dl>
+    </section>
+    <section class="ui-card table-section">
+      <h2>{{ i18n.text('requestLines') }}</h2>
+      <app-data-table [label]="i18n.text('requestLines')"
+        ><table>
+          <thead>
+            <tr>
+              <th>{{ i18n.text('product') }}</th>
+              <th>{{ i18n.text('requested') }}</th>
+              <th>{{ i18n.text('stock') }}</th>
+              <th>{{ i18n.text('supplier') }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (line of x.lines; track line.productId + '-' + line.measurementUnitId) {
+              <tr>
+                <td>
+                  <code>{{ line.productCode }}</code> — {{ line.productName }}
+                </td>
+                <td>{{ line.requestedQuantity | number: '1.0-6' }} {{ line.unitName }}</td>
+                <td>{{ line.stockQuantity | number: '1.0-6' }}</td>
+                <td>{{ line.suggestedSupplierName ?? '—' }}</td>
+              </tr>
+            }
+          </tbody>
+        </table></app-data-table
+      >
+    </section>
+    <section class="ui-card command-bar">
+      @if (x.status === 1 && session.can('PurchaseRequests.Submit')) {
+        <button class="ui-button primary" [disabled]="saving()" (click)="submit()">
+          {{ i18n.text('submit') }}
+        </button>
+      }
+      @if ((x.status === 1 || x.status === 2) && session.can('PurchaseRequests.Cancel')) {
+        <label class="ui-field"
+          ><span>{{ i18n.text('cancelReason') }}</span
+          ><input #reason maxlength="500" /></label
+        ><button class="ui-button danger" [disabled]="saving()" (click)="cancel(reason.value)">
+          {{ i18n.text('cancel') }}
+        </button>
+      }
+    </section>
+    @if (x.approval; as approval) {
+      <section class="ui-card">
+        <h2>{{ i18n.text('approval') }} — {{ approval.ruleName }}</h2>
+        @if (approval.currentRole) {
+          <p>
+            <strong>{{ i18n.text('currentRole') }}:</strong> {{ approval.currentRole }}
+          </p>
+        }
+        <ol>
+          @for (step of approval.steps; track step.sequence) {
+            <li>{{ step.roleName }} — {{ approvalStatusName(step.status) }}</li>
+          }
+        </ol>
+        @if (approval.status === 1 && approval.canCurrentUserDecide) {
+          <div class="command-bar">
+            <label class="ui-field"
+              ><span>{{ i18n.text('decisionNote') }}</span
+              ><input #decisionNote maxlength="500"
+            /></label>
+            @if (session.can('PurchaseRequests.Approve')) {
+              <button
+                type="button"
+                class="ui-button primary"
+                [disabled]="saving()"
+                (click)="decide(true, decisionNote.value)"
+              >
+                {{ i18n.text('approve') }}
+              </button>
+            }
+            @if (session.can('PurchaseRequests.Reject')) {
+              <button
+                type="button"
+                class="ui-button danger"
+                [disabled]="saving()"
+                (click)="decide(false, decisionNote.value)"
+              >
+                {{ i18n.text('reject') }}
+              </button>
+            }
+          </div>
+        }
+      </section>
+    }
+    <section class="ui-card history">
+      <h2>{{ i18n.text('history') }}</h2>
+      <ol>
+        @for (item of x.history; track item.createdAtUtc) {
+          <li>
+            <strong>{{ actionName(item.action) }}</strong> — {{ item.userId }} —
+            {{ item.createdAtUtc | date: 'dd/MM/yyyy HH:mm' }}
+            @if (item.reason) {
+              <p>{{ item.reason }}</p>
+            }
+          </li>
+        }
+      </ol>
+    </section>
+  }
+</section>

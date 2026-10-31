@@ -1,0 +1,117 @@
+<section class="stock-transfers" [attr.aria-label]="i18n.text('title')">
+  <app-page-header eyebrow="INVENTORY" [title]="isForm ? (page()?.transferNumber || i18n.text('newTransfer')) : (details()?.transferNumber || i18n.text('title'))" [description]="isForm ? i18n.text('formDescription') : (isDetails ? i18n.text('detailDescription') : i18n.text('description'))">
+    @if (isForm || isDetails) {
+      <a class="ui-button secondary" routerLink="/inventory/transfers">{{ i18n.text('back') }}</a>
+    } @else if (session.can('StockTransfers.Create')) {
+      <a class="ui-button primary" routerLink="/inventory/transfers/new">{{ i18n.text('newTransfer') }}</a>
+    }
+  </app-page-header>
+
+  @if (loading()) {
+    <app-feedback-state kind="loading" [title]="i18n.text('loading')" />
+  } @else if (loadingProblem(); as failure) {
+    <app-api-recovery [problem]="failure" (retry)="load()" />
+  } @else if (isForm) {
+    <form class="transfer-form ui-panel" [formGroup]="form" (ngSubmit)="save()">
+      @if (problem()) { <app-form-error-summary [title]="problem()" [errors]="{}" /> }
+      <div class="form-grid">
+        <label>{{ i18n.text('sourceWarehouse') }}
+          <select formControlName="fromWarehouseId">
+            <option [ngValue]="0">—</option>
+            @for (warehouse of page()?.warehouses; track warehouse.id) { <option [ngValue]="warehouse.id">{{ warehouse.name }}</option> }
+          </select>
+        </label>
+        <label>{{ i18n.text('destinationWarehouse') }}
+          <select formControlName="toWarehouseId">
+            <option [ngValue]="0">—</option>
+            @for (warehouse of page()?.warehouses; track warehouse.id) { <option [ngValue]="warehouse.id">{{ warehouse.name }}</option> }
+          </select>
+        </label>
+        <label>{{ i18n.text('reference') }}<input formControlName="reference" /></label>
+        <label class="wide">{{ i18n.text('notes') }}<textarea formControlName="notes" rows="3"></textarea></label>
+      </div>
+
+      <div class="section-heading">
+        <h2>{{ i18n.text('items') }}</h2>
+        <button class="ui-button secondary" type="button" (click)="addItem()">{{ i18n.text('addItem') }}</button>
+      </div>
+      <div formArrayName="items" class="line-list">
+        @for (item of items.controls; track $index; let index = $index) {
+          <fieldset [formGroupName]="index" class="line-card">
+            <legend>{{ i18n.text('product') }} {{ index + 1 }}</legend>
+            <div class="line-grid">
+              <label>{{ i18n.text('product') }}
+                <select formControlName="productId">
+                  <option [ngValue]="0">—</option>
+                  @for (product of page()?.products; track product.id) { <option [ngValue]="product.id">{{ product.name }}</option> }
+                </select>
+              </label>
+              <label>{{ i18n.text('barcode') }}<output>{{ barcode(item.get('productId')?.value) }}</output></label>
+              <label>{{ i18n.text('quantity') }}<input type="number" min="0.001" step="0.001" formControlName="quantity" /></label>
+              <label>{{ i18n.text('sourceLocation') }}
+                <select formControlName="sourceLocationId">
+                  <option [ngValue]="null">{{ i18n.text('automatic') }}</option>
+                  @for (location of sourceLocations(); track location.id) { <option [ngValue]="location.id">{{ location.code }}</option> }
+                </select>
+              </label>
+              <label>{{ i18n.text('destinationLocation') }}
+                <select formControlName="destinationLocationId">
+                  <option [ngValue]="null">{{ i18n.text('automatic') }}</option>
+                  @for (location of destinationLocations(); track location.id) { <option [ngValue]="location.id">{{ location.code }}</option> }
+                </select>
+              </label>
+              <label class="wide">{{ i18n.text('tracking') }}
+                <textarea rows="2" formControlName="trackingAllocations"></textarea>
+                <small>{{ i18n.text('trackingHelp') }}</small>
+              </label>
+            </div>
+            <button class="ui-button danger" type="button" (click)="removeItem(index)">{{ i18n.text('remove') }}</button>
+          </fieldset>
+        }
+      </div>
+      <div class="form-actions">
+        <a class="ui-button secondary" routerLink="/inventory/transfers">{{ i18n.text('back') }}</a>
+        <button class="ui-button primary" [disabled]="saving()">{{ saving() ? i18n.text('saving') : i18n.text('save') }}</button>
+      </div>
+    </form>
+  } @else if (isDetails && details(); as transfer) {
+    @if (problem()) { <div class="ui-alert danger" role="alert">{{ problem() }}</div> }
+    @if (success()) { <div class="ui-alert success" role="status">{{ success() }}</div> }
+    <div class="summary-grid">
+      <article class="ui-panel"><span>{{ i18n.text('status') }}</span><strong>{{ statusName(transfer.status) }}</strong></article>
+      <article class="ui-panel"><span>{{ i18n.text('sourceWarehouse') }}</span><strong>{{ transfer.fromWarehouseName }}</strong></article>
+      <article class="ui-panel"><span>{{ i18n.text('destinationWarehouse') }}</span><strong>{{ transfer.toWarehouseName }}</strong></article>
+      <article class="ui-panel"><span>{{ i18n.text('createdBy') }}</span><strong>{{ transfer.createdByUserName }}</strong><small>{{ transfer.createdAt | date:'dd/MM/yyyy HH:mm' }}</small></article>
+    </div>
+    <div class="action-bar">
+      @if (transfer.status === 1 && session.can('StockTransfers.Edit')) { <a class="ui-button secondary" [routerLink]="['/inventory/transfers', transfer.id, 'edit']">{{ i18n.text('edit') }}</a> }
+      @if (transfer.status === 1 && session.can('StockTransfers.Submit')) { <button class="ui-button primary" (click)="submit()" [disabled]="saving()">{{ i18n.text('submit') }}</button> }
+      @if (transfer.status === 2 && session.can('StockTransfers.Approve')) { <button class="ui-button primary" (click)="approve()" [disabled]="saving()">{{ i18n.text('approve') }}</button> }
+      @if (transfer.status === 2 && session.can('StockTransfers.Reject')) { <button class="ui-button danger" (click)="reject()" [disabled]="saving()">{{ i18n.text('reject') }}</button> }
+      @if (transfer.status === 4 && session.can('StockTransfers.Edit')) { <button class="ui-button secondary" (click)="returnToDraft()" [disabled]="saving()">{{ i18n.text('returnToDraft') }}</button> }
+      @if (transfer.status === 3 && session.can('StockTransfers.Post')) { <button class="ui-button primary" (click)="post()" [disabled]="saving()">{{ i18n.text('post') }}</button> }
+      @if (transfer.status === 5 && session.can('StockTransfers.Cancel')) { <button class="ui-button danger" (click)="cancel()" [disabled]="saving()">{{ i18n.text('cancel') }}</button> }
+    </div>
+    <app-data-table [label]="i18n.text('items')">
+      <table><thead><tr><th>{{ i18n.text('product') }}</th><th>{{ i18n.text('barcode') }}</th><th>{{ i18n.text('quantity') }}</th><th>{{ i18n.text('sourceLocation') }}</th><th>{{ i18n.text('destinationLocation') }}</th><th>{{ i18n.text('tracking') }}</th></tr></thead>
+      <tbody>@for (item of transfer.items; track item.id) { <tr><td>{{ item.productName }}</td><td>{{ item.barcode || '—' }}</td><td>{{ item.quantity | number:'1.0-3' }}</td><td>{{ item.sourceLocationCode }}</td><td>{{ item.destinationLocationCode }}</td><td><pre>{{ item.trackingAllocations || '—' }}</pre></td></tr> }</tbody></table>
+    </app-data-table>
+    <h2>{{ i18n.text('history') }}</h2>
+    @if (!transfer.history.length) { <p>{{ i18n.text('noHistory') }}</p> }
+    @else {
+      <app-data-table [label]="i18n.text('history')"><table><thead><tr><th>{{ i18n.text('fromStatus') }}</th><th>{{ i18n.text('toStatus') }}</th><th>{{ i18n.text('user') }}</th><th>{{ i18n.text('reason') }}</th><th>{{ i18n.text('createdAt') }}</th></tr></thead>
+      <tbody>@for (entry of transfer.history; track entry.id) { <tr><td>{{ statusName(entry.fromStatus) }}</td><td>{{ statusName(entry.toStatus) }}</td><td>{{ entry.userName }}</td><td>{{ entry.reason || '—' }}</td><td>{{ entry.createdAt | date:'dd/MM/yyyy HH:mm' }}</td></tr> }</tbody></table></app-data-table>
+    }
+  } @else {
+    <form class="filters ui-panel" (ngSubmit)="load()">
+      <label>{{ i18n.text('search') }}<input [formControl]="search" [placeholder]="i18n.text('searchPlaceholder')" /></label>
+      <label>{{ i18n.text('status') }}<select [formControl]="status"><option [ngValue]="null">{{ i18n.text('allStatuses') }}</option>@for (value of [1,2,3,4,5,6]; track value) { <option [ngValue]="value">{{ statusName(value) }}</option> }</select></label>
+      <button class="ui-button secondary">{{ i18n.text('apply') }}</button>
+    </form>
+    @if (!rows().length) { <app-feedback-state kind="empty" [title]="i18n.text('empty')" [description]="i18n.text('emptyDescription')" /> }
+    @else {
+      <app-data-table [label]="i18n.text('title')"><table><thead><tr><th>{{ i18n.text('number') }}</th><th>{{ i18n.text('sourceWarehouse') }}</th><th>{{ i18n.text('destinationWarehouse') }}</th><th>{{ i18n.text('status') }}</th><th>{{ i18n.text('items') }}</th><th>{{ i18n.text('createdAt') }}</th><th>{{ i18n.text('actions') }}</th></tr></thead>
+      <tbody>@for (row of rows(); track row.id) { <tr><td><code>{{ row.transferNumber }}</code></td><td>{{ row.fromWarehouseName }}</td><td>{{ row.toWarehouseName }}</td><td><span class="ui-badge" [class.success]="row.status === 5" [class.warning]="row.status > 1 && row.status < 5">{{ statusName(row.status) }}</span></td><td>{{ row.itemsCount }}</td><td>{{ row.createdAt | date:'dd/MM/yyyy HH:mm' }}</td><td><a [routerLink]="['/inventory/transfers', row.id]">{{ i18n.text('details') }}</a></td></tr> }</tbody></table></app-data-table>
+    }
+  }
+</section>

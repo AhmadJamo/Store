@@ -1,0 +1,8 @@
+.work-page, .work-list { display: grid; gap: 1rem; }
+.work-filters { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.work-filters button { padding: 0.55rem 0.8rem; border: 1px solid var(--erp-color-border); border-radius: 999px; background: var(--erp-color-surface); color: inherit; cursor: pointer; }
+.work-filters button.active { border-color: var(--erp-color-primary); color: var(--erp-color-primary); }
+.work-list article { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 1rem; border-inline-start: 0.3rem solid var(--erp-color-warning); border-radius: 0.8rem; background: var(--erp-color-surface); }
+.work-list article.critical { border-inline-start-color: var(--erp-color-danger); }
+.work-copy { display: grid; gap: 0.3rem; }.work-copy h2, .work-copy p { margin: 0; }.work-copy small { color: var(--erp-color-text-muted); }
+@media (max-width: 680px) { .work-list article { align-items: stretch; flex-direction: column; } }

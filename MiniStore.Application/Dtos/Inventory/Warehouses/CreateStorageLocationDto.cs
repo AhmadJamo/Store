@@ -1,22 +1,22 @@
-using MiniStore.Domain.Entities;
+using System.ComponentModel.DataAnnotations;using MiniStore.Domain.Entities;
 
 namespace MiniStore.Application.DTOs.Warehouses;
 
 public class CreateStorageLocationDto
 {
-    public int WarehouseId { get; set; }
-    public string Code { get; set; } = string.Empty;
-    public string Name { get; set; } = string.Empty;
-    public string? Barcode { get; set; }
+    [Range(1,int.MaxValue)]public int WarehouseId { get; set; }
+    [Required,StringLength(100)]public string Code { get; set; } = string.Empty;
+    [Required,StringLength(200)]public string Name { get; set; } = string.Empty;
+    [StringLength(100)]public string? Barcode { get; set; }
     public int? ParentLocationId { get; set; }
-    public int Sequence { get; set; }
-    public string? Zone { get; set; }
-    public string? Aisle { get; set; }
-    public string? Rack { get; set; }
-    public string? Level { get; set; }
-    public string? Bin { get; set; }
+    [Range(0,int.MaxValue)]public int Sequence { get; set; }
+    [StringLength(100)]public string? Zone { get; set; }
+    [StringLength(100)]public string? Aisle { get; set; }
+    [StringLength(100)]public string? Rack { get; set; }
+    [StringLength(100)]public string? Level { get; set; }
+    [StringLength(100)]public string? Bin { get; set; }
     public StorageLocationType Type { get; set; } = StorageLocationType.Storage;
-    public decimal? MaximumQuantity { get; set; }
+    [Range(typeof(decimal),"0","999999999999",ParseLimitsInInvariantCulture=true,ConvertValueInInvariantCulture=true)]public decimal? MaximumQuantity { get; set; }
     public bool IsReceivable { get; set; }
     public bool IsPickable { get; set; } = true;
     public bool IsReservable { get; set; } = true;
@@ -27,13 +27,13 @@ public class CreateStorageLocationDto
 
 public class EditStorageLocationDto
 {
-    public int Id { get; set; }
-    public int WarehouseId { get; set; }
-    public string Code { get; set; } = string.Empty;
-    public string Name { get; set; } = string.Empty;
-    public string? Barcode { get; set; }
+    [Range(1,int.MaxValue)]public int Id { get; set; }
+    [Range(1,int.MaxValue)]public int WarehouseId { get; set; }
+    [Required,StringLength(100)]public string Code { get; set; } = string.Empty;
+    [Required,StringLength(200)]public string Name { get; set; } = string.Empty;
+    [StringLength(100)]public string? Barcode { get; set; }
     public int? ParentLocationId { get; set; }
-    public int Sequence { get; set; }
+    [Range(0,int.MaxValue)]public int Sequence { get; set; }
     public bool IsReceivable { get; set; }
     public bool IsPickable { get; set; }
     public bool IsReservable { get; set; }

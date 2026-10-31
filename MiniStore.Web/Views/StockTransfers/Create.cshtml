@@ -1,5 +1,4 @@
 @using MiniStore.Application.DTOs.StockTransfers
-@using MiniStore.Domain.Entities
 @inject Microsoft.Extensions.Localization.IStringLocalizer<MiniStore.Web.SharedResource> Localizer
 
 @model CreateStockTransferDto
@@ -8,13 +7,14 @@
     ViewData["Title"] = "New Stock Transfer";
 
     var products =
-        ViewBag.Products as List<Product>
-        ?? new List<Product>();
+        ViewBag.Products as IReadOnlyList<StockTransferProductOptionDto>
+        ?? Array.Empty<StockTransferProductOptionDto>();
 
     var warehouses =
-        ViewBag.Warehouses as List<Warehouse>
-        ?? new List<Warehouse>();
-    var locations = ViewBag.StorageLocations as List<StorageLocation> ?? new List<StorageLocation>();
+        ViewBag.Warehouses as IReadOnlyList<StockTransferWarehouseOptionDto>
+        ?? Array.Empty<StockTransferWarehouseOptionDto>();
+    var locations = ViewBag.StorageLocations as IReadOnlyList<StockTransferLocationOptionDto>
+        ?? Array.Empty<StockTransferLocationOptionDto>();
 }
 
 
@@ -104,7 +104,7 @@
                             {
                                 <option value="@warehouse.Id"
                                         data-control-mode="@((int)warehouse.ControlMode)"
-                                        data-require-source="@warehouse.RequireSourceLocationForTransfers.ToString().ToLowerInvariant()">
+                                        data-require-source="@warehouse.RequireSourceLocation.ToString().ToLowerInvariant()">
 
                                     @warehouse.Name
 
@@ -146,7 +146,7 @@
                             {
                                 <option value="@warehouse.Id"
                                         data-control-mode="@((int)warehouse.ControlMode)"
-                                        data-require-destination="@warehouse.RequireDestinationLocationForTransfers.ToString().ToLowerInvariant()">
+                                        data-require-destination="@warehouse.RequireDestinationLocation.ToString().ToLowerInvariant()">
 
                                     @warehouse.Name
 

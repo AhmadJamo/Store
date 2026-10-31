@@ -1,0 +1,39 @@
+import { ChangeDetectionStrategy, Component, DestroyRef, ElementRef, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { RouterLink } from '@angular/router';
+import { ApiErrorService } from '../../core/api/api-error.service';
+import { NormalizedApiProblem } from '../../core/api/api.models';
+import { ApiSessionService } from '../../core/api/api-session.service';
+import { FormErrorSummaryComponent } from '../../shared/forms/form-error-summary';
+import { FormFocusService } from '../../shared/forms/form-focus.service';
+import { ApiRecoveryComponent } from '../../shared/ui/api-recovery/api-recovery';
+import { FeedbackStateComponent } from '../../shared/ui/feedback-state/feedback-state';
+import { PageHeaderComponent } from '../../shared/ui/page-header/page-header';
+import { WorkspaceService } from '../../workspace/state/workspace.service';
+import { ProductTemplateApiService } from './data/product-template-api.service';
+import { ProductTemplate, ProductTemplatePage, VariantGenerationCommand } from './data/product-template.models';
+import { ProductLocalizationService } from './product-localization.service';
+
+@Component({ selector: 'app-product-templates-page', imports: [ReactiveFormsModule, RouterLink, PageHeaderComponent, FeedbackStateComponent, FormErrorSummaryComponent, ApiRecoveryComponent], templateUrl: './product-templates-page.html', styleUrl: './product-templates-page.scss', changeDetection: ChangeDetectionStrategy.OnPush })
+export class ProductTemplatesPageComponent {
+  protected readonly i18n = inject(ProductLocalizationService); protected readonly session = inject(ApiSessionService); private readonly api = inject(ProductTemplateApiService); private readonly errors = inject(ApiErrorService); private readonly workspace = inject(WorkspaceService); private readonly destroyRef = inject(DestroyRef); private readonly host = inject(ElementRef<HTMLElement>); private readonly focus = inject(FormFocusService);
+  protected readonly page = signal<ProductTemplatePage | null>(null); protected readonly loading = signal(true); protected readonly loadingProblem = signal<NormalizedApiProblem | null>(null); protected readonly problem = signal(''); protected readonly success = signal(''); protected readonly saving = signal(false); protected readonly generating = signal(false); protected readonly selectedOptions = signal<Record<number, readonly number[]>>({}); protected readonly sourceProducts = signal<Record<number, number>>({});
+  protected readonly createForm = inject(FormBuilder).nonNullable.group({ name: ['', [Validators.required, Validators.maxLength(150)]], code: ['', [Validators.required, Validators.maxLength(40), Validators.pattern(/^[A-Za-z0-9][A-Za-z0-9_-]*$/)]], productCategoryId: [0, Validators.min(1)] });
+  protected readonly assignForm = inject(FormBuilder).group({ productId: [0, [Validators.required, Validators.min(1)]], productTemplateId: [null as number | null] });
+  constructor() { this.load(); this.createForm.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => this.setDirty(this.createForm.dirty || this.assignForm.dirty)); this.assignForm.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => this.setDirty(this.createForm.dirty || this.assignForm.dirty)); }
+  canDeactivate(): boolean { return (!this.createForm.dirty && !this.assignForm.dirty && !this.hasGenerationChanges()) || globalThis.confirm(this.i18n.text('unsavedDescription')); }
+  protected load(): void { this.loading.set(true); this.loadingProblem.set(null); this.api.getPage().subscribe({ next: page => { this.page.set(page); this.loading.set(false); }, error: error => { this.loadingProblem.set(this.errors.normalize(error)); this.loading.set(false); } }); }
+  protected create(): void { if (this.saving() || this.createForm.invalid) { this.createForm.markAllAsTouched(); this.problem.set(this.i18n.text('correctTemplateFields')); this.focus.focusFirstInvalid(this.host.nativeElement); return; } const raw = this.createForm.getRawValue(); this.run(() => this.api.create({ ...raw, name: raw.name.trim(), code: raw.code.trim().toUpperCase() }), page => { this.page.set(page); this.createForm.reset({ name: '', code: '', productCategoryId: 0 }); this.createForm.markAsPristine(); this.success.set(this.i18n.text('templateCreated')); }); }
+  protected assign(): void { if (this.saving() || this.assignForm.invalid) { this.assignForm.markAllAsTouched(); this.problem.set(this.i18n.text('correctAssignmentFields')); return; } const raw = this.assignForm.getRawValue(); this.run(() => this.api.assign({ productId: Number(raw.productId), productTemplateId: raw.productTemplateId }), page => { this.page.set(page); this.assignForm.reset({ productId: 0, productTemplateId: null }); this.assignForm.markAsPristine(); this.success.set(this.i18n.text('templateAssignmentUpdated')); }); }
+  protected toggleOption(templateId: number, optionId: number, checked: boolean): void { const current = this.selectedOptions()[templateId] ?? []; this.selectedOptions.update(all => ({ ...all, [templateId]: checked ? [...new Set([...current, optionId])] : current.filter(id => id !== optionId) })); this.setDirty(true); }
+  protected setSource(templateId: number, productId: number): void { this.sourceProducts.update(all => ({ ...all, [templateId]: productId })); this.setDirty(true); }
+  protected preview(template: ProductTemplate): void { const command = this.command(template.id); if (!command) return; this.problem.set(''); this.generating.set(true); this.api.preview(command).subscribe({ next: page => { this.page.set(page); this.generating.set(false); }, error: error => this.fail(error, true) }); }
+  protected generate(): void { const preview = this.page()?.preview; if (!preview || this.generating()) return; this.generating.set(true); this.problem.set(''); this.api.generate({ productTemplateId: preview.productTemplateId, sourceProductId: preview.sourceProductId, optionIds: preview.optionIds }).subscribe({ next: result => { this.page.set(result.page); this.selectedOptions.set({}); this.sourceProducts.set({}); this.success.set(this.i18n.text('variantsCreated').replace('{0}', String(result.createdCount))); this.generating.set(false); this.setDirty(false); }, error: error => this.fail(error, true) }); }
+  protected closePreview(): void { const current = this.page(); if (current) this.page.set({ ...current, preview: null }); }
+  private command(templateId: number): VariantGenerationCommand | null { const sourceProductId = this.sourceProducts()[templateId] ?? 0; const optionIds = this.selectedOptions()[templateId] ?? []; if (!sourceProductId || !optionIds.length) { this.problem.set(this.i18n.text('selectVariantOptions')); return null; } return { productTemplateId: templateId, sourceProductId, optionIds }; }
+  private run(request: () => ReturnType<ProductTemplateApiService['create']>, success: (page: ProductTemplatePage) => void): void { this.problem.set(''); this.success.set(''); this.saving.set(true); request().subscribe({ next: page => { success(page); this.saving.set(false); this.setDirty(false); }, error: error => this.fail(error, false) }); }
+  private fail(error: unknown, generation: boolean): void { const failure = this.errors.normalize(error); this.problem.set(failure.detail ?? failure.title ?? this.i18n.text('errorDescription')); generation ? this.generating.set(false) : this.saving.set(false); }
+  private hasGenerationChanges(): boolean { return Object.values(this.selectedOptions()).some(ids => ids.length) || Object.values(this.sourceProducts()).some(Boolean); }
+  private setDirty(dirty: boolean): void { const tab = this.workspace.activeTab(); if (tab) this.workspace.markDirty(tab.id, dirty); }
+}

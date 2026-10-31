@@ -1,0 +1,9 @@
+.supplier-page { display: grid; gap: var(--erp-space-5); max-width: 90rem; margin-inline: auto; }
+.ui-button { display: inline-flex; align-items: center; text-decoration: none; }
+.details-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--erp-space-4); }
+.ui-card { padding: var(--erp-card-padding); border: 1px solid var(--erp-color-border); border-radius: var(--erp-radius-md); background: var(--erp-color-surface); box-shadow: var(--erp-shadow-sm); }
+.ui-card h2 { margin-block-start: 0; }
+dl { display: grid; gap: var(--erp-space-3); margin: 0; }
+dl div { display: grid; grid-template-columns: minmax(8rem, 35%) 1fr; gap: var(--erp-space-3); }
+dt { color: var(--erp-color-text-muted); } dd { margin: 0; overflow-wrap: anywhere; }
+@media (max-width: 680px) { .details-grid { grid-template-columns: 1fr; } }

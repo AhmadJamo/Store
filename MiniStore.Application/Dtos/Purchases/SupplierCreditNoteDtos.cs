@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using MiniStore.Domain.Entities;
 
 namespace MiniStore.Application.DTOs.Purchases;
@@ -27,17 +28,24 @@ public sealed class SupplierCreditNoteAvailableLineDto
 
 public sealed class CreateSupplierCreditNoteDto
 {
+    [Range(1, int.MaxValue)]
     public int VendorBillId { get; set; }
     public DateOnly CreditDate { get; set; } = DateOnly.FromDateTime(DateTime.Today);
+    [StringLength(100)]
     public string? SupplierReference { get; set; }
+    [Required, StringLength(1000)]
     public string Reason { get; set; } = string.Empty;
+    [MinLength(1)]
     public List<CreateSupplierCreditNoteLineDto> Lines { get; set; } = [];
 }
 
 public sealed class CreateSupplierCreditNoteLineDto
 {
+    [Range(1, int.MaxValue)]
     public int VendorBillLineId { get; set; }
+    [Range(typeof(decimal), "0", "999999999999", ParseLimitsInInvariantCulture = true, ConvertValueInInvariantCulture = true)]
     public decimal Quantity { get; set; }
+    [StringLength(2000)]
     public string? TrackingAllocations { get; set; }
 }
 

@@ -1,10 +1,9 @@
-
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using MiniStore.Application.DTOs.StockTransfers;
+using MiniStore.Application.Services;
 using MiniStore.Domain.Commands;
 using MiniStore.Domain.Entities;
 using MiniStore.Domain.Interfaces;
@@ -12,955 +11,223 @@ using MiniStore.Web.Authorization;
 
 namespace MiniStore.Web.Controllers;
 
-public class StockTransfersController : Controller
+public sealed class StockTransfersController(
+    IStockTransferService stockTransferService,
+    StockTransferPageService pages,
+    IStringLocalizer<SharedResource> localizer) : Controller
 {
-    private readonly IStockTransferService _stockTransferService;
-    private readonly IProductRepository _productRepository;
-    private readonly IWarehouseRepository _warehouseRepository;
-    private readonly UserManager<IdentityUser> _userManager;
-    private readonly IStorageLocationRepository _storageLocationRepository;
-    private readonly IStringLocalizer<SharedResource> _localizer;
-
-    public StockTransfersController(
-        IStockTransferService stockTransferService,
-        IProductRepository productRepository,
-        IWarehouseRepository warehouseRepository,
-        UserManager<IdentityUser> userManager,
-        IStorageLocationRepository storageLocationRepository,
-        IStringLocalizer<SharedResource> localizer)
+    [HttpGet, Authorize, PermissionAuthorize("StockTransfers.View")]
+    public async Task<IActionResult> Index(string? search, StockTransferStatus? status)
     {
-        _stockTransferService = stockTransferService;
-        _productRepository = productRepository;
-        _warehouseRepository = warehouseRepository;
-        _userManager = userManager;
-        _storageLocationRepository = storageLocationRepository;
-        _localizer = localizer;
-    }
-
-    // ============================================================
-    // INDEX
-    // ============================================================
-
-    [HttpGet]
-    [Authorize]
-    [PermissionAuthorize("StockTransfers.View")]
-    public async Task<IActionResult> Index(
-        string? search,
-        StockTransferStatus? status)
-    {
-        var transfers =
-            await _stockTransferService.GetAllAsync(
-                search,
-                status);
-
-        var warehouses =
-            await _warehouseRepository.GetAllAsync();
-
-        var dtoList =
-            new List<StockTransferDto>();
-
-        foreach (var transfer in transfers)
-        {
-            var fromWarehouse =
-                warehouses.FirstOrDefault(
-                    x => x.Id == transfer.FromWarehouseId);
-
-            var toWarehouse =
-                warehouses.FirstOrDefault(
-                    x => x.Id == transfer.ToWarehouseId);
-
-            dtoList.Add(
-                new StockTransferDto
-                {
-                    Id =
-                        transfer.Id,
-
-                    TransferNumber =
-                        transfer.TransferNumber,
-
-                    FromWarehouseId =
-                        transfer.FromWarehouseId,
-
-                    FromWarehouseName =
-                        fromWarehouse?.Name
-                        ?? "Unknown Warehouse",
-
-                    ToWarehouseId =
-                        transfer.ToWarehouseId,
-
-                    ToWarehouseName =
-                        toWarehouse?.Name
-                        ?? "Unknown Warehouse",
-
-                    Status =
-                        transfer.Status,
-
-                    CreatedByUserId =
-                        transfer.CreatedByUserId,
-
-                    CreatedAt =
-                        transfer.CreatedAt,
-
-                    Reference =
-                        transfer.Reference,
-
-                    Notes =
-                        transfer.Notes,
-
-                    ItemsCount =
-                        transfer.Items.Count
-                });
-        }
-
         ViewBag.Search = search;
         ViewBag.Status = status;
-
-        return View(dtoList);
+        return View(await pages.GetListAsync(search, status));
     }
 
-    // ============================================================
-    // DETAILS
-    // ============================================================
-
-    [HttpGet]
-    [Authorize]
-    [PermissionAuthorize("StockTransfers.View")]
-    public async Task<IActionResult> Details(
-        int id)
+    [HttpGet, Authorize, PermissionAuthorize("StockTransfers.View")]
+    public async Task<IActionResult> Details(int id)
     {
-        var transfer =
-            await _stockTransferService.GetByIdAsync(id);
-
-        if (transfer == null)
-        {
-            TempData["NotificationType"] =
-                "error";
-
-            TempData["NotificationMessage"] = _localizer["Stock transfer not found."].Value;
-
-            return RedirectToAction(
-                nameof(Index));
-        }
-
-        var warehouses =
-            await _warehouseRepository.GetAllAsync();
-
-        var products =
-            await _productRepository.GetAllAsync(null);
-        var storageLocations = await _storageLocationRepository.SearchAsync(null, null);
-
-        var fromWarehouse =
-            warehouses.FirstOrDefault(
-                x => x.Id == transfer.FromWarehouseId);
-
-        var toWarehouse =
-            warehouses.FirstOrDefault(
-                x => x.Id == transfer.ToWarehouseId);
-
-        // ========================================================
-        // USER IDS
-        // ========================================================
-
-        var userIds =
-            new List<string>();
-
-        AddUserId(
-            userIds,
-            transfer.CreatedByUserId);
-
-        AddUserId(
-            userIds,
-            transfer.SubmittedByUserId);
-
-        AddUserId(
-            userIds,
-            transfer.ApprovedByUserId);
-
-        AddUserId(
-            userIds,
-            transfer.RejectedByUserId);
-
-        AddUserId(
-            userIds,
-            transfer.PostedByUserId);
-
-        AddUserId(
-            userIds,
-            transfer.CancelledByUserId);
-
-        foreach (var history in transfer.History)
-        {
-            AddUserId(
-                userIds,
-                history.UserId);
-        }
-
-        // ========================================================
-        // LOAD USERS
-        // ========================================================
-
-        var usersById =
-            new Dictionary<string, string>();
-
-        foreach (var userId in userIds.Distinct())
-        {
-            var user =
-                await _userManager.FindByIdAsync(
-                    userId);
-
-            if (user != null)
-            {
-                usersById[userId] =
-                    user.UserName
-                    ?? user.Email
-                    ?? userId;
-            }
-        }
-
-        // ========================================================
-        // DETAILS DTO
-        // ========================================================
-
-        var dto =
-            new StockTransferDetailsDto
-            {
-                Id =
-                    transfer.Id,
-
-                TransferNumber =
-                    transfer.TransferNumber,
-
-                FromWarehouseId =
-                    transfer.FromWarehouseId,
-
-                FromWarehouseName =
-                    fromWarehouse?.Name
-                    ?? "Unknown Warehouse",
-
-                ToWarehouseId =
-                    transfer.ToWarehouseId,
-
-                ToWarehouseName =
-                    toWarehouse?.Name
-                    ?? "Unknown Warehouse",
-
-                Status =
-                    transfer.Status,
-
-                // ------------------------------------------------
-                // Created
-                // ------------------------------------------------
-
-                CreatedByUserId =
-                    transfer.CreatedByUserId,
-
-                CreatedByUserName =
-                    GetUserName(
-                        usersById,
-                        transfer.CreatedByUserId),
-
-                CreatedAt =
-                    transfer.CreatedAt,
-
-                // ------------------------------------------------
-                // General
-                // ------------------------------------------------
-
-                Reference =
-                    transfer.Reference,
-
-                Notes =
-                    transfer.Notes,
-
-                // ------------------------------------------------
-                // Submitted
-                // ------------------------------------------------
-
-                SubmittedByUserId =
-                    transfer.SubmittedByUserId,
-
-                SubmittedByUserName =
-                    GetUserName(
-                        usersById,
-                        transfer.SubmittedByUserId),
-
-                SubmittedAt =
-                    transfer.SubmittedAt,
-
-                // ------------------------------------------------
-                // Approved
-                // ------------------------------------------------
-
-                ApprovedByUserId =
-                    transfer.ApprovedByUserId,
-
-                ApprovedByUserName =
-                    GetUserName(
-                        usersById,
-                        transfer.ApprovedByUserId),
-
-                ApprovedAt =
-                    transfer.ApprovedAt,
-
-                // ------------------------------------------------
-                // Rejected
-                // ------------------------------------------------
-
-                RejectedByUserId =
-                    transfer.RejectedByUserId,
-
-                RejectedByUserName =
-                    GetUserName(
-                        usersById,
-                        transfer.RejectedByUserId),
-
-                RejectedAt =
-                    transfer.RejectedAt,
-
-                RejectionReason =
-                    transfer.RejectionReason,
-
-                // ------------------------------------------------
-                // Posted
-                // ------------------------------------------------
-
-                PostedByUserId =
-                    transfer.PostedByUserId,
-
-                PostedByUserName =
-                    GetUserName(
-                        usersById,
-                        transfer.PostedByUserId),
-
-                PostedAt =
-                    transfer.PostedAt,
-
-                // ------------------------------------------------
-                // Cancelled
-                // ------------------------------------------------
-
-                CancelledByUserId =
-                    transfer.CancelledByUserId,
-
-                CancelledByUserName =
-                    GetUserName(
-                        usersById,
-                        transfer.CancelledByUserId),
-
-                CancelledAt =
-                    transfer.CancelledAt,
-
-                CancellationReason =
-                    transfer.CancellationReason
-            };
-
-        // ========================================================
-        // ITEMS
-        // ========================================================
-
-        foreach (var item in transfer.Items)
-        {
-            var product =
-                products.FirstOrDefault(
-                    x => x.Id == item.ProductId);
-
-            dto.Items.Add(
-                new StockTransferItemDto
-                {
-                    Id =
-                        item.Id,
-
-                    ProductId =
-                        item.ProductId,
-
-                    ProductName =
-                        product?.Name
-                        ?? "Unknown Product",
-
-                    Barcode =
-                        product?.Barcode,
-
-                    Quantity =
-                        item.Quantity,
-                    SourceLocationId = item.SourceLocationId,
-                    DestinationLocationId = item.DestinationLocationId,
-                    SourceLocationCode = storageLocations.FirstOrDefault(x => x.Id == item.SourceLocationId)?.Code ?? "Legacy / unassigned",
-                    DestinationLocationCode = storageLocations.FirstOrDefault(x => x.Id == item.DestinationLocationId)?.Code ?? "Legacy / unassigned",
-                    TrackingAllocations = item.TrackingAllocations
-                });
-        }
-
-        // ========================================================
-        // HISTORY
-        // ========================================================
-
-        foreach (var history in transfer.History)
-        {
-            dto.History.Add(
-                new StockTransferHistoryDto
-                {
-                    Id =
-                        history.Id,
-
-                    FromStatus =
-                        history.FromStatus,
-
-                    ToStatus =
-                        history.ToStatus,
-
-                    Action =
-                        history.Action,
-
-                    UserId =
-                        history.UserId,
-
-                    UserName =
-                        GetUserName(
-                            usersById,
-                            history.UserId),
-
-                    Reason =
-                        history.Reason,
-
-                    CreatedAt =
-                        history.CreatedAt
-                });
-        }
-
-        return View(dto);
+        var transfer = await pages.GetDetailsAsync(id);
+        if (transfer is not null) return View(transfer);
+        Notify("error", "Stock transfer not found.");
+        return RedirectToAction(nameof(Index));
     }
 
-    // ============================================================
-    // CREATE - GET
-    // ============================================================
-
-    [HttpGet]
-    [Authorize]
-    [PermissionAuthorize("StockTransfers.Create")]
+    [HttpGet, Authorize, PermissionAuthorize("StockTransfers.Create")]
     public async Task<IActionResult> Create()
     {
-        await LoadDropdowns();
-
+        LoadDropdowns((await pages.GetFormAsync())!);
         return View();
     }
 
-    // ============================================================
-    // CREATE - POST
-    // ============================================================
-
-    [HttpPost]
-    [Authorize]
-    [ValidateAntiForgeryToken]
-    [PermissionAuthorize("StockTransfers.Create")]
-    public async Task<IActionResult> Create(
-        CreateStockTransferDto dto)
+    [HttpPost, Authorize, ValidateAntiForgeryToken, PermissionAuthorize("StockTransfers.Create")]
+    public async Task<IActionResult> Create(CreateStockTransferDto dto)
     {
         if (!ModelState.IsValid)
         {
-            await LoadDropdowns();
-
-            TempData["NotificationType"] =
-                "error";
-
-            TempData["NotificationMessage"] = _localizer["Please check the entered data."].Value;
-
+            LoadDropdowns((await pages.GetFormAsync())!);
+            Notify("error", "Please check the entered data.");
             return View(dto);
         }
 
-        var userId =
-            User.FindFirstValue(
-                ClaimTypes.NameIdentifier);
-
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (string.IsNullOrWhiteSpace(userId))
         {
-            TempData["NotificationType"] =
-                "error";
-
-            TempData["NotificationMessage"] = _localizer["Current user could not be identified."].Value;
-
-            return RedirectToAction(
-                nameof(Index));
+            Notify("error", "Current user could not be identified.");
+            return RedirectToAction(nameof(Index));
         }
 
         try
         {
-            var items =
-                dto.Items
-                    .Select(
-                        item =>
-                            new CreateStockTransferItemCommand(
-                                item.ProductId,
-                                item.Quantity,
-                                item.SourceLocationId,
-                                item.DestinationLocationId,
-                                item.TrackingAllocations))
-                    .ToList();
-
-            var command =
-                new CreateStockTransferCommand(
-                    dto.FromWarehouseId,
-                    dto.ToWarehouseId,
-                    userId,
-                    dto.Reference,
-                    dto.Notes,
-                    items);
-
-            var id =
-                await _stockTransferService
-                    .CreateAsync(command);
-
-            TempData["NotificationType"] =
-                "success";
-
-            TempData["NotificationMessage"] = _localizer["Stock transfer created successfully."].Value;
-
-            return RedirectToAction(
-                nameof(Details),
-                new { id });
+            var id = await stockTransferService.CreateAsync(new CreateStockTransferCommand(
+                dto.FromWarehouseId,
+                dto.ToWarehouseId,
+                userId,
+                dto.Reference,
+                dto.Notes,
+                dto.Items.Select(x => new CreateStockTransferItemCommand(
+                    x.ProductId,
+                    x.Quantity,
+                    x.SourceLocationId,
+                    x.DestinationLocationId,
+                    x.TrackingAllocations)).ToList()));
+            Notify("success", "Stock transfer created successfully.");
+            return RedirectToAction(nameof(Details), new { id });
         }
-        catch (Exception ex)
+        catch (Exception exception)
         {
-            HttpContext.RequestServices.GetRequiredService<ILoggerFactory>()
-                .CreateLogger(GetType()).LogError(ex, "Request operation failed");
-            await LoadDropdowns();
-
-            TempData["NotificationType"] =
-                "error";
-
-            TempData["NotificationMessage"] = _localizer["The operation could not be completed. Please try again or contact the administrator."].Value;
-
+            Log(exception);
+            LoadDropdowns((await pages.GetFormAsync())!);
+            Notify("error", "The operation could not be completed. Please try again or contact the administrator.");
             return View(dto);
         }
     }
 
-    // ============================================================
-    // EDIT - GET
-    // ============================================================
-
-    [HttpGet]
-    [Authorize]
-    [PermissionAuthorize("StockTransfers.Edit")]
-    public async Task<IActionResult> Edit(
-        int id)
+    [HttpGet, Authorize, PermissionAuthorize("StockTransfers.Edit")]
+    public async Task<IActionResult> Edit(int id)
     {
-        var transfer =
-            await _stockTransferService.GetByIdAsync(id);
-
-        if (transfer == null)
+        try
         {
-            TempData["NotificationType"] =
-                "error";
-
-            TempData["NotificationMessage"] = _localizer["Stock transfer not found."].Value;
-
-            return RedirectToAction(
-                nameof(Index));
-        }
-
-        if (transfer.Status != StockTransferStatus.Draft)
-        {
-            TempData["NotificationType"] =
-                "error";
-
-            TempData["NotificationMessage"] = _localizer["Only draft transfers can be edited."].Value;
-
-            return RedirectToAction(
-                nameof(Details),
-                new { id });
-        }
-
-        var dto =
-            new UpdateStockTransferDto
+            var page = await pages.GetFormAsync(id);
+            if (page is null)
             {
-                FromWarehouseId =
-                    transfer.FromWarehouseId,
+                Notify("error", "Stock transfer not found.");
+                return RedirectToAction(nameof(Index));
+            }
 
-                ToWarehouseId =
-                    transfer.ToWarehouseId,
-
-                Reference =
-                    transfer.Reference,
-
-                Notes =
-                    transfer.Notes
-            };
-
-        foreach (var item in transfer.Items)
-        {
-            dto.Items.Add(
-                new UpdateStockTransferItemDto
-                {
-                    ProductId =
-                        item.ProductId,
-
-                    Quantity =
-                        item.Quantity,
-
-                    SourceLocationId =
-                        item.SourceLocationId,
-
-                    DestinationLocationId =
-                        item.DestinationLocationId,
-
-                    TrackingAllocations = item.TrackingAllocations
-                });
+            LoadDropdowns(page);
+            return View(ToUpdateDto(page.Form));
         }
-
-        await LoadDropdowns();
-
-        ViewBag.TransferNumber =
-            transfer.TransferNumber;
-
-        return View(dto);
+        catch (InvalidOperationException)
+        {
+            Notify("error", "Only draft transfers can be edited.");
+            return RedirectToAction(nameof(Details), new { id });
+        }
     }
 
-    // ============================================================
-    // EDIT - POST
-    // ============================================================
-
-    [HttpPost]
-    [Authorize]
-    [ValidateAntiForgeryToken]
-    [PermissionAuthorize("StockTransfers.Edit")]
-    public async Task<IActionResult> Edit(
-        int id,
-        UpdateStockTransferDto dto)
+    [HttpPost, Authorize, ValidateAntiForgeryToken, PermissionAuthorize("StockTransfers.Edit")]
+    public async Task<IActionResult> Edit(int id, UpdateStockTransferDto dto)
     {
         if (!ModelState.IsValid)
         {
-            await LoadDropdowns();
-
-            ViewBag.TransferNumber =
-                (await _stockTransferService.GetByIdAsync(id))
-                ?.TransferNumber
-                ?? string.Empty;
-
-            TempData["NotificationType"] =
-                "error";
-
-            TempData["NotificationMessage"] = _localizer["Please check the entered data."].Value;
-
+            var page = await pages.GetFormAsync(id);
+            if (page is null) return RedirectToAction(nameof(Index));
+            LoadDropdowns(page);
+            Notify("error", "Please check the entered data.");
             return View(dto);
         }
 
         try
         {
-            var items =
-                dto.Items
-                    .Select(
-                        item =>
-                            new UpdateStockTransferItemCommand(
-                                item.ProductId,
-                                item.Quantity,
-                                item.SourceLocationId,
-                                item.DestinationLocationId,
-                                item.TrackingAllocations))
-                    .ToList();
-
-            var command =
-                new UpdateStockTransferCommand(
-                    id,
-                    dto.FromWarehouseId,
-                    dto.ToWarehouseId,
-                    dto.Reference,
-                    dto.Notes,
-                    items);
-
-            await _stockTransferService
-                .UpdateAsync(
-                    id,
-                    command);
-
-            TempData["NotificationType"] =
-                "success";
-
-            TempData["NotificationMessage"] = _localizer["Stock transfer updated successfully."].Value;
-
-            return RedirectToAction(
-                nameof(Details),
-                new { id });
+            await stockTransferService.UpdateAsync(id, new UpdateStockTransferCommand(
+                id,
+                dto.FromWarehouseId,
+                dto.ToWarehouseId,
+                dto.Reference,
+                dto.Notes,
+                dto.Items.Select(x => new UpdateStockTransferItemCommand(
+                    x.ProductId,
+                    x.Quantity,
+                    x.SourceLocationId,
+                    x.DestinationLocationId,
+                    x.TrackingAllocations)).ToList()));
+            Notify("success", "Stock transfer updated successfully.");
+            return RedirectToAction(nameof(Details), new { id });
         }
-        catch (Exception ex)
+        catch (Exception exception)
         {
-            HttpContext.RequestServices.GetRequiredService<ILoggerFactory>()
-                .CreateLogger(GetType()).LogError(ex, "Request operation failed");
-            await LoadDropdowns();
-
-            ViewBag.TransferNumber =
-                (await _stockTransferService.GetByIdAsync(id))
-                ?.TransferNumber
-                ?? string.Empty;
-
-            TempData["NotificationType"] =
-                "error";
-
-            TempData["NotificationMessage"] = _localizer["The operation could not be completed. Please try again or contact the administrator."].Value;
-
+            Log(exception);
+            var page = await pages.GetFormAsync(id);
+            if (page is null) return RedirectToAction(nameof(Index));
+            LoadDropdowns(page);
+            Notify("error", "The operation could not be completed. Please try again or contact the administrator.");
             return View(dto);
         }
     }
 
-    // ============================================================
-    // SUBMIT
-    // ============================================================
+    [HttpPost, Authorize, ValidateAntiForgeryToken, PermissionAuthorize("StockTransfers.Submit")]
+    public Task<IActionResult> Submit(int id) => Workflow(id, user => stockTransferService.SubmitAsync(id, user), "Stock transfer submitted successfully.");
 
-    [HttpPost]
-    [Authorize]
-    [ValidateAntiForgeryToken]
-    [PermissionAuthorize("StockTransfers.Submit")]
-    public async Task<IActionResult> Submit(
-        int id)
+    [HttpPost, Authorize, ValidateAntiForgeryToken, PermissionAuthorize("StockTransfers.Approve")]
+    public Task<IActionResult> Approve(int id) => Workflow(id, user => stockTransferService.ApproveAsync(id, user), "Stock transfer approved successfully.");
+
+    [HttpPost, Authorize, ValidateAntiForgeryToken, PermissionAuthorize("StockTransfers.Reject")]
+    public Task<IActionResult> Reject(int id, string reason) =>
+        string.IsNullOrWhiteSpace(reason)
+            ? MissingReason(id, "Rejection reason is required.")
+            : Workflow(id, user => stockTransferService.RejectAsync(id, user, reason), "Stock transfer rejected successfully.");
+
+    [HttpPost, Authorize, ValidateAntiForgeryToken, PermissionAuthorize("StockTransfers.Edit")]
+    public Task<IActionResult> ReturnToDraft(int id) => Workflow(id, user => stockTransferService.ReturnToDraftAsync(id, user), "Stock transfer returned to draft successfully.");
+
+    [HttpPost, Authorize, ValidateAntiForgeryToken, PermissionAuthorize("StockTransfers.Post")]
+    public Task<IActionResult> Post(int id) => Workflow(id, user => stockTransferService.PostAsync(id, user), "Stock transfer posted successfully.");
+
+    [HttpPost, Authorize, ValidateAntiForgeryToken, PermissionAuthorize("StockTransfers.Cancel")]
+    public Task<IActionResult> Cancel(int id, string reason) =>
+        string.IsNullOrWhiteSpace(reason)
+            ? MissingReason(id, "Cancellation reason is required.")
+            : Workflow(id, user => stockTransferService.CancelAsync(id, user, reason), "Stock transfer cancelled successfully.");
+
+    private async Task<IActionResult> Workflow(int id, Func<string, Task> action, string successMessage)
     {
-        return await ExecuteWorkflowAction(
-            id,
-            async userId =>
-            {
-                await _stockTransferService
-                    .SubmitAsync(
-                        id,
-                        userId);
-            },
-            "Stock transfer submitted successfully.");
-    }
-
-    // ============================================================
-    // APPROVE
-    // ============================================================
-
-    [HttpPost]
-    [Authorize]
-    [ValidateAntiForgeryToken]
-    [PermissionAuthorize("StockTransfers.Approve")]
-    public async Task<IActionResult> Approve(
-        int id)
-    {
-        return await ExecuteWorkflowAction(
-            id,
-            async userId =>
-            {
-                await _stockTransferService
-                    .ApproveAsync(
-                        id,
-                        userId);
-            },
-            "Stock transfer approved successfully.");
-    }
-
-    // ============================================================
-    // REJECT
-    // ============================================================
-
-    [HttpPost]
-    [Authorize]
-    [ValidateAntiForgeryToken]
-    [PermissionAuthorize("StockTransfers.Reject")]
-    public async Task<IActionResult> Reject(
-        int id,
-        string reason)
-    {
-        if (string.IsNullOrWhiteSpace(reason))
-        {
-            TempData["NotificationType"] =
-                "error";
-
-            TempData["NotificationMessage"] = _localizer["Rejection reason is required."].Value;
-
-            return RedirectToAction(
-                nameof(Details),
-                new { id });
-        }
-
-        return await ExecuteWorkflowAction(
-            id,
-            async userId =>
-            {
-                await _stockTransferService
-                    .RejectAsync(
-                        id,
-                        userId,
-                        reason);
-            },
-            "Stock transfer rejected successfully.");
-    }
-
-    // ============================================================
-    // RETURN TO DRAFT
-    // ============================================================
-
-    [HttpPost]
-    [Authorize]
-    [ValidateAntiForgeryToken]
-    [PermissionAuthorize("StockTransfers.Edit")]
-    public async Task<IActionResult> ReturnToDraft(
-        int id)
-    {
-        return await ExecuteWorkflowAction(
-            id,
-            async userId =>
-            {
-                await _stockTransferService
-                    .ReturnToDraftAsync(
-                        id,
-                        userId);
-            },
-            "Stock transfer returned to draft successfully.");
-    }
-
-    // ============================================================
-    // POST
-    // ============================================================
-
-    [HttpPost]
-    [Authorize]
-    [ValidateAntiForgeryToken]
-    [PermissionAuthorize("StockTransfers.Post")]
-    public async Task<IActionResult> Post(
-        int id)
-    {
-        return await ExecuteWorkflowAction(
-            id,
-            async userId =>
-            {
-                await _stockTransferService
-                    .PostAsync(
-                        id,
-                        userId);
-            },
-            "Stock transfer posted successfully.");
-    }
-
-    // ============================================================
-    // CANCEL
-    // ============================================================
-
-    [HttpPost]
-    [Authorize]
-    [ValidateAntiForgeryToken]
-    [PermissionAuthorize("StockTransfers.Cancel")]
-    public async Task<IActionResult> Cancel(
-        int id,
-        string reason)
-    {
-        if (string.IsNullOrWhiteSpace(reason))
-        {
-            TempData["NotificationType"] =
-                "error";
-
-            TempData["NotificationMessage"] = _localizer["Cancellation reason is required."].Value;
-
-            return RedirectToAction(
-                nameof(Details),
-                new { id });
-        }
-
-        return await ExecuteWorkflowAction(
-            id,
-            async userId =>
-            {
-                await _stockTransferService
-                    .CancelAsync(
-                        id,
-                        userId,
-                        reason);
-            },
-            "Stock transfer cancelled successfully.");
-    }
-
-    // ============================================================
-    // WORKFLOW HELPER
-    // ============================================================
-
-    private async Task<IActionResult> ExecuteWorkflowAction(
-        int id,
-        Func<string, Task> action,
-        string successMessage)
-    {
-        var userId =
-            User.FindFirstValue(
-                ClaimTypes.NameIdentifier);
-
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (string.IsNullOrWhiteSpace(userId))
         {
-            TempData["NotificationType"] =
-                "error";
-
-            TempData["NotificationMessage"] = _localizer["Current user could not be identified."].Value;
-
-            return RedirectToAction(
-                nameof(Index));
+            Notify("error", "Current user could not be identified.");
+            return RedirectToAction(nameof(Index));
         }
 
         try
         {
             await action(userId);
-
-            TempData["NotificationType"] =
-                "success";
-
-            TempData["NotificationMessage"] =
-                successMessage;
+            Notify("success", successMessage);
         }
-        catch (Exception ex)
+        catch (Exception exception)
         {
-            HttpContext.RequestServices.GetRequiredService<ILoggerFactory>()
-                .CreateLogger(GetType()).LogError(ex, "Request operation failed");
-            TempData["NotificationType"] =
-                "error";
-
-            TempData["NotificationMessage"] = _localizer["The operation could not be completed. Please try again or contact the administrator."].Value;
+            Log(exception);
+            Notify("error", "The operation could not be completed. Please try again or contact the administrator.");
         }
-
-        return RedirectToAction(
-            nameof(Details),
-            new { id });
+        return RedirectToAction(nameof(Details), new { id });
     }
 
-    // ============================================================
-    // USER HELPERS
-    // ============================================================
-
-    private static void AddUserId(
-        List<string> userIds,
-        string? userId)
+    private Task<IActionResult> MissingReason(int id, string message)
     {
-        if (!string.IsNullOrWhiteSpace(userId))
-        {
-            userIds.Add(userId);
-        }
+        Notify("error", message);
+        return Task.FromResult<IActionResult>(RedirectToAction(nameof(Details), new { id }));
     }
 
-    private static string GetUserName(
-        Dictionary<string, string> usersById,
-        string? userId)
+    private void LoadDropdowns(StockTransferFormPageDto page)
     {
-        if (string.IsNullOrWhiteSpace(userId))
-        {
-            return string.Empty;
-        }
-
-        if (usersById.TryGetValue(
-                userId,
-                out var userName))
-        {
-            return userName;
-        }
-
-        return userId;
+        ViewBag.Products = page.Products;
+        ViewBag.Warehouses = page.Warehouses;
+        ViewBag.StorageLocations = page.Locations;
+        ViewBag.TransferNumber = page.TransferNumber;
     }
 
-    // ============================================================
-    // DROPDOWNS
-    // ============================================================
-
-    private async Task LoadDropdowns()
+    private static UpdateStockTransferDto ToUpdateDto(CreateStockTransferDto form) => new()
     {
-        ViewBag.Products =
-            await _productRepository
-                .GetAllAsync(null);
+        FromWarehouseId = form.FromWarehouseId,
+        ToWarehouseId = form.ToWarehouseId,
+        Reference = form.Reference,
+        Notes = form.Notes,
+        Items = form.Items.Select(x => new UpdateStockTransferItemDto
+        {
+            ProductId = x.ProductId,
+            Quantity = x.Quantity,
+            SourceLocationId = x.SourceLocationId,
+            DestinationLocationId = x.DestinationLocationId,
+            TrackingAllocations = x.TrackingAllocations
+        }).ToList()
+    };
 
-        ViewBag.Warehouses =
-            await _warehouseRepository
-                .GetAllAsync();
-        ViewBag.StorageLocations = await _storageLocationRepository.SearchAsync(null, null);
+    private void Notify(string type, string message)
+    {
+        TempData["NotificationType"] = type;
+        TempData["NotificationMessage"] = localizer[message].Value;
     }
+
+    private void Log(Exception exception) =>
+        HttpContext.RequestServices.GetRequiredService<ILoggerFactory>()
+            .CreateLogger(GetType()).LogError(exception, "Request operation failed");
 }

@@ -1,14 +1,15 @@
 @using System.Globalization
 @using MiniStore.Application.DTOs.Security
+@model CreateTenantUserDto
 @{ var ar = CultureInfo.CurrentUICulture.Name.StartsWith("ar"); ViewData["Title"] = ar ? "إضافة مستخدم" : "Add user"; var roles = ViewBag.Roles as List<TenantRoleOptionDto> ?? []; }
 <div class="row justify-content-center py-3"><div class="col-lg-7"><div class="card border-0 shadow-sm"><div class="card-header bg-white"><h4 class="mb-0">@ViewData["Title"]</h4></div><div class="card-body p-4">
     @if (ViewBag.Error is string error) { <div class="alert alert-danger">@error</div> }
     <p class="text-muted">@(ar ? "سيضاف المستخدم إلى الشركة الحالية فقط، ويأخذ صلاحيات الدور المختار فيها." : "The user will join only the active company and receive the selected company role.")</p>
     <form asp-action="Create" method="post">
-        <div class="mb-3"><label class="form-label">@(ar ? "اسم المستخدم" : "Username")</label><input name="username" class="form-control" required maxlength="100" /></div>
-        <div class="mb-3"><label class="form-label">@(ar ? "البريد الإلكتروني" : "Email")</label><input name="email" type="email" class="form-control" required maxlength="256" /></div>
-        <div class="mb-3"><label class="form-label">@(ar ? "كلمة المرور" : "Password")</label><input name="password" type="password" class="form-control" required autocomplete="new-password" /></div>
-        <div class="mb-4"><label class="form-label">@(ar ? "دور الشركة" : "Company role")</label><select name="roleId" class="form-select" required><option value="">@(ar ? "اختر الدور" : "Select role")</option>@foreach(var role in roles){<option value="@role.Id">@role.Name @(role.IsSystem ? (ar ? "(محمي)" : "(Protected)") : "")</option>}</select></div>
+        <div class="mb-3"><label asp-for="UserName" class="form-label">@(ar ? "اسم المستخدم" : "Username")</label><input asp-for="UserName" class="form-control" required maxlength="100" /></div>
+        <div class="mb-3"><label asp-for="Email" class="form-label">@(ar ? "البريد الإلكتروني" : "Email")</label><input asp-for="Email" type="email" class="form-control" required maxlength="256" /></div>
+        <div class="mb-3"><label asp-for="Password" class="form-label">@(ar ? "كلمة المرور" : "Password")</label><input asp-for="Password" type="password" class="form-control" required autocomplete="new-password" value="" /></div>
+        <div class="mb-4"><label asp-for="RoleId" class="form-label">@(ar ? "دور الشركة" : "Company role")</label><select asp-for="RoleId" class="form-select" required><option value="">@(ar ? "اختر الدور" : "Select role")</option>@foreach(var role in roles){<option value="@role.Id">@role.Name @(role.IsSystem ? (ar ? "(محمي)" : "(Protected)") : "")</option>}</select></div>
         <div class="d-flex justify-content-end gap-2"><a asp-action="Index" class="btn btn-outline-secondary">@(ar ? "إلغاء" : "Cancel")</a><button class="btn btn-primary">@(ar ? "إنشاء المستخدم" : "Create user")</button></div>
     </form>
 </div></div></div></div>

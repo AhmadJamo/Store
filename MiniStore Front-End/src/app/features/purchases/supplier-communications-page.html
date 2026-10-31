@@ -1,0 +1,135 @@
+<section class="communications-page">
+  <app-page-header
+    eyebrow="PURCHASING"
+    [title]="i18n.text('title')"
+    [description]="i18n.text('description')"
+  />
+  @if (loading()) {
+    <app-feedback-state kind="loading" [title]="i18n.text('loading')" />
+  } @else if (failure(); as problem) {
+    <app-api-recovery [problem]="problem" (retry)="load()" />
+  } @else if (!id) {
+    <section class="ui-card prepare">
+      <h2>{{ documentNumber || i18n.text('document') }}</h2>
+      <p>
+        <strong>{{ i18n.text('supplier') }}:</strong> {{ supplierName }}
+      </p>
+      <div class="actions">
+        @if (session.can('SupplierCommunications.Prepare')) {
+          <button class="ui-button primary" [disabled]="saving()" (click)="prepare('ar-JO')">
+            {{ saving() ? i18n.text('preparing') : i18n.text('prepare') }} —
+            {{ i18n.text('arabic') }}</button
+          ><button class="ui-button secondary" [disabled]="saving()" (click)="prepare('en-US')">
+            {{ i18n.text('prepare') }} — {{ i18n.text('english') }}
+          </button>
+        }
+      </div>
+    </section>
+    <section>
+      <h2>{{ i18n.text('history') }}</h2>
+      <div class="cards">
+        @for (x of history(); track x.id) {
+          <article class="ui-card">
+            <header>
+              <strong>{{ x.supplierName }}</strong
+              ><span class="ui-badge">{{ i18n.text(status(x.status)) }}</span>
+            </header>
+            <p>{{ x.preferredLanguage }} · {{ x.createdAtUtc | date: 'medium' }}</p>
+            <a class="ui-button secondary" [routerLink]="['/purchases/communications', x.id]">{{
+              i18n.text('open')
+            }}</a>
+          </article>
+        } @empty {
+          <p class="ui-card">{{ i18n.text('none') }}</p>
+        }
+      </div>
+    </section>
+  } @else if (communication(); as x) {
+    <div class="top">
+      <span class="ui-badge">{{ i18n.text(status(x.status)) }}</span
+      ><a class="ui-button secondary" [routerLink]="sourceRoute(x)">{{ i18n.text('back') }}</a>
+    </div>
+    <aside class="ui-card warning">
+      <strong>{{ i18n.text('preparedWarning') }}</strong
+      ><span>{{ i18n.text('warning') }}</span>
+    </aside>
+    <article class="ui-card message">
+      <dl>
+        <div>
+          <dt>{{ i18n.text('supplier') }}</dt>
+          <dd>{{ x.supplierName }}</dd>
+        </div>
+        <div>
+          <dt>{{ i18n.text('recipient') }}</dt>
+          <dd>{{ x.recipientEmail }}</dd>
+        </div>
+        <div>
+          <dt>{{ i18n.text('language') }}</dt>
+          <dd>{{ x.preferredLanguage }}</dd>
+        </div>
+      </dl>
+      <h2>{{ i18n.text('subject') }}</h2>
+      <p>{{ x.subject }}</p>
+      <h2>{{ i18n.text('message') }}</h2>
+      <pre>{{ x.body }}</pre>
+      <a class="ui-button primary" [href]="x.mailtoUrl">{{ i18n.text('openEmail') }}</a>
+    </article>
+    @if (x.attachments.length) {
+      <section class="ui-card">
+        <h2>{{ i18n.text('attachments') }}</h2>
+        <div class="actions">
+          @for (item of x.attachments; track item.id) {
+            <a class="ui-button secondary" [href]="attachmentUrl(item.id)">{{ item.fileName }}</a>
+          }
+        </div>
+      </section>
+    }
+    @if (session.can('SupplierCommunications.RecordActivity')) {
+      <form class="ui-card activity" [formGroup]="activity" (ngSubmit)="record()">
+        <h2>{{ i18n.text('record') }}</h2>
+        <label class="ui-field"
+          ><span>{{ i18n.text('activity') }}</span
+          ><select formControlName="status">
+            <option [ngValue]="2">{{ i18n.text('sent') }}</option>
+            <option [ngValue]="3">{{ i18n.text('delivered') }}</option>
+            <option [ngValue]="4">{{ i18n.text('replied') }}</option>
+            <option [ngValue]="5">{{ i18n.text('failed') }}</option>
+            <option [ngValue]="6">{{ i18n.text('followUp') }}</option>
+          </select></label
+        ><label class="ui-field"
+          ><span>{{ i18n.text('occurred') }}</span
+          ><input type="datetime-local" formControlName="occurredAtUtc" /></label
+        ><label class="ui-field"
+          ><span>{{ i18n.text('evidence') }}</span
+          ><input formControlName="evidenceReference" maxlength="500" /></label
+        ><label class="ui-field"
+          ><span>{{ i18n.text('note') }}</span
+          ><input formControlName="note" maxlength="2000" /></label
+        ><button class="ui-button primary" [disabled]="saving()">
+          {{ saving() ? i18n.text('saving') : i18n.text('save') }}
+        </button>
+      </form>
+    }
+    <section>
+      <h2>{{ i18n.text('statusHistory') }}</h2>
+      <div class="cards">
+        @for (item of x.activities; track item.occurredAtUtc + item.status) {
+          <article class="ui-card">
+            <header>
+              <strong>{{ i18n.text(status(item.status)) }}</strong
+              ><time>{{ item.occurredAtUtc | date: 'medium' }}</time>
+            </header>
+            @if (item.note) {
+              <p>{{ item.note }}</p>
+            }
+            @if (item.evidenceReference) {
+              <small>{{ i18n.text('evidence') }}: {{ item.evidenceReference }}</small>
+            }
+          </article>
+        } @empty {
+          <p class="ui-card">{{ i18n.text('noStatus') }}</p>
+        }
+      </div>
+    </section>
+  }
+</section>

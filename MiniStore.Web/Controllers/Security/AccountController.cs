@@ -2,42 +2,27 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using MiniStore.Application.Tenancy;
-using MiniStore.Domain.Interfaces;
 using MiniStore.Application.Saas;
 using MiniStore.Application.Services;
 using MiniStore.Domain.Entities;
+using MiniStore.Web.Services;
 
 namespace MiniStore.Web.Controllers;
 
 public class AccountController : Controller
 {
-    private readonly SignInManager<IdentityUser> _signInManager;
-    private readonly UserManager<IdentityUser> _userManager;
-    private readonly ITenantMembershipRepository _memberships;
-    private readonly ISaasOnboardingService _onboarding;
-    private readonly ICompanyOnboardingService _companyOnboarding;
     private readonly PlatformSaasService _saas;
-    private readonly ISecurityAuditEventWriter _securityAudit;
-    private readonly IAuditRequestContext _auditRequest;
+    private readonly TenantAccountAuthenticationService _authentication;
+    private readonly TenantCompanyRegistrationService _registration;
 
     public AccountController(
-        SignInManager<IdentityUser> signInManager,
-        UserManager<IdentityUser> userManager,
-        ITenantMembershipRepository memberships,
-        ISaasOnboardingService onboarding,
-        ICompanyOnboardingService companyOnboarding,
         PlatformSaasService saas,
-        ISecurityAuditEventWriter securityAudit,
-        IAuditRequestContext auditRequest)
+        TenantAccountAuthenticationService authentication,
+        TenantCompanyRegistrationService registration)
     {
-        _signInManager = signInManager;
-        _userManager = userManager;
-        _memberships = memberships;
-        _onboarding = onboarding;
-        _companyOnboarding = companyOnboarding;
         _saas = saas;
-        _securityAudit = securityAudit;
-        _auditRequest = auditRequest;
+        _authentication = authentication;
+        _registration = registration;
     }
 
     [HttpGet]
@@ -78,56 +63,10 @@ public class AccountController : Controller
             return View();
         }
 
-        var user = await _userManager.FindByNameAsync(username);
-        var result = user is null
-            ? Microsoft.AspNetCore.Identity.SignInResult.Failed
-            : await _signInManager.CheckPasswordSignInAsync(
-                user,
-                password,
-                lockoutOnFailure: true);
-
-        if (result.Succeeded)
+        var outcome = await _authentication.SignInAsync(username, password, companyCode);
+        if (outcome.Status == TenantLoginStatus.Succeeded)
         {
-            var membership = string.IsNullOrWhiteSpace(companyCode)
-                ? await _memberships.GetDefaultActiveAsync(user!.Id)
-                : await _memberships.GetActiveByCompanyCodeAsync(user!.Id, companyCode);
-            if (membership is null)
-            {
-                await _securityAudit.RecordAsync(new IndependentAuditEventWriteRequest
-                {
-                    Scope = AuditEventScope.System,
-                    Category = AuditEventCategory.Security,
-                    Severity = AuditEventSeverity.Warning,
-                    Outcome = AuditEventOutcome.Denied,
-                    EventType = SemanticAuditEventTypes.TenantLoginFailed,
-                    Action = "Login",
-                    ActorType = AuditActorType.External,
-                    ActorId = "anonymous",
-                    SourceChannel = AuditSourceChannel.Web,
-                    CorrelationId = _auditRequest.CorrelationId,
-                    ResourceType = "TenantSession",
-                    ResourceId = "login",
-                    ReasonCode = "CompanyAccessDenied",
-                    RequestPathTemplate = _auditRequest.RequestPathTemplate,
-                    SourceIpMasked = _auditRequest.SourceIpMasked,
-                    UserAgentHash = _auditRequest.UserAgentHash
-                }, CancellationToken.None);
-                ViewBag.Error = string.IsNullOrWhiteSpace(companyCode)
-                    ? "Your account is not assigned to an active company."
-                    : "The company code is invalid or your account is not assigned to it.";
-                ViewBag.ReturnUrl = returnUrl;
-                ViewBag.CompanyCode = companyCode;
-                return View();
-            }
-
-            await _signInManager.SignInWithClaimsAsync(
-                user,
-                isPersistent: false,
-                [new Claim(
-                    TenantClaimTypes.TenantId,
-                    membership.TenantId.ToString(System.Globalization.CultureInfo.InvariantCulture))]);
-
-            if (!await _companyOnboarding.IsResolvedAsync(membership.TenantId))
+            if (outcome.RequiresCompanyOnboarding)
                 return RedirectToAction("Index", "CompanyOnboarding");
 
             if (!string.IsNullOrWhiteSpace(returnUrl) &&
@@ -142,28 +81,11 @@ public class AccountController : Controller
                 "Dashboard");
         }
 
-        ViewBag.Error =
-            "Invalid username or password.";
-
-        await _securityAudit.RecordAsync(new IndependentAuditEventWriteRequest
-        {
-            Scope = AuditEventScope.System,
-            Category = AuditEventCategory.Security,
-            Severity = result.IsLockedOut ? AuditEventSeverity.Critical : AuditEventSeverity.Warning,
-            Outcome = AuditEventOutcome.Denied,
-            EventType = SemanticAuditEventTypes.TenantLoginFailed,
-            Action = "Login",
-            ActorType = AuditActorType.External,
-            ActorId = "anonymous",
-            SourceChannel = AuditSourceChannel.Web,
-            CorrelationId = _auditRequest.CorrelationId,
-            ResourceType = "TenantSession",
-            ResourceId = "login",
-            ReasonCode = result.IsLockedOut ? "AccountLocked" : "InvalidCredentials",
-            RequestPathTemplate = _auditRequest.RequestPathTemplate,
-            SourceIpMasked = _auditRequest.SourceIpMasked,
-            UserAgentHash = _auditRequest.UserAgentHash
-        }, CancellationToken.None);
+        ViewBag.Error = outcome.Status == TenantLoginStatus.CompanyAccessDenied
+            ? string.IsNullOrWhiteSpace(companyCode)
+                ? "Your account is not assigned to an active company."
+                : "The company code is invalid or your account is not assigned to it."
+            : "Invalid username or password.";
 
         ViewBag.ReturnUrl = returnUrl;
         ViewBag.CompanyCode = companyCode;
@@ -175,7 +97,7 @@ public class AccountController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Logout()
     {
-        await _signInManager.SignOutAsync();
+        await _authentication.SignOutAsync();
 
         return RedirectToAction(
             nameof(Login));
@@ -200,13 +122,7 @@ public class AccountController : Controller
     {
         try
         {
-            var result = await _onboarding.RegisterAsync(command);
-            var user = await _userManager.FindByIdAsync(result.UserId)
-                ?? throw new InvalidOperationException("The registered user was not found.");
-            await _signInManager.SignInWithClaimsAsync(
-                user,
-                false,
-                [new Claim(TenantClaimTypes.TenantId, result.TenantId.ToString(System.Globalization.CultureInfo.InvariantCulture))]);
+            await _registration.RegisterAndSignInAsync(command);
             return RedirectToAction("Index", "CompanyOnboarding");
         }
         catch (Exception exception) when (exception is ArgumentException or InvalidOperationException)

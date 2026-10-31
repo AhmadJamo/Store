@@ -1,0 +1,154 @@
+# Phase 22 — Inventory and WMS Angular migration
+
+> Status: COMPLETE — `MOD-022A..F` COMPLETE on 2026-10-27
+>
+> Presentation default: MVC until a separate cutover approval.
+
+> Reconciliation note (2026-10-30): `MOD-022A..F` are complete for their recorded slices, but the source-authoritative
+> `MOD-028A` registry found four older inventory surfaces outside those slices: Stock Transfers, Inventory Scanning,
+> Inventory Insights and Inventory Reconciliation. They are queued in `MOD-028B..D`; this note corrects the earlier broad
+> wording that implied every inventory MVC surface had migrated.
+
+## Scope
+
+Move the existing inventory and WMS workflows to Angular in bounded slices while preserving ProductStock, StockTransaction,
+InventoryBalance, reservation, tracking, valuation and accounting authority on the server. Angular consumes explicit DTOs and
+never recomputes authoritative quantity, cost or value.
+
+## `MOD-022A` delivered — inventory ledger
+
+- Added authenticated `GET /api/v1/stock-transactions` protected by `StockTransactions.View`.
+- The API delegates paging, search, type/direction/date filters and allowlisted sorting to `StockTransactionService`; controllers do
+  not access Entity Framework and the historical ledger exposes no mutation endpoint.
+- Added permission-aware Angular route `/inventory/transactions` with debounced search, all 18 current transaction types,
+  incoming/outgoing and date filters, page sizes, sortable columns, paging and server-authored unit-cost/value/variance display.
+- Added Arabic/English labels, RTL-safe logical layout, external SCSS, responsive filters and accessible sortable headings.
+- No database, valuation, balance, tracking, posting or accounting behavior changed.
+
+## Evidence
+
+- Web Release build: zero warnings and zero errors.
+- Security/inventory regression: 1206 checks passed.
+- Angular: 151/151 tests across 52 files passed.
+- Static accessibility: 61 templates passed; external-SCSS policy passed.
+- Production bundles: 302,834/358,400 initial bytes and 80,941/81,920 largest lazy bytes.
+- Live checks: Angular route returned 200; anonymous API request returned 401.
+
+## `MOD-022B` delivered — product stock and manual adjustments
+
+- Added authenticated, versioned ProductStock list/form/create/update/delete contracts. Every operation delegates to
+  `ProductStockService`; the existing server-owned delete refusal remains visible to Angular instead of inventing a second rule.
+- Added the manual adjustment form/command contract over `StockTransactionService` for Adjustment In, Adjustment Out and
+  Kitchen Variance, with a required reason and server-owned balance, location-removal, tracking and AVCO behavior.
+- Added permission-aware `/inventory/stocks` Angular operations for balance review, opening stock, current-quantity correction,
+  delete attempt feedback and manual adjustment. Product and warehouse names are user-facing; identifiers stay internal.
+- Added invariant quantity validation, explicit form option DTOs, CSRF protection, Problem Details recovery, dirty-form protection,
+  Arabic/English localization, RTL-safe responsive layout and permission-filtered navigation.
+- No database, accounting, valuation, tracking or inventory-domain rule changed; MVC remains the default presentation.
+
+## Current evidence
+
+- Web Release build: zero warnings and zero errors.
+- Security/inventory regression: 1216 checks passed.
+- Angular: 161/161 tests across 59 files passed.
+- Static accessibility: 67 templates passed; external-SCSS policy passed.
+- Production bundles: 303,702/358,400 initial bytes and 81,296/81,920 largest lazy bytes.
+- Live checks: adjustment list/create Angular routes returned 200; anonymous adjustment APIs returned 401.
+
+## `MOD-022C` delivered — availability and reservation history
+
+- Added authenticated, versioned, GET-only availability and reservation endpoints protected independently by
+  `InventoryBalances.View` and `InventoryReservations.View`.
+- Paging remains behind `InventoryBalanceService` and `InventoryReservationService`; controllers do not access repositories or EF.
+- Added permission-aware `/inventory/availability` with product search, named warehouse filtering, paging and server-authored
+  On Hand, Reserved and Available quantities by named location, including the protected Unassigned position.
+- Added permission-aware `/inventory/reservations` with reference search, Active/Consumed/Released filtering, paging, named source
+  types, line counts, remaining total quantity and lifecycle timestamps.
+- Both responsive screens are Arabic/English, RTL-safe and read-only. No schema, balance, reservation, tracking, valuation or
+  accounting behavior changed; MVC remains the default presentation.
+
+## `MOD-022D` delivered — inventory adjustments and cycle counting
+
+- Added an authenticated versioned API for adjustment list, named create options, create, details, count, approve, post and cancel.
+- Each mutation keeps its independent `InventoryAdjustments.*` permission and CSRF protection and delegates to
+  `InventoryAdjustmentService`; the controller does not access repositories or EF.
+- Added permission-aware Angular list, create and details routes with warehouse/location/product names, blind-count behavior,
+  dynamic full-line count entry, variance evidence, completed-action states and separate approve/post/cancel controls.
+- Rejected commands retain correctable input and render normalized Problem Details. Dirty count/create forms are protected.
+- Separation of duties, frozen expected quantity, reservations, location/tracking updates, AVCO, stock transactions/movements and
+  atomic posting remain server-owned. No schema or domain/accounting rule changed; MVC remains default.
+
+## `MOD-022E` delivered — inventory tracking and quality controls
+
+- Added authenticated `GET` plus CSRF-protected opening allocation, quarantine/release, recall create/close and recall-communication
+  endpoints under `/api/v1/inventory-tracking`; each operation preserves its independent `InventoryTracking.*` permission.
+- The API maps tuple-backed service choices to explicit named DTOs and delegates every command to `InventoryTrackingService`; no
+  controller accesses EF or repositories and no tracking, expiration, dimensional balance or recall rule moved into Angular.
+- Added permission-aware `/inventory/tracking` with dynamic opening allocations, live expiration alerts, current balances and trace
+  history, reasoned quarantine/release, recall impact evidence, manual communication logging and explicit closure guidance.
+- Product, warehouse and location names are user-facing while identifiers remain transport values. Rejected and dirty opening/recall
+  forms remain recoverable. Arabic/English, RTL, responsive external SCSS and accessibility contracts are included.
+- Recall closure deliberately does not release quarantined inventory. MVC remains the default presentation and no schema changed.
+
+## Current evidence
+
+- Web Release build: zero warnings and zero errors.
+- Security/inventory regression: 1219 checks passed.
+- Angular: 164/164 tests across 61 files passed.
+- Static accessibility: 68 templates passed; external-SCSS policy passed.
+- Production bundles: 303,857/358,400 initial bytes and 81,401/81,920 largest lazy bytes.
+- Live checks: Angular tracking route returned 200; anonymous tracking read/write requests returned 401.
+
+## `MOD-022F` delivered — warehouse locations and internal movement
+
+- Added authenticated, versioned APIs for location search/create/edit, Unassigned Stock assignment and putaway rules, exact-location
+  relocation history and the physical StockMovement ledger. Controllers delegate to existing Application services only.
+- Added permission-aware Angular `/inventory/locations`, `/inventory/putaway` and `/inventory/location-movements` routes covering
+  location hierarchy/barcode/capabilities, suggested/manual putaway, rule create/activate/deactivate, relocation and both ledgers.
+- Every mutation preserves antiforgery and its existing permission. Putaway/relocation use retry-safe idempotency keys; warehouse,
+  product and location names remain user-facing while identifiers stay internal transport values.
+- Capacity, receive/pick eligibility, hierarchy/cycle checks, dimensional balance, ProductStock totals and immutable movement facts
+  remain server-owned. Arabic/English, RTL, dirty-form recovery, responsive external SCSS and accessibility are included.
+- No schema or domain/accounting rule changed; MVC remains the default presentation.
+
+## Final evidence
+
+- Web Release build: zero warnings and zero errors.
+- Security/inventory regression: 1224 checks passed.
+- Angular: 165/165 tests across 62 files passed.
+- Static accessibility: 71 templates passed; external-SCSS policy passed.
+- Production bundles: 304,437/358,400 initial bytes and 81,662/81,920 largest lazy bytes.
+- Live checks: all three Angular routes return 200 and anonymous location/putaway/movement API requests return 401.
+
+## Next phase
+
+`MOD-023A` starts the purchasing migration with Purchase Request list/create/details and its submit/cancel lifecycle, preserving
+approval, frozen-unit, numbering and server-owned state-transition rules. MVC remains default until a separate cutover approval.
+## MOD-028B — Stock Transfers parity
+
+- Added Application-owned list/details/form projections and removed repository/UserManager composition from the MVC controller.
+- Added a permission-separated, antiforgery-protected internal API for create/edit and the complete
+  submit/approve/reject/return-to-draft/post/cancel lifecycle.
+- Added bilingual RTL-safe Angular list/create/edit/details routes with named warehouses, products and storage locations,
+  tracking allocations, dirty-form protection and state-aware actions.
+- Existing numbering, reservations, warehouse/location validation, tracking, movements, valuation and posting authority remain
+  in `StockTransferService`; no schema or business transition changed.
+- Full gate passed: Release clean, 1,315 backend checks, 208/208 Angular tests, 118 templates, 325,287 initial bytes and
+  81,824 largest-lazy bytes. MVC remains default.
+## MOD-028C — Inventory Scanning parity
+
+- Added an authenticated read/command API over `InventoryScanningService` without moving scan resolution or stock rules into Web.
+- Preserved the base scan permission plus independent putaway, relocation and count permissions and antiforgery on every command.
+- Added a bilingual RTL-safe scanner/keyboard Angular route with exact/ambiguous/not-found states, blind-count protection,
+  server-issued idempotency keys, duplicate-submit suppression and named balance evidence.
+- Full gate passed: Release clean, 1,317 backend checks, 209/209 Angular tests, 119 templates, 325,405 initial bytes and
+  81,911 largest-lazy bytes. MVC remains default.
+## MOD-028D — Inventory Insights and Reconciliation parity
+
+- Added two independent permission-protected GET-only APIs over the existing Application services.
+- Added bilingual RTL-safe Angular routes for activity thresholds/KPIs and paged reconciliation exceptions.
+- Classification, values, reconciliation tolerances, issue detection and paging remain server-authored; no mutation exists.
+- Replaced the Insights warehouse tuple with an explicit API DTO and removed four proven-unused foundation localization strings
+  to restore lazy-budget headroom without raising limits.
+- Full gate passed: Release clean, 1,319 backend checks, 210/210 Angular tests, 120 templates, 325,647 initial bytes and
+  81,537 largest-lazy bytes. MVC remains default.

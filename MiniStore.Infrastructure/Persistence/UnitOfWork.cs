@@ -31,6 +31,7 @@ public class UnitOfWork : IUnitOfWork
         catch (DbUpdateConcurrencyException exception)
         {
             await transaction.RollbackAsync();
+            _context.ChangeTracker.Clear();
 
             throw new InvalidOperationException(
                 "Data changed while this operation was being processed. Review the latest values and try again.",
@@ -39,6 +40,7 @@ public class UnitOfWork : IUnitOfWork
         catch
         {
             await transaction.RollbackAsync();
+            _context.ChangeTracker.Clear();
 
             throw;
         }

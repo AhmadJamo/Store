@@ -8,8 +8,9 @@ using MiniStore.Domain.Interfaces;
 
 namespace MiniStore.Web.Services;
 
-public sealed class SupplierOutboxWorker(IServiceScopeFactory scopes,ILogger<SupplierOutboxWorker> logger) : BackgroundService
+public sealed class SupplierOutboxWorker(IServiceScopeFactory scopes,IBackgroundJobMonitor monitor,ILogger<SupplierOutboxWorker> logger) : BackgroundService
 {
+    private const string JobKey="supplier-outbox";
     public static HttpMessageHandler CreateHandler()=>new SocketsHttpHandler
     {
         AllowAutoRedirect=false,
@@ -23,8 +24,9 @@ public sealed class SupplierOutboxWorker(IServiceScopeFactory scopes,ILogger<Sup
     };
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
+        monitor.Register(JobKey,"jobSupplierOutbox","SupplierIntegrations.View",TimeSpan.FromSeconds(30));
         using var timer=new PeriodicTimer(TimeSpan.FromSeconds(30));
-        do{try{await DispatchBatch(stoppingToken);}catch(Exception ex){logger.LogError(ex,"Supplier outbox batch failed.");}}while(await timer.WaitForNextTickAsync(stoppingToken));
+        do{monitor.Started(JobKey);try{await DispatchBatch(stoppingToken);monitor.Succeeded(JobKey);}catch(OperationCanceledException)when(stoppingToken.IsCancellationRequested){break;}catch(Exception ex){monitor.Failed(JobKey);logger.LogError(ex,"Supplier outbox batch failed.");}}while(await timer.WaitForNextTickAsync(stoppingToken));
     }
     private async Task DispatchBatch(CancellationToken cancellationToken)
     {

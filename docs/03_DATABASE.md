@@ -5,8 +5,16 @@ Migration 135 (`20261022125125_AddReusableAnalyticsCenter`) creates tenant-owned
 `AnalyticsWorkspaceWidgets`. Workspaces preserve module key, visibility/owner, default status, layout, date window,
 comparison/refresh/definition preferences, creator evidence and rowversion. Widgets preserve stable provider key,
 unique order, visualization, bilingual title overrides, spans, Top-N, legend/comparison, target and accent color.
-Tenant-composite foreign keys and query filters preserve isolation. Source/model and local Demo are reconciled through
-migration 135 with no pending changes as of 2026-10-22.
+Tenant-composite foreign keys and query filters preserve isolation.
+
+`MOD-017C` source migration `20261025025522_AddAnalyticsWorkspaceDelegation` creates
+`AnalyticsWorkspaceDelegations`. Each tenant-owned row targets exactly one company member or tenant role, records a
+UTC start, optional expiry, creator evidence and optional revocation evidence, and belongs to one workspace through a
+tenant-composite cascade. The optional role reference is also tenant-composite, preventing cross-company crafted
+references. `AnalyticsWorkspaces.DelegationRevision` forces the parent rowversion to advance on grant/revoke, so stale
+access commands conflict reliably. User/role activity lookup indexes support authorization checks. This additive migration
+is migration 136 and was applied to local Demo on 2026-10-30 after the live MVC rollback rehearsal exposed the missing
+table. EF reports no pending migrations or model changes.
 
 ## SAL-120B organization identity, document designer and frozen PDF evidence
 
@@ -24,7 +32,7 @@ Migration 130 (`20261021220324_AddCustomerCreditNotes`) creates tenant-owned hea
 
 ## SAL-100C return disposition posting
 
-Migration 129 (`20261021170925_AddCustomerReturnDispositionPosting`) adds nullable `PostedByUserId` and `PostedAtUtc` evidence to `CustomerReturnReceipts`; enum values are stored through the existing integer columns. The migration is additive and is now included in the local Demo database together with all migrations through 135.
+Migration 129 (`20261021170925_AddCustomerReturnDispositionPosting`) adds nullable `PostedByUserId` and `PostedAtUtc` evidence to `CustomerReturnReceipts`; enum values are stored through the existing integer columns. The migration is additive and is now included in the local Demo database together with all migrations through 136.
 
 ## SAL-100A customer return authorization (2026-10-21)
 
@@ -36,7 +44,7 @@ Migration 128 adds tenant-owned receipt, line and history tables with restrictiv
 
 > Status: IMPLEMENTED  
 > Source of truth: EF Core entities, configurations and migrations  
-> Last reviewed: 2026-10-22
+> Last reviewed: 2026-10-30
 
 PUR-270 migration `20261014205756_AddSupplierPortalAndIntegration` creates tenant-owned `SupplierIntegrationCredentials`, `SupplierPortalAccesses`, `SupplierExternalSubmissions`, `SupplierIntegrationOutboxMessages` and `SupplierExternalAuditEvents`. Credential and portal secrets are stored only as SHA-256 hashes; global unique indexes make cross-tenant token resolution unambiguous. Tenant-composite foreign keys bind suppliers, credentials and outbox messages to one company. Submission channel/identity/idempotency is unique inside the tenant, and outbox idempotency is tenant-unique. The migration is additive, creates no access by default and was applied to local `MiniStoreDb` on 2026-10-15.
 

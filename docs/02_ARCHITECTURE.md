@@ -1,5 +1,55 @@
 # Architecture
 
+## Incremental Angular API boundary (2026-10-24)
+
+During migration, `MiniStore.Web` remains the composition and same-origin host for both MVC and the versioned internal `/api/v1` surface. API controllers use explicit Application DTOs/services; repositories and EF Core are not exposed to presentation. The existing Identity cookie, tenant middleware and permission authority remain authoritative. Angular owns presentation state only, bootstraps its server session and CSRF token centrally, and treats returned permissions as display guidance while every server endpoint reauthorizes independently. OpenAPI is authenticated and filtered to internal v1 paths. See `modernization/PHASE_02_API_FOUNDATION.md` and the same-origin modernization ADR.
+
+The Platform Angular boundary uses its separate `PlatformCookie`, never the tenant Identity cookie. Audit reads delegate to
+`AuditEventReadService`; only the server's `AuditSensitive` authorization decision enables sensitive redacted fields.
+Exports remain purpose-bound and self-auditing. Retention commands delegate unchanged to `AuditRetentionService`, which owns
+legal holds, signed external checkpoints, destruction manifests and transactional semantic audit evidence.
+
+Presentation cutover is an MVC-layer concern. A global action filter consults per-surface `Mvc`, `AngularPilot`, or
+`AngularDefault` configuration, but redirects only GET/HEAD actions in the code-owned route allowlist. Mutations,
+downloads, missing route values and unknown actions remain MVC. MOD-030A adds same-origin production Angular hosting
+under `/app`; MOD-030B/C commit Customers, Suppliers, Products and AnalyticsCenter as reversible `AngularDefault`
+cohorts while Settings remains MVC pending authorized evidence. The SPA fallback
+is path-scoped and static-only, so API authorization, tenant middleware and MVC routing retain their existing boundaries.
+See `decisions/ADR-20261025-REVERSIBLE-PRESENTATION-CUTOVER.md` and `modernization/PHASE_30_CUTOVER.md`.
+
+The Angular visual layer uses semantic CSS custom properties as its stable component contract. Runtime theme and density choices alter root data attributes and tokens rather than duplicating markup. Locale owns `lang`/`dir`; components use logical CSS. The server session culture wins at bootstrap, and a language change writes the same server cookie before changing visible Angular state. A neutral locale signal keeps session consumers aligned without introducing a session/interceptor cycle. Browser storage contains only versioned, non-sensitive UI preferences and is never an authority for server culture, permissions or business state. See `modernization/PHASE_03_VISUAL_SYSTEM.md`.
+
+The first business slice, Customers, proves coexistence rather than replacement. MVC and `/api/v1/customers` share the same Application service and DTO authority; Angular adds no direct repository or EF path. Server-side paging, numbering, policy resolution, validation, transaction and concurrency remain behind that boundary. The Angular feature keeps API models/client, presentation components and a separate stylesheet within one feature folder and integrates with the reusable workspace without persisting form payloads.
+
+Shared Angular UI is deliberately presentation-only. Headers, feedback states, table overflow regions and pagers accept text/content or emit UI intent; they never fetch data, inspect permissions or interpret business fields. Customers and Suppliers prove reuse. Supplier paging was added through Domain repository criteria and Application DTO/service projection rather than browser slicing or controller data access.
+
+The complete supplier Angular slice follows the same vertical boundary as Customers: typed feature client → versioned API controller → `SupplierService` → existing repositories/assignment service/UnitOfWork. Form-option DTOs are convenience projections, not browser authority; every submitted account and product relationship is revalidated through the Application layer. Supplier concurrency has a dedicated exception mapped to HTTP 409 while remaining compatible with the MVC `InvalidOperationException` handling boundary.
+
+The Angular Command Center uses an explicit typed provider registry over existing feature API clients. It does not introduce a generic query endpoint or reinterpret business data. Provider availability comes from the bootstrapped session, and each request still crosses the feature endpoint's server authorization/tenant boundary. Its local preference contract is versioned and intentionally restricted to allowlisted navigation/provider identifiers and presentation mode.
+
+Shared form productivity remains presentation orchestration: keyboard save emits the existing submit intent, error focus maps validated field identifiers and safe list preferences store only bounded presentation fields. It does not own DTO mapping, validation rules, authorization, concurrency or persistence. Local business-form drafts are explicitly disallowed in MOD-009 pending a separate classified server-side design.
+
+UI layout state remains in the Core preference boundary, not feature or workspace business state. Versioned theme/density/sidebar/content-width enums apply semantic document data attributes consumed by external SCSS. Responsive behavior can override presentation at small widths, but stored preferences never alter navigation authorization, feature availability or backend behavior. Route and modal focus management remains shell-owned.
+
+Recovery presentation uses a stable internal Problem Details `code` plus HTTP status, not translated-message matching.
+Application services still decide validation, duplicate and concurrency outcomes; Web maps them to presentation codes,
+and Angular maps those codes to non-destructive actions. The reusable recovery component cannot retry mutations,
+override row versions, merge duplicates or grant navigation. See `modernization/PHASE_11_DATA_QUALITY_RECOVERY.md`.
+
+Document transparency is a read-only Application composition boundary. It reuses authoritative Sales Order and
+Customer Invoice DTOs, emits typed journey/relationship/number evidence and applies source and target View permissions.
+Angular formats and localizes the evidence but never recalculates totals, outstanding balances or relationships.
+
+The work center and workspace profiles remain presentation orchestration. Server services select actionable records
+using existing View/action permissions; local profiles can only reorder the resulting allowlisted destinations. The
+Angular Analytics experience reuses the generic provider boundary and accepts only server datasets and allowlisted
+drill targets. See modernization phases 13-15.
+
+Background operation observation uses an Application interface implemented by a Web singleton because hosted-worker
+runtime state belongs to the process, not the database or Domain. Workers publish start/success/failure timestamps only;
+the Application service applies user permissions and adds tenant-owned analytics refresh-plan metadata. This state is
+not durable scheduling evidence and raw exceptions never cross the API. See `modernization/PHASE_16_BACKGROUND_OPERATIONS.md`.
+
 ## Reusable analytics boundary (2026-10-22)
 
 The central Analytics Center depends only on generic Application DTOs and `IAnalyticsModuleProvider`. Each module owns its calculations and exposes stable dimensions, filters and widget keys; the center owns workspace persistence, layout, date validation and previous-period/year comparison. Sales and Purchasing are registrations, not dependencies of the controller or generic views. Saved workspaces store presentation/query configuration rather than copied analytical facts. See `decisions/ADR-20261022-REUSABLE-ANALYTICS-CENTER.md`.
@@ -84,3 +134,24 @@ SAL-090 keeps `CustomerPaymentService` as the collection coordinator. It reads i
 `AUDIT_SECURITY_ARCHITECTURE_AND_IMPLEMENTATION_PLAN.md` and `decisions/2026-10-15-audit-event-v2-boundary.md` define the accepted documentation-only `P1-AUD-010` boundary. A later additive `AuditEvent` model will carry semantic actor, scope, outcome, reason, correlation, redacted changes and integrity evidence through an Application-owned writer implemented by Infrastructure. Successful mutation events share the business UnitOfWork; denied/failed security attempts use a distinct bounded path and never claim a committed mutation.
 
 The existing EF interceptor and 707 Demo `AuditLogs` remain legacy compatibility evidence and are not reinterpreted or backfilled. Accounting journals, inventory movements and specialized document histories remain authoritative for amounts, quantities and lifecycle facts. `P1-AUD-011` implements the additive mixed-scope entity, schema, writer, redactor and keyed integrity service. `P1-AUD-012` keeps semantic construction in Application services, obtains request correlation through an Application contract implemented by Web, and persists enrolled role/permission and sensitive-setting events in the same transaction/save as their business change. Authentication/platform/external coverage, reading permissions/screens, retention and external checkpoints remain gated by `P1-AUD-013..016`.
+
+## MOD-022 inventory Angular boundary
+
+Inventory Angular routes are presentation clients only. `MOD-022A` calls an authenticated versioned controller that
+delegates to `StockTransactionService`; the controller and Angular client never access EF or recompute quantity, moving
+average cost, inventory value or variance. StockTransaction remains immutable evidence and the first ledger endpoint is
+GET-only. MVC stays the committed default until explicit cutover and rollback acceptance.
+
+`MOD-022B` keeps Angular as a presentation client for ProductStock and manual adjustment operations. Form option DTOs expose
+names with internal identifiers, while `ProductStockService` and `StockTransactionService` remain the only business-command
+owners. Controllers do not read EF, direct delete keeps the existing Application rejection, and all balance, location, tracking,
+AVCO and accounting effects remain inside the established inventory transaction boundary.
+
+`MOD-022C` exposes read-only dimensional availability and reservation history through versioned controllers that call paged
+Application-service methods. Angular never derives Available, changes Reserved or resolves tenant dimensions. The existing
+repositories, tenant filters, rowversions and reservation workflows remain authoritative; both controllers are GET-only.
+
+`MOD-022D` keeps the inventory-adjustment lifecycle behind `InventoryAdjustmentService`. The versioned controller only maps named
+create options and delegates create/count/approve/post/cancel commands. Angular conditionally presents each independently authorized
+state transition; it does not calculate variance or mutate balance/location/tracking/valuation facts. Separation of duties and atomic
+posting remain Domain/Application responsibilities.

@@ -35,6 +35,10 @@ public sealed class FiscalPeriodService(
         try { rowVersion = Convert.FromBase64String(dto.RowVersion); }
         catch (FormatException) { throw new InvalidOperationException("Fiscal period version is invalid."); }
 
+        if (rowVersion.Length == 0 || !period.RowVersion.SequenceEqual(rowVersion))
+            throw new SettingsConcurrencyException(
+                "Fiscal period was modified by another user. Reload and try again.");
+
         repository.SetOriginalRowVersion(period, rowVersion);
         period.ChangeStatus(dto.Status, dto.Reason, currentUser.UserId);
         await unitOfWork.ExecuteInTransactionAsync(() => Task.CompletedTask);

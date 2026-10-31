@@ -1,0 +1,7 @@
+<section class="documents-page"><app-page-header eyebrow="ERP" [title]="i18n.text('documentEvidence')" [description]="i18n.text('documentEvidenceDescription')">@if (evidence()) { <a class="ui-button secondary" routerLink="/documents">{{ i18n.text('backToDocuments') }}</a> }</app-page-header>
+  @if (loading()) { <app-feedback-state kind="loading" [title]="i18n.text('loading')" /> }
+  @else if (problem(); as failure) { <app-api-recovery [problem]="failure" (retry)="load()" /> }
+  @else if (evidence(); as detail) { <header class="document-summary"><div><span>{{ detail.status }}</span><h2>{{ detail.number }}</h2><p>{{ detail.party }}</p></div><strong>{{ detail.totalAmount }} {{ detail.currencyCode }}</strong></header><app-document-evidence [evidence]="detail" /> }
+  @else if (items().length === 0) { <app-feedback-state kind="empty" [title]="i18n.text('noDocumentEvidence')" [description]="i18n.text('noDocumentEvidenceDescription')" /> }
+  @else { <div class="document-list">@for (item of items(); track item.kind + item.id) { <a [routerLink]="['/documents', item.kind, item.id]"><span><strong>{{ item.number }}</strong><small>{{ item.party }} · {{ item.status }} · {{ item.documentDate }}</small></span><b>{{ item.totalAmount }} {{ item.currencyCode }}</b></a> }</div> }
+</section>

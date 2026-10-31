@@ -1,5 +1,23 @@
 # Products and recipes
-> Status: IMPLEMENTED | Last reviewed: 2026-10-24
+> Status: IMPLEMENTED | Last reviewed: 2026-10-27
+
+## Angular migration foundation (2026-10-25)
+
+`MOD-021A` completes product-master parity in Angular: server-paged list/search, details, create, edit and confirmed
+delete. The API delegates to `ProductService`, separates View/Create/Edit/Delete permissions and validates antiforgery
+on every mutation. The form includes all current MVC fields and server-provided category, managed-unit, supplier and
+expense-account options; user-facing details show names while IDs remain transport-only. `MOD-021B` completes category
+list/create/activate/deactivate with neutral-code validation and preserved inactive rows. `MOD-021C` completes attribute
+definition/options/status and typed per-product values with category applicability and variant refresh remaining
+server-authoritative. `MOD-021D` completes template creation, SKU assignment, preview and bounded controlled variant
+generation without copying stock/history/barcode/recipes. `MOD-021E` completes prepared-product recipe list/edit and
+immutable-version save while conversion remains server-owned. Measurement-unit operations are already Angular-owned
+from `MOD-020L`. `MOD-021F` also completes tax-rate, payment-method and branch list/create operations through explicit
+DTOs and named account choices. MVC remains the committed default. See `modernization/PHASE_21_CATALOG.md`.
+
+`MOD-021G` completes warehouse list/create/edit/delete in Angular with branch/account names and all current operational,
+control, picking, receiving, POS, capacity and transfer-location settings. Server-side entitlement and inventory guards
+remain authoritative. The complete `MOD-021A..G` catalog wave is now functionally complete.
 
 Recipe yields, ingredient quantities and measurement-unit conversion factors use culture-invariant decimal validation, so Arabic UI culture cannot turn valid dot-based HTML values into a validation exception.
 
@@ -26,3 +44,9 @@ Tracked products may define an optional default shelf life in days, require an e
 
 ## If this changes
 Review product entity doc, inventory/purchase/sales/transfers docs, configuration/migration, controller/screens, permissions and map.
+
+## Angular cutover update (2026-10-31)
+
+MOD-030B makes the allowlisted Product list/create/edit GET routes AngularDefault after hosted acceptance and a successful
+MVC rollback rehearsal. Query strings and positive IDs are preserved; mutations and unknown MVC actions are never redirected.
+The Razor controller/views remain available as the rollback path.

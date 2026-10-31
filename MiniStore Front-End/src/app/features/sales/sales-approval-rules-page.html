@@ -1,0 +1,129 @@
+<main class="approval-page">
+  @if (loading()) {
+    <app-feedback-state kind="loading" [title]="i18n.text('title')" />
+  } @else if (failure(); as issue) {
+    <app-api-recovery [problem]="issue" (retry)="load()" />
+  } @else if (page(); as page) {
+    <app-page-header
+      [eyebrow]="i18n.text('area')"
+      [title]="i18n.text('title')"
+      [description]="i18n.text('description')"
+    />
+    @if (problem(); as issue) {
+      <app-api-recovery [problem]="issue" [allowRetry]="false" />
+    }
+    @if (session.can('SalesApprovalRules.Manage')) {
+      <form class="ui-card form" [formGroup]="form" (ngSubmit)="create()">
+        <label class="ui-field"
+          ><span>{{ i18n.text('name') }}</span
+          ><input formControlName="name" maxlength="150" /></label
+        ><label class="ui-field"
+          ><span>{{ i18n.text('customer') }}</span
+          ><select formControlName="customerId">
+            <option [ngValue]="null">{{ i18n.text('allCustomers') }}</option>
+            @for (x of page.customers; track x.id) {
+              <option [ngValue]="x.id">{{ x.label }}</option>
+            }
+          </select></label
+        ><label class="ui-field"
+          ><span>{{ i18n.text('priority') }}</span
+          ><input type="number" min="1" max="9999" formControlName="priority" /></label
+        ><label class="ui-field"
+          ><span>{{ i18n.text('action') }}</span
+          ><select formControlName="action">
+            @for (v of [1, 2, 3]; track v) {
+              <option [ngValue]="v">{{ i18n.action(v) }}</option>
+            }
+          </select></label
+        ><label class="ui-field"
+          ><span>{{ i18n.text('metric') }}</span
+          ><select formControlName="metric">
+            @for (v of [1, 2, 3, 4, 5]; track v) {
+              <option [ngValue]="v">{{ i18n.metric(v) }}</option>
+            }
+          </select></label
+        ><label class="ui-field"
+          ><span>{{ i18n.text('comparison') }}</span
+          ><select formControlName="comparison">
+            @for (v of [1, 2, 3, 4]; track v) {
+              <option [ngValue]="v">{{ i18n.comparison(v) }}</option>
+            }
+          </select></label
+        ><label class="ui-field"
+          ><span>{{ i18n.text('threshold') }}</span
+          ><input type="number" min="0" step=".000001" formControlName="threshold" /></label
+        ><label class="ui-field"
+          ><span>{{ i18n.text('from') }}</span
+          ><input type="date" formControlName="effectiveFrom" /></label
+        ><label class="ui-field"
+          ><span>{{ i18n.text('to') }}</span
+          ><input type="date" formControlName="effectiveTo"
+        /></label>
+        <section class="wide" formArrayName="approverRoles">
+          <h2>{{ i18n.text('roles') }}</h2>
+          <div class="role-grid">
+            @for (control of roles.controls; track control; let i = $index) {
+              <select [formControlName]="i">
+                <option value="">—</option>
+                @for (role of page.roles; track role) {
+                  <option [value]="role">{{ role }}</option>
+                }
+              </select>
+            }
+          </div>
+          <button class="ui-button" type="button" (click)="addRole()">
+            {{ i18n.text('addRole') }}
+          </button>
+        </section>
+        <label class="check"
+          ><input type="checkbox" formControlName="allowRequesterApproval" />{{
+            i18n.text('allowRequester')
+          }}</label
+        ><label class="check"
+          ><input type="checkbox" formControlName="requireDistinctApprovers" />{{
+            i18n.text('distinct')
+          }}</label
+        ><button class="ui-button primary wide" [disabled]="saving() || form.invalid">
+          {{ i18n.text('create') }}
+        </button>
+      </form>
+    }
+    @if (!page.rules.length) {
+      <app-feedback-state kind="empty" [title]="i18n.text('empty')" />
+    }
+    <div class="cards">
+      @for (rule of page.rules; track rule.id) {
+        <article class="ui-card">
+          <div class="heading">
+            <strong>{{ rule.priority }} · {{ rule.name }}</strong
+            ><span class="status">{{ i18n.text(rule.isActive ? 'active' : 'inactive') }}</span>
+          </div>
+          <p>{{ rule.customerName }}</p>
+          <p>
+            {{ i18n.metric(rule.metric) }} · {{ i18n.comparison(rule.comparison) }} ·
+            {{ rule.threshold | number: '1.0-6' }}
+          </p>
+          <p>{{ i18n.action(rule.action) }}</p>
+          @if (rule.effectiveFrom || rule.effectiveTo) {
+            <p>
+              {{ i18n.text('period') }}: {{ rule.effectiveFrom || '—' }} —
+              {{ rule.effectiveTo || '—' }}
+            </p>
+          }
+          @if (rule.approverRoles.length) {
+            <p>{{ i18n.text('steps') }}: {{ rule.approverRoles.join(' → ') }}</p>
+          }
+          @if (session.can('SalesApprovalRules.Manage')) {
+            <button
+              class="ui-button"
+              [disabled]="saving()"
+              (click)="toggle(rule.id, !rule.isActive, rule.rowVersion)"
+            >
+              {{ i18n.text(rule.isActive ? 'deactivate' : 'activate') }}
+            </button>
+          }
+        </article>
+      }
+    </div>
+  }
+</main>

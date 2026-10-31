@@ -48,4 +48,28 @@ public class PermissionService : IPermissionService
         return await _authorization.HasPermissionAsync(tenantId, currentUser.Id, permission);
     }
 
+    public async Task<IReadOnlyList<string>> GetGrantedAsync(string userId)
+    {
+        if (string.IsNullOrWhiteSpace(userId) || _tenantContext.TenantId is not int tenantId)
+            return [];
+
+        var currentUser = await _userManager.FindByIdAsync(userId);
+        if (currentUser is null)
+            return [];
+
+        // Keep the Angular/session permission projection aligned with CanAsync and
+        // PermissionAuthorizationHandler: the protected company Admin role grants
+        // every code-owned permission inside the active company.
+        if (await _authorization.HasRoleAsync(tenantId, currentUser.Id, "Admin"))
+        {
+            return PermissionDefinitions.All
+                .Select(x => x.Name)
+                .Distinct(StringComparer.Ordinal)
+                .OrderBy(x => x, StringComparer.Ordinal)
+                .ToList();
+        }
+
+        return await _authorization.GetGrantedPermissionsAsync(tenantId, currentUser.Id);
+    }
+
 }

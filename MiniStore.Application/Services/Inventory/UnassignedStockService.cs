@@ -8,6 +8,7 @@ public class UnassignedStockService(
     IProductStockRepository productStockRepository,
     IProductLocationStockRepository locationStockRepository,
     IProductRepository productRepository,
+    IProductCategoryRepository productCategoryRepository,
     IWarehouseRepository warehouseRepository,
     IStorageLocationRepository storageLocationRepository,
     PutawayRuleService putawayRuleService,
@@ -15,6 +16,13 @@ public class UnassignedStockService(
     ICurrentUserService currentUserService,
     IUnitOfWork unitOfWork)
 {
+    public async Task<UnassignedStockPageDto> GetPageAsync(int? warehouseId,string? query,string? sort)
+    {
+        var warehouses=(await warehouseRepository.GetAllAsync()).Where(x=>x.ControlMode!=InventoryControlMode.Simple).OrderBy(x=>x.Name).ToList();
+        var locations=(await storageLocationRepository.SearchAsync(null,null)).Where(x=>x.Status==StorageLocationStatus.Active&&x.IsReceivable).ToList();
+        var products=await productRepository.GetAllAsync(null);var categories=await productCategoryRepository.GetAllAsync();
+        return new(){Rows=await SearchAsync(warehouseId,query,sort),Warehouses=warehouses.Select(x=>new StorageLocationWarehouseOptionDto(x.Id,x.Name)).ToList(),Locations=locations.Select(x=>new UnassignedLocationOptionDto(x.Id,x.WarehouseId,x.Code)).ToList(),Products=products.OrderBy(x=>x.Name).Select(x=>new PutawayTargetOptionDto(x.Id,x.Name)).ToList(),Categories=categories.OrderBy(x=>x.Name).Select(x=>new PutawayTargetOptionDto(x.Id,x.Name)).ToList(),Rules=await putawayRuleService.GetAllAsync()};
+    }
     public async Task<List<UnassignedStockDto>> SearchAsync(
         int? warehouseId,
         string? query,

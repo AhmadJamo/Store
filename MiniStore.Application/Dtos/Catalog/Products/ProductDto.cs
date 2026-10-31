@@ -21,6 +21,7 @@ public class ProductDto
     public MiniStore.Domain.Entities.UnitOfMeasure StockUnit { get; set; }
 
     public int? MeasurementUnitId { get; set; }
+    public string? MeasurementUnitName { get; set; }
 
     public bool AllowNegativeRecipeConsumption { get; set; }
 
@@ -49,6 +50,7 @@ public class ProductDto
     public int ExpirationWarningDays { get; set; }
     public MiniStore.Domain.Entities.ProductHandlingRequirements HandlingRequirements { get; set; }
     public List<int> SupplierIds { get; set; } = [];
+    public List<string> SupplierNames { get; set; } = [];
     public MiniStore.Domain.Entities.PurchaseBillingPolicy PurchaseBillingPolicy { get; set; }
     public int? PurchaseExpenseAccountId { get; set; }
 }

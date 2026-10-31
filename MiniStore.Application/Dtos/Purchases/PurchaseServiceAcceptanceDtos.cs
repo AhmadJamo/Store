@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 namespace MiniStore.Application.DTOs.Purchases;
 
 public sealed class PurchaseServiceAcceptanceCreatePageDto
@@ -22,15 +23,19 @@ public sealed class PurchaseServiceAcceptanceAvailableLineDto
 
 public sealed class CreatePurchaseServiceAcceptanceDto
 {
+    [Range(1,int.MaxValue)]
     public int PurchaseOrderId { get; set; }
     public DateOnly CompletionDate { get; set; } = DateOnly.FromDateTime(DateTime.Today);
-    public string? Notes { get; set; }
+    [StringLength(1000)] public string? Notes { get; set; }
+    [MinLength(1)]
     public List<CreatePurchaseServiceAcceptanceLineDto> Lines { get; set; } = [];
 }
 
 public sealed class CreatePurchaseServiceAcceptanceLineDto
 {
+    [Range(1,int.MaxValue)]
     public int PurchaseOrderLineId { get; set; }
+    [Range(typeof(decimal),"0","999999999999",ParseLimitsInInvariantCulture=true,ConvertValueInInvariantCulture=true)]
     public decimal CompletedQuantity { get; set; }
 }
 

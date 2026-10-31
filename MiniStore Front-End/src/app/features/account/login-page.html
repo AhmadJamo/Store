@@ -1,0 +1,19 @@
+<main class="auth-page" [attr.dir]="i18n.direction()">
+  <section class="auth-card" aria-labelledby="sign-in-title">
+    <header class="auth-header">
+      <div class="auth-brand" aria-hidden="true">M</div>
+      <div><span class="eyebrow">MiniStore ERP</span><h1 id="sign-in-title">{{ i18n.text('signIn') }}</h1></div>
+      <button type="button" class="language" [disabled]="i18n.switching()" (click)="i18n.toggle()">{{ i18n.text('language') }}</button>
+    </header>
+    @if(i18n.switchError()){<p class="auth-error" role="alert">{{i18n.text('errorDescription')}}</p>}
+    <p class="auth-description">{{ i18n.text('signInDescription') }}</p>
+    @if (problem(); as message) { <div class="auth-error" role="alert">{{ message }}</div> }
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <label class="ui-field" for="company-code"><span>{{ i18n.text('companyCode') }}</span><input id="company-code" type="text" formControlName="companyCode" autocomplete="organization" placeholder="amman-cafe" /><small>{{ i18n.text('companyCodeHelp') }}</small></label>
+      <label class="ui-field" for="user-name"><span>{{ i18n.text('userName') }}</span><input id="user-name" type="text" formControlName="userName" autocomplete="username" autofocus />@if(form.controls.userName.touched && form.controls.userName.hasError('required')){<small class="field-error">{{ i18n.text('userNameRequired') }}</small>}</label>
+      <label class="ui-field" for="password"><span>{{ i18n.text('password') }}</span><input id="password" type="password" formControlName="password" autocomplete="current-password" />@if(form.controls.password.touched && form.controls.password.hasError('required')){<small class="field-error">{{ i18n.text('passwordRequired') }}</small>}</label>
+      <button class="ui-button primary auth-submit" [disabled]="submitting()">{{ submitting() ? i18n.text('signingIn') : i18n.text('signIn') }}</button>
+    </form>
+    <footer><span>{{ i18n.text('noAccountYet') }}</span> <a href="/register">{{ i18n.text('createCompanyAccount') }}</a><p>{{ i18n.text('secureSessionNote') }}</p></footer>
+  </section>
+</main>

@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using MiniStore.Infrastructure.Persistence;
 using MiniStore.Web.Middleware;
 using MiniStore.Web.Observability;
+using MiniStore.Web.Middleware.Api;
 
 namespace MiniStore.Web.Configuration;
 
@@ -37,8 +38,20 @@ public static class WebApplicationExtensions
             app.UseHsts();
         }
 
+        app.UseMiddleware<InternalApiExceptionMiddleware>();
         app.UseMiddleware<RequestTelemetryMiddleware>();
         app.UseHttpsRedirection();
+        app.UseStaticFiles(new StaticFileOptions
+        {
+            OnPrepareResponse = context =>
+            {
+                var fileName = context.File.Name;
+                context.Context.Response.Headers.CacheControl =
+                    string.Equals(fileName, "index.html", StringComparison.OrdinalIgnoreCase)
+                        ? "no-store, no-cache"
+                        : "public,max-age=31536000,immutable";
+            }
+        });
         app.UseRouting();
         app.UseRateLimiter();
         app.UseAuthentication();
@@ -60,10 +73,17 @@ public static class WebApplicationExtensions
             ResponseWriter = WriteHealthResponseAsync
         }).AllowAnonymous();
         app.MapControllers();
+        app.MapOpenApi("/openapi/{documentName}.json").RequireAuthorization();
         app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}")
             .WithStaticAssets();
+        app.MapFallbackToFile("app/{*path:nonfile}", "app/index.html",
+            new StaticFileOptions
+            {
+                OnPrepareResponse = context =>
+                    context.Context.Response.Headers.CacheControl = "no-store, no-cache"
+            }).AllowAnonymous();
         return app;
     }
 

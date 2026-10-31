@@ -35,7 +35,7 @@ public class InventorySettingsService(
         {
             if (!settings.RowVersion.SequenceEqual(dto.RowVersion))
             {
-                throw new InvalidOperationException(
+                throw new SettingsConcurrencyException(
                     "Inventory settings were modified by another user. Reload the page and try again.");
             }
 

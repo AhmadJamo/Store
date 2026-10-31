@@ -511,6 +511,9 @@ namespace MiniStore.Infrastructure.Migrations
                     b.Property<int>("DefaultPeriodDays")
                         .HasColumnType("int");
 
+                    b.Property<int>("DelegationRevision")
+                        .HasColumnType("int");
+
                     b.Property<string>("Description")
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
@@ -566,6 +569,70 @@ namespace MiniStore.Infrastructure.Migrations
                     b.HasIndex("OwnerUserId", "ModuleKey");
 
                     b.ToTable("AnalyticsWorkspaces");
+                });
+
+            modelBuilder.Entity("MiniStore.Domain.Entities.AnalyticsWorkspaceDelegation", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AnalyticsWorkspaceId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedByUserId")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime?>("ExpiresAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("RevokedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("RevokedByUserId")
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("StartsAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("TargetRoleId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TargetType")
+                        .HasColumnType("int");
+
+                    b.Property<string>("TargetUserId")
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("TenantId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TenantId");
+
+                    b.HasIndex("AnalyticsWorkspaceId", "TenantId");
+
+                    b.HasIndex("TargetRoleId", "TenantId");
+
+                    b.HasIndex("AnalyticsWorkspaceId", "TargetType", "TargetRoleId");
+
+                    b.HasIndex("AnalyticsWorkspaceId", "TargetType", "TargetUserId");
+
+                    b.HasIndex("TargetRoleId", "RevokedAtUtc", "ExpiresAtUtc");
+
+                    b.HasIndex("TargetUserId", "RevokedAtUtc", "ExpiresAtUtc");
+
+                    b.ToTable("AnalyticsWorkspaceDelegations");
                 });
 
             modelBuilder.Entity("MiniStore.Domain.Entities.AnalyticsWorkspaceWidget", b =>
@@ -12964,6 +13031,28 @@ namespace MiniStore.Infrastructure.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("MiniStore.Domain.Entities.AnalyticsWorkspaceDelegation", b =>
+                {
+                    b.HasOne("MiniStore.Domain.Entities.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MiniStore.Domain.Entities.AnalyticsWorkspace", null)
+                        .WithMany("Delegations")
+                        .HasForeignKey("AnalyticsWorkspaceId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MiniStore.Domain.Entities.TenantRole", null)
+                        .WithMany()
+                        .HasForeignKey("TargetRoleId", "TenantId")
+                        .HasPrincipalKey("Id", "TenantId")
+                        .OnDelete(DeleteBehavior.Restrict);
+                });
+
             modelBuilder.Entity("MiniStore.Domain.Entities.AnalyticsWorkspaceWidget", b =>
                 {
                     b.HasOne("MiniStore.Domain.Entities.Tenant", null)
@@ -17115,6 +17204,8 @@ namespace MiniStore.Infrastructure.Migrations
 
             modelBuilder.Entity("MiniStore.Domain.Entities.AnalyticsWorkspace", b =>
                 {
+                    b.Navigation("Delegations");
+
                     b.Navigation("Widgets");
                 });
 

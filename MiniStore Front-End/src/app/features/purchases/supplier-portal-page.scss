@@ -1,0 +1,37 @@
+.portal-page {
+  display: grid;
+  gap: 1.25rem;
+  max-width: 78rem;
+  margin-inline: auto;
+  padding: 1rem;
+}
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  gap: 1rem;
+}
+.form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+  gap: 1rem;
+}
+.form h2,
+.form .lines,
+.form .wide {
+  grid-column: 1/-1;
+}
+.form button {
+  justify-self: start;
+}
+.lines {
+  display: grid;
+  gap: 1rem;
+}
+.lines fieldset {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+  gap: 0.75rem;
+}
+.success {
+  border-inline-start: 0.3rem solid var(--color-success, #15803d);
+}

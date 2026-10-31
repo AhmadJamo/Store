@@ -1,4 +1,176 @@
 # Codebase map
+## Angular modernization foundation
+
+The in-repository workspace `MiniStore Front-End` is the isolated Angular 22 presentation target. It uses standalone components, strict TypeScript, lazy routes, SCSS design tokens, an Arabic RTL/English LTR localization boundary, a responsive shell and a small Signals-owned workspace state contract. Its central API clients bootstrap the user/tenant/permission session, normalize Problem Details and attach the server-issued CSRF token to unsafe internal API calls. Its development proxy is limited to `/api` and `/Account`.
+
+`MiniStore.Web/Controllers/Api/V1` exposes the authenticated session and CSRF foundation. `AuthenticationApiController` adds rate-limited, antiforgery-protected login and authenticated logout; `TenantAccountAuthenticationService` is the single MVC/API owner of Identity password checks, company membership selection, tenant claim creation, onboarding detection and denied-login audit evidence. `InternalApiSessionService` composes explicit Application DTOs through tenant and permission boundaries. Angular `core/api` owns CSRF attachment, in-memory session state, authenticated/anonymous guards and expired-session routing, while `features/account` owns login and access-denied presentation. `CultureApiController` and the MVC language controller share `UiCultureCookie`; Angular's neutral `UiCultureStateService` lets the server session culture drive locale/direction without creating an HTTP-interceptor/session dependency cycle. No credentials or tokens enter browser storage. `InternalApiExceptionMiddleware`, cookie events and API behavior options keep errors JSON-based with correlation IDs. Authenticated OpenAPI is filtered to `/api/v1`; reusable bounded paging contracts live in `MiniStore.Application/DTOs/Api`. MVC remains operational and no database migration or business-rule change was introduced. See `docs/modernization/PHASE_02_API_FOUNDATION.md`.
+
+`PermissionService.GetGrantedAsync` mirrors the tenant-Admin shortcut used by `CanAsync` and the authorization handler:
+an active-company Admin session projects every code-owned permission to Angular. This keeps navigation/session guidance
+aligned with backend authority without treating a global Identity or Platform role as tenant administration.
+
+`scripts/generate-mvc-migration-registry.ps1` is also the single source for `MVC_MIGRATION_REGISTRY.md` and
+`DUAL_RUN_ACCEPTANCE_MATRIX.md`. It distinguishes `[ApiController]` endpoints regardless of folder, inventories compact
+same-line MVC actions, verifies every mapped Angular route and emits one acceptance row per counterpart with route,
+operation, permission, risk and evidence fields. The modernization gate fails when either generated artifact is stale.
+
+`tests/AngularBrowserAcceptance` loads an operator-supplied Playwright storage-state into both UI and API contexts. Without
+one, it uses a bounded synthetic session only for design-system presentation checks and reports authenticated API parity as
+skipped. `scripts/Test-DualRunReadOnly.ps1` separately verifies live zero-mutation identity, financial and inventory access
+boundaries; the main modernization gate runs it whenever an API URL is supplied.
+
+`scripts/Invoke-AuthenticatedDualRun.ps1` is the secret-safe MOD-029B entry point. It requires an existing external or
+git-ignored Playwright state, then runs the full gate. The browser runner reconciles culture, customer-invoice identity and
+total (or the localized zero-row state and an authorized chart-of-accounts fallback), and inventory
+product/warehouse/on-hand values without serializing compared business values or authentication data. It waits for the
+real culture response and decodes rendered HTML before text comparison so network timing and equivalent entity encodings
+cannot create false failures.
+
+The MOD-029C cohort layer selects one permission-allowed, read-only JSON endpoint for each of sales, purchasing,
+inventory, accounting and administration, reports unavailable cohorts explicitly and requires at least three covered
+business cohorts. It never invokes mutation or download endpoints and never serializes response payloads.
+
+`tests/AngularBrowserAcceptance` also supports `--cutover-mode angular|mvc|pilot`. It uses the external storage-state,
+disables redirect following and verifies exact `/app` targets or MVC 200 responses for authorized allowlisted GET routes.
+It derives fixture IDs through read-only APIs and never prints them. The mode exposed the pending additive Analytics
+delegation migration during rollback; local Demo is now reconciled through migration 136.
+
+`scripts/Publish-AngularAssets.ps1` builds Angular with the production `/app/` base href, validates the generated index,
+cleans only the fixed git-ignored `MiniStore.Web/wwwroot/app` target and copies hashed assets. `WebApplicationExtensions`
+serves those assets with immutable caching and a no-cache, `/app`-scoped SPA fallback. Customers, Suppliers, Products and
+AnalyticsCenter are the committed AngularDefault cohorts; the generated registry and acceptance matrix read appsettings and report the mixed mode.
+
+`MiniStore Front-End/src/app/core/preferences` owns versioned, non-sensitive theme/density preferences and system-theme resolution. Global semantic tokens provide light/dark palettes, density dimensions, focus, reduced-motion and forced-color behavior. The lazy `/design-system` page is the bilingual RTL/LTR visual-state reference for shared buttons, badges, fields and empty/loading/error patterns. See `docs/modernization/PHASE_03_VISUAL_SYSTEM.md`.
+
+`MiniStore Front-End/src/app/workspace` owns the reusable Angular workspace engine. Its navigation registry is session-permission aware and is also the restoration allowlist; its Signals state provides stable context identities, deduplication, bounded per-tab history, configurable tab/recent limits, safe versioned restoration, close/reopen and dirty-state protection. The shell supplies localized ARIA tabs, direction-aware keyboard movement and explicit unsaved-change decisions. No permissions or business payloads are persisted. See `docs/modernization/PHASE_04_WORKSPACE_ENGINE.md`.
+
+`scripts/generate-mvc-migration-registry.ps1` now inventories conventional MVC and `Areas` controllers/views, validates
+declared counterparts against the actual Angular route file and reads the cutover catalog separately. Its generated
+`docs/modernization/MVC_MIGRATION_REGISTRY.md` is the source-authoritative parity inventory; the ordered remaining work and
+cross-surface file gaps are documented in `docs/modernization/PHASE_28_REMAINING.md`.
+
+`MiniStore.Application/Services/Inventory/StockTransferPageService.cs` owns Stock Transfer list/details/form projections
+with named warehouses, products, locations and tenant users. `StockTransfersApiController` exposes the permission-separated
+and antiforgery-protected lifecycle while `StockTransferService` retains all mutation authority. Angular
+`features/inventory/stock-transfers-page.*` and `data/stock-transfer*` own the bilingual list/create/edit/details workspace,
+typed API client and lifecycle tests. MVC consumes the same Application projection and remains the default.
+
+`InventoryScanningApiController` exposes exact scan resolution plus independently permissioned putaway, relocation and
+Draft-count commands over the existing `InventoryScanningService`. Angular `features/inventory/inventory-scanning*` and
+`data/inventory-scanning*` own the bilingual scanner-first route, typed client and route tests; server normalization,
+ambiguity rejection, blind-count hiding and idempotency remain Application-owned.
+
+`InventoryInsightsApiController` and `InventoryReconciliationApiController` expose independent GET-only contracts over
+their Application services. Angular `features/inventory/inventory-analysis*` and `data/inventory-analysis*` own bilingual
+activity/KPI and paged reconciliation evidence. Classification, values, tolerances, issues and paging remain server-owned.
+
+`AuditEventsApiController` exposes tenant-scoped audit search and purpose-bound CSV export over `AuditEventReadService`.
+Angular `features/audit/audit-events*` owns bilingual filters, paging, permission-aware evidence and safe download. View,
+export and sensitive-evidence permissions remain independent; sensitive inclusion is derived only on the server, exports
+remain bounded to 5,000 rows and the existing Application service records their semantic evidence.
+
+`MiniStore.Web/Controllers/Api/V1/CustomersController.cs` exposes permission-separated Customer list/details/form/create/update contracts through the existing `CustomerService`; it does not access EF or repositories. `MiniStore Front-End/src/app/features/customers` is the first business vertical slice, with an isolated typed client, responsive list/details/create/edit pages, external SCSS, Problem Details field feedback, row-version concurrency and workspace dirty-state integration. MVC Customers remains the rollback path. See `docs/modernization/PHASE_05_CUSTOMERS_VERTICAL_SLICE.md`.
+
+`MiniStore Front-End/src/app/shared/ui` contains only proven presentation primitives for page headers, feedback states, overflow table regions and server-driven pagers. Customers and the read-only `features/suppliers` directory are the first two consumers. `SuppliersApiController` calls `SupplierService.GetPageAsync`; supplier search/count/order/page remains behind the Application/repository boundary. See `docs/modernization/PHASE_06_SHARED_UI_PRIMITIVES.md`.
+
+`MiniStore Front-End/src/app/features/suppliers` now owns the complete supplier list/details/create/edit Angular slice. `SuppliersApiController` delegates form options and mutations to `SupplierService`; account validation, product assignments, tenant filtering and transactions remain server-owned. Explicit Problem Details and HTTP 409 row-version conflicts keep failed edits recoverable. MVC remains the rollback path. See `docs/modernization/PHASE_07_SUPPLIERS_VERTICAL_SLICE.md`.
+
+`MiniStore Front-End/src/app/features/command-center` owns the typed quick-preview provider registry and versioned personal favorite/snapshot preferences. The home page consumes it for permission-aware commands and bounded Customer/Supplier previews. Only allowlisted navigation/provider identifiers and view mode persist; records, search terms, URLs and permissions do not. See `docs/modernization/PHASE_08_COMMAND_CENTER_FOUNDATION.md`.
+
+`MiniStore Front-End/src/app/shared/forms` contains the proven Customer/Supplier safe save shortcut, accessible error summary/focus behavior and allowlisted list-view preferences. It never persists form payloads or search text. See `docs/modernization/PHASE_09_SMART_FORM_PRODUCTIVITY.md`.
+
+`MiniStore Front-End/src/app/core/preferences` and `shell/layout` now also own allowlisted sidebar/content-width state, a compact settings panel, mobile navigation preservation, skip navigation, route focus and trapped/restored unsaved-dialog focus. Global tokens cover compact density, reduced motion and forced colors. See `docs/modernization/PHASE_10_RESPONSIVE_ACCESSIBILITY_PREFERENCES.md`.
+
+`MiniStore.Web/Middleware/Api/InternalApiProblemCodes.cs` and `InternalApiProblemFactory.cs` own stable internal
+Problem Details classification and correlation metadata. Angular `core/api/ApiErrorService` normalizes that contract;
+`shared/ui/api-recovery` presents only permitted recovery intent. Customer and Supplier lists/forms prove reuse while
+preserving failed input and prohibiting automatic mutation retry. See `docs/modernization/PHASE_11_DATA_QUALITY_RECOVERY.md`.
+
+`DocumentEvidenceService` composes read-only Sales Order and Customer Invoice journey, relation and explained-number
+evidence from existing Application DTOs. `DocumentEvidenceApiController` exposes four explicit permission-protected
+routes; Angular `features/document-evidence` and `shared/ui/document-evidence` render the two proven consumers without
+client calculations or generic graph traversal. See `docs/modernization/PHASE_12_DOCUMENT_EVIDENCE.md`.
+
+`WorkCenterService` composes permission-filtered Sales Order and Customer Invoice actions from existing Application
+decisions; Angular `features/work-center` adds contextual guidance without executing mutations. Versioned
+`WorkspaceProfileService` reorders only visible navigation and controls a responsive context panel. The protected
+Angular analytics route calls the existing generic `AnalyticsCenterService`, and drill-down remains allowlisted. See
+`docs/modernization/PHASE_13_WORK_CENTER.md` through `PHASE_15_ANALYTICS_EXPLORATION.md`.
+
+`IBackgroundJobMonitor` is an Application-owned runtime observation contract implemented by the singleton Web
+`BackgroundJobMonitor`. The replenishment, supplier-outbox and audit-retention hosted workers publish sanitized state;
+`OperationsCenterService` filters snapshots and analytics refresh plans by existing permissions before Angular
+`features/operations-center` renders them. See `docs/modernization/PHASE_16_BACKGROUND_OPERATIONS.md`.
+
+`scripts/verify-angular-modernization.ps1` is the MOD-018 acceptance orchestrator. It combines Release/backend
+regression, Angular tests/build, external-SCSS and static accessibility policies, explicit bundle budgets, the existing
+performance workload and `tests/AngularBrowserAcceptance`. The browser executable reuses Microsoft.Playwright already
+present in the repository and emits only ignored verification artifacts. See `PHASE_18_ACCEPTANCE_GATE.md`.
+`scripts/Invoke-AngularAuthenticatedAcceptance.ps1` adds the safe interactive MOD-018B path: Edge captures login state
+only under the Windows temporary directory, the orchestrator consumes it, and `finally` deletes it.
+
+`docs/modernization/FULL_MVC_TO_ANGULAR_MIGRATION_PLAN.md` is the approved presentation-migration program. It extends
+the work through `MOD-030`: shared acceptance and complete MVC inventory, nine module/cross-cutting migration waves,
+full dual-run reconciliation and an explicit final Angular-only cutover. A page is not complete until its actions,
+permissions, localization, files, edge states and tests reach parity.
+
+`MiniStore Front-End/src/app/features/settings` now contains the Angular settings overview plus complete forms for
+operating preferences, organization identity/custom fields/logo, discount controls, purchase-matching tolerances,
+inventory defaults, purchase sourcing, document numbering, fiscal-period list/create/status operations and
+currency exchange-rate list/upsert, measurement-unit list/create/deactivate, accounting settings, branch sales accounts,
+branch/POS inventory-access configuration and terminal creation, per-terminal POS experience/profile updates, and the
+server-localized permission-aware workflow catalog.
+`MiniStore Front-End/src/app/features/document-designs` now supplies list/filter, details, create/clone editor, ordered
+sections, live preview and activate/archive/default lifecycle operations through `DocumentDesignsApiController`, which
+delegates exclusively to `DocumentDesignService` and preserves rowversion conflicts and version immutability.
+`SettingsApiController` exposes explicit protected read/write/upload/delete contracts and delegates to
+`GeneralSettingsService`, `DiscountSettingsService`, `PurchaseMatchingSettingsService`, `InventorySettingsService`,
+`PurchaseSourcingPolicyService`, `DocumentNumberService`, `FiscalPeriodService` and
+`CurrencyExchangeRateService`, `MeasurementUnitService`, `AccountingSettingsService`, `BranchService` and
+`InventoryAccessService`; mutation paths
+retain semantic audit and stale-write protection. `SettingsConcurrencyException` is translated to RFC Problem Details
+409, while validation remains 400. Settings stays `Mvc` in committed cutover configuration; MOD-030C prepares only its
+GET-page route mappings for the separately authorized MOD-030D cutover.
+
+`MiniStore Front-End/src/app/features/identity` owns tenant-user list/create and tenant-role list/create/edit/delete presentation. `UsersApiController` delegates both MVC and API user creation to the Application-owned `ITenantUserAdministrationService`; `RolesApiController` delegates to `TenantRoleService` and maps Domain permissions to explicit code-only API DTOs. Identity creation compensates a failed tenant binding, and `UnitOfWork` clears tracked state after rollback before that cleanup. Angular routes, settings links and navigation are permission filtered, while endpoint policies and antiforgery remain authoritative. Existing-user edit/delete are intentionally absent because the current MVC source surface does not implement them.
+
+`MiniStore Front-End/src/app/features/onboarding` owns anonymous company registration and authenticated guided setup/skip. `RegistrationApiController` exposes public plans and a CSRF/rate-limited registration POST through the shared `TenantCompanyRegistrationService`, so MVC and API reuse the same atomic SaaS provisioning and cookie/tenant-claim sign-in. `CompanyOnboardingApiController` requires `Administration.Access` and delegates complete/skip to the existing transactional `ICompanyOnboardingService`. Feature-local bilingual copy remains lazy while sharing the global locale/direction signal, keeping the established bundle budget. See `docs/modernization/PHASE_20_ADMINISTRATION_SETTINGS.md`.
+
+`MiniStore Front-End/src/app/features/products` now owns the complete product-master list/details/create/edit/delete
+slice. `ProductsApiController` exposes explicit permission-separated form and mutation contracts with antiforgery and
+Problem Details, while `ProductService` remains the owner of barcode uniqueness, managed units, type/pricing/channel,
+supplier, tracking, shelf-life and logistics rules. The Application form-page DTO projects category, unit, supplier and
+expense-account options and product details expose display names rather than internal IDs. See
+`docs/modernization/PHASE_21_CATALOG.md`.
+
+`ProductCategoriesApiController` and Angular `/products/categories` complete category list/create/status parity over
+`ProductCategoryService`. Reads use `Products.View`; create and activate/deactivate use `Products.Edit` plus
+antiforgery. Neutral category codes are DTO/domain validated and inactive categories remain preserved for historical
+references.
+
+`ProductAttributesApiController` and Angular `/products/attributes` plus `/products/:id/attributes` complete definition,
+selection-option, status and typed per-product value parity over `ProductAttributeService`. DTO validation, category
+applicability, required/type/option checks and assigned-template variant refresh remain server-owned. Mutations require
+`Products.Edit` and antiforgery; Angular preserves rejected input and uses bilingual external SCSS.
+
+`ProductTemplatesApiController` and Angular `/products/templates` complete template create, SKU assignment/removal,
+variant list, bounded preview and explicit generation over `ProductTemplateService`. The server recomputes neutral
+signatures and combination plans, enforces the 50-row cap and prevents unsafe cloning. All mutations use
+`Products.Edit` and antiforgery.
+
+`RecipesApiController` and Angular `/products/recipes` plus `/products/recipes/:productId` complete prepared-product
+recipe list/editor/immutable-version save over `RecipeService`. Stocked-ingredient eligibility, unit dimensions,
+conversion snapshots, positive quantities and version transactions remain server-owned; save uses `Products.Edit`
+and antiforgery.
+
+`CatalogMastersApiController` and Angular `/products/catalog-masters` complete current tax-rate, payment-method and
+branch list/create operations. Application projections expose account names instead of entity/account IDs as evidence;
+the whole API requires `Administration.Access`, and each mutation validates antiforgery.
+
+`WarehousesApiController` and Angular `/warehouses` complete warehouse list/create/edit/delete over `WarehouseService`.
+Form DTOs project branch/account names; SaaS limits, accounting validation, control-mode/POS transition guards and
+delete constraints remain server-owned with operation-specific permissions and antiforgery.
+
 ## SAL-130A reusable Analytics Center
 
 `AnalyticsWorkspace` and its widgets persist tenant-owned personal/shared presentation preferences. Generic analytics
@@ -7,6 +179,11 @@ Purchasing register as the first providers. `AnalyticsCenterController` and two 
 saved workspaces without depending on a module DTO. Central comparison re-executes the selected provider for the
 previous period/year. Migration 135 adds the isolated workspace schema. See `modules/analytics.md` and the Analytics
 Center ADR.
+
+`AnalyticsWorkspaceDelegation` adds time-bounded, revocable user/tenant-role access inside the same aggregate.
+`AnalyticsCenterService` authorizes owner/manager administration, `IAnalyticsPrincipalDirectory` supplies only active
+tenant choices, and repository availability combines owner/shared/current user/current role grants before the existing
+provider-permission recheck. Source migration `20261025025522_AddAnalyticsWorkspaceDelegation` is additive.
 
 ## SAL-120B central document identity and designer
 
@@ -324,7 +501,19 @@ Hierarchical location update (2026-09-30): StorageLocation retains its identity 
 | `Controllers/Inventory/InventoryAdjustmentsController.cs` | permission-split count/approve/post/cancel workflow | InventoryAdjustments views and service. |
 | `Controllers/Inventory/InventoryTrackingController.cs` | permission-protected opening allocation, tracking report and quarantine/release commands | InventoryTracking view and service. |
 | `Controllers/Purchases/SupplierPurchasingController.cs` | permission-split bilingual supplier-first bulk purchasing-data administration | PUR-010 service and `Views/SupplierPurchasing/Index.cshtml`. |
+| `Controllers/Api/V1/SupplierPurchasingApiController.cs`, `MiniStore Front-End/src/app/features/purchases/supplier-purchasing*` | authenticated Angular supplier terms, bulk save, price tiers/history/exceptions and bounded CSV/XLSX preview/import/export over `SupplierPurchasingInfoService` | MOD-023N; MVC remains default. |
 | `Controllers/Purchases/{SupplierQuotations,PurchaseOrders}Controller.cs`, `Views/SupplierQuotations/*`, `Views/PurchaseOrders/*` | quotation capture, responsive per-line split award, generated-order links, Purchase Order progress, state-aware actions, separately permitted remainder close/reopen and immutable history | PUR-040/PUR-050/PUR-165/PUR-210 services and permissions. |
+| `Controllers/Api/V1/{PurchaseSourcing,SupplierQuotations}ApiController.cs`, `MiniStore Front-End/src/app/features/purchases/purchase-sourcing-*` | authenticated Angular sourcing list/details/multipart create, bounded tenant-safe attachment download, printable RFQ, invited quotation entry/comparison and reasoned exact-quantity award over existing Application services | MOD-023C/MOD-028F; MVC remains default. |
+| `Controllers/Api/V1/PurchaseOrdersApiController.cs`, `MiniStore Front-End/src/app/features/purchases/purchase-order*` | authenticated Angular Purchase Order list/details, award materialization, lifecycle, direct-delivery evidence and supplier confirmation over `PurchaseOrderService` | MOD-023D; MVC remains default. |
+| `Controllers/Api/V1/GoodsReceiptsApiController.cs`, `MiniStore Front-End/src/app/features/purchases/goods-receipt*` | authenticated Angular receipt list/details/create, scanning/posting, staged quality inspection and put-away over `GoodsReceiptService`; server owns quantities, tracking, valuation, movements and journals | MOD-023E; MVC remains default. |
+| `Controllers/Api/V1/VendorBillsApiController.cs`, `MiniStore Front-End/src/app/features/purchases/vendor-bill*` | authenticated Angular Vendor Bill list/details/create, match decisions, posting/cancellation, bounded attachments and reviewed extraction over `VendorBillService` | MOD-023F; MVC remains default. |
+| `Controllers/Api/V1/SupplierPaymentsApiController.cs`, `MiniStore Front-End/src/app/features/purchases/supplier-payment*` | authenticated Angular Supplier Payment list/details and multi-bill create/post over `SupplierPaymentService`; server owns balances, exchange and journals | MOD-023G; MVC remains default. |
+| `Controllers/Api/V1/GoodsReceiptReturnsApiController.cs`, `MiniStore Front-End/src/app/features/purchases/goods-receipt-return*` | authenticated Angular receipt-return list/details/create-and-post over `GoodsReceiptReturnService`; server owns unbilled limits, availability, tracking/location removal, valuation and journals | MOD-023H; MVC remains default. |
+| `Controllers/Api/V1/SupplierCreditNotesApiController.cs`, `MiniStore Front-End/src/app/features/purchases/supplier-credit-note*` | authenticated Angular supplier-credit-note list/details/create-and-post over `SupplierCreditNoteService`; server owns bill limits, stock/tracking removal, tax, valuation, payable and journals | MOD-023I; MVC remains default. |
+| `Controllers/Api/V1/PurchaseDocumentReversalsApiController.cs`, `MiniStore Front-End/src/app/features/purchases/purchase-document-reversal*` | authenticated Angular purchase-reversal list/details/create over `PurchaseDocumentReversalService`; server owns dependencies, valuation/availability gates, corrections, opposite journals and idempotency | MOD-023J; MVC remains default. |
+| `Controllers/Api/V1/LandedCostsApiController.cs`, `MiniStore Front-End/src/app/features/purchases/landed-cost*` | authenticated Angular landed-cost list/details/create-and-post over `LandedCostService`; server owns allocation, capitalization/expense split, AVCO, movements and journals | MOD-023K; MVC remains default. |
+| `Controllers/Api/V1/PurchaseServiceAcceptancesApiController.cs`, `MiniStore Front-End/src/app/features/purchases/purchase-service-acceptance*` | authenticated Angular service-acceptance list/details/create over `PurchaseServiceAcceptanceService`; server owns confirmed service-line eligibility, remaining quantity and the no-stock boundary | MOD-023L; MVC remains default. |
+| `Controllers/Api/V1/{PurchaseAgreements,PurchaseTemplates}ApiController.cs`, `MiniStore Front-End/src/app/features/purchases/purchase-{agreement,agreements,templates}*` | authenticated Angular agreement lifecycle/capped releases and repeat-template creation/generation/active state over existing Application services | MOD-023M; MVC remains default. |
 | `Controllers/Purchases/PurchaseServiceAcceptancesController.cs`, `Views/PurchaseServiceAcceptances/*` | permission-protected service-completion capture and immutable list/detail evidence, with no warehouse-stock mutation | PUR-220 service acceptance. |
 | `Controllers/Purchases/GoodsReceiptsController.cs`, `Views/GoodsReceipts/Create.cshtml` | permission-protected partial Goods Receipt capture and immediate posting | PUR-060 receipt service. |
 | `Views/GoodsReceipts/Scan.cshtml` and Goods Receipt scan actions | Draft receipt creation, exact product scanning, accumulated-quantity review and explicit final posting | PUR-150 receipt service. |
@@ -332,6 +521,32 @@ Hierarchical location update (2026-09-30): StorageLocation retains its identity 
 | `Controllers/Purchases/VendorBillsController.cs`, `Views/VendorBills/*.cshtml` | responsive card-based mixed-source Draft entry with attachments, separate approval/override/post actions, history, attachment download and immutable posted detail without horizontal line scrolling | PUR-080/PUR-220 bill service. |
 | `Controllers/Purchases/SupplierPurchasingController.cs`, `Views/SupplierPurchasing/*` | supplier-scoped responsive bulk editor, quantity price-break editor, read-only price history, expired/duplicate exception cards, permission-protected CSV/Excel downloads and atomic upload previews | PUR-010/PUR-230 supplier-price management. |
 | `Controllers/Purchases/PurchaseReplenishmentController.cs`, `Views/PurchaseReplenishment/Index.cshtml`, `Services/Purchases/ReplenishmentAutomationWorker.cs` | permission-separated responsive settings/history and tenant-scoped scheduled execution | PUR-240 automated replenishment. |
+| `Controllers/Api/V1/PurchaseReplenishmentApiController.cs`, `MiniStore Front-End/src/app/features/purchases/purchase-replenishment*` | authenticated Angular automation settings, manual run and suggestion history | MOD-023O; MVC remains default. |
+| `Controllers/Api/V1/PurchaseAnalyticsApiController.cs`, `MiniStore Front-End/src/app/features/purchases/purchase-analytics*` | authenticated read-only Angular purchasing analytics with server-owned filters, KPIs, trends, supplier/buyer performance, matching exceptions and acceptance evidence | MOD-023P; MVC remains default. |
+| `Controllers/Api/V1/PurchaseAccountingReconciliationApiController.cs`, `MiniStore Front-End/src/app/features/purchases/purchase-accounting-reconciliation*` | authenticated read-only Angular inventory/GL and GRNI/GL evidence with server-owned as-of reconciliation and permission-aware source/setup links | MOD-023Q; MVC remains default. |
+| `Controllers/Api/V1/SupplierCommunicationsApiController.cs`, `MiniStore Front-End/src/app/features/purchases/supplier-communications*` | authenticated Angular supplier email preparation/history/detail, immutable attachment download and explicit activity evidence over `SupplierCommunicationService` | MOD-023R; MVC remains default. |
+| `Controllers/Api/V1/SupplierIntegrationsManagementApiController.cs`, `MiniStore Front-End/src/app/features/purchases/supplier-integrations*` | authenticated Angular credential/portal-access/outbox/submission/audit management over `SupplierIntegrationService`, including one-time secrets and immutable payload downloads | MOD-023S; MVC remains default. |
+| `Controllers/Api/V1/SupplierPortalApiController.cs`, `MiniStore Front-End/src/app/features/purchases/supplier-portal*` | anonymous token-scoped, rate-limited Angular supplier portal for RFQ/PO read, quotation, confirmation and delivery notice with antiforgery, privacy headers and denied-access audit | MOD-023T; MVC remains default. |
+| `Controllers/Api/V1/{LegacyPurchases,LegacyPurchaseReturns}ApiController.cs`, `MiniStore Front-End/src/app/features/purchases/legacy-purchase*` | authenticated Angular historical direct-purchase list/details/post and posted-return list/details/create-and-post over existing Application services; new legacy purchase creation stays retired | MOD-023U; MVC remains default. |
+| `Controllers/Api/V1/SalesPriceListsApiController.cs`, `MiniStore Front-End/src/app/features/sales/sales-pricing*` | authenticated Angular sales price-list/rule lifecycle and read-only server-authored pricing evaluation over `SalesPriceListService` | MOD-024A; MVC remains default. |
+| `Controllers/Api/V1/SalesQuotationsApiController.cs`, `MiniStore Front-End/src/app/features/sales/sales-quotation*`, `sales-quotations*` | authenticated Angular quotation list/details/composer, independent lifecycle commands and frozen PDF delivery over `SalesQuotationService` | MOD-024B; MVC remains default. |
+| `Controllers/Api/V1/SalesOrdersApiController.cs`, `MiniStore Front-End/src/app/features/sales/sales-orders*` | authenticated Angular Sales Order list/details, accepted-quotation conversion, confirm/cancel and approval decisions over Application services | MOD-024C; downstream reservation/delivery/invoice progress is read-only here. |
+| `Controllers/Api/V1/SalesOrderReservationsApiController.cs`, `MiniStore Front-End/src/app/features/sales/sales-order-reservations*` | authenticated Angular confirmed-order reservation page, reserve/release commands and named stock-position evidence | MOD-024D; Application service retains balance and eligibility authority. |
+| `Controllers/Api/V1/SalesDeliveriesApiController.cs`, `MiniStore Front-End/src/app/features/sales/sales-deliveries*` | authenticated Angular Sales Delivery list/details/composer, post/cancel and tracking/cost evidence | MOD-024E; server retains reservation, stock, valuation and COGS authority. |
+| `Controllers/Api/V1/CustomerInvoicesApiController.cs`, `MiniStore Front-End/src/app/features/sales/customer-invoices*` | authenticated Angular Customer Invoice list/details/composer, approve/cancel/post/reverse, settlement and journal evidence | MOD-024F; server retains eligibility, snapshots, cumulative, balance and accounting authority. |
+| `Controllers/Api/V1/CustomerPaymentsApiController.cs`, `MiniStore Front-End/src/app/features/sales/customer-payments*` | authenticated Angular Customer Payment list/details/create-and-post allocation, FX/carrying/journal evidence and reversal | MOD-024G; server retains balance, currency, allocation and accounting authority. |
+| `Controllers/Api/V1/CustomerReturnRequestsApiController.cs`, `MiniStore Front-End/src/app/features/sales/customer-return-requests*` | authenticated Angular Customer Return Request list/details/create and authorization lifecycle over `CustomerReturnRequestService` | MOD-024H; server retains delivery ownership, cumulative quantity, transition and concurrency authority. |
+| `Controllers/Api/V1/CustomerReturnReceiptsApiController.cs`, `MiniStore Front-End/src/app/features/sales/customer-return-receipts*` | authenticated Angular Customer Return Receipt list/details/create, inspection, cancellation and disposition posting over `CustomerReturnReceiptService` | MOD-024I; server retains quantity, tracking, stock, valuation, movement and accounting authority. |
+| `Controllers/Api/V1/CustomerCreditNotesApiController.cs`, `MiniStore Front-End/src/app/features/sales/customer-credit-notes*` | authenticated Angular Customer Credit Note list/details/create-and-post with return eligibility and journal evidence over `CustomerCreditNoteService` | MOD-024J; server retains cumulative quantity, financial snapshot, idempotency and accounting authority. |
+| `Controllers/Api/V1/SalesApprovalRulesApiController.cs`, `MiniStore Front-End/src/app/features/sales/sales-approval-rules*` | authenticated Angular Sales Approval Rule list/create/activation management over `SalesOrderApprovalService` | MOD-024K; server retains scope, role, ordered-step, concurrency and order-evaluation authority. |
+| `Controllers/Api/V1/SalesQuotationTemplatesApiController.cs`, `MiniStore Front-End/src/app/features/sales/sales-quotation-templates*` | authenticated Angular Sales Quotation Template list/details/create, version cloning and lifecycle management over `SalesQuotationTemplateService` | MOD-024L; server retains product/unit/tax/design, code/version, lifecycle, concurrency and default authority. |
+| `Services/Sales/LegacySaleWorkspaceService.cs`, `Controllers/Api/V1/LegacySalesApiController.cs`, `MiniStore Front-End/src/app/features/sales/legacy-sales*` | Application-owned projection plus authenticated Angular immediate-sale history/details, wholesale/POS creation and one-time GL posting, including terminal runtime layout and warehouse access | MOD-025A/B; `SaleService` and `SalePostingService` retain price, stock, tracking, valuation, transaction and accounting authority. |
+| `docs/modernization/PHASE_25_LEGACY_SALES_POS.md` | legacy immediate-sale/POS Angular migration scope, completed slices, evidence and next slice | MOD-025 execution control. |
+| `Controllers/Api/V1/LegacySalesReturnsApiController.cs`, `MiniStore Front-End/src/app/features/sales/legacy-sales-returns*` | authenticated Angular immediate-sale return list/details/create-and-post over `SalesReturnService` | MOD-025C; server retains cumulative quantity, tracking, inventory, valuation and accounting authority. |
+| `Controllers/Api/V1/AccountsApiController.cs`, `MiniStore Front-End/src/app/features/accounting/accounts*` | authenticated Angular chart-of-accounts list/create over `AccountService`, including named hierarchy projection | MOD-026A; Application/Domain retain code, parent and type validation. |
+| `docs/modernization/PHASE_26_ACCOUNTING.md` | accounting Angular migration scope, completed slices, evidence and next slice | MOD-026 execution control. |
+| `Controllers/Api/V1/JournalEntriesApiController.cs`, `MiniStore Front-End/src/app/features/accounting/journal-entry*` | read-only authenticated Angular journal-entry evidence with named accounts and dimensions over `JournalEntryQueryService` | MOD-026B; no posting or reversal mutation is exposed. |
+| `docs/modernization/PHASE_24_SALES.md` | sales Angular migration scope, completed slices, evidence and next slice | MOD-024 execution control. |
 | `Controllers/Purchases/SupplierCreditNotesController.cs`, `Views/SupplierCreditNotes/*.cshtml` | permission-protected responsive billed-return capture, immediate posting, history and immutable detail | PUR-170 credit-note service. |
 | `Controllers/Purchases/PurchaseDocumentReversalsController.cs`, `Views/PurchaseDocumentReversals/*.cshtml` | permission-protected responsive reversal confirmation, history and audit detail | PUR-180 reversal service. |
 | `Controllers/Purchases/SupplierPaymentsController.cs`, `Views/SupplierPayments/*.cshtml` | permission-protected partial allocation, immediate posting, payment history and immutable detail | PUR-100 payment service. |
@@ -343,6 +558,11 @@ Hierarchical location update (2026-09-30): StorageLocation retains its identity 
 | `Views/Settings/WorkflowCatalog.cshtml` | responsive bilingual 62-step catalog grouped into seven ERP modules and phases, with module navigation, step owner, reviewer, control principle, completion evidence and authorized destination | `WorkflowCatalogService`; Administration access. |
 | `Areas/Platform/*` | separately authenticated platform-owner control center for plans, companies/subscriptions, promotion codes and pending payment confirmations | SaaS module. |
 | `Controllers/PublicController.cs`, `Controllers/Saas/SubscriptionController.cs` | public landing/pricing and tenant subscription/checkout flows | SaaS module and public/subscription views. |
+| `Application/Saas/TenantSubscriptionPageService.cs`, `Controllers/Api/V1/SubscriptionApiController.cs`, `MiniStore Front-End/src/app/features/subscription/*` | named tenant subscription summary and antiforgery checkout Angular pilot; price, promotion, total and state remain server-calculated | MOD-027A; MVC remains default. |
+| `Controllers/Api/V1/PublicPlansApiController.cs`, `MiniStore Front-End/src/app/features/public-site/*` | anonymous read-only public plan projection and bilingual Angular welcome/pricing pilot | MOD-027B; registration revalidates the selected plan server-side. |
+| `Services/PlatformAccountAuthenticationService.cs`, `Controllers/Api/V1/PlatformSessionApiController.cs`, `MiniStore Front-End/src/app/features/platform/*` | separate Platform-cookie authentication/session and read-only control-center overview | MOD-027C; tenant identity grants no Platform access. |
+| `Controllers/Api/V1/PlatformManagementApiController.cs`, `MiniStore Front-End/src/app/features/platform/platform-management*` | role-separated Platform companies, plans, promotions and pending-payment management | MOD-027D; payment activation remains transactionally server-owned. |
+| `Controllers/Api/V1/PlatformAuditApiController.cs`, `MiniStore Front-End/src/app/features/platform/platform-{audit,retention}*` | policy-separated Platform audit search/export and owner-only legal-hold/checkpoint/retention workspaces | MOD-027E; sensitive evidence is server-authorized and all mutations retain antiforgery/audit authority. |
 | `Middleware/SubscriptionAccessMiddleware.cs` | blocks tenant ERP access when the current subscription is not usable | SaaS module/security. |
 | `Localization/*.cs`, `Resources/SharedResource.ar.resx` | supported cultures, cached database-default provider and centralized Arabic translations | shared layout and localized views/controllers. |
 | `Formatting/NumberDisplayExtensions.cs` | culture-aware display and invariant HTML-input formatting with settings-controlled maximum precision and no insignificant trailing zeros | purchase and settings screens. |
@@ -353,7 +573,7 @@ Hierarchical location update (2026-09-30): StorageLocation retains its identity 
 | `Views/<Module>/*.cshtml` | Razor screens/forms/client JS | `screens/*.md`. |
 | `Views/Shared/*.cshtml` | localized LTR/RTL layout, language switch, notifications, validation/error/delete partials | screens/shared-ui.md. |
 
-Localization update (2026-09-14): ASP.NET request localization supports `en-US` and `ar-JO`; GeneralSettings provides the cached company default and a whitelisted cookie endpoint provides user override. Shared layout/navigation/auth/dialogs and core Settings pages use `SharedResource`; migration `AddLocalizationSettings` backfills English.
+Localization update (2026-10-30): ASP.NET request localization supports `en-US` and `ar-JO`; GeneralSettings provides the cached company default and the whitelisted MVC/API POST endpoints share an essential HttpOnly culture cookie. Angular commits its local locale/direction only after server synchronization and treats session culture as authoritative at bootstrap. Shared layout/navigation/auth/dialogs and core Settings pages use `SharedResource`; migration `AddLocalizationSettings` backfills English.
 
 Tenant isolation update (2026-09-14): `Tenant`, `TenantMembership`, tenant context and session middleware establish a shared-database company boundary. AppDbContext adds TenantId/query filters/write guards to 34 business entities and changes business uniqueness to tenant-aware indexes. Migration `AddTenantIsolation` backfills the Demo Company and current users.
 
@@ -389,3 +609,60 @@ For exact module relationships, use `modules/*.md`; for entity and service detai
 - `Infrastructure/Services/Saas/CompanyOnboardingService.cs`: versioned transactional starter template.
 - `Web/Controllers/Saas/CompanyOnboardingController.cs` and `Views/CompanyOnboarding/Index.cshtml`: authenticated bilingual setup/skip flow.
 - `AddCompanyGuidedOnboarding`: onboarding table and compatible existing-tenant backfill.
+
+## Angular modernization additions — 2026-10-25
+
+- `MiniStore.Web/Controllers/Api/V1/AnalyticsCenterApiController.cs`: analytics read, builder, workspace-create and governed access/delegation API.
+- `MiniStore.Web/Controllers/Api/V1/SettingsApiController.cs`: protected identity/preferences read API for the first settings slice.
+- `MiniStore Front-End/src/app/features/settings/`: bilingual identity overview and editable operating preferences with
+  rowversion, save feedback and workspace dirty-state protection; mutations reuse `GeneralSettingsService`.
+- `MiniStore.Web/Controllers/Api/V1/ProductsApiController.cs`: protected paged product read API for the first catalog slice.
+- `MiniStore Front-End/src/app/features/analytics/report-builder-page.*`: governed workspace builder with external SCSS.
+- `MiniStore Front-End/src/app/features/analytics/workspace-access-page.*`: bilingual user/role delegation, schedule, expiry, revoke and evidence UI with external SCSS.
+- `MiniStore Front-End/src/app/features/settings/`: read-only organization/settings Angular feature.
+- `MiniStore Front-End/src/app/features/products/`: paged product-catalog Angular feature.
+- `scripts/verify-angular-modernization.ps1`: reusable migration acceptance command.
+- `scripts/generate-mvc-migration-registry.ps1`: source-driven MVC view, action and Razor-control inventory generator.
+- `MiniStore.Web/Presentation/Cutover/`: validated per-surface presentation modes, code-owned Angular route allowlist,
+  GET/HEAD resolver and global MVC cutover filter. Committed modes remain MVC.
+- `docs/modernization/MVC_MIGRATION_REGISTRY.md`: generated 89-controller, 189-view, 344-MVC-action and
+  198-Razor-file migration registry; do not edit rows manually.
+- `docs/decisions/ADR-20261025-REVERSIBLE-PRESENTATION-CUTOVER.md`: cutover/rollback boundary and rationale.
+- `docs/modernization/MOD-017-021-FOUNDATION.md`: scope, evidence and remaining gates for this bundle.
+- `docs/modernization/MOD-017B-FINANCIAL-PREVIEW.md`: server-authored financial provenance and presentation evidence.
+- `docs/modernization/MOD-017C-GOVERNED-DELEGATION.md`: tenancy, permission, migration and verification evidence.
+- `MiniStore.Web/Controllers/Api/V1/StockTransactionsApiController.cs`: authenticated inventory-ledger paging/filter contract plus CSRF-protected manual-adjustment form/command over `StockTransactionService`.
+- `MiniStore.Web/Controllers/Api/V1/ProductStocksApiController.cs` and `MiniStore.Application/Dtos/Inventory/ProductStocks/ProductStockFormPageDto.cs`: permission-separated balance/form/create/update/delete API contracts with named choices over Application services and preserved delete refusal.
+- `MiniStore.Web/Controllers/Api/V1/{InventoryBalancesApiController,InventoryReservationsApiController}.cs`: authenticated GET-only, independently permission-protected paging contracts over the existing availability/reservation Application services.
+- `MiniStore.Web/Controllers/Api/V1/InventoryAdjustmentsApiController.cs`: authenticated list/create/details/count/approve/post/cancel contract with independent permissions and CSRF over `InventoryAdjustmentService`.
+- `MiniStore.Web/Controllers/Api/V1/StockTransfersApiController.cs` and `MiniStore.Application/Services/Inventory/StockTransferPageService.cs`: named list/details/form projections plus the complete permission-separated, antiforgery-protected transfer lifecycle over the existing mutation service.
+- `MiniStore.Web/Controllers/Api/V1/InventoryScanningApiController.cs`: exact lookup plus independently permissioned and antiforgery-protected putaway, relocation and Draft-count commands over `InventoryScanningService`.
+- `MiniStore.Web/Controllers/Api/V1/InventoryAnalysisApiControllers.cs`: independently permissioned GET-only insights and reconciliation contracts with server-authored thresholds, values, issues and paging.
+- `MiniStore.Web/Controllers/Api/V1/InventoryTrackingApiController.cs`: authenticated tracking report plus permission-separated,
+  CSRF-protected opening allocation, quarantine/release and recall lifecycle/communication commands over `InventoryTrackingService`.
+- `MiniStore.Web/Controllers/Api/V1/{WarehouseLocationsApiController,UnassignedStockApiController,LocationMovementsApiController,StockMovementsApiController}.cs`:
+  MOD-022F authenticated location master, putaway/rules, relocation and physical movement contracts over Application services.
+- `MiniStore Front-End/src/app/features/inventory/`: bilingual Angular inventory ledger plus complete ProductStock/manual-adjustment presentation, typed clients, permission navigation, dirty/rejected-input recovery and external responsive SCSS.
+- `MiniStore Front-End/src/app/features/inventory/{inventory-availability-page,inventory-reservations-page,inventory-read-page}.*`: bilingual read-only dimensional availability and reservation-history routes with named filters, paging and shared external responsive styling.
+- `MiniStore Front-End/src/app/features/inventory/inventory-adjustment*`: bilingual list/create/details cycle-counting workflow with blind-count handling, dynamic line entry, completed-action states and external responsive SCSS.
+- `MiniStore Front-End/src/app/features/inventory/stock-transfers-page.*` and `data/stock-transfer*`: bilingual list/create/edit/details transfer workflow with named dimensions, tracking allocation entry, state-aware actions and external responsive SCSS.
+- `MiniStore Front-End/src/app/features/inventory/inventory-scanning*` and `data/inventory-scanning*`: bilingual scanner/keyboard workflow with explicit resolution states, blind-count protection, server-issued retry keys and external responsive SCSS.
+- `MiniStore Front-End/src/app/features/inventory/inventory-analysis*` and `data/inventory-analysis*`: bilingual activity/KPI and reconciliation evidence routes with named dimensions, bounded filters/paging and external responsive SCSS.
+- `MiniStore Front-End/src/app/features/inventory/inventory-tracking*` and `data/inventory-tracking*`: bilingual lot/serial,
+  expiration, quarantine and recall workspace, typed client/models, dirty-form recovery and external responsive SCSS.
+- `MiniStore Front-End/src/app/features/inventory/{warehouse-locations-page,unassigned-stock-page,location-movements-page,warehouse-operations*}`
+  and `data/warehouse-operations*`: typed, bilingual location master, putaway/rule and internal/physical movement Angular operations
+  with permission-aware commands, idempotency, dirty-form recovery and shared external responsive SCSS.
+- `docs/modernization/PHASE_22_INVENTORY.md`: inventory/WMS Angular migration scope, completed slices, evidence and next gate.
+- `MiniStore.Web/Controllers/Api/V1/PurchaseRequestsApiController.cs`: authenticated, permission-separated Purchase Request
+  list/details/create/submit/cancel/approve/reject contract over Application services, with antiforgery and row-version evidence.
+- `MiniStore.Web/Controllers/Api/V1/PurchaseApprovalRulesApiController.cs`: authenticated rule page/create/active-state API over
+  `PurchaseApprovalService`, with independent View/Manage permissions, antiforgery and concurrency evidence.
+- `MiniStore Front-End/src/app/features/purchases/purchase-request*`: bilingual typed Purchase Request list/create/details workspace,
+  dynamic named lines, approval-rule administration, eligible lifecycle/decision actions, history and external responsive SCSS.
+- `docs/modernization/PHASE_23_PURCHASING.md`: purchasing Angular migration slices, evidence and next gate.
+- `MiniStore.Web/Controllers/Api/V1/PurchaseRequestsApiController.cs`: authenticated, permission-separated Purchase Request
+  list/details/create/submit/cancel contract over `PurchaseRequestService`, with antiforgery and row-version evidence.
+- `MiniStore Front-End/src/app/features/purchases/purchase-request*`: bilingual typed Purchase Request list/create/details workspace,
+  dynamic named lines, lifecycle actions, history, dirty recovery and external responsive SCSS.
+- `docs/modernization/PHASE_23_PURCHASING.md`: purchasing Angular migration slices, evidence and next gate.

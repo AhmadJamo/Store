@@ -3,6 +3,9 @@ using Microsoft.AspNetCore.Mvc;
 using MiniStore.Web.Localization;
 using MiniStore.Web.Guidance;
 using MiniStore.Web.Observability;
+using Microsoft.Extensions.Localization;
+using MiniStore.Web.Middleware.Api;
+using MiniStore.Web.Presentation.Cutover;
 
 namespace MiniStore.Web.Configuration;
 
@@ -15,21 +18,70 @@ public static class WebPresentationExtensions
         services.AddLocalization(options => options.ResourcesPath = "Resources");
         services.AddMemoryCache();
         services.AddHttpContextAccessor();
+        services.AddAntiforgery(options =>
+        {
+            options.HeaderName = "X-CSRF-TOKEN";
+            options.Cookie.Name = "MiniStore.Antiforgery";
+            options.Cookie.HttpOnly = true;
+            options.Cookie.SameSite = SameSiteMode.Strict;
+            options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+        });
+        services.AddProblemDetails(options => options.CustomizeProblemDetails = context =>
+        {
+            context.ProblemDetails.Extensions["correlationId"] = context.HttpContext.TraceIdentifier;
+        });
+        services.AddOpenApi("internal-v1", options =>
+        {
+            options.AddDocumentTransformer((document, _, _) =>
+            {
+                foreach (var path in document.Paths.Keys
+                             .Where(path => !path.StartsWith("/api/v1", StringComparison.OrdinalIgnoreCase))
+                             .ToList())
+                    document.Paths.Remove(path);
+                document.Info.Title = "MiniStore Internal API";
+                document.Info.Version = "v1";
+                return Task.CompletedTask;
+            });
+        });
         services.Configure<ObservabilityOptions>(
             configuration.GetSection(ObservabilityOptions.SectionName));
+        services.AddOptions<PresentationCutoverOptions>()
+            .Bind(configuration.GetSection(PresentationCutoverOptions.SectionName))
+            .Validate(
+                options => !string.IsNullOrWhiteSpace(options.AngularBasePath) &&
+                           options.AngularBasePath.StartsWith('/') &&
+                           !options.AngularBasePath.StartsWith("//", StringComparison.Ordinal) &&
+                           options.AngularBasePath.All(character =>
+                               char.IsLetterOrDigit(character) || character is '/' or '-' or '_'),
+                "PresentationCutover:AngularBasePath must be a local absolute path.")
+            .ValidateOnStart();
         services.AddHealthChecks()
             .AddCheck("application", () =>
                 Microsoft.Extensions.Diagnostics.HealthChecks.HealthCheckResult.Healthy(),
                 tags: ["live"])
             .AddCheck<DatabaseHealthCheck>("database", tags: ["ready"]);
         services.AddScoped<WorkflowCompletionFilter>();
+        services.AddScoped<PresentationCutoverResolver>();
+        services.AddScoped<PresentationCutoverFilter>();
         services.AddControllersWithViews(options =>
         {
             options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
             options.Filters.Add<WorkflowCompletionFilter>();
+            options.Filters.Add<PresentationCutoverFilter>();
         })
             .AddViewLocalization()
             .AddDataAnnotationsLocalization();
+        services.Configure<ApiBehaviorOptions>(options =>
+        {
+            options.InvalidModelStateResponseFactory = context =>
+            {
+                var localizer = context.HttpContext.RequestServices.GetRequiredService<IStringLocalizer<SharedResource>>();
+                return InternalApiProblemFactory.Validation(
+                    context.HttpContext,
+                    context.ModelState,
+                    localizer["One or more validation errors occurred."]);
+            };
+        });
 
         services.Configure<RequestLocalizationOptions>(options =>
         {
@@ -67,6 +119,14 @@ public static class WebPresentationExtensions
                 context.HttpContext.Response.Headers.RetryAfter = retryAfterSeconds.ToString(
                     System.Globalization.CultureInfo.InvariantCulture);
                 var path = context.HttpContext.Request.Path;
+                if (path.StartsWithSegments("/api/v1"))
+                {
+                    await InternalApiProblemWriter.WriteAsync(
+                        context.HttpContext,
+                        StatusCodes.Status429TooManyRequests,
+                        "Too many attempts. Try again later.");
+                    return;
+                }
                 if (path.StartsWithSegments("/api/supplier"))
                 {
                     context.HttpContext.Response.StatusCode=StatusCodes.Status429TooManyRequests;

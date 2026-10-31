@@ -1,0 +1,93 @@
+<section class="templates-page" [attr.aria-label]="i18n.text('templates')">
+  <app-page-header
+    eyebrow="PURCHASING"
+    [title]="i18n.text('templates')"
+    [description]="i18n.text('templateDescription')"
+  />
+  @if (problem()) {
+    <p class="message error" role="alert">{{ problem() }}</p>
+  }
+  @if (loading()) {
+    <app-feedback-state kind="loading" [title]="i18n.text('loading')" />
+  } @else if (loadingProblem(); as failure) {
+    <app-api-recovery [problem]="failure" (retry)="retry()" />
+  } @else if (creating() && order(); as x) {
+    <div class="actions">
+      <a class="ui-button secondary" routerLink="/purchases/templates">{{ i18n.text('back') }}</a>
+    </div>
+    <form class="ui-card" [formGroup]="form" (ngSubmit)="create()">
+      <h2>
+        {{ i18n.text('order') }} <code>{{ x.orderNumber }}</code>
+      </h2>
+      <p>
+        {{ i18n.text('supplier') }}: {{ x.supplierName }} · {{ i18n.text('warehouse') }}:
+        {{ x.warehouseName }}
+      </p>
+      <div class="form-grid">
+        <label class="ui-field"
+          ><span>{{ i18n.text('name') }}</span
+          ><input maxlength="150" formControlName="name" /></label
+        ><label class="ui-field"
+          ><span>{{ i18n.text('needed') }}</span
+          ><input type="number" min="0" max="3650" formControlName="neededInDays" /></label
+        ><label class="ui-field"
+          ><span>{{ i18n.text('priority') }}</span
+          ><select formControlName="priority">
+            <option [ngValue]="1">{{ i18n.text('low') }}</option>
+            <option [ngValue]="2">{{ i18n.text('normal') }}</option>
+            <option [ngValue]="3">{{ i18n.text('high') }}</option>
+            <option [ngValue]="4">{{ i18n.text('urgent') }}</option>
+          </select></label
+        >
+      </div>
+      <button class="ui-button primary" [disabled]="saving()">
+        {{ i18n.text('saveTemplate') }}
+      </button>
+    </form>
+  } @else {
+    <div class="actions">
+      <a class="ui-button secondary" routerLink="/purchases/agreements">{{ i18n.text('title') }}</a>
+    </div>
+    <div class="cards">
+      @for (x of rows(); track x.id) {
+        <article class="ui-card">
+          <header>
+            <h2>
+              <code>{{ x.templateNumber }}</code> — {{ x.name }}
+            </h2>
+            <span class="ui-badge">{{
+              x.isActive ? i18n.text('active') : i18n.text('cancelled')
+            }}</span>
+          </header>
+          <p>
+            {{ i18n.text('supplier') }}: {{ x.supplierName }} · {{ i18n.text('warehouse') }}:
+            {{ x.warehouseName }}
+          </p>
+          <p>
+            {{ i18n.text('needed') }}: {{ x.neededInDays }} · {{ i18n.text('priority') }}:
+            {{ priorityName(x.priority) }} · {{ i18n.text('generated') }}: {{ x.generationCount }}
+          </p>
+          <ul>
+            @for (l of x.lines; track $index) {
+              <li>{{ l.product }} — {{ l.quantity | number: '1.0-6' }} {{ l.unitName }}</li>
+            }
+          </ul>
+          <div class="actions">
+            @if (x.isActive && session.can('PurchaseTemplates.Generate')) {
+              <button class="ui-button primary" [disabled]="saving()" (click)="generate(x)">
+                {{ i18n.text('generate') }}
+              </button>
+            }
+            @if (session.can('PurchaseTemplates.Manage')) {
+              <button class="ui-button secondary" [disabled]="saving()" (click)="setActive(x)">
+                {{ x.isActive ? i18n.text('deactivate') : i18n.text('templateActivate') }}
+              </button>
+            }
+          </div>
+        </article>
+      } @empty {
+        <p class="ui-card">{{ i18n.text('noTemplates') }}</p>
+      }
+    </div>
+  }
+</section>

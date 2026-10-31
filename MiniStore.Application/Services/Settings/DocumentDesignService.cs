@@ -130,5 +130,5 @@ public sealed class DocumentDesignService(IDocumentDesignRepository designs, IUn
     };
 
     private static void EnsureVersion(byte[] current, byte[] submitted)
-    { if (submitted.Length == 0 || !current.SequenceEqual(submitted)) throw new InvalidOperationException("Document design was modified by another user. Reload and try again."); }
+    { if (submitted.Length == 0 || !current.SequenceEqual(submitted)) throw new SettingsConcurrencyException("Document design was modified by another user. Reload and try again."); }
 }

@@ -11,6 +11,117 @@ PUR-010 adds tenant-safe supplier/product purchasing information with purchase u
 
 The additive procurement workflow now also supports internal Purchase Requests, configurable approvals, sourcing invitations, submitted supplier quotations, a reasoned quotation award and a new Purchase Order. Sourcing and Supplier Quotation create actions bind their create pages' nested `Form.*` fields explicitly, so source identities, invited suppliers and commercial quotation lines survive submission; action links are shown only with their matching permissions. A Purchase Order is created only from the recorded award, freezes its supplier, warehouse, currency, dates, payment terms and commercial line data, and moves through Draft -> Approved -> Confirmed (or a reasoned cancellation before confirmation). The list/detail UI respects distinct view/create/approve/confirm/cancel permissions. A confirmed order remains a commercial commitment: it does not change inventory, AVCO, stock movements or accounting. Receipt/billing-derived completion is intentionally deferred to PUR-060 onward.
 
+`MOD-023C` exposes that existing sourcing/quotation/award behavior through authenticated Angular APIs without duplicating persistence or
+domain logic. Angular can select only the suppliers and commercial inputs; the Application services still validate approved-request
+eligibility, invitation membership, currency/rates, complete quotation lines, exact allocation totals and required award reasons.
+
+`MOD-023D` exposes all current Purchase Order operations through a dedicated Angular API/page. Award materialization and every lifecycle,
+fulfillment and supplier-confirmation mutation still delegate to `PurchaseOrderService`; independent permissions, antiforgery and
+row-version evidence are mandatory. Confirmation remains commercial only and does not mutate inventory or accounting.
+
+`MOD-023E` exposes the existing Goods Receipt list/details, direct receipt, barcode/product-code scanning draft, post, staged quality
+inspection and put-away operations through authenticated Angular routes. The browser submits physical evidence only; confirmed-order
+eligibility, remaining quantity, unit conversion, lot/serial/date rules, idempotency, location, AVCO, stock movement, GRNI posting and
+quality-state transitions remain in `GoodsReceiptService` and Inventory/Accounting services. Independent View/Create/Inspect/PutAway
+permissions and antiforgery remain mandatory, and MVC remains the default presentation.
+
+`MOD-023F` exposes the current Vendor Bill list/details/create, approval, reasoned match override, posting, cancellation,
+attachments and extraction-review operations through Angular. Multipart files remain bounded to ten initial attachments and 5 MB each,
+and extracted values remain untrusted suggestions until explicit review. `VendorBillService` still owns allocation availability,
+supplier invoice uniqueness, three-way matching, taxes, PPV, GRNI, payable and journal effects; Angular cannot calculate or post them.
+
+`MOD-023G` exposes Supplier Payment list/details/create-and-post through Angular with named active payment methods and allocations
+across eligible open bills for the same supplier and currency. The server recalculates paid/credited balances transactionally, blocks
+overpayment and owns exchange-rate, realized gain/loss, payable and cash/bank journal lines. Angular displays but never derives them.
+
+`MOD-023H` exposes Goods Receipt Return list/details/create-and-post through Angular with receipt-line remaining quantities,
+received tracking evidence and explicit location/tracking removal allocations. `GoodsReceiptReturnService` still validates posted
+receipt eligibility, unbilled quantity, current availability and tracking identity, then owns AVCO removal, physical movement,
+GRNI/PPV and balanced journal effects. Independent View/Create permissions and antiforgery remain mandatory; MVC remains default.
+
+`MOD-023I` exposes Supplier Credit Note list/details/create-and-post through Angular with billed, credited and remaining line
+quantities plus received/removal tracking and financial evidence. `SupplierCreditNoteService` still validates posted receipt-based
+bills and current stock/tracking availability, prorates tax and document values, removes inventory at AVCO and posts payable,
+input-tax, inventory and PPV lines atomically. Independent View/Create permissions and antiforgery remain mandatory; MVC is default.
+
+`MOD-023J` exposes controlled Purchase Document Reversal list/details/create through Angular and links eligible posted receipts,
+bills and payments to the reversal confirmation. `PurchaseDocumentReversalService` still owns dependency ordering, fiscal-period
+validation, unchanged valuation and stock-availability gates, exact physical/value corrections, opposite journal posting,
+idempotency and original-state transitions. Independent View/Create permissions and antiforgery remain mandatory; MVC is default.
+
+`MOD-023K` exposes Landed Cost list/details/create-and-post through Angular and links posted receipts to allocation and posted costs
+to controlled reversal. `LandedCostService` still owns quantity/value allocation, current-stock capitalization versus consumed-cost
+expense, AVCO revaluation, value-only stock movements, clearing/expense accounts and balanced journals. Permissions and CSRF remain
+mandatory; MVC is default.
+
+`MOD-023L` exposes Purchase Service Acceptance list/details/create through Angular and links eligible confirmed Purchase Orders to
+service completion. `PurchaseServiceAcceptanceService` still owns confirmed-order and service-policy eligibility, cumulative remaining
+quantities and immutable completion evidence. The operation deliberately creates no warehouse stock movement or accounting entry.
+Independent View/Create permissions and antiforgery remain mandatory; MVC is default.
+
+`MOD-023M` exposes Purchase Agreement list/details/create, activation, cancellation and capped releases plus repeat Purchase Template
+list, create-from-order, request generation and active-state management through Angular. `PurchaseAgreementService` and
+`PurchaseTemplateService` still own award exclusivity, concurrency, validity, cumulative contracted quantities, traced generation and
+current product/unit eligibility. These commercial/demand operations create no direct stock or accounting effect; MVC is default.
+
+`MOD-023N` exposes supplier purchasing terms, atomic bulk save, active state, quantity-price breaks, immutable price history,
+price exceptions and bounded CSV/XLSX preview/import/export through Angular. `SupplierPurchasingInfoService` still owns product/unit
+compatibility, duplicates, preferred rows, concurrency, validity, base currency, atomic imports and audit snapshots; MVC is default.
+
+`MOD-023O` exposes automated replenishment settings, manual execution and run/suggestion history through Angular. Scheduling, demand calculation and duplicate prevention remain server-owned; MVC is default.
+
+`MOD-023P` exposes the existing purchasing analytics projection through an authenticated, read-only Angular workspace. Date,
+supplier, buyer, order-status and grouping filters are submitted to `PurchaseAnalyticsService`; the server remains authoritative for
+spend, receipts, payables, matching exceptions, supplier performance, buyer workload, trends, KPI definitions and acceptance-stage
+counts. Buyer display names and localized KPI/source explanations are prepared by the API, and drill-through links remain separately
+permission protected. No schema, inventory or accounting effect was introduced; MVC is default.
+
+`MOD-023Q` exposes Purchase Accounting Reconciliation through an authenticated, read-only Angular workspace. The browser submits only
+the as-of date and exception filter; `PurchaseAccountingReconciliationService` and its tenant-filtered repository remain authoritative
+for historical/current inventory valuation, warehouse ledger balances, GRNI receipts, returns, bill clearing, settlement evidence and
+all differences. Source and setup links are independently permission-aware. No reconciliation value is derived in Angular and no
+schema, inventory or accounting effect was introduced; MVC is default.
+
+`MOD-023R` exposes supplier communication preparation, document history, immutable RFQ attachment downloads and explicit activity
+recording through Angular. RFQ and Purchase Order pages link by named supplier to bilingual preparation/history. The Application/domain
+layer remains authoritative for supplier/document eligibility, email presence, approved/sent states, immutable subject/body/attachment
+snapshots and the rule that sending precedes delivery, reply or follow-up evidence. Opening a local email application is never treated
+as proof of sending. Independent Prepare/View/RecordActivity permissions and antiforgery remain mandatory; MVC is default.
+
+`MOD-023S` exposes supplier integration management through Angular: credential creation/deactivation, one-time API-key display,
+document-scoped private portal links, Purchase Order reliable-delivery queue/retry, UBL and immutable submission payload downloads plus
+external audit evidence. RFQ and Purchase Order pages enter the context by named supplier. The Application/domain layer still owns
+secret hashing/protection, HTTPS callback validation, document/supplier eligibility, one-time token behavior, idempotency and retry
+state. Independent View/Manage/Queue/Retry permissions and antiforgery remain mandatory; MVC is default.
+
+`MOD-023T` exposes the public supplier portal through a lazy Angular route outside the employee sign-in guard. A capability token
+may read only its RFQ or Purchase Order and may submit the existing quotation, order-confirmation or delivery-notice command.
+`SupplierIntegrationService` still owns the hash-only token, tenant/supplier/document boundary, expiry/revocation, idempotency and
+eligibility rules. Writes retain antiforgery and rate limiting; responses are no-store/no-referrer/noindex, denied tokens are audited,
+and the portal cannot create or post an internal financial document by itself. MVC is default.
+
+`MOD-028F` closes the remaining sourcing file/print parity gap. Angular approved-request RFQ creation now submits a bounded
+multipart contract, so the API no longer discards attachments. Detail pages expose only tenant-filtered attachment metadata and
+permission-protected downloads; filenames are reduced to their final segment, content types are normalized and each RFQ remains
+limited to ten 5 MB files by both presentation and domain rules. A dedicated bilingual RTL-safe route renders the authorized RFQ
+snapshot for browser print/save-PDF without adding a new business document or mutation.
+
+`MOD-023U` completes the remaining legacy direct-purchase presentation in Angular: historical list/details, one-time ledger posting,
+posted Purchase Return list/details and create-and-post. New direct-purchase creation remains retired and users are directed to
+Purchase Requests. `PurchasePostingService` and `PurchaseReturnService` retain posting, quantity, availability, tracking, valuation,
+tax, payable and balanced-journal authority. Independent view/create permissions and antiforgery protect both mutations; MVC remains
+default.
+
+Angular `/purchases/requests` now covers the current request list/search/status filter, named multi-line Draft creation, details,
+approval/history evidence, Submit and reasoned Cancel operations. The versioned API repeats independent permissions and antiforgery,
+and `PurchaseRequestService` still owns numbering, active purchasable products, compatible managed-unit conversion, supplier validity,
+row-version concurrency and lifecycle transitions. Angular computes no trusted quantity conversion or approval state; MVC is default.
+
+Angular `/purchases/approval-rules` now administers the existing warehouse/priority-scoped ordered role rules, including activation
+with row-version evidence. Request details expose current-role and immutable step evidence and show Approve/Reject only when both the
+API-authored role eligibility and independent permission allow it. `PurchaseApprovalService` still freezes rule snapshots and advances
+or rejects the request/instance atomically; the browser cannot select a rule, skip a step or impersonate an approver.
+
 Recognized purchase prerequisite errors are actionable in the shared notification experience. Accounting, warehouse-account, approval-rule, payment-method, matching-tolerance, tax, supplier, product, measurement-unit and document-number failures link to their owning setup or master-data screen when the current user has the required management permission; otherwise the user is told to contact an administrator. Quantity, date and other ordinary validation errors do not receive unrelated setup links. This is the default pattern for future user-resolvable errors.
 
 Successful purchase transitions now include a localized "What is the next step?" explanation and permission-aware action. Specific mappings guide users through request submission/approval, supplier sourcing, quotation entry/comparison/award, order approval/confirmation, goods receipt, vendor billing, payment and agreement activation. Other successful purchase POST redirects receive a safe document/list fallback so the workflow never ends without guidance; destination controllers remain authoritative for access.

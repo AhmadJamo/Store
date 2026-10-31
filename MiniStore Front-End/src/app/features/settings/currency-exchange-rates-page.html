@@ -1,0 +1,30 @@
+<section class="settings-form-page">
+  <app-page-header eyebrow="ADMIN" [title]="i18n.text('currencyExchangeRates')" [description]="i18n.text('currencyExchangeRatesDescription')" />
+  @if (loading()) {
+    <app-feedback-state kind="loading" [title]="i18n.text('loading')" />
+  } @else {
+    @if (problem(); as failure) { <app-api-recovery [problem]="failure" [allowRetry]="false" /> }
+    @if (saved()) { <p class="save-status" role="status">{{ i18n.text('exchangeRateSaved') }}</p> }
+    <form class="form-card" [formGroup]="form" appSafeFormShortcuts [saving]="saving()" (saveShortcut)="save()" (ngSubmit)="save()">
+      <div class="section-heading"><h2>{{ i18n.text('addOrUpdateExchangeRate') }}</h2><strong>{{ i18n.text('companyCurrency') }}: {{ companyCurrencyCode() }}</strong></div>
+      <div class="form-grid">
+        <label class="ui-field"><span>{{ i18n.text('supplierCurrency') }}</span><input formControlName="currencyCode" maxlength="3" autocomplete="off" /></label>
+        <label class="ui-field"><span>{{ i18n.text('effectiveDate') }}</span><input type="date" formControlName="effectiveDate" /></label>
+        <label class="ui-field"><span>{{ i18n.text('companyCurrencyPerUnit') }}</span><input type="number" min="0.000000000001" step="0.000000000001" formControlName="companyCurrencyPerUnit" /><small>{{ i18n.text('exchangeRateExample') }}</small></label>
+        <label class="ui-field"><span>{{ i18n.text('rateSource') }}</span><input formControlName="source" maxlength="100" /></label>
+      </div>
+      <button class="ui-button primary" type="submit" [disabled]="saving() || form.invalid">{{ i18n.text('saveExchangeRate') }}</button>
+    </form>
+    <section class="form-card">
+      <h2>{{ i18n.text('recordedExchangeRates') }}</h2>
+      @if (rates().length === 0) {
+        <p>{{ i18n.text('noExchangeRates') }}</p>
+      } @else {
+        <div class="table-scroll"><table><thead><tr><th scope="col">{{ i18n.text('currency') }}</th><th scope="col">{{ i18n.text('effectiveDate') }}</th><th scope="col">{{ i18n.text('rate') }}</th><th scope="col">{{ i18n.text('rateSource') }}</th></tr></thead><tbody>
+          @for (item of rates(); track item.currencyCode + item.effectiveDate) { <tr><td><strong>{{ item.currencyCode }}</strong></td><td>{{ item.effectiveDate }}</td><td>{{ item.companyCurrencyPerUnit }} {{ companyCurrencyCode() }}</td><td>{{ item.source }}</td></tr> }
+        </tbody></table></div>
+      }
+    </section>
+    <footer class="form-actions"><a class="ui-button secondary" routerLink="/settings">{{ i18n.text('back') }}</a></footer>
+  }
+</section>

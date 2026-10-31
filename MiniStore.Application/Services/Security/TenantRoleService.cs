@@ -83,7 +83,7 @@ public class TenantRoleService(
             ?? throw new InvalidOperationException("Role was not found in this company.");
         if (role.IsSystem) throw new InvalidOperationException("System roles cannot be edited.");
         if (dto.RowVersion.Length == 0 || !role.RowVersion.SequenceEqual(dto.RowVersion))
-            throw new InvalidOperationException("Role settings changed in another session. Reload and try again.");
+            throw new RoleConcurrencyException("Role settings changed in another session. Reload and try again.");
         var normalizedName = (dto.Name?.Trim() ?? string.Empty).ToUpperInvariant();
         var duplicate = await roles.GetByNormalizedNameAsync(tenantId, normalizedName);
         if (duplicate is not null && duplicate.Id != role.Id)

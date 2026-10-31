@@ -86,7 +86,7 @@ public class CustomerService(ICustomerRepository customers, IAccountRepository a
     public async Task ChangeContactStatusAsync(CustomerChildStatusCommandDto dto,bool archive)=>await unitOfWork.ExecuteInTransactionAsync(async()=>{var x=await customers.GetContactAsync(dto.CustomerId,dto.Id)??throw new InvalidOperationException("Customer contact was not found.");EnsureVersion(x.RowVersion,dto.RowVersion);if(archive)x.Archive(DateTime.UtcNow);else x.Restore();});
     public async Task ChangeAddressStatusAsync(CustomerChildStatusCommandDto dto,bool archive)=>await unitOfWork.ExecuteInTransactionAsync(async()=>{var x=await customers.GetAddressAsync(dto.CustomerId,dto.Id)??throw new InvalidOperationException("Customer address was not found.");EnsureVersion(x.RowVersion,dto.RowVersion);if(archive)x.Archive(DateTime.UtcNow);else x.Restore();});
 
-    private static void EnsureVersion(byte[] current,byte[] submitted){if(submitted.Length==0||!current.SequenceEqual(submitted))throw new InvalidOperationException("Customer information was modified by another user. Reload and try again.");}
+    private static void EnsureVersion(byte[] current,byte[] submitted){if(submitted.Length==0||!current.SequenceEqual(submitted))throw new CustomerConcurrencyException("Customer information was modified by another user. Reload and try again.");}
 
     private async Task ChangeStatusAsync(CustomerStatusCommandDto dto, bool archive) =>
         await unitOfWork.ExecuteInTransactionAsync(async () =>
@@ -96,7 +96,7 @@ public class CustomerService(ICustomerRepository customers, IAccountRepository a
     {
         var customer = await customers.GetByIdAsync(id) ?? throw new InvalidOperationException("Customer was not found.");
         if (rowVersion.Length == 0 || !customer.RowVersion.SequenceEqual(rowVersion))
-            throw new InvalidOperationException("Customer was modified by another user. Reload and try again.");
+            throw new CustomerConcurrencyException("Customer was modified by another user. Reload and try again.");
         return customer;
     }
 
@@ -113,7 +113,7 @@ public class CustomerService(ICustomerRepository customers, IAccountRepository a
 
     private async Task ValidateBusinessDefaultsAsync(CustomerFormDto dto,int? excludedId)
     {
-        if (await customers.NameExistsAsync(dto.Name, excludedId)) throw new InvalidOperationException("Customer name already exists.");
+        if (await customers.NameExistsAsync(dto.Name, excludedId)) throw new CustomerDuplicateException("Customer name already exists.");
         var supportedCurrencies=await GetCurrencyOptionsAsync();
         if(!string.IsNullOrWhiteSpace(dto.PreferredCurrencyCode)&&!supportedCurrencies.Contains(dto.PreferredCurrencyCode.Trim().ToUpperInvariant()))
             throw new InvalidOperationException("Selected preferred currency is not configured.");

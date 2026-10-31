@@ -1,0 +1,289 @@
+<main class="templates-page">
+  @if (loading()) {
+    <app-feedback-state kind="loading" [title]="i18n.text('title')" />
+  } @else if (failure(); as issue) {
+    <app-api-recovery [problem]="issue" (retry)="load()" />
+  } @else if (item(); as x) {
+    <app-page-header
+      [eyebrow]="i18n.text('area')"
+      [title]="x.code + ' v' + x.version + ' — ' + x.name"
+      [description]="i18n.text('description')"
+    />
+    <div class="heading">
+      <span class="status">{{ i18n.status(x.status) }}</span>
+      <div class="links">
+        <a class="ui-button" routerLink="/sales/quotation-templates">{{ i18n.text('back') }}</a>
+        @if (session.can('SalesQuotationTemplates.Manage')) {
+          <a
+            class="ui-button"
+            routerLink="/sales/quotation-templates/new"
+            [queryParams]="{ sourceTemplateId: x.id }"
+            >{{ i18n.text('newVersion') }}</a
+          >
+        }
+      </div>
+    </div>
+    <section class="facts ui-card">
+      <div>
+        <span>{{ i18n.text('category') }}</span
+        ><strong>{{ x.category || '—' }}</strong>
+      </div>
+      <div>
+        <span>{{ i18n.text('validity') }}</span
+        ><strong>{{ x.validityDays }}</strong>
+      </div>
+      <div>
+        <span>{{ i18n.text('priceList') }}</span
+        ><strong>{{ x.priceListName || i18n.text('fallback') }}</strong>
+      </div>
+      <div>
+        <span>{{ i18n.text('design') }}</span
+        ><strong>{{ x.designName || i18n.text('defaultDesign') }}</strong>
+      </div>
+    </section>
+    <div class="cards">
+      @for (line of x.items; track line.sequence) {
+        <article class="ui-card">
+          <div class="heading">
+            <strong>{{ line.sequence }}. {{ line.productName }}</strong
+            ><span>{{ i18n.type(line.itemType) }}</span>
+          </div>
+          <p>{{ line.sectionTitle }} · {{ line.unitName }}</p>
+          <p>{{ line.minimumQuantity }}–{{ line.maximumQuantity }} ({{ line.defaultQuantity }})</p>
+          @if (line.optionGroupName) {
+            <p>
+              {{ line.optionGroupName }} · {{ line.groupMinimumSelections }}–{{
+                line.groupMaximumSelections
+              }}
+            </p>
+          }
+        </article>
+      }
+    </div>
+    @if (session.can('SalesQuotationTemplates.Manage')) {
+      <section class="actions ui-card">
+        @if (x.status === 1) {
+          <button class="ui-button primary" (click)="command('activate')">
+            {{ i18n.text('activate') }}
+          </button>
+        }
+        @if (x.status === 2 && !x.isDefault) {
+          <button class="ui-button" (click)="command('default')">
+            {{ i18n.text('setDefault') }}
+          </button>
+        }
+        @if (x.status !== 3) {
+          <button class="ui-button danger" (click)="command('archive')">
+            {{ i18n.text('archive') }}
+          </button>
+        }
+      </section>
+    }
+  } @else if (page(); as p) {
+    <app-page-header
+      [eyebrow]="i18n.text('area')"
+      [title]="i18n.text('create')"
+      [description]="i18n.text('description')"
+    />
+    @if (problem(); as issue) {
+      <app-api-recovery [problem]="issue" [allowRetry]="false" />
+    }
+    <form [formGroup]="form" (ngSubmit)="create()">
+      <section class="form ui-card">
+        <label class="ui-field"
+          ><span>{{ i18n.text('code') }}</span
+          ><input formControlName="code" /></label
+        ><label class="ui-field"
+          ><span>{{ i18n.text('version') }}</span
+          ><input type="number" formControlName="version" /></label
+        ><label class="ui-field"
+          ><span>{{ i18n.text('name') }}</span
+          ><input formControlName="name" /></label
+        ><label class="ui-field"
+          ><span>{{ i18n.text('descriptionField') }}</span
+          ><input formControlName="description" /></label
+        ><label class="ui-field"
+          ><span>{{ i18n.text('category') }}</span
+          ><input formControlName="category" /></label
+        ><label class="ui-field"
+          ><span>{{ i18n.text('tags') }}</span
+          ><input formControlName="tags" /></label
+        ><label class="ui-field"
+          ><span>{{ i18n.text('validity') }}</span
+          ><input type="number" formControlName="validityDays" /></label
+        ><label class="ui-field"
+          ><span>{{ i18n.text('channel') }}</span
+          ><select formControlName="channel">
+            <option [ngValue]="1">{{ i18n.text('wholesale') }}</option>
+            <option [ngValue]="2">{{ i18n.text('retail') }}</option>
+          </select></label
+        ><label class="ui-field"
+          ><span>{{ i18n.text('priceList') }}</span
+          ><select formControlName="salesPriceListId">
+            <option [ngValue]="null">{{ i18n.text('fallback') }}</option>
+            @for (o of p.priceLists; track o.id) {
+              <option [ngValue]="o.id">{{ o.label }}</option>
+            }
+          </select></label
+        ><label class="ui-field"
+          ><span>{{ i18n.text('design') }}</span
+          ><select formControlName="documentDesignId">
+            <option [ngValue]="null">{{ i18n.text('defaultDesign') }}</option>
+            @for (o of p.designs; track o.id) {
+              <option [ngValue]="o.id">{{ o.label }}</option>
+            }
+          </select></label
+        ><label class="check"
+          ><input type="checkbox" formControlName="allowAdditionalLines" />{{
+            i18n.text('additional')
+          }}</label
+        ><label class="check"
+          ><input type="checkbox" formControlName="isDefault" />{{
+            i18n.text('makeDefault')
+          }}</label
+        ><label class="ui-field wide"
+          ><span>{{ i18n.text('introduction') }}</span
+          ><textarea formControlName="introduction"></textarea></label
+        ><label class="ui-field wide"
+          ><span>{{ i18n.text('terms') }}</span
+          ><textarea formControlName="termsAndConditions"></textarea></label
+        ><label class="ui-field wide"
+          ><span>{{ i18n.text('footer') }}</span
+          ><textarea formControlName="footerNotes"></textarea>
+        </label>
+      </section>
+      <div class="heading">
+        <h2>{{ i18n.text('items') }}</h2>
+        <button type="button" class="ui-button" (click)="addItem()">
+          {{ i18n.text('addItem') }}
+        </button>
+      </div>
+      <div class="cards" formArrayName="items">
+        @for (g of items.controls; track g; let i = $index) {
+          <article class="ui-card item" [formGroupName]="i">
+            <label class="ui-field"
+              ><span>{{ i18n.text('sequence') }}</span
+              ><input type="number" formControlName="sequence" /></label
+            ><label class="ui-field"
+              ><span>{{ i18n.text('section') }}</span
+              ><input formControlName="sectionTitle" /></label
+            ><label class="ui-field"
+              ><span>{{ i18n.text('product') }}</span
+              ><select formControlName="productId">
+                @for (o of p.products; track o.id) {
+                  <option [ngValue]="o.id">{{ o.label }}</option>
+                }
+              </select></label
+            ><label class="ui-field"
+              ><span>{{ i18n.text('unit') }}</span
+              ><select formControlName="measurementUnitId">
+                @for (o of p.units; track o.id) {
+                  <option [ngValue]="o.id">{{ o.label }}</option>
+                }
+              </select></label
+            ><label class="ui-field"
+              ><span>{{ i18n.text('type') }}</span
+              ><select formControlName="itemType">
+                @for (v of [1, 2, 3]; track v) {
+                  <option [ngValue]="v">{{ i18n.type(v) }}</option>
+                }
+              </select></label
+            ><label class="ui-field"
+              ><span>{{ i18n.text('defaultQty') }}</span
+              ><input type="number" step=".000001" formControlName="defaultQuantity" /></label
+            ><label class="ui-field"
+              ><span>{{ i18n.text('minQty') }}</span
+              ><input type="number" step=".000001" formControlName="minimumQuantity" /></label
+            ><label class="ui-field"
+              ><span>{{ i18n.text('maxQty') }}</span
+              ><input type="number" step=".000001" formControlName="maximumQuantity" /></label
+            ><label class="ui-field"
+              ><span>{{ i18n.text('tax') }}</span
+              ><select formControlName="taxRateId">
+                <option [ngValue]="null">—</option>
+                @for (o of p.taxRates; track o.id) {
+                  <option [ngValue]="o.id">{{ o.label }}</option>
+                }
+              </select></label
+            ><label class="ui-field"
+              ><span>{{ i18n.text('groupCode') }}</span
+              ><input formControlName="optionGroupCode" /></label
+            ><label class="ui-field"
+              ><span>{{ i18n.text('groupName') }}</span
+              ><input formControlName="optionGroupName" /></label
+            ><label class="ui-field"
+              ><span>{{ i18n.text('minSelections') }}</span
+              ><input type="number" formControlName="groupMinimumSelections" /></label
+            ><label class="ui-field"
+              ><span>{{ i18n.text('maxSelections') }}</span
+              ><input type="number" formControlName="groupMaximumSelections" /></label
+            ><label class="ui-field"
+              ><span>{{ i18n.text('notes') }}</span
+              ><input formControlName="notes" /></label
+            ><label class="check"
+              ><input type="checkbox" formControlName="allowQuantityChange" />{{
+                i18n.text('quantityEditable')
+              }}</label
+            ><label class="check"
+              ><input type="checkbox" formControlName="isDefaultSelected" />{{
+                i18n.text('selected')
+              }}</label
+            ><button type="button" class="ui-button danger" (click)="removeItem(i)">
+              {{ i18n.text('remove') }}
+            </button>
+          </article>
+        }
+      </div>
+      <button
+        class="ui-button primary submit"
+        [disabled]="saving() || form.invalid || !items.length"
+      >
+        {{ i18n.text('createDraft') }}
+      </button>
+    </form>
+  } @else {
+    <app-page-header
+      [eyebrow]="i18n.text('area')"
+      [title]="i18n.text('title')"
+      [description]="i18n.text('description')"
+    />
+    <div class="heading">
+      @if (session.can('SalesQuotationTemplates.Manage')) {
+        <a class="ui-button primary" routerLink="/sales/quotation-templates/new">{{
+          i18n.text('create')
+        }}</a>
+      }
+      <form class="filters" (ngSubmit)="load()">
+        <input [formControl]="search" [placeholder]="i18n.text('search')" /><select
+          [formControl]="status"
+        >
+          <option [ngValue]="0">{{ i18n.text('all') }}</option>
+          <option [ngValue]="1">{{ i18n.text('draft') }}</option>
+          <option [ngValue]="2">{{ i18n.text('active') }}</option>
+          <option [ngValue]="3">{{ i18n.text('archived') }}</option></select
+        ><button class="ui-button">{{ i18n.text('apply') }}</button>
+      </form>
+    </div>
+    @if (!rows().length) {
+      <app-feedback-state kind="empty" [title]="i18n.text('empty')" />
+    }
+    <div class="cards">
+      @for (x of rows(); track x.id) {
+        <article class="ui-card">
+          <div class="heading">
+            <strong>{{ x.code }} v{{ x.version }}</strong
+            ><span>{{ i18n.status(x.status) }}</span>
+          </div>
+          <h2>{{ x.name }}</h2>
+          <p>
+            {{ i18n.text('items') }}: {{ x.itemCount }} · {{ i18n.text('validity') }}:
+            {{ x.validityDays }}
+          </p>
+          <a class="ui-button" [routerLink]="['/sales/quotation-templates', x.id]">{{
+            i18n.text('view')
+          }}</a>
+        </article>
+      }
+    </div>
+  }
+</main>

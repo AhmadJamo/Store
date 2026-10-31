@@ -1,0 +1,7 @@
+using Microsoft.AspNetCore.Authorization;using Microsoft.AspNetCore.Mvc;using Microsoft.Extensions.Localization;using MiniStore.Application.DTOs.Purchases;using MiniStore.Application.Services;using MiniStore.Web.Authorization;using MiniStore.Web.Middleware.Api;
+namespace MiniStore.Web.Controllers.Api.V1;
+[ApiController,Authorize,Route("api/v1/purchase-replenishment")]public sealed class PurchaseReplenishmentApiController(ReplenishmentAutomationService service,IStringLocalizer<SharedResource>localizer):ControllerBase{
+[HttpGet,PermissionAuthorize("PurchaseReplenishment.View")]public async Task<ActionResult<ReplenishmentAutomationPageDto>>Get()=>Ok(await service.GetPageAsync());
+[HttpPost("settings"),ValidateAntiForgeryToken,PermissionAuthorize("PurchaseReplenishment.Manage")]public async Task<IActionResult>SaveSettings(SaveReplenishmentAutomationSettingsDto input)=>await Run(async()=>{await service.SaveSettingsAsync(input);return new{id=1};});
+[HttpPost("run"),ValidateAntiForgeryToken,PermissionAuthorize("PurchaseReplenishment.Run")]public async Task<IActionResult>RunNow()=>await Run(async()=>new{id=await service.RunNowAsync()});
+private async Task<IActionResult>Run<T>(Func<Task<T>>action){try{return Ok(await action());}catch(Exception e)when(e is ArgumentException or InvalidOperationException){ModelState.AddModelError(string.Empty,localizer[e.Message]);return InternalApiProblemFactory.Validation(HttpContext,ModelState,localizer["One or more validation errors occurred."],InternalApiProblemCodes.Validation);}}}

@@ -1,0 +1,91 @@
+import { inject, Injectable } from '@angular/core';
+import { ApiSessionService } from '../../core/api/api-session.service';
+const copy = {
+  en: {
+    title: 'Supplier communication',
+    description:
+      'Prepare supplier email evidence and record only activities that actually occurred.',
+    supplier: 'Supplier',
+    document: 'Source document',
+    language: 'Language',
+    arabic: 'Arabic',
+    english: 'English',
+    prepare: 'Prepare email',
+    preparing: 'Preparing…',
+    history: 'Communication history',
+    open: 'Open communication',
+    none: 'No supplier communications have been prepared.',
+    loading: 'Loading supplier communication…',
+    back: 'Back to document',
+    preparedWarning: 'Prepared does not mean sent',
+    warning:
+      'The system opens your email application but does not claim sending, delivery or reply. Record each status only from actual evidence.',
+    recipient: 'Recipient email',
+    subject: 'Subject',
+    message: 'Message',
+    openEmail: 'Open in email application',
+    attachments: 'Attachments to add in the email application',
+    record: 'Record actual communication activity',
+    activity: 'Activity',
+    occurred: 'Occurred at',
+    evidence: 'Evidence reference',
+    note: 'Summary / note',
+    save: 'Record activity',
+    saving: 'Recording…',
+    sent: 'Sent',
+    delivered: 'Delivered',
+    replied: 'Replied',
+    failed: 'Failed',
+    followUp: 'Follow-up',
+    prepared: 'Prepared',
+    statusHistory: 'Communication history',
+    noStatus: 'No sending status has been recorded yet.',
+  },
+  ar: {
+    title: 'اتصال المورد',
+    description: 'جهّز دليل رسالة المورد وسجّل فقط الأنشطة التي حدثت فعليًا.',
+    supplier: 'المورد',
+    document: 'المستند المصدر',
+    language: 'اللغة',
+    arabic: 'العربية',
+    english: 'الإنجليزية',
+    prepare: 'تجهيز الرسالة',
+    preparing: 'جارٍ التجهيز…',
+    history: 'سجل الاتصالات',
+    open: 'فتح الاتصال',
+    none: 'لم يتم تجهيز اتصالات لهذا المورد.',
+    loading: 'جارٍ تحميل اتصال المورد…',
+    back: 'العودة إلى المستند',
+    preparedWarning: 'التجهيز لا يعني الإرسال',
+    warning:
+      'يفتح النظام تطبيق البريد لكنه لا يدّعي الإرسال أو التسليم أو الرد. سجّل كل حالة من دليل فعلي فقط.',
+    recipient: 'بريد المستلم',
+    subject: 'الموضوع',
+    message: 'الرسالة',
+    openEmail: 'فتح في تطبيق البريد',
+    attachments: 'المرفقات المطلوب إضافتها في تطبيق البريد',
+    record: 'تسجيل نشاط الاتصال الفعلي',
+    activity: 'النشاط',
+    occurred: 'وقت الحدوث',
+    evidence: 'مرجع الدليل',
+    note: 'الملخص / الملاحظة',
+    save: 'تسجيل النشاط',
+    saving: 'جارٍ التسجيل…',
+    sent: 'تم الإرسال',
+    delivered: 'تم التسليم',
+    replied: 'تم الرد',
+    failed: 'فشل',
+    followUp: 'متابعة',
+    prepared: 'مجهز',
+    statusHistory: 'سجل الاتصال',
+    noStatus: 'لم يتم تسجيل حالة إرسال بعد.',
+  },
+} as const;
+export type CommunicationKey = keyof typeof copy.en;
+@Injectable({ providedIn: 'root' })
+export class SupplierCommunicationsLocalizationService {
+  private readonly session = inject(ApiSessionService);
+  text(key: CommunicationKey) {
+    return copy[this.session.session()?.culture?.startsWith('ar') ? 'ar' : 'en'][key];
+  }
+}

@@ -1,0 +1,34 @@
+<section class="customer-page" aria-labelledby="customer-form-title">
+  <header class="page-header"><div><span class="eyebrow">CRM</span><h1 id="customer-form-title">{{ i18n.text(id ? 'editCustomer' : 'newCustomer') }}</h1><p>{{ i18n.text('customerFormDescription') }}</p></div><a class="ui-button secondary" routerLink="/customers">{{ i18n.text('cancel') }}</a></header>
+  @if (!page() && !problem()) { <div class="state" aria-live="polite">{{ i18n.text('loading') }}</div> }
+  @if (problem()) { <app-form-error-summary [title]="problem()" [errors]="fieldErrors()" (fieldRequested)="focusField($event)" /> }
+  @if (recovery(); as failure) { <app-api-recovery [problem]="failure" [allowRetry]="recoveryAllowsRetry()" [sourceUrl]="latestRecordUrl()" (retry)="loadForm()" /> }
+  @if (page(); as options) {
+    <form appSafeFormShortcuts [saving]="saving()" (saveShortcut)="save()" [formGroup]="form" (ngSubmit)="save()" novalidate>
+      <fieldset><legend>{{ i18n.text('profile') }}</legend><div class="form-grid">
+        @if (id) { <label class="ui-field"><span>{{ i18n.text('customerCode') }}</span><input formControlName="customerCode" readonly /></label> }
+        <label class="ui-field"><span>{{ i18n.text('customerName') }} *</span><input formControlName="name" autocomplete="organization" />@if (errorFor('name')) { <small>{{ errorFor('name') }}</small> }</label>
+        <label class="ui-field"><span>{{ i18n.text('customerType') }}</span><select formControlName="type"><option [value]="1">{{ i18n.text('company') }}</option><option [value]="2">{{ i18n.text('individual') }}</option></select></label>
+        <label class="ui-field"><span>{{ i18n.text('legalName') }}</span><input formControlName="legalName" /></label>
+        <label class="ui-field"><span>{{ i18n.text('phone') }}</span><input formControlName="phone" autocomplete="tel" /></label>
+        <label class="ui-field"><span>{{ i18n.text('email') }}</span><input formControlName="email" type="email" autocomplete="email" />@if (errorFor('email')) { <small>{{ errorFor('email') }}</small> }</label>
+        <label class="ui-field"><span>{{ i18n.text('website') }}</span><input formControlName="website" type="url" /></label>
+        <label class="ui-field"><span>{{ i18n.text('registrationNumber') }}</span><input formControlName="registrationNumber" /></label>
+        <label class="ui-field"><span>{{ i18n.text('taxNumber') }}</span><input formControlName="taxNumber" /></label>
+        <label class="ui-field"><span>{{ i18n.text('preferredLanguage') }}</span><select formControlName="preferredLanguage"><option value="ar-JO">العربية</option><option value="en-US">English</option></select></label>
+        <label class="ui-field"><span>{{ i18n.text('timeZone') }}</span><input formControlName="timeZoneId" /></label>
+        <label class="ui-field full"><span>{{ i18n.text('notes') }}</span><textarea formControlName="notes" rows="3"></textarea></label>
+      </div></fieldset>
+      <fieldset><legend>{{ i18n.text('commercialDefaults') }}</legend><p class="field-note">{{ i18n.text('optionalFieldsNote') }}</p><div class="form-grid">
+        <label class="ui-field"><span>{{ i18n.text('receivableAccount') }}</span><select formControlName="accountId"><option [ngValue]="null">{{ i18n.text('automaticOrConfigured') }}</option>@for (account of options.accounts; track account.id) { <option [ngValue]="account.id">{{ account.code }} — {{ account.name }}</option> }</select></label>
+        <label class="ui-field"><span>{{ i18n.text('paymentTermDays') }}</span><input formControlName="paymentTermDays" type="number" min="0" max="3650" /></label>
+        <label class="ui-field"><span>{{ i18n.text('currency') }}</span><select formControlName="preferredCurrencyCode"><option value="">—</option>@for (currency of options.currencies; track currency) { <option [value]="currency">{{ currency }}</option> }</select></label>
+        <label class="ui-field"><span>{{ i18n.text('taxRate') }}</span><select formControlName="defaultTaxRateId"><option [ngValue]="null">—</option>@for (tax of options.taxRates; track tax.id) { <option [ngValue]="tax.id">{{ tax.name }} ({{ tax.rate }}%)</option> }</select></label>
+        <label class="ui-field"><span>{{ i18n.text('priceList') }}</span><select formControlName="defaultSalesPriceListId"><option [ngValue]="null">—</option>@for (list of options.priceLists; track list.id) { <option [ngValue]="list.id">{{ list.code }} — {{ list.name }}</option> }</select></label>
+        <label class="check-field"><input formControlName="isTaxExempt" type="checkbox" /> {{ i18n.text('taxExempt') }}</label>
+        @if (form.controls.isTaxExempt.value) { <label class="ui-field full"><span>{{ i18n.text('taxExemptionReason') }}</span><textarea formControlName="taxExemptionReason" rows="2"></textarea></label> }
+      </div></fieldset>
+      <footer class="form-actions"><span class="shortcut-hint">{{ i18n.text('saveShortcutHint') }}</span><a class="ui-button secondary" routerLink="/customers">{{ i18n.text('cancel') }}</a><button class="ui-button primary" type="submit" [disabled]="saving()">{{ saving() ? i18n.text('saving') : i18n.text('save') }}</button></footer>
+    </form>
+  }
+</section>

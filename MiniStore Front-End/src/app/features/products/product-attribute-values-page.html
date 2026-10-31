@@ -1,0 +1,25 @@
+<section class="values-page">
+  @if (loading()) { <app-feedback-state kind="loading" [title]="i18n.text('loading')" /> }
+  @else if (loadingProblem(); as failure) { <app-api-recovery [problem]="failure" (retry)="load()" /> }
+  @else if (page(); as current) {
+    <app-page-header eyebrow="CATALOG" [title]="i18n.text('productAttributeValues') + ': ' + current.productName" [description]="current.productCode + (current.categoryName ? ' · ' + current.categoryName : '')"><a class="ui-button secondary" [routerLink]="['/products', current.productId]">{{ i18n.text('backToProduct') }}</a><a class="ui-button secondary" routerLink="/products/attributes">{{ i18n.text('manageAttributes') }}</a></app-page-header>
+    @if (problem()) { <app-form-error-summary [title]="problem()" [errors]="fieldErrors()" (fieldRequested)="focusField($event)" /> }
+    @if (!current.fields.length) { <app-feedback-state kind="empty" [title]="i18n.text('noApplicableAttributes')" [description]="i18n.text('noApplicableAttributesDescription')" /> }
+    @else {
+      <form class="values-form" appSafeFormShortcuts [saving]="saving()" (saveShortcut)="save()" [formGroup]="form" (ngSubmit)="save()" novalidate>
+        @for (field of current.fields; track field.definitionId) {
+          <label class="ui-field" [attr.for]="key(field)"><span>{{ field.name }}@if (field.isRequired) { * } @if (field.isVariantDefining) { <small class="variant">{{ i18n.text('variantDefining') }}</small> }</span>
+            @switch (field.dataType) {
+              @case (1) { <input [id]="key(field)" [formControlName]="key(field)" maxlength="500" /> }
+              @case (2) { <input [id]="key(field)" type="number" step="any" inputmode="decimal" [formControlName]="key(field)" /> }
+              @case (3) { <select [id]="key(field)" [formControlName]="key(field)"><option value="">{{ i18n.text('selectOption') }}</option><option value="true">{{ i18n.text('yes') }}</option><option value="false">{{ i18n.text('no') }}</option></select> }
+              @case (4) { <select [id]="key(field)" [formControlName]="key(field)"><option value="">{{ i18n.text('selectOption') }}</option>@for (option of field.options; track option.id) { <option [value]="option.id">{{ option.name }}</option> }</select> }
+            }
+            <small class="code">{{ field.code }}</small>@if (errorFor(field)) { <small class="error">{{ errorFor(field) }}</small> }
+          </label>
+        }
+        <div class="form-actions"><a class="ui-button secondary" [routerLink]="['/products', current.productId]">{{ i18n.text('cancel') }}</a><button class="ui-button primary" type="submit" [disabled]="saving()">{{ saving() ? i18n.text('saving') : i18n.text('saveAttributeValues') }}</button></div>
+      </form>
+    }
+  }
+</section>

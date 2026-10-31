@@ -1,0 +1,117 @@
+<section class="replenishment-page" [attr.aria-label]="i18n.text('title')">
+  <app-page-header
+    eyebrow="PURCHASING"
+    [title]="i18n.text('title')"
+    [description]="i18n.text('description')"
+  />
+  @if (problem()) {
+    <p class="message error" role="alert">{{ problem() }}</p>
+  }
+  @if (message()) {
+    <p class="message success" role="status">{{ message() }}</p>
+  }
+  @if (loading()) {
+    <app-feedback-state kind="loading" [title]="i18n.text('loading')" />
+  } @else if (loadingProblem(); as failure) {
+    <app-api-recovery [problem]="failure" (retry)="retry()" />
+  } @else if (page(); as p) {
+    <div class="actions">
+      @if (session.can('PurchaseReplenishment.Run')) {
+        <button class="ui-button primary" [disabled]="saving()" (click)="run()">
+          {{ i18n.text('run') }}
+        </button>
+      }
+    </div>
+    <form class="ui-card" [formGroup]="form" (ngSubmit)="save()">
+      <h2>{{ i18n.text('settings') }}</h2>
+      <div class="grid">
+        <label class="check"
+          ><input type="checkbox" formControlName="isEnabled" /> {{ i18n.text('enabled') }}</label
+        ><label class="ui-field"
+          ><span>{{ i18n.text('frequency') }}</span
+          ><input type="number" min="1" max="168" formControlName="frequencyHours" /></label
+        ><label class="ui-field"
+          ><span>{{ i18n.text('lookback') }}</span
+          ><input type="number" min="7" max="730" formControlName="forecastLookbackDays" /></label
+        ><label class="ui-field"
+          ><span>{{ i18n.text('mode') }}</span
+          ><select formControlName="mode">
+            <option [ngValue]="1">{{ i18n.text('review') }}</option>
+            <option [ngValue]="2">{{ i18n.text('requests') }}</option>
+            <option [ngValue]="3">{{ i18n.text('rfq') }}</option>
+          </select></label
+        ><label class="ui-field"
+          ><span>{{ i18n.text('response') }}</span
+          ><input type="number" min="1" max="90" formControlName="supplierResponseDays"
+        /></label>
+      </div>
+      @if (session.can('PurchaseReplenishment.Manage')) {
+        <button class="ui-button secondary" [disabled]="saving()">{{ i18n.text('save') }}</button>
+      }
+      <p>
+        {{ i18n.text('last') }}: {{ (p.lastRunAtUtc | date: 'medium') || '—' }} ·
+        {{ i18n.text('next') }}: {{ (p.nextRunAtUtc | date: 'medium') || '—' }}
+      </p>
+    </form>
+    <h2>{{ i18n.text('history') }}</h2>
+    @for (run of p.runs; track run.id) {
+      <article class="ui-card run">
+        <header>
+          <strong>#{{ run.id }} · {{ modeName(run.mode) }}</strong
+          ><span class="ui-badge">{{
+            run.isScheduled ? i18n.text('scheduled') : i18n.text('manual')
+          }}</span>
+        </header>
+        <p>{{ run.startedAtUtc | date: 'medium' }} · {{ run.triggeredByUserId }}</p>
+        @if (run.error) {
+          <p class="message error">{{ run.error }}</p>
+        }
+        <div class="suggestions">
+          @for (x of run.suggestions; track x.id) {
+            <section>
+              <strong>{{ x.product }}</strong>
+              <p>{{ x.warehouse }} · {{ i18n.text('needed') }} {{ x.neededByDate }}</p>
+              <dl>
+                <div>
+                  <dt>{{ i18n.text('available') }}</dt>
+                  <dd>{{ x.available | number: '1.0-6' }}</dd>
+                </div>
+                <div>
+                  <dt>{{ i18n.text('incoming') }}</dt>
+                  <dd>{{ x.incoming | number: '1.0-6' }}</dd>
+                </div>
+                <div>
+                  <dt>{{ i18n.text('demand') }}</dt>
+                  <dd>{{ x.historicalDemand | number: '1.0-6' }}</dd>
+                </div>
+                <div>
+                  <dt>{{ i18n.text('target') }}</dt>
+                  <dd>{{ x.target | number: '1.0-6' }}</dd>
+                </div>
+                <div>
+                  <dt>{{ i18n.text('purchase') }}</dt>
+                  <dd>{{ x.suggestedPurchase | number: '1.0-6' }} {{ x.purchaseUnitSymbol }}</dd>
+                </div>
+              </dl>
+              @if (x.purchaseRequestId) {
+                <a
+                  class="ui-button secondary"
+                  [routerLink]="['/purchases/requests', x.purchaseRequestId]"
+                  >{{ i18n.text('openRequest') }}</a
+                >
+              } @else if (x.purchaseSourcingEventId) {
+                <a
+                  class="ui-button secondary"
+                  [routerLink]="['/purchases/sourcing', x.purchaseSourcingEventId]"
+                  >{{ i18n.text('openRfq') }}</a
+                >
+              }
+            </section>
+          }
+        </div>
+      </article>
+    } @empty {
+      <p class="ui-card">{{ i18n.text('noRuns') }}</p>
+    }
+  }
+</section>

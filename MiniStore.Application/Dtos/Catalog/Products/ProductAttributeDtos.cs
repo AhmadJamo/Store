@@ -1,17 +1,29 @@
+using System.ComponentModel.DataAnnotations;
 using MiniStore.Domain.Entities;
 
 namespace MiniStore.Application.DTOs.Products;
 
 public sealed class CreateProductAttributeDto
 {
+    [Required, StringLength(100)]
     public string Name { get; set; } = string.Empty;
+
+    [Required, StringLength(40)]
+    [RegularExpression("^[A-Za-z0-9][A-Za-z0-9_-]*$")]
     public string Code { get; set; } = string.Empty;
     public ProductAttributeDataType DataType { get; set; } = ProductAttributeDataType.Text;
     public bool IsRequired { get; set; }
     public bool IsVariantDefining { get; set; }
+    [Range(0, int.MaxValue)]
     public int DisplayOrder { get; set; }
     public List<int> ProductCategoryIds { get; set; } = [];
+    [StringLength(10000)]
     public string? OptionsText { get; set; }
+}
+
+public sealed class SetProductAttributeStatusDto
+{
+    public bool IsActive { get; set; }
 }
 
 public sealed class ProductAttributeDefinitionDto
@@ -39,6 +51,11 @@ public sealed class ProductAttributeValueInputDto
 {
     public int DefinitionId { get; set; }
     public string? Value { get; set; }
+}
+
+public sealed class SaveProductAttributeValuesDto
+{
+    public List<ProductAttributeValueInputDto> Values { get; set; } = [];
 }
 
 public sealed class ProductAttributeValueFieldDto

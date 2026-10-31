@@ -1,0 +1,73 @@
+<main class="journal-page">
+  @if (loading()) {
+    <app-feedback-state kind="loading" [title]="i18n.text('title')" />
+  } @else if (failure(); as issue) {
+    <app-api-recovery [problem]="issue" (retry)="load()" />
+  } @else if (entry(); as x) {
+    <app-page-header
+      [eyebrow]="i18n.text('area')"
+      [title]="x.entryNumber"
+      [description]="i18n.text('description')"
+    /><span class="status">{{ i18n.status(x.status) }}</span>
+    <section class="facts ui-card">
+      <div>
+        <span>{{ i18n.text('date') }}</span
+        ><strong>{{ x.date | date: 'mediumDate' }}</strong>
+      </div>
+      <div>
+        <span>{{ i18n.text('sourceType') }}</span
+        ><strong>{{ x.sourceType || '—' }}</strong>
+      </div>
+      <div>
+        <span>{{ i18n.text('sourceReference') }}</span
+        ><strong>{{ x.sourceReference || '—' }}</strong>
+      </div>
+      @if (x.reversalOfEntryId) {
+        <div>
+          <span>{{ i18n.text('reversalOf') }}</span
+          ><strong>{{ x.reversalOfEntryId }}</strong>
+        </div>
+      }
+      @if (x.description) {
+        <div class="wide">
+          <span>{{ i18n.text('entryDescription') }}</span
+          ><strong>{{ x.description }}</strong>
+        </div>
+      }
+    </section>
+    <section class="ui-card table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>{{ i18n.text('account') }}</th>
+            <th>{{ i18n.text('branch') }}</th>
+            <th>{{ i18n.text('warehouse') }}</th>
+            <th>{{ i18n.text('debit') }}</th>
+            <th>{{ i18n.text('credit') }}</th>
+            <th>{{ i18n.text('lineDescription') }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (line of x.lines; track $index) {
+            <tr>
+              <td>{{ line.accountDisplay }}</td>
+              <td>{{ line.branchName || '—' }}</td>
+              <td>{{ line.warehouseName || '—' }}</td>
+              <td>{{ line.debit | number: '1.2-2' }}</td>
+              <td>{{ line.credit | number: '1.2-2' }}</td>
+              <td>{{ line.description || '—' }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </section>
+    <section class="totals ui-card">
+      <span
+        >{{ i18n.text('totalDebit') }}: <strong>{{ x.totalDebit | number: '1.2-2' }}</strong></span
+      ><span
+        >{{ i18n.text('totalCredit') }}:
+        <strong>{{ x.totalCredit | number: '1.2-2' }}</strong></span
+      >
+    </section>
+  }
+</main>

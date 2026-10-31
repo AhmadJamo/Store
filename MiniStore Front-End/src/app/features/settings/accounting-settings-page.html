@@ -1,0 +1,19 @@
+<section class="settings-form-page">
+  <app-page-header eyebrow="ADMIN" [title]="i18n.text('accountingSettings')" [description]="i18n.text('accountingSettingsDescription')" />
+  @if (loading()) { <app-feedback-state kind="loading" [title]="i18n.text('loading')" /> } @else {
+    @if (problem(); as failure) { <app-api-recovery [problem]="failure" [allowRetry]="false" /> }
+    @if (saved()) { <p class="save-status" role="status">{{ i18n.text('accountingSettingsSaved') }}</p> }
+    <form [formGroup]="form" appSafeFormShortcuts [saving]="saving()" (saveShortcut)="save()" (ngSubmit)="save()">
+      <section class="form-card"><h2>{{ i18n.text('customerReceivablePolicy') }}</h2><div class="form-grid">
+        <label class="ui-field"><span>{{ i18n.text('receivableAccountMode') }}</span><select formControlName="customerReceivableAccountMode"><option [ngValue]="null">{{ i18n.text('legacyManualBehavior') }}</option><option [ngValue]="1">{{ i18n.text('sharedControlAccount') }}</option><option [ngValue]="2">{{ i18n.text('automaticIndividualAccount') }}</option><option [ngValue]="3">{{ i18n.text('manualAccountSelection') }}</option></select></label>
+        <label class="ui-field"><span>{{ i18n.text('sharedReceivableControlAccount') }}</span><select formControlName="customerReceivableControlAccountId"><option [ngValue]="null">{{ i18n.text('selectNotConfigured') }}</option>@for (account of accounts(); track account.id) { <option [ngValue]="account.id">{{ account.code }} — {{ account.name }}</option> }</select></label>
+        <label class="ui-field"><span>{{ i18n.text('automaticCustomerParentAccount') }}</span><select formControlName="customerReceivableParentAccountId"><option [ngValue]="null">{{ i18n.text('selectNotConfigured') }}</option>@for (account of accounts(); track account.id) { <option [ngValue]="account.id">{{ account.code }} — {{ account.name }}</option> }</select></label>
+        <label class="ui-field"><span>{{ i18n.text('automaticAccountCodePrefix') }}</span><input formControlName="customerAccountCodePrefix" maxlength="20" /></label>
+        <label class="ui-field"><span>{{ i18n.text('policyEffectiveFrom') }}</span><input type="date" formControlName="customerPolicyEffectiveFrom" /></label>
+      </div></section>
+      <section class="form-card"><h2>{{ i18n.text('customerInvoicingPolicy') }}</h2><label class="ui-field"><span>{{ i18n.text('invoiceQuantityBasis') }}</span><select formControlName="salesInvoiceQuantityPolicy"><option [ngValue]="1">{{ i18n.text('deliveredQuantity') }}</option><option [ngValue]="2">{{ i18n.text('orderedQuantity') }}</option></select></label></section>
+      <section class="form-card"><h2>{{ i18n.text('postingAccounts') }}</h2><div class="form-grid">@for (field of postingFields; track field[0]) { <label class="ui-field"><span>{{ i18n.text(field[1]) }}</span><select [formControlName]="field[0]"><option [ngValue]="null">{{ i18n.text('selectNotConfigured') }}</option>@for (account of accounts(); track account.id) { <option [ngValue]="account.id">{{ account.code }} — {{ account.name }}</option> }</select></label> }</div></section>
+      <footer class="form-actions"><button class="ui-button primary" type="submit" [disabled]="saving() || form.invalid">{{ i18n.text('saveAccountingSettings') }}</button><a class="ui-button secondary" routerLink="/settings">{{ i18n.text('back') }}</a></footer>
+    </form>
+  }
+</section>

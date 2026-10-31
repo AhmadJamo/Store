@@ -1,6 +1,8 @@
 using MiniStore.Application.Permissions;
+using MiniStore.Application.DTOs.Security;
 using MiniStore.Application.Saas;
 using MiniStore.Application.Services;
+using MiniStore.Application.Services.Api;
 using MiniStore.Domain.Interfaces;
 using MiniStore.Infrastructure.Authorization;
 using MiniStore.Infrastructure.Documents;
@@ -36,10 +38,16 @@ public static class BusinessServicesExtensions
         services.AddScoped<ISaasRepository, SaasRepository>();
         services.AddScoped<EntitlementService>();
         services.AddScoped<PlatformSaasService>();
+        services.AddScoped<TenantSubscriptionPageService>();
         services.AddScoped<ISaasOnboardingService, SaasOnboardingService>();
         services.AddScoped<ICompanyOnboardingService, CompanyOnboardingService>();
         services.AddScoped<IBillingCheckoutService, BillingCheckoutService>();
         services.AddScoped<IPermissionService, PermissionService>();
+        services.AddScoped<InternalApiSessionService>();
+        services.AddScoped<TenantAccountAuthenticationService>();
+        services.AddScoped<PlatformAccountAuthenticationService>();
+        services.AddScoped<TenantCompanyRegistrationService>();
+        services.AddScoped<ITenantUserAdministrationService, TenantUserAdministrationService>();
     }
 
     private static void AddCatalogServices(this IServiceCollection services)
@@ -124,6 +132,8 @@ public static class BusinessServicesExtensions
         services.AddScoped<ReplenishmentPurchaseDemandService>();
         services.AddScoped<IReplenishmentAutomationRepository, ReplenishmentAutomationRepository>();
         services.AddScoped<ReplenishmentAutomationService>();
+        services.AddSingleton<IBackgroundJobMonitor, BackgroundJobMonitor>();
+        services.AddScoped<OperationsCenterService>();
         services.AddHostedService<ReplenishmentAutomationWorker>();
         services.AddScoped<InventoryInsightsService>();
         services.AddScoped<InventoryScanningService>();
@@ -135,6 +145,7 @@ public static class BusinessServicesExtensions
         services.AddScoped<StockTransactionService>();
         services.AddScoped<IStockTransferRepository, StockTransferRepository>();
         services.AddScoped<IStockTransferService, StockTransferService>();
+        services.AddScoped<StockTransferPageService>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
     }
 
@@ -207,6 +218,7 @@ public static class BusinessServicesExtensions
         services.AddScoped<SalesQuotationService>();
         services.AddScoped<SalesAnalyticsService>();
         services.AddScoped<IAnalyticsWorkspaceRepository, AnalyticsWorkspaceRepository>();
+        services.AddScoped<IAnalyticsPrincipalDirectory, AnalyticsPrincipalDirectory>();
         services.AddScoped<IAnalyticsModuleProvider, SalesAnalyticsModuleProvider>();
         services.AddScoped<IAnalyticsModuleProvider, PurchaseAnalyticsModuleProvider>();
         services.AddScoped<AnalyticsCenterService>();
@@ -224,6 +236,8 @@ public static class BusinessServicesExtensions
         services.AddScoped<ICustomerCreditNoteRepository, CustomerCreditNoteRepository>();
         services.AddScoped<ISalesApprovalRepository, SalesApprovalRepository>();
         services.AddScoped<CustomerInvoiceService>();
+        services.AddScoped<DocumentEvidenceService>();
+        services.AddScoped<WorkCenterService>();
         services.AddScoped<CustomerPaymentService>();
         services.AddScoped<CustomerReturnRequestService>();
         services.AddScoped<CustomerReturnReceiptService>();
@@ -231,6 +245,7 @@ public static class BusinessServicesExtensions
         services.AddScoped<SalesOrderApprovalService>();
         services.AddScoped<ISaleService, SaleService>();
         services.AddScoped<SalePostingService>();
+        services.AddScoped<LegacySaleWorkspaceService>();
         services.AddScoped<ISalesReturnRepository, SalesReturnRepository>();
         services.AddScoped<SalesReturnService>();
     }

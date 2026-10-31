@@ -1,0 +1,74 @@
+<div class="public-site" [attr.dir]="i18n.locale.direction()">
+  <a class="skip-link" href="#main">{{ i18n.text('skip') }}</a>
+  <header>
+    <a class="brand" routerLink="/welcome">{{ i18n.text('product') }}</a>
+    <nav [attr.aria-label]="i18n.text('primaryNavigation')">
+      <a routerLink="/welcome">{{ i18n.text('navHome') }}</a>
+      <a routerLink="/pricing">{{ i18n.text('navPricing') }}</a>
+    </nav>
+    <div class="header-actions">
+      <button type="button" (click)="i18n.locale.toggle()">{{ i18n.text('language') }}</button>
+      <a routerLink="/login">{{ i18n.text('signIn') }}</a>
+    </div>
+  </header>
+
+  <main id="main">
+    @if (!pricing) {
+      <section class="hero">
+        <div>
+          <span class="badge">{{ i18n.text('badge') }}</span>
+          <h1>{{ i18n.text('hero') }}</h1>
+          <p>{{ i18n.text('heroDescription') }}</p>
+          <div class="hero-actions">
+            <a class="ui-button primary" routerLink="/register">{{ i18n.text('start') }}</a>
+            <a class="ui-button secondary" href="#features">{{ i18n.text('explore') }}</a>
+          </div>
+        </div>
+        <aside aria-hidden="true">
+          <span>{{ i18n.text('sales') }}</span><strong>24.8K</strong>
+          <span>{{ i18n.text('inventoryMetric') }}</span><strong>98.4%</strong>
+        </aside>
+      </section>
+      <section id="features" class="features" [attr.aria-label]="i18n.text('featuresLabel')">
+        <article><h2>{{ i18n.text('accounting') }}</h2><p>{{ i18n.text('accountingText') }}</p></article>
+        <article><h2>{{ i18n.text('inventory') }}</h2><p>{{ i18n.text('inventoryText') }}</p></article>
+        <article><h2>{{ i18n.text('pos') }}</h2><p>{{ i18n.text('posText') }}</p></article>
+      </section>
+    } @else {
+      <section class="pricing-heading">
+        <h1>{{ i18n.text('pricingTitle') }}</h1>
+        <p>{{ i18n.text('pricingDescription') }}</p>
+      </section>
+      @if (problem(); as issue) {
+        <app-api-recovery [problem]="issue" (retry)="load()" />
+      }
+      @if (loading()) {
+        <app-feedback-state kind="loading" [title]="i18n.text('pricingTitle')" />
+      } @else if (!plans().length) {
+        <app-feedback-state kind="empty" [title]="i18n.text('plansEmpty')" />
+      } @else {
+        <section class="plans" [attr.aria-label]="i18n.text('plansLabel')">
+          @for (plan of plans(); track plan.id) {
+            <article>
+              <h2>{{ name(plan) }}</h2>
+              <p>{{ description(plan) }}</p>
+              <div class="price">
+                <strong>{{ plan.monthlyPrice | number: '1.2-2' }}</strong>
+                <span>{{ plan.currency }} / {{ i18n.text('month') }}</span>
+              </div>
+              <p>{{ i18n.text('annual') }}: {{ plan.annualPrice | number: '1.2-2' }} {{ plan.currency }} / {{ i18n.text('year') }}</p>
+              <ul>
+                @for (limit of limits(plan); track limit[0]) {
+                  <li><span>{{ i18n.limit(limit[0]) }}</span><strong>{{ limit[1] ?? i18n.text('unlimited') }}</strong></li>
+                }
+              </ul>
+              <a class="ui-button primary" [routerLink]="['/register']" [queryParams]="{ planId: plan.id }">
+                {{ i18n.text('start') }}
+              </a>
+            </article>
+          }
+        </section>
+      }
+    }
+  </main>
+</div>

@@ -1,0 +1,294 @@
+<main class="invoices-page">
+  @if (loading()) {
+    <app-feedback-state kind="loading" [title]="i18n.text('title')" />
+  } @else if (failure(); as p) {
+    <app-api-recovery [problem]="p" (retry)="load()" />
+  } @else if (item(); as x) {
+    <app-page-header
+      [eyebrow]="i18n.text('area')"
+      [title]="x.invoiceNumber"
+      [description]="i18n.text('description')"
+    />
+    <div class="heading">
+      <span class="status">{{ i18n.status(x.status) }}</span>
+      <div>
+        <a class="ui-button" [routerLink]="['/sales/orders', x.salesOrderId]">{{
+          i18n.text('order')
+        }}</a>
+        <a class="ui-button" routerLink="/sales/invoices">{{ i18n.text('back') }}</a>
+      </div>
+    </div>
+    @if (x.status === 1 || x.status === 2) {
+      <p class="ui-card safe">{{ i18n.text('safe') }}</p>
+    }
+    @if (problem(); as issue) {
+      <app-api-recovery [problem]="issue" [allowRetry]="false" />
+    }
+    <div class="facts">
+      <section class="ui-card">
+        <h2>{{ i18n.text('snapshot') }}</h2>
+        <strong>{{ x.customerCode }} — {{ x.customerName }}</strong>
+        @if (x.customerLegalName) {
+          <p>{{ x.customerLegalName }}</p>
+        }
+        @if (x.address) {
+          <p>{{ x.address }}</p>
+        }
+      </section>
+      <section class="ui-card">
+        <h2>{{ i18n.text('terms') }}</h2>
+        <p>{{ i18n.text('invoiceDate') }}: {{ x.invoiceDate }}</p>
+        <p>{{ i18n.text('dueDate') }}: {{ x.dueDate }}</p>
+        <p>{{ i18n.text('paymentDays') }}: {{ x.paymentTermDays }}</p>
+        <p>{{ i18n.text('basis') }}: {{ i18n.basis(x.quantityPolicy) }}</p>
+      </section>
+    </div>
+    <section>
+      <h2>{{ i18n.text('lines') }}</h2>
+      <div class="cards">
+        @for (line of x.lines; track line.id) {
+          <article class="ui-card">
+            <div class="heading">
+              <strong>{{ line.productCode }} — {{ line.productName }}</strong
+              ><span>{{ line.quantity | number: '1.0-6' }} {{ line.unitName }}</span>
+            </div>
+            <dl>
+              <div>
+                <dt>{{ i18n.text('unitPrice') }}</dt>
+                <dd>{{ line.unitPrice | number: '1.2-6' }}</dd>
+              </div>
+              <div>
+                <dt>{{ i18n.text('net') }}</dt>
+                <dd>{{ line.netAmount | number: '1.2-6' }}</dd>
+              </div>
+              <div>
+                <dt>{{ i18n.text('tax') }}</dt>
+                <dd>{{ line.taxAmount | number: '1.2-6' }}</dd>
+              </div>
+              <div>
+                <dt>{{ i18n.text('total') }}</dt>
+                <dd>{{ line.totalAmount | number: '1.2-6' }} {{ x.currencyCode }}</dd>
+              </div>
+            </dl>
+            @if (line.sources.length) {
+              <div>
+                <strong>{{ i18n.text('sources') }}</strong>
+                @for (s of line.sources; track s.salesDeliveryLineId) {
+                  <a class="source" [routerLink]="['/sales/deliveries', s.salesDeliveryId]"
+                    >{{ s.deliveryNumber }} · {{ s.stockQuantity | number: '1.0-6' }}</a
+                  >
+                }
+              </div>
+            }
+          </article>
+        }
+      </div>
+    </section>
+    <section class="ui-card totals">
+      <div>
+        {{ i18n.text('net') }}<strong>{{ x.netAmount | number: '1.2-6' }}</strong>
+      </div>
+      <div>
+        {{ i18n.text('tax') }}<strong>{{ x.taxAmount | number: '1.2-6' }}</strong>
+      </div>
+      <div>
+        {{ i18n.text('total')
+        }}<strong>{{ x.totalAmount | number: '1.2-6' }} {{ x.currencyCode }}</strong>
+      </div>
+    </section>
+    @if (x.status === 4 || x.status === 5) {
+      <section class="ui-card">
+        <h2>{{ i18n.text('accounting') }}</h2>
+        <p>{{ i18n.text('journal') }}: {{ x.journalEntryNumber }}</p>
+        <p>{{ i18n.text('receivable') }}: {{ x.receivableAccountDisplay }}</p>
+        <p>{{ i18n.text('revenue') }}: {{ x.salesRevenueAccountDisplay }}</p>
+        @for (j of x.journalLines; track $index) {
+          <p>
+            {{ j.accountDisplay }} — {{ i18n.text('debit') }} {{ j.debit | number: '1.2-6' }} /
+            {{ i18n.text('credit') }}
+            {{ j.credit | number: '1.2-6' }}
+          </p>
+        }
+      </section>
+    }
+    @if (x.status === 4) {
+      <section class="ui-card settlement">
+        <div>
+          {{ i18n.text('paymentStatus') }}<strong>{{ i18n.paymentStatus(x.paymentStatus) }}</strong>
+        </div>
+        <div>
+          {{ i18n.text('paid') }}<strong>{{ x.paidAmount | number: '1.2-6' }}</strong>
+        </div>
+        <div>
+          {{ i18n.text('credited') }}<strong>{{ x.creditedAmount | number: '1.2-6' }}</strong>
+        </div>
+        <div>
+          {{ i18n.text('outstanding') }}<strong>{{ x.outstandingAmount | number: '1.2-6' }}</strong>
+        </div>
+      </section>
+    }
+    <section class="ui-card actions">
+      @if (x.status === 4 && session.can('CustomerCreditNotes.Create')) {
+        <a
+          class="ui-button"
+          routerLink="/sales/credit-notes/new"
+          [queryParams]="{ customerInvoiceId: x.id }"
+          >{{ i18n.text('createCreditNote') }}</a
+        >
+      }
+      @if (x.status === 4 && x.outstandingAmount > 0 && session.can('CustomerPayments.Create')) {
+        <a
+          class="ui-button primary"
+          routerLink="/sales/payments/new"
+          [queryParams]="{ customerInvoiceId: x.id }"
+          >{{ i18n.text('recordPayment') }}</a
+        >
+      } @else if (x.status === 4 && x.outstandingAmount <= 0) {
+        <strong>{{ i18n.text('paymentCompleted') }}</strong>
+      }
+      @if (x.status === 1 && session.can('CustomerInvoices.Approve')) {
+        <button class="ui-button primary" [disabled]="saving()" (click)="command('approve')">
+          {{ i18n.text('approve') }}
+        </button>
+      }
+      @if (x.status === 2 && session.can('CustomerInvoices.Post')) {
+        <button class="ui-button primary" [disabled]="saving()" (click)="command('post')">
+          {{ i18n.text('post') }}
+        </button>
+      }
+      @if ((x.status === 1 || x.status === 2) && session.can('CustomerInvoices.Cancel')) {
+        <label class="ui-field"
+          ><span>{{ i18n.text('reason') }}</span
+          ><input [formControl]="reason" maxlength="500" /></label
+        ><button class="ui-button danger" [disabled]="saving()" (click)="command('cancel')">
+          {{ i18n.text('cancel') }}
+        </button>
+      }
+      @if (
+        x.status === 4 &&
+        x.paidAmount <= 0 &&
+        x.creditedAmount <= 0 &&
+        session.can('CustomerInvoices.Reverse')
+      ) {
+        <form [formGroup]="reverseForm" (ngSubmit)="reverse()">
+          <label class="ui-field"
+            ><span>{{ i18n.text('reversalDate') }}</span
+            ><input type="date" formControlName="reversalDate" /></label
+          ><label class="ui-field"
+            ><span>{{ i18n.text('reversalReason') }}</span
+            ><input formControlName="reason" maxlength="500" /></label
+          ><button class="ui-button danger">{{ i18n.text('reverse') }}</button>
+        </form>
+      }
+    </section>
+    <section>
+      <h2>{{ i18n.text('history') }}</h2>
+      @for (h of x.history; track h.createdAtUtc) {
+        <article class="ui-card history">
+          <strong>{{ i18n.status(h.toStatus) }}</strong
+          ><span>{{ h.userId }}</span
+          ><time>{{ h.createdAtUtc | date: 'medium' }}</time>
+          @if (h.reason) {
+            <p>{{ h.reason }}</p>
+          }
+        </article>
+      }
+    </section>
+  } @else if (page(); as p) {
+    <app-page-header
+      [eyebrow]="i18n.text('area')"
+      [title]="i18n.text('create')"
+      [description]="p.orderNumber + ' · ' + p.customerCode + ' — ' + p.customerName"
+    /><a class="ui-button back" [routerLink]="['/sales/orders', p.salesOrderId]">{{
+      i18n.text('back')
+    }}</a>
+    <p class="ui-card safe">{{ i18n.text('safe') }}</p>
+    @if (problem(); as issue) {
+      <app-api-recovery [problem]="issue" [allowRetry]="false" />
+    }
+    <section class="ui-card">
+      <strong>{{ i18n.text('basis') }}: {{ i18n.basis(p.quantityPolicy) }}</strong>
+    </section>
+    <form [formGroup]="form" (ngSubmit)="create()">
+      <section class="ui-card form-head">
+        <label class="ui-field"
+          ><span>{{ i18n.text('invoiceDate') }}</span
+          ><input type="date" formControlName="invoiceDate" /></label
+        ><label class="ui-field"
+          ><span>{{ i18n.text('notes') }}</span
+          ><input formControlName="notes" maxlength="1000"
+        /></label>
+      </section>
+      <div class="cards" formArrayName="lines">
+        @for (g of lines.controls; track g; let i = $index) {
+          <article class="ui-card" [formGroupName]="i">
+            <strong>{{ p.lines[i].productCode }} — {{ p.lines[i].productName }}</strong>
+            <p>
+              {{ i18n.text('ordered') }}: {{ p.lines[i].orderedQuantity | number: '1.0-6' }} ·
+              {{ i18n.text('eligible') }}: {{ p.lines[i].sourceEligibleQuantity | number: '1.0-6' }}
+            </p>
+            <p>
+              {{ i18n.text('committed') }}: {{ p.lines[i].committedQuantity | number: '1.0-6' }} ·
+              {{ i18n.text('remaining') }}: {{ p.lines[i].remainingQuantity | number: '1.0-6' }}
+            </p>
+            <label class="ui-field"
+              ><span>{{ i18n.text('quantity') }}</span
+              ><input
+                type="number"
+                min="0"
+                [max]="p.lines[i].remainingQuantity"
+                step=".000001"
+                formControlName="quantity" /></label
+            ><small
+              >{{ i18n.text('unitPrice') }}: {{ p.lines[i].unitPrice | number: '1.2-6' }}
+              {{ p.currencyCode }}</small
+            >
+          </article>
+        }
+      </div>
+      <button class="ui-button primary submit" [disabled]="saving() || form.invalid">
+        {{ i18n.text('createDraft') }}
+      </button>
+    </form>
+  } @else {
+    <app-page-header
+      [eyebrow]="i18n.text('area')"
+      [title]="i18n.text('title')"
+      [description]="i18n.text('description')"
+    />
+    <form class="ui-card filters" [formGroup]="filters" (ngSubmit)="load()">
+      <label class="ui-field"
+        ><span>{{ i18n.text('search') }}</span
+        ><input formControlName="search" /></label
+      ><label class="ui-field"
+        ><span>{{ i18n.text('status') }}</span
+        ><select formControlName="status">
+          <option [ngValue]="0">{{ i18n.text('all') }}</option>
+          @for (s of [1, 2, 3, 4, 5]; track s) {
+            <option [ngValue]="s">{{ i18n.status(s) }}</option>
+          }
+        </select></label
+      ><button class="ui-button">{{ i18n.text('search') }}</button>
+    </form>
+    @if (!rows().length) {
+      <app-feedback-state kind="empty" [title]="i18n.text('empty')" />
+    }
+    <div class="cards">
+      @for (i of rows(); track i.id) {
+        <article class="ui-card">
+          <div class="heading">
+            <strong>{{ i.invoiceNumber }}</strong
+            ><span class="status">{{ i18n.status(i.status) }}</span>
+          </div>
+          <p>{{ i18n.text('order') }}: {{ i.orderNumber }}</p>
+          <p>{{ i.customerCode }} — {{ i.customerName }}</p>
+          <p>{{ i.totalAmount | number: '1.2-6' }} {{ i.currencyCode }}</p>
+          @if (i.status === 4) {
+            <p>{{ i18n.text('outstanding') }}: {{ i.outstandingAmount | number: '1.2-6' }}</p>
+          }
+          <a class="ui-button" [routerLink]="['/sales/invoices', i.id]">{{ i18n.text('view') }}</a>
+        </article>
+      }
+    </div>
+  }
+</main>

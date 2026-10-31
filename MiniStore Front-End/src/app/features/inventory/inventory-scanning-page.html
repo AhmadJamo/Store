@@ -1,0 +1,62 @@
+<section class="scanning-page" [attr.aria-label]="i18n.text('title')">
+  <app-page-header eyebrow="INVENTORY" [title]="i18n.text('title')" [description]="i18n.text('description')" />
+
+  <form class="scan-form ui-panel" [formGroup]="queryForm" (ngSubmit)="resolve()">
+    <label>{{ i18n.text('adjustment') }}<input formControlName="adjustmentScan" autocomplete="off" /></label>
+    <label>{{ i18n.text('product') }}<input formControlName="productScan" autocomplete="off" autofocus /></label>
+    <label>{{ i18n.text('source') }}<input formControlName="sourceLocationScan" autocomplete="off" /></label>
+    <label>{{ i18n.text('destination') }}<input formControlName="locationScan" autocomplete="off" /></label>
+    <button class="ui-button primary" [disabled]="loading() || saving()">{{ loading() ? i18n.text('resolving') : i18n.text('resolve') }}</button>
+  </form>
+
+  @if (loading()) {
+    <app-feedback-state kind="loading" [title]="i18n.text('resolving')" />
+  } @else if (loadingProblem(); as failure) {
+    <app-api-recovery [problem]="failure" (retry)="resolve()" />
+  } @else if (page(); as current) {
+    @if (problem()) { <div class="ui-alert danger" role="alert">{{ problem() }}</div> }
+    @if (success()) { <div class="ui-alert success" role="status">{{ success() }}</div> }
+
+    <div class="result-grid">
+      <article class="ui-panel"><strong>{{ i18n.text('countDocument') }}</strong><span class="ui-badge" [class.success]="current.adjustment.status === 1" [class.danger]="current.adjustment.status === 2" [class.warning]="current.adjustment.status === 3">{{ statusName(current.adjustment.status) }}</span><b>{{ current.adjustment.displayName }}</b><small>{{ current.adjustment.secondaryText }}</small></article>
+      <article class="ui-panel"><strong>{{ i18n.text('productScan') }}</strong><span class="ui-badge" [class.success]="current.product.status === 1" [class.danger]="current.product.status === 2" [class.warning]="current.product.status === 3">{{ statusName(current.product.status) }}</span><b>{{ current.product.displayName }}</b><small>{{ current.product.secondaryText }}</small></article>
+      <article class="ui-panel"><strong>{{ i18n.text('sourceScan') }}</strong><span class="ui-badge" [class.success]="current.sourceLocation.status === 1" [class.danger]="current.sourceLocation.status === 2" [class.warning]="current.sourceLocation.status === 3">{{ statusName(current.sourceLocation.status) }}</span><b>{{ current.sourceLocation.displayName }}</b><small>{{ current.sourceLocation.secondaryText }}</small></article>
+      <article class="ui-panel"><strong>{{ i18n.text('destinationScan') }}</strong><span class="ui-badge" [class.success]="current.location.status === 1" [class.danger]="current.location.status === 2" [class.warning]="current.location.status === 3">{{ statusName(current.location.status) }}</span><b>{{ current.location.displayName }}</b><small>{{ current.location.secondaryText }}</small></article>
+    </div>
+
+    @if (canPutaway(current)) {
+      <form class="action-card ui-panel" (ngSubmit)="putaway(current)">
+        <div><h2>{{ i18n.text('putaway') }}</h2><p>{{ i18n.text('putawayHelp') }}</p></div>
+        <label>{{ i18n.text('quantity') }}<input type="number" min="0.000001" step="0.000001" [formControl]="quantity" /></label>
+        <button class="ui-button primary" [disabled]="saving()">{{ saving() ? i18n.text('working') : i18n.text('postPutaway') }}</button>
+      </form>
+    }
+    @if (canRelocate(current)) {
+      <form class="action-card ui-panel" (ngSubmit)="relocate(current)">
+        <div><h2>{{ i18n.text('relocate') }}</h2><p>{{ i18n.text('relocateHelp') }}</p></div>
+        <label>{{ i18n.text('quantity') }}<input type="number" min="0.000001" step="0.000001" [formControl]="quantity" /></label>
+        <button class="ui-button primary" [disabled]="saving()">{{ saving() ? i18n.text('working') : i18n.text('postRelocation') }}</button>
+      </form>
+    }
+    @if (canCount(current)) {
+      <form class="action-card ui-panel" (ngSubmit)="count(current)">
+        <div><h2>{{ i18n.text('count') }}</h2><p>{{ i18n.text('countHelp') }}</p></div>
+        <label>{{ i18n.text('countedQuantity') }}<input type="number" min="0" step="0.000001" [formControl]="countedQuantity" /></label>
+        <button class="ui-button primary" [disabled]="saving()">{{ saving() ? i18n.text('working') : i18n.text('recordCount') }}</button>
+      </form>
+    }
+
+    @if (current.isBlindCount) {
+      <div class="ui-alert" role="status">{{ i18n.text('blindCount') }}</div>
+    } @else if (current.product.status === 1) {
+      <app-data-table [label]="i18n.text('balances')">
+        <table><thead><tr><th>{{ i18n.text('warehouse') }}</th><th>{{ i18n.text('location') }}</th><th>{{ i18n.text('onHand') }}</th><th>{{ i18n.text('reserved') }}</th><th>{{ i18n.text('available') }}</th></tr></thead>
+        <tbody>
+          @for (balance of current.balances; track balance.warehouseName + balance.locationName) {
+            <tr><td>{{ balance.warehouseName }}</td><td>{{ balance.isUnassigned ? i18n.text('unassigned') : balance.locationName }}</td><td>{{ balance.onHand | number:'1.0-6' }}</td><td>{{ balance.reserved | number:'1.0-6' }}</td><td [class.negative]="balance.available < 0">{{ balance.available | number:'1.0-6' }}</td></tr>
+          } @empty { <tr><td colspan="5">{{ i18n.text('noBalances') }}</td></tr> }
+        </tbody></table>
+      </app-data-table>
+    }
+  }
+</section>

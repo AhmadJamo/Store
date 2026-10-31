@@ -26,3 +26,9 @@ public class PurchaseDto
     public List<PurchaseItemDto> Items { get; set; }
         = new();
 }
+
+public sealed class LegacyPurchaseDetailsPageDto
+{
+    public PurchaseDto Purchase { get; init; } = new();
+    public bool IsPosted { get; init; }
+}

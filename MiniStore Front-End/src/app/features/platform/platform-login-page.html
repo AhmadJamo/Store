@@ -1,0 +1,26 @@
+<main class="platform-page login" [attr.dir]="i18n.locale.direction()">
+  <section class="panel" aria-labelledby="platform-login-title">
+    <header>
+      <strong>{{ i18n.text('product') }}</strong>
+      <button type="button" (click)="i18n.locale.toggle()">{{ i18n.text('language') }}</button>
+    </header>
+    <h1 id="platform-login-title">{{ i18n.text('loginTitle') }}</h1>
+    <p>{{ i18n.text('loginDescription') }}</p>
+    @if (rejected()) {
+      <p class="error" role="alert">{{ i18n.text('invalid') }}</p>
+    }
+    <form [formGroup]="form" (ngSubmit)="login()">
+      <label class="ui-field">
+        <span>{{ i18n.text('username') }}</span>
+        <input formControlName="username" autocomplete="username" maxlength="100" />
+      </label>
+      <label class="ui-field">
+        <span>{{ i18n.text('password') }}</span>
+        <input formControlName="password" type="password" autocomplete="current-password" maxlength="1024" />
+      </label>
+      <button class="ui-button primary" [disabled]="form.invalid || submitting()">
+        {{ i18n.text('signIn') }}
+      </button>
+    </form>
+  </section>
+</main>

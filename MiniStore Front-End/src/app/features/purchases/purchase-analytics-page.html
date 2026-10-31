@@ -1,0 +1,182 @@
+<section class="analytics-page" [attr.aria-label]="i18n.text('title')">
+  <app-page-header
+    eyebrow="PURCHASING"
+    [title]="i18n.text('title')"
+    [description]="i18n.text('description')"
+  />
+  @if (loading()) {
+    <app-feedback-state kind="loading" [title]="i18n.text('loading')" />
+  } @else if (failure(); as f) {
+    <app-api-recovery [problem]="f" (retry)="load()" />
+  } @else if (page(); as p) {
+    <form class="ui-card filters" [formGroup]="form" (ngSubmit)="load()">
+      <label class="ui-field"
+        ><span>{{ i18n.text('from') }}</span
+        ><input type="date" formControlName="From" /></label
+      ><label class="ui-field"
+        ><span>{{ i18n.text('to') }}</span
+        ><input type="date" formControlName="To" /></label
+      ><label class="ui-field"
+        ><span>{{ i18n.text('supplier') }}</span
+        ><select formControlName="SupplierId">
+          <option value="">{{ i18n.text('all') }}</option>
+          @for (x of p.supplierOptions; track x.id) {
+            <option [value]="x.id">{{ x.label }}</option>
+          }
+        </select></label
+      ><label class="ui-field"
+        ><span>{{ i18n.text('buyer') }}</span
+        ><select formControlName="BuyerUserId">
+          <option value="">{{ i18n.text('all') }}</option>
+          @for (x of p.buyerOptions; track x.userId) {
+            <option [value]="x.userId">{{ x.displayName }}</option>
+          }
+        </select></label
+      ><label class="ui-field"
+        ><span>{{ i18n.text('status') }}</span
+        ><select formControlName="OrderStatus">
+          <option value="">{{ i18n.text('all') }}</option>
+          <option value="1">{{ i18n.text('draft') }}</option>
+          <option value="2">{{ i18n.text('approved') }}</option>
+          <option value="3">{{ i18n.text('confirmed') }}</option>
+          <option value="4">{{ i18n.text('cancelled') }}</option>
+          <option value="5">{{ i18n.text('closed') }}</option>
+        </select></label
+      ><label class="ui-field"
+        ><span>{{ i18n.text('group') }}</span
+        ><select formControlName="GroupBy">
+          <option [ngValue]="1">{{ i18n.text('month') }}</option>
+          <option [ngValue]="2">{{ i18n.text('supplier') }}</option>
+          <option [ngValue]="3">{{ i18n.text('buyer') }}</option>
+        </select></label
+      ><button class="ui-button primary">{{ i18n.text('apply') }}</button>
+    </form>
+    <div class="metrics">
+      <article class="ui-card">
+        <span>{{ i18n.text('openOrders') }}</span
+        ><strong>{{ p.openOrders }}</strong
+        ><small
+          >{{ i18n.text('unconfirmed') }}: {{ p.unconfirmedOrders }} · {{ i18n.text('overdue') }}:
+          {{ p.overdueOrders }}</small
+        >
+      </article>
+      <article class="ui-card">
+        <span>{{ i18n.text('spend') }}</span
+        ><strong>{{ p.vendorBillSpend | number: '1.2-2' }}</strong
+        ><small>{{ i18n.text('payables') }}: {{ p.outstandingPayables | number: '1.2-2' }}</small>
+      </article>
+      <article class="ui-card">
+        <span>{{ i18n.text('receipt') }}</span
+        ><strong>{{ p.receiptValue | number: '1.2-2' }}</strong
+        ><small>{{ i18n.text('delivery') }}: {{ p.averageDeliveryDays | number: '1.1-2' }}</small>
+      </article>
+      <article class="ui-card">
+        <span>{{ i18n.text('exceptions') }}</span
+        ><strong>{{ p.openMatchExceptionCount }}</strong>
+      </article>
+    </div>
+    <section>
+      <h2>{{ i18n.text('trends') }}</h2>
+      <div class="cards">
+        @for (x of p.trends; track x.groupKey) {
+          <article class="ui-card">
+            <strong>{{ x.groupLabel }}</strong>
+            <p>
+              {{ i18n.text('orders') }}: {{ x.orderCount }} · {{ x.orderedValue | number: '1.2-2' }}
+            </p>
+            <p>
+              {{ i18n.text('spend') }}: {{ x.spend | number: '1.2-2' }} ·
+              {{ i18n.text('variance') }}: {{ x.priceVariance | number: '1.2-2' }}
+            </p>
+          </article>
+        } @empty {
+          <p>{{ i18n.text('empty') }}</p>
+        }
+      </div>
+    </section>
+    <section>
+      <h2>{{ i18n.text('workload') }}</h2>
+      <div class="cards">
+        @for (x of p.buyerWorkloads; track x.buyerUserId) {
+          <article class="ui-card">
+            <strong>{{ x.buyerDisplayName }}</strong>
+            <p>
+              {{ i18n.text('orders') }}: {{ x.orderCount }} · {{ i18n.text('open') }}:
+              {{ x.openOrders }} · {{ i18n.text('overdue') }}: {{ x.overdueOrders }}
+            </p>
+            <p>{{ x.orderedValue | number: '1.2-2' }}</p>
+          </article>
+        }
+      </div>
+    </section>
+    <section>
+      <h2>{{ i18n.text('matching') }}</h2>
+      <div class="cards">
+        @for (x of p.openExceptions; track x.vendorBillId) {
+          <article class="ui-card">
+            <strong>{{ x.vendorBillNumber }}</strong>
+            <p>
+              {{ x.supplierName }} · {{ i18n.text('maximumVariance') }}:
+              {{ x.maximumVariancePercent | number: '1.1-2' }}%
+            </p>
+            <a class="ui-button secondary" [routerLink]="['/purchases/bills', x.vendorBillId]">{{
+              i18n.text('openDocument')
+            }}</a>
+          </article>
+        }
+      </div>
+    </section>
+    <section>
+      <h2>{{ i18n.text('journey') }}</h2>
+      <div class="cards">
+        @for (x of p.acceptanceJourney; track x.label) {
+          <article class="ui-card">
+            <strong>{{ x.label }}</strong
+            ><span class="ui-badge">{{ x.count }}</span>
+            <p>{{ x.explanation }}</p>
+            @if (session.can(x.requiredPermission)) {
+              <a class="ui-button secondary" [routerLink]="route(x)">{{
+                i18n.text('openSources')
+              }}</a>
+            }
+          </article>
+        }
+      </div>
+    </section>
+    <section>
+      <h2>{{ i18n.text('performance') }}</h2>
+      <div class="cards">
+        @for (x of p.suppliers; track x.supplierId) {
+          <article class="ui-card">
+            <strong>{{ x.supplierName }}</strong>
+            <p>
+              {{ i18n.text('fill') }}: {{ x.fillRatePercent | number: '1.1-2' }}% ·
+              {{ i18n.text('onTime') }}: {{ x.onTimeRatePercent | number: '1.1-2' }}%
+            </p>
+            <p>
+              {{ i18n.text('returns') }}: {{ x.returnRatePercent | number: '1.1-2' }}% ·
+              {{ i18n.text('spend') }}: {{ x.billedSpend | number: '1.2-2' }}
+            </p>
+          </article>
+        }
+      </div>
+    </section>
+    <section>
+      <h2>{{ i18n.text('kpis') }}</h2>
+      <div class="cards">
+        @for (x of p.kpis; track x.label) {
+          <article class="ui-card">
+            <header>
+              <strong>{{ x.label }}</strong
+              ><span>{{ x.value }}</span>
+            </header>
+            <p>
+              {{ i18n.text('source') }}: {{ x.source }} · {{ i18n.text('period') }}: {{ x.period }}
+            </p>
+            <small>{{ x.explanation }}</small>
+          </article>
+        }
+      </div>
+    </section>
+  }
+</section>

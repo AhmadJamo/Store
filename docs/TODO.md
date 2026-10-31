@@ -1,12 +1,116 @@
 # Project TODO
 > Source of truth: Current repository scan  
-> Last reviewed: 2026-10-24
+> Last reviewed: 2026-10-27
 
 The approved numbered Arabic/English delivery sequence is maintained in `MASTER_IMPLEMENTATION_ROADMAP_AR_EN.md`. Detailed working status, business rules and the rolling suggestion queue remain in `ARABIC_SHARED_ROADMAP.md`. This file remains the concise technical backlog.
 
 The PUR-000 through PUR-280 purchase evolution is implemented. The approved completion sequence is maintained in `PURCHASE_COMPLETION_ROADMAP_AR_EN.md`. Incoming customer-management and sales requirements must be reconciled with master-roadmap steps 7 through 11 before implementation.
 
 The ERP SaaS Foundation Blueprint is imported as a non-authoritative planning reference. `FND-000` reconciles it with current code; later `FND` slices are not implemented until explicitly approved and evidenced.
+
+- [x] MOD-000 complete the read-only MVC-to-API/Angular repository audit, target architecture, dependency graph, workspace design, MVP, feature matrix and risk assessment. Completed 2026-10-24.
+- [x] MOD-001 create the isolated modernization branch and Angular 22 foundation in `MiniStore Front-End`, with strict standalone architecture, lazy routing, RTL/LTR shell, design tokens, restricted dev proxy, Signals workspace boundary, documentation, rollback and verified frontend/backend builds. Completed 2026-10-24.
+- [x] MOD-002 add the versioned internal API foundation: same-origin session/CSRF contracts, permission/tenant enforcement, standardized ProblemDetails, authenticated internal-only OpenAPI, bounded paging conventions, Angular clients and focused security/live HTTP checks. Completed 2026-10-24.
+- [x] MOD-003 establish the reusable visual-system foundation: semantic tokens, system/light/dark themes, comfortable/compact density, persisted RTL/LTR preferences, focus/motion/forced-color rules and a bilingual state preview. Completed 2026-10-24.
+- [x] MOD-004 build the reusable workspace engine: permission-aware sidebar metadata, tab identity/deduplication, per-tab history, close/close-others, refresh restoration and dirty-state navigation guard. Completed 2026-10-24 with 12 Angular tests and unchanged backend behavior.
+- [x] MOD-005 deliver the first Customers Angular vertical slice with explicit API DTOs, server-side paging/search, validation, concurrency and MVC parity. Completed 2026-10-24 with 17 Angular tests and 1076 backend checks.
+- [x] MOD-006 extract only proven shared form/table primitives and validate them against a second real feature consumer. Completed 2026-10-24 with Customers/Suppliers, 22 Angular tests and 1079 backend checks.
+- [x] MOD-007 complete Suppliers as the next Angular migration slice: details/create/edit, validation, concurrency and MVC parity. Completed 2026-10-24 with 26 Angular tests and 1081 backend checks.
+- [x] MOD-008 add a permission-aware Command Center foundation with reusable quick preview, favorites and bounded user snapshots. Completed 2026-10-24 with 30 Angular tests.
+- [x] MOD-009 add reusable smart-form productivity: explicit draft policy, saved non-sensitive filters and keyboard-first entry without automatic posting. Completed 2026-10-24 with 36 Angular tests.
+- [x] MOD-010 complete responsive dashboard, density, focus and layout preferences with safe reset and accessibility evidence. Completed 2026-10-24 with visual review and 39 Angular tests.
+- [x] MOD-011 add reusable duplicate/conflict/data-quality and recovery presentation over authoritative backend evidence. Completed 2026-10-24 with stable API codes, typed duplicate outcomes, reusable Customer/Supplier recovery, 52 Angular tests and 1084 backend checks.
+- [x] MOD-012 add reusable document journey, related-record evidence and Explain This Number presentation over authoritative backend evidence. Completed 2026-10-24 on Sales Orders and Customer Invoices without database changes.
+- [x] MOD-013 add a permission-aware action/exception center and contextual help over existing server decisions. Completed 2026-10-24.
+- [x] MOD-014 add allowlisted Focused/Operator/Analyst workspace profiles and a responsive split context panel without changing permissions. Completed 2026-10-24.
+- [x] MOD-015 expose the reusable Analytics Center through Angular with server grouping/comparison, allowlisted drill-down and bounded export preview. Completed 2026-10-24.
+- [x] MOD-016 add permission-filtered runtime monitoring for real hosted workers, SLA state and truthful analytics refresh plans without pretending report delivery exists. Completed 2026-10-24.
+- [x] MOD-017 governed Angular workspace builder/save, backend-authored financial preview and tenant-safe user/role delegation with optional start/expiry, revocation evidence and source-permission rechecks. Completed 2026-10-25.
+- [x] MOD-018A reusable acceptance gate: Release/regression, Angular tests/build, external SCSS, explicit initial/lazy budgets, static accessibility and real Edge RTL/LTR/keyboard/state/mobile checks with one passed/failed/skipped report. Completed 2026-10-25.
+- [x] MOD-018B prove the real authenticated session and three permission-allowed read endpoints with an external short-lived storage state; the final gate passed 11/11 with zero skips and deleted the temporary state. Completed 2026-10-25.
+- [x] MOD-019 generate the complete 89-controller/189-view/344-MVC-action/198-Razor-file registry and add reversible, GET-only, allowlisted per-surface cutover controls with MVC committed as the default. Completed 2026-10-25.
+- [x] MOD-020 complete all current Settings/Document Design, account/session, tenant-user/role, public registration and
+  guided onboarding operations in Angular. Identity, tenant membership, provisioning, lockout/audit, CSRF and HttpOnly
+  cookies remain server-owned; MVC remains the default until a later cutover gate. Completed 2026-10-27.
+- [x] MOD-021 complete Angular product master, categories, attributes/values, templates/variants, recipes,
+  tax/payment/branch masters and warehouse CRUD with explicit DTOs, separate permissions, CSRF and tests. Completed
+  `MOD-021A..G` on 2026-10-27; MVC remains default pending cutover.
+- [x] MOD-022A migrate the read-only inventory transaction ledger with server paging/search/type/direction/date filters,
+  sorting, cost/value evidence, permission-aware navigation, bilingual RTL UI and full verification. Completed 2026-10-27.
+- [x] MOD-022B migrate all current ProductStock operations and reason-required manual stock adjustments with explicit API
+  DTOs, permissions, CSRF, retained server rules and bilingual Angular UI. Completed 2026-10-27.
+- [x] MOD-022C migrate dimensional availability and reservation history with Application-owned paging, independent permissions,
+  named dimensions, bilingual read-only Angular routes and full verification. Completed 2026-10-27.
+- [x] MOD-022D migrate the complete inventory-adjustment lifecycle: create, count, approve, post and cancel with independent
+  permissions, CSRF, completed-action states and server-owned dimensional posting. Completed 2026-10-27.
+- [x] MOD-022E migrate all current lot/serial visibility, opening allocation, expiration, quarantine/release, recall lifecycle and
+  manual recall communication operations with independent permissions and server-owned rules. Completed 2026-10-27.
+- [x] MOD-022F migrate warehouse locations, Unassigned Stock putaway/rules, relocation and Location/Stock Movement history with all current operations and server-owned invariants. Completed 2026-10-27.
+- [x] MOD-023A migrate Purchase Request list/create/details/submit/cancel with named dynamic lines, concurrency, independent permissions and server-owned rules. Completed 2026-10-27.
+- [x] MOD-023B migrate approval-rule list/create/activation and Purchase Request approve/reject decisions with frozen ordered roles and independent permissions. Completed 2026-10-27.
+- [x] MOD-023C migrate sourcing list/details/create, invited-supplier quotation capture/comparison and reason-required exact-quantity award with independent permissions and server-owned commercial rules. Completed 2026-10-28.
+- [x] MOD-023D migrate Purchase Order list/details/create-from-award and approve/confirm/cancel/close/reopen/direct-delivery/supplier-confirmation operations with independent permissions and server-owned lifecycle rules. Completed 2026-10-28.
+- [x] MOD-023E migrate Goods Receipt list/details/direct create, scanning draft/post, staged inspection and put-away with independent permissions and server-owned quantity/tracking/inventory/accounting rules. Completed 2026-10-28.
+- [x] MOD-023F migrate Vendor Bill list/details/create/approve/override/post/cancel plus bounded attachments and reviewed extraction with server-owned allocation, matching, tax and accounting. Completed 2026-10-28.
+- [x] MOD-023G migrate Supplier Payment list/details/create-and-post with named methods, bounded multi-bill allocation and server-owned balances, exchange differences and journals. Completed 2026-10-28.
+- [x] MOD-023H migrate Goods Receipt Return list/details/create-and-post with explicit tracking allocations and server-owned unbilled limits, availability, valuation, movements and journals. Completed 2026-10-28.
+- [x] MOD-023I migrate Supplier Credit Note list/details/create-and-post with explicit tracking allocations and server-owned bill limits, stock availability, tax, valuation, payable and journals. Completed 2026-10-28.
+- [x] MOD-023J migrate controlled Purchase Document Reversal list/details/create for receipts, bills, payments and landed costs with server-owned dependencies, valuation, corrections, opposite journals and idempotency. Completed 2026-10-28.
+- [x] MOD-023K migrate Landed Cost list/details/create-and-post with receipt/reversal links and server-owned allocation, capitalization/expense split, AVCO, movements and journals. Completed 2026-10-28.
+- [x] MOD-023L migrate Purchase Service Acceptance list/details/create with eligible-order link, remaining service quantities, immutable evidence and no inventory effect. Completed 2026-10-28.
+- [x] MOD-023M migrate Purchase Agreements and repeat Purchase Templates with full lifecycle/release/generation operations and server-owned award, concurrency and quantity rules. Completed 2026-10-28.
+- [x] MOD-023N migrate supplier purchasing terms, bulk save, price breaks/history/exceptions and bounded CSV/XLSX import/export. Completed 2026-10-28.
+- [x] MOD-023O migrate automated replenishment settings, manual execution and run/suggestion history. Completed 2026-10-28.
+- [x] MOD-023P migrate purchasing analytics filters, KPIs, trends, supplier/buyer performance, matching exceptions and acceptance journey. Completed 2026-10-28.
+- [x] MOD-023Q migrate Purchase Accounting Reconciliation as a read-only Angular evidence surface with server-owned reconciliation calculations. Completed 2026-10-28.
+- [x] MOD-023R migrate supplier communication preparation, attachments and recorded activity evidence with independent permissions. Completed 2026-10-28.
+- [x] MOD-023S migrate supplier credentials, portal access and external submission queue/retry/download operations. Completed 2026-10-28.
+- [x] MOD-023T migrate the token-scoped supplier portal quotation, order confirmation and delivery notice operations. Completed 2026-10-28.
+- [x] MOD-023U migrate the remaining Legacy Direct Purchase history/details/post evidence and posted Purchase Return list/details/create-and-post operations; keep new legacy purchase creation retired. Completed 2026-10-29.
+- [x] MOD-024A migrate Sales Price Lists, pricing rules, lifecycle operations and server-authored pricing evaluation as the first sales slice. Completed 2026-10-29.
+- [x] MOD-024B migrate Sales Quotation list/details/create, lifecycle transitions and PDF preview/download with server-owned pricing and snapshots. Completed 2026-10-29.
+- [x] MOD-024C migrate Sales Order list/details, accepted-quotation conversion, confirmation/cancellation and control approvals with server-owned source snapshots. Completed 2026-10-29.
+- [x] MOD-024D migrate Sales Order inventory reservation page, reserve and release operations with named warehouses/locations and server-owned remaining quantities. Completed 2026-10-29.
+- [x] MOD-024E migrate Sales Delivery list/details/create, posting and cancellation with server-owned reservation, tracking, valuation, stock and COGS authority. Completed 2026-10-29.
+- [x] MOD-024F migrate Customer Invoice list/details/create, approval/cancellation, posting and reversal with server-owned cumulative eligibility, frozen commercial evidence and accounting. Completed 2026-10-29.
+- [x] MOD-024G migrate Customer Payment list/details/create, allocation, posting and reversal with server-owned balances, FX and accounting. Completed 2026-10-29.
+- [x] MOD-024H migrate Customer Return Request list/details/create and authorization lifecycle with server-owned returnable quantities. Completed 2026-10-29.
+- [x] MOD-024I migrate Customer Return Receipt list/details/create, inspection, cancellation and disposition posting with server-owned quantities, tracking, inventory and accounting. Completed 2026-10-29.
+- [x] MOD-024J migrate Customer Credit Note list/details/create-and-post with server-owned eligibility, cumulative credits and accounting. Completed 2026-10-29.
+- [x] MOD-024K migrate Sales Approval Rule list/create/activation management with server-owned scope, threshold and ordered-step validation. Completed 2026-10-29.
+- [x] MOD-024L migrate Sales Quotation Template list/details/create, version cloning and lifecycle management with server-owned template validation. Completed 2026-10-29.
+- [x] MOD-025A migrate legacy immediate-sale history/details, wholesale creation and one-time posting while preserving server-owned pricing, stock, tracking and accounting. Completed 2026-10-29.
+- [x] MOD-025B migrate the retail POS composer with terminal warehouse access, experience settings, order context and server-owned sale execution. Completed 2026-10-29.
+- [x] MOD-025C migrate immediate-sale return list/details/create-and-post with server-owned remaining quantities, tracking, stock and accounting. Completed 2026-10-29.
+- [x] MOD-026A migrate the chart-of-accounts list/create surface through an Application-owned API with server-owned hierarchy and validation. Completed 2026-10-29.
+- [x] MOD-026B migrate Journal Entry details with named accounts, branch/warehouse dimensions and immutable source evidence. Completed 2026-10-29.
+- [x] MOD-027A migrate tenant subscription summary and checkout with server-owned plan, promotion and payment-state validation. Completed 2026-10-29.
+- [x] MOD-027B migrate the public landing and pricing surfaces with server-authored bilingual plan cards and registration destinations. Completed 2026-10-29.
+- [x] MOD-027C migrate Platform sign-in/session and the read-only control-center overview with its separate operator boundary. Completed 2026-10-30.
+- [x] MOD-027D migrate Platform companies, plans, promotions and pending-payment operations with role-specific policies. Completed 2026-10-30.
+- [x] MOD-027E migrate Platform audit-event reading/export and retention/legal-hold operations. Completed 2026-10-30.
+- [x] MOD-028A reconcile the generated migration registry with every actual shared and remaining MVC surface, classify parity and approve the first bounded implementation slice. Completed 2026-10-30.
+- [x] MOD-028B migrate Stock Transfer list/details/create/edit and its full submit/approve/reject/return/post/cancel lifecycle through an Application-owned API. Completed 2026-10-30.
+- [x] MOD-028C migrate Inventory Scanning resolution, putaway, relocation and absolute draft-count operations with independent permissions. Completed 2026-10-30.
+- [x] MOD-028D migrate Inventory Insights and Inventory Reconciliation as independent read-only Angular evidence surfaces. Completed 2026-10-30.
+- [x] MOD-028E migrate tenant Audit Event reading, sensitive-field policy and purpose-bound bounded CSV export. Completed 2026-10-30.
+- [x] MOD-028F close Purchase Sourcing attachment upload/download and printable RFQ parity. Completed 2026-10-30.
+- [x] MOD-028G synchronize Angular locale with server culture and complete the final registry reconciliation. Completed 2026-10-30.
+- [x] MOD-023 through MOD-028 migrate purchasing, sales, POS, accounting, tenant/public,
+  platform and shared MVC workflows to Angular, including every operation, permission, localization, file/PDF and edge state.
+- [ ] MOD-029 prove full-system parity through dual-run reconciliation, performance/security/accessibility evidence and cutover/rollback rehearsals.
+  - [x] MOD-029A1 generate and gate an 82-counterpart static acceptance matrix; correct compact-action/API classification. Completed 2026-10-30.
+  - [x] MOD-029A2 run public/high-risk boundary browser/API samples, bounded performance and route-level rollback rehearsal. Completed 2026-10-30; authenticated data evidence moves to MOD-029B.
+  - [x] MOD-029B reconcile authenticated same-data identity, financial and inventory reads with an operator-supplied Playwright session. Completed 2026-10-30.
+    - [x] Add a secret-safe runner, git-ignore enforcement and identity/financial/inventory value comparisons. Completed 2026-10-30.
+    - [x] Capture an operator-authenticated state and execute the runner against Demo: 9/9 authenticated checks, zero skips; financial empty-state and real inventory same-data evidence passed. Completed 2026-10-30.
+  - [x] MOD-029C run permission-driven read-only acceptance across the high-risk sales, purchasing, inventory, accounting and administration cohorts. Completed 2026-10-30 with 15/15 browser checks and zero skips.
+  - [x] MOD-029D rehearse live process-level AngularDefault cutover and MVC rollback for allowlisted GET routes without committing a default change. Completed 2026-10-30 on 10 authorized routes; applied additive migration 136 after the rehearsal exposed Demo drift.
+- [ ] MOD-030 make Angular the only presentation and retire MVC incrementally only after explicit approval and zero registry gaps.
+  - [x] MOD-030A host the production Angular build under `/app`, prove deep-link/assets/API separation and cut over Customers as the first reversible route cohort. Completed 2026-10-30 with 15/15 hosted checks and a 10-route mixed pilot.
+  - [x] MOD-030B cut over Suppliers and Products as the second reversible cohort. Completed 2026-10-31 with 15/15 hosted checks, a 12-route mixed pilot and a 12-route MVC rollback.
+  - [x] MOD-030C cut over Analytics Center and prepare GET-only Settings mappings. Completed 2026-10-31 with 15/15 hosted checks, a 12-route mixed pilot and a 12-route MVC rollback; Settings stayed MVC because the captured operator lacked `Administration.Access`.
+  - [ ] MOD-030D cut over Settings only with an `Administration.Access` operator, followed by hosted, mixed-pilot and MVC-rollback evidence.
 
 - [x] FND-000 import the ERP SaaS Foundation Blueprint with provenance and classify its ten capabilities against the actual MiniStore repository.
 - [ ] FND-010 inventory production environments and operational ownership, approve RPO/RTO and backup retention, run an isolated restore drill, reconcile restored financial/inventory/tenant/outbox state and record evidence.

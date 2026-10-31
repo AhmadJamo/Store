@@ -1,0 +1,259 @@
+<main class="return-receipts-page">
+  @if (loading()) {
+    <app-feedback-state kind="loading" [title]="i18n.text('title')" />
+  } @else if (failure(); as issue) {
+    <app-api-recovery [problem]="issue" (retry)="load()" />
+  } @else if (item(); as receipt) {
+    <app-page-header
+      [eyebrow]="i18n.text('area')"
+      [title]="receipt.receiptNumber"
+      [description]="i18n.text('description')"
+    />
+    <div class="heading">
+      <span class="status">{{ i18n.status(receipt.status) }}</span>
+      <div class="links">
+        <a class="ui-button" [routerLink]="['/sales/return-requests', receipt.requestId]">{{
+          i18n.text('request')
+        }}</a>
+        <a class="ui-button" routerLink="/sales/return-receipts">{{ i18n.text('back') }}</a>
+      </div>
+    </div>
+    <p class="ui-card safe">{{ i18n.text('safe') }}</p>
+    @if (problem(); as issue) {
+      <app-api-recovery [problem]="issue" [allowRetry]="false" />
+    }
+    <section class="ui-card facts">
+      <div>
+        <span>{{ i18n.text('request') }}</span
+        ><strong>{{ receipt.requestNumber }}</strong>
+      </div>
+      <div>
+        <span>{{ i18n.text('receiptDate') }}</span
+        ><strong>{{ receipt.receiptDate }}</strong>
+      </div>
+      <div>
+        <span>{{ i18n.text('notes') }}</span
+        ><strong>{{ receipt.notes || '—' }}</strong>
+      </div>
+      @if (receipt.cancellationReason) {
+        <div>
+          <span>{{ i18n.text('cancellationReason') }}</span
+          ><strong>{{ receipt.cancellationReason }}</strong>
+        </div>
+      }
+    </section>
+    <div class="cards">
+      @for (line of receipt.lines; track line.id) {
+        <article class="ui-card">
+          <strong>{{ line.productCode }} — {{ line.productName }}</strong>
+          <p>{{ line.warehouseName }} · {{ line.locationName }}</p>
+          <dl>
+            <div>
+              <dt>{{ i18n.text('received') }}</dt>
+              <dd>{{ line.receivedQuantity | number: '1.0-6' }}</dd>
+            </div>
+            <div>
+              <dt>{{ i18n.text('disposition') }}</dt>
+              <dd>{{ i18n.disposition(line.disposition) }}</dd>
+            </div>
+            <div>
+              <dt>{{ i18n.text('inspectionNotes') }}</dt>
+              <dd>{{ line.inspectionNotes }}</dd>
+            </div>
+            @if (receipt.status === 4 && line.disposition === 1) {
+              <div>
+                <dt>{{ i18n.text('restockedQuantity') }}</dt>
+                <dd>{{ line.restockedQuantity | number: '1.0-6' }}</dd>
+              </div>
+              <div>
+                <dt>{{ i18n.text('restockedCost') }}</dt>
+                <dd>{{ line.restockedCost | number: '1.2-6' }}</dd>
+              </div>
+            }
+          </dl>
+          @if (line.trackingAllocations) {
+            <pre>{{ line.trackingAllocations }}</pre>
+          }
+        </article>
+      }
+    </div>
+    @if (receipt.status === 4) {
+      <section class="ui-card facts">
+        <div>
+          <span>{{ i18n.text('restockedQuantity') }}</span
+          ><strong>{{ receipt.totalRestockedQuantity | number: '1.0-6' }}</strong>
+        </div>
+        <div>
+          <span>{{ i18n.text('restockedCost') }}</span
+          ><strong>{{ receipt.totalRestockedCost | number: '1.2-6' }}</strong>
+        </div>
+        <div>
+          <span>{{ i18n.text('postedBy') }}</span
+          ><strong>{{ receipt.postedByUserId }}</strong>
+        </div>
+        <div>
+          <span>{{ i18n.text('journal') }}</span
+          ><strong>{{ receipt.journalEntryNumber || '—' }}</strong>
+        </div>
+      </section>
+    }
+    <section class="ui-card actions">
+      @if (receipt.status === 1 && session.can('CustomerReturnReceipts.Inspect')) {
+        <button class="ui-button primary" [disabled]="saving()" (click)="command('inspect')">
+          {{ i18n.text('completeInspection') }}
+        </button>
+      }
+      @if (receipt.status === 1 && session.can('CustomerReturnReceipts.Cancel')) {
+        <label class="ui-field"
+          ><span>{{ i18n.text('cancellationReason') }}</span
+          ><input [formControl]="cancelReason" maxlength="500"
+        /></label>
+        <button class="ui-button danger" [disabled]="saving()" (click)="command('cancel')">
+          {{ i18n.text('cancel') }}
+        </button>
+      }
+      @if (receipt.status === 2) {
+        <strong>{{ i18n.text('completedInspection') }}</strong>
+        @if (session.can('CustomerReturnReceipts.PostDisposition')) {
+          <button class="ui-button primary" [disabled]="saving()" (click)="command('post')">
+            {{ i18n.text('postDisposition') }}
+          </button>
+        }
+      } @else if (receipt.status === 4) {
+        <strong>{{ i18n.text('completedPosting') }}</strong>
+      }
+    </section>
+    <section>
+      <h2>{{ i18n.text('history') }}</h2>
+      @for (entry of receipt.history; track entry.createdAtUtc) {
+        <article class="ui-card history">
+          <strong>{{ i18n.status(entry.toStatus) }}</strong
+          ><span>{{ entry.userId }}</span
+          ><time>{{ entry.createdAtUtc | date: 'medium' }}</time>
+          @if (entry.reason) {
+            <p>{{ entry.reason }}</p>
+          }
+        </article>
+      }
+    </section>
+  } @else if (page(); as page) {
+    <app-page-header
+      [eyebrow]="i18n.text('area')"
+      [title]="i18n.text('create')"
+      [description]="page.requestNumber + ' · ' + page.customerName"
+    />
+    <a class="ui-button back" [routerLink]="['/sales/return-requests', page.requestId]">{{
+      i18n.text('back')
+    }}</a>
+    <p class="ui-card safe">{{ i18n.text('safe') }}</p>
+    @if (problem(); as issue) {
+      <app-api-recovery [problem]="issue" [allowRetry]="false" />
+    }
+    <form [formGroup]="form" (ngSubmit)="create()">
+      <section class="ui-card form-head">
+        <label class="ui-field"
+          ><span>{{ i18n.text('receiptDate') }}</span
+          ><input type="date" [min]="page.requestDate" formControlName="receiptDate"
+        /></label>
+        <label class="ui-field"
+          ><span>{{ i18n.text('notes') }}</span
+          ><input formControlName="notes" maxlength="1000"
+        /></label>
+      </section>
+      <div class="cards" formArrayName="lines">
+        @for (group of lines.controls; track group; let index = $index) {
+          <article class="ui-card" [formGroupName]="index">
+            <strong
+              >{{ page.lines[index].productCode }} — {{ page.lines[index].productName }}</strong
+            >
+            <p>{{ page.lines[index].warehouseName }} · {{ page.lines[index].locationName }}</p>
+            <dl>
+              <div>
+                <dt>{{ i18n.text('approved') }}</dt>
+                <dd>{{ page.lines[index].approvedQuantity | number: '1.0-6' }}</dd>
+              </div>
+              <div>
+                <dt>{{ i18n.text('alreadyReceived') }}</dt>
+                <dd>{{ page.lines[index].alreadyReceivedQuantity | number: '1.0-6' }}</dd>
+              </div>
+              <div>
+                <dt>{{ i18n.text('remaining') }}</dt>
+                <dd>{{ page.lines[index].remainingQuantity | number: '1.0-6' }}</dd>
+              </div>
+            </dl>
+            <label class="ui-field"
+              ><span>{{ i18n.text('received') }}</span
+              ><input
+                type="number"
+                min="0"
+                [max]="page.lines[index].remainingQuantity"
+                step=".000001"
+                formControlName="receivedQuantity"
+            /></label>
+            <label class="ui-field"
+              ><span>{{ i18n.text('disposition') }}</span
+              ><select formControlName="disposition">
+                @for (value of [1, 2, 3, 4]; track value) {
+                  <option [ngValue]="value">{{ i18n.disposition(value) }}</option>
+                }
+              </select></label
+            >
+            <label class="ui-field"
+              ><span>{{ i18n.text('inspectionNotes') }}</span
+              ><input formControlName="inspectionNotes" maxlength="500"
+            /></label>
+            @if (page.lines[index].trackingPolicy !== 0) {
+              <label class="ui-field"
+                ><span>{{ i18n.text('tracking') }}</span
+                ><textarea
+                  formControlName="trackingAllocations"
+                  maxlength="4000"
+                  [placeholder]="i18n.text('trackingHelp')"
+                ></textarea>
+              </label>
+            }
+          </article>
+        }
+      </div>
+      <div class="ui-card submit">
+        <strong>{{ i18n.text('quantity') }}: {{ quantityTotal() | number: '1.0-6' }}</strong
+        ><button
+          class="ui-button primary"
+          [disabled]="saving() || form.invalid || quantityTotal() <= 0"
+        >
+          {{ i18n.text('createDraft') }}
+        </button>
+      </div>
+    </form>
+  } @else {
+    <app-page-header
+      [eyebrow]="i18n.text('area')"
+      [title]="i18n.text('title')"
+      [description]="i18n.text('description')"
+    />
+    <form class="ui-card filters" (ngSubmit)="load()">
+      <label class="ui-field"
+        ><span>{{ i18n.text('search') }}</span
+        ><input [formControl]="search" /></label
+      ><button class="ui-button">{{ i18n.text('apply') }}</button>
+    </form>
+    @if (!rows().length) {
+      <app-feedback-state kind="empty" [title]="i18n.text('empty')" />
+    }
+    <div class="cards">
+      @for (receipt of rows(); track receipt.id) {
+        <article class="ui-card">
+          <div class="heading">
+            <strong>{{ receipt.receiptNumber }}</strong
+            ><span class="status">{{ i18n.status(receipt.status) }}</span>
+          </div>
+          <p>{{ i18n.text('request') }}: {{ receipt.requestNumber }}</p>
+          <p>{{ receipt.receiptDate }} · {{ receipt.quantity | number: '1.0-6' }}</p>
+          <a class="ui-button" [routerLink]="['/sales/return-receipts', receipt.id]">{{
+            i18n.text('view')
+          }}</a>
+        </article>
+      }
+    </div>
+  }
+</main>

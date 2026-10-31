@@ -1,0 +1,15 @@
+.supplier-page, form { display: grid; gap: var(--erp-space-5); }
+.supplier-page { max-width: 90rem; margin-inline: auto; }
+.ui-button { display: inline-flex; align-items: center; text-decoration: none; }
+.validation-summary { padding: var(--erp-space-5); border: 1px dashed var(--erp-color-danger-border); border-radius: var(--erp-radius-md); color: var(--erp-color-danger); background: var(--erp-color-danger-soft); }
+fieldset { min-width: 0; padding: var(--erp-card-padding); border: 1px solid var(--erp-color-border); border-radius: var(--erp-radius-md); background: var(--erp-color-surface); }
+legend { padding-inline: var(--erp-space-2); font-weight: 750; }
+.form-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--erp-space-4); }
+.ui-field textarea { resize: vertical; color: var(--erp-color-text); border: 1px solid var(--erp-color-border); border-radius: var(--erp-radius-sm); padding: var(--erp-space-3); background: var(--erp-color-surface); }
+.ui-field small { color: var(--erp-color-danger); }
+.ui-field .hint { color: var(--erp-color-text-muted); }
+.full { grid-column: 1 / -1; }
+.check-field { display: flex; align-items: center; gap: var(--erp-space-2); min-height: var(--erp-control-height); }
+.form-actions { display: flex; justify-content: end; flex-wrap: wrap; gap: var(--erp-space-2); }.shortcut-hint { margin-inline-end: auto; color: var(--erp-color-text-muted); font-size: .8rem; }
+@media (max-width: 900px) { .form-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 680px) { .form-grid { grid-template-columns: 1fr; } .full { grid-column: auto; } }

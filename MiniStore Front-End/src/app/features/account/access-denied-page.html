@@ -1,0 +1,10 @@
+<main class="denied" [attr.dir]="i18n.direction()">
+  <section aria-labelledby="access-denied-title">
+    <span aria-hidden="true">⛔</span>
+    <h1 id="access-denied-title">{{ i18n.text('accessDenied') }}</h1>
+    <p>{{ i18n.text('accessDeniedDescription') }}</p>
+    <a class="ui-button primary" [routerLink]="session.isAuthenticated() ? '/' : '/login'">
+      {{ session.isAuthenticated() ? i18n.text('returnToWorkspace') : i18n.text('signIn') }}
+    </a>
+  </section>
+</main>

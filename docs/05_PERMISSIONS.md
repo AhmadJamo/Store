@@ -2,8 +2,9 @@
 ## Analytics Center
 
 - `AnalyticsCenter.View` opens the center and its read-only registered module providers.
-- `AnalyticsCenter.Customize` creates personal workspaces.
-- `AnalyticsCenter.Manage` additionally permits shared workspaces. The controller and Application service both enforce this boundary; a crafted shared-workspace POST cannot rely on presentation visibility alone.
+- `AnalyticsCenter.Customize` creates personal workspaces and permits an owner to view, grant and revoke access to that owner's workspace.
+- `AnalyticsCenter.Manage` additionally permits shared workspaces and delegation management for any workspace in the active company. The controller and Application service both enforce this boundary; a crafted shared-workspace or delegation request cannot rely on presentation visibility alone.
+- Delegation is not a permission grant. A delegated user still needs `AnalyticsCenter.View` and the registered provider's source permission every time the workspace runs.
 
 ## Advanced quotation templates
 
@@ -33,6 +34,9 @@ Inventory adjustments split `View`, `Create`, `Count`, `Approve`, `Post` and `Ca
 
 Inventory tracking uses `InventoryTracking.View` for traceability, `InventoryTracking.Open` for the high-impact opening allocation/policy activation and `InventoryTracking.ManageQuarantine` for reasoned quarantine/release transitions.
 `InventoryTracking.ManageRecall` controls recall creation and closure. Recall visibility follows `InventoryTracking.View`; closing a recall never grants or implies quarantine release authority.
+The Angular `/inventory/tracking` route is hidden without `InventoryTracking.View`; its opening, quarantine and recall controls are
+independently hidden by their matching permissions. `/api/v1/inventory-tracking` rechecks the same boundaries, and every mutation
+also requires antiforgery validation, so client-side visibility is never treated as authorization.
 `Inventory.Replenishment.View` protects reviewed replenishment suggestions; `Inventory.Replenishment.Manage` separately protects rule create/update and activation changes. Creating a transfer draft additionally requires `StockTransfers.Create`; creating purchase demand additionally requires `PurchaseRequests.Create`.
 `InventoryInsights.View` protects the read-only slow/dead inventory activity report; it grants no stock mutation capability.
 `InventoryScanning.View` protects the scan console. Scanned putaway additionally requires `ProductStock.Edit`; both policies are enforced on the POST action and the form is hidden without edit authority.
@@ -65,15 +69,17 @@ Products, Warehouses, Customers, ProductStock, StockTransactions, StockMovements
 | Inventory insights | Dedicated View permission protects the read-only activity report; thresholds and filters do not mutate stock. |
 | Inventory scanning | View protects resolution; putaway adds ProductStock.Edit, relocation adds LocationMovements.Create and Draft line counting adds InventoryAdjustments.Count. Every mutation uses antiforgery; movement commands use scoped keys and counts use absolute state assignment. |
 | Stock transfers | View/Create/Edit/Submit/Approve/Reject/Post/Cancel enforced. |
-| Users | View/Create enforced; Edit/Delete definitions have no actions. |
-| Roles | View/Create/Edit/Delete enforced; controller uses `TenantRoleService`, system Admin cannot be edited/deleted and all IDs are resolved inside the active tenant. |
+| Users | View/Create enforced in MVC and `/api/v1/users`; Edit/Delete definitions have no current MVC or Angular actions. Creation is delegated to the shared `ITenantUserAdministrationService`, which validates the active company, user limit and tenant-owned active role. |
+| Roles | View/Create/Edit/Delete enforced in MVC and `/api/v1/roles`; both presentations use `TenantRoleService`, system roles cannot be edited/deleted and all role/permission IDs are resolved inside the active tenant/application catalogue. |
 | Settings | Requires `Administration.Access`, which only an Admin assignment in the active tenant can satisfy. |
 | Accounting master data | Accounts, branches, tax rates and payment methods require the tenant-Admin boundary. Customers now use the dedicated `Customers.*` permissions; navigation and Dashboard visibility require `Customers.View`. |
-| Audit events | `AuditEvents.View` protects the tenant reader, `AuditEvents.Export` is additionally required for export, and `AuditEvents.ViewSensitive` alone reveals masked request evidence. The repository still enforces the active tenant regardless of permission. Platform policies are separate: Owner/Administrator/Billing may view Platform/System events, Owner/Administrator may export, and only Owner may view sensitive request evidence. |
+| Audit events | `AuditEvents.View` protects both MVC and `/api/v1/audit-events` tenant readers, `AuditEvents.Export` is additionally required for either export, and `AuditEvents.ViewSensitive` alone reveals masked request evidence. The repository still enforces the active tenant regardless of permission, and the API derives sensitive inclusion server-side. Platform policies are separate: Owner/Administrator/Billing may view Platform/System events, Owner/Administrator may export, and only Owner may view sensitive request evidence. |
 | Audit retention | `PlatformAuditRetention` is a separate Platform policy restricted to Owner. Every create/release hold, checkpoint and retention command is server-authorized and antiforgery protected; no tenant permission grants this authority. |
 
 ## Known inconsistencies
 `Settings.View` and `Settings.Edit` remain mainly navigation capabilities. `Administration.Access` is an internal protected policy key and is absent from the delegable permission catalogue. The Settings workflow catalog uses this same company-admin boundary; links from each documented step are rendered only when the current user also has that operational destination permission. Identity mutations (`Users.Create/Edit/Delete`, `Roles.Create/Edit/Delete`) require tenant Admin membership and are filtered from custom-role editing, regardless of stored data. Assignment validates an active company membership and a role owned by the same tenant.
+
+Angular identity navigation is visibility only, never authorization. `UsersApiController` and `RolesApiController` repeat the operation-specific policy on every action, and all create/update/delete operations require antiforgery. Role form contracts expose stable permission codes, not stored permission entities, and the server re-resolves the submitted codes before saving.
 
 `P1-AUD-014` adds the dedicated `AuditEvents.View`, `AuditEvents.Export` and `AuditEvents.ViewSensitive` permissions. Export requires both View and Export at the server action, an antiforgery token and a fixed purpose; possessing View alone cannot export. No permission exists to update or delete an audit event.
 
@@ -99,7 +105,7 @@ The Index and mutation actions enforce these policies server-side. Permission se
 
 # PUR-030 purchase sourcing permissions
 
-- `PurchaseSourcing.View` protects sourcing-event listing and detail visibility.
+- `PurchaseSourcing.View` protects sourcing-event listing, detail, printable evidence and tenant-safe attachment download.
 - `PurchaseSourcing.Create` protects converting an approved request into exactly one sent supplier-invitation event.
 - `PurchaseSourcing.CreateDirect` separately protects the fast path. The Application service also requires the permission and re-evaluates the tenant amount limit, optional role and supplier-active policy before persisting a direct RFQ.
 - The command remains commercial intent only; it has no inventory or accounting permission because it cannot mutate either area.
@@ -204,3 +210,65 @@ The Index and mutation actions enforce these policies server-side. Permission se
 - On 2026-10-17 the owner explicitly authorized promoting the rotated local Demo administrator through the existing one-time `PlatformOperatorSeeder`. The temporary bootstrap flag was disabled afterward, and a real login was verified to reach `/platform`.
 - This local Demo assignment is not production authorization evidence and does not create or configure an external deployment identity.
 
+# MOD-022A inventory-ledger permission
+
+- `StockTransactions.View` controls both the Angular navigation item and `GET /api/v1/stock-transactions`.
+- Navigation filtering is convenience only; the API repeats authorization for every request and tenant query filters
+  remain authoritative.
+- The ledger endpoint provides no mutation methods. `StockTransactions.Create` does not imply ledger-view access and
+  remains reserved for the separately migrated manual-adjustment workflow.
+
+## MOD-022B product-stock and adjustment permissions (2026-10-27)
+
+Angular `/inventory/stocks` requires `ProductStock.View`. Opening stock, balance correction and delete attempt are independently
+protected by `ProductStock.Create`, `ProductStock.Edit` and `ProductStock.Delete`; delete authority does not bypass the existing
+Application rule that stock records are retained and adjusted to zero. Manual Adjustment In/Out and Kitchen Variance require
+`StockTransactions.Create`. Navigation and buttons are permission-filtered, but each API endpoint remains the authoritative check.
+
+## MOD-022C availability and reservation permissions (2026-10-27)
+
+Angular `/inventory/availability` and `GET /api/v1/inventory-balances` require `InventoryBalances.View`. Angular
+`/inventory/reservations` and `GET /api/v1/inventory-reservations` separately require `InventoryReservations.View`. Neither
+permission grants balance mutation, reservation creation/consumption/release or source-document authority. Navigation filtering is
+only presentation convenience; both APIs repeat authentication, tenant and permission checks.
+
+## MOD-022D inventory-adjustment permissions (2026-10-27)
+
+Angular adjustment list/details require `InventoryAdjustments.View`; named create form and creation require Create; recording every
+Draft line requires Count; Counted approval requires Approve; Approved dimensional posting requires Post; and pre-Posted cancellation
+requires Cancel. Every unsafe endpoint validates antiforgery. Navigation and action visibility are conveniences only; the API repeats
+the exact permission. Domain separation of duties still prevents the creator/counter from approving their own count.
+
+## MOD-022F warehouse-operation permissions (2026-10-27)
+
+Angular location reads/create/edit use `Warehouses.View`, `Warehouses.Create` and `Warehouses.Edit` independently. Unassigned Stock
+reads require `ProductStock.View`; assignment and putaway-rule create/activation require `ProductStock.Edit`. Location history and
+relocation require `LocationMovements.View` and `LocationMovements.Create`; the physical ledger separately requires
+`StockMovements.View`. Every mutation validates antiforgery. Navigation/action filtering never replaces API authorization.
+
+## MOD-023A Purchase Request permissions (2026-10-27)
+
+Angular list/details require `PurchaseRequests.View`; create options and creation require `PurchaseRequests.Create`; Draft submission
+requires `PurchaseRequests.Submit`; and reasoned Draft/Submitted cancellation requires `PurchaseRequests.Cancel`. Every command
+validates antiforgery. Navigation and button visibility are convenience only; the API repeats exact authorization.
+
+## MOD-023B purchase-approval permissions (2026-10-27)
+
+Approval-rule reads require `PurchaseApprovalRules.View`; create and activate/deactivate require `PurchaseApprovalRules.Manage` plus
+antiforgery. Request decisions separately require `PurchaseRequests.Approve` or `PurchaseRequests.Reject` and antiforgery. The server
+also requires the signed-in user to hold the current frozen step role; either permission or role alone is insufficient.
+
+
+## MOD-023C sourcing and quotation API permissions (2026-10-28)
+
+- `PurchaseSourcing.View` protects Angular sourcing list/details; `PurchaseSourcing.Create` separately protects create-form data and
+  create/send. The POST is antiforgery-protected and delegates only to `PurchaseSourcingService`.
+- `SupplierQuotations.Create` protects invited quotation options and submission; `SupplierQuotations.View` protects comparison;
+  `SupplierQuotations.Award` alone permits the antiforgery-protected one-time award.
+- Angular permission checks only hide ineligible actions. Controller policies and Application/Domain validation remain authoritative.
+
+## MOD-023D Purchase Order API permissions (2026-10-28)
+
+Reads require `PurchaseOrders.View`. Create-from-award, approve, confirm, cancel, close, reopen, configure fulfillment, record direct
+delivery and record supplier confirmation each retain their distinct `PurchaseOrders.*` permission and antiforgery. UI visibility is
+convenience only; controller authorization and server lifecycle checks are authoritative.

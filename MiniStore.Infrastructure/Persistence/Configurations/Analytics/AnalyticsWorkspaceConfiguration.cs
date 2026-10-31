@@ -4,7 +4,7 @@ using MiniStore.Domain.Entities;
 
 namespace MiniStore.Infrastructure.Persistence.Configurations;
 
-public sealed class AnalyticsWorkspaceConfiguration : IEntityTypeConfiguration<AnalyticsWorkspace>, IEntityTypeConfiguration<AnalyticsWorkspaceWidget>
+public sealed class AnalyticsWorkspaceConfiguration : IEntityTypeConfiguration<AnalyticsWorkspace>, IEntityTypeConfiguration<AnalyticsWorkspaceWidget>, IEntityTypeConfiguration<AnalyticsWorkspaceDelegation>
 {
     public void Configure(EntityTypeBuilder<AnalyticsWorkspace> b)
     {
@@ -14,6 +14,7 @@ public sealed class AnalyticsWorkspaceConfiguration : IEntityTypeConfiguration<A
         b.Property(x => x.RowVersion).IsRowVersion();
         b.HasIndex(x => new { x.ModuleKey, x.Visibility }); b.HasIndex(x => new { x.OwnerUserId, x.ModuleKey });
         b.HasMany(x => x.Widgets).WithOne().HasForeignKey(x => x.AnalyticsWorkspaceId).OnDelete(DeleteBehavior.Cascade);
+        b.HasMany(x => x.Delegations).WithOne().HasForeignKey(x => x.AnalyticsWorkspaceId).OnDelete(DeleteBehavior.Cascade);
     }
     public void Configure(EntityTypeBuilder<AnalyticsWorkspaceWidget> b)
     {
@@ -22,5 +23,18 @@ public sealed class AnalyticsWorkspaceConfiguration : IEntityTypeConfiguration<A
         b.Property(x => x.TargetValue).HasPrecision(24, 8); b.Property(x => x.AccentColor).HasMaxLength(7);
         b.HasIndex(x => new { x.AnalyticsWorkspaceId, x.WidgetKey }).IsUnique();
         b.HasIndex(x => new { x.AnalyticsWorkspaceId, x.Sequence }).IsUnique();
+    }
+    public void Configure(EntityTypeBuilder<AnalyticsWorkspaceDelegation> b)
+    {
+        b.HasKey(x => x.Id); b.Property(x => x.TargetUserId).HasMaxLength(450);
+        b.Property(x => x.CreatedByUserId).HasMaxLength(450).IsRequired(); b.Property(x => x.RevokedByUserId).HasMaxLength(450);
+        b.HasIndex(x => new { x.AnalyticsWorkspaceId, x.TargetType, x.TargetUserId });
+        b.HasIndex(x => new { x.AnalyticsWorkspaceId, x.TargetType, x.TargetRoleId });
+        b.HasIndex(x => new { x.TargetUserId, x.RevokedAtUtc, x.ExpiresAtUtc });
+        b.HasIndex(x => new { x.TargetRoleId, x.RevokedAtUtc, x.ExpiresAtUtc });
+        b.HasOne<TenantRole>().WithMany()
+            .HasForeignKey(nameof(AnalyticsWorkspaceDelegation.TargetRoleId), "TenantId")
+            .HasPrincipalKey(nameof(TenantRole.Id), nameof(TenantRole.TenantId))
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

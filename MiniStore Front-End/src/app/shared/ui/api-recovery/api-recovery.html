@@ -1,0 +1,20 @@
+<section class="api-recovery" role="alert" aria-live="polite">
+  <div>
+    <strong>{{ problem().detail || problem().title || i18n.text('errorTitle') }}</strong>
+    <p>{{ i18n.text(descriptionKey()) }}</p>
+  </div>
+  <div class="recovery-actions">
+    @if (problem().canRetry && allowRetry()) {
+      <button class="ui-button secondary" type="button" (click)="retry.emit()">{{ i18n.text('retry') }}</button>
+    }
+    @if (sourceUrl()) {
+      <a class="ui-button secondary" [routerLink]="sourceUrl()" target="_blank" rel="noopener">{{ i18n.text('openLatestRecord') }}</a>
+    }
+  </div>
+  @if (problem().correlationId; as reference) {
+    <div class="reference">
+      <span>{{ i18n.text('supportReference') }}: <code>{{ reference }}</code></span>
+      <button type="button" (click)="copyReference()">{{ i18n.text(copied() ? 'referenceCopied' : 'copyReference') }}</button>
+    </div>
+  }
+</section>

@@ -1,0 +1,229 @@
+<section class="payment-page" [attr.aria-label]="i18n.text('title')">
+  <app-page-header
+    eyebrow="PURCHASING"
+    [title]="page() ? i18n.text('create') : i18n.text('title')"
+    [description]="i18n.text('description')"
+  />
+  @if (problem()) {
+    <p class="message error" role="alert">{{ problem() }}</p>
+  }
+  @if (success()) {
+    <p class="message success" role="status">{{ success() }}</p>
+  }
+  @if (loading()) {
+    <app-feedback-state kind="loading" [title]="i18n.text('loading')" />
+  } @else if (loadingProblem(); as failure) {
+    <app-api-recovery [problem]="failure" (retry)="retry()" />
+  } @else if (page(); as p) {
+    <div class="actions">
+      <a class="ui-button secondary" routerLink="/purchases/payments">{{ i18n.text('back') }}</a>
+    </div>
+    <section class="ui-card summary">
+      <h2>{{ p.supplierName }}</h2>
+      <p>
+        {{ i18n.text('currency') }}: <strong>{{ p.currencyCode }}</strong>
+      </p>
+    </section>
+    <form class="ui-card" [formGroup]="form" (ngSubmit)="create()">
+      <div class="form-grid">
+        <label class="ui-field"
+          ><span>{{ i18n.text('date') }}</span
+          ><input type="date" formControlName="paymentDate" /></label
+        ><label class="ui-field"
+          ><span>{{ i18n.text('method') }}</span
+          ><select formControlName="paymentMethodId">
+            <option [ngValue]="0">{{ i18n.text('selectMethod') }}</option>
+            @for (m of p.paymentMethods; track m.id) {
+              <option [ngValue]="m.id">{{ m.name }}</option>
+            }
+          </select></label
+        ><label class="ui-field"
+          ><span>{{ i18n.text('external') }}</span
+          ><input maxlength="100" formControlName="externalReference" /></label
+        ><label class="ui-field"
+          ><span>{{ i18n.text('notes') }}</span
+          ><textarea maxlength="1000" formControlName="notes"></textarea>
+        </label>
+      </div>
+      <div formArrayName="lines">
+        <app-data-table [label]="i18n.text('bills')"
+          ><table>
+            <thead>
+              <tr>
+                <th>{{ i18n.text('bill') }}</th>
+                <th>{{ i18n.text('invoice') }}</th>
+                <th>{{ i18n.text('billDate') }}</th>
+                <th>{{ i18n.text('billTotal') }}</th>
+                <th>{{ i18n.text('paid') }}</th>
+                <th>{{ i18n.text('outstanding') }}</th>
+                <th>{{ i18n.text('allocation') }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (b of p.openBills; track b.vendorBillId; let i = $index) {
+                <tr [formGroupName]="i">
+                  <td>
+                    <code>{{ b.billNumber }}</code>
+                  </td>
+                  <td>{{ b.supplierInvoiceNumber }}</td>
+                  <td>{{ b.billDate | date: 'dd/MM/yyyy' }}</td>
+                  <td>{{ b.totalAmount | number: '1.2-6' }}</td>
+                  <td>{{ b.paidAmount | number: '1.2-6' }}</td>
+                  <td>{{ b.outstandingAmount | number: '1.2-6' }}</td>
+                  <td>
+                    <input
+                      type="number"
+                      min="0"
+                      [max]="b.outstandingAmount"
+                      step="0.01"
+                      formControlName="amount"
+                    />
+                  </td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td colspan="7">{{ i18n.text('noRows') }}</td>
+                </tr>
+              }
+            </tbody>
+          </table></app-data-table
+        >
+      </div>
+      @if (p.openBills.length) {
+        <div class="actions">
+          <button class="ui-button primary" [disabled]="saving()">{{ i18n.text('post') }}</button>
+        </div>
+      }
+    </form>
+  } @else if (detail(); as x) {
+    <div class="actions">
+      <a class="ui-button secondary" routerLink="/purchases/payments">{{ i18n.text('back') }}</a>
+      @if (x.status === 2 && session.can('PurchaseDocumentReversals.Create')) {
+        <a
+          class="ui-button danger"
+          [routerLink]="['/purchases/reversals/new']"
+          [queryParams]="{ documentType: 3, originalDocumentId: x.id }"
+          >{{ i18n.text('reverseDocument') }}</a
+        >
+      }
+    </div>
+    <section class="ui-card summary">
+      <header>
+        <h2>
+          <code>{{ x.paymentNumber }}</code>
+        </h2>
+        <span class="ui-badge">{{ statusName(x.status) }}</span>
+      </header>
+      <dl>
+        <div>
+          <dt>{{ i18n.text('supplier') }}</dt>
+          <dd>{{ x.supplierName }}</dd>
+        </div>
+        <div>
+          <dt>{{ i18n.text('method') }}</dt>
+          <dd>{{ x.paymentMethodName }}</dd>
+        </div>
+        <div>
+          <dt>{{ i18n.text('date') }}</dt>
+          <dd>{{ x.paymentDate | date: 'dd/MM/yyyy' }}</dd>
+        </div>
+        <div>
+          <dt>{{ i18n.text('external') }}</dt>
+          <dd>{{ x.externalReference || '—' }}</dd>
+        </div>
+        <div>
+          <dt>{{ i18n.text('exchange') }}</dt>
+          <dd>
+            1 {{ x.currencyCode }} = {{ x.exchangeRate | number: '1.2-6' }}
+            {{ x.companyCurrencyCode }}
+          </dd>
+        </div>
+      </dl>
+    </section>
+    <section class="ui-card">
+      <app-data-table [label]="i18n.text('bills')"
+        ><table>
+          <thead>
+            <tr>
+              <th>{{ i18n.text('bill') }}</th>
+              <th>{{ i18n.text('invoice') }}</th>
+              <th>{{ i18n.text('allocation') }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (l of x.lines; track l.vendorBillId) {
+              <tr>
+                <td>
+                  <a [routerLink]="['/purchases/bills', l.vendorBillId]"
+                    ><code>{{ l.billNumber }}</code></a
+                  >
+                </td>
+                <td>{{ l.supplierInvoiceNumber }}</td>
+                <td>{{ l.amount | number: '1.2-6' }} {{ x.currencyCode }}</td>
+              </tr>
+            }
+          </tbody>
+        </table></app-data-table
+      >
+    </section>
+    <section class="ui-card totals">
+      <div>
+        {{ i18n.text('total') }}:
+        <strong>{{ x.totalAmount | number: '1.2-6' }} {{ x.currencyCode }}</strong>
+      </div>
+      <div>
+        {{ i18n.text('companyEquivalent') }}: {{ x.companyCurrencyAmount | number: '1.2-6' }}
+        {{ x.companyCurrencyCode }}
+      </div>
+      <div>
+        {{ i18n.text('carrying') }}: {{ x.payableCarryingAmount | number: '1.2-6' }}
+        {{ x.companyCurrencyCode }}
+      </div>
+    </section>
+  } @else {
+    <form class="filters" (ngSubmit)="loadList()">
+      <label class="ui-field"
+        ><span>{{ i18n.text('search') }}</span
+        ><input [formControl]="search" /></label
+      ><button class="ui-button secondary">{{ i18n.text('search') }}</button>
+    </form>
+    <section class="ui-card">
+      <app-data-table [label]="i18n.text('title')"
+        ><table>
+          <thead>
+            <tr>
+              <th>{{ i18n.text('number') }}</th>
+              <th>{{ i18n.text('supplier') }}</th>
+              <th>{{ i18n.text('method') }}</th>
+              <th>{{ i18n.text('date') }}</th>
+              <th>{{ i18n.text('total') }}</th>
+              <th>{{ i18n.text('status') }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (x of rows(); track x.id) {
+              <tr>
+                <td>
+                  <a [routerLink]="['/purchases/payments', x.id]"
+                    ><code>{{ x.paymentNumber }}</code></a
+                  >
+                </td>
+                <td>{{ x.supplierName }}</td>
+                <td>{{ x.paymentMethodName }}</td>
+                <td>{{ x.paymentDate | date: 'dd/MM/yyyy' }}</td>
+                <td>{{ x.totalAmount | number: '1.2-6' }} {{ x.currencyCode }}</td>
+                <td>
+                  <span class="ui-badge">{{ statusName(x.status) }}</span>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="6">{{ i18n.text('noRows') }}</td>
+              </tr>
+            }
+          </tbody>
+        </table></app-data-table
+      >
+    </section>
+  }
+</section>

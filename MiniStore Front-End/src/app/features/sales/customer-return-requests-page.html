@@ -1,0 +1,262 @@
+<main class="return-requests-page">
+  @if (loading()) {
+    <app-feedback-state kind="loading" [title]="i18n.text('title')" />
+  } @else if (failure(); as issue) {
+    <app-api-recovery [problem]="issue" (retry)="load()" />
+  } @else if (item(); as request) {
+    <app-page-header
+      [eyebrow]="i18n.text('area')"
+      [title]="request.returnNumber"
+      [description]="i18n.text('description')"
+    />
+    <div class="heading">
+      <span class="status">{{ i18n.status(request.status) }}</span>
+      <div class="links">
+        <a class="ui-button" [routerLink]="['/sales/deliveries', request.salesDeliveryId]">{{
+          i18n.text('delivery')
+        }}</a>
+        <a class="ui-button" [routerLink]="['/sales/orders', request.salesOrderId]">{{
+          i18n.text('order')
+        }}</a>
+        <a class="ui-button" routerLink="/sales/return-requests">{{ i18n.text('back') }}</a>
+      </div>
+    </div>
+    <p class="ui-card safe">{{ i18n.text('safe') }}</p>
+    @if (problem(); as issue) {
+      <app-api-recovery [problem]="issue" [allowRetry]="false" />
+    }
+    <section class="ui-card facts">
+      <div>
+        <span>{{ i18n.text('customer') }}</span
+        ><strong>{{ request.customerName }}</strong>
+      </div>
+      <div>
+        <span>{{ i18n.text('delivery') }}</span
+        ><strong>{{ request.deliveryNumber }}</strong>
+      </div>
+      <div>
+        <span>{{ i18n.text('order') }}</span
+        ><strong>{{ request.orderNumber }}</strong>
+      </div>
+      <div>
+        <span>{{ i18n.text('requestDate') }}</span
+        ><strong>{{ request.requestDate }}</strong>
+      </div>
+      <div class="wide">
+        <span>{{ i18n.text('reason') }}</span
+        ><strong>{{ request.reason }}</strong>
+      </div>
+      @if (request.notes) {
+        <div class="wide">
+          <span>{{ i18n.text('notes') }}</span
+          ><strong>{{ request.notes }}</strong>
+        </div>
+      }
+      @if (request.decisionReason) {
+        <div class="wide">
+          <span>{{ i18n.text('decisionReason') }}</span
+          ><strong>{{ request.decisionReason }}</strong>
+        </div>
+      }
+      @if (request.cancellationReason) {
+        <div class="wide">
+          <span>{{ i18n.text('cancellationReason') }}</span
+          ><strong>{{ request.cancellationReason }}</strong>
+        </div>
+      }
+    </section>
+    <section>
+      <h2>{{ i18n.text('lines') }}</h2>
+      <div class="cards">
+        @for (line of request.lines; track line.id) {
+          <article class="ui-card">
+            <strong>{{ line.productCode }} — {{ line.productName }}</strong>
+            <p>{{ line.warehouseName }} · {{ line.locationName }}</p>
+            <dl>
+              <div>
+                <dt>{{ i18n.text('delivered') }}</dt>
+                <dd>{{ line.deliveredQuantity | number: '1.0-6' }}</dd>
+              </div>
+              <div>
+                <dt>{{ i18n.text('quantity') }}</dt>
+                <dd>{{ line.requestedQuantity | number: '1.0-6' }}</dd>
+              </div>
+            </dl>
+            @if (line.trackingAllocations) {
+              <pre>{{ line.trackingAllocations }}</pre>
+            }
+          </article>
+        }
+      </div>
+    </section>
+    <section class="ui-card actions">
+      @if (request.status === 1 && session.can('CustomerReturnRequests.Submit')) {
+        <button class="ui-button primary" [disabled]="saving()" (click)="command('submit')">
+          {{ i18n.text('submit') }}
+        </button>
+      }
+      @if (request.status === 2 && session.can('CustomerReturnRequests.Approve')) {
+        <button class="ui-button primary" [disabled]="saving()" (click)="command('approve')">
+          {{ i18n.text('approve') }}
+        </button>
+      }
+      @if (request.status === 2 && session.can('CustomerReturnRequests.Reject')) {
+        <label class="ui-field"
+          ><span>{{ i18n.text('decisionReason') }}</span
+          ><input [formControl]="actionReason" maxlength="500"
+        /></label>
+        <button class="ui-button danger" [disabled]="saving()" (click)="command('reject')">
+          {{ i18n.text('reject') }}
+        </button>
+      }
+      @if (request.status === 3) {
+        <strong>{{ i18n.text('completed') }}</strong>
+        @if (request.hasRemainingReceipt && session.can('CustomerReturnReceipts.Create')) {
+          <a
+            class="ui-button primary"
+            routerLink="/sales/return-receipts/new"
+            [queryParams]="{ customerReturnRequestId: request.id }"
+            >{{ i18n.text('receive') }}</a
+          >
+        }
+      }
+      @if (
+        request.status !== 4 &&
+        request.status !== 5 &&
+        !request.receiptIds.length &&
+        session.can('CustomerReturnRequests.Cancel')
+      ) {
+        <label class="ui-field"
+          ><span>{{ i18n.text('cancellationReason') }}</span
+          ><input [formControl]="actionReason" maxlength="500"
+        /></label>
+        <button class="ui-button" [disabled]="saving()" (click)="command('cancel')">
+          {{ i18n.text('cancel') }}
+        </button>
+      }
+      @for (receiptId of request.receiptIds; track receiptId) {
+        <a class="ui-button" [routerLink]="['/sales/return-receipts', receiptId]"
+          >{{ i18n.text('receipts') }} #{{ receiptId }}</a
+        >
+      }
+    </section>
+    <section>
+      <h2>{{ i18n.text('history') }}</h2>
+      @for (entry of request.history; track entry.createdAtUtc) {
+        <article class="ui-card history">
+          <strong>{{ i18n.status(entry.toStatus) }}</strong
+          ><span>{{ entry.userId }}</span
+          ><time>{{ entry.createdAtUtc | date: 'medium' }}</time>
+          @if (entry.reason) {
+            <p>{{ entry.reason }}</p>
+          }
+        </article>
+      }
+    </section>
+  } @else if (page(); as page) {
+    <app-page-header
+      [eyebrow]="i18n.text('area')"
+      [title]="i18n.text('create')"
+      [description]="page.deliveryNumber + ' · ' + page.customerName"
+    />
+    <a class="ui-button back" [routerLink]="['/sales/deliveries', page.salesDeliveryId]">{{
+      i18n.text('back')
+    }}</a>
+    <p class="ui-card safe">{{ i18n.text('safe') }}</p>
+    @if (problem(); as issue) {
+      <app-api-recovery [problem]="issue" [allowRetry]="false" />
+    }
+    <form [formGroup]="form" (ngSubmit)="create()">
+      <section class="ui-card form-head">
+        <label class="ui-field"
+          ><span>{{ i18n.text('requestDate') }}</span
+          ><input type="date" [min]="page.deliveryDate" formControlName="requestDate"
+        /></label>
+        <label class="ui-field"
+          ><span>{{ i18n.text('reason') }}</span
+          ><input formControlName="reason" maxlength="500"
+        /></label>
+        <label class="ui-field wide"
+          ><span>{{ i18n.text('notes') }}</span
+          ><textarea formControlName="notes" maxlength="1000"></textarea>
+        </label>
+      </section>
+      <div class="cards" formArrayName="lines">
+        @for (group of lines.controls; track group; let index = $index) {
+          <article class="ui-card" [formGroupName]="index">
+            <strong
+              >{{ page.lines[index].productCode }} — {{ page.lines[index].productName }}</strong
+            >
+            <p>{{ page.lines[index].warehouseName }} · {{ page.lines[index].locationName }}</p>
+            <dl>
+              <div>
+                <dt>{{ i18n.text('delivered') }}</dt>
+                <dd>{{ page.lines[index].deliveredQuantity | number: '1.0-6' }}</dd>
+              </div>
+              <div>
+                <dt>{{ i18n.text('requested') }}</dt>
+                <dd>{{ page.lines[index].alreadyRequestedQuantity | number: '1.0-6' }}</dd>
+              </div>
+              <div>
+                <dt>{{ i18n.text('remaining') }}</dt>
+                <dd>{{ page.lines[index].remainingQuantity | number: '1.0-6' }}</dd>
+              </div>
+            </dl>
+            <label class="ui-field"
+              ><span>{{ i18n.text('quantity') }}</span
+              ><input
+                type="number"
+                min="0"
+                [max]="page.lines[index].remainingQuantity"
+                step=".000001"
+                formControlName="stockQuantity"
+            /></label>
+          </article>
+        }
+      </div>
+      @if (!page.lines.length) {
+        <app-feedback-state kind="empty" [title]="i18n.text('empty')" />
+      }
+      <div class="ui-card submit">
+        <strong>{{ i18n.text('quantity') }}: {{ quantityTotal() | number: '1.0-6' }}</strong>
+        <button
+          class="ui-button primary"
+          [disabled]="saving() || form.invalid || quantityTotal() <= 0"
+        >
+          {{ i18n.text('createDraft') }}
+        </button>
+      </div>
+    </form>
+  } @else {
+    <app-page-header
+      [eyebrow]="i18n.text('area')"
+      [title]="i18n.text('title')"
+      [description]="i18n.text('description')"
+    />
+    <form class="ui-card filters" (ngSubmit)="load()">
+      <label class="ui-field"
+        ><span>{{ i18n.text('search') }}</span
+        ><input [formControl]="search" /></label
+      ><button class="ui-button">{{ i18n.text('apply') }}</button>
+    </form>
+    @if (!rows().length) {
+      <app-feedback-state kind="empty" [title]="i18n.text('empty')" />
+    }
+    <div class="cards">
+      @for (request of rows(); track request.id) {
+        <article class="ui-card">
+          <div class="heading">
+            <strong>{{ request.returnNumber }}</strong
+            ><span class="status">{{ i18n.status(request.status) }}</span>
+          </div>
+          <p>{{ request.customerName }}</p>
+          <p>{{ i18n.text('order') }}: {{ request.orderNumber }}</p>
+          <p>{{ request.requestDate }} · {{ request.quantity | number: '1.0-6' }}</p>
+          <a class="ui-button" [routerLink]="['/sales/return-requests', request.id]">{{
+            i18n.text('view')
+          }}</a>
+        </article>
+      }
+    </div>
+  }
+</main>

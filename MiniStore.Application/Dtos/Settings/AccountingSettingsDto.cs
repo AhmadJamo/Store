@@ -1,5 +1,27 @@
 namespace MiniStore.Application.Dtos.Settings;
+using MiniStore.Application.Dtos.Accounting;
 using MiniStore.Domain.Entities;
+
+public sealed class AccountingSettingsPageDto
+{
+    public AccountingSettingsDto Settings { get; init; } = new();
+    public List<AccountDto> Accounts { get; init; } = [];
+}
+
+public sealed class BranchSalesAccountsPageDto
+{
+    public List<BranchSalesAccountDto> Branches { get; init; } = [];
+    public List<AccountDto> Accounts { get; init; } = [];
+}
+
+public sealed class BranchSalesAccountDto
+{
+    public int Id { get; init; }
+    public string Code { get; init; } = string.Empty;
+    public string Name { get; init; } = string.Empty;
+    public bool IsActive { get; init; }
+    public int? SalesRevenueAccountId { get; init; }
+}
 
 public class AccountingSettingsDto
 {

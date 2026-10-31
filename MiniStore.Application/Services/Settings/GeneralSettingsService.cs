@@ -254,7 +254,7 @@ public class GeneralSettingsService
     private static void EnsureVersion(byte[] current, byte[] submitted)
     {
         if (submitted.Length == 0 || !current.SequenceEqual(submitted))
-            throw new InvalidOperationException(
+            throw new SettingsConcurrencyException(
                 "The general settings were modified by another user. Please reload the page and try again.");
     }
 }

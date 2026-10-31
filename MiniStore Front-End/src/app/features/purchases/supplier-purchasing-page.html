@@ -1,0 +1,372 @@
+<section class="supplier-page" [attr.aria-label]="i18n.text('title')">
+  <app-page-header
+    eyebrow="PURCHASING"
+    [title]="
+      i18n.text(
+        mode() === 'exceptions'
+          ? 'exceptions'
+          : mode() === 'history'
+            ? 'history'
+            : mode() === 'breaks'
+              ? 'breaks'
+              : 'title'
+      )
+    "
+    [description]="i18n.text('description')"
+  />
+  @if (problem()) {
+    <p class="message error" role="alert">{{ problem() }}</p>
+  }
+  @if (success()) {
+    <p class="message success" role="status">{{ success() }}</p>
+  }
+  @if (loading()) {
+    <app-feedback-state kind="loading" [title]="i18n.text('loading')" />
+  } @else if (loadingProblem(); as failure) {
+    <app-api-recovery [problem]="failure" (retry)="retry()" />
+  } @else if (mode() === 'main' && page(); as p) {
+    <div class="toolbar">
+      <label class="ui-field"
+        ><span>{{ i18n.text('supplier') }}</span
+        ><select #supplier (change)="loadSupplier(supplier.value)">
+          <option value="">{{ i18n.text('select') }}</option>
+          @for (x of p.suppliers; track x.id) {
+            <option [value]="x.id" [selected]="x.id === p.selectedSupplierId">{{ x.label }}</option>
+          }
+        </select></label
+      ><a class="ui-button secondary" routerLink="/purchases/supplier-terms/exceptions"
+        >{{ i18n.text('exceptions') }} ({{ p.priceExceptionCount }})</a
+      >
+      @if (p.selectedSupplierId) {
+        <button class="ui-button secondary" (click)="download('csv')">
+          {{ i18n.text('exportCsv') }}</button
+        ><button class="ui-button secondary" (click)="download('excel')">
+          {{ i18n.text('exportExcel') }}
+        </button>
+      }
+    </div>
+    @if (!p.selectedSupplierId) {
+      <p class="ui-card">{{ i18n.text('empty') }}</p>
+    } @else {
+      @if (session.can('Purchases.SupplierTerms.Manage')) {
+        <section class="ui-card imports">
+          <p>{{ i18n.text('fileHelp') }}</p>
+          <label class="ui-button secondary"
+            >{{ i18n.text('importCsv')
+            }}<input
+              hidden
+              type="file"
+              accept=".csv,text/csv"
+              (change)="previewFile($any($event.target).files, 'csv')" /></label
+          ><label class="ui-button secondary"
+            >{{ i18n.text('importExcel')
+            }}<input
+              hidden
+              type="file"
+              accept=".xlsx"
+              (change)="previewFile($any($event.target).files, 'excel')"
+          /></label>
+        </section>
+      }
+      @if (preview(); as v) {
+        <section class="ui-card">
+          <h2>{{ i18n.text('preview') }} — {{ v.fileName }}</h2>
+          <p>
+            {{ i18n.text('validRows') }}: {{ v.validRowCount }} · {{ i18n.text('errorRows') }}:
+            {{ v.errorRowCount }}
+          </p>
+          <app-data-table [label]="i18n.text('preview')"
+            ><table>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>{{ i18n.text('change') }}</th>
+                  <th>{{ i18n.text('product') }}</th>
+                  <th>{{ i18n.text('unit') }}</th>
+                  <th>{{ i18n.text('price') }}</th>
+                  <th>{{ i18n.text('errors') }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (r of v.rows; track r.rowNumber) {
+                  <tr>
+                    <td>{{ r.rowNumber }}</td>
+                    <td>{{ r.changeType }}</td>
+                    <td>{{ r.productCode }} — {{ r.productName }}</td>
+                    <td>{{ r.purchaseUnitCode }}</td>
+                    <td>{{ r.unitPrice | number: '1.2-6' }} {{ r.currencyCode }}</td>
+                    <td>{{ r.errors.join(' · ') || '—' }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table></app-data-table
+          >
+          @if (v.canImport) {
+            <button class="ui-button primary" [disabled]="saving()" (click)="importPreview()">
+              {{ i18n.text('import') }}
+            </button>
+          }
+        </section>
+      }
+      @if (p.bulkForm.rows.length && session.can('Purchases.SupplierTerms.Manage')) {
+        <form class="product-list" (ngSubmit)="saveBulk()">
+          @for (r of p.bulkForm.rows; track r.productId; let i = $index) {
+            <div [formGroup]="$any(rows.at(i))" class="ui-card product-card">
+              <header>
+                <label
+                  ><input type="checkbox" formControlName="selected" />
+                  <code>{{ r.productCode }}</code> — {{ r.productName }}</label
+                >
+              </header>
+              <div class="grid">
+                <label class="ui-field"
+                  ><span>{{ i18n.text('supplierCode') }}</span
+                  ><input
+                    maxlength="100"
+                    formControlName="supplierProductCode"
+                    (change)="selectRow(i)" /></label
+                ><label class="ui-field"
+                  ><span>{{ i18n.text('unit') }}</span
+                  ><select formControlName="purchaseMeasurementUnitId" (change)="selectRow(i)">
+                    @for (u of r.unitOptions; track u.id) {
+                      <option [ngValue]="u.id">{{ u.label }}</option>
+                    }
+                  </select></label
+                ><label class="ui-field"
+                  ><span>{{ i18n.text('minimum') }}</span
+                  ><input
+                    type="number"
+                    min="0.000001"
+                    step="0.000001"
+                    formControlName="minimumOrderQuantity"
+                    (change)="selectRow(i)" /></label
+                ><label class="ui-field"
+                  ><span>{{ i18n.text('multiple') }}</span
+                  ><input
+                    type="number"
+                    min="0.000001"
+                    step="0.000001"
+                    formControlName="orderMultiple"
+                    (change)="selectRow(i)" /></label
+                ><label class="ui-field"
+                  ><span>{{ i18n.text('price') }}</span
+                  ><input
+                    type="number"
+                    min="0"
+                    step="0.0001"
+                    formControlName="unitPrice"
+                    (change)="selectRow(i)" /></label
+                ><label class="ui-field"
+                  ><span>{{ i18n.text('lead') }}</span
+                  ><input
+                    type="number"
+                    min="0"
+                    max="3650"
+                    formControlName="leadTimeDays"
+                    (change)="selectRow(i)" /></label
+                ><label class="ui-field"
+                  ><span>{{ i18n.text('priority') }}</span
+                  ><input
+                    type="number"
+                    min="0"
+                    max="9999"
+                    formControlName="priority"
+                    (change)="selectRow(i)" /></label
+                ><label class="ui-field"
+                  ><span>{{ i18n.text('validFrom') }}</span
+                  ><input type="date" formControlName="validFrom" (change)="selectRow(i)" /></label
+                ><label class="ui-field"
+                  ><span>{{ i18n.text('validTo') }}</span
+                  ><input type="date" formControlName="validTo" (change)="selectRow(i)" /></label
+                ><label class="check"
+                  ><input type="checkbox" formControlName="isPreferred" (change)="selectRow(i)" />
+                  {{ i18n.text('preferred') }}</label
+                ><label class="ui-field wide"
+                  ><span>{{ i18n.text('descriptionField') }}</span
+                  ><input
+                    maxlength="300"
+                    formControlName="supplierDescription"
+                    (change)="selectRow(i)"
+                /></label>
+              </div>
+            </div>
+          }
+          <button class="ui-button primary" [disabled]="saving()">{{ i18n.text('save') }}</button>
+        </form>
+      } @else if (!p.bulkForm.rows.length) {
+        <p class="ui-card">{{ i18n.text('noProducts') }}</p>
+      }
+      <section class="saved">
+        @for (x of p.rows; track x.id) {
+          <article class="ui-card row-card">
+            <div>
+              <strong
+                ><code>{{ x.productCode }}</code> — {{ x.productName }}</strong
+              >
+              <p>{{ x.purchaseUnit }} · {{ x.unitPrice | number: '1.2-6' }} {{ x.currencyCode }}</p>
+            </div>
+            <div class="actions">
+              <span class="ui-badge">{{
+                x.isActive ? i18n.text('active') : i18n.text('inactive')
+              }}</span
+              ><a
+                class="ui-button secondary"
+                [routerLink]="['/purchases/supplier-terms', x.id, 'history']"
+                >{{ i18n.text('history') }}</a
+              ><a
+                class="ui-button secondary"
+                [routerLink]="['/purchases/supplier-terms', x.id, 'price-breaks']"
+                >{{ i18n.text('breaks') }} ({{ x.priceBreakCount }})</a
+              >
+              @if (session.can('Purchases.SupplierTerms.Manage')) {
+                <button class="ui-button secondary" (click)="toggle(x)">
+                  {{ x.isActive ? i18n.text('deactivate') : i18n.text('activate') }}
+                </button>
+              }
+            </div>
+          </article>
+        }
+      </section>
+    }
+  } @else if (mode() === 'breaks' && breakPage(); as p) {
+    <a
+      class="ui-button secondary"
+      [routerLink]="['/purchases/supplier-terms']"
+      [queryParams]="{ supplierId: p.supplierId }"
+      >{{ i18n.text('back') }}</a
+    >
+    <section class="ui-card">
+      <h2>{{ p.productLabel }}</h2>
+      <p>
+        {{ p.supplierName }} · {{ p.purchaseUnit }} · {{ p.baseUnitPrice | number: '1.2-6' }}
+        {{ p.currencyCode }}
+      </p>
+    </section>
+    @if (p.isActive && session.can('Purchases.SupplierTerms.Manage')) {
+      <form class="ui-card" (ngSubmit)="saveBreaks()">
+        <div class="actions">
+          <button type="button" class="ui-button secondary" (click)="addBreak()">
+            {{ i18n.text('addBreak') }}
+          </button>
+        </div>
+        @for (control of breaks.controls; track $index; let i = $index) {
+          <div class="break-row" [formGroup]="$any(control)">
+            <label class="ui-field"
+              ><span>{{ i18n.text('startQuantity') }}</span
+              ><input
+                type="number"
+                [min]="p.minimumOrderQuantity"
+                step="0.000001"
+                formControlName="minimumQuantity" /></label
+            ><label class="ui-field"
+              ><span>{{ i18n.text('price') }}</span
+              ><input type="number" min="0" step="0.0001" formControlName="unitPrice" /></label
+            ><label class="ui-field"
+              ><span>{{ i18n.text('discount') }}</span
+              ><input
+                type="number"
+                min="0"
+                max="100"
+                step="0.0001"
+                formControlName="discountPercent" /></label
+            ><button type="button" class="ui-button danger" (click)="removeBreak(i)">
+              {{ i18n.text('remove') }}
+            </button>
+          </div>
+        }
+        <button class="ui-button primary" [disabled]="saving()">
+          {{ i18n.text('saveBreaks') }}
+        </button>
+      </form>
+    } @else {
+      <section class="ui-card">
+        @for (r of p.form.rows; track $index) {
+          <p>
+            {{ r.minimumQuantity }} → {{ r.unitPrice }} {{ p.currencyCode }} ({{
+              r.discountPercent
+            }}%)
+          </p>
+        }
+      </section>
+    }
+  } @else if (mode() === 'history' && historyPage(); as p) {
+    <a
+      class="ui-button secondary"
+      [routerLink]="['/purchases/supplier-terms']"
+      [queryParams]="{ supplierId: p.supplierId }"
+      >{{ i18n.text('back') }}</a
+    >
+    <section class="ui-card">
+      <h2>{{ p.productLabel }}</h2>
+      <p>{{ p.supplierName }} · {{ p.purchaseUnit }}</p>
+    </section>
+    @for (r of p.rows; track r.revision) {
+      <article class="ui-card">
+        <header>
+          <strong>{{ i18n.text('revision') }} {{ r.revision }}</strong
+          ><span
+            >{{ r.changedAtUtc | date: 'medium' }} · {{ i18n.text('changedBy') }}
+            {{ r.changedByUserId }}</span
+          >
+        </header>
+        <p>
+          {{ r.baseUnitPrice | number: '1.2-6' }} {{ r.currencyCode }} · {{ r.validFrom }} —
+          {{ r.validTo || '—' }}
+        </p>
+        @for (b of r.priceBreaks; track $index) {
+          <p>
+            {{ b.minimumQuantity }} → {{ b.netUnitPrice | number: '1.2-6' }} {{ r.currencyCode }}
+          </p>
+        }
+      </article>
+    } @empty {
+      <p class="ui-card">{{ i18n.text('noHistory') }}</p>
+    }
+  } @else if (exceptionPage(); as p) {
+    <a class="ui-button secondary" routerLink="/purchases/supplier-terms">{{
+      i18n.text('back')
+    }}</a>
+    <div class="toolbar">
+      <button class="ui-button secondary" (click)="loadExceptions()">
+        {{ i18n.text('all') }} {{ p.totalFindingCount }}</button
+      ><button class="ui-button secondary" (click)="loadExceptions(1)">
+        {{ i18n.text('expired') }} {{ p.expiredCount }}</button
+      ><button class="ui-button secondary" (click)="loadExceptions(2)">
+        {{ i18n.text('expiring') }} {{ p.expiringSoonCount }}</button
+      ><button class="ui-button secondary" (click)="loadExceptions(3)">
+        {{ i18n.text('duplicates') }} {{ p.duplicateSupplierProductCodeCount }}</button
+      ><button class="ui-button secondary" (click)="loadExceptions(4)">
+        {{ i18n.text('multiplePreferred') }} {{ p.multiplePreferredRowsCount }}
+      </button>
+    </div>
+    @for (x of p.rows; track x.purchasingInfoId) {
+      <article class="ui-card">
+        <h2>{{ x.productLabel }}</h2>
+        <p>{{ x.supplierName }} · {{ x.purchaseUnit }} · {{ x.unitPrice }} {{ x.currencyCode }}</p>
+        <a
+          class="ui-button secondary"
+          [routerLink]="['/purchases/supplier-terms', x.purchasingInfoId, 'history']"
+          >{{ i18n.text('history') }}</a
+        >
+      </article>
+    } @empty {
+      <p class="ui-card">{{ i18n.text('noExceptions') }}</p>
+    }
+    <div class="actions">
+      <button
+        class="ui-button secondary"
+        [disabled]="p.pageNumber <= 1"
+        (click)="loadExceptions(p.selectedType, p.pageNumber - 1)"
+      >
+        {{ i18n.text('previous') }}</button
+      ><span>{{ i18n.text('page') }} {{ p.pageNumber }} / {{ p.totalPages }}</span
+      ><button
+        class="ui-button secondary"
+        [disabled]="p.pageNumber >= p.totalPages"
+        (click)="loadExceptions(p.selectedType, p.pageNumber + 1)"
+      >
+        {{ i18n.text('next') }}
+      </button>
+    </div>
+  }
+</section>

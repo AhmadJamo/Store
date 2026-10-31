@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Logging;
@@ -22,11 +23,19 @@ using MiniStore.Application.Permissions;
 using MiniStore.Application.DTOs.Settings;
 using MiniStore.Application.Dtos.Settings;
 using MiniStore.Application.Dtos.Customers;
+using MiniStore.Application.Dtos.Analytics;
 using MiniStore.Application.DTOs.Inventory.Tracking;
+using MiniStore.Application.DTOs.Inventory.Adjustments;
+using MiniStore.Application.DTOs.LocationMovements;
 using MiniStore.Application.DTOs.Purchases;
 using MiniStore.Application.DTOs.Products;
+using MiniStore.Application.DTOs.ProductStocks;
+using MiniStore.Application.DTOs.Recipes;
 using MiniStore.Application.DTOs.Suppliers;
+using MiniStore.Application.DTOs.Security;
 using MiniStore.Application.DTOs.Warehouses;
+using MiniStore.Application.DTOs.Api;
+using MiniStore.Application.Dtos.Shared;
 using MiniStore.Application.Services;
 using MiniStore.Infrastructure.Authorization;
 using MiniStore.Infrastructure.Persistence;
@@ -42,12 +51,96 @@ using MiniStore.Web.Formatting;
 using MiniStore.Web.Navigation;
 using MiniStore.Web.Services;
 using MiniStore.Web.Observability;
+using MiniStore.Web.Middleware.Api;
+using MiniStore.Web.Controllers.Api.V1;
+using MiniStore.Web.Presentation.Cutover;
 
 var count = 0;
 void Check(bool condition, string message)
 {
     if (!condition) throw new Exception(message);
     count++;
+}
+
+var mvcCutoverResolver = new PresentationCutoverResolver(Options.Create(
+    new PresentationCutoverOptions
+    {
+        AngularBasePath = "/app",
+        Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["Customers"] = PresentationCutoverMode.Mvc
+        }
+    }));
+var cutoverContext = new DefaultHttpContext();
+cutoverContext.Request.Method = HttpMethods.Get;
+cutoverContext.Request.QueryString = new QueryString("?page=2");
+Check(mvcCutoverResolver.Resolve(
+        cutoverContext.Request, "Customers", "Index", new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null,
+    "MVC cutover mode must preserve the existing MVC route");
+var pilotCutoverResolver = new PresentationCutoverResolver(Options.Create(
+    new PresentationCutoverOptions
+    {
+        Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["Customers"] = PresentationCutoverMode.AngularPilot
+        }
+    }));
+Check(pilotCutoverResolver.Resolve(
+        cutoverContext.Request, "Customers", "Index", new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null,
+    "Angular pilot mode must collect evidence without replacing the MVC route");
+
+var angularCutoverResolver = new PresentationCutoverResolver(Options.Create(
+    new PresentationCutoverOptions
+    {
+        AngularBasePath = "/app",
+        Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["Customers"] = PresentationCutoverMode.AngularDefault
+        }
+    }));
+Check(angularCutoverResolver.Resolve(
+        cutoverContext.Request, "Customers", "Index", new Microsoft.AspNetCore.Routing.RouteValueDictionary()) == "/app/customers?page=2",
+    "Angular-default GET actions must resolve to the allowlisted Angular route and preserve the query string");
+Check(angularCutoverResolver.Resolve(
+        cutoverContext.Request, "Customers", "Details", new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 17 }) == "/app/customers/17?page=2",
+    "Angular-default detail actions must resolve route values without exposing an arbitrary redirect target");
+Check(angularCutoverResolver.Resolve(
+        cutoverContext.Request, "Customers", "Details", new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = "../admin" }) is null,
+    "Angular-default detail actions must reject unsafe route values");
+cutoverContext.Request.Method = HttpMethods.Post;
+Check(angularCutoverResolver.Resolve(
+        cutoverContext.Request, "Customers", "Index", new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null,
+    "Presentation cutover must never redirect mutation requests");
+cutoverContext.Request.Method = HttpMethods.Get;
+Check(angularCutoverResolver.Resolve(
+        cutoverContext.Request, "Customers", "Export", new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null,
+    "Presentation cutover must keep non-allowlisted actions on MVC");
+foreach (var entry in PresentationCutoverRouteCatalog.All)
+{
+    var keyParts = entry.Key.Split(':', 2);
+    var routeValues = new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 1 };
+    var rehearsalAngular = new PresentationCutoverResolver(Options.Create(
+        new PresentationCutoverOptions
+        {
+            AngularBasePath = "/app",
+            Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
+            {
+                [keyParts[0]] = PresentationCutoverMode.AngularDefault
+            }
+        }));
+    Check(rehearsalAngular.Resolve(cutoverContext.Request, keyParts[0], keyParts[1], routeValues) is not null,
+        $"Cutover rehearsal must resolve allowlisted GET {entry.Key}");
+    var rehearsalRollback = new PresentationCutoverResolver(Options.Create(
+        new PresentationCutoverOptions
+        {
+            AngularBasePath = "/app",
+            Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
+            {
+                [keyParts[0]] = PresentationCutoverMode.Mvc
+            }
+        }));
+    Check(rehearsalRollback.Resolve(cutoverContext.Request, keyParts[0], keyParts[1], routeValues) is null,
+        $"Rollback rehearsal must restore MVC for {entry.Key}");
 }
 
 using var db = new AppDbContext(
@@ -280,6 +373,28 @@ Check(auditController.GetMethod(nameof(AuditEventsController.Index))!
       auditController.GetMethod(nameof(AuditEventsController.Export))!
           .GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null,
     "Audit view and export endpoints must enforce distinct server permissions and antiforgery on export");
+var auditApi = typeof(AuditEventsApiController);
+Check(auditApi.GetCustomAttribute<ApiControllerAttribute>() is not null &&
+      auditApi.GetCustomAttribute<AuthorizeAttribute>() is not null &&
+      auditApi.GetCustomAttribute<RouteAttribute>()?.Template == "api/v1/audit-events" &&
+      auditApi.GetMethod(nameof(AuditEventsApiController.Get))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:AuditEvents.View",
+    "Angular tenant audit reads must remain authenticated, versioned and view protected");
+Check(auditApi.GetMethod(nameof(AuditEventsApiController.Export))!
+          .GetCustomAttributes<PermissionAuthorizeAttribute>().Select(x => x.Policy).ToHashSet()
+          .SetEquals(["Permission:AuditEvents.View", "Permission:AuditEvents.Export"]) &&
+      auditApi.GetMethod(nameof(AuditEventsApiController.Export))!
+          .GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null &&
+      typeof(AuditEventExportRequest).GetProperties().Select(x => x.Name).ToHashSet()
+          .SetEquals([nameof(AuditEventExportRequest.Query), nameof(AuditEventExportRequest.Purpose)]),
+    "Angular tenant audit export must preserve separate permissions, antiforgery and a server-owned sensitive-evidence decision");
+var cultureApi = typeof(CultureApiController);
+Check(cultureApi.GetCustomAttribute<ApiControllerAttribute>() is not null &&
+      cultureApi.GetCustomAttribute<RouteAttribute>()?.Template == "api/v1/culture" &&
+      cultureApi.GetMethod(nameof(CultureApiController.Set))!.GetCustomAttribute<HttpPostAttribute>() is not null &&
+      cultureApi.GetMethod(nameof(CultureApiController.Set))!.GetCustomAttribute<AllowAnonymousAttribute>() is not null &&
+      cultureApi.GetMethod(nameof(CultureApiController.Set))!.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null,
+    "Angular culture synchronization must preserve the public language switch with antiforgery and no unsafe GET mutation");
 Check(NavigationDefinitions.All.SelectMany(x => x.Items)
           .Any(x => x.Controller == "AuditEvents" && x.Permission == "AuditEvents.View"),
     "Audit navigation must remain hidden without the dedicated view permission");
@@ -570,6 +685,12 @@ foreach (var admin in new[] { false, true })
         await handler.HandleAsync(context);
         Check(context.HasSucceeded == admin, $"Handler: {permission}, admin={admin}");
     }
+    var projectedPermissions = await service.GetGrantedAsync("user");
+    Check(admin
+            ? projectedPermissions.SequenceEqual(PermissionDefinitions.All.Select(x => x.Name)
+                .Distinct(StringComparer.Ordinal).OrderBy(x => x, StringComparer.Ordinal))
+            : projectedPermissions.Count == 0,
+        $"Session permission projection must match the tenant Admin shortcut, admin={admin}");
 }
 
 foreach (var controller in new[] { typeof(RolesController), typeof(ProductsController), typeof(WarehousesController), typeof(SuppliersController), typeof(ProductStocksController) })
@@ -1203,6 +1324,16 @@ Check(
         .Where(method => method.DeclaringType == typeof(InventoryReconciliationController))
         .All(method => method.GetCustomAttribute<HttpPostAttribute>() is null),
     "Inventory reconciliation controller must remain read-only");
+Check(
+    typeof(InventoryReconciliationApiController).GetCustomAttribute<RouteAttribute>()?.Template ==
+        "api/v1/inventory-reconciliation" &&
+    typeof(InventoryReconciliationApiController).GetMethod(nameof(InventoryReconciliationApiController.Get))!
+        .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
+        $"{PermissionAuthorizeAttribute.PolicyPrefix}InventoryReconciliation.View" &&
+    typeof(InventoryReconciliationApiController).GetMethods(BindingFlags.Instance | BindingFlags.Public)
+        .Where(method => method.DeclaringType == typeof(InventoryReconciliationApiController))
+        .All(method => method.GetCustomAttribute<HttpPostAttribute>() is null),
+    "Angular inventory reconciliation must remain a dedicated permission-protected read contract");
 var purchaseAccountingReconciliationIndex = typeof(PurchaseAccountingReconciliationController)
     .GetMethod(nameof(PurchaseAccountingReconciliationController.Index))!;
 Check(
@@ -1744,6 +1875,46 @@ var inventoryReservationsIndex = typeof(InventoryReservationsController).GetMeth
 Check(inventoryReservationsIndex.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
       $"{PermissionAuthorizeAttribute.PolicyPrefix}InventoryReservations.View",
     "Inventory reservation history must require its dedicated view permission");
+var stockTransferApi = typeof(StockTransfersApiController);
+Check(stockTransferApi.GetCustomAttribute<RouteAttribute>()?.Template == "api/v1/stock-transfers",
+    "Stock-transfer Angular traffic must use the versioned internal API route");
+var stockTransferPolicies = new Dictionary<string, string>
+{
+    [nameof(StockTransfersApiController.GetAll)] = "StockTransfers.View",
+    [nameof(StockTransfersApiController.Get)] = "StockTransfers.View",
+    [nameof(StockTransfersApiController.GetCreateForm)] = "StockTransfers.Create",
+    [nameof(StockTransfersApiController.GetEditForm)] = "StockTransfers.Edit",
+    [nameof(StockTransfersApiController.Create)] = "StockTransfers.Create",
+    [nameof(StockTransfersApiController.Update)] = "StockTransfers.Edit",
+    [nameof(StockTransfersApiController.Submit)] = "StockTransfers.Submit",
+    [nameof(StockTransfersApiController.Approve)] = "StockTransfers.Approve",
+    [nameof(StockTransfersApiController.Reject)] = "StockTransfers.Reject",
+    [nameof(StockTransfersApiController.ReturnToDraft)] = "StockTransfers.Edit",
+    [nameof(StockTransfersApiController.Post)] = "StockTransfers.Post",
+    [nameof(StockTransfersApiController.Cancel)] = "StockTransfers.Cancel"
+};
+Check(stockTransferPolicies.All(expected =>
+        stockTransferApi.GetMethod(expected.Key)!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
+        $"{PermissionAuthorizeAttribute.PolicyPrefix}{expected.Value}"),
+    "Every stock-transfer query and workflow command must enforce its dedicated server-side permission");
+var stockTransferMutations = new[]
+{
+    nameof(StockTransfersApiController.Create),
+    nameof(StockTransfersApiController.Update),
+    nameof(StockTransfersApiController.Submit),
+    nameof(StockTransfersApiController.Approve),
+    nameof(StockTransfersApiController.Reject),
+    nameof(StockTransfersApiController.ReturnToDraft),
+    nameof(StockTransfersApiController.Post),
+    nameof(StockTransfersApiController.Cancel)
+};
+Check(stockTransferMutations.All(name =>
+        stockTransferApi.GetMethod(name)!.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null),
+    "Every stock-transfer mutation must require antiforgery validation");
+Check(typeof(StockTransfersController).GetConstructors().Single().GetParameters()
+        .All(parameter => !parameter.ParameterType.Name.Contains("Repository", StringComparison.Ordinal) &&
+                          !parameter.ParameterType.Name.StartsWith("UserManager", StringComparison.Ordinal)),
+    "The MVC stock-transfer compatibility surface must compose reads through the Application layer");
 var adjustment = new InventoryAdjustment("ADJ-000001", 1, null, true, "Annual count", "counter");
 adjustment.AddLine(1, 10m);
 adjustment.RecordCounts([(1, 8m)], "counter");
@@ -1935,6 +2106,12 @@ var insightsIndex = typeof(InventoryInsightsController).GetMethod(nameof(Invento
 Check(insightsIndex.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
       $"{PermissionAuthorizeAttribute.PolicyPrefix}InventoryInsights.View",
     "Inventory insights must require its dedicated view permission");
+Check(typeof(InventoryInsightsApiController).GetCustomAttribute<RouteAttribute>()?.Template ==
+      "api/v1/inventory-insights" &&
+      typeof(InventoryInsightsApiController).GetMethod(nameof(InventoryInsightsApiController.Get))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
+          $"{PermissionAuthorizeAttribute.PolicyPrefix}InventoryInsights.View",
+    "Angular inventory insights must remain a dedicated permission-protected read contract");
 Check(InventoryActivityClassifier.Classify(null, DateTime.UtcNow.AddDays(-40), DateTime.UtcNow, 30, 90) ==
       MiniStore.Application.DTOs.Inventory.Insights.InventoryActivityState.NeverIssued,
     "Old stock with no outbound movement must remain visibly distinct from dead stock");
@@ -1983,6 +2160,29 @@ Check(scanningCountPolicies.SetEquals([
         $"{PermissionAuthorizeAttribute.PolicyPrefix}InventoryScanning.View",
         $"{PermissionAuthorizeAttribute.PolicyPrefix}InventoryAdjustments.Count"]),
     "Scanned counting must require scan visibility and inventory count permission");
+var scanningApi = typeof(InventoryScanningApiController);
+Check(scanningApi.GetCustomAttribute<RouteAttribute>()?.Template == "api/v1/inventory-scanning" &&
+      scanningApi.GetMethod(nameof(InventoryScanningApiController.Resolve))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
+          $"{PermissionAuthorizeAttribute.PolicyPrefix}InventoryScanning.View",
+    "Angular inventory scanning must use the versioned route and dedicated lookup permission");
+var scanningApiPolicies = new Dictionary<string, string>
+{
+    [nameof(InventoryScanningApiController.Putaway)] = "ProductStock.Edit",
+    [nameof(InventoryScanningApiController.Relocate)] = "LocationMovements.Create",
+    [nameof(InventoryScanningApiController.Count)] = "InventoryAdjustments.Count"
+};
+Check(scanningApiPolicies.All(expected =>
+    {
+        var method = scanningApi.GetMethod(expected.Key)!;
+        var policies = method.GetCustomAttributes<PermissionAuthorizeAttribute>()
+            .Select(x => x.Policy).ToHashSet();
+        return policies.SetEquals([
+            $"{PermissionAuthorizeAttribute.PolicyPrefix}InventoryScanning.View",
+            $"{PermissionAuthorizeAttribute.PolicyPrefix}{expected.Value}"]) &&
+            method.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null;
+    }),
+    "Every Angular scan command must retain both permissions and antiforgery validation");
 var scannedAdjustment = new InventoryAdjustment("ADJ-SCAN", 1, null, true, "Blind scan test", "creator");
 scannedAdjustment.AddLine(10, 5m);
 scannedAdjustment.RecordLineCount(10, 4m, "counter");
@@ -3404,6 +3604,826 @@ Check(typeof(StorageLocationService).GetMethod(nameof(StorageLocationService.Get
         .ReturnType == typeof(Task<StorageLocationPageOptionsDto>),
     "Storage location application service must own warehouse and parent-location page options");
 
+var sessionApi = typeof(SessionController);
+Check(sessionApi.GetCustomAttribute<ApiControllerAttribute>() is not null &&
+      sessionApi.GetCustomAttribute<AuthorizeAttribute>() is not null &&
+      sessionApi.GetCustomAttribute<AllowAnonymousAttribute>() is null,
+    "Internal session API must require authenticated access");
+Check(sessionApi.GetCustomAttribute<RouteAttribute>()?.Template == "api/v1/session",
+    "Internal session API must remain explicitly versioned");
+var securityApi = typeof(SecurityController);
+var csrfEndpoint = securityApi.GetMethod(nameof(SecurityController.GetCsrfToken))!;
+var mutationProbe = securityApi.GetMethod(nameof(SecurityController.MutationProbe))!;
+Check(securityApi.GetCustomAttribute<AuthorizeAttribute>() is not null &&
+      csrfEndpoint.GetCustomAttribute<AllowAnonymousAttribute>() is not null &&
+      mutationProbe.GetCustomAttribute<HttpPostAttribute>() is not null &&
+      mutationProbe.GetCustomAttribute<IgnoreAntiforgeryTokenAttribute>() is null,
+    "Anonymous clients may obtain a CSRF token while internal mutations remain authenticated and protected");
+var authenticationApi = typeof(AuthenticationApiController);
+var tenantLogin = authenticationApi.GetMethod(nameof(AuthenticationApiController.Login))!;
+var tenantLogout = authenticationApi.GetMethod(nameof(AuthenticationApiController.Logout))!;
+Check(authenticationApi.GetCustomAttribute<ApiControllerAttribute>() is not null &&
+      authenticationApi.GetCustomAttribute<RouteAttribute>()?.Template == "api/v1/auth" &&
+      authenticationApi.GetCustomAttribute<AuthorizeAttribute>() is null,
+    "Tenant authentication API must expose an explicitly versioned public boundary");
+Check(tenantLogin.GetCustomAttribute<AllowAnonymousAttribute>() is not null &&
+      tenantLogin.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null &&
+      tenantLogin.GetCustomAttribute<Microsoft.AspNetCore.RateLimiting.EnableRateLimitingAttribute>()?.PolicyName == "login",
+    "Tenant login must be explicitly anonymous, CSRF protected and rate limited");
+Check(tenantLogout.GetCustomAttribute<AuthorizeAttribute>() is not null &&
+      tenantLogout.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null &&
+      tenantLogout.GetCustomAttribute<IgnoreAntiforgeryTokenAttribute>() is null,
+    "Tenant logout must require an authenticated CSRF-protected mutation");
+var accountControllerDependencies = typeof(AccountController).GetConstructors().Single().GetParameters()
+    .Select(parameter => parameter.ParameterType).ToArray();
+Check(accountControllerDependencies.Contains(typeof(TenantAccountAuthenticationService)) &&
+      !accountControllerDependencies.Contains(typeof(ITenantMembershipRepository)) &&
+      !accountControllerDependencies.Contains(typeof(ISecurityAuditEventWriter)),
+    "MVC and API account flows must share the audited tenant authentication service");
+Check(accountControllerDependencies.Contains(typeof(TenantCompanyRegistrationService)) &&
+      !accountControllerDependencies.Contains(typeof(UserManager<IdentityUser>)) &&
+      !accountControllerDependencies.Contains(typeof(SignInManager<IdentityUser>)),
+    "MVC and API registration must share the cookie-sign-in registration service");
+Check(typeof(TenantLoginRequestDto).GetProperty(nameof(TenantLoginRequestDto.Password))!
+          .GetCustomAttribute<RequiredAttribute>() is not null,
+    "Tenant login API must reject missing credentials before invoking Identity");
+var registrationApi = typeof(RegistrationApiController);
+var registerCompany = registrationApi.GetMethod(nameof(RegistrationApiController.Register))!;
+Check(registrationApi.GetCustomAttribute<ApiControllerAttribute>() is not null &&
+      registrationApi.GetCustomAttribute<RouteAttribute>()?.Template == "api/v1/registration" &&
+      registrationApi.GetMethod(nameof(RegistrationApiController.Get))!
+          .GetCustomAttribute<AllowAnonymousAttribute>() is not null,
+    "Company registration API must expose only an explicitly versioned public contract");
+Check(registerCompany.GetCustomAttribute<AllowAnonymousAttribute>() is not null &&
+      registerCompany.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null &&
+      registerCompany.GetCustomAttribute<Microsoft.AspNetCore.RateLimiting.EnableRateLimitingAttribute>()?.PolicyName == "registration",
+    "Company registration must remain anonymous, CSRF protected and independently rate limited");
+Check(typeof(RegisterCompanyRequestDto).GetProperty(nameof(RegisterCompanyRequestDto.Password))!
+          .GetCustomAttribute<RequiredAttribute>() is not null &&
+      typeof(RegisterCompanyRequestDto).GetProperty(nameof(RegisterCompanyRequestDto.CompanySlug))!
+          .GetCustomAttribute<RegularExpressionAttribute>() is not null,
+    "Registration API must validate secret and company-address input before provisioning");
+var onboardingApi = typeof(CompanyOnboardingApiController);
+Check(onboardingApi.GetCustomAttribute<ApiControllerAttribute>() is not null &&
+      onboardingApi.GetCustomAttributes<AuthorizeAttribute>().Any() &&
+      onboardingApi.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:Administration.Access" &&
+      onboardingApi.GetCustomAttribute<RouteAttribute>()?.Template == "api/v1/company-onboarding",
+    "Company onboarding API must require the active tenant Admin boundary");
+Check(new[] { nameof(CompanyOnboardingApiController.Complete), nameof(CompanyOnboardingApiController.Skip) }
+          .All(name => onboardingApi.GetMethod(name)!.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null),
+    "Complete and skip onboarding mutations must both require antiforgery validation");
+Check(typeof(CompanyOnboardingController).GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
+      "Permission:Administration.Access",
+    "MVC onboarding rollback path must retain the same tenant Admin boundary as Angular");
+var usersApi = typeof(UsersApiController);
+Check(usersApi.GetCustomAttribute<ApiControllerAttribute>() is not null &&
+      usersApi.GetCustomAttribute<AuthorizeAttribute>() is not null &&
+      usersApi.GetCustomAttribute<RouteAttribute>()?.Template == "api/v1/users",
+    "Tenant user API must remain authenticated and explicitly versioned");
+Check(usersApi.GetMethod(nameof(UsersApiController.GetAll))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:Users.View" &&
+      usersApi.GetMethod(nameof(UsersApiController.GetCreateForm))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:Users.Create" &&
+      usersApi.GetMethod(nameof(UsersApiController.Create))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:Users.Create" &&
+      usersApi.GetMethod(nameof(UsersApiController.Create))!
+          .GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null,
+    "Tenant user API must preserve operation permissions and antiforgery");
+var usersMvcDependencies = typeof(AccountController).Assembly.GetType("MiniStore.Web.Controllers.UsersController")!
+    .GetConstructors().Single().GetParameters().Select(parameter => parameter.ParameterType).ToArray();
+Check(usersMvcDependencies.SequenceEqual([typeof(ITenantUserAdministrationService)]),
+    "MVC user administration must use the shared application contract instead of Identity or repositories directly");
+var rolesApi = typeof(RolesApiController);
+Check(rolesApi.GetCustomAttribute<ApiControllerAttribute>() is not null &&
+      rolesApi.GetCustomAttribute<AuthorizeAttribute>() is not null &&
+      rolesApi.GetCustomAttribute<RouteAttribute>()?.Template == "api/v1/roles",
+    "Tenant role API must remain authenticated and explicitly versioned");
+Check(rolesApi.GetMethod(nameof(RolesApiController.Create))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:Roles.Create" &&
+      rolesApi.GetMethod(nameof(RolesApiController.Update))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:Roles.Edit" &&
+      rolesApi.GetMethod(nameof(RolesApiController.Delete))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:Roles.Delete" &&
+      new[] { nameof(RolesApiController.Create), nameof(RolesApiController.Update), nameof(RolesApiController.Delete) }
+          .All(name => rolesApi.GetMethod(name)!.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null),
+    "Tenant role API mutations must preserve Admin-gated permissions and antiforgery");
+Check(typeof(TenantRoleFormDto).GetProperty(nameof(TenantRoleFormDto.Permissions))!.PropertyType ==
+      typeof(IReadOnlyList<TenantPermissionOptionDto>) &&
+      typeof(RoleConcurrencyException).IsSubclassOf(typeof(InvalidOperationException)),
+    "Role API must expose DTO permission codes and an explicit concurrency outcome instead of Domain entities");
+Check(AuditCoverageCatalog.Controls.Any(control => control.EventType == SemanticAuditEventTypes.TenantUserCreated),
+    "Tenant user creation must retain semantic security audit coverage");
+var normalizedPage = new PageRequest(0, 999, "name", "  customer  ")
+    .Normalize(new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "name" });
+Check(normalizedPage.Page == 1 && normalizedPage.PageSize == PageRequest.MaximumPageSize &&
+      normalizedPage.Search == "customer" && normalizedPage.Sort == "name",
+    "API paging contract must clamp bounds and normalize search input");
+CheckArgumentThrows(
+    () => new PageRequest(Sort: "unsafe").Normalize(new HashSet<string> { "name" }),
+    "API paging contract must reject undeclared sort fields");
+Check(typeof(IPermissionService).GetMethod(nameof(IPermissionService.GetGrantedAsync)) is not null,
+    "Session composition must use the shared application permission boundary");
+var customersApi = typeof(CustomersApiController);
+Check(customersApi.GetCustomAttribute<ApiControllerAttribute>() is not null &&
+      customersApi.GetCustomAttribute<AuthorizeAttribute>() is not null &&
+      customersApi.GetCustomAttribute<RouteAttribute>()?.Template == "api/v1/customers",
+    "Customer API must remain authenticated and explicitly versioned");
+Check(customersApi.GetMethod(nameof(CustomersApiController.GetPage))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:Customers.View" &&
+      customersApi.GetMethod(nameof(CustomersApiController.Create))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:Customers.Create" &&
+      customersApi.GetMethod(nameof(CustomersApiController.Update))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:Customers.Edit",
+    "Customer API must preserve operation-specific permissions");
+Check(customersApi.GetMethod(nameof(CustomersApiController.Create))!
+          .GetCustomAttribute<IgnoreAntiforgeryTokenAttribute>() is null &&
+      customersApi.GetMethod(nameof(CustomersApiController.Update))!
+          .GetCustomAttribute<IgnoreAntiforgeryTokenAttribute>() is null,
+    "Customer API mutations must retain global antiforgery validation");
+Check(typeof(CustomerConcurrencyException).IsSubclassOf(typeof(InvalidOperationException)),
+    "Customer concurrency must remain explicit while preserving MVC compatibility");
+Check(typeof(CustomerDuplicateException).IsSubclassOf(typeof(InvalidOperationException)) &&
+      typeof(SupplierDuplicateException).IsSubclassOf(typeof(InvalidOperationException)),
+    "Duplicate classification must use explicit Application outcomes while preserving MVC compatibility");
+Check(InternalApiProblemCodes.FromStatus(StatusCodes.Status400BadRequest) == InternalApiProblemCodes.Validation &&
+      InternalApiProblemCodes.FromStatus(StatusCodes.Status401Unauthorized) == InternalApiProblemCodes.Unauthorized &&
+      InternalApiProblemCodes.FromStatus(StatusCodes.Status403Forbidden) == InternalApiProblemCodes.Forbidden &&
+      InternalApiProblemCodes.FromStatus(StatusCodes.Status404NotFound) == InternalApiProblemCodes.NotFound &&
+      InternalApiProblemCodes.FromStatus(StatusCodes.Status503ServiceUnavailable) == InternalApiProblemCodes.Transient,
+    "Internal API problem codes must remain stable and status-aware");
+var problemContext = new DefaultHttpContext { TraceIdentifier = "regression-trace" };
+var stableProblem = (ProblemDetails)InternalApiProblemFactory.Create(
+    problemContext, StatusCodes.Status409Conflict, "Changed", InternalApiProblemCodes.Concurrency).Value!;
+Check(stableProblem.Extensions["code"]?.ToString() == InternalApiProblemCodes.Concurrency &&
+      stableProblem.Extensions["correlationId"]?.ToString() == "regression-trace",
+    "Internal API problems must expose a stable code and support correlation without exception details");
+var suppliersApi = typeof(SuppliersApiController);
+Check(suppliersApi.GetCustomAttribute<ApiControllerAttribute>() is not null &&
+      suppliersApi.GetCustomAttribute<AuthorizeAttribute>() is not null &&
+      suppliersApi.GetCustomAttribute<RouteAttribute>()?.Template == "api/v1/suppliers",
+    "Supplier list API must remain authenticated and explicitly versioned");
+Check(suppliersApi.GetMethod(nameof(SuppliersApiController.GetPage))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:Suppliers.View" &&
+      suppliersApi.GetMethod(nameof(SuppliersApiController.Get))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:Suppliers.View" &&
+      suppliersApi.GetMethod(nameof(SuppliersApiController.GetCreateForm))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:Suppliers.Create" &&
+      suppliersApi.GetMethod(nameof(SuppliersApiController.GetEditForm))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:Suppliers.Edit" &&
+      suppliersApi.GetMethod(nameof(SuppliersApiController.Create))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:Suppliers.Create" &&
+      suppliersApi.GetMethod(nameof(SuppliersApiController.Update))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:Suppliers.Edit",
+    "Supplier API must preserve operation-specific permissions");
+Check(suppliersApi.GetMethod(nameof(SuppliersApiController.Create))!
+          .GetCustomAttribute<IgnoreAntiforgeryTokenAttribute>() is null &&
+      suppliersApi.GetMethod(nameof(SuppliersApiController.Update))!
+          .GetCustomAttribute<IgnoreAntiforgeryTokenAttribute>() is null,
+    "Supplier API mutations must retain global antiforgery validation");
+Check(typeof(SupplierConcurrencyException).IsSubclassOf(typeof(InvalidOperationException)),
+    "Supplier concurrency must remain explicit while preserving MVC compatibility");
+var evidenceApi = typeof(DocumentEvidenceApiController);
+Check(evidenceApi.GetCustomAttribute<ApiControllerAttribute>() is not null &&
+      evidenceApi.GetCustomAttribute<AuthorizeAttribute>() is not null &&
+      evidenceApi.GetCustomAttribute<RouteAttribute>()?.Template == "api/v1/document-evidence",
+    "Document evidence API must remain authenticated and explicitly versioned");
+Check(evidenceApi.GetMethod(nameof(DocumentEvidenceApiController.GetSalesOrders))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:SalesOrders.View" &&
+      evidenceApi.GetMethod(nameof(DocumentEvidenceApiController.GetSalesOrder))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:SalesOrders.View" &&
+      evidenceApi.GetMethod(nameof(DocumentEvidenceApiController.GetCustomerInvoices))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:CustomerInvoices.View" &&
+      evidenceApi.GetMethod(nameof(DocumentEvidenceApiController.GetCustomerInvoice))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:CustomerInvoices.View",
+    "Document evidence endpoints must retain source-document view permissions");
+Check(typeof(DocumentEvidenceDto).GetProperty(nameof(DocumentEvidenceDto.ExplainedNumbers)) is not null &&
+      typeof(DocumentEvidenceDto).GetProperty(nameof(DocumentEvidenceDto.RelatedDocuments)) is not null,
+    "Document evidence contract must keep related records and explained numbers server-authored");
+var workCenterApi = typeof(WorkCenterApiController);
+Check(workCenterApi.GetCustomAttribute<ApiControllerAttribute>() is not null &&
+      workCenterApi.GetCustomAttribute<AuthorizeAttribute>() is not null &&
+      workCenterApi.GetCustomAttribute<RouteAttribute>()?.Template == "api/v1/work-center",
+    "Work center API must remain authenticated and explicitly versioned");
+Check(typeof(WorkCenterItemDto).GetProperty(nameof(WorkCenterItemDto.RequiredPermission)) is not null,
+    "Work center items must retain the server-checked permission that made the action eligible");
+var analyticsApi = typeof(AnalyticsCenterApiController);
+Check(analyticsApi.GetCustomAttribute<ApiControllerAttribute>() is not null &&
+      analyticsApi.GetCustomAttribute<AuthorizeAttribute>() is not null &&
+      analyticsApi.GetCustomAttribute<RouteAttribute>()?.Template == "api/v1/analytics-center" &&
+      analyticsApi.GetMethod(nameof(AnalyticsCenterApiController.Get))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:AnalyticsCenter.View",
+    "Analytics API must remain authenticated, versioned and protected by the existing analytics permission");
+Check(analyticsApi.GetMethod(nameof(AnalyticsCenterApiController.GetBuilder))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:AnalyticsCenter.Customize" &&
+      analyticsApi.GetMethod(nameof(AnalyticsCenterApiController.CreateWorkspace))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:AnalyticsCenter.Customize",
+    "Analytics workspace discovery and creation must retain the customize permission");
+Check(analyticsApi.GetMethod(nameof(AnalyticsCenterApiController.GetAccess))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:AnalyticsCenter.Customize" &&
+      analyticsApi.GetMethod(nameof(AnalyticsCenterApiController.CreateDelegation))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:AnalyticsCenter.Customize" &&
+      analyticsApi.GetMethod(nameof(AnalyticsCenterApiController.RevokeDelegation))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:AnalyticsCenter.Customize",
+    "Analytics delegation reads, grants and revocations must retain the customize permission");
+var analyticsWorkspace = new AnalyticsWorkspace("Owner workspace", null, null, "sales",
+    AnalyticsWorkspaceVisibility.Personal, "owner", false, 2, 30,
+    AnalyticsComparisonMode.PreviousPeriod, 0, true);
+var analyticsDelegation = new AnalyticsWorkspaceDelegation(AnalyticsDelegationTargetType.User,
+    "member", null, DateTime.UtcNow.AddMinutes(-1), DateTime.UtcNow.AddDays(1), "owner");
+analyticsWorkspace.AddDelegation(analyticsDelegation);
+Check(analyticsDelegation.IsActive(DateTime.UtcNow),
+    "A current analytics delegation must be active inside its bounded period");
+CheckThrows(() => analyticsWorkspace.AddDelegation(new AnalyticsWorkspaceDelegation(
+        AnalyticsDelegationTargetType.User, "member", null, DateTime.UtcNow, null, "owner")),
+    "A workspace must reject duplicate active delegation targets");
+analyticsDelegation.Revoke("owner", DateTime.UtcNow);
+Check(!analyticsDelegation.IsActive(DateTime.UtcNow),
+    "A revoked analytics delegation must stop immediately");
+var revisionWorkspace = new AnalyticsWorkspace("Revision workspace", null, null, "sales",
+    AnalyticsWorkspaceVisibility.Personal, "owner", false, 2, 30,
+    AnalyticsComparisonMode.PreviousPeriod, 0, true);
+var revisionBeforeGrant = revisionWorkspace.DelegationRevision;
+revisionWorkspace.AddDelegation(new AnalyticsWorkspaceDelegation(AnalyticsDelegationTargetType.User,
+    "second-member", null, DateTime.UtcNow, null, "owner"));
+Check(revisionWorkspace.DelegationRevision == revisionBeforeGrant + 1,
+    "Adding an analytics delegation must advance the workspace concurrency revision");
+revisionWorkspace.RevokeDelegation(0, "owner", DateTime.UtcNow);
+Check(revisionWorkspace.DelegationRevision == revisionBeforeGrant + 2,
+    "Revoking an analytics delegation must advance the workspace concurrency revision");
+CheckArgumentThrows(() => new AnalyticsWorkspaceDelegation(AnalyticsDelegationTargetType.Role,
+        "crafted-user", 7, DateTime.UtcNow, null, "owner"),
+    "An analytics delegation must reject mixed user and role targets");
+var delegationMetadata = db.Model.FindEntityType(typeof(AnalyticsWorkspaceDelegation))!;
+Check(TenantIsolationModel.TenantOwnedTypes.Contains(typeof(AnalyticsWorkspaceDelegation)) &&
+      delegationMetadata.GetDeclaredQueryFilters().Any() &&
+      delegationMetadata.GetIndexes().Any(index => index.Properties.Any(p => p.Name == nameof(AnalyticsWorkspaceDelegation.TargetUserId))) &&
+      delegationMetadata.GetIndexes().Any(index => index.Properties.Any(p => p.Name == nameof(AnalyticsWorkspaceDelegation.TargetRoleId))),
+    "Analytics delegations must remain tenant-filtered and indexed for user and role lookup");
+Check(typeof(AnalyticsCenterPageDto).GetProperty(nameof(AnalyticsCenterPageDto.FinancialPreview)) is not null &&
+      typeof(AnalyticsFinancialPreviewDto).GetProperty(nameof(AnalyticsFinancialPreviewDto.Currency)) is not null &&
+      typeof(AnalyticsFinancialPreviewDto).GetProperty(nameof(AnalyticsFinancialPreviewDto.DecimalPlaces)) is not null &&
+      typeof(AnalyticsFinancialPreviewDto).GetProperty(nameof(AnalyticsFinancialPreviewDto.ValuesAreServerAuthored)) is not null,
+    "Analytics financial preview must retain server-authored currency, rounding and provenance metadata");
+var settingsApi = typeof(SettingsApiController);
+Check(settingsApi.GetCustomAttribute<ApiControllerAttribute>() is not null &&
+      settingsApi.GetCustomAttribute<AuthorizeAttribute>() is not null &&
+      settingsApi.GetCustomAttribute<RouteAttribute>()?.Template == "api/v1/settings" &&
+      settingsApi.GetMethod(nameof(SettingsApiController.GetOrganizationIdentity))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:Administration.Access" &&
+      settingsApi.GetMethod(nameof(SettingsApiController.GetPreferences))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:Administration.Access" &&
+      settingsApi.GetMethod(nameof(SettingsApiController.UpdatePreferences))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:Administration.Access" &&
+      settingsApi.GetMethod(nameof(SettingsApiController.UpdatePreferences))!
+          .GetCustomAttribute<HttpPutAttribute>()?.Template == "preferences",
+    "Angular settings reads and writes must remain authenticated and administration protected");
+foreach (var actionName in new[]
+         {
+             nameof(SettingsApiController.UpdateOrganizationIdentity),
+             nameof(SettingsApiController.GetOrganizationLogo),
+             nameof(SettingsApiController.UploadOrganizationLogo),
+             nameof(SettingsApiController.DeleteOrganizationLogo),
+             nameof(SettingsApiController.GetDiscounts),
+             nameof(SettingsApiController.UpdateDiscounts),
+             nameof(SettingsApiController.GetPurchaseMatching),
+             nameof(SettingsApiController.UpdatePurchaseMatching)
+             ,nameof(SettingsApiController.GetInventory)
+             ,nameof(SettingsApiController.UpdateInventory)
+             ,nameof(SettingsApiController.GetPurchaseSourcing)
+             ,nameof(SettingsApiController.UpdatePurchaseSourcing)
+             ,nameof(SettingsApiController.GetDocumentNumbers)
+             ,nameof(SettingsApiController.UpdateDocumentNumbers)
+             ,nameof(SettingsApiController.GetFiscalPeriods)
+             ,nameof(SettingsApiController.CreateFiscalPeriod)
+             ,nameof(SettingsApiController.ChangeFiscalPeriodStatus)
+             ,nameof(SettingsApiController.GetCurrencyExchangeRates)
+             ,nameof(SettingsApiController.SaveCurrencyExchangeRate)
+             ,nameof(SettingsApiController.GetMeasurementUnits)
+             ,nameof(SettingsApiController.CreateMeasurementUnit)
+             ,nameof(SettingsApiController.DeactivateMeasurementUnit)
+             ,nameof(SettingsApiController.GetAccountingSettings)
+             ,nameof(SettingsApiController.UpdateAccountingSettings)
+             ,nameof(SettingsApiController.GetBranchSalesAccounts)
+             ,nameof(SettingsApiController.UpdateBranchSalesAccount)
+             ,nameof(SettingsApiController.GetInventoryAccess)
+             ,nameof(SettingsApiController.ConfigureBranchWarehouse)
+             ,nameof(SettingsApiController.CreatePosTerminal)
+             ,nameof(SettingsApiController.ConfigurePosTerminalWarehouse)
+             ,nameof(SettingsApiController.GetPosExperience)
+             ,nameof(SettingsApiController.UpdatePosExperience)
+             ,nameof(SettingsApiController.GetWorkflowCatalog)
+         })
+    Check(settingsApi.GetMethod(actionName)!
+              .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:Administration.Access",
+        $"Angular settings action {actionName} must remain administration protected");
+Check(settingsApi.GetMethod(nameof(SettingsApiController.UpdateOrganizationIdentity))!
+          .GetCustomAttribute<HttpPutAttribute>()?.Template == "organization-identity" &&
+      settingsApi.GetMethod(nameof(SettingsApiController.GetOrganizationLogo))!
+          .GetCustomAttribute<HttpGetAttribute>()?.Template == "organization-logo" &&
+      settingsApi.GetMethod(nameof(SettingsApiController.UploadOrganizationLogo))!
+          .GetCustomAttribute<HttpPostAttribute>()?.Template == "organization-logo" &&
+      settingsApi.GetMethod(nameof(SettingsApiController.DeleteOrganizationLogo))!
+          .GetCustomAttribute<HttpDeleteAttribute>()?.Template == "organization-logo" &&
+      settingsApi.GetMethod(nameof(SettingsApiController.GetDiscounts))!
+          .GetCustomAttribute<HttpGetAttribute>()?.Template == "discounts" &&
+      settingsApi.GetMethod(nameof(SettingsApiController.UpdateDiscounts))!
+          .GetCustomAttribute<HttpPutAttribute>()?.Template == "discounts" &&
+      settingsApi.GetMethod(nameof(SettingsApiController.GetPurchaseMatching))!
+          .GetCustomAttribute<HttpGetAttribute>()?.Template == "purchase-matching" &&
+      settingsApi.GetMethod(nameof(SettingsApiController.UpdatePurchaseMatching))!
+          .GetCustomAttribute<HttpPutAttribute>()?.Template == "purchase-matching",
+    "Angular settings endpoints must expose the intended read, update, upload and delete HTTP operations");
+Check(settingsApi.GetMethod(nameof(SettingsApiController.GetInventory))!
+          .GetCustomAttribute<HttpGetAttribute>()?.Template == "inventory" &&
+      settingsApi.GetMethod(nameof(SettingsApiController.UpdateInventory))!
+          .GetCustomAttribute<HttpPutAttribute>()?.Template == "inventory",
+    "Angular inventory settings must expose protected GET and PUT operations");
+Check(settingsApi.GetMethod(nameof(SettingsApiController.GetPurchaseSourcing))!
+          .GetCustomAttribute<HttpGetAttribute>()?.Template == "purchase-sourcing" &&
+      settingsApi.GetMethod(nameof(SettingsApiController.UpdatePurchaseSourcing))!
+          .GetCustomAttribute<HttpPutAttribute>()?.Template == "purchase-sourcing",
+    "Angular purchase-sourcing policy must expose protected GET and PUT operations");
+Check(settingsApi.GetMethod(nameof(SettingsApiController.GetDocumentNumbers))!
+          .GetCustomAttribute<HttpGetAttribute>()?.Template == "document-numbers" &&
+      settingsApi.GetMethod(nameof(SettingsApiController.UpdateDocumentNumbers))!
+          .GetCustomAttribute<HttpPutAttribute>()?.Template == "document-numbers",
+    "Angular document numbering must expose protected GET and atomic PUT operations");
+Check(settingsApi.GetMethod(nameof(SettingsApiController.GetFiscalPeriods))!
+          .GetCustomAttribute<HttpGetAttribute>()?.Template == "fiscal-periods" &&
+      settingsApi.GetMethod(nameof(SettingsApiController.CreateFiscalPeriod))!
+          .GetCustomAttribute<HttpPostAttribute>()?.Template == "fiscal-periods" &&
+      settingsApi.GetMethod(nameof(SettingsApiController.ChangeFiscalPeriodStatus))!
+          .GetCustomAttribute<HttpPutAttribute>()?.Template == "fiscal-periods/status",
+    "Angular fiscal periods must expose protected GET, POST and status PUT operations");
+Check(settingsApi.GetMethod(nameof(SettingsApiController.GetCurrencyExchangeRates))!
+          .GetCustomAttribute<HttpGetAttribute>()?.Template == "currency-exchange-rates" &&
+      settingsApi.GetMethod(nameof(SettingsApiController.SaveCurrencyExchangeRate))!
+          .GetCustomAttribute<HttpPostAttribute>()?.Template == "currency-exchange-rates",
+    "Angular currency exchange rates must expose protected GET and POST upsert operations");
+Check(settingsApi.GetMethod(nameof(SettingsApiController.GetMeasurementUnits))!
+          .GetCustomAttribute<HttpGetAttribute>()?.Template == "measurement-units" &&
+      settingsApi.GetMethod(nameof(SettingsApiController.CreateMeasurementUnit))!
+          .GetCustomAttribute<HttpPostAttribute>()?.Template == "measurement-units" &&
+      settingsApi.GetMethod(nameof(SettingsApiController.DeactivateMeasurementUnit))!
+          .GetCustomAttribute<HttpPostAttribute>()?.Template == "measurement-units/{id:int}/deactivate",
+    "Angular measurement units must expose protected GET, create POST and deactivate POST operations");
+Check(settingsApi.GetMethod(nameof(SettingsApiController.GetAccountingSettings))!
+          .GetCustomAttribute<HttpGetAttribute>()?.Template == "accounting" &&
+      settingsApi.GetMethod(nameof(SettingsApiController.UpdateAccountingSettings))!
+          .GetCustomAttribute<HttpPutAttribute>()?.Template == "accounting",
+    "Angular accounting settings must expose protected GET and PUT operations");
+Check(settingsApi.GetMethod(nameof(SettingsApiController.GetBranchSalesAccounts))!
+          .GetCustomAttribute<HttpGetAttribute>()?.Template == "branch-sales-accounts" &&
+      settingsApi.GetMethod(nameof(SettingsApiController.UpdateBranchSalesAccount))!
+          .GetCustomAttribute<HttpPutAttribute>()?.Template == "branch-sales-accounts/{branchId:int}",
+    "Angular branch sales accounts must expose protected GET and PUT operations");
+Check(settingsApi.GetMethod(nameof(SettingsApiController.GetInventoryAccess))!
+          .GetCustomAttribute<HttpGetAttribute>()?.Template == "inventory-access" &&
+      settingsApi.GetMethod(nameof(SettingsApiController.ConfigureBranchWarehouse))!
+          .GetCustomAttribute<HttpPutAttribute>()?.Template == "inventory-access/branch-warehouse" &&
+      settingsApi.GetMethod(nameof(SettingsApiController.CreatePosTerminal))!
+          .GetCustomAttribute<HttpPostAttribute>()?.Template == "inventory-access/pos-terminals" &&
+      settingsApi.GetMethod(nameof(SettingsApiController.ConfigurePosTerminalWarehouse))!
+          .GetCustomAttribute<HttpPutAttribute>()?.Template == "inventory-access/pos-terminal-warehouse",
+    "Angular inventory access must expose protected GET, branch PUT, terminal POST and terminal-warehouse PUT operations");
+Check(settingsApi.GetMethod(nameof(SettingsApiController.GetPosExperience))!
+          .GetCustomAttribute<HttpGetAttribute>()?.Template == "pos-experience" &&
+      settingsApi.GetMethod(nameof(SettingsApiController.UpdatePosExperience))!
+          .GetCustomAttribute<HttpPutAttribute>()?.Template == "pos-experience",
+    "Angular POS experience must expose protected GET and complete PUT operations");
+Check(settingsApi.GetMethod(nameof(SettingsApiController.GetWorkflowCatalog))!
+          .GetCustomAttribute<HttpGetAttribute>()?.Template == "workflow-catalog",
+    "Angular workflow catalog must expose an administration-protected GET operation");
+Check(typeof(SettingsApiController.WorkflowCatalogApiStep)
+          .GetProperty(nameof(SettingsApiController.WorkflowCatalogApiStep.CanOpen)) is not null &&
+      typeof(SettingsApiController.WorkflowCatalogApiStep)
+          .GetProperty(nameof(SettingsApiController.WorkflowCatalogApiStep.WorkUrl)) is not null,
+    "Workflow catalog API steps must carry server-authorized work-link decisions");
+var documentDesignsApi = typeof(DocumentDesignsApiController);
+Check(documentDesignsApi.GetCustomAttribute<ApiControllerAttribute>() is not null &&
+      documentDesignsApi.GetCustomAttributes<AuthorizeAttribute>().Any() &&
+      documentDesignsApi.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:Administration.Access" &&
+      documentDesignsApi.GetCustomAttribute<RouteAttribute>()?.Template == "api/v1/document-designs",
+    "Angular document design administration must remain authenticated and administration protected");
+Check(documentDesignsApi.GetMethod(nameof(DocumentDesignsApiController.GetAll))!.GetCustomAttribute<HttpGetAttribute>()?.Template is null &&
+      documentDesignsApi.GetMethod(nameof(DocumentDesignsApiController.GetForm))!.GetCustomAttribute<HttpGetAttribute>()?.Template == "form" &&
+      documentDesignsApi.GetMethod(nameof(DocumentDesignsApiController.Get))!.GetCustomAttribute<HttpGetAttribute>()?.Template == "{id:int}" &&
+      documentDesignsApi.GetMethod(nameof(DocumentDesignsApiController.Create))!.GetCustomAttribute<HttpPostAttribute>()?.Template is null &&
+      documentDesignsApi.GetMethod(nameof(DocumentDesignsApiController.Activate))!.GetCustomAttribute<HttpPostAttribute>()?.Template == "{id:int}/activate" &&
+      documentDesignsApi.GetMethod(nameof(DocumentDesignsApiController.Archive))!.GetCustomAttribute<HttpPostAttribute>()?.Template == "{id:int}/archive" &&
+      documentDesignsApi.GetMethod(nameof(DocumentDesignsApiController.SetDefault))!.GetCustomAttribute<HttpPostAttribute>()?.Template == "{id:int}/set-default",
+    "Angular document designs must expose list/form/details/create/activate/archive/default operations");
+Check(typeof(PurchaseMatchingSettingsDto).GetProperty(nameof(PurchaseMatchingSettingsDto.RowVersion)) is not null &&
+      db.Model.FindEntityType(typeof(PurchaseMatchingSettings))!
+          .FindProperty(nameof(PurchaseMatchingSettings.RowVersion))!.IsConcurrencyToken,
+    "Purchase matching settings writes must carry the database concurrency token");
+var purchaseMatchingView = File.ReadAllText(Path.Combine(webRoot, "Views", "Settings", "PurchaseMatching.cshtml"));
+Check(purchaseMatchingView.Contains("asp-for=\"RowVersion\"", StringComparison.Ordinal) &&
+      purchaseMatchingView.Contains("type=\"hidden\"", StringComparison.Ordinal),
+    "The MVC purchase-matching rollback form must submit its concurrency token");
+var productsApi = typeof(ProductsApiController);
+Check(productsApi.GetCustomAttribute<ApiControllerAttribute>() is not null &&
+      productsApi.GetCustomAttribute<AuthorizeAttribute>() is not null &&
+      productsApi.GetCustomAttribute<RouteAttribute>()?.Template == "api/v1/products" &&
+      productsApi.GetMethod(nameof(ProductsApiController.GetPage))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:Products.View" &&
+      productsApi.GetMethod(nameof(ProductsApiController.Get))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:Products.View",
+    "Angular product reads must remain authenticated and product-view protected");
+Check(productsApi.GetMethod(nameof(ProductsApiController.GetCreateForm))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:Products.Create" &&
+      productsApi.GetMethod(nameof(ProductsApiController.GetEditForm))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:Products.Edit",
+    "Angular product form options must enforce separate create and edit permissions");
+Check(productsApi.GetMethod(nameof(ProductsApiController.Create))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:Products.Create" &&
+      productsApi.GetMethod(nameof(ProductsApiController.Update))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:Products.Edit" &&
+      productsApi.GetMethod(nameof(ProductsApiController.Delete))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:Products.Delete",
+    "Angular product mutations must preserve independent create, edit and delete permissions");
+Check(new[]
+    {
+        productsApi.GetMethod(nameof(ProductsApiController.Create))!,
+        productsApi.GetMethod(nameof(ProductsApiController.Update))!,
+        productsApi.GetMethod(nameof(ProductsApiController.Delete))!
+    }.All(method => method.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null),
+    "Every Angular product mutation must require antiforgery validation");
+Check(typeof(ProductService).GetMethod(nameof(ProductService.GetFormPageAsync))!
+          .ReturnType == typeof(Task<ProductFormPageDto>) &&
+      typeof(ProductFormPageDto).GetProperty(nameof(ProductFormPageDto.MeasurementUnits)) is not null &&
+      typeof(ProductFormPageDto).GetProperty(nameof(ProductFormPageDto.Suppliers)) is not null &&
+      typeof(ProductFormPageDto).GetProperty(nameof(ProductFormPageDto.ExpenseAccounts)) is not null,
+    "Product form options must remain an explicit Application DTO contract");
+var productCategoriesApi = typeof(ProductCategoriesApiController);
+Check(productCategoriesApi.GetCustomAttribute<ApiControllerAttribute>() is not null &&
+      productCategoriesApi.GetCustomAttribute<AuthorizeAttribute>() is not null &&
+      productCategoriesApi.GetCustomAttribute<RouteAttribute>()?.Template == "api/v1/product-categories" &&
+      productCategoriesApi.GetMethod(nameof(ProductCategoriesApiController.GetAll))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:Products.View",
+    "Angular product-category reads must remain authenticated and Products.View protected");
+Check(new[]
+    {
+        productCategoriesApi.GetMethod(nameof(ProductCategoriesApiController.Create))!,
+        productCategoriesApi.GetMethod(nameof(ProductCategoriesApiController.SetStatus))!
+    }.All(method => method.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:Products.Edit" &&
+        method.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null),
+    "Product-category creation and status changes must require Products.Edit and antiforgery");
+Check(typeof(CreateProductCategoryDto).GetProperty(nameof(CreateProductCategoryDto.Code))!
+          .GetCustomAttribute<RegularExpressionAttribute>()?.Pattern == "^[A-Za-z0-9][A-Za-z0-9_-]*$" &&
+      typeof(CreateProductCategoryDto).GetProperty(nameof(CreateProductCategoryDto.Name))!
+          .GetCustomAttribute<RequiredAttribute>() is not null,
+    "Product-category API input must require a name and language-neutral code");
+var productAttributesApi = typeof(ProductAttributesApiController);
+Check(productAttributesApi.GetCustomAttribute<ApiControllerAttribute>() is not null &&
+      productAttributesApi.GetCustomAttribute<AuthorizeAttribute>() is not null &&
+      productAttributesApi.GetCustomAttribute<RouteAttribute>()?.Template == "api/v1/product-attributes" &&
+      productAttributesApi.GetMethod(nameof(ProductAttributesApiController.GetPage))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:Products.View",
+    "Angular product-attribute definitions must remain authenticated and Products.View protected");
+Check(new[]
+    {
+        productAttributesApi.GetMethod(nameof(ProductAttributesApiController.Create))!,
+        productAttributesApi.GetMethod(nameof(ProductAttributesApiController.SetStatus))!,
+        productAttributesApi.GetMethod(nameof(ProductAttributesApiController.SaveValues))!
+    }.All(method => method.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:Products.Edit" &&
+        method.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null) &&
+      productAttributesApi.GetMethod(nameof(ProductAttributesApiController.GetValues))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:Products.Edit",
+    "Product-attribute definitions and values must require Products.Edit and every mutation must validate antiforgery");
+Check(typeof(CreateProductAttributeDto).GetProperty(nameof(CreateProductAttributeDto.Code))!
+          .GetCustomAttribute<RegularExpressionAttribute>()?.Pattern == "^[A-Za-z0-9][A-Za-z0-9_-]*$" &&
+      typeof(CreateProductAttributeDto).GetProperty(nameof(CreateProductAttributeDto.Name))!
+          .GetCustomAttribute<RequiredAttribute>() is not null &&
+      typeof(ProductAttributeService).GetMethod(nameof(ProductAttributeService.CreateAsync))!
+          .ReturnType == typeof(Task<int>),
+    "Product-attribute creation must validate its API contract and return the persisted identifier through the Application layer");
+var productTemplatesApi = typeof(ProductTemplatesApiController);
+Check(productTemplatesApi.GetCustomAttribute<ApiControllerAttribute>() is not null &&
+      productTemplatesApi.GetCustomAttribute<AuthorizeAttribute>() is not null &&
+      productTemplatesApi.GetCustomAttribute<RouteAttribute>()?.Template == "api/v1/product-templates" &&
+      productTemplatesApi.GetMethod(nameof(ProductTemplatesApiController.GetPage))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:Products.View",
+    "Angular product-template reads must remain authenticated and Products.View protected");
+Check(new[]
+    {
+        productTemplatesApi.GetMethod(nameof(ProductTemplatesApiController.Create))!,
+        productTemplatesApi.GetMethod(nameof(ProductTemplatesApiController.Assign))!,
+        productTemplatesApi.GetMethod(nameof(ProductTemplatesApiController.Preview))!,
+        productTemplatesApi.GetMethod(nameof(ProductTemplatesApiController.Generate))!
+    }.All(method => method.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:Products.Edit" &&
+        method.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null),
+    "Template create/assignment/preview/generation must require Products.Edit and antiforgery");
+Check(typeof(CreateProductTemplateDto).GetProperty(nameof(CreateProductTemplateDto.Code))!
+          .GetCustomAttribute<RegularExpressionAttribute>()?.Pattern == "^[A-Za-z0-9][A-Za-z0-9_-]*$" &&
+      ProductTemplateService.MaximumGeneratedVariants == 50,
+    "Template inputs must keep neutral codes and variant generation must remain bounded to 50 combinations");
+var recipesApi = typeof(RecipesApiController);
+Check(recipesApi.GetCustomAttribute<ApiControllerAttribute>() is not null &&
+      recipesApi.GetCustomAttribute<AuthorizeAttribute>() is not null &&
+      recipesApi.GetCustomAttribute<RouteAttribute>()?.Template == "api/v1/recipes" &&
+      recipesApi.GetMethod(nameof(RecipesApiController.GetAll))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:Products.View",
+    "Angular recipe list must remain authenticated and Products.View protected");
+Check(recipesApi.GetMethod(nameof(RecipesApiController.GetEditor))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:Products.Edit" &&
+      recipesApi.GetMethod(nameof(RecipesApiController.Save))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:Products.Edit" &&
+      recipesApi.GetMethod(nameof(RecipesApiController.Save))!
+          .GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null,
+    "Recipe editor and immutable-version save must require Products.Edit and writes must validate antiforgery");
+Check(typeof(RecipeEditorDto).GetProperty(nameof(RecipeEditorDto.YieldQuantity))!
+          .GetCustomAttribute<RangeAttribute>() is not null &&
+      typeof(RecipeIngredientInputDto).GetProperty(nameof(RecipeIngredientInputDto.Quantity))!
+          .GetCustomAttribute<RangeAttribute>() is not null,
+    "Recipe API input must retain invariant positive yield and ingredient quantity validation");
+var catalogMastersApi = typeof(CatalogMastersApiController);
+Check(catalogMastersApi.GetCustomAttribute<ApiControllerAttribute>() is not null &&
+      catalogMastersApi.GetCustomAttributes<AuthorizeAttribute>().Any() &&
+      catalogMastersApi.GetCustomAttribute<RouteAttribute>()?.Template == "api/v1/catalog-masters" &&
+      catalogMastersApi.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:Administration.Access",
+    "Angular catalog masters must remain authenticated and Administration.Access protected");
+Check(new[]
+    {
+        catalogMastersApi.GetMethod(nameof(CatalogMastersApiController.CreateTaxRate))!,
+        catalogMastersApi.GetMethod(nameof(CatalogMastersApiController.CreatePaymentMethod))!,
+        catalogMastersApi.GetMethod(nameof(CatalogMastersApiController.CreateBranch))!
+    }.All(method => method.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null),
+    "Every tax-rate, payment-method and branch mutation must validate antiforgery");
+Check(typeof(CreateTaxRateDto).GetProperty(nameof(CreateTaxRateDto.Rate))!.GetCustomAttribute<RangeAttribute>() is not null &&
+      typeof(CreateBranchDto).GetProperty(nameof(CreateBranchDto.Code))!.GetCustomAttribute<RegularExpressionAttribute>()?.Pattern == "^[A-Za-z0-9][A-Za-z0-9_-]*$" &&
+      typeof(CatalogMastersPageDto).GetProperty(nameof(CatalogMastersPageDto.Accounts)) is not null,
+    "Catalog-master API input and account-name projection must remain explicit DTO contracts");
+var warehousesApi = typeof(WarehousesApiController);
+Check(warehousesApi.GetCustomAttribute<ApiControllerAttribute>() is not null && warehousesApi.GetCustomAttribute<AuthorizeAttribute>() is not null && warehousesApi.GetCustomAttribute<RouteAttribute>()?.Template=="api/v1/warehouses" && warehousesApi.GetMethod(nameof(WarehousesApiController.GetAll))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:Warehouses.View", "Angular warehouse reads must remain authenticated and Warehouses.View protected");
+Check(warehousesApi.GetMethod(nameof(WarehousesApiController.Create))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:Warehouses.Create" && warehousesApi.GetMethod(nameof(WarehousesApiController.Update))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:Warehouses.Edit" && warehousesApi.GetMethod(nameof(WarehousesApiController.Delete))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:Warehouses.Delete" && new[]{warehousesApi.GetMethod(nameof(WarehousesApiController.Create))!,warehousesApi.GetMethod(nameof(WarehousesApiController.Update))!,warehousesApi.GetMethod(nameof(WarehousesApiController.Delete))!}.All(x=>x.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null), "Warehouse CRUD must preserve independent permissions and antiforgery");
+Check(typeof(CreateWarehouseDto).GetProperty(nameof(CreateWarehouseDto.Name))!.GetCustomAttribute<RequiredAttribute>() is not null && typeof(WarehouseDto).GetProperty(nameof(WarehouseDto.BranchName)) is not null && typeof(WarehouseFormPageDto).GetProperty(nameof(WarehouseFormPageDto.Accounts)) is not null, "Warehouse API must use validated input and named form projections");
+var stockTransactionsApi = typeof(StockTransactionsApiController);
+Check(stockTransactionsApi.GetCustomAttribute<ApiControllerAttribute>() is not null &&
+      stockTransactionsApi.GetCustomAttribute<AuthorizeAttribute>() is not null &&
+      stockTransactionsApi.GetCustomAttribute<RouteAttribute>()?.Template == "api/v1/stock-transactions" &&
+      stockTransactionsApi.GetMethod(nameof(StockTransactionsApiController.GetPage))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:StockTransactions.View",
+    "Angular inventory ledger must remain authenticated, versioned and StockTransactions.View protected");
+var stockLedgerMethod = stockTransactionsApi.GetMethod(nameof(StockTransactionsApiController.GetPage))!;
+Check(stockLedgerMethod.GetCustomAttribute<HttpPostAttribute>() is null && stockLedgerMethod.GetCustomAttribute<HttpPutAttribute>() is null && stockLedgerMethod.GetCustomAttribute<HttpDeleteAttribute>() is null,
+    "Inventory ledger endpoint must remain read-only so Angular cannot mutate historical movement evidence");
+Check(stockTransactionsApi.GetMethod(nameof(StockTransactionsApiController.GetManualForm))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:StockTransactions.Create" &&
+      stockTransactionsApi.GetMethod(nameof(StockTransactionsApiController.CreateManual))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:StockTransactions.Create" &&
+      stockTransactionsApi.GetMethod(nameof(StockTransactionsApiController.CreateManual))!.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null,
+    "Manual Angular stock adjustments must require StockTransactions.Create and antiforgery");
+var productStocksApi = typeof(ProductStocksApiController);
+Check(productStocksApi.GetCustomAttribute<ApiControllerAttribute>() is not null && productStocksApi.GetCustomAttribute<AuthorizeAttribute>() is not null &&
+      productStocksApi.GetCustomAttribute<RouteAttribute>()?.Template == "api/v1/product-stocks" &&
+      productStocksApi.GetMethod(nameof(ProductStocksApiController.GetAll))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:ProductStock.View",
+    "Angular product-stock reads must remain authenticated, versioned and ProductStock.View protected");
+Check(productStocksApi.GetMethod(nameof(ProductStocksApiController.Create))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:ProductStock.Create" &&
+      productStocksApi.GetMethod(nameof(ProductStocksApiController.Update))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:ProductStock.Edit" &&
+      productStocksApi.GetMethod(nameof(ProductStocksApiController.Delete))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:ProductStock.Delete" &&
+      new[] { productStocksApi.GetMethod(nameof(ProductStocksApiController.Create))!, productStocksApi.GetMethod(nameof(ProductStocksApiController.Update))!, productStocksApi.GetMethod(nameof(ProductStocksApiController.Delete))! }
+          .All(method => method.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null),
+    "Product-stock operations must preserve independent permissions and antiforgery");
+Check(typeof(CreateProductStockDto).GetProperty(nameof(CreateProductStockDto.ProductId))!.GetCustomAttribute<RangeAttribute>() is not null &&
+      typeof(CreateProductStockDto).GetProperty(nameof(CreateProductStockDto.Quantity))!.GetCustomAttribute<RangeAttribute>() is not null &&
+      typeof(UpdateProductStockDto).GetProperty(nameof(UpdateProductStockDto.Quantity))!.GetCustomAttribute<RangeAttribute>() is not null &&
+      typeof(ProductStockFormPageDto).GetProperty(nameof(ProductStockFormPageDto.Products)) is not null,
+    "Product-stock API must use validated inputs and named product/warehouse option DTOs");
+var inventoryBalancesApi = typeof(InventoryBalancesApiController);
+Check(inventoryBalancesApi.GetCustomAttribute<ApiControllerAttribute>() is not null &&
+      inventoryBalancesApi.GetCustomAttribute<AuthorizeAttribute>() is not null &&
+      inventoryBalancesApi.GetCustomAttribute<RouteAttribute>()?.Template == "api/v1/inventory-balances" &&
+      inventoryBalancesApi.GetMethod(nameof(InventoryBalancesApiController.GetPage))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:InventoryBalances.View",
+    "Angular inventory availability must remain authenticated, versioned and InventoryBalances.View protected");
+var inventoryReservationsApi = typeof(InventoryReservationsApiController);
+Check(inventoryReservationsApi.GetCustomAttribute<ApiControllerAttribute>() is not null &&
+      inventoryReservationsApi.GetCustomAttribute<AuthorizeAttribute>() is not null &&
+      inventoryReservationsApi.GetCustomAttribute<RouteAttribute>()?.Template == "api/v1/inventory-reservations" &&
+      inventoryReservationsApi.GetMethod(nameof(InventoryReservationsApiController.GetPage))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:InventoryReservations.View",
+    "Angular inventory reservations must remain authenticated, versioned and InventoryReservations.View protected");
+Check(typeof(InventoryBalanceService).GetMethod(nameof(InventoryBalanceService.GetPagedAsync)) is not null &&
+      typeof(InventoryReservationService).GetMethod(nameof(InventoryReservationService.GetPagedAsync)) is not null,
+    "Inventory availability and reservation paging must remain behind the Application boundary");
+var inventoryAdjustmentsApi = typeof(InventoryAdjustmentsApiController);
+Check(inventoryAdjustmentsApi.GetCustomAttribute<ApiControllerAttribute>() is not null &&
+      inventoryAdjustmentsApi.GetCustomAttribute<AuthorizeAttribute>() is not null &&
+      inventoryAdjustmentsApi.GetCustomAttribute<RouteAttribute>()?.Template == "api/v1/inventory-adjustments" &&
+      inventoryAdjustmentsApi.GetMethod(nameof(InventoryAdjustmentsApiController.GetAll))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:InventoryAdjustments.View" &&
+      inventoryAdjustmentsApi.GetMethod(nameof(InventoryAdjustmentsApiController.GetDetails))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:InventoryAdjustments.View",
+    "Angular inventory-adjustment reads must remain authenticated and InventoryAdjustments.View protected");
+Check(inventoryAdjustmentsApi.GetMethod(nameof(InventoryAdjustmentsApiController.Create))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:InventoryAdjustments.Create" &&
+      inventoryAdjustmentsApi.GetMethod(nameof(InventoryAdjustmentsApiController.Count))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:InventoryAdjustments.Count" &&
+      inventoryAdjustmentsApi.GetMethod(nameof(InventoryAdjustmentsApiController.Approve))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:InventoryAdjustments.Approve" &&
+      inventoryAdjustmentsApi.GetMethod(nameof(InventoryAdjustmentsApiController.Post))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:InventoryAdjustments.Post" &&
+      inventoryAdjustmentsApi.GetMethod(nameof(InventoryAdjustmentsApiController.Cancel))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:InventoryAdjustments.Cancel" &&
+      new[] { nameof(InventoryAdjustmentsApiController.Create), nameof(InventoryAdjustmentsApiController.Count), nameof(InventoryAdjustmentsApiController.Approve), nameof(InventoryAdjustmentsApiController.Post), nameof(InventoryAdjustmentsApiController.Cancel) }
+          .Select(name => inventoryAdjustmentsApi.GetMethod(name)!).All(method => method.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null),
+    "Every inventory-adjustment mutation must preserve its independent permission and antiforgery");
+Check(typeof(InventoryAdjustmentCreateApiPageDto).GetProperty(nameof(InventoryAdjustmentCreateApiPageDto.Warehouses)) is not null &&
+      typeof(InventoryCountInputDto).GetProperty(nameof(InventoryCountInputDto.CountedQuantity))!.GetCustomAttribute<RangeAttribute>() is not null,
+    "Inventory-adjustment API must expose named options and invariant count validation");
+var inventoryTrackingApi=typeof(InventoryTrackingApiController);
+Check(inventoryTrackingApi.GetCustomAttribute<ApiControllerAttribute>() is not null&&inventoryTrackingApi.GetCustomAttribute<AuthorizeAttribute>() is not null&&inventoryTrackingApi.GetCustomAttribute<RouteAttribute>()?.Template=="api/v1/inventory-tracking"&&inventoryTrackingApi.GetMethod(nameof(InventoryTrackingApiController.GetPage))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:InventoryTracking.View","Angular inventory tracking must remain authenticated, versioned and view protected");
+Check(inventoryTrackingApi.GetMethod(nameof(InventoryTrackingApiController.Open))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:InventoryTracking.Open"&&new[]{nameof(InventoryTrackingApiController.Quarantine),nameof(InventoryTrackingApiController.Release)}.All(name=>inventoryTrackingApi.GetMethod(name)!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:InventoryTracking.ManageQuarantine")&&new[]{nameof(InventoryTrackingApiController.CreateRecall),nameof(InventoryTrackingApiController.CloseRecall),nameof(InventoryTrackingApiController.RecordCommunication)}.All(name=>inventoryTrackingApi.GetMethod(name)!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:InventoryTracking.ManageRecall")&&new[]{nameof(InventoryTrackingApiController.Open),nameof(InventoryTrackingApiController.Quarantine),nameof(InventoryTrackingApiController.Release),nameof(InventoryTrackingApiController.CreateRecall),nameof(InventoryTrackingApiController.CloseRecall),nameof(InventoryTrackingApiController.RecordCommunication)}.All(name=>inventoryTrackingApi.GetMethod(name)!.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null),"Every inventory-tracking mutation must preserve its dedicated permission and antiforgery");
+Check(typeof(InventoryTrackingApiPageDto).GetProperty(nameof(InventoryTrackingApiPageDto.Products)) is not null&&typeof(OpenTrackingAllocationLineDto).GetProperty(nameof(OpenTrackingAllocationLineDto.Quantity))!.GetCustomAttribute<RangeAttribute>() is not null&&typeof(TrackingReasonDto).GetProperty(nameof(TrackingReasonDto.Reason))!.GetCustomAttribute<StringLengthAttribute>()?.MinimumLength==3&&typeof(CreateInventoryRecallDto).GetProperty(nameof(CreateInventoryRecallDto.ProductId))!.GetCustomAttribute<RangeAttribute>() is not null,"Inventory tracking API must expose named options and validated command DTOs");
+var warehouseLocationsApi=typeof(WarehouseLocationsApiController);var unassignedStockApi=typeof(UnassignedStockApiController);var locationMovementsApi=typeof(LocationMovementsApiController);var stockMovementsApi=typeof(StockMovementsApiController);
+Check(new[]{warehouseLocationsApi,unassignedStockApi,locationMovementsApi,stockMovementsApi}.All(type=>type.GetCustomAttribute<ApiControllerAttribute>() is not null&&type.GetCustomAttribute<AuthorizeAttribute>() is not null),"Angular warehouse location and movement APIs must remain authenticated and versioned");
+Check(warehouseLocationsApi.GetMethod(nameof(WarehouseLocationsApiController.GetPage))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:Warehouses.View"&&warehouseLocationsApi.GetMethod(nameof(WarehouseLocationsApiController.Create))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:Warehouses.Create"&&warehouseLocationsApi.GetMethod(nameof(WarehouseLocationsApiController.Update))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:Warehouses.Edit"&&new[]{nameof(WarehouseLocationsApiController.Create),nameof(WarehouseLocationsApiController.Update)}.All(name=>warehouseLocationsApi.GetMethod(name)!.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null),"Warehouse location writes must preserve separate permissions and antiforgery");
+Check(unassignedStockApi.GetMethod(nameof(UnassignedStockApiController.GetPage))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:ProductStock.View"&&new[]{nameof(UnassignedStockApiController.Assign),nameof(UnassignedStockApiController.CreateRule),nameof(UnassignedStockApiController.SetRuleActive)}.All(name=>unassignedStockApi.GetMethod(name)!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:ProductStock.Edit"&&unassignedStockApi.GetMethod(name)!.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null),"Putaway and rule mutations must require ProductStock.Edit and antiforgery");
+Check(locationMovementsApi.GetMethod(nameof(LocationMovementsApiController.GetPage))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:LocationMovements.View"&&locationMovementsApi.GetMethod(nameof(LocationMovementsApiController.Move))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:LocationMovements.Create"&&locationMovementsApi.GetMethod(nameof(LocationMovementsApiController.Move))!.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null&&stockMovementsApi.GetMethod(nameof(StockMovementsApiController.GetPage))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:StockMovements.View","Internal relocation and physical ledger must preserve independent permissions and antiforgery");
+Check(typeof(AssignUnassignedStockDto).GetProperty(nameof(AssignUnassignedStockDto.IdempotencyKey))!.GetCustomAttribute<StringLengthAttribute>()?.MinimumLength==16&&typeof(CreateLocationMovementDto).GetProperty(nameof(CreateLocationMovementDto.Quantity))!.GetCustomAttribute<RangeAttribute>() is not null&&typeof(CreateStorageLocationDto).GetProperty(nameof(CreateStorageLocationDto.Code))!.GetCustomAttribute<RequiredAttribute>() is not null,"Location and putaway API commands must validate identity, quantity and idempotency inputs");
+var purchaseRequestsApi=typeof(PurchaseRequestsApiController);
+Check(purchaseRequestsApi.GetCustomAttribute<ApiControllerAttribute>() is not null&&purchaseRequestsApi.GetCustomAttribute<AuthorizeAttribute>() is not null&&purchaseRequestsApi.GetCustomAttribute<RouteAttribute>()?.Template=="api/v1/purchase-requests"&&new[]{nameof(PurchaseRequestsApiController.GetAll),nameof(PurchaseRequestsApiController.Get)}.All(name=>purchaseRequestsApi.GetMethod(name)!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:PurchaseRequests.View"),"Angular purchase-request reads must remain authenticated, versioned and view protected");
+Check(purchaseRequestsApi.GetMethod(nameof(PurchaseRequestsApiController.Create))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:PurchaseRequests.Create"&&purchaseRequestsApi.GetMethod(nameof(PurchaseRequestsApiController.Submit))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:PurchaseRequests.Submit"&&purchaseRequestsApi.GetMethod(nameof(PurchaseRequestsApiController.Cancel))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:PurchaseRequests.Cancel"&&new[]{nameof(PurchaseRequestsApiController.Create),nameof(PurchaseRequestsApiController.Submit),nameof(PurchaseRequestsApiController.Cancel)}.All(name=>purchaseRequestsApi.GetMethod(name)!.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null),"Purchase-request mutations must preserve independent permissions and antiforgery");
+Check(typeof(CreatePurchaseRequestDto).GetProperty(nameof(CreatePurchaseRequestDto.WarehouseId))!.GetCustomAttribute<RangeAttribute>() is not null&&typeof(CreatePurchaseRequestDto).GetProperty(nameof(CreatePurchaseRequestDto.Lines))!.GetCustomAttribute<MinLengthAttribute>()?.Length==1&&typeof(CreatePurchaseRequestLineDto).GetProperty(nameof(CreatePurchaseRequestLineDto.RequestedQuantity))!.GetCustomAttribute<RangeAttribute>() is not null&&typeof(PurchaseRequestStatusCommandDto).GetProperty(nameof(PurchaseRequestStatusCommandDto.RowVersion))!.GetCustomAttribute<RequiredAttribute>() is not null,"Purchase-request API commands must validate named destination, lines, quantities and concurrency evidence");
+var purchaseApprovalRulesApi=typeof(PurchaseApprovalRulesApiController);
+Check(purchaseApprovalRulesApi.GetCustomAttribute<ApiControllerAttribute>() is not null&&purchaseApprovalRulesApi.GetCustomAttribute<AuthorizeAttribute>() is not null&&purchaseApprovalRulesApi.GetMethod(nameof(PurchaseApprovalRulesApiController.GetPage))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:PurchaseApprovalRules.View","Purchase approval rules API must remain authenticated and independently view protected");
+Check(new[]{nameof(PurchaseApprovalRulesApiController.Create),nameof(PurchaseApprovalRulesApiController.SetActive)}.All(name=>purchaseApprovalRulesApi.GetMethod(name)!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:PurchaseApprovalRules.Manage"&&purchaseApprovalRulesApi.GetMethod(name)!.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null)&&purchaseRequestsApi.GetMethod(nameof(PurchaseRequestsApiController.Approve))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:PurchaseRequests.Approve"&&purchaseRequestsApi.GetMethod(nameof(PurchaseRequestsApiController.Reject))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:PurchaseRequests.Reject"&&new[]{nameof(PurchaseRequestsApiController.Approve),nameof(PurchaseRequestsApiController.Reject)}.All(name=>purchaseRequestsApi.GetMethod(name)!.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null),"Approval rule and request decision mutations must preserve independent permissions and antiforgery");
+Check(typeof(CreatePurchaseApprovalRuleDto).GetProperty(nameof(CreatePurchaseApprovalRuleDto.Name))!.GetCustomAttribute<RequiredAttribute>() is not null&&typeof(CreatePurchaseApprovalRuleDto).GetProperty(nameof(CreatePurchaseApprovalRuleDto.ApproverRoles))!.GetCustomAttribute<MinLengthAttribute>()?.Length==1&&typeof(SetPurchaseApprovalRuleActiveDto).GetProperty(nameof(SetPurchaseApprovalRuleActiveDto.RowVersion))!.GetCustomAttribute<RequiredAttribute>() is not null&&typeof(PurchaseRequestDecisionDto).GetProperty(nameof(PurchaseRequestDecisionDto.Note))!.GetCustomAttribute<StringLengthAttribute>()?.MaximumLength==500,"Approval APIs must validate rule identity, ordered roles, concurrency and bounded decision evidence");
+var purchaseSourcingApi=typeof(PurchaseSourcingApiController);var supplierQuotationsApi=typeof(SupplierQuotationsApiController);
+Check(purchaseSourcingApi.GetCustomAttribute<ApiControllerAttribute>() is not null&&purchaseSourcingApi.GetCustomAttribute<AuthorizeAttribute>() is not null&&purchaseSourcingApi.GetCustomAttribute<RouteAttribute>()?.Template=="api/v1/purchase-sourcing"&&new[]{nameof(PurchaseSourcingApiController.GetAll),nameof(PurchaseSourcingApiController.Get)}.All(name=>purchaseSourcingApi.GetMethod(name)!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:PurchaseSourcing.View")&&purchaseSourcingApi.GetMethod(nameof(PurchaseSourcingApiController.GetCreateForm))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:PurchaseSourcing.Create","Angular sourcing reads and form options must remain authenticated and independently permission protected");
+Check(purchaseSourcingApi.GetMethod(nameof(PurchaseSourcingApiController.Create))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:PurchaseSourcing.Create"&&purchaseSourcingApi.GetMethod(nameof(PurchaseSourcingApiController.Create))!.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null&&supplierQuotationsApi.GetCustomAttribute<ApiControllerAttribute>() is not null&&supplierQuotationsApi.GetCustomAttribute<AuthorizeAttribute>() is not null&&supplierQuotationsApi.GetMethod(nameof(SupplierQuotationsApiController.Create))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SupplierQuotations.Create"&&supplierQuotationsApi.GetMethod(nameof(SupplierQuotationsApiController.Award))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SupplierQuotations.Award"&&new[]{nameof(SupplierQuotationsApiController.Create),nameof(SupplierQuotationsApiController.Award)}.All(name=>supplierQuotationsApi.GetMethod(name)!.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null),"Sourcing, quotation and award mutations must preserve independent permissions and antiforgery");
+Check(purchaseSourcingApi.GetMethod(nameof(PurchaseSourcingApiController.Create))!.GetCustomAttribute<RequestFormLimitsAttribute>()?.MultipartBodyLengthLimit is <= 52_500_000&&purchaseSourcingApi.GetMethod(nameof(PurchaseSourcingApiController.DownloadAttachment))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:PurchaseSourcing.View","Sourcing attachment upload must remain bounded and tenant-safe download must require sourcing view permission");
+Check(supplierQuotationsApi.GetMethod(nameof(SupplierQuotationsApiController.Comparison))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SupplierQuotations.View"&&typeof(CreatePurchaseSourcingDto).GetProperty(nameof(CreatePurchaseSourcingDto.SupplierIds))!.GetCustomAttribute<MinLengthAttribute>()?.Length==1&&typeof(CreateSupplierQuotationDto).GetProperty(nameof(CreateSupplierQuotationDto.Lines))!.GetCustomAttribute<MinLengthAttribute>()?.Length==1&&typeof(CreatePurchaseQuotationAwardAllocationDto).GetProperty(nameof(CreatePurchaseQuotationAwardAllocationDto.Reason))!.GetCustomAttribute<StringLengthAttribute>()?.MaximumLength==1000,"Quotation comparison and commands must keep view authorization, complete line validation and bounded award evidence");
+var purchaseOrdersApi=typeof(PurchaseOrdersApiController);
+Check(purchaseOrdersApi.GetCustomAttribute<ApiControllerAttribute>() is not null&&purchaseOrdersApi.GetCustomAttribute<AuthorizeAttribute>() is not null&&purchaseOrdersApi.GetCustomAttribute<RouteAttribute>()?.Template=="api/v1/purchase-orders"&&new[]{nameof(PurchaseOrdersApiController.GetAll),nameof(PurchaseOrdersApiController.Get)}.All(name=>purchaseOrdersApi.GetMethod(name)!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:PurchaseOrders.View"),"Angular purchase-order reads must remain authenticated, versioned and view protected");
+Check(new Dictionary<string,string>{{nameof(PurchaseOrdersApiController.CreateFromAward),"PurchaseOrders.Create"},{nameof(PurchaseOrdersApiController.Approve),"PurchaseOrders.Approve"},{nameof(PurchaseOrdersApiController.Confirm),"PurchaseOrders.Confirm"},{nameof(PurchaseOrdersApiController.Cancel),"PurchaseOrders.Cancel"},{nameof(PurchaseOrdersApiController.CloseRemaining),"PurchaseOrders.Close"},{nameof(PurchaseOrdersApiController.Reopen),"PurchaseOrders.Reopen"},{nameof(PurchaseOrdersApiController.ConfigureDropship),"PurchaseOrders.ConfigureFulfillment"},{nameof(PurchaseOrdersApiController.RecordDirectDelivery),"PurchaseOrders.RecordDirectDelivery"},{nameof(PurchaseOrdersApiController.RecordSupplierConfirmation),"PurchaseOrders.RecordSupplierConfirmation"}}.All(x=>purchaseOrdersApi.GetMethod(x.Key)!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy==$"Permission:{x.Value}"&&purchaseOrdersApi.GetMethod(x.Key)!.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null),"Every purchase-order mutation must retain its independent permission and antiforgery");
+Check(typeof(PurchaseOrderCommandDto).GetProperty(nameof(PurchaseOrderCommandDto.RowVersion))!.GetCustomAttribute<RequiredAttribute>() is not null&&typeof(ConfigurePurchaseDropshipDto).GetProperty(nameof(ConfigurePurchaseDropshipDto.RecipientName))!.GetCustomAttribute<RequiredAttribute>() is not null&&typeof(RecordPurchaseDirectDeliveryDto).GetProperty(nameof(RecordPurchaseDirectDeliveryDto.Quantity))!.GetCustomAttribute<RangeAttribute>() is not null&&typeof(RecordPurchaseOrderSupplierConfirmationDto).GetProperty(nameof(RecordPurchaseOrderSupplierConfirmationDto.ConfirmationReference))!.GetCustomAttribute<StringLengthAttribute>()?.MaximumLength==250,"Purchase-order commands must validate concurrency, fulfillment identity, quantity and supplier evidence");
+var goodsReceiptsApi=typeof(GoodsReceiptsApiController);
+Check(goodsReceiptsApi.GetCustomAttribute<ApiControllerAttribute>() is not null&&goodsReceiptsApi.GetCustomAttribute<AuthorizeAttribute>() is not null&&goodsReceiptsApi.GetCustomAttribute<RouteAttribute>()?.Template=="api/v1/goods-receipts"&&new[]{nameof(GoodsReceiptsApiController.GetAll),nameof(GoodsReceiptsApiController.Get)}.All(name=>goodsReceiptsApi.GetMethod(name)!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:GoodsReceipts.View")&&goodsReceiptsApi.GetMethod(nameof(GoodsReceiptsApiController.GetCreateForm))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:GoodsReceipts.Create"&&goodsReceiptsApi.GetMethod(nameof(GoodsReceiptsApiController.GetScan))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:GoodsReceipts.Create","Angular goods-receipt reads and receiving forms must remain authenticated, versioned and independently permission protected");
+Check(new Dictionary<string,string>{{nameof(GoodsReceiptsApiController.Create),"GoodsReceipts.Create"},{nameof(GoodsReceiptsApiController.CreateDraft),"GoodsReceipts.Create"},{nameof(GoodsReceiptsApiController.Scan),"GoodsReceipts.Create"},{nameof(GoodsReceiptsApiController.Post),"GoodsReceipts.Create"},{nameof(GoodsReceiptsApiController.Inspect),"GoodsReceipts.Inspect"},{nameof(GoodsReceiptsApiController.PutAway),"GoodsReceipts.PutAway"}}.All(x=>goodsReceiptsApi.GetMethod(x.Key)!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy==$"Permission:{x.Value}"&&goodsReceiptsApi.GetMethod(x.Key)!.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null),"Every goods-receipt mutation must preserve create, inspection or put-away permission and antiforgery");
+Check(typeof(CreateGoodsReceiptDto).GetProperty(nameof(CreateGoodsReceiptDto.PurchaseOrderId))!.GetCustomAttribute<RangeAttribute>() is not null&&typeof(CreateGoodsReceiptDto).GetProperty(nameof(CreateGoodsReceiptDto.Lines))!.GetCustomAttribute<MinLengthAttribute>()?.Length==1&&typeof(CreateGoodsReceiptLineDto).GetProperty(nameof(CreateGoodsReceiptLineDto.ReceivedQuantity))!.GetCustomAttribute<RangeAttribute>() is not null&&typeof(ScanGoodsReceiptDto).GetProperty(nameof(ScanGoodsReceiptDto.IdempotencyKey))!.GetCustomAttribute<StringLengthAttribute>()?.MinimumLength==16&&typeof(InspectGoodsReceiptDto).GetProperty(nameof(InspectGoodsReceiptDto.Lines))!.GetCustomAttribute<MinLengthAttribute>()?.Length==1&&typeof(InspectGoodsReceiptLineDto).GetProperty(nameof(InspectGoodsReceiptLineDto.Reason))!.GetCustomAttribute<StringLengthAttribute>()?.MaximumLength==500,"Goods-receipt commands must validate order and line identity, quantities, idempotency and bounded quality evidence");
+var vendorBillsApi=typeof(VendorBillsApiController);
+Check(vendorBillsApi.GetCustomAttribute<ApiControllerAttribute>() is not null&&vendorBillsApi.GetCustomAttribute<AuthorizeAttribute>() is not null&&vendorBillsApi.GetCustomAttribute<RouteAttribute>()?.Template=="api/v1/vendor-bills"&&new[]{nameof(VendorBillsApiController.GetAll),nameof(VendorBillsApiController.Get),nameof(VendorBillsApiController.DownloadAttachment)}.All(name=>vendorBillsApi.GetMethod(name)!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:VendorBills.View")&&vendorBillsApi.GetMethod(nameof(VendorBillsApiController.GetCreateForm))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:VendorBills.Create","Angular vendor-bill reads, attachment download and create form must remain authenticated, versioned and independently permission protected");
+Check(new Dictionary<string,string>{{nameof(VendorBillsApiController.Create),"VendorBills.Create"},{nameof(VendorBillsApiController.Approve),"VendorBills.Approve"},{nameof(VendorBillsApiController.ApproveOverride),"VendorBills.OverrideMatch"},{nameof(VendorBillsApiController.Post),"VendorBills.Post"},{nameof(VendorBillsApiController.Cancel),"VendorBills.Cancel"},{nameof(VendorBillsApiController.AddAttachment),"VendorBills.ManageAttachments"},{nameof(VendorBillsApiController.GenerateExtraction),"VendorBills.ReviewExtraction"},{nameof(VendorBillsApiController.ReviewExtraction),"VendorBills.ReviewExtraction"}}.All(x=>vendorBillsApi.GetMethod(x.Key)!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy==$"Permission:{x.Value}"&&vendorBillsApi.GetMethod(x.Key)!.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null),"Every vendor-bill mutation must preserve its independent permission and antiforgery");
+Check(typeof(CreateVendorBillDto).GetProperty(nameof(CreateVendorBillDto.SupplierInvoiceNumber))!.GetCustomAttribute<RequiredAttribute>() is not null&&typeof(CreateVendorBillDto).GetProperty(nameof(CreateVendorBillDto.Lines))!.GetCustomAttribute<MinLengthAttribute>()?.Length==1&&typeof(CreateVendorBillLineDto).GetProperty(nameof(CreateVendorBillLineDto.Quantity))!.GetCustomAttribute<RangeAttribute>() is not null&&typeof(VendorBillCommandDto).GetProperty(nameof(VendorBillCommandDto.RowVersion))!.GetCustomAttribute<RequiredAttribute>() is not null&&typeof(ReviewVendorBillExtractionDto).GetProperty(nameof(ReviewVendorBillExtractionDto.ReviewNote))!.GetCustomAttribute<StringLengthAttribute>()?.MaximumLength==1000,"Vendor-bill commands must validate invoice identity, allocation quantities, concurrency and bounded review evidence");
+var supplierPaymentsApi=typeof(SupplierPaymentsApiController);
+Check(supplierPaymentsApi.GetCustomAttribute<ApiControllerAttribute>() is not null&&supplierPaymentsApi.GetCustomAttribute<AuthorizeAttribute>() is not null&&supplierPaymentsApi.GetCustomAttribute<RouteAttribute>()?.Template=="api/v1/supplier-payments"&&new[]{nameof(SupplierPaymentsApiController.GetAll),nameof(SupplierPaymentsApiController.Get)}.All(name=>supplierPaymentsApi.GetMethod(name)!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SupplierPayments.View")&&supplierPaymentsApi.GetMethod(nameof(SupplierPaymentsApiController.GetCreateForm))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SupplierPayments.Create","Angular supplier-payment reads and create form must remain authenticated, versioned and independently permission protected");
+Check(supplierPaymentsApi.GetMethod(nameof(SupplierPaymentsApiController.Create))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SupplierPayments.Create"&&supplierPaymentsApi.GetMethod(nameof(SupplierPaymentsApiController.Create))!.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null,"Supplier-payment posting must retain create permission and antiforgery");
+Check(typeof(CreateSupplierPaymentDto).GetProperty(nameof(CreateSupplierPaymentDto.SourceVendorBillId))!.GetCustomAttribute<RangeAttribute>() is not null&&typeof(CreateSupplierPaymentDto).GetProperty(nameof(CreateSupplierPaymentDto.PaymentMethodId))!.GetCustomAttribute<RangeAttribute>() is not null&&typeof(CreateSupplierPaymentDto).GetProperty(nameof(CreateSupplierPaymentDto.Lines))!.GetCustomAttribute<MinLengthAttribute>()?.Length==1&&typeof(CreateSupplierPaymentLineDto).GetProperty(nameof(CreateSupplierPaymentLineDto.Amount))!.GetCustomAttribute<RangeAttribute>() is not null,"Supplier-payment commands must validate source bill, named payment method, allocations and invariant amounts");
+var receiptReturnsApi=typeof(GoodsReceiptReturnsApiController);
+Check(receiptReturnsApi.GetCustomAttribute<ApiControllerAttribute>() is not null&&receiptReturnsApi.GetCustomAttribute<AuthorizeAttribute>() is not null&&new[]{nameof(GoodsReceiptReturnsApiController.GetAll),nameof(GoodsReceiptReturnsApiController.Get)}.All(name=>receiptReturnsApi.GetMethod(name)!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:GoodsReceiptReturns.View")&&receiptReturnsApi.GetMethod(nameof(GoodsReceiptReturnsApiController.GetCreateForm))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:GoodsReceiptReturns.Create","Angular goods-receipt-return reads and create form must preserve authentication and permissions");
+Check(receiptReturnsApi.GetMethod(nameof(GoodsReceiptReturnsApiController.Create))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:GoodsReceiptReturns.Create"&&receiptReturnsApi.GetMethod(nameof(GoodsReceiptReturnsApiController.Create))!.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null,"Goods-receipt-return posting must retain create permission and antiforgery");
+
+var supplierCreditNotesApi=typeof(SupplierCreditNotesApiController);
+Check(supplierCreditNotesApi.GetCustomAttribute<ApiControllerAttribute>() is not null&&supplierCreditNotesApi.GetCustomAttribute<AuthorizeAttribute>() is not null&&supplierCreditNotesApi.GetCustomAttribute<RouteAttribute>()?.Template=="api/v1/supplier-credit-notes"&&new[]{nameof(SupplierCreditNotesApiController.GetAll),nameof(SupplierCreditNotesApiController.Get)}.All(name=>supplierCreditNotesApi.GetMethod(name)!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SupplierCreditNotes.View")&&supplierCreditNotesApi.GetMethod(nameof(SupplierCreditNotesApiController.GetCreateForm))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SupplierCreditNotes.Create","Angular supplier-credit-note reads and create form must remain authenticated, versioned and independently permission protected");
+Check(supplierCreditNotesApi.GetMethod(nameof(SupplierCreditNotesApiController.Create))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SupplierCreditNotes.Create"&&supplierCreditNotesApi.GetMethod(nameof(SupplierCreditNotesApiController.Create))!.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null,"Supplier-credit-note posting must retain create permission and antiforgery");
+Check(typeof(CreateSupplierCreditNoteDto).GetProperty(nameof(CreateSupplierCreditNoteDto.Reason))!.GetCustomAttribute<RequiredAttribute>() is not null&&typeof(CreateSupplierCreditNoteDto).GetProperty(nameof(CreateSupplierCreditNoteDto.Lines))!.GetCustomAttribute<MinLengthAttribute>()?.Length==1&&typeof(CreateSupplierCreditNoteLineDto).GetProperty(nameof(CreateSupplierCreditNoteLineDto.Quantity))!.GetCustomAttribute<RangeAttribute>() is not null,"Supplier-credit-note API DTOs must reject missing reasons, empty lines and invalid quantities before Application execution");
+var purchaseReversalsApi=typeof(PurchaseDocumentReversalsApiController);
+Check(purchaseReversalsApi.GetCustomAttribute<ApiControllerAttribute>() is not null&&purchaseReversalsApi.GetCustomAttribute<AuthorizeAttribute>() is not null&&purchaseReversalsApi.GetCustomAttribute<RouteAttribute>()?.Template=="api/v1/purchase-document-reversals"&&new[]{nameof(PurchaseDocumentReversalsApiController.GetAll),nameof(PurchaseDocumentReversalsApiController.Get)}.All(name=>purchaseReversalsApi.GetMethod(name)!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:PurchaseDocumentReversals.View")&&purchaseReversalsApi.GetMethod(nameof(PurchaseDocumentReversalsApiController.GetCreateForm))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:PurchaseDocumentReversals.Create","Angular purchase-reversal reads and create form must remain authenticated, versioned and independently permission protected");
+Check(purchaseReversalsApi.GetMethod(nameof(PurchaseDocumentReversalsApiController.Create))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:PurchaseDocumentReversals.Create"&&purchaseReversalsApi.GetMethod(nameof(PurchaseDocumentReversalsApiController.Create))!.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null,"Purchase-document reversal posting must retain create permission and antiforgery");
+Check(typeof(CreatePurchaseDocumentReversalDto).GetProperty(nameof(CreatePurchaseDocumentReversalDto.OriginalDocumentId))!.GetCustomAttribute<RangeAttribute>() is not null&&typeof(CreatePurchaseDocumentReversalDto).GetProperty(nameof(CreatePurchaseDocumentReversalDto.Reason))!.GetCustomAttribute<RequiredAttribute>() is not null&&typeof(CreatePurchaseDocumentReversalDto).GetProperty(nameof(CreatePurchaseDocumentReversalDto.IdempotencyKey))!.GetCustomAttribute<StringLengthAttribute>()?.MinimumLength==16,"Purchase-reversal commands must validate source identity, reason and bounded idempotency evidence");
+var landedCostsApi=typeof(LandedCostsApiController);
+Check(landedCostsApi.GetCustomAttribute<ApiControllerAttribute>() is not null&&landedCostsApi.GetCustomAttribute<AuthorizeAttribute>() is not null&&landedCostsApi.GetCustomAttribute<RouteAttribute>()?.Template=="api/v1/landed-costs"&&new[]{nameof(LandedCostsApiController.GetAll),nameof(LandedCostsApiController.Get)}.All(name=>landedCostsApi.GetMethod(name)!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:LandedCosts.View")&&landedCostsApi.GetMethod(nameof(LandedCostsApiController.GetCreateForm))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:LandedCosts.Create","Angular landed-cost reads and create form must remain authenticated, versioned and independently permission protected");
+Check(landedCostsApi.GetMethod(nameof(LandedCostsApiController.Create))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:LandedCosts.Create"&&landedCostsApi.GetMethod(nameof(LandedCostsApiController.Create))!.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null,"Landed-cost posting must retain create permission and antiforgery");
+Check(typeof(CreateLandedCostDto).GetProperty(nameof(CreateLandedCostDto.ExternalReference))!.GetCustomAttribute<RequiredAttribute>() is not null&&typeof(CreateLandedCostDto).GetProperty(nameof(CreateLandedCostDto.Components))!.GetCustomAttribute<MinLengthAttribute>()?.Length==1&&typeof(CreateLandedCostComponentDto).GetProperty(nameof(CreateLandedCostComponentDto.Amount))!.GetCustomAttribute<RangeAttribute>() is not null,"Landed-cost commands must validate receipt identity, external reference, components and invariant amounts");
+var serviceAcceptancesApi=typeof(PurchaseServiceAcceptancesApiController);
+Check(serviceAcceptancesApi.GetCustomAttribute<ApiControllerAttribute>() is not null&&serviceAcceptancesApi.GetCustomAttribute<AuthorizeAttribute>() is not null&&new[]{nameof(PurchaseServiceAcceptancesApiController.GetAll),nameof(PurchaseServiceAcceptancesApiController.Get)}.All(name=>serviceAcceptancesApi.GetMethod(name)!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:PurchaseServiceAcceptances.View")&&serviceAcceptancesApi.GetMethod(nameof(PurchaseServiceAcceptancesApiController.GetCreateForm))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:PurchaseServiceAcceptances.Create","Angular service-acceptance reads and create form must preserve authentication and permissions");
+Check(serviceAcceptancesApi.GetMethod(nameof(PurchaseServiceAcceptancesApiController.Create))!.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null&&serviceAcceptancesApi.GetMethod(nameof(PurchaseServiceAcceptancesApiController.Create))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:PurchaseServiceAcceptances.Create","Service-acceptance creation must retain permission and antiforgery");
+Check(typeof(CreatePurchaseServiceAcceptanceDto).GetProperty(nameof(CreatePurchaseServiceAcceptanceDto.Lines))!.GetCustomAttribute<MinLengthAttribute>()?.Length==1&&typeof(CreatePurchaseServiceAcceptanceLineDto).GetProperty(nameof(CreatePurchaseServiceAcceptanceLineDto.CompletedQuantity))!.GetCustomAttribute<RangeAttribute>() is not null,"Service-acceptance commands must validate lines and quantities");
+var agreementsApi=typeof(PurchaseAgreementsApiController);
+Check(agreementsApi.GetCustomAttribute<ApiControllerAttribute>() is not null&&agreementsApi.GetCustomAttribute<AuthorizeAttribute>() is not null&&new[]{nameof(PurchaseAgreementsApiController.GetAll),nameof(PurchaseAgreementsApiController.Get)}.All(name=>agreementsApi.GetMethod(name)!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:PurchaseAgreements.View"),"Angular purchase-agreement reads must preserve authentication and View permission");
+Check(new[]{nameof(PurchaseAgreementsApiController.Create),nameof(PurchaseAgreementsApiController.Activate),nameof(PurchaseAgreementsApiController.Cancel),nameof(PurchaseAgreementsApiController.Release)}.All(name=>agreementsApi.GetMethod(name)!.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null),"Every Angular purchase-agreement mutation must retain antiforgery");
+Check(agreementsApi.GetMethod(nameof(PurchaseAgreementsApiController.Create))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:PurchaseAgreements.Create"&&agreementsApi.GetMethod(nameof(PurchaseAgreementsApiController.Activate))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:PurchaseAgreements.Activate"&&agreementsApi.GetMethod(nameof(PurchaseAgreementsApiController.Cancel))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:PurchaseAgreements.Cancel"&&agreementsApi.GetMethod(nameof(PurchaseAgreementsApiController.Release))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:PurchaseAgreements.Release","Angular agreement commands must retain independent permissions");
+var templatesApi=typeof(PurchaseTemplatesApiController);
+Check(templatesApi.GetCustomAttribute<ApiControllerAttribute>() is not null&&templatesApi.GetCustomAttribute<AuthorizeAttribute>() is not null&&templatesApi.GetMethod(nameof(PurchaseTemplatesApiController.GetAll))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:PurchaseTemplates.View","Angular purchase-template reads must preserve authentication and View permission");
+Check(new[]{nameof(PurchaseTemplatesApiController.CreateFromOrder),nameof(PurchaseTemplatesApiController.Generate),nameof(PurchaseTemplatesApiController.SetActive)}.All(name=>templatesApi.GetMethod(name)!.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null),"Every Angular purchase-template mutation must retain antiforgery");
+Check(templatesApi.GetMethod(nameof(PurchaseTemplatesApiController.CreateFromOrder))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:PurchaseTemplates.Create"&&templatesApi.GetMethod(nameof(PurchaseTemplatesApiController.Generate))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:PurchaseTemplates.Generate"&&templatesApi.GetMethod(nameof(PurchaseTemplatesApiController.SetActive))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:PurchaseTemplates.Manage"&&typeof(CreatePurchaseTemplateDto).GetProperty(nameof(CreatePurchaseTemplateDto.Name))!.GetCustomAttribute<StringLengthAttribute>()?.MaximumLength==150,"Angular template commands must preserve permissions and validated input");
+var supplierPurchasingApi=typeof(SupplierPurchasingApiController);
+Check(supplierPurchasingApi.GetCustomAttribute<ApiControllerAttribute>() is not null&&supplierPurchasingApi.GetCustomAttribute<AuthorizeAttribute>() is not null&&new[]{nameof(SupplierPurchasingApiController.GetPage),nameof(SupplierPurchasingApiController.GetExceptions),nameof(SupplierPurchasingApiController.GetPriceBreaks),nameof(SupplierPurchasingApiController.GetHistory),nameof(SupplierPurchasingApiController.ExportCsv),nameof(SupplierPurchasingApiController.ExportExcel)}.All(name=>supplierPurchasingApi.GetMethod(name)!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:Purchases.SupplierTerms.View"),"Angular supplier-purchasing reads and exports must retain authentication and View permission");
+Check(new[]{nameof(SupplierPurchasingApiController.SaveBulk),nameof(SupplierPurchasingApiController.SavePriceBreaks),nameof(SupplierPurchasingApiController.SetActive),nameof(SupplierPurchasingApiController.PreviewCsv),nameof(SupplierPurchasingApiController.PreviewExcel),nameof(SupplierPurchasingApiController.ImportCsv),nameof(SupplierPurchasingApiController.ImportExcel)}.All(name=>supplierPurchasingApi.GetMethod(name)!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:Purchases.SupplierTerms.Manage"&&supplierPurchasingApi.GetMethod(name)!.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null),"Every Angular supplier-purchasing mutation and preview must retain Manage permission and antiforgery");
+Check(supplierPurchasingApi.GetMethod(nameof(SupplierPurchasingApiController.PreviewCsv))!.GetCustomAttribute<RequestFormLimitsAttribute>()?.MultipartBodyLengthLimit==1_100_000&&supplierPurchasingApi.GetMethod(nameof(SupplierPurchasingApiController.PreviewExcel))!.GetCustomAttribute<RequestFormLimitsAttribute>()?.MultipartBodyLengthLimit==1_100_000,"Supplier-purchasing import previews must retain bounded multipart requests");
+var purchaseReplenishmentApi=typeof(PurchaseReplenishmentApiController);
+Check(purchaseReplenishmentApi.GetCustomAttribute<ApiControllerAttribute>() is not null&&purchaseReplenishmentApi.GetCustomAttribute<AuthorizeAttribute>() is not null&&purchaseReplenishmentApi.GetMethod(nameof(PurchaseReplenishmentApiController.Get))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:PurchaseReplenishment.View","Angular replenishment reads must retain authentication and View permission");
+Check(purchaseReplenishmentApi.GetMethod(nameof(PurchaseReplenishmentApiController.SaveSettings))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:PurchaseReplenishment.Manage"&&purchaseReplenishmentApi.GetMethod(nameof(PurchaseReplenishmentApiController.RunNow))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:PurchaseReplenishment.Run"&&new[]{nameof(PurchaseReplenishmentApiController.SaveSettings),nameof(PurchaseReplenishmentApiController.RunNow)}.All(name=>purchaseReplenishmentApi.GetMethod(name)!.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null),"Angular replenishment settings and runs must retain independent permissions and antiforgery");
+var purchaseAnalyticsApi=typeof(PurchaseAnalyticsApiController);
+Check(purchaseAnalyticsApi.GetCustomAttribute<ApiControllerAttribute>() is not null&&purchaseAnalyticsApi.GetCustomAttribute<AuthorizeAttribute>() is not null&&purchaseAnalyticsApi.GetMethod(nameof(PurchaseAnalyticsApiController.Get))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:PurchaseAnalytics.View","Angular purchase analytics must retain authentication and View permission");
+var purchaseAccountingReconciliationApi=typeof(PurchaseAccountingReconciliationApiController);
+Check(purchaseAccountingReconciliationApi.GetCustomAttribute<ApiControllerAttribute>() is not null&&purchaseAccountingReconciliationApi.GetCustomAttribute<AuthorizeAttribute>() is not null&&purchaseAccountingReconciliationApi.GetMethod(nameof(PurchaseAccountingReconciliationApiController.Get))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:PurchaseAccountingReconciliation.View","Angular purchase reconciliation must retain authentication and View permission");
+var supplierCommunicationsApi=typeof(SupplierCommunicationsApiController);
+Check(supplierCommunicationsApi.GetCustomAttribute<ApiControllerAttribute>() is not null&&supplierCommunicationsApi.GetCustomAttribute<AuthorizeAttribute>() is not null,"Angular supplier communications must require authentication");
+Check(supplierCommunicationsApi.GetMethod(nameof(SupplierCommunicationsApiController.Prepare))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SupplierCommunications.Prepare"&&supplierCommunicationsApi.GetMethod(nameof(SupplierCommunicationsApiController.RecordActivity))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SupplierCommunications.RecordActivity"&&new[]{nameof(SupplierCommunicationsApiController.Prepare),nameof(SupplierCommunicationsApiController.RecordActivity)}.All(name=>supplierCommunicationsApi.GetMethod(name)!.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null),"Angular supplier communication mutations must retain independent permissions and antiforgery");
+var supplierIntegrationsManagementApi=typeof(SupplierIntegrationsManagementApiController);
+Check(supplierIntegrationsManagementApi.GetCustomAttribute<ApiControllerAttribute>() is not null&&supplierIntegrationsManagementApi.GetCustomAttribute<AuthorizeAttribute>() is not null,"Angular supplier integrations management must require authentication");
+Check(new[]{nameof(SupplierIntegrationsManagementApiController.CreateCredential),nameof(SupplierIntegrationsManagementApiController.Deactivate),nameof(SupplierIntegrationsManagementApiController.CreateAccess),nameof(SupplierIntegrationsManagementApiController.Revoke),nameof(SupplierIntegrationsManagementApiController.Queue),nameof(SupplierIntegrationsManagementApiController.Retry)}.All(name=>supplierIntegrationsManagementApi.GetMethod(name)!.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null),"Angular supplier integration mutations must retain antiforgery");
+var supplierPortalApi=typeof(SupplierPortalApiController);
+Check(supplierPortalApi.GetCustomAttribute<AllowAnonymousAttribute>() is not null&&supplierPortalApi.GetCustomAttribute<EnableRateLimitingAttribute>()?.PolicyName=="supplier-portal","Angular supplier portal must remain anonymous-token scoped and rate limited");
+Check(new[]{nameof(SupplierPortalApiController.Quotation),nameof(SupplierPortalApiController.Confirm),nameof(SupplierPortalApiController.Delivery)}.All(name=>supplierPortalApi.GetMethod(name)!.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null),"Angular supplier portal mutations must retain antiforgery");
+var legacyPurchasesApi=typeof(LegacyPurchasesApiController);
+Check(legacyPurchasesApi.GetCustomAttribute<AuthorizeAttribute>() is not null&&legacyPurchasesApi.GetMethod(nameof(LegacyPurchasesApiController.Post))!.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null&&legacyPurchasesApi.GetMethod(nameof(LegacyPurchasesApiController.Post))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:Purchases.Create","Angular legacy purchase posting must remain authenticated, independently permitted and antiforgery protected");
+var legacyPurchaseReturnsApi=typeof(LegacyPurchaseReturnsApiController);
+Check(legacyPurchaseReturnsApi.GetCustomAttribute<AuthorizeAttribute>() is not null&&legacyPurchaseReturnsApi.GetMethod(nameof(LegacyPurchaseReturnsApiController.Create))!.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null&&legacyPurchaseReturnsApi.GetMethod(nameof(LegacyPurchaseReturnsApiController.Create))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:PurchaseReturns.Create","Angular legacy purchase returns must remain authenticated, independently permitted and antiforgery protected");
+Check(typeof(CreatePurchaseReturnDto).GetProperty(nameof(CreatePurchaseReturnDto.Reason))!.GetCustomAttribute<RequiredAttribute>() is not null&&typeof(CreatePurchaseReturnDto).GetProperty(nameof(CreatePurchaseReturnDto.Items))!.GetCustomAttribute<MinLengthAttribute>()?.Length==1&&typeof(CreatePurchaseReturnItemDto).GetProperty(nameof(CreatePurchaseReturnItemDto.Quantity))!.GetCustomAttribute<RangeAttribute>() is not null&&typeof(CreatePurchaseReturnItemDto).GetProperty(nameof(CreatePurchaseReturnItemDto.TrackingAllocations))!.GetCustomAttribute<StringLengthAttribute>()?.MaximumLength==2000,"Legacy purchase return commands must validate reason, lines, quantity and bounded tracking evidence");
+var salesPricingApi=typeof(SalesPriceListsApiController);
+Check(salesPricingApi.GetCustomAttribute<AuthorizeAttribute>() is not null&&salesPricingApi.GetMethod(nameof(SalesPriceListsApiController.GetPage))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SalesPricing.View","Angular sales pricing API must remain authenticated and view-permission protected");
+Check(new[]{nameof(SalesPriceListsApiController.Create),nameof(SalesPriceListsApiController.SetListActive),nameof(SalesPriceListsApiController.AddRule),nameof(SalesPriceListsApiController.SetRuleActive),nameof(SalesPriceListsApiController.Evaluate)}.All(name=>salesPricingApi.GetMethod(name)!.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null),"Angular sales pricing posts must retain antiforgery, including read-only evaluation");
+var salesQuotationsApi=typeof(SalesQuotationsApiController);
+Check(salesQuotationsApi.GetCustomAttribute<AuthorizeAttribute>() is not null&&salesQuotationsApi.GetMethod(nameof(SalesQuotationsApiController.GetAll))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SalesQuotations.View"&&salesQuotationsApi.GetMethod(nameof(SalesQuotationsApiController.Get))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SalesQuotations.View"&&salesQuotationsApi.GetMethod(nameof(SalesQuotationsApiController.DownloadPdf))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SalesQuotations.View","Angular sales quotation reads and PDF evidence must remain authenticated and view-permission protected");
+Check(new[]{nameof(SalesQuotationsApiController.Create),nameof(SalesQuotationsApiController.Send),nameof(SalesQuotationsApiController.Accept),nameof(SalesQuotationsApiController.Reject),nameof(SalesQuotationsApiController.Expire),nameof(SalesQuotationsApiController.Cancel)}.All(name=>salesQuotationsApi.GetMethod(name)!.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null),"Every Angular sales quotation mutation must retain antiforgery");
+Check(salesQuotationsApi.GetMethod(nameof(SalesQuotationsApiController.Create))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SalesQuotations.Create"&&salesQuotationsApi.GetMethod(nameof(SalesQuotationsApiController.Send))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SalesQuotations.Send"&&salesQuotationsApi.GetMethod(nameof(SalesQuotationsApiController.Accept))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SalesQuotations.Accept"&&salesQuotationsApi.GetMethod(nameof(SalesQuotationsApiController.Reject))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SalesQuotations.Reject"&&new[]{nameof(SalesQuotationsApiController.Expire),nameof(SalesQuotationsApiController.Cancel)}.All(name=>salesQuotationsApi.GetMethod(name)!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SalesQuotations.Cancel"),"Angular sales quotation lifecycle commands must preserve independent permissions");
+var salesOrdersApi=typeof(SalesOrdersApiController);
+Check(salesOrdersApi.GetCustomAttribute<AuthorizeAttribute>() is not null&&salesOrdersApi.GetMethod(nameof(SalesOrdersApiController.GetAll))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SalesOrders.View"&&salesOrdersApi.GetMethod(nameof(SalesOrdersApiController.Get))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SalesOrders.View","Angular sales order reads must remain authenticated and view-permission protected");
+Check(new[]{nameof(SalesOrdersApiController.CreateFromQuotation),nameof(SalesOrdersApiController.Confirm),nameof(SalesOrdersApiController.Cancel),nameof(SalesOrdersApiController.Approve),nameof(SalesOrdersApiController.Reject)}.All(name=>salesOrdersApi.GetMethod(name)!.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null),"Every Angular sales order mutation must retain antiforgery");
+Check(salesOrdersApi.GetMethod(nameof(SalesOrdersApiController.CreateFromQuotation))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SalesOrders.Create"&&salesOrdersApi.GetMethod(nameof(SalesOrdersApiController.Confirm))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SalesOrders.Confirm"&&salesOrdersApi.GetMethod(nameof(SalesOrdersApiController.Cancel))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SalesOrders.Cancel"&&new[]{nameof(SalesOrdersApiController.Approve),nameof(SalesOrdersApiController.Reject)}.All(name=>salesOrdersApi.GetMethod(name)!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SalesOrders.ApproveException"),"Angular sales order conversion, lifecycle and approval decisions must preserve independent permissions");
+var salesReservationsApi=typeof(SalesOrderReservationsApiController);
+Check(salesReservationsApi.GetCustomAttribute<AuthorizeAttribute>() is not null&&salesReservationsApi.GetMethod(nameof(SalesOrderReservationsApiController.Get))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SalesOrders.View","Angular sales order reservation page must remain authenticated and view-permission protected");
+Check(new[]{nameof(SalesOrderReservationsApiController.Reserve),nameof(SalesOrderReservationsApiController.Release)}.All(name=>salesReservationsApi.GetMethod(name)!.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null),"Every Angular sales order reservation mutation must retain antiforgery");
+Check(salesReservationsApi.GetMethod(nameof(SalesOrderReservationsApiController.Reserve))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SalesOrders.Reserve"&&salesReservationsApi.GetMethod(nameof(SalesOrderReservationsApiController.Release))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SalesOrders.ReleaseReservation","Angular reserve and release commands must preserve independent permissions");
+var salesDeliveriesApi=typeof(SalesDeliveriesApiController);
+Check(salesDeliveriesApi.GetCustomAttribute<AuthorizeAttribute>() is not null&&salesDeliveriesApi.GetMethod(nameof(SalesDeliveriesApiController.GetAll))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SalesDeliveries.View"&&salesDeliveriesApi.GetMethod(nameof(SalesDeliveriesApiController.Get))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SalesDeliveries.View","Angular sales delivery reads must remain authenticated and view-permission protected");
+Check(new[]{nameof(SalesDeliveriesApiController.Create),nameof(SalesDeliveriesApiController.Post),nameof(SalesDeliveriesApiController.Cancel)}.All(name=>salesDeliveriesApi.GetMethod(name)!.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null),"Every Angular sales delivery mutation must retain antiforgery");
+Check(salesDeliveriesApi.GetMethod(nameof(SalesDeliveriesApiController.Create))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SalesDeliveries.Create"&&salesDeliveriesApi.GetMethod(nameof(SalesDeliveriesApiController.Post))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SalesDeliveries.Post"&&salesDeliveriesApi.GetMethod(nameof(SalesDeliveriesApiController.Cancel))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SalesDeliveries.Cancel","Angular sales delivery create, post and cancel must preserve independent permissions");
+var customerInvoicesApi=typeof(CustomerInvoicesApiController);
+Check(customerInvoicesApi.GetCustomAttribute<AuthorizeAttribute>() is not null&&customerInvoicesApi.GetMethod(nameof(CustomerInvoicesApiController.GetAll))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:CustomerInvoices.View"&&customerInvoicesApi.GetMethod(nameof(CustomerInvoicesApiController.Get))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:CustomerInvoices.View"&&customerInvoicesApi.GetMethod(nameof(CustomerInvoicesApiController.GetCreateForm))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:CustomerInvoices.Create","Angular customer invoice reads and create form must remain authenticated and independently permission protected");
+Check(new[]{nameof(CustomerInvoicesApiController.Create),nameof(CustomerInvoicesApiController.Approve),nameof(CustomerInvoicesApiController.Cancel),nameof(CustomerInvoicesApiController.Post),nameof(CustomerInvoicesApiController.Reverse)}.All(name=>customerInvoicesApi.GetMethod(name)!.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null),"Every Angular customer invoice mutation must retain antiforgery");
+Check(customerInvoicesApi.GetMethod(nameof(CustomerInvoicesApiController.Create))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:CustomerInvoices.Create"&&customerInvoicesApi.GetMethod(nameof(CustomerInvoicesApiController.Approve))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:CustomerInvoices.Approve"&&customerInvoicesApi.GetMethod(nameof(CustomerInvoicesApiController.Cancel))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:CustomerInvoices.Cancel"&&customerInvoicesApi.GetMethod(nameof(CustomerInvoicesApiController.Post))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:CustomerInvoices.Post"&&customerInvoicesApi.GetMethod(nameof(CustomerInvoicesApiController.Reverse))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:CustomerInvoices.Reverse","Angular customer invoice lifecycle commands must preserve independent permissions");
+var customerPaymentsApi=typeof(CustomerPaymentsApiController);
+Check(customerPaymentsApi.GetCustomAttribute<AuthorizeAttribute>() is not null&&customerPaymentsApi.GetMethod(nameof(CustomerPaymentsApiController.GetAll))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:CustomerPayments.View"&&customerPaymentsApi.GetMethod(nameof(CustomerPaymentsApiController.Get))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:CustomerPayments.View"&&customerPaymentsApi.GetMethod(nameof(CustomerPaymentsApiController.GetCreateForm))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:CustomerPayments.Create","Angular customer payment reads and create form must remain authenticated and independently permission protected");
+Check(new[]{nameof(CustomerPaymentsApiController.Create),nameof(CustomerPaymentsApiController.Reverse)}.All(name=>customerPaymentsApi.GetMethod(name)!.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null),"Every Angular customer payment mutation must retain antiforgery");
+Check(customerPaymentsApi.GetMethod(nameof(CustomerPaymentsApiController.Create))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:CustomerPayments.Create"&&customerPaymentsApi.GetMethod(nameof(CustomerPaymentsApiController.Reverse))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:CustomerPayments.Reverse","Angular customer payment posting and reversal must preserve independent permissions");
+Check(typeof(CreateGoodsReceiptReturnDto).GetProperty(nameof(CreateGoodsReceiptReturnDto.Reason))!.GetCustomAttribute<RequiredAttribute>() is not null&&typeof(CreateGoodsReceiptReturnDto).GetProperty(nameof(CreateGoodsReceiptReturnDto.Lines))!.GetCustomAttribute<MinLengthAttribute>()?.Length==1&&typeof(CreateGoodsReceiptReturnLineDto).GetProperty(nameof(CreateGoodsReceiptReturnLineDto.ReturnQuantity))!.GetCustomAttribute<RangeAttribute>() is not null&&typeof(CreateGoodsReceiptReturnLineDto).GetProperty(nameof(CreateGoodsReceiptReturnLineDto.TrackingAllocations))!.GetCustomAttribute<StringLengthAttribute>()?.MaximumLength==2000,"Receipt-return commands must validate reason, lines, quantities and bounded tracking evidence");
+var subscriptionApi = typeof(SubscriptionApiController);
+Check(subscriptionApi.GetCustomAttribute<ApiControllerAttribute>() is not null &&
+      subscriptionApi.GetCustomAttribute<AuthorizeAttribute>() is not null &&
+      subscriptionApi.GetCustomAttribute<RouteAttribute>()?.Template == "api/v1/subscription",
+    "Angular tenant subscription API must remain authenticated and explicitly versioned");
+Check(subscriptionApi.GetMethod(nameof(SubscriptionApiController.CreateCheckout))!
+          .GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null,
+    "Angular subscription checkout creation must retain antiforgery validation");
+var publicPlansApi = typeof(PublicPlansApiController);
+Check(publicPlansApi.GetCustomAttribute<ApiControllerAttribute>() is not null &&
+      publicPlansApi.GetCustomAttribute<AllowAnonymousAttribute>() is not null &&
+      publicPlansApi.GetCustomAttribute<RouteAttribute>()?.Template == "api/v1/public/plans" &&
+      publicPlansApi.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly)
+          .All(method => method.GetCustomAttribute<HttpGetAttribute>() is not null),
+    "Angular public plan API must remain anonymous, versioned and read-only");
+var platformSessionApi = typeof(PlatformSessionApiController);
+Check(platformSessionApi.GetCustomAttribute<ApiControllerAttribute>() is not null &&
+      platformSessionApi.GetCustomAttribute<RouteAttribute>()?.Template == "api/v1/platform" &&
+      platformSessionApi.GetMethod(nameof(PlatformSessionApiController.Login))!
+          .GetCustomAttribute<AllowAnonymousAttribute>() is not null &&
+      platformSessionApi.GetMethod(nameof(PlatformSessionApiController.Login))!
+          .GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null &&
+      platformSessionApi.GetMethod(nameof(PlatformSessionApiController.Login))!
+          .GetCustomAttribute<EnableRateLimitingAttribute>()?.PolicyName == "login",
+    "Angular platform login must remain isolated, rate limited and antiforgery protected");
+Check(new[] { nameof(PlatformSessionApiController.Session), nameof(PlatformSessionApiController.Overview), nameof(PlatformSessionApiController.Logout) }
+      .All(name => platformSessionApi.GetMethod(name)!
+          .GetCustomAttribute<AuthorizeAttribute>()?.AuthenticationSchemes == PlatformAuthentication.Scheme) &&
+      platformSessionApi.GetMethod(nameof(PlatformSessionApiController.Logout))!
+          .GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null,
+    "Angular platform session must require the separate Platform cookie and protect logout");
+var platformManagementApi = typeof(PlatformManagementApiController);
+Check(platformManagementApi.GetCustomAttribute<AuthorizeAttribute>()?.AuthenticationSchemes == PlatformAuthentication.Scheme &&
+      platformManagementApi.GetCustomAttribute<RouteAttribute>()?.Template == "api/v1/platform/management",
+    "Angular platform management must require the isolated Platform cookie");
+Check(new[] { nameof(PlatformManagementApiController.UpdateCompany), nameof(PlatformManagementApiController.CreatePlan), nameof(PlatformManagementApiController.CreatePromotion) }
+      .All(name => platformManagementApi.GetMethod(name)!.GetCustomAttribute<AuthorizeAttribute>()?.Policy == PlatformAuthentication.ManagementPolicy &&
+                   platformManagementApi.GetMethod(name)!.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null) &&
+      platformManagementApi.GetMethod(nameof(PlatformManagementApiController.ConfirmPayment))!
+          .GetCustomAttribute<AuthorizeAttribute>()?.Policy == PlatformAuthentication.BillingPolicy &&
+      platformManagementApi.GetMethod(nameof(PlatformManagementApiController.ConfirmPayment))!
+          .GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null,
+    "Platform mutations must preserve Management/Billing policies and antiforgery");
+var platformAuditApi = typeof(PlatformAuditEventsApiController);
+Check(platformAuditApi.GetCustomAttribute<AuthorizeAttribute>()?.AuthenticationSchemes == PlatformAuthentication.Scheme &&
+      platformAuditApi.GetCustomAttribute<AuthorizeAttribute>()?.Policy == PlatformAuthentication.AuditViewPolicy &&
+      platformAuditApi.GetCustomAttribute<RouteAttribute>()?.Template == "api/v1/platform/audit-events" &&
+      platformAuditApi.GetMethod(nameof(PlatformAuditEventsApiController.Export))!
+          .GetCustomAttribute<AuthorizeAttribute>()?.Policy == PlatformAuthentication.AuditExportPolicy &&
+      platformAuditApi.GetMethod(nameof(PlatformAuditEventsApiController.Export))!
+          .GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null,
+    "Angular platform audit evidence must preserve isolated View/Export policies and antiforgery");
+var platformRetentionApi = typeof(PlatformAuditRetentionApiController);
+Check(platformRetentionApi.GetCustomAttribute<AuthorizeAttribute>()?.AuthenticationSchemes == PlatformAuthentication.Scheme &&
+      platformRetentionApi.GetCustomAttribute<AuthorizeAttribute>()?.Policy == PlatformAuthentication.AuditRetentionPolicy &&
+      platformRetentionApi.GetCustomAttribute<RouteAttribute>()?.Template == "api/v1/platform/audit-retention" &&
+      new[] { nameof(PlatformAuditRetentionApiController.CreateHold), nameof(PlatformAuditRetentionApiController.ReleaseHold), nameof(PlatformAuditRetentionApiController.Checkpoint), nameof(PlatformAuditRetentionApiController.RunRetention) }
+          .All(name => platformRetentionApi.GetMethod(name)!.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null),
+    "Angular platform retention maintenance must require the owner policy and antiforgery on every mutation");
+var operationsApi = typeof(OperationsCenterApiController);
+Check(operationsApi.GetCustomAttribute<ApiControllerAttribute>() is not null &&
+      operationsApi.GetCustomAttribute<AuthorizeAttribute>() is not null &&
+      operationsApi.GetCustomAttribute<RouteAttribute>()?.Template == "api/v1/operations-center",
+    "Operations center API must remain authenticated and explicitly versioned");
+Check(typeof(BackgroundJobStatusDto).GetProperty("Error") is null &&
+      typeof(BackgroundJobStatusDto).GetProperty(nameof(BackgroundJobStatusDto.Permission)) is not null &&
+      typeof(IBackgroundJobMonitor).GetMethod(nameof(IBackgroundJobMonitor.Snapshot)) is not null,
+    "Background job monitoring must remain permission-filterable and must not expose raw worker failures");
+Check(typeof(ISupplierRepository).GetMethod(nameof(ISupplierRepository.GetPagedAsync)) is not null &&
+      typeof(SupplierService).GetMethod(nameof(SupplierService.GetPageAsync))!
+          .ReturnType == typeof(Task<SupplierListPageDto>) &&
+      typeof(SupplierService).GetMethod(nameof(SupplierService.GetFormPageAsync))!
+          .ReturnType == typeof(Task<SupplierFormPageDto>),
+    "Supplier paging and form options must remain behind the Application and repository boundaries");
+
 Console.WriteLine($"Passed {count} security and inventory regression checks.");
 
 void CheckThrows(Action action, string message)
@@ -3474,6 +4494,10 @@ sealed class StubTenantAuthorization(bool admin) : MiniStore.Domain.Interfaces.I
 {
     public Task<bool> HasRoleAsync(int tenantId, string userId, string roleName) => Task.FromResult(admin && roleName == "Admin");
     public Task<bool> HasPermissionAsync(int tenantId, string userId, string permission) => Task.FromResult(false);
+    public Task<IReadOnlyList<string>> GetGrantedPermissionsAsync(int tenantId, string userId) =>
+        Task.FromResult<IReadOnlyList<string>>([]);
+    public Task<IReadOnlyList<int>> GetRoleIdsAsync(int tenantId, string userId) =>
+        Task.FromResult<IReadOnlyList<int>>([]);
     public Task AddRoleAsync(TenantUserRole assignment) => Task.CompletedTask;
     public Task SaveChangesAsync() => Task.CompletedTask;
 }

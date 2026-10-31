@@ -2,6 +2,10 @@
 
 The UI action audit, last verified on 2026-10-24, checks every static Razor link/form target against the compiled controller actions and every MVC POST against antiforgery validation. Dynamic client-only buttons were separately inventoried; the only submit-style button outside a form is the intentionally disabled Settings placeholder. The same automated gate now verifies Arabic entries for every literal shared-localizer key, rejects common direct-English Razor UI text and hard-coded controller action messages, detects case-insensitive duplicate resource keys, and protects the explicit nested customer form contract plus visible validation feedback.
 
+Angular shell, login, registration and onboarding language controls synchronize the server culture cookie before changing
+the visible locale. While the request is pending the control is disabled; failure retains the current language and shows
+localized feedback. The session culture is authoritative on startup, and `lang`/`dir` remain aligned for Arabic RTL and English LTR.
+
 `/Settings/WorkflowCatalog` is the complete bilingual ERP guide: 62 permission-aware steps grouped into seven modules and their operational phases, with owner, reviewer, instructions, control principle, completion evidence and a link to the real destination action.
 ## Advanced quotation templates (`SAL-120A`)
 
@@ -47,6 +51,13 @@ The UI action audit, last verified on 2026-10-24, checks every static Razor link
 | `Areas/Platform/Views/*` | separately signed-in operator dashboard for plans, promotions, companies/subscriptions and pending payment confirmation; login displays friendly retry feedback when throttled. |
 | `Views/Dashboard/Index.cshtml` | authenticated Odoo-inspired application launcher after login. Responsive cards expose Point of Sale, Sales, Purchasing, Inventory, Products, Accounting and Administration with localized search and independently permission-filtered shortcuts. Home remains a compatibility redirect. |
 | `Views/Products/{Index,Create,Edit,_LogisticsFields}.cshtml`, `Views/Shared/_SupplierSelector.cshtml` | localized catalogue and product forms that configure product details plus multiple active suppliers; the shared relationship is reflected automatically on Supplier forms. |
+| Angular `/products`, `/products/new`, `/products/:id`, `/products/:id/edit` | bilingual RTL-ready product master with server paging/name-code-barcode search, permission-aware details/create/edit/delete, all current commercial/tracking/logistics/supplier fields, dirty-form protection and Problem Details recovery. MVC remains default. |
+| Angular `/products/categories` | permission-aware bilingual category list/create/activate/deactivate with neutral code validation, retained failed input and preserved inactive history. MVC remains default. |
+| Angular `/products/attributes`, `/products/:id/attributes` | bilingual attribute definition/options/status administration and typed per-product value entry with category applicability, required values, permission-aware links, dirty protection and rejected-input recovery. MVC remains default. |
+| Angular `/products/templates` | bilingual template creation, existing-SKU assignment/removal, grouped variants, bounded preview and explicit controlled generation with failed-input recovery. MVC remains default. |
+| Angular `/products/recipes`, `/products/recipes/:productId` | bilingual prepared-product recipe list and dynamic immutable-version editor with compatible managed units, negative-policy guidance, dirty protection and retained rejected rows. MVC remains default. |
+| Angular `/products/catalog-masters` | administration-protected bilingual tax-rate, payment-method and branch lists/create forms with named accounting choices, invariant rates, neutral branch codes and rejected-input recovery. MVC remains default. |
+| Angular `/warehouses` | bilingual warehouse list/create/edit/delete with named branch/account options, complete operation/control/picking/receiving settings, independent permissions, dirty guard and rejected-input recovery. MVC remains default. |
 | `Views/ProductCategories/Index.cshtml` | category create/list/activate screen with language-neutral codes and preserved inactive categories. |
 | `Views/Recipes/{Index,Edit}.cshtml` | bilingual prepared-product recipe list and dynamic immutable-version editor using active managed units, immutable conversion snapshots and visible negative policy. |
 | `Views/Warehouses/*`, `Views/Suppliers/*` | warehouse master data plus responsive supplier profile cards/forms. Supplier forms capture legal, tax, contact, accounting and commercial data and select multiple eligible products with search. |
@@ -60,6 +71,7 @@ The UI action audit, last verified on 2026-10-24, checks every static Razor link
 | `Views/JournalEntries/Details.cshtml` | permission-protected read-only linked journal evidence with source, status, responsive account cards, debit/credit totals and optional branch/warehouse dimensions. |
 | `Views/Settings/Accounting.cshtml` | accounting posting accounts plus CUS-030A customer-receivable mode, control/parent account, automatic code prefix and prospective effective date with bilingual help. |
 | `Views/ProductStocks/{Index,Create,Edit}.cshtml` | balance, moving average and inventory value list; opening balance/direct adjustment; negative recipe exceptions are highlighted. |
+| Angular `/inventory/stocks` | permission-aware bilingual product/warehouse balance list plus opening stock, quantity correction, protected delete feedback and reason-required manual Adjustment In/Out or Kitchen Variance. Names stay user-facing, rejected forms stay editable and server-owned quantity/location/tracking/AVCO rules remain authoritative. MVC remains default. |
 | `Views/StockTransactions/{Index,Create}.cshtml` | paged/filterable movement list with unit cost, movement value and variance; manual adjustments include reason-required kitchen variance. |
 | `Views/WarehouseLocations/{Index,Create,Edit}.cshtml`, `Views/UnassignedStock/Index.cshtml` | parent-indented location master data plus warehouse/product search; WarehouseLocations receives projected Application DTOs rather than domain entities. Putaway-rule administration and capacity-aware suggestions remain unchanged. |
 | `Views/Replenishment/Index.cshtml` | permission-separated min/max management and reviewed suggestions that explicitly create either a Draft transfer from a preferred warehouse or a traced Draft Purchase Request when purchasing is the source. |
@@ -72,6 +84,8 @@ The UI action audit, last verified on 2026-10-24, checks every static Razor link
 | `Views/ProductTemplates/Index.cshtml` | bilingual template creation, existing-SKU assignment and grouped variant listing. |
 | `Views/Purchases/{Index,Create,Details}.cshtml` | purchase list/detail and client-side dynamic item rows. |
 | `Views/PurchaseRequests/Details.cshtml`, `Views/PurchaseSourcing/{Create,Details}.cshtml`, `Views/SupplierQuotations/{Create,Comparison}.cshtml` | permission-aware approved/direct sourcing and supplier-quotation entry; the responsive comparison allocates exact demand quantities across supplier lines with reasons, then replaces the completed action with allocation evidence and links to every generated order. |
+| Angular `/purchases/sourcing`, `/new`, `/:id`, `/:id/print`, `/:id/quotation`, `/:id/comparison` | bilingual permission-aware sourcing workspace for approved-request multipart RFQ creation, bounded attachment download, print/save-PDF evidence, invited quotation capture, company-currency comparison and reason-required line award; completed awards show immutable allocation evidence. |
+| Angular `/purchases/orders`, `/purchases/orders/:id` | bilingual permission-aware Purchase Order list/details with create-from-award navigation, approve/confirm/cancel, remainder close/reopen, direct-delivery setup/evidence and supplier date confirmation. |
 | `Views/PurchaseOrders/Details.cshtml` | responsive line cards show the frozen billing policy plus physical receipt or service-completion progress without horizontal scrolling. Finished receipt/service actions are replaced by status badges; separately authorized reason forms handle remaining-quantity closure and reopen. |
 | `Views/GoodsReceipts/{Index,Create,Scan,Details}.cshtml` | responsive card-based receiving without horizontal scrolling. The warehouse route clearly distinguishes direct posting from receive/inspect/store; staged details capture accepted/rejected/damaged/short quantities and expose only the currently valid inspection or storage action. |
 | `Views/PurchaseServiceAcceptances/{Index,Create,Details}.cshtml` | responsive bilingual service-completion capture and immutable evidence; explicitly states that no warehouse stock changes. |
@@ -109,19 +123,43 @@ Products, Warehouses, Suppliers, ProductStocks and Roles index delete controls u
 /onboarding is a bilingual, responsive post-registration screen with business-type cards, country/currency/language/fiscal choices, tax and POS switches, inventory control level, transactional Apply and explicit manual-setup Skip.
 ## WMS-015D Product Templates
 The Product Templates screen supports a two-step selection-variant workflow: choose an assigned source SKU and options, inspect the bounded preview, then explicitly create missing products. Existing combinations are labelled and skipped.
+
+## Purchase Requests Angular
+
+Angular `/purchases/requests` provides the permission-aware searchable list, `/purchases/requests/new` creates a named warehouse and
+multi-line Draft, and `/purchases/requests/:id` shows lines, approval/history evidence and only currently available Submit/Cancel
+commands. Rejected forms stay editable, completed actions disappear with the status, and MVC remains the default presentation.
+Angular `/purchases/approval-rules` is linked from that workspace for authorized viewers and covers named scope, priority range,
+ordered roles, create and active-state control. Request details show frozen approval steps and eligible Approve/Reject decisions.
 ## Physical Stock Movements
 Bilingual read-only ledger showing Putaway/Relocation plus Planned, Posted or Reversed transfer outbound/transit/inbound stages, product, warehouse, locations, quantity and reference. It intentionally reports historic legacy rows without backfilling them.
+
+Angular `/inventory/locations` manages the location hierarchy, barcode and operational capabilities. Angular `/inventory/putaway`
+assigns Unassigned Stock and manages product/category/default putaway rules. Angular `/inventory/location-movements` performs exact
+same-warehouse relocation and combines searchable LocationMovement history with the read-only physical StockMovement ledger.
+Buttons and navigation are permission-filtered; APIs remain authoritative and MVC is still the default presentation.
 ## Inventory Availability
 Bilingual read-only Product/Warehouse/Location projection showing OnHand, Reserved and Available. The system-owned Unassigned row is visibly distinguished and cannot be managed as a normal storage location.
 ## Inventory reservations
 
 `InventoryReservations/Index` is a bilingual, permission-protected audit list of source reference, lifecycle status, line count, total quantity and create/close times.
 
+Angular `/inventory/availability` is the bilingual, permission-protected dimensional availability list with product search, named
+warehouse filtering and paging. Angular `/inventory/reservations` is the matching reservation-history list with reference and
+status filters and paging. Both show server-authored values, use RTL-safe responsive tables and remain read-only; MVC is default.
+
 ## Inventory adjustments
+
+Angular `/inventory/adjustments` provides the permission-aware list, `/inventory/adjustments/new` creates a named warehouse/location
+and multi-product count, and `/inventory/adjustments/:id` records every line then exposes only the valid approve/post/cancel action.
+Blind Draft counts hide expected quantity, completed actions become status badges, rejected inputs stay editable and MVC remains default.
 `InventoryAdjustments/Index`, `Create` and `Details` implement the bilingual count workflow. Blind Draft documents hide expected quantities; later states expose expected, counted and variance values plus allowed workflow actions.
 
 ## Lot and serial tracking
 `InventoryTracking/Index` shows current lot/serial positions, expiration highlighting and immutable history. Its opening form captures all dimensional allocations required to activate tracking on legacy stock.
+Angular `/inventory/tracking` now exposes the same complete current workflow: opening activation, expiration evidence,
+reasoned quarantine/release, recall impact and immutable manual communication history. Controls are permission-filtered, but the API
+rechecks every permission and antiforgery token. Recall closure explicitly leaves quarantine unchanged; MVC remains default.
 # PUR-010 screen
 
 `Views/SupplierPurchasing/Index.cshtml` is a bilingual RTL-safe, supplier-first bulk Purchasing screen. It lists only products already assigned to the selected supplier from either master-data form, then lets the user search, select and edit their purchasing terms together. When none are assigned it links directly to Supplier edit. The responsive card grid avoids horizontal scrolling. Product, supplier and unit names are shown while IDs remain internal; prepared-to-order products are excluded.
@@ -135,7 +173,19 @@ All purchase tables, details and populated numeric inputs use the shared number 
 
 ## Audit-event readers
 
-- `/AuditEvents` is the tenant reader. It requires `AuditEvents.View`, always applies the active-company boundary and offers bounded filters, deterministic pagination and responsive cards without horizontal scrolling.
+- `/AuditEvents` remains the MVC tenant reader and `/audit-events` is its Angular pilot. Both require `AuditEvents.View`,
+  apply the active-company boundary and offer bounded filters and deterministic pagination. Angular adds bilingual RTL-safe
+  loading/error/empty states and exposes export only when the session has `AuditEvents.Export`.
 - `/platform/audit-events` is the separate Platform/System reader. It never impersonates a tenant and is protected by Platform audit policies.
 - CSV (ملف قيم مفصولة بفواصل) export is limited to 5,000 rows, requires an allowed purpose and separate export authority, and records one `DataAccess.AuditEventsExported` event after creating the snapshot. Masked source IP and user-agent fingerprint appear only with sensitive-view authority.
 - `/platform/audit-retention` is an Owner-only responsive control screen. It displays the approved 7-year/3-year/90-day policy, creates and releases scoped legal holds, creates a signed checkpoint and runs retention. Retention is unavailable when its local/hosting secret configuration is disabled.
+
+## Angular inventory workflows
+
+- `/inventory/transactions` requires `StockTransactions.View` and displays the immutable inventory transaction history.
+- The responsive bilingual screen provides debounced product/warehouse/reference search, type and direction filters,
+  inclusive from/to dates, page-size control, server sorting and paging, plus server-authored cost/value/variance columns.
+- The transaction ledger stays read-only. `/inventory/stocks` now owns the Angular presentation for all current ProductStock
+  operations and authorized manual adjustments; every mutation uses CSRF and its separate server permission.
+- `/inventory/availability` requires `InventoryBalances.View`; `/inventory/reservations` requires
+  `InventoryReservations.View`. Both provide loading, empty and recovery states and bounded server paging.

@@ -1,0 +1,23 @@
+<section class="audit-page" [attr.aria-label]="i18n.text('title')">
+  <app-page-header eyebrow="SECURITY" [title]="i18n.text('title')" [description]="i18n.text('description')" />
+  <form class="filters ui-panel" [formGroup]="form" (ngSubmit)="search()">
+    <h2>{{ i18n.text('filters') }}</h2>
+    <label>{{ i18n.text('from') }}<input type="date" formControlName="from" /></label><label>{{ i18n.text('to') }}<input type="date" formControlName="to" /></label>
+    <label>{{ i18n.text('category') }}<select formControlName="category"><option [ngValue]="null">{{ i18n.text('all') }}</option>@for (value of [1,2,3,4,5,6]; track value) { <option [ngValue]="value">{{ i18n.category(value) }}</option> }</select></label>
+    <label>{{ i18n.text('outcome') }}<select formControlName="outcome"><option [ngValue]="null">{{ i18n.text('all') }}</option>@for (value of [1,2,3,4]; track value) { <option [ngValue]="value">{{ i18n.outcome(value) }}</option> }</select></label>
+    @for (field of [{key:'eventType',label:'eventType'},{key:'actorId',label:'actor'},{key:'resourceType',label:'resourceType'},{key:'resourceId',label:'resourceId'},{key:'correlationId',label:'correlation'}]; track field.key) { <label>{{ i18n.text($any(field.label)) }}<input [formControlName]="field.key" /></label> }
+    <label>{{ i18n.text('pageSize') }}<select formControlName="pageSize">@for (size of [25,50,100]; track size) { <option [ngValue]="size">{{ size }}</option> }</select></label>
+    <div class="actions"><button class="ui-button primary">{{ i18n.text('search') }}</button><button class="ui-button secondary" type="button" (click)="reset()">{{ i18n.text('reset') }}</button></div>
+  </form>
+  @if (loading()) { <app-feedback-state kind="loading" [title]="i18n.text('loading')" /> }
+  @else if (problem(); as failure) { <app-api-recovery [problem]="failure" (retry)="load()" /> }
+  @else if (page(); as data) {
+    @if (data.canViewSensitive) { <p class="ui-alert" role="status">{{ i18n.text('sensitive') }}</p> }
+    <app-data-table [label]="i18n.text('results')"><table><thead><tr><th>{{ i18n.text('occurred') }}</th><th>{{ i18n.text('event') }}</th><th>{{ i18n.text('actor') }}</th><th>{{ i18n.text('resource') }}</th><th>{{ i18n.text('outcome') }}</th>@if (data.canViewSensitive) { <th>{{ i18n.text('details') }}</th> }</tr></thead><tbody>
+      @for (item of data.items; track item.id) { <tr><td>{{ item.occurredAtUtc | date:'medium' }}<small>{{ i18n.channel(item.sourceChannel) }}</small></td><td><strong>{{ item.eventType }}</strong><small>{{ i18n.category(item.category) }} · {{ item.action }} · {{ i18n.severity(item.severity) }}</small>@if (item.reasonCode) { <small>{{ i18n.text('reasonCode') }}: {{ item.reasonCode }}</small> }</td><td>{{ item.actorId }}</td><td>{{ item.resourceType }} / {{ item.resourceId }}<small>{{ item.correlationId }}</small></td><td>{{ i18n.outcome(item.outcome) }}</td>@if (data.canViewSensitive) { <td><details><summary>{{ i18n.text('details') }}</summary>@if (item.changesRedactedJson) { <strong>{{ i18n.text('changes') }}</strong><pre>{{ item.changesRedactedJson }}</pre> }@if (item.metadataRedactedJson) { <strong>{{ i18n.text('metadata') }}</strong><pre>{{ item.metadataRedactedJson }}</pre> }<small>{{ i18n.text('path') }}: {{ item.requestPathTemplate || '—' }}<br />{{ i18n.text('ip') }}: {{ item.sourceIpMasked || '—' }}<br />{{ i18n.text('userAgent') }}: {{ item.userAgentHash || '—' }}</small></details></td> }</tr> }
+      @empty { <tr><td [attr.colspan]="data.canViewSensitive ? 6 : 5">{{ i18n.text('empty') }}</td></tr> }
+    </tbody></table></app-data-table>
+    <nav class="pager" [attr.aria-label]="i18n.text('page')"><button class="ui-button secondary" type="button" [disabled]="data.query.page <= 1" (click)="move(-1)">{{ i18n.text('previous') }}</button><span>{{ i18n.text('page') }} {{ data.query.page }} {{ i18n.text('of') }} {{ data.totalPages }}</span><button class="ui-button secondary" type="button" [disabled]="data.query.page >= data.totalPages" (click)="move(1)">{{ i18n.text('next') }}</button></nav>
+    @if (session.can('AuditEvents.Export')) { <div class="export ui-panel"><label>{{ i18n.text('purpose') }}<select [value]="purpose()" (change)="purpose.set($any($event.target).value)"><option value="InternalReview">{{ i18n.text('internalReview') }}</option><option value="SecurityInvestigation">{{ i18n.text('securityInvestigation') }}</option><option value="ComplianceReview">{{ i18n.text('complianceReview') }}</option></select></label><button class="ui-button primary" type="button" [disabled]="exporting()" (click)="export()">{{ i18n.text(exporting() ? 'exporting' : 'export') }}</button></div> }
+  }
+</section>

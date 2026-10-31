@@ -29,3 +29,13 @@ public sealed class InventoryAdjustmentCreatePageDto
     public CreateInventoryAdjustmentDto Input { get; set; } = new(); public List<(int Id, string Name)> Warehouses { get; set; } = [];
     public List<(int Id, int WarehouseId, string Name)> Locations { get; set; } = []; public List<(int Id, string Name)> Products { get; set; } = [];
 }
+public sealed record InventoryAdjustmentWarehouseOptionDto(int Id, string Name);
+public sealed record InventoryAdjustmentLocationOptionDto(int Id, int WarehouseId, string Name);
+public sealed record InventoryAdjustmentProductOptionDto(int Id, string Name);
+public sealed class InventoryAdjustmentCreateApiPageDto
+{
+    public CreateInventoryAdjustmentDto Input { get; set; } = new();
+    public List<InventoryAdjustmentWarehouseOptionDto> Warehouses { get; set; } = [];
+    public List<InventoryAdjustmentLocationOptionDto> Locations { get; set; } = [];
+    public List<InventoryAdjustmentProductOptionDto> Products { get; set; } = [];
+}

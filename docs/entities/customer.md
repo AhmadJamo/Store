@@ -18,3 +18,9 @@ CUS-030B adds prospective commercial defaults: payment-term days, optional prefe
 Change impact: entity/configuration/migration, Customer DTO/service/repository, Sales validation, controller/views, permissions/navigation, localization, numbering, tests and customer/database documentation.
 
 The MVC create/edit contract uses `CustomerFormPostDto.Form` to match the Razor `Form.*` field names exactly. Every invalid submission returns the populated page model and exposes both the complete validation summary and field-level errors; successful creation redirects to the saved customer details page with a localized notification.
+
+MOD-005 reuses the same DTO/service authority through the authenticated `/api/v1/customers` surface and Angular list/details/create/edit pages. API requests keep generated code and policy-resolved account optional, mutations require antiforgery plus operation-specific permissions, and stale row versions return `409 Conflict`. MVC remains available; neither presentation owns numbering, tenant rules or business validation.
+
+MOD-011 maps Customer duplicate/validation/concurrency/not-found outcomes to stable Problem Details codes. Angular
+preserves failed form values, never retries saves automatically and lets an editor open the latest authorized record
+in a separate tab for comparison. Customer equivalence and duplicate policy remain Application-owned.

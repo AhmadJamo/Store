@@ -87,7 +87,8 @@ public sealed class InventoryInsightsService(
         {
             Query = query,
             Rows = filtered,
-            Warehouses = warehouseRows.OrderBy(x => x.Name).Select(x => (x.Id, x.Name)).ToList(),
+            Warehouses = warehouseRows.OrderBy(x => x.Name)
+                .Select(x => new InventoryInsightsWarehouseDto(x.Id, x.Name)).ToList(),
             TotalValue = rows.Sum(x => x.InventoryValue),
             AttentionValue = rows.Where(x => x.State != InventoryActivityState.Active).Sum(x => x.InventoryValue),
             SlowCount = rows.Count(x => x.State == InventoryActivityState.Slow),

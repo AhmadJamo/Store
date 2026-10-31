@@ -1,12 +1,12 @@
-namespace MiniStore.Application.DTOs.Warehouses;
+using System.ComponentModel.DataAnnotations;namespace MiniStore.Application.DTOs.Warehouses;
 
 public sealed class CreatePutawayRuleDto
 {
-    public int WarehouseId { get; set; }
-    public int StorageLocationId { get; set; }
+    [Range(1,int.MaxValue)]public int WarehouseId { get; set; }
+    [Range(1,int.MaxValue)]public int StorageLocationId { get; set; }
     public int? ProductId { get; set; }
     public int? ProductCategoryId { get; set; }
-    public int Priority { get; set; } = 100;
+    [Range(1,9999)]public int Priority { get; set; } = 100;
 }
 
 public sealed class PutawayRuleDto

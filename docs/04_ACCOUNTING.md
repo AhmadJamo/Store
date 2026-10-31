@@ -119,3 +119,12 @@ The shared fiscal-period and journal-posting controls apply. Draft creation and 
 SAL-070 creates and approves customer invoice documents but deliberately does not post them. Its company setting chooses Delivered or Ordered quantity eligibility, not an accounting method. Approval freezes billing evidence and reserves source quantity only; it does not debit receivables, credit revenue/output tax or record payment. This prevents a document from appearing financially Posted before a balanced source-unique journal exists.
 
 SAL-080 owns invoice recognition and SAL-090 separately owns receipt allocation and receivable settlement. Neither repeats delivery-time COGS or inventory effects. An allocated invoice cannot be reversed until its posted customer payments are reversed.
+## Angular migration status
+
+`MOD-026A` exposes the current Chart of Accounts list/create surface through an Application-owned API and bilingual RTL-safe
+Angular workspace. Parent accounts are selected and displayed by code/name while IDs remain internal. `AccountService` retains
+duplicate-code, parent-existence and entity validation. MVC remains default until a separate cutover approval.
+
+`MOD-026B` exposes immutable Journal Entry details through a read-only permission-protected API and bilingual Angular evidence
+screen. Account, branch and warehouse IDs are projected to names; source type/reference, descriptions, debit/credit and balanced
+totals are visible. The screen adds no mutation and leaves posting, uniqueness and reversal authority in accounting services.

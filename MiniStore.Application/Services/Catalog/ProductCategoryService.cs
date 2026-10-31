@@ -12,15 +12,20 @@ public sealed class ProductCategoryService(IProductCategoryRepository repository
             .Select(Map)
             .ToList();
 
-    public async Task CreateAsync(CreateProductCategoryDto dto)
+    public async Task<ProductCategoryDto?> GetByIdAsync(int id) =>
+        await repository.GetByIdAsync(id) is { } category ? Map(category) : null;
+
+    public async Task<int> CreateAsync(CreateProductCategoryDto dto)
     {
         var code = dto.Code.Trim().ToUpperInvariant();
         if (await repository.GetByCodeAsync(code) is not null)
             throw new InvalidOperationException("A product category with this code already exists.");
         if (await repository.GetByNameAsync(dto.Name.Trim()) is not null)
             throw new InvalidOperationException("A product category with this name already exists.");
-        await repository.AddAsync(new ProductCategory(dto.Name, code));
+        var category = new ProductCategory(dto.Name, code);
+        await repository.AddAsync(category);
         await repository.SaveChangesAsync();
+        return category.Id;
     }
 
     public async Task SetActiveAsync(int id, bool isActive)

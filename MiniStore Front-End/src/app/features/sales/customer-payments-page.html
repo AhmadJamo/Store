@@ -1,0 +1,229 @@
+<main class="payments-page">
+  @if (loading()) {
+    <app-feedback-state kind="loading" [title]="i18n.text('title')" />
+  } @else if (failure(); as issue) {
+    <app-api-recovery [problem]="issue" (retry)="load()" />
+  } @else if (item(); as x) {
+    <app-page-header
+      [eyebrow]="i18n.text('area')"
+      [title]="x.paymentNumber"
+      [description]="i18n.text('description')"
+    />
+    <div class="heading">
+      <span class="status">{{ i18n.status(x.status) }}</span>
+      <a class="ui-button" routerLink="/sales/payments">{{ i18n.text('back') }}</a>
+    </div>
+    @if (problem(); as issue) {
+      <app-api-recovery [problem]="issue" [allowRetry]="false" />
+    }
+    <section class="ui-card facts">
+      <div>
+        <span>{{ i18n.text('customer') }}</span
+        ><strong>{{ x.customerName }}</strong>
+      </div>
+      <div>
+        <span>{{ i18n.text('paymentDate') }}</span
+        ><strong>{{ x.paymentDate }}</strong>
+      </div>
+      <div>
+        <span>{{ i18n.text('paymentMethod') }}</span
+        ><strong>{{ x.paymentMethodName }}</strong>
+      </div>
+      <div>
+        <span>{{ i18n.text('total') }}</span
+        ><strong>{{ x.totalAmount | number: '1.2-6' }} {{ x.currencyCode }}</strong>
+      </div>
+      <div>
+        <span>{{ i18n.text('companyAmount') }}</span
+        ><strong
+          >{{ x.companyCurrencyAmount | number: '1.2-6' }} {{ x.companyCurrencyCode }}</strong
+        >
+      </div>
+      <div>
+        <span>{{ i18n.text('exchange') }}</span
+        ><strong
+          >1 {{ x.currencyCode }} = {{ x.exchangeRate | number: '1.2-8' }}
+          {{ x.companyCurrencyCode }}</strong
+        ><small>{{ x.exchangeRateDate }} · {{ x.exchangeRateSource }}</small>
+      </div>
+    </section>
+    <section>
+      <h2>{{ i18n.text('allocations') }}</h2>
+      <div class="cards">
+        @for (line of x.lines; track line.customerInvoiceId) {
+          <article class="ui-card">
+            <a [routerLink]="['/sales/invoices', line.customerInvoiceId]"
+              ><strong>{{ line.invoiceNumber }}</strong></a
+            >
+            <dl>
+              <div>
+                <dt>{{ i18n.text('allocation') }}</dt>
+                <dd>{{ line.amount | number: '1.2-6' }} {{ x.currencyCode }}</dd>
+              </div>
+              <div>
+                <dt>{{ i18n.text('companyAmount') }}</dt>
+                <dd>
+                  {{ line.companyCurrencyAmount | number: '1.2-6' }} {{ x.companyCurrencyCode }}
+                </dd>
+              </div>
+              <div>
+                <dt>{{ i18n.text('carrying') }}</dt>
+                <dd>
+                  {{ line.receivableCarryingAmount | number: '1.2-6' }} {{ x.companyCurrencyCode }}
+                </dd>
+              </div>
+            </dl>
+          </article>
+        }
+      </div>
+    </section>
+    <section class="ui-card">
+      <h2>{{ i18n.text('accounting') }}</h2>
+      <p>{{ i18n.text('journal') }}: {{ x.journalEntryNumber }}</p>
+      @if (x.reversalJournalEntryNumber) {
+        <p>{{ i18n.text('reversalJournal') }}: {{ x.reversalJournalEntryNumber }}</p>
+      }
+    </section>
+    @if (x.notes) {
+      <section class="ui-card">
+        <h2>{{ i18n.text('notes') }}</h2>
+        <p>{{ x.notes }}</p>
+      </section>
+    }
+    @if (x.status === 2 && session.can('CustomerPayments.Reverse')) {
+      <form class="ui-card reverse" [formGroup]="reverseForm" (ngSubmit)="reverse()">
+        <label class="ui-field"
+          ><span>{{ i18n.text('reversalDate') }}</span
+          ><input type="date" formControlName="reversalDate"
+        /></label>
+        <label class="ui-field"
+          ><span>{{ i18n.text('reversalReason') }}</span
+          ><input formControlName="reason" maxlength="500"
+        /></label>
+        <button class="ui-button danger" [disabled]="saving()">{{ i18n.text('reverse') }}</button>
+      </form>
+    } @else if (x.status === 3) {
+      <p class="ui-card completed">{{ i18n.text('completed') }}</p>
+    }
+  } @else if (page(); as p) {
+    <app-page-header
+      [eyebrow]="i18n.text('area')"
+      [title]="i18n.text('create')"
+      [description]="p.customerName + ' — ' + p.currencyCode"
+    />
+    <a
+      class="ui-button back"
+      [routerLink]="['/sales/invoices', form.controls.sourceCustomerInvoiceId.value]"
+      >{{ i18n.text('back') }}</a
+    >
+    <p class="ui-card safe">{{ i18n.text('safe') }}</p>
+    @if (problem(); as issue) {
+      <app-api-recovery [problem]="issue" [allowRetry]="false" />
+    }
+    <form [formGroup]="form" (ngSubmit)="create()">
+      <section class="ui-card form-head">
+        <label class="ui-field"
+          ><span>{{ i18n.text('paymentDate') }}</span
+          ><input type="date" formControlName="paymentDate"
+        /></label>
+        <label class="ui-field"
+          ><span>{{ i18n.text('paymentMethod') }}</span
+          ><select formControlName="paymentMethodId">
+            <option [ngValue]="0">{{ i18n.text('selectMethod') }}</option>
+            @for (method of p.paymentMethods; track method.id) {
+              <option [ngValue]="method.id">{{ method.name }}</option>
+            }
+          </select></label
+        >
+        <label class="ui-field"
+          ><span>{{ i18n.text('externalReference') }}</span
+          ><input formControlName="externalReference" maxlength="100"
+        /></label>
+        <label class="ui-field wide"
+          ><span>{{ i18n.text('notes') }}</span
+          ><input formControlName="notes" maxlength="1000"
+        /></label>
+      </section>
+      <h2>{{ i18n.text('openInvoices') }}</h2>
+      <div class="cards" formArrayName="lines">
+        @for (group of lines.controls; track group; let index = $index) {
+          <article class="ui-card" [formGroupName]="index">
+            <div class="heading">
+              <a [routerLink]="['/sales/invoices', p.openInvoices[index].customerInvoiceId]"
+                ><strong>{{ p.openInvoices[index].invoiceNumber }}</strong></a
+              ><span>{{ p.openInvoices[index].dueDate }}</span>
+            </div>
+            <dl>
+              <div>
+                <dt>{{ i18n.text('invoiceTotal') }}</dt>
+                <dd>{{ p.openInvoices[index].totalAmount | number: '1.2-6' }}</dd>
+              </div>
+              <div>
+                <dt>{{ i18n.text('paid') }}</dt>
+                <dd>{{ p.openInvoices[index].paidAmount | number: '1.2-6' }}</dd>
+              </div>
+              <div>
+                <dt>{{ i18n.text('outstanding') }}</dt>
+                <dd>
+                  {{ p.openInvoices[index].outstandingAmount | number: '1.2-6' }}
+                  {{ p.currencyCode }}
+                </dd>
+              </div>
+            </dl>
+            <label class="ui-field"
+              ><span>{{ i18n.text('allocation') }}</span
+              ><input
+                type="number"
+                min="0"
+                [max]="p.openInvoices[index].outstandingAmount"
+                step=".01"
+                formControlName="amount"
+            /></label>
+          </article>
+        }
+      </div>
+      <div class="ui-card submit">
+        <strong
+          >{{ i18n.text('total') }}: {{ allocationTotal() | number: '1.2-6' }}
+          {{ p.currencyCode }}</strong
+        ><button
+          class="ui-button primary"
+          [disabled]="saving() || form.invalid || allocationTotal() <= 0"
+        >
+          {{ i18n.text('post') }}
+        </button>
+      </div>
+    </form>
+  } @else {
+    <app-page-header
+      [eyebrow]="i18n.text('area')"
+      [title]="i18n.text('title')"
+      [description]="i18n.text('description')"
+    />
+    <form class="ui-card filters" (ngSubmit)="load()">
+      <label class="ui-field"
+        ><span>{{ i18n.text('search') }}</span
+        ><input [formControl]="search" /></label
+      ><button class="ui-button">{{ i18n.text('apply') }}</button>
+    </form>
+    @if (!rows().length) {
+      <app-feedback-state kind="empty" [title]="i18n.text('empty')" />
+    }
+    <div class="cards">
+      @for (payment of rows(); track payment.id) {
+        <article class="ui-card">
+          <div class="heading">
+            <strong>{{ payment.paymentNumber }}</strong
+            ><span class="status">{{ i18n.status(payment.status) }}</span>
+          </div>
+          <p>{{ payment.customerName }}</p>
+          <p>{{ payment.paymentDate }} · {{ payment.paymentMethodName }}</p>
+          <p>{{ payment.totalAmount | number: '1.2-6' }} {{ payment.currencyCode }}</p>
+          <a class="ui-button" [routerLink]="['/sales/payments', payment.id]">{{
+            i18n.text('view')
+          }}</a>
+        </article>
+      }
+    </div>
+  }
+</main>

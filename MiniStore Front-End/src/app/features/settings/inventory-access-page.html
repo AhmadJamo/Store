@@ -1,0 +1,65 @@
+<section class="settings-form-page">
+  <app-page-header eyebrow="ADMIN" [title]="i18n.text('inventoryAccess')" [description]="i18n.text('inventoryAccessDescription')" />
+  @if (loading()) { <app-feedback-state kind="loading" [title]="i18n.text('loading')" /> } @else {
+    @if (problem(); as failure) { <app-api-recovery [problem]="failure" [allowRetry]="false" /> }
+    @if (message() === 'branch') { <p class="save-status" role="status">{{ i18n.text('inventoryAccessSaved') }}</p> }
+    @if (message() === 'terminal') { <p class="save-status" role="status">{{ i18n.text('posTerminalCreated') }}</p> }
+    @if (message() === 'terminalWarehouse') { <p class="save-status" role="status">{{ i18n.text('posWarehouseSaved') }}</p> }
+
+    <form class="form-card" [formGroup]="branchForm" appSafeFormShortcuts [saving]="saving()" (saveShortcut)="saveBranchAccess()" (ngSubmit)="saveBranchAccess()">
+      <h2>{{ i18n.text('branchWarehouseAccess') }}</h2>
+      <div class="form-grid">
+        <label class="ui-field"><span>{{ i18n.text('branch') }}</span><select formControlName="branchId"><option [ngValue]="0">{{ i18n.text('selectBranch') }}</option>@for (branch of branches(); track branch.id) { <option [ngValue]="branch.id">{{ branch.displayName }}</option> }</select></label>
+        <label class="ui-field"><span>{{ i18n.text('warehouse') }}</span><select formControlName="warehouseId"><option [ngValue]="0">{{ i18n.text('selectWarehouse') }}</option>@for (warehouse of warehouses(); track warehouse.id) { <option [ngValue]="warehouse.id">{{ warehouse.name }}</option> }</select></label>
+        <label class="ui-field"><span>{{ i18n.text('priority') }}</span><input type="number" min="1" max="999" formControlName="priority" /></label>
+        <fieldset class="checks full"><legend>{{ i18n.text('accessPermissions') }}</legend>
+          <label><input type="checkbox" formControlName="allowPosSales" /> {{ i18n.text('posSales') }}</label>
+          <label><input type="checkbox" formControlName="isDefaultForPos" /> {{ i18n.text('branchPosDefault') }}</label>
+          <label><input type="checkbox" formControlName="allowPurchases" /> {{ i18n.text('purchases') }}</label>
+          <label><input type="checkbox" formControlName="allowTransferOut" /> {{ i18n.text('transferOut') }}</label>
+          <label><input type="checkbox" formControlName="allowTransferIn" /> {{ i18n.text('transferIn') }}</label>
+          <label><input type="checkbox" formControlName="allowReplenishment" /> {{ i18n.text('replenishment') }}</label>
+        </fieldset>
+      </div>
+      <button class="ui-button primary" type="submit" [disabled]="saving() || branchForm.invalid">{{ i18n.text('saveBranchAccess') }}</button>
+    </form>
+
+    <section class="form-card"><h2>{{ i18n.text('configuredBranchAccess') }}</h2>
+      @if (branchAccesses().length === 0) { <p>{{ i18n.text('noBranchAccess') }}</p> } @else {
+        <div class="table-scroll"><table><thead><tr><th scope="col">{{ i18n.text('branch') }}</th><th scope="col">{{ i18n.text('warehouse') }}</th><th scope="col">{{ i18n.text('priority') }}</th><th scope="col">{{ i18n.text('posSales') }}</th><th scope="col">{{ i18n.text('purchases') }}</th><th scope="col">{{ i18n.text('transferOut') }}</th><th scope="col">{{ i18n.text('transferIn') }}</th><th scope="col">{{ i18n.text('replenishment') }}</th></tr></thead><tbody>
+          @for (access of branchAccesses(); track access.branchId + '-' + access.warehouseId) { <tr><td>{{ access.branchName }}</td><td>{{ access.warehouseName }}</td><td>{{ access.priority }}</td><td>{{ i18n.text(access.allowPosSales ? (access.isDefaultForPos ? 'allowedDefault' : 'allowedLabel') : 'notAllowedLabel') }}</td><td>{{ i18n.text(access.allowPurchases ? 'allowedLabel' : 'notAllowedLabel') }}</td><td>{{ i18n.text(access.allowTransferOut ? 'allowedLabel' : 'notAllowedLabel') }}</td><td>{{ i18n.text(access.allowTransferIn ? 'allowedLabel' : 'notAllowedLabel') }}</td><td>{{ i18n.text(access.allowReplenishment ? 'allowedLabel' : 'notAllowedLabel') }}</td></tr> }
+        </tbody></table></div>
+      }
+    </section>
+
+    <div class="sequence-grid">
+      <form class="form-card" [formGroup]="terminalForm" (ngSubmit)="createTerminal()">
+        <h2>{{ i18n.text('createPosTerminal') }}</h2><p>{{ i18n.text('configureBranchFirst') }}</p>
+        <div class="form-grid">
+          <label class="ui-field full"><span>{{ i18n.text('terminalName') }}</span><input maxlength="100" formControlName="name" /></label>
+          <label class="ui-field"><span>{{ i18n.text('branch') }}</span><select formControlName="branchId"><option [ngValue]="0">{{ i18n.text('selectBranch') }}</option>@for (branch of branches(); track branch.id) { <option [ngValue]="branch.id">{{ branch.displayName }}</option> }</select></label>
+          <label class="ui-field"><span>{{ i18n.text('defaultWarehouse') }}</span><select formControlName="defaultWarehouseId"><option [ngValue]="0">{{ i18n.text('selectAllowedPosWarehouse') }}</option>@for (warehouse of allowedPosWarehouses(terminalForm.controls.branchId.value); track warehouse.id) { <option [ngValue]="warehouse.id">{{ warehouse.name }}</option> }</select></label>
+        </div><button class="ui-button primary" type="submit" [disabled]="saving() || terminalForm.invalid">{{ i18n.text('createTerminal') }}</button>
+      </form>
+
+      <form class="form-card" [formGroup]="terminalWarehouseForm" (ngSubmit)="saveTerminalWarehouse()">
+        <h2>{{ i18n.text('addWarehouseToPos') }}</h2>
+        <div class="form-grid">
+          <label class="ui-field"><span>{{ i18n.text('posTerminal') }}</span><select formControlName="posTerminalId"><option [ngValue]="0">{{ i18n.text('selectPosTerminal') }}</option>@for (terminal of posTerminals(); track terminal.id) { <option [ngValue]="terminal.id">{{ terminal.branchName }} · {{ terminal.name }}</option> }</select></label>
+          <label class="ui-field"><span>{{ i18n.text('warehouse') }}</span><select formControlName="warehouseId"><option [ngValue]="0">{{ i18n.text('selectAllowedPosWarehouse') }}</option>@for (warehouse of allowedTerminalWarehouses(); track warehouse.id) { <option [ngValue]="warehouse.id">{{ warehouse.name }}</option> }</select></label>
+          <label class="ui-field"><span>{{ i18n.text('priority') }}</span><input type="number" min="1" max="999" formControlName="priority" /></label>
+          <label class="full"><input type="checkbox" formControlName="makeDefault" /> {{ i18n.text('makePosDefault') }}</label>
+        </div><button class="ui-button primary" type="submit" [disabled]="saving() || terminalWarehouseForm.invalid">{{ i18n.text('savePosWarehouse') }}</button>
+      </form>
+    </div>
+
+    <section class="form-card"><h2>{{ i18n.text('configuredPosTerminals') }}</h2>
+      @if (posTerminals().length === 0) { <p>{{ i18n.text('noPosTerminals') }}</p> } @else {
+        <div class="table-scroll"><table><thead><tr><th scope="col">{{ i18n.text('posTerminal') }}</th><th scope="col">{{ i18n.text('branch') }}</th><th scope="col">{{ i18n.text('defaultWarehouse') }}</th><th scope="col">{{ i18n.text('allowedWarehouses') }}</th><th scope="col">{{ i18n.text('status') }}</th></tr></thead><tbody>
+          @for (terminal of posTerminals(); track terminal.id) { <tr><td>{{ terminal.name }}</td><td>{{ terminal.branchName }}</td><td>{{ terminal.defaultWarehouseName }}</td><td>{{ terminalWarehouseSummary(terminal) }}</td><td>{{ i18n.text(terminal.isActive ? 'active' : 'inactive') }}</td></tr> }
+        </tbody></table></div>
+      }
+    </section>
+    <footer class="form-actions"><a class="ui-button secondary" routerLink="/settings">{{ i18n.text('back') }}</a></footer>
+  }
+</section>

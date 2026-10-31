@@ -37,13 +37,17 @@ public class WarehouseService
     {
         var warehouses =
             await _warehouseRepository.GetAllAsync();
+        var branches = (await _branchRepository.GetAllAsync()).ToDictionary(x => x.Id);
+        var accounts = (await _accountRepository.GetAllAsync()).ToDictionary(x => x.Id);
 
         return warehouses.Select(warehouse => new WarehouseDto
         {
             Id = warehouse.Id,
             Name = warehouse.Name,
             BranchId = warehouse.BranchId,
+            BranchName = warehouse.BranchId.HasValue && branches.TryGetValue(warehouse.BranchId.Value, out var branch) ? branch.Name : null,
             InventoryAccountId = warehouse.InventoryAccountId,
+            InventoryAccountName = warehouse.InventoryAccountId.HasValue && accounts.TryGetValue(warehouse.InventoryAccountId.Value, out var account) ? $"{account.Code} — {account.Name}" : null,
             Type = warehouse.Type,
             ControlMode = warehouse.ControlMode,
             PickingStrategy = warehouse.PickingStrategy,
@@ -62,13 +66,17 @@ public class WarehouseService
 
         if (warehouse == null)
             return null;
+        var branch = warehouse.BranchId.HasValue ? await _branchRepository.GetByIdAsync(warehouse.BranchId.Value) : null;
+        var account = warehouse.InventoryAccountId.HasValue ? await _accountRepository.GetByIdAsync(warehouse.InventoryAccountId.Value) : null;
 
         return new WarehouseDto
         {
             Id = warehouse.Id,
             Name = warehouse.Name,
             BranchId = warehouse.BranchId,
+            BranchName = branch?.Name,
             InventoryAccountId = warehouse.InventoryAccountId,
+            InventoryAccountName = account is null ? null : $"{account.Code} — {account.Name}",
             Type = warehouse.Type,
             ControlMode = warehouse.ControlMode,
             PickingStrategy = warehouse.PickingStrategy,

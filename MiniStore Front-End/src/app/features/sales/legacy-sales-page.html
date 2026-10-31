@@ -1,0 +1,346 @@
+<main class="legacy-sales-page">
+  @if (loading()) {
+    <app-feedback-state kind="loading" [title]="i18n.text('loading')" />
+  } @else if (failure(); as issue) {
+    <app-api-recovery [problem]="issue" (retry)="load()" />
+  } @else if (detail(); as page) {
+    <app-page-header
+      [eyebrow]="i18n.text('area')"
+      [title]="page.sale.invoiceNumber"
+      [description]="i18n.text('description')"
+    />
+    <div class="toolbar">
+      <a class="ui-button" routerLink="/sales/legacy">{{ i18n.text('back') }}</a
+      ><span class="status" [class.posted]="page.isPosted">{{
+        i18n.text(page.isPosted ? 'posted' : 'notPosted')
+      }}</span>
+    </div>
+    @if (success()) {
+      <p class="notice success" role="status">{{ success() }}</p>
+    }
+    @if (problem(); as issue) {
+      <app-api-recovery [problem]="issue" [allowRetry]="false" />
+    }
+    <section class="facts ui-card">
+      <div>
+        <span>{{ i18n.text('channel') }}</span
+        ><strong>{{ i18n.channel(page.channel) }}</strong>
+      </div>
+      <div>
+        <span>{{ i18n.text('date') }}</span
+        ><strong>{{ page.sale.date | date: 'mediumDate' }}</strong>
+      </div>
+      <div>
+        <span>{{ i18n.text('warehouse') }}</span
+        ><strong>{{ page.warehouseName }}</strong>
+      </div>
+      <div>
+        <span>{{ i18n.text('customer') }}</span
+        ><strong>{{ page.customerName || i18n.text('walkIn') }}</strong>
+      </div>
+      <div>
+        <span>{{ i18n.text('payment') }}</span
+        ><strong>{{ page.paymentMethodName }}</strong>
+      </div>
+      <div>
+        <span>{{ i18n.text('total') }}</span
+        ><strong>{{ page.sale.totalAmount | number: '1.2-2' }}</strong>
+      </div>
+    </section>
+    <section class="ui-card table-card">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>{{ i18n.text('product') }}</th>
+              <th>{{ i18n.text('quantity') }}</th>
+              <th>{{ i18n.text('price') }}</th>
+              <th>{{ i18n.text('discount') }}</th>
+              <th>{{ i18n.text('total') }}</th>
+              <th>{{ i18n.text('cogs') }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (line of page.sale.items; track line.id) {
+              <tr>
+                <td>{{ line.productName }}</td>
+                <td>{{ line.quantity | number: '1.0-6' }}</td>
+                <td>{{ line.salePrice | number: '1.2-2' }}</td>
+                <td>{{ line.discountAmount | number: '1.2-2' }}</td>
+                <td>{{ line.total | number: '1.2-2' }}</td>
+                <td>{{ line.costOfGoodsSold | number: '1.2-2' }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+    <section class="totals ui-card">
+      <div>
+        <span>{{ i18n.text('subtotal') }}</span
+        ><strong>{{ page.sale.subtotal | number: '1.2-2' }}</strong>
+      </div>
+      <div>
+        <span>{{ i18n.text('invoiceDiscount') }}</span
+        ><strong>{{ page.sale.invoiceDiscountAmount | number: '1.2-2' }}</strong>
+      </div>
+      <div>
+        <span>{{ i18n.text('taxAmount') }}</span
+        ><strong>{{ page.sale.taxAmount | number: '1.2-2' }}</strong>
+      </div>
+      <div>
+        <span>{{ i18n.text('total') }}</span
+        ><strong>{{ page.sale.totalAmount | number: '1.2-2' }}</strong>
+      </div>
+    </section>
+    @if (!page.isPosted && session.can('Sales.Create')) {
+      <button class="ui-button primary" [disabled]="saving()" (click)="post()">
+        {{ i18n.text('post') }}
+      </button>
+    }
+    @if (page.isPosted && session.can('SalesReturns.Create')) {
+      <a class="ui-button" [routerLink]="['/sales/legacy', page.sale.id, 'return']">{{
+        i18n.text('createReturn')
+      }}</a>
+    }
+  } @else if (page(); as p) {
+    <app-page-header
+      [eyebrow]="i18n.text('area')"
+      [title]="i18n.text(isPos ? 'posCreate' : 'create')"
+      [description]="i18n.text('description')"
+    />
+    @if (problem(); as issue) {
+      <app-api-recovery [problem]="issue" [allowRetry]="false" />
+    }
+    <form [formGroup]="form" (ngSubmit)="create()">
+      <section class="form-grid ui-card">
+        @if (isPos && posPage(); as pos) {
+          <label class="ui-field"
+            ><span>{{ i18n.text('terminal') }}</span
+            ><select formControlName="posTerminalId" (change)="terminalChanged()">
+              @for (terminal of pos.terminals; track terminal.id) {
+                <option [ngValue]="terminal.id">
+                  {{ terminal.branchName }} · {{ terminal.name }}
+                </option>
+              }
+            </select></label
+          >
+        }
+        <label class="ui-field"
+          ><span>{{ i18n.text('date') }}</span
+          ><input type="date" formControlName="date"
+        /></label>
+        <label class="ui-field"
+          ><span>{{ i18n.text('warehouse') }}</span
+          ><select formControlName="warehouseId">
+            @if (isPos) {
+              @for (o of terminalWarehouses(); track o.warehouseId) {
+                <option [ngValue]="o.warehouseId">{{ o.warehouseName }}</option>
+              }
+            } @else {
+              @for (o of p.warehouses; track o.id) {
+                <option [ngValue]="o.id">{{ o.label }}</option>
+              }
+            }
+          </select></label
+        >
+        @if (isPos) {
+          <label class="ui-field"
+            ><span>{{ i18n.text('orderType') }}</span
+            ><select formControlName="posOrderType">
+              @for (value of orderTypes(); track value) {
+                <option [ngValue]="value">{{ i18n.orderType(value) }}</option>
+              }
+            </select></label
+          >
+          @if (runtime()?.requireServiceReference || form.controls.posOrderType.value === 2) {
+            <label class="ui-field"
+              ><span>{{ i18n.text('serviceReference') }}</span
+              ><input formControlName="serviceReference"
+            /></label>
+          }
+          @if (runtime()?.enableGuestCount && form.controls.posOrderType.value === 2) {
+            <label class="ui-field"
+              ><span>{{ i18n.text('guestCount') }}</span
+              ><input type="number" min="1" max="999" formControlName="guestCount"
+            /></label>
+          }
+        }
+        <label class="ui-field"
+          ><span>{{ i18n.text('customer') }}</span
+          ><select formControlName="customerId">
+            <option [ngValue]="null">{{ i18n.text('walkIn') }}</option>
+            @for (o of p.customers; track o.id) {
+              <option [ngValue]="o.id">{{ o.label }}</option>
+            }
+          </select></label
+        >
+        <label class="ui-field"
+          ><span>{{ i18n.text('payment') }}</span
+          ><select formControlName="paymentMethodId">
+            @for (o of p.paymentMethods; track o.id) {
+              <option [ngValue]="o.id">{{ o.label }}</option>
+            }
+          </select></label
+        >
+        <label class="ui-field"
+          ><span>{{ i18n.text('tax') }}</span
+          ><select formControlName="taxRateId">
+            <option [ngValue]="null">{{ i18n.text('noTax') }}</option>
+            @for (o of p.taxRates; track o.id) {
+              <option [ngValue]="o.id">
+                {{ o.label }} ({{ o.rate }}% ·
+                {{ i18n.text(o.isPriceInclusive ? 'inclusive' : 'exclusive') }})
+              </option>
+            }
+          </select></label
+        >
+        <label class="ui-field wide"
+          ><span>{{ i18n.text('notes') }}</span
+          ><textarea formControlName="notes"></textarea>
+        </label>
+      </section>
+      <div class="section-heading">
+        <h2>{{ i18n.text('items') }}</h2>
+        <button type="button" class="ui-button" (click)="addItem()">
+          {{ i18n.text('addItem') }}
+        </button>
+      </div>
+      <label class="ui-field search"
+        ><span>{{ i18n.text('productSearch') }}</span
+        ><input [formControl]="productSearch"
+      /></label>
+      @if (isPos) {
+        <section
+          class="product-catalog"
+          [class.compact]="runtime()?.compactProductCards"
+          [style.--pos-columns]="runtime()?.productColumns || 4"
+        >
+          @for (product of filteredProducts(p); track product.id) {
+            <button type="button" class="product-card ui-card" (click)="addProduct(product)">
+              <strong>{{ product.name }}</strong
+              ><span>{{ product.code }}</span>
+              @if (runtime()?.showBarcode && product.barcode) {
+                <small>{{ product.barcode }}</small>
+              }
+              @if (runtime()?.showPrice) {
+                <b>{{ product.retailPrice | number: '1.2-2' }}</b>
+              }
+              @if (runtime()?.showStock) {
+                <small>{{ i18n.text('stock') }}: {{ stock(product.id) | number: '1.0-6' }}</small>
+              }
+            </button>
+          }
+        </section>
+      }
+      <div class="line-list" formArrayName="items">
+        @for (group of items.controls; track group; let i = $index) {
+          <article class="line ui-card" [formGroupName]="i">
+            <label class="ui-field product"
+              ><span>{{ i18n.text('product') }}</span
+              ><select formControlName="productId" (change)="productChanged(i)">
+                @for (o of filteredProducts(p); track o.id) {
+                  <option [ngValue]="o.id">
+                    {{ o.code }} — {{ o.name }}
+                    @if (o.barcode && (!isPos || runtime()?.showBarcode)) {
+                      ({{ o.barcode }})
+                    }
+                  </option>
+                }
+              </select></label
+            >
+            <label class="ui-field"
+              ><span>{{ i18n.text('quantity') }}</span
+              ><input type="number" step=".000001" formControlName="quantity"
+            /></label>
+            @if (!isPos || runtime()?.showPrice) {
+              <label class="ui-field"
+                ><span>{{ i18n.text('price') }}</span
+                ><input type="number" formControlName="salePrice" readonly
+              /></label>
+            }
+            @if (isPos && runtime()?.showStock) {
+              <p class="stock">
+                {{ i18n.text('stock') }}:
+                {{ stock(group.get('productId')?.value) | number: '1.0-6' }}
+              </p>
+            }
+            <label class="ui-field"
+              ><span>{{ i18n.text('discountType') }}</span
+              ><select formControlName="discountType">
+                <option [ngValue]="1">{{ i18n.text('percentage') }}</option>
+                <option [ngValue]="2">{{ i18n.text('fixed') }}</option>
+              </select></label
+            >
+            <label class="ui-field"
+              ><span>{{ i18n.text('discount') }}</span
+              ><input type="number" step=".01" formControlName="discountValue"
+            /></label>
+            @if (!isPos || runtime()?.enableItemNotes) {
+              <label class="ui-field"
+                ><span>{{ i18n.text('lineNotes') }}</span
+                ><input formControlName="notes"
+              /></label>
+            }
+            @if (isTracked(i)) {
+              <label class="ui-field wide"
+                ><span>{{ i18n.text('tracking') }}</span
+                ><textarea formControlName="trackingAllocations"></textarea
+                ><small>{{ i18n.text('trackingHelp') }}</small></label
+              >
+            }
+            <button type="button" class="ui-button danger" (click)="removeItem(i)">
+              {{ i18n.text('remove') }}
+            </button>
+          </article>
+        }
+      </div>
+      <section class="discount ui-card">
+        <label class="ui-field"
+          ><span>{{ i18n.text('discountType') }}</span
+          ><select formControlName="invoiceDiscountType">
+            <option [ngValue]="1">{{ i18n.text('percentage') }}</option>
+            <option [ngValue]="2">{{ i18n.text('fixed') }}</option>
+          </select></label
+        ><label class="ui-field"
+          ><span>{{ i18n.text('invoiceDiscount') }}</span
+          ><input type="number" step=".01" formControlName="invoiceDiscountValue"
+        /></label>
+      </section>
+      <button
+        class="ui-button primary submit"
+        [disabled]="saving() || form.invalid || !items.length"
+      >
+        {{ i18n.text('save') }}
+      </button>
+    </form>
+  } @else {
+    <app-page-header
+      [eyebrow]="i18n.text('area')"
+      [title]="i18n.text('title')"
+      [description]="i18n.text('description')"
+    />
+    @if (session.can('Sales.Create')) {
+      <a class="ui-button primary create" routerLink="/sales/legacy/new">{{
+        i18n.text('create')
+      }}</a>
+    }
+    @if (!rows().length) {
+      <app-feedback-state kind="empty" [title]="i18n.text('empty')" />
+    }
+    <div class="cards">
+      @for (x of rows(); track x.id) {
+        <article class="ui-card">
+          <div class="card-heading">
+            <strong>{{ x.invoiceNumber }}</strong
+            ><span>{{ i18n.channel(x.channel) }}</span>
+          </div>
+          <p>{{ x.date | date: 'mediumDate' }} · {{ x.warehouseName }}</p>
+          <p>{{ x.customerName || i18n.text('walkIn') }}</p>
+          <strong>{{ x.totalAmount | number: '1.2-2' }}</strong
+          ><a class="ui-button" [routerLink]="['/sales/legacy', x.id]">{{ i18n.text('view') }}</a>
+        </article>
+      }
+    </div>
+  }
+</main>

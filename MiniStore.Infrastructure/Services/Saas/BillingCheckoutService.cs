@@ -40,7 +40,7 @@ public class BillingCheckoutService(
         var discount = decimal.Round(subtotal * (promotion?.DiscountPercentage ?? 0) / 100m, 2);
         var checkout = new BillingCheckoutSession(tenantId, planId, cycle, promotion?.Id, subtotal, discount, plan.Currency);
         await context.BillingCheckoutSessions.AddAsync(checkout); await context.SaveChangesAsync();
-        return new(checkout.Id, plan.Id, plan.NameEnglish, cycle, subtotal, discount, checkout.Total, checkout.Currency, promotion?.Code, checkout.ExpiresAt);
+        return new(checkout.Id, plan.Id, plan.NameEnglish, plan.NameArabic, cycle, subtotal, discount, checkout.Total, checkout.Currency, promotion?.Code, checkout.ExpiresAt);
     }
 
     public async Task CompleteAsync(Guid sessionId, string providerReference)

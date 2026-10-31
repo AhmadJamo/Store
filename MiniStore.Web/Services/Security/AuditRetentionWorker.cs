@@ -7,14 +7,19 @@ namespace MiniStore.Web.Services;
 public sealed class AuditRetentionWorker(
     IServiceScopeFactory scopeFactory,
     IOptions<AuditRetentionOptions> options,
+    IBackgroundJobMonitor monitor,
     ILogger<AuditRetentionWorker> logger) : BackgroundService
 {
+    private const string JobKey = "audit-retention";
+
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        if (!options.Value.Enabled) return;
         var interval = TimeSpan.FromHours(Math.Clamp(options.Value.WorkerIntervalHours, 1, 168));
+        monitor.Register(JobKey, "jobAuditRetention", "AuditEvents.View", interval, options.Value.Enabled);
+        if (!options.Value.Enabled) { monitor.Disabled(JobKey); return; }
         while (!stoppingToken.IsCancellationRequested)
         {
+            monitor.Started(JobKey);
             try
             {
                 using var scope = scopeFactory.CreateScope();
@@ -22,10 +27,12 @@ public sealed class AuditRetentionWorker(
                     .RunRetentionAsync(stoppingToken);
                 logger.LogInformation("Audit retention completed: {DeletedCount} events removed after checkpoint {CheckpointId}",
                     result.DeletedCount, result.CheckpointId);
+                monitor.Succeeded(JobKey);
             }
             catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested) { break; }
             catch (Exception exception)
             {
+                monitor.Failed(JobKey);
                 logger.LogCritical(exception, "Audit retention/checkpoint execution failed; no unarchived candidates should be deleted");
             }
 

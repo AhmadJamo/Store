@@ -1,0 +1,15 @@
+<section class="categories-page">
+  <app-page-header eyebrow="CATALOG" [title]="i18n.text('productCategories')" [description]="i18n.text('productCategoriesDescription')"><a class="ui-button secondary" routerLink="/products">{{ i18n.text('backToProducts') }}</a></app-page-header>
+  @if (problem()) { <app-form-error-summary [title]="problem()" [errors]="fieldErrors()" (fieldRequested)="focusField($event)" /> }
+  @if (session.can('Products.Edit')) {
+    <form class="category-form" appSafeFormShortcuts [saving]="saving()" (saveShortcut)="create()" [formGroup]="form" (ngSubmit)="create()" novalidate>
+      <label class="ui-field"><span>{{ i18n.text('categoryName') }} *</span><input formControlName="name" maxlength="100" />@if (errorFor('name')) { <small>{{ errorFor('name') }}</small> }</label>
+      <label class="ui-field"><span>{{ i18n.text('categoryCode') }} *</span><input formControlName="code" maxlength="30" autocapitalize="characters" /><small class="hint">{{ i18n.text('categoryCodeHint') }}</small>@if (errorFor('code')) { <small>{{ errorFor('code') }}</small> }</label>
+      <button class="ui-button primary" type="submit" [disabled]="saving()">{{ saving() ? i18n.text('adding') : i18n.text('addCategory') }}</button>
+    </form>
+  }
+  @if (loading()) { <app-feedback-state kind="loading" [title]="i18n.text('loading')" /> }
+  @else if (loadingProblem(); as failure) { <app-api-recovery [problem]="failure" (retry)="load()" /> }
+  @else if (!items().length) { <app-feedback-state kind="empty" [title]="i18n.text('noCategories')" /> }
+  @else { <app-data-table [label]="i18n.text('productCategories')"><table><thead><tr><th>{{ i18n.text('categoryName') }}</th><th>{{ i18n.text('categoryCode') }}</th><th>{{ i18n.text('status') }}</th>@if (session.can('Products.Edit')) { <th>{{ i18n.text('categoryActions') }}</th> }</tr></thead><tbody>@for (category of items(); track category.id) { <tr><td><strong>{{ category.name }}</strong></td><td><code>{{ category.code }}</code></td><td><span class="ui-badge" [class.success]="category.isActive" [class.warning]="!category.isActive">{{ category.isActive ? i18n.text('active') : i18n.text('inactive') }}</span></td>@if (session.can('Products.Edit')) { <td><button class="ui-button small" type="button" [disabled]="changingId() !== null" (click)="setStatus(category)">{{ category.isActive ? i18n.text('deactivate') : i18n.text('activate') }}</button></td> }</tr> }</tbody></table></app-data-table> }
+</section>

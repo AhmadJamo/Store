@@ -1,7 +1,73 @@
 # Security assessment
 > Status: PARTIALLY VERIFIED
 > Source of truth: Static inspection and focused executable regression checks
-> Last reviewed: 2026-10-22
+> Last reviewed: 2026-10-27
+
+## Internal Angular API boundary (2026-10-24)
+
+The same-origin `/api/v1` boundary reuses the Identity application cookie, tenant session middleware and backend permission service. Authentication and authorization failures return RFC Problem Details JSON with a correlation ID instead of redirecting API callers to MVC pages. Unsafe methods remain under the global antiforgery filter; Angular retrieves a request token from an authenticated endpoint and sends it through `X-CSRF-TOKEN`. OpenAPI requires authentication and contains only internal v1 routes. No JWT, local-storage credential, broad CORS policy or client-authoritative permission decision was added.
+
+The tenant `Admin` role is company-scoped and is the only administration shortcut. Its Angular session projection now
+returns every code-owned permission, matching `CanAsync` and `PermissionAuthorizationHandler`; non-admin projections are
+unchanged. A global Identity role, Platform owner identity or account name does not grant tenant administration.
+
+The MOD-019 presentation cutover filter runs after authorization and cannot supply an arbitrary destination. It accepts
+only a validated local Angular base path and a code-owned controller/action allowlist, encodes route values, and ignores
+POST plus every unlisted action. Enabling a surface therefore cannot redirect a mutation or replace endpoint permission checks.
+
+MOD-030A serves only generated public Angular assets below `/app`. Its non-file fallback returns the generated index only
+inside that prefix and cannot shadow `/api`, authentication, health, OpenAPI or MVC endpoints. Hashed assets are immutable;
+the index is no-cache. The hosted client continues to use the same-origin HttpOnly Identity and antiforgery cookies and
+stores no credential. Customers, Suppliers, Products and AnalyticsCenter are the committed AngularDefault cohorts; server authorization
+still runs before every allowlisted MVC redirect and all API operations independently reauthorize. MOD-030B added only
+GET routes for Product create/edit presentation; unsafe operations remain protected API or MVC requests.
+MOD-030C requires both Analytics View and Customize permissions before rehearsal and keeps Settings at MVC because the
+available operator does not hold `Administration.Access`. Prepared Settings mappings contain only GET pages and do not
+redirect `OrganizationLogo` or any unsafe action.
+
+Customer and Supplier Angular slices use operation-specific View/Create/Edit permissions on every endpoint. Supplier form options are projected by the Application layer, and submitted account/product identifiers are revalidated by existing services; client filtering is never treated as authorization. Supplier stale-write failures return HTTP 409 while keeping global antiforgery and tenant repository filters intact.
+
+Angular user/role administration repeats exact `Users.*` and `Roles.*` policies on every API operation; navigation visibility cannot authorize a request. Unsafe operations require antiforgery, system roles cannot be mutated, role updates use rowversion with HTTP 409 on stale data, and all supplied role/permission identifiers are resolved server-side. User creation shares one Application contract with MVC, checks the tenant subscription limit and active company role, and commits membership, assignment and sanitized semantic audit evidence in one `UnitOfWork`. If that tenant binding fails after Identity account creation, the new account is removed after clearing the rolled-back tracker state. Passwords are never returned, logged, or stored by Angular and are cleared from the form after rejection.
+
+The Angular settings mutation surface requires authenticated `Administration.Access` for every identity, logo,
+preferences, discount and purchase-matching operation. Unsafe PUT/POST/DELETE requests use the shared antiforgery
+interceptor/filter. Logo content is limited to 2 MB and validated by PNG/JPEG signature in the Application service.
+General, discount and purchase-matching writes carry database rowversions; stale submissions return coded HTTP 409,
+and semantic audit remains inside the existing Application save path. The client never treats route visibility as
+authorization and never writes EF entities directly.
+
+The Command Center never aggregates unauthorized backend data: its provider list is session-permission filtered and its previews call the already-protected Customer/Supplier APIs with bounded paging. Local Command Center persistence contains only validated navigation/provider identifiers and view mode; restoration drops unknown, unauthorized, oversized or injected values. Record payloads, search terms, arbitrary URLs and permission decisions are not stored.
+
+MOD-009 keeps Customer/Supplier draft payloads in memory only. Saved list preferences use a versioned allowlist of booleans, sort enum and bounded page size; search text and record data are excluded and hostile JSON falls back to defaults. Server error field names must match a simple form-control identifier before DOM focus, preventing selector injection. Keyboard shortcuts invoke the normal validated form submit path and are suppressed while saving.
+
+MOD-010 layout preferences accept only explicit theme, density, sidebar and content-width enum values. They cannot grant permissions, reveal hidden navigation or store tenant/business payloads. Legacy version recovery imports only valid presentation values; reset removes the stored preference object. Mobile navigation remains filtered by the same session-aware registry.
+
+MOD-011 adds stable language-neutral Problem Details codes and correlation IDs without exposing exception types or
+stack traces. Angular offers retry only for transient read requests; failed mutations retain user input but require an
+explicit new save. Concurrency opens the already-authorized record route in a separate tab and never bypasses the
+server row version. Forbidden and permanent failures expose no retry or setup action.
+
+MOD-012 exposes no generic entity lookup. Sales Order and Customer Invoice evidence use separate routes and matching
+View policies; cross-document links require the destination View permission. Lists are capped, tenant filters remain in
+the reused services/repositories, and the contract contains display snapshots rather than mutable entity instances.
+
+MOD-013 action items require both the source View permission and the matching action permission before the server emits
+them. Contextual links open read-only document evidence; Angular never performs the mutation. MOD-014 profiles persist
+only allowlisted presentation values and reorder an already permission-filtered navigation list.
+
+MOD-015 keeps `AnalyticsCenter.View` on the API and repeats provider permission filtering in the Application service.
+Only Customer and Supplier Angular routes are valid drill targets, and export preview displays the bounded returned
+dataset without fetching hidden rows or generating a file. MOD-016 filters each worker by its existing module View
+permission, returns no exception text or tenant payload, and clearly marks analytics refresh plans as non-delivery.
+
+MOD-017C stores delegation inside the tenant-owned workspace aggregate. Only the owner or
+`AnalyticsCenter.Manage` may administer it, and all access endpoints additionally require
+`AnalyticsCenter.Customize`. Target users must be active company members; target roles are resolved inside the active
+tenant and protected by a tenant-composite foreign key. Revoked, expired and not-yet-active grants are excluded.
+Workspace discovery evaluates current user and role grants, but execution independently rechecks the provider's source
+permission, so delegation cannot elevate data access. Rowversion rejects stale grant/revoke commands.
+
+The Customers API independently applies `Customers.View`, `Customers.Create` and `Customers.Edit` to its matching operations. Sidebar visibility is only guidance; every endpoint reauthorizes. POST/PUT retain global antiforgery, DTO validation and tenant-filtered Application/repository access. Customer form data and row versions are never written to browser storage; stale updates return a correlation-bearing `409` response.
 
 SAL-130A analytics remain read-only and pass through tenant-filtered repositories in the Application layer. Saved workspaces are tenant-owned; personal rows are owner-filtered and shared creation requires a separate management permission rechecked in the Application service. The center filters and executes providers only after checking each provider-declared permission, including during crafted workspace creation. Date windows are capped at two years, module/widget keys are validated against the registered provider catalog, and database constraints prevent duplicate widget keys/orders. Comparison queries reuse the same tenant-scoped provider and filters for the derived prior period.
 
@@ -32,7 +98,7 @@ WMS-070A requires full dimensional reconciliation before tracking activation, re
 ## Verified protections and boundaries
 MVC antiforgery, local returnUrl validation, Identity password hashing, HTTPS redirection and production HSTS are enforced. The 2026-10-23 UI audit closed legacy gaps by adding controller-level automatic validation to Accounts, Branches, Payment Methods, Tax Rates, Products, Recipes, Product Stocks, Stock Transactions, Warehouses, Purchases, Suppliers, Company Onboarding and Settings. Regression now fails if any public MVC `[HttpPost]` action lacks explicit or controller-level validation. Inspected active data access uses EF LINQ; no raw SQL found. No confirmed XSS was identified in inspected dynamic row rendering; this is not a penetration-test guarantee.
 
-The language switch is an antiforgery-protected POST, accepts only `en-US` and `ar-JO`, uses `LocalRedirect` after validating the return URL, and stores an essential HttpOnly SameSite=Lax culture cookie. Arabic translation values are output through Razor encoding.
+The MVC and Angular language switches are antiforgery-protected POSTs, accept only normalized `en-US` and `ar-JO`, and share an essential HttpOnly SameSite=Lax culture cookie. MVC uses `LocalRedirect` after validating the return URL; the API returns no content. Both preserve the existing anonymous language-selection boundary, do not mutate through GET, and never store credentials or authorization state. Angular changes its visible locale only after the cookie write succeeds and treats server session culture as authoritative at bootstrap. Arabic translation values remain encoded by their presentation renderer.
 
 Actionable purchase-error guidance never bypasses authorization. A resolution button is rendered only when the current user satisfies the target screen's existing management permission; otherwise the notification directs the user to an administrator. The destination controller continues to enforce its own server-side permission independently of button visibility.
 
@@ -41,6 +107,25 @@ Successful purchase, inventory and warehouse notifications apply the same bounda
 PUR-200 direct RFQs require the dedicated `PurchaseSourcing.CreateDirect` controller policy and repeat that permission check inside the Application service. The service also evaluates the tenant amount ceiling, optional tenant role and supplier-active requirement before persistence, freezes the applied policy evidence and cannot create or authorize a Purchase Order. Attachments are tenant-owned database rows, file names are reduced to their final segment, each file is capped at 5 MB, each RFQ is capped at ten files and downloads require sourcing view permission.
 
 PUR-210 split awards require `SupplierQuotations.Award`, bind only the nested allocation command and resolve every supplied quotation-line identity inside the current tenant and sourcing event. The Application service rejects duplicates, non-submitted quotes, missing reasons, quantities above a supplier quote and any sourcing line whose awarded total differs from the approved requested quantity. The sourcing event closes in the same Serializable transaction as its immutable allocation evidence. `PurchaseOrders.Create` remains separate and can only materialize supplier-grouped orders from those frozen allocations; split awards cannot be converted into a single-supplier agreement.
+
+## MOD-023C Angular sourcing boundary (2026-10-28)
+
+The versioned sourcing and quotation controllers require authentication and exact read/create/award permissions. Every mutation validates
+antiforgery and model bounds before delegating to the existing Application services; controllers do not access EF or repositories.
+Supplier identity is resolved against recorded invitations, quotation lines must match the event exactly, monetary decimal validation is
+culture-invariant, and award identities/quantities/reasons are revalidated server-side. The Angular client cannot close an event directly.
+
+`MOD-028F` preserves RFQ uploads through bounded multipart input instead of accepting file bytes in JSON: at most ten
+non-empty files of 5 MB each, final-segment names and parseable media types reach the Application/domain boundary. Attachment
+download re-resolves the RFQ and attachment through the tenant-filtered repository and requires `PurchaseSourcing.View`; storage
+paths are never exposed. The Angular print route reuses the authorized DTO and performs no mutation.
+
+## MOD-023D Angular Purchase Order boundary (2026-10-28)
+
+The Purchase Order API is authenticated, versioned and delegates only to `PurchaseOrderService`. All nine mutations require independent
+permissions and antiforgery; route/payload IDs, row-version bytes, reasons and bounded delivery/supplier evidence are validated. The server
+re-resolves award eligibility, status, open quantities, fulfillment route and expense-account prerequisites. Angular cannot post stock or
+accounting through approval/confirmation.
 
 PUR-220 service evidence separates `PurchaseServiceAcceptances.View` from `PurchaseServiceAcceptances.Create`. The Application service resolves every supplied line through the current tenant's confirmed Purchase Order, requires the frozen Service Completion policy and caps cumulative completion. Goods Receipt paths independently reject non-receipt policies and non-stocked products, so a crafted request cannot turn a service into warehouse stock.
 
@@ -64,11 +149,36 @@ Database relationship hardening appends TenantId to every relationship between t
 
 Public company registration uses a configurable fixed-window limit that defaults to 20 submissions per hour per connection IP and creates the user, company, owner membership, tenant Admin assignment and trial inside one database transaction. Rejections redirect to the bilingual registration page with the server-calculated retry time instead of exposing a raw HTTP 429 browser page. Platform login has its own cookie, lockout-aware password check, rate limit and role policies, and uses the same friendly rejection flow. Subscription middleware denies tenant ERP routes when the subscription is suspended, cancelled or expired while preserving login, public, platform and subscription-management routes.
 
+The Angular registration API keeps the same independent limiter and adds explicit antiforgery to the anonymous POST; API rejection is localized RFC Problem Details rather than an MVC redirect. MVC and API share `TenantCompanyRegistrationService` for provisioning plus cookie/tenant-claim sign-in, and the API response never returns the Identity user ID or a credential. Guided Complete and Skip require authentication, `Administration.Access` and antiforgery, then delegate to the existing serializable setup service. Angular retains non-secret rejected registration values but clears the password and stores no token or setup payload.
+
 Platform login, plan creation and promotion creation forms emit explicit antiforgery tokens. A live GET/POST regression check covers the separate-cookie login form so missing-token failures do not appear as an unexplained HTTP 400.
+
+Platform audit Angular endpoints preserve four independent policies: `AuditView` for search, `AuditExport` plus antiforgery
+for CSV, `AuditSensitive` as a server-derived field gate, and `AuditRetention` for owner maintenance. The client cannot
+request sensitive inclusion. Tenant audit Angular endpoints likewise require `AuditEvents.View`, add `AuditEvents.Export` and antiforgery for CSV and
+derive `AuditEvents.ViewSensitive` on the server. The export request contains only the bounded query and approved purpose,
+so the browser cannot elevate its evidence projection.
+Legal-hold creation/release, checkpoint creation and retention execution all require antiforgery
+and reuse the Application service that records semantic evidence, verifies the external checkpoint and rechecks holds before deletion.
 
 SAL-070 customer invoices are tenant-owned at header, line, source-allocation and history level. Composite tenant foreign keys prevent cross-company order, customer, product, unit, pricing, tax and delivery references. Tenant-unique invoice numbers and request keys provide identity/idempotency, rowversion rejects stale lifecycle commands, and Serializable creation rechecks cumulative active quantity. Dedicated View/Create/Approve/Cancel permissions and antiforgery protect every controller mutation. Approval cannot create journals or payments, and the company eligibility policy cannot change after dependent invoices exist without a future controlled transition.
 
 ## Remaining risks / deployment work
+
+Angular fiscal-period administration is authenticated and requires `Administration.Access` for list, create and
+status change. The API delegates only to `FiscalPeriodService`, keeps global antiforgery enforcement for POST/PUT,
+rejects overlaps and invalid transitions server-side, requires a reason for status changes and maps a stale rowversion
+to coded HTTP 409 without exposing EF entities.
+
+Angular currency exchange-rate reads and upserts also require `Administration.Access` and use the global unsafe-method
+antiforgery contract. The API accepts only the explicit Application DTO and delegates to
+`CurrencyExchangeRateService`; server/domain validation normalizes three-letter codes, requires a positive rate and
+bounded source, and prevents a redundant rate for the company currency.
+
+Angular measurement-unit list, create and deactivate operations require `Administration.Access`; POST commands remain
+under antiforgery. The API delegates to `MeasurementUnitService`, which normalizes and rejects duplicate codes, while
+the domain validates dimensions/factors/precision and independently blocks deactivation of built-in units.
+
 - Configure production AllowedHosts; wildcard remains because the deployment hostname is unknown.
 - Supply a production SQL connection string with validated TLS certificates; local development configuration trusts the certificate.
 - Rate limiting is per process and uses the connection IP. Multi-instance/reverse-proxy deployments need trusted proxy configuration and shared edge limits; do not trust arbitrary forwarded headers.
@@ -86,3 +196,102 @@ Run `pwsh -NoProfile -File scripts/verify-local.ps1`. The 2026-10-18 run built w
 Password validation runs before company selection. A supplied globally unique tenant slug must resolve to an active membership for that user before the TenantId claim is issued. Empty company code retains default-membership behavior. Errors do not expose another company's records.
 WMS-020A uses a dedicated `StockMovements.View` permission for its read-only ledger. Putaway and Relocation retain their existing mutation permissions. Server-side tenant filters, composite tenant foreign keys, antiforgery-protected forms and tenant-unique idempotency keys prevent cross-company linkage and repeated submissions.
 WMS-040 availability is read-only under `InventoryBalances.View`. Tenant filters and composite foreign keys isolate dimensions; filtered unique indexes prevent duplicate Unassigned/exact-location rows, and rowversion plus database reservation constraints protect future concurrent allocation.
+## MOD-021A product API boundary (2026-10-27)
+
+Product reads and form-option projections remain authenticated and require their matching View/Create/Edit permission.
+Create, update and delete use independent server permissions and explicit antiforgery validation. The controller accepts
+Application DTOs, delegates to `ProductService`, returns normalized validation/not-found/conflict Problem Details and
+never exposes persistence exceptions or EF entities. Tenant query and write guards remain authoritative.
+
+## MOD-021B product-category boundary (2026-10-27)
+
+The versioned category API requires authentication and `Products.View` for reads. Create and status changes both require
+`Products.Edit` and explicit antiforgery. The DTO/domain enforce a language-neutral bounded code, duplicate validation
+is localized, and the API returns only Application DTOs. Angular visibility is guidance only and cannot grant access.
+
+## MOD-021C product-attribute boundary (2026-10-27)
+
+The versioned attribute API requires authentication and `Products.View` for the definition directory. Definition
+creation/status and all per-product value reads/writes require `Products.Edit`; POST/PUT operations explicitly validate
+antiforgery. Neutral codes and bounded input are DTO-validated, while `ProductAttributeService` revalidates category
+applicability, required/type rules, option ownership and template variant refresh transactionally. No EF entity or
+client-computed variant signature crosses the API boundary.
+
+## MOD-021D product-template boundary (2026-10-27)
+
+Template reads require authentication and `Products.View`. Create, assignment/removal, preview and generation require
+`Products.Edit` and antiforgery even though preview has no persistence effect. Angular never calculates a trusted
+variant identity: `ProductTemplateService` rechecks category/source/template relationships, values/options, neutral
+SHA-256 signatures, duplicate combinations and the 50-combination limit, then rebuilds the plan inside generation.
+
+## MOD-021E recipe boundary (2026-10-27)
+
+Recipe list reads require authentication and `Products.View`; editor reads and immutable-version saves require
+`Products.Edit`, with explicit antiforgery on save. `RecipeService` revalidates product/ingredient tenancy through
+repositories, stocked eligibility, active managed units, matching dimensions and positive quantities transactionally.
+Angular receives DTOs only and cannot author trusted conversion snapshots or recipe cost.
+
+## MOD-021F catalog-master boundary (2026-10-27)
+
+The combined tax/payment/branch API requires authentication and `Administration.Access` at controller level; every
+create action explicitly validates antiforgery. Explicit Application DTOs project named accounts and avoid exposing
+domain/EF entities. Account existence, duplicate payment/branch rules and invariant 0–100 tax validation are repeated
+server-side; the Angular permission check only controls navigation visibility.
+
+## MOD-021G warehouse boundary (2026-10-27)
+
+Warehouse list/create-form/edit-form/create/update/delete endpoints require their independent
+`Warehouses.View/Create/Edit/Delete` permissions. Every mutation validates antiforgery. Application DTOs expose named
+branch/account options while `WarehouseService` repeats SaaS entitlement, tenant/account, duplicate, location/control,
+POS-access and deletion constraints; client-side disabled fields are guidance only.
+
+## MOD-022A inventory-ledger boundary (2026-10-27)
+
+`GET /api/v1/stock-transactions` requires an authenticated tenant session and `StockTransactions.View`. The API exposes
+no POST, PUT, PATCH or DELETE route, so the Angular ledger cannot mutate historical StockTransaction evidence. Paging,
+search, direction/type/date filters and sort columns are bounded by the existing Application/repository path and tenant
+query filters. Product/warehouse names and valuation snapshots are DTO projections; anonymous live access returns 401.
+
+## MOD-022B stock-mutation boundary (2026-10-27)
+
+ProductStock and manual-adjustment APIs require authentication, tenant context and operation-specific permissions. POST, PUT and
+DELETE require antiforgery; explicit DTOs use invariant non-negative quantity validation and return JSON Problem Details without
+exposing entities. Controllers call Application services only. Tenant filtering, serializable UnitOfWork behavior, rowversion,
+location/tracking allocation, negative-stock policy and moving-average valuation remain server-owned. The delete endpoint deliberately
+preserves the service rejection, so authorization never becomes permission to erase stock history.
+
+## MOD-022C read-only inventory projections (2026-10-27)
+
+Availability and reservation endpoints are authenticated, tenant-filtered, versioned and GET-only. Their independent View
+permissions are enforced at the controller, paging is bounded in the Application services and explicit DTOs expose names and
+quantities without returning entities. Angular cannot change OnHand, Reserved or Available, and it cannot reserve, consume or
+release stock. Existing tenant filters, composite keys, rowversions and reservation concurrency constraints remain authoritative.
+
+## MOD-022D inventory-adjustment command boundary (2026-10-27)
+
+All adjustment endpoints require authentication and tenant context. Create, Count, Approve, Post and Cancel have separate permissions
+and antiforgery checks; explicit DTOs validate invariant non-negative counts and named options avoid exposing entities. Controllers
+call `InventoryAdjustmentService` only. Domain status checks, creator/counter approval separation, frozen-stock revalidation, reserved
+floor protection, serializable UnitOfWork and rowversion remain authoritative. Angular cannot skip a state or author variance/cost.
+
+## MOD-022F warehouse-operation command boundary (2026-10-27)
+
+Location, Unassigned Stock, relocation and physical-ledger APIs require authentication, tenant context and independent permissions;
+all POST/PUT commands validate antiforgery. Explicit DTOs validate identifiers, quantities, lengths and idempotency keys, and API
+controllers call Application services only. The server owns same-warehouse hierarchy, cycle/duplicate checks, active receive/pick
+capabilities, total destination capacity, exact source quantity, serializable transactions, dimensional balances and immutable linked
+movement facts. Replaying a putaway/relocation key cannot apply stock twice; Angular cannot grant authority through navigation state.
+
+## MOD-023A Purchase Request command boundary (2026-10-27)
+
+The versioned API requires authentication and tenant context, exposes DTOs only and delegates to `PurchaseRequestService`. Create,
+Submit and Cancel require independent permissions plus antiforgery; status commands carry route-matched identity and row-version
+evidence. Server-side rules revalidate warehouse, active purchasable product, managed-unit dimension, supplier, positive quantity,
+duplicate line, numbering and eligible state. Angular cannot author trusted conversion, approval or inventory/accounting effects.
+
+## MOD-023B approval command boundary (2026-10-27)
+
+Rule and decision APIs require authentication, tenant context, independent permissions and antiforgery. Rule commands validate name,
+one-to-three ordered tenant roles, warehouse scope, priority range and row-version activation. Decision commands route-match identity,
+bound notes and return forbid when the user lacks the frozen current role. `PurchaseApprovalService` re-resolves tenant roles and
+advances/rejects the instance and request transactionally; Angular visibility cannot skip or fabricate an approval step.

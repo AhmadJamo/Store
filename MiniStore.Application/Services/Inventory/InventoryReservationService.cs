@@ -8,6 +8,8 @@ public sealed class InventoryReservationService(
     IInventoryReservationRepository reservations,
     IStorageLocationRepository locations)
 {
+    private static readonly int[] AllowedPageSizes = [25, 50, 100, 250];
+
     public sealed record Allocation(int ProductId, int WarehouseId, int? StorageLocationId,
         decimal Quantity, int? SourceLineId = null);
 
@@ -24,6 +26,25 @@ public sealed class InventoryReservationService(
                 LineCount = x.Lines.Count, TotalQuantity = x.Lines.Sum(line => line.RemainingQuantity)
             }).ToList();
         return new InventoryReservationPageDto { Rows = rows, Status = status, Search = normalized };
+    }
+
+    public async Task<InventoryReservationPagedResultDto> GetPagedAsync(
+        InventoryReservationStatus? status, string? search, int page = 1, int pageSize = 50)
+    {
+        var result = await GetPageAsync(status, search);
+        page = Math.Max(1, page);
+        pageSize = AllowedPageSizes.Contains(pageSize) ? pageSize : 50;
+        var totalCount = result.Rows.Count;
+        var totalPages = Math.Max(1, (int)Math.Ceiling(totalCount / (double)pageSize));
+        page = Math.Min(page, totalPages);
+        return new InventoryReservationPagedResultDto
+        {
+            Items = result.Rows.Skip((page - 1) * pageSize).Take(pageSize).ToList(),
+            TotalCount = totalCount,
+            Page = page,
+            PageSize = pageSize,
+            TotalPages = totalPages
+        };
     }
 
     public async Task ReserveTransferAsync(StockTransfer transfer, string userId)

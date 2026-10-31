@@ -1,0 +1,439 @@
+<section class="sourcing-page" [attr.aria-label]="i18n.text('title')">
+  <app-page-header
+    eyebrow="PURCHASING"
+    [title]="
+      mode() === 'create'
+        ? i18n.text('new')
+        : mode() === 'print'
+          ? i18n.text('printTitle')
+        : mode() === 'quote'
+          ? i18n.text('quote')
+          : mode() === 'compare'
+            ? i18n.text('comparison')
+            : i18n.text('title')
+    "
+    [description]="i18n.text('description')"
+  />
+  @if (problem()) {
+    <p class="message error" role="alert">{{ problem() }}</p>
+  }
+  @if (success()) {
+    <p class="message success" role="status">{{ success() }}</p>
+  }
+  @if (loading()) {
+    <app-feedback-state kind="loading" [title]="i18n.text('loading')" />
+  } @else if (loadingProblem(); as failure) {
+    <app-api-recovery [problem]="failure" (retry)="retry()" />
+  } @else if (mode() === 'list') {
+    <form class="filters" [formGroup]="filter" (ngSubmit)="loadList()">
+      <label class="ui-field"
+        ><span>{{ i18n.text('search') }}</span
+        ><input formControlName="search" /></label
+      ><label class="ui-field"
+        ><span>{{ i18n.text('status') }}</span
+        ><select formControlName="status">
+          <option [ngValue]="0">{{ i18n.text('all') }}</option>
+          @for (x of [1, 2, 3, 4]; track x) {
+            <option [ngValue]="x">{{ statusName(x) }}</option>
+          }
+        </select></label
+      ><button class="ui-button secondary">{{ i18n.text('search') }}</button>
+    </form>
+    <section class="ui-card">
+      <app-data-table [label]="i18n.text('title')"
+        ><table>
+          <thead>
+            <tr>
+              <th>{{ i18n.text('number') }}</th>
+              <th>{{ i18n.text('request') }}</th>
+              <th>{{ i18n.text('warehouse') }}</th>
+              <th>{{ i18n.text('deadline') }}</th>
+              <th>{{ i18n.text('suppliers') }}</th>
+              <th>{{ i18n.text('status') }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (x of rows(); track x.id) {
+              <tr>
+                <td>
+                  <a [routerLink]="['/purchases/sourcing', x.id]"
+                    ><code>{{ x.sourcingNumber }}</code></a
+                  >
+                </td>
+                <td>{{ x.purchaseRequestNumber ?? '—' }}</td>
+                <td>{{ x.warehouseName }}</td>
+                <td>{{ x.supplierResponseDeadline | date: 'dd/MM/yyyy' }}</td>
+                <td>{{ x.invitations.length }}</td>
+                <td>
+                  <span class="ui-badge">{{ statusName(x.status) }}</span>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="6">{{ i18n.text('noRows') }}</td>
+              </tr>
+            }
+          </tbody>
+        </table></app-data-table
+      >
+    </section>
+  } @else if (mode() === 'create' && createPage(); as page) {
+    <div class="actions">
+      <a class="ui-button secondary" routerLink="/purchases/requests">{{ i18n.text('request') }}</a>
+    </div>
+    <section class="ui-card summary">
+      <h2>
+        <code>{{ page.request.requestNumber }}</code>
+      </h2>
+      <p>{{ page.request.warehouseName }} · {{ page.request.neededByDate | date: 'dd/MM/yyyy' }}</p>
+    </section>
+    <form class="ui-card form" [formGroup]="sourcingForm" (ngSubmit)="create()">
+      <div class="form-grid">
+        <label class="ui-field"
+          ><span>{{ i18n.text('deadline') }}</span
+          ><input type="date" formControlName="supplierResponseDeadline" /></label
+        ><label class="ui-field"
+          ><span>{{ i18n.text('buyerRef') }}</span
+          ><input maxlength="100" formControlName="buyerReference" /></label
+        ><label class="ui-field"
+          ><span>{{ i18n.text('estimate') }} ({{ page.companyCurrencyCode }})</span
+          ><input
+            type="number"
+            min="0"
+            step="0.001"
+            formControlName="estimatedAmountCompanyCurrency" /></label
+        ><label class="ui-field wide"
+          ><span>{{ i18n.text('notes') }}</span
+          ><textarea maxlength="1000" formControlName="notes"></textarea></label
+        ><label class="ui-field wide"
+          ><span>{{ i18n.text('invitation') }}</span
+          ><textarea maxlength="1000" formControlName="invitationMessage"></textarea>
+        </label>
+      </div>
+      <label class="ui-field wide file-field"><span>{{ i18n.text('attachments') }}</span><input type="file" multiple (change)="chooseAttachments($any($event.target).files)" /><small>{{ i18n.text('attachmentHelp') }}</small>@if (attachments().length) { <strong>{{ attachments().length }} / 10</strong> }</label>
+      <fieldset>
+        <legend>{{ i18n.text('selectSuppliers') }}</legend>
+        <div class="check-grid">
+          @for (s of page.suppliers; track s.id) {
+            <label
+              ><input
+                type="checkbox"
+                [checked]="selectedSuppliers().includes(s.id)"
+                (change)="toggleSupplier(s.id, $any($event.target).checked)"
+              />
+              {{ s.label }}</label
+            >
+          }
+        </div>
+      </fieldset>
+      <div class="actions">
+        <button class="ui-button primary" [disabled]="saving()">{{ i18n.text('send') }}</button>
+      </div>
+    </form>
+  } @else if (mode() === 'details' && detail(); as x) {
+    <div class="actions">
+      <a class="ui-button secondary" routerLink="/purchases/sourcing">{{ i18n.text('back') }}</a>
+      <a class="ui-button secondary" [routerLink]="['/purchases/sourcing', x.id, 'print']" target="_blank" rel="noopener">{{ i18n.text('print') }}</a>
+      @if (x.status === 2 && session.can('SupplierQuotations.Create')) {
+        <a class="ui-button primary" [routerLink]="['/purchases/sourcing', x.id, 'quotation']">{{
+          i18n.text('quote')
+        }}</a>
+      }
+      @if (session.can('SupplierQuotations.View')) {
+        <a class="ui-button secondary" [routerLink]="['/purchases/sourcing', x.id, 'comparison']">{{
+          i18n.text('comparison')
+        }}</a>
+      }
+    </div>
+    <section class="ui-card summary">
+      <header>
+        <h2>
+          <code>{{ x.sourcingNumber }}</code>
+        </h2>
+        <span class="ui-badge">{{ statusName(x.status) }}</span>
+      </header>
+      <dl>
+        <div>
+          <dt>{{ i18n.text('warehouse') }}</dt>
+          <dd>{{ x.warehouseName }}</dd>
+        </div>
+        <div>
+          <dt>{{ i18n.text('deadline') }}</dt>
+          <dd>{{ x.supplierResponseDeadline | date: 'dd/MM/yyyy' }}</dd>
+        </div>
+        <div>
+          <dt>{{ i18n.text('request') }}</dt>
+          <dd>{{ x.purchaseRequestNumber ?? '—' }}</dd>
+        </div>
+        <div>
+          <dt>{{ i18n.text('estimate') }}</dt>
+          <dd>
+            {{ x.estimatedAmountCompanyCurrency | number: '1.2-3' }} {{ x.companyCurrencyCode }}
+          </dd>
+        </div>
+      </dl>
+    </section>
+    @if (x.attachments.length) {
+      <section class="ui-card attachments"><h2>{{ i18n.text('attachments') }}</h2><ul>@for (attachment of x.attachments; track attachment.id) { <li><span>{{ attachment.fileName }} <small>({{ attachment.size / 1024 | number:'1.0-1' }} KB)</small></span><a class="ui-button secondary" [href]="attachmentUrl(x.id, attachment.id)">{{ i18n.text('download') }}</a></li> }</ul></section>
+    }
+    <section class="ui-card">
+      <h2>{{ i18n.text('suppliers') }}</h2>
+      <ul>
+        @for (s of x.invitations; track s.supplierId) {
+          <li>
+            {{ s.supplierName }}
+            @if (
+              session.can('SupplierCommunications.Prepare') ||
+              session.can('SupplierCommunications.View')
+            ) {
+              <a
+                class="ui-button secondary"
+                routerLink="/purchases/communications/prepare"
+                [queryParams]="{
+                  documentType: 1,
+                  documentId: x.id,
+                  supplierId: s.supplierId,
+                  supplierName: s.supplierName,
+                  documentNumber: x.sourcingNumber,
+                }"
+                >{{ i18n.text('supplierCommunication') }}</a
+              >
+            }
+            @if (session.can('SupplierIntegrations.View')) {
+              <a
+                class="ui-button secondary"
+                routerLink="/purchases/integrations"
+                [queryParams]="{
+                  documentType: 1,
+                  documentId: x.id,
+                  supplierId: s.supplierId,
+                  supplierName: s.supplierName,
+                  documentNumber: x.sourcingNumber,
+                }"
+                >{{ i18n.text('supplierIntegration') }}</a
+              >
+            }
+          </li>
+        }
+      </ul>
+    </section>
+    <section class="ui-card">
+      <app-data-table [label]="i18n.text('product')"
+        ><table>
+          <thead>
+            <tr>
+              <th>{{ i18n.text('product') }}</th>
+              <th>{{ i18n.text('requested') }}</th>
+              <th>{{ i18n.text('stock') }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (line of x.lines; track line.id) {
+              <tr>
+                <td>
+                  <code>{{ line.productCode }}</code> — {{ line.productName }}
+                </td>
+                <td>{{ line.requestedQuantity | number: '1.0-6' }} {{ line.unitName }}</td>
+                <td>{{ line.stockQuantity | number: '1.0-6' }}</td>
+              </tr>
+            }
+          </tbody>
+        </table></app-data-table
+      >
+    </section>
+  } @else if (mode() === 'print' && detail(); as x) {
+    <article class="print-sheet">
+      <div class="print-actions"><button class="ui-button primary" type="button" (click)="print()">{{ i18n.text('print') }}</button></div>
+      <header><div><h1>{{ i18n.text('printTitle') }}</h1><strong>{{ x.sourcingNumber }}</strong></div><span>{{ i18n.text(x.path === 1 ? 'approvedRequest' : 'direct') }}</span></header>
+      <dl><div><dt>{{ i18n.text('warehouse') }}</dt><dd>{{ x.warehouseName }}</dd></div><div><dt>{{ i18n.text('buyerRef') }}</dt><dd>{{ x.buyerReference || '—' }}</dd></div><div><dt>{{ i18n.text('deadline') }}</dt><dd>{{ x.supplierResponseDeadline | date:'dd/MM/yyyy' }}</dd></div><div><dt>{{ i18n.text('expectedDelivery') }}</dt><dd>{{ x.requestedByDate | date:'dd/MM/yyyy' }}</dd></div></dl>
+      <table><thead><tr><th>{{ i18n.text('product') }}</th><th>{{ i18n.text('requested') }}</th><th>{{ i18n.text('notes') }}</th></tr></thead><tbody>@for (line of x.lines; track line.id) { <tr><td>{{ line.productCode }} — {{ line.productName }}</td><td>{{ line.requestedQuantity | number:'1.0-6' }} {{ line.unitName }}</td><td>{{ line.notes || '—' }}</td></tr> }</tbody></table>
+      <h2>{{ i18n.text('suppliers') }}</h2><ul>@for (supplier of x.invitations; track supplier.supplierId) { <li>{{ supplier.supplierName }}</li> }</ul>
+    </article>
+  } @else if (mode() === 'quote' && quotePage(); as page) {
+    <div class="actions">
+      <a
+        class="ui-button secondary"
+        [routerLink]="['/purchases/sourcing', page.sourcingEvent.id]"
+        >{{ i18n.text('back') }}</a
+      >
+    </div>
+    <form class="ui-card form" [formGroup]="quoteForm" (ngSubmit)="submitQuotation()">
+      <div class="form-grid">
+        <label class="ui-field"
+          ><span>{{ i18n.text('supplier') }}</span
+          ><select formControlName="supplierId">
+            <option [ngValue]="0">—</option>
+            @for (s of page.suppliers; track s.id) {
+              <option [ngValue]="s.id">{{ s.label }}</option>
+            }
+          </select></label
+        ><label class="ui-field"
+          ><span>{{ i18n.text('currency') }}</span
+          ><select formControlName="currencyCode">
+            @for (c of page.availableCurrencyCodes; track c) {
+              <option [value]="c">{{ c }}</option>
+            }
+          </select></label
+        ><label class="ui-field"
+          ><span>{{ i18n.text('supplierRef') }}</span
+          ><input maxlength="100" formControlName="supplierReference" /></label
+        ><label class="ui-field"
+          ><span>{{ i18n.text('quoteDate') }}</span
+          ><input type="date" formControlName="quotationDate" /></label
+        ><label class="ui-field"
+          ><span>{{ i18n.text('validUntil') }}</span
+          ><input type="date" formControlName="validUntilDate" /></label
+        ><label class="ui-field"
+          ><span>{{ i18n.text('leadTime') }}</span
+          ><input type="number" min="0" max="3650" formControlName="leadTimeDays" /></label
+        ><label class="ui-field"
+          ><span>{{ i18n.text('paymentTerms') }}</span
+          ><input maxlength="500" formControlName="paymentTerms" /></label
+        ><label class="ui-field"
+          ><span>{{ i18n.text('notes') }}</span
+          ><input maxlength="1000" formControlName="notes"
+        /></label>
+      </div>
+      <div formArrayName="lines" class="line-list">
+        @for (line of quotationLines.controls; track $index; let i = $index) {
+          <fieldset [formGroupName]="i">
+            <legend>
+              {{ page.sourcingEvent.lines[i].productCode }} —
+              {{ page.sourcingEvent.lines[i].productName }}
+            </legend>
+            <div class="line-grid">
+              <label class="ui-field"
+                ><span>{{ i18n.text('quantity') }}</span
+                ><input
+                  type="number"
+                  min="0.000001"
+                  step="0.000001"
+                  formControlName="quotedQuantity" /></label
+              ><label class="ui-field"
+                ><span>{{ i18n.text('unitPrice') }}</span
+                ><input type="number" min="0" step="0.000001" formControlName="unitPrice" /></label
+              ><label class="ui-field"
+                ><span>{{ i18n.text('discount') }}</span
+                ><input type="number" min="0" max="100" formControlName="discountPercent" /></label
+              ><label class="ui-field"
+                ><span>{{ i18n.text('tax') }}</span
+                ><input type="number" min="0" max="100" formControlName="taxPercent"
+              /></label>
+            </div>
+          </fieldset>
+        }
+      </div>
+      <div class="actions">
+        <button class="ui-button primary" [disabled]="saving()">
+          {{ i18n.text('submitQuote') }}
+        </button>
+      </div>
+    </form>
+  } @else if (mode() === 'compare' && comparison(); as page) {
+    <div class="actions">
+      <a class="ui-button secondary" [routerLink]="['/purchases/sourcing', page.sourcingEventId]">{{
+        i18n.text('back')
+      }}</a>
+      @if (page.canAward && session.can('SupplierQuotations.Create')) {
+        <a
+          class="ui-button secondary"
+          [routerLink]="['/purchases/sourcing', page.sourcingEventId, 'quotation']"
+          >{{ i18n.text('quote') }}</a
+        >
+      }
+    </div>
+    <section class="ui-card">
+      <h2>{{ i18n.text('offers') }}</h2>
+      <div class="offer-grid">
+        @for (q of page.quotations; track q.id) {
+          <article>
+            <h3>
+              {{ q.supplierName }} · <code>{{ q.quotationNumber }}</code>
+            </h3>
+            <p>
+              {{ i18n.text('gross') }}: {{ q.grossAmount | number: '1.2-3' }} {{ q.currencyCode }}
+            </p>
+            <p>
+              {{ i18n.text('companyValue') }}: {{ q.companyGrossAmount | number: '1.2-3' }}
+              {{ q.companyCurrencyCode }}
+            </p>
+            <p>{{ i18n.text('leadTime') }}: {{ q.leadTimeDays }}</p>
+            <ul>
+              @for (line of q.lines; track line.id) {
+                <li>
+                  {{ line.productName }} — {{ line.unitPrice | number: '1.2-6' }}
+                  {{ q.currencyCode }} · {{ line.taxPercent }}%
+                </li>
+              }
+            </ul>
+          </article>
+        }
+      </div>
+    </section>
+    @if (page.canAward && session.can('SupplierQuotations.Award')) {
+      <form class="ui-card" [formGroup]="awardForm" (ngSubmit)="award()">
+        <h2>{{ i18n.text('completeAward') }}</h2>
+        <div class="allocation-list" formArrayName="lines">
+          @for (control of awardLines.controls; track $index; let i = $index) {
+            <div class="allocation" [formGroupName]="i">
+              @if (
+                page.quotations
+                  .flatMap((q) => q.lines)
+                  .find((l) => l.id === control.value.supplierQuotationLineId);
+                as line
+              ) {
+                <strong>{{ line.productName }}</strong>
+              }
+              <label class="ui-field"
+                ><span>{{ i18n.text('awardQuantity') }}</span
+                ><input
+                  type="number"
+                  min="0"
+                  step="0.000001"
+                  formControlName="awardedQuantity" /></label
+              ><label class="ui-field"
+                ><span>{{ i18n.text('reason') }}</span
+                ><input maxlength="1000" formControlName="reason"
+              /></label>
+            </div>
+          }
+        </div>
+        <div class="actions">
+          <button class="ui-button primary" [disabled]="saving()">
+            {{ i18n.text('completeAward') }}
+          </button>
+        </div>
+      </form>
+    }
+    @if (!page.canAward) {
+      <section class="ui-card">
+        <h2>{{ i18n.text('awardRecorded') }}</h2>
+        <ul>
+          @for (x of page.awardAllocations; track x.supplierQuotationLineId) {
+            <li>
+              <strong>{{ x.supplierName }}</strong> — {{ x.awardedQuantity | number: '1.0-6' }} ·
+              {{ x.reason }}
+            </li>
+          }
+        </ul>
+        @if (session.can('PurchaseOrders.Create')) {
+          <div class="actions">
+            <button class="ui-button primary" [disabled]="saving()" (click)="createOrders()">
+              {{ i18n.text('createOrders') }}
+            </button>
+          </div>
+        }
+        @if (canCreateAgreement(page) && session.can('PurchaseAgreements.Create')) {
+          <div class="actions">
+            <a
+              class="ui-button secondary"
+              [routerLink]="['/purchases/agreements/new']"
+              [queryParams]="{ sourcingEventId: page.sourcingEventId }"
+              >{{ i18n.text('createAgreement') }}</a
+            >
+          </div>
+        }
+      </section>
+    }
+  }
+</section>

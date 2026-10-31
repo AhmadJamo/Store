@@ -2,6 +2,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
 using MiniStore.Application.Tenancy;
 using MiniStore.Domain.Interfaces;
+using MiniStore.Web.Middleware.Api;
 
 namespace MiniStore.Web.Middleware;
 
@@ -35,6 +36,14 @@ public class TenantSessionMiddleware(RequestDelegate next)
             if (membership is null)
             {
                 await signInManager.SignOutAsync();
+                if (context.Request.Path.StartsWithSegments("/api/v1"))
+                {
+                    await InternalApiProblemWriter.WriteAsync(
+                        context,
+                        StatusCodes.Status401Unauthorized,
+                        "Authentication is required.");
+                    return;
+                }
                 context.Response.Redirect("/Account/Login");
                 return;
             }

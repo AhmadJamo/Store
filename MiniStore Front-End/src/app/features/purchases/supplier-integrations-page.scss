@@ -1,0 +1,63 @@
+.integrations-page {
+  display: grid;
+  gap: 1.25rem;
+}
+.form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+  gap: 1rem;
+}
+.form h2,
+.form fieldset,
+.form button {
+  grid-column: 1/-1;
+}
+.form fieldset {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+.form button {
+  justify-self: start;
+}
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
+  gap: 1rem;
+}
+.ui-card header,
+.actions {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+.secret {
+  display: grid;
+  gap: 0.75rem;
+  border-inline-start: 0.3rem solid var(--color-warning, #d97706);
+}
+.secret textarea {
+  min-height: 5rem;
+}
+.secret button {
+  justify-self: start;
+}
+dl {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  gap: 1rem;
+}
+dd {
+  margin: 0;
+  font-weight: 700;
+}
+pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  max-height: 32rem;
+  overflow: auto;
+}
+.error {
+  color: var(--color-danger, #b91c1c);
+}

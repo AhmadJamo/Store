@@ -1,0 +1,41 @@
+<section class="operations-page">
+  <app-page-header eyebrow="OPS" [title]="i18n.text('operationsCenter')" [description]="i18n.text('operationsDescription')" />
+  @if (loading()) {
+    <app-feedback-state kind="loading" [title]="i18n.text('loading')" />
+  } @else if (problem(); as failure) {
+    <app-api-recovery [problem]="failure" (retry)="load()" />
+  } @else if (page(); as current) {
+    <section class="operations-section" aria-labelledby="job-heading">
+      <header><h2 id="job-heading">{{ i18n.text('backgroundJobs') }}</h2><p>{{ i18n.text('backgroundJobsDescription') }}</p></header>
+      @if (current.jobs.length === 0) {
+        <app-feedback-state kind="empty" [title]="i18n.text('noVisibleJobs')" />
+      } @else {
+        <div class="job-grid">
+          @for (job of current.jobs; track job.jobKey) {
+            <article>
+              <header><h3>{{ text(job.titleKey) }}</h3><span class="status" [attr.data-state]="job.slaState">{{ text('sla' + job.slaState) }}</span></header>
+              <dl>
+                <div><dt>{{ i18n.text('runtimeState') }}</dt><dd>{{ text('jobState' + job.state) }}</dd></div>
+                <div><dt>{{ i18n.text('expectedInterval') }}</dt><dd>{{ job.expectedIntervalMinutes }} {{ i18n.text('minutes') }}</dd></div>
+                <div><dt>{{ i18n.text('lastCompleted') }}</dt><dd>{{ job.lastCompletedAtUtc ? (job.lastCompletedAtUtc | date:'medium') : i18n.text('notRunYet') }}</dd></div>
+                <div><dt>{{ i18n.text('lastDuration') }}</dt><dd>{{ job.lastDurationMilliseconds === undefined ? '—' : job.lastDurationMilliseconds + ' ms' }}</dd></div>
+              </dl>
+            </article>
+          }
+        </div>
+      }
+    </section>
+    <section class="operations-section" aria-labelledby="refresh-heading">
+      <header><h2 id="refresh-heading">{{ i18n.text('refreshPlans') }}</h2><p>{{ i18n.text('refreshPlansDescription') }}</p></header>
+      @if (current.refreshPlans.length === 0) {
+        <app-feedback-state kind="empty" [title]="i18n.text('noRefreshPlans')" />
+      } @else {
+        <div class="plan-list">
+          @for (plan of current.refreshPlans; track plan.workspaceId) {
+            <article><div><h3>{{ localizedName(plan.name, plan.nameArabic) }}</h3><p>{{ plan.moduleKey }}</p></div><strong>{{ plan.refreshIntervalMinutes }} {{ i18n.text('minutes') }}</strong><span>{{ i18n.text('deliveryNotEnabled') }}</span></article>
+          }
+        </div>
+      }
+    </section>
+  }
+</section>

@@ -1,5 +1,5 @@
 # Sales
-> Status: LEGACY IMMEDIATE SALE IMPLEMENTED; SAL-020 THROUGH SAL-130A IMPLEMENTED IN SOURCE | Last reviewed: 2026-10-24
+> Status: LEGACY IMMEDIATE SALE IMPLEMENTED; SAL-020 THROUGH SAL-130A IMPLEMENTED IN SOURCE | Last reviewed: 2026-10-29
 
 `SAL-130A` exposes quote-to-cash analytics through the generic Analytics Center provider contract. It calculates quotation cohort/value/acceptance, order progression, posted invoice revenue, collection, outstanding/overdue receivables, credits, delivery COGS, contribution, customer/product performance and an explicitly separated legacy/modern comparison. The provider is read-only; it does not invent conversions between legacy immediate sales and the modern document lifecycle.
 
@@ -14,6 +14,103 @@ SAL-110 adds flexible tenant-configured controls at Sales Order confirmation. Ea
 The implemented `Sale` flow is classified by the completed `SAL-000` audit as a compatible immediate sale/invoice/payment/stock workflow. It is not a Sales Order and must not be backfilled into invented quotations, deliveries, receivable invoices or payment allocations. The additive target, risks and sequence are documented in `SALES_ARCHITECTURE_AUDIT_AND_IMPLEMENTATION_PLAN.md`; `SAL-005` fixes the ownership boundaries. Customer foundation CUS-005..030B preserves every historical CustomerId and now provides profile/code/archive/concurrency, contacts/addresses, configurable receivable assignment, payment days, preferred configured currency and tax/exemption defaults. SAL-020B adds an optional prospective default price list. These commercial values do not silently change or rewrite the legacy immediate Sale.
 
 Customer create/edit render nested `Form.*` fields and post an explicit `CustomerFormPostDto` wrapper with the same shape. Generated customer code is not an input prerequisite, and an empty receivable-account selection is accepted by model binding so shared/automatic account policy can resolve it; manual policy produces a localized, specific account-selection error. Other profile and commercial fields remain optional except the customer name and server-provided language/time-zone defaults. Invalid submissions rebuild the option lists, preserve attempted values, show an all-errors summary plus field errors and add a localized correction prompt instead of failing silently. Create/edit forms declare their target actions and submit buttons explicitly. Regression protects the post-model contract, optional generated/policy fields and visible validation/submit markup.
+
+MOD-005 adds a coexisting Angular Customer vertical slice over the same `CustomerService`: permission-separated internal API list/details/form/create/update, server paging/search/sort, full bilingual responsive forms, Problem Details feedback and explicit row-version conflict handling. No sales, stock, accounting, numbering or Customer domain rule changed, and the MVC screens remain the fallback.
+
+`MOD-024A` exposes Sales Price List creation/lifecycle, rule creation/lifecycle and read-only price evaluation through Angular.
+`SalesPriceListService` still owns scope precedence, compatible units, normalized quantity, validity, customer defaults/exemption,
+currency exchange, rounding, tax source and all calculated values. View/Manage permissions remain separate and every POST retains
+antiforgery. Evaluation creates no sales document, inventory movement, accounting entry or payment; MVC remains default.
+
+`MOD-024B` exposes the existing Sales Quotation list, detail, create-form, creation, PDF and complete lifecycle through Angular.
+The composer uses named customers, addresses, templates, designs, products, units, tax rates and price lists; identifiers remain
+internal. Create/Send/Accept/Reject/Cancel permissions stay independent, Expire shares the established Cancel authority, every
+mutation retains antiforgery and commands carry rowversion. The server reloads active source records, reprices through
+`SalesPriceListService`, freezes commercial/template/design evidence and owns all transition/PDF rules. Angular performs no trusted
+pricing, numbering, snapshot, state or PDF calculation. Quotation actions still create no reservation, stock movement, journal,
+invoice or payment; MVC remains default.
+
+`MOD-024C` exposes Sales Order list/details, one-time accepted-quotation conversion, control evaluation/confirmation, reasoned
+cancellation and approval decisions through Angular. Source links and generated-order links replace already-consumed actions.
+`SalesOrderService` reloads the accepted quotation and copies its frozen commercial evidence without repricing; centralized numbering,
+rowversion, configured control findings, ordered role approvals and posted-delivery cancellation guards remain server-owned. The detail
+workspace reports reservation, delivery and invoice progress but does not mutate those later workflows. Converting or confirming a
+Sales Order does not reserve/reduce stock or create accounting; MVC remains default.
+
+`MOD-024D` exposes the confirmed Sales Order reservation page plus Reserve and Release through Angular. Operators choose warehouses
+and reservable locations by name, review OnHand/Reserved/Available evidence and request per-line remaining stock quantities using the
+existing block-all or reserve-available shortage policy. The server rechecks order rowversion, cumulative committed quantity,
+warehouse/location eligibility and locked balance availability. Reserve and Release permissions remain independent and both posts
+retain antiforgery. A reservation changes Reserved/Available only, never OnHand or accounting; MVC remains default.
+
+`MOD-024E` exposes Sales Delivery list/details, draft preparation from an active reservation, Post and draft Cancel through Angular.
+The composer supports partial quantities and lot/serial allocation only for tracked products, while named warehouse/location evidence
+remains visible. The server rechecks reservation/order ownership and remaining quantities, performs tracked or untracked physical
+issue, consumes the reservation, updates stock/movements, freezes moving-average cost and posts COGS exactly once. Post and Cancel
+retain separate permissions, antiforgery and rowversion. Delivery posting does not create a customer invoice or payment; MVC remains
+default.
+
+`MOD-024F` exposes Customer Invoice list/details, draft creation from an eligible Sales Order, Approve, Cancel, Post and Reverse
+through Angular. The workspace shows ordered/delivered quantity policy, cumulative committed and remaining quantities, frozen
+customer/commercial evidence, source deliveries, settlement balances and immutable journal evidence. The server reloads source
+documents and remains authoritative for eligibility, pricing/tax/currency snapshots, numbering, cumulative limits, accounting,
+reversal and outstanding balances. Permissions remain independent and every mutation retains antiforgery and concurrency evidence;
+no invoice operation changes inventory or records a customer payment. MVC remains default.
+
+`MOD-024G` exposes Customer Payment list/details, create-and-post allocation and Reverse through Angular. Operators start from one
+posted invoice and can allocate the receipt across open posted invoices for the same customer and currency using a named active
+payment method. The server remains authoritative for outstanding balances, credit-note deductions, carrying-value allocation,
+exchange rates, realized exchange gain/loss, numbering, journal posting and exact reversal. Create/Post and Reverse retain separate
+permissions and antiforgery; collection changes receivables/accounting only and never inventory. MVC remains default.
+
+`MOD-024H` exposes Customer Return Request list/details/create plus Submit, Approve, Reject and Cancel through Angular. Creation
+starts from one Posted Sales Delivery and presents server-authored delivered, already-requested and remaining quantities by named
+product, warehouse and location. `CustomerReturnRequestService` reloads the delivery, rechecks cumulative active requests inside the
+existing transaction, owns numbering and state transitions, and enforces rowversion on every lifecycle command. Authorization changes
+no stock, tracking, accounting, invoice balance, credit note or cash; those effects remain in later receipt/disposition/credit slices.
+MVC remains default.
+
+`MOD-024I` exposes Customer Return Receipt list/details/create plus Inspect, Post Disposition and Cancel through Angular. Operators
+start from an Approved return request, select only server-authored remaining quantities, record Restock/Quarantine/Reject/Destroy
+decisions and provide exact source-delivery lot/serial evidence when required. `CustomerReturnReceiptService` remains authoritative
+for cumulative receipt limits, tracking identity ownership, rowversion, stock/location/tracking updates, historical cost, movements
+and COGS reversal. Completing inspection freezes evidence without stock or accounting effect; only disposition posting applies
+Restock lines. MVC remains default.
+
+`MOD-024J` exposes Customer Credit Note list/details/create-and-post through Angular. Operators start from one Posted customer
+invoice and select only server-authored quantities backed by Posted return receipts. `CustomerCreditNoteService` remains authoritative
+for invoice/order/delivery/receipt ownership, cumulative per-receipt/per-delivery/per-invoice limits, proportional currency/tax
+snapshots, request-key idempotency, numbering, branch dimensions and journal posting. The operation reverses receivables, revenue and
+output tax only; it never repeats inventory or creates a cash refund. MVC remains default.
+
+`MOD-024K` exposes Sales Approval Rule list/create/activation management through Angular. The workspace covers all-customer or
+named-customer scope, five server-defined metrics, comparison/threshold, Warn/Require Approval/Block effect, priority, effective
+dates and ordered approver roles. `SalesOrderApprovalService` retains customer/tenant-role validation, action-step compatibility,
+unique ordered roles, rowversion and later Sales Order evaluation. Angular does not evaluate or confirm orders. MVC remains default.
+
+`MOD-024L` exposes Sales Quotation Template list/details/create, source-version cloning, activation, archiving and default selection
+through Angular. The bilingual workspace covers reusable content, required/optional/alternative products, quantity editing, option
+groups, price-list and document-design selection. `SalesQuotationTemplateService` retains unique code/version lineage, active
+product/unit/tax/design validation, lifecycle concurrency and default exclusivity; Angular does not reprice quotations. MVC remains
+default.
+
+`MOD-025A` exposes legacy immediate-sale history/details, Wholesale creation and one-time accounting posting through Angular. The
+workspace displays named warehouse/customer/payment/tax choices, product name/code/barcode search and optional lot/serial evidence.
+`LegacySaleWorkspaceService` owns presentation projections while `SaleService` remains authoritative for wholesale price, discounts,
+tax, numbering, stock, tracking and frozen cost in one transaction; `SalePostingService` owns idempotent balanced GL posting. The
+legacy `Sale` remains an immediate sale and is not reinterpreted as a Sales Order or receivable invoice. MVC remains default.
+
+`MOD-025B` adds the Angular Retail POS composer over the same bounded workspace. Active terminals project only their configured
+warehouses and runtime experience settings; product cards apply configured columns, density, barcode/price/stock visibility and
+quick barcode add. Order type, service reference, guest count, line notes and manual tracking appear only when enabled. `SaleService`
+still revalidates every terminal, warehouse, product and order-context choice and owns retail price, recipe consumption, stock,
+tracking, cost and numbering. MVC remains default.
+
+`MOD-025C` exposes immediate-sale return list/details/create-and-post through Angular. The create projection shows sold, already
+returned and remaining quantities and requests lot/serial identities only for tracked products. `SalesReturnService` retains
+cumulative limits, original-sale tracking provenance, proportional refund/tax/discount values, inventory restoration, historical
+cost and balanced accounting in one transaction. No independent shift-close or print route exists in the current source, so none
+was fabricated. MVC remains default.
 
 Sales quantity, threshold, price-rule and document-line decimal ranges parse limits and submitted values with invariant culture. Arabic UI requests no longer throw before controller execution when validating dot-based HTML decimals.
 

@@ -1,19 +1,19 @@
-namespace MiniStore.Application.DTOs.LocationMovements;
+using System.ComponentModel.DataAnnotations;namespace MiniStore.Application.DTOs.LocationMovements;
 
 public class CreateLocationMovementDto
 {
-    public string IdempotencyKey { get; set; } = Guid.NewGuid().ToString("N");
-    public int WarehouseId { get; set; }
+    [Required,StringLength(100,MinimumLength=16)]public string IdempotencyKey { get; set; } = Guid.NewGuid().ToString("N");
+    [Range(1,int.MaxValue)]public int WarehouseId { get; set; }
 
-    public int ProductId { get; set; }
+    [Range(1,int.MaxValue)]public int ProductId { get; set; }
 
-    public int FromStorageLocationId { get; set; }
+    [Range(1,int.MaxValue)]public int FromStorageLocationId { get; set; }
 
-    public int ToStorageLocationId { get; set; }
+    [Range(1,int.MaxValue)]public int ToStorageLocationId { get; set; }
 
-    public decimal Quantity { get; set; }
+    [Range(typeof(decimal),"0.000001","999999999999",ParseLimitsInInvariantCulture=true,ConvertValueInInvariantCulture=true)]public decimal Quantity { get; set; }
 
-    public string? Reference { get; set; }
+    [StringLength(100)]public string? Reference { get; set; }
 
-    public string? Notes { get; set; }
+    [StringLength(500)]public string? Notes { get; set; }
 }

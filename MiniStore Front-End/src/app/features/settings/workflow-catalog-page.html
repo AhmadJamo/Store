@@ -1,0 +1,17 @@
+<section class="settings-form-page">
+  <app-page-header eyebrow="ADMIN" [title]="i18n.text('workflowCatalog')" [description]="i18n.text('workflowCatalogDescription')" />
+  @if (loading()) { <app-feedback-state kind="loading" [title]="i18n.text('loading')" /> }
+  @else if (problem(); as failure) { <app-api-recovery [problem]="failure" (retry)="load()" /> }
+  @else if (page(); as catalog) {
+    <section class="form-card"><h2>{{ catalog.moduleName }}</h2><p>{{ catalog.purpose }}</p><strong>{{ i18n.text('separationOfDuties') }}</strong><p>{{ i18n.text('separationOfDutiesHelp') }}</p></section>
+    <nav class="form-actions" [attr.aria-label]="i18n.text('workflowModules')">@for (module of modules(catalog.steps); track module; let index = $index) { <a class="ui-button secondary" [href]="'#workflow-module-' + index">{{ module }}</a> }</nav>
+    @for (module of modules(catalog.steps); track module; let moduleIndex = $index) {
+      <section class="workflow-module" [id]="'workflow-module-' + moduleIndex"><h2>{{ module }}</h2>
+        @for (phase of phases(catalog.steps, module); track phase) { <h3>{{ phase }}</h3><div class="workflow-steps">
+          @for (step of phaseSteps(catalog.steps, module, phase); track step.number) { <article class="form-card workflow-step"><header><span class="step-number">{{ step.number }}</span><div><h4>{{ step.title }}</h4>@if (step.conditional) { <span class="status-chip">{{ i18n.text('conditionalStep') }}</span> }</div>@if (step.canOpen && step.workUrl) { <a class="ui-button primary" [href]="step.workUrl">{{ i18n.text('openWorkScreen') }}</a> } @else { <span class="status-chip">{{ i18n.text('noWorkScreenPermission') }}</span> }</header><dl><div><dt>{{ i18n.text('stepOwner') }}</dt><dd>{{ step.responsibleRole }}</dd></div><div><dt>{{ i18n.text('reviewerApprover') }}</dt><dd>{{ step.reviewerRole }}</dd></div><div><dt>{{ i18n.text('whatShouldHappen') }}</dt><dd>{{ step.instructions }}</dd></div><div><dt>{{ i18n.text('completionEvidence') }}</dt><dd>{{ step.completionEvidence }}</dd></div></dl><p class="control-principle"><strong>{{ i18n.text('controlPrinciple') }}:</strong> {{ step.controlPrinciple }}</p></article> }
+        </div> }
+      </section>
+    }
+    <footer class="form-actions"><a class="ui-button secondary" routerLink="/settings">{{ i18n.text('back') }}</a></footer>
+  }
+</section>

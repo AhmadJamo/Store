@@ -1,0 +1,132 @@
+<main class="returns-page">
+  @if (loading()) {
+    <app-feedback-state kind="loading" [title]="i18n.text('title')" />
+  } @else if (failure(); as issue) {
+    <app-api-recovery [problem]="issue" (retry)="load()" />
+  } @else if (detail(); as x) {
+    <app-page-header
+      [eyebrow]="i18n.text('area')"
+      [title]="x.returnNumber"
+      [description]="i18n.text('description')"
+    /><a class="ui-button" routerLink="/sales/legacy-returns">{{ i18n.text('back') }}</a>
+    <section class="facts ui-card">
+      <div>
+        <span>{{ i18n.text('original') }}</span
+        ><a [routerLink]="['/sales/legacy', x.saleId]">{{ x.saleInvoiceNumber }}</a>
+      </div>
+      <div>
+        <span>{{ i18n.text('date') }}</span
+        ><strong>{{ x.date | date: 'mediumDate' }}</strong>
+      </div>
+      <div>
+        <span>{{ i18n.text('reason') }}</span
+        ><strong>{{ x.reason }}</strong>
+      </div>
+    </section>
+    <section class="ui-card table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>{{ i18n.text('product') }}</th>
+            <th>{{ i18n.text('quantity') }}</th>
+            <th>{{ i18n.text('refund') }}</th>
+            <th>{{ i18n.text('restocked') }}</th>
+            <th>{{ i18n.text('cost') }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (line of x.items; track line.saleItemId) {
+            <tr>
+              <td>{{ line.productName }}</td>
+              <td>{{ line.quantity | number: '1.0-6' }}</td>
+              <td>{{ line.refundAmount | number: '1.2-2' }}</td>
+              <td>{{ i18n.text(line.restocked ? 'yes' : 'no') }}</td>
+              <td>{{ line.restockedCostAmount | number: '1.2-8' }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </section>
+    <section class="totals ui-card">
+      <span
+        >{{ i18n.text('tax') }}: <strong>{{ x.taxAmount | number: '1.2-2' }}</strong></span
+      ><span
+        >{{ i18n.text('refund') }}: <strong>{{ x.refundAmount | number: '1.2-2' }}</strong></span
+      >
+    </section>
+  } @else if (page(); as p) {
+    <app-page-header
+      [eyebrow]="i18n.text('area')"
+      [title]="i18n.text('create')"
+      [description]="i18n.text('description')"
+    />
+    <p>
+      {{ i18n.text('original') }}: <strong>{{ p.saleInvoiceNumber }}</strong>
+    </p>
+    @if (problem(); as issue) {
+      <app-api-recovery [problem]="issue" [allowRetry]="false" />
+    }
+    <form [formGroup]="form" (ngSubmit)="create()">
+      <section class="form ui-card">
+        <label class="ui-field"
+          ><span>{{ i18n.text('date') }}</span
+          ><input type="date" formControlName="date" /></label
+        ><label class="ui-field grow"
+          ><span>{{ i18n.text('reason') }}</span
+          ><input formControlName="reason"
+        /></label>
+      </section>
+      <div formArrayName="items" class="lines">
+        @for (line of p.lines; track line.saleItemId; let i = $index) {
+          <article class="ui-card line" [formGroupName]="i">
+            <strong>{{ line.productName }}</strong
+            ><span>{{ i18n.text('sold') }}: {{ line.soldQuantity }}</span
+            ><span>{{ i18n.text('returned') }}: {{ line.returnedQuantity }}</span
+            ><span>{{ i18n.text('remaining') }}: {{ line.remainingQuantity }}</span
+            ><label class="ui-field"
+              ><span>{{ i18n.text('quantity') }}</span
+              ><input
+                type="number"
+                step=".000001"
+                min="0"
+                [max]="line.remainingQuantity"
+                formControlName="quantity"
+            /></label>
+            @if (line.trackingPolicy !== 0) {
+              <label class="ui-field"
+                ><span>{{ i18n.text('tracking') }}</span
+                ><textarea formControlName="trackingAllocations"></textarea
+                ><small>{{ i18n.text('trackingHelp') }}</small></label
+              >
+            }
+          </article>
+        }
+      </div>
+      <button class="ui-button primary" [disabled]="saving() || form.invalid">
+        {{ i18n.text('post') }}
+      </button>
+    </form>
+  } @else {
+    <app-page-header
+      [eyebrow]="i18n.text('area')"
+      [title]="i18n.text('title')"
+      [description]="i18n.text('description')"
+    />
+    @if (!rows().length) {
+      <app-feedback-state kind="empty" [title]="i18n.text('empty')" />
+    }
+    <div class="cards">
+      @for (x of rows(); track x.id) {
+        <article class="ui-card">
+          <strong>{{ x.returnNumber }}</strong
+          ><a [routerLink]="['/sales/legacy', x.saleId]">{{ x.saleInvoiceNumber }}</a
+          ><span>{{ x.date | date: 'mediumDate' }}</span
+          ><span>{{ i18n.text('refund') }}: {{ x.refundAmount | number: '1.2-2' }}</span
+          ><a class="ui-button" [routerLink]="['/sales/legacy-returns', x.id]">{{
+            i18n.text('view')
+          }}</a>
+        </article>
+      }
+    </div>
+  }
+</main>

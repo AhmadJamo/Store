@@ -1,0 +1,29 @@
+<main class="onboarding-page" [attr.dir]="i18n.direction()">
+  <section class="onboarding-card setup-card" aria-labelledby="setup-title">
+    <header class="public-header">
+      <div><span class="eyebrow">{{ copy.text('finalSetupStep') }}</span><h1 id="setup-title">{{ copy.text('prepareCompany') }} {{ tenantName() }}</h1></div>
+      <button type="button" class="language" [disabled]="i18n.switching()" (click)="i18n.toggle()">{{ i18n.text('language') }}</button>
+    </header>
+    @if(i18n.switchError()){<p class="field-error" role="alert">{{i18n.text('errorDescription')}}</p>}
+    <p class="lead">{{ copy.text('setupDescription') }}</p>
+    @if (loading()) { <app-feedback-state kind="loading" [title]="i18n.text('loading')"/> }
+    @else {
+      @if (problem(); as failure) { <app-api-recovery [problem]="failure" [allowRetry]="false"/> }
+      <form [formGroup]="form" (ngSubmit)="complete()">
+        <fieldset class="business-types"><legend>{{ copy.text('businessType') }}</legend><div class="business-grid">@for (option of businessTypes(); track option.value) { <label class="business-card"><input type="radio" formControlName="businessType" [value]="option.value" (change)="chooseBusiness(option)"/><strong>{{ optionName(option) }}</strong><span>{{ optionDescription(option) }}</span></label> }</div></fieldset>
+        <fieldset class="essential-settings"><legend>{{ copy.text('essentialSettings') }}</legend><div class="field-grid">
+          <label class="ui-field"><span>{{ copy.text('country') }}</span><select formControlName="countryCode"><option value="JO">{{ copy.text('jordan') }}</option><option value="SA">{{ copy.text('saudiArabia') }}</option><option value="AE">{{ copy.text('uae') }}</option><option value="PS">{{ copy.text('palestine') }}</option><option value="EG">{{ copy.text('egypt') }}</option></select></label>
+          <label class="ui-field"><span>{{ i18n.text('currency') }}</span><select formControlName="currency"><option value="JOD">JOD</option><option value="SAR">SAR</option><option value="AED">AED</option><option value="USD">USD</option><option value="EGP">EGP</option></select></label>
+          <label class="ui-field"><span>{{ copy.text('setupDefaultLanguage') }}</span><select formControlName="language"><option [value]="2">العربية</option><option [value]="1">English</option></select></label>
+          <label class="ui-field"><span>{{ copy.text('fiscalYearStarts') }}</span><select formControlName="fiscalYearStartMonth">@for (month of [1,2,3,4,5,6,7,8,9,10,11,12]; track month) { <option [value]="month">{{ monthName(month) }}</option> }</select></label>
+          <label class="ui-field wide"><span>{{ copy.text('inventoryControl') }}</span><select formControlName="inventoryControlMode"><option [value]="3">{{ copy.text('hybridInventory') }}</option><option [value]="2">{{ copy.text('locationManagedInventory') }}</option><option [value]="1">{{ copy.text('simpleInventory') }}</option></select></label>
+          <label class="check"><input type="checkbox" formControlName="usePos"/> <span>{{ copy.text('createPos') }}</span></label>
+          <label class="check"><input type="checkbox" formControlName="isTaxRegistered"/> <span>{{ copy.text('taxRegistered') }}</span></label>
+          @if (form.controls.isTaxRegistered.value) { <label class="ui-field"><span>{{ copy.text('defaultTaxRate') }}</span><input type="number" formControlName="defaultTaxRate" min="0" max="100" step="0.0001"/></label> }
+        </div></fieldset>
+        <div class="setup-summary">{{ copy.text('setupCreates') }}</div>
+        <footer class="setup-actions"><button class="ui-button primary" [disabled]="form.invalid || saving() || skipping()">{{ saving() ? copy.text('preparingCompany') : copy.text('applySetup') }}</button><button type="button" class="ui-button secondary" [disabled]="saving() || skipping()" (click)="skip()">{{ skipping() ? copy.text('skippingSetup') : copy.text('skipSetup') }}</button></footer>
+      </form>
+    }
+  </section>
+</main>
