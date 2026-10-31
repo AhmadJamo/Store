@@ -109,7 +109,8 @@ The ERP SaaS Foundation Blueprint is imported as a non-authoritative planning re
 - [ ] MOD-030 make Angular the only presentation and retire MVC incrementally only after explicit approval and zero registry gaps.
   - [x] MOD-030A host the production Angular build under `/app`, prove deep-link/assets/API separation and cut over Customers as the first reversible route cohort. Completed 2026-10-30 with 15/15 hosted checks and a 10-route mixed pilot.
   - [x] MOD-030B cut over Suppliers and Products as the second reversible cohort. Completed 2026-10-31 with 15/15 hosted checks, a 12-route mixed pilot and a 12-route MVC rollback.
-  - [ ] MOD-030C cut over Analytics Center and Settings only after hosted acceptance with an `Administration.Access` operator, followed by mixed-pilot and MVC-rollback evidence.
+  - [x] MOD-030C cut over Analytics Center and prepare GET-only Settings mappings. Completed 2026-10-31 with 15/15 hosted checks, a 12-route mixed pilot and a 12-route MVC rollback; Settings stayed MVC because the captured operator lacked `Administration.Access`.
+  - [ ] MOD-030D cut over Settings only with an `Administration.Access` operator, followed by hosted, mixed-pilot and MVC-rollback evidence.
 
 - [x] FND-000 import the ERP SaaS Foundation Blueprint with provenance and classify its ten capabilities against the actual MiniStore repository.
 - [ ] FND-010 inventory production environments and operational ownership, approve RPO/RTO and backup retention, run an isolated restore drill, reconcile restored financial/inventory/tenant/outbox state and record evidence.

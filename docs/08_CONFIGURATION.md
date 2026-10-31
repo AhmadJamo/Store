@@ -19,8 +19,8 @@ health endpoints remain available if request instrumentation is disabled. Produc
 `Program.cs` only composes five explicit startup concerns. `WebPresentationExtensions` owns MVC, localization, antiforgery, cache, throttling and health registrations; `PersistenceExtensions` owns DbContext and audit interception; `SecurityExtensions` owns Identity, cookies and authorization; `BusinessServicesExtensions` groups explicit repository/application registrations by feature; and `WebApplicationExtensions` owns startup seeding, request telemetry, secret-free `/health/live` and `/health/ready`, middleware and routes. Tenant-session validation runs after authentication; subscription lifecycle enforcement runs before tenant authorization. Request culture uses the user's cookie then the cached company default. Windows Event Log output is disabled, and startup database initialization failures exit cleanly. Startup runs Identity, permission and configured platform-operator seeders. It does not call `Database.Migrate`; migration deployment remains explicit.
 
 `PresentationCutover` configures the local `AngularBasePath` and per-surface mode. Supported modes are `Mvc`,
-`AngularPilot`, and `AngularDefault`; missing surfaces are treated as `Mvc`. MOD-030B commits Customers, Suppliers and
-Products to `AngularDefault` while AnalyticsCenter and Settings remain `Mvc`. A base path that is not local
+`AngularPilot`, and `AngularDefault`; missing surfaces are treated as `Mvc`. MOD-030C commits Customers, Suppliers,
+Products and AnalyticsCenter to `AngularDefault` while Settings remains `Mvc`. A base path that is not local
 fails startup validation.
 
 `P1-AUD-015` registers one retention worker. When `AuditRetention:Enabled=true`, it runs immediately and then every configured 1–168 hours (24 by default). Each run creates a signed external checkpoint before selecting candidates; no row is removed unless a signed destruction manifest exists and the maintenance transaction revalidates its ID, integrity fingerprint and absence of an active legal hold.

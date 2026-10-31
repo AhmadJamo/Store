@@ -12,8 +12,8 @@ legal holds, signed external checkpoints, destruction manifests and transactiona
 Presentation cutover is an MVC-layer concern. A global action filter consults per-surface `Mvc`, `AngularPilot`, or
 `AngularDefault` configuration, but redirects only GET/HEAD actions in the code-owned route allowlist. Mutations,
 downloads, missing route values and unknown actions remain MVC. MOD-030A adds same-origin production Angular hosting
-under `/app`; MOD-030B commits Customers, Suppliers and Products as reversible `AngularDefault` cohorts while other
-surfaces remain MVC. The SPA fallback
+under `/app`; MOD-030B/C commit Customers, Suppliers, Products and AnalyticsCenter as reversible `AngularDefault`
+cohorts while Settings remains MVC pending authorized evidence. The SPA fallback
 is path-scoped and static-only, so API authorization, tenant middleware and MVC routing retain their existing boundaries.
 See `decisions/ADR-20261025-REVERSIBLE-PRESENTATION-CUTOVER.md` and `modernization/PHASE_30_CUTOVER.md`.
 

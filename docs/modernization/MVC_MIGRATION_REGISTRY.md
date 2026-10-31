@@ -11,7 +11,7 @@
 - Angular application routes discovered: 180.
 - MVC surfaces with a verified Angular counterpart: 82.
 - Remaining MVC surfaces without a mapped Angular counterpart: 0.
-- Allowlisted Angular-default cutover actions: 13.
+- Allowlisted Angular-default cutover actions: 29.
 
 Remaining surfaces: none.
 
@@ -26,8 +26,8 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | Account | Register.cshtml | Angular Pilot | /login, /register, /access-denied | MiniStore.Web/Views/Account/Register.cshtml |
 | Accounts | Create.cshtml | Angular Pilot | /accounting/accounts | MiniStore.Web/Views/Accounts/Create.cshtml |
 | Accounts | Index.cshtml | Angular Pilot | /accounting/accounts | MiniStore.Web/Views/Accounts/Index.cshtml |
-| AnalyticsCenter | Create.cshtml | Angular Pilot | /analytics | MiniStore.Web/Views/AnalyticsCenter/Create.cshtml |
-| AnalyticsCenter | Index.cshtml | Angular Pilot | /analytics | MiniStore.Web/Views/AnalyticsCenter/Index.cshtml |
+| AnalyticsCenter | Create.cshtml | Angular Default | /analytics | MiniStore.Web/Views/AnalyticsCenter/Create.cshtml |
+| AnalyticsCenter | Index.cshtml | Angular Default | /analytics | MiniStore.Web/Views/AnalyticsCenter/Index.cshtml |
 | AuditEvents | Index.cshtml | Angular Pilot | /audit-events | MiniStore.Web/Views/AuditEvents/Index.cshtml |
 | Branches | Create.cshtml | Angular Pilot | /products/catalog-masters | MiniStore.Web/Views/Branches/Create.cshtml |
 | Branches | Index.cshtml | Angular Pilot | /products/catalog-masters | MiniStore.Web/Views/Branches/Index.cshtml |
@@ -234,9 +234,9 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | Accounts | Create | GET | Angular Pilot | /accounting/accounts | — | MiniStore.Web/Controllers/Accounting/AccountsController.cs |
 | Accounts | Create | GET, POST | Angular Pilot | /accounting/accounts | — | MiniStore.Web/Controllers/Accounting/AccountsController.cs |
 | Accounts | Index | ANY | Angular Pilot | /accounting/accounts | — | MiniStore.Web/Controllers/Accounting/AccountsController.cs |
-| AnalyticsCenter | Create | GET | Angular Pilot | /analytics | /analytics/builder | MiniStore.Web/Controllers/Analytics/AnalyticsCenterController.cs |
-| AnalyticsCenter | Create | POST | Angular Pilot | /analytics | /analytics/builder | MiniStore.Web/Controllers/Analytics/AnalyticsCenterController.cs |
-| AnalyticsCenter | Index | GET | Angular Pilot | /analytics | /analytics | MiniStore.Web/Controllers/Analytics/AnalyticsCenterController.cs |
+| AnalyticsCenter | Create | GET | Angular Default | /analytics | /analytics/builder | MiniStore.Web/Controllers/Analytics/AnalyticsCenterController.cs |
+| AnalyticsCenter | Create | POST | Angular Default | /analytics | /analytics/builder | MiniStore.Web/Controllers/Analytics/AnalyticsCenterController.cs |
+| AnalyticsCenter | Index | GET | Angular Default | /analytics | /analytics | MiniStore.Web/Controllers/Analytics/AnalyticsCenterController.cs |
 | AuditEvents | Export | POST | Angular Pilot | /audit-events | — | MiniStore.Web/Controllers/Security/AuditEventsController.cs |
 | AuditEvents | Index | GET | Angular Pilot | /audit-events | — | MiniStore.Web/Controllers/Security/AuditEventsController.cs |
 | Branches | BranchesController | ANY | Angular Pilot | /products/catalog-masters | — | MiniStore.Web/Controllers/Accounting/BranchesController.cs |
@@ -507,42 +507,42 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | SalesReturns | Create | POST | Angular Pilot | /sales/legacy-returns | — | MiniStore.Web/Controllers/Sales/SalesReturnsController.cs |
 | SalesReturns | Details | ANY | Angular Pilot | /sales/legacy-returns | — | MiniStore.Web/Controllers/Sales/SalesReturnsController.cs |
 | SalesReturns | Index | ANY | Angular Pilot | /sales/legacy-returns | — | MiniStore.Web/Controllers/Sales/SalesReturnsController.cs |
-| Settings | Accounting | GET | Angular Pilot | /settings | — | MiniStore.Web/Controllers/Settings/SettingsController.cs |
-| Settings | Accounting | POST | Angular Pilot | /settings | — | MiniStore.Web/Controllers/Settings/SettingsController.cs |
-| Settings | BranchSalesAccounts | GET | Angular Pilot | /settings | — | MiniStore.Web/Controllers/Settings/SettingsController.cs |
-| Settings | BranchSalesAccounts | POST | Angular Pilot | /settings | — | MiniStore.Web/Controllers/Settings/SettingsController.cs |
+| Settings | Accounting | GET | Angular Pilot | /settings | /settings/accounting | MiniStore.Web/Controllers/Settings/SettingsController.cs |
+| Settings | Accounting | POST | Angular Pilot | /settings | /settings/accounting | MiniStore.Web/Controllers/Settings/SettingsController.cs |
+| Settings | BranchSalesAccounts | GET | Angular Pilot | /settings | /settings/branch-sales-accounts | MiniStore.Web/Controllers/Settings/SettingsController.cs |
+| Settings | BranchSalesAccounts | POST | Angular Pilot | /settings | /settings/branch-sales-accounts | MiniStore.Web/Controllers/Settings/SettingsController.cs |
 | Settings | ChangeFiscalPeriodStatus | POST | Angular Pilot | /settings | — | MiniStore.Web/Controllers/Settings/SettingsController.cs |
 | Settings | ConfigureBranchWarehouse | POST | Angular Pilot | /settings | — | MiniStore.Web/Controllers/Settings/SettingsController.cs |
 | Settings | ConfigurePosTerminalWarehouse | POST | Angular Pilot | /settings | — | MiniStore.Web/Controllers/Settings/SettingsController.cs |
 | Settings | CreatePosTerminal | POST | Angular Pilot | /settings | — | MiniStore.Web/Controllers/Settings/SettingsController.cs |
-| Settings | Currencies | GET | Angular Pilot | /settings | — | MiniStore.Web/Controllers/Settings/SettingsController.cs |
-| Settings | Currencies | POST | Angular Pilot | /settings | — | MiniStore.Web/Controllers/Settings/SettingsController.cs |
+| Settings | Currencies | GET | Angular Pilot | /settings | /settings/currency-exchange-rates | MiniStore.Web/Controllers/Settings/SettingsController.cs |
+| Settings | Currencies | POST | Angular Pilot | /settings | /settings/currency-exchange-rates | MiniStore.Web/Controllers/Settings/SettingsController.cs |
 | Settings | DeactivateUnit | POST | Angular Pilot | /settings | — | MiniStore.Web/Controllers/Settings/SettingsController.cs |
-| Settings | Discounts | GET | Angular Pilot | /settings | — | MiniStore.Web/Controllers/Settings/SettingsController.cs |
-| Settings | Discounts | POST | Angular Pilot | /settings | — | MiniStore.Web/Controllers/Settings/SettingsController.cs |
-| Settings | DocumentNumbers | GET | Angular Pilot | /settings | — | MiniStore.Web/Controllers/Settings/SettingsController.cs |
-| Settings | DocumentNumbers | POST | Angular Pilot | /settings | — | MiniStore.Web/Controllers/Settings/SettingsController.cs |
-| Settings | FiscalPeriods | GET | Angular Pilot | /settings | — | MiniStore.Web/Controllers/Settings/SettingsController.cs |
-| Settings | FiscalPeriods | POST | Angular Pilot | /settings | — | MiniStore.Web/Controllers/Settings/SettingsController.cs |
-| Settings | General | GET | Angular Pilot | /settings | — | MiniStore.Web/Controllers/Settings/SettingsController.cs |
-| Settings | General | POST | Angular Pilot | /settings | — | MiniStore.Web/Controllers/Settings/SettingsController.cs |
+| Settings | Discounts | GET | Angular Pilot | /settings | /settings/discounts | MiniStore.Web/Controllers/Settings/SettingsController.cs |
+| Settings | Discounts | POST | Angular Pilot | /settings | /settings/discounts | MiniStore.Web/Controllers/Settings/SettingsController.cs |
+| Settings | DocumentNumbers | GET | Angular Pilot | /settings | /settings/document-numbers | MiniStore.Web/Controllers/Settings/SettingsController.cs |
+| Settings | DocumentNumbers | POST | Angular Pilot | /settings | /settings/document-numbers | MiniStore.Web/Controllers/Settings/SettingsController.cs |
+| Settings | FiscalPeriods | GET | Angular Pilot | /settings | /settings/fiscal-periods | MiniStore.Web/Controllers/Settings/SettingsController.cs |
+| Settings | FiscalPeriods | POST | Angular Pilot | /settings | /settings/fiscal-periods | MiniStore.Web/Controllers/Settings/SettingsController.cs |
+| Settings | General | GET | Angular Pilot | /settings | /settings | MiniStore.Web/Controllers/Settings/SettingsController.cs |
+| Settings | General | POST | Angular Pilot | /settings | /settings | MiniStore.Web/Controllers/Settings/SettingsController.cs |
 | Settings | Index | GET | Angular Pilot | /settings | /settings | MiniStore.Web/Controllers/Settings/SettingsController.cs |
-| Settings | Inventory | GET | Angular Pilot | /settings | — | MiniStore.Web/Controllers/Settings/SettingsController.cs |
-| Settings | Inventory | POST | Angular Pilot | /settings | — | MiniStore.Web/Controllers/Settings/SettingsController.cs |
-| Settings | InventoryAccess | GET | Angular Pilot | /settings | — | MiniStore.Web/Controllers/Settings/SettingsController.cs |
-| Settings | Invoices | GET | Angular Pilot | /settings | — | MiniStore.Web/Controllers/Settings/SettingsController.cs |
-| Settings | OrganizationIdentity | GET | Angular Pilot | /settings | — | MiniStore.Web/Controllers/Settings/SettingsController.cs |
-| Settings | OrganizationIdentity | POST | Angular Pilot | /settings | — | MiniStore.Web/Controllers/Settings/SettingsController.cs |
+| Settings | Inventory | GET | Angular Pilot | /settings | /settings/inventory | MiniStore.Web/Controllers/Settings/SettingsController.cs |
+| Settings | Inventory | POST | Angular Pilot | /settings | /settings/inventory | MiniStore.Web/Controllers/Settings/SettingsController.cs |
+| Settings | InventoryAccess | GET | Angular Pilot | /settings | /settings/inventory-access | MiniStore.Web/Controllers/Settings/SettingsController.cs |
+| Settings | Invoices | GET | Angular Pilot | /settings | /settings/document-numbers | MiniStore.Web/Controllers/Settings/SettingsController.cs |
+| Settings | OrganizationIdentity | GET | Angular Pilot | /settings | /settings/identity | MiniStore.Web/Controllers/Settings/SettingsController.cs |
+| Settings | OrganizationIdentity | POST | Angular Pilot | /settings | /settings/identity | MiniStore.Web/Controllers/Settings/SettingsController.cs |
 | Settings | OrganizationLogo | GET | Angular Pilot | /settings | — | MiniStore.Web/Controllers/Settings/SettingsController.cs |
-| Settings | Pos | GET | Angular Pilot | /settings | — | MiniStore.Web/Controllers/Settings/SettingsController.cs |
-| Settings | Pos | POST | Angular Pilot | /settings | — | MiniStore.Web/Controllers/Settings/SettingsController.cs |
-| Settings | PurchaseMatching | GET | Angular Pilot | /settings | — | MiniStore.Web/Controllers/Settings/SettingsController.cs |
-| Settings | PurchaseMatching | POST | Angular Pilot | /settings | — | MiniStore.Web/Controllers/Settings/SettingsController.cs |
-| Settings | PurchaseSourcingPolicy | GET | Angular Pilot | /settings | — | MiniStore.Web/Controllers/Settings/SettingsController.cs |
-| Settings | PurchaseSourcingPolicy | POST | Angular Pilot | /settings | — | MiniStore.Web/Controllers/Settings/SettingsController.cs |
-| Settings | Units | GET | Angular Pilot | /settings | — | MiniStore.Web/Controllers/Settings/SettingsController.cs |
-| Settings | Units | POST | Angular Pilot | /settings | — | MiniStore.Web/Controllers/Settings/SettingsController.cs |
-| Settings | WorkflowCatalog | GET | Angular Pilot | /settings | — | MiniStore.Web/Controllers/Settings/SettingsController.cs |
+| Settings | Pos | GET | Angular Pilot | /settings | /settings/pos-experience | MiniStore.Web/Controllers/Settings/SettingsController.cs |
+| Settings | Pos | POST | Angular Pilot | /settings | /settings/pos-experience | MiniStore.Web/Controllers/Settings/SettingsController.cs |
+| Settings | PurchaseMatching | GET | Angular Pilot | /settings | /settings/purchase-matching | MiniStore.Web/Controllers/Settings/SettingsController.cs |
+| Settings | PurchaseMatching | POST | Angular Pilot | /settings | /settings/purchase-matching | MiniStore.Web/Controllers/Settings/SettingsController.cs |
+| Settings | PurchaseSourcingPolicy | GET | Angular Pilot | /settings | /settings/purchase-sourcing | MiniStore.Web/Controllers/Settings/SettingsController.cs |
+| Settings | PurchaseSourcingPolicy | POST | Angular Pilot | /settings | /settings/purchase-sourcing | MiniStore.Web/Controllers/Settings/SettingsController.cs |
+| Settings | Units | GET | Angular Pilot | /settings | /settings/measurement-units | MiniStore.Web/Controllers/Settings/SettingsController.cs |
+| Settings | Units | POST | Angular Pilot | /settings | /settings/measurement-units | MiniStore.Web/Controllers/Settings/SettingsController.cs |
+| Settings | WorkflowCatalog | GET | Angular Pilot | /settings | /settings/workflow-catalog | MiniStore.Web/Controllers/Settings/SettingsController.cs |
 | StockMovements | Index | GET | Angular Pilot | /inventory/location-movements | — | MiniStore.Web/Controllers/Inventory/StockMovementsController.cs |
 | StockTransactions | Create | GET | Angular Pilot | /inventory/transactions | — | MiniStore.Web/Controllers/Inventory/StockTransactionsController.cs |
 | StockTransactions | Create | POST | Angular Pilot | /inventory/transactions | — | MiniStore.Web/Controllers/Inventory/StockTransactionsController.cs |

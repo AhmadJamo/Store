@@ -33,8 +33,8 @@ delegation migration during rollback; local Demo is now reconciled through migra
 
 `scripts/Publish-AngularAssets.ps1` builds Angular with the production `/app/` base href, validates the generated index,
 cleans only the fixed git-ignored `MiniStore.Web/wwwroot/app` target and copies hashed assets. `WebApplicationExtensions`
-serves those assets with immutable caching and a no-cache, `/app`-scoped SPA fallback. Customers, Suppliers and Products
-are the committed AngularDefault cohorts; the generated registry and acceptance matrix read appsettings and report the mixed mode.
+serves those assets with immutable caching and a no-cache, `/app`-scoped SPA fallback. Customers, Suppliers, Products and
+AnalyticsCenter are the committed AngularDefault cohorts; the generated registry and acceptance matrix read appsettings and report the mixed mode.
 
 `MiniStore Front-End/src/app/core/preferences` owns versioned, non-sensitive theme/density preferences and system-theme resolution. Global semantic tokens provide light/dark palettes, density dimensions, focus, reduced-motion and forced-color behavior. The lazy `/design-system` page is the bilingual RTL/LTR visual-state reference for shared buttons, badges, fields and empty/loading/error patterns. See `docs/modernization/PHASE_03_VISUAL_SYSTEM.md`.
 
@@ -125,7 +125,8 @@ delegates exclusively to `DocumentDesignService` and preserves rowversion confli
 `CurrencyExchangeRateService`, `MeasurementUnitService`, `AccountingSettingsService`, `BranchService` and
 `InventoryAccessService`; mutation paths
 retain semantic audit and stale-write protection. `SettingsConcurrencyException` is translated to RFC Problem Details
-409, while validation remains 400. Settings stays `Mvc` in committed cutover configuration.
+409, while validation remains 400. Settings stays `Mvc` in committed cutover configuration; MOD-030C prepares only its
+GET-page route mappings for the separately authorized MOD-030D cutover.
 
 `MiniStore Front-End/src/app/features/identity` owns tenant-user list/create and tenant-role list/create/edit/delete presentation. `UsersApiController` delegates both MVC and API user creation to the Application-owned `ITenantUserAdministrationService`; `RolesApiController` delegates to `TenantRoleService` and maps Domain permissions to explicit code-only API DTOs. Identity creation compensates a failed tenant binding, and `UnitOfWork` clears tracked state after rollback before that cleanup. Angular routes, settings links and navigation are permission filtered, while endpoint policies and antiforgery remain authoritative. Existing-user edit/delete are intentionally absent because the current MVC source surface does not implement them.
 

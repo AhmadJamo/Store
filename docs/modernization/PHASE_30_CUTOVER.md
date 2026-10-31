@@ -1,6 +1,6 @@
 # MOD-030 — hosted Angular cutover and MVC retirement
 
-> Status: IN PROGRESS — `MOD-030A/B` complete through 2026-10-31
+> Status: IN PROGRESS — `MOD-030A..C` complete through 2026-10-31
 
 ## MOD-030A production hosting and first cohort
 
@@ -36,5 +36,17 @@ The final non-live gate passed a warning-free Release build, 1,349 backend regre
 121 static templates and the project bundle budgets (326,764 initial bytes; 81,880 largest lazy bytes). Browser evidence
 is the separate hosted 15/15 run above rather than a development-host substitute.
 
-`MOD-030C` must obtain an operator session with `Administration.Access`, then repeat hosted acceptance, mixed pilot and
-MVC rollback for Analytics Center and Settings before committing either surface.
+## MOD-030C Analytics Center cohort and Settings preparation
+
+AnalyticsCenter now joins Customers, Suppliers and Products as AngularDefault. Its index and builder require the
+existing View/Customize permissions. Hosted acceptance passed 15/15 with zero skips; the mixed pilot redirected the
+authorized Analytics routes to exact Angular targets across 12 covered routes, and process-local rollback returned the
+same 12 routes through MVC 200.
+
+The final static gate passed a warning-free Release build, 1,381 backend regression checks, 214/214 Angular tests,
+121 templates and the unchanged project bundle budgets.
+
+Settings remains MVC. Its existing GET pages are mapped to proven Angular routes in preparation for the next cohort,
+while the binary logo response and all unsafe actions remain outside the catalog. Two interactive captures authenticated
+an operator that lacked `Administration.Access`; the runner now fails explicitly on missing required cohort permissions.
+`MOD-030D` must provide that authorized session and repeat hosted acceptance, pilot and rollback before committing Settings.

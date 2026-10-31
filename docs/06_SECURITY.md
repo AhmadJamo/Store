@@ -14,9 +14,12 @@ POST plus every unlisted action. Enabling a surface therefore cannot redirect a 
 MOD-030A serves only generated public Angular assets below `/app`. Its non-file fallback returns the generated index only
 inside that prefix and cannot shadow `/api`, authentication, health, OpenAPI or MVC endpoints. Hashed assets are immutable;
 the index is no-cache. The hosted client continues to use the same-origin HttpOnly Identity and antiforgery cookies and
-stores no credential. Customers, Suppliers and Products are the committed AngularDefault cohorts; server authorization
+stores no credential. Customers, Suppliers, Products and AnalyticsCenter are the committed AngularDefault cohorts; server authorization
 still runs before every allowlisted MVC redirect and all API operations independently reauthorize. MOD-030B added only
 GET routes for Product create/edit presentation; unsafe operations remain protected API or MVC requests.
+MOD-030C requires both Analytics View and Customize permissions before rehearsal and keeps Settings at MVC because the
+available operator does not hold `Administration.Access`. Prepared Settings mappings contain only GET pages and do not
+redirect `OrganizationLogo` or any unsafe action.
 
 Customer and Supplier Angular slices use operation-specific View/Create/Edit permissions on every endpoint. Supplier form options are projected by the Application layer, and submitted account/product identifiers are revalidated by existing services; client filtering is never treated as authorization. Supplier stale-write failures return HTTP 409 while keeping global antiforgery and tenant repository filters intact.
 

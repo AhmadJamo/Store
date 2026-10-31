@@ -113,6 +113,15 @@ static async Task RunLiveCutoverAsync(
     var permissions = session.RootElement.GetProperty("permissions").EnumerateArray()
         .Select(x => x.GetString()).Where(x => x is not null).Cast<string>()
         .ToHashSet(StringComparer.Ordinal);
+    foreach (var requiredPermission in new[]
+             {
+                 "AnalyticsCenter.View",
+                 "AnalyticsCenter.Customize"
+             })
+    {
+        Require(permissions.Contains(requiredPermission),
+            $"Cutover rehearsal requires {requiredPermission}; capture an authorized operator session.");
+    }
 
     var routes = new List<CutoverProbe>
     {
@@ -123,6 +132,22 @@ static async Task RunLiveCutoverAsync(
         new("/AnalyticsCenter", "/app/analytics", "AnalyticsCenter.View"),
         new("/AnalyticsCenter/Create", "/app/analytics/builder", "AnalyticsCenter.Customize"),
         new("/Settings", "/app/settings", "Administration.Access"),
+        new("/Settings/General", "/app/settings", "Administration.Access"),
+        new("/Settings/OrganizationIdentity", "/app/settings/identity", "Administration.Access"),
+        new("/Settings/Discounts", "/app/settings/discounts", "Administration.Access"),
+        new("/Settings/PurchaseMatching", "/app/settings/purchase-matching", "Administration.Access"),
+        new("/Settings/Inventory", "/app/settings/inventory", "Administration.Access"),
+        new("/Settings/PurchaseSourcingPolicy", "/app/settings/purchase-sourcing", "Administration.Access"),
+        new("/Settings/DocumentNumbers", "/app/settings/document-numbers", "Administration.Access"),
+        new("/Settings/Invoices", "/app/settings/document-numbers", "Administration.Access"),
+        new("/Settings/FiscalPeriods", "/app/settings/fiscal-periods", "Administration.Access"),
+        new("/Settings/Currencies", "/app/settings/currency-exchange-rates", "Administration.Access"),
+        new("/Settings/Units", "/app/settings/measurement-units", "Administration.Access"),
+        new("/Settings/Accounting", "/app/settings/accounting", "Administration.Access"),
+        new("/Settings/BranchSalesAccounts", "/app/settings/branch-sales-accounts", "Administration.Access"),
+        new("/Settings/InventoryAccess", "/app/settings/inventory-access", "Administration.Access"),
+        new("/Settings/Pos", "/app/settings/pos-experience", "Administration.Access"),
+        new("/Settings/WorkflowCatalog", "/app/settings/workflow-catalog", "Administration.Access"),
         new("/Products?search=cutover-rehearsal", "/app/products?search=cutover-rehearsal", "Products.View"),
         new("/Products/Create", "/app/products/new", "Products.Create")
     };
@@ -174,7 +199,7 @@ static async Task RunLiveCutoverAsync(
             new APIRequestContextOptions { MaxRedirects = 0 });
         var expectsAngular = options.CutoverMode == "angular" ||
                              options.CutoverMode == "pilot" &&
-                             surface is "Customers" or "Suppliers" or "Products";
+                             surface is "Customers" or "Suppliers" or "Products" or "AnalyticsCenter";
         if (expectsAngular)
         {
             Require(response.Status is 301 or 302 or 307 or 308,
