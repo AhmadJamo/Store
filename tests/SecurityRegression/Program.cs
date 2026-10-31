@@ -688,9 +688,12 @@ foreach (var admin in new[] { false, true })
     var projectedPermissions = await service.GetGrantedAsync("user");
     Check(admin
             ? projectedPermissions.SequenceEqual(PermissionDefinitions.All.Select(x => x.Name)
+                .Concat(AdministrationPermissions.All)
                 .Distinct(StringComparer.Ordinal).OrderBy(x => x, StringComparer.Ordinal))
             : projectedPermissions.Count == 0,
         $"Session permission projection must match the tenant Admin shortcut, admin={admin}");
+    Check(!admin || AdministrationPermissions.All.All(projectedPermissions.Contains),
+        "Tenant Admin session projection must include every protected administration permission");
 }
 
 foreach (var controller in new[] { typeof(RolesController), typeof(ProductsController), typeof(WarehousesController), typeof(SuppliersController), typeof(ProductStocksController) })

@@ -64,6 +64,7 @@ public class PermissionService : IPermissionService
         {
             return PermissionDefinitions.All
                 .Select(x => x.Name)
+                .Concat(AdministrationPermissions.All)
                 .Distinct(StringComparer.Ordinal)
                 .OrderBy(x => x, StringComparer.Ordinal)
                 .ToList();
