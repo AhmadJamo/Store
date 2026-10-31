@@ -197,6 +197,20 @@ Check(inventoryTrackingCutoverResolver.Resolve(
         cutoverContext.Request, "InventoryTracking", "Open",
         new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null,
     "Inventory Tracking mutations must stay outside the presentation cutover catalog");
+var stockMovementsCutoverResolver = new PresentationCutoverResolver(Options.Create(
+    new PresentationCutoverOptions
+    {
+        AngularBasePath = "/app",
+        Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["StockMovements"] = PresentationCutoverMode.AngularDefault
+        }
+    }));
+Check(stockMovementsCutoverResolver.Resolve(
+        cutoverContext.Request, "StockMovements", "Index",
+        new Microsoft.AspNetCore.Routing.RouteValueDictionary()) ==
+    "/app/inventory/location-movements?page=2",
+    "Stock Movements cutover must preserve query strings on its exact shared Angular route");
 foreach (var entry in PresentationCutoverRouteCatalog.All)
 {
     var keyParts = entry.Key.Split(':', 2);

@@ -50,7 +50,8 @@ public static class PresentationCutoverRouteCatalog
             ["StockTransfers:Create"] = "/inventory/transfers/new",
             ["StockTransfers:Edit"] = "/inventory/transfers/{id}/edit",
             ["StockTransfers:Details"] = "/inventory/transfers/{id}",
-            ["InventoryTracking:Index"] = "/inventory/tracking"
+            ["InventoryTracking:Index"] = "/inventory/tracking",
+            ["StockMovements:Index"] = "/inventory/location-movements"
         };
 
     public static IReadOnlyDictionary<string, string> All => Routes;

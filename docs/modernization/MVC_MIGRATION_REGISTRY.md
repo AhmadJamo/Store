@@ -11,7 +11,7 @@
 - Angular application routes discovered: 183.
 - MVC surfaces with a verified Angular counterpart: 82.
 - Remaining MVC surfaces without a mapped Angular counterpart: 0.
-- Allowlisted Angular-default cutover actions: 46.
+- Allowlisted Angular-default cutover actions: 47.
 
 Remaining surfaces: none.
 
@@ -174,7 +174,7 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | Settings | PurchaseSourcingPolicy.cshtml | Angular Default | /settings | MiniStore.Web/Views/Settings/PurchaseSourcingPolicy.cshtml |
 | Settings | Units.cshtml | Angular Default | /settings | MiniStore.Web/Views/Settings/Units.cshtml |
 | Settings | WorkflowCatalog.cshtml | Angular Default | /settings | MiniStore.Web/Views/Settings/WorkflowCatalog.cshtml |
-| StockMovements | Index.cshtml | Angular Pilot | /inventory/location-movements | MiniStore.Web/Views/StockMovements/Index.cshtml |
+| StockMovements | Index.cshtml | Angular Default | /inventory/location-movements | MiniStore.Web/Views/StockMovements/Index.cshtml |
 | StockTransactions | Create.cshtml | Angular Default | /inventory/transactions | MiniStore.Web/Views/StockTransactions/Create.cshtml |
 | StockTransactions | Index.cshtml | Angular Default | /inventory/transactions | MiniStore.Web/Views/StockTransactions/Index.cshtml |
 | StockTransfers | Create.cshtml | Angular Default | /inventory/transfers | MiniStore.Web/Views/StockTransfers/Create.cshtml |
@@ -543,7 +543,7 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | Settings | Units | GET | Angular Default | /settings | /settings/measurement-units | MiniStore.Web/Controllers/Settings/SettingsController.cs |
 | Settings | Units | POST | Angular Default | /settings | /settings/measurement-units | MiniStore.Web/Controllers/Settings/SettingsController.cs |
 | Settings | WorkflowCatalog | GET | Angular Default | /settings | /settings/workflow-catalog | MiniStore.Web/Controllers/Settings/SettingsController.cs |
-| StockMovements | Index | GET | Angular Pilot | /inventory/location-movements | — | MiniStore.Web/Controllers/Inventory/StockMovementsController.cs |
+| StockMovements | Index | GET | Angular Default | /inventory/location-movements | /inventory/location-movements | MiniStore.Web/Controllers/Inventory/StockMovementsController.cs |
 | StockTransactions | Create | GET | Angular Default | /inventory/transactions | /inventory/stocks/adjustment | MiniStore.Web/Controllers/Inventory/StockTransactionsController.cs |
 | StockTransactions | Create | POST | Angular Default | /inventory/transactions | /inventory/stocks/adjustment | MiniStore.Web/Controllers/Inventory/StockTransactionsController.cs |
 | StockTransactions | Index | GET | Angular Default | /inventory/transactions | /inventory/transactions | MiniStore.Web/Controllers/Inventory/StockTransactionsController.cs |

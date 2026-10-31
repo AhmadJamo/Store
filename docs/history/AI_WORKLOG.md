@@ -1,5 +1,10 @@
 # AI Work Log
 
+- 2026-11-01: Completed `MOD-030E2E`. StockMovements read-only Index now uses the shared location-movements
+  AngularDefault workspace with query preservation. Hosted acceptance passed 15/15, cutover and MVC rollback passed 44
+  routes, and Release, 1,430 backend checks, 215/215 Angular tests, 121 templates and bundle budgets passed. The temporary
+  authenticated state was deleted; no database, mutation boundary, business rule or MVC file changed.
+
 - 2026-11-01: Completed `MOD-030E2D`. InventoryTracking Index now uses its exact AngularDefault route with query
   preservation. Open/quarantine/release/create-recall/close-recall/communication remain independently authorized
   antiforgery-protected mutations outside the presentation catalog. Hosted acceptance passed 15/15, cutover and MVC

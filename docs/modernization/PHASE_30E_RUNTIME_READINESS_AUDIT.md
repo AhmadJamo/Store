@@ -1,6 +1,6 @@
 # MOD-030E — Angular runtime readiness audit
 
-> Status: IN PROGRESS — MOD-030E2D complete
+> Status: IN PROGRESS — MOD-030E2E complete
 > Date: 2026-11-01
 
 ## Finding
@@ -84,6 +84,17 @@ The authenticated hosted suite passed 15/15 with zero failures/skips. Cutover an
 43 authorized routes. The final gate passed a warning-free Release build, 1,427 backend checks, 215/215 Angular tests
 across 106 files, 121 templates and bundle budgets (327,235 initial bytes; 81,880 largest lazy bytes). Fourteen surfaces
 are now AngularDefault and 68 mapped surfaces remain MVC by default. No data, schema, business rule or MVC file changed.
+
+## MOD-030E2E evidence
+
+StockMovements now joins the committed AngularDefault set. Its read-only Index GET maps to the shared
+`/inventory/location-movements` Angular workspace with query-string preservation. The MVC controller and versioned API
+each expose only the `StockMovements.View` read boundary; no write operation was added to the presentation catalog.
+
+The authenticated hosted suite passed 15/15 with zero failures/skips. Cutover and process-local MVC rollback both passed
+44 authorized routes. The final gate passed a warning-free Release build, 1,430 backend checks, 215/215 Angular tests
+across 106 files, 121 templates and bundle budgets (327,235 initial bytes; 81,880 largest lazy bytes). Fifteen surfaces
+are now AngularDefault and 67 mapped surfaces remain MVC by default. No data, schema, business rule or MVC file changed.
 
 Every cohort must add explicit GET-only action mappings, require its existing permissions, pass hosted acceptance and
 exact Angular targets, then pass a process-local MVC rollback. Mutations continue through their independently authorized

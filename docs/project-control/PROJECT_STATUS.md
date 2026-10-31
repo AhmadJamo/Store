@@ -146,3 +146,6 @@ return-to-draft/post/cancel خارج التحويل وبصلاحياتها ال�
 خارج كتالوج التحويل وبصلاحياتها وantiforgery. نجح hosted ‏15/15 والقطع والرجوع 43/43، والبوابة 1,427 backend
 و215/215 Angular و121 قالبًا. أصبحت 14 سطحًا AngularDefault وبقي 68 سطحًا mapped على MVC؛ ينتقل التنفيذ إلى
 `MOD-030E2E` لسطح StockMovements القراءة فقط.
+اكتمل `MOD-030E2E`: فُعل StockMovements Index القراءة فقط على workspace حركات المواقع المشترك مع حفظ query.
+نجح hosted ‏15/15 والقطع والرجوع 44/44، والبوابة 1,430 backend و215/215 Angular و121 قالبًا. أصبحت 15 سطحًا
+AngularDefault وبقي 67 سطحًا mapped على MVC؛ ينتقل التنفيذ إلى دفعة `MOD-030E2F` المجمعة لأربع عمليات مستودع.
