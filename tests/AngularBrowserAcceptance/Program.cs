@@ -116,7 +116,8 @@ static async Task RunLiveCutoverAsync(
     foreach (var requiredPermission in new[]
              {
                  "AnalyticsCenter.View",
-                 "AnalyticsCenter.Customize"
+                 "AnalyticsCenter.Customize",
+                 "Administration.Access"
              })
     {
         Require(permissions.Contains(requiredPermission),
@@ -139,7 +140,8 @@ static async Task RunLiveCutoverAsync(
         new("/Settings/Inventory", "/app/settings/inventory", "Administration.Access"),
         new("/Settings/PurchaseSourcingPolicy", "/app/settings/purchase-sourcing", "Administration.Access"),
         new("/Settings/DocumentNumbers", "/app/settings/document-numbers", "Administration.Access"),
-        new("/Settings/Invoices", "/app/settings/document-numbers", "Administration.Access"),
+        new("/Settings/Invoices", "/app/settings/document-numbers", "Administration.Access",
+            "/Settings/DocumentNumbers"),
         new("/Settings/FiscalPeriods", "/app/settings/fiscal-periods", "Administration.Access"),
         new("/Settings/Currencies", "/app/settings/currency-exchange-rates", "Administration.Access"),
         new("/Settings/Units", "/app/settings/measurement-units", "Administration.Access"),
@@ -199,7 +201,7 @@ static async Task RunLiveCutoverAsync(
             new APIRequestContextOptions { MaxRedirects = 0 });
         var expectsAngular = options.CutoverMode == "angular" ||
                              options.CutoverMode == "pilot" &&
-                             surface is "Customers" or "Suppliers" or "Products" or "AnalyticsCenter";
+                             surface is "Customers" or "Suppliers" or "Products" or "AnalyticsCenter" or "Settings";
         if (expectsAngular)
         {
             Require(response.Status is 301 or 302 or 307 or 308,
@@ -210,8 +212,19 @@ static async Task RunLiveCutoverAsync(
         }
         else
         {
-            Require(response.Status == 200,
-                $"MVC rollback surface {surface} returned {response.Status} instead of 200.");
+            if (probe.MvcRedirectPath is not null)
+            {
+                Require(response.Status is 301 or 302 or 307 or 308,
+                    $"MVC rollback alias {probe.MvcPath} returned {response.Status} instead of a redirect.");
+                Require(response.Headers.TryGetValue("location", out var mvcLocation) &&
+                        string.Equals(mvcLocation, probe.MvcRedirectPath, StringComparison.Ordinal),
+                    $"MVC rollback alias {probe.MvcPath} returned an unexpected target.");
+            }
+            else
+            {
+                Require(response.Status == 200,
+                    $"MVC rollback surface {surface} returned {response.Status} instead of 200.");
+            }
         }
         executed++;
     }
@@ -553,7 +566,11 @@ sealed record CheckResult(string Name, string Status, string Detail);
 
 sealed record CohortProbe(string Cohort, string Permission, string Path);
 
-sealed record CutoverProbe(string MvcPath, string AngularPath, string Permission);
+sealed record CutoverProbe(
+    string MvcPath,
+    string AngularPath,
+    string Permission,
+    string? MvcRedirectPath = null);
 
 sealed record Arguments(
     string FrontendUrl,

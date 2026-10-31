@@ -106,11 +106,11 @@ The ERP SaaS Foundation Blueprint is imported as a non-authoritative planning re
     - [x] Capture an operator-authenticated state and execute the runner against Demo: 9/9 authenticated checks, zero skips; financial empty-state and real inventory same-data evidence passed. Completed 2026-10-30.
   - [x] MOD-029C run permission-driven read-only acceptance across the high-risk sales, purchasing, inventory, accounting and administration cohorts. Completed 2026-10-30 with 15/15 browser checks and zero skips.
   - [x] MOD-029D rehearse live process-level AngularDefault cutover and MVC rollback for allowlisted GET routes without committing a default change. Completed 2026-10-30 on 10 authorized routes; applied additive migration 136 after the rehearsal exposed Demo drift.
-- [ ] MOD-030 make Angular the only presentation and retire MVC incrementally only after explicit approval and zero registry gaps.
+- [ ] MOD-030 make Angular the only presentation and retire MVC incrementally only after explicit approval and zero registry gaps. Reversible cutover is complete; physical MVC retirement remains approval-gated.
   - [x] MOD-030A host the production Angular build under `/app`, prove deep-link/assets/API separation and cut over Customers as the first reversible route cohort. Completed 2026-10-30 with 15/15 hosted checks and a 10-route mixed pilot.
   - [x] MOD-030B cut over Suppliers and Products as the second reversible cohort. Completed 2026-10-31 with 15/15 hosted checks, a 12-route mixed pilot and a 12-route MVC rollback.
   - [x] MOD-030C cut over Analytics Center and prepare GET-only Settings mappings. Completed 2026-10-31 with 15/15 hosted checks, a 12-route mixed pilot and a 12-route MVC rollback; Settings stayed MVC because the captured operator lacked `Administration.Access`.
-  - [ ] MOD-030D cut over Settings only with an `Administration.Access` operator, followed by hosted, mixed-pilot and MVC-rollback evidence.
+  - [x] MOD-030D cut over Settings with an `Administration.Access` operator. Completed 2026-10-31 with 15/15 hosted checks, 29-route Angular cutover and 29-route MVC rollback; Release clean, 1,385 backend checks, 214/214 Angular tests, 121 templates and bundle budgets passed.
 
 - [x] FND-000 import the ERP SaaS Foundation Blueprint with provenance and classify its ten capabilities against the actual MiniStore repository.
 - [ ] FND-010 inventory production environments and operational ownership, approve RPO/RTO and backup retention, run an isolated restore drill, reconcile restored financial/inventory/tenant/outbox state and record evidence.

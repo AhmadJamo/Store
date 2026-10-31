@@ -2,10 +2,10 @@
 
 ## آخر خط أساس منفذ
 
-أحدث بوابة كاملة قبل `MOD-029B` في 2026-10-30: Release نجح بلا تحذيرات أو أخطاء، وSecurityRegression نجح في
-1,345 فحصًا، وAngular نجح في 214/214 اختبارًا عبر 106 ملفات. نجح فحص الوصول الثابت لـ121 قالبًا، ونجحت ميزانية
-الإنتاج عند 326,764/358,400 بايت أولية و81,880/81,920 لأكبر lazy chunk. تشغيل Demo المصرح به نجح 9/9 بلا
-تخطٍ للهوية/المالية/المخزون، و100/100 أداء عند p95 14.24 ms وp99 16.79 ms.
+أحدث بوابة كاملة بعد `MOD-030D` في 2026-10-31: Release نجح بلا تحذيرات أو أخطاء، وSecurityRegression نجح في
+1,385 فحصًا، وAngular نجح في 214/214 اختبارًا عبر 106 ملفات. نجح فحص الوصول الثابت لـ121 قالبًا، ونجحت ميزانية
+الإنتاج عند 326,764/358,400 بايت أولية و81,880/81,920 لأكبر lazy chunk. تشغيل Demo المصرح به نجح 15/15 بلا
+فشل أو تخطٍ، ونجح القطع والرجوع على 29 مسارًا مصرحًا.
 
 | الأمر | النتيجة | التاريخ |
 |---|---|---|
@@ -31,6 +31,7 @@
 | MOD-030A hosted Angular production | `/app` index/deep link 200 no-cache, hashed asset 200 immutable, API remained separate; authenticated hosted run 15/15 and mixed Customers pilot 10 routes passed | 2026-10-30 |
 | MOD-030B Suppliers/Products cohort | Hosted deep links passed; authenticated run 15/15 with zero skips; 12-route mixed pilot and 12-route MVC rollback passed; Release clean, 1,349 backend checks, 214/214 Angular tests, 121 templates and bundle budgets passed | 2026-10-31 |
 | MOD-030C Analytics cohort | Authenticated hosted run 15/15 with zero skips; Analytics mixed pilot and four-cohort MVC rollback passed across 12 authorized routes; Settings intentionally remained MVC; Release clean, 1,381 backend checks, 214/214 Angular tests, 121 templates and bundle budgets passed | 2026-10-31 |
+| MOD-030D Settings cohort | Authorized hosted run 15/15 with zero failures/skips; five-cohort Angular cutover and process-local MVC rollback passed across 29 routes; Release clean, 1,385 backend checks, 214/214 Angular tests, 121 templates and bundle budgets passed | 2026-10-31 |
 | Live schema integrity (سلامة المخطط الحي) | 147 tables, 420 trusted FKs, zero disabled constraints/indexes or unsafe tenant relations | 2026-10-15 |
 | Web dependency build (بناء الويب واعتماداته) | Release, 4 projects, zero warnings/errors after SAL-120A (نجح) | 2026-10-22 |
 

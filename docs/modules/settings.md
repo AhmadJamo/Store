@@ -59,9 +59,9 @@ The role-aware Work procedure catalog is also available in Angular as an intenti
 ## New-company defaults (2026-09-15)
 Guided onboarding creates only missing settings and master records. It links the branch sales account, warehouse inventory subaccount, payment accounts and optional tax accounts, then applies the selected POS profile. Every generated value remains editable through its normal Settings or master-data screen.
 
-## Angular cutover preparation (2026-10-31)
+## Angular cutover (2026-10-31)
 
-MOD-030C maps the existing Settings GET pages to their proven Angular routes, excluding the binary OrganizationLogo
-response and every mutation. Settings remains `Mvc`: two capture attempts produced an authenticated operator without
-`Administration.Access`, and the cutover runner now fails explicitly instead of silently skipping this evidence.
-MOD-030D must use an authorized session for hosted acceptance, pilot and MVC rollback before changing the default.
+MOD-030D commits the proven Settings GET pages to `AngularDefault` after an authorized `Administration.Access` session
+passed 15/15 hosted checks, 29 exact Angular route probes and the same 29-route process-local MVC rollback. The binary
+OrganizationLogo response, every mutation and every unknown action remain outside the GET cutover catalog. Razor views
+and controllers remain available as the rollback path until a separately approved retirement cohort removes them.

@@ -1,5 +1,13 @@
 # AI Work Log
 
+- 2026-10-31: Completed `MOD-030D`, the final reversible configured Angular cohort. A verified active-company Tenant
+  Admin session passed the hosted production suite 15/15 with no failures or skips. Settings joined Customers, Suppliers,
+  Products and AnalyticsCenter as `AngularDefault`; 29 authorized allowlisted GET routes matched exact Angular targets,
+  then a process-local override returned all 29 probes to MVC (including the known Invoices-to-DocumentNumbers alias).
+  Release built without warnings/errors, 1,385 backend checks, 214/214 Angular tests across 106 files, 121 templates and
+  bundle budgets passed. No Razor/controller, database object or business rule was removed. Physical MVC retirement now
+  waits at `MOD-031A` for explicit owner approval of a bounded destructive cohort.
+
 - 2026-10-31: Completed the tenant-Admin session-projection correction. Follow-up live evidence showed the captured
   operator already had the active-company Admin assignment, but `Administration.Access` was intentionally outside the
   delegable `PermissionDefinitions` catalog and was therefore missing from the first projection fix. The protected

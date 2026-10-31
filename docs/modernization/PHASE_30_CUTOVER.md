@@ -46,7 +46,23 @@ same 12 routes through MVC 200.
 The final static gate passed a warning-free Release build, 1,381 backend regression checks, 214/214 Angular tests,
 121 templates and the unchanged project bundle budgets.
 
-Settings remains MVC. Its existing GET pages are mapped to proven Angular routes in preparation for the next cohort,
-while the binary logo response and all unsafe actions remain outside the catalog. Two interactive captures authenticated
-an operator that lacked `Administration.Access`; the runner now fails explicitly on missing required cohort permissions.
-`MOD-030D` must provide that authorized session and repeat hosted acceptance, pilot and rollback before committing Settings.
+At the end of MOD-030C, Settings still remained MVC. Its existing GET pages were mapped to proven Angular routes in
+preparation for the next cohort, while the binary logo response and all unsafe actions remained outside the catalog.
+Two earlier interactive captures lacked `Administration.Access`; the runner therefore requires the permission explicitly.
+
+## MOD-030D authorized Settings cohort
+
+The active-company Tenant Admin session now projects the complete protected administration permission set, including
+`Administration.Access`, while backend authorization remains authoritative. Settings joins Customers, Suppliers,
+Products and AnalyticsCenter as a committed `AngularDefault` cohort. Only the existing allowlisted GET pages redirect;
+the binary OrganizationLogo action, all mutations and unknown actions remain outside presentation cutover.
+
+The authenticated production-hosted suite passed 15/15 with zero failures or skips. The five-cohort cutover matched 29
+authorized GET routes to their exact Angular targets. A process-local override then returned the same 29 probes to MVC;
+the legacy `/Settings/Invoices` alias was verified as its existing local redirect to Document Numbers while every other
+probe returned MVC 200.
+
+The final static gate passed a warning-free Release build, 1,385 backend regression checks, 214/214 Angular tests across
+106 files, 121 templates and the existing bundle budgets (326,764 initial bytes; 81,880 largest lazy bytes). No Razor
+view, MVC controller, database object or business rule was removed. Physical MVC retirement is a separate destructive
+phase and requires explicit approval for each bounded cohort.

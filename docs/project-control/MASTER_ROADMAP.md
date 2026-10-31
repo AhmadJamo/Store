@@ -36,7 +36,7 @@
 - `MOD-028` — COMPLETE 2026-10-30: اكتملت `MOD-028A..G`، تزامنت ثقافة Angular والخادم، وأغلق السجل المولد بصفر أسطح متبقية مع بقاء MVC افتراضيًا.
 - `MOD-023..028` — APPROVED PROGRAM: نقل المشتريات والمبيعات وPOS والمحاسبة وSaaS وكل الشاشات المشتركة والمتبقية إلى Angular على موجات، مع functional parity وإعادة تصميم كاملة وفق Angular design system لا نسخ Razor.
 - `MOD-029` — COMPLETE 2026-10-30: اكتملت `MOD-029A..D` للمصفوفة والمصالحة المصرح بها ومجموعات المخاطر والتحويل/الرجوع الحي؛ MVC ما زال default.
-- `MOD-030` — EXPLICIT FINAL GATE IN PROGRESS: اكتمل `MOD-030A..C` باستضافة Angular production وتحويل Customers/Suppliers/Products/AnalyticsCenter؛ التالي `MOD-030D` لـSettings بجلسة Administration.Access، ثم إزالة MVC تدريجيًا فقط بعد إثبات الدفعة ورجوعها.
+- `MOD-030` — REVERSIBLE CUTOVER COMPLETE 2026-10-31: اكتمل `MOD-030A..D` باستضافة Angular production وتحويل Customers/Suppliers/Products/AnalyticsCenter/Settings مع قبول ورجوع مثبتين؛ إزالة MVC الفعلية تبقى تدريجية وممنوعة دون موافقة صريحة لكل دفعة محدودة.
 
 ## P0 — مخاطر حرجة
 
