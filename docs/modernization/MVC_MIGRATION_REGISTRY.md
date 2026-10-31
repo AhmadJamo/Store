@@ -8,10 +8,10 @@
 - User-facing MVC views discovered: 199.
 - MVC actions discovered: 411.
 - Razor files included in the control inventory: 209.
-- Angular application routes discovered: 180.
+- Angular application routes discovered: 183.
 - MVC surfaces with a verified Angular counterpart: 82.
 - Remaining MVC surfaces without a mapped Angular counterpart: 0.
-- Allowlisted Angular-default cutover actions: 33.
+- Allowlisted Angular-default cutover actions: 38.
 
 Remaining surfaces: none.
 
@@ -95,9 +95,9 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | Products | Create.cshtml | Angular Default | /products | MiniStore.Web/Views/Products/Create.cshtml |
 | Products | Edit.cshtml | Angular Default | /products | MiniStore.Web/Views/Products/Edit.cshtml |
 | Products | Index.cshtml | Angular Default | /products | MiniStore.Web/Views/Products/Index.cshtml |
-| ProductStocks | Create.cshtml | Angular Pilot | /inventory/stocks | MiniStore.Web/Views/ProductStocks/Create.cshtml |
-| ProductStocks | Edit.cshtml | Angular Pilot | /inventory/stocks | MiniStore.Web/Views/ProductStocks/Edit.cshtml |
-| ProductStocks | Index.cshtml | Angular Pilot | /inventory/stocks | MiniStore.Web/Views/ProductStocks/Index.cshtml |
+| ProductStocks | Create.cshtml | Angular Default | /inventory/stocks | MiniStore.Web/Views/ProductStocks/Create.cshtml |
+| ProductStocks | Edit.cshtml | Angular Default | /inventory/stocks | MiniStore.Web/Views/ProductStocks/Edit.cshtml |
+| ProductStocks | Index.cshtml | Angular Default | /inventory/stocks | MiniStore.Web/Views/ProductStocks/Index.cshtml |
 | ProductTemplates | Index.cshtml | Angular Pilot | /products/templates | MiniStore.Web/Views/ProductTemplates/Index.cshtml |
 | Public | Index.cshtml | Angular Pilot | /welcome, /pricing | MiniStore.Web/Views/Public/Index.cshtml |
 | Public | Pricing.cshtml | Angular Pilot | /welcome, /pricing | MiniStore.Web/Views/Public/Pricing.cshtml |
@@ -175,8 +175,8 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | Settings | Units.cshtml | Angular Default | /settings | MiniStore.Web/Views/Settings/Units.cshtml |
 | Settings | WorkflowCatalog.cshtml | Angular Default | /settings | MiniStore.Web/Views/Settings/WorkflowCatalog.cshtml |
 | StockMovements | Index.cshtml | Angular Pilot | /inventory/location-movements | MiniStore.Web/Views/StockMovements/Index.cshtml |
-| StockTransactions | Create.cshtml | Angular Pilot | /inventory/transactions | MiniStore.Web/Views/StockTransactions/Create.cshtml |
-| StockTransactions | Index.cshtml | Angular Pilot | /inventory/transactions | MiniStore.Web/Views/StockTransactions/Index.cshtml |
+| StockTransactions | Create.cshtml | Angular Default | /inventory/transactions | MiniStore.Web/Views/StockTransactions/Create.cshtml |
+| StockTransactions | Index.cshtml | Angular Default | /inventory/transactions | MiniStore.Web/Views/StockTransactions/Index.cshtml |
 | StockTransfers | Create.cshtml | Angular Pilot | /inventory/transfers | MiniStore.Web/Views/StockTransfers/Create.cshtml |
 | StockTransfers | Details.cshtml | Angular Pilot | /inventory/transfers | MiniStore.Web/Views/StockTransfers/Details.cshtml |
 | StockTransfers | Edit.cshtml | Angular Pilot | /inventory/transfers | MiniStore.Web/Views/StockTransfers/Edit.cshtml |
@@ -371,12 +371,12 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | Products | Edit | GET | Angular Default | /products | /products/{id}/edit | MiniStore.Web/Controllers/Catalog/ProductsController.cs |
 | Products | Edit | POST | Angular Default | /products | /products/{id}/edit | MiniStore.Web/Controllers/Catalog/ProductsController.cs |
 | Products | Index | ANY | Angular Default | /products | /products | MiniStore.Web/Controllers/Catalog/ProductsController.cs |
-| ProductStocks | Create | GET | Angular Pilot | /inventory/stocks | — | MiniStore.Web/Controllers/Inventory/ProductStocksController.cs |
-| ProductStocks | Create | POST | Angular Pilot | /inventory/stocks | — | MiniStore.Web/Controllers/Inventory/ProductStocksController.cs |
-| ProductStocks | Delete | POST | Angular Pilot | /inventory/stocks | — | MiniStore.Web/Controllers/Inventory/ProductStocksController.cs |
-| ProductStocks | Edit | GET | Angular Pilot | /inventory/stocks | — | MiniStore.Web/Controllers/Inventory/ProductStocksController.cs |
-| ProductStocks | Edit | POST | Angular Pilot | /inventory/stocks | — | MiniStore.Web/Controllers/Inventory/ProductStocksController.cs |
-| ProductStocks | Index | GET | Angular Pilot | /inventory/stocks | — | MiniStore.Web/Controllers/Inventory/ProductStocksController.cs |
+| ProductStocks | Create | GET | Angular Default | /inventory/stocks | /inventory/stocks/new | MiniStore.Web/Controllers/Inventory/ProductStocksController.cs |
+| ProductStocks | Create | POST | Angular Default | /inventory/stocks | /inventory/stocks/new | MiniStore.Web/Controllers/Inventory/ProductStocksController.cs |
+| ProductStocks | Delete | POST | Angular Default | /inventory/stocks | — | MiniStore.Web/Controllers/Inventory/ProductStocksController.cs |
+| ProductStocks | Edit | GET | Angular Default | /inventory/stocks | /inventory/stocks/{id}/edit | MiniStore.Web/Controllers/Inventory/ProductStocksController.cs |
+| ProductStocks | Edit | POST | Angular Default | /inventory/stocks | /inventory/stocks/{id}/edit | MiniStore.Web/Controllers/Inventory/ProductStocksController.cs |
+| ProductStocks | Index | GET | Angular Default | /inventory/stocks | /inventory/stocks | MiniStore.Web/Controllers/Inventory/ProductStocksController.cs |
 | ProductTemplates | Assign | POST | Angular Pilot | /products/templates | — | MiniStore.Web/Controllers/Catalog/ProductTemplatesController.cs |
 | ProductTemplates | Create | POST | Angular Pilot | /products/templates | — | MiniStore.Web/Controllers/Catalog/ProductTemplatesController.cs |
 | ProductTemplates | Generate | POST | Angular Pilot | /products/templates | — | MiniStore.Web/Controllers/Catalog/ProductTemplatesController.cs |
@@ -544,9 +544,9 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | Settings | Units | POST | Angular Default | /settings | /settings/measurement-units | MiniStore.Web/Controllers/Settings/SettingsController.cs |
 | Settings | WorkflowCatalog | GET | Angular Default | /settings | /settings/workflow-catalog | MiniStore.Web/Controllers/Settings/SettingsController.cs |
 | StockMovements | Index | GET | Angular Pilot | /inventory/location-movements | — | MiniStore.Web/Controllers/Inventory/StockMovementsController.cs |
-| StockTransactions | Create | GET | Angular Pilot | /inventory/transactions | — | MiniStore.Web/Controllers/Inventory/StockTransactionsController.cs |
-| StockTransactions | Create | POST | Angular Pilot | /inventory/transactions | — | MiniStore.Web/Controllers/Inventory/StockTransactionsController.cs |
-| StockTransactions | Index | GET | Angular Pilot | /inventory/transactions | — | MiniStore.Web/Controllers/Inventory/StockTransactionsController.cs |
+| StockTransactions | Create | GET | Angular Default | /inventory/transactions | /inventory/stocks/adjustment | MiniStore.Web/Controllers/Inventory/StockTransactionsController.cs |
+| StockTransactions | Create | POST | Angular Default | /inventory/transactions | /inventory/stocks/adjustment | MiniStore.Web/Controllers/Inventory/StockTransactionsController.cs |
+| StockTransactions | Index | GET | Angular Default | /inventory/transactions | /inventory/transactions | MiniStore.Web/Controllers/Inventory/StockTransactionsController.cs |
 | StockTransfers | Approve | POST | Angular Pilot | /inventory/transfers | — | MiniStore.Web/Controllers/Inventory/StockTransfersController.cs |
 | StockTransfers | Cancel | POST | Angular Pilot | /inventory/transfers | — | MiniStore.Web/Controllers/Inventory/StockTransfersController.cs |
 | StockTransfers | Create | GET | Angular Pilot | /inventory/transfers | — | MiniStore.Web/Controllers/Inventory/StockTransfersController.cs |

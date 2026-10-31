@@ -69,3 +69,6 @@ phase and requires explicit approval for each bounded cohort.
 
 Runtime completion evidence continues in `PHASE_30E_RUNTIME_READINESS_AUDIT.md`. MOD-030E1 adds four GET-only
 inventory analysis surfaces after 15/15 production-hosted acceptance and 33-route cutover and rollback evidence.
+
+MOD-030E2A adds StockTransactions and ProductStocks with intent-specific Angular stock routes. Hosted acceptance passed
+15/15, rendered Angular/API stock data matched, and both cutover and MVC rollback passed 38 authorized GET routes.

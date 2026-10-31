@@ -113,7 +113,8 @@ The ERP SaaS Foundation Blueprint is imported as a non-authoritative planning re
   - [x] MOD-030D cut over Settings with an `Administration.Access` operator. Completed 2026-10-31 with 15/15 hosted checks, 29-route Angular cutover and 29-route MVC rollback; Release clean, 1,385 backend checks, 214/214 Angular tests, 121 templates and bundle budgets passed.
   - [ ] MOD-030E complete runtime AngularDefault coverage for the 77 mapped surfaces that remain MVC by default; do not delete MVC during this phase.
     - [x] MOD-030E1 cut over InventoryBalances, InventoryReservations, InventoryInsights and InventoryReconciliation. Completed 2026-10-31 with hosted 15/15, 33-route cutover/rollback, 1,394 backend checks and 214/214 Angular tests.
-    - [ ] MOD-030E2A cut over StockTransactions and ProductStocks GET presentation while all mutations remain independently protected.
+    - [x] MOD-030E2A cut over StockTransactions and ProductStocks GET presentation while all mutations remain independently protected. Completed 2026-10-31 with hosted 15/15, Angular/API stock reconciliation, 38-route cutover/rollback, 1,406 backend checks and 215/215 Angular tests.
+    - [ ] MOD-030E2B cut over InventoryAdjustments list/create/details GET presentation while lifecycle mutations remain independently protected.
 
 - [x] FND-000 import the ERP SaaS Foundation Blueprint with provenance and classify its ten capabilities against the actual MiniStore repository.
 - [ ] FND-010 inventory production environments and operational ownership, approve RPO/RTO and backup retention, run an isolated restore drill, reconcile restored financial/inventory/tenant/outbox state and record evidence.

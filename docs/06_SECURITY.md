@@ -31,6 +31,11 @@ MOD-030E1 adds only the `Index` GET actions for Inventory Balances, Reservations
 action and each underlying API retains its independent View permission; query strings are forwarded as presentation state
 and revalidated by the Angular API client/server contract. No inventory mutation, export or download action is redirected.
 
+MOD-030E2A maps only StockTransactions and ProductStocks GET presentation. The transaction ledger retains View and
+manual-adjustment Create permissions; Product Stocks retains View/Create/Edit on the exact MVC actions and repeats
+Create/Edit/Delete/StockTransactions.Create on its APIs. The edit identifier is preserved in the Angular deep link. No
+POST, PUT or DELETE is redirected, and the temporary authenticated state used for acceptance was deleted afterward.
+
 Customer and Supplier Angular slices use operation-specific View/Create/Edit permissions on every endpoint. Supplier form options are projected by the Application layer, and submitted account/product identifiers are revalidated by existing services; client filtering is never treated as authorization. Supplier stale-write failures return HTTP 409 while keeping global antiforgery and tenant repository filters intact.
 
 Angular user/role administration repeats exact `Users.*` and `Roles.*` policies on every API operation; navigation visibility cannot authorize a request. Unsafe operations require antiforgery, system roles cannot be mutated, role updates use rowversion with HTTP 409 on stale data, and all supplied role/permission identifiers are resolved server-side. User creation shares one Application contract with MVC, checks the tenant subscription limit and active company role, and commits membership, assignment and sanitized semantic audit evidence in one `UnitOfWork`. If that tenant binding fails after Identity account creation, the new account is removed after clearing the rolled-back tracker state. Passwords are never returned, logged, or stored by Angular and are cleared from the form after rejection.

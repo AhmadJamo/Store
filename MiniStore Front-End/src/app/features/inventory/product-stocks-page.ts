@@ -2,7 +2,7 @@ import { DecimalPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, ElementRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ApiErrorService } from '../../core/api/api-error.service';
 import { NormalizedApiProblem } from '../../core/api/api.models';
 import { ApiSessionService } from '../../core/api/api-session.service';
@@ -21,12 +21,12 @@ import { InventoryLocalizationService } from './inventory-localization.service';
 export class ProductStocksPageComponent {
   protected readonly i18n = inject(InventoryLocalizationService); protected readonly session = inject(ApiSessionService);
   private readonly api = inject(ProductStockApiService); private readonly errors = inject(ApiErrorService); private readonly fb = inject(FormBuilder);
-  private readonly destroyRef = inject(DestroyRef); private readonly workspace = inject(WorkspaceService); private readonly host = inject(ElementRef<HTMLElement>); private readonly focus = inject(FormFocusService);
+  private readonly destroyRef = inject(DestroyRef); private readonly workspace = inject(WorkspaceService); private readonly host = inject(ElementRef<HTMLElement>); private readonly focus = inject(FormFocusService); private readonly route = inject(ActivatedRoute);
   protected readonly items = signal<readonly ProductStock[]>([]); protected readonly stockOptions = signal<ProductStockFormPage | null>(null); protected readonly adjustmentOptions = signal<ManualStockAdjustmentFormPage | null>(null);
   protected readonly editingId = signal<number | null>(null); protected readonly loading = signal(true); protected readonly loadingProblem = signal<NormalizedApiProblem | null>(null); protected readonly problem = signal(''); protected readonly success = signal(''); protected readonly saving = signal(false);
   protected readonly stockForm = this.fb.nonNullable.group({ productId: [0, Validators.min(1)], warehouseId: [0, Validators.min(1)], quantity: [0, Validators.min(0)] });
   protected readonly adjustmentForm = this.fb.nonNullable.group({ productId: [0, Validators.min(1)], warehouseId: [0, Validators.min(1)], type: [6, Validators.pattern(/^[678]$/)], quantity: [0, Validators.min(0.001)], reference: ['', [Validators.required, Validators.maxLength(100)]] });
-  constructor() { this.load(); if (this.session.can('ProductStock.Create')) this.loadStockForm(); if (this.session.can('StockTransactions.Create')) this.loadAdjustmentForm(); this.stockForm.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => this.syncDirty()); this.adjustmentForm.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => this.syncDirty()); }
+  constructor() { const editId = Number(this.route.snapshot.paramMap.get('id')); this.load(); if (editId > 0 && this.session.can('ProductStock.Edit')) this.loadStockForm(editId); else if (this.session.can('ProductStock.Create')) this.loadStockForm(); if (this.session.can('StockTransactions.Create')) this.loadAdjustmentForm(); this.stockForm.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => this.syncDirty()); this.adjustmentForm.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => this.syncDirty()); }
   canDeactivate() { return !(this.stockForm.dirty || this.adjustmentForm.dirty) || globalThis.confirm(this.i18n.text('unsavedDescription')); }
   protected load() { this.loading.set(true); this.loadingProblem.set(null); this.api.getAll().subscribe({ next: items => { this.items.set(items); this.loading.set(false); }, error: error => { this.loadingProblem.set(this.errors.normalize(error)); this.loading.set(false); } }); }
   protected loadStockForm(id?: number) { this.clearMessages(); this.api.getForm(id).subscribe({ next: page => { this.stockOptions.set(page); this.editingId.set(id ?? null); this.stockForm.patchValue(page.form); this.stockForm.controls.productId[id ? 'disable' : 'enable']({ emitEvent: false }); this.stockForm.controls.warehouseId[id ? 'disable' : 'enable']({ emitEvent: false }); this.stockForm.markAsPristine(); this.syncDirty(); }, error: error => this.problem.set(this.message(error)) }); }

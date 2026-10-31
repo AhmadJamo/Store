@@ -16,8 +16,8 @@ same-line MVC actions, verifies every mapped Angular route and emits one accepta
 operation, permission, risk and evidence fields. The modernization gate fails when either generated artifact is stale.
 
 `docs/modernization/PHASE_30E_RUNTIME_READINESS_AUDIT.md` distinguishes functional counterparts from runtime defaults:
-82 surfaces are mapped. MOD-030E1 expands the committed default from five to nine surfaces and reduces the MVC-default
-remainder from 77 to 73 without deleting MVC. Its four GET-only inventory analysis routes preserve query strings.
+82 surfaces are mapped. MOD-030E2A expands the committed default to eleven surfaces and reduces the MVC-default
+remainder to 71 without deleting MVC. Its ledger/stock GET routes preserve filters and positive edit identifiers.
 
 `tests/AngularBrowserAcceptance` loads an operator-supplied Playwright storage-state into both UI and API contexts. Without
 one, it uses a bounded synthetic session only for design-system presentation checks and reports authenticated API parity as
@@ -27,9 +27,10 @@ boundaries; the main modernization gate runs it whenever an API URL is supplied.
 `scripts/Invoke-AuthenticatedDualRun.ps1` is the secret-safe MOD-029B entry point. It requires an existing external or
 git-ignored Playwright state, then runs the full gate. The browser runner reconciles culture, customer-invoice identity and
 total (or the localized zero-row state and an authorized chart-of-accounts fallback), and inventory
-product/warehouse/on-hand values without serializing compared business values or authentication data. It waits for the
-real culture response and decodes rendered HTML before text comparison so network timing and equivalent entity encodings
-cannot create false failures.
+product/warehouse/quantity values across the rendered Angular stock workspace and API without serializing compared
+business values or authentication data. Financial/culture reconciliation retains the MVC/API boundary. The runner waits
+for real responses and decodes rendered HTML before comparison so timing and equivalent entity encodings cannot create
+false failures.
 
 The MOD-029C cohort layer selects one permission-allowed, read-only JSON endpoint for each of sales, purchasing,
 inventory, accounting and administration, reports unavailable cohorts explicitly and requires at least three covered

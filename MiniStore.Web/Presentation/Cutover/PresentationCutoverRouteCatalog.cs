@@ -37,7 +37,12 @@ public static class PresentationCutoverRouteCatalog
             ["InventoryBalances:Index"] = "/inventory/availability",
             ["InventoryReservations:Index"] = "/inventory/reservations",
             ["InventoryInsights:Index"] = "/inventory/insights",
-            ["InventoryReconciliation:Index"] = "/inventory/reconciliation"
+            ["InventoryReconciliation:Index"] = "/inventory/reconciliation",
+            ["StockTransactions:Index"] = "/inventory/transactions",
+            ["StockTransactions:Create"] = "/inventory/stocks/adjustment",
+            ["ProductStocks:Index"] = "/inventory/stocks",
+            ["ProductStocks:Create"] = "/inventory/stocks/new",
+            ["ProductStocks:Edit"] = "/inventory/stocks/{id}/edit"
         };
 
     public static IReadOnlyDictionary<string, string> All => Routes;

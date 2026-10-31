@@ -1,5 +1,12 @@
 # AI Work Log
 
+- 2026-10-31: Completed `MOD-030E2A`. StockTransactions and ProductStocks now use exact AngularDefault GET routes;
+  ledger filters are preserved and manual-adjustment/create/edit intents use dedicated Angular deep links, including a
+  positive edit identifier that loads the requested record. Replaced the expiring Product Stocks MVC/API comparison with
+  rendered Angular/API product, warehouse and quantity reconciliation. Hosted acceptance passed 15/15 with zero skips,
+  cutover and MVC rollback passed 38 routes, and Release, 1,406 backend checks, 215/215 Angular tests, 121 templates and
+  bundle budgets passed. The temporary authenticated state was deleted. No database, business rule or MVC file changed.
+
 - 2026-10-31: Completed `MOD-030E1`. InventoryBalances, InventoryReservations, InventoryInsights and
   InventoryReconciliation now use exact GET-only AngularDefault routes with query-string preservation. The hosted suite
   passed 15/15, cutover and MVC rollback passed 33 authorized routes, and the final gate passed Release, 1,394 backend

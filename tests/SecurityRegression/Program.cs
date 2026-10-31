@@ -128,6 +128,24 @@ Check(inventoryCutoverResolver.Resolve(
         cutoverContext.Request, "InventoryBalances", "Index",
         new Microsoft.AspNetCore.Routing.RouteValueDictionary()) == "/app/inventory/availability?page=2",
     "Read-only inventory cutover must preserve query strings on its exact Angular route");
+var stockCutoverResolver = new PresentationCutoverResolver(Options.Create(
+    new PresentationCutoverOptions
+    {
+        AngularBasePath = "/app",
+        Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["StockTransactions"] = PresentationCutoverMode.AngularDefault,
+            ["ProductStocks"] = PresentationCutoverMode.AngularDefault
+        }
+    }));
+Check(stockCutoverResolver.Resolve(
+        cutoverContext.Request, "StockTransactions", "Index",
+        new Microsoft.AspNetCore.Routing.RouteValueDictionary()) == "/app/inventory/transactions?page=2",
+    "Stock transaction cutover must preserve query strings on the Angular ledger route");
+Check(stockCutoverResolver.Resolve(
+        cutoverContext.Request, "ProductStocks", "Edit",
+        new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 7 }) == "/app/inventory/stocks/7/edit?page=2",
+    "Product Stock edit GET must preserve the identifier in the Angular stock workspace");
 foreach (var entry in PresentationCutoverRouteCatalog.All)
 {
     var keyParts = entry.Key.Split(':', 2);

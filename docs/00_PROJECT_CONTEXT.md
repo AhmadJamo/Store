@@ -40,8 +40,8 @@ The imported ERP SaaS Foundation Blueprint remains a proposed reference. The pro
 See `06_SECURITY.md`, `04_ACCOUNTING.md`, and `TODO.md`. The historically exposed administrator was closed for the evidenced local Demo environment, an encrypted isolated restore drill reconciled without differences and migrations through 135 are applied with no pending EF model change. The local Demo audit and retention features are enabled through User Secrets. Coverage reconciliation is complete, new legacy writes are frozen behind a reversible flag, and pre/post signed checkpoints preserved all 710 historical legacy rows. Real deployment identities, off-host backup/checkpoint storage, production deployment controls and broader integration testing remain open.
 
 ## Recommended next steps
-1. Complete `MOD-030E2A`, the Stock Transactions and Product Stocks AngularDefault cohort.
-2. Continue the 73 remaining mapped MVC-default surfaces in permission-aware runtime cohorts with MVC rollback.
+1. Complete `MOD-030E2B`, the Inventory Adjustments AngularDefault cohort.
+2. Continue the 71 remaining mapped MVC-default surfaces in permission-aware runtime cohorts with MVC rollback.
 3. Consider physical MVC retirement only after runtime coverage and staging evidence are complete.
 
 ## Read first

@@ -24,7 +24,7 @@ try
     });
     if (string.IsNullOrWhiteSpace(options.CutoverMode))
     {
-        await RunUiAsync(browser, options, checks);
+        await RunUiAsync(playwright, browser, options, checks);
         await RunApiAsync(playwright, options, checks);
     }
     else
@@ -121,7 +121,12 @@ static async Task RunLiveCutoverAsync(
                  "InventoryBalances.View",
                  "InventoryReservations.View",
                  "InventoryInsights.View",
-                 "InventoryReconciliation.View"
+                 "InventoryReconciliation.View",
+                 "StockTransactions.View",
+                 "StockTransactions.Create",
+                 "ProductStock.View",
+                 "ProductStock.Create",
+                 "ProductStock.Edit"
              })
     {
         Require(permissions.Contains(requiredPermission),
@@ -163,7 +168,12 @@ static async Task RunLiveCutoverAsync(
         new("/InventoryInsights?attentionOnly=true",
             "/app/inventory/insights?attentionOnly=true", "InventoryInsights.View"),
         new("/InventoryReconciliation?exceptionsOnly=true&page=1",
-            "/app/inventory/reconciliation?exceptionsOnly=true&page=1", "InventoryReconciliation.View")
+            "/app/inventory/reconciliation?exceptionsOnly=true&page=1", "InventoryReconciliation.View"),
+        new("/StockTransactions?movement=incoming&page=2",
+            "/app/inventory/transactions?movement=incoming&page=2", "StockTransactions.View"),
+        new("/StockTransactions/Create", "/app/inventory/stocks/adjustment", "StockTransactions.Create"),
+        new("/ProductStocks", "/app/inventory/stocks", "ProductStock.View"),
+        new("/ProductStocks/Create", "/app/inventory/stocks/new", "ProductStock.Create")
     };
 
     if (permissions.Contains("Customers.View"))
@@ -203,6 +213,17 @@ static async Task RunLiveCutoverAsync(
             routes.Add(new($"/Products/Edit/{id}", $"/app/products/{id}/edit", "Products.Edit"));
         }
     }
+    if (permissions.Contains("ProductStock.View"))
+    {
+        var response = await authenticated.GetAsync("/api/v1/product-stocks");
+        Require(response.Ok, $"Product Stock cutover fixture read returned {response.Status}.");
+        using var stocks = JsonDocument.Parse(await response.TextAsync());
+        if (stocks.RootElement.ValueKind == JsonValueKind.Array && stocks.RootElement.GetArrayLength() > 0)
+        {
+            var id = stocks.RootElement[0].GetProperty("id").GetInt32();
+            routes.Add(new($"/ProductStocks/Edit/{id}", $"/app/inventory/stocks/{id}/edit", "ProductStock.Edit"));
+        }
+    }
 
     var executed = 0;
     foreach (var probe in routes.Where(x => permissions.Contains(x.Permission)))
@@ -215,7 +236,7 @@ static async Task RunLiveCutoverAsync(
                              options.CutoverMode == "pilot" &&
                              surface is "Customers" or "Suppliers" or "Products" or "AnalyticsCenter" or "Settings" or
                                  "InventoryBalances" or "InventoryReservations" or "InventoryInsights" or
-                                 "InventoryReconciliation";
+                                 "InventoryReconciliation" or "StockTransactions" or "ProductStocks";
         if (expectsAngular)
         {
             Require(response.Status is 301 or 302 or 307 or 308,
@@ -248,7 +269,7 @@ static async Task RunLiveCutoverAsync(
         $"{executed} authorized allowlisted GET routes matched the expected presentation mode."));
 }
 
-static async Task RunUiAsync(IBrowser browser, Arguments options, List<CheckResult> checks)
+static async Task RunUiAsync(IPlaywright playwright, IBrowser browser, Arguments options, List<CheckResult> checks)
 {
     await using var context = await browser.NewContextAsync(new BrowserNewContextOptions
     {
@@ -333,6 +354,68 @@ static async Task RunUiAsync(IBrowser browser, Arguments options, List<CheckResu
         Path = Path.Combine(options.OutputDirectory, "design-system-mobile.png"), FullPage = true
     });
     checks.Add(new("responsive", "passed", "Desktop and 390px mobile viewports passed."));
+
+    await RunAuthenticatedInventoryUiReconciliationAsync(playwright, page, options, checks);
+}
+
+static async Task RunAuthenticatedInventoryUiReconciliationAsync(
+    IPlaywright playwright,
+    IPage page,
+    Arguments options,
+    List<CheckResult> checks)
+{
+    if (string.IsNullOrWhiteSpace(options.ApiUrl) || string.IsNullOrWhiteSpace(options.StorageStatePath))
+    {
+        checks.Add(new("angular-api-inventory-stocks", "skipped",
+            "A live API URL and authenticated storage-state are required for Angular/API reconciliation."));
+        return;
+    }
+
+    var apiBase = options.ApiUrl.TrimEnd('/');
+    await using var api = await playwright.APIRequest.NewContextAsync(new APIRequestNewContextOptions
+    {
+        BaseURL = apiBase,
+        IgnoreHTTPSErrors = true,
+        StorageStatePath = options.StorageStatePath
+    });
+    var sessionResponse = await api.GetAsync("/api/v1/session");
+    Require(sessionResponse.Ok, $"Authenticated UI session returned {sessionResponse.Status}.");
+    using var session = JsonDocument.Parse(await sessionResponse.TextAsync());
+    var canViewStocks = session.RootElement.GetProperty("permissions").EnumerateArray()
+        .Any(permission => permission.GetString() == "ProductStock.View");
+    if (!canViewStocks)
+    {
+        checks.Add(new("angular-api-inventory-stocks", "skipped",
+            "Authenticated session lacks ProductStock.View."));
+        return;
+    }
+
+    var stocksResponse = await api.GetAsync("/api/v1/product-stocks");
+    Require(stocksResponse.Ok, $"Product Stock API returned {stocksResponse.Status}.");
+    using var stocks = JsonDocument.Parse(await stocksResponse.TextAsync());
+    if (stocks.RootElement.ValueKind != JsonValueKind.Array || stocks.RootElement.GetArrayLength() == 0)
+    {
+        checks.Add(new("angular-api-inventory-stocks", "skipped",
+            "The authenticated tenant has no product-stock sample; no same-data claim was made."));
+        return;
+    }
+
+    var stock = stocks.RootElement[0];
+    var productName = stock.GetProperty("productName").GetString() ?? "";
+    var warehouseName = stock.GetProperty("warehouseName").GetString() ?? "";
+    var quantity = stock.GetProperty("quantity").GetDecimal();
+    await page.SetViewportSizeAsync(1440, 1000);
+    await page.GotoAsync($"{apiBase}/app/inventory/stocks",
+        new PageGotoOptions { WaitUntil = WaitUntilState.DOMContentLoaded });
+    await page.Locator(".stocks-page").WaitForAsync();
+    await page.GetByText(productName, new PageGetByTextOptions { Exact = false }).First.WaitForAsync();
+    var inventoryHtml = await page.ContentAsync();
+    Require(ContainsEncoded(inventoryHtml, productName) && ContainsEncoded(inventoryHtml, warehouseName),
+        "Angular Product Stocks and product-stock API identity fields did not reconcile.");
+    Require(ContainsNumber(inventoryHtml, quantity),
+        "Angular Product Stocks and product-stock API quantity did not reconcile.");
+    checks.Add(new("angular-api-inventory-stocks", "passed",
+        "Product, warehouse and quantity matched across the Angular screen and API."));
 }
 
 static async Task RunApiAsync(IPlaywright playwright, Arguments options, List<CheckResult> checks)
@@ -514,39 +597,6 @@ static async Task RunAuthenticatedReconciliationAsync(
             "Authenticated session lacks CustomerInvoices.View."));
     }
 
-    if (permissions.Contains("InventoryInsights.View"))
-    {
-        var inventoryApi = await authenticated.GetAsync("/api/v1/inventory-insights");
-        Require(inventoryApi.Ok, $"Inventory insights API returned {inventoryApi.Status}.");
-        using var inventory = JsonDocument.Parse(await inventoryApi.TextAsync());
-        var rows = inventory.RootElement.GetProperty("rows");
-        if (rows.GetArrayLength() == 0)
-        {
-            checks.Add(new("dual-run-inventory-insights", "skipped",
-                "The authenticated tenant has no inventory-insight sample; no same-data claim was made."));
-        }
-        else
-        {
-            var row = rows[0];
-            var productName = row.GetProperty("productName").GetString() ?? "";
-            var warehouseName = row.GetProperty("warehouseName").GetString() ?? "";
-            var onHand = row.GetProperty("onHand").GetDecimal();
-            var inventoryMvc = await authenticated.GetAsync("/ProductStocks");
-            Require(inventoryMvc.Ok, $"Product Stocks MVC read returned {inventoryMvc.Status}.");
-            var inventoryHtml = await inventoryMvc.TextAsync();
-            Require(ContainsEncoded(inventoryHtml, productName) && ContainsEncoded(inventoryHtml, warehouseName),
-                "Product Stocks MVC and inventory-insights API identity fields did not reconcile.");
-            Require(ContainsNumber(inventoryHtml, onHand),
-                "Product Stocks MVC and inventory-insights API quantity did not reconcile.");
-            checks.Add(new("dual-run-inventory-insights", "passed",
-                "Product, warehouse and quantity matched across Product Stocks MVC and the inventory API."));
-        }
-    }
-    else
-    {
-        checks.Add(new("dual-run-inventory-insights", "skipped",
-            "Authenticated session lacks InventoryInsights.View."));
-    }
 }
 
 static bool ContainsEncoded(string html, string value) =>

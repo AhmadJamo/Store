@@ -177,6 +177,12 @@ permission-protected Index GET actions are mapped; filters/query strings are pre
 their existing independently authorized API/MVC commands. Hosted acceptance passed 15/15 and both the 33-route cutover
 and process-local MVC rollback passed.
 
+MOD-030E2A commits Stock Transactions and Product Stocks to AngularDefault. Ledger filters remain query-string state;
+manual adjustment, opening-stock creation and positive-ID edit links resolve to dedicated Angular deep links backed by
+the unified stock workspace. Angular loads the requested edit record through the existing permission-protected form API.
+Hosted acceptance passed 15/15, rendered Angular product/warehouse/quantity matched the API, and both 38-route cutover
+and MVC rollback passed. All writes remain independently authorized and antiforgery-protected; no inventory rule changed.
+
 Quantity differences use a 0.000001 tolerance and value differences use 0.00000001. Exceptions must be resolved through the owning inventory document or a future approved adjustment workflow. The SQL integration fixture creates a disposable database, verifies query translation and tenant isolation for two companies, and proves that ProductStock rowversion allows exactly one of two concurrent last-unit issues to succeed.
 
 The 2026-09-30 read-only run against the demo database found five explained legacy exceptions: three positive balances whose latest pre-valuation transactions contain zero snapshot fields, and two controlled-negative recipe ingredient balances with the same legacy zero snapshots. No location allocation rows were present for those balances. They are demo-data baseline exceptions, not silent corrections; the report retains them until the demo inventory is deliberately reseeded or an approved baseline workflow exists.

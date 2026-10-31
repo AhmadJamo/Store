@@ -465,6 +465,30 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'inventory/stocks/new',
+        canDeactivate: [(component) => component.canDeactivate()],
+        loadComponent: () =>
+          import('./features/inventory/product-stocks-page').then(
+            (module) => module.ProductStocksPageComponent,
+          ),
+      },
+      {
+        path: 'inventory/stocks/adjustment',
+        canDeactivate: [(component) => component.canDeactivate()],
+        loadComponent: () =>
+          import('./features/inventory/product-stocks-page').then(
+            (module) => module.ProductStocksPageComponent,
+          ),
+      },
+      {
+        path: 'inventory/stocks/:id/edit',
+        canDeactivate: [(component) => component.canDeactivate()],
+        loadComponent: () =>
+          import('./features/inventory/product-stocks-page').then(
+            (module) => module.ProductStocksPageComponent,
+          ),
+      },
+      {
         path: 'inventory/availability',
         loadComponent: () =>
           import('./features/inventory/inventory-availability-page').then(

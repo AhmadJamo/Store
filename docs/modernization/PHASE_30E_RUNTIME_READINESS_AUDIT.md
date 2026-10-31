@@ -1,6 +1,6 @@
 # MOD-030E — Angular runtime readiness audit
 
-> Status: IN PROGRESS — MOD-030E1 complete
+> Status: IN PROGRESS — MOD-030E2A complete
 > Date: 2026-10-31
 
 ## Finding
@@ -31,6 +31,19 @@ The authenticated hosted suite passed 15/15 with zero failures/skips, the expand
 and a process-local override returned the same 33 probes to MVC. The final gate passed Release, 1,394 backend checks,
 214/214 Angular tests, 121 templates and bundle budgets. Nine surfaces are now AngularDefault and 73 mapped surfaces
 remain MVC by default.
+
+## MOD-030E2A evidence
+
+StockTransactions and ProductStocks now join the committed AngularDefault set. The ledger Index keeps its filter query,
+manual adjustment creation resolves to `/inventory/stocks/adjustment`, opening-stock creation resolves to
+`/inventory/stocks/new`, and edit preserves the positive identifier at `/inventory/stocks/{id}/edit`. Angular loads that
+exact record while the unified stock workspace retains independently authorized create, edit, delete and adjustment APIs.
+
+The authenticated hosted suite passed 15/15 with zero failures/skips, including product/warehouse/quantity equality
+between the rendered Angular Product Stocks screen and its API. Cutover and process-local MVC rollback both passed 38
+authorized routes. The final evidence passed a warning-free Release build, 1,406 backend checks, 215/215 Angular tests
+across 106 files, 121 templates and bundle budgets (327,235 initial bytes; 81,880 largest lazy bytes). Eleven surfaces are
+now AngularDefault and 71 mapped surfaces remain MVC by default. No MVC file, database object or business rule changed.
 
 Every cohort must add explicit GET-only action mappings, require its existing permissions, pass hosted acceptance and
 exact Angular targets, then pass a process-local MVC rollback. Mutations continue through their independently authorized
