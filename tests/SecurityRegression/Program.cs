@@ -160,6 +160,25 @@ Check(adjustmentCutoverResolver.Resolve(
         new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 3_000_000_000L }) ==
     "/app/inventory/adjustments/3000000000?page=2",
     "Inventory Adjustment details cutover must preserve positive Int64 identifiers");
+var stockTransferCutoverResolver = new PresentationCutoverResolver(Options.Create(
+    new PresentationCutoverOptions
+    {
+        AngularBasePath = "/app",
+        Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["StockTransfers"] = PresentationCutoverMode.AngularDefault
+        }
+    }));
+Check(stockTransferCutoverResolver.Resolve(
+        cutoverContext.Request, "StockTransfers", "Details",
+        new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 23 }) ==
+    "/app/inventory/transfers/23?page=2",
+    "Stock Transfer details cutover must preserve its identifier and query string");
+Check(stockTransferCutoverResolver.Resolve(
+        cutoverContext.Request, "StockTransfers", "Edit",
+        new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 23 }) ==
+    "/app/inventory/transfers/23/edit?page=2",
+    "Stock Transfer edit GET must preserve its identifier and query string");
 foreach (var entry in PresentationCutoverRouteCatalog.All)
 {
     var keyParts = entry.Key.Split(':', 2);

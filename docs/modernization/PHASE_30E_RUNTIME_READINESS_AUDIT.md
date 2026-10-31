@@ -1,7 +1,7 @@
 # MOD-030E — Angular runtime readiness audit
 
-> Status: IN PROGRESS — MOD-030E2B complete
-> Date: 2026-10-31
+> Status: IN PROGRESS — MOD-030E2C complete
+> Date: 2026-11-01
 
 ## Finding
 
@@ -58,6 +58,20 @@ The authenticated hosted suite passed 15/15 with zero failures/skips. Cutover an
 was instead covered with a positive identifier above Int32 range. The final gate passed a warning-free Release build,
 1,413 backend checks, 215/215 Angular tests across 106 files, 121 templates and the existing bundle budgets. Twelve
 surfaces are now AngularDefault and 70 mapped surfaces remain MVC by default. No data or schema changed.
+
+## MOD-030E2C evidence
+
+StockTransfers now joins the committed AngularDefault set. Index, Create, Edit and Details GET actions map to
+`/inventory/transfers`, `/inventory/transfers/new`, `/inventory/transfers/{id}/edit` and
+`/inventory/transfers/{id}`. Submit, Approve, Reject, ReturnToDraft, Post and Cancel remain independently authorized
+antiforgery-protected API/MVC mutations and are not presentation redirects.
+
+The authenticated hosted suite passed 15/15 with zero failures/skips. Cutover and process-local MVC rollback both passed
+42 authorized routes. Demo contained no transfer row, so no live Details/Edit fixture was claimed or created; exact
+positive-ID resolution for both routes is covered by executable security regression checks. The final gate passed a
+warning-free Release build, 1,423 backend checks, 215/215 Angular tests across 106 files, 121 templates and bundle budgets
+(327,235 initial bytes; 81,880 largest lazy bytes). Thirteen surfaces are now AngularDefault and 69 mapped surfaces remain
+MVC by default. No data, schema, business rule or MVC file changed.
 
 Every cohort must add explicit GET-only action mappings, require its existing permissions, pass hosted acceptance and
 exact Angular targets, then pass a process-local MVC rollback. Mutations continue through their independently authorized

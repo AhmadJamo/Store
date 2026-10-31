@@ -128,7 +128,10 @@ static async Task RunLiveCutoverAsync(
                  "ProductStock.Create",
                  "ProductStock.Edit",
                  "InventoryAdjustments.View",
-                 "InventoryAdjustments.Create"
+                 "InventoryAdjustments.Create",
+                 "StockTransfers.View",
+                 "StockTransfers.Create",
+                 "StockTransfers.Edit"
              })
     {
         Require(permissions.Contains(requiredPermission),
@@ -177,7 +180,9 @@ static async Task RunLiveCutoverAsync(
         new("/ProductStocks", "/app/inventory/stocks", "ProductStock.View"),
         new("/ProductStocks/Create", "/app/inventory/stocks/new", "ProductStock.Create"),
         new("/InventoryAdjustments?status=1", "/app/inventory/adjustments?status=1", "InventoryAdjustments.View"),
-        new("/InventoryAdjustments/Create", "/app/inventory/adjustments/new", "InventoryAdjustments.Create")
+        new("/InventoryAdjustments/Create", "/app/inventory/adjustments/new", "InventoryAdjustments.Create"),
+        new("/StockTransfers?search=cutover-rehearsal", "/app/inventory/transfers?search=cutover-rehearsal", "StockTransfers.View"),
+        new("/StockTransfers/Create", "/app/inventory/transfers/new", "StockTransfers.Create")
     };
 
     if (permissions.Contains("Customers.View"))
@@ -240,6 +245,28 @@ static async Task RunLiveCutoverAsync(
                 $"/app/inventory/adjustments/{id}", "InventoryAdjustments.View"));
         }
     }
+    if (permissions.Contains("StockTransfers.View"))
+    {
+        var response = await authenticated.GetAsync("/api/v1/stock-transfers");
+        Require(response.Ok, $"Stock Transfer cutover fixture read returned {response.Status}.");
+        using var transfers = JsonDocument.Parse(await response.TextAsync());
+        if (transfers.RootElement.ValueKind == JsonValueKind.Array && transfers.RootElement.GetArrayLength() > 0)
+        {
+            var first = transfers.RootElement[0];
+            var id = first.GetProperty("id").GetInt32();
+            routes.Add(new($"/StockTransfers/Details/{id}",
+                $"/app/inventory/transfers/{id}", "StockTransfers.View"));
+
+            var draft = transfers.RootElement.EnumerateArray()
+                .FirstOrDefault(x => x.GetProperty("status").GetInt32() == 1);
+            if (draft.ValueKind != JsonValueKind.Undefined)
+            {
+                var draftId = draft.GetProperty("id").GetInt32();
+                routes.Add(new($"/StockTransfers/Edit/{draftId}",
+                    $"/app/inventory/transfers/{draftId}/edit", "StockTransfers.Edit"));
+            }
+        }
+    }
 
     var executed = 0;
     foreach (var probe in routes.Where(x => permissions.Contains(x.Permission)))
@@ -253,7 +280,7 @@ static async Task RunLiveCutoverAsync(
                              surface is "Customers" or "Suppliers" or "Products" or "AnalyticsCenter" or "Settings" or
                                  "InventoryBalances" or "InventoryReservations" or "InventoryInsights" or
                                  "InventoryReconciliation" or "StockTransactions" or "ProductStocks" or
-                                 "InventoryAdjustments";
+                                 "InventoryAdjustments" or "StockTransfers";
         if (expectsAngular)
         {
             Require(response.Status is 301 or 302 or 307 or 308,

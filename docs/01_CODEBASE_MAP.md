@@ -16,8 +16,9 @@ same-line MVC actions, verifies every mapped Angular route and emits one accepta
 operation, permission, risk and evidence fields. The modernization gate fails when either generated artifact is stale.
 
 `docs/modernization/PHASE_30E_RUNTIME_READINESS_AUDIT.md` distinguishes functional counterparts from runtime defaults:
-82 surfaces are mapped. MOD-030E2B expands the committed default to twelve surfaces and reduces the MVC-default
-remainder to 70 without deleting MVC. Inventory Adjustment GET routes preserve filters and positive Int64 identifiers.
+82 surfaces are mapped. MOD-030E2C expands the committed default to thirteen surfaces and reduces the MVC-default
+remainder to 69 without deleting MVC. Stock Transfer list/create/edit/details GET routes preserve filters and positive
+identifiers while lifecycle mutations remain outside the presentation catalog.
 
 `tests/AngularBrowserAcceptance` loads an operator-supplied Playwright storage-state into both UI and API contexts. Without
 one, it uses a bounded synthetic session only for design-system presentation checks and reports authenticated API parity as
@@ -59,7 +60,7 @@ cross-surface file gaps are documented in `docs/modernization/PHASE_28_REMAINING
 with named warehouses, products, locations and tenant users. `StockTransfersApiController` exposes the permission-separated
 and antiforgery-protected lifecycle while `StockTransferService` retains all mutation authority. Angular
 `features/inventory/stock-transfers-page.*` and `data/stock-transfer*` own the bilingual list/create/edit/details workspace,
-typed API client and lifecycle tests. MVC consumes the same Application projection and remains the default.
+typed API client and lifecycle tests. Exact GET routes are now `AngularDefault`; MVC remains intact as the rollback surface.
 
 `InventoryScanningApiController` exposes exact scan resolution plus independently permissioned putaway, relocation and
 Draft-count commands over the existing `InventoryScanningService`. Angular `features/inventory/inventory-scanning*` and

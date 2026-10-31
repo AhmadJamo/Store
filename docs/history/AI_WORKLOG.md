@@ -1,5 +1,12 @@
 # AI Work Log
 
+- 2026-11-01: Completed `MOD-030E2C`. StockTransfers Index/Create/Edit/Details now use exact AngularDefault routes;
+  query strings and positive identifiers are preserved, while submit/approve/reject/return-to-draft/post/cancel remain
+  independently authorized antiforgery-protected mutations. Hosted acceptance passed 15/15, cutover and MVC rollback
+  passed 42 routes, and Release, 1,423 backend checks, 215/215 Angular tests, 121 templates and bundle budgets passed.
+  Demo had no transfer row, so Details/Edit used executable resolver coverage and no test data was created. The temporary
+  authenticated state was deleted; no database, business rule or MVC file changed.
+
 - 2026-11-01: Completed `MOD-030E2B`. InventoryAdjustments Index/Create/Details now use exact AngularDefault routes;
   the shared resolver was widened from positive Int32 to invariant positive Int64 identifiers to match the aggregate.
   Count/Approve/Post/Cancel remain independently authorized antiforgery-protected mutations. Hosted acceptance passed
