@@ -1,5 +1,11 @@
 # AI Work Log
 
+- 2026-10-31: Reconciled tenant-Admin permission projection for Angular sessions. `PermissionService.GetGrantedAsync`
+  now mirrors the existing company-scoped Admin shortcut used by `CanAsync` and the authorization handler, returning the
+  code-owned permission catalog only for a verified tenant Admin role. Added executable admin/non-admin regression evidence;
+  Release built cleanly and 1,383 security/inventory checks passed. The captured Settings operator still projected only
+  12 cutover routes, proving it is not assigned the active company's Admin role rather than exposing a session-projection bug.
+
 - 2026-10-31: Completed `MOD-030C` as an independently evidenced Analytics Center cohort after two captured sessions
   lacked `Administration.Access`. AnalyticsCenter now joins Customers, Suppliers and Products as AngularDefault; hosted
   acceptance passed 15/15, the mixed pilot passed 12 authorized routes and process-local MVC rollback passed the same

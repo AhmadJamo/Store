@@ -685,6 +685,12 @@ foreach (var admin in new[] { false, true })
         await handler.HandleAsync(context);
         Check(context.HasSucceeded == admin, $"Handler: {permission}, admin={admin}");
     }
+    var projectedPermissions = await service.GetGrantedAsync("user");
+    Check(admin
+            ? projectedPermissions.SequenceEqual(PermissionDefinitions.All.Select(x => x.Name)
+                .Distinct(StringComparer.Ordinal).OrderBy(x => x, StringComparer.Ordinal))
+            : projectedPermissions.Count == 0,
+        $"Session permission projection must match the tenant Admin shortcut, admin={admin}");
 }
 
 foreach (var controller in new[] { typeof(RolesController), typeof(ProductsController), typeof(WarehousesController), typeof(SuppliersController), typeof(ProductStocksController) })

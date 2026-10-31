@@ -7,6 +7,10 @@
 
 The same-origin `/api/v1` boundary reuses the Identity application cookie, tenant session middleware and backend permission service. Authentication and authorization failures return RFC Problem Details JSON with a correlation ID instead of redirecting API callers to MVC pages. Unsafe methods remain under the global antiforgery filter; Angular retrieves a request token from an authenticated endpoint and sends it through `X-CSRF-TOKEN`. OpenAPI requires authentication and contains only internal v1 routes. No JWT, local-storage credential, broad CORS policy or client-authoritative permission decision was added.
 
+The tenant `Admin` role is company-scoped and is the only administration shortcut. Its Angular session projection now
+returns every code-owned permission, matching `CanAsync` and `PermissionAuthorizationHandler`; non-admin projections are
+unchanged. A global Identity role, Platform owner identity or account name does not grant tenant administration.
+
 The MOD-019 presentation cutover filter runs after authorization and cannot supply an arbitrary destination. It accepts
 only a validated local Angular base path and a code-owned controller/action allowlist, encodes route values, and ignores
 POST plus every unlisted action. Enabling a surface therefore cannot redirect a mutation or replace endpoint permission checks.

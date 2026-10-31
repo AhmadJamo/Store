@@ -5,6 +5,10 @@ The in-repository workspace `MiniStore Front-End` is the isolated Angular 22 pre
 
 `MiniStore.Web/Controllers/Api/V1` exposes the authenticated session and CSRF foundation. `AuthenticationApiController` adds rate-limited, antiforgery-protected login and authenticated logout; `TenantAccountAuthenticationService` is the single MVC/API owner of Identity password checks, company membership selection, tenant claim creation, onboarding detection and denied-login audit evidence. `InternalApiSessionService` composes explicit Application DTOs through tenant and permission boundaries. Angular `core/api` owns CSRF attachment, in-memory session state, authenticated/anonymous guards and expired-session routing, while `features/account` owns login and access-denied presentation. `CultureApiController` and the MVC language controller share `UiCultureCookie`; Angular's neutral `UiCultureStateService` lets the server session culture drive locale/direction without creating an HTTP-interceptor/session dependency cycle. No credentials or tokens enter browser storage. `InternalApiExceptionMiddleware`, cookie events and API behavior options keep errors JSON-based with correlation IDs. Authenticated OpenAPI is filtered to `/api/v1`; reusable bounded paging contracts live in `MiniStore.Application/DTOs/Api`. MVC remains operational and no database migration or business-rule change was introduced. See `docs/modernization/PHASE_02_API_FOUNDATION.md`.
 
+`PermissionService.GetGrantedAsync` mirrors the tenant-Admin shortcut used by `CanAsync` and the authorization handler:
+an active-company Admin session projects every code-owned permission to Angular. This keeps navigation/session guidance
+aligned with backend authority without treating a global Identity or Platform role as tenant administration.
+
 `scripts/generate-mvc-migration-registry.ps1` is also the single source for `MVC_MIGRATION_REGISTRY.md` and
 `DUAL_RUN_ACCEPTANCE_MATRIX.md`. It distinguishes `[ApiController]` endpoints regardless of folder, inventories compact
 same-line MVC actions, verifies every mapped Angular route and emits one acceptance row per counterpart with route,
