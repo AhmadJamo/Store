@@ -1,27 +1,26 @@
 # المهمة التالية الوحيدة / Next Task
 
-## `MOD-031A` — بوابة أول دفعة تقاعد MVC / First MVC Retirement Approval Gate
+## `MOD-030E1` — دفعة مخزون للقراءة فقط / Read-only Inventory Cutover
 
-> الحالة: AWAITING EXPLICIT OWNER APPROVAL
+> الحالة: APPROVED
 
-اكتمل `MOD-030A..D`: الأسطح الخمسة الملتزمة تعمل افتراضيًا عبر Angular، ونجح hosted acceptance ‏15/15 ثم
-القطع والرجوع على 29 مسارًا. لا توجد فجوة أسطح في السجل المولد، وما زالت Razor/controllers موجودة كرجوع آمن.
+أظهر تدقيق الجاهزية أن 82 سطحًا لها Angular counterpart، لكن خمسة أسطح فقط و29 إجراء GET تعمل AngularDefault.
+يبقى 77 سطحًا MVC افتراضيًا، لذلك أُجل حذف MVC وبدأت مرحلة إكمال القطع التشغيلي.
 
 ### المتطلب السابق
 
-- موافقة صريحة على بدء الحذف المادي؛ نجاح القطع لا يُعد إذنًا بحذف MVC.
-- اختيار دفعة صغيرة واحدة من المسارات ذات أقل اعتماد متبادل، مع خطة استعادة من Git/النشر قبل الحذف.
+- InventoryBalances وInventoryReservations وInventoryInsights وInventoryReconciliation لكل منها Index GET فقط.
+- تبقى صلاحيات backend وواجهات API هي السلطة، ولا يضاف أي تحويل mutation.
 
 ### الهدف بعد الموافقة
 
-- حصر controllers/views/navigation/tests الخاصة بالدفعة المختارة ومراجعة جميع المراجع.
-- حذف العرض MVC فقط من دون المساس بخدمات Application أو API أو قواعد الأعمال.
-- إعادة توليد السجل وتشغيل البوابة الكاملة وقبول Angular المستضاف.
-- إثبات rollback على مستوى النشر/الإصدار لأن rollback عبر MVC لن يبقى متاحًا للمسارات المحذوفة.
+- إضافة خرائط GET الدقيقة للمسارات الأربعة وتفعيلها AngularDefault.
+- توسيع مشغل القطع ليطلب الصلاحيات الأربع ويختبر query strings.
+- تشغيل hosted acceptance والقطع والـprocess-local MVC rollback.
+- إبقاء Controllers وRazor كاملة كرجوع.
 
 ### القبول
 
-- لا مرجع Razor أو route أو navigation يتيم.
-- صلاحيات API وantiforgery والعزل بين الشركات لا تتغير.
-- Release وbackend وAngular والوصولية والحزمة والقبول المستضاف كلها ناجحة.
-- التوثيق يحدد الملفات المحذوفة وطريقة استعادة الإصدار السابق.
+- كل GET مصرح يعيد التوجيه إلى هدف Angular المطابق ويحافظ على query string.
+- rollback يعيد المسارات الأربعة إلى MVC 200.
+- البوابة الكاملة تبقى خضراء دون حذف ملفات أو تغيير قاعدة البيانات.

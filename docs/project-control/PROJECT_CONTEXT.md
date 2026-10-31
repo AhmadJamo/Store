@@ -17,8 +17,8 @@ Web → Application → Domain، وتنفذ Infrastructure عقود التخزي
 اكتمل `MOD-027` وكل `MOD-028A..G`، وتزامنت ثقافة Angular والخادم وأغلق السجل المولد بصفر أسطح متبقية.
 اكتملت `MOD-029A..D` للbaseline والمصالحة المصرح بها ومجموعات المخاطر والتحويل/الرجوع الحي. قاعدة Demo
 مطابقة للمصدر عند الترحيل 136. اكتمل `MOD-030A..D` باستضافة Angular production وتحويل Customers وSuppliers
-وProducts وAnalyticsCenter وSettings مع قبول ورجوع ناجحين. الخطوة التالية بوابة موافقة صريحة لأول دفعة تقاعد
-MVC محدودة كما هو مسجل في [NEXT_TASK.md](NEXT_TASK.md).
+وProducts وAnalyticsCenter وSettings مع قبول ورجوع ناجحين. كشف تدقيق الجاهزية أن 77 سطحًا mapped ما زالت MVC
+افتراضيًا؛ المهمة التالية `MOD-030E1` لإكمال أول دفعة مخزون read-only كما هو مسجل في [NEXT_TASK.md](NEXT_TASK.md).
 
 قبل أي عمل اقرأ:
 

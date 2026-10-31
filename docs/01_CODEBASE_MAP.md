@@ -15,6 +15,10 @@ aligned with backend authority without treating a global Identity or Platform ro
 same-line MVC actions, verifies every mapped Angular route and emits one acceptance row per counterpart with route,
 operation, permission, risk and evidence fields. The modernization gate fails when either generated artifact is stale.
 
+`docs/modernization/PHASE_30E_RUNTIME_READINESS_AUDIT.md` distinguishes functional counterparts from runtime defaults:
+82 surfaces are mapped, five are committed AngularDefault and 77 remain MVC by default. MOD-030E completes those runtime
+cohorts without deleting MVC, beginning with four GET-only inventory analysis surfaces.
+
 `tests/AngularBrowserAcceptance` loads an operator-supplied Playwright storage-state into both UI and API contexts. Without
 one, it uses a bounded synthetic session only for design-system presentation checks and reports authenticated API parity as
 skipped. `scripts/Test-DualRunReadOnly.ps1` separately verifies live zero-mutation identity, financial and inventory access

@@ -1,6 +1,6 @@
 # MOD-030 — hosted Angular cutover and MVC retirement
 
-> Status: IN PROGRESS — `MOD-030A..C` complete through 2026-10-31
+> Status: IN PROGRESS — `MOD-030A..D` complete; runtime completion continues in MOD-030E
 
 ## MOD-030A production hosting and first cohort
 
