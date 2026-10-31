@@ -117,7 +117,11 @@ static async Task RunLiveCutoverAsync(
              {
                  "AnalyticsCenter.View",
                  "AnalyticsCenter.Customize",
-                 "Administration.Access"
+                 "Administration.Access",
+                 "InventoryBalances.View",
+                 "InventoryReservations.View",
+                 "InventoryInsights.View",
+                 "InventoryReconciliation.View"
              })
     {
         Require(permissions.Contains(requiredPermission),
@@ -151,7 +155,15 @@ static async Task RunLiveCutoverAsync(
         new("/Settings/Pos", "/app/settings/pos-experience", "Administration.Access"),
         new("/Settings/WorkflowCatalog", "/app/settings/workflow-catalog", "Administration.Access"),
         new("/Products?search=cutover-rehearsal", "/app/products?search=cutover-rehearsal", "Products.View"),
-        new("/Products/Create", "/app/products/new", "Products.Create")
+        new("/Products/Create", "/app/products/new", "Products.Create"),
+        new("/InventoryBalances?search=cutover-rehearsal",
+            "/app/inventory/availability?search=cutover-rehearsal", "InventoryBalances.View"),
+        new("/InventoryReservations?search=cutover-rehearsal",
+            "/app/inventory/reservations?search=cutover-rehearsal", "InventoryReservations.View"),
+        new("/InventoryInsights?attentionOnly=true",
+            "/app/inventory/insights?attentionOnly=true", "InventoryInsights.View"),
+        new("/InventoryReconciliation?exceptionsOnly=true&page=1",
+            "/app/inventory/reconciliation?exceptionsOnly=true&page=1", "InventoryReconciliation.View")
     };
 
     if (permissions.Contains("Customers.View"))
@@ -201,7 +213,9 @@ static async Task RunLiveCutoverAsync(
             new APIRequestContextOptions { MaxRedirects = 0 });
         var expectsAngular = options.CutoverMode == "angular" ||
                              options.CutoverMode == "pilot" &&
-                             surface is "Customers" or "Suppliers" or "Products" or "AnalyticsCenter" or "Settings";
+                             surface is "Customers" or "Suppliers" or "Products" or "AnalyticsCenter" or "Settings" or
+                                 "InventoryBalances" or "InventoryReservations" or "InventoryInsights" or
+                                 "InventoryReconciliation";
         if (expectsAngular)
         {
             Require(response.Status is 301 or 302 or 307 or 308,
@@ -517,14 +531,15 @@ static async Task RunAuthenticatedReconciliationAsync(
             var productName = row.GetProperty("productName").GetString() ?? "";
             var warehouseName = row.GetProperty("warehouseName").GetString() ?? "";
             var onHand = row.GetProperty("onHand").GetDecimal();
-            var inventoryMvc = await authenticated.GetAsync("/InventoryInsights");
-            Require(inventoryMvc.Ok, $"Inventory insights MVC read returned {inventoryMvc.Status}.");
+            var inventoryMvc = await authenticated.GetAsync("/ProductStocks");
+            Require(inventoryMvc.Ok, $"Product Stocks MVC read returned {inventoryMvc.Status}.");
             var inventoryHtml = await inventoryMvc.TextAsync();
             Require(ContainsEncoded(inventoryHtml, productName) && ContainsEncoded(inventoryHtml, warehouseName),
-                "MVC/API inventory identity fields did not reconcile.");
-            Require(ContainsNumber(inventoryHtml, onHand), "MVC/API on-hand quantity did not reconcile.");
+                "Product Stocks MVC and inventory-insights API identity fields did not reconcile.");
+            Require(ContainsNumber(inventoryHtml, onHand),
+                "Product Stocks MVC and inventory-insights API quantity did not reconcile.");
             checks.Add(new("dual-run-inventory-insights", "passed",
-                "Product, warehouse and on-hand quantity matched across MVC and API."));
+                "Product, warehouse and quantity matched across Product Stocks MVC and the inventory API."));
         }
     }
     else

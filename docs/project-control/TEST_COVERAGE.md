@@ -32,6 +32,7 @@
 | MOD-030B Suppliers/Products cohort | Hosted deep links passed; authenticated run 15/15 with zero skips; 12-route mixed pilot and 12-route MVC rollback passed; Release clean, 1,349 backend checks, 214/214 Angular tests, 121 templates and bundle budgets passed | 2026-10-31 |
 | MOD-030C Analytics cohort | Authenticated hosted run 15/15 with zero skips; Analytics mixed pilot and four-cohort MVC rollback passed across 12 authorized routes; Settings intentionally remained MVC; Release clean, 1,381 backend checks, 214/214 Angular tests, 121 templates and bundle budgets passed | 2026-10-31 |
 | MOD-030D Settings cohort | Authorized hosted run 15/15 with zero failures/skips; five-cohort Angular cutover and process-local MVC rollback passed across 29 routes; Release clean, 1,385 backend checks, 214/214 Angular tests, 121 templates and bundle budgets passed | 2026-10-31 |
+| MOD-030E1 read-only inventory cohort | Inventory balances, reservations, insights and reconciliation: hosted 15/15; 33-route Angular cutover and MVC rollback; Release clean, 1,394 backend checks, 214/214 Angular tests, 121 templates and bundle budgets passed | 2026-10-31 |
 | Live schema integrity (سلامة المخطط الحي) | 147 tables, 420 trusted FKs, zero disabled constraints/indexes or unsafe tenant relations | 2026-10-15 |
 | Web dependency build (بناء الويب واعتماداته) | Release, 4 projects, zero warnings/errors after SAL-120A (نجح) | 2026-10-22 |
 

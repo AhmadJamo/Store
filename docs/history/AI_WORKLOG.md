@@ -1,5 +1,11 @@
 # AI Work Log
 
+- 2026-10-31: Completed `MOD-030E1`. InventoryBalances, InventoryReservations, InventoryInsights and
+  InventoryReconciliation now use exact GET-only AngularDefault routes with query-string preservation. The hosted suite
+  passed 15/15, cutover and MVC rollback passed 33 authorized routes, and the final gate passed Release, 1,394 backend
+  checks, 214/214 Angular tests, 121 templates and bundle budgets. The same-data inventory probe moved to the still-MVC
+  Product Stocks view so it remains meaningful after Inventory Insights cutover. No mutation or database object changed.
+
 - 2026-10-31: Audited Angular runtime readiness before MVC retirement. The generated registry's zero counterpart gap
   means all 82 mapped surfaces have Angular routes, not that all are runtime defaults. Committed configuration covers five
   surfaces and 29 GET actions; 77 mapped surfaces remain MVC by default. Replaced premature MVC retirement with approved

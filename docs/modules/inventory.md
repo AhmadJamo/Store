@@ -172,6 +172,11 @@ The Inventory Settings singleton supplies defaults for new warehouses. Effective
 
 The `InventoryReconciliation.View` report is a read-only WMS control. For each tenant Product + Warehouse it compares ProductStock quantity/value, the SQL-aggregated ProductLocationStock quantity, derived Unassigned quantity and the latest StockTransaction quantity/value snapshot. It also finds location balances without a warehouse balance, negative location rows and location balances attached to Simple warehouses. Search accepts product name, generated code or barcode; warehouse, exception-only and page-size filters are available. The report never adjusts stock.
 
+MOD-030E1 commits Inventory Balances, Reservations, Insights and Reconciliation to AngularDefault. Only their four
+permission-protected Index GET actions are mapped; filters/query strings are preserved and all inventory writes remain on
+their existing independently authorized API/MVC commands. Hosted acceptance passed 15/15 and both the 33-route cutover
+and process-local MVC rollback passed.
+
 Quantity differences use a 0.000001 tolerance and value differences use 0.00000001. Exceptions must be resolved through the owning inventory document or a future approved adjustment workflow. The SQL integration fixture creates a disposable database, verifies query translation and tenant isolation for two companies, and proves that ProductStock rowversion allows exactly one of two concurrent last-unit issues to succeed.
 
 The 2026-09-30 read-only run against the demo database found five explained legacy exceptions: three positive balances whose latest pre-valuation transactions contain zero snapshot fields, and two controlled-negative recipe ingredient balances with the same legacy zero snapshots. No location allocation rows were present for those balances. They are demo-data baseline exceptions, not silent corrections; the report retains them until the demo inventory is deliberately reseeded or an approved baseline workflow exists.

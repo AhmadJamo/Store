@@ -11,7 +11,7 @@
 - Angular application routes discovered: 180.
 - MVC surfaces with a verified Angular counterpart: 82.
 - Remaining MVC surfaces without a mapped Angular counterpart: 0.
-- Allowlisted Angular-default cutover actions: 29.
+- Allowlisted Angular-default cutover actions: 33.
 
 Remaining surfaces: none.
 
@@ -66,10 +66,10 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | InventoryAdjustments | Create.cshtml | Angular Pilot | /inventory/adjustments | MiniStore.Web/Views/InventoryAdjustments/Create.cshtml |
 | InventoryAdjustments | Details.cshtml | Angular Pilot | /inventory/adjustments | MiniStore.Web/Views/InventoryAdjustments/Details.cshtml |
 | InventoryAdjustments | Index.cshtml | Angular Pilot | /inventory/adjustments | MiniStore.Web/Views/InventoryAdjustments/Index.cshtml |
-| InventoryBalances | Index.cshtml | Angular Pilot | /inventory/availability | MiniStore.Web/Views/InventoryBalances/Index.cshtml |
-| InventoryInsights | Index.cshtml | Angular Pilot | /inventory/insights | MiniStore.Web/Views/InventoryInsights/Index.cshtml |
-| InventoryReconciliation | Index.cshtml | Angular Pilot | /inventory/reconciliation | MiniStore.Web/Views/InventoryReconciliation/Index.cshtml |
-| InventoryReservations | Index.cshtml | Angular Pilot | /inventory/reservations | MiniStore.Web/Views/InventoryReservations/Index.cshtml |
+| InventoryBalances | Index.cshtml | Angular Default | /inventory/availability | MiniStore.Web/Views/InventoryBalances/Index.cshtml |
+| InventoryInsights | Index.cshtml | Angular Default | /inventory/insights | MiniStore.Web/Views/InventoryInsights/Index.cshtml |
+| InventoryReconciliation | Index.cshtml | Angular Default | /inventory/reconciliation | MiniStore.Web/Views/InventoryReconciliation/Index.cshtml |
+| InventoryReservations | Index.cshtml | Angular Default | /inventory/reservations | MiniStore.Web/Views/InventoryReservations/Index.cshtml |
 | InventoryScanning | Index.cshtml | Angular Pilot | /inventory/scanning | MiniStore.Web/Views/InventoryScanning/Index.cshtml |
 | InventoryTracking | Index.cshtml | Angular Pilot | /inventory/tracking | MiniStore.Web/Views/InventoryTracking/Index.cshtml |
 | JournalEntries | Details.cshtml | Angular Pilot | /accounting/journal-entries/:id | MiniStore.Web/Views/JournalEntries/Details.cshtml |
@@ -313,10 +313,10 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | InventoryAdjustments | Details | GET | Angular Pilot | /inventory/adjustments | — | MiniStore.Web/Controllers/Inventory/InventoryAdjustmentsController.cs |
 | InventoryAdjustments | Index | GET | Angular Pilot | /inventory/adjustments | — | MiniStore.Web/Controllers/Inventory/InventoryAdjustmentsController.cs |
 | InventoryAdjustments | Post | POST | Angular Pilot | /inventory/adjustments | — | MiniStore.Web/Controllers/Inventory/InventoryAdjustmentsController.cs |
-| InventoryBalances | Index | GET | Angular Pilot | /inventory/availability | — | MiniStore.Web/Controllers/Inventory/InventoryBalancesController.cs |
-| InventoryInsights | Index | GET | Angular Pilot | /inventory/insights | — | MiniStore.Web/Controllers/Inventory/InventoryInsightsController.cs |
-| InventoryReconciliation | Index | GET | Angular Pilot | /inventory/reconciliation | — | MiniStore.Web/Controllers/Inventory/InventoryReconciliationController.cs |
-| InventoryReservations | Index | GET | Angular Pilot | /inventory/reservations | — | MiniStore.Web/Controllers/Inventory/InventoryReservationsController.cs |
+| InventoryBalances | Index | GET | Angular Default | /inventory/availability | /inventory/availability | MiniStore.Web/Controllers/Inventory/InventoryBalancesController.cs |
+| InventoryInsights | Index | GET | Angular Default | /inventory/insights | /inventory/insights | MiniStore.Web/Controllers/Inventory/InventoryInsightsController.cs |
+| InventoryReconciliation | Index | GET | Angular Default | /inventory/reconciliation | /inventory/reconciliation | MiniStore.Web/Controllers/Inventory/InventoryReconciliationController.cs |
+| InventoryReservations | Index | GET | Angular Default | /inventory/reservations | /inventory/reservations | MiniStore.Web/Controllers/Inventory/InventoryReservationsController.cs |
 | InventoryScanning | Count | POST | Angular Pilot | /inventory/scanning | — | MiniStore.Web/Controllers/Inventory/InventoryScanningController.cs |
 | InventoryScanning | Index | GET | Angular Pilot | /inventory/scanning | — | MiniStore.Web/Controllers/Inventory/InventoryScanningController.cs |
 | InventoryScanning | Putaway | POST | Angular Pilot | /inventory/scanning | — | MiniStore.Web/Controllers/Inventory/InventoryScanningController.cs |

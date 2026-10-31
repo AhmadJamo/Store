@@ -115,6 +115,19 @@ cutoverContext.Request.Method = HttpMethods.Get;
 Check(angularCutoverResolver.Resolve(
         cutoverContext.Request, "Customers", "Export", new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null,
     "Presentation cutover must keep non-allowlisted actions on MVC");
+var inventoryCutoverResolver = new PresentationCutoverResolver(Options.Create(
+    new PresentationCutoverOptions
+    {
+        AngularBasePath = "/app",
+        Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["InventoryBalances"] = PresentationCutoverMode.AngularDefault
+        }
+    }));
+Check(inventoryCutoverResolver.Resolve(
+        cutoverContext.Request, "InventoryBalances", "Index",
+        new Microsoft.AspNetCore.Routing.RouteValueDictionary()) == "/app/inventory/availability?page=2",
+    "Read-only inventory cutover must preserve query strings on its exact Angular route");
 foreach (var entry in PresentationCutoverRouteCatalog.All)
 {
     var keyParts = entry.Key.Split(':', 2);

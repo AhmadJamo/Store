@@ -33,7 +33,11 @@ public static class PresentationCutoverRouteCatalog
             ["Settings:WorkflowCatalog"] = "/settings/workflow-catalog",
             ["Products:Index"] = "/products",
             ["Products:Create"] = "/products/new",
-            ["Products:Edit"] = "/products/{id}/edit"
+            ["Products:Edit"] = "/products/{id}/edit",
+            ["InventoryBalances:Index"] = "/inventory/availability",
+            ["InventoryReservations:Index"] = "/inventory/reservations",
+            ["InventoryInsights:Index"] = "/inventory/insights",
+            ["InventoryReconciliation:Index"] = "/inventory/reconciliation"
         };
 
     public static IReadOnlyDictionary<string, string> All => Routes;
