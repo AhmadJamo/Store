@@ -11,8 +11,10 @@ legal holds, signed external checkpoints, destruction manifests and transactiona
 
 Presentation cutover is an MVC-layer concern. A global action filter consults per-surface `Mvc`, `AngularPilot`, or
 `AngularDefault` configuration, but redirects only GET/HEAD actions in the code-owned route allowlist. Mutations,
-downloads, missing route values and unknown actions remain MVC. All committed modes are `Mvc`; MOD-029/030 still
-govern default-route changes and retirement. See `decisions/ADR-20261025-REVERSIBLE-PRESENTATION-CUTOVER.md`.
+downloads, missing route values and unknown actions remain MVC. MOD-030A adds same-origin production Angular hosting
+under `/app` and commits Customers as the first `AngularDefault` cohort; all other surfaces remain MVC. The SPA fallback
+is path-scoped and static-only, so API authorization, tenant middleware and MVC routing retain their existing boundaries.
+See `decisions/ADR-20261025-REVERSIBLE-PRESENTATION-CUTOVER.md` and `modernization/PHASE_30_CUTOVER.md`.
 
 The Angular visual layer uses semantic CSS custom properties as its stable component contract. Runtime theme and density choices alter root data attributes and tokens rather than duplicating markup. Locale owns `lang`/`dir`; components use logical CSS. The server session culture wins at bootstrap, and a language change writes the same server cookie before changing visible Angular state. A neutral locale signal keeps session consumers aligned without introducing a session/interceptor cycle. Browser storage contains only versioned, non-sensitive UI preferences and is never an authority for server culture, permissions or business state. See `modernization/PHASE_03_VISUAL_SYSTEM.md`.
 

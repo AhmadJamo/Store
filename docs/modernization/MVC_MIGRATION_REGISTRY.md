@@ -47,10 +47,10 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | CustomerReturnRequests | Create.cshtml | Angular Pilot | /sales/return-requests | MiniStore.Web/Views/CustomerReturnRequests/Create.cshtml |
 | CustomerReturnRequests | Details.cshtml | Angular Pilot | /sales/return-requests | MiniStore.Web/Views/CustomerReturnRequests/Details.cshtml |
 | CustomerReturnRequests | Index.cshtml | Angular Pilot | /sales/return-requests | MiniStore.Web/Views/CustomerReturnRequests/Index.cshtml |
-| Customers | Create.cshtml | Angular Pilot | /customers | MiniStore.Web/Views/Customers/Create.cshtml |
-| Customers | Details.cshtml | Angular Pilot | /customers | MiniStore.Web/Views/Customers/Details.cshtml |
-| Customers | Edit.cshtml | Angular Pilot | /customers | MiniStore.Web/Views/Customers/Edit.cshtml |
-| Customers | Index.cshtml | Angular Pilot | /customers | MiniStore.Web/Views/Customers/Index.cshtml |
+| Customers | Create.cshtml | Angular Default | /customers | MiniStore.Web/Views/Customers/Create.cshtml |
+| Customers | Details.cshtml | Angular Default | /customers | MiniStore.Web/Views/Customers/Details.cshtml |
+| Customers | Edit.cshtml | Angular Default | /customers | MiniStore.Web/Views/Customers/Edit.cshtml |
+| Customers | Index.cshtml | Angular Default | /customers | MiniStore.Web/Views/Customers/Index.cshtml |
 | Dashboard | Index.cshtml | Angular Pilot | / | MiniStore.Web/Views/Dashboard/Index.cshtml |
 | DocumentDesigns | Create.cshtml | Angular Pilot | /settings/document-designs | MiniStore.Web/Views/DocumentDesigns/Create.cshtml |
 | DocumentDesigns | Details.cshtml | Angular Pilot | /settings/document-designs | MiniStore.Web/Views/DocumentDesigns/Details.cshtml |
@@ -268,20 +268,20 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | CustomerReturnRequests | Index | GET | Angular Pilot | /sales/return-requests | — | MiniStore.Web/Controllers/Sales/CustomerReturnRequestsController.cs |
 | CustomerReturnRequests | Reject | POST | Angular Pilot | /sales/return-requests | — | MiniStore.Web/Controllers/Sales/CustomerReturnRequestsController.cs |
 | CustomerReturnRequests | Submit | POST | Angular Pilot | /sales/return-requests | — | MiniStore.Web/Controllers/Sales/CustomerReturnRequestsController.cs |
-| Customers | Archive | POST | Angular Pilot | /customers | — | MiniStore.Web/Controllers/Customers/CustomersController.cs |
-| Customers | ArchiveAddress | POST | Angular Pilot | /customers | — | MiniStore.Web/Controllers/Customers/CustomersController.cs |
-| Customers | ArchiveContact | POST | Angular Pilot | /customers | — | MiniStore.Web/Controllers/Customers/CustomersController.cs |
-| Customers | Create | GET | Angular Pilot | /customers | /customers/new | MiniStore.Web/Controllers/Customers/CustomersController.cs |
-| Customers | Create | POST | Angular Pilot | /customers | /customers/new | MiniStore.Web/Controllers/Customers/CustomersController.cs |
-| Customers | Details | GET | Angular Pilot | /customers | /customers/{id} | MiniStore.Web/Controllers/Customers/CustomersController.cs |
-| Customers | Edit | GET | Angular Pilot | /customers | /customers/{id}/edit | MiniStore.Web/Controllers/Customers/CustomersController.cs |
-| Customers | Edit | POST | Angular Pilot | /customers | /customers/{id}/edit | MiniStore.Web/Controllers/Customers/CustomersController.cs |
-| Customers | Index | GET | Angular Pilot | /customers | /customers | MiniStore.Web/Controllers/Customers/CustomersController.cs |
-| Customers | Restore | POST | Angular Pilot | /customers | — | MiniStore.Web/Controllers/Customers/CustomersController.cs |
-| Customers | RestoreAddress | POST | Angular Pilot | /customers | — | MiniStore.Web/Controllers/Customers/CustomersController.cs |
-| Customers | RestoreContact | POST | Angular Pilot | /customers | — | MiniStore.Web/Controllers/Customers/CustomersController.cs |
-| Customers | SaveAddress | POST | Angular Pilot | /customers | — | MiniStore.Web/Controllers/Customers/CustomersController.cs |
-| Customers | SaveContact | POST | Angular Pilot | /customers | — | MiniStore.Web/Controllers/Customers/CustomersController.cs |
+| Customers | Archive | POST | Angular Default | /customers | — | MiniStore.Web/Controllers/Customers/CustomersController.cs |
+| Customers | ArchiveAddress | POST | Angular Default | /customers | — | MiniStore.Web/Controllers/Customers/CustomersController.cs |
+| Customers | ArchiveContact | POST | Angular Default | /customers | — | MiniStore.Web/Controllers/Customers/CustomersController.cs |
+| Customers | Create | GET | Angular Default | /customers | /customers/new | MiniStore.Web/Controllers/Customers/CustomersController.cs |
+| Customers | Create | POST | Angular Default | /customers | /customers/new | MiniStore.Web/Controllers/Customers/CustomersController.cs |
+| Customers | Details | GET | Angular Default | /customers | /customers/{id} | MiniStore.Web/Controllers/Customers/CustomersController.cs |
+| Customers | Edit | GET | Angular Default | /customers | /customers/{id}/edit | MiniStore.Web/Controllers/Customers/CustomersController.cs |
+| Customers | Edit | POST | Angular Default | /customers | /customers/{id}/edit | MiniStore.Web/Controllers/Customers/CustomersController.cs |
+| Customers | Index | GET | Angular Default | /customers | /customers | MiniStore.Web/Controllers/Customers/CustomersController.cs |
+| Customers | Restore | POST | Angular Default | /customers | — | MiniStore.Web/Controllers/Customers/CustomersController.cs |
+| Customers | RestoreAddress | POST | Angular Default | /customers | — | MiniStore.Web/Controllers/Customers/CustomersController.cs |
+| Customers | RestoreContact | POST | Angular Default | /customers | — | MiniStore.Web/Controllers/Customers/CustomersController.cs |
+| Customers | SaveAddress | POST | Angular Default | /customers | — | MiniStore.Web/Controllers/Customers/CustomersController.cs |
+| Customers | SaveContact | POST | Angular Default | /customers | — | MiniStore.Web/Controllers/Customers/CustomersController.cs |
 | Dashboard | Index | ANY | Angular Pilot | / | — | MiniStore.Web/Controllers/Home/DashboardController.cs |
 | DocumentDesigns | Activate | POST | Angular Pilot | /settings/document-designs | — | MiniStore.Web/Controllers/Settings/DocumentDesignsController.cs |
 | DocumentDesigns | Archive | POST | Angular Pilot | /settings/document-designs | — | MiniStore.Web/Controllers/Settings/DocumentDesignsController.cs |

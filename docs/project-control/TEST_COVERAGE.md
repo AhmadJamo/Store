@@ -28,6 +28,7 @@
 | Restored ERP reconciliation (مصالحة النظام المستعاد) | 147 tables and 21 business checks; zero mismatches (صفر فروق) | 2026-10-15 |
 | EF/database migration reconciliation (مطابقة الترحيلات) | Source/model/local Demo reconciled through migration 136; no pending migrations or model changes | 2026-10-30 |
 | MOD-029D live cutover/rollback | 10 authorized allowlisted GET routes redirected to exact Angular targets, then returned MVC 200 after restart; final full gate passed | 2026-10-30 |
+| MOD-030A hosted Angular production | `/app` index/deep link 200 no-cache, hashed asset 200 immutable, API remained separate; authenticated hosted run 15/15 and mixed Customers pilot 10 routes passed | 2026-10-30 |
 | Live schema integrity (سلامة المخطط الحي) | 147 tables, 420 trusted FKs, zero disabled constraints/indexes or unsafe tenant relations | 2026-10-15 |
 | Web dependency build (بناء الويب واعتماداته) | Release, 4 projects, zero warnings/errors after SAL-120A (نجح) | 2026-10-22 |
 

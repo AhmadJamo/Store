@@ -1,5 +1,14 @@
 # AI Work Log
 
+- 2026-10-30: Completed `MOD-030A` production Angular hosting and the first reversible cohort. Angular production now
+  builds with `/app/` base href; a validated publisher replaces only the fixed git-ignored web artifact directory.
+  ASP.NET serves hashed assets immutably and a no-cache SPA fallback scoped to `/app`, leaving API/MVC routing untouched.
+  Direct HTTP checks passed for index, deep link, asset and anonymous API separation. The operator-authenticated hosted
+  run passed 15/15 with zero skips. Customers is now the only committed AngularDefault surface; a 10-route mixed pilot
+  proved Customers redirects while Suppliers/Analytics/Products remain MVC (Settings unavailable to this operator).
+  The final static gate passed Release, 1,345 backend checks, 214/214 Angular tests, 121 templates and bundle limits.
+  Generated registry/matrix now read appsettings and report the mixed mode. Execution advances to `MOD-030B`.
+
 - 2026-10-30: Completed `MOD-029D` live cutover/rollback rehearsal. Added an outcome-only browser-runner mode that
   disables redirects and verifies exact Angular targets or MVC 200 responses for permission-allowed allowlisted GET routes.
   Process-local AngularDefault overrides passed 10 routes; committed configuration remained MVC. The first rollback exposed

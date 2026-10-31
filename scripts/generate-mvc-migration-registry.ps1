@@ -9,11 +9,12 @@ $repoRoot = Split-Path -Parent $PSScriptRoot
 $webRoot = Join-Path $repoRoot "MiniStore.Web"
 $angularRoutesPath = Join-Path $repoRoot "MiniStore Front-End/src/app/app.routes.ts"
 $cutoverCatalogPath = Join-Path $webRoot "Presentation/Cutover/PresentationCutoverRouteCatalog.cs"
+$appSettingsPath = Join-Path $webRoot "appsettings.json"
 $output = Join-Path $repoRoot $OutputPath
 $acceptanceOutput = Join-Path $repoRoot $AcceptanceMatrixPath
 
 # Semantic MVC surface -> existing Angular counterpart. Every mapped route is verified against app.routes.ts.
-# A counterpart means Angular Pilot only; it never changes the MVC-default cutover mode.
+# Counterpart status and committed AngularDefault modes are reconciled independently.
 $surfaceRoutes = @{}
 @'
 Account|/login,/register,/access-denied
@@ -121,6 +122,15 @@ foreach ($entry in $surfaceRoutes.GetEnumerator()) {
 $cutoverRoutes = @{}
 [regex]::Matches((Get-Content $cutoverCatalogPath -Raw), '\["(?<key>[^"]+)"\]\s*=\s*"(?<route>[^"]+)"') |
     ForEach-Object { $cutoverRoutes[$_.Groups["key"].Value] = $_.Groups["route"].Value }
+$cutoverSettings = (Get-Content $appSettingsPath -Raw | ConvertFrom-Json).PresentationCutover.Surfaces
+$angularDefaultSurfaces = @($cutoverSettings.PSObject.Properties |
+    Where-Object { $_.Value -eq "AngularDefault" } |
+    ForEach-Object { $_.Name })
+$presentationDefault = if ($angularDefaultSurfaces.Count -eq 0) {
+    "MVC"
+} else {
+    "Mixed ($($angularDefaultSurfaces -join ', ') AngularDefault; all other surfaces MVC)"
+}
 
 function Get-Surface([System.IO.FileInfo]$file, [bool]$controller) {
     if ($file.FullName -match '[\\/]Areas[\\/](?<area>[^\\/]+)[\\/](?:Views|Controllers)[\\/](?<feature>[^\\/]+)') {
@@ -131,6 +141,7 @@ function Get-Surface([System.IO.FileInfo]$file, [bool]$controller) {
     return $file.Directory.Name
 }
 function Get-MigrationStatus([string]$surface) {
+    if ($angularDefaultSurfaces -contains $surface) { return "Angular Default" }
     if ($surfaceRoutes.ContainsKey($surface)) { return "Angular Pilot" }
     return "Inventoried"
 }
@@ -323,7 +334,7 @@ $matrixLines.Add('')
 $matrixLines.Add('> Generated from source by scripts/generate-mvc-migration-registry.ps1. Do not edit rows manually.')
 $matrixLines.Add('')
 $matrixLines.Add("- Counterparts covered: $($matrixRows.Count).")
-$matrixLines.Add('- Presentation default: MVC.')
+$matrixLines.Add("- Presentation default: $presentationDefault.")
 $matrixLines.Add('- Evidence baseline: generated MVC view/action inventory, verified Angular route, controller permission references and acceptance gate.')
 $matrixLines.Add('- Runtime dual-run samples and cutover rehearsal results are appended by the MOD-029 acceptance workflow; this static matrix performs no mutation.')
 $matrixLines.Add('')

@@ -11,6 +11,12 @@ The MOD-019 presentation cutover filter runs after authorization and cannot supp
 only a validated local Angular base path and a code-owned controller/action allowlist, encodes route values, and ignores
 POST plus every unlisted action. Enabling a surface therefore cannot redirect a mutation or replace endpoint permission checks.
 
+MOD-030A serves only generated public Angular assets below `/app`. Its non-file fallback returns the generated index only
+inside that prefix and cannot shadow `/api`, authentication, health, OpenAPI or MVC endpoints. Hashed assets are immutable;
+the index is no-cache. The hosted client continues to use the same-origin HttpOnly Identity and antiforgery cookies and
+stores no credential. Customers is the only committed AngularDefault cohort; server authorization still runs before its
+allowlisted MVC redirect and all API operations independently reauthorize.
+
 Customer and Supplier Angular slices use operation-specific View/Create/Edit permissions on every endpoint. Supplier form options are projected by the Application layer, and submitted account/product identifiers are revalidated by existing services; client filtering is never treated as authorization. Supplier stale-write failures return HTTP 409 while keeping global antiforgery and tenant repository filters intact.
 
 Angular user/role administration repeats exact `Users.*` and `Roles.*` policies on every API operation; navigation visibility cannot authorize a request. Unsafe operations require antiforgery, system roles cannot be mutated, role updates use rowversion with HTTP 409 on stale data, and all supplied role/permission identifiers are resolved server-side. User creation shares one Application contract with MVC, checks the tenant subscription limit and active company role, and commits membership, assignment and sanitized semantic audit evidence in one `UnitOfWork`. If that tenant binding fails after Identity account creation, the new account is removed after clearing the rolled-back tracker state. Passwords are never returned, logged, or stored by Angular and are cleared from the form after rejection.

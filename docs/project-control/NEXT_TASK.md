@@ -1,22 +1,22 @@
 # المهمة التالية الوحيدة / Next Task
 
-## `MOD-030A` — استضافة Angular وبوابة التحويل النهائي / Angular Hosting and Final Cutover Gate
+## `MOD-030B` — توسيع الدفعة القابلة للرجوع / Expand the Reversible Cutover Cohort
 
 > الحالة: APPROVED — NEXT INCREMENT ضمن موجة القبول الشامل
 
-اكتمل `MOD-029D`: نجح AngularDefault ثم MVC rollback على 10 مسارات GET مصرح بها. كشف التمرين ترحيل
-Analytics delegation المعلق؛ طُبق الترحيل 136 الإضافي وأصبحت قاعدة Demo مطابقة بلا pending migrations.
+اكتمل `MOD-030A`: Angular production مستضاف تحت `/app`، نجح deep-link/assets/API separation، ونجح القبول
+المصرح 15/15. Customers هو أول AngularDefault cohort، و10 مسارات نجحت في التحقق المختلط.
 
 ### الهدف
 
-- استضافة build Angular الإنتاجي فعليًا تحت `/app` مع SPA fallback آمن لا يبتلع API/MVC.
-- توسيع cutover catalog من allowlist التجريبية إلى route families المثبتة تدريجيًا، مع بقاء rollback.
-- تشغيل قبول مصرح به على Angular المستضاف لا dev server، ثم تحويل الدفعة الأولى فقط.
-- عدم حذف MVC حتى يثبت كل surface تحت الاستضافة الإنتاجية ويُسجل rollback لكل دفعة.
+- تحويل Suppliers وProducts كدفعة ثانية بعد قبول hosted production خاص بهما.
+- توسيع allowlist فقط عند الحاجة لمسارات GET المثبتة، مع بقاء mutations على API وMVC rollback.
+- تشغيل pilot مختلط ثم MVC rollback للدفعة قبل تثبيت الإعداد.
+- عدم تحويل AnalyticsCenter/Settings حتى تتوفر جلسة `Administration.Access` لتغطية Settings.
 
 ### القبول
 
-- `/app` وdeep links تعيد Angular production index/assets بنجاح، بينما `/api` وMVC تبقيان منفصلتين.
-- الدفعة الأولى تتحول بـGET allowlist فقط، وتحافظ على query/id والصلاحيات، ويظل rollback قابلًا للتشغيل.
-- البوابة الكاملة وMOD-029B..D تنجح على الخادم المستضاف.
-- لا حذف Razor/controller قبل إغلاق سجل كل surface وإثبات مسار الرجوع.
+- Suppliers وProducts ينجحان على hosted Angular مع صلاحيات الجلسة والـdeep links.
+- mixed pilot يثبت تحويل الدفعة الجديدة وبقاء AnalyticsCenter/Settings على MVC.
+- rollback يعيد Customers/Suppliers/Products إلى MVC 200 قبل تثبيت الدفعة.
+- البوابة الكاملة تبقى خضراء ولا يحذف أي Razor/controller في هذه الخطوة.

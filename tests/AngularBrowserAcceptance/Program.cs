@@ -95,7 +95,8 @@ static async Task RunLiveCutoverAsync(
     Arguments options,
     List<CheckResult> checks)
 {
-    Require(options.CutoverMode is "angular" or "mvc", "--cutover-mode must be angular or mvc.");
+    Require(options.CutoverMode is "angular" or "mvc" or "pilot",
+        "--cutover-mode must be angular, mvc or pilot.");
     Require(!string.IsNullOrWhiteSpace(options.ApiUrl), "--api-url is required for cutover rehearsal.");
     Require(!string.IsNullOrWhiteSpace(options.StorageStatePath) && File.Exists(options.StorageStatePath),
         "An authenticated storage-state is required for cutover rehearsal.");
@@ -154,10 +155,14 @@ static async Task RunLiveCutoverAsync(
     var executed = 0;
     foreach (var probe in routes.Where(x => permissions.Contains(x.Permission)))
     {
-        var surface = probe.MvcPath.Split('/', StringSplitOptions.RemoveEmptyEntries)[0];
+        var surface = probe.MvcPath.TrimStart('/')
+            .Split(new[] { '/', '?' }, StringSplitOptions.RemoveEmptyEntries)[0];
         var response = await authenticated.GetAsync(probe.MvcPath,
             new APIRequestContextOptions { MaxRedirects = 0 });
-        if (options.CutoverMode == "angular")
+        var expectsAngular = options.CutoverMode == "angular" ||
+                             options.CutoverMode == "pilot" &&
+                             string.Equals(surface, "Customers", StringComparison.Ordinal);
+        if (expectsAngular)
         {
             Require(response.Status is 301 or 302 or 307 or 308,
                 $"AngularDefault surface {surface} returned {response.Status} instead of a redirect.");
@@ -184,6 +189,7 @@ static async Task RunUiAsync(IBrowser browser, Arguments options, List<CheckResu
     {
         ViewportSize = new ViewportSize { Width = 1440, Height = 1000 },
         ColorScheme = ColorScheme.Light,
+        IgnoreHTTPSErrors = true,
         StorageStatePath = string.IsNullOrWhiteSpace(options.StorageStatePath)
             ? null
             : options.StorageStatePath

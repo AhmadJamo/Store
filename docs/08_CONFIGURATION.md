@@ -1,7 +1,7 @@
 # Configuration and runtime composition
 > Status: IMPLEMENTED WITH PRODUCTION GAPS  
 > Source of truth: `Program.cs`, `MiniStore.Web/Configuration/*.cs`, project files, appsettings
-> Last reviewed: 2026-10-24
+> Last reviewed: 2026-10-30
 
 ## Configuration
 `MiniStore.Web/appsettings.json` contains `ConnectionStrings:DefaultConnection`, disabled `AdminUser`, `PlatformOwner`, `AuditEvents` and `AuditRetention` sections, `Observability`, registration rate-limit values, logging levels and wildcard `AllowedHosts`. No password, integrity key, checkpoint key or local archive path is committed. Audit allowlists and approved 7/3-year, 90-day policy values are schema/policy configuration, not secret material. Optional `AuditReadConnection` and `AuditMaintenanceConnection` are external secrets; absence falls back to the development connection and is not acceptable proof of production identity separation.
@@ -19,8 +19,9 @@ health endpoints remain available if request instrumentation is disabled. Produc
 `Program.cs` only composes five explicit startup concerns. `WebPresentationExtensions` owns MVC, localization, antiforgery, cache, throttling and health registrations; `PersistenceExtensions` owns DbContext and audit interception; `SecurityExtensions` owns Identity, cookies and authorization; `BusinessServicesExtensions` groups explicit repository/application registrations by feature; and `WebApplicationExtensions` owns startup seeding, request telemetry, secret-free `/health/live` and `/health/ready`, middleware and routes. Tenant-session validation runs after authentication; subscription lifecycle enforcement runs before tenant authorization. Request culture uses the user's cookie then the cached company default. Windows Event Log output is disabled, and startup database initialization failures exit cleanly. Startup runs Identity, permission and configured platform-operator seeders. It does not call `Database.Migrate`; migration deployment remains explicit.
 
 `PresentationCutover` configures the local `AngularBasePath` and per-surface mode. Supported modes are `Mvc`,
-`AngularPilot`, and `AngularDefault`; missing surfaces are treated as `Mvc`. The committed configuration keeps Customers,
-Suppliers, AnalyticsCenter, Settings and Products on `Mvc`. A base path that is not local fails startup validation.
+`AngularPilot`, and `AngularDefault`; missing surfaces are treated as `Mvc`. MOD-030A commits Customers to
+`AngularDefault` while Suppliers, AnalyticsCenter, Settings and Products remain `Mvc`. A base path that is not local
+fails startup validation.
 
 `P1-AUD-015` registers one retention worker. When `AuditRetention:Enabled=true`, it runs immediately and then every configured 1–168 hours (24 by default). Each run creates a signed external checkpoint before selecting candidates; no row is removed unless a signed destruction manifest exists and the maintenance transaction revalidates its ID, integrity fingerprint and absence of an active legal hold.
 
@@ -33,7 +34,7 @@ database table or configuration section and resets on restart.
 
 ## Angular development configuration
 
-`MiniStore Front-End/proxy.conf.json` proxies only `/api` and `/Account` to `https://localhost:54052`, matching the committed `MiniStore.Web` launch profile. The target is a local-development value and contains no credential; it must remain aligned if the backend launch profile changes. Run the backend first, then `npm start`, and open Angular at `http://localhost:4200`. Production uses a same-origin deployment or trusted reverse proxy; enabling broad CORS is not the default. `.nvmrc` pins Node 24.20.0 and `package.json` restricts the supported major line to Node 24.
+`MiniStore Front-End/proxy.conf.json` proxies only `/api` and `/Account` to `https://localhost:54052`, matching the committed `MiniStore.Web` launch profile. The target is a local-development value and contains no credential; it must remain aligned if the backend launch profile changes. Run the backend first, then `npm start`, and open Angular at `http://localhost:4200`. Production is same-origin under `/app/`. Run `scripts/Publish-AngularAssets.ps1` to build with that base href, validate the output and replace only the git-ignored `MiniStore.Web/wwwroot/app` artifact directory. ASP.NET serves hashed assets with immutable caching and the Angular index/deep-link fallback with no-cache; the fallback is scoped to `/app` and cannot consume `/api` or MVC routes. `.nvmrc` pins Node 24.20.0 and `package.json` restricts the supported major line to Node 24.
 
 The internal API uses the existing Identity cookie plus `MiniStore.Antiforgery`, a strict same-site HttpOnly antiforgery cookie. Angular obtains the request token from `/api/v1/security/csrf` and sends it in `X-CSRF-TOKEN` for unsafe `/api/` methods. No token or secret is stored in browser local storage. OpenAPI is available at `/openapi/internal-v1.json` only after authentication.
 

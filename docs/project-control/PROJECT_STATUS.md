@@ -112,3 +112,6 @@
 اكتمل `MOD-029D`: نجح AngularDefault والرجوع إلى MVC على 10 مسارات مصرح بها. كشف الرجوع جدول delegation
 المفقود، فطُبق الترحيل الإضافي 136 وأكد EF عدم وجود pending migrations، ثم نجح rollback. البوابة الكاملة بقيت
 خضراء. ينتقل التنفيذ إلى `MOD-030A` لاستضافة Angular production تحت `/app` قبل أي تقاعد MVC.
+اكتمل `MOD-030A`: يخدم ASP.NET Angular production تحت `/app` مع deep-link fallback محصور وcache مناسب،
+ونجح الفصل عن `/api` وMVC. القبول المصرح على الخادم نفسه نجح 15/15 بلا تخطٍ، ونجح mixed pilot على 10
+مسارات: Customers AngularDefault والبقية MVC. ينتقل التنفيذ إلى `MOD-030B` لتحويل Suppliers وProducts مع rollback.
