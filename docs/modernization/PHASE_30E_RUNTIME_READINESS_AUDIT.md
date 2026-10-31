@@ -1,6 +1,6 @@
 # MOD-030E — Angular runtime readiness audit
 
-> Status: IN PROGRESS — MOD-030E2C complete
+> Status: IN PROGRESS — MOD-030E2D complete
 > Date: 2026-11-01
 
 ## Finding
@@ -72,6 +72,18 @@ positive-ID resolution for both routes is covered by executable security regress
 warning-free Release build, 1,423 backend checks, 215/215 Angular tests across 106 files, 121 templates and bundle budgets
 (327,235 initial bytes; 81,880 largest lazy bytes). Thirteen surfaces are now AngularDefault and 69 mapped surfaces remain
 MVC by default. No data, schema, business rule or MVC file changed.
+
+## MOD-030E2D evidence
+
+InventoryTracking now joins the committed AngularDefault set. Its sole Index GET maps to `/inventory/tracking` with
+query-string preservation. Open, Quarantine, Release, CreateRecall, CloseRecall and RecordRecallCommunication remain
+independently authorized antiforgery-protected API/MVC mutations and are explicitly excluded from the presentation
+catalog.
+
+The authenticated hosted suite passed 15/15 with zero failures/skips. Cutover and process-local MVC rollback both passed
+43 authorized routes. The final gate passed a warning-free Release build, 1,427 backend checks, 215/215 Angular tests
+across 106 files, 121 templates and bundle budgets (327,235 initial bytes; 81,880 largest lazy bytes). Fourteen surfaces
+are now AngularDefault and 68 mapped surfaces remain MVC by default. No data, schema, business rule or MVC file changed.
 
 Every cohort must add explicit GET-only action mappings, require its existing permissions, pass hosted acceptance and
 exact Angular targets, then pass a process-local MVC rollback. Mutations continue through their independently authorized

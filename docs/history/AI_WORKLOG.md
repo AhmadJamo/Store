@@ -1,5 +1,11 @@
 # AI Work Log
 
+- 2026-11-01: Completed `MOD-030E2D`. InventoryTracking Index now uses its exact AngularDefault route with query
+  preservation. Open/quarantine/release/create-recall/close-recall/communication remain independently authorized
+  antiforgery-protected mutations outside the presentation catalog. Hosted acceptance passed 15/15, cutover and MVC
+  rollback passed 43 routes, and Release, 1,427 backend checks, 215/215 Angular tests, 121 templates and bundle budgets
+  passed. The temporary authenticated state was deleted; no database, business rule or MVC file changed.
+
 - 2026-11-01: Completed `MOD-030E2C`. StockTransfers Index/Create/Edit/Details now use exact AngularDefault routes;
   query strings and positive identifiers are preserved, while submit/approve/reject/return-to-draft/post/cancel remain
   independently authorized antiforgery-protected mutations. Hosted acceptance passed 15/15, cutover and MVC rollback

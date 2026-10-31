@@ -11,7 +11,7 @@
 - Angular application routes discovered: 183.
 - MVC surfaces with a verified Angular counterpart: 82.
 - Remaining MVC surfaces without a mapped Angular counterpart: 0.
-- Allowlisted Angular-default cutover actions: 45.
+- Allowlisted Angular-default cutover actions: 46.
 
 Remaining surfaces: none.
 
@@ -71,7 +71,7 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | InventoryReconciliation | Index.cshtml | Angular Default | /inventory/reconciliation | MiniStore.Web/Views/InventoryReconciliation/Index.cshtml |
 | InventoryReservations | Index.cshtml | Angular Default | /inventory/reservations | MiniStore.Web/Views/InventoryReservations/Index.cshtml |
 | InventoryScanning | Index.cshtml | Angular Pilot | /inventory/scanning | MiniStore.Web/Views/InventoryScanning/Index.cshtml |
-| InventoryTracking | Index.cshtml | Angular Pilot | /inventory/tracking | MiniStore.Web/Views/InventoryTracking/Index.cshtml |
+| InventoryTracking | Index.cshtml | Angular Default | /inventory/tracking | MiniStore.Web/Views/InventoryTracking/Index.cshtml |
 | JournalEntries | Details.cshtml | Angular Pilot | /accounting/journal-entries/:id | MiniStore.Web/Views/JournalEntries/Details.cshtml |
 | LandedCosts | Create.cshtml | Angular Pilot | /purchases/landed-costs | MiniStore.Web/Views/LandedCosts/Create.cshtml |
 | LandedCosts | Details.cshtml | Angular Pilot | /purchases/landed-costs | MiniStore.Web/Views/LandedCosts/Details.cshtml |
@@ -321,13 +321,13 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | InventoryScanning | Index | GET | Angular Pilot | /inventory/scanning | — | MiniStore.Web/Controllers/Inventory/InventoryScanningController.cs |
 | InventoryScanning | Putaway | POST | Angular Pilot | /inventory/scanning | — | MiniStore.Web/Controllers/Inventory/InventoryScanningController.cs |
 | InventoryScanning | Relocate | POST | Angular Pilot | /inventory/scanning | — | MiniStore.Web/Controllers/Inventory/InventoryScanningController.cs |
-| InventoryTracking | CloseRecall | POST | Angular Pilot | /inventory/tracking | — | MiniStore.Web/Controllers/Inventory/InventoryTrackingController.cs |
-| InventoryTracking | CreateRecall | POST | Angular Pilot | /inventory/tracking | — | MiniStore.Web/Controllers/Inventory/InventoryTrackingController.cs |
-| InventoryTracking | Index | GET | Angular Pilot | /inventory/tracking | — | MiniStore.Web/Controllers/Inventory/InventoryTrackingController.cs |
-| InventoryTracking | Open | GET, POST | Angular Pilot | /inventory/tracking | — | MiniStore.Web/Controllers/Inventory/InventoryTrackingController.cs |
-| InventoryTracking | Quarantine | POST | Angular Pilot | /inventory/tracking | — | MiniStore.Web/Controllers/Inventory/InventoryTrackingController.cs |
-| InventoryTracking | RecordRecallCommunication | POST | Angular Pilot | /inventory/tracking | — | MiniStore.Web/Controllers/Inventory/InventoryTrackingController.cs |
-| InventoryTracking | Release | POST | Angular Pilot | /inventory/tracking | — | MiniStore.Web/Controllers/Inventory/InventoryTrackingController.cs |
+| InventoryTracking | CloseRecall | POST | Angular Default | /inventory/tracking | — | MiniStore.Web/Controllers/Inventory/InventoryTrackingController.cs |
+| InventoryTracking | CreateRecall | POST | Angular Default | /inventory/tracking | — | MiniStore.Web/Controllers/Inventory/InventoryTrackingController.cs |
+| InventoryTracking | Index | GET | Angular Default | /inventory/tracking | /inventory/tracking | MiniStore.Web/Controllers/Inventory/InventoryTrackingController.cs |
+| InventoryTracking | Open | GET, POST | Angular Default | /inventory/tracking | — | MiniStore.Web/Controllers/Inventory/InventoryTrackingController.cs |
+| InventoryTracking | Quarantine | POST | Angular Default | /inventory/tracking | — | MiniStore.Web/Controllers/Inventory/InventoryTrackingController.cs |
+| InventoryTracking | RecordRecallCommunication | POST | Angular Default | /inventory/tracking | — | MiniStore.Web/Controllers/Inventory/InventoryTrackingController.cs |
+| InventoryTracking | Release | POST | Angular Default | /inventory/tracking | — | MiniStore.Web/Controllers/Inventory/InventoryTrackingController.cs |
 | JournalEntries | Details | GET | Angular Pilot | /accounting/journal-entries/:id | — | MiniStore.Web/Controllers/Accounting/JournalEntriesController.cs |
 | LandedCosts | RedirectToAction | GET, POST | Angular Pilot | /purchases/landed-costs | — | MiniStore.Web/Controllers/Purchases/LandedCostsController.cs |
 | Language | Set | POST | Angular Pilot | / | — | MiniStore.Web/Controllers/Settings/LanguageController.cs |

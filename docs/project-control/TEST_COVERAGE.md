@@ -2,10 +2,10 @@
 
 ## آخر خط أساس منفذ
 
-أحدث بوابة كاملة بعد `MOD-030E2C` في 2026-11-01: Release نجح بلا تحذيرات أو أخطاء، وSecurityRegression نجح في
-1,423 فحصًا، وAngular نجح في 215/215 اختبارًا عبر 106 ملفات. نجح فحص الوصول الثابت لـ121 قالبًا، ونجحت ميزانية
+أحدث بوابة كاملة بعد `MOD-030E2D` في 2026-11-01: Release نجح بلا تحذيرات أو أخطاء، وSecurityRegression نجح في
+1,427 فحصًا، وAngular نجح في 215/215 اختبارًا عبر 106 ملفات. نجح فحص الوصول الثابت لـ121 قالبًا، ونجحت ميزانية
 الإنتاج عند 327,235/358,400 بايت أولية و81,880/81,920 لأكبر lazy chunk. تشغيل Demo المصرح به نجح 15/15 بلا
-فشل أو تخطٍ، ونجح القطع والرجوع على 42 مسارًا مصرحًا.
+فشل أو تخطٍ، ونجح القطع والرجوع على 43 مسارًا مصرحًا.
 
 | الأمر | النتيجة | التاريخ |
 |---|---|---|
@@ -36,6 +36,7 @@
 | MOD-030E2A inventory ledger/stock cohort | Hosted 15/15 with rendered Angular/API stock equality; 38-route Angular cutover and MVC rollback; Release clean, 1,406 backend checks, 215/215 Angular tests, 121 templates and bundle budgets passed | 2026-10-31 |
 | MOD-030E2B inventory-adjustment cohort | Hosted 15/15; 40-route Angular cutover and MVC rollback; above-Int32 Details route covered without mutating Demo data; Release clean, 1,413 backend checks, 215/215 Angular tests, 121 templates and bundle budgets passed | 2026-11-01 |
 | MOD-030E2C stock-transfer cohort | Hosted 15/15; 42-route Angular cutover and MVC rollback; exact Details/Edit routes covered without creating a missing Demo fixture; Release clean, 1,423 backend checks, 215/215 Angular tests, 121 templates and bundle budgets passed | 2026-11-01 |
+| MOD-030E2D inventory-tracking cohort | Hosted 15/15; 43-route Angular cutover and MVC rollback; Index-only presentation mapping with every tracking mutation excluded; Release clean, 1,427 backend checks, 215/215 Angular tests, 121 templates and bundle budgets passed | 2026-11-01 |
 | Live schema integrity (سلامة المخطط الحي) | 147 tables, 420 trusted FKs, zero disabled constraints/indexes or unsafe tenant relations | 2026-10-15 |
 | Web dependency build (بناء الويب واعتماداته) | Release, 4 projects, zero warnings/errors after SAL-120A (نجح) | 2026-10-22 |
 

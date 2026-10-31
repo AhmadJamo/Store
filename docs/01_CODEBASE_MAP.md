@@ -16,9 +16,9 @@ same-line MVC actions, verifies every mapped Angular route and emits one accepta
 operation, permission, risk and evidence fields. The modernization gate fails when either generated artifact is stale.
 
 `docs/modernization/PHASE_30E_RUNTIME_READINESS_AUDIT.md` distinguishes functional counterparts from runtime defaults:
-82 surfaces are mapped. MOD-030E2C expands the committed default to thirteen surfaces and reduces the MVC-default
-remainder to 69 without deleting MVC. Stock Transfer list/create/edit/details GET routes preserve filters and positive
-identifiers while lifecycle mutations remain outside the presentation catalog.
+82 surfaces are mapped. MOD-030E2D expands the committed default to fourteen surfaces and reduces the MVC-default
+remainder to 68 without deleting MVC. InventoryTracking redirects only its Index GET to `/inventory/tracking`; open,
+quarantine, release and recall operations remain independently authorized mutations outside the presentation catalog.
 
 `tests/AngularBrowserAcceptance` loads an operator-supplied Playwright storage-state into both UI and API contexts. Without
 one, it uses a bounded synthetic session only for design-system presentation checks and reports authenticated API parity as

@@ -1,26 +1,26 @@
 # المهمة التالية الوحيدة / Next Task
 
-## `MOD-030E2D` — التتبع والتشغيل / Inventory Tracking Cutover
+## `MOD-030E2E` — سجل حركات المواقع / Stock Movements Read-only Cutover
 
 > الحالة: APPROVED
 
-اكتمل `MOD-030E2C`: أصبحت قائمة/إنشاء/تعديل/تفاصيل تحويلات المخزون AngularDefault، ونجح hosted ‏15/15 والقطع
-والرجوع على 42 مسارًا. أصبحت 13 سطحًا مفعلة، ويبقى 69 سطحًا mapped يعمل MVC افتراضيًا.
+اكتمل `MOD-030E2D`: أصبحت صفحة InventoryTracking Index ‏AngularDefault مع بقاء كل عمليات الكتابة خارج التحويل.
+نجح hosted ‏15/15 والقطع والرجوع على 43 مسارًا. أصبحت 14 سطحًا مفعلة، ويبقى 68 سطحًا mapped يعمل MVC افتراضيًا.
 
 ### المتطلب السابق
 
-- InventoryTracking لديه Angular workspace وعقد API يقرأ نفس Application projection المستخدم في MVC.
-- التحويل يقتصر على Index GET؛ open/quarantine/release/create-recall/close-recall/communication تبقى mutations مستقلة ومحمية.
+- StockMovements سطح قراءة فقط وله Angular route وعقد API محمي بـ`StockMovements.View`.
+- Controller يملك Index GET واحدًا؛ لا توجد mutation ضمن هذا السطح.
 
 ### الهدف بعد الموافقة
 
-- إضافة خريطة GET الدقيقة لـInventoryTracking Index وتفعيل السطح AngularDefault.
-- توسيع مشغل القطع ليطلب `InventoryTracking.View` ويثبت صفحة التتبع المصرح بها دون تنفيذ أي mutation.
+- إضافة خريطة GET الدقيقة لـStockMovements Index وتفعيل السطح AngularDefault.
+- توسيع مشغل القطع ليطلب `StockMovements.View` ويثبت query-string preservation.
 - تشغيل hosted acceptance والقطع والـprocess-local MVC rollback.
 - إبقاء Controllers وRazor كاملة كرجوع.
 
 ### القبول
 
-- Index المصرح يعيد التوجيه إلى `/inventory/tracking` ويحافظ على query string إن وجد.
-- rollback يعيد المسار إلى MVC 200 دون تنفيذ open/quarantine/release/recall mutation.
+- Index المصرح يعيد التوجيه إلى `/inventory/location-movements` ويحافظ على query string.
+- rollback يعيد المسار إلى MVC 200، ولا توجد mutation ضمن السطح.
 - البوابة الكاملة تبقى خضراء دون حذف ملفات أو تغيير قاعدة البيانات.

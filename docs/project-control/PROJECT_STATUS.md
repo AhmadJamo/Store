@@ -142,3 +142,7 @@ read-only كأول دفعة إكمال تشغيلية.
 return-to-draft/post/cancel خارج التحويل وبصلاحياتها المستقلة. نجح hosted ‏15/15 والقطع والرجوع 42/42، والبوابة
 1,423 backend و215/215 Angular و121 قالبًا. لم تحتو Demo تحويلًا، فلم تُنشأ بيانات اختبار ولم يُدّع اختبار حي
 لـDetails/Edit. أصبحت 13 سطحًا AngularDefault وبقي 69 سطحًا mapped على MVC؛ ينتقل التنفيذ إلى `MOD-030E2D`.
+اكتمل `MOD-030E2D`: فُعل InventoryTracking Index فقط مع حفظ query، وبقيت عمليات open/quarantine/release/recall
+خارج كتالوج التحويل وبصلاحياتها وantiforgery. نجح hosted ‏15/15 والقطع والرجوع 43/43، والبوابة 1,427 backend
+و215/215 Angular و121 قالبًا. أصبحت 14 سطحًا AngularDefault وبقي 68 سطحًا mapped على MVC؛ ينتقل التنفيذ إلى
+`MOD-030E2E` لسطح StockMovements القراءة فقط.

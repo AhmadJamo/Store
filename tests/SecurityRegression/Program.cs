@@ -179,6 +179,24 @@ Check(stockTransferCutoverResolver.Resolve(
         new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 23 }) ==
     "/app/inventory/transfers/23/edit?page=2",
     "Stock Transfer edit GET must preserve its identifier and query string");
+var inventoryTrackingCutoverResolver = new PresentationCutoverResolver(Options.Create(
+    new PresentationCutoverOptions
+    {
+        AngularBasePath = "/app",
+        Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["InventoryTracking"] = PresentationCutoverMode.AngularDefault
+        }
+    }));
+Check(inventoryTrackingCutoverResolver.Resolve(
+        cutoverContext.Request, "InventoryTracking", "Index",
+        new Microsoft.AspNetCore.Routing.RouteValueDictionary()) ==
+    "/app/inventory/tracking?page=2",
+    "Inventory Tracking cutover must preserve query strings on its exact Angular route");
+Check(inventoryTrackingCutoverResolver.Resolve(
+        cutoverContext.Request, "InventoryTracking", "Open",
+        new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null,
+    "Inventory Tracking mutations must stay outside the presentation cutover catalog");
 foreach (var entry in PresentationCutoverRouteCatalog.All)
 {
     var keyParts = entry.Key.Split(':', 2);

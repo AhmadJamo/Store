@@ -131,7 +131,8 @@ static async Task RunLiveCutoverAsync(
                  "InventoryAdjustments.Create",
                  "StockTransfers.View",
                  "StockTransfers.Create",
-                 "StockTransfers.Edit"
+                 "StockTransfers.Edit",
+                 "InventoryTracking.View"
              })
     {
         Require(permissions.Contains(requiredPermission),
@@ -182,7 +183,8 @@ static async Task RunLiveCutoverAsync(
         new("/InventoryAdjustments?status=1", "/app/inventory/adjustments?status=1", "InventoryAdjustments.View"),
         new("/InventoryAdjustments/Create", "/app/inventory/adjustments/new", "InventoryAdjustments.Create"),
         new("/StockTransfers?search=cutover-rehearsal", "/app/inventory/transfers?search=cutover-rehearsal", "StockTransfers.View"),
-        new("/StockTransfers/Create", "/app/inventory/transfers/new", "StockTransfers.Create")
+        new("/StockTransfers/Create", "/app/inventory/transfers/new", "StockTransfers.Create"),
+        new("/InventoryTracking?focus=expiration", "/app/inventory/tracking?focus=expiration", "InventoryTracking.View")
     };
 
     if (permissions.Contains("Customers.View"))
@@ -280,7 +282,7 @@ static async Task RunLiveCutoverAsync(
                              surface is "Customers" or "Suppliers" or "Products" or "AnalyticsCenter" or "Settings" or
                                  "InventoryBalances" or "InventoryReservations" or "InventoryInsights" or
                                  "InventoryReconciliation" or "StockTransactions" or "ProductStocks" or
-                                 "InventoryAdjustments" or "StockTransfers";
+                                 "InventoryAdjustments" or "StockTransfers" or "InventoryTracking";
         if (expectsAngular)
         {
             Require(response.Status is 301 or 302 or 307 or 308,
