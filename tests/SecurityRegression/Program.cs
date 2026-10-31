@@ -211,6 +211,38 @@ Check(stockMovementsCutoverResolver.Resolve(
         new Microsoft.AspNetCore.Routing.RouteValueDictionary()) ==
     "/app/inventory/location-movements?page=2",
     "Stock Movements cutover must preserve query strings on its exact shared Angular route");
+var warehouseOperationsCutoverResolver = new PresentationCutoverResolver(Options.Create(
+    new PresentationCutoverOptions
+    {
+        AngularBasePath = "/app",
+        Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["WarehouseLocations"] = PresentationCutoverMode.AngularDefault,
+            ["UnassignedStock"] = PresentationCutoverMode.AngularDefault,
+            ["LocationMovements"] = PresentationCutoverMode.AngularDefault,
+            ["InventoryScanning"] = PresentationCutoverMode.AngularDefault
+        }
+    }));
+Check(warehouseOperationsCutoverResolver.Resolve(
+        cutoverContext.Request, "WarehouseLocations", "Index",
+        new Microsoft.AspNetCore.Routing.RouteValueDictionary()) == "/app/inventory/locations?page=2" &&
+      warehouseOperationsCutoverResolver.Resolve(
+        cutoverContext.Request, "UnassignedStock", "Index",
+        new Microsoft.AspNetCore.Routing.RouteValueDictionary()) == "/app/inventory/putaway?page=2" &&
+      warehouseOperationsCutoverResolver.Resolve(
+        cutoverContext.Request, "LocationMovements", "Index",
+        new Microsoft.AspNetCore.Routing.RouteValueDictionary()) == "/app/inventory/location-movements?page=2" &&
+      warehouseOperationsCutoverResolver.Resolve(
+        cutoverContext.Request, "InventoryScanning", "Index",
+        new Microsoft.AspNetCore.Routing.RouteValueDictionary()) == "/app/inventory/scanning?page=2",
+    "Warehouse operations cutover must preserve query strings on all four exact Angular routes");
+Check(warehouseOperationsCutoverResolver.Resolve(
+        cutoverContext.Request, "WarehouseLocations", "Edit",
+        new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 5 }) is null &&
+      warehouseOperationsCutoverResolver.Resolve(
+        cutoverContext.Request, "LocationMovements", "Move",
+        new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null,
+    "Unsupported warehouse-location deep links and mutations must remain on MVC");
 foreach (var entry in PresentationCutoverRouteCatalog.All)
 {
     var keyParts = entry.Key.Split(':', 2);

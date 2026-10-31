@@ -149,3 +149,6 @@ return-to-draft/post/cancel خارج التحويل وبصلاحياتها ال�
 اكتمل `MOD-030E2E`: فُعل StockMovements Index القراءة فقط على workspace حركات المواقع المشترك مع حفظ query.
 نجح hosted ‏15/15 والقطع والرجوع 44/44، والبوابة 1,430 backend و215/215 Angular و121 قالبًا. أصبحت 15 سطحًا
 AngularDefault وبقي 67 سطحًا mapped على MVC؛ ينتقل التنفيذ إلى دفعة `MOD-030E2F` المجمعة لأربع عمليات مستودع.
+اكتمل `MOD-030E2F`: فُعلت Index GET لأربع عمليات مستودع في دفعة واحدة مع حفظ query، وبقيت كل writes وdeep links
+غير المدعومة لإنشاء/تعديل موقع على MVC. نجح hosted ‏15/15 والقطع والرجوع 48/48، والبوابة 1,440 backend و215/215
+Angular و121 قالبًا. أصبحت 19 سطحًا AngularDefault وبقي 63 سطحًا mapped على MVC؛ ينتقل التنفيذ إلى `MOD-030E2G`.

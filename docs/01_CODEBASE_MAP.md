@@ -16,9 +16,10 @@ same-line MVC actions, verifies every mapped Angular route and emits one accepta
 operation, permission, risk and evidence fields. The modernization gate fails when either generated artifact is stale.
 
 `docs/modernization/PHASE_30E_RUNTIME_READINESS_AUDIT.md` distinguishes functional counterparts from runtime defaults:
-82 surfaces are mapped. MOD-030E2E expands the committed default to fifteen surfaces and reduces the MVC-default
-remainder to 67 without deleting MVC. StockMovements redirects its read-only Index GET to the shared
-`/inventory/location-movements` workspace with query-string preservation.
+82 surfaces are mapped. MOD-030E2F expands the committed default to nineteen surfaces and reduces the MVC-default
+remainder to 63 without deleting MVC. WarehouseLocations, UnassignedStock, LocationMovements and InventoryScanning
+redirect their Index GET actions to exact Angular workspaces with query preservation. WarehouseLocations Create/Edit
+deep links remain MVC because the Angular workspace does not yet consume create/edit URL intent; all writes remain MVC/API.
 
 `tests/AngularBrowserAcceptance` loads an operator-supplied Playwright storage-state into both UI and API contexts. Without
 one, it uses a bounded synthetic session only for design-system presentation checks and reports authenticated API parity as

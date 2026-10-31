@@ -1,5 +1,11 @@
 # AI Work Log
 
+- 2026-11-01: Completed `MOD-030E2F` as the first batched runtime cohort. WarehouseLocations, UnassignedStock,
+  LocationMovements and InventoryScanning Index GET actions now use exact AngularDefault workspaces with query
+  preservation. Unsupported WarehouseLocations Create/Edit deep links and every write remain on MVC/API. Hosted
+  acceptance passed 15/15, cutover and MVC rollback passed 48 routes, and Release, 1,440 backend checks, 215/215 Angular
+  tests, 121 templates and bundle budgets passed. The temporary authenticated state was deleted; no data or schema changed.
+
 - 2026-11-01: Completed `MOD-030E2E`. StockMovements read-only Index now uses the shared location-movements
   AngularDefault workspace with query preservation. Hosted acceptance passed 15/15, cutover and MVC rollback passed 44
   routes, and Release, 1,430 backend checks, 215/215 Angular tests, 121 templates and bundle budgets passed. The temporary

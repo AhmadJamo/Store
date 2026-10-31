@@ -11,7 +11,7 @@
 - Angular application routes discovered: 183.
 - MVC surfaces with a verified Angular counterpart: 82.
 - Remaining MVC surfaces without a mapped Angular counterpart: 0.
-- Allowlisted Angular-default cutover actions: 47.
+- Allowlisted Angular-default cutover actions: 51.
 
 Remaining surfaces: none.
 
@@ -70,13 +70,13 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | InventoryInsights | Index.cshtml | Angular Default | /inventory/insights | MiniStore.Web/Views/InventoryInsights/Index.cshtml |
 | InventoryReconciliation | Index.cshtml | Angular Default | /inventory/reconciliation | MiniStore.Web/Views/InventoryReconciliation/Index.cshtml |
 | InventoryReservations | Index.cshtml | Angular Default | /inventory/reservations | MiniStore.Web/Views/InventoryReservations/Index.cshtml |
-| InventoryScanning | Index.cshtml | Angular Pilot | /inventory/scanning | MiniStore.Web/Views/InventoryScanning/Index.cshtml |
+| InventoryScanning | Index.cshtml | Angular Default | /inventory/scanning | MiniStore.Web/Views/InventoryScanning/Index.cshtml |
 | InventoryTracking | Index.cshtml | Angular Default | /inventory/tracking | MiniStore.Web/Views/InventoryTracking/Index.cshtml |
 | JournalEntries | Details.cshtml | Angular Pilot | /accounting/journal-entries/:id | MiniStore.Web/Views/JournalEntries/Details.cshtml |
 | LandedCosts | Create.cshtml | Angular Pilot | /purchases/landed-costs | MiniStore.Web/Views/LandedCosts/Create.cshtml |
 | LandedCosts | Details.cshtml | Angular Pilot | /purchases/landed-costs | MiniStore.Web/Views/LandedCosts/Details.cshtml |
 | LandedCosts | Index.cshtml | Angular Pilot | /purchases/landed-costs | MiniStore.Web/Views/LandedCosts/Index.cshtml |
-| LocationMovements | Index.cshtml | Angular Pilot | /inventory/location-movements | MiniStore.Web/Views/LocationMovements/Index.cshtml |
+| LocationMovements | Index.cshtml | Angular Default | /inventory/location-movements | MiniStore.Web/Views/LocationMovements/Index.cshtml |
 | PaymentMethods | Create.cshtml | Angular Pilot | /products/catalog-masters | MiniStore.Web/Views/PaymentMethods/Create.cshtml |
 | PaymentMethods | Index.cshtml | Angular Pilot | /products/catalog-masters | MiniStore.Web/Views/PaymentMethods/Index.cshtml |
 | Platform/Platform | Companies.cshtml | Angular Pilot | /platform-control, /platform-management | MiniStore.Web/Areas/Platform/Views/Platform/Companies.cshtml |
@@ -208,15 +208,15 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | Suppliers | Index.cshtml | Angular Default | /suppliers | MiniStore.Web/Views/Suppliers/Index.cshtml |
 | TaxRates | Create.cshtml | Angular Pilot | /products/catalog-masters | MiniStore.Web/Views/TaxRates/Create.cshtml |
 | TaxRates | Index.cshtml | Angular Pilot | /products/catalog-masters | MiniStore.Web/Views/TaxRates/Index.cshtml |
-| UnassignedStock | Index.cshtml | Angular Pilot | /inventory/putaway | MiniStore.Web/Views/UnassignedStock/Index.cshtml |
+| UnassignedStock | Index.cshtml | Angular Default | /inventory/putaway | MiniStore.Web/Views/UnassignedStock/Index.cshtml |
 | Users | Create.cshtml | Angular Pilot | /users | MiniStore.Web/Views/Users/Create.cshtml |
 | Users | Index.cshtml | Angular Pilot | /users | MiniStore.Web/Views/Users/Index.cshtml |
 | VendorBills | Create.cshtml | Angular Pilot | /purchases/bills | MiniStore.Web/Views/VendorBills/Create.cshtml |
 | VendorBills | Details.cshtml | Angular Pilot | /purchases/bills | MiniStore.Web/Views/VendorBills/Details.cshtml |
 | VendorBills | Index.cshtml | Angular Pilot | /purchases/bills | MiniStore.Web/Views/VendorBills/Index.cshtml |
-| WarehouseLocations | Create.cshtml | Angular Pilot | /inventory/locations | MiniStore.Web/Views/WarehouseLocations/Create.cshtml |
-| WarehouseLocations | Edit.cshtml | Angular Pilot | /inventory/locations | MiniStore.Web/Views/WarehouseLocations/Edit.cshtml |
-| WarehouseLocations | Index.cshtml | Angular Pilot | /inventory/locations | MiniStore.Web/Views/WarehouseLocations/Index.cshtml |
+| WarehouseLocations | Create.cshtml | Angular Default | /inventory/locations | MiniStore.Web/Views/WarehouseLocations/Create.cshtml |
+| WarehouseLocations | Edit.cshtml | Angular Default | /inventory/locations | MiniStore.Web/Views/WarehouseLocations/Edit.cshtml |
+| WarehouseLocations | Index.cshtml | Angular Default | /inventory/locations | MiniStore.Web/Views/WarehouseLocations/Index.cshtml |
 | Warehouses | Create.cshtml | Angular Pilot | /warehouses | MiniStore.Web/Views/Warehouses/Create.cshtml |
 | Warehouses | Edit.cshtml | Angular Pilot | /warehouses | MiniStore.Web/Views/Warehouses/Edit.cshtml |
 | Warehouses | Index.cshtml | Angular Pilot | /warehouses | MiniStore.Web/Views/Warehouses/Index.cshtml |
@@ -317,10 +317,10 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | InventoryInsights | Index | GET | Angular Default | /inventory/insights | /inventory/insights | MiniStore.Web/Controllers/Inventory/InventoryInsightsController.cs |
 | InventoryReconciliation | Index | GET | Angular Default | /inventory/reconciliation | /inventory/reconciliation | MiniStore.Web/Controllers/Inventory/InventoryReconciliationController.cs |
 | InventoryReservations | Index | GET | Angular Default | /inventory/reservations | /inventory/reservations | MiniStore.Web/Controllers/Inventory/InventoryReservationsController.cs |
-| InventoryScanning | Count | POST | Angular Pilot | /inventory/scanning | — | MiniStore.Web/Controllers/Inventory/InventoryScanningController.cs |
-| InventoryScanning | Index | GET | Angular Pilot | /inventory/scanning | — | MiniStore.Web/Controllers/Inventory/InventoryScanningController.cs |
-| InventoryScanning | Putaway | POST | Angular Pilot | /inventory/scanning | — | MiniStore.Web/Controllers/Inventory/InventoryScanningController.cs |
-| InventoryScanning | Relocate | POST | Angular Pilot | /inventory/scanning | — | MiniStore.Web/Controllers/Inventory/InventoryScanningController.cs |
+| InventoryScanning | Count | POST | Angular Default | /inventory/scanning | — | MiniStore.Web/Controllers/Inventory/InventoryScanningController.cs |
+| InventoryScanning | Index | GET | Angular Default | /inventory/scanning | /inventory/scanning | MiniStore.Web/Controllers/Inventory/InventoryScanningController.cs |
+| InventoryScanning | Putaway | POST | Angular Default | /inventory/scanning | — | MiniStore.Web/Controllers/Inventory/InventoryScanningController.cs |
+| InventoryScanning | Relocate | POST | Angular Default | /inventory/scanning | — | MiniStore.Web/Controllers/Inventory/InventoryScanningController.cs |
 | InventoryTracking | CloseRecall | POST | Angular Default | /inventory/tracking | — | MiniStore.Web/Controllers/Inventory/InventoryTrackingController.cs |
 | InventoryTracking | CreateRecall | POST | Angular Default | /inventory/tracking | — | MiniStore.Web/Controllers/Inventory/InventoryTrackingController.cs |
 | InventoryTracking | Index | GET | Angular Default | /inventory/tracking | /inventory/tracking | MiniStore.Web/Controllers/Inventory/InventoryTrackingController.cs |
@@ -331,8 +331,8 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | JournalEntries | Details | GET | Angular Pilot | /accounting/journal-entries/:id | — | MiniStore.Web/Controllers/Accounting/JournalEntriesController.cs |
 | LandedCosts | RedirectToAction | GET, POST | Angular Pilot | /purchases/landed-costs | — | MiniStore.Web/Controllers/Purchases/LandedCostsController.cs |
 | Language | Set | POST | Angular Pilot | / | — | MiniStore.Web/Controllers/Settings/LanguageController.cs |
-| LocationMovements | Index | GET | Angular Pilot | /inventory/location-movements | — | MiniStore.Web/Controllers/Inventory/LocationMovementsController.cs |
-| LocationMovements | Move | POST | Angular Pilot | /inventory/location-movements | — | MiniStore.Web/Controllers/Inventory/LocationMovementsController.cs |
+| LocationMovements | Index | GET | Angular Default | /inventory/location-movements | /inventory/location-movements | MiniStore.Web/Controllers/Inventory/LocationMovementsController.cs |
+| LocationMovements | Move | POST | Angular Default | /inventory/location-movements | — | MiniStore.Web/Controllers/Inventory/LocationMovementsController.cs |
 | PaymentMethods | Create | GET | Angular Pilot | /products/catalog-masters | — | MiniStore.Web/Controllers/Accounting/PaymentMethodsController.cs |
 | PaymentMethods | Create | GET, POST | Angular Pilot | /products/catalog-masters | — | MiniStore.Web/Controllers/Accounting/PaymentMethodsController.cs |
 | PaymentMethods | Index | ANY | Angular Pilot | /products/catalog-masters | — | MiniStore.Web/Controllers/Accounting/PaymentMethodsController.cs |
@@ -607,10 +607,10 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | TaxRates | Create | GET | Angular Pilot | /products/catalog-masters | — | MiniStore.Web/Controllers/Accounting/TaxRatesController.cs |
 | TaxRates | Create | GET, POST | Angular Pilot | /products/catalog-masters | — | MiniStore.Web/Controllers/Accounting/TaxRatesController.cs |
 | TaxRates | Index | ANY | Angular Pilot | /products/catalog-masters | — | MiniStore.Web/Controllers/Accounting/TaxRatesController.cs |
-| UnassignedStock | Assign | POST | Angular Pilot | /inventory/putaway | — | MiniStore.Web/Controllers/Inventory/UnassignedStockController.cs |
-| UnassignedStock | CreateRule | POST | Angular Pilot | /inventory/putaway | — | MiniStore.Web/Controllers/Inventory/UnassignedStockController.cs |
-| UnassignedStock | Index | GET | Angular Pilot | /inventory/putaway | — | MiniStore.Web/Controllers/Inventory/UnassignedStockController.cs |
-| UnassignedStock | SetRuleActive | POST | Angular Pilot | /inventory/putaway | — | MiniStore.Web/Controllers/Inventory/UnassignedStockController.cs |
+| UnassignedStock | Assign | POST | Angular Default | /inventory/putaway | — | MiniStore.Web/Controllers/Inventory/UnassignedStockController.cs |
+| UnassignedStock | CreateRule | POST | Angular Default | /inventory/putaway | — | MiniStore.Web/Controllers/Inventory/UnassignedStockController.cs |
+| UnassignedStock | Index | GET | Angular Default | /inventory/putaway | /inventory/putaway | MiniStore.Web/Controllers/Inventory/UnassignedStockController.cs |
+| UnassignedStock | SetRuleActive | POST | Angular Default | /inventory/putaway | — | MiniStore.Web/Controllers/Inventory/UnassignedStockController.cs |
 | Users | Create | GET | Angular Pilot | /users | — | MiniStore.Web/Controllers/Security/UsersController.cs |
 | Users | Create | POST | Angular Pilot | /users | — | MiniStore.Web/Controllers/Security/UsersController.cs |
 | Users | Index | GET | Angular Pilot | /users | — | MiniStore.Web/Controllers/Security/UsersController.cs |
@@ -625,11 +625,11 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | VendorBills | Post | POST | Angular Pilot | /purchases/bills | — | MiniStore.Web/Controllers/Purchases/VendorBillsController.cs |
 | VendorBills | RedirectToAction | POST | Angular Pilot | /purchases/bills | — | MiniStore.Web/Controllers/Purchases/VendorBillsController.cs |
 | VendorBills | RedirectToAction | POST | Angular Pilot | /purchases/bills | — | MiniStore.Web/Controllers/Purchases/VendorBillsController.cs |
-| WarehouseLocations | Create | GET | Angular Pilot | /inventory/locations | — | MiniStore.Web/Controllers/Inventory/WarehouseLocationsController.cs |
-| WarehouseLocations | Create | POST | Angular Pilot | /inventory/locations | — | MiniStore.Web/Controllers/Inventory/WarehouseLocationsController.cs |
-| WarehouseLocations | Edit | GET | Angular Pilot | /inventory/locations | — | MiniStore.Web/Controllers/Inventory/WarehouseLocationsController.cs |
-| WarehouseLocations | Edit | POST | Angular Pilot | /inventory/locations | — | MiniStore.Web/Controllers/Inventory/WarehouseLocationsController.cs |
-| WarehouseLocations | Index | GET | Angular Pilot | /inventory/locations | — | MiniStore.Web/Controllers/Inventory/WarehouseLocationsController.cs |
+| WarehouseLocations | Create | GET | Angular Default | /inventory/locations | — | MiniStore.Web/Controllers/Inventory/WarehouseLocationsController.cs |
+| WarehouseLocations | Create | POST | Angular Default | /inventory/locations | — | MiniStore.Web/Controllers/Inventory/WarehouseLocationsController.cs |
+| WarehouseLocations | Edit | GET | Angular Default | /inventory/locations | — | MiniStore.Web/Controllers/Inventory/WarehouseLocationsController.cs |
+| WarehouseLocations | Edit | POST | Angular Default | /inventory/locations | — | MiniStore.Web/Controllers/Inventory/WarehouseLocationsController.cs |
+| WarehouseLocations | Index | GET | Angular Default | /inventory/locations | /inventory/locations | MiniStore.Web/Controllers/Inventory/WarehouseLocationsController.cs |
 | Warehouses | Create | GET | Angular Pilot | /warehouses | — | MiniStore.Web/Controllers/Inventory/WarehousesController.cs |
 | Warehouses | Create | POST | Angular Pilot | /warehouses | — | MiniStore.Web/Controllers/Inventory/WarehousesController.cs |
 | Warehouses | Delete | POST | Angular Pilot | /warehouses | — | MiniStore.Web/Controllers/Inventory/WarehousesController.cs |

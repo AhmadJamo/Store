@@ -133,7 +133,10 @@ static async Task RunLiveCutoverAsync(
                  "StockTransfers.Create",
                  "StockTransfers.Edit",
                  "InventoryTracking.View",
-                 "StockMovements.View"
+                 "StockMovements.View",
+                 "Warehouses.View",
+                 "LocationMovements.View",
+                 "InventoryScanning.View"
              })
     {
         Require(permissions.Contains(requiredPermission),
@@ -186,7 +189,11 @@ static async Task RunLiveCutoverAsync(
         new("/StockTransfers?search=cutover-rehearsal", "/app/inventory/transfers?search=cutover-rehearsal", "StockTransfers.View"),
         new("/StockTransfers/Create", "/app/inventory/transfers/new", "StockTransfers.Create"),
         new("/InventoryTracking?focus=expiration", "/app/inventory/tracking?focus=expiration", "InventoryTracking.View"),
-        new("/StockMovements?source=transfer", "/app/inventory/location-movements?source=transfer", "StockMovements.View")
+        new("/StockMovements?source=transfer", "/app/inventory/location-movements?source=transfer", "StockMovements.View"),
+        new("/WarehouseLocations?warehouseId=1&query=rack", "/app/inventory/locations?warehouseId=1&query=rack", "Warehouses.View"),
+        new("/UnassignedStock?warehouseId=1&sort=quantity-desc", "/app/inventory/putaway?warehouseId=1&sort=quantity-desc", "ProductStock.View"),
+        new("/LocationMovements?warehouseId=1&query=transfer", "/app/inventory/location-movements?warehouseId=1&query=transfer", "LocationMovements.View"),
+        new("/InventoryScanning?productScan=cutover-rehearsal", "/app/inventory/scanning?productScan=cutover-rehearsal", "InventoryScanning.View")
     };
 
     if (permissions.Contains("Customers.View"))
@@ -284,7 +291,8 @@ static async Task RunLiveCutoverAsync(
                              surface is "Customers" or "Suppliers" or "Products" or "AnalyticsCenter" or "Settings" or
                                  "InventoryBalances" or "InventoryReservations" or "InventoryInsights" or
                                  "InventoryReconciliation" or "StockTransactions" or "ProductStocks" or
-                                 "InventoryAdjustments" or "StockTransfers" or "InventoryTracking" or "StockMovements";
+                                 "InventoryAdjustments" or "StockTransfers" or "InventoryTracking" or "StockMovements" or
+                                 "WarehouseLocations" or "UnassignedStock" or "LocationMovements" or "InventoryScanning";
         if (expectsAngular)
         {
             Require(response.Status is 301 or 302 or 307 or 308,

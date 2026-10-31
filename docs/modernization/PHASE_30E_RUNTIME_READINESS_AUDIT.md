@@ -1,6 +1,6 @@
 # MOD-030E — Angular runtime readiness audit
 
-> Status: IN PROGRESS — MOD-030E2E complete
+> Status: IN PROGRESS — MOD-030E2F complete
 > Date: 2026-11-01
 
 ## Finding
@@ -95,6 +95,19 @@ The authenticated hosted suite passed 15/15 with zero failures/skips. Cutover an
 44 authorized routes. The final gate passed a warning-free Release build, 1,430 backend checks, 215/215 Angular tests
 across 106 files, 121 templates and bundle budgets (327,235 initial bytes; 81,880 largest lazy bytes). Fifteen surfaces
 are now AngularDefault and 67 mapped surfaces remain MVC by default. No data, schema, business rule or MVC file changed.
+
+## MOD-030E2F evidence
+
+WarehouseLocations, UnassignedStock, LocationMovements and InventoryScanning now join the committed AngularDefault set.
+Their Index GET actions map to `/inventory/locations`, `/inventory/putaway`, `/inventory/location-movements` and
+`/inventory/scanning` with query-string preservation. WarehouseLocations Create/Edit deep links remain MVC because the
+Angular workspace does not yet consume direct create/edit URL intent. Create/update/assign/move/putaway/relocate/count
+operations remain independently authorized antiforgery-protected API/MVC mutations outside the presentation catalog.
+
+The authenticated hosted suite passed 15/15 with zero failures/skips. Cutover and process-local MVC rollback both passed
+48 authorized routes. The final gate passed a warning-free Release build, 1,440 backend checks, 215/215 Angular tests
+across 106 files, 121 templates and bundle budgets (327,235 initial bytes; 81,880 largest lazy bytes). Nineteen surfaces
+are now AngularDefault and 63 mapped surfaces remain MVC by default. No data, schema, business rule or MVC file changed.
 
 Every cohort must add explicit GET-only action mappings, require its existing permissions, pass hosted acceptance and
 exact Angular targets, then pass a process-local MVC rollback. Mutations continue through their independently authorized
