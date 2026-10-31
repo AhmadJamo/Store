@@ -1,22 +1,27 @@
 # المهمة التالية الوحيدة / Next Task
 
-## `MOD-030B` — توسيع الدفعة القابلة للرجوع / Expand the Reversible Cutover Cohort
+## `MOD-030C` — دفعة Analytics وSettings المصرح بها / Authorized Analytics and Settings Cohort
 
-> الحالة: APPROVED — NEXT INCREMENT ضمن موجة القبول الشامل
+> الحالة: APPROVED — NEXT INCREMENT ضمن التحويل المرحلي القابل للرجوع
 
-اكتمل `MOD-030A`: Angular production مستضاف تحت `/app`، نجح deep-link/assets/API separation، ونجح القبول
-المصرح 15/15. Customers هو أول AngularDefault cohort، و10 مسارات نجحت في التحقق المختلط.
+اكتمل `MOD-030B`: Customers وSuppliers وProducts تعمل افتراضيًا عبر Angular، ونجح hosted acceptance 15/15،
+ثم نجح mixed pilot وMVC rollback على 12 مسارًا مصرحًا دون حذف MVC.
+
+### المتطلب السابق
+
+- توفير Playwright storage-state خارجي ومستثنى من Git لمستخدم يحمل `Administration.Access`، مع صلاحيات Analytics
+  اللازمة. لا تُقرأ أو تُطبع بيانات الاعتماد أو محتويات الجلسة.
 
 ### الهدف
 
-- تحويل Suppliers وProducts كدفعة ثانية بعد قبول hosted production خاص بهما.
-- توسيع allowlist فقط عند الحاجة لمسارات GET المثبتة، مع بقاء mutations على API وMVC rollback.
-- تشغيل pilot مختلط ثم MVC rollback للدفعة قبل تثبيت الإعداد.
-- عدم تحويل AnalyticsCenter/Settings حتى تتوفر جلسة `Administration.Access` لتغطية Settings.
+- إثبات hosted production لـAnalytics Center وSettings، بما في ذلك deep links والقراءات المصرح بها.
+- توسيع allowlist فقط لمسارات GET الموجودة والمثبتة بنظير Angular.
+- تشغيل mixed pilot للدفعتين ثم process-local MVC rollback قبل تثبيت AngularDefault.
+- إبقاء جميع mutations خلف API/antiforgery وإبقاء Razor/controller كمسار رجوع.
 
 ### القبول
 
-- Suppliers وProducts ينجحان على hosted Angular مع صلاحيات الجلسة والـdeep links.
-- mixed pilot يثبت تحويل الدفعة الجديدة وبقاء AnalyticsCenter/Settings على MVC.
-- rollback يعيد Customers/Suppliers/Products إلى MVC 200 قبل تثبيت الدفعة.
-- البوابة الكاملة تبقى خضراء ولا يحذف أي Razor/controller في هذه الخطوة.
+- جلسة `Administration.Access` تنجح في hosted Angular دون تخطٍ لSettings.
+- AnalyticsCenter وSettings يعيدان التوجيه إلى أهداف Angular المطابقة في pilot.
+- Customers/Suppliers/Products تبقى AngularDefault، والمسارات غير المحولة تبقى MVC.
+- rollback يعيد الأسطح الخمسة إلى MVC 200، والبوابة الكاملة تبقى خضراء.

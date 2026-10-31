@@ -123,7 +123,8 @@ static async Task RunLiveCutoverAsync(
         new("/AnalyticsCenter", "/app/analytics", "AnalyticsCenter.View"),
         new("/AnalyticsCenter/Create", "/app/analytics/builder", "AnalyticsCenter.Customize"),
         new("/Settings", "/app/settings", "Administration.Access"),
-        new("/Products", "/app/products", "Products.View")
+        new("/Products?search=cutover-rehearsal", "/app/products?search=cutover-rehearsal", "Products.View"),
+        new("/Products/Create", "/app/products/new", "Products.Create")
     };
 
     if (permissions.Contains("Customers.View"))
@@ -151,6 +152,18 @@ static async Task RunLiveCutoverAsync(
             routes.Add(new($"/Suppliers/Edit/{id}", $"/app/suppliers/{id}/edit", "Suppliers.Edit"));
         }
     }
+    if (permissions.Contains("Products.View"))
+    {
+        var response = await authenticated.GetAsync("/api/v1/products?page=1&pageSize=1");
+        Require(response.Ok, $"Product cutover fixture read returned {response.Status}.");
+        using var page = JsonDocument.Parse(await response.TextAsync());
+        var items = page.RootElement.GetProperty("items");
+        if (items.GetArrayLength() > 0)
+        {
+            var id = items[0].GetProperty("id").GetInt32();
+            routes.Add(new($"/Products/Edit/{id}", $"/app/products/{id}/edit", "Products.Edit"));
+        }
+    }
 
     var executed = 0;
     foreach (var probe in routes.Where(x => permissions.Contains(x.Permission)))
@@ -161,7 +174,7 @@ static async Task RunLiveCutoverAsync(
             new APIRequestContextOptions { MaxRedirects = 0 });
         var expectsAngular = options.CutoverMode == "angular" ||
                              options.CutoverMode == "pilot" &&
-                             string.Equals(surface, "Customers", StringComparison.Ordinal);
+                             surface is "Customers" or "Suppliers" or "Products";
         if (expectsAngular)
         {
             Require(response.Status is 301 or 302 or 307 or 308,

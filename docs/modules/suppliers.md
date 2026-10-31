@@ -23,3 +23,6 @@ MOD-006 added the permission-aware directory as the second consumer of the share
 MOD-011 makes the Supplier slice a second consumer of stable error classification and the shared recovery component.
 Duplicate and validation failures preserve input, transient list reads alone offer retry, and concurrency comparison
 opens the protected latest record without replacing the submitted row version.
+
+MOD-030B makes the allowlisted Supplier list/create/edit GET routes AngularDefault after hosted acceptance and a successful
+MVC rollback rehearsal. Mutations, authorization, Application rules and the existing Razor rollback path are unchanged.

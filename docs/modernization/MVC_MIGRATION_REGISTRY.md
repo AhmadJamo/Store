@@ -11,7 +11,7 @@
 - Angular application routes discovered: 180.
 - MVC surfaces with a verified Angular counterpart: 82.
 - Remaining MVC surfaces without a mapped Angular counterpart: 0.
-- Allowlisted Angular-default cutover actions: 11.
+- Allowlisted Angular-default cutover actions: 13.
 
 Remaining surfaces: none.
 
@@ -92,9 +92,9 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | ProductAttributes | Index.cshtml | Angular Pilot | /products/attributes | MiniStore.Web/Views/ProductAttributes/Index.cshtml |
 | ProductAttributes | Values.cshtml | Angular Pilot | /products/attributes | MiniStore.Web/Views/ProductAttributes/Values.cshtml |
 | ProductCategories | Index.cshtml | Angular Pilot | /products/categories | MiniStore.Web/Views/ProductCategories/Index.cshtml |
-| Products | Create.cshtml | Angular Pilot | /products | MiniStore.Web/Views/Products/Create.cshtml |
-| Products | Edit.cshtml | Angular Pilot | /products | MiniStore.Web/Views/Products/Edit.cshtml |
-| Products | Index.cshtml | Angular Pilot | /products | MiniStore.Web/Views/Products/Index.cshtml |
+| Products | Create.cshtml | Angular Default | /products | MiniStore.Web/Views/Products/Create.cshtml |
+| Products | Edit.cshtml | Angular Default | /products | MiniStore.Web/Views/Products/Edit.cshtml |
+| Products | Index.cshtml | Angular Default | /products | MiniStore.Web/Views/Products/Index.cshtml |
 | ProductStocks | Create.cshtml | Angular Pilot | /inventory/stocks | MiniStore.Web/Views/ProductStocks/Create.cshtml |
 | ProductStocks | Edit.cshtml | Angular Pilot | /inventory/stocks | MiniStore.Web/Views/ProductStocks/Edit.cshtml |
 | ProductStocks | Index.cshtml | Angular Pilot | /inventory/stocks | MiniStore.Web/Views/ProductStocks/Index.cshtml |
@@ -203,9 +203,9 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | SupplierPurchasing | PriceHistory.cshtml | Angular Pilot | /purchases/supplier-terms | MiniStore.Web/Views/SupplierPurchasing/PriceHistory.cshtml |
 | SupplierQuotations | Comparison.cshtml | Angular Pilot | /purchases/sourcing | MiniStore.Web/Views/SupplierQuotations/Comparison.cshtml |
 | SupplierQuotations | Create.cshtml | Angular Pilot | /purchases/sourcing | MiniStore.Web/Views/SupplierQuotations/Create.cshtml |
-| Suppliers | Create.cshtml | Angular Pilot | /suppliers | MiniStore.Web/Views/Suppliers/Create.cshtml |
-| Suppliers | Edit.cshtml | Angular Pilot | /suppliers | MiniStore.Web/Views/Suppliers/Edit.cshtml |
-| Suppliers | Index.cshtml | Angular Pilot | /suppliers | MiniStore.Web/Views/Suppliers/Index.cshtml |
+| Suppliers | Create.cshtml | Angular Default | /suppliers | MiniStore.Web/Views/Suppliers/Create.cshtml |
+| Suppliers | Edit.cshtml | Angular Default | /suppliers | MiniStore.Web/Views/Suppliers/Edit.cshtml |
+| Suppliers | Index.cshtml | Angular Default | /suppliers | MiniStore.Web/Views/Suppliers/Index.cshtml |
 | TaxRates | Create.cshtml | Angular Pilot | /products/catalog-masters | MiniStore.Web/Views/TaxRates/Create.cshtml |
 | TaxRates | Index.cshtml | Angular Pilot | /products/catalog-masters | MiniStore.Web/Views/TaxRates/Index.cshtml |
 | UnassignedStock | Index.cshtml | Angular Pilot | /inventory/putaway | MiniStore.Web/Views/UnassignedStock/Index.cshtml |
@@ -365,12 +365,12 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | ProductCategories | Create | POST | Angular Pilot | /products/categories | — | MiniStore.Web/Controllers/Catalog/ProductCategoriesController.cs |
 | ProductCategories | Index | GET | Angular Pilot | /products/categories | — | MiniStore.Web/Controllers/Catalog/ProductCategoriesController.cs |
 | ProductCategories | SetActive | POST | Angular Pilot | /products/categories | — | MiniStore.Web/Controllers/Catalog/ProductCategoriesController.cs |
-| Products | Create | GET | Angular Pilot | /products | — | MiniStore.Web/Controllers/Catalog/ProductsController.cs |
-| Products | Create | POST | Angular Pilot | /products | — | MiniStore.Web/Controllers/Catalog/ProductsController.cs |
-| Products | Delete | POST | Angular Pilot | /products | — | MiniStore.Web/Controllers/Catalog/ProductsController.cs |
-| Products | Edit | GET | Angular Pilot | /products | — | MiniStore.Web/Controllers/Catalog/ProductsController.cs |
-| Products | Edit | POST | Angular Pilot | /products | — | MiniStore.Web/Controllers/Catalog/ProductsController.cs |
-| Products | Index | ANY | Angular Pilot | /products | /products | MiniStore.Web/Controllers/Catalog/ProductsController.cs |
+| Products | Create | GET | Angular Default | /products | /products/new | MiniStore.Web/Controllers/Catalog/ProductsController.cs |
+| Products | Create | POST | Angular Default | /products | /products/new | MiniStore.Web/Controllers/Catalog/ProductsController.cs |
+| Products | Delete | POST | Angular Default | /products | — | MiniStore.Web/Controllers/Catalog/ProductsController.cs |
+| Products | Edit | GET | Angular Default | /products | /products/{id}/edit | MiniStore.Web/Controllers/Catalog/ProductsController.cs |
+| Products | Edit | POST | Angular Default | /products | /products/{id}/edit | MiniStore.Web/Controllers/Catalog/ProductsController.cs |
+| Products | Index | ANY | Angular Default | /products | /products | MiniStore.Web/Controllers/Catalog/ProductsController.cs |
 | ProductStocks | Create | GET | Angular Pilot | /inventory/stocks | — | MiniStore.Web/Controllers/Inventory/ProductStocksController.cs |
 | ProductStocks | Create | POST | Angular Pilot | /inventory/stocks | — | MiniStore.Web/Controllers/Inventory/ProductStocksController.cs |
 | ProductStocks | Delete | POST | Angular Pilot | /inventory/stocks | — | MiniStore.Web/Controllers/Inventory/ProductStocksController.cs |
@@ -598,12 +598,12 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | SupplierPurchasing | SetActive | POST | Angular Pilot | /purchases/supplier-terms | — | MiniStore.Web/Controllers/Purchases/SupplierPurchasingController.cs |
 | SupplierQuotations | RedirectToAction | GET, POST | Angular Pilot | /purchases/sourcing | — | MiniStore.Web/Controllers/Purchases/SupplierQuotationsController.cs |
 | SupplierQuotations | RedirectToAction | GET, POST | Angular Pilot | /purchases/sourcing | — | MiniStore.Web/Controllers/Purchases/SupplierQuotationsController.cs |
-| Suppliers | Create | GET | Angular Pilot | /suppliers | /suppliers/new | MiniStore.Web/Controllers/Suppliers/SuppliersController.cs |
-| Suppliers | Create | POST | Angular Pilot | /suppliers | /suppliers/new | MiniStore.Web/Controllers/Suppliers/SuppliersController.cs |
-| Suppliers | Delete | POST | Angular Pilot | /suppliers | — | MiniStore.Web/Controllers/Suppliers/SuppliersController.cs |
-| Suppliers | Edit | GET | Angular Pilot | /suppliers | /suppliers/{id}/edit | MiniStore.Web/Controllers/Suppliers/SuppliersController.cs |
-| Suppliers | Edit | POST | Angular Pilot | /suppliers | /suppliers/{id}/edit | MiniStore.Web/Controllers/Suppliers/SuppliersController.cs |
-| Suppliers | Index | GET | Angular Pilot | /suppliers | /suppliers | MiniStore.Web/Controllers/Suppliers/SuppliersController.cs |
+| Suppliers | Create | GET | Angular Default | /suppliers | /suppliers/new | MiniStore.Web/Controllers/Suppliers/SuppliersController.cs |
+| Suppliers | Create | POST | Angular Default | /suppliers | /suppliers/new | MiniStore.Web/Controllers/Suppliers/SuppliersController.cs |
+| Suppliers | Delete | POST | Angular Default | /suppliers | — | MiniStore.Web/Controllers/Suppliers/SuppliersController.cs |
+| Suppliers | Edit | GET | Angular Default | /suppliers | /suppliers/{id}/edit | MiniStore.Web/Controllers/Suppliers/SuppliersController.cs |
+| Suppliers | Edit | POST | Angular Default | /suppliers | /suppliers/{id}/edit | MiniStore.Web/Controllers/Suppliers/SuppliersController.cs |
+| Suppliers | Index | GET | Angular Default | /suppliers | /suppliers | MiniStore.Web/Controllers/Suppliers/SuppliersController.cs |
 | TaxRates | Create | GET | Angular Pilot | /products/catalog-masters | — | MiniStore.Web/Controllers/Accounting/TaxRatesController.cs |
 | TaxRates | Create | GET, POST | Angular Pilot | /products/catalog-masters | — | MiniStore.Web/Controllers/Accounting/TaxRatesController.cs |
 | TaxRates | Index | ANY | Angular Pilot | /products/catalog-masters | — | MiniStore.Web/Controllers/Accounting/TaxRatesController.cs |

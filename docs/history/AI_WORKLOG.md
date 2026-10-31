@@ -1,5 +1,13 @@
 # AI Work Log
 
+- 2026-10-31: Completed `MOD-030B` reversible Suppliers/Products cutover. Committed Customers, Suppliers and Products
+  as AngularDefault surfaces, expanded the GET-only catalog to Product create/edit, and extended the secret-safe runner
+  with a read-only Product fixture. Hosted Supplier/Product deep links returned 200 and the authenticated hosted suite
+  passed 15/15 with zero skips. The mixed pilot passed 12 authorized routes; a process-local override then returned the
+  same 12 routes through MVC 200. The final gate passed a clean Release build, 1,349 backend checks, 214/214 Angular
+  tests, 121 templates and bundle budgets. No mutation, Razor/controller, schema or business rule changed. Execution
+  advances to `MOD-030C`, gated on an operator session with `Administration.Access` for Settings evidence.
+
 - 2026-10-30: Completed `MOD-030A` production Angular hosting and the first reversible cohort. Angular production now
   builds with `/app/` base href; a validated publisher replaces only the fixed git-ignored web artifact directory.
   ASP.NET serves hashed assets immutably and a no-cache SPA fallback scoped to `/app`, leaving API/MVC routing untouched.

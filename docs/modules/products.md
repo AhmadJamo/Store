@@ -44,3 +44,9 @@ Tracked products may define an optional default shelf life in days, require an e
 
 ## If this changes
 Review product entity doc, inventory/purchase/sales/transfers docs, configuration/migration, controller/screens, permissions and map.
+
+## Angular cutover update (2026-10-31)
+
+MOD-030B makes the allowlisted Product list/create/edit GET routes AngularDefault after hosted acceptance and a successful
+MVC rollback rehearsal. Query strings and positive IDs are preserved; mutations and unknown MVC actions are never redirected.
+The Razor controller/views remain available as the rollback path.

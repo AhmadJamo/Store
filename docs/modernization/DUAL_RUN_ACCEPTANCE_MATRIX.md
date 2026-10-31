@@ -3,7 +3,7 @@
 > Generated from source by scripts/generate-mvc-migration-registry.ps1. Do not edit rows manually.
 
 - Counterparts covered: 82.
-- Presentation default: Mixed (Customers AngularDefault; all other surfaces MVC).
+- Presentation default: Mixed (Customers, Suppliers, Products AngularDefault; all other surfaces MVC).
 - Evidence baseline: generated MVC view/action inventory, verified Angular route, controller permission references and acceptance gate.
 - Runtime dual-run samples and cutover rehearsal results are appended by the MOD-029 acceptance workflow; this static matrix performs no mutation.
 

@@ -33,8 +33,8 @@ delegation migration during rollback; local Demo is now reconciled through migra
 
 `scripts/Publish-AngularAssets.ps1` builds Angular with the production `/app/` base href, validates the generated index,
 cleans only the fixed git-ignored `MiniStore.Web/wwwroot/app` target and copies hashed assets. `WebApplicationExtensions`
-serves those assets with immutable caching and a no-cache, `/app`-scoped SPA fallback. Customers is the first committed
-AngularDefault surface; the generated registry and acceptance matrix read appsettings and report the mixed mode.
+serves those assets with immutable caching and a no-cache, `/app`-scoped SPA fallback. Customers, Suppliers and Products
+are the committed AngularDefault cohorts; the generated registry and acceptance matrix read appsettings and report the mixed mode.
 
 `MiniStore Front-End/src/app/core/preferences` owns versioned, non-sensitive theme/density preferences and system-theme resolution. Global semantic tokens provide light/dark palettes, density dimensions, focus, reduced-motion and forced-color behavior. The lazy `/design-system` page is the bilingual RTL/LTR visual-state reference for shared buttons, badges, fields and empty/loading/error patterns. See `docs/modernization/PHASE_03_VISUAL_SYSTEM.md`.
 

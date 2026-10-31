@@ -115,3 +115,7 @@
 اكتمل `MOD-030A`: يخدم ASP.NET Angular production تحت `/app` مع deep-link fallback محصور وcache مناسب،
 ونجح الفصل عن `/api` وMVC. القبول المصرح على الخادم نفسه نجح 15/15 بلا تخطٍ، ونجح mixed pilot على 10
 مسارات: Customers AngularDefault والبقية MVC. ينتقل التنفيذ إلى `MOD-030B` لتحويل Suppliers وProducts مع rollback.
+اكتمل `MOD-030B`: أصبحت Customers وSuppliers وProducts دفعات AngularDefault قابلة للرجوع. نجح hosted acceptance
+15/15 بلا تخطٍ، ونجح mixed pilot على 12 مسارًا مصرحًا، ثم أعاد process-local rollback المسارات نفسها إلى MVC 200.
+لا حذف Razor/controller ولا تغيير قاعدة بيانات. ينتقل التنفيذ إلى `MOD-030C` بعد توفير جلسة `Administration.Access`.
+البوابة النهائية نجحت: Release بلا تحذيرات/أخطاء، و1,349 فحص backend، و214/214 Angular، و121 قالبًا، وميزانيات الحزم.

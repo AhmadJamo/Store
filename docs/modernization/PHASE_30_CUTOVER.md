@@ -1,6 +1,6 @@
 # MOD-030 — hosted Angular cutover and MVC retirement
 
-> Status: IN PROGRESS — `MOD-030A` complete on 2026-10-30
+> Status: IN PROGRESS — `MOD-030A/B` complete through 2026-10-31
 
 ## MOD-030A production hosting and first cohort
 
@@ -19,6 +19,22 @@ mutations and unknown actions remain on their existing protected paths. A mixed 
 redirecting to Angular and the other authorized allowlisted surfaces returning MVC 200. The generator now derives
 AngularDefault surfaces from appsettings, marks Customers accurately and reports a mixed presentation mode.
 
-No Razor view or MVC controller was deleted. `MOD-030B` must repeat hosted acceptance plus rollback before moving
-Suppliers and Products. Analytics Center and Settings remain later cohorts because Settings needs an operator with
-`Administration.Access` for live evidence.
+No Razor view or MVC controller was deleted.
+
+## MOD-030B supplier and product cohort
+
+Suppliers and Products now join Customers as committed `AngularDefault` surfaces. The code-owned allowlist covers the
+existing Supplier list/create/edit and Product list/create/edit GET actions; it does not invent MVC details actions or
+redirect any mutation. Product search query strings and positive edit IDs are preserved.
+
+Hosted `/app/suppliers`, `/app/suppliers/new`, `/app/products` and `/app/products/new` deep links returned 200. The full
+operator-authenticated hosted suite passed 15/15 with zero skips. The mixed pilot passed 12 authorized routes with the
+three cohorts redirecting to exact Angular targets and Analytics remaining MVC. A process-local rollback then returned
+the same 12 routes through MVC 200. No Razor view/controller or database object changed.
+
+The final non-live gate passed a warning-free Release build, 1,349 backend regression checks, 214/214 Angular tests,
+121 static templates and the project bundle budgets (326,764 initial bytes; 81,880 largest lazy bytes). Browser evidence
+is the separate hosted 15/15 run above rather than a development-host substitute.
+
+`MOD-030C` must obtain an operator session with `Administration.Access`, then repeat hosted acceptance, mixed pilot and
+MVC rollback for Analytics Center and Settings before committing either surface.

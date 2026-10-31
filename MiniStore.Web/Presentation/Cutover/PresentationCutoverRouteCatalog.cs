@@ -15,7 +15,9 @@ public static class PresentationCutoverRouteCatalog
             ["AnalyticsCenter:Index"] = "/analytics",
             ["AnalyticsCenter:Create"] = "/analytics/builder",
             ["Settings:Index"] = "/settings",
-            ["Products:Index"] = "/products"
+            ["Products:Index"] = "/products",
+            ["Products:Create"] = "/products/new",
+            ["Products:Edit"] = "/products/{id}/edit"
         };
 
     public static IReadOnlyDictionary<string, string> All => Routes;
