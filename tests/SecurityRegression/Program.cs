@@ -146,6 +146,20 @@ Check(stockCutoverResolver.Resolve(
         cutoverContext.Request, "ProductStocks", "Edit",
         new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 7 }) == "/app/inventory/stocks/7/edit?page=2",
     "Product Stock edit GET must preserve the identifier in the Angular stock workspace");
+var adjustmentCutoverResolver = new PresentationCutoverResolver(Options.Create(
+    new PresentationCutoverOptions
+    {
+        AngularBasePath = "/app",
+        Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["InventoryAdjustments"] = PresentationCutoverMode.AngularDefault
+        }
+    }));
+Check(adjustmentCutoverResolver.Resolve(
+        cutoverContext.Request, "InventoryAdjustments", "Details",
+        new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 3_000_000_000L }) ==
+    "/app/inventory/adjustments/3000000000?page=2",
+    "Inventory Adjustment details cutover must preserve positive Int64 identifiers");
 foreach (var entry in PresentationCutoverRouteCatalog.All)
 {
     var keyParts = entry.Key.Split(':', 2);

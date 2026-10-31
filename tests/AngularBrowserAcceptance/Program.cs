@@ -126,7 +126,9 @@ static async Task RunLiveCutoverAsync(
                  "StockTransactions.Create",
                  "ProductStock.View",
                  "ProductStock.Create",
-                 "ProductStock.Edit"
+                 "ProductStock.Edit",
+                 "InventoryAdjustments.View",
+                 "InventoryAdjustments.Create"
              })
     {
         Require(permissions.Contains(requiredPermission),
@@ -173,7 +175,9 @@ static async Task RunLiveCutoverAsync(
             "/app/inventory/transactions?movement=incoming&page=2", "StockTransactions.View"),
         new("/StockTransactions/Create", "/app/inventory/stocks/adjustment", "StockTransactions.Create"),
         new("/ProductStocks", "/app/inventory/stocks", "ProductStock.View"),
-        new("/ProductStocks/Create", "/app/inventory/stocks/new", "ProductStock.Create")
+        new("/ProductStocks/Create", "/app/inventory/stocks/new", "ProductStock.Create"),
+        new("/InventoryAdjustments?status=1", "/app/inventory/adjustments?status=1", "InventoryAdjustments.View"),
+        new("/InventoryAdjustments/Create", "/app/inventory/adjustments/new", "InventoryAdjustments.Create")
     };
 
     if (permissions.Contains("Customers.View"))
@@ -224,6 +228,18 @@ static async Task RunLiveCutoverAsync(
             routes.Add(new($"/ProductStocks/Edit/{id}", $"/app/inventory/stocks/{id}/edit", "ProductStock.Edit"));
         }
     }
+    if (permissions.Contains("InventoryAdjustments.View"))
+    {
+        var response = await authenticated.GetAsync("/api/v1/inventory-adjustments");
+        Require(response.Ok, $"Inventory Adjustment cutover fixture read returned {response.Status}.");
+        using var adjustments = JsonDocument.Parse(await response.TextAsync());
+        if (adjustments.RootElement.ValueKind == JsonValueKind.Array && adjustments.RootElement.GetArrayLength() > 0)
+        {
+            var id = adjustments.RootElement[0].GetProperty("id").GetInt64();
+            routes.Add(new($"/InventoryAdjustments/Details/{id}",
+                $"/app/inventory/adjustments/{id}", "InventoryAdjustments.View"));
+        }
+    }
 
     var executed = 0;
     foreach (var probe in routes.Where(x => permissions.Contains(x.Permission)))
@@ -236,7 +252,8 @@ static async Task RunLiveCutoverAsync(
                              options.CutoverMode == "pilot" &&
                              surface is "Customers" or "Suppliers" or "Products" or "AnalyticsCenter" or "Settings" or
                                  "InventoryBalances" or "InventoryReservations" or "InventoryInsights" or
-                                 "InventoryReconciliation" or "StockTransactions" or "ProductStocks";
+                                 "InventoryReconciliation" or "StockTransactions" or "ProductStocks" or
+                                 "InventoryAdjustments";
         if (expectsAngular)
         {
             Require(response.Status is 301 or 302 or 307 or 308,

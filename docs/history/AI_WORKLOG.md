@@ -1,5 +1,12 @@
 # AI Work Log
 
+- 2026-11-01: Completed `MOD-030E2B`. InventoryAdjustments Index/Create/Details now use exact AngularDefault routes;
+  the shared resolver was widened from positive Int32 to invariant positive Int64 identifiers to match the aggregate.
+  Count/Approve/Post/Cancel remain independently authorized antiforgery-protected mutations. Hosted acceptance passed
+  15/15, cutover and MVC rollback passed 40 routes, and Release, 1,413 backend checks, 215/215 Angular tests, 121
+  templates and bundle budgets passed. Demo had no adjustment row, so Details used executable above-Int32 coverage and no
+  test data was created. The temporary authenticated state was deleted; no database, rule or MVC file changed.
+
 - 2026-10-31: Completed `MOD-030E2A`. StockTransactions and ProductStocks now use exact AngularDefault GET routes;
   ledger filters are preserved and manual-adjustment/create/edit intents use dedicated Angular deep links, including a
   positive edit identifier that loads the requested record. Replaced the expiring Product Stocks MVC/API comparison with

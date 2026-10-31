@@ -11,7 +11,7 @@
 - Angular application routes discovered: 183.
 - MVC surfaces with a verified Angular counterpart: 82.
 - Remaining MVC surfaces without a mapped Angular counterpart: 0.
-- Allowlisted Angular-default cutover actions: 38.
+- Allowlisted Angular-default cutover actions: 41.
 
 Remaining surfaces: none.
 
@@ -63,9 +63,9 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | GoodsReceipts | Index.cshtml | Angular Pilot | /purchases/receipts | MiniStore.Web/Views/GoodsReceipts/Index.cshtml |
 | GoodsReceipts | Scan.cshtml | Angular Pilot | /purchases/receipts | MiniStore.Web/Views/GoodsReceipts/Scan.cshtml |
 | Home | Index.cshtml | Angular Pilot | / | MiniStore.Web/Views/Home/Index.cshtml |
-| InventoryAdjustments | Create.cshtml | Angular Pilot | /inventory/adjustments | MiniStore.Web/Views/InventoryAdjustments/Create.cshtml |
-| InventoryAdjustments | Details.cshtml | Angular Pilot | /inventory/adjustments | MiniStore.Web/Views/InventoryAdjustments/Details.cshtml |
-| InventoryAdjustments | Index.cshtml | Angular Pilot | /inventory/adjustments | MiniStore.Web/Views/InventoryAdjustments/Index.cshtml |
+| InventoryAdjustments | Create.cshtml | Angular Default | /inventory/adjustments | MiniStore.Web/Views/InventoryAdjustments/Create.cshtml |
+| InventoryAdjustments | Details.cshtml | Angular Default | /inventory/adjustments | MiniStore.Web/Views/InventoryAdjustments/Details.cshtml |
+| InventoryAdjustments | Index.cshtml | Angular Default | /inventory/adjustments | MiniStore.Web/Views/InventoryAdjustments/Index.cshtml |
 | InventoryBalances | Index.cshtml | Angular Default | /inventory/availability | MiniStore.Web/Views/InventoryBalances/Index.cshtml |
 | InventoryInsights | Index.cshtml | Angular Default | /inventory/insights | MiniStore.Web/Views/InventoryInsights/Index.cshtml |
 | InventoryReconciliation | Index.cshtml | Angular Default | /inventory/reconciliation | MiniStore.Web/Views/InventoryReconciliation/Index.cshtml |
@@ -305,14 +305,14 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | GoodsReceipts | RecordScan | POST | Angular Pilot | /purchases/receipts | — | MiniStore.Web/Controllers/Purchases/GoodsReceiptsController.cs |
 | GoodsReceipts | Scan | GET | Angular Pilot | /purchases/receipts | — | MiniStore.Web/Controllers/Purchases/GoodsReceiptsController.cs |
 | Home | Index | ANY | Angular Pilot | / | — | MiniStore.Web/Controllers/Home/HomeController.cs |
-| InventoryAdjustments | Approve | POST | Angular Pilot | /inventory/adjustments | — | MiniStore.Web/Controllers/Inventory/InventoryAdjustmentsController.cs |
-| InventoryAdjustments | Cancel | POST | Angular Pilot | /inventory/adjustments | — | MiniStore.Web/Controllers/Inventory/InventoryAdjustmentsController.cs |
-| InventoryAdjustments | Count | POST | Angular Pilot | /inventory/adjustments | — | MiniStore.Web/Controllers/Inventory/InventoryAdjustmentsController.cs |
-| InventoryAdjustments | Create | GET | Angular Pilot | /inventory/adjustments | — | MiniStore.Web/Controllers/Inventory/InventoryAdjustmentsController.cs |
-| InventoryAdjustments | Create | POST | Angular Pilot | /inventory/adjustments | — | MiniStore.Web/Controllers/Inventory/InventoryAdjustmentsController.cs |
-| InventoryAdjustments | Details | GET | Angular Pilot | /inventory/adjustments | — | MiniStore.Web/Controllers/Inventory/InventoryAdjustmentsController.cs |
-| InventoryAdjustments | Index | GET | Angular Pilot | /inventory/adjustments | — | MiniStore.Web/Controllers/Inventory/InventoryAdjustmentsController.cs |
-| InventoryAdjustments | Post | POST | Angular Pilot | /inventory/adjustments | — | MiniStore.Web/Controllers/Inventory/InventoryAdjustmentsController.cs |
+| InventoryAdjustments | Approve | POST | Angular Default | /inventory/adjustments | — | MiniStore.Web/Controllers/Inventory/InventoryAdjustmentsController.cs |
+| InventoryAdjustments | Cancel | POST | Angular Default | /inventory/adjustments | — | MiniStore.Web/Controllers/Inventory/InventoryAdjustmentsController.cs |
+| InventoryAdjustments | Count | POST | Angular Default | /inventory/adjustments | — | MiniStore.Web/Controllers/Inventory/InventoryAdjustmentsController.cs |
+| InventoryAdjustments | Create | GET | Angular Default | /inventory/adjustments | /inventory/adjustments/new | MiniStore.Web/Controllers/Inventory/InventoryAdjustmentsController.cs |
+| InventoryAdjustments | Create | POST | Angular Default | /inventory/adjustments | /inventory/adjustments/new | MiniStore.Web/Controllers/Inventory/InventoryAdjustmentsController.cs |
+| InventoryAdjustments | Details | GET | Angular Default | /inventory/adjustments | /inventory/adjustments/{id} | MiniStore.Web/Controllers/Inventory/InventoryAdjustmentsController.cs |
+| InventoryAdjustments | Index | GET | Angular Default | /inventory/adjustments | /inventory/adjustments | MiniStore.Web/Controllers/Inventory/InventoryAdjustmentsController.cs |
+| InventoryAdjustments | Post | POST | Angular Default | /inventory/adjustments | — | MiniStore.Web/Controllers/Inventory/InventoryAdjustmentsController.cs |
 | InventoryBalances | Index | GET | Angular Default | /inventory/availability | /inventory/availability | MiniStore.Web/Controllers/Inventory/InventoryBalancesController.cs |
 | InventoryInsights | Index | GET | Angular Default | /inventory/insights | /inventory/insights | MiniStore.Web/Controllers/Inventory/InventoryInsightsController.cs |
 | InventoryReconciliation | Index | GET | Angular Default | /inventory/reconciliation | /inventory/reconciliation | MiniStore.Web/Controllers/Inventory/InventoryReconciliationController.cs |

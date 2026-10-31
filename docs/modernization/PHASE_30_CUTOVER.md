@@ -72,3 +72,6 @@ inventory analysis surfaces after 15/15 production-hosted acceptance and 33-rout
 
 MOD-030E2A adds StockTransactions and ProductStocks with intent-specific Angular stock routes. Hosted acceptance passed
 15/15, rendered Angular/API stock data matched, and both cutover and MVC rollback passed 38 authorized GET routes.
+
+MOD-030E2B adds InventoryAdjustments Index/Create/Details and widens the safe route-value parser to positive Int64.
+Hosted acceptance passed 15/15 and both cutover and MVC rollback passed 40 authorized GET routes without test-data writes.

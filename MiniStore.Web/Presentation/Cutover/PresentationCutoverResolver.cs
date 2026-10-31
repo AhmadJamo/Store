@@ -23,7 +23,8 @@ public sealed class PresentationCutoverResolver(IOptions<PresentationCutoverOpti
 
         if (route.Contains("{id}", StringComparison.Ordinal))
         {
-            if (!int.TryParse(routeValues["id"]?.ToString(), out var id) || id <= 0)
+            if (!long.TryParse(routeValues["id"]?.ToString(), NumberStyles.Integer,
+                    CultureInfo.InvariantCulture, out var id) || id <= 0)
                 return null;
 
             route = route.Replace("{id}", id.ToString(CultureInfo.InvariantCulture), StringComparison.Ordinal);

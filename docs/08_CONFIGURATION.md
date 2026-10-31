@@ -21,7 +21,7 @@ health endpoints remain available if request instrumentation is disabled. Produc
 `PresentationCutover` configures the local `AngularBasePath` and per-surface mode. Supported modes are `Mvc`,
 `AngularPilot`, and `AngularDefault`; missing surfaces are treated as `Mvc`. MOD-030D commits Customers, Suppliers,
 Products, AnalyticsCenter, Settings, InventoryBalances, InventoryReservations, InventoryInsights,
-InventoryReconciliation, StockTransactions and ProductStocks to `AngularDefault`. A base path that is not local
+InventoryReconciliation, StockTransactions, ProductStocks and InventoryAdjustments to `AngularDefault`. A base path that is not local
 fails startup validation.
 
 `P1-AUD-015` registers one retention worker. When `AuditRetention:Enabled=true`, it runs immediately and then every configured 1–168 hours (24 by default). Each run creates a signed external checkpoint before selecting candidates; no row is removed unless a signed destruction manifest exists and the maintenance transaction revalidates its ID, integrity fingerprint and absence of an active legal hold.

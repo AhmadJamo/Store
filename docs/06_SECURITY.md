@@ -36,6 +36,11 @@ manual-adjustment Create permissions; Product Stocks retains View/Create/Edit on
 Create/Edit/Delete/StockTransactions.Create on its APIs. The edit identifier is preserved in the Angular deep link. No
 POST, PUT or DELETE is redirected, and the temporary authenticated state used for acceptance was deleted afterward.
 
+MOD-030E2B maps only Inventory Adjustments Index/Create/Details GET presentation. The resolver accepts the controller's
+positive Int64 identifier using invariant parsing and continues to reject hostile, zero or negative values. Count,
+Approve, Post and Cancel are absent from the catalog and retain their exact permission plus antiforgery boundary. Demo
+had no adjustment fixture, so live acceptance made no false Details claim; executable coverage proves the Int64 target.
+
 Customer and Supplier Angular slices use operation-specific View/Create/Edit permissions on every endpoint. Supplier form options are projected by the Application layer, and submitted account/product identifiers are revalidated by existing services; client filtering is never treated as authorization. Supplier stale-write failures return HTTP 409 while keeping global antiforgery and tenant repository filters intact.
 
 Angular user/role administration repeats exact `Users.*` and `Roles.*` policies on every API operation; navigation visibility cannot authorize a request. Unsafe operations require antiforgery, system roles cannot be mutated, role updates use rowversion with HTTP 409 on stale data, and all supplied role/permission identifiers are resolved server-side. User creation shares one Application contract with MVC, checks the tenant subscription limit and active company role, and commits membership, assignment and sanitized semantic audit evidence in one `UnitOfWork`. If that tenant binding fails after Identity account creation, the new account is removed after clearing the rolled-back tracker state. Passwords are never returned, logged, or stored by Angular and are cleared from the form after rejection.

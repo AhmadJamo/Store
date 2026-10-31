@@ -177,6 +177,11 @@ permission-protected Index GET actions are mapped; filters/query strings are pre
 their existing independently authorized API/MVC commands. Hosted acceptance passed 15/15 and both the 33-route cutover
 and process-local MVC rollback passed.
 
+MOD-030E2B commits Inventory Adjustments list/create/details GET presentation to AngularDefault. Details preserves the
+positive `long` identifier, while Count, Approve, Post and Cancel remain separately permissioned and antiforgery-protected
+mutations. Hosted acceptance passed 15/15 and both 40-route cutover and MVC rollback passed. Demo had no adjustment row,
+so the Details route used an executable above-Int32 identifier check rather than creating business data for a test.
+
 MOD-030E2A commits Stock Transactions and Product Stocks to AngularDefault. Ledger filters remain query-string state;
 manual adjustment, opening-stock creation and positive-ID edit links resolve to dedicated Angular deep links backed by
 the unified stock workspace. Angular loads the requested edit record through the existing permission-protected form API.

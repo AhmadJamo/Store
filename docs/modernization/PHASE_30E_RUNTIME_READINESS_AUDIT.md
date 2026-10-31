@@ -1,6 +1,6 @@
 # MOD-030E — Angular runtime readiness audit
 
-> Status: IN PROGRESS — MOD-030E2A complete
+> Status: IN PROGRESS — MOD-030E2B complete
 > Date: 2026-10-31
 
 ## Finding
@@ -44,6 +44,20 @@ between the rendered Angular Product Stocks screen and its API. Cutover and proc
 authorized routes. The final evidence passed a warning-free Release build, 1,406 backend checks, 215/215 Angular tests
 across 106 files, 121 templates and bundle budgets (327,235 initial bytes; 81,880 largest lazy bytes). Eleven surfaces are
 now AngularDefault and 71 mapped surfaces remain MVC by default. No MVC file, database object or business rule changed.
+
+## MOD-030E2B evidence
+
+InventoryAdjustments now joins the committed AngularDefault set. Index, Create and positive-ID Details GET actions map
+to `/inventory/adjustments`, `/inventory/adjustments/new` and `/inventory/adjustments/{id}`. The cutover resolver now
+parses invariant positive Int64 identifiers because the adjustment aggregate uses `long`; unsafe, zero and negative route
+values still fail closed. Count, Approve, Post and Cancel remain independently authorized antiforgery-protected API/MVC
+mutations and are not in the presentation catalog.
+
+The authenticated hosted suite passed 15/15 with zero failures/skips. Cutover and process-local MVC rollback both passed
+40 authorized routes. Demo contained no adjustment row, so no live Details fixture was claimed; the exact Details target
+was instead covered with a positive identifier above Int32 range. The final gate passed a warning-free Release build,
+1,413 backend checks, 215/215 Angular tests across 106 files, 121 templates and the existing bundle budgets. Twelve
+surfaces are now AngularDefault and 70 mapped surfaces remain MVC by default. No data or schema changed.
 
 Every cohort must add explicit GET-only action mappings, require its existing permissions, pass hosted acceptance and
 exact Angular targets, then pass a process-local MVC rollback. Mutations continue through their independently authorized
