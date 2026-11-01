@@ -114,6 +114,18 @@ are now AngularDefault and 63 mapped surfaces remain MVC by default. No data, sc
 The post-cohort registry correction first exposed Inventory Replenishment as a parity gap. Its dedicated API/Angular slice
 now closes that gap without changing the runtime default; the 63 remaining MVC-default surfaces are mapped again.
 
+## MOD-030E2G evidence
+
+Inventory Replenishment now joins the committed AngularDefault set on its dedicated `/inventory/replenishment` route.
+Only Index GET is in the presentation catalog and its warehouse/search/exception query is preserved. Rule save/activation,
+transfer-draft creation and purchase-request-draft creation remain independently permissioned, antiforgery-protected API/MVC
+mutations. The separate Purchase Replenishment automation route and permissions remain unchanged.
+
+The authenticated hosted suite passed 15/15 with zero failures/skips. Cutover and process-local MVC rollback both passed
+49 authorized routes. The final functional gate passed a warning-free Release build, 1,447 backend checks, 218/218 Angular
+tests across 108 files, 122 templates and bundle budgets (327,391 initial bytes; 81,880 largest lazy bytes). Twenty surfaces
+are now AngularDefault and 62 mapped surfaces remain MVC by default. No schema or MVC file changed.
+
 Every cohort must add explicit GET-only action mappings, require its existing permissions, pass hosted acceptance and
 exact Angular targets, then pass a process-local MVC rollback. Mutations continue through their independently authorized
 API endpoints. No MVC file is removed during MOD-030E.

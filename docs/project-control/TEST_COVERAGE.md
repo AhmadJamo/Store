@@ -2,10 +2,10 @@
 
 ## آخر خط أساس منفذ
 
-أحدث بوابة وظيفية بعد إغلاق parity لـ`MOD-030E2G` في 2026-11-01: Release نجح بلا تحذيرات أو أخطاء،
-وSecurityRegression نجح في 1,443 فحصًا، وAngular نجح في 218/218 اختبارًا عبر 108 ملفات. نجح فحص الوصول الثابت
-لـ122 قالبًا، ونجحت ميزانية الإنتاج عند 327,391/358,400 بايت أولية و81,880/81,920 لأكبر lazy chunk. آخر تشغيل
-Demo مصرح به بقي `MOD-030E2F`: ‏15/15 والقطع/الرجوع على 48 مسارًا؛ Replenishment ينتظر الدليل الحي التالي.
+أحدث بوابة بعد `MOD-030E2G` في 2026-11-01: Release نجح بلا تحذيرات أو أخطاء، وSecurityRegression نجح في
+1,447 فحصًا، وAngular نجح في 218/218 اختبارًا عبر 108 ملفات. نجح فحص الوصول الثابت لـ122 قالبًا، ونجحت ميزانية
+الإنتاج عند 327,391/358,400 بايت أولية و81,880/81,920 لأكبر lazy chunk. تشغيل Demo المصرح به نجح 15/15 بلا
+فشل أو تخطٍ، ونجح القطع والرجوع على 49 مسارًا مصرحًا.
 
 | الأمر | النتيجة | التاريخ |
 |---|---|---|
@@ -39,7 +39,7 @@ Demo مصرح به بقي `MOD-030E2F`: ‏15/15 والقطع/الرجوع عل�
 | MOD-030E2D inventory-tracking cohort | Hosted 15/15; 43-route Angular cutover and MVC rollback; Index-only presentation mapping with every tracking mutation excluded; Release clean, 1,427 backend checks, 215/215 Angular tests, 121 templates and bundle budgets passed | 2026-11-01 |
 | MOD-030E2E stock-movements cohort | Hosted 15/15; 44-route Angular cutover and MVC rollback; read-only Index mapped to the shared location-movements workspace; Release clean, 1,430 backend checks, 215/215 Angular tests, 121 templates and bundle budgets passed | 2026-11-01 |
 | MOD-030E2F warehouse-operations cohort | Four Index GET surfaces batched; hosted 15/15; 48-route Angular cutover and MVC rollback; unsupported WarehouseLocations Create/Edit deep links retained on MVC; Release clean, 1,440 backend checks, 215/215 Angular tests, 121 templates and bundle budgets passed | 2026-11-01 |
-| MOD-030E2G Inventory Replenishment parity | Dedicated Application-backed API and `/inventory/replenishment` workspace; compound permissions and antiforgery proven; Release clean, 1,443 backend checks, 218/218 Angular tests across 108 files, 122 templates and bundle budgets passed; live cutover/rollback pending | 2026-11-01 |
+| MOD-030E2G Inventory Replenishment | Dedicated Application-backed API and `/inventory/replenishment` workspace; compound permissions and antiforgery proven; hosted 15/15 and 49-route cutover/MVC rollback passed; Release clean, 1,447 backend checks, 218/218 Angular tests across 108 files, 122 templates and bundle budgets passed | 2026-11-01 |
 | Live schema integrity (سلامة المخطط الحي) | 147 tables, 420 trusted FKs, zero disabled constraints/indexes or unsafe tenant relations | 2026-10-15 |
 | Web dependency build (بناء الويب واعتماداته) | Release, 4 projects, zero warnings/errors after SAL-120A (نجح) | 2026-10-22 |
 

@@ -154,7 +154,8 @@ WMS-090B2 lets an operator with both replenishment-management and transfer-creat
 `MOD-030E2G` adds the dedicated `/inventory/replenishment` Angular workspace and authenticated API over the same
 `ReplenishmentService` projection. View, rule management, transfer creation and purchase-request creation retain their
 independent permissions, and every mutation retains antiforgery. The existing `/purchases/replenishment` workspace remains
-the separate purchase-automation workflow. Inventory Replenishment stays MVC-default until reversible Index cutover is proven.
+the separate purchase-automation workflow. Its Index GET is now AngularDefault after hosted 15/15 and 49-route cutover/MVC
+rollback evidence; mutations remain outside the presentation catalog.
 
 WMS-090D adds a read-only inventory activity report over current positive ProductStock. The latest actual negative StockTransaction is the outbound activity anchor; stock older than configurable slow/dead thresholds is classified accordingly. Stock received but never issued is kept separate, and positive balances without movement history are surfaced as a data-quality state instead of being hidden or assigned an invented date. The report changes neither quantity nor accounting value.
 

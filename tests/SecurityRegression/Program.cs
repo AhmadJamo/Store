@@ -243,6 +243,23 @@ Check(warehouseOperationsCutoverResolver.Resolve(
         cutoverContext.Request, "LocationMovements", "Move",
         new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null,
     "Unsupported warehouse-location deep links and mutations must remain on MVC");
+var replenishmentCutoverResolver = new PresentationCutoverResolver(Options.Create(
+    new PresentationCutoverOptions
+    {
+        AngularBasePath = "/app",
+        Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["Replenishment"] = PresentationCutoverMode.AngularDefault
+        }
+    }));
+Check(replenishmentCutoverResolver.Resolve(
+        cutoverContext.Request, "Replenishment", "Index",
+        new Microsoft.AspNetCore.Routing.RouteValueDictionary()) == "/app/inventory/replenishment?page=2",
+    "Inventory Replenishment cutover must preserve query strings on its dedicated Angular route");
+Check(replenishmentCutoverResolver.Resolve(
+        cutoverContext.Request, "Replenishment", "Save",
+        new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null,
+    "Inventory Replenishment mutations must stay outside the presentation cutover catalog");
 foreach (var entry in PresentationCutoverRouteCatalog.All)
 {
     var keyParts = entry.Key.Split(':', 2);

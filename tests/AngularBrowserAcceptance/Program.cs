@@ -136,7 +136,8 @@ static async Task RunLiveCutoverAsync(
                  "StockMovements.View",
                  "Warehouses.View",
                  "LocationMovements.View",
-                 "InventoryScanning.View"
+                 "InventoryScanning.View",
+                 "Inventory.Replenishment.View"
              })
     {
         Require(permissions.Contains(requiredPermission),
@@ -193,7 +194,8 @@ static async Task RunLiveCutoverAsync(
         new("/WarehouseLocations?warehouseId=1&query=rack", "/app/inventory/locations?warehouseId=1&query=rack", "Warehouses.View"),
         new("/UnassignedStock?warehouseId=1&sort=quantity-desc", "/app/inventory/putaway?warehouseId=1&sort=quantity-desc", "ProductStock.View"),
         new("/LocationMovements?warehouseId=1&query=transfer", "/app/inventory/location-movements?warehouseId=1&query=transfer", "LocationMovements.View"),
-        new("/InventoryScanning?productScan=cutover-rehearsal", "/app/inventory/scanning?productScan=cutover-rehearsal", "InventoryScanning.View")
+        new("/InventoryScanning?productScan=cutover-rehearsal", "/app/inventory/scanning?productScan=cutover-rehearsal", "InventoryScanning.View"),
+        new("/Replenishment?search=cutover-rehearsal&exceptionsOnly=true", "/app/inventory/replenishment?search=cutover-rehearsal&exceptionsOnly=true", "Inventory.Replenishment.View")
     };
 
     if (permissions.Contains("Customers.View"))
@@ -292,7 +294,8 @@ static async Task RunLiveCutoverAsync(
                                  "InventoryBalances" or "InventoryReservations" or "InventoryInsights" or
                                  "InventoryReconciliation" or "StockTransactions" or "ProductStocks" or
                                  "InventoryAdjustments" or "StockTransfers" or "InventoryTracking" or "StockMovements" or
-                                 "WarehouseLocations" or "UnassignedStock" or "LocationMovements" or "InventoryScanning";
+                                 "WarehouseLocations" or "UnassignedStock" or "LocationMovements" or "InventoryScanning" or
+                                 "Replenishment";
         if (expectsAngular)
         {
             Require(response.Status is 301 or 302 or 307 or 308,

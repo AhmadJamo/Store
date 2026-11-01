@@ -1,29 +1,27 @@
 # المهمة التالية الوحيدة / Next Task
 
-## `MOD-030E2G` — تخطيط إعادة التزويد / Inventory Replenishment Parity and Cutover
+## `MOD-030E3A` — أسطح الكتالوج الرئيسية المشتركة / Shared Catalog Masters Cutover
 
 > الحالة: APPROVED
 
-اكتمل `MOD-030E2F`: أصبحت أربعة أسطح Warehouse Operations ‏AngularDefault في دفعة واحدة، مع بقاء deep links غير
-المدعومة وعمليات الكتابة على MVC/API. نجح hosted ‏15/15 والقطع والرجوع على 48 مسارًا. أصبحت 19 سطحًا مفعلة،
-ويبقى 63 سطحًا mapped يعمل MVC افتراضيًا. أُغلقت فجوة Inventory Replenishment الوظيفية بالمقابل الصحيح.
+اكتمل `MOD-030E2G`: أصبح Inventory Replenishment السطح العشرين AngularDefault بعد hosted ‏15/15 والقطع والرجوع
+49/49. بقي 62 سطحًا mapped يعمل MVC افتراضيًا.
 
-### المتطلب السابق
+### النطاق المحدود
 
-- كشف التدقيق أن `/purchases/replenishment` يخص أتمتة المشتريات وصلاحيات `PurchaseReplenishment.*`، وليس شاشة
-  المخزون المبنية على `ReplenishmentService` وصلاحيات `Inventory.Replenishment.*`.
-- بُني API وAngular workspace الصحيحان على `/inventory/replenishment`، ونجحت اختبارات الوظيفة والصلاحيات.
+- Branches وPaymentMethods وTaxRates فقط؛ الأسطح الثلاثة تشترك في Angular workspace `/products/catalog-masters`.
+- يقتصر كتالوج العرض على Index GET لكل سطح مع حفظ query.
+- Create/update/delete تبقى أوامر API/MVC مستقلة بصلاحياتها وantiforgery، ولا تدخل كتالوج العرض.
 
-### الهدف بعد الموافقة
+### الهدف
 
-- إضافة خريطة GET الدقيقة لـReplenishment Index إلى `/inventory/replenishment` وتفعيل السطح AngularDefault بعد إثبات parity.
-- توسيع مشغل القطع بصلاحية `Inventory.Replenishment.View` وإثبات query preservation.
-- تشغيل hosted acceptance والقطع والـprocess-local MVC rollback.
-- إبقاء Controllers وRazor كاملة كرجوع.
+- تدقيق أن Angular workspace يعرض الأنواع الثلاثة ويطبق صلاحيات كل master بدقة.
+- إضافة خرائط Index GET الثلاث وتفعيل الأسطح AngularDefault كدفعة تشغيلية واحدة.
+- توسيع مشغل cutover المصرح، ثم إثبات AngularDefault وprocess-local MVC rollback.
+- إبقاء Controllers وRazor كاملة كمسار رجوع.
 
 ### القبول
 
-- اختبارات API وAngular تثبت القراءة والأوامر والصلاحيات وحالات الخطأ دون نقل قواعد العمل إلى الواجهة.
-- Index المصرح يصل إلى `/inventory/replenishment` ويحافظ على query.
-- rollback يعيد المسار إلى MVC دون تنفيذ أي mutation.
-- البوابة الكاملة تبقى خضراء دون حذف ملفات أو تغيير قاعدة البيانات.
+- كل Index مصرح يصل إلى `/products/catalog-masters` ويحافظ على query.
+- أي action غير Index وأي طلب غير GET/HEAD يبقى خارج presentation cutover.
+- hosted acceptance والقطع والرجوع والبوابة الكاملة تبقى خضراء بلا تغيير قاعدة بيانات.

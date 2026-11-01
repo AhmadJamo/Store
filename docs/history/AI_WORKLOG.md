@@ -1776,3 +1776,9 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   `/inventory/replenishment` Angular workspace with URL filters, dirty-state protection and exact generated-document
   navigation. Release built cleanly; 1,443 backend/security checks and 218/218 Angular tests passed. Runtime remains MVC
   for Replenishment until the next cutover/rollback step.
+- 2026-11-01: Completed `MOD-030E2G` runtime cutover. Replenishment Index now redirects to the dedicated
+  `/inventory/replenishment` Angular workspace with query preservation; all rule/document mutations remain outside the
+  presentation catalog. Hosted acceptance passed 15/15, and both AngularDefault and process-local MVC rollback passed
+  49 authorized GET routes. The final evidence passed 1,447 backend checks, 218/218 Angular tests, 122 templates and bundle
+  budgets. The temporary authenticated browser state was deleted and both test hosts were stopped. Twenty surfaces are
+  AngularDefault and 62 remain MVC-default; execution advances to `MOD-030E3A`.

@@ -16,8 +16,8 @@ same-line MVC actions, verifies every mapped Angular route and emits one accepta
 operation, permission, risk and evidence fields. The modernization gate fails when either generated artifact is stale.
 
 `docs/modernization/PHASE_30E_RUNTIME_READINESS_AUDIT.md` distinguishes functional counterparts from runtime defaults:
-All 82 surfaces have verified functional counterparts. MOD-030E2F expands the committed default to nineteen surfaces
-and leaves 63 mapped MVC-default surfaces. Inventory Replenishment now has its own Application-backed API and Angular
+All 82 surfaces have verified functional counterparts. MOD-030E2G expands the committed default to twenty surfaces and
+leaves 62 mapped MVC-default surfaces. Inventory Replenishment now uses its own Application-backed API and Angular
 workspace at `/inventory/replenishment`; it is not the separate Purchase Replenishment automation workflow. WarehouseLocations,
 UnassignedStock, LocationMovements and InventoryScanning
 redirect their Index GET actions to exact Angular workspaces with query preservation. WarehouseLocations Create/Edit
