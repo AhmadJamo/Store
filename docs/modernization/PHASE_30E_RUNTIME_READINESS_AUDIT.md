@@ -1,6 +1,6 @@
 # MOD-030E — Angular runtime readiness audit
 
-> Status: IN PROGRESS — MOD-030E4L complete
+> Status: IN PROGRESS — MOD-030E4M complete
 > Date: 2026-11-01
 
 ## Finding
@@ -223,6 +223,12 @@ Hosted acceptance passed 15/15. Cutover and process-local MVC rollback each pass
 with zero warnings and 1,499 backend checks. Thirty-three surfaces are AngularDefault and 49 remain MVC-default. The
 git-ignored temporary authentication state is retained only for the next local cohorts; no data, schema, inventory,
 accounting, business rule or MVC file changed.
+
+## MOD-030E4M evidence
+
+SupplierCreditNotes Index/query-bound Create/positive-ID Details GET now joins AngularDefault; Create POST remains outside
+cutover. Hosted acceptance passed 15/15, cutover and MVC rollback each passed 91 routes, and Release passed with 1,577
+backend checks. No saved credit note existed for live Details. Forty-four surfaces are AngularDefault and 38 remain MVC.
 
 ## MOD-030E4L evidence
 

@@ -1,18 +1,16 @@
 # المهمة التالية الوحيدة / Next Task
 
-## `MOD-030E4M` — إشعارات ائتمان الموردين / Supplier Credit Notes Cutover
+## `MOD-030E4N` — عكس مستندات الشراء / Purchase Document Reversals Cutover
 
 > الحالة: APPROVED
 
-اكتمل `MOD-030E4L`: أصبحت VendorBills السطح 43 في AngularDefault بعد hosted ‏15/15 والقطع والرجوع 89/89،
-وشمل الاختبار فاتورة موجودة للقراءة فقط. بقي 39 سطحًا mapped يعمل MVC افتراضيًا.
+اكتمل `MOD-030E4M`: أصبحت SupplierCreditNotes السطح 44 بعد hosted ‏15/15 والقطع والرجوع 91/91. لم يوجد إشعار محفوظ لاختبار Details حياً. بقي 38 سطحًا MVC.
 
 ### النطاق المحدود
 
-- SupplierCreditNotes Index GET إلى `/purchases/credit-notes`.
-- Create GET ذو `vendorBillId` الموجب إلى `/purchases/credit-notes/new`.
-- Details GET ذو المعرّف الموجب إلى `/purchases/credit-notes/{id}`.
-- Create POST وكل credit-note mutations تبقى خارج presentation cutover.
+- PurchaseDocumentReversals Index GET إلى `/purchases/reversals`.
+- Details GET ذو المعرّف الموجب إلى `/purchases/reversals/{id}`.
+- Create GET المركب وCreate POST يبقيان خارج الدفعة.
 
 ### القبول
 

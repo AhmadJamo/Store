@@ -222,3 +222,6 @@ POST وكل return mutations خارج التحويل. نجح hosted ‏15/15 و�
 والاستخراج وكل lifecycle/accounting commands خارج التحويل. نجح hosted ‏15/15 والقطع والرجوع 89/89 والبوابة 1,568
 backend دون إنشاء بيانات. أصبحت 43 سطحًا AngularDefault وبقي 39 سطحًا MVC؛ ينتقل التنفيذ إلى `MOD-030E4M`
 لإشعارات ائتمان الموردين.
+اكتمل `MOD-030E4M`: أصبحت SupplierCreditNotes لمسارات Index/Create/Details GET الدقيقة AngularDefault، وبقي Create
+POST خارج التحويل. نجح hosted ‏15/15 والقطع والرجوع 91/91 والبوابة 1,577 backend. أصبحت 44 سطحًا AngularDefault
+وبقي 38 سطحًا MVC؛ ينتقل التنفيذ إلى `MOD-030E4N` لعكس مستندات الشراء.

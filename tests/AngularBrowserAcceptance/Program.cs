@@ -242,7 +242,10 @@ static async Task RunLiveCutoverAsync(
             "GoodsReceiptReturns.View"),
         new("/VendorBills?search=cutover-rehearsal",
             "/app/purchases/bills?search=cutover-rehearsal",
-            "VendorBills.View")
+            "VendorBills.View"),
+        new("/SupplierCreditNotes",
+            "/app/purchases/credit-notes",
+            "SupplierCreditNotes.View")
     };
 
     if (permissions.Contains("Customers.View"))
@@ -431,6 +434,25 @@ static async Task RunLiveCutoverAsync(
             var id = bills.RootElement[0].GetProperty("id").GetInt32();
             routes.Add(new($"/VendorBills/Details/{id}",
                 $"/app/purchases/bills/{id}", "VendorBills.View"));
+            if (permissions.Contains("SupplierCreditNotes.Create"))
+            {
+                routes.Add(new($"/SupplierCreditNotes/Create?vendorBillId={id}",
+                    $"/app/purchases/credit-notes/new?vendorBillId={id}",
+                    "SupplierCreditNotes.Create"));
+            }
+        }
+    }
+    if (permissions.Contains("SupplierCreditNotes.View"))
+    {
+        var response = await authenticated.GetAsync("/api/v1/supplier-credit-notes");
+        Require(response.Ok, $"Supplier-credit-note cutover fixture read returned {response.Status}.");
+        using var creditNotes = JsonDocument.Parse(await response.TextAsync());
+        if (creditNotes.RootElement.ValueKind == JsonValueKind.Array &&
+            creditNotes.RootElement.GetArrayLength() > 0)
+        {
+            var id = creditNotes.RootElement[0].GetProperty("id").GetInt32();
+            routes.Add(new($"/SupplierCreditNotes/Details/{id}",
+                $"/app/purchases/credit-notes/{id}", "SupplierCreditNotes.View"));
         }
     }
     if (permissions.Contains("InventoryAdjustments.View"))
@@ -511,6 +533,8 @@ static async Task RunLiveCutoverAsync(
                          surface is "GoodsReceiptReturns";
         expectsAngular = expectsAngular || options.CutoverMode == "pilot" &&
                          surface is "VendorBills";
+        expectsAngular = expectsAngular || options.CutoverMode == "pilot" &&
+                         surface is "SupplierCreditNotes";
         if (expectsAngular)
         {
             Require(response.Status is 301 or 302 or 307 or 308,

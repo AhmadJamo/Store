@@ -186,6 +186,10 @@ read-only; no saved return existed for a live Details probe, whose exact positiv
 regression-covered. Release and 1,558 backend checks passed without creating data or changing schema, inventory,
 accounting or business rules.
 
+`MOD-030E4M` makes SupplierCreditNotes Index/query-bound Create/positive-ID Details GET presentation AngularDefault.
+Hosted acceptance passed 15/15, cutover and MVC rollback each passed 91 routes, and 1,577 backend checks passed. Create
+POST remains outside cutover; no saved credit note existed for live Details and no data or accounting changed.
+
 `MOD-030E4L` makes VendorBills Index/query-bound Create/positive-ID Details GET presentation `AngularDefault` at
 `/purchases/bills`, `/purchases/bills/new?purchaseOrderId={id}` and `/purchases/bills/{id}`. The positive order ID
 is validated and preserved. Attachment download/upload, extraction review, approval/override, posting and cancellation

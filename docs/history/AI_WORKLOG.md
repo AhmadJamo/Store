@@ -1,5 +1,10 @@
 # AI Work Log
 
+- 2026-11-02: Completed `MOD-030E4M`. SupplierCreditNotes Index/query-bound Create/Details GET now uses exact
+  AngularDefault routes; Create POST remains outside cutover. Hosted 15/15, cutover/rollback 91/91 and 1,577 backend
+  checks passed without data changes. No saved credit note existed for live Details. Forty-four surfaces are
+  AngularDefault and 38 remain MVC-default; execution advances to `MOD-030E4N`.
+
 - 2026-11-02: Completed `MOD-030E4L`. VendorBills Index/query-bound Create/positive-ID Details GET presentation
   now uses exact AngularDefault routes. The positive order query ID is validated and preserved. Attachments, extraction,
   lifecycle and accounting commands retain independent permissions and antiforgery outside presentation cutover. Hosted

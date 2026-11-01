@@ -739,13 +739,49 @@ Check(new[]
               "VendorBills", action,
               new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 17 }) is null),
     "Vendor-bill attachments, lifecycle, extraction and accounting commands must stay outside presentation cutover");
+var supplierCreditNotesCutoverResolver = new PresentationCutoverResolver(Options.Create(
+    new PresentationCutoverOptions
+    {
+        AngularBasePath = "/app",
+        Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["SupplierCreditNotes"] = PresentationCutoverMode.AngularDefault
+        }
+    }));
+cutoverContext.Request.QueryString =
+    new Microsoft.AspNetCore.Http.QueryString("?vendorBillId=17&source=cutover");
+Check(supplierCreditNotesCutoverResolver.Resolve(cutoverContext.Request,
+          "SupplierCreditNotes", "Create",
+          new Microsoft.AspNetCore.Routing.RouteValueDictionary()) ==
+      "/app/purchases/credit-notes/new?vendorBillId=17&source=cutover",
+    "Supplier-credit-note cutover must validate and preserve a query-bound vendor-bill ID");
+cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?page=2");
+Check(supplierCreditNotesCutoverResolver.Resolve(cutoverContext.Request,
+          "SupplierCreditNotes", "Index",
+          new Microsoft.AspNetCore.Routing.RouteValueDictionary()) ==
+      "/app/purchases/credit-notes?page=2" &&
+      supplierCreditNotesCutoverResolver.Resolve(cutoverContext.Request,
+          "SupplierCreditNotes", "Details",
+          new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 17 }) ==
+      "/app/purchases/credit-notes/17?page=2",
+    "Supplier-credit-note cutover must resolve exact list and positive-ID details routes");
+cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?vendorBillId=0");
+Check(supplierCreditNotesCutoverResolver.Resolve(cutoverContext.Request,
+          "SupplierCreditNotes", "Create",
+          new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null &&
+      new long[] { -1, 0 }.All(id =>
+          supplierCreditNotesCutoverResolver.Resolve(cutoverContext.Request,
+              "SupplierCreditNotes", "Details",
+              new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = id }) is null),
+    "Supplier-credit-note cutover must reject unsafe bill and credit-note identifiers");
+cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?page=2");
 foreach (var entry in PresentationCutoverRouteCatalog.All)
 {
     var keyParts = entry.Key.Split(':', 2);
     var routeValues = new Microsoft.AspNetCore.Routing.RouteValueDictionary
         {
             ["id"] = 1, ["productId"] = 1, ["sourcingEventId"] = 1,
-            ["purchaseOrderId"] = 1, ["goodsReceiptId"] = 1
+            ["purchaseOrderId"] = 1, ["goodsReceiptId"] = 1, ["vendorBillId"] = 1
         };
     var rehearsalAngular = new PresentationCutoverResolver(Options.Create(
         new PresentationCutoverOptions
