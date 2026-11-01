@@ -177,6 +177,15 @@ independently authorized with antiforgery outside the presentation catalog. Host
 plus process-local MVC rollback each passed 84 authorized routes using existing order/receipt data read-only. Release and
 1,549 backend checks passed; no data was created and no schema, inventory, accounting or business rule changed.
 
+`MOD-030E4K` makes GoodsReceiptReturns Index/query-bound Create/positive-ID Details GET presentation
+`AngularDefault` at `/purchases/receipt-returns`, `/purchases/receipt-returns/new?goodsReceiptId={id}` and
+`/purchases/receipt-returns/{id}`. The positive receipt ID is validated and preserved. Create POST and every return
+mutation remain independently authorized with antiforgery outside the presentation catalog. Hosted acceptance passed
+15/15, and cutover plus process-local MVC rollback each passed 86 authorized routes. Existing receipt data covered Create
+read-only; no saved return existed for a live Details probe, whose exact positive-ID and unsafe-ID behavior remains
+regression-covered. Release and 1,558 backend checks passed without creating data or changing schema, inventory,
+accounting or business rules.
+
 Angular `/purchases/approval-rules` now administers the existing warehouse/priority-scoped ordered role rules, including activation
 with row-version evidence. Request details expose current-role and immutable step evidence and show Approve/Reject only when both the
 API-authored role eligibility and independent permission allow it. `PurchaseApprovalService` still freezes rule snapshots and advances

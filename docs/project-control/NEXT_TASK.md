@@ -1,18 +1,18 @@
 # المهمة التالية الوحيدة / Next Task
 
-## `MOD-030E4K` — مرتجعات الاستلام / Goods Receipt Returns Cutover
+## `MOD-030E4L` — فواتير الموردين / Vendor Bills Cutover
 
 > الحالة: APPROVED
 
-اكتمل `MOD-030E4J`: أصبحت GoodsReceipts السطح 41 في AngularDefault بعد hosted ‏15/15 والقطع والرجوع 84/84
-للقائمة والإنشاء والتفاصيل والمسح باستخدام بيانات موجودة دون إنشاء بيانات. بقي 41 سطحًا mapped يعمل MVC افتراضيًا.
+اكتمل `MOD-030E4K`: أصبحت GoodsReceiptReturns السطح 42 في AngularDefault بعد hosted ‏15/15 والقطع والرجوع 86/86.
+غُطيت القائمة والإنشاء باستلام موجود، ولم يوجد مرتجع محفوظ لاختبار Details حياً. بقي 40 سطحًا mapped يعمل MVC افتراضيًا.
 
 ### النطاق المحدود
 
-- GoodsReceiptReturns Index GET إلى `/purchases/receipt-returns`.
-- Create GET ذو `goodsReceiptId` الموجب إلى `/purchases/receipt-returns/new`.
-- Details GET ذو المعرّف الموجب إلى `/purchases/receipt-returns/{id}`.
-- Create POST وكل return mutations تبقى خارج presentation cutover.
+- VendorBills Index GET إلى `/purchases/bills` مع الحفاظ على البحث.
+- Create GET ذو `purchaseOrderId` الموجب إلى `/purchases/bills/new`.
+- Details GET ذو المعرّف الموجب إلى `/purchases/bills/{id}`.
+- المرفقات وكل bill lifecycle/accounting mutations تبقى خارج presentation cutover.
 
 ### القبول
 

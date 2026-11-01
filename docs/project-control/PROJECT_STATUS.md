@@ -214,3 +214,7 @@ lifecycle/fulfillment mutations خارج التحويل. نجح hosted ‏15/15 
 receipt/scan/inspection/posting/reversal mutations خارج التحويل. نجح hosted ‏15/15 والقطع والرجوع 84/84 والبوابة
 1,549 backend دون إنشاء بيانات. أصبحت 41 سطحًا AngularDefault وبقي 41 سطحًا MVC؛ ينتقل التنفيذ إلى `MOD-030E4K`
 لمرتجعات استلام البضاعة.
+اكتمل `MOD-030E4K`: أصبحت GoodsReceiptReturns لمسارات Index/Create/Details GET الدقيقة AngularDefault، وبقي Create
+POST وكل return mutations خارج التحويل. نجح hosted ‏15/15 والقطع والرجوع 86/86 والبوابة 1,558 backend دون إنشاء
+بيانات؛ لم يوجد مرتجع محفوظ لاختبار Details حياً. أصبحت 42 سطحًا AngularDefault وبقي 40 سطحًا MVC؛ ينتقل التنفيذ إلى
+`MOD-030E4L` لفواتير الموردين.

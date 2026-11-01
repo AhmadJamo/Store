@@ -16,8 +16,8 @@ same-line MVC actions, verifies every mapped Angular route and emits one accepta
 operation, permission, risk and evidence fields. The modernization gate fails when either generated artifact is stale.
 
 `docs/modernization/PHASE_30E_RUNTIME_READINESS_AUDIT.md` distinguishes functional counterparts from runtime defaults:
-All 82 surfaces have verified functional counterparts. MOD-030E4J expands the committed default to forty-one surfaces and
-leaves 41 mapped MVC-default surfaces. Inventory Replenishment uses its own Application-backed API and Angular
+All 82 surfaces have verified functional counterparts. MOD-030E4K expands the committed default to forty-two surfaces and
+leaves 40 mapped MVC-default surfaces. Inventory Replenishment uses its own Application-backed API and Angular
 workspace at `/inventory/replenishment`; it is not the separate Purchase Replenishment automation workflow. WarehouseLocations,
 UnassignedStock, LocationMovements and InventoryScanning
 redirect their Index GET actions to exact Angular workspaces with query preservation. WarehouseLocations Create/Edit
@@ -62,6 +62,8 @@ PurchaseOrders Index/positive-ID Details now use exact Angular routes. Create-fr
 mutation remain independently authorized and antiforgery protected outside presentation cutover.
 GoodsReceipts Index/query-bound Create/positive-ID Details/Scan GET presentation now uses exact Angular routes. Receipt,
 scan, inspection, posting and reversal mutations remain independently authorized and antiforgery protected outside cutover.
+GoodsReceiptReturns Index/query-bound Create/positive-ID Details GET presentation now uses exact Angular routes. Create POST
+and every return mutation remain independently authorized and antiforgery protected outside presentation cutover.
 
 `tests/AngularBrowserAcceptance` loads an operator-supplied Playwright storage-state into both UI and API contexts. Without
 one, it uses a bounded synthetic session only for design-system presentation checks and reports authenticated API parity as

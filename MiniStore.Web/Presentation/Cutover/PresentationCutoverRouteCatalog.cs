@@ -91,7 +91,10 @@ public static class PresentationCutoverRouteCatalog
             ["GoodsReceipts:Index"] = "/purchases/receipts",
             ["GoodsReceipts:Create"] = "/purchases/receipts/new?purchaseOrderId={purchaseOrderId}",
             ["GoodsReceipts:Details"] = "/purchases/receipts/{id}",
-            ["GoodsReceipts:Scan"] = "/purchases/receipts/{id}/scan"
+            ["GoodsReceipts:Scan"] = "/purchases/receipts/{id}/scan",
+            ["GoodsReceiptReturns:Index"] = "/purchases/receipt-returns",
+            ["GoodsReceiptReturns:Create"] = "/purchases/receipt-returns/new?goodsReceiptId={goodsReceiptId}",
+            ["GoodsReceiptReturns:Details"] = "/purchases/receipt-returns/{id}"
         };
 
     public static IReadOnlyDictionary<string, string> All => Routes;

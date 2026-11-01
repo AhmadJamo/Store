@@ -236,7 +236,10 @@ static async Task RunLiveCutoverAsync(
             "PurchaseOrders.View"),
         new("/GoodsReceipts?search=cutover-rehearsal",
             "/app/purchases/receipts?search=cutover-rehearsal",
-            "GoodsReceipts.View")
+            "GoodsReceipts.View"),
+        new("/GoodsReceiptReturns",
+            "/app/purchases/receipt-returns",
+            "GoodsReceiptReturns.View")
     };
 
     if (permissions.Contains("Customers.View"))
@@ -388,6 +391,25 @@ static async Task RunLiveCutoverAsync(
                 routes.Add(new($"/GoodsReceipts/Scan/{id}",
                     $"/app/purchases/receipts/{id}/scan", "GoodsReceipts.Create"));
             }
+            if (permissions.Contains("GoodsReceiptReturns.Create"))
+            {
+                routes.Add(new($"/GoodsReceiptReturns/Create?goodsReceiptId={id}",
+                    $"/app/purchases/receipt-returns/new?goodsReceiptId={id}",
+                    "GoodsReceiptReturns.Create"));
+            }
+        }
+    }
+    if (permissions.Contains("GoodsReceiptReturns.View"))
+    {
+        var response = await authenticated.GetAsync("/api/v1/goods-receipt-returns");
+        Require(response.Ok, $"Goods-receipt-return cutover fixture read returned {response.Status}.");
+        using var returns = JsonDocument.Parse(await response.TextAsync());
+        if (returns.RootElement.ValueKind == JsonValueKind.Array &&
+            returns.RootElement.GetArrayLength() > 0)
+        {
+            var id = returns.RootElement[0].GetProperty("id").GetInt32();
+            routes.Add(new($"/GoodsReceiptReturns/Details/{id}",
+                $"/app/purchases/receipt-returns/{id}", "GoodsReceiptReturns.View"));
         }
     }
     if (permissions.Contains("InventoryAdjustments.View"))
@@ -464,6 +486,8 @@ static async Task RunLiveCutoverAsync(
                          surface is "PurchaseOrders";
         expectsAngular = expectsAngular || options.CutoverMode == "pilot" &&
                          surface is "GoodsReceipts";
+        expectsAngular = expectsAngular || options.CutoverMode == "pilot" &&
+                         surface is "GoodsReceiptReturns";
         if (expectsAngular)
         {
             Require(response.Status is 301 or 302 or 307 or 308,

@@ -115,6 +115,34 @@ public sealed class PresentationCutoverResolver(IOptions<PresentationCutoverOpti
             }
         }
 
+        if (route.Contains("{goodsReceiptId}", StringComparison.Ordinal))
+        {
+            var goodsReceiptIdValue = routeValues["goodsReceiptId"]?.ToString();
+            var goodsReceiptIdFromQuery = false;
+            if (string.IsNullOrWhiteSpace(goodsReceiptIdValue) &&
+                request.Query.TryGetValue("goodsReceiptId", out var queryGoodsReceiptId))
+            {
+                goodsReceiptIdValue = queryGoodsReceiptId.FirstOrDefault();
+                goodsReceiptIdFromQuery = true;
+            }
+
+            if (!long.TryParse(goodsReceiptIdValue, NumberStyles.Integer,
+                    CultureInfo.InvariantCulture, out var goodsReceiptId) || goodsReceiptId <= 0)
+                return null;
+
+            route = route.Replace("{goodsReceiptId}", goodsReceiptId.ToString(CultureInfo.InvariantCulture),
+                StringComparison.Ordinal);
+
+            if (goodsReceiptIdFromQuery)
+            {
+                var remainingQuery = request.Query
+                    .Where(pair => !string.Equals(pair.Key, "goodsReceiptId", StringComparison.OrdinalIgnoreCase))
+                    .SelectMany(pair => pair.Value.Select(value =>
+                        new KeyValuePair<string, string?>(pair.Key, value)));
+                queryString = QueryString.Create(remainingQuery);
+            }
+        }
+
         var target = settings.AngularBasePath.TrimEnd('/') + route;
         if (!queryString.HasValue)
             return target;
