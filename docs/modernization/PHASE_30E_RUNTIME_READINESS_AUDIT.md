@@ -1,6 +1,6 @@
 # MOD-030E — Angular runtime readiness audit
 
-> Status: IN PROGRESS — MOD-030E3F complete
+> Status: IN PROGRESS — MOD-030E4A complete
 > Date: 2026-11-01
 
 ## Finding
@@ -200,6 +200,17 @@ unchanged Angular suite retains 218/218 tests across 108 files, 122 accessible t
 initial bytes and 81,880 largest lazy bytes. Thirty-one surfaces are AngularDefault and 51 remain MVC-default. The
 git-ignored temporary authentication state is retained only for the next local cohorts; no data, schema, business rule or
 MVC file changed.
+
+## MOD-030E4A evidence
+
+PurchaseAnalytics Index now joins the committed AngularDefault set at `/purchases/analytics` with query preservation.
+`PurchaseAnalytics.View` remains the sole authority and no purchase command or mutation is present in the presentation catalog.
+
+Hosted acceptance passed 15/15. Cutover and process-local MVC rollback each passed 66 authorized routes. Release passed with
+zero warnings and 1,496 backend checks; the unchanged Angular suite retains 218/218 tests across 108 files, 122 accessible
+templates and official bundle budgets of 327,391 initial bytes and 81,880 largest lazy bytes. Thirty-two surfaces are
+AngularDefault and 50 remain MVC-default. The git-ignored temporary authentication state is retained only for the next local
+cohorts; no data, schema, inventory, accounting, business rule or MVC file changed.
 
 Every cohort must add explicit GET-only action mappings, require its existing permissions, pass hosted acceptance and
 exact Angular targets, then pass a process-local MVC rollback. Mutations continue through their independently authorized

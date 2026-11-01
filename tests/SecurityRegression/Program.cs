@@ -396,6 +396,20 @@ Check(productWorkflowCutoverResolver.Resolve(cutoverContext.Request, "ProductTem
       productWorkflowCutoverResolver.Resolve(cutoverContext.Request, "Recipes", "Edit",
           new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["productId"] = 0 }) is null,
     "Product workflow mutations and unsafe recipe identifiers must stay outside presentation cutover");
+var purchaseAnalyticsCutoverResolver = new PresentationCutoverResolver(Options.Create(
+    new PresentationCutoverOptions
+    {
+        AngularBasePath = "/app",
+        Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["PurchaseAnalytics"] = PresentationCutoverMode.AngularDefault
+        }
+    }));
+Check(purchaseAnalyticsCutoverResolver.Resolve(cutoverContext.Request, "PurchaseAnalytics", "Index",
+          new Microsoft.AspNetCore.Routing.RouteValueDictionary()) == "/app/purchases/analytics?page=2" &&
+      purchaseAnalyticsCutoverResolver.Resolve(cutoverContext.Request, "PurchaseAnalytics", "Export",
+          new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null,
+    "Purchase analytics cutover must resolve only the exact read-only Index route");
 foreach (var entry in PresentationCutoverRouteCatalog.All)
 {
     var keyParts = entry.Key.Split(':', 2);

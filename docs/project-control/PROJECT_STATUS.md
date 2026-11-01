@@ -182,3 +182,6 @@ Create/Edit غير المدعومة وكل الكتابات على MVC/API. نج
 اكتمل `MOD-030E3F`: أصبحت ProductTemplates وRecipes AngularDefault لمسارات Index وEdit GET الدقيقة، مع معرّف منتج
 موجب للوصفة وبقاء كل mutations خارج التحويل. نجح hosted ‏15/15 والقطع والرجوع 65/65 والبوابة 1,493 backend.
 أصبحت 31 سطحًا AngularDefault وبقي 51 سطحًا MVC؛ ينتقل التنفيذ إلى `MOD-030E4A` لتحليلات المشتريات القراءة فقط.
+اكتمل `MOD-030E4A`: أصبح PurchaseAnalytics Index القراءة فقط AngularDefault على `/purchases/analytics` مع حفظ
+الفلاتر وبقاء كل أوامر الشراء خارج التحويل. نجح hosted ‏15/15 والقطع والرجوع 66/66 والبوابة 1,496 backend.
+أصبحت 32 سطحًا AngularDefault وبقي 50 سطحًا MVC؛ ينتقل التنفيذ إلى `MOD-030E4B` لمصالحة محاسبة المشتريات.

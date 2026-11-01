@@ -1,5 +1,13 @@
 # AI Work Log
 
+- 2026-11-01: Completed `MOD-030E4A`. PurchaseAnalytics Index now uses the exact `/purchases/analytics`
+  AngularDefault route with query preservation and its existing read-only permission; no purchasing command entered the
+  presentation catalog. Hosted acceptance passed 15/15, and cutover plus MVC rollback each passed 66 authorized routes.
+  Release and 1,496 backend checks passed; the unchanged Angular suite retains 218/218 tests, 122 accessible templates and
+  official bundle budgets. No data, schema, inventory, accounting, business rule or MVC file changed. Thirty-two surfaces
+  are AngularDefault and 50 remain MVC-default; execution advances to read-only `MOD-030E4B`. The git-ignored
+  authentication state remains temporary and uncommitted.
+
 - 2026-11-01: Completed `MOD-030E3F`. ProductTemplates Index and Recipes Index/positive-product Edit now use exact
   AngularDefault routes; every template/recipe mutation remains independently authorized and antiforgery-protected.
   Hosted acceptance passed 15/15; cutover and MVC rollback passed 65 routes including a read-only resolved recipe fixture.

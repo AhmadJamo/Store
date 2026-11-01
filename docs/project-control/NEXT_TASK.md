@@ -1,17 +1,17 @@
 # المهمة التالية الوحيدة / Next Task
 
-## `MOD-030E4A` — تحليلات المشتريات / Purchase Analytics Cutover
+## `MOD-030E4B` — مصالحة محاسبة المشتريات / Purchase Accounting Reconciliation Cutover
 
 > الحالة: APPROVED
 
-اكتمل `MOD-030E3F`: أصبحت ProductTemplates وRecipes السطحين 30 و31 في AngularDefault بعد hosted ‏15/15 والقطع
-والرجوع 65/65. بقي 51 سطحًا mapped يعمل MVC افتراضيًا.
+اكتمل `MOD-030E4A`: أصبح PurchaseAnalytics السطح 32 في AngularDefault بعد hosted ‏15/15 والقطع والرجوع 66/66.
+بقي 50 سطحًا mapped يعمل MVC افتراضيًا.
 
 ### النطاق المحدود
 
-- PurchaseAnalytics Index GET إلى `/purchases/analytics`.
-- الحفاظ على فلاتر query والاعتماد على `PurchaseAnalytics.View` دون منح أي صلاحية كتابة.
-- كل إنشاء/تعديل/اعتماد/ترحيل لمستندات الشراء يبقى خارج هذه الدفعة وخارج كتالوج العرض.
+- PurchaseAccountingReconciliation Index GET إلى `/purchases/accounting-reconciliation`.
+- الحفاظ على `asOfDate` و`exceptionsOnly` والاعتماد على `PurchaseAccountingReconciliation.View`.
+- كل تسوية أو ترحيل أو تعديل مالي يبقى خارج هذه الدفعة وخارج كتالوج العرض.
 
 ### القبول
 

@@ -1,5 +1,5 @@
 # Purchases
-> Status: PROCURE-TO-PAY THROUGH PUR-280 IMPLEMENTED; NEW LEGACY DIRECT PURCHASE CREATION RETIRED | Last reviewed: 2026-10-15
+> Status: PROCURE-TO-PAY THROUGH PUR-280 IMPLEMENTED; NEW LEGACY DIRECT PURCHASE CREATION RETIRED | Last reviewed: 2026-11-01
 
 `SAL-130A` reuses the existing purchasing analytics calculations through a generic Analytics Center provider. Spend, receiving, matching exceptions, supplier/buyer performance, journey and legacy/modern evidence can now be composed into the same tenant-owned personal/shared workspace model as other modules; Purchasing does not own a second dashboard framework.
 
@@ -75,6 +75,11 @@ supplier, buyer, order-status and grouping filters are submitted to `PurchaseAna
 spend, receipts, payables, matching exceptions, supplier performance, buyer workload, trends, KPI definitions and acceptance-stage
 counts. Buyer display names and localized KPI/source explanations are prepared by the API, and drill-through links remain separately
 permission protected. No schema, inventory or accounting effect was introduced; MVC is default.
+
+`MOD-030E4A` makes the exact PurchaseAnalytics Index GET presentation `AngularDefault` at `/purchases/analytics`.
+Query filters are preserved and `PurchaseAnalytics.View` remains authoritative; no purchase command is added to the presentation
+catalog. Hosted acceptance passed 15/15, and cutover plus process-local MVC rollback each passed 66 authorized routes. Release and
+1,496 backend checks passed; no data, schema, inventory, accounting or business-rule change was introduced.
 
 `MOD-023Q` exposes Purchase Accounting Reconciliation through an authenticated, read-only Angular workspace. The browser submits only
 the as-of date and exception filter; `PurchaseAccountingReconciliationService` and its tenant-filtered repository remain authoritative

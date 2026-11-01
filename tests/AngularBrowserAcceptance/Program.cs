@@ -208,7 +208,8 @@ static async Task RunLiveCutoverAsync(
         new("/Roles?source=cutover-rehearsal", "/app/roles?source=cutover-rehearsal", "Roles.View"),
         new("/Roles/Create", "/app/roles/new", "Roles.Create"),
         new("/ProductTemplates?source=cutover-rehearsal", "/app/products/templates?source=cutover-rehearsal", "Products.View"),
-        new("/Recipes?source=cutover-rehearsal", "/app/products/recipes?source=cutover-rehearsal", "Products.View")
+        new("/Recipes?source=cutover-rehearsal", "/app/products/recipes?source=cutover-rehearsal", "Products.View"),
+        new("/PurchaseAnalytics?source=cutover-rehearsal", "/app/purchases/analytics?source=cutover-rehearsal", "PurchaseAnalytics.View")
     };
 
     if (permissions.Contains("Customers.View"))
@@ -343,6 +344,8 @@ static async Task RunLiveCutoverAsync(
                                  "Users" or "Roles";
         expectsAngular = expectsAngular || options.CutoverMode == "pilot" &&
                          surface is "ProductTemplates" or "Recipes";
+        expectsAngular = expectsAngular || options.CutoverMode == "pilot" &&
+                         surface is "PurchaseAnalytics";
         if (expectsAngular)
         {
             Require(response.Status is 301 or 302 or 307 or 308,
