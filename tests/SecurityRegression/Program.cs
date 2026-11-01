@@ -331,6 +331,21 @@ Check(warehousesCutoverResolver.Resolve(cutoverContext.Request, "Warehouses", "C
       warehousesCutoverResolver.Resolve(cutoverContext.Request, "Warehouses", "Edit",
           new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 1 }) is null,
     "Unsupported Warehouse Create/Edit deep links must stay outside presentation cutover");
+var auditEventsCutoverResolver = new PresentationCutoverResolver(Options.Create(
+    new PresentationCutoverOptions
+    {
+        AngularBasePath = "/app",
+        Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["AuditEvents"] = PresentationCutoverMode.AngularDefault
+        }
+    }));
+Check(auditEventsCutoverResolver.Resolve(cutoverContext.Request, "AuditEvents", "Index",
+        new Microsoft.AspNetCore.Routing.RouteValueDictionary()) == "/app/audit-events?page=2",
+    "Tenant Audit Events Index cutover must preserve query strings on the Angular route");
+Check(auditEventsCutoverResolver.Resolve(cutoverContext.Request, "AuditEvents", "Export",
+        new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null,
+    "Audit export must stay outside presentation cutover");
 foreach (var entry in PresentationCutoverRouteCatalog.All)
 {
     var keyParts = entry.Key.Split(':', 2);

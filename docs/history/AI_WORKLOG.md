@@ -1,5 +1,12 @@
 # AI Work Log
 
+- 2026-11-01: Completed `MOD-030E3D`. Tenant AuditEvents Index now uses `/audit-events` as AngularDefault with filter
+  query preservation. Export remains independently authorized and antiforgery-protected, and Platform audit remains behind
+  its separate authentication boundary. Hosted acceptance passed 15/15, cutover and MVC rollback passed 57 routes, and
+  Release plus 1,473 backend checks passed; the unchanged Angular suite retains 218/218 tests, 122 templates and bundle
+  budgets. Temporary authentication state was deleted; no data, schema, business rule or MVC file changed. Twenty-seven
+  surfaces are AngularDefault and 55 remain MVC-default; execution advances to `MOD-030E3E`.
+
 - 2026-11-01: Completed `MOD-030E3C`. Warehouses Index now uses `/warehouses` as AngularDefault with query
   preservation. Unsupported Create/Edit GET deep links and every mutation remain on MVC/API because the current Angular
   workspace does not consume explicit URL form intent. Hosted acceptance passed 15/15, cutover and MVC rollback passed 56

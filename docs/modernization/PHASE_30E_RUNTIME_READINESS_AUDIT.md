@@ -1,6 +1,6 @@
 # MOD-030E — Angular runtime readiness audit
 
-> Status: IN PROGRESS — MOD-030E3C complete
+> Status: IN PROGRESS — MOD-030E3D complete
 > Date: 2026-11-01
 
 ## Finding
@@ -164,6 +164,17 @@ The authenticated hosted suite passed 15/15 with zero failures/skips. Cutover an
 218/218 tests across 108 files, 122 accessible templates and bundle budgets of 327,391 initial bytes and 81,880 largest
 lazy bytes. Twenty-six surfaces are AngularDefault and 56 remain MVC-default. Temporary authentication state was deleted;
 no data, schema, business rule or MVC file changed.
+
+## MOD-030E3D evidence
+
+Tenant AuditEvents Index now joins the committed AngularDefault set at `/audit-events`, preserving filters and paging.
+Export POST remains independently permissioned and antiforgery-protected outside presentation cutover; the Platform audit
+surface and its separate authentication boundary are unchanged.
+
+The authenticated hosted suite passed 15/15. Cutover and process-local MVC rollback each passed 57 authorized routes.
+Release passed with zero warnings and 1,473 backend checks; the unchanged Angular suite retains 218/218 tests, 122
+accessible templates and bundle budgets. Twenty-seven surfaces are AngularDefault and 55 remain MVC-default. Temporary
+authentication state was deleted; no data, schema, business rule or MVC file changed.
 
 Every cohort must add explicit GET-only action mappings, require its existing permissions, pass hosted acceptance and
 exact Angular targets, then pass a process-local MVC rollback. Mutations continue through their independently authorized

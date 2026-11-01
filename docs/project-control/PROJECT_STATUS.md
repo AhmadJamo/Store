@@ -173,3 +173,6 @@ backend، و218/218 Angular، و122 قالبًا، وميزانيات 327,391 ب
 Create/Edit غير المدعومة وكل الكتابات على MVC/API. نجح hosted ‏15/15 والقطع والرجوع 56/56، والبوابة 1,469 backend
 مع بقاء 218/218 Angular و122 قالبًا وميزانيات الحزم خضراء. أصبحت 26 سطحًا AngularDefault وبقي 56 سطحًا MVC؛
 ينتقل التنفيذ إلى `MOD-030E3D` لسجل التدقيق.
+اكتمل `MOD-030E3D`: أصبح tenant AuditEvents Index AngularDefault على `/audit-events` مع حفظ الفلاتر، وبقي Export POST
+محميًا ومستقلًا خارج التحويل، دون لمس Platform audit. نجح hosted ‏15/15 والقطع والرجوع 57/57 والبوابة 1,473 backend.
+أصبحت 27 سطحًا AngularDefault وبقي 55 سطحًا MVC؛ ينتقل التنفيذ إلى `MOD-030E3E` للمستخدمين والأدوار.

@@ -1,7 +1,7 @@
 # Security assessment
 > Status: PARTIALLY VERIFIED
 > Source of truth: Static inspection and focused executable regression checks
-> Last reviewed: 2026-10-27
+> Last reviewed: 2026-11-01
 
 ## Internal Angular API boundary (2026-10-24)
 
@@ -311,3 +311,11 @@ Rule and decision APIs require authentication, tenant context, independent permi
 one-to-three ordered tenant roles, warehouse scope, priority range and row-version activation. Decision commands route-match identity,
 bound notes and return forbid when the user lacks the frozen current role. `PurchaseApprovalService` re-resolves tenant roles and
 advances/rejects the instance and request transactionally; Angular visibility cannot skip or fabricate an approval step.
+
+## Angular tenant-audit cutover update (2026-11-01)
+
+`MOD-030E3D` makes only tenant `AuditEvents.Index` GET `AngularDefault` at `/audit-events`, preserving all filter query
+values. CSV export remains an independently authorized (`AuditEvents.View` + `AuditEvents.Export`), antiforgery-protected
+POST outside presentation cutover. Sensitive-field projection remains server-authoritative through
+`AuditEvents.ViewSensitive`, and the separately authenticated Platform audit surface is unchanged. Hosted acceptance passed
+15/15 and both the 57-route cutover and MVC rollback passed.
