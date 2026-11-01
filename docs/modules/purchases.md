@@ -139,6 +139,12 @@ with row-version evidence. Request details expose current-role and immutable ste
 API-authored role eligibility and independent permission allow it. `PurchaseApprovalService` still freezes rule snapshots and advances
 or rejects the request/instance atomically; the browser cannot select a rule, skip a step or impersonate an approver.
 
+`MOD-030E4D` makes the exact PurchaseApprovalRules Index GET presentation `AngularDefault` at
+`/purchases/approval-rules`. `PurchaseApprovalRules.View` remains authoritative; create and status commands retain
+`PurchaseApprovalRules.Manage` plus antiforgery outside the presentation catalog. Hosted acceptance passed 15/15, and
+cutover plus process-local MVC rollback each passed 69 authorized routes. Release and 1,505 backend checks passed; no data,
+schema, inventory, accounting or business-rule change was introduced.
+
 Recognized purchase prerequisite errors are actionable in the shared notification experience. Accounting, warehouse-account, approval-rule, payment-method, matching-tolerance, tax, supplier, product, measurement-unit and document-number failures link to their owning setup or master-data screen when the current user has the required management permission; otherwise the user is told to contact an administrator. Quantity, date and other ordinary validation errors do not receive unrelated setup links. This is the default pattern for future user-resolvable errors.
 
 Successful purchase transitions now include a localized "What is the next step?" explanation and permission-aware action. Specific mappings guide users through request submission/approval, supplier sourcing, quotation entry/comparison/award, order approval/confirmation, goods receipt, vendor billing, payment and agreement activation. Other successful purchase POST redirects receive a safe document/list fallback so the workflow never ends without guidance; destination controllers remain authoritative for access.

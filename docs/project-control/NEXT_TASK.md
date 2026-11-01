@@ -1,17 +1,17 @@
 # المهمة التالية الوحيدة / Next Task
 
-## `MOD-030E4D` — قواعد اعتماد الشراء / Purchase Approval Rules Cutover
+## `MOD-030E4E` — قوالب الشراء / Purchase Templates Cutover
 
 > الحالة: APPROVED
 
-اكتمل `MOD-030E4C`: أصبح PurchaseReplenishment السطح 34 في AngularDefault بعد hosted ‏15/15 والقطع والرجوع
-68/68. بقي 48 سطحًا mapped يعمل MVC افتراضيًا.
+اكتمل `MOD-030E4D`: أصبح PurchaseApprovalRules السطح 35 في AngularDefault بعد hosted ‏15/15 والقطع والرجوع
+69/69. بقي 47 سطحًا mapped يعمل MVC افتراضيًا.
 
 ### النطاق المحدود
 
-- PurchaseApprovalRules Index GET إلى `/purchases/approval-rules`.
-- الحفاظ على query والاعتماد على `PurchaseApprovalRules.View`.
-- إنشاء القاعدة وتغيير حالتها يبقيان بصلاحية Manage وantiforgery وخارج كتالوج العرض.
+- PurchaseTemplates Index GET إلى `/purchases/templates`.
+- الحفاظ على query والاعتماد على `PurchaseTemplates.View`.
+- CreateFromOrder وGenerate وSetActive تبقى بصلاحياتها وantiforgery وخارج كتالوج العرض.
 
 ### القبول
 
