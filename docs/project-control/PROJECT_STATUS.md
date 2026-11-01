@@ -179,3 +179,6 @@ Create/Edit غير المدعومة وكل الكتابات على MVC/API. نج
 اكتمل `MOD-030E3E`: أصبحت Users وRoles AngularDefault لمسارات Index/Create/Edit GET الدقيقة، مع معرّف موجب للتعديل
 وبقاء كل mutations خارج التحويل. نجح hosted ‏15/15 والقطع والرجوع 62/62 والبوابة 1,485 backend دون إنشاء بيانات هوية.
 أصبحت 29 سطحًا AngularDefault وبقي 53 سطحًا MVC؛ ينتقل التنفيذ إلى `MOD-030E3F` للقوالب والوصفات.
+اكتمل `MOD-030E3F`: أصبحت ProductTemplates وRecipes AngularDefault لمسارات Index وEdit GET الدقيقة، مع معرّف منتج
+موجب للوصفة وبقاء كل mutations خارج التحويل. نجح hosted ‏15/15 والقطع والرجوع 65/65 والبوابة 1,493 backend.
+أصبحت 31 سطحًا AngularDefault وبقي 51 سطحًا MVC؛ ينتقل التنفيذ إلى `MOD-030E4A` لتحليلات المشتريات القراءة فقط.

@@ -125,7 +125,8 @@ The ERP SaaS Foundation Blueprint is imported as a non-authoritative planning re
     - [x] MOD-030E3C cut over Warehouses Index GET to `/warehouses`; keep unsupported Create/Edit deep links and every mutation on MVC/API until Angular consumes explicit URL intent. Completed 2026-11-01 with hosted 15/15, 56-route cutover/rollback and 1,469 backend checks.
     - [x] MOD-030E3D cut over AuditEvents Index GET to `/audit-events`; keep export POST independently authorized and outside presentation cutover. Completed 2026-11-01 with hosted 15/15, 57-route cutover/rollback and 1,473 backend checks.
     - [x] MOD-030E3E cut over Users Index/Create and Roles Index/Create/Edit GET presentation to exact Angular routes; keep identity/role mutations independently authorized and outside presentation cutover. Completed 2026-11-01 with hosted 15/15, 62-route cutover/rollback and 1,485 backend checks.
-    - [ ] MOD-030E3F cut over ProductTemplates Index and Recipes Index/positive-product Edit GET presentation to exact Angular routes; keep template/recipe mutations outside presentation cutover.
+    - [x] MOD-030E3F cut over ProductTemplates Index and Recipes Index/positive-product Edit GET presentation to exact Angular routes; keep template/recipe mutations outside presentation cutover. Completed 2026-11-01 with hosted 15/15, 65-route cutover/rollback and 1,493 backend checks.
+    - [ ] MOD-030E4A cut over the read-only PurchaseAnalytics Index GET presentation to `/purchases/analytics`; preserve filters and keep every purchasing mutation outside presentation cutover.
 
 - [x] FND-000 import the ERP SaaS Foundation Blueprint with provenance and classify its ten capabilities against the actual MiniStore repository.
 - [ ] FND-010 inventory production environments and operational ownership, approve RPO/RTO and backup retention, run an isolated restore drill, reconcile restored financial/inventory/tenant/outbox state and record evidence.

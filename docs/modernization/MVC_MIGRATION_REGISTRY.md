@@ -11,7 +11,7 @@
 - Angular application routes discovered: 184.
 - MVC surfaces with a verified Angular counterpart: 82.
 - Remaining MVC surfaces without a mapped Angular counterpart: 0.
-- Allowlisted Angular-default cutover actions: 65.
+- Allowlisted Angular-default cutover actions: 68.
 
 Remaining surfaces: none.
 
@@ -98,7 +98,7 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | ProductStocks | Create.cshtml | Angular Default | /inventory/stocks | MiniStore.Web/Views/ProductStocks/Create.cshtml |
 | ProductStocks | Edit.cshtml | Angular Default | /inventory/stocks | MiniStore.Web/Views/ProductStocks/Edit.cshtml |
 | ProductStocks | Index.cshtml | Angular Default | /inventory/stocks | MiniStore.Web/Views/ProductStocks/Index.cshtml |
-| ProductTemplates | Index.cshtml | Angular Pilot | /products/templates | MiniStore.Web/Views/ProductTemplates/Index.cshtml |
+| ProductTemplates | Index.cshtml | Angular Default | /products/templates | MiniStore.Web/Views/ProductTemplates/Index.cshtml |
 | Public | Index.cshtml | Angular Pilot | /welcome, /pricing | MiniStore.Web/Views/Public/Index.cshtml |
 | Public | Pricing.cshtml | Angular Pilot | /welcome, /pricing | MiniStore.Web/Views/Public/Pricing.cshtml |
 | PurchaseAccountingReconciliation | Index.cshtml | Angular Pilot | /purchases/accounting-reconciliation | MiniStore.Web/Views/PurchaseAccountingReconciliation/Index.cshtml |
@@ -131,8 +131,8 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | PurchaseSourcing | Index.cshtml | Angular Pilot | /purchases/sourcing | MiniStore.Web/Views/PurchaseSourcing/Index.cshtml |
 | PurchaseSourcing | Print.cshtml | Angular Pilot | /purchases/sourcing | MiniStore.Web/Views/PurchaseSourcing/Print.cshtml |
 | PurchaseTemplates | Index.cshtml | Angular Pilot | /purchases/templates | MiniStore.Web/Views/PurchaseTemplates/Index.cshtml |
-| Recipes | Edit.cshtml | Angular Pilot | /products/recipes | MiniStore.Web/Views/Recipes/Edit.cshtml |
-| Recipes | Index.cshtml | Angular Pilot | /products/recipes | MiniStore.Web/Views/Recipes/Index.cshtml |
+| Recipes | Edit.cshtml | Angular Default | /products/recipes | MiniStore.Web/Views/Recipes/Edit.cshtml |
+| Recipes | Index.cshtml | Angular Default | /products/recipes | MiniStore.Web/Views/Recipes/Index.cshtml |
 | Replenishment | Index.cshtml | Angular Default | /inventory/replenishment | MiniStore.Web/Views/Replenishment/Index.cshtml |
 | Roles | Create.cshtml | Angular Default | /roles | MiniStore.Web/Views/Roles/Create.cshtml |
 | Roles | Edit.cshtml | Angular Default | /roles | MiniStore.Web/Views/Roles/Edit.cshtml |
@@ -377,11 +377,11 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | ProductStocks | Edit | GET | Angular Default | /inventory/stocks | /inventory/stocks/{id}/edit | MiniStore.Web/Controllers/Inventory/ProductStocksController.cs |
 | ProductStocks | Edit | POST | Angular Default | /inventory/stocks | /inventory/stocks/{id}/edit | MiniStore.Web/Controllers/Inventory/ProductStocksController.cs |
 | ProductStocks | Index | GET | Angular Default | /inventory/stocks | /inventory/stocks | MiniStore.Web/Controllers/Inventory/ProductStocksController.cs |
-| ProductTemplates | Assign | POST | Angular Pilot | /products/templates | — | MiniStore.Web/Controllers/Catalog/ProductTemplatesController.cs |
-| ProductTemplates | Create | POST | Angular Pilot | /products/templates | — | MiniStore.Web/Controllers/Catalog/ProductTemplatesController.cs |
-| ProductTemplates | Generate | POST | Angular Pilot | /products/templates | — | MiniStore.Web/Controllers/Catalog/ProductTemplatesController.cs |
-| ProductTemplates | Index | GET | Angular Pilot | /products/templates | — | MiniStore.Web/Controllers/Catalog/ProductTemplatesController.cs |
-| ProductTemplates | Preview | POST | Angular Pilot | /products/templates | — | MiniStore.Web/Controllers/Catalog/ProductTemplatesController.cs |
+| ProductTemplates | Assign | POST | Angular Default | /products/templates | — | MiniStore.Web/Controllers/Catalog/ProductTemplatesController.cs |
+| ProductTemplates | Create | POST | Angular Default | /products/templates | — | MiniStore.Web/Controllers/Catalog/ProductTemplatesController.cs |
+| ProductTemplates | Generate | POST | Angular Default | /products/templates | — | MiniStore.Web/Controllers/Catalog/ProductTemplatesController.cs |
+| ProductTemplates | Index | GET | Angular Default | /products/templates | /products/templates | MiniStore.Web/Controllers/Catalog/ProductTemplatesController.cs |
+| ProductTemplates | Preview | POST | Angular Default | /products/templates | — | MiniStore.Web/Controllers/Catalog/ProductTemplatesController.cs |
 | Public | Index | GET | Angular Pilot | /welcome, /pricing | — | MiniStore.Web/Controllers/PublicController.cs |
 | Public | Pricing | GET | Angular Pilot | /welcome, /pricing | — | MiniStore.Web/Controllers/PublicController.cs |
 | PurchaseAccountingReconciliation | Index | GET | Angular Pilot | /purchases/accounting-reconciliation | — | MiniStore.Web/Controllers/Purchases/PurchaseAccountingReconciliationController.cs |
@@ -441,9 +441,9 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | PurchaseTemplates | RedirectToAction | GET, POST | Angular Pilot | /purchases/templates | — | MiniStore.Web/Controllers/Purchases/PurchaseTemplatesController.cs |
 | PurchaseTemplates | RedirectToAction | GET, POST | Angular Pilot | /purchases/templates | — | MiniStore.Web/Controllers/Purchases/PurchaseTemplatesController.cs |
 | PurchaseTemplates | RedirectToAction | GET, POST | Angular Pilot | /purchases/templates | — | MiniStore.Web/Controllers/Purchases/PurchaseTemplatesController.cs |
-| Recipes | Edit | GET | Angular Pilot | /products/recipes | — | MiniStore.Web/Controllers/Catalog/RecipesController.cs |
-| Recipes | Edit | POST | Angular Pilot | /products/recipes | — | MiniStore.Web/Controllers/Catalog/RecipesController.cs |
-| Recipes | Index | GET | Angular Pilot | /products/recipes | — | MiniStore.Web/Controllers/Catalog/RecipesController.cs |
+| Recipes | Edit | GET | Angular Default | /products/recipes | /products/recipes/{productId} | MiniStore.Web/Controllers/Catalog/RecipesController.cs |
+| Recipes | Edit | POST | Angular Default | /products/recipes | /products/recipes/{productId} | MiniStore.Web/Controllers/Catalog/RecipesController.cs |
+| Recipes | Index | GET | Angular Default | /products/recipes | /products/recipes | MiniStore.Web/Controllers/Catalog/RecipesController.cs |
 | Replenishment | CreatePurchaseRequestDraft | POST | Angular Default | /inventory/replenishment | — | MiniStore.Web/Controllers/Inventory/ReplenishmentController.cs |
 | Replenishment | CreateTransferDraft | GET, POST | Angular Default | /inventory/replenishment | — | MiniStore.Web/Controllers/Inventory/ReplenishmentController.cs |
 | Replenishment | Index | GET | Angular Default | /inventory/replenishment | /inventory/replenishment | MiniStore.Web/Controllers/Inventory/ReplenishmentController.cs |

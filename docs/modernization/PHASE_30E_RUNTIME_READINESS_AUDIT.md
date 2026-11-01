@@ -1,6 +1,6 @@
 # MOD-030E — Angular runtime readiness audit
 
-> Status: IN PROGRESS — MOD-030E3E complete
+> Status: IN PROGRESS — MOD-030E3F complete
 > Date: 2026-11-01
 
 ## Finding
@@ -186,6 +186,20 @@ Hosted acceptance passed 15/15. Cutover and process-local MVC rollback each pass
 existing editable role resolved read-only through the API. Release passed with zero warnings and 1,485 backend checks.
 Twenty-nine surfaces are AngularDefault and 53 remain MVC-default. Temporary authentication state was deleted and no
 identity data, schema, business rule or MVC file changed.
+
+## MOD-030E3F evidence
+
+ProductTemplates Index and Recipes Index/positive-product Edit now join the committed AngularDefault set on
+`/products/templates`, `/products/recipes` and `/products/recipes/{productId}`. Recipe Edit rejects missing/non-positive
+identifiers. All template and recipe mutations remain independently permissioned and antiforgery-protected outside
+presentation cutover.
+
+Hosted acceptance passed 15/15. Cutover and process-local MVC rollback each passed 65 authorized routes, including an
+existing recipe resolved read-only through the API. Release passed with zero warnings and 1,493 backend checks; the
+unchanged Angular suite retains 218/218 tests across 108 files, 122 accessible templates and bundle budgets of 327,391
+initial bytes and 81,880 largest lazy bytes. Thirty-one surfaces are AngularDefault and 51 remain MVC-default. The
+git-ignored temporary authentication state is retained only for the next local cohorts; no data, schema, business rule or
+MVC file changed.
 
 Every cohort must add explicit GET-only action mappings, require its existing permissions, pass hosted acceptance and
 exact Angular targets, then pass a process-local MVC rollback. Mutations continue through their independently authorized

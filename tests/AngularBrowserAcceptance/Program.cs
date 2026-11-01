@@ -206,7 +206,9 @@ static async Task RunLiveCutoverAsync(
         new("/Users?source=cutover-rehearsal", "/app/users?source=cutover-rehearsal", "Users.View"),
         new("/Users/Create", "/app/users/new", "Users.Create"),
         new("/Roles?source=cutover-rehearsal", "/app/roles?source=cutover-rehearsal", "Roles.View"),
-        new("/Roles/Create", "/app/roles/new", "Roles.Create")
+        new("/Roles/Create", "/app/roles/new", "Roles.Create"),
+        new("/ProductTemplates?source=cutover-rehearsal", "/app/products/templates?source=cutover-rehearsal", "Products.View"),
+        new("/Recipes?source=cutover-rehearsal", "/app/products/recipes?source=cutover-rehearsal", "Products.View")
     };
 
     if (permissions.Contains("Customers.View"))
@@ -275,6 +277,18 @@ static async Task RunLiveCutoverAsync(
             }
         }
     }
+    if (permissions.Contains("Products.Edit"))
+    {
+        var response = await authenticated.GetAsync("/api/v1/recipes");
+        Require(response.Ok, $"Recipe cutover fixture read returned {response.Status}.");
+        using var recipes = JsonDocument.Parse(await response.TextAsync());
+        if (recipes.RootElement.ValueKind == JsonValueKind.Array && recipes.RootElement.GetArrayLength() > 0)
+        {
+            var productId = recipes.RootElement[0].GetProperty("productId").GetInt32();
+            routes.Add(new($"/Recipes/Edit?productId={productId}",
+                $"/app/products/recipes/{productId}", "Products.Edit"));
+        }
+    }
     if (permissions.Contains("InventoryAdjustments.View"))
     {
         var response = await authenticated.GetAsync("/api/v1/inventory-adjustments");
@@ -327,6 +341,8 @@ static async Task RunLiveCutoverAsync(
                                  "Replenishment" or "Branches" or "PaymentMethods" or "TaxRates" or
                                  "ProductCategories" or "ProductAttributes" or "Warehouses" or "AuditEvents" or
                                  "Users" or "Roles";
+        expectsAngular = expectsAngular || options.CutoverMode == "pilot" &&
+                         surface is "ProductTemplates" or "Recipes";
         if (expectsAngular)
         {
             Require(response.Status is 301 or 302 or 307 or 308,

@@ -373,6 +373,29 @@ Check(new long[] { -1, 0 }.All(id => identityAdministrationCutoverResolver.Resol
       identityAdministrationCutoverResolver.Resolve(cutoverContext.Request, "Roles", "Delete",
           new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 17 }) is null,
     "Role cutover must reject unsafe identifiers and keep mutations outside presentation cutover");
+var productWorkflowCutoverResolver = new PresentationCutoverResolver(Options.Create(
+    new PresentationCutoverOptions
+    {
+        AngularBasePath = "/app",
+        Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["ProductTemplates"] = PresentationCutoverMode.AngularDefault,
+            ["Recipes"] = PresentationCutoverMode.AngularDefault
+        }
+    }));
+Check(productWorkflowCutoverResolver.Resolve(cutoverContext.Request, "ProductTemplates", "Index",
+          new Microsoft.AspNetCore.Routing.RouteValueDictionary()) == "/app/products/templates?page=2" &&
+      productWorkflowCutoverResolver.Resolve(cutoverContext.Request, "Recipes", "Index",
+          new Microsoft.AspNetCore.Routing.RouteValueDictionary()) == "/app/products/recipes?page=2" &&
+      productWorkflowCutoverResolver.Resolve(cutoverContext.Request, "Recipes", "Edit",
+          new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["productId"] = 17 }) ==
+      "/app/products/recipes/17?page=2",
+    "Product template and recipe GET cutover must resolve exact Angular routes");
+Check(productWorkflowCutoverResolver.Resolve(cutoverContext.Request, "ProductTemplates", "Generate",
+          new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null &&
+      productWorkflowCutoverResolver.Resolve(cutoverContext.Request, "Recipes", "Edit",
+          new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["productId"] = 0 }) is null,
+    "Product workflow mutations and unsafe recipe identifiers must stay outside presentation cutover");
 foreach (var entry in PresentationCutoverRouteCatalog.All)
 {
     var keyParts = entry.Key.Split(':', 2);

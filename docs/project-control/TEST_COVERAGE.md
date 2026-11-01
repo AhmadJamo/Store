@@ -45,6 +45,7 @@
 | MOD-030E3C Warehouses Index | Exact Index GET maps to `/warehouses`; unsupported Create/Edit deep links and all writes excluded; hosted 15/15 and 56-route cutover/MVC rollback passed; Release clean, 1,469 backend checks, 218/218 Angular tests across 108 files, 122 templates and bundle budgets passed | 2026-11-01 |
 | MOD-030E3D tenant AuditEvents | Exact Index GET maps to `/audit-events`; export and Platform audit excluded; hosted 15/15 and 57-route cutover/MVC rollback passed; Release clean, 1,473 backend checks, 218/218 Angular tests across 108 files, 122 templates and bundle budgets passed | 2026-11-01 |
 | MOD-030E3E Users and Roles | Exact Users Index/Create and Roles Index/Create/Edit GET routes; mutations excluded; hosted 15/15 and 62-route cutover/MVC rollback passed; Release clean and 1,485 backend checks passed without test identity creation | 2026-11-01 |
+| MOD-030E3F Product Templates and Recipes | Exact ProductTemplates Index and Recipes Index/positive-product Edit GET routes; mutations excluded; hosted 15/15 and 65-route cutover/MVC rollback passed; Release clean and 1,493 backend checks passed without data creation | 2026-11-01 |
 | Live schema integrity (سلامة المخطط الحي) | 147 tables, 420 trusted FKs, zero disabled constraints/indexes or unsafe tenant relations | 2026-10-15 |
 | Web dependency build (بناء الويب واعتماداته) | Release, 4 projects, zero warnings/errors after SAL-120A (نجح) | 2026-10-22 |
 

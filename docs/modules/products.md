@@ -67,3 +67,11 @@ validated as positive, moved into the Angular path and removed from the remainin
 preserved. Create, status and value-save commands remain independently authorized and antiforgery-protected outside the
 presentation catalog. Hosted acceptance passed 15/15, and both the 55-route cutover and MVC rollback passed. No data,
 schema or business rule changed.
+
+## Product workflow cutover update (2026-11-01)
+
+`MOD-030E3F` makes ProductTemplates Index and Recipes Index/positive-product Edit GET presentation `AngularDefault` on
+`/products/templates`, `/products/recipes` and `/products/recipes/{productId}`. The recipe identifier must be positive;
+query values are preserved. Assign/Create/Preview/Generate and recipe-save commands remain independently authorized and
+antiforgery-protected outside the presentation catalog. Hosted acceptance passed 15/15, and both the 65-route cutover and
+MVC rollback passed. Release and 1,493 backend checks passed; no data, schema or business rule changed.
