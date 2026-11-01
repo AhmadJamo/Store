@@ -227,7 +227,10 @@ static async Task RunLiveCutoverAsync(
             "PurchaseRequests.View"),
         new("/PurchaseRequests/Create",
             "/app/purchases/requests/new",
-            "PurchaseRequests.Create")
+            "PurchaseRequests.Create"),
+        new("/PurchaseSourcing?status=1&search=cutover-rehearsal",
+            "/app/purchases/sourcing?status=1&search=cutover-rehearsal",
+            "PurchaseSourcing.View")
     };
 
     if (permissions.Contains("Customers.View"))
@@ -320,6 +323,21 @@ static async Task RunLiveCutoverAsync(
                 $"/app/purchases/requests/{id}", "PurchaseRequests.View"));
         }
     }
+    if (permissions.Contains("PurchaseSourcing.View"))
+    {
+        var response = await authenticated.GetAsync("/api/v1/purchase-sourcing");
+        Require(response.Ok, $"Purchase-sourcing cutover fixture read returned {response.Status}.");
+        using var sourcingEvents = JsonDocument.Parse(await response.TextAsync());
+        if (sourcingEvents.RootElement.ValueKind == JsonValueKind.Array &&
+            sourcingEvents.RootElement.GetArrayLength() > 0)
+        {
+            var id = sourcingEvents.RootElement[0].GetProperty("id").GetInt32();
+            routes.Add(new($"/PurchaseSourcing/Details/{id}",
+                $"/app/purchases/sourcing/{id}", "PurchaseSourcing.View"));
+            routes.Add(new($"/PurchaseSourcing/Print/{id}",
+                $"/app/purchases/sourcing/{id}/print", "PurchaseSourcing.View"));
+        }
+    }
     if (permissions.Contains("InventoryAdjustments.View"))
     {
         var response = await authenticated.GetAsync("/api/v1/inventory-adjustments");
@@ -386,6 +404,8 @@ static async Task RunLiveCutoverAsync(
                          surface is "PurchaseTemplates";
         expectsAngular = expectsAngular || options.CutoverMode == "pilot" &&
                          surface is "PurchaseRequests";
+        expectsAngular = expectsAngular || options.CutoverMode == "pilot" &&
+                         surface is "PurchaseSourcing";
         if (expectsAngular)
         {
             Require(response.Status is 301 or 302 or 307 or 308,

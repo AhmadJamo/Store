@@ -147,6 +147,13 @@ Hosted acceptance passed 15/15, and cutover plus process-local MVC rollback each
 existing request read through the API. Release and 1,516 backend checks passed; no data was created and no schema,
 inventory, accounting or business rule changed.
 
+`MOD-030E4G` makes PurchaseSourcing Index/positive-ID Details/Print GET presentation `AngularDefault` at
+`/purchases/sourcing`, `/purchases/sourcing/{id}` and `/purchases/sourcing/{id}/print`. Create/direct forms, attachment
+download and every mutation remain independently authorized outside the presentation catalog. Hosted acceptance passed
+15/15, and cutover plus process-local MVC rollback each passed 76 authorized routes including an existing sourcing event
+resolved read-only through the API. Release and 1,524 backend checks passed; no data was created and no schema, inventory,
+accounting or business rule changed.
+
 Angular `/purchases/approval-rules` now administers the existing warehouse/priority-scoped ordered role rules, including activation
 with row-version evidence. Request details expose current-role and immutable step evidence and show Approve/Reject only when both the
 API-authored role eligibility and independent permission allow it. `PurchaseApprovalService` still freezes rule snapshots and advances

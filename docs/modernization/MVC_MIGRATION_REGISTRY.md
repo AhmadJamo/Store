@@ -11,7 +11,7 @@
 - Angular application routes discovered: 184.
 - MVC surfaces with a verified Angular counterpart: 82.
 - Remaining MVC surfaces without a mapped Angular counterpart: 0.
-- Allowlisted Angular-default cutover actions: 76.
+- Allowlisted Angular-default cutover actions: 79.
 
 Remaining surfaces: none.
 
@@ -125,11 +125,11 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | PurchaseServiceAcceptances | Create.cshtml | Angular Pilot | /purchases/service-acceptances | MiniStore.Web/Views/PurchaseServiceAcceptances/Create.cshtml |
 | PurchaseServiceAcceptances | Details.cshtml | Angular Pilot | /purchases/service-acceptances | MiniStore.Web/Views/PurchaseServiceAcceptances/Details.cshtml |
 | PurchaseServiceAcceptances | Index.cshtml | Angular Pilot | /purchases/service-acceptances | MiniStore.Web/Views/PurchaseServiceAcceptances/Index.cshtml |
-| PurchaseSourcing | Create.cshtml | Angular Pilot | /purchases/sourcing | MiniStore.Web/Views/PurchaseSourcing/Create.cshtml |
-| PurchaseSourcing | Details.cshtml | Angular Pilot | /purchases/sourcing | MiniStore.Web/Views/PurchaseSourcing/Details.cshtml |
-| PurchaseSourcing | Direct.cshtml | Angular Pilot | /purchases/sourcing | MiniStore.Web/Views/PurchaseSourcing/Direct.cshtml |
-| PurchaseSourcing | Index.cshtml | Angular Pilot | /purchases/sourcing | MiniStore.Web/Views/PurchaseSourcing/Index.cshtml |
-| PurchaseSourcing | Print.cshtml | Angular Pilot | /purchases/sourcing | MiniStore.Web/Views/PurchaseSourcing/Print.cshtml |
+| PurchaseSourcing | Create.cshtml | Angular Default | /purchases/sourcing | MiniStore.Web/Views/PurchaseSourcing/Create.cshtml |
+| PurchaseSourcing | Details.cshtml | Angular Default | /purchases/sourcing | MiniStore.Web/Views/PurchaseSourcing/Details.cshtml |
+| PurchaseSourcing | Direct.cshtml | Angular Default | /purchases/sourcing | MiniStore.Web/Views/PurchaseSourcing/Direct.cshtml |
+| PurchaseSourcing | Index.cshtml | Angular Default | /purchases/sourcing | MiniStore.Web/Views/PurchaseSourcing/Index.cshtml |
+| PurchaseSourcing | Print.cshtml | Angular Default | /purchases/sourcing | MiniStore.Web/Views/PurchaseSourcing/Print.cshtml |
 | PurchaseTemplates | Index.cshtml | Angular Default | /purchases/templates | MiniStore.Web/Views/PurchaseTemplates/Index.cshtml |
 | Recipes | Edit.cshtml | Angular Default | /products/recipes | MiniStore.Web/Views/Recipes/Edit.cshtml |
 | Recipes | Index.cshtml | Angular Default | /products/recipes | MiniStore.Web/Views/Recipes/Index.cshtml |
@@ -430,14 +430,14 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | PurchaseServiceAcceptances | Create | POST | Angular Pilot | /purchases/service-acceptances | — | MiniStore.Web/Controllers/Purchases/PurchaseServiceAcceptancesController.cs |
 | PurchaseServiceAcceptances | Details | GET | Angular Pilot | /purchases/service-acceptances | — | MiniStore.Web/Controllers/Purchases/PurchaseServiceAcceptancesController.cs |
 | PurchaseServiceAcceptances | Index | GET | Angular Pilot | /purchases/service-acceptances | — | MiniStore.Web/Controllers/Purchases/PurchaseServiceAcceptancesController.cs |
-| PurchaseSourcing | Attachment | GET | Angular Pilot | /purchases/sourcing | — | MiniStore.Web/Controllers/Purchases/PurchaseSourcingController.cs |
-| PurchaseSourcing | Create | GET | Angular Pilot | /purchases/sourcing | — | MiniStore.Web/Controllers/Purchases/PurchaseSourcingController.cs |
-| PurchaseSourcing | Create | POST | Angular Pilot | /purchases/sourcing | — | MiniStore.Web/Controllers/Purchases/PurchaseSourcingController.cs |
-| PurchaseSourcing | Details | GET | Angular Pilot | /purchases/sourcing | — | MiniStore.Web/Controllers/Purchases/PurchaseSourcingController.cs |
-| PurchaseSourcing | Direct | GET | Angular Pilot | /purchases/sourcing | — | MiniStore.Web/Controllers/Purchases/PurchaseSourcingController.cs |
-| PurchaseSourcing | Direct | POST | Angular Pilot | /purchases/sourcing | — | MiniStore.Web/Controllers/Purchases/PurchaseSourcingController.cs |
-| PurchaseSourcing | Index | GET | Angular Pilot | /purchases/sourcing | — | MiniStore.Web/Controllers/Purchases/PurchaseSourcingController.cs |
-| PurchaseSourcing | Print | GET | Angular Pilot | /purchases/sourcing | — | MiniStore.Web/Controllers/Purchases/PurchaseSourcingController.cs |
+| PurchaseSourcing | Attachment | GET | Angular Default | /purchases/sourcing | — | MiniStore.Web/Controllers/Purchases/PurchaseSourcingController.cs |
+| PurchaseSourcing | Create | GET | Angular Default | /purchases/sourcing | — | MiniStore.Web/Controllers/Purchases/PurchaseSourcingController.cs |
+| PurchaseSourcing | Create | POST | Angular Default | /purchases/sourcing | — | MiniStore.Web/Controllers/Purchases/PurchaseSourcingController.cs |
+| PurchaseSourcing | Details | GET | Angular Default | /purchases/sourcing | /purchases/sourcing/{id} | MiniStore.Web/Controllers/Purchases/PurchaseSourcingController.cs |
+| PurchaseSourcing | Direct | GET | Angular Default | /purchases/sourcing | — | MiniStore.Web/Controllers/Purchases/PurchaseSourcingController.cs |
+| PurchaseSourcing | Direct | POST | Angular Default | /purchases/sourcing | — | MiniStore.Web/Controllers/Purchases/PurchaseSourcingController.cs |
+| PurchaseSourcing | Index | GET | Angular Default | /purchases/sourcing | /purchases/sourcing | MiniStore.Web/Controllers/Purchases/PurchaseSourcingController.cs |
+| PurchaseSourcing | Print | GET | Angular Default | /purchases/sourcing | /purchases/sourcing/{id}/print | MiniStore.Web/Controllers/Purchases/PurchaseSourcingController.cs |
 | PurchaseTemplates | RedirectToAction | GET, POST | Angular Default | /purchases/templates | — | MiniStore.Web/Controllers/Purchases/PurchaseTemplatesController.cs |
 | PurchaseTemplates | RedirectToAction | GET, POST | Angular Default | /purchases/templates | — | MiniStore.Web/Controllers/Purchases/PurchaseTemplatesController.cs |
 | PurchaseTemplates | RedirectToAction | GET, POST | Angular Default | /purchases/templates | — | MiniStore.Web/Controllers/Purchases/PurchaseTemplatesController.cs |

@@ -516,6 +516,37 @@ Check(new long[] { -1, 0 }.All(id =>
               "PurchaseRequests", action,
               new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 17 }) is null),
     "Purchase-request lifecycle mutations and unsafe identifiers must stay outside presentation cutover");
+var purchaseSourcingCutoverResolver = new PresentationCutoverResolver(Options.Create(
+    new PresentationCutoverOptions
+    {
+        AngularBasePath = "/app",
+        Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["PurchaseSourcing"] = PresentationCutoverMode.AngularDefault
+        }
+    }));
+Check(purchaseSourcingCutoverResolver.Resolve(cutoverContext.Request,
+          "PurchaseSourcing", "Index",
+          new Microsoft.AspNetCore.Routing.RouteValueDictionary()) ==
+      "/app/purchases/sourcing?page=2" &&
+      purchaseSourcingCutoverResolver.Resolve(cutoverContext.Request,
+          "PurchaseSourcing", "Details",
+          new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 17 }) ==
+      "/app/purchases/sourcing/17?page=2" &&
+      purchaseSourcingCutoverResolver.Resolve(cutoverContext.Request,
+          "PurchaseSourcing", "Print",
+          new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 17 }) ==
+      "/app/purchases/sourcing/17/print?page=2",
+    "Purchase-sourcing cutover must resolve exact list, positive-ID details and print routes");
+Check(new long[] { -1, 0 }.All(id =>
+          purchaseSourcingCutoverResolver.Resolve(cutoverContext.Request,
+              "PurchaseSourcing", "Details",
+              new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = id }) is null) &&
+      new[] { "Create", "Direct", "Attachment" }.All(action =>
+          purchaseSourcingCutoverResolver.Resolve(cutoverContext.Request,
+              "PurchaseSourcing", action,
+              new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 17 }) is null),
+    "Purchase-sourcing create/direct, attachment and unsafe identifiers must stay outside presentation cutover");
 foreach (var entry in PresentationCutoverRouteCatalog.All)
 {
     var keyParts = entry.Key.Split(':', 2);

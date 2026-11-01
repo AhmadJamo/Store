@@ -200,3 +200,6 @@ Create/Edit غير المدعومة وكل الكتابات على MVC/API. نج
 اكتمل `MOD-030E4F`: أصبحت PurchaseRequests لمسارات Index/Create/Details GET الدقيقة AngularDefault، وبقيت كل lifecycle
 mutations خارج التحويل. نجح hosted ‏15/15 والقطع والرجوع 73/73 والبوابة 1,516 backend دون إنشاء بيانات.
 أصبحت 37 سطحًا AngularDefault وبقي 45 سطحًا MVC؛ ينتقل التنفيذ إلى `MOD-030E4G` لتوريد طلبات الشراء.
+اكتمل `MOD-030E4G`: أصبحت PurchaseSourcing لمسارات Index/Details/Print GET الدقيقة AngularDefault، وبقيت نماذج
+Create/Direct وتنزيل المرفقات وكل mutations خارج التحويل. نجح hosted ‏15/15 والقطع والرجوع 76/76 والبوابة 1,524 backend
+دون إنشاء بيانات. أصبحت 38 سطحًا AngularDefault وبقي 44 سطحًا MVC؛ ينتقل التنفيذ إلى `MOD-030E4H` لعروض الموردين.

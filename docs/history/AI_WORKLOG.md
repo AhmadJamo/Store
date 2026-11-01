@@ -1,5 +1,13 @@
 # AI Work Log
 
+- 2026-11-02: Completed `MOD-030E4G`. PurchaseSourcing Index/positive-ID Details/Print now use exact AngularDefault
+  routes with query preservation. Create/direct forms, attachment download and all mutations retain independent
+  permissions and antiforgery outside presentation cutover. Hosted acceptance passed 15/15, and cutover plus MVC rollback
+  each passed 76 authorized routes including an existing sourcing event resolved read-only through the API. Release and
+  1,524 backend checks passed; no data was created and no schema, inventory, accounting, business rule or MVC file changed.
+  Thirty-eight surfaces are AngularDefault and 44 remain MVC-default; execution advances to `MOD-030E4H`. The git-ignored
+  authentication state remains temporary and uncommitted.
+
 - 2026-11-01: Completed `MOD-030E4F`. PurchaseRequests Index/Create/positive-ID Details now use exact
   AngularDefault routes with query preservation. Create POST and Submit/Cancel/Approve/Reject retain independent
   permissions and antiforgery outside presentation cutover. Hosted acceptance passed 15/15, and cutover plus MVC rollback
