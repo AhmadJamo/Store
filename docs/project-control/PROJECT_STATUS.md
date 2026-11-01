@@ -154,3 +154,7 @@ AngularDefault وبقي 67 سطحًا mapped على MVC؛ ينتقل التنف�
 Angular و121 قالبًا. أصبحت 19 سطحًا AngularDefault وبقي 63 سطحًا mapped على MVC؛ ينتقل التنفيذ إلى `MOD-030E2G`.
 كشف التدقيق الدلالي قبل `MOD-030E2G` أن 62 من هذه الأسطح mapped، بينما Inventory Replenishment يحتاج API/Angular
 خاصين به قبل القطع. صُحح السجل دون تغيير runtime أو قاعدة البيانات، وأصبحت المهمة إغلاق parity ثم cutover.
+أُغلق جزء parity من `MOD-030E2G`: أضيف API مستقل فوق خدمات التطبيق وواجهة `/inventory/replenishment` ثنائية اللغة
+مع فصل صلاحيات العرض/الإدارة/إنشاء التحويل/طلب الشراء وحماية antiforgery. نجح Release بلا تحذيرات، و1,443 فحص
+backend، و218/218 Angular، و122 قالبًا، وميزانيات 327,391 بايت أولية و81,880 لأكبر lazy chunk. بقي Index على MVC
+إلى أن ينجح القطع والرجوع الحيان.

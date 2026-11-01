@@ -151,9 +151,10 @@ WMS-090B1 adds a live forecast from Approved stock transfers. Confirmed inbound 
 
 WMS-090B2 lets an operator with both replenishment-management and transfer-create permissions convert a still-needed suggestion with a preferred source into a Draft StockTransfer. Creation recalculates projected shortage and source Available, enforces branch replenishment/transfer access, selects one sufficient pickable source position when exact source is required, uses the capacity-aware putaway suggestion when exact destination is required, and refuses a duplicate open intent for the same rule. It never submits, approves, reserves or posts the draft.
 
-Angular parity for this reviewed Inventory Replenishment workflow remains explicit work under `MOD-030E2G`. The existing
-`/purchases/replenishment` workspace controls purchase automation and different permissions; it is not a valid counterpart.
-Inventory Replenishment stays MVC-default until its own API/workspace and reversible Index cutover are proven.
+`MOD-030E2G` adds the dedicated `/inventory/replenishment` Angular workspace and authenticated API over the same
+`ReplenishmentService` projection. View, rule management, transfer creation and purchase-request creation retain their
+independent permissions, and every mutation retains antiforgery. The existing `/purchases/replenishment` workspace remains
+the separate purchase-automation workflow. Inventory Replenishment stays MVC-default until reversible Index cutover is proven.
 
 WMS-090D adds a read-only inventory activity report over current positive ProductStock. The latest actual negative StockTransaction is the outbound activity anchor; stock older than configurable slow/dead thresholds is classified accordingly. Stock received but never issued is kept separate, and positive balances without movement history are surfaced as a data-quality state instead of being hidden or assigned an invented date. The report changes neither quantity nor accounting value.
 

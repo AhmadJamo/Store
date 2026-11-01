@@ -540,6 +540,11 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'inventory/replenishment',
+        canDeactivate: [(component) => component.canDeactivate()],
+        loadComponent: () => import('./features/inventory/replenishment-page').then((module) => module.ReplenishmentPageComponent),
+      },
+      {
         path: 'inventory/insights',
         loadComponent: () =>
           import('./features/inventory/inventory-analysis-page').then(

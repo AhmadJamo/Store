@@ -6,19 +6,16 @@
 
 اكتمل `MOD-030E2F`: أصبحت أربعة أسطح Warehouse Operations ‏AngularDefault في دفعة واحدة، مع بقاء deep links غير
 المدعومة وعمليات الكتابة على MVC/API. نجح hosted ‏15/15 والقطع والرجوع على 48 مسارًا. أصبحت 19 سطحًا مفعلة،
-ويبقى 63 سطحًا يعمل MVC افتراضيًا: 62 mapped وفجوة Inventory Replenishment واحدة.
+ويبقى 63 سطحًا mapped يعمل MVC افتراضيًا. أُغلقت فجوة Inventory Replenishment الوظيفية بالمقابل الصحيح.
 
 ### المتطلب السابق
 
 - كشف التدقيق أن `/purchases/replenishment` يخص أتمتة المشتريات وصلاحيات `PurchaseReplenishment.*`، وليس شاشة
   المخزون المبنية على `ReplenishmentService` وصلاحيات `Inventory.Replenishment.*`.
-- يجب بناء API وAngular workspace الصحيحين قبل أي تحويل.
+- بُني API وAngular workspace الصحيحان على `/inventory/replenishment`، ونجحت اختبارات الوظيفة والصلاحيات.
 
 ### الهدف بعد الموافقة
 
-- إضافة عقد API فوق `ReplenishmentService` دون تجاوز Application layer، مع View/Manage والصلاحيات الإضافية الدقيقة
-  لإنشاء transfer أو purchase request، وantiforgery لكل mutation.
-- إضافة Angular workspace ثنائي اللغة وRTL لعرض القواعد والاقتراحات وتنفيذ الأوامر المتاحة فقط.
 - إضافة خريطة GET الدقيقة لـReplenishment Index إلى `/inventory/replenishment` وتفعيل السطح AngularDefault بعد إثبات parity.
 - توسيع مشغل القطع بصلاحية `Inventory.Replenishment.View` وإثبات query preservation.
 - تشغيل hosted acceptance والقطع والـprocess-local MVC rollback.

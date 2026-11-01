@@ -2230,6 +2230,31 @@ Check(replenishmentPurchaseDraftPolicies.SetEquals([
         $"{PermissionAuthorizeAttribute.PolicyPrefix}Inventory.Replenishment.Manage",
         $"{PermissionAuthorizeAttribute.PolicyPrefix}PurchaseRequests.Create"]),
     "Creating replenishment purchase demand must require both replenishment management and purchase-request creation permissions");
+var replenishmentApi = typeof(ReplenishmentApiController);
+Check(replenishmentApi.GetCustomAttribute<RouteAttribute>()?.Template == "api/v1/replenishment" &&
+      replenishmentApi.GetMethod(nameof(ReplenishmentApiController.Get))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
+          $"{PermissionAuthorizeAttribute.PolicyPrefix}Inventory.Replenishment.View",
+    "Angular inventory replenishment must use its own view-protected API instead of purchase automation");
+var replenishmentApiMutations = new[]
+{
+    nameof(ReplenishmentApiController.SaveRule),
+    nameof(ReplenishmentApiController.SetActive),
+    nameof(ReplenishmentApiController.CreateTransferDraft),
+    nameof(ReplenishmentApiController.CreatePurchaseRequestDraft)
+};
+Check(replenishmentApiMutations.All(name => replenishmentApi.GetMethod(name)!
+          .GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null),
+    "Every inventory replenishment API mutation must require antiforgery validation");
+Check(replenishmentApi.GetMethod(nameof(ReplenishmentApiController.CreateTransferDraft))!
+          .GetCustomAttributes<PermissionAuthorizeAttribute>().Select(x => x.Policy).ToHashSet().SetEquals([
+              $"{PermissionAuthorizeAttribute.PolicyPrefix}Inventory.Replenishment.Manage",
+              $"{PermissionAuthorizeAttribute.PolicyPrefix}StockTransfers.Create"]) &&
+      replenishmentApi.GetMethod(nameof(ReplenishmentApiController.CreatePurchaseRequestDraft))!
+          .GetCustomAttributes<PermissionAuthorizeAttribute>().Select(x => x.Policy).ToHashSet().SetEquals([
+              $"{PermissionAuthorizeAttribute.PolicyPrefix}Inventory.Replenishment.Manage",
+              $"{PermissionAuthorizeAttribute.PolicyPrefix}PurchaseRequests.Create"]),
+    "Inventory replenishment document commands must preserve their compound permission boundaries");
 Check(ReplenishmentPurchaseDemandService.CalculatePurchaseQuantity(23m, 1m, 10m, 3m, 2m) == 4m,
     "Replenishment purchase demand must convert stock demand and round up to supplier minimums and order multiples");
 

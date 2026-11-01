@@ -5,9 +5,9 @@
 
 ## Finding
 
-Functional migration coverage and runtime cutover are different measures. The corrected source-driven registry maps 81
-of 82 MVC surfaces to verified Angular routes. Inventory Replenishment remains the one explicit counterpart gap; its MVC
-service uses `Inventory.Replenishment.*`, while `/purchases/replenishment` is a different automation workflow using
+Functional migration coverage and runtime cutover are different measures. The corrected source-driven registry now maps
+all 82 MVC surfaces to verified Angular routes. Inventory Replenishment maps to `/inventory/replenishment` and uses
+`Inventory.Replenishment.*`; `/purchases/replenishment` remains a different automation workflow using
 `PurchaseReplenishment.*`. Before MOD-030E, committed configuration marked five surfaces and 29 GET actions as
 `AngularDefault`; 77 surfaces remained MVC by default.
 
@@ -111,8 +111,8 @@ The authenticated hosted suite passed 15/15 with zero failures/skips. Cutover an
 across 106 files, 121 templates and bundle budgets (327,235 initial bytes; 81,880 largest lazy bytes). Nineteen surfaces
 are now AngularDefault and 63 mapped surfaces remain MVC by default. No data, schema, business rule or MVC file changed.
 
-The post-cohort registry correction classifies those 63 MVC-default surfaces as 62 verified counterparts plus the one
-Inventory Replenishment parity gap. It changes no runtime route or presentation mode.
+The post-cohort registry correction first exposed Inventory Replenishment as a parity gap. Its dedicated API/Angular slice
+now closes that gap without changing the runtime default; the 63 remaining MVC-default surfaces are mapped again.
 
 Every cohort must add explicit GET-only action mappings, require its existing permissions, pass hosted acceptance and
 exact Angular targets, then pass a process-local MVC rollback. Mutations continue through their independently authorized

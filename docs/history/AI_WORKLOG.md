@@ -1770,3 +1770,9 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   surface. Runtime remains unchanged at 19 AngularDefault surfaces and 63 MVC-default surfaces (62 mapped plus one parity
   gap); no database, business rule, controller or presentation mode changed. `MOD-030E2G` now builds the correct
   `/inventory/replenishment` API/Angular slice before reversible cutover.
+- 2026-11-01: Completed the functional-parity half of `MOD-030E2G`. Added a dedicated authenticated Inventory
+  Replenishment API over the existing Application services, explicit named option DTOs instead of persistence entities,
+  independently permissioned and antiforgery-protected rule/transfer/purchase-demand commands, and a bilingual RTL-safe
+  `/inventory/replenishment` Angular workspace with URL filters, dirty-state protection and exact generated-document
+  navigation. Release built cleanly; 1,443 backend/security checks and 218/218 Angular tests passed. Runtime remains MVC
+  for Replenishment until the next cutover/rollback step.

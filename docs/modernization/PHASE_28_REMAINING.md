@@ -1,6 +1,6 @@
 # Phase 28 — Shared and remaining Angular migration
 
-> Status: CORRECTED — `MOD-028A..G` complete on 2026-10-30; one Inventory Replenishment parity gap was exposed on 2026-11-01
+> Status: COMPLETE AFTER CORRECTION — the Inventory Replenishment parity gap exposed on 2026-11-01 now has a dedicated counterpart
 >
 > Presentation default: MVC until a separate cutover approval.
 
@@ -103,9 +103,8 @@ from Inventory Replenishment to the distinct Purchase Replenishment automation w
 
 ## Confirmed remaining surfaces
 
-Inventory Replenishment. It requires an API and Angular workspace over `ReplenishmentService` with
-`Inventory.Replenishment.View/Manage`; the existing `/purchases/replenishment` route is a separate automation workflow and
-cannot be used as its counterpart.
+None. Inventory Replenishment now uses its dedicated `/inventory/replenishment` counterpart over `ReplenishmentService`
+with `Inventory.Replenishment.*`; the separate `/purchases/replenishment` automation workflow remains distinct.
 
 The shared MVC layout/error/notification partials are presentation infrastructure, not independent routes. Angular already
 has shell, normalized Problem Details and recovery presentation. Health endpoints are machine endpoints and do not need a

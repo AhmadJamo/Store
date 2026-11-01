@@ -16,11 +16,17 @@ same-line MVC actions, verifies every mapped Angular route and emits one accepta
 operation, permission, risk and evidence fields. The modernization gate fails when either generated artifact is stale.
 
 `docs/modernization/PHASE_30E_RUNTIME_READINESS_AUDIT.md` distinguishes functional counterparts from runtime defaults:
-81 of 82 surfaces have verified functional counterparts. MOD-030E2F expands the committed default to nineteen surfaces
-and leaves 63 MVC-default surfaces: 62 mapped plus the explicit Inventory Replenishment parity gap. WarehouseLocations,
+All 82 surfaces have verified functional counterparts. MOD-030E2F expands the committed default to nineteen surfaces
+and leaves 63 mapped MVC-default surfaces. Inventory Replenishment now has its own Application-backed API and Angular
+workspace at `/inventory/replenishment`; it is not the separate Purchase Replenishment automation workflow. WarehouseLocations,
 UnassignedStock, LocationMovements and InventoryScanning
 redirect their Index GET actions to exact Angular workspaces with query preservation. WarehouseLocations Create/Edit
 deep links remain MVC because the Angular workspace does not yet consume create/edit URL intent; all writes remain MVC/API.
+
+`ReplenishmentApiController` exposes the reviewed inventory projection plus independently protected rule, transfer-draft
+and purchase-request-draft commands. Angular `features/inventory/replenishment*` owns bilingual filters, rule editing,
+server-authored forecast evidence and exact generated-document navigation. `ReplenishmentService` and
+`ReplenishmentPurchaseDemandService` retain all calculation and mutation authority.
 
 `tests/AngularBrowserAcceptance` loads an operator-supplied Playwright storage-state into both UI and API contexts. Without
 one, it uses a bounded synthetic session only for design-system presentation checks and reports authenticated API parity as
