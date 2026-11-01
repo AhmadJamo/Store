@@ -1,5 +1,13 @@
 # AI Work Log
 
+- 2026-11-02: Completed `MOD-030E4L`. VendorBills Index/query-bound Create/positive-ID Details GET presentation
+  now uses exact AngularDefault routes. The positive order query ID is validated and preserved. Attachments, extraction,
+  lifecycle and accounting commands retain independent permissions and antiforgery outside presentation cutover. Hosted
+  acceptance passed 15/15, and cutover plus MVC rollback each passed 89 authorized routes including an existing bill
+  resolved read-only. Release and 1,568 backend checks passed without creating data or changing schema, inventory,
+  accounting, business rules or MVC. Forty-three surfaces are AngularDefault and 39 remain MVC-default; execution advances
+  to `MOD-030E4M`.
+
 - 2026-11-02: Completed `MOD-030E4K`. GoodsReceiptReturns Index/query-bound Create/positive-ID Details GET
   presentation now uses exact AngularDefault routes. The positive receipt query ID is validated and preserved. Create POST
   and every return mutation retain independent permissions and antiforgery outside presentation cutover. Hosted acceptance

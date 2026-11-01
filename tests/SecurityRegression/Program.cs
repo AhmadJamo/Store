@@ -694,6 +694,51 @@ Check(goodsReceiptReturnsCutoverResolver.Resolve(cutoverContext.Request,
               new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = id }) is null),
     "Goods-receipt-return cutover must reject unsafe receipt and return identifiers");
 cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?page=2");
+var vendorBillsCutoverResolver = new PresentationCutoverResolver(Options.Create(
+    new PresentationCutoverOptions
+    {
+        AngularBasePath = "/app",
+        Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["VendorBills"] = PresentationCutoverMode.AngularDefault
+        }
+    }));
+cutoverContext.Request.QueryString =
+    new Microsoft.AspNetCore.Http.QueryString("?purchaseOrderId=17&source=cutover");
+Check(vendorBillsCutoverResolver.Resolve(cutoverContext.Request,
+          "VendorBills", "Create",
+          new Microsoft.AspNetCore.Routing.RouteValueDictionary()) ==
+      "/app/purchases/bills/new?purchaseOrderId=17&source=cutover",
+    "Vendor-bill cutover must validate and preserve a query-bound purchase-order ID");
+cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?page=2");
+Check(vendorBillsCutoverResolver.Resolve(cutoverContext.Request,
+          "VendorBills", "Index",
+          new Microsoft.AspNetCore.Routing.RouteValueDictionary()) ==
+      "/app/purchases/bills?page=2" &&
+      vendorBillsCutoverResolver.Resolve(cutoverContext.Request,
+          "VendorBills", "Details",
+          new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 17 }) ==
+      "/app/purchases/bills/17?page=2",
+    "Vendor-bill cutover must resolve exact list and positive-ID details routes");
+cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?purchaseOrderId=0");
+Check(vendorBillsCutoverResolver.Resolve(cutoverContext.Request,
+          "VendorBills", "Create",
+          new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null &&
+      new long[] { -1, 0 }.All(id =>
+          vendorBillsCutoverResolver.Resolve(cutoverContext.Request,
+              "VendorBills", "Details",
+              new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = id }) is null),
+    "Vendor-bill cutover must reject unsafe order and bill identifiers");
+cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?page=2");
+Check(new[]
+      {
+          "Approve", "ApproveOverride", "Post", "Cancel", "DownloadAttachment",
+          "AddAttachment", "GenerateExtraction", "ReviewExtraction"
+      }.All(action =>
+          vendorBillsCutoverResolver.Resolve(cutoverContext.Request,
+              "VendorBills", action,
+              new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 17 }) is null),
+    "Vendor-bill attachments, lifecycle, extraction and accounting commands must stay outside presentation cutover");
 foreach (var entry in PresentationCutoverRouteCatalog.All)
 {
     var keyParts = entry.Key.Split(':', 2);

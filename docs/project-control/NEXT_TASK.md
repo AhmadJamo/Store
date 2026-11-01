@@ -1,18 +1,18 @@
 # المهمة التالية الوحيدة / Next Task
 
-## `MOD-030E4L` — فواتير الموردين / Vendor Bills Cutover
+## `MOD-030E4M` — إشعارات ائتمان الموردين / Supplier Credit Notes Cutover
 
 > الحالة: APPROVED
 
-اكتمل `MOD-030E4K`: أصبحت GoodsReceiptReturns السطح 42 في AngularDefault بعد hosted ‏15/15 والقطع والرجوع 86/86.
-غُطيت القائمة والإنشاء باستلام موجود، ولم يوجد مرتجع محفوظ لاختبار Details حياً. بقي 40 سطحًا mapped يعمل MVC افتراضيًا.
+اكتمل `MOD-030E4L`: أصبحت VendorBills السطح 43 في AngularDefault بعد hosted ‏15/15 والقطع والرجوع 89/89،
+وشمل الاختبار فاتورة موجودة للقراءة فقط. بقي 39 سطحًا mapped يعمل MVC افتراضيًا.
 
 ### النطاق المحدود
 
-- VendorBills Index GET إلى `/purchases/bills` مع الحفاظ على البحث.
-- Create GET ذو `purchaseOrderId` الموجب إلى `/purchases/bills/new`.
-- Details GET ذو المعرّف الموجب إلى `/purchases/bills/{id}`.
-- المرفقات وكل bill lifecycle/accounting mutations تبقى خارج presentation cutover.
+- SupplierCreditNotes Index GET إلى `/purchases/credit-notes`.
+- Create GET ذو `vendorBillId` الموجب إلى `/purchases/credit-notes/new`.
+- Details GET ذو المعرّف الموجب إلى `/purchases/credit-notes/{id}`.
+- Create POST وكل credit-note mutations تبقى خارج presentation cutover.
 
 ### القبول
 

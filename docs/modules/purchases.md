@@ -186,6 +186,14 @@ read-only; no saved return existed for a live Details probe, whose exact positiv
 regression-covered. Release and 1,558 backend checks passed without creating data or changing schema, inventory,
 accounting or business rules.
 
+`MOD-030E4L` makes VendorBills Index/query-bound Create/positive-ID Details GET presentation `AngularDefault` at
+`/purchases/bills`, `/purchases/bills/new?purchaseOrderId={id}` and `/purchases/bills/{id}`. The positive order ID
+is validated and preserved. Attachment download/upload, extraction review, approval/override, posting and cancellation
+remain independently authorized with antiforgery where applicable outside the presentation catalog. Hosted acceptance
+passed 15/15, and cutover plus process-local MVC rollback each passed 89 authorized routes including an existing bill
+resolved read-only. Release and 1,568 backend checks passed without creating data or changing schema, inventory,
+accounting or business rules.
+
 Angular `/purchases/approval-rules` now administers the existing warehouse/priority-scoped ordered role rules, including activation
 with row-version evidence. Request details expose current-role and immutable step evidence and show Approve/Reject only when both the
 API-authored role eligibility and independent permission allow it. `PurchaseApprovalService` still freezes rule snapshots and advances

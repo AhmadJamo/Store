@@ -218,3 +218,7 @@ receipt/scan/inspection/posting/reversal mutations خارج التحويل. نج
 POST وكل return mutations خارج التحويل. نجح hosted ‏15/15 والقطع والرجوع 86/86 والبوابة 1,558 backend دون إنشاء
 بيانات؛ لم يوجد مرتجع محفوظ لاختبار Details حياً. أصبحت 42 سطحًا AngularDefault وبقي 40 سطحًا MVC؛ ينتقل التنفيذ إلى
 `MOD-030E4L` لفواتير الموردين.
+اكتمل `MOD-030E4L`: أصبحت VendorBills لمسارات Index/Create/Details GET الدقيقة AngularDefault، وبقيت المرفقات
+والاستخراج وكل lifecycle/accounting commands خارج التحويل. نجح hosted ‏15/15 والقطع والرجوع 89/89 والبوابة 1,568
+backend دون إنشاء بيانات. أصبحت 43 سطحًا AngularDefault وبقي 39 سطحًا MVC؛ ينتقل التنفيذ إلى `MOD-030E4M`
+لإشعارات ائتمان الموردين.

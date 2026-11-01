@@ -239,7 +239,10 @@ static async Task RunLiveCutoverAsync(
             "GoodsReceipts.View"),
         new("/GoodsReceiptReturns",
             "/app/purchases/receipt-returns",
-            "GoodsReceiptReturns.View")
+            "GoodsReceiptReturns.View"),
+        new("/VendorBills?search=cutover-rehearsal",
+            "/app/purchases/bills?search=cutover-rehearsal",
+            "VendorBills.View")
     };
 
     if (permissions.Contains("Customers.View"))
@@ -373,6 +376,11 @@ static async Task RunLiveCutoverAsync(
                 routes.Add(new($"/GoodsReceipts/Create?purchaseOrderId={id}",
                     $"/app/purchases/receipts/new?purchaseOrderId={id}", "GoodsReceipts.Create"));
             }
+            if (permissions.Contains("VendorBills.Create"))
+            {
+                routes.Add(new($"/VendorBills/Create?purchaseOrderId={id}",
+                    $"/app/purchases/bills/new?purchaseOrderId={id}", "VendorBills.Create"));
+            }
         }
     }
     if (permissions.Contains("GoodsReceipts.View"))
@@ -410,6 +418,19 @@ static async Task RunLiveCutoverAsync(
             var id = returns.RootElement[0].GetProperty("id").GetInt32();
             routes.Add(new($"/GoodsReceiptReturns/Details/{id}",
                 $"/app/purchases/receipt-returns/{id}", "GoodsReceiptReturns.View"));
+        }
+    }
+    if (permissions.Contains("VendorBills.View"))
+    {
+        var response = await authenticated.GetAsync("/api/v1/vendor-bills");
+        Require(response.Ok, $"Vendor-bill cutover fixture read returned {response.Status}.");
+        using var bills = JsonDocument.Parse(await response.TextAsync());
+        if (bills.RootElement.ValueKind == JsonValueKind.Array &&
+            bills.RootElement.GetArrayLength() > 0)
+        {
+            var id = bills.RootElement[0].GetProperty("id").GetInt32();
+            routes.Add(new($"/VendorBills/Details/{id}",
+                $"/app/purchases/bills/{id}", "VendorBills.View"));
         }
     }
     if (permissions.Contains("InventoryAdjustments.View"))
@@ -488,6 +509,8 @@ static async Task RunLiveCutoverAsync(
                          surface is "GoodsReceipts";
         expectsAngular = expectsAngular || options.CutoverMode == "pilot" &&
                          surface is "GoodsReceiptReturns";
+        expectsAngular = expectsAngular || options.CutoverMode == "pilot" &&
+                         surface is "VendorBills";
         if (expectsAngular)
         {
             Require(response.Status is 301 or 302 or 307 or 308,

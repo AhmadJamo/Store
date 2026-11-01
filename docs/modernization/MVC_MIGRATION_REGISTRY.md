@@ -11,7 +11,7 @@
 - Angular application routes discovered: 184.
 - MVC surfaces with a verified Angular counterpart: 82.
 - Remaining MVC surfaces without a mapped Angular counterpart: 0.
-- Allowlisted Angular-default cutover actions: 90.
+- Allowlisted Angular-default cutover actions: 93.
 
 Remaining surfaces: none.
 
@@ -211,9 +211,9 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | UnassignedStock | Index.cshtml | Angular Default | /inventory/putaway | MiniStore.Web/Views/UnassignedStock/Index.cshtml |
 | Users | Create.cshtml | Angular Default | /users | MiniStore.Web/Views/Users/Create.cshtml |
 | Users | Index.cshtml | Angular Default | /users | MiniStore.Web/Views/Users/Index.cshtml |
-| VendorBills | Create.cshtml | Angular Pilot | /purchases/bills | MiniStore.Web/Views/VendorBills/Create.cshtml |
-| VendorBills | Details.cshtml | Angular Pilot | /purchases/bills | MiniStore.Web/Views/VendorBills/Details.cshtml |
-| VendorBills | Index.cshtml | Angular Pilot | /purchases/bills | MiniStore.Web/Views/VendorBills/Index.cshtml |
+| VendorBills | Create.cshtml | Angular Default | /purchases/bills | MiniStore.Web/Views/VendorBills/Create.cshtml |
+| VendorBills | Details.cshtml | Angular Default | /purchases/bills | MiniStore.Web/Views/VendorBills/Details.cshtml |
+| VendorBills | Index.cshtml | Angular Default | /purchases/bills | MiniStore.Web/Views/VendorBills/Index.cshtml |
 | WarehouseLocations | Create.cshtml | Angular Default | /inventory/locations | MiniStore.Web/Views/WarehouseLocations/Create.cshtml |
 | WarehouseLocations | Edit.cshtml | Angular Default | /inventory/locations | MiniStore.Web/Views/WarehouseLocations/Edit.cshtml |
 | WarehouseLocations | Index.cshtml | Angular Default | /inventory/locations | MiniStore.Web/Views/WarehouseLocations/Index.cshtml |
@@ -614,17 +614,17 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | Users | Create | GET | Angular Default | /users | /users/new | MiniStore.Web/Controllers/Security/UsersController.cs |
 | Users | Create | POST | Angular Default | /users | /users/new | MiniStore.Web/Controllers/Security/UsersController.cs |
 | Users | Index | GET | Angular Default | /users | /users | MiniStore.Web/Controllers/Security/UsersController.cs |
-| VendorBills | Approve | POST | Angular Pilot | /purchases/bills | — | MiniStore.Web/Controllers/Purchases/VendorBillsController.cs |
-| VendorBills | ApproveOverride | POST | Angular Pilot | /purchases/bills | — | MiniStore.Web/Controllers/Purchases/VendorBillsController.cs |
-| VendorBills | Cancel | POST | Angular Pilot | /purchases/bills | — | MiniStore.Web/Controllers/Purchases/VendorBillsController.cs |
-| VendorBills | Create | GET | Angular Pilot | /purchases/bills | — | MiniStore.Web/Controllers/Purchases/VendorBillsController.cs |
-| VendorBills | Create | POST | Angular Pilot | /purchases/bills | — | MiniStore.Web/Controllers/Purchases/VendorBillsController.cs |
-| VendorBills | Details | GET | Angular Pilot | /purchases/bills | — | MiniStore.Web/Controllers/Purchases/VendorBillsController.cs |
-| VendorBills | DownloadAttachment | GET | Angular Pilot | /purchases/bills | — | MiniStore.Web/Controllers/Purchases/VendorBillsController.cs |
-| VendorBills | Index | GET | Angular Pilot | /purchases/bills | — | MiniStore.Web/Controllers/Purchases/VendorBillsController.cs |
-| VendorBills | Post | POST | Angular Pilot | /purchases/bills | — | MiniStore.Web/Controllers/Purchases/VendorBillsController.cs |
-| VendorBills | RedirectToAction | POST | Angular Pilot | /purchases/bills | — | MiniStore.Web/Controllers/Purchases/VendorBillsController.cs |
-| VendorBills | RedirectToAction | POST | Angular Pilot | /purchases/bills | — | MiniStore.Web/Controllers/Purchases/VendorBillsController.cs |
+| VendorBills | Approve | POST | Angular Default | /purchases/bills | — | MiniStore.Web/Controllers/Purchases/VendorBillsController.cs |
+| VendorBills | ApproveOverride | POST | Angular Default | /purchases/bills | — | MiniStore.Web/Controllers/Purchases/VendorBillsController.cs |
+| VendorBills | Cancel | POST | Angular Default | /purchases/bills | — | MiniStore.Web/Controllers/Purchases/VendorBillsController.cs |
+| VendorBills | Create | GET | Angular Default | /purchases/bills | /purchases/bills/new?purchaseOrderId={purchaseOrderId} | MiniStore.Web/Controllers/Purchases/VendorBillsController.cs |
+| VendorBills | Create | POST | Angular Default | /purchases/bills | /purchases/bills/new?purchaseOrderId={purchaseOrderId} | MiniStore.Web/Controllers/Purchases/VendorBillsController.cs |
+| VendorBills | Details | GET | Angular Default | /purchases/bills | /purchases/bills/{id} | MiniStore.Web/Controllers/Purchases/VendorBillsController.cs |
+| VendorBills | DownloadAttachment | GET | Angular Default | /purchases/bills | — | MiniStore.Web/Controllers/Purchases/VendorBillsController.cs |
+| VendorBills | Index | GET | Angular Default | /purchases/bills | /purchases/bills | MiniStore.Web/Controllers/Purchases/VendorBillsController.cs |
+| VendorBills | Post | POST | Angular Default | /purchases/bills | — | MiniStore.Web/Controllers/Purchases/VendorBillsController.cs |
+| VendorBills | RedirectToAction | POST | Angular Default | /purchases/bills | — | MiniStore.Web/Controllers/Purchases/VendorBillsController.cs |
+| VendorBills | RedirectToAction | POST | Angular Default | /purchases/bills | — | MiniStore.Web/Controllers/Purchases/VendorBillsController.cs |
 | WarehouseLocations | Create | GET | Angular Default | /inventory/locations | — | MiniStore.Web/Controllers/Inventory/WarehouseLocationsController.cs |
 | WarehouseLocations | Create | POST | Angular Default | /inventory/locations | — | MiniStore.Web/Controllers/Inventory/WarehouseLocationsController.cs |
 | WarehouseLocations | Edit | GET | Angular Default | /inventory/locations | — | MiniStore.Web/Controllers/Inventory/WarehouseLocationsController.cs |
