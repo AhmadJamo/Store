@@ -1,6 +1,6 @@
 # MOD-030E — Angular runtime readiness audit
 
-> Status: IN PROGRESS — MOD-030E4A complete
+> Status: IN PROGRESS — MOD-030E4B complete
 > Date: 2026-11-01
 
 ## Finding
@@ -211,6 +211,18 @@ zero warnings and 1,496 backend checks; the unchanged Angular suite retains 218/
 templates and official bundle budgets of 327,391 initial bytes and 81,880 largest lazy bytes. Thirty-two surfaces are
 AngularDefault and 50 remain MVC-default. The git-ignored temporary authentication state is retained only for the next local
 cohorts; no data, schema, inventory, accounting, business rule or MVC file changed.
+
+## MOD-030E4B evidence
+
+PurchaseAccountingReconciliation Index now joins the committed AngularDefault set at
+`/purchases/accounting-reconciliation`, preserving as-of and exception query values.
+`PurchaseAccountingReconciliation.View` remains the sole authority and no financial mutation is present in the
+presentation catalog.
+
+Hosted acceptance passed 15/15. Cutover and process-local MVC rollback each passed 67 authorized routes. Release passed
+with zero warnings and 1,499 backend checks. Thirty-three surfaces are AngularDefault and 49 remain MVC-default. The
+git-ignored temporary authentication state is retained only for the next local cohorts; no data, schema, inventory,
+accounting, business rule or MVC file changed.
 
 Every cohort must add explicit GET-only action mappings, require its existing permissions, pass hosted acceptance and
 exact Angular targets, then pass a process-local MVC rollback. Mutations continue through their independently authorized

@@ -410,6 +410,23 @@ Check(purchaseAnalyticsCutoverResolver.Resolve(cutoverContext.Request, "Purchase
       purchaseAnalyticsCutoverResolver.Resolve(cutoverContext.Request, "PurchaseAnalytics", "Export",
           new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null,
     "Purchase analytics cutover must resolve only the exact read-only Index route");
+var purchaseReconciliationCutoverResolver = new PresentationCutoverResolver(Options.Create(
+    new PresentationCutoverOptions
+    {
+        AngularBasePath = "/app",
+        Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["PurchaseAccountingReconciliation"] = PresentationCutoverMode.AngularDefault
+        }
+    }));
+Check(purchaseReconciliationCutoverResolver.Resolve(cutoverContext.Request,
+          "PurchaseAccountingReconciliation", "Index",
+          new Microsoft.AspNetCore.Routing.RouteValueDictionary()) ==
+      "/app/purchases/accounting-reconciliation?page=2" &&
+      purchaseReconciliationCutoverResolver.Resolve(cutoverContext.Request,
+          "PurchaseAccountingReconciliation", "Post",
+          new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null,
+    "Purchase accounting reconciliation cutover must resolve only the exact read-only Index route");
 foreach (var entry in PresentationCutoverRouteCatalog.All)
 {
     var keyParts = entry.Key.Split(':', 2);

@@ -11,7 +11,7 @@
 - Angular application routes discovered: 184.
 - MVC surfaces with a verified Angular counterpart: 82.
 - Remaining MVC surfaces without a mapped Angular counterpart: 0.
-- Allowlisted Angular-default cutover actions: 69.
+- Allowlisted Angular-default cutover actions: 70.
 
 Remaining surfaces: none.
 
@@ -101,7 +101,7 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | ProductTemplates | Index.cshtml | Angular Default | /products/templates | MiniStore.Web/Views/ProductTemplates/Index.cshtml |
 | Public | Index.cshtml | Angular Pilot | /welcome, /pricing | MiniStore.Web/Views/Public/Index.cshtml |
 | Public | Pricing.cshtml | Angular Pilot | /welcome, /pricing | MiniStore.Web/Views/Public/Pricing.cshtml |
-| PurchaseAccountingReconciliation | Index.cshtml | Angular Pilot | /purchases/accounting-reconciliation | MiniStore.Web/Views/PurchaseAccountingReconciliation/Index.cshtml |
+| PurchaseAccountingReconciliation | Index.cshtml | Angular Default | /purchases/accounting-reconciliation | MiniStore.Web/Views/PurchaseAccountingReconciliation/Index.cshtml |
 | PurchaseAgreements | Create.cshtml | Angular Pilot | /purchases/agreements | MiniStore.Web/Views/PurchaseAgreements/Create.cshtml |
 | PurchaseAgreements | Details.cshtml | Angular Pilot | /purchases/agreements | MiniStore.Web/Views/PurchaseAgreements/Details.cshtml |
 | PurchaseAgreements | Index.cshtml | Angular Pilot | /purchases/agreements | MiniStore.Web/Views/PurchaseAgreements/Index.cshtml |
@@ -384,7 +384,7 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | ProductTemplates | Preview | POST | Angular Default | /products/templates | — | MiniStore.Web/Controllers/Catalog/ProductTemplatesController.cs |
 | Public | Index | GET | Angular Pilot | /welcome, /pricing | — | MiniStore.Web/Controllers/PublicController.cs |
 | Public | Pricing | GET | Angular Pilot | /welcome, /pricing | — | MiniStore.Web/Controllers/PublicController.cs |
-| PurchaseAccountingReconciliation | Index | GET | Angular Pilot | /purchases/accounting-reconciliation | — | MiniStore.Web/Controllers/Purchases/PurchaseAccountingReconciliationController.cs |
+| PurchaseAccountingReconciliation | Index | GET | Angular Default | /purchases/accounting-reconciliation | /purchases/accounting-reconciliation | MiniStore.Web/Controllers/Purchases/PurchaseAccountingReconciliationController.cs |
 | PurchaseAgreements | RedirectToAction | GET, POST | Angular Pilot | /purchases/agreements | — | MiniStore.Web/Controllers/Purchases/PurchaseAgreementsController.cs |
 | PurchaseAgreements | RedirectToAction | GET, POST | Angular Pilot | /purchases/agreements | — | MiniStore.Web/Controllers/Purchases/PurchaseAgreementsController.cs |
 | PurchaseAgreements | RedirectToAction | GET, POST | Angular Pilot | /purchases/agreements | — | MiniStore.Web/Controllers/Purchases/PurchaseAgreementsController.cs |

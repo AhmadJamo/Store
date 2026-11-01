@@ -87,6 +87,12 @@ for historical/current inventory valuation, warehouse ledger balances, GRNI rece
 all differences. Source and setup links are independently permission-aware. No reconciliation value is derived in Angular and no
 schema, inventory or accounting effect was introduced; MVC is default.
 
+`MOD-030E4B` makes the exact PurchaseAccountingReconciliation Index GET presentation `AngularDefault` at
+`/purchases/accounting-reconciliation`. As-of and exception filters are preserved and
+`PurchaseAccountingReconciliation.View` remains authoritative; no financial command is added to the presentation catalog.
+Hosted acceptance passed 15/15, and cutover plus process-local MVC rollback each passed 67 authorized routes. Release and
+1,499 backend checks passed; no data, schema, inventory, accounting or business-rule change was introduced.
+
 `MOD-023R` exposes supplier communication preparation, document history, immutable RFQ attachment downloads and explicit activity
 recording through Angular. RFQ and Purchase Order pages link by named supplier to bilingual preparation/history. The Application/domain
 layer remains authoritative for supplier/document eligibility, email presence, approved/sent states, immutable subject/body/attachment

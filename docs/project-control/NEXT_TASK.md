@@ -1,17 +1,17 @@
 # المهمة التالية الوحيدة / Next Task
 
-## `MOD-030E4B` — مصالحة محاسبة المشتريات / Purchase Accounting Reconciliation Cutover
+## `MOD-030E4C` — تزويد المشتريات / Purchase Replenishment Cutover
 
 > الحالة: APPROVED
 
-اكتمل `MOD-030E4A`: أصبح PurchaseAnalytics السطح 32 في AngularDefault بعد hosted ‏15/15 والقطع والرجوع 66/66.
-بقي 50 سطحًا mapped يعمل MVC افتراضيًا.
+اكتمل `MOD-030E4B`: أصبح PurchaseAccountingReconciliation السطح 33 في AngularDefault بعد hosted ‏15/15 والقطع
+والرجوع 67/67. بقي 49 سطحًا mapped يعمل MVC افتراضيًا.
 
 ### النطاق المحدود
 
-- PurchaseAccountingReconciliation Index GET إلى `/purchases/accounting-reconciliation`.
-- الحفاظ على `asOfDate` و`exceptionsOnly` والاعتماد على `PurchaseAccountingReconciliation.View`.
-- كل تسوية أو ترحيل أو تعديل مالي يبقى خارج هذه الدفعة وخارج كتالوج العرض.
+- PurchaseReplenishment Index GET إلى `/purchases/replenishment`.
+- الحفاظ على query والاعتماد على `PurchaseReplenishment.View`.
+- حفظ الإعدادات والتشغيل اليدوي يبقيان بصلاحياتهما وantiforgery وخارج كتالوج العرض.
 
 ### القبول
 

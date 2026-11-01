@@ -185,3 +185,6 @@ Create/Edit غير المدعومة وكل الكتابات على MVC/API. نج
 اكتمل `MOD-030E4A`: أصبح PurchaseAnalytics Index القراءة فقط AngularDefault على `/purchases/analytics` مع حفظ
 الفلاتر وبقاء كل أوامر الشراء خارج التحويل. نجح hosted ‏15/15 والقطع والرجوع 66/66 والبوابة 1,496 backend.
 أصبحت 32 سطحًا AngularDefault وبقي 50 سطحًا MVC؛ ينتقل التنفيذ إلى `MOD-030E4B` لمصالحة محاسبة المشتريات.
+اكتمل `MOD-030E4B`: أصبح PurchaseAccountingReconciliation Index القراءة فقط AngularDefault مع حفظ فلاتر التاريخ
+والاستثناءات وبقاء كل الأوامر المالية خارج التحويل. نجح hosted ‏15/15 والقطع والرجوع 67/67 والبوابة 1,499 backend.
+أصبحت 33 سطحًا AngularDefault وبقي 49 سطحًا MVC؛ ينتقل التنفيذ إلى `MOD-030E4C` لتزويد المشتريات.
