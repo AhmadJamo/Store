@@ -207,3 +207,6 @@ Create/Direct وتنزيل المرفقات وكل mutations خارج التحو
 AngularDefault، وبقي Create/Award POST وكل mutations خارج التحويل. نجح hosted ‏15/15 والقطع والرجوع 78/78 والبوابة
 1,531 backend دون إنشاء بيانات. أصبحت 39 سطحًا AngularDefault وبقي 43 سطحًا MVC؛ ينتقل التنفيذ إلى `MOD-030E4I`
 لقائمة وتفاصيل أوامر الشراء.
+اكتمل `MOD-030E4I`: أصبحت PurchaseOrders لمساري Index/Details GET الدقيقة AngularDefault، وبقي CreateFromAward وكل
+lifecycle/fulfillment mutations خارج التحويل. نجح hosted ‏15/15 والقطع والرجوع 80/80 والبوابة 1,537 backend دون إنشاء
+بيانات. أصبحت 40 سطحًا AngularDefault وبقي 42 سطحًا MVC؛ ينتقل التنفيذ إلى `MOD-030E4J` لاستلامات البضاعة.

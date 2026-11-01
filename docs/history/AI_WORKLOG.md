@@ -1,5 +1,13 @@
 # AI Work Log
 
+- 2026-11-02: Completed `MOD-030E4I`. PurchaseOrders Index/positive-ID Details GET presentation now uses exact
+  AngularDefault routes with query preservation. CreateFromAward and every lifecycle or fulfillment mutation retain
+  independent permissions and antiforgery outside presentation cutover. Hosted acceptance passed 15/15, and cutover plus
+  MVC rollback each passed 80 authorized routes including an existing purchase order resolved read-only through the API.
+  Release and 1,537 backend checks passed; no data was created and no schema, inventory, accounting, business rule or MVC
+  file changed. Forty surfaces are AngularDefault and 42 remain MVC-default; execution advances to `MOD-030E4J`. The
+  git-ignored authentication state remains temporary and uncommitted.
+
 - 2026-11-02: Completed `MOD-030E4H`. SupplierQuotations query-bound Create/Comparison GET presentation now uses
   exact AngularDefault quotation/comparison routes for positive sourcing-event IDs, consuming the source query identity
   into the path. Create POST, Award POST and every mutation retain independent permissions and antiforgery outside

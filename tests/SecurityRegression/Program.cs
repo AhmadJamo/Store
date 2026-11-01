@@ -578,6 +578,37 @@ Check(new[] { "Award" }.All(action =>
               "SupplierQuotations", action,
               new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["sourcingEventId"] = 17 }) is null),
     "Supplier-quotation award mutations must stay outside presentation cutover");
+var purchaseOrdersCutoverResolver = new PresentationCutoverResolver(Options.Create(
+    new PresentationCutoverOptions
+    {
+        AngularBasePath = "/app",
+        Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["PurchaseOrders"] = PresentationCutoverMode.AngularDefault
+        }
+    }));
+Check(purchaseOrdersCutoverResolver.Resolve(cutoverContext.Request,
+          "PurchaseOrders", "Index",
+          new Microsoft.AspNetCore.Routing.RouteValueDictionary()) ==
+      "/app/purchases/orders?page=2" &&
+      purchaseOrdersCutoverResolver.Resolve(cutoverContext.Request,
+          "PurchaseOrders", "Details",
+          new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 17 }) ==
+      "/app/purchases/orders/17?page=2",
+    "Purchase-order cutover must resolve exact list and positive-ID details routes");
+Check(new long[] { -1, 0 }.All(id =>
+          purchaseOrdersCutoverResolver.Resolve(cutoverContext.Request,
+              "PurchaseOrders", "Details",
+              new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = id }) is null) &&
+      new[]
+      {
+          "CreateFromAward", "Approve", "Confirm", "Cancel", "CloseRemaining", "Reopen",
+          "ConfigureDropship", "RecordDirectDelivery", "RecordSupplierConfirmation"
+      }.All(action =>
+          purchaseOrdersCutoverResolver.Resolve(cutoverContext.Request,
+              "PurchaseOrders", action,
+              new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 17 }) is null),
+    "Purchase-order lifecycle and fulfillment mutations and unsafe identifiers must stay outside presentation cutover");
 foreach (var entry in PresentationCutoverRouteCatalog.All)
 {
     var keyParts = entry.Key.Split(':', 2);

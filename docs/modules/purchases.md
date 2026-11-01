@@ -161,6 +161,14 @@ independently authorized with antiforgery outside the presentation catalog. Host
 plus process-local MVC rollback each passed 78 authorized routes using an existing sourcing event read-only. Release and
 1,531 backend checks passed; no data was created and no schema, inventory, accounting or business rule changed.
 
+`MOD-030E4I` makes PurchaseOrders Index/positive-ID Details GET presentation `AngularDefault` at
+`/purchases/orders` and `/purchases/orders/{id}`. Filters remain preserved. CreateFromAward and every approval,
+confirmation, cancellation, closure, reopen, dropship, direct-delivery and supplier-confirmation mutation remain
+independently authorized with antiforgery outside the presentation catalog. Hosted acceptance passed 15/15, and cutover
+plus process-local MVC rollback each passed 80 authorized routes including an existing order resolved read-only through
+the API. Release and 1,537 backend checks passed; no data was created and no schema, inventory, accounting or business
+rule changed.
+
 Angular `/purchases/approval-rules` now administers the existing warehouse/priority-scoped ordered role rules, including activation
 with row-version evidence. Request details expose current-role and immutable step evidence and show Approve/Reject only when both the
 API-authored role eligibility and independent permission allow it. `PurchaseApprovalService` still freezes rule snapshots and advances
