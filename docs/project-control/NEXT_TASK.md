@@ -1,17 +1,17 @@
 # المهمة التالية الوحيدة / Next Task
 
-## `MOD-030E4C` — تزويد المشتريات / Purchase Replenishment Cutover
+## `MOD-030E4D` — قواعد اعتماد الشراء / Purchase Approval Rules Cutover
 
 > الحالة: APPROVED
 
-اكتمل `MOD-030E4B`: أصبح PurchaseAccountingReconciliation السطح 33 في AngularDefault بعد hosted ‏15/15 والقطع
-والرجوع 67/67. بقي 49 سطحًا mapped يعمل MVC افتراضيًا.
+اكتمل `MOD-030E4C`: أصبح PurchaseReplenishment السطح 34 في AngularDefault بعد hosted ‏15/15 والقطع والرجوع
+68/68. بقي 48 سطحًا mapped يعمل MVC افتراضيًا.
 
 ### النطاق المحدود
 
-- PurchaseReplenishment Index GET إلى `/purchases/replenishment`.
-- الحفاظ على query والاعتماد على `PurchaseReplenishment.View`.
-- حفظ الإعدادات والتشغيل اليدوي يبقيان بصلاحياتهما وantiforgery وخارج كتالوج العرض.
+- PurchaseApprovalRules Index GET إلى `/purchases/approval-rules`.
+- الحفاظ على query والاعتماد على `PurchaseApprovalRules.View`.
+- إنشاء القاعدة وتغيير حالتها يبقيان بصلاحية Manage وantiforgery وخارج كتالوج العرض.
 
 ### القبول
 

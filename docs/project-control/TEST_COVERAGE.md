@@ -48,6 +48,7 @@
 | MOD-030E3F Product Templates and Recipes | Exact ProductTemplates Index and Recipes Index/positive-product Edit GET routes; mutations excluded; hosted 15/15 and 65-route cutover/MVC rollback passed; Release clean and 1,493 backend checks passed without data creation | 2026-11-01 |
 | MOD-030E4A Purchase Analytics | Exact read-only Index GET maps to `/purchases/analytics` with query preservation and no purchase commands; hosted 15/15 and 66-route cutover/MVC rollback passed; Release clean and 1,496 backend checks passed | 2026-11-01 |
 | MOD-030E4B Purchase Accounting Reconciliation | Exact read-only Index GET maps to `/purchases/accounting-reconciliation` with as-of/exception query preservation and no financial commands; hosted 15/15 and 67-route cutover/MVC rollback passed; Release clean and 1,499 backend checks passed | 2026-11-01 |
+| MOD-030E4C Purchase Replenishment | Exact Index GET maps to `/purchases/replenishment`; settings-save/manual-run commands stay independently permissioned and antiforgery protected; hosted 15/15 and 68-route cutover/MVC rollback passed; Release clean and 1,502 backend checks passed | 2026-11-01 |
 | Live schema integrity (سلامة المخطط الحي) | 147 tables, 420 trusted FKs, zero disabled constraints/indexes or unsafe tenant relations | 2026-10-15 |
 | Web dependency build (بناء الويب واعتماداته) | Release, 4 projects, zero warnings/errors after SAL-120A (نجح) | 2026-10-22 |
 

@@ -1,5 +1,13 @@
 # AI Work Log
 
+- 2026-11-01: Completed `MOD-030E4C`. PurchaseReplenishment Index now uses the exact
+  `/purchases/replenishment` AngularDefault route. Settings-save and manual-run commands retain independent permissions
+  and antiforgery outside presentation cutover; this remains distinct from Inventory Replenishment. Hosted acceptance
+  passed 15/15, and cutover plus MVC rollback each passed 68 authorized routes. Release and 1,502 backend checks passed.
+  No data, schema, inventory, accounting, business rule or MVC file changed. Thirty-four surfaces are AngularDefault and
+  48 remain MVC-default; execution advances to `MOD-030E4D`. The git-ignored authentication state remains temporary and
+  uncommitted.
+
 - 2026-11-01: Completed `MOD-030E4B`. PurchaseAccountingReconciliation Index now uses the exact
   `/purchases/accounting-reconciliation` AngularDefault route with as-of/exception query preservation and its existing
   read-only permission; no financial command entered the presentation catalog. Hosted acceptance passed 15/15, and cutover

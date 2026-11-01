@@ -11,7 +11,7 @@
 - Angular application routes discovered: 184.
 - MVC surfaces with a verified Angular counterpart: 82.
 - Remaining MVC surfaces without a mapped Angular counterpart: 0.
-- Allowlisted Angular-default cutover actions: 70.
+- Allowlisted Angular-default cutover actions: 71.
 
 Remaining surfaces: none.
 
@@ -112,7 +112,7 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | PurchaseDocumentReversals | Index.cshtml | Angular Pilot | /purchases/reversals | MiniStore.Web/Views/PurchaseDocumentReversals/Index.cshtml |
 | PurchaseOrders | Details.cshtml | Angular Pilot | /purchases/orders | MiniStore.Web/Views/PurchaseOrders/Details.cshtml |
 | PurchaseOrders | Index.cshtml | Angular Pilot | /purchases/orders | MiniStore.Web/Views/PurchaseOrders/Index.cshtml |
-| PurchaseReplenishment | Index.cshtml | Angular Pilot | /purchases/replenishment | MiniStore.Web/Views/PurchaseReplenishment/Index.cshtml |
+| PurchaseReplenishment | Index.cshtml | Angular Default | /purchases/replenishment | MiniStore.Web/Views/PurchaseReplenishment/Index.cshtml |
 | PurchaseRequests | Create.cshtml | Angular Pilot | /purchases/requests | MiniStore.Web/Views/PurchaseRequests/Create.cshtml |
 | PurchaseRequests | Details.cshtml | Angular Pilot | /purchases/requests | MiniStore.Web/Views/PurchaseRequests/Details.cshtml |
 | PurchaseRequests | Index.cshtml | Angular Pilot | /purchases/requests | MiniStore.Web/Views/PurchaseRequests/Index.cshtml |
@@ -408,9 +408,9 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | PurchaseOrders | RedirectToAction | GET, POST | Angular Pilot | /purchases/orders | — | MiniStore.Web/Controllers/Purchases/PurchaseOrdersController.cs |
 | PurchaseOrders | RedirectToAction | GET, POST | Angular Pilot | /purchases/orders | — | MiniStore.Web/Controllers/Purchases/PurchaseOrdersController.cs |
 | PurchaseOrders | View | GET | Angular Pilot | /purchases/orders | — | MiniStore.Web/Controllers/Purchases/PurchaseOrdersController.cs |
-| PurchaseReplenishment | Index | GET | Angular Pilot | /purchases/replenishment | — | MiniStore.Web/Controllers/Purchases/PurchaseReplenishmentController.cs |
-| PurchaseReplenishment | RunNow | POST | Angular Pilot | /purchases/replenishment | — | MiniStore.Web/Controllers/Purchases/PurchaseReplenishmentController.cs |
-| PurchaseReplenishment | SaveSettings | POST | Angular Pilot | /purchases/replenishment | — | MiniStore.Web/Controllers/Purchases/PurchaseReplenishmentController.cs |
+| PurchaseReplenishment | Index | GET | Angular Default | /purchases/replenishment | /purchases/replenishment | MiniStore.Web/Controllers/Purchases/PurchaseReplenishmentController.cs |
+| PurchaseReplenishment | RunNow | POST | Angular Default | /purchases/replenishment | — | MiniStore.Web/Controllers/Purchases/PurchaseReplenishmentController.cs |
+| PurchaseReplenishment | SaveSettings | POST | Angular Default | /purchases/replenishment | — | MiniStore.Web/Controllers/Purchases/PurchaseReplenishmentController.cs |
 | PurchaseRequests | Index | GET | Angular Pilot | /purchases/requests | — | MiniStore.Web/Controllers/Purchases/PurchaseRequestsController.cs |
 | PurchaseRequests | RedirectToAction | GET, POST | Angular Pilot | /purchases/requests | — | MiniStore.Web/Controllers/Purchases/PurchaseRequestsController.cs |
 | PurchaseRequests | RedirectToAction | GET, POST | Angular Pilot | /purchases/requests | — | MiniStore.Web/Controllers/Purchases/PurchaseRequestsController.cs |

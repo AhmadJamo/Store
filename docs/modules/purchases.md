@@ -70,6 +70,12 @@ compatibility, duplicates, preferred rows, concurrency, validity, base currency,
 
 `MOD-023O` exposes automated replenishment settings, manual execution and run/suggestion history through Angular. Scheduling, demand calculation and duplicate prevention remain server-owned; MVC is default.
 
+`MOD-030E4C` makes the exact PurchaseReplenishment Index GET presentation `AngularDefault` at
+`/purchases/replenishment`. `PurchaseReplenishment.View` remains authoritative; settings save and manual run retain
+`PurchaseReplenishment.Manage`/`Run` plus antiforgery outside the presentation catalog. Hosted acceptance passed 15/15,
+and cutover plus process-local MVC rollback each passed 68 authorized routes. Release and 1,502 backend checks passed; no
+data, schema, inventory, accounting or business-rule change was introduced.
+
 `MOD-023P` exposes the existing purchasing analytics projection through an authenticated, read-only Angular workspace. Date,
 supplier, buyer, order-status and grouping filters are submitted to `PurchaseAnalyticsService`; the server remains authoritative for
 spend, receipts, payables, matching exceptions, supplier performance, buyer workload, trends, KPI definitions and acceptance-stage

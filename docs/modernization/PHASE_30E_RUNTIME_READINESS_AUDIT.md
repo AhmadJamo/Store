@@ -1,6 +1,6 @@
 # MOD-030E — Angular runtime readiness audit
 
-> Status: IN PROGRESS — MOD-030E4B complete
+> Status: IN PROGRESS — MOD-030E4C complete
 > Date: 2026-11-01
 
 ## Finding
@@ -221,6 +221,17 @@ presentation catalog.
 
 Hosted acceptance passed 15/15. Cutover and process-local MVC rollback each passed 67 authorized routes. Release passed
 with zero warnings and 1,499 backend checks. Thirty-three surfaces are AngularDefault and 49 remain MVC-default. The
+git-ignored temporary authentication state is retained only for the next local cohorts; no data, schema, inventory,
+accounting, business rule or MVC file changed.
+
+## MOD-030E4C evidence
+
+PurchaseReplenishment Index now joins the committed AngularDefault set at `/purchases/replenishment`. This is the purchase
+automation workflow, distinct from Inventory Replenishment. Settings-save and manual-run commands retain their independent
+permissions and antiforgery protection outside presentation cutover.
+
+Hosted acceptance passed 15/15. Cutover and process-local MVC rollback each passed 68 authorized routes. Release passed
+with zero warnings and 1,502 backend checks. Thirty-four surfaces are AngularDefault and 48 remain MVC-default. The
 git-ignored temporary authentication state is retained only for the next local cohorts; no data, schema, inventory,
 accounting, business rule or MVC file changed.
 

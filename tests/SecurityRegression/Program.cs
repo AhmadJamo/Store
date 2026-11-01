@@ -427,6 +427,26 @@ Check(purchaseReconciliationCutoverResolver.Resolve(cutoverContext.Request,
           "PurchaseAccountingReconciliation", "Post",
           new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null,
     "Purchase accounting reconciliation cutover must resolve only the exact read-only Index route");
+var purchaseReplenishmentCutoverResolver = new PresentationCutoverResolver(Options.Create(
+    new PresentationCutoverOptions
+    {
+        AngularBasePath = "/app",
+        Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["PurchaseReplenishment"] = PresentationCutoverMode.AngularDefault
+        }
+    }));
+Check(purchaseReplenishmentCutoverResolver.Resolve(cutoverContext.Request,
+          "PurchaseReplenishment", "Index",
+          new Microsoft.AspNetCore.Routing.RouteValueDictionary()) ==
+      "/app/purchases/replenishment?page=2" &&
+      purchaseReplenishmentCutoverResolver.Resolve(cutoverContext.Request,
+          "PurchaseReplenishment", "SaveSettings",
+          new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null &&
+      purchaseReplenishmentCutoverResolver.Resolve(cutoverContext.Request,
+          "PurchaseReplenishment", "RunNow",
+          new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null,
+    "Purchase replenishment cutover must keep settings and manual-run mutations outside presentation cutover");
 foreach (var entry in PresentationCutoverRouteCatalog.All)
 {
     var keyParts = entry.Key.Split(':', 2);
