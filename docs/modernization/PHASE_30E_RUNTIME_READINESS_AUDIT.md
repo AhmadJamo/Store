@@ -1,6 +1,6 @@
 # MOD-030E — Angular runtime readiness audit
 
-> Status: IN PROGRESS — MOD-030E3D complete
+> Status: IN PROGRESS — MOD-030E3E complete
 > Date: 2026-11-01
 
 ## Finding
@@ -175,6 +175,17 @@ The authenticated hosted suite passed 15/15. Cutover and process-local MVC rollb
 Release passed with zero warnings and 1,473 backend checks; the unchanged Angular suite retains 218/218 tests, 122
 accessible templates and bundle budgets. Twenty-seven surfaces are AngularDefault and 55 remain MVC-default. Temporary
 authentication state was deleted; no data, schema, business rule or MVC file changed.
+
+## MOD-030E3E evidence
+
+Users Index/Create and Roles Index/Create/Edit now join the committed AngularDefault set on `/users`, `/users/new`,
+`/roles`, `/roles/new` and `/roles/{id}/edit`. Role Edit rejects missing/non-positive identifiers. All identity and role
+mutations remain independently permissioned and antiforgery-protected outside presentation cutover.
+
+Hosted acceptance passed 15/15. Cutover and process-local MVC rollback each passed 62 authorized routes, including an
+existing editable role resolved read-only through the API. Release passed with zero warnings and 1,485 backend checks.
+Twenty-nine surfaces are AngularDefault and 53 remain MVC-default. Temporary authentication state was deleted and no
+identity data, schema, business rule or MVC file changed.
 
 Every cohort must add explicit GET-only action mappings, require its existing permissions, pass hosted acceptance and
 exact Angular targets, then pass a process-local MVC rollback. Mutations continue through their independently authorized

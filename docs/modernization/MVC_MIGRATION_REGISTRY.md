@@ -11,7 +11,7 @@
 - Angular application routes discovered: 184.
 - MVC surfaces with a verified Angular counterpart: 82.
 - Remaining MVC surfaces without a mapped Angular counterpart: 0.
-- Allowlisted Angular-default cutover actions: 60.
+- Allowlisted Angular-default cutover actions: 65.
 
 Remaining surfaces: none.
 
@@ -134,9 +134,9 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | Recipes | Edit.cshtml | Angular Pilot | /products/recipes | MiniStore.Web/Views/Recipes/Edit.cshtml |
 | Recipes | Index.cshtml | Angular Pilot | /products/recipes | MiniStore.Web/Views/Recipes/Index.cshtml |
 | Replenishment | Index.cshtml | Angular Default | /inventory/replenishment | MiniStore.Web/Views/Replenishment/Index.cshtml |
-| Roles | Create.cshtml | Angular Pilot | /roles | MiniStore.Web/Views/Roles/Create.cshtml |
-| Roles | Edit.cshtml | Angular Pilot | /roles | MiniStore.Web/Views/Roles/Edit.cshtml |
-| Roles | Index.cshtml | Angular Pilot | /roles | MiniStore.Web/Views/Roles/Index.cshtml |
+| Roles | Create.cshtml | Angular Default | /roles | MiniStore.Web/Views/Roles/Create.cshtml |
+| Roles | Edit.cshtml | Angular Default | /roles | MiniStore.Web/Views/Roles/Edit.cshtml |
+| Roles | Index.cshtml | Angular Default | /roles | MiniStore.Web/Views/Roles/Index.cshtml |
 | Sales | Create.cshtml | Angular Pilot | /sales/legacy | MiniStore.Web/Views/Sales/Create.cshtml |
 | Sales | Details.cshtml | Angular Pilot | /sales/legacy | MiniStore.Web/Views/Sales/Details.cshtml |
 | Sales | Index.cshtml | Angular Pilot | /sales/legacy | MiniStore.Web/Views/Sales/Index.cshtml |
@@ -209,8 +209,8 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | TaxRates | Create.cshtml | Angular Default | /products/catalog-masters | MiniStore.Web/Views/TaxRates/Create.cshtml |
 | TaxRates | Index.cshtml | Angular Default | /products/catalog-masters | MiniStore.Web/Views/TaxRates/Index.cshtml |
 | UnassignedStock | Index.cshtml | Angular Default | /inventory/putaway | MiniStore.Web/Views/UnassignedStock/Index.cshtml |
-| Users | Create.cshtml | Angular Pilot | /users | MiniStore.Web/Views/Users/Create.cshtml |
-| Users | Index.cshtml | Angular Pilot | /users | MiniStore.Web/Views/Users/Index.cshtml |
+| Users | Create.cshtml | Angular Default | /users | MiniStore.Web/Views/Users/Create.cshtml |
+| Users | Index.cshtml | Angular Default | /users | MiniStore.Web/Views/Users/Index.cshtml |
 | VendorBills | Create.cshtml | Angular Pilot | /purchases/bills | MiniStore.Web/Views/VendorBills/Create.cshtml |
 | VendorBills | Details.cshtml | Angular Pilot | /purchases/bills | MiniStore.Web/Views/VendorBills/Details.cshtml |
 | VendorBills | Index.cshtml | Angular Pilot | /purchases/bills | MiniStore.Web/Views/VendorBills/Index.cshtml |
@@ -449,12 +449,12 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | Replenishment | Index | GET | Angular Default | /inventory/replenishment | /inventory/replenishment | MiniStore.Web/Controllers/Inventory/ReplenishmentController.cs |
 | Replenishment | Save | GET, POST | Angular Default | /inventory/replenishment | — | MiniStore.Web/Controllers/Inventory/ReplenishmentController.cs |
 | Replenishment | SetActive | GET, POST | Angular Default | /inventory/replenishment | — | MiniStore.Web/Controllers/Inventory/ReplenishmentController.cs |
-| Roles | Create | GET | Angular Pilot | /roles | — | MiniStore.Web/Controllers/Security/RolesController.cs |
-| Roles | Create | POST | Angular Pilot | /roles | — | MiniStore.Web/Controllers/Security/RolesController.cs |
-| Roles | Delete | POST | Angular Pilot | /roles | — | MiniStore.Web/Controllers/Security/RolesController.cs |
-| Roles | Edit | GET | Angular Pilot | /roles | — | MiniStore.Web/Controllers/Security/RolesController.cs |
-| Roles | Edit | POST | Angular Pilot | /roles | — | MiniStore.Web/Controllers/Security/RolesController.cs |
-| Roles | Index | GET | Angular Pilot | /roles | — | MiniStore.Web/Controllers/Security/RolesController.cs |
+| Roles | Create | GET | Angular Default | /roles | /roles/new | MiniStore.Web/Controllers/Security/RolesController.cs |
+| Roles | Create | POST | Angular Default | /roles | /roles/new | MiniStore.Web/Controllers/Security/RolesController.cs |
+| Roles | Delete | POST | Angular Default | /roles | — | MiniStore.Web/Controllers/Security/RolesController.cs |
+| Roles | Edit | GET | Angular Default | /roles | /roles/{id}/edit | MiniStore.Web/Controllers/Security/RolesController.cs |
+| Roles | Edit | POST | Angular Default | /roles | /roles/{id}/edit | MiniStore.Web/Controllers/Security/RolesController.cs |
+| Roles | Index | GET | Angular Default | /roles | /roles | MiniStore.Web/Controllers/Security/RolesController.cs |
 | Sales | Create | ANY | Angular Pilot | /sales/legacy | — | MiniStore.Web/Controllers/Sales/SalesController.cs |
 | Sales | Create | POST | Angular Pilot | /sales/legacy | — | MiniStore.Web/Controllers/Sales/SalesController.cs |
 | Sales | Details | ANY | Angular Pilot | /sales/legacy | — | MiniStore.Web/Controllers/Sales/SalesController.cs |
@@ -611,9 +611,9 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | UnassignedStock | CreateRule | POST | Angular Default | /inventory/putaway | — | MiniStore.Web/Controllers/Inventory/UnassignedStockController.cs |
 | UnassignedStock | Index | GET | Angular Default | /inventory/putaway | /inventory/putaway | MiniStore.Web/Controllers/Inventory/UnassignedStockController.cs |
 | UnassignedStock | SetRuleActive | POST | Angular Default | /inventory/putaway | — | MiniStore.Web/Controllers/Inventory/UnassignedStockController.cs |
-| Users | Create | GET | Angular Pilot | /users | — | MiniStore.Web/Controllers/Security/UsersController.cs |
-| Users | Create | POST | Angular Pilot | /users | — | MiniStore.Web/Controllers/Security/UsersController.cs |
-| Users | Index | GET | Angular Pilot | /users | — | MiniStore.Web/Controllers/Security/UsersController.cs |
+| Users | Create | GET | Angular Default | /users | /users/new | MiniStore.Web/Controllers/Security/UsersController.cs |
+| Users | Create | POST | Angular Default | /users | /users/new | MiniStore.Web/Controllers/Security/UsersController.cs |
+| Users | Index | GET | Angular Default | /users | /users | MiniStore.Web/Controllers/Security/UsersController.cs |
 | VendorBills | Approve | POST | Angular Pilot | /purchases/bills | — | MiniStore.Web/Controllers/Purchases/VendorBillsController.cs |
 | VendorBills | ApproveOverride | POST | Angular Pilot | /purchases/bills | — | MiniStore.Web/Controllers/Purchases/VendorBillsController.cs |
 | VendorBills | Cancel | POST | Angular Pilot | /purchases/bills | — | MiniStore.Web/Controllers/Purchases/VendorBillsController.cs |

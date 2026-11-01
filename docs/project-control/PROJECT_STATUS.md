@@ -176,3 +176,6 @@ Create/Edit غير المدعومة وكل الكتابات على MVC/API. نج
 اكتمل `MOD-030E3D`: أصبح tenant AuditEvents Index AngularDefault على `/audit-events` مع حفظ الفلاتر، وبقي Export POST
 محميًا ومستقلًا خارج التحويل، دون لمس Platform audit. نجح hosted ‏15/15 والقطع والرجوع 57/57 والبوابة 1,473 backend.
 أصبحت 27 سطحًا AngularDefault وبقي 55 سطحًا MVC؛ ينتقل التنفيذ إلى `MOD-030E3E` للمستخدمين والأدوار.
+اكتمل `MOD-030E3E`: أصبحت Users وRoles AngularDefault لمسارات Index/Create/Edit GET الدقيقة، مع معرّف موجب للتعديل
+وبقاء كل mutations خارج التحويل. نجح hosted ‏15/15 والقطع والرجوع 62/62 والبوابة 1,485 backend دون إنشاء بيانات هوية.
+أصبحت 29 سطحًا AngularDefault وبقي 53 سطحًا MVC؛ ينتقل التنفيذ إلى `MOD-030E3F` للقوالب والوصفات.

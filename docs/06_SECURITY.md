@@ -319,3 +319,10 @@ values. CSV export remains an independently authorized (`AuditEvents.View` + `Au
 POST outside presentation cutover. Sensitive-field projection remains server-authoritative through
 `AuditEvents.ViewSensitive`, and the separately authenticated Platform audit surface is unchanged. Hosted acceptance passed
 15/15 and both the 57-route cutover and MVC rollback passed.
+
+## Angular identity-administration cutover update (2026-11-01)
+
+`MOD-030E3E` maps only authorized Users Index/Create and Roles Index/Create/Edit GET presentation to exact Angular routes.
+Role Edit requires a positive identifier. User creation, role creation/update/delete and permission/assignment mutations
+remain independently authorized and antiforgery-protected outside presentation cutover. Hosted acceptance passed 15/15,
+and both the 62-route cutover and MVC rollback passed without creating test identity data.

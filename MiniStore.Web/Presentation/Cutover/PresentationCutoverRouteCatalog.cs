@@ -64,7 +64,12 @@ public static class PresentationCutoverRouteCatalog
             ["ProductAttributes:Index"] = "/products/attributes",
             ["ProductAttributes:Values"] = "/products/{productId}/attributes",
             ["Warehouses:Index"] = "/warehouses",
-            ["AuditEvents:Index"] = "/audit-events"
+            ["AuditEvents:Index"] = "/audit-events",
+            ["Users:Index"] = "/users",
+            ["Users:Create"] = "/users/new",
+            ["Roles:Index"] = "/roles",
+            ["Roles:Create"] = "/roles/new",
+            ["Roles:Edit"] = "/roles/{id}/edit"
         };
 
     public static IReadOnlyDictionary<string, string> All => Routes;

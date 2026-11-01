@@ -346,6 +346,33 @@ Check(auditEventsCutoverResolver.Resolve(cutoverContext.Request, "AuditEvents", 
 Check(auditEventsCutoverResolver.Resolve(cutoverContext.Request, "AuditEvents", "Export",
         new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null,
     "Audit export must stay outside presentation cutover");
+var identityAdministrationCutoverResolver = new PresentationCutoverResolver(Options.Create(
+    new PresentationCutoverOptions
+    {
+        AngularBasePath = "/app",
+        Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["Users"] = PresentationCutoverMode.AngularDefault,
+            ["Roles"] = PresentationCutoverMode.AngularDefault
+        }
+    }));
+Check(identityAdministrationCutoverResolver.Resolve(cutoverContext.Request, "Users", "Index",
+          new Microsoft.AspNetCore.Routing.RouteValueDictionary()) == "/app/users?page=2" &&
+      identityAdministrationCutoverResolver.Resolve(cutoverContext.Request, "Users", "Create",
+          new Microsoft.AspNetCore.Routing.RouteValueDictionary()) == "/app/users/new?page=2" &&
+      identityAdministrationCutoverResolver.Resolve(cutoverContext.Request, "Roles", "Index",
+          new Microsoft.AspNetCore.Routing.RouteValueDictionary()) == "/app/roles?page=2" &&
+      identityAdministrationCutoverResolver.Resolve(cutoverContext.Request, "Roles", "Create",
+          new Microsoft.AspNetCore.Routing.RouteValueDictionary()) == "/app/roles/new?page=2" &&
+      identityAdministrationCutoverResolver.Resolve(cutoverContext.Request, "Roles", "Edit",
+          new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 17 }) == "/app/roles/17/edit?page=2",
+    "Users and Roles GET cutover must resolve exact Angular routes and preserve query strings");
+Check(new long[] { -1, 0 }.All(id => identityAdministrationCutoverResolver.Resolve(
+          cutoverContext.Request, "Roles", "Edit",
+          new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = id }) is null) &&
+      identityAdministrationCutoverResolver.Resolve(cutoverContext.Request, "Roles", "Delete",
+          new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 17 }) is null,
+    "Role cutover must reject unsafe identifiers and keep mutations outside presentation cutover");
 foreach (var entry in PresentationCutoverRouteCatalog.All)
 {
     var keyParts = entry.Key.Split(':', 2);

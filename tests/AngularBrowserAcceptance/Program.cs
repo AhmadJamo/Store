@@ -202,7 +202,11 @@ static async Task RunLiveCutoverAsync(
         new("/ProductCategories?source=cutover-rehearsal", "/app/products/categories?source=cutover-rehearsal", "Products.View"),
         new("/ProductAttributes?source=cutover-rehearsal", "/app/products/attributes?source=cutover-rehearsal", "Products.View"),
         new("/Warehouses?source=cutover-rehearsal", "/app/warehouses?source=cutover-rehearsal", "Warehouses.View"),
-        new("/AuditEvents?page=2&eventType=cutover", "/app/audit-events?page=2&eventType=cutover", "AuditEvents.View")
+        new("/AuditEvents?page=2&eventType=cutover", "/app/audit-events?page=2&eventType=cutover", "AuditEvents.View"),
+        new("/Users?source=cutover-rehearsal", "/app/users?source=cutover-rehearsal", "Users.View"),
+        new("/Users/Create", "/app/users/new", "Users.Create"),
+        new("/Roles?source=cutover-rehearsal", "/app/roles?source=cutover-rehearsal", "Roles.View"),
+        new("/Roles/Create", "/app/roles/new", "Roles.Create")
     };
 
     if (permissions.Contains("Customers.View"))
@@ -255,6 +259,22 @@ static async Task RunLiveCutoverAsync(
             routes.Add(new($"/ProductStocks/Edit/{id}", $"/app/inventory/stocks/{id}/edit", "ProductStock.Edit"));
         }
     }
+    if (permissions.Contains("Roles.View") && permissions.Contains("Roles.Edit"))
+    {
+        var response = await authenticated.GetAsync("/api/v1/roles");
+        Require(response.Ok, $"Role cutover fixture read returned {response.Status}.");
+        using var roles = JsonDocument.Parse(await response.TextAsync());
+        if (roles.RootElement.ValueKind == JsonValueKind.Array)
+        {
+            var editable = roles.RootElement.EnumerateArray()
+                .FirstOrDefault(role => !role.GetProperty("isSystem").GetBoolean());
+            if (editable.ValueKind != JsonValueKind.Undefined)
+            {
+                var id = editable.GetProperty("id").GetInt32();
+                routes.Add(new($"/Roles/Edit/{id}", $"/app/roles/{id}/edit", "Roles.Edit"));
+            }
+        }
+    }
     if (permissions.Contains("InventoryAdjustments.View"))
     {
         var response = await authenticated.GetAsync("/api/v1/inventory-adjustments");
@@ -305,7 +325,8 @@ static async Task RunLiveCutoverAsync(
                                  "InventoryAdjustments" or "StockTransfers" or "InventoryTracking" or "StockMovements" or
                                  "WarehouseLocations" or "UnassignedStock" or "LocationMovements" or "InventoryScanning" or
                                  "Replenishment" or "Branches" or "PaymentMethods" or "TaxRates" or
-                                 "ProductCategories" or "ProductAttributes" or "Warehouses" or "AuditEvents";
+                                 "ProductCategories" or "ProductAttributes" or "Warehouses" or "AuditEvents" or
+                                 "Users" or "Roles";
         if (expectsAngular)
         {
             Require(response.Status is 301 or 302 or 307 or 308,

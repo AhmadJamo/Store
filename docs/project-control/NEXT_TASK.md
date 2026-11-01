@@ -1,21 +1,20 @@
 # المهمة التالية الوحيدة / Next Task
 
-## `MOD-030E3E` — إدارة المستخدمين والأدوار / Users and Roles Cutover
+## `MOD-030E3F` — قوالب المنتجات والوصفات / Product Templates and Recipes Cutover
 
 > الحالة: APPROVED
 
-اكتمل `MOD-030E3D`: أصبح tenant AuditEvents السطح السابع والعشرين AngularDefault بعد hosted ‏15/15 والقطع والرجوع
-57/57. بقي 55 سطحًا mapped يعمل MVC افتراضيًا.
+اكتمل `MOD-030E3E`: أصبحت Users وRoles السطحين 28 و29 في AngularDefault بعد hosted ‏15/15 والقطع والرجوع 62/62.
+بقي 53 سطحًا mapped يعمل MVC افتراضيًا.
 
 ### النطاق المحدود
 
-- Users وRoles فقط ضمن مصادقة الشركة الحالية.
-- Users Index/Create GET إلى `/users` و`/users/new`.
-- Roles Index/Create/Edit GET إلى `/roles` و`/roles/new` و`/roles/{id}/edit` مع معرّف موجب.
-- كل POST/Delete وتعيين صلاحيات أو عضويات تبقى مستقلة بصلاحياتها وantiforgery وخارج كتالوج العرض.
+- ProductTemplates Index GET إلى `/products/templates`.
+- Recipes Index GET إلى `/products/recipes` وEdit GET ذو `productId` الموجب إلى `/products/recipes/{id}`.
+- Assign/Create/Preview/Generate وقواعد حفظ الوصفة تبقى مستقلة بصلاحياتها وantiforgery وخارج كتالوج العرض.
 
 ### القبول
 
-- كل GET مصرح يصل إلى مسار Angular الدقيق ويحافظ على query والمعرّف عند الحاجة.
-- أي mutation أو معرّف غير موجب أو action غير مدعوم يبقى خارج presentation cutover.
+- كل GET مصرح يصل إلى مسار Angular الدقيق ويحافظ على query والمعرّف الموجب.
+- كل mutation أو معرّف غير موجب يبقى خارج presentation cutover.
 - hosted acceptance والقطع والرجوع والبوابة الكاملة تبقى خضراء بلا تغيير قاعدة بيانات.

@@ -16,8 +16,8 @@ same-line MVC actions, verifies every mapped Angular route and emits one accepta
 operation, permission, risk and evidence fields. The modernization gate fails when either generated artifact is stale.
 
 `docs/modernization/PHASE_30E_RUNTIME_READINESS_AUDIT.md` distinguishes functional counterparts from runtime defaults:
-All 82 surfaces have verified functional counterparts. MOD-030E3D expands the committed default to twenty-seven surfaces and
-leaves 55 mapped MVC-default surfaces. Inventory Replenishment uses its own Application-backed API and Angular
+All 82 surfaces have verified functional counterparts. MOD-030E3E expands the committed default to twenty-nine surfaces and
+leaves 53 mapped MVC-default surfaces. Inventory Replenishment uses its own Application-backed API and Angular
 workspace at `/inventory/replenishment`; it is not the separate Purchase Replenishment automation workflow. WarehouseLocations,
 UnassignedStock, LocationMovements and InventoryScanning
 redirect their Index GET actions to exact Angular workspaces with query preservation. WarehouseLocations Create/Edit
@@ -37,6 +37,8 @@ Warehouses Index now redirects to `/warehouses` with query preservation. Create/
 single Angular workspace does not consume independent create/edit URL intent; all writes remain API/MVC operations.
 Tenant AuditEvents Index now redirects to `/audit-events` with filter query preservation. Export remains an independently
 authorized antiforgery-protected API/MVC operation; separate Platform audit authentication is unchanged.
+Users Index/Create and Roles Index/Create/Edit now use exact Angular routes. Positive role identifiers are required; every
+identity/role mutation remains independently authorized and antiforgery-protected outside presentation cutover.
 
 `tests/AngularBrowserAcceptance` loads an operator-supplied Playwright storage-state into both UI and API contexts. Without
 one, it uses a bounded synthetic session only for design-system presentation checks and reports authenticated API parity as

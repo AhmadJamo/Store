@@ -1,5 +1,12 @@
 # AI Work Log
 
+- 2026-11-01: Completed `MOD-030E3E`. Users Index/Create and Roles Index/Create/Edit now use exact AngularDefault routes;
+  positive role identifiers are enforced and every identity/role mutation remains independently authorized and
+  antiforgery-protected. Hosted acceptance passed 15/15; cutover and MVC rollback passed 62 routes including a read-only
+  resolved editable-role fixture. Release and 1,485 backend checks passed. Temporary authentication state was deleted and
+  no identity data, schema, business rule or MVC file changed. Twenty-nine surfaces are AngularDefault and 53 remain
+  MVC-default; execution advances to `MOD-030E3F`.
+
 - 2026-11-01: Completed `MOD-030E3D`. Tenant AuditEvents Index now uses `/audit-events` as AngularDefault with filter
   query preservation. Export remains independently authorized and antiforgery-protected, and Platform audit remains behind
   its separate authentication boundary. Hosted acceptance passed 15/15, cutover and MVC rollback passed 57 routes, and
