@@ -1,17 +1,17 @@
 # المهمة التالية الوحيدة / Next Task
 
-## `MOD-030E4F` — طلبات الشراء / Purchase Requests Cutover
+## `MOD-030E4G` — توريد طلبات الشراء / Purchase Sourcing Cutover
 
 > الحالة: APPROVED
 
-اكتمل `MOD-030E4E`: أصبح PurchaseTemplates السطح 36 في AngularDefault بعد hosted ‏15/15 والقطع والرجوع
-70/70. بقي 46 سطحًا mapped يعمل MVC افتراضيًا.
+اكتمل `MOD-030E4F`: أصبح PurchaseRequests السطح 37 في AngularDefault بعد hosted ‏15/15 والقطع والرجوع 73/73
+بما فيها Details لطلب موجود دون إنشاء بيانات. بقي 45 سطحًا mapped يعمل MVC افتراضيًا.
 
 ### النطاق المحدود
 
-- PurchaseRequests Index GET إلى `/purchases/requests` وCreate GET إلى `/purchases/requests/new`.
-- Details GET ذو المعرّف الموجب إلى `/purchases/requests/{id}` مع الحفاظ على query.
-- Create POST وSubmit/Cancel/Approve/Reject تبقى بصلاحياتها وantiforgery وخارج كتالوج العرض.
+- PurchaseSourcing Index GET إلى `/purchases/sourcing`.
+- Details/Print GET ذوا المعرّف الموجب إلى `/purchases/sourcing/{id}` و`/purchases/sourcing/{id}/print`.
+- Create/Direct forms وAttachment download وكل mutations تبقى خارج الدفعة إلى أن يثبت URL intent لكل منها.
 
 ### القبول
 

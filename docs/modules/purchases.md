@@ -140,6 +140,13 @@ approval/history evidence, Submit and reasoned Cancel operations. The versioned 
 and `PurchaseRequestService` still owns numbering, active purchasable products, compatible managed-unit conversion, supplier validity,
 row-version concurrency and lifecycle transitions. Angular computes no trusted quantity conversion or approval state; MVC is default.
 
+`MOD-030E4F` makes PurchaseRequests Index/Create/positive-ID Details GET presentation `AngularDefault` at
+`/purchases/requests`, `/purchases/requests/new` and `/purchases/requests/{id}`. Query filters are preserved; Create POST
+and Submit/Cancel/Approve/Reject retain their independent permissions plus antiforgery outside the presentation catalog.
+Hosted acceptance passed 15/15, and cutover plus process-local MVC rollback each passed 73 authorized routes including an
+existing request read through the API. Release and 1,516 backend checks passed; no data was created and no schema,
+inventory, accounting or business rule changed.
+
 Angular `/purchases/approval-rules` now administers the existing warehouse/priority-scoped ordered role rules, including activation
 with row-version evidence. Request details expose current-role and immutable step evidence and show Approve/Reject only when both the
 API-authored role eligibility and independent permission allow it. `PurchaseApprovalService` still freezes rule snapshots and advances

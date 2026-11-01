@@ -77,7 +77,10 @@ public static class PresentationCutoverRouteCatalog
             ["PurchaseAccountingReconciliation:Index"] = "/purchases/accounting-reconciliation",
             ["PurchaseReplenishment:Index"] = "/purchases/replenishment",
             ["PurchaseApprovalRules:Index"] = "/purchases/approval-rules",
-            ["PurchaseTemplates:Index"] = "/purchases/templates"
+            ["PurchaseTemplates:Index"] = "/purchases/templates",
+            ["PurchaseRequests:Index"] = "/purchases/requests",
+            ["PurchaseRequests:Create"] = "/purchases/requests/new",
+            ["PurchaseRequests:Details"] = "/purchases/requests/{id}"
         };
 
     public static IReadOnlyDictionary<string, string> All => Routes;

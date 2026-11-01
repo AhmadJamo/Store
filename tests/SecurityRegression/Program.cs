@@ -485,6 +485,37 @@ Check(purchaseTemplatesCutoverResolver.Resolve(cutoverContext.Request,
               "PurchaseTemplates", action,
               new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 17 }) is null),
     "Purchase-template cutover must keep create, generate and status mutations outside presentation cutover");
+var purchaseRequestsCutoverResolver = new PresentationCutoverResolver(Options.Create(
+    new PresentationCutoverOptions
+    {
+        AngularBasePath = "/app",
+        Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["PurchaseRequests"] = PresentationCutoverMode.AngularDefault
+        }
+    }));
+Check(purchaseRequestsCutoverResolver.Resolve(cutoverContext.Request,
+          "PurchaseRequests", "Index",
+          new Microsoft.AspNetCore.Routing.RouteValueDictionary()) ==
+      "/app/purchases/requests?page=2" &&
+      purchaseRequestsCutoverResolver.Resolve(cutoverContext.Request,
+          "PurchaseRequests", "Create",
+          new Microsoft.AspNetCore.Routing.RouteValueDictionary()) ==
+      "/app/purchases/requests/new?page=2" &&
+      purchaseRequestsCutoverResolver.Resolve(cutoverContext.Request,
+          "PurchaseRequests", "Details",
+          new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 17 }) ==
+      "/app/purchases/requests/17?page=2",
+    "Purchase-request cutover must resolve exact list, create and positive-ID details routes");
+Check(new long[] { -1, 0 }.All(id =>
+          purchaseRequestsCutoverResolver.Resolve(cutoverContext.Request,
+              "PurchaseRequests", "Details",
+              new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = id }) is null) &&
+      new[] { "Submit", "Cancel", "Approve", "Reject" }.All(action =>
+          purchaseRequestsCutoverResolver.Resolve(cutoverContext.Request,
+              "PurchaseRequests", action,
+              new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 17 }) is null),
+    "Purchase-request lifecycle mutations and unsafe identifiers must stay outside presentation cutover");
 foreach (var entry in PresentationCutoverRouteCatalog.All)
 {
     var keyParts = entry.Key.Split(':', 2);

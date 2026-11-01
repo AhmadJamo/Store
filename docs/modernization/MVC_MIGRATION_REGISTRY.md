@@ -11,7 +11,7 @@
 - Angular application routes discovered: 184.
 - MVC surfaces with a verified Angular counterpart: 82.
 - Remaining MVC surfaces without a mapped Angular counterpart: 0.
-- Allowlisted Angular-default cutover actions: 73.
+- Allowlisted Angular-default cutover actions: 76.
 
 Remaining surfaces: none.
 
@@ -113,9 +113,9 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | PurchaseOrders | Details.cshtml | Angular Pilot | /purchases/orders | MiniStore.Web/Views/PurchaseOrders/Details.cshtml |
 | PurchaseOrders | Index.cshtml | Angular Pilot | /purchases/orders | MiniStore.Web/Views/PurchaseOrders/Index.cshtml |
 | PurchaseReplenishment | Index.cshtml | Angular Default | /purchases/replenishment | MiniStore.Web/Views/PurchaseReplenishment/Index.cshtml |
-| PurchaseRequests | Create.cshtml | Angular Pilot | /purchases/requests | MiniStore.Web/Views/PurchaseRequests/Create.cshtml |
-| PurchaseRequests | Details.cshtml | Angular Pilot | /purchases/requests | MiniStore.Web/Views/PurchaseRequests/Details.cshtml |
-| PurchaseRequests | Index.cshtml | Angular Pilot | /purchases/requests | MiniStore.Web/Views/PurchaseRequests/Index.cshtml |
+| PurchaseRequests | Create.cshtml | Angular Default | /purchases/requests | MiniStore.Web/Views/PurchaseRequests/Create.cshtml |
+| PurchaseRequests | Details.cshtml | Angular Default | /purchases/requests | MiniStore.Web/Views/PurchaseRequests/Details.cshtml |
+| PurchaseRequests | Index.cshtml | Angular Default | /purchases/requests | MiniStore.Web/Views/PurchaseRequests/Index.cshtml |
 | PurchaseReturns | Create.cshtml | Angular Pilot | /purchases/legacy-returns | MiniStore.Web/Views/PurchaseReturns/Create.cshtml |
 | PurchaseReturns | Details.cshtml | Angular Pilot | /purchases/legacy-returns | MiniStore.Web/Views/PurchaseReturns/Details.cshtml |
 | PurchaseReturns | Index.cshtml | Angular Pilot | /purchases/legacy-returns | MiniStore.Web/Views/PurchaseReturns/Index.cshtml |
@@ -411,12 +411,12 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | PurchaseReplenishment | Index | GET | Angular Default | /purchases/replenishment | /purchases/replenishment | MiniStore.Web/Controllers/Purchases/PurchaseReplenishmentController.cs |
 | PurchaseReplenishment | RunNow | POST | Angular Default | /purchases/replenishment | — | MiniStore.Web/Controllers/Purchases/PurchaseReplenishmentController.cs |
 | PurchaseReplenishment | SaveSettings | POST | Angular Default | /purchases/replenishment | — | MiniStore.Web/Controllers/Purchases/PurchaseReplenishmentController.cs |
-| PurchaseRequests | Index | GET | Angular Pilot | /purchases/requests | — | MiniStore.Web/Controllers/Purchases/PurchaseRequestsController.cs |
-| PurchaseRequests | RedirectToAction | GET, POST | Angular Pilot | /purchases/requests | — | MiniStore.Web/Controllers/Purchases/PurchaseRequestsController.cs |
-| PurchaseRequests | RedirectToAction | GET, POST | Angular Pilot | /purchases/requests | — | MiniStore.Web/Controllers/Purchases/PurchaseRequestsController.cs |
-| PurchaseRequests | RedirectToAction | GET, POST | Angular Pilot | /purchases/requests | — | MiniStore.Web/Controllers/Purchases/PurchaseRequestsController.cs |
-| PurchaseRequests | RedirectToAction | GET, POST | Angular Pilot | /purchases/requests | — | MiniStore.Web/Controllers/Purchases/PurchaseRequestsController.cs |
-| PurchaseRequests | RedirectToAction | GET, POST | Angular Pilot | /purchases/requests | — | MiniStore.Web/Controllers/Purchases/PurchaseRequestsController.cs |
+| PurchaseRequests | Index | GET | Angular Default | /purchases/requests | /purchases/requests | MiniStore.Web/Controllers/Purchases/PurchaseRequestsController.cs |
+| PurchaseRequests | RedirectToAction | GET, POST | Angular Default | /purchases/requests | — | MiniStore.Web/Controllers/Purchases/PurchaseRequestsController.cs |
+| PurchaseRequests | RedirectToAction | GET, POST | Angular Default | /purchases/requests | — | MiniStore.Web/Controllers/Purchases/PurchaseRequestsController.cs |
+| PurchaseRequests | RedirectToAction | GET, POST | Angular Default | /purchases/requests | — | MiniStore.Web/Controllers/Purchases/PurchaseRequestsController.cs |
+| PurchaseRequests | RedirectToAction | GET, POST | Angular Default | /purchases/requests | — | MiniStore.Web/Controllers/Purchases/PurchaseRequestsController.cs |
+| PurchaseRequests | RedirectToAction | GET, POST | Angular Default | /purchases/requests | — | MiniStore.Web/Controllers/Purchases/PurchaseRequestsController.cs |
 | PurchaseReturns | Create | ANY | Angular Pilot | /purchases/legacy-returns | — | MiniStore.Web/Controllers/Purchases/PurchaseReturnsController.cs |
 | PurchaseReturns | Create | POST | Angular Pilot | /purchases/legacy-returns | — | MiniStore.Web/Controllers/Purchases/PurchaseReturnsController.cs |
 | PurchaseReturns | Details | ANY | Angular Pilot | /purchases/legacy-returns | — | MiniStore.Web/Controllers/Purchases/PurchaseReturnsController.cs |

@@ -221,7 +221,13 @@ static async Task RunLiveCutoverAsync(
             "PurchaseApprovalRules.View"),
         new("/PurchaseTemplates?source=cutover-rehearsal",
             "/app/purchases/templates?source=cutover-rehearsal",
-            "PurchaseTemplates.View")
+            "PurchaseTemplates.View"),
+        new("/PurchaseRequests?status=1&search=cutover-rehearsal",
+            "/app/purchases/requests?status=1&search=cutover-rehearsal",
+            "PurchaseRequests.View"),
+        new("/PurchaseRequests/Create",
+            "/app/purchases/requests/new",
+            "PurchaseRequests.Create")
     };
 
     if (permissions.Contains("Customers.View"))
@@ -302,6 +308,18 @@ static async Task RunLiveCutoverAsync(
                 $"/app/products/recipes/{productId}", "Products.Edit"));
         }
     }
+    if (permissions.Contains("PurchaseRequests.View"))
+    {
+        var response = await authenticated.GetAsync("/api/v1/purchase-requests");
+        Require(response.Ok, $"Purchase-request cutover fixture read returned {response.Status}.");
+        using var requests = JsonDocument.Parse(await response.TextAsync());
+        if (requests.RootElement.ValueKind == JsonValueKind.Array && requests.RootElement.GetArrayLength() > 0)
+        {
+            var id = requests.RootElement[0].GetProperty("id").GetInt32();
+            routes.Add(new($"/PurchaseRequests/Details/{id}",
+                $"/app/purchases/requests/{id}", "PurchaseRequests.View"));
+        }
+    }
     if (permissions.Contains("InventoryAdjustments.View"))
     {
         var response = await authenticated.GetAsync("/api/v1/inventory-adjustments");
@@ -366,6 +384,8 @@ static async Task RunLiveCutoverAsync(
                          surface is "PurchaseApprovalRules";
         expectsAngular = expectsAngular || options.CutoverMode == "pilot" &&
                          surface is "PurchaseTemplates";
+        expectsAngular = expectsAngular || options.CutoverMode == "pilot" &&
+                         surface is "PurchaseRequests";
         if (expectsAngular)
         {
             Require(response.Status is 301 or 302 or 307 or 308,
