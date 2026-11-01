@@ -9,11 +9,11 @@
 - MVC actions discovered: 411.
 - Razor files included in the control inventory: 209.
 - Angular application routes discovered: 183.
-- MVC surfaces with a verified Angular counterpart: 82.
-- Remaining MVC surfaces without a mapped Angular counterpart: 0.
+- MVC surfaces with a verified Angular counterpart: 81.
+- Remaining MVC surfaces without a mapped Angular counterpart: 1.
 - Allowlisted Angular-default cutover actions: 51.
 
-Remaining surfaces: none.
+Remaining surfaces: Replenishment.
 
 Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, Parity Proven, Angular Default, MVC Retired. A pilot status does not change the default MVC route.
 
@@ -133,7 +133,7 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | PurchaseTemplates | Index.cshtml | Angular Pilot | /purchases/templates | MiniStore.Web/Views/PurchaseTemplates/Index.cshtml |
 | Recipes | Edit.cshtml | Angular Pilot | /products/recipes | MiniStore.Web/Views/Recipes/Edit.cshtml |
 | Recipes | Index.cshtml | Angular Pilot | /products/recipes | MiniStore.Web/Views/Recipes/Index.cshtml |
-| Replenishment | Index.cshtml | Angular Pilot | /purchases/replenishment | MiniStore.Web/Views/Replenishment/Index.cshtml |
+| Replenishment | Index.cshtml | Inventoried | — | MiniStore.Web/Views/Replenishment/Index.cshtml |
 | Roles | Create.cshtml | Angular Pilot | /roles | MiniStore.Web/Views/Roles/Create.cshtml |
 | Roles | Edit.cshtml | Angular Pilot | /roles | MiniStore.Web/Views/Roles/Edit.cshtml |
 | Roles | Index.cshtml | Angular Pilot | /roles | MiniStore.Web/Views/Roles/Index.cshtml |
@@ -444,11 +444,11 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | Recipes | Edit | GET | Angular Pilot | /products/recipes | — | MiniStore.Web/Controllers/Catalog/RecipesController.cs |
 | Recipes | Edit | POST | Angular Pilot | /products/recipes | — | MiniStore.Web/Controllers/Catalog/RecipesController.cs |
 | Recipes | Index | GET | Angular Pilot | /products/recipes | — | MiniStore.Web/Controllers/Catalog/RecipesController.cs |
-| Replenishment | CreatePurchaseRequestDraft | POST | Angular Pilot | /purchases/replenishment | — | MiniStore.Web/Controllers/Inventory/ReplenishmentController.cs |
-| Replenishment | CreateTransferDraft | GET, POST | Angular Pilot | /purchases/replenishment | — | MiniStore.Web/Controllers/Inventory/ReplenishmentController.cs |
-| Replenishment | Index | GET | Angular Pilot | /purchases/replenishment | — | MiniStore.Web/Controllers/Inventory/ReplenishmentController.cs |
-| Replenishment | Save | GET, POST | Angular Pilot | /purchases/replenishment | — | MiniStore.Web/Controllers/Inventory/ReplenishmentController.cs |
-| Replenishment | SetActive | GET, POST | Angular Pilot | /purchases/replenishment | — | MiniStore.Web/Controllers/Inventory/ReplenishmentController.cs |
+| Replenishment | CreatePurchaseRequestDraft | POST | Inventoried | — | — | MiniStore.Web/Controllers/Inventory/ReplenishmentController.cs |
+| Replenishment | CreateTransferDraft | GET, POST | Inventoried | — | — | MiniStore.Web/Controllers/Inventory/ReplenishmentController.cs |
+| Replenishment | Index | GET | Inventoried | — | — | MiniStore.Web/Controllers/Inventory/ReplenishmentController.cs |
+| Replenishment | Save | GET, POST | Inventoried | — | — | MiniStore.Web/Controllers/Inventory/ReplenishmentController.cs |
+| Replenishment | SetActive | GET, POST | Inventoried | — | — | MiniStore.Web/Controllers/Inventory/ReplenishmentController.cs |
 | Roles | Create | GET | Angular Pilot | /roles | — | MiniStore.Web/Controllers/Security/RolesController.cs |
 | Roles | Create | POST | Angular Pilot | /roles | — | MiniStore.Web/Controllers/Security/RolesController.cs |
 | Roles | Delete | POST | Angular Pilot | /roles | — | MiniStore.Web/Controllers/Security/RolesController.cs |

@@ -5,9 +5,11 @@
 
 ## Finding
 
-Functional migration coverage and runtime cutover are different measures. The source-driven registry maps 82 MVC
-surfaces to existing Angular routes and reports zero counterpart gaps. Before MOD-030E, committed configuration marked
-five surfaces and 29 GET actions as `AngularDefault`; 77 mapped surfaces remained MVC by default.
+Functional migration coverage and runtime cutover are different measures. The corrected source-driven registry maps 81
+of 82 MVC surfaces to verified Angular routes. Inventory Replenishment remains the one explicit counterpart gap; its MVC
+service uses `Inventory.Replenishment.*`, while `/purchases/replenishment` is a different automation workflow using
+`PurchaseReplenishment.*`. Before MOD-030E, committed configuration marked five surfaces and 29 GET actions as
+`AngularDefault`; 77 surfaces remained MVC by default.
 
 This means Angular is ready for the five proven cohorts, but the application is not yet Angular-only and physical MVC
 retirement would be premature.
@@ -108,6 +110,9 @@ The authenticated hosted suite passed 15/15 with zero failures/skips. Cutover an
 48 authorized routes. The final gate passed a warning-free Release build, 1,440 backend checks, 215/215 Angular tests
 across 106 files, 121 templates and bundle budgets (327,235 initial bytes; 81,880 largest lazy bytes). Nineteen surfaces
 are now AngularDefault and 63 mapped surfaces remain MVC by default. No data, schema, business rule or MVC file changed.
+
+The post-cohort registry correction classifies those 63 MVC-default surfaces as 62 verified counterparts plus the one
+Inventory Replenishment parity gap. It changes no runtime route or presentation mode.
 
 Every cohort must add explicit GET-only action mappings, require its existing permissions, pass hosted acceptance and
 exact Angular targets, then pass a process-local MVC rollback. Mutations continue through their independently authorized

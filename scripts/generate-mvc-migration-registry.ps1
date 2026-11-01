@@ -66,7 +66,6 @@ PurchaseServiceAcceptances|/purchases/service-acceptances
 PurchaseSourcing|/purchases/sourcing
 PurchaseTemplates|/purchases/templates
 Recipes|/products/recipes
-Replenishment|/purchases/replenishment
 Roles|/roles
 Sales|/sales/legacy
 SalesApprovalRules|/sales/approval-rules

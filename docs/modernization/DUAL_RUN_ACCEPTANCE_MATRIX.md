@@ -2,7 +2,7 @@
 
 > Generated from source by scripts/generate-mvc-migration-registry.ps1. Do not edit rows manually.
 
-- Counterparts covered: 82.
+- Counterparts covered: 81.
 - Presentation default: Mixed (Customers, Suppliers, AnalyticsCenter, Settings, Products, InventoryBalances, InventoryReservations, InventoryInsights, InventoryReconciliation, StockTransactions, ProductStocks, InventoryAdjustments, StockTransfers, InventoryTracking, StockMovements, WarehouseLocations, UnassignedStock, LocationMovements, InventoryScanning AngularDefault; all other surfaces MVC).
 - Evidence baseline: generated MVC view/action inventory, verified Angular route, controller permission references and acceptance gate.
 - Runtime dual-run samples and cutover rehearsal results are appended by the MOD-029 acceptance workflow; this static matrix performs no mutation.
@@ -62,7 +62,6 @@
 | PurchaseSourcing | /PurchaseSourcing | /purchases/sourcing | Read/write | PurchaseSourcing.Create, PurchaseSourcing.CreateDirect, PurchaseSourcing.View | Standard | 5 view(s); 8 action(s); route/source gate |
 | PurchaseTemplates | /PurchaseTemplates | /purchases/templates | Read/write | PurchaseTemplates.Create, PurchaseTemplates.Generate, PurchaseTemplates.Manage, PurchaseTemplates.View | Standard | 1 view(s); 3 action(s); route/source gate |
 | Recipes | /Recipes | /products/recipes | Read/write | Products.Edit, Products.View | Standard | 2 view(s); 3 action(s); route/source gate |
-| Replenishment | /Replenishment | /purchases/replenishment | Read/write | Inventory.Replenishment.Manage, Inventory.Replenishment.View, PurchaseRequests.Create, StockTransfers.Create | Inventory | 1 view(s); 5 action(s); route/source gate |
 | Roles | /Roles | /roles | Read/write | Roles.Create, Roles.Delete, Roles.Edit, Roles.View | Standard | 3 view(s); 6 action(s); route/source gate |
 | Sales | /Sales | /sales/legacy | Read/write | Sales.Create, Sales.View | Standard | 4 view(s); 6 action(s); route/source gate |
 | SalesApprovalRules | /SalesApprovalRules | /sales/approval-rules | Read/write | SalesApprovalRules.Manage, SalesApprovalRules.View | Standard | 1 view(s); 3 action(s); route/source gate |

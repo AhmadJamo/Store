@@ -1,6 +1,6 @@
 # Phase 28 — Shared and remaining Angular migration
 
-> Status: COMPLETE — `MOD-028A..G` complete on 2026-10-30; generated registry has zero remaining surfaces
+> Status: CORRECTED — `MOD-028A..G` complete on 2026-10-30; one Inventory Replenishment parity gap was exposed on 2026-11-01
 >
 > Presentation default: MVC until a separate cutover approval.
 
@@ -97,13 +97,15 @@ At bootstrap, the server session culture is authoritative over the non-sensitive
 
 `UiCultureStateService` keeps the shared locale signal independent from HTTP/session services, avoiding an interceptor
 dependency cycle while keeping session consumers, document `lang` and `dir`, and feature-local translators aligned. No token,
-credential, permission or business data is stored in browser storage. The corrected source generator now contains 164 controllers
-(82 MVC/82 API), 199 views, 411 MVC actions, 209 Razor control rows, 180 Angular routes and 82 verified counterparts, with
-zero remaining surfaces. MVC remains the presentation default.
+credential, permission or business data is stored in browser storage. A later semantic correction removed the false mapping
+from Inventory Replenishment to the distinct Purchase Replenishment automation workspace. The current generator contains
+81 verified counterparts and one remaining surface. MVC remains the presentation default for that surface.
 
 ## Confirmed remaining surfaces
 
-None. The final generated reconciliation reports zero unmapped MVC surfaces.
+Inventory Replenishment. It requires an API and Angular workspace over `ReplenishmentService` with
+`Inventory.Replenishment.View/Manage`; the existing `/purchases/replenishment` route is a separate automation workflow and
+cannot be used as its counterpart.
 
 The shared MVC layout/error/notification partials are presentation infrastructure, not independent routes. Angular already
 has shell, normalized Problem Details and recovery presentation. Health endpoints are machine endpoints and do not need a

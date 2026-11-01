@@ -1764,3 +1764,9 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   passed 1,322 checks, Angular passed 211/211 tests across 105 files, 121 templates passed accessibility and bundles measured
   326,124/358,400 initial and 81,600/81,920 largest lazy bytes. The registry reports 180 routes; only Language remains
   unmapped and no inspected cross-surface file/print gap remains. MVC remains default; advanced to `MOD-028G`.
+- 2026-11-01: Corrected the Angular migration registry before `MOD-030E2G`. Removed the false Inventory Replenishment
+  mapping to `/purchases/replenishment`, which belongs to a separate Purchase Replenishment automation service and
+  `PurchaseReplenishment.*` permissions. Regeneration now reports 81 verified counterparts and one explicit remaining
+  surface. Runtime remains unchanged at 19 AngularDefault surfaces and 63 MVC-default surfaces (62 mapped plus one parity
+  gap); no database, business rule, controller or presentation mode changed. `MOD-030E2G` now builds the correct
+  `/inventory/replenishment` API/Angular slice before reversible cutover.

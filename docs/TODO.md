@@ -119,7 +119,7 @@ The ERP SaaS Foundation Blueprint is imported as a non-authoritative planning re
     - [x] MOD-030E2D cut over the InventoryTracking Index GET presentation while open/quarantine/release/recall mutations remain independently protected. Completed 2026-11-01 with hosted 15/15, 43-route cutover/rollback, 1,427 backend checks and 215/215 Angular tests.
     - [x] MOD-030E2E cut over the read-only StockMovements Index GET presentation with exact query preservation and MVC rollback. Completed 2026-11-01 with hosted 15/15, 44-route cutover/rollback, 1,430 backend checks and 215/215 Angular tests.
     - [x] MOD-030E2F cut over the bounded warehouse-operations cohort: WarehouseLocations, UnassignedStock, LocationMovements and InventoryScanning Index GET presentation while all writes and unsupported WarehouseLocations Create/Edit deep links remain on MVC. Completed 2026-11-01 with hosted 15/15, 48-route cutover/rollback, 1,440 backend checks and 215/215 Angular tests.
-    - [ ] MOD-030E2G cut over Replenishment Index GET presentation while rule, transfer and purchase-demand mutations remain independently protected.
+    - [ ] MOD-030E2G build the correct Inventory Replenishment API/Angular counterpart, then cut over Index GET while rule, transfer and purchase-demand mutations remain independently protected. The distinct Purchase Replenishment automation route must not be reused.
 
 - [x] FND-000 import the ERP SaaS Foundation Blueprint with provenance and classify its ten capabilities against the actual MiniStore repository.
 - [ ] FND-010 inventory production environments and operational ownership, approve RPO/RTO and backup retention, run an isolated restore drill, reconcile restored financial/inventory/tenant/outbox state and record evidence.
