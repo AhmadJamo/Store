@@ -11,7 +11,7 @@
 - Angular application routes discovered: 184.
 - MVC surfaces with a verified Angular counterpart: 82.
 - Remaining MVC surfaces without a mapped Angular counterpart: 0.
-- Allowlisted Angular-default cutover actions: 72.
+- Allowlisted Angular-default cutover actions: 73.
 
 Remaining surfaces: none.
 
@@ -130,7 +130,7 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | PurchaseSourcing | Direct.cshtml | Angular Pilot | /purchases/sourcing | MiniStore.Web/Views/PurchaseSourcing/Direct.cshtml |
 | PurchaseSourcing | Index.cshtml | Angular Pilot | /purchases/sourcing | MiniStore.Web/Views/PurchaseSourcing/Index.cshtml |
 | PurchaseSourcing | Print.cshtml | Angular Pilot | /purchases/sourcing | MiniStore.Web/Views/PurchaseSourcing/Print.cshtml |
-| PurchaseTemplates | Index.cshtml | Angular Pilot | /purchases/templates | MiniStore.Web/Views/PurchaseTemplates/Index.cshtml |
+| PurchaseTemplates | Index.cshtml | Angular Default | /purchases/templates | MiniStore.Web/Views/PurchaseTemplates/Index.cshtml |
 | Recipes | Edit.cshtml | Angular Default | /products/recipes | MiniStore.Web/Views/Recipes/Edit.cshtml |
 | Recipes | Index.cshtml | Angular Default | /products/recipes | MiniStore.Web/Views/Recipes/Index.cshtml |
 | Replenishment | Index.cshtml | Angular Default | /inventory/replenishment | MiniStore.Web/Views/Replenishment/Index.cshtml |
@@ -438,9 +438,9 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | PurchaseSourcing | Direct | POST | Angular Pilot | /purchases/sourcing | — | MiniStore.Web/Controllers/Purchases/PurchaseSourcingController.cs |
 | PurchaseSourcing | Index | GET | Angular Pilot | /purchases/sourcing | — | MiniStore.Web/Controllers/Purchases/PurchaseSourcingController.cs |
 | PurchaseSourcing | Print | GET | Angular Pilot | /purchases/sourcing | — | MiniStore.Web/Controllers/Purchases/PurchaseSourcingController.cs |
-| PurchaseTemplates | RedirectToAction | GET, POST | Angular Pilot | /purchases/templates | — | MiniStore.Web/Controllers/Purchases/PurchaseTemplatesController.cs |
-| PurchaseTemplates | RedirectToAction | GET, POST | Angular Pilot | /purchases/templates | — | MiniStore.Web/Controllers/Purchases/PurchaseTemplatesController.cs |
-| PurchaseTemplates | RedirectToAction | GET, POST | Angular Pilot | /purchases/templates | — | MiniStore.Web/Controllers/Purchases/PurchaseTemplatesController.cs |
+| PurchaseTemplates | RedirectToAction | GET, POST | Angular Default | /purchases/templates | — | MiniStore.Web/Controllers/Purchases/PurchaseTemplatesController.cs |
+| PurchaseTemplates | RedirectToAction | GET, POST | Angular Default | /purchases/templates | — | MiniStore.Web/Controllers/Purchases/PurchaseTemplatesController.cs |
+| PurchaseTemplates | RedirectToAction | GET, POST | Angular Default | /purchases/templates | — | MiniStore.Web/Controllers/Purchases/PurchaseTemplatesController.cs |
 | Recipes | Edit | GET | Angular Default | /products/recipes | /products/recipes/{productId} | MiniStore.Web/Controllers/Catalog/RecipesController.cs |
 | Recipes | Edit | POST | Angular Default | /products/recipes | /products/recipes/{productId} | MiniStore.Web/Controllers/Catalog/RecipesController.cs |
 | Recipes | Index | GET | Angular Default | /products/recipes | /products/recipes | MiniStore.Web/Controllers/Catalog/RecipesController.cs |

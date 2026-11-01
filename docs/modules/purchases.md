@@ -64,6 +64,12 @@ list, create-from-order, request generation and active-state management through 
 `PurchaseTemplateService` still own award exclusivity, concurrency, validity, cumulative contracted quantities, traced generation and
 current product/unit eligibility. These commercial/demand operations create no direct stock or accounting effect; MVC is default.
 
+`MOD-030E4E` makes the exact PurchaseTemplates Index GET presentation `AngularDefault` at `/purchases/templates`.
+`PurchaseTemplates.View` remains authoritative; create-from-order, generate and status commands retain their independent
+permissions plus antiforgery outside the presentation catalog. Hosted acceptance passed 15/15, and cutover plus
+process-local MVC rollback each passed 70 authorized routes. Release and 1,508 backend checks passed; no data, schema,
+inventory, accounting or business-rule change was introduced.
+
 `MOD-023N` exposes supplier purchasing terms, atomic bulk save, active state, quantity-price breaks, immutable price history,
 price exceptions and bounded CSV/XLSX preview/import/export through Angular. `SupplierPurchasingInfoService` still owns product/unit
 compatibility, duplicates, preferred rows, concurrency, validity, base currency, atomic imports and audit snapshots; MVC is default.

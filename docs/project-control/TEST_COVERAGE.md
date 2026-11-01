@@ -50,6 +50,7 @@
 | MOD-030E4B Purchase Accounting Reconciliation | Exact read-only Index GET maps to `/purchases/accounting-reconciliation` with as-of/exception query preservation and no financial commands; hosted 15/15 and 67-route cutover/MVC rollback passed; Release clean and 1,499 backend checks passed | 2026-11-01 |
 | MOD-030E4C Purchase Replenishment | Exact Index GET maps to `/purchases/replenishment`; settings-save/manual-run commands stay independently permissioned and antiforgery protected; hosted 15/15 and 68-route cutover/MVC rollback passed; Release clean and 1,502 backend checks passed | 2026-11-01 |
 | MOD-030E4D Purchase Approval Rules | Exact Index GET maps to `/purchases/approval-rules`; create/status commands stay Manage-permissioned and antiforgery protected; hosted 15/15 and 69-route cutover/MVC rollback passed; Release clean and 1,505 backend checks passed | 2026-11-01 |
+| MOD-030E4E Purchase Templates | Exact Index GET maps to `/purchases/templates`; create/generate/status commands stay independently permissioned and antiforgery protected; hosted 15/15 and 70-route cutover/MVC rollback passed; Release clean and 1,508 backend checks passed | 2026-11-01 |
 | Live schema integrity (سلامة المخطط الحي) | 147 tables, 420 trusted FKs, zero disabled constraints/indexes or unsafe tenant relations | 2026-10-15 |
 | Web dependency build (بناء الويب واعتماداته) | Release, 4 projects, zero warnings/errors after SAL-120A (نجح) | 2026-10-22 |
 

@@ -218,7 +218,10 @@ static async Task RunLiveCutoverAsync(
             "PurchaseReplenishment.View"),
         new("/PurchaseApprovalRules?source=cutover-rehearsal",
             "/app/purchases/approval-rules?source=cutover-rehearsal",
-            "PurchaseApprovalRules.View")
+            "PurchaseApprovalRules.View"),
+        new("/PurchaseTemplates?source=cutover-rehearsal",
+            "/app/purchases/templates?source=cutover-rehearsal",
+            "PurchaseTemplates.View")
     };
 
     if (permissions.Contains("Customers.View"))
@@ -361,6 +364,8 @@ static async Task RunLiveCutoverAsync(
                          surface is "PurchaseReplenishment";
         expectsAngular = expectsAngular || options.CutoverMode == "pilot" &&
                          surface is "PurchaseApprovalRules";
+        expectsAngular = expectsAngular || options.CutoverMode == "pilot" &&
+                         surface is "PurchaseTemplates";
         if (expectsAngular)
         {
             Require(response.Status is 301 or 302 or 307 or 308,

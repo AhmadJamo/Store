@@ -194,3 +194,6 @@ Create/Edit غير المدعومة وكل الكتابات على MVC/API. نج
 اكتمل `MOD-030E4D`: أصبح PurchaseApprovalRules Index AngularDefault، وبقي إنشاء القاعدة وتغيير حالتها بصلاحية Manage
 وحماية antiforgery خارج التحويل. نجح hosted ‏15/15 والقطع والرجوع 69/69 والبوابة 1,505 backend.
 أصبحت 35 سطحًا AngularDefault وبقي 47 سطحًا MVC؛ ينتقل التنفيذ إلى `MOD-030E4E` لقوالب الشراء.
+اكتمل `MOD-030E4E`: أصبح PurchaseTemplates Index AngularDefault، وبقي إنشاء القالب والتوليد وتغيير الحالة بصلاحياتها
+وحماية antiforgery خارج التحويل. نجح hosted ‏15/15 والقطع والرجوع 70/70 والبوابة 1,508 backend.
+أصبحت 36 سطحًا AngularDefault وبقي 46 سطحًا MVC؛ ينتقل التنفيذ إلى `MOD-030E4F` لطلبات الشراء.

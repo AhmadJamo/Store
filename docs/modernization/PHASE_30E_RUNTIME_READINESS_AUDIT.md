@@ -1,6 +1,6 @@
 # MOD-030E — Angular runtime readiness audit
 
-> Status: IN PROGRESS — MOD-030E4D complete
+> Status: IN PROGRESS — MOD-030E4E complete
 > Date: 2026-11-01
 
 ## Finding
@@ -221,6 +221,16 @@ presentation catalog.
 
 Hosted acceptance passed 15/15. Cutover and process-local MVC rollback each passed 67 authorized routes. Release passed
 with zero warnings and 1,499 backend checks. Thirty-three surfaces are AngularDefault and 49 remain MVC-default. The
+git-ignored temporary authentication state is retained only for the next local cohorts; no data, schema, inventory,
+accounting, business rule or MVC file changed.
+
+## MOD-030E4E evidence
+
+PurchaseTemplates Index now joins the committed AngularDefault set at `/purchases/templates`. Create-from-order,
+generate and status commands retain their independent permissions and antiforgery protection outside presentation cutover.
+
+Hosted acceptance passed 15/15. Cutover and process-local MVC rollback each passed 70 authorized routes. Release passed
+with zero warnings and 1,508 backend checks. Thirty-six surfaces are AngularDefault and 46 remain MVC-default. The
 git-ignored temporary authentication state is retained only for the next local cohorts; no data, schema, inventory,
 accounting, business rule or MVC file changed.
 

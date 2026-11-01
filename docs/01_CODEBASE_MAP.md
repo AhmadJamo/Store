@@ -16,8 +16,8 @@ same-line MVC actions, verifies every mapped Angular route and emits one accepta
 operation, permission, risk and evidence fields. The modernization gate fails when either generated artifact is stale.
 
 `docs/modernization/PHASE_30E_RUNTIME_READINESS_AUDIT.md` distinguishes functional counterparts from runtime defaults:
-All 82 surfaces have verified functional counterparts. MOD-030E4D expands the committed default to thirty-five surfaces and
-leaves 47 mapped MVC-default surfaces. Inventory Replenishment uses its own Application-backed API and Angular
+All 82 surfaces have verified functional counterparts. MOD-030E4E expands the committed default to thirty-six surfaces and
+leaves 46 mapped MVC-default surfaces. Inventory Replenishment uses its own Application-backed API and Angular
 workspace at `/inventory/replenishment`; it is not the separate Purchase Replenishment automation workflow. WarehouseLocations,
 UnassignedStock, LocationMovements and InventoryScanning
 redirect their Index GET actions to exact Angular workspaces with query preservation. WarehouseLocations Create/Edit
@@ -50,6 +50,8 @@ PurchaseReplenishment Index now uses `/purchases/replenishment`; settings-save a
 independent permissions and antiforgery protection outside presentation cutover.
 PurchaseApprovalRules Index now uses `/purchases/approval-rules`; create/status commands retain Manage permission and
 antiforgery protection outside presentation cutover.
+PurchaseTemplates Index now uses `/purchases/templates`; create-from-order, generate and status commands retain their
+independent permissions and antiforgery protection outside presentation cutover.
 
 `tests/AngularBrowserAcceptance` loads an operator-supplied Playwright storage-state into both UI and API contexts. Without
 one, it uses a bounded synthetic session only for design-system presentation checks and reports authenticated API parity as

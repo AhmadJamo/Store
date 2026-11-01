@@ -467,6 +467,24 @@ Check(purchaseApprovalRulesCutoverResolver.Resolve(cutoverContext.Request,
           "PurchaseApprovalRules", "SetActive",
           new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 17 }) is null,
     "Purchase approval-rule cutover must keep create and status mutations outside presentation cutover");
+var purchaseTemplatesCutoverResolver = new PresentationCutoverResolver(Options.Create(
+    new PresentationCutoverOptions
+    {
+        AngularBasePath = "/app",
+        Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["PurchaseTemplates"] = PresentationCutoverMode.AngularDefault
+        }
+    }));
+Check(purchaseTemplatesCutoverResolver.Resolve(cutoverContext.Request,
+          "PurchaseTemplates", "Index",
+          new Microsoft.AspNetCore.Routing.RouteValueDictionary()) ==
+      "/app/purchases/templates?page=2" &&
+      new[] { "CreateFromOrder", "Generate", "SetActive" }.All(action =>
+          purchaseTemplatesCutoverResolver.Resolve(cutoverContext.Request,
+              "PurchaseTemplates", action,
+              new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 17 }) is null),
+    "Purchase-template cutover must keep create, generate and status mutations outside presentation cutover");
 foreach (var entry in PresentationCutoverRouteCatalog.All)
 {
     var keyParts = entry.Key.Split(':', 2);
