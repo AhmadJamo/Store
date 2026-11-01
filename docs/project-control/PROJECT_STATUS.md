@@ -203,3 +203,7 @@ mutations خارج التحويل. نجح hosted ‏15/15 والقطع والر�
 اكتمل `MOD-030E4G`: أصبحت PurchaseSourcing لمسارات Index/Details/Print GET الدقيقة AngularDefault، وبقيت نماذج
 Create/Direct وتنزيل المرفقات وكل mutations خارج التحويل. نجح hosted ‏15/15 والقطع والرجوع 76/76 والبوابة 1,524 backend
 دون إنشاء بيانات. أصبحت 38 سطحًا AngularDefault وبقي 44 سطحًا MVC؛ ينتقل التنفيذ إلى `MOD-030E4H` لعروض الموردين.
+اكتمل `MOD-030E4H`: أصبحت SupplierQuotations لمساري Create/Comparison GET المرتبطين بمعرّف sourcing موجب
+AngularDefault، وبقي Create/Award POST وكل mutations خارج التحويل. نجح hosted ‏15/15 والقطع والرجوع 78/78 والبوابة
+1,531 backend دون إنشاء بيانات. أصبحت 39 سطحًا AngularDefault وبقي 43 سطحًا MVC؛ ينتقل التنفيذ إلى `MOD-030E4I`
+لقائمة وتفاصيل أوامر الشراء.

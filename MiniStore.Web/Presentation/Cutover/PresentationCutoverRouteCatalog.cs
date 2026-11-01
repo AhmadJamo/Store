@@ -83,7 +83,9 @@ public static class PresentationCutoverRouteCatalog
             ["PurchaseRequests:Details"] = "/purchases/requests/{id}",
             ["PurchaseSourcing:Index"] = "/purchases/sourcing",
             ["PurchaseSourcing:Details"] = "/purchases/sourcing/{id}",
-            ["PurchaseSourcing:Print"] = "/purchases/sourcing/{id}/print"
+            ["PurchaseSourcing:Print"] = "/purchases/sourcing/{id}/print",
+            ["SupplierQuotations:Create"] = "/purchases/sourcing/{sourcingEventId}/quotation",
+            ["SupplierQuotations:Comparison"] = "/purchases/sourcing/{sourcingEventId}/comparison"
         };
 
     public static IReadOnlyDictionary<string, string> All => Routes;

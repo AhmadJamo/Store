@@ -336,6 +336,16 @@ static async Task RunLiveCutoverAsync(
                 $"/app/purchases/sourcing/{id}", "PurchaseSourcing.View"));
             routes.Add(new($"/PurchaseSourcing/Print/{id}",
                 $"/app/purchases/sourcing/{id}/print", "PurchaseSourcing.View"));
+            if (permissions.Contains("SupplierQuotations.Create"))
+            {
+                routes.Add(new($"/SupplierQuotations/Create?sourcingEventId={id}",
+                    $"/app/purchases/sourcing/{id}/quotation", "SupplierQuotations.Create"));
+            }
+            if (permissions.Contains("SupplierQuotations.View"))
+            {
+                routes.Add(new($"/SupplierQuotations/Comparison?sourcingEventId={id}",
+                    $"/app/purchases/sourcing/{id}/comparison", "SupplierQuotations.View"));
+            }
         }
     }
     if (permissions.Contains("InventoryAdjustments.View"))
@@ -406,6 +416,8 @@ static async Task RunLiveCutoverAsync(
                          surface is "PurchaseRequests";
         expectsAngular = expectsAngular || options.CutoverMode == "pilot" &&
                          surface is "PurchaseSourcing";
+        expectsAngular = expectsAngular || options.CutoverMode == "pilot" &&
+                         surface is "SupplierQuotations";
         if (expectsAngular)
         {
             Require(response.Status is 301 or 302 or 307 or 308,

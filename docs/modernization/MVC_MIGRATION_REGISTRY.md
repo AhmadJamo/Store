@@ -11,7 +11,7 @@
 - Angular application routes discovered: 184.
 - MVC surfaces with a verified Angular counterpart: 82.
 - Remaining MVC surfaces without a mapped Angular counterpart: 0.
-- Allowlisted Angular-default cutover actions: 79.
+- Allowlisted Angular-default cutover actions: 81.
 
 Remaining surfaces: none.
 
@@ -201,8 +201,8 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | SupplierPurchasing | PriceBreaks.cshtml | Angular Pilot | /purchases/supplier-terms | MiniStore.Web/Views/SupplierPurchasing/PriceBreaks.cshtml |
 | SupplierPurchasing | PriceExceptions.cshtml | Angular Pilot | /purchases/supplier-terms | MiniStore.Web/Views/SupplierPurchasing/PriceExceptions.cshtml |
 | SupplierPurchasing | PriceHistory.cshtml | Angular Pilot | /purchases/supplier-terms | MiniStore.Web/Views/SupplierPurchasing/PriceHistory.cshtml |
-| SupplierQuotations | Comparison.cshtml | Angular Pilot | /purchases/sourcing | MiniStore.Web/Views/SupplierQuotations/Comparison.cshtml |
-| SupplierQuotations | Create.cshtml | Angular Pilot | /purchases/sourcing | MiniStore.Web/Views/SupplierQuotations/Create.cshtml |
+| SupplierQuotations | Comparison.cshtml | Angular Default | /purchases/sourcing | MiniStore.Web/Views/SupplierQuotations/Comparison.cshtml |
+| SupplierQuotations | Create.cshtml | Angular Default | /purchases/sourcing | MiniStore.Web/Views/SupplierQuotations/Create.cshtml |
 | Suppliers | Create.cshtml | Angular Default | /suppliers | MiniStore.Web/Views/Suppliers/Create.cshtml |
 | Suppliers | Edit.cshtml | Angular Default | /suppliers | MiniStore.Web/Views/Suppliers/Edit.cshtml |
 | Suppliers | Index.cshtml | Angular Default | /suppliers | MiniStore.Web/Views/Suppliers/Index.cshtml |
@@ -596,8 +596,8 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | SupplierPurchasing | SaveBulk | POST | Angular Pilot | /purchases/supplier-terms | — | MiniStore.Web/Controllers/Purchases/SupplierPurchasingController.cs |
 | SupplierPurchasing | SavePriceBreaks | POST | Angular Pilot | /purchases/supplier-terms | — | MiniStore.Web/Controllers/Purchases/SupplierPurchasingController.cs |
 | SupplierPurchasing | SetActive | POST | Angular Pilot | /purchases/supplier-terms | — | MiniStore.Web/Controllers/Purchases/SupplierPurchasingController.cs |
-| SupplierQuotations | RedirectToAction | GET, POST | Angular Pilot | /purchases/sourcing | — | MiniStore.Web/Controllers/Purchases/SupplierQuotationsController.cs |
-| SupplierQuotations | RedirectToAction | GET, POST | Angular Pilot | /purchases/sourcing | — | MiniStore.Web/Controllers/Purchases/SupplierQuotationsController.cs |
+| SupplierQuotations | RedirectToAction | GET, POST | Angular Default | /purchases/sourcing | — | MiniStore.Web/Controllers/Purchases/SupplierQuotationsController.cs |
+| SupplierQuotations | RedirectToAction | GET, POST | Angular Default | /purchases/sourcing | — | MiniStore.Web/Controllers/Purchases/SupplierQuotationsController.cs |
 | Suppliers | Create | GET | Angular Default | /suppliers | /suppliers/new | MiniStore.Web/Controllers/Suppliers/SuppliersController.cs |
 | Suppliers | Create | POST | Angular Default | /suppliers | /suppliers/new | MiniStore.Web/Controllers/Suppliers/SuppliersController.cs |
 | Suppliers | Delete | POST | Angular Default | /suppliers | — | MiniStore.Web/Controllers/Suppliers/SuppliersController.cs |

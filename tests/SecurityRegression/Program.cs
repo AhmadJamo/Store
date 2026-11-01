@@ -547,10 +547,42 @@ Check(new long[] { -1, 0 }.All(id =>
               "PurchaseSourcing", action,
               new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 17 }) is null),
     "Purchase-sourcing create/direct, attachment and unsafe identifiers must stay outside presentation cutover");
+var supplierQuotationsCutoverResolver = new PresentationCutoverResolver(Options.Create(
+    new PresentationCutoverOptions
+    {
+        AngularBasePath = "/app",
+        Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["SupplierQuotations"] = PresentationCutoverMode.AngularDefault
+        }
+    }));
+cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?sourcingEventId=17&tab=offers");
+Check(supplierQuotationsCutoverResolver.Resolve(cutoverContext.Request,
+          "SupplierQuotations", "Create",
+          new Microsoft.AspNetCore.Routing.RouteValueDictionary()) ==
+      "/app/purchases/sourcing/17/quotation?tab=offers" &&
+      supplierQuotationsCutoverResolver.Resolve(cutoverContext.Request,
+          "SupplierQuotations", "Comparison",
+          new Microsoft.AspNetCore.Routing.RouteValueDictionary()) ==
+      "/app/purchases/sourcing/17/comparison?tab=offers",
+    "Supplier-quotation cutover must resolve exact query-bound create and comparison routes");
+cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?sourcingEventId=0");
+Check(new[] { "Create", "Comparison" }.All(action =>
+          supplierQuotationsCutoverResolver.Resolve(cutoverContext.Request,
+              "SupplierQuotations", action,
+              new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null),
+    "Supplier-quotation cutover must reject missing or nonpositive sourcing-event identifiers");
+cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?page=2");
+Check(new[] { "Award" }.All(action =>
+          supplierQuotationsCutoverResolver.Resolve(cutoverContext.Request,
+              "SupplierQuotations", action,
+              new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["sourcingEventId"] = 17 }) is null),
+    "Supplier-quotation award mutations must stay outside presentation cutover");
 foreach (var entry in PresentationCutoverRouteCatalog.All)
 {
     var keyParts = entry.Key.Split(':', 2);
-    var routeValues = new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 1, ["productId"] = 1 };
+    var routeValues = new Microsoft.AspNetCore.Routing.RouteValueDictionary
+        { ["id"] = 1, ["productId"] = 1, ["sourcingEventId"] = 1 };
     var rehearsalAngular = new PresentationCutoverResolver(Options.Create(
         new PresentationCutoverOptions
         {

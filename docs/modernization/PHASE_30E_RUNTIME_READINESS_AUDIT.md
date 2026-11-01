@@ -1,6 +1,6 @@
 # MOD-030E — Angular runtime readiness audit
 
-> Status: IN PROGRESS — MOD-030E4G complete
+> Status: IN PROGRESS — MOD-030E4H complete
 > Date: 2026-11-01
 
 ## Finding
@@ -223,6 +223,18 @@ Hosted acceptance passed 15/15. Cutover and process-local MVC rollback each pass
 with zero warnings and 1,499 backend checks. Thirty-three surfaces are AngularDefault and 49 remain MVC-default. The
 git-ignored temporary authentication state is retained only for the next local cohorts; no data, schema, inventory,
 accounting, business rule or MVC file changed.
+
+## MOD-030E4H evidence
+
+SupplierQuotations query-bound Create/Comparison GET presentation now joins the committed AngularDefault set at
+`/purchases/sourcing/{id}/quotation` and `/purchases/sourcing/{id}/comparison` for positive sourcing-event IDs. The
+source query identity is consumed into the Angular path. Create POST, Award POST and all mutations remain independently
+permissioned and antiforgery protected outside presentation cutover.
+
+Hosted acceptance passed 15/15. Cutover and process-local MVC rollback each passed 78 authorized routes using an existing
+sourcing event read-only. Release passed with zero warnings and 1,531 backend checks. Thirty-nine surfaces are
+AngularDefault and 43 remain MVC-default. The git-ignored temporary authentication state is retained only for the next
+local cohorts; no data, schema, inventory, accounting, business rule or MVC file changed.
 
 ## MOD-030E4G evidence
 

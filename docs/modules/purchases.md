@@ -154,6 +154,13 @@ download and every mutation remain independently authorized outside the presenta
 resolved read-only through the API. Release and 1,524 backend checks passed; no data was created and no schema, inventory,
 accounting or business rule changed.
 
+`MOD-030E4H` makes SupplierQuotations query-bound Create/Comparison GET presentation `AngularDefault` at
+`/purchases/sourcing/{id}/quotation` and `/purchases/sourcing/{id}/comparison` for positive sourcing-event IDs. The
+query identity is consumed into the Angular path rather than duplicated. Create POST, Award POST and every mutation remain
+independently authorized with antiforgery outside the presentation catalog. Hosted acceptance passed 15/15, and cutover
+plus process-local MVC rollback each passed 78 authorized routes using an existing sourcing event read-only. Release and
+1,531 backend checks passed; no data was created and no schema, inventory, accounting or business rule changed.
+
 Angular `/purchases/approval-rules` now administers the existing warehouse/priority-scoped ordered role rules, including activation
 with row-version evidence. Request details expose current-role and immutable step evidence and show Approve/Reject only when both the
 API-authored role eligibility and independent permission allow it. `PurchaseApprovalService` still freezes rule snapshots and advances
