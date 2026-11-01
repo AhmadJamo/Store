@@ -11,7 +11,7 @@
 - Angular application routes discovered: 184.
 - MVC surfaces with a verified Angular counterpart: 82.
 - Remaining MVC surfaces without a mapped Angular counterpart: 0.
-- Allowlisted Angular-default cutover actions: 83.
+- Allowlisted Angular-default cutover actions: 87.
 
 Remaining surfaces: none.
 
@@ -58,10 +58,10 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | GoodsReceiptReturns | Create.cshtml | Angular Pilot | /purchases/receipt-returns | MiniStore.Web/Views/GoodsReceiptReturns/Create.cshtml |
 | GoodsReceiptReturns | Details.cshtml | Angular Pilot | /purchases/receipt-returns | MiniStore.Web/Views/GoodsReceiptReturns/Details.cshtml |
 | GoodsReceiptReturns | Index.cshtml | Angular Pilot | /purchases/receipt-returns | MiniStore.Web/Views/GoodsReceiptReturns/Index.cshtml |
-| GoodsReceipts | Create.cshtml | Angular Pilot | /purchases/receipts | MiniStore.Web/Views/GoodsReceipts/Create.cshtml |
-| GoodsReceipts | Details.cshtml | Angular Pilot | /purchases/receipts | MiniStore.Web/Views/GoodsReceipts/Details.cshtml |
-| GoodsReceipts | Index.cshtml | Angular Pilot | /purchases/receipts | MiniStore.Web/Views/GoodsReceipts/Index.cshtml |
-| GoodsReceipts | Scan.cshtml | Angular Pilot | /purchases/receipts | MiniStore.Web/Views/GoodsReceipts/Scan.cshtml |
+| GoodsReceipts | Create.cshtml | Angular Default | /purchases/receipts | MiniStore.Web/Views/GoodsReceipts/Create.cshtml |
+| GoodsReceipts | Details.cshtml | Angular Default | /purchases/receipts | MiniStore.Web/Views/GoodsReceipts/Details.cshtml |
+| GoodsReceipts | Index.cshtml | Angular Default | /purchases/receipts | MiniStore.Web/Views/GoodsReceipts/Index.cshtml |
+| GoodsReceipts | Scan.cshtml | Angular Default | /purchases/receipts | MiniStore.Web/Views/GoodsReceipts/Scan.cshtml |
 | Home | Index.cshtml | Angular Pilot | / | MiniStore.Web/Views/Home/Index.cshtml |
 | InventoryAdjustments | Create.cshtml | Angular Default | /inventory/adjustments | MiniStore.Web/Views/InventoryAdjustments/Create.cshtml |
 | InventoryAdjustments | Details.cshtml | Angular Default | /inventory/adjustments | MiniStore.Web/Views/InventoryAdjustments/Details.cshtml |
@@ -294,16 +294,16 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | GoodsReceiptReturns | Create | POST | Angular Pilot | /purchases/receipt-returns | — | MiniStore.Web/Controllers/Purchases/GoodsReceiptReturnsController.cs |
 | GoodsReceiptReturns | Details | GET | Angular Pilot | /purchases/receipt-returns | — | MiniStore.Web/Controllers/Purchases/GoodsReceiptReturnsController.cs |
 | GoodsReceiptReturns | Index | GET | Angular Pilot | /purchases/receipt-returns | — | MiniStore.Web/Controllers/Purchases/GoodsReceiptReturnsController.cs |
-| GoodsReceipts | Create | GET | Angular Pilot | /purchases/receipts | — | MiniStore.Web/Controllers/Purchases/GoodsReceiptsController.cs |
-| GoodsReceipts | Create | POST | Angular Pilot | /purchases/receipts | — | MiniStore.Web/Controllers/Purchases/GoodsReceiptsController.cs |
-| GoodsReceipts | CreateScanDraft | POST | Angular Pilot | /purchases/receipts | — | MiniStore.Web/Controllers/Purchases/GoodsReceiptsController.cs |
-| GoodsReceipts | Details | GET | Angular Pilot | /purchases/receipts | — | MiniStore.Web/Controllers/Purchases/GoodsReceiptsController.cs |
-| GoodsReceipts | Index | GET | Angular Pilot | /purchases/receipts | — | MiniStore.Web/Controllers/Purchases/GoodsReceiptsController.cs |
-| GoodsReceipts | Inspect | POST | Angular Pilot | /purchases/receipts | — | MiniStore.Web/Controllers/Purchases/GoodsReceiptsController.cs |
-| GoodsReceipts | PostDraft | POST | Angular Pilot | /purchases/receipts | — | MiniStore.Web/Controllers/Purchases/GoodsReceiptsController.cs |
-| GoodsReceipts | PutAway | POST | Angular Pilot | /purchases/receipts | — | MiniStore.Web/Controllers/Purchases/GoodsReceiptsController.cs |
-| GoodsReceipts | RecordScan | POST | Angular Pilot | /purchases/receipts | — | MiniStore.Web/Controllers/Purchases/GoodsReceiptsController.cs |
-| GoodsReceipts | Scan | GET | Angular Pilot | /purchases/receipts | — | MiniStore.Web/Controllers/Purchases/GoodsReceiptsController.cs |
+| GoodsReceipts | Create | GET | Angular Default | /purchases/receipts | /purchases/receipts/new?purchaseOrderId={purchaseOrderId} | MiniStore.Web/Controllers/Purchases/GoodsReceiptsController.cs |
+| GoodsReceipts | Create | POST | Angular Default | /purchases/receipts | /purchases/receipts/new?purchaseOrderId={purchaseOrderId} | MiniStore.Web/Controllers/Purchases/GoodsReceiptsController.cs |
+| GoodsReceipts | CreateScanDraft | POST | Angular Default | /purchases/receipts | — | MiniStore.Web/Controllers/Purchases/GoodsReceiptsController.cs |
+| GoodsReceipts | Details | GET | Angular Default | /purchases/receipts | /purchases/receipts/{id} | MiniStore.Web/Controllers/Purchases/GoodsReceiptsController.cs |
+| GoodsReceipts | Index | GET | Angular Default | /purchases/receipts | /purchases/receipts | MiniStore.Web/Controllers/Purchases/GoodsReceiptsController.cs |
+| GoodsReceipts | Inspect | POST | Angular Default | /purchases/receipts | — | MiniStore.Web/Controllers/Purchases/GoodsReceiptsController.cs |
+| GoodsReceipts | PostDraft | POST | Angular Default | /purchases/receipts | — | MiniStore.Web/Controllers/Purchases/GoodsReceiptsController.cs |
+| GoodsReceipts | PutAway | POST | Angular Default | /purchases/receipts | — | MiniStore.Web/Controllers/Purchases/GoodsReceiptsController.cs |
+| GoodsReceipts | RecordScan | POST | Angular Default | /purchases/receipts | — | MiniStore.Web/Controllers/Purchases/GoodsReceiptsController.cs |
+| GoodsReceipts | Scan | GET | Angular Default | /purchases/receipts | /purchases/receipts/{id}/scan | MiniStore.Web/Controllers/Purchases/GoodsReceiptsController.cs |
 | Home | Index | ANY | Angular Pilot | / | — | MiniStore.Web/Controllers/Home/HomeController.cs |
 | InventoryAdjustments | Approve | POST | Angular Default | /inventory/adjustments | — | MiniStore.Web/Controllers/Inventory/InventoryAdjustmentsController.cs |
 | InventoryAdjustments | Cancel | POST | Angular Default | /inventory/adjustments | — | MiniStore.Web/Controllers/Inventory/InventoryAdjustmentsController.cs |

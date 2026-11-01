@@ -609,11 +609,60 @@ Check(new long[] { -1, 0 }.All(id =>
               "PurchaseOrders", action,
               new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 17 }) is null),
     "Purchase-order lifecycle and fulfillment mutations and unsafe identifiers must stay outside presentation cutover");
+var goodsReceiptsCutoverResolver = new PresentationCutoverResolver(Options.Create(
+    new PresentationCutoverOptions
+    {
+        AngularBasePath = "/app",
+        Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["GoodsReceipts"] = PresentationCutoverMode.AngularDefault
+        }
+    }));
+cutoverContext.Request.QueryString =
+    new Microsoft.AspNetCore.Http.QueryString("?purchaseOrderId=17&source=cutover");
+Check(goodsReceiptsCutoverResolver.Resolve(cutoverContext.Request,
+          "GoodsReceipts", "Create",
+          new Microsoft.AspNetCore.Routing.RouteValueDictionary()) ==
+      "/app/purchases/receipts/new?purchaseOrderId=17&source=cutover",
+    "Goods-receipt cutover must consume a positive query-bound order ID without duplicating query separators");
+cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?page=2");
+Check(goodsReceiptsCutoverResolver.Resolve(cutoverContext.Request,
+          "GoodsReceipts", "Index",
+          new Microsoft.AspNetCore.Routing.RouteValueDictionary()) ==
+      "/app/purchases/receipts?page=2" &&
+      goodsReceiptsCutoverResolver.Resolve(cutoverContext.Request,
+          "GoodsReceipts", "Details",
+          new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 17 }) ==
+      "/app/purchases/receipts/17?page=2" &&
+      goodsReceiptsCutoverResolver.Resolve(cutoverContext.Request,
+          "GoodsReceipts", "Scan",
+          new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 17 }) ==
+      "/app/purchases/receipts/17/scan?page=2",
+    "Goods-receipt cutover must resolve exact list, details and scan routes");
+cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?purchaseOrderId=0");
+Check(goodsReceiptsCutoverResolver.Resolve(cutoverContext.Request,
+          "GoodsReceipts", "Create",
+          new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null &&
+      new long[] { -1, 0 }.All(id =>
+          new[] { "Details", "Scan" }.All(action =>
+              goodsReceiptsCutoverResolver.Resolve(cutoverContext.Request,
+                  "GoodsReceipts", action,
+                  new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = id }) is null)),
+    "Goods-receipt cutover must reject unsafe order and receipt identifiers");
+cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?page=2");
+Check(new[]
+      {
+          "CreateScanDraft", "RecordScan", "PostDraft", "Inspect", "Reverse"
+      }.All(action =>
+          goodsReceiptsCutoverResolver.Resolve(cutoverContext.Request,
+              "GoodsReceipts", action,
+              new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 17 }) is null),
+    "Goods-receipt scan, posting, inspection and reversal mutations must stay outside presentation cutover");
 foreach (var entry in PresentationCutoverRouteCatalog.All)
 {
     var keyParts = entry.Key.Split(':', 2);
     var routeValues = new Microsoft.AspNetCore.Routing.RouteValueDictionary
-        { ["id"] = 1, ["productId"] = 1, ["sourcingEventId"] = 1 };
+        { ["id"] = 1, ["productId"] = 1, ["sourcingEventId"] = 1, ["purchaseOrderId"] = 1 };
     var rehearsalAngular = new PresentationCutoverResolver(Options.Create(
         new PresentationCutoverOptions
         {

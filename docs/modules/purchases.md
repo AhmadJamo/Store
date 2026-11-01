@@ -169,6 +169,14 @@ plus process-local MVC rollback each passed 80 authorized routes including an ex
 the API. Release and 1,537 backend checks passed; no data was created and no schema, inventory, accounting or business
 rule changed.
 
+`MOD-030E4J` makes GoodsReceipts Index/query-bound Create/positive-ID Details/Scan GET presentation
+`AngularDefault` at `/purchases/receipts`, `/purchases/receipts/new?purchaseOrderId={id}`,
+`/purchases/receipts/{id}` and `/purchases/receipts/{id}/scan`. The positive order ID is validated and consumed without
+duplicating query separators. Receipt creation, scan recording, inspection, posting and reversal mutations remain
+independently authorized with antiforgery outside the presentation catalog. Hosted acceptance passed 15/15, and cutover
+plus process-local MVC rollback each passed 84 authorized routes using existing order/receipt data read-only. Release and
+1,549 backend checks passed; no data was created and no schema, inventory, accounting or business rule changed.
+
 Angular `/purchases/approval-rules` now administers the existing warehouse/priority-scoped ordered role rules, including activation
 with row-version evidence. Request details expose current-role and immutable step evidence and show Approve/Reject only when both the
 API-authored role eligibility and independent permission allow it. `PurchaseApprovalService` still freezes rule snapshots and advances

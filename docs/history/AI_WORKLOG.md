@@ -1,5 +1,14 @@
 # AI Work Log
 
+- 2026-11-02: Completed `MOD-030E4J`. GoodsReceipts Index/query-bound Create/positive-ID Details/Scan GET
+  presentation now uses exact AngularDefault routes. The positive purchase-order query ID is validated and preserved
+  without duplicated query separators. Receipt, scan, inspection, posting and reversal mutations retain independent
+  permissions and antiforgery outside presentation cutover. Hosted acceptance passed 15/15, and cutover plus MVC rollback
+  each passed 84 authorized routes using existing order and receipt data read-only. Release and 1,549 backend checks
+  passed; no data was created and no schema, inventory, accounting, business rule or MVC file changed. Forty-one surfaces
+  are AngularDefault and 41 remain MVC-default; execution advances to `MOD-030E4K`. The git-ignored authentication state
+  remains temporary and uncommitted.
+
 - 2026-11-02: Completed `MOD-030E4I`. PurchaseOrders Index/positive-ID Details GET presentation now uses exact
   AngularDefault routes with query preservation. CreateFromAward and every lifecycle or fulfillment mutation retain
   independent permissions and antiforgery outside presentation cutover. Hosted acceptance passed 15/15, and cutover plus

@@ -1,6 +1,6 @@
 # MOD-030E — Angular runtime readiness audit
 
-> Status: IN PROGRESS — MOD-030E4I complete
+> Status: IN PROGRESS — MOD-030E4J complete
 > Date: 2026-11-01
 
 ## Finding
@@ -223,6 +223,18 @@ Hosted acceptance passed 15/15. Cutover and process-local MVC rollback each pass
 with zero warnings and 1,499 backend checks. Thirty-three surfaces are AngularDefault and 49 remain MVC-default. The
 git-ignored temporary authentication state is retained only for the next local cohorts; no data, schema, inventory,
 accounting, business rule or MVC file changed.
+
+## MOD-030E4J evidence
+
+GoodsReceipts Index/query-bound Create/positive-ID Details/Scan GET presentation now joins the committed AngularDefault
+set at the four exact Angular receipt routes. The positive purchase-order query ID is validated and preserved without
+duplicated query separators. Receipt, scan, inspection, posting and reversal mutations remain independently permissioned
+and antiforgery protected outside presentation cutover.
+
+Hosted acceptance passed 15/15. Cutover and process-local MVC rollback each passed 84 authorized routes using existing
+order and receipt evidence read-only. Release passed with zero warnings and 1,549 backend checks. Forty-one surfaces are
+AngularDefault and 41 remain MVC-default. The git-ignored temporary authentication state is retained only for the next
+local cohorts; no data, schema, inventory, accounting, business rule or MVC file changed.
 
 ## MOD-030E4I evidence
 

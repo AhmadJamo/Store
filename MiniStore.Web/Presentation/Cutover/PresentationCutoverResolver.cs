@@ -87,7 +87,40 @@ public sealed class PresentationCutoverResolver(IOptions<PresentationCutoverOpti
             }
         }
 
+        if (route.Contains("{purchaseOrderId}", StringComparison.Ordinal))
+        {
+            var purchaseOrderIdValue = routeValues["purchaseOrderId"]?.ToString();
+            var purchaseOrderIdFromQuery = false;
+            if (string.IsNullOrWhiteSpace(purchaseOrderIdValue) &&
+                request.Query.TryGetValue("purchaseOrderId", out var queryPurchaseOrderId))
+            {
+                purchaseOrderIdValue = queryPurchaseOrderId.FirstOrDefault();
+                purchaseOrderIdFromQuery = true;
+            }
+
+            if (!long.TryParse(purchaseOrderIdValue, NumberStyles.Integer,
+                    CultureInfo.InvariantCulture, out var purchaseOrderId) || purchaseOrderId <= 0)
+                return null;
+
+            route = route.Replace("{purchaseOrderId}", purchaseOrderId.ToString(CultureInfo.InvariantCulture),
+                StringComparison.Ordinal);
+
+            if (purchaseOrderIdFromQuery)
+            {
+                var remainingQuery = request.Query
+                    .Where(pair => !string.Equals(pair.Key, "purchaseOrderId", StringComparison.OrdinalIgnoreCase))
+                    .SelectMany(pair => pair.Value.Select(value =>
+                        new KeyValuePair<string, string?>(pair.Key, value)));
+                queryString = QueryString.Create(remainingQuery);
+            }
+        }
+
         var target = settings.AngularBasePath.TrimEnd('/') + route;
-        return target + queryString.Value;
+        if (!queryString.HasValue)
+            return target;
+
+        return target.Contains('?')
+            ? target + "&" + queryString.Value![1..]
+            : target + queryString.Value;
     }
 }
