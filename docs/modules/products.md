@@ -58,3 +58,12 @@ The Razor controller/views remain available as the rollback path.
 authorized and antiforgery-protected through their existing API/MVC boundaries and are not presentation redirects. Hosted
 acceptance passed 15/15, and both the 52-route Angular cutover and process-local MVC rollback passed. All three Razor
 controllers and views remain intact as the rollback path; no schema or business rule changed.
+
+## Product catalog-definition cutover update (2026-11-01)
+
+`MOD-030E3B` makes ProductCategories Index and ProductAttributes Index/Values GET presentation `AngularDefault` on
+`/products/categories`, `/products/attributes` and `/products/{id}/attributes`. The query-bound MVC `productId` is
+validated as positive, moved into the Angular path and removed from the remaining query while unrelated query values are
+preserved. Create, status and value-save commands remain independently authorized and antiforgery-protected outside the
+presentation catalog. Hosted acceptance passed 15/15, and both the 55-route cutover and MVC rollback passed. No data,
+schema or business rule changed.

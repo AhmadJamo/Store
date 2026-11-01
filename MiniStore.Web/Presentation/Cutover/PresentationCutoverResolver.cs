@@ -30,7 +30,36 @@ public sealed class PresentationCutoverResolver(IOptions<PresentationCutoverOpti
             route = route.Replace("{id}", id.ToString(CultureInfo.InvariantCulture), StringComparison.Ordinal);
         }
 
+        var queryString = request.QueryString;
+        if (route.Contains("{productId}", StringComparison.Ordinal))
+        {
+            var productIdValue = routeValues["productId"]?.ToString();
+            var productIdFromQuery = false;
+            if (string.IsNullOrWhiteSpace(productIdValue) &&
+                request.Query.TryGetValue("productId", out var queryProductId))
+            {
+                productIdValue = queryProductId.FirstOrDefault();
+                productIdFromQuery = true;
+            }
+
+            if (!long.TryParse(productIdValue, NumberStyles.Integer,
+                    CultureInfo.InvariantCulture, out var productId) || productId <= 0)
+                return null;
+
+            route = route.Replace("{productId}", productId.ToString(CultureInfo.InvariantCulture),
+                StringComparison.Ordinal);
+
+            if (productIdFromQuery)
+            {
+                var remainingQuery = request.Query
+                    .Where(pair => !string.Equals(pair.Key, "productId", StringComparison.OrdinalIgnoreCase))
+                    .SelectMany(pair => pair.Value.Select(value =>
+                        new KeyValuePair<string, string?>(pair.Key, value)));
+                queryString = QueryString.Create(remainingQuery);
+            }
+        }
+
         var target = settings.AngularBasePath.TrimEnd('/') + route;
-        return target + request.QueryString.Value;
+        return target + queryString.Value;
     }
 }

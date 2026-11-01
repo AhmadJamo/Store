@@ -198,7 +198,9 @@ static async Task RunLiveCutoverAsync(
         new("/Replenishment?search=cutover-rehearsal&exceptionsOnly=true", "/app/inventory/replenishment?search=cutover-rehearsal&exceptionsOnly=true", "Inventory.Replenishment.View"),
         new("/Branches?source=cutover-rehearsal", "/app/products/catalog-masters?source=cutover-rehearsal", "Administration.Access"),
         new("/PaymentMethods?source=cutover-rehearsal", "/app/products/catalog-masters?source=cutover-rehearsal", "Administration.Access"),
-        new("/TaxRates?source=cutover-rehearsal", "/app/products/catalog-masters?source=cutover-rehearsal", "Administration.Access")
+        new("/TaxRates?source=cutover-rehearsal", "/app/products/catalog-masters?source=cutover-rehearsal", "Administration.Access"),
+        new("/ProductCategories?source=cutover-rehearsal", "/app/products/categories?source=cutover-rehearsal", "Products.View"),
+        new("/ProductAttributes?source=cutover-rehearsal", "/app/products/attributes?source=cutover-rehearsal", "Products.View")
     };
 
     if (permissions.Contains("Customers.View"))
@@ -236,6 +238,8 @@ static async Task RunLiveCutoverAsync(
         {
             var id = items[0].GetProperty("id").GetInt32();
             routes.Add(new($"/Products/Edit/{id}", $"/app/products/{id}/edit", "Products.Edit"));
+            routes.Add(new($"/ProductAttributes/Values?productId={id}",
+                $"/app/products/{id}/attributes", "Products.Edit"));
         }
     }
     if (permissions.Contains("ProductStock.View"))
@@ -298,7 +302,8 @@ static async Task RunLiveCutoverAsync(
                                  "InventoryReconciliation" or "StockTransactions" or "ProductStocks" or
                                  "InventoryAdjustments" or "StockTransfers" or "InventoryTracking" or "StockMovements" or
                                  "WarehouseLocations" or "UnassignedStock" or "LocationMovements" or "InventoryScanning" or
-                                 "Replenishment" or "Branches" or "PaymentMethods" or "TaxRates";
+                                 "Replenishment" or "Branches" or "PaymentMethods" or "TaxRates" or
+                                 "ProductCategories" or "ProductAttributes";
         if (expectsAngular)
         {
             Require(response.Status is 301 or 302 or 307 or 308,

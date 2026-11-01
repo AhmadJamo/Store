@@ -165,3 +165,7 @@ backend، و218/218 Angular، و122 قالبًا، وميزانيات 327,391 ب
 `/products/catalog-masters` المشتركة مع حفظ query، وبقيت كل أوامر الكتابة خارج كتالوج العرض. نجح hosted ‏15/15
 والقطع والرجوع 52/52، والبوابة Release بلا تحذيرات و1,455 backend و218/218 Angular و122 قالبًا وميزانيات الحزم.
 أصبحت 23 سطحًا AngularDefault وبقي 59 سطحًا mapped على MVC؛ ينتقل التنفيذ إلى `MOD-030E3B`.
+اكتمل `MOD-030E3B`: أصبحت ProductCategories وProductAttributes AngularDefault لمسارات Index وValues GET الدقيقة.
+كشف الاختبار الحي أن `productId` يأتي من query، فصُحح المحوّل لنقله إلى مسار Angular مع رفض القيم غير الموجبة وحفظ
+بقية query. نجح hosted ‏15/15 والقطع والرجوع 55/55، والبوابة 1,465 backend و218/218 Angular و122 قالبًا.
+أصبحت 25 سطحًا AngularDefault وبقي 57 سطحًا mapped على MVC؛ ينتقل التنفيذ إلى `MOD-030E3C`.

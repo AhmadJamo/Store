@@ -11,7 +11,7 @@
 - Angular application routes discovered: 184.
 - MVC surfaces with a verified Angular counterpart: 82.
 - Remaining MVC surfaces without a mapped Angular counterpart: 0.
-- Allowlisted Angular-default cutover actions: 55.
+- Allowlisted Angular-default cutover actions: 58.
 
 Remaining surfaces: none.
 
@@ -89,9 +89,9 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | Platform/PlatformAccount | Login.cshtml | Angular Pilot | /platform-login | MiniStore.Web/Areas/Platform/Views/PlatformAccount/Login.cshtml |
 | Platform/PlatformAuditEvents | Index.cshtml | Angular Pilot | /platform-audit | MiniStore.Web/Areas/Platform/Views/PlatformAuditEvents/Index.cshtml |
 | Platform/PlatformAuditRetention | Index.cshtml | Angular Pilot | /platform-retention | MiniStore.Web/Areas/Platform/Views/PlatformAuditRetention/Index.cshtml |
-| ProductAttributes | Index.cshtml | Angular Pilot | /products/attributes | MiniStore.Web/Views/ProductAttributes/Index.cshtml |
-| ProductAttributes | Values.cshtml | Angular Pilot | /products/attributes | MiniStore.Web/Views/ProductAttributes/Values.cshtml |
-| ProductCategories | Index.cshtml | Angular Pilot | /products/categories | MiniStore.Web/Views/ProductCategories/Index.cshtml |
+| ProductAttributes | Index.cshtml | Angular Default | /products/attributes | MiniStore.Web/Views/ProductAttributes/Index.cshtml |
+| ProductAttributes | Values.cshtml | Angular Default | /products/attributes | MiniStore.Web/Views/ProductAttributes/Values.cshtml |
+| ProductCategories | Index.cshtml | Angular Default | /products/categories | MiniStore.Web/Views/ProductCategories/Index.cshtml |
 | Products | Create.cshtml | Angular Default | /products | MiniStore.Web/Views/Products/Create.cshtml |
 | Products | Edit.cshtml | Angular Default | /products | MiniStore.Web/Views/Products/Edit.cshtml |
 | Products | Index.cshtml | Angular Default | /products | MiniStore.Web/Views/Products/Index.cshtml |
@@ -357,14 +357,14 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | Platform/PlatformAuditRetention | Index | GET | Angular Pilot | /platform-retention | — | MiniStore.Web/Areas/Platform/Controllers/PlatformAuditRetentionController.cs |
 | Platform/PlatformAuditRetention | ReleaseHold | POST | Angular Pilot | /platform-retention | — | MiniStore.Web/Areas/Platform/Controllers/PlatformAuditRetentionController.cs |
 | Platform/PlatformAuditRetention | Run | POST | Angular Pilot | /platform-retention | — | MiniStore.Web/Areas/Platform/Controllers/PlatformAuditRetentionController.cs |
-| ProductAttributes | Create | POST | Angular Pilot | /products/attributes | — | MiniStore.Web/Controllers/Catalog/ProductAttributesController.cs |
-| ProductAttributes | Index | GET | Angular Pilot | /products/attributes | — | MiniStore.Web/Controllers/Catalog/ProductAttributesController.cs |
-| ProductAttributes | SetActive | POST | Angular Pilot | /products/attributes | — | MiniStore.Web/Controllers/Catalog/ProductAttributesController.cs |
-| ProductAttributes | Values | GET | Angular Pilot | /products/attributes | — | MiniStore.Web/Controllers/Catalog/ProductAttributesController.cs |
-| ProductAttributes | Values | POST | Angular Pilot | /products/attributes | — | MiniStore.Web/Controllers/Catalog/ProductAttributesController.cs |
-| ProductCategories | Create | POST | Angular Pilot | /products/categories | — | MiniStore.Web/Controllers/Catalog/ProductCategoriesController.cs |
-| ProductCategories | Index | GET | Angular Pilot | /products/categories | — | MiniStore.Web/Controllers/Catalog/ProductCategoriesController.cs |
-| ProductCategories | SetActive | POST | Angular Pilot | /products/categories | — | MiniStore.Web/Controllers/Catalog/ProductCategoriesController.cs |
+| ProductAttributes | Create | POST | Angular Default | /products/attributes | — | MiniStore.Web/Controllers/Catalog/ProductAttributesController.cs |
+| ProductAttributes | Index | GET | Angular Default | /products/attributes | /products/attributes | MiniStore.Web/Controllers/Catalog/ProductAttributesController.cs |
+| ProductAttributes | SetActive | POST | Angular Default | /products/attributes | — | MiniStore.Web/Controllers/Catalog/ProductAttributesController.cs |
+| ProductAttributes | Values | GET | Angular Default | /products/attributes | /products/{productId}/attributes | MiniStore.Web/Controllers/Catalog/ProductAttributesController.cs |
+| ProductAttributes | Values | POST | Angular Default | /products/attributes | /products/{productId}/attributes | MiniStore.Web/Controllers/Catalog/ProductAttributesController.cs |
+| ProductCategories | Create | POST | Angular Default | /products/categories | — | MiniStore.Web/Controllers/Catalog/ProductCategoriesController.cs |
+| ProductCategories | Index | GET | Angular Default | /products/categories | /products/categories | MiniStore.Web/Controllers/Catalog/ProductCategoriesController.cs |
+| ProductCategories | SetActive | POST | Angular Default | /products/categories | — | MiniStore.Web/Controllers/Catalog/ProductCategoriesController.cs |
 | Products | Create | GET | Angular Default | /products | /products/new | MiniStore.Web/Controllers/Catalog/ProductsController.cs |
 | Products | Create | POST | Angular Default | /products | /products/new | MiniStore.Web/Controllers/Catalog/ProductsController.cs |
 | Products | Delete | POST | Angular Default | /products | — | MiniStore.Web/Controllers/Catalog/ProductsController.cs |

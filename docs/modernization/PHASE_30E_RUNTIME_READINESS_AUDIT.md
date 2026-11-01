@@ -1,6 +1,6 @@
 # MOD-030E — Angular runtime readiness audit
 
-> Status: IN PROGRESS — MOD-030E3A complete
+> Status: IN PROGRESS — MOD-030E3B complete
 > Date: 2026-11-01
 
 ## Finding
@@ -138,6 +138,20 @@ The authenticated hosted suite passed 15/15 with zero failures/skips. Cutover an
 across 108 files, 122 templates and bundle budgets (327,391 initial bytes; 81,880 largest lazy bytes). Twenty-three surfaces
 are now AngularDefault and 59 mapped surfaces remain MVC by default. The temporary authenticated state was deleted and no
 schema, data, business rule or MVC file changed.
+
+## MOD-030E3B evidence
+
+ProductCategories and ProductAttributes now join the committed AngularDefault set. Category Index and attribute Index use
+their exact Angular routes; attribute Values consumes only a positive MVC query-bound `productId` into
+`/products/{id}/attributes`, removes that transport parameter and preserves all unrelated query values. Create, SetActive
+and Values POST operations remain independently authorized and antiforgery-protected outside presentation cutover.
+
+The first rebuilt live runner exposed the query-bound identifier mismatch instead of falsely passing it; the resolver and
+regression coverage were corrected before acceptance. The authenticated hosted suite then passed 15/15, and cutover plus
+process-local MVC rollback each passed 55 authorized routes. The final gate passed Release with zero warnings, 1,465
+backend checks, 218/218 Angular tests across 108 files, 122 templates and bundle budgets (327,391 initial bytes; 81,880
+largest lazy bytes). Twenty-five surfaces are AngularDefault and 57 remain MVC-default. Temporary authentication state was
+deleted; no data, schema, business rule or MVC file changed.
 
 Every cohort must add explicit GET-only action mappings, require its existing permissions, pass hosted acceptance and
 exact Angular targets, then pass a process-local MVC rollback. Mutations continue through their independently authorized

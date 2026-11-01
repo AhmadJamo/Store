@@ -1,29 +1,27 @@
 # المهمة التالية الوحيدة / Next Task
 
-## `MOD-030E3B` — تعريفات كتالوج المنتجات / Product Catalog Definitions Cutover
+## `MOD-030E3C` — قائمة المستودعات / Warehouses Index Cutover
 
 > الحالة: APPROVED
 
-اكتمل `MOD-030E3A`: أصبحت Branches وPaymentMethods وTaxRates المجموعة المشتركة الأولى في الكتالوج، بعد hosted
-‏15/15 والقطع والرجوع 52/52. أصبح 23 سطحًا AngularDefault وبقي 59 سطحًا mapped يعمل MVC افتراضيًا.
+اكتمل `MOD-030E3B`: أصبحت ProductCategories وProductAttributes السطحين 24 و25 في AngularDefault بعد hosted ‏15/15
+والقطع والرجوع 55/55. بقي 57 سطحًا mapped يعمل MVC افتراضيًا.
 
 ### النطاق المحدود
 
-- ProductCategories وProductAttributes فقط.
-- يضاف ProductCategories Index GET إلى `/products/categories`.
-- يضاف ProductAttributes Index GET إلى `/products/attributes`، وValues GET ذو `productId` الموجب إلى
-  `/products/{id}/attributes`.
-- Create وSetActive وValues POST تبقى أوامر API/MVC مستقلة بصلاحياتها وantiforgery، ولا تدخل كتالوج العرض.
+- Warehouses فقط.
+- يضاف Index GET إلى `/warehouses` مع حفظ query.
+- Create/Edit GET تبقى على MVC لأن مساحة Angular الحالية تدير النموذج داخل الصفحة ولا تستهلك URL intent مستقلًا.
+- Create/Edit/Delete POST تبقى أوامر MVC/API مستقلة بصلاحياتها وantiforgery ولا تدخل كتالوج العرض.
 
 ### الهدف
 
-- تدقيق أن مسارات Angular تعرض تعريفات التصنيفات والخصائص وقيم المنتج بالصلاحيات الحالية.
-- إضافة خرائط GET الدقيقة وتفعيل السطحين AngularDefault كدفعة تشغيلية واحدة.
-- توسيع مشغل cutover المصرح، ثم إثبات AngularDefault وprocess-local MVC rollback.
-- إبقاء Controllers وRazor كاملة كمسار رجوع.
+- تدقيق أن مساحة Angular تعرض المستودعات بالأسماء والخيارات الحالية وتحترم صلاحيات View/Create/Edit/Delete.
+- تحويل Index فقط وتوسيع مشغل cutover المصرح.
+- إثبات AngularDefault وprocess-local MVC rollback مع إبقاء Controller وRazor كاملين.
 
 ### القبول
 
-- كل GET مصرح يصل إلى مسار Angular الدقيق ويحافظ على query والمعرّف الموجب عند الحاجة.
-- المعرّف المفقود/صفر/السالب، وأي action كتابة أو طلب غير GET/HEAD، يبقى خارج presentation cutover.
+- Warehouses Index المصرح يصل إلى `/warehouses` ويحافظ على query.
+- Create/Edit deep links وكل write وغير GET/HEAD تبقى خارج presentation cutover.
 - hosted acceptance والقطع والرجوع والبوابة الكاملة تبقى خضراء بلا تغيير قاعدة بيانات.

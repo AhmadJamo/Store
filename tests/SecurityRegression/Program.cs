@@ -280,10 +280,44 @@ Check(new[] { "Branches", "PaymentMethods", "TaxRates" }.All(surface =>
         catalogMastersCutoverResolver.Resolve(cutoverContext.Request, surface, "Create",
             new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null),
     "Catalog-master create actions must stay outside the presentation cutover catalog");
+var productDefinitionsCutoverResolver = new PresentationCutoverResolver(Options.Create(
+    new PresentationCutoverOptions
+    {
+        AngularBasePath = "/app",
+        Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["ProductCategories"] = PresentationCutoverMode.AngularDefault,
+            ["ProductAttributes"] = PresentationCutoverMode.AngularDefault
+        }
+    }));
+Check(productDefinitionsCutoverResolver.Resolve(cutoverContext.Request, "ProductCategories", "Index",
+          new Microsoft.AspNetCore.Routing.RouteValueDictionary()) == "/app/products/categories?page=2" &&
+      productDefinitionsCutoverResolver.Resolve(cutoverContext.Request, "ProductAttributes", "Index",
+          new Microsoft.AspNetCore.Routing.RouteValueDictionary()) == "/app/products/attributes?page=2" &&
+      productDefinitionsCutoverResolver.Resolve(cutoverContext.Request, "ProductAttributes", "Values",
+          new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["productId"] = 17 }) ==
+      "/app/products/17/attributes?page=2",
+    "Product catalog-definition GET cutover must preserve query strings and the positive product identifier");
+Check(new long[] { -1, 0 }.All(productId =>
+          productDefinitionsCutoverResolver.Resolve(cutoverContext.Request, "ProductAttributes", "Values",
+              new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["productId"] = productId }) is null) &&
+      productDefinitionsCutoverResolver.Resolve(cutoverContext.Request, "ProductAttributes", "Values",
+          new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null,
+    "Product attribute Values cutover must reject missing, zero and negative product identifiers");
+cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?productId=17&tab=values");
+Check(productDefinitionsCutoverResolver.Resolve(cutoverContext.Request, "ProductAttributes", "Values",
+        new Microsoft.AspNetCore.Routing.RouteValueDictionary()) == "/app/products/17/attributes?tab=values",
+    "Product attribute Values cutover must consume the query-bound product identifier and preserve other query values");
+cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?page=2");
+Check(productDefinitionsCutoverResolver.Resolve(cutoverContext.Request, "ProductCategories", "Create",
+          new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null &&
+      productDefinitionsCutoverResolver.Resolve(cutoverContext.Request, "ProductAttributes", "SetActive",
+          new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 1 }) is null,
+    "Product catalog-definition mutations must stay outside the presentation cutover catalog");
 foreach (var entry in PresentationCutoverRouteCatalog.All)
 {
     var keyParts = entry.Key.Split(':', 2);
-    var routeValues = new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 1 };
+    var routeValues = new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 1, ["productId"] = 1 };
     var rehearsalAngular = new PresentationCutoverResolver(Options.Create(
         new PresentationCutoverOptions
         {

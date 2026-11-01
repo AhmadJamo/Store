@@ -1,5 +1,14 @@
 # AI Work Log
 
+- 2026-11-01: Completed `MOD-030E3B`. ProductCategories Index and ProductAttributes Index/Values GET presentation now
+  use exact AngularDefault routes. The rebuilt live runner exposed that MVC Values binds `productId` from query; the
+  resolver now validates and consumes that positive identifier into the Angular path, removes the transport parameter and
+  preserves unrelated query values. Writes remain independently authorized and antiforgery-protected. Hosted acceptance
+  passed 15/15, cutover and MVC rollback passed 55 routes, and Release, 1,465 backend checks, 218/218 Angular tests across
+  108 files, 122 templates and bundle budgets passed. Temporary authentication state was deleted; no data, schema,
+  business rule or MVC file changed. Twenty-five surfaces are AngularDefault and 57 remain MVC-default; execution advances
+  to `MOD-030E3C`.
+
 - 2026-11-01: Completed `MOD-030E3A`. Branches, PaymentMethods and TaxRates exact Index GET actions now use the shared
   `/products/catalog-masters` AngularDefault workspace with query preservation. Create/update/delete remain independently
   authorized and antiforgery-protected outside the presentation catalog. Hosted acceptance passed 15/15, cutover and
