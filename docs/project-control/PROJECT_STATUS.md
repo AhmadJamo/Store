@@ -161,3 +161,7 @@ backend، و218/218 Angular، و122 قالبًا، وميزانيات 327,391 ب
 اكتمل `MOD-030E2G`: أصبح Replenishment Index فقط AngularDefault على مساره الصحيح مع حفظ query، وبقيت كل mutations
 خارج كتالوج التحويل. نجح hosted ‏15/15 والقطع والرجوع 49/49، والبوابة 1,447 backend و218/218 Angular و122 قالبًا
 وميزانيات الحزم. أصبحت 20 سطحًا AngularDefault وبقي 62 سطحًا mapped على MVC؛ ينتقل التنفيذ إلى `MOD-030E3A`.
+اكتمل `MOD-030E3A`: أصبحت Branches وPaymentMethods وTaxRates Index فقط AngularDefault على مساحة
+`/products/catalog-masters` المشتركة مع حفظ query، وبقيت كل أوامر الكتابة خارج كتالوج العرض. نجح hosted ‏15/15
+والقطع والرجوع 52/52، والبوابة Release بلا تحذيرات و1,455 backend و218/218 Angular و122 قالبًا وميزانيات الحزم.
+أصبحت 23 سطحًا AngularDefault وبقي 59 سطحًا mapped على MVC؛ ينتقل التنفيذ إلى `MOD-030E3B`.

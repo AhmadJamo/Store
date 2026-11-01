@@ -1,6 +1,6 @@
 # MOD-030E — Angular runtime readiness audit
 
-> Status: IN PROGRESS — MOD-030E2F complete
+> Status: IN PROGRESS — MOD-030E3A complete
 > Date: 2026-11-01
 
 ## Finding
@@ -125,6 +125,19 @@ The authenticated hosted suite passed 15/15 with zero failures/skips. Cutover an
 49 authorized routes. The final functional gate passed a warning-free Release build, 1,447 backend checks, 218/218 Angular
 tests across 108 files, 122 templates and bundle budgets (327,391 initial bytes; 81,880 largest lazy bytes). Twenty surfaces
 are now AngularDefault and 62 mapped surfaces remain MVC by default. No schema or MVC file changed.
+
+## MOD-030E3A evidence
+
+Branches, PaymentMethods and TaxRates now join the committed AngularDefault set on their shared
+`/products/catalog-masters` workspace. Only each controller's exact Index GET is in the presentation catalog, query strings
+are preserved, and create/update/delete operations remain independently authorized and antiforgery-protected through the
+existing API/MVC boundaries.
+
+The authenticated hosted suite passed 15/15 with zero failures/skips. Cutover and process-local MVC rollback both passed
+52 authorized routes. The final gate passed a warning-free Release build, 1,455 backend checks, 218/218 Angular tests
+across 108 files, 122 templates and bundle budgets (327,391 initial bytes; 81,880 largest lazy bytes). Twenty-three surfaces
+are now AngularDefault and 59 mapped surfaces remain MVC by default. The temporary authenticated state was deleted and no
+schema, data, business rule or MVC file changed.
 
 Every cohort must add explicit GET-only action mappings, require its existing permissions, pass hosted acceptance and
 exact Angular targets, then pass a process-local MVC rollback. Mutations continue through their independently authorized

@@ -1,5 +1,13 @@
 # AI Work Log
 
+- 2026-11-01: Completed `MOD-030E3A`. Branches, PaymentMethods and TaxRates exact Index GET actions now use the shared
+  `/products/catalog-masters` AngularDefault workspace with query preservation. Create/update/delete remain independently
+  authorized and antiforgery-protected outside the presentation catalog. Hosted acceptance passed 15/15, cutover and
+  process-local MVC rollback passed 52 routes, and Release, 1,455 backend checks, 218/218 Angular tests across 108 files,
+  122 templates and bundle budgets passed. The temporary authenticated state was deleted; no data, schema, business rule
+  or MVC file changed. Twenty-three surfaces are AngularDefault and 59 remain MVC-default; execution advances to
+  `MOD-030E3B`.
+
 - 2026-11-01: Completed `MOD-030E2F` as the first batched runtime cohort. WarehouseLocations, UnassignedStock,
   LocationMovements and InventoryScanning Index GET actions now use exact AngularDefault workspaces with query
   preservation. Unsupported WarehouseLocations Create/Edit deep links and every write remain on MVC/API. Hosted

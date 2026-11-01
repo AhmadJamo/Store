@@ -16,8 +16,8 @@ same-line MVC actions, verifies every mapped Angular route and emits one accepta
 operation, permission, risk and evidence fields. The modernization gate fails when either generated artifact is stale.
 
 `docs/modernization/PHASE_30E_RUNTIME_READINESS_AUDIT.md` distinguishes functional counterparts from runtime defaults:
-All 82 surfaces have verified functional counterparts. MOD-030E2G expands the committed default to twenty surfaces and
-leaves 62 mapped MVC-default surfaces. Inventory Replenishment now uses its own Application-backed API and Angular
+All 82 surfaces have verified functional counterparts. MOD-030E3A expands the committed default to twenty-three surfaces and
+leaves 59 mapped MVC-default surfaces. Inventory Replenishment uses its own Application-backed API and Angular
 workspace at `/inventory/replenishment`; it is not the separate Purchase Replenishment automation workflow. WarehouseLocations,
 UnassignedStock, LocationMovements and InventoryScanning
 redirect their Index GET actions to exact Angular workspaces with query preservation. WarehouseLocations Create/Edit
@@ -26,7 +26,9 @@ deep links remain MVC because the Angular workspace does not yet consume create/
 `ReplenishmentApiController` exposes the reviewed inventory projection plus independently protected rule, transfer-draft
 and purchase-request-draft commands. Angular `features/inventory/replenishment*` owns bilingual filters, rule editing,
 server-authored forecast evidence and exact generated-document navigation. `ReplenishmentService` and
-`ReplenishmentPurchaseDemandService` retain all calculation and mutation authority.
+`ReplenishmentPurchaseDemandService` retain all calculation and mutation authority. Branches, PaymentMethods and TaxRates
+now redirect their exact Index GET actions to the shared `/products/catalog-masters` workspace; their create/update/delete
+commands remain independently authorized, antiforgery-protected and outside the presentation catalog.
 
 `tests/AngularBrowserAcceptance` loads an operator-supplied Playwright storage-state into both UI and API contexts. Without
 one, it uses a bounded synthetic session only for design-system presentation checks and reports authenticated API parity as
@@ -53,7 +55,8 @@ delegation migration during rollback; local Demo is now reconciled through migra
 `scripts/Publish-AngularAssets.ps1` builds Angular with the production `/app/` base href, validates the generated index,
 cleans only the fixed git-ignored `MiniStore.Web/wwwroot/app` target and copies hashed assets. `WebApplicationExtensions`
 serves those assets with immutable caching and a no-cache, `/app`-scoped SPA fallback. Customers, Suppliers, Products,
-AnalyticsCenter and Settings are the committed AngularDefault cohorts; the generated registry and acceptance matrix read appsettings and report the cutover mode.
+AnalyticsCenter, Settings, the proven inventory cohorts and the shared catalog masters are committed AngularDefault cohorts;
+the generated registry and acceptance matrix read appsettings and report the cutover mode.
 
 `MiniStore Front-End/src/app/core/preferences` owns versioned, non-sensitive theme/density preferences and system-theme resolution. Global semantic tokens provide light/dark palettes, density dimensions, focus, reduced-motion and forced-color behavior. The lazy `/design-system` page is the bilingual RTL/LTR visual-state reference for shared buttons, badges, fields and empty/loading/error patterns. See `docs/modernization/PHASE_03_VISUAL_SYSTEM.md`.
 

@@ -260,6 +260,26 @@ Check(replenishmentCutoverResolver.Resolve(
         cutoverContext.Request, "Replenishment", "Save",
         new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null,
     "Inventory Replenishment mutations must stay outside the presentation cutover catalog");
+var catalogMastersCutoverResolver = new PresentationCutoverResolver(Options.Create(
+    new PresentationCutoverOptions
+    {
+        AngularBasePath = "/app",
+        Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["Branches"] = PresentationCutoverMode.AngularDefault,
+            ["PaymentMethods"] = PresentationCutoverMode.AngularDefault,
+            ["TaxRates"] = PresentationCutoverMode.AngularDefault
+        }
+    }));
+Check(new[] { "Branches", "PaymentMethods", "TaxRates" }.All(surface =>
+        catalogMastersCutoverResolver.Resolve(cutoverContext.Request, surface, "Index",
+            new Microsoft.AspNetCore.Routing.RouteValueDictionary()) ==
+        "/app/products/catalog-masters?page=2"),
+    "Shared catalog-master Index cutover must preserve query strings on the exact Angular route");
+Check(new[] { "Branches", "PaymentMethods", "TaxRates" }.All(surface =>
+        catalogMastersCutoverResolver.Resolve(cutoverContext.Request, surface, "Create",
+            new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null),
+    "Catalog-master create actions must stay outside the presentation cutover catalog");
 foreach (var entry in PresentationCutoverRouteCatalog.All)
 {
     var keyParts = entry.Key.Split(':', 2);

@@ -56,7 +56,10 @@ public static class PresentationCutoverRouteCatalog
             ["UnassignedStock:Index"] = "/inventory/putaway",
             ["LocationMovements:Index"] = "/inventory/location-movements",
             ["InventoryScanning:Index"] = "/inventory/scanning",
-            ["Replenishment:Index"] = "/inventory/replenishment"
+            ["Replenishment:Index"] = "/inventory/replenishment",
+            ["Branches:Index"] = "/products/catalog-masters",
+            ["PaymentMethods:Index"] = "/products/catalog-masters",
+            ["TaxRates:Index"] = "/products/catalog-masters"
         };
 
     public static IReadOnlyDictionary<string, string> All => Routes;

@@ -1,5 +1,5 @@
 # Products and recipes
-> Status: IMPLEMENTED | Last reviewed: 2026-10-27
+> Status: IMPLEMENTED | Last reviewed: 2026-11-01
 
 ## Angular migration foundation (2026-10-25)
 
@@ -50,3 +50,11 @@ Review product entity doc, inventory/purchase/sales/transfers docs, configuratio
 MOD-030B makes the allowlisted Product list/create/edit GET routes AngularDefault after hosted acceptance and a successful
 MVC rollback rehearsal. Query strings and positive IDs are preserved; mutations and unknown MVC actions are never redirected.
 The Razor controller/views remain available as the rollback path.
+
+## Shared catalog-master cutover update (2026-11-01)
+
+`MOD-030E3A` makes the exact Branches, PaymentMethods and TaxRates Index GET actions `AngularDefault` on the shared
+`/products/catalog-masters` workspace. Query strings are preserved. Create/update/delete operations remain independently
+authorized and antiforgery-protected through their existing API/MVC boundaries and are not presentation redirects. Hosted
+acceptance passed 15/15, and both the 52-route Angular cutover and process-local MVC rollback passed. All three Razor
+controllers and views remain intact as the rollback path; no schema or business rule changed.

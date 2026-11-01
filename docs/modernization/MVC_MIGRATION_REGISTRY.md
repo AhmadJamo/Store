@@ -11,7 +11,7 @@
 - Angular application routes discovered: 184.
 - MVC surfaces with a verified Angular counterpart: 82.
 - Remaining MVC surfaces without a mapped Angular counterpart: 0.
-- Allowlisted Angular-default cutover actions: 52.
+- Allowlisted Angular-default cutover actions: 55.
 
 Remaining surfaces: none.
 
@@ -29,8 +29,8 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | AnalyticsCenter | Create.cshtml | Angular Default | /analytics | MiniStore.Web/Views/AnalyticsCenter/Create.cshtml |
 | AnalyticsCenter | Index.cshtml | Angular Default | /analytics | MiniStore.Web/Views/AnalyticsCenter/Index.cshtml |
 | AuditEvents | Index.cshtml | Angular Pilot | /audit-events | MiniStore.Web/Views/AuditEvents/Index.cshtml |
-| Branches | Create.cshtml | Angular Pilot | /products/catalog-masters | MiniStore.Web/Views/Branches/Create.cshtml |
-| Branches | Index.cshtml | Angular Pilot | /products/catalog-masters | MiniStore.Web/Views/Branches/Index.cshtml |
+| Branches | Create.cshtml | Angular Default | /products/catalog-masters | MiniStore.Web/Views/Branches/Create.cshtml |
+| Branches | Index.cshtml | Angular Default | /products/catalog-masters | MiniStore.Web/Views/Branches/Index.cshtml |
 | CompanyOnboarding | Index.cshtml | Angular Pilot | /onboarding | MiniStore.Web/Views/CompanyOnboarding/Index.cshtml |
 | CustomerCreditNotes | Create.cshtml | Angular Pilot | /sales/credit-notes | MiniStore.Web/Views/CustomerCreditNotes/Create.cshtml |
 | CustomerCreditNotes | Details.cshtml | Angular Pilot | /sales/credit-notes | MiniStore.Web/Views/CustomerCreditNotes/Details.cshtml |
@@ -77,8 +77,8 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | LandedCosts | Details.cshtml | Angular Pilot | /purchases/landed-costs | MiniStore.Web/Views/LandedCosts/Details.cshtml |
 | LandedCosts | Index.cshtml | Angular Pilot | /purchases/landed-costs | MiniStore.Web/Views/LandedCosts/Index.cshtml |
 | LocationMovements | Index.cshtml | Angular Default | /inventory/location-movements | MiniStore.Web/Views/LocationMovements/Index.cshtml |
-| PaymentMethods | Create.cshtml | Angular Pilot | /products/catalog-masters | MiniStore.Web/Views/PaymentMethods/Create.cshtml |
-| PaymentMethods | Index.cshtml | Angular Pilot | /products/catalog-masters | MiniStore.Web/Views/PaymentMethods/Index.cshtml |
+| PaymentMethods | Create.cshtml | Angular Default | /products/catalog-masters | MiniStore.Web/Views/PaymentMethods/Create.cshtml |
+| PaymentMethods | Index.cshtml | Angular Default | /products/catalog-masters | MiniStore.Web/Views/PaymentMethods/Index.cshtml |
 | Platform/Platform | Companies.cshtml | Angular Pilot | /platform-control, /platform-management | MiniStore.Web/Areas/Platform/Views/Platform/Companies.cshtml |
 | Platform/Platform | CreatePlan.cshtml | Angular Pilot | /platform-control, /platform-management | MiniStore.Web/Areas/Platform/Views/Platform/CreatePlan.cshtml |
 | Platform/Platform | CreatePromotion.cshtml | Angular Pilot | /platform-control, /platform-management | MiniStore.Web/Areas/Platform/Views/Platform/CreatePromotion.cshtml |
@@ -206,8 +206,8 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | Suppliers | Create.cshtml | Angular Default | /suppliers | MiniStore.Web/Views/Suppliers/Create.cshtml |
 | Suppliers | Edit.cshtml | Angular Default | /suppliers | MiniStore.Web/Views/Suppliers/Edit.cshtml |
 | Suppliers | Index.cshtml | Angular Default | /suppliers | MiniStore.Web/Views/Suppliers/Index.cshtml |
-| TaxRates | Create.cshtml | Angular Pilot | /products/catalog-masters | MiniStore.Web/Views/TaxRates/Create.cshtml |
-| TaxRates | Index.cshtml | Angular Pilot | /products/catalog-masters | MiniStore.Web/Views/TaxRates/Index.cshtml |
+| TaxRates | Create.cshtml | Angular Default | /products/catalog-masters | MiniStore.Web/Views/TaxRates/Create.cshtml |
+| TaxRates | Index.cshtml | Angular Default | /products/catalog-masters | MiniStore.Web/Views/TaxRates/Index.cshtml |
 | UnassignedStock | Index.cshtml | Angular Default | /inventory/putaway | MiniStore.Web/Views/UnassignedStock/Index.cshtml |
 | Users | Create.cshtml | Angular Pilot | /users | MiniStore.Web/Views/Users/Create.cshtml |
 | Users | Index.cshtml | Angular Pilot | /users | MiniStore.Web/Views/Users/Index.cshtml |
@@ -239,7 +239,7 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | AnalyticsCenter | Index | GET | Angular Default | /analytics | /analytics | MiniStore.Web/Controllers/Analytics/AnalyticsCenterController.cs |
 | AuditEvents | Export | POST | Angular Pilot | /audit-events | — | MiniStore.Web/Controllers/Security/AuditEventsController.cs |
 | AuditEvents | Index | GET | Angular Pilot | /audit-events | — | MiniStore.Web/Controllers/Security/AuditEventsController.cs |
-| Branches | BranchesController | ANY | Angular Pilot | /products/catalog-masters | — | MiniStore.Web/Controllers/Accounting/BranchesController.cs |
+| Branches | BranchesController | ANY | Angular Default | /products/catalog-masters | — | MiniStore.Web/Controllers/Accounting/BranchesController.cs |
 | CompanyOnboarding | Complete | POST | Angular Pilot | /onboarding | — | MiniStore.Web/Controllers/Saas/CompanyOnboardingController.cs |
 | CompanyOnboarding | Index | GET | Angular Pilot | /onboarding | — | MiniStore.Web/Controllers/Saas/CompanyOnboardingController.cs |
 | CompanyOnboarding | Skip | POST | Angular Pilot | /onboarding | — | MiniStore.Web/Controllers/Saas/CompanyOnboardingController.cs |
@@ -333,9 +333,9 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | Language | Set | POST | Angular Pilot | / | — | MiniStore.Web/Controllers/Settings/LanguageController.cs |
 | LocationMovements | Index | GET | Angular Default | /inventory/location-movements | /inventory/location-movements | MiniStore.Web/Controllers/Inventory/LocationMovementsController.cs |
 | LocationMovements | Move | POST | Angular Default | /inventory/location-movements | — | MiniStore.Web/Controllers/Inventory/LocationMovementsController.cs |
-| PaymentMethods | Create | GET | Angular Pilot | /products/catalog-masters | — | MiniStore.Web/Controllers/Accounting/PaymentMethodsController.cs |
-| PaymentMethods | Create | GET, POST | Angular Pilot | /products/catalog-masters | — | MiniStore.Web/Controllers/Accounting/PaymentMethodsController.cs |
-| PaymentMethods | Index | ANY | Angular Pilot | /products/catalog-masters | — | MiniStore.Web/Controllers/Accounting/PaymentMethodsController.cs |
+| PaymentMethods | Create | GET | Angular Default | /products/catalog-masters | — | MiniStore.Web/Controllers/Accounting/PaymentMethodsController.cs |
+| PaymentMethods | Create | GET, POST | Angular Default | /products/catalog-masters | — | MiniStore.Web/Controllers/Accounting/PaymentMethodsController.cs |
+| PaymentMethods | Index | ANY | Angular Default | /products/catalog-masters | /products/catalog-masters | MiniStore.Web/Controllers/Accounting/PaymentMethodsController.cs |
 | Platform/Platform | Companies | GET | Angular Pilot | /platform-control, /platform-management | — | MiniStore.Web/Areas/Platform/Controllers/PlatformController.cs |
 | Platform/Platform | ConfirmPayment | GET, POST | Angular Pilot | /platform-control, /platform-management | — | MiniStore.Web/Areas/Platform/Controllers/PlatformController.cs |
 | Platform/Platform | CreatePlan | GET | Angular Pilot | /platform-control, /platform-management | — | MiniStore.Web/Areas/Platform/Controllers/PlatformController.cs |
@@ -604,9 +604,9 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | Suppliers | Edit | GET | Angular Default | /suppliers | /suppliers/{id}/edit | MiniStore.Web/Controllers/Suppliers/SuppliersController.cs |
 | Suppliers | Edit | POST | Angular Default | /suppliers | /suppliers/{id}/edit | MiniStore.Web/Controllers/Suppliers/SuppliersController.cs |
 | Suppliers | Index | GET | Angular Default | /suppliers | /suppliers | MiniStore.Web/Controllers/Suppliers/SuppliersController.cs |
-| TaxRates | Create | GET | Angular Pilot | /products/catalog-masters | — | MiniStore.Web/Controllers/Accounting/TaxRatesController.cs |
-| TaxRates | Create | GET, POST | Angular Pilot | /products/catalog-masters | — | MiniStore.Web/Controllers/Accounting/TaxRatesController.cs |
-| TaxRates | Index | ANY | Angular Pilot | /products/catalog-masters | — | MiniStore.Web/Controllers/Accounting/TaxRatesController.cs |
+| TaxRates | Create | GET | Angular Default | /products/catalog-masters | — | MiniStore.Web/Controllers/Accounting/TaxRatesController.cs |
+| TaxRates | Create | GET, POST | Angular Default | /products/catalog-masters | — | MiniStore.Web/Controllers/Accounting/TaxRatesController.cs |
+| TaxRates | Index | ANY | Angular Default | /products/catalog-masters | /products/catalog-masters | MiniStore.Web/Controllers/Accounting/TaxRatesController.cs |
 | UnassignedStock | Assign | POST | Angular Default | /inventory/putaway | — | MiniStore.Web/Controllers/Inventory/UnassignedStockController.cs |
 | UnassignedStock | CreateRule | POST | Angular Default | /inventory/putaway | — | MiniStore.Web/Controllers/Inventory/UnassignedStockController.cs |
 | UnassignedStock | Index | GET | Angular Default | /inventory/putaway | /inventory/putaway | MiniStore.Web/Controllers/Inventory/UnassignedStockController.cs |

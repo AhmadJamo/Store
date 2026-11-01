@@ -195,7 +195,10 @@ static async Task RunLiveCutoverAsync(
         new("/UnassignedStock?warehouseId=1&sort=quantity-desc", "/app/inventory/putaway?warehouseId=1&sort=quantity-desc", "ProductStock.View"),
         new("/LocationMovements?warehouseId=1&query=transfer", "/app/inventory/location-movements?warehouseId=1&query=transfer", "LocationMovements.View"),
         new("/InventoryScanning?productScan=cutover-rehearsal", "/app/inventory/scanning?productScan=cutover-rehearsal", "InventoryScanning.View"),
-        new("/Replenishment?search=cutover-rehearsal&exceptionsOnly=true", "/app/inventory/replenishment?search=cutover-rehearsal&exceptionsOnly=true", "Inventory.Replenishment.View")
+        new("/Replenishment?search=cutover-rehearsal&exceptionsOnly=true", "/app/inventory/replenishment?search=cutover-rehearsal&exceptionsOnly=true", "Inventory.Replenishment.View"),
+        new("/Branches?source=cutover-rehearsal", "/app/products/catalog-masters?source=cutover-rehearsal", "Administration.Access"),
+        new("/PaymentMethods?source=cutover-rehearsal", "/app/products/catalog-masters?source=cutover-rehearsal", "Administration.Access"),
+        new("/TaxRates?source=cutover-rehearsal", "/app/products/catalog-masters?source=cutover-rehearsal", "Administration.Access")
     };
 
     if (permissions.Contains("Customers.View"))
@@ -295,7 +298,7 @@ static async Task RunLiveCutoverAsync(
                                  "InventoryReconciliation" or "StockTransactions" or "ProductStocks" or
                                  "InventoryAdjustments" or "StockTransfers" or "InventoryTracking" or "StockMovements" or
                                  "WarehouseLocations" or "UnassignedStock" or "LocationMovements" or "InventoryScanning" or
-                                 "Replenishment";
+                                 "Replenishment" or "Branches" or "PaymentMethods" or "TaxRates";
         if (expectsAngular)
         {
             Require(response.Status is 301 or 302 or 307 or 308,

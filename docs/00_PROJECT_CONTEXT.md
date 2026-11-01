@@ -1,7 +1,7 @@
 # MiniStore project context
 > Status: PARTIALLY IMPLEMENTED  
 > Source of truth: Code  
-> Last reviewed: 2026-10-24
+> Last reviewed: 2026-11-01
 
 ## Project identity
 MiniStore is a server-rendered ASP.NET Core MVC store-management application under incremental Angular modernization. It targets .NET 10, uses EF Core 10 with SQL Server, ASP.NET Core Identity, Razor views, and a Domain/Application/Infrastructure/Web layered solution. The existing Web host now includes a protected versioned internal API foundation; no separate public API project is present.
@@ -11,7 +11,7 @@ The repository implements an operational slice for catalog, warehouses, stock, s
 
 The WMS track is temporarily paused after implementing reconciliation, logistics, movements, balances, reservations, counts, lot/serial execution, removal/putaway policies, replenishment transfer/purchase-demand planning, inventory insights and safe scan workflows. The additive procure-to-pay evolution is implemented through PUR-280. Advanced purchasing analytics expose filterable spend, delay, confirmation, price-variance, supplier, seasonal, buyer-workload and open-exception evidence with source definitions and document links. Creation of new Legacy Direct Purchases is retired; historical records remain visible and users are directed to Purchase Requests for new activity.
 
-The imported ERP SaaS Foundation Blueprint remains a proposed reference. The project-control audit provides current control evidence. CUS-010/020/030A/030B provide the professional Customer master and receivable policy. SAL-020A/B through SAL-100D provide pricing through collection and controlled returns/credits. SAL-110 adds tenant-configurable order controls and sequential approvals. SAL-120A/B add versioned quotation templates, central organization identity, a reusable document designer/PDF engine and frozen sent-document snapshots. SAL-130A now adds a reusable provider-based Analytics Center with personal/shared workspaces and Sales/Purchasing providers. Angular functional migration, `MOD-029` dual-run acceptance and `MOD-030A..D` reversible cutover are complete. MOD-030E has expanded the committed `AngularDefault` set to 20 surfaces under `/app`, leaving 62 mapped surfaces MVC by default. Inventory Replenishment now uses its dedicated `/inventory/replenishment` workspace with live cutover and rollback evidence. Physical retirement remains deferred until runtime cutover is complete. Migration source/model and the local Demo database are reconciled through migration 136. Legacy Sale/POS business behavior remains unchanged.
+The imported ERP SaaS Foundation Blueprint remains a proposed reference. The project-control audit provides current control evidence. CUS-010/020/030A/030B provide the professional Customer master and receivable policy. SAL-020A/B through SAL-100D provide pricing through collection and controlled returns/credits. SAL-110 adds tenant-configurable order controls and sequential approvals. SAL-120A/B add versioned quotation templates, central organization identity, a reusable document designer/PDF engine and frozen sent-document snapshots. SAL-130A now adds a reusable provider-based Analytics Center with personal/shared workspaces and Sales/Purchasing providers. Angular functional migration, `MOD-029` dual-run acceptance and `MOD-030A..D` reversible cutover are complete. MOD-030E has expanded the committed `AngularDefault` set to 23 surfaces under `/app`, leaving 59 mapped surfaces MVC by default. Inventory Replenishment uses its dedicated `/inventory/replenishment` workspace, while Branches, PaymentMethods and TaxRates share `/products/catalog-masters`; both cohorts have live cutover and rollback evidence. Physical retirement remains deferred until runtime cutover is complete. Migration source/model and the local Demo database are reconciled through migration 136. Legacy Sale/POS business behavior remains unchanged.
 
 ## Status classification
 - IMPLEMENTED: catalog, warehouses, suppliers, stock balances/movements, purchases, sales, transfer workflow, Identity login, role-permission checks, audit-log rows, Razor UI.
@@ -40,8 +40,8 @@ The imported ERP SaaS Foundation Blueprint remains a proposed reference. The pro
 See `06_SECURITY.md`, `04_ACCOUNTING.md`, and `TODO.md`. The historically exposed administrator was closed for the evidenced local Demo environment, an encrypted isolated restore drill reconciled without differences and migrations through 135 are applied with no pending EF model change. The local Demo audit and retention features are enabled through User Secrets. Coverage reconciliation is complete, new legacy writes are frozen behind a reversible flag, and pre/post signed checkpoints preserved all 710 historical legacy rows. Real deployment identities, off-host backup/checkpoint storage, production deployment controls and broader integration testing remain open.
 
 ## Recommended next steps
-1. Complete `MOD-030E3A`, the shared Branches/PaymentMethods/TaxRates catalog-master Index cohort.
-2. Continue the remaining 62 MVC-default surfaces in permission-aware runtime cohorts with MVC rollback.
+1. Complete `MOD-030E3B`, the ProductCategories/ProductAttributes catalog-definition cohort.
+2. Continue the remaining 59 MVC-default surfaces in permission-aware runtime cohorts with MVC rollback.
 3. Consider physical MVC retirement only after runtime coverage and staging evidence are complete.
 
 ## Read first
