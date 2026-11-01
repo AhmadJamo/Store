@@ -11,7 +11,7 @@
 - Angular application routes discovered: 184.
 - MVC surfaces with a verified Angular counterpart: 82.
 - Remaining MVC surfaces without a mapped Angular counterpart: 0.
-- Allowlisted Angular-default cutover actions: 58.
+- Allowlisted Angular-default cutover actions: 59.
 
 Remaining surfaces: none.
 
@@ -217,9 +217,9 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | WarehouseLocations | Create.cshtml | Angular Default | /inventory/locations | MiniStore.Web/Views/WarehouseLocations/Create.cshtml |
 | WarehouseLocations | Edit.cshtml | Angular Default | /inventory/locations | MiniStore.Web/Views/WarehouseLocations/Edit.cshtml |
 | WarehouseLocations | Index.cshtml | Angular Default | /inventory/locations | MiniStore.Web/Views/WarehouseLocations/Index.cshtml |
-| Warehouses | Create.cshtml | Angular Pilot | /warehouses | MiniStore.Web/Views/Warehouses/Create.cshtml |
-| Warehouses | Edit.cshtml | Angular Pilot | /warehouses | MiniStore.Web/Views/Warehouses/Edit.cshtml |
-| Warehouses | Index.cshtml | Angular Pilot | /warehouses | MiniStore.Web/Views/Warehouses/Index.cshtml |
+| Warehouses | Create.cshtml | Angular Default | /warehouses | MiniStore.Web/Views/Warehouses/Create.cshtml |
+| Warehouses | Edit.cshtml | Angular Default | /warehouses | MiniStore.Web/Views/Warehouses/Edit.cshtml |
+| Warehouses | Index.cshtml | Angular Default | /warehouses | MiniStore.Web/Views/Warehouses/Index.cshtml |
 
 ## Action inventory
 
@@ -630,12 +630,12 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | WarehouseLocations | Edit | GET | Angular Default | /inventory/locations | — | MiniStore.Web/Controllers/Inventory/WarehouseLocationsController.cs |
 | WarehouseLocations | Edit | POST | Angular Default | /inventory/locations | — | MiniStore.Web/Controllers/Inventory/WarehouseLocationsController.cs |
 | WarehouseLocations | Index | GET | Angular Default | /inventory/locations | /inventory/locations | MiniStore.Web/Controllers/Inventory/WarehouseLocationsController.cs |
-| Warehouses | Create | GET | Angular Pilot | /warehouses | — | MiniStore.Web/Controllers/Inventory/WarehousesController.cs |
-| Warehouses | Create | POST | Angular Pilot | /warehouses | — | MiniStore.Web/Controllers/Inventory/WarehousesController.cs |
-| Warehouses | Delete | POST | Angular Pilot | /warehouses | — | MiniStore.Web/Controllers/Inventory/WarehousesController.cs |
-| Warehouses | Edit | GET | Angular Pilot | /warehouses | — | MiniStore.Web/Controllers/Inventory/WarehousesController.cs |
-| Warehouses | Edit | POST | Angular Pilot | /warehouses | — | MiniStore.Web/Controllers/Inventory/WarehousesController.cs |
-| Warehouses | Index | GET | Angular Pilot | /warehouses | — | MiniStore.Web/Controllers/Inventory/WarehousesController.cs |
+| Warehouses | Create | GET | Angular Default | /warehouses | — | MiniStore.Web/Controllers/Inventory/WarehousesController.cs |
+| Warehouses | Create | POST | Angular Default | /warehouses | — | MiniStore.Web/Controllers/Inventory/WarehousesController.cs |
+| Warehouses | Delete | POST | Angular Default | /warehouses | — | MiniStore.Web/Controllers/Inventory/WarehousesController.cs |
+| Warehouses | Edit | GET | Angular Default | /warehouses | — | MiniStore.Web/Controllers/Inventory/WarehousesController.cs |
+| Warehouses | Edit | POST | Angular Default | /warehouses | — | MiniStore.Web/Controllers/Inventory/WarehousesController.cs |
+| Warehouses | Index | GET | Angular Default | /warehouses | /warehouses | MiniStore.Web/Controllers/Inventory/WarehousesController.cs |
 
 ## Control inventory
 

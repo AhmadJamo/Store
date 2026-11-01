@@ -314,6 +314,23 @@ Check(productDefinitionsCutoverResolver.Resolve(cutoverContext.Request, "Product
       productDefinitionsCutoverResolver.Resolve(cutoverContext.Request, "ProductAttributes", "SetActive",
           new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 1 }) is null,
     "Product catalog-definition mutations must stay outside the presentation cutover catalog");
+var warehousesCutoverResolver = new PresentationCutoverResolver(Options.Create(
+    new PresentationCutoverOptions
+    {
+        AngularBasePath = "/app",
+        Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["Warehouses"] = PresentationCutoverMode.AngularDefault
+        }
+    }));
+Check(warehousesCutoverResolver.Resolve(cutoverContext.Request, "Warehouses", "Index",
+        new Microsoft.AspNetCore.Routing.RouteValueDictionary()) == "/app/warehouses?page=2",
+    "Warehouses Index cutover must preserve query strings on the Angular workspace");
+Check(warehousesCutoverResolver.Resolve(cutoverContext.Request, "Warehouses", "Create",
+          new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null &&
+      warehousesCutoverResolver.Resolve(cutoverContext.Request, "Warehouses", "Edit",
+          new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 1 }) is null,
+    "Unsupported Warehouse Create/Edit deep links must stay outside presentation cutover");
 foreach (var entry in PresentationCutoverRouteCatalog.All)
 {
     var keyParts = entry.Key.Split(':', 2);

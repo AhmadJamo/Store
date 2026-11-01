@@ -200,7 +200,8 @@ static async Task RunLiveCutoverAsync(
         new("/PaymentMethods?source=cutover-rehearsal", "/app/products/catalog-masters?source=cutover-rehearsal", "Administration.Access"),
         new("/TaxRates?source=cutover-rehearsal", "/app/products/catalog-masters?source=cutover-rehearsal", "Administration.Access"),
         new("/ProductCategories?source=cutover-rehearsal", "/app/products/categories?source=cutover-rehearsal", "Products.View"),
-        new("/ProductAttributes?source=cutover-rehearsal", "/app/products/attributes?source=cutover-rehearsal", "Products.View")
+        new("/ProductAttributes?source=cutover-rehearsal", "/app/products/attributes?source=cutover-rehearsal", "Products.View"),
+        new("/Warehouses?source=cutover-rehearsal", "/app/warehouses?source=cutover-rehearsal", "Warehouses.View")
     };
 
     if (permissions.Contains("Customers.View"))
@@ -303,7 +304,7 @@ static async Task RunLiveCutoverAsync(
                                  "InventoryAdjustments" or "StockTransfers" or "InventoryTracking" or "StockMovements" or
                                  "WarehouseLocations" or "UnassignedStock" or "LocationMovements" or "InventoryScanning" or
                                  "Replenishment" or "Branches" or "PaymentMethods" or "TaxRates" or
-                                 "ProductCategories" or "ProductAttributes";
+                                 "ProductCategories" or "ProductAttributes" or "Warehouses";
         if (expectsAngular)
         {
             Require(response.Status is 301 or 302 or 307 or 308,

@@ -1,5 +1,12 @@
 # AI Work Log
 
+- 2026-11-01: Completed `MOD-030E3C`. Warehouses Index now uses `/warehouses` as AngularDefault with query
+  preservation. Unsupported Create/Edit GET deep links and every mutation remain on MVC/API because the current Angular
+  workspace does not consume explicit URL form intent. Hosted acceptance passed 15/15, cutover and MVC rollback passed 56
+  routes, and Release plus 1,469 backend checks passed; the unchanged Angular suite retained 218/218 tests across 108 files,
+  122 templates and bundle budgets. Temporary authentication state was deleted; no data, schema, business rule or MVC file
+  changed. Twenty-six surfaces are AngularDefault and 56 remain MVC-default; execution advances to `MOD-030E3D`.
+
 - 2026-11-01: Completed `MOD-030E3B`. ProductCategories Index and ProductAttributes Index/Values GET presentation now
   use exact AngularDefault routes. The rebuilt live runner exposed that MVC Values binds `productId` from query; the
   resolver now validates and consumes that positive identifier into the Angular path, removes the transport parameter and

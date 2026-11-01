@@ -1,6 +1,6 @@
 # MOD-030E — Angular runtime readiness audit
 
-> Status: IN PROGRESS — MOD-030E3B complete
+> Status: IN PROGRESS — MOD-030E3C complete
 > Date: 2026-11-01
 
 ## Finding
@@ -152,6 +152,18 @@ process-local MVC rollback each passed 55 authorized routes. The final gate pass
 backend checks, 218/218 Angular tests across 108 files, 122 templates and bundle budgets (327,391 initial bytes; 81,880
 largest lazy bytes). Twenty-five surfaces are AngularDefault and 57 remain MVC-default. Temporary authentication state was
 deleted; no data, schema, business rule or MVC file changed.
+
+## MOD-030E3C evidence
+
+Warehouses Index now joins the committed AngularDefault set at `/warehouses` with query preservation. Create/Edit GET
+deep links remain MVC because the current single-page Angular workspace does not consume explicit create/edit URL intent.
+Create, Edit and Delete mutations remain independently permissioned and antiforgery-protected outside presentation cutover.
+
+The authenticated hosted suite passed 15/15 with zero failures/skips. Cutover and process-local MVC rollback each passed
+56 authorized routes. Release passed with zero warnings and 1,469 backend checks; the unchanged Angular workspace retained
+218/218 tests across 108 files, 122 accessible templates and bundle budgets of 327,391 initial bytes and 81,880 largest
+lazy bytes. Twenty-six surfaces are AngularDefault and 56 remain MVC-default. Temporary authentication state was deleted;
+no data, schema, business rule or MVC file changed.
 
 Every cohort must add explicit GET-only action mappings, require its existing permissions, pass hosted acceptance and
 exact Angular targets, then pass a process-local MVC rollback. Mutations continue through their independently authorized

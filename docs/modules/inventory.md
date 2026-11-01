@@ -174,6 +174,11 @@ The POS warehouse list contains only warehouses with POS sales enabled, and Sale
 
 The Inventory Settings singleton supplies defaults for new warehouses. Effective rules remain warehouse-specific. Existing warehouses are migrated as Hybrid with capacity enforcement so established location data and workflows remain available.
 
+`MOD-030E3C` makes only Warehouses Index GET `AngularDefault` on `/warehouses` with query preservation. The current
+Angular workspace supports list/create/edit/delete operations through independently authorized API commands, but it does
+not consume separate Create/Edit URL intent, so those MVC GET deep links and every mutation remain outside presentation
+cutover. Hosted acceptance passed 15/15, and both the 56-route cutover and MVC rollback passed. MVC remains intact.
+
 ## Inventory reconciliation baseline
 
 The `InventoryReconciliation.View` report is a read-only WMS control. For each tenant Product + Warehouse it compares ProductStock quantity/value, the SQL-aggregated ProductLocationStock quantity, derived Unassigned quantity and the latest StockTransaction quantity/value snapshot. It also finds location balances without a warehouse balance, negative location rows and location balances attached to Simple warehouses. Search accepts product name, generated code or barcode; warehouse, exception-only and page-size filters are available. The report never adjusts stock.
