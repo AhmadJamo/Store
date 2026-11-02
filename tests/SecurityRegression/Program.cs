@@ -1149,6 +1149,40 @@ Check(new long[] { -1, 0 }.All(id =>
               "SalesQuotations", action,
               new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 19 }) is null),
     "Sales-quotation cutover must reject unsafe IDs and keep PDF/lifecycle actions outside cutover");
+var salesOrderCutoverResolver = new PresentationCutoverResolver(Options.Create(
+    new PresentationCutoverOptions
+    {
+        AngularBasePath = "/app",
+        Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["SalesOrders"] = PresentationCutoverMode.AngularDefault
+        }
+    }));
+cutoverContext.Request.QueryString =
+    new Microsoft.AspNetCore.Http.QueryString("?status=1&search=cutover");
+Check(salesOrderCutoverResolver.Resolve(cutoverContext.Request,
+          "SalesOrders", "Index", new Microsoft.AspNetCore.Routing.RouteValueDictionary()) ==
+      "/app/sales/orders?status=1&search=cutover" &&
+      salesOrderCutoverResolver.Resolve(cutoverContext.Request,
+          "SalesOrders", "Details",
+          new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 17 }) ==
+      "/app/sales/orders/17?status=1&search=cutover" &&
+      salesOrderCutoverResolver.Resolve(cutoverContext.Request,
+          "SalesOrders", "Reserve",
+          new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 17 }) ==
+      "/app/sales/orders/17/reservations?status=1&search=cutover",
+    "Sales-order cutover must resolve list, details and reservation GET routes");
+Check(new long[] { -1, 0 }.All(id =>
+          new[] { "Details", "Reserve" }.All(action =>
+              salesOrderCutoverResolver.Resolve(cutoverContext.Request,
+                  "SalesOrders", action,
+                  new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = id }) is null)) &&
+      new[] { "CreateFromQuotation", "Confirm", "Cancel", "ApproveException", "RejectException",
+              "ReleaseReservation" }.All(action =>
+          salesOrderCutoverResolver.Resolve(cutoverContext.Request,
+              "SalesOrders", action,
+              new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 17 }) is null),
+    "Sales-order cutover must reject unsafe IDs and keep lifecycle, approval and reservation mutations outside cutover");
 cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?page=2");
 foreach (var entry in PresentationCutoverRouteCatalog.All)
 {

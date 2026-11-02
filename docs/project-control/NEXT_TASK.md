@@ -1,19 +1,19 @@
 # المهمة التالية الوحيدة / Next Task
 
-## `MOD-030E4Y` — أوامر البيع وحجوزاتها / Sales Orders and Reservations Cutover
+## `MOD-030E4Z` — تسليمات البيع / Sales Deliveries Cutover
 
 > الحالة: APPROVED
 
-اكتمل `MOD-030E4X`: أصبحت SalesQuotations السطح 56 بعد hosted ‏15/15 ومجموعة القطع/الرجوع المصرح بها 104/104 والبوابة 1,663. لم تحمل الجلسة صلاحيات عروض الأسعار ولم يتغير عرض. بقي 26 سطحًا MVC.
+اكتمل `MOD-030E4Y`: أصبحت SalesOrders السطح 57 بعد hosted ‏15/15 ومجموعة القطع/الرجوع 104/104 والبوابة 1,671. لم تحمل الجلسة SalesOrders.View ولم يتغير أمر أو حجز. بقي 25 سطحًا MVC.
 
 ### النطاق المحدود
 
-- SalesOrders Index وDetails وReserve ذوا المعرّف الموجب إلى `/sales/orders` و`/sales/orders/{id}` و`/sales/orders/{id}/reservations`.
-- الحفاظ على status/search في القائمة.
-- CreateFromQuotation وConfirm/Cancel وقرارات الموافقة وReserve/ReleaseReservation POST تبقى خارج التحويل.
+- SalesDeliveries Index وDetails وCreate ذو salesOrderId موجب إلى `/sales/deliveries` و`/sales/deliveries/{id}` و`/sales/deliveries/new?salesOrderId={id}`.
+- الحفاظ على search في القائمة.
+- Create/Post/Cancel POST تبقى خارج التحويل وتعمل عبر Angular API المحمي.
 
 ### القبول
 
 - كل GET مصرح يصل إلى مسار Angular الدقيق ويحافظ على query والمعرّف الموجب.
 - كل mutation تبقى خارج presentation cutover بصلاحياتها وantiforgery.
-- hosted acceptance والقطع والرجوع والبوابة الكاملة تبقى خضراء بلا إنشاء أو تغيير أمر/حجز.
+- hosted acceptance والقطع والرجوع والبوابة الكاملة تبقى خضراء بلا إنشاء أو تغيير تسليم.

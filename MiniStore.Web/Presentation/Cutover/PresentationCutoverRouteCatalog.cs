@@ -128,7 +128,10 @@ public static class PresentationCutoverRouteCatalog
             ["SalesPriceLists:Index"] = "/sales/pricing",
             ["SalesQuotations:Index"] = "/sales/quotations",
             ["SalesQuotations:Create"] = "/sales/quotations/new",
-            ["SalesQuotations:Details"] = "/sales/quotations/{id}"
+            ["SalesQuotations:Details"] = "/sales/quotations/{id}",
+            ["SalesOrders:Index"] = "/sales/orders",
+            ["SalesOrders:Details"] = "/sales/orders/{id}",
+            ["SalesOrders:Reserve"] = "/sales/orders/{id}/reservations"
         };
 
     public static IReadOnlyDictionary<string, string> All => Routes;

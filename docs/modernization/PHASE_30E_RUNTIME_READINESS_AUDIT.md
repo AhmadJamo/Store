@@ -264,6 +264,14 @@ passed. The current session lacked quotation permissions for live route probes; 
 preservation and exclusions are regression-covered and no quotation changed. Fifty-six surfaces are AngularDefault and
 26 remain MVC-default.
 
+## MOD-030E4Y evidence
+
+SalesOrders Index/positive-ID Details/Reserve joins AngularDefault. Conversion, lifecycle, approvals and reservation
+mutations remain API-backed POST actions outside presentation cutover. Hosted 15/15, the current authorized route set
+cutover/rollback 104/104 and 1,671 backend checks passed. The current session lacked `SalesOrders.View` for live probes;
+exact routes and exclusions are regression-covered and no order/reservation changed. Fifty-seven surfaces are
+AngularDefault and 25 remain MVC-default.
+
 ## MOD-030E4S evidence
 
 SupplierCommunications positive-ID Details joins AngularDefault; Prepare/RecordActivity and attachment download remain

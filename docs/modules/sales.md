@@ -162,3 +162,10 @@ download and every create/lifecycle POST remain outside cutover with their exist
 15/15, the current authorized route set cutover/rollback 104/104 and 1,663 backend checks passed. The current session
 did not expose quotation permissions for live route probes; resolver behavior is regression-covered and no quotation
 was created or changed.
+
+`MOD-030E4Y` makes SalesOrders Index/positive-ID Details and positive-ID Reserve GET presentation AngularDefault at
+the order list/detail/reservation routes. Status/search query values are preserved. Quotation conversion, confirm/cancel,
+approval decisions and reserve/release POST actions remain outside cutover with existing permissions and antiforgery;
+Angular performs them through the protected APIs. Hosted 15/15, the current authorized route set cutover/rollback
+104/104 and 1,671 backend checks passed. The current session lacked `SalesOrders.View` for live route probes; resolver
+behavior is regression-covered and no order or reservation changed.

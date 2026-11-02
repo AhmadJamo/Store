@@ -11,7 +11,7 @@
 - Angular application routes discovered: 184.
 - MVC surfaces with a verified Angular counterpart: 82.
 - Remaining MVC surfaces without a mapped Angular counterpart: 0.
-- Allowlisted Angular-default cutover actions: 124.
+- Allowlisted Angular-default cutover actions: 127.
 
 Remaining surfaces: none.
 
@@ -145,9 +145,9 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | SalesDeliveries | Create.cshtml | Angular Pilot | /sales/deliveries | MiniStore.Web/Views/SalesDeliveries/Create.cshtml |
 | SalesDeliveries | Details.cshtml | Angular Pilot | /sales/deliveries | MiniStore.Web/Views/SalesDeliveries/Details.cshtml |
 | SalesDeliveries | Index.cshtml | Angular Pilot | /sales/deliveries | MiniStore.Web/Views/SalesDeliveries/Index.cshtml |
-| SalesOrders | Details.cshtml | Angular Pilot | /sales/orders | MiniStore.Web/Views/SalesOrders/Details.cshtml |
-| SalesOrders | Index.cshtml | Angular Pilot | /sales/orders | MiniStore.Web/Views/SalesOrders/Index.cshtml |
-| SalesOrders | Reserve.cshtml | Angular Pilot | /sales/orders | MiniStore.Web/Views/SalesOrders/Reserve.cshtml |
+| SalesOrders | Details.cshtml | Angular Default | /sales/orders | MiniStore.Web/Views/SalesOrders/Details.cshtml |
+| SalesOrders | Index.cshtml | Angular Default | /sales/orders | MiniStore.Web/Views/SalesOrders/Index.cshtml |
+| SalesOrders | Reserve.cshtml | Angular Default | /sales/orders | MiniStore.Web/Views/SalesOrders/Reserve.cshtml |
 | SalesPriceLists | Index.cshtml | Angular Default | /sales/pricing | MiniStore.Web/Views/SalesPriceLists/Index.cshtml |
 | SalesQuotations | Create.cshtml | Angular Default | /sales/quotations | MiniStore.Web/Views/SalesQuotations/Create.cshtml |
 | SalesQuotations | Details.cshtml | Angular Default | /sales/quotations | MiniStore.Web/Views/SalesQuotations/Details.cshtml |
@@ -470,16 +470,16 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | SalesDeliveries | Details | GET | Angular Pilot | /sales/deliveries | — | MiniStore.Web/Controllers/Sales/SalesDeliveriesController.cs |
 | SalesDeliveries | Index | GET | Angular Pilot | /sales/deliveries | — | MiniStore.Web/Controllers/Sales/SalesDeliveriesController.cs |
 | SalesDeliveries | Post | POST | Angular Pilot | /sales/deliveries | — | MiniStore.Web/Controllers/Sales/SalesDeliveriesController.cs |
-| SalesOrders | ApproveException | POST | Angular Pilot | /sales/orders | — | MiniStore.Web/Controllers/Sales/SalesOrdersController.cs |
-| SalesOrders | Cancel | POST | Angular Pilot | /sales/orders | — | MiniStore.Web/Controllers/Sales/SalesOrdersController.cs |
-| SalesOrders | Confirm | POST | Angular Pilot | /sales/orders | — | MiniStore.Web/Controllers/Sales/SalesOrdersController.cs |
-| SalesOrders | CreateFromQuotation | POST | Angular Pilot | /sales/orders | — | MiniStore.Web/Controllers/Sales/SalesOrdersController.cs |
-| SalesOrders | Details | GET | Angular Pilot | /sales/orders | — | MiniStore.Web/Controllers/Sales/SalesOrdersController.cs |
-| SalesOrders | Index | GET | Angular Pilot | /sales/orders | — | MiniStore.Web/Controllers/Sales/SalesOrdersController.cs |
-| SalesOrders | RejectException | POST | Angular Pilot | /sales/orders | — | MiniStore.Web/Controllers/Sales/SalesOrdersController.cs |
-| SalesOrders | ReleaseReservation | POST | Angular Pilot | /sales/orders | — | MiniStore.Web/Controllers/Sales/SalesOrdersController.cs |
-| SalesOrders | Reserve | GET | Angular Pilot | /sales/orders | — | MiniStore.Web/Controllers/Sales/SalesOrdersController.cs |
-| SalesOrders | Reserve | POST | Angular Pilot | /sales/orders | — | MiniStore.Web/Controllers/Sales/SalesOrdersController.cs |
+| SalesOrders | ApproveException | POST | Angular Default | /sales/orders | — | MiniStore.Web/Controllers/Sales/SalesOrdersController.cs |
+| SalesOrders | Cancel | POST | Angular Default | /sales/orders | — | MiniStore.Web/Controllers/Sales/SalesOrdersController.cs |
+| SalesOrders | Confirm | POST | Angular Default | /sales/orders | — | MiniStore.Web/Controllers/Sales/SalesOrdersController.cs |
+| SalesOrders | CreateFromQuotation | POST | Angular Default | /sales/orders | — | MiniStore.Web/Controllers/Sales/SalesOrdersController.cs |
+| SalesOrders | Details | GET | Angular Default | /sales/orders | /sales/orders/{id} | MiniStore.Web/Controllers/Sales/SalesOrdersController.cs |
+| SalesOrders | Index | GET | Angular Default | /sales/orders | /sales/orders | MiniStore.Web/Controllers/Sales/SalesOrdersController.cs |
+| SalesOrders | RejectException | POST | Angular Default | /sales/orders | — | MiniStore.Web/Controllers/Sales/SalesOrdersController.cs |
+| SalesOrders | ReleaseReservation | POST | Angular Default | /sales/orders | — | MiniStore.Web/Controllers/Sales/SalesOrdersController.cs |
+| SalesOrders | Reserve | GET | Angular Default | /sales/orders | /sales/orders/{id}/reservations | MiniStore.Web/Controllers/Sales/SalesOrdersController.cs |
+| SalesOrders | Reserve | POST | Angular Default | /sales/orders | /sales/orders/{id}/reservations | MiniStore.Web/Controllers/Sales/SalesOrdersController.cs |
 | SalesPriceLists | AddRule | POST | Angular Default | /sales/pricing | — | MiniStore.Web/Controllers/Sales/SalesPriceListsController.cs |
 | SalesPriceLists | Create | POST | Angular Default | /sales/pricing | — | MiniStore.Web/Controllers/Sales/SalesPriceListsController.cs |
 | SalesPriceLists | Evaluate | POST | Angular Default | /sales/pricing | — | MiniStore.Web/Controllers/Sales/SalesPriceListsController.cs |

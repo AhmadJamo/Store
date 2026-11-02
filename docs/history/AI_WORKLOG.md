@@ -1,5 +1,11 @@
 # AI Work Log
 
+- 2026-11-02: Completed `MOD-030E4Y`. SalesOrders Index/positive-ID Details/Reserve GET now use AngularDefault; all
+  conversion, lifecycle, approval and reservation mutations remain protected API-backed POST operations outside
+  presentation cutover. Hosted 15/15, the current authorized route set cutover/rollback 104/104 and 1,671 backend checks
+  passed. The session lacked SalesOrders.View for live probes; behavior is regression-covered and no order/reservation
+  changed. Fifty-seven surfaces are AngularDefault and 25 remain MVC-default; execution advances to `MOD-030E4Z`.
+
 - 2026-11-02: Completed `MOD-030E4X`. SalesQuotations Index/Create/positive-ID Details GET now use exact
   AngularDefault routes with filter/template query preservation. PDF and all create/lifecycle POST actions remain outside
   cutover. Hosted 15/15, the current authorized route set cutover/rollback 104/104 and 1,663 backend checks passed. The

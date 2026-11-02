@@ -281,7 +281,10 @@ static async Task RunLiveCutoverAsync(
             "SalesQuotations.View"),
         new("/SalesQuotations/Create?templateId=1",
             "/app/sales/quotations/new?templateId=1",
-            "SalesQuotations.Create")
+            "SalesQuotations.Create"),
+        new("/SalesOrders?status=1&search=cutover-rehearsal",
+            "/app/sales/orders?status=1&search=cutover-rehearsal",
+            "SalesOrders.View")
     };
 
     if (permissions.Contains("Customers.View"))
@@ -668,6 +671,21 @@ static async Task RunLiveCutoverAsync(
                 $"/app/sales/quotations/{id}", "SalesQuotations.View"));
         }
     }
+    if (permissions.Contains("SalesOrders.View"))
+    {
+        var response = await authenticated.GetAsync("/api/v1/sales-orders");
+        Require(response.Ok, $"Sales-order cutover fixture read returned {response.Status}.");
+        using var orders = JsonDocument.Parse(await response.TextAsync());
+        if (orders.RootElement.ValueKind == JsonValueKind.Array &&
+            orders.RootElement.GetArrayLength() > 0)
+        {
+            var id = orders.RootElement[0].GetProperty("id").GetInt32();
+            routes.Add(new($"/SalesOrders/Details/{id}",
+                $"/app/sales/orders/{id}", "SalesOrders.View"));
+            routes.Add(new($"/SalesOrders/Reserve/{id}",
+                $"/app/sales/orders/{id}/reservations", "SalesOrders.View"));
+        }
+    }
     if (permissions.Contains("InventoryAdjustments.View"))
     {
         var response = await authenticated.GetAsync("/api/v1/inventory-adjustments");
@@ -770,6 +788,8 @@ static async Task RunLiveCutoverAsync(
                          surface is "SalesPriceLists";
         expectsAngular = expectsAngular || options.CutoverMode == "pilot" &&
                          surface is "SalesQuotations";
+        expectsAngular = expectsAngular || options.CutoverMode == "pilot" &&
+                         surface is "SalesOrders";
         if (expectsAngular)
         {
             Require(response.Status is 301 or 302 or 307 or 308,
