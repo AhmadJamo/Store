@@ -1,5 +1,9 @@
 # AI Work Log
 
+- 2026-11-02: Completed `MOD-030E5C`. CustomerReturnRequests Index/positive-delivery Create/positive-ID Details GET
+  now use AngularDefault; lifecycle remains protected API POST. Hosted 15/15, cutover/rollback 104/104 and 1,707 backend
+  checks passed without mutation. Sixty-one surfaces are AngularDefault and 21 remain MVC-default.
+
 - 2026-11-02: Completed `MOD-030E5B`. CustomerPayments Index/positive-invoice Create/positive-ID Details GET now use
   AngularDefault; create/reverse remain protected API POST operations. Hosted 15/15, cutover/rollback 104/104 and 1,698
   backend checks passed with no financial mutation. Sixty surfaces are AngularDefault and 22 remain MVC-default.

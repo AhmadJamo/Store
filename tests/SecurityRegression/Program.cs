@@ -1293,6 +1293,42 @@ Check(new long[] { -1, 0 }.All(id =>
           "CustomerPayments", "Reverse",
           new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 17 }) is null,
     "Customer-payment cutover must reject unsafe IDs and keep create/reverse accounting mutations outside cutover");
+var customerReturnRequestCutoverResolver = new PresentationCutoverResolver(Options.Create(
+    new PresentationCutoverOptions
+    {
+        AngularBasePath = "/app",
+        Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["CustomerReturnRequests"] = PresentationCutoverMode.AngularDefault
+        }
+    }));
+cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?search=cutover");
+Check(customerReturnRequestCutoverResolver.Resolve(cutoverContext.Request,
+          "CustomerReturnRequests", "Index", new Microsoft.AspNetCore.Routing.RouteValueDictionary()) ==
+      "/app/sales/return-requests?search=cutover" &&
+      customerReturnRequestCutoverResolver.Resolve(cutoverContext.Request,
+          "CustomerReturnRequests", "Details",
+          new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 17 }) ==
+      "/app/sales/return-requests/17?search=cutover",
+    "Customer-return-request cutover must resolve list and positive-ID details routes");
+cutoverContext.Request.QueryString =
+    new Microsoft.AspNetCore.Http.QueryString("?salesDeliveryId=19&source=cutover");
+Check(customerReturnRequestCutoverResolver.Resolve(cutoverContext.Request,
+          "CustomerReturnRequests", "Create", new Microsoft.AspNetCore.Routing.RouteValueDictionary()) ==
+      "/app/sales/return-requests/new?salesDeliveryId=19&source=cutover",
+    "Customer-return-request cutover must validate and consume the source delivery identifier");
+cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?salesDeliveryId=0");
+Check(new long[] { -1, 0 }.All(id =>
+          customerReturnRequestCutoverResolver.Resolve(cutoverContext.Request,
+              "CustomerReturnRequests", "Details",
+              new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = id }) is null) &&
+      customerReturnRequestCutoverResolver.Resolve(cutoverContext.Request,
+          "CustomerReturnRequests", "Create", new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null &&
+      new[] { "Submit", "Approve", "Reject", "Cancel" }.All(action =>
+          customerReturnRequestCutoverResolver.Resolve(cutoverContext.Request,
+              "CustomerReturnRequests", action,
+              new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 17 }) is null),
+    "Customer-return-request cutover must reject unsafe IDs and keep lifecycle mutations outside cutover");
 cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?page=2");
 foreach (var entry in PresentationCutoverRouteCatalog.All)
 {
@@ -1303,6 +1339,7 @@ foreach (var entry in PresentationCutoverRouteCatalog.All)
             ["purchaseOrderId"] = 1, ["goodsReceiptId"] = 1, ["vendorBillId"] = 1,
             ["purchaseId"] = 1, ["salesOrderId"] = 1,
             ["customerInvoiceId"] = 1,
+            ["salesDeliveryId"] = 1,
             ["token"] = syntacticallyValidPortalToken
         };
     var rehearsalAngular = new PresentationCutoverResolver(Options.Create(

@@ -11,7 +11,7 @@
 - Angular application routes discovered: 184.
 - MVC surfaces with a verified Angular counterpart: 82.
 - Remaining MVC surfaces without a mapped Angular counterpart: 0.
-- Allowlisted Angular-default cutover actions: 136.
+- Allowlisted Angular-default cutover actions: 139.
 
 Remaining surfaces: none.
 
@@ -44,9 +44,9 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | CustomerReturnReceipts | Create.cshtml | Angular Pilot | /sales/return-receipts | MiniStore.Web/Views/CustomerReturnReceipts/Create.cshtml |
 | CustomerReturnReceipts | Details.cshtml | Angular Pilot | /sales/return-receipts | MiniStore.Web/Views/CustomerReturnReceipts/Details.cshtml |
 | CustomerReturnReceipts | Index.cshtml | Angular Pilot | /sales/return-receipts | MiniStore.Web/Views/CustomerReturnReceipts/Index.cshtml |
-| CustomerReturnRequests | Create.cshtml | Angular Pilot | /sales/return-requests | MiniStore.Web/Views/CustomerReturnRequests/Create.cshtml |
-| CustomerReturnRequests | Details.cshtml | Angular Pilot | /sales/return-requests | MiniStore.Web/Views/CustomerReturnRequests/Details.cshtml |
-| CustomerReturnRequests | Index.cshtml | Angular Pilot | /sales/return-requests | MiniStore.Web/Views/CustomerReturnRequests/Index.cshtml |
+| CustomerReturnRequests | Create.cshtml | Angular Default | /sales/return-requests | MiniStore.Web/Views/CustomerReturnRequests/Create.cshtml |
+| CustomerReturnRequests | Details.cshtml | Angular Default | /sales/return-requests | MiniStore.Web/Views/CustomerReturnRequests/Details.cshtml |
+| CustomerReturnRequests | Index.cshtml | Angular Default | /sales/return-requests | MiniStore.Web/Views/CustomerReturnRequests/Index.cshtml |
 | Customers | Create.cshtml | Angular Default | /customers | MiniStore.Web/Views/Customers/Create.cshtml |
 | Customers | Details.cshtml | Angular Default | /customers | MiniStore.Web/Views/Customers/Details.cshtml |
 | Customers | Edit.cshtml | Angular Default | /customers | MiniStore.Web/Views/Customers/Edit.cshtml |
@@ -260,14 +260,14 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | CustomerReturnReceipts | RedirectToAction | GET | Angular Pilot | /sales/return-receipts | — | MiniStore.Web/Controllers/Sales/CustomerReturnReceiptsController.cs |
 | CustomerReturnReceipts | RedirectToAction | GET, POST | Angular Pilot | /sales/return-receipts | — | MiniStore.Web/Controllers/Sales/CustomerReturnReceiptsController.cs |
 | CustomerReturnReceipts | View | GET | Angular Pilot | /sales/return-receipts | — | MiniStore.Web/Controllers/Sales/CustomerReturnReceiptsController.cs |
-| CustomerReturnRequests | Approve | POST | Angular Pilot | /sales/return-requests | — | MiniStore.Web/Controllers/Sales/CustomerReturnRequestsController.cs |
-| CustomerReturnRequests | Cancel | POST | Angular Pilot | /sales/return-requests | — | MiniStore.Web/Controllers/Sales/CustomerReturnRequestsController.cs |
-| CustomerReturnRequests | Create | GET | Angular Pilot | /sales/return-requests | — | MiniStore.Web/Controllers/Sales/CustomerReturnRequestsController.cs |
-| CustomerReturnRequests | Create | POST | Angular Pilot | /sales/return-requests | — | MiniStore.Web/Controllers/Sales/CustomerReturnRequestsController.cs |
-| CustomerReturnRequests | Details | GET | Angular Pilot | /sales/return-requests | — | MiniStore.Web/Controllers/Sales/CustomerReturnRequestsController.cs |
-| CustomerReturnRequests | Index | GET | Angular Pilot | /sales/return-requests | — | MiniStore.Web/Controllers/Sales/CustomerReturnRequestsController.cs |
-| CustomerReturnRequests | Reject | POST | Angular Pilot | /sales/return-requests | — | MiniStore.Web/Controllers/Sales/CustomerReturnRequestsController.cs |
-| CustomerReturnRequests | Submit | POST | Angular Pilot | /sales/return-requests | — | MiniStore.Web/Controllers/Sales/CustomerReturnRequestsController.cs |
+| CustomerReturnRequests | Approve | POST | Angular Default | /sales/return-requests | — | MiniStore.Web/Controllers/Sales/CustomerReturnRequestsController.cs |
+| CustomerReturnRequests | Cancel | POST | Angular Default | /sales/return-requests | — | MiniStore.Web/Controllers/Sales/CustomerReturnRequestsController.cs |
+| CustomerReturnRequests | Create | GET | Angular Default | /sales/return-requests | /sales/return-requests/new?salesDeliveryId={salesDeliveryId} | MiniStore.Web/Controllers/Sales/CustomerReturnRequestsController.cs |
+| CustomerReturnRequests | Create | POST | Angular Default | /sales/return-requests | /sales/return-requests/new?salesDeliveryId={salesDeliveryId} | MiniStore.Web/Controllers/Sales/CustomerReturnRequestsController.cs |
+| CustomerReturnRequests | Details | GET | Angular Default | /sales/return-requests | /sales/return-requests/{id} | MiniStore.Web/Controllers/Sales/CustomerReturnRequestsController.cs |
+| CustomerReturnRequests | Index | GET | Angular Default | /sales/return-requests | /sales/return-requests | MiniStore.Web/Controllers/Sales/CustomerReturnRequestsController.cs |
+| CustomerReturnRequests | Reject | POST | Angular Default | /sales/return-requests | — | MiniStore.Web/Controllers/Sales/CustomerReturnRequestsController.cs |
+| CustomerReturnRequests | Submit | POST | Angular Default | /sales/return-requests | — | MiniStore.Web/Controllers/Sales/CustomerReturnRequestsController.cs |
 | Customers | Archive | POST | Angular Default | /customers | — | MiniStore.Web/Controllers/Customers/CustomersController.cs |
 | Customers | ArchiveAddress | POST | Angular Default | /customers | — | MiniStore.Web/Controllers/Customers/CustomersController.cs |
 | Customers | ArchiveContact | POST | Angular Default | /customers | — | MiniStore.Web/Controllers/Customers/CustomersController.cs |

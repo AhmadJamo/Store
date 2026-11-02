@@ -293,7 +293,10 @@ static async Task RunLiveCutoverAsync(
             "CustomerInvoices.View"),
         new("/CustomerPayments?search=cutover-rehearsal",
             "/app/sales/payments?search=cutover-rehearsal",
-            "CustomerPayments.View")
+            "CustomerPayments.View"),
+        new("/CustomerReturnRequests?search=cutover-rehearsal",
+            "/app/sales/return-requests?search=cutover-rehearsal",
+            "CustomerReturnRequests.View")
     };
 
     if (permissions.Contains("Customers.View"))
@@ -734,6 +737,19 @@ static async Task RunLiveCutoverAsync(
                 $"/app/sales/payments/{id}", "CustomerPayments.View"));
         }
     }
+    if (permissions.Contains("CustomerReturnRequests.View"))
+    {
+        var response = await authenticated.GetAsync("/api/v1/customer-return-requests");
+        Require(response.Ok, $"Customer-return-request cutover fixture read returned {response.Status}.");
+        using var requests = JsonDocument.Parse(await response.TextAsync());
+        if (requests.RootElement.ValueKind == JsonValueKind.Array &&
+            requests.RootElement.GetArrayLength() > 0)
+        {
+            var id = requests.RootElement[0].GetProperty("id").GetInt32();
+            routes.Add(new($"/CustomerReturnRequests/Details/{id}",
+                $"/app/sales/return-requests/{id}", "CustomerReturnRequests.View"));
+        }
+    }
     if (permissions.Contains("InventoryAdjustments.View"))
     {
         var response = await authenticated.GetAsync("/api/v1/inventory-adjustments");
@@ -844,6 +860,8 @@ static async Task RunLiveCutoverAsync(
                          surface is "CustomerInvoices";
         expectsAngular = expectsAngular || options.CutoverMode == "pilot" &&
                          surface is "CustomerPayments";
+        expectsAngular = expectsAngular || options.CutoverMode == "pilot" &&
+                         surface is "CustomerReturnRequests";
         if (expectsAngular)
         {
             Require(response.Status is 301 or 302 or 307 or 308,
