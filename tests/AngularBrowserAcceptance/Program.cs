@@ -284,7 +284,10 @@ static async Task RunLiveCutoverAsync(
             "SalesQuotations.Create"),
         new("/SalesOrders?status=1&search=cutover-rehearsal",
             "/app/sales/orders?status=1&search=cutover-rehearsal",
-            "SalesOrders.View")
+            "SalesOrders.View"),
+        new("/SalesDeliveries?search=cutover-rehearsal",
+            "/app/sales/deliveries?search=cutover-rehearsal",
+            "SalesDeliveries.View")
     };
 
     if (permissions.Contains("Customers.View"))
@@ -686,6 +689,19 @@ static async Task RunLiveCutoverAsync(
                 $"/app/sales/orders/{id}/reservations", "SalesOrders.View"));
         }
     }
+    if (permissions.Contains("SalesDeliveries.View"))
+    {
+        var response = await authenticated.GetAsync("/api/v1/sales-deliveries");
+        Require(response.Ok, $"Sales-delivery cutover fixture read returned {response.Status}.");
+        using var deliveries = JsonDocument.Parse(await response.TextAsync());
+        if (deliveries.RootElement.ValueKind == JsonValueKind.Array &&
+            deliveries.RootElement.GetArrayLength() > 0)
+        {
+            var id = deliveries.RootElement[0].GetProperty("id").GetInt32();
+            routes.Add(new($"/SalesDeliveries/Details/{id}",
+                $"/app/sales/deliveries/{id}", "SalesDeliveries.View"));
+        }
+    }
     if (permissions.Contains("InventoryAdjustments.View"))
     {
         var response = await authenticated.GetAsync("/api/v1/inventory-adjustments");
@@ -790,6 +806,8 @@ static async Task RunLiveCutoverAsync(
                          surface is "SalesQuotations";
         expectsAngular = expectsAngular || options.CutoverMode == "pilot" &&
                          surface is "SalesOrders";
+        expectsAngular = expectsAngular || options.CutoverMode == "pilot" &&
+                         surface is "SalesDeliveries";
         if (expectsAngular)
         {
             Require(response.Status is 301 or 302 or 307 or 308,

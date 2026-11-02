@@ -71,6 +71,7 @@
 | MOD-030E4W Sales Pricing | Index GET with selected-list/query preservation; list/rule/status/evaluation POST excluded; hosted 15/15, current authorized route set cutover/MVC rollback 104/104 and 1,654 backend checks; session lacked SalesPricing.View for live route probe; no pricing mutation | 2026-11-02 |
 | MOD-030E4X Sales Quotations | Index/query-bound Create/positive-ID Details GET; PDF and create/lifecycle POST excluded; hosted 15/15, current authorized route set cutover/MVC rollback 104/104 and 1,663 backend checks; session lacked quotation permissions for live probes; no quotation mutation | 2026-11-02 |
 | MOD-030E4Y Sales Orders and Reservations | Index/positive-ID Details/Reserve GET; conversion/lifecycle/approval/reservation POST excluded; hosted 15/15, current authorized route set cutover/MVC rollback 104/104 and 1,671 backend checks; session lacked SalesOrders.View for live probes; no mutation | 2026-11-02 |
+| MOD-030E4Z Sales Deliveries | Index/positive-order Create/positive-ID Details GET; create/post/cancel excluded; hosted 15/15, current authorized route set cutover/MVC rollback 104/104 and 1,680 backend checks; session lacked delivery permissions; no mutation | 2026-11-02 |
 | Live schema integrity (سلامة المخطط الحي) | 147 tables, 420 trusted FKs, zero disabled constraints/indexes or unsafe tenant relations | 2026-10-15 |
 | Web dependency build (بناء الويب واعتماداته) | Release, 4 projects, zero warnings/errors after SAL-120A (نجح) | 2026-10-22 |
 

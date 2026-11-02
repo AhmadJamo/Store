@@ -1183,6 +1183,43 @@ Check(new long[] { -1, 0 }.All(id =>
               "SalesOrders", action,
               new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 17 }) is null),
     "Sales-order cutover must reject unsafe IDs and keep lifecycle, approval and reservation mutations outside cutover");
+var salesDeliveryCutoverResolver = new PresentationCutoverResolver(Options.Create(
+    new PresentationCutoverOptions
+    {
+        AngularBasePath = "/app",
+        Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["SalesDeliveries"] = PresentationCutoverMode.AngularDefault
+        }
+    }));
+cutoverContext.Request.QueryString =
+    new Microsoft.AspNetCore.Http.QueryString("?search=cutover");
+Check(salesDeliveryCutoverResolver.Resolve(cutoverContext.Request,
+          "SalesDeliveries", "Index", new Microsoft.AspNetCore.Routing.RouteValueDictionary()) ==
+      "/app/sales/deliveries?search=cutover" &&
+      salesDeliveryCutoverResolver.Resolve(cutoverContext.Request,
+          "SalesDeliveries", "Details",
+          new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 17 }) ==
+      "/app/sales/deliveries/17?search=cutover",
+    "Sales-delivery cutover must resolve list and positive-ID details routes");
+cutoverContext.Request.QueryString =
+    new Microsoft.AspNetCore.Http.QueryString("?salesOrderId=19&source=cutover");
+Check(salesDeliveryCutoverResolver.Resolve(cutoverContext.Request,
+          "SalesDeliveries", "Create", new Microsoft.AspNetCore.Routing.RouteValueDictionary()) ==
+      "/app/sales/deliveries/new?salesOrderId=19&source=cutover",
+    "Sales-delivery cutover must validate and consume the source sales-order identifier");
+cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?salesOrderId=0");
+Check(new long[] { -1, 0 }.All(id =>
+          salesDeliveryCutoverResolver.Resolve(cutoverContext.Request,
+              "SalesDeliveries", "Details",
+              new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = id }) is null) &&
+      salesDeliveryCutoverResolver.Resolve(cutoverContext.Request,
+          "SalesDeliveries", "Create", new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null &&
+      new[] { "Post", "Cancel" }.All(action =>
+          salesDeliveryCutoverResolver.Resolve(cutoverContext.Request,
+              "SalesDeliveries", action,
+              new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 17 }) is null),
+    "Sales-delivery cutover must reject unsafe IDs and keep post/cancel mutations outside cutover");
 cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?page=2");
 foreach (var entry in PresentationCutoverRouteCatalog.All)
 {
@@ -1191,7 +1228,8 @@ foreach (var entry in PresentationCutoverRouteCatalog.All)
         {
             ["id"] = 1, ["productId"] = 1, ["sourcingEventId"] = 1,
             ["purchaseOrderId"] = 1, ["goodsReceiptId"] = 1, ["vendorBillId"] = 1,
-            ["purchaseId"] = 1, ["token"] = syntacticallyValidPortalToken
+            ["purchaseId"] = 1, ["salesOrderId"] = 1,
+            ["token"] = syntacticallyValidPortalToken
         };
     var rehearsalAngular = new PresentationCutoverResolver(Options.Create(
         new PresentationCutoverOptions

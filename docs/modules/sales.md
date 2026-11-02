@@ -169,3 +169,9 @@ approval decisions and reserve/release POST actions remain outside cutover with 
 Angular performs them through the protected APIs. Hosted 15/15, the current authorized route set cutover/rollback
 104/104 and 1,671 backend checks passed. The current session lacked `SalesOrders.View` for live route probes; resolver
 behavior is regression-covered and no order or reservation changed.
+
+`MOD-030E4Z` makes SalesDeliveries Index/positive-order Create/positive-ID Details GET presentation AngularDefault.
+The query-bound `salesOrderId` is validated and preserved in the composer route. Create, post and cancel remain
+protected API-backed POST actions outside presentation cutover. Hosted 15/15, the current authorized route set
+cutover/rollback 104/104 and 1,680 backend checks passed. The session lacked delivery permissions for live probes;
+resolver behavior is regression-covered and no delivery, stock or accounting data changed.

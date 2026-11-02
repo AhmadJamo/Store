@@ -272,6 +272,13 @@ cutover/rollback 104/104 and 1,671 backend checks passed. The current session la
 exact routes and exclusions are regression-covered and no order/reservation changed. Fifty-seven surfaces are
 AngularDefault and 25 remain MVC-default.
 
+## MOD-030E4Z evidence
+
+SalesDeliveries Index/positive-order Create/positive-ID Details joins AngularDefault; create/post/cancel remain API-backed
+POST operations outside cutover. Hosted 15/15, the current authorized route set cutover/rollback 104/104 and 1,680
+backend checks passed. The session lacked delivery permissions for live probes; exact routes and exclusions are
+regression-covered and no delivery/stock/accounting changed. Fifty-eight surfaces are AngularDefault and 24 remain MVC.
+
 ## MOD-030E4S evidence
 
 SupplierCommunications positive-ID Details joins AngularDefault; Prepare/RecordActivity and attachment download remain

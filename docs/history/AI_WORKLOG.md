@@ -1,5 +1,11 @@
 # AI Work Log
 
+- 2026-11-02: Completed `MOD-030E4Z`. SalesDeliveries Index/positive-order Create/positive-ID Details GET now use
+  AngularDefault; create/post/cancel remain protected API-backed POST operations outside cutover. Hosted 15/15, the
+  authorized route set cutover/rollback 104/104 and 1,680 backend checks passed. The session lacked delivery permissions
+  for live probes; resolver behavior is covered and no delivery/stock/accounting changed. Fifty-eight surfaces are
+  AngularDefault and 24 remain MVC-default; execution advances to `MOD-030E5A`.
+
 - 2026-11-02: Completed `MOD-030E4Y`. SalesOrders Index/positive-ID Details/Reserve GET now use AngularDefault; all
   conversion, lifecycle, approval and reservation mutations remain protected API-backed POST operations outside
   presentation cutover. Hosted 15/15, the current authorized route set cutover/rollback 104/104 and 1,671 backend checks
