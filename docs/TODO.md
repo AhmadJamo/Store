@@ -160,7 +160,8 @@ The ERP SaaS Foundation Blueprint is imported as a non-authoritative planning re
     - [x] MOD-030E5F cut over SalesApprovalRules Index GET; keep rule creation and activation changes outside cutover. Completed 2026-11-02 with hosted 15/15, cutover/MVC rollback 118/118 and 1,725 backend checks; no rule or order approval changed.
     - [x] MOD-030E5G cut over SalesQuotationTemplates Index, optional-source Create and positive-ID Details GET; keep create/lifecycle changes outside cutover. Completed 2026-11-03 with hosted 15/15, cutover/MVC rollback 119/119 and 1,729 backend checks; no template changed.
     - [x] MOD-030E5H cut over legacy Sales Index/Create/Details and POS GET presentation; keep sale creation and GL posting outside cutover. Completed 2026-11-03 with hosted 15/15, cutover/MVC rollback 123/123 and 1,738 backend checks; no sale, stock or journal changed.
-    - [ ] MOD-030E5I cut over legacy SalesReturns Index, positive-sale Create and positive-ID Details GET; keep create-and-post outside cutover.
+    - [x] MOD-030E5I cut over legacy SalesReturns Index, positive-sale Create and positive-ID Details GET; keep create-and-post outside cutover. Completed 2026-11-03 with hosted 15/15, cutover/MVC rollback 124/124 and 1,748 backend checks; no return, stock or journal changed.
+    - [ ] MOD-030E5J cut over Accounts Index GET; keep account creation outside cutover.
 
 - [x] FND-000 import the ERP SaaS Foundation Blueprint with provenance and classify its ten capabilities against the actual MiniStore repository.
 - [ ] FND-010 inventory production environments and operational ownership, approve RPO/RTO and backup retention, run an isolated restore drill, reconcile restored financial/inventory/tenant/outbox state and record evidence.

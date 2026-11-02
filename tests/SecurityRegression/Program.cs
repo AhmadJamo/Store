@@ -1479,6 +1479,34 @@ Check(new long[] { -1, 0 }.All(id =>
       legacySalesCutoverResolver.Resolve(cutoverContext.Request,
           "Sales", "Post", new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 17 }) is null,
     "Legacy-sales cutover must reject unsafe IDs and keep GL posting outside presentation cutover");
+var legacySalesReturnsCutoverResolver = new PresentationCutoverResolver(Options.Create(
+    new PresentationCutoverOptions
+    {
+        AngularBasePath = "/app",
+        Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["SalesReturns"] = PresentationCutoverMode.AngularDefault
+        }
+    }));
+cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?source=cutover");
+Check(legacySalesReturnsCutoverResolver.Resolve(cutoverContext.Request,
+          "SalesReturns", "Index", new Microsoft.AspNetCore.Routing.RouteValueDictionary()) ==
+      "/app/sales/legacy-returns?source=cutover" &&
+      legacySalesReturnsCutoverResolver.Resolve(cutoverContext.Request,
+          "SalesReturns", "Details", new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 17 }) ==
+      "/app/sales/legacy-returns/17?source=cutover",
+    "Legacy-sales-return cutover must resolve list and positive-ID details routes");
+cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?saleId=19&source=cutover");
+Check(legacySalesReturnsCutoverResolver.Resolve(cutoverContext.Request,
+          "SalesReturns", "Create", new Microsoft.AspNetCore.Routing.RouteValueDictionary()) ==
+      "/app/sales/legacy/19/return?source=cutover",
+    "Legacy-sales-return cutover must validate and consume the source sale identifier");
+cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?saleId=0");
+Check(new long[] { -1, 0 }.All(id => legacySalesReturnsCutoverResolver.Resolve(cutoverContext.Request,
+          "SalesReturns", "Details", new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = id }) is null) &&
+      legacySalesReturnsCutoverResolver.Resolve(cutoverContext.Request,
+          "SalesReturns", "Create", new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null,
+    "Legacy-sales-return cutover must reject unsafe return and source-sale identifiers");
 cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?page=2");
 foreach (var entry in PresentationCutoverRouteCatalog.All)
 {
@@ -1491,6 +1519,7 @@ foreach (var entry in PresentationCutoverRouteCatalog.All)
             ["customerInvoiceId"] = 1,
             ["salesDeliveryId"] = 1,
             ["customerReturnRequestId"] = 1,
+            ["saleId"] = 1,
             ["token"] = syntacticallyValidPortalToken
         };
     var rehearsalAngular = new PresentationCutoverResolver(Options.Create(

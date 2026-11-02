@@ -212,3 +212,7 @@ creating or changing a quotation template.
 `MOD-030E5H` makes legacy Sales Index/Create/positive-ID Details and Pos GET presentation AngularDefault. Wholesale/POS
 creation, stock consumption and one-time GL posting remain protected API POST operations under existing server authority.
 Hosted 15/15, cutover/MVC rollback 123/123 and 1,738 backend checks passed without sale, stock or journal mutation.
+
+`MOD-030E5I` makes legacy SalesReturns Index/positive-sale Create/positive-ID Details GET presentation AngularDefault.
+Create-and-post remains protected API POST. Hosted 15/15, cutover/MVC rollback 124/124 and 1,748 backend checks passed
+without return, stock or journal mutation.

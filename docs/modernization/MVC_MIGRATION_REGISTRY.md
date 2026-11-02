@@ -11,7 +11,7 @@
 - Angular application routes discovered: 184.
 - MVC surfaces with a verified Angular counterpart: 82.
 - Remaining MVC surfaces without a mapped Angular counterpart: 0.
-- Allowlisted Angular-default cutover actions: 153.
+- Allowlisted Angular-default cutover actions: 156.
 
 Remaining surfaces: none.
 
@@ -155,9 +155,9 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | SalesQuotationTemplates | Create.cshtml | Angular Default | /sales/quotation-templates | MiniStore.Web/Views/SalesQuotationTemplates/Create.cshtml |
 | SalesQuotationTemplates | Details.cshtml | Angular Default | /sales/quotation-templates | MiniStore.Web/Views/SalesQuotationTemplates/Details.cshtml |
 | SalesQuotationTemplates | Index.cshtml | Angular Default | /sales/quotation-templates | MiniStore.Web/Views/SalesQuotationTemplates/Index.cshtml |
-| SalesReturns | Create.cshtml | Angular Pilot | /sales/legacy-returns | MiniStore.Web/Views/SalesReturns/Create.cshtml |
-| SalesReturns | Details.cshtml | Angular Pilot | /sales/legacy-returns | MiniStore.Web/Views/SalesReturns/Details.cshtml |
-| SalesReturns | Index.cshtml | Angular Pilot | /sales/legacy-returns | MiniStore.Web/Views/SalesReturns/Index.cshtml |
+| SalesReturns | Create.cshtml | Angular Default | /sales/legacy-returns | MiniStore.Web/Views/SalesReturns/Create.cshtml |
+| SalesReturns | Details.cshtml | Angular Default | /sales/legacy-returns | MiniStore.Web/Views/SalesReturns/Details.cshtml |
+| SalesReturns | Index.cshtml | Angular Default | /sales/legacy-returns | MiniStore.Web/Views/SalesReturns/Index.cshtml |
 | Settings | Accounting.cshtml | Angular Default | /settings | MiniStore.Web/Views/Settings/Accounting.cshtml |
 | Settings | BranchSalesAccounts.cshtml | Angular Default | /settings | MiniStore.Web/Views/Settings/BranchSalesAccounts.cshtml |
 | Settings | Currencies.cshtml | Angular Default | /settings | MiniStore.Web/Views/Settings/Currencies.cshtml |
@@ -503,10 +503,10 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | SalesQuotationTemplates | Details | GET | Angular Default | /sales/quotation-templates | /sales/quotation-templates/{id} | MiniStore.Web/Controllers/Sales/SalesQuotationTemplatesController.cs |
 | SalesQuotationTemplates | Index | GET | Angular Default | /sales/quotation-templates | /sales/quotation-templates | MiniStore.Web/Controllers/Sales/SalesQuotationTemplatesController.cs |
 | SalesQuotationTemplates | SetDefault | POST | Angular Default | /sales/quotation-templates | — | MiniStore.Web/Controllers/Sales/SalesQuotationTemplatesController.cs |
-| SalesReturns | Create | ANY | Angular Pilot | /sales/legacy-returns | — | MiniStore.Web/Controllers/Sales/SalesReturnsController.cs |
-| SalesReturns | Create | POST | Angular Pilot | /sales/legacy-returns | — | MiniStore.Web/Controllers/Sales/SalesReturnsController.cs |
-| SalesReturns | Details | ANY | Angular Pilot | /sales/legacy-returns | — | MiniStore.Web/Controllers/Sales/SalesReturnsController.cs |
-| SalesReturns | Index | ANY | Angular Pilot | /sales/legacy-returns | — | MiniStore.Web/Controllers/Sales/SalesReturnsController.cs |
+| SalesReturns | Create | ANY | Angular Default | /sales/legacy-returns | /sales/legacy/{saleId}/return | MiniStore.Web/Controllers/Sales/SalesReturnsController.cs |
+| SalesReturns | Create | POST | Angular Default | /sales/legacy-returns | /sales/legacy/{saleId}/return | MiniStore.Web/Controllers/Sales/SalesReturnsController.cs |
+| SalesReturns | Details | ANY | Angular Default | /sales/legacy-returns | /sales/legacy-returns/{id} | MiniStore.Web/Controllers/Sales/SalesReturnsController.cs |
+| SalesReturns | Index | ANY | Angular Default | /sales/legacy-returns | /sales/legacy-returns | MiniStore.Web/Controllers/Sales/SalesReturnsController.cs |
 | Settings | Accounting | GET | Angular Default | /settings | /settings/accounting | MiniStore.Web/Controllers/Settings/SettingsController.cs |
 | Settings | Accounting | POST | Angular Default | /settings | /settings/accounting | MiniStore.Web/Controllers/Settings/SettingsController.cs |
 | Settings | BranchSalesAccounts | GET | Angular Default | /settings | /settings/branch-sales-accounts | MiniStore.Web/Controllers/Settings/SettingsController.cs |

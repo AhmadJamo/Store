@@ -80,6 +80,7 @@
 | MOD-030E5F Sales Approval Rules | Index GET; create/activation POST excluded; hosted 15/15, cutover/MVC rollback 118/118 and 1,725 backend checks; no rule/order-approval mutation | 2026-11-02 |
 | MOD-030E5G Sales Quotation Templates | Index/optional-source Create/positive-ID Details GET; create/lifecycle POST excluded; hosted 15/15, cutover/MVC rollback 119/119 and 1,729 backend checks; no template mutation | 2026-11-03 |
 | MOD-030E5H Legacy Sales/POS | Index/Create/positive-ID Details/Pos GET; wholesale/POS create and GL-post POST excluded; hosted 15/15, cutover/MVC rollback 123/123 and 1,738 backend checks; no sale/stock/journal mutation | 2026-11-03 |
+| MOD-030E5I Legacy Sales Returns | Index/positive-sale Create/positive-ID Details GET; create-and-post excluded; hosted 15/15, cutover/MVC rollback 124/124 and 1,748 backend checks; no return/stock/journal mutation | 2026-11-03 |
 | Live schema integrity (سلامة المخطط الحي) | 147 tables, 420 trusted FKs, zero disabled constraints/indexes or unsafe tenant relations | 2026-10-15 |
 | Web dependency build (بناء الويب واعتماداته) | Release, 4 projects, zero warnings/errors after SAL-120A (نجح) | 2026-10-22 |
 

@@ -305,3 +305,6 @@ sourceTemplateId غير الموجب، وبقي الإنشاء ودورة الح
 اكتمل `MOD-030E5H`: أصبحت Sales Index/Create/Details/Pos GET AngularDefault، وبقي إنشاء بيع الجملة وPOS والترحيل
 المحاسبي عبر API المحمي. نجح hosted ‏15/15 والقطع/الرجوع 123/123 والبوابة 1,738 بلا إنشاء بيع أو تغيير مخزون أو قيد.
 أصبحت 66 سطحًا AngularDefault وبقي 16 سطحًا MVC؛ ينتقل التنفيذ إلى `MOD-030E5I` لمرتجعات البيع الفوري.
+اكتمل `MOD-030E5I`: أصبحت SalesReturns Index/Create/Details GET AngularDefault وبقي create-and-post عبر API. نجح
+hosted ‏15/15 والقطع/الرجوع 124/124 والبوابة 1,748 بلا مرتجع أو تغيير مخزون أو قيد. أصبحت 67 سطحًا AngularDefault
+وبقي 15 سطحًا MVC؛ ينتقل التنفيذ إلى `MOD-030E5J` لشجرة الحسابات.

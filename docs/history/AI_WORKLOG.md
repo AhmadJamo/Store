@@ -1,5 +1,10 @@
 # AI Work Log
 
+- 2026-11-03: Completed `MOD-030E5I`. Legacy SalesReturns Index/positive-sale Create/positive-ID Details GET now use
+  AngularDefault; create-and-post remains protected API POST. Hosted 15/15, cutover/MVC rollback 124/124 and 1,748
+  backend checks passed without return, stock or journal mutation. Sixty-seven surfaces are AngularDefault and 15 remain
+  MVC-default.
+
 - 2026-11-03: Completed `MOD-030E5H`. Legacy Sales Index/Create/positive-ID Details/Pos GET now use AngularDefault;
   wholesale/POS creation and GL posting remain protected API POST. Hosted 15/15, cutover/MVC rollback 123/123 and
   1,738 backend checks passed without sale, stock or journal mutation. Sixty-six surfaces are AngularDefault and 16

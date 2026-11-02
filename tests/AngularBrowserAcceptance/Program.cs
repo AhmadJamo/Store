@@ -315,7 +315,9 @@ static async Task RunLiveCutoverAsync(
         new("/Sales/Create?source=cutover-rehearsal",
             "/app/sales/legacy/new?source=cutover-rehearsal", "Sales.Create"),
         new("/Sales/Pos?source=cutover-rehearsal",
-            "/app/sales/pos?source=cutover-rehearsal", "Sales.Create")
+            "/app/sales/pos?source=cutover-rehearsal", "Sales.Create"),
+        new("/SalesReturns?source=cutover-rehearsal",
+            "/app/sales/legacy-returns?source=cutover-rehearsal", "SalesReturns.View")
     };
 
     if (permissions.Contains("Customers.View"))
@@ -822,6 +824,18 @@ static async Task RunLiveCutoverAsync(
             routes.Add(new($"/Sales/Details/{id}", $"/app/sales/legacy/{id}", "Sales.View"));
         }
     }
+    if (permissions.Contains("SalesReturns.View"))
+    {
+        var response = await authenticated.GetAsync("/api/v1/legacy-sales-returns");
+        Require(response.Ok, $"Legacy-sales-return cutover fixture read returned {response.Status}.");
+        using var returns = JsonDocument.Parse(await response.TextAsync());
+        if (returns.RootElement.ValueKind == JsonValueKind.Array && returns.RootElement.GetArrayLength() > 0)
+        {
+            var id = returns.RootElement[0].GetProperty("id").GetInt32();
+            routes.Add(new($"/SalesReturns/Details/{id}",
+                $"/app/sales/legacy-returns/{id}", "SalesReturns.View"));
+        }
+    }
     if (permissions.Contains("InventoryAdjustments.View"))
     {
         var response = await authenticated.GetAsync("/api/v1/inventory-adjustments");
@@ -944,6 +958,8 @@ static async Task RunLiveCutoverAsync(
                          surface is "SalesQuotationTemplates";
         expectsAngular = expectsAngular || options.CutoverMode == "pilot" &&
                          surface is "Sales";
+        expectsAngular = expectsAngular || options.CutoverMode == "pilot" &&
+                         surface is "SalesReturns";
         if (expectsAngular)
         {
             Require(response.Status is 301 or 302 or 307 or 308,

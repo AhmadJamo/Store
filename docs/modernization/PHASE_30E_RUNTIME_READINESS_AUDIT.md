@@ -332,6 +332,12 @@ posting remain protected API POST outside presentation cutover. Hosted 15/15, cu
 backend checks passed without sale, stock or journal mutation. Sixty-six surfaces are AngularDefault and 16 remain
 MVC-default.
 
+## MOD-030E5I evidence
+
+Legacy SalesReturns Index/positive-sale Create/positive-ID Details joins AngularDefault; create-and-post remains protected
+API POST. Hosted 15/15, cutover/MVC rollback 124/124 and 1,748 backend checks passed without return, stock or journal
+mutation. Sixty-seven surfaces are AngularDefault and 15 remain MVC-default.
+
 ## MOD-030E4S evidence
 
 SupplierCommunications positive-ID Details joins AngularDefault; Prepare/RecordActivity and attachment download remain
