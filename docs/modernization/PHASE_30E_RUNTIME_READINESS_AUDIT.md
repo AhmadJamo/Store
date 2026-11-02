@@ -248,6 +248,14 @@ retired purchase creation, posting and return Create POST remain outside cutover
 and 1,650 backend checks passed. No legacy purchase or return sample existed for live detail/form probes, and no business
 document was created. Fifty-four surfaces are AngularDefault and 28 remain MVC-default.
 
+## MOD-030E4W evidence
+
+SalesPriceLists Index joins AngularDefault at `/sales/pricing` with selected-list/query preservation. Create, status,
+rule and evaluation POST actions remain outside cutover. Hosted 15/15, the current authorized route set cutover/rollback
+104/104 and 1,654 backend checks passed. The current session lacked `SalesPricing.View` for a live route probe; exact
+resolution and POST exclusions are regression-covered and no pricing data changed. Fifty-five surfaces are
+AngularDefault and 27 remain MVC-default.
+
 ## MOD-030E4S evidence
 
 SupplierCommunications positive-ID Details joins AngularDefault; Prepare/RecordActivity and attachment download remain

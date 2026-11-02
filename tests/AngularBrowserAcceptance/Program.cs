@@ -272,7 +272,10 @@ static async Task RunLiveCutoverAsync(
             "Purchases.View"),
         new("/PurchaseReturns?source=cutover-rehearsal",
             "/app/purchases/legacy-returns?source=cutover-rehearsal",
-            "PurchaseReturns.View")
+            "PurchaseReturns.View"),
+        new("/SalesPriceLists?id=1&source=cutover-rehearsal",
+            "/app/sales/pricing?id=1&source=cutover-rehearsal",
+            "SalesPricing.View")
     };
 
     if (permissions.Contains("Customers.View"))
@@ -744,6 +747,8 @@ static async Task RunLiveCutoverAsync(
                          surface is "SupplierPortal";
         expectsAngular = expectsAngular || options.CutoverMode == "pilot" &&
                          surface is "Purchases" or "PurchaseReturns";
+        expectsAngular = expectsAngular || options.CutoverMode == "pilot" &&
+                         surface is "SalesPriceLists";
         if (expectsAngular)
         {
             Require(response.Status is 301 or 302 or 307 or 308,

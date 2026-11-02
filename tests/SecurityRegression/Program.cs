@@ -1095,6 +1095,26 @@ Check(new long[] { -1, 0 }.All(id =>
           "PurchaseReturns", "Create",
           new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["purchaseId"] = 0 }) is null,
     "Legacy-purchase cutover must reject unsafe IDs and keep retired creation and mutations outside cutover");
+var salesPricingCutoverResolver = new PresentationCutoverResolver(Options.Create(
+    new PresentationCutoverOptions
+    {
+        AngularBasePath = "/app",
+        Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["SalesPriceLists"] = PresentationCutoverMode.AngularDefault
+        }
+    }));
+cutoverContext.Request.QueryString =
+    new Microsoft.AspNetCore.Http.QueryString("?id=17&source=cutover");
+Check(salesPricingCutoverResolver.Resolve(cutoverContext.Request,
+          "SalesPriceLists", "Index", new Microsoft.AspNetCore.Routing.RouteValueDictionary()) ==
+      "/app/sales/pricing?id=17&source=cutover",
+    "Sales-pricing cutover must preserve the selected price list and query values");
+Check(new[] { "Create", "SetListActive", "AddRule", "SetRuleActive", "Evaluate" }.All(action =>
+          salesPricingCutoverResolver.Resolve(cutoverContext.Request,
+              "SalesPriceLists", action,
+              new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null),
+    "Sales-pricing cutover must keep list, rule and evaluation posts outside cutover");
 cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?page=2");
 foreach (var entry in PresentationCutoverRouteCatalog.All)
 {

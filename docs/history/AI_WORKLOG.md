@@ -1,5 +1,11 @@
 # AI Work Log
 
+- 2026-11-02: Completed `MOD-030E4W`. SalesPriceLists Index GET now uses AngularDefault with selected-list/query
+  preservation; list/rule creation, status and evaluation POST actions remain outside cutover. Hosted 15/15, the current
+  authorized route set cutover/rollback 104/104 and 1,654 backend checks passed. The current session lacked
+  SalesPricing.View for a live probe; resolver behavior is regression-covered and no pricing data changed. Fifty-five
+  surfaces are AngularDefault and 27 remain MVC-default; execution advances to `MOD-030E4X`.
+
 - 2026-11-02: Completed `MOD-030E4V`. Legacy Purchases and PurchaseReturns list/details plus the positive-purchase
   return-form GET now use exact AngularDefault routes. Retired purchase creation, posting and return Create POST remain
   outside cutover with existing permissions/antiforgery. Hosted 15/15, cutover/rollback 104/104 and 1,650 backend checks

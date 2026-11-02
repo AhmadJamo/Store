@@ -11,7 +11,7 @@
 - Angular application routes discovered: 184.
 - MVC surfaces with a verified Angular counterpart: 82.
 - Remaining MVC surfaces without a mapped Angular counterpart: 0.
-- Allowlisted Angular-default cutover actions: 120.
+- Allowlisted Angular-default cutover actions: 121.
 
 Remaining surfaces: none.
 
@@ -148,7 +148,7 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | SalesOrders | Details.cshtml | Angular Pilot | /sales/orders | MiniStore.Web/Views/SalesOrders/Details.cshtml |
 | SalesOrders | Index.cshtml | Angular Pilot | /sales/orders | MiniStore.Web/Views/SalesOrders/Index.cshtml |
 | SalesOrders | Reserve.cshtml | Angular Pilot | /sales/orders | MiniStore.Web/Views/SalesOrders/Reserve.cshtml |
-| SalesPriceLists | Index.cshtml | Angular Pilot | /sales/pricing | MiniStore.Web/Views/SalesPriceLists/Index.cshtml |
+| SalesPriceLists | Index.cshtml | Angular Default | /sales/pricing | MiniStore.Web/Views/SalesPriceLists/Index.cshtml |
 | SalesQuotations | Create.cshtml | Angular Pilot | /sales/quotations | MiniStore.Web/Views/SalesQuotations/Create.cshtml |
 | SalesQuotations | Details.cshtml | Angular Pilot | /sales/quotations | MiniStore.Web/Views/SalesQuotations/Details.cshtml |
 | SalesQuotations | Index.cshtml | Angular Pilot | /sales/quotations | MiniStore.Web/Views/SalesQuotations/Index.cshtml |
@@ -480,12 +480,12 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | SalesOrders | ReleaseReservation | POST | Angular Pilot | /sales/orders | — | MiniStore.Web/Controllers/Sales/SalesOrdersController.cs |
 | SalesOrders | Reserve | GET | Angular Pilot | /sales/orders | — | MiniStore.Web/Controllers/Sales/SalesOrdersController.cs |
 | SalesOrders | Reserve | POST | Angular Pilot | /sales/orders | — | MiniStore.Web/Controllers/Sales/SalesOrdersController.cs |
-| SalesPriceLists | AddRule | POST | Angular Pilot | /sales/pricing | — | MiniStore.Web/Controllers/Sales/SalesPriceListsController.cs |
-| SalesPriceLists | Create | POST | Angular Pilot | /sales/pricing | — | MiniStore.Web/Controllers/Sales/SalesPriceListsController.cs |
-| SalesPriceLists | Evaluate | POST | Angular Pilot | /sales/pricing | — | MiniStore.Web/Controllers/Sales/SalesPriceListsController.cs |
-| SalesPriceLists | Index | GET | Angular Pilot | /sales/pricing | — | MiniStore.Web/Controllers/Sales/SalesPriceListsController.cs |
-| SalesPriceLists | SetListActive | POST | Angular Pilot | /sales/pricing | — | MiniStore.Web/Controllers/Sales/SalesPriceListsController.cs |
-| SalesPriceLists | SetRuleActive | POST | Angular Pilot | /sales/pricing | — | MiniStore.Web/Controllers/Sales/SalesPriceListsController.cs |
+| SalesPriceLists | AddRule | POST | Angular Default | /sales/pricing | — | MiniStore.Web/Controllers/Sales/SalesPriceListsController.cs |
+| SalesPriceLists | Create | POST | Angular Default | /sales/pricing | — | MiniStore.Web/Controllers/Sales/SalesPriceListsController.cs |
+| SalesPriceLists | Evaluate | POST | Angular Default | /sales/pricing | — | MiniStore.Web/Controllers/Sales/SalesPriceListsController.cs |
+| SalesPriceLists | Index | GET | Angular Default | /sales/pricing | /sales/pricing | MiniStore.Web/Controllers/Sales/SalesPriceListsController.cs |
+| SalesPriceLists | SetListActive | POST | Angular Default | /sales/pricing | — | MiniStore.Web/Controllers/Sales/SalesPriceListsController.cs |
+| SalesPriceLists | SetRuleActive | POST | Angular Default | /sales/pricing | — | MiniStore.Web/Controllers/Sales/SalesPriceListsController.cs |
 | SalesQuotations | Accept | POST | Angular Pilot | /sales/quotations | — | MiniStore.Web/Controllers/Sales/SalesQuotationsController.cs |
 | SalesQuotations | Cancel | POST | Angular Pilot | /sales/quotations | — | MiniStore.Web/Controllers/Sales/SalesQuotationsController.cs |
 | SalesQuotations | Create | GET | Angular Pilot | /sales/quotations | — | MiniStore.Web/Controllers/Sales/SalesQuotationsController.cs |

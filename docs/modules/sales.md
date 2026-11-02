@@ -149,3 +149,9 @@ SAL-100A adds independent `CustomerReturnRequest` authorization from one Posted 
 SAL-100B adds partial/multiple `CustomerReturnReceipt` documents for Approved requests. Each line freezes received quantity, exact tracked identities, inspection notes and Restock/Quarantine/Reject/Destroy disposition. Active receipts cannot exceed approved quantities or reuse delivery-issued identities. Completing inspection freezes evidence and has no stock/accounting/customer-credit effect; SAL-100C owns disposition posting.
 
 SAL-100C posts inspected Restock dispositions through the authoritative inventory, location, tracking, movement and journal services at frozen historical delivery cost; Quarantine/Reject/Destroy remain non-stock. SAL-100D adds a separate Posted `CustomerCreditNote` for returned quantities billed by a Posted invoice. It prevents duplicate retries and cumulative over-credit across invoice, delivery and receipt evidence, reverses receivable/revenue/output tax, reduces invoice/payment outstanding balances and blocks invoice reversal after credit. It never repeats inventory or creates a cash refund. Legacy Sale/POS returns remain unchanged.
+`MOD-030E4W` makes SalesPriceLists Index GET presentation AngularDefault at `/sales/pricing`, preserving the selected
+price-list `id` and other query values. Create, list/rule status changes, rule creation and server-authored evaluation
+remain POST-only outside presentation cutover with their existing View/Manage permissions and antiforgery. Hosted 15/15,
+the current authorized route set cutover/rollback 104/104 and 1,654 backend checks passed. The current authenticated
+session did not expose `SalesPricing.View` for a live route probe; exact query preservation and POST exclusions are
+regression-covered, and no price list or rule changed.
