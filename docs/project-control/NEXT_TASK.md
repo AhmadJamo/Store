@@ -1,17 +1,17 @@
 # المهمة التالية الوحيدة / Next Task
 
-## `MOD-030E4P` — قبول خدمات الشراء / Purchase Service Acceptances Cutover
+## `MOD-030E4Q` — اتفاقيات الشراء / Purchase Agreements Cutover
 
 > الحالة: APPROVED
 
-اكتمل `MOD-030E4O`: أصبحت LandedCosts السطح 46 بعد hosted ‏15/15 والقطع والرجوع 95/95 والبوابة 1,592. بقي 36 سطحًا MVC.
+اكتمل `MOD-030E4P`: أصبحت PurchaseServiceAcceptances السطح 47 بعد hosted ‏15/15 والقطع والرجوع 97/97 والبوابة 1,601. لم يوجد قبول خدمة محفوظ لاختبار Details حياً. بقي 35 سطحًا MVC.
 
 ### النطاق المحدود
 
-- PurchaseServiceAcceptances Index GET إلى `/purchases/service-acceptances`.
-- Create GET ذو `purchaseOrderId` الموجب إلى `/purchases/service-acceptances/new`.
-- Details GET ذو المعرّف الموجب إلى `/purchases/service-acceptances/{id}`.
-- Create POST يبقى خارج التحويل.
+- PurchaseAgreements Index GET إلى `/purchases/agreements`.
+- Create GET ذو `sourcingEventId` الموجب إلى `/purchases/agreements/new`.
+- Details GET ذو المعرّف الموجب إلى `/purchases/agreements/{id}`.
+- Create/Activate/Cancel/Release POST تبقى خارج التحويل.
 
 ### القبول
 

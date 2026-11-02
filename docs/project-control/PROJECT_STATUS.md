@@ -232,3 +232,7 @@ POST خارج التحويل. نجح hosted ‏15/15 والقطع والرجوع
 goodsReceiptId الموجب والحفاظ عليه، وبقي Create POST خارج التحويل. نجح hosted ‏15/15 والقطع والرجوع 95/95 والبوابة
 1,592 backend دون إنشاء بيانات أو تغيير المخزون أو المحاسبة. أصبحت 46 سطحًا AngularDefault وبقي 36 سطحًا MVC؛ ينتقل
 التنفيذ إلى `MOD-030E4P` لقبول خدمات الشراء.
+اكتمل `MOD-030E4P`: أصبحت PurchaseServiceAcceptances لمسارات Index/Create/Details GET الدقيقة AngularDefault، مع
+التحقق من purchaseOrderId الموجب والحفاظ عليه، وبقي Create POST خارج التحويل. نجح hosted ‏15/15 والقطع والرجوع 97/97
+والبوابة 1,601 backend دون إنشاء بيانات؛ لم يوجد قبول خدمة محفوظ لاختبار Details حياً. أصبحت 47 سطحًا AngularDefault
+وبقي 35 سطحًا MVC؛ ينتقل التنفيذ إلى `MOD-030E4Q` لاتفاقيات الشراء.

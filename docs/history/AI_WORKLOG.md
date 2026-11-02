@@ -1,5 +1,11 @@
 # AI Work Log
 
+- 2026-11-02: Completed `MOD-030E4P`. PurchaseServiceAcceptances Index/query-bound Create/positive-ID Details GET now
+  uses exact AngularDefault routes; the positive purchase-order ID is validated and preserved, while Create POST remains
+  outside cutover. Hosted 15/15, cutover/rollback 97/97 and 1,601 backend checks passed without data changes. No saved
+  acceptance existed for live Details. Forty-seven surfaces are AngularDefault and 35 remain MVC-default; execution
+  advances to `MOD-030E4Q`.
+
 - 2026-11-02: Completed `MOD-030E4O`. LandedCosts Index/query-bound Create/positive-ID Details GET now uses exact
   AngularDefault routes; the positive goods-receipt ID is validated and preserved, while Create POST remains outside
   cutover. Hosted 15/15, cutover/rollback 95/95 and 1,592 backend checks passed without data changes. Forty-six surfaces

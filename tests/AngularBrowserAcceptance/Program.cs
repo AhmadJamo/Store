@@ -251,7 +251,10 @@ static async Task RunLiveCutoverAsync(
             "PurchaseDocumentReversals.View"),
         new("/LandedCosts",
             "/app/purchases/landed-costs",
-            "LandedCosts.View")
+            "LandedCosts.View"),
+        new("/PurchaseServiceAcceptances",
+            "/app/purchases/service-acceptances",
+            "PurchaseServiceAcceptances.View")
     };
 
     if (permissions.Contains("Customers.View"))
@@ -390,6 +393,12 @@ static async Task RunLiveCutoverAsync(
                 routes.Add(new($"/VendorBills/Create?purchaseOrderId={id}",
                     $"/app/purchases/bills/new?purchaseOrderId={id}", "VendorBills.Create"));
             }
+            if (permissions.Contains("PurchaseServiceAcceptances.Create"))
+            {
+                routes.Add(new($"/PurchaseServiceAcceptances/Create?purchaseOrderId={id}",
+                    $"/app/purchases/service-acceptances/new?purchaseOrderId={id}",
+                    "PurchaseServiceAcceptances.Create"));
+            }
         }
     }
     if (permissions.Contains("GoodsReceipts.View"))
@@ -493,6 +502,19 @@ static async Task RunLiveCutoverAsync(
                 $"/app/purchases/landed-costs/{id}", "LandedCosts.View"));
         }
     }
+    if (permissions.Contains("PurchaseServiceAcceptances.View"))
+    {
+        var response = await authenticated.GetAsync("/api/v1/purchase-service-acceptances");
+        Require(response.Ok, $"Purchase-service-acceptance cutover fixture read returned {response.Status}.");
+        using var acceptances = JsonDocument.Parse(await response.TextAsync());
+        if (acceptances.RootElement.ValueKind == JsonValueKind.Array &&
+            acceptances.RootElement.GetArrayLength() > 0)
+        {
+            var id = acceptances.RootElement[0].GetProperty("id").GetInt32();
+            routes.Add(new($"/PurchaseServiceAcceptances/Details/{id}",
+                $"/app/purchases/service-acceptances/{id}", "PurchaseServiceAcceptances.View"));
+        }
+    }
     if (permissions.Contains("InventoryAdjustments.View"))
     {
         var response = await authenticated.GetAsync("/api/v1/inventory-adjustments");
@@ -577,6 +599,8 @@ static async Task RunLiveCutoverAsync(
                          surface is "PurchaseDocumentReversals";
         expectsAngular = expectsAngular || options.CutoverMode == "pilot" &&
                          surface is "LandedCosts";
+        expectsAngular = expectsAngular || options.CutoverMode == "pilot" &&
+                         surface is "PurchaseServiceAcceptances";
         if (expectsAngular)
         {
             Require(response.Status is 301 or 302 or 307 or 308,

@@ -199,6 +199,11 @@ goods-receipt ID is validated and preserved. Create POST remains independently p
 outside cutover. Hosted 15/15, cutover/rollback 95/95 and 1,592 backend checks passed without creating data or changing
 schema, inventory, accounting or business rules.
 
+`MOD-030E4P` makes PurchaseServiceAcceptances Index/query-bound Create/positive-ID Details GET presentation
+AngularDefault. The positive purchase-order ID is validated and preserved. Create POST remains independently permissioned
+and antiforgery protected outside cutover. Hosted 15/15, cutover/rollback 97/97 and 1,601 backend checks passed without
+creating data or changing stock or accounting; no saved acceptance existed for a live Details probe.
+
 `MOD-030E4L` makes VendorBills Index/query-bound Create/positive-ID Details GET presentation `AngularDefault` at
 `/purchases/bills`, `/purchases/bills/new?purchaseOrderId={id}` and `/purchases/bills/{id}`. The positive order ID
 is validated and preserved. Attachment download/upload, extraction review, approval/override, posting and cancellation

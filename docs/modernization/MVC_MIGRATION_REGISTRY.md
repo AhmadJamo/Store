@@ -11,7 +11,7 @@
 - Angular application routes discovered: 184.
 - MVC surfaces with a verified Angular counterpart: 82.
 - Remaining MVC surfaces without a mapped Angular counterpart: 0.
-- Allowlisted Angular-default cutover actions: 101.
+- Allowlisted Angular-default cutover actions: 104.
 
 Remaining surfaces: none.
 
@@ -122,9 +122,9 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | Purchases | Create.cshtml | Angular Pilot | /purchases/legacy | MiniStore.Web/Views/Purchases/Create.cshtml |
 | Purchases | Details.cshtml | Angular Pilot | /purchases/legacy | MiniStore.Web/Views/Purchases/Details.cshtml |
 | Purchases | Index.cshtml | Angular Pilot | /purchases/legacy | MiniStore.Web/Views/Purchases/Index.cshtml |
-| PurchaseServiceAcceptances | Create.cshtml | Angular Pilot | /purchases/service-acceptances | MiniStore.Web/Views/PurchaseServiceAcceptances/Create.cshtml |
-| PurchaseServiceAcceptances | Details.cshtml | Angular Pilot | /purchases/service-acceptances | MiniStore.Web/Views/PurchaseServiceAcceptances/Details.cshtml |
-| PurchaseServiceAcceptances | Index.cshtml | Angular Pilot | /purchases/service-acceptances | MiniStore.Web/Views/PurchaseServiceAcceptances/Index.cshtml |
+| PurchaseServiceAcceptances | Create.cshtml | Angular Default | /purchases/service-acceptances | MiniStore.Web/Views/PurchaseServiceAcceptances/Create.cshtml |
+| PurchaseServiceAcceptances | Details.cshtml | Angular Default | /purchases/service-acceptances | MiniStore.Web/Views/PurchaseServiceAcceptances/Details.cshtml |
+| PurchaseServiceAcceptances | Index.cshtml | Angular Default | /purchases/service-acceptances | MiniStore.Web/Views/PurchaseServiceAcceptances/Index.cshtml |
 | PurchaseSourcing | Create.cshtml | Angular Default | /purchases/sourcing | MiniStore.Web/Views/PurchaseSourcing/Create.cshtml |
 | PurchaseSourcing | Details.cshtml | Angular Default | /purchases/sourcing | MiniStore.Web/Views/PurchaseSourcing/Details.cshtml |
 | PurchaseSourcing | Direct.cshtml | Angular Default | /purchases/sourcing | MiniStore.Web/Views/PurchaseSourcing/Direct.cshtml |
@@ -426,10 +426,10 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | Purchases | Details | GET | Angular Pilot | /purchases/legacy | — | MiniStore.Web/Controllers/Purchases/PurchasesController.cs |
 | Purchases | Index | GET | Angular Pilot | /purchases/legacy | — | MiniStore.Web/Controllers/Purchases/PurchasesController.cs |
 | Purchases | Post | POST | Angular Pilot | /purchases/legacy | — | MiniStore.Web/Controllers/Purchases/PurchasesController.cs |
-| PurchaseServiceAcceptances | Create | GET | Angular Pilot | /purchases/service-acceptances | — | MiniStore.Web/Controllers/Purchases/PurchaseServiceAcceptancesController.cs |
-| PurchaseServiceAcceptances | Create | POST | Angular Pilot | /purchases/service-acceptances | — | MiniStore.Web/Controllers/Purchases/PurchaseServiceAcceptancesController.cs |
-| PurchaseServiceAcceptances | Details | GET | Angular Pilot | /purchases/service-acceptances | — | MiniStore.Web/Controllers/Purchases/PurchaseServiceAcceptancesController.cs |
-| PurchaseServiceAcceptances | Index | GET | Angular Pilot | /purchases/service-acceptances | — | MiniStore.Web/Controllers/Purchases/PurchaseServiceAcceptancesController.cs |
+| PurchaseServiceAcceptances | Create | GET | Angular Default | /purchases/service-acceptances | /purchases/service-acceptances/new?purchaseOrderId={purchaseOrderId} | MiniStore.Web/Controllers/Purchases/PurchaseServiceAcceptancesController.cs |
+| PurchaseServiceAcceptances | Create | POST | Angular Default | /purchases/service-acceptances | /purchases/service-acceptances/new?purchaseOrderId={purchaseOrderId} | MiniStore.Web/Controllers/Purchases/PurchaseServiceAcceptancesController.cs |
+| PurchaseServiceAcceptances | Details | GET | Angular Default | /purchases/service-acceptances | /purchases/service-acceptances/{id} | MiniStore.Web/Controllers/Purchases/PurchaseServiceAcceptancesController.cs |
+| PurchaseServiceAcceptances | Index | GET | Angular Default | /purchases/service-acceptances | /purchases/service-acceptances | MiniStore.Web/Controllers/Purchases/PurchaseServiceAcceptancesController.cs |
 | PurchaseSourcing | Attachment | GET | Angular Default | /purchases/sourcing | — | MiniStore.Web/Controllers/Purchases/PurchaseSourcingController.cs |
 | PurchaseSourcing | Create | GET | Angular Default | /purchases/sourcing | — | MiniStore.Web/Controllers/Purchases/PurchaseSourcingController.cs |
 | PurchaseSourcing | Create | POST | Angular Default | /purchases/sourcing | — | MiniStore.Web/Controllers/Purchases/PurchaseSourcingController.cs |
