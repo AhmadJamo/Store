@@ -1,5 +1,10 @@
 # AI Work Log
 
+- 2026-11-02: Completed `MOD-030E4S`. SupplierCommunications positive-ID Details GET now uses the exact AngularDefault
+  route; Prepare/RecordActivity POST and attachment download remain outside cutover. Hosted 15/15, cutover/rollback
+  101/101 and 1,626 backend checks passed without data changes. No saved communication existed for a live Details probe.
+  Fifty surfaces are AngularDefault and 32 remain MVC-default; execution advances to `MOD-030E4T`.
+
 - 2026-11-02: Completed `MOD-030E4R`. SupplierPurchasing Index/PriceExceptions/positive-ID PriceBreaks/PriceHistory GET
   now uses exact AngularDefault routes; filters are preserved, while exports and all mutations remain outside cutover.
   Hosted 15/15, cutover/rollback 101/101 and 1,622 backend checks passed without data changes. No purchasing-info row

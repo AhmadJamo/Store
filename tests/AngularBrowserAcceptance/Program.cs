@@ -395,6 +395,28 @@ static async Task RunLiveCutoverAsync(
                     break;
                 }
             }
+            if (permissions.Contains("SupplierCommunications.View"))
+            {
+                for (var index = 0; index < sourcingEvents.RootElement.GetArrayLength(); index++)
+                {
+                    var documentId = sourcingEvents.RootElement[index].GetProperty("id").GetInt32();
+                    var historyResponse = await authenticated.GetAsync(
+                        $"/api/v1/supplier-communications/document/1/{documentId}");
+                    if (!historyResponse.Ok)
+                        continue;
+
+                    using var history = JsonDocument.Parse(await historyResponse.TextAsync());
+                    if (history.RootElement.ValueKind != JsonValueKind.Array ||
+                        history.RootElement.GetArrayLength() == 0)
+                        continue;
+
+                    var communicationId = history.RootElement[0].GetProperty("id").GetInt32();
+                    routes.Add(new($"/SupplierCommunications/Details/{communicationId}",
+                        $"/app/purchases/communications/{communicationId}",
+                        "SupplierCommunications.View"));
+                    break;
+                }
+            }
         }
     }
     if (permissions.Contains("PurchaseOrders.View"))
@@ -660,6 +682,8 @@ static async Task RunLiveCutoverAsync(
                          surface is "PurchaseAgreements";
         expectsAngular = expectsAngular || options.CutoverMode == "pilot" &&
                          surface is "SupplierPurchasing";
+        expectsAngular = expectsAngular || options.CutoverMode == "pilot" &&
+                         surface is "SupplierCommunications";
         if (expectsAngular)
         {
             Require(response.Status is 301 or 302 or 307 or 308,

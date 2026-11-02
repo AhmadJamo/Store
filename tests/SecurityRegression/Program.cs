@@ -955,6 +955,33 @@ Check(new long[] { -1, 0 }.All(id =>
               "SupplierPurchasing", action,
               new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 17 }) is null),
     "Supplier-purchasing cutover must reject unsafe IDs and keep exports and mutations outside cutover");
+var supplierCommunicationsCutoverResolver = new PresentationCutoverResolver(Options.Create(
+    new PresentationCutoverOptions
+    {
+        AngularBasePath = "/app",
+        Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["SupplierCommunications"] = PresentationCutoverMode.AngularDefault
+        }
+    }));
+cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?source=cutover");
+Check(supplierCommunicationsCutoverResolver.Resolve(cutoverContext.Request,
+          "SupplierCommunications", "Details",
+          new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 17 }) ==
+      "/app/purchases/communications/17?source=cutover",
+    "Supplier-communication cutover must resolve positive-ID details and preserve query values");
+Check(new long[] { -1, 0 }.All(id =>
+          supplierCommunicationsCutoverResolver.Resolve(cutoverContext.Request,
+              "SupplierCommunications", "Details",
+              new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = id }) is null) &&
+      new[] { "Prepare", "RecordActivity", "Attachment" }.All(action =>
+          supplierCommunicationsCutoverResolver.Resolve(cutoverContext.Request,
+              "SupplierCommunications", action,
+              new Microsoft.AspNetCore.Routing.RouteValueDictionary
+              {
+                  ["id"] = 17, ["attachmentId"] = 1
+              }) is null),
+    "Supplier-communication cutover must reject unsafe IDs and keep commands and downloads outside cutover");
 cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?page=2");
 foreach (var entry in PresentationCutoverRouteCatalog.All)
 {

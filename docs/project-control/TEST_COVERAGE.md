@@ -64,6 +64,7 @@
 | MOD-030E4P Purchase Service Acceptances | Index/query-bound Create/Details GET; positive purchase-order validation; Create POST excluded; hosted 15/15 and 97-route cutover/MVC rollback; Release clean and 1,601 backend checks; no saved acceptance for live Details | 2026-11-02 |
 | MOD-030E4Q Purchase Agreements | Index/query-bound Create/Details GET; lifecycle/release mutations excluded; hosted 15/15 and 99-route cutover/MVC rollback; Release clean and 1,610 backend checks; eligible awarded sourcing fixture used, no saved agreement for live Details | 2026-11-02 |
 | MOD-030E4R Supplier Purchasing | Index/PriceExceptions/PriceBreaks/PriceHistory GET; exports and mutations excluded; hosted 15/15 and 101-route cutover/MVC rollback; Release clean and 1,622 backend checks; no purchasing-info row for live price routes | 2026-11-02 |
+| MOD-030E4S Supplier Communications | Positive-ID Details GET; prepare/activity commands and attachment download excluded; hosted 15/15 and 101-route cutover/MVC rollback; Release clean and 1,626 backend checks; no saved communication for live Details | 2026-11-02 |
 | Live schema integrity (سلامة المخطط الحي) | 147 tables, 420 trusted FKs, zero disabled constraints/indexes or unsafe tenant relations | 2026-10-15 |
 | Web dependency build (بناء الويب واعتماداته) | Release, 4 projects, zero warnings/errors after SAL-120A (نجح) | 2026-10-22 |
 

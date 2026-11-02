@@ -1,16 +1,17 @@
 # المهمة التالية الوحيدة / Next Task
 
-## `MOD-030E4S` — اتصالات الموردين / Supplier Communications Cutover
+## `MOD-030E4T` — تكاملات الموردين / Supplier Integrations Cutover
 
 > الحالة: APPROVED
 
-اكتمل `MOD-030E4R`: أصبحت SupplierPurchasing السطح 49 بعد hosted ‏15/15 والقطع والرجوع 101/101 والبوابة 1,622. لم يوجد صف بيانات شراء مورد لاختبار مسارات الأسعار حياً. بقي 33 سطحًا MVC.
+اكتمل `MOD-030E4S`: أصبحت SupplierCommunications السطح 50 بعد hosted ‏15/15 والقطع والرجوع 101/101 والبوابة 1,626. لم يوجد اتصال محفوظ لاختبار Details حياً. بقي 32 سطحًا MVC.
 
 ### النطاق المحدود
 
-- SupplierCommunications Details GET ذو المعرّف الموجب إلى `/purchases/communications/{id}`.
-- Prepare وRecordActivity POST تبقيان خارج التحويل.
-- Attachment GET يبقى تنزيل ملف مباشر خارج presentation cutover.
+- SupplierIntegrations Index GET إلى `/purchases/integrations`.
+- Submission GET ذو المعرّف الموجب إلى `/purchases/integrations/submissions/{id}`.
+- UBL وDownloadSubmission GET يبقيان تنزيل ملف مباشر خارج presentation cutover.
+- credential/portal/outbox/retry POST actions تبقى خارج التحويل.
 
 ### القبول
 

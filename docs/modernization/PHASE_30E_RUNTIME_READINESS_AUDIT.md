@@ -224,6 +224,12 @@ with zero warnings and 1,499 backend checks. Thirty-three surfaces are AngularDe
 git-ignored temporary authentication state is retained only for the next local cohorts; no data, schema, inventory,
 accounting, business rule or MVC file changed.
 
+## MOD-030E4S evidence
+
+SupplierCommunications positive-ID Details joins AngularDefault; Prepare/RecordActivity and attachment download remain
+outside cutover. Hosted 15/15, cutover/rollback 101/101 and 1,626 backend checks passed. No saved communication existed
+for a live Details probe. Fifty surfaces are AngularDefault and 32 remain MVC-default.
+
 ## MOD-030E4R evidence
 
 SupplierPurchasing Index/PriceExceptions/positive-ID PriceBreaks/PriceHistory joins AngularDefault. Exports and every
