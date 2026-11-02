@@ -11,7 +11,7 @@
 - Angular application routes discovered: 184.
 - MVC surfaces with a verified Angular counterpart: 82.
 - Remaining MVC surfaces without a mapped Angular counterpart: 0.
-- Allowlisted Angular-default cutover actions: 146.
+- Allowlisted Angular-default cutover actions: 149.
 
 Remaining surfaces: none.
 
@@ -152,9 +152,9 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | SalesQuotations | Create.cshtml | Angular Default | /sales/quotations | MiniStore.Web/Views/SalesQuotations/Create.cshtml |
 | SalesQuotations | Details.cshtml | Angular Default | /sales/quotations | MiniStore.Web/Views/SalesQuotations/Details.cshtml |
 | SalesQuotations | Index.cshtml | Angular Default | /sales/quotations | MiniStore.Web/Views/SalesQuotations/Index.cshtml |
-| SalesQuotationTemplates | Create.cshtml | Angular Pilot | /sales/quotation-templates | MiniStore.Web/Views/SalesQuotationTemplates/Create.cshtml |
-| SalesQuotationTemplates | Details.cshtml | Angular Pilot | /sales/quotation-templates | MiniStore.Web/Views/SalesQuotationTemplates/Details.cshtml |
-| SalesQuotationTemplates | Index.cshtml | Angular Pilot | /sales/quotation-templates | MiniStore.Web/Views/SalesQuotationTemplates/Index.cshtml |
+| SalesQuotationTemplates | Create.cshtml | Angular Default | /sales/quotation-templates | MiniStore.Web/Views/SalesQuotationTemplates/Create.cshtml |
+| SalesQuotationTemplates | Details.cshtml | Angular Default | /sales/quotation-templates | MiniStore.Web/Views/SalesQuotationTemplates/Details.cshtml |
+| SalesQuotationTemplates | Index.cshtml | Angular Default | /sales/quotation-templates | MiniStore.Web/Views/SalesQuotationTemplates/Index.cshtml |
 | SalesReturns | Create.cshtml | Angular Pilot | /sales/legacy-returns | MiniStore.Web/Views/SalesReturns/Create.cshtml |
 | SalesReturns | Details.cshtml | Angular Pilot | /sales/legacy-returns | MiniStore.Web/Views/SalesReturns/Details.cshtml |
 | SalesReturns | Index.cshtml | Angular Pilot | /sales/legacy-returns | MiniStore.Web/Views/SalesReturns/Index.cshtml |
@@ -496,13 +496,13 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | SalesQuotations | Index | GET | Angular Default | /sales/quotations | /sales/quotations | MiniStore.Web/Controllers/Sales/SalesQuotationsController.cs |
 | SalesQuotations | Reject | POST | Angular Default | /sales/quotations | — | MiniStore.Web/Controllers/Sales/SalesQuotationsController.cs |
 | SalesQuotations | Send | POST | Angular Default | /sales/quotations | — | MiniStore.Web/Controllers/Sales/SalesQuotationsController.cs |
-| SalesQuotationTemplates | Activate | POST | Angular Pilot | /sales/quotation-templates | — | MiniStore.Web/Controllers/Sales/SalesQuotationTemplatesController.cs |
-| SalesQuotationTemplates | Archive | POST | Angular Pilot | /sales/quotation-templates | — | MiniStore.Web/Controllers/Sales/SalesQuotationTemplatesController.cs |
-| SalesQuotationTemplates | Create | GET | Angular Pilot | /sales/quotation-templates | — | MiniStore.Web/Controllers/Sales/SalesQuotationTemplatesController.cs |
-| SalesQuotationTemplates | Create | POST | Angular Pilot | /sales/quotation-templates | — | MiniStore.Web/Controllers/Sales/SalesQuotationTemplatesController.cs |
-| SalesQuotationTemplates | Details | GET | Angular Pilot | /sales/quotation-templates | — | MiniStore.Web/Controllers/Sales/SalesQuotationTemplatesController.cs |
-| SalesQuotationTemplates | Index | GET | Angular Pilot | /sales/quotation-templates | — | MiniStore.Web/Controllers/Sales/SalesQuotationTemplatesController.cs |
-| SalesQuotationTemplates | SetDefault | POST | Angular Pilot | /sales/quotation-templates | — | MiniStore.Web/Controllers/Sales/SalesQuotationTemplatesController.cs |
+| SalesQuotationTemplates | Activate | POST | Angular Default | /sales/quotation-templates | — | MiniStore.Web/Controllers/Sales/SalesQuotationTemplatesController.cs |
+| SalesQuotationTemplates | Archive | POST | Angular Default | /sales/quotation-templates | — | MiniStore.Web/Controllers/Sales/SalesQuotationTemplatesController.cs |
+| SalesQuotationTemplates | Create | GET | Angular Default | /sales/quotation-templates | /sales/quotation-templates/new | MiniStore.Web/Controllers/Sales/SalesQuotationTemplatesController.cs |
+| SalesQuotationTemplates | Create | POST | Angular Default | /sales/quotation-templates | /sales/quotation-templates/new | MiniStore.Web/Controllers/Sales/SalesQuotationTemplatesController.cs |
+| SalesQuotationTemplates | Details | GET | Angular Default | /sales/quotation-templates | /sales/quotation-templates/{id} | MiniStore.Web/Controllers/Sales/SalesQuotationTemplatesController.cs |
+| SalesQuotationTemplates | Index | GET | Angular Default | /sales/quotation-templates | /sales/quotation-templates | MiniStore.Web/Controllers/Sales/SalesQuotationTemplatesController.cs |
+| SalesQuotationTemplates | SetDefault | POST | Angular Default | /sales/quotation-templates | — | MiniStore.Web/Controllers/Sales/SalesQuotationTemplatesController.cs |
 | SalesReturns | Create | ANY | Angular Pilot | /sales/legacy-returns | — | MiniStore.Web/Controllers/Sales/SalesReturnsController.cs |
 | SalesReturns | Create | POST | Angular Pilot | /sales/legacy-returns | — | MiniStore.Web/Controllers/Sales/SalesReturnsController.cs |
 | SalesReturns | Details | ANY | Angular Pilot | /sales/legacy-returns | — | MiniStore.Web/Controllers/Sales/SalesReturnsController.cs |

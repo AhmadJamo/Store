@@ -298,3 +298,7 @@ AngularDefault وبقي 20 سطحًا MVC؛ ينتقل التنفيذ إلى `MO
 اكتمل `MOD-030E5F`: أصبحت SalesApprovalRules Index GET AngularDefault، وبقي إنشاء القواعد وتفعيلها/تعطيلها عبر API
 المحمي. نجح hosted ‏15/15 والقطع/الرجوع 118/118 والبوابة 1,725 بلا تغيير قاعدة أو اعتماد طلب. أصبحت 64 سطحًا
 AngularDefault وبقي 18 سطحًا MVC؛ ينتقل التنفيذ إلى `MOD-030E5G` لقوالب عروض أسعار المبيعات.
+اكتمل `MOD-030E5G`: أصبحت SalesQuotationTemplates Index/Create/Details GET الآمنة AngularDefault مع رفض
+sourceTemplateId غير الموجب، وبقي الإنشاء ودورة الحالة عبر API المحمي. نجح hosted ‏15/15 والقطع/الرجوع 119/119
+والبوابة 1,729 بلا إنشاء أو تغيير قالب. أصبحت 65 سطحًا AngularDefault وبقي 17 سطحًا MVC؛ ينتقل التنفيذ إلى
+`MOD-030E5H` للبيع الفوري ونقطة البيع.

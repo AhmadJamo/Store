@@ -306,7 +306,10 @@ static async Task RunLiveCutoverAsync(
             "CustomerCreditNotes.View"),
         new("/SalesApprovalRules?source=cutover-rehearsal",
             "/app/sales/approval-rules?source=cutover-rehearsal",
-            "SalesApprovalRules.View")
+            "SalesApprovalRules.View"),
+        new("/SalesQuotationTemplates?status=1&search=cutover-rehearsal",
+            "/app/sales/quotation-templates?status=1&search=cutover-rehearsal",
+            "SalesQuotationTemplates.View")
     };
 
     if (permissions.Contains("Customers.View"))
@@ -786,6 +789,22 @@ static async Task RunLiveCutoverAsync(
                 $"/app/sales/credit-notes/{id}", "CustomerCreditNotes.View"));
         }
     }
+    if (permissions.Contains("SalesQuotationTemplates.View"))
+    {
+        var response = await authenticated.GetAsync("/api/v1/sales-quotation-templates");
+        Require(response.Ok, $"Sales-quotation-template cutover fixture read returned {response.Status}.");
+        using var templates = JsonDocument.Parse(await response.TextAsync());
+        if (templates.RootElement.ValueKind == JsonValueKind.Array && templates.RootElement.GetArrayLength() > 0)
+        {
+            var id = templates.RootElement[0].GetProperty("id").GetInt32();
+            routes.Add(new($"/SalesQuotationTemplates/Details/{id}",
+                $"/app/sales/quotation-templates/{id}", "SalesQuotationTemplates.View"));
+            if (permissions.Contains("SalesQuotationTemplates.Manage"))
+                routes.Add(new($"/SalesQuotationTemplates/Create?sourceTemplateId={id}",
+                    $"/app/sales/quotation-templates/new?sourceTemplateId={id}",
+                    "SalesQuotationTemplates.Manage"));
+        }
+    }
     if (permissions.Contains("InventoryAdjustments.View"))
     {
         var response = await authenticated.GetAsync("/api/v1/inventory-adjustments");
@@ -904,6 +923,8 @@ static async Task RunLiveCutoverAsync(
                          surface is "CustomerCreditNotes";
         expectsAngular = expectsAngular || options.CutoverMode == "pilot" &&
                          surface is "SalesApprovalRules";
+        expectsAngular = expectsAngular || options.CutoverMode == "pilot" &&
+                         surface is "SalesQuotationTemplates";
         if (expectsAngular)
         {
             Require(response.Status is 301 or 302 or 307 or 308,

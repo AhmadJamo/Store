@@ -1419,6 +1419,37 @@ Check(new[] { "Create", "SetActive" }.All(action =>
             "SalesApprovalRules", action,
             new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 17 }) is null),
     "Sales-approval-rule cutover must keep rule creation and activation mutations outside presentation cutover");
+var salesQuotationTemplateCutoverResolver = new PresentationCutoverResolver(Options.Create(
+    new PresentationCutoverOptions
+    {
+        AngularBasePath = "/app",
+        Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["SalesQuotationTemplates"] = PresentationCutoverMode.AngularDefault
+        }
+    }));
+cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?status=1&search=cutover");
+Check(salesQuotationTemplateCutoverResolver.Resolve(cutoverContext.Request,
+          "SalesQuotationTemplates", "Index", new Microsoft.AspNetCore.Routing.RouteValueDictionary()) ==
+      "/app/sales/quotation-templates?status=1&search=cutover" &&
+      salesQuotationTemplateCutoverResolver.Resolve(cutoverContext.Request,
+          "SalesQuotationTemplates", "Details",
+          new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 17 }) ==
+      "/app/sales/quotation-templates/17?status=1&search=cutover",
+    "Sales-quotation-template cutover must resolve list and positive-ID details routes");
+cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?sourceTemplateId=19&source=cutover");
+Check(salesQuotationTemplateCutoverResolver.Resolve(cutoverContext.Request,
+          "SalesQuotationTemplates", "Create", new Microsoft.AspNetCore.Routing.RouteValueDictionary()) ==
+      "/app/sales/quotation-templates/new?sourceTemplateId=19&source=cutover",
+    "Sales-quotation-template cutover must preserve an optional positive source template identifier");
+cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?sourceTemplateId=0");
+Check(salesQuotationTemplateCutoverResolver.Resolve(cutoverContext.Request,
+          "SalesQuotationTemplates", "Create", new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null &&
+      new[] { "Activate", "Archive", "SetDefault" }.All(action =>
+          salesQuotationTemplateCutoverResolver.Resolve(cutoverContext.Request,
+              "SalesQuotationTemplates", action,
+              new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 17 }) is null),
+    "Sales-quotation-template cutover must reject unsafe source IDs and keep lifecycle mutations outside cutover");
 cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?page=2");
 foreach (var entry in PresentationCutoverRouteCatalog.All)
 {

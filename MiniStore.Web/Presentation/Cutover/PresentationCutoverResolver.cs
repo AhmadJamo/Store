@@ -43,6 +43,14 @@ public sealed class PresentationCutoverResolver(IOptions<PresentationCutoverOpti
         }
 
         var queryString = request.QueryString;
+        if (string.Equals(controller, "SalesQuotationTemplates", StringComparison.OrdinalIgnoreCase) &&
+            string.Equals(action, "Create", StringComparison.OrdinalIgnoreCase) &&
+            request.Query.TryGetValue("sourceTemplateId", out var sourceTemplateIds) &&
+            (sourceTemplateIds.Count != 1 ||
+             !long.TryParse(sourceTemplateIds[0], NumberStyles.Integer, CultureInfo.InvariantCulture,
+                 out var sourceTemplateId) || sourceTemplateId <= 0))
+            return null;
+
         if (route.Contains("{productId}", StringComparison.Ordinal))
         {
             var productIdValue = routeValues["productId"]?.ToString();

@@ -1,5 +1,10 @@
 # AI Work Log
 
+- 2026-11-03: Completed `MOD-030E5G`. SalesQuotationTemplates Index/optional-source Create/positive-ID Details GET now
+  use AngularDefault; unsafe source IDs are rejected and create/lifecycle remain protected API POST. Hosted 15/15,
+  cutover/MVC rollback 119/119 and 1,729 backend checks passed without template mutation. Sixty-five surfaces are
+  AngularDefault and 17 remain MVC-default.
+
 - 2026-11-02: Completed `MOD-030E5F`. SalesApprovalRules Index GET now uses AngularDefault; rule creation and activation
   changes remain protected API POST. Hosted 15/15, cutover/MVC rollback 118/118 and 1,725 backend checks passed without
   changing a rule or order approval. Sixty-four surfaces are AngularDefault and 18 remain MVC-default.

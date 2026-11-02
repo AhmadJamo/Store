@@ -203,3 +203,8 @@ credit note or changing receivables, inventory, cash or journals.
 remain protected API POST operations, and all scope, role, ordered-step, concurrency and order-evaluation authority stays
 server-side. Hosted 15/15, cutover/MVC rollback 118/118 and 1,725 backend checks passed without changing a rule or order
 approval.
+
+`MOD-030E5G` makes SalesQuotationTemplates Index/optional-source Create/positive-ID Details GET presentation
+AngularDefault. Optional `sourceTemplateId` values must be positive; create, activate, archive and set-default remain
+protected API POST operations. Hosted 15/15, cutover/MVC rollback 119/119 and 1,729 backend checks passed without
+creating or changing a quotation template.

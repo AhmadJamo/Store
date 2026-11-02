@@ -318,6 +318,13 @@ SalesApprovalRules Index joins AngularDefault; rule creation and activation/deac
 presentation cutover. Hosted 15/15, cutover/MVC rollback 118/118 and 1,725 backend checks passed without rule or order-
 approval mutation. Sixty-four surfaces are AngularDefault and 18 remain MVC-default.
 
+## MOD-030E5G evidence
+
+SalesQuotationTemplates Index/optional-source Create/positive-ID Details joins AngularDefault; unsafe optional source IDs
+are rejected and create/activate/archive/set-default remain protected API POST outside presentation cutover. Hosted 15/15,
+cutover/MVC rollback 119/119 and 1,729 backend checks passed without template mutation. Sixty-five surfaces are
+AngularDefault and 17 remain MVC-default.
+
 ## MOD-030E4S evidence
 
 SupplierCommunications positive-ID Details joins AngularDefault; Prepare/RecordActivity and attachment download remain

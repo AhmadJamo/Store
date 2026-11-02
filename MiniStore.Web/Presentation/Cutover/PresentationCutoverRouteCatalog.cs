@@ -150,7 +150,10 @@ public static class PresentationCutoverRouteCatalog
             ["CustomerCreditNotes:Index"] = "/sales/credit-notes",
             ["CustomerCreditNotes:Create"] = "/sales/credit-notes/new?customerInvoiceId={customerInvoiceId}",
             ["CustomerCreditNotes:Details"] = "/sales/credit-notes/{id}",
-            ["SalesApprovalRules:Index"] = "/sales/approval-rules"
+            ["SalesApprovalRules:Index"] = "/sales/approval-rules",
+            ["SalesQuotationTemplates:Index"] = "/sales/quotation-templates",
+            ["SalesQuotationTemplates:Create"] = "/sales/quotation-templates/new",
+            ["SalesQuotationTemplates:Details"] = "/sales/quotation-templates/{id}"
         };
 
     public static IReadOnlyDictionary<string, string> All => Routes;
