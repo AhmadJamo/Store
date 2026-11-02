@@ -309,7 +309,13 @@ static async Task RunLiveCutoverAsync(
             "SalesApprovalRules.View"),
         new("/SalesQuotationTemplates?status=1&search=cutover-rehearsal",
             "/app/sales/quotation-templates?status=1&search=cutover-rehearsal",
-            "SalesQuotationTemplates.View")
+            "SalesQuotationTemplates.View"),
+        new("/Sales?source=cutover-rehearsal",
+            "/app/sales/legacy?source=cutover-rehearsal", "Sales.View"),
+        new("/Sales/Create?source=cutover-rehearsal",
+            "/app/sales/legacy/new?source=cutover-rehearsal", "Sales.Create"),
+        new("/Sales/Pos?source=cutover-rehearsal",
+            "/app/sales/pos?source=cutover-rehearsal", "Sales.Create")
     };
 
     if (permissions.Contains("Customers.View"))
@@ -805,6 +811,17 @@ static async Task RunLiveCutoverAsync(
                     "SalesQuotationTemplates.Manage"));
         }
     }
+    if (permissions.Contains("Sales.View"))
+    {
+        var response = await authenticated.GetAsync("/api/v1/legacy-sales");
+        Require(response.Ok, $"Legacy-sale cutover fixture read returned {response.Status}.");
+        using var sales = JsonDocument.Parse(await response.TextAsync());
+        if (sales.RootElement.ValueKind == JsonValueKind.Array && sales.RootElement.GetArrayLength() > 0)
+        {
+            var id = sales.RootElement[0].GetProperty("id").GetInt32();
+            routes.Add(new($"/Sales/Details/{id}", $"/app/sales/legacy/{id}", "Sales.View"));
+        }
+    }
     if (permissions.Contains("InventoryAdjustments.View"))
     {
         var response = await authenticated.GetAsync("/api/v1/inventory-adjustments");
@@ -925,6 +942,8 @@ static async Task RunLiveCutoverAsync(
                          surface is "SalesApprovalRules";
         expectsAngular = expectsAngular || options.CutoverMode == "pilot" &&
                          surface is "SalesQuotationTemplates";
+        expectsAngular = expectsAngular || options.CutoverMode == "pilot" &&
+                         surface is "Sales";
         if (expectsAngular)
         {
             Require(response.Status is 301 or 302 or 307 or 308,

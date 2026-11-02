@@ -153,7 +153,11 @@ public static class PresentationCutoverRouteCatalog
             ["SalesApprovalRules:Index"] = "/sales/approval-rules",
             ["SalesQuotationTemplates:Index"] = "/sales/quotation-templates",
             ["SalesQuotationTemplates:Create"] = "/sales/quotation-templates/new",
-            ["SalesQuotationTemplates:Details"] = "/sales/quotation-templates/{id}"
+            ["SalesQuotationTemplates:Details"] = "/sales/quotation-templates/{id}",
+            ["Sales:Index"] = "/sales/legacy",
+            ["Sales:Create"] = "/sales/legacy/new",
+            ["Sales:Details"] = "/sales/legacy/{id}",
+            ["Sales:Pos"] = "/sales/pos"
         };
 
     public static IReadOnlyDictionary<string, string> All => Routes;

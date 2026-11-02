@@ -208,3 +208,7 @@ approval.
 AngularDefault. Optional `sourceTemplateId` values must be positive; create, activate, archive and set-default remain
 protected API POST operations. Hosted 15/15, cutover/MVC rollback 119/119 and 1,729 backend checks passed without
 creating or changing a quotation template.
+
+`MOD-030E5H` makes legacy Sales Index/Create/positive-ID Details and Pos GET presentation AngularDefault. Wholesale/POS
+creation, stock consumption and one-time GL posting remain protected API POST operations under existing server authority.
+Hosted 15/15, cutover/MVC rollback 123/123 and 1,738 backend checks passed without sale, stock or journal mutation.

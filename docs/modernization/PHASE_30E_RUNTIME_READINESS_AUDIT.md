@@ -325,6 +325,13 @@ are rejected and create/activate/archive/set-default remain protected API POST o
 cutover/MVC rollback 119/119 and 1,729 backend checks passed without template mutation. Sixty-five surfaces are
 AngularDefault and 17 remain MVC-default.
 
+## MOD-030E5H evidence
+
+Legacy Sales Index/Create/positive-ID Details and Pos joins AngularDefault; wholesale/POS creation, stock mutation and GL
+posting remain protected API POST outside presentation cutover. Hosted 15/15, cutover/MVC rollback 123/123 and 1,738
+backend checks passed without sale, stock or journal mutation. Sixty-six surfaces are AngularDefault and 16 remain
+MVC-default.
+
 ## MOD-030E4S evidence
 
 SupplierCommunications positive-ID Details joins AngularDefault; Prepare/RecordActivity and attachment download remain
