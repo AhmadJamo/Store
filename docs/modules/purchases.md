@@ -209,6 +209,11 @@ positive sourcing-event ID is validated and preserved. Create/Activate/Cancel/Re
 permissioned and antiforgery protected outside cutover. Hosted 15/15, cutover/rollback 99/99 and 1,610 backend checks
 passed without data changes. An eligible awarded sourcing event covered Create; no saved agreement existed for Details.
 
+`MOD-030E4R` makes SupplierPurchasing Index/PriceExceptions/positive-ID PriceBreaks/PriceHistory GET presentation
+AngularDefault. Supplier and exception filters are preserved, while exports, previews, imports, saves and status changes
+remain outside cutover. Hosted 15/15, cutover/rollback 101/101 and 1,622 backend checks passed without data changes. No
+supplier-purchasing row existed for live price-route probes, whose exact and unsafe-ID behavior is regression-covered.
+
 `MOD-030E4L` makes VendorBills Index/query-bound Create/positive-ID Details GET presentation `AngularDefault` at
 `/purchases/bills`, `/purchases/bills/new?purchaseOrderId={id}` and `/purchases/bills/{id}`. The positive order ID
 is validated and preserved. Attachment download/upload, extraction review, approval/override, posting and cancellation

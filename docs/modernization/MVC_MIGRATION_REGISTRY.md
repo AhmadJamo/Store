@@ -11,7 +11,7 @@
 - Angular application routes discovered: 184.
 - MVC surfaces with a verified Angular counterpart: 82.
 - Remaining MVC surfaces without a mapped Angular counterpart: 0.
-- Allowlisted Angular-default cutover actions: 107.
+- Allowlisted Angular-default cutover actions: 111.
 
 Remaining surfaces: none.
 
@@ -196,11 +196,11 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | SupplierPayments | Index.cshtml | Angular Pilot | /purchases/payments | MiniStore.Web/Views/SupplierPayments/Index.cshtml |
 | SupplierPortal | Index.cshtml | Angular Pilot | /supplier-portal/:token | MiniStore.Web/Views/SupplierPortal/Index.cshtml |
 | SupplierPortal | Unavailable.cshtml | Angular Pilot | /supplier-portal/:token | MiniStore.Web/Views/SupplierPortal/Unavailable.cshtml |
-| SupplierPurchasing | ImportPreview.cshtml | Angular Pilot | /purchases/supplier-terms | MiniStore.Web/Views/SupplierPurchasing/ImportPreview.cshtml |
-| SupplierPurchasing | Index.cshtml | Angular Pilot | /purchases/supplier-terms | MiniStore.Web/Views/SupplierPurchasing/Index.cshtml |
-| SupplierPurchasing | PriceBreaks.cshtml | Angular Pilot | /purchases/supplier-terms | MiniStore.Web/Views/SupplierPurchasing/PriceBreaks.cshtml |
-| SupplierPurchasing | PriceExceptions.cshtml | Angular Pilot | /purchases/supplier-terms | MiniStore.Web/Views/SupplierPurchasing/PriceExceptions.cshtml |
-| SupplierPurchasing | PriceHistory.cshtml | Angular Pilot | /purchases/supplier-terms | MiniStore.Web/Views/SupplierPurchasing/PriceHistory.cshtml |
+| SupplierPurchasing | ImportPreview.cshtml | Angular Default | /purchases/supplier-terms | MiniStore.Web/Views/SupplierPurchasing/ImportPreview.cshtml |
+| SupplierPurchasing | Index.cshtml | Angular Default | /purchases/supplier-terms | MiniStore.Web/Views/SupplierPurchasing/Index.cshtml |
+| SupplierPurchasing | PriceBreaks.cshtml | Angular Default | /purchases/supplier-terms | MiniStore.Web/Views/SupplierPurchasing/PriceBreaks.cshtml |
+| SupplierPurchasing | PriceExceptions.cshtml | Angular Default | /purchases/supplier-terms | MiniStore.Web/Views/SupplierPurchasing/PriceExceptions.cshtml |
+| SupplierPurchasing | PriceHistory.cshtml | Angular Default | /purchases/supplier-terms | MiniStore.Web/Views/SupplierPurchasing/PriceHistory.cshtml |
 | SupplierQuotations | Comparison.cshtml | Angular Default | /purchases/sourcing | MiniStore.Web/Views/SupplierQuotations/Comparison.cshtml |
 | SupplierQuotations | Create.cshtml | Angular Default | /purchases/sourcing | MiniStore.Web/Views/SupplierQuotations/Create.cshtml |
 | Suppliers | Create.cshtml | Angular Default | /suppliers | MiniStore.Web/Views/Suppliers/Create.cshtml |
@@ -582,20 +582,20 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | SupplierPortal | RecordDenied | POST | Angular Pilot | /supplier-portal/:token | — | MiniStore.Web/Controllers/Purchases/SupplierPortalController.cs |
 | SupplierPortal | RecordDenied | POST | Angular Pilot | /supplier-portal/:token | — | MiniStore.Web/Controllers/Purchases/SupplierPortalController.cs |
 | SupplierPortal | RecordDenied | POST | Angular Pilot | /supplier-portal/:token | — | MiniStore.Web/Controllers/Purchases/SupplierPortalController.cs |
-| SupplierPurchasing | ExportCsv | GET | Angular Pilot | /purchases/supplier-terms | — | MiniStore.Web/Controllers/Purchases/SupplierPurchasingController.cs |
-| SupplierPurchasing | ExportExcel | GET | Angular Pilot | /purchases/supplier-terms | — | MiniStore.Web/Controllers/Purchases/SupplierPurchasingController.cs |
-| SupplierPurchasing | ImportCsv | POST | Angular Pilot | /purchases/supplier-terms | — | MiniStore.Web/Controllers/Purchases/SupplierPurchasingController.cs |
-| SupplierPurchasing | ImportExcel | POST | Angular Pilot | /purchases/supplier-terms | — | MiniStore.Web/Controllers/Purchases/SupplierPurchasingController.cs |
-| SupplierPurchasing | Index | GET | Angular Pilot | /purchases/supplier-terms | — | MiniStore.Web/Controllers/Purchases/SupplierPurchasingController.cs |
-| SupplierPurchasing | PreviewCsv | POST | Angular Pilot | /purchases/supplier-terms | — | MiniStore.Web/Controllers/Purchases/SupplierPurchasingController.cs |
-| SupplierPurchasing | PreviewExcel | POST | Angular Pilot | /purchases/supplier-terms | — | MiniStore.Web/Controllers/Purchases/SupplierPurchasingController.cs |
-| SupplierPurchasing | PriceBreaks | GET | Angular Pilot | /purchases/supplier-terms | — | MiniStore.Web/Controllers/Purchases/SupplierPurchasingController.cs |
-| SupplierPurchasing | PriceExceptions | GET | Angular Pilot | /purchases/supplier-terms | — | MiniStore.Web/Controllers/Purchases/SupplierPurchasingController.cs |
-| SupplierPurchasing | PriceHistory | GET | Angular Pilot | /purchases/supplier-terms | — | MiniStore.Web/Controllers/Purchases/SupplierPurchasingController.cs |
-| SupplierPurchasing | Save | POST | Angular Pilot | /purchases/supplier-terms | — | MiniStore.Web/Controllers/Purchases/SupplierPurchasingController.cs |
-| SupplierPurchasing | SaveBulk | POST | Angular Pilot | /purchases/supplier-terms | — | MiniStore.Web/Controllers/Purchases/SupplierPurchasingController.cs |
-| SupplierPurchasing | SavePriceBreaks | POST | Angular Pilot | /purchases/supplier-terms | — | MiniStore.Web/Controllers/Purchases/SupplierPurchasingController.cs |
-| SupplierPurchasing | SetActive | POST | Angular Pilot | /purchases/supplier-terms | — | MiniStore.Web/Controllers/Purchases/SupplierPurchasingController.cs |
+| SupplierPurchasing | ExportCsv | GET | Angular Default | /purchases/supplier-terms | — | MiniStore.Web/Controllers/Purchases/SupplierPurchasingController.cs |
+| SupplierPurchasing | ExportExcel | GET | Angular Default | /purchases/supplier-terms | — | MiniStore.Web/Controllers/Purchases/SupplierPurchasingController.cs |
+| SupplierPurchasing | ImportCsv | POST | Angular Default | /purchases/supplier-terms | — | MiniStore.Web/Controllers/Purchases/SupplierPurchasingController.cs |
+| SupplierPurchasing | ImportExcel | POST | Angular Default | /purchases/supplier-terms | — | MiniStore.Web/Controllers/Purchases/SupplierPurchasingController.cs |
+| SupplierPurchasing | Index | GET | Angular Default | /purchases/supplier-terms | /purchases/supplier-terms | MiniStore.Web/Controllers/Purchases/SupplierPurchasingController.cs |
+| SupplierPurchasing | PreviewCsv | POST | Angular Default | /purchases/supplier-terms | — | MiniStore.Web/Controllers/Purchases/SupplierPurchasingController.cs |
+| SupplierPurchasing | PreviewExcel | POST | Angular Default | /purchases/supplier-terms | — | MiniStore.Web/Controllers/Purchases/SupplierPurchasingController.cs |
+| SupplierPurchasing | PriceBreaks | GET | Angular Default | /purchases/supplier-terms | /purchases/supplier-terms/{id}/price-breaks | MiniStore.Web/Controllers/Purchases/SupplierPurchasingController.cs |
+| SupplierPurchasing | PriceExceptions | GET | Angular Default | /purchases/supplier-terms | /purchases/supplier-terms/exceptions | MiniStore.Web/Controllers/Purchases/SupplierPurchasingController.cs |
+| SupplierPurchasing | PriceHistory | GET | Angular Default | /purchases/supplier-terms | /purchases/supplier-terms/{id}/history | MiniStore.Web/Controllers/Purchases/SupplierPurchasingController.cs |
+| SupplierPurchasing | Save | POST | Angular Default | /purchases/supplier-terms | — | MiniStore.Web/Controllers/Purchases/SupplierPurchasingController.cs |
+| SupplierPurchasing | SaveBulk | POST | Angular Default | /purchases/supplier-terms | — | MiniStore.Web/Controllers/Purchases/SupplierPurchasingController.cs |
+| SupplierPurchasing | SavePriceBreaks | POST | Angular Default | /purchases/supplier-terms | — | MiniStore.Web/Controllers/Purchases/SupplierPurchasingController.cs |
+| SupplierPurchasing | SetActive | POST | Angular Default | /purchases/supplier-terms | — | MiniStore.Web/Controllers/Purchases/SupplierPurchasingController.cs |
 | SupplierQuotations | RedirectToAction | GET, POST | Angular Default | /purchases/sourcing | — | MiniStore.Web/Controllers/Purchases/SupplierQuotationsController.cs |
 | SupplierQuotations | RedirectToAction | GET, POST | Angular Default | /purchases/sourcing | — | MiniStore.Web/Controllers/Purchases/SupplierQuotationsController.cs |
 | Suppliers | Create | GET | Angular Default | /suppliers | /suppliers/new | MiniStore.Web/Controllers/Suppliers/SuppliersController.cs |

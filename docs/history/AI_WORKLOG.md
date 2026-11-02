@@ -1,5 +1,11 @@
 # AI Work Log
 
+- 2026-11-02: Completed `MOD-030E4R`. SupplierPurchasing Index/PriceExceptions/positive-ID PriceBreaks/PriceHistory GET
+  now uses exact AngularDefault routes; filters are preserved, while exports and all mutations remain outside cutover.
+  Hosted 15/15, cutover/rollback 101/101 and 1,622 backend checks passed without data changes. No purchasing-info row
+  existed for live price-route probes. Forty-nine surfaces are AngularDefault and 33 remain MVC-default; execution
+  advances to `MOD-030E4S`.
+
 - 2026-11-02: Completed `MOD-030E4Q`. PurchaseAgreements Index/query-bound Create/positive-ID Details GET now uses exact
   AngularDefault routes; all lifecycle/release POST actions remain outside cutover. Hosted 15/15, cutover/rollback 99/99
   and 1,610 backend checks passed without data changes. The fixture now probes for an eligible awarded sourcing event,

@@ -1,17 +1,16 @@
 # المهمة التالية الوحيدة / Next Task
 
-## `MOD-030E4R` — بيانات شراء المورد / Supplier Purchasing Cutover
+## `MOD-030E4S` — اتصالات الموردين / Supplier Communications Cutover
 
 > الحالة: APPROVED
 
-اكتمل `MOD-030E4Q`: أصبحت PurchaseAgreements السطح 48 بعد hosted ‏15/15 والقطع والرجوع 99/99 والبوابة 1,610. اختُبر Create بحدث توريد مؤهل، ولم توجد اتفاقية محفوظة لاختبار Details حياً. بقي 34 سطحًا MVC.
+اكتمل `MOD-030E4R`: أصبحت SupplierPurchasing السطح 49 بعد hosted ‏15/15 والقطع والرجوع 101/101 والبوابة 1,622. لم يوجد صف بيانات شراء مورد لاختبار مسارات الأسعار حياً. بقي 33 سطحًا MVC.
 
 ### النطاق المحدود
 
-- SupplierPurchasing Index GET إلى `/purchases/supplier-terms` مع supplierId الاختياري.
-- PriceExceptions GET إلى `/purchases/supplier-terms/exceptions` مع المرشحات.
-- PriceBreaks/PriceHistory GET للمعرّفات الموجبة إلى مسارات Angular الدقيقة.
-- Export/preview/import/save/status actions تبقى خارج التحويل.
+- SupplierCommunications Details GET ذو المعرّف الموجب إلى `/purchases/communications/{id}`.
+- Prepare وRecordActivity POST تبقيان خارج التحويل.
+- Attachment GET يبقى تنزيل ملف مباشر خارج presentation cutover.
 
 ### القبول
 

@@ -257,7 +257,13 @@ static async Task RunLiveCutoverAsync(
             "PurchaseServiceAcceptances.View"),
         new("/PurchaseAgreements",
             "/app/purchases/agreements",
-            "PurchaseAgreements.View")
+            "PurchaseAgreements.View"),
+        new("/SupplierPurchasing",
+            "/app/purchases/supplier-terms",
+            "Purchases.SupplierTerms.View"),
+        new("/SupplierPurchasing/PriceExceptions?type=1&page=1",
+            "/app/purchases/supplier-terms/exceptions?type=1&page=1",
+            "Purchases.SupplierTerms.View")
     };
 
     if (permissions.Contains("Customers.View"))
@@ -547,6 +553,23 @@ static async Task RunLiveCutoverAsync(
                 $"/app/purchases/agreements/{id}", "PurchaseAgreements.View"));
         }
     }
+    if (permissions.Contains("Purchases.SupplierTerms.View"))
+    {
+        var response = await authenticated.GetAsync("/api/v1/supplier-purchasing");
+        Require(response.Ok, $"Supplier-purchasing cutover fixture read returned {response.Status}.");
+        using var supplierPurchasing = JsonDocument.Parse(await response.TextAsync());
+        var rows = supplierPurchasing.RootElement.GetProperty("rows");
+        if (rows.ValueKind == JsonValueKind.Array && rows.GetArrayLength() > 0)
+        {
+            var id = rows[0].GetProperty("id").GetInt32();
+            routes.Add(new($"/SupplierPurchasing/PriceBreaks/{id}",
+                $"/app/purchases/supplier-terms/{id}/price-breaks",
+                "Purchases.SupplierTerms.View"));
+            routes.Add(new($"/SupplierPurchasing/PriceHistory/{id}",
+                $"/app/purchases/supplier-terms/{id}/history",
+                "Purchases.SupplierTerms.View"));
+        }
+    }
     if (permissions.Contains("InventoryAdjustments.View"))
     {
         var response = await authenticated.GetAsync("/api/v1/inventory-adjustments");
@@ -635,6 +658,8 @@ static async Task RunLiveCutoverAsync(
                          surface is "PurchaseServiceAcceptances";
         expectsAngular = expectsAngular || options.CutoverMode == "pilot" &&
                          surface is "PurchaseAgreements";
+        expectsAngular = expectsAngular || options.CutoverMode == "pilot" &&
+                         surface is "SupplierPurchasing";
         if (expectsAngular)
         {
             Require(response.Status is 301 or 302 or 307 or 308,

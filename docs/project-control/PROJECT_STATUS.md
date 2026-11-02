@@ -240,3 +240,7 @@ goodsReceiptId الموجب والحفاظ عليه، وبقي Create POST خا�
 Create/Activate/Cancel/Release POST خارج التحويل. نجح hosted ‏15/15 والقطع والرجوع 99/99 والبوابة 1,610 backend دون
 إنشاء بيانات. اختار fixture حدث توريد مؤهلاً ذا award وتجنب حدثاً غير مؤهل كان يعيد 500 من MVC؛ لم توجد اتفاقية محفوظة
 لاختبار Details حياً. أصبحت 48 سطحًا AngularDefault وبقي 34 سطحًا MVC؛ ينتقل التنفيذ إلى `MOD-030E4R` لبيانات شراء المورد.
+اكتمل `MOD-030E4R`: أصبحت SupplierPurchasing لمسارات Index/PriceExceptions/PriceBreaks/PriceHistory GET الدقيقة
+AngularDefault، وبقيت التنزيلات والاستيراد والحفظ وتغيير الحالة خارج التحويل. نجح hosted ‏15/15 والقطع والرجوع 101/101
+والبوابة 1,622 backend دون إنشاء بيانات؛ لم يوجد صف بيانات شراء مورد لاختبار مساري الأسعار حياً. أصبحت 49 سطحًا
+AngularDefault وبقي 33 سطحًا MVC؛ ينتقل التنفيذ إلى `MOD-030E4S` لاتصالات الموردين.

@@ -909,6 +909,52 @@ Check(purchaseAgreementsCutoverResolver.Resolve(cutoverContext.Request,
               "PurchaseAgreements", "Details",
               new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = id }) is null),
     "Purchase-agreement cutover must reject unsafe sourcing-event and agreement identifiers");
+var supplierPurchasingCutoverResolver = new PresentationCutoverResolver(Options.Create(
+    new PresentationCutoverOptions
+    {
+        AngularBasePath = "/app",
+        Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["SupplierPurchasing"] = PresentationCutoverMode.AngularDefault
+        }
+    }));
+cutoverContext.Request.QueryString =
+    new Microsoft.AspNetCore.Http.QueryString("?supplierId=17&source=cutover");
+Check(supplierPurchasingCutoverResolver.Resolve(cutoverContext.Request,
+          "SupplierPurchasing", "Index",
+          new Microsoft.AspNetCore.Routing.RouteValueDictionary()) ==
+      "/app/purchases/supplier-terms?supplierId=17&source=cutover",
+    "Supplier-purchasing cutover must preserve the optional supplier filter");
+cutoverContext.Request.QueryString =
+    new Microsoft.AspNetCore.Http.QueryString("?type=1&page=2");
+Check(supplierPurchasingCutoverResolver.Resolve(cutoverContext.Request,
+          "SupplierPurchasing", "PriceExceptions",
+          new Microsoft.AspNetCore.Routing.RouteValueDictionary()) ==
+      "/app/purchases/supplier-terms/exceptions?type=1&page=2",
+    "Supplier-purchasing cutover must preserve exception filters");
+cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?source=cutover");
+Check(supplierPurchasingCutoverResolver.Resolve(cutoverContext.Request,
+          "SupplierPurchasing", "PriceBreaks",
+          new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 17 }) ==
+      "/app/purchases/supplier-terms/17/price-breaks?source=cutover" &&
+      supplierPurchasingCutoverResolver.Resolve(cutoverContext.Request,
+          "SupplierPurchasing", "PriceHistory",
+          new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 17 }) ==
+      "/app/purchases/supplier-terms/17/history?source=cutover",
+    "Supplier-purchasing cutover must resolve positive-ID price routes");
+Check(new long[] { -1, 0 }.All(id =>
+          supplierPurchasingCutoverResolver.Resolve(cutoverContext.Request,
+              "SupplierPurchasing", "PriceBreaks",
+              new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = id }) is null &&
+          supplierPurchasingCutoverResolver.Resolve(cutoverContext.Request,
+              "SupplierPurchasing", "PriceHistory",
+              new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = id }) is null) &&
+      new[] { "ExportCsv", "ExportExcel", "SaveBulk", "PreviewCsv", "PreviewExcel",
+              "ImportCsv", "ImportExcel", "SavePriceBreaks", "Save", "SetActive" }
+          .All(action => supplierPurchasingCutoverResolver.Resolve(cutoverContext.Request,
+              "SupplierPurchasing", action,
+              new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 17 }) is null),
+    "Supplier-purchasing cutover must reject unsafe IDs and keep exports and mutations outside cutover");
 cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?page=2");
 foreach (var entry in PresentationCutoverRouteCatalog.All)
 {
