@@ -278,3 +278,7 @@ AngularDefault وبقي 25 سطحًا MVC؛ ينتقل التنفيذ إلى `MO
 Create/Post/Cancel تعمل عبر API خارج تحويل العرض. نجح hosted ‏15/15 والقطع والرجوع 104/104 والبوابة 1,680 backend.
 لم تحمل الجلسة صلاحيات التسليمات ولم تتغير بيانات تسليم/مخزون/محاسبة. أصبحت 58 سطحًا AngularDefault وبقي 24 سطحًا
 MVC؛ ينتقل التنفيذ إلى `MOD-030E5A` لفواتير العملاء.
+اكتمل `MOD-030E5A`: أصبحت CustomerInvoices Index/Create/Details GET AngularDefault مع تحقق salesOrderId، وبقيت
+Create/Approve/Cancel/Post/Reverse تعمل عبر API خارج تحويل العرض. نجح hosted ‏15/15 والقطع والرجوع 104/104 والبوابة
+1,689 backend. لم تحمل الجلسة صلاحيات الفواتير ولم تتغير فاتورة أو ذمم أو قيود. أصبحت 59 سطحًا AngularDefault وبقي
+23 سطحًا MVC؛ ينتقل التنفيذ إلى `MOD-030E5B` لتحصيلات العملاء.

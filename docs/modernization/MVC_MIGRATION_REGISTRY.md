@@ -11,7 +11,7 @@
 - Angular application routes discovered: 184.
 - MVC surfaces with a verified Angular counterpart: 82.
 - Remaining MVC surfaces without a mapped Angular counterpart: 0.
-- Allowlisted Angular-default cutover actions: 130.
+- Allowlisted Angular-default cutover actions: 133.
 
 Remaining surfaces: none.
 
@@ -35,9 +35,9 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | CustomerCreditNotes | Create.cshtml | Angular Pilot | /sales/credit-notes | MiniStore.Web/Views/CustomerCreditNotes/Create.cshtml |
 | CustomerCreditNotes | Details.cshtml | Angular Pilot | /sales/credit-notes | MiniStore.Web/Views/CustomerCreditNotes/Details.cshtml |
 | CustomerCreditNotes | Index.cshtml | Angular Pilot | /sales/credit-notes | MiniStore.Web/Views/CustomerCreditNotes/Index.cshtml |
-| CustomerInvoices | Create.cshtml | Angular Pilot | /sales/invoices | MiniStore.Web/Views/CustomerInvoices/Create.cshtml |
-| CustomerInvoices | Details.cshtml | Angular Pilot | /sales/invoices | MiniStore.Web/Views/CustomerInvoices/Details.cshtml |
-| CustomerInvoices | Index.cshtml | Angular Pilot | /sales/invoices | MiniStore.Web/Views/CustomerInvoices/Index.cshtml |
+| CustomerInvoices | Create.cshtml | Angular Default | /sales/invoices | MiniStore.Web/Views/CustomerInvoices/Create.cshtml |
+| CustomerInvoices | Details.cshtml | Angular Default | /sales/invoices | MiniStore.Web/Views/CustomerInvoices/Details.cshtml |
+| CustomerInvoices | Index.cshtml | Angular Default | /sales/invoices | MiniStore.Web/Views/CustomerInvoices/Index.cshtml |
 | CustomerPayments | Create.cshtml | Angular Pilot | /sales/payments | MiniStore.Web/Views/CustomerPayments/Create.cshtml |
 | CustomerPayments | Details.cshtml | Angular Pilot | /sales/payments | MiniStore.Web/Views/CustomerPayments/Details.cshtml |
 | CustomerPayments | Index.cshtml | Angular Pilot | /sales/payments | MiniStore.Web/Views/CustomerPayments/Index.cshtml |
@@ -244,14 +244,14 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | CompanyOnboarding | Index | GET | Angular Pilot | /onboarding | — | MiniStore.Web/Controllers/Saas/CompanyOnboardingController.cs |
 | CompanyOnboarding | Skip | POST | Angular Pilot | /onboarding | — | MiniStore.Web/Controllers/Saas/CompanyOnboardingController.cs |
 | CustomerCreditNotes | RedirectToAction | GET, POST | Angular Pilot | /sales/credit-notes | — | MiniStore.Web/Controllers/Sales/CustomerCreditNotesController.cs |
-| CustomerInvoices | Approve | POST | Angular Pilot | /sales/invoices | — | MiniStore.Web/Controllers/Sales/CustomerInvoicesController.cs |
-| CustomerInvoices | Cancel | POST | Angular Pilot | /sales/invoices | — | MiniStore.Web/Controllers/Sales/CustomerInvoicesController.cs |
-| CustomerInvoices | Create | GET | Angular Pilot | /sales/invoices | — | MiniStore.Web/Controllers/Sales/CustomerInvoicesController.cs |
-| CustomerInvoices | Create | POST | Angular Pilot | /sales/invoices | — | MiniStore.Web/Controllers/Sales/CustomerInvoicesController.cs |
-| CustomerInvoices | Details | GET | Angular Pilot | /sales/invoices | — | MiniStore.Web/Controllers/Sales/CustomerInvoicesController.cs |
-| CustomerInvoices | Index | GET | Angular Pilot | /sales/invoices | — | MiniStore.Web/Controllers/Sales/CustomerInvoicesController.cs |
-| CustomerInvoices | Post | POST | Angular Pilot | /sales/invoices | — | MiniStore.Web/Controllers/Sales/CustomerInvoicesController.cs |
-| CustomerInvoices | Reverse | POST | Angular Pilot | /sales/invoices | — | MiniStore.Web/Controllers/Sales/CustomerInvoicesController.cs |
+| CustomerInvoices | Approve | POST | Angular Default | /sales/invoices | — | MiniStore.Web/Controllers/Sales/CustomerInvoicesController.cs |
+| CustomerInvoices | Cancel | POST | Angular Default | /sales/invoices | — | MiniStore.Web/Controllers/Sales/CustomerInvoicesController.cs |
+| CustomerInvoices | Create | GET | Angular Default | /sales/invoices | /sales/invoices/new?salesOrderId={salesOrderId} | MiniStore.Web/Controllers/Sales/CustomerInvoicesController.cs |
+| CustomerInvoices | Create | POST | Angular Default | /sales/invoices | /sales/invoices/new?salesOrderId={salesOrderId} | MiniStore.Web/Controllers/Sales/CustomerInvoicesController.cs |
+| CustomerInvoices | Details | GET | Angular Default | /sales/invoices | /sales/invoices/{id} | MiniStore.Web/Controllers/Sales/CustomerInvoicesController.cs |
+| CustomerInvoices | Index | GET | Angular Default | /sales/invoices | /sales/invoices | MiniStore.Web/Controllers/Sales/CustomerInvoicesController.cs |
+| CustomerInvoices | Post | POST | Angular Default | /sales/invoices | — | MiniStore.Web/Controllers/Sales/CustomerInvoicesController.cs |
+| CustomerInvoices | Reverse | POST | Angular Default | /sales/invoices | — | MiniStore.Web/Controllers/Sales/CustomerInvoicesController.cs |
 | CustomerPayments | Create | GET | Angular Pilot | /sales/payments | — | MiniStore.Web/Controllers/Sales/CustomerPaymentsController.cs |
 | CustomerPayments | Create | POST | Angular Pilot | /sales/payments | — | MiniStore.Web/Controllers/Sales/CustomerPaymentsController.cs |
 | CustomerPayments | Details | GET | Angular Pilot | /sales/payments | — | MiniStore.Web/Controllers/Sales/CustomerPaymentsController.cs |

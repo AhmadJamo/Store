@@ -175,3 +175,9 @@ The query-bound `salesOrderId` is validated and preserved in the composer route.
 protected API-backed POST actions outside presentation cutover. Hosted 15/15, the current authorized route set
 cutover/rollback 104/104 and 1,680 backend checks passed. The session lacked delivery permissions for live probes;
 resolver behavior is regression-covered and no delivery, stock or accounting data changed.
+
+`MOD-030E5A` makes CustomerInvoices Index/positive-order Create/positive-ID Details GET presentation AngularDefault.
+The source `salesOrderId` is validated and preserved. Create, approve, cancel, post and reverse remain protected
+API-backed POST actions outside presentation cutover. Hosted 15/15, the current authorized route set cutover/rollback
+104/104 and 1,689 backend checks passed. The session lacked invoice permissions for live probes; resolver behavior is
+regression-covered and no invoice, receivable or journal changed.

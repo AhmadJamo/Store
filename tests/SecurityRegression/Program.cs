@@ -1220,6 +1220,43 @@ Check(new long[] { -1, 0 }.All(id =>
               "SalesDeliveries", action,
               new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 17 }) is null),
     "Sales-delivery cutover must reject unsafe IDs and keep post/cancel mutations outside cutover");
+var customerInvoiceCutoverResolver = new PresentationCutoverResolver(Options.Create(
+    new PresentationCutoverOptions
+    {
+        AngularBasePath = "/app",
+        Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["CustomerInvoices"] = PresentationCutoverMode.AngularDefault
+        }
+    }));
+cutoverContext.Request.QueryString =
+    new Microsoft.AspNetCore.Http.QueryString("?status=1&search=cutover");
+Check(customerInvoiceCutoverResolver.Resolve(cutoverContext.Request,
+          "CustomerInvoices", "Index", new Microsoft.AspNetCore.Routing.RouteValueDictionary()) ==
+      "/app/sales/invoices?status=1&search=cutover" &&
+      customerInvoiceCutoverResolver.Resolve(cutoverContext.Request,
+          "CustomerInvoices", "Details",
+          new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 17 }) ==
+      "/app/sales/invoices/17?status=1&search=cutover",
+    "Customer-invoice cutover must resolve list and positive-ID details routes");
+cutoverContext.Request.QueryString =
+    new Microsoft.AspNetCore.Http.QueryString("?salesOrderId=19&source=cutover");
+Check(customerInvoiceCutoverResolver.Resolve(cutoverContext.Request,
+          "CustomerInvoices", "Create", new Microsoft.AspNetCore.Routing.RouteValueDictionary()) ==
+      "/app/sales/invoices/new?salesOrderId=19&source=cutover",
+    "Customer-invoice cutover must validate and consume the source sales-order identifier");
+cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?salesOrderId=0");
+Check(new long[] { -1, 0 }.All(id =>
+          customerInvoiceCutoverResolver.Resolve(cutoverContext.Request,
+              "CustomerInvoices", "Details",
+              new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = id }) is null) &&
+      customerInvoiceCutoverResolver.Resolve(cutoverContext.Request,
+          "CustomerInvoices", "Create", new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null &&
+      new[] { "Approve", "Cancel", "Post", "Reverse" }.All(action =>
+          customerInvoiceCutoverResolver.Resolve(cutoverContext.Request,
+              "CustomerInvoices", action,
+              new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 17 }) is null),
+    "Customer-invoice cutover must reject unsafe IDs and keep lifecycle/accounting mutations outside cutover");
 cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?page=2");
 foreach (var entry in PresentationCutoverRouteCatalog.All)
 {

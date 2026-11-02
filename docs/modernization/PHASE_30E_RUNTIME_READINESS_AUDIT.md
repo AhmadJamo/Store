@@ -279,6 +279,13 @@ POST operations outside cutover. Hosted 15/15, the current authorized route set 
 backend checks passed. The session lacked delivery permissions for live probes; exact routes and exclusions are
 regression-covered and no delivery/stock/accounting changed. Fifty-eight surfaces are AngularDefault and 24 remain MVC.
 
+## MOD-030E5A evidence
+
+CustomerInvoices Index/positive-order Create/positive-ID Details joins AngularDefault; create/approve/cancel/post/reverse
+remain API-backed POST actions outside cutover. Hosted 15/15, the current authorized route set cutover/rollback 104/104
+and 1,689 backend checks passed. The session lacked invoice permissions for live probes; exact routes and exclusions are
+regression-covered and no invoice/accounting changed. Fifty-nine surfaces are AngularDefault and 23 remain MVC-default.
+
 ## MOD-030E4S evidence
 
 SupplierCommunications positive-ID Details joins AngularDefault; Prepare/RecordActivity and attachment download remain
