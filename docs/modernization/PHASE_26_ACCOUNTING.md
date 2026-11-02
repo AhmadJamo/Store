@@ -2,7 +2,7 @@
 
 > Status: COMPLETE — `MOD-026A..B` COMPLETE on 2026-10-29
 >
-> Presentation default: MVC until a separate cutover approval.
+> Presentation default: Chart of Accounts is AngularDefault after `MOD-030E5J`; Journal Entry details remains MVC pending `MOD-030E5K`.
 
 ## Scope
 
@@ -33,3 +33,10 @@ posting, source uniqueness, balance and close authority remains in Application/D
 
 The current accounting settings, fiscal periods, taxes, payment methods and branch account mappings were already migrated in earlier
 slices. `MOD-027A` starts the remaining SaaS presentation with tenant subscription and checkout.
+
+## Runtime cutover update
+
+`MOD-030E5J` makes only the Chart of Accounts Index GET presentation AngularDefault at `/accounting/accounts`. The create GET/POST
+surface remains outside the presentation catalog, and the Angular create command continues through the independently protected,
+antiforgery-validated API over `AccountService`. Hosted 15/15, rendered Angular/API financial reconciliation, cutover/MVC rollback
+125/125 and 1,760 backend checks passed without creating an account or changing a journal.

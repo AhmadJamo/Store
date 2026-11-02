@@ -11,7 +11,7 @@
 - Angular application routes discovered: 184.
 - MVC surfaces with a verified Angular counterpart: 82.
 - Remaining MVC surfaces without a mapped Angular counterpart: 0.
-- Allowlisted Angular-default cutover actions: 156.
+- Allowlisted Angular-default cutover actions: 157.
 
 Remaining surfaces: none.
 
@@ -24,8 +24,8 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | Account | AccessDenied.cshtml | Angular Pilot | /login, /register, /access-denied | MiniStore.Web/Views/Account/AccessDenied.cshtml |
 | Account | Login.cshtml | Angular Pilot | /login, /register, /access-denied | MiniStore.Web/Views/Account/Login.cshtml |
 | Account | Register.cshtml | Angular Pilot | /login, /register, /access-denied | MiniStore.Web/Views/Account/Register.cshtml |
-| Accounts | Create.cshtml | Angular Pilot | /accounting/accounts | MiniStore.Web/Views/Accounts/Create.cshtml |
-| Accounts | Index.cshtml | Angular Pilot | /accounting/accounts | MiniStore.Web/Views/Accounts/Index.cshtml |
+| Accounts | Create.cshtml | Angular Default | /accounting/accounts | MiniStore.Web/Views/Accounts/Create.cshtml |
+| Accounts | Index.cshtml | Angular Default | /accounting/accounts | MiniStore.Web/Views/Accounts/Index.cshtml |
 | AnalyticsCenter | Create.cshtml | Angular Default | /analytics | MiniStore.Web/Views/AnalyticsCenter/Create.cshtml |
 | AnalyticsCenter | Index.cshtml | Angular Default | /analytics | MiniStore.Web/Views/AnalyticsCenter/Index.cshtml |
 | AuditEvents | Index.cshtml | Angular Default | /audit-events | MiniStore.Web/Views/AuditEvents/Index.cshtml |
@@ -231,9 +231,9 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | Account | Logout | POST | Angular Pilot | /login, /register, /access-denied | — | MiniStore.Web/Controllers/Security/AccountController.cs |
 | Account | Register | GET | Angular Pilot | /login, /register, /access-denied | — | MiniStore.Web/Controllers/Security/AccountController.cs |
 | Account | Register | POST | Angular Pilot | /login, /register, /access-denied | — | MiniStore.Web/Controllers/Security/AccountController.cs |
-| Accounts | Create | GET | Angular Pilot | /accounting/accounts | — | MiniStore.Web/Controllers/Accounting/AccountsController.cs |
-| Accounts | Create | GET, POST | Angular Pilot | /accounting/accounts | — | MiniStore.Web/Controllers/Accounting/AccountsController.cs |
-| Accounts | Index | ANY | Angular Pilot | /accounting/accounts | — | MiniStore.Web/Controllers/Accounting/AccountsController.cs |
+| Accounts | Create | GET | Angular Default | /accounting/accounts | — | MiniStore.Web/Controllers/Accounting/AccountsController.cs |
+| Accounts | Create | GET, POST | Angular Default | /accounting/accounts | — | MiniStore.Web/Controllers/Accounting/AccountsController.cs |
+| Accounts | Index | ANY | Angular Default | /accounting/accounts | /accounting/accounts | MiniStore.Web/Controllers/Accounting/AccountsController.cs |
 | AnalyticsCenter | Create | GET | Angular Default | /analytics | /analytics/builder | MiniStore.Web/Controllers/Analytics/AnalyticsCenterController.cs |
 | AnalyticsCenter | Create | POST | Angular Default | /analytics | /analytics/builder | MiniStore.Web/Controllers/Analytics/AnalyticsCenterController.cs |
 | AnalyticsCenter | Index | GET | Angular Default | /analytics | /analytics | MiniStore.Web/Controllers/Analytics/AnalyticsCenterController.cs |

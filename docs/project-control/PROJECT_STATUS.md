@@ -308,3 +308,7 @@ sourceTemplateId غير الموجب، وبقي الإنشاء ودورة الح
 اكتمل `MOD-030E5I`: أصبحت SalesReturns Index/Create/Details GET AngularDefault وبقي create-and-post عبر API. نجح
 hosted ‏15/15 والقطع/الرجوع 124/124 والبوابة 1,748 بلا مرتجع أو تغيير مخزون أو قيد. أصبحت 67 سطحًا AngularDefault
 وبقي 15 سطحًا MVC؛ ينتقل التنفيذ إلى `MOD-030E5J` لشجرة الحسابات.
+اكتمل `MOD-030E5J`: أصبحت Accounts Index GET AngularDefault وبقي إنشاء الحساب خارج presentation cutover خلف الصلاحية
+وantiforgery و`AccountService`. نجح hosted ‏15/15 مع مصالحة الحسابات بين Angular المرسوم وAPI، والقطع/الرجوع
+125/125، والبوابة 1,760 بلا إنشاء حساب أو تغيير قيد. أصبحت 68 سطحًا AngularDefault وبقي 14 سطحًا MVC؛ ينتقل
+التنفيذ إلى `MOD-030E5K` لتفاصيل القيود اليومية.

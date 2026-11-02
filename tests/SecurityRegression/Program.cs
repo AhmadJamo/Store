@@ -1507,6 +1507,22 @@ Check(new long[] { -1, 0 }.All(id => legacySalesReturnsCutoverResolver.Resolve(c
       legacySalesReturnsCutoverResolver.Resolve(cutoverContext.Request,
           "SalesReturns", "Create", new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null,
     "Legacy-sales-return cutover must reject unsafe return and source-sale identifiers");
+var accountsCutoverResolver = new PresentationCutoverResolver(Options.Create(
+    new PresentationCutoverOptions
+    {
+        AngularBasePath = "/app",
+        Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["Accounts"] = PresentationCutoverMode.AngularDefault
+        }
+    }));
+cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?source=cutover");
+Check(accountsCutoverResolver.Resolve(cutoverContext.Request,
+          "Accounts", "Index", new Microsoft.AspNetCore.Routing.RouteValueDictionary()) ==
+      "/app/accounting/accounts?source=cutover" &&
+      accountsCutoverResolver.Resolve(cutoverContext.Request,
+          "Accounts", "Create", new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null,
+    "Accounts cutover must resolve the tree while keeping account creation outside presentation cutover");
 cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?page=2");
 foreach (var entry in PresentationCutoverRouteCatalog.All)
 {

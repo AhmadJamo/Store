@@ -338,6 +338,15 @@ Legacy SalesReturns Index/positive-sale Create/positive-ID Details joins Angular
 API POST. Hosted 15/15, cutover/MVC rollback 124/124 and 1,748 backend checks passed without return, stock or journal
 mutation. Sixty-seven surfaces are AngularDefault and 15 remain MVC-default.
 
+## MOD-030E5J evidence
+
+Accounts Index GET joins AngularDefault at `/accounting/accounts`; query values remain preserved. Account creation is not
+in the presentation catalog and remains behind `Administration.Access`, antiforgery and `AccountService` through the
+protected API/MVC commands. The authenticated browser acceptance now reconciles account code/name between the rendered
+Angular workspace and the API instead of expecting MVC HTML after cutover. Hosted 15/15, cutover/MVC rollback 125/125 and
+1,760 backend checks passed without account or journal mutation. Sixty-eight surfaces are AngularDefault and 14 remain
+MVC-default.
+
 ## MOD-030E4S evidence
 
 SupplierCommunications positive-ID Details joins AngularDefault; Prepare/RecordActivity and attachment download remain

@@ -317,7 +317,9 @@ static async Task RunLiveCutoverAsync(
         new("/Sales/Pos?source=cutover-rehearsal",
             "/app/sales/pos?source=cutover-rehearsal", "Sales.Create"),
         new("/SalesReturns?source=cutover-rehearsal",
-            "/app/sales/legacy-returns?source=cutover-rehearsal", "SalesReturns.View")
+            "/app/sales/legacy-returns?source=cutover-rehearsal", "SalesReturns.View"),
+        new("/Accounts?source=cutover-rehearsal",
+            "/app/accounting/accounts?source=cutover-rehearsal", "Administration.Access")
     };
 
     if (permissions.Contains("Customers.View"))
@@ -960,6 +962,8 @@ static async Task RunLiveCutoverAsync(
                          surface is "Sales";
         expectsAngular = expectsAngular || options.CutoverMode == "pilot" &&
                          surface is "SalesReturns";
+        expectsAngular = expectsAngular || options.CutoverMode == "pilot" &&
+                         surface is "Accounts";
         if (expectsAngular)
         {
             Require(response.Status is 301 or 302 or 307 or 308,
@@ -1079,6 +1083,7 @@ static async Task RunUiAsync(IPlaywright playwright, IBrowser browser, Arguments
     checks.Add(new("responsive", "passed", "Desktop and 390px mobile viewports passed."));
 
     await RunAuthenticatedInventoryUiReconciliationAsync(playwright, page, options, checks);
+    await RunAuthenticatedAccountsUiReconciliationAsync(playwright, page, options, checks);
 }
 
 static async Task RunAuthenticatedInventoryUiReconciliationAsync(
@@ -1139,6 +1144,56 @@ static async Task RunAuthenticatedInventoryUiReconciliationAsync(
         "Angular Product Stocks and product-stock API quantity did not reconcile.");
     checks.Add(new("angular-api-inventory-stocks", "passed",
         "Product, warehouse and quantity matched across the Angular screen and API."));
+}
+
+static async Task RunAuthenticatedAccountsUiReconciliationAsync(
+    IPlaywright playwright,
+    IPage page,
+    Arguments options,
+    List<CheckResult> checks)
+{
+    if (string.IsNullOrWhiteSpace(options.ApiUrl) || string.IsNullOrWhiteSpace(options.StorageStatePath))
+    {
+        return;
+    }
+
+    var apiBase = options.ApiUrl.TrimEnd('/');
+    await using var api = await playwright.APIRequest.NewContextAsync(new APIRequestNewContextOptions
+    {
+        BaseURL = apiBase,
+        IgnoreHTTPSErrors = true,
+        StorageStatePath = options.StorageStatePath
+    });
+    var sessionResponse = await api.GetAsync("/api/v1/session");
+    Require(sessionResponse.Ok, $"Authenticated UI session returned {sessionResponse.Status}.");
+    using var session = JsonDocument.Parse(await sessionResponse.TextAsync());
+    var canViewAccounts = session.RootElement.GetProperty("permissions").EnumerateArray()
+        .Any(permission => permission.GetString() == "Administration.Access");
+    if (!canViewAccounts)
+    {
+        return;
+    }
+
+    var accountsResponse = await api.GetAsync("/api/v1/accounts");
+    Require(accountsResponse.Ok, $"Chart of accounts API returned {accountsResponse.Status}.");
+    using var accounts = JsonDocument.Parse(await accountsResponse.TextAsync());
+    var accountRows = accounts.RootElement.GetProperty("accounts");
+    Require(accountRows.GetArrayLength() > 0,
+        "No chart-of-accounts sample exists for financial reconciliation.");
+    var account = accountRows[0];
+    var accountCode = account.GetProperty("code").GetString() ?? "";
+    var accountName = account.GetProperty("name").GetString() ?? "";
+
+    await page.SetViewportSizeAsync(1440, 1000);
+    await page.GotoAsync($"{apiBase}/app/accounting/accounts",
+        new PageGotoOptions { WaitUntil = WaitUntilState.DOMContentLoaded });
+    await page.Locator(".accounts-page").WaitForAsync();
+    await page.GetByText(accountCode, new PageGetByTextOptions { Exact = false }).First.WaitForAsync();
+    var accountsHtml = await page.ContentAsync();
+    Require(ContainsEncoded(accountsHtml, accountCode) && ContainsEncoded(accountsHtml, accountName),
+        "Angular/API chart-of-accounts identity fields did not reconcile.");
+    checks.Add(new("dual-run-financial-accounts", "passed",
+        "Account code and name matched across the rendered Angular workspace and API."));
 }
 
 static async Task RunApiAsync(IPlaywright playwright, Arguments options, List<CheckResult> checks)
@@ -1266,22 +1321,7 @@ static async Task RunAuthenticatedReconciliationAsync(
         {
             if (permissions.Contains("Administration.Access"))
             {
-                var accountsApi = await authenticated.GetAsync("/api/v1/accounts");
-                Require(accountsApi.Ok, $"Chart of accounts API returned {accountsApi.Status}.");
-                using var accounts = JsonDocument.Parse(await accountsApi.TextAsync());
-                var accountRows = accounts.RootElement.GetProperty("accounts");
-                Require(accountRows.GetArrayLength() > 0,
-                    "No customer invoice or chart-of-accounts sample exists for financial reconciliation.");
-                var account = accountRows[0];
-                var accountCode = account.GetProperty("code").GetString() ?? "";
-                var accountName = account.GetProperty("name").GetString() ?? "";
-                var accountsMvc = await authenticated.GetAsync("/Accounts");
-                Require(accountsMvc.Ok, $"Chart of accounts MVC read returned {accountsMvc.Status}.");
-                var accountsHtml = await accountsMvc.TextAsync();
-                Require(ContainsEncoded(accountsHtml, accountCode) && ContainsEncoded(accountsHtml, accountName),
-                    "MVC/API chart-of-accounts identity fields did not reconcile.");
-                checks.Add(new("dual-run-financial-accounts", "passed",
-                    "No invoice sample existed; account code and name matched across MVC and API."));
+                // The authenticated UI pass reconciles the rendered Angular chart with this API.
             }
             else
             {

@@ -1,5 +1,11 @@
 # AI Work Log
 
+- 2026-11-03: Completed `MOD-030E5J`. Accounts Index GET now uses AngularDefault; account creation remains outside
+  presentation cutover behind the existing Administration permission, antiforgery and `AccountService`. The hosted browser
+  gate passed 15/15 after moving the no-invoice financial fallback from non-rendered MVC HTML to rendered Angular/API
+  account reconciliation. Cutover/MVC rollback passed 125/125 and 1,760 backend checks passed without account or journal
+  mutation. Sixty-eight surfaces are AngularDefault and 14 remain MVC-default.
+
 - 2026-11-03: Completed `MOD-030E5I`. Legacy SalesReturns Index/positive-sale Create/positive-ID Details GET now use
   AngularDefault; create-and-post remains protected API POST. Hosted 15/15, cutover/MVC rollback 124/124 and 1,748
   backend checks passed without return, stock or journal mutation. Sixty-seven surfaces are AngularDefault and 15 remain

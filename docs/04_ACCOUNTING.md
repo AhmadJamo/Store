@@ -128,3 +128,8 @@ duplicate-code, parent-existence and entity validation. MVC remains default unti
 `MOD-026B` exposes immutable Journal Entry details through a read-only permission-protected API and bilingual Angular evidence
 screen. Account, branch and warehouse IDs are projected to names; source type/reference, descriptions, debit/credit and balanced
 totals are visible. The screen adds no mutation and leaves posting, uniqueness and reversal authority in accounting services.
+
+`MOD-030E5J` makes the Chart of Accounts Index GET presentation AngularDefault at `/accounting/accounts`. Account creation
+remains outside presentation cutover behind `Administration.Access`, antiforgery and `AccountService`; no account or journal
+mutation is introduced. Hosted 15/15, rendered Angular/API financial reconciliation, cutover/MVC rollback 125/125 and 1,760
+backend checks passed.
