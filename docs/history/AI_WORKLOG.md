@@ -1,5 +1,10 @@
 # AI Work Log
 
+- 2026-11-02: Completed `MOD-030E4T`. SupplierIntegrations Index/positive-ID Submission GET now uses exact
+  AngularDefault routes; UBL/submission downloads and all mutations remain outside cutover. Hosted 15/15,
+  cutover/rollback 102/102 and 1,632 backend checks passed without data changes. No saved submission existed for a live
+  details probe. Fifty-one surfaces are AngularDefault and 31 remain MVC-default; execution advances to `MOD-030E4U`.
+
 - 2026-11-02: Completed `MOD-030E4S`. SupplierCommunications positive-ID Details GET now uses the exact AngularDefault
   route; Prepare/RecordActivity POST and attachment download remain outside cutover. Hosted 15/15, cutover/rollback
   101/101 and 1,626 backend checks passed without data changes. No saved communication existed for a live Details probe.

@@ -1,17 +1,16 @@
 # المهمة التالية الوحيدة / Next Task
 
-## `MOD-030E4T` — تكاملات الموردين / Supplier Integrations Cutover
+## `MOD-030E4U` — بوابة المورد العامة / Supplier Portal Cutover
 
 > الحالة: APPROVED
 
-اكتمل `MOD-030E4S`: أصبحت SupplierCommunications السطح 50 بعد hosted ‏15/15 والقطع والرجوع 101/101 والبوابة 1,626. لم يوجد اتصال محفوظ لاختبار Details حياً. بقي 32 سطحًا MVC.
+اكتمل `MOD-030E4T`: أصبحت SupplierIntegrations السطح 51 بعد hosted ‏15/15 والقطع والرجوع 102/102 والبوابة 1,632. لم توجد Submission محفوظة لاختبار التفاصيل حياً. بقي 31 سطحًا MVC.
 
 ### النطاق المحدود
 
-- SupplierIntegrations Index GET إلى `/purchases/integrations`.
-- Submission GET ذو المعرّف الموجب إلى `/purchases/integrations/submissions/{id}`.
-- UBL وDownloadSubmission GET يبقيان تنزيل ملف مباشر خارج presentation cutover.
-- credential/portal/outbox/retry POST actions تبقى خارج التحويل.
+- SupplierPortal Index GET ذو token آمن إلى `/supplier-portal/{token}`.
+- الحفاظ على AllowAnonymous وrate limiting وno-store/no-referrer/noindex وسجل الرفض الأمني.
+- Quotation/ConfirmOrder/DeliveryNotice POST تبقى خارج التحويل.
 
 ### القبول
 

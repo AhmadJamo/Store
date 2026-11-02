@@ -982,6 +982,35 @@ Check(new long[] { -1, 0 }.All(id =>
                   ["id"] = 17, ["attachmentId"] = 1
               }) is null),
     "Supplier-communication cutover must reject unsafe IDs and keep commands and downloads outside cutover");
+var supplierIntegrationsCutoverResolver = new PresentationCutoverResolver(Options.Create(
+    new PresentationCutoverOptions
+    {
+        AngularBasePath = "/app",
+        Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["SupplierIntegrations"] = PresentationCutoverMode.AngularDefault
+        }
+    }));
+cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?source=cutover");
+Check(supplierIntegrationsCutoverResolver.Resolve(cutoverContext.Request,
+          "SupplierIntegrations", "Index",
+          new Microsoft.AspNetCore.Routing.RouteValueDictionary()) ==
+      "/app/purchases/integrations?source=cutover" &&
+      supplierIntegrationsCutoverResolver.Resolve(cutoverContext.Request,
+          "SupplierIntegrations", "Submission",
+          new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 17 }) ==
+      "/app/purchases/integrations/submissions/17?source=cutover",
+    "Supplier-integration cutover must resolve the dashboard and positive-ID submission routes");
+Check(new long[] { -1, 0 }.All(id =>
+          supplierIntegrationsCutoverResolver.Resolve(cutoverContext.Request,
+              "SupplierIntegrations", "Submission",
+              new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = id }) is null) &&
+      new[] { "CreateCredential", "DeactivateCredential", "CreatePortalAccess", "RevokePortalAccess",
+              "QueuePurchaseOrder", "Retry", "PurchaseOrderUbl", "DownloadSubmission" }.All(action =>
+          supplierIntegrationsCutoverResolver.Resolve(cutoverContext.Request,
+              "SupplierIntegrations", action,
+              new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 17 }) is null),
+    "Supplier-integration cutover must reject unsafe IDs and keep downloads and mutations outside cutover");
 cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?page=2");
 foreach (var entry in PresentationCutoverRouteCatalog.All)
 {

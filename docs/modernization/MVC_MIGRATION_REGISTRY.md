@@ -11,7 +11,7 @@
 - Angular application routes discovered: 184.
 - MVC surfaces with a verified Angular counterpart: 82.
 - Remaining MVC surfaces without a mapped Angular counterpart: 0.
-- Allowlisted Angular-default cutover actions: 112.
+- Allowlisted Angular-default cutover actions: 114.
 
 Remaining surfaces: none.
 
@@ -187,10 +187,10 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | SupplierCreditNotes | Create.cshtml | Angular Default | /purchases/credit-notes | MiniStore.Web/Views/SupplierCreditNotes/Create.cshtml |
 | SupplierCreditNotes | Details.cshtml | Angular Default | /purchases/credit-notes | MiniStore.Web/Views/SupplierCreditNotes/Details.cshtml |
 | SupplierCreditNotes | Index.cshtml | Angular Default | /purchases/credit-notes | MiniStore.Web/Views/SupplierCreditNotes/Index.cshtml |
-| SupplierIntegrations | CredentialCreated.cshtml | Angular Pilot | /purchases/integrations | MiniStore.Web/Views/SupplierIntegrations/CredentialCreated.cshtml |
-| SupplierIntegrations | Index.cshtml | Angular Pilot | /purchases/integrations | MiniStore.Web/Views/SupplierIntegrations/Index.cshtml |
-| SupplierIntegrations | PortalAccessCreated.cshtml | Angular Pilot | /purchases/integrations | MiniStore.Web/Views/SupplierIntegrations/PortalAccessCreated.cshtml |
-| SupplierIntegrations | Submission.cshtml | Angular Pilot | /purchases/integrations | MiniStore.Web/Views/SupplierIntegrations/Submission.cshtml |
+| SupplierIntegrations | CredentialCreated.cshtml | Angular Default | /purchases/integrations | MiniStore.Web/Views/SupplierIntegrations/CredentialCreated.cshtml |
+| SupplierIntegrations | Index.cshtml | Angular Default | /purchases/integrations | MiniStore.Web/Views/SupplierIntegrations/Index.cshtml |
+| SupplierIntegrations | PortalAccessCreated.cshtml | Angular Default | /purchases/integrations | MiniStore.Web/Views/SupplierIntegrations/PortalAccessCreated.cshtml |
+| SupplierIntegrations | Submission.cshtml | Angular Default | /purchases/integrations | MiniStore.Web/Views/SupplierIntegrations/Submission.cshtml |
 | SupplierPayments | Create.cshtml | Angular Pilot | /purchases/payments | MiniStore.Web/Views/SupplierPayments/Create.cshtml |
 | SupplierPayments | Details.cshtml | Angular Pilot | /purchases/payments | MiniStore.Web/Views/SupplierPayments/Details.cshtml |
 | SupplierPayments | Index.cshtml | Angular Pilot | /purchases/payments | MiniStore.Web/Views/SupplierPayments/Index.cshtml |
@@ -567,13 +567,13 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | SupplierCreditNotes | Create | POST | Angular Default | /purchases/credit-notes | /purchases/credit-notes/new?vendorBillId={vendorBillId} | MiniStore.Web/Controllers/Purchases/SupplierCreditNotesController.cs |
 | SupplierCreditNotes | Details | GET | Angular Default | /purchases/credit-notes | /purchases/credit-notes/{id} | MiniStore.Web/Controllers/Purchases/SupplierCreditNotesController.cs |
 | SupplierCreditNotes | Index | GET | Angular Default | /purchases/credit-notes | /purchases/credit-notes | MiniStore.Web/Controllers/Purchases/SupplierCreditNotesController.cs |
-| SupplierIntegrations | File | GET | Angular Pilot | /purchases/integrations | — | MiniStore.Web/Controllers/Purchases/SupplierIntegrationsController.cs |
-| SupplierIntegrations | RedirectToAction | POST | Angular Pilot | /purchases/integrations | — | MiniStore.Web/Controllers/Purchases/SupplierIntegrationsController.cs |
-| SupplierIntegrations | RedirectToAction | POST | Angular Pilot | /purchases/integrations | — | MiniStore.Web/Controllers/Purchases/SupplierIntegrationsController.cs |
-| SupplierIntegrations | RedirectToAction | POST | Angular Pilot | /purchases/integrations | — | MiniStore.Web/Controllers/Purchases/SupplierIntegrationsController.cs |
-| SupplierIntegrations | RedirectToDocument | POST | Angular Pilot | /purchases/integrations | — | MiniStore.Web/Controllers/Purchases/SupplierIntegrationsController.cs |
-| SupplierIntegrations | View | GET, POST | Angular Pilot | /purchases/integrations | — | MiniStore.Web/Controllers/Purchases/SupplierIntegrationsController.cs |
-| SupplierIntegrations | View | POST | Angular Pilot | /purchases/integrations | — | MiniStore.Web/Controllers/Purchases/SupplierIntegrationsController.cs |
+| SupplierIntegrations | File | GET | Angular Default | /purchases/integrations | — | MiniStore.Web/Controllers/Purchases/SupplierIntegrationsController.cs |
+| SupplierIntegrations | RedirectToAction | POST | Angular Default | /purchases/integrations | — | MiniStore.Web/Controllers/Purchases/SupplierIntegrationsController.cs |
+| SupplierIntegrations | RedirectToAction | POST | Angular Default | /purchases/integrations | — | MiniStore.Web/Controllers/Purchases/SupplierIntegrationsController.cs |
+| SupplierIntegrations | RedirectToAction | POST | Angular Default | /purchases/integrations | — | MiniStore.Web/Controllers/Purchases/SupplierIntegrationsController.cs |
+| SupplierIntegrations | RedirectToDocument | POST | Angular Default | /purchases/integrations | — | MiniStore.Web/Controllers/Purchases/SupplierIntegrationsController.cs |
+| SupplierIntegrations | View | GET, POST | Angular Default | /purchases/integrations | — | MiniStore.Web/Controllers/Purchases/SupplierIntegrationsController.cs |
+| SupplierIntegrations | View | POST | Angular Default | /purchases/integrations | — | MiniStore.Web/Controllers/Purchases/SupplierIntegrationsController.cs |
 | SupplierPayments | Create | GET | Angular Pilot | /purchases/payments | — | MiniStore.Web/Controllers/Purchases/SupplierPaymentsController.cs |
 | SupplierPayments | Create | POST | Angular Pilot | /purchases/payments | — | MiniStore.Web/Controllers/Purchases/SupplierPaymentsController.cs |
 | SupplierPayments | Details | GET | Angular Pilot | /purchases/payments | — | MiniStore.Web/Controllers/Purchases/SupplierPaymentsController.cs |

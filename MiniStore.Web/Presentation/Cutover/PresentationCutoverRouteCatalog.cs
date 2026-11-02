@@ -116,7 +116,9 @@ public static class PresentationCutoverRouteCatalog
             ["SupplierPurchasing:PriceExceptions"] = "/purchases/supplier-terms/exceptions",
             ["SupplierPurchasing:PriceBreaks"] = "/purchases/supplier-terms/{id}/price-breaks",
             ["SupplierPurchasing:PriceHistory"] = "/purchases/supplier-terms/{id}/history",
-            ["SupplierCommunications:Details"] = "/purchases/communications/{id}"
+            ["SupplierCommunications:Details"] = "/purchases/communications/{id}",
+            ["SupplierIntegrations:Index"] = "/purchases/integrations",
+            ["SupplierIntegrations:Submission"] = "/purchases/integrations/submissions/{id}"
         };
 
     public static IReadOnlyDictionary<string, string> All => Routes;

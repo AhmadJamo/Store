@@ -248,3 +248,7 @@ AngularDefault وبقي 33 سطحًا MVC؛ ينتقل التنفيذ إلى `MO
 النشاط وتنزيل المرفق خارج التحويل. نجح hosted ‏15/15 والقطع والرجوع 101/101 والبوابة 1,626 backend دون إنشاء بيانات؛
 لم يوجد اتصال مورد محفوظ لاختبار Details حياً. أصبحت 50 سطحًا AngularDefault وبقي 32 سطحًا MVC؛ ينتقل التنفيذ إلى
 `MOD-030E4T` لتكاملات الموردين.
+اكتمل `MOD-030E4T`: أصبحت SupplierIntegrations لمساري Index/Submission GET الدقيقين AngularDefault، وبقيت تنزيلات
+UBL/submission وكل عمليات credentials/portal/outbox/retry خارج التحويل. نجح hosted ‏15/15 والقطع والرجوع 102/102
+والبوابة 1,632 backend دون إنشاء بيانات؛ لم توجد Submission محفوظة لاختبار التفاصيل حياً. أصبحت 51 سطحًا
+AngularDefault وبقي 31 سطحًا MVC؛ ينتقل التنفيذ إلى `MOD-030E4U` لبوابة المورد العامة.

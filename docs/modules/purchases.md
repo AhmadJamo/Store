@@ -219,6 +219,10 @@ POST and attachment download remain outside cutover. Hosted 15/15, cutover/rollb
 passed without data changes. No saved communication existed for a live Details probe; exact and unsafe-ID behavior is
 regression-covered.
 
+`MOD-030E4T` makes SupplierIntegrations Index/positive-ID Submission GET presentation AngularDefault. UBL/submission
+downloads and credential/portal/outbox/retry mutations remain outside cutover. Hosted 15/15, cutover/rollback 102/102
+and 1,632 backend checks passed without data changes. No saved submission existed for a live Submission probe.
+
 `MOD-030E4L` makes VendorBills Index/query-bound Create/positive-ID Details GET presentation `AngularDefault` at
 `/purchases/bills`, `/purchases/bills/new?purchaseOrderId={id}` and `/purchases/bills/{id}`. The positive order ID
 is validated and preserved. Attachment download/upload, extraction review, approval/override, posting and cancellation
