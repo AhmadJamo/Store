@@ -1045,6 +1045,56 @@ Check(new[] { "", "msp_short", "msp_" + new string('A', 42),
 Check(typeof(SupplierPortalController).GetCustomAttribute<AllowAnonymousAttribute>() is not null &&
       typeof(SupplierPortalController).GetCustomAttribute<EnableRateLimitingAttribute>()?.PolicyName == "supplier-portal",
     "Supplier-portal cutover must retain anonymous token access and its dedicated rate limit");
+var legacyPurchaseCutoverResolver = new PresentationCutoverResolver(Options.Create(
+    new PresentationCutoverOptions
+    {
+        AngularBasePath = "/app",
+        Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["Purchases"] = PresentationCutoverMode.AngularDefault,
+            ["PurchaseReturns"] = PresentationCutoverMode.AngularDefault
+        }
+    }));
+cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?source=cutover");
+Check(legacyPurchaseCutoverResolver.Resolve(cutoverContext.Request,
+          "Purchases", "Index", new Microsoft.AspNetCore.Routing.RouteValueDictionary()) ==
+      "/app/purchases/legacy?source=cutover" &&
+      legacyPurchaseCutoverResolver.Resolve(cutoverContext.Request,
+          "Purchases", "Details",
+          new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 17 }) ==
+      "/app/purchases/legacy/17?source=cutover" &&
+      legacyPurchaseCutoverResolver.Resolve(cutoverContext.Request,
+          "PurchaseReturns", "Index", new Microsoft.AspNetCore.Routing.RouteValueDictionary()) ==
+      "/app/purchases/legacy-returns?source=cutover" &&
+      legacyPurchaseCutoverResolver.Resolve(cutoverContext.Request,
+          "PurchaseReturns", "Details",
+          new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 19 }) ==
+      "/app/purchases/legacy-returns/19?source=cutover",
+    "Legacy-purchase cutover must resolve list and positive-ID detail routes");
+cutoverContext.Request.QueryString =
+    new Microsoft.AspNetCore.Http.QueryString("?purchaseId=17&source=cutover");
+Check(legacyPurchaseCutoverResolver.Resolve(cutoverContext.Request,
+          "PurchaseReturns", "Create", new Microsoft.AspNetCore.Routing.RouteValueDictionary()) ==
+      "/app/purchases/legacy/17/return?source=cutover",
+    "Legacy-purchase-return cutover must validate and consume the purchase identifier");
+cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?purchaseId=0");
+Check(new long[] { -1, 0 }.All(id =>
+          legacyPurchaseCutoverResolver.Resolve(cutoverContext.Request,
+              "Purchases", "Details",
+              new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = id }) is null &&
+          legacyPurchaseCutoverResolver.Resolve(cutoverContext.Request,
+              "PurchaseReturns", "Details",
+              new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = id }) is null) &&
+      legacyPurchaseCutoverResolver.Resolve(cutoverContext.Request,
+          "PurchaseReturns", "Create", new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null &&
+      new[] { "Create", "Post" }.All(action =>
+          legacyPurchaseCutoverResolver.Resolve(cutoverContext.Request,
+              "Purchases", action,
+              new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 17 }) is null) &&
+      legacyPurchaseCutoverResolver.Resolve(cutoverContext.Request,
+          "PurchaseReturns", "Create",
+          new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["purchaseId"] = 0 }) is null,
+    "Legacy-purchase cutover must reject unsafe IDs and keep retired creation and mutations outside cutover");
 cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?page=2");
 foreach (var entry in PresentationCutoverRouteCatalog.All)
 {
@@ -1053,7 +1103,7 @@ foreach (var entry in PresentationCutoverRouteCatalog.All)
         {
             ["id"] = 1, ["productId"] = 1, ["sourcingEventId"] = 1,
             ["purchaseOrderId"] = 1, ["goodsReceiptId"] = 1, ["vendorBillId"] = 1,
-            ["token"] = syntacticallyValidPortalToken
+            ["purchaseId"] = 1, ["token"] = syntacticallyValidPortalToken
         };
     var rehearsalAngular = new PresentationCutoverResolver(Options.Create(
         new PresentationCutoverOptions
@@ -5281,9 +5331,9 @@ var supplierPortalApi=typeof(SupplierPortalApiController);
 Check(supplierPortalApi.GetCustomAttribute<AllowAnonymousAttribute>() is not null&&supplierPortalApi.GetCustomAttribute<EnableRateLimitingAttribute>()?.PolicyName=="supplier-portal","Angular supplier portal must remain anonymous-token scoped and rate limited");
 Check(new[]{nameof(SupplierPortalApiController.Quotation),nameof(SupplierPortalApiController.Confirm),nameof(SupplierPortalApiController.Delivery)}.All(name=>supplierPortalApi.GetMethod(name)!.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null),"Angular supplier portal mutations must retain antiforgery");
 var legacyPurchasesApi=typeof(LegacyPurchasesApiController);
-Check(legacyPurchasesApi.GetCustomAttribute<AuthorizeAttribute>() is not null&&legacyPurchasesApi.GetMethod(nameof(LegacyPurchasesApiController.Post))!.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null&&legacyPurchasesApi.GetMethod(nameof(LegacyPurchasesApiController.Post))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:Purchases.Create","Angular legacy purchase posting must remain authenticated, independently permitted and antiforgery protected");
+Check(legacyPurchasesApi.GetCustomAttribute<AuthorizeAttribute>() is not null&&new[]{nameof(LegacyPurchasesApiController.GetAll),nameof(LegacyPurchasesApiController.Get)}.All(name=>legacyPurchasesApi.GetMethod(name)!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:Purchases.View")&&legacyPurchasesApi.GetMethod(nameof(LegacyPurchasesApiController.Post))!.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null&&legacyPurchasesApi.GetMethod(nameof(LegacyPurchasesApiController.Post))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:Purchases.Create","Angular legacy purchase reads must retain View permission and posting must remain independently permitted and antiforgery protected");
 var legacyPurchaseReturnsApi=typeof(LegacyPurchaseReturnsApiController);
-Check(legacyPurchaseReturnsApi.GetCustomAttribute<AuthorizeAttribute>() is not null&&legacyPurchaseReturnsApi.GetMethod(nameof(LegacyPurchaseReturnsApiController.Create))!.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null&&legacyPurchaseReturnsApi.GetMethod(nameof(LegacyPurchaseReturnsApiController.Create))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:PurchaseReturns.Create","Angular legacy purchase returns must remain authenticated, independently permitted and antiforgery protected");
+Check(legacyPurchaseReturnsApi.GetCustomAttribute<AuthorizeAttribute>() is not null&&new[]{nameof(LegacyPurchaseReturnsApiController.GetAll),nameof(LegacyPurchaseReturnsApiController.Get)}.All(name=>legacyPurchaseReturnsApi.GetMethod(name)!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:PurchaseReturns.View")&&legacyPurchaseReturnsApi.GetMethod(nameof(LegacyPurchaseReturnsApiController.GetCreateForm))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:PurchaseReturns.Create"&&legacyPurchaseReturnsApi.GetMethod(nameof(LegacyPurchaseReturnsApiController.Create))!.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null&&legacyPurchaseReturnsApi.GetMethod(nameof(LegacyPurchaseReturnsApiController.Create))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:PurchaseReturns.Create","Angular legacy purchase-return reads and create form must retain permissions while creation stays antiforgery protected");
 Check(typeof(CreatePurchaseReturnDto).GetProperty(nameof(CreatePurchaseReturnDto.Reason))!.GetCustomAttribute<RequiredAttribute>() is not null&&typeof(CreatePurchaseReturnDto).GetProperty(nameof(CreatePurchaseReturnDto.Items))!.GetCustomAttribute<MinLengthAttribute>()?.Length==1&&typeof(CreatePurchaseReturnItemDto).GetProperty(nameof(CreatePurchaseReturnItemDto.Quantity))!.GetCustomAttribute<RangeAttribute>() is not null&&typeof(CreatePurchaseReturnItemDto).GetProperty(nameof(CreatePurchaseReturnItemDto.TrackingAllocations))!.GetCustomAttribute<StringLengthAttribute>()?.MaximumLength==2000,"Legacy purchase return commands must validate reason, lines, quantity and bounded tracking evidence");
 var salesPricingApi=typeof(SalesPriceListsApiController);
 Check(salesPricingApi.GetCustomAttribute<AuthorizeAttribute>() is not null&&salesPricingApi.GetMethod(nameof(SalesPriceListsApiController.GetPage))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SalesPricing.View","Angular sales pricing API must remain authenticated and view-permission protected");

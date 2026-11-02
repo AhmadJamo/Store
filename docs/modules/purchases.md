@@ -231,6 +231,13 @@ the controller/API boundary. Quotation, order-confirmation and delivery-notice P
 Hosted 15/15, cutover/rollback 102/102, explicit 302 privacy-header evidence and 1,637 backend checks passed. No portal
 access, supplier submission, inventory document or accounting document was created.
 
+`MOD-030E4V` makes legacy Purchases Index/positive-ID Details and PurchaseReturns Index/positive-ID Details plus the
+positive-`purchaseId` Create GET presentation AngularDefault. The return-form identifier is consumed into
+`/purchases/legacy/{id}/return` while unrelated query values are preserved. Retired direct-purchase creation, historical
+purchase posting and return Create POST remain outside cutover with their existing permissions and antiforgery. Hosted
+15/15, cutover/rollback 104/104 and 1,650 backend checks passed. No legacy purchase or return existed for live
+detail/form probes, and no purchase, return, inventory or accounting document was created.
+
 `MOD-030E4L` makes VendorBills Index/query-bound Create/positive-ID Details GET presentation `AngularDefault` at
 `/purchases/bills`, `/purchases/bills/new?purchaseOrderId={id}` and `/purchases/bills/{id}`. The positive order ID
 is validated and preserved. Attachment download/upload, extraction review, approval/override, posting and cancellation

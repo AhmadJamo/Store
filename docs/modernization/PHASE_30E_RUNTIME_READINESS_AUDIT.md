@@ -240,6 +240,14 @@ guarded. Hosted 15/15, cutover/rollback 102/102, the explicit redirect-header pr
 probe did not follow the fake token redirect and no portal access or submission was created. Fifty-two surfaces are
 AngularDefault and 30 remain MVC-default.
 
+## MOD-030E4V evidence
+
+Legacy Purchases Index/positive-ID Details and PurchaseReturns Index/positive-ID Details/positive-purchase Create GET
+presentation join AngularDefault. The query-bound `purchaseId` is validated and moved to the Angular return-form route;
+retired purchase creation, posting and return Create POST remain outside cutover. Hosted 15/15, cutover/rollback 104/104
+and 1,650 backend checks passed. No legacy purchase or return sample existed for live detail/form probes, and no business
+document was created. Fifty-four surfaces are AngularDefault and 28 remain MVC-default.
+
 ## MOD-030E4S evidence
 
 SupplierCommunications positive-ID Details joins AngularDefault; Prepare/RecordActivity and attachment download remain

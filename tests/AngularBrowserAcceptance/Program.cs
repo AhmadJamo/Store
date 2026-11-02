@@ -266,7 +266,13 @@ static async Task RunLiveCutoverAsync(
             "Purchases.SupplierTerms.View"),
         new("/SupplierIntegrations",
             "/app/purchases/integrations",
-            "SupplierIntegrations.View")
+            "SupplierIntegrations.View"),
+        new("/Purchases?source=cutover-rehearsal",
+            "/app/purchases/legacy?source=cutover-rehearsal",
+            "Purchases.View"),
+        new("/PurchaseReturns?source=cutover-rehearsal",
+            "/app/purchases/legacy-returns?source=cutover-rehearsal",
+            "PurchaseReturns.View")
     };
 
     if (permissions.Contains("Customers.View"))
@@ -609,6 +615,37 @@ static async Task RunLiveCutoverAsync(
                 "SupplierIntegrations.View"));
         }
     }
+    if (permissions.Contains("Purchases.View"))
+    {
+        var response = await authenticated.GetAsync("/api/v1/legacy-purchases");
+        Require(response.Ok, $"Legacy-purchase cutover fixture read returned {response.Status}.");
+        using var purchases = JsonDocument.Parse(await response.TextAsync());
+        if (purchases.RootElement.ValueKind == JsonValueKind.Array &&
+            purchases.RootElement.GetArrayLength() > 0)
+        {
+            var id = purchases.RootElement[0].GetProperty("id").GetInt32();
+            routes.Add(new($"/Purchases/Details/{id}",
+                $"/app/purchases/legacy/{id}", "Purchases.View"));
+            if (permissions.Contains("PurchaseReturns.Create"))
+            {
+                routes.Add(new($"/PurchaseReturns/Create?purchaseId={id}",
+                    $"/app/purchases/legacy/{id}/return", "PurchaseReturns.Create"));
+            }
+        }
+    }
+    if (permissions.Contains("PurchaseReturns.View"))
+    {
+        var response = await authenticated.GetAsync("/api/v1/legacy-purchase-returns");
+        Require(response.Ok, $"Legacy-purchase-return cutover fixture read returned {response.Status}.");
+        using var returns = JsonDocument.Parse(await response.TextAsync());
+        if (returns.RootElement.ValueKind == JsonValueKind.Array &&
+            returns.RootElement.GetArrayLength() > 0)
+        {
+            var id = returns.RootElement[0].GetProperty("id").GetInt32();
+            routes.Add(new($"/PurchaseReturns/Details/{id}",
+                $"/app/purchases/legacy-returns/{id}", "PurchaseReturns.View"));
+        }
+    }
     if (permissions.Contains("InventoryAdjustments.View"))
     {
         var response = await authenticated.GetAsync("/api/v1/inventory-adjustments");
@@ -705,6 +742,8 @@ static async Task RunLiveCutoverAsync(
                          surface is "SupplierIntegrations";
         expectsAngular = expectsAngular || options.CutoverMode == "pilot" &&
                          surface is "SupplierPortal";
+        expectsAngular = expectsAngular || options.CutoverMode == "pilot" &&
+                         surface is "Purchases" or "PurchaseReturns";
         if (expectsAngular)
         {
             Require(response.Status is 301 or 302 or 307 or 308,

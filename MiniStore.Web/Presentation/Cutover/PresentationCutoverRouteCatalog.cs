@@ -119,7 +119,12 @@ public static class PresentationCutoverRouteCatalog
             ["SupplierCommunications:Details"] = "/purchases/communications/{id}",
             ["SupplierIntegrations:Index"] = "/purchases/integrations",
             ["SupplierIntegrations:Submission"] = "/purchases/integrations/submissions/{id}",
-            ["SupplierPortal:Index"] = "/supplier-portal/{token}"
+            ["SupplierPortal:Index"] = "/supplier-portal/{token}",
+            ["Purchases:Index"] = "/purchases/legacy",
+            ["Purchases:Details"] = "/purchases/legacy/{id}",
+            ["PurchaseReturns:Index"] = "/purchases/legacy-returns",
+            ["PurchaseReturns:Details"] = "/purchases/legacy-returns/{id}",
+            ["PurchaseReturns:Create"] = "/purchases/legacy/{purchaseId}/return"
         };
 
     public static IReadOnlyDictionary<string, string> All => Routes;

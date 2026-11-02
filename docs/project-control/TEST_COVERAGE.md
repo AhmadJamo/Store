@@ -67,6 +67,7 @@
 | MOD-030E4S Supplier Communications | Positive-ID Details GET; prepare/activity commands and attachment download excluded; hosted 15/15 and 101-route cutover/MVC rollback; Release clean and 1,626 backend checks; no saved communication for live Details | 2026-11-02 |
 | MOD-030E4T Supplier Integrations | Index/positive-ID Submission GET; downloads and mutations excluded; hosted 15/15 and 102-route cutover/MVC rollback; Release clean and 1,632 backend checks; no saved submission for live details | 2026-11-02 |
 | MOD-030E4U Supplier Portal | Generated-shape token Index GET only; malformed-token MVC audit fallback, API revalidation, rate-limit/anonymous guards and privacy redirect headers; all submissions excluded; hosted 15/15, 102-route cutover/MVC rollback and 1,637 backend checks; no portal access created | 2026-11-02 |
+| MOD-030E4V Legacy Purchases and Returns | Purchase/return list/details plus positive-purchase return-form GET; retired creation, posting and return mutation excluded; hosted 15/15, 104-route cutover/MVC rollback and 1,650 backend checks; no saved sample for live details/form and no document creation | 2026-11-02 |
 | Live schema integrity (سلامة المخطط الحي) | 147 tables, 420 trusted FKs, zero disabled constraints/indexes or unsafe tenant relations | 2026-10-15 |
 | Web dependency build (بناء الويب واعتماداته) | Release, 4 projects, zero warnings/errors after SAL-120A (نجح) | 2026-10-22 |
 

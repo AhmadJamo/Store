@@ -11,7 +11,7 @@
 - Angular application routes discovered: 184.
 - MVC surfaces with a verified Angular counterpart: 82.
 - Remaining MVC surfaces without a mapped Angular counterpart: 0.
-- Allowlisted Angular-default cutover actions: 115.
+- Allowlisted Angular-default cutover actions: 120.
 
 Remaining surfaces: none.
 
@@ -116,12 +116,12 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | PurchaseRequests | Create.cshtml | Angular Default | /purchases/requests | MiniStore.Web/Views/PurchaseRequests/Create.cshtml |
 | PurchaseRequests | Details.cshtml | Angular Default | /purchases/requests | MiniStore.Web/Views/PurchaseRequests/Details.cshtml |
 | PurchaseRequests | Index.cshtml | Angular Default | /purchases/requests | MiniStore.Web/Views/PurchaseRequests/Index.cshtml |
-| PurchaseReturns | Create.cshtml | Angular Pilot | /purchases/legacy-returns | MiniStore.Web/Views/PurchaseReturns/Create.cshtml |
-| PurchaseReturns | Details.cshtml | Angular Pilot | /purchases/legacy-returns | MiniStore.Web/Views/PurchaseReturns/Details.cshtml |
-| PurchaseReturns | Index.cshtml | Angular Pilot | /purchases/legacy-returns | MiniStore.Web/Views/PurchaseReturns/Index.cshtml |
-| Purchases | Create.cshtml | Angular Pilot | /purchases/legacy | MiniStore.Web/Views/Purchases/Create.cshtml |
-| Purchases | Details.cshtml | Angular Pilot | /purchases/legacy | MiniStore.Web/Views/Purchases/Details.cshtml |
-| Purchases | Index.cshtml | Angular Pilot | /purchases/legacy | MiniStore.Web/Views/Purchases/Index.cshtml |
+| PurchaseReturns | Create.cshtml | Angular Default | /purchases/legacy-returns | MiniStore.Web/Views/PurchaseReturns/Create.cshtml |
+| PurchaseReturns | Details.cshtml | Angular Default | /purchases/legacy-returns | MiniStore.Web/Views/PurchaseReturns/Details.cshtml |
+| PurchaseReturns | Index.cshtml | Angular Default | /purchases/legacy-returns | MiniStore.Web/Views/PurchaseReturns/Index.cshtml |
+| Purchases | Create.cshtml | Angular Default | /purchases/legacy | MiniStore.Web/Views/Purchases/Create.cshtml |
+| Purchases | Details.cshtml | Angular Default | /purchases/legacy | MiniStore.Web/Views/Purchases/Details.cshtml |
+| Purchases | Index.cshtml | Angular Default | /purchases/legacy | MiniStore.Web/Views/Purchases/Index.cshtml |
 | PurchaseServiceAcceptances | Create.cshtml | Angular Default | /purchases/service-acceptances | MiniStore.Web/Views/PurchaseServiceAcceptances/Create.cshtml |
 | PurchaseServiceAcceptances | Details.cshtml | Angular Default | /purchases/service-acceptances | MiniStore.Web/Views/PurchaseServiceAcceptances/Details.cshtml |
 | PurchaseServiceAcceptances | Index.cshtml | Angular Default | /purchases/service-acceptances | MiniStore.Web/Views/PurchaseServiceAcceptances/Index.cshtml |
@@ -417,15 +417,15 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | PurchaseRequests | RedirectToAction | GET, POST | Angular Default | /purchases/requests | — | MiniStore.Web/Controllers/Purchases/PurchaseRequestsController.cs |
 | PurchaseRequests | RedirectToAction | GET, POST | Angular Default | /purchases/requests | — | MiniStore.Web/Controllers/Purchases/PurchaseRequestsController.cs |
 | PurchaseRequests | RedirectToAction | GET, POST | Angular Default | /purchases/requests | — | MiniStore.Web/Controllers/Purchases/PurchaseRequestsController.cs |
-| PurchaseReturns | Create | ANY | Angular Pilot | /purchases/legacy-returns | — | MiniStore.Web/Controllers/Purchases/PurchaseReturnsController.cs |
-| PurchaseReturns | Create | POST | Angular Pilot | /purchases/legacy-returns | — | MiniStore.Web/Controllers/Purchases/PurchaseReturnsController.cs |
-| PurchaseReturns | Details | ANY | Angular Pilot | /purchases/legacy-returns | — | MiniStore.Web/Controllers/Purchases/PurchaseReturnsController.cs |
-| PurchaseReturns | Index | ANY | Angular Pilot | /purchases/legacy-returns | — | MiniStore.Web/Controllers/Purchases/PurchaseReturnsController.cs |
-| Purchases | Create | GET | Angular Pilot | /purchases/legacy | — | MiniStore.Web/Controllers/Purchases/PurchasesController.cs |
-| Purchases | Create | POST | Angular Pilot | /purchases/legacy | — | MiniStore.Web/Controllers/Purchases/PurchasesController.cs |
-| Purchases | Details | GET | Angular Pilot | /purchases/legacy | — | MiniStore.Web/Controllers/Purchases/PurchasesController.cs |
-| Purchases | Index | GET | Angular Pilot | /purchases/legacy | — | MiniStore.Web/Controllers/Purchases/PurchasesController.cs |
-| Purchases | Post | POST | Angular Pilot | /purchases/legacy | — | MiniStore.Web/Controllers/Purchases/PurchasesController.cs |
+| PurchaseReturns | Create | ANY | Angular Default | /purchases/legacy-returns | /purchases/legacy/{purchaseId}/return | MiniStore.Web/Controllers/Purchases/PurchaseReturnsController.cs |
+| PurchaseReturns | Create | POST | Angular Default | /purchases/legacy-returns | /purchases/legacy/{purchaseId}/return | MiniStore.Web/Controllers/Purchases/PurchaseReturnsController.cs |
+| PurchaseReturns | Details | ANY | Angular Default | /purchases/legacy-returns | /purchases/legacy-returns/{id} | MiniStore.Web/Controllers/Purchases/PurchaseReturnsController.cs |
+| PurchaseReturns | Index | ANY | Angular Default | /purchases/legacy-returns | /purchases/legacy-returns | MiniStore.Web/Controllers/Purchases/PurchaseReturnsController.cs |
+| Purchases | Create | GET | Angular Default | /purchases/legacy | — | MiniStore.Web/Controllers/Purchases/PurchasesController.cs |
+| Purchases | Create | POST | Angular Default | /purchases/legacy | — | MiniStore.Web/Controllers/Purchases/PurchasesController.cs |
+| Purchases | Details | GET | Angular Default | /purchases/legacy | /purchases/legacy/{id} | MiniStore.Web/Controllers/Purchases/PurchasesController.cs |
+| Purchases | Index | GET | Angular Default | /purchases/legacy | /purchases/legacy | MiniStore.Web/Controllers/Purchases/PurchasesController.cs |
+| Purchases | Post | POST | Angular Default | /purchases/legacy | — | MiniStore.Web/Controllers/Purchases/PurchasesController.cs |
 | PurchaseServiceAcceptances | Create | GET | Angular Default | /purchases/service-acceptances | /purchases/service-acceptances/new?purchaseOrderId={purchaseOrderId} | MiniStore.Web/Controllers/Purchases/PurchaseServiceAcceptancesController.cs |
 | PurchaseServiceAcceptances | Create | POST | Angular Default | /purchases/service-acceptances | /purchases/service-acceptances/new?purchaseOrderId={purchaseOrderId} | MiniStore.Web/Controllers/Purchases/PurchaseServiceAcceptancesController.cs |
 | PurchaseServiceAcceptances | Details | GET | Angular Default | /purchases/service-acceptances | /purchases/service-acceptances/{id} | MiniStore.Web/Controllers/Purchases/PurchaseServiceAcceptancesController.cs |

@@ -1,5 +1,11 @@
 # AI Work Log
 
+- 2026-11-02: Completed `MOD-030E4V`. Legacy Purchases and PurchaseReturns list/details plus the positive-purchase
+  return-form GET now use exact AngularDefault routes. Retired purchase creation, posting and return Create POST remain
+  outside cutover with existing permissions/antiforgery. Hosted 15/15, cutover/rollback 104/104 and 1,650 backend checks
+  passed. No legacy purchase/return sample existed for live detail/form probes and no document was created. Fifty-four
+  surfaces are AngularDefault and 28 remain MVC-default; execution advances to `MOD-030E4W`.
+
 - 2026-11-02: Completed `MOD-030E4U`. SupplierPortal Index GET now uses AngularDefault only for the generated token
   syntax. Malformed tokens preserve MVC denied-access audit; valid-looking tokens are revalidated and audited by the
   public API. Redirects preserve no-store/no-referrer/noindex, while AllowAnonymous, the dedicated rate limit and all

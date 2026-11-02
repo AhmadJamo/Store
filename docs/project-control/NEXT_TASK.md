@@ -1,19 +1,19 @@
 # المهمة التالية الوحيدة / Next Task
 
-## `MOD-030E4V` — المشتريات المباشرة التاريخية ومرتجعاتها / Legacy Purchases and Returns Cutover
+## `MOD-030E4W` — تسعير المبيعات / Sales Pricing Cutover
 
 > الحالة: APPROVED
 
-اكتمل `MOD-030E4U`: أصبحت SupplierPortal السطح 52 بعد hosted ‏15/15 والقطع والرجوع 102/102 وفحص ترويسات الخصوصية والبوابة 1,637. لم يُنشأ رابط بوابة أو submission، وبقي 30 سطحًا MVC.
+اكتمل `MOD-030E4V`: أصبحت Purchases وPurchaseReturns السطحين 53 و54 بعد hosted ‏15/15 والقطع والرجوع 104/104 والبوابة 1,650. لم توجد عينة تاريخية لاختبار التفاصيل أو نموذج المرتجع حياً، ولم يُنشأ مستند. بقي 28 سطحًا MVC.
 
 ### النطاق المحدود
 
-- Purchases Index وDetails ذوا المعرّف الموجب إلى `/purchases/legacy` و`/purchases/legacy/{id}`.
-- PurchaseReturns Index وDetails ذوا المعرّف الموجب وCreate ذو `purchaseId` الموجب إلى مسارات Angular التاريخية الدقيقة.
-- إنشاء الشراء المباشر القديم يبقى متقاعدًا، وPurchase Post وPurchaseReturn Create POST يبقيان خارج التحويل.
+- SalesPriceLists Index GET إلى `/sales/pricing` مع الحفاظ على `id` المحدد وأي query آمن.
+- Create وSetListActive وAddRule وSetRuleActive وEvaluate POST تبقى خارج التحويل.
+- تبقى صلاحيات View/Manage وantiforgery وقواعد التسعير في Application كما هي.
 
 ### القبول
 
-- كل GET مصرح يصل إلى مسار Angular الدقيق ويحافظ على المعرّفات والاستعلام.
-- المعرّفات غير الموجبة، إنشاء شراء قديم وكل mutation تبقى خارج presentation cutover.
-- hosted acceptance والقطع والرجوع والبوابة الكاملة تبقى خضراء بلا إنشاء مستندات شراء أو مخزون أو محاسبة.
+- Index GET المصرح يصل إلى مسار Angular الدقيق ويحافظ على query.
+- كل mutation والتقييم POST يبقى خارج presentation cutover.
+- hosted acceptance والقطع والرجوع والبوابة الكاملة تبقى خضراء بلا إنشاء أو تغيير قائمة/قاعدة أسعار.
