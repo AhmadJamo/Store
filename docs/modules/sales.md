@@ -193,3 +193,8 @@ cutover/rollback 104/104 and 1,707 backend checks passed with no return request 
 `MOD-030E5D` makes CustomerReturnReceipts Index/positive-request Create/positive-ID Details GET presentation
 AngularDefault. Create/inspect/disposition post/cancel remain protected API POST. Hosted 15/15, cutover/rollback 104/104
 and 1,716 backend checks passed without return, stock or accounting mutation.
+
+`MOD-030E5E` makes CustomerCreditNotes Index/positive-invoice Create/positive-ID Details GET presentation
+AngularDefault. Create-and-post remains a protected API POST, so cumulative return eligibility, idempotency and accounting
+authority stay server-side. Hosted 15/15, cutover/MVC rollback 117/117 and 1,725 backend checks passed without creating a
+credit note or changing receivables, inventory, cash or journals.

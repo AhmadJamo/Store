@@ -304,6 +304,14 @@ CustomerReturnReceipts safe GET presentation joins AngularDefault; create/inspec
 Hosted 15/15, cutover/rollback 104/104 and 1,716 backend checks passed without stock/accounting mutation. Sixty-two
 surfaces are AngularDefault and 20 remain MVC-default.
 
+## MOD-030E5E evidence
+
+CustomerCreditNotes Index/positive-invoice Create/positive-ID Details joins AngularDefault; create-and-post remains a
+protected API POST outside presentation cutover. Hosted 15/15, cutover/MVC rollback 117/117 and 1,725 backend checks
+passed without credit-note, receivable, inventory, cash or journal mutation. The broader current administrator permission
+set increased the live route rehearsal from 104 to 117 and exposed a pre-existing quotation-create MVC fallback; its exact
+redirect is now covered. Sixty-three surfaces are AngularDefault and 19 remain MVC-default.
+
 ## MOD-030E4S evidence
 
 SupplierCommunications positive-ID Details joins AngularDefault; Prepare/RecordActivity and attachment download remain

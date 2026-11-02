@@ -281,7 +281,8 @@ static async Task RunLiveCutoverAsync(
             "SalesQuotations.View"),
         new("/SalesQuotations/Create?templateId=1",
             "/app/sales/quotations/new?templateId=1",
-            "SalesQuotations.Create"),
+            "SalesQuotations.Create",
+            "/SalesQuotations"),
         new("/SalesOrders?status=1&search=cutover-rehearsal",
             "/app/sales/orders?status=1&search=cutover-rehearsal",
             "SalesOrders.View"),
@@ -299,7 +300,10 @@ static async Task RunLiveCutoverAsync(
             "CustomerReturnRequests.View"),
         new("/CustomerReturnReceipts?search=cutover-rehearsal",
             "/app/sales/return-receipts?search=cutover-rehearsal",
-            "CustomerReturnReceipts.View")
+            "CustomerReturnReceipts.View"),
+        new("/CustomerCreditNotes?search=cutover-rehearsal",
+            "/app/sales/credit-notes?search=cutover-rehearsal",
+            "CustomerCreditNotes.View")
     };
 
     if (permissions.Contains("Customers.View"))
@@ -766,6 +770,19 @@ static async Task RunLiveCutoverAsync(
                 $"/app/sales/return-receipts/{id}", "CustomerReturnReceipts.View"));
         }
     }
+    if (permissions.Contains("CustomerCreditNotes.View"))
+    {
+        var response = await authenticated.GetAsync("/api/v1/customer-credit-notes");
+        Require(response.Ok, $"Customer-credit-note cutover fixture read returned {response.Status}.");
+        using var notes = JsonDocument.Parse(await response.TextAsync());
+        if (notes.RootElement.ValueKind == JsonValueKind.Array &&
+            notes.RootElement.GetArrayLength() > 0)
+        {
+            var id = notes.RootElement[0].GetProperty("id").GetInt32();
+            routes.Add(new($"/CustomerCreditNotes/Details/{id}",
+                $"/app/sales/credit-notes/{id}", "CustomerCreditNotes.View"));
+        }
+    }
     if (permissions.Contains("InventoryAdjustments.View"))
     {
         var response = await authenticated.GetAsync("/api/v1/inventory-adjustments");
@@ -880,6 +897,8 @@ static async Task RunLiveCutoverAsync(
                          surface is "CustomerReturnRequests";
         expectsAngular = expectsAngular || options.CutoverMode == "pilot" &&
                          surface is "CustomerReturnReceipts";
+        expectsAngular = expectsAngular || options.CutoverMode == "pilot" &&
+                         surface is "CustomerCreditNotes";
         if (expectsAngular)
         {
             Require(response.Status is 301 or 302 or 307 or 308,

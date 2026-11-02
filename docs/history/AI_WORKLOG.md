@@ -1,5 +1,11 @@
 # AI Work Log
 
+- 2026-11-02: Completed `MOD-030E5E`. CustomerCreditNotes Index/positive-invoice Create/positive-ID Details GET now use
+  AngularDefault; create-and-post remains protected API POST. Hosted 15/15, cutover/MVC rollback 117/117 and 1,725
+  backend checks passed. The expanded administrator permission set exposed and now covers the existing quotation-create
+  MVC fallback. No credit note, receivable, inventory, cash or journal changed. Sixty-three surfaces are AngularDefault
+  and 19 remain MVC-default.
+
 - 2026-11-02: Completed `MOD-030E5D`. CustomerReturnReceipts safe GET presentation now uses AngularDefault; create,
   inspect, disposition post and cancel remain API POST. Hosted 15/15, cutover/rollback 104/104 and 1,716 backend checks
   passed without stock/accounting mutation. Sixty-two surfaces are AngularDefault and 20 remain MVC-default.

@@ -1365,6 +1365,41 @@ Check(new long[] { -1, 0 }.All(id =>
               "CustomerReturnReceipts", action,
               new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 17 }) is null),
     "Customer-return-receipt cutover must reject unsafe IDs and keep stock/accounting mutations outside cutover");
+var customerCreditNoteCutoverResolver = new PresentationCutoverResolver(Options.Create(
+    new PresentationCutoverOptions
+    {
+        AngularBasePath = "/app",
+        Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["CustomerCreditNotes"] = PresentationCutoverMode.AngularDefault
+        }
+    }));
+cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?search=cutover");
+Check(customerCreditNoteCutoverResolver.Resolve(cutoverContext.Request,
+          "CustomerCreditNotes", "Index", new Microsoft.AspNetCore.Routing.RouteValueDictionary()) ==
+      "/app/sales/credit-notes?search=cutover" &&
+      customerCreditNoteCutoverResolver.Resolve(cutoverContext.Request,
+          "CustomerCreditNotes", "Details",
+          new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 17 }) ==
+      "/app/sales/credit-notes/17?search=cutover",
+    "Customer-credit-note cutover must resolve list and positive-ID details routes");
+cutoverContext.Request.QueryString =
+    new Microsoft.AspNetCore.Http.QueryString("?customerInvoiceId=19&source=cutover");
+Check(customerCreditNoteCutoverResolver.Resolve(cutoverContext.Request,
+          "CustomerCreditNotes", "Create", new Microsoft.AspNetCore.Routing.RouteValueDictionary()) ==
+      "/app/sales/credit-notes/new?customerInvoiceId=19&source=cutover",
+    "Customer-credit-note cutover must validate and consume the source invoice identifier");
+cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?customerInvoiceId=0");
+Check(new long[] { -1, 0 }.All(id =>
+          customerCreditNoteCutoverResolver.Resolve(cutoverContext.Request,
+              "CustomerCreditNotes", "Details",
+              new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = id }) is null) &&
+      customerCreditNoteCutoverResolver.Resolve(cutoverContext.Request,
+          "CustomerCreditNotes", "Create", new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null &&
+      customerCreditNoteCutoverResolver.Resolve(cutoverContext.Request,
+          "CustomerCreditNotes", "Post",
+          new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 17 }) is null,
+    "Customer-credit-note cutover must reject unsafe IDs and keep posting outside presentation cutover");
 cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?page=2");
 foreach (var entry in PresentationCutoverRouteCatalog.All)
 {

@@ -146,7 +146,10 @@ public static class PresentationCutoverRouteCatalog
             ["CustomerReturnRequests:Details"] = "/sales/return-requests/{id}",
             ["CustomerReturnReceipts:Index"] = "/sales/return-receipts",
             ["CustomerReturnReceipts:Create"] = "/sales/return-receipts/new?customerReturnRequestId={customerReturnRequestId}",
-            ["CustomerReturnReceipts:Details"] = "/sales/return-receipts/{id}"
+            ["CustomerReturnReceipts:Details"] = "/sales/return-receipts/{id}",
+            ["CustomerCreditNotes:Index"] = "/sales/credit-notes",
+            ["CustomerCreditNotes:Create"] = "/sales/credit-notes/new?customerInvoiceId={customerInvoiceId}",
+            ["CustomerCreditNotes:Details"] = "/sales/credit-notes/{id}"
         };
 
     public static IReadOnlyDictionary<string, string> All => Routes;
