@@ -204,6 +204,11 @@ AngularDefault. The positive purchase-order ID is validated and preserved. Creat
 and antiforgery protected outside cutover. Hosted 15/15, cutover/rollback 97/97 and 1,601 backend checks passed without
 creating data or changing stock or accounting; no saved acceptance existed for a live Details probe.
 
+`MOD-030E4Q` makes PurchaseAgreements Index/query-bound Create/positive-ID Details GET presentation AngularDefault. The
+positive sourcing-event ID is validated and preserved. Create/Activate/Cancel/Release POST actions remain independently
+permissioned and antiforgery protected outside cutover. Hosted 15/15, cutover/rollback 99/99 and 1,610 backend checks
+passed without data changes. An eligible awarded sourcing event covered Create; no saved agreement existed for Details.
+
 `MOD-030E4L` makes VendorBills Index/query-bound Create/positive-ID Details GET presentation `AngularDefault` at
 `/purchases/bills`, `/purchases/bills/new?purchaseOrderId={id}` and `/purchases/bills/{id}`. The positive order ID
 is validated and preserved. Attachment download/upload, extraction review, approval/override, posting and cancellation

@@ -254,7 +254,10 @@ static async Task RunLiveCutoverAsync(
             "LandedCosts.View"),
         new("/PurchaseServiceAcceptances",
             "/app/purchases/service-acceptances",
-            "PurchaseServiceAcceptances.View")
+            "PurchaseServiceAcceptances.View"),
+        new("/PurchaseAgreements",
+            "/app/purchases/agreements",
+            "PurchaseAgreements.View")
     };
 
     if (permissions.Contains("Customers.View"))
@@ -369,6 +372,22 @@ static async Task RunLiveCutoverAsync(
             {
                 routes.Add(new($"/SupplierQuotations/Comparison?sourcingEventId={id}",
                     $"/app/purchases/sourcing/{id}/comparison", "SupplierQuotations.View"));
+            }
+            if (permissions.Contains("PurchaseAgreements.Create"))
+            {
+                for (var index = 0; index < sourcingEvents.RootElement.GetArrayLength(); index++)
+                {
+                    var candidateId = sourcingEvents.RootElement[index].GetProperty("id").GetInt32();
+                    var createForm = await authenticated.GetAsync(
+                        $"/api/v1/purchase-agreements/create-form?sourcingEventId={candidateId}");
+                    if (!createForm.Ok)
+                        continue;
+
+                    routes.Add(new($"/PurchaseAgreements/Create?sourcingEventId={candidateId}",
+                        $"/app/purchases/agreements/new?sourcingEventId={candidateId}",
+                        "PurchaseAgreements.Create"));
+                    break;
+                }
             }
         }
     }
@@ -515,6 +534,19 @@ static async Task RunLiveCutoverAsync(
                 $"/app/purchases/service-acceptances/{id}", "PurchaseServiceAcceptances.View"));
         }
     }
+    if (permissions.Contains("PurchaseAgreements.View"))
+    {
+        var response = await authenticated.GetAsync("/api/v1/purchase-agreements");
+        Require(response.Ok, $"Purchase-agreement cutover fixture read returned {response.Status}.");
+        using var agreements = JsonDocument.Parse(await response.TextAsync());
+        if (agreements.RootElement.ValueKind == JsonValueKind.Array &&
+            agreements.RootElement.GetArrayLength() > 0)
+        {
+            var id = agreements.RootElement[0].GetProperty("id").GetInt32();
+            routes.Add(new($"/PurchaseAgreements/Details/{id}",
+                $"/app/purchases/agreements/{id}", "PurchaseAgreements.View"));
+        }
+    }
     if (permissions.Contains("InventoryAdjustments.View"))
     {
         var response = await authenticated.GetAsync("/api/v1/inventory-adjustments");
@@ -601,6 +633,8 @@ static async Task RunLiveCutoverAsync(
                          surface is "LandedCosts";
         expectsAngular = expectsAngular || options.CutoverMode == "pilot" &&
                          surface is "PurchaseServiceAcceptances";
+        expectsAngular = expectsAngular || options.CutoverMode == "pilot" &&
+                         surface is "PurchaseAgreements";
         if (expectsAngular)
         {
             Require(response.Status is 301 or 302 or 307 or 308,

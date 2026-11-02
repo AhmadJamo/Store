@@ -224,6 +224,13 @@ with zero warnings and 1,499 backend checks. Thirty-three surfaces are AngularDe
 git-ignored temporary authentication state is retained only for the next local cohorts; no data, schema, inventory,
 accounting, business rule or MVC file changed.
 
+## MOD-030E4Q evidence
+
+PurchaseAgreements Index/query-bound Create/positive-ID Details joins AngularDefault; lifecycle and release mutations stay
+outside cutover. Hosted 15/15, cutover/rollback 99/99 and 1,610 backend checks passed. Fixture probing selects only an
+eligible awarded sourcing event, avoiding the legacy MVC 500 for ineligible creation; no saved agreement existed for live
+Details. Forty-eight surfaces are AngularDefault and 34 remain MVC-default.
+
 ## MOD-030E4P evidence
 
 PurchaseServiceAcceptances Index/query-bound Create/positive-ID Details joins AngularDefault; Create POST remains outside

@@ -874,6 +874,41 @@ Check(serviceAcceptancesCutoverResolver.Resolve(cutoverContext.Request,
               "PurchaseServiceAcceptances", "Details",
               new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = id }) is null),
     "Service-acceptance cutover must reject unsafe order and acceptance identifiers");
+var purchaseAgreementsCutoverResolver = new PresentationCutoverResolver(Options.Create(
+    new PresentationCutoverOptions
+    {
+        AngularBasePath = "/app",
+        Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["PurchaseAgreements"] = PresentationCutoverMode.AngularDefault
+        }
+    }));
+cutoverContext.Request.QueryString =
+    new Microsoft.AspNetCore.Http.QueryString("?sourcingEventId=17&source=cutover");
+Check(purchaseAgreementsCutoverResolver.Resolve(cutoverContext.Request,
+          "PurchaseAgreements", "Create",
+          new Microsoft.AspNetCore.Routing.RouteValueDictionary()) ==
+      "/app/purchases/agreements/new?sourcingEventId=17&source=cutover",
+    "Purchase-agreement cutover must validate and preserve a query-bound sourcing-event ID");
+cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?page=2");
+Check(purchaseAgreementsCutoverResolver.Resolve(cutoverContext.Request,
+          "PurchaseAgreements", "Index",
+          new Microsoft.AspNetCore.Routing.RouteValueDictionary()) ==
+      "/app/purchases/agreements?page=2" &&
+      purchaseAgreementsCutoverResolver.Resolve(cutoverContext.Request,
+          "PurchaseAgreements", "Details",
+          new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 17 }) ==
+      "/app/purchases/agreements/17?page=2",
+    "Purchase-agreement cutover must resolve exact list and positive-ID details routes");
+cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?sourcingEventId=0");
+Check(purchaseAgreementsCutoverResolver.Resolve(cutoverContext.Request,
+          "PurchaseAgreements", "Create",
+          new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null &&
+      new long[] { -1, 0 }.All(id =>
+          purchaseAgreementsCutoverResolver.Resolve(cutoverContext.Request,
+              "PurchaseAgreements", "Details",
+              new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = id }) is null),
+    "Purchase-agreement cutover must reject unsafe sourcing-event and agreement identifiers");
 cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?page=2");
 foreach (var entry in PresentationCutoverRouteCatalog.All)
 {

@@ -1,5 +1,11 @@
 # AI Work Log
 
+- 2026-11-02: Completed `MOD-030E4Q`. PurchaseAgreements Index/query-bound Create/positive-ID Details GET now uses exact
+  AngularDefault routes; all lifecycle/release POST actions remain outside cutover. Hosted 15/15, cutover/rollback 99/99
+  and 1,610 backend checks passed without data changes. The fixture now probes for an eligible awarded sourcing event,
+  avoiding an ineligible legacy MVC Create 500; no saved agreement existed for live Details. Forty-eight surfaces are
+  AngularDefault and 34 remain MVC-default; execution advances to `MOD-030E4R`.
+
 - 2026-11-02: Completed `MOD-030E4P`. PurchaseServiceAcceptances Index/query-bound Create/positive-ID Details GET now
   uses exact AngularDefault routes; the positive purchase-order ID is validated and preserved, while Create POST remains
   outside cutover. Hosted 15/15, cutover/rollback 97/97 and 1,601 backend checks passed without data changes. No saved

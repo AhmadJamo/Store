@@ -11,7 +11,7 @@
 - Angular application routes discovered: 184.
 - MVC surfaces with a verified Angular counterpart: 82.
 - Remaining MVC surfaces without a mapped Angular counterpart: 0.
-- Allowlisted Angular-default cutover actions: 104.
+- Allowlisted Angular-default cutover actions: 107.
 
 Remaining surfaces: none.
 
@@ -102,9 +102,9 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | Public | Index.cshtml | Angular Pilot | /welcome, /pricing | MiniStore.Web/Views/Public/Index.cshtml |
 | Public | Pricing.cshtml | Angular Pilot | /welcome, /pricing | MiniStore.Web/Views/Public/Pricing.cshtml |
 | PurchaseAccountingReconciliation | Index.cshtml | Angular Default | /purchases/accounting-reconciliation | MiniStore.Web/Views/PurchaseAccountingReconciliation/Index.cshtml |
-| PurchaseAgreements | Create.cshtml | Angular Pilot | /purchases/agreements | MiniStore.Web/Views/PurchaseAgreements/Create.cshtml |
-| PurchaseAgreements | Details.cshtml | Angular Pilot | /purchases/agreements | MiniStore.Web/Views/PurchaseAgreements/Details.cshtml |
-| PurchaseAgreements | Index.cshtml | Angular Pilot | /purchases/agreements | MiniStore.Web/Views/PurchaseAgreements/Index.cshtml |
+| PurchaseAgreements | Create.cshtml | Angular Default | /purchases/agreements | MiniStore.Web/Views/PurchaseAgreements/Create.cshtml |
+| PurchaseAgreements | Details.cshtml | Angular Default | /purchases/agreements | MiniStore.Web/Views/PurchaseAgreements/Details.cshtml |
+| PurchaseAgreements | Index.cshtml | Angular Default | /purchases/agreements | MiniStore.Web/Views/PurchaseAgreements/Index.cshtml |
 | PurchaseAnalytics | Index.cshtml | Angular Default | /purchases/analytics | MiniStore.Web/Views/PurchaseAnalytics/Index.cshtml |
 | PurchaseApprovalRules | Index.cshtml | Angular Default | /purchases/approval-rules | MiniStore.Web/Views/PurchaseApprovalRules/Index.cshtml |
 | PurchaseDocumentReversals | Create.cshtml | Angular Default | /purchases/reversals | MiniStore.Web/Views/PurchaseDocumentReversals/Create.cshtml |
@@ -385,10 +385,10 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | Public | Index | GET | Angular Pilot | /welcome, /pricing | — | MiniStore.Web/Controllers/PublicController.cs |
 | Public | Pricing | GET | Angular Pilot | /welcome, /pricing | — | MiniStore.Web/Controllers/PublicController.cs |
 | PurchaseAccountingReconciliation | Index | GET | Angular Default | /purchases/accounting-reconciliation | /purchases/accounting-reconciliation | MiniStore.Web/Controllers/Purchases/PurchaseAccountingReconciliationController.cs |
-| PurchaseAgreements | RedirectToAction | GET, POST | Angular Pilot | /purchases/agreements | — | MiniStore.Web/Controllers/Purchases/PurchaseAgreementsController.cs |
-| PurchaseAgreements | RedirectToAction | GET, POST | Angular Pilot | /purchases/agreements | — | MiniStore.Web/Controllers/Purchases/PurchaseAgreementsController.cs |
-| PurchaseAgreements | RedirectToAction | GET, POST | Angular Pilot | /purchases/agreements | — | MiniStore.Web/Controllers/Purchases/PurchaseAgreementsController.cs |
-| PurchaseAgreements | RedirectToAction | GET, POST | Angular Pilot | /purchases/agreements | — | MiniStore.Web/Controllers/Purchases/PurchaseAgreementsController.cs |
+| PurchaseAgreements | RedirectToAction | GET, POST | Angular Default | /purchases/agreements | — | MiniStore.Web/Controllers/Purchases/PurchaseAgreementsController.cs |
+| PurchaseAgreements | RedirectToAction | GET, POST | Angular Default | /purchases/agreements | — | MiniStore.Web/Controllers/Purchases/PurchaseAgreementsController.cs |
+| PurchaseAgreements | RedirectToAction | GET, POST | Angular Default | /purchases/agreements | — | MiniStore.Web/Controllers/Purchases/PurchaseAgreementsController.cs |
+| PurchaseAgreements | RedirectToAction | GET, POST | Angular Default | /purchases/agreements | — | MiniStore.Web/Controllers/Purchases/PurchaseAgreementsController.cs |
 | PurchaseAnalytics | View | GET | Angular Default | /purchases/analytics | — | MiniStore.Web/Controllers/Purchases/PurchaseAnalyticsController.cs |
 | PurchaseApprovalRules | Create | POST | Angular Default | /purchases/approval-rules | — | MiniStore.Web/Controllers/Purchases/PurchaseApprovalRulesController.cs |
 | PurchaseApprovalRules | Index | GET | Angular Default | /purchases/approval-rules | /purchases/approval-rules | MiniStore.Web/Controllers/Purchases/PurchaseApprovalRulesController.cs |

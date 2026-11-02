@@ -108,7 +108,10 @@ public static class PresentationCutoverRouteCatalog
             ["LandedCosts:Details"] = "/purchases/landed-costs/{id}",
             ["PurchaseServiceAcceptances:Index"] = "/purchases/service-acceptances",
             ["PurchaseServiceAcceptances:Create"] = "/purchases/service-acceptances/new?purchaseOrderId={purchaseOrderId}",
-            ["PurchaseServiceAcceptances:Details"] = "/purchases/service-acceptances/{id}"
+            ["PurchaseServiceAcceptances:Details"] = "/purchases/service-acceptances/{id}",
+            ["PurchaseAgreements:Index"] = "/purchases/agreements",
+            ["PurchaseAgreements:Create"] = "/purchases/agreements/new?sourcingEventId={sourcingEventId}",
+            ["PurchaseAgreements:Details"] = "/purchases/agreements/{id}"
         };
 
     public static IReadOnlyDictionary<string, string> All => Routes;

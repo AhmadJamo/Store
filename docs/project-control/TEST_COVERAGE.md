@@ -62,6 +62,7 @@
 | MOD-030E4N Purchase Document Reversals | Index/Details GET; Create and reversal excluded; hosted 15/15 and 92-route cutover/MVC rollback; 1,583 backend checks; no saved reversal for live Details | 2026-11-02 |
 | MOD-030E4O Landed Costs | Index/query-bound Create/Details GET; positive goods-receipt validation; Create POST excluded; hosted 15/15 and 95-route cutover/MVC rollback; Release clean and 1,592 backend checks without data creation | 2026-11-02 |
 | MOD-030E4P Purchase Service Acceptances | Index/query-bound Create/Details GET; positive purchase-order validation; Create POST excluded; hosted 15/15 and 97-route cutover/MVC rollback; Release clean and 1,601 backend checks; no saved acceptance for live Details | 2026-11-02 |
+| MOD-030E4Q Purchase Agreements | Index/query-bound Create/Details GET; lifecycle/release mutations excluded; hosted 15/15 and 99-route cutover/MVC rollback; Release clean and 1,610 backend checks; eligible awarded sourcing fixture used, no saved agreement for live Details | 2026-11-02 |
 | Live schema integrity (سلامة المخطط الحي) | 147 tables, 420 trusted FKs, zero disabled constraints/indexes or unsafe tenant relations | 2026-10-15 |
 | Web dependency build (بناء الويب واعتماداته) | Release, 4 projects, zero warnings/errors after SAL-120A (نجح) | 2026-10-22 |
 
