@@ -11,7 +11,7 @@
 - Angular application routes discovered: 184.
 - MVC surfaces with a verified Angular counterpart: 82.
 - Remaining MVC surfaces without a mapped Angular counterpart: 0.
-- Allowlisted Angular-default cutover actions: 157.
+- Allowlisted Angular-default cutover actions: 158.
 
 Remaining surfaces: none.
 
@@ -72,7 +72,7 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | InventoryReservations | Index.cshtml | Angular Default | /inventory/reservations | MiniStore.Web/Views/InventoryReservations/Index.cshtml |
 | InventoryScanning | Index.cshtml | Angular Default | /inventory/scanning | MiniStore.Web/Views/InventoryScanning/Index.cshtml |
 | InventoryTracking | Index.cshtml | Angular Default | /inventory/tracking | MiniStore.Web/Views/InventoryTracking/Index.cshtml |
-| JournalEntries | Details.cshtml | Angular Pilot | /accounting/journal-entries/:id | MiniStore.Web/Views/JournalEntries/Details.cshtml |
+| JournalEntries | Details.cshtml | Angular Default | /accounting/journal-entries/:id | MiniStore.Web/Views/JournalEntries/Details.cshtml |
 | LandedCosts | Create.cshtml | Angular Default | /purchases/landed-costs | MiniStore.Web/Views/LandedCosts/Create.cshtml |
 | LandedCosts | Details.cshtml | Angular Default | /purchases/landed-costs | MiniStore.Web/Views/LandedCosts/Details.cshtml |
 | LandedCosts | Index.cshtml | Angular Default | /purchases/landed-costs | MiniStore.Web/Views/LandedCosts/Index.cshtml |
@@ -328,7 +328,7 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | InventoryTracking | Quarantine | POST | Angular Default | /inventory/tracking | — | MiniStore.Web/Controllers/Inventory/InventoryTrackingController.cs |
 | InventoryTracking | RecordRecallCommunication | POST | Angular Default | /inventory/tracking | — | MiniStore.Web/Controllers/Inventory/InventoryTrackingController.cs |
 | InventoryTracking | Release | POST | Angular Default | /inventory/tracking | — | MiniStore.Web/Controllers/Inventory/InventoryTrackingController.cs |
-| JournalEntries | Details | GET | Angular Pilot | /accounting/journal-entries/:id | — | MiniStore.Web/Controllers/Accounting/JournalEntriesController.cs |
+| JournalEntries | Details | GET | Angular Default | /accounting/journal-entries/:id | /accounting/journal-entries/{id} | MiniStore.Web/Controllers/Accounting/JournalEntriesController.cs |
 | LandedCosts | RedirectToAction | GET, POST | Angular Default | /purchases/landed-costs | — | MiniStore.Web/Controllers/Purchases/LandedCostsController.cs |
 | Language | Set | POST | Angular Pilot | / | — | MiniStore.Web/Controllers/Settings/LanguageController.cs |
 | LocationMovements | Index | GET | Angular Default | /inventory/location-movements | /inventory/location-movements | MiniStore.Web/Controllers/Inventory/LocationMovementsController.cs |

@@ -2,7 +2,7 @@
 
 > Status: COMPLETE — `MOD-026A..B` COMPLETE on 2026-10-29
 >
-> Presentation default: Chart of Accounts is AngularDefault after `MOD-030E5J`; Journal Entry details remains MVC pending `MOD-030E5K`.
+> Presentation default: Chart of Accounts and positive-ID Journal Entry details are AngularDefault after `MOD-030E5J..K`.
 
 ## Scope
 
@@ -40,3 +40,8 @@ slices. `MOD-027A` starts the remaining SaaS presentation with tenant subscripti
 surface remains outside the presentation catalog, and the Angular create command continues through the independently protected,
 antiforgery-validated API over `AccountService`. Hosted 15/15, rendered Angular/API financial reconciliation, cutover/MVC rollback
 125/125 and 1,760 backend checks passed without creating an account or changing a journal.
+
+`MOD-030E5K` makes positive-ID Journal Entry Details GET presentation AngularDefault at the exact detail route. Non-positive
+IDs are rejected by the shared resolver, while the read-only API and Angular screen remain under `JournalEntries.View`.
+Hosted 15/15, cutover/MVC rollback 125/125 and 1,763 backend checks passed. Demo exposed no payment-backed journal ID for a
+live detail probe; no journal was created or changed.

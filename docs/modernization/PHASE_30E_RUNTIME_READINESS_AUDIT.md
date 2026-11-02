@@ -347,6 +347,14 @@ Angular workspace and the API instead of expecting MVC HTML after cutover. Hoste
 1,760 backend checks passed without account or journal mutation. Sixty-eight surfaces are AngularDefault and 14 remain
 MVC-default.
 
+## MOD-030E5K evidence
+
+JournalEntries positive-ID Details GET joins AngularDefault at `/accounting/journal-entries/{id}`. Non-positive IDs are
+rejected by the shared resolver, the read path remains under `JournalEntries.View`, and no posting or reversal operation is
+part of the surface. Hosted 15/15, cutover/MVC rollback 125/125 and 1,763 backend checks passed. Demo exposed no
+payment-backed JournalEntryId for a live Details probe; the exact route and unsafe-ID behavior remain regression-covered,
+and no journal was created or changed. Sixty-nine surfaces are AngularDefault and 13 remain MVC-default.
+
 ## MOD-030E4S evidence
 
 SupplierCommunications positive-ID Details joins AngularDefault; Prepare/RecordActivity and attachment download remain

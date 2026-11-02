@@ -1,5 +1,10 @@
 # AI Work Log
 
+- 2026-11-03: Completed `MOD-030E5K`. Positive-ID JournalEntries Details GET now uses AngularDefault; the resolver rejects
+  non-positive identifiers and the surface remains read-only under `JournalEntries.View`. Hosted 15/15, cutover/MVC rollback
+  125/125 and 1,763 backend checks passed. Demo exposed no payment-backed JournalEntryId for a live detail probe, so no
+  journal was created or changed. Sixty-nine surfaces are AngularDefault and 13 remain MVC-default.
+
 - 2026-11-03: Completed `MOD-030E5J`. Accounts Index GET now uses AngularDefault; account creation remains outside
   presentation cutover behind the existing Administration permission, antiforgery and `AccountService`. The hosted browser
   gate passed 15/15 after moving the no-invoice financial fallback from non-rendered MVC HTML to rendered Angular/API

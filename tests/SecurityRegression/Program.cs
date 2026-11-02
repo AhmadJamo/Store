@@ -1523,6 +1523,22 @@ Check(accountsCutoverResolver.Resolve(cutoverContext.Request,
       accountsCutoverResolver.Resolve(cutoverContext.Request,
           "Accounts", "Create", new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null,
     "Accounts cutover must resolve the tree while keeping account creation outside presentation cutover");
+var journalEntriesCutoverResolver = new PresentationCutoverResolver(Options.Create(
+    new PresentationCutoverOptions
+    {
+        AngularBasePath = "/app",
+        Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["JournalEntries"] = PresentationCutoverMode.AngularDefault
+        }
+    }));
+cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?source=cutover");
+Check(journalEntriesCutoverResolver.Resolve(cutoverContext.Request,
+          "JournalEntries", "Details", new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 17 }) ==
+      "/app/accounting/journal-entries/17?source=cutover" &&
+      new long[] { -1, 0 }.All(id => journalEntriesCutoverResolver.Resolve(cutoverContext.Request,
+          "JournalEntries", "Details", new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = id }) is null),
+    "Journal-entry cutover must require a positive identifier and preserve query values");
 cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?page=2");
 foreach (var entry in PresentationCutoverRouteCatalog.All)
 {

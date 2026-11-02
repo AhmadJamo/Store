@@ -133,3 +133,9 @@ totals are visible. The screen adds no mutation and leaves posting, uniqueness a
 remains outside presentation cutover behind `Administration.Access`, antiforgery and `AccountService`; no account or journal
 mutation is introduced. Hosted 15/15, rendered Angular/API financial reconciliation, cutover/MVC rollback 125/125 and 1,760
 backend checks passed.
+
+`MOD-030E5K` makes positive-ID Journal Entry Details GET presentation AngularDefault at
+`/accounting/journal-entries/{id}`. The resolver rejects non-positive IDs and the surface remains read-only under
+`JournalEntries.View`; posting, source uniqueness and reversal remain outside presentation cutover. Hosted 15/15,
+cutover/MVC rollback 125/125 and 1,763 backend checks passed. Demo had no payment-backed journal ID for a live detail probe,
+so no accounting data was created to fabricate one.

@@ -758,6 +758,19 @@ static async Task RunLiveCutoverAsync(
             var id = payments.RootElement[0].GetProperty("id").GetInt32();
             routes.Add(new($"/CustomerPayments/Details/{id}",
                 $"/app/sales/payments/{id}", "CustomerPayments.View"));
+            if (permissions.Contains("JournalEntries.View"))
+            {
+                var journalPayment = payments.RootElement.EnumerateArray().FirstOrDefault(payment =>
+                    payment.TryGetProperty("journalEntryId", out var journalId) &&
+                    journalId.ValueKind == JsonValueKind.Number && journalId.GetInt32() > 0);
+                if (journalPayment.ValueKind != JsonValueKind.Undefined)
+                {
+                    var journalId = journalPayment.GetProperty("journalEntryId").GetInt32();
+                    routes.Add(new($"/JournalEntries/Details/{journalId}?source=cutover-rehearsal",
+                        $"/app/accounting/journal-entries/{journalId}?source=cutover-rehearsal",
+                        "JournalEntries.View"));
+                }
+            }
         }
     }
     if (permissions.Contains("CustomerReturnRequests.View"))
@@ -964,6 +977,8 @@ static async Task RunLiveCutoverAsync(
                          surface is "SalesReturns";
         expectsAngular = expectsAngular || options.CutoverMode == "pilot" &&
                          surface is "Accounts";
+        expectsAngular = expectsAngular || options.CutoverMode == "pilot" &&
+                         surface is "JournalEntries";
         if (expectsAngular)
         {
             Require(response.Status is 301 or 302 or 307 or 308,
