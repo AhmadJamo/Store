@@ -230,6 +230,16 @@ SupplierIntegrations Index/positive-ID Submission joins AngularDefault; download
 cutover. Hosted 15/15, cutover/rollback 102/102 and 1,632 backend checks passed. No saved submission existed for a live
 Submission probe. Fifty-one surfaces are AngularDefault and 31 remain MVC-default.
 
+## MOD-030E4U evidence
+
+SupplierPortal Index joins AngularDefault only for the exact generated token syntax. The global redirect preserves
+`Cache-Control: no-store`, `Referrer-Policy: no-referrer` and `X-Robots-Tag: noindex, nofollow`; malformed tokens stay on
+MVC for denied-access audit, while the public Angular API revalidates valid-looking tokens and audits denial. All three
+submission POST actions remain outside cutover, and AllowAnonymous plus the `supplier-portal` limiter are regression-
+guarded. Hosted 15/15, cutover/rollback 102/102, the explicit redirect-header probe and 1,637 backend checks passed. The
+probe did not follow the fake token redirect and no portal access or submission was created. Fifty-two surfaces are
+AngularDefault and 30 remain MVC-default.
+
 ## MOD-030E4S evidence
 
 SupplierCommunications positive-ID Details joins AngularDefault; Prepare/RecordActivity and attachment download remain

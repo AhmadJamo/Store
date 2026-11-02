@@ -1,5 +1,12 @@
 # AI Work Log
 
+- 2026-11-02: Completed `MOD-030E4U`. SupplierPortal Index GET now uses AngularDefault only for the generated token
+  syntax. Malformed tokens preserve MVC denied-access audit; valid-looking tokens are revalidated and audited by the
+  public API. Redirects preserve no-store/no-referrer/noindex, while AllowAnonymous, the dedicated rate limit and all
+  three submission POST actions remain unchanged. Hosted 15/15, cutover/rollback 102/102, explicit privacy-header
+  evidence and 1,637 backend checks passed; no portal access or submission was created. Fifty-two surfaces are
+  AngularDefault and 30 remain MVC-default; execution advances to `MOD-030E4V`.
+
 - 2026-11-02: Completed `MOD-030E4T`. SupplierIntegrations Index/positive-ID Submission GET now uses exact
   AngularDefault routes; UBL/submission downloads and all mutations remain outside cutover. Hosted 15/15,
   cutover/rollback 102/102 and 1,632 backend checks passed without data changes. No saved submission existed for a live

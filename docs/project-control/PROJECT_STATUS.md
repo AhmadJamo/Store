@@ -252,3 +252,8 @@ AngularDefault وبقي 33 سطحًا MVC؛ ينتقل التنفيذ إلى `MO
 UBL/submission وكل عمليات credentials/portal/outbox/retry خارج التحويل. نجح hosted ‏15/15 والقطع والرجوع 102/102
 والبوابة 1,632 backend دون إنشاء بيانات؛ لم توجد Submission محفوظة لاختبار التفاصيل حياً. أصبحت 51 سطحًا
 AngularDefault وبقي 31 سطحًا MVC؛ ينتقل التنفيذ إلى `MOD-030E4U` لبوابة المورد العامة.
+اكتمل `MOD-030E4U`: أصبح SupplierPortal Index GET فقط AngularDefault للـ token المطابق لصيغة التوليد. بقيت الرموز
+المشوّهة على MVC لتسجيل الرفض، وتعيد API التحقق من الرموز سليمة الشكل، مع no-store/no-referrer/noindex على التحويل
+وبقاء AllowAnonymous وrate limiting وكل POST خارج القطع. نجح hosted ‏15/15 والقطع والرجوع 102/102 وفحص ترويسات
+الخصوصية والبوابة 1,637 backend؛ لم يُنشأ رابط بوابة أو submission. أصبحت 52 سطحًا AngularDefault وبقي 30 سطحًا MVC؛
+ينتقل التنفيذ إلى `MOD-030E4V` للمشتريات المباشرة التاريخية ومرتجعاتها.

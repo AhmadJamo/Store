@@ -11,7 +11,7 @@
 - Angular application routes discovered: 184.
 - MVC surfaces with a verified Angular counterpart: 82.
 - Remaining MVC surfaces without a mapped Angular counterpart: 0.
-- Allowlisted Angular-default cutover actions: 114.
+- Allowlisted Angular-default cutover actions: 115.
 
 Remaining surfaces: none.
 
@@ -194,8 +194,8 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | SupplierPayments | Create.cshtml | Angular Pilot | /purchases/payments | MiniStore.Web/Views/SupplierPayments/Create.cshtml |
 | SupplierPayments | Details.cshtml | Angular Pilot | /purchases/payments | MiniStore.Web/Views/SupplierPayments/Details.cshtml |
 | SupplierPayments | Index.cshtml | Angular Pilot | /purchases/payments | MiniStore.Web/Views/SupplierPayments/Index.cshtml |
-| SupplierPortal | Index.cshtml | Angular Pilot | /supplier-portal/:token | MiniStore.Web/Views/SupplierPortal/Index.cshtml |
-| SupplierPortal | Unavailable.cshtml | Angular Pilot | /supplier-portal/:token | MiniStore.Web/Views/SupplierPortal/Unavailable.cshtml |
+| SupplierPortal | Index.cshtml | Angular Default | /supplier-portal/:token | MiniStore.Web/Views/SupplierPortal/Index.cshtml |
+| SupplierPortal | Unavailable.cshtml | Angular Default | /supplier-portal/:token | MiniStore.Web/Views/SupplierPortal/Unavailable.cshtml |
 | SupplierPurchasing | ImportPreview.cshtml | Angular Default | /purchases/supplier-terms | MiniStore.Web/Views/SupplierPurchasing/ImportPreview.cshtml |
 | SupplierPurchasing | Index.cshtml | Angular Default | /purchases/supplier-terms | MiniStore.Web/Views/SupplierPurchasing/Index.cshtml |
 | SupplierPurchasing | PriceBreaks.cshtml | Angular Default | /purchases/supplier-terms | MiniStore.Web/Views/SupplierPurchasing/PriceBreaks.cshtml |
@@ -578,10 +578,10 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | SupplierPayments | Create | POST | Angular Pilot | /purchases/payments | — | MiniStore.Web/Controllers/Purchases/SupplierPaymentsController.cs |
 | SupplierPayments | Details | GET | Angular Pilot | /purchases/payments | — | MiniStore.Web/Controllers/Purchases/SupplierPaymentsController.cs |
 | SupplierPayments | Index | GET | Angular Pilot | /purchases/payments | — | MiniStore.Web/Controllers/Purchases/SupplierPaymentsController.cs |
-| SupplierPortal | RecordDenied | GET | Angular Pilot | /supplier-portal/:token | — | MiniStore.Web/Controllers/Purchases/SupplierPortalController.cs |
-| SupplierPortal | RecordDenied | POST | Angular Pilot | /supplier-portal/:token | — | MiniStore.Web/Controllers/Purchases/SupplierPortalController.cs |
-| SupplierPortal | RecordDenied | POST | Angular Pilot | /supplier-portal/:token | — | MiniStore.Web/Controllers/Purchases/SupplierPortalController.cs |
-| SupplierPortal | RecordDenied | POST | Angular Pilot | /supplier-portal/:token | — | MiniStore.Web/Controllers/Purchases/SupplierPortalController.cs |
+| SupplierPortal | RecordDenied | GET | Angular Default | /supplier-portal/:token | — | MiniStore.Web/Controllers/Purchases/SupplierPortalController.cs |
+| SupplierPortal | RecordDenied | POST | Angular Default | /supplier-portal/:token | — | MiniStore.Web/Controllers/Purchases/SupplierPortalController.cs |
+| SupplierPortal | RecordDenied | POST | Angular Default | /supplier-portal/:token | — | MiniStore.Web/Controllers/Purchases/SupplierPortalController.cs |
+| SupplierPortal | RecordDenied | POST | Angular Default | /supplier-portal/:token | — | MiniStore.Web/Controllers/Purchases/SupplierPortalController.cs |
 | SupplierPurchasing | ExportCsv | GET | Angular Default | /purchases/supplier-terms | — | MiniStore.Web/Controllers/Purchases/SupplierPurchasingController.cs |
 | SupplierPurchasing | ExportExcel | GET | Angular Default | /purchases/supplier-terms | — | MiniStore.Web/Controllers/Purchases/SupplierPurchasingController.cs |
 | SupplierPurchasing | ImportCsv | POST | Angular Default | /purchases/supplier-terms | — | MiniStore.Web/Controllers/Purchases/SupplierPurchasingController.cs |

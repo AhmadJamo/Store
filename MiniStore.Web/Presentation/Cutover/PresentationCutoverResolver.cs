@@ -30,6 +30,18 @@ public sealed class PresentationCutoverResolver(IOptions<PresentationCutoverOpti
             route = route.Replace("{id}", id.ToString(CultureInfo.InvariantCulture), StringComparison.Ordinal);
         }
 
+        if (route.Contains("{token}", StringComparison.Ordinal))
+        {
+            var token = routeValues["token"]?.ToString();
+            if (token is null || token.Length != 47 ||
+                !token.StartsWith("msp_", StringComparison.Ordinal) ||
+                token.AsSpan(4).IndexOfAnyExcept(
+                    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_".AsSpan()) >= 0)
+                return null;
+
+            route = route.Replace("{token}", token, StringComparison.Ordinal);
+        }
+
         var queryString = request.QueryString;
         if (route.Contains("{productId}", StringComparison.Ordinal))
         {

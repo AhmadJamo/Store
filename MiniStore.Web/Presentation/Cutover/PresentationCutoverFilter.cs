@@ -14,6 +14,12 @@ public sealed class PresentationCutoverFilter(PresentationCutoverResolver resolv
             var target = resolver.Resolve(context.HttpContext.Request, controller, action, context.RouteData.Values);
             if (target is not null)
             {
+                if (string.Equals(controller, "SupplierPortal", StringComparison.OrdinalIgnoreCase))
+                {
+                    context.HttpContext.Response.Headers.CacheControl = "no-store";
+                    context.HttpContext.Response.Headers["Referrer-Policy"] = "no-referrer";
+                    context.HttpContext.Response.Headers["X-Robots-Tag"] = "noindex, nofollow";
+                }
                 context.Result = new RedirectResult(target, permanent: false, preserveMethod: false);
                 return;
             }

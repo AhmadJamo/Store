@@ -703,6 +703,8 @@ static async Task RunLiveCutoverAsync(
                          surface is "SupplierCommunications";
         expectsAngular = expectsAngular || options.CutoverMode == "pilot" &&
                          surface is "SupplierIntegrations";
+        expectsAngular = expectsAngular || options.CutoverMode == "pilot" &&
+                         surface is "SupplierPortal";
         if (expectsAngular)
         {
             Require(response.Status is 301 or 302 or 307 or 308,

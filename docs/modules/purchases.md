@@ -223,6 +223,14 @@ regression-covered.
 downloads and credential/portal/outbox/retry mutations remain outside cutover. Hosted 15/15, cutover/rollback 102/102
 and 1,632 backend checks passed without data changes. No saved submission existed for a live Submission probe.
 
+`MOD-030E4U` makes only SupplierPortal Index GET presentation AngularDefault when the route token matches the generated
+`msp_` plus Base64URL shape. Malformed tokens stay on MVC so its denied-access audit still runs; generated-shape tokens
+are revalidated by the Angular public API, which records denial for invalid/expired/revoked access. The redirect itself
+adds `no-store`, `no-referrer` and `noindex, nofollow`; anonymous access and the dedicated portal rate limit remain on
+the controller/API boundary. Quotation, order-confirmation and delivery-notice POST actions remain outside cutover.
+Hosted 15/15, cutover/rollback 102/102, explicit 302 privacy-header evidence and 1,637 backend checks passed. No portal
+access, supplier submission, inventory document or accounting document was created.
+
 `MOD-030E4L` makes VendorBills Index/query-bound Create/positive-ID Details GET presentation `AngularDefault` at
 `/purchases/bills`, `/purchases/bills/new?purchaseOrderId={id}` and `/purchases/bills/{id}`. The positive order ID
 is validated and preserved. Attachment download/upload, extraction review, approval/override, posting and cancellation
