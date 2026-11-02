@@ -303,7 +303,10 @@ static async Task RunLiveCutoverAsync(
             "CustomerReturnReceipts.View"),
         new("/CustomerCreditNotes?search=cutover-rehearsal",
             "/app/sales/credit-notes?search=cutover-rehearsal",
-            "CustomerCreditNotes.View")
+            "CustomerCreditNotes.View"),
+        new("/SalesApprovalRules?source=cutover-rehearsal",
+            "/app/sales/approval-rules?source=cutover-rehearsal",
+            "SalesApprovalRules.View")
     };
 
     if (permissions.Contains("Customers.View"))
@@ -899,6 +902,8 @@ static async Task RunLiveCutoverAsync(
                          surface is "CustomerReturnReceipts";
         expectsAngular = expectsAngular || options.CutoverMode == "pilot" &&
                          surface is "CustomerCreditNotes";
+        expectsAngular = expectsAngular || options.CutoverMode == "pilot" &&
+                         surface is "SalesApprovalRules";
         if (expectsAngular)
         {
             Require(response.Status is 301 or 302 or 307 or 308,

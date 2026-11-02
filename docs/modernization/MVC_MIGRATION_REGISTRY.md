@@ -11,7 +11,7 @@
 - Angular application routes discovered: 184.
 - MVC surfaces with a verified Angular counterpart: 82.
 - Remaining MVC surfaces without a mapped Angular counterpart: 0.
-- Allowlisted Angular-default cutover actions: 145.
+- Allowlisted Angular-default cutover actions: 146.
 
 Remaining surfaces: none.
 
@@ -141,7 +141,7 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | Sales | Details.cshtml | Angular Pilot | /sales/legacy | MiniStore.Web/Views/Sales/Details.cshtml |
 | Sales | Index.cshtml | Angular Pilot | /sales/legacy | MiniStore.Web/Views/Sales/Index.cshtml |
 | Sales | Pos.cshtml | Angular Pilot | /sales/legacy | MiniStore.Web/Views/Sales/Pos.cshtml |
-| SalesApprovalRules | Index.cshtml | Angular Pilot | /sales/approval-rules | MiniStore.Web/Views/SalesApprovalRules/Index.cshtml |
+| SalesApprovalRules | Index.cshtml | Angular Default | /sales/approval-rules | MiniStore.Web/Views/SalesApprovalRules/Index.cshtml |
 | SalesDeliveries | Create.cshtml | Angular Default | /sales/deliveries | MiniStore.Web/Views/SalesDeliveries/Create.cshtml |
 | SalesDeliveries | Details.cshtml | Angular Default | /sales/deliveries | MiniStore.Web/Views/SalesDeliveries/Details.cshtml |
 | SalesDeliveries | Index.cshtml | Angular Default | /sales/deliveries | MiniStore.Web/Views/SalesDeliveries/Index.cshtml |
@@ -461,9 +461,9 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | Sales | Index | ANY | Angular Pilot | /sales/legacy | — | MiniStore.Web/Controllers/Sales/SalesController.cs |
 | Sales | Pos | GET | Angular Pilot | /sales/legacy | — | MiniStore.Web/Controllers/Sales/SalesController.cs |
 | Sales | Post | POST | Angular Pilot | /sales/legacy | — | MiniStore.Web/Controllers/Sales/SalesController.cs |
-| SalesApprovalRules | Create | POST | Angular Pilot | /sales/approval-rules | — | MiniStore.Web/Controllers/Sales/SalesApprovalRulesController.cs |
-| SalesApprovalRules | Index | GET | Angular Pilot | /sales/approval-rules | — | MiniStore.Web/Controllers/Sales/SalesApprovalRulesController.cs |
-| SalesApprovalRules | SetActive | POST | Angular Pilot | /sales/approval-rules | — | MiniStore.Web/Controllers/Sales/SalesApprovalRulesController.cs |
+| SalesApprovalRules | Create | POST | Angular Default | /sales/approval-rules | — | MiniStore.Web/Controllers/Sales/SalesApprovalRulesController.cs |
+| SalesApprovalRules | Index | GET | Angular Default | /sales/approval-rules | /sales/approval-rules | MiniStore.Web/Controllers/Sales/SalesApprovalRulesController.cs |
+| SalesApprovalRules | SetActive | POST | Angular Default | /sales/approval-rules | — | MiniStore.Web/Controllers/Sales/SalesApprovalRulesController.cs |
 | SalesDeliveries | Cancel | POST | Angular Default | /sales/deliveries | — | MiniStore.Web/Controllers/Sales/SalesDeliveriesController.cs |
 | SalesDeliveries | Create | GET | Angular Default | /sales/deliveries | /sales/deliveries/new?salesOrderId={salesOrderId} | MiniStore.Web/Controllers/Sales/SalesDeliveriesController.cs |
 | SalesDeliveries | Create | POST | Angular Default | /sales/deliveries | /sales/deliveries/new?salesOrderId={salesOrderId} | MiniStore.Web/Controllers/Sales/SalesDeliveriesController.cs |

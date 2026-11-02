@@ -1,5 +1,9 @@
 # AI Work Log
 
+- 2026-11-02: Completed `MOD-030E5F`. SalesApprovalRules Index GET now uses AngularDefault; rule creation and activation
+  changes remain protected API POST. Hosted 15/15, cutover/MVC rollback 118/118 and 1,725 backend checks passed without
+  changing a rule or order approval. Sixty-four surfaces are AngularDefault and 18 remain MVC-default.
+
 - 2026-11-02: Completed `MOD-030E5E`. CustomerCreditNotes Index/positive-invoice Create/positive-ID Details GET now use
   AngularDefault; create-and-post remains protected API POST. Hosted 15/15, cutover/MVC rollback 117/117 and 1,725
   backend checks passed. The expanded administrator permission set exposed and now covers the existing quotation-create

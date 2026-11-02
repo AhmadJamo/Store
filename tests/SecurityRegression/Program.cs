@@ -1400,6 +1400,25 @@ Check(new long[] { -1, 0 }.All(id =>
           "CustomerCreditNotes", "Post",
           new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 17 }) is null,
     "Customer-credit-note cutover must reject unsafe IDs and keep posting outside presentation cutover");
+var salesApprovalRulesCutoverResolver = new PresentationCutoverResolver(Options.Create(
+    new PresentationCutoverOptions
+    {
+        AngularBasePath = "/app",
+        Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["SalesApprovalRules"] = PresentationCutoverMode.AngularDefault
+        }
+    }));
+cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?source=cutover");
+Check(salesApprovalRulesCutoverResolver.Resolve(cutoverContext.Request,
+          "SalesApprovalRules", "Index", new Microsoft.AspNetCore.Routing.RouteValueDictionary()) ==
+      "/app/sales/approval-rules?source=cutover",
+    "Sales-approval-rule cutover must resolve the exact list route and preserve query values");
+Check(new[] { "Create", "SetActive" }.All(action =>
+        salesApprovalRulesCutoverResolver.Resolve(cutoverContext.Request,
+            "SalesApprovalRules", action,
+            new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 17 }) is null),
+    "Sales-approval-rule cutover must keep rule creation and activation mutations outside presentation cutover");
 cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?page=2");
 foreach (var entry in PresentationCutoverRouteCatalog.All)
 {

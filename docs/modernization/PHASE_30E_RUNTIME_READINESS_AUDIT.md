@@ -312,6 +312,12 @@ passed without credit-note, receivable, inventory, cash or journal mutation. The
 set increased the live route rehearsal from 104 to 117 and exposed a pre-existing quotation-create MVC fallback; its exact
 redirect is now covered. Sixty-three surfaces are AngularDefault and 19 remain MVC-default.
 
+## MOD-030E5F evidence
+
+SalesApprovalRules Index joins AngularDefault; rule creation and activation/deactivation remain protected API POST outside
+presentation cutover. Hosted 15/15, cutover/MVC rollback 118/118 and 1,725 backend checks passed without rule or order-
+approval mutation. Sixty-four surfaces are AngularDefault and 18 remain MVC-default.
+
 ## MOD-030E4S evidence
 
 SupplierCommunications positive-ID Details joins AngularDefault; Prepare/RecordActivity and attachment download remain

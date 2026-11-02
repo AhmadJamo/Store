@@ -198,3 +198,8 @@ and 1,716 backend checks passed without return, stock or accounting mutation.
 AngularDefault. Create-and-post remains a protected API POST, so cumulative return eligibility, idempotency and accounting
 authority stay server-side. Hosted 15/15, cutover/MVC rollback 117/117 and 1,725 backend checks passed without creating a
 credit note or changing receivables, inventory, cash or journals.
+
+`MOD-030E5F` makes SalesApprovalRules Index GET presentation AngularDefault. Rule creation and activation/deactivation
+remain protected API POST operations, and all scope, role, ordered-step, concurrency and order-evaluation authority stays
+server-side. Hosted 15/15, cutover/MVC rollback 118/118 and 1,725 backend checks passed without changing a rule or order
+approval.
