@@ -804,6 +804,42 @@ Check(new long[] { -1, 0 }.All(id =>
               ["documentType"] = 1, ["originalDocumentId"] = 17
           }) is null,
     "Purchase-document-reversal create and unsafe identifiers must stay outside presentation cutover");
+var landedCostsCutoverResolver = new PresentationCutoverResolver(Options.Create(
+    new PresentationCutoverOptions
+    {
+        AngularBasePath = "/app",
+        Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["LandedCosts"] = PresentationCutoverMode.AngularDefault
+        }
+    }));
+cutoverContext.Request.QueryString =
+    new Microsoft.AspNetCore.Http.QueryString("?goodsReceiptId=17&source=cutover");
+Check(landedCostsCutoverResolver.Resolve(cutoverContext.Request,
+          "LandedCosts", "Create",
+          new Microsoft.AspNetCore.Routing.RouteValueDictionary()) ==
+      "/app/purchases/landed-costs/new?goodsReceiptId=17&source=cutover",
+    "Landed-cost cutover must validate and preserve a query-bound goods-receipt ID");
+cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?page=2");
+Check(landedCostsCutoverResolver.Resolve(cutoverContext.Request,
+          "LandedCosts", "Index",
+          new Microsoft.AspNetCore.Routing.RouteValueDictionary()) ==
+      "/app/purchases/landed-costs?page=2" &&
+      landedCostsCutoverResolver.Resolve(cutoverContext.Request,
+          "LandedCosts", "Details",
+          new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 17 }) ==
+      "/app/purchases/landed-costs/17?page=2",
+    "Landed-cost cutover must resolve exact list and positive-ID details routes");
+cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?goodsReceiptId=0");
+Check(landedCostsCutoverResolver.Resolve(cutoverContext.Request,
+          "LandedCosts", "Create",
+          new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null &&
+      new long[] { -1, 0 }.All(id =>
+          landedCostsCutoverResolver.Resolve(cutoverContext.Request,
+              "LandedCosts", "Details",
+              new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = id }) is null),
+    "Landed-cost cutover must reject unsafe receipt and landed-cost identifiers");
+cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?page=2");
 foreach (var entry in PresentationCutoverRouteCatalog.All)
 {
     var keyParts = entry.Key.Split(':', 2);

@@ -228,3 +228,7 @@ POST خارج التحويل. نجح hosted ‏15/15 والقطع والرجوع
 اكتمل `MOD-030E4N`: أصبحت PurchaseDocumentReversals لمساري Index/Details GET AngularDefault، وبقي Create والعكس
 خارج التحويل. نجح hosted ‏15/15 والقطع والرجوع 92/92 والبوابة 1,583 backend. أصبحت 45 سطحًا AngularDefault وبقي 37
 سطحًا MVC؛ ينتقل التنفيذ إلى `MOD-030E4O` للتكاليف الإضافية.
+اكتمل `MOD-030E4O`: أصبحت LandedCosts لمسارات Index/Create/Details GET الدقيقة AngularDefault، مع التحقق من
+goodsReceiptId الموجب والحفاظ عليه، وبقي Create POST خارج التحويل. نجح hosted ‏15/15 والقطع والرجوع 95/95 والبوابة
+1,592 backend دون إنشاء بيانات أو تغيير المخزون أو المحاسبة. أصبحت 46 سطحًا AngularDefault وبقي 36 سطحًا MVC؛ ينتقل
+التنفيذ إلى `MOD-030E4P` لقبول خدمات الشراء.

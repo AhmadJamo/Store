@@ -224,6 +224,12 @@ with zero warnings and 1,499 backend checks. Thirty-three surfaces are AngularDe
 git-ignored temporary authentication state is retained only for the next local cohorts; no data, schema, inventory,
 accounting, business rule or MVC file changed.
 
+## MOD-030E4O evidence
+
+LandedCosts Index/query-bound Create/positive-ID Details joins AngularDefault; Create POST remains outside cutover. The
+positive goods-receipt ID is validated and preserved. Hosted 15/15, cutover/rollback 95/95 and 1,592 backend checks passed.
+Forty-six surfaces are AngularDefault and 36 remain MVC-default; no data, schema, inventory or accounting changed.
+
 ## MOD-030E4N evidence
 
 PurchaseDocumentReversals Index/positive-ID Details joins AngularDefault; Create and reversal remain outside cutover.

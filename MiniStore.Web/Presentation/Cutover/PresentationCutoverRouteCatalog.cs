@@ -102,7 +102,10 @@ public static class PresentationCutoverRouteCatalog
             ["SupplierCreditNotes:Create"] = "/purchases/credit-notes/new?vendorBillId={vendorBillId}",
             ["SupplierCreditNotes:Details"] = "/purchases/credit-notes/{id}",
             ["PurchaseDocumentReversals:Index"] = "/purchases/reversals",
-            ["PurchaseDocumentReversals:Details"] = "/purchases/reversals/{id}"
+            ["PurchaseDocumentReversals:Details"] = "/purchases/reversals/{id}",
+            ["LandedCosts:Index"] = "/purchases/landed-costs",
+            ["LandedCosts:Create"] = "/purchases/landed-costs/new?goodsReceiptId={goodsReceiptId}",
+            ["LandedCosts:Details"] = "/purchases/landed-costs/{id}"
         };
 
     public static IReadOnlyDictionary<string, string> All => Routes;
