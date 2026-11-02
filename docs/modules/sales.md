@@ -155,3 +155,10 @@ remain POST-only outside presentation cutover with their existing View/Manage pe
 the current authorized route set cutover/rollback 104/104 and 1,654 backend checks passed. The current authenticated
 session did not expose `SalesPricing.View` for a live route probe; exact query preservation and POST exclusions are
 regression-covered, and no price list or rule changed.
+
+`MOD-030E4X` makes SalesQuotations Index/query-bound Create/positive-ID Details GET presentation AngularDefault at the
+exact list, composer and detail routes. Status/search and optional template query values are preserved. Frozen PDF
+download and every create/lifecycle POST remain outside cutover with their existing permissions and antiforgery. Hosted
+15/15, the current authorized route set cutover/rollback 104/104 and 1,663 backend checks passed. The current session
+did not expose quotation permissions for live route probes; resolver behavior is regression-covered and no quotation
+was created or changed.

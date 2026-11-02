@@ -256,6 +256,14 @@ rule and evaluation POST actions remain outside cutover. Hosted 15/15, the curre
 resolution and POST exclusions are regression-covered and no pricing data changed. Fifty-five surfaces are
 AngularDefault and 27 remain MVC-default.
 
+## MOD-030E4X evidence
+
+SalesQuotations Index/query-bound Create/positive-ID Details joins AngularDefault; PDF and create/lifecycle POST actions
+remain outside cutover. Hosted 15/15, the current authorized route set cutover/rollback 104/104 and 1,663 backend checks
+passed. The current session lacked quotation permissions for live route probes; exact routes, positive IDs, query
+preservation and exclusions are regression-covered and no quotation changed. Fifty-six surfaces are AngularDefault and
+26 remain MVC-default.
+
 ## MOD-030E4S evidence
 
 SupplierCommunications positive-ID Details joins AngularDefault; Prepare/RecordActivity and attachment download remain

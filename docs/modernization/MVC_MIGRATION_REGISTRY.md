@@ -11,7 +11,7 @@
 - Angular application routes discovered: 184.
 - MVC surfaces with a verified Angular counterpart: 82.
 - Remaining MVC surfaces without a mapped Angular counterpart: 0.
-- Allowlisted Angular-default cutover actions: 121.
+- Allowlisted Angular-default cutover actions: 124.
 
 Remaining surfaces: none.
 
@@ -149,9 +149,9 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | SalesOrders | Index.cshtml | Angular Pilot | /sales/orders | MiniStore.Web/Views/SalesOrders/Index.cshtml |
 | SalesOrders | Reserve.cshtml | Angular Pilot | /sales/orders | MiniStore.Web/Views/SalesOrders/Reserve.cshtml |
 | SalesPriceLists | Index.cshtml | Angular Default | /sales/pricing | MiniStore.Web/Views/SalesPriceLists/Index.cshtml |
-| SalesQuotations | Create.cshtml | Angular Pilot | /sales/quotations | MiniStore.Web/Views/SalesQuotations/Create.cshtml |
-| SalesQuotations | Details.cshtml | Angular Pilot | /sales/quotations | MiniStore.Web/Views/SalesQuotations/Details.cshtml |
-| SalesQuotations | Index.cshtml | Angular Pilot | /sales/quotations | MiniStore.Web/Views/SalesQuotations/Index.cshtml |
+| SalesQuotations | Create.cshtml | Angular Default | /sales/quotations | MiniStore.Web/Views/SalesQuotations/Create.cshtml |
+| SalesQuotations | Details.cshtml | Angular Default | /sales/quotations | MiniStore.Web/Views/SalesQuotations/Details.cshtml |
+| SalesQuotations | Index.cshtml | Angular Default | /sales/quotations | MiniStore.Web/Views/SalesQuotations/Index.cshtml |
 | SalesQuotationTemplates | Create.cshtml | Angular Pilot | /sales/quotation-templates | MiniStore.Web/Views/SalesQuotationTemplates/Create.cshtml |
 | SalesQuotationTemplates | Details.cshtml | Angular Pilot | /sales/quotation-templates | MiniStore.Web/Views/SalesQuotationTemplates/Details.cshtml |
 | SalesQuotationTemplates | Index.cshtml | Angular Pilot | /sales/quotation-templates | MiniStore.Web/Views/SalesQuotationTemplates/Index.cshtml |
@@ -486,16 +486,16 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | SalesPriceLists | Index | GET | Angular Default | /sales/pricing | /sales/pricing | MiniStore.Web/Controllers/Sales/SalesPriceListsController.cs |
 | SalesPriceLists | SetListActive | POST | Angular Default | /sales/pricing | — | MiniStore.Web/Controllers/Sales/SalesPriceListsController.cs |
 | SalesPriceLists | SetRuleActive | POST | Angular Default | /sales/pricing | — | MiniStore.Web/Controllers/Sales/SalesPriceListsController.cs |
-| SalesQuotations | Accept | POST | Angular Pilot | /sales/quotations | — | MiniStore.Web/Controllers/Sales/SalesQuotationsController.cs |
-| SalesQuotations | Cancel | POST | Angular Pilot | /sales/quotations | — | MiniStore.Web/Controllers/Sales/SalesQuotationsController.cs |
-| SalesQuotations | Create | GET | Angular Pilot | /sales/quotations | — | MiniStore.Web/Controllers/Sales/SalesQuotationsController.cs |
-| SalesQuotations | Create | POST | Angular Pilot | /sales/quotations | — | MiniStore.Web/Controllers/Sales/SalesQuotationsController.cs |
-| SalesQuotations | Details | GET | Angular Pilot | /sales/quotations | — | MiniStore.Web/Controllers/Sales/SalesQuotationsController.cs |
-| SalesQuotations | DownloadPdf | GET | Angular Pilot | /sales/quotations | — | MiniStore.Web/Controllers/Sales/SalesQuotationsController.cs |
-| SalesQuotations | Expire | POST | Angular Pilot | /sales/quotations | — | MiniStore.Web/Controllers/Sales/SalesQuotationsController.cs |
-| SalesQuotations | Index | GET | Angular Pilot | /sales/quotations | — | MiniStore.Web/Controllers/Sales/SalesQuotationsController.cs |
-| SalesQuotations | Reject | POST | Angular Pilot | /sales/quotations | — | MiniStore.Web/Controllers/Sales/SalesQuotationsController.cs |
-| SalesQuotations | Send | POST | Angular Pilot | /sales/quotations | — | MiniStore.Web/Controllers/Sales/SalesQuotationsController.cs |
+| SalesQuotations | Accept | POST | Angular Default | /sales/quotations | — | MiniStore.Web/Controllers/Sales/SalesQuotationsController.cs |
+| SalesQuotations | Cancel | POST | Angular Default | /sales/quotations | — | MiniStore.Web/Controllers/Sales/SalesQuotationsController.cs |
+| SalesQuotations | Create | GET | Angular Default | /sales/quotations | /sales/quotations/new | MiniStore.Web/Controllers/Sales/SalesQuotationsController.cs |
+| SalesQuotations | Create | POST | Angular Default | /sales/quotations | /sales/quotations/new | MiniStore.Web/Controllers/Sales/SalesQuotationsController.cs |
+| SalesQuotations | Details | GET | Angular Default | /sales/quotations | /sales/quotations/{id} | MiniStore.Web/Controllers/Sales/SalesQuotationsController.cs |
+| SalesQuotations | DownloadPdf | GET | Angular Default | /sales/quotations | — | MiniStore.Web/Controllers/Sales/SalesQuotationsController.cs |
+| SalesQuotations | Expire | POST | Angular Default | /sales/quotations | — | MiniStore.Web/Controllers/Sales/SalesQuotationsController.cs |
+| SalesQuotations | Index | GET | Angular Default | /sales/quotations | /sales/quotations | MiniStore.Web/Controllers/Sales/SalesQuotationsController.cs |
+| SalesQuotations | Reject | POST | Angular Default | /sales/quotations | — | MiniStore.Web/Controllers/Sales/SalesQuotationsController.cs |
+| SalesQuotations | Send | POST | Angular Default | /sales/quotations | — | MiniStore.Web/Controllers/Sales/SalesQuotationsController.cs |
 | SalesQuotationTemplates | Activate | POST | Angular Pilot | /sales/quotation-templates | — | MiniStore.Web/Controllers/Sales/SalesQuotationTemplatesController.cs |
 | SalesQuotationTemplates | Archive | POST | Angular Pilot | /sales/quotation-templates | — | MiniStore.Web/Controllers/Sales/SalesQuotationTemplatesController.cs |
 | SalesQuotationTemplates | Create | GET | Angular Pilot | /sales/quotation-templates | — | MiniStore.Web/Controllers/Sales/SalesQuotationTemplatesController.cs |

@@ -1115,6 +1115,40 @@ Check(new[] { "Create", "SetListActive", "AddRule", "SetRuleActive", "Evaluate" 
               "SalesPriceLists", action,
               new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null),
     "Sales-pricing cutover must keep list, rule and evaluation posts outside cutover");
+var salesQuotationCutoverResolver = new PresentationCutoverResolver(Options.Create(
+    new PresentationCutoverOptions
+    {
+        AngularBasePath = "/app",
+        Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["SalesQuotations"] = PresentationCutoverMode.AngularDefault
+        }
+    }));
+cutoverContext.Request.QueryString =
+    new Microsoft.AspNetCore.Http.QueryString("?status=1&search=cutover");
+Check(salesQuotationCutoverResolver.Resolve(cutoverContext.Request,
+          "SalesQuotations", "Index", new Microsoft.AspNetCore.Routing.RouteValueDictionary()) ==
+      "/app/sales/quotations?status=1&search=cutover",
+    "Sales-quotation cutover must preserve list filters");
+cutoverContext.Request.QueryString =
+    new Microsoft.AspNetCore.Http.QueryString("?templateId=17&source=cutover");
+Check(salesQuotationCutoverResolver.Resolve(cutoverContext.Request,
+          "SalesQuotations", "Create", new Microsoft.AspNetCore.Routing.RouteValueDictionary()) ==
+      "/app/sales/quotations/new?templateId=17&source=cutover" &&
+      salesQuotationCutoverResolver.Resolve(cutoverContext.Request,
+          "SalesQuotations", "Details",
+          new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 19 }) ==
+      "/app/sales/quotations/19?templateId=17&source=cutover",
+    "Sales-quotation cutover must resolve create and positive-ID details routes");
+Check(new long[] { -1, 0 }.All(id =>
+          salesQuotationCutoverResolver.Resolve(cutoverContext.Request,
+              "SalesQuotations", "Details",
+              new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = id }) is null) &&
+      new[] { "DownloadPdf", "Send", "Accept", "Reject", "Expire", "Cancel" }.All(action =>
+          salesQuotationCutoverResolver.Resolve(cutoverContext.Request,
+              "SalesQuotations", action,
+              new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 19 }) is null),
+    "Sales-quotation cutover must reject unsafe IDs and keep PDF/lifecycle actions outside cutover");
 cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?page=2");
 foreach (var entry in PresentationCutoverRouteCatalog.All)
 {

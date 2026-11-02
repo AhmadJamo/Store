@@ -275,7 +275,13 @@ static async Task RunLiveCutoverAsync(
             "PurchaseReturns.View"),
         new("/SalesPriceLists?id=1&source=cutover-rehearsal",
             "/app/sales/pricing?id=1&source=cutover-rehearsal",
-            "SalesPricing.View")
+            "SalesPricing.View"),
+        new("/SalesQuotations?status=1&search=cutover-rehearsal",
+            "/app/sales/quotations?status=1&search=cutover-rehearsal",
+            "SalesQuotations.View"),
+        new("/SalesQuotations/Create?templateId=1",
+            "/app/sales/quotations/new?templateId=1",
+            "SalesQuotations.Create")
     };
 
     if (permissions.Contains("Customers.View"))
@@ -649,6 +655,19 @@ static async Task RunLiveCutoverAsync(
                 $"/app/purchases/legacy-returns/{id}", "PurchaseReturns.View"));
         }
     }
+    if (permissions.Contains("SalesQuotations.View"))
+    {
+        var response = await authenticated.GetAsync("/api/v1/sales-quotations");
+        Require(response.Ok, $"Sales-quotation cutover fixture read returned {response.Status}.");
+        using var quotations = JsonDocument.Parse(await response.TextAsync());
+        if (quotations.RootElement.ValueKind == JsonValueKind.Array &&
+            quotations.RootElement.GetArrayLength() > 0)
+        {
+            var id = quotations.RootElement[0].GetProperty("id").GetInt32();
+            routes.Add(new($"/SalesQuotations/Details/{id}",
+                $"/app/sales/quotations/{id}", "SalesQuotations.View"));
+        }
+    }
     if (permissions.Contains("InventoryAdjustments.View"))
     {
         var response = await authenticated.GetAsync("/api/v1/inventory-adjustments");
@@ -749,6 +768,8 @@ static async Task RunLiveCutoverAsync(
                          surface is "Purchases" or "PurchaseReturns";
         expectsAngular = expectsAngular || options.CutoverMode == "pilot" &&
                          surface is "SalesPriceLists";
+        expectsAngular = expectsAngular || options.CutoverMode == "pilot" &&
+                         surface is "SalesQuotations";
         if (expectsAngular)
         {
             Require(response.Status is 301 or 302 or 307 or 308,

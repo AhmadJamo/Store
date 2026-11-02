@@ -1,5 +1,11 @@
 # AI Work Log
 
+- 2026-11-02: Completed `MOD-030E4X`. SalesQuotations Index/Create/positive-ID Details GET now use exact
+  AngularDefault routes with filter/template query preservation. PDF and all create/lifecycle POST actions remain outside
+  cutover. Hosted 15/15, the current authorized route set cutover/rollback 104/104 and 1,663 backend checks passed. The
+  current session lacked quotation permissions for live probes; behavior is regression-covered and no quotation changed.
+  Fifty-six surfaces are AngularDefault and 26 remain MVC-default; execution advances to `MOD-030E4Y`.
+
 - 2026-11-02: Completed `MOD-030E4W`. SalesPriceLists Index GET now uses AngularDefault with selected-list/query
   preservation; list/rule creation, status and evaluation POST actions remain outside cutover. Hosted 15/15, the current
   authorized route set cutover/rollback 104/104 and 1,654 backend checks passed. The current session lacked
