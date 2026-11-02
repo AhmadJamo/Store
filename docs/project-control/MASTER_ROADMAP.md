@@ -37,7 +37,7 @@
 - `MOD-023..028` — APPROVED PROGRAM: نقل المشتريات والمبيعات وPOS والمحاسبة وSaaS وكل الشاشات المشتركة والمتبقية إلى Angular على موجات، مع functional parity وإعادة تصميم كاملة وفق Angular design system لا نسخ Razor.
 - `MOD-029` — COMPLETE 2026-10-30: اكتملت `MOD-029A..D` للمصفوفة والمصالحة المصرح بها ومجموعات المخاطر والتحويل/الرجوع الحي؛ MVC ما زال default.
 - `MOD-030` — REVERSIBLE CUTOVER COMPLETE 2026-10-31: اكتمل `MOD-030A..D` باستضافة Angular production وتحويل Customers/Suppliers/Products/AnalyticsCenter/Settings مع قبول ورجوع مثبتين؛ إزالة MVC الفعلية تبقى تدريجية وممنوعة دون موافقة صريحة لكل دفعة محدودة.
-- `MOD-030E` — IN PROGRESS: اكتملت `MOD-030E4A..M`، وأصبحت 44 سطحًا AngularDefault مع 38 سطحًا متبقيًا على MVC. الدفعة التالية `MOD-030E4N` لقائمة وتفاصيل عكس مستندات الشراء.
+- `MOD-030E` — IN PROGRESS: اكتملت `MOD-030E4A..N`، وأصبحت 45 سطحًا AngularDefault مع 37 سطحًا متبقيًا على MVC. الدفعة التالية `MOD-030E4O` للتكاليف الإضافية.
 
 ## P0 — مخاطر حرجة
 

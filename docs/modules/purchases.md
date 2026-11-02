@@ -190,6 +190,10 @@ accounting or business rules.
 Hosted acceptance passed 15/15, cutover and MVC rollback each passed 91 routes, and 1,577 backend checks passed. Create
 POST remains outside cutover; no saved credit note existed for live Details and no data or accounting changed.
 
+`MOD-030E4N` makes PurchaseDocumentReversals Index/positive-ID Details GET presentation AngularDefault. Create and the
+reversal mutation remain outside cutover. Hosted 15/15, cutover/rollback 92/92 and 1,583 backend checks passed. No saved
+reversal existed for live Details and no data changed.
+
 `MOD-030E4L` makes VendorBills Index/query-bound Create/positive-ID Details GET presentation `AngularDefault` at
 `/purchases/bills`, `/purchases/bills/new?purchaseOrderId={id}` and `/purchases/bills/{id}`. The positive order ID
 is validated and preserved. Attachment download/upload, extraction review, approval/override, posting and cancellation

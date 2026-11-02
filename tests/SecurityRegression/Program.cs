@@ -775,6 +775,35 @@ Check(supplierCreditNotesCutoverResolver.Resolve(cutoverContext.Request,
               new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = id }) is null),
     "Supplier-credit-note cutover must reject unsafe bill and credit-note identifiers");
 cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?page=2");
+var purchaseDocumentReversalsCutoverResolver = new PresentationCutoverResolver(Options.Create(
+    new PresentationCutoverOptions
+    {
+        AngularBasePath = "/app",
+        Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["PurchaseDocumentReversals"] = PresentationCutoverMode.AngularDefault
+        }
+    }));
+Check(purchaseDocumentReversalsCutoverResolver.Resolve(cutoverContext.Request,
+          "PurchaseDocumentReversals", "Index",
+          new Microsoft.AspNetCore.Routing.RouteValueDictionary()) ==
+      "/app/purchases/reversals?page=2" &&
+      purchaseDocumentReversalsCutoverResolver.Resolve(cutoverContext.Request,
+          "PurchaseDocumentReversals", "Details",
+          new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 17 }) ==
+      "/app/purchases/reversals/17?page=2",
+    "Purchase-document-reversal cutover must resolve exact list and positive-ID details routes");
+Check(new long[] { -1, 0 }.All(id =>
+          purchaseDocumentReversalsCutoverResolver.Resolve(cutoverContext.Request,
+              "PurchaseDocumentReversals", "Details",
+              new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = id }) is null) &&
+      purchaseDocumentReversalsCutoverResolver.Resolve(cutoverContext.Request,
+          "PurchaseDocumentReversals", "Create",
+          new Microsoft.AspNetCore.Routing.RouteValueDictionary
+          {
+              ["documentType"] = 1, ["originalDocumentId"] = 17
+          }) is null,
+    "Purchase-document-reversal create and unsafe identifiers must stay outside presentation cutover");
 foreach (var entry in PresentationCutoverRouteCatalog.All)
 {
     var keyParts = entry.Key.Split(':', 2);

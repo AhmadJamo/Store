@@ -59,6 +59,7 @@
 | MOD-030E4K Goods Receipt Returns | Exact Index/query-bound Create/positive-ID Details GET routes; Create POST and mutations excluded; hosted 15/15 and 86-route cutover/MVC rollback passed with an existing receipt for Create, while no saved return existed for live Details; Release clean and 1,558 backend checks passed without data creation | 2026-11-02 |
 | MOD-030E4L Vendor Bills | Exact Index/query-bound Create/positive-ID Details GET routes; attachments, extraction and lifecycle/accounting commands excluded; hosted 15/15 and 89-route cutover/MVC rollback passed including a read-only existing bill; Release clean and 1,568 backend checks passed without data creation | 2026-11-02 |
 | MOD-030E4M Supplier Credit Notes | Index/query-bound Create/Details GET; Create POST excluded; hosted 15/15 and 91-route cutover/MVC rollback; 1,577 backend checks; no saved credit note for live Details | 2026-11-02 |
+| MOD-030E4N Purchase Document Reversals | Index/Details GET; Create and reversal excluded; hosted 15/15 and 92-route cutover/MVC rollback; 1,583 backend checks; no saved reversal for live Details | 2026-11-02 |
 | Live schema integrity (سلامة المخطط الحي) | 147 tables, 420 trusted FKs, zero disabled constraints/indexes or unsafe tenant relations | 2026-10-15 |
 | Web dependency build (بناء الويب واعتماداته) | Release, 4 projects, zero warnings/errors after SAL-120A (نجح) | 2026-10-22 |
 

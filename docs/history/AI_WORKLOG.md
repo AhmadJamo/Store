@@ -1,5 +1,10 @@
 # AI Work Log
 
+- 2026-11-02: Completed `MOD-030E4N`. PurchaseDocumentReversals Index/Details GET now uses exact AngularDefault
+  routes; Create and reversal remain outside cutover. Hosted 15/15, cutover/rollback 92/92 and 1,583 backend checks passed.
+  No saved reversal existed for live Details. Forty-five surfaces are AngularDefault and 37 remain MVC-default; execution
+  advances to `MOD-030E4O`.
+
 - 2026-11-02: Completed `MOD-030E4M`. SupplierCreditNotes Index/query-bound Create/Details GET now uses exact
   AngularDefault routes; Create POST remains outside cutover. Hosted 15/15, cutover/rollback 91/91 and 1,577 backend
   checks passed without data changes. No saved credit note existed for live Details. Forty-four surfaces are

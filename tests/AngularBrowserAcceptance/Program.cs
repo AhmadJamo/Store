@@ -245,7 +245,10 @@ static async Task RunLiveCutoverAsync(
             "VendorBills.View"),
         new("/SupplierCreditNotes",
             "/app/purchases/credit-notes",
-            "SupplierCreditNotes.View")
+            "SupplierCreditNotes.View"),
+        new("/PurchaseDocumentReversals",
+            "/app/purchases/reversals",
+            "PurchaseDocumentReversals.View")
     };
 
     if (permissions.Contains("Customers.View"))
@@ -455,6 +458,19 @@ static async Task RunLiveCutoverAsync(
                 $"/app/purchases/credit-notes/{id}", "SupplierCreditNotes.View"));
         }
     }
+    if (permissions.Contains("PurchaseDocumentReversals.View"))
+    {
+        var response = await authenticated.GetAsync("/api/v1/purchase-document-reversals");
+        Require(response.Ok, $"Purchase-document-reversal cutover fixture read returned {response.Status}.");
+        using var reversals = JsonDocument.Parse(await response.TextAsync());
+        if (reversals.RootElement.ValueKind == JsonValueKind.Array &&
+            reversals.RootElement.GetArrayLength() > 0)
+        {
+            var id = reversals.RootElement[0].GetProperty("id").GetInt32();
+            routes.Add(new($"/PurchaseDocumentReversals/Details/{id}",
+                $"/app/purchases/reversals/{id}", "PurchaseDocumentReversals.View"));
+        }
+    }
     if (permissions.Contains("InventoryAdjustments.View"))
     {
         var response = await authenticated.GetAsync("/api/v1/inventory-adjustments");
@@ -535,6 +551,8 @@ static async Task RunLiveCutoverAsync(
                          surface is "VendorBills";
         expectsAngular = expectsAngular || options.CutoverMode == "pilot" &&
                          surface is "SupplierCreditNotes";
+        expectsAngular = expectsAngular || options.CutoverMode == "pilot" &&
+                         surface is "PurchaseDocumentReversals";
         if (expectsAngular)
         {
             Require(response.Status is 301 or 302 or 307 or 308,

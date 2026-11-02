@@ -1,16 +1,17 @@
 # المهمة التالية الوحيدة / Next Task
 
-## `MOD-030E4N` — عكس مستندات الشراء / Purchase Document Reversals Cutover
+## `MOD-030E4O` — التكاليف الإضافية / Landed Costs Cutover
 
 > الحالة: APPROVED
 
-اكتمل `MOD-030E4M`: أصبحت SupplierCreditNotes السطح 44 بعد hosted ‏15/15 والقطع والرجوع 91/91. لم يوجد إشعار محفوظ لاختبار Details حياً. بقي 38 سطحًا MVC.
+اكتمل `MOD-030E4N`: أصبحت PurchaseDocumentReversals السطح 45 بعد hosted ‏15/15 والقطع والرجوع 92/92. لم يوجد سجل عكس محفوظ لاختبار Details حياً. بقي 37 سطحًا MVC.
 
 ### النطاق المحدود
 
-- PurchaseDocumentReversals Index GET إلى `/purchases/reversals`.
-- Details GET ذو المعرّف الموجب إلى `/purchases/reversals/{id}`.
-- Create GET المركب وCreate POST يبقيان خارج الدفعة.
+- LandedCosts Index GET إلى `/purchases/landed-costs`.
+- Create GET ذو `goodsReceiptId` الموجب إلى `/purchases/landed-costs/new`.
+- Details GET ذو المعرّف الموجب إلى `/purchases/landed-costs/{id}`.
+- Create POST يبقى خارج التحويل.
 
 ### القبول
 

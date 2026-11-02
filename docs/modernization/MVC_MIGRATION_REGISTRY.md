@@ -11,7 +11,7 @@
 - Angular application routes discovered: 184.
 - MVC surfaces with a verified Angular counterpart: 82.
 - Remaining MVC surfaces without a mapped Angular counterpart: 0.
-- Allowlisted Angular-default cutover actions: 96.
+- Allowlisted Angular-default cutover actions: 98.
 
 Remaining surfaces: none.
 
@@ -107,9 +107,9 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | PurchaseAgreements | Index.cshtml | Angular Pilot | /purchases/agreements | MiniStore.Web/Views/PurchaseAgreements/Index.cshtml |
 | PurchaseAnalytics | Index.cshtml | Angular Default | /purchases/analytics | MiniStore.Web/Views/PurchaseAnalytics/Index.cshtml |
 | PurchaseApprovalRules | Index.cshtml | Angular Default | /purchases/approval-rules | MiniStore.Web/Views/PurchaseApprovalRules/Index.cshtml |
-| PurchaseDocumentReversals | Create.cshtml | Angular Pilot | /purchases/reversals | MiniStore.Web/Views/PurchaseDocumentReversals/Create.cshtml |
-| PurchaseDocumentReversals | Details.cshtml | Angular Pilot | /purchases/reversals | MiniStore.Web/Views/PurchaseDocumentReversals/Details.cshtml |
-| PurchaseDocumentReversals | Index.cshtml | Angular Pilot | /purchases/reversals | MiniStore.Web/Views/PurchaseDocumentReversals/Index.cshtml |
+| PurchaseDocumentReversals | Create.cshtml | Angular Default | /purchases/reversals | MiniStore.Web/Views/PurchaseDocumentReversals/Create.cshtml |
+| PurchaseDocumentReversals | Details.cshtml | Angular Default | /purchases/reversals | MiniStore.Web/Views/PurchaseDocumentReversals/Details.cshtml |
+| PurchaseDocumentReversals | Index.cshtml | Angular Default | /purchases/reversals | MiniStore.Web/Views/PurchaseDocumentReversals/Index.cshtml |
 | PurchaseOrders | Details.cshtml | Angular Default | /purchases/orders | MiniStore.Web/Views/PurchaseOrders/Details.cshtml |
 | PurchaseOrders | Index.cshtml | Angular Default | /purchases/orders | MiniStore.Web/Views/PurchaseOrders/Index.cshtml |
 | PurchaseReplenishment | Index.cshtml | Angular Default | /purchases/replenishment | MiniStore.Web/Views/PurchaseReplenishment/Index.cshtml |
@@ -393,10 +393,10 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | PurchaseApprovalRules | Create | POST | Angular Default | /purchases/approval-rules | — | MiniStore.Web/Controllers/Purchases/PurchaseApprovalRulesController.cs |
 | PurchaseApprovalRules | Index | GET | Angular Default | /purchases/approval-rules | /purchases/approval-rules | MiniStore.Web/Controllers/Purchases/PurchaseApprovalRulesController.cs |
 | PurchaseApprovalRules | SetActive | POST | Angular Default | /purchases/approval-rules | — | MiniStore.Web/Controllers/Purchases/PurchaseApprovalRulesController.cs |
-| PurchaseDocumentReversals | Create | GET | Angular Pilot | /purchases/reversals | — | MiniStore.Web/Controllers/Purchases/PurchaseDocumentReversalsController.cs |
-| PurchaseDocumentReversals | Create | POST | Angular Pilot | /purchases/reversals | — | MiniStore.Web/Controllers/Purchases/PurchaseDocumentReversalsController.cs |
-| PurchaseDocumentReversals | Details | GET | Angular Pilot | /purchases/reversals | — | MiniStore.Web/Controllers/Purchases/PurchaseDocumentReversalsController.cs |
-| PurchaseDocumentReversals | Index | GET | Angular Pilot | /purchases/reversals | — | MiniStore.Web/Controllers/Purchases/PurchaseDocumentReversalsController.cs |
+| PurchaseDocumentReversals | Create | GET | Angular Default | /purchases/reversals | — | MiniStore.Web/Controllers/Purchases/PurchaseDocumentReversalsController.cs |
+| PurchaseDocumentReversals | Create | POST | Angular Default | /purchases/reversals | — | MiniStore.Web/Controllers/Purchases/PurchaseDocumentReversalsController.cs |
+| PurchaseDocumentReversals | Details | GET | Angular Default | /purchases/reversals | /purchases/reversals/{id} | MiniStore.Web/Controllers/Purchases/PurchaseDocumentReversalsController.cs |
+| PurchaseDocumentReversals | Index | GET | Angular Default | /purchases/reversals | /purchases/reversals | MiniStore.Web/Controllers/Purchases/PurchaseDocumentReversalsController.cs |
 | PurchaseOrders | Details | GET, POST | Angular Default | /purchases/orders | /purchases/orders/{id} | MiniStore.Web/Controllers/Purchases/PurchaseOrdersController.cs |
 | PurchaseOrders | RedirectToAction | GET, POST | Angular Default | /purchases/orders | — | MiniStore.Web/Controllers/Purchases/PurchaseOrdersController.cs |
 | PurchaseOrders | RedirectToAction | GET, POST | Angular Default | /purchases/orders | — | MiniStore.Web/Controllers/Purchases/PurchaseOrdersController.cs |

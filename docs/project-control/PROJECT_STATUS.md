@@ -225,3 +225,6 @@ backend دون إنشاء بيانات. أصبحت 43 سطحًا AngularDefault 
 اكتمل `MOD-030E4M`: أصبحت SupplierCreditNotes لمسارات Index/Create/Details GET الدقيقة AngularDefault، وبقي Create
 POST خارج التحويل. نجح hosted ‏15/15 والقطع والرجوع 91/91 والبوابة 1,577 backend. أصبحت 44 سطحًا AngularDefault
 وبقي 38 سطحًا MVC؛ ينتقل التنفيذ إلى `MOD-030E4N` لعكس مستندات الشراء.
+اكتمل `MOD-030E4N`: أصبحت PurchaseDocumentReversals لمساري Index/Details GET AngularDefault، وبقي Create والعكس
+خارج التحويل. نجح hosted ‏15/15 والقطع والرجوع 92/92 والبوابة 1,583 backend. أصبحت 45 سطحًا AngularDefault وبقي 37
+سطحًا MVC؛ ينتقل التنفيذ إلى `MOD-030E4O` للتكاليف الإضافية.
