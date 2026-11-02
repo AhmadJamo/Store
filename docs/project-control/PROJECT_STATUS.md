@@ -316,3 +316,7 @@ hosted ‏15/15 والقطع/الرجوع 124/124 والبوابة 1,748 بلا 
 للقراءة فقط تحت `JournalEntries.View`. نجح hosted ‏15/15 والقطع/الرجوع 125/125 والبوابة 1,763. لم تعرض Demo
 JournalEntryId مرتبطًا بدفعة لعينة live، ولم يُنشأ أو يتغير أي قيد. أصبحت 69 سطحًا AngularDefault وبقي 13 سطحًا MVC؛
 ينتقل التنفيذ إلى `MOD-030E5L` لدفعات الموردين.
+اكتمل `MOD-030E5L`: أصبحت SupplierPayments Index/Create/Details GET الآمنة AngularDefault مع اشتراط vendorBillId موجب
+ومفرد، وبقي create-and-post تحت `SupplierPaymentService` وخارج تحويل العرض. نجح hosted ‏15/15 والقطع/الرجوع
+128/128 والبوابة 1,773 بلا إنشاء دفعة أو تغيير قيد. أصبحت 70 سطحًا AngularDefault وبقي 12 سطحًا MVC؛ ينتقل
+التنفيذ إلى `MOD-030E5M` لصفحة الاشتراك.

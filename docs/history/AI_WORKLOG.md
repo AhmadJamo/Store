@@ -1,5 +1,10 @@
 # AI Work Log
 
+- 2026-11-03: Completed `MOD-030E5L`. SupplierPayments Index/positive-bill Create/positive-ID Details GET now use
+  AngularDefault; the source bill must be a single positive query value and create-and-post remains protected API/MVC POST
+  under `SupplierPaymentService`. Hosted 15/15, cutover/MVC rollback 128/128 and 1,773 backend checks passed without
+  payment or journal mutation. Seventy surfaces are AngularDefault and 12 remain MVC-default.
+
 - 2026-11-03: Completed `MOD-030E5K`. Positive-ID JournalEntries Details GET now uses AngularDefault; the resolver rejects
   non-positive identifiers and the surface remains read-only under `JournalEntries.View`. Hosted 15/15, cutover/MVC rollback
   125/125 and 1,763 backend checks passed. Demo exposed no payment-backed JournalEntryId for a live detail probe, so no

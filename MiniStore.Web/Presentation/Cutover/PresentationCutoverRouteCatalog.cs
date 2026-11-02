@@ -162,7 +162,10 @@ public static class PresentationCutoverRouteCatalog
             ["SalesReturns:Create"] = "/sales/legacy/{saleId}/return",
             ["SalesReturns:Details"] = "/sales/legacy-returns/{id}",
             ["Accounts:Index"] = "/accounting/accounts",
-            ["JournalEntries:Details"] = "/accounting/journal-entries/{id}"
+            ["JournalEntries:Details"] = "/accounting/journal-entries/{id}",
+            ["SupplierPayments:Index"] = "/purchases/payments",
+            ["SupplierPayments:Create"] = "/purchases/payments/new",
+            ["SupplierPayments:Details"] = "/purchases/payments/{id}"
         };
 
     public static IReadOnlyDictionary<string, string> All => Routes;

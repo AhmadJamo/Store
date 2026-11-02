@@ -1539,9 +1539,42 @@ Check(journalEntriesCutoverResolver.Resolve(cutoverContext.Request,
       new long[] { -1, 0 }.All(id => journalEntriesCutoverResolver.Resolve(cutoverContext.Request,
           "JournalEntries", "Details", new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = id }) is null),
     "Journal-entry cutover must require a positive identifier and preserve query values");
+var supplierPaymentsCutoverResolver = new PresentationCutoverResolver(Options.Create(
+    new PresentationCutoverOptions
+    {
+        AngularBasePath = "/app",
+        Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["SupplierPayments"] = PresentationCutoverMode.AngularDefault
+        }
+    }));
+cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?search=cutover");
+Check(supplierPaymentsCutoverResolver.Resolve(cutoverContext.Request,
+          "SupplierPayments", "Index", new Microsoft.AspNetCore.Routing.RouteValueDictionary()) ==
+      "/app/purchases/payments?search=cutover" &&
+      supplierPaymentsCutoverResolver.Resolve(cutoverContext.Request,
+          "SupplierPayments", "Details", new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 23 }) ==
+      "/app/purchases/payments/23?search=cutover",
+    "Supplier-payment cutover must preserve filters and resolve positive details");
+Check(new long[] { -1, 0 }.All(id => supplierPaymentsCutoverResolver.Resolve(cutoverContext.Request,
+          "SupplierPayments", "Details", new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = id }) is null),
+    "Supplier-payment cutover must reject unsafe detail identifiers");
+cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?vendorBillId=31&source=cutover");
+Check(supplierPaymentsCutoverResolver.Resolve(cutoverContext.Request,
+          "SupplierPayments", "Create", new Microsoft.AspNetCore.Routing.RouteValueDictionary()) ==
+      "/app/purchases/payments/new?vendorBillId=31&source=cutover",
+    "Supplier-payment cutover must preserve a positive source bill and other query values");
+Check(new long[] { -1, 0 }.All(id =>
+    {
+        cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString($"?vendorBillId={id}");
+        return supplierPaymentsCutoverResolver.Resolve(cutoverContext.Request,
+            "SupplierPayments", "Create", new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null;
+    }), "Supplier-payment cutover must reject unsafe source-bill identifiers");
 cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?page=2");
 foreach (var entry in PresentationCutoverRouteCatalog.All)
 {
+    cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString(
+        entry.Key == "SupplierPayments:Create" ? "?vendorBillId=1&page=2" : "?page=2");
     var keyParts = entry.Key.Split(':', 2);
     var routeValues = new Microsoft.AspNetCore.Routing.RouteValueDictionary
         {

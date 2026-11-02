@@ -34,6 +34,11 @@ supplier invoice uniqueness, three-way matching, taxes, PPV, GRNI, payable and j
 across eligible open bills for the same supplier and currency. The server recalculates paid/credited balances transactionally, blocks
 overpayment and owns exchange-rate, realized gain/loss, payable and cash/bank journal lines. Angular displays but never derives them.
 
+`MOD-030E5L` makes SupplierPayments Index, positive-Vendor-Bill Create and positive-ID Details GET presentation
+AngularDefault at the exact list/composer/detail routes. The source bill must be a single positive query value; Create POST,
+payable limits, allocation, exchange and journal posting remain under `SupplierPaymentService` and outside presentation
+cutover. Hosted 15/15, cutover/MVC rollback 128/128 and 1,773 backend checks passed without payment or journal mutation.
+
 `MOD-023H` exposes Goods Receipt Return list/details/create-and-post through Angular with receipt-line remaining quantities,
 received tracking evidence and explicit location/tracking removal allocations. `GoodsReceiptReturnService` still validates posted
 receipt eligibility, unbilled quantity, current availability and tracking identity, then owns AVCO removal, physical movement,

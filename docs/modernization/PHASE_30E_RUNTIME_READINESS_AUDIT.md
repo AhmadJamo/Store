@@ -355,6 +355,14 @@ part of the surface. Hosted 15/15, cutover/MVC rollback 125/125 and 1,763 backen
 payment-backed JournalEntryId for a live Details probe; the exact route and unsafe-ID behavior remain regression-covered,
 and no journal was created or changed. Sixty-nine surfaces are AngularDefault and 13 remain MVC-default.
 
+## MOD-030E5L evidence
+
+SupplierPayments Index/positive-Vendor-Bill Create/positive-ID Details GET joins AngularDefault at the exact list,
+composer and detail routes. The source bill must be a single positive query value; Create POST, payable limits,
+allocation, exchange and journal posting remain under `SupplierPaymentService` outside presentation cutover. Hosted
+15/15, cutover/MVC rollback 128/128 and 1,773 backend checks passed using existing read-only fixtures without payment or
+journal mutation. Seventy surfaces are AngularDefault and 12 remain MVC-default.
+
 ## MOD-030E4S evidence
 
 SupplierCommunications positive-ID Details joins AngularDefault; Prepare/RecordActivity and attachment download remain

@@ -127,6 +127,11 @@ supplier sourcing, inventory/accounting posting, concurrency and tenant authorit
 - Angular: 172/172 tests across 68 files; 77 templates passed accessibility; external SCSS passed.
 - Bundles: 308,019/358,400 initial bytes and 81,743/81,920 largest lazy bytes.
 
+Runtime update: `MOD-030E5L` makes Supplier Payments Index, positive-bill Create and positive-ID Details GET presentation
+AngularDefault. Create-and-post remains outside presentation cutover under the existing permission, antiforgery and
+`SupplierPaymentService` authority. Hosted 15/15, cutover/MVC rollback 128/128 and 1,773 backend checks passed without
+creating a payment or changing a journal.
+
 ## `MOD-023H` delivered — Goods Receipt Returns
 
 - Added authenticated list/details/create-form and create-and-post APIs over `GoodsReceiptReturnService`.

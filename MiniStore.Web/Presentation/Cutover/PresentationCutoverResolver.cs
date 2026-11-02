@@ -51,6 +51,14 @@ public sealed class PresentationCutoverResolver(IOptions<PresentationCutoverOpti
                  out var sourceTemplateId) || sourceTemplateId <= 0))
             return null;
 
+        if (string.Equals(controller, "SupplierPayments", StringComparison.OrdinalIgnoreCase) &&
+            string.Equals(action, "Create", StringComparison.OrdinalIgnoreCase) &&
+            (!request.Query.TryGetValue("vendorBillId", out var vendorBillIds) ||
+             vendorBillIds.Count != 1 ||
+             !long.TryParse(vendorBillIds[0], NumberStyles.Integer, CultureInfo.InvariantCulture,
+                 out var sourceVendorBillId) || sourceVendorBillId <= 0))
+            return null;
+
         if (route.Contains("{productId}", StringComparison.Ordinal))
         {
             var productIdValue = routeValues["productId"]?.ToString();
