@@ -288,3 +288,6 @@ Create/Approve/Cancel/Post/Reverse تعمل عبر API خارج تحويل ال�
 اكتمل `MOD-030E5C`: أصبحت CustomerReturnRequests Index/Create/Details GET AngularDefault، وبقيت دورة الحالة عبر API.
 نجح hosted ‏15/15 والقطع/الرجوع 104/104 والبوابة 1,707 بلا تغيير طلب. أصبحت 61 سطحًا AngularDefault وبقي 21 سطحًا
 MVC؛ ينتقل التنفيذ إلى `MOD-030E5D` لاستلامات المرتجعات.
+اكتمل `MOD-030E5D`: أصبحت CustomerReturnReceipts GET الآمنة AngularDefault وبقيت عمليات الإنشاء والفحص والترحيل
+والإلغاء عبر API. نجح hosted ‏15/15 والقطع/الرجوع 104/104 والبوابة 1,716 بلا تغيير مخزون/محاسبة. أصبحت 62 سطحًا
+AngularDefault وبقي 20 سطحًا MVC؛ ينتقل التنفيذ إلى `MOD-030E5E` لإشعارات دائن العملاء.

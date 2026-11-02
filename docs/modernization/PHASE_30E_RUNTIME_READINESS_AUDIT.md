@@ -298,6 +298,12 @@ CustomerReturnRequests Index/positive-delivery Create/positive-ID Details joins 
 outside cutover. Hosted 15/15, cutover/rollback 104/104 and 1,707 backend checks passed without mutation. Sixty-one
 surfaces are AngularDefault and 21 remain MVC-default.
 
+## MOD-030E5D evidence
+
+CustomerReturnReceipts safe GET presentation joins AngularDefault; create/inspect/post/cancel stay outside cutover.
+Hosted 15/15, cutover/rollback 104/104 and 1,716 backend checks passed without stock/accounting mutation. Sixty-two
+surfaces are AngularDefault and 20 remain MVC-default.
+
 ## MOD-030E4S evidence
 
 SupplierCommunications positive-ID Details joins AngularDefault; Prepare/RecordActivity and attachment download remain

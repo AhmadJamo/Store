@@ -295,6 +295,34 @@ public sealed class PresentationCutoverResolver(IOptions<PresentationCutoverOpti
             }
         }
 
+        if (route.Contains("{customerReturnRequestId}", StringComparison.Ordinal))
+        {
+            var requestIdValue = routeValues["customerReturnRequestId"]?.ToString();
+            var requestIdFromQuery = false;
+            if (string.IsNullOrWhiteSpace(requestIdValue) &&
+                request.Query.TryGetValue("customerReturnRequestId", out var queryRequestId))
+            {
+                requestIdValue = queryRequestId.FirstOrDefault();
+                requestIdFromQuery = true;
+            }
+
+            if (!long.TryParse(requestIdValue, NumberStyles.Integer,
+                    CultureInfo.InvariantCulture, out var requestId) || requestId <= 0)
+                return null;
+
+            route = route.Replace("{customerReturnRequestId}", requestId.ToString(CultureInfo.InvariantCulture),
+                StringComparison.Ordinal);
+
+            if (requestIdFromQuery)
+            {
+                var remainingQuery = request.Query
+                    .Where(pair => !string.Equals(pair.Key, "customerReturnRequestId", StringComparison.OrdinalIgnoreCase))
+                    .SelectMany(pair => pair.Value.Select(value =>
+                        new KeyValuePair<string, string?>(pair.Key, value)));
+                queryString = QueryString.Create(remainingQuery);
+            }
+        }
+
         var target = settings.AngularBasePath.TrimEnd('/') + route;
         if (!queryString.HasValue)
             return target;

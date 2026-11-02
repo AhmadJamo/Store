@@ -296,7 +296,10 @@ static async Task RunLiveCutoverAsync(
             "CustomerPayments.View"),
         new("/CustomerReturnRequests?search=cutover-rehearsal",
             "/app/sales/return-requests?search=cutover-rehearsal",
-            "CustomerReturnRequests.View")
+            "CustomerReturnRequests.View"),
+        new("/CustomerReturnReceipts?search=cutover-rehearsal",
+            "/app/sales/return-receipts?search=cutover-rehearsal",
+            "CustomerReturnReceipts.View")
     };
 
     if (permissions.Contains("Customers.View"))
@@ -750,6 +753,19 @@ static async Task RunLiveCutoverAsync(
                 $"/app/sales/return-requests/{id}", "CustomerReturnRequests.View"));
         }
     }
+    if (permissions.Contains("CustomerReturnReceipts.View"))
+    {
+        var response = await authenticated.GetAsync("/api/v1/customer-return-receipts");
+        Require(response.Ok, $"Customer-return-receipt cutover fixture read returned {response.Status}.");
+        using var receipts = JsonDocument.Parse(await response.TextAsync());
+        if (receipts.RootElement.ValueKind == JsonValueKind.Array &&
+            receipts.RootElement.GetArrayLength() > 0)
+        {
+            var id = receipts.RootElement[0].GetProperty("id").GetInt32();
+            routes.Add(new($"/CustomerReturnReceipts/Details/{id}",
+                $"/app/sales/return-receipts/{id}", "CustomerReturnReceipts.View"));
+        }
+    }
     if (permissions.Contains("InventoryAdjustments.View"))
     {
         var response = await authenticated.GetAsync("/api/v1/inventory-adjustments");
@@ -862,6 +878,8 @@ static async Task RunLiveCutoverAsync(
                          surface is "CustomerPayments";
         expectsAngular = expectsAngular || options.CutoverMode == "pilot" &&
                          surface is "CustomerReturnRequests";
+        expectsAngular = expectsAngular || options.CutoverMode == "pilot" &&
+                         surface is "CustomerReturnReceipts";
         if (expectsAngular)
         {
             Require(response.Status is 301 or 302 or 307 or 308,

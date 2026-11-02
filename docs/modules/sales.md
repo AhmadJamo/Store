@@ -189,3 +189,7 @@ Hosted 15/15, authorized cutover/rollback 104/104 and 1,698 backend checks passe
 `MOD-030E5C` makes CustomerReturnRequests Index/positive-delivery Create/positive-ID Details GET presentation
 AngularDefault. Create/submit/approve/reject/cancel remain protected API POST operations. Hosted 15/15,
 cutover/rollback 104/104 and 1,707 backend checks passed with no return request mutation.
+
+`MOD-030E5D` makes CustomerReturnReceipts Index/positive-request Create/positive-ID Details GET presentation
+AngularDefault. Create/inspect/disposition post/cancel remain protected API POST. Hosted 15/15, cutover/rollback 104/104
+and 1,716 backend checks passed without return, stock or accounting mutation.

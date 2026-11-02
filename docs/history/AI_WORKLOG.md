@@ -1,5 +1,9 @@
 # AI Work Log
 
+- 2026-11-02: Completed `MOD-030E5D`. CustomerReturnReceipts safe GET presentation now uses AngularDefault; create,
+  inspect, disposition post and cancel remain API POST. Hosted 15/15, cutover/rollback 104/104 and 1,716 backend checks
+  passed without stock/accounting mutation. Sixty-two surfaces are AngularDefault and 20 remain MVC-default.
+
 - 2026-11-02: Completed `MOD-030E5C`. CustomerReturnRequests Index/positive-delivery Create/positive-ID Details GET
   now use AngularDefault; lifecycle remains protected API POST. Hosted 15/15, cutover/rollback 104/104 and 1,707 backend
   checks passed without mutation. Sixty-one surfaces are AngularDefault and 21 remain MVC-default.

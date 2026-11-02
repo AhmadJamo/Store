@@ -75,6 +75,7 @@
 | MOD-030E5A Customer Invoices | Index/positive-order Create/positive-ID Details GET; lifecycle/accounting POST excluded; hosted 15/15, current authorized route set cutover/MVC rollback 104/104 and 1,689 backend checks; session lacked invoice permissions; no financial mutation | 2026-11-02 |
 | MOD-030E5B Customer Payments | Index/positive-invoice Create/positive-ID Details GET; create/reverse POST excluded; hosted 15/15, cutover/MVC rollback 104/104 and 1,698 backend checks; no financial mutation | 2026-11-02 |
 | MOD-030E5C Customer Return Requests | Index/positive-delivery Create/positive-ID Details GET; lifecycle POST excluded; hosted 15/15, cutover/MVC rollback 104/104 and 1,707 backend checks; no mutation | 2026-11-02 |
+| MOD-030E5D Customer Return Receipts | Index/positive-request Create/positive-ID Details GET; create/inspect/post/cancel excluded; hosted 15/15, cutover/MVC rollback 104/104 and 1,716 backend checks; no stock/accounting mutation | 2026-11-02 |
 | Live schema integrity (سلامة المخطط الحي) | 147 tables, 420 trusted FKs, zero disabled constraints/indexes or unsafe tenant relations | 2026-10-15 |
 | Web dependency build (بناء الويب واعتماداته) | Release, 4 projects, zero warnings/errors after SAL-120A (نجح) | 2026-10-22 |
 
