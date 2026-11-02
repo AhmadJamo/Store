@@ -1,5 +1,9 @@
 # AI Work Log
 
+- 2026-11-02: Completed `MOD-030E5B`. CustomerPayments Index/positive-invoice Create/positive-ID Details GET now use
+  AngularDefault; create/reverse remain protected API POST operations. Hosted 15/15, cutover/rollback 104/104 and 1,698
+  backend checks passed with no financial mutation. Sixty surfaces are AngularDefault and 22 remain MVC-default.
+
 - 2026-11-02: Completed `MOD-030E5A`. CustomerInvoices Index/positive-order Create/positive-ID Details GET now use
   AngularDefault; create/approve/cancel/post/reverse remain protected API-backed POST operations outside cutover. Hosted
   15/15, authorized cutover/rollback 104/104 and 1,689 backend checks passed. The session lacked invoice permissions for

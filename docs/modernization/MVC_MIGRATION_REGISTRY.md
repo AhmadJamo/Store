@@ -11,7 +11,7 @@
 - Angular application routes discovered: 184.
 - MVC surfaces with a verified Angular counterpart: 82.
 - Remaining MVC surfaces without a mapped Angular counterpart: 0.
-- Allowlisted Angular-default cutover actions: 133.
+- Allowlisted Angular-default cutover actions: 136.
 
 Remaining surfaces: none.
 
@@ -38,9 +38,9 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | CustomerInvoices | Create.cshtml | Angular Default | /sales/invoices | MiniStore.Web/Views/CustomerInvoices/Create.cshtml |
 | CustomerInvoices | Details.cshtml | Angular Default | /sales/invoices | MiniStore.Web/Views/CustomerInvoices/Details.cshtml |
 | CustomerInvoices | Index.cshtml | Angular Default | /sales/invoices | MiniStore.Web/Views/CustomerInvoices/Index.cshtml |
-| CustomerPayments | Create.cshtml | Angular Pilot | /sales/payments | MiniStore.Web/Views/CustomerPayments/Create.cshtml |
-| CustomerPayments | Details.cshtml | Angular Pilot | /sales/payments | MiniStore.Web/Views/CustomerPayments/Details.cshtml |
-| CustomerPayments | Index.cshtml | Angular Pilot | /sales/payments | MiniStore.Web/Views/CustomerPayments/Index.cshtml |
+| CustomerPayments | Create.cshtml | Angular Default | /sales/payments | MiniStore.Web/Views/CustomerPayments/Create.cshtml |
+| CustomerPayments | Details.cshtml | Angular Default | /sales/payments | MiniStore.Web/Views/CustomerPayments/Details.cshtml |
+| CustomerPayments | Index.cshtml | Angular Default | /sales/payments | MiniStore.Web/Views/CustomerPayments/Index.cshtml |
 | CustomerReturnReceipts | Create.cshtml | Angular Pilot | /sales/return-receipts | MiniStore.Web/Views/CustomerReturnReceipts/Create.cshtml |
 | CustomerReturnReceipts | Details.cshtml | Angular Pilot | /sales/return-receipts | MiniStore.Web/Views/CustomerReturnReceipts/Details.cshtml |
 | CustomerReturnReceipts | Index.cshtml | Angular Pilot | /sales/return-receipts | MiniStore.Web/Views/CustomerReturnReceipts/Index.cshtml |
@@ -252,11 +252,11 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | CustomerInvoices | Index | GET | Angular Default | /sales/invoices | /sales/invoices | MiniStore.Web/Controllers/Sales/CustomerInvoicesController.cs |
 | CustomerInvoices | Post | POST | Angular Default | /sales/invoices | — | MiniStore.Web/Controllers/Sales/CustomerInvoicesController.cs |
 | CustomerInvoices | Reverse | POST | Angular Default | /sales/invoices | — | MiniStore.Web/Controllers/Sales/CustomerInvoicesController.cs |
-| CustomerPayments | Create | GET | Angular Pilot | /sales/payments | — | MiniStore.Web/Controllers/Sales/CustomerPaymentsController.cs |
-| CustomerPayments | Create | POST | Angular Pilot | /sales/payments | — | MiniStore.Web/Controllers/Sales/CustomerPaymentsController.cs |
-| CustomerPayments | Details | GET | Angular Pilot | /sales/payments | — | MiniStore.Web/Controllers/Sales/CustomerPaymentsController.cs |
-| CustomerPayments | Index | GET | Angular Pilot | /sales/payments | — | MiniStore.Web/Controllers/Sales/CustomerPaymentsController.cs |
-| CustomerPayments | Reverse | POST | Angular Pilot | /sales/payments | — | MiniStore.Web/Controllers/Sales/CustomerPaymentsController.cs |
+| CustomerPayments | Create | GET | Angular Default | /sales/payments | /sales/payments/new?customerInvoiceId={customerInvoiceId} | MiniStore.Web/Controllers/Sales/CustomerPaymentsController.cs |
+| CustomerPayments | Create | POST | Angular Default | /sales/payments | /sales/payments/new?customerInvoiceId={customerInvoiceId} | MiniStore.Web/Controllers/Sales/CustomerPaymentsController.cs |
+| CustomerPayments | Details | GET | Angular Default | /sales/payments | /sales/payments/{id} | MiniStore.Web/Controllers/Sales/CustomerPaymentsController.cs |
+| CustomerPayments | Index | GET | Angular Default | /sales/payments | /sales/payments | MiniStore.Web/Controllers/Sales/CustomerPaymentsController.cs |
+| CustomerPayments | Reverse | POST | Angular Default | /sales/payments | — | MiniStore.Web/Controllers/Sales/CustomerPaymentsController.cs |
 | CustomerReturnReceipts | RedirectToAction | GET | Angular Pilot | /sales/return-receipts | — | MiniStore.Web/Controllers/Sales/CustomerReturnReceiptsController.cs |
 | CustomerReturnReceipts | RedirectToAction | GET, POST | Angular Pilot | /sales/return-receipts | — | MiniStore.Web/Controllers/Sales/CustomerReturnReceiptsController.cs |
 | CustomerReturnReceipts | View | GET | Angular Pilot | /sales/return-receipts | — | MiniStore.Web/Controllers/Sales/CustomerReturnReceiptsController.cs |

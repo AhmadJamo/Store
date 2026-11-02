@@ -286,6 +286,12 @@ remain API-backed POST actions outside cutover. Hosted 15/15, the current author
 and 1,689 backend checks passed. The session lacked invoice permissions for live probes; exact routes and exclusions are
 regression-covered and no invoice/accounting changed. Fifty-nine surfaces are AngularDefault and 23 remain MVC-default.
 
+## MOD-030E5B evidence
+
+CustomerPayments Index/positive-invoice Create/positive-ID Details joins AngularDefault; create/reverse remain protected
+API POST outside cutover. Hosted 15/15, authorized cutover/rollback 104/104 and 1,698 backend checks passed with no
+financial mutation. Sixty surfaces are AngularDefault and 22 remain MVC-default.
+
 ## MOD-030E4S evidence
 
 SupplierCommunications positive-ID Details joins AngularDefault; Prepare/RecordActivity and attachment download remain

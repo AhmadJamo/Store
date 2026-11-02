@@ -181,3 +181,7 @@ The source `salesOrderId` is validated and preserved. Create, approve, cancel, p
 API-backed POST actions outside presentation cutover. Hosted 15/15, the current authorized route set cutover/rollback
 104/104 and 1,689 backend checks passed. The session lacked invoice permissions for live probes; resolver behavior is
 regression-covered and no invoice, receivable or journal changed.
+
+`MOD-030E5B` makes CustomerPayments Index/positive-invoice Create/positive-ID Details GET presentation AngularDefault.
+The source invoice ID is validated. Create-and-post and reverse remain protected API POST operations outside cutover.
+Hosted 15/15, authorized cutover/rollback 104/104 and 1,698 backend checks passed; no payment or journal changed.
