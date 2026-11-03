@@ -1606,6 +1606,29 @@ Check(publicCutoverResolver.Resolve(cutoverContext.Request,
 Check(publicCutoverResolver.Resolve(cutoverContext.Request,
           "Account", "Register", new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null,
     "Public cutover must not absorb registration or plan-selection authority");
+var platformAccountCutoverResolver = new PresentationCutoverResolver(Options.Create(
+    new PresentationCutoverOptions
+    {
+        AngularBasePath = "/app",
+        Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["PlatformAccount"] = PresentationCutoverMode.AngularDefault
+        }
+    }));
+cutoverContext.Request.Method = Microsoft.AspNetCore.Http.HttpMethods.Get;
+cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString(
+    "?returnUrl=%2Fplatform&rateLimited=true&retryAfterSeconds=120");
+Check(platformAccountCutoverResolver.Resolve(cutoverContext.Request,
+          "PlatformAccount", "Login", new Microsoft.AspNetCore.Routing.RouteValueDictionary()) ==
+      "/app/platform-login?returnUrl=%2Fplatform&rateLimited=true&retryAfterSeconds=120",
+    "Platform sign-in cutover must preserve the local return and rate-limit evidence query");
+cutoverContext.Request.Method = Microsoft.AspNetCore.Http.HttpMethods.Post;
+Check(platformAccountCutoverResolver.Resolve(cutoverContext.Request,
+          "PlatformAccount", "Login", new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null &&
+      platformAccountCutoverResolver.Resolve(cutoverContext.Request,
+          "PlatformAccount", "Logout", new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null,
+    "Platform sign-in cutover must keep credential submission and logout outside presentation cutover");
+cutoverContext.Request.Method = Microsoft.AspNetCore.Http.HttpMethods.Get;
 cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?page=2");
 foreach (var entry in PresentationCutoverRouteCatalog.All)
 {

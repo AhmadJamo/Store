@@ -11,7 +11,7 @@
 - Angular application routes discovered: 184.
 - MVC surfaces with a verified Angular counterpart: 82.
 - Remaining MVC surfaces without a mapped Angular counterpart: 0.
-- Allowlisted Angular-default cutover actions: 164.
+- Allowlisted Angular-default cutover actions: 165.
 
 Remaining surfaces: none.
 
@@ -347,8 +347,8 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | Platform/Platform | Plans | GET | Angular Pilot | /platform-control, /platform-management | — | MiniStore.Web/Areas/Platform/Controllers/PlatformController.cs |
 | Platform/Platform | Promotions | GET | Angular Pilot | /platform-control, /platform-management | — | MiniStore.Web/Areas/Platform/Controllers/PlatformController.cs |
 | Platform/Platform | UpdateCompany | GET, POST | Angular Pilot | /platform-control, /platform-management | — | MiniStore.Web/Areas/Platform/Controllers/PlatformController.cs |
-| Platform/PlatformAccount | Login | GET | Angular Pilot | /platform-login | — | MiniStore.Web/Areas/Platform/Controllers/PlatformAccountController.cs |
-| Platform/PlatformAccount | Login | POST | Angular Pilot | /platform-login | — | MiniStore.Web/Areas/Platform/Controllers/PlatformAccountController.cs |
+| Platform/PlatformAccount | Login | GET | Angular Pilot | /platform-login | /platform-login | MiniStore.Web/Areas/Platform/Controllers/PlatformAccountController.cs |
+| Platform/PlatformAccount | Login | POST | Angular Pilot | /platform-login | /platform-login | MiniStore.Web/Areas/Platform/Controllers/PlatformAccountController.cs |
 | Platform/PlatformAccount | Logout | POST | Angular Pilot | /platform-login | — | MiniStore.Web/Areas/Platform/Controllers/PlatformAccountController.cs |
 | Platform/PlatformAuditEvents | Export | POST | Angular Pilot | /platform-audit | — | MiniStore.Web/Areas/Platform/Controllers/PlatformAuditEventsController.cs |
 | Platform/PlatformAuditEvents | Index | GET | Angular Pilot | /platform-audit | — | MiniStore.Web/Areas/Platform/Controllers/PlatformAuditEventsController.cs |

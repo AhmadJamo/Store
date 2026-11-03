@@ -111,3 +111,10 @@ MVC surfaces before selecting their implementation slices.
 - Registration, selected-plan validation and every SaaS mutation remain outside presentation cutover.
 - Hosted acceptance passed 15/15; anonymous Angular cutover and process-local MVC rollback each passed within 131 GET
   routes; 1,782 backend checks passed without registration or plan/subscription mutation.
+
+## `MOD-030E5O` runtime cutover
+
+- Anonymous PlatformAccount Login GET now defaults to `/app/platform-login`, preserving returnUrl and rate-limit evidence.
+- Credential submission, login rate limiting, Platform-cookie issue and logout remain outside presentation cutover.
+- Hosted acceptance passed 15/15; anonymous Angular cutover and process-local MVC rollback each passed within 132 GET
+  routes; 1,786 backend checks passed without a credential attempt or Platform session mutation.

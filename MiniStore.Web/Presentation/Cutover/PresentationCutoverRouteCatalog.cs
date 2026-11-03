@@ -168,7 +168,8 @@ public static class PresentationCutoverRouteCatalog
             ["SupplierPayments:Details"] = "/purchases/payments/{id}",
             ["Subscription:Index"] = "/subscription",
             ["Public:Index"] = "/welcome",
-            ["Public:Pricing"] = "/pricing"
+            ["Public:Pricing"] = "/pricing",
+            ["PlatformAccount:Login"] = "/platform-login"
         };
 
     public static IReadOnlyDictionary<string, string> All => Routes;

@@ -377,6 +377,13 @@ Registration, selected-plan validation and every SaaS mutation remain outside pr
 anonymous cutover/MVC rollback 131/131 and 1,782 backend checks passed without registration or plan/subscription mutation.
 Seventy-two surfaces are AngularDefault and 10 remain MVC-default.
 
+## MOD-030E5O evidence
+
+Anonymous PlatformAccount Login GET joins AngularDefault at `/platform-login`, preserving returnUrl and rate-limit evidence.
+Credential submission, rate limiting, Platform-cookie issue and logout remain outside presentation cutover. Hosted 15/15,
+anonymous cutover/MVC rollback 132/132 and 1,786 backend checks passed without a credential attempt or Platform session
+mutation. Seventy-three surfaces are AngularDefault and nine remain MVC-default.
+
 ## MOD-030E4S evidence
 
 SupplierCommunications positive-ID Details joins AngularDefault; Prepare/RecordActivity and attachment download remain

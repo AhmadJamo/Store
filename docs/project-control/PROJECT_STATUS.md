@@ -327,3 +327,7 @@ JournalEntryId مرتبطًا بدفعة لعينة live، ولم يُنشأ أ�
 اكتمل `MOD-030E5N`: أصبح Public Index وPricing GET المجهولان AngularDefault مع حفظ الاستعلام، وبقي التسجيل واختيار
 الخطة وكل عمليات SaaS خارج تحويل العرض. نجح hosted ‏15/15 والقطع/الرجوع المجهول 131/131 والبوابة 1,782 بلا تسجيل
 أو تغيير خطة/اشتراك. أصبحت 72 سطحًا AngularDefault وبقي 10 أسطح MVC؛ ينتقل التنفيذ إلى `MOD-030E5O` لدخول Platform.
+اكتمل `MOD-030E5O`: أصبح PlatformAccount Login GET المجهول AngularDefault مع حفظ returnUrl ومؤشرات rate limit،
+وبقي Login POST والتقييد وإصدار cookie وLogout خارج تحويل العرض. نجح hosted ‏15/15 والقطع/الرجوع المجهول 132/132
+والبوابة 1,786 بلا محاولة اعتماد أو تغيير جلسة Platform. أصبحت 73 سطحًا AngularDefault وبقي 9 أسطح MVC؛ ينتقل
+التنفيذ إلى `MOD-030E5P` لنظرة Platform وإدارته.

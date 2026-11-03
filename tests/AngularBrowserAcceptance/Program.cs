@@ -925,7 +925,9 @@ static async Task RunLiveCutoverAsync(
         foreach (var probe in new[]
                  {
                      (MvcPath: "/?source=cutover-rehearsal", AngularPath: "/app/welcome?source=cutover-rehearsal"),
-                     (MvcPath: "/pricing?source=cutover-rehearsal", AngularPath: "/app/pricing?source=cutover-rehearsal")
+                     (MvcPath: "/pricing?source=cutover-rehearsal", AngularPath: "/app/pricing?source=cutover-rehearsal"),
+                     (MvcPath: "/platform/account/login?returnUrl=%2Fplatform&rateLimited=true&retryAfterSeconds=120",
+                         AngularPath: "/app/platform-login?returnUrl=%2Fplatform&rateLimited=true&retryAfterSeconds=120")
                  })
         {
             var response = await anonymous.GetAsync(probe.MvcPath,

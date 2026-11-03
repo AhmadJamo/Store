@@ -86,6 +86,7 @@
 | MOD-030E5L Supplier Payments | Index/positive-bill Create/positive-ID Details GET; create-and-post excluded; hosted 15/15, cutover/MVC rollback 128/128 and 1,773 backend checks; no payment/journal mutation | 2026-11-03 |
 | MOD-030E5M Tenant Subscription | Index GET with query preservation; checkout/pricing/promotion/activation authority excluded; hosted 15/15, cutover/MVC rollback 129/129 and 1,776 backend checks; no checkout/subscription mutation | 2026-11-03 |
 | MOD-030E5N Public Landing and Pricing | anonymous Index/Pricing GET with query preservation; registration and SaaS mutations excluded; hosted 15/15, anonymous cutover/MVC rollback 131/131 and 1,782 backend checks; no registration/plan/subscription mutation | 2026-11-03 |
+| MOD-030E5O Platform Sign-in | anonymous Login GET with return/rate-limit query preservation; credential POST, cookie issue and logout excluded; hosted 15/15, anonymous cutover/MVC rollback 132/132 and 1,786 backend checks; no credential/session mutation | 2026-11-03 |
 | Live schema integrity (سلامة المخطط الحي) | 147 tables, 420 trusted FKs, zero disabled constraints/indexes or unsafe tenant relations | 2026-10-15 |
 | Web dependency build (بناء الويب واعتماداته) | Release, 4 projects, zero warnings/errors after SAL-120A (نجح) | 2026-10-22 |
 
