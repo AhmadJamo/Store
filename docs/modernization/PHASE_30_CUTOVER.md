@@ -1,6 +1,6 @@
 # MOD-030 — hosted Angular cutover and MVC retirement
 
-> Status: IN PROGRESS — `MOD-030A..D` complete; runtime completion continues in MOD-030E
+> Status: RUNTIME CUTOVER COMPLETE — physical MVC retirement remains separately approval-gated
 
 ## MOD-030A production hosting and first cohort
 
@@ -75,3 +75,8 @@ MOD-030E2A adds StockTransactions and ProductStocks with intent-specific Angular
 
 MOD-030E2B adds InventoryAdjustments Index/Create/Details and widens the safe route-value parser to positive Int64.
 Hosted acceptance passed 15/15 and both cutover and MVC rollback passed 40 authorized GET routes without test-data writes.
+
+MOD-030E completed on 2026-11-03 with all 81 presentation surfaces AngularDefault, zero presentation gaps and Language
+explicitly retained as the sole POST-only, antiforgery-protected compatibility boundary. No Razor view or MVC controller
+was deleted. Physical retirement begins only after the non-destructive `MOD-030F` dependency/cohort audit and explicit
+approval of each destructive cohort.

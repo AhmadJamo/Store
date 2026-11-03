@@ -9,6 +9,9 @@ public sealed class PresentationCutoverOptions
     public Dictionary<string, PresentationCutoverMode> Surfaces { get; set; } =
         new(StringComparer.OrdinalIgnoreCase);
 
+    public HashSet<string> MutationOnlyMvcSurfaces { get; set; } =
+        new(StringComparer.OrdinalIgnoreCase);
+
     public PresentationCutoverMode GetMode(string surface) =>
         Surfaces.TryGetValue(surface, out var mode) ? mode : PresentationCutoverMode.Mvc;
 }

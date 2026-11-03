@@ -42,7 +42,6 @@ InventoryReservations|/inventory/reservations
 InventoryScanning|/inventory/scanning
 InventoryTracking|/inventory/tracking
 JournalEntries|/accounting/journal-entries/:id
-Language|/
 LandedCosts|/purchases/landed-costs
 LocationMovements|/inventory/location-movements
 PaymentMethods|/products/catalog-masters
@@ -122,12 +121,16 @@ foreach ($entry in $surfaceRoutes.GetEnumerator()) {
 $cutoverRoutes = @{}
 [regex]::Matches((Get-Content $cutoverCatalogPath -Raw), '\["(?<key>[^"]+)"\]\s*=\s*"(?<route>[^"]+)"') |
     ForEach-Object { $cutoverRoutes[$_.Groups["key"].Value] = $_.Groups["route"].Value }
-$cutoverSettings = (Get-Content $appSettingsPath -Raw | ConvertFrom-Json).PresentationCutover.Surfaces
+$cutoverConfiguration = (Get-Content $appSettingsPath -Raw | ConvertFrom-Json).PresentationCutover
+$cutoverSettings = $cutoverConfiguration.Surfaces
+$mutationOnlyMvcSurfaces = @($cutoverConfiguration.MutationOnlyMvcSurfaces)
 $angularDefaultSurfaces = @($cutoverSettings.PSObject.Properties |
     Where-Object { $_.Value -eq "AngularDefault" } |
     ForEach-Object { $_.Name })
 $presentationDefault = if ($angularDefaultSurfaces.Count -eq 0) {
     "MVC"
+} elseif ($mutationOnlyMvcSurfaces.Count -gt 0) {
+    "AngularDefault for all presentation surfaces; mutation-only MVC compatibility: $($mutationOnlyMvcSurfaces -join ', ')"
 } else {
     "Mixed ($($angularDefaultSurfaces -join ', ') AngularDefault; all other surfaces MVC)"
 }
@@ -141,11 +144,13 @@ function Get-Surface([System.IO.FileInfo]$file, [bool]$controller) {
     return $file.Directory.Name
 }
 function Get-MigrationStatus([string]$surface) {
+    if ($mutationOnlyMvcSurfaces -contains $surface) { return "MVC Compatibility (mutation-only)" }
     if ($angularDefaultSurfaces -contains $surface) { return "Angular Default" }
     if ($surfaceRoutes.ContainsKey($surface)) { return "Angular Pilot" }
     return "Inventoried"
 }
 function Get-Routes([string]$surface) {
+    if ($mutationOnlyMvcSurfaces -contains $surface) { return "Not applicable (mutation-only)" }
     if (-not $surfaceRoutes.ContainsKey($surface)) { return "—" }
     return ($surfaceRoutes[$surface] -join ", ")
 }
@@ -220,8 +225,20 @@ $controlRows = $viewFiles | Where-Object { $_.Directory.Name -ne "Shared" } | Fo
 } | Sort-Object Surface, View
 
 $allSurfaces = @($viewRows.Surface) + @($actionRows.Surface) | Sort-Object -Unique
-$remainingSurfaces = @($allSurfaces | Where-Object { -not $surfaceRoutes.ContainsKey($_) })
-$pilotSurfaces = @($allSurfaces | Where-Object { $surfaceRoutes.ContainsKey($_) })
+$unknownMutationOnlySurfaces = @($mutationOnlyMvcSurfaces | Where-Object { $_ -notin $allSurfaces })
+if ($unknownMutationOnlySurfaces.Count -gt 0) {
+    throw "Configured mutation-only MVC surfaces were not discovered: $($unknownMutationOnlySurfaces -join ', ')."
+}
+$invalidMutationOnlySurfaces = @($mutationOnlyMvcSurfaces | Where-Object {
+    $angularDefaultSurfaces -contains $_ -or $surfaceRoutes.ContainsKey($_)
+})
+if ($invalidMutationOnlySurfaces.Count -gt 0) {
+    throw "Mutation-only MVC surfaces cannot be AngularDefault or mapped as presentation counterparts: $($invalidMutationOnlySurfaces -join ', ')."
+}
+$presentationSurfaces = @($allSurfaces | Where-Object { $_ -notin $mutationOnlyMvcSurfaces })
+$remainingSurfaces = @($presentationSurfaces | Where-Object { -not $surfaceRoutes.ContainsKey($_) })
+$pilotSurfaces = @($presentationSurfaces | Where-Object { $surfaceRoutes.ContainsKey($_) })
+$matrixSurfaces = @($pilotSurfaces) + @($mutationOnlyMvcSurfaces) | Sort-Object -Unique
 
 function Get-MvcRouteFamily([string]$surface) {
     switch ($surface) {
@@ -245,7 +262,7 @@ function Get-AcceptanceRisk([string]$surface) {
     return 'Standard'
 }
 
-$matrixRows = foreach ($surface in $pilotSurfaces) {
+$matrixRows = foreach ($surface in $matrixSurfaces) {
     $surfaceActions = @($actionRows | Where-Object Surface -eq $surface)
     $surfaceViews = @($viewRows | Where-Object Surface -eq $surface)
     $sourcePaths = @($surfaceActions.Source | Sort-Object -Unique)
@@ -267,15 +284,19 @@ $matrixRows = foreach ($surface in $pilotSurfaces) {
         Surface = $surface
         MvcRoute = Get-MvcRouteFamily $surface
         AngularRoute = Get-Routes $surface
-        Operation = if ($hasMutation) { 'Read/write' } else { 'Read-only' }
+        Operation = if ($mutationOnlyMvcSurfaces -contains $surface) { 'Mutation-only compatibility' } elseif ($hasMutation) { 'Read/write' } else { 'Read-only' }
         Permissions = if ($permissionReferences.Count) { @($permissionReferences | Sort-Object) -join ', ' } else { 'Public/session boundary' }
         Risk = Get-AcceptanceRisk $surface
-        Evidence = "$($surfaceViews.Count) view(s); $($surfaceActions.Count) action(s); route/source gate"
+        Evidence = if ($mutationOnlyMvcSurfaces -contains $surface) {
+            "$($surfaceViews.Count) view(s); $($surfaceActions.Count) POST action(s); antiforgery/source gate"
+        } else {
+            "$($surfaceViews.Count) view(s); $($surfaceActions.Count) action(s); route/source gate"
+        }
     }
 }
 
-if ($matrixRows.Count -ne $pilotSurfaces.Count) {
-    throw "Acceptance matrix row count $($matrixRows.Count) does not match counterpart count $($pilotSurfaces.Count)."
+if ($matrixRows.Count -ne $matrixSurfaces.Count) {
+    throw "Acceptance matrix row count $($matrixRows.Count) does not match classified surface count $($matrixSurfaces.Count)."
 }
 foreach ($row in $matrixRows) {
     foreach ($field in 'Surface','MvcRoute','AngularRoute','Operation','Permissions','Risk','Evidence') {
@@ -297,13 +318,14 @@ $lines.Add("- User-facing MVC views discovered: $($viewRows.Count).")
 $lines.Add("- MVC actions discovered: $($actionRows.Count).")
 $lines.Add("- Razor files included in the control inventory: $($controlRows.Count).")
 $lines.Add("- Angular application routes discovered: $($angularRoutes.Count).")
-$lines.Add("- MVC surfaces with a verified Angular counterpart: $($pilotSurfaces.Count).")
-$lines.Add("- Remaining MVC surfaces without a mapped Angular counterpart: $($remainingSurfaces.Count).")
+$lines.Add("- Presentation surfaces with a verified Angular counterpart: $($pilotSurfaces.Count).")
+$lines.Add("- Remaining presentation surfaces without a mapped Angular counterpart: $($remainingSurfaces.Count).")
+$lines.Add("- Mutation-only MVC compatibility surfaces: $($mutationOnlyMvcSurfaces.Count) ($(if($mutationOnlyMvcSurfaces){$mutationOnlyMvcSurfaces -join ', '}else{'none'})).")
 $lines.Add("- Allowlisted Angular-default cutover actions: $($cutoverRoutes.Count).")
 $lines.Add("")
-$lines.Add("Remaining surfaces: $(if($remainingSurfaces){$remainingSurfaces -join ', '}else{'none'}).")
+$lines.Add("Remaining presentation surfaces: $(if($remainingSurfaces){$remainingSurfaces -join ', '}else{'none'}).")
 $lines.Add("")
-$lines.Add("Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, Parity Proven, Angular Default, MVC Retired. A pilot status does not change the default MVC route.")
+$lines.Add("Statuses follow the migration lifecycle plus MVC Compatibility (mutation-only). A mutation-only boundary has no GET presentation surface and is intentionally excluded from AngularDefault redirects.")
 $lines.Add("")
 $lines.Add("## View inventory")
 $lines.Add("")
@@ -333,7 +355,8 @@ $matrixLines.Add('# Dual-run acceptance matrix')
 $matrixLines.Add('')
 $matrixLines.Add('> Generated from source by scripts/generate-mvc-migration-registry.ps1. Do not edit rows manually.')
 $matrixLines.Add('')
-$matrixLines.Add("- Counterparts covered: $($matrixRows.Count).")
+$matrixLines.Add("- Presentation counterparts covered: $($pilotSurfaces.Count).")
+$matrixLines.Add("- Mutation-only MVC compatibility boundaries: $($mutationOnlyMvcSurfaces.Count) ($(if($mutationOnlyMvcSurfaces){$mutationOnlyMvcSurfaces -join ', '}else{'none'})).")
 $matrixLines.Add("- Presentation default: $presentationDefault.")
 $matrixLines.Add('- Evidence baseline: generated MVC view/action inventory, verified Angular route, controller permission references and acceptance gate.')
 $matrixLines.Add('- Runtime dual-run samples and cutover rehearsal results are appended by the MOD-029 acceptance workflow; this static matrix performs no mutation.')
@@ -346,5 +369,5 @@ foreach ($row in $matrixRows | Sort-Object Surface) {
 New-Item -ItemType Directory -Force -Path (Split-Path -Parent $acceptanceOutput) | Out-Null
 $matrixLines | Set-Content -Path $acceptanceOutput -Encoding utf8
 
-Write-Host "Generated $OutputPath with $($viewRows.Count) views, $($actionRows.Count) MVC actions, $($controlRows.Count) Razor control rows, and $($remainingSurfaces.Count) remaining surfaces."
-Write-Host "Generated $AcceptanceMatrixPath with $($matrixRows.Count) counterpart rows and no unknown evidence fields."
+Write-Host "Generated $OutputPath with $($viewRows.Count) views, $($actionRows.Count) MVC actions, $($controlRows.Count) Razor control rows, $($remainingSurfaces.Count) remaining presentation surfaces, and $($mutationOnlyMvcSurfaces.Count) mutation-only boundary."
+Write-Host "Generated $AcceptanceMatrixPath with $($matrixRows.Count) classified rows and no unknown evidence fields."

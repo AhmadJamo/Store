@@ -54,6 +54,11 @@ public static class WebPresentationExtensions
                            options.AngularBasePath.All(character =>
                                char.IsLetterOrDigit(character) || character is '/' or '-' or '_'),
                 "PresentationCutover:AngularBasePath must be a local absolute path.")
+            .Validate(
+                options => options.MutationOnlyMvcSurfaces.All(surface =>
+                    !string.IsNullOrWhiteSpace(surface) &&
+                    options.GetMode(surface) == PresentationCutoverMode.Mvc),
+                "PresentationCutover mutation-only MVC surfaces must be named and cannot be AngularDefault.")
             .ValidateOnStart();
         services.AddHealthChecks()
             .AddCheck("application", () =>

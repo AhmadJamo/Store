@@ -1810,6 +1810,29 @@ cutoverContext.Request.Method = Microsoft.AspNetCore.Http.HttpMethods.Post;
 Check(homeCutoverResolver.Resolve(cutoverContext.Request,
           "Home", "Index", new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null,
     "Home compatibility cutover must remain GET/HEAD-only");
+var languageMutationOptions = new PresentationCutoverOptions
+{
+    AngularBasePath = "/app",
+    MutationOnlyMvcSurfaces = new HashSet<string>(["Language"], StringComparer.OrdinalIgnoreCase)
+};
+var languageMutationResolver = new PresentationCutoverResolver(Options.Create(languageMutationOptions));
+var languageController = typeof(LanguageController);
+Check(languageMutationOptions.MutationOnlyMvcSurfaces.SetEquals(["Language"]) &&
+      languageMutationOptions.GetMode("Language") == PresentationCutoverMode.Mvc &&
+      PresentationCutoverRouteCatalog.All.Keys.All(key =>
+          !key.StartsWith("Language:", StringComparison.OrdinalIgnoreCase)) &&
+      languageController.GetMethod(nameof(LanguageController.Set))!.GetCustomAttribute<HttpPostAttribute>() is not null &&
+      languageController.GetMethod(nameof(LanguageController.Set))!.GetCustomAttribute<HttpGetAttribute>() is null &&
+      languageController.GetMethod(nameof(LanguageController.Set))!.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null,
+    "Language must remain an explicit POST-only antiforgery MVC compatibility boundary outside the cutover catalog");
+cutoverContext.Request.Method = Microsoft.AspNetCore.Http.HttpMethods.Get;
+Check(languageMutationResolver.Resolve(cutoverContext.Request,
+          "Language", "Set", new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null,
+    "Language mutation compatibility must not expose a GET presentation redirect");
+cutoverContext.Request.Method = Microsoft.AspNetCore.Http.HttpMethods.Post;
+Check(languageMutationResolver.Resolve(cutoverContext.Request,
+          "Language", "Set", new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null,
+    "Language mutation compatibility must keep POST outside presentation cutover");
 cutoverContext.Request.Method = Microsoft.AspNetCore.Http.HttpMethods.Get;
 cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?page=2");
 foreach (var entry in PresentationCutoverRouteCatalog.All)

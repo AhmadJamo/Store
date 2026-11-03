@@ -1,26 +1,26 @@
 # المهمة التالية الوحيدة / Next Task
 
-## `MOD-030E5X` — تصنيف حد اللغة / Language Mutation Boundary Classification
+## `MOD-030F` — جرد جاهزية تقاعد MVC / MVC Retirement Readiness Inventory
 
 > الحالة: APPROVED
 
-اكتمل `MOD-030E5W`: أصبح Home السطح 81 بعد hosted ‏15/15 والقطع/الرجوع 140/140 والبوابة 1,840 دون
-تغيير حالة أو بيانات. لم يبق إلا Language Set، وهو POST mutation بلا GET أو Razor view.
+اكتمل runtime cutover: أسطح العرض الـ81 كلها AngularDefault، صفر فجوات عرض، وLanguage حد POST-only compatibility
+وحيد. ملفات MVC ما زالت موجودة للرجوع ولم يُحذف شيء.
 
 ### النطاق المحدود
 
-- تصنيف Language Set POST كحد MVC compatibility دائم خارج presentation cutover.
-- جعل سجل الهجرة والمصفوفة يميزان mutation-only exception عن سطح عرض MVC متبقٍ.
-- إثبات بقاء الأمر POST + antiforgery وأنه لا يدخل كتالوج GET/HEAD أو AngularDefault.
+- جرد Controllers وRazor والروابط والاختبارات والتحميلات والأوامر التي تمنع حذفًا آمنًا.
+- تقسيم التقاعد الفعلي إلى دفعات صغيرة قابلة للرجوع مع ترتيب الاعتماديات ودليل النشر المطلوب.
+- تحديد الملفات التي يجب إبقاؤها لأوامر mutation/download/authentication/compatibility.
 
 ### القبول
 
-- لا يبقى أي سطح عرض GET على MVC افتراضيًا.
-- يظهر Language بوضوح كاستثناء mutation-only لا كفجوة عرض.
-- فحوص الحماية والمولّد والبناء وبوابة Angular خضراء.
+- تقرير مولّد أو قابل للتحقق يميز مرشحي الحذف عن الملفات المشتركة والاستثناءات.
+- كل دفعة مقترحة لها نطاق واختبارات ورجوع واضحان.
+- لا حذف ولا تغيير مسارات ولا كسر rollback في هذه المهمة.
 
 ### خارج النطاق
 
-- تغيير cookie الثقافة أو التطبيع أو returnUrl المحلي.
-- تحويل POST إلى redirect عرض أو نقله إلى المتصفح.
-- حذف Controller أو antiforgery أو أي مسار rollback.
+- حذف Controllers أو Razor views.
+- إزالة PresentationCutover أو مسارات MVC rollback.
+- أي تغيير قاعدة بيانات أو business rule أو صلاحيات.

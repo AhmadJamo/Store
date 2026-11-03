@@ -2,8 +2,9 @@
 
 > Generated from source by scripts/generate-mvc-migration-registry.ps1. Do not edit rows manually.
 
-- Counterparts covered: 82.
-- Presentation default: Mixed (Customers, Suppliers, AnalyticsCenter, Settings, Products, InventoryBalances, InventoryReservations, InventoryInsights, InventoryReconciliation, StockTransactions, ProductStocks, InventoryAdjustments, StockTransfers, InventoryTracking, StockMovements, WarehouseLocations, UnassignedStock, LocationMovements, InventoryScanning, Replenishment, Branches, PaymentMethods, TaxRates, ProductCategories, ProductAttributes, Warehouses, AuditEvents, Users, Roles, ProductTemplates, Recipes, PurchaseAnalytics, PurchaseAccountingReconciliation, PurchaseReplenishment, PurchaseApprovalRules, PurchaseTemplates, PurchaseRequests, PurchaseSourcing, SupplierQuotations, PurchaseOrders, GoodsReceipts, GoodsReceiptReturns, VendorBills, SupplierCreditNotes, PurchaseDocumentReversals, LandedCosts, PurchaseServiceAcceptances, PurchaseAgreements, SupplierPurchasing, SupplierCommunications, SupplierIntegrations, SupplierPortal, Purchases, PurchaseReturns, SalesPriceLists, SalesQuotations, SalesOrders, SalesDeliveries, CustomerInvoices, CustomerPayments, CustomerReturnRequests, CustomerReturnReceipts, CustomerCreditNotes, SalesApprovalRules, SalesQuotationTemplates, Sales, SalesReturns, Accounts, JournalEntries, SupplierPayments, Subscription, Public, PlatformAccount, Platform, PlatformAuditEvents, PlatformAuditRetention, Account, CompanyOnboarding, Dashboard, DocumentDesigns, Home AngularDefault; all other surfaces MVC).
+- Presentation counterparts covered: 81.
+- Mutation-only MVC compatibility boundaries: 1 (Language).
+- Presentation default: AngularDefault for all presentation surfaces; mutation-only MVC compatibility: Language.
 - Evidence baseline: generated MVC view/action inventory, verified Angular route, controller permission references and acceptance gate.
 - Runtime dual-run samples and cutover rehearsal results are appended by the MOD-029 acceptance workflow; this static matrix performs no mutation.
 
@@ -35,7 +36,7 @@
 | InventoryTracking | /InventoryTracking | /inventory/tracking | Read/write | InventoryTracking.ManageQuarantine, InventoryTracking.ManageRecall, InventoryTracking.Open, InventoryTracking.View | Inventory | 1 view(s); 7 action(s); route/source gate |
 | JournalEntries | /JournalEntries | /accounting/journal-entries/:id | Read-only | JournalEntries.View | Financial | 1 view(s); 1 action(s); route/source gate |
 | LandedCosts | /LandedCosts | /purchases/landed-costs | Read/write | LandedCosts.Create, LandedCosts.View | Financial | 3 view(s); 1 action(s); route/source gate |
-| Language | /Language/Set | / | Read/write | Public/session boundary | Identity/tenant | 0 view(s); 1 action(s); route/source gate |
+| Language | /Language/Set | Not applicable (mutation-only) | Mutation-only compatibility | Public/session boundary | Identity/tenant | 0 view(s); 1 POST action(s); antiforgery/source gate |
 | LocationMovements | /LocationMovements | /inventory/location-movements | Read/write | LocationMovements.Create, LocationMovements.View | Inventory | 1 view(s); 2 action(s); route/source gate |
 | PaymentMethods | /PaymentMethods | /products/catalog-masters | Read/write | Administration.Access | Financial | 2 view(s); 3 action(s); route/source gate |
 | Platform/Platform | /platform | /platform-control, /platform-management | Read/write | Public/session boundary | Identity/tenant | 7 view(s); 11 action(s); route/source gate |

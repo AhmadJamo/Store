@@ -9,13 +9,14 @@
 - MVC actions discovered: 411.
 - Razor files included in the control inventory: 209.
 - Angular application routes discovered: 184.
-- MVC surfaces with a verified Angular counterpart: 82.
-- Remaining MVC surfaces without a mapped Angular counterpart: 0.
+- Presentation surfaces with a verified Angular counterpart: 81.
+- Remaining presentation surfaces without a mapped Angular counterpart: 0.
+- Mutation-only MVC compatibility surfaces: 1 (Language).
 - Allowlisted Angular-default cutover actions: 183.
 
-Remaining surfaces: none.
+Remaining presentation surfaces: none.
 
-Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, Parity Proven, Angular Default, MVC Retired. A pilot status does not change the default MVC route.
+Statuses follow the migration lifecycle plus MVC Compatibility (mutation-only). A mutation-only boundary has no GET presentation surface and is intentionally excluded from AngularDefault redirects.
 
 ## View inventory
 
@@ -330,7 +331,7 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | InventoryTracking | Release | POST | Angular Default | /inventory/tracking | — | MiniStore.Web/Controllers/Inventory/InventoryTrackingController.cs |
 | JournalEntries | Details | GET | Angular Default | /accounting/journal-entries/:id | /accounting/journal-entries/{id} | MiniStore.Web/Controllers/Accounting/JournalEntriesController.cs |
 | LandedCosts | RedirectToAction | GET, POST | Angular Default | /purchases/landed-costs | — | MiniStore.Web/Controllers/Purchases/LandedCostsController.cs |
-| Language | Set | POST | Angular Pilot | / | — | MiniStore.Web/Controllers/Settings/LanguageController.cs |
+| Language | Set | POST | MVC Compatibility (mutation-only) | Not applicable (mutation-only) | — | MiniStore.Web/Controllers/Settings/LanguageController.cs |
 | LocationMovements | Index | GET | Angular Default | /inventory/location-movements | /inventory/location-movements | MiniStore.Web/Controllers/Inventory/LocationMovementsController.cs |
 | LocationMovements | Move | POST | Angular Default | /inventory/location-movements | — | MiniStore.Web/Controllers/Inventory/LocationMovementsController.cs |
 | PaymentMethods | Create | GET | Angular Default | /products/catalog-masters | — | MiniStore.Web/Controllers/Accounting/PaymentMethodsController.cs |
