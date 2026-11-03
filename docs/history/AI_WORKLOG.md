@@ -1,5 +1,10 @@
 # AI Work Log
 
+- 2026-11-03: Completed `MOD-030E5T`. CompanyOnboarding Index GET now uses AngularDefault at `/app/onboarding`;
+  Complete, Skip and starter-template provisioning remain under `ICompanyOnboardingService` and antiforgery outside cutover.
+  Hosted 15/15, cutover/MVC rollback 136/136 and 1,824 backend checks passed without onboarding or setup-data mutation.
+  Seventy-eight surfaces are AngularDefault and four remain MVC-default.
+
 - 2026-11-03: Completed `MOD-030E5S`. Account Login, Register and AccessDenied GET now use AngularDefault at
   `/app/login`, `/app/register` and `/app/access-denied`, preserving company/return/rate-limit and selected-plan query
   values. Authentication, registration and logout POST remain outside cutover. Hosted 15/15, anonymous cutover/MVC rollback

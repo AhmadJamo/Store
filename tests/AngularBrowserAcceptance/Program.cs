@@ -170,6 +170,8 @@ static async Task RunLiveCutoverAsync(
         new("/Settings/InventoryAccess", "/app/settings/inventory-access", "Administration.Access"),
         new("/Settings/Pos", "/app/settings/pos-experience", "Administration.Access"),
         new("/Settings/WorkflowCatalog", "/app/settings/workflow-catalog", "Administration.Access"),
+        new("/onboarding?source=cutover-rehearsal", "/app/onboarding?source=cutover-rehearsal",
+            "Administration.Access", "/"),
         new("/Products?search=cutover-rehearsal", "/app/products?search=cutover-rehearsal", "Products.View"),
         new("/Products/Create", "/app/products/new", "Products.Create"),
         new("/InventoryBalances?search=cutover-rehearsal",
@@ -1069,6 +1071,8 @@ static async Task RunLiveCutoverAsync(
                          surface is "SupplierPayments";
         expectsAngular = expectsAngular || options.CutoverMode == "pilot" &&
                          surface is "subscription";
+        expectsAngular = expectsAngular || options.CutoverMode == "pilot" &&
+                         surface is "onboarding";
         if (expectsAngular)
         {
             Require(response.Status is 301 or 302 or 307 or 308,

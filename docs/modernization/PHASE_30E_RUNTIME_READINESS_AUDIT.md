@@ -415,6 +415,13 @@ company/return/rate-limit and selected-plan query values. Authentication, regist
 presentation cutover. Hosted 15/15, anonymous cutover/MVC rollback 135/135 and 1,820 backend checks passed without
 credential attempt, registration or session mutation. Seventy-seven surfaces are AngularDefault and five remain MVC-default.
 
+## MOD-030E5T evidence
+
+CompanyOnboarding Index GET joins AngularDefault at `/onboarding`. Complete, Skip and starter-template provisioning remain
+under `ICompanyOnboardingService` and antiforgery outside presentation cutover. Hosted 15/15, cutover/MVC rollback
+136/136 and 1,824 backend checks passed without onboarding or setup-data mutation. Seventy-eight surfaces are AngularDefault
+and four remain MVC-default.
+
 ## MOD-030E4S evidence
 
 SupplierCommunications positive-ID Details joins AngularDefault; Prepare/RecordActivity and attachment download remain

@@ -7,7 +7,8 @@ The in-repository workspace `MiniStore Front-End` is the isolated Angular 22 pre
 
 - `Controllers/Security/AccountController.cs` and `MiniStore Front-End/src/app/features/{account,onboarding}/*`:
   MOD-030E5S makes Login/Register/AccessDenied GET presentation AngularDefault with MVC rollback; authentication,
-  registration, logout and provisioning mutations remain on the shared server services outside cutover.
+  registration, logout and provisioning mutations remain on the shared server services outside cutover. MOD-030E5T also
+  makes CompanyOnboarding Index GET AngularDefault with MVC rollback while Complete/Skip remain outside cutover.
 
 `PermissionService.GetGrantedAsync` mirrors the tenant-Admin shortcut used by `CanAsync` and the authorization handler:
 an active-company Admin session projects every code-owned permission plus the protected administration-only permission

@@ -1727,6 +1727,26 @@ Check(new[] { "Login", "Register", "Logout" }
         .All(action => accountCutoverResolver.Resolve(cutoverContext.Request,
             "Account", action, new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null),
     "Account cutover must keep authentication, registration and logout mutations outside presentation cutover");
+var companyOnboardingCutoverResolver = new PresentationCutoverResolver(Options.Create(
+    new PresentationCutoverOptions
+    {
+        AngularBasePath = "/app",
+        Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["CompanyOnboarding"] = PresentationCutoverMode.AngularDefault
+        }
+    }));
+cutoverContext.Request.Method = Microsoft.AspNetCore.Http.HttpMethods.Get;
+cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?source=cutover");
+Check(companyOnboardingCutoverResolver.Resolve(cutoverContext.Request,
+          "CompanyOnboarding", "Index", new Microsoft.AspNetCore.Routing.RouteValueDictionary()) ==
+      "/app/onboarding?source=cutover",
+    "Company onboarding cutover must preserve query values on the setup workspace");
+cutoverContext.Request.Method = Microsoft.AspNetCore.Http.HttpMethods.Post;
+Check(new[] { "Complete", "Skip" }
+        .All(action => companyOnboardingCutoverResolver.Resolve(cutoverContext.Request,
+            "CompanyOnboarding", action, new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null),
+    "Company onboarding cutover must keep completion, skip and starter provisioning outside presentation cutover");
 cutoverContext.Request.Method = Microsoft.AspNetCore.Http.HttpMethods.Get;
 cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?page=2");
 foreach (var entry in PresentationCutoverRouteCatalog.All)

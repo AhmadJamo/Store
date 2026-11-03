@@ -11,7 +11,7 @@
 - Angular application routes discovered: 184.
 - MVC surfaces with a verified Angular counterpart: 82.
 - Remaining MVC surfaces without a mapped Angular counterpart: 0.
-- Allowlisted Angular-default cutover actions: 177.
+- Allowlisted Angular-default cutover actions: 178.
 
 Remaining surfaces: none.
 
@@ -31,7 +31,7 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | AuditEvents | Index.cshtml | Angular Default | /audit-events | MiniStore.Web/Views/AuditEvents/Index.cshtml |
 | Branches | Create.cshtml | Angular Default | /products/catalog-masters | MiniStore.Web/Views/Branches/Create.cshtml |
 | Branches | Index.cshtml | Angular Default | /products/catalog-masters | MiniStore.Web/Views/Branches/Index.cshtml |
-| CompanyOnboarding | Index.cshtml | Angular Pilot | /onboarding | MiniStore.Web/Views/CompanyOnboarding/Index.cshtml |
+| CompanyOnboarding | Index.cshtml | Angular Default | /onboarding | MiniStore.Web/Views/CompanyOnboarding/Index.cshtml |
 | CustomerCreditNotes | Create.cshtml | Angular Default | /sales/credit-notes | MiniStore.Web/Views/CustomerCreditNotes/Create.cshtml |
 | CustomerCreditNotes | Details.cshtml | Angular Default | /sales/credit-notes | MiniStore.Web/Views/CustomerCreditNotes/Details.cshtml |
 | CustomerCreditNotes | Index.cshtml | Angular Default | /sales/credit-notes | MiniStore.Web/Views/CustomerCreditNotes/Index.cshtml |
@@ -240,9 +240,9 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | AuditEvents | Export | POST | Angular Default | /audit-events | — | MiniStore.Web/Controllers/Security/AuditEventsController.cs |
 | AuditEvents | Index | GET | Angular Default | /audit-events | /audit-events | MiniStore.Web/Controllers/Security/AuditEventsController.cs |
 | Branches | BranchesController | ANY | Angular Default | /products/catalog-masters | — | MiniStore.Web/Controllers/Accounting/BranchesController.cs |
-| CompanyOnboarding | Complete | POST | Angular Pilot | /onboarding | — | MiniStore.Web/Controllers/Saas/CompanyOnboardingController.cs |
-| CompanyOnboarding | Index | GET | Angular Pilot | /onboarding | — | MiniStore.Web/Controllers/Saas/CompanyOnboardingController.cs |
-| CompanyOnboarding | Skip | POST | Angular Pilot | /onboarding | — | MiniStore.Web/Controllers/Saas/CompanyOnboardingController.cs |
+| CompanyOnboarding | Complete | POST | Angular Default | /onboarding | — | MiniStore.Web/Controllers/Saas/CompanyOnboardingController.cs |
+| CompanyOnboarding | Index | GET | Angular Default | /onboarding | /onboarding | MiniStore.Web/Controllers/Saas/CompanyOnboardingController.cs |
+| CompanyOnboarding | Skip | POST | Angular Default | /onboarding | — | MiniStore.Web/Controllers/Saas/CompanyOnboardingController.cs |
 | CustomerCreditNotes | RedirectToAction | GET, POST | Angular Default | /sales/credit-notes | — | MiniStore.Web/Controllers/Sales/CustomerCreditNotesController.cs |
 | CustomerInvoices | Approve | POST | Angular Default | /sales/invoices | — | MiniStore.Web/Controllers/Sales/CustomerInvoicesController.cs |
 | CustomerInvoices | Cancel | POST | Angular Default | /sales/invoices | — | MiniStore.Web/Controllers/Sales/CustomerInvoicesController.cs |
