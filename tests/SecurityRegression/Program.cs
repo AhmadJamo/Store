@@ -1695,6 +1695,38 @@ Check(new[] { "CreateHold", "ReleaseHold", "Checkpoint", "Run" }
         .All(action => platformRetentionCutoverResolver.Resolve(cutoverContext.Request,
             "PlatformAuditRetention", action, new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null),
     "Platform retention cutover must keep legal holds, checkpoints and retention execution outside presentation cutover");
+var accountCutoverResolver = new PresentationCutoverResolver(Options.Create(
+    new PresentationCutoverOptions
+    {
+        AngularBasePath = "/app",
+        Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["Account"] = PresentationCutoverMode.AngularDefault
+        }
+    }));
+cutoverContext.Request.Method = Microsoft.AspNetCore.Http.HttpMethods.Get;
+cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString(
+    "?companyCode=demo&returnUrl=%2FDashboard&rateLimited=true&retryAfterSeconds=120");
+Check(accountCutoverResolver.Resolve(cutoverContext.Request,
+          "Account", "Login", new Microsoft.AspNetCore.Routing.RouteValueDictionary()) ==
+      "/app/login?companyCode=demo&returnUrl=%2FDashboard&rateLimited=true&retryAfterSeconds=120",
+    "Account login cutover must preserve company, local return and rate-limit evidence");
+cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString(
+    "?planId=1&rateLimited=true&retryAfterSeconds=120");
+Check(accountCutoverResolver.Resolve(cutoverContext.Request,
+          "Account", "Register", new Microsoft.AspNetCore.Routing.RouteValueDictionary()) ==
+      "/app/register?planId=1&rateLimited=true&retryAfterSeconds=120",
+    "Account registration cutover must preserve the selected plan and rate-limit evidence");
+cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?source=cutover");
+Check(accountCutoverResolver.Resolve(cutoverContext.Request,
+          "Account", "AccessDenied", new Microsoft.AspNetCore.Routing.RouteValueDictionary()) ==
+      "/app/access-denied?source=cutover",
+    "Account access-denied cutover must preserve query values");
+cutoverContext.Request.Method = Microsoft.AspNetCore.Http.HttpMethods.Post;
+Check(new[] { "Login", "Register", "Logout" }
+        .All(action => accountCutoverResolver.Resolve(cutoverContext.Request,
+            "Account", action, new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null),
+    "Account cutover must keep authentication, registration and logout mutations outside presentation cutover");
 cutoverContext.Request.Method = Microsoft.AspNetCore.Http.HttpMethods.Get;
 cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?page=2");
 foreach (var entry in PresentationCutoverRouteCatalog.All)

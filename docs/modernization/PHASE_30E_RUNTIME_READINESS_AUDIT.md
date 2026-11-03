@@ -408,6 +408,13 @@ cutover/MVC rollback 132/132, live tenant-cookie isolation and 1,810 backend che
 session fixture was available for an authorized live route probe; exact mapping and GET-only boundaries are regression-covered.
 Seventy-six surfaces are AngularDefault and six remain MVC-default.
 
+## MOD-030E5S evidence
+
+Account Login, Register and AccessDenied GET join AngularDefault at `/login`, `/register` and `/access-denied`, preserving
+company/return/rate-limit and selected-plan query values. Authentication, registration and logout POST remain outside
+presentation cutover. Hosted 15/15, anonymous cutover/MVC rollback 135/135 and 1,820 backend checks passed without
+credential attempt, registration or session mutation. Seventy-seven surfaces are AngularDefault and five remain MVC-default.
+
 ## MOD-030E4S evidence
 
 SupplierCommunications positive-ID Details joins AngularDefault; Prepare/RecordActivity and attachment download remain

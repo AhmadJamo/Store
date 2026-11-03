@@ -1,5 +1,11 @@
 # AI Work Log
 
+- 2026-11-03: Completed `MOD-030E5S`. Account Login, Register and AccessDenied GET now use AngularDefault at
+  `/app/login`, `/app/register` and `/app/access-denied`, preserving company/return/rate-limit and selected-plan query
+  values. Authentication, registration and logout POST remain outside cutover. Hosted 15/15, anonymous cutover/MVC rollback
+  135/135 and 1,820 backend checks passed without credential attempt, registration or session mutation. Seventy-seven
+  surfaces are AngularDefault and five remain MVC-default.
+
 - 2026-11-03: Completed `MOD-030E5R`. PlatformAuditRetention Index GET now uses AngularDefault at
   `/app/platform-retention`; legal holds, checkpoints and retention execution remain Owner-only, antiforgery-protected and
   outside cutover. Hosted 15/15, cutover/MVC rollback 132/132, live tenant-cookie isolation and 1,810 backend checks passed

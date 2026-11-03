@@ -178,7 +178,10 @@ public static class PresentationCutoverRouteCatalog
             ["Platform:Promotions"] = "/platform-management",
             ["Platform:CreatePromotion"] = "/platform-management",
             ["PlatformAuditEvents:Index"] = "/platform-audit",
-            ["PlatformAuditRetention:Index"] = "/platform-retention"
+            ["PlatformAuditRetention:Index"] = "/platform-retention",
+            ["Account:Login"] = "/login",
+            ["Account:Register"] = "/register",
+            ["Account:AccessDenied"] = "/access-denied"
         };
 
     public static IReadOnlyDictionary<string, string> All => Routes;

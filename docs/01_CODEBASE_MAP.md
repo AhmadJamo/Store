@@ -5,6 +5,10 @@ The in-repository workspace `MiniStore Front-End` is the isolated Angular 22 pre
 
 `MiniStore.Web/Controllers/Api/V1` exposes the authenticated session and CSRF foundation. `AuthenticationApiController` adds rate-limited, antiforgery-protected login and authenticated logout; `TenantAccountAuthenticationService` is the single MVC/API owner of Identity password checks, company membership selection, tenant claim creation, onboarding detection and denied-login audit evidence. `InternalApiSessionService` composes explicit Application DTOs through tenant and permission boundaries. Angular `core/api` owns CSRF attachment, in-memory session state, authenticated/anonymous guards and expired-session routing, while `features/account` owns login and access-denied presentation. `CultureApiController` and the MVC language controller share `UiCultureCookie`; Angular's neutral `UiCultureStateService` lets the server session culture drive locale/direction without creating an HTTP-interceptor/session dependency cycle. No credentials or tokens enter browser storage. `InternalApiExceptionMiddleware`, cookie events and API behavior options keep errors JSON-based with correlation IDs. Authenticated OpenAPI is filtered to `/api/v1`; reusable bounded paging contracts live in `MiniStore.Application/DTOs/Api`. MVC remains operational and no database migration or business-rule change was introduced. See `docs/modernization/PHASE_02_API_FOUNDATION.md`.
 
+- `Controllers/Security/AccountController.cs` and `MiniStore Front-End/src/app/features/{account,onboarding}/*`:
+  MOD-030E5S makes Login/Register/AccessDenied GET presentation AngularDefault with MVC rollback; authentication,
+  registration, logout and provisioning mutations remain on the shared server services outside cutover.
+
 `PermissionService.GetGrantedAsync` mirrors the tenant-Admin shortcut used by `CanAsync` and the authorization handler:
 an active-company Admin session projects every code-owned permission plus the protected administration-only permission
 set to Angular. This keeps navigation/session guidance

@@ -945,7 +945,13 @@ static async Task RunLiveCutoverAsync(
                      (MvcPath: "/?source=cutover-rehearsal", AngularPath: "/app/welcome?source=cutover-rehearsal"),
                      (MvcPath: "/pricing?source=cutover-rehearsal", AngularPath: "/app/pricing?source=cutover-rehearsal"),
                      (MvcPath: "/platform/account/login?returnUrl=%2Fplatform&rateLimited=true&retryAfterSeconds=120",
-                         AngularPath: "/app/platform-login?returnUrl=%2Fplatform&rateLimited=true&retryAfterSeconds=120")
+                         AngularPath: "/app/platform-login?returnUrl=%2Fplatform&rateLimited=true&retryAfterSeconds=120"),
+                     (MvcPath: "/Account/Login?companyCode=demo&returnUrl=%2FDashboard&rateLimited=true&retryAfterSeconds=120",
+                         AngularPath: "/app/login?companyCode=demo&returnUrl=%2FDashboard&rateLimited=true&retryAfterSeconds=120"),
+                     (MvcPath: "/Account/Register?planId=1&rateLimited=true&retryAfterSeconds=120",
+                         AngularPath: "/app/register?planId=1&rateLimited=true&retryAfterSeconds=120"),
+                     (MvcPath: "/Account/AccessDenied?source=cutover-rehearsal",
+                         AngularPath: "/app/access-denied?source=cutover-rehearsal")
                  })
         {
             var response = await anonymous.GetAsync(probe.MvcPath,

@@ -11,7 +11,7 @@
 - Angular application routes discovered: 184.
 - MVC surfaces with a verified Angular counterpart: 82.
 - Remaining MVC surfaces without a mapped Angular counterpart: 0.
-- Allowlisted Angular-default cutover actions: 174.
+- Allowlisted Angular-default cutover actions: 177.
 
 Remaining surfaces: none.
 
@@ -21,9 +21,9 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 
 | MVC surface | View | Migration status | Angular counterpart | Source |
 |---|---|---|---|---|
-| Account | AccessDenied.cshtml | Angular Pilot | /login, /register, /access-denied | MiniStore.Web/Views/Account/AccessDenied.cshtml |
-| Account | Login.cshtml | Angular Pilot | /login, /register, /access-denied | MiniStore.Web/Views/Account/Login.cshtml |
-| Account | Register.cshtml | Angular Pilot | /login, /register, /access-denied | MiniStore.Web/Views/Account/Register.cshtml |
+| Account | AccessDenied.cshtml | Angular Default | /login, /register, /access-denied | MiniStore.Web/Views/Account/AccessDenied.cshtml |
+| Account | Login.cshtml | Angular Default | /login, /register, /access-denied | MiniStore.Web/Views/Account/Login.cshtml |
+| Account | Register.cshtml | Angular Default | /login, /register, /access-denied | MiniStore.Web/Views/Account/Register.cshtml |
 | Accounts | Create.cshtml | Angular Default | /accounting/accounts | MiniStore.Web/Views/Accounts/Create.cshtml |
 | Accounts | Index.cshtml | Angular Default | /accounting/accounts | MiniStore.Web/Views/Accounts/Index.cshtml |
 | AnalyticsCenter | Create.cshtml | Angular Default | /analytics | MiniStore.Web/Views/AnalyticsCenter/Create.cshtml |
@@ -225,12 +225,12 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 
 | MVC surface | Action | HTTP verbs | Migration status | Angular counterpart | Angular-default cutover route | Source |
 |---|---|---|---|---|---|---|
-| Account | AccessDenied | GET | Angular Pilot | /login, /register, /access-denied | — | MiniStore.Web/Controllers/Security/AccountController.cs |
-| Account | Login | GET | Angular Pilot | /login, /register, /access-denied | — | MiniStore.Web/Controllers/Security/AccountController.cs |
-| Account | Login | POST | Angular Pilot | /login, /register, /access-denied | — | MiniStore.Web/Controllers/Security/AccountController.cs |
-| Account | Logout | POST | Angular Pilot | /login, /register, /access-denied | — | MiniStore.Web/Controllers/Security/AccountController.cs |
-| Account | Register | GET | Angular Pilot | /login, /register, /access-denied | — | MiniStore.Web/Controllers/Security/AccountController.cs |
-| Account | Register | POST | Angular Pilot | /login, /register, /access-denied | — | MiniStore.Web/Controllers/Security/AccountController.cs |
+| Account | AccessDenied | GET | Angular Default | /login, /register, /access-denied | /access-denied | MiniStore.Web/Controllers/Security/AccountController.cs |
+| Account | Login | GET | Angular Default | /login, /register, /access-denied | /login | MiniStore.Web/Controllers/Security/AccountController.cs |
+| Account | Login | POST | Angular Default | /login, /register, /access-denied | /login | MiniStore.Web/Controllers/Security/AccountController.cs |
+| Account | Logout | POST | Angular Default | /login, /register, /access-denied | — | MiniStore.Web/Controllers/Security/AccountController.cs |
+| Account | Register | GET | Angular Default | /login, /register, /access-denied | /register | MiniStore.Web/Controllers/Security/AccountController.cs |
+| Account | Register | POST | Angular Default | /login, /register, /access-denied | /register | MiniStore.Web/Controllers/Security/AccountController.cs |
 | Accounts | Create | GET | Angular Default | /accounting/accounts | — | MiniStore.Web/Controllers/Accounting/AccountsController.cs |
 | Accounts | Create | GET, POST | Angular Default | /accounting/accounts | — | MiniStore.Web/Controllers/Accounting/AccountsController.cs |
 | Accounts | Index | ANY | Angular Default | /accounting/accounts | /accounting/accounts | MiniStore.Web/Controllers/Accounting/AccountsController.cs |
