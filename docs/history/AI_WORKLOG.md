@@ -1,5 +1,10 @@
 # AI Work Log
 
+- 2026-11-03: Completed `MOD-030E5M`. Tenant Subscription Index GET now uses AngularDefault at `/app/subscription`
+  with query preservation; checkout POST and all price, promotion and activation authority remain under the existing SaaS
+  services outside presentation cutover. Hosted 15/15, cutover/MVC rollback 129/129 and 1,776 backend checks passed
+  without creating a checkout or changing subscription state. Seventy-one surfaces are AngularDefault and 11 remain MVC-default.
+
 - 2026-11-03: Completed `MOD-030E5L`. SupplierPayments Index/positive-bill Create/positive-ID Details GET now use
   AngularDefault; the source bill must be a single positive query value and create-and-post remains protected API/MVC POST
   under `SupplierPaymentService`. Hosted 15/15, cutover/MVC rollback 128/128 and 1,773 backend checks passed without

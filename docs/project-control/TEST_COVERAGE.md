@@ -84,6 +84,7 @@
 | MOD-030E5J Chart of Accounts | Index GET; create excluded; rendered Angular/API account reconciliation, hosted 15/15, cutover/MVC rollback 125/125 and 1,760 backend checks; no account/journal mutation | 2026-11-03 |
 | MOD-030E5K Journal Entry Details | positive-ID Details GET only; non-positive IDs rejected; hosted 15/15, cutover/MVC rollback 125/125 and 1,763 backend checks; no live payment-backed fixture and no journal mutation | 2026-11-03 |
 | MOD-030E5L Supplier Payments | Index/positive-bill Create/positive-ID Details GET; create-and-post excluded; hosted 15/15, cutover/MVC rollback 128/128 and 1,773 backend checks; no payment/journal mutation | 2026-11-03 |
+| MOD-030E5M Tenant Subscription | Index GET with query preservation; checkout/pricing/promotion/activation authority excluded; hosted 15/15, cutover/MVC rollback 129/129 and 1,776 backend checks; no checkout/subscription mutation | 2026-11-03 |
 | Live schema integrity (سلامة المخطط الحي) | 147 tables, 420 trusted FKs, zero disabled constraints/indexes or unsafe tenant relations | 2026-10-15 |
 | Web dependency build (بناء الويب واعتماداته) | Release, 4 projects, zero warnings/errors after SAL-120A (نجح) | 2026-10-22 |
 

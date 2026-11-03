@@ -97,3 +97,10 @@ pricing, promotion redemption, payment confirmation and Platform authorization r
 
 `MOD-027` is complete. Execution advances to `MOD-028A`, a source-authoritative reconciliation of shared and remaining
 MVC surfaces before selecting their implementation slices.
+
+## `MOD-030E5M` runtime cutover
+
+- Tenant Subscription Index GET now defaults to the existing Angular `/app/subscription` workspace and preserves query values.
+- Checkout POST, server-authored pricing, promotion validation and subscription activation remain outside presentation cutover.
+- Hosted acceptance passed 15/15; Angular cutover and process-local MVC rollback each passed 129 authorized GET routes;
+  1,776 backend checks passed without creating a checkout or changing subscription state.

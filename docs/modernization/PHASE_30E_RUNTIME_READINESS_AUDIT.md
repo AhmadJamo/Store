@@ -363,6 +363,13 @@ allocation, exchange and journal posting remain under `SupplierPaymentService` o
 15/15, cutover/MVC rollback 128/128 and 1,773 backend checks passed using existing read-only fixtures without payment or
 journal mutation. Seventy surfaces are AngularDefault and 12 remain MVC-default.
 
+## MOD-030E5M evidence
+
+Tenant Subscription Index GET joins AngularDefault at `/subscription`, with the original query preserved. Checkout POST,
+server-authored plan pricing, promotion validation and activation remain under the existing SaaS services outside presentation
+cutover. Hosted 15/15, cutover/MVC rollback 129/129 and 1,776 backend checks passed without checkout creation or subscription
+mutation. Seventy-one surfaces are AngularDefault and 11 remain MVC-default.
+
 ## MOD-030E4S evidence
 
 SupplierCommunications positive-ID Details joins AngularDefault; Prepare/RecordActivity and attachment download remain

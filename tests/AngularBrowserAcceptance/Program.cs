@@ -270,6 +270,9 @@ static async Task RunLiveCutoverAsync(
         new("/SupplierPayments?search=cutover-rehearsal",
             "/app/purchases/payments?search=cutover-rehearsal",
             "SupplierPayments.View"),
+        new("/subscription?source=cutover-rehearsal",
+            "/app/subscription?source=cutover-rehearsal",
+            "Administration.Access"),
         new("/Purchases?source=cutover-rehearsal",
             "/app/purchases/legacy?source=cutover-rehearsal",
             "Purchases.View"),
@@ -1007,6 +1010,8 @@ static async Task RunLiveCutoverAsync(
                          surface is "JournalEntries";
         expectsAngular = expectsAngular || options.CutoverMode == "pilot" &&
                          surface is "SupplierPayments";
+        expectsAngular = expectsAngular || options.CutoverMode == "pilot" &&
+                         surface is "subscription";
         if (expectsAngular)
         {
             Require(response.Status is 301 or 302 or 307 or 308,

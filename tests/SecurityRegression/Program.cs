@@ -1570,6 +1570,22 @@ Check(new long[] { -1, 0 }.All(id =>
         return supplierPaymentsCutoverResolver.Resolve(cutoverContext.Request,
             "SupplierPayments", "Create", new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null;
     }), "Supplier-payment cutover must reject unsafe source-bill identifiers");
+var subscriptionCutoverResolver = new PresentationCutoverResolver(Options.Create(
+    new PresentationCutoverOptions
+    {
+        AngularBasePath = "/app",
+        Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["Subscription"] = PresentationCutoverMode.AngularDefault
+        }
+    }));
+cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?source=cutover");
+Check(subscriptionCutoverResolver.Resolve(cutoverContext.Request,
+          "Subscription", "Index", new Microsoft.AspNetCore.Routing.RouteValueDictionary()) ==
+      "/app/subscription?source=cutover" &&
+      subscriptionCutoverResolver.Resolve(cutoverContext.Request,
+          "Subscription", "Checkout", new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null,
+    "Subscription cutover must preserve query values while keeping checkout outside presentation cutover");
 cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?page=2");
 foreach (var entry in PresentationCutoverRouteCatalog.All)
 {

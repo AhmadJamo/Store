@@ -11,7 +11,7 @@
 - Angular application routes discovered: 184.
 - MVC surfaces with a verified Angular counterpart: 82.
 - Remaining MVC surfaces without a mapped Angular counterpart: 0.
-- Allowlisted Angular-default cutover actions: 161.
+- Allowlisted Angular-default cutover actions: 162.
 
 Remaining surfaces: none.
 
@@ -181,8 +181,8 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | StockTransfers | Details.cshtml | Angular Default | /inventory/transfers | MiniStore.Web/Views/StockTransfers/Details.cshtml |
 | StockTransfers | Edit.cshtml | Angular Default | /inventory/transfers | MiniStore.Web/Views/StockTransfers/Edit.cshtml |
 | StockTransfers | Index.cshtml | Angular Default | /inventory/transfers | MiniStore.Web/Views/StockTransfers/Index.cshtml |
-| Subscription | Checkout.cshtml | Angular Pilot | /subscription | MiniStore.Web/Views/Subscription/Checkout.cshtml |
-| Subscription | Index.cshtml | Angular Pilot | /subscription | MiniStore.Web/Views/Subscription/Index.cshtml |
+| Subscription | Checkout.cshtml | Angular Default | /subscription | MiniStore.Web/Views/Subscription/Checkout.cshtml |
+| Subscription | Index.cshtml | Angular Default | /subscription | MiniStore.Web/Views/Subscription/Index.cshtml |
 | SupplierCommunications | Details.cshtml | Angular Default | /purchases/communications/prepare | MiniStore.Web/Views/SupplierCommunications/Details.cshtml |
 | SupplierCreditNotes | Create.cshtml | Angular Default | /purchases/credit-notes | MiniStore.Web/Views/SupplierCreditNotes/Create.cshtml |
 | SupplierCreditNotes | Details.cshtml | Angular Default | /purchases/credit-notes | MiniStore.Web/Views/SupplierCreditNotes/Details.cshtml |
@@ -559,8 +559,8 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | StockTransfers | Reject | POST | Angular Default | /inventory/transfers | — | MiniStore.Web/Controllers/Inventory/StockTransfersController.cs |
 | StockTransfers | ReturnToDraft | POST | Angular Default | /inventory/transfers | — | MiniStore.Web/Controllers/Inventory/StockTransfersController.cs |
 | StockTransfers | Submit | POST | Angular Default | /inventory/transfers | — | MiniStore.Web/Controllers/Inventory/StockTransfersController.cs |
-| Subscription | Checkout | GET, POST | Angular Pilot | /subscription | — | MiniStore.Web/Controllers/Saas/SubscriptionController.cs |
-| Subscription | Index | GET | Angular Pilot | /subscription | — | MiniStore.Web/Controllers/Saas/SubscriptionController.cs |
+| Subscription | Checkout | GET, POST | Angular Default | /subscription | — | MiniStore.Web/Controllers/Saas/SubscriptionController.cs |
+| Subscription | Index | GET | Angular Default | /subscription | /subscription | MiniStore.Web/Controllers/Saas/SubscriptionController.cs |
 | SupplierCommunications | RedirectToAction | POST | Angular Default | /purchases/communications/prepare | — | MiniStore.Web/Controllers/Purchases/SupplierCommunicationsController.cs |
 | SupplierCommunications | RedirectToAction | POST, GET | Angular Default | /purchases/communications/prepare | — | MiniStore.Web/Controllers/Purchases/SupplierCommunicationsController.cs |
 | SupplierCreditNotes | Create | GET | Angular Default | /purchases/credit-notes | /purchases/credit-notes/new?vendorBillId={vendorBillId} | MiniStore.Web/Controllers/Purchases/SupplierCreditNotesController.cs |
