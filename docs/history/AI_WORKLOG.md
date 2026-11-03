@@ -1,5 +1,11 @@
 # AI Work Log
 
+- 2026-11-03: Completed `MOD-030E5Q`. PlatformAuditEvents Index GET now uses AngularDefault at
+  `/app/platform-audit`, preserving filters; export, sensitive-field authority and semantic export auditing remain outside
+  cutover. Hosted 15/15, cutover/MVC rollback 132/132, live tenant-cookie isolation and 1,806 backend checks passed
+  without export or audit mutation. No Platform session fixture was available for an authorized live route probe; the exact
+  mapping and GET-only boundary are regression-covered. Seventy-five surfaces are AngularDefault and seven remain MVC-default.
+
 - 2026-11-03: Completed `MOD-030E5P`. Platform overview and management GET actions now use AngularDefault at
   `/app/platform-control` and `/app/platform-management`; company, plan, promotion and payment mutations remain under
   their Platform policies and antiforgery outside cutover. Hosted 15/15, cutover/MVC rollback 132/132, live tenant-cookie

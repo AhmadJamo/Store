@@ -126,3 +126,10 @@ MVC surfaces before selecting their implementation slices.
 - Hosted acceptance passed 15/15; the existing authorized tenant route set passed cutover/MVC rollback 132/132 and proved
   live tenant-cookie isolation from Platform. Exact Platform mappings and GET-only boundaries passed within 1,802 backend
   checks. No Platform session fixture was available for authorized live route probes, and no Platform data changed.
+
+## `MOD-030E5Q` runtime cutover
+
+- PlatformAuditEvents Index GET now defaults to `/app/platform-audit`, preserving audit filters.
+- Export, sensitive-field authorization and semantic export-event authority remain outside presentation cutover.
+- Hosted 15/15, existing route-set cutover/MVC rollback 132/132, live tenant-cookie isolation and 1,806 backend checks
+  passed without export or audit mutation. No Platform session fixture was available for an authorized live route probe.

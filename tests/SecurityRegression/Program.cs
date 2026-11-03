@@ -1655,6 +1655,26 @@ Check(new[] { "UpdateCompany", "CreatePlan", "CreatePromotion", "ConfirmPayment"
         .All(action => platformCutoverResolver.Resolve(cutoverContext.Request,
             "Platform", action, new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null),
     "Platform cutover must keep company, plan, promotion and payment mutations outside presentation cutover");
+var platformAuditCutoverResolver = new PresentationCutoverResolver(Options.Create(
+    new PresentationCutoverOptions
+    {
+        AngularBasePath = "/app",
+        Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["PlatformAuditEvents"] = PresentationCutoverMode.AngularDefault
+        }
+    }));
+cutoverContext.Request.Method = Microsoft.AspNetCore.Http.HttpMethods.Get;
+cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString(
+    "?eventType=Security.LoginDenied&includeSensitive=true&page=2");
+Check(platformAuditCutoverResolver.Resolve(cutoverContext.Request,
+          "PlatformAuditEvents", "Index", new Microsoft.AspNetCore.Routing.RouteValueDictionary()) ==
+      "/app/platform-audit?eventType=Security.LoginDenied&includeSensitive=true&page=2",
+    "Platform audit cutover must preserve filters while sensitive-field authority remains server-owned");
+cutoverContext.Request.Method = Microsoft.AspNetCore.Http.HttpMethods.Post;
+Check(platformAuditCutoverResolver.Resolve(cutoverContext.Request,
+          "PlatformAuditEvents", "Export", new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null,
+    "Platform audit cutover must keep export and its semantic audit event outside presentation cutover");
 cutoverContext.Request.Method = Microsoft.AspNetCore.Http.HttpMethods.Get;
 cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?page=2");
 foreach (var entry in PresentationCutoverRouteCatalog.All)

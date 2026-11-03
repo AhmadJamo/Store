@@ -88,6 +88,7 @@
 | MOD-030E5N Public Landing and Pricing | anonymous Index/Pricing GET with query preservation; registration and SaaS mutations excluded; hosted 15/15, anonymous cutover/MVC rollback 131/131 and 1,782 backend checks; no registration/plan/subscription mutation | 2026-11-03 |
 | MOD-030E5O Platform Sign-in | anonymous Login GET with return/rate-limit query preservation; credential POST, cookie issue and logout excluded; hosted 15/15, anonymous cutover/MVC rollback 132/132 and 1,786 backend checks; no credential/session mutation | 2026-11-03 |
 | MOD-030E5P Platform Overview and Management | overview/management GET mapped; company/plan/promotion/payment mutations excluded; hosted 15/15, existing route-set cutover/MVC rollback 132/132, live tenant-cookie isolation and 1,802 backend checks; no Platform session fixture for authorized live probes and no mutation | 2026-11-03 |
+| MOD-030E5Q Platform Audit Events | Index GET/filter mapping; export, sensitive fields and semantic export audit excluded; hosted 15/15, existing route-set cutover/MVC rollback 132/132, live tenant-cookie isolation and 1,806 backend checks; no Platform session fixture for authorized live probe and no mutation | 2026-11-03 |
 | Live schema integrity (سلامة المخطط الحي) | 147 tables, 420 trusted FKs, zero disabled constraints/indexes or unsafe tenant relations | 2026-10-15 |
 | Web dependency build (بناء الويب واعتماداته) | Release, 4 projects, zero warnings/errors after SAL-120A (نجح) | 2026-10-22 |
 

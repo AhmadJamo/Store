@@ -392,6 +392,14 @@ Company, plan, promotion and payment mutations remain policy/antiforgery protect
 without mutation. No Platform session fixture was available for authorized live route probes; exact mappings and GET-only
 boundaries are regression-covered. Seventy-four surfaces are AngularDefault and eight remain MVC-default.
 
+## MOD-030E5Q evidence
+
+PlatformAuditEvents Index GET joins AngularDefault at `/platform-audit`, preserving filters. Export, sensitive-field
+authorization and semantic export auditing remain outside presentation cutover. Hosted 15/15, existing route-set
+cutover/MVC rollback 132/132, live tenant-cookie isolation and 1,806 backend checks passed without mutation. No Platform
+session fixture was available for an authorized live route probe; exact mapping and GET-only behavior are regression-covered.
+Seventy-five surfaces are AngularDefault and seven remain MVC-default.
+
 ## MOD-030E4S evidence
 
 SupplierCommunications positive-ID Details joins AngularDefault; Prepare/RecordActivity and attachment download remain

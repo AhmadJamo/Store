@@ -176,7 +176,8 @@ public static class PresentationCutoverRouteCatalog
             ["Platform:Plans"] = "/platform-management",
             ["Platform:CreatePlan"] = "/platform-management",
             ["Platform:Promotions"] = "/platform-management",
-            ["Platform:CreatePromotion"] = "/platform-management"
+            ["Platform:CreatePromotion"] = "/platform-management",
+            ["PlatformAuditEvents:Index"] = "/platform-audit"
         };
 
     public static IReadOnlyDictionary<string, string> All => Routes;
