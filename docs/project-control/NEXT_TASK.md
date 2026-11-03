@@ -1,17 +1,17 @@
 # المهمة التالية الوحيدة / Next Task
 
-## `MOD-030E5N` — الواجهة العامة والتسعير / Public Landing and Pricing Cutover
+## `MOD-030E5O` — دخول منصة الإدارة / Platform Sign-in Cutover
 
 > الحالة: APPROVED
 
-اكتمل `MOD-030E5M`: أصبح Subscription السطح 71 بعد hosted ‏15/15 والقطع/الرجوع 129/129 والبوابة
-1,776 بلا إنشاء checkout أو تغيير اشتراك. بقي 11 سطحًا MVC.
+اكتمل `MOD-030E5N`: أصبح Public السطح 72 بعد hosted ‏15/15 والقطع/الرجوع المجهول 131/131 والبوابة
+1,782 بلا تسجيل أو تغيير خطة/اشتراك. بقي 10 أسطح MVC.
 
 ### النطاق المحدود
 
-- تحويل Public Index وPricing GET المجهولين إلى `/app/welcome` و`/app/pricing`.
-- إبقاء التسجيل واختيار الخطة وكل عمليات SaaS خارج تحويل العرض.
+- تحويل PlatformAccount Login GET المجهول إلى `/app/platform-login` مع حفظ returnUrl ومؤشرات rate limit.
+- إبقاء Login POST، التحقق من الاعتماد، rate limiting، إصدار cookie وLogout POST خارج تحويل العرض.
 
 ### القبول
 
-- GET العام يصل إلى Angular مع حفظ الاستعلام، والرجوع إلى MVC مثبت بلا تسجيل أو تغيير خطة أو اشتراك.
+- GET المجهول يصل إلى Angular مع حفظ الاستعلام، والرجوع إلى MVC مثبت بلا محاولة دخول أو تغيير جلسة Platform.

@@ -916,6 +916,37 @@ static async Task RunLiveCutoverAsync(
     }
 
     var executed = 0;
+    await using (var anonymous = await playwright.APIRequest.NewContextAsync(new APIRequestNewContextOptions
+                 {
+                     BaseURL = options.ApiUrl,
+                     IgnoreHTTPSErrors = true
+                 }))
+    {
+        foreach (var probe in new[]
+                 {
+                     (MvcPath: "/?source=cutover-rehearsal", AngularPath: "/app/welcome?source=cutover-rehearsal"),
+                     (MvcPath: "/pricing?source=cutover-rehearsal", AngularPath: "/app/pricing?source=cutover-rehearsal")
+                 })
+        {
+            var response = await anonymous.GetAsync(probe.MvcPath,
+                new APIRequestContextOptions { MaxRedirects = 0 });
+            var expectsAngular = options.CutoverMode is "angular" or "pilot";
+            if (expectsAngular)
+            {
+                Require(response.Status is 301 or 302 or 307 or 308,
+                    $"AngularDefault public surface {probe.MvcPath} returned {response.Status} instead of a redirect.");
+                Require(response.Headers.TryGetValue("location", out var location) &&
+                        string.Equals(location, probe.AngularPath, StringComparison.Ordinal),
+                    $"AngularDefault public surface {probe.MvcPath} returned an unexpected target.");
+            }
+            else
+            {
+                Require(response.Status == 200,
+                    $"MVC rollback public surface {probe.MvcPath} returned {response.Status} instead of 200.");
+            }
+            executed++;
+        }
+    }
     foreach (var probe in routes.Where(x => permissions.Contains(x.Permission)))
     {
         var surface = probe.MvcPath.TrimStart('/')

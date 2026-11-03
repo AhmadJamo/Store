@@ -104,3 +104,10 @@ MVC surfaces before selecting their implementation slices.
 - Checkout POST, server-authored pricing, promotion validation and subscription activation remain outside presentation cutover.
 - Hosted acceptance passed 15/15; Angular cutover and process-local MVC rollback each passed 129 authorized GET routes;
   1,776 backend checks passed without creating a checkout or changing subscription state.
+
+## `MOD-030E5N` runtime cutover
+
+- Anonymous Public landing and pricing GET now default to `/app/welcome` and `/app/pricing`, preserving query values.
+- Registration, selected-plan validation and every SaaS mutation remain outside presentation cutover.
+- Hosted acceptance passed 15/15; anonymous Angular cutover and process-local MVC rollback each passed within 131 GET
+  routes; 1,782 backend checks passed without registration or plan/subscription mutation.

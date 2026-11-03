@@ -370,6 +370,13 @@ server-authored plan pricing, promotion validation and activation remain under t
 cutover. Hosted 15/15, cutover/MVC rollback 129/129 and 1,776 backend checks passed without checkout creation or subscription
 mutation. Seventy-one surfaces are AngularDefault and 11 remain MVC-default.
 
+## MOD-030E5N evidence
+
+Anonymous Public Index and Pricing GET join AngularDefault at `/welcome` and `/pricing`, preserving query values.
+Registration, selected-plan validation and every SaaS mutation remain outside presentation cutover. Hosted 15/15,
+anonymous cutover/MVC rollback 131/131 and 1,782 backend checks passed without registration or plan/subscription mutation.
+Seventy-two surfaces are AngularDefault and 10 remain MVC-default.
+
 ## MOD-030E4S evidence
 
 SupplierCommunications positive-ID Details joins AngularDefault; Prepare/RecordActivity and attachment download remain

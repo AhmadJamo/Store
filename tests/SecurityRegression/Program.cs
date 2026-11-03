@@ -1586,6 +1586,26 @@ Check(subscriptionCutoverResolver.Resolve(cutoverContext.Request,
       subscriptionCutoverResolver.Resolve(cutoverContext.Request,
           "Subscription", "Checkout", new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null,
     "Subscription cutover must preserve query values while keeping checkout outside presentation cutover");
+var publicCutoverResolver = new PresentationCutoverResolver(Options.Create(
+    new PresentationCutoverOptions
+    {
+        AngularBasePath = "/app",
+        Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["Public"] = PresentationCutoverMode.AngularDefault
+        }
+    }));
+cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?source=cutover");
+Check(publicCutoverResolver.Resolve(cutoverContext.Request,
+          "Public", "Index", new Microsoft.AspNetCore.Routing.RouteValueDictionary()) ==
+      "/app/welcome?source=cutover" &&
+      publicCutoverResolver.Resolve(cutoverContext.Request,
+          "Public", "Pricing", new Microsoft.AspNetCore.Routing.RouteValueDictionary()) ==
+      "/app/pricing?source=cutover",
+    "Public cutover must resolve anonymous landing and pricing routes while preserving query values");
+Check(publicCutoverResolver.Resolve(cutoverContext.Request,
+          "Account", "Register", new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null,
+    "Public cutover must not absorb registration or plan-selection authority");
 cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?page=2");
 foreach (var entry in PresentationCutoverRouteCatalog.All)
 {

@@ -1,5 +1,10 @@
 # AI Work Log
 
+- 2026-11-03: Completed `MOD-030E5N`. Anonymous Public Index and Pricing GET now use AngularDefault at
+  `/app/welcome` and `/app/pricing` with query preservation. Registration, plan selection and SaaS mutations remain
+  outside presentation cutover. Hosted 15/15, anonymous cutover/MVC rollback 131/131 and 1,782 backend checks passed
+  without registration or plan/subscription mutation. Seventy-two surfaces are AngularDefault and 10 remain MVC-default.
+
 - 2026-11-03: Completed `MOD-030E5M`. Tenant Subscription Index GET now uses AngularDefault at `/app/subscription`
   with query preservation; checkout POST and all price, promotion and activation authority remain under the existing SaaS
   services outside presentation cutover. Hosted 15/15, cutover/MVC rollback 129/129 and 1,776 backend checks passed
