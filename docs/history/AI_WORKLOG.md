@@ -1,5 +1,12 @@
 # AI Work Log
 
+- 2026-11-03: Completed `MOD-030E5P`. Platform overview and management GET actions now use AngularDefault at
+  `/app/platform-control` and `/app/platform-management`; company, plan, promotion and payment mutations remain under
+  their Platform policies and antiforgery outside cutover. Hosted 15/15, cutover/MVC rollback 132/132, live tenant-cookie
+  isolation and 1,802 backend checks passed without mutation. No Platform session fixture was available for authorized
+  live route probes; exact mappings and GET-only boundaries are regression-covered. Seventy-four surfaces are AngularDefault
+  and eight remain MVC-default.
+
 - 2026-11-03: Completed `MOD-030E5O`. Anonymous PlatformAccount Login GET now uses AngularDefault at
   `/app/platform-login`, preserving returnUrl and rate-limit evidence. Credential submission, rate limiting, Platform-cookie
   issue and logout remain outside presentation cutover. Hosted 15/15, anonymous cutover/MVC rollback 132/132 and 1,786

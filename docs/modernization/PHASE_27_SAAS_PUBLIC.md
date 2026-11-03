@@ -118,3 +118,11 @@ MVC surfaces before selecting their implementation slices.
 - Credential submission, login rate limiting, Platform-cookie issue and logout remain outside presentation cutover.
 - Hosted acceptance passed 15/15; anonymous Angular cutover and process-local MVC rollback each passed within 132 GET
   routes; 1,786 backend checks passed without a credential attempt or Platform session mutation.
+
+## `MOD-030E5P` runtime cutover
+
+- Platform overview and management GET actions now default to `/app/platform-control` and `/app/platform-management`.
+- Company, plan, promotion and payment mutations retain their Platform policies, antiforgery and server authority outside cutover.
+- Hosted acceptance passed 15/15; the existing authorized tenant route set passed cutover/MVC rollback 132/132 and proved
+  live tenant-cookie isolation from Platform. Exact Platform mappings and GET-only boundaries passed within 1,802 backend
+  checks. No Platform session fixture was available for authorized live route probes, and no Platform data changed.

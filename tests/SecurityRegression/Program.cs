@@ -1629,6 +1629,33 @@ Check(platformAccountCutoverResolver.Resolve(cutoverContext.Request,
           "PlatformAccount", "Logout", new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null,
     "Platform sign-in cutover must keep credential submission and logout outside presentation cutover");
 cutoverContext.Request.Method = Microsoft.AspNetCore.Http.HttpMethods.Get;
+var platformCutoverResolver = new PresentationCutoverResolver(Options.Create(
+    new PresentationCutoverOptions
+    {
+        AngularBasePath = "/app",
+        Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["Platform"] = PresentationCutoverMode.AngularDefault
+        }
+    }));
+cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?source=cutover");
+var platformManagementActions = new[]
+{
+    "Companies", "PendingPayments", "Plans", "CreatePlan", "Promotions", "CreatePromotion"
+};
+Check(platformCutoverResolver.Resolve(cutoverContext.Request,
+          "Platform", "Index", new Microsoft.AspNetCore.Routing.RouteValueDictionary()) ==
+      "/app/platform-control?source=cutover" &&
+      platformManagementActions.All(action => platformCutoverResolver.Resolve(cutoverContext.Request,
+          "Platform", action, new Microsoft.AspNetCore.Routing.RouteValueDictionary()) ==
+          "/app/platform-management?source=cutover"),
+    "Platform cutover must resolve the overview and management GET actions while preserving query values");
+cutoverContext.Request.Method = Microsoft.AspNetCore.Http.HttpMethods.Post;
+Check(new[] { "UpdateCompany", "CreatePlan", "CreatePromotion", "ConfirmPayment" }
+        .All(action => platformCutoverResolver.Resolve(cutoverContext.Request,
+            "Platform", action, new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null),
+    "Platform cutover must keep company, plan, promotion and payment mutations outside presentation cutover");
+cutoverContext.Request.Method = Microsoft.AspNetCore.Http.HttpMethods.Get;
 cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?page=2");
 foreach (var entry in PresentationCutoverRouteCatalog.All)
 {

@@ -169,7 +169,14 @@ public static class PresentationCutoverRouteCatalog
             ["Subscription:Index"] = "/subscription",
             ["Public:Index"] = "/welcome",
             ["Public:Pricing"] = "/pricing",
-            ["PlatformAccount:Login"] = "/platform-login"
+            ["PlatformAccount:Login"] = "/platform-login",
+            ["Platform:Index"] = "/platform-control",
+            ["Platform:Companies"] = "/platform-management",
+            ["Platform:PendingPayments"] = "/platform-management",
+            ["Platform:Plans"] = "/platform-management",
+            ["Platform:CreatePlan"] = "/platform-management",
+            ["Platform:Promotions"] = "/platform-management",
+            ["Platform:CreatePromotion"] = "/platform-management"
         };
 
     public static IReadOnlyDictionary<string, string> All => Routes;

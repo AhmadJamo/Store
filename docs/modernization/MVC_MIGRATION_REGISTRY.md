@@ -11,7 +11,7 @@
 - Angular application routes discovered: 184.
 - MVC surfaces with a verified Angular counterpart: 82.
 - Remaining MVC surfaces without a mapped Angular counterpart: 0.
-- Allowlisted Angular-default cutover actions: 165.
+- Allowlisted Angular-default cutover actions: 172.
 
 Remaining surfaces: none.
 
@@ -336,16 +336,16 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | PaymentMethods | Create | GET | Angular Default | /products/catalog-masters | — | MiniStore.Web/Controllers/Accounting/PaymentMethodsController.cs |
 | PaymentMethods | Create | GET, POST | Angular Default | /products/catalog-masters | — | MiniStore.Web/Controllers/Accounting/PaymentMethodsController.cs |
 | PaymentMethods | Index | ANY | Angular Default | /products/catalog-masters | /products/catalog-masters | MiniStore.Web/Controllers/Accounting/PaymentMethodsController.cs |
-| Platform/Platform | Companies | GET | Angular Pilot | /platform-control, /platform-management | — | MiniStore.Web/Areas/Platform/Controllers/PlatformController.cs |
+| Platform/Platform | Companies | GET | Angular Pilot | /platform-control, /platform-management | /platform-management | MiniStore.Web/Areas/Platform/Controllers/PlatformController.cs |
 | Platform/Platform | ConfirmPayment | GET, POST | Angular Pilot | /platform-control, /platform-management | — | MiniStore.Web/Areas/Platform/Controllers/PlatformController.cs |
-| Platform/Platform | CreatePlan | GET | Angular Pilot | /platform-control, /platform-management | — | MiniStore.Web/Areas/Platform/Controllers/PlatformController.cs |
-| Platform/Platform | CreatePlan | GET, POST | Angular Pilot | /platform-control, /platform-management | — | MiniStore.Web/Areas/Platform/Controllers/PlatformController.cs |
-| Platform/Platform | CreatePromotion | GET | Angular Pilot | /platform-control, /platform-management | — | MiniStore.Web/Areas/Platform/Controllers/PlatformController.cs |
-| Platform/Platform | CreatePromotion | GET, POST | Angular Pilot | /platform-control, /platform-management | — | MiniStore.Web/Areas/Platform/Controllers/PlatformController.cs |
-| Platform/Platform | Index | GET | Angular Pilot | /platform-control, /platform-management | — | MiniStore.Web/Areas/Platform/Controllers/PlatformController.cs |
-| Platform/Platform | PendingPayments | GET | Angular Pilot | /platform-control, /platform-management | — | MiniStore.Web/Areas/Platform/Controllers/PlatformController.cs |
-| Platform/Platform | Plans | GET | Angular Pilot | /platform-control, /platform-management | — | MiniStore.Web/Areas/Platform/Controllers/PlatformController.cs |
-| Platform/Platform | Promotions | GET | Angular Pilot | /platform-control, /platform-management | — | MiniStore.Web/Areas/Platform/Controllers/PlatformController.cs |
+| Platform/Platform | CreatePlan | GET | Angular Pilot | /platform-control, /platform-management | /platform-management | MiniStore.Web/Areas/Platform/Controllers/PlatformController.cs |
+| Platform/Platform | CreatePlan | GET, POST | Angular Pilot | /platform-control, /platform-management | /platform-management | MiniStore.Web/Areas/Platform/Controllers/PlatformController.cs |
+| Platform/Platform | CreatePromotion | GET | Angular Pilot | /platform-control, /platform-management | /platform-management | MiniStore.Web/Areas/Platform/Controllers/PlatformController.cs |
+| Platform/Platform | CreatePromotion | GET, POST | Angular Pilot | /platform-control, /platform-management | /platform-management | MiniStore.Web/Areas/Platform/Controllers/PlatformController.cs |
+| Platform/Platform | Index | GET | Angular Pilot | /platform-control, /platform-management | /platform-control | MiniStore.Web/Areas/Platform/Controllers/PlatformController.cs |
+| Platform/Platform | PendingPayments | GET | Angular Pilot | /platform-control, /platform-management | /platform-management | MiniStore.Web/Areas/Platform/Controllers/PlatformController.cs |
+| Platform/Platform | Plans | GET | Angular Pilot | /platform-control, /platform-management | /platform-management | MiniStore.Web/Areas/Platform/Controllers/PlatformController.cs |
+| Platform/Platform | Promotions | GET | Angular Pilot | /platform-control, /platform-management | /platform-management | MiniStore.Web/Areas/Platform/Controllers/PlatformController.cs |
 | Platform/Platform | UpdateCompany | GET, POST | Angular Pilot | /platform-control, /platform-management | — | MiniStore.Web/Areas/Platform/Controllers/PlatformController.cs |
 | Platform/PlatformAccount | Login | GET | Angular Pilot | /platform-login | /platform-login | MiniStore.Web/Areas/Platform/Controllers/PlatformAccountController.cs |
 | Platform/PlatformAccount | Login | POST | Angular Pilot | /platform-login | /platform-login | MiniStore.Web/Areas/Platform/Controllers/PlatformAccountController.cs |

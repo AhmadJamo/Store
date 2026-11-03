@@ -1,18 +1,17 @@
 # المهمة التالية الوحيدة / Next Task
 
-## `MOD-030E5P` — نظرة منصة الإدارة وعملياتها / Platform Overview and Management Cutover
+## `MOD-030E5Q` — تدقيق منصة الإدارة / Platform Audit Events Cutover
 
 > الحالة: APPROVED
 
-اكتمل `MOD-030E5O`: أصبح PlatformAccount السطح 73 بعد hosted ‏15/15 والقطع/الرجوع المجهول 132/132
-والبوابة 1,786 بلا محاولة اعتماد أو تغيير جلسة. بقي 9 أسطح MVC.
+اكتمل `MOD-030E5P`: أصبح Platform السطح 74 بعد hosted ‏15/15 والقطع/الرجوع 132/132 والبوابة 1,802
+مع إثبات عزل جلسة الشركة، بلا تغيير بيانات. بقي 8 أسطح MVC.
 
 ### النطاق المحدود
 
-- تحويل Platform Index وCompanies وPendingPayments وPlans وCreatePlan وPromotions وCreatePromotion GET إلى
-  `/app/platform-control` و`/app/platform-management`.
-- إبقاء تحديث الشركة وإنشاء الخطة/العرض وتأكيد الدفع تحت سياسات Platform وantiforgery وخارج تحويل العرض.
+- تحويل PlatformAuditEvents Index GET إلى `/app/platform-audit` مع حفظ فلاتر الاستعلام.
+- إبقاء Export POST وصلاحيات العرض/التصدير/البيانات الحساسة وتسجيل حدث التصدير خارج تحويل العرض.
 
 ### القبول
 
-- GET بجلسة Platform مصرح بها يصل إلى Angular مع حفظ الاستعلام، والرجوع إلى MVC مثبت بلا تغيير شركة أو خطة أو عرض أو دفعة.
+- المسار الدقيق وحدود GET والصلاحيات مثبتة، والرجوع إلى MVC مثبت بلا تصدير أو تغيير سجل تدقيق.

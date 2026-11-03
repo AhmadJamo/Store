@@ -384,6 +384,14 @@ Credential submission, rate limiting, Platform-cookie issue and logout remain ou
 anonymous cutover/MVC rollback 132/132 and 1,786 backend checks passed without a credential attempt or Platform session
 mutation. Seventy-three surfaces are AngularDefault and nine remain MVC-default.
 
+## MOD-030E5P evidence
+
+Platform overview and management GET actions join AngularDefault at `/platform-control` and `/platform-management`.
+Company, plan, promotion and payment mutations remain policy/antiforgery protected outside presentation cutover. Hosted
+15/15, the existing route-set cutover/MVC rollback 132/132, live tenant-cookie isolation and 1,802 backend checks passed
+without mutation. No Platform session fixture was available for authorized live route probes; exact mappings and GET-only
+boundaries are regression-covered. Seventy-four surfaces are AngularDefault and eight remain MVC-default.
+
 ## MOD-030E4S evidence
 
 SupplierCommunications positive-ID Details joins AngularDefault; Prepare/RecordActivity and attachment download remain

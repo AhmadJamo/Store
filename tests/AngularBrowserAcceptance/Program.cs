@@ -916,6 +916,12 @@ static async Task RunLiveCutoverAsync(
     }
 
     var executed = 0;
+    var platformBoundary = await authenticated.GetAsync("/platform?source=cutover-rehearsal",
+        new APIRequestContextOptions { MaxRedirects = 0 });
+    Require(platformBoundary.Status is 301 or 302 or 307 or 308 &&
+            platformBoundary.Headers.TryGetValue("location", out var platformLoginLocation) &&
+            platformLoginLocation.Contains("/platform/account/login", StringComparison.OrdinalIgnoreCase),
+        "A tenant session must not satisfy the isolated Platform cookie boundary.");
     await using (var anonymous = await playwright.APIRequest.NewContextAsync(new APIRequestNewContextOptions
                  {
                      BaseURL = options.ApiUrl,
