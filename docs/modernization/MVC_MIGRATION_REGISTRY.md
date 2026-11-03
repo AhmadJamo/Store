@@ -11,7 +11,7 @@
 - Angular application routes discovered: 184.
 - MVC surfaces with a verified Angular counterpart: 82.
 - Remaining MVC surfaces without a mapped Angular counterpart: 0.
-- Allowlisted Angular-default cutover actions: 182.
+- Allowlisted Angular-default cutover actions: 183.
 
 Remaining surfaces: none.
 
@@ -62,7 +62,7 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | GoodsReceipts | Details.cshtml | Angular Default | /purchases/receipts | MiniStore.Web/Views/GoodsReceipts/Details.cshtml |
 | GoodsReceipts | Index.cshtml | Angular Default | /purchases/receipts | MiniStore.Web/Views/GoodsReceipts/Index.cshtml |
 | GoodsReceipts | Scan.cshtml | Angular Default | /purchases/receipts | MiniStore.Web/Views/GoodsReceipts/Scan.cshtml |
-| Home | Index.cshtml | Angular Pilot | / | MiniStore.Web/Views/Home/Index.cshtml |
+| Home | Index.cshtml | Angular Default | / | MiniStore.Web/Views/Home/Index.cshtml |
 | InventoryAdjustments | Create.cshtml | Angular Default | /inventory/adjustments | MiniStore.Web/Views/InventoryAdjustments/Create.cshtml |
 | InventoryAdjustments | Details.cshtml | Angular Default | /inventory/adjustments | MiniStore.Web/Views/InventoryAdjustments/Details.cshtml |
 | InventoryAdjustments | Index.cshtml | Angular Default | /inventory/adjustments | MiniStore.Web/Views/InventoryAdjustments/Index.cshtml |
@@ -304,7 +304,7 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | GoodsReceipts | PutAway | POST | Angular Default | /purchases/receipts | — | MiniStore.Web/Controllers/Purchases/GoodsReceiptsController.cs |
 | GoodsReceipts | RecordScan | POST | Angular Default | /purchases/receipts | — | MiniStore.Web/Controllers/Purchases/GoodsReceiptsController.cs |
 | GoodsReceipts | Scan | GET | Angular Default | /purchases/receipts | /purchases/receipts/{id}/scan | MiniStore.Web/Controllers/Purchases/GoodsReceiptsController.cs |
-| Home | Index | ANY | Angular Pilot | / | — | MiniStore.Web/Controllers/Home/HomeController.cs |
+| Home | Index | ANY | Angular Default | / | / | MiniStore.Web/Controllers/Home/HomeController.cs |
 | InventoryAdjustments | Approve | POST | Angular Default | /inventory/adjustments | — | MiniStore.Web/Controllers/Inventory/InventoryAdjustmentsController.cs |
 | InventoryAdjustments | Cancel | POST | Angular Default | /inventory/adjustments | — | MiniStore.Web/Controllers/Inventory/InventoryAdjustmentsController.cs |
 | InventoryAdjustments | Count | POST | Angular Default | /inventory/adjustments | — | MiniStore.Web/Controllers/Inventory/InventoryAdjustmentsController.cs |

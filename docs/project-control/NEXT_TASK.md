@@ -1,25 +1,26 @@
 # المهمة التالية الوحيدة / Next Task
 
-## `MOD-030E5W` — مسار Home التوافقي / Home Compatibility Redirect Cutover
+## `MOD-030E5X` — تصنيف حد اللغة / Language Mutation Boundary Classification
 
 > الحالة: APPROVED
 
-اكتمل `MOD-030E5V`: أصبح DocumentDesigns السطح 80 بعد hosted ‏15/15 والقطع/الرجوع 139/139 والبوابة
-1,836 دون إنشاء أو تعديل تصميم. بقي سطحان MVC.
+اكتمل `MOD-030E5W`: أصبح Home السطح 81 بعد hosted ‏15/15 والقطع/الرجوع 140/140 والبوابة 1,840 دون
+تغيير حالة أو بيانات. لم يبق إلا Language Set، وهو POST mutation بلا GET أو Razor view.
 
 ### النطاق المحدود
 
-- تحويل Home Index GET التوافقي إلى جذر `/app` مع الحفاظ على query string.
-- إبقاء قرار الإعداد الموجّه مقابل Dashboard داخل الخدمة/المتحكم الحالي كمسار rollback، دون تغيير بيانات أو صلاحيات.
+- تصنيف Language Set POST كحد MVC compatibility دائم خارج presentation cutover.
+- جعل سجل الهجرة والمصفوفة يميزان mutation-only exception عن سطح عرض MVC متبقٍ.
+- إثبات بقاء الأمر POST + antiforgery وأنه لا يدخل كتالوج GET/HEAD أو AngularDefault.
 
 ### القبول
 
-- مسار Home المصرّح يعيد التوجيه إلى هدف Angular الدقيق، والـ override المحلي يعيده إلى سلوك MVC.
-- فحوص الحماية تثبت التطابق وتمنع أي توسيع إلى أوامر غير GET.
-- hosted وcutover وrollback والبناء والبوابة النهائية خضراء.
+- لا يبقى أي سطح عرض GET على MVC افتراضيًا.
+- يظهر Language بوضوح كاستثناء mutation-only لا كفجوة عرض.
+- فحوص الحماية والمولّد والبناء وبوابة Angular خضراء.
 
 ### خارج النطاق
 
-- تغيير منطق اكتمال الإعداد الموجّه أو Dashboard.
-- تحويل أمر تغيير اللغة POST إلى presentation cutover.
-- حذف أي Controller أو Razor view أو مسار rollback.
+- تغيير cookie الثقافة أو التطبيع أو returnUrl المحلي.
+- تحويل POST إلى redirect عرض أو نقله إلى المتصفح.
+- حذف Controller أو antiforgery أو أي مسار rollback.

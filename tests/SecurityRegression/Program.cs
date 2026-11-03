@@ -1791,6 +1791,25 @@ Check(new[] { "Create", "Activate", "SetDefault", "Archive" }
         .All(action => documentDesignsCutoverResolver.Resolve(cutoverContext.Request,
             "DocumentDesigns", action, new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null),
     "Document-design cutover must keep create and lifecycle mutations outside presentation cutover");
+var homeCutoverResolver = new PresentationCutoverResolver(Options.Create(
+    new PresentationCutoverOptions
+    {
+        AngularBasePath = "/app",
+        Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["Home"] = PresentationCutoverMode.AngularDefault
+        }
+    }));
+cutoverContext.Request.Method = Microsoft.AspNetCore.Http.HttpMethods.Get;
+cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?source=cutover");
+Check(homeCutoverResolver.Resolve(cutoverContext.Request,
+          "Home", "Index", new Microsoft.AspNetCore.Routing.RouteValueDictionary()) ==
+      "/app?source=cutover",
+    "Home compatibility cutover must normalize the Angular root and preserve query values");
+cutoverContext.Request.Method = Microsoft.AspNetCore.Http.HttpMethods.Post;
+Check(homeCutoverResolver.Resolve(cutoverContext.Request,
+          "Home", "Index", new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null,
+    "Home compatibility cutover must remain GET/HEAD-only");
 cutoverContext.Request.Method = Microsoft.AspNetCore.Http.HttpMethods.Get;
 cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?page=2");
 foreach (var entry in PresentationCutoverRouteCatalog.All)

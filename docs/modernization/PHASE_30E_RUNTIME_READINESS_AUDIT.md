@@ -439,6 +439,14 @@ No saved design existed for a live Details probe; exact positive-ID resolution a
 the regression suite without creating or changing a design. Eighty surfaces are AngularDefault and two remain
 MVC-default.
 
+## MOD-030E5W evidence
+
+The authenticated Home compatibility Index GET joins AngularDefault at the normalized `/app` root with query
+preservation. Its existing MVC action still selects CompanyOnboarding or Dashboard when rollback is enabled; no setup
+decision moved into the browser and POST remains outside the GET/HEAD-only presentation catalog. Hosted 15/15,
+cutover/MVC rollback 140/140, a warning-free Release build and 1,840 backend checks passed without changing onboarding
+state or business data. Eighty-one surfaces are AngularDefault and only the mutation-only Language surface remains MVC.
+
 ## MOD-030E4S evidence
 
 SupplierCommunications positive-ID Details joins AngularDefault; Prepare/RecordActivity and attachment download remain

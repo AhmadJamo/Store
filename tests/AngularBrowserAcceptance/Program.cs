@@ -174,6 +174,8 @@ static async Task RunLiveCutoverAsync(
             "Administration.Access", "/"),
         new("/Dashboard?source=cutover-rehearsal", "/app?source=cutover-rehearsal",
             "Administration.Access"),
+        new("/Home?source=cutover-rehearsal", "/app?source=cutover-rehearsal",
+            "Administration.Access", "/Dashboard"),
         new("/DocumentDesigns?status=1&search=cutover-rehearsal",
             "/app/settings/document-designs?status=1&search=cutover-rehearsal", "Administration.Access"),
         new("/DocumentDesigns/Create?documentType=1",
@@ -1096,6 +1098,8 @@ static async Task RunLiveCutoverAsync(
                          surface is "Dashboard";
         expectsAngular = expectsAngular || options.CutoverMode == "pilot" &&
                          surface is "DocumentDesigns";
+        expectsAngular = expectsAngular || options.CutoverMode == "pilot" &&
+                         surface is "Home";
         if (expectsAngular)
         {
             Require(response.Status is 301 or 302 or 307 or 308,

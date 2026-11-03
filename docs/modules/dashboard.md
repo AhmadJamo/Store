@@ -4,6 +4,9 @@
 ## Purpose and behavior
 The authenticated Dashboard is an Odoo-inspired application launcher rather than an empty landing page. It presents Point of Sale, Sales, Purchasing, Inventory, Products, Accounting and Administration as responsive application cards with distinct icons, colors, plain-language descriptions and direct shortcuts to common screens.
 
+Dashboard Index and the legacy authenticated Home compatibility GET now resolve to the normalized Angular `/app` root
+by default. Their MVC actions remain intact for rollback, including Home's server-side onboarding-resolution decision.
+
 The launcher is permission-aware. An application is shown only when at least one of its destinations is authorized, each shortcut is filtered independently through `IPermissionService`, and the card opens the first authorized destination. A client-side localized search filters applications without a server request. The layout supports English and Arabic, including RTL, and remains usable on mobile widths.
 
 ## Source files

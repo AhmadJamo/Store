@@ -186,7 +186,8 @@ public static class PresentationCutoverRouteCatalog
             ["Dashboard:Index"] = "/",
             ["DocumentDesigns:Index"] = "/settings/document-designs",
             ["DocumentDesigns:Create"] = "/settings/document-designs/new",
-            ["DocumentDesigns:Details"] = "/settings/document-designs/{id}"
+            ["DocumentDesigns:Details"] = "/settings/document-designs/{id}",
+            ["Home:Index"] = "/"
         };
 
     public static IReadOnlyDictionary<string, string> All => Routes;

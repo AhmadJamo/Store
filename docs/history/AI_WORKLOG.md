@@ -1,5 +1,11 @@
 # AI Work Log
 
+- 2026-11-03: Completed `MOD-030E5W`. The authenticated Home compatibility Index GET now joins Dashboard at the
+  normalized Angular `/app` root with query preservation. The existing onboarding-resolved decision remains unchanged
+  behind MVC rollback, and POST remains outside the GET/HEAD-only presentation contract. Hosted 15/15, cutover/MVC
+  rollback 140/140, a warning-free Release build and 1,840 backend checks passed without changing onboarding state or
+  business data. Eighty-one surfaces are AngularDefault; only the mutation-only Language surface remains MVC.
+
 - 2026-11-03: Completed `MOD-030E5V`. DocumentDesigns Index, Create and positive-ID Details GET now use
   AngularDefault at `/app/settings/document-designs`, while Create, Activate, SetDefault and Archive commands remain
   independently authorized and antiforgery protected outside presentation cutover. Hosted 15/15, cutover/MVC rollback
