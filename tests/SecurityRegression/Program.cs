@@ -1675,6 +1675,26 @@ cutoverContext.Request.Method = Microsoft.AspNetCore.Http.HttpMethods.Post;
 Check(platformAuditCutoverResolver.Resolve(cutoverContext.Request,
           "PlatformAuditEvents", "Export", new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null,
     "Platform audit cutover must keep export and its semantic audit event outside presentation cutover");
+var platformRetentionCutoverResolver = new PresentationCutoverResolver(Options.Create(
+    new PresentationCutoverOptions
+    {
+        AngularBasePath = "/app",
+        Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["PlatformAuditRetention"] = PresentationCutoverMode.AngularDefault
+        }
+    }));
+cutoverContext.Request.Method = Microsoft.AspNetCore.Http.HttpMethods.Get;
+cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?source=cutover");
+Check(platformRetentionCutoverResolver.Resolve(cutoverContext.Request,
+          "PlatformAuditRetention", "Index", new Microsoft.AspNetCore.Routing.RouteValueDictionary()) ==
+      "/app/platform-retention?source=cutover",
+    "Platform retention cutover must resolve the owner-only status workspace and preserve query values");
+cutoverContext.Request.Method = Microsoft.AspNetCore.Http.HttpMethods.Post;
+Check(new[] { "CreateHold", "ReleaseHold", "Checkpoint", "Run" }
+        .All(action => platformRetentionCutoverResolver.Resolve(cutoverContext.Request,
+            "PlatformAuditRetention", action, new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null),
+    "Platform retention cutover must keep legal holds, checkpoints and retention execution outside presentation cutover");
 cutoverContext.Request.Method = Microsoft.AspNetCore.Http.HttpMethods.Get;
 cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?page=2");
 foreach (var entry in PresentationCutoverRouteCatalog.All)

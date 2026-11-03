@@ -11,7 +11,7 @@
 - Angular application routes discovered: 184.
 - MVC surfaces with a verified Angular counterpart: 82.
 - Remaining MVC surfaces without a mapped Angular counterpart: 0.
-- Allowlisted Angular-default cutover actions: 173.
+- Allowlisted Angular-default cutover actions: 174.
 
 Remaining surfaces: none.
 
@@ -354,7 +354,7 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | Platform/PlatformAuditEvents | Index | GET | Angular Pilot | /platform-audit | /platform-audit | MiniStore.Web/Areas/Platform/Controllers/PlatformAuditEventsController.cs |
 | Platform/PlatformAuditRetention | Checkpoint | POST | Angular Pilot | /platform-retention | — | MiniStore.Web/Areas/Platform/Controllers/PlatformAuditRetentionController.cs |
 | Platform/PlatformAuditRetention | CreateHold | POST | Angular Pilot | /platform-retention | — | MiniStore.Web/Areas/Platform/Controllers/PlatformAuditRetentionController.cs |
-| Platform/PlatformAuditRetention | Index | GET | Angular Pilot | /platform-retention | — | MiniStore.Web/Areas/Platform/Controllers/PlatformAuditRetentionController.cs |
+| Platform/PlatformAuditRetention | Index | GET | Angular Pilot | /platform-retention | /platform-retention | MiniStore.Web/Areas/Platform/Controllers/PlatformAuditRetentionController.cs |
 | Platform/PlatformAuditRetention | ReleaseHold | POST | Angular Pilot | /platform-retention | — | MiniStore.Web/Areas/Platform/Controllers/PlatformAuditRetentionController.cs |
 | Platform/PlatformAuditRetention | Run | POST | Angular Pilot | /platform-retention | — | MiniStore.Web/Areas/Platform/Controllers/PlatformAuditRetentionController.cs |
 | ProductAttributes | Create | POST | Angular Default | /products/attributes | — | MiniStore.Web/Controllers/Catalog/ProductAttributesController.cs |

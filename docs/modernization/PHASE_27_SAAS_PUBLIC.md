@@ -133,3 +133,10 @@ MVC surfaces before selecting their implementation slices.
 - Export, sensitive-field authorization and semantic export-event authority remain outside presentation cutover.
 - Hosted 15/15, existing route-set cutover/MVC rollback 132/132, live tenant-cookie isolation and 1,806 backend checks
   passed without export or audit mutation. No Platform session fixture was available for an authorized live route probe.
+
+## `MOD-030E5R` runtime cutover
+
+- PlatformAuditRetention Index GET now defaults to `/app/platform-retention`.
+- Legal holds, checkpoints and retention execution remain Owner-only, antiforgery-protected and outside cutover.
+- Hosted 15/15, existing route-set cutover/MVC rollback 132/132, live tenant-cookie isolation and 1,810 backend checks
+  passed without mutation. No Platform session fixture was available for an authorized live route probe.

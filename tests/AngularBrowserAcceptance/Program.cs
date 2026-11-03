@@ -928,6 +928,12 @@ static async Task RunLiveCutoverAsync(
             platformAuditBoundary.Headers.TryGetValue("location", out var platformAuditLoginLocation) &&
             platformAuditLoginLocation.Contains("/platform/account/login", StringComparison.OrdinalIgnoreCase),
         "A tenant session must not satisfy the isolated Platform audit boundary.");
+    var platformRetentionBoundary = await authenticated.GetAsync("/platform/audit-retention",
+        new APIRequestContextOptions { MaxRedirects = 0 });
+    Require(platformRetentionBoundary.Status is 301 or 302 or 307 or 308 &&
+            platformRetentionBoundary.Headers.TryGetValue("location", out var platformRetentionLoginLocation) &&
+            platformRetentionLoginLocation.Contains("/platform/account/login", StringComparison.OrdinalIgnoreCase),
+        "A tenant session must not satisfy the owner-only Platform retention boundary.");
     await using (var anonymous = await playwright.APIRequest.NewContextAsync(new APIRequestNewContextOptions
                  {
                      BaseURL = options.ApiUrl,
