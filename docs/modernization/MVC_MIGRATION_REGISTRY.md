@@ -11,7 +11,7 @@
 - Angular application routes discovered: 184.
 - MVC surfaces with a verified Angular counterpart: 82.
 - Remaining MVC surfaces without a mapped Angular counterpart: 0.
-- Allowlisted Angular-default cutover actions: 178.
+- Allowlisted Angular-default cutover actions: 179.
 
 Remaining surfaces: none.
 
@@ -51,7 +51,7 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | Customers | Details.cshtml | Angular Default | /customers | MiniStore.Web/Views/Customers/Details.cshtml |
 | Customers | Edit.cshtml | Angular Default | /customers | MiniStore.Web/Views/Customers/Edit.cshtml |
 | Customers | Index.cshtml | Angular Default | /customers | MiniStore.Web/Views/Customers/Index.cshtml |
-| Dashboard | Index.cshtml | Angular Pilot | / | MiniStore.Web/Views/Dashboard/Index.cshtml |
+| Dashboard | Index.cshtml | Angular Default | / | MiniStore.Web/Views/Dashboard/Index.cshtml |
 | DocumentDesigns | Create.cshtml | Angular Pilot | /settings/document-designs | MiniStore.Web/Views/DocumentDesigns/Create.cshtml |
 | DocumentDesigns | Details.cshtml | Angular Pilot | /settings/document-designs | MiniStore.Web/Views/DocumentDesigns/Details.cshtml |
 | DocumentDesigns | Index.cshtml | Angular Pilot | /settings/document-designs | MiniStore.Web/Views/DocumentDesigns/Index.cshtml |
@@ -282,7 +282,7 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | Customers | RestoreContact | POST | Angular Default | /customers | — | MiniStore.Web/Controllers/Customers/CustomersController.cs |
 | Customers | SaveAddress | POST | Angular Default | /customers | — | MiniStore.Web/Controllers/Customers/CustomersController.cs |
 | Customers | SaveContact | POST | Angular Default | /customers | — | MiniStore.Web/Controllers/Customers/CustomersController.cs |
-| Dashboard | Index | ANY | Angular Pilot | / | — | MiniStore.Web/Controllers/Home/DashboardController.cs |
+| Dashboard | Index | ANY | Angular Default | / | / | MiniStore.Web/Controllers/Home/DashboardController.cs |
 | DocumentDesigns | Activate | POST | Angular Pilot | /settings/document-designs | — | MiniStore.Web/Controllers/Settings/DocumentDesignsController.cs |
 | DocumentDesigns | Archive | POST | Angular Pilot | /settings/document-designs | — | MiniStore.Web/Controllers/Settings/DocumentDesignsController.cs |
 | DocumentDesigns | Create | GET | Angular Pilot | /settings/document-designs | — | MiniStore.Web/Controllers/Settings/DocumentDesignsController.cs |

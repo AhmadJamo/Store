@@ -362,7 +362,9 @@ public sealed class PresentationCutoverResolver(IOptions<PresentationCutoverOpti
             }
         }
 
-        var target = settings.AngularBasePath.TrimEnd('/') + route;
+        var target = route == "/"
+            ? settings.AngularBasePath.TrimEnd('/')
+            : settings.AngularBasePath.TrimEnd('/') + route;
         if (!queryString.HasValue)
             return target;
 

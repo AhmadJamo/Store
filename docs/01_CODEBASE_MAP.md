@@ -631,7 +631,7 @@ Hierarchical location update (2026-09-30): StorageLocation retains its identity 
 | `Guidance/{ActionableErrorGuidance,WorkflowNextStepGuidance,WorkflowCompletionFilter}.cs` | permission-aware setup/recovery links for recognized purchase and sales-delivery errors plus centralized next-step prompts and automatic success fallback for workflow POST redirects | shared notification partial, presentation registration and focused regression checks. |
 | Purchase workflow detail/comparison view models and Razor actions | state-aware one-time actions, completed-state labels, downstream document links and outstanding Vendor Bill balances | purchase repositories/services, localized views and regression checks. |
 | `Controllers/Home/{Dashboard,Home}Controller.cs` | authenticated Dashboard application-launcher entry and legacy Home redirect | Dashboard definitions/view and login flow. |
-| `Navigation/*.cs` | navigation metadata plus permission-aware Dashboard application-launcher definitions | permissions/screens/dashboard module. |
+| `Navigation/*.cs` | navigation metadata plus permission-aware Dashboard application-launcher definitions | MOD-030E5U; Dashboard Index GET is AngularDefault at the normalized `/app` root with MVC rollback; guidance and downstream operations retain their existing services and permissions. |
 | `Views/<Module>/*.cshtml` | Razor screens/forms/client JS | `screens/*.md`. |
 | `Views/Shared/*.cshtml` | localized LTR/RTL layout, language switch, notifications, validation/error/delete partials | screens/shared-ui.md. |
 

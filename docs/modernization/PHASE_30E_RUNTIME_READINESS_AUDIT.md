@@ -422,6 +422,13 @@ under `ICompanyOnboardingService` and antiforgery outside presentation cutover. 
 136/136 and 1,824 backend checks passed without onboarding or setup-data mutation. Seventy-eight surfaces are AngularDefault
 and four remain MVC-default.
 
+## MOD-030E5U evidence
+
+Dashboard Index GET joins AngularDefault at the normalized `/app` root with query preservation. Work guidance and
+downstream operations retain existing services and permissions. The dual-run culture probe now uses the permanently
+excluded MVC account-create view. Hosted 15/15, cutover/MVC rollback 137/137 and 1,827 backend checks passed without
+business mutation. Seventy-nine surfaces are AngularDefault and three remain MVC-default.
+
 ## MOD-030E4S evidence
 
 SupplierCommunications positive-ID Details joins AngularDefault; Prepare/RecordActivity and attachment download remain

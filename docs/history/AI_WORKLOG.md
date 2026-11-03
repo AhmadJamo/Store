@@ -1,5 +1,11 @@
 # AI Work Log
 
+- 2026-11-03: Completed `MOD-030E5U`. Dashboard Index GET now uses AngularDefault at the normalized `/app` root,
+  preserving query values; work guidance and downstream operations retain existing services and permissions. The dual-run
+  culture probe moved to the permanently excluded MVC account-create view so it remains valid after Dashboard cutover.
+  Hosted 15/15, cutover/MVC rollback 137/137 and 1,827 backend checks passed without business mutation. Seventy-nine
+  surfaces are AngularDefault and three remain MVC-default.
+
 - 2026-11-03: Completed `MOD-030E5T`. CompanyOnboarding Index GET now uses AngularDefault at `/app/onboarding`;
   Complete, Skip and starter-template provisioning remain under `ICompanyOnboardingService` and antiforgery outside cutover.
   Hosted 15/15, cutover/MVC rollback 136/136 and 1,824 backend checks passed without onboarding or setup-data mutation.

@@ -1747,6 +1747,21 @@ Check(new[] { "Complete", "Skip" }
         .All(action => companyOnboardingCutoverResolver.Resolve(cutoverContext.Request,
             "CompanyOnboarding", action, new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null),
     "Company onboarding cutover must keep completion, skip and starter provisioning outside presentation cutover");
+var dashboardCutoverResolver = new PresentationCutoverResolver(Options.Create(
+    new PresentationCutoverOptions
+    {
+        AngularBasePath = "/app",
+        Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["Dashboard"] = PresentationCutoverMode.AngularDefault
+        }
+    }));
+cutoverContext.Request.Method = Microsoft.AspNetCore.Http.HttpMethods.Get;
+cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?source=cutover");
+Check(dashboardCutoverResolver.Resolve(cutoverContext.Request,
+          "Dashboard", "Index", new Microsoft.AspNetCore.Routing.RouteValueDictionary()) ==
+      "/app?source=cutover",
+    "Dashboard cutover must normalize the Angular root and preserve query values");
 cutoverContext.Request.Method = Microsoft.AspNetCore.Http.HttpMethods.Get;
 cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?page=2");
 foreach (var entry in PresentationCutoverRouteCatalog.All)

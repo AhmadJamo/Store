@@ -182,7 +182,8 @@ public static class PresentationCutoverRouteCatalog
             ["Account:Login"] = "/login",
             ["Account:Register"] = "/register",
             ["Account:AccessDenied"] = "/access-denied",
-            ["CompanyOnboarding:Index"] = "/onboarding"
+            ["CompanyOnboarding:Index"] = "/onboarding",
+            ["Dashboard:Index"] = "/"
         };
 
     public static IReadOnlyDictionary<string, string> All => Routes;

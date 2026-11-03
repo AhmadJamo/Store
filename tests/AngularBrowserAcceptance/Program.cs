@@ -172,6 +172,8 @@ static async Task RunLiveCutoverAsync(
         new("/Settings/WorkflowCatalog", "/app/settings/workflow-catalog", "Administration.Access"),
         new("/onboarding?source=cutover-rehearsal", "/app/onboarding?source=cutover-rehearsal",
             "Administration.Access", "/"),
+        new("/Dashboard?source=cutover-rehearsal", "/app?source=cutover-rehearsal",
+            "Administration.Access"),
         new("/Products?search=cutover-rehearsal", "/app/products?search=cutover-rehearsal", "Products.View"),
         new("/Products/Create", "/app/products/new", "Products.Create"),
         new("/InventoryBalances?search=cutover-rehearsal",
@@ -1073,6 +1075,8 @@ static async Task RunLiveCutoverAsync(
                          surface is "subscription";
         expectsAngular = expectsAngular || options.CutoverMode == "pilot" &&
                          surface is "onboarding";
+        expectsAngular = expectsAngular || options.CutoverMode == "pilot" &&
+                         surface is "Dashboard";
         if (expectsAngular)
         {
             Require(response.Status is 301 or 302 or 307 or 308,
@@ -1413,10 +1417,10 @@ static async Task RunAuthenticatedReconciliationAsync(
 {
     var culture = session.RootElement.GetProperty("culture").GetString();
     Require(culture is "ar-JO" or "en-US", "Authenticated session returned an unsupported culture.");
-    var dashboard = await authenticated.GetAsync("/Dashboard");
-    Require(dashboard.Ok, $"Authenticated MVC dashboard returned {dashboard.Status}.");
-    var dashboardHtml = await dashboard.TextAsync();
-    Require(dashboardHtml.Contains($"lang=\"{culture}\"", StringComparison.OrdinalIgnoreCase),
+    var mvcCultureProbe = await authenticated.GetAsync("/Accounts/Create");
+    Require(mvcCultureProbe.Ok, $"Authenticated excluded MVC account-create view returned {mvcCultureProbe.Status}.");
+    var mvcCultureHtml = await mvcCultureProbe.TextAsync();
+    Require(mvcCultureHtml.Contains($"lang=\"{culture}\"", StringComparison.OrdinalIgnoreCase),
         "MVC culture does not match the authenticated API session culture.");
     checks.Add(new("dual-run-identity-culture", "passed",
         "MVC and API used the same authenticated session culture."));
