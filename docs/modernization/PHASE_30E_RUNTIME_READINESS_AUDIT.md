@@ -429,6 +429,16 @@ downstream operations retain existing services and permissions. The dual-run cul
 excluded MVC account-create view. Hosted 15/15, cutover/MVC rollback 137/137 and 1,827 backend checks passed without
 business mutation. Seventy-nine surfaces are AngularDefault and three remain MVC-default.
 
+## MOD-030E5V evidence
+
+DocumentDesigns Index, Create and positive-ID Details GET join AngularDefault at `/settings/document-designs`,
+`/settings/document-designs/new` and `/settings/document-designs/{id}` with query preservation. Create, Activate,
+SetDefault and Archive commands remain independently authorized and antiforgery protected outside the presentation
+catalog. Hosted 15/15, cutover/MVC rollback 139/139, a warning-free Release build and 1,836 backend checks passed.
+No saved design existed for a live Details probe; exact positive-ID resolution and unsafe-ID rejection are covered by
+the regression suite without creating or changing a design. Eighty surfaces are AngularDefault and two remain
+MVC-default.
+
 ## MOD-030E4S evidence
 
 SupplierCommunications positive-ID Details joins AngularDefault; Prepare/RecordActivity and attachment download remain

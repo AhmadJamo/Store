@@ -174,6 +174,10 @@ static async Task RunLiveCutoverAsync(
             "Administration.Access", "/"),
         new("/Dashboard?source=cutover-rehearsal", "/app?source=cutover-rehearsal",
             "Administration.Access"),
+        new("/DocumentDesigns?status=1&search=cutover-rehearsal",
+            "/app/settings/document-designs?status=1&search=cutover-rehearsal", "Administration.Access"),
+        new("/DocumentDesigns/Create?documentType=1",
+            "/app/settings/document-designs/new?documentType=1", "Administration.Access"),
         new("/Products?search=cutover-rehearsal", "/app/products?search=cutover-rehearsal", "Products.View"),
         new("/Products/Create", "/app/products/new", "Products.Create"),
         new("/InventoryBalances?search=cutover-rehearsal",
@@ -919,6 +923,19 @@ static async Task RunLiveCutoverAsync(
         }
     }
 
+    if (permissions.Contains("Administration.Access"))
+    {
+        var designsResponse = await authenticated.GetAsync("/api/v1/document-designs");
+        Require(designsResponse.Ok, $"Document designs API returned {designsResponse.Status}.");
+        using var designs = JsonDocument.Parse(await designsResponse.TextAsync());
+        if (designs.RootElement.ValueKind == JsonValueKind.Array && designs.RootElement.GetArrayLength() > 0)
+        {
+            var id = designs.RootElement[0].GetProperty("id").GetInt32();
+            routes.Add(new($"/DocumentDesigns/Details/{id}?source=cutover-rehearsal",
+                $"/app/settings/document-designs/{id}?source=cutover-rehearsal", "Administration.Access"));
+        }
+    }
+
     var executed = 0;
     var platformBoundary = await authenticated.GetAsync("/platform?source=cutover-rehearsal",
         new APIRequestContextOptions { MaxRedirects = 0 });
@@ -1077,6 +1094,8 @@ static async Task RunLiveCutoverAsync(
                          surface is "onboarding";
         expectsAngular = expectsAngular || options.CutoverMode == "pilot" &&
                          surface is "Dashboard";
+        expectsAngular = expectsAngular || options.CutoverMode == "pilot" &&
+                         surface is "DocumentDesigns";
         if (expectsAngular)
         {
             Require(response.Status is 301 or 302 or 307 or 308,

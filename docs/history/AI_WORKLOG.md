@@ -1,5 +1,12 @@
 # AI Work Log
 
+- 2026-11-03: Completed `MOD-030E5V`. DocumentDesigns Index, Create and positive-ID Details GET now use
+  AngularDefault at `/app/settings/document-designs`, while Create, Activate, SetDefault and Archive commands remain
+  independently authorized and antiforgery protected outside presentation cutover. Hosted 15/15, cutover/MVC rollback
+  139/139, a warning-free Release build and 1,836 backend checks passed. No saved design existed for a live Details
+  probe, so exact positive-ID and unsafe-ID behavior remained regression-covered without creating or changing a design.
+  Eighty surfaces are AngularDefault and two remain MVC-default.
+
 - 2026-11-03: Completed `MOD-030E5U`. Dashboard Index GET now uses AngularDefault at the normalized `/app` root,
   preserving query values; work guidance and downstream operations retain existing services and permissions. The dual-run
   culture probe moved to the permanently excluded MVC account-create view so it remains valid after Dashboard cutover.

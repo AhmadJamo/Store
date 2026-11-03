@@ -93,6 +93,7 @@
 | MOD-030E5S Tenant Account Presentation | anonymous Login/Register/AccessDenied GET with company/return/rate-limit/plan query preservation; all identity mutations excluded; hosted 15/15, cutover/MVC rollback 135/135 and 1,820 backend checks; no credential/registration/session mutation | 2026-11-03 |
 | MOD-030E5T Company Onboarding | Index GET mapped; Complete/Skip/starter provisioning excluded; hosted 15/15, cutover/MVC rollback 136/136 and 1,824 backend checks; no onboarding/setup mutation | 2026-11-03 |
 | MOD-030E5U Dashboard | Index GET mapped to normalized `/app` root; guidance/downstream operations excluded; hosted 15/15, cutover/MVC rollback 137/137 and 1,827 backend checks; culture probe moved to permanently excluded MVC view; no mutation | 2026-11-03 |
+| MOD-030E5V Document Designs | Index/Create/positive-ID Details GET mapped; create/lifecycle commands excluded; hosted 15/15, cutover/MVC rollback 139/139, warning-free Release and 1,836 backend checks; no saved design for live Details and no mutation | 2026-11-03 |
 | Live schema integrity (سلامة المخطط الحي) | 147 tables, 420 trusted FKs, zero disabled constraints/indexes or unsafe tenant relations | 2026-10-15 |
 | Web dependency build (بناء الويب واعتماداته) | Release, 4 projects, zero warnings/errors after SAL-120A (نجح) | 2026-10-22 |
 

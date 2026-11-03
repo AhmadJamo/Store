@@ -1762,6 +1762,35 @@ Check(dashboardCutoverResolver.Resolve(cutoverContext.Request,
           "Dashboard", "Index", new Microsoft.AspNetCore.Routing.RouteValueDictionary()) ==
       "/app?source=cutover",
     "Dashboard cutover must normalize the Angular root and preserve query values");
+var documentDesignsCutoverResolver = new PresentationCutoverResolver(Options.Create(
+    new PresentationCutoverOptions
+    {
+        AngularBasePath = "/app",
+        Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["DocumentDesigns"] = PresentationCutoverMode.AngularDefault
+        }
+    }));
+cutoverContext.Request.Method = Microsoft.AspNetCore.Http.HttpMethods.Get;
+cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?source=cutover");
+Check(documentDesignsCutoverResolver.Resolve(cutoverContext.Request,
+          "DocumentDesigns", "Index", new Microsoft.AspNetCore.Routing.RouteValueDictionary()) ==
+      "/app/settings/document-designs?source=cutover" &&
+      documentDesignsCutoverResolver.Resolve(cutoverContext.Request,
+          "DocumentDesigns", "Create", new Microsoft.AspNetCore.Routing.RouteValueDictionary()) ==
+      "/app/settings/document-designs/new?source=cutover" &&
+      documentDesignsCutoverResolver.Resolve(cutoverContext.Request,
+          "DocumentDesigns", "Details", new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 19 }) ==
+      "/app/settings/document-designs/19?source=cutover",
+    "Document-design cutover must resolve list, create and positive details while preserving query values");
+Check(new long[] { -1, 0 }.All(id => documentDesignsCutoverResolver.Resolve(cutoverContext.Request,
+          "DocumentDesigns", "Details", new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = id }) is null),
+    "Document-design cutover must reject unsafe detail identifiers");
+cutoverContext.Request.Method = Microsoft.AspNetCore.Http.HttpMethods.Post;
+Check(new[] { "Create", "Activate", "SetDefault", "Archive" }
+        .All(action => documentDesignsCutoverResolver.Resolve(cutoverContext.Request,
+            "DocumentDesigns", action, new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null),
+    "Document-design cutover must keep create and lifecycle mutations outside presentation cutover");
 cutoverContext.Request.Method = Microsoft.AspNetCore.Http.HttpMethods.Get;
 cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?page=2");
 foreach (var entry in PresentationCutoverRouteCatalog.All)

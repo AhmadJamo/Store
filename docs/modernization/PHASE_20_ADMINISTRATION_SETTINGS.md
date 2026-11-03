@@ -1,7 +1,7 @@
 # MOD-020 — Administration, settings, identity and onboarding
 
 > Status: FUNCTIONAL PARITY IMPLEMENTED — 2026-10-27  
-> Presentation default: MVC (unchanged; Angular cutover requires a later explicit gate)
+> Presentation default: AngularDefault for the completed Settings and DocumentDesigns GET surfaces; MVC rollback retained
 
 ## Purpose
 
@@ -27,6 +27,10 @@
 | `MOD-020S` | Cookie-backed login/logout, company-code selection, access denied, expiry recovery and session shell evidence. |
 | `MOD-020T` | Current tenant-user list/create and tenant-role list/create/edit/delete, including system-role and concurrency protection. |
 | `MOD-020U` | Public registration, selected-plan 14-day trial, automatic sign-in, business preset selection, transactional complete, explicit skip and pending-setup resume. |
+
+Runtime cutover is now proven separately through `MOD-030D` for Settings and `MOD-030E5V` for DocumentDesigns.
+DocumentDesigns Index/Create/positive-ID Details GET use Angular by default; its lifecycle commands remain server-authorized
+outside the presentation catalog and all Razor screens remain available for rollback.
 
 Registration and login share Web services between MVC and API so cookie issuance, tenant claims and provisioning do not drift. Guided setup continues to use the existing serializable `CompanyOnboardingService`; Angular supplies choices but cannot create accounts, branches, warehouses, tax, payments, numbering or POS records itself.
 

@@ -11,7 +11,7 @@
 - Angular application routes discovered: 184.
 - MVC surfaces with a verified Angular counterpart: 82.
 - Remaining MVC surfaces without a mapped Angular counterpart: 0.
-- Allowlisted Angular-default cutover actions: 179.
+- Allowlisted Angular-default cutover actions: 182.
 
 Remaining surfaces: none.
 
@@ -52,9 +52,9 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | Customers | Edit.cshtml | Angular Default | /customers | MiniStore.Web/Views/Customers/Edit.cshtml |
 | Customers | Index.cshtml | Angular Default | /customers | MiniStore.Web/Views/Customers/Index.cshtml |
 | Dashboard | Index.cshtml | Angular Default | / | MiniStore.Web/Views/Dashboard/Index.cshtml |
-| DocumentDesigns | Create.cshtml | Angular Pilot | /settings/document-designs | MiniStore.Web/Views/DocumentDesigns/Create.cshtml |
-| DocumentDesigns | Details.cshtml | Angular Pilot | /settings/document-designs | MiniStore.Web/Views/DocumentDesigns/Details.cshtml |
-| DocumentDesigns | Index.cshtml | Angular Pilot | /settings/document-designs | MiniStore.Web/Views/DocumentDesigns/Index.cshtml |
+| DocumentDesigns | Create.cshtml | Angular Default | /settings/document-designs | MiniStore.Web/Views/DocumentDesigns/Create.cshtml |
+| DocumentDesigns | Details.cshtml | Angular Default | /settings/document-designs | MiniStore.Web/Views/DocumentDesigns/Details.cshtml |
+| DocumentDesigns | Index.cshtml | Angular Default | /settings/document-designs | MiniStore.Web/Views/DocumentDesigns/Index.cshtml |
 | GoodsReceiptReturns | Create.cshtml | Angular Default | /purchases/receipt-returns | MiniStore.Web/Views/GoodsReceiptReturns/Create.cshtml |
 | GoodsReceiptReturns | Details.cshtml | Angular Default | /purchases/receipt-returns | MiniStore.Web/Views/GoodsReceiptReturns/Details.cshtml |
 | GoodsReceiptReturns | Index.cshtml | Angular Default | /purchases/receipt-returns | MiniStore.Web/Views/GoodsReceiptReturns/Index.cshtml |
@@ -283,13 +283,13 @@ Statuses follow the migration lifecycle: Inventoried, API Ready, Angular Pilot, 
 | Customers | SaveAddress | POST | Angular Default | /customers | — | MiniStore.Web/Controllers/Customers/CustomersController.cs |
 | Customers | SaveContact | POST | Angular Default | /customers | — | MiniStore.Web/Controllers/Customers/CustomersController.cs |
 | Dashboard | Index | ANY | Angular Default | / | / | MiniStore.Web/Controllers/Home/DashboardController.cs |
-| DocumentDesigns | Activate | POST | Angular Pilot | /settings/document-designs | — | MiniStore.Web/Controllers/Settings/DocumentDesignsController.cs |
-| DocumentDesigns | Archive | POST | Angular Pilot | /settings/document-designs | — | MiniStore.Web/Controllers/Settings/DocumentDesignsController.cs |
-| DocumentDesigns | Create | GET | Angular Pilot | /settings/document-designs | — | MiniStore.Web/Controllers/Settings/DocumentDesignsController.cs |
-| DocumentDesigns | Create | POST | Angular Pilot | /settings/document-designs | — | MiniStore.Web/Controllers/Settings/DocumentDesignsController.cs |
-| DocumentDesigns | Details | GET | Angular Pilot | /settings/document-designs | — | MiniStore.Web/Controllers/Settings/DocumentDesignsController.cs |
-| DocumentDesigns | Index | GET | Angular Pilot | /settings/document-designs | — | MiniStore.Web/Controllers/Settings/DocumentDesignsController.cs |
-| DocumentDesigns | SetDefault | POST | Angular Pilot | /settings/document-designs | — | MiniStore.Web/Controllers/Settings/DocumentDesignsController.cs |
+| DocumentDesigns | Activate | POST | Angular Default | /settings/document-designs | — | MiniStore.Web/Controllers/Settings/DocumentDesignsController.cs |
+| DocumentDesigns | Archive | POST | Angular Default | /settings/document-designs | — | MiniStore.Web/Controllers/Settings/DocumentDesignsController.cs |
+| DocumentDesigns | Create | GET | Angular Default | /settings/document-designs | /settings/document-designs/new | MiniStore.Web/Controllers/Settings/DocumentDesignsController.cs |
+| DocumentDesigns | Create | POST | Angular Default | /settings/document-designs | /settings/document-designs/new | MiniStore.Web/Controllers/Settings/DocumentDesignsController.cs |
+| DocumentDesigns | Details | GET | Angular Default | /settings/document-designs | /settings/document-designs/{id} | MiniStore.Web/Controllers/Settings/DocumentDesignsController.cs |
+| DocumentDesigns | Index | GET | Angular Default | /settings/document-designs | /settings/document-designs | MiniStore.Web/Controllers/Settings/DocumentDesignsController.cs |
+| DocumentDesigns | SetDefault | POST | Angular Default | /settings/document-designs | — | MiniStore.Web/Controllers/Settings/DocumentDesignsController.cs |
 | GoodsReceiptReturns | Create | GET | Angular Default | /purchases/receipt-returns | /purchases/receipt-returns/new?goodsReceiptId={goodsReceiptId} | MiniStore.Web/Controllers/Purchases/GoodsReceiptReturnsController.cs |
 | GoodsReceiptReturns | Create | POST | Angular Default | /purchases/receipt-returns | /purchases/receipt-returns/new?goodsReceiptId={goodsReceiptId} | MiniStore.Web/Controllers/Purchases/GoodsReceiptReturnsController.cs |
 | GoodsReceiptReturns | Details | GET | Angular Default | /purchases/receipt-returns | /purchases/receipt-returns/{id} | MiniStore.Web/Controllers/Purchases/GoodsReceiptReturnsController.cs |

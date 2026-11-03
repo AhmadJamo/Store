@@ -184,7 +184,9 @@ branch/POS inventory-access configuration and terminal creation, per-terminal PO
 server-localized permission-aware workflow catalog.
 `MiniStore Front-End/src/app/features/document-designs` now supplies list/filter, details, create/clone editor, ordered
 sections, live preview and activate/archive/default lifecycle operations through `DocumentDesignsApiController`, which
-delegates exclusively to `DocumentDesignService` and preserves rowversion conflicts and version immutability.
+delegates exclusively to `DocumentDesignService` and preserves rowversion conflicts and version immutability. Its
+Index/Create/positive-ID Details GET routes are AngularDefault under `/app/settings/document-designs`; all lifecycle
+commands remain outside presentation cutover with MVC rollback retained.
 `SettingsApiController` exposes explicit protected read/write/upload/delete contracts and delegates to
 `GeneralSettingsService`, `DiscountSettingsService`, `PurchaseMatchingSettingsService`, `InventorySettingsService`,
 `PurchaseSourcingPolicyService`, `DocumentNumberService`, `FiscalPeriodService` and
@@ -552,7 +554,7 @@ Hierarchical location update (2026-09-30): StorageLocation retains its identity 
 | `Controllers/Sales/SalesQuotationsController.cs`, `Views/SalesQuotations/*` | permission-separated Draft creation and quotation lifecycle with responsive immutable detail/history | SAL-030 quotation service, permissions and sales docs. |
 | `Controllers/Sales/SalesQuotationTemplatesController.cs`, `Views/SalesQuotationTemplates/*` | permission-separated template search/create/version/activate/archive/default management | SAL-120A template service, permissions and sales docs. |
 | `Controllers/Settings/SettingsController.cs`, `Views/Settings/{OrganizationIdentity,_OrganizationIdentityField}.cshtml`, `Models/Settings/OrganizationIdentityFieldRowViewModel.cs` | administration-only bilingual identity editor, secure logo upload/read and repeatable custom-field rows | shared organization identity and SAL-120B foundation. |
-| `Controllers/Settings/DocumentDesignsController.cs`, `Views/DocumentDesigns/*.cshtml`, `Models/Settings/DocumentDesignSectionRowViewModel.cs` | administration-only versioned multi-document designer with filters, lifecycle actions, live preview and reorderable bilingual sections | shared rendering policy and SAL-120B quotation integration. |
+| `Controllers/Settings/DocumentDesignsController.cs`, `Views/DocumentDesigns/*.cshtml`, `Models/Settings/DocumentDesignSectionRowViewModel.cs` | administration-only versioned multi-document designer with filters, lifecycle actions, live preview and reorderable bilingual sections; Index/Create/Details GET are AngularDefault | MOD-030E5V, shared rendering policy and SAL-120B quotation integration. |
 | `Controllers/Sales/SalesOrdersController.cs`, `Views/SalesOrders/*` | one-time quotation conversion, permission-separated confirmation/cancellation and responsive full/partial reservation/release/history workflow | SAL-040/050 order services, permissions and sales docs. |
 | `Controllers/Sales/SalesDeliveriesController.cs`, `Views/SalesDeliveries/*` | permission-separated delivery list/create/detail, Draft cancellation and atomic posting with state-aware completion/next-step guidance | SAL-060 delivery service, permissions, inventory and accounting docs. |
 | `Controllers/Sales/CustomerInvoicesController.cs`, `Views/CustomerInvoices/*` | six-permission invoice lifecycle, responsive source/accounting evidence, one-time post and controlled reversal | SAL-070/080 invoice service and accounting docs. |
