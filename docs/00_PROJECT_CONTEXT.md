@@ -3,10 +3,12 @@
 > Source of truth: Code  
 > Last reviewed: 2026-11-04
 
-The Angular UI/UX modernization program is active under the root `UI_UX_MODERNIZATION_PLAN.md`. UX-001 is complete:
+The Angular UI/UX modernization program is active under the root `UI_UX_MODERNIZATION_PLAN.md`. UX-001 and UX-002 are complete:
 the permission-aware shell uses persistent collapsible business groups, active-route expansion and bilingual
-breadcrumbs while retaining Router authority and the existing persistent workspace tabs. UX-002 context preservation
-is the approved next task; physical MVC retirement inventory is deferred, not cancelled.
+breadcrumbs while retaining Router authority and the existing persistent workspace tabs. Five pilot pages now preserve
+allowlisted list context through URL state and tenant/user-scoped memory; Purchase Request and Stock Transfer create
+forms keep only safe structural drafts in memory. UX-003 page architecture is the approved next task; physical MVC
+retirement inventory is deferred, not cancelled.
 
 ## Project identity
 MiniStore is a server-rendered ASP.NET Core MVC store-management application under incremental Angular modernization. It targets .NET 10, uses EF Core 10 with SQL Server, ASP.NET Core Identity, Razor views, and a Domain/Application/Infrastructure/Web layered solution. The existing Web host now includes a protected versioned internal API foundation; no separate public API project is present.

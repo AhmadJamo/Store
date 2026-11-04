@@ -99,7 +99,7 @@ permission-backed routes already present in `app.routes.ts`.
 - [x] Verify unit tests, production build, static accessibility, bundle budgets and hosted RTL/LTR behavior.
 - [x] Document verification results and commit the phase.
 
-### UX-002 — Context preservation contract — PENDING
+### UX-002 — Context preservation contract — COMPLETED 2026-11-05
 
 - Define a reusable typed page-context contract for search, filters, sorting, pagination and selected subtabs.
 - Separate URL-shareable state, safe persistent preferences and memory-only transient state.
@@ -176,29 +176,31 @@ Every phase must record:
 | Phase | Build/tests | UX evidence | Result |
 |---|---|---|---|
 | UX-001 | 220/220 Angular; 122 templates; production 328,867 B initial and 81,880 B largest lazy, both custom budgets green | Browser states, RTL/LTR, keyboard and 390px responsive checks passed; Windows interactive helper failed independently; authenticated reconciliation later hit a stale hidden “طحين” option | COMPLETE WITH RECORDED EXTERNAL FIXTURE RISK |
+| UX-002 | 224/224 Angular; 122 templates; production 328,867 B initial and 81,880 B largest lazy, custom budgets green | URL normalization, back/forward observation, workspace-memory restoration, tenant/user isolation and memory-only draft tests passed across five pilot pages | COMPLETE |
 
 ## Latest phase report
 
-### UX-001 — Completed
+### UX-002 — Completed
 
-- Replaced the flat permitted-route list with seven permission-filtered business groups.
-- Persisted only allowlisted group open/closed preferences and automatically opens the active route group.
-- Added bilingual shell breadcrumbs and a feature-local localization resource.
-- Preserved Router authority, workspace tabs, history, recently closed tabs and dirty-state protection.
-- Added mobile/compact group behavior without raising any bundle budget.
+- Added a typed `PageContextService` with allowlisted text, integer, boolean and choice codecs.
+- Bound Customers, Suppliers, Products, Purchase Requests and Stock Transfers filters to normalized URL state and
+  tenant/user-scoped workspace memory.
+- Preserved existing safe persistent view preferences without storing search text or business drafts in local storage.
+- Added memory-only, opt-in structural drafts for new Purchase Requests and Stock Transfers. Free text, justification,
+  notes and tracking allocations are explicitly excluded.
+- Restored dirty-state protection after draft recovery and clears drafts after successful creation or session-boundary
+  changes.
 
 ### Next
 
-- UX-002: define the typed context-preservation contract and pilot it on Customers, Suppliers, Products, Purchase
-  Requests and Stock Transfers.
+- UX-003: standardize page headers, filter bars, action zones, summary strips and workflow footers.
 
 ### Recorded risks
 
-- The Windows interactive inspection helper exited twice because of the local sandbox helper; the project Playwright
-  suite supplied responsive/direction/keyboard evidence instead.
-- Four browser checks passed. A later authenticated data-reconciliation check timed out on a hidden Demo product option
-  named “طحين”; this is not a navigation failure and remains a fixture/locator risk to isolate before claiming a fully
-  green authenticated browser suite.
+- Query parameters intentionally expose only feature-allowlisted list context; sensitive or unrestricted form fields
+  remain excluded.
+- Memory-only drafts do not survive a full browser reload by design. Persistent drafts require a separately reviewed,
+  feature-owned encrypted/server-side policy rather than generic browser storage.
 
 ## Risks
 

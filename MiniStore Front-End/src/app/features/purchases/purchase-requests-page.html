@@ -27,7 +27,7 @@
         <a class="ui-button primary" routerLink="/purchases/requests/new">{{ i18n.text('new') }}</a>
       }
     </div>
-    <form class="filters" [formGroup]="filter" (ngSubmit)="loadList()">
+    <form class="filters" [formGroup]="filter" (ngSubmit)="applyListFilters()">
       <label class="ui-field"
         ><span>{{ i18n.text('search') }}</span
         ><input formControlName="search" /></label

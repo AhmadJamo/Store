@@ -1,4 +1,6 @@
 # Sales
+> UX-002 note: the Customers list now preserves allowlisted search, archived-state, sort and page context through the
+> shared URL/workspace contract. Search is not persisted in local storage.
 > Status: LEGACY IMMEDIATE SALE IMPLEMENTED; SAL-020 THROUGH SAL-130A IMPLEMENTED IN SOURCE | Last reviewed: 2026-10-29
 
 `SAL-130A` exposes quote-to-cash analytics through the generic Analytics Center provider contract. It calculates quotation cohort/value/acceptance, order progression, posted invoice revenue, collection, outstanding/overdue receivables, credits, delivery COGS, contribution, customer/product performance and an explicitly separated legacy/modern comparison. The provider is read-only; it does not invent conversions between legacy immediate sales and the modern document lifecycle.

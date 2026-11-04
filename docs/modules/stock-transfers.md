@@ -1,6 +1,10 @@
 # Stock transfers
 > Status: IMPLEMENTED | Last reviewed: 2026-10-04
 
+UX-002 preserves Stock Transfer list search/status context and adds an opt-in memory-only create draft for warehouse,
+product, quantity and location IDs. Reference, notes and tracking allocations are deliberately excluded. Restored drafts
+remain protected by the existing dirty guard and are cleared after successful creation or identity change.
+
 Workflow: Draft → Submitted → Approved → Posted; submitted transfers can be rejected then returned to draft; posted transfers can be cancelled, which makes compensating stock movements. Creator cannot approve own transfer. Post creates out/in stock transactions and adjusts both warehouse balances in UnitOfWork. For tracked products, posting chooses lot/serial identities by the source warehouse's configured removal strategy, moves them between the selected positions and cancellation reverses that same route with balanced trace entries. A StockTransfer rowversion prevents two concurrent workflow transitions, including duplicate posting, from both committing.
 
 Source and destination locations are optional per line. A specified location must belong to its matching warehouse. Posting moves exact location balances when supplied; omitted destination locations create unassigned destination stock, while omitted sources may consume only unassigned source stock. Creation generates its tenant StockTransfer `DocumentSequence` inside the same transaction; a missing row receives a safe default, so configuration absence no longer blocks creation. Sources: StockTransfer/Item/History/status/action entities; transfer commands and DTOs; interface/service/repository/configurations and transfer screens.

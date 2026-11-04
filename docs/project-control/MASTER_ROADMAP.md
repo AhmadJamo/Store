@@ -41,8 +41,9 @@
 - `MOD-030F` — APPROVED: جرد غير هدّام لاعتماديات تقاعد MVC وتقسيمها إلى دفعات قابلة للرجوع قبل طلب موافقة الحذف.
 - `UX-001` — COMPLETE 2026-11-04: تدقيق واجهة Angular، خطة تحديث مستمرة، مجموعات تنقل مهنية بصلاحيات،
   breadcrumbs ثنائية اللغة وحفظ آمن لتفضيل فتح المجموعات دون تغيير الأعمال.
-- `UX-002` — APPROVED NEXT: عقد موحد لحفظ سياق البحث والفلاتر والترقيم والتبويبات والمسودات المسموحة؛
-  أولوية المالك الحالية. `MOD-030F` مؤجل مؤقتًا ولم يُلغَ.
+- `UX-002` — COMPLETE 2026-11-05: عقد typed لسياق URL وذاكرة workspace المعزولة ومسودات آمنة مؤقتة،
+  مطبق على Customers وSuppliers وProducts وPurchase Requests وStock Transfers.
+- `UX-003` — APPROVED NEXT: توحيد page headers وfilter bars وaction zones وsummary strips وworkflow footers.
 
 ## P0 — مخاطر حرجة
 

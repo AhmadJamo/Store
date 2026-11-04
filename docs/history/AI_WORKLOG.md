@@ -1,5 +1,12 @@
 # AI Work Log
 
+- 2026-11-05: Completed `UX-002`. Added a typed, codec-based `PageContextService` that separates normalized URL
+  context, tenant/user-scoped workspace memory and opt-in memory-only drafts. Customers, Suppliers, Products, Purchase
+  Requests and Stock Transfers now restore allowlisted search/filter/page state. New Purchase Request and Stock Transfer
+  forms restore only structural IDs, dates, priorities and quantities; justification, notes, reference and tracking text
+  are excluded. Drafts clear after creation or identity-boundary changes, and dirty guards remain active. Angular passed
+  224/224 tests, 122 template checks and custom budgets at 328,867 initial and 81,880 largest lazy bytes.
+
 - 2026-11-04: Completed `UX-001`, the first phase of the Angular UI/UX modernization program. Added the root
   continuously maintained roadmap and architecture ADR; replaced the flat shell list with seven permission-filtered,
   persistent business groups; added active-route expansion and bilingual breadcrumbs; and retained Router authority,

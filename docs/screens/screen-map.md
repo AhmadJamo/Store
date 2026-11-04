@@ -7,6 +7,13 @@ shows a route-derived bilingual breadcrumb. The active group opens automatically
 access to all permitted items, while workspace tabs, recently closed pages, per-tab history and unsaved-change
 protection remain unchanged. Group state stores only allowlisted UI identifiers.
 
+## Angular page context (UX-002)
+
+Customers, Suppliers, Products, Purchase Requests and Stock Transfers restore allowlisted list context from URL state
+or tenant/user-scoped workspace memory. Purchase Request and Stock Transfer create pages also restore structural
+memory-only drafts while deliberately excluding free text, justification, notes, references and tracking allocations.
+Restored drafts remain dirty and protected; successful creation clears them.
+
 The UI action audit, last verified on 2026-10-24, checks every static Razor link/form target against the compiled controller actions and every MVC POST against antiforgery validation. Dynamic client-only buttons were separately inventoried; the only submit-style button outside a form is the intentionally disabled Settings placeholder. The same automated gate now verifies Arabic entries for every literal shared-localizer key, rejects common direct-English Razor UI text and hard-coded controller action messages, detects case-insensitive duplicate resource keys, and protects the explicit nested customer form contract plus visible validation feedback.
 
 Angular shell, login, registration and onboarding language controls synchronize the server culture cookie before changing

@@ -13,6 +13,7 @@ import { DataTableComponent } from '../../shared/ui/data-table/data-table';
 import { FeedbackStateComponent } from '../../shared/ui/feedback-state/feedback-state';
 import { PageHeaderComponent } from '../../shared/ui/page-header/page-header';
 import { WorkspaceService } from '../../workspace/state/workspace.service';
+import { PageContextService, pageContextFields } from '../../shared/state/page-context.service';
 import { StockTransferApiService } from './data/stock-transfer-api.service';
 import {
   StockTransferDetails,
@@ -26,6 +27,17 @@ import {
   StockTransferLocalizationService,
   StockTransferMessageKey,
 } from './stock-transfer-localization.service';
+
+interface StockTransferDraft {
+  readonly fromWarehouseId: number;
+  readonly toWarehouseId: number;
+  readonly items: readonly {
+    readonly productId: number;
+    readonly quantity: number;
+    readonly sourceLocationId: number | null;
+    readonly destinationLocationId: number | null;
+  }[];
+}
 
 @Component({
   selector: 'app-stock-transfers-page',
@@ -53,6 +65,11 @@ export class StockTransfersPageComponent {
   private readonly route = inject(ActivatedRoute);
   private readonly workspace = inject(WorkspaceService);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly context = inject(PageContextService);
+  private readonly listContextSchema = {
+    defaults: { search: '', status: 0 },
+    fields: { search: pageContextFields.text(), status: pageContextFields.integer(0, 6) },
+  };
 
   protected readonly id = Number(this.route.snapshot.paramMap.get('id') || 0);
   protected readonly routePath = this.route.snapshot.routeConfig?.path ?? '';
@@ -78,8 +95,18 @@ export class StockTransfersPageComponent {
   });
 
   constructor() {
-    this.load();
+    if (this.isForm || this.isDetails) this.load();
+    else {
+      this.context.watch('stock-transfers-list', this.route, this.listContextSchema)
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe(value => {
+          this.search.setValue(value.search, { emitEvent: false });
+          this.status.setValue(value.status || null, { emitEvent: false });
+          this.load();
+        });
+    }
     this.form.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
+      if (this.isForm && !this.isEdit && this.form.dirty) this.saveDraft();
       this.setDirty(this.form.dirty);
     });
     this.form.controls.fromWarehouseId.valueChanges
@@ -141,6 +168,12 @@ export class StockTransfersPageComponent {
         error: error => this.loadFailed(error),
       });
   }
+  protected applyFilters(): void {
+    void this.context.replace('stock-transfers-list', this.route, this.listContextSchema, {
+      search: this.search.value.trim(),
+      status: this.status.value ?? 0,
+    }).then(changed => { if (!changed) this.load(); });
+  }
 
   protected addItem(input?: StockTransferLineInput): void {
     this.items.push(this.lineGroup(input));
@@ -181,6 +214,7 @@ export class StockTransfersPageComponent {
       : this.api.create(input);
     request.subscribe({
       next: (result: void | { id: number }) => {
+        if (!this.isEdit) this.context.clearDraft('stock-transfer-create');
         this.form.markAsPristine();
         this.setDirty(false);
         this.saving.set(false);
@@ -239,8 +273,9 @@ export class StockTransfersPageComponent {
     this.items.clear({ emitEvent: false });
     for (const item of input.items) this.items.push(this.lineGroup(item), { emitEvent: false });
     if (!input.items.length) this.items.push(this.lineGroup(), { emitEvent: false });
-    this.form.markAsPristine();
-    this.setDirty(false);
+    const restored = !this.isEdit && this.restoreDraft();
+    restored ? this.form.markAsDirty() : this.form.markAsPristine();
+    this.setDirty(restored);
   }
 
   private lineGroup(input?: StockTransferLineInput): FormGroup {
@@ -288,5 +323,37 @@ export class StockTransfersPageComponent {
   private setDirty(dirty: boolean): void {
     const tab = this.workspace.activeTab();
     if (tab) this.workspace.markDirty(tab.id, dirty);
+  }
+  private saveDraft(): void {
+    const value = this.form.getRawValue();
+    const items = value.items as StockTransferLineInput[];
+    this.context.saveDraft<StockTransferDraft>('stock-transfer-create', {
+      fromWarehouseId: value.fromWarehouseId,
+      toWarehouseId: value.toWarehouseId,
+      items: items.slice(0, 100).map(item => ({
+        productId: Number(item.productId) || 0,
+        quantity: Math.max(Number(item.quantity) || 1, 0.001),
+        sourceLocationId: item.sourceLocationId ? Number(item.sourceLocationId) : null,
+        destinationLocationId: item.destinationLocationId ? Number(item.destinationLocationId) : null,
+      })),
+    });
+  }
+  private restoreDraft(): boolean {
+    const draft = this.context.loadDraft<StockTransferDraft>('stock-transfer-create');
+    if (!draft?.items?.length) return false;
+    this.form.patchValue({
+      fromWarehouseId: Number(draft.fromWarehouseId) || 0,
+      toWarehouseId: Number(draft.toWarehouseId) || 0,
+    }, { emitEvent: false });
+    this.items.clear({ emitEvent: false });
+    for (const item of draft.items.slice(0, 100)) {
+      this.items.push(this.lineGroup({
+        productId: Number(item.productId) || 0,
+        quantity: Math.max(Number(item.quantity) || 1, 0.001),
+        sourceLocationId: item.sourceLocationId ? Number(item.sourceLocationId) : undefined,
+        destinationLocationId: item.destinationLocationId ? Number(item.destinationLocationId) : undefined,
+      }), { emitEvent: false });
+    }
+    return true;
   }
 }

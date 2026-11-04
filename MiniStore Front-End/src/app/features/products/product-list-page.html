@@ -9,8 +9,8 @@
     @if (session.can('Products.Create')) { <a class="ui-button primary" routerLink="/products/new">{{ i18n.text('addProduct') }}</a> }
   </app-page-header>
   <div class="filters">
-    <label><span>{{ i18n.text('searchProducts') }}</span><input #box type="search" (input)="search(box.value)" [placeholder]="i18n.text('searchProductsPlaceholder')" /></label>
-    <label><span>{{ i18n.text('status') }}</span><select (change)="status($any($event.target).value)"><option value="">{{ i18n.text('all') }}</option><option value="true">{{ i18n.text('active') }}</option><option value="false">{{ i18n.text('inactive') }}</option></select></label>
+    <label><span>{{ i18n.text('searchProducts') }}</span><input #box type="search" [value]="query.search" (input)="search(box.value)" [placeholder]="i18n.text('searchProductsPlaceholder')" /></label>
+    <label><span>{{ i18n.text('status') }}</span><select [value]="query.isActive === undefined ? '' : query.isActive" (change)="status($any($event.target).value)"><option value="">{{ i18n.text('all') }}</option><option value="true">{{ i18n.text('active') }}</option><option value="false">{{ i18n.text('inactive') }}</option></select></label>
   </div>
   @if (loading()) { <app-feedback-state kind="loading" [title]="i18n.text('loading')" /> }
   @else if (problem(); as failure) { <app-api-recovery [problem]="failure" (retry)="load()" /> }

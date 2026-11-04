@@ -10,9 +10,10 @@ The ERP SaaS Foundation Blueprint is imported as a non-authoritative planning re
 
 - [x] UX-001 audit the Angular UI and establish the continuously maintained modernization roadmap, grouped
   permission-aware navigation, bilingual breadcrumbs and safe navigation preference persistence. Completed 2026-11-04.
-- [ ] UX-002 implement a typed page-context contract for filters, paging, selected tabs and approved drafts, then pilot
-  Customers, Suppliers, Products, Purchase Requests and Stock Transfers.
-- [ ] UX-003..008 standardize page architecture, tables, forms, workflow guidance, productivity and module-wide
+- [x] UX-002 implement a typed page-context contract for filters, paging, selected tabs and approved drafts, then pilot
+  Customers, Suppliers, Products, Purchase Requests and Stock Transfers. Completed 2026-11-05.
+- [ ] UX-003 standardize page headers, filters, action zones, summary strips and workflow footers.
+- [ ] UX-004..008 standardize tables, forms, workflow guidance, productivity and module-wide
   consistency as defined in `UI_UX_MODERNIZATION_PLAN.md`.
 
 - [x] MOD-000 complete the read-only MVC-to-API/Angular repository audit, target architecture, dependency graph, workspace design, MVP, feature matrix and risk assessment. Completed 2026-10-24.

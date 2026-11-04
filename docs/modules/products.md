@@ -3,6 +3,10 @@
 
 ## Angular migration foundation (2026-10-25)
 
+UX-002 preserves product search, active-state filter and paging across workspace tab switches and shareable URLs using
+the shared typed page-context contract. Values are bounded and identity-scoped; no product search is persisted as a
+browser-storage preference.
+
 `MOD-021A` completes product-master parity in Angular: server-paged list/search, details, create, edit and confirmed
 delete. The API delegates to `ProductService`, separates View/Create/Edit/Delete permissions and validates antiforgery
 on every mutation. The form includes all current MVC fields and server-provided category, managed-unit, supplier and

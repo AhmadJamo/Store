@@ -10,6 +10,7 @@ import { DataTableComponent } from '../../shared/ui/data-table/data-table';
 import { FeedbackStateComponent } from '../../shared/ui/feedback-state/feedback-state';
 import { PageHeaderComponent } from '../../shared/ui/page-header/page-header';
 import { WorkspaceService } from '../../workspace/state/workspace.service';
+import { PageContextService, pageContextFields } from '../../shared/state/page-context.service';
 import { PurchaseRequestApiService } from './purchase-request-api.service';
 import {
   ApprovalRulesPage,
@@ -21,6 +22,18 @@ import {
   PurchaseRequestKey,
   PurchaseRequestLocalizationService,
 } from './purchase-request-localization.service';
+
+interface PurchaseRequestDraft {
+  readonly warehouseId: number;
+  readonly neededByDate: string;
+  readonly priority: number;
+  readonly lines: readonly {
+    readonly productId: number;
+    readonly measurementUnitId: number;
+    readonly requestedQuantity: number;
+    readonly suggestedSupplierId: number;
+  }[];
+}
 @Component({
   selector: 'app-purchase-requests-page',
   imports: [
@@ -47,6 +60,11 @@ export class PurchaseRequestsPageComponent {
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
   private readonly fb = inject(FormBuilder);
+  private readonly context = inject(PageContextService);
+  private readonly listContextSchema = {
+    defaults: { status: 0, search: '' },
+    fields: { status: pageContextFields.integer(0, 6), search: pageContextFields.text() },
+  };
   protected readonly mode = signal<'list' | 'create' | 'details' | 'rules'>('list');
   protected readonly rows = signal<PurchaseRequest[]>([]);
   protected readonly detail = signal<PurchaseRequest | null>(null);
@@ -78,11 +96,21 @@ export class PurchaseRequestsPageComponent {
   constructor() {
     this.form.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => this.markDirty());
+      .subscribe(() => {
+        if (this.mode() === 'create' && this.form.dirty) this.saveDraft();
+        this.markDirty();
+      });
     this.ruleForm.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.markDirty());
     this.route.url.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => this.resolve());
+    this.context.watch('purchase-requests-list', this.route, this.listContextSchema)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(value => {
+        if (this.mode() !== 'list') return;
+        this.filter.setValue(value, { emitEvent: false });
+        this.loadList();
+      });
   }
   canDeactivate() {
     return (
@@ -93,18 +121,18 @@ export class PurchaseRequestsPageComponent {
     return this.form.controls.lines;
   }
   protected addLine() {
-    this.lines.push(
-      this.fb.nonNullable.group({
-        productId: [0, Validators.min(1)],
-        measurementUnitId: [0, Validators.min(1)],
-        requestedQuantity: [1, Validators.min(0.000001)],
-        suggestedSupplierId: [0],
-        notes: ['', Validators.maxLength(500)],
-      }),
-    );
+    this.lines.push(this.lineGroup());
+    this.form.markAsDirty();
+    this.saveDraft();
+    this.markDirty();
   }
   protected removeLine(i: number) {
-    if (this.lines.length > 1) this.lines.removeAt(i);
+    if (this.lines.length > 1) {
+      this.lines.removeAt(i);
+      this.form.markAsDirty();
+      this.saveDraft();
+      this.markDirty();
+    }
   }
   protected loadList() {
     const f = this.filter.getRawValue();
@@ -116,6 +144,10 @@ export class PurchaseRequestsPageComponent {
       },
       error: (e) => this.fail(e),
     });
+  }
+  protected applyListFilters(): void {
+    void this.context.replace('purchase-requests-list', this.route, this.listContextSchema, this.filter.getRawValue())
+      .then(changed => { if (!changed) this.loadList(); });
   }
   protected create() {
     if (this.form.invalid || !this.lines.length) {
@@ -150,6 +182,7 @@ export class PurchaseRequestsPageComponent {
       })
       .subscribe({
         next: (r) => {
+          this.context.clearDraft('purchase-request-create');
           this.saving.set(false);
           this.form.markAsPristine();
           this.markDirty();
@@ -282,7 +315,7 @@ export class PurchaseRequestsPageComponent {
     );
   }
   protected retry() {
-    this.resolve();
+    this.mode() === 'list' ? this.loadList() : this.resolve();
   }
   protected approvalStatusName(v: number) {
     return this.i18n.text(
@@ -314,9 +347,10 @@ export class PurchaseRequestsPageComponent {
             justification: p.form.justification,
             notes: p.form.notes ?? '',
           });
-          this.lines.clear();
-          this.addLine();
-          this.form.markAsPristine();
+          this.lines.clear({ emitEvent: false });
+          this.lines.push(this.lineGroup(), { emitEvent: false });
+          const restored = this.restoreDraft();
+          restored ? this.form.markAsDirty() : this.form.markAsPristine();
           this.markDirty();
           this.loading.set(false);
         },
@@ -330,7 +364,6 @@ export class PurchaseRequestsPageComponent {
       return;
     }
     this.mode.set('list');
-    this.loadList();
   }
   private loadRules() {
     this.start();
@@ -387,5 +420,46 @@ export class PurchaseRequestsPageComponent {
   private markDirty() {
     const tab = this.workspace.activeTab();
     if (tab) this.workspace.markDirty(tab.id, this.form.dirty || this.ruleForm.dirty);
+  }
+  private lineGroup(value?: Partial<PurchaseRequestDraft['lines'][number]>) {
+    return this.fb.nonNullable.group({
+      productId: [value?.productId ?? 0, Validators.min(1)],
+      measurementUnitId: [value?.measurementUnitId ?? 0, Validators.min(1)],
+      requestedQuantity: [value?.requestedQuantity ?? 1, Validators.min(0.000001)],
+      suggestedSupplierId: [value?.suggestedSupplierId ?? 0],
+      notes: ['', Validators.maxLength(500)],
+    });
+  }
+  private saveDraft(): void {
+    const value = this.form.getRawValue();
+    const lines = value.lines as {
+      productId: number;
+      measurementUnitId: number;
+      requestedQuantity: number;
+      suggestedSupplierId: number;
+    }[];
+    this.context.saveDraft<PurchaseRequestDraft>('purchase-request-create', {
+      warehouseId: value.warehouseId,
+      neededByDate: value.neededByDate,
+      priority: value.priority,
+      lines: lines.slice(0, 100).map(line => ({
+        productId: Number(line.productId) || 0,
+        measurementUnitId: Number(line.measurementUnitId) || 0,
+        requestedQuantity: Math.max(Number(line.requestedQuantity) || 1, 0.000001),
+        suggestedSupplierId: Number(line.suggestedSupplierId) || 0,
+      })),
+    });
+  }
+  private restoreDraft(): boolean {
+    const draft = this.context.loadDraft<PurchaseRequestDraft>('purchase-request-create');
+    if (!draft?.lines?.length) return false;
+    this.form.patchValue({
+      warehouseId: Number(draft.warehouseId) || 0,
+      neededByDate: /^\d{4}-\d{2}-\d{2}$/.test(draft.neededByDate) ? draft.neededByDate : this.form.controls.neededByDate.value,
+      priority: [1, 2, 3, 4].includes(draft.priority) ? draft.priority : 2,
+    }, { emitEvent: false });
+    this.lines.clear({ emitEvent: false });
+    for (const line of draft.lines.slice(0, 100)) this.lines.push(this.lineGroup(line), { emitEvent: false });
+    return true;
   }
 }

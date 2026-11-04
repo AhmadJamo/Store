@@ -1,6 +1,10 @@
 # Purchases
 > Status: PROCURE-TO-PAY THROUGH PUR-280 IMPLEMENTED; NEW LEGACY DIRECT PURCHASE CREATION RETIRED | Last reviewed: 2026-11-01
 
+UX-002 preserves Purchase Request list status/search context and adds an opt-in memory-only create draft containing
+warehouse, needed date, priority, product/unit/supplier IDs and quantities. Justification and all notes are deliberately
+excluded. The restored form remains dirty and protected; successful creation or identity change clears the draft.
+
 `SAL-130A` reuses the existing purchasing analytics calculations through a generic Analytics Center provider. Spend, receiving, matching exceptions, supplier/buyer performance, journey and legacy/modern evidence can now be composed into the same tenant-owned personal/shared workspace model as other modules; Purchasing does not own a second dashboard framework.
 
 The implemented workflow described below is a direct supplier invoice and inventory receipt, not a Purchase Order lifecycle. The approved additive evolution, compatibility rules and ordered delivery slices are documented in `docs/PURCHASE_MANAGEMENT_EVOLUTION_PLAN.md`. Existing Purchase and PurchaseReturn history will remain valid and will not be fabricated into new procurement documents.

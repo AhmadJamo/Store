@@ -103,7 +103,7 @@
       <tbody>@for (entry of transfer.history; track entry.id) { <tr><td>{{ statusName(entry.fromStatus) }}</td><td>{{ statusName(entry.toStatus) }}</td><td>{{ entry.userName }}</td><td>{{ entry.reason || '—' }}</td><td>{{ entry.createdAt | date:'dd/MM/yyyy HH:mm' }}</td></tr> }</tbody></table></app-data-table>
     }
   } @else {
-    <form class="filters ui-panel" (ngSubmit)="load()">
+    <form class="filters ui-panel" (ngSubmit)="applyFilters()">
       <label>{{ i18n.text('search') }}<input [formControl]="search" [placeholder]="i18n.text('searchPlaceholder')" /></label>
       <label>{{ i18n.text('status') }}<select [formControl]="status"><option [ngValue]="null">{{ i18n.text('allStatuses') }}</option>@for (value of [1,2,3,4,5,6]; track value) { <option [ngValue]="value">{{ statusName(value) }}</option> }</select></label>
       <button class="ui-button secondary">{{ i18n.text('apply') }}</button>

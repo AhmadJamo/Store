@@ -2,6 +2,10 @@
 > Status: IMPLEMENTED | Last reviewed: 2026-10-12
 
 ## Purpose and flow
+
+UX-002 binds supplier search, inactive-state filter and paging to allowlisted URL context plus tenant/user-scoped
+workspace memory. Saved view preferences remain limited to inactive-state and page size; search text is not written to
+local storage.
 The supplier master stores the display and legal names, contact person, phone, email, website, address, tax and registration numbers, payment terms, notes, active state and payable account. Create and Edit use responsive bilingual sections and allow several eligible products to be assigned in the same operation.
 
 Supplier/product assignment is bidirectional and has one source of truth: the active `SupplierProductPurchasingInfo` row. Selecting a product on a supplier therefore shows that supplier automatically on the product, and selecting a supplier on a product shows the product automatically on the supplier. Removing an assignment deactivates its purchasing rows rather than deleting commercial history; reselecting restores the existing terms. Prepared-to-order products, inactive products and inactive suppliers cannot receive new active assignments.
