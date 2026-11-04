@@ -2,6 +2,10 @@
 
 ## آخر خط أساس منفذ
 
+بوابة `UX-001` في 2026-11-04: نجح 220/220 اختبار Angular و122 قالبًا ثابتًا، والبناء الإنتاجي ضمن الميزانيات
+المخصصة عند 328,867 بايت أولية و81,880 بايت لأكبر lazy chunk. نجحت فحوص المتصفح للحالات وRTL/LTR ولوحة
+المفاتيح و390px. فشل فحص مصالحة بيانات لاحق مستقل بانتظار خيار Demo مخفي «طحين»، لذلك لم يُسجل كنجاح شامل.
+
 أحدث بوابة بعد `MOD-030E2G` في 2026-11-01: Release نجح بلا تحذيرات أو أخطاء، وSecurityRegression نجح في
 1,447 فحصًا، وAngular نجح في 218/218 اختبارًا عبر 108 ملفات. نجح فحص الوصول الثابت لـ122 قالبًا، ونجحت ميزانية
 الإنتاج عند 327,391/358,400 بايت أولية و81,880/81,920 لأكبر lazy chunk. تشغيل Demo المصرح به نجح 15/15 بلا
@@ -9,6 +13,7 @@
 
 | الأمر | النتيجة | التاريخ |
 |---|---|---|
+| UX-001 workspace navigation | 220/220 Angular; 122 templates; custom bundles green; browser states/direction/keyboard/390px passed; later Demo reconciliation fixture recorded separately | 2026-11-04 |
 | Authenticated MOD-029B dual-run gate | 9/9 browser checks, zero skips; culture, financial empty-state and real inventory row reconciled across MVC/API; 100/100 performance requests passed | 2026-10-30 |
 | Authenticated MOD-029C high-risk cohorts | 15/15 browser checks, zero skips; permission-allowed GET/JSON reads passed for sales, purchasing, inventory, accounting and administration | 2026-10-30 |
 | `dotnet run --project tests/SecurityRegression/SecurityRegression.csproj -c Release --no-build` | Passed 1072 checks (نجح 1072 فحصًا)، وتشمل الآن versioned authenticated session API، حماية mutation بـantiforgery، paging bounds/sort allow-list، واستخدام permission boundary المشترك | 2026-10-24 |

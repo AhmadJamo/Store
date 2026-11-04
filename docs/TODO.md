@@ -1,12 +1,19 @@
 # Project TODO
 > Source of truth: Current repository scan  
-> Last reviewed: 2026-10-27
+> Last reviewed: 2026-11-04
 
 The approved numbered Arabic/English delivery sequence is maintained in `MASTER_IMPLEMENTATION_ROADMAP_AR_EN.md`. Detailed working status, business rules and the rolling suggestion queue remain in `ARABIC_SHARED_ROADMAP.md`. This file remains the concise technical backlog.
 
 The PUR-000 through PUR-280 purchase evolution is implemented. The approved completion sequence is maintained in `PURCHASE_COMPLETION_ROADMAP_AR_EN.md`. Incoming customer-management and sales requirements must be reconciled with master-roadmap steps 7 through 11 before implementation.
 
 The ERP SaaS Foundation Blueprint is imported as a non-authoritative planning reference. `FND-000` reconciles it with current code; later `FND` slices are not implemented until explicitly approved and evidenced.
+
+- [x] UX-001 audit the Angular UI and establish the continuously maintained modernization roadmap, grouped
+  permission-aware navigation, bilingual breadcrumbs and safe navigation preference persistence. Completed 2026-11-04.
+- [ ] UX-002 implement a typed page-context contract for filters, paging, selected tabs and approved drafts, then pilot
+  Customers, Suppliers, Products, Purchase Requests and Stock Transfers.
+- [ ] UX-003..008 standardize page architecture, tables, forms, workflow guidance, productivity and module-wide
+  consistency as defined in `UI_UX_MODERNIZATION_PLAN.md`.
 
 - [x] MOD-000 complete the read-only MVC-to-API/Angular repository audit, target architecture, dependency graph, workspace design, MVP, feature matrix and risk assessment. Completed 2026-10-24.
 - [x] MOD-001 create the isolated modernization branch and Angular 22 foundation in `MiniStore Front-End`, with strict standalone architecture, lazy routing, RTL/LTR shell, design tokens, restricted dev proxy, Signals workspace boundary, documentation, rollback and verified frontend/backend builds. Completed 2026-10-24.

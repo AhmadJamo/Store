@@ -1,6 +1,13 @@
 # Codebase map
 ## Angular modernization foundation
 
+`UI_UX_MODERNIZATION_PLAN.md` is the continuous UI/UX roadmap. UX-001 adds grouped shell navigation through
+`workspace/navigation/navigation-registry.service.ts`, allowlisted group preference persistence through
+`navigation-group-state.service.ts`, shell-local bilingual labels through
+`shell/layout/shell-navigation-localization.service.ts`, and route-derived breadcrumbs in `shell/layout/app-shell.*`.
+The Angular Router, permission session and `WorkspaceService` remain authoritative; no business data is stored by the
+new preference service. See `docs/decisions/2026-11-04-ui-ux-modernization-foundation.md`.
+
 The in-repository workspace `MiniStore Front-End` is the isolated Angular 22 presentation target. It uses standalone components, strict TypeScript, lazy routes, SCSS design tokens, an Arabic RTL/English LTR localization boundary, a responsive shell and a small Signals-owned workspace state contract. Its central API clients bootstrap the user/tenant/permission session, normalize Problem Details and attach the server-issued CSRF token to unsafe internal API calls. Its development proxy is limited to `/api` and `/Account`.
 
 `MiniStore.Web/Controllers/Api/V1` exposes the authenticated session and CSRF foundation. `AuthenticationApiController` adds rate-limited, antiforgery-protected login and authenticated logout; `TenantAccountAuthenticationService` is the single MVC/API owner of Identity password checks, company membership selection, tenant claim creation, onboarding detection and denied-login audit evidence. `InternalApiSessionService` composes explicit Application DTOs through tenant and permission boundaries. Angular `core/api` owns CSRF attachment, in-memory session state, authenticated/anonymous guards and expired-session routing, while `features/account` owns login and access-denied presentation. `CultureApiController` and the MVC language controller share `UiCultureCookie`; Angular's neutral `UiCultureStateService` lets the server session culture drive locale/direction without creating an HTTP-interceptor/session dependency cycle. `PresentationCutoverOptions.MutationOnlyMvcSurfaces` classifies the MVC Language POST as a compatibility command, never as an AngularDefault GET redirect. No credentials or tokens enter browser storage. `InternalApiExceptionMiddleware`, cookie events and API behavior options keep errors JSON-based with correlation IDs. Authenticated OpenAPI is filtered to `/api/v1`; reusable bounded paging contracts live in `MiniStore.Application/DTOs/Api`. MVC remains operational for rollback and approved compatibility commands; no database migration or business-rule change was introduced. See `docs/modernization/PHASE_02_API_FOUNDATION.md`.

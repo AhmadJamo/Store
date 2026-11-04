@@ -1,5 +1,13 @@
 # AI Work Log
 
+- 2026-11-04: Completed `UX-001`, the first phase of the Angular UI/UX modernization program. Added the root
+  continuously maintained roadmap and architecture ADR; replaced the flat shell list with seven permission-filtered,
+  persistent business groups; added active-route expansion and bilingual breadcrumbs; and retained Router authority,
+  workspace tabs, history and dirty-state protection. Angular passed 220/220 tests, 122 static templates and custom
+  production budgets at 328,867 initial bytes and 81,880 largest lazy bytes. Browser state, RTL/LTR, keyboard and 390px
+  responsive checks passed. The later authenticated reconciliation still has a recorded stale hidden-product fixture
+  risk and the Windows interactive helper failed independently of the app.
+
 - 2026-11-03: Completed `MOD-030E5X` and closed the runtime cutover audit. Added a validated
   `MutationOnlyMvcSurfaces` configuration boundary and classified Language Set as the sole POST-only MVC compatibility
   command. The generator now reports 81 verified presentation counterparts, zero remaining presentation surfaces and

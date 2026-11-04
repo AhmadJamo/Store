@@ -108,6 +108,16 @@ app-shell .session-summary small { color: var(--erp-color-text-muted); font-size
 app-shell .session-summary strong { max-width: 10rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: .8rem; }
 app-shell .session-summary .ui-button { min-height: 2.25rem; white-space: nowrap; }
 app-shell .session-error { margin: 0; padding: var(--erp-space-2) var(--erp-space-6); color: var(--erp-color-danger); background: var(--erp-color-danger-soft); }
+app-shell .primary-navigation { display: grid; gap: var(--erp-space-2); overflow-y: auto; min-height: 0; scrollbar-width: thin; }
+app-shell .nav-group { border-radius: var(--erp-radius-sm); }
+app-shell .nav-group summary { display: grid; grid-template-columns: 1.25rem minmax(0, 1fr) auto; align-items: center; gap: var(--erp-space-2); min-height: 2.5rem; padding-inline: var(--erp-space-3); color: var(--erp-color-sidebar-muted); cursor: pointer; font-size: .76rem; font-weight: 750; list-style: none; }
+app-shell .nav-group summary::-webkit-details-marker { display: none; }
+app-shell .nav-group summary:hover { color: var(--erp-color-on-primary); background: rgb(255 255 255 / 6%); }
+app-shell .nav-chevron { transition: transform var(--erp-transition-fast); }
+app-shell .nav-group[open] .nav-chevron { transform: rotate(180deg); }
+app-shell .nav-group-items { display: grid; gap: var(--erp-space-1); padding-block: var(--erp-space-1) var(--erp-space-2); }
+app-shell .breadcrumbs { display: flex; align-items: center; gap: var(--erp-space-2); color: var(--erp-color-text-muted); font-size: .75rem; font-weight: 500; }
+app-shell .breadcrumbs [aria-current='page'] { color: var(--erp-color-text); font-weight: 700; }
 html[data-split-view='true'] app-shell .content-frame { grid-template-columns: minmax(0, 1fr) minmax(14rem, 22rem); }
 html[data-split-view='true'] app-shell .split-panel { display: block; }
 html[data-workspace-profile='analyst'] app-shell main { max-width: 100%; }
@@ -147,6 +157,7 @@ html[data-workspace-profile='operator'] app-shell .workspace-toolbar { backgroun
 }
 
 @media (max-width: 1200px) { app-shell .session-summary > span { display: none; } }
+@media (max-width: 900px) { app-shell .nav-group summary span:not(:first-child) { display: none; } app-shell .nav-group summary { grid-template-columns: 1fr; justify-items: center; } }
 @media print {
   app-shell .sidebar, app-shell .topbar, app-shell .workspace-toolbar, app-shell .tabs, app-shell .split-panel, app-shell .skip-link { display: none !important; }
   app-shell .shell, app-shell .content-frame { display: block !important; }
@@ -158,3 +169,5 @@ html[data-workspace-profile='operator'] app-shell .workspace-toolbar { backgroun
   app-shell .topbar, app-shell main { padding: var(--erp-space-3); }
   app-shell .workspace-toolbar, app-shell .tabs { padding-inline: var(--erp-space-3); }
 }
+
+@media (max-width: 680px) { app-shell .primary-navigation { display: flex; gap: var(--erp-space-1); overflow-x: auto; scrollbar-width: thin; } app-shell .nav-group { flex: 0 0 auto; } app-shell .nav-group-items { display: flex; padding: 0; } }

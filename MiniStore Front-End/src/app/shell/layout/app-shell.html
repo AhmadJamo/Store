@@ -2,9 +2,16 @@
 <div class="shell" [attr.dir]="i18n.direction()">
   <aside class="sidebar" [attr.aria-label]="i18n.text('workspace')">
     <div class="brand"><span class="brand-mark">M</span><span>{{ i18n.text('appName') }}</span></div>
-    <nav>
-      @for (item of navigation.visibleItems(); track item.id) {
-        <a class="nav-item" [routerLink]="item.route" (click)="openNavigation($event, item)" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: item.route === '/' }"><span aria-hidden="true">{{ item.icon }}</span>{{ i18n.text(item.labelKey) }}</a>
+    <nav class="primary-navigation">
+      @for (group of navigation.visibleGroups(); track group.id) {
+        <details class="nav-group" [open]="navigationGroups.isOpen(group.id)" (toggle)="onNavigationGroupToggle(group.id, $event)">
+          <summary><span aria-hidden="true">{{ group.icon }}</span><span>{{ shellI18n.group(group.id) }}</span><span class="nav-chevron" aria-hidden="true">⌄</span></summary>
+          <div class="nav-group-items">
+            @for (item of group.items; track item.id) {
+              <a class="nav-item" [routerLink]="item.route" (click)="openNavigation($event, item)" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: item.route === '/' }"><span aria-hidden="true">{{ item.icon }}</span>{{ i18n.text(item.labelKey) }}</a>
+            }
+          </div>
+        </details>
       }
     </nav>
     <div class="sidebar-note"><strong>{{ i18n.text('ready') }}</strong><span>{{ i18n.text('protected') }}</span></div>
@@ -12,7 +19,11 @@
 
   <section class="workspace">
     <header class="topbar">
-      <div><span class="eyebrow">{{ i18n.text('workspace') }}</span><strong>{{ i18n.text('phaseTitle') }}</strong></div>
+      <div class="page-context"><span class="eyebrow">{{ i18n.text('workspace') }}</span><strong>{{ i18n.text('phaseTitle') }}</strong>
+        @if (currentNavigationItem(); as currentItem) {
+          <nav class="breadcrumbs" [attr.aria-label]="i18n.text('workspace')"><span>{{ shellI18n.group(navigation.groupForItem(currentItem)) }}</span><span aria-hidden="true">›</span><span aria-current="page">{{ i18n.text(currentItem.labelKey) }}</span></nav>
+        }
+      </div>
       <label class="search"><span aria-hidden="true">⌕</span><input [placeholder]="i18n.text('search')" disabled /></label>
       @if (session.session(); as currentSession) {
         <div class="session-summary">

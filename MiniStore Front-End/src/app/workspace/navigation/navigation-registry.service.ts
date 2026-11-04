@@ -3,6 +3,24 @@ import { ApiSessionService } from '../../core/api/api-session.service';
 import { NavigationItem } from '../state/workspace.models';
 import { WorkspaceProfileService } from '../../core/preferences/workspace-profile.service';
 
+export type NavigationGroupId = 'overview' | 'partners' | 'catalog' | 'inventory' | 'purchasing' | 'insights' | 'administration';
+
+export interface NavigationGroup {
+  readonly id: NavigationGroupId;
+  readonly icon: string;
+  readonly items: readonly NavigationItem[];
+}
+
+const navigationGroups: readonly Omit<NavigationGroup, 'items'>[] = [
+  { id: 'overview', icon: '⌂' },
+  { id: 'partners', icon: '♙' },
+  { id: 'catalog', icon: '▦' },
+  { id: 'inventory', icon: '▥' },
+  { id: 'purchasing', icon: '▣' },
+  { id: 'insights', icon: '◫' },
+  { id: 'administration', icon: '⚙' },
+];
+
 const navigationItems: readonly NavigationItem[] = [
   { id: 'home', route: '/', labelKey: 'dashboard', icon: '⌂' },
   {
@@ -294,6 +312,13 @@ export class NavigationRegistryService {
     const order = priorities[this.profiles.profile()];
     return [...visible].sort((a, b) => order.indexOf(a.id) - order.indexOf(b.id));
   });
+  readonly visibleGroups = computed<readonly NavigationGroup[]>(() => {
+    const visible = this.visibleItems();
+    return navigationGroups.flatMap((group): NavigationGroup[] => {
+      const items = visible.filter((item) => this.groupForItem(item) === group.id);
+      return items.length ? [{ ...group, items }] : [];
+    });
+  });
 
   constructor(
     private readonly session: ApiSessionService,
@@ -302,6 +327,21 @@ export class NavigationRegistryService {
 
   findById(id: string): NavigationItem | undefined {
     return this.items.find((item) => item.id === id);
+  }
+
+  groupForItem(item: NavigationItem): NavigationGroupId {
+    if (item.route.startsWith('/inventory/')) return 'inventory';
+    if (item.route.startsWith('/purchases/')) return 'purchasing';
+    if (item.id === 'customers' || item.id === 'suppliers') return 'partners';
+    if (item.id === 'products') return 'catalog';
+    if (item.id === 'documents' || item.id === 'analytics') return 'insights';
+    if (['settings', 'users', 'roles', 'audit-events', 'design-system'].includes(item.id)) return 'administration';
+    return 'overview';
+  }
+
+  groupForRoute(route: string): NavigationGroupId | null {
+    const item = this.findByRoute(route);
+    return item ? this.groupForItem(item) : null;
   }
 
   findByRoute(route: string): NavigationItem | undefined {

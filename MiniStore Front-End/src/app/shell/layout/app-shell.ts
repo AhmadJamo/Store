@@ -6,11 +6,13 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { LocalizationService } from '../../core/localization/localization.service';
 import { ContentWidthPreference, DensityPreference, SidebarPreference, ThemePreference, UiPreferencesService } from '../../core/preferences/ui-preferences.service';
 import { WorkspaceProfile, WorkspaceProfileService } from '../../core/preferences/workspace-profile.service';
-import { NavigationRegistryService } from '../../workspace/navigation/navigation-registry.service';
+import { NavigationGroupId, NavigationRegistryService } from '../../workspace/navigation/navigation-registry.service';
 import { NavigationItem, WorkspaceTab } from '../../workspace/state/workspace.models';
 import { WorkspaceService } from '../../workspace/state/workspace.service';
 import { AccountApiService } from '../../core/api/account-api.service';
 import { ApiSessionService } from '../../core/api/api-session.service';
+import { NavigationGroupStateService } from '../../workspace/navigation/navigation-group-state.service';
+import { ShellNavigationLocalizationService } from './shell-navigation-localization.service';
 
 @Component({
   selector: 'app-shell',
@@ -24,6 +26,8 @@ export class AppShell implements OnInit {
   protected readonly workspace = inject(WorkspaceService);
   protected readonly preferences = inject(UiPreferencesService);
   protected readonly navigation = inject(NavigationRegistryService);
+  protected readonly navigationGroups = inject(NavigationGroupStateService);
+  protected readonly shellI18n = inject(ShellNavigationLocalizationService);
   protected readonly workspaceProfile = inject(WorkspaceProfileService);
   protected readonly session = inject(ApiSessionService);
   protected readonly signingOut = signal(false);
@@ -33,13 +37,27 @@ export class AppShell implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
   private readonly document = inject(DOCUMENT);
   private dialogOpener: HTMLElement | null = null;
+  protected readonly currentRoute = signal('/');
 
   ngOnInit(): void {
+    this.currentRoute.set(this.router.url);
     this.workspace.syncRoute(this.router.url);
+    this.navigationGroups.ensureOpen(this.navigation.groupForRoute(this.router.url));
     this.router.events.pipe(
       filter((event): event is NavigationEnd => event instanceof NavigationEnd),
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe((event) => { this.workspace.syncRoute(event.urlAfterRedirects); this.focusMain(); });
+    ).subscribe((event) => {
+      this.currentRoute.set(event.urlAfterRedirects);
+      this.workspace.syncRoute(event.urlAfterRedirects);
+      this.navigationGroups.ensureOpen(this.navigation.groupForRoute(event.urlAfterRedirects));
+      this.focusMain();
+    });
+  }
+
+  protected currentNavigationItem(): NavigationItem | undefined { return this.navigation.findByRoute(this.currentRoute()); }
+
+  protected onNavigationGroupToggle(groupId: NavigationGroupId, event: Event): void {
+    this.navigationGroups.setOpen(groupId, (event.currentTarget as HTMLDetailsElement).open);
   }
 
   @HostListener('window:beforeunload', ['$event'])

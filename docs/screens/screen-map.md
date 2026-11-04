@@ -1,5 +1,12 @@
 # Razor screen map
 
+## Angular ERP workspace shell (UX-001)
+
+The Angular shell now organizes every registered permitted destination into persistent collapsible business groups and
+shows a route-derived bilingual breadcrumb. The active group opens automatically. Compact and 390px layouts preserve
+access to all permitted items, while workspace tabs, recently closed pages, per-tab history and unsaved-change
+protection remain unchanged. Group state stores only allowlisted UI identifiers.
+
 The UI action audit, last verified on 2026-10-24, checks every static Razor link/form target against the compiled controller actions and every MVC POST against antiforgery validation. Dynamic client-only buttons were separately inventoried; the only submit-style button outside a form is the intentionally disabled Settings placeholder. The same automated gate now verifies Arabic entries for every literal shared-localizer key, rejects common direct-English Razor UI text and hard-coded controller action messages, detects case-insensitive duplicate resource keys, and protects the explicit nested customer form contract plus visible validation feedback.
 
 Angular shell, login, registration and onboarding language controls synchronize the server culture cookie before changing
