@@ -3,7 +3,7 @@ import { NavigationGroupId } from './navigation-registry.service';
 
 const storageKey = 'ministore.ui.navigation-groups.v1';
 const allowedGroups: readonly NavigationGroupId[] = [
-  'overview', 'partners', 'catalog', 'inventory', 'purchasing', 'insights', 'administration',
+  'overview', 'partners', 'catalog', 'inventory', 'purchasing', 'sales', 'accounting', 'insights', 'administration',
 ];
 
 @Injectable({ providedIn: 'root' })

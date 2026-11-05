@@ -62,6 +62,27 @@ if ($shell -match '<input\b[^>]*id="workspace-command-search"[^>]*\bdisabled\b')
     $failures.Add('The workspace command search regressed to a disabled control.')
 }
 
+$appRoot = Split-Path -Parent $SourcePath
+$routeContent = Get-Content -LiteralPath (Join-Path $SourcePath 'app.routes.ts') -Raw
+$navigationContent = Get-Content -LiteralPath (Join-Path $SourcePath 'workspace/navigation/navigation-registry.service.ts') -Raw
+$moduleRoutes = @([regex]::Matches($routeContent, "path:\s*'((?:purchases|sales|accounting)(?:/[^']*)?)'") |
+    ForEach-Object { $_.Groups[1].Value } |
+    Where-Object { $_ -notmatch ':' -and $_ -notmatch '/new$' } |
+    Sort-Object -Unique)
+$registeredRoutes = @([regex]::Matches($navigationContent, "route:\s*'(/(?:purchases|sales|accounting)(?:/[^']*)?)'") |
+    ForEach-Object { $_.Groups[1].Value.TrimStart('/') } |
+    Sort-Object -Unique)
+foreach ($route in $moduleRoutes) {
+    if ($registeredRoutes -notcontains $route) {
+        $failures.Add("Operational route is missing from the permission-aware navigation registry: /$route")
+    }
+}
+foreach ($groupId in @('purchasing', 'sales', 'accounting')) {
+    if ($navigationContent -notmatch "\{ id: '$groupId', icon:") {
+        $failures.Add("Required ERP navigation group is missing: $groupId")
+    }
+}
+
 function Count-TemplatesUsing([string]$Pattern) {
     return @($pages | Where-Object { (Get-Content -LiteralPath $_.FullName -Raw) -match $Pattern }).Count
 }
@@ -79,6 +100,8 @@ $metrics = [ordered]@{
     WorkflowFooter = Count-TemplatesUsing '<app-workflow-footer\b'
     FeedbackState = Count-TemplatesUsing '<app-feedback-state\b'
     ApiRecovery = Count-TemplatesUsing '<app-api-recovery\b'
+    RegisteredNavigationItems = @([regex]::Matches($navigationContent, "\bid:\s*'[^']+'\s*,\s*route:")).Count
+    HubCoveredOperationalRoutes = $moduleRoutes.Count
 }
 
 if ($metrics.SharedPageHeader + $metrics.DocumentedLayoutExceptions -ne $metrics.FeaturePages) {

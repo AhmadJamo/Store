@@ -242,3 +242,12 @@ All purchase tables, details and populated numeric inputs use the shared number 
   operations and authorized manual adjustments; every mutation uses CSRF and its separate server permission.
 - `/inventory/availability` requires `InventoryBalances.View`; `/inventory/reservations` requires
   `InventoryReservations.View`. Both provide loading, empty and recovery states and bounded server paging.
+
+## Angular ERP module hubs (UX-009)
+
+- `/app/purchases` — permission-aware Purchasing center grouping the existing planning, sourcing, receiving, payables and
+  supplier-operation workspaces.
+- `/app/sales` — permission-aware Sales center grouping pricing, quotations, orders, fulfillment, receivables, returns and POS.
+- `/app/accounting` — permission-aware Accounting center linking the current chart of accounts and accounting setup screens.
+- Hub children remain registered in command search, favorites and persistent tabs but are intentionally hidden from the main
+  sidebar. API/controller authorization remains authoritative.

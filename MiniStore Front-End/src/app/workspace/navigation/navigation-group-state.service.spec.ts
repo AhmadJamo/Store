@@ -10,7 +10,10 @@ describe('NavigationGroupStateService', () => {
     expect(service.isOpen('inventory')).toBe(false);
     service.setOpen('inventory', true);
     expect(service.isOpen('inventory')).toBe(true);
+    service.setOpen('sales', true);
+    expect(service.isOpen('sales')).toBe(true);
     expect(localStorage.getItem('ministore.ui.navigation-groups.v1')).toContain('inventory');
+    expect(localStorage.getItem('ministore.ui.navigation-groups.v1')).toContain('sales');
   });
 
   it('drops invalid persisted values and restores a safe default', () => {

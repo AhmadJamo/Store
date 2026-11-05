@@ -12,6 +12,7 @@ import { WorkspaceService } from '../../workspace/state/workspace.service';
 import { AccountApiService } from '../../core/api/account-api.service';
 import { ApiSessionService } from '../../core/api/api-session.service';
 import { NavigationGroupStateService } from '../../workspace/navigation/navigation-group-state.service';
+import { NavigationLocalizationService } from '../../workspace/navigation/navigation-localization.service';
 import { ShellNavigationLocalizationService } from './shell-navigation-localization.service';
 
 @Component({
@@ -22,6 +23,7 @@ import { ShellNavigationLocalizationService } from './shell-navigation-localizat
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppShell implements OnInit {
+  protected readonly navigationI18n = inject(NavigationLocalizationService);
   protected readonly i18n = inject(LocalizationService);
   protected readonly workspace = inject(WorkspaceService);
   protected readonly preferences = inject(UiPreferencesService);
@@ -38,7 +40,7 @@ export class AppShell implements OnInit {
     const query = this.searchQuery().trim().toLocaleLowerCase(this.i18n.locale());
     if (!query) return [];
     return this.navigation.visibleItems().filter(item => {
-      const label = this.i18n.text(item.labelKey).toLocaleLowerCase(this.i18n.locale());
+      const label = this.navigationI18n.text(item.labelKey).toLocaleLowerCase(this.i18n.locale());
       const group = this.shellI18n.group(this.navigation.groupForItem(item)).toLocaleLowerCase(this.i18n.locale());
       return label.includes(query) || group.includes(query);
     }).slice(0, 8);

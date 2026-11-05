@@ -154,6 +154,14 @@ permission-backed routes already present in `app.routes.ts`.
 - [x] Integrate consistency inventory into the modernization acceptance command.
 - [x] Run Angular, Release, security, responsive, RTL/LTR, keyboard, accessibility and bundle verification.
 
+### UX-009 — Navigation completeness and module hubs — COMPLETED 2026-11-05
+
+- [x] Add concise Purchasing, Sales and Accounting groups to the professional workspace navigation.
+- [x] Add one reusable permission-aware module hub instead of duplicating module-specific shells.
+- [x] Register all 41 non-detail operational routes for search, favorites, tabs, breadcrumbs and safe restoration.
+- [x] Keep detailed destinations out of the sidebar while preserving permission filtering everywhere.
+- [x] Add executable route-coverage, unit, accessibility, bundle and hosted RTL/LTR/mobile evidence.
+
 ## Reusable component target
 
 - `EnterprisePageHeader`: title, description, breadcrumb, status, primary and secondary actions.
@@ -188,6 +196,7 @@ Every phase must record:
 | UX-006 | 230/230 Angular; 130 templates; production 333,336 B initial and 81,880 B largest lazy, custom budgets green | Workflow stage/current/guidance semantics passed; hosted states, RTL/LTR, keyboard and 390px responsive checks passed | COMPLETE |
 | UX-007 | 232/232 Angular; 130 templates; production 335,312 B initial and 81,880 B largest lazy, custom budgets green | Permission-filtered results, Ctrl+K focus and memory-only query tests passed; hosted states, RTL/LTR, keyboard and 390px responsive checks passed | COMPLETE |
 | UX-008 | 232/232 Angular; 130 templates; isolated Release build clean; 1,843 security/inventory checks; production 335,312 B initial and 81,880 B largest lazy | 113-page inventory: 102 shared headers + 11 named layout exceptions; 5/5 hosted states, RTL/LTR, keyboard and 390px checks passed | COMPLETE WITH DOCUMENTED LAYOUT EXCEPTIONS |
+| UX-009 | 234/234 Angular; 131 templates; production 335,946 B initial and 81,880 B largest lazy | 72 registered destinations; 41/41 operational module routes; 5/5 hosted RTL/LTR, keyboard, states and 390px checks passed | COMPLETE |
 
 ## Latest phase report
 
@@ -200,10 +209,17 @@ Every phase must record:
 - The command search now exposes an explicit search landmark without changing routing, permissions or query storage.
 - Full evidence is recorded in `docs/modernization/UI_UX_CONSISTENCY_AUDIT.md`.
 
+### UX-009 — Completed
+
+- Purchasing, Sales and Accounting now have concise sidebar groups and reusable permission-aware module hubs.
+- Search, favorites and persistent tabs can discover 41 operational module routes without placing every page in the sidebar.
+- Navigation-only localization was split from the global resource to keep the existing strict lazy budget unchanged.
+- Full evidence is recorded in `docs/modernization/UI_UX_NAVIGATION_HUBS.md`.
+
 ### Next
 
-- UI/UX modernization is complete within the approved presentation scope. The next approved task is the non-destructive
-  `MOD-030F` MVC-retirement dependency inventory; no MVC file deletion is authorized.
+- `UX-010` is the approved accounting workspace foundation: a real account hierarchy and searchable journal directory.
+  Financial statements and manual journals remain separate future scope.
 
 ### Recorded risks
 
@@ -238,4 +254,5 @@ The program is complete only when all applicable implemented modules use the sam
 workflow standards; common operations require fewer verified interactions; safe page context survives appropriate
 navigation; permissions and backend workflow rules remain authoritative; and the complete regression, accessibility,
 responsive, RTL/LTR and production-build gates pass. UX-008 satisfies this definition for the approved presentation
-scope with 11 executable layout exceptions; production deployment readiness and physical MVC retirement remain separate.
+scope with 11 executable layout exceptions. UX-009 additionally closes the identified navigation-discovery gap for the three
+largest underrepresented modules; production deployment readiness and physical MVC retirement remain separate.

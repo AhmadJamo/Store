@@ -166,3 +166,14 @@
 - لا يعد build (البناء) اختبار سلوك.
 - كل مهمة جديدة تضيف اختبار مجال + قاعدة بيانات/أمان حسب الخطر، وتعيد الاختبارات المناسبة.
 - المهمة `COMPLETE` (مكتملة) فقط إذا سجل الأمر والنتيجة والتاريخ؛ التعذر يعني `UNVERIFIED` (غير متحقق)، لا نجاحًا.
+
+## UX-009 navigation completeness — 2026-11-05
+
+- Angular Vitest: 234/234 tests passed across 111 files, including sidebar/hub permission filtering and group persistence.
+- Static accessibility: 131/131 templates passed; UI inventory accounts for 114 pages (103 shared headers + 11 exceptions).
+- Navigation consistency: 72 registry entries and 41/41 non-detail operational Purchasing/Sales/Accounting routes covered.
+- Production budgets: 335,946/358,400 initial bytes; 81,880/81,920 largest lazy bytes.
+- Hosted acceptance: 5/5 presentation checks passed for states, Arabic/English direction, keyboard focus and 390px layout.
+- Live `/health/ready` and `/app/` returned HTTP 200 after asset publication.
+- No backend permission evaluator, API, schema or business rule changed; the 1,843-check UX-008 security baseline remains
+  the latest full backend regression evidence.

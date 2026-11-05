@@ -339,6 +339,8 @@ The ERP SaaS Foundation Blueprint is imported as a non-authoritative planning re
 - Implemented WMS-010 hierarchical location metadata, barcode, sequence, tree ordering, warehouse-filtered parent selection, operational capabilities, edit workflow and cycle/same-warehouse validation. Putaway/transfers/relocations enforce receive/pick capabilities. Its additive migration is applied to `AHMAD/MiniStoreDb`; authenticated UI smoke remains because no login secret is stored in the repository.
 
 ## In Progress
+- UX-009 navigation completeness is complete: 72 registered destinations and 41/41 operational routes are covered through
+  permission-aware Purchasing, Sales and Accounting hubs. UX-010 Accounting Workspace Foundation is next.
 - PUR-280 is implemented. The purchase completion roadmap is complete; continue from the master roadmap after reconciling customer-management and sales requirements.
 - WMS delivery is paused by product-owner direction. Its remaining items stay documented in `WMS_EVOLUTION_PLAN.md` and resume after the current purchase-management priority.
 - WMS-015A/B/C/D typed definitions, values, ProductTemplate grouping and controlled selection-based variant generation are implemented. Product remains the SKU; proceed to the next WMS slice.

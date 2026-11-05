@@ -6,6 +6,7 @@ import { LocalizationService } from '../../core/localization/localization.servic
 import { FeedbackStateComponent } from '../../shared/ui/feedback-state/feedback-state';
 import { PageHeaderComponent } from '../../shared/ui/page-header/page-header';
 import { NavigationRegistryService } from '../../workspace/navigation/navigation-registry.service';
+import { NavigationLocalizationService } from '../../workspace/navigation/navigation-localization.service';
 import { CommandCenterPreferencesService } from '../command-center/command-center-preferences.service';
 import { CommandCenterRegistryService } from '../command-center/command-center-registry.service';
 import { CommandCenterViewMode, QuickPreviewProviderId, QuickPreviewResult } from '../command-center/command-center.models';
@@ -18,6 +19,7 @@ import { CommandCenterViewMode, QuickPreviewProviderId, QuickPreviewResult } fro
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HomePage {
+  protected readonly navigationI18n = inject(NavigationLocalizationService);
   protected readonly i18n = inject(LocalizationService);
   protected readonly registry = inject(CommandCenterRegistryService);
   protected readonly preferences = inject(CommandCenterPreferencesService);
@@ -31,7 +33,7 @@ export class HomePage {
   protected readonly preview = signal<QuickPreviewResult | null>(null);
   protected readonly matchingCommands = computed(() => {
     const query = this.search().trim().toLocaleLowerCase(this.i18n.locale());
-    return this.navigation.visibleItems().filter((item) => !query || this.i18n.text(item.labelKey).toLocaleLowerCase(this.i18n.locale()).includes(query));
+    return this.navigation.visibleItems().filter((item) => !query || this.navigationI18n.text(item.labelKey).toLocaleLowerCase(this.i18n.locale()).includes(query));
   });
 
   constructor() { if (this.selectedProvider()) this.loadPreview(); }

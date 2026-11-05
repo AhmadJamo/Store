@@ -11,7 +11,7 @@
     </form>
     <nav class="command-results" [attr.aria-label]="i18n.text('availableDestinations')">
       @for (item of matchingCommands(); track item.id) {
-        <div class="command-item"><a [routerLink]="item.route"><span aria-hidden="true">{{ item.icon }}</span><strong>{{ i18n.text(item.labelKey) }}</strong></a><button type="button" (click)="preferences.toggleFavorite(item.id)" [attr.aria-pressed]="preferences.isFavorite(item.id)" [title]="i18n.text(preferences.isFavorite(item.id) ? 'removeFavorite' : 'addFavorite')">{{ preferences.isFavorite(item.id) ? '★' : '☆' }}</button></div>
+        <div class="command-item"><a [routerLink]="item.route"><span aria-hidden="true">{{ item.icon }}</span><strong>{{ navigationI18n.text(item.labelKey) }}</strong></a><button type="button" (click)="preferences.toggleFavorite(item.id)" [attr.aria-pressed]="preferences.isFavorite(item.id)" [title]="i18n.text(preferences.isFavorite(item.id) ? 'removeFavorite' : 'addFavorite')">{{ preferences.isFavorite(item.id) ? '★' : '☆' }}</button></div>
       }
     </nav>
   </section>
@@ -34,7 +34,7 @@
     </section>
 
     <aside class="personal-panel">
-      <section><h2>{{ i18n.text('favorites') }}</h2><p>{{ i18n.text('favoritesDescription') }}</p>@if (!preferences.favoriteItems().length) { <small>{{ i18n.text('noFavorites') }}</small> }<div class="personal-list">@for (item of preferences.favoriteItems(); track item.id) { <a [routerLink]="item.route"><span>{{ item.icon }}</span>{{ i18n.text(item.labelKey) }}</a> }</div></section>
+      <section><h2>{{ i18n.text('favorites') }}</h2><p>{{ i18n.text('favoritesDescription') }}</p>@if (!preferences.favoriteItems().length) { <small>{{ i18n.text('noFavorites') }}</small> }<div class="personal-list">@for (item of preferences.favoriteItems(); track item.id) { <a [routerLink]="item.route"><span>{{ item.icon }}</span>{{ navigationI18n.text(item.labelKey) }}</a> }</div></section>
       <section><h2>{{ i18n.text('savedSnapshots') }}</h2><p>{{ i18n.text('snapshotsDescription') }}</p>@if (!preferences.snapshots().length) { <small>{{ i18n.text('noSnapshots') }}</small> }<div class="personal-list">@for (snapshot of preferences.snapshots(); track snapshot.id) { <div class="snapshot"><button type="button" (click)="applySnapshot(snapshot.providerId, snapshot.viewMode)">{{ i18n.text(snapshot.providerId === 'customers' ? 'customersTitle' : 'suppliersTitle') }} · {{ i18n.text(snapshot.viewMode === 'compact' ? 'compactView' : 'comfortableView') }}</button><button type="button" class="remove" (click)="preferences.removeSnapshot(snapshot.id)" [title]="i18n.text('removeSnapshot')">×</button></div> }</div></section>
     </aside>
   </div>

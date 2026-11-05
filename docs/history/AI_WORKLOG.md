@@ -2185,3 +2185,11 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   49 authorized GET routes. The final evidence passed 1,447 backend checks, 218/218 Angular tests, 122 templates and bundle
   budgets. The temporary authenticated browser state was deleted and both test hosts were stopped. Twenty surfaces are
   AngularDefault and 62 remain MVC-default; execution advances to `MOD-030E3A`.
+- 2026-11-05: Completed `UX-009` Navigation Completeness and Module Hubs. Added concise permission-aware Purchasing, Sales
+  and Accounting groups plus one reusable route-data-driven hub; registered 72 destinations so all 41 non-detail operational
+  module routes participate in search, favorites, breadcrumbs, persistent tabs and safe restoration without flooding the
+  sidebar. Added navigation-specific bilingual resources to preserve the fixed bundle budget and an executable consistency
+  gate that rejects unregistered operational routes. Angular passed 234/234 tests, 131 templates passed static accessibility,
+  production measured 335,946/358,400 initial and 81,880/81,920 largest lazy bytes, hosted RTL/LTR/state/keyboard/390px
+  acceptance passed 5/5, and the published app/readiness endpoints returned 200. No API, schema, business rule or permission
+  definition changed. Advanced the approved gate to `UX-010` Accounting Workspace Foundation.

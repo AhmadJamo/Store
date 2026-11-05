@@ -8,6 +8,8 @@ const navigationGroupLabels: Record<NavigationGroupId, Readonly<{ 'ar-JO': strin
   catalog: { 'ar-JO': 'الكتالوج', 'en-US': 'Catalog' },
   inventory: { 'ar-JO': 'المخزون والمستودعات', 'en-US': 'Inventory and warehouses' },
   purchasing: { 'ar-JO': 'المشتريات', 'en-US': 'Purchasing' },
+  sales: { 'ar-JO': 'المبيعات', 'en-US': 'Sales' },
+  accounting: { 'ar-JO': 'المحاسبة والمالية', 'en-US': 'Accounting and finance' },
   insights: { 'ar-JO': 'المستندات والتحليلات', 'en-US': 'Documents and analytics' },
   administration: { 'ar-JO': 'الإدارة والإعدادات', 'en-US': 'Administration and settings' },
 };

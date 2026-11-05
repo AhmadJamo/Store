@@ -8,7 +8,7 @@
           <summary><span aria-hidden="true">{{ group.icon }}</span><span>{{ shellI18n.group(group.id) }}</span><span class="nav-chevron" aria-hidden="true">⌄</span></summary>
           <div class="nav-group-items">
             @for (item of group.items; track item.id) {
-              <a class="nav-item" [routerLink]="item.route" (click)="openNavigation($event, item)" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: item.route === '/' }"><span aria-hidden="true">{{ item.icon }}</span>{{ i18n.text(item.labelKey) }}</a>
+              <a class="nav-item" [routerLink]="item.route" (click)="openNavigation($event, item)" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: item.route === '/' }"><span aria-hidden="true">{{ item.icon }}</span>{{ navigationI18n.text(item.labelKey) }}</a>
             }
           </div>
         </details>
@@ -21,7 +21,7 @@
     <header class="topbar">
       <div class="page-context"><span class="eyebrow">{{ i18n.text('workspace') }}</span><strong>{{ i18n.text('phaseTitle') }}</strong>
         @if (currentNavigationItem(); as currentItem) {
-          <nav class="breadcrumbs" [attr.aria-label]="i18n.text('workspace')"><span>{{ shellI18n.group(navigation.groupForItem(currentItem)) }}</span><span aria-hidden="true">›</span><span aria-current="page">{{ i18n.text(currentItem.labelKey) }}</span></nav>
+          <nav class="breadcrumbs" [attr.aria-label]="i18n.text('workspace')"><span>{{ shellI18n.group(navigation.groupForItem(currentItem)) }}</span><span aria-hidden="true">›</span><span aria-current="page">{{ navigationI18n.text(currentItem.labelKey) }}</span></nav>
         }
       </div>
       <div class="command-search" role="search" (focusout)="onSearchFocusOut($event)">
@@ -32,7 +32,7 @@
             @if (displayedSearchItems().length) {
               <nav class="search-results" [attr.aria-label]="shellI18n.search('searchResults')">
                 @for (item of displayedSearchItems(); track item.id) {
-                  <button type="button" (click)="navigateSearch(item)"><span aria-hidden="true">{{ item.icon }}</span><span><strong>{{ i18n.text(item.labelKey) }}</strong><small>{{ shellI18n.group(navigation.groupForItem(item)) }}</small></span></button>
+                  <button type="button" (click)="navigateSearch(item)"><span aria-hidden="true">{{ item.icon }}</span><span><strong>{{ navigationI18n.text(item.labelKey) }}</strong><small>{{ shellI18n.group(navigation.groupForItem(item)) }}</small></span></button>
                 }
               </nav>
             } @else {
@@ -83,15 +83,15 @@
       @for (tab of workspace.tabs(); track tab.id; let index = $index) {
         <div class="workspace-tab" role="presentation" [class.active]="workspace.activeTab()?.id === tab.id">
           <button type="button" role="tab" [attr.aria-selected]="workspace.activeTab()?.id === tab.id" [attr.tabindex]="workspace.activeTab()?.id === tab.id ? 0 : -1" (click)="activate(tab)" (keydown)="onTabKeydown($event, index)">
-            {{ i18n.text(tab.titleKey) }} @if (tab.dirty) { <span class="dirty" [attr.aria-label]="i18n.text('dirty')">●</span> }
+            {{ navigationI18n.text(tab.titleKey) }} @if (tab.dirty) { <span class="dirty" [attr.aria-label]="i18n.text('dirty')">●</span> }
           </button>
-          <button type="button" class="tab-close" (click)="close($event, tab)" [attr.aria-label]="i18n.text('close') + ' ' + i18n.text(tab.titleKey)">×</button>
+          <button type="button" class="tab-close" (click)="close($event, tab)" [attr.aria-label]="i18n.text('close') + ' ' + navigationI18n.text(tab.titleKey)">×</button>
           <button type="button" class="tab-more" (click)="closeOthers($event, tab)" [attr.aria-label]="i18n.text('closeOthers')" [title]="i18n.text('closeOthers')">⋯</button>
         </div>
       }
     </div>
 
-    <div class="content-frame"><main id="main-content" tabindex="-1"><router-outlet /></main><aside class="split-panel" [attr.aria-label]="i18n.text('contextPanel')"><h2>{{ i18n.text('contextPanel') }}</h2><p>{{ i18n.text('contextPanelDescription') }}</p><nav>@for (item of navigation.visibleItems(); track item.id) { @if (item.id === 'work-center' || item.id === 'documents') { <a [routerLink]="item.route">{{ i18n.text(item.labelKey) }}</a> } }</nav></aside></div>
+    <div class="content-frame"><main id="main-content" tabindex="-1"><router-outlet /></main><aside class="split-panel" [attr.aria-label]="i18n.text('contextPanel')"><h2>{{ i18n.text('contextPanel') }}</h2><p>{{ i18n.text('contextPanelDescription') }}</p><nav>@for (item of navigation.visibleItems(); track item.id) { @if (item.id === 'work-center' || item.id === 'documents') { <a [routerLink]="item.route">{{ navigationI18n.text(item.labelKey) }}</a> } }</nav></aside></div>
   </section>
 </div>
 

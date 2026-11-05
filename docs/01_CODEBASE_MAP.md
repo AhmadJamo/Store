@@ -1,6 +1,12 @@
 # Codebase map
 ## Angular modernization foundation
 
+UX-009 adds reusable permission-aware module hubs under `features/module-hubs`, complete Purchasing/Sales/Accounting route
+registration through `workspace/navigation/navigation-registry.service.ts`, navigation-only bilingual resources through
+`navigation-localization.service.ts`, and executable 41-route coverage in `scripts/Test-UiUxConsistency.ps1`. Hidden hub
+destinations remain available to search, favorites, breadcrumbs, persistent tabs and safe restoration without expanding the
+sidebar. See `docs/modernization/UI_UX_NAVIGATION_HUBS.md` and ADR `2026-11-05-permission-aware-module-hubs.md`.
+
 `UI_UX_MODERNIZATION_PLAN.md` is the continuous UI/UX roadmap. UX-001 adds grouped shell navigation through
 `workspace/navigation/navigation-registry.service.ts`, allowlisted group preference persistence through
 `navigation-group-state.service.ts`, shell-local bilingual labels through

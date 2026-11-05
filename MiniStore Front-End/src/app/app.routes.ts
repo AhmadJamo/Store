@@ -614,6 +614,11 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'purchases',
+        data: { groupId: 'purchasing', titleKey: 'purchasingCenter', descriptionKey: 'purchasingCenterDescription' },
+        loadComponent: () => import('./features/module-hubs/module-hub-page').then((module) => module.ModuleHubPageComponent),
+      },
+      {
         path: 'purchases/requests',
         loadComponent: () =>
           import('./features/purchases/purchase-requests-page').then(
@@ -1043,6 +1048,11 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'sales',
+        data: { groupId: 'sales', titleKey: 'salesCenter', descriptionKey: 'salesCenterDescription' },
+        loadComponent: () => import('./features/module-hubs/module-hub-page').then((module) => module.ModuleHubPageComponent),
+      },
+      {
         path: 'sales/pricing',
         canDeactivate: [(component) => component.canDeactivate()],
         loadComponent: () =>
@@ -1307,6 +1317,11 @@ export const routes: Routes = [
           import('./features/sales/legacy-sales-returns-page').then(
             (module) => module.LegacySalesReturnsPageComponent,
           ),
+      },
+      {
+        path: 'accounting',
+        data: { groupId: 'accounting', titleKey: 'accountingCenter', descriptionKey: 'accountingCenterDescription' },
+        loadComponent: () => import('./features/module-hubs/module-hub-page').then((module) => module.ModuleHubPageComponent),
       },
       {
         path: 'accounting/accounts',

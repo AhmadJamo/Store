@@ -325,3 +325,10 @@
 - الاختبارات: golden datasets/performance/permission.
 - الترحيل: read models فقط عند القياس.
 - التعقيد: عالٍ.
+
+## UX-009 — Navigation completeness and module hubs — COMPLETE 2026-11-05
+
+- Added permission-aware Purchasing, Sales and Accounting hubs and concise sidebar groups.
+- Registered 72 navigation destinations and enforced coverage for all 41 non-detail operational routes in those modules.
+- Preserved Router/tab authority, permission filtering, RTL/LTR and fixed bundle budgets.
+- Next approved slice: UX-010 Accounting Workspace Foundation; financial statements and manual journals remain deferred.

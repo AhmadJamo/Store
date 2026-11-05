@@ -222,3 +222,9 @@ Hosted 15/15, cutover/MVC rollback 123/123 and 1,738 backend checks passed witho
 `MOD-030E5I` makes legacy SalesReturns Index/positive-sale Create/positive-ID Details GET presentation AngularDefault.
 Create-and-post remains protected API POST. Hosted 15/15, cutover/MVC rollback 124/124 and 1,748 backend checks passed
 without return, stock or journal mutation.
+
+## Angular navigation hub (UX-009)
+
+`/app/sales` is the concise permission-aware entry for the implemented pricing, quotation, order, delivery, invoice,
+payment, return/credit and immediate-sale/POS workspaces. Child routes remain searchable and tab-restorable without each
+becoming a sidebar item. No sales price, stock, posting, return or approval business rule changed.
