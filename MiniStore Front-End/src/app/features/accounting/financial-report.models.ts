@@ -1,0 +1,5 @@
+export type FinancialReportView = 'trial' | 'balance' | 'income';
+export interface FinancialReportQuery { fromDate: string; toDate: string; view: FinancialReportView; }
+export interface FinancialReportRow { accountId:number; code:string; name:string; type:number; depth:number; hasChildren:boolean; periodDebit:number; periodCredit:number; closingDebit:number; closingCredit:number; periodAmount:number; closingAmount:number; }
+export interface FinancialSection { rows:FinancialReportRow[]; total:number; }
+export interface FinancialReportPage { fromDate:string; toDate:string; trialBalance:{ rows:FinancialReportRow[]; totalPeriodDebit:number; totalPeriodCredit:number; totalClosingDebit:number; totalClosingCredit:number; difference:number }; balanceSheet:{ assets:FinancialSection; liabilities:FinancialSection; equity:FinancialSection; currentEarnings:number; totalLiabilitiesAndEquity:number; difference:number }; incomeStatement:{ revenue:FinancialSection; expenses:FinancialSection; netIncome:number }; }

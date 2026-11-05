@@ -14,16 +14,19 @@ public sealed class JournalEntryQueryService(IJournalEntryRepository entries, IA
             FromDate = query.FromDate?.Date,
             ToDate = query.ToDate?.Date,
             Status = query.Status,
+            AccountId = query.AccountId,
             Page = Math.Max(1, query.Page),
             PageSize = Math.Clamp(query.PageSize, 1, 100)
         };
         if (normalized.FromDate.HasValue && normalized.ToDate.HasValue && normalized.FromDate > normalized.ToDate)
             throw new ArgumentException("The start date cannot be after the end date.");
         var result = await entries.GetPagedAsync(new JournalEntrySearchCriteria(normalized.Search,
-            normalized.FromDate, normalized.ToDate, normalized.Status, normalized.Page, normalized.PageSize));
+            normalized.FromDate, normalized.ToDate, normalized.Status, normalized.AccountId, normalized.Page, normalized.PageSize));
+        var filteredAccount = normalized.AccountId.HasValue ? await accounts.GetByIdAsync(normalized.AccountId.Value) : null;
         return new JournalEntryListPageDto
         {
             Query = normalized,
+            AccountDisplay = filteredAccount is null ? null : $"{filteredAccount.Code} — {filteredAccount.Name}",
             TotalCount = result.TotalCount,
             TotalPages = result.TotalCount == 0 ? 0 : (int)Math.Ceiling(result.TotalCount / (double)normalized.PageSize),
             Items = result.Items.Select(x => new JournalEntryListItemDto(x.Id, x.EntryNumber, x.Date, x.Description,

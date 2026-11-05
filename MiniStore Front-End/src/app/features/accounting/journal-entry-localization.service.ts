@@ -21,7 +21,7 @@ const c = {
     reversed: 'Reversed',
     draft: 'Draft',
     reversalOf: 'Reversal of entry',
-    directoryTitle: 'Journal entries', directoryDescription: 'Searchable posting evidence with balanced totals and source references.', search: 'Search entries', searchPlaceholder: 'Entry number, source, reference or description', fromDate: 'From date', toDate: 'To date', allStatuses: 'All statuses', view: 'View entry', noEntries: 'No journal entries match these filters.', totalRecords: 'Total entries', previous: 'Previous', next: 'Next', filters: 'Journal filters',
+    directoryTitle: 'Journal entries', directoryDescription: 'Searchable posting evidence with balanced totals and source references.', search: 'Search entries', searchPlaceholder: 'Entry number, source, reference or description', fromDate: 'From date', toDate: 'To date', allStatuses: 'All statuses', view: 'View entry', noEntries: 'No journal entries match these filters.', totalRecords: 'Total entries', previous: 'Previous', next: 'Next', filters: 'Journal filters', filteredAccount: 'Journal evidence for account',
   },
   ar: {
     area: 'المحاسبة',
@@ -43,7 +43,7 @@ const c = {
     reversed: 'معكوس',
     draft: 'مسودة',
     reversalOf: 'عكس للقيد',
-    directoryTitle: 'دليل القيود اليومية', directoryDescription: 'دليل ترحيل قابل للبحث يعرض التوازن ومراجع المصادر.', search: 'بحث القيود', searchPlaceholder: 'رقم القيد أو المصدر أو المرجع أو الوصف', fromDate: 'من تاريخ', toDate: 'إلى تاريخ', allStatuses: 'كل الحالات', view: 'فتح القيد', noEntries: 'لا توجد قيود تطابق هذه المرشحات.', totalRecords: 'إجمالي القيود', previous: 'السابق', next: 'التالي', filters: 'مرشحات القيود',
+    directoryTitle: 'دليل القيود اليومية', directoryDescription: 'دليل ترحيل قابل للبحث يعرض التوازن ومراجع المصادر.', search: 'بحث القيود', searchPlaceholder: 'رقم القيد أو المصدر أو المرجع أو الوصف', fromDate: 'من تاريخ', toDate: 'إلى تاريخ', allStatuses: 'كل الحالات', view: 'فتح القيد', noEntries: 'لا توجد قيود تطابق هذه المرشحات.', totalRecords: 'إجمالي القيود', previous: 'السابق', next: 'التالي', filters: 'مرشحات القيود', filteredAccount: 'دليل القيود للحساب',
   },
 } as const;
 export type JournalKey = keyof typeof c.en;

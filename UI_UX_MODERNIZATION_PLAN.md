@@ -170,6 +170,15 @@ permission-backed routes already present in `app.routes.ts`.
 - [x] Preserve tenant isolation, existing permissions and all posting/fiscal-period authority.
 - [x] Verify .NET, security, Angular, accessibility, bundle and hosted RTL/LTR/mobile gates.
 
+### UX-011 — Read-only financial reporting foundation — COMPLETED 2026-11-06
+
+- [x] Add server-calculated trial balance movement and closing balances by inclusive period.
+- [x] Add server-calculated balance sheet and income statement with explicit normal-balance definitions.
+- [x] Exclude drafts and preserve correct separately-posted reversal treatment.
+- [x] Add exact account/date drill-down to the tenant-filtered journal directory.
+- [x] Preserve report period/tab context and expose the workspace through the existing accounting read permission.
+- [x] Verify golden accounting data, .NET, Angular, accessibility, route coverage, bundles and hosted RTL/LTR/mobile gates.
+
 ## Reusable component target
 
 - `EnterprisePageHeader`: title, description, breadcrumb, status, primary and secondary actions.
@@ -206,6 +215,7 @@ Every phase must record:
 | UX-008 | 232/232 Angular; 130 templates; isolated Release build clean; 1,843 security/inventory checks; production 335,312 B initial and 81,880 B largest lazy | 113-page inventory: 102 shared headers + 11 named layout exceptions; 5/5 hosted states, RTL/LTR, keyboard and 390px checks passed | COMPLETE WITH DOCUMENTED LAYOUT EXCEPTIONS |
 | UX-009 | 234/234 Angular; 131 templates; production 335,946 B initial and 81,880 B largest lazy | 72 registered destinations; 41/41 operational module routes; 5/5 hosted RTL/LTR, keyboard, states and 390px checks passed | COMPLETE |
 | UX-010 | 236/236 Angular; 1,843 security checks; 132 templates; production 336,053 B initial and 81,880 B largest lazy | Expandable account hierarchy; 73 destinations; 42/42 operational routes; 5/5 hosted acceptance | COMPLETE |
+| UX-011 | 237/237 Angular; 1,847 security/accounting checks; 133 templates; production 336,179 B initial and 81,880 B largest lazy | Golden balanced ledger; 74 destinations; 43/43 operational routes; hosted acceptance 6 passed/0 failed | COMPLETE |
 
 ## Latest phase report
 
@@ -225,10 +235,17 @@ Every phase must record:
 - Navigation-only localization was split from the global resource to keep the existing strict lazy budget unchanged.
 - Full evidence is recorded in `docs/modernization/UI_UX_NAVIGATION_HUBS.md`.
 
+### UX-011 — Completed
+
+- Added a reconciliable trial balance, balance sheet and income statement calculated only in the Application/repository layers.
+- Added exact account/date journal drill-down and preserved safe report context in workspace tabs and browser history.
+- Documented draft exclusion, reversal evidence, normal balances, current earnings and company-currency boundaries.
+- Full evidence is recorded in `docs/modernization/UI_UX_FINANCIAL_REPORTING.md`.
+
 ### Next
 
-- `UX-010` is the approved accounting workspace foundation: a real account hierarchy and searchable journal directory.
-  Financial statements and manual journals remain separate future scope.
+- `UX-012` is the approved controlled manual-journal foundation: draft composition, balanced validation, explicit posting
+  and exact reversal through the existing journal gateway and fiscal-period authority.
 
 ### Recorded risks
 

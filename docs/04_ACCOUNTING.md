@@ -148,3 +148,18 @@ so no accounting data was created to fabricate one.
 - `GET /api/v1/journal-entries` and Angular `/accounting/journal-entries` require `JournalEntries.View`; details retain the
   existing positive-ID route. No create/update/post/reverse endpoint was added.
 - No database or posting-model change was required.
+
+# UX-011 financial reporting foundation (2026-11-06)
+
+- `FinancialReportService` defines the trial balance, balance sheet and income statement from repository-aggregated journal
+  evidence. Angular performs no balance or statement calculation.
+- Draft entries are excluded. Posted entries and Reversed originals are included because a separate posted reversal entry
+  neutralizes the original; omitting the original would misstate the ledger.
+- The trial balance exposes selected-period movement and cumulative closing debit/credit through the end date. Grand totals
+  use direct account movements; hierarchical rows are display rollups and are not added again.
+- Assets/expenses are debit-normal; liabilities/equity/revenue are credit-normal. Balance-sheet current earnings use
+  cumulative revenue less cumulative expenses, while the income statement uses selected-period movement.
+- Account drill-down opens the tenant-filtered journal directory with exact dates and account ID. Reports use the existing
+  `JournalEntries.View` permission and current company ledger currency.
+- No schema, posting, fiscal-period, reversal or transaction rule changed. See
+  `modernization/UI_UX_FINANCIAL_REPORTING.md` and ADR `decisions/2026-11-06-server-authored-financial-reports.md`.

@@ -187,3 +187,15 @@
 - Navigation consistency: 73 items and 42/42 operational module routes.
 - Production budgets: 336,053/358,400 initial; 81,880/81,920 largest lazy.
 - Hosted acceptance: 5/5 RTL/LTR, keyboard, states and 390px checks; live app/readiness 200 and anonymous journal list 401.
+
+## UX-011 financial reporting — 2026-11-06
+
+- .NET Web Release: zero warnings/errors; no migration or model change.
+- Security/accounting regression: 1,847/1,847, including a golden balanced ledger for trial balance, balance sheet, current
+  earnings and selected-period net income.
+- Angular Vitest: 237/237 across 112 files, including report period API parameters and exact account drill-down parameters.
+- Static accessibility: 133 templates; UI inventory 116 pages (105 shared headers + 11 documented exceptions).
+- Navigation consistency: 74 items and 43/43 operational module routes.
+- Production budgets: 336,179/358,400 initial; 81,880/81,920 largest lazy.
+- Hosted acceptance: 6 passed/0 failed for states, RTL/LTR, keyboard and 390px layout; authenticated reconciliation checks
+  were skipped because no external storage-state fixture was supplied.

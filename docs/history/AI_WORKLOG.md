@@ -2201,3 +2201,12 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   zero warnings/errors, 1,843 security checks and 236/236 Angular tests passed, 132 templates passed accessibility, bundles
   measured 336,053/358,400 and 81,880/81,920, and hosted RTL/LTR/state/keyboard/mobile acceptance passed 5/5. The updated
   app is running on port 54052. Advanced the gate to `UX-011` read-only financial reporting foundation.
+- 2026-11-06: Completed `UX-011` Read-only Financial Reporting Foundation. Added repository-aggregated, Application-owned
+  trial balance, balance sheet and income statement DTOs/API plus bilingual RTL-safe Angular tabs with allowlisted period
+  context and exact account/date drill-down into the journal directory. Drafts are excluded; Reversed originals remain with
+  their separately posted opposite entries so the ledger nets correctly. Added golden accounting regression for balanced
+  trial/statement/current-earnings results. Web Release built with zero warnings/errors; 1,847 security/accounting checks,
+  237/237 Angular tests, 133 templates, 74 destinations, 43/43 operational routes and fixed bundle budgets passed. Hosted
+  acceptance passed 6 with zero failures; two authenticated reconciliation checks were skipped without external storage
+  state. No schema, journal mutation, permission definition or fiscal-period rule changed. Advanced to `UX-012` controlled
+  manual-journal foundation.

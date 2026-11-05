@@ -14,6 +14,7 @@ export class JournalEntryApiService {
     if (query.fromDate) params = params.set('fromDate', query.fromDate);
     if (query.toDate) params = params.set('toDate', query.toDate);
     if (query.status !== 'all') params = params.set('status', query.status);
+    if (query.accountId > 0) params = params.set('accountId', query.accountId);
     return this.http.get<JournalEntryListPage>('/api/v1/journal-entries', { params });
   }
 }

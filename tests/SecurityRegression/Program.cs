@@ -36,6 +36,7 @@ using MiniStore.Application.DTOs.Security;
 using MiniStore.Application.DTOs.Warehouses;
 using MiniStore.Application.DTOs.Api;
 using MiniStore.Application.Dtos.Shared;
+using MiniStore.Application.Dtos.Accounting;
 using MiniStore.Application.Services;
 using MiniStore.Infrastructure.Authorization;
 using MiniStore.Infrastructure.Persistence;
@@ -6184,7 +6185,43 @@ Check(typeof(ISupplierRepository).GetMethod(nameof(ISupplierRepository.GetPagedA
           .ReturnType == typeof(Task<SupplierFormPageDto>),
     "Supplier paging and form options must remain behind the Application and repository boundaries");
 
+var reportAccounts = new[]
+{
+    CreateReportAccount(1, "1000", "Assets", AccountType.Asset),
+    CreateReportAccount(2, "2000", "Liabilities", AccountType.Liability),
+    CreateReportAccount(3, "3000", "Equity", AccountType.Equity),
+    CreateReportAccount(4, "4000", "Revenue", AccountType.Revenue),
+    CreateReportAccount(5, "5000", "Expenses", AccountType.Expense)
+}.ToList();
+var reportMovements = new List<FinancialAccountMovement>
+{
+    new(1, 0m, 150m, 30m, 120m), new(2, 0m, 0m, 50m, -50m),
+    new(3, 0m, 0m, 30m, -30m), new(4, 0m, 0m, 60m, -60m),
+    new(5, 0m, 20m, 0m, 20m)
+};
+var financialReport = await new FinancialReportService(new StubFinancialJournalRepository(reportMovements),
+    new StubFinancialAccountRepository(reportAccounts)).GetAsync(new FinancialReportQueryDto
+    { FromDate = new DateTime(2026, 1, 1), ToDate = new DateTime(2026, 12, 31) });
+Check(financialReport.TrialBalance.TotalClosingDebit == 140m &&
+      financialReport.TrialBalance.TotalClosingCredit == 140m && financialReport.TrialBalance.Difference == 0m,
+    "Trial balance must reconcile server-calculated debit and credit balances");
+Check(financialReport.BalanceSheet.Assets.Total == 120m &&
+      financialReport.BalanceSheet.TotalLiabilitiesAndEquity == 120m && financialReport.BalanceSheet.Difference == 0m,
+    "Balance sheet must include current earnings and remain balanced");
+Check(financialReport.IncomeStatement.Revenue.Total == 60m &&
+      financialReport.IncomeStatement.Expenses.Total == 20m && financialReport.IncomeStatement.NetIncome == 40m,
+    "Income statement must calculate period revenue, expenses, and net income on the server");
+Check(typeof(IJournalEntryRepository).GetMethod(nameof(IJournalEntryRepository.GetFinancialMovementsAsync)) is not null,
+    "Financial reporting must remain behind the journal repository boundary");
+
 Console.WriteLine($"Passed {count} security and inventory regression checks.");
+
+static Account CreateReportAccount(int id, string code, string name, AccountType type)
+{
+    var account = new Account(code, name, type);
+    typeof(Account).GetProperty(nameof(Account.Id))!.SetValue(account, id);
+    return account;
+}
 
 void CheckThrows(Action action, string message)
 {
@@ -6249,6 +6286,22 @@ sealed class StubPurchaseAccountingReconciliationRepository(PurchaseAccountingRe
     public Task<PurchaseAccountingReconciliationSnapshot> GetSnapshotAsync(
         DateOnly asOfDate,
         CancellationToken cancellationToken = default) => Task.FromResult(snapshot);
+}
+sealed class StubFinancialAccountRepository(List<Account> accounts) : IAccountRepository
+{
+    public Task<List<Account>> GetAllAsync() => Task.FromResult(accounts);
+    public Task<Account?> GetByIdAsync(int id) => Task.FromResult(accounts.SingleOrDefault(x => x.Id == id));
+    public Task AddAsync(Account account) => Task.CompletedTask;
+    public Task SaveChangesAsync() => Task.CompletedTask;
+}
+sealed class StubFinancialJournalRepository(List<FinancialAccountMovement> movements) : IJournalEntryRepository
+{
+    public Task<List<FinancialAccountMovement>> GetFinancialMovementsAsync(DateTime fromDate, DateTime toDate) => Task.FromResult(movements);
+    public Task<bool> ExistsForSourceAsync(string sourceType, string sourceReference) => Task.FromResult(false);
+    public Task<JournalEntry?> GetBySourceAsync(string sourceType, string sourceReference) => Task.FromResult<JournalEntry?>(null);
+    public Task<JournalEntry?> GetByIdAsync(int id) => Task.FromResult<JournalEntry?>(null);
+    public Task<(List<JournalEntry> Items, int TotalCount)> GetPagedAsync(JournalEntrySearchCriteria criteria) => Task.FromResult((new List<JournalEntry>(), 0));
+    public Task AddAsync(JournalEntry entry) => Task.CompletedTask;
 }
 sealed class StubTenantAuthorization(bool admin) : MiniStore.Domain.Interfaces.ITenantAuthorizationRepository
 {

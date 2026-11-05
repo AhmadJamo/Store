@@ -11,6 +11,7 @@
   } @else if (problem(); as failure) {
     <app-api-recovery [problem]="failure" (retry)="load()" />
   } @else if (result(); as page) {
+    @if (page.accountDisplay) { <p class="account-filter"><strong>{{ i18n.text('filteredAccount') }}:</strong> {{ page.accountDisplay }}</p> }
     @if (!page.items.length) {
       <app-feedback-state kind="empty" [title]="i18n.text('noEntries')" />
     } @else {

@@ -339,3 +339,12 @@
 - Added a tenant-filtered, permission-protected and repository-paged journal directory with immutable detail navigation.
 - Kept schema, posting, reversal and fiscal-period rules unchanged.
 - Next approved slice: UX-011 read-only financial reporting foundation; manual journals remain deferred.
+
+## UX-011 — Read-only financial reporting foundation — COMPLETE 2026-11-06
+
+- Added server-calculated trial balance, balance sheet and income statement from tenant-filtered journal evidence.
+- Excluded drafts, preserved correct separately-posted reversal treatment and documented every report definition.
+- Added exact account/date journal drill-down, safe period/tab context and existing-permission accounting-hub discovery.
+- Passed 1,847 security/accounting checks, 237 Angular tests, 133 templates, 74 destinations, 43/43 operational routes,
+  production budgets and hosted RTL/LTR/keyboard/mobile acceptance.
+- Next approved slice: UX-012 controlled manual-journal foundation; cash flow, consolidation and budgets remain deferred.

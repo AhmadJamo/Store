@@ -35,11 +35,29 @@ public class JournalEntryRepository(AppDbContext context) : IJournalEntryReposit
             query = query.Where(x => x.Date < exclusiveEnd);
         }
         if (criteria.Status.HasValue) query = query.Where(x => x.Status == criteria.Status.Value);
+        if (criteria.AccountId.HasValue) query = query.Where(x => x.Lines.Any(line => line.AccountId == criteria.AccountId.Value));
         var totalCount = await query.CountAsync();
         var items = await query.OrderByDescending(x => x.Date).ThenByDescending(x => x.Id)
             .Skip((criteria.Page - 1) * criteria.PageSize).Take(criteria.PageSize)
             .Include(x => x.Lines).ToListAsync();
         return (items, totalCount);
+    }
+
+    public Task<List<FinancialAccountMovement>> GetFinancialMovementsAsync(DateTime fromDate, DateTime toDate)
+    {
+        var from = fromDate.Date;
+        var exclusiveEnd = toDate.Date.AddDays(1);
+        return context.JournalEntries.AsNoTracking()
+            .Where(entry => entry.Status != JournalEntryStatus.Draft && entry.Date < exclusiveEnd)
+            .SelectMany(entry => entry.Lines, (entry, line) => new { Entry = entry, Line = line })
+            .GroupBy(value => value.Line.AccountId)
+            .Select(group => new FinancialAccountMovement(
+                group.Key,
+                group.Sum(value => value.Entry.Date < from ? value.Line.Debit - value.Line.Credit : 0m),
+                group.Sum(value => value.Entry.Date >= from ? value.Line.Debit : 0m),
+                group.Sum(value => value.Entry.Date >= from ? value.Line.Credit : 0m),
+                group.Sum(value => value.Line.Debit - value.Line.Credit)))
+            .ToListAsync();
     }
 
     public Task AddAsync(JournalEntry entry) => context.JournalEntries.AddAsync(entry).AsTask();

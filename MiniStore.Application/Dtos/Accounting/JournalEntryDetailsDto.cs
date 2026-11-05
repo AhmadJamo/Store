@@ -26,6 +26,7 @@ public sealed class JournalEntryListQueryDto
     public DateTime? FromDate { get; set; }
     public DateTime? ToDate { get; set; }
     public JournalEntryStatus? Status { get; set; }
+    public int? AccountId { get; set; }
     public int Page { get; set; } = 1;
     public int PageSize { get; set; } = 25;
 }
@@ -36,6 +37,7 @@ public sealed record JournalEntryListItemDto(int Id, string EntryNumber, DateTim
 public sealed class JournalEntryListPageDto
 {
     public JournalEntryListQueryDto Query { get; init; } = new();
+    public string? AccountDisplay { get; init; }
     public List<JournalEntryListItemDto> Items { get; init; } = [];
     public int TotalCount { get; init; }
     public int TotalPages { get; init; }

@@ -1336,6 +1336,10 @@ export const routes: Routes = [
         loadComponent: () => import('./features/accounting/journal-entry-list-page').then((module) => module.JournalEntryListPageComponent),
       },
       {
+        path: 'accounting/financial-reports',
+        loadComponent: () => import('./features/accounting/financial-report-page').then((module) => module.FinancialReportPageComponent),
+      },
+      {
         path: 'accounting/journal-entries/:id',
         loadComponent: () =>
           import('./features/accounting/journal-entry-page').then(

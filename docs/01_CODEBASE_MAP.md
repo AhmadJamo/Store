@@ -1,6 +1,12 @@
 # Codebase map
 ## Angular modernization foundation
 
+UX-011 adds server-authored financial reporting through `IJournalEntryRepository.GetFinancialMovementsAsync`,
+`FinancialReportService`, `FinancialReportsApiController` and Angular `features/accounting/financial-report-*`. The same
+repository now supports exact account drill-down in the journal directory. Report period/tab context is allowlisted;
+financial values are never calculated in Angular. See `docs/modernization/UI_UX_FINANCIAL_REPORTING.md` and ADR
+`docs/decisions/2026-11-06-server-authored-financial-reports.md`.
+
 UX-010 extends `AccountService`/`AccountPageDto` with a defensive server-authored hierarchy and adds repository-owned journal
 search/paging through `IJournalEntryRepository`, `JournalEntryQueryService` and `JournalEntriesApiController`. Angular
 `features/accounting` owns the expandable chart and journal directory; `PageContextService` preserves only allowlisted
