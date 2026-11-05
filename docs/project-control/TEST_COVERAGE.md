@@ -177,3 +177,13 @@
 - Live `/health/ready` and `/app/` returned HTTP 200 after asset publication.
 - No backend permission evaluator, API, schema or business rule changed; the 1,843-check UX-008 security baseline remains
   the latest full backend regression evidence.
+
+## UX-010 accounting workspace — 2026-11-05
+
+- .NET Release build: zero warnings/errors; no migration or model change.
+- Security/inventory regression: 1,843/1,843 checks passed, including tenant classification and permission coverage.
+- Angular Vitest: 236/236 tests; filtered journal API parameters and journal-only navigation isolation are covered.
+- Static accessibility: 132 templates; UI inventory 115 pages (104 headers + 11 exceptions).
+- Navigation consistency: 73 items and 42/42 operational module routes.
+- Production budgets: 336,053/358,400 initial; 81,880/81,920 largest lazy.
+- Hosted acceptance: 5/5 RTL/LTR, keyboard, states and 390px checks; live app/readiness 200 and anonymous journal list 401.

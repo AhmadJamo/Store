@@ -4,7 +4,7 @@
 > Last reviewed: 2026-11-05
 
 The Angular UI/UX modernization program under `UI_UX_MODERNIZATION_PLAN.md` is complete for its approved presentation
-scope through UX-008:
+scope through UX-010:
 the permission-aware shell uses persistent collapsible business groups, active-route expansion and bilingual
 breadcrumbs while retaining Router authority and the existing persistent workspace tabs. Five pilot pages now preserve
 allowlisted list context through URL state and tenant/user-scoped memory; Purchase Request and Stock Transfer create
@@ -20,6 +20,10 @@ persists search text. The final executable inventory accounts for all 113 featur
 shared header and 11 authentication/public/onboarding/platform/design-reference layouts are named exceptions. Angular,
 Release, security, accessibility, bundle and hosted browser gates passed. Physical MVC retirement remains a separate,
 approval-gated program; `MOD-030F` is a non-destructive dependency inventory only.
+
+UX-009 adds permission-aware Purchasing, Sales and Accounting hubs with complete operational-route discovery. UX-010
+projects the tenant chart of accounts as an expandable hierarchy and adds a permission-protected, repository-paged journal
+directory. Neither phase changes posting, fiscal-period, reversal or manual-journal authority.
 
 ## Project identity
 MiniStore is a server-rendered ASP.NET Core MVC store-management application under incremental Angular modernization. It targets .NET 10, uses EF Core 10 with SQL Server, ASP.NET Core Identity, Razor views, and a Domain/Application/Infrastructure/Web layered solution. The existing Web host now includes a protected versioned internal API foundation; no separate public API project is present.
@@ -58,7 +62,7 @@ The imported ERP SaaS Foundation Blueprint remains a proposed reference. The pro
 See `06_SECURITY.md`, `04_ACCOUNTING.md`, and `TODO.md`. The historically exposed administrator was closed for the evidenced local Demo environment, an encrypted isolated restore drill reconciled without differences and migrations through 135 are applied with no pending EF model change. The local Demo audit and retention features are enabled through User Secrets. Coverage reconciliation is complete, new legacy writes are frozen behind a reversible flag, and pre/post signed checkpoints preserved all 710 historical legacy rows. Real deployment identities, off-host backup/checkpoint storage, production deployment controls and broader integration testing remain open.
 
 ## Recommended next steps
-1. Complete `MOD-030F`, a non-destructive physical-retirement readiness inventory and dependency gate.
+1. Complete `UX-011`, the read-only financial reporting foundation with reconciled trial-balance evidence.
 2. Retire no MVC cohort until its exact files, mutation/download exceptions and deployment rollback are explicitly approved.
 3. Consider physical MVC retirement only after runtime coverage and staging evidence are complete.
 

@@ -332,3 +332,10 @@
 - Registered 72 navigation destinations and enforced coverage for all 41 non-detail operational routes in those modules.
 - Preserved Router/tab authority, permission filtering, RTL/LTR and fixed bundle budgets.
 - Next approved slice: UX-010 Accounting Workspace Foundation; financial statements and manual journals remain deferred.
+
+## UX-010 — Accounting workspace foundation — COMPLETE 2026-11-05
+
+- Added a server-authored expandable chart hierarchy and preserved safe account search context.
+- Added a tenant-filtered, permission-protected and repository-paged journal directory with immutable detail navigation.
+- Kept schema, posting, reversal and fiscal-period rules unchanged.
+- Next approved slice: UX-011 read-only financial reporting foundation; manual journals remain deferred.

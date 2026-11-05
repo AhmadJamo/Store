@@ -4698,4 +4698,5 @@
   <data name="Checkout not found." xml:space="preserve"><value>لم يتم العثور على طلب الدفع.</value></data>
   <data name="Checkout is no longer payable." xml:space="preserve"><value>طلب الدفع لم يعد قابلًا للسداد.</value></data>
   <data name="Payment reference is required." xml:space="preserve"><value>مرجع الدفع مطلوب.</value></data>
+  <data name="The start date cannot be after the end date." xml:space="preserve"><value>لا يمكن أن يكون تاريخ البداية بعد تاريخ النهاية.</value></data>
 </root>

@@ -15,5 +15,14 @@ export interface CreateAccount {
 }
 export interface AccountPage {
   accounts: AccountRow[];
+  tree: AccountTreeNode[];
   form: CreateAccount;
+}
+export interface AccountTreeNode {
+  id: number;
+  code: string;
+  name: string;
+  type: number;
+  isActive: boolean;
+  children: AccountTreeNode[];
 }

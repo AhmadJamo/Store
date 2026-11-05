@@ -22,6 +22,7 @@
 .table-wrap {
   overflow: auto;
 }
+.tree-tools{display:flex;align-items:end;justify-content:space-between;gap:var(--erp-space-3)}.tree-tools .ui-field{min-inline-size:min(100%,24rem)}.tree-tools>div{display:flex;gap:var(--erp-space-2)}.account-name{display:flex;align-items:center;gap:var(--erp-space-2);padding-inline-start:calc(var(--account-depth) * 1.35rem)}.account-name small{color:var(--erp-color-text-muted)}.tree-toggle{display:grid;place-items:center;inline-size:1.75rem;block-size:1.75rem;border:1px solid var(--erp-color-border);border-radius:var(--erp-radius-sm);background:var(--erp-color-surface);color:var(--erp-color-text);cursor:pointer}.tree-leaf{display:grid;place-items:center;inline-size:1.75rem}@media(max-width:40rem){.tree-tools{align-items:stretch;flex-direction:column}.tree-tools>div{flex-wrap:wrap}}
 table {
   width: 100%;
   border-collapse: collapse;

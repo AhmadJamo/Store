@@ -44,6 +44,10 @@
     @if (!p.accounts.length) {
       <app-feedback-state kind="empty" [title]="i18n.text('empty')" />
     }
+    <div class="tree-tools">
+      <label class="ui-field"><span>{{ i18n.text('search') }}</span><input #accountSearch type="search" [value]="search()" (input)="setSearch(accountSearch.value)" [placeholder]="i18n.text('searchPlaceholder')" /></label>
+      <div><button type="button" class="ui-button secondary" (click)="expandAll()">{{ i18n.text('expandAll') }}</button><button type="button" class="ui-button secondary" (click)="collapseAll()">{{ i18n.text('collapseAll') }}</button></div>
+    </div>
     <section class="ui-card table-wrap">
       <table>
         <thead>
@@ -51,16 +55,16 @@
             <th>{{ i18n.text('code') }}</th>
             <th>{{ i18n.text('name') }}</th>
             <th>{{ i18n.text('type') }}</th>
-            <th>{{ i18n.text('parent') }}</th>
+            <th>{{ i18n.text('status') }}</th>
           </tr>
         </thead>
         <tbody>
-          @for (a of p.accounts; track a.id) {
+          @for (row of visibleAccounts(); track row.node.id) {
             <tr>
-              <td>{{ a.code }}</td>
-              <td>{{ a.name }}</td>
-              <td>{{ i18n.type(a.type) }}</td>
-              <td>{{ a.parentAccountName || i18n.text('top') }}</td>
+              <td><code>{{ row.node.code }}</code></td>
+              <td><div class="account-name" [style.--account-depth]="row.depth">@if (row.node.children.length) {<button type="button" class="tree-toggle" (click)="toggle(row.node)" [attr.aria-expanded]="expanded().has(row.node.id)">{{ expanded().has(row.node.id) ? '−' : '+' }}</button>} @else {<span class="tree-leaf" aria-hidden="true">·</span>}<strong>{{ row.node.name }}</strong>@if (row.node.children.length) {<small>{{ row.node.children.length }} {{ i18n.text('children') }}</small>}</div></td>
+              <td>{{ i18n.type(row.node.type) }}</td>
+              <td><span class="ui-badge" [class.success]="row.node.isActive" [class.warning]="!row.node.isActive">{{ row.node.isActive ? i18n.text('active') : i18n.text('inactive') }}</span></td>
             </tr>
           }
         </tbody>

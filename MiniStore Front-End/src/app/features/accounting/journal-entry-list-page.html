@@ -1,0 +1,25 @@
+<main class="journal-list">
+  <app-page-header [eyebrow]="i18n.text('area')" [title]="i18n.text('directoryTitle')" [description]="i18n.text('directoryDescription')" />
+  <section class="filters" [attr.aria-label]="i18n.text('filters')">
+    <label class="ui-field"><span>{{ i18n.text('search') }}</span><input #searchBox type="search" [value]="query.search" (input)="search(searchBox.value)" [placeholder]="i18n.text('searchPlaceholder')" /></label>
+    <label class="ui-field"><span>{{ i18n.text('fromDate') }}</span><input #from type="date" [value]="query.fromDate" (change)="filter({ fromDate: from.value })" /></label>
+    <label class="ui-field"><span>{{ i18n.text('toDate') }}</span><input #to type="date" [value]="query.toDate" (change)="filter({ toDate: to.value })" /></label>
+    <label class="ui-field"><span>{{ i18n.text('status') }}</span><select #status [value]="query.status" (change)="filter({ status: $any(status.value) })"><option value="all">{{ i18n.text('allStatuses') }}</option><option value="1">{{ i18n.text('draft') }}</option><option value="2">{{ i18n.text('posted') }}</option><option value="3">{{ i18n.text('reversed') }}</option></select></label>
+  </section>
+  @if (loading()) {
+    <app-feedback-state kind="loading" [title]="i18n.text('directoryTitle')" />
+  } @else if (problem(); as failure) {
+    <app-api-recovery [problem]="failure" (retry)="load()" />
+  } @else if (result(); as page) {
+    @if (!page.items.length) {
+      <app-feedback-state kind="empty" [title]="i18n.text('noEntries')" />
+    } @else {
+      <app-data-table [label]="i18n.text('directoryTitle')">
+        <table><thead><tr><th>{{ i18n.text('title') }}</th><th>{{ i18n.text('date') }}</th><th>{{ i18n.text('sourceReference') }}</th><th>{{ i18n.text('status') }}</th><th>{{ i18n.text('totalDebit') }}</th><th>{{ i18n.text('totalCredit') }}</th><th></th></tr></thead>
+          <tbody>@for (entry of page.items; track entry.id) {<tr><td><strong>{{ entry.entryNumber }}</strong><small>{{ entry.description || '—' }}</small></td><td>{{ entry.date | date: 'mediumDate' }}</td><td>{{ entry.sourceType || '—' }} @if (entry.sourceReference) {<small>{{ entry.sourceReference }}</small>}</td><td><span class="ui-badge" [class.success]="entry.status === 2" [class.warning]="entry.status !== 2">{{ i18n.status(entry.status) }}</span></td><td>{{ entry.totalDebit | number: '1.2-2' }}</td><td>{{ entry.totalCredit | number: '1.2-2' }}</td><td><a [routerLink]="['/accounting/journal-entries', entry.id]">{{ i18n.text('view') }}</a></td></tr>}</tbody>
+        </table>
+      </app-data-table>
+    }
+    <app-pager [page]="query.page" [totalPages]="page.totalPages" [totalCount]="page.totalCount" [totalLabel]="i18n.text('totalRecords')" [previousLabel]="i18n.text('previous')" [nextLabel]="i18n.text('next')" (pageChange)="move($event)" />
+  }
+</main>

@@ -272,3 +272,10 @@ also requires the signed-in user to hold the current frozen step role; either pe
 Reads require `PurchaseOrders.View`. Create-from-award, approve, confirm, cancel, close, reopen, configure fulfillment, record direct
 delivery and record supplier confirmation each retain their distinct `PurchaseOrders.*` permission and antiforgery. UI visibility is
 convenience only; controller authorization and server lifecycle checks are authoritative.
+
+## UX-010 accounting reads
+
+- `JournalEntries.View` protects both `GET /api/v1/journal-entries` and positive-ID journal details. It also controls the
+  journal-directory destination inside the Accounting hub.
+- `Administration.Access` remains required for the chart of accounts and accounting settings. A journal-only user can open
+  the Accounting hub and journal directory but cannot discover Settings or account-management destinations.

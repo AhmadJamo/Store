@@ -251,3 +251,9 @@ All purchase tables, details and populated numeric inputs use the shared number 
 - `/app/accounting` — permission-aware Accounting center linking the current chart of accounts and accounting setup screens.
 - Hub children remain registered in command search, favorites and persistent tabs but are intentionally hidden from the main
   sidebar. API/controller authorization remains authoritative.
+
+## Angular accounting workspace (UX-010)
+
+- `/app/accounting/accounts` — expandable/collapsible chart hierarchy, code/name search and existing protected create form.
+- `/app/accounting/journal-entries` — server-filtered journal directory with search, inclusive dates, status and paging.
+- `/app/accounting/journal-entries/{id}` — existing immutable journal evidence with named accounts and dimensions.

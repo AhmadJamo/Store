@@ -139,3 +139,12 @@ backend checks passed.
 `JournalEntries.View`; posting, source uniqueness and reversal remain outside presentation cutover. Hosted 15/15,
 cutover/MVC rollback 125/125 and 1,763 backend checks passed. Demo had no payment-backed journal ID for a live detail probe,
 so no accounting data was created to fabricate one.
+# UX-010 accounting workspace update (2026-11-05)
+
+- `AccountService.GetPageAsync` now returns both the existing flat account options and a defensive hierarchical projection.
+- Angular `/accounting/accounts` renders expandable/collapsible parent-child rows and preserves safe search context.
+- `JournalEntryQueryService.GetPageAsync` and `IJournalEntryRepository.GetPagedAsync` add tenant-filtered search, inclusive
+  dates, status, deterministic newest-first ordering and bounded paging for immutable journal evidence.
+- `GET /api/v1/journal-entries` and Angular `/accounting/journal-entries` require `JournalEntries.View`; details retain the
+  existing positive-ID route. No create/update/post/reverse endpoint was added.
+- No database or posting-model change was required.

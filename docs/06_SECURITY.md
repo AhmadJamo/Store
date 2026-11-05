@@ -326,3 +326,9 @@ POST outside presentation cutover. Sensitive-field projection remains server-aut
 Role Edit requires a positive identifier. User creation, role creation/update/delete and permission/assignment mutations
 remain independently authorized and antiforgery-protected outside presentation cutover. Hosted acceptance passed 15/15,
 and both the 62-route cutover and MVC rollback passed without creating test identity data.
+
+## UX-010 accounting read boundary
+
+The journal directory is authenticated and protected by `JournalEntries.View`; repository queries remain under the shared
+tenant filter and return explicit DTOs with bounded page size. Invalid date ranges use localized validation Problem Details.
+No mutation endpoint or browser-side authorization rule was introduced. Anonymous live access was verified as HTTP 401.

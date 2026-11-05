@@ -28,4 +28,13 @@ describe('NavigationRegistryService', () => {
     expect(registry.visibleItems().some((item) => item.id === 'customer-payments')).toBe(false);
     expect(registry.visibleGroups().some((group) => group.id === 'sales')).toBe(false);
   });
+
+  it('opens the accounting hub for journal readers without exposing administration settings', () => {
+    const registry = createRegistry(['JournalEntries.View']);
+    const accounting = registry.visibleGroups().find((group) => group.id === 'accounting');
+
+    expect(accounting?.items.map((item) => item.id)).toEqual(['accounting-center']);
+    expect(registry.visibleItems().some((item) => item.id === 'journal-entries')).toBe(true);
+    expect(registry.visibleItems().some((item) => item.id === 'settings')).toBe(false);
+  });
 });

@@ -1,6 +1,12 @@
 # Codebase map
 ## Angular modernization foundation
 
+UX-010 extends `AccountService`/`AccountPageDto` with a defensive server-authored hierarchy and adds repository-owned journal
+search/paging through `IJournalEntryRepository`, `JournalEntryQueryService` and `JournalEntriesApiController`. Angular
+`features/accounting` owns the expandable chart and journal directory; `PageContextService` preserves only allowlisted
+filters. Existing tenant filters, `Administration.Access`, `JournalEntries.View` and posting services remain authoritative.
+See `docs/modernization/UI_UX_ACCOUNTING_WORKSPACE.md`.
+
 UX-009 adds reusable permission-aware module hubs under `features/module-hubs`, complete Purchasing/Sales/Accounting route
 registration through `workspace/navigation/navigation-registry.service.ts`, navigation-only bilingual resources through
 `navigation-localization.service.ts`, and executable 41-route coverage in `scripts/Test-UiUxConsistency.ps1`. Hidden hub

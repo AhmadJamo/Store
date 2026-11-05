@@ -21,6 +21,7 @@ const c = {
     revenue: 'Revenue',
     expense: 'Expense',
     unsaved: 'Discard unsaved account changes?',
+    search: 'Search accounts', searchPlaceholder: 'Code or account name', expandAll: 'Expand all', collapseAll: 'Collapse all', status: 'Status', children: 'subaccounts',
   },
   ar: {
     area: 'المحاسبة',
@@ -42,6 +43,7 @@ const c = {
     revenue: 'إيراد',
     expense: 'مصروف',
     unsaved: 'هل تريد تجاهل تغييرات الحساب؟',
+    search: 'بحث الحسابات', searchPlaceholder: 'الرمز أو اسم الحساب', expandAll: 'توسيع الكل', collapseAll: 'طي الكل', status: 'الحالة', children: 'حسابات فرعية',
   },
 } as const;
 export type AccountKey = keyof typeof c.en;

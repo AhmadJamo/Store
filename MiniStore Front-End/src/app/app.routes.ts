@@ -1332,6 +1332,10 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'accounting/journal-entries',
+        loadComponent: () => import('./features/accounting/journal-entry-list-page').then((module) => module.JournalEntryListPageComponent),
+      },
+      {
         path: 'accounting/journal-entries/:id',
         loadComponent: () =>
           import('./features/accounting/journal-entry-page').then(

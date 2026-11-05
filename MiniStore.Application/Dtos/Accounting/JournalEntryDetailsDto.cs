@@ -19,3 +19,24 @@ public sealed class JournalEntryDetailsDto
     public decimal TotalDebit => Lines.Sum(x => x.Debit);
     public decimal TotalCredit => Lines.Sum(x => x.Credit);
 }
+
+public sealed class JournalEntryListQueryDto
+{
+    public string? Search { get; set; }
+    public DateTime? FromDate { get; set; }
+    public DateTime? ToDate { get; set; }
+    public JournalEntryStatus? Status { get; set; }
+    public int Page { get; set; } = 1;
+    public int PageSize { get; set; } = 25;
+}
+
+public sealed record JournalEntryListItemDto(int Id, string EntryNumber, DateTime Date, string? Description,
+    string? SourceType, string? SourceReference, JournalEntryStatus Status, decimal TotalDebit, decimal TotalCredit);
+
+public sealed class JournalEntryListPageDto
+{
+    public JournalEntryListQueryDto Query { get; init; } = new();
+    public List<JournalEntryListItemDto> Items { get; init; } = [];
+    public int TotalCount { get; init; }
+    public int TotalPages { get; init; }
+}

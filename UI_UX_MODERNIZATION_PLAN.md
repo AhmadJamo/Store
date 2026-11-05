@@ -162,6 +162,14 @@ permission-backed routes already present in `app.routes.ts`.
 - [x] Keep detailed destinations out of the sidebar while preserving permission filtering everywhere.
 - [x] Add executable route-coverage, unit, accessibility, bundle and hosted RTL/LTR/mobile evidence.
 
+### UX-010 — Accounting workspace foundation — COMPLETED 2026-11-05
+
+- [x] Project the chart of accounts as a safe server-authored parent/child hierarchy.
+- [x] Add expandable, searchable bilingual Angular tree presentation with preserved safe context.
+- [x] Add a read-only, repository-paged journal directory with search/date/status filters and immutable-detail links.
+- [x] Preserve tenant isolation, existing permissions and all posting/fiscal-period authority.
+- [x] Verify .NET, security, Angular, accessibility, bundle and hosted RTL/LTR/mobile gates.
+
 ## Reusable component target
 
 - `EnterprisePageHeader`: title, description, breadcrumb, status, primary and secondary actions.
@@ -197,6 +205,7 @@ Every phase must record:
 | UX-007 | 232/232 Angular; 130 templates; production 335,312 B initial and 81,880 B largest lazy, custom budgets green | Permission-filtered results, Ctrl+K focus and memory-only query tests passed; hosted states, RTL/LTR, keyboard and 390px responsive checks passed | COMPLETE |
 | UX-008 | 232/232 Angular; 130 templates; isolated Release build clean; 1,843 security/inventory checks; production 335,312 B initial and 81,880 B largest lazy | 113-page inventory: 102 shared headers + 11 named layout exceptions; 5/5 hosted states, RTL/LTR, keyboard and 390px checks passed | COMPLETE WITH DOCUMENTED LAYOUT EXCEPTIONS |
 | UX-009 | 234/234 Angular; 131 templates; production 335,946 B initial and 81,880 B largest lazy | 72 registered destinations; 41/41 operational module routes; 5/5 hosted RTL/LTR, keyboard, states and 390px checks passed | COMPLETE |
+| UX-010 | 236/236 Angular; 1,843 security checks; 132 templates; production 336,053 B initial and 81,880 B largest lazy | Expandable account hierarchy; 73 destinations; 42/42 operational routes; 5/5 hosted acceptance | COMPLETE |
 
 ## Latest phase report
 

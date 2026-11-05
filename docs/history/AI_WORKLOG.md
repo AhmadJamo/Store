@@ -2193,3 +2193,11 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   production measured 335,946/358,400 initial and 81,880/81,920 largest lazy bytes, hosted RTL/LTR/state/keyboard/390px
   acceptance passed 5/5, and the published app/readiness endpoints returned 200. No API, schema, business rule or permission
   definition changed. Advanced the approved gate to `UX-010` Accounting Workspace Foundation.
+- 2026-11-05: Completed `UX-010` Accounting Workspace Foundation. `AccountService` now returns a defensive tenant-filtered
+  account hierarchy and Angular renders expandable/searchable rows while retaining the existing protected create form.
+  Added repository-owned journal search, inclusive date/status filters, deterministic paging and balanced list DTOs, exposed
+  through the existing `JournalEntries.View` boundary and a new Angular directory linked to immutable details. Safe filters
+  persist through `PageContextService`; no schema, journal mutation, posting or fiscal-period rule changed. Release built with
+  zero warnings/errors, 1,843 security checks and 236/236 Angular tests passed, 132 templates passed accessibility, bundles
+  measured 336,053/358,400 and 81,880/81,920, and hosted RTL/LTR/state/keyboard/mobile acceptance passed 5/5. The updated
+  app is running on port 54052. Advanced the gate to `UX-011` read-only financial reporting foundation.
