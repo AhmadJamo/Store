@@ -3,7 +3,8 @@
 > Source of truth: Code  
 > Last reviewed: 2026-11-05
 
-The Angular UI/UX modernization program is active under the root `UI_UX_MODERNIZATION_PLAN.md`. UX-001 through UX-007 are complete:
+The Angular UI/UX modernization program under `UI_UX_MODERNIZATION_PLAN.md` is complete for its approved presentation
+scope through UX-008:
 the permission-aware shell uses persistent collapsible business groups, active-route expansion and bilingual
 breadcrumbs while retaining Router authority and the existing persistent workspace tabs. Five pilot pages now preserve
 allowlisted list context through URL state and tenant/user-scoped memory; Purchase Request and Stock Transfer create
@@ -15,8 +16,10 @@ without moving validation or workflow authority to the client. Stock Transfers, 
 Sales Orders now render shared display-only progress and localized next-step guidance from their server-returned state;
 permissions and transition commands remain feature/server-owned. The shell now provides permission-filtered page/command
 search with Ctrl+K or `/`, workspace-tab navigation and memory-only safe recents; it never indexes business entities or
-persists search text. UX-008 consistency rollout and final validation is next; physical MVC
-retirement inventory is deferred, not cancelled.
+persists search text. The final executable inventory accounts for all 113 feature pages: 102 ERP workspace pages use the
+shared header and 11 authentication/public/onboarding/platform/design-reference layouts are named exceptions. Angular,
+Release, security, accessibility, bundle and hosted browser gates passed. Physical MVC retirement remains a separate,
+approval-gated program; `MOD-030F` is a non-destructive dependency inventory only.
 
 ## Project identity
 MiniStore is a server-rendered ASP.NET Core MVC store-management application under incremental Angular modernization. It targets .NET 10, uses EF Core 10 with SQL Server, ASP.NET Core Identity, Razor views, and a Domain/Application/Infrastructure/Web layered solution. The existing Web host now includes a protected versioned internal API foundation; no separate public API project is present.

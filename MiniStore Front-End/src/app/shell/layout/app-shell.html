@@ -24,7 +24,7 @@
           <nav class="breadcrumbs" [attr.aria-label]="i18n.text('workspace')"><span>{{ shellI18n.group(navigation.groupForItem(currentItem)) }}</span><span aria-hidden="true">›</span><span aria-current="page">{{ i18n.text(currentItem.labelKey) }}</span></nav>
         }
       </div>
-      <div class="command-search" (focusout)="onSearchFocusOut($event)">
+      <div class="command-search" role="search" (focusout)="onSearchFocusOut($event)">
         <label class="search" for="workspace-command-search"><span aria-hidden="true">⌕</span><input id="workspace-command-search" autocomplete="off" [value]="searchQuery()" (input)="updateSearch($any($event.target).value)" (focus)="searchOpen.set(true)" (keydown)="onSearchKeydown($event)" [placeholder]="shellI18n.search('searchPages')" maxlength="80" /><kbd>Ctrl K</kbd></label>
         @if (searchOpen()) {
           <section class="search-popover" [attr.aria-label]="shellI18n.search('searchPages')">

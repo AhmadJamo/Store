@@ -130,6 +130,10 @@ try {
         & (Join-Path $PSScriptRoot "Test-AngularStaticAccessibility.ps1") -SourcePath $source
     })
 
+    [void](Invoke-GateStep "ui-ux-consistency" "UI/UX consistency inventory" {
+        & (Join-Path $PSScriptRoot "Test-UiUxConsistency.ps1") -SourcePath $source
+    })
+
     Push-Location $frontEnd
     try {
         if (-not $SkipAngularTests) {

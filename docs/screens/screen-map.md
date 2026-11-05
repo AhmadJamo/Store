@@ -43,7 +43,15 @@ permission checks, reasons, command availability and protected API calls; no tra
 
 The topbar search now finds only session-permitted registered destinations and opens them through the persistent workspace
 tabs. Ctrl+K and `/` focus it from non-editing contexts; Enter, Arrow Down and Escape provide keyboard operation. Empty and
-no-match states are bilingual and responsive. Queries are never persisted and recent detail routes display only module roots.
+no-result states remain bilingual, queries are memory-only, and the search exposes a semantic search landmark.
+
+## Angular final consistency gate (UX-008)
+
+All 113 feature pages are now covered by an executable inventory. The 102 applicable ERP workspace pages consume the
+shared page header; Customer create/edit closed the final drift. Eleven authentication, public/onboarding,
+platform-operator and design-reference pages retain independent layouts by exact documented allowlist. Shared table,
+filter, form, detail, workflow, feedback and recovery primitives remain applicability-based and do not invent business
+concepts on pages that do not have them.
 
 The UI action audit, last verified on 2026-10-24, checks every static Razor link/form target against the compiled controller actions and every MVC POST against antiforgery validation. Dynamic client-only buttons were separately inventoried; the only submit-style button outside a form is the intentionally disabled Settings placeholder. The same automated gate now verifies Arabic entries for every literal shared-localizer key, rejects common direct-English Razor UI text and hard-coded controller action messages, detects case-insensitive duplicate resource keys, and protects the explicit nested customer form contract plus visible validation feedback.
 

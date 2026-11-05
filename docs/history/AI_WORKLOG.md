@@ -1,5 +1,12 @@
 # AI Work Log
 
+- 2026-11-05: Completed `UX-008` and the approved UI/UX modernization presentation scope. Added an executable
+  113-page consistency inventory to the unified gate, standardized Customer create/edit on the shared page header,
+  added a semantic search landmark and recorded 11 exact independent-layout exceptions. No API, DTO, schema, permission
+  or business rule changed. Angular passed 232/232 tests, 130 templates and custom bundle budgets; isolated Release
+  built with zero warnings/errors, SecurityRegression passed 1,843 checks, hosted browser acceptance passed 5/5 and the
+  published live host returned HTTP 200. Physical MVC retirement remains separate and deletion is not authorized.
+
 - 2026-11-05: Completed `UX-007`. Replaced the disabled shell search with bilingual permission-filtered destination search
   over the registered navigation catalog, routed results through the existing workspace access recheck, and added Ctrl+K,
   `/`, Enter/Arrow/Escape behavior plus memory-only safe recent destinations. No entity index, API, permission or business

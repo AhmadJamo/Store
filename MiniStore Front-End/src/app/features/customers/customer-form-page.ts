@@ -10,11 +10,12 @@ import { FormErrorSummaryComponent } from '../../shared/forms/form-error-summary
 import { FormFocusService } from '../../shared/forms/form-focus.service';
 import { SafeFormShortcutsDirective } from '../../shared/forms/safe-form-shortcuts.directive';
 import { ApiRecoveryComponent } from '../../shared/ui/api-recovery/api-recovery';
+import { PageHeaderComponent } from '../../shared/ui/page-header/page-header';
 import { WorkspaceService } from '../../workspace/state/workspace.service';
 import { CustomerApiService } from './data/customer-api.service';
 import { CustomerForm, CustomerFormPage } from './data/customer.models';
 
-@Component({ selector: 'app-customer-form-page', imports: [ReactiveFormsModule, RouterLink, FormErrorSummaryComponent, SafeFormShortcutsDirective, ApiRecoveryComponent], templateUrl: './customer-form-page.html', styleUrl: './customers.scss', changeDetection: ChangeDetectionStrategy.OnPush })
+@Component({ selector: 'app-customer-form-page', imports: [ReactiveFormsModule, RouterLink, FormErrorSummaryComponent, SafeFormShortcutsDirective, ApiRecoveryComponent, PageHeaderComponent], templateUrl: './customer-form-page.html', styleUrl: './customers.scss', changeDetection: ChangeDetectionStrategy.OnPush })
 export class CustomerFormPageComponent {
   protected readonly i18n = inject(LocalizationService);
   private readonly api = inject(CustomerApiService);

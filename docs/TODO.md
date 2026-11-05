@@ -22,8 +22,9 @@ The ERP SaaS Foundation Blueprint is imported as a non-authoritative planning re
   Purchase Orders and Sales Orders while preserving server transition authority. Completed 2026-11-05.
 - [x] UX-007 activate permission-filtered shell page/command search, Ctrl+K and `/` shortcuts, and safe memory-only recent
   destinations through the existing Router/workspace authority. Completed 2026-11-05.
-- [ ] UX-008 complete module-wide consistency rollout, exception inventory and final validation as defined in
-  `UI_UX_MODERNIZATION_PLAN.md`.
+- [x] UX-008 complete module-wide consistency rollout, executable exception inventory and final validation. Completed
+  2026-11-05 with all 113 pages accounted for (102 shared headers + 11 named exceptions), 232/232 Angular tests,
+  1,843 security/inventory checks, clean isolated Release build and 5/5 hosted browser checks.
 
 - [x] MOD-000 complete the read-only MVC-to-API/Angular repository audit, target architecture, dependency graph, workspace design, MVP, feature matrix and risk assessment. Completed 2026-10-24.
 - [x] MOD-001 create the isolated modernization branch and Angular 22 foundation in `MiniStore Front-End`, with strict standalone architecture, lazy routing, RTL/LTR shell, design tokens, restricted dev proxy, Signals workspace boundary, documentation, rollback and verified frontend/backend builds. Completed 2026-10-24.

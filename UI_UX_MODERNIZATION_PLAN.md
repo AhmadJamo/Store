@@ -1,6 +1,6 @@
 # MiniStore Angular UI/UX Modernization Plan
 
-> Status: IN PROGRESS  
+> Status: COMPLETE WITH DOCUMENTED LAYOUT EXCEPTIONS
 > Started: 2026-11-04  
 > Source of truth: implemented Angular code, backend contracts, permissions and executable verification  
 > Rule: update this file at the end of every implementation phase
@@ -146,12 +146,13 @@ permission-backed routes already present in `app.routes.ts`.
 - [x] Keep queries memory-only and avoid entity indexing or new API/business-data storage.
 - [x] Verify tests, production build, custom budgets, static accessibility and hosted RTL/LTR/mobile behavior.
 
-### UX-008 — Consistency rollout and validation — PENDING
+### UX-008 — Consistency rollout and validation — COMPLETED 2026-11-05
 
-- Migrate every implemented module to the shared page/table/form/workflow standards.
-- Run route, permission, workflow, responsive, RTL/LTR, keyboard, accessibility and performance verification.
-- Record exceptions explicitly; modernization is not complete while implemented modules use conflicting standards or
-  existing functionality lacks evidence.
+- [x] Add a reproducible inventory gate for all 113 feature pages and the reusable UI contracts.
+- [x] Close the remaining ERP-workspace header inconsistency on Customer create/edit.
+- [x] Record 11 intentional non-workspace layout exceptions by exact path and rationale.
+- [x] Integrate consistency inventory into the modernization acceptance command.
+- [x] Run Angular, Release, security, responsive, RTL/LTR, keyboard, accessibility and bundle verification.
 
 ## Reusable component target
 
@@ -186,21 +187,23 @@ Every phase must record:
 | UX-005 | 229/229 Angular; 129 templates; production 333,336 B initial and 81,880 B largest lazy, custom budgets green | Shared form/detail semantics passed; hosted states, RTL/LTR, keyboard and 390px responsive checks passed | COMPLETE |
 | UX-006 | 230/230 Angular; 130 templates; production 333,336 B initial and 81,880 B largest lazy, custom budgets green | Workflow stage/current/guidance semantics passed; hosted states, RTL/LTR, keyboard and 390px responsive checks passed | COMPLETE |
 | UX-007 | 232/232 Angular; 130 templates; production 335,312 B initial and 81,880 B largest lazy, custom budgets green | Permission-filtered results, Ctrl+K focus and memory-only query tests passed; hosted states, RTL/LTR, keyboard and 390px responsive checks passed | COMPLETE |
+| UX-008 | 232/232 Angular; 130 templates; isolated Release build clean; 1,843 security/inventory checks; production 335,312 B initial and 81,880 B largest lazy | 113-page inventory: 102 shared headers + 11 named layout exceptions; 5/5 hosted states, RTL/LTR, keyboard and 390px checks passed | COMPLETE WITH DOCUMENTED LAYOUT EXCEPTIONS |
 
 ## Latest phase report
 
-### UX-007 — Completed
+### UX-008 — Completed
 
-- Replaced the disabled topbar control with bilingual page/command search over `NavigationRegistryService.visibleItems()`.
-- Results inherit session permission filtering and `WorkspaceService.open()` rechecks access before navigating.
-- Added `Ctrl+K` and `/` shortcuts, Enter/Arrow/Escape handling, keyboard-focusable results, empty/no-match states and
-  390px-safe responsive presentation.
-- Search text remains signal-only and is cleared after navigation; recent destinations are memory-only and collapse
-  closed detail routes to their registered module destination, avoiding document identifiers.
+- Added `scripts/Test-UiUxConsistency.ps1` and made it a required modernization gate.
+- The gate accounts for every feature page: 102 ERP workspace pages use `app-page-header`; 11 public, authentication,
+  onboarding, platform-operator or design-reference pages retain intentionally independent layouts.
+- Customer create/edit now uses the same shared header as the rest of the ERP workspace.
+- The command search now exposes an explicit search landmark without changing routing, permissions or query storage.
+- Full evidence is recorded in `docs/modernization/UI_UX_CONSISTENCY_AUDIT.md`.
 
 ### Next
 
-- UX-008: roll the approved standards across implemented modules, record exceptions and run final consistency validation.
+- UI/UX modernization is complete within the approved presentation scope. The next approved task is the non-destructive
+  `MOD-030F` MVC-retirement dependency inventory; no MVC file deletion is authorized.
 
 ### Recorded risks
 
@@ -214,6 +217,8 @@ Every phase must record:
   should prefer explicit server-provided available-action metadata where contracts already expose it.
 - Shell search covers registered navigation destinations, not business entities. Entity search remains bounded to existing
   feature APIs and must not become an unrestricted browser-side index.
+- Eleven pages intentionally do not use the ERP workspace header because they are authentication, public/onboarding,
+  platform-operator or design-reference surfaces. Their exact allowlist is executable and must be reviewed if paths move.
 
 ## Risks
 
@@ -229,7 +234,8 @@ Every phase must record:
 
 ## Definition of complete
 
-The program is complete only when all implemented modules use the same approved shell, page, table, form, feedback and
+The program is complete only when all applicable implemented modules use the same approved shell, page, table, form, feedback and
 workflow standards; common operations require fewer verified interactions; safe page context survives appropriate
 navigation; permissions and backend workflow rules remain authoritative; and the complete regression, accessibility,
-responsive, RTL/LTR and production-build gates pass. A visually improved subset is not completion.
+responsive, RTL/LTR and production-build gates pass. UX-008 satisfies this definition for the approved presentation
+scope with 11 executable layout exceptions; production deployment readiness and physical MVC retirement remain separate.
