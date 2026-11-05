@@ -39,6 +39,12 @@ Stock Transfer, Purchase Request, Purchase Order and Sales Order details render 
 localized current/terminal state and next-step guidance. The component is display-only. Each feature retains status mapping,
 permission checks, reasons, command availability and protected API calls; no transition is inferred or executed by shared UI.
 
+## Angular shell command search (UX-007)
+
+The topbar search now finds only session-permitted registered destinations and opens them through the persistent workspace
+tabs. Ctrl+K and `/` focus it from non-editing contexts; Enter, Arrow Down and Escape provide keyboard operation. Empty and
+no-match states are bilingual and responsive. Queries are never persisted and recent detail routes display only module roots.
+
 The UI action audit, last verified on 2026-10-24, checks every static Razor link/form target against the compiled controller actions and every MVC POST against antiforgery validation. Dynamic client-only buttons were separately inventoried; the only submit-style button outside a form is the intentionally disabled Settings placeholder. The same automated gate now verifies Arabic entries for every literal shared-localizer key, rejects common direct-English Razor UI text and hard-coded controller action messages, detects case-insensitive duplicate resource keys, and protects the explicit nested customer form contract plus visible validation feedback.
 
 Angular shell, login, registration and onboarding language controls synchronize the server culture cookie before changing

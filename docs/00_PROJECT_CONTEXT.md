@@ -3,7 +3,7 @@
 > Source of truth: Code  
 > Last reviewed: 2026-11-05
 
-The Angular UI/UX modernization program is active under the root `UI_UX_MODERNIZATION_PLAN.md`. UX-001 through UX-006 are complete:
+The Angular UI/UX modernization program is active under the root `UI_UX_MODERNIZATION_PLAN.md`. UX-001 through UX-007 are complete:
 the permission-aware shell uses persistent collapsible business groups, active-route expansion and bilingual
 breadcrumbs while retaining Router authority and the existing persistent workspace tabs. Five pilot pages now preserve
 allowlisted list context through URL state and tenant/user-scoped memory; Purchase Request and Stock Transfer create
@@ -13,7 +13,9 @@ configuration, feature-owned cell templates and shared table states without clie
 sections, localized required/optional cues and detail sections now pilot Products, Purchase Requests and Stock Transfers
 without moving validation or workflow authority to the client. Stock Transfers, Purchase Requests, Purchase Orders and
 Sales Orders now render shared display-only progress and localized next-step guidance from their server-returned state;
-permissions and transition commands remain feature/server-owned. UX-007 productivity is next; physical MVC
+permissions and transition commands remain feature/server-owned. The shell now provides permission-filtered page/command
+search with Ctrl+K or `/`, workspace-tab navigation and memory-only safe recents; it never indexes business entities or
+persists search text. UX-008 consistency rollout and final validation is next; physical MVC
 retirement inventory is deferred, not cancelled.
 
 ## Project identity

@@ -138,12 +138,13 @@ permission-backed routes already present in `app.routes.ts`.
 - [x] Reuse the workflow footer for Purchase and Sales Order action zones while preserving feature permission/state checks.
 - [x] Verify tests, production build, static accessibility and hosted RTL/LTR/mobile behavior.
 
-### UX-007 — Productivity and connected information — PENDING
+### UX-007 — Productivity and connected information — COMPLETED 2026-11-05
 
-- Replace the disabled search with permission-filtered page/command search; add entity search only where backend APIs
-  provide bounded endpoints.
-- Add contextual quick actions, keyboard shortcut discovery and safe recent destinations.
-- Connect related records using existing identifiers and APIs; do not duplicate source-of-truth data.
+- [x] Replace the disabled shell search with permission-filtered page/command destination search.
+- [x] Route every result through the existing Router/workspace-tab authority and permission recheck.
+- [x] Add `Ctrl+K` and `/` discovery, keyboard activation, responsive results and safe memory-only recent destinations.
+- [x] Keep queries memory-only and avoid entity indexing or new API/business-data storage.
+- [x] Verify tests, production build, custom budgets, static accessibility and hosted RTL/LTR/mobile behavior.
 
 ### UX-008 — Consistency rollout and validation — PENDING
 
@@ -184,31 +185,35 @@ Every phase must record:
 | UX-004 | 227/227 Angular; 126 templates; production 333,336 B initial and 81,880 B largest lazy, custom budgets green | Typed columns, bounded states and server-sort intent tests passed; hosted RTL/LTR, keyboard and 390px responsive checks passed | COMPLETE |
 | UX-005 | 229/229 Angular; 129 templates; production 333,336 B initial and 81,880 B largest lazy, custom budgets green | Shared form/detail semantics passed; hosted states, RTL/LTR, keyboard and 390px responsive checks passed | COMPLETE |
 | UX-006 | 230/230 Angular; 130 templates; production 333,336 B initial and 81,880 B largest lazy, custom budgets green | Workflow stage/current/guidance semantics passed; hosted states, RTL/LTR, keyboard and 390px responsive checks passed | COMPLETE |
+| UX-007 | 232/232 Angular; 130 templates; production 335,312 B initial and 81,880 B largest lazy, custom budgets green | Permission-filtered results, Ctrl+K focus and memory-only query tests passed; hosted states, RTL/LTR, keyboard and 390px responsive checks passed | COMPLETE |
 
 ## Latest phase report
 
-### UX-006 — Completed
+### UX-007 — Completed
 
-- Added a reusable accessible `WorkflowProgress` component that renders only feature-supplied server status evidence.
-- Added bilingual current/next-step guidance to Stock Transfers, Purchase Requests, Purchase Orders and Sales Orders.
-- Purchase and Sales Order action zones now use the shared workflow footer; their existing permissions, status checks,
-  reasons, confirmation rules and protected API commands remain unchanged.
-- Reformatted the Sales Orders component for maintainability without changing its behavior or contracts.
+- Replaced the disabled topbar control with bilingual page/command search over `NavigationRegistryService.visibleItems()`.
+- Results inherit session permission filtering and `WorkspaceService.open()` rechecks access before navigating.
+- Added `Ctrl+K` and `/` shortcuts, Enter/Arrow/Escape handling, keyboard-focusable results, empty/no-match states and
+  390px-safe responsive presentation.
+- Search text remains signal-only and is cleared after navigation; recent destinations are memory-only and collapse
+  closed detail routes to their registered module destination, avoiding document identifiers.
 
 ### Next
 
-- UX-007: replace unfinished search with permission-filtered page/command search and add safe connected-information aids.
+- UX-008: roll the approved standards across implemented modules, record exceptions and run final consistency validation.
 
 ### Recorded risks
 
 - The built-in Angular framework chunk still emits its pre-existing 180 kB warning; the project release budgets remain
-  green at 333,336/358,400 initial bytes and 81,880/81,920 largest lazy bytes.
+  green at 335,312/358,400 initial bytes and 81,880/81,920 largest lazy bytes.
 - Column visibility persistence was intentionally deferred: a generic preference could hide identity or action evidence.
   Any future column chooser must use a feature-owned allowlist and keep required columns visible.
 - Required/optional cues improve scanning but do not replace validation. Existing Angular validators and server Problem
   Details remain authoritative, and a future rollout must classify each module field explicitly.
 - Workflow guidance is descriptive, not authoritative. It must remain synchronized with server statuses; future workflows
   should prefer explicit server-provided available-action metadata where contracts already expose it.
+- Shell search covers registered navigation destinations, not business entities. Entity search remains bounded to existing
+  feature APIs and must not become an unrestricted browser-side index.
 
 ## Risks
 

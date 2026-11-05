@@ -26,6 +26,10 @@
 ضمن الميزانيات عند 333,336/358,400 بايت أولية و81,880/81,920 لأكبر lazy chunk. نجح عقد مراحل سير العمل
 والمرحلة الحالية والإرشاد، ونجحت 5/5 فحوص متصفح للحالات وRTL/LTR ولوحة المفاتيح وسطح المكتب و390px.
 
+بوابة `UX-007` في 2026-11-05: نجح 232/232 اختبار Angular عبر 110 ملفات، و130 قالبًا ثابتًا، والبناء الإنتاجي
+ضمن الميزانيات عند 335,312/358,400 بايت أولية و81,880/81,920 لأكبر lazy chunk. نجحت فلترة الوجهات المسموحة
+واختصار Ctrl+K وعدم تخزين الاستعلام، ونجحت 5/5 فحوص متصفح للحالات وRTL/LTR ولوحة المفاتيح و390px.
+
 أحدث بوابة بعد `MOD-030E2G` في 2026-11-01: Release نجح بلا تحذيرات أو أخطاء، وSecurityRegression نجح في
 1,447 فحصًا، وAngular نجح في 218/218 اختبارًا عبر 108 ملفات. نجح فحص الوصول الثابت لـ122 قالبًا، ونجحت ميزانية
 الإنتاج عند 327,391/358,400 بايت أولية و81,880/81,920 لأكبر lazy chunk. تشغيل Demo المصرح به نجح 15/15 بلا
@@ -39,6 +43,7 @@
 | UX-004 enterprise tables | 227/227 Angular across 110 files; 126 templates; typed columns/states/server-sort intent and 5/5 browser layout checks passed; custom bundles green | 2026-11-05 |
 | UX-005 forms and details | 229/229 Angular across 110 files; 129 templates; shared field cues/form/detail sections and 5/5 browser layout checks passed; custom bundles green | 2026-11-05 |
 | UX-006 workflow integration | 230/230 Angular across 110 files; 130 templates; progress/current/guidance contract and 5/5 browser layout checks passed; custom bundles green | 2026-11-05 |
+| UX-007 productivity search | 232/232 Angular across 110 files; 130 templates; permission filtering/Ctrl+K/memory-only query and 5/5 browser layout checks passed; custom bundles green | 2026-11-05 |
 | Authenticated MOD-029B dual-run gate | 9/9 browser checks, zero skips; culture, financial empty-state and real inventory row reconciled across MVC/API; 100/100 performance requests passed | 2026-10-30 |
 | Authenticated MOD-029C high-risk cohorts | 15/15 browser checks, zero skips; permission-allowed GET/JSON reads passed for sales, purchasing, inventory, accounting and administration | 2026-10-30 |
 | `dotnet run --project tests/SecurityRegression/SecurityRegression.csproj -c Release --no-build` | Passed 1072 checks (نجح 1072 فحصًا)، وتشمل الآن versioned authenticated session API، حماية mutation بـantiforgery، paging bounds/sort allow-list، واستخدام permission boundary المشترك | 2026-10-24 |

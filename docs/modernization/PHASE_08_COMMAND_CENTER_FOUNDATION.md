@@ -1,5 +1,11 @@
 # MOD-008 — Reusable Command Center foundation
 
+## UX-007 shell productivity evolution (2026-11-05)
+
+The later UI/UX program activates permission-filtered page/command search in the persistent shell. It reuses the registered
+navigation catalog and workspace permission recheck, supports Ctrl+K and `/`, and keeps queries/recent destinations in memory
+only. This is destination search, not a browser-side entity index; existing bounded Customer/Supplier previews remain separate.
+
 > Status: COMPLETED  
 > Completed: 2026-10-24  
 > Database/backend changes: none

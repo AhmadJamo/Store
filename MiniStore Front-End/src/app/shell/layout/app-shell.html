@@ -24,7 +24,23 @@
           <nav class="breadcrumbs" [attr.aria-label]="i18n.text('workspace')"><span>{{ shellI18n.group(navigation.groupForItem(currentItem)) }}</span><span aria-hidden="true">›</span><span aria-current="page">{{ i18n.text(currentItem.labelKey) }}</span></nav>
         }
       </div>
-      <label class="search"><span aria-hidden="true">⌕</span><input [placeholder]="i18n.text('search')" disabled /></label>
+      <div class="command-search" (focusout)="onSearchFocusOut($event)">
+        <label class="search" for="workspace-command-search"><span aria-hidden="true">⌕</span><input id="workspace-command-search" autocomplete="off" [value]="searchQuery()" (input)="updateSearch($any($event.target).value)" (focus)="searchOpen.set(true)" (keydown)="onSearchKeydown($event)" [placeholder]="shellI18n.search('searchPages')" maxlength="80" /><kbd>Ctrl K</kbd></label>
+        @if (searchOpen()) {
+          <section class="search-popover" [attr.aria-label]="shellI18n.search('searchPages')">
+            <h2>{{ searchQuery().trim() ? shellI18n.search('searchResults') : shellI18n.search('recentDestinations') }}</h2>
+            @if (displayedSearchItems().length) {
+              <nav class="search-results" [attr.aria-label]="shellI18n.search('searchResults')">
+                @for (item of displayedSearchItems(); track item.id) {
+                  <button type="button" (click)="navigateSearch(item)"><span aria-hidden="true">{{ item.icon }}</span><span><strong>{{ i18n.text(item.labelKey) }}</strong><small>{{ shellI18n.group(navigation.groupForItem(item)) }}</small></span></button>
+                }
+              </nav>
+            } @else {
+              <p>{{ searchQuery().trim() ? shellI18n.search('noSearchResults') : shellI18n.search('searchStartHint') }}</p>
+            }
+          </section>
+        }
+      </div>
       @if (session.session(); as currentSession) {
         <div class="session-summary">
           <span><small>{{ i18n.text('signedInCompany') }}</small><strong>{{ currentSession.tenant.name }}</strong></span>

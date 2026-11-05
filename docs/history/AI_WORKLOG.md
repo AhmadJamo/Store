@@ -1,5 +1,11 @@
 # AI Work Log
 
+- 2026-11-05: Completed `UX-007`. Replaced the disabled shell search with bilingual permission-filtered destination search
+  over the registered navigation catalog, routed results through the existing workspace access recheck, and added Ctrl+K,
+  `/`, Enter/Arrow/Escape behavior plus memory-only safe recent destinations. No entity index, API, permission or business
+  rule was added and queries are never persisted. Angular passed 232/232 tests, 130 static templates, 5/5 hosted browser
+  checks and custom budgets at 335,312 initial and 81,880 largest lazy bytes.
+
 - 2026-11-05: Completed `UX-006`. Added an accessible display-only workflow progress component and bilingual next-step
   guidance across Stock Transfers, Purchase Requests, Purchase Orders and Sales Orders. Purchase/Sales Order actions now
   reuse the shared workflow footer while existing statuses, permissions, reasons, confirmation rules and protected API

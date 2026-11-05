@@ -1,5 +1,5 @@
 import { DOCUMENT } from '@angular/common';
-import { ChangeDetectionStrategy, Component, DestroyRef, HostListener, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, HostListener, computed, inject, OnInit, signal } from '@angular/core';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -32,6 +32,27 @@ export class AppShell implements OnInit {
   protected readonly session = inject(ApiSessionService);
   protected readonly signingOut = signal(false);
   protected readonly signOutFailed = signal(false);
+  protected readonly searchQuery = signal('');
+  protected readonly searchOpen = signal(false);
+  protected readonly searchResults = computed(() => {
+    const query = this.searchQuery().trim().toLocaleLowerCase(this.i18n.locale());
+    if (!query) return [];
+    return this.navigation.visibleItems().filter(item => {
+      const label = this.i18n.text(item.labelKey).toLocaleLowerCase(this.i18n.locale());
+      const group = this.shellI18n.group(this.navigation.groupForItem(item)).toLocaleLowerCase(this.i18n.locale());
+      return label.includes(query) || group.includes(query);
+    }).slice(0, 8);
+  });
+  protected readonly recentDestinations = computed(() => {
+    const seen = new Set<string>();
+    return this.workspace.recentlyClosed().flatMap(tab => {
+      const item = this.navigation.findById(tab.navigationId);
+      if (!item || !this.navigation.canAccess(item) || seen.has(item.id)) return [];
+      seen.add(item.id);
+      return [item];
+    }).slice(0, 5);
+  });
+  protected readonly displayedSearchItems = computed(() => this.searchQuery().trim() ? this.searchResults() : this.recentDestinations());
   private readonly account = inject(AccountApiService);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
@@ -71,6 +92,60 @@ export class AppShell implements OnInit {
     if (!this.confirmLeave(targetId)) return;
     const tab = this.workspace.open(item);
     if (tab) void this.router.navigateByUrl(tab.route);
+  }
+
+  protected updateSearch(value: string): void {
+    this.searchQuery.set(value.slice(0, 80));
+    this.searchOpen.set(true);
+  }
+
+  protected navigateSearch(item: NavigationItem): void {
+    const targetId = `${item.id}::default`;
+    if (!this.confirmLeave(targetId)) return;
+    const tab = this.workspace.open(item);
+    if (tab) void this.router.navigateByUrl(tab.route);
+    this.closeSearch();
+  }
+
+  protected onSearchKeydown(event: KeyboardEvent): void {
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      this.closeSearch();
+      return;
+    }
+    if (event.key === 'ArrowDown') {
+      event.preventDefault();
+      this.document.querySelector<HTMLElement>('.search-results button')?.focus();
+      return;
+    }
+    if (event.key === 'Enter') {
+      const first = this.displayedSearchItems()[0];
+      if (first) {
+        event.preventDefault();
+        this.navigateSearch(first);
+      }
+    }
+  }
+
+  protected onSearchFocusOut(event: FocusEvent): void {
+    const container = event.currentTarget as HTMLElement;
+    if (!container.contains(event.relatedTarget as Node | null)) this.searchOpen.set(false);
+  }
+
+  @HostListener('document:keydown', ['$event'])
+  protected onGlobalKeydown(event: KeyboardEvent): void {
+    const target = event.target as HTMLElement | null;
+    const typing = !!target && ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName);
+    const shortcut = (event.ctrlKey || event.metaKey) && event.key.toLocaleLowerCase() === 'k';
+    if (!shortcut && !(event.key === '/' && !typing)) return;
+    event.preventDefault();
+    this.searchOpen.set(true);
+    queueMicrotask(() => this.document.getElementById('workspace-command-search')?.focus());
+  }
+
+  private closeSearch(): void {
+    this.searchOpen.set(false);
+    this.searchQuery.set('');
   }
 
   protected skipToMain(event: Event): void {
