@@ -332,3 +332,10 @@ and both the 62-route cutover and MVC rollback passed without creating test iden
 The journal directory is authenticated and protected by `JournalEntries.View`; repository queries remain under the shared
 tenant filter and return explicit DTOs with bounded page size. Invalid date ranges use localized validation Problem Details.
 No mutation endpoint or browser-side authorization rule was introduced. Anonymous live access was verified as HTTP 401.
+
+## UX-012 controlled manual-journal boundary
+
+Manual-journal mutations are authenticated, independently permissioned and antiforgery protected. The Application service
+resolves every account/branch/warehouse through tenant-filtered repositories, uses a stable GUID request key, rejects key
+reuse with different content and executes Draft/Post/Reverse inside the existing Serializable UnitOfWork. No EF access is
+introduced in the controller, and posted evidence has no update/delete endpoint.

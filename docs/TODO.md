@@ -339,8 +339,8 @@ The ERP SaaS Foundation Blueprint is imported as a non-authoritative planning re
 - Implemented WMS-010 hierarchical location metadata, barcode, sequence, tree ordering, warehouse-filtered parent selection, operational capabilities, edit workflow and cycle/same-warehouse validation. Putaway/transfers/relocations enforce receive/pick capabilities. Its additive migration is applied to `AHMAD/MiniStoreDb`; authenticated UI smoke remains because no login secret is stored in the repository.
 
 ## In Progress
-- UX-011 Read-only Financial Reporting Foundation is complete. Trial balance, balance sheet and income statement are
-  server-calculated with exact journal drill-down. UX-012 controlled manual-journal foundation is next.
+- UX-012 Controlled Manual Journal Foundation is complete. Balanced Draft/Post/Reverse uses the existing gateway and fiscal
+  periods with independent permissions. UX-013 receivables/payables aging and subledger reconciliation is next.
 - UX-009 navigation completeness is complete: 72 registered destinations and 41/41 operational routes are covered through
   permission-aware Purchasing, Sales and Accounting hubs. UX-010 Accounting Workspace Foundation is next.
 - PUR-280 is implemented. The purchase completion roadmap is complete; continue from the master roadmap after reconciling customer-management and sales requirements.

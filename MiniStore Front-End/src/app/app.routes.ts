@@ -1340,6 +1340,16 @@ export const routes: Routes = [
         loadComponent: () => import('./features/accounting/financial-report-page').then((module) => module.FinancialReportPageComponent),
       },
       {
+        path: 'accounting/manual-journals',
+        canDeactivate: [(component) => component.canDeactivate()],
+        loadComponent: () => import('./features/accounting/manual-journal-page').then((module) => module.ManualJournalPageComponent),
+      },
+      {
+        path: 'accounting/manual-journals/:id',
+        canDeactivate: [(component) => component.canDeactivate()],
+        loadComponent: () => import('./features/accounting/manual-journal-page').then((module) => module.ManualJournalPageComponent),
+      },
+      {
         path: 'accounting/journal-entries/:id',
         loadComponent: () =>
           import('./features/accounting/journal-entry-page').then(

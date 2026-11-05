@@ -44,6 +44,12 @@ public sealed class JournalPostingService(
         return entry;
     }
 
+    public async Task PostDraftAsync(JournalEntry entry)
+    {
+        await fiscalPeriods.EnsurePostingAllowedAsync(entry.Date);
+        entry.Post();
+    }
+
     public async Task<JournalEntry> ReverseAsync(string originalSourceType, string originalSourceReference,
         string reversalNumber, DateTime reversalDate, string reason)
     {

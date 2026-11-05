@@ -179,6 +179,15 @@ permission-backed routes already present in `app.routes.ts`.
 - [x] Preserve report period/tab context and expose the workspace through the existing accounting read permission.
 - [x] Verify golden accounting data, .NET, Angular, accessibility, route coverage, bundles and hosted RTL/LTR/mobile gates.
 
+### UX-012 — Controlled manual journal foundation — COMPLETED 2026-11-06
+
+- [x] Add independent View/Create/Post/Reverse accounting permissions and protected API commands.
+- [x] Add balanced tenant-validated Draft composition with named accounts and optional dimensions.
+- [x] Route posting and exact reversal through the existing journal gateway, fiscal periods and Serializable UnitOfWork.
+- [x] Preserve unsaved content and the stable retry key in memory only; clear it after success.
+- [x] Keep posted/reversed evidence immutable and provide direct next-step detail navigation.
+- [x] Verify golden lifecycle, isolation, idempotency, closed periods, Angular, accessibility and bundle gates.
+
 ## Reusable component target
 
 - `EnterprisePageHeader`: title, description, breadcrumb, status, primary and secondary actions.
@@ -216,6 +225,7 @@ Every phase must record:
 | UX-009 | 234/234 Angular; 131 templates; production 335,946 B initial and 81,880 B largest lazy | 72 registered destinations; 41/41 operational module routes; 5/5 hosted RTL/LTR, keyboard, states and 390px checks passed | COMPLETE |
 | UX-010 | 236/236 Angular; 1,843 security checks; 132 templates; production 336,053 B initial and 81,880 B largest lazy | Expandable account hierarchy; 73 destinations; 42/42 operational routes; 5/5 hosted acceptance | COMPLETE |
 | UX-011 | 237/237 Angular; 1,847 security/accounting checks; 133 templates; production 336,179 B initial and 81,880 B largest lazy | Golden balanced ledger; 74 destinations; 43/43 operational routes; hosted acceptance 6 passed/0 failed | COMPLETE |
+| UX-012 | 238/238 Angular; 1,855 security/accounting checks; 134 templates; production 336,483 B initial and 81,880 B largest lazy | Golden Draft/Post/Reverse lifecycle; 75 destinations; 44/44 routes; hosted 6 passed/0 failed | COMPLETE |
 
 ## Latest phase report
 
@@ -242,10 +252,17 @@ Every phase must record:
 - Documented draft exclusion, reversal evidence, normal balances, current earnings and company-currency boundaries.
 - Full evidence is recorded in `docs/modernization/UI_UX_FINANCIAL_REPORTING.md`.
 
+### UX-012 — Completed
+
+- Added balanced manual Draft creation, explicit posting and exact opposite-entry reversal without direct EF access.
+- Added separate permissions, CSRF protection, tenant dimension validation and stable retry behavior.
+- Added memory-only unsaved form recovery and removed mutation actions after their one-time state transition.
+- Full evidence is recorded in `docs/modernization/UI_UX_MANUAL_JOURNALS.md`.
+
 ### Next
 
-- `UX-012` is the approved controlled manual-journal foundation: draft composition, balanced validation, explicit posting
-  and exact reversal through the existing journal gateway and fiscal-period authority.
+- `UX-013` is the approved receivables/payables aging foundation: server-authored as-of buckets, source-document drill-down
+  and subledger-to-ledger reconciliation without adding collection or payment mutations.
 
 ### Recorded risks
 

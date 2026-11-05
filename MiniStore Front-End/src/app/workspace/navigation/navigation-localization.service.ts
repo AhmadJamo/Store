@@ -3,6 +3,7 @@ import { LocalizationService, MessageKey } from '../../core/localization/localiz
 
 const navigationMessages = {
   'ar-JO': {
+    manualJournals: 'القيود اليدوية',
     financialReports: 'التقارير المالية',
     purchasingCenter: 'مركز المشتريات', purchasingCenterDescription: 'مساحة موحدة للتخطيط والتوريد والاستلام والذمم الدائنة وعمليات الموردين.', salesCenter: 'مركز المبيعات', salesCenterDescription: 'مساحة موحدة للتسعير والطلبات والتسليم والتحصيل والمرتجعات والبيع الفوري.', accountingCenter: 'مركز المحاسبة', accountingCenterDescription: 'وصول منظم إلى شجرة الحسابات وإعدادات المحاسبة والفترات والعملات وربط الفروع.', noModuleDestinations: 'لا توجد وجهات متاحة', noModuleDestinationsDescription: 'لا تملك صلاحية لفتح أي مساحة عمل في هذه الوحدة.', openWorkspace: 'فتح مساحة العمل',
     planningAndSourcing: 'التخطيط والتوريد', receivingAndFulfillment: 'الاستلام والتنفيذ', payablesAndControl: 'الذمم الدائنة والرقابة', supplierOperations: 'عمليات الموردين', commercialPreparation: 'التجهيز التجاري', salesFulfillment: 'تنفيذ المبيعات', receivablesAndCollection: 'الذمم المدينة والتحصيل', returnsAndCredits: 'المرتجعات والإشعارات الدائنة', immediateSales: 'البيع الفوري', accountingSetup: 'الإعداد المحاسبي',
@@ -10,6 +11,7 @@ const navigationMessages = {
     accountingReview: 'المراجعة المحاسبية', journalEntries: 'دليل القيود اليومية', salesPricing: 'تسعير المبيعات', salesQuotationTemplates: 'قوالب عروض الأسعار', salesQuotations: 'عروض الأسعار', salesApprovalRules: 'قواعد اعتماد المبيعات', salesOrders: 'أوامر البيع', salesDeliveries: 'تسليمات المبيعات', customerInvoices: 'فواتير العملاء', customerPayments: 'دفعات العملاء', customerReturnRequests: 'طلبات مرتجعات العملاء', customerReturnReceipts: 'استلام مرتجعات العملاء', customerCreditNotes: 'إشعارات العملاء الدائنة', directSales: 'البيع المباشر', pointOfSale: 'نقطة البيع', directSalesReturns: 'مرتجعات البيع المباشر', chartOfAccounts: 'شجرة الحسابات',
   },
   'en-US': {
+    manualJournals: 'Manual journals',
     financialReports: 'Financial reports',
     purchasingCenter: 'Purchasing center', purchasingCenterDescription: 'A unified workspace for planning, sourcing, receiving, payables, and supplier operations.', salesCenter: 'Sales center', salesCenterDescription: 'A unified workspace for pricing, orders, delivery, collection, returns, and immediate sales.', accountingCenter: 'Accounting center', accountingCenterDescription: 'Organized access to the chart of accounts, accounting setup, periods, currencies, and branch mappings.', noModuleDestinations: 'No destinations available', noModuleDestinationsDescription: 'You do not have permission to open a workspace in this module.', openWorkspace: 'Open workspace',
     planningAndSourcing: 'Planning and sourcing', receivingAndFulfillment: 'Receiving and fulfillment', payablesAndControl: 'Payables and control', supplierOperations: 'Supplier operations', commercialPreparation: 'Commercial preparation', salesFulfillment: 'Sales fulfillment', receivablesAndCollection: 'Receivables and collection', returnsAndCredits: 'Returns and credits', immediateSales: 'Immediate sales', accountingSetup: 'Accounting setup',

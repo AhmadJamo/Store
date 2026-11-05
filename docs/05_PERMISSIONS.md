@@ -277,5 +277,8 @@ convenience only; controller authorization and server lifecycle checks are autho
 
 - `JournalEntries.View` protects both `GET /api/v1/journal-entries` and positive-ID journal details. It also controls the
   journal-directory destination inside the Accounting hub.
+- `ManualJournals.View`, `ManualJournals.Create`, `ManualJournals.Post` and `ManualJournals.Reverse` independently protect
+  manual-journal discovery, Draft persistence, financial posting and exact reversal. Create does not imply View; the Angular
+  workspace avoids the list endpoint for a create-only user. None grants accounting settings or operational-document posting.
 - `Administration.Access` remains required for the chart of accounts and accounting settings. A journal-only user can open
   the Accounting hub and journal directory but cannot discover Settings or account-management destinations.

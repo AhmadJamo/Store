@@ -6,7 +6,7 @@ namespace MiniStore.Application.Services;
 public sealed class JournalEntryQueryService(IJournalEntryRepository entries, IAccountRepository accounts,
     IBranchRepository branches, IWarehouseRepository warehouses)
 {
-    public async Task<JournalEntryListPageDto> GetPageAsync(JournalEntryListQueryDto query)
+    public async Task<JournalEntryListPageDto> GetPageAsync(JournalEntryListQueryDto query, string? sourceTypePrefix = null)
     {
         var normalized = new JournalEntryListQueryDto
         {
@@ -21,7 +21,8 @@ public sealed class JournalEntryQueryService(IJournalEntryRepository entries, IA
         if (normalized.FromDate.HasValue && normalized.ToDate.HasValue && normalized.FromDate > normalized.ToDate)
             throw new ArgumentException("The start date cannot be after the end date.");
         var result = await entries.GetPagedAsync(new JournalEntrySearchCriteria(normalized.Search,
-            normalized.FromDate, normalized.ToDate, normalized.Status, normalized.AccountId, normalized.Page, normalized.PageSize));
+            normalized.FromDate, normalized.ToDate, normalized.Status, normalized.AccountId, sourceTypePrefix,
+            normalized.Page, normalized.PageSize));
         var filteredAccount = normalized.AccountId.HasValue ? await accounts.GetByIdAsync(normalized.AccountId.Value) : null;
         return new JournalEntryListPageDto
         {

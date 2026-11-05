@@ -348,3 +348,12 @@
 - Passed 1,847 security/accounting checks, 237 Angular tests, 133 templates, 74 destinations, 43/43 operational routes,
   production budgets and hosted RTL/LTR/keyboard/mobile acceptance.
 - Next approved slice: UX-012 controlled manual-journal foundation; cash flow, consolidation and budgets remain deferred.
+
+## UX-012 — Controlled manual journal foundation — COMPLETE 2026-11-06
+
+- Added separate View/Create/Post/Reverse permissions, tenant-filtered named options and a balanced Draft composer.
+- Kept financial authority in the shared posting/reversal gateway, fiscal periods and Serializable UnitOfWork.
+- Added stable retry keys, memory-only unsaved recovery, immutable posted evidence and exact reversal navigation.
+- Passed 1,855 security/accounting checks, 238 Angular tests, 134 templates, 75 destinations, 44/44 operational routes and
+  production budgets without a schema migration.
+- Next approved slice: UX-013 receivables/payables aging and subledger reconciliation.

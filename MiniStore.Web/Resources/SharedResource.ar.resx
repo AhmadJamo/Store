@@ -4699,4 +4699,23 @@
   <data name="Checkout is no longer payable." xml:space="preserve"><value>طلب الدفع لم يعد قابلًا للسداد.</value></data>
   <data name="Payment reference is required." xml:space="preserve"><value>مرجع الدفع مطلوب.</value></data>
   <data name="The start date cannot be after the end date." xml:space="preserve"><value>لا يمكن أن يكون تاريخ البداية بعد تاريخ النهاية.</value></data>
+  <data name="A manual journal description is required." xml:space="preserve"><value>وصف القيد اليدوي مطلوب.</value></data>
+  <data name="A manual journal date is required." xml:space="preserve"><value>تاريخ القيد اليدوي مطلوب.</value></data>
+  <data name="A manual journal requires at least two lines." xml:space="preserve"><value>يتطلب القيد اليدوي سطرين على الأقل.</value></data>
+  <data name="Select an active account for every manual journal line." xml:space="preserve"><value>اختر حسابًا نشطًا لكل سطر في القيد اليدوي.</value></data>
+  <data name="The selected branch is unavailable." xml:space="preserve"><value>الفرع المحدد غير متاح.</value></data>
+  <data name="The selected warehouse is unavailable." xml:space="preserve"><value>المستودع المحدد غير متاح.</value></data>
+  <data name="The selected warehouse does not belong to the selected branch." xml:space="preserve"><value>المستودع المحدد لا يتبع الفرع المحدد.</value></data>
+  <data name="Manual journal amounts cannot exceed two decimal places." xml:space="preserve"><value>لا يمكن أن تتجاوز مبالغ القيد اليدوي منزلتين عشريتين.</value></data>
+  <data name="Manual journal debit and credit totals must be equal." xml:space="preserve"><value>يجب أن يتساوى إجمالي المدين والدائن في القيد اليدوي.</value></data>
+  <data name="A valid manual journal request key is required." xml:space="preserve"><value>يلزم مفتاح طلب صالح للقيد اليدوي.</value></data>
+  <data name="Only a draft manual journal can be posted." xml:space="preserve"><value>لا يمكن ترحيل إلا قيد يدوي بحالة مسودة.</value></data>
+  <data name="A manual journal reversal reason is required." xml:space="preserve"><value>سبب عكس القيد اليدوي مطلوب.</value></data>
+  <data name="A manual journal reversal date is required." xml:space="preserve"><value>تاريخ عكس القيد اليدوي مطلوب.</value></data>
+  <data name="Only a posted manual journal can be reversed." xml:space="preserve"><value>لا يمكن عكس إلا قيد يدوي مُرحّل.</value></data>
+  <data name="The manual journal was not found." xml:space="preserve"><value>لم يتم العثور على القيد اليدوي.</value></data>
+  <data name="The journal entry is not a manual journal." xml:space="preserve"><value>قيد اليومية ليس قيدًا يدويًا.</value></data>
+  <data name="The manual journal request key was already used with different content." xml:space="preserve"><value>استُخدم مفتاح طلب القيد اليدوي مسبقًا مع محتوى مختلف.</value></data>
+  <data name="The manual journal request key was already used for another reversal." xml:space="preserve"><value>استُخدم مفتاح طلب القيد اليدوي مسبقًا لعكس قيد آخر.</value></data>
+  <data name="Manual journal amounts exceed the supported limit." xml:space="preserve"><value>تتجاوز مبالغ القيد اليدوي الحد المدعوم.</value></data>
 </root>

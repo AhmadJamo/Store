@@ -31,3 +31,9 @@ Web → Application → Domain، وتنفذ Infrastructure عقود التخزي
 ممنوع: حذف التاريخ، كسر TenantId (معرّف الشركة)، تعديل مستند مالي مرحل، تجاوز Application، أو اعتبار
 مرجع مقترح دليل تنفيذ. فهرس التوثيق الكامل في `docs/README.md`، والتعارضات في
 [DOCUMENTATION_CONFLICTS.md](DOCUMENTATION_CONFLICTS.md).
+
+# UX modernization accounting continuation (2026-11-06)
+
+UX-009 through UX-012 now provide permission-aware Accounting discovery, hierarchical accounts, a searchable journal,
+server-authored financial reports and controlled manual Draft/Post/Reverse. The next approved bounded gap is UX-013 AR/AP
+aging and subledger reconciliation. Posted evidence remains immutable and all posting stays behind Application services.

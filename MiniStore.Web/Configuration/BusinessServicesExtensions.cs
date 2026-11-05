@@ -91,6 +91,7 @@ public static class BusinessServicesExtensions
         services.AddScoped<JournalPostingService>();
         services.AddScoped<JournalEntryQueryService>();
         services.AddScoped<FinancialReportService>();
+        services.AddScoped<ManualJournalService>();
         services.AddScoped<IPaymentMethodRepository, PaymentMethodRepository>();
         services.AddScoped<PaymentMethodService>();
         services.AddScoped<IDocumentSequenceRepository, DocumentSequenceRepository>();

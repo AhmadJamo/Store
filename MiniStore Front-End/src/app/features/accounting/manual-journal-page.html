@@ -1,0 +1,71 @@
+<main class="manual">
+  <app-page-header [eyebrow]="i18n.text('area')" [title]="i18n.text('title')" [description]="i18n.text('description')" />
+  @if (loading()) {
+    <app-feedback-state kind="loading" [title]="i18n.text('title')" />
+  } @else if (failure(); as loadError) {
+    <app-api-recovery [problem]="loadError" (retry)="retry()" />
+  } @else if (item(); as journal) {
+    <a routerLink="/accounting/manual-journals">← {{ i18n.text('back') }}</a>
+    <section class="summary">
+      <div><span>{{ i18n.text('date') }}</span><strong>{{ journal.date | date: 'mediumDate' }}</strong></div>
+      <div><span>{{ i18n.text('descriptionLabel') }}</span><strong>{{ journal.description }}</strong></div>
+      <div><span>{{ i18n.text('status') }}</span><strong class="ui-badge">{{ i18n.status(journal.status) }}</strong></div>
+    </section>
+    <app-data-table [label]="i18n.text('lines')">
+      <table><thead><tr><th>{{ i18n.text('account') }}</th><th>{{ i18n.text('branch') }}</th><th>{{ i18n.text('warehouse') }}</th><th>{{ i18n.text('debit') }}</th><th>{{ i18n.text('credit') }}</th></tr></thead>
+        <tbody>@for (line of journal.lines; track $index) {<tr><td>{{ line.accountDisplay }}<small>{{ line.description }}</small></td><td>{{ line.branchName || '—' }}</td><td>{{ line.warehouseName || '—' }}</td><td>{{ line.debit | number: '1.2-2' }}</td><td>{{ line.credit | number: '1.2-2' }}</td></tr>}</tbody>
+        <tfoot><tr><th colspan="3">{{ i18n.text('balanced') }}</th><th>{{ journal.totalDebit | number: '1.2-2' }}</th><th>{{ journal.totalCredit | number: '1.2-2' }}</th></tr></tfoot>
+      </table>
+    </app-data-table>
+    @if (problem(); as actionError) { <app-api-recovery [problem]="actionError" /> }
+    <section class="actions">
+      @if (journal.sourceType === 'ManualJournal' && journal.status === 1 && session.can('ManualJournals.Post')) { <button type="button" class="ui-button primary" (click)="post()" [disabled]="saving()">{{ i18n.text('post') }}</button> }
+      @if (journal.sourceType === 'ManualJournal' && journal.status === 2 && session.can('ManualJournals.Reverse')) {
+        <form [formGroup]="reverseForm" (ngSubmit)="reverse()">
+          <label class="ui-field"><span>{{ i18n.text('reverseDate') }}</span><input type="date" formControlName="date" /></label>
+          <label class="ui-field grow"><span>{{ i18n.text('reason') }}</span><input formControlName="reason" /></label>
+          <button class="ui-button danger" [disabled]="saving()">{{ i18n.text('reverse') }}</button>
+        </form>
+      }
+    </section>
+  } @else {
+    <section class="directory">
+      <h2>{{ i18n.text('list') }}</h2>
+      @if (page(); as list) {
+        @if (!list.items.length) { <app-feedback-state kind="empty" [title]="i18n.text('empty')" /> }
+        @else {
+          <app-data-table [label]="i18n.text('list')"><table><thead><tr><th>{{ i18n.text('descriptionLabel') }}</th><th>{{ i18n.text('date') }}</th><th>{{ i18n.text('status') }}</th><th>{{ i18n.text('totalDebit') }}</th><th>{{ i18n.text('totalCredit') }}</th><th></th></tr></thead>
+            <tbody>@for (row of list.items; track row.id) {<tr><td><strong>{{ row.entryNumber }}</strong><small>{{ row.description }}</small></td><td>{{ row.date | date: 'mediumDate' }}</td><td>{{ i18n.status(row.status) }}</td><td>{{ row.totalDebit | number: '1.2-2' }}</td><td>{{ row.totalCredit | number: '1.2-2' }}</td><td><a [routerLink]="['/accounting/manual-journals', row.id]">{{ i18n.text('view') }}</a></td></tr>}</tbody>
+          </table></app-data-table>
+        }
+      }
+    </section>
+    @if (options(); as createOptions) {
+      <form class="editor" [formGroup]="form" (ngSubmit)="save()">
+        <h2>{{ i18n.text('newDraft') }}</h2>
+        <div class="header-fields">
+          <label class="ui-field"><span>{{ i18n.text('date') }}</span><input type="date" formControlName="date" /></label>
+          <label class="ui-field grow"><span>{{ i18n.text('descriptionLabel') }}</span><input formControlName="description" maxlength="500" /></label>
+        </div>
+        <div class="line-grid heading"><span>{{ i18n.text('account') }}</span><span>{{ i18n.text('branch') }}</span><span>{{ i18n.text('warehouse') }}</span><span>{{ i18n.text('debit') }}</span><span>{{ i18n.text('credit') }}</span><span>{{ i18n.text('lineDescription') }}</span><span></span></div>
+        <div formArrayName="lines">
+          @for (row of lines.controls; track row; let index = $index) {
+            <div class="line-grid" [formGroupName]="index">
+              <select formControlName="accountId"><option [ngValue]="0">{{ i18n.text('select') }}</option>@for (option of createOptions.accounts; track option.id) {<option [ngValue]="option.id">{{ option.display }}</option>}</select>
+              <select formControlName="branchId"><option [ngValue]="null">{{ i18n.text('optional') }}</option>@for (option of createOptions.branches; track option.id) {<option [ngValue]="option.id">{{ option.display }}</option>}</select>
+              <select formControlName="warehouseId"><option [ngValue]="null">{{ i18n.text('optional') }}</option>@for (option of createOptions.warehouses; track option.id) {<option [ngValue]="option.id">{{ option.display }}</option>}</select>
+              <input type="number" min="0" step="0.01" formControlName="debit" />
+              <input type="number" min="0" step="0.01" formControlName="credit" />
+              <input formControlName="description" maxlength="500" />
+              <button type="button" class="ui-button ghost" (click)="removeLine(index)" [disabled]="lines.length <= 2">{{ i18n.text('remove') }}</button>
+            </div>
+          }
+        </div>
+        <button type="button" class="ui-button secondary" (click)="addLine()">{{ i18n.text('addLine') }}</button>
+        <div class="totals" [class.invalid]="!balanced()"><span>{{ balanced() ? i18n.text('balanced') : i18n.text('outOfBalance') }}</span><strong>{{ i18n.text('totalDebit') }}: {{ total('debit') | number: '1.2-2' }}</strong><strong>{{ i18n.text('totalCredit') }}: {{ total('credit') | number: '1.2-2' }}</strong></div>
+        @if (problem(); as createError) { <app-api-recovery [problem]="createError" /> }
+        <button class="ui-button primary" [disabled]="saving() || form.invalid || !balanced()">{{ i18n.text('saveDraft') }}</button>
+      </form>
+    }
+  }
+</main>

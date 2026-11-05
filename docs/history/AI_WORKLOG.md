@@ -2210,3 +2210,11 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   acceptance passed 6 with zero failures; two authenticated reconciliation checks were skipped without external storage
   state. No schema, journal mutation, permission definition or fiscal-period rule changed. Advanced to `UX-012` controlled
   manual-journal foundation.
+- 2026-11-06: Completed `UX-012` Controlled Manual Journal Foundation. Added four independent permissions, tenant-filtered
+  named account/dimension options, a bilingual RTL-safe Draft composer and immutable details with eligible Post/Reverse
+  actions. Draft creation is balanced and idempotent; retry keys persist only in memory. Posting and exact reversal reuse
+  `JournalPostingService`, fiscal periods and the Serializable UnitOfWork. Added golden service checks for CSRF, permission
+  separation, idempotency, tenant rejection, closed-period blocking and separate opposite-entry reversal. Web Release built
+  cleanly; 1,855 security/accounting checks, 238 Angular tests, 134 templates, 75 destinations, 44/44 operational routes and
+  fixed bundle budgets and hosted acceptance (6 passed/0 failed) passed. No schema or operational posting rule changed.
+  The updated app is running on port 54052. Advanced to `UX-013` AR/AP aging.

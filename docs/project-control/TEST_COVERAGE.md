@@ -199,3 +199,15 @@
 - Production budgets: 336,179/358,400 initial; 81,880/81,920 largest lazy.
 - Hosted acceptance: 6 passed/0 failed for states, RTL/LTR, keyboard and 390px layout; authenticated reconciliation checks
   were skipped because no external storage-state fixture was supplied.
+
+## UX-012 controlled manual journals — 2026-11-06
+
+- .NET Web Release: zero warnings/errors; existing journal schema reused.
+- Security/accounting regression: 1,855/1,855, including permissions, CSRF, tenant account rejection, idempotent Draft,
+  balanced Post, closed-period rejection and exact separate reversal.
+- Angular Vitest: 238/238 across 113 files; protected create/post/reverse API commands are covered.
+- Static accessibility: 134 templates; UI inventory 117 pages (106 shared headers + 11 documented exceptions).
+- Navigation consistency: 75 items and 44/44 operational module routes.
+- Production budgets: 336,483/358,400 initial; 81,880/81,920 largest lazy.
+- Hosted acceptance: 6 passed/0 failed for states, RTL/LTR, keyboard and 390px layout; anonymous manual-journal API was
+  rejected with 401. Two authenticated reconciliation checks were skipped without an external storage-state fixture.

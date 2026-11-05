@@ -6213,6 +6213,83 @@ Check(financialReport.IncomeStatement.Revenue.Total == 60m &&
     "Income statement must calculate period revenue, expenses, and net income on the server");
 Check(typeof(IJournalEntryRepository).GetMethod(nameof(IJournalEntryRepository.GetFinancialMovementsAsync)) is not null,
     "Financial reporting must remain behind the journal repository boundary");
+var manualPermissionNames = new[] { "ManualJournals.View", "ManualJournals.Create", "ManualJournals.Post", "ManualJournals.Reverse" };
+Check(manualPermissionNames.All(name => PermissionDefinitions.All.Count(x => x.Name == name) == 1),
+    "Manual journals must expose independent view, create, post, and reverse permissions");
+Check(typeof(ManualJournalsApiController).GetMethod(nameof(ManualJournalsApiController.Create))!
+          .GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null &&
+      typeof(ManualJournalsApiController).GetMethod(nameof(ManualJournalsApiController.Post))!
+          .GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null &&
+      typeof(ManualJournalsApiController).GetMethod(nameof(ManualJournalsApiController.Reverse))!
+          .GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null,
+    "Every manual-journal mutation must remain antiforgery protected");
+var manualJournal = new JournalEntry("MJ-GOLDEN", new DateTime(2026, 11, 6), "Golden manual journal",
+    "ManualJournal", Guid.NewGuid().ToString("N"));
+manualJournal.AddLine(new JournalEntryLine(1, 125m, 0m));
+manualJournal.AddLine(new JournalEntryLine(2, 0m, 125m));
+Check(manualJournal.Status == JournalEntryStatus.Draft, "A new manual journal must remain a non-financial draft");
+manualJournal.Post();
+var manualReversal = manualJournal.CreateReversal("MJ-GOLDEN-R", new DateTime(2026, 11, 7), "Correction",
+    "ManualJournalReversal", Guid.NewGuid().ToString("N"));
+Check(manualJournal.Status == JournalEntryStatus.Reversed && manualReversal.Status == JournalEntryStatus.Posted &&
+      manualReversal.Lines.Sum(x => x.Debit) == 125m && manualReversal.Lines.Sum(x => x.Credit) == 125m,
+    "Manual-journal reversal must preserve the original and create a separate balanced opposite entry");
+var manualAccounts = new[]
+{
+    CreateReportAccount(101, "1100", "Cash", AccountType.Asset),
+    CreateReportAccount(202, "3100", "Equity", AccountType.Equity)
+}.ToList();
+var manualEntries = new StubManualJournalRepository();
+var manualUnit = new StubUnitOfWork();
+var openPeriods = new StubFiscalPeriodRepository();
+var manualAccountRepository = new StubFinancialAccountRepository(manualAccounts);
+var emptyBranches = new StubBranchRepository();
+var emptyWarehouses = new StubWarehouseRepository();
+var manualPosting = new JournalPostingService(manualEntries,
+    new DocumentNumberService(new StubDocumentSequenceRepository()),
+    new FiscalPeriodService(openPeriods, manualUnit, new StubCurrentUser()));
+var manualQuery = new JournalEntryQueryService(manualEntries, manualAccountRepository, emptyBranches, emptyWarehouses);
+var manualService = new ManualJournalService(manualEntries, manualAccountRepository, emptyBranches, emptyWarehouses,
+    new DocumentNumberService(new StubDocumentSequenceRepository()), manualPosting, manualQuery, manualUnit);
+var requestKey = Guid.NewGuid().ToString();
+var manualInput = new CreateManualJournalDto
+{
+    Date = new DateTime(2026, 11, 6), Description = "Owner contribution", IdempotencyKey = requestKey,
+    Lines =
+    [
+        new() { AccountId = 101, Debit = 250m },
+        new() { AccountId = 202, Credit = 250m }
+    ]
+};
+var manualId = await manualService.CreateDraftAsync(manualInput);
+var retryManualId = await manualService.CreateDraftAsync(manualInput);
+Check(manualId == retryManualId && manualEntries.Items.Count == 1 && manualEntries.Items[0].Status == JournalEntryStatus.Draft,
+    "Manual-journal draft creation must be idempotent and remain non-financial until posting");
+await manualService.PostAsync(manualId);
+var manualReversalId = await manualService.ReverseAsync(manualId, new ReverseManualJournalDto
+{ Date = new DateTime(2026, 11, 7), Reason = "Correct classification", IdempotencyKey = Guid.NewGuid().ToString() });
+Check(manualEntries.Items.Single(x => x.Id == manualId).Status == JournalEntryStatus.Reversed &&
+      manualEntries.Items.Single(x => x.Id == manualReversalId).Status == JournalEntryStatus.Posted,
+    "Manual-journal service must post and reverse through the shared journal gateway");
+try
+{
+    await manualService.CreateDraftAsync(new CreateManualJournalDto
+    {
+        Date = manualInput.Date, Description = "Cross-tenant account", IdempotencyKey = Guid.NewGuid().ToString(),
+        Lines = [new() { AccountId = 9999, Debit = 1m }, new() { AccountId = 202, Credit = 1m }]
+    });
+    throw new Exception("Manual journals must reject unavailable tenant-scoped account identifiers");
+}
+catch (ArgumentException) { count++; }
+var closedPeriod = new FiscalPeriod("Closed", new DateTime(2026, 1, 1), new DateTime(2026, 12, 31));
+typeof(FiscalPeriod).GetProperty(nameof(FiscalPeriod.Status))!.SetValue(closedPeriod, FiscalPeriodStatus.Closed);
+var blockedPosting = new JournalPostingService(new StubManualJournalRepository(),
+    new DocumentNumberService(new StubDocumentSequenceRepository()),
+    new FiscalPeriodService(new StubFiscalPeriodRepository(closedPeriod), manualUnit, new StubCurrentUser()));
+var blockedDraft = new JournalEntry("MJ-CLOSED", new DateTime(2026, 11, 6), "Closed period", "ManualJournal", Guid.NewGuid().ToString("N"));
+blockedDraft.AddLine(new JournalEntryLine(101, 1m, 0m)); blockedDraft.AddLine(new JournalEntryLine(202, 0m, 1m));
+try { await blockedPosting.PostDraftAsync(blockedDraft); throw new Exception("Closed periods must block manual posting"); }
+catch (InvalidOperationException) { count++; }
 
 Console.WriteLine($"Passed {count} security and inventory regression checks.");
 
@@ -6300,8 +6377,58 @@ sealed class StubFinancialJournalRepository(List<FinancialAccountMovement> movem
     public Task<bool> ExistsForSourceAsync(string sourceType, string sourceReference) => Task.FromResult(false);
     public Task<JournalEntry?> GetBySourceAsync(string sourceType, string sourceReference) => Task.FromResult<JournalEntry?>(null);
     public Task<JournalEntry?> GetByIdAsync(int id) => Task.FromResult<JournalEntry?>(null);
+    public Task<JournalEntry?> GetByIdForUpdateAsync(int id) => Task.FromResult<JournalEntry?>(null);
     public Task<(List<JournalEntry> Items, int TotalCount)> GetPagedAsync(JournalEntrySearchCriteria criteria) => Task.FromResult((new List<JournalEntry>(), 0));
     public Task AddAsync(JournalEntry entry) => Task.CompletedTask;
+}
+sealed class StubManualJournalRepository : IJournalEntryRepository
+{
+    public List<JournalEntry> Items { get; } = [];
+    public Task<bool> ExistsForSourceAsync(string sourceType, string sourceReference) => Task.FromResult(Items.Any(x => x.SourceType == sourceType && x.SourceReference == sourceReference));
+    public Task<JournalEntry?> GetBySourceAsync(string sourceType, string sourceReference) => Task.FromResult(Items.SingleOrDefault(x => x.SourceType == sourceType && x.SourceReference == sourceReference));
+    public Task<JournalEntry?> GetByIdAsync(int id) => Task.FromResult(Items.SingleOrDefault(x => x.Id == id));
+    public Task<JournalEntry?> GetByIdForUpdateAsync(int id) => GetByIdAsync(id);
+    public Task<(List<JournalEntry> Items, int TotalCount)> GetPagedAsync(JournalEntrySearchCriteria criteria) => Task.FromResult((Items.ToList(), Items.Count));
+    public Task<List<FinancialAccountMovement>> GetFinancialMovementsAsync(DateTime fromDate, DateTime toDate) => Task.FromResult(new List<FinancialAccountMovement>());
+    public Task AddAsync(JournalEntry entry) { typeof(JournalEntry).GetProperty(nameof(JournalEntry.Id))!.SetValue(entry, Items.Count + 1); Items.Add(entry); return Task.CompletedTask; }
+}
+sealed class StubUnitOfWork : IUnitOfWork
+{
+    public async Task ExecuteInTransactionAsync(Func<Task> operation) => await operation();
+    public Task FlushAsync() => Task.CompletedTask;
+}
+sealed class StubDocumentSequenceRepository : IDocumentSequenceRepository
+{
+    private DocumentSequence? value;
+    public Task<IReadOnlyList<DocumentSequence>> GetAllAsync() => Task.FromResult<IReadOnlyList<DocumentSequence>>(value is null ? [] : [value]);
+    public Task<DocumentSequence?> GetAsync(DocumentNumberType type) => Task.FromResult(value);
+    public Task AddAsync(DocumentSequence sequence) { value = sequence; return Task.CompletedTask; }
+    public Task SaveChangesAsync() => Task.CompletedTask;
+}
+sealed class StubFiscalPeriodRepository(FiscalPeriod? period = null) : IFiscalPeriodRepository
+{
+    public Task<List<FiscalPeriod>> GetAllAsync() => Task.FromResult(period is null ? new List<FiscalPeriod>() : [period]);
+    public Task<FiscalPeriod?> GetByIdAsync(int id) => Task.FromResult(period);
+    public Task<FiscalPeriod?> FindForDateAsync(DateTime date) => Task.FromResult(period is not null && date >= period.StartDate && date <= period.EndDate ? period : null);
+    public Task<bool> AnyAsync() => Task.FromResult(period is not null);
+    public Task<bool> OverlapsAsync(DateTime startDate, DateTime endDate) => Task.FromResult(false);
+    public Task AddAsync(FiscalPeriod value) => Task.CompletedTask;
+    public void SetOriginalRowVersion(FiscalPeriod value, byte[] rowVersion) { }
+}
+sealed class StubBranchRepository : IBranchRepository
+{
+    public Task<List<Branch>> GetAllAsync() => Task.FromResult(new List<Branch>());
+    public Task<Branch?> GetByIdAsync(int id) => Task.FromResult<Branch?>(null);
+    public Task AddAsync(Branch branch) => Task.CompletedTask;
+    public Task SaveChangesAsync() => Task.CompletedTask;
+}
+sealed class StubWarehouseRepository : IWarehouseRepository
+{
+    public Task<Warehouse?> GetByIdAsync(int id) => Task.FromResult<Warehouse?>(null);
+    public Task<List<Warehouse>> GetAllAsync() => Task.FromResult(new List<Warehouse>());
+    public Task AddAsync(Warehouse warehouse) => Task.CompletedTask;
+    public Task DeleteAsync(Warehouse warehouse) => Task.CompletedTask;
+    public Task SaveChangesAsync() => Task.CompletedTask;
 }
 sealed class StubTenantAuthorization(bool admin) : MiniStore.Domain.Interfaces.ITenantAuthorizationRepository
 {

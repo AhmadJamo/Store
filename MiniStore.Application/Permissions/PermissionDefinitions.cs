@@ -235,6 +235,10 @@ public static class PermissionDefinitions
         new("CustomerCreditNotes.View", "View Customer Credit Notes", "Sales"),
         new("CustomerCreditNotes.Create", "Create and Post Customer Credit Note", "Sales"),
         new("JournalEntries.View", "View Journal Entries", "Accounting"),
+        new("ManualJournals.View", "View Manual Journals", "Accounting"),
+        new("ManualJournals.Create", "Create Manual Journal Drafts", "Accounting"),
+        new("ManualJournals.Post", "Post Manual Journals", "Accounting"),
+        new("ManualJournals.Reverse", "Reverse Manual Journals", "Accounting"),
         new("SalesReturns.View", "View Sales Returns", "Sales Returns"),
         new("SalesReturns.Create", "Create Sales Return", "Sales Returns"),
 

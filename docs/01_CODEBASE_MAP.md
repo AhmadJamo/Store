@@ -1,6 +1,12 @@
 # Codebase map
 ## Angular modernization foundation
 
+UX-012 adds controlled manual journals through `ManualJournalService`, the existing `JournalPostingService`,
+`ManualJournalsApiController` and Angular `features/accounting/manual-journal-*`. `IJournalEntryRepository` now exposes a
+tracked lookup for controlled state transitions and an internal source-prefix directory filter. Four independent permissions
+protect view/create/post/reverse; every mutation uses CSRF and the existing Serializable UnitOfWork. See
+`docs/modernization/UI_UX_MANUAL_JOURNALS.md` and ADR `docs/decisions/2026-11-06-controlled-manual-journal-boundary.md`.
+
 UX-011 adds server-authored financial reporting through `IJournalEntryRepository.GetFinancialMovementsAsync`,
 `FinancialReportService`, `FinancialReportsApiController` and Angular `features/accounting/financial-report-*`. The same
 repository now supports exact account drill-down in the journal directory. Report period/tab context is allowlisted;

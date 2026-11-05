@@ -17,6 +17,9 @@ public class JournalEntryRepository(AppDbContext context) : IJournalEntryReposit
     public Task<JournalEntry?> GetByIdAsync(int id) => context.JournalEntries.AsNoTracking()
         .Include(x => x.Lines).SingleOrDefaultAsync(x => x.Id == id);
 
+    public Task<JournalEntry?> GetByIdForUpdateAsync(int id) => context.JournalEntries
+        .Include(x => x.Lines).SingleOrDefaultAsync(x => x.Id == id);
+
     public async Task<(List<JournalEntry> Items, int TotalCount)> GetPagedAsync(JournalEntrySearchCriteria criteria)
     {
         var query = context.JournalEntries.AsNoTracking().AsQueryable();
@@ -36,6 +39,8 @@ public class JournalEntryRepository(AppDbContext context) : IJournalEntryReposit
         }
         if (criteria.Status.HasValue) query = query.Where(x => x.Status == criteria.Status.Value);
         if (criteria.AccountId.HasValue) query = query.Where(x => x.Lines.Any(line => line.AccountId == criteria.AccountId.Value));
+        if (!string.IsNullOrWhiteSpace(criteria.SourceTypePrefix))
+            query = query.Where(x => x.SourceType != null && x.SourceType.StartsWith(criteria.SourceTypePrefix));
         var totalCount = await query.CountAsync();
         var items = await query.OrderByDescending(x => x.Date).ThenByDescending(x => x.Id)
             .Skip((criteria.Page - 1) * criteria.PageSize).Take(criteria.PageSize)

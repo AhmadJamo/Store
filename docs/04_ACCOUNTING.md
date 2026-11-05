@@ -163,3 +163,14 @@ so no accounting data was created to fabricate one.
   `JournalEntries.View` permission and current company ledger currency.
 - No schema, posting, fiscal-period, reversal or transaction rule changed. See
   `modernization/UI_UX_FINANCIAL_REPORTING.md` and ADR `decisions/2026-11-06-server-authored-financial-reports.md`.
+
+# UX-012 controlled manual journals (2026-11-06)
+
+- Manual journal Create stores a balanced Draft with a source-unique request key; Drafts remain excluded from reports.
+- Post uses `JournalPostingService.PostDraftAsync` and the existing open-fiscal-period rule. Reverse uses the existing exact
+  opposite-entry gateway and preserves the original as Reversed.
+- View/Create/Post/Reverse permissions are independent. Every mutation is antiforgery-protected and runs inside the existing
+  Serializable UnitOfWork.
+- Active tenant accounts and valid tenant branch/warehouse dimensions are resolved before persistence. Amounts remain in
+  company ledger currency and are limited to two decimal places.
+- Posted/Reversed evidence has no edit/delete endpoint. No schema or operational sales/purchase posting rule changed.
