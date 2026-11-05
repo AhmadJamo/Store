@@ -29,3 +29,12 @@ Suppliers now have a read-only Angular list and authenticated `/api/v1/suppliers
 | Backend SecurityRegression | Passed 1079 checks |
 
 Tests cover shared metadata rendering, accessible error/retry behavior, emitted page decisions, named table regions, supplier API parameters and backend authentication/permission/layer boundaries.
+
+## UX-004 evolution — 2026-11-05
+
+`DataTableComponent` now retains the original projected-table mode and adds an opt-in typed mode. Column metadata
+describes presentation semantics only; feature-owned `DataTableCellDirective` templates retain business links, badges
+and actions. The shared component renders bounded loading/error/empty states, sticky headers, logical type alignment and
+horizontal overflow. Sortable headers emit a key/direction request and never reorder data locally. Products, Purchase
+Requests and Stock Transfers are the first typed consumers. Verification passed 227/227 Angular tests, 126 static
+templates, 5/5 hosted layout checks and the custom production budgets.

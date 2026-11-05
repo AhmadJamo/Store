@@ -1,1 +1,18 @@
-.table-wrap { overflow-x: auto; border: 1px solid var(--erp-color-border); border-radius: var(--erp-radius-md); background: var(--erp-color-surface); }
+.table-wrap { max-inline-size: 100%; overflow: auto; border: 1px solid var(--erp-color-border); border-radius: var(--erp-radius-md); background: var(--erp-color-surface); }
+table, :host ::ng-deep table { inline-size: 100%; border-collapse: separate; border-spacing: 0; }
+th, td, :host ::ng-deep th, :host ::ng-deep td { padding: var(--erp-space-3) var(--erp-space-4); border-block-end: 1px solid var(--erp-color-border); text-align: start; vertical-align: middle; }
+th, :host ::ng-deep th { position: sticky; inset-block-start: 0; z-index: 1; color: var(--erp-color-text-muted); background: var(--erp-color-surface); font-size: .8rem; white-space: nowrap; }
+tbody tr:last-child td, :host ::ng-deep tbody tr:last-child td { border-block-end: 0; }
+tbody tr:hover td, :host ::ng-deep tbody tr:hover td { background: var(--erp-color-surface-muted); }
+.column-number { text-align: end; font-variant-numeric: tabular-nums; }
+.column-date { white-space: nowrap; font-variant-numeric: tabular-nums; }
+.column-code { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; white-space: nowrap; }
+.column-status { text-align: center; white-space: nowrap; }
+.column-actions { text-align: end; white-space: nowrap; }
+.sort-button { display: inline-flex; align-items: center; gap: var(--erp-space-1); min-block-size: 2rem; padding: 0; border: 0; color: inherit; background: transparent; font: inherit; font-weight: 700; cursor: pointer; }
+.sort-button:focus-visible { outline: 2px solid var(--erp-color-primary); outline-offset: 2px; }
+.table-state { display: grid; place-items: center; gap: var(--erp-space-3); min-block-size: 10rem; padding: var(--erp-space-6); color: var(--erp-color-text-muted); text-align: center; }
+.table-state.error { color: var(--erp-color-danger); background: var(--erp-color-danger-soft); }
+.state-mark { inline-size: 2rem; block-size: 2rem; border: .2rem solid var(--erp-color-border); border-block-start-color: var(--erp-color-primary); border-radius: 50%; animation: table-spin .8s linear infinite; }
+@keyframes table-spin { to { transform: rotate(1turn); } }
+@media (prefers-reduced-motion: reduce) { .state-mark { animation: none; } }

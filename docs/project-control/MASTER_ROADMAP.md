@@ -45,7 +45,9 @@
   مطبق على Customers وSuppliers وProducts وPurchase Requests وStock Transfers.
 - `UX-003` — COMPLETE 2026-11-05: مكونات موحدة للعناوين والفلاتر والملخصات ورؤوس الأقسام وتذييل سير العمل،
   مطبقة على Products وPurchase Requests وStock Transfers دون تغيير الأعمال.
-- `UX-004` — APPROVED NEXT: تطوير بنية enterprise data table مع إبقاء paging/filter/sort تحت سلطة الخادم.
+- `UX-004` — COMPLETE 2026-11-05: بنية enterprise data table typed بحالات ورؤوس ثابتة ومحاذاة وقوالب خلايا
+  خاصة بالوحدة، مع إبقاء paging/filter/sort تحت سلطة الخادم.
+- `UX-005` — APPROVED NEXT: توحيد النماذج ومجموعات الحقول وإشارات التحقق وبنية صفحات التفاصيل.
 
 ## P0 — مخاطر حرجة
 

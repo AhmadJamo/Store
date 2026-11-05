@@ -1,5 +1,5 @@
 import { DatePipe, DecimalPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -9,7 +9,7 @@ import { NormalizedApiProblem } from '../../core/api/api.models';
 import { ApiSessionService } from '../../core/api/api-session.service';
 import { FormErrorSummaryComponent } from '../../shared/forms/form-error-summary';
 import { ApiRecoveryComponent } from '../../shared/ui/api-recovery/api-recovery';
-import { DataTableComponent } from '../../shared/ui/data-table/data-table';
+import { DataTableCellDirective, DataTableColumn, DataTableComponent } from '../../shared/ui/data-table/data-table';
 import { FeedbackStateComponent } from '../../shared/ui/feedback-state/feedback-state';
 import { PageHeaderComponent } from '../../shared/ui/page-header/page-header';
 import { FilterBarComponent } from '../../shared/ui/filter-bar/filter-bar';
@@ -58,6 +58,7 @@ interface StockTransferDraft {
     FeedbackStateComponent,
     ApiRecoveryComponent,
     DataTableComponent,
+    DataTableCellDirective,
     FormErrorSummaryComponent,
   ],
   templateUrl: './stock-transfers-page.html',
@@ -85,6 +86,15 @@ export class StockTransfersPageComponent {
   protected readonly isEdit = this.routePath.endsWith('/edit');
   protected readonly isDetails = !!this.id && !this.isEdit;
   protected readonly rows = signal<StockTransferRow[]>([]);
+  protected readonly listColumns = computed<readonly DataTableColumn[]>(() => [
+    { key: 'transferNumber', header: this.i18n.text('number'), kind: 'code' },
+    { key: 'fromWarehouseName', header: this.i18n.text('sourceWarehouse') },
+    { key: 'toWarehouseName', header: this.i18n.text('destinationWarehouse') },
+    { key: 'status', header: this.i18n.text('status'), kind: 'status' },
+    { key: 'itemsCount', header: this.i18n.text('items'), kind: 'number' },
+    { key: 'createdAt', header: this.i18n.text('createdAt'), kind: 'date' },
+    { key: 'actions', header: this.i18n.text('actions'), kind: 'actions' },
+  ]);
   protected readonly details = signal<StockTransferDetails | null>(null);
   protected readonly page = signal<StockTransferFormPage | null>(null);
   protected readonly loading = signal(true);

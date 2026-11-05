@@ -57,6 +57,48 @@ describe('shared UI primitives', () => {
     expect(fixture.nativeElement.querySelector('[role="region"]').getAttribute('aria-label')).toBe('Suppliers');
   });
 
+  it('renders typed columns and emits server-side sort intent without reordering rows', async () => {
+    await TestBed.configureTestingModule({ imports: [DataTableComponent] }).compileComponents();
+    const fixture = TestBed.createComponent(DataTableComponent);
+    const rows = [{ id: 1, name: 'Zulu', amount: 2 }, { id: 2, name: 'Alpha', amount: 1 }];
+    fixture.componentRef.setInput('label', 'Products');
+    fixture.componentRef.setInput('columns', [
+      { key: 'name', header: 'Name', sortable: true },
+      { key: 'amount', header: 'Amount', kind: 'number' },
+    ]);
+    fixture.componentRef.setInput('rows', rows);
+    const changes: unknown[] = [];
+    fixture.componentInstance.sortChange.subscribe(value => changes.push(value));
+    fixture.detectChanges();
+
+    fixture.nativeElement.querySelector('.sort-button').click();
+    expect(changes).toEqual([{ key: 'name', direction: 'asc' }]);
+    expect(rows.map(row => row.name)).toEqual(['Zulu', 'Alpha']);
+    expect(fixture.nativeElement.querySelector('tbody .column-number').textContent).toContain('2');
+  });
+
+  it('renders bounded loading, error and empty table states', async () => {
+    await TestBed.configureTestingModule({ imports: [DataTableComponent] }).compileComponents();
+    const fixture = TestBed.createComponent(DataTableComponent);
+    fixture.componentRef.setInput('label', 'Requests');
+    fixture.componentRef.setInput('columns', [{ key: 'number', header: 'Number' }]);
+    fixture.componentRef.setInput('rows', []);
+    fixture.componentRef.setInput('emptyTitle', 'No requests');
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('.table-state.empty').textContent).toContain('No requests');
+
+    fixture.componentRef.setInput('loading', true);
+    fixture.componentRef.setInput('loadingTitle', 'Loading');
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('[role="status"]').textContent).toContain('Loading');
+
+    fixture.componentRef.setInput('loading', false);
+    fixture.componentRef.setInput('error', 'Failed');
+    fixture.componentRef.setInput('retryLabel', 'Retry');
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('[role="alert"]').textContent).toContain('Failed');
+  });
+
   it('gives reusable page architecture regions accessible names', async () => {
     await TestBed.configureTestingModule({
       imports: [FilterBarComponent, SectionHeaderComponent, SummaryStripComponent, WorkflowFooterComponent],

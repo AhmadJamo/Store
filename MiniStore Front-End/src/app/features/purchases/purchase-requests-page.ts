@@ -1,12 +1,12 @@
 import { DatePipe, DecimalPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormArray, FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ApiErrorService } from '../../core/api/api-error.service';
 import { ApiSessionService } from '../../core/api/api-session.service';
 import { ApiRecoveryComponent } from '../../shared/ui/api-recovery/api-recovery';
-import { DataTableComponent } from '../../shared/ui/data-table/data-table';
+import { DataTableCellDirective, DataTableColumn, DataTableComponent } from '../../shared/ui/data-table/data-table';
 import { FeedbackStateComponent } from '../../shared/ui/feedback-state/feedback-state';
 import { PageHeaderComponent } from '../../shared/ui/page-header/page-header';
 import { FilterBarComponent } from '../../shared/ui/filter-bar/filter-bar';
@@ -53,6 +53,7 @@ interface PurchaseRequestDraft {
     FeedbackStateComponent,
     ApiRecoveryComponent,
     DataTableComponent,
+    DataTableCellDirective,
   ],
   templateUrl: './purchase-requests-page.html',
   styleUrl: './purchase-requests-page.scss',
@@ -75,6 +76,14 @@ export class PurchaseRequestsPageComponent {
   };
   protected readonly mode = signal<'list' | 'create' | 'details' | 'rules'>('list');
   protected readonly rows = signal<PurchaseRequest[]>([]);
+  protected readonly listColumns = computed<readonly DataTableColumn[]>(() => [
+    { key: 'requestNumber', header: this.i18n.text('number'), kind: 'code' },
+    { key: 'warehouseName', header: this.i18n.text('warehouse') },
+    { key: 'neededByDate', header: this.i18n.text('needed'), kind: 'date' },
+    { key: 'priority', header: this.i18n.text('priority'), kind: 'status' },
+    { key: 'status', header: this.i18n.text('status'), kind: 'status' },
+    { key: 'lines', header: this.i18n.text('lines'), kind: 'number' },
+  ]);
   protected readonly detail = signal<PurchaseRequest | null>(null);
   protected readonly options = signal<CreateRequestPage | null>(null);
   protected readonly rulesPage = signal<ApprovalRulesPage | null>(null);

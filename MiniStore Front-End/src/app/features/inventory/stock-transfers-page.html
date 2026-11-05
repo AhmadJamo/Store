@@ -109,10 +109,11 @@
         <button filter-actions class="ui-button secondary">{{ i18n.text('apply') }}</button>
       </app-filter-bar>
     </form>
-    @if (!rows().length) { <app-feedback-state kind="empty" [title]="i18n.text('empty')" [description]="i18n.text('emptyDescription')" /> }
-    @else {
-      <app-data-table [label]="i18n.text('title')"><table><thead><tr><th>{{ i18n.text('number') }}</th><th>{{ i18n.text('sourceWarehouse') }}</th><th>{{ i18n.text('destinationWarehouse') }}</th><th>{{ i18n.text('status') }}</th><th>{{ i18n.text('items') }}</th><th>{{ i18n.text('createdAt') }}</th><th>{{ i18n.text('actions') }}</th></tr></thead>
-      <tbody>@for (row of rows(); track row.id) { <tr><td><code>{{ row.transferNumber }}</code></td><td>{{ row.fromWarehouseName }}</td><td>{{ row.toWarehouseName }}</td><td><span class="ui-badge" [class.success]="row.status === 5" [class.warning]="row.status > 1 && row.status < 5">{{ statusName(row.status) }}</span></td><td>{{ row.itemsCount }}</td><td>{{ row.createdAt | date:'dd/MM/yyyy HH:mm' }}</td><td><a [routerLink]="['/inventory/transfers', row.id]">{{ i18n.text('details') }}</a></td></tr> }</tbody></table></app-data-table>
-    }
+    <app-data-table [label]="i18n.text('title')" [columns]="listColumns()" [rows]="rows()" [emptyTitle]="i18n.text('empty')" [emptyDescription]="i18n.text('emptyDescription')">
+      <ng-template appDataCell="transferNumber" let-row><code>{{ row.transferNumber }}</code></ng-template>
+      <ng-template appDataCell="status" let-row><span class="ui-badge" [class.success]="row.status === 5" [class.warning]="row.status > 1 && row.status < 5">{{ statusName(row.status) }}</span></ng-template>
+      <ng-template appDataCell="createdAt" let-row>{{ row.createdAt | date:'dd/MM/yyyy HH:mm' }}</ng-template>
+      <ng-template appDataCell="actions" let-row><a [routerLink]="['/inventory/transfers', row.id]">{{ i18n.text('details') }}</a></ng-template>
+    </app-data-table>
   }
 </section>

@@ -3,12 +3,14 @@
 > Source of truth: Code  
 > Last reviewed: 2026-11-05
 
-The Angular UI/UX modernization program is active under the root `UI_UX_MODERNIZATION_PLAN.md`. UX-001 through UX-003 are complete:
+The Angular UI/UX modernization program is active under the root `UI_UX_MODERNIZATION_PLAN.md`. UX-001 through UX-004 are complete:
 the permission-aware shell uses persistent collapsible business groups, active-route expansion and bilingual
 breadcrumbs while retaining Router authority and the existing persistent workspace tabs. Five pilot pages now preserve
 allowlisted list context through URL state and tenant/user-scoped memory; Purchase Request and Stock Transfer create
 forms keep only safe structural drafts in memory. Products, Purchase Requests and Stock Transfers now use shared page
-headers, filter bars, summary strips, section headers and workflow footers. UX-004 table infrastructure is the approved next task; physical MVC
+headers, filter bars, summary strips, section headers and workflow footers. Their list tables now use typed column
+configuration, feature-owned cell templates and shared table states without client-side data authority. UX-005 forms and
+detail-page architecture is the approved next task; physical MVC
 retirement inventory is deferred, not cancelled.
 
 ## Project identity

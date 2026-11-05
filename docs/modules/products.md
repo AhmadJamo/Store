@@ -11,6 +11,10 @@ UX-003 applies the shared page action zones, accessible filter bar and summary s
 administration links remain secondary, Product creation remains permission-gated and primary, and table behavior and
 server paging remain unchanged.
 
+UX-004 moves the Product list to typed shared-table columns. Code, numeric price, status and action semantics now share
+consistent alignment and sticky headers, while product links, permission-gated actions, API paging and filtering remain
+feature/server-owned.
+
 `MOD-021A` completes product-master parity in Angular: server-paged list/search, details, create, edit and confirmed
 delete. The API delegates to `ProductService`, separates View/Create/Edit/Delete permissions and validates antiforgery
 on every mutation. The form includes all current MVC fields and server-provided category, managed-unit, supplier and

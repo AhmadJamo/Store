@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
@@ -6,7 +6,7 @@ import { ApiErrorService } from '../../core/api/api-error.service';
 import { NormalizedApiProblem } from '../../core/api/api.models';
 import { ApiSessionService } from '../../core/api/api-session.service';
 import { ApiRecoveryComponent } from '../../shared/ui/api-recovery/api-recovery';
-import { DataTableComponent } from '../../shared/ui/data-table/data-table';
+import { DataTableCellDirective, DataTableColumn, DataTableComponent } from '../../shared/ui/data-table/data-table';
 import { FeedbackStateComponent } from '../../shared/ui/feedback-state/feedback-state';
 import { PageHeaderComponent } from '../../shared/ui/page-header/page-header';
 import { PagerComponent } from '../../shared/ui/pager/pager';
@@ -17,7 +17,7 @@ import { ProductPage } from './data/product.models';
 import { ProductLocalizationService } from './product-localization.service';
 import { PageContextService, pageContextFields } from '../../shared/state/page-context.service';
 
-@Component({ selector: 'app-product-list-page', imports: [RouterLink, PageHeaderComponent, FilterBarComponent, SummaryStripComponent, ApiRecoveryComponent, DataTableComponent, FeedbackStateComponent, PagerComponent], templateUrl: './product-list-page.html', styleUrl: './product-list-page.scss', changeDetection: ChangeDetectionStrategy.OnPush })
+@Component({ selector: 'app-product-list-page', imports: [RouterLink, PageHeaderComponent, FilterBarComponent, SummaryStripComponent, ApiRecoveryComponent, DataTableComponent, DataTableCellDirective, FeedbackStateComponent, PagerComponent], templateUrl: './product-list-page.html', styleUrl: './product-list-page.scss', changeDetection: ChangeDetectionStrategy.OnPush })
 export class ProductListPageComponent {
   protected readonly i18n = inject(ProductLocalizationService);
   protected readonly session = inject(ApiSessionService);
@@ -30,6 +30,15 @@ export class ProductListPageComponent {
   protected readonly page = signal<ProductPage | null>(null);
   protected readonly loading = signal(true);
   protected readonly problem = signal<NormalizedApiProblem | null>(null);
+  protected readonly tableColumns = computed<readonly DataTableColumn[]>(() => [
+    { key: 'productCode', header: this.i18n.text('productCode'), kind: 'code' },
+    { key: 'name', header: this.i18n.text('productName') },
+    { key: 'category', header: this.i18n.text('category') },
+    { key: 'salePrice', header: this.i18n.text('salePrice'), kind: 'number' },
+    { key: 'channels', header: this.i18n.text('channels') },
+    { key: 'status', header: this.i18n.text('status'), kind: 'status' },
+    { key: 'actions', header: this.i18n.text('actions'), kind: 'actions' },
+  ]);
   private readonly contextSchema = {
     defaults: { page: 1, search: '', isActive: undefined as boolean | undefined },
     fields: {

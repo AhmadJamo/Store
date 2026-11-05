@@ -1,1 +1,41 @@
-<div class="table-wrap" role="region" [attr.aria-label]="label()" tabindex="0"><ng-content /></div>
+<div class="table-wrap" role="region" [attr.aria-label]="label()" tabindex="0">
+  @if (!columns().length) {
+    <ng-content />
+  } @else if (loading()) {
+    <div class="table-state" role="status"><span class="state-mark" aria-hidden="true"></span><strong>{{ loadingTitle() }}</strong></div>
+  } @else if (error()) {
+    <div class="table-state error" role="alert">
+      <strong>{{ error() }}</strong>
+      @if (retryLabel()) { <button class="ui-button secondary" type="button" (click)="retry.emit()">{{ retryLabel() }}</button> }
+    </div>
+  } @else if (!rows().length) {
+    <div class="table-state empty"><strong>{{ emptyTitle() }}</strong>@if (emptyDescription()) { <span>{{ emptyDescription() }}</span> }</div>
+  } @else {
+    <table>
+      <thead><tr>
+        @for (column of columns(); track column.key) {
+          <th [class]="'column-' + (column.kind || 'text')" [style.inline-size]="column.width || null" [attr.aria-sort]="ariaSort(column)">
+            @if (column.sortable) {
+              <button class="sort-button" type="button" (click)="requestSort(column)">
+                {{ column.header }}<span aria-hidden="true">{{ sort()?.key === column.key ? (sort()?.direction === 'asc' ? '↑' : '↓') : '↕' }}</span>
+              </button>
+            } @else { {{ column.header }} }
+          </th>
+        }
+      </tr></thead>
+      <tbody>
+        @for (row of rows(); track trackRow($index, row)) {
+          <tr>
+            @for (column of columns(); track column.key) {
+              <td [class]="'column-' + (column.kind || 'text')">
+                @if (cellTemplate(column.key); as template) {
+                  <ng-container [ngTemplateOutlet]="template" [ngTemplateOutletContext]="{ $implicit: row, column: column }" />
+                } @else { {{ value(row, column.key) }} }
+              </td>
+            }
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</div>

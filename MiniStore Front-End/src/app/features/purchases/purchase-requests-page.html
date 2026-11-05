@@ -63,42 +63,13 @@
       { label: i18n.text('status'), value: filter.controls.status.value ? statusName(filter.controls.status.value) : i18n.text('allStatuses') }
     ]" />
     <section class="ui-card table-section">
-      <app-data-table [label]="i18n.text('title')"
-        ><table>
-          <thead>
-            <tr>
-              <th>{{ i18n.text('number') }}</th>
-              <th>{{ i18n.text('warehouse') }}</th>
-              <th>{{ i18n.text('needed') }}</th>
-              <th>{{ i18n.text('priority') }}</th>
-              <th>{{ i18n.text('status') }}</th>
-              <th>{{ i18n.text('lines') }}</th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (x of rows(); track x.id) {
-              <tr>
-                <td>
-                  <a [routerLink]="['/purchases/requests', x.id]"
-                    ><code>{{ x.requestNumber }}</code></a
-                  >
-                </td>
-                <td>{{ x.warehouseName }}</td>
-                <td>{{ x.neededByDate | date: 'dd/MM/yyyy' }}</td>
-                <td>{{ priorityName(x.priority) }}</td>
-                <td>
-                  <span class="ui-badge">{{ statusName(x.status) }}</span>
-                </td>
-                <td>{{ x.lines.length }}</td>
-              </tr>
-            } @empty {
-              <tr>
-                <td colspan="6">{{ i18n.text('noRows') }}</td>
-              </tr>
-            }
-          </tbody>
-        </table></app-data-table
-      >
+      <app-data-table [label]="i18n.text('title')" [columns]="listColumns()" [rows]="rows()" [emptyTitle]="i18n.text('noRows')">
+        <ng-template appDataCell="requestNumber" let-row><a [routerLink]="['/purchases/requests', row.id]"><code>{{ row.requestNumber }}</code></a></ng-template>
+        <ng-template appDataCell="neededByDate" let-row>{{ row.neededByDate | date: 'dd/MM/yyyy' }}</ng-template>
+        <ng-template appDataCell="priority" let-row>{{ priorityName(row.priority) }}</ng-template>
+        <ng-template appDataCell="status" let-row><span class="ui-badge">{{ statusName(row.status) }}</span></ng-template>
+        <ng-template appDataCell="lines" let-row>{{ row.lines.length }}</ng-template>
+      </app-data-table>
     </section>
   } @else if (mode() === 'rules' && rulesPage(); as rules) {
     @if (session.can('PurchaseApprovalRules.Manage')) {

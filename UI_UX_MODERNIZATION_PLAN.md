@@ -114,13 +114,13 @@ permission-backed routes already present in `app.routes.ts`.
 - [x] Replace repeated local `.filters` and `.actions` patterns on Products, Purchase Requests and Stock Transfers.
 - [x] Establish responsive desktop/mobile rules and RTL logical spacing.
 
-### UX-004 — Enterprise data-table infrastructure — PENDING
+### UX-004 — Enterprise data-table infrastructure — COMPLETED 2026-11-05
 
-- Evolve `app-data-table` into configurable infrastructure for loading/empty/error states, sticky headers, alignment,
-  status cells, row actions, selection and column preferences.
-- Keep server-side paging/filter/sort where APIs support them; do not fake backend capabilities.
-- Define typed entity-specific table configurations.
-- Pilot on Products, Purchase Requests and Stock Transfers before module-wide migration.
+- [x] Evolve `app-data-table` into configurable infrastructure for loading/empty/error states, sticky headers,
+  type-aware alignment, status cells and row actions.
+- [x] Keep server-side paging/filter/sort authoritative; the component emits sort intent and never reorders rows.
+- [x] Define typed entity-specific column configurations and feature-owned cell templates.
+- [x] Pilot on Products, Purchase Requests and Stock Transfers before module-wide migration.
 
 ### UX-005 — Forms and detail pages — PENDING
 
@@ -178,29 +178,30 @@ Every phase must record:
 | UX-001 | 220/220 Angular; 122 templates; production 328,867 B initial and 81,880 B largest lazy, both custom budgets green | Browser states, RTL/LTR, keyboard and 390px responsive checks passed; Windows interactive helper failed independently; authenticated reconciliation later hit a stale hidden “طحين” option | COMPLETE WITH RECORDED EXTERNAL FIXTURE RISK |
 | UX-002 | 224/224 Angular; 122 templates; production 328,867 B initial and 81,880 B largest lazy, custom budgets green | URL normalization, back/forward observation, workspace-memory restoration, tenant/user isolation and memory-only draft tests passed across five pilot pages | COMPLETE |
 | UX-003 | 225/225 Angular; 126 templates; production 330,806 B initial and 81,880 B largest lazy, custom budgets green | Hosted states, RTL/LTR, keyboard and 390px responsive checks passed; shared page-region accessibility contracts passed | COMPLETE |
+| UX-004 | 227/227 Angular; 126 templates; production 333,336 B initial and 81,880 B largest lazy, custom budgets green | Typed columns, bounded states and server-sort intent tests passed; hosted RTL/LTR, keyboard and 390px responsive checks passed | COMPLETE |
 
 ## Latest phase report
 
-### UX-003 — Completed
+### UX-004 — Completed
 
-- Extended `app-page-header` with explicit primary, secondary and context projection zones while retaining compatibility
-  with existing consumers.
-- Added reusable accessible `app-filter-bar`, `app-summary-strip`, `app-section-header` and sticky
-  `app-workflow-footer` primitives using logical CSS and mobile fallbacks.
-- Applied the architecture to Products, Purchase Requests and Stock Transfers without changing permissions, routes,
-  API contracts, workflow states or business rules.
-- Moved high-value create/save and lifecycle actions into consistent action zones, reducing separated action clusters.
+- Added a typed column contract with text, code, number, date, status and action semantics plus feature-owned cell
+  templates for business links and badges.
+- Added reusable loading, error/retry and empty states, sticky headers, numeric/date alignment, row hover and bounded
+  horizontal overflow while preserving the legacy projection mode for existing consumers.
+- Server-side sorting remains explicit: sortable headers emit a key/direction request but never mutate or reorder rows.
+- Migrated Products, Purchase Requests and Stock Transfers list tables without changing their data sources, permissions,
+  links, status meanings or server paging/filtering.
 
 ### Next
 
-- UX-004: evolve the shared data-table infrastructure and pilot typed table configuration on the same three pages.
+- UX-005: standardize forms, field groups, validation cues and detail-page information architecture.
 
 ### Recorded risks
 
 - The built-in Angular framework chunk still emits its pre-existing 180 kB warning; the project release budgets remain
-  green at 330,806/358,400 initial bytes and 81,880/81,920 largest lazy bytes.
-- UX-003 intentionally does not redesign table semantics or infer workflow actions; those remain feature-owned and are
-  addressed separately by UX-004 and UX-006.
+  green at 333,336/358,400 initial bytes and 81,880/81,920 largest lazy bytes.
+- Column visibility persistence was intentionally deferred: a generic preference could hide identity or action evidence.
+  Any future column chooser must use a feature-owned allowlist and keep required columns visible.
 
 ## Risks
 
