@@ -1,0 +1,4 @@
+:host { display: block; position: sticky; inset-block-end: var(--erp-space-2); z-index: 5; }
+.workflow-footer { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--erp-space-3); padding: var(--erp-space-3); border: 1px solid var(--erp-color-border); border-radius: var(--erp-radius-md); background: color-mix(in srgb, var(--erp-color-surface) 94%, transparent); box-shadow: var(--erp-shadow-md); backdrop-filter: blur(10px); }
+.secondary, .primary { display: flex; flex-wrap: wrap; align-items: center; gap: var(--erp-space-2); }
+@media (max-width: 680px) { :host { position: static; }.workflow-footer, .secondary, .primary { align-items: stretch; flex-direction: column; }.secondary, .primary { inline-size: 100%; } }

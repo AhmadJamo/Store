@@ -1,5 +1,11 @@
 # AI Work Log
 
+- 2026-11-05: Completed `UX-003`. Extended the shared page header with explicit context/primary/secondary action zones
+  and added reusable filter bar, summary strip, section header and sticky workflow footer primitives. Products,
+  Purchase Requests and Stock Transfers now use the shared architecture without API, permission, workflow or business
+  rule changes. Angular passed 225/225 tests across 110 files, 126 static templates, 5/5 hosted browser checks and
+  custom bundle budgets at 330,806 initial and 81,880 largest lazy bytes.
+
 - 2026-11-05: Completed `UX-002`. Added a typed, codec-based `PageContextService` that separates normalized URL
   context, tenant/user-scoped workspace memory and opt-in memory-only drafts. Customers, Suppliers, Products, Purchase
   Requests and Stock Transfers now restore allowlisted search/filter/page state. New Purchase Request and Stock Transfer

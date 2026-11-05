@@ -1,1 +1,13 @@
-<header class="page-header"><div>@if (eyebrow()) { <span class="eyebrow">{{ eyebrow() }}</span> }<h1>{{ title() }}</h1>@if (description()) { <p>{{ description() }}</p> }</div><div class="page-actions"><ng-content /></div></header>
+<header class="page-header">
+  <div class="page-heading">
+    @if (eyebrow()) { <span class="eyebrow">{{ eyebrow() }}</span> }
+    <h1>{{ title() }}</h1>
+    @if (description()) { <p>{{ description() }}</p> }
+    <div class="page-context"><ng-content select="[page-context]" /></div>
+  </div>
+  <div class="page-actions">
+    <div class="secondary-actions"><ng-content select="[secondary-actions]" /></div>
+    <div class="legacy-actions"><ng-content /></div>
+    <div class="primary-actions"><ng-content select="[primary-actions]" /></div>
+  </div>
+</header>

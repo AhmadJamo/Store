@@ -1,0 +1,8 @@
+:host { display: block; }
+.filter-bar { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: var(--erp-space-3); padding: var(--erp-space-4); border: 1px solid var(--erp-color-border); border-radius: var(--erp-radius-md); background: var(--erp-color-surface); }
+.filter-fields, .filter-actions { display: flex; flex-wrap: wrap; align-items: end; gap: var(--erp-space-3); }
+.filter-fields { flex: 1 1 30rem; }
+.filter-actions { flex: 0 0 auto; }
+@media (max-width: 680px) {
+  .filter-fields, .filter-actions { inline-size: 100%; align-items: stretch; flex-direction: column; }
+}

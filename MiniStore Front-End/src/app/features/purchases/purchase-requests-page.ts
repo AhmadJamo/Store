@@ -9,6 +9,10 @@ import { ApiRecoveryComponent } from '../../shared/ui/api-recovery/api-recovery'
 import { DataTableComponent } from '../../shared/ui/data-table/data-table';
 import { FeedbackStateComponent } from '../../shared/ui/feedback-state/feedback-state';
 import { PageHeaderComponent } from '../../shared/ui/page-header/page-header';
+import { FilterBarComponent } from '../../shared/ui/filter-bar/filter-bar';
+import { SectionHeaderComponent } from '../../shared/ui/section-header/section-header';
+import { SummaryStripComponent } from '../../shared/ui/summary-strip/summary-strip';
+import { WorkflowFooterComponent } from '../../shared/ui/workflow-footer/workflow-footer';
 import { WorkspaceService } from '../../workspace/state/workspace.service';
 import { PageContextService, pageContextFields } from '../../shared/state/page-context.service';
 import { PurchaseRequestApiService } from './purchase-request-api.service';
@@ -42,6 +46,10 @@ interface PurchaseRequestDraft {
     ReactiveFormsModule,
     RouterLink,
     PageHeaderComponent,
+    FilterBarComponent,
+    SectionHeaderComponent,
+    SummaryStripComponent,
+    WorkflowFooterComponent,
     FeedbackStateComponent,
     ApiRecoveryComponent,
     DataTableComponent,

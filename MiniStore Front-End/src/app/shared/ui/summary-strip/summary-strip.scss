@@ -1,0 +1,7 @@
+.summary-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr)); gap: var(--erp-space-3); }
+article { display: grid; gap: var(--erp-space-1); min-inline-size: 0; padding: var(--erp-space-3) var(--erp-space-4); border: 1px solid var(--erp-color-border); border-inline-start: .25rem solid var(--erp-color-primary); border-radius: var(--erp-radius-md); background: var(--erp-color-surface); }
+article.success { border-inline-start-color: var(--erp-color-success); }
+article.warning { border-inline-start-color: var(--erp-color-warning); }
+article.danger { border-inline-start-color: var(--erp-color-danger); }
+span, small { color: var(--erp-color-text-muted); }
+strong { overflow-wrap: anywhere; font-size: 1.15rem; }

@@ -1,20 +1,26 @@
 <section class="products-page">
   <app-page-header eyebrow="CATALOG" [title]="i18n.text('products')" [description]="i18n.text('productsDescription')">
-    <a class="ui-button secondary" routerLink="/products/categories">{{ i18n.text('productCategories') }}</a>
-    <a class="ui-button secondary" routerLink="/products/attributes">{{ i18n.text('productAttributes') }}</a>
-    <a class="ui-button secondary" routerLink="/products/templates">{{ i18n.text('productTemplates') }}</a>
-    <a class="ui-button secondary" routerLink="/products/recipes">{{ i18n.text('recipes') }}</a>
-    @if (session.can('Administration.Access')) { <a class="ui-button secondary" routerLink="/products/catalog-masters">{{ i18n.text('catalogMasters') }}</a> }
-    @if (session.can('Warehouses.View')) { <a class="ui-button secondary" routerLink="/warehouses">{{ i18n.text('warehouses') }}</a> }
-    @if (session.can('Products.Create')) { <a class="ui-button primary" routerLink="/products/new">{{ i18n.text('addProduct') }}</a> }
+    <div secondary-actions>
+      <a class="ui-button secondary" routerLink="/products/categories">{{ i18n.text('productCategories') }}</a>
+      <a class="ui-button secondary" routerLink="/products/attributes">{{ i18n.text('productAttributes') }}</a>
+      <a class="ui-button secondary" routerLink="/products/templates">{{ i18n.text('productTemplates') }}</a>
+      <a class="ui-button secondary" routerLink="/products/recipes">{{ i18n.text('recipes') }}</a>
+      @if (session.can('Administration.Access')) { <a class="ui-button secondary" routerLink="/products/catalog-masters">{{ i18n.text('catalogMasters') }}</a> }
+      @if (session.can('Warehouses.View')) { <a class="ui-button secondary" routerLink="/warehouses">{{ i18n.text('warehouses') }}</a> }
+    </div>
+    @if (session.can('Products.Create')) { <a primary-actions class="ui-button primary" routerLink="/products/new">{{ i18n.text('addProduct') }}</a> }
   </app-page-header>
-  <div class="filters">
+  <app-filter-bar [label]="i18n.text('searchProducts')">
     <label><span>{{ i18n.text('searchProducts') }}</span><input #box type="search" [value]="query.search" (input)="search(box.value)" [placeholder]="i18n.text('searchProductsPlaceholder')" /></label>
     <label><span>{{ i18n.text('status') }}</span><select [value]="query.isActive === undefined ? '' : query.isActive" (change)="status($any($event.target).value)"><option value="">{{ i18n.text('all') }}</option><option value="true">{{ i18n.text('active') }}</option><option value="false">{{ i18n.text('inactive') }}</option></select></label>
-  </div>
+  </app-filter-bar>
   @if (loading()) { <app-feedback-state kind="loading" [title]="i18n.text('loading')" /> }
   @else if (problem(); as failure) { <app-api-recovery [problem]="failure" (retry)="load()" /> }
   @else if (page(); as result) {
+    <app-summary-strip [label]="i18n.text('products')" [items]="[
+      { label: i18n.text('totalRecords'), value: result.totalCount },
+      { label: i18n.text('status'), value: query.isActive === undefined ? i18n.text('all') : (query.isActive ? i18n.text('active') : i18n.text('inactive')) }
+    ]" />
     @if (!result.items.length) { <app-feedback-state kind="empty" [title]="i18n.text('noProducts')" [description]="i18n.text('noProductsDescription')" /> }
     @else {
       <app-data-table [label]="i18n.text('products')"><table><thead><tr><th>{{ i18n.text('productCode') }}</th><th>{{ i18n.text('productName') }}</th><th>{{ i18n.text('category') }}</th><th>{{ i18n.text('salePrice') }}</th><th>{{ i18n.text('channels') }}</th><th>{{ i18n.text('status') }}</th><th>{{ i18n.text('actions') }}</th></tr></thead><tbody>

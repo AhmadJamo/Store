@@ -1,0 +1,9 @@
+<section class="summary-strip" [attr.aria-label]="label()">
+  @for (item of items(); track item.label) {
+    <article [class]="item.tone || 'neutral'">
+      <span>{{ item.label }}</span>
+      <strong>{{ item.value }}</strong>
+      @if (item.detail) { <small>{{ item.detail }}</small> }
+    </article>
+  }
+</section>

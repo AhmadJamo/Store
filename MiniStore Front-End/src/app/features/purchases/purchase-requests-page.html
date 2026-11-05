@@ -9,7 +9,28 @@
           : i18n.text('title')
     "
     [description]="mode() === 'rules' ? i18n.text('rulesDescription') : i18n.text('description')"
-  />
+  >
+    @if (mode() === 'list') {
+      <ng-container secondary-actions>
+        @if (session.can('PurchaseApprovalRules.View')) {<a class="ui-button secondary" routerLink="/purchases/approval-rules">{{i18n.text('rulesTitle')}}</a>}
+      </ng-container>
+    }
+    @if (mode() === 'list') {
+      <ng-container primary-actions>
+        @if (session.can('PurchaseRequests.Create')) {<a class="ui-button primary" routerLink="/purchases/requests/new">{{ i18n.text('new') }}</a>}
+      </ng-container>
+    }
+    @if (detail(); as current) {
+      <ng-container secondary-actions><a class="ui-button secondary" routerLink="/purchases/requests">{{ i18n.text('back') }}</a></ng-container>
+    }
+    @if (detail(); as current) {
+      <ng-container primary-actions>
+        @if (current.status === 4 && session.can('PurchaseSourcing.Create')) {
+          <a class="ui-button primary" [routerLink]="['/purchases/sourcing/new']" [queryParams]="{purchaseRequestId:current.id}">{{ i18n.text('startSourcing') }}</a>
+        }
+      </ng-container>
+    }
+  </app-page-header>
   @if (problem()) {
     <p class="message error" role="alert">{{ problem() }}</p>
   }
@@ -21,14 +42,9 @@
   } @else if (loadingProblem(); as failure) {
     <app-api-recovery [problem]="failure" (retry)="retry()" />
   } @else if (mode() === 'list') {
-    <div class="actions">
-      @if (session.can('PurchaseApprovalRules.View')) {<a class="ui-button secondary" routerLink="/purchases/approval-rules">{{i18n.text('rulesTitle')}}</a>}
-      @if (session.can('PurchaseRequests.Create')) {
-        <a class="ui-button primary" routerLink="/purchases/requests/new">{{ i18n.text('new') }}</a>
-      }
-    </div>
-    <form class="filters" [formGroup]="filter" (ngSubmit)="applyListFilters()">
-      <label class="ui-field"
+    <form [formGroup]="filter" (ngSubmit)="applyListFilters()">
+      <app-filter-bar [label]="i18n.text('search')">
+        <label class="ui-field"
         ><span>{{ i18n.text('search') }}</span
         ><input formControlName="search" /></label
       ><label class="ui-field"
@@ -39,8 +55,13 @@
             <option [ngValue]="x">{{ statusName(x) }}</option>
           }
         </select></label
-      ><button class="ui-button secondary">{{ i18n.text('search') }}</button>
+        ><button filter-actions class="ui-button secondary">{{ i18n.text('search') }}</button>
+      </app-filter-bar>
     </form>
+    <app-summary-strip [label]="i18n.text('title')" [items]="[
+      { label: i18n.text('visibleRequests'), value: rows().length },
+      { label: i18n.text('status'), value: filter.controls.status.value ? statusName(filter.controls.status.value) : i18n.text('allStatuses') }
+    ]" />
     <section class="ui-card table-section">
       <app-data-table [label]="i18n.text('title')"
         ><table>
@@ -200,7 +221,9 @@
           ><textarea formControlName="notes" maxlength="1000"></textarea>
         </label>
       </div>
-      <h2>{{ i18n.text('requestLines') }}</h2>
+      <app-section-header [title]="i18n.text('requestLines')">
+        <button class="ui-button secondary" type="button" (click)="addLine()">{{ i18n.text('addLine') }}</button>
+      </app-section-header>
       <div formArrayName="lines" class="line-list">
         @for (line of lines.controls; track line; let i = $index) {
           <fieldset [formGroupName]="i">
@@ -252,19 +275,12 @@
           </fieldset>
         }
       </div>
-      <div class="actions">
-        <button type="button" class="ui-button secondary" (click)="addLine()">
-          {{ i18n.text('addLine') }}</button
-        ><button class="ui-button primary" [disabled]="saving()">{{ i18n.text('create') }}</button>
-      </div>
+      <app-workflow-footer [label]="i18n.text('workflowActions')">
+        <a secondary-actions class="ui-button secondary" routerLink="/purchases/requests">{{ i18n.text('back') }}</a>
+        <button class="ui-button primary" [disabled]="saving()">{{ i18n.text('create') }}</button>
+      </app-workflow-footer>
     </form>
   } @else if (detail(); as x) {
-    <div class="actions">
-      <a class="ui-button secondary" routerLink="/purchases/requests">{{ i18n.text('back') }}</a>
-      @if (x.status === 4 && session.can('PurchaseSourcing.Create')) {
-        <a class="ui-button primary" [routerLink]="['/purchases/sourcing/new']" [queryParams]="{purchaseRequestId:x.id}">{{ i18n.text('startSourcing') }}</a>
-      }
-    </div>
     <section class="ui-card summary">
       <header>
         <h2>
@@ -318,7 +334,7 @@
         </table></app-data-table
       >
     </section>
-    <section class="ui-card command-bar">
+    <app-workflow-footer [label]="i18n.text('workflowActions')">
       @if (x.status === 1 && session.can('PurchaseRequests.Submit')) {
         <button class="ui-button primary" [disabled]="saving()" (click)="submit()">
           {{ i18n.text('submit') }}
@@ -332,7 +348,7 @@
           {{ i18n.text('cancel') }}
         </button>
       }
-    </section>
+    </app-workflow-footer>
     @if (x.approval; as approval) {
       <section class="ui-card">
         <h2>{{ i18n.text('approval') }} — {{ approval.ruleName }}</h2>

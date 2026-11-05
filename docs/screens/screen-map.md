@@ -14,6 +14,13 @@ or tenant/user-scoped workspace memory. Purchase Request and Stock Transfer crea
 memory-only drafts while deliberately excluding free text, justification, notes, references and tracking allocations.
 Restored drafts remain dirty and protected; successful creation clears them.
 
+## Angular page architecture (UX-003)
+
+Products, Purchase Requests and Stock Transfers now prove the shared page-header action zones, accessible filter bar,
+summary strip, section header and responsive sticky workflow footer. The primitives use logical spacing, collapse safely
+at 390px and do not calculate permissions or workflow actions. Existing feature components remain the authority for
+which links and commands are rendered.
+
 The UI action audit, last verified on 2026-10-24, checks every static Razor link/form target against the compiled controller actions and every MVC POST against antiforgery validation. Dynamic client-only buttons were separately inventoried; the only submit-style button outside a form is the intentionally disabled Settings placeholder. The same automated gate now verifies Arabic entries for every literal shared-localizer key, rejects common direct-English Razor UI text and hard-coded controller action messages, detects case-insensitive duplicate resource keys, and protects the explicit nested customer form contract plus visible validation feedback.
 
 Angular shell, login, registration and onboarding language controls synchronize the server culture cookie before changing

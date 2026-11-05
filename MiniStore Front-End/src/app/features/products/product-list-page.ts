@@ -10,12 +10,14 @@ import { DataTableComponent } from '../../shared/ui/data-table/data-table';
 import { FeedbackStateComponent } from '../../shared/ui/feedback-state/feedback-state';
 import { PageHeaderComponent } from '../../shared/ui/page-header/page-header';
 import { PagerComponent } from '../../shared/ui/pager/pager';
+import { FilterBarComponent } from '../../shared/ui/filter-bar/filter-bar';
+import { SummaryStripComponent } from '../../shared/ui/summary-strip/summary-strip';
 import { ProductApiService } from './data/product-api.service';
 import { ProductPage } from './data/product.models';
 import { ProductLocalizationService } from './product-localization.service';
 import { PageContextService, pageContextFields } from '../../shared/state/page-context.service';
 
-@Component({ selector: 'app-product-list-page', imports: [RouterLink, PageHeaderComponent, ApiRecoveryComponent, DataTableComponent, FeedbackStateComponent, PagerComponent], templateUrl: './product-list-page.html', styleUrl: './product-list-page.scss', changeDetection: ChangeDetectionStrategy.OnPush })
+@Component({ selector: 'app-product-list-page', imports: [RouterLink, PageHeaderComponent, FilterBarComponent, SummaryStripComponent, ApiRecoveryComponent, DataTableComponent, FeedbackStateComponent, PagerComponent], templateUrl: './product-list-page.html', styleUrl: './product-list-page.scss', changeDetection: ChangeDetectionStrategy.OnPush })
 export class ProductListPageComponent {
   protected readonly i18n = inject(ProductLocalizationService);
   protected readonly session = inject(ApiSessionService);

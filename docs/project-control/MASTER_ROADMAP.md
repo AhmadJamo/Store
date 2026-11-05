@@ -43,7 +43,9 @@
   breadcrumbs ثنائية اللغة وحفظ آمن لتفضيل فتح المجموعات دون تغيير الأعمال.
 - `UX-002` — COMPLETE 2026-11-05: عقد typed لسياق URL وذاكرة workspace المعزولة ومسودات آمنة مؤقتة،
   مطبق على Customers وSuppliers وProducts وPurchase Requests وStock Transfers.
-- `UX-003` — APPROVED NEXT: توحيد page headers وfilter bars وaction zones وsummary strips وworkflow footers.
+- `UX-003` — COMPLETE 2026-11-05: مكونات موحدة للعناوين والفلاتر والملخصات ورؤوس الأقسام وتذييل سير العمل،
+  مطبقة على Products وPurchase Requests وStock Transfers دون تغيير الأعمال.
+- `UX-004` — APPROVED NEXT: تطوير بنية enterprise data table مع إبقاء paging/filter/sort تحت سلطة الخادم.
 
 ## P0 — مخاطر حرجة
 

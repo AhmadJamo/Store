@@ -3,6 +3,10 @@ import { DataTableComponent } from './data-table/data-table';
 import { FeedbackStateComponent } from './feedback-state/feedback-state';
 import { PageHeaderComponent } from './page-header/page-header';
 import { PagerComponent } from './pager/pager';
+import { FilterBarComponent } from './filter-bar/filter-bar';
+import { SectionHeaderComponent } from './section-header/section-header';
+import { SummaryStripComponent } from './summary-strip/summary-strip';
+import { WorkflowFooterComponent } from './workflow-footer/workflow-footer';
 
 describe('shared UI primitives', () => {
   it('renders page metadata without owning business actions', async () => {
@@ -51,5 +55,33 @@ describe('shared UI primitives', () => {
     fixture.componentRef.setInput('label', 'Suppliers');
     fixture.detectChanges();
     expect(fixture.nativeElement.querySelector('[role="region"]').getAttribute('aria-label')).toBe('Suppliers');
+  });
+
+  it('gives reusable page architecture regions accessible names', async () => {
+    await TestBed.configureTestingModule({
+      imports: [FilterBarComponent, SectionHeaderComponent, SummaryStripComponent, WorkflowFooterComponent],
+    }).compileComponents();
+
+    const filters = TestBed.createComponent(FilterBarComponent);
+    filters.componentRef.setInput('label', 'Product filters');
+    filters.detectChanges();
+    expect(filters.nativeElement.querySelector('[role="search"]').getAttribute('aria-label')).toBe('Product filters');
+
+    const section = TestBed.createComponent(SectionHeaderComponent);
+    section.componentRef.setInput('title', 'Request lines');
+    section.detectChanges();
+    expect(section.nativeElement.querySelector('h2').textContent).toContain('Request lines');
+
+    const summary = TestBed.createComponent(SummaryStripComponent);
+    summary.componentRef.setInput('label', 'Transfer summary');
+    summary.componentRef.setInput('items', [{ label: 'Status', value: 'Draft', tone: 'warning' }]);
+    summary.detectChanges();
+    expect(summary.nativeElement.querySelector('section').getAttribute('aria-label')).toBe('Transfer summary');
+    expect(summary.nativeElement.querySelector('article').classList).toContain('warning');
+
+    const footer = TestBed.createComponent(WorkflowFooterComponent);
+    footer.componentRef.setInput('label', 'Workflow actions');
+    footer.detectChanges();
+    expect(footer.nativeElement.querySelector('footer').getAttribute('aria-label')).toBe('Workflow actions');
   });
 });

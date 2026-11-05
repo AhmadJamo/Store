@@ -1,6 +1,6 @@
 # Project TODO
 > Source of truth: Current repository scan  
-> Last reviewed: 2026-11-04
+> Last reviewed: 2026-11-05
 
 The approved numbered Arabic/English delivery sequence is maintained in `MASTER_IMPLEMENTATION_ROADMAP_AR_EN.md`. Detailed working status, business rules and the rolling suggestion queue remain in `ARABIC_SHARED_ROADMAP.md`. This file remains the concise technical backlog.
 
@@ -12,7 +12,8 @@ The ERP SaaS Foundation Blueprint is imported as a non-authoritative planning re
   permission-aware navigation, bilingual breadcrumbs and safe navigation preference persistence. Completed 2026-11-04.
 - [x] UX-002 implement a typed page-context contract for filters, paging, selected tabs and approved drafts, then pilot
   Customers, Suppliers, Products, Purchase Requests and Stock Transfers. Completed 2026-11-05.
-- [ ] UX-003 standardize page headers, filters, action zones, summary strips and workflow footers.
+- [x] UX-003 standardize page headers, filters, action zones, summary strips and workflow footers on Products,
+  Purchase Requests and Stock Transfers. Completed 2026-11-05.
 - [ ] UX-004..008 standardize tables, forms, workflow guidance, productivity and module-wide
   consistency as defined in `UI_UX_MODERNIZATION_PLAN.md`.
 

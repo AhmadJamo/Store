@@ -89,6 +89,8 @@ const c = {
     decidedBy: 'Decided by',
     unsaved: 'You have an unsaved purchase request. Leave this page?',
     error: 'The operation could not be completed.',
+    visibleRequests: 'Visible requests',
+    workflowActions: 'Workflow actions',
   },
   ar: {
     title: 'طلبات الشراء',
@@ -178,6 +180,8 @@ const c = {
     decidedBy: 'صاحب القرار',
     unsaved: 'لديك طلب شراء غير محفوظ. هل تريد المغادرة؟',
     error: 'تعذر إتمام العملية.',
+    visibleRequests: 'الطلبات الظاهرة',
+    workflowActions: 'إجراءات سير العمل',
   },
 } as const;
 export type PurchaseRequestKey = keyof typeof c.en;

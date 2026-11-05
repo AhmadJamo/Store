@@ -1,11 +1,15 @@
 # Products and recipes
-> Status: IMPLEMENTED | Last reviewed: 2026-11-01
+> Status: IMPLEMENTED | Last reviewed: 2026-11-05
 
 ## Angular migration foundation (2026-10-25)
 
 UX-002 preserves product search, active-state filter and paging across workspace tab switches and shareable URLs using
 the shared typed page-context contract. Values are bounded and identity-scoped; no product search is persisted as a
 browser-storage preference.
+
+UX-003 applies the shared page action zones, accessible filter bar and summary strip to the Product list. Catalog
+administration links remain secondary, Product creation remains permission-gated and primary, and table behavior and
+server paging remain unchanged.
 
 `MOD-021A` completes product-master parity in Angular: server-paged list/search, details, create, edit and confirmed
 delete. The API delegates to `ProductService`, separates View/Create/Edit/Delete permissions and validates antiforgery

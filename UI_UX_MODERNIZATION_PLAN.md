@@ -107,12 +107,12 @@ permission-backed routes already present in `app.routes.ts`.
 - Migrate representative Customers, Suppliers, Products, Purchase Requests and Stock Transfers pages.
 - Verify back/forward, tab switching, reload behavior, dirty guards and tenant/user boundaries.
 
-### UX-003 — Unified page architecture and action zones — PENDING
+### UX-003 — Unified page architecture and action zones — COMPLETED 2026-11-05
 
-- Extend the page-header system with breadcrumbs, primary/secondary action slots and compact metadata.
-- Add reusable filter bar, summary strip, section header and sticky workflow footer.
-- Replace repeated local `.filters` and `.actions` patterns incrementally.
-- Establish responsive desktop/tablet/mobile rules and RTL logical spacing.
+- [x] Extend the page-header system with primary/secondary action slots and compact context.
+- [x] Add reusable filter bar, summary strip, section header and sticky workflow footer.
+- [x] Replace repeated local `.filters` and `.actions` patterns on Products, Purchase Requests and Stock Transfers.
+- [x] Establish responsive desktop/mobile rules and RTL logical spacing.
 
 ### UX-004 — Enterprise data-table infrastructure — PENDING
 
@@ -177,30 +177,30 @@ Every phase must record:
 |---|---|---|---|
 | UX-001 | 220/220 Angular; 122 templates; production 328,867 B initial and 81,880 B largest lazy, both custom budgets green | Browser states, RTL/LTR, keyboard and 390px responsive checks passed; Windows interactive helper failed independently; authenticated reconciliation later hit a stale hidden “طحين” option | COMPLETE WITH RECORDED EXTERNAL FIXTURE RISK |
 | UX-002 | 224/224 Angular; 122 templates; production 328,867 B initial and 81,880 B largest lazy, custom budgets green | URL normalization, back/forward observation, workspace-memory restoration, tenant/user isolation and memory-only draft tests passed across five pilot pages | COMPLETE |
+| UX-003 | 225/225 Angular; 126 templates; production 330,806 B initial and 81,880 B largest lazy, custom budgets green | Hosted states, RTL/LTR, keyboard and 390px responsive checks passed; shared page-region accessibility contracts passed | COMPLETE |
 
 ## Latest phase report
 
-### UX-002 — Completed
+### UX-003 — Completed
 
-- Added a typed `PageContextService` with allowlisted text, integer, boolean and choice codecs.
-- Bound Customers, Suppliers, Products, Purchase Requests and Stock Transfers filters to normalized URL state and
-  tenant/user-scoped workspace memory.
-- Preserved existing safe persistent view preferences without storing search text or business drafts in local storage.
-- Added memory-only, opt-in structural drafts for new Purchase Requests and Stock Transfers. Free text, justification,
-  notes and tracking allocations are explicitly excluded.
-- Restored dirty-state protection after draft recovery and clears drafts after successful creation or session-boundary
-  changes.
+- Extended `app-page-header` with explicit primary, secondary and context projection zones while retaining compatibility
+  with existing consumers.
+- Added reusable accessible `app-filter-bar`, `app-summary-strip`, `app-section-header` and sticky
+  `app-workflow-footer` primitives using logical CSS and mobile fallbacks.
+- Applied the architecture to Products, Purchase Requests and Stock Transfers without changing permissions, routes,
+  API contracts, workflow states or business rules.
+- Moved high-value create/save and lifecycle actions into consistent action zones, reducing separated action clusters.
 
 ### Next
 
-- UX-003: standardize page headers, filter bars, action zones, summary strips and workflow footers.
+- UX-004: evolve the shared data-table infrastructure and pilot typed table configuration on the same three pages.
 
 ### Recorded risks
 
-- Query parameters intentionally expose only feature-allowlisted list context; sensitive or unrestricted form fields
-  remain excluded.
-- Memory-only drafts do not survive a full browser reload by design. Persistent drafts require a separately reviewed,
-  feature-owned encrypted/server-side policy rather than generic browser storage.
+- The built-in Angular framework chunk still emits its pre-existing 180 kB warning; the project release budgets remain
+  green at 330,806/358,400 initial bytes and 81,880/81,920 largest lazy bytes.
+- UX-003 intentionally does not redesign table semantics or infer workflow actions; those remain feature-owned and are
+  addressed separately by UX-004 and UX-006.
 
 ## Risks
 

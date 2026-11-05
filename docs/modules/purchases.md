@@ -1,9 +1,13 @@
 # Purchases
-> Status: PROCURE-TO-PAY THROUGH PUR-280 IMPLEMENTED; NEW LEGACY DIRECT PURCHASE CREATION RETIRED | Last reviewed: 2026-11-01
+> Status: PROCURE-TO-PAY THROUGH PUR-280 IMPLEMENTED; NEW LEGACY DIRECT PURCHASE CREATION RETIRED | Last reviewed: 2026-11-05
 
 UX-002 preserves Purchase Request list status/search context and adds an opt-in memory-only create draft containing
 warehouse, needed date, priority, product/unit/supplier IDs and quantities. Justification and all notes are deliberately
 excluded. The restored form remains dirty and protected; successful creation or identity change clears the draft.
+
+UX-003 applies shared header action zones, list filters and summary, request-line section headers and a sticky create or
+lifecycle footer to Purchase Requests. Existing permission checks, approval decisions, sourcing links, dirty protection
+and Application-owned workflow rules remain unchanged.
 
 `SAL-130A` reuses the existing purchasing analytics calculations through a generic Analytics Center provider. Spend, receiving, matching exceptions, supplier/buyer performance, journey and legacy/modern evidence can now be composed into the same tenant-owned personal/shared workspace model as other modules; Purchasing does not own a second dashboard framework.
 
