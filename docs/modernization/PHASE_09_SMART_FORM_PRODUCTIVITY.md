@@ -4,6 +4,12 @@
 > Completed: 2026-10-24  
 > Database/backend changes: none
 
+## UX-005 evolution (2026-11-05)
+
+The later UI/UX program adds reusable semantic form sections, localized required/optional cues and detail sections to
+Product, Purchase Request and Stock Transfer pilots. It reuses the existing validators, dirty guards, safe draft policy,
+save shortcut and submission locks; it does not introduce generic form persistence, DTO changes or client workflow rules.
+
 ## Outcome
 
 Customers and Suppliers now prove a reusable, keyboard-first form productivity layer without introducing a generic

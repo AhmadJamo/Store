@@ -165,33 +165,35 @@
     </section>
   } @else if (mode() === 'create' && options(); as data) {
     <form class="ui-card request-form" [formGroup]="form" (ngSubmit)="create()">
+      <app-form-section [title]="i18n.text('requestDetails')">
       <div class="form-grid">
         <label class="ui-field"
-          ><span>{{ i18n.text('destination') }}</span
-          ><select formControlName="warehouseId">
+          ><app-field-cue [label]="i18n.text('destination')" [required]="true" [requiredText]="i18n.text('requiredField')" [optionalText]="i18n.text('optionalField')" />
+          <select formControlName="warehouseId">
             <option [ngValue]="0">{{ i18n.text('selectWarehouse') }}</option>
             @for (x of data.warehouses; track x.id) {
               <option [ngValue]="x.id">{{ x.label }}</option>
             }
           </select></label
         ><label class="ui-field"
-          ><span>{{ i18n.text('needed') }}</span
-          ><input type="date" formControlName="neededByDate" /></label
+          ><app-field-cue [label]="i18n.text('needed')" [required]="true" [requiredText]="i18n.text('requiredField')" [optionalText]="i18n.text('optionalField')" />
+          <input type="date" formControlName="neededByDate" /></label
         ><label class="ui-field"
-          ><span>{{ i18n.text('priority') }}</span
-          ><select formControlName="priority">
+          ><app-field-cue [label]="i18n.text('priority')" [required]="true" [requiredText]="i18n.text('requiredField')" [optionalText]="i18n.text('optionalField')" />
+          <select formControlName="priority">
             @for (x of [1, 2, 3, 4]; track x) {
               <option [ngValue]="x">{{ priorityName(x) }}</option>
             }
           </select></label
         ><label class="ui-field wide"
-          ><span>{{ i18n.text('justification') }}</span
-          ><textarea formControlName="justification" maxlength="500"></textarea></label
+          ><app-field-cue [label]="i18n.text('justification')" [required]="true" [requiredText]="i18n.text('requiredField')" [optionalText]="i18n.text('optionalField')" />
+          <textarea formControlName="justification" maxlength="500"></textarea></label
         ><label class="ui-field wide"
-          ><span>{{ i18n.text('notes') }}</span
-          ><textarea formControlName="notes" maxlength="1000"></textarea>
+          ><app-field-cue [label]="i18n.text('notes')" [requiredText]="i18n.text('requiredField')" [optionalText]="i18n.text('optionalField')" />
+          <textarea formControlName="notes" maxlength="1000"></textarea>
         </label>
       </div>
+      </app-form-section>
       <app-section-header [title]="i18n.text('requestLines')">
         <button class="ui-button secondary" type="button" (click)="addLine()">{{ i18n.text('addLine') }}</button>
       </app-section-header>
@@ -252,13 +254,8 @@
       </app-workflow-footer>
     </form>
   } @else if (detail(); as x) {
-    <section class="ui-card summary">
-      <header>
-        <h2>
-          <code>{{ x.requestNumber }}</code>
-        </h2>
-        <span class="ui-badge">{{ statusName(x.status) }}</span>
-      </header>
+    <app-detail-section [title]="x.requestNumber">
+      <span detail-actions class="ui-badge">{{ statusName(x.status) }}</span>
       <dl>
         <div>
           <dt>{{ i18n.text('warehouse') }}</dt>
@@ -277,7 +274,7 @@
           <dd>{{ x.justification }}</dd>
         </div>
       </dl>
-    </section>
+    </app-detail-section>
     <section class="ui-card table-section">
       <h2>{{ i18n.text('requestLines') }}</h2>
       <app-data-table [label]="i18n.text('requestLines')"

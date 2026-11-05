@@ -1,0 +1,3 @@
+.field-label { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: var(--erp-space-2); }
+small { color: var(--erp-color-text-muted); font-size: .72rem; font-weight: 500; }
+small.required { color: var(--erp-color-primary-strong); }

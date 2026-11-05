@@ -15,6 +15,10 @@ UX-004 moves the Product list to typed shared-table columns. Code, numeric price
 consistent alignment and sticky headers, while product links, permission-gated actions, API paging and filtering remain
 feature/server-owned.
 
+UX-005 groups Product create/edit fields into semantic sections, adds localized required/optional cues to representative
+identity and commercial fields, keeps the existing save shortcut/lock in the shared workflow footer, and presents Product
+details through consistent detail sections. All validators, values, permissions and delete behavior are unchanged.
+
 `MOD-021A` completes product-master parity in Angular: server-paged list/search, details, create, edit and confirmed
 delete. The API delegates to `ProductService`, separates View/Create/Edit/Delete permissions and validates antiforgery
 on every mutation. The form includes all current MVC fields and server-provided category, managed-unit, supplier and

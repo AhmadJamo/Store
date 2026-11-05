@@ -91,6 +91,9 @@ const c = {
     error: 'The operation could not be completed.',
     visibleRequests: 'Visible requests',
     workflowActions: 'Workflow actions',
+    requestDetails: 'Request details',
+    requiredField: 'Required',
+    optionalField: 'Optional',
   },
   ar: {
     title: 'طلبات الشراء',
@@ -182,6 +185,9 @@ const c = {
     error: 'تعذر إتمام العملية.',
     visibleRequests: 'الطلبات الظاهرة',
     workflowActions: 'إجراءات سير العمل',
+    requestDetails: 'بيانات الطلب',
+    requiredField: 'مطلوب',
+    optionalField: 'اختياري',
   },
 } as const;
 export type PurchaseRequestKey = keyof typeof c.en;

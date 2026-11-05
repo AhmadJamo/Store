@@ -1,0 +1,7 @@
+.detail-section { block-size: 100%; padding: var(--erp-card-padding); border: 1px solid var(--erp-color-border); border-radius: var(--erp-radius-md); background: var(--erp-color-surface); box-shadow: var(--erp-shadow-sm); }
+header { display: flex; align-items: start; justify-content: space-between; gap: var(--erp-space-3); margin-block-end: var(--erp-space-4); }
+h2 { margin: 0; font-size: 1.05rem; }
+p { margin: var(--erp-space-1) 0 0; color: var(--erp-color-text-muted); }
+.detail-actions { display: flex; flex-wrap: wrap; gap: var(--erp-space-2); }
+.detail-actions:empty { display: none; }
+@media (max-width: 680px) { header { flex-direction: column; } }

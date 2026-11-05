@@ -1,0 +1,5 @@
+<fieldset class="form-section">
+  <legend>{{ title() }}</legend>
+  @if (description()) { <p class="section-description">{{ description() }}</p> }
+  <ng-content />
+</fieldset>

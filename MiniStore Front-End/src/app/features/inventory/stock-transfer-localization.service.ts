@@ -16,6 +16,7 @@ const messages = {
     edit: 'تعديل', submit: 'إرسال للاعتماد', approve: 'اعتماد', reject: 'رفض', returnToDraft: 'إعادة لمسودة', post: 'ترحيل', cancel: 'إلغاء وترجيع الحركة',
     reasonPrompt: 'أدخل السبب', confirmAction: 'هل تريد تنفيذ هذا الإجراء؟', saved: 'تم حفظ التحويل.', actionCompleted: 'تم تنفيذ الإجراء بنجاح.',
     error: 'تعذر إكمال العملية.', unsaved: 'لديك تغييرات غير محفوظة. هل تريد المغادرة؟', noHistory: 'لا يوجد سجل حالة بعد.', workflowActions: 'إجراءات سير العمل',
+    transferDetails: 'بيانات التحويل', requiredField: 'مطلوب', optionalField: 'اختياري',
   },
   'en-US': {
     title: 'Stock transfers', description: 'Create, review, approve, and post transfers while the server remains authoritative for stock movements.',
@@ -31,6 +32,7 @@ const messages = {
     edit: 'Edit', submit: 'Submit', approve: 'Approve', reject: 'Reject', returnToDraft: 'Return to draft', post: 'Post', cancel: 'Cancel and reverse',
     reasonPrompt: 'Enter the reason', confirmAction: 'Perform this action?', saved: 'The transfer was saved.', actionCompleted: 'The action completed successfully.',
     error: 'The operation could not be completed.', unsaved: 'You have unsaved changes. Leave this page?', noHistory: 'No status history yet.', workflowActions: 'Workflow actions',
+    transferDetails: 'Transfer details', requiredField: 'Required', optionalField: 'Optional',
   },
 } as const;
 

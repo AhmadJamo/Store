@@ -5,6 +5,8 @@ import { FormArray, FormBuilder, ReactiveFormsModule, Validators } from '@angula
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ApiErrorService } from '../../core/api/api-error.service';
 import { ApiSessionService } from '../../core/api/api-session.service';
+import { FieldCueComponent } from '../../shared/forms/field-cue/field-cue';
+import { FormSectionComponent } from '../../shared/forms/form-section/form-section';
 import { ApiRecoveryComponent } from '../../shared/ui/api-recovery/api-recovery';
 import { DataTableCellDirective, DataTableColumn, DataTableComponent } from '../../shared/ui/data-table/data-table';
 import { FeedbackStateComponent } from '../../shared/ui/feedback-state/feedback-state';
@@ -13,6 +15,7 @@ import { FilterBarComponent } from '../../shared/ui/filter-bar/filter-bar';
 import { SectionHeaderComponent } from '../../shared/ui/section-header/section-header';
 import { SummaryStripComponent } from '../../shared/ui/summary-strip/summary-strip';
 import { WorkflowFooterComponent } from '../../shared/ui/workflow-footer/workflow-footer';
+import { DetailSectionComponent } from '../../shared/ui/detail-section/detail-section';
 import { WorkspaceService } from '../../workspace/state/workspace.service';
 import { PageContextService, pageContextFields } from '../../shared/state/page-context.service';
 import { PurchaseRequestApiService } from './purchase-request-api.service';
@@ -54,6 +57,9 @@ interface PurchaseRequestDraft {
     ApiRecoveryComponent,
     DataTableComponent,
     DataTableCellDirective,
+    FieldCueComponent,
+    FormSectionComponent,
+    DetailSectionComponent,
   ],
   templateUrl: './purchase-requests-page.html',
   styleUrl: './purchase-requests-page.scss',

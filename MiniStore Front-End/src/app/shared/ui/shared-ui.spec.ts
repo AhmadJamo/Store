@@ -7,6 +7,9 @@ import { FilterBarComponent } from './filter-bar/filter-bar';
 import { SectionHeaderComponent } from './section-header/section-header';
 import { SummaryStripComponent } from './summary-strip/summary-strip';
 import { WorkflowFooterComponent } from './workflow-footer/workflow-footer';
+import { FieldCueComponent } from '../forms/field-cue/field-cue';
+import { FormSectionComponent } from '../forms/form-section/form-section';
+import { DetailSectionComponent } from './detail-section/detail-section';
 
 describe('shared UI primitives', () => {
   it('renders page metadata without owning business actions', async () => {
@@ -125,5 +128,34 @@ describe('shared UI primitives', () => {
     footer.componentRef.setInput('label', 'Workflow actions');
     footer.detectChanges();
     expect(footer.nativeElement.querySelector('footer').getAttribute('aria-label')).toBe('Workflow actions');
+  });
+
+  it('renders reusable form sections and localized field cues', async () => {
+    await TestBed.configureTestingModule({ imports: [FormSectionComponent, FieldCueComponent] }).compileComponents();
+
+    const section = TestBed.createComponent(FormSectionComponent);
+    section.componentRef.setInput('title', 'Request details');
+    section.componentRef.setInput('description', 'Complete the required fields');
+    section.detectChanges();
+    expect(section.nativeElement.querySelector('fieldset legend').textContent).toContain('Request details');
+    expect(section.nativeElement.querySelector('.section-description').textContent).toContain('required fields');
+
+    const cue = TestBed.createComponent(FieldCueComponent);
+    cue.componentRef.setInput('label', 'Warehouse');
+    cue.componentRef.setInput('required', true);
+    cue.componentRef.setInput('requiredText', 'Required');
+    cue.componentRef.setInput('optionalText', 'Optional');
+    cue.detectChanges();
+    expect(cue.nativeElement.textContent).toContain('Warehouse');
+    expect(cue.nativeElement.querySelector('small.required').textContent).toContain('Required');
+  });
+
+  it('renders consistent detail sections with optional actions', async () => {
+    await TestBed.configureTestingModule({ imports: [DetailSectionComponent] }).compileComponents();
+    const fixture = TestBed.createComponent(DetailSectionComponent);
+    fixture.componentRef.setInput('title', 'Commercial data');
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('section.detail-section')).toBeTruthy();
+    expect(fixture.nativeElement.querySelector('h2').textContent).toContain('Commercial data');
   });
 });

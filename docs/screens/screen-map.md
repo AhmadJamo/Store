@@ -27,6 +27,12 @@ Products, Purchase Requests and Stock Transfers use the typed shared-table mode.
 logical alignment and horizontal overflow; feature templates still own links, badges and permissioned row actions.
 Sorting is a server-intent output only and no row is reordered or filtered inside the component.
 
+## Angular forms and detail sections (UX-005)
+
+Product create/edit/details, Purchase Request create/details and Stock Transfer create/details now use shared semantic
+form/detail sections. Required and optional cues are localized in English and Arabic. Existing controls, validation,
+draft exclusions, dirty guards, permission checks and server-owned commands remain unchanged; no decorative tabs were added.
+
 The UI action audit, last verified on 2026-10-24, checks every static Razor link/form target against the compiled controller actions and every MVC POST against antiforgery validation. Dynamic client-only buttons were separately inventoried; the only submit-style button outside a form is the intentionally disabled Settings placeholder. The same automated gate now verifies Arabic entries for every literal shared-localizer key, rejects common direct-English Razor UI text and hard-coded controller action messages, detects case-insensitive duplicate resource keys, and protects the explicit nested customer form contract plus visible validation feedback.
 
 Angular shell, login, registration and onboarding language controls synchronize the server culture cookie before changing

@@ -6,11 +6,12 @@ import { ApiSessionService } from '../../core/api/api-session.service';
 import { ApiRecoveryComponent } from '../../shared/ui/api-recovery/api-recovery';
 import { FeedbackStateComponent } from '../../shared/ui/feedback-state/feedback-state';
 import { PageHeaderComponent } from '../../shared/ui/page-header/page-header';
+import { DetailSectionComponent } from '../../shared/ui/detail-section/detail-section';
 import { ProductApiService } from './data/product-api.service';
 import { Product } from './data/product.models';
 import { ProductLocalizationService, ProductMessageKey } from './product-localization.service';
 
-@Component({ selector: 'app-product-details-page', imports: [RouterLink, PageHeaderComponent, FeedbackStateComponent, ApiRecoveryComponent], templateUrl: './product-details-page.html', styleUrl: './product-details-page.scss', changeDetection: ChangeDetectionStrategy.OnPush })
+@Component({ selector: 'app-product-details-page', imports: [RouterLink, PageHeaderComponent, DetailSectionComponent, FeedbackStateComponent, ApiRecoveryComponent], templateUrl: './product-details-page.html', styleUrl: './product-details-page.scss', changeDetection: ChangeDetectionStrategy.OnPush })
 export class ProductDetailsPageComponent {
   protected readonly i18n = inject(ProductLocalizationService);
   protected readonly session = inject(ApiSessionService);

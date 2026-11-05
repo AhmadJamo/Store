@@ -14,22 +14,24 @@
   } @else if (isForm) {
     <form class="transfer-form ui-panel" [formGroup]="form" (ngSubmit)="save()">
       @if (problem()) { <app-form-error-summary [title]="problem()" [errors]="{}" /> }
+      <app-form-section [title]="i18n.text('transferDetails')">
       <div class="form-grid">
-        <label>{{ i18n.text('sourceWarehouse') }}
+        <label><app-field-cue [label]="i18n.text('sourceWarehouse')" [required]="true" [requiredText]="i18n.text('requiredField')" [optionalText]="i18n.text('optionalField')" />
           <select formControlName="fromWarehouseId">
             <option [ngValue]="0">—</option>
             @for (warehouse of page()?.warehouses; track warehouse.id) { <option [ngValue]="warehouse.id">{{ warehouse.name }}</option> }
           </select>
         </label>
-        <label>{{ i18n.text('destinationWarehouse') }}
+        <label><app-field-cue [label]="i18n.text('destinationWarehouse')" [required]="true" [requiredText]="i18n.text('requiredField')" [optionalText]="i18n.text('optionalField')" />
           <select formControlName="toWarehouseId">
             <option [ngValue]="0">—</option>
             @for (warehouse of page()?.warehouses; track warehouse.id) { <option [ngValue]="warehouse.id">{{ warehouse.name }}</option> }
           </select>
         </label>
-        <label>{{ i18n.text('reference') }}<input formControlName="reference" /></label>
-        <label class="wide">{{ i18n.text('notes') }}<textarea formControlName="notes" rows="3"></textarea></label>
+        <label><app-field-cue [label]="i18n.text('reference')" [requiredText]="i18n.text('requiredField')" [optionalText]="i18n.text('optionalField')" /><input formControlName="reference" /></label>
+        <label class="wide"><app-field-cue [label]="i18n.text('notes')" [requiredText]="i18n.text('requiredField')" [optionalText]="i18n.text('optionalField')" /><textarea formControlName="notes" rows="3"></textarea></label>
       </div>
+      </app-form-section>
 
       <app-section-header [title]="i18n.text('items')">
         <button class="ui-button secondary" type="button" (click)="addItem()">{{ i18n.text('addItem') }}</button>
@@ -91,16 +93,17 @@
       @if (transfer.status === 3 && session.can('StockTransfers.Post')) { <button class="ui-button primary" (click)="post()" [disabled]="saving()">{{ i18n.text('post') }}</button> }
       @if (transfer.status === 5 && session.can('StockTransfers.Cancel')) { <button class="ui-button danger" (click)="cancel()" [disabled]="saving()">{{ i18n.text('cancel') }}</button> }
     </app-workflow-footer>
-    <app-data-table [label]="i18n.text('items')">
+    <app-detail-section [title]="i18n.text('items')"><app-data-table [label]="i18n.text('items')">
       <table><thead><tr><th>{{ i18n.text('product') }}</th><th>{{ i18n.text('barcode') }}</th><th>{{ i18n.text('quantity') }}</th><th>{{ i18n.text('sourceLocation') }}</th><th>{{ i18n.text('destinationLocation') }}</th><th>{{ i18n.text('tracking') }}</th></tr></thead>
       <tbody>@for (item of transfer.items; track item.id) { <tr><td>{{ item.productName }}</td><td>{{ item.barcode || '—' }}</td><td>{{ item.quantity | number:'1.0-3' }}</td><td>{{ item.sourceLocationCode }}</td><td>{{ item.destinationLocationCode }}</td><td><pre>{{ item.trackingAllocations || '—' }}</pre></td></tr> }</tbody></table>
-    </app-data-table>
-    <h2>{{ i18n.text('history') }}</h2>
+    </app-data-table></app-detail-section>
+    <app-detail-section [title]="i18n.text('history')">
     @if (!transfer.history.length) { <p>{{ i18n.text('noHistory') }}</p> }
     @else {
       <app-data-table [label]="i18n.text('history')"><table><thead><tr><th>{{ i18n.text('fromStatus') }}</th><th>{{ i18n.text('toStatus') }}</th><th>{{ i18n.text('user') }}</th><th>{{ i18n.text('reason') }}</th><th>{{ i18n.text('createdAt') }}</th></tr></thead>
       <tbody>@for (entry of transfer.history; track entry.id) { <tr><td>{{ statusName(entry.fromStatus) }}</td><td>{{ statusName(entry.toStatus) }}</td><td>{{ entry.userName }}</td><td>{{ entry.reason || '—' }}</td><td>{{ entry.createdAt | date:'dd/MM/yyyy HH:mm' }}</td></tr> }</tbody></table></app-data-table>
     }
+    </app-detail-section>
   } @else {
     <form (ngSubmit)="applyFilters()">
       <app-filter-bar [label]="i18n.text('search')">

@@ -1,5 +1,11 @@
 # AI Work Log
 
+- 2026-11-05: Completed `UX-005`. Added reusable semantic form sections, localized required/optional field cues and
+  detail sections, then piloted them on Product create/edit/details, Purchase Request create/details and Stock Transfer
+  create/details. Existing validation, safe memory-only drafts, dirty guards, permissions, submission locks and server
+  workflow authority remain unchanged; no DTO/API/schema/business-rule change was made. Angular passed 229/229 tests,
+  129 static templates, 5/5 hosted browser checks and custom budgets at 333,336 initial and 81,880 largest lazy bytes.
+
 - 2026-11-05: Completed `UX-004`. Evolved `app-data-table` with typed column semantics, feature-owned cell templates,
   bounded loading/error/empty states, sticky headers, alignment, overflow and explicit server-sort intent that never
   reorders rows. Migrated Product, Purchase Request and Stock Transfer lists without changing APIs, paging, filters,

@@ -122,11 +122,13 @@ permission-backed routes already present in `app.routes.ts`.
 - [x] Define typed entity-specific column configurations and feature-owned cell templates.
 - [x] Pilot on Products, Purchase Requests and Stock Transfers before module-wide migration.
 
-### UX-005 — Forms and detail pages — PENDING
+### UX-005 — Forms and detail pages — COMPLETED 2026-11-05
 
-- Standardize field groups, required/optional cues, validation summaries, keyboard flow and submission locking.
-- Standardize detail tabs: Overview, Details, Related Records, Activity and Available Actions where supported.
-- Preserve safe draft state on approved high-value forms and verify duplicate-submit protection.
+- [x] Add reusable form sections and localized required/optional field cues.
+- [x] Add reusable detail sections without inventing decorative tabs or new information groupings.
+- [x] Pilot Product create/edit/details, Purchase Request create/details and Stock Transfer create/details.
+- [x] Preserve existing validation, safe draft adapters, dirty guards, permission gates and submission locking.
+- [x] Verify unit tests, production build, static accessibility and hosted RTL/LTR/mobile behavior.
 
 ### UX-006 — Workflow integration — PENDING
 
@@ -179,22 +181,21 @@ Every phase must record:
 | UX-002 | 224/224 Angular; 122 templates; production 328,867 B initial and 81,880 B largest lazy, custom budgets green | URL normalization, back/forward observation, workspace-memory restoration, tenant/user isolation and memory-only draft tests passed across five pilot pages | COMPLETE |
 | UX-003 | 225/225 Angular; 126 templates; production 330,806 B initial and 81,880 B largest lazy, custom budgets green | Hosted states, RTL/LTR, keyboard and 390px responsive checks passed; shared page-region accessibility contracts passed | COMPLETE |
 | UX-004 | 227/227 Angular; 126 templates; production 333,336 B initial and 81,880 B largest lazy, custom budgets green | Typed columns, bounded states and server-sort intent tests passed; hosted RTL/LTR, keyboard and 390px responsive checks passed | COMPLETE |
+| UX-005 | 229/229 Angular; 129 templates; production 333,336 B initial and 81,880 B largest lazy, custom budgets green | Shared form/detail semantics passed; hosted states, RTL/LTR, keyboard and 390px responsive checks passed | COMPLETE |
 
 ## Latest phase report
 
-### UX-004 — Completed
+### UX-005 — Completed
 
-- Added a typed column contract with text, code, number, date, status and action semantics plus feature-owned cell
-  templates for business links and badges.
-- Added reusable loading, error/retry and empty states, sticky headers, numeric/date alignment, row hover and bounded
-  horizontal overflow while preserving the legacy projection mode for existing consumers.
-- Server-side sorting remains explicit: sortable headers emit a key/direction request but never mutate or reorder rows.
-- Migrated Products, Purchase Requests and Stock Transfers list tables without changing their data sources, permissions,
-  links, status meanings or server paging/filtering.
+- Added reusable `FormSection`, `FieldCue` and `DetailSection` components with logical CSS and localized English/Arabic
+  required/optional cues.
+- Product, Purchase Request and Stock Transfer pilots now group related input and detail content consistently while
+  retaining every existing field, command, permission, safe draft adapter and server-owned rule.
+- Existing workflow footers, dirty guards and save locks remain authoritative; no DTO, API, schema or domain change was made.
 
 ### Next
 
-- UX-005: standardize forms, field groups, validation cues and detail-page information architecture.
+- UX-006: add display-only workflow progress and prerequisite guidance driven exclusively by backend state and actions.
 
 ### Recorded risks
 
@@ -202,6 +203,8 @@ Every phase must record:
   green at 333,336/358,400 initial bytes and 81,880/81,920 largest lazy bytes.
 - Column visibility persistence was intentionally deferred: a generic preference could hide identity or action evidence.
   Any future column chooser must use a feature-owned allowlist and keep required columns visible.
+- Required/optional cues improve scanning but do not replace validation. Existing Angular validators and server Problem
+  Details remain authoritative, and a future rollout must classify each module field explicitly.
 
 ## Risks
 

@@ -8,6 +8,8 @@ import { ApiErrorService } from '../../core/api/api-error.service';
 import { NormalizedApiProblem } from '../../core/api/api.models';
 import { ApiSessionService } from '../../core/api/api-session.service';
 import { FormErrorSummaryComponent } from '../../shared/forms/form-error-summary';
+import { FieldCueComponent } from '../../shared/forms/field-cue/field-cue';
+import { FormSectionComponent } from '../../shared/forms/form-section/form-section';
 import { ApiRecoveryComponent } from '../../shared/ui/api-recovery/api-recovery';
 import { DataTableCellDirective, DataTableColumn, DataTableComponent } from '../../shared/ui/data-table/data-table';
 import { FeedbackStateComponent } from '../../shared/ui/feedback-state/feedback-state';
@@ -16,6 +18,7 @@ import { FilterBarComponent } from '../../shared/ui/filter-bar/filter-bar';
 import { SectionHeaderComponent } from '../../shared/ui/section-header/section-header';
 import { SummaryStripComponent } from '../../shared/ui/summary-strip/summary-strip';
 import { WorkflowFooterComponent } from '../../shared/ui/workflow-footer/workflow-footer';
+import { DetailSectionComponent } from '../../shared/ui/detail-section/detail-section';
 import { WorkspaceService } from '../../workspace/state/workspace.service';
 import { PageContextService, pageContextFields } from '../../shared/state/page-context.service';
 import { StockTransferApiService } from './data/stock-transfer-api.service';
@@ -60,6 +63,9 @@ interface StockTransferDraft {
     DataTableComponent,
     DataTableCellDirective,
     FormErrorSummaryComponent,
+    FieldCueComponent,
+    FormSectionComponent,
+    DetailSectionComponent,
   ],
   templateUrl: './stock-transfers-page.html',
   styleUrl: './stock-transfers-page.scss',

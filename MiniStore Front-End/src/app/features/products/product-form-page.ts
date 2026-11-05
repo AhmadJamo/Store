@@ -7,9 +7,12 @@ import { NormalizedApiProblem } from '../../core/api/api.models';
 import { FormErrorSummaryComponent } from '../../shared/forms/form-error-summary';
 import { FormFocusService } from '../../shared/forms/form-focus.service';
 import { SafeFormShortcutsDirective } from '../../shared/forms/safe-form-shortcuts.directive';
+import { FieldCueComponent } from '../../shared/forms/field-cue/field-cue';
+import { FormSectionComponent } from '../../shared/forms/form-section/form-section';
 import { ApiRecoveryComponent } from '../../shared/ui/api-recovery/api-recovery';
 import { FeedbackStateComponent } from '../../shared/ui/feedback-state/feedback-state';
 import { PageHeaderComponent } from '../../shared/ui/page-header/page-header';
+import { WorkflowFooterComponent } from '../../shared/ui/workflow-footer/workflow-footer';
 import { WorkspaceService } from '../../workspace/state/workspace.service';
 import { ProductApiService } from './data/product-api.service';
 import { Product, ProductCommand, ProductFormPage } from './data/product.models';
@@ -19,7 +22,7 @@ const ProductType = { Raw: 1, Direct: 2, Prepared: 3, Service: 4 } as const;
 const BillingPolicy = { Ordered: 1, Received: 2, ServiceCompletion: 3, DirectDelivery: 4 } as const;
 const Handling = { Fragile: 1, KeepDry: 2, Refrigerated: 4, Frozen: 8, Hazardous: 16 } as const;
 
-@Component({ selector: 'app-product-form-page', imports: [ReactiveFormsModule, RouterLink, PageHeaderComponent, FeedbackStateComponent, FormErrorSummaryComponent, SafeFormShortcutsDirective, ApiRecoveryComponent], templateUrl: './product-form-page.html', styleUrl: './product-form-page.scss', changeDetection: ChangeDetectionStrategy.OnPush })
+@Component({ selector: 'app-product-form-page', imports: [ReactiveFormsModule, RouterLink, PageHeaderComponent, FeedbackStateComponent, FormErrorSummaryComponent, SafeFormShortcutsDirective, ApiRecoveryComponent, FieldCueComponent, FormSectionComponent, WorkflowFooterComponent], templateUrl: './product-form-page.html', styleUrl: './product-form-page.scss', changeDetection: ChangeDetectionStrategy.OnPush })
 export class ProductFormPageComponent {
   protected readonly i18n = inject(ProductLocalizationService);
   private readonly api = inject(ProductApiService);
