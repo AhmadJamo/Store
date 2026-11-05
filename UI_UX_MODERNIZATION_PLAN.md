@@ -130,12 +130,13 @@ permission-backed routes already present in `app.routes.ts`.
 - [x] Preserve existing validation, safe draft adapters, dirty guards, permission gates and submission locking.
 - [x] Verify unit tests, production build, static accessibility and hosted RTL/LTR/mobile behavior.
 
-### UX-006 — Workflow integration — PENDING
+### UX-006 — Workflow integration — COMPLETED 2026-11-05
 
-- Add a reusable display-only workflow progress component driven by backend status/actions.
-- Add a permission/state-aware workflow footer and prerequisite explanations.
-- Pilot Stock Transfers, Purchase Requests, Purchase Orders and Sales Orders.
-- Verify every existing transition, alternative path and next-step link without changing domain rules.
+- [x] Add a reusable display-only workflow progress component driven by backend status.
+- [x] Add localized next-step and prerequisite guidance without calculating transitions in the shared component.
+- [x] Pilot Stock Transfers, Purchase Requests, Purchase Orders and Sales Orders.
+- [x] Reuse the workflow footer for Purchase and Sales Order action zones while preserving feature permission/state checks.
+- [x] Verify tests, production build, static accessibility and hosted RTL/LTR/mobile behavior.
 
 ### UX-007 — Productivity and connected information — PENDING
 
@@ -182,20 +183,21 @@ Every phase must record:
 | UX-003 | 225/225 Angular; 126 templates; production 330,806 B initial and 81,880 B largest lazy, custom budgets green | Hosted states, RTL/LTR, keyboard and 390px responsive checks passed; shared page-region accessibility contracts passed | COMPLETE |
 | UX-004 | 227/227 Angular; 126 templates; production 333,336 B initial and 81,880 B largest lazy, custom budgets green | Typed columns, bounded states and server-sort intent tests passed; hosted RTL/LTR, keyboard and 390px responsive checks passed | COMPLETE |
 | UX-005 | 229/229 Angular; 129 templates; production 333,336 B initial and 81,880 B largest lazy, custom budgets green | Shared form/detail semantics passed; hosted states, RTL/LTR, keyboard and 390px responsive checks passed | COMPLETE |
+| UX-006 | 230/230 Angular; 130 templates; production 333,336 B initial and 81,880 B largest lazy, custom budgets green | Workflow stage/current/guidance semantics passed; hosted states, RTL/LTR, keyboard and 390px responsive checks passed | COMPLETE |
 
 ## Latest phase report
 
-### UX-005 — Completed
+### UX-006 — Completed
 
-- Added reusable `FormSection`, `FieldCue` and `DetailSection` components with logical CSS and localized English/Arabic
-  required/optional cues.
-- Product, Purchase Request and Stock Transfer pilots now group related input and detail content consistently while
-  retaining every existing field, command, permission, safe draft adapter and server-owned rule.
-- Existing workflow footers, dirty guards and save locks remain authoritative; no DTO, API, schema or domain change was made.
+- Added a reusable accessible `WorkflowProgress` component that renders only feature-supplied server status evidence.
+- Added bilingual current/next-step guidance to Stock Transfers, Purchase Requests, Purchase Orders and Sales Orders.
+- Purchase and Sales Order action zones now use the shared workflow footer; their existing permissions, status checks,
+  reasons, confirmation rules and protected API commands remain unchanged.
+- Reformatted the Sales Orders component for maintainability without changing its behavior or contracts.
 
 ### Next
 
-- UX-006: add display-only workflow progress and prerequisite guidance driven exclusively by backend state and actions.
+- UX-007: replace unfinished search with permission-filtered page/command search and add safe connected-information aids.
 
 ### Recorded risks
 
@@ -205,6 +207,8 @@ Every phase must record:
   Any future column chooser must use a feature-owned allowlist and keep required columns visible.
 - Required/optional cues improve scanning but do not replace validation. Existing Angular validators and server Problem
   Details remain authoritative, and a future rollout must classify each module field explicitly.
+- Workflow guidance is descriptive, not authoritative. It must remain synchronized with server statuses; future workflows
+  should prefer explicit server-provided available-action metadata where contracts already expose it.
 
 ## Risks
 

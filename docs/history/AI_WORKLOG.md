@@ -1,5 +1,11 @@
 # AI Work Log
 
+- 2026-11-05: Completed `UX-006`. Added an accessible display-only workflow progress component and bilingual next-step
+  guidance across Stock Transfers, Purchase Requests, Purchase Orders and Sales Orders. Purchase/Sales Order actions now
+  reuse the shared workflow footer while existing statuses, permissions, reasons, confirmation rules and protected API
+  commands remain unchanged. Angular passed 230/230 tests, 130 static templates, 5/5 hosted browser checks and custom
+  budgets at 333,336 initial and 81,880 largest lazy bytes.
+
 - 2026-11-05: Completed `UX-005`. Added reusable semantic form sections, localized required/optional field cues and
   detail sections, then piloted them on Product create/edit/details, Purchase Request create/details and Stock Transfer
   create/details. Existing validation, safe memory-only drafts, dirty guards, permissions, submission locks and server

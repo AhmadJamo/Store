@@ -275,6 +275,7 @@
         </div>
       </dl>
     </app-detail-section>
+    <app-workflow-progress [label]="i18n.text('workflowProgress')" [steps]="workflowSteps(x.status)" [guidance]="workflowGuidance(x.status)" />
     <section class="ui-card table-section">
       <h2>{{ i18n.text('requestLines') }}</h2>
       <app-data-table [label]="i18n.text('requestLines')"

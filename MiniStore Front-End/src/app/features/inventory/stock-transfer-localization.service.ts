@@ -17,6 +17,7 @@ const messages = {
     reasonPrompt: 'أدخل السبب', confirmAction: 'هل تريد تنفيذ هذا الإجراء؟', saved: 'تم حفظ التحويل.', actionCompleted: 'تم تنفيذ الإجراء بنجاح.',
     error: 'تعذر إكمال العملية.', unsaved: 'لديك تغييرات غير محفوظة. هل تريد المغادرة؟', noHistory: 'لا يوجد سجل حالة بعد.', workflowActions: 'إجراءات سير العمل',
     transferDetails: 'بيانات التحويل', requiredField: 'مطلوب', optionalField: 'اختياري',
+    workflowProgress: 'تقدم سير العمل', nextSubmit: 'الخطوة التالية: إرسال التحويل للاعتماد.', nextApprove: 'يتطلب الترحيل اعتماد التحويل أولًا.', nextPost: 'الخطوة التالية: ترحيل التحويل لنقل المخزون.', rejectedGuidance: 'التحويل مرفوض؛ أعده إلى المسودة قبل إرساله مجددًا.', postedGuidance: 'تم ترحيل التحويل؛ الإلغاء ينشئ حركات عكسية مضبوطة.', cancelledGuidance: 'تم إلغاء التحويل وعكس حركاته.',
   },
   'en-US': {
     title: 'Stock transfers', description: 'Create, review, approve, and post transfers while the server remains authoritative for stock movements.',
@@ -33,6 +34,7 @@ const messages = {
     reasonPrompt: 'Enter the reason', confirmAction: 'Perform this action?', saved: 'The transfer was saved.', actionCompleted: 'The action completed successfully.',
     error: 'The operation could not be completed.', unsaved: 'You have unsaved changes. Leave this page?', noHistory: 'No status history yet.', workflowActions: 'Workflow actions',
     transferDetails: 'Transfer details', requiredField: 'Required', optionalField: 'Optional',
+    workflowProgress: 'Workflow progress', nextSubmit: 'Next: submit the transfer for approval.', nextApprove: 'The transfer must be approved before posting.', nextPost: 'Next: post the transfer to move stock.', rejectedGuidance: 'The transfer was rejected; return it to draft before resubmitting.', postedGuidance: 'The transfer is posted; cancellation creates controlled reversal movements.', cancelledGuidance: 'The transfer was cancelled and its movements were reversed.',
   },
 } as const;
 

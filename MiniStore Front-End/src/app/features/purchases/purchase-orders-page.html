@@ -167,7 +167,8 @@
         </div>
       </dl>
     </section>
-    <section class="ui-card actions command">
+    <app-workflow-progress [label]="i18n.text('workflowProgress')" [steps]="workflowSteps(x.status)" [guidance]="workflowGuidance(x.status)" />
+    <app-workflow-footer [label]="i18n.text('workflowActions')">
       @if (
         x.status === 3 &&
         x.lines.some((l) => l.availableToBill > 0) &&
@@ -226,7 +227,7 @@
           {{ i18n.text('reopen') }}
         </button>
       }
-    </section>
+    </app-workflow-footer>
     <section class="ui-card">
       <h2>{{ i18n.text('lines') }}</h2>
       <app-data-table [label]="i18n.text('lines')"

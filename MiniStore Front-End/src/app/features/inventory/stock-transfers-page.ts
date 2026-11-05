@@ -18,6 +18,7 @@ import { FilterBarComponent } from '../../shared/ui/filter-bar/filter-bar';
 import { SectionHeaderComponent } from '../../shared/ui/section-header/section-header';
 import { SummaryStripComponent } from '../../shared/ui/summary-strip/summary-strip';
 import { WorkflowFooterComponent } from '../../shared/ui/workflow-footer/workflow-footer';
+import { WorkflowProgressComponent, WorkflowStep } from '../../shared/ui/workflow-progress/workflow-progress';
 import { DetailSectionComponent } from '../../shared/ui/detail-section/detail-section';
 import { WorkspaceService } from '../../workspace/state/workspace.service';
 import { PageContextService, pageContextFields } from '../../shared/state/page-context.service';
@@ -66,6 +67,7 @@ interface StockTransferDraft {
     FieldCueComponent,
     FormSectionComponent,
     DetailSectionComponent,
+    WorkflowProgressComponent,
   ],
   templateUrl: './stock-transfers-page.html',
   styleUrl: './stock-transfers-page.scss',
@@ -156,6 +158,36 @@ export class StockTransfersPageComponent {
       5: 'posted',
       6: 'cancelled',
     } as Record<number, StockTransferMessageKey>)[status] ?? 'draft');
+  }
+
+  protected workflowSteps(status: number): readonly WorkflowStep[] {
+    const primary = [
+      this.i18n.text('draft'),
+      this.i18n.text('submitted'),
+      this.i18n.text('approved'),
+      this.i18n.text('posted'),
+    ];
+    if (status === 4) return [
+      { label: primary[0], state: 'complete' },
+      { label: primary[1], state: 'complete' },
+      { label: this.i18n.text('rejected'), state: 'stopped' },
+    ];
+    if (status === 6) return [
+      ...primary.map(label => ({ label, state: 'complete' as const })),
+      { label: this.i18n.text('cancelled'), state: 'stopped' },
+    ];
+    const current = ({ 1: 0, 2: 1, 3: 2, 5: 3 } as Record<number, number>)[status] ?? 0;
+    return primary.map((label, index) => ({
+      label,
+      state: index < current ? 'complete' : index === current ? 'current' : 'upcoming',
+    }));
+  }
+
+  protected workflowGuidance(status: number): string {
+    return this.i18n.text(({
+      1: 'nextSubmit', 2: 'nextApprove', 3: 'nextPost', 4: 'rejectedGuidance',
+      5: 'postedGuidance', 6: 'cancelledGuidance',
+    } as Record<number, StockTransferMessageKey>)[status] ?? 'nextSubmit');
   }
 
   protected load(): void {

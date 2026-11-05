@@ -94,6 +94,13 @@ const c = {
     requestDetails: 'Request details',
     requiredField: 'Required',
     optionalField: 'Optional',
+    workflowProgress: 'Workflow progress',
+    nextSubmitGuidance: 'Next: submit the request for approval.',
+    approvalGuidance: 'The request is waiting for the configured approval steps.',
+    sourcingGuidance: 'Next: start supplier sourcing from the approved request.',
+    sourcedGuidance: 'Supplier sourcing has started for this request.',
+    cancelledGuidance: 'The request was cancelled and has no further action.',
+    rejectedGuidance: 'The request was rejected by the approval workflow.',
   },
   ar: {
     title: 'طلبات الشراء',
@@ -188,6 +195,13 @@ const c = {
     requestDetails: 'بيانات الطلب',
     requiredField: 'مطلوب',
     optionalField: 'اختياري',
+    workflowProgress: 'تقدم سير العمل',
+    nextSubmitGuidance: 'الخطوة التالية: إرسال الطلب للاعتماد.',
+    approvalGuidance: 'الطلب بانتظار خطوات الاعتماد المهيأة.',
+    sourcingGuidance: 'الخطوة التالية: بدء التوريد من الموردين للطلب المعتمد.',
+    sourcedGuidance: 'بدأت عملية التوريد من الموردين لهذا الطلب.',
+    cancelledGuidance: 'تم إلغاء الطلب ولا يوجد إجراء لاحق.',
+    rejectedGuidance: 'تم رفض الطلب ضمن سير الاعتماد.',
   },
 } as const;
 export type PurchaseRequestKey = keyof typeof c.en;

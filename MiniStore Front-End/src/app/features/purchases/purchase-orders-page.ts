@@ -9,6 +9,8 @@ import { ApiRecoveryComponent } from '../../shared/ui/api-recovery/api-recovery'
 import { DataTableComponent } from '../../shared/ui/data-table/data-table';
 import { FeedbackStateComponent } from '../../shared/ui/feedback-state/feedback-state';
 import { PageHeaderComponent } from '../../shared/ui/page-header/page-header';
+import { WorkflowProgressComponent, WorkflowStep } from '../../shared/ui/workflow-progress/workflow-progress';
+import { WorkflowFooterComponent } from '../../shared/ui/workflow-footer/workflow-footer';
 import { WorkspaceService } from '../../workspace/state/workspace.service';
 import { PurchaseOrderApiService } from './purchase-order-api.service';
 import { PurchaseOrder } from './purchase-order.models';
@@ -27,6 +29,8 @@ import {
     DataTableComponent,
     FeedbackStateComponent,
     PageHeaderComponent,
+    WorkflowProgressComponent,
+    WorkflowFooterComponent,
   ],
   templateUrl: './purchase-orders-page.html',
   styleUrl: './purchase-orders-page.scss',
@@ -168,6 +172,27 @@ export class PurchaseOrdersPageComponent {
         >
       )[v] ?? 'draft',
     );
+  }
+  protected workflowSteps(status: number): readonly WorkflowStep[] {
+    const primary = [
+      this.i18n.text('draft'), this.i18n.text('approved'),
+      this.i18n.text('confirmed'), this.i18n.text('closed'),
+    ];
+    if (status === 4) return [
+      { label: primary[0], state: 'complete' },
+      { label: this.i18n.text('cancelled'), state: 'stopped' },
+    ];
+    const current = ({ 1: 0, 2: 1, 3: 2, 5: 3 } as Record<number, number>)[status] ?? 0;
+    return primary.map((label, index) => ({
+      label,
+      state: index < current ? 'complete' : index === current ? 'current' : 'upcoming',
+    }));
+  }
+  protected workflowGuidance(status: number): string {
+    return this.i18n.text(({
+      1: 'nextApproveGuidance', 2: 'nextConfirmGuidance', 3: 'fulfillmentGuidance',
+      4: 'cancelledGuidance', 5: 'closedGuidance',
+    } as Record<number, PurchaseOrderKey>)[status] ?? 'nextApproveGuidance');
   }
   protected retry() {
     this.resolve();

@@ -63,6 +63,13 @@ const copy = {
     history: 'History',
     unsaved: 'You have unsaved purchase-order data. Leave this page?',
     error: 'The operation could not be completed.',
+    workflowProgress: 'Workflow progress',
+    workflowActions: 'Workflow actions',
+    nextApproveGuidance: 'Next: approve the draft commercial commitment.',
+    nextConfirmGuidance: 'Next: confirm the approved order before fulfillment.',
+    fulfillmentGuidance: 'Continue the server-authorized receiving, service, delivery and billing work.',
+    cancelledGuidance: 'The purchase order was cancelled before fulfillment.',
+    closedGuidance: 'The purchase order is closed; reopen is available only when the server permits it.',
   },
   ar: {
     receiveGoods: 'استلام البضاعة',
@@ -124,6 +131,13 @@ const copy = {
     history: 'السجل',
     unsaved: 'لديك بيانات أمر شراء غير محفوظة. هل تريد المغادرة؟',
     error: 'تعذر إتمام العملية.',
+    workflowProgress: 'تقدم سير العمل',
+    workflowActions: 'إجراءات سير العمل',
+    nextApproveGuidance: 'الخطوة التالية: اعتماد الالتزام التجاري المسودة.',
+    nextConfirmGuidance: 'الخطوة التالية: تأكيد الأمر المعتمد قبل التنفيذ.',
+    fulfillmentGuidance: 'تابع الاستلام أو الخدمة أو التسليم والفوترة التي يسمح بها الخادم.',
+    cancelledGuidance: 'تم إلغاء أمر الشراء قبل التنفيذ.',
+    closedGuidance: 'أمر الشراء مغلق؛ تتوفر إعادة الفتح فقط عندما يسمح الخادم.',
   },
 } as const;
 export type PurchaseOrderKey = keyof typeof copy.en;

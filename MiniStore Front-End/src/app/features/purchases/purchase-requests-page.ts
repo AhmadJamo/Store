@@ -15,6 +15,7 @@ import { FilterBarComponent } from '../../shared/ui/filter-bar/filter-bar';
 import { SectionHeaderComponent } from '../../shared/ui/section-header/section-header';
 import { SummaryStripComponent } from '../../shared/ui/summary-strip/summary-strip';
 import { WorkflowFooterComponent } from '../../shared/ui/workflow-footer/workflow-footer';
+import { WorkflowProgressComponent, WorkflowStep } from '../../shared/ui/workflow-progress/workflow-progress';
 import { DetailSectionComponent } from '../../shared/ui/detail-section/detail-section';
 import { WorkspaceService } from '../../workspace/state/workspace.service';
 import { PageContextService, pageContextFields } from '../../shared/state/page-context.service';
@@ -60,6 +61,7 @@ interface PurchaseRequestDraft {
     FieldCueComponent,
     FormSectionComponent,
     DetailSectionComponent,
+    WorkflowProgressComponent,
   ],
   templateUrl: './purchase-requests-page.html',
   styleUrl: './purchase-requests-page.scss',
@@ -322,6 +324,28 @@ export class PurchaseRequestsPageComponent {
         v
       ] ?? 'normal',
     );
+  }
+  protected workflowSteps(status: number): readonly WorkflowStep[] {
+    const primary = [
+      this.i18n.text('draft'), this.i18n.text('submittedStatus'),
+      this.i18n.text('approved'), this.i18n.text('sourced'),
+    ];
+    if (status === 3 || status === 5) return [
+      { label: primary[0], state: 'complete' },
+      ...(status === 5 ? [{ label: primary[1], state: 'complete' as const }] : []),
+      { label: this.statusName(status), state: 'stopped' },
+    ];
+    const current = ({ 1: 0, 2: 1, 4: 2, 6: 3 } as Record<number, number>)[status] ?? 0;
+    return primary.map((label, index) => ({
+      label,
+      state: index < current ? 'complete' : index === current ? 'current' : 'upcoming',
+    }));
+  }
+  protected workflowGuidance(status: number): string {
+    return this.i18n.text(({
+      1: 'nextSubmitGuidance', 2: 'approvalGuidance', 3: 'cancelledGuidance',
+      4: 'sourcingGuidance', 5: 'rejectedGuidance', 6: 'sourcedGuidance',
+    } as Record<number, PurchaseRequestKey>)[status] ?? 'nextSubmitGuidance');
   }
   protected actionName(v: number) {
     return this.i18n.text(

@@ -10,6 +10,7 @@ import { WorkflowFooterComponent } from './workflow-footer/workflow-footer';
 import { FieldCueComponent } from '../forms/field-cue/field-cue';
 import { FormSectionComponent } from '../forms/form-section/form-section';
 import { DetailSectionComponent } from './detail-section/detail-section';
+import { WorkflowProgressComponent } from './workflow-progress/workflow-progress';
 
 describe('shared UI primitives', () => {
   it('renders page metadata without owning business actions', async () => {
@@ -157,5 +158,21 @@ describe('shared UI primitives', () => {
     fixture.detectChanges();
     expect(fixture.nativeElement.querySelector('section.detail-section')).toBeTruthy();
     expect(fixture.nativeElement.querySelector('h2').textContent).toContain('Commercial data');
+  });
+
+  it('renders server-derived workflow stages and current guidance accessibly', async () => {
+    await TestBed.configureTestingModule({ imports: [WorkflowProgressComponent] }).compileComponents();
+    const fixture = TestBed.createComponent(WorkflowProgressComponent);
+    fixture.componentRef.setInput('label', 'Workflow progress');
+    fixture.componentRef.setInput('steps', [
+      { label: 'Draft', state: 'complete' },
+      { label: 'Submitted', state: 'current' },
+      { label: 'Approved', state: 'upcoming' },
+    ]);
+    fixture.componentRef.setInput('guidance', 'Approval is required before posting.');
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('section').getAttribute('aria-label')).toBe('Workflow progress');
+    expect(fixture.nativeElement.querySelector('[aria-current="step"]').textContent).toContain('Submitted');
+    expect(fixture.nativeElement.textContent).toContain('Approval is required');
   });
 });

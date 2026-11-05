@@ -1,0 +1,11 @@
+<section class="workflow-progress" [attr.aria-label]="label()">
+  <ol>
+    @for (step of steps(); track $index) {
+      <li [class]="step.state" [attr.aria-current]="step.state === 'current' || step.state === 'stopped' ? 'step' : null">
+        <span class="marker" aria-hidden="true"></span>
+        <span>{{ step.label }}</span>
+      </li>
+    }
+  </ol>
+  @if (guidance()) { <p>{{ guidance() }}</p> }
+</section>

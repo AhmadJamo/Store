@@ -18,7 +18,9 @@ The ERP SaaS Foundation Blueprint is imported as a non-authoritative planning re
   without moving paging, filtering or sorting from the server. Completed 2026-11-05.
 - [x] UX-005 standardize form sections, localized required/optional cues and detail sections on Product, Purchase Request
   and Stock Transfer create/detail pilots without changing validation or workflow authority. Completed 2026-11-05.
-- [ ] UX-006..008 standardize workflow guidance, productivity and module-wide consistency as defined in
+- [x] UX-006 add display-only workflow progress and bilingual next-step guidance to Stock Transfers, Purchase Requests,
+  Purchase Orders and Sales Orders while preserving server transition authority. Completed 2026-11-05.
+- [ ] UX-007..008 deliver productivity/connected information and module-wide consistency as defined in
   `UI_UX_MODERNIZATION_PLAN.md`.
 
 - [x] MOD-000 complete the read-only MVC-to-API/Angular repository audit, target architecture, dependency graph, workspace design, MVP, feature matrix and risk assessment. Completed 2026-10-24.

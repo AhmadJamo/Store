@@ -84,6 +84,7 @@
       { label: i18n.text('destinationWarehouse'), value: transfer.toWarehouseName },
       { label: i18n.text('createdBy'), value: transfer.createdByUserName, detail: (transfer.createdAt | date:'dd/MM/yyyy HH:mm') || '' }
     ]" />
+    <app-workflow-progress [label]="i18n.text('workflowProgress')" [steps]="workflowSteps(transfer.status)" [guidance]="workflowGuidance(transfer.status)" />
     <app-workflow-footer [label]="i18n.text('workflowActions')">
       @if (transfer.status === 1 && session.can('StockTransfers.Edit')) { <a class="ui-button secondary" [routerLink]="['/inventory/transfers', transfer.id, 'edit']">{{ i18n.text('edit') }}</a> }
       @if (transfer.status === 1 && session.can('StockTransfers.Submit')) { <button class="ui-button primary" (click)="submit()" [disabled]="saving()">{{ i18n.text('submit') }}</button> }

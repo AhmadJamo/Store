@@ -52,6 +52,11 @@ const m = {
     createOrder: 'Create sales order',
     orderCreated: 'Sales order created',
     viewOrder: 'View sales order',
+    workflowProgress: 'Workflow progress',
+    workflowActions: 'Workflow actions',
+    nextConfirmGuidance: 'Next: evaluate controls and confirm the draft order.',
+    executionGuidance: 'Continue with server-authorized reservation, delivery and invoicing.',
+    cancelledGuidance: 'The sales order was cancelled and cannot continue.',
   },
   ar: {
     title: 'طلبات البيع',
@@ -104,6 +109,11 @@ const m = {
     createOrder: 'إنشاء طلب بيع',
     orderCreated: 'تم إنشاء طلب البيع',
     viewOrder: 'عرض طلب البيع',
+    workflowProgress: 'تقدم سير العمل',
+    workflowActions: 'إجراءات سير العمل',
+    nextConfirmGuidance: 'الخطوة التالية: تقييم الضوابط وتأكيد طلب البيع المسودة.',
+    executionGuidance: 'تابع الحجز والتسليم والفوترة التي يسمح بها الخادم.',
+    cancelledGuidance: 'تم إلغاء طلب البيع ولا يمكن متابعة تنفيذه.',
   },
 } as const;
 export type SalesOrderKey = keyof typeof m.en;

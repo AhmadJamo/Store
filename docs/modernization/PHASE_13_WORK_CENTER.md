@@ -1,5 +1,11 @@
 # MOD-013 — Action and exception center
 
+## UX-006 workflow evolution (2026-11-05)
+
+The later UI/UX program adds a shared display-only workflow progress region and localized next-step guidance to Stock
+Transfers, Purchase Requests, Purchase Orders and Sales Orders. Features continue to own server-status mapping, permissions,
+reasons and protected commands; the shared component neither calculates nor executes a transition.
+
 > Status: COMPLETED  
 > Completed: 2026-10-24  
 > Database changes: none

@@ -16,6 +16,10 @@ UX-005 groups Purchase Request header fields in a semantic form section with loc
 shared detail section for request identity/status. Safe structural drafts, unrestricted-text exclusions, approval rules,
 dirty protection, submission locking and Application-owned transitions remain unchanged.
 
+UX-006 adds display-only progress and bilingual next-step guidance to Purchase Requests and Purchase Orders. Request
+approval/sourcing and order approval/confirmation/fulfillment/closure remain derived from existing server status and
+progress contracts. Purchase Order commands now use the shared workflow footer without changing permissions or mutations.
+
 `SAL-130A` reuses the existing purchasing analytics calculations through a generic Analytics Center provider. Spend, receiving, matching exceptions, supplier/buyer performance, journey and legacy/modern evidence can now be composed into the same tenant-owned personal/shared workspace model as other modules; Purchasing does not own a second dashboard framework.
 
 The implemented workflow described below is a direct supplier invoice and inventory receipt, not a Purchase Order lifecycle. The approved additive evolution, compatibility rules and ordered delivery slices are documented in `docs/PURCHASE_MANAGEMENT_EVOLUTION_PLAN.md`. Existing Purchase and PurchaseReturn history will remain valid and will not be fabricated into new procurement documents.

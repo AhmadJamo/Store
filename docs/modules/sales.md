@@ -1,4 +1,8 @@
 # Sales
+UX-006 adds display-only Draft/Confirmed/Cancelled progress and bilingual guidance to Sales Order details. Pending approval
+uses the existing server-returned approval status, while reservation, delivery and invoicing guidance references existing
+progress contracts. The command zone now uses the shared workflow footer without changing permission or mutation logic.
+
 > UX-002 note: the Customers list now preserves allowlisted search, archived-state, sort and page context through the
 > shared URL/workspace contract. Search is not persisted in local storage.
 > Status: LEGACY IMMEDIATE SALE IMPLEMENTED; SAL-020 THROUGH SAL-130A IMPLEMENTED IN SOURCE | Last reviewed: 2026-10-29
