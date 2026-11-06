@@ -44,6 +44,15 @@ public class FiscalPeriod
             throw new ArgumentException("Fiscal period status is invalid.");
         if (status == Status)
             throw new InvalidOperationException("Fiscal period already has the selected status.");
+        var validTransition = Status switch
+        {
+            FiscalPeriodStatus.Open => status == FiscalPeriodStatus.SoftClosed,
+            FiscalPeriodStatus.SoftClosed => status is FiscalPeriodStatus.Open or FiscalPeriodStatus.Closed,
+            FiscalPeriodStatus.Closed => status == FiscalPeriodStatus.SoftClosed,
+            _ => false
+        };
+        if (!validTransition)
+            throw new InvalidOperationException("Fiscal period status must move one controlled step at a time.");
         if (string.IsNullOrWhiteSpace(reason) || reason.Trim().Length > 500)
             throw new ArgumentException("A status change reason is required and cannot exceed 500 characters.");
 

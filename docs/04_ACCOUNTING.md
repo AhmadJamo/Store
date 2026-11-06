@@ -21,7 +21,7 @@
 
 > Status: PARTIALLY IMPLEMENTED  
 > Source of truth: Code  
-> Last reviewed: 2026-10-21
+> Last reviewed: 2026-11-07
 
 For the Arabic accounting-cycle, journal examples, international-standard map, mandatory software controls and ordered implementation guide, see [`ACCOUNTING_REFERENCE_AR.md`](ACCOUNTING_REFERENCE_AR.md). That reference describes the target policy and must not be read as an implemented-feature list; the status table below remains the implementation assessment.
 
@@ -198,3 +198,13 @@ so no accounting data was created to fabricate one.
   differences, inventory exceptions, draft journals and fiscal-period coverage. Checks are evidence, not permission to close.
 - The endpoint and Angular surface are GET-only under `JournalEntries.View`. No journal, payment, period status, inventory
   or source document is mutated, and no automatic closing entry is created.
+
+# UX-015 controlled period close (2026-11-07)
+
+- Fiscal periods move only Open → SoftClosed → Closed; reopen moves Closed → SoftClosed → Open. Direct jumps are rejected.
+- Soft close and final close rerun the complete UX-014 readiness report inside the existing UnitOfWork transaction. Any
+  `Blocked` check except the target period-status check rejects the command before status mutation.
+- Every command requires a reason and current rowversion. `FiscalPeriod` retains reason, actor and UTC time; the semantic
+  audit catalog records the before/after status under `Accounting.FiscalPeriodStatusChanged`.
+- View, soft close, final close and reopen use independent permissions and explicit antiforgery-protected endpoints.
+- The phase creates no closing journal, changes no posted entry and does not implement consolidation, budgets or FX revaluation.

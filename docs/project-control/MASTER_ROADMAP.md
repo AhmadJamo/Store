@@ -375,3 +375,12 @@
 - Passed 1,867 security/accounting checks, 240 Angular tests, 136 templates, 77 destinations, 46/46 routes,
   production budgets and authenticated Edge acceptance 15/15.
 - Proposed next slice: UX-015 controlled period-close execution; owner approval is required before mutations.
+
+## UX-015 — Controlled period-close execution — COMPLETE 2026-11-07
+
+- Enforced stepwise Open/SoftClosed/Closed transitions and one-step reopen with required reason and rowversion.
+- Reran UX-014 readiness inside the transaction and blocked status changes on any authoritative blocker.
+- Added independent View/SoftClose/Close/Reopen permissions, explicit antiforgery and registered semantic audit evidence.
+- Kept automatic closing journals, posted-entry changes, consolidation, budgets and FX revaluation out of scope.
+- Passed clean Release, 1,872 security/accounting checks, 240 Angular tests, 136 templates, bundle budgets and Edge 15/15.
+- Proposed next slice: UX-016 recurring-journal templates and controlled runs; owner approval required.

@@ -1,6 +1,6 @@
 # Project TODO
 > Source of truth: Current repository scan  
-> Last reviewed: 2026-11-05
+> Last reviewed: 2026-11-07
 
 The approved numbered Arabic/English delivery sequence is maintained in `MASTER_IMPLEMENTATION_ROADMAP_AR_EN.md`. Detailed working status, business rules and the rolling suggestion queue remain in `ARABIC_SHARED_ROADMAP.md`. This file remains the concise technical backlog.
 
@@ -339,8 +339,8 @@ The ERP SaaS Foundation Blueprint is imported as a non-authoritative planning re
 - Implemented WMS-010 hierarchical location metadata, barcode, sequence, tree ordering, warehouse-filtered parent selection, operational capabilities, edit workflow and cycle/same-warehouse validation. Putaway/transfers/relocations enforce receive/pick capabilities. Its additive migration is applied to `AHMAD/MiniStoreDb`; authenticated UI smoke remains because no login secret is stored in the repository.
 
 ## In Progress
-- UX-014 cash flow and period-close readiness is complete as a GET-only evidence surface. UX-015 controlled close execution
-  is proposed and must not begin before owner approval because it would mutate fiscal-period status and may create journals.
+- UX-015 controlled period-close execution is complete without automatic closing journals. UX-016 recurring-journal
+  templates and controlled runs is proposed and requires owner approval before adding a scheduled financial mutation.
 - UX-009 navigation completeness is complete: 72 registered destinations and 41/41 operational routes are covered through
   permission-aware Purchasing, Sales and Accounting hubs. UX-010 Accounting Workspace Foundation is next.
 - PUR-280 is implemented. The purchase completion roadmap is complete; continue from the master roadmap after reconciling customer-management and sales requirements.
@@ -367,7 +367,7 @@ The ERP SaaS Foundation Blueprint is imported as a non-authoritative planning re
 
 ## Accounting Gaps
 - Sales/purchase posting, immutable returns, fiscal-period enforcement, financial statements, AR/AP aging and read-only
-  cash-flow/close readiness are implemented. Mixed-rate product tax, wider reversal coverage, controlled close execution,
+  cash-flow/close readiness and controlled period close are implemented. Mixed-rate product tax, wider reversal coverage,
   budgets and consolidation remain pending.
 
 ## Testing Gaps
@@ -427,3 +427,11 @@ The ERP SaaS Foundation Blueprint is imported as a non-authoritative planning re
 - [x] Transparent operating/investing/financing classification with explicit unclassified review.
 - [x] Read-only close checks for financial equality, AR/AP, inventory, draft journals and fiscal-period coverage.
 - [x] Safe date/tab context, direct evidence links and authenticated Edge acceptance.
+
+## UX-015 completed (2026-11-07)
+
+- [x] Stepwise Open/SoftClosed/Closed and one-step reopen domain transitions.
+- [x] Transactional readiness rerun that blocks on authoritative UX-014 exceptions.
+- [x] Independent permissions, explicit antiforgery, required reason/rowversion and semantic audit evidence.
+- [x] Bilingual state-aware UI that removes unavailable/repeated commands and links to readiness evidence.
+- [x] No automatic closing journal and no modification of posted or source documents.

@@ -32,7 +32,7 @@ Return receipts add independently enforced View, Create, Inspect, PostDispositio
 
 > Status: PARTIALLY IMPLEMENTED  
 > Source of truth: Code  
-> Last reviewed: 2026-10-22
+> Last reviewed: 2026-11-07
 
 `InventoryReservations.View` protects the read-only inventory reservation history screen. `SalesOrders.ApproveException` is separate from Confirm and applies only to configured exception steps. `SalesApprovalRules.View/Manage` separate rule reading from administration. `SalesDeliveries.View`, `Create`, `Post` and `Cancel` independently protect delivery visibility, Draft creation, physical/accounting posting and Draft cancellation.
 
@@ -288,3 +288,11 @@ convenience only; controller authorization and server lifecycle checks are autho
   workspace avoids the list endpoint for a create-only user. None grants accounting settings or operational-document posting.
 - `Administration.Access` remains required for the chart of accounts and accounting settings. A journal-only user can open
   the Accounting hub and journal directory but cannot discover Settings or account-management destinations.
+
+## UX-015 fiscal-period permissions
+
+- `FiscalPeriods.View` protects the period directory and accounting-hub discovery.
+- `FiscalPeriods.SoftClose`, `FiscalPeriods.Close` and `FiscalPeriods.Reopen` independently protect their explicit POST
+  commands. None implies another permission or `Administration.Access`.
+- Period creation remains under `Administration.Access`; the internal Angular API exposes no generic status endpoint and the
+  screen hides actions that are unavailable for the current status or permission set.

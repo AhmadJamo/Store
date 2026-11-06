@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { forkJoin } from 'rxjs';
-import { AccountingSettings, AccountingSettingsPage, BranchSalesAccountsPage, ConfigureBranchWarehouse, ConfigurePosTerminalWarehouse, CreateMeasurementUnit, CreatePosTerminal, CurrencyExchangeRatesPage, DiscountSettings, DocumentNumberSettings, FiscalPeriodsPage, FiscalPeriodStatusCommand, GeneralPreferences, InventoryAccessSettings, InventorySettings, MeasurementUnitsPage, OrganizationIdentity, PosExperienceSettings, PosExperienceSettingsPage, PurchaseMatchingSettings, PurchaseSourcingPolicy, SaveCurrencyExchangeRate, WorkflowCatalogPage } from './settings.models';
+import { AccountingSettings, AccountingSettingsPage, BranchSalesAccountsPage, ConfigureBranchWarehouse, ConfigurePosTerminalWarehouse, CreateMeasurementUnit, CreatePosTerminal, CurrencyExchangeRatesPage, DiscountSettings, DocumentNumberSettings, FiscalPeriodsPage, FiscalPeriodTransition, GeneralPreferences, InventoryAccessSettings, InventorySettings, MeasurementUnitsPage, OrganizationIdentity, PosExperienceSettings, PosExperienceSettingsPage, PurchaseMatchingSettings, PurchaseSourcingPolicy, SaveCurrencyExchangeRate, WorkflowCatalogPage } from './settings.models';
 @Injectable({ providedIn: 'root' })
 export class SettingsApiService {
   constructor(private readonly http: HttpClient) {}
@@ -22,7 +22,7 @@ export class SettingsApiService {
   updateDocumentNumbers(value: DocumentNumberSettings) { return this.http.put<DocumentNumberSettings>('/api/v1/settings/document-numbers', value); }
   getFiscalPeriods() { return this.http.get<FiscalPeriodsPage>('/api/v1/settings/fiscal-periods'); }
   createFiscalPeriod(value: FiscalPeriodsPage['newPeriod']) { return this.http.post<FiscalPeriodsPage>('/api/v1/settings/fiscal-periods', value); }
-  changeFiscalPeriodStatus(value: FiscalPeriodStatusCommand) { return this.http.put<FiscalPeriodsPage>('/api/v1/settings/fiscal-periods/status', value); }
+  transitionFiscalPeriod(id: number, action: 'soft-close' | 'close' | 'reopen', value: FiscalPeriodTransition) { return this.http.post<FiscalPeriodsPage>(`/api/v1/settings/fiscal-periods/${id}/${action}`, value); }
   getCurrencyExchangeRates() { return this.http.get<CurrencyExchangeRatesPage>('/api/v1/settings/currency-exchange-rates'); }
   saveCurrencyExchangeRate(value: SaveCurrencyExchangeRate) { return this.http.post<CurrencyExchangeRatesPage>('/api/v1/settings/currency-exchange-rates', value); }
   getMeasurementUnits() { return this.http.get<MeasurementUnitsPage>('/api/v1/settings/measurement-units'); }

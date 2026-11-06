@@ -3446,6 +3446,38 @@ Check(fiscalPeriod.Contains(new DateTime(2026, 9, 29)) && fiscalPeriod.Status ==
 fiscalPeriod.ChangeStatus(FiscalPeriodStatus.SoftClosed, "Month-end review", "accountant");
 Check(fiscalPeriod.Status == FiscalPeriodStatus.SoftClosed && fiscalPeriod.StatusChangeReason == "Month-end review",
     "Fiscal-period status changes must preserve their reason and actor metadata");
+fiscalPeriod.ChangeStatus(FiscalPeriodStatus.Closed, "Final controller approval", "controller");
+fiscalPeriod.ChangeStatus(FiscalPeriodStatus.SoftClosed, "Reopen for documented correction", "controller");
+fiscalPeriod.ChangeStatus(FiscalPeriodStatus.Open, "Resume posting", "controller");
+Check(fiscalPeriod.Status == FiscalPeriodStatus.Open,
+    "Fiscal-period close and reopen must move exactly one controlled step at a time");
+var directClosePeriod = new FiscalPeriod("Direct close", new DateTime(2025, 1, 1), new DateTime(2025, 12, 31));
+CheckThrows(() => directClosePeriod.ChangeStatus(FiscalPeriodStatus.Closed, "Skip review", "accountant"),
+    "An open fiscal period must not skip the soft-close step");
+typeof(FiscalPeriod).GetProperty(nameof(FiscalPeriod.RowVersion))!.SetValue(directClosePeriod, new byte[] { 1, 2, 3 });
+var blockedReadiness = new StubPeriodCloseReadinessService(
+    [new CloseReadinessCheckDto("DraftJournals", "Blocked", 1, 0, "/accounting/journal-entries")]);
+var blockedCloseService = new FiscalPeriodService(new StubFiscalPeriodRepository(directClosePeriod),
+    new StubUnitOfWork(), new StubCurrentUser(), blockedReadiness,
+    new SemanticAuditEventService(new StubAuditEventWriter(), new StubAuditRequestContext()));
+try
+{
+    await blockedCloseService.SoftCloseAsync(directClosePeriod.Id,
+        new FiscalPeriodTransitionDto { Reason = "Review complete", RowVersion = "AQID" });
+    throw new Exception("Close readiness blockers must prevent a fiscal-period transition");
+}
+catch (InvalidOperationException) { count++; }
+Check(blockedReadiness.Calls == 1 && directClosePeriod.Status == FiscalPeriodStatus.Open,
+    "Fiscal-period close must rerun readiness and preserve the current status when a blocker exists");
+var closeAuditWriter = new StubAuditEventWriter();
+var readyCloseService = new FiscalPeriodService(new StubFiscalPeriodRepository(directClosePeriod),
+    new StubUnitOfWork(), new StubCurrentUser(), new StubPeriodCloseReadinessService(),
+    new SemanticAuditEventService(closeAuditWriter, new StubAuditRequestContext()));
+await readyCloseService.SoftCloseAsync(directClosePeriod.Id,
+    new FiscalPeriodTransitionDto { Reason = "Controller reviewed readiness", RowVersion = "AQID" });
+Check(directClosePeriod.Status == FiscalPeriodStatus.SoftClosed &&
+      closeAuditWriter.Requests.Single().EventType == SemanticAuditEventTypes.FiscalPeriodStatusChanged,
+    "A ready fiscal period must soft-close and emit semantic audit evidence in the transaction");
 CheckArgumentThrows(
     () => new FiscalPeriod("Invalid", new DateTime(2026, 12, 31), new DateTime(2026, 1, 1)),
     "Fiscal periods must reject an inverted date range");
@@ -5658,9 +5690,7 @@ foreach (var actionName in new[]
              ,nameof(SettingsApiController.UpdatePurchaseSourcing)
              ,nameof(SettingsApiController.GetDocumentNumbers)
              ,nameof(SettingsApiController.UpdateDocumentNumbers)
-             ,nameof(SettingsApiController.GetFiscalPeriods)
              ,nameof(SettingsApiController.CreateFiscalPeriod)
-             ,nameof(SettingsApiController.ChangeFiscalPeriodStatus)
              ,nameof(SettingsApiController.GetCurrencyExchangeRates)
              ,nameof(SettingsApiController.SaveCurrencyExchangeRate)
              ,nameof(SettingsApiController.GetMeasurementUnits)
@@ -5715,11 +5745,26 @@ Check(settingsApi.GetMethod(nameof(SettingsApiController.GetDocumentNumbers))!
     "Angular document numbering must expose protected GET and atomic PUT operations");
 Check(settingsApi.GetMethod(nameof(SettingsApiController.GetFiscalPeriods))!
           .GetCustomAttribute<HttpGetAttribute>()?.Template == "fiscal-periods" &&
+      settingsApi.GetMethod(nameof(SettingsApiController.GetFiscalPeriods))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:FiscalPeriods.View" &&
       settingsApi.GetMethod(nameof(SettingsApiController.CreateFiscalPeriod))!
-          .GetCustomAttribute<HttpPostAttribute>()?.Template == "fiscal-periods" &&
-      settingsApi.GetMethod(nameof(SettingsApiController.ChangeFiscalPeriodStatus))!
-          .GetCustomAttribute<HttpPutAttribute>()?.Template == "fiscal-periods/status",
-    "Angular fiscal periods must expose protected GET, POST and status PUT operations");
+          .GetCustomAttribute<HttpPostAttribute>()?.Template == "fiscal-periods",
+    "Angular fiscal periods must expose protected read and create operations");
+var fiscalPeriodPermissionNames = new[] { "FiscalPeriods.View", "FiscalPeriods.SoftClose", "FiscalPeriods.Close", "FiscalPeriods.Reopen" };
+Check(fiscalPeriodPermissionNames.All(name => PermissionDefinitions.All.Count(x => x.Name == name) == 1),
+    "Fiscal periods must expose independent view, soft-close, close and reopen permissions");
+var fiscalTransitionActions = new[]
+{
+    (nameof(SettingsApiController.SoftCloseFiscalPeriod), "fiscal-periods/{id:int}/soft-close", "FiscalPeriods.SoftClose"),
+    (nameof(SettingsApiController.CloseFiscalPeriod), "fiscal-periods/{id:int}/close", "FiscalPeriods.Close"),
+    (nameof(SettingsApiController.ReopenFiscalPeriod), "fiscal-periods/{id:int}/reopen", "FiscalPeriods.Reopen")
+};
+Check(fiscalTransitionActions.All(item =>
+        settingsApi.GetMethod(item.Item1)!.GetCustomAttribute<HttpPostAttribute>()?.Template == item.Item2 &&
+        settingsApi.GetMethod(item.Item1)!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
+            $"Permission:{item.Item3}" &&
+        settingsApi.GetMethod(item.Item1)!.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null),
+    "Fiscal-period transitions must use explicit antiforgery-protected endpoints and separate permissions");
 Check(settingsApi.GetMethod(nameof(SettingsApiController.GetCurrencyExchangeRates))!
           .GetCustomAttribute<HttpGetAttribute>()?.Template == "currency-exchange-rates" &&
       settingsApi.GetMethod(nameof(SettingsApiController.SaveCurrencyExchangeRate))!
@@ -6284,7 +6329,7 @@ var emptyBranches = new StubBranchRepository();
 var emptyWarehouses = new StubWarehouseRepository();
 var manualPosting = new JournalPostingService(manualEntries,
     new DocumentNumberService(new StubDocumentSequenceRepository()),
-    new FiscalPeriodService(openPeriods, manualUnit, new StubCurrentUser()));
+    CreateFiscalPeriodService(openPeriods, manualUnit));
 var manualQuery = new JournalEntryQueryService(manualEntries, manualAccountRepository, emptyBranches, emptyWarehouses);
 var manualService = new ManualJournalService(manualEntries, manualAccountRepository, emptyBranches, emptyWarehouses,
     new DocumentNumberService(new StubDocumentSequenceRepository()), manualPosting, manualQuery, manualUnit);
@@ -6322,13 +6367,17 @@ var closedPeriod = new FiscalPeriod("Closed", new DateTime(2026, 1, 1), new Date
 typeof(FiscalPeriod).GetProperty(nameof(FiscalPeriod.Status))!.SetValue(closedPeriod, FiscalPeriodStatus.Closed);
 var blockedPosting = new JournalPostingService(new StubManualJournalRepository(),
     new DocumentNumberService(new StubDocumentSequenceRepository()),
-    new FiscalPeriodService(new StubFiscalPeriodRepository(closedPeriod), manualUnit, new StubCurrentUser()));
+    CreateFiscalPeriodService(new StubFiscalPeriodRepository(closedPeriod), manualUnit));
 var blockedDraft = new JournalEntry("MJ-CLOSED", new DateTime(2026, 11, 6), "Closed period", "ManualJournal", Guid.NewGuid().ToString("N"));
 blockedDraft.AddLine(new JournalEntryLine(101, 1m, 0m)); blockedDraft.AddLine(new JournalEntryLine(202, 0m, 1m));
 try { await blockedPosting.PostDraftAsync(blockedDraft); throw new Exception("Closed periods must block manual posting"); }
 catch (InvalidOperationException) { count++; }
 
 Console.WriteLine($"Passed {count} security and inventory regression checks.");
+
+static FiscalPeriodService CreateFiscalPeriodService(IFiscalPeriodRepository repository, IUnitOfWork unitOfWork) =>
+    new(repository, unitOfWork, new StubCurrentUser(), new StubPeriodCloseReadinessService(),
+        new SemanticAuditEventService(new StubAuditEventWriter(), new StubAuditRequestContext()));
 
 static Account CreateReportAccount(int id, string code, string name, AccountType type)
 {
@@ -6390,6 +6439,37 @@ sealed class StubUsers : UserManager<IdentityUser>
 
 sealed class StubTenantContext : MiniStore.Domain.Interfaces.ITenantContext { public int? TenantId => 1; }
 sealed class StubCurrentUser : ICurrentUserService { public string UserId => "regression-user"; }
+sealed class StubPeriodCloseReadinessService(IReadOnlyList<CloseReadinessCheckDto>? readiness = null) : IPeriodCloseReadinessService
+{
+    public int Calls { get; private set; }
+    public Task<CashFlowClosePageDto> GetAsync(CashFlowCloseQueryDto query, CancellationToken cancellationToken = default) =>
+        Task.FromResult(Create(query));
+    private CashFlowClosePageDto Create(CashFlowCloseQueryDto query)
+    {
+        Calls++;
+        return new CashFlowClosePageDto(query.FromDate ?? DateTime.Today, query.ToDate ?? DateTime.Today,
+            "JOD", 1, new CashFlowSummaryDto(0, 0, 0, 0, 0, 0, 0), [], readiness ?? []);
+    }
+}
+sealed class StubAuditEventWriter : IAuditEventWriter
+{
+    public List<AuditEventWriteRequest> Requests { get; } = [];
+    public ValueTask<Guid?> RecordAsync(AuditEventWriteRequest request, CancellationToken cancellationToken = default) =>
+        Record(request);
+    private ValueTask<Guid?> Record(AuditEventWriteRequest request)
+    {
+        Requests.Add(request);
+        return ValueTask.FromResult<Guid?>(Guid.NewGuid());
+    }
+}
+sealed class StubAuditRequestContext : IAuditRequestContext
+{
+    public string CorrelationId => "regression-correlation";
+    public string? RequestPathTemplate => "/api/v1/settings/fiscal-periods/{id}/{action}";
+    public AuditSourceChannel SourceChannel => AuditSourceChannel.Api;
+    public string? SourceIpMasked => null;
+    public string? UserAgentHash => null;
+}
 sealed class ThrowingScopeFactory : IServiceScopeFactory
 {
     public IServiceScope CreateScope() => throw new InvalidOperationException("Persistence unavailable.");

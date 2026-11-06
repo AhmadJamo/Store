@@ -203,6 +203,15 @@ permission-backed routes already present in `app.routes.ts`.
 - [x] Preserve safe date/tab context and direct evidence links without adding a close/post/payment mutation.
 - [x] Verify Release, accounting/security, Angular, accessibility, consistency, budgets and authenticated Edge acceptance.
 
+### UX-015 — Controlled period-close execution — COMPLETED 2026-11-07
+
+- [x] Enforce Open → SoftClosed → Closed and one-step reopen transitions in the domain.
+- [x] Rerun server-authored close readiness inside the close transaction and reject blocking checks.
+- [x] Add independent View/SoftClose/Close/Reopen permissions, explicit CSRF-protected endpoints and semantic audit evidence.
+- [x] Require a reason and rowversion, preserve user/time metadata, and remove unavailable/repeated actions from Angular.
+- [x] Keep automatic closing journals, posted-entry mutation, consolidation, budgets and FX revaluation out of scope.
+- [x] Verify Release, 1,872 security/accounting checks, 240 Angular tests, accessibility, bundle budgets and Edge 15/15.
+
 ## Reusable component target
 
 - `EnterprisePageHeader`: title, description, breadcrumb, status, primary and secondary actions.
@@ -243,6 +252,7 @@ Every phase must record:
 | UX-012 | 238/238 Angular; 1,855 security/accounting checks; 134 templates; production 336,483 B initial and 81,880 B largest lazy | Golden Draft/Post/Reverse lifecycle; 75 destinations; 44/44 routes; hosted 6 passed/0 failed | COMPLETE |
 | UX-013 | 239/239 Angular; 1,864 security/accounting checks; 135 templates; production 336,904 B initial and 81,877 B largest lazy | Golden bucket boundaries and due-date snapshot; 76 destinations; 45/45 routes; hosted presentation 6 passed/0 failed | COMPLETE |
 | UX-014 | 240/240 Angular; 1,867 security/accounting checks; 136 templates; production 337,026 B initial and 81,877 B largest lazy | Deterministic classification and repository boundaries; 77 destinations; 46/46 routes; authenticated Edge 15 passed/0 failed | COMPLETE |
+| UX-015 | 240/240 Angular; 1,872 security/accounting checks; 136 templates; production 337,026 B initial and 81,877 B largest lazy | Stepwise transitions, readiness blocking, separate permissions/CSRF/audit; authenticated Edge 15 passed/0 failed | COMPLETE |
 
 ## Latest phase report
 
@@ -292,10 +302,18 @@ Every phase must record:
 - Preserved date/tab context and kept all posting, payment and fiscal-period mutations outside the surface.
 - Full evidence is recorded in docs/modernization/UI_UX_CASH_FLOW_CLOSE.md.
 
+### UX-015 — Completed
+
+- Added explicit soft-close, final-close and one-step reopen commands with independent permissions and CSRF protection.
+- The command reruns UX-014 readiness inside the transaction and refuses any blocking control before changing status.
+- Reason, actor, time and rowversion remain on the fiscal-period record; a registered semantic audit event records the status delta.
+- No automatic close journal, source-document mutation or posted-entry rewrite was introduced.
+- Full evidence is recorded in docs/modernization/UI_UX_CONTROLLED_PERIOD_CLOSE.md.
+
 ### Next
 
-- UX-015 is proposed for controlled period-close execution and close evidence; owner approval is required before any
-  status mutation or automatic close journal is designed or implemented.
+- UX-016 recurring-journal templates and controlled runs is proposed and requires owner approval before adding a new
+  scheduled financial mutation. Automatic year-end closing journals remain a separate accounting-policy decision.
 
 ### Recorded risks
 

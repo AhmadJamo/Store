@@ -5,6 +5,12 @@ using MiniStore.Domain.Interfaces;
 
 namespace MiniStore.Application.Services;
 
+public interface IPeriodCloseReadinessService
+{
+    Task<CashFlowClosePageDto> GetAsync(CashFlowCloseQueryDto query,
+        CancellationToken cancellationToken = default);
+}
+
 public sealed class CashFlowCloseService(
     IPaymentMethodRepository paymentMethods,
     IJournalEntryRepository journals,
@@ -12,7 +18,7 @@ public sealed class CashFlowCloseService(
     FinancialReportService financialReports,
     AgingReportService agingReports,
     InventoryReconciliationService inventoryReconciliation,
-    IGeneralSettingsRepository generalSettings)
+    IGeneralSettingsRepository generalSettings) : IPeriodCloseReadinessService
 {
     public async Task<CashFlowClosePageDto> GetAsync(CashFlowCloseQueryDto query,
         CancellationToken cancellationToken = default)

@@ -155,7 +155,7 @@ public sealed class SettingsApiController(
         await ExecuteUpdateAsync(() => documentNumbers.UpdateAsync(dto), documentNumbers.GetPageAsync);
 
     [HttpGet("fiscal-periods")]
-    [PermissionAuthorize("Administration.Access")]
+    [PermissionAuthorize("FiscalPeriods.View")]
     public async Task<ActionResult<FiscalPeriodsPageDto>> GetFiscalPeriods() => Ok(await fiscalPeriods.GetPageAsync());
 
     [HttpPost("fiscal-periods")]
@@ -163,10 +163,26 @@ public sealed class SettingsApiController(
     public async Task<ActionResult<FiscalPeriodsPageDto>> CreateFiscalPeriod(CreateFiscalPeriodDto dto) =>
         await ExecuteUpdateAsync(() => fiscalPeriods.CreateAsync(dto), () => fiscalPeriods.GetPageAsync());
 
-    [HttpPut("fiscal-periods/status")]
-    [PermissionAuthorize("Administration.Access")]
-    public async Task<ActionResult<FiscalPeriodsPageDto>> ChangeFiscalPeriodStatus(ChangeFiscalPeriodStatusDto dto) =>
-        await ExecuteUpdateAsync(() => fiscalPeriods.ChangeStatusAsync(dto), () => fiscalPeriods.GetPageAsync());
+    [HttpPost("fiscal-periods/{id:int}/soft-close")]
+    [PermissionAuthorize("FiscalPeriods.SoftClose")]
+    [ValidateAntiForgeryToken]
+    public async Task<ActionResult<FiscalPeriodsPageDto>> SoftCloseFiscalPeriod(int id,
+        FiscalPeriodTransitionDto dto) => await ExecuteUpdateAsync(
+            () => fiscalPeriods.SoftCloseAsync(id, dto), () => fiscalPeriods.GetPageAsync());
+
+    [HttpPost("fiscal-periods/{id:int}/close")]
+    [PermissionAuthorize("FiscalPeriods.Close")]
+    [ValidateAntiForgeryToken]
+    public async Task<ActionResult<FiscalPeriodsPageDto>> CloseFiscalPeriod(int id,
+        FiscalPeriodTransitionDto dto) => await ExecuteUpdateAsync(
+            () => fiscalPeriods.CloseAsync(id, dto), () => fiscalPeriods.GetPageAsync());
+
+    [HttpPost("fiscal-periods/{id:int}/reopen")]
+    [PermissionAuthorize("FiscalPeriods.Reopen")]
+    [ValidateAntiForgeryToken]
+    public async Task<ActionResult<FiscalPeriodsPageDto>> ReopenFiscalPeriod(int id,
+        FiscalPeriodTransitionDto dto) => await ExecuteUpdateAsync(
+            () => fiscalPeriods.ReopenAsync(id, dto), () => fiscalPeriods.GetPageAsync());
 
     [HttpGet("currency-exchange-rates")]
     [PermissionAuthorize("Administration.Access")]

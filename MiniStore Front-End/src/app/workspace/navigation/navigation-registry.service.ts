@@ -256,7 +256,7 @@ const navigationItems: readonly NavigationItem[] = [
     route: '/accounting',
     labelKey: 'accountingCenter',
     icon: '▤',
-    requiredAnyPermissions: ['Administration.Access', 'JournalEntries.View', 'ManualJournals.View', 'ManualJournals.Create'],
+    requiredAnyPermissions: ['Administration.Access', 'JournalEntries.View', 'ManualJournals.View', 'ManualJournals.Create', 'FiscalPeriods.View'],
   },
   { id: 'chart-of-accounts', route: '/accounting/accounts', labelKey: 'chartOfAccounts', icon: '⌘', requiredPermission: 'Administration.Access', showInSidebar: false, hubSectionKey: 'accountingSetup' },
   { id: 'journal-entries', route: '/accounting/journal-entries', labelKey: 'journalEntries', icon: '▤', requiredPermission: 'JournalEntries.View', showInSidebar: false, hubSectionKey: 'accountingReview' },
@@ -265,7 +265,7 @@ const navigationItems: readonly NavigationItem[] = [
   { id: 'cash-flow-close', route: '/accounting/cash-flow-close', labelKey: 'cashFlowClose', icon: '≋', requiredPermission: 'JournalEntries.View', showInSidebar: false, hubSectionKey: 'accountingReview' },
   { id: 'manual-journals', route: '/accounting/manual-journals', labelKey: 'manualJournals', icon: '✎', requiredAnyPermissions: ['ManualJournals.View', 'ManualJournals.Create'], showInSidebar: false, hubSectionKey: 'accountingReview' },
   { id: 'accounting-settings-link', route: '/settings/accounting', labelKey: 'accountingSettings', icon: '⚙', requiredPermission: 'Administration.Access', showInSidebar: false, hubSectionKey: 'accountingSetup' },
-  { id: 'fiscal-periods-link', route: '/settings/fiscal-periods', labelKey: 'fiscalPeriods', icon: '▦', requiredPermission: 'Administration.Access', showInSidebar: false, hubSectionKey: 'accountingSetup' },
+  { id: 'fiscal-periods-link', route: '/settings/fiscal-periods', labelKey: 'fiscalPeriods', icon: '▦', requiredAnyPermissions: ['Administration.Access', 'FiscalPeriods.View'], showInSidebar: false, hubSectionKey: 'accountingSetup' },
   { id: 'currency-rates-link', route: '/settings/currency-exchange-rates', labelKey: 'currencyExchangeRates', icon: '¤', requiredPermission: 'Administration.Access', showInSidebar: false, hubSectionKey: 'accountingSetup' },
   { id: 'branch-accounts-link', route: '/settings/branch-sales-accounts', labelKey: 'branchSalesAccounts', icon: '⌂', requiredPermission: 'Administration.Access', showInSidebar: false, hubSectionKey: 'accountingSetup' },
   {

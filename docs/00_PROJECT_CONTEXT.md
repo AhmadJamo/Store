@@ -1,10 +1,10 @@
 # MiniStore project context
 > Status: PARTIALLY IMPLEMENTED  
 > Source of truth: Code  
-> Last reviewed: 2026-11-06
+> Last reviewed: 2026-11-07
 
 The Angular UI/UX modernization program under `UI_UX_MODERNIZATION_PLAN.md` is complete for its approved presentation
-scope through UX-013:
+scope through UX-015:
 the permission-aware shell uses persistent collapsible business groups, active-route expansion and bilingual
 breadcrumbs while retaining Router authority and the existing persistent workspace tabs. Five pilot pages now preserve
 allowlisted list context through URL state and tenant/user-scoped memory; Purchase Request and Stock Transfer create
@@ -27,6 +27,9 @@ directory. UX-011 adds server-authored financial reports. UX-012 adds independen
 fiscal-period-protected posting and exact separate reversal through the shared journal gateway.
 UX-013 adds server-authored AR/AP aging and full control-account reconciliation with frozen company-currency carrying
 values and new-vendor-bill due-date snapshots.
+UX-014 adds ledger-derived cash flow and read-only period-close readiness. UX-015 adds controlled stepwise fiscal-period
+close/reopen execution with server-side readiness blocking, separate permissions, antiforgery and semantic audit evidence;
+it deliberately does not create automatic closing journals or modify posted entries.
 
 ## Project identity
 MiniStore is a server-rendered ASP.NET Core MVC store-management application under incremental Angular modernization. It targets .NET 10, uses EF Core 10 with SQL Server, ASP.NET Core Identity, Razor views, and a Domain/Application/Infrastructure/Web layered solution. The existing Web host now includes a protected versioned internal API foundation; no separate public API project is present.

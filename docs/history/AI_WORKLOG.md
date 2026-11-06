@@ -2235,3 +2235,10 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   acceptance passed 15/15 including the new accounting endpoint. Fixed the acceptance stock locator to scope the visible
   table row instead of a hidden select option. The app remains running on https://localhost:54052. UX-015 controlled close
   execution is proposed and requires owner approval before any mutation.
+- 2026-11-07: Completed UX-015 Controlled Period-Close Execution. Fiscal periods now move only Open → SoftClosed → Closed
+  and reopen one step at a time with required reason, actor/time metadata and rowversion. Close commands rerun the complete
+  UX-014 readiness report inside the UnitOfWork and preserve status on blockers. Added independent View/SoftClose/Close/Reopen
+  permissions, explicit antiforgery, registered semantic audit evidence and a bilingual state-aware Angular workflow with
+  direct readiness links. No automatic closing journal or posted/source-document mutation was introduced. Release rebuilt
+  with zero warnings/errors; 1,872 security/accounting checks, 240/240 Angular tests, 136 templates and fixed bundle budgets
+  passed. Authenticated Microsoft Edge acceptance passed 15/15. UX-016 recurring-journal templates is proposed pending owner approval.

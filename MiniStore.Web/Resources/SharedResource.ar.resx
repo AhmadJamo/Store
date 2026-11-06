@@ -4720,4 +4720,9 @@
   <data name="Manual journal amounts exceed the supported limit." xml:space="preserve"><value>تتجاوز مبالغ القيد اليدوي الحد المدعوم.</value></data>
   <data name="The aging date cannot be in the future." xml:space="preserve"><value>لا يمكن أن يكون تاريخ أعمار الذمم في المستقبل.</value></data>
   <data name="The aging search cannot exceed 100 characters." xml:space="preserve"><value>لا يمكن أن يتجاوز بحث أعمار الذمم 100 حرف.</value></data>
+  <data name="Fiscal period status must move one controlled step at a time." xml:space="preserve"><value>يجب أن تنتقل حالة الفترة المالية خطوة مضبوطة واحدة في كل مرة.</value></data>
+  <data name="Only a soft-closed or closed fiscal period can be reopened." xml:space="preserve"><value>يمكن إعادة فتح الفترة المالية المغلقة جزئياً أو المغلقة فقط.</value></data>
+  <data name="Fiscal period cannot be closed before its end date." xml:space="preserve"><value>لا يمكن إقفال الفترة المالية قبل تاريخ انتهائها.</value></data>
+  <data name="Fiscal period close is blocked. Review close readiness and resolve every blocker." xml:space="preserve"><value>إقفال الفترة المالية متوقف. راجع جاهزية الإقفال وعالج جميع الموانع.</value></data>
+  <data name="Fiscal period was modified by another user. Reload and try again." xml:space="preserve"><value>عدّل مستخدم آخر الفترة المالية. أعد التحميل ثم حاول مرة أخرى.</value></data>
 </root>

@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { of, throwError } from 'rxjs';
 import { ApiErrorService } from '../../core/api/api-error.service';
+import { ApiSessionService } from '../../core/api/api-session.service';
 import { WorkspaceService } from '../../workspace/state/workspace.service';
 import { SettingsApiService } from './data/settings-api.service';
 import { DiscountSettingsPageComponent } from './discount-settings-page';
@@ -19,6 +20,7 @@ import { PosExperiencePageComponent } from './pos-experience-page';
 
 const workspace = { activeTab: vi.fn(() => ({ id: 'settings::test' })), markDirty: vi.fn() };
 const errorService = { normalize: (error: unknown) => error };
+const fiscalPeriodSession = { can: (permission: string) => ['Administration.Access', 'FiscalPeriods.SoftClose', 'FiscalPeriods.Close', 'FiscalPeriods.Reopen'].includes(permission) };
 const preferences = { currency: 'JOD', decimalPlaces: 2, quantityDecimalPlaces: 3, dateFormat: 'dd/MM/yyyy', timeZone: 'Asia/Amman', defaultLanguage: 1, rowVersion: 'AQID' };
 const identity = { tradeName: 'MiniStore', documentNameStyle: 1, hasLogo: true, logoVersion: '1', rowVersion: 'AQID', customFields: [] };
 
@@ -67,10 +69,10 @@ describe('DocumentNumberSettingsPageComponent', () => {
 describe('FiscalPeriodsPageComponent', () => {
   const period = { id: 7, name: 'FY 2026', startDate: '2026-01-01T00:00:00', endDate: '2026-12-31T00:00:00', status: 1, rowVersion: 'AQID' };
   const page = { periods: [period], newPeriod: { name: '', startDate: '2027-01-01T00:00:00', endDate: '2027-12-31T00:00:00' } };
-  const api = { getFiscalPeriods: vi.fn(() => of(page)), createFiscalPeriod: vi.fn(), changeFiscalPeriodStatus: vi.fn() };
-  beforeEach(async () => { vi.clearAllMocks(); api.getFiscalPeriods.mockReturnValue(of(page)); await TestBed.configureTestingModule({ imports: [FiscalPeriodsPageComponent], providers: [provideRouter([]), { provide: SettingsApiService, useValue: api }, { provide: WorkspaceService, useValue: workspace }, { provide: ApiErrorService, useValue: errorService }] }).compileComponents(); });
+  const api = { getFiscalPeriods: vi.fn(() => of(page)), createFiscalPeriod: vi.fn(), transitionFiscalPeriod: vi.fn() };
+  beforeEach(async () => { vi.clearAllMocks(); api.getFiscalPeriods.mockReturnValue(of(page)); await TestBed.configureTestingModule({ imports: [FiscalPeriodsPageComponent], providers: [provideRouter([]), { provide: SettingsApiService, useValue: api }, { provide: WorkspaceService, useValue: workspace }, { provide: ApiErrorService, useValue: errorService }, { provide: ApiSessionService, useValue: fiscalPeriodSession }] }).compileComponents(); });
   it('creates a fiscal period with every entered field and adopts the refreshed page', () => { api.createFiscalPeriod.mockReturnValue(of({ periods: [{ ...period, id: 8, name: 'FY 2027', rowVersion: 'BAUG' }], newPeriod: { name: '', startDate: '2028-01-01T00:00:00', endDate: '2028-12-31T00:00:00' } })); const component = TestBed.createComponent(FiscalPeriodsPageComponent).componentInstance as any; component.form.setValue({ name: 'FY 2027', startDate: '2027-01-01', endDate: '2027-12-31' }); component.create(); expect(api.createFiscalPeriod).toHaveBeenCalledWith({ name: 'FY 2027', startDate: '2027-01-01', endDate: '2027-12-31' }); expect(component.periods()[0].rowVersion).toBe('BAUG'); expect(component.form.controls.startDate.value).toBe('2028-01-01'); });
-  it('changes status with reason and rowversion while preserving the draft on rejection', () => { api.changeFiscalPeriodStatus.mockReturnValueOnce(of({ ...page, periods: [{ ...period, status: 2, rowVersion: 'BAUG' }] })).mockReturnValueOnce(throwError(() => ({ kind: 'concurrency', detail: 'Reload.' }))); const component = TestBed.createComponent(FiscalPeriodsPageComponent).componentInstance as any; component.setStatus(7, { target: { value: '2' } } as unknown as Event); component.setReason(7, { target: { value: 'Month-end review' } } as unknown as Event); component.changeStatus(period); expect(api.changeFiscalPeriodStatus).toHaveBeenCalledWith({ id: 7, status: 2, reason: 'Month-end review', rowVersion: 'AQID' }); component.setReason(7, { target: { value: 'Close after audit' } } as unknown as Event); component.changeStatus({ ...period, status: 2, rowVersion: 'BAUG' }); expect(component.drafts()[7].reason).toBe('Close after audit'); expect(component.problem()).toEqual({ kind: 'concurrency', detail: 'Reload.' }); });
+  it('uses an explicit transition with reason and rowversion while preserving the draft on rejection', () => { api.transitionFiscalPeriod.mockReturnValueOnce(of({ ...page, periods: [{ ...period, status: 2, rowVersion: 'BAUG' }] })).mockReturnValueOnce(throwError(() => ({ kind: 'concurrency', detail: 'Reload.' }))); const component = TestBed.createComponent(FiscalPeriodsPageComponent).componentInstance as any; component.setReason(7, { target: { value: 'Month-end review' } } as unknown as Event); component.transition(period, 'soft-close'); expect(api.transitionFiscalPeriod).toHaveBeenCalledWith(7, 'soft-close', { reason: 'Month-end review', rowVersion: 'AQID' }); component.setReason(7, { target: { value: 'Close after audit' } } as unknown as Event); component.transition({ ...period, status: 2, rowVersion: 'BAUG' }, 'close'); expect(component.drafts()[7]).toBe('Close after audit'); expect(component.problem()).toEqual({ kind: 'concurrency', detail: 'Reload.' }); });
 });
 
 describe('CurrencyExchangeRatesPageComponent', () => {

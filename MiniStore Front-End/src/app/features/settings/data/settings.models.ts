@@ -28,7 +28,7 @@ export interface DocumentSequence { documentType:number; nameEnglish:string; nam
 export interface DocumentNumberSettings { sequences: DocumentSequence[]; }
 export interface FiscalPeriod { id:number; name:string; startDate:string; endDate:string; status:number; statusChangeReason?:string; rowVersion:string; }
 export interface FiscalPeriodsPage { periods:FiscalPeriod[]; newPeriod:{name:string;startDate:string;endDate:string}; }
-export interface FiscalPeriodStatusCommand { id:number;status:number;reason:string;rowVersion:string; }
+export interface FiscalPeriodTransition { reason:string;rowVersion:string; }
 export interface CurrencyExchangeRate { currencyCode:string; effectiveDate:string; companyCurrencyPerUnit:number; source:string; }
 export interface SaveCurrencyExchangeRate { currencyCode:string; effectiveDate:string; companyCurrencyPerUnit:number; source:string; }
 export interface CurrencyExchangeRatesPage { companyCurrencyCode:string; form:SaveCurrencyExchangeRate; rates:CurrencyExchangeRate[]; }

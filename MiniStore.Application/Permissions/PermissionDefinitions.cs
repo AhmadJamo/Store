@@ -239,6 +239,10 @@ public static class PermissionDefinitions
         new("ManualJournals.Create", "Create Manual Journal Drafts", "Accounting"),
         new("ManualJournals.Post", "Post Manual Journals", "Accounting"),
         new("ManualJournals.Reverse", "Reverse Manual Journals", "Accounting"),
+        new("FiscalPeriods.View", "View Fiscal Periods", "Accounting"),
+        new("FiscalPeriods.SoftClose", "Soft Close Fiscal Periods", "Accounting"),
+        new("FiscalPeriods.Close", "Close Fiscal Periods", "Accounting"),
+        new("FiscalPeriods.Reopen", "Reopen Fiscal Periods", "Accounting"),
         new("SalesReturns.View", "View Sales Returns", "Sales Returns"),
         new("SalesReturns.Create", "Create Sales Return", "Sales Returns"),
 

@@ -39,3 +39,11 @@ public sealed class ChangeFiscalPeriodStatusDto
     [Required]
     public string RowVersion { get; set; } = string.Empty;
 }
+
+public sealed class FiscalPeriodTransitionDto
+{
+    [Required, StringLength(500)]
+    public string Reason { get; set; } = string.Empty;
+    [Required]
+    public string RowVersion { get; set; } = string.Empty;
+}

@@ -1,6 +1,6 @@
 # Accounting module
 
-> Last reviewed: 2026-11-06
+> Last reviewed: 2026-11-07
 
 The current Angular accounting presentation includes the chart-of-accounts list/create surface, posted journal-entry detail
 routes reached from business documents, and administration-owned accounting setup for fiscal periods, exchange rates and
@@ -28,6 +28,11 @@ UX-014 adds `/accounting/cash-flow-close` for server-authored cash movements and
 Cash is bounded by active payment-method settlement accounts. Ambiguous movement stays visible as Unclassified, and every
 readiness row links to its owning report or evidence directory. Date and selected-view context are allowlisted.
 
-Current limitations remain explicit: account re-parenting/status management, close execution,
+UX-015 turns fiscal-period status into a controlled operation: explicit soft close, final close and one-step reopen actions
+require their own permissions, antiforgery, reason and rowversion. Close commands rerun UX-014 readiness transactionally;
+blocked controls preserve the current period. The period stores actor/time/reason and a semantic audit event records the
+status change. No automatic close journal or posted-entry mutation is part of this module.
+
+Current limitations remain explicit: account re-parenting/status management, automatic closing entries,
 recurring/bulk journals, budgets and consolidation are not implemented. Operational posting and fiscal-period rules remain
 unchanged; manual journals reuse them.

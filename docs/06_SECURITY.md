@@ -1,7 +1,7 @@
 # Security assessment
 > Status: PARTIALLY VERIFIED
 > Source of truth: Static inspection and focused executable regression checks
-> Last reviewed: 2026-11-06
+> Last reviewed: 2026-11-07
 
 ## UX-013 aging-report boundary
 
@@ -345,3 +345,11 @@ Manual-journal mutations are authenticated, independently permissioned and antif
 resolves every account/branch/warehouse through tenant-filtered repositories, uses a stable GUID request key, rejects key
 reuse with different content and executes Draft/Post/Reverse inside the existing Serializable UnitOfWork. No EF access is
 introduced in the controller, and posted evidence has no update/delete endpoint.
+
+## UX-015 controlled fiscal-period boundary
+
+Fiscal-period reads and each transition are independently authorized. Soft close, final close and reopen are explicit POST
+endpoints with antiforgery; Angular visibility is convenience only. The Application service reruns server-authored readiness
+inside the UnitOfWork, checks the supplied rowversion and calls the domain transition. Direct status jumps fail in the domain.
+The period record preserves reason/actor/time, and the registered `Accounting.FiscalPeriodStatusChanged` semantic event stores
+only allowlisted status deltas. No endpoint edits/deletes posted journals or bypasses source-document services.

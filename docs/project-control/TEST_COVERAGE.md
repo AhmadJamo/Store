@@ -49,6 +49,7 @@
 | UX-006 workflow integration | 230/230 Angular across 110 files; 130 templates; progress/current/guidance contract and 5/5 browser layout checks passed; custom bundles green | 2026-11-05 |
 | UX-007 productivity search | 232/232 Angular across 110 files; 130 templates; permission filtering/Ctrl+K/memory-only query and 5/5 browser layout checks passed; custom bundles green | 2026-11-05 |
 | UX-008 final consistency | 113/113 pages accounted for (102 shared headers + 11 named exceptions); 232/232 Angular; 130 templates; isolated Release clean; 1,843 security/inventory checks; 5/5 browser checks; custom bundles green | 2026-11-05 |
+| UX-015 controlled period close | Release clean; 1,872 security/accounting checks; 240/240 Angular; 136 templates; bundles 337,026/358,400 initial and 81,877/81,920 lazy; authenticated Edge 15/15 | 2026-11-07 |
 | Authenticated MOD-029B dual-run gate | 9/9 browser checks, zero skips; culture, financial empty-state and real inventory row reconciled across MVC/API; 100/100 performance requests passed | 2026-10-30 |
 | Authenticated MOD-029C high-risk cohorts | 15/15 browser checks, zero skips; permission-allowed GET/JSON reads passed for sales, purchasing, inventory, accounting and administration | 2026-10-30 |
 | `dotnet run --project tests/SecurityRegression/SecurityRegression.csproj -c Release --no-build` | Passed 1072 checks (نجح 1072 فحصًا)، وتشمل الآن versioned authenticated session API، حماية mutation بـantiforgery، paging bounds/sort allow-list، واستخدام permission boundary المشترك | 2026-10-24 |

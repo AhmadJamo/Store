@@ -1,6 +1,13 @@
 # Codebase map
 ## Angular modernization foundation
 
+UX-015 extends `FiscalPeriodService` and the `FiscalPeriod` domain entity with stepwise transitions, transactional UX-014
+readiness enforcement and registered semantic audit evidence. `SettingsApiController` exposes separate CSRF-protected
+soft-close/close/reopen commands under four `FiscalPeriods.*` permissions. Angular `features/settings/fiscal-periods-*`
+uses permission-aware state actions and links the exact period to close readiness. See
+`docs/modernization/UI_UX_CONTROLLED_PERIOD_CLOSE.md` and ADR
+`docs/decisions/2026-11-07-controlled-period-close.md`.
+
 UX-014 adds `CashFlowCloseService`, `CashFlowCloseApiController`, repository-owned cash movement/draft aggregates and
 Angular `features/accounting/cash-flow-close-*`. Active payment-method settlement accounts define cash; classification and
 all readiness checks are server-authored, while ambiguous movement remains explicit. The workspace is GET-only under
