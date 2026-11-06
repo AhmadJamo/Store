@@ -1,0 +1,9 @@
+export type AgingView='receivables'|'payables';
+export interface AgingQuery{asOfDate:string;search:string;view:AgingView}
+export interface AgingBuckets{current:number;days1To30:number;days31To60:number;days61To90:number;over90:number;total:number}
+export interface AgingApplication{type:string;id:number;number:string;date:string;companyAmount:number;route:string}
+export interface AgingDocument{id:number;number:string;documentDate:string;dueDate:string;currencyCode:string;documentAmount:number;appliedAmount:number;outstandingAmount:number;bucket:string;route:string;journalSearch:string;applications:AgingApplication[]}
+export interface AgingParty{id:number;code:string;name:string;controlAccountId:number|null;buckets:AgingBuckets;documents:AgingDocument[]}
+export interface AgingReconciliation{accountId:number;accountCode:string;accountName:string;subledgerAmount:number;generalLedgerAmount:number;difference:number;journalRoute:string}
+export interface AgingSide{buckets:AgingBuckets;parties:AgingParty[];reconciliation:AgingReconciliation[]}
+export interface AgingReportPage{asOfDate:string;companyCurrencyCode:string;receivables:AgingSide;payables:AgingSide}

@@ -1,6 +1,13 @@
 # Codebase map
 ## Angular modernization foundation
 
+UX-013 adds AgingReportService, AgingReportsApiController, repository-owned as-of account balances and Angular
+features/accounting/aging-report-*. Customer and supplier open items use frozen company-currency applications and
+dated reversal evidence; reconciliation always uses the complete subledger even when the display is searched. New vendor
+bills freeze payment-term days and due date through migration AddVendorBillDueDateSnapshot; historical null snapshots
+fall back to bill date without a bulk rewrite. See docs/modernization/UI_UX_AGING_RECONCILIATION.md and ADR
+docs/decisions/2026-11-06-server-authored-aging-reconciliation.md.
+
 UX-012 adds controlled manual journals through `ManualJournalService`, the existing `JournalPostingService`,
 `ManualJournalsApiController` and Angular `features/accounting/manual-journal-*`. `IJournalEntryRepository` now exposes a
 tracked lookup for controlled state transitions and an internal source-prefix directory filter. Four independent permissions

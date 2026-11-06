@@ -211,3 +211,16 @@
 - Production budgets: 336,483/358,400 initial; 81,880/81,920 largest lazy.
 - Hosted acceptance: 6 passed/0 failed for states, RTL/LTR, keyboard and 390px layout; anonymous manual-journal API was
   rejected with 401. Two authenticated reconciliation checks were skipped without an external storage-state fixture.
+
+## UX-013 AR/AP aging and reconciliation — 2026-11-06
+
+- .NET Web Release rebuild: zero warnings/errors; migration 137 adds nullable vendor-bill due-date snapshot fields.
+- Security/accounting regression: 1,864/1,864, including exact bucket boundaries, report permission, repository balance
+  boundary and frozen vendor-bill due date.
+- Angular Vitest: 239/239 across 114 files; safe as-of/search API parameters are covered.
+- Static accessibility: 135 templates; UI inventory 118 pages (107 shared headers + 11 documented exceptions).
+- Navigation consistency: 76 items and 45/45 operational module routes.
+- Production budgets: 336,904/358,400 initial; 81,877/81,920 largest lazy.
+- Hosted presentation acceptance: 6 passed/0 failed for states, RTL/LTR, keyboard and 390px layout; two authenticated checks
+  skipped without storage state. The broader legacy dual-run gate still expects MVC Login HTTP 200 although Login now
+  correctly redirects to Angular, and is recorded as a pre-existing harness mismatch.

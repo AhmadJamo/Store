@@ -1,4 +1,10 @@
 # Permissions and authorization
+
+## UX-013 aging reports
+
+GET /api/v1/aging-reports and /accounting/aging reuse JournalEntries.View. The feature is read-only and introduces no
+mutation permission. Source-document links remain independently protected by their owning module permissions.
+
 ## Analytics Center
 
 - `AnalyticsCenter.View` opens the center and its read-only registered module providers.

@@ -174,3 +174,14 @@ so no accounting data was created to fabricate one.
 - Active tenant accounts and valid tenant branch/warehouse dimensions are resolved before persistence. Amounts remain in
   company ledger currency and are limited to two decimal places.
 - Posted/Reversed evidence has no edit/delete endpoint. No schema or operational sales/purchase posting rule changed.
+
+# UX-013 AR/AP aging and reconciliation (2026-11-06)
+
+- Receivable and payable open items are reconstructed as of the requested date from posted invoices/bills, carrying-value
+  payment allocations, company-currency credit notes and dated reversal evidence.
+- The server assigns current, 1–30, 31–60, 61–90 and over-90 buckets from due date; Angular performs no financial math.
+- Complete subledger totals are grouped by control account and compared with non-draft journal balances through the same
+  date. Display search cannot change reconciliation totals, and missing assignments remain explicit differences.
+- New vendor bills freeze supplier payment-term days and due date. Migration AddVendorBillDueDateSnapshot adds nullable
+  fields without rewriting historical financial data; legacy null due dates conservatively use bill date.
+- The surface is GET-only under JournalEntries.View; no collection, payment, posting or revaluation command was added.

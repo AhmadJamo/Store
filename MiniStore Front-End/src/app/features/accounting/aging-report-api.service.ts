@@ -1,0 +1,2 @@
+import {HttpClient,HttpParams} from '@angular/common/http';import{Injectable}from'@angular/core';import{AgingQuery,AgingReportPage}from'./aging-report.models';
+@Injectable({providedIn:'root'})export class AgingReportApiService{constructor(private readonly http:HttpClient){}get(query:AgingQuery){let params=new HttpParams();if(query.asOfDate)params=params.set('asOfDate',query.asOfDate);if(query.search)params=params.set('search',query.search);return this.http.get<AgingReportPage>('/api/v1/aging-reports',{params});}}

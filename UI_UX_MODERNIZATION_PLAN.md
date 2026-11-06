@@ -226,6 +226,7 @@ Every phase must record:
 | UX-010 | 236/236 Angular; 1,843 security checks; 132 templates; production 336,053 B initial and 81,880 B largest lazy | Expandable account hierarchy; 73 destinations; 42/42 operational routes; 5/5 hosted acceptance | COMPLETE |
 | UX-011 | 237/237 Angular; 1,847 security/accounting checks; 133 templates; production 336,179 B initial and 81,880 B largest lazy | Golden balanced ledger; 74 destinations; 43/43 operational routes; hosted acceptance 6 passed/0 failed | COMPLETE |
 | UX-012 | 238/238 Angular; 1,855 security/accounting checks; 134 templates; production 336,483 B initial and 81,880 B largest lazy | Golden Draft/Post/Reverse lifecycle; 75 destinations; 44/44 routes; hosted 6 passed/0 failed | COMPLETE |
+| UX-013 | 239/239 Angular; 1,864 security/accounting checks; 135 templates; production 336,904 B initial and 81,877 B largest lazy | Golden bucket boundaries and due-date snapshot; 76 destinations; 45/45 routes; hosted presentation 6 passed/0 failed | COMPLETE |
 
 ## Latest phase report
 
@@ -259,10 +260,17 @@ Every phase must record:
 - Added memory-only unsaved form recovery and removed mutation actions after their one-time state transition.
 - Full evidence is recorded in `docs/modernization/UI_UX_MANUAL_JOURNALS.md`.
 
+### UX-013 — Completed
+
+- Added server-authored customer and supplier aging from frozen company-currency carrying values.
+- Added full control-account reconciliation that remains complete when display search is applied.
+- Added safe document/payment/credit/journal drill-down and explicit missing-account differences.
+- New vendor bills freeze payment terms and due date; historical rows remain untouched with a documented bill-date fallback.
+- Full evidence is recorded in docs/modernization/UI_UX_AGING_RECONCILIATION.md.
+
 ### Next
 
-- `UX-013` is the approved receivables/payables aging foundation: server-authored as-of buckets, source-document drill-down
-  and subledger-to-ledger reconciliation without adding collection or payment mutations.
+- UX-014 is proposed for a server-authored cash-flow statement and period-close readiness workspace; owner approval is pending.
 
 ### Recorded risks
 

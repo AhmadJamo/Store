@@ -2218,3 +2218,11 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   cleanly; 1,855 security/accounting checks, 238 Angular tests, 134 templates, 75 destinations, 44/44 operational routes and
   fixed bundle budgets and hosted acceptance (6 passed/0 failed) passed. No schema or operational posting rule changed.
   The updated app is running on port 54052. Advanced to `UX-013` AR/AP aging.
+- 2026-11-06: Completed UX-013 AR/AP Aging and Subledger Reconciliation. Added a GET-only, permission-protected Application
+  report that reconstructs open receivables/payables as of date from frozen carrying amounts, partial payments, credits and
+  dated reversals; assigns five server-side age buckets; and reconciles the complete subledger against control-account journal
+  balances. Added bilingual RTL-safe Angular display with safe context and source drill-down. New vendor bills freeze terms
+  and due date through nullable migration 137; historical rows were deliberately not rewritten. Web Release rebuilt cleanly;
+  1,864 security/accounting checks, 239 Angular tests, 135 templates, 76 destinations, 45/45 routes and bundle budgets passed.
+  Hosted presentation acceptance passed 6/0; the legacy dual-run Login expectation remains stale. UX-014 is proposed pending
+  owner approval.

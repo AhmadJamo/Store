@@ -411,3 +411,10 @@ The ERP SaaS Foundation Blueprint is imported as a non-authoritative planning re
 - [x] Create linked accounting, branch, warehouse, payment, tax, numbering, discount and POS foundations transactionally.
 - [x] Support explicit Skip and resumption of Pending setup.
 - [x] Accept and membership-validate the company slug during login.
+
+## UX-013 completed (2026-11-06)
+
+- [x] Server-authored AR/AP aging buckets and company-currency open-item balances.
+- [x] Partial payment, credit-note and dated-reversal treatment.
+- [x] Complete subledger-to-control-account reconciliation and source drill-down.
+- [x] Frozen due-date evidence for new vendor bills without rewriting historical rows.

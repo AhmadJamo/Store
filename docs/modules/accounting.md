@@ -20,6 +20,10 @@ UX-012 adds controlled manual Draft creation, explicit fiscal-period-protected p
 The workspace uses named tenant accounts/dimensions, stable retry keys, memory-only unsaved drafts and independent
 View/Create/Post/Reverse permissions. Posted evidence remains immutable.
 
-Current limitations remain explicit: account re-parenting/status management, AR/AP aging, cash flow, close processing,
+UX-013 adds /accounting/aging for server-authored AR/AP aging, source-document drill-down and complete control-account
+reconciliation. It uses frozen carrying values, respects dated reversals, preserves safe date/search/tab context and
+exposes missing control-account assignment. New vendor bills freeze due-date evidence; historical bills are not rewritten.
+
+Current limitations remain explicit: account re-parenting/status management, cash flow, close processing,
 recurring/bulk journals, budgets and consolidation are not implemented. Operational posting and fiscal-period rules remain
 unchanged; manual journals reuse them.

@@ -13,6 +13,8 @@ public sealed class VendorBill
     public string SupplierInvoiceNumber { get; private set; }
     public string NormalizedSupplierInvoiceNumber { get; private set; }
     public DateOnly BillDate { get; private set; }
+    public int? PaymentTermDaysSnapshot { get; private set; }
+    public DateOnly? DueDate { get; private set; }
     public string CurrencyCode { get; private set; }
     public string CompanyCurrencyCode { get; private set; }
     public decimal ExchangeRate { get; private set; }
@@ -43,7 +45,8 @@ public sealed class VendorBill
 
     public VendorBill(string billNumber, int purchaseOrderId, int supplierId, string supplierInvoiceNumber,
         DateOnly billDate, string currencyCode, string? notes, string userId, string? companyCurrencyCode = null,
-        decimal exchangeRate = 1m, DateOnly? exchangeRateDate = null, string exchangeRateSource = "Company currency")
+        decimal exchangeRate = 1m, DateOnly? exchangeRateDate = null, string exchangeRateSource = "Company currency",
+        int paymentTermDays = 0)
     {
         if (string.IsNullOrWhiteSpace(billNumber) || billNumber.Trim().Length > 50) throw new ArgumentException("Vendor bill number is required and cannot exceed 50 characters.");
         if (purchaseOrderId <= 0 || supplierId <= 0) throw new ArgumentException("Purchase order and supplier are required.");
@@ -52,10 +55,12 @@ public sealed class VendorBill
         if (notes?.Trim().Length > 1000) throw new ArgumentException("Vendor bill notes cannot exceed 1000 characters.");
         if (string.IsNullOrWhiteSpace(userId)) throw new ArgumentException("User is required.");
         if (exchangeRate <= 0) throw new ArgumentException("Exchange rate must be greater than zero.");
+        if (paymentTermDays is < 0 or > 3650) throw new ArgumentException("Supplier payment terms must be between 0 and 3650 days.");
         BillNumber = billNumber.Trim(); PurchaseOrderId = purchaseOrderId; SupplierId = supplierId;
         SupplierInvoiceNumber = supplierInvoiceNumber.Trim(); NormalizedSupplierInvoiceNumber = NormalizeInvoiceNumber(supplierInvoiceNumber);
         if (NormalizedSupplierInvoiceNumber.Length == 0) throw new ArgumentException("Supplier invoice number must contain at least one letter or number.");
-        BillDate = billDate; CurrencyCode = currencyCode.Trim().ToUpperInvariant(); CompanyCurrencyCode = (companyCurrencyCode ?? CurrencyCode).Trim().ToUpperInvariant();
+        BillDate = billDate; PaymentTermDaysSnapshot = paymentTermDays; DueDate = billDate.AddDays(paymentTermDays);
+        CurrencyCode = currencyCode.Trim().ToUpperInvariant(); CompanyCurrencyCode = (companyCurrencyCode ?? CurrencyCode).Trim().ToUpperInvariant();
         ExchangeRate = exchangeRate; ExchangeRateDate = exchangeRateDate ?? billDate; ExchangeRateSource = exchangeRateSource.Trim(); Notes = string.IsNullOrWhiteSpace(notes) ? null : notes.Trim();
         CreatedByUserId = userId.Trim(); CreatedAtUtc = DateTime.UtcNow; Status = VendorBillStatus.Draft;
     }
@@ -91,7 +96,7 @@ public sealed class VendorBill
         Attachments.Add(attachment);
     }
     public void AddExtractionSuggestion(VendorBillExtractionSuggestion suggestion){EnsureDraft();if(ExtractionSuggestions.Any(x=>x.VendorBillAttachmentId==suggestion.VendorBillAttachmentId&&x.Status==VendorBillExtractionStatus.PendingReview))throw new InvalidOperationException("This attachment already has an extraction suggestion awaiting review.");ExtractionSuggestions.Add(suggestion);}
-    public void ApplyExtractedHeader(string supplierInvoiceNumber,DateOnly billDate,string companyCurrencyCode,decimal exchangeRate,DateOnly exchangeRateDate,string exchangeRateSource){EnsureDraft();if(string.IsNullOrWhiteSpace(supplierInvoiceNumber)||supplierInvoiceNumber.Trim().Length>100)throw new ArgumentException("Supplier invoice number is required and cannot exceed 100 characters.");if(string.IsNullOrWhiteSpace(companyCurrencyCode)||companyCurrencyCode.Trim().Length!=3||exchangeRate<=0||string.IsNullOrWhiteSpace(exchangeRateSource))throw new ArgumentException("A valid vendor bill exchange rate is required.");SupplierInvoiceNumber=supplierInvoiceNumber.Trim();NormalizedSupplierInvoiceNumber=NormalizeInvoiceNumber(supplierInvoiceNumber);if(NormalizedSupplierInvoiceNumber.Length==0)throw new ArgumentException("Supplier invoice number must contain at least one letter or number.");BillDate=billDate;CompanyCurrencyCode=companyCurrencyCode.Trim().ToUpperInvariant();ExchangeRate=exchangeRate;ExchangeRateDate=exchangeRateDate;ExchangeRateSource=exchangeRateSource.Trim();foreach(var line in Lines)line.ApplyBillExchangeRate(exchangeRate);}
+    public void ApplyExtractedHeader(string supplierInvoiceNumber,DateOnly billDate,string companyCurrencyCode,decimal exchangeRate,DateOnly exchangeRateDate,string exchangeRateSource){EnsureDraft();if(string.IsNullOrWhiteSpace(supplierInvoiceNumber)||supplierInvoiceNumber.Trim().Length>100)throw new ArgumentException("Supplier invoice number is required and cannot exceed 100 characters.");if(string.IsNullOrWhiteSpace(companyCurrencyCode)||companyCurrencyCode.Trim().Length!=3||exchangeRate<=0||string.IsNullOrWhiteSpace(exchangeRateSource))throw new ArgumentException("A valid vendor bill exchange rate is required.");SupplierInvoiceNumber=supplierInvoiceNumber.Trim();NormalizedSupplierInvoiceNumber=NormalizeInvoiceNumber(supplierInvoiceNumber);if(NormalizedSupplierInvoiceNumber.Length==0)throw new ArgumentException("Supplier invoice number must contain at least one letter or number.");BillDate=billDate;DueDate=billDate.AddDays(PaymentTermDaysSnapshot.GetValueOrDefault());CompanyCurrencyCode=companyCurrencyCode.Trim().ToUpperInvariant();ExchangeRate=exchangeRate;ExchangeRateDate=exchangeRateDate;ExchangeRateSource=exchangeRateSource.Trim();foreach(var line in Lines)line.ApplyBillExchangeRate(exchangeRate);}
     public void Cancel(string userId, string reason)
     {
         if (Status is not (VendorBillStatus.Draft or VendorBillStatus.Approved))

@@ -1,7 +1,13 @@
 # Security assessment
 > Status: PARTIALLY VERIFIED
 > Source of truth: Static inspection and focused executable regression checks
-> Last reviewed: 2026-11-01
+> Last reviewed: 2026-11-06
+
+## UX-013 aging-report boundary
+
+The aging API is authenticated, tenant-filtered and GET-only under JournalEntries.View. Financial values and bucket
+classification are server-authored. Search is bounded to 100 characters and does not alter full reconciliation totals.
+No credential, entity index or report data is persisted in browser storage.
 
 ## Internal Angular API boundary (2026-10-24)
 

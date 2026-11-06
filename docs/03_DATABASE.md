@@ -254,3 +254,9 @@ certificate and encrypted private key remain in the SQL Server backup directory;
 outside the repository in local User Secrets. This proves local recoverability only: off-host retention, scheduling,
 failure alerts and another-server restoration remain production work. Full secret-free evidence is in
 `project-control/operations/P0-OPS-002-BACKUP-RESTORE-DRILL.md`.
+
+## UX-013 vendor-bill due-date snapshot (2026-11-06)
+
+Migration 20261106131442_AddVendorBillDueDateSnapshot adds nullable DueDate and PaymentTermDaysSnapshot to VendorBills.
+New bills populate both from supplier terms at creation. Historical rows remain null and are not bulk-rewritten; aging uses
+BillDate as the documented fallback until separately verified source evidence is approved for backfill.

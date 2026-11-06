@@ -4604,6 +4604,10 @@ Check(vendorBill.Status == VendorBillStatus.Posted && vendorBill.NormalizedSuppl
       vendorBill.ReceiptClearingAmount == 9m && vendorBill.Attachments.Single().FileName == "invoice.pdf" &&
       vendorBill.ApprovedByUserId == "approver",
     "Vendor bills must normalize supplier invoice identity and freeze receipt, price and tax values");
+var datedVendorBill = new VendorBill("VB-DUE", 1, 5, "DUE-1", new DateOnly(2026, 11, 1), "JOD", null, "buyer",
+    paymentTermDays: 30);
+Check(datedVendorBill.PaymentTermDaysSnapshot == 30 && datedVendorBill.DueDate == new DateOnly(2026, 12, 1),
+    "Vendor bills must freeze supplier payment terms and due date for reproducible aging");
 CheckThrows(() => vendorBill.AddLine(new VendorBillLine(2, 2, 11, 1m, 1m, 1m, 1m, null, 0, null, false, "P-11", "Tea", "kg")),
     "Posted vendor bills must be immutable");
 var vendorBillType = db.Model.FindEntityType(typeof(VendorBill))!;
@@ -6213,6 +6217,27 @@ Check(financialReport.IncomeStatement.Revenue.Total == 60m &&
     "Income statement must calculate period revenue, expenses, and net income on the server");
 Check(typeof(IJournalEntryRepository).GetMethod(nameof(IJournalEntryRepository.GetFinancialMovementsAsync)) is not null,
     "Financial reporting must remain behind the journal repository boundary");
+Check(typeof(IJournalEntryRepository).GetMethod(nameof(IJournalEntryRepository.GetAccountBalancesAsOfAsync)) is not null,
+    "Aging reconciliation must obtain as-of control-account balances through the journal repository");
+Check(typeof(AgingReportsApiController).GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
+      PermissionAuthorizeAttribute.PolicyPrefix + "JournalEntries.View",
+    "Aging reports must require journal-view authority");
+var agingAsOf = new DateOnly(2026, 11, 6);
+Check(AgingReportService.BucketName(agingAsOf, agingAsOf) == "Current",
+    "An amount due on the report date must remain current");
+Check(AgingReportService.BucketName(agingAsOf.AddDays(-1), agingAsOf) == "Days1To30" &&
+      AgingReportService.BucketName(agingAsOf.AddDays(-30), agingAsOf) == "Days1To30",
+    "Aging days one through thirty must share the first overdue bucket");
+Check(AgingReportService.BucketName(agingAsOf.AddDays(-31), agingAsOf) == "Days31To60" &&
+      AgingReportService.BucketName(agingAsOf.AddDays(-60), agingAsOf) == "Days31To60",
+    "Aging days thirty-one through sixty must share the second overdue bucket");
+Check(AgingReportService.BucketName(agingAsOf.AddDays(-61), agingAsOf) == "Days61To90" &&
+      AgingReportService.BucketName(agingAsOf.AddDays(-90), agingAsOf) == "Days61To90",
+    "Aging days sixty-one through ninety must share the third overdue bucket");
+Check(AgingReportService.BucketName(agingAsOf.AddDays(-91), agingAsOf) == "Over90",
+    "Aging above ninety days must use the final bucket");
+Check(new AgingBucketsDto(10m, 20m, 30m, 40m, 50m).Total == 150m,
+    "Aging bucket totals must be calculated on the server contract");
 var manualPermissionNames = new[] { "ManualJournals.View", "ManualJournals.Create", "ManualJournals.Post", "ManualJournals.Reverse" };
 Check(manualPermissionNames.All(name => PermissionDefinitions.All.Count(x => x.Name == name) == 1),
     "Manual journals must expose independent view, create, post, and reverse permissions");
@@ -6374,6 +6399,7 @@ sealed class StubFinancialAccountRepository(List<Account> accounts) : IAccountRe
 sealed class StubFinancialJournalRepository(List<FinancialAccountMovement> movements) : IJournalEntryRepository
 {
     public Task<List<FinancialAccountMovement>> GetFinancialMovementsAsync(DateTime fromDate, DateTime toDate) => Task.FromResult(movements);
+    public Task<List<AccountBalance>> GetAccountBalancesAsOfAsync(IEnumerable<int> accountIds, DateTime asOfDate) => Task.FromResult(new List<AccountBalance>());
     public Task<bool> ExistsForSourceAsync(string sourceType, string sourceReference) => Task.FromResult(false);
     public Task<JournalEntry?> GetBySourceAsync(string sourceType, string sourceReference) => Task.FromResult<JournalEntry?>(null);
     public Task<JournalEntry?> GetByIdAsync(int id) => Task.FromResult<JournalEntry?>(null);
@@ -6390,6 +6416,7 @@ sealed class StubManualJournalRepository : IJournalEntryRepository
     public Task<JournalEntry?> GetByIdForUpdateAsync(int id) => GetByIdAsync(id);
     public Task<(List<JournalEntry> Items, int TotalCount)> GetPagedAsync(JournalEntrySearchCriteria criteria) => Task.FromResult((Items.ToList(), Items.Count));
     public Task<List<FinancialAccountMovement>> GetFinancialMovementsAsync(DateTime fromDate, DateTime toDate) => Task.FromResult(new List<FinancialAccountMovement>());
+    public Task<List<AccountBalance>> GetAccountBalancesAsOfAsync(IEnumerable<int> accountIds, DateTime asOfDate) => Task.FromResult(new List<AccountBalance>());
     public Task AddAsync(JournalEntry entry) { typeof(JournalEntry).GetProperty(nameof(JournalEntry.Id))!.SetValue(entry, Items.Count + 1); Items.Add(entry); return Task.CompletedTask; }
 }
 sealed class StubUnitOfWork : IUnitOfWork

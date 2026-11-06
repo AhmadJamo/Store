@@ -1340,6 +1340,10 @@ export const routes: Routes = [
         loadComponent: () => import('./features/accounting/financial-report-page').then((module) => module.FinancialReportPageComponent),
       },
       {
+        path: 'accounting/aging',
+        loadComponent: () => import('./features/accounting/aging-report-page').then((module) => module.AgingReportPageComponent),
+      },
+      {
         path: 'accounting/manual-journals',
         canDeactivate: [(component) => component.canDeactivate()],
         loadComponent: () => import('./features/accounting/manual-journal-page').then((module) => module.ManualJournalPageComponent),

@@ -12367,6 +12367,9 @@ namespace MiniStore.Infrastructure.Migrations
                         .HasMaxLength(3)
                         .HasColumnType("nvarchar(3)");
 
+                    b.Property<DateOnly?>("DueDate")
+                        .HasColumnType("date");
+
                     b.Property<decimal>("ExchangeRate")
                         .HasPrecision(24, 12)
                         .HasColumnType("decimal(24,12)");
@@ -12387,6 +12390,9 @@ namespace MiniStore.Infrastructure.Migrations
                     b.Property<string>("Notes")
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
+
+                    b.Property<int?>("PaymentTermDaysSnapshot")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("PostedAtUtc")
                         .HasColumnType("datetime2");

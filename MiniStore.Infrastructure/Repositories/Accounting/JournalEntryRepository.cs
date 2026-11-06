@@ -65,5 +65,18 @@ public class JournalEntryRepository(AppDbContext context) : IJournalEntryReposit
             .ToListAsync();
     }
 
+    public Task<List<AccountBalance>> GetAccountBalancesAsOfAsync(IEnumerable<int> accountIds, DateTime asOfDate)
+    {
+        var ids = accountIds.Distinct().ToArray();
+        var exclusiveEnd = asOfDate.Date.AddDays(1);
+        return context.JournalEntries.AsNoTracking()
+            .Where(entry => entry.Status != JournalEntryStatus.Draft && entry.Date < exclusiveEnd)
+            .SelectMany(entry => entry.Lines)
+            .Where(line => ids.Contains(line.AccountId))
+            .GroupBy(line => line.AccountId)
+            .Select(group => new AccountBalance(group.Key, group.Sum(line => line.Debit), group.Sum(line => line.Credit)))
+            .ToListAsync();
+    }
+
     public Task AddAsync(JournalEntry entry) => context.JournalEntries.AddAsync(entry).AsTask();
 }

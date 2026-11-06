@@ -4718,4 +4718,6 @@
   <data name="The manual journal request key was already used with different content." xml:space="preserve"><value>استُخدم مفتاح طلب القيد اليدوي مسبقًا مع محتوى مختلف.</value></data>
   <data name="The manual journal request key was already used for another reversal." xml:space="preserve"><value>استُخدم مفتاح طلب القيد اليدوي مسبقًا لعكس قيد آخر.</value></data>
   <data name="Manual journal amounts exceed the supported limit." xml:space="preserve"><value>تتجاوز مبالغ القيد اليدوي الحد المدعوم.</value></data>
+  <data name="The aging date cannot be in the future." xml:space="preserve"><value>لا يمكن أن يكون تاريخ أعمار الذمم في المستقبل.</value></data>
+  <data name="The aging search cannot exceed 100 characters." xml:space="preserve"><value>لا يمكن أن يتجاوز بحث أعمار الذمم 100 حرف.</value></data>
 </root>

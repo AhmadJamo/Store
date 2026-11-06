@@ -70,7 +70,7 @@ public sealed class VendorBillService(
         {
             var order = await orders.GetByIdAsync(dto.PurchaseOrderId) ?? throw new InvalidOperationException("Purchase order was not found.");
             if (order.Status is not (PurchaseOrderStatus.Confirmed or PurchaseOrderStatus.Closed)) throw new InvalidOperationException("Only confirmed purchase orders can be billed.");
-            _ = await suppliers.GetByIdAsync(order.SupplierId) ?? throw new InvalidOperationException("Supplier was not found.");
+            var supplier = await suppliers.GetByIdAsync(order.SupplierId) ?? throw new InvalidOperationException("Supplier was not found.");
             var normalizedInvoice = VendorBill.NormalizeInvoiceNumber(dto.SupplierInvoiceNumber);
             if (normalizedInvoice.Length == 0) throw new ArgumentException("Supplier invoice number must contain at least one letter or number.");
             if (await bills.ExistsActiveSupplierInvoiceAsync(order.SupplierId, normalizedInvoice)) throw new InvalidOperationException("This supplier invoice number has already been used.");
@@ -96,7 +96,7 @@ public sealed class VendorBillService(
             var billRate = await exchangeRates.ResolveAsync(order.CurrencyCode, dto.BillDate);
             created = new VendorBill(await numbers.GenerateAsync(DocumentNumberType.VendorBill, dto.BillDate.ToDateTime(TimeOnly.MinValue)),
                 order.Id, order.SupplierId, dto.SupplierInvoiceNumber, dto.BillDate, order.CurrencyCode, dto.Notes, currentUser.UserId,
-                billRate.CompanyCurrencyCode, billRate.Rate, billRate.RateDate, billRate.Source);
+                billRate.CompanyCurrencyCode, billRate.Rate, billRate.RateDate, billRate.Source, supplier.PaymentTermsDays);
             foreach (var input in submitted)
             {
                 if (!orderLineMap.TryGetValue(input.PurchaseOrderLineId, out var orderLine) || input.BillingPolicy != orderLine.BillingPolicySnapshot)

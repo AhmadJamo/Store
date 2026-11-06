@@ -357,3 +357,12 @@
 - Passed 1,855 security/accounting checks, 238 Angular tests, 134 templates, 75 destinations, 44/44 operational routes and
   production budgets without a schema migration.
 - Next approved slice: UX-013 receivables/payables aging and subledger reconciliation.
+
+## UX-013 — AR/AP aging and subledger reconciliation — COMPLETE 2026-11-06
+
+- Added server-authored current/1–30/31–60/61–90/over-90 buckets from effective posted document evidence.
+- Applied partial payments and credit notes at frozen company-currency carrying values and respected dated reversals.
+- Reconciled the complete subledger to every used control account while keeping display search independent.
+- Added source-document and journal drill-down, explicit missing-account differences and frozen due dates for new vendor bills.
+- Passed 1,864 security/accounting checks, 239 Angular tests, 135 templates, 76 destinations, 45/45 routes and production budgets.
+- Proposed next slice: UX-014 cash-flow statement and period-close readiness; owner approval pending.
