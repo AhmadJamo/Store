@@ -1,0 +1,41 @@
+<main class="cash-flow-close">
+  <app-page-header [eyebrow]="i18n.text('area')" [title]="i18n.text('title')" [description]="i18n.text('description')" />
+  <section class="filters">
+    <label class="ui-field"><span>{{ i18n.text('from') }}</span><input #from type="date" [value]="query.fromDate" (change)="filter({ fromDate: from.value })" /></label>
+    <label class="ui-field"><span>{{ i18n.text('to') }}</span><input #to type="date" [value]="query.toDate" (change)="filter({ toDate: to.value })" /></label>
+  </section>
+  <nav class="tabs" aria-label="Report views">
+    <button type="button" [class.active]="query.view === 'cash-flow'" (click)="setView('cash-flow')">{{ i18n.text('cashFlow') }}</button>
+    <button type="button" [class.active]="query.view === 'close-readiness'" (click)="setView('close-readiness')">{{ i18n.text('closeReadiness') }}</button>
+  </nav>
+  @if (loading()) {
+    <app-feedback-state kind="loading" [title]="i18n.text('title')" />
+  } @else if (problem(); as failure) {
+    <app-api-recovery [problem]="failure" (retry)="load()" />
+  } @else if (result(); as report) {
+    @if (query.view === 'cash-flow') {
+      <section class="summary">
+        <article><span>{{ i18n.text('opening') }}</span><strong>{{ report.summary.openingCash | number: '1.2-2' }}</strong></article>
+        <article><span>{{ i18n.text('operating') }}</span><strong>{{ report.summary.operating | number: '1.2-2' }}</strong></article>
+        <article><span>{{ i18n.text('investing') }}</span><strong>{{ report.summary.investing | number: '1.2-2' }}</strong></article>
+        <article><span>{{ i18n.text('financing') }}</span><strong>{{ report.summary.financing | number: '1.2-2' }}</strong></article>
+        <article><span>{{ i18n.text('unclassified') }}</span><strong>{{ report.summary.unclassified | number: '1.2-2' }}</strong></article>
+        <article><span>{{ i18n.text('netChange') }}</span><strong>{{ report.summary.netChange | number: '1.2-2' }}</strong></article>
+        <article class="closing"><span>{{ i18n.text('closing') }} · {{ report.companyCurrencyCode }}</span><strong>{{ report.summary.closingCash | number: '1.2-2' }}</strong></article>
+      </section>
+      @if (report.movements.length === 0) {
+        <app-feedback-state kind="empty" [title]="i18n.text('noMovements')" />
+      } @else {
+        <app-data-table [label]="i18n.text('cashFlow')">
+          <table><thead><tr><th>{{ i18n.text('entry') }}</th><th>{{ i18n.text('date') }}</th><th>{{ i18n.text('descriptionLabel') }}</th><th>{{ i18n.text('source') }}</th><th>{{ i18n.text('classification') }}</th><th>{{ i18n.text('amount') }}</th><th></th></tr></thead>
+          <tbody>@for (row of report.movements; track row.entryId) {<tr><td>{{ row.entryNumber }}</td><td>{{ row.date | date: 'mediumDate' }}</td><td>{{ row.description || '—' }}</td><td>{{ row.sourceType }} {{ row.sourceReference }}</td><td><span class="ui-badge">{{ label(row.classification) }}</span></td><td><strong>{{ row.amount | number: '1.2-2' }}</strong></td><td><a [href]="row.evidenceRoute">{{ i18n.text('evidence') }}</a></td></tr>}</tbody></table>
+        </app-data-table>
+      }
+    } @else {
+      <app-data-table [label]="i18n.text('closeReadiness')">
+        <table><thead><tr><th>{{ i18n.text('check') }}</th><th>{{ i18n.text('status') }}</th><th>{{ i18n.text('count') }}</th><th>{{ i18n.text('difference') }}</th><th></th></tr></thead>
+        <tbody>@for (row of report.readiness; track row.code) {<tr><td>{{ label(row.code) }}</td><td><span class="ui-badge" [class.success]="row.status === 'Ready'" [class.danger]="row.status === 'Blocked'">{{ status(row.status) }}</span></td><td>{{ row.count }}</td><td>{{ row.difference | number: '1.2-2' }}</td><td><a [href]="row.evidenceRoute">{{ i18n.text('evidence') }}</a></td></tr>}</tbody></table>
+      </app-data-table>
+    }
+  }
+</main>

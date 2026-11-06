@@ -188,6 +188,21 @@ permission-backed routes already present in `app.routes.ts`.
 - [x] Keep posted/reversed evidence immutable and provide direct next-step detail navigation.
 - [x] Verify golden lifecycle, isolation, idempotency, closed periods, Angular, accessibility and bundle gates.
 
+### UX-013 — AR/AP aging and subledger reconciliation — COMPLETED 2026-11-06
+
+- [x] Reconstruct open receivables and payables from posted source evidence at a selected date.
+- [x] Apply frozen company-currency payments/credits and dated reversal evidence.
+- [x] Reconcile complete subledgers to every used control account without display-filter distortion.
+- [x] Preserve safe date/search/tab context and source/journal drill-down.
+
+### UX-014 — Cash flow and period-close readiness — COMPLETED 2026-11-06
+
+- [x] Derive opening, movement and closing cash from active payment-method settlement accounts and posted journals.
+- [x] Classify operating, investing and financing movement server-side while exposing ambiguous movement for review.
+- [x] Add a read-only close checklist for trial balance, balance sheet, AR/AP, inventory, drafts and fiscal-period coverage.
+- [x] Preserve safe date/tab context and direct evidence links without adding a close/post/payment mutation.
+- [x] Verify Release, accounting/security, Angular, accessibility, consistency, budgets and authenticated Edge acceptance.
+
 ## Reusable component target
 
 - `EnterprisePageHeader`: title, description, breadcrumb, status, primary and secondary actions.
@@ -227,6 +242,7 @@ Every phase must record:
 | UX-011 | 237/237 Angular; 1,847 security/accounting checks; 133 templates; production 336,179 B initial and 81,880 B largest lazy | Golden balanced ledger; 74 destinations; 43/43 operational routes; hosted acceptance 6 passed/0 failed | COMPLETE |
 | UX-012 | 238/238 Angular; 1,855 security/accounting checks; 134 templates; production 336,483 B initial and 81,880 B largest lazy | Golden Draft/Post/Reverse lifecycle; 75 destinations; 44/44 routes; hosted 6 passed/0 failed | COMPLETE |
 | UX-013 | 239/239 Angular; 1,864 security/accounting checks; 135 templates; production 336,904 B initial and 81,877 B largest lazy | Golden bucket boundaries and due-date snapshot; 76 destinations; 45/45 routes; hosted presentation 6 passed/0 failed | COMPLETE |
+| UX-014 | 240/240 Angular; 1,867 security/accounting checks; 136 templates; production 337,026 B initial and 81,877 B largest lazy | Deterministic classification and repository boundaries; 77 destinations; 46/46 routes; authenticated Edge 15 passed/0 failed | COMPLETE |
 
 ## Latest phase report
 
@@ -268,9 +284,18 @@ Every phase must record:
 - New vendor bills freeze payment terms and due date; historical rows remain untouched with a documented bill-date fallback.
 - Full evidence is recorded in docs/modernization/UI_UX_AGING_RECONCILIATION.md.
 
+### UX-014 — Completed
+
+- Added ledger-derived cash opening, movement and closing totals from configured settlement accounts.
+- Added transparent operating/investing/financing classification and a separate unclassified review total.
+- Added a read-only close-readiness checklist across core accounting and inventory reconciliations with evidence links.
+- Preserved date/tab context and kept all posting, payment and fiscal-period mutations outside the surface.
+- Full evidence is recorded in docs/modernization/UI_UX_CASH_FLOW_CLOSE.md.
+
 ### Next
 
-- UX-014 is proposed for a server-authored cash-flow statement and period-close readiness workspace; owner approval is pending.
+- UX-015 is proposed for controlled period-close execution and close evidence; owner approval is required before any
+  status mutation or automatic close journal is designed or implemented.
 
 ### Recorded risks
 

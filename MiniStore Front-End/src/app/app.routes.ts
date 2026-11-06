@@ -1344,6 +1344,10 @@ export const routes: Routes = [
         loadComponent: () => import('./features/accounting/aging-report-page').then((module) => module.AgingReportPageComponent),
       },
       {
+        path: 'accounting/cash-flow-close',
+        loadComponent: () => import('./features/accounting/cash-flow-close-page').then((module) => module.CashFlowClosePageComponent),
+      },
+      {
         path: 'accounting/manual-journals',
         canDeactivate: [(component) => component.canDeactivate()],
         loadComponent: () => import('./features/accounting/manual-journal-page').then((module) => module.ManualJournalPageComponent),

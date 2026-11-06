@@ -262,6 +262,7 @@ const navigationItems: readonly NavigationItem[] = [
   { id: 'journal-entries', route: '/accounting/journal-entries', labelKey: 'journalEntries', icon: '▤', requiredPermission: 'JournalEntries.View', showInSidebar: false, hubSectionKey: 'accountingReview' },
   { id: 'financial-reports', route: '/accounting/financial-reports', labelKey: 'financialReports', icon: '▥', requiredPermission: 'JournalEntries.View', showInSidebar: false, hubSectionKey: 'accountingReview' },
   { id: 'aging-reports', route: '/accounting/aging', labelKey: 'agingReports', icon: '⌛', requiredPermission: 'JournalEntries.View', showInSidebar: false, hubSectionKey: 'accountingReview' },
+  { id: 'cash-flow-close', route: '/accounting/cash-flow-close', labelKey: 'cashFlowClose', icon: '≋', requiredPermission: 'JournalEntries.View', showInSidebar: false, hubSectionKey: 'accountingReview' },
   { id: 'manual-journals', route: '/accounting/manual-journals', labelKey: 'manualJournals', icon: '✎', requiredAnyPermissions: ['ManualJournals.View', 'ManualJournals.Create'], showInSidebar: false, hubSectionKey: 'accountingReview' },
   { id: 'accounting-settings-link', route: '/settings/accounting', labelKey: 'accountingSettings', icon: '⚙', requiredPermission: 'Administration.Access', showInSidebar: false, hubSectionKey: 'accountingSetup' },
   { id: 'fiscal-periods-link', route: '/settings/fiscal-periods', labelKey: 'fiscalPeriods', icon: '▦', requiredPermission: 'Administration.Access', showInSidebar: false, hubSectionKey: 'accountingSetup' },

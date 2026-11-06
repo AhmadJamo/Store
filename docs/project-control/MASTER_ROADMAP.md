@@ -366,3 +366,12 @@
 - Added source-document and journal drill-down, explicit missing-account differences and frozen due dates for new vendor bills.
 - Passed 1,864 security/accounting checks, 239 Angular tests, 135 templates, 76 destinations, 45/45 routes and production budgets.
 - Proposed next slice: UX-014 cash-flow statement and period-close readiness; owner approval pending.
+
+## UX-014 — Cash flow and period-close readiness — COMPLETE 2026-11-06
+
+- Added ledger-derived cash opening/movement/closing totals from active settlement accounts.
+- Added deterministic operating/investing/financing classification and explicit ambiguous-movement review.
+- Added GET-only close checks across financial equality, AR/AP, inventory, draft journals and fiscal periods.
+- Passed 1,867 security/accounting checks, 240 Angular tests, 136 templates, 77 destinations, 46/46 routes,
+  production budgets and authenticated Edge acceptance 15/15.
+- Proposed next slice: UX-015 controlled period-close execution; owner approval is required before mutations.

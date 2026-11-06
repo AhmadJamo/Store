@@ -78,5 +78,36 @@ public class JournalEntryRepository(AppDbContext context) : IJournalEntryReposit
             .ToListAsync();
     }
 
+    public async Task<List<CashFlowJournalMovement>> GetCashFlowMovementsAsync(
+        IEnumerable<int> cashAccountIds, DateTime fromDate, DateTime toDate)
+    {
+        var cashIds = cashAccountIds.Distinct().ToHashSet();
+        if (cashIds.Count == 0) return [];
+        var from = fromDate.Date;
+        var exclusiveEnd = toDate.Date.AddDays(1);
+        var entries = await context.JournalEntries.AsNoTracking()
+            .Where(entry => entry.Status != JournalEntryStatus.Draft && entry.Date >= from && entry.Date < exclusiveEnd &&
+                entry.Lines.Any(line => cashIds.Contains(line.AccountId)))
+            .Include(entry => entry.Lines)
+            .OrderBy(entry => entry.Date).ThenBy(entry => entry.Id)
+            .ToListAsync();
+        var counterpartIds = entries.SelectMany(entry => entry.Lines)
+            .Where(line => !cashIds.Contains(line.AccountId)).Select(line => line.AccountId).Distinct().ToArray();
+        var accountTypes = await context.Accounts.AsNoTracking().Where(account => counterpartIds.Contains(account.Id))
+            .ToDictionaryAsync(account => account.Id, account => account.Type);
+        return entries.Select(entry => new CashFlowJournalMovement(entry.Id, entry.EntryNumber, entry.Date,
+            entry.Description, entry.SourceType, entry.SourceReference,
+            entry.Lines.Where(line => cashIds.Contains(line.AccountId)).Sum(line => line.Debit - line.Credit),
+            entry.Lines.Where(line => !cashIds.Contains(line.AccountId) && accountTypes.ContainsKey(line.AccountId))
+                .Select(line => accountTypes[line.AccountId]).Distinct().ToArray())).ToList();
+    }
+
+    public Task<int> CountDraftEntriesAsync(DateTime toDate)
+    {
+        var exclusiveEnd = toDate.Date.AddDays(1);
+        return context.JournalEntries.AsNoTracking()
+            .CountAsync(entry => entry.Status == JournalEntryStatus.Draft && entry.Date < exclusiveEnd);
+    }
+
     public Task AddAsync(JournalEntry entry) => context.JournalEntries.AddAsync(entry).AsTask();
 }

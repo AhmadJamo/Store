@@ -6222,6 +6222,18 @@ Check(typeof(IJournalEntryRepository).GetMethod(nameof(IJournalEntryRepository.G
 Check(typeof(AgingReportsApiController).GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
       PermissionAuthorizeAttribute.PolicyPrefix + "JournalEntries.View",
     "Aging reports must require journal-view authority");
+Check(typeof(CashFlowCloseApiController).GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
+      PermissionAuthorizeAttribute.PolicyPrefix + "JournalEntries.View",
+    "Cash-flow and close-readiness reporting must require journal-view authority");
+Check(typeof(IJournalEntryRepository).GetMethod(nameof(IJournalEntryRepository.GetCashFlowMovementsAsync)) is not null &&
+      typeof(IJournalEntryRepository).GetMethod(nameof(IJournalEntryRepository.CountDraftEntriesAsync)) is not null,
+    "Cash-flow and close readiness must remain behind the journal repository boundary");
+Check(CashFlowCloseService.Classify("CustomerPayment", [AccountType.Asset]) == "Operating" &&
+      CashFlowCloseService.Classify("ManualJournal", [AccountType.Expense]) == "Operating" &&
+      CashFlowCloseService.Classify("ManualJournal", [AccountType.Asset]) == "Investing" &&
+      CashFlowCloseService.Classify("ManualJournal", [AccountType.Equity]) == "Financing" &&
+      CashFlowCloseService.Classify("ManualJournal", [AccountType.Asset, AccountType.Liability]) == "Unclassified",
+    "Cash-flow classification must be deterministic and preserve ambiguous entries for review");
 var agingAsOf = new DateOnly(2026, 11, 6);
 Check(AgingReportService.BucketName(agingAsOf, agingAsOf) == "Current",
     "An amount due on the report date must remain current");
@@ -6400,6 +6412,8 @@ sealed class StubFinancialJournalRepository(List<FinancialAccountMovement> movem
 {
     public Task<List<FinancialAccountMovement>> GetFinancialMovementsAsync(DateTime fromDate, DateTime toDate) => Task.FromResult(movements);
     public Task<List<AccountBalance>> GetAccountBalancesAsOfAsync(IEnumerable<int> accountIds, DateTime asOfDate) => Task.FromResult(new List<AccountBalance>());
+    public Task<List<CashFlowJournalMovement>> GetCashFlowMovementsAsync(IEnumerable<int> cashAccountIds, DateTime fromDate, DateTime toDate) => Task.FromResult(new List<CashFlowJournalMovement>());
+    public Task<int> CountDraftEntriesAsync(DateTime toDate) => Task.FromResult(0);
     public Task<bool> ExistsForSourceAsync(string sourceType, string sourceReference) => Task.FromResult(false);
     public Task<JournalEntry?> GetBySourceAsync(string sourceType, string sourceReference) => Task.FromResult<JournalEntry?>(null);
     public Task<JournalEntry?> GetByIdAsync(int id) => Task.FromResult<JournalEntry?>(null);
@@ -6417,6 +6431,8 @@ sealed class StubManualJournalRepository : IJournalEntryRepository
     public Task<(List<JournalEntry> Items, int TotalCount)> GetPagedAsync(JournalEntrySearchCriteria criteria) => Task.FromResult((Items.ToList(), Items.Count));
     public Task<List<FinancialAccountMovement>> GetFinancialMovementsAsync(DateTime fromDate, DateTime toDate) => Task.FromResult(new List<FinancialAccountMovement>());
     public Task<List<AccountBalance>> GetAccountBalancesAsOfAsync(IEnumerable<int> accountIds, DateTime asOfDate) => Task.FromResult(new List<AccountBalance>());
+    public Task<List<CashFlowJournalMovement>> GetCashFlowMovementsAsync(IEnumerable<int> cashAccountIds, DateTime fromDate, DateTime toDate) => Task.FromResult(new List<CashFlowJournalMovement>());
+    public Task<int> CountDraftEntriesAsync(DateTime toDate) => Task.FromResult(Items.Count(x => x.Status == JournalEntryStatus.Draft && x.Date.Date <= toDate.Date));
     public Task AddAsync(JournalEntry entry) { typeof(JournalEntry).GetProperty(nameof(JournalEntry.Id))!.SetValue(entry, Items.Count + 1); Items.Add(entry); return Task.CompletedTask; }
 }
 sealed class StubUnitOfWork : IUnitOfWork

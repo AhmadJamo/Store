@@ -185,3 +185,16 @@ so no accounting data was created to fabricate one.
 - New vendor bills freeze supplier payment-term days and due date. Migration AddVendorBillDueDateSnapshot adds nullable
   fields without rewriting historical financial data; legacy null due dates conservatively use bill date.
 - The surface is GET-only under JournalEntries.View; no collection, payment, posting or revaluation command was added.
+
+# UX-014 cash flow and period-close readiness (2026-11-06)
+
+- Active payment-method settlement accounts are the explicit cash/cash-equivalent boundary. Opening balance and selected
+  period movement come from non-draft journal evidence; closing cash equals opening plus every classified and unclassified
+  cash movement.
+- Customer, supplier, sale and purchase sources and revenue/expense counterparts classify as Operating. Asset-only
+  counterparts classify as Investing and liability/equity-only counterparts as Financing. Mixed or unsupported evidence is
+  never guessed: it remains Unclassified with a direct journal link.
+- The close-readiness view checks cash configuration, unclassified movement, trial/balance-sheet equality, AR/AP control
+  differences, inventory exceptions, draft journals and fiscal-period coverage. Checks are evidence, not permission to close.
+- The endpoint and Angular surface are GET-only under `JournalEntries.View`. No journal, payment, period status, inventory
+  or source document is mutated, and no automatic closing entry is created.

@@ -2226,3 +2226,12 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   1,864 security/accounting checks, 239 Angular tests, 135 templates, 76 destinations, 45/45 routes and bundle budgets passed.
   Hosted presentation acceptance passed 6/0; the legacy dual-run Login expectation remains stale. UX-014 is proposed pending
   owner approval.
+- 2026-11-06: Completed UX-014 Cash Flow and Period-Close Readiness. Added repository-owned cash movement and Draft
+  aggregates, an Application-owned classification/readiness service, a permission-protected GET API and bilingual RTL-safe
+  Angular workspace with safe date/view context and direct evidence links. Active payment-method settlement accounts define
+  cash; ambiguous movement stays Unclassified and remains included in reconciliation. No period, journal, payment, inventory
+  or source-document mutation was added. Release rebuilt with zero warnings/errors; 1,867 security/accounting checks,
+  240/240 Angular tests, 136 templates, 77 destinations, 46/46 routes and bundle budgets passed. Authenticated Edge
+  acceptance passed 15/15 including the new accounting endpoint. Fixed the acceptance stock locator to scope the visible
+  table row instead of a hidden select option. The app remains running on https://localhost:54052. UX-015 controlled close
+  execution is proposed and requires owner approval before any mutation.

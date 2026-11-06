@@ -339,8 +339,8 @@ The ERP SaaS Foundation Blueprint is imported as a non-authoritative planning re
 - Implemented WMS-010 hierarchical location metadata, barcode, sequence, tree ordering, warehouse-filtered parent selection, operational capabilities, edit workflow and cycle/same-warehouse validation. Putaway/transfers/relocations enforce receive/pick capabilities. Its additive migration is applied to `AHMAD/MiniStoreDb`; authenticated UI smoke remains because no login secret is stored in the repository.
 
 ## In Progress
-- UX-012 Controlled Manual Journal Foundation is complete. Balanced Draft/Post/Reverse uses the existing gateway and fiscal
-  periods with independent permissions. UX-013 receivables/payables aging and subledger reconciliation is next.
+- UX-014 cash flow and period-close readiness is complete as a GET-only evidence surface. UX-015 controlled close execution
+  is proposed and must not begin before owner approval because it would mutate fiscal-period status and may create journals.
 - UX-009 navigation completeness is complete: 72 registered destinations and 41/41 operational routes are covered through
   permission-aware Purchasing, Sales and Accounting hubs. UX-010 Accounting Workspace Foundation is next.
 - PUR-280 is implemented. The purchase completion roadmap is complete; continue from the master roadmap after reconciling customer-management and sales requirements.
@@ -366,7 +366,9 @@ The ERP SaaS Foundation Blueprint is imported as a non-authoritative planning re
 - Duplicate `PermissionsCodeExport` tree can drift.
 
 ## Accounting Gaps
-- Sales/purchase posting, immutable posted returns, fiscal-period enforcement and controlled reversal for four purchase document types are implemented; provisional-negative variance settles during purchase posting. Mixed-rate product tax, reversal coverage outside the current purchase scope and financial statements remain pending.
+- Sales/purchase posting, immutable returns, fiscal-period enforcement, financial statements, AR/AP aging and read-only
+  cash-flow/close readiness are implemented. Mixed-rate product tax, wider reversal coverage, controlled close execution,
+  budgets and consolidation remain pending.
 
 ## Testing Gaps
 - Security regression executable checks complete entity classification and composite tenant relationships. A live two-company SQL mutation was rejected by the database; comprehensive repository HTTP/database integration and penetration tests remain outstanding.
@@ -418,3 +420,10 @@ The ERP SaaS Foundation Blueprint is imported as a non-authoritative planning re
 - [x] Partial payment, credit-note and dated-reversal treatment.
 - [x] Complete subledger-to-control-account reconciliation and source drill-down.
 - [x] Frozen due-date evidence for new vendor bills without rewriting historical rows.
+
+## UX-014 completed (2026-11-06)
+
+- [x] Ledger-derived opening, movement and closing cash using configured settlement accounts.
+- [x] Transparent operating/investing/financing classification with explicit unclassified review.
+- [x] Read-only close checks for financial equality, AR/AP, inventory, draft journals and fiscal-period coverage.
+- [x] Safe date/tab context, direct evidence links and authenticated Edge acceptance.

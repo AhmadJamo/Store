@@ -1272,7 +1272,8 @@ static async Task RunAuthenticatedInventoryUiReconciliationAsync(
     await page.GotoAsync($"{apiBase}/app/inventory/stocks",
         new PageGotoOptions { WaitUntil = WaitUntilState.DOMContentLoaded });
     await page.Locator(".stocks-page").WaitForAsync();
-    await page.GetByText(productName, new PageGetByTextOptions { Exact = false }).First.WaitForAsync();
+    await page.Locator(".stocks-page tbody")
+        .GetByText(productName, new LocatorGetByTextOptions { Exact = false }).First.WaitForAsync();
     var inventoryHtml = await page.ContentAsync();
     Require(ContainsEncoded(inventoryHtml, productName) && ContainsEncoded(inventoryHtml, warehouseName),
         "Angular Product Stocks and product-stock API identity fields did not reconcile.");
@@ -1401,6 +1402,7 @@ static async Task RunHighRiskCohortAcceptanceAsync(
         new CohortProbe("purchasing", "PurchaseOrders.View", "/api/v1/purchase-orders"),
         new CohortProbe("inventory", "InventoryInsights.View", "/api/v1/inventory-insights"),
         new CohortProbe("accounting", "PurchaseAccountingReconciliation.View", "/api/v1/purchase-accounting-reconciliation"),
+        new CohortProbe("accounting", "JournalEntries.View", "/api/v1/cash-flow-close?fromDate=2026-01-01&toDate=2026-11-06"),
         new CohortProbe("accounting", "Administration.Access", "/api/v1/accounts"),
         new CohortProbe("administration", "Users.View", "/api/v1/users"),
         new CohortProbe("administration", "AuditEvents.View", "/api/v1/audit-events?page=1&pageSize=1")

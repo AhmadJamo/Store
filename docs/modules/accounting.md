@@ -24,6 +24,10 @@ UX-013 adds /accounting/aging for server-authored AR/AP aging, source-document d
 reconciliation. It uses frozen carrying values, respects dated reversals, preserves safe date/search/tab context and
 exposes missing control-account assignment. New vendor bills freeze due-date evidence; historical bills are not rewritten.
 
-Current limitations remain explicit: account re-parenting/status management, cash flow, close processing,
+UX-014 adds `/accounting/cash-flow-close` for server-authored cash movements and a read-only close-readiness checklist.
+Cash is bounded by active payment-method settlement accounts. Ambiguous movement stays visible as Unclassified, and every
+readiness row links to its owning report or evidence directory. Date and selected-view context are allowlisted.
+
+Current limitations remain explicit: account re-parenting/status management, close execution,
 recurring/bulk journals, budgets and consolidation are not implemented. Operational posting and fiscal-period rules remain
 unchanged; manual journals reuse them.

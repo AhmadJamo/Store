@@ -1,6 +1,12 @@
 # Codebase map
 ## Angular modernization foundation
 
+UX-014 adds `CashFlowCloseService`, `CashFlowCloseApiController`, repository-owned cash movement/draft aggregates and
+Angular `features/accounting/cash-flow-close-*`. Active payment-method settlement accounts define cash; classification and
+all readiness checks are server-authored, while ambiguous movement remains explicit. The workspace is GET-only under
+`JournalEntries.View`. See `docs/modernization/UI_UX_CASH_FLOW_CLOSE.md` and ADR
+`docs/decisions/2026-11-06-cash-flow-close-read-model.md`.
+
 UX-013 adds AgingReportService, AgingReportsApiController, repository-owned as-of account balances and Angular
 features/accounting/aging-report-*. Customer and supplier open items use frozen company-currency applications and
 dated reversal evidence; reconciliation always uses the complete subledger even when the display is searched. New vendor
