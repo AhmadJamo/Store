@@ -26,7 +26,7 @@ public static class TenantIsolationModel
         typeof(SalesApprovalRule), typeof(SalesApprovalRuleStep), typeof(SalesOrderApproval), typeof(SalesOrderApprovalFinding), typeof(SalesOrderApprovalStep),
         typeof(DocumentSequence), typeof(AuditLog), typeof(GeneralSettings), typeof(OrganizationIdentityField), typeof(OrganizationLogo), typeof(CurrencyExchangeRate), typeof(DiscountSettings),
         typeof(StockTransfer), typeof(StockTransferItem), typeof(StockTransferHistory),
-        typeof(Branch), typeof(Account), typeof(JournalEntry), typeof(JournalEntryLine), typeof(FiscalPeriod),
+        typeof(Branch), typeof(Account), typeof(JournalEntry), typeof(JournalEntryLine), typeof(FiscalPeriod), typeof(RecurringJournalTemplate), typeof(RecurringJournalTemplateLine),
         typeof(Customer), typeof(CustomerContact), typeof(CustomerAddress), typeof(TaxRate), typeof(PosTerminal), typeof(PosTerminalProduct),
         typeof(PosTerminalWarehouse), typeof(PosTerminalSettings), typeof(BranchWarehouseAccess),
         typeof(AccountingSettings), typeof(InventorySettings), typeof(PaymentMethod),

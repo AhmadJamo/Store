@@ -4725,4 +4725,23 @@
   <data name="Fiscal period cannot be closed before its end date." xml:space="preserve"><value>لا يمكن إقفال الفترة المالية قبل تاريخ انتهائها.</value></data>
   <data name="Fiscal period close is blocked. Review close readiness and resolve every blocker." xml:space="preserve"><value>إقفال الفترة المالية متوقف. راجع جاهزية الإقفال وعالج جميع الموانع.</value></data>
   <data name="Fiscal period was modified by another user. Reload and try again." xml:space="preserve"><value>عدّل مستخدم آخر الفترة المالية. أعد التحميل ثم حاول مرة أخرى.</value></data>
+  <data name="A recurring journal template name is required." xml:space="preserve"><value>اسم قالب القيد الدوري مطلوب.</value></data>
+  <data name="A recurring journal description is required." xml:space="preserve"><value>وصف القيد الدوري مطلوب.</value></data>
+  <data name="Recurring journal template name cannot exceed 150 characters." xml:space="preserve"><value>لا يمكن أن يتجاوز اسم قالب القيد الدوري 150 حرفًا.</value></data>
+  <data name="Recurring journal description cannot exceed 500 characters." xml:space="preserve"><value>لا يمكن أن يتجاوز وصف القيد الدوري 500 حرف.</value></data>
+  <data name="Recurring journal frequency is invalid." xml:space="preserve"><value>تكرار القيد الدوري غير صالح.</value></data>
+  <data name="Recurring journal end date cannot be before its start date." xml:space="preserve"><value>لا يمكن أن يسبق تاريخ انتهاء القيد الدوري تاريخ بدايته.</value></data>
+  <data name="A recurring journal template requires at least two lines." xml:space="preserve"><value>يتطلب قالب القيد الدوري سطرين على الأقل.</value></data>
+  <data name="Recurring journal debit and credit totals must be equal." xml:space="preserve"><value>يجب أن يتساوى إجمالي المدين والدائن في القيد الدوري.</value></data>
+  <data name="A recurring journal line requires one account and exactly one positive debit or credit amount." xml:space="preserve"><value>يتطلب سطر القيد الدوري حسابًا واحدًا ومبلغًا موجبًا واحدًا مدينًا أو دائنًا.</value></data>
+  <data name="Recurring journal amounts cannot exceed two decimal places." xml:space="preserve"><value>لا يمكن أن تتجاوز مبالغ القيد الدوري منزلتين عشريتين.</value></data>
+  <data name="Recurring journal amounts exceed the supported limit." xml:space="preserve"><value>تتجاوز مبالغ القيد الدوري الحد المدعوم.</value></data>
+  <data name="A completed recurring journal template cannot be reactivated." xml:space="preserve"><value>لا يمكن إعادة تفعيل قالب قيد دوري مكتمل.</value></data>
+  <data name="The recurring journal template is not available to run." xml:space="preserve"><value>قالب القيد الدوري غير متاح للتشغيل.</value></data>
+  <data name="Select an active account for every recurring journal line." xml:space="preserve"><value>اختر حسابًا نشطًا لكل سطر في القيد الدوري.</value></data>
+  <data name="Recurring journal template was not found." xml:space="preserve"><value>لم يتم العثور على قالب القيد الدوري.</value></data>
+  <data name="Recurring journal start date is required." xml:space="preserve"><value>تاريخ بدء القيد الدوري مطلوب.</value></data>
+  <data name="Recurring journal template version is invalid." xml:space="preserve"><value>نسخة قالب القيد الدوري غير صالحة.</value></data>
+  <data name="Recurring journal template was modified by another user. Reload and try again." xml:space="preserve"><value>عدّل مستخدم آخر قالب القيد الدوري. أعد التحميل ثم حاول مرة أخرى.</value></data>
+  <data name="A valid recurring journal run key is required." xml:space="preserve"><value>يلزم مفتاح تشغيل صالح للقيد الدوري.</value></data>
 </root>

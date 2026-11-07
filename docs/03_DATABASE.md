@@ -94,6 +94,7 @@ All business tables have a required `TenantId` foreign key to `Tenants`. EF quer
 | Accounts / Branches / JournalEntries / JournalEntryLines | hierarchical chart; branches optionally reference a sales-revenue subaccount; journal lines hold debit/credit plus optional branch/warehouse dimensions. A journal source type/reference has a filtered unique index to prevent a document from posting twice. |
 | PurchaseReturns / PurchaseReturnItems | immutable tenant-owned supplier-return headers/lines linked to original purchase/items with proportional accounting and actual inventory-cost snapshots. |
 | FiscalPeriods | tenant accounting date ranges with Open/SoftClosed/Closed status, status-change audit metadata, date/status checks and SQL rowversion concurrency. Application validation prevents overlapping ranges. |
+| RecurringJournalTemplates / RecurringJournalTemplateLines | tenant-owned balanced recurring definitions with cadence, effective/next/last-run evidence, rowversion, named account and optional branch/warehouse relationships. Generated journals remain separate `JournalEntries`. |
 | Warehouses, Suppliers | Warehouses link a branch/inventory account and persist operational type, control mode, picking, POS, capacity, transfer-location policies and the purchase receiving route; suppliers store legal/contact/tax/commercial profile data, active state, payable account and rowversion. |
 | InventoryTrackingTransactions | Immutable lot/serial trace rows include nullable picking-strategy provenance; null identifies history created before `AddTrackedRemovalStrategyAudit`. |
 | StockTransferItems | Transfer lines retain optional manual lot/serial allocation text through draft/edit/post; `AddTransferTrackingAllocations` leaves historic rows null. |
@@ -260,3 +261,9 @@ failure alerts and another-server restoration remain production work. Full secre
 Migration 20261106131442_AddVendorBillDueDateSnapshot adds nullable DueDate and PaymentTermDaysSnapshot to VendorBills.
 New bills populate both from supplier terms at creation. Historical rows remain null and are not bulk-rewritten; aging uses
 BillDate as the documented fallback until separately verified source evidence is approved for backfill.
+## UX-016 recurring-journal schema (2026-11-07)
+
+Migration `20261106230309_AddRecurringJournalTemplates` is migration 138. It creates tenant-owned
+`RecurringJournalTemplates` and `RecurringJournalTemplateLines`, rowversion concurrency, effective/next/last-run evidence,
+and tenant-composite account, branch, warehouse and template relationships. It creates no templates or journals during
+migration. It is applied to local Demo, and EF reports no pending model changes.

@@ -3,7 +3,7 @@ import { LocalizationService, MessageKey } from '../../core/localization/localiz
 
 const navigationMessages = {
   'ar-JO': {
-    manualJournals: 'القيود اليدوية',
+    manualJournals: 'القيود اليدوية', recurringJournals: 'القيود الدورية',
     financialReports: 'التقارير المالية',
     agingReports: 'أعمار الذمم والمصالحة', cashFlowClose: 'التدفق النقدي وجاهزية الإقفال',
     purchasingCenter: 'مركز المشتريات', purchasingCenterDescription: 'مساحة موحدة للتخطيط والتوريد والاستلام والذمم الدائنة وعمليات الموردين.', salesCenter: 'مركز المبيعات', salesCenterDescription: 'مساحة موحدة للتسعير والطلبات والتسليم والتحصيل والمرتجعات والبيع الفوري.', accountingCenter: 'مركز المحاسبة', accountingCenterDescription: 'وصول منظم إلى شجرة الحسابات وإعدادات المحاسبة والفترات والعملات وربط الفروع.', noModuleDestinations: 'لا توجد وجهات متاحة', noModuleDestinationsDescription: 'لا تملك صلاحية لفتح أي مساحة عمل في هذه الوحدة.', openWorkspace: 'فتح مساحة العمل',
@@ -12,7 +12,7 @@ const navigationMessages = {
     accountingReview: 'المراجعة المحاسبية', journalEntries: 'دليل القيود اليومية', salesPricing: 'تسعير المبيعات', salesQuotationTemplates: 'قوالب عروض الأسعار', salesQuotations: 'عروض الأسعار', salesApprovalRules: 'قواعد اعتماد المبيعات', salesOrders: 'أوامر البيع', salesDeliveries: 'تسليمات المبيعات', customerInvoices: 'فواتير العملاء', customerPayments: 'دفعات العملاء', customerReturnRequests: 'طلبات مرتجعات العملاء', customerReturnReceipts: 'استلام مرتجعات العملاء', customerCreditNotes: 'إشعارات العملاء الدائنة', directSales: 'البيع المباشر', pointOfSale: 'نقطة البيع', directSalesReturns: 'مرتجعات البيع المباشر', chartOfAccounts: 'شجرة الحسابات',
   },
   'en-US': {
-    manualJournals: 'Manual journals',
+    manualJournals: 'Manual journals', recurringJournals: 'Recurring journals',
     financialReports: 'Financial reports',
     agingReports: 'Aging and reconciliation', cashFlowClose: 'Cash flow and close readiness',
     purchasingCenter: 'Purchasing center', purchasingCenterDescription: 'A unified workspace for planning, sourcing, receiving, payables, and supplier operations.', salesCenter: 'Sales center', salesCenterDescription: 'A unified workspace for pricing, orders, delivery, collection, returns, and immediate sales.', accountingCenter: 'Accounting center', accountingCenterDescription: 'Organized access to the chart of accounts, accounting setup, periods, currencies, and branch mappings.', noModuleDestinations: 'No destinations available', noModuleDestinationsDescription: 'You do not have permission to open a workspace in this module.', openWorkspace: 'Open workspace',

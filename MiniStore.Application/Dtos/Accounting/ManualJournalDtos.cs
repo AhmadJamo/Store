@@ -11,7 +11,7 @@ public sealed class ManualJournalCreatePageDto
     public List<ManualJournalOptionDto> Warehouses { get; init; } = [];
 }
 
-public sealed class ManualJournalLineInputDto
+public class ManualJournalLineInputDto
 {
     public int AccountId { get; set; }
     public int? BranchId { get; set; }

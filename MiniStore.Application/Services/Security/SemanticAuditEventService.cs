@@ -11,6 +11,8 @@ public static class SemanticAuditEventTypes
     public const string TenantUserCreated = "Security.TenantUserCreated";
     public const string AccountingSettingsChanged = "Configuration.AccountingSettingsChanged";
     public const string FiscalPeriodStatusChanged = "Accounting.FiscalPeriodStatusChanged";
+    public const string RecurringJournalTemplateChanged = "Accounting.RecurringJournalTemplateChanged";
+    public const string RecurringJournalDraftGenerated = "Accounting.RecurringJournalDraftGenerated";
     public const string GeneralSettingsChanged = "Configuration.GeneralSettingsChanged";
     public const string DiscountSettingsChanged = "Configuration.DiscountSettingsChanged";
     public const string InventorySettingsChanged = "Configuration.InventorySettingsChanged";

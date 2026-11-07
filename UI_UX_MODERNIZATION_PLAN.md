@@ -212,6 +212,15 @@ permission-backed routes already present in `app.routes.ts`.
 - [x] Keep automatic closing journals, posted-entry mutation, consolidation, budgets and FX revaluation out of scope.
 - [x] Verify Release, 1,872 security/accounting checks, 240 Angular tests, accessibility, bundle budgets and Edge 15/15.
 
+### UX-016 — Recurring journal templates and controlled runs — COMPLETED 2026-11-07
+
+- [x] Add balanced tenant-owned monthly, quarterly and annual templates with named accounts and optional dimensions.
+- [x] Generate one separate Draft per explicit run with atomic retry safety and no automatic posting.
+- [x] Add independent View/Manage/Run permissions, antiforgery, rowversion and semantic audit evidence.
+- [x] Preserve unsaved create context and show next run, last result and generated Draft evidence.
+- [x] Keep fiscal periods authoritative at the existing posting gateway; add no background scheduler or closing entry.
+- [x] Verify Release, 1,883 security/accounting checks, 242 Angular tests, accessibility, bundle budgets and Edge 15/15.
+
 ## Reusable component target
 
 - `EnterprisePageHeader`: title, description, breadcrumb, status, primary and secondary actions.
@@ -253,6 +262,7 @@ Every phase must record:
 | UX-013 | 239/239 Angular; 1,864 security/accounting checks; 135 templates; production 336,904 B initial and 81,877 B largest lazy | Golden bucket boundaries and due-date snapshot; 76 destinations; 45/45 routes; hosted presentation 6 passed/0 failed | COMPLETE |
 | UX-014 | 240/240 Angular; 1,867 security/accounting checks; 136 templates; production 337,026 B initial and 81,877 B largest lazy | Deterministic classification and repository boundaries; 77 destinations; 46/46 routes; authenticated Edge 15 passed/0 failed | COMPLETE |
 | UX-015 | 240/240 Angular; 1,872 security/accounting checks; 136 templates; production 337,026 B initial and 81,877 B largest lazy | Stepwise transitions, readiness blocking, separate permissions/CSRF/audit; authenticated Edge 15 passed/0 failed | COMPLETE |
+| UX-016 | 242/242 Angular; 1,883 security/accounting checks; 137 templates; production 337,191 B initial and 81,877 B largest lazy | Balanced templates, idempotent Draft runs, 78 destinations, 47/47 routes; authenticated Edge 15 passed/0 failed | COMPLETE |
 
 ## Latest phase report
 
@@ -310,10 +320,17 @@ Every phase must record:
 - No automatic close journal, source-document mutation or posted-entry rewrite was introduced.
 - Full evidence is recorded in docs/modernization/UI_UX_CONTROLLED_PERIOD_CLOSE.md.
 
+### UX-016 — Completed
+
+- Added balanced tenant-owned recurring templates with explicit monthly, quarterly or annual next-run dates.
+- Each authorized run creates a separate reviewable Draft and advances exactly once under rowversion and retry-key control.
+- Reused manual-journal validation and the existing posting gateway; no scheduler or automatic posting was introduced.
+- Full evidence is recorded in `docs/modernization/UI_UX_RECURRING_JOURNALS.md`.
+
 ### Next
 
-- UX-016 recurring-journal templates and controlled runs is proposed and requires owner approval before adding a new
-  scheduled financial mutation. Automatic year-end closing journals remain a separate accounting-policy decision.
+- UX-017 bank-statement reconciliation foundation is proposed and requires owner approval before adding statement import
+  and matching records. Automatic journal creation and external bank connections remain separate policy decisions.
 
 ### Recorded risks
 

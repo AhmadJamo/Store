@@ -337,10 +337,14 @@ The ERP SaaS Foundation Blueprint is imported as a non-authoritative planning re
 - Added WMS-000 read-only bilingual inventory reconciliation, dedicated permission/navigation, structured movement identity/cutover contract and a disposable two-tenant SQL fixture for query translation and concurrent last-unit protection.
 - Implemented WMS-005 product categories, Mass/Length logistics metadata, handling requirements, tracking-policy guard, catalogue filters and additive migration; the migration is applied to the development database.
 - Implemented WMS-010 hierarchical location metadata, barcode, sequence, tree ordering, warehouse-filtered parent selection, operational capabilities, edit workflow and cycle/same-warehouse validation. Putaway/transfers/relocations enforce receive/pick capabilities. Its additive migration is applied to `AHMAD/MiniStoreDb`; authenticated UI smoke remains because no login secret is stored in the repository.
+- Completed UX-016 balanced tenant-owned recurring-journal templates and explicit idempotent Draft generation with separate
+  View/Manage/Run permissions, antiforgery, rowversion, semantic audit evidence and bilingual Angular management. Migration
+  138 is applied to local Demo; Release, 1,883 checks, 242/242 Angular tests, 137 templates, 78 destinations, 47/47 routes,
+  production budgets and authenticated Edge 15/15 passed.
 
 ## In Progress
-- UX-015 controlled period-close execution is complete without automatic closing journals. UX-016 recurring-journal
-  templates and controlled runs is proposed and requires owner approval before adding a scheduled financial mutation.
+- UX-016 recurring-journal templates and controlled runs is complete with Draft-only manual execution. UX-017 bank-statement
+  reconciliation is proposed and requires owner approval before adding statement import and matching records.
 - UX-009 navigation completeness is complete: 72 registered destinations and 41/41 operational routes are covered through
   permission-aware Purchasing, Sales and Accounting hubs. UX-010 Accounting Workspace Foundation is next.
 - PUR-280 is implemented. The purchase completion roadmap is complete; continue from the master roadmap after reconciling customer-management and sales requirements.

@@ -6373,6 +6373,40 @@ blockedDraft.AddLine(new JournalEntryLine(101, 1m, 0m)); blockedDraft.AddLine(ne
 try { await blockedPosting.PostDraftAsync(blockedDraft); throw new Exception("Closed periods must block manual posting"); }
 catch (InvalidOperationException) { count++; }
 
+var recurringPermissionNames = new[] { "RecurringJournals.View", "RecurringJournals.Manage", "RecurringJournals.Run" };
+Check(recurringPermissionNames.All(name => PermissionDefinitions.All.Count(x => x.Name == name) == 1),
+    "Recurring journals must expose independent view, manage, and run permissions");
+var recurringApi = typeof(RecurringJournalsApiController);
+Check(new[] { nameof(RecurringJournalsApiController.Create), nameof(RecurringJournalsApiController.Update),
+        nameof(RecurringJournalsApiController.SetState), nameof(RecurringJournalsApiController.RunTemplate) }
+    .All(name => recurringApi.GetMethod(name)!.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null),
+    "Every recurring-journal mutation must remain antiforgery protected");
+Check(recurringApi.GetMethod(nameof(RecurringJournalsApiController.GetPage))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:RecurringJournals.View" &&
+      recurringApi.GetMethod(nameof(RecurringJournalsApiController.Create))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:RecurringJournals.Manage" &&
+      recurringApi.GetMethod(nameof(RecurringJournalsApiController.RunTemplate))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:RecurringJournals.Run",
+    "Recurring-journal endpoints must keep their least-privilege policies");
+Check(TenantIsolationModel.TenantOwnedTypes.Contains(typeof(RecurringJournalTemplate)) &&
+      TenantIsolationModel.TenantOwnedTypes.Contains(typeof(RecurringJournalTemplateLine)),
+    "Recurring-journal templates and lines must remain tenant isolated");
+var recurringTemplate = new RecurringJournalTemplate("Monthly rent", "Accrue monthly rent",
+    RecurringJournalFrequency.Monthly, new DateTime(2026, 11, 1), new DateTime(2027, 1, 1),
+    [new RecurringJournalTemplateLine(101, 500m, 0m), new RecurringJournalTemplateLine(202, 0m, 500m)]);
+recurringTemplate.RecordRun(Guid.NewGuid().ToString("N"), 45, new DateTime(2026, 11, 1, 10, 0, 0, DateTimeKind.Utc));
+Check(recurringTemplate.LastJournalEntryId == 45 && recurringTemplate.LastRunDate == new DateTime(2026, 11, 1) &&
+      recurringTemplate.NextRunDate == new DateTime(2026, 12, 1) && recurringTemplate.IsActive,
+    "A recurring-journal run must preserve evidence and advance exactly one occurrence");
+recurringTemplate.RecordRun(Guid.NewGuid().ToString("N"), 46, new DateTime(2026, 12, 1, 10, 0, 0, DateTimeKind.Utc));
+recurringTemplate.RecordRun(Guid.NewGuid().ToString("N"), 47, new DateTime(2027, 1, 1, 10, 0, 0, DateTimeKind.Utc));
+Check(recurringTemplate.NextRunDate is null && !recurringTemplate.IsActive,
+    "A recurring-journal template must complete after its configured end date");
+CheckArgumentThrows(() => new RecurringJournalTemplate("Broken", "Out of balance", RecurringJournalFrequency.Monthly,
+        new DateTime(2026, 11, 1), null,
+        [new RecurringJournalTemplateLine(101, 10m, 0m), new RecurringJournalTemplateLine(202, 0m, 9m)]),
+    "Recurring-journal templates must reject unbalanced lines");
+
 Console.WriteLine($"Passed {count} security and inventory regression checks.");
 
 static FiscalPeriodService CreateFiscalPeriodService(IFiscalPeriodRepository repository, IUnitOfWork unitOfWork) =>

@@ -572,7 +572,7 @@ All Application DTO decimal `RangeAttribute` contracts parse their declared limi
 
 Accounting foundation (2026-09-13): migration `AddAccountingFoundation` adds Accounts, Branches, JournalEntries, JournalEntryLines and optional warehouse branch/inventory-account links. See accounting ADR before adding automated posting.
 | `Documents/PlaywrightPdfEngine.cs`, `Documents/PlaywrightDocumentPdfRenderer.cs` | singleton Chromium HTML-to-PDF runtime plus encoded bilingual quotation composer | central reusable PDF runtime; Windows uses installed Edge and other deployments install Playwright Chromium. |
-| `Migrations/*.cs` and snapshot | schema evolution/model snapshots, currently through `20261022122434_AddFrozenSalesQuotationPdf` (134) | EF tooling, deployment. |
+| `Migrations/*.cs` and snapshot | schema evolution/model snapshots, currently through `20261106230309_AddRecurringJournalTemplates` (138) | EF tooling, deployment. |
 
 Inventory concurrency update (2026-09-13): ProductStock and StockTransfer include database-generated rowversions; migration `AddInventoryConcurrency` updates SQL Server. UnitOfWork uses Serializable isolation for atomic inventory workflows. Manual stock transactions accept adjustments only, and purchase/sale aggregates reject duplicate product lines. Focused checks live in `tests/SecurityRegression`.
 
@@ -596,6 +596,13 @@ Hierarchical location update (2026-09-30): StorageLocation retains its identity 
 | `Repositories/Saas/SaasRepository.cs` | control-plane plan, subscription, entitlement usage, operator and promotion persistence | public pricing and Platform area. |
 | `Repositories/Accounting/JournalEntryRepository.cs` | journal source duplicate-posting lookup and persistence | purchase and sale posting services. |
 | `Repositories/Accounting/FiscalPeriodRepository.cs` | tenant period lookup, overlap validation and rowversion handling | FiscalPeriodService. |
+| `Repositories/Accounting/RecurringJournalTemplateRepository.cs` | tenant-filtered recurring-template reads, tracked updates and rowversion handling | RecurringJournalService. |
+
+UX-016 accounting update (2026-11-07): `RecurringJournalTemplate` and its lines define tenant-owned balanced cadence
+templates. `RecurringJournalService` validates named account/dimension choices, coordinates rowversion/idempotent controlled
+runs and creates separate Drafts through `ManualJournalService`. `RecurringJournalsApiController` exposes independently
+permissioned antiforgery-protected commands. Angular `/accounting/recurring-journals` provides the bilingual management/run
+workspace, persistent-tab/unsaved-form behavior and generated-journal evidence links.
 | `Repositories/Inventory/StockTransactionRepository.cs` | inventory movement history plus source/type lookup for accounting settlement | inventory services and `PurchasePostingService`. |
 | `Repositories/Inventory/InventoryReconciliationRepository.cs` | tenant-filtered SQL aggregates for warehouse balances, location allocations, orphan allocations and latest movement snapshots | WMS-000 reconciliation service. |
 | `Repositories/Purchases/PurchaseAccountingReconciliationRepository.cs` | tenant-filtered as-of-date Inventory ledger, operational valuation, receipt, return, bill-clearing and GRNI ledger projections | PUR-160 reconciliation service. |

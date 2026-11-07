@@ -33,6 +33,11 @@ require their own permissions, antiforgery, reason and rowversion. Close command
 blocked controls preserve the current period. The period stores actor/time/reason and a semantic audit event records the
 status change. No automatic close journal or posted-entry mutation is part of this module.
 
-Current limitations remain explicit: account re-parenting/status management, automatic closing entries,
-recurring/bulk journals, budgets and consolidation are not implemented. Operational posting and fiscal-period rules remain
-unchanged; manual journals reuse them.
+UX-016 adds `/accounting/recurring-journals` for balanced tenant-owned templates and explicit controlled runs. Monthly,
+quarterly and annual templates retain next/last-run evidence and rowversion. Each run creates a separate Draft through the
+manual-journal validation path with an idempotency key, then advances exactly one occurrence atomically. It never posts or
+changes an earlier Draft. View/Manage/Run permissions, antiforgery and semantic audit evidence are independent.
+
+Current limitations remain explicit: account re-parenting/status management, automatic closing entries, bulk journals,
+budgets, bank reconciliation and consolidation are not implemented. Recurring runs are human-triggered and Draft-only;
+operational posting and fiscal-period rules remain unchanged.

@@ -32,6 +32,14 @@ public sealed class ManualJournalService(IJournalEntryRepository entries, IAccou
 
     public async Task<int> CreateDraftAsync(CreateManualJournalDto input)
     {
+        var id = 0;
+        await unitOfWork.ExecuteInTransactionAsync(async () =>
+            id = await CreateDraftInCurrentTransactionAsync(input, SourceType));
+        return id;
+    }
+
+    internal async Task<int> CreateDraftInCurrentTransactionAsync(CreateManualJournalDto input, string sourceType)
+    {
         var key = NormalizeKey(input.IdempotencyKey);
         var description = Require(input.Description, "A manual journal description is required.");
         if (input.Date == default) throw new ArgumentException("A manual journal date is required.");
@@ -42,24 +50,19 @@ public sealed class ManualJournalService(IJournalEntryRepository entries, IAccou
         var lines = input.Lines.Select(line => BuildLine(line, accountMap, branchMap, warehouseMap)).ToList();
         EnsureBalanced(lines);
 
-        var id = 0;
-        await unitOfWork.ExecuteInTransactionAsync(async () =>
+        var existing = await entries.GetBySourceAsync(sourceType, key);
+        if (existing is not null)
         {
-            var existing = await entries.GetBySourceAsync(SourceType, key);
-            if (existing is not null)
-            {
-                if (!Matches(existing, input.Date.Date, description, lines))
-                    throw new InvalidOperationException("The manual journal request key was already used with different content.");
-                id = existing.Id; return;
-            }
-            var entry = new JournalEntry(await numbers.GenerateAsync(DocumentNumberType.JournalEntry, input.Date.Date),
-                input.Date.Date, description, SourceType, key);
-            foreach (var line in lines) entry.AddLine(line);
-            await entries.AddAsync(entry);
-            await unitOfWork.FlushAsync();
-            id = entry.Id;
-        });
-        return id;
+            if (!Matches(existing, input.Date.Date, description, lines))
+                throw new InvalidOperationException("The manual journal request key was already used with different content.");
+            return existing.Id;
+        }
+        var entry = new JournalEntry(await numbers.GenerateAsync(DocumentNumberType.JournalEntry, input.Date.Date),
+            input.Date.Date, description, sourceType, key);
+        foreach (var line in lines) entry.AddLine(line);
+        await entries.AddAsync(entry);
+        await unitOfWork.FlushAsync();
+        return entry.Id;
     }
 
     public async Task<int> PostAsync(int id)

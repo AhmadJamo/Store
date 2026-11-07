@@ -1358,6 +1358,11 @@ export const routes: Routes = [
         loadComponent: () => import('./features/accounting/manual-journal-page').then((module) => module.ManualJournalPageComponent),
       },
       {
+        path: 'accounting/recurring-journals',
+        canDeactivate: [(component) => component.canDeactivate()],
+        loadComponent: () => import('./features/accounting/recurring-journal-page').then((module) => module.RecurringJournalPageComponent),
+      },
+      {
         path: 'accounting/journal-entries/:id',
         loadComponent: () =>
           import('./features/accounting/journal-entry-page').then(

@@ -95,6 +95,8 @@ public static class BusinessServicesExtensions
         services.AddScoped<CashFlowCloseService>();
         services.AddScoped<IPeriodCloseReadinessService>(provider => provider.GetRequiredService<CashFlowCloseService>());
         services.AddScoped<ManualJournalService>();
+        services.AddScoped<IRecurringJournalTemplateRepository, RecurringJournalTemplateRepository>();
+        services.AddScoped<RecurringJournalService>();
         services.AddScoped<IPaymentMethodRepository, PaymentMethodRepository>();
         services.AddScoped<PaymentMethodService>();
         services.AddScoped<IDocumentSequenceRepository, DocumentSequenceRepository>();

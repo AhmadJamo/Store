@@ -208,3 +208,13 @@ so no accounting data was created to fabricate one.
   audit catalog records the before/after status under `Accounting.FiscalPeriodStatusChanged`.
 - View, soft close, final close and reopen use independent permissions and explicit antiforgery-protected endpoints.
 - The phase creates no closing journal, changes no posted entry and does not implement consolidation, budgets or FX revaluation.
+
+# UX-016 recurring journal templates (2026-11-07)
+
+- `RecurringJournalTemplate` stores a balanced tenant-owned definition, monthly/quarterly/annual cadence, effective dates,
+  next/last-run evidence, active state and rowversion. Lines reference named tenant accounts and optional branch/warehouse dimensions.
+- An explicit run command uses one stable request key, creates a separate `RecurringJournal` Draft through
+  `ManualJournalService`, records the created entry and advances one occurrence in the same Serializable transaction.
+- Retry of the same successful run returns the prior entry and does not advance again. Editing never changes an earlier Draft.
+- View/Manage/Run are independent permissions. Mutations use antiforgery, rowversion and allowlisted semantic audit events.
+- No run posts automatically. Normal journal posting and `FiscalPeriodService` remain the final financial authority.

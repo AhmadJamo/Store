@@ -205,6 +205,8 @@ public class AppDbContext
 
     public DbSet<JournalEntryLine> JournalEntryLines => Set<JournalEntryLine>();
     public DbSet<FiscalPeriod> FiscalPeriods => Set<FiscalPeriod>();
+    public DbSet<RecurringJournalTemplate> RecurringJournalTemplates => Set<RecurringJournalTemplate>();
+    public DbSet<RecurringJournalTemplateLine> RecurringJournalTemplateLines => Set<RecurringJournalTemplateLine>();
     public DbSet<Customer> Customers => Set<Customer>();
     public DbSet<CustomerContact> CustomerContacts => Set<CustomerContact>();
     public DbSet<CustomerAddress> CustomerAddresses => Set<CustomerAddress>();

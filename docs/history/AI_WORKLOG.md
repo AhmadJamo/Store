@@ -2242,3 +2242,12 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   direct readiness links. No automatic closing journal or posted/source-document mutation was introduced. Release rebuilt
   with zero warnings/errors; 1,872 security/accounting checks, 240/240 Angular tests, 136 templates and fixed bundle budgets
   passed. Authenticated Microsoft Edge acceptance passed 15/15. UX-016 recurring-journal templates is proposed pending owner approval.
+- 2026-11-07: Completed UX-016 Recurring Journal Templates and Controlled Runs. Added tenant-owned balanced monthly,
+  quarterly and annual templates and an explicit run command that creates one separate `RecurringJournal` Draft through the
+  shared manual-journal validation path. A normalized retry key and current rowversion prevent duplicate generation or
+  double advancement; commands use independent View/Manage/Run permissions, antiforgery and allowlisted semantic audit
+  evidence. Migration 138 was applied to local Demo with no data backfill, and EF reports no pending model changes. Release
+  rebuilt with zero warnings/errors; 1,883 security/accounting checks, 242/242 Angular tests across 116 files, 137 templates,
+  78 destinations, 47/47 routes and 337,191/358,400 plus 81,877/81,920 bundle budgets passed. Authenticated Microsoft Edge
+  acceptance passed 15/15. No scheduler, automatic posting, closing entry or posted-journal mutation was added. UX-017
+  bank-statement reconciliation is proposed pending owner approval.

@@ -353,3 +353,9 @@ endpoints with antiforgery; Angular visibility is convenience only. The Applicat
 inside the UnitOfWork, checks the supplied rowversion and calls the domain transition. Direct status jumps fail in the domain.
 The period record preserves reason/actor/time, and the registered `Accounting.FiscalPeriodStatusChanged` semantic event stores
 only allowlisted status deltas. No endpoint edits/deletes posted journals or bypasses source-document services.
+
+Recurring-journal templates and lines are in the shared tenant-isolation model and use tenant-composite account/dimension
+relationships. Every create/update/state/run mutation is antiforgery protected; changes and runs require the current
+rowversion, and runs use a normalized GUID key for idempotency. `Accounting.RecurringJournalTemplateChanged` and
+`Accounting.RecurringJournalDraftGenerated` store only allowlisted evidence. The run path can create a Draft but cannot post
+it, change an existing journal or bypass the fiscal-period check used by the posting gateway.

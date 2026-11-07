@@ -27,6 +27,8 @@ public static class AuditCoverageCatalog
         Event("SEC-USER-CREATE", SemanticAuditEventTypes.TenantUserCreated, "TenantUserAdministrationService.CreateAsync", "Tenant", AuditEventOutcome.Succeeded),
         Event("CFG-ACCOUNTING", SemanticAuditEventTypes.AccountingSettingsChanged, "AccountingSettingsService.UpdateAsync", "Tenant", AuditEventOutcome.Succeeded),
         Event("ACC-FISCAL-PERIOD-STATUS", SemanticAuditEventTypes.FiscalPeriodStatusChanged, "FiscalPeriodService.ChangeStatusCoreAsync", "Tenant", AuditEventOutcome.Succeeded),
+        Event("ACC-RECURRING-JOURNAL-TEMPLATE", SemanticAuditEventTypes.RecurringJournalTemplateChanged, "RecurringJournalService.CreateAsync/UpdateAsync/SetStateAsync", "Tenant", AuditEventOutcome.Succeeded),
+        Event("ACC-RECURRING-JOURNAL-RUN", SemanticAuditEventTypes.RecurringJournalDraftGenerated, "RecurringJournalService.RunAsync", "Tenant", AuditEventOutcome.Succeeded),
         Event("CFG-GENERAL", SemanticAuditEventTypes.GeneralSettingsChanged, "GeneralSettingsService.UpdateAsync", "Tenant", AuditEventOutcome.Succeeded),
         Event("CFG-DISCOUNT", SemanticAuditEventTypes.DiscountSettingsChanged, "DiscountSettingsService.UpdateAsync", "Tenant", AuditEventOutcome.Succeeded),
         Event("CFG-INVENTORY", SemanticAuditEventTypes.InventorySettingsChanged, "InventorySettingsService.UpdateAsync", "Tenant", AuditEventOutcome.Succeeded),

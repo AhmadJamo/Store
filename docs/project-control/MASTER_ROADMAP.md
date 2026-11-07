@@ -384,3 +384,12 @@
 - Kept automatic closing journals, posted-entry changes, consolidation, budgets and FX revaluation out of scope.
 - Passed clean Release, 1,872 security/accounting checks, 240 Angular tests, 136 templates, bundle budgets and Edge 15/15.
 - Proposed next slice: UX-016 recurring-journal templates and controlled runs; owner approval required.
+
+## UX-016 — Recurring journal templates and controlled runs — COMPLETE 2026-11-07
+
+- Added tenant-owned balanced templates with named accounts/dimensions, bounded cadence and effective dates.
+- Explicit runs create separate idempotent Drafts through the shared manual-journal validation path; nothing posts automatically.
+- Added View/Manage/Run permissions, antiforgery, rowversion, semantic audit evidence and bilingual Angular management.
+- Passed clean Release, 1,883 security/accounting checks, 242 Angular tests, 137 templates, 78 destinations, 47/47 routes,
+  production budgets and authenticated Edge acceptance 15/15.
+- Proposed next slice: UX-017 bank-statement reconciliation foundation; owner approval required.

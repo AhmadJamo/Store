@@ -296,3 +296,10 @@ convenience only; controller authorization and server lifecycle checks are autho
   commands. None implies another permission or `Administration.Access`.
 - Period creation remains under `Administration.Access`; the internal Angular API exposes no generic status endpoint and the
   screen hides actions that are unavailable for the current status or permission set.
+
+## UX-016 recurring-journal permissions
+
+- `RecurringJournals.View` protects template discovery and accounting-hub navigation.
+- `RecurringJournals.Manage` independently protects create, update, pause and reactivate commands.
+- `RecurringJournals.Run` independently protects Draft generation. It does not grant posting, reversal, journal-directory
+  access or accounting administration. Posting still requires the existing manual-journal posting permission.
