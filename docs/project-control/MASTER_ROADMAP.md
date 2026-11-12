@@ -48,7 +48,9 @@
   مجهولان ولا يناسبهما كتالوج التحويل المحمي التقليدي.
 - `MOD-030J` — COMPLETE 2026-11-12: حُذف PublicController وملفا العرض بعد موافقة صريحة، واستُبدلت `/` و`/pricing`
   بتحويلات GET/HEAD مجهولة دقيقة تحفظ query؛ نجح Edge على 146 مسارًا ولم يتغير التسجيل أو الـAPI.
-- `MOD-030K` — PROPOSED: تدقيق غير هدّام لأولويات 54 mixed-controller blockers؛ لا حذف R2 قبل موافقة دفعة مستقلة.
+- `MOD-030K` — COMPLETE 2026-11-12: رُتبت 54 حالة R2 بإشارة dependency مولدة ومراجعة مصدرية؛ اختير AuditEvents
+  كأصغر cohort تالٍ، دون حذف أو تغيير runtime.
+- `MOD-030L` — PROPOSED: تقاعد MVC لـAuditEvents Index/Export وView بعد إثبات API/Angular؛ يحتاج موافقة حذف مستقلة.
 - `UX-001` — COMPLETE 2026-11-04: تدقيق واجهة Angular، خطة تحديث مستمرة، مجموعات تنقل مهنية بصلاحيات،
   breadcrumbs ثنائية اللغة وحفظ آمن لتفضيل فتح المجموعات دون تغيير الأعمال.
 - `UX-002` — COMPLETE 2026-11-05: عقد typed لسياق URL وذاكرة workspace المعزولة ومسودات آمنة مؤقتة،

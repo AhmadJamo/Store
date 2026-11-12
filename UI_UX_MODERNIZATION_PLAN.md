@@ -418,3 +418,12 @@ largest underrepresented modules; production deployment readiness and physical M
 - Hosted route probes and Microsoft Edge acceptance on 146 authorized routes passed.
 - Release built with zero warnings/errors; 1,856 security/inventory checks, 242/242 Angular tests, 137 templates,
   120-page consistency and fixed bundle budgets passed.
+
+## MOD-030K — mixed-controller prioritization audit — COMPLETED 2026-11-12
+
+- Added a generated dependency-score ordering for all 54 R2 surfaces; the score is triage evidence, never deletion approval.
+- Reviewed the lowest-count AuditEvents, PlatformAuditEvents, LocationMovements and AnalyticsCenter boundaries against actual MVC/API/Angular code.
+- Selected tenant `AuditEvents` as the smallest next proposed cohort because Angular/API already preserve filters, sensitive evidence and permission-separated CSRF export.
+- Deferred Platform audit until isolated-session live evidence exists and deferred LocationMovements because it performs stock mutation.
+- No controller, view, route, permission, API or runtime behavior changed; active counts remain 74/402/208.
+- Release, 1,856 security/inventory checks, 242/242 Angular tests, 137 templates, 120-page consistency and bundle budgets passed.

@@ -1,5 +1,14 @@
 # AI Work Log
 
+- 2026-11-12: Completed `MOD-030K` as a non-destructive prioritization audit of 54 R2 mixed-controller surfaces. Added a
+  reproducible generated dependency-count ordering, then reviewed AuditEvents, PlatformAuditEvents, LocationMovements and
+  AnalyticsCenter against source. Recommended tenant AuditEvents for a separately approved MOD-030L because its filters,
+  paging, sensitive evidence and permission-separated CSRF export already have Angular/API replacements. Deferred Platform
+  audit for isolated-session evidence and LocationMovements for stock-mutation risk. No runtime file, route or permission
+  changed; active counts remain 74 MVC controllers, 402 actions and 208 Razor files. Release built with zero warnings/errors;
+  1,856 security/inventory checks, 242/242 Angular tests, 137 templates, 120-page consistency and bundle budgets passed.
+  Browser was not rerun because no runtime behavior changed.
+
 - 2026-11-12: Completed separately approved `MOD-030J`. Removed `PublicController` and its Index/Pricing Razor views,
   removed obsolete reversible cutover entries/settings and added exact explicitly anonymous GET/HEAD redirects for `/` and
   `/pricing` with complete query preservation. Registration, login, plan revalidation, antiforgery, rate limiting, cookies,

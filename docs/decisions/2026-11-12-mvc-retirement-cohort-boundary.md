@@ -60,3 +60,10 @@ permission is used only by the two declared Public patterns and maps explicit an
 continue to require their original permission policies. `PublicController` and its two views were removed, while Account,
 registration, API and `_PublicLayout` remain. This makes deployment of the prior build the rollback mechanism and closes the
 last R1/R1-A cohort without authorizing any R2 deletion.
+
+## R2 prioritization — MOD-030K
+
+R2 ordering uses a generated dependency-count signal: mutations × 3, downloads × 2, other boundaries × 4 and Razor files.
+This is reproducible triage evidence only; business criticality, validation recovery, session isolation and live fixtures can
+override it. Tenant AuditEvents is the next proposed cohort because its single view and legacy export have complete
+permission-separated Angular/API replacements. Deletion remains independently approval-gated.

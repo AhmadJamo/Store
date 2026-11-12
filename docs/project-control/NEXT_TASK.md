@@ -1,23 +1,23 @@
 # المهمة التالية الوحيدة / Next Task
 
-## MOD-030K — تدقيق أولويات mixed controllers / Mixed-controller prioritization audit
+## MOD-030L — تقاعد MVC لـAuditEvents / Tenant AuditEvents MVC retirement
 
 > الحالة: PROPOSED — AWAITING OWNER APPROVAL
 
-اكتمل `MOD-030J` وحُذف آخر سطح R1/R1-A. بقي 54 سطحًا R2 مختلطًا يجمع العرض مع mutation/download/session boundaries،
-ولا يجوز حذف Views منها قبل فصل اعتمادياتها الفعلية.
+اكتمل `MOD-030K` دون حذف، واختار tenant AuditEvents كأصغر cohort تالٍ بعد إثبات Angular/API للقراءة والتصدير.
 
 ### النطاق المقترح
 
-- جرد R2 حسب عدد mutations/downloads/views والمخاطر والصلاحيات والمراجع المشتركة.
-- اختيار دفعة صغيرة يمكن فصل presentation منها دون نقل business logic أو حذف commands.
-- توثيق الملفات الدقيقة، API/Angular parity، legacy-link behavior وخطة rollback المقترحة.
-- إخراج توصية فقط؛ كل حذف فعلي يحتاج موافقة مالك مستقلة جديدة.
+- حذف `AuditEventsController` و`Views/AuditEvents/Index.cshtml` فقط بعد موافقة صريحة.
+- إبقاء `AuditEventReadService` و`AuditEventsApiController` وAngular والصلاحيات كما هي.
+- حفظ GET/HEAD legacy تحت `AuditEvents.View` مع query إلى `/app/audit-events`.
+- تقاعد POST MVC القديم للتصدير صراحة؛ لا redirect للـPOST، والـAngular يستخدم API محميًا بـCSRF.
+- تشغيل Release/security/Angular وEdge read acceptance، مع إثبات صلاحيات View/Export/ViewSensitive دون إنشاء export للاختبار.
 
 ### خارج النطاق
 
-- لا حذف Controller أو View في مرحلة التدقيق.
-- لا تغيير mutations أو downloads أو session/authentication أو business rules.
-- لا R3/R4 ولا shared Razor infrastructure.
+- لا تنفيذ قبل موافقة مالك صريحة على حذف هذين الملفين وتقاعد MVC Export.
+- لا تغيير Application service أو API أو audit semantics أو retention أو Platform audit.
+- لا أي R2 آخر أو R3/R4/shared Razor infrastructure.
 
-النتيجة المطلوبة تقرير أولوية موثق فقط؛ لا توجد موافقة حذف R2 حاليًا.
+التدقيق الكامل في `docs/modernization/MOD_030K_MIXED_CONTROLLER_PRIORITY_AUDIT.md`؛ لا توجد موافقة حذف بعد.

@@ -37,6 +37,10 @@ exact anonymous GET/HEAD redirects preserve `/`, `/pricing` and their query stri
 rate limiting, plan validation, API and shared layout boundaries remain unchanged. Active inventory is now 74 MVC
 controllers, 402 actions and 208 Razor files; nine presentation actions across eight surfaces are physically retired and
 no R1/R1-A surface remains.
+`MOD-030K` then completed a non-destructive prioritization audit of all 54 R2 mixed controllers. The generated inventory now
+orders dependency counts without treating the score as deletion authority. Tenant `AuditEvents` is the next proposed bounded
+cohort because its read and permission-separated CSRF export have complete Angular/API replacements; Platform audit and
+stock-moving candidates were deferred for higher session/mutation risk. No runtime file changed and counts remain 74/402/208.
 
 UX-009 adds permission-aware Purchasing, Sales and Accounting hubs with complete operational-route discovery. UX-010
 projects the tenant chart of accounts as an expandable hierarchy and adds a permission-protected, repository-paged journal

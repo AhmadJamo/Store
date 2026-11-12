@@ -521,6 +521,29 @@ foreach ($row in $retirementRows | Sort-Object Surface) {
     $retirementLines.Add("| $($row.Surface) | $($row.CandidateActions) | $($row.Mutations) | $($row.Downloads) | $($row.Boundaries) | $($row.RazorFiles) | $($row.Cohort) |")
 }
 $retirementLines.Add('')
+$retirementLines.Add('## R2 prioritization signals')
+$retirementLines.Add('')
+$retirementLines.Add('This is a dependency-count signal, not deletion approval. Score = mutations × 3 + downloads × 2 + other boundaries × 4 + Razor files. Business criticality, session isolation, validation recovery and live evidence can override the numeric order.')
+$retirementLines.Add('')
+$retirementLines.Add('| Priority | MVC surface | Score | Presentation candidates | Mutations | Downloads | Other boundaries | Razor files |')
+$retirementLines.Add('|---:|---|---:|---:|---:|---:|---:|---:|')
+$r2PriorityRows = @($retirementRows | Where-Object Cohort -like 'R2 -*' | ForEach-Object {
+    [pscustomobject]@{
+        Surface = $_.Surface
+        Score = ($_.Mutations * 3) + ($_.Downloads * 2) + ($_.Boundaries * 4) + $_.RazorFiles
+        CandidateActions = $_.CandidateActions
+        Mutations = $_.Mutations
+        Downloads = $_.Downloads
+        Boundaries = $_.Boundaries
+        RazorFiles = $_.RazorFiles
+    }
+} | Sort-Object Score, Mutations, Downloads, Boundaries, RazorFiles, Surface)
+$priority = 0
+foreach ($row in $r2PriorityRows) {
+    $priority++
+    $retirementLines.Add("| $priority | $($row.Surface) | $($row.Score) | $($row.CandidateActions) | $($row.Mutations) | $($row.Downloads) | $($row.Boundaries) | $($row.RazorFiles) |")
+}
+$retirementLines.Add('')
 $retirementLines.Add('## Retained action dependencies')
 $retirementLines.Add('')
 $retirementLines.Add('| MVC surface | Action | Verb | Reason | Source |')

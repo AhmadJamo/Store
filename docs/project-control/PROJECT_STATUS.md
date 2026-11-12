@@ -396,3 +396,7 @@ GET. أصبحت 74 سطحًا AngularDefault وبقي 8 أسطح MVC؛ ينتق�
 لـGET/HEAD على `/` و`/pricing` تحفظ query. بقي التسجيل والدخول والتحقق من الخطة والـAPI و`_PublicLayout` بلا تغيير.
 أصبح الجرد 74 MVC Controller و402 إجراء و208 ملفات Razor؛ تسعة إجراءات عبر ثمانية أسطح وتسعة Views متقاعدة، ولا
 يوجد R1/R1-A متبقٍ. نجح Edge على 146 مسارًا، والرجوع هو نشر الكومت السابق.
+اكتمل `MOD-030K` كتدقيق غير هدّام لـ54 سطح R2. أضيف ترتيب dependency مولد، ثم روجعت أخف الحالات في المصدر.
+اختير tenant AuditEvents كاقتراح MOD-030L لأن Angular/API يغطيان القراءة والتصدير المحمي والصلاحيات الحساسة؛ أُجل
+PlatformAuditEvents لغياب fixture جلسة Platform مصرح، وLocationMovements لأنه يغير المخزون. لا حذف ولا تغيير runtime؛
+الأعداد بقيت 74 MVC Controller و402 إجراء و208 ملفات Razor.

@@ -127,6 +127,67 @@ MOD-030G physically retired five read-only inventory surfaces. MOD-030H retired 
 | WarehouseLocations | 1 | 2 | 0 | 2 | 3 | R2 - mixed controller; retain views until commands/downloads retire |
 | Warehouses | 1 | 3 | 0 | 2 | 3 | R2 - mixed controller; retain views until commands/downloads retire |
 
+## R2 prioritization signals
+
+This is a dependency-count signal, not deletion approval. Score = mutations × 3 + downloads × 2 + other boundaries × 4 + Razor files. Business criticality, session isolation, validation recovery and live evidence can override the numeric order.
+
+| Priority | MVC surface | Score | Presentation candidates | Mutations | Downloads | Other boundaries | Razor files |
+|---:|---|---:|---:|---:|---:|---:|---:|
+| 1 | AuditEvents | 3 | 1 | 0 | 1 | 0 | 1 |
+| 2 | Platform/PlatformAuditEvents | 3 | 1 | 0 | 1 | 0 | 1 |
+| 3 | LocationMovements | 4 | 1 | 1 | 0 | 0 | 1 |
+| 4 | AnalyticsCenter | 5 | 2 | 1 | 0 | 0 | 2 |
+| 5 | Recipes | 5 | 2 | 1 | 0 | 0 | 2 |
+| 6 | StockTransactions | 5 | 2 | 1 | 0 | 0 | 2 |
+| 7 | Subscription | 5 | 1 | 1 | 0 | 0 | 2 |
+| 8 | Users | 5 | 2 | 1 | 0 | 0 | 2 |
+| 9 | GoodsReceiptReturns | 6 | 3 | 1 | 0 | 0 | 3 |
+| 10 | PurchaseServiceAcceptances | 6 | 3 | 1 | 0 | 0 | 3 |
+| 11 | SupplierCreditNotes | 6 | 3 | 1 | 0 | 0 | 3 |
+| 12 | SupplierPayments | 6 | 3 | 1 | 0 | 0 | 3 |
+| 13 | CompanyOnboarding | 7 | 1 | 2 | 0 | 0 | 1 |
+| 14 | Platform/PlatformAccount | 7 | 1 | 2 | 0 | 0 | 1 |
+| 15 | ProductCategories | 7 | 1 | 2 | 0 | 0 | 1 |
+| 16 | PurchaseApprovalRules | 7 | 1 | 2 | 0 | 0 | 1 |
+| 17 | PurchaseReplenishment | 7 | 1 | 2 | 0 | 0 | 1 |
+| 18 | SalesApprovalRules | 7 | 1 | 2 | 0 | 0 | 1 |
+| 19 | CustomerPayments | 9 | 3 | 2 | 0 | 0 | 3 |
+| 20 | PurchaseDocumentReversals | 10 | 2 | 1 | 0 | 1 | 3 |
+| 21 | InventoryScanning | 10 | 1 | 3 | 0 | 0 | 1 |
+| 22 | UnassignedStock | 10 | 1 | 3 | 0 | 0 | 1 |
+| 23 | ProductAttributes | 11 | 2 | 3 | 0 | 0 | 2 |
+| 24 | Account | 12 | 3 | 3 | 0 | 0 | 3 |
+| 25 | ProductStocks | 12 | 3 | 3 | 0 | 0 | 3 |
+| 26 | SalesDeliveries | 12 | 3 | 3 | 0 | 0 | 3 |
+| 27 | Purchases | 13 | 2 | 2 | 0 | 1 | 3 |
+| 28 | Roles | 13 | 3 | 3 | 0 | 0 | 4 |
+| 29 | Platform/PlatformAuditRetention | 13 | 1 | 4 | 0 | 0 | 1 |
+| 30 | ProductTemplates | 13 | 1 | 4 | 0 | 0 | 1 |
+| 31 | Replenishment | 13 | 1 | 4 | 0 | 0 | 1 |
+| 32 | Suppliers | 14 | 3 | 3 | 0 | 0 | 5 |
+| 33 | SalesQuotationTemplates | 15 | 3 | 4 | 0 | 0 | 3 |
+| 34 | DocumentDesigns | 16 | 3 | 4 | 0 | 0 | 4 |
+| 35 | SalesPriceLists | 16 | 1 | 5 | 0 | 0 | 1 |
+| 36 | WarehouseLocations | 17 | 1 | 2 | 0 | 2 | 3 |
+| 37 | Products | 17 | 2 | 3 | 0 | 1 | 4 |
+| 38 | CustomerInvoices | 18 | 3 | 5 | 0 | 0 | 3 |
+| 39 | CustomerReturnRequests | 18 | 3 | 5 | 0 | 0 | 3 |
+| 40 | InventoryAdjustments | 18 | 3 | 5 | 0 | 0 | 3 |
+| 41 | PurchaseRequests | 18 | 1 | 5 | 0 | 0 | 3 |
+| 42 | Platform/Platform | 19 | 7 | 4 | 0 | 0 | 7 |
+| 43 | InventoryTracking | 19 | 1 | 6 | 0 | 0 | 1 |
+| 44 | Warehouses | 20 | 1 | 3 | 0 | 2 | 3 |
+| 45 | PurchaseSourcing | 21 | 3 | 2 | 1 | 2 | 5 |
+| 46 | Sales | 22 | 1 | 2 | 0 | 3 | 4 |
+| 47 | GoodsReceipts | 22 | 4 | 6 | 0 | 0 | 4 |
+| 48 | SalesQuotations | 23 | 3 | 6 | 1 | 0 | 3 |
+| 49 | SalesOrders | 24 | 3 | 7 | 0 | 0 | 3 |
+| 50 | VendorBills | 26 | 3 | 7 | 1 | 0 | 3 |
+| 51 | StockTransfers | 28 | 4 | 8 | 0 | 0 | 4 |
+| 52 | SupplierPurchasing | 33 | 4 | 8 | 2 | 0 | 5 |
+| 53 | Customers | 35 | 4 | 10 | 0 | 0 | 5 |
+| 54 | Settings | 73 | 17 | 18 | 1 | 0 | 17 |
+
 ## Retained action dependencies
 
 | MVC surface | Action | Verb | Reason | Source |

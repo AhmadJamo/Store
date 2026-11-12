@@ -111,3 +111,10 @@ redirect `/` to `/app/welcome` and `/pricing` to `/app/pricing`, preserving comp
 the reversible cutover catalog/configuration, so rollback deploys the previous build. Registration, login, plan validation,
 rate limiting, cookies, onboarding, culture switching, the public plans API and `_PublicLayout` remain unchanged. Hosted
 GET/HEAD probes passed and Edge acceptance passed 146 authorized routes.
+
+## MOD-030K mixed-controller prioritization audit — completed 2026-11-12
+
+The generated retirement inventory now orders all 54 R2 surfaces using a dependency-count signal while explicitly keeping
+business/session/mutation risk authoritative. Source review selected tenant AuditEvents as the next proposed bounded cohort:
+its filters, paging, sensitive evidence and permission-separated CSRF export already exist in Angular/API. Platform audit is
+deferred for isolated-session live evidence and LocationMovements for stock-mutation evidence. No runtime code was changed.

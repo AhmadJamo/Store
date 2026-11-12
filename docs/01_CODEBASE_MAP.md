@@ -120,6 +120,8 @@ Current MOD-030J snapshot: nine approved presentation actions across eight inven
 retired, while 74 MVC controllers, 402 actions and 208 Razor files remain active. The exact anonymous `/` and `/pricing`
 redirects are owned by `RetiredPresentationRouteCatalog`; protected retired routes retain their permission policies.
 See `docs/modernization/MOD_030J_PUBLIC_RETIREMENT.md`. The generated retirement inventory is authoritative.
+MOD-030K adds a generated R2 dependency-score ordering and a source-reviewed recommendation for tenant AuditEvents; see
+`docs/modernization/MOD_030K_MIXED_CONTROLLER_PRIORITY_AUDIT.md`. It changes no runtime boundary.
 
 `ReplenishmentApiController` exposes the reviewed inventory projection plus independently protected rule, transfer-draft
 and purchase-request-draft commands. Angular `features/inventory/replenishment*` owns bilingual filters, rule editing,
@@ -795,6 +797,8 @@ For exact module relationships, use `modules/*.md`; for entity and service detai
   anonymous `/` and `/pricing` surface.
 - `docs/modernization/MOD_030J_PUBLIC_RETIREMENT.md`: approved deletion, exact anonymous legacy routes, preserved boundaries
   and hosted/Edge evidence for Public retirement.
+- `docs/modernization/MOD_030K_MIXED_CONTROLLER_PRIORITY_AUDIT.md`: non-destructive 54-surface R2 ordering, candidate
+  comparison and the approval-gated AuditEvents recommendation.
 - `docs/decisions/2026-11-12-mvc-retirement-cohort-boundary.md`: R1..R4 retirement boundaries, separate deletion
   approval rule and legacy-link/cutover/rollback obligations.
 - `docs/decisions/ADR-20261025-REVERSIBLE-PRESENTATION-CUTOVER.md`: cutover/rollback boundary and rationale.
