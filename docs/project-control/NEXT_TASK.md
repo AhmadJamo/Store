@@ -1,23 +1,23 @@
 # المهمة التالية الوحيدة / Next Task
 
-## MOD-030I — تدقيق حد Public المجهول / Anonymous Public boundary audit
+## MOD-030J — تقاعد Public المجهول / Anonymous Public physical retirement
 
 > الحالة: PROPOSED — AWAITING OWNER APPROVAL
 
-اكتمل `MOD-030H` بحذف سطحي القراءة الماليين بعد إثبات API/Angular. بقي `Public` وحده ضمن R1، لكنه حد مجهول
-مرتبط بالدخول والتسعير والتسجيل ولذلك لا يُعامل كصفحة أعمال داخلية.
+اكتمل `MOD-030I` كتدقيق دون حذف. ثبت تكافؤ Angular/API، لكن Public صُنّف R1-A لأن `/` و`/pricing` مساران
+مجهولان صريحان، بينما كتالوج التقاعد الحالي يبني مسارات Controller/Action ويفرض صلاحية.
 
 ### النطاق المقترح
 
-- جرد `Public.Index` و`Public.Pricing` وروابط التسجيل والخطة والعودة وسلوك المستخدم المجهول.
-- إثبات تكافؤ Angular والحفاظ على query/rate-limit/session semantics قبل اقتراح أي حذف.
-- تحديد ما إذا كان يلزم redirect دائم محمي بسياسة anonymous-safe أو إبقاء حد MVC صغير.
-- توثيق قرار rollback واختبارات Edge المجهولة بصورة مستقلة.
+- إضافة عقد exact-route مجهول صريح لـ`/` و`/pricing` دون إضعاف التحويلات المحمية الحالية.
+- حفظ GET/HEAD وquery إلى `/app/welcome` و`/app/pricing`.
+- حذف `PublicController` وملفي `Views/Public` فقط بعد إثبات عدم وجود مراجع معلقة.
+- تشغيل اختبارات Edge المجهولة لمسارات legacy والتسجيل والخطة، واعتماد deployment rollback.
 
 ### خارج النطاق
 
-- لا حذف في مرحلة التدقيق دون موافقة لاحقة صريحة.
+- لا تنفيذ أو حذف قبل موافقة مالك صريحة لهذه الدفعة.
 - لا تعديل للمصادقة أو التسجيل أو checkout أو cookies أو rate limiting.
-- لا أي سطح R2/R3/R4 أو shared Razor infrastructure.
+- لا حذف `_PublicLayout` أو أي سطح R2/R3/R4 أو shared Razor infrastructure.
 
-النتيجة المطلوبة أولًا هي قرار موثق فقط؛ أي تقاعد فعلي لـPublic يحتاج موافقة مالك مستقلة جديدة.
+القرار التفصيلي في `docs/modernization/MOD_030I_PUBLIC_BOUNDARY_AUDIT.md`؛ هذه المهمة ليست معتمدة للتنفيذ بعد.

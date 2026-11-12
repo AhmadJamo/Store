@@ -43,3 +43,12 @@ replacements. `JournalEntries.Details` and `PurchaseAccountingReconciliation.Ind
 entries were removed. The centralized catalog now supports exact non-Index actions and positive route-ID substitution,
 while preserving permission policies and query strings. No posting, reconciliation calculation, repository or database
 boundary changed. Anonymous Public remains unapproved and is the only remaining R1 surface.
+
+## Anonymous audit — MOD-030I
+
+The audit found functional Angular/API parity but a materially different routing boundary. Public owns exact anonymous `/`
+and `/pricing` paths; the retired-route catalog currently derives conventional controller/action paths and always attaches a
+permission policy. Public is therefore classified R1-A and remains active. A later physical retirement must be separately
+approved, add explicit anonymous-safe route patterns without weakening protected redirects, preserve query strings and prove
+registration/login/session/rate-limit isolation. Shared `_PublicLayout` is retained because Account registration and Company
+Onboarding still use it.

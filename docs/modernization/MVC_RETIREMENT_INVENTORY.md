@@ -16,7 +16,7 @@ Physical MVC retirement must follow feature-sized, reversible cohorts. A Razor v
 - Retained download/generated-file actions: 9.
 - Retained compatibility, ambiguous-verb, session or non-cutover actions: 33.
 - Razor files discovered: 210; shared infrastructure files: 11.
-- Presentation-only pilot surfaces: 1.
+- Presentation-only pilot surfaces: 1, including 1 anonymous public boundary.
 - Mixed-controller surfaces blocked from early view deletion: 54.
 - Physically retired R1 surfaces with protected legacy redirects: 7.
 
@@ -27,6 +27,7 @@ The exact action and Razor paths remain in `MVC_MIGRATION_REGISTRY.md`; this fil
 | Cohort | Meaning | Deletion gate |
 |---|---|---|
 | R1 | Presentation-only controller surface with every discovered action covered by Angular-default cutover. | Owner approval, exact file/reference proof, MVC-mode retirement decision, Release/regression/browser evidence and deployment rollback plan. |
+| R1-A | Anonymous presentation-only surface with custom legacy paths or identity-adjacent behavior. | All R1 gates plus explicit anonymous route patterns, query preservation, isolation from login/registration/session/rate-limit behavior and independent anonymous browser evidence. |
 | R2 | Mixed presentation plus MVC mutation/download/session behavior. | Retire command/download dependencies first; keep Razor views while any retained path can render them. |
 | R3 | No presentation candidate; MVC still owns a route, session decision, ambiguous verb or other compatibility behavior. | Explicit replacement or permanent-boundary decision before deletion. |
 | R4 | Declared mutation-only compatibility surface. | Preserve unless a separately approved architecture change replaces it. |
@@ -82,7 +83,7 @@ MOD-030G physically retired five read-only inventory surfaces. MOD-030H then ret
 | Products | 2 | 3 | 0 | 1 | 4 | R2 - mixed controller; retain views until commands/downloads retire |
 | ProductStocks | 3 | 3 | 0 | 0 | 3 | R2 - mixed controller; retain views until commands/downloads retire |
 | ProductTemplates | 1 | 4 | 0 | 0 | 1 | R2 - mixed controller; retain views until commands/downloads retire |
-| Public | 2 | 0 | 0 | 0 | 2 | R1 - presentation-only pilot candidate |
+| Public | 2 | 0 | 0 | 0 | 2 | R1-A - anonymous public boundary; explicit route contract required |
 | PurchaseAgreements | 0 | 4 | 0 | 0 | 3 | R3 - retained MVC boundary; API/session decision required |
 | PurchaseAnalytics | 0 | 0 | 0 | 1 | 1 | R3 - retained MVC boundary; API/session decision required |
 | PurchaseApprovalRules | 1 | 2 | 0 | 0 | 1 | R2 - mixed controller; retain views until commands/downloads retire |
@@ -409,4 +410,4 @@ MOD-030G physically retired five read-only inventory surfaces. MOD-030H then ret
 
 ## Current outcome
 
-MOD-030F inventory and the separately approved MOD-030G/MOD-030H cohorts are complete. Seven MVC presentation actions and seven Razor views are physically retired behind protected legacy redirects. Anonymous `Public` is the only remaining R1 surface; no Public or R2/R3/R4 deletion is approved.
+MOD-030F inventory and the separately approved MOD-030G/MOD-030H cohorts are complete. MOD-030I audited `Public` without deletion and classified it as the sole R1-A anonymous boundary: Angular/API parity exists, but the current permission-protected conventional retired-route catalog cannot own `/` and `/pricing` safely. Seven MVC presentation actions and seven Razor views are physically retired; no Public or R2/R3/R4 deletion is approved.

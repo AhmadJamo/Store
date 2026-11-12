@@ -359,6 +359,8 @@ $retirementRows = foreach ($surface in $allSurfaces) {
     $surfaceRazor = @($viewFiles | Where-Object { (Get-Surface $_ $false) -eq $surface })
     $cohort = if ($mutationOnlyMvcSurfaces -contains $surface) {
         'R4 - permanent compatibility review'
+    } elseif ($surface -eq 'Public' -and $candidateActions.Count -gt 0 -and ($mutationActions.Count + $downloadActions.Count + $boundaryActions.Count) -eq 0) {
+        'R1-A - anonymous public boundary; explicit route contract required'
     } elseif ($candidateActions.Count -gt 0 -and ($mutationActions.Count + $downloadActions.Count + $boundaryActions.Count) -eq 0) {
         'R1 - presentation-only pilot candidate'
     } elseif ($candidateActions.Count -gt 0) {
@@ -486,7 +488,7 @@ $retirementLines.Add("- Retained compatibility, ambiguous-verb, session or non-c
     $_.Retirement -notin @('Retain - MVC mutation','Retain - download or generated file')
 }).Count).")
 $retirementLines.Add("- Razor files discovered: $($viewFiles.Count); shared infrastructure files: $($sharedRazorFiles.Count).")
-$retirementLines.Add("- Presentation-only pilot surfaces: $(@($retirementRows | Where-Object Cohort -eq 'R1 - presentation-only pilot candidate').Count).")
+$retirementLines.Add("- Presentation-only pilot surfaces: $(@($retirementRows | Where-Object Cohort -like 'R1*').Count), including $(@($retirementRows | Where-Object Cohort -like 'R1-A*').Count) anonymous public boundary.")
 $retirementLines.Add("- Mixed-controller surfaces blocked from early view deletion: $(@($retirementRows | Where-Object Cohort -like 'R2 -*').Count).")
 $retirementLines.Add("- Physically retired R1 surfaces with protected legacy redirects: $($retiredRows.Count).")
 $retirementLines.Add('')
@@ -497,6 +499,7 @@ $retirementLines.Add('')
 $retirementLines.Add('| Cohort | Meaning | Deletion gate |')
 $retirementLines.Add('|---|---|---|')
 $retirementLines.Add('| R1 | Presentation-only controller surface with every discovered action covered by Angular-default cutover. | Owner approval, exact file/reference proof, MVC-mode retirement decision, Release/regression/browser evidence and deployment rollback plan. |')
+$retirementLines.Add('| R1-A | Anonymous presentation-only surface with custom legacy paths or identity-adjacent behavior. | All R1 gates plus explicit anonymous route patterns, query preservation, isolation from login/registration/session/rate-limit behavior and independent anonymous browser evidence. |')
 $retirementLines.Add('| R2 | Mixed presentation plus MVC mutation/download/session behavior. | Retire command/download dependencies first; keep Razor views while any retained path can render them. |')
 $retirementLines.Add('| R3 | No presentation candidate; MVC still owns a route, session decision, ambiguous verb or other compatibility behavior. | Explicit replacement or permanent-boundary decision before deletion. |')
 $retirementLines.Add('| R4 | Declared mutation-only compatibility surface. | Preserve unless a separately approved architecture change replaces it. |')
@@ -538,7 +541,7 @@ $retirementLines.Add('6. Run Release, regression, generated-inventory, Angular a
 $retirementLines.Add('')
 $retirementLines.Add('## Current outcome')
 $retirementLines.Add('')
-$retirementLines.Add('MOD-030F inventory and the separately approved MOD-030G/MOD-030H cohorts are complete. Seven MVC presentation actions and seven Razor views are physically retired behind protected legacy redirects. Anonymous `Public` is the only remaining R1 surface; no Public or R2/R3/R4 deletion is approved.')
+$retirementLines.Add('MOD-030F inventory and the separately approved MOD-030G/MOD-030H cohorts are complete. MOD-030I audited `Public` without deletion and classified it as the sole R1-A anonymous boundary: Angular/API parity exists, but the current permission-protected conventional retired-route catalog cannot own `/` and `/pricing` safely. Seven MVC presentation actions and seven Razor views are physically retired; no Public or R2/R3/R4 deletion is approved.')
 
 New-Item -ItemType Directory -Force -Path (Split-Path -Parent $retirementOutput) | Out-Null
 $retirementLines | Set-Content -Path $retirementOutput -Encoding utf8

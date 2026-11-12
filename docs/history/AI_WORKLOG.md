@@ -1,5 +1,14 @@
 # AI Work Log
 
+- 2026-11-12: Completed `MOD-030I` as a non-destructive anonymous Public boundary audit. Confirmed functional Angular/API
+  parity for landing and pricing, server-authoritative plan cards and registration plan revalidation. Classified Public as
+  R1-A because its exact anonymous `/` and `/pricing` paths cannot use the current permission-protected conventional
+  retired-route catalog unchanged. Preserved Account login/registration, rate limiting, cookies, onboarding, culture
+  switching, the public plans API and shared `_PublicLayout`. No runtime file was deleted or changed; active counts remain
+  75 MVC controllers, 404 actions and 210 Razor files. Release built with zero warnings/errors; 1,860 backend checks,
+  242/242 Angular tests, 137 templates, 120-page consistency and bundle budgets passed. Browser was not rerun because no
+  runtime behavior changed. MOD-030J physical retirement is proposed and awaits separate approval.
+
 - 2026-11-12: Completed separately approved `MOD-030H`. Retired the read-only `JournalEntries.Details` and
   `PurchaseAccountingReconciliation.Index` MVC controllers/views after confirming existing API/Angular parity. Extended
   the centralized retired-route catalog for exact actions and positive journal IDs, preserved query filters and original

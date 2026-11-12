@@ -116,9 +116,10 @@ UnassignedStock, LocationMovements and InventoryScanning
 redirect their Index GET actions to exact Angular workspaces with query preservation. WarehouseLocations Create/Edit
 deep links remain MVC because the Angular workspace does not yet consume create/edit URL intent; all writes remain MVC/API.
 
-Current MOD-030H snapshot: seven approved read-only inventory/financial presentation surfaces are now physically retired, while
+Current MOD-030I snapshot: seven approved read-only inventory/financial presentation surfaces are now physically retired, while
 75 MVC controllers, 404 actions and 210 Razor files remain active. The generated retirement inventory is authoritative
-for the current cohort counts; the preceding MOD-030E4N figures are retained as historical runtime-cutover evidence.
+for the current cohort counts. Public is the sole R1-A anonymous boundary after an audit-only decision; see
+`docs/modernization/MOD_030I_PUBLIC_BOUNDARY_AUDIT.md`. The preceding MOD-030E4N figures are retained as historical runtime-cutover evidence.
 
 `ReplenishmentApiController` exposes the reviewed inventory projection plus independently protected rule, transfer-draft
 and purchase-request-draft commands. Angular `features/inventory/replenishment*` owns bilingual filters, rule editing,
@@ -789,7 +790,9 @@ For exact module relationships, use `modules/*.md`; for entity and service detai
 - `docs/modernization/MVC_MIGRATION_REGISTRY.md`: generated 75-MVC-controller, 192-user-facing-view,
   404-MVC-action and 202-Razor-control-row active migration registry; do not edit rows manually.
 - `docs/modernization/MVC_RETIREMENT_INVENTORY.md`: generated active classification for 404 MVC actions and
-  210 Razor files, plus seven physically retired R1 surfaces, one remaining Public R1 surface and 54 mixed-controller blockers.
+  210 Razor files, plus seven physically retired R1 surfaces, one remaining Public R1-A boundary and 54 mixed-controller blockers.
+- `docs/modernization/MOD_030I_PUBLIC_BOUNDARY_AUDIT.md`: audit-only parity, dependency and future exact-route gate for the
+  anonymous `/` and `/pricing` surface; no deletion or runtime change.
 - `docs/decisions/2026-11-12-mvc-retirement-cohort-boundary.md`: R1..R4 retirement boundaries, separate deletion
   approval rule and legacy-link/cutover/rollback obligations.
 - `docs/decisions/ADR-20261025-REVERSIBLE-PRESENTATION-CUTOVER.md`: cutover/rollback boundary and rationale.

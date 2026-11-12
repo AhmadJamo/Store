@@ -28,6 +28,10 @@ query strings while the Angular APIs remain authoritative. `MOD-030H` subsequent
 JournalEntries Details and PurchaseAccountingReconciliation Index MVC presentation after confirming the existing API and
 Angular replacements. The active inventory is now 75 MVC controllers, 404 actions and 210 Razor files; seven surfaces
 are physically retired and anonymous Public is the only remaining R1 surface. Public and mixed surfaces remain approval-gated.
+`MOD-030I` audited that final surface without deletion. Public has Angular/API parity, but its exact anonymous `/` and
+`/pricing` paths are incompatible with the current permission-protected conventional retired-route catalog. It is now the
+sole `R1-A` boundary; any physical retirement requires a separately approved exact anonymous route contract. Active counts
+remain 75 MVC controllers, 404 actions and 210 Razor files.
 
 UX-009 adds permission-aware Purchasing, Sales and Accounting hubs with complete operational-route discovery. UX-010
 projects the tenant chart of accounts as an expandable hierarchy and adds a permission-protected, repository-paged journal

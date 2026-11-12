@@ -112,6 +112,15 @@ MVC surfaces before selecting their implementation slices.
 - Hosted acceptance passed 15/15; anonymous Angular cutover and process-local MVC rollback each passed within 131 GET
   routes; 1,782 backend checks passed without registration or plan/subscription mutation.
 
+## `MOD-030I` physical-retirement audit
+
+- Confirmed the Angular welcome/pricing and anonymous public-plan API remain the functional replacements.
+- Classified the MVC Public surface as R1-A because its exact `/` and `/pricing` paths are anonymous and cannot use the
+  current permission-protected conventional retired-route catalog unchanged.
+- No controller, view, API or route was deleted. Registration, selected-plan revalidation, rate limiting, cookies,
+  onboarding, culture switching and shared `_PublicLayout` remain intact.
+- Any physical retirement is deferred to a separately approved MOD-030J with exact anonymous-safe routes and browser proof.
+
 ## `MOD-030E5O` runtime cutover
 
 - Anonymous PlatformAccount Login GET now defaults to `/app/platform-login`, preserving returnUrl and rate-limit evidence.

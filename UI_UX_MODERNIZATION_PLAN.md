@@ -398,4 +398,12 @@ largest underrepresented modules; production deployment readiness and physical M
 - Extended the reusable retired-route catalog with exact action mapping and positive journal-ID substitution.
 - Preserved reconciliation filters and journal query strings under the original permission policies.
 - Active inventory is 75 MVC controllers, 404 actions and 210 Razor files; seven surfaces are retired and Public is the sole remaining R1 surface.
+
+## MOD-030I — anonymous Public boundary audit — COMPLETED 2026-11-12
+
+- Audited `Public.Index` and `Public.Pricing`, their exact `/` and `/pricing` routes, Angular/API parity and registration dependencies without deleting or changing runtime code.
+- Confirmed that pricing remains server-authored and Angular passes only `planId` into registration, where eligibility is revalidated.
+- Classified Public as `R1-A`: the current retired-route catalog requires permission-protected conventional paths and cannot safely represent anonymous root routes unchanged.
+- Preserved `_PublicLayout`, Account login/registration, onboarding, culture switching, cookies, rate limiting and the public plans API.
+- A later physical retirement is `MOD-030J`, requires separate owner approval and must add exact anonymous-safe route evidence first.
 - Release built cleanly, 1,860 security/inventory checks passed and authenticated Edge acceptance passed 146 routes.

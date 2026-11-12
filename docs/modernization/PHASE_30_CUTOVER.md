@@ -95,3 +95,11 @@ After separate explicit approval, `JournalEntries.Details` and `PurchaseAccounti
 and their two Razor views were removed. Their existing API controllers, Angular pages and Application services remain
 authoritative. Protected legacy redirects preserve a positive journal ID, reconciliation filters and query strings; the
 active cutover catalog/configuration no longer targets deleted code. Edge acceptance passed 146 authorized routes.
+
+## MOD-030I anonymous Public boundary audit — completed 2026-11-12
+
+The audit confirmed Angular/API parity for the landing and pricing pages without deleting or changing runtime code. Public
+owns exact anonymous `/` and `/pricing` routes, while the existing retired-route catalog generates conventional controller
+paths and always requires a permission. Public is therefore R1-A and remains active. Account login/registration, plan
+revalidation, rate limiting, cookies, onboarding, culture switching, the public plans API and shared `_PublicLayout` remain
+outside any proposed deletion. A physical MOD-030J requires separate approval and an exact anonymous-safe route contract.
