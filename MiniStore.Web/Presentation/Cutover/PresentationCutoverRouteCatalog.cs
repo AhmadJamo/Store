@@ -160,8 +160,6 @@ public static class PresentationCutoverRouteCatalog
             ["SupplierPayments:Create"] = "/purchases/payments/new",
             ["SupplierPayments:Details"] = "/purchases/payments/{id}",
             ["Subscription:Index"] = "/subscription",
-            ["Public:Index"] = "/welcome",
-            ["Public:Pricing"] = "/pricing",
             ["PlatformAccount:Login"] = "/platform-login",
             ["Platform:Index"] = "/platform-control",
             ["Platform:Companies"] = "/platform-management",

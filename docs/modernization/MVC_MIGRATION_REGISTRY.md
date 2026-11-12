@@ -4,16 +4,16 @@
 
 ## Reconciliation
 
-- Controllers discovered: 163 total; 75 MVC; 88 API.
-- User-facing MVC views discovered: 192.
-- MVC actions discovered: 404.
-- Razor files included in the control inventory: 202.
+- Controllers discovered: 162 total; 74 MVC; 88 API.
+- User-facing MVC views discovered: 190.
+- MVC actions discovered: 402.
+- Razor files included in the control inventory: 200.
 - Angular application routes discovered: 194.
-- Presentation surfaces with a verified Angular counterpart: 74.
+- Presentation surfaces with a verified Angular counterpart: 73.
 - Remaining presentation surfaces without a mapped Angular counterpart: 0.
 - Mutation-only MVC compatibility surfaces: 1 (Language).
-- Physically retired presentation surfaces with protected legacy redirects: 7 (InventoryBalances, InventoryReservations, InventoryInsights, InventoryReconciliation, StockMovements, JournalEntries, PurchaseAccountingReconciliation).
-- Allowlisted Angular-default cutover actions: 176.
+- Physically retired presentation actions with legacy redirects: 9 across 8 surfaces (InventoryBalances, InventoryInsights, InventoryReconciliation, InventoryReservations, JournalEntries, Public, PurchaseAccountingReconciliation, StockMovements).
+- Allowlisted Angular-default cutover actions: 174.
 
 Remaining presentation surfaces: none.
 
@@ -96,8 +96,6 @@ Statuses follow the migration lifecycle plus MVC Compatibility (mutation-only). 
 | ProductStocks | Edit.cshtml | Angular Default | /inventory/stocks | MiniStore.Web/Views/ProductStocks/Edit.cshtml |
 | ProductStocks | Index.cshtml | Angular Default | /inventory/stocks | MiniStore.Web/Views/ProductStocks/Index.cshtml |
 | ProductTemplates | Index.cshtml | Angular Default | /products/templates | MiniStore.Web/Views/ProductTemplates/Index.cshtml |
-| Public | Index.cshtml | Angular Default | /welcome, /pricing | MiniStore.Web/Views/Public/Index.cshtml |
-| Public | Pricing.cshtml | Angular Default | /welcome, /pricing | MiniStore.Web/Views/Public/Pricing.cshtml |
 | PurchaseAgreements | Create.cshtml | Angular Default | /purchases/agreements | MiniStore.Web/Views/PurchaseAgreements/Create.cshtml |
 | PurchaseAgreements | Details.cshtml | Angular Default | /purchases/agreements | MiniStore.Web/Views/PurchaseAgreements/Details.cshtml |
 | PurchaseAgreements | Index.cshtml | Angular Default | /purchases/agreements | MiniStore.Web/Views/PurchaseAgreements/Index.cshtml |
@@ -372,8 +370,6 @@ Statuses follow the migration lifecycle plus MVC Compatibility (mutation-only). 
 | ProductTemplates | Generate | POST | Angular Default | /products/templates | — | MiniStore.Web/Controllers/Catalog/ProductTemplatesController.cs |
 | ProductTemplates | Index | GET | Angular Default | /products/templates | /products/templates | MiniStore.Web/Controllers/Catalog/ProductTemplatesController.cs |
 | ProductTemplates | Preview | POST | Angular Default | /products/templates | — | MiniStore.Web/Controllers/Catalog/ProductTemplatesController.cs |
-| Public | Index | GET | Angular Default | /welcome, /pricing | /welcome | MiniStore.Web/Controllers/PublicController.cs |
-| Public | Pricing | GET | Angular Default | /welcome, /pricing | /pricing | MiniStore.Web/Controllers/PublicController.cs |
 | PurchaseAgreements | RedirectToAction | GET, POST | Angular Default | /purchases/agreements | — | MiniStore.Web/Controllers/Purchases/PurchaseAgreementsController.cs |
 | PurchaseAgreements | RedirectToAction | GET, POST | Angular Default | /purchases/agreements | — | MiniStore.Web/Controllers/Purchases/PurchaseAgreementsController.cs |
 | PurchaseAgreements | RedirectToAction | GET, POST | Angular Default | /purchases/agreements | — | MiniStore.Web/Controllers/Purchases/PurchaseAgreementsController.cs |
@@ -706,8 +702,6 @@ Statuses follow the migration lifecycle plus MVC Compatibility (mutation-only). 
 | ProductStocks | Edit.cshtml | 1 | 1 | 1 | Edit, Index | MiniStore.Web/Views/ProductStocks/Edit.cshtml |
 | ProductStocks | Index.cshtml | 1 | 1 | 2 | Create, Delete, Edit | MiniStore.Web/Views/ProductStocks/Index.cshtml |
 | ProductTemplates | Index.cshtml | 4 | 4 | 4 | Assign, Create, Generate, Index, Preview, Values | MiniStore.Web/Views/ProductTemplates/Index.cshtml |
-| Public | Index.cshtml | 0 | 0 | 2 | Register | MiniStore.Web/Views/Public/Index.cshtml |
-| Public | Pricing.cshtml | 0 | 0 | 1 | Register | MiniStore.Web/Views/Public/Pricing.cshtml |
 | PurchaseAgreements | Create.cshtml | 1 | 1 | 0 | Create | MiniStore.Web/Views/PurchaseAgreements/Create.cshtml |
 | PurchaseAgreements | Details.cshtml | 3 | 3 | 1 | Activate, Cancel, Index, Release | MiniStore.Web/Views/PurchaseAgreements/Details.cshtml |
 | PurchaseAgreements | Index.cshtml | 0 | 0 | 1 | Details | MiniStore.Web/Views/PurchaseAgreements/Index.cshtml |

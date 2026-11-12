@@ -121,6 +121,14 @@ MVC surfaces before selecting their implementation slices.
   onboarding, culture switching and shared `_PublicLayout` remain intact.
 - Any physical retirement is deferred to a separately approved MOD-030J with exact anonymous-safe routes and browser proof.
 
+## `MOD-030J` physical retirement
+
+- Removed only `PublicController` and its two landing/pricing Razor views after explicit approval.
+- Exact anonymous GET/HEAD redirects now preserve `/`, `/pricing` and query values while targeting Angular.
+- Registration, plan revalidation, authentication, rate limiting, cookies, onboarding, the public-plan API and shared
+  `_PublicLayout` remain unchanged.
+- Hosted route probes passed and Microsoft Edge acceptance passed 146 authorized routes; rollback deploys the previous build.
+
 ## `MOD-030E5O` runtime cutover
 
 - Anonymous PlatformAccount Login GET now defaults to `/app/platform-login`, preserving returnUrl and rate-limit evidence.

@@ -103,3 +103,11 @@ owns exact anonymous `/` and `/pricing` routes, while the existing retired-route
 paths and always requires a permission. Public is therefore R1-A and remains active. Account login/registration, plan
 revalidation, rate limiting, cookies, onboarding, culture switching, the public plans API and shared `_PublicLayout` remain
 outside any proposed deletion. A physical MOD-030J requires separate approval and an exact anonymous-safe route contract.
+
+## MOD-030J anonymous Public retirement — completed 2026-11-12
+
+After explicit approval, `PublicController` and its two Razor views were removed. Exact anonymous GET/HEAD endpoints now
+redirect `/` to `/app/welcome` and `/pricing` to `/app/pricing`, preserving complete query strings. Public was removed from
+the reversible cutover catalog/configuration, so rollback deploys the previous build. Registration, login, plan validation,
+rate limiting, cookies, onboarding, culture switching, the public plans API and `_PublicLayout` remain unchanged. Hosted
+GET/HEAD probes passed and Edge acceptance passed 146 authorized routes.

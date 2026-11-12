@@ -9,8 +9,9 @@ namespace MiniStore.Web.Presentation.Cutover;
 public sealed record RetiredPresentationRoute(
     string Controller,
     string AngularRoute,
-    string RequiredPermission,
-    string Action = "Index");
+    string? RequiredPermission,
+    string Action = "Index",
+    IReadOnlyList<string>? LegacyPatterns = null);
 
 public static class RetiredPresentationRouteCatalog
 {
@@ -22,7 +23,9 @@ public static class RetiredPresentationRouteCatalog
         new("InventoryReconciliation", "/inventory/reconciliation", "InventoryReconciliation.View"),
         new("StockMovements", "/inventory/location-movements", "StockMovements.View"),
         new("JournalEntries", "/accounting/journal-entries/{id}", "JournalEntries.View", "Details"),
-        new("PurchaseAccountingReconciliation", "/purchases/accounting-reconciliation", "PurchaseAccountingReconciliation.View")
+        new("PurchaseAccountingReconciliation", "/purchases/accounting-reconciliation", "PurchaseAccountingReconciliation.View"),
+        new("Public", "/welcome", null, "Index", ["/"]),
+        new("Public", "/pricing", null, "Pricing", ["/pricing"])
     ];
 
     public static IReadOnlyList<RetiredPresentationRoute> All => Routes;
@@ -31,7 +34,12 @@ public static class RetiredPresentationRouteCatalog
     {
         foreach (var route in Routes)
         {
-            if (route.Action.Equals("Index", StringComparison.OrdinalIgnoreCase))
+            if (route.LegacyPatterns is { Count: > 0 })
+            {
+                foreach (var pattern in route.LegacyPatterns)
+                    MapPattern(endpoints, pattern, route);
+            }
+            else if (route.Action.Equals("Index", StringComparison.OrdinalIgnoreCase))
             {
                 MapPattern(endpoints, $"/{route.Controller}", route);
                 MapPattern(endpoints, $"/{route.Controller}/Index", route);
@@ -74,7 +82,7 @@ public static class RetiredPresentationRouteCatalog
         string pattern,
         RetiredPresentationRoute route)
     {
-        endpoints.MapMethods(pattern, [HttpMethods.Get, HttpMethods.Head], context =>
+        var endpoint = endpoints.MapMethods(pattern, [HttpMethods.Get, HttpMethods.Head], context =>
             {
                 var options = context.RequestServices
                     .GetRequiredService<IOptions<PresentationCutoverOptions>>()
@@ -88,8 +96,12 @@ public static class RetiredPresentationRouteCatalog
                     permanent: false,
                     preserveMethod: false);
                 return Task.CompletedTask;
-            })
-            .RequireAuthorization(
+            });
+
+        if (route.RequiredPermission is null)
+            endpoint.AllowAnonymous();
+        else
+            endpoint.RequireAuthorization(
                 $"{PermissionAuthorizeAttribute.PolicyPrefix}{route.RequiredPermission}");
     }
 }

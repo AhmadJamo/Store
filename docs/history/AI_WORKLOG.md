@@ -1,5 +1,14 @@
 # AI Work Log
 
+- 2026-11-12: Completed separately approved `MOD-030J`. Removed `PublicController` and its Index/Pricing Razor views,
+  removed obsolete reversible cutover entries/settings and added exact explicitly anonymous GET/HEAD redirects for `/` and
+  `/pricing` with complete query preservation. Registration, login, plan revalidation, antiforgery, rate limiting, cookies,
+  onboarding, the public plans API and shared `_PublicLayout` remain unchanged. Active inventory is 74 MVC controllers,
+  402 actions and 208 Razor files; nine presentation actions across eight surfaces are retired. Hosted GET/HEAD, registration
+  and API probes passed, and Microsoft Edge accepted 146 authorized routes. Release built with zero warnings/errors;
+  1,856 security/inventory checks, 242/242 Angular tests, 137 templates, 120-page consistency and bundle budgets passed.
+  Rollback deploys the previous build.
+
 - 2026-11-12: Completed `MOD-030I` as a non-destructive anonymous Public boundary audit. Confirmed functional Angular/API
   parity for landing and pricing, server-authoritative plan cards and registration plan revalidation. Classified Public as
   R1-A because its exact anonymous `/` and `/pricing` paths cannot use the current permission-protected conventional

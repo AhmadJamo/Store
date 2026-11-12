@@ -991,7 +991,9 @@ static async Task RunLiveCutoverAsync(
         {
             var response = await anonymous.GetAsync(probe.MvcPath,
                 new APIRequestContextOptions { MaxRedirects = 0 });
-            var expectsAngular = options.CutoverMode is "angular" or "pilot";
+            var physicallyRetiredPublic = probe.MvcPath.StartsWith("/?", StringComparison.Ordinal) ||
+                                          probe.MvcPath.StartsWith("/pricing?", StringComparison.Ordinal);
+            var expectsAngular = physicallyRetiredPublic || options.CutoverMode is "angular" or "pilot";
             if (expectsAngular)
             {
                 Require(response.Status is 301 or 302 or 307 or 308,

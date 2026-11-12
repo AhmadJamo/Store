@@ -9,16 +9,16 @@ Physical MVC retirement must follow feature-sized, reversible cohorts. A Razor v
 
 ## Reconciliation
 
-- MVC controllers: 75.
-- MVC actions classified: 404 of 404.
-- Angular-default presentation actions eligible for cohort review: 136.
+- MVC controllers: 74.
+- MVC actions classified: 402 of 402.
+- Angular-default presentation actions eligible for cohort review: 134.
 - Retained MVC mutation actions: 226.
 - Retained download/generated-file actions: 9.
 - Retained compatibility, ambiguous-verb, session or non-cutover actions: 33.
-- Razor files discovered: 210; shared infrastructure files: 11.
-- Presentation-only pilot surfaces: 1, including 1 anonymous public boundary.
+- Razor files discovered: 208; shared infrastructure files: 11.
+- Presentation-only pilot surfaces: 0, including 0 anonymous public boundary.
 - Mixed-controller surfaces blocked from early view deletion: 54.
-- Physically retired R1 surfaces with protected legacy redirects: 7.
+- Physically retired presentation actions with legacy redirects: 9 across 8 surfaces.
 
 The exact action and Razor paths remain in `MVC_MIGRATION_REGISTRY.md`; this file adds retirement dependency classification and cohort gates without duplicating that source inventory.
 
@@ -34,7 +34,7 @@ The exact action and Razor paths remain in `MVC_MIGRATION_REGISTRY.md`; this fil
 
 ## Completed physical retirement cohorts
 
-MOD-030G physically retired five read-only inventory surfaces. MOD-030H then retired `JournalEntries.Details` and `PurchaseAccountingReconciliation.Index` after separate owner approval and API/Angular parity review. Their controller actions, Razor views and reversible cutover entries are gone; permission-protected GET/HEAD legacy redirects preserve exact actions, positive journal IDs and query strings. Anonymous `Public` remains the only structurally R1 surface and is not approved for deletion.
+MOD-030G physically retired five read-only inventory surfaces. MOD-030H retired `JournalEntries.Details` and `PurchaseAccountingReconciliation.Index`. MOD-030J then retired the two anonymous `Public` actions after the separately approved MOD-030I audit. Their controller actions, Razor views and reversible cutover entries are gone; protected routes retain permission policies, while exact `/` and `/pricing` redirects are explicitly anonymous. All redirects preserve GET/HEAD and query strings.
 
 | Retired MVC surface | Angular destination | Required permission |
 |---|---|---|
@@ -43,6 +43,8 @@ MOD-030G physically retired five read-only inventory surfaces. MOD-030H then ret
 | InventoryReconciliation | /inventory/reconciliation | InventoryReconciliation.View |
 | InventoryReservations | /inventory/reservations | InventoryReservations.View |
 | JournalEntries | /accounting/journal-entries/{id} | JournalEntries.View |
+| Public | /welcome | Anonymous |
+| Public | /pricing | Anonymous |
 | PurchaseAccountingReconciliation | /purchases/accounting-reconciliation | PurchaseAccountingReconciliation.View |
 | StockMovements | /inventory/location-movements | StockMovements.View |
 
@@ -83,7 +85,6 @@ MOD-030G physically retired five read-only inventory surfaces. MOD-030H then ret
 | Products | 2 | 3 | 0 | 1 | 4 | R2 - mixed controller; retain views until commands/downloads retire |
 | ProductStocks | 3 | 3 | 0 | 0 | 3 | R2 - mixed controller; retain views until commands/downloads retire |
 | ProductTemplates | 1 | 4 | 0 | 0 | 1 | R2 - mixed controller; retain views until commands/downloads retire |
-| Public | 2 | 0 | 0 | 0 | 2 | R1-A - anonymous public boundary; explicit route contract required |
 | PurchaseAgreements | 0 | 4 | 0 | 0 | 3 | R3 - retained MVC boundary; API/session decision required |
 | PurchaseAnalytics | 0 | 0 | 0 | 1 | 1 | R3 - retained MVC boundary; API/session decision required |
 | PurchaseApprovalRules | 1 | 2 | 0 | 0 | 1 | R2 - mixed controller; retain views until commands/downloads retire |
@@ -410,4 +411,4 @@ MOD-030G physically retired five read-only inventory surfaces. MOD-030H then ret
 
 ## Current outcome
 
-MOD-030F inventory and the separately approved MOD-030G/MOD-030H cohorts are complete. MOD-030I audited `Public` without deletion and classified it as the sole R1-A anonymous boundary: Angular/API parity exists, but the current permission-protected conventional retired-route catalog cannot own `/` and `/pricing` safely. Seven MVC presentation actions and seven Razor views are physically retired; no Public or R2/R3/R4 deletion is approved.
+MOD-030F inventory and the separately approved MOD-030G/MOD-030H/MOD-030J cohorts are complete. Nine MVC presentation actions across eight surfaces and nine Razor views are physically retired. Public exact `/` and `/pricing` routes are explicitly anonymous and preserve query strings; the other retired routes retain their original permission policies. No R2/R3/R4 deletion is approved.

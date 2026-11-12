@@ -346,9 +346,9 @@ The ERP SaaS Foundation Blueprint is imported as a non-authoritative planning re
   production budgets and authenticated Edge 15/15 passed.
 
 ## In Progress
-- MOD-030I completed the non-destructive audit of the remaining anonymous Public boundary. It is now R1-A because exact
-  `/` and `/pricing` routes need a dedicated anonymous-safe retirement contract. MOD-030J deletion is proposed and requires
-  separate owner approval; Account/registration/session/rate-limit/shared-layout behavior must remain unchanged.
+- MOD-030J completed the separately approved anonymous Public retirement with exact `/` and `/pricing` GET/HEAD redirects.
+  No R1/R1-A surface remains. MOD-030K is proposed as a non-destructive prioritization audit of 54 mixed-controller blockers;
+  no R2 deletion is approved.
 - UX-016 recurring-journal templates and controlled runs is complete with Draft-only manual execution. UX-017 bank-statement
   reconciliation is proposed and requires owner approval before adding statement import and matching records.
 - UX-009 navigation completeness is complete: 72 registered destinations and 41/41 operational routes are covered through

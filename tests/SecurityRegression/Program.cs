@@ -1527,26 +1527,9 @@ Check(subscriptionCutoverResolver.Resolve(cutoverContext.Request,
       subscriptionCutoverResolver.Resolve(cutoverContext.Request,
           "Subscription", "Checkout", new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null,
     "Subscription cutover must preserve query values while keeping checkout outside presentation cutover");
-var publicCutoverResolver = new PresentationCutoverResolver(Options.Create(
-    new PresentationCutoverOptions
-    {
-        AngularBasePath = "/app",
-        Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
-        {
-            ["Public"] = PresentationCutoverMode.AngularDefault
-        }
-    }));
-cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?source=cutover");
-Check(publicCutoverResolver.Resolve(cutoverContext.Request,
-          "Public", "Index", new Microsoft.AspNetCore.Routing.RouteValueDictionary()) ==
-      "/app/welcome?source=cutover" &&
-      publicCutoverResolver.Resolve(cutoverContext.Request,
-          "Public", "Pricing", new Microsoft.AspNetCore.Routing.RouteValueDictionary()) ==
-      "/app/pricing?source=cutover",
-    "Public cutover must resolve anonymous landing and pricing routes while preserving query values");
-Check(publicCutoverResolver.Resolve(cutoverContext.Request,
-          "Account", "Register", new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null,
-    "Public cutover must not absorb registration or plan-selection authority");
+Check(!PresentationCutoverRouteCatalog.All.ContainsKey("Public:Index") &&
+      !PresentationCutoverRouteCatalog.All.ContainsKey("Public:Pricing"),
+    "Physically retired Public routes must not remain in reversible presentation cutover");
 var platformAccountCutoverResolver = new PresentationCutoverResolver(Options.Create(
     new PresentationCutoverOptions
     {
@@ -2998,23 +2981,25 @@ foreach (var viewPath in Directory.EnumerateFiles(webRoot, "*.cshtml", SearchOpt
 }
 Check(razorRouteFailures.Count == 0,
     $"Every static Razor link and form must target an existing public controller action. Invalid targets: {string.Join(", ", razorRouteFailures)}");
-var expectedRetiredPresentationRoutes = new Dictionary<string, (string Action, string Route, string Permission)>
+var expectedRetiredPresentationRoutes = new Dictionary<string, (string Route, string? Permission, string[] Patterns)>
 {
-    ["InventoryBalances"] = ("Index", "/inventory/availability", "InventoryBalances.View"),
-    ["InventoryReservations"] = ("Index", "/inventory/reservations", "InventoryReservations.View"),
-    ["InventoryInsights"] = ("Index", "/inventory/insights", "InventoryInsights.View"),
-    ["InventoryReconciliation"] = ("Index", "/inventory/reconciliation", "InventoryReconciliation.View"),
-    ["StockMovements"] = ("Index", "/inventory/location-movements", "StockMovements.View"),
-    ["JournalEntries"] = ("Details", "/accounting/journal-entries/{id}", "JournalEntries.View"),
-    ["PurchaseAccountingReconciliation"] = ("Index", "/purchases/accounting-reconciliation", "PurchaseAccountingReconciliation.View")
+    ["InventoryBalances:Index"] = ("/inventory/availability", "InventoryBalances.View", []),
+    ["InventoryReservations:Index"] = ("/inventory/reservations", "InventoryReservations.View", []),
+    ["InventoryInsights:Index"] = ("/inventory/insights", "InventoryInsights.View", []),
+    ["InventoryReconciliation:Index"] = ("/inventory/reconciliation", "InventoryReconciliation.View", []),
+    ["StockMovements:Index"] = ("/inventory/location-movements", "StockMovements.View", []),
+    ["JournalEntries:Details"] = ("/accounting/journal-entries/{id}", "JournalEntries.View", []),
+    ["PurchaseAccountingReconciliation:Index"] = ("/purchases/accounting-reconciliation", "PurchaseAccountingReconciliation.View", []),
+    ["Public:Index"] = ("/welcome", null, ["/"]),
+    ["Public:Pricing"] = ("/pricing", null, ["/pricing"])
 };
 Check(
     RetiredPresentationRouteCatalog.All.Count == expectedRetiredPresentationRoutes.Count &&
     RetiredPresentationRouteCatalog.All.All(route =>
-        expectedRetiredPresentationRoutes.TryGetValue(route.Controller, out var expected) &&
-        route.Action == expected.Action &&
+        expectedRetiredPresentationRoutes.TryGetValue($"{route.Controller}:{route.Action}", out var expected) &&
         route.AngularRoute == expected.Route &&
         route.RequiredPermission == expected.Permission &&
+        (route.LegacyPatterns ?? []).SequenceEqual(expected.Patterns) &&
         !PresentationCutoverRouteCatalog.All.ContainsKey($"{route.Controller}:{route.Action}") &&
         !Directory.EnumerateFiles(Path.Combine(webRoot, "Controllers"), $"{route.Controller}Controller.cs", SearchOption.AllDirectories).Any() &&
         !File.Exists(Path.Combine(webRoot, "Views", route.Controller, $"{route.Action}.cshtml"))) &&
@@ -3023,7 +3008,7 @@ Check(
         "/inventory/availability",
         new QueryString("?warehouseId=4&search=bolt")) ==
         "/app/inventory/availability?warehouseId=4&search=bolt",
-    "Retired read-only MVC surfaces must keep exact permission-protected Angular redirects, query preservation and no controller/view artifact");
+    "Retired MVC surfaces must keep exact protected or explicitly anonymous Angular redirects, query preservation and no controller/view artifact");
 Check(
     RetiredPresentationRouteCatalog.BuildTarget(
         "/app",
@@ -3032,6 +3017,18 @@ Check(
         new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 17 }) ==
         "/app/accounting/journal-entries/17?source=ledger",
     "Retired read-only MVC surfaces must keep exact permission-protected Angular redirects, query preservation and no controller/view artifact");
+Check(
+    RetiredPresentationRouteCatalog.BuildTarget(
+        "/app",
+        "/welcome",
+        new QueryString("?source=legacy")) ==
+        "/app/welcome?source=legacy" &&
+    RetiredPresentationRouteCatalog.BuildTarget(
+        "/app",
+        "/pricing",
+        new QueryString("?planId=17&source=legacy")) ==
+        "/app/pricing?planId=17&source=legacy",
+    "Retired anonymous Public routes must preserve landing/pricing query values without absorbing registration authority");
 Check(
     typeof(InventoryReconciliationApiController).GetCustomAttribute<RouteAttribute>()?.Template ==
         "api/v1/inventory-reconciliation" &&

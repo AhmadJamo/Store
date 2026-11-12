@@ -52,3 +52,11 @@ permission policy. Public is therefore classified R1-A and remains active. A lat
 approved, add explicit anonymous-safe route patterns without weakening protected redirects, preserve query strings and prove
 registration/login/session/rate-limit isolation. Shared `_PublicLayout` is retained because Account registration and Company
 Onboarding still use it.
+
+## Anonymous implementation — MOD-030J
+
+After explicit approval, the catalog gained optional exact legacy patterns and a nullable permission boundary. A null
+permission is used only by the two declared Public patterns and maps explicit anonymous metadata; all existing retired rows
+continue to require their original permission policies. `PublicController` and its two views were removed, while Account,
+registration, API and `_PublicLayout` remain. This makes deployment of the prior build the rollback mechanism and closes the
+last R1/R1-A cohort without authorizing any R2 deletion.

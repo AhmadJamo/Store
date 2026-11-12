@@ -32,6 +32,11 @@ are physically retired and anonymous Public is the only remaining R1 surface. Pu
 `/pricing` paths are incompatible with the current permission-protected conventional retired-route catalog. It is now the
 sole `R1-A` boundary; any physical retirement requires a separately approved exact anonymous route contract. Active counts
 remain 75 MVC controllers, 404 actions and 210 Razor files.
+`MOD-030J` then completed that separately approved retirement: `PublicController` and its two views were removed, while
+exact anonymous GET/HEAD redirects preserve `/`, `/pricing` and their query strings. Registration, authentication,
+rate limiting, plan validation, API and shared layout boundaries remain unchanged. Active inventory is now 74 MVC
+controllers, 402 actions and 208 Razor files; nine presentation actions across eight surfaces are physically retired and
+no R1/R1-A surface remains.
 
 UX-009 adds permission-aware Purchasing, Sales and Accounting hubs with complete operational-route discovery. UX-010
 projects the tenant chart of accounts as an expandable hierarchy and adds a permission-protected, repository-paged journal

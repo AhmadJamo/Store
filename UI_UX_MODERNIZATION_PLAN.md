@@ -398,6 +398,7 @@ largest underrepresented modules; production deployment readiness and physical M
 - Extended the reusable retired-route catalog with exact action mapping and positive journal-ID substitution.
 - Preserved reconciliation filters and journal query strings under the original permission policies.
 - Active inventory is 75 MVC controllers, 404 actions and 210 Razor files; seven surfaces are retired and Public is the sole remaining R1 surface.
+- Release built cleanly, 1,860 security/inventory checks passed and authenticated Edge acceptance passed 146 routes.
 
 ## MOD-030I — anonymous Public boundary audit — COMPLETED 2026-11-12
 
@@ -406,4 +407,14 @@ largest underrepresented modules; production deployment readiness and physical M
 - Classified Public as `R1-A`: the current retired-route catalog requires permission-protected conventional paths and cannot safely represent anonymous root routes unchanged.
 - Preserved `_PublicLayout`, Account login/registration, onboarding, culture switching, cookies, rate limiting and the public plans API.
 - A later physical retirement is `MOD-030J`, requires separate owner approval and must add exact anonymous-safe route evidence first.
-- Release built cleanly, 1,860 security/inventory checks passed and authenticated Edge acceptance passed 146 routes.
+
+## MOD-030J — anonymous Public physical retirement — COMPLETED 2026-11-12
+
+- Removed `PublicController` and its landing/pricing Razor views after explicit owner approval.
+- Replaced only exact `/` and `/pricing` GET/HEAD routes with explicitly anonymous Angular redirects that preserve query values.
+- Removed Public from reversible cutover configuration/catalog; rollback is deployment of the previous build.
+- Preserved registration, login, plan validation, antiforgery, rate limiting, cookies, onboarding, culture switching, the public plans API and shared `_PublicLayout`.
+- Active inventory is 74 MVC controllers, 402 actions and 208 Razor files; nine actions across eight surfaces and nine views are physically retired.
+- Hosted route probes and Microsoft Edge acceptance on 146 authorized routes passed.
+- Release built with zero warnings/errors; 1,856 security/inventory checks, 242/242 Angular tests, 137 templates,
+  120-page consistency and fixed bundle budgets passed.
