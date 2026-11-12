@@ -381,3 +381,12 @@ largest underrepresented modules; production deployment readiness and physical M
 - Verification: deterministic regeneration passed twice; Release built with 0 warnings/errors; 1,883 security/inventory
   checks, 242/242 Angular tests, 137 static templates, the 120-page consistency inventory and production bundle budgets
   passed. Browser and performance gates were intentionally not claimed because MOD-030F changed no runtime or UI.
+
+## MOD-030G — first physical MVC retirement pilot — COMPLETED 2026-11-12
+
+- Removed five read-only inventory MVC controllers and their five Index Razor views.
+- Removed their reversible cutover entries and AngularDefault settings so configuration cannot target deleted code.
+- Added one reusable, permission-protected legacy GET/HEAD redirect catalog preserving both URL forms and query strings.
+- Kept the existing Angular feature components and server-authored APIs unchanged; no business or database rule moved.
+- Established deployment rollback as the rollback mechanism after physical deletion.
+- Release built cleanly, 1,866 security/inventory checks passed and authenticated Edge acceptance passed 145 routes.

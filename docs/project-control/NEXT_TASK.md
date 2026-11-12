@@ -1,27 +1,24 @@
 # المهمة التالية الوحيدة / Next Task
 
-## MOD-030G — أول دفعة تقاعد MVC للقراءة فقط / First read-only MVC retirement pilot
+## MOD-030H — تقاعد سطحي MVC ماليين للقراءة فقط / Financial read-only MVC retirement
 
 > الحالة: PROPOSED — AWAITING OWNER APPROVAL
 
-اكتمل `MOD-030F` كجرد غير هدّام وصنّف كل 411 إجراء MVC و217 ملف Razor دون حذف. الدفعة التالية المقترحة
-صغيرة ومحددة داخل المخزون فقط، لأنها لا تملك mutation أو download أو session dependency مكتشفًا.
+اكتمل `MOD-030G` بحذف خمسة أسطح مخزون R1 مع إبقاء روابطها القديمة محمية ومتجهة إلى Angular. بقي ضمن R1
+ثلاثة أسطح فقط؛ المقترح التالي يعالج السطحين الماليين معًا ويؤجل Public كحد عام مستقل.
 
 ### النطاق المقترح
 
-- `InventoryBalances.Index` وView الخاصة به.
-- `InventoryReservations.Index` وView الخاصة به.
-- `InventoryInsights.Index` وView الخاصة به.
-- `InventoryReconciliation.Index` وView الخاصة به.
-- `StockMovements.Index` وView الخاصة به.
-- تثبيت سلوك الروابط القديمة بعد إزالة العرض، وتحديث `PresentationCutover` بحيث لا يشير أي وضع رجوع إلى كود محذوف.
-- بحث مراجع كامل، ثم Release/regression/Angular/browser acceptance وخطة رجوع نشر قابلة للتنفيذ.
+- `JournalEntries.Details` و`Views/JournalEntries/Details.cshtml`.
+- `PurchaseAccountingReconciliation.Index` وView الخاصة به.
+- تحويل صيغ الروابط القديمة إلى مسارات Angular الدقيقة مع نفس `JournalEntries.View` و
+  `PurchaseAccountingReconciliation.View` وحفظ المعرف/query.
+- إزالة مفاتيح cutover/configuration الخاصة بهما، وتثبيت Release/regression/Angular/Edge وdeployment rollback.
 
 ### خارج النطاق
 
+- `Public` أو أي مسار anonymous/authentication.
 - أي mutation أو download أو shared Razor infrastructure.
-- `JournalEntries` أو `PurchaseAccountingReconciliation` رغم تصنيفهما R1، بسبب المخاطر المالية الأعلى.
-- `Public` بسبب كونه مدخلًا عامًا مجهول الجلسة.
-- أي سطح R2/R3/R4، وأي حذف جماعي للـMVC.
+- أي سطح R2/R3/R4 أو تغيير في القيود والترحيل والمصالحة المالية الخادمية.
 
-لا يبدأ الحذف قبل موافقة مالك صريحة على هذه الملفات الخمسة وعلى سياسة الروابط القديمة والرجوع بعد إزالة MVC.
+لا يبدأ الحذف قبل موافقة مالك صريحة بسبب حساسية روابط الدليل والمصالحة المالية.

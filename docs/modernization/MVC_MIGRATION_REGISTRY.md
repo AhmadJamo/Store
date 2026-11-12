@@ -4,15 +4,16 @@
 
 ## Reconciliation
 
-- Controllers discovered: 170 total; 82 MVC; 88 API.
-- User-facing MVC views discovered: 199.
-- MVC actions discovered: 411.
-- Razor files included in the control inventory: 209.
+- Controllers discovered: 165 total; 77 MVC; 88 API.
+- User-facing MVC views discovered: 194.
+- MVC actions discovered: 406.
+- Razor files included in the control inventory: 204.
 - Angular application routes discovered: 194.
-- Presentation surfaces with a verified Angular counterpart: 81.
+- Presentation surfaces with a verified Angular counterpart: 76.
 - Remaining presentation surfaces without a mapped Angular counterpart: 0.
 - Mutation-only MVC compatibility surfaces: 1 (Language).
-- Allowlisted Angular-default cutover actions: 183.
+- Physically retired presentation surfaces with protected legacy redirects: 5 (InventoryBalances, InventoryReservations, InventoryInsights, InventoryReconciliation, StockMovements).
+- Allowlisted Angular-default cutover actions: 178.
 
 Remaining presentation surfaces: none.
 
@@ -67,10 +68,6 @@ Statuses follow the migration lifecycle plus MVC Compatibility (mutation-only). 
 | InventoryAdjustments | Create.cshtml | Angular Default | /inventory/adjustments | MiniStore.Web/Views/InventoryAdjustments/Create.cshtml |
 | InventoryAdjustments | Details.cshtml | Angular Default | /inventory/adjustments | MiniStore.Web/Views/InventoryAdjustments/Details.cshtml |
 | InventoryAdjustments | Index.cshtml | Angular Default | /inventory/adjustments | MiniStore.Web/Views/InventoryAdjustments/Index.cshtml |
-| InventoryBalances | Index.cshtml | Angular Default | /inventory/availability | MiniStore.Web/Views/InventoryBalances/Index.cshtml |
-| InventoryInsights | Index.cshtml | Angular Default | /inventory/insights | MiniStore.Web/Views/InventoryInsights/Index.cshtml |
-| InventoryReconciliation | Index.cshtml | Angular Default | /inventory/reconciliation | MiniStore.Web/Views/InventoryReconciliation/Index.cshtml |
-| InventoryReservations | Index.cshtml | Angular Default | /inventory/reservations | MiniStore.Web/Views/InventoryReservations/Index.cshtml |
 | InventoryScanning | Index.cshtml | Angular Default | /inventory/scanning | MiniStore.Web/Views/InventoryScanning/Index.cshtml |
 | InventoryTracking | Index.cshtml | Angular Default | /inventory/tracking | MiniStore.Web/Views/InventoryTracking/Index.cshtml |
 | JournalEntries | Details.cshtml | Angular Default | /accounting/journal-entries/:id | MiniStore.Web/Views/JournalEntries/Details.cshtml |
@@ -175,7 +172,6 @@ Statuses follow the migration lifecycle plus MVC Compatibility (mutation-only). 
 | Settings | PurchaseSourcingPolicy.cshtml | Angular Default | /settings | MiniStore.Web/Views/Settings/PurchaseSourcingPolicy.cshtml |
 | Settings | Units.cshtml | Angular Default | /settings | MiniStore.Web/Views/Settings/Units.cshtml |
 | Settings | WorkflowCatalog.cshtml | Angular Default | /settings | MiniStore.Web/Views/Settings/WorkflowCatalog.cshtml |
-| StockMovements | Index.cshtml | Angular Default | /inventory/location-movements | MiniStore.Web/Views/StockMovements/Index.cshtml |
 | StockTransactions | Create.cshtml | Angular Default | /inventory/transactions | MiniStore.Web/Views/StockTransactions/Create.cshtml |
 | StockTransactions | Index.cshtml | Angular Default | /inventory/transactions | MiniStore.Web/Views/StockTransactions/Index.cshtml |
 | StockTransfers | Create.cshtml | Angular Default | /inventory/transfers | MiniStore.Web/Views/StockTransfers/Create.cshtml |
@@ -314,10 +310,6 @@ Statuses follow the migration lifecycle plus MVC Compatibility (mutation-only). 
 | InventoryAdjustments | Details | GET | Angular Default | /inventory/adjustments | /inventory/adjustments/{id} | MiniStore.Web/Controllers/Inventory/InventoryAdjustmentsController.cs |
 | InventoryAdjustments | Index | GET | Angular Default | /inventory/adjustments | /inventory/adjustments | MiniStore.Web/Controllers/Inventory/InventoryAdjustmentsController.cs |
 | InventoryAdjustments | Post | POST | Angular Default | /inventory/adjustments | — | MiniStore.Web/Controllers/Inventory/InventoryAdjustmentsController.cs |
-| InventoryBalances | Index | GET | Angular Default | /inventory/availability | /inventory/availability | MiniStore.Web/Controllers/Inventory/InventoryBalancesController.cs |
-| InventoryInsights | Index | GET | Angular Default | /inventory/insights | /inventory/insights | MiniStore.Web/Controllers/Inventory/InventoryInsightsController.cs |
-| InventoryReconciliation | Index | GET | Angular Default | /inventory/reconciliation | /inventory/reconciliation | MiniStore.Web/Controllers/Inventory/InventoryReconciliationController.cs |
-| InventoryReservations | Index | GET | Angular Default | /inventory/reservations | /inventory/reservations | MiniStore.Web/Controllers/Inventory/InventoryReservationsController.cs |
 | InventoryScanning | Count | POST | Angular Default | /inventory/scanning | — | MiniStore.Web/Controllers/Inventory/InventoryScanningController.cs |
 | InventoryScanning | Index | GET | Angular Default | /inventory/scanning | /inventory/scanning | MiniStore.Web/Controllers/Inventory/InventoryScanningController.cs |
 | InventoryScanning | Putaway | POST | Angular Default | /inventory/scanning | — | MiniStore.Web/Controllers/Inventory/InventoryScanningController.cs |
@@ -544,7 +536,6 @@ Statuses follow the migration lifecycle plus MVC Compatibility (mutation-only). 
 | Settings | Units | GET | Angular Default | /settings | /settings/measurement-units | MiniStore.Web/Controllers/Settings/SettingsController.cs |
 | Settings | Units | POST | Angular Default | /settings | /settings/measurement-units | MiniStore.Web/Controllers/Settings/SettingsController.cs |
 | Settings | WorkflowCatalog | GET | Angular Default | /settings | /settings/workflow-catalog | MiniStore.Web/Controllers/Settings/SettingsController.cs |
-| StockMovements | Index | GET | Angular Default | /inventory/location-movements | /inventory/location-movements | MiniStore.Web/Controllers/Inventory/StockMovementsController.cs |
 | StockTransactions | Create | GET | Angular Default | /inventory/transactions | /inventory/stocks/adjustment | MiniStore.Web/Controllers/Inventory/StockTransactionsController.cs |
 | StockTransactions | Create | POST | Angular Default | /inventory/transactions | /inventory/stocks/adjustment | MiniStore.Web/Controllers/Inventory/StockTransactionsController.cs |
 | StockTransactions | Index | GET | Angular Default | /inventory/transactions | /inventory/transactions | MiniStore.Web/Controllers/Inventory/StockTransactionsController.cs |
@@ -689,10 +680,6 @@ Statuses follow the migration lifecycle plus MVC Compatibility (mutation-only). 
 | InventoryAdjustments | Create.cshtml | 1 | 1 | 1 | Create, Index | MiniStore.Web/Views/InventoryAdjustments/Create.cshtml |
 | InventoryAdjustments | Details.cshtml | 4 | 4 | 1 | Approve, Cancel, Count, Index, Post | MiniStore.Web/Views/InventoryAdjustments/Details.cshtml |
 | InventoryAdjustments | Index.cshtml | 0 | 0 | 2 | Create, Details | MiniStore.Web/Views/InventoryAdjustments/Index.cshtml |
-| InventoryBalances | Index.cshtml | 1 | 1 | 0 | — | MiniStore.Web/Views/InventoryBalances/Index.cshtml |
-| InventoryInsights | Index.cshtml | 1 | 1 | 0 | — | MiniStore.Web/Views/InventoryInsights/Index.cshtml |
-| InventoryReconciliation | Index.cshtml | 1 | 1 | 1 | — | MiniStore.Web/Views/InventoryReconciliation/Index.cshtml |
-| InventoryReservations | Index.cshtml | 1 | 1 | 0 | — | MiniStore.Web/Views/InventoryReservations/Index.cshtml |
 | InventoryScanning | Index.cshtml | 4 | 4 | 0 | Count, Putaway, Relocate | MiniStore.Web/Views/InventoryScanning/Index.cshtml |
 | InventoryTracking | Index.cshtml | 5 | 7 | 0 | @(x.Status==InventoryTrackingStatus.Available?, CloseRecall, CreateRecall, Open, RecordRecallCommunication | MiniStore.Web/Views/InventoryTracking/Index.cshtml |
 | JournalEntries | Details.cshtml | 0 | 1 | 0 | — | MiniStore.Web/Views/JournalEntries/Details.cshtml |
@@ -801,7 +788,6 @@ Statuses follow the migration lifecycle plus MVC Compatibility (mutation-only). 
 | Settings | PurchaseSourcingPolicy.cshtml | 1 | 1 | 1 | Index, PurchaseSourcingPolicy | MiniStore.Web/Views/Settings/PurchaseSourcingPolicy.cshtml |
 | Settings | Units.cshtml | 2 | 2 | 1 | DeactivateUnit, Index, Units | MiniStore.Web/Views/Settings/Units.cshtml |
 | Settings | WorkflowCatalog.cshtml | 0 | 0 | 3 | @step.Action, Index | MiniStore.Web/Views/Settings/WorkflowCatalog.cshtml |
-| StockMovements | Index.cshtml | 0 | 0 | 1 | Index | MiniStore.Web/Views/StockMovements/Index.cshtml |
 | StockTransactions | Create.cshtml | 1 | 1 | 1 | Create, Index | MiniStore.Web/Views/StockTransactions/Create.cshtml |
 | StockTransactions | Index.cshtml | 1 | 1 | 13 | Index | MiniStore.Web/Views/StockTransactions/Index.cshtml |
 | StockTransfers | Create.cshtml | 1 | 3 | 2 | Create, Index | MiniStore.Web/Views/StockTransfers/Create.cshtml |

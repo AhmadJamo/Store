@@ -40,8 +40,10 @@
 - `MOD-030E` — COMPLETE 2026-11-03: أصبحت أسطح العرض الـ81 كلها AngularDefault، وصُنّف Language كحد POST-only compatibility وحيد؛ صفر فجوات عرض، دون حذف MVC.
 - `MOD-030F` — COMPLETE 2026-11-12: جرد غير هدّام صنّف 411 إجراء MVC و217 ملف Razor ضمن دفعات R1..R4،
   وحدد خمسة أسطح مخزون قراءة فقط كأول pilot مقترح؛ لم يُحذف شيء وما زالت كل دفعة حذف بحاجة لموافقة مستقلة.
-- `MOD-030G` — PROPOSED: تقاعد pilot محدود لخمسة أسطح مخزون R1 قراءة فقط، بعد موافقة المالك وتثبيت مسار الروابط
-  القديمة والرجوع التشغيلي؛ لا يشمل المحاسبة أو Public أو أي mutation/download.
+- `MOD-030G` — COMPLETE 2026-11-12: حُذفت خمسة Controllers وخمسة Views للمخزون القراءة فقط، واستُبدلت بروابط
+  GET/HEAD قديمة محمية تحفظ query وتتجه إلى Angular. نجح Edge على 145 مسارًا؛ الرجوع أصبح deployment rollback.
+- `MOD-030H` — PROPOSED: مراجعة وتقاعد سطحي R1 الماليين JournalEntries Details وPurchaseAccountingReconciliation
+  Index فقط؛ يحتاج موافقة مستقلة ولا يشمل Public أو أي R2/R3/R4.
 - `UX-001` — COMPLETE 2026-11-04: تدقيق واجهة Angular، خطة تحديث مستمرة، مجموعات تنقل مهنية بصلاحيات،
   breadcrumbs ثنائية اللغة وحفظ آمن لتفضيل فتح المجموعات دون تغيير الأعمال.
 - `UX-002` — COMPLETE 2026-11-05: عقد typed لسياق URL وذاكرة workspace المعزولة ومسودات آمنة مؤقتة،

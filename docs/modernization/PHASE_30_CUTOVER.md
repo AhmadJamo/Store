@@ -80,3 +80,11 @@ MOD-030E completed on 2026-11-03 with all 81 presentation surfaces AngularDefaul
 explicitly retained as the sole POST-only, antiforgery-protected compatibility boundary. No Razor view or MVC controller
 was deleted. Physical retirement begins only after the non-destructive `MOD-030F` dependency/cohort audit and explicit
 approval of each destructive cohort.
+
+## MOD-030G physical retirement pilot — completed 2026-11-12
+
+The separately approved first physical retirement cohort removes only InventoryBalances, InventoryReservations,
+InventoryInsights, InventoryReconciliation and StockMovements MVC Index presentation and their five Razor views.
+The same permission policies now protect centralized GET/HEAD legacy redirects to Angular, including explicit /Index
+aliases and query preservation. These surfaces are absent from PresentationCutover settings and its reversible catalog;
+rollback is a previous-build deployment. No mutation, download, financial, public or shared Razor boundary changed.

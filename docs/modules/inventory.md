@@ -1,5 +1,5 @@
 # Inventory and stock movements
-> Status: IMPLEMENTED WITH APPROVED WMS EVOLUTION | Last reviewed: 2026-10-24
+> Status: IMPLEMENTED WITH APPROVED WMS EVOLUTION | Last reviewed: 2026-11-12
 
 Inventory quantity DTOs use culture-invariant decimal range limits and value conversion. Arabic requests therefore reach ordinary model validation rather than throwing while parsing limits such as `0.000001`.
 
@@ -187,6 +187,11 @@ MOD-030E1 commits Inventory Balances, Reservations, Insights and Reconciliation 
 permission-protected Index GET actions are mapped; filters/query strings are preserved and all inventory writes remain on
 their existing independently authorized API/MVC commands. Hosted acceptance passed 15/15 and both the 33-route cutover
 and process-local MVC rollback passed.
+
+MOD-030G physically retires those four read-only MVC controllers/views plus `StockMovements.Index`. Their versioned,
+permission-protected APIs and Angular workspaces remain unchanged. A centralized retired-route catalog preserves both
+legacy URL forms and query strings under the same permissions. Runtime MVC rollback was deliberately removed for these
+five surfaces; rollback now deploys the previous commit/build. Edge acceptance covered 145 authorized routes.
 
 MOD-030E2B commits Inventory Adjustments list/create/details GET presentation to AngularDefault. Details preserves the
 positive `long` identifier, while Count, Approve, Post and Cancel remain separately permissioned and antiforgery-protected

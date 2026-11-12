@@ -22,6 +22,10 @@ Release, security, accessibility, bundle and hosted browser gates passed. `MOD-0
 physical-retirement inventory: all 411 discovered MVC actions across 82 surfaces are classified, 217 Razor files are
 accounted for and mixed controllers are blocked from early view deletion. No MVC file was removed; every physical
 retirement cohort still requires separate owner approval.
+`MOD-030G` then completed the separately approved first retirement pilot: five read-only inventory controllers and their
+five Razor views were removed. Permission-protected legacy GET/HEAD redirects preserve both historical URL forms and
+query strings while the Angular APIs remain authoritative. The active MVC inventory is now 77 controllers, 406 actions
+and 212 Razor files; financial, public and mixed surfaces remain approval-gated.
 
 UX-009 adds permission-aware Purchasing, Sales and Accounting hubs with complete operational-route discovery. UX-010
 projects the tenant chart of accounts as an expandable hierarchy and adds a permission-protected, repository-paged journal

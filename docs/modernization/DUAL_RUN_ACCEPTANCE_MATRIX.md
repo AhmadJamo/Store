@@ -2,8 +2,9 @@
 
 > Generated from source by scripts/generate-mvc-migration-registry.ps1. Do not edit rows manually.
 
-- Presentation counterparts covered: 81.
+- Presentation counterparts covered: 76.
 - Mutation-only MVC compatibility boundaries: 1 (Language).
+- Physically retired MVC presentation surfaces: 5 (InventoryBalances, InventoryReservations, InventoryInsights, InventoryReconciliation, StockMovements); protected legacy redirects remain outside the reversible cutover catalog.
 - Presentation default: AngularDefault for all presentation surfaces; mutation-only MVC compatibility: Language.
 - Evidence baseline: generated MVC view/action inventory, verified Angular route, controller permission references and acceptance gate.
 - Runtime dual-run samples and cutover rehearsal results are appended by the MOD-029 acceptance workflow; this static matrix performs no mutation.
@@ -28,10 +29,6 @@
 | GoodsReceipts | /GoodsReceipts | /purchases/receipts | Read/write | GoodsReceipts.Create, GoodsReceipts.Inspect, GoodsReceipts.PutAway, GoodsReceipts.View | Standard | 4 view(s); 10 action(s); route/source gate |
 | Home | / | / | Read/write | Public/session boundary | Standard | 1 view(s); 1 action(s); route/source gate |
 | InventoryAdjustments | /InventoryAdjustments | /inventory/adjustments | Read/write | InventoryAdjustments.Approve, InventoryAdjustments.Cancel, InventoryAdjustments.Count, InventoryAdjustments.Create, InventoryAdjustments.Post, InventoryAdjustments.View | Inventory | 3 view(s); 8 action(s); route/source gate |
-| InventoryBalances | /InventoryBalances | /inventory/availability | Read-only | InventoryBalances.View | Inventory | 1 view(s); 1 action(s); route/source gate |
-| InventoryInsights | /InventoryInsights | /inventory/insights | Read-only | InventoryInsights.View | Inventory | 1 view(s); 1 action(s); route/source gate |
-| InventoryReconciliation | /InventoryReconciliation | /inventory/reconciliation | Read-only | InventoryReconciliation.View | Inventory | 1 view(s); 1 action(s); route/source gate |
-| InventoryReservations | /InventoryReservations | /inventory/reservations | Read-only | InventoryReservations.View | Inventory | 1 view(s); 1 action(s); route/source gate |
 | InventoryScanning | /InventoryScanning | /inventory/scanning | Read/write | InventoryAdjustments.Count, InventoryScanning.View, LocationMovements.Create, ProductStock.Edit | Inventory | 1 view(s); 4 action(s); route/source gate |
 | InventoryTracking | /InventoryTracking | /inventory/tracking | Read/write | InventoryTracking.ManageQuarantine, InventoryTracking.ManageRecall, InventoryTracking.Open, InventoryTracking.View | Inventory | 1 view(s); 7 action(s); route/source gate |
 | JournalEntries | /JournalEntries | /accounting/journal-entries/:id | Read-only | JournalEntries.View | Financial | 1 view(s); 1 action(s); route/source gate |
@@ -74,7 +71,6 @@
 | SalesQuotationTemplates | /SalesQuotationTemplates | /sales/quotation-templates | Read/write | SalesQuotationTemplates.Manage, SalesQuotationTemplates.View | Standard | 3 view(s); 7 action(s); route/source gate |
 | SalesReturns | /SalesReturns | /sales/legacy-returns | Read/write | SalesReturns.Create, SalesReturns.View | Standard | 3 view(s); 4 action(s); route/source gate |
 | Settings | /Settings | /settings | Read/write | Administration.Access | Standard | 16 view(s); 36 action(s); route/source gate |
-| StockMovements | /StockMovements | /inventory/location-movements | Read-only | StockMovements.View | Inventory | 1 view(s); 1 action(s); route/source gate |
 | StockTransactions | /StockTransactions | /inventory/transactions | Read/write | StockTransactions.Create, StockTransactions.View | Inventory | 2 view(s); 3 action(s); route/source gate |
 | StockTransfers | /StockTransfers | /inventory/transfers | Read/write | StockTransfers.Approve, StockTransfers.Cancel, StockTransfers.Create, StockTransfers.Edit, StockTransfers.Post, StockTransfers.Reject, StockTransfers.Submit, StockTransfers.View | Inventory | 4 view(s); 12 action(s); route/source gate |
 | Subscription | /Subscription | /subscription | Read/write | Public/session boundary | Identity/tenant | 2 view(s); 2 action(s); route/source gate |

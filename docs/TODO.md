@@ -195,7 +195,8 @@ The ERP SaaS Foundation Blueprint is imported as a non-authoritative planning re
     - [x] MOD-030E5W cut over the authenticated Home compatibility redirect GET; retain its onboarding/Dashboard decision and MVC rollback. Completed 2026-11-03 with hosted 15/15, cutover/MVC rollback 140/140, warning-free Release and 1,840 backend checks; no onboarding state or business data changed.
     - [x] MOD-030E5X classify Language Set POST as a permanent mutation-only MVC compatibility boundary; do not add it to the GET/HEAD presentation catalog. Completed 2026-11-03 with 81 presentation counterparts, zero presentation gaps, one explicit mutation-only boundary, warning-free Release and 1,843 backend checks.
   - [x] MOD-030F inventory physical MVC retirement dependencies and define bounded reversible cohorts; completed 2026-11-12 with all 411 MVC actions and 217 Razor files classified, eight R1 surfaces and no deletion.
-  - [ ] MOD-030G retire a separately approved R1 pilot limited to InventoryBalances, InventoryReservations, InventoryInsights, InventoryReconciliation and StockMovements; preserve legacy-link behavior and prove rollback before deletion.
+  - [x] MOD-030G retire a separately approved R1 pilot limited to InventoryBalances, InventoryReservations, InventoryInsights, InventoryReconciliation and StockMovements. Completed 2026-11-12 with five controllers/views removed, protected query-preserving legacy redirects and Edge acceptance across 145 routes.
+  - [ ] MOD-030H review and, only after separate approval, retire the financial R1 JournalEntries Details and PurchaseAccountingReconciliation Index surfaces with exact permission/link/deployment rollback evidence.
 
 - [x] FND-000 import the ERP SaaS Foundation Blueprint with provenance and classify its ten capabilities against the actual MiniStore repository.
 - [ ] FND-010 inventory production environments and operational ownership, approve RPO/RTO and backup retention, run an isolated restore drill, reconcile restored financial/inventory/tenant/outbox state and record evidence.
@@ -344,8 +345,8 @@ The ERP SaaS Foundation Blueprint is imported as a non-authoritative planning re
   production budgets and authenticated Edge 15/15 passed.
 
 ## In Progress
-- MOD-030F retirement inventory is complete without deletion. MOD-030G is the proposed five-surface read-only inventory
-  pilot and requires explicit owner approval before removing any controller action or Razor view.
+- MOD-030G completed the approved five-surface read-only inventory retirement with protected legacy redirects. MOD-030H
+  is proposed for the two remaining financial R1 surfaces and requires separate owner approval.
 - UX-016 recurring-journal templates and controlled runs is complete with Draft-only manual execution. UX-017 bank-statement
   reconciliation is proposed and requires owner approval before adding statement import and matching records.
 - UX-009 navigation completeness is complete: 72 registered destinations and 41/41 operational routes are covered through

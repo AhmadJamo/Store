@@ -116,19 +116,6 @@ cutoverContext.Request.Method = HttpMethods.Get;
 Check(angularCutoverResolver.Resolve(
         cutoverContext.Request, "Customers", "Export", new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null,
     "Presentation cutover must keep non-allowlisted actions on MVC");
-var inventoryCutoverResolver = new PresentationCutoverResolver(Options.Create(
-    new PresentationCutoverOptions
-    {
-        AngularBasePath = "/app",
-        Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
-        {
-            ["InventoryBalances"] = PresentationCutoverMode.AngularDefault
-        }
-    }));
-Check(inventoryCutoverResolver.Resolve(
-        cutoverContext.Request, "InventoryBalances", "Index",
-        new Microsoft.AspNetCore.Routing.RouteValueDictionary()) == "/app/inventory/availability?page=2",
-    "Read-only inventory cutover must preserve query strings on its exact Angular route");
 var stockCutoverResolver = new PresentationCutoverResolver(Options.Create(
     new PresentationCutoverOptions
     {
@@ -198,20 +185,6 @@ Check(inventoryTrackingCutoverResolver.Resolve(
         cutoverContext.Request, "InventoryTracking", "Open",
         new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null,
     "Inventory Tracking mutations must stay outside the presentation cutover catalog");
-var stockMovementsCutoverResolver = new PresentationCutoverResolver(Options.Create(
-    new PresentationCutoverOptions
-    {
-        AngularBasePath = "/app",
-        Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
-        {
-            ["StockMovements"] = PresentationCutoverMode.AngularDefault
-        }
-    }));
-Check(stockMovementsCutoverResolver.Resolve(
-        cutoverContext.Request, "StockMovements", "Index",
-        new Microsoft.AspNetCore.Routing.RouteValueDictionary()) ==
-    "/app/inventory/location-movements?page=2",
-    "Stock Movements cutover must preserve query strings on its exact shared Angular route");
 var warehouseOperationsCutoverResolver = new PresentationCutoverResolver(Options.Create(
     new PresentationCutoverOptions
     {
@@ -2928,6 +2901,14 @@ var navigableItems = NavigationDefinitions.All.SelectMany(x => x.Items)
 var webControllers = typeof(CustomersController).Assembly.GetTypes()
     .Where(x => typeof(Controller).IsAssignableFrom(x) && x.Name.EndsWith("Controller", StringComparison.Ordinal))
     .ToDictionary(x => x.Name[..^"Controller".Length], StringComparer.OrdinalIgnoreCase);
+var retiredNavigationTargets = RetiredPresentationRouteCatalog.All
+    .Select(route => $"{route.Controller}:Index")
+    .ToHashSet(StringComparer.OrdinalIgnoreCase);
+bool IsRegisteredPresentationTarget(string controllerName, string actionName) =>
+    retiredNavigationTargets.Contains($"{controllerName}:{actionName}") ||
+    webControllers.TryGetValue(controllerName, out var controller) &&
+    controller.GetMethods(BindingFlags.Instance | BindingFlags.Public)
+        .Any(method => method.Name.Equals(actionName, StringComparison.OrdinalIgnoreCase));
 var unprotectedPostActions = webControllers.Values
     .SelectMany(controller => controller.GetMethods(BindingFlags.Instance | BindingFlags.Public)
         .Where(method => method.GetCustomAttribute<HttpPostAttribute>() is not null)
@@ -2940,19 +2921,15 @@ var unprotectedPostActions = webControllers.Values
 Check(unprotectedPostActions.Count == 0,
     $"Every MVC POST action must validate antiforgery tokens. Unprotected actions: {string.Join(", ", unprotectedPostActions)}");
 var invalidCatalogTargets = completeCatalog.Steps
-    .Where(step => !webControllers.TryGetValue(step.Controller, out var controller) ||
-                   !controller.GetMethods(BindingFlags.Instance | BindingFlags.Public)
-                       .Any(method => method.Name.Equals(step.Action, StringComparison.OrdinalIgnoreCase)))
+    .Where(step => !IsRegisteredPresentationTarget(step.Controller, step.Action))
     .Select(step => $"{step.Controller}.{step.Action}")
     .Distinct(StringComparer.OrdinalIgnoreCase)
     .OrderBy(x => x)
     .ToList();
 Check(invalidCatalogTargets.Count == 0,
     $"Every complete workflow catalog step must target an existing public controller action. Invalid targets: {string.Join(", ", invalidCatalogTargets)}");
-Check(navigableItems.All(item => webControllers.TryGetValue(item.Controller, out var controller) &&
-        controller.GetMethods(BindingFlags.Instance | BindingFlags.Public)
-            .Any(method => method.Name.Equals(item.Action, StringComparison.OrdinalIgnoreCase))),
-    "Every sidebar and dashboard button must target an existing public controller action");
+Check(navigableItems.All(item => IsRegisteredPresentationTarget(item.Controller, item.Action)),
+    "Every sidebar and dashboard button must target an existing public controller action or a registered retired presentation redirect");
 var repositoryRoot = new DirectoryInfo(AppContext.BaseDirectory);
 while (repositoryRoot is not null && !File.Exists(Path.Combine(repositoryRoot.FullName, "MiniStore.sln")))
     repositoryRoot = repositoryRoot.Parent;
@@ -3023,6 +3000,9 @@ var hardCodedActionMessages = Directory.EnumerateFiles(Path.Combine(webRoot, "Co
 Check(hardCodedActionMessages.Count == 0,
     $"User-facing controller messages must use localization resources. Files: {string.Join(", ", hardCodedActionMessages)}");
 var razorRouteFailures = new List<string>();
+var retiredRazorTargets = RetiredPresentationRouteCatalog.All
+    .Select(route => $"{route.Controller}:Index")
+    .ToHashSet(StringComparer.OrdinalIgnoreCase);
 foreach (var viewPath in Directory.EnumerateFiles(webRoot, "*.cshtml", SearchOption.AllDirectories)
              .Where(path => !Path.GetFileName(path).StartsWith('_')))
 {
@@ -3041,25 +3021,39 @@ foreach (var viewPath in Directory.EnumerateFiles(webRoot, "*.cshtml", SearchOpt
         var controllerName = controllerMatch.Success ? controllerMatch.Groups[1].Value : defaultController;
         if (controllerName.Contains('@')) continue;
         var actionName = actionMatch.Groups[1].Value;
-        if (!webControllers.TryGetValue(controllerName, out var controllerType) ||
-            !controllerType.GetMethods(BindingFlags.Instance | BindingFlags.Public)
-                .Any(method => method.Name.Equals(actionName, StringComparison.OrdinalIgnoreCase)))
+        var targetsRetiredRedirect = retiredRazorTargets.Contains($"{controllerName}:{actionName}");
+        if ((!webControllers.TryGetValue(controllerName, out var controllerType) ||
+             !controllerType.GetMethods(BindingFlags.Instance | BindingFlags.Public)
+                 .Any(method => method.Name.Equals(actionName, StringComparison.OrdinalIgnoreCase))) &&
+            !targetsRetiredRedirect)
             razorRouteFailures.Add($"{relativePath}: {controllerName}.{actionName}");
     }
 }
 Check(razorRouteFailures.Count == 0,
     $"Every static Razor link and form must target an existing public controller action. Invalid targets: {string.Join(", ", razorRouteFailures)}");
-var reconciliationIndex = typeof(InventoryReconciliationController)
-    .GetMethod(nameof(InventoryReconciliationController.Index))!;
+var expectedRetiredPresentationRoutes = new Dictionary<string, (string Route, string Permission)>
+{
+    ["InventoryBalances"] = ("/inventory/availability", "InventoryBalances.View"),
+    ["InventoryReservations"] = ("/inventory/reservations", "InventoryReservations.View"),
+    ["InventoryInsights"] = ("/inventory/insights", "InventoryInsights.View"),
+    ["InventoryReconciliation"] = ("/inventory/reconciliation", "InventoryReconciliation.View"),
+    ["StockMovements"] = ("/inventory/location-movements", "StockMovements.View")
+};
 Check(
-    reconciliationIndex.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
-        $"{PermissionAuthorizeAttribute.PolicyPrefix}InventoryReconciliation.View",
-    "Inventory reconciliation report must enforce its dedicated view permission");
-Check(
-    typeof(InventoryReconciliationController).GetMethods(BindingFlags.Instance | BindingFlags.Public)
-        .Where(method => method.DeclaringType == typeof(InventoryReconciliationController))
-        .All(method => method.GetCustomAttribute<HttpPostAttribute>() is null),
-    "Inventory reconciliation controller must remain read-only");
+    RetiredPresentationRouteCatalog.All.Count == expectedRetiredPresentationRoutes.Count &&
+    RetiredPresentationRouteCatalog.All.All(route =>
+        expectedRetiredPresentationRoutes.TryGetValue(route.Controller, out var expected) &&
+        route.AngularRoute == expected.Route &&
+        route.RequiredPermission == expected.Permission &&
+        !PresentationCutoverRouteCatalog.All.ContainsKey($"{route.Controller}:Index") &&
+        !File.Exists(Path.Combine(webRoot, "Controllers", "Inventory", $"{route.Controller}Controller.cs")) &&
+        !File.Exists(Path.Combine(webRoot, "Views", route.Controller, "Index.cshtml"))) &&
+    RetiredPresentationRouteCatalog.BuildTarget(
+        "/app",
+        "/inventory/availability",
+        new QueryString("?warehouseId=4&search=bolt")) ==
+        "/app/inventory/availability?warehouseId=4&search=bolt",
+    "Retired read-only MVC surfaces must keep exact permission-protected Angular redirects, query preservation and no controller/view artifact");
 Check(
     typeof(InventoryReconciliationApiController).GetCustomAttribute<RouteAttribute>()?.Template ==
         "api/v1/inventory-reconciliation" &&
@@ -3591,10 +3585,6 @@ Check(plannedTransferMovement.Status == StockMovementStatus.Posted && plannedTra
 plannedTransferMovement.Reverse("canceller");
 Check(plannedTransferMovement.Status == StockMovementStatus.Reversed && plannedTransferMovement.ReversedAt.HasValue,
     "Cancelling a posted transfer must reverse its physical movement stages");
-var stockMovementIndex = typeof(StockMovementsController).GetMethod(nameof(StockMovementsController.Index))!;
-Check(stockMovementIndex.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
-      $"{PermissionAuthorizeAttribute.PolicyPrefix}StockMovements.View",
-    "Physical stock movement history must require its dedicated view permission");
 var inventoryBalance = new InventoryBalance(1, 1, null, 12m);
 inventoryBalance.SetReserved(4m);
 Check(inventoryBalance.OnHand == 12m && inventoryBalance.Reserved == 4m && inventoryBalance.Available == 8m,
@@ -3608,10 +3598,6 @@ var unassignedBalanceIndex = db.Model.FindEntityType(typeof(InventoryBalance))!.
 Check(unassignedBalanceIndex.Properties.Select(property => property.Name)
         .SequenceEqual(["TenantId", nameof(InventoryBalance.ProductId), nameof(InventoryBalance.WarehouseId)]),
     "Inventory balances must allow only one protected unassigned row per tenant product and warehouse");
-var inventoryBalancesIndex = typeof(InventoryBalancesController).GetMethod(nameof(InventoryBalancesController.Index))!;
-Check(inventoryBalancesIndex.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
-      $"{PermissionAuthorizeAttribute.PolicyPrefix}InventoryBalances.View",
-    "Inventory availability must require its dedicated view permission");
 var reservation = new InventoryReservation(
     InventoryReservationSourceType.StockTransfer, 10, "TR-10", "approver");
 reservation.AddLine(1, 1, null, 4m);
@@ -3639,10 +3625,6 @@ Check(partialReservation.Status==InventoryReservationStatus.Active&&partialReser
 partialReservation.Consume(new Dictionary<long,decimal>{{0,3m}},"picker");
 Check(partialReservation.Status==InventoryReservationStatus.Consumed&&partialReservation.ClosedAt.HasValue,
     "A reservation must close only when every remaining quantity is consumed");
-var inventoryReservationsIndex = typeof(InventoryReservationsController).GetMethod(nameof(InventoryReservationsController.Index))!;
-Check(inventoryReservationsIndex.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
-      $"{PermissionAuthorizeAttribute.PolicyPrefix}InventoryReservations.View",
-    "Inventory reservation history must require its dedicated view permission");
 var stockTransferApi = typeof(StockTransfersApiController);
 Check(stockTransferApi.GetCustomAttribute<RouteAttribute>()?.Template == "api/v1/stock-transfers",
     "Stock-transfer Angular traffic must use the versioned internal API route");
@@ -3895,10 +3877,6 @@ Check(replenishmentApi.GetMethod(nameof(ReplenishmentApiController.CreateTransfe
 Check(ReplenishmentPurchaseDemandService.CalculatePurchaseQuantity(23m, 1m, 10m, 3m, 2m) == 4m,
     "Replenishment purchase demand must convert stock demand and round up to supplier minimums and order multiples");
 
-var insightsIndex = typeof(InventoryInsightsController).GetMethod(nameof(InventoryInsightsController.Index))!;
-Check(insightsIndex.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
-      $"{PermissionAuthorizeAttribute.PolicyPrefix}InventoryInsights.View",
-    "Inventory insights must require its dedicated view permission");
 Check(typeof(InventoryInsightsApiController).GetCustomAttribute<RouteAttribute>()?.Template ==
       "api/v1/inventory-insights" &&
       typeof(InventoryInsightsApiController).GetMethod(nameof(InventoryInsightsApiController.Get))!

@@ -128,10 +128,10 @@ localized feedback. The session culture is authoritative on startup, and `lang`/
 | `Views/StockTransactions/{Index,Create}.cshtml` | paged/filterable movement list with unit cost, movement value and variance; manual adjustments include reason-required kitchen variance. |
 | `Views/WarehouseLocations/{Index,Create,Edit}.cshtml`, `Views/UnassignedStock/Index.cshtml` | parent-indented location master data plus warehouse/product search; WarehouseLocations receives projected Application DTOs rather than domain entities. Putaway-rule administration and capacity-aware suggestions remain unchanged. |
 | `Views/Replenishment/Index.cshtml` | permission-separated min/max management and reviewed suggestions that explicitly create either a Draft transfer from a preferred warehouse or a traced Draft Purchase Request when purchasing is the source. |
-| `Views/InventoryInsights/Index.cshtml` | bilingual read-only slow/dead stock analysis with warehouse, product, status and threshold filters. |
+| `Views/InventoryInsights/Index.cshtml` | RETIRED by MOD-030G; protected legacy links redirect to the bilingual Angular inventory-insights workspace. |
 | `Views/InventoryScanning/Index.cshtml` | bilingual adjustment/product/source/destination lookup with permission-gated putaway, relocation or absolute Draft line count; blind counts hide balances. |
 | `Views/LocationMovements/Index.cshtml` | same-warehouse rack/bin relocation form with filtered choices, available quantity and searchable movement history. |
-| `Views/InventoryReconciliation/Index.cshtml` | bilingual read-only WMS exception report comparing warehouse quantity/value, assigned/unassigned location quantity and the latest movement snapshot, with warehouse/search/exception/page filters. |
+| `Views/InventoryReconciliation/Index.cshtml` | RETIRED by MOD-030G; protected legacy links redirect to the Angular reconciliation workspace with query preservation. |
 | `Views/PurchaseAccountingReconciliation/Index.cshtml` | responsive bilingual read-only financial reconciliation cards for warehouse Inventory versus GL and receipt-derived GRNI versus GL, with as-of-date filtering, exception/open-only mode, source-document links and permission-aware setup actions. |
 | `Views/ProductAttributes/{Index,Values}.cshtml` | bilingual definition administration plus per-product typed value assignment with required/category/option validation. |
 | `Views/ProductTemplates/Index.cshtml` | bilingual template creation, existing-SKU assignment and grouped variant listing. |
@@ -195,7 +195,8 @@ Buttons and navigation are permission-filtered; APIs remain authoritative and MV
 Bilingual read-only Product/Warehouse/Location projection showing OnHand, Reserved and Available. The system-owned Unassigned row is visibly distinguished and cannot be managed as a normal storage location.
 ## Inventory reservations
 
-`InventoryReservations/Index` is a bilingual, permission-protected audit list of source reference, lifecycle status, line count, total quantity and create/close times.
+The MVC `InventoryReservations/Index` screen was retired by MOD-030G. The permission-protected legacy route now redirects
+to the bilingual Angular audit list with source, lifecycle, quantity and time evidence preserved by the existing API.
 
 Angular `/inventory/availability` is the bilingual, permission-protected dimensional availability list with product search, named
 warehouse filtering and paging. Angular `/inventory/reservations` is the matching reservation-history list with reference and

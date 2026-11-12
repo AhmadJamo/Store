@@ -17,6 +17,14 @@ under `/app`; MOD-030B..D commit Customers, Suppliers, Products, AnalyticsCenter
 is path-scoped and static-only, so API authorization, tenant middleware and MVC routing retain their existing boundaries.
 See `decisions/ADR-20261025-REVERSIBLE-PRESENTATION-CUTOVER.md` and `modernization/PHASE_30_CUTOVER.md`.
 
+Physical presentation retirement is a separate deployment boundary from reversible runtime cutover. `MOD-030G` removes
+only the approved read-only InventoryBalances, InventoryReservations, InventoryInsights, InventoryReconciliation and
+StockMovements MVC controllers/views after verifying their Angular/API counterparts. A centralized retired-route catalog
+continues to authorize legacy GET/HEAD URLs with the original permission policy, preserves query strings and redirects
+both controller-root and explicit `Index` aliases to `/app`. Retired surfaces are excluded from the active cutover catalog;
+their rollback is deployment of the previous build, while all Application services, APIs, mutations, downloads and data
+contracts remain unchanged. See `decisions/2026-11-12-mvc-retirement-cohort-boundary.md`.
+
 The Angular visual layer uses semantic CSS custom properties as its stable component contract. Runtime theme and density choices alter root data attributes and tokens rather than duplicating markup. Locale owns `lang`/`dir`; components use logical CSS. The server session culture wins at bootstrap, and a language change writes the same server cookie before changing visible Angular state. A neutral locale signal keeps session consumers aligned without introducing a session/interceptor cycle. Browser storage contains only versioned, non-sensitive UI preferences and is never an authority for server culture, permissions or business state. See `modernization/PHASE_03_VISUAL_SYSTEM.md`.
 
 The first business slice, Customers, proves coexistence rather than replacement. MVC and `/api/v1/customers` share the same Application service and DTO authority; Angular adds no direct repository or EF path. Server-side paging, numbering, policy resolution, validation, transaction and concurrency remain behind that boundary. The Angular feature keeps API models/client, presentation components and a separate stylesheet within one feature folder and integrates with the reusable workspace without persisting form payloads.

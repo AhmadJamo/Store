@@ -1,5 +1,13 @@
 # AI Work Log
 
+- 2026-11-12: Completed the separately approved `MOD-030G` first physical MVC retirement pilot. Removed five read-only
+  inventory controllers and five Index Razor views, removed their active cutover/configuration entries and added a
+  reusable permission-protected legacy GET/HEAD redirect catalog that preserves both URL forms and query strings.
+  The generated active inventory is now 77 MVC controllers, 406 actions and 212 Razor files; five R1 surfaces are
+  recorded as physically retired and only three R1 surfaces remain. Release built without warnings/errors, all 1,866
+  security/inventory checks passed and authenticated Edge acceptance passed 145 routes. No mutation, download,
+  database, accounting, financial/public or R2/R3/R4 surface changed; rollback is deployment of the previous build.
+
 - 2026-11-12: Completed `MOD-030F` as a non-destructive MVC retirement dependency inventory. Extended the generated
   migration evidence and unified stale-artifact gate to classify all 411 MVC actions across 82 surfaces and account for
   all 217 Razor files. The result identifies 143 Angular-default presentation candidates, 226 retained mutations, nine

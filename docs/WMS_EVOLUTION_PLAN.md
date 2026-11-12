@@ -653,6 +653,9 @@ tests/InventorySqlIntegration/InventorySqlIntegration.csproj
 tests/InventorySqlIntegration/Program.cs
 ```
 
+MOD-030G retirement note (2026-11-12): the listed MVC controller/view were later removed after Angular/API parity.
+The protected legacy URLs redirect to `/app/inventory/reconciliation`; the Application service and SQL controls remain.
+
 Files to modify:
 
 ```text
@@ -767,6 +770,9 @@ MiniStore.Web/Controllers/Inventory/StockMovementsController.cs
 MiniStore.Web/Views/StockMovements/Index.cshtml
 docs/decisions/<date>-physical-stock-movement-ledger.md
 ```
+
+MOD-030G retirement note (2026-11-12): the listed MVC controller/view were later removed after Angular/API parity.
+The protected legacy URLs redirect to `/app/inventory/location-movements`; the ledger service remains authoritative.
 
 Files to modify first for the pilot:
 

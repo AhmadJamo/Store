@@ -10,6 +10,7 @@ $repoRoot = Split-Path -Parent $PSScriptRoot
 $webRoot = Join-Path $repoRoot "MiniStore.Web"
 $angularRoutesPath = Join-Path $repoRoot "MiniStore Front-End/src/app/app.routes.ts"
 $cutoverCatalogPath = Join-Path $webRoot "Presentation/Cutover/PresentationCutoverRouteCatalog.cs"
+$retiredCatalogPath = Join-Path $webRoot "Presentation/Cutover/RetiredPresentationRouteCatalog.cs"
 $appSettingsPath = Join-Path $webRoot "appsettings.json"
 $output = Join-Path $repoRoot $OutputPath
 $acceptanceOutput = Join-Path $repoRoot $AcceptanceMatrixPath
@@ -37,10 +38,6 @@ GoodsReceiptReturns|/purchases/receipt-returns
 GoodsReceipts|/purchases/receipts
 Home|/
 InventoryAdjustments|/inventory/adjustments
-InventoryBalances|/inventory/availability
-InventoryInsights|/inventory/insights
-InventoryReconciliation|/inventory/reconciliation
-InventoryReservations|/inventory/reservations
 InventoryScanning|/inventory/scanning
 InventoryTracking|/inventory/tracking
 JournalEntries|/accounting/journal-entries/:id
@@ -78,7 +75,6 @@ SalesQuotations|/sales/quotations
 SalesQuotationTemplates|/sales/quotation-templates
 SalesReturns|/sales/legacy-returns
 Settings|/settings
-StockMovements|/inventory/location-movements
 StockTransactions|/inventory/transactions
 StockTransfers|/inventory/transfers
 Subscription|/subscription
@@ -120,6 +116,26 @@ foreach ($entry in $surfaceRoutes.GetEnumerator()) {
     }
 }
 
+$retiredRows = [regex]::Matches(
+    (Get-Content $retiredCatalogPath -Raw),
+    'new\("(?<surface>[^"]+)",\s*"(?<route>[^"]+)",\s*"(?<permission>[^"]+)"\)') |
+    ForEach-Object {
+        [pscustomobject]@{
+            Surface = $_.Groups["surface"].Value
+            AngularRoute = $_.Groups["route"].Value
+            Permission = $_.Groups["permission"].Value
+        }
+    }
+$retiredSurfaces = @($retiredRows.Surface)
+foreach ($row in $retiredRows) {
+    if (-not $angularRoutes.Contains($row.AngularRoute)) {
+        throw "Retired MVC surface '$($row.Surface)' targets missing Angular route '$($row.AngularRoute)'."
+    }
+    if ($surfaceRoutes.ContainsKey($row.Surface)) {
+        throw "Retired MVC surface '$($row.Surface)' cannot remain in the active MVC counterpart map."
+    }
+}
+
 $cutoverRoutes = @{}
 [regex]::Matches((Get-Content $cutoverCatalogPath -Raw), '\["(?<key>[^"]+)"\]\s*=\s*"(?<route>[^"]+)"') |
     ForEach-Object { $cutoverRoutes[$_.Groups["key"].Value] = $_.Groups["route"].Value }
@@ -129,6 +145,10 @@ $mutationOnlyMvcSurfaces = @($cutoverConfiguration.MutationOnlyMvcSurfaces)
 $angularDefaultSurfaces = @($cutoverSettings.PSObject.Properties |
     Where-Object { $_.Value -eq "AngularDefault" } |
     ForEach-Object { $_.Name })
+$retiredConfiguredSurfaces = @($retiredSurfaces | Where-Object { $angularDefaultSurfaces -contains $_ })
+if ($retiredConfiguredSurfaces.Count -gt 0) {
+    throw "Retired MVC surfaces cannot remain in PresentationCutover settings: $($retiredConfiguredSurfaces -join ', ')."
+}
 $presentationDefault = if ($angularDefaultSurfaces.Count -eq 0) {
     "MVC"
 } elseif ($mutationOnlyMvcSurfaces.Count -gt 0) {
@@ -253,6 +273,10 @@ $controlRows = $viewFiles | Where-Object { $_.Directory.Name -ne "Shared" } | Fo
 } | Sort-Object Surface, View
 
 $allSurfaces = @($viewRows.Surface) + @($actionRows.Surface) | Sort-Object -Unique
+$retiredMvcArtifacts = @($retiredSurfaces | Where-Object { $allSurfaces -contains $_ })
+if ($retiredMvcArtifacts.Count -gt 0) {
+    throw "Retired MVC surfaces still expose controller actions or user-facing views: $($retiredMvcArtifacts -join ', ')."
+}
 $unknownMutationOnlySurfaces = @($mutationOnlyMvcSurfaces | Where-Object { $_ -notin $allSurfaces })
 if ($unknownMutationOnlySurfaces.Count -gt 0) {
     throw "Configured mutation-only MVC surfaces were not discovered: $($unknownMutationOnlySurfaces -join ', ')."
@@ -390,6 +414,7 @@ $lines.Add("- Angular application routes discovered: $($angularRoutes.Count).")
 $lines.Add("- Presentation surfaces with a verified Angular counterpart: $($pilotSurfaces.Count).")
 $lines.Add("- Remaining presentation surfaces without a mapped Angular counterpart: $($remainingSurfaces.Count).")
 $lines.Add("- Mutation-only MVC compatibility surfaces: $($mutationOnlyMvcSurfaces.Count) ($(if($mutationOnlyMvcSurfaces){$mutationOnlyMvcSurfaces -join ', '}else{'none'})).")
+$lines.Add("- Physically retired presentation surfaces with protected legacy redirects: $($retiredRows.Count) ($($retiredSurfaces -join ', ')).")
 $lines.Add("- Allowlisted Angular-default cutover actions: $($cutoverRoutes.Count).")
 $lines.Add("")
 $lines.Add("Remaining presentation surfaces: $(if($remainingSurfaces){$remainingSurfaces -join ', '}else{'none'}).")
@@ -426,6 +451,7 @@ $matrixLines.Add('> Generated from source by scripts/generate-mvc-migration-regi
 $matrixLines.Add('')
 $matrixLines.Add("- Presentation counterparts covered: $($pilotSurfaces.Count).")
 $matrixLines.Add("- Mutation-only MVC compatibility boundaries: $($mutationOnlyMvcSurfaces.Count) ($(if($mutationOnlyMvcSurfaces){$mutationOnlyMvcSurfaces -join ', '}else{'none'})).")
+$matrixLines.Add("- Physically retired MVC presentation surfaces: $($retiredRows.Count) ($($retiredSurfaces -join ', ')); protected legacy redirects remain outside the reversible cutover catalog.")
 $matrixLines.Add("- Presentation default: $presentationDefault.")
 $matrixLines.Add('- Evidence baseline: generated MVC view/action inventory, verified Angular route, controller permission references and acceptance gate.')
 $matrixLines.Add('- Runtime dual-run samples and cutover rehearsal results are appended by the MOD-029 acceptance workflow; this static matrix performs no mutation.')
@@ -442,7 +468,7 @@ $retirementLines = [System.Collections.Generic.List[string]]::new()
 $retirementLines.Add('# MVC retirement dependency inventory')
 $retirementLines.Add('')
 $retirementLines.Add('> Generated from source by `scripts/generate-mvc-migration-registry.ps1`. Do not edit inventory rows manually.')
-$retirementLines.Add('> MOD-030F is non-destructive: this inventory authorizes no controller, Razor file, route or rollback deletion.')
+$retirementLines.Add('> MOD-030F created the non-destructive baseline. MOD-030G records the first separately approved physical retirement pilot.')
 $retirementLines.Add('')
 $retirementLines.Add('## Decision')
 $retirementLines.Add('')
@@ -462,6 +488,7 @@ $retirementLines.Add("- Retained compatibility, ambiguous-verb, session or non-c
 $retirementLines.Add("- Razor files discovered: $($viewFiles.Count); shared infrastructure files: $($sharedRazorFiles.Count).")
 $retirementLines.Add("- Presentation-only pilot surfaces: $(@($retirementRows | Where-Object Cohort -eq 'R1 - presentation-only pilot candidate').Count).")
 $retirementLines.Add("- Mixed-controller surfaces blocked from early view deletion: $(@($retirementRows | Where-Object Cohort -like 'R2 -*').Count).")
+$retirementLines.Add("- Physically retired R1 surfaces with protected legacy redirects: $($retiredRows.Count).")
 $retirementLines.Add('')
 $retirementLines.Add('The exact action and Razor paths remain in `MVC_MIGRATION_REGISTRY.md`; this file adds retirement dependency classification and cohort gates without duplicating that source inventory.')
 $retirementLines.Add('')
@@ -474,9 +501,15 @@ $retirementLines.Add('| R2 | Mixed presentation plus MVC mutation/download/sessi
 $retirementLines.Add('| R3 | No presentation candidate; MVC still owns a route, session decision, ambiguous verb or other compatibility behavior. | Explicit replacement or permanent-boundary decision before deletion. |')
 $retirementLines.Add('| R4 | Declared mutation-only compatibility surface. | Preserve unless a separately approved architecture change replaces it. |')
 $retirementLines.Add('')
-$retirementLines.Add('## Recommended first deletion pilot')
+$retirementLines.Add('## Completed first deletion pilot')
 $retirementLines.Add('')
-$retirementLines.Add('If the owner separately approves physical deletion, start with the five read-only inventory surfaces `InventoryBalances`, `InventoryReservations`, `InventoryInsights`, `InventoryReconciliation` and `StockMovements`. Each has one Angular-default presentation action, no discovered MVC mutation/download/session dependency and one Razor view. Keep `JournalEntries`, `PurchaseAccountingReconciliation` and anonymous `Public` out of the first pilot because their financial or public-entry risk deserves a later cohort even though they are structurally R1.')
+$retirementLines.Add('MOD-030G physically retired the five read-only inventory surfaces `InventoryBalances`, `InventoryReservations`, `InventoryInsights`, `InventoryReconciliation` and `StockMovements`. Their controller actions, Razor views and reversible cutover entries are gone; permission-protected GET/HEAD legacy redirects preserve both `/Controller` and `/Controller/Index` links with query strings. `JournalEntries`, `PurchaseAccountingReconciliation` and anonymous `Public` remain out of this pilot because their financial or public-entry risk deserves a later cohort even though they are structurally R1.')
+$retirementLines.Add('')
+$retirementLines.Add('| Retired MVC surface | Angular destination | Required permission |')
+$retirementLines.Add('|---|---|---|')
+foreach ($row in $retiredRows | Sort-Object Surface) {
+    $retirementLines.Add("| $($row.Surface) | $($row.AngularRoute) | $($row.Permission) |")
+}
 $retirementLines.Add('')
 $retirementLines.Add('## Surface inventory')
 $retirementLines.Add('')
@@ -503,9 +536,9 @@ $retirementLines.Add('4. Decide how `PresentationCutover` and MVC rollback behav
 $retirementLines.Add('5. Obtain explicit owner approval for that bounded deletion batch.')
 $retirementLines.Add('6. Run Release, regression, generated-inventory, Angular and authenticated browser acceptance, then record deployment rollback evidence.')
 $retirementLines.Add('')
-$retirementLines.Add('## MOD-030F outcome')
+$retirementLines.Add('## Current outcome')
 $retirementLines.Add('')
-$retirementLines.Add('Inventory and dependency classification are complete. No physical retirement batch is approved by this document. The next logical migration task is a separately approved R1 pilot selected from the generated presentation-only surfaces; if none is operationally suitable, retire API-equivalent command dependencies from one R2 feature before removing its views.')
+$retirementLines.Add('MOD-030F inventory and the separately approved MOD-030G read-only inventory pilot are complete. Five MVC presentation actions and five Razor views are physically retired behind protected legacy redirects. No R2/R3/R4 surface is approved for deletion; the next cohort must receive separate owner approval.')
 
 New-Item -ItemType Directory -Force -Path (Split-Path -Parent $retirementOutput) | Out-Null
 $retirementLines | Set-Content -Path $retirementOutput -Encoding utf8

@@ -18,6 +18,7 @@
 | New/deleted/renamed file | codebase map plus all linked documentation |
 | Architectural decision | architecture, ADR, affected module docs, TODO/worklog |
 | Internal API/Angular contract | API DTO/service/controller, auth/tenant/antiforgery behavior, OpenAPI, Angular client/interceptor, architecture, security, configuration, dependencies, modernization phase, map, tests and worklog |
+| MVC presentation retirement | exact controllers/views/references, protected legacy-route behavior, cutover configuration/catalog, modernization inventory/phase, controller/screen/module maps, ADR, tests, TODO and worklog |
 
 Security regression executable: `tests/SecurityRegression` must be reviewed/run when changing permission evaluation, identity mutation policy or delete action HTTP methods. Shared policy helper is mapped in `01_CODEBASE_MAP.md`.
 

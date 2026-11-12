@@ -26,12 +26,10 @@ Provides protected list/details/create, inspection completion and draft cancella
 | StockTransactions | Index/Create | movement permissions/service. |
 | WarehouseLocations / UnassignedStock | hierarchical location search/create/edit, putaway-rule administration and capacity-aware suggested putaway | WarehouseLocations uses DTO-only `StorageLocationService` projections with no direct repository; warehouse/product-stock permissions and location/putaway services. |
 | Replenishment | reviewed shortage suggestions, rule management and explicitly reviewed Draft transfer creation | Inventory.Replenishment.View/Manage plus StockTransfers.Create for draft conversion. |
-| InventoryInsights | read-only positive-stock activity, slow/dead thresholds and movement-history exceptions | InventoryInsights.View. |
 | InventoryScanning | exact adjustment/product/source/destination resolution, availability, putaway, relocation and Draft line counting | InventoryScanning.View; Putaway adds ProductStock.Edit, Relocate adds LocationMovements.Create and Count adds InventoryAdjustments.Count; mutations use antiforgery. |
 | ProductAttributes | typed attribute dictionary create/list/activation and per-product value assignment | Products View/Edit permissions and ProductAttributeService. |
 | ProductTemplates | template creation, existing-SKU assignment/removal and grouped variant listing | Products View/Edit permissions and ProductTemplateService. |
 | LocationMovements | Index/Move | LocationMovements.View/Create and LocationMovementService. |
-| InventoryReconciliation | Index | InventoryReconciliation.View; read-only Application service over tenant-filtered SQL aggregate queries. |
 | PurchaseAccountingReconciliation | Index | PurchaseAccountingReconciliation.View; read-only as-of-date Inventory/GL and receipt-derived GRNI/GL comparison with localized validation. |
 | Purchases | Index/Create/Details | Purchases.View/Create; PurchaseService and master repositories for dropdowns. |
 | Sales | Index/Details/Create/Pos/Post | Sales.View/Create; SaleService validates and snapshots optional invoice tax plus POS order context/item notes; SalePostingService creates the one-time balanced revenue, output-tax and COGS journal; PosExperienceSettingsService supplies terminal-specific runtime presentation/workflow. |
@@ -69,13 +67,12 @@ Roles.Delete now requires POST and antiforgery. User/role mutations require curr
 Authenticated /onboarding endpoints display, complete or skip new-company setup through the Application contract. Registration and pending-company login redirect here; Home resumes unresolved setup. The controller does not access EF.
 ## WMS-015D product variant generation
 `ProductTemplatesController` provides antiforgery-protected preview and generate actions. Both require `Products.Edit`; generation recomputes the bounded plan server-side and creates only missing signatures.
-## StockMovementsController
-Read-only WMS-020 pilot ledger protected by `StockMovements.View`. The controller delegates all queries and reconciliation projection to the Application service.
-## InventoryBalancesController
-Read-only WMS-040 availability screen protected by `InventoryBalances.View`. Product, warehouse and location mapping stays in the Application service.
+## Retired read-only inventory MVC presentation
 
-## InventoryReservationsController
-Read-only WMS-050 reservation history protected by `InventoryReservations.View`. Filtering and projection remain in the Application service.
+MOD-030G removed `StockMovementsController`, `InventoryBalancesController`, `InventoryReservationsController`,
+`InventoryInsightsController` and `InventoryReconciliationController` plus their five Index views. Their existing
+Application services and versioned APIs remain authoritative. A central permission-protected GET/HEAD catalog redirects
+both `/Controller` and `/Controller/Index` legacy URLs, preserving query strings; rollback is now deployment-level.
 
 ## SalesOrdersController
 SAL-040 list/detail, one-time quotation conversion, confirmation and cancellation plus SAL-050 reservation history/create/release endpoints. The GET reservation page requires SalesOrders.View; mutations use separate Reserve and ReleaseReservation permissions and antiforgery. The controller delegates all order, balance, warehouse/location and cumulative-quantity rules to Application services.

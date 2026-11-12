@@ -3,6 +3,7 @@ using MiniStore.Infrastructure.Persistence;
 using MiniStore.Web.Middleware;
 using MiniStore.Web.Observability;
 using MiniStore.Web.Middleware.Api;
+using MiniStore.Web.Presentation.Cutover;
 
 namespace MiniStore.Web.Configuration;
 
@@ -73,6 +74,7 @@ public static class WebApplicationExtensions
             ResponseWriter = WriteHealthResponseAsync
         }).AllowAnonymous();
         app.MapControllers();
+        RetiredPresentationRouteCatalog.Map(app);
         app.MapOpenApi("/openapi/{documentName}.json").RequireAuthorization();
         app.MapControllerRoute(
                 name: "default",

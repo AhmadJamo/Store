@@ -184,11 +184,19 @@ static async Task RunLiveCutoverAsync(
         new("/Products/Create", "/app/products/new", "Products.Create"),
         new("/InventoryBalances?search=cutover-rehearsal",
             "/app/inventory/availability?search=cutover-rehearsal", "InventoryBalances.View"),
+        new("/InventoryBalances/Index?search=cutover-rehearsal",
+            "/app/inventory/availability?search=cutover-rehearsal", "InventoryBalances.View"),
         new("/InventoryReservations?search=cutover-rehearsal",
+            "/app/inventory/reservations?search=cutover-rehearsal", "InventoryReservations.View"),
+        new("/InventoryReservations/Index?search=cutover-rehearsal",
             "/app/inventory/reservations?search=cutover-rehearsal", "InventoryReservations.View"),
         new("/InventoryInsights?attentionOnly=true",
             "/app/inventory/insights?attentionOnly=true", "InventoryInsights.View"),
+        new("/InventoryInsights/Index?attentionOnly=true",
+            "/app/inventory/insights?attentionOnly=true", "InventoryInsights.View"),
         new("/InventoryReconciliation?exceptionsOnly=true&page=1",
+            "/app/inventory/reconciliation?exceptionsOnly=true&page=1", "InventoryReconciliation.View"),
+        new("/InventoryReconciliation/Index?exceptionsOnly=true&page=1",
             "/app/inventory/reconciliation?exceptionsOnly=true&page=1", "InventoryReconciliation.View"),
         new("/StockTransactions?movement=incoming&page=2",
             "/app/inventory/transactions?movement=incoming&page=2", "StockTransactions.View"),
@@ -201,6 +209,7 @@ static async Task RunLiveCutoverAsync(
         new("/StockTransfers/Create", "/app/inventory/transfers/new", "StockTransfers.Create"),
         new("/InventoryTracking?focus=expiration", "/app/inventory/tracking?focus=expiration", "InventoryTracking.View"),
         new("/StockMovements?source=transfer", "/app/inventory/location-movements?source=transfer", "StockMovements.View"),
+        new("/StockMovements/Index?source=transfer", "/app/inventory/location-movements?source=transfer", "StockMovements.View"),
         new("/WarehouseLocations?warehouseId=1&query=rack", "/app/inventory/locations?warehouseId=1&query=rack", "Warehouses.View"),
         new("/UnassignedStock?warehouseId=1&sort=quantity-desc", "/app/inventory/putaway?warehouseId=1&sort=quantity-desc", "ProductStock.View"),
         new("/LocationMovements?warehouseId=1&query=transfer", "/app/inventory/location-movements?warehouseId=1&query=transfer", "LocationMovements.View"),
@@ -1002,7 +1011,10 @@ static async Task RunLiveCutoverAsync(
             .Split(new[] { '/', '?' }, StringSplitOptions.RemoveEmptyEntries)[0];
         var response = await authenticated.GetAsync(probe.MvcPath,
             new APIRequestContextOptions { MaxRedirects = 0 });
-        var expectsAngular = options.CutoverMode == "angular" ||
+        var physicallyRetired = surface is "InventoryBalances" or "InventoryReservations" or
+            "InventoryInsights" or "InventoryReconciliation" or "StockMovements";
+        var expectsAngular = physicallyRetired ||
+                             options.CutoverMode == "angular" ||
                              options.CutoverMode == "pilot" &&
                              surface is "Customers" or "Suppliers" or "Products" or "AnalyticsCenter" or "Settings" or
                                  "InventoryBalances" or "InventoryReservations" or "InventoryInsights" or

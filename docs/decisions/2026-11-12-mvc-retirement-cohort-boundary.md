@@ -28,3 +28,10 @@ verification set and obtain explicit owner approval.
 - Broad controller/view deletion is blocked for mixed surfaces.
 - The first proposed deletion pilot is limited to five read-only inventory surfaces.
 - Financial, public, authentication, download and mutation boundaries remain for later explicit decisions.
+
+## First implementation — MOD-030G
+
+The owner separately approved the five read-only inventory R1 surfaces. Their controllers, Index views, active cutover
+entries and AngularDefault settings were removed. A central endpoint catalog now preserves legacy GET/HEAD links under
+the original permission policies and forwards query strings to Angular. This is intentionally not a second MVC fallback:
+rollback deploys the previous commit/build. Financial and public R1 surfaces remain untouched.

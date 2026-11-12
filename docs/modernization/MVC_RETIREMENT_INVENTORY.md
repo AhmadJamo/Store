@@ -1,7 +1,7 @@
 # MVC retirement dependency inventory
 
 > Generated from source by `scripts/generate-mvc-migration-registry.ps1`. Do not edit inventory rows manually.
-> MOD-030F is non-destructive: this inventory authorizes no controller, Razor file, route or rollback deletion.
+> MOD-030F created the non-destructive baseline. MOD-030G records the first separately approved physical retirement pilot.
 
 ## Decision
 
@@ -9,15 +9,16 @@ Physical MVC retirement must follow feature-sized, reversible cohorts. A Razor v
 
 ## Reconciliation
 
-- MVC controllers: 82.
-- MVC actions classified: 411 of 411.
-- Angular-default presentation actions eligible for cohort review: 143.
+- MVC controllers: 77.
+- MVC actions classified: 406 of 406.
+- Angular-default presentation actions eligible for cohort review: 138.
 - Retained MVC mutation actions: 226.
 - Retained download/generated-file actions: 9.
 - Retained compatibility, ambiguous-verb, session or non-cutover actions: 33.
-- Razor files discovered: 217; shared infrastructure files: 11.
-- Presentation-only pilot surfaces: 8.
+- Razor files discovered: 212; shared infrastructure files: 11.
+- Presentation-only pilot surfaces: 3.
 - Mixed-controller surfaces blocked from early view deletion: 54.
+- Physically retired R1 surfaces with protected legacy redirects: 5.
 
 The exact action and Razor paths remain in `MVC_MIGRATION_REGISTRY.md`; this file adds retirement dependency classification and cohort gates without duplicating that source inventory.
 
@@ -30,9 +31,17 @@ The exact action and Razor paths remain in `MVC_MIGRATION_REGISTRY.md`; this fil
 | R3 | No presentation candidate; MVC still owns a route, session decision, ambiguous verb or other compatibility behavior. | Explicit replacement or permanent-boundary decision before deletion. |
 | R4 | Declared mutation-only compatibility surface. | Preserve unless a separately approved architecture change replaces it. |
 
-## Recommended first deletion pilot
+## Completed first deletion pilot
 
-If the owner separately approves physical deletion, start with the five read-only inventory surfaces `InventoryBalances`, `InventoryReservations`, `InventoryInsights`, `InventoryReconciliation` and `StockMovements`. Each has one Angular-default presentation action, no discovered MVC mutation/download/session dependency and one Razor view. Keep `JournalEntries`, `PurchaseAccountingReconciliation` and anonymous `Public` out of the first pilot because their financial or public-entry risk deserves a later cohort even though they are structurally R1.
+MOD-030G physically retired the five read-only inventory surfaces `InventoryBalances`, `InventoryReservations`, `InventoryInsights`, `InventoryReconciliation` and `StockMovements`. Their controller actions, Razor views and reversible cutover entries are gone; permission-protected GET/HEAD legacy redirects preserve both `/Controller` and `/Controller/Index` links with query strings. `JournalEntries`, `PurchaseAccountingReconciliation` and anonymous `Public` remain out of this pilot because their financial or public-entry risk deserves a later cohort even though they are structurally R1.
+
+| Retired MVC surface | Angular destination | Required permission |
+|---|---|---|
+| InventoryBalances | /inventory/availability | InventoryBalances.View |
+| InventoryInsights | /inventory/insights | InventoryInsights.View |
+| InventoryReconciliation | /inventory/reconciliation | InventoryReconciliation.View |
+| InventoryReservations | /inventory/reservations | InventoryReservations.View |
+| StockMovements | /inventory/location-movements | StockMovements.View |
 
 ## Surface inventory
 
@@ -56,10 +65,6 @@ If the owner separately approves physical deletion, start with the five read-onl
 | GoodsReceipts | 4 | 6 | 0 | 0 | 4 | R2 - mixed controller; retain views until commands/downloads retire |
 | Home | 0 | 0 | 0 | 1 | 1 | R3 - retained MVC boundary; API/session decision required |
 | InventoryAdjustments | 3 | 5 | 0 | 0 | 3 | R2 - mixed controller; retain views until commands/downloads retire |
-| InventoryBalances | 1 | 0 | 0 | 0 | 1 | R1 - presentation-only pilot candidate |
-| InventoryInsights | 1 | 0 | 0 | 0 | 1 | R1 - presentation-only pilot candidate |
-| InventoryReconciliation | 1 | 0 | 0 | 0 | 1 | R1 - presentation-only pilot candidate |
-| InventoryReservations | 1 | 0 | 0 | 0 | 1 | R1 - presentation-only pilot candidate |
 | InventoryScanning | 1 | 3 | 0 | 0 | 1 | R2 - mixed controller; retain views until commands/downloads retire |
 | InventoryTracking | 1 | 6 | 0 | 0 | 1 | R2 - mixed controller; retain views until commands/downloads retire |
 | JournalEntries | 1 | 0 | 0 | 0 | 1 | R1 - presentation-only pilot candidate |
@@ -102,7 +107,6 @@ If the owner separately approves physical deletion, start with the five read-onl
 | SalesQuotationTemplates | 3 | 4 | 0 | 0 | 3 | R2 - mixed controller; retain views until commands/downloads retire |
 | SalesReturns | 0 | 1 | 0 | 3 | 3 | R3 - retained MVC boundary; API/session decision required |
 | Settings | 17 | 18 | 1 | 0 | 17 | R2 - mixed controller; retain views until commands/downloads retire |
-| StockMovements | 1 | 0 | 0 | 0 | 1 | R1 - presentation-only pilot candidate |
 | StockTransactions | 2 | 1 | 0 | 0 | 2 | R2 - mixed controller; retain views until commands/downloads retire |
 | StockTransfers | 4 | 8 | 0 | 0 | 4 | R2 - mixed controller; retain views until commands/downloads retire |
 | Subscription | 1 | 1 | 0 | 0 | 2 | R2 - mixed controller; retain views until commands/downloads retire |
@@ -403,6 +407,6 @@ If the owner separately approves physical deletion, start with the five read-onl
 5. Obtain explicit owner approval for that bounded deletion batch.
 6. Run Release, regression, generated-inventory, Angular and authenticated browser acceptance, then record deployment rollback evidence.
 
-## MOD-030F outcome
+## Current outcome
 
-Inventory and dependency classification are complete. No physical retirement batch is approved by this document. The next logical migration task is a separately approved R1 pilot selected from the generated presentation-only surfaces; if none is operationally suitable, retire API-equivalent command dependencies from one R2 feature before removing its views.
+MOD-030F inventory and the separately approved MOD-030G read-only inventory pilot are complete. Five MVC presentation actions and five Razor views are physically retired behind protected legacy redirects. No R2/R3/R4 surface is approved for deletion; the next cohort must receive separate owner approval.
