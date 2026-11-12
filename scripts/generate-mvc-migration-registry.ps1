@@ -40,7 +40,6 @@ Home|/
 InventoryAdjustments|/inventory/adjustments
 InventoryScanning|/inventory/scanning
 InventoryTracking|/inventory/tracking
-JournalEntries|/accounting/journal-entries/:id
 LandedCosts|/purchases/landed-costs
 LocationMovements|/inventory/location-movements
 PaymentMethods|/products/catalog-masters
@@ -50,7 +49,6 @@ Products|/products
 ProductStocks|/inventory/stocks
 ProductTemplates|/products/templates
 Public|/welcome,/pricing
-PurchaseAccountingReconciliation|/purchases/accounting-reconciliation
 PurchaseAgreements|/purchases/agreements
 PurchaseAnalytics|/purchases/analytics
 PurchaseApprovalRules|/purchases/approval-rules
@@ -118,17 +116,19 @@ foreach ($entry in $surfaceRoutes.GetEnumerator()) {
 
 $retiredRows = [regex]::Matches(
     (Get-Content $retiredCatalogPath -Raw),
-    'new\("(?<surface>[^"]+)",\s*"(?<route>[^"]+)",\s*"(?<permission>[^"]+)"\)') |
+    'new\("(?<surface>[^"]+)",\s*"(?<route>[^"]+)",\s*"(?<permission>[^"]+)"(?:,\s*"(?<action>[^"]+)")?\)') |
     ForEach-Object {
         [pscustomobject]@{
             Surface = $_.Groups["surface"].Value
             AngularRoute = $_.Groups["route"].Value
             Permission = $_.Groups["permission"].Value
+            Action = $(if ($_.Groups["action"].Success) { $_.Groups["action"].Value } else { "Index" })
         }
     }
 $retiredSurfaces = @($retiredRows.Surface)
 foreach ($row in $retiredRows) {
-    if (-not $angularRoutes.Contains($row.AngularRoute)) {
+    $angularLookupRoute = $row.AngularRoute -replace '\{([^}]+)\}', ':$1'
+    if (-not $angularRoutes.Contains($angularLookupRoute)) {
         throw "Retired MVC surface '$($row.Surface)' targets missing Angular route '$($row.AngularRoute)'."
     }
     if ($surfaceRoutes.ContainsKey($row.Surface)) {
@@ -468,7 +468,7 @@ $retirementLines = [System.Collections.Generic.List[string]]::new()
 $retirementLines.Add('# MVC retirement dependency inventory')
 $retirementLines.Add('')
 $retirementLines.Add('> Generated from source by `scripts/generate-mvc-migration-registry.ps1`. Do not edit inventory rows manually.')
-$retirementLines.Add('> MOD-030F created the non-destructive baseline. MOD-030G records the first separately approved physical retirement pilot.')
+$retirementLines.Add('> MOD-030F created the non-destructive baseline. MOD-030G and MOD-030H record the separately approved physical retirement cohorts.')
 $retirementLines.Add('')
 $retirementLines.Add('## Decision')
 $retirementLines.Add('')
@@ -501,9 +501,9 @@ $retirementLines.Add('| R2 | Mixed presentation plus MVC mutation/download/sessi
 $retirementLines.Add('| R3 | No presentation candidate; MVC still owns a route, session decision, ambiguous verb or other compatibility behavior. | Explicit replacement or permanent-boundary decision before deletion. |')
 $retirementLines.Add('| R4 | Declared mutation-only compatibility surface. | Preserve unless a separately approved architecture change replaces it. |')
 $retirementLines.Add('')
-$retirementLines.Add('## Completed first deletion pilot')
+$retirementLines.Add('## Completed physical retirement cohorts')
 $retirementLines.Add('')
-$retirementLines.Add('MOD-030G physically retired the five read-only inventory surfaces `InventoryBalances`, `InventoryReservations`, `InventoryInsights`, `InventoryReconciliation` and `StockMovements`. Their controller actions, Razor views and reversible cutover entries are gone; permission-protected GET/HEAD legacy redirects preserve both `/Controller` and `/Controller/Index` links with query strings. `JournalEntries`, `PurchaseAccountingReconciliation` and anonymous `Public` remain out of this pilot because their financial or public-entry risk deserves a later cohort even though they are structurally R1.')
+$retirementLines.Add('MOD-030G physically retired five read-only inventory surfaces. MOD-030H then retired `JournalEntries.Details` and `PurchaseAccountingReconciliation.Index` after separate owner approval and API/Angular parity review. Their controller actions, Razor views and reversible cutover entries are gone; permission-protected GET/HEAD legacy redirects preserve exact actions, positive journal IDs and query strings. Anonymous `Public` remains the only structurally R1 surface and is not approved for deletion.')
 $retirementLines.Add('')
 $retirementLines.Add('| Retired MVC surface | Angular destination | Required permission |')
 $retirementLines.Add('|---|---|---|')
@@ -538,7 +538,7 @@ $retirementLines.Add('6. Run Release, regression, generated-inventory, Angular a
 $retirementLines.Add('')
 $retirementLines.Add('## Current outcome')
 $retirementLines.Add('')
-$retirementLines.Add('MOD-030F inventory and the separately approved MOD-030G read-only inventory pilot are complete. Five MVC presentation actions and five Razor views are physically retired behind protected legacy redirects. No R2/R3/R4 surface is approved for deletion; the next cohort must receive separate owner approval.')
+$retirementLines.Add('MOD-030F inventory and the separately approved MOD-030G/MOD-030H cohorts are complete. Seven MVC presentation actions and seven Razor views are physically retired behind protected legacy redirects. Anonymous `Public` is the only remaining R1 surface; no Public or R2/R3/R4 deletion is approved.')
 
 New-Item -ItemType Directory -Force -Path (Split-Path -Parent $retirementOutput) | Out-Null
 $retirementLines | Set-Content -Path $retirementOutput -Encoding utf8

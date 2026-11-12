@@ -1,6 +1,6 @@
 # Accounting module
 
-> Last reviewed: 2026-11-07
+> Last reviewed: 2026-11-12
 
 The current Angular accounting presentation includes the chart-of-accounts list/create surface, posted journal-entry detail
 routes reached from business documents, and administration-owned accounting setup for fiscal periods, exchange rates and
@@ -41,3 +41,7 @@ changes an earlier Draft. View/Manage/Run permissions, antiforgery and semantic 
 Current limitations remain explicit: account re-parenting/status management, automatic closing entries, bulk journals,
 budgets, bank reconciliation and consolidation are not implemented. Recurring runs are human-triggered and Draft-only;
 operational posting and fiscal-period rules remain unchanged.
+
+MOD-030H physically retires the legacy `JournalEntries.Details` MVC controller/view after confirming the existing
+`JournalEntriesApiController` and Angular detail route. Positive-ID legacy links remain permission-protected redirects;
+the query service, immutable evidence, tenant filtering and all posting/reversal authorities are unchanged.

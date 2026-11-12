@@ -116,8 +116,8 @@ UnassignedStock, LocationMovements and InventoryScanning
 redirect their Index GET actions to exact Angular workspaces with query preservation. WarehouseLocations Create/Edit
 deep links remain MVC because the Angular workspace does not yet consume create/edit URL intent; all writes remain MVC/API.
 
-Current MOD-030G snapshot: five approved read-only inventory presentation surfaces are now physically retired, while
-77 MVC controllers, 406 actions and 212 Razor files remain active. The generated retirement inventory is authoritative
+Current MOD-030H snapshot: seven approved read-only inventory/financial presentation surfaces are now physically retired, while
+75 MVC controllers, 404 actions and 210 Razor files remain active. The generated retirement inventory is authoritative
 for the current cohort counts; the preceding MOD-030E4N figures are retained as historical runtime-cutover evidence.
 
 `ReplenishmentApiController` exposes the reviewed inventory projection plus independently protected rule, transfer-draft
@@ -657,8 +657,8 @@ workspace, persistent-tab/unsaved-form behavior and generated-journal evidence l
 | `Controllers/Sales/SalesOrdersController.cs`, `Views/SalesOrders/*` | one-time quotation conversion, permission-separated confirmation/cancellation and responsive full/partial reservation/release/history workflow | SAL-040/050 order services, permissions and sales docs. |
 | `Controllers/Sales/SalesDeliveriesController.cs`, `Views/SalesDeliveries/*` | permission-separated delivery list/create/detail, Draft cancellation and atomic posting with state-aware completion/next-step guidance | SAL-060 delivery service, permissions, inventory and accounting docs. |
 | `Controllers/Sales/CustomerInvoicesController.cs`, `Views/CustomerInvoices/*` | six-permission invoice lifecycle, responsive source/accounting evidence, one-time post and controlled reversal | SAL-070/080 invoice service and accounting docs. |
-| `Controllers/Accounting/JournalEntriesController.cs`, `Views/JournalEntries/Details.cshtml` | dedicated-permission read-only source-linked journal detail with responsive dimensional lines | JournalEntryQueryService and accounting docs. |
-| `Presentation/Cutover/RetiredPresentationRouteCatalog.cs` | permission-protected legacy GET/HEAD redirects for five physically retired read-only inventory MVC surfaces | Angular inventory routes, existing permission policies and deployment rollback. |
+| `Controllers/Api/V1/JournalEntriesApiController.cs`, Angular journal routes | dedicated-permission read-only journal directory/detail API and Angular evidence presentation | JournalEntryQueryService and accounting docs; legacy MVC Details is retired by MOD-030H. |
+| `Presentation/Cutover/RetiredPresentationRouteCatalog.cs` | permission-protected legacy GET/HEAD redirects for seven physically retired read-only MVC surfaces, including positive journal IDs | Angular inventory/financial routes, existing permission policies and deployment rollback. |
 | `Controllers/Inventory/InventoryAdjustmentsController.cs` | permission-split count/approve/post/cancel workflow | InventoryAdjustments views and service. |
 | `Controllers/Inventory/InventoryTrackingController.cs` | permission-protected opening allocation, tracking report and quarantine/release commands | InventoryTracking view and service. |
 | `Controllers/Purchases/SupplierPurchasingController.cs` | permission-split bilingual supplier-first bulk purchasing-data administration | PUR-010 service and `Views/SupplierPurchasing/Index.cshtml`. |
@@ -714,7 +714,7 @@ workspace, persistent-tab/unsaved-form behavior and generated-journal evidence l
 | `Controllers/Purchases/{PurchaseAgreements,PurchaseTemplates}Controller.cs`, matching views | permission-split agreement creation/activation/release and repeat-template creation/generation | PUR-120 services. |
 | `Controllers/Purchases/LandedCostsController.cs`, `Views/LandedCosts/*` | permission-split landed-cost history, allocation capture and immutable detail | PUR-130 service. |
 | `Controllers/Purchases/PurchaseAnalyticsController.cs`, `Views/PurchaseAnalytics/Index.cshtml` | permission-protected responsive purchasing dashboard with KPI sources, trends, drill-through exceptions, buyer workload and final lifecycle acceptance | PUR-140/PUR-280 analytics service. |
-| `Controllers/Purchases/PurchaseAccountingReconciliationController.cs`, `Views/PurchaseAccountingReconciliation/Index.cshtml` | permission-protected read-only Inventory/GL and GRNI/GL reconciliation with responsive evidence cards and setup/source links | PUR-160 reconciliation service. |
+| `Controllers/Api/V1/PurchaseAccountingReconciliationApiController.cs`, Angular reconciliation route | permission-protected read-only Inventory/GL and GRNI/GL reconciliation with responsive evidence cards and setup/source links | PUR-160 reconciliation service; legacy MVC Index is retired by MOD-030H. |
 | `Views/Settings/PurchaseMatching.cshtml` | administration screen for quantity and price tolerance percentages | PUR-090 settings service. |
 | `Views/Settings/WorkflowCatalog.cshtml` | responsive bilingual 62-step catalog grouped into seven ERP modules and phases, with module navigation, step owner, reviewer, control principle, completion evidence and authorized destination | `WorkflowCatalogService`; Administration access. |
 | `Areas/Platform/*` | separately authenticated platform-owner control center for plans, companies/subscriptions, promotion codes and pending payment confirmations | SaaS module. |
@@ -784,12 +784,12 @@ For exact module relationships, use `modules/*.md`; for entity and service detai
 - `MiniStore Front-End/src/app/features/products/`: paged product-catalog Angular feature.
 - `scripts/verify-angular-modernization.ps1`: reusable migration acceptance command.
 - `scripts/generate-mvc-migration-registry.ps1`: source-driven MVC view, action and Razor-control inventory generator.
-- `MiniStore.Web/Presentation/Cutover/`: active reversible presentation modes plus the MOD-030G retired-route catalog;
+- `MiniStore.Web/Presentation/Cutover/`: active reversible presentation modes plus the MOD-030G/MOD-030H retired-route catalog;
   retired routes stay permission-protected and preserve query strings but no longer expose an MVC rollback switch.
-- `docs/modernization/MVC_MIGRATION_REGISTRY.md`: generated 77-MVC-controller, 194-user-facing-view,
-  406-MVC-action and 204-Razor-control-row active migration registry; do not edit rows manually.
-- `docs/modernization/MVC_RETIREMENT_INVENTORY.md`: generated active classification for 406 MVC actions and
-  212 Razor files, plus five physically retired R1 surfaces, three remaining R1 surfaces and 54 mixed-controller blockers.
+- `docs/modernization/MVC_MIGRATION_REGISTRY.md`: generated 75-MVC-controller, 192-user-facing-view,
+  404-MVC-action and 202-Razor-control-row active migration registry; do not edit rows manually.
+- `docs/modernization/MVC_RETIREMENT_INVENTORY.md`: generated active classification for 404 MVC actions and
+  210 Razor files, plus seven physically retired R1 surfaces, one remaining Public R1 surface and 54 mixed-controller blockers.
 - `docs/decisions/2026-11-12-mvc-retirement-cohort-boundary.md`: R1..R4 retirement boundaries, separate deletion
   approval rule and legacy-link/cutover/rollback obligations.
 - `docs/decisions/ADR-20261025-REVERSIBLE-PRESENTATION-CUTOVER.md`: cutover/rollback boundary and rationale.

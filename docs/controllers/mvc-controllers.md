@@ -84,7 +84,12 @@ SAL-080 `CustomerInvoicesController` exposes filtered list/detail, order-scoped 
 
 SAL-090 `CustomerPaymentsController` exposes a searchable receipt list, invoice-scoped allocation form, immutable details/journal links and reasoned reversal. It never accesses EF directly; the Application service enforces same-customer/currency, outstanding caps, exchange treatment and Serializable concurrency.
 
-`JournalEntriesController` exposes only permission-protected Details and delegates the tenant-filtered read projection to `JournalEntryQueryService`; it has no create/edit/delete action.
+`JournalEntriesController` was retired by MOD-030H. The existing permission-protected `JournalEntriesApiController` now
+remains the only Web read boundary for the Angular journal directory/detail, and still delegates tenant-filtered projection
+to `JournalEntryQueryService`. The protected legacy Details route accepts only a positive ID and redirects to Angular.
+
+`PurchaseAccountingReconciliationController` was also retired by MOD-030H. Its existing read-only API and Application
+service remain authoritative; protected legacy Index URLs preserve filters while redirecting to Angular.
 
 ## InventoryAdjustmentsController
 WMS-060 list/create/details plus antiforgery-protected Count, Approve, Post and Cancel actions. Each mutation has a dedicated permission and delegates all rules to the Application service.

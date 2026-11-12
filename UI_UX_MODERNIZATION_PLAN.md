@@ -390,3 +390,12 @@ largest underrepresented modules; production deployment readiness and physical M
 - Kept the existing Angular feature components and server-authored APIs unchanged; no business or database rule moved.
 - Established deployment rollback as the rollback mechanism after physical deletion.
 - Release built cleanly, 1,866 security/inventory checks passed and authenticated Edge acceptance passed 145 routes.
+
+## MOD-030H — financial read-only MVC retirement — COMPLETED 2026-11-12
+
+- Retired `JournalEntries.Details` and `PurchaseAccountingReconciliation.Index` MVC controllers/views after explicit approval.
+- Kept the existing versioned API controllers, Angular pages, Application services and financial calculations unchanged.
+- Extended the reusable retired-route catalog with exact action mapping and positive journal-ID substitution.
+- Preserved reconciliation filters and journal query strings under the original permission policies.
+- Active inventory is 75 MVC controllers, 404 actions and 210 Razor files; seven surfaces are retired and Public is the sole remaining R1 surface.
+- Release built cleanly, 1,860 security/inventory checks passed and authenticated Edge acceptance passed 146 routes.

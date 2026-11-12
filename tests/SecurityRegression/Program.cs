@@ -384,23 +384,6 @@ Check(purchaseAnalyticsCutoverResolver.Resolve(cutoverContext.Request, "Purchase
       purchaseAnalyticsCutoverResolver.Resolve(cutoverContext.Request, "PurchaseAnalytics", "Export",
           new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null,
     "Purchase analytics cutover must resolve only the exact read-only Index route");
-var purchaseReconciliationCutoverResolver = new PresentationCutoverResolver(Options.Create(
-    new PresentationCutoverOptions
-    {
-        AngularBasePath = "/app",
-        Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
-        {
-            ["PurchaseAccountingReconciliation"] = PresentationCutoverMode.AngularDefault
-        }
-    }));
-Check(purchaseReconciliationCutoverResolver.Resolve(cutoverContext.Request,
-          "PurchaseAccountingReconciliation", "Index",
-          new Microsoft.AspNetCore.Routing.RouteValueDictionary()) ==
-      "/app/purchases/accounting-reconciliation?page=2" &&
-      purchaseReconciliationCutoverResolver.Resolve(cutoverContext.Request,
-          "PurchaseAccountingReconciliation", "Post",
-          new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null,
-    "Purchase accounting reconciliation cutover must resolve only the exact read-only Index route");
 var purchaseReplenishmentCutoverResolver = new PresentationCutoverResolver(Options.Create(
     new PresentationCutoverOptions
     {
@@ -1497,22 +1480,6 @@ Check(accountsCutoverResolver.Resolve(cutoverContext.Request,
       accountsCutoverResolver.Resolve(cutoverContext.Request,
           "Accounts", "Create", new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null,
     "Accounts cutover must resolve the tree while keeping account creation outside presentation cutover");
-var journalEntriesCutoverResolver = new PresentationCutoverResolver(Options.Create(
-    new PresentationCutoverOptions
-    {
-        AngularBasePath = "/app",
-        Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
-        {
-            ["JournalEntries"] = PresentationCutoverMode.AngularDefault
-        }
-    }));
-cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?source=cutover");
-Check(journalEntriesCutoverResolver.Resolve(cutoverContext.Request,
-          "JournalEntries", "Details", new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 17 }) ==
-      "/app/accounting/journal-entries/17?source=cutover" &&
-      new long[] { -1, 0 }.All(id => journalEntriesCutoverResolver.Resolve(cutoverContext.Request,
-          "JournalEntries", "Details", new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = id }) is null),
-    "Journal-entry cutover must require a positive identifier and preserve query values");
 var supplierPaymentsCutoverResolver = new PresentationCutoverResolver(Options.Create(
     new PresentationCutoverOptions
     {
@@ -2709,7 +2676,7 @@ Check(db.Model.FindEntityType(typeof(CustomerCreditNote))!.GetIndexes().Any(inde
 Check(DocumentSequence.CreateDefault(DocumentNumberType.CustomerCreditNote).Preview(DateTime.Today).StartsWith("CCN-"),
     "Customer credit notes must use an independent centralized CCN document sequence");
 Check(PermissionDefinitions.All.Count(x=>x.Name=="JournalEntries.View")==1&&
-      typeof(JournalEntriesController).GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:JournalEntries.View",
+      typeof(JournalEntriesApiController).GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:JournalEntries.View",
     "Journal-entry evidence must require one dedicated server-side read permission");
 var invoiceOrder=new SalesOrder("SO-000002",salesQuotation,new DateOnly(2026,10,20),"user");
 typeof(SalesOrder).GetProperty(nameof(SalesOrder.Id))!.SetValue(invoiceOrder,81);
@@ -2902,7 +2869,7 @@ var webControllers = typeof(CustomersController).Assembly.GetTypes()
     .Where(x => typeof(Controller).IsAssignableFrom(x) && x.Name.EndsWith("Controller", StringComparison.Ordinal))
     .ToDictionary(x => x.Name[..^"Controller".Length], StringComparer.OrdinalIgnoreCase);
 var retiredNavigationTargets = RetiredPresentationRouteCatalog.All
-    .Select(route => $"{route.Controller}:Index")
+    .Select(route => $"{route.Controller}:{route.Action}")
     .ToHashSet(StringComparer.OrdinalIgnoreCase);
 bool IsRegisteredPresentationTarget(string controllerName, string actionName) =>
     retiredNavigationTargets.Contains($"{controllerName}:{actionName}") ||
@@ -3001,7 +2968,7 @@ Check(hardCodedActionMessages.Count == 0,
     $"User-facing controller messages must use localization resources. Files: {string.Join(", ", hardCodedActionMessages)}");
 var razorRouteFailures = new List<string>();
 var retiredRazorTargets = RetiredPresentationRouteCatalog.All
-    .Select(route => $"{route.Controller}:Index")
+    .Select(route => $"{route.Controller}:{route.Action}")
     .ToHashSet(StringComparer.OrdinalIgnoreCase);
 foreach (var viewPath in Directory.EnumerateFiles(webRoot, "*.cshtml", SearchOption.AllDirectories)
              .Where(path => !Path.GetFileName(path).StartsWith('_')))
@@ -3031,28 +2998,39 @@ foreach (var viewPath in Directory.EnumerateFiles(webRoot, "*.cshtml", SearchOpt
 }
 Check(razorRouteFailures.Count == 0,
     $"Every static Razor link and form must target an existing public controller action. Invalid targets: {string.Join(", ", razorRouteFailures)}");
-var expectedRetiredPresentationRoutes = new Dictionary<string, (string Route, string Permission)>
+var expectedRetiredPresentationRoutes = new Dictionary<string, (string Action, string Route, string Permission)>
 {
-    ["InventoryBalances"] = ("/inventory/availability", "InventoryBalances.View"),
-    ["InventoryReservations"] = ("/inventory/reservations", "InventoryReservations.View"),
-    ["InventoryInsights"] = ("/inventory/insights", "InventoryInsights.View"),
-    ["InventoryReconciliation"] = ("/inventory/reconciliation", "InventoryReconciliation.View"),
-    ["StockMovements"] = ("/inventory/location-movements", "StockMovements.View")
+    ["InventoryBalances"] = ("Index", "/inventory/availability", "InventoryBalances.View"),
+    ["InventoryReservations"] = ("Index", "/inventory/reservations", "InventoryReservations.View"),
+    ["InventoryInsights"] = ("Index", "/inventory/insights", "InventoryInsights.View"),
+    ["InventoryReconciliation"] = ("Index", "/inventory/reconciliation", "InventoryReconciliation.View"),
+    ["StockMovements"] = ("Index", "/inventory/location-movements", "StockMovements.View"),
+    ["JournalEntries"] = ("Details", "/accounting/journal-entries/{id}", "JournalEntries.View"),
+    ["PurchaseAccountingReconciliation"] = ("Index", "/purchases/accounting-reconciliation", "PurchaseAccountingReconciliation.View")
 };
 Check(
     RetiredPresentationRouteCatalog.All.Count == expectedRetiredPresentationRoutes.Count &&
     RetiredPresentationRouteCatalog.All.All(route =>
         expectedRetiredPresentationRoutes.TryGetValue(route.Controller, out var expected) &&
+        route.Action == expected.Action &&
         route.AngularRoute == expected.Route &&
         route.RequiredPermission == expected.Permission &&
-        !PresentationCutoverRouteCatalog.All.ContainsKey($"{route.Controller}:Index") &&
-        !File.Exists(Path.Combine(webRoot, "Controllers", "Inventory", $"{route.Controller}Controller.cs")) &&
-        !File.Exists(Path.Combine(webRoot, "Views", route.Controller, "Index.cshtml"))) &&
+        !PresentationCutoverRouteCatalog.All.ContainsKey($"{route.Controller}:{route.Action}") &&
+        !Directory.EnumerateFiles(Path.Combine(webRoot, "Controllers"), $"{route.Controller}Controller.cs", SearchOption.AllDirectories).Any() &&
+        !File.Exists(Path.Combine(webRoot, "Views", route.Controller, $"{route.Action}.cshtml"))) &&
     RetiredPresentationRouteCatalog.BuildTarget(
         "/app",
         "/inventory/availability",
         new QueryString("?warehouseId=4&search=bolt")) ==
         "/app/inventory/availability?warehouseId=4&search=bolt",
+    "Retired read-only MVC surfaces must keep exact permission-protected Angular redirects, query preservation and no controller/view artifact");
+Check(
+    RetiredPresentationRouteCatalog.BuildTarget(
+        "/app",
+        "/accounting/journal-entries/{id}",
+        new QueryString("?source=ledger"),
+        new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 17 }) ==
+        "/app/accounting/journal-entries/17?source=ledger",
     "Retired read-only MVC surfaces must keep exact permission-protected Angular redirects, query preservation and no controller/view artifact");
 Check(
     typeof(InventoryReconciliationApiController).GetCustomAttribute<RouteAttribute>()?.Template ==
@@ -3064,17 +3042,14 @@ Check(
         .Where(method => method.DeclaringType == typeof(InventoryReconciliationApiController))
         .All(method => method.GetCustomAttribute<HttpPostAttribute>() is null),
     "Angular inventory reconciliation must remain a dedicated permission-protected read contract");
-var purchaseAccountingReconciliationIndex = typeof(PurchaseAccountingReconciliationController)
-    .GetMethod(nameof(PurchaseAccountingReconciliationController.Index))!;
 Check(
-    purchaseAccountingReconciliationIndex.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
-        $"{PermissionAuthorizeAttribute.PolicyPrefix}PurchaseAccountingReconciliation.View",
-    "Purchase accounting reconciliation report must enforce its dedicated view permission");
-Check(
-    typeof(PurchaseAccountingReconciliationController).GetMethods(BindingFlags.Instance | BindingFlags.Public)
-        .Where(method => method.DeclaringType == typeof(PurchaseAccountingReconciliationController))
+    typeof(PurchaseAccountingReconciliationApiController).GetMethod(nameof(PurchaseAccountingReconciliationApiController.Get))!
+        .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
+        $"{PermissionAuthorizeAttribute.PolicyPrefix}PurchaseAccountingReconciliation.View" &&
+    typeof(PurchaseAccountingReconciliationApiController).GetMethods(BindingFlags.Instance | BindingFlags.Public)
+        .Where(method => method.DeclaringType == typeof(PurchaseAccountingReconciliationApiController))
         .All(method => method.GetCustomAttribute<HttpPostAttribute>() is null),
-    "Purchase accounting reconciliation controller must remain read-only");
+    "Purchase accounting reconciliation API must remain dedicated-permission protected and read-only");
 
 var locationMovement = new LocationMovement(
     productId: 1,

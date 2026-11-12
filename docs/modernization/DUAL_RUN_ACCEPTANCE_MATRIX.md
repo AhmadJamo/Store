@@ -2,9 +2,9 @@
 
 > Generated from source by scripts/generate-mvc-migration-registry.ps1. Do not edit rows manually.
 
-- Presentation counterparts covered: 76.
+- Presentation counterparts covered: 74.
 - Mutation-only MVC compatibility boundaries: 1 (Language).
-- Physically retired MVC presentation surfaces: 5 (InventoryBalances, InventoryReservations, InventoryInsights, InventoryReconciliation, StockMovements); protected legacy redirects remain outside the reversible cutover catalog.
+- Physically retired MVC presentation surfaces: 7 (InventoryBalances, InventoryReservations, InventoryInsights, InventoryReconciliation, StockMovements, JournalEntries, PurchaseAccountingReconciliation); protected legacy redirects remain outside the reversible cutover catalog.
 - Presentation default: AngularDefault for all presentation surfaces; mutation-only MVC compatibility: Language.
 - Evidence baseline: generated MVC view/action inventory, verified Angular route, controller permission references and acceptance gate.
 - Runtime dual-run samples and cutover rehearsal results are appended by the MOD-029 acceptance workflow; this static matrix performs no mutation.
@@ -31,7 +31,6 @@
 | InventoryAdjustments | /InventoryAdjustments | /inventory/adjustments | Read/write | InventoryAdjustments.Approve, InventoryAdjustments.Cancel, InventoryAdjustments.Count, InventoryAdjustments.Create, InventoryAdjustments.Post, InventoryAdjustments.View | Inventory | 3 view(s); 8 action(s); route/source gate |
 | InventoryScanning | /InventoryScanning | /inventory/scanning | Read/write | InventoryAdjustments.Count, InventoryScanning.View, LocationMovements.Create, ProductStock.Edit | Inventory | 1 view(s); 4 action(s); route/source gate |
 | InventoryTracking | /InventoryTracking | /inventory/tracking | Read/write | InventoryTracking.ManageQuarantine, InventoryTracking.ManageRecall, InventoryTracking.Open, InventoryTracking.View | Inventory | 1 view(s); 7 action(s); route/source gate |
-| JournalEntries | /JournalEntries | /accounting/journal-entries/:id | Read-only | JournalEntries.View | Financial | 1 view(s); 1 action(s); route/source gate |
 | LandedCosts | /LandedCosts | /purchases/landed-costs | Read/write | LandedCosts.Create, LandedCosts.View | Financial | 3 view(s); 1 action(s); route/source gate |
 | Language | /Language/Set | Not applicable (mutation-only) | Mutation-only compatibility | Public/session boundary | Identity/tenant | 0 view(s); 1 POST action(s); antiforgery/source gate |
 | LocationMovements | /LocationMovements | /inventory/location-movements | Read/write | LocationMovements.Create, LocationMovements.View | Inventory | 1 view(s); 2 action(s); route/source gate |
@@ -46,7 +45,6 @@
 | ProductStocks | /ProductStocks | /inventory/stocks | Read/write | ProductStock.Create, ProductStock.Delete, ProductStock.Edit, ProductStock.View | Inventory | 3 view(s); 6 action(s); route/source gate |
 | ProductTemplates | /ProductTemplates | /products/templates | Read/write | Products.Edit, Products.View | Standard | 1 view(s); 5 action(s); route/source gate |
 | Public | / | /welcome, /pricing | Read-only | Public/session boundary | Standard | 2 view(s); 2 action(s); route/source gate |
-| PurchaseAccountingReconciliation | /PurchaseAccountingReconciliation | /purchases/accounting-reconciliation | Read-only | PurchaseAccountingReconciliation.View | Financial | 1 view(s); 1 action(s); route/source gate |
 | PurchaseAgreements | /PurchaseAgreements | /purchases/agreements | Read/write | PurchaseAgreements.Activate, PurchaseAgreements.Cancel, PurchaseAgreements.Create, PurchaseAgreements.Release, PurchaseAgreements.View | Standard | 3 view(s); 4 action(s); route/source gate |
 | PurchaseAnalytics | /PurchaseAnalytics | /purchases/analytics | Read-only | PurchaseAnalytics.View | Standard | 1 view(s); 1 action(s); route/source gate |
 | PurchaseApprovalRules | /PurchaseApprovalRules | /purchases/approval-rules | Read/write | PurchaseApprovalRules.Manage, PurchaseApprovalRules.View | Standard | 1 view(s); 3 action(s); route/source gate |

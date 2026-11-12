@@ -25,6 +25,11 @@ both controller-root and explicit `Index` aliases to `/app`. Retired surfaces ar
 their rollback is deployment of the previous build, while all Application services, APIs, mutations, downloads and data
 contracts remain unchanged. See `decisions/2026-11-12-mvc-retirement-cohort-boundary.md`.
 
+`MOD-030H` applies the same boundary to two separately approved financial reads. `JournalEntries.Details` maps only a
+positive route ID to the Angular journal evidence page, and `PurchaseAccountingReconciliation.Index` preserves its query
+filters. Their existing versioned API controllers remain the presentation data boundary and continue delegating to the
+Application services; no financial calculation, validation, repository or posting authority moved into routing or Angular.
+
 The Angular visual layer uses semantic CSS custom properties as its stable component contract. Runtime theme and density choices alter root data attributes and tokens rather than duplicating markup. Locale owns `lang`/`dir`; components use logical CSS. The server session culture wins at bootstrap, and a language change writes the same server cookie before changing visible Angular state. A neutral locale signal keeps session consumers aligned without introducing a session/interceptor cycle. Browser storage contains only versioned, non-sensitive UI preferences and is never an authority for server culture, permissions or business state. See `modernization/PHASE_03_VISUAL_SYSTEM.md`.
 
 The first business slice, Customers, proves coexistence rather than replacement. MVC and `/api/v1/customers` share the same Application service and DTO authority; Angular adds no direct repository or EF path. Server-side paging, numbering, policy resolution, validation, transaction and concurrency remain behind that boundary. The Angular feature keeps API models/client, presentation components and a separate stylesheet within one feature folder and integrates with the reusable workspace without persisting form payloads.

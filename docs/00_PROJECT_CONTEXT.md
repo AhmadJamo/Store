@@ -24,8 +24,10 @@ accounted for and mixed controllers are blocked from early view deletion. No MVC
 retirement cohort still requires separate owner approval.
 `MOD-030G` then completed the separately approved first retirement pilot: five read-only inventory controllers and their
 five Razor views were removed. Permission-protected legacy GET/HEAD redirects preserve both historical URL forms and
-query strings while the Angular APIs remain authoritative. The active MVC inventory is now 77 controllers, 406 actions
-and 212 Razor files; financial, public and mixed surfaces remain approval-gated.
+query strings while the Angular APIs remain authoritative. `MOD-030H` subsequently retired the separately approved
+JournalEntries Details and PurchaseAccountingReconciliation Index MVC presentation after confirming the existing API and
+Angular replacements. The active inventory is now 75 MVC controllers, 404 actions and 210 Razor files; seven surfaces
+are physically retired and anonymous Public is the only remaining R1 surface. Public and mixed surfaces remain approval-gated.
 
 UX-009 adds permission-aware Purchasing, Sales and Accounting hubs with complete operational-route discovery. UX-010
 projects the tenant chart of accounts as an expandable hierarchy and adds a permission-protected, repository-paged journal

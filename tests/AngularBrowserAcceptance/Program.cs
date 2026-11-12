@@ -232,6 +232,9 @@ static async Task RunLiveCutoverAsync(
         new("/PurchaseAccountingReconciliation?asOfDate=2026-11-01&exceptionsOnly=false",
             "/app/purchases/accounting-reconciliation?asOfDate=2026-11-01&exceptionsOnly=false",
             "PurchaseAccountingReconciliation.View"),
+        new("/PurchaseAccountingReconciliation/Index?asOfDate=2026-11-01&exceptionsOnly=false",
+            "/app/purchases/accounting-reconciliation?asOfDate=2026-11-01&exceptionsOnly=false",
+            "PurchaseAccountingReconciliation.View"),
         new("/PurchaseReplenishment?source=cutover-rehearsal",
             "/app/purchases/replenishment?source=cutover-rehearsal",
             "PurchaseReplenishment.View"),
@@ -1012,7 +1015,8 @@ static async Task RunLiveCutoverAsync(
         var response = await authenticated.GetAsync(probe.MvcPath,
             new APIRequestContextOptions { MaxRedirects = 0 });
         var physicallyRetired = surface is "InventoryBalances" or "InventoryReservations" or
-            "InventoryInsights" or "InventoryReconciliation" or "StockMovements";
+            "InventoryInsights" or "InventoryReconciliation" or "StockMovements" or
+            "JournalEntries" or "PurchaseAccountingReconciliation";
         var expectsAngular = physicallyRetired ||
                              options.CutoverMode == "angular" ||
                              options.CutoverMode == "pilot" &&

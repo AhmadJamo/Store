@@ -35,3 +35,11 @@ The owner separately approved the five read-only inventory R1 surfaces. Their co
 entries and AngularDefault settings were removed. A central endpoint catalog now preserves legacy GET/HEAD links under
 the original permission policies and forwards query strings to Angular. This is intentionally not a second MVC fallback:
 rollback deploys the previous commit/build. Financial and public R1 surfaces remain untouched.
+
+## Second implementation — MOD-030H
+
+The owner separately approved the two financial read-only R1 surfaces after confirming their existing API and Angular
+replacements. `JournalEntries.Details` and `PurchaseAccountingReconciliation.Index` controllers/views and active cutover
+entries were removed. The centralized catalog now supports exact non-Index actions and positive route-ID substitution,
+while preserving permission policies and query strings. No posting, reconciliation calculation, repository or database
+boundary changed. Anonymous Public remains unapproved and is the only remaining R1 surface.

@@ -82,7 +82,11 @@ Views في 54 سطحًا مختلطًا قبل تقاعد mutation/download depe
 
 `MOD-030G` اكتمل في 2026-11-12: أزيلت خمسة Controllers وخمسة Views للمخزون القراءة فقط، وحُذفت مفاتيحها من
 الـcutover القابل للرجوع. كتالوج مركزي محمي بنفس الصلاحيات يحفظ صيغتي الرابط وquery ويتجه إلى Angular؛ الرجوع
-لهذه الدفعة أصبح deployment rollback. بقيت الأسطح المالية وPublic وكل R2/R3/R4 دون حذف.
+لهذه الدفعة أصبح deployment rollback.
+
+`MOD-030H` اكتمل في 2026-11-12 بعد موافقة مستقلة: أزيل سطحا JournalEntries Details و
+PurchaseAccountingReconciliation Index من MVC/Razor فقط، وبقيت API وAngular والخدمات المالية كما هي. أصبح Public
+هو سطح R1 الوحيد المتبقي ولا توجد موافقة على حذفه.
 
 ## ترتيب التنفيذ داخل كل موجة
 

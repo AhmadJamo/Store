@@ -1,7 +1,7 @@
 # MVC retirement dependency inventory
 
 > Generated from source by `scripts/generate-mvc-migration-registry.ps1`. Do not edit inventory rows manually.
-> MOD-030F created the non-destructive baseline. MOD-030G records the first separately approved physical retirement pilot.
+> MOD-030F created the non-destructive baseline. MOD-030G and MOD-030H record the separately approved physical retirement cohorts.
 
 ## Decision
 
@@ -9,16 +9,16 @@ Physical MVC retirement must follow feature-sized, reversible cohorts. A Razor v
 
 ## Reconciliation
 
-- MVC controllers: 77.
-- MVC actions classified: 406 of 406.
-- Angular-default presentation actions eligible for cohort review: 138.
+- MVC controllers: 75.
+- MVC actions classified: 404 of 404.
+- Angular-default presentation actions eligible for cohort review: 136.
 - Retained MVC mutation actions: 226.
 - Retained download/generated-file actions: 9.
 - Retained compatibility, ambiguous-verb, session or non-cutover actions: 33.
-- Razor files discovered: 212; shared infrastructure files: 11.
-- Presentation-only pilot surfaces: 3.
+- Razor files discovered: 210; shared infrastructure files: 11.
+- Presentation-only pilot surfaces: 1.
 - Mixed-controller surfaces blocked from early view deletion: 54.
-- Physically retired R1 surfaces with protected legacy redirects: 5.
+- Physically retired R1 surfaces with protected legacy redirects: 7.
 
 The exact action and Razor paths remain in `MVC_MIGRATION_REGISTRY.md`; this file adds retirement dependency classification and cohort gates without duplicating that source inventory.
 
@@ -31,9 +31,9 @@ The exact action and Razor paths remain in `MVC_MIGRATION_REGISTRY.md`; this fil
 | R3 | No presentation candidate; MVC still owns a route, session decision, ambiguous verb or other compatibility behavior. | Explicit replacement or permanent-boundary decision before deletion. |
 | R4 | Declared mutation-only compatibility surface. | Preserve unless a separately approved architecture change replaces it. |
 
-## Completed first deletion pilot
+## Completed physical retirement cohorts
 
-MOD-030G physically retired the five read-only inventory surfaces `InventoryBalances`, `InventoryReservations`, `InventoryInsights`, `InventoryReconciliation` and `StockMovements`. Their controller actions, Razor views and reversible cutover entries are gone; permission-protected GET/HEAD legacy redirects preserve both `/Controller` and `/Controller/Index` links with query strings. `JournalEntries`, `PurchaseAccountingReconciliation` and anonymous `Public` remain out of this pilot because their financial or public-entry risk deserves a later cohort even though they are structurally R1.
+MOD-030G physically retired five read-only inventory surfaces. MOD-030H then retired `JournalEntries.Details` and `PurchaseAccountingReconciliation.Index` after separate owner approval and API/Angular parity review. Their controller actions, Razor views and reversible cutover entries are gone; permission-protected GET/HEAD legacy redirects preserve exact actions, positive journal IDs and query strings. Anonymous `Public` remains the only structurally R1 surface and is not approved for deletion.
 
 | Retired MVC surface | Angular destination | Required permission |
 |---|---|---|
@@ -41,6 +41,8 @@ MOD-030G physically retired the five read-only inventory surfaces `InventoryBala
 | InventoryInsights | /inventory/insights | InventoryInsights.View |
 | InventoryReconciliation | /inventory/reconciliation | InventoryReconciliation.View |
 | InventoryReservations | /inventory/reservations | InventoryReservations.View |
+| JournalEntries | /accounting/journal-entries/{id} | JournalEntries.View |
+| PurchaseAccountingReconciliation | /purchases/accounting-reconciliation | PurchaseAccountingReconciliation.View |
 | StockMovements | /inventory/location-movements | StockMovements.View |
 
 ## Surface inventory
@@ -67,7 +69,6 @@ MOD-030G physically retired the five read-only inventory surfaces `InventoryBala
 | InventoryAdjustments | 3 | 5 | 0 | 0 | 3 | R2 - mixed controller; retain views until commands/downloads retire |
 | InventoryScanning | 1 | 3 | 0 | 0 | 1 | R2 - mixed controller; retain views until commands/downloads retire |
 | InventoryTracking | 1 | 6 | 0 | 0 | 1 | R2 - mixed controller; retain views until commands/downloads retire |
-| JournalEntries | 1 | 0 | 0 | 0 | 1 | R1 - presentation-only pilot candidate |
 | LandedCosts | 0 | 1 | 0 | 0 | 3 | R3 - retained MVC boundary; API/session decision required |
 | Language | 0 | 0 | 0 | 1 | 0 | R4 - permanent compatibility review |
 | LocationMovements | 1 | 1 | 0 | 0 | 1 | R2 - mixed controller; retain views until commands/downloads retire |
@@ -82,7 +83,6 @@ MOD-030G physically retired the five read-only inventory surfaces `InventoryBala
 | ProductStocks | 3 | 3 | 0 | 0 | 3 | R2 - mixed controller; retain views until commands/downloads retire |
 | ProductTemplates | 1 | 4 | 0 | 0 | 1 | R2 - mixed controller; retain views until commands/downloads retire |
 | Public | 2 | 0 | 0 | 0 | 2 | R1 - presentation-only pilot candidate |
-| PurchaseAccountingReconciliation | 1 | 0 | 0 | 0 | 1 | R1 - presentation-only pilot candidate |
 | PurchaseAgreements | 0 | 4 | 0 | 0 | 3 | R3 - retained MVC boundary; API/session decision required |
 | PurchaseAnalytics | 0 | 0 | 0 | 1 | 1 | R3 - retained MVC boundary; API/session decision required |
 | PurchaseApprovalRules | 1 | 2 | 0 | 0 | 1 | R2 - mixed controller; retain views until commands/downloads retire |
@@ -409,4 +409,4 @@ MOD-030G physically retired the five read-only inventory surfaces `InventoryBala
 
 ## Current outcome
 
-MOD-030F inventory and the separately approved MOD-030G read-only inventory pilot are complete. Five MVC presentation actions and five Razor views are physically retired behind protected legacy redirects. No R2/R3/R4 surface is approved for deletion; the next cohort must receive separate owner approval.
+MOD-030F inventory and the separately approved MOD-030G/MOD-030H cohorts are complete. Seven MVC presentation actions and seven Razor views are physically retired behind protected legacy redirects. Anonymous `Public` is the only remaining R1 surface; no Public or R2/R3/R4 deletion is approved.

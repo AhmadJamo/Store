@@ -42,8 +42,9 @@
   وحدد خمسة أسطح مخزون قراءة فقط كأول pilot مقترح؛ لم يُحذف شيء وما زالت كل دفعة حذف بحاجة لموافقة مستقلة.
 - `MOD-030G` — COMPLETE 2026-11-12: حُذفت خمسة Controllers وخمسة Views للمخزون القراءة فقط، واستُبدلت بروابط
   GET/HEAD قديمة محمية تحفظ query وتتجه إلى Angular. نجح Edge على 145 مسارًا؛ الرجوع أصبح deployment rollback.
-- `MOD-030H` — PROPOSED: مراجعة وتقاعد سطحي R1 الماليين JournalEntries Details وPurchaseAccountingReconciliation
-  Index فقط؛ يحتاج موافقة مستقلة ولا يشمل Public أو أي R2/R3/R4.
+- `MOD-030H` — COMPLETE 2026-11-12: تقاعد سطحي R1 الماليين JournalEntries Details وPurchaseAccountingReconciliation
+  Index بعد إثبات API/Angular؛ نجح Edge على 146 مسارًا وبقي Public وحده ضمن R1.
+- `MOD-030I` — PROPOSED: تدقيق حد Public المجهول المستقل؛ لا حذف قبل موافقة منفصلة وإثبات مسارات الدخول/التسعير.
 - `UX-001` — COMPLETE 2026-11-04: تدقيق واجهة Angular، خطة تحديث مستمرة، مجموعات تنقل مهنية بصلاحيات،
   breadcrumbs ثنائية اللغة وحفظ آمن لتفضيل فتح المجموعات دون تغيير الأعمال.
 - `UX-002` — COMPLETE 2026-11-05: عقد typed لسياق URL وذاكرة workspace المعزولة ومسودات آمنة مؤقتة،

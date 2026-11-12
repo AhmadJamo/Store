@@ -4,16 +4,16 @@
 
 ## Reconciliation
 
-- Controllers discovered: 165 total; 77 MVC; 88 API.
-- User-facing MVC views discovered: 194.
-- MVC actions discovered: 406.
-- Razor files included in the control inventory: 204.
+- Controllers discovered: 163 total; 75 MVC; 88 API.
+- User-facing MVC views discovered: 192.
+- MVC actions discovered: 404.
+- Razor files included in the control inventory: 202.
 - Angular application routes discovered: 194.
-- Presentation surfaces with a verified Angular counterpart: 76.
+- Presentation surfaces with a verified Angular counterpart: 74.
 - Remaining presentation surfaces without a mapped Angular counterpart: 0.
 - Mutation-only MVC compatibility surfaces: 1 (Language).
-- Physically retired presentation surfaces with protected legacy redirects: 5 (InventoryBalances, InventoryReservations, InventoryInsights, InventoryReconciliation, StockMovements).
-- Allowlisted Angular-default cutover actions: 178.
+- Physically retired presentation surfaces with protected legacy redirects: 7 (InventoryBalances, InventoryReservations, InventoryInsights, InventoryReconciliation, StockMovements, JournalEntries, PurchaseAccountingReconciliation).
+- Allowlisted Angular-default cutover actions: 176.
 
 Remaining presentation surfaces: none.
 
@@ -70,7 +70,6 @@ Statuses follow the migration lifecycle plus MVC Compatibility (mutation-only). 
 | InventoryAdjustments | Index.cshtml | Angular Default | /inventory/adjustments | MiniStore.Web/Views/InventoryAdjustments/Index.cshtml |
 | InventoryScanning | Index.cshtml | Angular Default | /inventory/scanning | MiniStore.Web/Views/InventoryScanning/Index.cshtml |
 | InventoryTracking | Index.cshtml | Angular Default | /inventory/tracking | MiniStore.Web/Views/InventoryTracking/Index.cshtml |
-| JournalEntries | Details.cshtml | Angular Default | /accounting/journal-entries/:id | MiniStore.Web/Views/JournalEntries/Details.cshtml |
 | LandedCosts | Create.cshtml | Angular Default | /purchases/landed-costs | MiniStore.Web/Views/LandedCosts/Create.cshtml |
 | LandedCosts | Details.cshtml | Angular Default | /purchases/landed-costs | MiniStore.Web/Views/LandedCosts/Details.cshtml |
 | LandedCosts | Index.cshtml | Angular Default | /purchases/landed-costs | MiniStore.Web/Views/LandedCosts/Index.cshtml |
@@ -99,7 +98,6 @@ Statuses follow the migration lifecycle plus MVC Compatibility (mutation-only). 
 | ProductTemplates | Index.cshtml | Angular Default | /products/templates | MiniStore.Web/Views/ProductTemplates/Index.cshtml |
 | Public | Index.cshtml | Angular Default | /welcome, /pricing | MiniStore.Web/Views/Public/Index.cshtml |
 | Public | Pricing.cshtml | Angular Default | /welcome, /pricing | MiniStore.Web/Views/Public/Pricing.cshtml |
-| PurchaseAccountingReconciliation | Index.cshtml | Angular Default | /purchases/accounting-reconciliation | MiniStore.Web/Views/PurchaseAccountingReconciliation/Index.cshtml |
 | PurchaseAgreements | Create.cshtml | Angular Default | /purchases/agreements | MiniStore.Web/Views/PurchaseAgreements/Create.cshtml |
 | PurchaseAgreements | Details.cshtml | Angular Default | /purchases/agreements | MiniStore.Web/Views/PurchaseAgreements/Details.cshtml |
 | PurchaseAgreements | Index.cshtml | Angular Default | /purchases/agreements | MiniStore.Web/Views/PurchaseAgreements/Index.cshtml |
@@ -321,7 +319,6 @@ Statuses follow the migration lifecycle plus MVC Compatibility (mutation-only). 
 | InventoryTracking | Quarantine | POST | Angular Default | /inventory/tracking | — | MiniStore.Web/Controllers/Inventory/InventoryTrackingController.cs |
 | InventoryTracking | RecordRecallCommunication | POST | Angular Default | /inventory/tracking | — | MiniStore.Web/Controllers/Inventory/InventoryTrackingController.cs |
 | InventoryTracking | Release | POST | Angular Default | /inventory/tracking | — | MiniStore.Web/Controllers/Inventory/InventoryTrackingController.cs |
-| JournalEntries | Details | GET | Angular Default | /accounting/journal-entries/:id | /accounting/journal-entries/{id} | MiniStore.Web/Controllers/Accounting/JournalEntriesController.cs |
 | LandedCosts | RedirectToAction | GET, POST | Angular Default | /purchases/landed-costs | — | MiniStore.Web/Controllers/Purchases/LandedCostsController.cs |
 | Language | Set | POST | MVC Compatibility (mutation-only) | Not applicable (mutation-only) | — | MiniStore.Web/Controllers/Settings/LanguageController.cs |
 | LocationMovements | Index | GET | Angular Default | /inventory/location-movements | /inventory/location-movements | MiniStore.Web/Controllers/Inventory/LocationMovementsController.cs |
@@ -377,7 +374,6 @@ Statuses follow the migration lifecycle plus MVC Compatibility (mutation-only). 
 | ProductTemplates | Preview | POST | Angular Default | /products/templates | — | MiniStore.Web/Controllers/Catalog/ProductTemplatesController.cs |
 | Public | Index | GET | Angular Default | /welcome, /pricing | /welcome | MiniStore.Web/Controllers/PublicController.cs |
 | Public | Pricing | GET | Angular Default | /welcome, /pricing | /pricing | MiniStore.Web/Controllers/PublicController.cs |
-| PurchaseAccountingReconciliation | Index | GET | Angular Default | /purchases/accounting-reconciliation | /purchases/accounting-reconciliation | MiniStore.Web/Controllers/Purchases/PurchaseAccountingReconciliationController.cs |
 | PurchaseAgreements | RedirectToAction | GET, POST | Angular Default | /purchases/agreements | — | MiniStore.Web/Controllers/Purchases/PurchaseAgreementsController.cs |
 | PurchaseAgreements | RedirectToAction | GET, POST | Angular Default | /purchases/agreements | — | MiniStore.Web/Controllers/Purchases/PurchaseAgreementsController.cs |
 | PurchaseAgreements | RedirectToAction | GET, POST | Angular Default | /purchases/agreements | — | MiniStore.Web/Controllers/Purchases/PurchaseAgreementsController.cs |
@@ -682,7 +678,6 @@ Statuses follow the migration lifecycle plus MVC Compatibility (mutation-only). 
 | InventoryAdjustments | Index.cshtml | 0 | 0 | 2 | Create, Details | MiniStore.Web/Views/InventoryAdjustments/Index.cshtml |
 | InventoryScanning | Index.cshtml | 4 | 4 | 0 | Count, Putaway, Relocate | MiniStore.Web/Views/InventoryScanning/Index.cshtml |
 | InventoryTracking | Index.cshtml | 5 | 7 | 0 | @(x.Status==InventoryTrackingStatus.Available?, CloseRecall, CreateRecall, Open, RecordRecallCommunication | MiniStore.Web/Views/InventoryTracking/Index.cshtml |
-| JournalEntries | Details.cshtml | 0 | 1 | 0 | — | MiniStore.Web/Views/JournalEntries/Details.cshtml |
 | LandedCosts | Create.cshtml | 1 | 1 | 1 | Create, Index | MiniStore.Web/Views/LandedCosts/Create.cshtml |
 | LandedCosts | Details.cshtml | 0 | 0 | 3 | Create, Details, Index | MiniStore.Web/Views/LandedCosts/Details.cshtml |
 | LandedCosts | Index.cshtml | 0 | 0 | 1 | Details | MiniStore.Web/Views/LandedCosts/Index.cshtml |
@@ -713,7 +708,6 @@ Statuses follow the migration lifecycle plus MVC Compatibility (mutation-only). 
 | ProductTemplates | Index.cshtml | 4 | 4 | 4 | Assign, Create, Generate, Index, Preview, Values | MiniStore.Web/Views/ProductTemplates/Index.cshtml |
 | Public | Index.cshtml | 0 | 0 | 2 | Register | MiniStore.Web/Views/Public/Index.cshtml |
 | Public | Pricing.cshtml | 0 | 0 | 1 | Register | MiniStore.Web/Views/Public/Pricing.cshtml |
-| PurchaseAccountingReconciliation | Index.cshtml | 1 | 1 | 6 | Accounting, Details, Edit, Index | MiniStore.Web/Views/PurchaseAccountingReconciliation/Index.cshtml |
 | PurchaseAgreements | Create.cshtml | 1 | 1 | 0 | Create | MiniStore.Web/Views/PurchaseAgreements/Create.cshtml |
 | PurchaseAgreements | Details.cshtml | 3 | 3 | 1 | Activate, Cancel, Index, Release | MiniStore.Web/Views/PurchaseAgreements/Details.cshtml |
 | PurchaseAgreements | Index.cshtml | 0 | 0 | 1 | Details | MiniStore.Web/Views/PurchaseAgreements/Index.cshtml |

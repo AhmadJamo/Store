@@ -88,3 +88,10 @@ InventoryInsights, InventoryReconciliation and StockMovements MVC Index presenta
 The same permission policies now protect centralized GET/HEAD legacy redirects to Angular, including explicit /Index
 aliases and query preservation. These surfaces are absent from PresentationCutover settings and its reversible catalog;
 rollback is a previous-build deployment. No mutation, download, financial, public or shared Razor boundary changed.
+
+## MOD-030H financial read-only retirement — completed 2026-11-12
+
+After separate explicit approval, `JournalEntries.Details` and `PurchaseAccountingReconciliation.Index` MVC presentation
+and their two Razor views were removed. Their existing API controllers, Angular pages and Application services remain
+authoritative. Protected legacy redirects preserve a positive journal ID, reconciliation filters and query strings; the
+active cutover catalog/configuration no longer targets deleted code. Edge acceptance passed 146 authorized routes.

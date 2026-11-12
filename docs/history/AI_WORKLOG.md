@@ -1,5 +1,13 @@
 # AI Work Log
 
+- 2026-11-12: Completed separately approved `MOD-030H`. Retired the read-only `JournalEntries.Details` and
+  `PurchaseAccountingReconciliation.Index` MVC controllers/views after confirming existing API/Angular parity. Extended
+  the centralized retired-route catalog for exact actions and positive journal IDs, preserved query filters and original
+  permissions, and removed active cutover/configuration entries. Active inventory is 75 MVC controllers, 404 actions and
+  210 Razor files; seven surfaces are physically retired and anonymous Public is the only remaining R1 surface. Release
+  built cleanly, 1,860 security/inventory checks passed and authenticated Edge acceptance passed 146 routes. No financial
+  calculation, mutation, repository, database or public/authentication boundary changed; rollback deploys the prior build.
+
 - 2026-11-12: Completed the separately approved `MOD-030G` first physical MVC retirement pilot. Removed five read-only
   inventory controllers and five Index Razor views, removed their active cutover/configuration entries and added a
   reusable permission-protected legacy GET/HEAD redirect catalog that preserves both URL forms and query strings.
