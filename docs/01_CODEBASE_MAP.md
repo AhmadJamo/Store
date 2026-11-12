@@ -102,10 +102,11 @@ an active-company Admin session projects every code-owned permission plus the pr
 set to Angular. This keeps navigation/session guidance
 aligned with backend authority without treating a global Identity or Platform role as tenant administration.
 
-`scripts/generate-mvc-migration-registry.ps1` is also the single source for `MVC_MIGRATION_REGISTRY.md` and
-`DUAL_RUN_ACCEPTANCE_MATRIX.md`. It distinguishes `[ApiController]` endpoints regardless of folder, inventories compact
+`scripts/generate-mvc-migration-registry.ps1` is also the single source for `MVC_MIGRATION_REGISTRY.md`,
+`DUAL_RUN_ACCEPTANCE_MATRIX.md` and `MVC_RETIREMENT_INVENTORY.md`. It distinguishes `[ApiController]` endpoints regardless of folder, inventories compact
 same-line MVC actions, verifies every mapped Angular route and emits one acceptance row per counterpart with route,
-operation, permission, risk and evidence fields. The modernization gate fails when either generated artifact is stale.
+operation, permission, risk and evidence fields. MOD-030F additionally classifies presentation, mutation, download and
+session/compatibility dependencies into gated retirement cohorts. The modernization gate fails when any generated artifact is stale.
 
 `docs/modernization/PHASE_30E_RUNTIME_READINESS_AUDIT.md` distinguishes functional counterparts from runtime defaults:
 All 82 surfaces have verified functional counterparts. MOD-030E4N expands the committed default to forty-five surfaces and
@@ -783,8 +784,12 @@ For exact module relationships, use `modules/*.md`; for entity and service detai
 - `scripts/generate-mvc-migration-registry.ps1`: source-driven MVC view, action and Razor-control inventory generator.
 - `MiniStore.Web/Presentation/Cutover/`: validated per-surface presentation modes, code-owned Angular route allowlist,
   GET/HEAD resolver and global MVC cutover filter. Committed modes remain MVC.
-- `docs/modernization/MVC_MIGRATION_REGISTRY.md`: generated 89-controller, 189-view, 344-MVC-action and
-  198-Razor-file migration registry; do not edit rows manually.
+- `docs/modernization/MVC_MIGRATION_REGISTRY.md`: generated 82-MVC-controller, 199-user-facing-view,
+  411-MVC-action and 209-Razor-control-row migration registry; do not edit rows manually.
+- `docs/modernization/MVC_RETIREMENT_INVENTORY.md`: generated MOD-030F classification for all 411 MVC actions and
+  217 Razor files, including eight R1 surfaces, 54 mixed-controller blockers and the mandatory deletion-batch gate.
+- `docs/decisions/2026-11-12-mvc-retirement-cohort-boundary.md`: R1..R4 retirement boundaries, separate deletion
+  approval rule and legacy-link/cutover/rollback obligations.
 - `docs/decisions/ADR-20261025-REVERSIBLE-PRESENTATION-CUTOVER.md`: cutover/rollback boundary and rationale.
 - `docs/modernization/MOD-017-021-FOUNDATION.md`: scope, evidence and remaining gates for this bundle.
 - `docs/modernization/MOD-017B-FINANCIAL-PREVIEW.md`: server-authored financial provenance and presentation evidence.

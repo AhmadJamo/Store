@@ -1,5 +1,14 @@
 # AI Work Log
 
+- 2026-11-12: Completed `MOD-030F` as a non-destructive MVC retirement dependency inventory. Extended the generated
+  migration evidence and unified stale-artifact gate to classify all 411 MVC actions across 82 surfaces and account for
+  all 217 Razor files. The result identifies 143 Angular-default presentation candidates, 226 retained mutations, nine
+  downloads, 33 session/compatibility boundaries, eight structurally R1 surfaces and 54 mixed-controller surfaces whose
+  views cannot be deleted early. Proposed a separately approved five-surface read-only inventory pilot; removed no MVC
+  controller, action, view, route, configuration or rollback path. Deterministic generation, warning-free Release, 1,883
+  security/inventory checks, 242/242 Angular tests, 137 templates, the 120-page consistency inventory and production
+  budgets passed; browser/performance evidence was intentionally not claimed because runtime and UI did not change.
+
 - 2026-11-05: Completed `UX-008` and the approved UI/UX modernization presentation scope. Added an executable
   113-page consistency inventory to the unified gate, standardized Customer create/edit on the shared page header,
   added a semantic search landmark and recorded 11 exact independent-layout exceptions. No API, DTO, schema, permission

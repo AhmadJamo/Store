@@ -1,7 +1,8 @@
 [CmdletBinding()]
 param(
     [string]$OutputPath = "docs/modernization/MVC_MIGRATION_REGISTRY.md",
-    [string]$AcceptanceMatrixPath = "docs/modernization/DUAL_RUN_ACCEPTANCE_MATRIX.md"
+    [string]$AcceptanceMatrixPath = "docs/modernization/DUAL_RUN_ACCEPTANCE_MATRIX.md",
+    [string]$RetirementInventoryPath = "docs/modernization/MVC_RETIREMENT_INVENTORY.md"
 )
 
 $ErrorActionPreference = "Stop"
@@ -12,6 +13,7 @@ $cutoverCatalogPath = Join-Path $webRoot "Presentation/Cutover/PresentationCutov
 $appSettingsPath = Join-Path $webRoot "appsettings.json"
 $output = Join-Path $repoRoot $OutputPath
 $acceptanceOutput = Join-Path $repoRoot $AcceptanceMatrixPath
+$retirementOutput = Join-Path $repoRoot $RetirementInventoryPath
 
 # Semantic MVC surface -> existing Angular counterpart. Every mapped route is verified against app.routes.ts.
 # Counterpart status and committed AngularDefault modes are reconciled independently.
@@ -155,6 +157,20 @@ function Get-Routes([string]$surface) {
     return ($surfaceRoutes[$surface] -join ", ")
 }
 
+function Get-RetirementActionDisposition(
+    [string]$surface,
+    [string]$verbs,
+    [bool]$returnsFile,
+    [bool]$hasCutoverRoute
+) {
+    if ($mutationOnlyMvcSurfaces -contains $surface) { return "Retain - explicit compatibility boundary" }
+    if ($returnsFile) { return "Retain - download or generated file" }
+    if ($verbs -match 'POST|PUT|DELETE|PATCH') { return "Retain - MVC mutation" }
+    if ($verbs -eq 'ANY') { return "Retain - ambiguous verb or session routing" }
+    if ($hasCutoverRoute) { return "Candidate - Angular-default presentation" }
+    return "Retain - non-cutover route or session boundary"
+}
+
 $viewFiles = @(
     Get-ChildItem (Join-Path $webRoot "Views") -Recurse -Filter *.cshtml
     Get-ChildItem (Join-Path $webRoot "Areas") -Recurse -Filter *.cshtml
@@ -189,6 +205,14 @@ $actionRows = foreach ($file in $mvcControllers) {
         while ($signature -notmatch '\)' -and $cursor -lt $fileLines.Count) { $signature += ' ' + $fileLines[$cursor]; $cursor++ }
         if ($signature -notmatch '\s(?<name>[A-Za-z_][A-Za-z0-9_]*)\s*\(') { continue }
         $action = $Matches.name
+        $actionEnd = $fileLines.Count
+        for ($next = $cursor; $next -lt $fileLines.Count; $next++) {
+            if ($fileLines[$next] -match '\bpublic\s+(?:async\s+)?(?:Task<)?(?:IActionResult|ActionResult|FileResult|JsonResult|ContentResult|RedirectToActionResult)') {
+                $actionEnd = $next
+                break
+            }
+        }
+        $actionBody = ($fileLines[$index..([Math]::Max($index, $actionEnd - 1))] -join "`n")
         $attributeText = if ($publicOffset -gt 0) { $fileLines[$index].Substring(0, $publicOffset) } else { '' }
         for ($back = $index - 1; $back -ge [Math]::Max(0, $index - 12); $back--) {
             if ($fileLines[$back] -match '^\s*\[' -or ($attributeText -and $fileLines[$back] -notmatch '[;{}]\s*$')) {
@@ -200,10 +224,14 @@ $actionRows = foreach ($file in $mvcControllers) {
         $verbs = [regex]::Matches($attributeText, 'Http(Get|Post|Put|Delete|Patch|Head)') |
             ForEach-Object { $_.Groups[1].Value.ToUpperInvariant() } | Select-Object -Unique
         if (-not $verbs) { $verbs = @('ANY') }
+        $verbText = $verbs -join ', '
         $key = "$($controller):$action"
+        $hasCutoverRoute = $cutoverRoutes.ContainsKey($key)
+        $returnsFile = $signature -match '\bFileResult\b' -or $actionBody -match '\b(?:File|PhysicalFile)\s*\('
         [pscustomobject]@{
-            Surface=$surface; Action=$action; Verbs=$verbs -join ', '; Status=Get-MigrationStatus $surface;
-            AngularRoute=Get-Routes $surface; CutoverRoute=if($cutoverRoutes.ContainsKey($key)){$cutoverRoutes[$key]}else{"—"};
+            Surface=$surface; Action=$action; Verbs=$verbText; Status=Get-MigrationStatus $surface;
+            AngularRoute=Get-Routes $surface; CutoverRoute=if($hasCutoverRoute){$cutoverRoutes[$key]}else{"—"};
+            Retirement=Get-RetirementActionDisposition $surface $verbText $returnsFile $hasCutoverRoute;
             Source=$source
         }
     }
@@ -295,6 +323,47 @@ $matrixRows = foreach ($surface in $matrixSurfaces) {
     }
 }
 
+$retirementRows = foreach ($surface in $allSurfaces) {
+    $surfaceActions = @($actionRows | Where-Object Surface -eq $surface)
+    $candidateActions = @($surfaceActions | Where-Object Retirement -eq 'Candidate - Angular-default presentation')
+    $mutationActions = @($surfaceActions | Where-Object Retirement -eq 'Retain - MVC mutation')
+    $downloadActions = @($surfaceActions | Where-Object Retirement -eq 'Retain - download or generated file')
+    $boundaryActions = @($surfaceActions | Where-Object {
+        $_.Retirement -like 'Retain -*' -and
+        $_.Retirement -notin @('Retain - MVC mutation','Retain - download or generated file')
+    })
+    $surfaceRazor = @($viewFiles | Where-Object { (Get-Surface $_ $false) -eq $surface })
+    $cohort = if ($mutationOnlyMvcSurfaces -contains $surface) {
+        'R4 - permanent compatibility review'
+    } elseif ($candidateActions.Count -gt 0 -and ($mutationActions.Count + $downloadActions.Count + $boundaryActions.Count) -eq 0) {
+        'R1 - presentation-only pilot candidate'
+    } elseif ($candidateActions.Count -gt 0) {
+        'R2 - mixed controller; retain views until commands/downloads retire'
+    } else {
+        'R3 - retained MVC boundary; API/session decision required'
+    }
+    [pscustomobject]@{
+        Surface = $surface
+        CandidateActions = $candidateActions.Count
+        Mutations = $mutationActions.Count
+        Downloads = $downloadActions.Count
+        Boundaries = $boundaryActions.Count
+        RazorFiles = $surfaceRazor.Count
+        Cohort = $cohort
+    }
+}
+
+$sharedRazorFiles = @($viewFiles | Where-Object {
+    $_.Directory.Name -eq 'Shared' -or $_.Name -in @('_ViewImports.cshtml','_ViewStart.cshtml')
+})
+$classifiedActionCount = @($actionRows | Where-Object { -not [string]::IsNullOrWhiteSpace($_.Retirement) }).Count
+if ($classifiedActionCount -ne $actionRows.Count) {
+    throw "MVC retirement inventory classified $classifiedActionCount of $($actionRows.Count) actions."
+}
+if (@($retirementRows | Where-Object { $_.Cohort -match 'unknown|unclassified' }).Count -gt 0) {
+    throw 'MVC retirement inventory contains an unclassified surface.'
+}
+
 if ($matrixRows.Count -ne $matrixSurfaces.Count) {
     throw "Acceptance matrix row count $($matrixRows.Count) does not match classified surface count $($matrixSurfaces.Count)."
 }
@@ -369,5 +438,78 @@ foreach ($row in $matrixRows | Sort-Object Surface) {
 New-Item -ItemType Directory -Force -Path (Split-Path -Parent $acceptanceOutput) | Out-Null
 $matrixLines | Set-Content -Path $acceptanceOutput -Encoding utf8
 
+$retirementLines = [System.Collections.Generic.List[string]]::new()
+$retirementLines.Add('# MVC retirement dependency inventory')
+$retirementLines.Add('')
+$retirementLines.Add('> Generated from source by `scripts/generate-mvc-migration-registry.ps1`. Do not edit inventory rows manually.')
+$retirementLines.Add('> MOD-030F is non-destructive: this inventory authorizes no controller, Razor file, route or rollback deletion.')
+$retirementLines.Add('')
+$retirementLines.Add('## Decision')
+$retirementLines.Add('')
+$retirementLines.Add('Physical MVC retirement must follow feature-sized, reversible cohorts. A Razor view on a mixed controller remains required until every retained MVC mutation that can redisplay validation errors has an accepted Angular/API replacement. Downloads, authentication/session routing, public token flows and the Language POST compatibility endpoint are independent boundaries, not presentation leftovers.')
+$retirementLines.Add('')
+$retirementLines.Add('## Reconciliation')
+$retirementLines.Add('')
+$retirementLines.Add("- MVC controllers: $($mvcControllers.Count).")
+$retirementLines.Add("- MVC actions classified: $($actionRows.Count) of $($actionRows.Count).")
+$retirementLines.Add("- Angular-default presentation actions eligible for cohort review: $(@($actionRows | Where-Object Retirement -eq 'Candidate - Angular-default presentation').Count).")
+$retirementLines.Add("- Retained MVC mutation actions: $(@($actionRows | Where-Object Retirement -eq 'Retain - MVC mutation').Count).")
+$retirementLines.Add("- Retained download/generated-file actions: $(@($actionRows | Where-Object Retirement -eq 'Retain - download or generated file').Count).")
+$retirementLines.Add("- Retained compatibility, ambiguous-verb, session or non-cutover actions: $(@($actionRows | Where-Object {
+    $_.Retirement -like 'Retain -*' -and
+    $_.Retirement -notin @('Retain - MVC mutation','Retain - download or generated file')
+}).Count).")
+$retirementLines.Add("- Razor files discovered: $($viewFiles.Count); shared infrastructure files: $($sharedRazorFiles.Count).")
+$retirementLines.Add("- Presentation-only pilot surfaces: $(@($retirementRows | Where-Object Cohort -eq 'R1 - presentation-only pilot candidate').Count).")
+$retirementLines.Add("- Mixed-controller surfaces blocked from early view deletion: $(@($retirementRows | Where-Object Cohort -like 'R2 -*').Count).")
+$retirementLines.Add('')
+$retirementLines.Add('The exact action and Razor paths remain in `MVC_MIGRATION_REGISTRY.md`; this file adds retirement dependency classification and cohort gates without duplicating that source inventory.')
+$retirementLines.Add('')
+$retirementLines.Add('## Cohort rules')
+$retirementLines.Add('')
+$retirementLines.Add('| Cohort | Meaning | Deletion gate |')
+$retirementLines.Add('|---|---|---|')
+$retirementLines.Add('| R1 | Presentation-only controller surface with every discovered action covered by Angular-default cutover. | Owner approval, exact file/reference proof, MVC-mode retirement decision, Release/regression/browser evidence and deployment rollback plan. |')
+$retirementLines.Add('| R2 | Mixed presentation plus MVC mutation/download/session behavior. | Retire command/download dependencies first; keep Razor views while any retained path can render them. |')
+$retirementLines.Add('| R3 | No presentation candidate; MVC still owns a route, session decision, ambiguous verb or other compatibility behavior. | Explicit replacement or permanent-boundary decision before deletion. |')
+$retirementLines.Add('| R4 | Declared mutation-only compatibility surface. | Preserve unless a separately approved architecture change replaces it. |')
+$retirementLines.Add('')
+$retirementLines.Add('## Recommended first deletion pilot')
+$retirementLines.Add('')
+$retirementLines.Add('If the owner separately approves physical deletion, start with the five read-only inventory surfaces `InventoryBalances`, `InventoryReservations`, `InventoryInsights`, `InventoryReconciliation` and `StockMovements`. Each has one Angular-default presentation action, no discovered MVC mutation/download/session dependency and one Razor view. Keep `JournalEntries`, `PurchaseAccountingReconciliation` and anonymous `Public` out of the first pilot because their financial or public-entry risk deserves a later cohort even though they are structurally R1.')
+$retirementLines.Add('')
+$retirementLines.Add('## Surface inventory')
+$retirementLines.Add('')
+$retirementLines.Add('| MVC surface | Presentation candidates | Mutations retained | Downloads retained | Other boundaries retained | Razor files | Cohort |')
+$retirementLines.Add('|---|---:|---:|---:|---:|---:|---|')
+foreach ($row in $retirementRows | Sort-Object Surface) {
+    $retirementLines.Add("| $($row.Surface) | $($row.CandidateActions) | $($row.Mutations) | $($row.Downloads) | $($row.Boundaries) | $($row.RazorFiles) | $($row.Cohort) |")
+}
+$retirementLines.Add('')
+$retirementLines.Add('## Retained action dependencies')
+$retirementLines.Add('')
+$retirementLines.Add('| MVC surface | Action | Verb | Reason | Source |')
+$retirementLines.Add('|---|---|---|---|---|')
+foreach ($row in $actionRows | Where-Object { $_.Retirement -like 'Retain -*' } | Sort-Object Surface, Action, Verbs) {
+    $retirementLines.Add("| $($row.Surface) | $($row.Action) | $($row.Verbs) | $($row.Retirement) | $($row.Source) |")
+}
+$retirementLines.Add('')
+$retirementLines.Add('## Mandatory batch checklist')
+$retirementLines.Add('')
+$retirementLines.Add('1. Name the exact controller actions, Razor files and shared references in the proposed batch.')
+$retirementLines.Add('2. Prove Angular/API functional parity for reads, validation recovery, commands, downloads and permissions that the batch owns.')
+$retirementLines.Add('3. Search runtime, Razor, tests, navigation and documentation references; the batch must leave no dangling route or view return.')
+$retirementLines.Add('4. Decide how `PresentationCutover` and MVC rollback behave after deletion; do not leave a configuration switch that points to removed code.')
+$retirementLines.Add('5. Obtain explicit owner approval for that bounded deletion batch.')
+$retirementLines.Add('6. Run Release, regression, generated-inventory, Angular and authenticated browser acceptance, then record deployment rollback evidence.')
+$retirementLines.Add('')
+$retirementLines.Add('## MOD-030F outcome')
+$retirementLines.Add('')
+$retirementLines.Add('Inventory and dependency classification are complete. No physical retirement batch is approved by this document. The next logical migration task is a separately approved R1 pilot selected from the generated presentation-only surfaces; if none is operationally suitable, retire API-equivalent command dependencies from one R2 feature before removing its views.')
+
+New-Item -ItemType Directory -Force -Path (Split-Path -Parent $retirementOutput) | Out-Null
+$retirementLines | Set-Content -Path $retirementOutput -Encoding utf8
+
 Write-Host "Generated $OutputPath with $($viewRows.Count) views, $($actionRows.Count) MVC actions, $($controlRows.Count) Razor control rows, $($remainingSurfaces.Count) remaining presentation surfaces, and $($mutationOnlyMvcSurfaces.Count) mutation-only boundary."
 Write-Host "Generated $AcceptanceMatrixPath with $($matrixRows.Count) classified rows and no unknown evidence fields."
+Write-Host "Generated $RetirementInventoryPath with $($retirementRows.Count) classified surfaces and $classifiedActionCount classified MVC actions."

@@ -96,12 +96,15 @@ try {
     [void](Invoke-GateStep "migration-reconciliation" "Generated MVC/Angular registry and dual-run matrix" {
         $registryPath = Join-Path $repoRoot "docs/modernization/MVC_MIGRATION_REGISTRY.md"
         $matrixPath = Join-Path $repoRoot "docs/modernization/DUAL_RUN_ACCEPTANCE_MATRIX.md"
+        $retirementPath = Join-Path $repoRoot "docs/modernization/MVC_RETIREMENT_INVENTORY.md"
         $registryBefore = if (Test-Path $registryPath) { Get-Content $registryPath -Raw } else { "" }
         $matrixBefore = if (Test-Path $matrixPath) { Get-Content $matrixPath -Raw } else { "" }
+        $retirementBefore = if (Test-Path $retirementPath) { Get-Content $retirementPath -Raw } else { "" }
         & (Join-Path $PSScriptRoot "generate-mvc-migration-registry.ps1")
         if ($registryBefore -ne (Get-Content $registryPath -Raw) -or
-            $matrixBefore -ne (Get-Content $matrixPath -Raw)) {
-            throw "Generated migration evidence was stale. Review and commit the regenerated registry and acceptance matrix."
+            $matrixBefore -ne (Get-Content $matrixPath -Raw) -or
+            $retirementBefore -ne (Get-Content $retirementPath -Raw)) {
+            throw "Generated migration evidence was stale. Review and commit the regenerated registry, acceptance matrix and MVC retirement inventory."
         }
     })
     if (-not $SkipBackend) {

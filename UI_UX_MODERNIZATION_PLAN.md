@@ -367,3 +367,17 @@ navigation; permissions and backend workflow rules remain authoritative; and the
 responsive, RTL/LTR and production-build gates pass. UX-008 satisfies this definition for the approved presentation
 scope with 11 executable layout exceptions. UX-009 additionally closes the identified navigation-discovery gap for the three
 largest underrepresented modules; production deployment readiness and physical MVC retirement remain separate.
+
+## MOD-030F — MVC retirement dependency inventory — COMPLETED 2026-11-12
+
+- Classified all 411 discovered MVC actions across 82 surfaces as Angular-default presentation candidates, retained
+  mutations, downloads/generated files or session/compatibility boundaries.
+- Accounted for all 217 Razor files and blocked early view deletion on 54 mixed-controller surfaces.
+- Added generated R1..R4 cohorts and made stale retirement evidence fail the unified modernization gate.
+- Identified five read-only inventory surfaces as the lowest-risk first deletion pilot; financial and anonymous/public
+  R1 surfaces are deliberately deferred.
+- Removed no MVC controller, action, view, route or rollback path. Every physical deletion batch remains separately
+  approval-gated.
+- Verification: deterministic regeneration passed twice; Release built with 0 warnings/errors; 1,883 security/inventory
+  checks, 242/242 Angular tests, 137 static templates, the 120-page consistency inventory and production bundle budgets
+  passed. Browser and performance gates were intentionally not claimed because MOD-030F changed no runtime or UI.

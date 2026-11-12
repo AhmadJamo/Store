@@ -1,7 +1,7 @@
 # MiniStore project context
 > Status: PARTIALLY IMPLEMENTED  
 > Source of truth: Code  
-> Last reviewed: 2026-11-07
+> Last reviewed: 2026-11-12
 
 The Angular UI/UX modernization program under `UI_UX_MODERNIZATION_PLAN.md` is complete for its approved presentation
 scope through UX-015:
@@ -18,8 +18,10 @@ permissions and transition commands remain feature/server-owned. The shell now p
 search with Ctrl+K or `/`, workspace-tab navigation and memory-only safe recents; it never indexes business entities or
 persists search text. The final executable inventory accounts for all 113 feature pages: 102 ERP workspace pages use the
 shared header and 11 authentication/public/onboarding/platform/design-reference layouts are named exceptions. Angular,
-Release, security, accessibility, bundle and hosted browser gates passed. Physical MVC retirement remains a separate,
-approval-gated program; `MOD-030F` is a non-destructive dependency inventory only.
+Release, security, accessibility, bundle and hosted browser gates passed. `MOD-030F` completed the non-destructive
+physical-retirement inventory: all 411 discovered MVC actions across 82 surfaces are classified, 217 Razor files are
+accounted for and mixed controllers are blocked from early view deletion. No MVC file was removed; every physical
+retirement cohort still requires separate owner approval.
 
 UX-009 adds permission-aware Purchasing, Sales and Accounting hubs with complete operational-route discovery. UX-010
 projects the tenant chart of accounts as an expandable hierarchy and adds a permission-protected, repository-paged journal

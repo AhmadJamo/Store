@@ -1,0 +1,30 @@
+# MVC retirement cohort boundary
+
+> Date: 2026-11-12
+> Status: Accepted for inventory; physical deletion remains approval-gated
+
+## Context
+
+All presentation surfaces run Angular by default, but the MVC code still contains mutations, downloads, authentication
+and session routing, validation redisplay paths and shared Razor infrastructure. Removing views by surface name alone can
+break retained POST actions or eliminate the proven rollback path.
+
+## Decision
+
+Generate retirement classification from source and divide surfaces into four cohorts:
+
+- R1: presentation-only candidates with every discovered action covered by Angular-default cutover.
+- R2: mixed controllers; retain views until their MVC mutations/downloads and validation redisplay dependencies retire.
+- R3: retained routing, session, ambiguous-verb or other compatibility boundaries requiring an explicit replacement.
+- R4: declared mutation-only compatibility boundaries preserved unless a separate architecture decision replaces them.
+
+No cohort classification authorizes deletion. Every bounded deletion batch must name exact files, preserve or deliberately
+replace legacy-link behavior, reconcile cutover configuration, prove no dangling references, pass the full applicable
+verification set and obtain explicit owner approval.
+
+## Consequences
+
+- The unified modernization gate now fails when the generated retirement inventory is stale.
+- Broad controller/view deletion is blocked for mixed surfaces.
+- The first proposed deletion pilot is limited to five read-only inventory surfaces.
+- Financial, public, authentication, download and mutation boundaries remain for later explicit decisions.
