@@ -468,3 +468,12 @@ largest underrepresented modules; production deployment readiness and physical M
   Products.View/Edit, antiforgery and immutable-version validation, and do not post stock or accounting entries.
 - Deferred StockTransactions, Subscription and Users behind inventory-, billing- and identity-specific mutation evidence.
 - Proposed `MOD-030Q` for separate approval of the exact Recipes controller/two-view deletion scope.
+
+## MOD-030Q — Recipes MVC retirement — COMPLETED 2026-11-13
+
+- Removed the approved Recipes controller and its Index/Edit Razor views while retaining API, Application service,
+  repositories, Angular pages, permissions and immutable recipe behavior.
+- Added permission-protected legacy GET/HEAD redirects, including safe positive `productId` query-to-path conversion.
+- Invalid identifiers return 404; the legacy MVC save POST returns 405 without mutation.
+- Release, 1,842 regression checks, 242/242 Angular tests, bundle gates and 147-route Edge acceptance passed.
+- Active inventory is 71 MVC controllers, 394 actions and 203 Razor files.

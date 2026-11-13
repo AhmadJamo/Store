@@ -59,6 +59,10 @@ controllers, 397 actions and 205 Razor files.
 candidate because its Angular/API flow reuses `RecipeService` and preserves authorization, antiforgery and server validation
 without posting stock or accounting entries. Stock movement, billing and identity cohorts remain deferred behind dedicated
 acceptance evidence; physical Recipes retirement remains separately approval-gated as MOD-030Q.
+`MOD-030Q` then completed the explicitly approved Recipes retirement. Its controller and two Razor views are gone;
+protected legacy list/editor GET/HEAD routes preserve navigation into Angular, including positive product-ID conversion.
+The retired MVC save returns 405; API, RecipeService and immutable recipe behavior remain unchanged. Active inventory is
+now 71 MVC controllers, 394 actions and 203 Razor files.
 
 UX-009 adds permission-aware Purchasing, Sales and Accounting hubs with complete operational-route discovery. UX-010
 projects the tenant chart of accounts as an expandable hierarchy and adds a permission-protected, repository-paged journal

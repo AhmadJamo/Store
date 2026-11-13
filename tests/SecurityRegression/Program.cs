@@ -338,23 +338,15 @@ var productWorkflowCutoverResolver = new PresentationCutoverResolver(Options.Cre
         AngularBasePath = "/app",
         Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
         {
-            ["ProductTemplates"] = PresentationCutoverMode.AngularDefault,
-            ["Recipes"] = PresentationCutoverMode.AngularDefault
+            ["ProductTemplates"] = PresentationCutoverMode.AngularDefault
         }
     }));
 Check(productWorkflowCutoverResolver.Resolve(cutoverContext.Request, "ProductTemplates", "Index",
-          new Microsoft.AspNetCore.Routing.RouteValueDictionary()) == "/app/products/templates?page=2" &&
-      productWorkflowCutoverResolver.Resolve(cutoverContext.Request, "Recipes", "Index",
-          new Microsoft.AspNetCore.Routing.RouteValueDictionary()) == "/app/products/recipes?page=2" &&
-      productWorkflowCutoverResolver.Resolve(cutoverContext.Request, "Recipes", "Edit",
-          new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["productId"] = 17 }) ==
-      "/app/products/recipes/17?page=2",
-    "Product template and recipe GET cutover must resolve exact Angular routes");
+          new Microsoft.AspNetCore.Routing.RouteValueDictionary()) == "/app/products/templates?page=2",
+    "Product template GET cutover must resolve its exact Angular route");
 Check(productWorkflowCutoverResolver.Resolve(cutoverContext.Request, "ProductTemplates", "Generate",
-          new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null &&
-      productWorkflowCutoverResolver.Resolve(cutoverContext.Request, "Recipes", "Edit",
-          new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["productId"] = 0 }) is null,
-    "Product workflow mutations and unsafe recipe identifiers must stay outside presentation cutover");
+          new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null,
+    "Product template mutations must stay outside presentation cutover");
 var purchaseAnalyticsCutoverResolver = new PresentationCutoverResolver(Options.Create(
     new PresentationCutoverOptions
     {
@@ -2948,20 +2940,22 @@ foreach (var viewPath in Directory.EnumerateFiles(webRoot, "*.cshtml", SearchOpt
 }
 Check(razorRouteFailures.Count == 0,
     $"Every static Razor link and form must target an existing public controller action. Invalid targets: {string.Join(", ", razorRouteFailures)}");
-var expectedRetiredPresentationRoutes = new Dictionary<string, (string Route, string? Permission, string[] Patterns)>
+var expectedRetiredPresentationRoutes = new Dictionary<string, (string Route, string? Permission, string[] Patterns, string? PositiveIntegerQueryParameter)>
 {
-    ["InventoryBalances:Index"] = ("/inventory/availability", "InventoryBalances.View", []),
-    ["InventoryReservations:Index"] = ("/inventory/reservations", "InventoryReservations.View", []),
-    ["InventoryInsights:Index"] = ("/inventory/insights", "InventoryInsights.View", []),
-    ["InventoryReconciliation:Index"] = ("/inventory/reconciliation", "InventoryReconciliation.View", []),
-    ["StockMovements:Index"] = ("/inventory/location-movements", "StockMovements.View", []),
-    ["JournalEntries:Details"] = ("/accounting/journal-entries/{id}", "JournalEntries.View", []),
-    ["PurchaseAccountingReconciliation:Index"] = ("/purchases/accounting-reconciliation", "PurchaseAccountingReconciliation.View", []),
-    ["AuditEvents:Index"] = ("/audit-events", "AuditEvents.View", []),
-    ["AnalyticsCenter:Index"] = ("/analytics", "AnalyticsCenter.View", []),
-    ["AnalyticsCenter:Create"] = ("/analytics/builder", "AnalyticsCenter.Customize", []),
-    ["Public:Index"] = ("/welcome", null, ["/"]),
-    ["Public:Pricing"] = ("/pricing", null, ["/pricing"])
+    ["InventoryBalances:Index"] = ("/inventory/availability", "InventoryBalances.View", [], null),
+    ["InventoryReservations:Index"] = ("/inventory/reservations", "InventoryReservations.View", [], null),
+    ["InventoryInsights:Index"] = ("/inventory/insights", "InventoryInsights.View", [], null),
+    ["InventoryReconciliation:Index"] = ("/inventory/reconciliation", "InventoryReconciliation.View", [], null),
+    ["StockMovements:Index"] = ("/inventory/location-movements", "StockMovements.View", [], null),
+    ["JournalEntries:Details"] = ("/accounting/journal-entries/{id}", "JournalEntries.View", [], null),
+    ["PurchaseAccountingReconciliation:Index"] = ("/purchases/accounting-reconciliation", "PurchaseAccountingReconciliation.View", [], null),
+    ["AuditEvents:Index"] = ("/audit-events", "AuditEvents.View", [], null),
+    ["AnalyticsCenter:Index"] = ("/analytics", "AnalyticsCenter.View", [], null),
+    ["AnalyticsCenter:Create"] = ("/analytics/builder", "AnalyticsCenter.Customize", [], null),
+    ["Recipes:Index"] = ("/products/recipes", "Products.View", [], null),
+    ["Recipes:Edit"] = ("/products/recipes/{productId}", "Products.Edit", [], "productId"),
+    ["Public:Index"] = ("/welcome", null, ["/"], null),
+    ["Public:Pricing"] = ("/pricing", null, ["/pricing"], null)
 };
 Check(
     RetiredPresentationRouteCatalog.All.Count == expectedRetiredPresentationRoutes.Count &&
@@ -2970,6 +2964,7 @@ Check(
         route.AngularRoute == expected.Route &&
         route.RequiredPermission == expected.Permission &&
         (route.LegacyPatterns ?? []).SequenceEqual(expected.Patterns) &&
+        route.PositiveIntegerQueryParameter == expected.PositiveIntegerQueryParameter &&
         !PresentationCutoverRouteCatalog.All.ContainsKey($"{route.Controller}:{route.Action}") &&
         !Directory.EnumerateFiles(Path.Combine(webRoot, "Controllers"), $"{route.Controller}Controller.cs", SearchOption.AllDirectories).Any() &&
         !File.Exists(Path.Combine(webRoot, "Views", route.Controller, $"{route.Action}.cshtml"))) &&
@@ -2979,6 +2974,13 @@ Check(
         new QueryString("?warehouseId=4&search=bolt")) ==
         "/app/inventory/availability?warehouseId=4&search=bolt",
     "Retired MVC surfaces must keep exact protected or explicitly anonymous Angular redirects, query preservation and no controller/view artifact");
+Check(RetiredPresentationRouteCatalog.BuildTarget(
+          "/app",
+          "/products/recipes/{productId}",
+          new QueryString("?source=legacy"),
+          new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["productId"] = 17 }) ==
+      "/app/products/recipes/17?source=legacy",
+    "Retired query-bound recipe edit must move a positive product id into the Angular path and preserve unrelated query values");
 Check(
     RetiredPresentationRouteCatalog.BuildTarget(
         "/app",

@@ -11,7 +11,8 @@ public sealed record RetiredPresentationRoute(
     string AngularRoute,
     string? RequiredPermission,
     string Action = "Index",
-    IReadOnlyList<string>? LegacyPatterns = null);
+    IReadOnlyList<string>? LegacyPatterns = null,
+    string? PositiveIntegerQueryParameter = null);
 
 public static class RetiredPresentationRouteCatalog
 {
@@ -27,6 +28,9 @@ public static class RetiredPresentationRouteCatalog
         new("AuditEvents", "/audit-events", "AuditEvents.View"),
         new("AnalyticsCenter", "/analytics", "AnalyticsCenter.View"),
         new("AnalyticsCenter", "/analytics/builder", "AnalyticsCenter.Customize", "Create"),
+        new("Recipes", "/products/recipes", "Products.View"),
+        new("Recipes", "/products/recipes/{productId}", "Products.Edit", "Edit",
+            PositiveIntegerQueryParameter: "productId"),
         new("Public", "/welcome", null, "Index", ["/"]),
         new("Public", "/pricing", null, "Pricing", ["/pricing"])
     ];
@@ -87,6 +91,26 @@ public static class RetiredPresentationRouteCatalog
     {
         var endpoint = endpoints.MapMethods(pattern, [HttpMethods.Get, HttpMethods.Head], context =>
             {
+                var targetQuery = context.Request.QueryString;
+                RouteValueDictionary? targetRouteValues = null;
+                if (route.PositiveIntegerQueryParameter is { } queryParameter)
+                {
+                    if (!int.TryParse(
+                            context.Request.Query[queryParameter].ToString(),
+                            System.Globalization.NumberStyles.None,
+                            System.Globalization.CultureInfo.InvariantCulture,
+                            out var queryValue) ||
+                        queryValue <= 0)
+                    {
+                        context.Response.StatusCode = StatusCodes.Status404NotFound;
+                        return Task.CompletedTask;
+                    }
+
+                    targetRouteValues = new RouteValueDictionary { [queryParameter] = queryValue };
+                    targetQuery = QueryString.Create(context.Request.Query.Where(pair =>
+                        !pair.Key.Equals(queryParameter, StringComparison.OrdinalIgnoreCase)));
+                }
+
                 var options = context.RequestServices
                     .GetRequiredService<IOptions<PresentationCutoverOptions>>()
                     .Value;
@@ -94,8 +118,8 @@ public static class RetiredPresentationRouteCatalog
                     BuildTarget(
                         options.AngularBasePath,
                         route.AngularRoute,
-                        context.Request.QueryString,
-                        context.Request.RouteValues),
+                        targetQuery,
+                        targetRouteValues ?? context.Request.RouteValues),
                     permanent: false,
                     preserveMethod: false);
                 return Task.CompletedTask;

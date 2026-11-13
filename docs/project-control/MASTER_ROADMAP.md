@@ -60,7 +60,10 @@
   محمية، وتقاعد workspace POST القديم دون redirect مع بقاء API/Angular/providers.
 - `MOD-030P` — COMPLETE 2026-11-13: قارن Recipes وStockTransactions وSubscription وUsers دون mutation؛ اختير Recipes
   كمرشح تالٍ، وأُجلت حدود المخزون والفوترة والهوية.
-- `MOD-030Q` — PROPOSED / APPROVAL REQUIRED: تقاعد RecipesController وViewي Index/Edit فقط بعد موافقة حذف صريحة.
+- `MOD-030Q` — COMPLETE 2026-11-13: حُذف RecipesController وViewا Index/Edit؛ بقيت التحويلات المحمية وAPI/Angular
+  وRecipeService، وثبت 404 للمعرف غير الآمن و405 للـPOST المتقاعد.
+- `MOD-030R` — PROPOSED / NON-DESTRUCTIVE: تدقيق ProductCategories وPurchaseApprovalRules وSalesApprovalRules
+  لاختيار الحد التكويني الآمن التالي دون حذف.
 - `UX-001` — COMPLETE 2026-11-04: تدقيق واجهة Angular، خطة تحديث مستمرة، مجموعات تنقل مهنية بصلاحيات،
   breadcrumbs ثنائية اللغة وحفظ آمن لتفضيل فتح المجموعات دون تغيير الأعمال.
 - `UX-002` — COMPLETE 2026-11-05: عقد typed لسياق URL وذاكرة workspace المعزولة ومسودات آمنة مؤقتة،

@@ -356,6 +356,9 @@ The ERP SaaS Foundation Blueprint is imported as a non-authoritative planning re
   legacy workspace POST is retired without redirect, and services/API/Angular/providers are unchanged.
 - MOD-030P completed the non-destructive Recipes/StockTransactions/Subscription/Users comparison. Recipes is the proposed
   MOD-030Q cohort; inventory, billing and identity mutations remain deferred and no deletion is yet approved.
+- MOD-030Q completed the separately approved Recipes MVC retirement. Protected list/editor GETs now resolve to Angular,
+  invalid product IDs return 404 and the retired MVC save returns 405; API and immutable-version behavior are unchanged.
+- MOD-030R is the next non-destructive audit of low-count configuration candidates.
 - UX-016 recurring-journal templates and controlled runs is complete with Draft-only manual execution. UX-017 bank-statement
   reconciliation is proposed and requires owner approval before adding statement import and matching records.
 - UX-009 navigation completeness is complete: 72 registered destinations and 41/41 operational routes are covered through

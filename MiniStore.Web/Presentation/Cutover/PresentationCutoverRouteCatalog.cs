@@ -63,8 +63,6 @@ public static class PresentationCutoverRouteCatalog
             ["Roles:Create"] = "/roles/new",
             ["Roles:Edit"] = "/roles/{id}/edit",
             ["ProductTemplates:Index"] = "/products/templates",
-            ["Recipes:Index"] = "/products/recipes",
-            ["Recipes:Edit"] = "/products/recipes/{productId}",
             ["PurchaseAnalytics:Index"] = "/purchases/analytics",
             ["PurchaseReplenishment:Index"] = "/purchases/replenishment",
             ["PurchaseApprovalRules:Index"] = "/purchases/approval-rules",

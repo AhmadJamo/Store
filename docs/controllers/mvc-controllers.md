@@ -21,7 +21,6 @@ Provides protected list/details/create, inspection completion and draft cancella
 | Products/Warehouses/Suppliers | Index/Create/Edit/Delete | matching permission attributes; products configure catalogue/logistics data and multiple suppliers; supplier create/edit captures professional profile data and multiple products. Both directions synchronize one purchasing-info relationship atomically. Warehouses configure inventory operating policy. |
 | Customers | server-paged Index, Details, Create, Edit, Archive/Restore plus contact/address save and archive/restore | Dedicated Customers.View/Create/Edit/Archive permissions, antiforgery on every mutation, DTO-only Application service, tenant isolation, unique active defaults and rowversion conflict handling. |
 | ProductCategories | Index/Create/SetActive | Products.View/Edit; tenant category service enforces unique language-neutral codes/names and preserves referenced rows. |
-| Recipes | Index/Edit | Products.View/Edit; Application service creates immutable versions and validates tenant products and compatible units. |
 | ProductStocks | Index/Create/Edit/Delete | product-stock permissions/service; delete service always refuses. |
 | StockTransactions | Index/Create | movement permissions/service. |
 | WarehouseLocations / UnassignedStock | hierarchical location search/create/edit, putaway-rule administration and capacity-aware suggested putaway | WarehouseLocations uses DTO-only `StorageLocationService` projections with no direct repository; warehouse/product-stock permissions and location/putaway services. |

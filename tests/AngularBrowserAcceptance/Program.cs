@@ -1019,7 +1019,7 @@ static async Task RunLiveCutoverAsync(
             new APIRequestContextOptions { MaxRedirects = 0 });
         var physicallyRetired = surface is "InventoryBalances" or "InventoryReservations" or
             "InventoryInsights" or "InventoryReconciliation" or "StockMovements" or
-            "JournalEntries" or "PurchaseAccountingReconciliation" or "AuditEvents" or "AnalyticsCenter";
+            "JournalEntries" or "PurchaseAccountingReconciliation" or "AuditEvents" or "AnalyticsCenter" or "Recipes";
         var expectsAngular = physicallyRetired ||
                              options.CutoverMode == "angular" ||
                              options.CutoverMode == "pilot" &&
@@ -1032,7 +1032,7 @@ static async Task RunLiveCutoverAsync(
                                  "ProductCategories" or "ProductAttributes" or "Warehouses" or "AuditEvents" or
                                  "Users" or "Roles";
         expectsAngular = expectsAngular || options.CutoverMode == "pilot" &&
-                         surface is "ProductTemplates" or "Recipes";
+                         surface is "ProductTemplates";
         expectsAngular = expectsAngular || options.CutoverMode == "pilot" &&
                          surface is "PurchaseAnalytics";
         expectsAngular = expectsAngular || options.CutoverMode == "pilot" &&
@@ -1144,6 +1144,27 @@ static async Task RunLiveCutoverAsync(
             }
         }
         executed++;
+    }
+
+    if (permissions.Contains("Products.Edit"))
+    {
+        var unsafeRecipe = await authenticated.GetAsync(
+            "/Recipes/Edit?productId=0",
+            new APIRequestContextOptions { MaxRedirects = 0 });
+        Require(unsafeRecipe.Status == 404,
+            $"Retired recipe edit accepted an unsafe product id with status {unsafeRecipe.Status}.");
+
+        var retiredRecipeSave = await authenticated.PostAsync(
+            "/Recipes/Edit",
+            new APIRequestContextOptions
+            {
+                MaxRedirects = 0,
+                DataObject = new { ProductId = 1 }
+            });
+        Require(retiredRecipeSave.Status == 405,
+            $"Retired recipe MVC save returned {retiredRecipeSave.Status} instead of 405.");
+        checks.Add(new("retired-recipes-boundary", "passed",
+            "Unsafe recipe ids return 404 and the retired MVC save returns 405 without mutation."));
     }
 
     Require(executed >= 5, $"Cutover rehearsal covered {executed} routes; at least 5 are required.");

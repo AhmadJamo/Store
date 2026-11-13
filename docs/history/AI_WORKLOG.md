@@ -1,5 +1,10 @@
 # AI Work Log
 
+- 2026-11-13: Completed the explicitly approved `MOD-030Q` Recipes MVC retirement. Deleted RecipesController and its
+  Index/Edit views; added protected retired routes with positive productId query-to-path conversion, 404 rejection for
+  unsafe IDs and 405 for the retired save POST. Kept Recipes API, RecipeService, DTOs, repositories, Angular and immutable
+  domain behavior unchanged. Release passed cleanly, 1,842 regression checks and 242/242 Angular tests passed, bundle gates
+  remained within project thresholds and Edge matched 147 GET routes plus the explicit 404/405 boundary.
 - 2026-11-13: Completed `MOD-030P` as a non-destructive comparison of Recipes, StockTransactions, Subscription and Users.
   Confirmed Recipes Angular/API parity over the same `RecipeService`, Products.View/Edit, antiforgery and immutable-version
   validation; recommended its exact controller/two-view boundary for separately approved MOD-030Q. Deferred stock,

@@ -116,9 +116,9 @@ UnassignedStock, LocationMovements and InventoryScanning
 redirect their Index GET actions to exact Angular workspaces with query preservation. WarehouseLocations Create/Edit
 deep links remain MVC because the Angular workspace does not yet consume create/edit URL intent; all writes remain MVC/API.
 
-Current MOD-030P snapshot: 12 mapped presentation GET actions across 10 surfaces are physically retired, plus the
-deliberately non-redirected AuditEvents export and AnalyticsCenter workspace POST. Active inventory is 72 MVC controllers,
-397 actions and 205 Razor files. Exact Public routes remain anonymous; protected retired GET/HEAD routes retain permissions
+Current MOD-030Q snapshot: 14 mapped presentation GET actions across 11 surfaces are physically retired, plus the
+deliberately non-redirected AuditEvents export, AnalyticsCenter workspace POST and Recipes save POST. Active inventory is
+71 MVC controllers, 394 actions and 203 Razor files. Exact Public routes remain anonymous; protected retired GET/HEAD routes retain permissions
 and query strings. See `docs/modernization/MOD_030O_ANALYTICS_CENTER_RETIREMENT.md`. The generated inventory is authoritative.
 
 `ReplenishmentApiController` exposes the reviewed inventory projection plus independently protected rule, transfer-draft
@@ -515,7 +515,7 @@ All Application DTO decimal `RangeAttribute` contracts parse their declared limi
 | `Services/Settings/CurrencyExchangeRateService.cs` | manages dated rates and resolves the latest rate on or before each document date; company currency resolves to one | Settings currency screen and PUR-190 document services. |
 | `Services/Purchases/SupplierPaymentService.cs` | calculates outstanding Vendor Bill balances and atomically settles supplier payable against a configured cash/bank payment method | Supplier Payment screens. |
 | `Services/Settings/PurchaseMatchingSettingsService.cs` | administers tenant quantity/price matching tolerances | Settings Purchase Matching screen. |
-| `Services/Catalog/RecipeService.cs` | lists and creates immutable active recipe versions with compatible ingredient units | Recipes controller/views and prepared-product sales. |
+| `Services/Catalog/RecipeService.cs` | lists and creates immutable active recipe versions with compatible ingredient units | Recipes API/Angular and prepared-product sales. |
 | `Services/Catalog/ProductCategoryService.cs` | creates and activates/deactivates tenant product categories used by logistics metadata | ProductCategories controller/view and product forms. |
 | `Services/Catalog/ProductAttributeService.cs` | transactionally creates typed attribute definitions, category links and selection options | ProductAttributes controller/view. |
 | `Services/Catalog/ProductTemplateService.cs` | groups existing Product SKUs by canonical signature and safely previews/creates at most 50 selection-based combinations from an assigned source SKU | ProductTemplates controller/view and attribute-value updates. |
@@ -647,7 +647,6 @@ workspace, persistent-tab/unsaved-form behavior and generated-journal evidence l
 | `Services/Security/HttpAuditRequestContext.cs` | trusted correlation/route/channel projection with IPv4/IPv6 masking and SHA-256 user-agent fingerprinting | Application semantic and independent security audit services. |
 | `Services/Tenancy/HttpTenantContext.cs`, `Middleware/TenantSessionMiddleware.cs` | resolve, validate and refresh the authenticated company boundary | AppDbContext, login and localization. |
 | `Controllers/<Feature>/*.cs` | MVC endpoints grouped by business feature; namespaces remain stable | `controllers/*.md`. |
-| `Controllers/Catalog/RecipesController.cs` | bilingual recipe list/version editor using Products permissions | recipe views and RecipeService. |
 | `Controllers/Catalog/ProductCategoriesController.cs` | bilingual product-category administration using Products View/Edit permissions | ProductCategories view and ProductCategoryService. |
 | `Controllers/Catalog/ProductAttributesController.cs` | bilingual typed product-attribute administration using Products View/Edit permissions | ProductAttributes view and ProductAttributeService. |
 | `Controllers/Catalog/ProductTemplatesController.cs` | bilingual template creation, existing-SKU assignment and explicit bounded variant preview/generation using Products View/Edit permissions | ProductTemplates view and ProductTemplateService. |
@@ -809,6 +808,8 @@ For exact module relationships, use `modules/*.md`; for entity and service detai
   protected Index/builder redirects, retired legacy POST and hosted/Edge evidence.
 - `docs/modernization/MOD_030P_NEXT_LOW_COUNT_COHORT_AUDIT.md`: non-destructive comparison of Recipes,
   StockTransactions, Subscription and Users, with Recipes recommended for a separately approved bounded retirement.
+- `docs/modernization/MOD_030Q_RECIPES_RETIREMENT.md`: approved Recipes controller/two-view retirement, safe
+  query-to-path product ID conversion, retired legacy save and full verification evidence.
 - `docs/decisions/2026-11-12-mvc-retirement-cohort-boundary.md`: R1..R4 retirement boundaries, separate deletion
   approval rule and legacy-link/cutover/rollback obligations.
 - `docs/decisions/ADR-20261025-REVERSIBLE-PRESENTATION-CUTOVER.md`: cutover/rollback boundary and rationale.

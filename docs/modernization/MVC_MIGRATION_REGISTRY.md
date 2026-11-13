@@ -4,16 +4,16 @@
 
 ## Reconciliation
 
-- Controllers discovered: 160 total; 72 MVC; 88 API.
-- User-facing MVC views discovered: 187.
-- MVC actions discovered: 397.
-- Razor files included in the control inventory: 197.
+- Controllers discovered: 159 total; 71 MVC; 88 API.
+- User-facing MVC views discovered: 185.
+- MVC actions discovered: 394.
+- Razor files included in the control inventory: 195.
 - Angular application routes discovered: 194.
-- Presentation surfaces with a verified Angular counterpart: 71.
+- Presentation surfaces with a verified Angular counterpart: 70.
 - Remaining presentation surfaces without a mapped Angular counterpart: 0.
 - Mutation-only MVC compatibility surfaces: 1 (Language).
-- Physically retired presentation actions with legacy redirects: 12 across 10 surfaces (AnalyticsCenter, AuditEvents, InventoryBalances, InventoryInsights, InventoryReconciliation, InventoryReservations, JournalEntries, Public, PurchaseAccountingReconciliation, StockMovements).
-- Allowlisted Angular-default cutover actions: 171.
+- Physically retired presentation actions with legacy redirects: 14 across 11 surfaces (AnalyticsCenter, AuditEvents, InventoryBalances, InventoryInsights, InventoryReconciliation, InventoryReservations, JournalEntries, Public, PurchaseAccountingReconciliation, Recipes, StockMovements).
+- Allowlisted Angular-default cutover actions: 169.
 
 Remaining presentation surfaces: none.
 
@@ -122,8 +122,6 @@ Statuses follow the migration lifecycle plus MVC Compatibility (mutation-only). 
 | PurchaseSourcing | Index.cshtml | Angular Default | /purchases/sourcing | MiniStore.Web/Views/PurchaseSourcing/Index.cshtml |
 | PurchaseSourcing | Print.cshtml | Angular Default | /purchases/sourcing | MiniStore.Web/Views/PurchaseSourcing/Print.cshtml |
 | PurchaseTemplates | Index.cshtml | Angular Default | /purchases/templates | MiniStore.Web/Views/PurchaseTemplates/Index.cshtml |
-| Recipes | Edit.cshtml | Angular Default | /products/recipes | MiniStore.Web/Views/Recipes/Edit.cshtml |
-| Recipes | Index.cshtml | Angular Default | /products/recipes | MiniStore.Web/Views/Recipes/Index.cshtml |
 | Replenishment | Index.cshtml | Angular Default | /inventory/replenishment | MiniStore.Web/Views/Replenishment/Index.cshtml |
 | Roles | Create.cshtml | Angular Default | /roles | MiniStore.Web/Views/Roles/Create.cshtml |
 | Roles | Edit.cshtml | Angular Default | /roles | MiniStore.Web/Views/Roles/Edit.cshtml |
@@ -418,9 +416,6 @@ Statuses follow the migration lifecycle plus MVC Compatibility (mutation-only). 
 | PurchaseTemplates | RedirectToAction | GET, POST | Angular Default | /purchases/templates | — | MiniStore.Web/Controllers/Purchases/PurchaseTemplatesController.cs |
 | PurchaseTemplates | RedirectToAction | GET, POST | Angular Default | /purchases/templates | — | MiniStore.Web/Controllers/Purchases/PurchaseTemplatesController.cs |
 | PurchaseTemplates | RedirectToAction | GET, POST | Angular Default | /purchases/templates | — | MiniStore.Web/Controllers/Purchases/PurchaseTemplatesController.cs |
-| Recipes | Edit | GET | Angular Default | /products/recipes | /products/recipes/{productId} | MiniStore.Web/Controllers/Catalog/RecipesController.cs |
-| Recipes | Edit | POST | Angular Default | /products/recipes | /products/recipes/{productId} | MiniStore.Web/Controllers/Catalog/RecipesController.cs |
-| Recipes | Index | GET | Angular Default | /products/recipes | /products/recipes | MiniStore.Web/Controllers/Catalog/RecipesController.cs |
 | Replenishment | CreatePurchaseRequestDraft | POST | Angular Default | /inventory/replenishment | — | MiniStore.Web/Controllers/Inventory/ReplenishmentController.cs |
 | Replenishment | CreateTransferDraft | GET, POST | Angular Default | /inventory/replenishment | — | MiniStore.Web/Controllers/Inventory/ReplenishmentController.cs |
 | Replenishment | Index | GET | Angular Default | /inventory/replenishment | /inventory/replenishment | MiniStore.Web/Controllers/Inventory/ReplenishmentController.cs |
@@ -720,8 +715,6 @@ Statuses follow the migration lifecycle plus MVC Compatibility (mutation-only). 
 | PurchaseSourcing | Index.cshtml | 1 | 1 | 2 | Details, Direct | MiniStore.Web/Views/PurchaseSourcing/Index.cshtml |
 | PurchaseSourcing | Print.cshtml | 0 | 1 | 0 | — | MiniStore.Web/Views/PurchaseSourcing/Print.cshtml |
 | PurchaseTemplates | Index.cshtml | 2 | 2 | 0 | Generate, SetActive | MiniStore.Web/Views/PurchaseTemplates/Index.cshtml |
-| Recipes | Edit.cshtml | 1 | 3 | 1 | Edit, Index | MiniStore.Web/Views/Recipes/Edit.cshtml |
-| Recipes | Index.cshtml | 0 | 0 | 2 | Edit, Index | MiniStore.Web/Views/Recipes/Index.cshtml |
 | Replenishment | Index.cshtml | 5 | 5 | 1 | CreatePurchaseRequestDraft, CreateTransferDraft, Details, Save, SetActive | MiniStore.Web/Views/Replenishment/Index.cshtml |
 | Roles | _Form.cshtml | 1 | 1 | 1 | @(editing ? , Index | MiniStore.Web/Views/Roles/_Form.cshtml |
 | Roles | Create.cshtml | 0 | 0 | 0 | — | MiniStore.Web/Views/Roles/Create.cshtml |

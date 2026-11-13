@@ -145,3 +145,9 @@ GET/HEAD القديمة تحويلات محمية تحفظ query. تقاعد POS
 قورنت Recipes وStockTransactions وSubscription وUsers دون حذف أو mutation. اختير Recipes كمرشح MOD-030Q منفصل
 لأن Angular/API يعيدان استخدام RecipeService ويحافظان على Products.View/Edit وantiforgery والتحقق من النسخ غير
 القابلة للتعديل. بقيت مخاطر المخزون والفوترة والهوية مؤجلة لاختبارات متخصصة، ولا حذف معتمد بعد.
+
+## MOD-030Q — تقاعد Recipes MVC
+
+اكتمل بعد الموافقة الصريحة: حُذف Controller وViewا Index/Edit فقط، وبقيت API وAngular وRecipeService وقواعد المجال.
+تحافظ GET/HEAD القديمة على الصلاحيات، وتنقل productId الموجب من query إلى المسار؛ غير الآمن يعيد 404 وPOST القديم
+يعيد 405 دون mutation. أصبح الجرد 71 Controller و394 Action و203 ملفات Razor.

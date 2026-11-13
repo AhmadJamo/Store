@@ -89,3 +89,10 @@ The next low-count comparison selects Recipes ahead of StockTransactions, Subscr
 immutable-version mutation inside the shared Application service and the Angular API preserves permission, antiforgery and
 validation behavior without stock or accounting posting. Inventory, billing and identity mutations require their own
 acceptance evidence. This recommendation does not authorize deletion; MOD-030Q remains approval-gated.
+
+## Query-bound R2 execution — MOD-030Q
+
+Recipes proves the retired catalog can safely move a positive query-bound identifier into an Angular path. The mapping is
+explicitly configured, rejects missing/non-positive values with 404, removes only the consumed query key and preserves all
+unrelated query values. The old MVC POST ends at 405 and is never replayed. Recipe mutation authority remains in the
+antiforgery-protected API and shared Application service. This does not authorize any other query-bound cohort.

@@ -38,7 +38,7 @@ remain authoritative. The complete `MOD-021A..G` catalog wave is now functionall
 Recipe yields, ingredient quantities and measurement-unit conversion factors use culture-invariant decimal validation, so Arabic UI culture cannot turn valid dot-based HTML values into a validation exception.
 
 ## Purpose and flow
-Manages database-generated product code, optional barcode, raw/direct/prepared classification, product category, logistics measurements, handling requirements, future tracking policy, active state, POS/sales channel availability, prices and stock unit. `RecipesController` and `RecipeService` create immutable recipe versions for prepared products; saving a recipe automatically marks the product prepared-to-order and clears direct purchase price.
+Manages database-generated product code, optional barcode, raw/direct/prepared classification, product category, logistics measurements, handling requirements, future tracking policy, active state, POS/sales channel availability, prices and stock unit. `RecipesApiController`, Angular and `RecipeService` create immutable recipe versions for prepared products; saving a recipe automatically marks the product prepared-to-order and clears direct purchase price.
 
 WMS-015 adds a tenant-owned attribute dictionary. Definitions have stable neutral codes, Text/Number/Boolean/Selection types, required and variant-defining flags, display order, optional category applicability and ordered selection options. Definitions are deactivated rather than deleted. Each Product can store one typed value per applicable definition; required, option ownership and category applicability are revalidated on every save. Product remains the stock identity and templates never carry balances.
 
@@ -56,7 +56,7 @@ Name is required; barcode is optional and unique per company when supplied. Cate
 Tracked products may define an optional default shelf life in days, require an expiration date on receipt and set their own expiration-warning horizon. Shelf-life controls are rejected when lot/serial tracking is disabled. When a receipt omits expiration and a default duration exists, expiration is derived from manufacture date, or from the receipt day when manufacture date is absent.
 
 ## Source files
-`Domain/Entities/Catalog/{Product,ProductRecipe,RecipeIngredient,UnitOfMeasure,UnitConversion}.cs`; Product/Recipe DTOs and services; product/recipe repositories and configurations; Products/Recipes controllers and views.
+`Domain/Entities/Catalog/{Product,ProductRecipe,RecipeIngredient,UnitOfMeasure,UnitConversion}.cs`; Product/Recipe DTOs and services; product/recipe repositories and configurations; Products MVC plus Recipes API/Angular pages.
 
 ## If this changes
 Review product entity doc, inventory/purchase/sales/transfers docs, configuration/migration, controller/screens, permissions and map.
@@ -91,3 +91,9 @@ schema or business rule changed.
 query values are preserved. Assign/Create/Preview/Generate and recipe-save commands remain independently authorized and
 antiforgery-protected outside the presentation catalog. Hosted acceptance passed 15/15, and both the 65-route cutover and
 MVC rollback passed. Release and 1,493 backend checks passed; no data, schema or business rule changed.
+
+## Recipes MVC retirement update (2026-11-13)
+
+`MOD-030Q` removes the legacy Recipes controller and Index/Edit Razor views after separate approval. Protected legacy
+GET/HEAD routes now resolve to Angular, positive query-bound product IDs are moved into the route, invalid IDs return 404,
+and the old MVC POST returns 405. Recipes API, RecipeService, Products permissions and immutable-version rules are unchanged.

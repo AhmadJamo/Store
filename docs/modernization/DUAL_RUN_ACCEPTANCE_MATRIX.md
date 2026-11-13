@@ -2,9 +2,9 @@
 
 > Generated from source by scripts/generate-mvc-migration-registry.ps1. Do not edit rows manually.
 
-- Presentation counterparts covered: 71.
+- Presentation counterparts covered: 70.
 - Mutation-only MVC compatibility boundaries: 1 (Language).
-- Physically retired MVC presentation actions: 12 across 10 surfaces (AnalyticsCenter, AuditEvents, InventoryBalances, InventoryInsights, InventoryReconciliation, InventoryReservations, JournalEntries, Public, PurchaseAccountingReconciliation, StockMovements); legacy redirects remain outside the reversible cutover catalog.
+- Physically retired MVC presentation actions: 14 across 11 surfaces (AnalyticsCenter, AuditEvents, InventoryBalances, InventoryInsights, InventoryReconciliation, InventoryReservations, JournalEntries, Public, PurchaseAccountingReconciliation, Recipes, StockMovements); legacy redirects remain outside the reversible cutover catalog.
 - Presentation default: AngularDefault for all presentation surfaces; mutation-only MVC compatibility: Language.
 - Evidence baseline: generated MVC view/action inventory, verified Angular route, controller permission references and acceptance gate.
 - Runtime dual-run samples and cutover rehearsal results are appended by the MOD-029 acceptance workflow; this static matrix performs no mutation.
@@ -54,7 +54,6 @@
 | PurchaseServiceAcceptances | /PurchaseServiceAcceptances | /purchases/service-acceptances | Read/write | PurchaseServiceAcceptances.Create, PurchaseServiceAcceptances.View | Standard | 3 view(s); 4 action(s); route/source gate |
 | PurchaseSourcing | /PurchaseSourcing | /purchases/sourcing | Read/write | PurchaseSourcing.Create, PurchaseSourcing.CreateDirect, PurchaseSourcing.View | Standard | 5 view(s); 8 action(s); route/source gate |
 | PurchaseTemplates | /PurchaseTemplates | /purchases/templates | Read/write | PurchaseTemplates.Create, PurchaseTemplates.Generate, PurchaseTemplates.Manage, PurchaseTemplates.View | Standard | 1 view(s); 3 action(s); route/source gate |
-| Recipes | /Recipes | /products/recipes | Read/write | Products.Edit, Products.View | Standard | 2 view(s); 3 action(s); route/source gate |
 | Replenishment | /Replenishment | /inventory/replenishment | Read/write | Inventory.Replenishment.Manage, Inventory.Replenishment.View, PurchaseRequests.Create, StockTransfers.Create | Inventory | 1 view(s); 5 action(s); route/source gate |
 | Roles | /Roles | /roles | Read/write | Roles.Create, Roles.Delete, Roles.Edit, Roles.View | Standard | 3 view(s); 6 action(s); route/source gate |
 | Sales | /Sales | /sales/legacy | Read/write | Sales.Create, Sales.View | Standard | 4 view(s); 6 action(s); route/source gate |

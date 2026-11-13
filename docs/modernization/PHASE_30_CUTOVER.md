@@ -156,3 +156,10 @@ Recipes, StockTransactions, Subscription and Users were compared without mutatio
 Angular/API parity over the existing RecipeService and retains Products.View/Edit, antiforgery and immutable-version
 validation, so it is the proposed separately approved MOD-030Q cohort. Stock movement, billing and identity boundaries
 remain deferred behind specialized acceptance evidence.
+
+## MOD-030Q Recipes retirement — completed 2026-11-13
+
+After explicit approval, the Recipes controller and Index/Edit Razor views were removed. Permission-protected legacy
+GET/HEAD routes now target Angular; the query-bound positive product ID is safely moved into the path while unrelated query
+values remain. Unsafe IDs return 404 and the retired MVC save returns 405. API, RecipeService, immutable-version validation
+and domain behavior are unchanged. Release, regression, Angular, bundle and authenticated Edge gates passed.
