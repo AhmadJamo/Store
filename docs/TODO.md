@@ -360,6 +360,9 @@ The ERP SaaS Foundation Blueprint is imported as a non-authoritative planning re
   invalid product IDs return 404 and the retired MVC save returns 405; API and immutable-version behavior are unchanged.
 - MOD-030R completed the non-destructive ProductCategories/PurchaseApprovalRules/SalesApprovalRules comparison.
   ProductCategories is proposed for MOD-030S; approval-rule cohorts remain deferred and no deletion is approved.
+- MOD-030S completed the approved ProductCategories MVC retirement. Protected reads redirect to Angular and both legacy
+  mutation routes return 405; API/service/category behavior remains unchanged.
+- MOD-030T is the next non-destructive approval-rule lifecycle audit.
 - UX-016 recurring-journal templates and controlled runs is complete with Draft-only manual execution. UX-017 bank-statement
   reconciliation is proposed and requires owner approval before adding statement import and matching records.
 - UX-009 navigation completeness is complete: 72 registered destinations and 41/41 operational routes are covered through

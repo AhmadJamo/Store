@@ -1019,7 +1019,8 @@ static async Task RunLiveCutoverAsync(
             new APIRequestContextOptions { MaxRedirects = 0 });
         var physicallyRetired = surface is "InventoryBalances" or "InventoryReservations" or
             "InventoryInsights" or "InventoryReconciliation" or "StockMovements" or
-            "JournalEntries" or "PurchaseAccountingReconciliation" or "AuditEvents" or "AnalyticsCenter" or "Recipes";
+            "JournalEntries" or "PurchaseAccountingReconciliation" or "AuditEvents" or "AnalyticsCenter" or "Recipes" or
+            "ProductCategories";
         var expectsAngular = physicallyRetired ||
                              options.CutoverMode == "angular" ||
                              options.CutoverMode == "pilot" &&
@@ -1029,7 +1030,7 @@ static async Task RunLiveCutoverAsync(
                                  "InventoryAdjustments" or "StockTransfers" or "InventoryTracking" or "StockMovements" or
                                  "WarehouseLocations" or "UnassignedStock" or "LocationMovements" or "InventoryScanning" or
                                  "Replenishment" or "Branches" or "PaymentMethods" or "TaxRates" or
-                                 "ProductCategories" or "ProductAttributes" or "Warehouses" or "AuditEvents" or
+                                 "ProductAttributes" or "Warehouses" or "AuditEvents" or
                                  "Users" or "Roles";
         expectsAngular = expectsAngular || options.CutoverMode == "pilot" &&
                          surface is "ProductTemplates";
@@ -1165,6 +1166,21 @@ static async Task RunLiveCutoverAsync(
             $"Retired recipe MVC save returned {retiredRecipeSave.Status} instead of 405.");
         checks.Add(new("retired-recipes-boundary", "passed",
             "Unsafe recipe ids return 404 and the retired MVC save returns 405 without mutation."));
+
+        foreach (var action in new[] { "Create", "SetActive" })
+        {
+            var retiredCategoryMutation = await authenticated.PostAsync(
+                $"/ProductCategories/{action}",
+                new APIRequestContextOptions
+                {
+                    MaxRedirects = 0,
+                    DataObject = new { Id = 1, IsActive = false, Name = "No mutation", Code = "NO_MUTATION" }
+                });
+            Require(retiredCategoryMutation.Status == 405,
+                $"Retired ProductCategories {action} returned {retiredCategoryMutation.Status} instead of 405.");
+        }
+        checks.Add(new("retired-product-categories-boundary", "passed",
+            "Retired ProductCategories create and status POST routes return 405 without mutation."));
     }
 
     Require(executed >= 5, $"Cutover rehearsal covered {executed} routes; at least 5 are required.");

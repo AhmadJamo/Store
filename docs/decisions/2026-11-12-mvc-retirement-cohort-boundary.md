@@ -103,3 +103,10 @@ ProductCategories is preferred over purchase and sales approval rules because ca
 configuration and do not choose approvers or transition documents. All three replacements preserve their existing
 Application services and server authorization, but workflow-rule retirement requires additional activation/resolution
 evidence. This audit authorizes no deletion; MOD-030S remains separately approval-gated.
+
+## Isolated configuration execution — MOD-030S
+
+ProductCategories follows the safe mixed-controller pattern: only the protected GET/HEAD presentation route is represented
+in the retired catalog. Legacy create/status POSTs end at 405 and are never translated into navigation or replayed. Category
+mutation authority remains in the antiforgery-protected API and shared ProductCategoryService. This does not authorize
+workflow-rule retirement.

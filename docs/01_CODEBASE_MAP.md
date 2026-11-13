@@ -116,9 +116,10 @@ UnassignedStock, LocationMovements and InventoryScanning
 redirect their Index GET actions to exact Angular workspaces with query preservation. WarehouseLocations Create/Edit
 deep links remain MVC because the Angular workspace does not yet consume create/edit URL intent; all writes remain MVC/API.
 
-Current MOD-030Q snapshot: 14 mapped presentation GET actions across 11 surfaces are physically retired, plus the
-deliberately non-redirected AuditEvents export, AnalyticsCenter workspace POST and Recipes save POST. Active inventory is
-71 MVC controllers, 394 actions and 203 Razor files. Exact Public routes remain anonymous; protected retired GET/HEAD routes retain permissions
+Current MOD-030S snapshot: 15 mapped presentation GET actions across 12 surfaces are physically retired, plus the
+deliberately non-redirected AuditEvents export, AnalyticsCenter workspace POST, Recipes save POST and ProductCategories
+create/status POSTs. Active inventory is 70 MVC controllers, 391 actions and 202 Razor files. Exact Public routes remain
+anonymous; protected retired GET/HEAD routes retain permissions
 and query strings. See `docs/modernization/MOD_030O_ANALYTICS_CENTER_RETIREMENT.md`. The generated inventory is authoritative.
 
 `ReplenishmentApiController` exposes the reviewed inventory projection plus independently protected rule, transfer-draft
@@ -647,7 +648,6 @@ workspace, persistent-tab/unsaved-form behavior and generated-journal evidence l
 | `Services/Security/HttpAuditRequestContext.cs` | trusted correlation/route/channel projection with IPv4/IPv6 masking and SHA-256 user-agent fingerprinting | Application semantic and independent security audit services. |
 | `Services/Tenancy/HttpTenantContext.cs`, `Middleware/TenantSessionMiddleware.cs` | resolve, validate and refresh the authenticated company boundary | AppDbContext, login and localization. |
 | `Controllers/<Feature>/*.cs` | MVC endpoints grouped by business feature; namespaces remain stable | `controllers/*.md`. |
-| `Controllers/Catalog/ProductCategoriesController.cs` | bilingual product-category administration using Products View/Edit permissions | ProductCategories view and ProductCategoryService. |
 | `Controllers/Catalog/ProductAttributesController.cs` | bilingual typed product-attribute administration using Products View/Edit permissions | ProductAttributes view and ProductAttributeService. |
 | `Controllers/Catalog/ProductTemplatesController.cs` | bilingual template creation, existing-SKU assignment and explicit bounded variant preview/generation using Products View/Edit permissions | ProductTemplates view and ProductTemplateService. |
 | `Controllers/Sales/SalesPriceListsController.cs`, `Views/SalesPriceLists/Index.cshtml` | permission-separated list/rule mutations and responsive read-only explainable evaluator | SAL-020B pricing service and sales docs. |
@@ -812,6 +812,8 @@ For exact module relationships, use `modules/*.md`; for entity and service detai
   query-to-path product ID conversion, retired legacy save and full verification evidence.
 - `docs/modernization/MOD_030R_CONFIGURATION_CANDIDATE_AUDIT.md`: non-destructive ProductCategories versus purchase/sales
   approval-rule comparison and the approval-gated ProductCategories recommendation.
+- `docs/modernization/MOD_030S_PRODUCT_CATEGORIES_RETIREMENT.md`: approved ProductCategories controller/view retirement,
+  protected legacy read and 405 mutation boundary evidence.
 - `docs/decisions/2026-11-12-mvc-retirement-cohort-boundary.md`: R1..R4 retirement boundaries, separate deletion
   approval rule and legacy-link/cutover/rollback obligations.
 - `docs/decisions/ADR-20261025-REVERSIBLE-PRESENTATION-CUTOVER.md`: cutover/rollback boundary and rationale.

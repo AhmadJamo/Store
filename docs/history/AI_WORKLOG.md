@@ -1,5 +1,9 @@
 # AI Work Log
 
+- 2026-11-13: Completed the explicitly approved `MOD-030S` ProductCategories MVC retirement. Deleted the controller and
+  Index view, retained a Products.View-protected legacy redirect and proved both retired Create/SetActive POSTs return 405
+  without mutation. Kept API, ProductCategoryService, DTOs, repository/entity, Angular, localization and validation intact.
+  Release passed cleanly, 1,840 checks and 242/242 Angular tests passed, bundle gates held and Edge matched 147 GET routes.
 - 2026-11-13: Completed `MOD-030R` as a non-destructive comparison of ProductCategories, PurchaseApprovalRules and
   SalesApprovalRules. All three authenticated API reads returned 200 and their legacy redirects were already covered in
   the 147-route Edge run. Recommended ProductCategories for separately approved MOD-030S because it preserves the same

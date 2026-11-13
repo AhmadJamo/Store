@@ -260,13 +260,10 @@ var productDefinitionsCutoverResolver = new PresentationCutoverResolver(Options.
         AngularBasePath = "/app",
         Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
         {
-            ["ProductCategories"] = PresentationCutoverMode.AngularDefault,
             ["ProductAttributes"] = PresentationCutoverMode.AngularDefault
         }
     }));
-Check(productDefinitionsCutoverResolver.Resolve(cutoverContext.Request, "ProductCategories", "Index",
-          new Microsoft.AspNetCore.Routing.RouteValueDictionary()) == "/app/products/categories?page=2" &&
-      productDefinitionsCutoverResolver.Resolve(cutoverContext.Request, "ProductAttributes", "Index",
+Check(productDefinitionsCutoverResolver.Resolve(cutoverContext.Request, "ProductAttributes", "Index",
           new Microsoft.AspNetCore.Routing.RouteValueDictionary()) == "/app/products/attributes?page=2" &&
       productDefinitionsCutoverResolver.Resolve(cutoverContext.Request, "ProductAttributes", "Values",
           new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["productId"] = 17 }) ==
@@ -283,9 +280,7 @@ Check(productDefinitionsCutoverResolver.Resolve(cutoverContext.Request, "Product
         new Microsoft.AspNetCore.Routing.RouteValueDictionary()) == "/app/products/17/attributes?tab=values",
     "Product attribute Values cutover must consume the query-bound product identifier and preserve other query values");
 cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?page=2");
-Check(productDefinitionsCutoverResolver.Resolve(cutoverContext.Request, "ProductCategories", "Create",
-          new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null &&
-      productDefinitionsCutoverResolver.Resolve(cutoverContext.Request, "ProductAttributes", "SetActive",
+Check(productDefinitionsCutoverResolver.Resolve(cutoverContext.Request, "ProductAttributes", "SetActive",
           new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 1 }) is null,
     "Product catalog-definition mutations must stay outside the presentation cutover catalog");
 var warehousesCutoverResolver = new PresentationCutoverResolver(Options.Create(
@@ -2954,6 +2949,7 @@ var expectedRetiredPresentationRoutes = new Dictionary<string, (string Route, st
     ["AnalyticsCenter:Create"] = ("/analytics/builder", "AnalyticsCenter.Customize", [], null),
     ["Recipes:Index"] = ("/products/recipes", "Products.View", [], null),
     ["Recipes:Edit"] = ("/products/recipes/{productId}", "Products.Edit", [], "productId"),
+    ["ProductCategories:Index"] = ("/products/categories", "Products.View", [], null),
     ["Public:Index"] = ("/welcome", null, ["/"], null),
     ["Public:Pricing"] = ("/pricing", null, ["/pricing"], null)
 };

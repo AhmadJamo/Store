@@ -485,3 +485,11 @@ largest underrepresented modules; production deployment readiness and physical M
   preserve Products.View/Edit, antiforgery and server validation without stock, accounting, identity or workflow effects.
 - Deferred purchase and sales approval rules because activation directly changes document approval routing.
 - Authenticated GET probes returned 200 for all three APIs; the 147-route Edge run covered their legacy redirects.
+
+## MOD-030S — ProductCategories MVC retirement — COMPLETED 2026-11-13
+
+- Removed the approved ProductCategories controller and its Index Razor view.
+- Protected legacy GET/HEAD routes now resolve to Angular with query preservation.
+- Legacy Create/SetActive POST routes return 405; API POST/PUT retain Products.Edit and antiforgery.
+- Release, 1,840 regression checks, 242/242 Angular tests, bundle gates and 147-route Edge acceptance passed.
+- Active inventory is 70 MVC controllers, 391 actions and 202 Razor files.

@@ -2,9 +2,9 @@
 
 > Generated from source by scripts/generate-mvc-migration-registry.ps1. Do not edit rows manually.
 
-- Presentation counterparts covered: 70.
+- Presentation counterparts covered: 69.
 - Mutation-only MVC compatibility boundaries: 1 (Language).
-- Physically retired MVC presentation actions: 14 across 11 surfaces (AnalyticsCenter, AuditEvents, InventoryBalances, InventoryInsights, InventoryReconciliation, InventoryReservations, JournalEntries, Public, PurchaseAccountingReconciliation, Recipes, StockMovements); legacy redirects remain outside the reversible cutover catalog.
+- Physically retired MVC presentation actions: 15 across 12 surfaces (AnalyticsCenter, AuditEvents, InventoryBalances, InventoryInsights, InventoryReconciliation, InventoryReservations, JournalEntries, ProductCategories, Public, PurchaseAccountingReconciliation, Recipes, StockMovements); legacy redirects remain outside the reversible cutover catalog.
 - Presentation default: AngularDefault for all presentation surfaces; mutation-only MVC compatibility: Language.
 - Evidence baseline: generated MVC view/action inventory, verified Angular route, controller permission references and acceptance gate.
 - Runtime dual-run samples and cutover rehearsal results are appended by the MOD-029 acceptance workflow; this static matrix performs no mutation.
@@ -38,7 +38,6 @@
 | Platform/PlatformAuditEvents | /platform/audit-events | /platform-audit | Read/write | Public/session boundary | Identity/tenant | 1 view(s); 2 action(s); route/source gate |
 | Platform/PlatformAuditRetention | /platform/audit-retention | /platform-retention | Read/write | Public/session boundary | Identity/tenant | 1 view(s); 5 action(s); route/source gate |
 | ProductAttributes | /ProductAttributes | /products/attributes | Read/write | Products.Edit, Products.View | Standard | 2 view(s); 5 action(s); route/source gate |
-| ProductCategories | /ProductCategories | /products/categories | Read/write | Products.Edit, Products.View | Standard | 1 view(s); 3 action(s); route/source gate |
 | Products | /Products | /products | Read/write | Products.Create, Products.Delete, Products.Edit, Products.View | Standard | 3 view(s); 6 action(s); route/source gate |
 | ProductStocks | /ProductStocks | /inventory/stocks | Read/write | ProductStock.Create, ProductStock.Delete, ProductStock.Edit, ProductStock.View | Inventory | 3 view(s); 6 action(s); route/source gate |
 | ProductTemplates | /ProductTemplates | /products/templates | Read/write | Products.Edit, Products.View | Standard | 1 view(s); 5 action(s); route/source gate |

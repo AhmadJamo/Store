@@ -4,16 +4,16 @@
 
 ## Reconciliation
 
-- Controllers discovered: 159 total; 71 MVC; 88 API.
-- User-facing MVC views discovered: 185.
-- MVC actions discovered: 394.
-- Razor files included in the control inventory: 195.
+- Controllers discovered: 158 total; 70 MVC; 88 API.
+- User-facing MVC views discovered: 184.
+- MVC actions discovered: 391.
+- Razor files included in the control inventory: 194.
 - Angular application routes discovered: 194.
-- Presentation surfaces with a verified Angular counterpart: 70.
+- Presentation surfaces with a verified Angular counterpart: 69.
 - Remaining presentation surfaces without a mapped Angular counterpart: 0.
 - Mutation-only MVC compatibility surfaces: 1 (Language).
-- Physically retired presentation actions with legacy redirects: 14 across 11 surfaces (AnalyticsCenter, AuditEvents, InventoryBalances, InventoryInsights, InventoryReconciliation, InventoryReservations, JournalEntries, Public, PurchaseAccountingReconciliation, Recipes, StockMovements).
-- Allowlisted Angular-default cutover actions: 169.
+- Physically retired presentation actions with legacy redirects: 15 across 12 surfaces (AnalyticsCenter, AuditEvents, InventoryBalances, InventoryInsights, InventoryReconciliation, InventoryReservations, JournalEntries, ProductCategories, Public, PurchaseAccountingReconciliation, Recipes, StockMovements).
+- Allowlisted Angular-default cutover actions: 168.
 
 Remaining presentation surfaces: none.
 
@@ -85,7 +85,6 @@ Statuses follow the migration lifecycle plus MVC Compatibility (mutation-only). 
 | Platform/PlatformAuditRetention | Index.cshtml | Angular Pilot | /platform-retention | MiniStore.Web/Areas/Platform/Views/PlatformAuditRetention/Index.cshtml |
 | ProductAttributes | Index.cshtml | Angular Default | /products/attributes | MiniStore.Web/Views/ProductAttributes/Index.cshtml |
 | ProductAttributes | Values.cshtml | Angular Default | /products/attributes | MiniStore.Web/Views/ProductAttributes/Values.cshtml |
-| ProductCategories | Index.cshtml | Angular Default | /products/categories | MiniStore.Web/Views/ProductCategories/Index.cshtml |
 | Products | Create.cshtml | Angular Default | /products | MiniStore.Web/Views/Products/Create.cshtml |
 | Products | Edit.cshtml | Angular Default | /products | MiniStore.Web/Views/Products/Edit.cshtml |
 | Products | Index.cshtml | Angular Default | /products | MiniStore.Web/Views/Products/Index.cshtml |
@@ -340,9 +339,6 @@ Statuses follow the migration lifecycle plus MVC Compatibility (mutation-only). 
 | ProductAttributes | SetActive | POST | Angular Default | /products/attributes | — | MiniStore.Web/Controllers/Catalog/ProductAttributesController.cs |
 | ProductAttributes | Values | GET | Angular Default | /products/attributes | /products/{productId}/attributes | MiniStore.Web/Controllers/Catalog/ProductAttributesController.cs |
 | ProductAttributes | Values | POST | Angular Default | /products/attributes | /products/{productId}/attributes | MiniStore.Web/Controllers/Catalog/ProductAttributesController.cs |
-| ProductCategories | Create | POST | Angular Default | /products/categories | — | MiniStore.Web/Controllers/Catalog/ProductCategoriesController.cs |
-| ProductCategories | Index | GET | Angular Default | /products/categories | /products/categories | MiniStore.Web/Controllers/Catalog/ProductCategoriesController.cs |
-| ProductCategories | SetActive | POST | Angular Default | /products/categories | — | MiniStore.Web/Controllers/Catalog/ProductCategoriesController.cs |
 | Products | Create | GET | Angular Default | /products | /products/new | MiniStore.Web/Controllers/Catalog/ProductsController.cs |
 | Products | Create | POST | Angular Default | /products | /products/new | MiniStore.Web/Controllers/Catalog/ProductsController.cs |
 | Products | Delete | POST | Angular Default | /products | — | MiniStore.Web/Controllers/Catalog/ProductsController.cs |
@@ -677,7 +673,6 @@ Statuses follow the migration lifecycle plus MVC Compatibility (mutation-only). 
 | Platform/PlatformAuditRetention | Index.cshtml | 4 | 4 | 0 | Checkpoint, CreateHold, ReleaseHold, Run | MiniStore.Web/Areas/Platform/Views/PlatformAuditRetention/Index.cshtml |
 | ProductAttributes | Index.cshtml | 2 | 2 | 1 | Create, Index, SetActive | MiniStore.Web/Views/ProductAttributes/Index.cshtml |
 | ProductAttributes | Values.cshtml | 1 | 1 | 1 | Edit, Values | MiniStore.Web/Views/ProductAttributes/Values.cshtml |
-| ProductCategories | Index.cshtml | 2 | 2 | 1 | Create, Index, SetActive | MiniStore.Web/Views/ProductCategories/Index.cshtml |
 | Products | _LogisticsFields.cshtml | 0 | 0 | 0 | — | MiniStore.Web/Views/Products/_LogisticsFields.cshtml |
 | Products | Create.cshtml | 1 | 1 | 1 | Create, Index | MiniStore.Web/Views/Products/Create.cshtml |
 | Products | Edit.cshtml | 1 | 1 | 1 | Edit, Index | MiniStore.Web/Views/Products/Edit.cshtml |

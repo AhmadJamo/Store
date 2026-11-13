@@ -157,3 +157,9 @@ GET/HEAD القديمة تحويلات محمية تحفظ query. تقاعد POS
 قورنت ProductCategories وPurchaseApprovalRules وSalesApprovalRules دون mutation. اختير ProductCategories كمرشح
 MOD-030S منفصل لأن البديل يعيد استخدام ProductCategoryService ولا يمس المخزون أو المحاسبة أو الهوية أو transitions.
 أُجلت قواعد الاعتماد لأنها تغير مسار الموافقة الفعلي، ولا حذف معتمد بعد.
+
+## MOD-030S — تقاعد ProductCategories MVC
+
+اكتمل بعد الموافقة الصريحة: حُذف Controller وView Index فقط، وبقيت API وAngular وProductCategoryService وقواعد المجال.
+تحافظ GET/HEAD القديمة على Products.View وquery، بينما يعيد Create/SetActive القديمتان 405 دون mutation.
+أصبح الجرد 70 Controller و391 Action و202 ملفات Razor.

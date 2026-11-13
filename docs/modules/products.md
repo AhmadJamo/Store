@@ -97,3 +97,9 @@ MVC rollback passed. Release and 1,493 backend checks passed; no data, schema or
 `MOD-030Q` removes the legacy Recipes controller and Index/Edit Razor views after separate approval. Protected legacy
 GET/HEAD routes now resolve to Angular, positive query-bound product IDs are moved into the route, invalid IDs return 404,
 and the old MVC POST returns 405. Recipes API, RecipeService, Products permissions and immutable-version rules are unchanged.
+
+## ProductCategories MVC retirement update (2026-11-13)
+
+`MOD-030S` removes the approved ProductCategories controller and Index view. Legacy reads redirect to the Angular category
+workspace; old create/status POSTs return 405. ProductCategories API, ProductCategoryService, Products permissions,
+antiforgery, neutral-code uniqueness and preserved inactive categories remain authoritative.

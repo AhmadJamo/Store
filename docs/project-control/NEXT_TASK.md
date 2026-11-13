@@ -1,21 +1,21 @@
 # المهمة التالية الوحيدة / Next Task
 
-## MOD-030S — تقاعد ProductCategories MVC / ProductCategories MVC retirement
+## MOD-030T — تدقيق lifecycle قواعد الاعتماد / Approval-rule lifecycle audit
 
-> الحالة: PROPOSED — DESTRUCTIVE — EXPLICIT APPROVAL REQUIRED
+> الحالة: PROPOSED — NON-DESTRUCTIVE
 
-اكتمل `MOD-030R` دون حذف. أثبت أن ProductCategories هو الحد التكويني التالي الأقل مخاطرة، لكن التقاعد غير معتمد بعد.
+اكتمل `MOD-030S`. الخطوة التالية تقارن PurchaseApprovalRules وSalesApprovalRules بعمق قبل أي تقاعد، لأن تفعيل
+القواعد يغير مسار اعتماد المستندات فعليًا.
 
-### نطاق الحذف المقترح الدقيق
+### النطاق المقترح
 
-- حذف `MiniStore.Web/Controllers/Catalog/ProductCategoriesController.cs`.
-- حذف `MiniStore.Web/Views/ProductCategories/Index.cshtml`.
-- تثبيت GET/HEAD القديمة إلى `/app/products/categories` مع `Products.View`.
-- إبقاء ProductCategories API وProductCategoryService وDTOs والمستودع والكيان وAngular.
-- إثبات أن Create/SetActive MVC POST يعيدان 405 دون mutation، مع بقاء API POST/PUT وantiforgery.
+- مراجعة MVC/API/Angular وخدمات Application والكيانات والمستودعات والصلاحيات وrowversion.
+- تتبع إنشاء القاعدة وتفعيلها وحلها عند Submit ومسار approve/reject دون تنفيذ mutation.
+- مراجعة اختبارات القواعد الحالية وتحديد أي فجوة acceptance تمنع التقاعد.
+- فحوص GET فقط واختيار cohort واحد إن ثبت الفصل الآمن.
 
 ### خارج النطاق
 
-- لا تغيير لبيانات التصنيفات أو المخزون أو المنتجات أو قاعدة البيانات.
-- لا POST/PUT/DELETE أثناء القبول.
-- لا بدء للحذف قبل موافقة المستخدم الصريحة على الملفين أعلاه.
+- لا حذف Controller أو View.
+- لا إنشاء/تفعيل قاعدة ولا Submit/Approve/Reject.
+- أي تقاعد فعلي لاحق يحتاج نطاق ملفات دقيقًا وموافقة مستقلة.

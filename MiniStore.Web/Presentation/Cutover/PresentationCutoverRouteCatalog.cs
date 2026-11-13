@@ -53,7 +53,6 @@ public static class PresentationCutoverRouteCatalog
             ["Branches:Index"] = "/products/catalog-masters",
             ["PaymentMethods:Index"] = "/products/catalog-masters",
             ["TaxRates:Index"] = "/products/catalog-masters",
-            ["ProductCategories:Index"] = "/products/categories",
             ["ProductAttributes:Index"] = "/products/attributes",
             ["ProductAttributes:Values"] = "/products/{productId}/attributes",
             ["Warehouses:Index"] = "/warehouses",

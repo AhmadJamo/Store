@@ -66,6 +66,9 @@ now 71 MVC controllers, 394 actions and 203 Razor files.
 `MOD-030R` then compared ProductCategories, PurchaseApprovalRules and SalesApprovalRules without mutation.
 ProductCategories is the next bounded configuration candidate; purchase and sales rules remain deferred because their
 activation changes document approval routing. Physical ProductCategories retirement remains separately approval-gated.
+`MOD-030S` then completed the explicitly approved ProductCategories retirement. Its controller and Razor view are gone;
+protected legacy reads redirect to Angular, while old create/status POSTs return 405. API, ProductCategoryService and
+catalog rules remain unchanged. Active inventory is now 70 MVC controllers, 391 actions and 202 Razor files.
 
 UX-009 adds permission-aware Purchasing, Sales and Accounting hubs with complete operational-route discovery. UX-010
 projects the tenant chart of accounts as an expandable hierarchy and adds a permission-protected, repository-paged journal

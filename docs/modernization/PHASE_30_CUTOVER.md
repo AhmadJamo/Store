@@ -170,3 +170,9 @@ ProductCategories, PurchaseApprovalRules and SalesApprovalRules were compared wi
 smallest isolated configuration boundary and complete Angular/API parity over ProductCategoryService. Purchase and sales
 approval-rule activation changes live workflow routing and remains deferred. All three authenticated API reads returned 200;
 no runtime file or inventory count changed.
+
+## MOD-030S ProductCategories retirement — completed 2026-11-13
+
+After explicit approval, ProductCategoriesController and its Index view were removed. Protected legacy reads now redirect
+to Angular and both retired MVC mutation routes return 405. API, Application service, authorization, antiforgery and
+category validation remain unchanged. Release, regression, Angular, bundle and Edge gates passed.
