@@ -82,3 +82,10 @@ AnalyticsCenter proves the same safe split for a configuration mutation: only le
 permission-preserving redirects. The old MVC POST is allowed to end at 405; it is never translated into a GET or replayed
 against the API. Workspace validation, sharing authority and persistence remain in the Application/API path. This decision
 does not authorize stock-moving controllers or any later cohort.
+
+## Next bounded R2 recommendation — MOD-030P
+
+The next low-count comparison selects Recipes ahead of StockTransactions, Subscription and Users. Recipes keeps its
+immutable-version mutation inside the shared Application service and the Angular API preserves permission, antiforgery and
+validation behavior without stock or accounting posting. Inventory, billing and identity mutations require their own
+acceptance evidence. This recommendation does not authorize deletion; MOD-030Q remains approval-gated.

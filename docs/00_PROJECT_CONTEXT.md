@@ -55,6 +55,10 @@ builder and configuration-only creation flow have complete Angular/API replaceme
 protected legacy GET/HEAD routes preserve Index and builder navigation, while the legacy workspace POST is retired without
 redirect. Services, providers, API, Angular, permissions and delegation remain unchanged. Active inventory is now 72 MVC
 controllers, 397 actions and 205 Razor files.
+`MOD-030P` then compared Recipes, StockTransactions, Subscription and Users without mutation. Recipes is the next bounded
+candidate because its Angular/API flow reuses `RecipeService` and preserves authorization, antiforgery and server validation
+without posting stock or accounting entries. Stock movement, billing and identity cohorts remain deferred behind dedicated
+acceptance evidence; physical Recipes retirement remains separately approval-gated as MOD-030Q.
 
 UX-009 adds permission-aware Purchasing, Sales and Accounting hubs with complete operational-route discovery. UX-010
 projects the tenant chart of accounts as an expandable hierarchy and adds a permission-protected, repository-paged journal

@@ -116,7 +116,7 @@ UnassignedStock, LocationMovements and InventoryScanning
 redirect their Index GET actions to exact Angular workspaces with query preservation. WarehouseLocations Create/Edit
 deep links remain MVC because the Angular workspace does not yet consume create/edit URL intent; all writes remain MVC/API.
 
-Current MOD-030O snapshot: 12 mapped presentation GET actions across 10 surfaces are physically retired, plus the
+Current MOD-030P snapshot: 12 mapped presentation GET actions across 10 surfaces are physically retired, plus the
 deliberately non-redirected AuditEvents export and AnalyticsCenter workspace POST. Active inventory is 72 MVC controllers,
 397 actions and 205 Razor files. Exact Public routes remain anonymous; protected retired GET/HEAD routes retain permissions
 and query strings. See `docs/modernization/MOD_030O_ANALYTICS_CENTER_RETIREMENT.md`. The generated inventory is authoritative.
@@ -332,8 +332,9 @@ delete constraints remain server-owned with operation-specific permissions and a
 
 `AnalyticsWorkspace` and its widgets persist tenant-owned personal/shared presentation preferences. Generic analytics
 DTOs, `IAnalyticsModuleProvider` and `AnalyticsCenterService` form the reusable Application boundary; Sales and
-Purchasing register as the first providers. `AnalyticsCenterController` and two generic Razor screens render live or
-saved workspaces without depending on a module DTO. Central comparison re-executes the selected provider for the
+Purchasing register as the first providers. The retired `AnalyticsCenterController` and its two generic Razor screens were
+removed in MOD-030O; the internal API and Angular pages render live or saved workspaces without depending on a module DTO.
+Central comparison re-executes the selected provider for the
 previous period/year. Migration 135 adds the isolated workspace schema. See `modules/analytics.md` and the Analytics
 Center ADR.
 
@@ -806,6 +807,8 @@ For exact module relationships, use `modules/*.md`; for entity and service detai
   AnalyticsCenter, stock-mutation deferral and the approval-gated AnalyticsCenter recommendation.
 - `docs/modernization/MOD_030O_ANALYTICS_CENTER_RETIREMENT.md`: approved AnalyticsCenter controller/two-view retirement,
   protected Index/builder redirects, retired legacy POST and hosted/Edge evidence.
+- `docs/modernization/MOD_030P_NEXT_LOW_COUNT_COHORT_AUDIT.md`: non-destructive comparison of Recipes,
+  StockTransactions, Subscription and Users, with Recipes recommended for a separately approved bounded retirement.
 - `docs/decisions/2026-11-12-mvc-retirement-cohort-boundary.md`: R1..R4 retirement boundaries, separate deletion
   approval rule and legacy-link/cutover/rollback obligations.
 - `docs/decisions/ADR-20261025-REVERSIBLE-PRESENTATION-CUTOVER.md`: cutover/rollback boundary and rationale.

@@ -459,3 +459,12 @@ largest underrepresented modules; production deployment readiness and physical M
 - Retired legacy MVC workspace POST without redirect; the typed API workspace command remains the only creation path.
 - Active inventory is 72 MVC controllers, 397 actions and 205 Razor files with 52 mixed-controller blockers.
 - Release, 1,845 regression checks, 242/242 Angular tests, 137 templates, 120-page consistency, bundle budgets and 147-route Edge acceptance passed.
+
+## MOD-030P — next low-count cohort audit — COMPLETED 2026-11-13
+
+- Compared Recipes, StockTransactions, Subscription and Users across MVC, API, Angular, Application services,
+  permissions, mutation boundaries and acceptance coverage without changing data or runtime behavior.
+- Selected Recipes as the next bounded candidate because Angular/API reuse the same `RecipeService`, preserve
+  Products.View/Edit, antiforgery and immutable-version validation, and do not post stock or accounting entries.
+- Deferred StockTransactions, Subscription and Users behind inventory-, billing- and identity-specific mutation evidence.
+- Proposed `MOD-030Q` for separate approval of the exact Recipes controller/two-view deletion scope.

@@ -1,21 +1,21 @@
 # المهمة التالية الوحيدة / Next Task
 
-## MOD-030P — تدقيق المرشحين منخفضي التعقيد التاليين / Next low-count cohort audit
+## MOD-030Q — تقاعد Recipes MVC / Recipes MVC retirement
 
-> الحالة: PROPOSED — NON-DESTRUCTIVE
+> الحالة: PROPOSED — DESTRUCTIVE — EXPLICIT APPROVAL REQUIRED
 
-اكتمل `MOD-030O`. الخطوة التالية تدقيق فقط للمرشحين ذوي score المنخفض المتبقين مثل Recipes وStockTransactions
-وSubscription وUsers، مع أولوية تجنب المخزون والهوية والاشتراك حتى يثبت فصل آمن.
+اكتمل `MOD-030P` دون حذف. أثبت أن Recipes هو الحد التالي الأقل مخاطرة، لكن التقاعد الفعلي غير معتمد بعد.
 
-### النطاق المقترح
+### نطاق الحذف المقترح الدقيق
 
-- مراجعة MVC/API/Angular والخدمات والصلاحيات والروابط والاختبارات لكل مرشح.
-- تصنيف mutation/session/subscription/inventory risks واختيار cohort واحد إن كان آمنًا.
-- فحوص GET فقط دون إنشاء/تعديل بيانات.
-- تحديث الخطة والجرد بنتيجة قابلة للمراجعة.
+- حذف `MiniStore.Web/Controllers/Catalog/RecipesController.cs`.
+- حذف `MiniStore.Web/Views/Recipes/Index.cshtml` و`Edit.cshtml`.
+- تثبيت تحويل GET/HEAD القديمة إلى `/app/products/recipes` و`/app/products/recipes/{productId}` مع صلاحياتها.
+- إبقاء Recipes API وRecipeService وDTOs والمستودعات وAngular وكل قواعد المجال.
+- إثبات أن MVC POST القديم أصبح غير متاح وأن API PUT المحمي بـ antiforgery هو مسار الحفظ الوحيد.
 
 ### خارج النطاق
 
-- لا حذف Controller أو View.
-- لا تنفيذ mutation أو تغيير هوية/اشتراك/مخزون.
-- أي تقاعد فعلي لاحق يحتاج موافقة حذف مستقلة بالأسماء والمسارات.
+- لا تغيير لقاعدة البيانات أو قواعد الوصفة أو المخزون أو المحاسبة.
+- لا تنفيذ حفظ وصفة أثناء القبول؛ فحوص GET فقط.
+- لا بدء للحذف قبل موافقة المستخدم الصريحة على الملفات الثلاثة أعلاه.

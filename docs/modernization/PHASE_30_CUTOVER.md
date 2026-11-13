@@ -149,3 +149,10 @@ preserve Index and builder navigation into Angular. The legacy MVC workspace POS
 API command remains authoritative. Services, providers, permissions and delegation behavior are unchanged. Release,
 regression, Angular, bundle and authenticated Edge gates passed; hosted probes proved exact 302/405/200 behavior without
 creating a workspace.
+
+## MOD-030P next low-count cohort audit — completed 2026-11-13
+
+Recipes, StockTransactions, Subscription and Users were compared without mutation or deletion. Recipes has complete
+Angular/API parity over the existing RecipeService and retains Products.View/Edit, antiforgery and immutable-version
+validation, so it is the proposed separately approved MOD-030Q cohort. Stock movement, billing and identity boundaries
+remain deferred behind specialized acceptance evidence.

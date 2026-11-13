@@ -58,7 +58,9 @@
   بعد نجاح بدائل القراءة والبناء، دون POST أو تغيير runtime.
 - `MOD-030O` — COMPLETE 2026-11-13: حُذف AnalyticsCenterController وViewا Index/Create؛ بقيت GET/HEAD تحويلات
   محمية، وتقاعد workspace POST القديم دون redirect مع بقاء API/Angular/providers.
-- `MOD-030P` — PROPOSED: تدقيق غير هدّام للمرشحين منخفضي التعقيد التاليين قبل أي موافقة حذف جديدة.
+- `MOD-030P` — COMPLETE 2026-11-13: قارن Recipes وStockTransactions وSubscription وUsers دون mutation؛ اختير Recipes
+  كمرشح تالٍ، وأُجلت حدود المخزون والفوترة والهوية.
+- `MOD-030Q` — PROPOSED / APPROVAL REQUIRED: تقاعد RecipesController وViewي Index/Edit فقط بعد موافقة حذف صريحة.
 - `UX-001` — COMPLETE 2026-11-04: تدقيق واجهة Angular، خطة تحديث مستمرة، مجموعات تنقل مهنية بصلاحيات،
   breadcrumbs ثنائية اللغة وحفظ آمن لتفضيل فتح المجموعات دون تغيير الأعمال.
 - `UX-002` — COMPLETE 2026-11-05: عقد typed لسياق URL وذاكرة workspace المعزولة ومسودات آمنة مؤقتة،

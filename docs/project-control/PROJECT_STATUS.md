@@ -412,3 +412,6 @@ query. تقاعد MVC Export دون redirect، وبقي API/Angular والخدم
 اكتمل `MOD-030O` بعد الموافقة الصريحة: حُذف AnalyticsCenterController وViewا Index/Create، وبقيت GET/HEAD القديمة
 تحويلات محمية. أعاد POST القديم 405 دون إنشاء Workspace، وبقيت API/Angular/providers والصلاحيات كما هي. أصبح الجرد
 72 Controller و397 إجراء و205 ملفات Razor؛ نجح Release و1,845 فحصًا و242/242 Angular وEdge على 147 مسارًا.
+اكتمل `MOD-030P` دون حذف أو mutation: قورنت Recipes وStockTransactions وSubscription وUsers، واختير Recipes كمرشح
+`MOD-030Q` منفصل لأن Angular/API يعيدان استخدام RecipeService ويحافظان على الصلاحيات والتحقق والمعاملة. بقيت حدود
+المخزون والفوترة والهوية مؤجلة.

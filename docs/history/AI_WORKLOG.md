@@ -1,5 +1,9 @@
 # AI Work Log
 
+- 2026-11-13: Completed `MOD-030P` as a non-destructive comparison of Recipes, StockTransactions, Subscription and Users.
+  Confirmed Recipes Angular/API parity over the same `RecipeService`, Products.View/Edit, antiforgery and immutable-version
+  validation; recommended its exact controller/two-view boundary for separately approved MOD-030Q. Deferred stock,
+  subscription and identity mutations. No runtime files, data or configuration changed.
 - 2026-11-13: Completed the separately approved `MOD-030O` AnalyticsCenter MVC retirement. Deleted the controller and its
   Index/Create Razor views, removed reversible cutover settings and added protected GET/HEAD compatibility routes for the
   analytics page and builder. The legacy workspace POST returned 405 and no workspace was created; API reads returned 200.
