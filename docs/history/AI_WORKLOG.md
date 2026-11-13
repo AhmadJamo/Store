@@ -1,5 +1,9 @@
 # AI Work Log
 
+- 2026-11-13: Completed `MOD-030R` as a non-destructive comparison of ProductCategories, PurchaseApprovalRules and
+  SalesApprovalRules. All three authenticated API reads returned 200 and their legacy redirects were already covered in
+  the 147-route Edge run. Recommended ProductCategories for separately approved MOD-030S because it preserves the same
+  Application service and has no stock/accounting/identity/workflow transition effect. No mutation or runtime change ran.
 - 2026-11-13: Completed the explicitly approved `MOD-030Q` Recipes MVC retirement. Deleted RecipesController and its
   Index/Edit views; added protected retired routes with positive productId query-to-path conversion, 404 rejection for
   unsafe IDs and 405 for the retired save POST. Kept Recipes API, RecipeService, DTOs, repositories, Angular and immutable

@@ -62,8 +62,9 @@
   كمرشح تالٍ، وأُجلت حدود المخزون والفوترة والهوية.
 - `MOD-030Q` — COMPLETE 2026-11-13: حُذف RecipesController وViewا Index/Edit؛ بقيت التحويلات المحمية وAPI/Angular
   وRecipeService، وثبت 404 للمعرف غير الآمن و405 للـPOST المتقاعد.
-- `MOD-030R` — PROPOSED / NON-DESTRUCTIVE: تدقيق ProductCategories وPurchaseApprovalRules وSalesApprovalRules
-  لاختيار الحد التكويني الآمن التالي دون حذف.
+- `MOD-030R` — COMPLETE 2026-11-13: اختير ProductCategories كمرشح تكويني تالٍ؛ أُجلت قواعد اعتماد المشتريات
+  والمبيعات لأنها تغير routing الفعلي للموافقات.
+- `MOD-030S` — PROPOSED / APPROVAL REQUIRED: تقاعد ProductCategoriesController وView Index فقط بعد موافقة صريحة.
 - `UX-001` — COMPLETE 2026-11-04: تدقيق واجهة Angular، خطة تحديث مستمرة، مجموعات تنقل مهنية بصلاحيات،
   breadcrumbs ثنائية اللغة وحفظ آمن لتفضيل فتح المجموعات دون تغيير الأعمال.
 - `UX-002` — COMPLETE 2026-11-05: عقد typed لسياق URL وذاكرة workspace المعزولة ومسودات آمنة مؤقتة،

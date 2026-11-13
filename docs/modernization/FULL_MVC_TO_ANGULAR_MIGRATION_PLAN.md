@@ -151,3 +151,9 @@ GET/HEAD القديمة تحويلات محمية تحفظ query. تقاعد POS
 اكتمل بعد الموافقة الصريحة: حُذف Controller وViewا Index/Edit فقط، وبقيت API وAngular وRecipeService وقواعد المجال.
 تحافظ GET/HEAD القديمة على الصلاحيات، وتنقل productId الموجب من query إلى المسار؛ غير الآمن يعيد 404 وPOST القديم
 يعيد 405 دون mutation. أصبح الجرد 71 Controller و394 Action و203 ملفات Razor.
+
+## MOD-030R — تدقيق مرشحي الإعدادات
+
+قورنت ProductCategories وPurchaseApprovalRules وSalesApprovalRules دون mutation. اختير ProductCategories كمرشح
+MOD-030S منفصل لأن البديل يعيد استخدام ProductCategoryService ولا يمس المخزون أو المحاسبة أو الهوية أو transitions.
+أُجلت قواعد الاعتماد لأنها تغير مسار الموافقة الفعلي، ولا حذف معتمد بعد.

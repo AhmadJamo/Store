@@ -477,3 +477,11 @@ largest underrepresented modules; production deployment readiness and physical M
 - Invalid identifiers return 404; the legacy MVC save POST returns 405 without mutation.
 - Release, 1,842 regression checks, 242/242 Angular tests, bundle gates and 147-route Edge acceptance passed.
 - Active inventory is 71 MVC controllers, 394 actions and 203 Razor files.
+
+## MOD-030R — configuration-candidate audit — COMPLETED 2026-11-13
+
+- Compared ProductCategories, PurchaseApprovalRules and SalesApprovalRules without mutation or runtime changes.
+- Selected ProductCategories as the next bounded candidate because MVC/API/Angular reuse `ProductCategoryService` and
+  preserve Products.View/Edit, antiforgery and server validation without stock, accounting, identity or workflow effects.
+- Deferred purchase and sales approval rules because activation directly changes document approval routing.
+- Authenticated GET probes returned 200 for all three APIs; the 147-route Edge run covered their legacy redirects.

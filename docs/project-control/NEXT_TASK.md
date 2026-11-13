@@ -1,21 +1,21 @@
 # المهمة التالية الوحيدة / Next Task
 
-## MOD-030R — تدقيق مرشحي الإعدادات التاليين / Next configuration-candidate audit
+## MOD-030S — تقاعد ProductCategories MVC / ProductCategories MVC retirement
 
-> الحالة: PROPOSED — NON-DESTRUCTIVE
+> الحالة: PROPOSED — DESTRUCTIVE — EXPLICIT APPROVAL REQUIRED
 
-اكتمل `MOD-030Q`. الخطوة التالية تدقيق ProductCategories وPurchaseApprovalRules وSalesApprovalRules لاختيار حد
-تكويني منخفض المخاطر، بدل القفز إلى المخزون أو الاشتراك أو الهوية.
+اكتمل `MOD-030R` دون حذف. أثبت أن ProductCategories هو الحد التكويني التالي الأقل مخاطرة، لكن التقاعد غير معتمد بعد.
 
-### النطاق المقترح
+### نطاق الحذف المقترح الدقيق
 
-- مراجعة MVC/API/Angular والخدمات والصلاحيات والتحقق لكل مرشح.
-- تصنيف أثر كل mutation والتأكد أن البديل يستخدم طبقة Application نفسها.
-- تشغيل فحوص GET فقط دون إنشاء أو تعديل بيانات.
-- اختيار cohort واحد فقط وتوثيق نطاق الحذف المقترح للموافقة اللاحقة.
+- حذف `MiniStore.Web/Controllers/Catalog/ProductCategoriesController.cs`.
+- حذف `MiniStore.Web/Views/ProductCategories/Index.cshtml`.
+- تثبيت GET/HEAD القديمة إلى `/app/products/categories` مع `Products.View`.
+- إبقاء ProductCategories API وProductCategoryService وDTOs والمستودع والكيان وAngular.
+- إثبات أن Create/SetActive MVC POST يعيدان 405 دون mutation، مع بقاء API POST/PUT وantiforgery.
 
 ### خارج النطاق
 
-- لا حذف Controller أو View.
-- لا POST/PUT/DELETE ولا تغيير إعدادات أو بيانات.
-- أي تقاعد فعلي لاحق يحتاج نطاقًا دقيقًا وموافقة مستقلة.
+- لا تغيير لبيانات التصنيفات أو المخزون أو المنتجات أو قاعدة البيانات.
+- لا POST/PUT/DELETE أثناء القبول.
+- لا بدء للحذف قبل موافقة المستخدم الصريحة على الملفين أعلاه.

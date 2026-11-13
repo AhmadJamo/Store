@@ -419,3 +419,5 @@ query. تقاعد MVC Export دون redirect، وبقي API/Angular والخدم
 محمية مع نقل productId الموجب إلى مسار Angular. المعرف غير الآمن يعيد 404 والـPOST القديم يعيد 405 دون mutation.
 بقيت API وRecipeService وقواعد النسخ غير القابلة للتعديل كما هي. أصبح الجرد 71/394/203؛ نجح Release و1,842 فحصًا
 و242/242 Angular وقبول Edge على 147 مسارًا.
+اكتمل `MOD-030R` دون حذف أو mutation: قورنت ProductCategories وقواعد اعتماد المشتريات والمبيعات، وأعادت APIs
+الثلاثة 200. اختير ProductCategories لحد MOD-030S منفصل، بينما أُجلت قواعد الاعتماد لأنها تغير توجيه الموافقات.

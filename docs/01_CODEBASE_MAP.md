@@ -810,6 +810,8 @@ For exact module relationships, use `modules/*.md`; for entity and service detai
   StockTransactions, Subscription and Users, with Recipes recommended for a separately approved bounded retirement.
 - `docs/modernization/MOD_030Q_RECIPES_RETIREMENT.md`: approved Recipes controller/two-view retirement, safe
   query-to-path product ID conversion, retired legacy save and full verification evidence.
+- `docs/modernization/MOD_030R_CONFIGURATION_CANDIDATE_AUDIT.md`: non-destructive ProductCategories versus purchase/sales
+  approval-rule comparison and the approval-gated ProductCategories recommendation.
 - `docs/decisions/2026-11-12-mvc-retirement-cohort-boundary.md`: R1..R4 retirement boundaries, separate deletion
   approval rule and legacy-link/cutover/rollback obligations.
 - `docs/decisions/ADR-20261025-REVERSIBLE-PRESENTATION-CUTOVER.md`: cutover/rollback boundary and rationale.

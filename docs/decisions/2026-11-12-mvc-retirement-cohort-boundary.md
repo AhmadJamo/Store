@@ -96,3 +96,10 @@ Recipes proves the retired catalog can safely move a positive query-bound identi
 explicitly configured, rejects missing/non-positive values with 404, removes only the consumed query key and preserves all
 unrelated query values. The old MVC POST ends at 405 and is never replayed. Recipe mutation authority remains in the
 antiforgery-protected API and shared Application service. This does not authorize any other query-bound cohort.
+
+## Isolated configuration recommendation — MOD-030R
+
+ProductCategories is preferred over purchase and sales approval rules because category create/status changes remain catalog
+configuration and do not choose approvers or transition documents. All three replacements preserve their existing
+Application services and server authorization, but workflow-rule retirement requires additional activation/resolution
+evidence. This audit authorizes no deletion; MOD-030S remains separately approval-gated.

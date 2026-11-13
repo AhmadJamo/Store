@@ -163,3 +163,10 @@ After explicit approval, the Recipes controller and Index/Edit Razor views were 
 GET/HEAD routes now target Angular; the query-bound positive product ID is safely moved into the path while unrelated query
 values remain. Unsafe IDs return 404 and the retired MVC save returns 405. API, RecipeService, immutable-version validation
 and domain behavior are unchanged. Release, regression, Angular, bundle and authenticated Edge gates passed.
+
+## MOD-030R configuration-candidate audit — completed 2026-11-13
+
+ProductCategories, PurchaseApprovalRules and SalesApprovalRules were compared without mutation. ProductCategories has the
+smallest isolated configuration boundary and complete Angular/API parity over ProductCategoryService. Purchase and sales
+approval-rule activation changes live workflow routing and remains deferred. All three authenticated API reads returned 200;
+no runtime file or inventory count changed.

@@ -63,6 +63,9 @@ acceptance evidence; physical Recipes retirement remains separately approval-gat
 protected legacy list/editor GET/HEAD routes preserve navigation into Angular, including positive product-ID conversion.
 The retired MVC save returns 405; API, RecipeService and immutable recipe behavior remain unchanged. Active inventory is
 now 71 MVC controllers, 394 actions and 203 Razor files.
+`MOD-030R` then compared ProductCategories, PurchaseApprovalRules and SalesApprovalRules without mutation.
+ProductCategories is the next bounded configuration candidate; purchase and sales rules remain deferred because their
+activation changes document approval routing. Physical ProductCategories retirement remains separately approval-gated.
 
 UX-009 adds permission-aware Purchasing, Sales and Accounting hubs with complete operational-route discovery. UX-010
 projects the tenant chart of accounts as an expandable hierarchy and adds a permission-protected, repository-paged journal
