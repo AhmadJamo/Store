@@ -191,3 +191,10 @@ redirect to Angular and retired MVC Create/SetActive POST routes return 405. API
 permissions, antiforgery, concurrency and sales-order approval behavior remain unchanged. Release, regression, Angular and
 bundle gates passed. Hosted anonymous HTTP boundaries passed; Edge UI automation was unavailable because its Windows helper
 failed ACL initialization, so no authenticated Edge result is claimed.
+
+## MOD-030V PurchaseApprovalRules SQL evidence — completed 2026-11-14
+
+The disposable SQL suite now exercises the real Application service, repositories and UnitOfWork for purchase approval
+rules. It proves specificity, frozen ordered roles, duplicate prevention, invalid-rule rollback, role authorization,
+atomic approve/reject transitions and stale-rowversion rejection. Production code and data did not change. MVC retirement
+is proposed only as separately approved MOD-030W.

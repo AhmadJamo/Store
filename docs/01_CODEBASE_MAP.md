@@ -757,7 +757,7 @@ For exact module relationships, use `modules/*.md`; for entity and service detai
 ## Security additions (2026-09-13)
 - `MiniStore.Application/Permissions/AdministrationPermissions.cs`: shared Admin-only identity mutation boundary, consumed by both permission evaluators.
 - `tests/SecurityRegression/{SecurityRegression.csproj,Program.cs}`: standalone executable authorization/action regression checks; references Web; no test-framework dependency.
-- `tests/InventorySqlIntegration/{InventorySqlIntegration.csproj,Program.cs}`: disposable SQL Server fixture for tenant isolation, inventory controls, replenishment purchase-demand deduplication and concurrent Goods Receipt, receipt-return, Vendor Bill and Supplier Payment accounting/overpayment protection.
+- `tests/InventorySqlIntegration/{InventorySqlIntegration.csproj,Program.cs}`: disposable SQL Server fixture for tenant isolation, PurchaseApprovalRules resolution/frozen steps/role-gated atomic decisions/rowversion, inventory controls, replenishment purchase-demand deduplication and concurrent Goods Receipt, receipt-return, Vendor Bill and Supplier Payment accounting/overpayment protection.
 - `MiniStore.Web/Observability/*`: configuration, health, request/error/duration/active-request metrics and structured failure/slow-request logs.
 - `tests/PerformanceSmoke/*`: bounded concurrent local availability workload and JSON p50/p95/p99 result.
 - `scripts/verify-local.ps1`: owner-approved local gate; it does not require Git or a hosted build provider.

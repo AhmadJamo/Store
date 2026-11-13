@@ -73,6 +73,8 @@ catalog rules remain unchanged. Active inventory is now 70 MVC controllers, 391 
 approved SalesApprovalRules presentation retirement. Its controller and Razor view are gone; protected reads redirect to
 Angular and old Create/SetActive POSTs return 405. The API, SalesOrderApprovalService, rule evaluation and approval workflow
 remain unchanged. Active inventory is now 69 MVC controllers, 388 actions and 201 Razor files.
+`MOD-030V` then closed the remaining PurchaseApprovalRules evidence gap with a disposable SQL lifecycle scenario over the
+real Application service, repositories and UnitOfWork. It changed test code only and authorizes no presentation deletion.
 
 UX-009 adds permission-aware Purchasing, Sales and Accounting hubs with complete operational-route discovery. UX-010
 projects the tenant chart of accounts as an expandable hierarchy and adds a permission-protected, repository-paged journal

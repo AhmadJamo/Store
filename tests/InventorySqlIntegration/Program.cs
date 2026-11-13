@@ -1,4 +1,5 @@
 using Microsoft.Data.SqlClient;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.DependencyInjection;
@@ -87,6 +88,8 @@ try
     await VerifySalesPricingFoundationAsync(tenantOneId,tenantTwoId,tenantOneFixture.ProductId,connectionString);
     await VerifySalesQuotationFoundationAsync(tenantOneId,tenantTwoId,tenantOneFixture.ProductId,
         tenantOneFixture.MeasurementUnitId,tenantOneFixture.WarehouseId,connectionString);
+    await VerifyPurchaseApprovalLifecycleAsync(tenantOneId, tenantOneFixture.ProductId,
+        tenantOneFixture.MeasurementUnitId, tenantOneFixture.WarehouseId, connectionString);
 
     await VerifyTenantIsolationAndReconciliationAsync(
         tenantOneId,
@@ -133,7 +136,7 @@ try
     await VerifyInventoryBalanceProjectionAsync(tenantOneId, tenantOneFixture.ProductId, expectedOnHand: 2m, connectionString);
     await VerifyOpeningTrackingAllocationAsync(tenantOneId, tenantOneFixture.ProductId, tenantOneFixture.WarehouseId, connectionString);
 
-    Console.WriteLine("Passed SQL integration checks: professional customer and sales-pricing tenant isolation, price-list code/rule uniqueness and cross-tenant linkage protection, partial/full sales-delivery reservation consumption, physical stock issue and delivery-time COGS posting, partial customer invoicing with exact delivery allocations and no premature accounting, one-time receivable/revenue posting and controlled invoice-journal reversal without inventory mutation, inspected customer-return Restock with historical-cost inventory restoration and balanced COGS reversal; semantic coverage catalog, legacy-audit freeze and rollback, semantic role/settings, denied-security, permission-aware audit reader/export, legal hold, signed checkpoint, manifest-before-delete retention and SQL audit-role separation plus audit-event rollback, isolation, append-only and integrity; tenant isolation, reconciliation, balances, replenishment purchase-request source concurrency, 3-product/2-supplier split awards, receipt, vendor-bill and supplier-payment concurrency, controlled payment reversal and retry, three-way matching override evidence, GRNI posting and clearing, purchase accounting reconciliation, payable settlement, receipt-based supplier returns, landed-cost valuation, purchasing analytics, idempotent barcode receipt drafts, adjustment posting, tracked operations, quarantine and recall.");
+    Console.WriteLine("Passed SQL integration checks: professional customer and sales-pricing tenant isolation, purchase-approval rule resolution, frozen ordered steps, role-gated approve/reject, atomic rollback, duplicate-instance prevention and rowversion activation; price-list code/rule uniqueness and cross-tenant linkage protection, partial/full sales-delivery reservation consumption, physical stock issue and delivery-time COGS posting, partial customer invoicing with exact delivery allocations and no premature accounting, one-time receivable/revenue posting and controlled invoice-journal reversal without inventory mutation, inspected customer-return Restock with historical-cost inventory restoration and balanced COGS reversal; semantic coverage catalog, legacy-audit freeze and rollback, semantic role/settings, denied-security, permission-aware audit reader/export, legal hold, signed checkpoint, manifest-before-delete retention and SQL audit-role separation plus audit-event rollback, isolation, append-only and integrity; tenant isolation, reconciliation, balances, replenishment purchase-request source concurrency, 3-product/2-supplier split awards, receipt, vendor-bill and supplier-payment concurrency, controlled payment reversal and retry, three-way matching override evidence, GRNI posting and clearing, purchase accounting reconciliation, payable settlement, receipt-based supplier returns, landed-cost valuation, purchasing analytics, idempotent barcode receipt drafts, adjustment posting, tracked operations, quarantine and recall.");
 }
 finally
 {
@@ -158,6 +161,18 @@ static DbContextOptions<AppDbContext> CreateLegacyAuditOptions(
             new FixedCurrentUser("legacy-audit-cutover-user"), tenantContext,
             Options.Create(new LegacyAuditOptions { WriteEnabled = writeEnabled })))
         .Options;
+
+static FiscalPeriodService CreateFiscalPeriodService(
+    AppDbContext context,
+    IUnitOfWork unitOfWork,
+    ICurrentUserService currentUser) => new(
+        new FiscalPeriodRepository(context),
+        unitOfWork,
+        currentUser,
+        new TestPeriodCloseReadinessService(),
+        new SemanticAuditEventService(
+            new NoOpAuditEventWriter(),
+            new FixedAuditRequestContext("sql-integration", "/tests/sql-integration")));
 
 static async Task VerifyLegacyAuditCutoverAsync(int tenantId, string connectionString)
 {
@@ -1032,6 +1047,184 @@ static async Task VerifyProfessionalCustomerMasterAsync(
     }
 }
 
+static async Task VerifyPurchaseApprovalLifecycleAsync(
+    int tenantId,
+    int productId,
+    int measurementUnitId,
+    int warehouseId,
+    string connectionString)
+{
+    var requesterId = $"sql-purchase-requester-{tenantId}";
+    var managerId = $"sql-purchase-manager-{tenantId}";
+    var financeId = $"sql-purchase-finance-{tenantId}";
+    int scopedRuleId;
+    int approvedRequestId;
+    int rejectedRequestId;
+    int invalidRequestId;
+    byte[] scopedRuleVersion;
+
+    await using (var seed = new AppDbContext(CreateOptions(connectionString), new FixedTenantContext(tenantId)))
+    {
+        seed.Users.AddRange(
+            new IdentityUser { Id = requesterId, UserName = requesterId, NormalizedUserName = requesterId.ToUpperInvariant() },
+            new IdentityUser { Id = managerId, UserName = managerId, NormalizedUserName = managerId.ToUpperInvariant() },
+            new IdentityUser { Id = financeId, UserName = financeId, NormalizedUserName = financeId.ToUpperInvariant() });
+        var managerRole = new TenantRole(tenantId, "SQL Purchase Manager");
+        var financeRole = new TenantRole(tenantId, "SQL Finance Manager");
+        seed.TenantRoles.AddRange(managerRole, financeRole);
+        await seed.SaveChangesAsync();
+
+        seed.TenantMemberships.AddRange(
+            new TenantMembership(tenantId, requesterId),
+            new TenantMembership(tenantId, managerId),
+            new TenantMembership(tenantId, financeId));
+        seed.TenantUserRoles.AddRange(
+            new TenantUserRole(tenantId, managerId, managerRole.Id),
+            new TenantUserRole(tenantId, financeId, financeRole.Id));
+
+        var fallbackRule = new PurchaseApprovalRule("SQL all-warehouse fallback", null,
+            PurchaseRequestPriority.Low, PurchaseRequestPriority.Urgent);
+        fallbackRule.AddStep(1, managerRole.Name);
+        var scopedRule = new PurchaseApprovalRule("SQL warehouse approval", warehouseId,
+            PurchaseRequestPriority.Normal, PurchaseRequestPriority.High);
+        scopedRule.AddStep(2, financeRole.Name);
+        scopedRule.AddStep(1, managerRole.Name);
+        var invalidUrgentRule = new PurchaseApprovalRule("SQL invalid urgent rule", warehouseId,
+            PurchaseRequestPriority.Urgent, PurchaseRequestPriority.Urgent);
+        seed.PurchaseApprovalRules.AddRange(fallbackRule, scopedRule, invalidUrgentRule);
+
+        var approvedRequest = new PurchaseRequest($"PRQ-SQL-APPROVE-{tenantId}", warehouseId,
+            DateOnly.FromDateTime(DateTime.Today.AddDays(5)), PurchaseRequestPriority.High,
+            "SQL approval lifecycle", null, requesterId);
+        approvedRequest.AddLine(new PurchaseRequestLine(productId, measurementUnitId, 1m, 1m, null, null));
+        var rejectedRequest = new PurchaseRequest($"PRQ-SQL-REJECT-{tenantId}", warehouseId,
+            DateOnly.FromDateTime(DateTime.Today.AddDays(6)), PurchaseRequestPriority.Normal,
+            "SQL rejection lifecycle", null, requesterId);
+        rejectedRequest.AddLine(new PurchaseRequestLine(productId, measurementUnitId, 1m, 1m, null, null));
+        var invalidRequest = new PurchaseRequest($"PRQ-SQL-INVALID-{tenantId}", warehouseId,
+            DateOnly.FromDateTime(DateTime.Today.AddDays(7)), PurchaseRequestPriority.Urgent,
+            "SQL rollback lifecycle", null, requesterId);
+        invalidRequest.AddLine(new PurchaseRequestLine(productId, measurementUnitId, 1m, 1m, null, null));
+        seed.PurchaseRequests.AddRange(approvedRequest, rejectedRequest, invalidRequest);
+        await seed.SaveChangesAsync();
+
+        scopedRuleId = scopedRule.Id;
+        scopedRuleVersion = scopedRule.RowVersion.ToArray();
+        approvedRequestId = approvedRequest.Id;
+        rejectedRequestId = rejectedRequest.Id;
+        invalidRequestId = invalidRequest.Id;
+    }
+
+    PurchaseApprovalService CreateService(AppDbContext context, string userId) => new(
+        new PurchaseApprovalRepository(context),
+        new PurchaseRequestRepository(context),
+        new WarehouseRepository(context),
+        new TenantRoleRepository(context),
+        new TenantAuthorizationRepository(context),
+        new FixedTenantContext(tenantId),
+        new FixedCurrentUser(userId),
+        new UnitOfWork(context));
+
+    async Task SubmitAsync(int requestId)
+    {
+        await using var context = new AppDbContext(CreateOptions(connectionString), new FixedTenantContext(tenantId));
+        var request = await new PurchaseRequestRepository(context).GetByIdAsync(requestId)
+            ?? throw new InvalidOperationException("SQL purchase request fixture was not found.");
+        await CreateService(context, requesterId).SubmitAsync(request);
+    }
+
+    await SubmitAsync(approvedRequestId);
+    await SubmitAsync(rejectedRequestId);
+
+    try
+    {
+        await SubmitAsync(approvedRequestId);
+        throw new InvalidOperationException("A submitted purchase request must not create a second approval instance.");
+    }
+    catch (InvalidOperationException exception) when (
+        exception.Message.Contains("Only draft purchase requests", StringComparison.Ordinal))
+    {
+        // Expected: domain state rejects the duplicate before another instance is persisted.
+    }
+
+    try
+    {
+        await SubmitAsync(invalidRequestId);
+        throw new InvalidOperationException("A matching approval rule without steps must block submission.");
+    }
+    catch (InvalidOperationException exception) when (
+        exception.Message.Contains("has no steps", StringComparison.Ordinal))
+    {
+        // Expected: validation occurs before the transaction changes the request.
+    }
+
+    await using (var snapshot = new AppDbContext(CreateOptions(connectionString), new FixedTenantContext(tenantId)))
+    {
+        var approvedInstance = await snapshot.PurchaseApprovalInstances.Include(x => x.Steps)
+            .SingleAsync(x => x.PurchaseRequestId == approvedRequestId);
+        if (approvedInstance.RuleNameSnapshot != "SQL warehouse approval" ||
+            !approvedInstance.Steps.OrderBy(x => x.Sequence).Select(x => x.ApproverRoleName)
+                .SequenceEqual(["SQL Purchase Manager", "SQL Finance Manager"]))
+            throw new InvalidOperationException("Purchase approval submission must resolve the most specific rule and freeze ordered role snapshots.");
+        if (await snapshot.PurchaseApprovalInstances.CountAsync(x => x.PurchaseRequestId == approvedRequestId) != 1)
+            throw new InvalidOperationException("A purchase request must have exactly one approval instance.");
+        var invalidRequest = await snapshot.PurchaseRequests.SingleAsync(x => x.Id == invalidRequestId);
+        if (invalidRequest.Status != PurchaseRequestStatus.Draft ||
+            await snapshot.PurchaseApprovalInstances.AnyAsync(x => x.PurchaseRequestId == invalidRequestId))
+            throw new InvalidOperationException("A rule-validation failure must leave the purchase request Draft without an approval instance.");
+    }
+
+    await using (var wrongRole = new AppDbContext(CreateOptions(connectionString), new FixedTenantContext(tenantId)))
+    {
+        try
+        {
+            await CreateService(wrongRole, financeId).DecideAsync(approvedRequestId, true, "Wrong step");
+            throw new InvalidOperationException("A user outside the current approval role must not decide the step.");
+        }
+        catch (UnauthorizedAccessException)
+        {
+            // Expected: the first step belongs only to SQL Purchase Manager.
+        }
+    }
+
+    await using (var manager = new AppDbContext(CreateOptions(connectionString), new FixedTenantContext(tenantId)))
+        await CreateService(manager, managerId).DecideAsync(approvedRequestId, true, "SQL manager approval");
+    await using (var finance = new AppDbContext(CreateOptions(connectionString), new FixedTenantContext(tenantId)))
+        await CreateService(finance, financeId).DecideAsync(approvedRequestId, true, "SQL finance approval");
+
+    await using (var manager = new AppDbContext(CreateOptions(connectionString), new FixedTenantContext(tenantId)))
+        await CreateService(manager, managerId).DecideAsync(rejectedRequestId, true, "SQL manager approval");
+    await using (var finance = new AppDbContext(CreateOptions(connectionString), new FixedTenantContext(tenantId)))
+        await CreateService(finance, financeId).DecideAsync(rejectedRequestId, false, "SQL budget rejection");
+
+    await using (var decisions = new AppDbContext(CreateOptions(connectionString), new FixedTenantContext(tenantId)))
+    {
+        var approved = await decisions.PurchaseRequests.SingleAsync(x => x.Id == approvedRequestId);
+        var rejected = await decisions.PurchaseRequests.SingleAsync(x => x.Id == rejectedRequestId);
+        var approvedInstance = await decisions.PurchaseApprovalInstances.SingleAsync(x => x.PurchaseRequestId == approvedRequestId);
+        var rejectedInstance = await decisions.PurchaseApprovalInstances.SingleAsync(x => x.PurchaseRequestId == rejectedRequestId);
+        if (approved.Status != PurchaseRequestStatus.Approved || approvedInstance.Status != PurchaseApprovalStatus.Approved ||
+            rejected.Status != PurchaseRequestStatus.Rejected || rejectedInstance.Status != PurchaseApprovalStatus.Rejected)
+            throw new InvalidOperationException("Role-authorized approval decisions must atomically transition both instance and purchase request.");
+    }
+
+    await using (var activation = new AppDbContext(CreateOptions(connectionString), new FixedTenantContext(tenantId)))
+        await CreateService(activation, managerId).SetActiveAsync(scopedRuleId, false, scopedRuleVersion);
+    await using (var staleActivation = new AppDbContext(CreateOptions(connectionString), new FixedTenantContext(tenantId)))
+    {
+        try
+        {
+            await CreateService(staleActivation, managerId).SetActiveAsync(scopedRuleId, true, scopedRuleVersion);
+            throw new InvalidOperationException("A stale purchase approval rule rowversion must be rejected.");
+        }
+        catch (InvalidOperationException exception) when (
+            exception.Message.Contains("modified by another user", StringComparison.Ordinal))
+        {
+            // Expected: the first status change owns the new rowversion.
+        }
+    }
+}
+
 static async Task VerifySalesPricingFoundationAsync(int tenantOneId,int tenantTwoId,int productId,string connectionString)
 {
     int tenantOneListId;
@@ -1277,7 +1470,7 @@ static async Task VerifySalesQuotationFoundationAsync(int tenantOneId,int tenant
             new InventoryBalanceRepository(deliveryContext),new ProductLocationStockRepository(deliveryContext),
             new PurchaseRepository(deliveryContext),new SupplierRepository(deliveryContext),new SaleRepository(deliveryContext),
             new CustomerRepository(deliveryContext),deliveryUnitOfWork);
-        var fiscalPeriods=new FiscalPeriodService(new FiscalPeriodRepository(deliveryContext),deliveryUnitOfWork,deliveryUser);
+        var fiscalPeriods=CreateFiscalPeriodService(deliveryContext,deliveryUnitOfWork,deliveryUser);
         var deliveryRepository=new SalesDeliveryRepository(deliveryContext);
         var deliveryService=new SalesDeliveryService(deliveryRepository,orderRepository,reservationRepository,
             new ProductRepository(deliveryContext),new ProductStockRepository(deliveryContext),new WarehouseRepository(deliveryContext),
@@ -1874,7 +2067,7 @@ static async Task VerifyConcurrentGoodsReceiptAndGrniAsync(
             new InventoryBalanceRepository(context), new ProductLocationStockRepository(context),
             new PurchaseRepository(context), new SupplierRepository(context), new SaleRepository(context),
             new CustomerRepository(context), unitOfWork);
-        var fiscalPeriods = new FiscalPeriodService(new FiscalPeriodRepository(context), unitOfWork, currentUser);
+        var fiscalPeriods = CreateFiscalPeriodService(context, unitOfWork, currentUser);
         var journals = new JournalPostingService(new JournalEntryRepository(context), numbers, fiscalPeriods);
         var exchangeRates = new CurrencyExchangeRateService(new CurrencyExchangeRateRepository(context), new GeneralSettingsRepository(context), unitOfWork, currentUser);
         var service = new GoodsReceiptService(
@@ -1931,7 +2124,7 @@ static async Task VerifyConcurrentGoodsReceiptAndGrniAsync(
         var billUnitOfWork = new UnitOfWork(billContext);
         var billUser = new FixedCurrentUser("integration-biller");
         var billNumbers = new DocumentNumberService(new DocumentSequenceRepository(billContext));
-        var billFiscalPeriods = new FiscalPeriodService(new FiscalPeriodRepository(billContext), billUnitOfWork, billUser);
+        var billFiscalPeriods = CreateFiscalPeriodService(billContext, billUnitOfWork, billUser);
         var billJournals = new JournalPostingService(new JournalEntryRepository(billContext), billNumbers, billFiscalPeriods);
         var billExchangeRates = new CurrencyExchangeRateService(new CurrencyExchangeRateRepository(billContext), new GeneralSettingsRepository(billContext), billUnitOfWork, billUser);
         var billOrderLifecycle = new PurchaseOrderLifecycleService(
@@ -1998,7 +2191,7 @@ static async Task VerifyConcurrentGoodsReceiptAndGrniAsync(
         var paymentUnitOfWork = new UnitOfWork(paymentContext);
         var paymentUser = new FixedCurrentUser("integration-cashier");
         var paymentNumbers = new DocumentNumberService(new DocumentSequenceRepository(paymentContext));
-        var paymentFiscalPeriods = new FiscalPeriodService(new FiscalPeriodRepository(paymentContext), paymentUnitOfWork, paymentUser);
+        var paymentFiscalPeriods = CreateFiscalPeriodService(paymentContext, paymentUnitOfWork, paymentUser);
         var paymentJournals = new JournalPostingService(new JournalEntryRepository(paymentContext), paymentNumbers, paymentFiscalPeriods);
         var paymentExchangeRates = new CurrencyExchangeRateService(new CurrencyExchangeRateRepository(paymentContext), new GeneralSettingsRepository(paymentContext), paymentUnitOfWork, paymentUser);
         var paymentMethod = await paymentContext.PaymentMethods.SingleAsync(x => x.Name == "Supplier bank transfer");
@@ -2040,7 +2233,7 @@ static async Task VerifyConcurrentGoodsReceiptAndGrniAsync(
         var reversalUnitOfWork = new UnitOfWork(paymentVerification);
         var reversalUser = new FixedCurrentUser("integration-reversal");
         var reversalNumbers = new DocumentNumberService(new DocumentSequenceRepository(paymentVerification));
-        var reversalPeriods = new FiscalPeriodService(new FiscalPeriodRepository(paymentVerification), reversalUnitOfWork, reversalUser);
+        var reversalPeriods = CreateFiscalPeriodService(paymentVerification, reversalUnitOfWork, reversalUser);
         var reversalJournals = new JournalPostingService(new JournalEntryRepository(paymentVerification), reversalNumbers, reversalPeriods);
         var reversalTracking = new InventoryTrackingService(
             new InventoryTrackingRepository(paymentVerification), new InventoryRecallRepository(paymentVerification),
@@ -2098,7 +2291,7 @@ static async Task VerifyConcurrentGoodsReceiptAndGrniAsync(
             new InventoryBalanceRepository(returnContext), new ProductLocationStockRepository(returnContext),
             new PurchaseRepository(returnContext), new SupplierRepository(returnContext), new SaleRepository(returnContext),
             new CustomerRepository(returnContext), returnUnitOfWork);
-        var returnFiscalPeriods = new FiscalPeriodService(new FiscalPeriodRepository(returnContext), returnUnitOfWork, returnUser);
+        var returnFiscalPeriods = CreateFiscalPeriodService(returnContext, returnUnitOfWork, returnUser);
         var returnJournals = new JournalPostingService(new JournalEntryRepository(returnContext), returnNumbers, returnFiscalPeriods);
         var untrackedRemoval = new UntrackedInventoryRemovalService(
             new WarehouseRepository(returnContext), new StorageLocationRepository(returnContext),
@@ -2165,7 +2358,7 @@ static async Task VerifyConcurrentGoodsReceiptAndGrniAsync(
         var landedUnitOfWork = new UnitOfWork(landedContext);
         var landedUser = new FixedCurrentUser("integration-landed-cost");
         var landedNumbers = new DocumentNumberService(new DocumentSequenceRepository(landedContext));
-        var landedPeriods = new FiscalPeriodService(new FiscalPeriodRepository(landedContext), landedUnitOfWork, landedUser);
+        var landedPeriods = CreateFiscalPeriodService(landedContext, landedUnitOfWork, landedUser);
         var landedJournals = new JournalPostingService(new JournalEntryRepository(landedContext), landedNumbers, landedPeriods);
         var landedService = new LandedCostService(new LandedCostRepository(landedContext), new GoodsReceiptRepository(landedContext),
             new PurchaseOrderRepository(landedContext), new SupplierRepository(landedContext), new WarehouseRepository(landedContext),
@@ -2237,7 +2430,7 @@ static async Task VerifyConcurrentGoodsReceiptAndGrniAsync(
         var creditUnitOfWork = new UnitOfWork(creditContext);
         var creditUser = new FixedCurrentUser("integration-credit");
         var creditNumbers = new DocumentNumberService(new DocumentSequenceRepository(creditContext));
-        var creditPeriods = new FiscalPeriodService(new FiscalPeriodRepository(creditContext), creditUnitOfWork, creditUser);
+        var creditPeriods = CreateFiscalPeriodService(creditContext, creditUnitOfWork, creditUser);
         var creditJournals = new JournalPostingService(new JournalEntryRepository(creditContext), creditNumbers, creditPeriods);
         var creditTracking = new InventoryTrackingService(
             new InventoryTrackingRepository(creditContext), new InventoryRecallRepository(creditContext),
@@ -2324,7 +2517,7 @@ static async Task VerifyConcurrentGoodsReceiptAndGrniAsync(
         new InventoryBalanceRepository(scanContext), new ProductLocationStockRepository(scanContext),
         new PurchaseRepository(scanContext), new SupplierRepository(scanContext), new SaleRepository(scanContext),
         new CustomerRepository(scanContext), scanUnitOfWork);
-    var scanPeriods = new FiscalPeriodService(new FiscalPeriodRepository(scanContext), scanUnitOfWork, scanUser);
+    var scanPeriods = CreateFiscalPeriodService(scanContext, scanUnitOfWork, scanUser);
     var scanJournals = new JournalPostingService(new JournalEntryRepository(scanContext), scanNumbers, scanPeriods);
     var scanExchangeRates = new CurrencyExchangeRateService(new CurrencyExchangeRateRepository(scanContext), new GeneralSettingsRepository(scanContext), scanUnitOfWork, scanUser);
     var scanService = new GoodsReceiptService(
@@ -2546,6 +2739,7 @@ static async Task VerifyTrackedActivationGuardAsync(
         measurementUnits,
         new ProductCategoryRepository(context),
         new AccountRepository(context),
+        new SupplierRepository(context),
         new SupplierProductAssignmentService(
             new SupplierProductPurchasingInfoRepository(context),
             new SupplierRepository(context),
@@ -2668,6 +2862,28 @@ file sealed class FixedTenantContext(int? tenantId) : ITenantContext
 file sealed class FixedCurrentUser(string userId) : ICurrentUserService
 {
     public string UserId { get; } = userId;
+}
+
+file sealed class TestPeriodCloseReadinessService : IPeriodCloseReadinessService
+{
+    public Task<MiniStore.Application.Dtos.Accounting.CashFlowClosePageDto> GetAsync(
+        MiniStore.Application.Dtos.Accounting.CashFlowCloseQueryDto query,
+        CancellationToken cancellationToken = default) =>
+        Task.FromResult(new MiniStore.Application.Dtos.Accounting.CashFlowClosePageDto(
+            query.FromDate ?? DateTime.Today,
+            query.ToDate ?? DateTime.Today,
+            "USD",
+            0,
+            new MiniStore.Application.Dtos.Accounting.CashFlowSummaryDto(0, 0, 0, 0, 0, 0, 0),
+            [],
+            []));
+}
+
+file sealed class NoOpAuditEventWriter : IAuditEventWriter
+{
+    public ValueTask<Guid?> RecordAsync(
+        AuditEventWriteRequest request,
+        CancellationToken cancellationToken = default) => ValueTask.FromResult<Guid?>(null);
 }
 
 file sealed class FixedAuditRequestContext(string correlationId, string? requestPathTemplate) : IAuditRequestContext

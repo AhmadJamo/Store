@@ -365,3 +365,10 @@ The audit confirmed purchase-rule administration and request decisions remain in
 warehouse/priority resolution, frozen ordered steps, role checks, transactions, antiforgery and rowversion. The Angular
 rules UI is currently part of the broader purchase-request feature and isolated SQL lifecycle evidence is weaker than the
 sales counterpart, so PurchaseApprovalRules MVC remains active and is not part of MOD-030U.
+
+## MOD-030V PurchaseApprovalRules SQL evidence
+
+The disposable SQL suite now exercises `PurchaseApprovalService` with real repositories and UnitOfWork. It proves
+warehouse/priority specificity, frozen ordered steps, one instance per request, invalid-rule rollback, role-gated
+sequential approval, rejection, atomic request/instance transitions and stale-rowversion protection. Runtime behavior and
+operational data are unchanged; MVC retirement remains a separate MOD-030W approval decision.

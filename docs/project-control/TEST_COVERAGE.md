@@ -60,7 +60,8 @@
 | `npm audit --omit=dev --json` in `MiniStore Front-End` | 0 production dependency vulnerabilities | 2026-10-24 |
 | Live visual/accessibility-tree review at `/design-system` | Arabic RTL shell, labels, native controls and empty/loading/error/status states verified | 2026-10-24 |
 | `dotnet build MiniStore.sln -c Release --no-restore` | Passed, 0 warnings/errors after the complete workflow/localization audit | 2026-10-23 |
-| `dotnet run --project tests/InventorySqlIntegration/InventorySqlIntegration.csproj -c Release --no-build` | BLOCKED before test execution by Windows SQL SSPI; quotation-template snapshot scenario is compiled but unverified on SQL | 2026-10-22 |
+| `dotnet run --project tests/InventorySqlIntegration/InventorySqlIntegration.csproj -c Release --no-build` | Passed complete disposable SQL suite, including PurchaseApprovalRules specificity, frozen ordered steps, role-gated atomic approve/reject, rollback, uniqueness and rowversion | 2026-11-14 |
+| `dotnet run --project tests/InventorySqlIntegration/InventorySqlIntegration.csproj -c Release --no-build` | Historical: blocked before test execution by Windows SQL SSPI; quotation-template snapshot scenario was compiled but unverified on SQL | 2026-10-22 |
 | `pwsh -NoProfile -File scripts/verify-local.ps1` | Build + 777 + SQL + 500-request workload passed | 2026-10-18 |
 | `dotnet run --project tests/InventorySqlIntegration/InventorySqlIntegration.csproj -c Release` | Passed full disposable SQL suite, including partial invoices, one-time balanced receivable/revenue posting, branch/warehouse dimensions, exact inverse journal, released eligibility and zero stock/movement mutation | 2026-10-21 |
 | Live local historic-credential negative test (اختبار رفض بيانات الدخول التاريخية) | Rejected after remediation (رُفضت بعد المعالجة) | 2026-10-15 |

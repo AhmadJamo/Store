@@ -1,5 +1,9 @@
 # AI Work Log
 
+- 2026-11-14: Completed `MOD-030V` by adding disposable SQL lifecycle evidence for PurchaseApprovalRules over the real
+  Application service, repositories and UnitOfWork. Proved specific rule resolution, frozen ordered steps, duplicate
+  prevention, invalid-rule rollback, role-gated atomic approve/reject and stale-rowversion rejection. Updated only the SQL
+  harness for current service constructors; the full disposable suite passed and removed its database automatically.
 - 2026-11-13: Completed the explicitly approved `MOD-030U` SalesApprovalRules MVC retirement. Deleted the controller and
   Index view, retained a SalesApprovalRules.View-protected legacy redirect and proved both retired Create/SetActive POSTs
   return 405 without mutation. Kept API, Angular, SalesOrderApprovalService, domain/repository, permissions, antiforgery,

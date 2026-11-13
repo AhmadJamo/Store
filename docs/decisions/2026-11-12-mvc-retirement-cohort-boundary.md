@@ -125,3 +125,9 @@ SalesApprovalRules follows the mixed-controller retirement rule: only protected 
 to the retired catalog. Legacy Create/SetActive POSTs end at 405 and are never redirected or replayed. Mutation and
 workflow authority remains in the antiforgery-protected API, `SalesOrderApprovalService` and domain entities. This execution
 does not authorize PurchaseApprovalRules retirement.
+
+## Purchase workflow evidence — MOD-030V
+
+PurchaseApprovalRules now meets the workflow evidence gate through a disposable SQL scenario using the real Application
+service, repositories and transaction boundary. Presentation retirement may therefore be proposed as MOD-030W, but the
+test evidence itself authorizes no controller/view deletion.

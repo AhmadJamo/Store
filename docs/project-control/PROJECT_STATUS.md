@@ -430,3 +430,6 @@ Application/domain مع الصلاحيات وantiforgery وrowversion. رُشح 
 اكتمل `MOD-030U` بعد الموافقة الصريحة: حُذف SalesApprovalRulesController وView الوحيد، وبقيت القراءة القديمة تحويلًا
 محميًا وCreate/SetActive القديمتان 405. بقيت API/Angular والخدمة وworkflow دون تغيير. أصبح الجرد 69 Controller و388
 إجراء و201 Razor؛ نجح Release و1,837 فحصًا و242/242 Angular. تعذر Edge UI بسبب ACL في مساعد Windows؛ نجح HTTP الحي.
+اكتمل `MOD-030V` باختبار SQL disposable على PurchaseApprovalService الحقيقي: ثبت اختيار القاعدة الأكثر تحديدًا، تجميد
+الخطوات، منع duplicate، rollback قبل Submit غير الصالح، صلاحية الدور، approve/reject الذري وrowversion. نجح كامل SQL
+suite وحذف قاعدة العملية تلقائيًا؛ لم يتغير production أو الجرد 69/388/201. أصبح MOD-030W اقتراح حذف مستقلًا فقط.

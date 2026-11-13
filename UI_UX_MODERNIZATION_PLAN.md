@@ -514,3 +514,12 @@ largest underrepresented modules; production deployment readiness and physical M
   project thresholds. Hosted anonymous boundaries passed; Edge window automation was unavailable due to a Windows helper
   ACL failure, so no authenticated Edge claim is made.
 - Active inventory is 69 MVC controllers, 388 actions and 201 Razor files.
+
+## MOD-030V — PurchaseApprovalRules SQL lifecycle evidence — COMPLETED 2026-11-14
+
+- Added a disposable SQL scenario over the real PurchaseApprovalService/repositories/UnitOfWork.
+- Proved specific rule resolution, frozen ordered steps, role-gated approve/reject, atomic request/instance transitions,
+  rollback on invalid rules, duplicate-instance prevention and stale-rowversion rejection.
+- Updated the SQL test harness to current FiscalPeriodService/ProductService contracts without changing production code.
+- The complete disposable SQL suite passed; no operational data or runtime behavior changed.
+- PurchaseApprovalRules MVC is now eligible only for a separately approved MOD-030W bounded retirement.

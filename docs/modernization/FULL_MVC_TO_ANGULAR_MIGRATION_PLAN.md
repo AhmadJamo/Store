@@ -176,3 +176,9 @@ SalesApprovalRules دليلًا مستقلًا أقوى عبر مكوّن Angula
 اكتمل بعد الموافقة الصريحة: حُذف Controller وView فقط، وبقيت API وAngular وSalesOrderApprovalService وكل قواعد التقييم
 والاعتماد. تحافظ GET/HEAD القديمة على SalesApprovalRules.View وquery، بينما يعيد Create/SetActive القديمتان 405 دون
 mutation. أصبح الجرد 69 Controller و388 Action و201 ملف Razor.
+
+## MOD-030V — دليل SQL لـPurchaseApprovalRules
+
+أضيف سيناريو disposable SQL عبر PurchaseApprovalService والمستودعات وUnitOfWork الفعلية. ثبت resolution حسب المستودع
+والأولوية، snapshot مرتب، منع instance مكرر، rollback عند قاعدة بلا خطوات، صلاحية الدور، approve/reject الذري وحماية
+rowversion. لم يتغير production؛ أي تقاعد MVC بقي بوابة MOD-030W مستقلة.
