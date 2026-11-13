@@ -374,6 +374,8 @@ The ERP SaaS Foundation Blueprint is imported as a non-authoritative planning re
 - The next retirement gate is a non-destructive audit that must name exactly three controllers as one cohort before deletion.
 - MOD-030X completed the first three-controller cohort: GoodsReceiptReturns, PurchaseServiceAcceptances and
   SupplierCreditNotes. Nine protected reads now resolve to Angular and the three retired Create POSTs return 405.
+- MOD-030Y completed the non-destructive audit and named the first ten-controller cohort. MOD-030Z is approved to execute
+  exactly those ten surfaces together; identity, subscription and Platform boundaries remain excluded.
 - UX-016 recurring-journal templates and controlled runs is complete with Draft-only manual execution. UX-017 bank-statement
   reconciliation is proposed and requires owner approval before adding statement import and matching records.
 - UX-009 navigation completeness is complete: 72 registered destinations and 41/41 operational routes are covered through

@@ -107,6 +107,9 @@ aligned with backend authority without treating a global Identity or Platform ro
 same-line MVC actions, verifies every mapped Angular route and emits one acceptance row per counterpart with route,
 operation, permission, risk and evidence fields. MOD-030F additionally classifies presentation, mutation, download and
 session/compatibility dependencies into gated retirement cohorts. The modernization gate fails when any generated artifact is stale.
+MOD-030Y records the first ten-controller retirement cohort audit in
+`docs/modernization/MOD_030Y_TEN_CONTROLLER_COHORT_AUDIT.md`; it changes no source inventory. MOD-030Z is the separately
+recorded execution boundary for exactly those ten surfaces.
 
 `docs/modernization/PHASE_30E_RUNTIME_READINESS_AUDIT.md` distinguishes functional counterparts from runtime defaults:
 All 82 surfaces have verified functional counterparts. MOD-030E4N expands the committed default to forty-five surfaces and

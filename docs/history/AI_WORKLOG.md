@@ -1,5 +1,11 @@
 # AI Work Log
 
+- 2026-11-14: Completed `MOD-030Y`, a non-destructive audit selecting the first ten-controller retirement cohort:
+  SupplierPayments, CustomerPayments, PurchaseReplenishment, ProductAttributes, ProductStocks, SalesDeliveries,
+  ProductTemplates, Replenishment, Suppliers and InventoryScanning. Each has Angular/API parity over its existing
+  Application service and permission boundary. Account, Subscription, Users and Platform surfaces were excluded because
+  identity/session evidence requires a separate cohort. No runtime, schema, data or inventory count changed.
+
 - 2026-11-14: Completed `MOD-030X`, the first three-controller retirement cohort. Removed GoodsReceiptReturns,
   PurchaseServiceAcceptances and SupplierCreditNotes MVC controllers plus nine Razor views. Protected legacy list/create/
   details reads resolve to exact Angular routes; old Create POSTs return 405. APIs, services, permissions, antiforgery and

@@ -542,3 +542,12 @@ largest underrepresented modules; production deployment readiness and physical M
 - Legacy list/create/details GET/HEAD routes now resolve to exact Angular destinations; retired MVC Create POSTs return 405.
 - Release passed with zero warnings/errors, 1,803 regression checks, 242/242 Angular tests and bundle/browser gates.
 - Active inventory is 65 MVC controllers, 373 actions, 191 Razor files and 173 user-facing views.
+
+## MOD-030Y — first ten-controller cohort audit — COMPLETED 2026-11-14
+
+- Changed future execution size from three to ten controllers per owner direction.
+- Selected SupplierPayments, CustomerPayments, PurchaseReplenishment, ProductAttributes, ProductStocks, SalesDeliveries,
+  ProductTemplates, Replenishment, Suppliers and InventoryScanning as the first ten-controller cohort.
+- Verified each has Angular and authenticated API coverage over the same Application service and permission boundaries.
+- Excluded Account, Subscription, Users and Platform controllers because identity/session/platform evidence needs a separate cohort.
+- No runtime file, schema or operational data changed; physical execution is recorded as MOD-030Z.
