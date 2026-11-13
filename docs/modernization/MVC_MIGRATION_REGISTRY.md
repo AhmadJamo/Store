@@ -4,16 +4,16 @@
 
 ## Reconciliation
 
-- Controllers discovered: 156 total; 68 MVC; 88 API.
-- User-facing MVC views discovered: 182.
-- MVC actions discovered: 385.
-- Razor files included in the control inventory: 192.
+- Controllers discovered: 153 total; 65 MVC; 88 API.
+- User-facing MVC views discovered: 173.
+- MVC actions discovered: 373.
+- Razor files included in the control inventory: 183.
 - Angular application routes discovered: 194.
-- Presentation surfaces with a verified Angular counterpart: 67.
+- Presentation surfaces with a verified Angular counterpart: 64.
 - Remaining presentation surfaces without a mapped Angular counterpart: 0.
 - Mutation-only MVC compatibility surfaces: 1 (Language).
-- Physically retired presentation actions with legacy redirects: 17 across 14 surfaces (AnalyticsCenter, AuditEvents, InventoryBalances, InventoryInsights, InventoryReconciliation, InventoryReservations, JournalEntries, ProductCategories, Public, PurchaseAccountingReconciliation, PurchaseApprovalRules, Recipes, SalesApprovalRules, StockMovements).
-- Allowlisted Angular-default cutover actions: 166.
+- Physically retired presentation actions with legacy redirects: 26 across 17 surfaces (AnalyticsCenter, AuditEvents, GoodsReceiptReturns, InventoryBalances, InventoryInsights, InventoryReconciliation, InventoryReservations, JournalEntries, ProductCategories, Public, PurchaseAccountingReconciliation, PurchaseApprovalRules, PurchaseServiceAcceptances, Recipes, SalesApprovalRules, StockMovements, SupplierCreditNotes).
+- Allowlisted Angular-default cutover actions: 157.
 
 Remaining presentation surfaces: none.
 
@@ -54,9 +54,6 @@ Statuses follow the migration lifecycle plus MVC Compatibility (mutation-only). 
 | DocumentDesigns | Create.cshtml | Angular Default | /settings/document-designs | MiniStore.Web/Views/DocumentDesigns/Create.cshtml |
 | DocumentDesigns | Details.cshtml | Angular Default | /settings/document-designs | MiniStore.Web/Views/DocumentDesigns/Details.cshtml |
 | DocumentDesigns | Index.cshtml | Angular Default | /settings/document-designs | MiniStore.Web/Views/DocumentDesigns/Index.cshtml |
-| GoodsReceiptReturns | Create.cshtml | Angular Default | /purchases/receipt-returns | MiniStore.Web/Views/GoodsReceiptReturns/Create.cshtml |
-| GoodsReceiptReturns | Details.cshtml | Angular Default | /purchases/receipt-returns | MiniStore.Web/Views/GoodsReceiptReturns/Details.cshtml |
-| GoodsReceiptReturns | Index.cshtml | Angular Default | /purchases/receipt-returns | MiniStore.Web/Views/GoodsReceiptReturns/Index.cshtml |
 | GoodsReceipts | Create.cshtml | Angular Default | /purchases/receipts | MiniStore.Web/Views/GoodsReceipts/Create.cshtml |
 | GoodsReceipts | Details.cshtml | Angular Default | /purchases/receipts | MiniStore.Web/Views/GoodsReceipts/Details.cshtml |
 | GoodsReceipts | Index.cshtml | Angular Default | /purchases/receipts | MiniStore.Web/Views/GoodsReceipts/Index.cshtml |
@@ -111,9 +108,6 @@ Statuses follow the migration lifecycle plus MVC Compatibility (mutation-only). 
 | Purchases | Create.cshtml | Angular Default | /purchases/legacy | MiniStore.Web/Views/Purchases/Create.cshtml |
 | Purchases | Details.cshtml | Angular Default | /purchases/legacy | MiniStore.Web/Views/Purchases/Details.cshtml |
 | Purchases | Index.cshtml | Angular Default | /purchases/legacy | MiniStore.Web/Views/Purchases/Index.cshtml |
-| PurchaseServiceAcceptances | Create.cshtml | Angular Default | /purchases/service-acceptances | MiniStore.Web/Views/PurchaseServiceAcceptances/Create.cshtml |
-| PurchaseServiceAcceptances | Details.cshtml | Angular Default | /purchases/service-acceptances | MiniStore.Web/Views/PurchaseServiceAcceptances/Details.cshtml |
-| PurchaseServiceAcceptances | Index.cshtml | Angular Default | /purchases/service-acceptances | MiniStore.Web/Views/PurchaseServiceAcceptances/Index.cshtml |
 | PurchaseSourcing | Create.cshtml | Angular Default | /purchases/sourcing | MiniStore.Web/Views/PurchaseSourcing/Create.cshtml |
 | PurchaseSourcing | Details.cshtml | Angular Default | /purchases/sourcing | MiniStore.Web/Views/PurchaseSourcing/Details.cshtml |
 | PurchaseSourcing | Direct.cshtml | Angular Default | /purchases/sourcing | MiniStore.Web/Views/PurchaseSourcing/Direct.cshtml |
@@ -169,9 +163,6 @@ Statuses follow the migration lifecycle plus MVC Compatibility (mutation-only). 
 | Subscription | Checkout.cshtml | Angular Default | /subscription | MiniStore.Web/Views/Subscription/Checkout.cshtml |
 | Subscription | Index.cshtml | Angular Default | /subscription | MiniStore.Web/Views/Subscription/Index.cshtml |
 | SupplierCommunications | Details.cshtml | Angular Default | /purchases/communications/prepare | MiniStore.Web/Views/SupplierCommunications/Details.cshtml |
-| SupplierCreditNotes | Create.cshtml | Angular Default | /purchases/credit-notes | MiniStore.Web/Views/SupplierCreditNotes/Create.cshtml |
-| SupplierCreditNotes | Details.cshtml | Angular Default | /purchases/credit-notes | MiniStore.Web/Views/SupplierCreditNotes/Details.cshtml |
-| SupplierCreditNotes | Index.cshtml | Angular Default | /purchases/credit-notes | MiniStore.Web/Views/SupplierCreditNotes/Index.cshtml |
 | SupplierIntegrations | CredentialCreated.cshtml | Angular Default | /purchases/integrations | MiniStore.Web/Views/SupplierIntegrations/CredentialCreated.cshtml |
 | SupplierIntegrations | Index.cshtml | Angular Default | /purchases/integrations | MiniStore.Web/Views/SupplierIntegrations/Index.cshtml |
 | SupplierIntegrations | PortalAccessCreated.cshtml | Angular Default | /purchases/integrations | MiniStore.Web/Views/SupplierIntegrations/PortalAccessCreated.cshtml |
@@ -270,10 +261,6 @@ Statuses follow the migration lifecycle plus MVC Compatibility (mutation-only). 
 | DocumentDesigns | Details | GET | Angular Default | /settings/document-designs | /settings/document-designs/{id} | MiniStore.Web/Controllers/Settings/DocumentDesignsController.cs |
 | DocumentDesigns | Index | GET | Angular Default | /settings/document-designs | /settings/document-designs | MiniStore.Web/Controllers/Settings/DocumentDesignsController.cs |
 | DocumentDesigns | SetDefault | POST | Angular Default | /settings/document-designs | — | MiniStore.Web/Controllers/Settings/DocumentDesignsController.cs |
-| GoodsReceiptReturns | Create | GET | Angular Default | /purchases/receipt-returns | /purchases/receipt-returns/new?goodsReceiptId={goodsReceiptId} | MiniStore.Web/Controllers/Purchases/GoodsReceiptReturnsController.cs |
-| GoodsReceiptReturns | Create | POST | Angular Default | /purchases/receipt-returns | /purchases/receipt-returns/new?goodsReceiptId={goodsReceiptId} | MiniStore.Web/Controllers/Purchases/GoodsReceiptReturnsController.cs |
-| GoodsReceiptReturns | Details | GET | Angular Default | /purchases/receipt-returns | /purchases/receipt-returns/{id} | MiniStore.Web/Controllers/Purchases/GoodsReceiptReturnsController.cs |
-| GoodsReceiptReturns | Index | GET | Angular Default | /purchases/receipt-returns | /purchases/receipt-returns | MiniStore.Web/Controllers/Purchases/GoodsReceiptReturnsController.cs |
 | GoodsReceipts | Create | GET | Angular Default | /purchases/receipts | /purchases/receipts/new?purchaseOrderId={purchaseOrderId} | MiniStore.Web/Controllers/Purchases/GoodsReceiptsController.cs |
 | GoodsReceipts | Create | POST | Angular Default | /purchases/receipts | /purchases/receipts/new?purchaseOrderId={purchaseOrderId} | MiniStore.Web/Controllers/Purchases/GoodsReceiptsController.cs |
 | GoodsReceipts | CreateScanDraft | POST | Angular Default | /purchases/receipts | — | MiniStore.Web/Controllers/Purchases/GoodsReceiptsController.cs |
@@ -392,10 +379,6 @@ Statuses follow the migration lifecycle plus MVC Compatibility (mutation-only). 
 | Purchases | Details | GET | Angular Default | /purchases/legacy | /purchases/legacy/{id} | MiniStore.Web/Controllers/Purchases/PurchasesController.cs |
 | Purchases | Index | GET | Angular Default | /purchases/legacy | /purchases/legacy | MiniStore.Web/Controllers/Purchases/PurchasesController.cs |
 | Purchases | Post | POST | Angular Default | /purchases/legacy | — | MiniStore.Web/Controllers/Purchases/PurchasesController.cs |
-| PurchaseServiceAcceptances | Create | GET | Angular Default | /purchases/service-acceptances | /purchases/service-acceptances/new?purchaseOrderId={purchaseOrderId} | MiniStore.Web/Controllers/Purchases/PurchaseServiceAcceptancesController.cs |
-| PurchaseServiceAcceptances | Create | POST | Angular Default | /purchases/service-acceptances | /purchases/service-acceptances/new?purchaseOrderId={purchaseOrderId} | MiniStore.Web/Controllers/Purchases/PurchaseServiceAcceptancesController.cs |
-| PurchaseServiceAcceptances | Details | GET | Angular Default | /purchases/service-acceptances | /purchases/service-acceptances/{id} | MiniStore.Web/Controllers/Purchases/PurchaseServiceAcceptancesController.cs |
-| PurchaseServiceAcceptances | Index | GET | Angular Default | /purchases/service-acceptances | /purchases/service-acceptances | MiniStore.Web/Controllers/Purchases/PurchaseServiceAcceptancesController.cs |
 | PurchaseSourcing | Attachment | GET | Angular Default | /purchases/sourcing | — | MiniStore.Web/Controllers/Purchases/PurchaseSourcingController.cs |
 | PurchaseSourcing | Create | GET | Angular Default | /purchases/sourcing | — | MiniStore.Web/Controllers/Purchases/PurchaseSourcingController.cs |
 | PurchaseSourcing | Create | POST | Angular Default | /purchases/sourcing | — | MiniStore.Web/Controllers/Purchases/PurchaseSourcingController.cs |
@@ -522,10 +505,6 @@ Statuses follow the migration lifecycle plus MVC Compatibility (mutation-only). 
 | Subscription | Index | GET | Angular Default | /subscription | /subscription | MiniStore.Web/Controllers/Saas/SubscriptionController.cs |
 | SupplierCommunications | RedirectToAction | POST | Angular Default | /purchases/communications/prepare | — | MiniStore.Web/Controllers/Purchases/SupplierCommunicationsController.cs |
 | SupplierCommunications | RedirectToAction | POST, GET | Angular Default | /purchases/communications/prepare | — | MiniStore.Web/Controllers/Purchases/SupplierCommunicationsController.cs |
-| SupplierCreditNotes | Create | GET | Angular Default | /purchases/credit-notes | /purchases/credit-notes/new?vendorBillId={vendorBillId} | MiniStore.Web/Controllers/Purchases/SupplierCreditNotesController.cs |
-| SupplierCreditNotes | Create | POST | Angular Default | /purchases/credit-notes | /purchases/credit-notes/new?vendorBillId={vendorBillId} | MiniStore.Web/Controllers/Purchases/SupplierCreditNotesController.cs |
-| SupplierCreditNotes | Details | GET | Angular Default | /purchases/credit-notes | /purchases/credit-notes/{id} | MiniStore.Web/Controllers/Purchases/SupplierCreditNotesController.cs |
-| SupplierCreditNotes | Index | GET | Angular Default | /purchases/credit-notes | /purchases/credit-notes | MiniStore.Web/Controllers/Purchases/SupplierCreditNotesController.cs |
 | SupplierIntegrations | File | GET | Angular Default | /purchases/integrations | — | MiniStore.Web/Controllers/Purchases/SupplierIntegrationsController.cs |
 | SupplierIntegrations | RedirectToAction | POST | Angular Default | /purchases/integrations | — | MiniStore.Web/Controllers/Purchases/SupplierIntegrationsController.cs |
 | SupplierIntegrations | RedirectToAction | POST | Angular Default | /purchases/integrations | — | MiniStore.Web/Controllers/Purchases/SupplierIntegrationsController.cs |
@@ -633,9 +612,6 @@ Statuses follow the migration lifecycle plus MVC Compatibility (mutation-only). 
 | DocumentDesigns | Create.cshtml | 1 | 2 | 1 | Create, Index | MiniStore.Web/Views/DocumentDesigns/Create.cshtml |
 | DocumentDesigns | Details.cshtml | 3 | 3 | 2 | Activate, Archive, Create, Index, SetDefault | MiniStore.Web/Views/DocumentDesigns/Details.cshtml |
 | DocumentDesigns | Index.cshtml | 1 | 1 | 4 | Create, Details, Index | MiniStore.Web/Views/DocumentDesigns/Index.cshtml |
-| GoodsReceiptReturns | Create.cshtml | 1 | 1 | 1 | Create, Details | MiniStore.Web/Views/GoodsReceiptReturns/Create.cshtml |
-| GoodsReceiptReturns | Details.cshtml | 0 | 0 | 1 | Index | MiniStore.Web/Views/GoodsReceiptReturns/Details.cshtml |
-| GoodsReceiptReturns | Index.cshtml | 0 | 0 | 1 | Details | MiniStore.Web/Views/GoodsReceiptReturns/Index.cshtml |
 | GoodsReceipts | Create.cshtml | 2 | 2 | 1 | Create, CreateScanDraft, Details | MiniStore.Web/Views/GoodsReceipts/Create.cshtml |
 | GoodsReceipts | Details.cshtml | 2 | 2 | 6 | Create, Details, Index, Inspect, PutAway, Scan | MiniStore.Web/Views/GoodsReceipts/Details.cshtml |
 | GoodsReceipts | Index.cshtml | 1 | 1 | 1 | Details | MiniStore.Web/Views/GoodsReceipts/Index.cshtml |
@@ -692,9 +668,6 @@ Statuses follow the migration lifecycle plus MVC Compatibility (mutation-only). 
 | Purchases | Create.cshtml | 1 | 3 | 1 | Create, Index | MiniStore.Web/Views/Purchases/Create.cshtml |
 | Purchases | Details.cshtml | 1 | 1 | 2 | Create, Index, Post | MiniStore.Web/Views/Purchases/Details.cshtml |
 | Purchases | Index.cshtml | 0 | 0 | 2 | Create, Details | MiniStore.Web/Views/Purchases/Index.cshtml |
-| PurchaseServiceAcceptances | Create.cshtml | 1 | 1 | 1 | Create, Details | MiniStore.Web/Views/PurchaseServiceAcceptances/Create.cshtml |
-| PurchaseServiceAcceptances | Details.cshtml | 0 | 0 | 2 | Details, Index | MiniStore.Web/Views/PurchaseServiceAcceptances/Details.cshtml |
-| PurchaseServiceAcceptances | Index.cshtml | 0 | 0 | 1 | Details | MiniStore.Web/Views/PurchaseServiceAcceptances/Index.cshtml |
 | PurchaseSourcing | Create.cshtml | 1 | 1 | 1 | Create, Details | MiniStore.Web/Views/PurchaseSourcing/Create.cshtml |
 | PurchaseSourcing | Details.cshtml | 4 | 4 | 6 | Attachment, Comparison, Create, CreatePortalAccess, Details, Index, Prepare, Print, RevokePortalAccess | MiniStore.Web/Views/PurchaseSourcing/Details.cshtml |
 | PurchaseSourcing | Direct.cshtml | 1 | 4 | 3 | Create, Direct, Index | MiniStore.Web/Views/PurchaseSourcing/Direct.cshtml |
@@ -752,9 +725,6 @@ Statuses follow the migration lifecycle plus MVC Compatibility (mutation-only). 
 | Subscription | Checkout.cshtml | 0 | 0 | 0 | — | MiniStore.Web/Views/Subscription/Checkout.cshtml |
 | Subscription | Index.cshtml | 1 | 1 | 0 | Checkout | MiniStore.Web/Views/Subscription/Index.cshtml |
 | SupplierCommunications | Details.cshtml | 1 | 1 | 3 | Attachment, Details, RecordActivity | MiniStore.Web/Views/SupplierCommunications/Details.cshtml |
-| SupplierCreditNotes | Create.cshtml | 1 | 1 | 1 | Create, Details | MiniStore.Web/Views/SupplierCreditNotes/Create.cshtml |
-| SupplierCreditNotes | Details.cshtml | 0 | 0 | 2 | Details, Index | MiniStore.Web/Views/SupplierCreditNotes/Details.cshtml |
-| SupplierCreditNotes | Index.cshtml | 0 | 0 | 1 | Details | MiniStore.Web/Views/SupplierCreditNotes/Index.cshtml |
 | SupplierIntegrations | CredentialCreated.cshtml | 0 | 0 | 1 | Index | MiniStore.Web/Views/SupplierIntegrations/CredentialCreated.cshtml |
 | SupplierIntegrations | Index.cshtml | 3 | 3 | 1 | CreateCredential, DeactivateCredential, Retry, Submission | MiniStore.Web/Views/SupplierIntegrations/Index.cshtml |
 | SupplierIntegrations | PortalAccessCreated.cshtml | 0 | 0 | 1 | Index | MiniStore.Web/Views/SupplierIntegrations/PortalAccessCreated.cshtml |

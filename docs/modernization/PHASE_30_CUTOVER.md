@@ -207,3 +207,11 @@ permissions, antiforgery, concurrency and purchase-request approval behavior rem
 regression checks, 242/242 Angular tests and bundle budgets. Hosted boundaries passed with 302/401/200/405 as expected.
 The active inventory is 68 controllers, 385 actions and 200 Razor files. Future retirement gates use named three-controller
 cohorts rather than single-controller execution.
+
+## MOD-030X three-controller purchasing retirement — completed 2026-11-14
+
+GoodsReceiptReturns, PurchaseServiceAcceptances and SupplierCreditNotes were retired as one cohesive cohort. Their three
+controllers and nine Razor views were removed. Exact protected list/create/details reads resolve to Angular; the three old
+Create POSTs return 405. Authenticated APIs, antiforgery, Application services and accounting/inventory authority remain.
+Release passed cleanly with 1,803 regression checks, 242/242 Angular tests and bundle/browser gates. Inventory is now 65
+controllers, 373 actions and 191 Razor files.

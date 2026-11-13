@@ -1,5 +1,11 @@
 # AI Work Log
 
+- 2026-11-14: Completed `MOD-030X`, the first three-controller retirement cohort. Removed GoodsReceiptReturns,
+  PurchaseServiceAcceptances and SupplierCreditNotes MVC controllers plus nine Razor views. Protected legacy list/create/
+  details reads resolve to exact Angular routes; old Create POSTs return 405. APIs, services, permissions, antiforgery and
+  accounting/inventory rules remain unchanged. Release passed with zero warnings/errors, 1,803 regression checks, 242/242
+  Angular tests and bundle/browser gates. Inventory is 65 controllers, 373 actions, 191 Razor files and 173 views.
+
 - 2026-11-14: Completed `MOD-030W` after explicit approval. Removed the PurchaseApprovalRules MVC controller and its single
   Razor view; protected legacy reads now resolve to Angular and retired Create/SetActive POSTs return 405. API, Angular,
   PurchaseApprovalService, permissions, antiforgery, concurrency and request approval behavior remain unchanged. Release

@@ -32,7 +32,6 @@ CustomerReturnRequests|/sales/return-requests
 Customers|/customers
 Dashboard|/
 DocumentDesigns|/settings/document-designs
-GoodsReceiptReturns|/purchases/receipt-returns
 GoodsReceipts|/purchases/receipts
 Home|/
 InventoryAdjustments|/inventory/adjustments
@@ -53,7 +52,6 @@ PurchaseReplenishment|/purchases/replenishment
 PurchaseRequests|/purchases/requests
 PurchaseReturns|/purchases/legacy-returns
 Purchases|/purchases/legacy
-PurchaseServiceAcceptances|/purchases/service-acceptances
 PurchaseSourcing|/purchases/sourcing
 PurchaseTemplates|/purchases/templates
 Replenishment|/inventory/replenishment
@@ -70,7 +68,6 @@ StockTransactions|/inventory/transactions
 StockTransfers|/inventory/transfers
 Subscription|/subscription
 SupplierCommunications|/purchases/communications/prepare
-SupplierCreditNotes|/purchases/credit-notes
 SupplierIntegrations|/purchases/integrations
 SupplierPayments|/purchases/payments
 SupplierPortal|/supplier-portal/:token
@@ -120,7 +117,7 @@ $retiredRows = [regex]::Matches(
     }
 $retiredSurfaces = @($retiredRows.Surface | Sort-Object -Unique)
 foreach ($row in $retiredRows) {
-    $angularLookupRoute = $row.AngularRoute -replace '\{([^}]+)\}', ':$1'
+    $angularLookupRoute = ($row.AngularRoute -split '\?', 2)[0] -replace '\{([^}]+)\}', ':$1'
     if (-not $angularRoutes.Contains($angularLookupRoute)) {
         throw "Retired MVC surface '$($row.Surface)' targets missing Angular route '$($row.AngularRoute)'."
     }
@@ -499,7 +496,7 @@ $retirementLines.Add('| R4 | Declared mutation-only compatibility surface. | Pre
 $retirementLines.Add('')
 $retirementLines.Add('## Completed physical retirement cohorts')
 $retirementLines.Add('')
-$retirementLines.Add('MOD-030G physically retired five read-only inventory surfaces. MOD-030H retired `JournalEntries.Details` and `PurchaseAccountingReconciliation.Index`. MOD-030J retired the two anonymous `Public` actions. MOD-030L retired tenant `AuditEvents.Index` and its MVC export. MOD-030O retired `AnalyticsCenter.Index/Create` and the legacy MVC workspace POST. MOD-030Q retired `Recipes.Index/Edit` and the legacy recipe-save POST. MOD-030S retired `ProductCategories.Index` and its legacy create/status POSTs. MOD-030U retired `SalesApprovalRules.Index` and its legacy create/status POSTs. MOD-030W then retired `PurchaseApprovalRules.Index` and its legacy create/status POSTs after the separately approved MOD-030V SQL evidence. Their controller actions, Razor views and reversible cutover entries are gone; protected GET/HEAD routes retain permission policies, while exact `/` and `/pricing` redirects are anonymous. Mapped redirects preserve queries; retired POST/download actions are not redirected.')
+$retirementLines.Add('MOD-030G physically retired five read-only inventory surfaces. MOD-030H retired `JournalEntries.Details` and `PurchaseAccountingReconciliation.Index`. MOD-030J retired the two anonymous `Public` actions. MOD-030L retired tenant `AuditEvents.Index` and its MVC export. MOD-030O retired `AnalyticsCenter.Index/Create` and the legacy MVC workspace POST. MOD-030Q retired `Recipes.Index/Edit` and the legacy recipe-save POST. MOD-030S retired `ProductCategories.Index` and its legacy create/status POSTs. MOD-030U retired `SalesApprovalRules.Index` and its legacy create/status POSTs. MOD-030W retired `PurchaseApprovalRules.Index` and its legacy create/status POSTs. MOD-030X then retired the GoodsReceiptReturns, PurchaseServiceAcceptances and SupplierCreditNotes list/create/details MVC flows as one purchasing cohort. Their controller actions, Razor views and reversible cutover entries are gone; protected GET/HEAD routes retain permission policies, while exact `/` and `/pricing` redirects are anonymous. Mapped redirects preserve queries; retired POST/download actions are not redirected.')
 $retirementLines.Add('')
 $retirementLines.Add('| Retired MVC surface | Angular destination | Required permission |')
 $retirementLines.Add('|---|---|---|')
@@ -557,7 +554,7 @@ $retirementLines.Add('6. Run Release, regression, generated-inventory, Angular a
 $retirementLines.Add('')
 $retirementLines.Add('## Current outcome')
 $retirementLines.Add('')
-$retirementLines.Add('MOD-030F inventory and the separately approved MOD-030G/MOD-030H/MOD-030J/MOD-030L/MOD-030O/MOD-030Q/MOD-030S/MOD-030U/MOD-030W cohorts are complete. Seventeen MVC presentation GET actions across fourteen surfaces and seventeen Razor views are physically retired. Public exact `/` and `/pricing` routes are anonymous; other retired GET/HEAD routes retain their original permission policies and preserve queries. The legacy AuditEvents export, AnalyticsCenter workspace POST, Recipes save POST, ProductCategories create/status POSTs, SalesApprovalRules create/status POSTs and PurchaseApprovalRules create/status POSTs are retired without redirect; Angular continues through their protected APIs. No additional R2/R3/R4 deletion is approved.')
+$retirementLines.Add('MOD-030F inventory and the separately approved retirement cohorts through MOD-030X are complete. Twenty-six MVC presentation GET actions across seventeen surfaces and twenty-six Razor views are physically retired. Public exact `/` and `/pricing` routes are anonymous; other retired GET/HEAD routes retain their original permission policies and preserve queries. Retired MVC POST/download actions, including the three MOD-030X Create POSTs, are not redirected; Angular continues through authenticated, permission-protected and antiforgery-protected APIs. No additional R2/R3/R4 deletion is approved.')
 
 New-Item -ItemType Directory -Force -Path (Split-Path -Parent $retirementOutput) | Out-Null
 $retirementLines | Set-Content -Path $retirementOutput -Encoding utf8

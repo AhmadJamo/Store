@@ -257,3 +257,9 @@ All purchase tables, details and populated numeric inputs use the shared number 
 - `/app/accounting/accounts` — expandable/collapsible chart hierarchy, code/name search and existing protected create form.
 - `/app/accounting/journal-entries` — server-filtered journal directory with search, inclusive dates, status and paging.
 - `/app/accounting/journal-entries/{id}` — existing immutable journal evidence with named accounts and dimensions.
+
+## Retired purchasing MVC cohort (MOD-030X)
+
+- `/app/purchases/receipt-returns`, `/app/purchases/service-acceptances` and `/app/purchases/credit-notes` own list,
+  positive-ID detail and source-bound create presentation.
+- Protected legacy GET/HEAD routes redirect to these Angular pages; retired MVC Create POST routes return 405.

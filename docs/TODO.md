@@ -372,6 +372,8 @@ The ERP SaaS Foundation Blueprint is imported as a non-authoritative planning re
 - MOD-030W completed the approved PurchaseApprovalRules MVC retirement. Protected reads resolve to Angular; legacy
   Create/SetActive POSTs return 405 and API/service/workflow authority remains unchanged.
 - The next retirement gate is a non-destructive audit that must name exactly three controllers as one cohort before deletion.
+- MOD-030X completed the first three-controller cohort: GoodsReceiptReturns, PurchaseServiceAcceptances and
+  SupplierCreditNotes. Nine protected reads now resolve to Angular and the three retired Create POSTs return 405.
 - UX-016 recurring-journal templates and controlled runs is complete with Draft-only manual execution. UX-017 bank-statement
   reconciliation is proposed and requires owner approval before adding statement import and matching records.
 - UX-009 navigation completeness is complete: 72 registered destinations and 41/41 operational routes are covered through

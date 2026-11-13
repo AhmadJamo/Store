@@ -116,10 +116,10 @@ UnassignedStock, LocationMovements and InventoryScanning
 redirect their Index GET actions to exact Angular workspaces with query preservation. WarehouseLocations Create/Edit
 deep links remain MVC because the Angular workspace does not yet consume create/edit URL intent; all writes remain MVC/API.
 
-Current MOD-030W snapshot: 17 mapped presentation GET actions across 14 surfaces are physically retired, plus the
+Current MOD-030X snapshot: 26 mapped presentation GET actions across 17 surfaces are physically retired, plus the
 deliberately non-redirected AuditEvents export, AnalyticsCenter workspace POST, Recipes save POST, ProductCategories
 create/status POSTs, SalesApprovalRules create/status POSTs and PurchaseApprovalRules create/status POSTs. Active inventory
-is 68 MVC controllers, 385 actions and 200 Razor files. Exact Public routes remain
+is 65 MVC controllers, 373 actions and 191 Razor files. Exact Public routes remain
 anonymous; protected retired GET/HEAD routes retain permissions
 and query strings. See `docs/modernization/MOD_030O_ANALYTICS_CENTER_RETIREMENT.md`. The generated inventory is authoritative.
 
@@ -678,10 +678,10 @@ workspace, persistent-tab/unsaved-form behavior and generated-journal evidence l
 | `Controllers/Api/V1/LandedCostsApiController.cs`, `MiniStore Front-End/src/app/features/purchases/landed-cost*` | authenticated Angular landed-cost list/details/create-and-post over `LandedCostService`; server owns allocation, capitalization/expense split, AVCO, movements and journals | MOD-023K/MOD-030E4O; Index/Create/Details GET presentation is AngularDefault with MVC rollback; Create POST remains outside cutover. |
 | `Controllers/Api/V1/PurchaseServiceAcceptancesApiController.cs`, `MiniStore Front-End/src/app/features/purchases/purchase-service-acceptance*` | authenticated Angular service-acceptance list/details/create over `PurchaseServiceAcceptanceService`; server owns confirmed service-line eligibility, remaining quantity and the no-stock boundary | MOD-023L/MOD-030E4P; Index/Create/Details GET presentation is AngularDefault with MVC rollback; Create POST remains outside cutover. |
 | `Controllers/Api/V1/{PurchaseAgreements,PurchaseTemplates}ApiController.cs`, `MiniStore Front-End/src/app/features/purchases/purchase-{agreement,agreements,templates}*` | authenticated Angular agreement lifecycle/capped releases and repeat-template creation/generation/active state over existing Application services | MOD-023M/MOD-030E4E/MOD-030E4Q; agreement and template GET presentation is AngularDefault with MVC rollback; mutations remain outside cutover. |
-| `Controllers/Purchases/PurchaseServiceAcceptancesController.cs`, `Views/PurchaseServiceAcceptances/*` | permission-protected service-completion capture and immutable list/detail evidence, with no warehouse-stock mutation | PUR-220 service acceptance. |
+| `Controllers/Api/V1/PurchaseServiceAcceptancesApiController.cs`, Angular `purchase-service-acceptances-page.*` | permission-protected service-completion capture and immutable list/detail evidence, with no warehouse-stock mutation; MVC presentation retired in MOD-030X | PUR-220 service acceptance. |
 | `Controllers/Purchases/GoodsReceiptsController.cs`, `Views/GoodsReceipts/Create.cshtml` | permission-protected partial Goods Receipt capture and immediate posting | PUR-060 receipt service. |
 | `Views/GoodsReceipts/Scan.cshtml` and Goods Receipt scan actions | Draft receipt creation, exact product scanning, accumulated-quantity review and explicit final posting | PUR-150 receipt service. |
-| `Controllers/Purchases/GoodsReceiptReturnsController.cs`, `Views/GoodsReceiptReturns/*.cshtml` | permission-protected receipt-based supplier return capture, history and detail | PUR-070 return service. |
+| `Controllers/Api/V1/GoodsReceiptReturnsApiController.cs`, Angular `goods-receipt-returns-page.*` | permission-protected receipt-based supplier return capture, history and detail; MVC presentation retired in MOD-030X | PUR-070 return service. |
 | `Controllers/Purchases/VendorBillsController.cs`, `Views/VendorBills/*.cshtml` | responsive card-based mixed-source Draft entry with attachments, separate approval/override/post actions, history, attachment download and immutable posted detail without horizontal line scrolling | PUR-080/PUR-220 bill service. |
 | `Controllers/Purchases/SupplierPurchasingController.cs`, `Views/SupplierPurchasing/*` | supplier-scoped responsive bulk editor, quantity price-break editor, read-only price history, expired/duplicate exception cards, permission-protected CSV/Excel downloads and atomic upload previews | PUR-010/PUR-230 supplier-price management. |
 | `Controllers/Purchases/PurchaseReplenishmentController.cs`, `Views/PurchaseReplenishment/Index.cshtml`, `Services/Purchases/ReplenishmentAutomationWorker.cs` | permission-separated responsive settings/history and tenant-scoped scheduled execution | PUR-240 automated replenishment. |
@@ -711,7 +711,7 @@ workspace, persistent-tab/unsaved-form behavior and generated-journal evidence l
 | `docs/modernization/PHASE_26_ACCOUNTING.md` | accounting Angular migration scope, completed slices, evidence and next slice | MOD-026 execution control. |
 | `Controllers/Api/V1/JournalEntriesApiController.cs`, `MiniStore Front-End/src/app/features/accounting/journal-entry*` | read-only authenticated Angular journal-entry evidence with named accounts and dimensions over `JournalEntryQueryService` | MOD-026B/MOD-030E5K; positive-ID Details GET presentation is AngularDefault with MVC rollback, and no posting or reversal mutation is exposed. |
 | `docs/modernization/PHASE_24_SALES.md` | sales Angular migration scope, completed slices, evidence and next slice | MOD-024 execution control. |
-| `Controllers/Purchases/SupplierCreditNotesController.cs`, `Views/SupplierCreditNotes/*.cshtml` | permission-protected responsive billed-return capture, immediate posting, history and immutable detail | PUR-170 credit-note service. |
+| `Controllers/Api/V1/SupplierCreditNotesApiController.cs`, Angular `supplier-credit-notes-page.*` | permission-protected billed-return capture, immediate posting, history and immutable detail; MVC presentation retired in MOD-030X | PUR-170 credit-note service. |
 | `Controllers/Purchases/PurchaseDocumentReversalsController.cs`, `Views/PurchaseDocumentReversals/*.cshtml` | permission-protected responsive reversal confirmation, history and audit detail | PUR-180 reversal service. |
 | `Controllers/Purchases/SupplierPaymentsController.cs`, `Views/SupplierPayments/*.cshtml` | permission-protected partial allocation, immediate posting, payment history and immutable detail | PUR-100 payment service. |
 | `Controllers/Purchases/{PurchaseAgreements,PurchaseTemplates}Controller.cs`, matching views | permission-split agreement creation/activation/release and repeat-template creation/generation | PUR-120 services. |

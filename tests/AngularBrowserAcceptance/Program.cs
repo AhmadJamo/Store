@@ -1020,7 +1020,8 @@ static async Task RunLiveCutoverAsync(
         var physicallyRetired = surface is "InventoryBalances" or "InventoryReservations" or
             "InventoryInsights" or "InventoryReconciliation" or "StockMovements" or
             "JournalEntries" or "PurchaseAccountingReconciliation" or "AuditEvents" or "AnalyticsCenter" or "Recipes" or
-            "ProductCategories" or "SalesApprovalRules" or "PurchaseApprovalRules";
+            "ProductCategories" or "SalesApprovalRules" or "PurchaseApprovalRules" or
+            "GoodsReceiptReturns" or "PurchaseServiceAcceptances" or "SupplierCreditNotes";
         var expectsAngular = physicallyRetired ||
                              options.CutoverMode == "angular" ||
                              options.CutoverMode == "pilot" &&
@@ -1053,17 +1054,11 @@ static async Task RunLiveCutoverAsync(
         expectsAngular = expectsAngular || options.CutoverMode == "pilot" &&
                          surface is "GoodsReceipts";
         expectsAngular = expectsAngular || options.CutoverMode == "pilot" &&
-                         surface is "GoodsReceiptReturns";
-        expectsAngular = expectsAngular || options.CutoverMode == "pilot" &&
                          surface is "VendorBills";
-        expectsAngular = expectsAngular || options.CutoverMode == "pilot" &&
-                         surface is "SupplierCreditNotes";
         expectsAngular = expectsAngular || options.CutoverMode == "pilot" &&
                          surface is "PurchaseDocumentReversals";
         expectsAngular = expectsAngular || options.CutoverMode == "pilot" &&
                          surface is "LandedCosts";
-        expectsAngular = expectsAngular || options.CutoverMode == "pilot" &&
-                         surface is "PurchaseServiceAcceptances";
         expectsAngular = expectsAngular || options.CutoverMode == "pilot" &&
                          surface is "PurchaseAgreements";
         expectsAngular = expectsAngular || options.CutoverMode == "pilot" &&
@@ -1214,6 +1209,28 @@ static async Task RunLiveCutoverAsync(
         checks.Add(new("retired-purchase-approval-rules-boundary", "passed",
             "Retired PurchaseApprovalRules create and status POST routes return 405 without mutation."));
     }
+
+    foreach (var retiredMutation in new[]
+             {
+                 (Controller: "GoodsReceiptReturns", Permission: "GoodsReceiptReturns.Create"),
+                 (Controller: "PurchaseServiceAcceptances", Permission: "PurchaseServiceAcceptances.Create"),
+                 (Controller: "SupplierCreditNotes", Permission: "SupplierCreditNotes.Create")
+             })
+    {
+        if (!permissions.Contains(retiredMutation.Permission))
+            continue;
+
+        var response = await authenticated.PostAsync($"/{retiredMutation.Controller}/Create",
+            new APIRequestContextOptions
+            {
+                MaxRedirects = 0,
+                DataObject = new { Id = 1, Reason = "No mutation" }
+            });
+        Require(response.Status == 405,
+            $"Retired {retiredMutation.Controller} Create returned {response.Status} instead of 405.");
+    }
+    checks.Add(new("retired-purchasing-three-controller-boundary", "passed",
+        "Retired GoodsReceiptReturns, PurchaseServiceAcceptances and SupplierCreditNotes MVC POST routes return 405."));
 
     Require(executed >= 5, $"Cutover rehearsal covered {executed} routes; at least 5 are required.");
     checks.Add(new($"live-cutover-{options.CutoverMode}", "passed",

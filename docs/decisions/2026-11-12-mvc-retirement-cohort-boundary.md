@@ -139,3 +139,10 @@ navigation is represented in the retired catalog and resolves to Angular; legacy
 never redirected or replayed. Mutation and workflow authority remains in the antiforgery-protected API,
 `PurchaseApprovalService` and domain entities. Subsequent retirements are grouped into explicit three-controller cohorts,
 but every cohort must still be named and audited before deletion.
+
+## First three-controller cohort — MOD-030X
+
+GoodsReceiptReturns, PurchaseServiceAcceptances and SupplierCreditNotes form one purchasing-document cohort because each
+maps one MVC list/create/details flow to one Angular feature and authenticated API over the same Application service.
+All three old Create POSTs are retired rather than replayed. Positive source identifiers are validated before redirect,
+and API permissions, antiforgery and transaction/posting authority remain unchanged.

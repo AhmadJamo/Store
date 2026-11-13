@@ -188,3 +188,9 @@ rowversion. لم يتغير production؛ أي تقاعد MVC بقي بوابة M
 اكتمل بعد الموافقة: حُذف Controller وView فقط، وتحافظ GET/HEAD القديمة على الصلاحية ثم تتجه إلى Angular، بينما يعيد
 Create/SetActive القديمتان 405. بقيت API وAngular وPurchaseApprovalService وقرارات الطلبات دون تغيير. أصبح الجرد 68
 Controller و385 Action و200 ملف Razor. الدفعات التالية ستجمع ثلاثة Controllers محددة في كل بوابة تنفيذ.
+
+## MOD-030X — أول دفعة من ثلاثة Controllers
+
+تقاعدت GoodsReceiptReturns وPurchaseServiceAcceptances وSupplierCreditNotes معًا بعد إثبات تطابق list/create/details
+والصلاحيات والتحقق والخدمات. حُذفت 3 Controllers و9 Views، وتحولت GET/HEAD القديمة إلى Angular، وأصبحت Create POSTs
+القديمة 405. بقيت APIs وApplication services وقواعد posting دون تغيير. الجرد الحالي 65/373/191.

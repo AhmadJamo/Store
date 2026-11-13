@@ -79,6 +79,10 @@ real Application service, repositories and UnitOfWork. It changed test code only
 are gone; protected reads resolve to Angular and the retired Create/SetActive POSTs return 405. API, service, authorization
 and purchase-request approval behavior remain unchanged. Active inventory is now 68 MVC controllers, 385 actions and 200
 Razor files. Future retirement planning uses explicit three-controller cohorts.
+`MOD-030X` completed the first such cohort: Goods Receipt Returns, Purchase Service Acceptances and Supplier Credit Notes.
+Their three controllers and nine views are gone; exact protected legacy reads resolve to Angular and old Create POSTs return
+405. APIs, services, permissions and financial/inventory posting rules remain unchanged. Active inventory is 65 MVC
+controllers, 373 actions and 191 Razor files.
 
 UX-009 adds permission-aware Purchasing, Sales and Accounting hubs with complete operational-route discovery. UX-010
 projects the tenant chart of accounts as an expandable hierarchy and adds a permission-protected, repository-paged journal

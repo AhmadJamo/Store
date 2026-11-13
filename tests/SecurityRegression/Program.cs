@@ -567,41 +567,6 @@ Check(new[]
               "GoodsReceipts", action,
               new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 17 }) is null),
     "Goods-receipt scan, posting, inspection and reversal mutations must stay outside presentation cutover");
-var goodsReceiptReturnsCutoverResolver = new PresentationCutoverResolver(Options.Create(
-    new PresentationCutoverOptions
-    {
-        AngularBasePath = "/app",
-        Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
-        {
-            ["GoodsReceiptReturns"] = PresentationCutoverMode.AngularDefault
-        }
-    }));
-cutoverContext.Request.QueryString =
-    new Microsoft.AspNetCore.Http.QueryString("?goodsReceiptId=17&source=cutover");
-Check(goodsReceiptReturnsCutoverResolver.Resolve(cutoverContext.Request,
-          "GoodsReceiptReturns", "Create",
-          new Microsoft.AspNetCore.Routing.RouteValueDictionary()) ==
-      "/app/purchases/receipt-returns/new?goodsReceiptId=17&source=cutover",
-    "Goods-receipt-return cutover must validate and preserve a query-bound receipt ID");
-cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?page=2");
-Check(goodsReceiptReturnsCutoverResolver.Resolve(cutoverContext.Request,
-          "GoodsReceiptReturns", "Index",
-          new Microsoft.AspNetCore.Routing.RouteValueDictionary()) ==
-      "/app/purchases/receipt-returns?page=2" &&
-      goodsReceiptReturnsCutoverResolver.Resolve(cutoverContext.Request,
-          "GoodsReceiptReturns", "Details",
-          new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 17 }) ==
-      "/app/purchases/receipt-returns/17?page=2",
-    "Goods-receipt-return cutover must resolve exact list and details routes");
-cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?goodsReceiptId=0");
-Check(goodsReceiptReturnsCutoverResolver.Resolve(cutoverContext.Request,
-          "GoodsReceiptReturns", "Create",
-          new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null &&
-      new long[] { -1, 0 }.All(id =>
-          goodsReceiptReturnsCutoverResolver.Resolve(cutoverContext.Request,
-              "GoodsReceiptReturns", "Details",
-              new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = id }) is null),
-    "Goods-receipt-return cutover must reject unsafe receipt and return identifiers");
 cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?page=2");
 var vendorBillsCutoverResolver = new PresentationCutoverResolver(Options.Create(
     new PresentationCutoverOptions
@@ -648,41 +613,6 @@ Check(new[]
               "VendorBills", action,
               new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 17 }) is null),
     "Vendor-bill attachments, lifecycle, extraction and accounting commands must stay outside presentation cutover");
-var supplierCreditNotesCutoverResolver = new PresentationCutoverResolver(Options.Create(
-    new PresentationCutoverOptions
-    {
-        AngularBasePath = "/app",
-        Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
-        {
-            ["SupplierCreditNotes"] = PresentationCutoverMode.AngularDefault
-        }
-    }));
-cutoverContext.Request.QueryString =
-    new Microsoft.AspNetCore.Http.QueryString("?vendorBillId=17&source=cutover");
-Check(supplierCreditNotesCutoverResolver.Resolve(cutoverContext.Request,
-          "SupplierCreditNotes", "Create",
-          new Microsoft.AspNetCore.Routing.RouteValueDictionary()) ==
-      "/app/purchases/credit-notes/new?vendorBillId=17&source=cutover",
-    "Supplier-credit-note cutover must validate and preserve a query-bound vendor-bill ID");
-cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?page=2");
-Check(supplierCreditNotesCutoverResolver.Resolve(cutoverContext.Request,
-          "SupplierCreditNotes", "Index",
-          new Microsoft.AspNetCore.Routing.RouteValueDictionary()) ==
-      "/app/purchases/credit-notes?page=2" &&
-      supplierCreditNotesCutoverResolver.Resolve(cutoverContext.Request,
-          "SupplierCreditNotes", "Details",
-          new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 17 }) ==
-      "/app/purchases/credit-notes/17?page=2",
-    "Supplier-credit-note cutover must resolve exact list and positive-ID details routes");
-cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?vendorBillId=0");
-Check(supplierCreditNotesCutoverResolver.Resolve(cutoverContext.Request,
-          "SupplierCreditNotes", "Create",
-          new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null &&
-      new long[] { -1, 0 }.All(id =>
-          supplierCreditNotesCutoverResolver.Resolve(cutoverContext.Request,
-              "SupplierCreditNotes", "Details",
-              new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = id }) is null),
-    "Supplier-credit-note cutover must reject unsafe bill and credit-note identifiers");
 cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?page=2");
 var purchaseDocumentReversalsCutoverResolver = new PresentationCutoverResolver(Options.Create(
     new PresentationCutoverOptions
@@ -748,41 +678,6 @@ Check(landedCostsCutoverResolver.Resolve(cutoverContext.Request,
               "LandedCosts", "Details",
               new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = id }) is null),
     "Landed-cost cutover must reject unsafe receipt and landed-cost identifiers");
-var serviceAcceptancesCutoverResolver = new PresentationCutoverResolver(Options.Create(
-    new PresentationCutoverOptions
-    {
-        AngularBasePath = "/app",
-        Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
-        {
-            ["PurchaseServiceAcceptances"] = PresentationCutoverMode.AngularDefault
-        }
-    }));
-cutoverContext.Request.QueryString =
-    new Microsoft.AspNetCore.Http.QueryString("?purchaseOrderId=17&source=cutover");
-Check(serviceAcceptancesCutoverResolver.Resolve(cutoverContext.Request,
-          "PurchaseServiceAcceptances", "Create",
-          new Microsoft.AspNetCore.Routing.RouteValueDictionary()) ==
-      "/app/purchases/service-acceptances/new?purchaseOrderId=17&source=cutover",
-    "Service-acceptance cutover must validate and preserve a query-bound purchase-order ID");
-cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?page=2");
-Check(serviceAcceptancesCutoverResolver.Resolve(cutoverContext.Request,
-          "PurchaseServiceAcceptances", "Index",
-          new Microsoft.AspNetCore.Routing.RouteValueDictionary()) ==
-      "/app/purchases/service-acceptances?page=2" &&
-      serviceAcceptancesCutoverResolver.Resolve(cutoverContext.Request,
-          "PurchaseServiceAcceptances", "Details",
-          new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 17 }) ==
-      "/app/purchases/service-acceptances/17?page=2",
-    "Service-acceptance cutover must resolve exact list and positive-ID details routes");
-cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?purchaseOrderId=0");
-Check(serviceAcceptancesCutoverResolver.Resolve(cutoverContext.Request,
-          "PurchaseServiceAcceptances", "Create",
-          new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null &&
-      new long[] { -1, 0 }.All(id =>
-          serviceAcceptancesCutoverResolver.Resolve(cutoverContext.Request,
-              "PurchaseServiceAcceptances", "Details",
-              new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = id }) is null),
-    "Service-acceptance cutover must reject unsafe order and acceptance identifiers");
 var purchaseAgreementsCutoverResolver = new PresentationCutoverResolver(Options.Create(
     new PresentationCutoverOptions
     {
@@ -2751,12 +2646,6 @@ Check(
 Check(PermissionDefinitions.All.Any(x => x.Name == "PurchaseServiceAcceptances.View") &&
       PermissionDefinitions.All.Any(x => x.Name == "PurchaseServiceAcceptances.Create"),
     "Purchase service completion visibility and entry must use separate permissions");
-var serviceAcceptanceCreate = typeof(PurchaseServiceAcceptancesController)
-    .GetMethods().Single(x => x.Name == nameof(PurchaseServiceAcceptancesController.Create) &&
-                              x.GetCustomAttribute<HttpPostAttribute>() is not null);
-Check(serviceAcceptanceCreate.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
-      $"{PermissionAuthorizeAttribute.PolicyPrefix}PurchaseServiceAcceptances.Create",
-    "Purchase service completion posting must enforce its dedicated create permission");
 var serviceAcceptance = new PurchaseServiceAcceptance("SVC-000001", 1, new DateOnly(2026, 10, 13), null, "tester");
 serviceAcceptance.AddLine(new PurchaseServiceAcceptanceLine(1, 1, 2m, "PRD-1", "Consulting", "Hour"));
 Check(serviceAcceptance.Lines.Single().CompletedQuantity == 2m,
@@ -2922,6 +2811,15 @@ var expectedRetiredPresentationRoutes = new Dictionary<string, (string Route, st
     ["ProductCategories:Index"] = ("/products/categories", "Products.View", [], null),
     ["SalesApprovalRules:Index"] = ("/sales/approval-rules", "SalesApprovalRules.View", [], null),
     ["PurchaseApprovalRules:Index"] = ("/purchases/approval-rules", "PurchaseApprovalRules.View", [], null),
+    ["GoodsReceiptReturns:Index"] = ("/purchases/receipt-returns", "GoodsReceiptReturns.View", [], null),
+    ["GoodsReceiptReturns:Details"] = ("/purchases/receipt-returns/{id}", "GoodsReceiptReturns.View", [], null),
+    ["GoodsReceiptReturns:Create"] = ("/purchases/receipt-returns/new?goodsReceiptId={goodsReceiptId}", "GoodsReceiptReturns.Create", [], "goodsReceiptId"),
+    ["PurchaseServiceAcceptances:Index"] = ("/purchases/service-acceptances", "PurchaseServiceAcceptances.View", [], null),
+    ["PurchaseServiceAcceptances:Details"] = ("/purchases/service-acceptances/{id}", "PurchaseServiceAcceptances.View", [], null),
+    ["PurchaseServiceAcceptances:Create"] = ("/purchases/service-acceptances/new?purchaseOrderId={purchaseOrderId}", "PurchaseServiceAcceptances.Create", [], "purchaseOrderId"),
+    ["SupplierCreditNotes:Index"] = ("/purchases/credit-notes", "SupplierCreditNotes.View", [], null),
+    ["SupplierCreditNotes:Details"] = ("/purchases/credit-notes/{id}", "SupplierCreditNotes.View", [], null),
+    ["SupplierCreditNotes:Create"] = ("/purchases/credit-notes/new?vendorBillId={vendorBillId}", "SupplierCreditNotes.Create", [], "vendorBillId"),
     ["Public:Index"] = ("/welcome", null, ["/"], null),
     ["Public:Pricing"] = ("/pricing", null, ["/pricing"], null)
 };
@@ -4499,14 +4397,6 @@ Check(returnMovement.Type == StockMovementType.ReceiptReturnOut && returnMovemen
     "A posted goods receipt return must create an idempotent outbound physical movement");
 Check(DocumentSequence.CreateDefault(DocumentNumberType.GoodsReceiptReturn).Preview(DateTime.Today).StartsWith("GRR-"),
     "Goods receipt returns must use an independent centralized document sequence");
-var receiptReturnController = typeof(GoodsReceiptReturnsController);
-Check(receiptReturnController.GetMethod(nameof(GoodsReceiptReturnsController.Index))!
-          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
-      $"{PermissionAuthorizeAttribute.PolicyPrefix}GoodsReceiptReturns.View" &&
-      receiptReturnController.GetMethod(nameof(GoodsReceiptReturnsController.Create), [typeof(CreateGoodsReceiptReturnDto)])!
-          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
-      $"{PermissionAuthorizeAttribute.PolicyPrefix}GoodsReceiptReturns.Create",
-    "Goods receipt return visibility and posting must use separate server-side permissions");
 var vendorBill = new VendorBill("VB-000001", 1, 5, " sup/inv-001 ", DateOnly.FromDateTime(DateTime.Today), "jod", "First bill", "buyer");
 vendorBill.AddLine(new VendorBillLine(1, 1, 10, 1m, 11.60m, 9m, 1m, 1, 16m, 45, true, "P-10", "Coffee beans", "kg"));
 vendorBill.AddAttachment(new VendorBillAttachment("invoice.pdf", "application/pdf", [1, 2, 3], "buyer"));
@@ -4557,14 +4447,6 @@ Check(supplierCreditMovement.Type == StockMovementType.ReceiptReturnOut &&
     "A posted supplier credit note must create an idempotent outbound physical movement");
 Check(DocumentSequence.CreateDefault(DocumentNumberType.SupplierCreditNote).Preview(DateTime.Today).StartsWith("SCN-"),
     "Supplier credit notes must use an independent centralized document sequence");
-var supplierCreditController = typeof(SupplierCreditNotesController);
-Check(supplierCreditController.GetMethod(nameof(SupplierCreditNotesController.Index))!
-          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
-      $"{PermissionAuthorizeAttribute.PolicyPrefix}SupplierCreditNotes.View" &&
-      supplierCreditController.GetMethod(nameof(SupplierCreditNotesController.Create), [typeof(CreateSupplierCreditNoteDto)])!
-          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
-      $"{PermissionAuthorizeAttribute.PolicyPrefix}SupplierCreditNotes.Create",
-    "Supplier credit note visibility and posting must use separate server-side permissions");
 var purchaseReversal = new PurchaseDocumentReversal("PRV-000001", PurchaseDocumentType.VendorBill, 1,
     "VB-000001", DateOnly.FromDateTime(DateTime.Today), "Correct duplicate posting", Guid.NewGuid().ToString("N"), "accountant");
 purchaseReversal.Post("JE-000099");

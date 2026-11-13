@@ -533,3 +533,12 @@ largest underrepresented modules; production deployment readiness and physical M
 - Hosted boundaries returned 302 for protected legacy reads, 401 for the anonymous API, 200 for Angular and 405 for retired writes.
 - Active inventory is 68 MVC controllers, 385 actions and 200 Razor files (182 user-facing views).
 - Subsequent presentation-retirement work will be planned and verified as explicit three-controller cohorts.
+
+## MOD-030X — first three-controller purchasing retirement — COMPLETED 2026-11-14
+
+- Retired `GoodsReceiptReturnsController`, `PurchaseServiceAcceptancesController` and `SupplierCreditNotesController` together.
+- Removed their nine Razor list/create/details views and active cutover/configuration mappings.
+- Preserved all three Angular features, authenticated APIs, Application services, permissions, antiforgery and posting rules.
+- Legacy list/create/details GET/HEAD routes now resolve to exact Angular destinations; retired MVC Create POSTs return 405.
+- Release passed with zero warnings/errors, 1,803 regression checks, 242/242 Angular tests and bundle/browser gates.
+- Active inventory is 65 MVC controllers, 373 actions, 191 Razor files and 173 user-facing views.

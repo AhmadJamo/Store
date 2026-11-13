@@ -379,3 +379,10 @@ After explicit approval, the PurchaseApprovalRules MVC controller and its single
 resolve to `/purchases/approval-rules`, while retired Create/SetActive POSTs return 405 and are never replayed. The API,
 `PurchaseApprovalService`, repositories, permissions, antiforgery, rowversion and purchase-request approval lifecycle remain
 authoritative and unchanged.
+
+## MOD-030X purchasing document cohort retirement
+
+Goods Receipt Returns, Purchase Service Acceptances and Supplier Credit Notes now use Angular/API exclusively. Their MVC
+controllers and nine list/create/details views were removed together. Protected legacy reads preserve positive source IDs
+and resolve to the exact Angular pages; legacy Create POSTs return 405. Existing Application services still own validation,
+stock movements, posting, immutable evidence and transactions.
