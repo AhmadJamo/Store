@@ -435,3 +435,11 @@ largest underrepresented modules; production deployment readiness and physical M
 - Retired legacy MVC `POST /AuditEvents/Export` without redirect; Angular continues through the CSRF-protected API export.
 - Active inventory is 73 MVC controllers, 400 actions and 207 Razor files. Ten redirected presentation actions across nine surfaces and ten views are retired; the AuditEvents export is an additional deliberately non-redirected retired action.
 - Release, 1,851 security/inventory checks, 242/242 Angular tests, 137 templates, 120-page consistency, bundle budgets and 147-route authenticated Edge acceptance passed.
+
+## MOD-030M — PlatformAuditEvents readiness audit — COMPLETED 2026-11-13
+
+- Confirmed MVC/API/Angular parity and isolated Platform View/Export/Sensitive policy separation without changing runtime code.
+- Confirmed that every available stored session is tenant-only and contains no `MiniStore.Platform` cookie.
+- Hosted read-only probes returned 401 for tenant/anonymous Platform API access and redirected tenant MVC access to Platform login.
+- Deferred physical retirement until an authorized Platform session proves same-scope reads and role separation; no deletion is approved.
+- Active inventory remains 73 MVC controllers, 400 actions and 207 Razor files.

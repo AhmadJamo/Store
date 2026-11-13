@@ -404,3 +404,6 @@ PlatformAuditEvents لغياب fixture جلسة Platform مصرح، وLocationMo
 query. تقاعد MVC Export دون redirect، وبقي API/Angular والخدمة والصلاحيات كما هي. أصبح الجرد 73 Controller و400
 إجراء و207 ملفات Razor. نجح Release و1,851 فحصًا و242/242 Angular وقبول Edge على 147 مسارًا؛ أثبت الفحص الحي
 302 للمسارين القديمين و405 للـPOST المتقاعد و200 لقراءة API.
+اكتمل `MOD-030M` كتدقيق غير هدّام لـPlatformAuditEvents. ثبت التكافؤ وعزل السياسات، لكن كل جلسات الاختبار tenant-only.
+أعادت طلبات tenant/anonymous للـPlatform API ‏401 وحُوّل MVC إلى Platform login؛ لذلك بقي Controller/View دون حذف
+إلى أن تتوفر جلسة Platform مصرح بها. الأعداد بقيت 73/400/207.

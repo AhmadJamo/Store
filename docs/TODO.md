@@ -348,7 +348,9 @@ The ERP SaaS Foundation Blueprint is imported as a non-authoritative planning re
 ## In Progress
 - MOD-030L completed the separately approved AuditEvents MVC retirement. Protected GET/HEAD compatibility routes remain,
   the legacy MVC export is retired without redirect, and Angular/API permissions and audit semantics are unchanged.
-- MOD-030M is proposed as a non-destructive PlatformAuditEvents session/parity audit; no Platform file deletion is approved.
+- MOD-030M completed the non-destructive PlatformAuditEvents audit. Static parity passed and tenant/anonymous isolation was
+  proven live, but no authorized Platform cookie fixture exists; physical retirement remains blocked and unapproved.
+- MOD-030N compares the next low-count mixed candidates without deletion or mutation.
 - UX-016 recurring-journal templates and controlled runs is complete with Draft-only manual execution. UX-017 bank-statement
   reconciliation is proposed and requires owner approval before adding statement import and matching records.
 - UX-009 navigation completeness is complete: 72 registered destinations and 41/41 operational routes are covered through

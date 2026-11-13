@@ -127,3 +127,10 @@ not redirected; Angular uses the existing permission-separated, antiforgery-prot
 tenant scope, sensitive-evidence authorization and audit semantics are unchanged. Release, regression, Angular, static UI,
 bundle and authenticated Edge gates passed; hosted probes proved 302/302/405/200 for the two legacy reads, legacy export and
 API read respectively.
+
+## MOD-030M PlatformAuditEvents readiness audit — completed 2026-11-13
+
+Source review confirmed complete MVC/API/Angular parity and isolated Platform View/Export/Sensitive policies. Available
+storage states contain tenant cookies only. Hosted read-only probes returned 401 for tenant and anonymous Platform API
+access and redirected MVC to Platform login. This proves isolation, not authorized parity; physical retirement remains
+deferred until a real Platform session fixture is captured. No runtime file or inventory count changed.

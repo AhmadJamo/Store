@@ -52,7 +52,9 @@
   كأصغر cohort تالٍ، دون حذف أو تغيير runtime.
 - `MOD-030L` — COMPLETE 2026-11-13: حُذف AuditEventsController وView بعد الموافقة؛ بقي GET/HEAD تحويلًا محميًا يحفظ
   query، وتقاعد MVC Export دون redirect مع بقاء API/Angular والصلاحيات.
-- `MOD-030M` — PROPOSED: تدقيق غير هدّام لحدود PlatformAuditEvents والجلسة المعزولة قبل تقرير أي حذف جديد.
+- `MOD-030M` — COMPLETE 2026-11-13: ثبت تكافؤ PlatformAuditEvents وعزل PlatformCookie؛ أُجل الحذف لغياب fixture
+  Platform مصرح، ولم يحدث أي تغيير runtime.
+- `MOD-030N` — PROPOSED: مقارنة مصدرية غير هدّامة للمرشحين التاليين LocationMovements وAnalyticsCenter.
 - `UX-001` — COMPLETE 2026-11-04: تدقيق واجهة Angular، خطة تحديث مستمرة، مجموعات تنقل مهنية بصلاحيات،
   breadcrumbs ثنائية اللغة وحفظ آمن لتفضيل فتح المجموعات دون تغيير الأعمال.
 - `UX-002` — COMPLETE 2026-11-05: عقد typed لسياق URL وذاكرة workspace المعزولة ومسودات آمنة مؤقتة،

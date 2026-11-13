@@ -45,6 +45,9 @@ stock-moving candidates were deferred for higher session/mutation risk. No runti
 permission-protected legacy GET/HEAD routes preserve query strings into Angular, while the legacy MVC export POST is retired
 without redirect. The Application read service, versioned API, Angular page, permission separation and audit semantics remain
 unchanged. Active inventory is now 73 MVC controllers, 400 actions and 207 Razor files.
+`MOD-030M` then audited PlatformAuditEvents without runtime changes. Static MVC/API/Angular and policy parity is complete,
+but all available browser states are tenant-only. Live tenant/anonymous probes correctly failed at the isolated Platform
+cookie boundary. Physical retirement is deferred until an authorized Platform fixture proves read and role behavior.
 
 UX-009 adds permission-aware Purchasing, Sales and Accounting hubs with complete operational-route discovery. UX-010
 projects the tenant chart of accounts as an expandable hierarchy and adds a permission-protected, repository-paged journal
