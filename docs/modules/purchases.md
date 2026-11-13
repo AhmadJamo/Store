@@ -358,3 +358,10 @@ Posted purchases support immutable partial/full supplier returns. Cumulative ret
 `/app/purchases` groups the implemented planning/sourcing, receiving, payables/control and supplier-operation workspaces.
 All non-detail operational routes are registered for search, favorites and persistent tabs while the sidebar keeps one module
 entry. Existing purchase services, permissions, posting and reconciliation rules remain authoritative and unchanged.
+
+## MOD-030T purchase-approval audit
+
+The audit confirmed purchase-rule administration and request decisions remain in `PurchaseApprovalService` with
+warehouse/priority resolution, frozen ordered steps, role checks, transactions, antiforgery and rowversion. The Angular
+rules UI is currently part of the broader purchase-request feature and isolated SQL lifecycle evidence is weaker than the
+sales counterpart, so PurchaseApprovalRules MVC remains active and is not part of MOD-030U.

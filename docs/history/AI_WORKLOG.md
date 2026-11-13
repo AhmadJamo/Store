@@ -1,5 +1,9 @@
 # AI Work Log
 
+- 2026-11-13: Completed `MOD-030T` as a non-destructive purchase/sales approval-rule lifecycle audit. Traced MVC/API/Angular,
+  Application services, domain snapshots, repositories, permissions, antiforgery, rowversion and downstream document
+  decisions. Both paths retain server authority. Recommended only SalesApprovalRules for separately approved MOD-030U
+  because it has a dedicated Angular feature, API-client tests and SQL evaluation/approval coverage. No runtime or data changed.
 - 2026-11-13: Completed the explicitly approved `MOD-030S` ProductCategories MVC retirement. Deleted the controller and
   Index view, retained a Products.View-protected legacy redirect and proved both retired Create/SetActive POSTs return 405
   without mutation. Kept API, ProductCategoryService, DTOs, repository/entity, Angular, localization and validation intact.

@@ -1,21 +1,23 @@
 # المهمة التالية الوحيدة / Next Task
 
-## MOD-030T — تدقيق lifecycle قواعد الاعتماد / Approval-rule lifecycle audit
+## MOD-030U — تقاعد SalesApprovalRules MVC
 
-> الحالة: PROPOSED — NON-DESTRUCTIVE
+> الحالة: PROPOSED — APPROVAL REQUIRED
 
-اكتمل `MOD-030S`. الخطوة التالية تقارن PurchaseApprovalRules وSalesApprovalRules بعمق قبل أي تقاعد، لأن تفعيل
-القواعد يغير مسار اعتماد المستندات فعليًا.
+اكتمل `MOD-030T` كتدقيق غير هدّام. أثبت أن SalesApprovalRules يملك بديل Angular/API مستقلًا مع دليل SQL لدورة
+التقييم والاعتماد، لكن هذا الاقتراح لا يسمح بالحذف قبل موافقة المالك على النطاق الدقيق أدناه.
 
 ### النطاق المقترح
 
-- مراجعة MVC/API/Angular وخدمات Application والكيانات والمستودعات والصلاحيات وrowversion.
-- تتبع إنشاء القاعدة وتفعيلها وحلها عند Submit ومسار approve/reject دون تنفيذ mutation.
-- مراجعة اختبارات القواعد الحالية وتحديد أي فجوة acceptance تمنع التقاعد.
-- فحوص GET فقط واختيار cohort واحد إن ثبت الفصل الآمن.
+- حذف `MiniStore.Web/Controllers/Sales/SalesApprovalRulesController.cs`.
+- حذف `MiniStore.Web/Views/SalesApprovalRules/Index.cshtml`.
+- نقل `SalesApprovalRules:Index` فقط إلى retired catalog على `/sales/approval-rules` بصلاحية `SalesApprovalRules.View`.
+- إزالة AngularDefault والمطابقة النشطة لهذا السطح فقط.
+- إبقاء API وAngular و`SalesOrderApprovalService` والكيانات والمستودع والصلاحيات وكل سلوك workflow كما هو.
+- إثبات تحويل GET/HEAD القديم و405 لمساري Create/SetActive القديمين دون mutation.
 
 ### خارج النطاق
 
-- لا حذف Controller أو View.
-- لا إنشاء/تفعيل قاعدة ولا Submit/Approve/Reject.
-- أي تقاعد فعلي لاحق يحتاج نطاق ملفات دقيقًا وموافقة مستقلة.
+- لا تعديل أو إنشاء أو تفعيل قاعدة اعتماد.
+- لا تأكيد أو اعتماد أو رفض Sales Order.
+- لا حذف PurchaseApprovalRules أو أي Controller/View آخر.

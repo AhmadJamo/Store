@@ -228,3 +228,10 @@ without return, stock or journal mutation.
 `/app/sales` is the concise permission-aware entry for the implemented pricing, quotation, order, delivery, invoice,
 payment, return/credit and immediate-sale/POS workspaces. Child routes remain searchable and tab-restorable without each
 becoming a sidebar item. No sales price, stock, posting, return or approval business rule changed.
+
+## MOD-030T approval-rule retirement evidence
+
+The non-destructive lifecycle audit confirmed the dedicated Angular rules feature and API continue through
+`SalesOrderApprovalService`, preserving customer/date/metric evaluation, frozen findings, requester and distinct-approver
+controls, permissions, antiforgery and rowversion. Existing domain and SQL coverage makes only the MVC controller/view a
+candidate for separately approved MOD-030U retirement; no sales rule or order behavior changed in this audit.

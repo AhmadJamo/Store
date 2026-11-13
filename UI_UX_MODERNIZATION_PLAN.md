@@ -493,3 +493,13 @@ largest underrepresented modules; production deployment readiness and physical M
 - Legacy Create/SetActive POST routes return 405; API POST/PUT retain Products.Edit and antiforgery.
 - Release, 1,840 regression checks, 242/242 Angular tests, bundle gates and 147-route Edge acceptance passed.
 - Active inventory is 70 MVC controllers, 391 actions and 202 Razor files.
+
+## MOD-030T — approval-rule lifecycle audit — COMPLETED 2026-11-13
+
+- Traced purchase and sales approval rules through MVC/API/Angular, Application services, domain snapshots, repositories,
+  permissions, antiforgery, rowversion and document submit/confirm/approve/reject behavior without mutation.
+- Confirmed both replacements preserve server authority and existing business rules.
+- Selected SalesApprovalRules as the stronger separately approval-gated candidate because it has an isolated Angular
+  feature, explicit client contract tests and SQL lifecycle evidence.
+- Deferred PurchaseApprovalRules because its UI is coupled to the purchase-request feature and its rule-resolution SQL
+  evidence is less isolated. No runtime file or inventory count changed.

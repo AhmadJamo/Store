@@ -176,3 +176,10 @@ no runtime file or inventory count changed.
 After explicit approval, ProductCategoriesController and its Index view were removed. Protected legacy reads now redirect
 to Angular and both retired MVC mutation routes return 405. API, Application service, authorization, antiforgery and
 category validation remain unchanged. Release, regression, Angular, bundle and Edge gates passed.
+
+## MOD-030T approval-rule lifecycle audit — completed 2026-11-13
+
+Purchase and sales rule management, rule resolution, frozen approval evidence and role-gated decisions were traced without
+mutation. Both replacements preserve the existing Application/domain authority, permissions, antiforgery and rowversion.
+SalesApprovalRules has the stronger isolated Angular/API/SQL lifecycle evidence and is proposed for a separately approved
+MOD-030U retirement. PurchaseApprovalRules remains active; no deletion is authorized by this audit.

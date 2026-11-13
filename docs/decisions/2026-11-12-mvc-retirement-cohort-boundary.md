@@ -110,3 +110,11 @@ ProductCategories follows the safe mixed-controller pattern: only the protected 
 in the retired catalog. Legacy create/status POSTs end at 405 and are never translated into navigation or replayed. Category
 mutation authority remains in the antiforgery-protected API and shared ProductCategoryService. This does not authorize
 workflow-rule retirement.
+
+## Workflow-rule recommendation — MOD-030T
+
+Workflow-rule presentation may be retired only when rule administration and the downstream document lifecycle are both
+evidenced. The audit found SalesApprovalRules has an isolated Angular feature, explicit API-client tests and SQL evaluation
+and approval coverage while retaining all authority in SalesOrderApprovalService/domain. It is therefore the only proposed
+MOD-030U cohort. PurchaseApprovalRules remains active until its rule-resolution lifecycle has equally isolated evidence.
+This recommendation does not authorize deletion.

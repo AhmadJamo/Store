@@ -66,7 +66,9 @@
   والمبيعات لأنها تغير routing الفعلي للموافقات.
 - `MOD-030S` — COMPLETE 2026-11-13: حُذف ProductCategoriesController وView Index؛ بقيت API/Angular والخدمة، وثبت
   405 لمساري Create/SetActive القديمين.
-- `MOD-030T` — PROPOSED / NON-DESTRUCTIVE: تدقيق lifecycle قواعد اعتماد المشتريات والمبيعات قبل اختيار أي حذف.
+- `MOD-030T` — COMPLETE 2026-11-13: دُققت دورة قواعد اعتماد المشتريات والمبيعات دون mutation؛ رُشح
+  SalesApprovalRules فقط بسبب قوة دليل Angular/API/SQL المستقل، وبقي PurchaseApprovalRules مؤجلًا.
+- `MOD-030U` — PROPOSED / APPROVAL REQUIRED: تقاعد MVC المحدود لـSalesApprovalRules دون تغيير API أو workflow.
 - `UX-001` — COMPLETE 2026-11-04: تدقيق واجهة Angular، خطة تحديث مستمرة، مجموعات تنقل مهنية بصلاحيات،
   breadcrumbs ثنائية اللغة وحفظ آمن لتفضيل فتح المجموعات دون تغيير الأعمال.
 - `UX-002` — COMPLETE 2026-11-05: عقد typed لسياق URL وذاكرة workspace المعزولة ومسودات آمنة مؤقتة،

@@ -163,3 +163,10 @@ MOD-030S منفصل لأن البديل يعيد استخدام ProductCategoryS
 اكتمل بعد الموافقة الصريحة: حُذف Controller وView Index فقط، وبقيت API وAngular وProductCategoryService وقواعد المجال.
 تحافظ GET/HEAD القديمة على Products.View وquery، بينما يعيد Create/SetActive القديمتان 405 دون mutation.
 أصبح الجرد 70 Controller و391 Action و202 ملفات Razor.
+
+## MOD-030T — تدقيق دورة قواعد الاعتماد
+
+تُتبعت قواعد اعتماد المشتريات والمبيعات من واجهة الإدارة إلى اختيار القاعدة ولقطة الخطوات وقرارات approve/reject دون
+أي mutation. البديلان يحافظان على Application/domain authority والصلاحيات وantiforgery وrowversion. يملك
+SalesApprovalRules دليلًا مستقلًا أقوى عبر مكوّن Angular مخصص واختبار عقد API واختبار SQL لدورة التقييم والاعتماد، لذلك
+هو المرشح الوحيد لـMOD-030U منفصل. يبقى PurchaseApprovalRules دون حذف حتى تقوية دليله التشغيلي.

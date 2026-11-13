@@ -424,3 +424,6 @@ query. تقاعد MVC Export دون redirect، وبقي API/Angular والخدم
 اكتمل `MOD-030S` بعد الموافقة الصريحة: حُذف ProductCategoriesController وView Index، وبقيت القراءة القديمة تحويلًا
 محميًا. أعاد Create وSetActive القديمتان 405 دون mutation، وبقيت API/Angular والخدمة والقواعد كما هي. أصبح الجرد
 70 Controller و391 إجراء و202 ملفات Razor؛ نجح Release و1,840 فحصًا و242/242 Angular وEdge على 147 مسارًا.
+اكتمل `MOD-030T` كتدقيق غير هدّام لدورة قواعد الاعتماد. ثبت أن المسارين يبقيان الاختيار واللقطات والقرارات داخل
+Application/domain مع الصلاحيات وantiforgery وrowversion. رُشح SalesApprovalRules لـMOD-030U منفصل لقوة دليل Angular
+المستقل واختبارات API وSQL، بينما بقي PurchaseApprovalRules فعالًا لحين دليل SQL أكثر عزلة. لا تغيير runtime؛ الأعداد 70/391/202.
