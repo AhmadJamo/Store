@@ -352,6 +352,9 @@ The ERP SaaS Foundation Blueprint is imported as a non-authoritative planning re
   proven live, but no authorized Platform cookie fixture exists; physical retirement remains blocked and unapproved.
 - MOD-030N completed the non-destructive LocationMovements/AnalyticsCenter comparison. LocationMovements remains deferred
   for stock-mutation evidence; AnalyticsCenter is the proposed MOD-030O cohort and requires separate deletion approval.
+- MOD-030O completed the separately approved AnalyticsCenter MVC retirement. Protected Index/builder GETs remain, the
+  legacy workspace POST is retired without redirect, and services/API/Angular/providers are unchanged.
+- MOD-030P is proposed as a non-destructive audit of the next lowest-count mixed candidates.
 - UX-016 recurring-journal templates and controlled runs is complete with Draft-only manual execution. UX-017 bank-statement
   reconciliation is proposed and requires owner approval before adding statement import and matching records.
 - UX-009 navigation completeness is complete: 72 registered destinations and 41/41 operational routes are covered through

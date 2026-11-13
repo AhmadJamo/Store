@@ -4,16 +4,16 @@
 
 ## Reconciliation
 
-- Controllers discovered: 161 total; 73 MVC; 88 API.
-- User-facing MVC views discovered: 189.
-- MVC actions discovered: 400.
-- Razor files included in the control inventory: 199.
+- Controllers discovered: 160 total; 72 MVC; 88 API.
+- User-facing MVC views discovered: 187.
+- MVC actions discovered: 397.
+- Razor files included in the control inventory: 197.
 - Angular application routes discovered: 194.
-- Presentation surfaces with a verified Angular counterpart: 72.
+- Presentation surfaces with a verified Angular counterpart: 71.
 - Remaining presentation surfaces without a mapped Angular counterpart: 0.
 - Mutation-only MVC compatibility surfaces: 1 (Language).
-- Physically retired presentation actions with legacy redirects: 10 across 9 surfaces (AuditEvents, InventoryBalances, InventoryInsights, InventoryReconciliation, InventoryReservations, JournalEntries, Public, PurchaseAccountingReconciliation, StockMovements).
-- Allowlisted Angular-default cutover actions: 173.
+- Physically retired presentation actions with legacy redirects: 12 across 10 surfaces (AnalyticsCenter, AuditEvents, InventoryBalances, InventoryInsights, InventoryReconciliation, InventoryReservations, JournalEntries, Public, PurchaseAccountingReconciliation, StockMovements).
+- Allowlisted Angular-default cutover actions: 171.
 
 Remaining presentation surfaces: none.
 
@@ -28,8 +28,6 @@ Statuses follow the migration lifecycle plus MVC Compatibility (mutation-only). 
 | Account | Register.cshtml | Angular Default | /login, /register, /access-denied | MiniStore.Web/Views/Account/Register.cshtml |
 | Accounts | Create.cshtml | Angular Default | /accounting/accounts | MiniStore.Web/Views/Accounts/Create.cshtml |
 | Accounts | Index.cshtml | Angular Default | /accounting/accounts | MiniStore.Web/Views/Accounts/Index.cshtml |
-| AnalyticsCenter | Create.cshtml | Angular Default | /analytics | MiniStore.Web/Views/AnalyticsCenter/Create.cshtml |
-| AnalyticsCenter | Index.cshtml | Angular Default | /analytics | MiniStore.Web/Views/AnalyticsCenter/Index.cshtml |
 | Branches | Create.cshtml | Angular Default | /products/catalog-masters | MiniStore.Web/Views/Branches/Create.cshtml |
 | Branches | Index.cshtml | Angular Default | /products/catalog-masters | MiniStore.Web/Views/Branches/Index.cshtml |
 | CompanyOnboarding | Index.cshtml | Angular Default | /onboarding | MiniStore.Web/Views/CompanyOnboarding/Index.cshtml |
@@ -226,9 +224,6 @@ Statuses follow the migration lifecycle plus MVC Compatibility (mutation-only). 
 | Accounts | Create | GET | Angular Default | /accounting/accounts | — | MiniStore.Web/Controllers/Accounting/AccountsController.cs |
 | Accounts | Create | GET, POST | Angular Default | /accounting/accounts | — | MiniStore.Web/Controllers/Accounting/AccountsController.cs |
 | Accounts | Index | ANY | Angular Default | /accounting/accounts | /accounting/accounts | MiniStore.Web/Controllers/Accounting/AccountsController.cs |
-| AnalyticsCenter | Create | GET | Angular Default | /analytics | /analytics/builder | MiniStore.Web/Controllers/Analytics/AnalyticsCenterController.cs |
-| AnalyticsCenter | Create | POST | Angular Default | /analytics | /analytics/builder | MiniStore.Web/Controllers/Analytics/AnalyticsCenterController.cs |
-| AnalyticsCenter | Index | GET | Angular Default | /analytics | /analytics | MiniStore.Web/Controllers/Analytics/AnalyticsCenterController.cs |
 | Branches | BranchesController | ANY | Angular Default | /products/catalog-masters | — | MiniStore.Web/Controllers/Accounting/BranchesController.cs |
 | CompanyOnboarding | Complete | POST | Angular Default | /onboarding | — | MiniStore.Web/Controllers/Saas/CompanyOnboardingController.cs |
 | CompanyOnboarding | Index | GET | Angular Default | /onboarding | /onboarding | MiniStore.Web/Controllers/Saas/CompanyOnboardingController.cs |
@@ -627,8 +622,6 @@ Statuses follow the migration lifecycle plus MVC Compatibility (mutation-only). 
 | Account | Register.cshtml | 1 | 4 | 0 | — | MiniStore.Web/Views/Account/Register.cshtml |
 | Accounts | Create.cshtml | 1 | 1 | 0 | — | MiniStore.Web/Views/Accounts/Create.cshtml |
 | Accounts | Index.cshtml | 0 | 0 | 1 | Create | MiniStore.Web/Views/Accounts/Index.cshtml |
-| AnalyticsCenter | Create.cshtml | 1 | 1 | 1 | Index | MiniStore.Web/Views/AnalyticsCenter/Create.cshtml |
-| AnalyticsCenter | Index.cshtml | 1 | 1 | 2 | Create, Index | MiniStore.Web/Views/AnalyticsCenter/Index.cshtml |
 | Branches | Create.cshtml | 1 | 1 | 0 | — | MiniStore.Web/Views/Branches/Create.cshtml |
 | Branches | Index.cshtml | 0 | 0 | 1 | Create | MiniStore.Web/Views/Branches/Index.cshtml |
 | CompanyOnboarding | Index.cshtml | 1 | 2 | 0 | — | MiniStore.Web/Views/CompanyOnboarding/Index.cshtml |

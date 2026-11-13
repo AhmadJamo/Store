@@ -451,3 +451,11 @@ largest underrepresented modules; production deployment readiness and physical M
 - Selected AnalyticsCenter as the next proposed bounded cohort: its Index, builder and workspace creation have complete governed replacements without stock/accounting effects.
 - Hosted read-only probes passed for both APIs and all three legacy GET redirects; no POST or business mutation ran.
 - No runtime file changed; active counts remain 73 MVC controllers, 400 actions and 207 Razor files.
+
+## MOD-030O — AnalyticsCenter MVC retirement — COMPLETED 2026-11-13
+
+- Removed the approved AnalyticsCenter controller and its Index/Create Razor views; service, providers, API, Angular and permissions remain authoritative.
+- Added permission-protected GET/HEAD redirects for Index and builder with query preservation.
+- Retired legacy MVC workspace POST without redirect; the typed API workspace command remains the only creation path.
+- Active inventory is 72 MVC controllers, 397 actions and 205 Razor files with 52 mixed-controller blockers.
+- Release, 1,845 regression checks, 242/242 Angular tests, 137 templates, 120-page consistency, bundle budgets and 147-route Edge acceptance passed.

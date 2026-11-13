@@ -116,11 +116,10 @@ UnassignedStock, LocationMovements and InventoryScanning
 redirect their Index GET actions to exact Angular workspaces with query preservation. WarehouseLocations Create/Edit
 deep links remain MVC because the Angular workspace does not yet consume create/edit URL intent; all writes remain MVC/API.
 
-Current MOD-030L snapshot: 10 mapped presentation actions across nine inventory/financial/public/security surfaces are
-physically retired, plus the deliberately non-redirected legacy AuditEvents MVC export. Active inventory is 73 MVC
-controllers, 400 actions and 207 Razor files. Exact Public routes remain anonymous; all protected retired GET/HEAD routes
-retain their permissions and query strings. See `docs/modernization/MOD_030L_AUDIT_EVENTS_RETIREMENT.md`. The generated
-retirement inventory is authoritative.
+Current MOD-030O snapshot: 12 mapped presentation GET actions across 10 surfaces are physically retired, plus the
+deliberately non-redirected AuditEvents export and AnalyticsCenter workspace POST. Active inventory is 72 MVC controllers,
+397 actions and 205 Razor files. Exact Public routes remain anonymous; protected retired GET/HEAD routes retain permissions
+and query strings. See `docs/modernization/MOD_030O_ANALYTICS_CENTER_RETIREMENT.md`. The generated inventory is authoritative.
 
 `ReplenishmentApiController` exposes the reviewed inventory projection plus independently protected rule, transfer-draft
 and purchase-request-draft commands. Angular `features/inventory/replenishment*` owns bilingual filters, rule editing,
@@ -789,10 +788,10 @@ For exact module relationships, use `modules/*.md`; for entity and service detai
 - `MiniStore.Web/Presentation/Cutover/`: active reversible modes plus the MOD-030G/H/J/L retired-route catalog; protected
   GET/HEAD routes retain permissions, exact Public routes are anonymous and queries are preserved. Retired POST/download
   actions are not redirected.
-- `docs/modernization/MVC_MIGRATION_REGISTRY.md`: generated 73-MVC-controller, 189-user-facing-view,
-  400-MVC-action and 199-Razor-control-row active migration registry; do not edit rows manually.
-- `docs/modernization/MVC_RETIREMENT_INVENTORY.md`: generated active classification for 400 MVC actions and
-  207 Razor files, plus 10 redirected retired presentation actions across nine surfaces and 53 mixed-controller blockers.
+- `docs/modernization/MVC_MIGRATION_REGISTRY.md`: generated 72-MVC-controller, 187-user-facing-view,
+  397-MVC-action and 197-Razor-control-row active migration registry; do not edit rows manually.
+- `docs/modernization/MVC_RETIREMENT_INVENTORY.md`: generated active classification for 397 MVC actions and
+  205 Razor files, plus 12 redirected retired presentation actions across 10 surfaces and 52 mixed-controller blockers.
 - `docs/modernization/MOD_030I_PUBLIC_BOUNDARY_AUDIT.md`: audit-only parity, dependency and future exact-route gate for the
   anonymous `/` and `/pricing` surface.
 - `docs/modernization/MOD_030J_PUBLIC_RETIREMENT.md`: approved deletion, exact anonymous legacy routes, preserved boundaries
@@ -805,6 +804,8 @@ For exact module relationships, use `modules/*.md`; for entity and service detai
   cookie evidence and the authorized Platform-session gate that blocks physical retirement.
 - `docs/modernization/MOD_030N_NEXT_MIXED_CANDIDATE_AUDIT.md`: source/live comparison of LocationMovements and
   AnalyticsCenter, stock-mutation deferral and the approval-gated AnalyticsCenter recommendation.
+- `docs/modernization/MOD_030O_ANALYTICS_CENTER_RETIREMENT.md`: approved AnalyticsCenter controller/two-view retirement,
+  protected Index/builder redirects, retired legacy POST and hosted/Edge evidence.
 - `docs/decisions/2026-11-12-mvc-retirement-cohort-boundary.md`: R1..R4 retirement boundaries, separate deletion
   approval rule and legacy-link/cutover/rollback obligations.
 - `docs/decisions/ADR-20261025-REVERSIBLE-PRESENTATION-CUTOVER.md`: cutover/rollback boundary and rationale.

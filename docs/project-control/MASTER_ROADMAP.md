@@ -56,7 +56,9 @@
   Platform مصرح، ولم يحدث أي تغيير runtime.
 - `MOD-030N` — COMPLETE 2026-11-13: أُجل LocationMovements لخطر حركة المخزون، واختير AnalyticsCenter كمرشح تالٍ
   بعد نجاح بدائل القراءة والبناء، دون POST أو تغيير runtime.
-- `MOD-030O` — PROPOSED: تقاعد MVC لـAnalyticsCenter Index/Create وViewين؛ يحتاج موافقة حذف مستقلة.
+- `MOD-030O` — COMPLETE 2026-11-13: حُذف AnalyticsCenterController وViewا Index/Create؛ بقيت GET/HEAD تحويلات
+  محمية، وتقاعد workspace POST القديم دون redirect مع بقاء API/Angular/providers.
+- `MOD-030P` — PROPOSED: تدقيق غير هدّام للمرشحين منخفضي التعقيد التاليين قبل أي موافقة حذف جديدة.
 - `UX-001` — COMPLETE 2026-11-04: تدقيق واجهة Angular، خطة تحديث مستمرة، مجموعات تنقل مهنية بصلاحيات،
   breadcrumbs ثنائية اللغة وحفظ آمن لتفضيل فتح المجموعات دون تغيير الأعمال.
 - `UX-002` — COMPLETE 2026-11-05: عقد typed لسياق URL وذاكرة workspace المعزولة ومسودات آمنة مؤقتة،

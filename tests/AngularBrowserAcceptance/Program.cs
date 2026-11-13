@@ -1019,7 +1019,7 @@ static async Task RunLiveCutoverAsync(
             new APIRequestContextOptions { MaxRedirects = 0 });
         var physicallyRetired = surface is "InventoryBalances" or "InventoryReservations" or
             "InventoryInsights" or "InventoryReconciliation" or "StockMovements" or
-            "JournalEntries" or "PurchaseAccountingReconciliation" or "AuditEvents";
+            "JournalEntries" or "PurchaseAccountingReconciliation" or "AuditEvents" or "AnalyticsCenter";
         var expectsAngular = physicallyRetired ||
                              options.CutoverMode == "angular" ||
                              options.CutoverMode == "pilot" &&

@@ -110,6 +110,10 @@ GET/HEAD القديمة تحويلات محمية تحفظ query. تقاعد POS
 `MOD-030N` قارن LocationMovements وAnalyticsCenter دون mutation. أُجل الأول لأن POST ينقل المخزون، واختير الثاني
 كاقتراح MOD-030O لأن Index/Create وworkspace API/Angular متكافئة ولا تؤثر على المخزون أو المحاسبة. الحذف غير معتمد.
 
+`MOD-030O` اكتمل بعد الموافقة الصريحة: حُذف AnalyticsCenter MVC Controller وViewا Index/Create، وبقيت GET/HEAD
+تحويلات محمية تحفظ query. تقاعد workspace POST القديم دون redirect، وبقيت الخدمة والـAPI وAngular والمزودات كما هي.
+أصبح الجرد 72 Controller و397 Action و205 ملفات Razor.
+
 ## ترتيب التنفيذ داخل كل موجة
 
 1. جرد الشاشة والإجراءات والاعتماديات.

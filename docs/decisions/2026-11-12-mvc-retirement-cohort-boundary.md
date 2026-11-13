@@ -75,3 +75,10 @@ compatibility catalog represents only safe GET/HEAD presentation navigation. It 
 GET redirect. Consequently the old MVC export ends at HTTP 405 while the existing API retains View + Export, antiforgery and
 server-side ViewSensitive enforcement. This pattern is specific to an already-proven replacement and does not authorize any
 other mixed controller.
+
+## Configuration-only R2 execution — MOD-030O
+
+AnalyticsCenter proves the same safe split for a configuration mutation: only legacy GET/HEAD presentation routes receive
+permission-preserving redirects. The old MVC POST is allowed to end at 405; it is never translated into a GET or replayed
+against the API. Workspace validation, sharing authority and persistence remain in the Application/API path. This decision
+does not authorize stock-moving controllers or any later cohort.

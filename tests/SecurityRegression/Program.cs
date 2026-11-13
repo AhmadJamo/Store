@@ -2165,15 +2165,6 @@ var organizationIdentityPost = typeof(SettingsController).GetMethods()
     .Single(x => x.Name == nameof(SettingsController.OrganizationIdentity) && x.GetCustomAttribute<HttpPostAttribute>() is not null);
 Check(organizationIdentityPost.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null,
     "Organization identity save must require antiforgery validation");
-var analyticsController = typeof(AnalyticsCenterController);
-Check(analyticsController.GetMethod(nameof(AnalyticsCenterController.Index))!
-          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == $"{PermissionAuthorizeAttribute.PolicyPrefix}AnalyticsCenter.View" &&
-      analyticsController.GetMethods().Single(x => x.Name == nameof(AnalyticsCenterController.Create) && x.GetCustomAttribute<HttpPostAttribute>() is not null)
-          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == $"{PermissionAuthorizeAttribute.PolicyPrefix}AnalyticsCenter.Customize",
-    "Analytics center view and workspace creation must enforce their server-side permissions");
-Check(analyticsController.GetMethods().Single(x => x.Name == nameof(AnalyticsCenterController.Create) && x.GetCustomAttribute<HttpPostAttribute>() is not null)
-          .GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null,
-    "Analytics workspace creation must require antiforgery validation");
 Check(SupportedUiCultures.Contains("ar-JO") && SupportedUiCultures.Contains("en-US") &&
       !SupportedUiCultures.Contains("fr-FR"),
     "Only Arabic and English UI cultures must be accepted");
@@ -2967,6 +2958,8 @@ var expectedRetiredPresentationRoutes = new Dictionary<string, (string Route, st
     ["JournalEntries:Details"] = ("/accounting/journal-entries/{id}", "JournalEntries.View", []),
     ["PurchaseAccountingReconciliation:Index"] = ("/purchases/accounting-reconciliation", "PurchaseAccountingReconciliation.View", []),
     ["AuditEvents:Index"] = ("/audit-events", "AuditEvents.View", []),
+    ["AnalyticsCenter:Index"] = ("/analytics", "AnalyticsCenter.View", []),
+    ["AnalyticsCenter:Create"] = ("/analytics/builder", "AnalyticsCenter.Customize", []),
     ["Public:Index"] = ("/welcome", null, ["/"]),
     ["Public:Pricing"] = ("/pricing", null, ["/pricing"])
 };

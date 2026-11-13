@@ -12,8 +12,6 @@ public static class PresentationCutoverRouteCatalog
             ["Suppliers:Index"] = "/suppliers",
             ["Suppliers:Create"] = "/suppliers/new",
             ["Suppliers:Edit"] = "/suppliers/{id}/edit",
-            ["AnalyticsCenter:Index"] = "/analytics",
-            ["AnalyticsCenter:Create"] = "/analytics/builder",
             ["Settings:Index"] = "/settings",
             ["Settings:General"] = "/settings",
             ["Settings:OrganizationIdentity"] = "/settings/identity",

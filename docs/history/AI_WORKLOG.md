@@ -1,5 +1,11 @@
 # AI Work Log
 
+- 2026-11-13: Completed the separately approved `MOD-030O` AnalyticsCenter MVC retirement. Deleted the controller and its
+  Index/Create Razor views, removed reversible cutover settings and added protected GET/HEAD compatibility routes for the
+  analytics page and builder. The legacy workspace POST returned 405 and no workspace was created; API reads returned 200.
+  Active inventory is 72 MVC controllers, 397 actions and 205 Razor files with 52 mixed blockers. Release built cleanly;
+  1,845 regression checks, 242/242 Angular tests, 137 templates, 120-page consistency, bundle budgets and 147-route Edge
+  acceptance passed.
 - 2026-11-13: Completed `MOD-030N` as a non-destructive comparison of LocationMovements and AnalyticsCenter. Confirmed
   API/Angular parity and targeted hosted GET 200/302 behavior without executing any POST. Deferred LocationMovements because
   it changes exact-location stock and requires database-backed replay/insufficient-quantity/recovery evidence. Recommended

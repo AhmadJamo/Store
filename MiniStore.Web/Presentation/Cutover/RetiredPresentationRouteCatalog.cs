@@ -25,6 +25,8 @@ public static class RetiredPresentationRouteCatalog
         new("JournalEntries", "/accounting/journal-entries/{id}", "JournalEntries.View", "Details"),
         new("PurchaseAccountingReconciliation", "/purchases/accounting-reconciliation", "PurchaseAccountingReconciliation.View"),
         new("AuditEvents", "/audit-events", "AuditEvents.View"),
+        new("AnalyticsCenter", "/analytics", "AnalyticsCenter.View"),
+        new("AnalyticsCenter", "/analytics/builder", "AnalyticsCenter.Customize", "Create"),
         new("Public", "/welcome", null, "Index", ["/"]),
         new("Public", "/pricing", null, "Pricing", ["/pricing"])
     ];

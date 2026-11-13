@@ -141,3 +141,11 @@ Source and targeted hosted GET review compared LocationMovements with AnalyticsC
 behind database-backed stock movement replay and rejection evidence. AnalyticsCenter is recommended for a separately
 approved MOD-030O because its read, builder and configuration-only creation flow have complete Angular/API replacements.
 No POST ran, no runtime file changed and current inventory counts remain unchanged.
+
+## MOD-030O AnalyticsCenter retirement — completed 2026-11-13
+
+After explicit approval, AnalyticsCenterController and its Index/Create views were removed. Protected GET/HEAD routes now
+preserve Index and builder navigation into Angular. The legacy MVC workspace POST is intentionally not redirected; the typed
+API command remains authoritative. Services, providers, permissions and delegation behavior are unchanged. Release,
+regression, Angular, bundle and authenticated Edge gates passed; hosted probes proved exact 302/405/200 behavior without
+creating a workspace.
