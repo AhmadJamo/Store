@@ -427,3 +427,11 @@ largest underrepresented modules; production deployment readiness and physical M
 - Deferred Platform audit until isolated-session live evidence exists and deferred LocationMovements because it performs stock mutation.
 - No controller, view, route, permission, API or runtime behavior changed; active counts remain 74/402/208.
 - Release, 1,856 security/inventory checks, 242/242 Angular tests, 137 templates, 120-page consistency and bundle budgets passed.
+
+## MOD-030L — tenant AuditEvents MVC retirement — COMPLETED 2026-11-13
+
+- Removed the approved tenant `AuditEventsController` and its Razor view; Application service, API, Angular and permissions remain authoritative.
+- Replaced only GET/HEAD `/AuditEvents` and `/AuditEvents/Index` with `AuditEvents.View`-protected Angular redirects that preserve queries.
+- Retired legacy MVC `POST /AuditEvents/Export` without redirect; Angular continues through the CSRF-protected API export.
+- Active inventory is 73 MVC controllers, 400 actions and 207 Razor files. Ten redirected presentation actions across nine surfaces and ten views are retired; the AuditEvents export is an additional deliberately non-redirected retired action.
+- Release, 1,851 security/inventory checks, 242/242 Angular tests, 137 templates, 120-page consistency, bundle budgets and 147-route authenticated Edge acceptance passed.

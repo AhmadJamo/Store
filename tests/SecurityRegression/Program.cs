@@ -305,21 +305,6 @@ Check(warehousesCutoverResolver.Resolve(cutoverContext.Request, "Warehouses", "C
       warehousesCutoverResolver.Resolve(cutoverContext.Request, "Warehouses", "Edit",
           new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 1 }) is null,
     "Unsupported Warehouse Create/Edit deep links must stay outside presentation cutover");
-var auditEventsCutoverResolver = new PresentationCutoverResolver(Options.Create(
-    new PresentationCutoverOptions
-    {
-        AngularBasePath = "/app",
-        Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
-        {
-            ["AuditEvents"] = PresentationCutoverMode.AngularDefault
-        }
-    }));
-Check(auditEventsCutoverResolver.Resolve(cutoverContext.Request, "AuditEvents", "Index",
-        new Microsoft.AspNetCore.Routing.RouteValueDictionary()) == "/app/audit-events?page=2",
-    "Tenant Audit Events Index cutover must preserve query strings on the Angular route");
-Check(auditEventsCutoverResolver.Resolve(cutoverContext.Request, "AuditEvents", "Export",
-        new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null,
-    "Audit export must stay outside presentation cutover");
 var identityAdministrationCutoverResolver = new PresentationCutoverResolver(Options.Create(
     new PresentationCutoverOptions
     {
@@ -2020,15 +2005,6 @@ Check(PermissionDefinitions.All.Any(x => x.Name == "AuditEvents.View") &&
       PermissionDefinitions.All.Any(x => x.Name == "AuditEvents.Export") &&
       PermissionDefinitions.All.Any(x => x.Name == "AuditEvents.ViewSensitive"),
     "Audit reading, exporting and restricted request evidence must use separate tenant permissions");
-var auditController = typeof(AuditEventsController);
-Check(auditController.GetMethod(nameof(AuditEventsController.Index))!
-          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:AuditEvents.View" &&
-      auditController.GetMethod(nameof(AuditEventsController.Export))!
-          .GetCustomAttributes<PermissionAuthorizeAttribute>().Select(x => x.Policy).ToHashSet()
-          .SetEquals(["Permission:AuditEvents.View", "Permission:AuditEvents.Export"]) &&
-      auditController.GetMethod(nameof(AuditEventsController.Export))!
-          .GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null,
-    "Audit view and export endpoints must enforce distinct server permissions and antiforgery on export");
 var auditApi = typeof(AuditEventsApiController);
 Check(auditApi.GetCustomAttribute<ApiControllerAttribute>() is not null &&
       auditApi.GetCustomAttribute<AuthorizeAttribute>() is not null &&
@@ -2990,6 +2966,7 @@ var expectedRetiredPresentationRoutes = new Dictionary<string, (string Route, st
     ["StockMovements:Index"] = ("/inventory/location-movements", "StockMovements.View", []),
     ["JournalEntries:Details"] = ("/accounting/journal-entries/{id}", "JournalEntries.View", []),
     ["PurchaseAccountingReconciliation:Index"] = ("/purchases/accounting-reconciliation", "PurchaseAccountingReconciliation.View", []),
+    ["AuditEvents:Index"] = ("/audit-events", "AuditEvents.View", []),
     ["Public:Index"] = ("/welcome", null, ["/"]),
     ["Public:Pricing"] = ("/pricing", null, ["/pricing"])
 };

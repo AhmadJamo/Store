@@ -24,6 +24,7 @@ public static class RetiredPresentationRouteCatalog
         new("StockMovements", "/inventory/location-movements", "StockMovements.View"),
         new("JournalEntries", "/accounting/journal-entries/{id}", "JournalEntries.View", "Details"),
         new("PurchaseAccountingReconciliation", "/purchases/accounting-reconciliation", "PurchaseAccountingReconciliation.View"),
+        new("AuditEvents", "/audit-events", "AuditEvents.View"),
         new("Public", "/welcome", null, "Index", ["/"]),
         new("Public", "/pricing", null, "Pricing", ["/pricing"])
     ];

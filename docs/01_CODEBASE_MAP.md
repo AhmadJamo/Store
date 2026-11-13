@@ -116,12 +116,11 @@ UnassignedStock, LocationMovements and InventoryScanning
 redirect their Index GET actions to exact Angular workspaces with query preservation. WarehouseLocations Create/Edit
 deep links remain MVC because the Angular workspace does not yet consume create/edit URL intent; all writes remain MVC/API.
 
-Current MOD-030J snapshot: nine approved presentation actions across eight inventory/financial/public surfaces are physically
-retired, while 74 MVC controllers, 402 actions and 208 Razor files remain active. The exact anonymous `/` and `/pricing`
-redirects are owned by `RetiredPresentationRouteCatalog`; protected retired routes retain their permission policies.
-See `docs/modernization/MOD_030J_PUBLIC_RETIREMENT.md`. The generated retirement inventory is authoritative.
-MOD-030K adds a generated R2 dependency-score ordering and a source-reviewed recommendation for tenant AuditEvents; see
-`docs/modernization/MOD_030K_MIXED_CONTROLLER_PRIORITY_AUDIT.md`. It changes no runtime boundary.
+Current MOD-030L snapshot: 10 mapped presentation actions across nine inventory/financial/public/security surfaces are
+physically retired, plus the deliberately non-redirected legacy AuditEvents MVC export. Active inventory is 73 MVC
+controllers, 400 actions and 207 Razor files. Exact Public routes remain anonymous; all protected retired GET/HEAD routes
+retain their permissions and query strings. See `docs/modernization/MOD_030L_AUDIT_EVENTS_RETIREMENT.md`. The generated
+retirement inventory is authoritative.
 
 `ReplenishmentApiController` exposes the reviewed inventory projection plus independently protected rule, transfer-draft
 and purchase-request-draft commands. Angular `features/inventory/replenishment*` owns bilingual filters, rule editing,
@@ -787,18 +786,21 @@ For exact module relationships, use `modules/*.md`; for entity and service detai
 - `MiniStore Front-End/src/app/features/products/`: paged product-catalog Angular feature.
 - `scripts/verify-angular-modernization.ps1`: reusable migration acceptance command.
 - `scripts/generate-mvc-migration-registry.ps1`: source-driven MVC view, action and Razor-control inventory generator.
-- `MiniStore.Web/Presentation/Cutover/`: active reversible presentation modes plus the MOD-030G/MOD-030H/MOD-030J retired-route catalog;
-  protected routes retain permissions, exact Public routes are explicitly anonymous, and all preserve query strings without an MVC rollback switch.
-- `docs/modernization/MVC_MIGRATION_REGISTRY.md`: generated 74-MVC-controller, 190-user-facing-view,
-  402-MVC-action and 200-Razor-control-row active migration registry; do not edit rows manually.
-- `docs/modernization/MVC_RETIREMENT_INVENTORY.md`: generated active classification for 402 MVC actions and
-  208 Razor files, plus nine retired presentation actions across eight surfaces and 54 mixed-controller blockers.
+- `MiniStore.Web/Presentation/Cutover/`: active reversible modes plus the MOD-030G/H/J/L retired-route catalog; protected
+  GET/HEAD routes retain permissions, exact Public routes are anonymous and queries are preserved. Retired POST/download
+  actions are not redirected.
+- `docs/modernization/MVC_MIGRATION_REGISTRY.md`: generated 73-MVC-controller, 189-user-facing-view,
+  400-MVC-action and 199-Razor-control-row active migration registry; do not edit rows manually.
+- `docs/modernization/MVC_RETIREMENT_INVENTORY.md`: generated active classification for 400 MVC actions and
+  207 Razor files, plus 10 redirected retired presentation actions across nine surfaces and 53 mixed-controller blockers.
 - `docs/modernization/MOD_030I_PUBLIC_BOUNDARY_AUDIT.md`: audit-only parity, dependency and future exact-route gate for the
   anonymous `/` and `/pricing` surface.
 - `docs/modernization/MOD_030J_PUBLIC_RETIREMENT.md`: approved deletion, exact anonymous legacy routes, preserved boundaries
   and hosted/Edge evidence for Public retirement.
 - `docs/modernization/MOD_030K_MIXED_CONTROLLER_PRIORITY_AUDIT.md`: non-destructive 54-surface R2 ordering, candidate
   comparison and the approval-gated AuditEvents recommendation.
+- `docs/modernization/MOD_030L_AUDIT_EVENTS_RETIREMENT.md`: approved tenant AuditEvents controller/view retirement,
+  protected legacy reads, deliberately non-redirected MVC export and hosted/Edge evidence.
 - `docs/decisions/2026-11-12-mvc-retirement-cohort-boundary.md`: R1..R4 retirement boundaries, separate deletion
   approval rule and legacy-link/cutover/rollback obligations.
 - `docs/decisions/ADR-20261025-REVERSIBLE-PRESENTATION-CUTOVER.md`: cutover/rollback boundary and rationale.

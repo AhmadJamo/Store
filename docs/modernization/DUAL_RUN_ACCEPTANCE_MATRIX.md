@@ -2,9 +2,9 @@
 
 > Generated from source by scripts/generate-mvc-migration-registry.ps1. Do not edit rows manually.
 
-- Presentation counterparts covered: 73.
+- Presentation counterparts covered: 72.
 - Mutation-only MVC compatibility boundaries: 1 (Language).
-- Physically retired MVC presentation actions: 9 across 8 surfaces (InventoryBalances, InventoryInsights, InventoryReconciliation, InventoryReservations, JournalEntries, Public, PurchaseAccountingReconciliation, StockMovements); legacy redirects remain outside the reversible cutover catalog.
+- Physically retired MVC presentation actions: 10 across 9 surfaces (AuditEvents, InventoryBalances, InventoryInsights, InventoryReconciliation, InventoryReservations, JournalEntries, Public, PurchaseAccountingReconciliation, StockMovements); legacy redirects remain outside the reversible cutover catalog.
 - Presentation default: AngularDefault for all presentation surfaces; mutation-only MVC compatibility: Language.
 - Evidence baseline: generated MVC view/action inventory, verified Angular route, controller permission references and acceptance gate.
 - Runtime dual-run samples and cutover rehearsal results are appended by the MOD-029 acceptance workflow; this static matrix performs no mutation.
@@ -14,7 +14,6 @@
 | Account | /Account | /login, /register, /access-denied | Read/write | Public/session boundary | Identity/tenant | 3 view(s); 6 action(s); route/source gate |
 | Accounts | /Accounts | /accounting/accounts | Read/write | Administration.Access | Financial | 2 view(s); 3 action(s); route/source gate |
 | AnalyticsCenter | /AnalyticsCenter | /analytics | Read/write | AnalyticsCenter.Customize, AnalyticsCenter.View | Standard | 2 view(s); 3 action(s); route/source gate |
-| AuditEvents | /AuditEvents | /audit-events | Read/write | AuditEvents.Export, AuditEvents.View | Standard | 1 view(s); 2 action(s); route/source gate |
 | Branches | /Branches | /products/catalog-masters | Read/write | Administration.Access | Standard | 2 view(s); 1 action(s); route/source gate |
 | CompanyOnboarding | /CompanyOnboarding | /onboarding | Read/write | Administration.Access | Identity/tenant | 1 view(s); 3 action(s); route/source gate |
 | CustomerCreditNotes | /CustomerCreditNotes | /sales/credit-notes | Read/write | CustomerCreditNotes.Create, CustomerCreditNotes.View | Financial | 3 view(s); 1 action(s); route/source gate |

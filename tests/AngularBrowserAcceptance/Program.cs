@@ -222,6 +222,7 @@ static async Task RunLiveCutoverAsync(
         new("/ProductAttributes?source=cutover-rehearsal", "/app/products/attributes?source=cutover-rehearsal", "Products.View"),
         new("/Warehouses?source=cutover-rehearsal", "/app/warehouses?source=cutover-rehearsal", "Warehouses.View"),
         new("/AuditEvents?page=2&eventType=cutover", "/app/audit-events?page=2&eventType=cutover", "AuditEvents.View"),
+        new("/AuditEvents/Index?page=2&eventType=cutover", "/app/audit-events?page=2&eventType=cutover", "AuditEvents.View"),
         new("/Users?source=cutover-rehearsal", "/app/users?source=cutover-rehearsal", "Users.View"),
         new("/Users/Create", "/app/users/new", "Users.Create"),
         new("/Roles?source=cutover-rehearsal", "/app/roles?source=cutover-rehearsal", "Roles.View"),
@@ -1018,7 +1019,7 @@ static async Task RunLiveCutoverAsync(
             new APIRequestContextOptions { MaxRedirects = 0 });
         var physicallyRetired = surface is "InventoryBalances" or "InventoryReservations" or
             "InventoryInsights" or "InventoryReconciliation" or "StockMovements" or
-            "JournalEntries" or "PurchaseAccountingReconciliation";
+            "JournalEntries" or "PurchaseAccountingReconciliation" or "AuditEvents";
         var expectsAngular = physicallyRetired ||
                              options.CutoverMode == "angular" ||
                              options.CutoverMode == "pilot" &&

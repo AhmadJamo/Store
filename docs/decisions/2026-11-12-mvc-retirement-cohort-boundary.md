@@ -67,3 +67,11 @@ R2 ordering uses a generated dependency-count signal: mutations × 3, downloads 
 This is reproducible triage evidence only; business criticality, validation recovery, session isolation and live fixtures can
 override it. Tenant AuditEvents is the next proposed cohort because its single view and legacy export have complete
 permission-separated Angular/API replacements. Deletion remains independently approval-gated.
+
+## First R2 execution — MOD-030L
+
+The owner separately approved tenant AuditEvents. Physical retirement removes both MVC actions and the single view, but the
+compatibility catalog represents only safe GET/HEAD presentation navigation. It must not translate a POST/download into a
+GET redirect. Consequently the old MVC export ends at HTTP 405 while the existing API retains View + Export, antiforgery and
+server-side ViewSensitive enforcement. This pattern is specific to an already-proven replacement and does not authorize any
+other mixed controller.

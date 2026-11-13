@@ -1,7 +1,7 @@
 # MiniStore project context
 > Status: PARTIALLY IMPLEMENTED  
 > Source of truth: Code  
-> Last reviewed: 2026-11-12
+> Last reviewed: 2026-11-13
 
 The Angular UI/UX modernization program under `UI_UX_MODERNIZATION_PLAN.md` is complete for its approved presentation
 scope through UX-015:
@@ -41,6 +41,10 @@ no R1/R1-A surface remains.
 orders dependency counts without treating the score as deletion authority. Tenant `AuditEvents` is the next proposed bounded
 cohort because its read and permission-separated CSRF export have complete Angular/API replacements; Platform audit and
 stock-moving candidates were deferred for higher session/mutation risk. No runtime file changed and counts remain 74/402/208.
+`MOD-030L` then completed the separately approved tenant AuditEvents retirement. Its controller and Razor view are removed;
+permission-protected legacy GET/HEAD routes preserve query strings into Angular, while the legacy MVC export POST is retired
+without redirect. The Application read service, versioned API, Angular page, permission separation and audit semantics remain
+unchanged. Active inventory is now 73 MVC controllers, 400 actions and 207 Razor files.
 
 UX-009 adds permission-aware Purchasing, Sales and Accounting hubs with complete operational-route discovery. UX-010
 projects the tenant chart of accounts as an expandable hierarchy and adds a permission-protected, repository-paged journal

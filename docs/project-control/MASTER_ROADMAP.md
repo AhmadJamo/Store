@@ -50,7 +50,9 @@
   بتحويلات GET/HEAD مجهولة دقيقة تحفظ query؛ نجح Edge على 146 مسارًا ولم يتغير التسجيل أو الـAPI.
 - `MOD-030K` — COMPLETE 2026-11-12: رُتبت 54 حالة R2 بإشارة dependency مولدة ومراجعة مصدرية؛ اختير AuditEvents
   كأصغر cohort تالٍ، دون حذف أو تغيير runtime.
-- `MOD-030L` — PROPOSED: تقاعد MVC لـAuditEvents Index/Export وView بعد إثبات API/Angular؛ يحتاج موافقة حذف مستقلة.
+- `MOD-030L` — COMPLETE 2026-11-13: حُذف AuditEventsController وView بعد الموافقة؛ بقي GET/HEAD تحويلًا محميًا يحفظ
+  query، وتقاعد MVC Export دون redirect مع بقاء API/Angular والصلاحيات.
+- `MOD-030M` — PROPOSED: تدقيق غير هدّام لحدود PlatformAuditEvents والجلسة المعزولة قبل تقرير أي حذف جديد.
 - `UX-001` — COMPLETE 2026-11-04: تدقيق واجهة Angular، خطة تحديث مستمرة، مجموعات تنقل مهنية بصلاحيات،
   breadcrumbs ثنائية اللغة وحفظ آمن لتفضيل فتح المجموعات دون تغيير الأعمال.
 - `UX-002` — COMPLETE 2026-11-05: عقد typed لسياق URL وذاكرة workspace المعزولة ومسودات آمنة مؤقتة،

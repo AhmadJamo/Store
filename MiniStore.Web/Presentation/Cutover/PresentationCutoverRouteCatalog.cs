@@ -59,7 +59,6 @@ public static class PresentationCutoverRouteCatalog
             ["ProductAttributes:Index"] = "/products/attributes",
             ["ProductAttributes:Values"] = "/products/{productId}/attributes",
             ["Warehouses:Index"] = "/warehouses",
-            ["AuditEvents:Index"] = "/audit-events",
             ["Users:Index"] = "/users",
             ["Users:Create"] = "/users/new",
             ["Roles:Index"] = "/roles",

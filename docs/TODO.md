@@ -346,8 +346,9 @@ The ERP SaaS Foundation Blueprint is imported as a non-authoritative planning re
   production budgets and authenticated Edge 15/15 passed.
 
 ## In Progress
-- MOD-030K completed the non-destructive prioritization audit of 54 mixed-controller blockers. Tenant AuditEvents is the
-  recommended MOD-030L cohort, but its controller/view and legacy MVC export must not be removed before separate owner approval.
+- MOD-030L completed the separately approved AuditEvents MVC retirement. Protected GET/HEAD compatibility routes remain,
+  the legacy MVC export is retired without redirect, and Angular/API permissions and audit semantics are unchanged.
+- MOD-030M is proposed as a non-destructive PlatformAuditEvents session/parity audit; no Platform file deletion is approved.
 - UX-016 recurring-journal templates and controlled runs is complete with Draft-only manual execution. UX-017 bank-statement
   reconciliation is proposed and requires owner approval before adding statement import and matching records.
 - UX-009 navigation completeness is complete: 72 registered destinations and 41/41 operational routes are covered through

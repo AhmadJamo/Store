@@ -118,3 +118,12 @@ The generated retirement inventory now orders all 54 R2 surfaces using a depende
 business/session/mutation risk authoritative. Source review selected tenant AuditEvents as the next proposed bounded cohort:
 its filters, paging, sensitive evidence and permission-separated CSRF export already exist in Angular/API. Platform audit is
 deferred for isolated-session live evidence and LocationMovements for stock-mutation evidence. No runtime code was changed.
+
+## MOD-030L tenant AuditEvents retirement — completed 2026-11-13
+
+After explicit approval, the tenant AuditEvents MVC controller and Razor view were removed. Protected GET/HEAD compatibility
+routes preserve both conventional legacy forms and their complete query strings. The legacy MVC export POST is intentionally
+not redirected; Angular uses the existing permission-separated, antiforgery-protected API export. Application services,
+tenant scope, sensitive-evidence authorization and audit semantics are unchanged. Release, regression, Angular, static UI,
+bundle and authenticated Edge gates passed; hosted probes proved 302/302/405/200 for the two legacy reads, legacy export and
+API read respectively.

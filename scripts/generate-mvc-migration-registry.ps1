@@ -21,7 +21,6 @@ $retirementOutput = Join-Path $repoRoot $RetirementInventoryPath
 $surfaceRoutes = @{}
 @'
 Account|/login,/register,/access-denied
-AuditEvents|/audit-events
 Accounts|/accounting/accounts
 AnalyticsCenter|/analytics
 Branches|/products/catalog-masters
@@ -505,7 +504,7 @@ $retirementLines.Add('| R4 | Declared mutation-only compatibility surface. | Pre
 $retirementLines.Add('')
 $retirementLines.Add('## Completed physical retirement cohorts')
 $retirementLines.Add('')
-$retirementLines.Add('MOD-030G physically retired five read-only inventory surfaces. MOD-030H retired `JournalEntries.Details` and `PurchaseAccountingReconciliation.Index`. MOD-030J then retired the two anonymous `Public` actions after the separately approved MOD-030I audit. Their controller actions, Razor views and reversible cutover entries are gone; protected routes retain permission policies, while exact `/` and `/pricing` redirects are explicitly anonymous. All redirects preserve GET/HEAD and query strings.')
+$retirementLines.Add('MOD-030G physically retired five read-only inventory surfaces. MOD-030H retired `JournalEntries.Details` and `PurchaseAccountingReconciliation.Index`. MOD-030J retired the two anonymous `Public` actions after the separately approved MOD-030I audit. MOD-030L then retired tenant `AuditEvents.Index` and its legacy MVC export after the separately approved MOD-030K audit. Their controller actions, Razor views and reversible cutover entries are gone; protected GET/HEAD routes retain permission policies, while exact `/` and `/pricing` redirects are explicitly anonymous. All mapped redirects preserve query strings; retired POST/download actions are not redirected.')
 $retirementLines.Add('')
 $retirementLines.Add('| Retired MVC surface | Angular destination | Required permission |')
 $retirementLines.Add('|---|---|---|')
@@ -563,7 +562,7 @@ $retirementLines.Add('6. Run Release, regression, generated-inventory, Angular a
 $retirementLines.Add('')
 $retirementLines.Add('## Current outcome')
 $retirementLines.Add('')
-$retirementLines.Add('MOD-030F inventory and the separately approved MOD-030G/MOD-030H/MOD-030J cohorts are complete. Nine MVC presentation actions across eight surfaces and nine Razor views are physically retired. Public exact `/` and `/pricing` routes are explicitly anonymous and preserve query strings; the other retired routes retain their original permission policies. No R2/R3/R4 deletion is approved.')
+$retirementLines.Add('MOD-030F inventory and the separately approved MOD-030G/MOD-030H/MOD-030J/MOD-030L cohorts are complete. Ten MVC presentation actions across nine surfaces and ten Razor views are physically retired. Public exact `/` and `/pricing` routes are explicitly anonymous and preserve query strings; the other retired GET/HEAD routes retain their original permission policies. The legacy AuditEvents MVC POST export is retired without redirect; Angular continues through the protected API export. No additional R2/R3/R4 deletion is approved.')
 
 New-Item -ItemType Directory -Force -Path (Split-Path -Parent $retirementOutput) | Out-Null
 $retirementLines | Set-Content -Path $retirementOutput -Encoding utf8

@@ -1,23 +1,25 @@
 # المهمة التالية الوحيدة / Next Task
 
-## MOD-030L — تقاعد MVC لـAuditEvents / Tenant AuditEvents MVC retirement
+## MOD-030M — تدقيق جاهزية PlatformAuditEvents / Platform audit retirement readiness audit
 
 > الحالة: PROPOSED — AWAITING OWNER APPROVAL
+> النوع: تدقيق غير هدّام؛ لا حذف ولا تغيير runtime
 
-اكتمل `MOD-030K` دون حذف، واختار tenant AuditEvents كأصغر cohort تالٍ بعد إثبات Angular/API للقراءة والتصدير.
+اكتمل `MOD-030L` وأغلق tenant AuditEvents. المرشح الأقل تعقيدًا التالي هو PlatformAuditEvents، لكنه يستخدم جلسة
+Platform cookie وسياسات Owner منفصلة، ولا يجوز افتراض أن دليل جلسة tenant يغطيه.
 
 ### النطاق المقترح
 
-- حذف `AuditEventsController` و`Views/AuditEvents/Index.cshtml` فقط بعد موافقة صريحة.
-- إبقاء `AuditEventReadService` و`AuditEventsApiController` وAngular والصلاحيات كما هي.
-- حفظ GET/HEAD legacy تحت `AuditEvents.View` مع query إلى `/app/audit-events`.
-- تقاعد POST MVC القديم للتصدير صراحة؛ لا redirect للـPOST، والـAngular يستخدم API محميًا بـCSRF.
-- تشغيل Release/security/Angular وEdge read acceptance، مع إثبات صلاحيات View/Export/ViewSensitive دون إنشاء export للاختبار.
+- مراجعة Controller/View وPlatform API وAngular وسياسات View/Export وعزل cookie الفعلي.
+- التحقق من مسارات GET والتصدير وCSRF والبيانات الحساسة والروابط الثابتة دون إنشاء تصدير أو تغيير بيانات.
+- تحديد fixture آمن لجلسة Platform مصرح بها، أو توثيق العائق بدقة إن لم تتوفر.
+- إصدار قرار readiness فقط مع قائمة الملفات والمسارات والرجوع المقترح للمرحلة اللاحقة.
+- تحديث سجل التقاعد والخطة والتوثيق بنتيجة التدقيق.
 
 ### خارج النطاق
 
-- لا تنفيذ قبل موافقة مالك صريحة على حذف هذين الملفين وتقاعد MVC Export.
-- لا تغيير Application service أو API أو audit semantics أو retention أو Platform audit.
-- لا أي R2 آخر أو R3/R4/shared Razor infrastructure.
+- لا حذف `PlatformAuditEventsController` أو View.
+- لا تعديل مصادقة Platform أو cookies أو السياسات أو API أو audit retention.
+- لا تقاعد لأي R2/R3/R4 إضافي.
 
-التدقيق الكامل في `docs/modernization/MOD_030K_MIXED_CONTROLLER_PRIORITY_AUDIT.md`؛ لا توجد موافقة حذف بعد.
+أي تقاعد فعلي لاحق يحتاج موافقة مالك مستقلة بعد اكتمال هذا التدقيق.

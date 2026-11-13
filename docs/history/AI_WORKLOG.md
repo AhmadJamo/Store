@@ -1,5 +1,11 @@
 # AI Work Log
 
+- 2026-11-13: Completed the separately approved `MOD-030L` tenant AuditEvents MVC retirement. Deleted
+  `AuditEventsController` and its Razor view, removed the reversible cutover entry/configuration and added protected GET/HEAD
+  compatibility routes for both legacy forms with query preservation. The legacy MVC export POST is not redirected and
+  returned 405 in a hosted authenticated probe; the unchanged API read returned 200. Active inventory is 73 MVC controllers,
+  400 actions and 207 Razor files. Release built with zero warnings/errors; 1,851 regression checks, 242/242 Angular tests,
+  137 templates, the 120-page consistency inventory, bundle budgets and 147-route authenticated Edge acceptance passed.
 - 2026-11-12: Completed `MOD-030K` as a non-destructive prioritization audit of 54 R2 mixed-controller surfaces. Added a
   reproducible generated dependency-count ordering, then reviewed AuditEvents, PlatformAuditEvents, LocationMovements and
   AnalyticsCenter against source. Recommended tenant AuditEvents for a separately approved MOD-030L because its filters,
