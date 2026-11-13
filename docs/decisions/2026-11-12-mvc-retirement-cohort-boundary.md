@@ -118,3 +118,10 @@ evidenced. The audit found SalesApprovalRules has an isolated Angular feature, e
 and approval coverage while retaining all authority in SalesOrderApprovalService/domain. It is therefore the only proposed
 MOD-030U cohort. PurchaseApprovalRules remains active until its rule-resolution lifecycle has equally isolated evidence.
 This recommendation does not authorize deletion.
+
+## Workflow-rule execution — MOD-030U
+
+SalesApprovalRules follows the mixed-controller retirement rule: only protected GET/HEAD presentation navigation is added
+to the retired catalog. Legacy Create/SetActive POSTs end at 405 and are never redirected or replayed. Mutation and
+workflow authority remains in the antiforgery-protected API, `SalesOrderApprovalService` and domain entities. This execution
+does not authorize PurchaseApprovalRules retirement.

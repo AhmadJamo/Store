@@ -60,7 +60,6 @@ PurchaseTemplates|/purchases/templates
 Replenishment|/inventory/replenishment
 Roles|/roles
 Sales|/sales/legacy
-SalesApprovalRules|/sales/approval-rules
 SalesDeliveries|/sales/deliveries
 SalesOrders|/sales/orders
 SalesPriceLists|/sales/pricing
@@ -501,7 +500,7 @@ $retirementLines.Add('| R4 | Declared mutation-only compatibility surface. | Pre
 $retirementLines.Add('')
 $retirementLines.Add('## Completed physical retirement cohorts')
 $retirementLines.Add('')
-$retirementLines.Add('MOD-030G physically retired five read-only inventory surfaces. MOD-030H retired `JournalEntries.Details` and `PurchaseAccountingReconciliation.Index`. MOD-030J retired the two anonymous `Public` actions. MOD-030L retired tenant `AuditEvents.Index` and its MVC export. MOD-030O retired `AnalyticsCenter.Index/Create` and the legacy MVC workspace POST. MOD-030Q retired `Recipes.Index/Edit` and the legacy recipe-save POST. MOD-030S then retired `ProductCategories.Index` and the legacy create/status POSTs after the separately approved MOD-030R audit. Their controller actions, Razor views and reversible cutover entries are gone; protected GET/HEAD routes retain permission policies, while exact `/` and `/pricing` redirects are anonymous. Mapped redirects preserve queries; retired POST/download actions are not redirected.')
+$retirementLines.Add('MOD-030G physically retired five read-only inventory surfaces. MOD-030H retired `JournalEntries.Details` and `PurchaseAccountingReconciliation.Index`. MOD-030J retired the two anonymous `Public` actions. MOD-030L retired tenant `AuditEvents.Index` and its MVC export. MOD-030O retired `AnalyticsCenter.Index/Create` and the legacy MVC workspace POST. MOD-030Q retired `Recipes.Index/Edit` and the legacy recipe-save POST. MOD-030S retired `ProductCategories.Index` and its legacy create/status POSTs. MOD-030U then retired `SalesApprovalRules.Index` and its legacy create/status POSTs after the separately approved MOD-030T lifecycle audit. Their controller actions, Razor views and reversible cutover entries are gone; protected GET/HEAD routes retain permission policies, while exact `/` and `/pricing` redirects are anonymous. Mapped redirects preserve queries; retired POST/download actions are not redirected.')
 $retirementLines.Add('')
 $retirementLines.Add('| Retired MVC surface | Angular destination | Required permission |')
 $retirementLines.Add('|---|---|---|')
@@ -559,7 +558,7 @@ $retirementLines.Add('6. Run Release, regression, generated-inventory, Angular a
 $retirementLines.Add('')
 $retirementLines.Add('## Current outcome')
 $retirementLines.Add('')
-$retirementLines.Add('MOD-030F inventory and the separately approved MOD-030G/MOD-030H/MOD-030J/MOD-030L/MOD-030O/MOD-030Q/MOD-030S cohorts are complete. Fifteen MVC presentation GET actions across twelve surfaces and fifteen Razor views are physically retired. Public exact `/` and `/pricing` routes are anonymous; other retired GET/HEAD routes retain their original permission policies and preserve queries. The legacy AuditEvents export, AnalyticsCenter workspace POST, Recipes save POST and ProductCategories create/status POSTs are retired without redirect; Angular continues through their protected APIs. No additional R2/R3/R4 deletion is approved.')
+$retirementLines.Add('MOD-030F inventory and the separately approved MOD-030G/MOD-030H/MOD-030J/MOD-030L/MOD-030O/MOD-030Q/MOD-030S/MOD-030U cohorts are complete. Sixteen MVC presentation GET actions across thirteen surfaces and sixteen Razor views are physically retired. Public exact `/` and `/pricing` routes are anonymous; other retired GET/HEAD routes retain their original permission policies and preserve queries. The legacy AuditEvents export, AnalyticsCenter workspace POST, Recipes save POST, ProductCategories create/status POSTs and SalesApprovalRules create/status POSTs are retired without redirect; Angular continues through their protected APIs. No additional R2/R3/R4 deletion is approved.')
 
 New-Item -ItemType Directory -Force -Path (Split-Path -Parent $retirementOutput) | Out-Null
 $retirementLines | Set-Content -Path $retirementOutput -Encoding utf8

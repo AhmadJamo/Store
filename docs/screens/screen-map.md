@@ -70,7 +70,7 @@ localized feedback. The session culture is authoritative on startup, and `lang`/
 
 ## Configurable sales controls (`SAL-110`)
 
-- `/SalesApprovalRules`: bilingual responsive builder for company/customer scope, metric, comparison, threshold, action, priority, effective dates and arbitrary sequential role steps; rules are activated/deactivated rather than rewriting past evidence.
+- Angular `/sales/approval-rules`: bilingual responsive builder for company/customer scope, metric, comparison, threshold, action, priority, effective dates and arbitrary sequential role steps; rules are activated/deactivated rather than rewriting past evidence, and protected legacy SalesApprovalRules reads redirect here.
 - `/SalesOrders/Details/{id}`: shows frozen measured findings and decision history, suppresses repeat confirmation while Pending and exposes approve/reject only to the authorized current role step.
 
 ## Customer credit notes (`SAL-100D`)

@@ -427,3 +427,6 @@ query. تقاعد MVC Export دون redirect، وبقي API/Angular والخدم
 اكتمل `MOD-030T` كتدقيق غير هدّام لدورة قواعد الاعتماد. ثبت أن المسارين يبقيان الاختيار واللقطات والقرارات داخل
 Application/domain مع الصلاحيات وantiforgery وrowversion. رُشح SalesApprovalRules لـMOD-030U منفصل لقوة دليل Angular
 المستقل واختبارات API وSQL، بينما بقي PurchaseApprovalRules فعالًا لحين دليل SQL أكثر عزلة. لا تغيير runtime؛ الأعداد 70/391/202.
+اكتمل `MOD-030U` بعد الموافقة الصريحة: حُذف SalesApprovalRulesController وView الوحيد، وبقيت القراءة القديمة تحويلًا
+محميًا وCreate/SetActive القديمتان 405. بقيت API/Angular والخدمة وworkflow دون تغيير. أصبح الجرد 69 Controller و388
+إجراء و201 Razor؛ نجح Release و1,837 فحصًا و242/242 Angular. تعذر Edge UI بسبب ACL في مساعد Windows؛ نجح HTTP الحي.

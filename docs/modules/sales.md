@@ -235,3 +235,10 @@ The non-destructive lifecycle audit confirmed the dedicated Angular rules featur
 `SalesOrderApprovalService`, preserving customer/date/metric evaluation, frozen findings, requester and distinct-approver
 controls, permissions, antiforgery and rowversion. Existing domain and SQL coverage makes only the MVC controller/view a
 candidate for separately approved MOD-030U retirement; no sales rule or order behavior changed in this audit.
+
+## MOD-030U SalesApprovalRules MVC retirement
+
+The approved MVC controller and Razor view are retired. Protected legacy reads redirect to Angular and the former MVC
+Create/SetActive POST routes return 405 rather than replaying a command. `SalesApprovalRulesApiController`,
+`SalesOrderApprovalService`, rule evaluation, frozen findings, requester/distinct-approver policies, permissions,
+antiforgery and rowversion remain authoritative and unchanged.

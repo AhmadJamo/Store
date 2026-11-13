@@ -4,16 +4,16 @@
 
 ## Reconciliation
 
-- Controllers discovered: 158 total; 70 MVC; 88 API.
-- User-facing MVC views discovered: 184.
-- MVC actions discovered: 391.
-- Razor files included in the control inventory: 194.
+- Controllers discovered: 157 total; 69 MVC; 88 API.
+- User-facing MVC views discovered: 183.
+- MVC actions discovered: 388.
+- Razor files included in the control inventory: 193.
 - Angular application routes discovered: 194.
-- Presentation surfaces with a verified Angular counterpart: 69.
+- Presentation surfaces with a verified Angular counterpart: 68.
 - Remaining presentation surfaces without a mapped Angular counterpart: 0.
 - Mutation-only MVC compatibility surfaces: 1 (Language).
-- Physically retired presentation actions with legacy redirects: 15 across 12 surfaces (AnalyticsCenter, AuditEvents, InventoryBalances, InventoryInsights, InventoryReconciliation, InventoryReservations, JournalEntries, ProductCategories, Public, PurchaseAccountingReconciliation, Recipes, StockMovements).
-- Allowlisted Angular-default cutover actions: 168.
+- Physically retired presentation actions with legacy redirects: 16 across 13 surfaces (AnalyticsCenter, AuditEvents, InventoryBalances, InventoryInsights, InventoryReconciliation, InventoryReservations, JournalEntries, ProductCategories, Public, PurchaseAccountingReconciliation, Recipes, SalesApprovalRules, StockMovements).
+- Allowlisted Angular-default cutover actions: 167.
 
 Remaining presentation surfaces: none.
 
@@ -129,7 +129,6 @@ Statuses follow the migration lifecycle plus MVC Compatibility (mutation-only). 
 | Sales | Details.cshtml | Angular Default | /sales/legacy | MiniStore.Web/Views/Sales/Details.cshtml |
 | Sales | Index.cshtml | Angular Default | /sales/legacy | MiniStore.Web/Views/Sales/Index.cshtml |
 | Sales | Pos.cshtml | Angular Default | /sales/legacy | MiniStore.Web/Views/Sales/Pos.cshtml |
-| SalesApprovalRules | Index.cshtml | Angular Default | /sales/approval-rules | MiniStore.Web/Views/SalesApprovalRules/Index.cshtml |
 | SalesDeliveries | Create.cshtml | Angular Default | /sales/deliveries | MiniStore.Web/Views/SalesDeliveries/Create.cshtml |
 | SalesDeliveries | Details.cshtml | Angular Default | /sales/deliveries | MiniStore.Web/Views/SalesDeliveries/Details.cshtml |
 | SalesDeliveries | Index.cshtml | Angular Default | /sales/deliveries | MiniStore.Web/Views/SalesDeliveries/Index.cshtml |
@@ -429,9 +428,6 @@ Statuses follow the migration lifecycle plus MVC Compatibility (mutation-only). 
 | Sales | Index | ANY | Angular Default | /sales/legacy | /sales/legacy | MiniStore.Web/Controllers/Sales/SalesController.cs |
 | Sales | Pos | GET | Angular Default | /sales/legacy | /sales/pos | MiniStore.Web/Controllers/Sales/SalesController.cs |
 | Sales | Post | POST | Angular Default | /sales/legacy | — | MiniStore.Web/Controllers/Sales/SalesController.cs |
-| SalesApprovalRules | Create | POST | Angular Default | /sales/approval-rules | — | MiniStore.Web/Controllers/Sales/SalesApprovalRulesController.cs |
-| SalesApprovalRules | Index | GET | Angular Default | /sales/approval-rules | /sales/approval-rules | MiniStore.Web/Controllers/Sales/SalesApprovalRulesController.cs |
-| SalesApprovalRules | SetActive | POST | Angular Default | /sales/approval-rules | — | MiniStore.Web/Controllers/Sales/SalesApprovalRulesController.cs |
 | SalesDeliveries | Cancel | POST | Angular Default | /sales/deliveries | — | MiniStore.Web/Controllers/Sales/SalesDeliveriesController.cs |
 | SalesDeliveries | Create | GET | Angular Default | /sales/deliveries | /sales/deliveries/new?salesOrderId={salesOrderId} | MiniStore.Web/Controllers/Sales/SalesDeliveriesController.cs |
 | SalesDeliveries | Create | POST | Angular Default | /sales/deliveries | /sales/deliveries/new?salesOrderId={salesOrderId} | MiniStore.Web/Controllers/Sales/SalesDeliveriesController.cs |
@@ -719,7 +715,6 @@ Statuses follow the migration lifecycle plus MVC Compatibility (mutation-only). 
 | Sales | Details.cshtml | 1 | 1 | 2 | Create, Index, Post | MiniStore.Web/Views/Sales/Details.cshtml |
 | Sales | Index.cshtml | 0 | 0 | 3 | Create, Details, Pos | MiniStore.Web/Views/Sales/Index.cshtml |
 | Sales | Pos.cshtml | 1 | 6 | 1 | Create, Index | MiniStore.Web/Views/Sales/Pos.cshtml |
-| SalesApprovalRules | Index.cshtml | 2 | 3 | 0 | Create, SetActive | MiniStore.Web/Views/SalesApprovalRules/Index.cshtml |
 | SalesDeliveries | Create.cshtml | 1 | 1 | 3 | Create, Details, Reserve | MiniStore.Web/Views/SalesDeliveries/Create.cshtml |
 | SalesDeliveries | Details.cshtml | 2 | 2 | 5 | Cancel, Create, Details, Index, Post | MiniStore.Web/Views/SalesDeliveries/Details.cshtml |
 | SalesDeliveries | Index.cshtml | 1 | 1 | 1 | Details | MiniStore.Web/Views/SalesDeliveries/Index.cshtml |

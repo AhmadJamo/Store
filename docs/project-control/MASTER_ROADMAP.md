@@ -68,7 +68,9 @@
   405 لمساري Create/SetActive القديمين.
 - `MOD-030T` — COMPLETE 2026-11-13: دُققت دورة قواعد اعتماد المشتريات والمبيعات دون mutation؛ رُشح
   SalesApprovalRules فقط بسبب قوة دليل Angular/API/SQL المستقل، وبقي PurchaseApprovalRules مؤجلًا.
-- `MOD-030U` — PROPOSED / APPROVAL REQUIRED: تقاعد MVC المحدود لـSalesApprovalRules دون تغيير API أو workflow.
+- `MOD-030U` — COMPLETE 2026-11-13: حُذف SalesApprovalRulesController وView فقط؛ بقيت API/Angular والخدمة وworkflow،
+  وثبت 405 للـPOST القديم دون mutation.
+- `MOD-030V` — PROPOSED: إضافة دليل SQL معزول لدورة PurchaseApprovalRules دون تغيير بيانات التشغيل.
 - `UX-001` — COMPLETE 2026-11-04: تدقيق واجهة Angular، خطة تحديث مستمرة، مجموعات تنقل مهنية بصلاحيات،
   breadcrumbs ثنائية اللغة وحفظ آمن لتفضيل فتح المجموعات دون تغيير الأعمال.
 - `UX-002` — COMPLETE 2026-11-05: عقد typed لسياق URL وذاكرة workspace المعزولة ومسودات آمنة مؤقتة،

@@ -32,6 +32,7 @@ public static class RetiredPresentationRouteCatalog
         new("Recipes", "/products/recipes/{productId}", "Products.Edit", "Edit",
             PositiveIntegerQueryParameter: "productId"),
         new("ProductCategories", "/products/categories", "Products.View"),
+        new("SalesApprovalRules", "/sales/approval-rules", "SalesApprovalRules.View"),
         new("Public", "/welcome", null, "Index", ["/"]),
         new("Public", "/pricing", null, "Pricing", ["/pricing"])
     ];

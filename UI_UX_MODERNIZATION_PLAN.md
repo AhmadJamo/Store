@@ -503,3 +503,14 @@ largest underrepresented modules; production deployment readiness and physical M
   feature, explicit client contract tests and SQL lifecycle evidence.
 - Deferred PurchaseApprovalRules because its UI is coupled to the purchase-request feature and its rule-resolution SQL
   evidence is less isolated. No runtime file or inventory count changed.
+
+## MOD-030U — SalesApprovalRules MVC retirement — COMPLETED 2026-11-13
+
+- Removed the separately approved SalesApprovalRules controller and single Razor view while retaining API, Angular,
+  Application/domain authority, permissions, antiforgery, rowversion and order-approval behavior.
+- Protected legacy GET/HEAD routes now resolve to Angular with query preservation; legacy Create/SetActive POSTs return
+  405 and are never redirected or replayed.
+- Release passed cleanly, 1,837 regression checks and 242/242 Angular tests passed, and bundle budgets remained within
+  project thresholds. Hosted anonymous boundaries passed; Edge window automation was unavailable due to a Windows helper
+  ACL failure, so no authenticated Edge claim is made.
+- Active inventory is 69 MVC controllers, 388 actions and 201 Razor files.

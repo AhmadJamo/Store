@@ -1,23 +1,21 @@
 # المهمة التالية الوحيدة / Next Task
 
-## MOD-030U — تقاعد SalesApprovalRules MVC
+## MOD-030V — دليل SQL لدورة PurchaseApprovalRules
 
-> الحالة: PROPOSED — APPROVAL REQUIRED
+> الحالة: PROPOSED — TEST EVIDENCE ONLY
 
-اكتمل `MOD-030T` كتدقيق غير هدّام. أثبت أن SalesApprovalRules يملك بديل Angular/API مستقلًا مع دليل SQL لدورة
-التقييم والاعتماد، لكن هذا الاقتراح لا يسمح بالحذف قبل موافقة المالك على النطاق الدقيق أدناه.
+اكتمل `MOD-030U`. قبل اقتراح حذف PurchaseApprovalRules، يجب إغلاق فجوة الدليل التي سجلها MOD-030T باختبار تكامل
+SQL معزول يعمل على قاعدة الاختبار فقط.
 
 ### النطاق المقترح
 
-- حذف `MiniStore.Web/Controllers/Sales/SalesApprovalRulesController.cs`.
-- حذف `MiniStore.Web/Views/SalesApprovalRules/Index.cshtml`.
-- نقل `SalesApprovalRules:Index` فقط إلى retired catalog على `/sales/approval-rules` بصلاحية `SalesApprovalRules.View`.
-- إزالة AngularDefault والمطابقة النشطة لهذا السطح فقط.
-- إبقاء API وAngular و`SalesOrderApprovalService` والكيانات والمستودع والصلاحيات وكل سلوك workflow كما هو.
-- إثبات تحويل GET/HEAD القديم و405 لمساري Create/SetActive القديمين دون mutation.
+- إضافة سيناريو SQL ينشئ قاعدة شراء في سياق الاختبار ويثبت warehouse/priority resolution وترتيب الخطوات.
+- إثبات أن Submit يجمّد اسم القاعدة والأدوار، وأن approve/reject يتطلب الدور الصحيح ويحدث الطلب داخل transaction.
+- إثبات rowversion عند تفعيل/تعطيل القاعدة وعدم إنشاء instance مكرر.
+- تشغيل بوابات Release والأمان واختبارات SQL ذات الصلة وتحديث التوثيق.
 
 ### خارج النطاق
 
-- لا تعديل أو إنشاء أو تفعيل قاعدة اعتماد.
-- لا تأكيد أو اعتماد أو رفض Sales Order.
-- لا حذف PurchaseApprovalRules أو أي Controller/View آخر.
+- لا تغيير في قاعدة التشغيل أو أي قاعدة اعتماد فعلية.
+- لا حذف Controller أو View.
+- أي تقاعد لاحق لـPurchaseApprovalRules يحتاج نطاقًا دقيقًا وموافقة مستقلة.

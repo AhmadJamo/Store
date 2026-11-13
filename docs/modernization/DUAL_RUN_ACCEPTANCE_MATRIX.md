@@ -2,9 +2,9 @@
 
 > Generated from source by scripts/generate-mvc-migration-registry.ps1. Do not edit rows manually.
 
-- Presentation counterparts covered: 69.
+- Presentation counterparts covered: 68.
 - Mutation-only MVC compatibility boundaries: 1 (Language).
-- Physically retired MVC presentation actions: 15 across 12 surfaces (AnalyticsCenter, AuditEvents, InventoryBalances, InventoryInsights, InventoryReconciliation, InventoryReservations, JournalEntries, ProductCategories, Public, PurchaseAccountingReconciliation, Recipes, StockMovements); legacy redirects remain outside the reversible cutover catalog.
+- Physically retired MVC presentation actions: 16 across 13 surfaces (AnalyticsCenter, AuditEvents, InventoryBalances, InventoryInsights, InventoryReconciliation, InventoryReservations, JournalEntries, ProductCategories, Public, PurchaseAccountingReconciliation, Recipes, SalesApprovalRules, StockMovements); legacy redirects remain outside the reversible cutover catalog.
 - Presentation default: AngularDefault for all presentation surfaces; mutation-only MVC compatibility: Language.
 - Evidence baseline: generated MVC view/action inventory, verified Angular route, controller permission references and acceptance gate.
 - Runtime dual-run samples and cutover rehearsal results are appended by the MOD-029 acceptance workflow; this static matrix performs no mutation.
@@ -56,7 +56,6 @@
 | Replenishment | /Replenishment | /inventory/replenishment | Read/write | Inventory.Replenishment.Manage, Inventory.Replenishment.View, PurchaseRequests.Create, StockTransfers.Create | Inventory | 1 view(s); 5 action(s); route/source gate |
 | Roles | /Roles | /roles | Read/write | Roles.Create, Roles.Delete, Roles.Edit, Roles.View | Standard | 3 view(s); 6 action(s); route/source gate |
 | Sales | /Sales | /sales/legacy | Read/write | Sales.Create, Sales.View | Standard | 4 view(s); 6 action(s); route/source gate |
-| SalesApprovalRules | /SalesApprovalRules | /sales/approval-rules | Read/write | SalesApprovalRules.Manage, SalesApprovalRules.View | Standard | 1 view(s); 3 action(s); route/source gate |
 | SalesDeliveries | /SalesDeliveries | /sales/deliveries | Read/write | SalesDeliveries.Cancel, SalesDeliveries.Create, SalesDeliveries.Post, SalesDeliveries.View | Standard | 3 view(s); 6 action(s); route/source gate |
 | SalesOrders | /SalesOrders | /sales/orders | Read/write | SalesOrders.ApproveException, SalesOrders.Cancel, SalesOrders.Confirm, SalesOrders.Create, SalesOrders.ReleaseReservation, SalesOrders.Reserve, SalesOrders.View | Standard | 3 view(s); 10 action(s); route/source gate |
 | SalesPriceLists | /SalesPriceLists | /sales/pricing | Read/write | SalesPricing.Manage, SalesPricing.View | Standard | 1 view(s); 6 action(s); route/source gate |

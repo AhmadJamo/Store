@@ -170,3 +170,9 @@ MOD-030S منفصل لأن البديل يعيد استخدام ProductCategoryS
 أي mutation. البديلان يحافظان على Application/domain authority والصلاحيات وantiforgery وrowversion. يملك
 SalesApprovalRules دليلًا مستقلًا أقوى عبر مكوّن Angular مخصص واختبار عقد API واختبار SQL لدورة التقييم والاعتماد، لذلك
 هو المرشح الوحيد لـMOD-030U منفصل. يبقى PurchaseApprovalRules دون حذف حتى تقوية دليله التشغيلي.
+
+## MOD-030U — تقاعد SalesApprovalRules MVC
+
+اكتمل بعد الموافقة الصريحة: حُذف Controller وView فقط، وبقيت API وAngular وSalesOrderApprovalService وكل قواعد التقييم
+والاعتماد. تحافظ GET/HEAD القديمة على SalesApprovalRules.View وquery، بينما يعيد Create/SetActive القديمتان 405 دون
+mutation. أصبح الجرد 69 Controller و388 Action و201 ملف Razor.

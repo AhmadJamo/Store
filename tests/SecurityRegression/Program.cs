@@ -1329,25 +1329,6 @@ Check(new long[] { -1, 0 }.All(id =>
           "CustomerCreditNotes", "Post",
           new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 17 }) is null,
     "Customer-credit-note cutover must reject unsafe IDs and keep posting outside presentation cutover");
-var salesApprovalRulesCutoverResolver = new PresentationCutoverResolver(Options.Create(
-    new PresentationCutoverOptions
-    {
-        AngularBasePath = "/app",
-        Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
-        {
-            ["SalesApprovalRules"] = PresentationCutoverMode.AngularDefault
-        }
-    }));
-cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?source=cutover");
-Check(salesApprovalRulesCutoverResolver.Resolve(cutoverContext.Request,
-          "SalesApprovalRules", "Index", new Microsoft.AspNetCore.Routing.RouteValueDictionary()) ==
-      "/app/sales/approval-rules?source=cutover",
-    "Sales-approval-rule cutover must resolve the exact list route and preserve query values");
-Check(new[] { "Create", "SetActive" }.All(action =>
-        salesApprovalRulesCutoverResolver.Resolve(cutoverContext.Request,
-            "SalesApprovalRules", action,
-            new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 17 }) is null),
-    "Sales-approval-rule cutover must keep rule creation and activation mutations outside presentation cutover");
 var salesQuotationTemplateCutoverResolver = new PresentationCutoverResolver(Options.Create(
     new PresentationCutoverOptions
     {
@@ -2471,12 +2452,21 @@ foreach(var type in new[]{typeof(SalesOrder),typeof(SalesOrderLine),typeof(Sales
         $"{type.Name} must be tenant owned");
 Check(DocumentSequence.CreateDefault(DocumentNumberType.SalesOrder).Preview(DateTime.Today).StartsWith("SO-"),
     "Sales orders must use an independent centralized SO document sequence");
-var salesApprovalController=typeof(SalesApprovalRulesController);
-Check(salesApprovalController.GetMethod(nameof(SalesApprovalRulesController.Index))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SalesApprovalRules.View"&&
-      salesApprovalController.GetMethod(nameof(SalesApprovalRulesController.Create))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SalesApprovalRules.Manage"&&
-      salesApprovalController.GetMethod(nameof(SalesApprovalRulesController.SetActive))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SalesApprovalRules.Manage"&&
-      salesApprovalController.GetMethods().Where(x=>x.GetCustomAttribute<HttpPostAttribute>() is not null).All(x=>x.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null),
-    "Sales approval rule endpoints must enforce dedicated permissions and antiforgery");
+var salesApprovalRulesApi = typeof(SalesApprovalRulesApiController);
+Check(salesApprovalRulesApi.GetCustomAttribute<ApiControllerAttribute>() is not null &&
+      salesApprovalRulesApi.GetCustomAttribute<AuthorizeAttribute>() is not null &&
+      salesApprovalRulesApi.GetCustomAttribute<RouteAttribute>()?.Template == "api/v1/sales-approval-rules" &&
+      salesApprovalRulesApi.GetMethod(nameof(SalesApprovalRulesApiController.GetPage))!
+          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == "Permission:SalesApprovalRules.View",
+    "Sales approval rule API reads must remain authenticated and independently view protected");
+Check(new[]
+    {
+        salesApprovalRulesApi.GetMethod(nameof(SalesApprovalRulesApiController.Create))!,
+        salesApprovalRulesApi.GetMethod(nameof(SalesApprovalRulesApiController.SetActive))!
+    }.All(method => method.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
+                      "Permission:SalesApprovalRules.Manage" &&
+                    method.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null),
+    "Sales approval rule API mutations must retain Manage permission and antiforgery after MVC retirement");
 var amountApprovalRule=new SalesApprovalRule("Large customer exposure",null,SalesControlMetric.CreditExposure,
     SalesControlComparison.GreaterThanOrEqual,100m,SalesControlAction.RequireApproval,10,new DateOnly(2026,1,1),null);
 amountApprovalRule.AddStep(1,"Sales Manager");amountApprovalRule.AddStep(2,"Finance Manager");
@@ -2950,6 +2940,7 @@ var expectedRetiredPresentationRoutes = new Dictionary<string, (string Route, st
     ["Recipes:Index"] = ("/products/recipes", "Products.View", [], null),
     ["Recipes:Edit"] = ("/products/recipes/{productId}", "Products.Edit", [], "productId"),
     ["ProductCategories:Index"] = ("/products/categories", "Products.View", [], null),
+    ["SalesApprovalRules:Index"] = ("/sales/approval-rules", "SalesApprovalRules.View", [], null),
     ["Public:Index"] = ("/welcome", null, ["/"], null),
     ["Public:Pricing"] = ("/pricing", null, ["/pricing"], null)
 };

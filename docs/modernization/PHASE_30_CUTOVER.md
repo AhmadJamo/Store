@@ -183,3 +183,11 @@ Purchase and sales rule management, rule resolution, frozen approval evidence an
 mutation. Both replacements preserve the existing Application/domain authority, permissions, antiforgery and rowversion.
 SalesApprovalRules has the stronger isolated Angular/API/SQL lifecycle evidence and is proposed for a separately approved
 MOD-030U retirement. PurchaseApprovalRules remains active; no deletion is authorized by this audit.
+
+## MOD-030U SalesApprovalRules retirement — completed 2026-11-13
+
+After explicit approval, the SalesApprovalRules controller and Index view were removed. Protected legacy reads now
+redirect to Angular and retired MVC Create/SetActive POST routes return 405. API, Angular, Application/domain authority,
+permissions, antiforgery, concurrency and sales-order approval behavior remain unchanged. Release, regression, Angular and
+bundle gates passed. Hosted anonymous HTTP boundaries passed; Edge UI automation was unavailable because its Windows helper
+failed ACL initialization, so no authenticated Edge result is claimed.

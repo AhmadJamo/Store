@@ -1,5 +1,10 @@
 # AI Work Log
 
+- 2026-11-13: Completed the explicitly approved `MOD-030U` SalesApprovalRules MVC retirement. Deleted the controller and
+  Index view, retained a SalesApprovalRules.View-protected legacy redirect and proved both retired Create/SetActive POSTs
+  return 405 without mutation. Kept API, Angular, SalesOrderApprovalService, domain/repository, permissions, antiforgery,
+  rowversion and sales-order workflow intact. Release passed cleanly, 1,837 checks and 242/242 Angular tests passed. Hosted
+  HTTP boundaries passed; Edge UI automation failed to initialize because of a Windows helper ACL error and is not claimed.
 - 2026-11-13: Completed `MOD-030T` as a non-destructive purchase/sales approval-rule lifecycle audit. Traced MVC/API/Angular,
   Application services, domain snapshots, repositories, permissions, antiforgery, rowversion and downstream document
   decisions. Both paths retain server authority. Recommended only SalesApprovalRules for separately approved MOD-030U
