@@ -1,5 +1,12 @@
 # AI Work Log
 
+- 2026-11-14: Completed `MOD-030W` after explicit approval. Removed the PurchaseApprovalRules MVC controller and its single
+  Razor view; protected legacy reads now resolve to Angular and retired Create/SetActive POSTs return 405. API, Angular,
+  PurchaseApprovalService, permissions, antiforgery, concurrency and request approval behavior remain unchanged. Release
+  passed cleanly with 1,833 regression checks, 242/242 Angular tests and bundle budgets. Hosted boundaries returned
+  302/401/200/405 as expected. Active inventory is 68 controllers, 385 actions and 200 Razor files. Future retirement work
+  will be organized as audited three-controller cohorts.
+
 - 2026-11-14: Completed `MOD-030V` by adding disposable SQL lifecycle evidence for PurchaseApprovalRules over the real
   Application service, repositories and UnitOfWork. Proved specific rule resolution, frozen ordered steps, duplicate
   prevention, invalid-rule rollback, role-gated atomic approve/reject and stale-rowversion rejection. Updated only the SQL

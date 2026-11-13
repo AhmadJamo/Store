@@ -33,6 +33,7 @@ public static class RetiredPresentationRouteCatalog
             PositiveIntegerQueryParameter: "productId"),
         new("ProductCategories", "/products/categories", "Products.View"),
         new("SalesApprovalRules", "/sales/approval-rules", "SalesApprovalRules.View"),
+        new("PurchaseApprovalRules", "/purchases/approval-rules", "PurchaseApprovalRules.View"),
         new("Public", "/welcome", null, "Index", ["/"]),
         new("Public", "/pricing", null, "Pricing", ["/pricing"])
     ];

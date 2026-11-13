@@ -72,7 +72,9 @@
   وثبت 405 للـPOST القديم دون mutation.
 - `MOD-030V` — COMPLETE 2026-11-14: أضيف اختبار SQL معزول لدورة PurchaseApprovalRules وأثبت resolution واللقطات
   والقرارات الذرية وrollback وuniqueness وrowversion دون تغيير production.
-- `MOD-030W` — PROPOSED / APPROVAL REQUIRED: تقاعد MVC المحدود لـPurchaseApprovalRules فقط.
+- `MOD-030W` — COMPLETE 2026-11-14: حُذف PurchaseApprovalRulesController وView فقط؛ بقيت API/Angular والخدمة وworkflow،
+  وثبت تحويل القراءة القديمة و405 للـPOST القديم دون mutation.
+- `MOD-030X` — NEXT AUDIT: اختيار وتدقيق دفعة واحدة من ثلاثة Controllers متبقية؛ لا حذف قبل تثبيت الأسماء والنطاق.
 - `UX-001` — COMPLETE 2026-11-04: تدقيق واجهة Angular، خطة تحديث مستمرة، مجموعات تنقل مهنية بصلاحيات،
   breadcrumbs ثنائية اللغة وحفظ آمن لتفضيل فتح المجموعات دون تغيير الأعمال.
 - `UX-002` — COMPLETE 2026-11-05: عقد typed لسياق URL وذاكرة workspace المعزولة ومسودات آمنة مؤقتة،

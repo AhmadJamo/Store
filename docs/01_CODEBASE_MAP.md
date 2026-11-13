@@ -116,10 +116,10 @@ UnassignedStock, LocationMovements and InventoryScanning
 redirect their Index GET actions to exact Angular workspaces with query preservation. WarehouseLocations Create/Edit
 deep links remain MVC because the Angular workspace does not yet consume create/edit URL intent; all writes remain MVC/API.
 
-Current MOD-030U snapshot: 16 mapped presentation GET actions across 13 surfaces are physically retired, plus the
+Current MOD-030W snapshot: 17 mapped presentation GET actions across 14 surfaces are physically retired, plus the
 deliberately non-redirected AuditEvents export, AnalyticsCenter workspace POST, Recipes save POST, ProductCategories
-create/status POSTs and SalesApprovalRules create/status POSTs. Active inventory is 69 MVC controllers, 388 actions and
-201 Razor files. Exact Public routes remain
+create/status POSTs, SalesApprovalRules create/status POSTs and PurchaseApprovalRules create/status POSTs. Active inventory
+is 68 MVC controllers, 385 actions and 200 Razor files. Exact Public routes remain
 anonymous; protected retired GET/HEAD routes retain permissions
 and query strings. See `docs/modernization/MOD_030O_ANALYTICS_CENTER_RETIREMENT.md`. The generated inventory is authoritative.
 
@@ -148,8 +148,9 @@ PurchaseAccountingReconciliation Index now uses `/purchases/accounting-reconcili
 preservation and `PurchaseAccountingReconciliation.View`; it performs no financial mutation.
 PurchaseReplenishment Index now uses `/purchases/replenishment`; settings-save and manual-run commands retain their
 independent permissions and antiforgery protection outside presentation cutover.
-PurchaseApprovalRules Index now uses `/purchases/approval-rules`; create/status commands retain Manage permission and
-antiforgery protection outside presentation cutover.
+PurchaseApprovalRules MVC presentation is physically retired. Protected legacy reads resolve to
+`/purchases/approval-rules`; retired Create/SetActive POSTs return 405. The API retains View/Manage authorization,
+antiforgery and Application-service authority.
 PurchaseTemplates Index now uses `/purchases/templates`; create-from-order, generate and status commands retain their
 independent permissions and antiforgery protection outside presentation cutover.
 PurchaseRequests Index/Create/positive-ID Details now use exact Angular routes; submit/cancel/approve/reject and Create POST

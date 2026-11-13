@@ -1020,7 +1020,7 @@ static async Task RunLiveCutoverAsync(
         var physicallyRetired = surface is "InventoryBalances" or "InventoryReservations" or
             "InventoryInsights" or "InventoryReconciliation" or "StockMovements" or
             "JournalEntries" or "PurchaseAccountingReconciliation" or "AuditEvents" or "AnalyticsCenter" or "Recipes" or
-            "ProductCategories" or "SalesApprovalRules";
+            "ProductCategories" or "SalesApprovalRules" or "PurchaseApprovalRules";
         var expectsAngular = physicallyRetired ||
                              options.CutoverMode == "angular" ||
                              options.CutoverMode == "pilot" &&
@@ -1040,8 +1040,6 @@ static async Task RunLiveCutoverAsync(
                          surface is "PurchaseAccountingReconciliation";
         expectsAngular = expectsAngular || options.CutoverMode == "pilot" &&
                          surface is "PurchaseReplenishment";
-        expectsAngular = expectsAngular || options.CutoverMode == "pilot" &&
-                         surface is "PurchaseApprovalRules";
         expectsAngular = expectsAngular || options.CutoverMode == "pilot" &&
                          surface is "PurchaseTemplates";
         expectsAngular = expectsAngular || options.CutoverMode == "pilot" &&
@@ -1197,6 +1195,24 @@ static async Task RunLiveCutoverAsync(
         }
         checks.Add(new("retired-sales-approval-rules-boundary", "passed",
             "Retired SalesApprovalRules create and status POST routes return 405 without mutation."));
+    }
+
+    if (permissions.Contains("PurchaseApprovalRules.Manage"))
+    {
+        foreach (var action in new[] { "Create", "SetActive" })
+        {
+            var retiredPurchaseApprovalMutation = await authenticated.PostAsync(
+                $"/PurchaseApprovalRules/{action}",
+                new APIRequestContextOptions
+                {
+                    MaxRedirects = 0,
+                    DataObject = new { Id = 1, Active = false, RowVersion = "AQID", Name = "No mutation" }
+                });
+            Require(retiredPurchaseApprovalMutation.Status == 405,
+                $"Retired PurchaseApprovalRules {action} returned {retiredPurchaseApprovalMutation.Status} instead of 405.");
+        }
+        checks.Add(new("retired-purchase-approval-rules-boundary", "passed",
+            "Retired PurchaseApprovalRules create and status POST routes return 405 without mutation."));
     }
 
     Require(executed >= 5, $"Cutover rehearsal covered {executed} routes; at least 5 are required.");

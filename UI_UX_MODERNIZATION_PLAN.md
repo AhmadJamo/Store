@@ -523,3 +523,13 @@ largest underrepresented modules; production deployment readiness and physical M
 - Updated the SQL test harness to current FiscalPeriodService/ProductService contracts without changing production code.
 - The complete disposable SQL suite passed; no operational data or runtime behavior changed.
 - PurchaseApprovalRules MVC is now eligible only for a separately approved MOD-030W bounded retirement.
+
+## MOD-030W — PurchaseApprovalRules MVC retirement — COMPLETED 2026-11-14
+
+- Removed the approved PurchaseApprovalRules controller and its single Razor view after the isolated SQL lifecycle gate.
+- Protected legacy GET/HEAD routes now resolve to `/purchases/approval-rules`; legacy Create/SetActive POSTs return 405.
+- API, Angular, `PurchaseApprovalService`, permissions, antiforgery, rowversion and request approval behavior are unchanged.
+- Release passed cleanly, 1,833 regression checks and 242/242 Angular tests passed, and bundle budgets remained within limits.
+- Hosted boundaries returned 302 for protected legacy reads, 401 for the anonymous API, 200 for Angular and 405 for retired writes.
+- Active inventory is 68 MVC controllers, 385 actions and 200 Razor files (182 user-facing views).
+- Subsequent presentation-retirement work will be planned and verified as explicit three-controller cohorts.

@@ -364,13 +364,14 @@ The ERP SaaS Foundation Blueprint is imported as a non-authoritative planning re
   mutation routes return 405; API/service/category behavior remains unchanged.
 - MOD-030T completed the non-destructive approval-rule lifecycle audit. Both paths retain server authority; SalesApprovalRules
   has the stronger isolated Angular/API/SQL evidence and is proposed for a separately approved MOD-030U retirement.
-- PurchaseApprovalRules remains active pending more isolated service-level SQL lifecycle evidence; no approval-rule deletion
-  is authorized by the audit.
+- PurchaseApprovalRules remained active at this audit point pending more isolated service-level SQL lifecycle evidence.
 - MOD-030U completed the separately approved SalesApprovalRules MVC retirement. Protected reads redirect to Angular and
   legacy Create/SetActive POSTs return 405; API and sales-order approval behavior remain unchanged.
 - MOD-030V completed isolated disposable-SQL lifecycle evidence for PurchaseApprovalRules, including rule resolution,
   frozen ordered steps, role-gated atomic decisions, rollback, uniqueness and rowversion.
-- MOD-030W is the separately approval-gated PurchaseApprovalRules MVC retirement proposal; no deletion is yet authorized.
+- MOD-030W completed the approved PurchaseApprovalRules MVC retirement. Protected reads resolve to Angular; legacy
+  Create/SetActive POSTs return 405 and API/service/workflow authority remains unchanged.
+- The next retirement gate is a non-destructive audit that must name exactly three controllers as one cohort before deletion.
 - UX-016 recurring-journal templates and controlled runs is complete with Draft-only manual execution. UX-017 bank-statement
   reconciliation is proposed and requires owner approval before adding statement import and matching records.
 - UX-009 navigation completeness is complete: 72 registered destinations and 41/41 operational routes are covered through

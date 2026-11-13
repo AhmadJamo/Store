@@ -372,3 +372,10 @@ The disposable SQL suite now exercises `PurchaseApprovalService` with real repos
 warehouse/priority specificity, frozen ordered steps, one instance per request, invalid-rule rollback, role-gated
 sequential approval, rejection, atomic request/instance transitions and stale-rowversion protection. Runtime behavior and
 operational data are unchanged; MVC retirement remains a separate MOD-030W approval decision.
+
+## MOD-030W PurchaseApprovalRules MVC retirement
+
+After explicit approval, the PurchaseApprovalRules MVC controller and its single view were removed. Protected legacy reads
+resolve to `/purchases/approval-rules`, while retired Create/SetActive POSTs return 405 and are never replayed. The API,
+`PurchaseApprovalService`, repositories, permissions, antiforgery, rowversion and purchase-request approval lifecycle remain
+authoritative and unchanged.

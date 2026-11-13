@@ -75,6 +75,10 @@ Angular and old Create/SetActive POSTs return 405. The API, SalesOrderApprovalSe
 remain unchanged. Active inventory is now 69 MVC controllers, 388 actions and 201 Razor files.
 `MOD-030V` then closed the remaining PurchaseApprovalRules evidence gap with a disposable SQL lifecycle scenario over the
 real Application service, repositories and UnitOfWork. It changed test code only and authorizes no presentation deletion.
+`MOD-030W` then completed the approved PurchaseApprovalRules presentation retirement. The controller and single Razor view
+are gone; protected reads resolve to Angular and the retired Create/SetActive POSTs return 405. API, service, authorization
+and purchase-request approval behavior remain unchanged. Active inventory is now 68 MVC controllers, 385 actions and 200
+Razor files. Future retirement planning uses explicit three-controller cohorts.
 
 UX-009 adds permission-aware Purchasing, Sales and Accounting hubs with complete operational-route discovery. UX-010
 projects the tenant chart of accounts as an expandable hierarchy and adds a permission-protected, repository-paged journal

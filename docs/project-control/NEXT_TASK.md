@@ -1,24 +1,25 @@
 # المهمة التالية الوحيدة / Next Task
 
-## MOD-030W — تقاعد PurchaseApprovalRules MVC
+## MOD-030X — تدقيق واختيار دفعة ثلاثة Controllers
 
-> الحالة: PROPOSED — APPROVAL REQUIRED
+> الحالة: APPROVED FOR NON-DESTRUCTIVE AUDIT ONLY
 
-أغلق `MOD-030V` فجوة SQL لدورة اعتماد المشتريات، لكن حذف طبقة العرض القديمة يبقى قرارًا مستقلًا يحتاج موافقة المالك
-على النطاق الدقيق أدناه.
+### الهدف
 
-### النطاق المقترح
+راجع الجرد الحالي وحدد بالاسم ثلاثة Controllers فقط تشكل دفعة تقاعد واحدة متماسكة وآمنة. يجب فحص كل Controller مع
+Views وAPI وAngular وApplication service والصلاحيات وantiforgery والمسارات القديمة وأي mutation/download/session behavior.
 
-- حذف `MiniStore.Web/Controllers/Purchases/PurchaseApprovalRulesController.cs`.
-- حذف `MiniStore.Web/Views/PurchaseApprovalRules/Index.cshtml`.
-- نقل `PurchaseApprovalRules:Index` فقط إلى retired catalog على `/purchases/approval-rules` بصلاحية
-  `PurchaseApprovalRules.View`.
-- إزالة AngularDefault والمطابقة النشطة لهذا السطح فقط.
-- إبقاء API وAngular و`PurchaseApprovalService` والكيانات والمستودعات والصلاحيات وكل workflow كما هو.
-- إثبات تحويل GET/HEAD القديم و405 لمساري Create/SetActive القديمين دون mutation.
+### المخرجات المطلوبة
+
+- أسماء Controllers الثلاثة والملفات التابعة لكل منها.
+- مسارات Angular/API البديلة ودليل التكافؤ لكل flow.
+- تصنيف GET/HEAD وPOST/download وأي استثناء لا يجوز تحويله.
+- مخاطر الأعمال والبيانات وخطة rollback واختبارات التنفيذ المقترحة.
+- تحديث التوثيق باقتراح دفعة تنفيذ مستقلة؛ لا يبدأ الحذف ضمن هذا التدقيق.
 
 ### خارج النطاق
 
-- لا تعديل أو إنشاء أو تفعيل قاعدة اعتماد تشغيلية.
-- لا Submit أو Approve أو Reject لطلب شراء فعلي.
-- لا حذف أي Controller/View آخر.
+- لا حذف Controller أو View.
+- لا تغيير runtime أو cutover catalog أو configuration.
+- لا mutation لبيانات تشغيلية.
+- لا توسيع الدفعة عن ثلاثة Controllers.

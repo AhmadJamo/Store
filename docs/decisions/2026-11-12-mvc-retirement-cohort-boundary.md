@@ -131,3 +131,11 @@ does not authorize PurchaseApprovalRules retirement.
 PurchaseApprovalRules now meets the workflow evidence gate through a disposable SQL scenario using the real Application
 service, repositories and transaction boundary. Presentation retirement may therefore be proposed as MOD-030W, but the
 test evidence itself authorizes no controller/view deletion.
+
+## Purchase workflow execution — MOD-030W
+
+After separate owner approval, PurchaseApprovalRules follows the same mixed-controller retirement rule: protected GET/HEAD
+navigation is represented in the retired catalog and resolves to Angular; legacy Create/SetActive POSTs end at 405 and are
+never redirected or replayed. Mutation and workflow authority remains in the antiforgery-protected API,
+`PurchaseApprovalService` and domain entities. Subsequent retirements are grouped into explicit three-controller cohorts,
+but every cohort must still be named and audited before deletion.

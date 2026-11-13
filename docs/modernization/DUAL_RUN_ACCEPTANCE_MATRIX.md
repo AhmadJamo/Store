@@ -2,9 +2,9 @@
 
 > Generated from source by scripts/generate-mvc-migration-registry.ps1. Do not edit rows manually.
 
-- Presentation counterparts covered: 68.
+- Presentation counterparts covered: 67.
 - Mutation-only MVC compatibility boundaries: 1 (Language).
-- Physically retired MVC presentation actions: 16 across 13 surfaces (AnalyticsCenter, AuditEvents, InventoryBalances, InventoryInsights, InventoryReconciliation, InventoryReservations, JournalEntries, ProductCategories, Public, PurchaseAccountingReconciliation, Recipes, SalesApprovalRules, StockMovements); legacy redirects remain outside the reversible cutover catalog.
+- Physically retired MVC presentation actions: 17 across 14 surfaces (AnalyticsCenter, AuditEvents, InventoryBalances, InventoryInsights, InventoryReconciliation, InventoryReservations, JournalEntries, ProductCategories, Public, PurchaseAccountingReconciliation, PurchaseApprovalRules, Recipes, SalesApprovalRules, StockMovements); legacy redirects remain outside the reversible cutover catalog.
 - Presentation default: AngularDefault for all presentation surfaces; mutation-only MVC compatibility: Language.
 - Evidence baseline: generated MVC view/action inventory, verified Angular route, controller permission references and acceptance gate.
 - Runtime dual-run samples and cutover rehearsal results are appended by the MOD-029 acceptance workflow; this static matrix performs no mutation.
@@ -43,7 +43,6 @@
 | ProductTemplates | /ProductTemplates | /products/templates | Read/write | Products.Edit, Products.View | Standard | 1 view(s); 5 action(s); route/source gate |
 | PurchaseAgreements | /PurchaseAgreements | /purchases/agreements | Read/write | PurchaseAgreements.Activate, PurchaseAgreements.Cancel, PurchaseAgreements.Create, PurchaseAgreements.Release, PurchaseAgreements.View | Standard | 3 view(s); 4 action(s); route/source gate |
 | PurchaseAnalytics | /PurchaseAnalytics | /purchases/analytics | Read-only | PurchaseAnalytics.View | Standard | 1 view(s); 1 action(s); route/source gate |
-| PurchaseApprovalRules | /PurchaseApprovalRules | /purchases/approval-rules | Read/write | PurchaseApprovalRules.Manage, PurchaseApprovalRules.View | Standard | 1 view(s); 3 action(s); route/source gate |
 | PurchaseDocumentReversals | /PurchaseDocumentReversals | /purchases/reversals | Read/write | PurchaseDocumentReversals.Create, PurchaseDocumentReversals.View | Financial | 3 view(s); 4 action(s); route/source gate |
 | PurchaseOrders | /PurchaseOrders | /purchases/orders | Read/write | PurchaseOrders.Approve, PurchaseOrders.Cancel, PurchaseOrders.Close, PurchaseOrders.ConfigureFulfillment, PurchaseOrders.Confirm, PurchaseOrders.Create, PurchaseOrders.RecordDirectDelivery, PurchaseOrders.RecordSupplierConfirmation, PurchaseOrders.Reopen, PurchaseOrders.View | Standard | 2 view(s); 11 action(s); route/source gate |
 | PurchaseReplenishment | /PurchaseReplenishment | /purchases/replenishment | Read/write | PurchaseReplenishment.Manage, PurchaseReplenishment.Run, PurchaseReplenishment.View | Inventory | 1 view(s); 3 action(s); route/source gate |

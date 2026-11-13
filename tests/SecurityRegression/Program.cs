@@ -376,26 +376,6 @@ Check(purchaseReplenishmentCutoverResolver.Resolve(cutoverContext.Request,
           "PurchaseReplenishment", "RunNow",
           new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null,
     "Purchase replenishment cutover must keep settings and manual-run mutations outside presentation cutover");
-var purchaseApprovalRulesCutoverResolver = new PresentationCutoverResolver(Options.Create(
-    new PresentationCutoverOptions
-    {
-        AngularBasePath = "/app",
-        Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
-        {
-            ["PurchaseApprovalRules"] = PresentationCutoverMode.AngularDefault
-        }
-    }));
-Check(purchaseApprovalRulesCutoverResolver.Resolve(cutoverContext.Request,
-          "PurchaseApprovalRules", "Index",
-          new Microsoft.AspNetCore.Routing.RouteValueDictionary()) ==
-      "/app/purchases/approval-rules?page=2" &&
-      purchaseApprovalRulesCutoverResolver.Resolve(cutoverContext.Request,
-          "PurchaseApprovalRules", "Create",
-          new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null &&
-      purchaseApprovalRulesCutoverResolver.Resolve(cutoverContext.Request,
-          "PurchaseApprovalRules", "SetActive",
-          new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 17 }) is null,
-    "Purchase approval-rule cutover must keep create and status mutations outside presentation cutover");
 var purchaseTemplatesCutoverResolver = new PresentationCutoverResolver(Options.Create(
     new PresentationCutoverOptions
     {
@@ -2941,6 +2921,7 @@ var expectedRetiredPresentationRoutes = new Dictionary<string, (string Route, st
     ["Recipes:Edit"] = ("/products/recipes/{productId}", "Products.Edit", [], "productId"),
     ["ProductCategories:Index"] = ("/products/categories", "Products.View", [], null),
     ["SalesApprovalRules:Index"] = ("/sales/approval-rules", "SalesApprovalRules.View", [], null),
+    ["PurchaseApprovalRules:Index"] = ("/purchases/approval-rules", "PurchaseApprovalRules.View", [], null),
     ["Public:Index"] = ("/welcome", null, ["/"], null),
     ["Public:Pricing"] = ("/pricing", null, ["/pricing"], null)
 };
@@ -4173,14 +4154,6 @@ Check(approvalController.GetMethod(nameof(PurchaseRequestsController.Approve))!
           .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
       $"{PermissionAuthorizeAttribute.PolicyPrefix}PurchaseRequests.Reject",
     "Purchase approval and rejection commands must use separate server-side permissions");
-var approvalRulesController = typeof(PurchaseApprovalRulesController);
-Check(approvalRulesController.GetMethod(nameof(PurchaseApprovalRulesController.Index))!
-          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
-      $"{PermissionAuthorizeAttribute.PolicyPrefix}PurchaseApprovalRules.View" &&
-      approvalRulesController.GetMethod(nameof(PurchaseApprovalRulesController.Create))!
-          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
-      $"{PermissionAuthorizeAttribute.PolicyPrefix}PurchaseApprovalRules.Manage",
-    "Purchase approval rule administration must separate view and manage permissions");
 var cancelledApproval = new PurchaseApprovalInstance(102, 20, "Rule", approvalRule.Steps, "requester");
 cancelledApproval.Cancel();
 Check(cancelledApproval.Status == PurchaseApprovalStatus.Cancelled && cancelledApproval.CompletedAtUtc.HasValue,

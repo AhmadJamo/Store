@@ -64,7 +64,6 @@ public static class PresentationCutoverRouteCatalog
             ["ProductTemplates:Index"] = "/products/templates",
             ["PurchaseAnalytics:Index"] = "/purchases/analytics",
             ["PurchaseReplenishment:Index"] = "/purchases/replenishment",
-            ["PurchaseApprovalRules:Index"] = "/purchases/approval-rules",
             ["PurchaseTemplates:Index"] = "/purchases/templates",
             ["PurchaseRequests:Index"] = "/purchases/requests",
             ["PurchaseRequests:Create"] = "/purchases/requests/new",

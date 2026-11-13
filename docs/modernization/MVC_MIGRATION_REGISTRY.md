@@ -4,16 +4,16 @@
 
 ## Reconciliation
 
-- Controllers discovered: 157 total; 69 MVC; 88 API.
-- User-facing MVC views discovered: 183.
-- MVC actions discovered: 388.
-- Razor files included in the control inventory: 193.
+- Controllers discovered: 156 total; 68 MVC; 88 API.
+- User-facing MVC views discovered: 182.
+- MVC actions discovered: 385.
+- Razor files included in the control inventory: 192.
 - Angular application routes discovered: 194.
-- Presentation surfaces with a verified Angular counterpart: 68.
+- Presentation surfaces with a verified Angular counterpart: 67.
 - Remaining presentation surfaces without a mapped Angular counterpart: 0.
 - Mutation-only MVC compatibility surfaces: 1 (Language).
-- Physically retired presentation actions with legacy redirects: 16 across 13 surfaces (AnalyticsCenter, AuditEvents, InventoryBalances, InventoryInsights, InventoryReconciliation, InventoryReservations, JournalEntries, ProductCategories, Public, PurchaseAccountingReconciliation, Recipes, SalesApprovalRules, StockMovements).
-- Allowlisted Angular-default cutover actions: 167.
+- Physically retired presentation actions with legacy redirects: 17 across 14 surfaces (AnalyticsCenter, AuditEvents, InventoryBalances, InventoryInsights, InventoryReconciliation, InventoryReservations, JournalEntries, ProductCategories, Public, PurchaseAccountingReconciliation, PurchaseApprovalRules, Recipes, SalesApprovalRules, StockMovements).
+- Allowlisted Angular-default cutover actions: 166.
 
 Remaining presentation surfaces: none.
 
@@ -96,7 +96,6 @@ Statuses follow the migration lifecycle plus MVC Compatibility (mutation-only). 
 | PurchaseAgreements | Details.cshtml | Angular Default | /purchases/agreements | MiniStore.Web/Views/PurchaseAgreements/Details.cshtml |
 | PurchaseAgreements | Index.cshtml | Angular Default | /purchases/agreements | MiniStore.Web/Views/PurchaseAgreements/Index.cshtml |
 | PurchaseAnalytics | Index.cshtml | Angular Default | /purchases/analytics | MiniStore.Web/Views/PurchaseAnalytics/Index.cshtml |
-| PurchaseApprovalRules | Index.cshtml | Angular Default | /purchases/approval-rules | MiniStore.Web/Views/PurchaseApprovalRules/Index.cshtml |
 | PurchaseDocumentReversals | Create.cshtml | Angular Default | /purchases/reversals | MiniStore.Web/Views/PurchaseDocumentReversals/Create.cshtml |
 | PurchaseDocumentReversals | Details.cshtml | Angular Default | /purchases/reversals | MiniStore.Web/Views/PurchaseDocumentReversals/Details.cshtml |
 | PurchaseDocumentReversals | Index.cshtml | Angular Default | /purchases/reversals | MiniStore.Web/Views/PurchaseDocumentReversals/Index.cshtml |
@@ -360,9 +359,6 @@ Statuses follow the migration lifecycle plus MVC Compatibility (mutation-only). 
 | PurchaseAgreements | RedirectToAction | GET, POST | Angular Default | /purchases/agreements | — | MiniStore.Web/Controllers/Purchases/PurchaseAgreementsController.cs |
 | PurchaseAgreements | RedirectToAction | GET, POST | Angular Default | /purchases/agreements | — | MiniStore.Web/Controllers/Purchases/PurchaseAgreementsController.cs |
 | PurchaseAnalytics | View | GET | Angular Default | /purchases/analytics | — | MiniStore.Web/Controllers/Purchases/PurchaseAnalyticsController.cs |
-| PurchaseApprovalRules | Create | POST | Angular Default | /purchases/approval-rules | — | MiniStore.Web/Controllers/Purchases/PurchaseApprovalRulesController.cs |
-| PurchaseApprovalRules | Index | GET | Angular Default | /purchases/approval-rules | /purchases/approval-rules | MiniStore.Web/Controllers/Purchases/PurchaseApprovalRulesController.cs |
-| PurchaseApprovalRules | SetActive | POST | Angular Default | /purchases/approval-rules | — | MiniStore.Web/Controllers/Purchases/PurchaseApprovalRulesController.cs |
 | PurchaseDocumentReversals | Create | GET | Angular Default | /purchases/reversals | — | MiniStore.Web/Controllers/Purchases/PurchaseDocumentReversalsController.cs |
 | PurchaseDocumentReversals | Create | POST | Angular Default | /purchases/reversals | — | MiniStore.Web/Controllers/Purchases/PurchaseDocumentReversalsController.cs |
 | PurchaseDocumentReversals | Details | GET | Angular Default | /purchases/reversals | /purchases/reversals/{id} | MiniStore.Web/Controllers/Purchases/PurchaseDocumentReversalsController.cs |
@@ -681,7 +677,6 @@ Statuses follow the migration lifecycle plus MVC Compatibility (mutation-only). 
 | PurchaseAgreements | Details.cshtml | 3 | 3 | 1 | Activate, Cancel, Index, Release | MiniStore.Web/Views/PurchaseAgreements/Details.cshtml |
 | PurchaseAgreements | Index.cshtml | 0 | 0 | 1 | Details | MiniStore.Web/Views/PurchaseAgreements/Index.cshtml |
 | PurchaseAnalytics | Index.cshtml | 1 | 1 | 3 | @x.Action, Details, Index | MiniStore.Web/Views/PurchaseAnalytics/Index.cshtml |
-| PurchaseApprovalRules | Index.cshtml | 2 | 2 | 0 | Create, SetActive | MiniStore.Web/Views/PurchaseApprovalRules/Index.cshtml |
 | PurchaseDocumentReversals | Create.cshtml | 1 | 1 | 2 | Create, Details | MiniStore.Web/Views/PurchaseDocumentReversals/Create.cshtml |
 | PurchaseDocumentReversals | Details.cshtml | 0 | 0 | 2 | Details, Index | MiniStore.Web/Views/PurchaseDocumentReversals/Details.cshtml |
 | PurchaseDocumentReversals | Index.cshtml | 0 | 0 | 1 | Details | MiniStore.Web/Views/PurchaseDocumentReversals/Index.cshtml |

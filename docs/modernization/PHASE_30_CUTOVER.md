@@ -198,3 +198,12 @@ The disposable SQL suite now exercises the real Application service, repositorie
 rules. It proves specificity, frozen ordered roles, duplicate prevention, invalid-rule rollback, role authorization,
 atomic approve/reject transitions and stale-rowversion rejection. Production code and data did not change. MVC retirement
 is proposed only as separately approved MOD-030W.
+
+## MOD-030W PurchaseApprovalRules retirement — completed 2026-11-14
+
+After explicit approval, the PurchaseApprovalRules controller and single Razor view were removed. Protected legacy reads
+resolve to Angular and retired Create/SetActive POST routes return 405. API, Angular, Application/domain authority,
+permissions, antiforgery, concurrency and purchase-request approval behavior remain unchanged. Release passed with 1,833
+regression checks, 242/242 Angular tests and bundle budgets. Hosted boundaries passed with 302/401/200/405 as expected.
+The active inventory is 68 controllers, 385 actions and 200 Razor files. Future retirement gates use named three-controller
+cohorts rather than single-controller execution.

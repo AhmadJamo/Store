@@ -182,3 +182,9 @@ mutation. أصبح الجرد 69 Controller و388 Action و201 ملف Razor.
 أضيف سيناريو disposable SQL عبر PurchaseApprovalService والمستودعات وUnitOfWork الفعلية. ثبت resolution حسب المستودع
 والأولوية، snapshot مرتب، منع instance مكرر، rollback عند قاعدة بلا خطوات، صلاحية الدور، approve/reject الذري وحماية
 rowversion. لم يتغير production؛ أي تقاعد MVC بقي بوابة MOD-030W مستقلة.
+
+## MOD-030W — تقاعد PurchaseApprovalRules MVC
+
+اكتمل بعد الموافقة: حُذف Controller وView فقط، وتحافظ GET/HEAD القديمة على الصلاحية ثم تتجه إلى Angular، بينما يعيد
+Create/SetActive القديمتان 405. بقيت API وAngular وPurchaseApprovalService وقرارات الطلبات دون تغيير. أصبح الجرد 68
+Controller و385 Action و200 ملف Razor. الدفعات التالية ستجمع ثلاثة Controllers محددة في كل بوابة تنفيذ.

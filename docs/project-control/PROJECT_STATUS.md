@@ -433,3 +433,7 @@ Application/domain مع الصلاحيات وantiforgery وrowversion. رُشح 
 اكتمل `MOD-030V` باختبار SQL disposable على PurchaseApprovalService الحقيقي: ثبت اختيار القاعدة الأكثر تحديدًا، تجميد
 الخطوات، منع duplicate، rollback قبل Submit غير الصالح، صلاحية الدور، approve/reject الذري وrowversion. نجح كامل SQL
 suite وحذف قاعدة العملية تلقائيًا؛ لم يتغير production أو الجرد 69/388/201. أصبح MOD-030W اقتراح حذف مستقلًا فقط.
+اكتمل `MOD-030W` بعد الموافقة: حُذف PurchaseApprovalRulesController وView الوحيد، وبقيت API وAngular والخدمة ودورة
+الاعتماد كما هي. أعادت القراءة القديمة 302 إلى Angular، والـAPI المجهول 401، وصفحة Angular 200، وCreate/SetActive
+القديمتان 405. أصبح الجرد 68 Controller و385 إجراء و200 Razor (182 View). نجح Release و1,833 فحصًا و242/242 Angular
+وحدود bundle. ستكون خطوات التقاعد التالية دفعات محددة من ثلاثة Controllers بعد تدقيق غير هدّام.
