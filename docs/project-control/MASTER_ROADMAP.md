@@ -54,7 +54,9 @@
   query، وتقاعد MVC Export دون redirect مع بقاء API/Angular والصلاحيات.
 - `MOD-030M` — COMPLETE 2026-11-13: ثبت تكافؤ PlatformAuditEvents وعزل PlatformCookie؛ أُجل الحذف لغياب fixture
   Platform مصرح، ولم يحدث أي تغيير runtime.
-- `MOD-030N` — PROPOSED: مقارنة مصدرية غير هدّامة للمرشحين التاليين LocationMovements وAnalyticsCenter.
+- `MOD-030N` — COMPLETE 2026-11-13: أُجل LocationMovements لخطر حركة المخزون، واختير AnalyticsCenter كمرشح تالٍ
+  بعد نجاح بدائل القراءة والبناء، دون POST أو تغيير runtime.
+- `MOD-030O` — PROPOSED: تقاعد MVC لـAnalyticsCenter Index/Create وViewين؛ يحتاج موافقة حذف مستقلة.
 - `UX-001` — COMPLETE 2026-11-04: تدقيق واجهة Angular، خطة تحديث مستمرة، مجموعات تنقل مهنية بصلاحيات،
   breadcrumbs ثنائية اللغة وحفظ آمن لتفضيل فتح المجموعات دون تغيير الأعمال.
 - `UX-002` — COMPLETE 2026-11-05: عقد typed لسياق URL وذاكرة workspace المعزولة ومسودات آمنة مؤقتة،

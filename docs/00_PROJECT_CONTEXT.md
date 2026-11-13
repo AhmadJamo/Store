@@ -48,6 +48,9 @@ unchanged. Active inventory is now 73 MVC controllers, 400 actions and 207 Razor
 `MOD-030M` then audited PlatformAuditEvents without runtime changes. Static MVC/API/Angular and policy parity is complete,
 but all available browser states are tenant-only. Live tenant/anonymous probes correctly failed at the isolated Platform
 cookie boundary. Physical retirement is deferred until an authorized Platform fixture proves read and role behavior.
+`MOD-030N` then compared LocationMovements and AnalyticsCenter without mutation. LocationMovements is deferred behind
+database-backed stock replay/rejection evidence. AnalyticsCenter is the next proposed bounded cohort because its read,
+builder and configuration-only creation flow have complete Angular/API replacements. No deletion is approved.
 
 UX-009 adds permission-aware Purchasing, Sales and Accounting hubs with complete operational-route discovery. UX-010
 projects the tenant chart of accounts as an expandable hierarchy and adds a permission-protected, repository-paged journal

@@ -443,3 +443,11 @@ largest underrepresented modules; production deployment readiness and physical M
 - Hosted read-only probes returned 401 for tenant/anonymous Platform API access and redirected tenant MVC access to Platform login.
 - Deferred physical retirement until an authorized Platform session proves same-scope reads and role separation; no deletion is approved.
 - Active inventory remains 73 MVC controllers, 400 actions and 207 Razor files.
+
+## MOD-030N — next mixed-candidate comparison — COMPLETED 2026-11-13
+
+- Compared LocationMovements and AnalyticsCenter against actual MVC/API/Angular, permissions, validation and mutation boundaries.
+- Deferred LocationMovements because it moves exact-location stock and requires database-backed idempotency/rejection evidence.
+- Selected AnalyticsCenter as the next proposed bounded cohort: its Index, builder and workspace creation have complete governed replacements without stock/accounting effects.
+- Hosted read-only probes passed for both APIs and all three legacy GET redirects; no POST or business mutation ran.
+- No runtime file changed; active counts remain 73 MVC controllers, 400 actions and 207 Razor files.

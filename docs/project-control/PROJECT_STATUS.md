@@ -407,3 +407,5 @@ query. تقاعد MVC Export دون redirect، وبقي API/Angular والخدم
 اكتمل `MOD-030M` كتدقيق غير هدّام لـPlatformAuditEvents. ثبت التكافؤ وعزل السياسات، لكن كل جلسات الاختبار tenant-only.
 أعادت طلبات tenant/anonymous للـPlatform API ‏401 وحُوّل MVC إلى Platform login؛ لذلك بقي Controller/View دون حذف
 إلى أن تتوفر جلسة Platform مصرح بها. الأعداد بقيت 73/400/207.
+اكتمل `MOD-030N` كتدقيق غير هدّام: أُجل LocationMovements لأنه يغير المخزون، واختير AnalyticsCenter كمرشح MOD-030O
+بعد إثبات GET للصفحة والباني والتحويلات حيًا دون أي POST. لا حذف ولا تغيير runtime؛ الأعداد بقيت 73/400/207.

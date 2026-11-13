@@ -1,22 +1,30 @@
 # المهمة التالية الوحيدة / Next Task
 
-## MOD-030N — مقارنة المرشحين المختلطين التاليين / Next mixed-candidate comparison
+## MOD-030O — تقاعد MVC لـAnalyticsCenter / AnalyticsCenter MVC retirement
 
-> الحالة: APPROVED — NON-DESTRUCTIVE BATCH
-> النوع: تدقيق مصدر واختبارات فقط؛ لا حذف ولا mutation
+> الحالة: PROPOSED — AWAITING EXPLICIT DELETION APPROVAL
 
-اكتمل `MOD-030M` وأُجل PlatformAuditEvents لغياب جلسة Platform مصرح بها. تستمر الدفعة التي وافق عليها المالك
-بمقارنة المرشحين منخفضي التعقيد التاليين: `LocationMovements` و`AnalyticsCenter`.
+اكتمل `MOD-030N` دون mutation واختار AnalyticsCenter كمرشح تالٍ. هذه الخطوة هدّامة ولا يشملها تصريح التدقيق العام.
 
-### النطاق
+### النطاق المقترح بعد الموافقة الصريحة
 
-- مراجعة MVC/API/Angular والخدمات والصلاحيات والروابط والاختبارات لكل مرشح.
-- تحديد أثر mutation/download/session والحد الأدنى لإثبات القبول والرجوع.
-- اختيار cohort تالٍ فقط إذا كان قابلًا للفصل دون تغيير قواعد الأعمال.
-- تحديث الخطة والجرد والتوثيق؛ لا حذف ولا تغيير runtime.
+- حذف `MiniStore.Web/Controllers/Analytics/AnalyticsCenterController.cs`.
+- حذف `MiniStore.Web/Views/AnalyticsCenter/Index.cshtml` و`Create.cshtml`.
+- تحويل GET/HEAD لـIndex إلى `/app/analytics` تحت `AnalyticsCenter.View` مع حفظ query.
+- تحويل GET/HEAD لـCreate إلى `/app/analytics/builder` تحت `AnalyticsCenter.Customize`.
+- تقاعد MVC `POST /AnalyticsCenter/Create` دون redirect؛ يبقى API workspace POST هو المسار الفعلي.
+- إبقاء الخدمة والـAPI وAngular والمزودات والصلاحيات والتفويضات دون تغيير.
+
+### بوابة التنفيذ
+
+- Release/security/Angular والجرد المولد.
+- فحوص GET حية وصلاحيات View/Customize/Manage ورفض POST القديم دون إنشاء workspace للاختبار.
+- الرجوع بنشر الكومت السابق؛ لا تغيير قاعدة بيانات.
 
 ### خارج النطاق
 
-- لا تنفيذ حركة مخزون ولا إنشاء/تعديل مساحة تحليلات.
-- لا حذف Controller أو View.
-- أي تقاعد فعلي يحتاج موافقة حذف مستقلة بالأسماء والمسارات.
+- لا حذف قبل موافقة صريحة على الملفات الثلاثة وPOST القديم.
+- لا تغيير Analytics business rules أو delegation أو providers.
+- لا تقاعد LocationMovements أو PlatformAuditEvents.
+
+التدقيق الكامل: `docs/modernization/MOD_030N_NEXT_MIXED_CANDIDATE_AUDIT.md`.

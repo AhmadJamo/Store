@@ -803,6 +803,8 @@ For exact module relationships, use `modules/*.md`; for entity and service detai
   protected legacy reads, deliberately non-redirected MVC export and hosted/Edge evidence.
 - `docs/modernization/MOD_030M_PLATFORM_AUDIT_READINESS_AUDIT.md`: audit-only Platform MVC/API/Angular parity, isolated
   cookie evidence and the authorized Platform-session gate that blocks physical retirement.
+- `docs/modernization/MOD_030N_NEXT_MIXED_CANDIDATE_AUDIT.md`: source/live comparison of LocationMovements and
+  AnalyticsCenter, stock-mutation deferral and the approval-gated AnalyticsCenter recommendation.
 - `docs/decisions/2026-11-12-mvc-retirement-cohort-boundary.md`: R1..R4 retirement boundaries, separate deletion
   approval rule and legacy-link/cutover/rollback obligations.
 - `docs/decisions/ADR-20261025-REVERSIBLE-PRESENTATION-CUTOVER.md`: cutover/rollback boundary and rationale.

@@ -107,6 +107,9 @@ GET/HEAD القديمة تحويلات محمية تحفظ query. تقاعد POS
 `MOD-030M` اكتمل كتدقيق فقط: PlatformAuditEvents متكافئ في MVC/API/Angular والسياسات منفصلة، لكن لا توجد جلسة
 اختبار تحمل PlatformCookie. أثبتت الفحوص الحية أن tenant/anonymous لا يعبران الحد. لا حذف قبل fixture مصرح مستقل.
 
+`MOD-030N` قارن LocationMovements وAnalyticsCenter دون mutation. أُجل الأول لأن POST ينقل المخزون، واختير الثاني
+كاقتراح MOD-030O لأن Index/Create وworkspace API/Angular متكافئة ولا تؤثر على المخزون أو المحاسبة. الحذف غير معتمد.
+
 ## ترتيب التنفيذ داخل كل موجة
 
 1. جرد الشاشة والإجراءات والاعتماديات.

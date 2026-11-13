@@ -134,3 +134,10 @@ Source review confirmed complete MVC/API/Angular parity and isolated Platform Vi
 storage states contain tenant cookies only. Hosted read-only probes returned 401 for tenant and anonymous Platform API
 access and redirected MVC to Platform login. This proves isolation, not authorized parity; physical retirement remains
 deferred until a real Platform session fixture is captured. No runtime file or inventory count changed.
+
+## MOD-030N next mixed-candidate audit — completed 2026-11-13
+
+Source and targeted hosted GET review compared LocationMovements with AnalyticsCenter. LocationMovements remains blocked
+behind database-backed stock movement replay and rejection evidence. AnalyticsCenter is recommended for a separately
+approved MOD-030O because its read, builder and configuration-only creation flow have complete Angular/API replacements.
+No POST ran, no runtime file changed and current inventory counts remain unchanged.
