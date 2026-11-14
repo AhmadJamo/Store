@@ -621,6 +621,13 @@ largest underrepresented modules; production deployment readiness and physical M
 - Closed ordinary MVC presentation retirement at zero surfaces; 13 reviewed server runtime boundaries remain intentional.
 - Future work returns to feature delivery; no further controller batch deletion is implied by the modernization plan.
 
+## UX-017A — bank-reconciliation readiness audit — COMPLETED 2026-11-14
+
+- Audited payment methods, settlement accounts, customer/supplier references, journal authority, periods and close readiness.
+- Found no current bank-account, statement/import, immutable line or partial-allocation model.
+- Defined UX-017B as the smallest safe foundation: bounded CSV evidence and read-only journal candidates, without matching,
+  journal creation, adjustments or close-readiness mutation.
+
 ## MOD-031C — fifteen-controller commercial retirement — COMPLETED 2026-11-14
 
 - Retired 15 MVC controllers spanning catalog masters, products, purchasing and sales returns/credits.

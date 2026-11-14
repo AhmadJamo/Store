@@ -471,3 +471,10 @@
 - Reconciled project context, architecture, security and testing documentation to the final generated baseline.
 - Closed the MOD-031 retirement stream at zero ordinary MVC presentation surfaces and 13 intentional runtime boundaries.
 - Historical cohort counts remain history; they no longer describe current architecture or authorize more batch deletion.
+
+## UX-017A — Bank-reconciliation readiness audit — COMPLETE 2026-11-14
+
+- Confirmed reusable settlement-account, immutable ledger, external-reference, fiscal-period and close-readiness foundations.
+- Confirmed there is no bank-account, statement, line, import fingerprint or reconciliation-allocation model today.
+- Rejected a PaymentMethod flag and one-to-one matched design because they cannot represent partial many-to-many clearing.
+- Approved UX-017B as immutable CSV statement evidence and read-only candidates only; matching and adjustments remain later slices.

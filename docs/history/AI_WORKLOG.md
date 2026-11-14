@@ -2404,3 +2404,6 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
 - 2026-11-14: Completed MOD-031H documentation closure. Current context, architecture, security and testing now identify
   Angular as the ordinary presentation layer, zero MVC business surfaces and 13 intentional server runtime boundaries.
   Historical cohort counts remain audit history; the MOD-031 retirement stream is closed without runtime changes.
+- 2026-11-14: Completed UX-017A as a source-only bank-reconciliation audit. Existing settlement accounts, immutable posted
+  journals, external references, periods and close readiness are reusable, but no bank-account/statement/import/allocation
+  model exists. Defined UX-017B as bounded CSV evidence and read-only candidates; no schema or runtime behavior changed.

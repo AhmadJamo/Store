@@ -218,3 +218,10 @@ so no accounting data was created to fabricate one.
 - Retry of the same successful run returns the prior entry and does not advance again. Editing never changes an earlier Draft.
 - View/Manage/Run are independent permissions. Mutations use antiforgery, rowversion and allowlisted semantic audit events.
 - No run posts automatically. Normal journal posting and `FiscalPeriodService` remain the final financial authority.
+# Bank reconciliation readiness (UX-017A, 2026-11-14)
+
+The ledger and payment-method settlement accounts are reusable, but no bank-statement subledger exists yet. The approved
+design is allocation-based rather than a matched flag so partial many-to-many clearing can be represented without modifying
+posted journals. UX-017B is limited to tenant-owned bank accounts, immutable bounded-CSV import evidence and read-only
+candidate visibility. Match/unmatch, fees, interest, transfers, journal creation and close-readiness blocking are explicitly
+deferred. See `modernization/UX_017_BANK_RECONCILIATION_READINESS_AUDIT.md`.

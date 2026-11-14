@@ -874,3 +874,8 @@ drifts, or Language stops being the explicit mutation-only compatibility endpoin
 MOD-031H is the current map baseline: Angular owns all ordinary ERP business presentation. Earlier entries saying “MVC
 remains default” describe their historical migration phase and are superseded by the generated zero-surface invariant.
 The remaining Razor/controllers are limited to the 13 documented server runtime boundaries.
+
+UX-017A records the bank-reconciliation dependency boundary in
+`docs/modernization/UX_017_BANK_RECONCILIATION_READINESS_AUDIT.md`. Current reusable authority is
+`PaymentMethod.AccountId`, `CashFlowCloseService`, `IJournalEntryRepository`, customer/supplier payment external references,
+fiscal periods and controlled journals. No bank-account, statement/import or reconciliation-allocation source files exist yet.

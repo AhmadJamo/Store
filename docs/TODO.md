@@ -504,3 +504,5 @@ The ERP SaaS Foundation Blueprint is imported as a non-authoritative planning re
 - [x] MOD-031G makes zero ordinary MVC presentation surfaces and the exact retained-boundary allowlist executable invariants.
 - [x] MOD-031H reconciled final project/security/testing wording and closed the MOD-031 retirement stream.
 - [ ] UX-017A audit bank-statement reconciliation readiness without schema or runtime mutation.
+- [x] UX-017A audited bank reconciliation and defined an allocation-based staged design without runtime mutation.
+- [ ] UX-017B implement immutable bank-account/statement CSV evidence and read-only candidates only.
