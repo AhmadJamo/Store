@@ -452,3 +452,10 @@
 - Generated inventory now reports zero remaining ordinary presentation surfaces. Thirteen classified runtime boundaries remain
   for identity/session, onboarding, settings downloads, supplier/public portal, language POST and Platform administration.
 - Release, 1,601 regression checks, 242 Angular tests, accessibility, consistency, bundle and browser gates passed.
+
+## MOD-031F — Retained runtime-boundary verification — COMPLETE 2026-11-14
+
+- Verified all 13 remaining controllers as identity/session, onboarding, settings/download, billing, supplier-token or
+  isolated Platform runtime boundaries rather than ordinary presentation gaps.
+- Live anonymous probes proved tenant/Platform login separation, invalid-token privacy headers and antiforgery rejection.
+- No controller, view, schema, permission or business rule changed. Future deletion requires a separately bounded fixture.

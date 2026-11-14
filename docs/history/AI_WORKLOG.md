@@ -2396,3 +2396,6 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
 - 2026-11-14: Completed MOD-031E. Retired Users and Roles MVC/Razor presentation after Angular/API parity proof and added
   five permission-preserving legacy reads. Generated inventory reports zero ordinary presentation surfaces and 13 retained
   operational boundaries. Release passed cleanly with 1,601 checks, 242/242 Angular tests and bundle/browser gates.
+- 2026-11-14: Completed MOD-031F without runtime mutation. Live anonymous probes verified all 13 retained identity/session,
+  onboarding, settings/download, billing, supplier-token and Platform boundaries; tenant and Platform challenges stayed
+  distinct, invalid portal tokens stayed private/no-store and unauthenticated antiforgery mutations were rejected.

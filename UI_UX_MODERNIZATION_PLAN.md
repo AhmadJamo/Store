@@ -603,6 +603,12 @@ largest underrepresented modules; production deployment readiness and physical M
   intentionally present pending separate live-session or public-token evidence; they are not modernization omissions.
 - Release passed with zero warnings/errors, 1,601 regression checks, 242/242 Angular tests and bundle/browser gates.
 
+## MOD-031F — retained runtime-boundary verification — COMPLETED 2026-11-14
+
+- Classified and live-probed all 13 retained boundaries after the ordinary presentation count reached zero.
+- Proved distinct tenant and Platform cookie challenges, safe invalid supplier-token presentation, and CSRF rejection.
+- Recorded the closure decision in `docs/modernization/RETAINED_RUNTIME_BOUNDARIES.md`; no runtime deletion was made.
+
 ## MOD-031C — fifteen-controller commercial retirement — COMPLETED 2026-11-14
 
 - Retired 15 MVC controllers spanning catalog masters, products, purchasing and sales returns/credits.

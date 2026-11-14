@@ -504,7 +504,7 @@ $retirementLines.Add('6. Run Release, regression, generated-inventory, Angular a
 $retirementLines.Add('')
 $retirementLines.Add('## Current outcome')
 $retirementLines.Add('')
-$retirementLines.Add('Retirement cohorts through MOD-031B are complete. Seventy-two MVC presentation GET actions across thirty-seven surfaces and seventy-two Razor views are physically retired. Public exact `/` and `/pricing` routes are anonymous; other retired GET/HEAD routes retain their original permission policies and preserve queries. Retired MVC POST/download actions are not redirected or replayed; Angular continues through authenticated, permission-protected and antiforgery-protected APIs. No additional deletion is approved outside the next named ten-controller audit.')
+$retirementLines.Add("Retirement cohorts through MOD-031E are complete. The generated inventory contains $($remainingSurfaces.Count) ordinary presentation surfaces and $($surfaceRows.Count) classified runtime boundaries. Public exact routes remain anonymous where required; protected retired GET/HEAD routes retain their permission policies and preserve queries. Retired MVC POST/download actions are never redirected or replayed. The retained boundaries own identity/session, onboarding, settings/download, subscription, supplier portal, language POST or isolated Platform behavior and require independent evidence before any future deletion.")
 
 New-Item -ItemType Directory -Force -Path (Split-Path -Parent $retirementOutput) | Out-Null
 $retirementLines | Set-Content -Path $retirementOutput -Encoding utf8
