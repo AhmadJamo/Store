@@ -1,4 +1,8 @@
 # MVC controllers
+> MOD-031D note: CustomerReturnRequests, SalesOrders, CustomerInvoices, SupplierPurchasing and the other operational
+> MVC controllers retired in this cohort are historical descriptions below. Their Angular/API replacements are now
+> authoritative; generated current inventory is in `docs/modernization/MVC_RETIREMENT_INVENTORY.md`.
+
 ## CustomerReturnRequestsController
 
 Provides protected list/details/create and lifecycle commands. Invalid sources return to Sales Deliveries; completed actions disappear and Details shows the next step.

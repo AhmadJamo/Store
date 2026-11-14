@@ -439,3 +439,8 @@
 
 - Retired the approved catalog/product/purchase/sales MVC presentation cohort with Angular/API authority preserved.
 - Active inventory is 30 MVC surfaces, 214 actions, 100 Razor rows and 93 views.
+
+## MOD-031D — Operational MVC retirement — COMPLETE 2026-11-14
+
+- Retired the approved 15-surface operational cohort with Angular/API authority preserved.
+- Active inventory is 15 MVC surfaces, 91 actions, 50 Razor rows and 45 views.

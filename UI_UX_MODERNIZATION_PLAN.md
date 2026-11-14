@@ -585,6 +585,14 @@ largest underrepresented modules; production deployment readiness and physical M
 - Inventory is 30 MVC surfaces, 214 actions, 100 Razor rows and 93 views.
 - Release passed with zero warnings/errors, 1,638 regression checks, 242/242 Angular tests and bundle/browser gates.
 
+## MOD-031D — fifteen-surface operational retirement — COMPLETED 2026-11-14
+
+- Retired 15 operational MVC controllers and 48 user-facing Razor views plus supporting page models/partials.
+- Added 47 protected compatibility reads; retired writes return 405 and downloads remain API-only.
+- Preserved Angular/API and all Application, UnitOfWork, accounting, inventory and workflow authority.
+- Inventory is now 15 MVC surfaces, 91 actions, 50 Razor rows and 45 views.
+- Release passed with zero warnings/errors, 1,605 checks, 242/242 Angular tests and bundle/browser gates.
+
 ## MOD-031C — fifteen-controller commercial retirement — COMPLETED 2026-11-14
 
 - Retired 15 MVC controllers spanning catalog masters, products, purchasing and sales returns/credits.

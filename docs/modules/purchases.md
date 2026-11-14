@@ -1,5 +1,9 @@
 # Purchases
 
+`MOD-031D` retires Purchase Requests, legacy Purchases, Sourcing, Supplier Purchasing and Vendor Bills MVC/Razor
+presentation. Angular/API remains authoritative; attachment and CSV/Excel downloads stay API-only and all posting,
+approval, matching, inventory and accounting rules remain Application-owned.
+
 `MOD-031C` retires the LandedCosts, PurchaseAgreements, PurchaseAnalytics, PurchaseOrders, PurchaseReturns,
 PurchaseTemplates, SupplierCommunications and SupplierQuotations MVC/Razor presentation. Angular/API remains authoritative;
 posting, fulfillment, sourcing, permissions, antiforgery and UnitOfWork behavior are unchanged.

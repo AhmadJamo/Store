@@ -482,6 +482,12 @@ The ERP SaaS Foundation Blueprint is imported as a non-authoritative planning re
 - [x] Preserve 34 protected reads and reject retired writes with 405.
 - [x] Pass Release, 1,638 checks, 242 Angular tests and bundle/browser gates.
 
+## MOD-031D completed (2026-11-14)
+
+- [x] Retire the approved 15 operational MVC/Razor surfaces.
+- [x] Preserve 47 protected reads; keep writes at 405 and downloads API-only.
+- [x] Pass Release, 1,605 checks, 242 Angular tests and bundle/browser gates.
+
 ## MOD-031C completed (2026-11-14)
 
 - [x] Retire the approved 15-controller commercial MVC/Razor cohort.

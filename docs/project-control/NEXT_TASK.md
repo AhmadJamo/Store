@@ -1,9 +1,10 @@
 # المهمة التالية الوحيدة / Next Task
 
-## MOD-031D — تدقيق 15 سطح MVC تشغيلي متبقٍ
+## MOD-031E — تدقيق الحدود النهائية المتبقية
 
 > الحالة: APPROVED FOR NON-DESTRUCTIVE AUDIT
 
-دقّق Accounts, CustomerInvoices, CustomerReturnRequests, Customers, DocumentDesigns, PurchaseRequests, Purchases,
-PurchaseSourcing, Sales, SalesOrders, SalesPriceLists, SalesQuotations, SalesQuotationTemplates, SupplierPurchasing
-وVendorBills. أثبت Angular/API والصلاحيات والتنزيلات وحدود المحاسبة والمخزون. لا تحذف ملفات.
+دقّق الأسطح الـ15 المتبقية: Account, CompanyOnboarding, Dashboard, Home, Roles, Settings, Subscription,
+SupplierIntegrations, SupplierPortal, Users, Language وPlatform/Platform وPlatformAccount وPlatformAuditEvents
+وPlatformAuditRetention. افصل حدود الهوية والجلسة والمنصة العامة والتنزيلات وPOST-only. لا تحذف قبل إثبات مسار
+بديل آمن لكل حد؛ يجوز تقسيم التنفيذ وإبقاء الحدود التي يجب ألا تتقاعد.

@@ -1613,15 +1613,6 @@ CheckArgumentThrows(() => new DocumentDesign(DocumentDesignType.Custom, "custom"
 Check(TenantIsolationModel.TenantOwnedTypes.Contains(typeof(DocumentDesign)) &&
       TenantIsolationModel.TenantOwnedTypes.Contains(typeof(DocumentDesignSection)),
     "Document designs and their sections must be tenant isolated");
-Check(typeof(DocumentDesignsController).GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
-      $"{PermissionAuthorizeAttribute.PolicyPrefix}Administration.Access",
-    "The central document designer must require administration access");
-var documentDesignCommands = typeof(DocumentDesignsController).GetMethods()
-    .Where(x => x.Name is nameof(DocumentDesignsController.Create) or nameof(DocumentDesignsController.Activate)
-        or nameof(DocumentDesignsController.Archive) or nameof(DocumentDesignsController.SetDefault))
-    .Where(x => x.GetCustomAttribute<HttpPostAttribute>() is not null);
-Check(documentDesignCommands.All(x => x.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null),
-    "Every document designer mutation must require antiforgery validation");
 var organizationIdentityPost = typeof(SettingsController).GetMethods()
     .Single(x => x.Name == nameof(SettingsController.OrganizationIdentity) && x.GetCustomAttribute<HttpPostAttribute>() is not null);
 Check(organizationIdentityPost.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null,
@@ -1797,7 +1788,7 @@ Check(typeof(MiniStore.Web.Areas.Platform.Controllers.PlatformAccountController)
         .GetParameters().Select(parameter => parameter.Name)
         .Contains("retryAfterSeconds"),
     "Platform login page must accept friendly rate-limit retry information");
-foreach (var controller in new[] { typeof(SettingsController), typeof(AccountsController) })
+foreach (var controller in new[] { typeof(SettingsController) })
 {
     var policy = controller.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy;
     Check(policy == $"{PermissionAuthorizeAttribute.PolicyPrefix}Administration.Access",
@@ -1805,45 +1796,16 @@ foreach (var controller in new[] { typeof(SettingsController), typeof(AccountsCo
     Check(controller.GetCustomAttributes<AuthorizeAttribute>().All(attribute => attribute.Roles is null),
         $"{controller.Name} must not trust a cross-company Identity role claim");
 }
-var customerController = typeof(CustomersController);
-Check(customerController.GetMethod(nameof(CustomersController.Index))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == $"{PermissionAuthorizeAttribute.PolicyPrefix}Customers.View" &&
-      customerController.GetMethods().Single(x => x.Name == nameof(CustomersController.Create) && x.GetCustomAttribute<HttpPostAttribute>() is not null).GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == $"{PermissionAuthorizeAttribute.PolicyPrefix}Customers.Create" &&
-      customerController.GetMethods().Single(x => x.Name == nameof(CustomersController.Edit) && x.GetCustomAttribute<HttpPostAttribute>() is not null).GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == $"{PermissionAuthorizeAttribute.PolicyPrefix}Customers.Edit" &&
-      customerController.GetMethod(nameof(CustomersController.Archive))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == $"{PermissionAuthorizeAttribute.PolicyPrefix}Customers.Archive" &&
-      customerController.GetMethod(nameof(CustomersController.Restore))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == $"{PermissionAuthorizeAttribute.PolicyPrefix}Customers.Archive",
-    "Customer profile actions must enforce separate view, create, edit and archive permissions");
-Check(customerController.GetMethods().Where(x => x.Name is nameof(CustomersController.Create) or nameof(CustomersController.Edit) or nameof(CustomersController.Archive) or nameof(CustomersController.Restore))
-        .Where(x => x.GetCustomAttribute<HttpPostAttribute>() is not null)
-        .All(x => x.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null),
-    "Every customer mutation must require antiforgery validation");
-Check(customerController.GetMethods()
-        .Where(x => x.Name is nameof(CustomersController.Create) or nameof(CustomersController.Edit))
-        .Where(x => x.GetCustomAttribute<HttpPostAttribute>() is not null)
-        .All(x => x.GetParameters().Single().ParameterType == typeof(CustomerFormPostDto)),
-    "Customer create and edit must accept the explicit nested Form post model rendered by the shared customer form");
 var customerFormContract = typeof(CustomerFormDto);
 var customerFormNullability = new NullabilityInfoContext();
 Check(customerFormNullability.Create(customerFormContract.GetProperty(nameof(CustomerFormDto.CustomerCode))!).WriteState == NullabilityState.Nullable,
     "Generated customer code must not be required by MVC before CustomerService assigns it");
 Check(customerFormContract.GetProperty(nameof(CustomerFormDto.AccountId))!.PropertyType == typeof(int?),
     "Customer account selection must accept an empty post when receivable policy resolves the account automatically");
-Check(customerController.GetMethods().Where(x=>x.Name is nameof(CustomersController.SaveContact) or nameof(CustomersController.SaveAddress))
-        .All(x=>x.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy==$"{PermissionAuthorizeAttribute.PolicyPrefix}Customers.Edit"&&x.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null),
-    "Customer contact and address edits must require edit permission and antiforgery");
-Check(customerController.GetMethods().Where(x=>x.Name is nameof(CustomersController.ArchiveContact) or nameof(CustomersController.RestoreContact) or nameof(CustomersController.ArchiveAddress) or nameof(CustomersController.RestoreAddress))
-        .All(x=>x.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy==$"{PermissionAuthorizeAttribute.PolicyPrefix}Customers.Archive"&&x.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null),
-    "Customer contact and address status changes must require archive permission and antiforgery");
 Check(PermissionDefinitions.All.Count(x => x.Name.StartsWith("Customers.", StringComparison.Ordinal)) == 4,
     "Customer master must declare exactly four independent permissions");
 Check(PermissionDefinitions.All.Count(x=>x.Name.StartsWith("SalesPricing.",StringComparison.Ordinal))==2,
     "Sales pricing must declare separate view and manage permissions");
-var priceListController=typeof(SalesPriceListsController);
-Check(priceListController.GetMethod(nameof(SalesPriceListsController.Index))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SalesPricing.View"&&
-      priceListController.GetMethod(nameof(SalesPriceListsController.Evaluate))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SalesPricing.View",
-    "Sales pricing list and evaluation reads must require view permission");
-Check(priceListController.GetMethods().Where(x=>x.Name is nameof(SalesPriceListsController.Create) or nameof(SalesPriceListsController.AddRule) or nameof(SalesPriceListsController.SetListActive) or nameof(SalesPriceListsController.SetRuleActive))
-      .All(x=>x.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SalesPricing.Manage"&&x.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null),
-    "Sales price-list mutations must require manage permission and antiforgery");
 
 var priceListMaster=new SalesPriceList("WHOLESALE","Wholesale JOD","jod",new DateOnly(2026,1,1),null,0.01m);
 var broadRule=priceListMaster.AddRule(SalesPriceRuleScope.AllProducts,null,null,null,1m,100,null,null,SalesPriceComputationType.PercentageAdjustment,-5m);
@@ -1858,16 +1820,6 @@ Check(TenantIsolationModel.TenantOwnedTypes.Contains(typeof(SalesPriceList))&&Te
     "Sales price lists and rules must be tenant owned");
 Check(PermissionDefinitions.All.Count(x=>x.Name.StartsWith("SalesQuotations.",StringComparison.Ordinal))==6,
     "Sales quotations must separate view, create and lifecycle permissions");
-var salesQuotationController=typeof(SalesQuotationsController);
-Check(salesQuotationController.GetMethod(nameof(SalesQuotationsController.Index))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SalesQuotations.View"&&
-      salesQuotationController.GetMethod(nameof(SalesQuotationsController.Details))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SalesQuotations.View"&&
-      salesQuotationController.GetMethods().Single(x=>x.Name==nameof(SalesQuotationsController.Create)&&x.GetCustomAttribute<HttpPostAttribute>() is not null).GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SalesQuotations.Create",
-    "Sales quotation reads and creation must enforce their dedicated permissions");
-Check(salesQuotationController.GetMethods().Where(x=>x.GetCustomAttribute<HttpPostAttribute>() is not null)
-      .All(x=>x.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null),
-    "Every sales quotation mutation must require antiforgery validation");
-Check(salesQuotationController.GetMethod(nameof(SalesQuotationsController.Expire))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SalesQuotations.Cancel",
-    "Expiring a sales quotation must require the close/cancel authority");
 var quotationCustomer=new Customer("CUS-Q01","Quotation Customer",1);typeof(Customer).GetProperty(nameof(Customer.Id))!.SetValue(quotationCustomer,1);
 var quotationProduct=new Product("Quotation Product",null,5m,10m,8m,measurementUnitId:1);typeof(Product).GetProperty(nameof(Product.Id))!.SetValue(quotationProduct,1);
 var quotationUnit=new MeasurementUnit("PCS","Piece","pc",MeasurementDimension.Count,1m,0);typeof(MeasurementUnit).GetProperty(nameof(MeasurementUnit.Id))!.SetValue(quotationUnit,1);
@@ -1881,12 +1833,6 @@ Check(TenantIsolationModel.TenantOwnedTypes.Contains(typeof(SalesQuotation))&&Te
     "Sales quotation headers, lines and history must be tenant owned");
 Check(PermissionDefinitions.All.Count(x=>x.Name.StartsWith("SalesQuotationTemplates.",StringComparison.Ordinal))==2,
     "Quotation templates must separate visibility from management authority");
-var quotationTemplateController=typeof(SalesQuotationTemplatesController);
-Check(quotationTemplateController.GetMethod(nameof(SalesQuotationTemplatesController.Index))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SalesQuotationTemplates.View"&&
-      quotationTemplateController.GetMethod(nameof(SalesQuotationTemplatesController.Details))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SalesQuotationTemplates.View"&&
-      quotationTemplateController.GetMethods().Single(x=>x.Name==nameof(SalesQuotationTemplatesController.Create)&&x.GetCustomAttribute<HttpPostAttribute>() is not null).GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SalesQuotationTemplates.Manage"&&
-      quotationTemplateController.GetMethods().Where(x=>x.GetCustomAttribute<HttpPostAttribute>() is not null).All(x=>x.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null),
-    "Quotation-template administration must enforce dedicated permissions and antiforgery");
 var advancedTemplate=new SalesQuotationTemplate("ADVANCED",1,null,"Advanced configurable offer",null,"Solutions","bundle,flexible",45,
     SaleChannel.Wholesale,null,true,true,"Introduction","Terms","Footer","template-user");
 var requiredTemplateItem=new SalesQuotationTemplateItem(1,"Core",quotationProduct,quotationUnit,2m,1m,5m,true,null,
@@ -1909,23 +1855,6 @@ Check(PermissionDefinitions.All.Count(x=>x.Name.StartsWith("SalesOrders.",String
     "Sales orders must separate view, conversion, confirmation, exception approval, cancellation, reservation and release permissions");
 Check(PermissionDefinitions.All.Count(x=>x.Name.StartsWith("SalesApprovalRules.",StringComparison.Ordinal))==2,
     "Sales controls must separate rule visibility from management authority");
-var salesOrderController=typeof(SalesOrdersController);
-var salesOrderReserveGet=salesOrderController.GetMethods().Single(x=>x.Name==nameof(SalesOrdersController.Reserve)&&x.GetCustomAttribute<HttpGetAttribute>() is not null);
-var salesOrderReservePost=salesOrderController.GetMethods().Single(x=>x.Name==nameof(SalesOrdersController.Reserve)&&x.GetCustomAttribute<HttpPostAttribute>() is not null);
-Check(salesOrderController.GetMethod(nameof(SalesOrdersController.Index))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SalesOrders.View"&&
-      salesOrderController.GetMethod(nameof(SalesOrdersController.Details))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SalesOrders.View"&&
-      salesOrderController.GetMethod(nameof(SalesOrdersController.CreateFromQuotation))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SalesOrders.Create"&&
-      salesOrderController.GetMethod(nameof(SalesOrdersController.Confirm))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SalesOrders.Confirm"&&
-      salesOrderController.GetMethod(nameof(SalesOrdersController.Cancel))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SalesOrders.Cancel"&&
-      salesOrderReserveGet.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SalesOrders.View"&&
-      salesOrderReservePost.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SalesOrders.Reserve"&&
-      salesOrderController.GetMethod(nameof(SalesOrdersController.ReleaseReservation))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SalesOrders.ReleaseReservation"&&
-      salesOrderController.GetMethod(nameof(SalesOrdersController.ApproveException))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SalesOrders.ApproveException"&&
-      salesOrderController.GetMethod(nameof(SalesOrdersController.RejectException))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:SalesOrders.ApproveException",
-    "Sales order endpoints must enforce their dedicated server-side permissions");
-Check(salesOrderController.GetMethods().Where(x=>x.GetCustomAttribute<HttpPostAttribute>() is not null)
-      .All(x=>x.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null),
-    "Every sales order mutation must require antiforgery validation");
 typeof(SalesQuotation).GetProperty(nameof(SalesQuotation.Id))!.SetValue(salesQuotation,71);
 typeof(SalesQuotationLine).GetProperty(nameof(SalesQuotationLine.Id))!.SetValue(salesQuotation.Lines.Single(),72);
 var salesOrder=new SalesOrder("SO-000001",salesQuotation,new DateOnly(2026,10,20),"user");
@@ -1998,33 +1927,10 @@ Check(salesDeliveryMovement.Type==StockMovementType.SalesDeliveryOut&&salesDeliv
 
 Check(PermissionDefinitions.All.Count(x=>x.Name.StartsWith("CustomerInvoices.",StringComparison.Ordinal))==6,
     "Customer invoices must separate view, draft creation, approval, posting, cancellation and reversal permissions");
-var customerInvoiceController=typeof(CustomerInvoicesController);
-Check(customerInvoiceController.GetMethod(nameof(CustomerInvoicesController.Index))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:CustomerInvoices.View"&&
-      customerInvoiceController.GetMethod(nameof(CustomerInvoicesController.Details))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:CustomerInvoices.View"&&
-      customerInvoiceController.GetMethods().Single(x=>x.Name==nameof(CustomerInvoicesController.Create)&&x.GetCustomAttribute<HttpPostAttribute>() is not null).GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:CustomerInvoices.Create"&&
-      customerInvoiceController.GetMethod(nameof(CustomerInvoicesController.Approve))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:CustomerInvoices.Approve"&&
-      customerInvoiceController.GetMethod(nameof(CustomerInvoicesController.Post))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:CustomerInvoices.Post"&&
-      customerInvoiceController.GetMethod(nameof(CustomerInvoicesController.Cancel))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:CustomerInvoices.Cancel"&&
-      customerInvoiceController.GetMethod(nameof(CustomerInvoicesController.Reverse))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:CustomerInvoices.Reverse",
-    "Customer invoice endpoints must enforce dedicated server-side permissions");
-Check(customerInvoiceController.GetMethods().Where(x=>x.GetCustomAttribute<HttpPostAttribute>() is not null)
-      .All(x=>x.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null),
-    "Every customer invoice mutation must require antiforgery validation");
 Check(PermissionDefinitions.All.Count(x=>x.Name.StartsWith("CustomerPayments.",StringComparison.Ordinal))==3,
     "Customer payments must separate visibility, posting and reversal permissions");
 Check(PermissionDefinitions.All.Count(x=>x.Name.StartsWith("CustomerReturnRequests.",StringComparison.Ordinal))==6,
     "Customer return requests must separate view, creation, submission, approval, rejection and cancellation permissions");
-var customerReturnController=typeof(CustomerReturnRequestsController);
-Check(customerReturnController.GetMethod(nameof(CustomerReturnRequestsController.Index))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:CustomerReturnRequests.View"&&
-      customerReturnController.GetMethods().Single(x=>x.Name==nameof(CustomerReturnRequestsController.Create)&&x.GetCustomAttribute<HttpPostAttribute>() is not null).GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:CustomerReturnRequests.Create"&&
-      customerReturnController.GetMethod(nameof(CustomerReturnRequestsController.Submit))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:CustomerReturnRequests.Submit"&&
-      customerReturnController.GetMethod(nameof(CustomerReturnRequestsController.Approve))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:CustomerReturnRequests.Approve"&&
-      customerReturnController.GetMethod(nameof(CustomerReturnRequestsController.Reject))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:CustomerReturnRequests.Reject"&&
-      customerReturnController.GetMethod(nameof(CustomerReturnRequestsController.Cancel))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy=="Permission:CustomerReturnRequests.Cancel",
-    "Customer return request endpoints must enforce dedicated server-side permissions");
-Check(customerReturnController.GetMethods().Where(x=>x.GetCustomAttribute<HttpPostAttribute>() is not null)
-      .All(x=>x.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null),
-    "Every customer return request mutation must require antiforgery validation");
 var customerReturn=new CustomerReturnRequest("CRQ-000001",1,1,1,"SO-000001","Demo customer",new DateOnly(2026,10,21),"Damaged packaging",null,"sales-user");
 customerReturn.AddLine(new CustomerReturnRequestLine(1,1,1,1,null,1m,3m,3m,"P-1","Product",null));
 customerReturn.Submit("sales-user"); customerReturn.Approve("sales-manager");
@@ -2247,7 +2153,7 @@ Check(DashboardDefinitions.All.SelectMany(x => x.Items).All(x => knownPermission
     "Every Dashboard application shortcut must use a registered permission");
 var navigableItems = NavigationDefinitions.All.SelectMany(x => x.Items)
     .Concat(DashboardDefinitions.All.SelectMany(x => x.Items)).ToList();
-var webControllers = typeof(CustomersController).Assembly.GetTypes()
+var webControllers = typeof(SettingsController).Assembly.GetTypes()
     .Where(x => typeof(Controller).IsAssignableFrom(x) && x.Name.EndsWith("Controller", StringComparison.Ordinal))
     .ToDictionary(x => x.Name[..^"Controller".Length], StringComparer.OrdinalIgnoreCase);
 var retiredNavigationTargets = RetiredPresentationRouteCatalog.All
@@ -2284,18 +2190,6 @@ while (repositoryRoot is not null && !File.Exists(Path.Combine(repositoryRoot.Fu
     repositoryRoot = repositoryRoot.Parent;
 Check(repositoryRoot is not null, "Regression checks must locate the repository root");
 var webRoot = Path.Combine(repositoryRoot!.FullName, "MiniStore.Web");
-var customerFormView = File.ReadAllText(Path.Combine(webRoot, "Views", "Customers", "_Form.cshtml"));
-var customerCreateView = File.ReadAllText(Path.Combine(webRoot, "Views", "Customers", "Create.cshtml"));
-var customerEditView = File.ReadAllText(Path.Combine(webRoot, "Views", "Customers", "Edit.cshtml"));
-Check(customerFormView.Contains("asp-validation-summary=\"All\"", StringComparison.Ordinal) &&
-      customerFormView.Contains("asp-validation-for=\"Form.Name\"", StringComparison.Ordinal) &&
-      customerFormView.Contains("asp-validation-for=\"Form.TimeZoneId\"", StringComparison.Ordinal),
-    "Customer form must display both the complete validation summary and field-level errors");
-Check(customerCreateView.Contains("<form asp-action=\"Create\" method=\"post\"", StringComparison.Ordinal) &&
-      customerCreateView.Contains("<button type=\"submit\"", StringComparison.Ordinal) &&
-      customerEditView.Contains("<form asp-action=\"Edit\" method=\"post\"", StringComparison.Ordinal) &&
-      customerEditView.Contains("<button type=\"submit\"", StringComparison.Ordinal),
-    "Customer create and edit pages must post explicitly with visible submit actions");
 var arabicResourceDocument = XDocument.Load(Path.Combine(webRoot, "Resources", "SharedResource.ar.resx"));
 var arabicResourceKeys = arabicResourceDocument.Root!.Elements("data")
     .Select(element => element.Attribute("name")?.Value)
@@ -2490,9 +2384,65 @@ var expectedRetiredPresentationRoutes = new Dictionary<string, (string Route, st
     ["SupplierCommunications:Details"] = ("/purchases/communications/{id}", "SupplierCommunications.View", [], null),
     ["SupplierQuotations:Create"] = ("/purchases/sourcing/{sourcingEventId}/quotation", "SupplierQuotations.Create", [], "sourcingEventId"),
     ["SupplierQuotations:Comparison"] = ("/purchases/sourcing/{sourcingEventId}/comparison", "SupplierQuotations.View", [], "sourcingEventId"),
+    ["Accounts:Index"] = ("/accounting/accounts", "Administration.Access", [], null),
+    ["Accounts:Create"] = ("/accounting/accounts", "Administration.Access", [], null),
+    ["Customers:Index"] = ("/customers", "Customers.View", [], null),
+    ["Customers:Details"] = ("/customers/{id}", "Customers.View", [], null),
+    ["Customers:Create"] = ("/customers/new", "Customers.Create", [], null),
+    ["Customers:Edit"] = ("/customers/{id}/edit", "Customers.Edit", [], null),
+    ["DocumentDesigns:Index"] = ("/settings/document-designs", "Administration.Access", [], null),
+    ["DocumentDesigns:Create"] = ("/settings/document-designs/new", "Administration.Access", [], null),
+    ["DocumentDesigns:Details"] = ("/settings/document-designs/{id}", "Administration.Access", [], null),
+    ["PurchaseRequests:Index"] = ("/purchases/requests", "PurchaseRequests.View", [], null),
+    ["PurchaseRequests:Create"] = ("/purchases/requests/new", "PurchaseRequests.Create", [], null),
+    ["PurchaseRequests:Details"] = ("/purchases/requests/{id}", "PurchaseRequests.View", [], null),
+    ["Purchases:Index"] = ("/purchases/legacy", "Purchases.View", [], null),
+    ["Purchases:Create"] = ("/purchases/legacy", "Purchases.Create", [], null),
+    ["Purchases:Details"] = ("/purchases/legacy/{id}", "Purchases.View", [], null),
+    ["PurchaseSourcing:Index"] = ("/purchases/sourcing", "PurchaseSourcing.View", [], null),
+    ["PurchaseSourcing:Create"] = ("/purchases/sourcing/new?purchaseRequestId={purchaseRequestId}", "PurchaseSourcing.Create", [], "purchaseRequestId"),
+    ["PurchaseSourcing:Direct"] = ("/purchases/sourcing/new", "PurchaseSourcing.CreateDirect", [], null),
+    ["PurchaseSourcing:Details"] = ("/purchases/sourcing/{id}", "PurchaseSourcing.View", [], null),
+    ["PurchaseSourcing:Print"] = ("/purchases/sourcing/{id}/print", "PurchaseSourcing.View", [], null),
+    ["Sales:Index"] = ("/sales/legacy", "Sales.View", [], null),
+    ["Sales:Create"] = ("/sales/legacy/new", "Sales.Create", [], null),
+    ["Sales:Details"] = ("/sales/legacy/{id}", "Sales.View", [], null),
+    ["Sales:Pos"] = ("/sales/pos", "Sales.Create", [], null),
+    ["SalesOrders:Index"] = ("/sales/orders", "SalesOrders.View", [], null),
+    ["SalesOrders:Details"] = ("/sales/orders/{id}", "SalesOrders.View", [], null),
+    ["SalesOrders:Reserve"] = ("/sales/orders/{id}/reservations", "SalesOrders.View", [], null),
+    ["SalesPriceLists:Index"] = ("/sales/pricing", "SalesPricing.View", [], null),
+    ["SalesQuotations:Index"] = ("/sales/quotations", "SalesQuotations.View", [], null),
+    ["SalesQuotations:Create"] = ("/sales/quotations/new", "SalesQuotations.Create", [], null),
+    ["SalesQuotations:Details"] = ("/sales/quotations/{id}", "SalesQuotations.View", [], null),
+    ["SalesQuotationTemplates:Index"] = ("/sales/quotation-templates", "SalesQuotationTemplates.View", [], null),
+    ["SalesQuotationTemplates:Create"] = ("/sales/quotation-templates/new", "SalesQuotationTemplates.Manage", [], null),
+    ["SalesQuotationTemplates:Details"] = ("/sales/quotation-templates/{id}", "SalesQuotationTemplates.View", [], null),
+    ["SupplierPurchasing:Index"] = ("/purchases/supplier-terms", "Purchases.SupplierTerms.View", [], null),
+    ["SupplierPurchasing:PriceExceptions"] = ("/purchases/supplier-terms/exceptions", "Purchases.SupplierTerms.View", [], null),
+    ["SupplierPurchasing:PriceBreaks"] = ("/purchases/supplier-terms/{id}/price-breaks", "Purchases.SupplierTerms.View", [], null),
+    ["SupplierPurchasing:PriceHistory"] = ("/purchases/supplier-terms/{id}/history", "Purchases.SupplierTerms.View", [], null),
+    ["VendorBills:Index"] = ("/purchases/bills", "VendorBills.View", [], null),
+    ["VendorBills:Create"] = ("/purchases/bills/new?purchaseOrderId={purchaseOrderId}", "VendorBills.Create", [], "purchaseOrderId"),
+    ["VendorBills:Details"] = ("/purchases/bills/{id}", "VendorBills.View", [], null),
+    ["CustomerInvoices:Index"] = ("/sales/invoices", "CustomerInvoices.View", [], null),
+    ["CustomerInvoices:Create"] = ("/sales/invoices/new?salesOrderId={salesOrderId}", "CustomerInvoices.Create", [], "salesOrderId"),
+    ["CustomerInvoices:Details"] = ("/sales/invoices/{id}", "CustomerInvoices.View", [], null),
+    ["CustomerReturnRequests:Index"] = ("/sales/return-requests", "CustomerReturnRequests.View", [], null),
+    ["CustomerReturnRequests:Create"] = ("/sales/return-requests/new?salesDeliveryId={salesDeliveryId}", "CustomerReturnRequests.Create", [], "salesDeliveryId"),
+    ["CustomerReturnRequests:Details"] = ("/sales/return-requests/{id}", "CustomerReturnRequests.View", [], null),
     ["Public:Index"] = ("/welcome", null, ["/"], null),
     ["Public:Pricing"] = ("/pricing", null, ["/pricing"], null)
 };
+var retiredRouteFailures = RetiredPresentationRouteCatalog.All.Where(route =>
+        !expectedRetiredPresentationRoutes.TryGetValue($"{route.Controller}:{route.Action}", out var expected) ||
+        route.AngularRoute != expected.Route || route.RequiredPermission != expected.Permission ||
+        !(route.LegacyPatterns ?? []).SequenceEqual(expected.Patterns) ||
+        route.PositiveIntegerQueryParameter != expected.PositiveIntegerQueryParameter ||
+        Directory.EnumerateFiles(Path.Combine(webRoot, "Controllers"), $"{route.Controller}Controller.cs", SearchOption.AllDirectories)
+            .Any(path => !path.Contains($"{Path.DirectorySeparatorChar}Api{Path.DirectorySeparatorChar}")) ||
+        File.Exists(Path.Combine(webRoot, "Views", route.Controller, $"{route.Action}.cshtml")))
+    .Select(route => $"{route.Controller}:{route.Action}").ToList();
 Check(
     RetiredPresentationRouteCatalog.All.Count == expectedRetiredPresentationRoutes.Count &&
     RetiredPresentationRouteCatalog.All.All(route =>
@@ -2501,14 +2451,15 @@ Check(
         route.RequiredPermission == expected.Permission &&
         (route.LegacyPatterns ?? []).SequenceEqual(expected.Patterns) &&
         route.PositiveIntegerQueryParameter == expected.PositiveIntegerQueryParameter &&
-        !Directory.EnumerateFiles(Path.Combine(webRoot, "Controllers"), $"{route.Controller}Controller.cs", SearchOption.AllDirectories).Any() &&
+        !Directory.EnumerateFiles(Path.Combine(webRoot, "Controllers"), $"{route.Controller}Controller.cs", SearchOption.AllDirectories)
+            .Any(path => !path.Contains($"{Path.DirectorySeparatorChar}Api{Path.DirectorySeparatorChar}")) &&
         !File.Exists(Path.Combine(webRoot, "Views", route.Controller, $"{route.Action}.cshtml"))) &&
     RetiredPresentationRouteCatalog.BuildTarget(
         "/app",
         "/inventory/availability",
         new QueryString("?warehouseId=4&search=bolt")) ==
         "/app/inventory/availability?warehouseId=4&search=bolt",
-    "Retired MVC surfaces must keep exact protected or explicitly anonymous Angular redirects, query preservation and no controller/view artifact");
+    $"Retired MVC surfaces must keep exact protected or explicitly anonymous Angular redirects, query preservation and no controller/view artifact. Count {RetiredPresentationRouteCatalog.All.Count}/{expectedRetiredPresentationRoutes.Count}; failures: {string.Join(", ", retiredRouteFailures)}");
 Check(RetiredPresentationRouteCatalog.BuildTarget(
           "/app",
           "/products/recipes/{productId}",
@@ -3482,63 +3433,6 @@ Check(typeof(CreateSupplierDto).GetProperty(nameof(CreateSupplierDto.ProductIds)
       typeof(CreateProductDto).GetProperty(nameof(CreateProductDto.SupplierIds)) is not null &&
       typeof(UpdateProductDto).GetProperty(nameof(UpdateProductDto.SupplierIds)) is not null,
     "Supplier and product forms must expose the same bidirectional assignment relationship");
-var supplierTermsIndexAction = typeof(SupplierPurchasingController)
-    .GetMethod(nameof(SupplierPurchasingController.Index))!;
-var supplierTermsSaveAction = typeof(SupplierPurchasingController)
-    .GetMethod(nameof(SupplierPurchasingController.Save))!;
-var supplierTermsBulkSaveAction = typeof(SupplierPurchasingController)
-    .GetMethod(nameof(SupplierPurchasingController.SaveBulk))!;
-var supplierTermsExportAction = typeof(SupplierPurchasingController)
-    .GetMethod(nameof(SupplierPurchasingController.ExportCsv))!;
-var supplierTermsPreviewAction = typeof(SupplierPurchasingController)
-    .GetMethod(nameof(SupplierPurchasingController.PreviewCsv))!;
-var supplierTermsImportAction = typeof(SupplierPurchasingController)
-    .GetMethod(nameof(SupplierPurchasingController.ImportCsv))!;
-var supplierTermsExcelExportAction = typeof(SupplierPurchasingController)
-    .GetMethod(nameof(SupplierPurchasingController.ExportExcel))!;
-var supplierTermsExcelPreviewAction = typeof(SupplierPurchasingController)
-    .GetMethod(nameof(SupplierPurchasingController.PreviewExcel))!;
-var supplierTermsExcelImportAction = typeof(SupplierPurchasingController)
-    .GetMethod(nameof(SupplierPurchasingController.ImportExcel))!;
-var supplierPriceBreaksAction = typeof(SupplierPurchasingController)
-    .GetMethod(nameof(SupplierPurchasingController.PriceBreaks))!;
-var supplierPriceBreaksSaveAction = typeof(SupplierPurchasingController)
-    .GetMethod(nameof(SupplierPurchasingController.SavePriceBreaks))!;
-var supplierPriceHistoryAction = typeof(SupplierPurchasingController)
-    .GetMethod(nameof(SupplierPurchasingController.PriceHistory))!;
-var supplierPriceExceptionsAction = typeof(SupplierPurchasingController)
-    .GetMethod(nameof(SupplierPurchasingController.PriceExceptions))!;
-Check(supplierTermsIndexAction.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
-      $"{PermissionAuthorizeAttribute.PolicyPrefix}Purchases.SupplierTerms.View" &&
-      supplierTermsSaveAction.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
-      $"{PermissionAuthorizeAttribute.PolicyPrefix}Purchases.SupplierTerms.Manage" &&
-      supplierTermsBulkSaveAction.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
-      $"{PermissionAuthorizeAttribute.PolicyPrefix}Purchases.SupplierTerms.Manage" &&
-      supplierTermsExportAction.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
-      $"{PermissionAuthorizeAttribute.PolicyPrefix}Purchases.SupplierTerms.View" &&
-      supplierTermsPreviewAction.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
-      $"{PermissionAuthorizeAttribute.PolicyPrefix}Purchases.SupplierTerms.Manage" &&
-      supplierTermsImportAction.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
-      $"{PermissionAuthorizeAttribute.PolicyPrefix}Purchases.SupplierTerms.Manage" &&
-      supplierTermsExcelExportAction.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
-      $"{PermissionAuthorizeAttribute.PolicyPrefix}Purchases.SupplierTerms.View" &&
-      supplierTermsExcelPreviewAction.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
-      $"{PermissionAuthorizeAttribute.PolicyPrefix}Purchases.SupplierTerms.Manage" &&
-      supplierTermsExcelImportAction.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
-      $"{PermissionAuthorizeAttribute.PolicyPrefix}Purchases.SupplierTerms.Manage" &&
-      supplierPriceBreaksAction.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
-      $"{PermissionAuthorizeAttribute.PolicyPrefix}Purchases.SupplierTerms.View" &&
-      supplierPriceBreaksSaveAction.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
-      $"{PermissionAuthorizeAttribute.PolicyPrefix}Purchases.SupplierTerms.Manage" &&
-      supplierPriceHistoryAction.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
-      $"{PermissionAuthorizeAttribute.PolicyPrefix}Purchases.SupplierTerms.View" &&
-      supplierPriceExceptionsAction.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
-      $"{PermissionAuthorizeAttribute.PolicyPrefix}Purchases.SupplierTerms.View",
-    "Supplier purchasing data must separate view and manage permissions");
-Check(supplierTermsBulkSaveAction.GetParameters().Single().GetCustomAttribute<BindAttribute>()?.Prefix == "BulkForm",
-    "Bulk supplier purchasing submission must bind the selected supplier and product rows as one form");
-Check(supplierPriceBreaksSaveAction.GetParameters().Single().GetCustomAttribute<BindAttribute>()?.Prefix == "Form",
-    "Supplier price-break submission must bind the aggregate and all quantity tiers as one form");
 var supplierCsv = SupplierPurchasingCsvParser.Write([
     ["P-1", "PCS", "V-1", "Box, large", "1", "6", "4", "12.5", "2026-10-14", "", "TRUE", "10"]
 ]);
@@ -3596,8 +3490,6 @@ foreach (var type in new[] { typeof(PurchaseRequest), typeof(PurchaseRequestLine
         $"{type.Name} must be tenant owned");
 Check(DocumentSequence.CreateDefault(DocumentNumberType.PurchaseRequest).Preview(DateTime.Today).StartsWith("PRQ-"),
     "Purchase requests must use the centralized PRQ document sequence");
-var prController=typeof(PurchaseRequestsController);
-Check(prController.GetMethod(nameof(PurchaseRequestsController.Index))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy==$"{PermissionAuthorizeAttribute.PolicyPrefix}PurchaseRequests.View"&&prController.GetMethod(nameof(PurchaseRequestsController.Create),[typeof(CreatePurchaseRequestDto)])!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy==$"{PermissionAuthorizeAttribute.PolicyPrefix}PurchaseRequests.Create"&&prController.GetMethod(nameof(PurchaseRequestsController.Submit))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy==$"{PermissionAuthorizeAttribute.PolicyPrefix}PurchaseRequests.Submit"&&prController.GetMethod(nameof(PurchaseRequestsController.Cancel))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy==$"{PermissionAuthorizeAttribute.PolicyPrefix}PurchaseRequests.Cancel","Purchase request commands must use separate server-side permissions");
 
 var approvalRule = new PurchaseApprovalRule("Warehouse managers", 1,
     PurchaseRequestPriority.Normal, PurchaseRequestPriority.Urgent);
@@ -3634,14 +3526,6 @@ Check(db.Model.FindEntityType(typeof(PurchaseApprovalRule))!
       db.Model.FindEntityType(typeof(PurchaseApprovalInstance))!
           .FindProperty(nameof(PurchaseApprovalInstance.RowVersion))!.IsConcurrencyToken,
     "Editable approval rules and instances must be rowversion protected");
-var approvalController = typeof(PurchaseRequestsController);
-Check(approvalController.GetMethod(nameof(PurchaseRequestsController.Approve))!
-          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
-      $"{PermissionAuthorizeAttribute.PolicyPrefix}PurchaseRequests.Approve" &&
-      approvalController.GetMethod(nameof(PurchaseRequestsController.Reject))!
-          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
-      $"{PermissionAuthorizeAttribute.PolicyPrefix}PurchaseRequests.Reject",
-    "Purchase approval and rejection commands must use separate server-side permissions");
 var cancelledApproval = new PurchaseApprovalInstance(102, 20, "Rule", approvalRule.Steps, "requester");
 cancelledApproval.Cancel();
 Check(cancelledApproval.Status == PurchaseApprovalStatus.Cancelled && cancelledApproval.CompletedAtUtc.HasValue,
@@ -3676,12 +3560,6 @@ directSourcing.Send("buyer");
 Check(directSourcing.Path == PurchaseSourcingPath.DirectRfq && directSourcing.PurchaseRequestId is null &&
       directSourcing.EstimatedAmountCompanyCurrency == 450m && directSourcing.Attachments.Count == 1,
     "Direct RFQs must freeze the applied policy context and support bounded tenant-owned attachments");
-var directActions = typeof(PurchaseSourcingController).GetMethods()
-    .Where(x => x.Name == nameof(PurchaseSourcingController.Direct)).ToList();
-Check(directActions.Count == 2 && directActions.All(x =>
-          x.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
-          $"{PermissionAuthorizeAttribute.PolicyPrefix}PurchaseSourcing.CreateDirect"),
-    "Direct RFQ GET and POST actions must require the dedicated server-side permission");
 Check(ActionableErrorGuidance.Resolve(
           "The estimated RFQ amount exceeds the direct path limit. Create a purchase request for approval.",
           "PurchaseSourcing") is { Controller: "PurchaseRequests", Action: "Create" },
@@ -4009,21 +3887,6 @@ Check(matchRun.WasOverridden && matchRun.Exceptions.Count == 1 && matchRun.Overr
     "Purchase match exceptions and reasoned overrides must remain immutable tenant-owned evidence");
 CheckArgumentThrows(() => new PurchaseMatchingSettings(101m, 0m),
     "Purchase matching tolerances must reject percentages above 100");
-var vendorBillController = typeof(VendorBillsController);
-var vendorBillCreatePost = vendorBillController.GetMethods().Single(x => x.Name == nameof(VendorBillsController.Create) && x.GetCustomAttribute<HttpPostAttribute>() is not null);
-Check(vendorBillController.GetMethod(nameof(VendorBillsController.Index))!
-          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
-      $"{PermissionAuthorizeAttribute.PolicyPrefix}VendorBills.View" &&
-      vendorBillCreatePost.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
-      $"{PermissionAuthorizeAttribute.PolicyPrefix}VendorBills.Create" &&
-      vendorBillController.GetMethod(nameof(VendorBillsController.ApproveOverride))!
-          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
-      $"{PermissionAuthorizeAttribute.PolicyPrefix}VendorBills.OverrideMatch" &&
-      vendorBillController.GetMethod(nameof(VendorBillsController.Approve))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == $"{PermissionAuthorizeAttribute.PolicyPrefix}VendorBills.Approve" &&
-      vendorBillController.GetMethod(nameof(VendorBillsController.Post))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == $"{PermissionAuthorizeAttribute.PolicyPrefix}VendorBills.Post" &&
-      vendorBillController.GetMethod(nameof(VendorBillsController.Cancel))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy == $"{PermissionAuthorizeAttribute.PolicyPrefix}VendorBills.Cancel",
-    "Vendor bill visibility, entry, approval, posting and match override must use separate server-side permissions");
-Check(vendorBillController.GetMethod(nameof(VendorBillsController.ReviewExtraction))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy==$"{PermissionAuthorizeAttribute.PolicyPrefix}VendorBills.ReviewExtraction","Extraction review must retain its distinct server-side permission");
 var integrationsController=typeof(SupplierIntegrationsController);var apiController=typeof(SupplierIntegrationApiController);var portalController=typeof(SupplierPortalController);
 Check(integrationsController.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy==$"{PermissionAuthorizeAttribute.PolicyPrefix}SupplierIntegrations.View"&&integrationsController.GetMethod(nameof(SupplierIntegrationsController.CreateCredential))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy==$"{PermissionAuthorizeAttribute.PolicyPrefix}SupplierIntegrations.Manage"&&integrationsController.GetMethod(nameof(SupplierIntegrationsController.QueuePurchaseOrder))!.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy==$"{PermissionAuthorizeAttribute.PolicyPrefix}SupplierIntegrations.Queue","Supplier integration administration and outbound queueing must use distinct internal permissions");
 Check(apiController.GetCustomAttribute<ApiControllerAttribute>() is not null&&apiController.GetCustomAttribute<AllowAnonymousAttribute>() is not null&&apiController.GetCustomAttribute<IgnoreAntiforgeryTokenAttribute>() is not null&&portalController.GetCustomAttribute<AllowAnonymousAttribute>() is not null,"Supplier API and portal must expose explicit anonymous boundaries while internal administration remains permission protected");
@@ -4039,19 +3902,6 @@ CheckThrows(() => supplierPayment.AddLine(new SupplierPaymentLine(3, 1m, "VB-000
     "Posted supplier payments must be immutable");
 Check(DocumentSequence.CreateDefault(DocumentNumberType.SupplierPayment).Preview(DateTime.Today).StartsWith("SPY-"),
     "Supplier payments must use an independent centralized document sequence");
-var sourcingController = typeof(PurchaseSourcingController);
-var sourcingCreateAction = sourcingController.GetMethods().Single(x =>
-    x.Name == nameof(PurchaseSourcingController.Create) && x.GetCustomAttribute<HttpPostAttribute>() is not null);
-Check(sourcingController.GetMethod(nameof(PurchaseSourcingController.Index))!
-          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
-      $"{PermissionAuthorizeAttribute.PolicyPrefix}PurchaseSourcing.View" &&
-      sourcingCreateAction
-          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
-      $"{PermissionAuthorizeAttribute.PolicyPrefix}PurchaseSourcing.Create",
-    "Purchase sourcing visibility and creation must use separate server-side permissions");
-Check(sourcingCreateAction.GetParameters().Single(x => x.ParameterType == typeof(CreatePurchaseSourcingDto))
-          .GetCustomAttribute<BindAttribute>()?.Prefix == "Form",
-    "Purchase sourcing submission must bind the nested Form fields posted by the create page");
 var currencySettingsAction = typeof(SettingsController).GetMethod(nameof(SettingsController.Currencies), [typeof(SaveCurrencyExchangeRateDto)])!;
 Check(currencySettingsAction.GetParameters().Single().GetCustomAttribute<BindAttribute>()?.Prefix == "Form",
     "Currency-rate submission must bind the nested Form fields posted by the settings page");

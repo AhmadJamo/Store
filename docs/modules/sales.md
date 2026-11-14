@@ -1,5 +1,9 @@
 # Sales
 
+`MOD-031D` retires the remaining sales operational MVC/Razor presentation in this cohort. Angular and authenticated
+APIs now own legacy sales/POS, pricing, quotations/templates, orders, invoices and return requests while Application
+services retain pricing, stock, accounting, lifecycle, permission and antiforgery authority.
+
 `MOD-031C` retires CustomerCreditNotes, CustomerReturnReceipts and SalesReturns MVC/Razor presentation. Angular/API keeps
 the same Application-owned posting, inventory disposition, accounting, authorization and antiforgery boundaries.
 
@@ -128,7 +132,7 @@ was fabricated. MVC remains default.
 
 Sales quantity, threshold, price-rule and document-line decimal ranges parse limits and submitted values with invariant culture. Arabic UI requests no longer throw before controller execution when validating dot-based HTML decimals.
 
-Wholesale Create and Retail POS call `SalesController.Create` then `SaleService.CreateAsync`. Product choices are limited to active products enabled for the corresponding channel, and the service revalidates those flags against crafted requests. It validates discount rules, generates the tenant document number, chooses the server-side price, applies the optional invoice tax after discounts, decreases stock at the current warehouse average and writes the Sale movement in one UnitOfWork transaction. Sale freezes the selected tax percentage, inclusive policy, output account and amount; SaleItem freezes UnitCost and CostOfGoodsSold. The number, sale, valuation and movement commit or roll back together; ProductStock rowversion detects concurrent writes.
+Wholesale Create and Retail POS call the authenticated legacy-sales API then `SaleService.CreateAsync`. Product choices are limited to active products enabled for the corresponding channel, and the service revalidates those flags against crafted requests. It validates discount rules, generates the tenant document number, chooses the server-side price, applies tax after discounts, decreases stock at moving-average cost and writes the movement in one UnitOfWork transaction.
 
 For a prepared-to-order item, SaleService requires an active recipe, snapshots its version and derives the sale-line unit cost from recipe quantities and current warehouse ingredient averages. It aggregates/consumes ingredients instead of decrementing menu-item stock. A missing or insufficient ingredient blocks the sale unless controlled negative consumption is enabled; such consumption uses provisional cost for later variance settlement.
 

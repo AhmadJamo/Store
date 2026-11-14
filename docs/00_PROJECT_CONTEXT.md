@@ -103,6 +103,9 @@ is now 30 MVC surfaces, 214 actions, 100 Razor rows and 93 views.
 MOD-031C then retired an explicitly approved fifteen-controller commercial cohort. Thirty-four protected GET/HEAD
 routes preserve navigation; writes are never redirected, and supplier attachment download remains API-only. The active
 generated inventory is now 30 MVC surfaces, 214 actions, 100 Razor control rows and 93 views.
+MOD-031D retired the next approved fifteen operational MVC/Razor surfaces after confirming Angular/API, permissions and
+download boundaries. Forty-seven protected reads preserve navigation; writes return 405 and downloads remain API-only.
+The active inventory is now 15 MVC surfaces, 91 actions, 50 Razor control rows and 45 views.
 
 UX-009 adds permission-aware Purchasing, Sales and Accounting hubs with complete operational-route discovery. UX-010
 projects the tenant chart of accounts as an expandable hierarchy and adds a permission-protected, repository-paged journal
