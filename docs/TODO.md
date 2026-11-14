@@ -501,4 +501,5 @@ The ERP SaaS Foundation Blueprint is imported as a non-authoritative planning re
 - [x] Reach zero remaining ordinary presentation surfaces in the generated inventory.
 - [ ] Verify the 13 retained operational boundaries independently; do not batch-delete identity/session/public/Platform routes.
 - [x] MOD-031F verified and documented all 13 retained operational boundaries without deletion or mutation.
-- [ ] MOD-031G make zero ordinary MVC presentation surfaces an executable modernization-gate invariant.
+- [x] MOD-031G makes zero ordinary MVC presentation surfaces and the exact retained-boundary allowlist executable invariants.
+- [ ] MOD-031H reconcile final project/security/testing wording and close the MOD-031 retirement stream.

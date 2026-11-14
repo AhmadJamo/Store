@@ -459,3 +459,9 @@
   isolated Platform runtime boundaries rather than ordinary presentation gaps.
 - Live anonymous probes proved tenant/Platform login separation, invalid-token privacy headers and antiforgery rejection.
 - No controller, view, schema, permission or business rule changed. Future deletion requires a separately bounded fixture.
+
+## MOD-031G — Zero MVC-presentation drift gate — COMPLETE 2026-11-14
+
+- Added an executable invariant requiring zero ordinary MVC presentation surfaces and the exact 13 reviewed runtime boundaries.
+- Kept Language as the sole explicit POST-only compatibility boundary.
+- The main modernization gate now fails on new MVC business presentation or retained-boundary allowlist drift.

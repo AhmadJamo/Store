@@ -2399,3 +2399,5 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
 - 2026-11-14: Completed MOD-031F without runtime mutation. Live anonymous probes verified all 13 retained identity/session,
   onboarding, settings/download, billing, supplier-token and Platform boundaries; tenant and Platform challenges stayed
   distinct, invalid portal tokens stayed private/no-store and unauthenticated antiforgery mutations were rejected.
+- 2026-11-14: Completed MOD-031G. Added an executable gate requiring zero ordinary MVC presentation surfaces, the exact
+  13 reviewed runtime boundaries and Language as the sole POST-only compatibility boundary. No runtime behavior changed.

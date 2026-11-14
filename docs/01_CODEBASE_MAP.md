@@ -866,3 +866,7 @@ Users and Roles now exist only as Angular feature pages plus versioned API contr
 artifacts are removed and protected legacy reads are mapped by `RetiredPresentationRouteCatalog`. The generated registry
 contains zero remaining ordinary presentation surfaces. The 13 remaining classified MVC boundaries are intentional runtime
 composition for identity/session, onboarding, settings/downloads, subscription, supplier portal, language POST and Platform.
+
+`scripts/Test-MvcPresentationInvariant.ps1` consumes the generated retirement inventory and dual-run matrix. The standard
+modernization gate invokes it after regeneration and fails if ordinary MVC presentation returns, the 13-boundary allowlist
+drifts, or Language stops being the explicit mutation-only compatibility endpoint.

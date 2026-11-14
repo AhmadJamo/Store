@@ -1,8 +1,9 @@
 # المهمة التالية الوحيدة / Next Task
 
-## MOD-031G — بوابة منع رجوع MVC presentation
+## MOD-031H — إغلاق مرحلة تقاعد MVC وتثبيت خط الأساس
 
-> الحالة: APPROVED FOR IMPLEMENTATION
+> الحالة: APPROVED FOR DOCUMENTATION AND VERIFICATION
 
-أضف فشلًا صريحًا إلى بوابة modernization إذا عاد أي سطح MVC presentation عادي بعد أن أصبح العدد صفرًا، مع allowlist
-واضحة للحدود التشغيلية الـ13 وLanguage POST-only. لا تغيّر runtime ولا تحذف الحدود؛ الهدف منع التراجع المعماري.
+حدّث سياق المشروع وخرائط الاختبار/الأمان إلى خط الأساس النهائي: Angular presentation مكتمل، صفر أسطح MVC عادية،
+13 حدود runtime مقصودة، وبوابة drift إلزامية. نظّف العبارات التاريخية التي ما زالت توحي بأن الحذف الجماعي مستمر،
+ثم شغّل البوابة الكاملة وأغلق مسار MOD-031 دون تغيير runtime.

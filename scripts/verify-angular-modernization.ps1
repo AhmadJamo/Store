@@ -107,6 +107,9 @@ try {
             throw "Generated migration evidence was stale. Review and commit the regenerated registry, acceptance matrix and MVC retirement inventory."
         }
     })
+    [void](Invoke-GateStep "mvc-presentation-invariant" "Zero ordinary MVC presentation surfaces" {
+        & (Join-Path $PSScriptRoot "Test-MvcPresentationInvariant.ps1")
+    })
     if (-not $SkipBackend) {
         [void](Invoke-GateStep "backend-build" "Backend release build" {
             dotnet build MiniStore.slnx -c Release --no-restore

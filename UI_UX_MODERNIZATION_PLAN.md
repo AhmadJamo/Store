@@ -609,6 +609,12 @@ largest underrepresented modules; production deployment readiness and physical M
 - Proved distinct tenant and Platform cookie challenges, safe invalid supplier-token presentation, and CSRF rejection.
 - Recorded the closure decision in `docs/modernization/RETAINED_RUNTIME_BOUNDARIES.md`; no runtime deletion was made.
 
+## MOD-031G — zero MVC-presentation drift gate — COMPLETED 2026-11-14
+
+- Added `Test-MvcPresentationInvariant.ps1` to require zero ordinary MVC presentation surfaces.
+- Allowlisted exactly the 13 reviewed runtime boundaries and asserted Language remains POST-only.
+- Integrated the invariant into the standard modernization gate; no runtime route or business behavior changed.
+
 ## MOD-031C — fifteen-controller commercial retirement — COMPLETED 2026-11-14
 
 - Retired 15 MVC controllers spanning catalog masters, products, purchasing and sales returns/credits.
