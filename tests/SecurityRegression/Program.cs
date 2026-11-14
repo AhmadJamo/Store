@@ -116,98 +116,6 @@ cutoverContext.Request.Method = HttpMethods.Get;
 Check(angularCutoverResolver.Resolve(
         cutoverContext.Request, "Customers", "Export", new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null,
     "Presentation cutover must keep non-allowlisted actions on MVC");
-var stockCutoverResolver = new PresentationCutoverResolver(Options.Create(
-    new PresentationCutoverOptions
-    {
-        AngularBasePath = "/app",
-        Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
-        {
-            ["StockTransactions"] = PresentationCutoverMode.AngularDefault
-        }
-    }));
-Check(stockCutoverResolver.Resolve(
-        cutoverContext.Request, "StockTransactions", "Index",
-        new Microsoft.AspNetCore.Routing.RouteValueDictionary()) == "/app/inventory/transactions?page=2",
-    "Stock transaction cutover must preserve query strings on the Angular ledger route");
-var adjustmentCutoverResolver = new PresentationCutoverResolver(Options.Create(
-    new PresentationCutoverOptions
-    {
-        AngularBasePath = "/app",
-        Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
-        {
-            ["InventoryAdjustments"] = PresentationCutoverMode.AngularDefault
-        }
-    }));
-Check(adjustmentCutoverResolver.Resolve(
-        cutoverContext.Request, "InventoryAdjustments", "Details",
-        new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 3_000_000_000L }) ==
-    "/app/inventory/adjustments/3000000000?page=2",
-    "Inventory Adjustment details cutover must preserve positive Int64 identifiers");
-var stockTransferCutoverResolver = new PresentationCutoverResolver(Options.Create(
-    new PresentationCutoverOptions
-    {
-        AngularBasePath = "/app",
-        Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
-        {
-            ["StockTransfers"] = PresentationCutoverMode.AngularDefault
-        }
-    }));
-Check(stockTransferCutoverResolver.Resolve(
-        cutoverContext.Request, "StockTransfers", "Details",
-        new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 23 }) ==
-    "/app/inventory/transfers/23?page=2",
-    "Stock Transfer details cutover must preserve its identifier and query string");
-Check(stockTransferCutoverResolver.Resolve(
-        cutoverContext.Request, "StockTransfers", "Edit",
-        new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 23 }) ==
-    "/app/inventory/transfers/23/edit?page=2",
-    "Stock Transfer edit GET must preserve its identifier and query string");
-var inventoryTrackingCutoverResolver = new PresentationCutoverResolver(Options.Create(
-    new PresentationCutoverOptions
-    {
-        AngularBasePath = "/app",
-        Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
-        {
-            ["InventoryTracking"] = PresentationCutoverMode.AngularDefault
-        }
-    }));
-Check(inventoryTrackingCutoverResolver.Resolve(
-        cutoverContext.Request, "InventoryTracking", "Index",
-        new Microsoft.AspNetCore.Routing.RouteValueDictionary()) ==
-    "/app/inventory/tracking?page=2",
-    "Inventory Tracking cutover must preserve query strings on its exact Angular route");
-Check(inventoryTrackingCutoverResolver.Resolve(
-        cutoverContext.Request, "InventoryTracking", "Open",
-        new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null,
-    "Inventory Tracking mutations must stay outside the presentation cutover catalog");
-var warehouseOperationsCutoverResolver = new PresentationCutoverResolver(Options.Create(
-    new PresentationCutoverOptions
-    {
-        AngularBasePath = "/app",
-        Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
-        {
-            ["WarehouseLocations"] = PresentationCutoverMode.AngularDefault,
-            ["UnassignedStock"] = PresentationCutoverMode.AngularDefault,
-            ["LocationMovements"] = PresentationCutoverMode.AngularDefault
-        }
-    }));
-Check(warehouseOperationsCutoverResolver.Resolve(
-        cutoverContext.Request, "WarehouseLocations", "Index",
-        new Microsoft.AspNetCore.Routing.RouteValueDictionary()) == "/app/inventory/locations?page=2" &&
-      warehouseOperationsCutoverResolver.Resolve(
-        cutoverContext.Request, "UnassignedStock", "Index",
-        new Microsoft.AspNetCore.Routing.RouteValueDictionary()) == "/app/inventory/putaway?page=2" &&
-       warehouseOperationsCutoverResolver.Resolve(
-         cutoverContext.Request, "LocationMovements", "Index",
-         new Microsoft.AspNetCore.Routing.RouteValueDictionary()) == "/app/inventory/location-movements?page=2",
-    "Warehouse operations cutover must preserve query strings on the retained exact Angular routes");
-Check(warehouseOperationsCutoverResolver.Resolve(
-        cutoverContext.Request, "WarehouseLocations", "Edit",
-        new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 5 }) is null &&
-      warehouseOperationsCutoverResolver.Resolve(
-        cutoverContext.Request, "LocationMovements", "Move",
-        new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null,
-    "Unsupported warehouse-location deep links and mutations must remain on MVC");
 var catalogMastersCutoverResolver = new PresentationCutoverResolver(Options.Create(
     new PresentationCutoverOptions
     {
@@ -228,23 +136,6 @@ Check(new[] { "Branches", "PaymentMethods", "TaxRates" }.All(surface =>
         catalogMastersCutoverResolver.Resolve(cutoverContext.Request, surface, "Create",
             new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null),
     "Catalog-master create actions must stay outside the presentation cutover catalog");
-var warehousesCutoverResolver = new PresentationCutoverResolver(Options.Create(
-    new PresentationCutoverOptions
-    {
-        AngularBasePath = "/app",
-        Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
-        {
-            ["Warehouses"] = PresentationCutoverMode.AngularDefault
-        }
-    }));
-Check(warehousesCutoverResolver.Resolve(cutoverContext.Request, "Warehouses", "Index",
-        new Microsoft.AspNetCore.Routing.RouteValueDictionary()) == "/app/warehouses?page=2",
-    "Warehouses Index cutover must preserve query strings on the Angular workspace");
-Check(warehousesCutoverResolver.Resolve(cutoverContext.Request, "Warehouses", "Create",
-          new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null &&
-      warehousesCutoverResolver.Resolve(cutoverContext.Request, "Warehouses", "Edit",
-          new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 1 }) is null,
-    "Unsupported Warehouse Create/Edit deep links must stay outside presentation cutover");
 var identityAdministrationCutoverResolver = new PresentationCutoverResolver(Options.Create(
     new PresentationCutoverOptions
     {
@@ -428,56 +319,6 @@ Check(new long[] { -1, 0 }.All(id =>
               "PurchaseOrders", action,
               new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 17 }) is null),
     "Purchase-order lifecycle and fulfillment mutations and unsafe identifiers must stay outside presentation cutover");
-var goodsReceiptsCutoverResolver = new PresentationCutoverResolver(Options.Create(
-    new PresentationCutoverOptions
-    {
-        AngularBasePath = "/app",
-        Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
-        {
-            ["GoodsReceipts"] = PresentationCutoverMode.AngularDefault
-        }
-    }));
-cutoverContext.Request.QueryString =
-    new Microsoft.AspNetCore.Http.QueryString("?purchaseOrderId=17&source=cutover");
-Check(goodsReceiptsCutoverResolver.Resolve(cutoverContext.Request,
-          "GoodsReceipts", "Create",
-          new Microsoft.AspNetCore.Routing.RouteValueDictionary()) ==
-      "/app/purchases/receipts/new?purchaseOrderId=17&source=cutover",
-    "Goods-receipt cutover must consume a positive query-bound order ID without duplicating query separators");
-cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?page=2");
-Check(goodsReceiptsCutoverResolver.Resolve(cutoverContext.Request,
-          "GoodsReceipts", "Index",
-          new Microsoft.AspNetCore.Routing.RouteValueDictionary()) ==
-      "/app/purchases/receipts?page=2" &&
-      goodsReceiptsCutoverResolver.Resolve(cutoverContext.Request,
-          "GoodsReceipts", "Details",
-          new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 17 }) ==
-      "/app/purchases/receipts/17?page=2" &&
-      goodsReceiptsCutoverResolver.Resolve(cutoverContext.Request,
-          "GoodsReceipts", "Scan",
-          new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 17 }) ==
-      "/app/purchases/receipts/17/scan?page=2",
-    "Goods-receipt cutover must resolve exact list, details and scan routes");
-cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?purchaseOrderId=0");
-Check(goodsReceiptsCutoverResolver.Resolve(cutoverContext.Request,
-          "GoodsReceipts", "Create",
-          new Microsoft.AspNetCore.Routing.RouteValueDictionary()) is null &&
-      new long[] { -1, 0 }.All(id =>
-          new[] { "Details", "Scan" }.All(action =>
-              goodsReceiptsCutoverResolver.Resolve(cutoverContext.Request,
-                  "GoodsReceipts", action,
-                  new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = id }) is null)),
-    "Goods-receipt cutover must reject unsafe order and receipt identifiers");
-cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?page=2");
-Check(new[]
-      {
-          "CreateScanDraft", "RecordScan", "PostDraft", "Inspect", "Reverse"
-      }.All(action =>
-          goodsReceiptsCutoverResolver.Resolve(cutoverContext.Request,
-              "GoodsReceipts", action,
-              new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 17 }) is null),
-    "Goods-receipt scan, posting, inspection and reversal mutations must stay outside presentation cutover");
-cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?page=2");
 var vendorBillsCutoverResolver = new PresentationCutoverResolver(Options.Create(
     new PresentationCutoverOptions
     {
@@ -524,35 +365,6 @@ Check(new[]
               new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 17 }) is null),
     "Vendor-bill attachments, lifecycle, extraction and accounting commands must stay outside presentation cutover");
 cutoverContext.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?page=2");
-var purchaseDocumentReversalsCutoverResolver = new PresentationCutoverResolver(Options.Create(
-    new PresentationCutoverOptions
-    {
-        AngularBasePath = "/app",
-        Surfaces = new Dictionary<string, PresentationCutoverMode>(StringComparer.OrdinalIgnoreCase)
-        {
-            ["PurchaseDocumentReversals"] = PresentationCutoverMode.AngularDefault
-        }
-    }));
-Check(purchaseDocumentReversalsCutoverResolver.Resolve(cutoverContext.Request,
-          "PurchaseDocumentReversals", "Index",
-          new Microsoft.AspNetCore.Routing.RouteValueDictionary()) ==
-      "/app/purchases/reversals?page=2" &&
-      purchaseDocumentReversalsCutoverResolver.Resolve(cutoverContext.Request,
-          "PurchaseDocumentReversals", "Details",
-          new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = 17 }) ==
-      "/app/purchases/reversals/17?page=2",
-    "Purchase-document-reversal cutover must resolve exact list and positive-ID details routes");
-Check(new long[] { -1, 0 }.All(id =>
-          purchaseDocumentReversalsCutoverResolver.Resolve(cutoverContext.Request,
-              "PurchaseDocumentReversals", "Details",
-              new Microsoft.AspNetCore.Routing.RouteValueDictionary { ["id"] = id }) is null) &&
-      purchaseDocumentReversalsCutoverResolver.Resolve(cutoverContext.Request,
-          "PurchaseDocumentReversals", "Create",
-          new Microsoft.AspNetCore.Routing.RouteValueDictionary
-          {
-              ["documentType"] = 1, ["originalDocumentId"] = 17
-          }) is null,
-    "Purchase-document-reversal create and unsafe identifiers must stay outside presentation cutover");
 var landedCostsCutoverResolver = new PresentationCutoverResolver(Options.Create(
     new PresentationCutoverOptions
     {
@@ -1968,7 +1780,7 @@ foreach (var admin in new[] { false, true })
         "Tenant Admin session projection must include every protected administration permission");
 }
 
-foreach (var controller in new[] { typeof(RolesController), typeof(ProductsController), typeof(WarehousesController) })
+foreach (var controller in new[] { typeof(RolesController), typeof(ProductsController) })
 {
     var action = controller.GetMethod("Delete")!;
     Check(action.GetCustomAttribute<HttpPostAttribute>() != null, $"Delete must require POST: {controller.Name}");
@@ -2632,6 +2444,31 @@ var expectedRetiredPresentationRoutes = new Dictionary<string, (string Route, st
     ["Suppliers:Create"] = ("/suppliers/new", "Suppliers.Create", [], null),
     ["Suppliers:Edit"] = ("/suppliers/{id}/edit", "Suppliers.Edit", [], null),
     ["InventoryScanning:Index"] = ("/inventory/scanning", "InventoryScanning.View", [], null),
+    ["LocationMovements:Index"] = ("/inventory/location-movements", "LocationMovements.View", [], null),
+    ["StockTransactions:Index"] = ("/inventory/transactions", "StockTransactions.View", [], null),
+    ["StockTransactions:Create"] = ("/inventory/stocks/adjustment", "StockTransactions.Create", [], null),
+    ["UnassignedStock:Index"] = ("/inventory/putaway", "ProductStock.View", [], null),
+    ["InventoryAdjustments:Index"] = ("/inventory/adjustments", "InventoryAdjustments.View", [], null),
+    ["InventoryAdjustments:Create"] = ("/inventory/adjustments/new", "InventoryAdjustments.Create", [], null),
+    ["InventoryAdjustments:Details"] = ("/inventory/adjustments/{id}", "InventoryAdjustments.View", [], null),
+    ["InventoryTracking:Index"] = ("/inventory/tracking", "InventoryTracking.View", [], null),
+    ["WarehouseLocations:Index"] = ("/inventory/locations", "Warehouses.View", [], null),
+    ["WarehouseLocations:Create"] = ("/inventory/locations", "Warehouses.Create", [], null),
+    ["WarehouseLocations:Edit"] = ("/inventory/locations", "Warehouses.Edit", ["/WarehouseLocations/Edit/{id:int:min(1)}"], null),
+    ["Warehouses:Index"] = ("/warehouses", "Warehouses.View", [], null),
+    ["Warehouses:Create"] = ("/warehouses", "Warehouses.Create", [], null),
+    ["Warehouses:Edit"] = ("/warehouses", "Warehouses.Edit", ["/Warehouses/Edit/{id:int:min(1)}"], null),
+    ["StockTransfers:Index"] = ("/inventory/transfers", "StockTransfers.View", [], null),
+    ["StockTransfers:Create"] = ("/inventory/transfers/new", "StockTransfers.Create", [], null),
+    ["StockTransfers:Edit"] = ("/inventory/transfers/{id}/edit", "StockTransfers.Edit", [], null),
+    ["StockTransfers:Details"] = ("/inventory/transfers/{id}", "StockTransfers.View", [], null),
+    ["GoodsReceipts:Index"] = ("/purchases/receipts", "GoodsReceipts.View", [], null),
+    ["GoodsReceipts:Create"] = ("/purchases/receipts/new?purchaseOrderId={purchaseOrderId}", "GoodsReceipts.Create", [], "purchaseOrderId"),
+    ["GoodsReceipts:Details"] = ("/purchases/receipts/{id}", "GoodsReceipts.View", [], null),
+    ["GoodsReceipts:Scan"] = ("/purchases/receipts/{id}/scan", "GoodsReceipts.Create", [], null),
+    ["PurchaseDocumentReversals:Index"] = ("/purchases/reversals", "PurchaseDocumentReversals.View", [], null),
+    ["PurchaseDocumentReversals:Details"] = ("/purchases/reversals/{id}", "PurchaseDocumentReversals.View", [], null),
+    ["PurchaseDocumentReversals:Create"] = ("/purchases/reversals/new", "PurchaseDocumentReversals.Create", [], null),
     ["Public:Index"] = ("/welcome", null, ["/"], null),
     ["Public:Pricing"] = ("/pricing", null, ["/pricing"], null)
 };
@@ -3283,10 +3120,6 @@ var stockTransferMutations = new[]
 Check(stockTransferMutations.All(name =>
         stockTransferApi.GetMethod(name)!.GetCustomAttribute<ValidateAntiForgeryTokenAttribute>() is not null),
     "Every stock-transfer mutation must require antiforgery validation");
-Check(typeof(StockTransfersController).GetConstructors().Single().GetParameters()
-        .All(parameter => !parameter.ParameterType.Name.Contains("Repository", StringComparison.Ordinal) &&
-                          !parameter.ParameterType.Name.StartsWith("UserManager", StringComparison.Ordinal)),
-    "The MVC stock-transfer compatibility surface must compose reads through the Application layer");
 var adjustment = new InventoryAdjustment("ADJ-000001", 1, null, true, "Annual count", "counter");
 adjustment.AddLine(1, 10m);
 adjustment.RecordCounts([(1, 8m)], "counter");
@@ -3303,10 +3136,6 @@ Check(adjustmentMovement.Type == StockMovementType.AdjustmentOut && adjustmentMo
 var adjustmentNumber = DocumentSequence.CreateDefault(DocumentNumberType.InventoryAdjustment);
 Check(adjustmentNumber.Preview(DateTime.Today).StartsWith("ADJ-", StringComparison.Ordinal),
     "Inventory adjustments must use centralized document numbering");
-var adjustmentsControllerIndex = typeof(InventoryAdjustmentsController).GetMethod(nameof(InventoryAdjustmentsController.Index))!;
-Check(adjustmentsControllerIndex.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
-      $"{PermissionAuthorizeAttribute.PolicyPrefix}InventoryAdjustments.View",
-    "Inventory adjustment history must require its dedicated view permission");
 var lotBalance = new InventoryTrackingBalance(1, 1, null, ProductTrackingPolicy.Lot,
     "lot-2026-a", 5m, new DateOnly(2026, 1, 1), new DateOnly(2027, 1, 1), "OPEN-1");
 Check(lotBalance.Identifier == "LOT-2026-A" && lotBalance.Quantity == 5m && lotBalance.Status == InventoryTrackingStatus.Available,
@@ -3347,34 +3176,16 @@ var serialIndex = db.Model.FindEntityType(typeof(InventoryTrackingBalance))!.Get
     .Single(index => index.IsUnique && index.GetFilter() == "[Policy] = 2");
 Check(serialIndex.Properties.Select(x => x.Name).SequenceEqual(["TenantId", nameof(InventoryTrackingBalance.ProductId), nameof(InventoryTrackingBalance.Policy), nameof(InventoryTrackingBalance.Identifier)]),
     "Serial identifiers must be globally unique per tenant product");
-var trackingControllerIndex = typeof(InventoryTrackingController).GetMethod(nameof(InventoryTrackingController.Index))!;
-Check(trackingControllerIndex.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
-      $"{PermissionAuthorizeAttribute.PolicyPrefix}InventoryTracking.View",
-    "Lot and serial traceability must require its dedicated view permission");
-var quarantineAction = typeof(InventoryTrackingController).GetMethod(nameof(InventoryTrackingController.Quarantine))!;
-Check(quarantineAction.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
-      $"{PermissionAuthorizeAttribute.PolicyPrefix}InventoryTracking.ManageQuarantine" &&
-      PermissionDefinitions.All.Any(x => x.Name == "InventoryTracking.ManageQuarantine"),
-    "Tracking quarantine changes must require a dedicated permission");
 var recall = new InventoryRecall("rcl-test", 1, "lot-2026-a", "Quality alert", "creator");
 Check(recall.Reference == "RCL-TEST" && recall.Identifier == "LOT-2026-A" && recall.Status == InventoryRecallStatus.Active,
     "Inventory recalls must normalize their business identity and start active");
 recall.Close("Investigation completed", "closer");
 Check(recall.Status == InventoryRecallStatus.Closed && recall.ClosedAt.HasValue,
     "Inventory recalls must retain an auditable explicit close transition");
-var recallAction = typeof(InventoryTrackingController).GetMethod(nameof(InventoryTrackingController.CreateRecall))!;
-Check(recallAction.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
-      $"{PermissionAuthorizeAttribute.PolicyPrefix}InventoryTracking.ManageRecall" &&
-      PermissionDefinitions.All.Any(x => x.Name == "InventoryTracking.ManageRecall"),
-    "Inventory recall creation must require its dedicated permission");
 var communication = new InventoryRecallCommunication(1, "Affected customer", "0790000000",
     RecallCommunicationChannel.Phone, RecallCommunicationOutcome.Reached, "Customer acknowledged recall", "agent");
 Check(communication.Channel == RecallCommunicationChannel.Phone && communication.Outcome == RecallCommunicationOutcome.Reached,
     "Recall communication entries must preserve immutable channel, outcome and audit facts");
-var communicationAction = typeof(InventoryTrackingController).GetMethod(nameof(InventoryTrackingController.RecordRecallCommunication))!;
-Check(communicationAction.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
-      $"{PermissionAuthorizeAttribute.PolicyPrefix}InventoryTracking.ManageRecall",
-    "Recall communication logging must require recall management permission");
 var laterExpiry = new InventoryTrackingBalance(1, 1, 2, ProductTrackingPolicy.Lot,
     "LOT-LATER", 8m, null, DateOnly.FromDateTime(DateTime.Today.AddDays(20)), "RECEIPT-1");
 var earlierExpiry = new InventoryTrackingBalance(1, 1, 1, ProductTrackingPolicy.Lot,
@@ -3428,13 +3239,6 @@ CheckArgumentThrows(() => new PutawayRule(1, 2, 3, 4, 10),
 productPutawayRule.SetActive(false);
 Check(!productPutawayRule.IsActive,
     "Putaway rules must support an explicit reversible active-state transition");
-var createPutawayRuleAction = typeof(UnassignedStockController).GetMethod(nameof(UnassignedStockController.CreateRule))!;
-var activatePutawayRuleAction = typeof(UnassignedStockController).GetMethod(nameof(UnassignedStockController.SetRuleActive))!;
-Check(createPutawayRuleAction.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
-      $"{PermissionAuthorizeAttribute.PolicyPrefix}ProductStock.Edit" &&
-      activatePutawayRuleAction.GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
-      $"{PermissionAuthorizeAttribute.PolicyPrefix}ProductStock.Edit",
-    "Putaway-rule administration must require stock edit permission");
 var replenishmentRule = new ReplenishmentRule(1, 2, 3, 5m, 20m, 2m, 7);
 Check(replenishmentRule.MinimumQuantity == 5m && replenishmentRule.MaximumQuantity == 20m &&
       replenishmentRule.PreferredSourceWarehouseId == 3,
@@ -4076,31 +3880,11 @@ Check(scannedDraft.Status == GoodsReceiptStatus.Draft && scannedDraft.Lines.Sing
     "Barcode receiving must aggregate a draft line and preserve tenant-owned idempotent scan evidence");
 CheckArgumentThrows(() => InventoryScanResolver.ValidateGoodsReceiptIdempotencyKey(InventoryScanResolver.NewPutawayIdempotencyKey()),
     "Goods receipt scans must reject retry keys from another scanning workflow");
-var goodsReceiptController = typeof(GoodsReceiptsController);
-var goodsReceiptCreateAction = goodsReceiptController.GetMethod(nameof(GoodsReceiptsController.Create), [typeof(CreateGoodsReceiptDto)])!;
-Check(goodsReceiptController.GetMethod(nameof(GoodsReceiptsController.Scan))!
-          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
-      $"{PermissionAuthorizeAttribute.PolicyPrefix}GoodsReceipts.Create" &&
-      goodsReceiptController.GetMethod(nameof(GoodsReceiptsController.RecordScan))!
-          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
-      $"{PermissionAuthorizeAttribute.PolicyPrefix}GoodsReceipts.Create" &&
-      goodsReceiptController.GetMethod(nameof(GoodsReceiptsController.PostDraft))!
-          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
-      $"{PermissionAuthorizeAttribute.PolicyPrefix}GoodsReceipts.Create" &&
-      goodsReceiptController.GetMethod(nameof(GoodsReceiptsController.Inspect))!
-          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
-      $"{PermissionAuthorizeAttribute.PolicyPrefix}GoodsReceipts.Inspect" &&
-      goodsReceiptController.GetMethod(nameof(GoodsReceiptsController.PutAway))!
-          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
-      $"{PermissionAuthorizeAttribute.PolicyPrefix}GoodsReceipts.PutAway",
-    "Receipt capture, quality inspection and storage must enforce separate server-side command permissions");
 var activeReceiptIndex = db.Model.FindEntityType(typeof(GoodsReceipt))!.GetIndexes()
     .Single(index => index.Properties.Select(property => property.Name)
         .SequenceEqual(["TenantId", nameof(GoodsReceipt.PurchaseOrderId)]));
 Check(activeReceiptIndex.IsUnique && activeReceiptIndex.GetFilter() == "[Status] IN (5, 6)",
     "Only one staged receipt may await inspection or storage for a purchase order");
-Check(goodsReceiptCreateAction.GetParameters().Single().GetCustomAttribute<BindAttribute>()?.Prefix == "Form",
-    "Manual goods-receipt submission must bind the nested Form fields posted by the create page");
 var landedStock = new ProductStock(10, 1);
 landedStock.Receive(4m, 10m);
 var landedMovement = landedStock.AddLandedCost(8m);
@@ -4235,14 +4019,6 @@ Check(receiptReversalMovement.SourceDocumentType == "PurchaseDocumentReversal" &
     "Goods receipt reversal must create dedicated idempotent outbound movement evidence");
 Check(DocumentSequence.CreateDefault(DocumentNumberType.PurchaseDocumentReversal).Preview(DateTime.Today).StartsWith("PRV-"),
     "Purchase document reversals must use an independent centralized sequence");
-var reversalController = typeof(PurchaseDocumentReversalsController);
-Check(reversalController.GetMethod(nameof(PurchaseDocumentReversalsController.Index))!
-          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
-      $"{PermissionAuthorizeAttribute.PolicyPrefix}PurchaseDocumentReversals.View" &&
-      reversalController.GetMethod(nameof(PurchaseDocumentReversalsController.Create), [typeof(CreatePurchaseDocumentReversalDto)])!
-          .GetCustomAttribute<PermissionAuthorizeAttribute>()?.Policy ==
-      $"{PermissionAuthorizeAttribute.PolicyPrefix}PurchaseDocumentReversals.Create",
-    "Purchase document reversal history and posting must use separate server-side permissions");
 var matchingSettings = new PurchaseMatchingSettings(2m, 3m);
 Check(matchingSettings.QuantityTolerancePercent == 2m && matchingSettings.PriceTolerancePercent == 3m,
     "Purchase matching settings must preserve independent quantity and price tolerances");
@@ -4899,15 +4675,6 @@ using (var telemetryListener = new MeterListener())
         "HTTP 500 responses must emit a testable operational alert log");
 }
 
-var warehouseLocationsController = typeof(WarehouseLocationsController);
-var warehouseLocationConstructorParameters = warehouseLocationsController.GetConstructors().Single()
-    .GetParameters()
-    .Select(parameter => parameter.ParameterType)
-    .ToArray();
-Check(!warehouseLocationConstructorParameters.Any(type =>
-        typeof(MiniStore.Domain.Interfaces.IWarehouseRepository).IsAssignableFrom(type) ||
-        typeof(MiniStore.Domain.Interfaces.IStorageLocationRepository).IsAssignableFrom(type)),
-    "Warehouse location presentation must not access warehouse or location repositories directly");
 Check(typeof(WarehouseInventorySearchDto).GetProperty(nameof(WarehouseInventorySearchDto.Locations))!
         .PropertyType == typeof(List<StorageLocationRowDto>),
     "Warehouse location search must project domain locations to application DTOs");

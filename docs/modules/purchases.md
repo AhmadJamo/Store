@@ -28,6 +28,10 @@ The implemented workflow described below is a direct supplier invoice and invent
 four user-facing Razor views. Their protected legacy GET/HEAD entry points now navigate to the established Angular
 workspaces; legacy mutations are never redirected or replayed. Payment posting, replenishment calculation, permissions,
 antiforgery, Application services, inventory and accounting behavior are unchanged.
+`MOD-031B` physically retires GoodsReceipts and PurchaseDocumentReversals MVC presentation. Protected list/create/
+details/scan reads navigate to the established Angular workspaces, while legacy commands return 405. Receipt inspection,
+put-away, posting, idempotency, reversal, valuation and accounting authority remain in the authenticated APIs and existing
+Application services.
 
 PUR-005 context ownership and accounting gates are accepted in `docs/PURCHASE_ARCHITECTURE_ALIGNMENT.md`: Supplier remains the current counterparty, Purchasing owns requests/sourcing/orders, Inventory owns receipt stock effects, and Accounting/AP owns bills, payables and payments. These are target boundaries, not implemented new documents.
 

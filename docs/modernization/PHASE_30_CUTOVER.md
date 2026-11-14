@@ -222,3 +222,11 @@ The exact MOD-030Y cohort retired ten MVC controllers and 21 user-facing views t
 to Angular; old mutations are not redirected or replayed. APIs, Application services, permissions, antiforgery and domain
 authority remain. Release passed with 1,725 regression checks, 242/242 Angular tests and bundle/browser gates. Inventory is
 55 controllers, 324 actions and 170 Razor files.
+
+## MOD-031B inventory/warehouse retirement — completed 2026-11-14
+
+LocationMovements, StockTransactions, UnassignedStock, InventoryAdjustments, InventoryTracking, WarehouseLocations,
+Warehouses, StockTransfers, GoodsReceipts and PurchaseDocumentReversals retired together. Twenty-five protected reads
+resolve to Angular and all old MVC commands terminate without redirect/replay. APIs, Application services, permissions,
+antiforgery, inventory valuation and accounting authority remain unchanged. Release passed with 1,656 checks, 242/242
+Angular tests and bundle/browser gates. Inventory is 45 controllers, 263 actions and 143 Razor files.

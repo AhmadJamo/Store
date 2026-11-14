@@ -700,9 +700,8 @@ MiniStore.Application/Dtos/Inventory/Warehouses/CreateStorageLocationDto.cs
 MiniStore.Infrastructure/Repositories/Inventory/StorageLocationRepository.cs
 MiniStore.Infrastructure/Persistence/Configurations/Inventory/StorageLocationConfiguration.cs
 MiniStore.Infrastructure/Migrations/AppDbContextModelSnapshot.cs
-MiniStore.Web/Controllers/Inventory/WarehouseLocationsController.cs
-MiniStore.Web/Views/WarehouseLocations/Index.cshtml
-MiniStore.Web/Views/WarehouseLocations/Create.cshtml
+MiniStore.Web/Controllers/Api/V1/WarehouseLocationsApiController.cs
+MiniStore Front-End/src/app/features/inventory/warehouse-locations-page.*
 MiniStore.Application/Permissions/PermissionDefinitions.cs
 MiniStore.Web/Resources/SharedResource.ar.resx
 tests/SecurityRegression/Program.cs
@@ -810,8 +809,8 @@ MiniStore.Application/Services/Inventory/StockTransferService.cs
 MiniStore.Domain/Interfaces/Inventory/IStockTransferRepository.cs
 MiniStore.Infrastructure/Repositories/Inventory/StockTransferRepository.cs
 MiniStore.Infrastructure/Persistence/Configurations/Inventory/StockTransfer*.cs
-MiniStore.Web/Controllers/Inventory/StockTransfersController.cs
-MiniStore.Web/Views/StockTransfers/Details.cshtml
+MiniStore.Web/Controllers/Api/V1/StockTransfersApiController.cs
+MiniStore Front-End/src/app/features/inventory/stock-transfers-page.*
 tests and stock-transfer/inventory docs
 ```
 
@@ -856,8 +855,8 @@ Infrastructure/.../Reservation*.cs
 
 Domain/Entities/Inventory/Adjustments/*
 Application/.../InventoryAdjustment*.cs
-Web/Controllers/Inventory/InventoryAdjustmentsController.cs
-Web/Views/InventoryAdjustments/*
+MiniStore.Web/Controllers/Api/V1/InventoryAdjustmentsApiController.cs
+MiniStore Front-End/src/app/features/inventory/inventory-adjustments-*
 
 Domain/Entities/Inventory/Tracking/{InventoryLot,InventorySerial}.cs
 Application/.../Lots/* and Serials/*

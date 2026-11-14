@@ -156,3 +156,12 @@ MVC controllers, Razor views and their active cutover registrations; the authent
 to the existing Application services. The retired-route catalog preserves the 21 protected GET/HEAD entry points,
 validates positive identifiers before Angular navigation and never redirects or replays legacy mutations. This cohort
 does not authorize identity, platform, subscription or session-boundary retirement.
+
+## Inventory and warehouse cohort — MOD-031B
+
+The owner authorized selecting and executing the next ten-controller cohort without another approval pause. The bounded
+cohort joins inventory operations, warehouse masters, transfers, receiving and controlled purchase reversal because all
+ten Angular/API flows already delegate to their existing Application services and share the same permission/antiforgery
+model. Only MVC presentation was removed. Twenty-five protected GET/HEAD routes remain for navigation compatibility;
+legacy mutations end at 405 and are never replayed. Identity, Platform, subscription and public-token boundaries remain
+outside this decision.

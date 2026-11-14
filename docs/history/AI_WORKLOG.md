@@ -1,5 +1,12 @@
 # AI Work Log
 
+- 2026-11-14: Completed `MOD-031A` and `MOD-031B`. Selected and retired the ten-controller inventory/warehouse cohort:
+  LocationMovements, StockTransactions, UnassignedStock, InventoryAdjustments, InventoryTracking, WarehouseLocations,
+  Warehouses, StockTransfers, GoodsReceipts and PurchaseDocumentReversals. Removed 25 user-facing views and ten page
+  models; 25 protected reads now resolve to Angular and representative old mutations return 405. Release passed with
+  1,656 checks, 242/242 Angular tests and bundle/browser gates. Inventory is 45 controllers, 263 actions, 143 Razor files
+  and 127 views.
+
 - 2026-11-14: Completed `MOD-030Z`, retiring the ten controllers selected by MOD-030Y plus 21 user-facing Razor views.
   Protected legacy reads now resolve to Angular; APIs, Application services, permissions, antiforgery and accounting/
   inventory authority remain. Release passed cleanly with 1,725 regression checks, 242/242 Angular tests and bundle/browser

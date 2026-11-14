@@ -89,6 +89,11 @@ MOD-030Z; active inventory remains 65 controllers, 373 actions and 191 Razor fil
 `MOD-030Z` then completed that exact ten-controller cohort. Twenty-one presentation GET actions and 21 user-facing views
 were retired while APIs and Application authority remained unchanged. Active inventory is now 55 MVC controllers, 324
 actions and 170 Razor files.
+MOD-031A selected the next connected inventory/warehouse cohort, and the owner authorized immediate execution without
+another approval pause. MOD-031B then retired its ten MVC controllers and 25 user-facing views while preserving the
+authenticated Angular APIs and Application/domain authority. Twenty-five protected legacy GET/HEAD routes remain as
+navigation compatibility only; old mutations return 405. Active inventory is now 45 controllers, 263 actions, 143 Razor
+files and 127 user-facing views.
 
 UX-009 adds permission-aware Purchasing, Sales and Accounting hubs with complete operational-route discovery. UX-010
 projects the tenant chart of accounts as an expandable hierarchy and adds a permission-protected, repository-paged journal

@@ -2,9 +2,9 @@
 
 > Generated from source by scripts/generate-mvc-migration-registry.ps1. Do not edit rows manually.
 
-- Presentation counterparts covered: 54.
+- Presentation counterparts covered: 44.
 - Mutation-only MVC compatibility boundaries: 1 (Language).
-- Physically retired MVC presentation actions: 47 across 27 surfaces (AnalyticsCenter, AuditEvents, CustomerPayments, GoodsReceiptReturns, InventoryBalances, InventoryInsights, InventoryReconciliation, InventoryReservations, InventoryScanning, JournalEntries, ProductAttributes, ProductCategories, ProductStocks, ProductTemplates, Public, PurchaseAccountingReconciliation, PurchaseApprovalRules, PurchaseReplenishment, PurchaseServiceAcceptances, Recipes, Replenishment, SalesApprovalRules, SalesDeliveries, StockMovements, SupplierCreditNotes, SupplierPayments, Suppliers); legacy redirects remain outside the reversible cutover catalog.
+- Physically retired MVC presentation actions: 72 across 37 surfaces (AnalyticsCenter, AuditEvents, CustomerPayments, GoodsReceiptReturns, GoodsReceipts, InventoryAdjustments, InventoryBalances, InventoryInsights, InventoryReconciliation, InventoryReservations, InventoryScanning, InventoryTracking, JournalEntries, LocationMovements, ProductAttributes, ProductCategories, ProductStocks, ProductTemplates, Public, PurchaseAccountingReconciliation, PurchaseApprovalRules, PurchaseDocumentReversals, PurchaseReplenishment, PurchaseServiceAcceptances, Recipes, Replenishment, SalesApprovalRules, SalesDeliveries, StockMovements, StockTransactions, StockTransfers, SupplierCreditNotes, SupplierPayments, Suppliers, UnassignedStock, WarehouseLocations, Warehouses); legacy redirects remain outside the reversible cutover catalog.
 - Presentation default: AngularDefault for all presentation surfaces; mutation-only MVC compatibility: Language.
 - Evidence baseline: generated MVC view/action inventory, verified Angular route, controller permission references and acceptance gate.
 - Runtime dual-run samples and cutover rehearsal results are appended by the MOD-029 acceptance workflow; this static matrix performs no mutation.
@@ -22,13 +22,9 @@
 | Customers | /Customers | /customers | Read/write | Customers.Archive, Customers.Create, Customers.Edit, Customers.View | Standard | 4 view(s); 14 action(s); route/source gate |
 | Dashboard | /Dashboard | / | Read/write | Public/session boundary | Standard | 1 view(s); 1 action(s); route/source gate |
 | DocumentDesigns | /DocumentDesigns | /settings/document-designs | Read/write | Administration.Access | Standard | 3 view(s); 7 action(s); route/source gate |
-| GoodsReceipts | /GoodsReceipts | /purchases/receipts | Read/write | GoodsReceipts.Create, GoodsReceipts.Inspect, GoodsReceipts.PutAway, GoodsReceipts.View | Standard | 4 view(s); 10 action(s); route/source gate |
 | Home | / | / | Read/write | Public/session boundary | Standard | 1 view(s); 1 action(s); route/source gate |
-| InventoryAdjustments | /InventoryAdjustments | /inventory/adjustments | Read/write | InventoryAdjustments.Approve, InventoryAdjustments.Cancel, InventoryAdjustments.Count, InventoryAdjustments.Create, InventoryAdjustments.Post, InventoryAdjustments.View | Inventory | 3 view(s); 8 action(s); route/source gate |
-| InventoryTracking | /InventoryTracking | /inventory/tracking | Read/write | InventoryTracking.ManageQuarantine, InventoryTracking.ManageRecall, InventoryTracking.Open, InventoryTracking.View | Inventory | 1 view(s); 7 action(s); route/source gate |
 | LandedCosts | /LandedCosts | /purchases/landed-costs | Read/write | LandedCosts.Create, LandedCosts.View | Financial | 3 view(s); 1 action(s); route/source gate |
 | Language | /Language/Set | Not applicable (mutation-only) | Mutation-only compatibility | Public/session boundary | Identity/tenant | 0 view(s); 1 POST action(s); antiforgery/source gate |
-| LocationMovements | /LocationMovements | /inventory/location-movements | Read/write | LocationMovements.Create, LocationMovements.View | Inventory | 1 view(s); 2 action(s); route/source gate |
 | PaymentMethods | /PaymentMethods | /products/catalog-masters | Read/write | Administration.Access | Financial | 2 view(s); 3 action(s); route/source gate |
 | Platform/Platform | /platform | /platform-control, /platform-management | Read/write | Public/session boundary | Identity/tenant | 7 view(s); 11 action(s); route/source gate |
 | Platform/PlatformAccount | /platform/account | /platform-login | Read/write | Public/session boundary | Identity/tenant | 1 view(s); 3 action(s); route/source gate |
@@ -37,7 +33,6 @@
 | Products | /Products | /products | Read/write | Products.Create, Products.Delete, Products.Edit, Products.View | Standard | 3 view(s); 6 action(s); route/source gate |
 | PurchaseAgreements | /PurchaseAgreements | /purchases/agreements | Read/write | PurchaseAgreements.Activate, PurchaseAgreements.Cancel, PurchaseAgreements.Create, PurchaseAgreements.Release, PurchaseAgreements.View | Standard | 3 view(s); 4 action(s); route/source gate |
 | PurchaseAnalytics | /PurchaseAnalytics | /purchases/analytics | Read-only | PurchaseAnalytics.View | Standard | 1 view(s); 1 action(s); route/source gate |
-| PurchaseDocumentReversals | /PurchaseDocumentReversals | /purchases/reversals | Read/write | PurchaseDocumentReversals.Create, PurchaseDocumentReversals.View | Financial | 3 view(s); 4 action(s); route/source gate |
 | PurchaseOrders | /PurchaseOrders | /purchases/orders | Read/write | PurchaseOrders.Approve, PurchaseOrders.Cancel, PurchaseOrders.Close, PurchaseOrders.ConfigureFulfillment, PurchaseOrders.Confirm, PurchaseOrders.Create, PurchaseOrders.RecordDirectDelivery, PurchaseOrders.RecordSupplierConfirmation, PurchaseOrders.Reopen, PurchaseOrders.View | Standard | 2 view(s); 11 action(s); route/source gate |
 | PurchaseRequests | /PurchaseRequests | /purchases/requests | Read/write | PurchaseRequests.Approve, PurchaseRequests.Cancel, PurchaseRequests.Create, PurchaseRequests.Reject, PurchaseRequests.Submit, PurchaseRequests.View | Standard | 3 view(s); 6 action(s); route/source gate |
 | PurchaseReturns | /PurchaseReturns | /purchases/legacy-returns | Read/write | PurchaseReturns.Create, PurchaseReturns.View | Standard | 3 view(s); 4 action(s); route/source gate |
@@ -52,8 +47,6 @@
 | SalesQuotationTemplates | /SalesQuotationTemplates | /sales/quotation-templates | Read/write | SalesQuotationTemplates.Manage, SalesQuotationTemplates.View | Standard | 3 view(s); 7 action(s); route/source gate |
 | SalesReturns | /SalesReturns | /sales/legacy-returns | Read/write | SalesReturns.Create, SalesReturns.View | Standard | 3 view(s); 4 action(s); route/source gate |
 | Settings | /Settings | /settings | Read/write | Administration.Access | Standard | 16 view(s); 36 action(s); route/source gate |
-| StockTransactions | /StockTransactions | /inventory/transactions | Read/write | StockTransactions.Create, StockTransactions.View | Inventory | 2 view(s); 3 action(s); route/source gate |
-| StockTransfers | /StockTransfers | /inventory/transfers | Read/write | StockTransfers.Approve, StockTransfers.Cancel, StockTransfers.Create, StockTransfers.Edit, StockTransfers.Post, StockTransfers.Reject, StockTransfers.Submit, StockTransfers.View | Inventory | 4 view(s); 12 action(s); route/source gate |
 | Subscription | /Subscription | /subscription | Read/write | Public/session boundary | Identity/tenant | 2 view(s); 2 action(s); route/source gate |
 | SupplierCommunications | /SupplierCommunications | /purchases/communications/prepare | Read/write | SupplierCommunications.Prepare, SupplierCommunications.RecordActivity, SupplierCommunications.View | Standard | 1 view(s); 2 action(s); route/source gate |
 | SupplierIntegrations | /SupplierIntegrations | /purchases/integrations | Read/write | SupplierIntegrations.Manage, SupplierIntegrations.Queue, SupplierIntegrations.Retry, SupplierIntegrations.View | Standard | 4 view(s); 7 action(s); route/source gate |
@@ -61,8 +54,5 @@
 | SupplierPurchasing | /SupplierPurchasing | /purchases/supplier-terms | Read/write | Purchases.SupplierTerms.Manage, Purchases.SupplierTerms.View | Standard | 5 view(s); 14 action(s); route/source gate |
 | SupplierQuotations | /SupplierQuotations | /purchases/sourcing | Read/write | SupplierQuotations.Award, SupplierQuotations.Create, SupplierQuotations.View | Standard | 2 view(s); 2 action(s); route/source gate |
 | TaxRates | /TaxRates | /products/catalog-masters | Read/write | Administration.Access | Standard | 2 view(s); 3 action(s); route/source gate |
-| UnassignedStock | /UnassignedStock | /inventory/putaway | Read/write | ProductStock.Edit, ProductStock.View | Inventory | 1 view(s); 4 action(s); route/source gate |
 | Users | /Users | /users | Read/write | Users.Create, Users.View | Standard | 2 view(s); 3 action(s); route/source gate |
 | VendorBills | /VendorBills | /purchases/bills | Read/write | VendorBills.Approve, VendorBills.Cancel, VendorBills.Create, VendorBills.ManageAttachments, VendorBills.OverrideMatch, VendorBills.Post, VendorBills.ReviewExtraction, VendorBills.View | Financial | 3 view(s); 11 action(s); route/source gate |
-| WarehouseLocations | /WarehouseLocations | /inventory/locations | Read/write | Warehouses.Create, Warehouses.Edit, Warehouses.View | Inventory | 3 view(s); 5 action(s); route/source gate |
-| Warehouses | /Warehouses | /warehouses | Read/write | Warehouses.Create, Warehouses.Delete, Warehouses.Edit, Warehouses.View | Inventory | 3 view(s); 6 action(s); route/source gate |

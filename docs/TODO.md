@@ -377,6 +377,8 @@ The ERP SaaS Foundation Blueprint is imported as a non-authoritative planning re
 - MOD-030Y completed the non-destructive audit and named the first ten-controller cohort. MOD-030Z is approved to execute
   exactly those ten surfaces together; identity, subscription and Platform boundaries remain excluded.
 - MOD-030Z completed the first ten-controller retirement as one cohort; APIs/services and accounting/inventory authority remain.
+- MOD-031A selected the next inventory/warehouse cohort and MOD-031B completed its ten-controller retirement. Twenty-five
+  protected reads remain as Angular navigation compatibility; old mutations return 405. Inventory is 45/263/143.
 - UX-016 recurring-journal templates and controlled runs is complete with Draft-only manual execution. UX-017 bank-statement
   reconciliation is proposed and requires owner approval before adding statement import and matching records.
 - UX-009 navigation completeness is complete: 72 registered destinations and 41/41 operational routes are covered through

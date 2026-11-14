@@ -559,3 +559,13 @@ largest underrepresented modules; production deployment readiness and physical M
 - Retained authenticated APIs, Application services, permissions, antiforgery and all accounting/inventory/domain authority.
 - Release passed cleanly with 1,725 regression checks, 242/242 Angular tests and bundle/browser gates.
 - Active inventory is 55 MVC controllers, 324 actions, 170 Razor files and 152 user-facing views.
+
+## MOD-031B — inventory and warehouse ten-controller retirement — COMPLETED 2026-11-14
+
+- Retired LocationMovements, StockTransactions, UnassignedStock, InventoryAdjustments, InventoryTracking,
+  WarehouseLocations, Warehouses, StockTransfers, GoodsReceipts and PurchaseDocumentReversals.
+- Removed ten MVC controllers, 25 user-facing Razor views and ten page-model companions.
+- Added 25 permission-preserving retired GET/HEAD routes; legacy mutations return 405 and are never replayed.
+- Preserved authenticated Angular APIs, Application services, antiforgery, UnitOfWork and inventory/accounting authority.
+- Release passed cleanly with 1,656 regression checks, 242/242 Angular tests and bundle/browser gates.
+- Active inventory is 45 MVC controllers, 263 actions, 143 Razor files and 127 user-facing views.

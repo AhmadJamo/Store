@@ -31,17 +31,12 @@ CustomerReturnRequests|/sales/return-requests
 Customers|/customers
 Dashboard|/
 DocumentDesigns|/settings/document-designs
-GoodsReceipts|/purchases/receipts
 Home|/
-InventoryAdjustments|/inventory/adjustments
-InventoryTracking|/inventory/tracking
 LandedCosts|/purchases/landed-costs
-LocationMovements|/inventory/location-movements
 PaymentMethods|/products/catalog-masters
 Products|/products
 PurchaseAgreements|/purchases/agreements
 PurchaseAnalytics|/purchases/analytics
-PurchaseDocumentReversals|/purchases/reversals
 PurchaseOrders|/purchases/orders
 PurchaseRequests|/purchases/requests
 PurchaseReturns|/purchases/legacy-returns
@@ -56,8 +51,6 @@ SalesQuotations|/sales/quotations
 SalesQuotationTemplates|/sales/quotation-templates
 SalesReturns|/sales/legacy-returns
 Settings|/settings
-StockTransactions|/inventory/transactions
-StockTransfers|/inventory/transfers
 Subscription|/subscription
 SupplierCommunications|/purchases/communications/prepare
 SupplierIntegrations|/purchases/integrations
@@ -65,11 +58,8 @@ SupplierPortal|/supplier-portal/:token
 SupplierPurchasing|/purchases/supplier-terms
 SupplierQuotations|/purchases/sourcing
 TaxRates|/products/catalog-masters
-UnassignedStock|/inventory/putaway
 Users|/users
 VendorBills|/purchases/bills
-WarehouseLocations|/inventory/locations
-Warehouses|/warehouses
 Platform/Platform|/platform-control,/platform-management
 Platform/PlatformAccount|/platform-login
 Platform/PlatformAuditEvents|/platform-audit
@@ -488,7 +478,7 @@ $retirementLines.Add('| R4 | Declared mutation-only compatibility surface. | Pre
 $retirementLines.Add('')
 $retirementLines.Add('## Completed physical retirement cohorts')
 $retirementLines.Add('')
-$retirementLines.Add('Physical retirement cohorts through MOD-030X removed the initial inventory, accounting, public, analytics, recipe, catalog and approval-rule presentations. MOD-030Z then retired SupplierPayments, CustomerPayments, PurchaseReplenishment, ProductAttributes, ProductStocks, SalesDeliveries, ProductTemplates, Replenishment, Suppliers and InventoryScanning as one ten-controller cohort. Their controller actions, Razor views and reversible cutover entries are gone; protected GET/HEAD routes retain permission policies, while exact `/` and `/pricing` redirects are anonymous. Mapped redirects preserve queries; retired POST/download actions are not redirected.')
+$retirementLines.Add('Physical retirement cohorts through MOD-030Z removed the initial inventory, accounting, public, analytics, recipe, catalog, approval-rule and first ten-controller presentations. MOD-031B then retired LocationMovements, StockTransactions, UnassignedStock, InventoryAdjustments, InventoryTracking, WarehouseLocations, Warehouses, StockTransfers, GoodsReceipts and PurchaseDocumentReversals as one inventory/warehouse cohort. Their MVC controllers, Razor views and reversible cutover entries are gone; protected GET/HEAD routes retain permission policies, while exact `/` and `/pricing` redirects are anonymous. Mapped redirects preserve queries; retired POST/download actions are not redirected.')
 $retirementLines.Add('')
 $retirementLines.Add('| Retired MVC surface | Angular destination | Required permission |')
 $retirementLines.Add('|---|---|---|')
@@ -546,7 +536,7 @@ $retirementLines.Add('6. Run Release, regression, generated-inventory, Angular a
 $retirementLines.Add('')
 $retirementLines.Add('## Current outcome')
 $retirementLines.Add('')
-$retirementLines.Add('Retirement cohorts through MOD-030Z are complete. Forty-seven MVC presentation GET actions across twenty-seven surfaces and forty-seven Razor views are physically retired. Public exact `/` and `/pricing` routes are anonymous; other retired GET/HEAD routes retain their original permission policies and preserve queries. Retired MVC POST/download actions are not redirected or replayed; Angular continues through authenticated, permission-protected and antiforgery-protected APIs. No additional deletion is approved outside the next named ten-controller audit.')
+$retirementLines.Add('Retirement cohorts through MOD-031B are complete. Seventy-two MVC presentation GET actions across thirty-seven surfaces and seventy-two Razor views are physically retired. Public exact `/` and `/pricing` routes are anonymous; other retired GET/HEAD routes retain their original permission policies and preserve queries. Retired MVC POST/download actions are not redirected or replayed; Angular continues through authenticated, permission-protected and antiforgery-protected APIs. No additional deletion is approved outside the next named ten-controller audit.')
 
 New-Item -ItemType Directory -Force -Path (Split-Path -Parent $retirementOutput) | Out-Null
 $retirementLines | Set-Content -Path $retirementOutput -Encoding utf8
