@@ -1,7 +1,7 @@
 # MiniStore project context
 > Status: PARTIALLY IMPLEMENTED  
 > Source of truth: Code  
-> Last reviewed: 2026-11-13
+> Last reviewed: 2026-11-14
 
 The Angular UI/UX modernization program under `UI_UX_MODERNIZATION_PLAN.md` is complete for its approved presentation
 scope through UX-015:
@@ -107,6 +107,13 @@ MOD-031D retired the next approved fifteen operational MVC/Razor surfaces after 
 download boundaries. Forty-seven protected reads preserve navigation; writes return 405 and downloads remain API-only.
 The active inventory is now 15 MVC surfaces, 91 actions, 50 Razor control rows and 45 views.
 
+`MOD-031E..H` supersede every earlier active-inventory snapshot above. Users/Roles were the final ordinary MVC
+presentation cohort. The generated source inventory now reports zero ordinary MVC presentation surfaces, 13 intentional
+runtime boundaries and one explicit mutation-only Language endpoint. The retained controllers own identity/session,
+onboarding, settings/download rollback, subscription, supplier-token or isolated Platform responsibilities; they are not
+unfinished Angular pages. `Test-MvcPresentationInvariant.ps1` is part of the standard modernization gate and fails if an
+ordinary MVC business page returns or the reviewed boundary allowlist drifts. The MOD-031 retirement stream is closed.
+
 UX-009 adds permission-aware Purchasing, Sales and Accounting hubs with complete operational-route discovery. UX-010
 projects the tenant chart of accounts as an expandable hierarchy and adds a permission-protected, repository-paged journal
 directory. UX-011 adds server-authored financial reports. UX-012 adds independently permissioned balanced manual Drafts,
@@ -118,17 +125,20 @@ close/reopen execution with server-side readiness blocking, separate permissions
 it deliberately does not create automatic closing journals or modify posted entries.
 
 ## Project identity
-MiniStore is a server-rendered ASP.NET Core MVC store-management application under incremental Angular modernization. It targets .NET 10, uses EF Core 10 with SQL Server, ASP.NET Core Identity, Razor views, and a Domain/Application/Infrastructure/Web layered solution. The existing Web host now includes a protected versioned internal API foundation; no separate public API project is present.
+MiniStore is an Angular-presented ERP workspace hosted by an ASP.NET Core application. It targets .NET 10 and Angular 22,
+uses EF Core 10 with SQL Server and ASP.NET Core Identity, and follows a Domain/Application/Infrastructure/Web layered
+solution. `MiniStore.Web` remains the same-origin composition, API, authentication and compatibility host; Razor is limited
+to the 13 reviewed runtime boundaries rather than ordinary business presentation. No separate public API project exists.
 
 ## Current development stage
 The repository implements an operational slice for catalog, warehouses, stock, suppliers, purchases, sales (wholesale and POS), configurable discounts, stock transfers, users/roles, settings and shared-database SaaS tenancy. Public signup, pricing, plans, trials, subscription access, promotion codes and a separate platform-owner control center are implemented. Product classification, generated internal codes, advanced catalog search, managed measurement units, immutable prepared-product recipes, automatic ingredient consumption and controlled kitchen-negative stock are also implemented. It is not yet a complete accounting ERP and does not yet integrate an external payment provider.
 
 The WMS track is temporarily paused after implementing reconciliation, logistics, movements, balances, reservations, counts, lot/serial execution, removal/putaway policies, replenishment transfer/purchase-demand planning, inventory insights and safe scan workflows. The additive procure-to-pay evolution is implemented through PUR-280. Advanced purchasing analytics expose filterable spend, delay, confirmation, price-variance, supplier, seasonal, buyer-workload and open-exception evidence with source definitions and document links. Creation of new Legacy Direct Purchases is retired; historical records remain visible and users are directed to Purchase Requests for new activity.
 
-The imported ERP SaaS Foundation Blueprint remains a proposed reference. The project-control audit provides current control evidence. CUS-010/020/030A/030B provide the professional Customer master and receivable policy. SAL-020A/B through SAL-100D provide pricing through collection and controlled returns/credits. SAL-110 adds tenant-configurable order controls and sequential approvals. SAL-120A/B add versioned quotation templates, central organization identity, a reusable document designer/PDF engine and frozen sent-document snapshots. SAL-130A now adds a reusable provider-based Analytics Center with personal/shared workspaces and Sales/Purchasing providers. Angular functional migration, `MOD-029` dual-run acceptance and reversible runtime cutover through `MOD-030E` are complete. All 81 presentation surfaces are committed `AngularDefault` under `/app`; the remaining Language endpoint is explicitly classified as a POST-only, antiforgery-protected MVC compatibility boundary rather than a presentation gap. Physical MVC retirement remains a separate approval-gated phase. Migration source/model and the local Demo database are reconciled through migration 136. Legacy Sale/POS business behavior remains unchanged.
+The imported ERP SaaS Foundation Blueprint remains a proposed reference. The project-control audit provides current control evidence. CUS-010/020/030A/030B provide the professional Customer master and receivable policy. SAL-020A/B through SAL-100D provide pricing through collection and controlled returns/credits. SAL-110 adds tenant-configurable order controls and sequential approvals. SAL-120A/B add versioned quotation templates, central organization identity, a reusable document designer/PDF engine and frozen sent-document snapshots. SAL-130A adds a reusable provider-based Analytics Center with personal/shared workspaces and Sales/Purchasing providers. Angular functional migration, dual-run acceptance, runtime cutover and physical presentation retirement are complete through `MOD-031H`. Ordinary business presentation is Angular under `/app`; server-owned runtime boundaries remain explicit and guarded. Migration source/model and the local Demo database are reconciled through migration 138. Legacy Sale/POS business behavior remains unchanged.
 
 ## Status classification
-- IMPLEMENTED: catalog, warehouses, suppliers, stock balances/movements, purchases, sales, transfer workflow, Identity login, role-permission checks, audit-log rows, Razor UI.
+- IMPLEMENTED: catalog, warehouses, suppliers, stock balances/movements, purchases, sales, transfer workflow, Identity login, role-permission checks, audit-log rows and Angular business presentation.
 - PARTIALLY IMPLEMENTED: authorization administration, auditability and inventory controls.
 - IMPLEMENTED: tenant-scoped centralized numbering for wholesale sales, POS sales, stock transfers and journal entries, including safe defaults and concurrent-edit protection.
 - IMPLEMENTED: database-enforced tenant relationship boundaries across all current ERP entities and tenant subscription redemptions, with automatic entity classification and relationship regression checks.
@@ -154,9 +164,9 @@ The imported ERP SaaS Foundation Blueprint remains a proposed reference. The pro
 See `06_SECURITY.md`, `04_ACCOUNTING.md`, and `TODO.md`. The historically exposed administrator was closed for the evidenced local Demo environment, an encrypted isolated restore drill reconciled without differences and migrations through 135 are applied with no pending EF model change. The local Demo audit and retention features are enabled through User Secrets. Coverage reconciliation is complete, new legacy writes are frozen behind a reversible flag, and pre/post signed checkpoints preserved all 710 historical legacy rows. Real deployment identities, off-host backup/checkpoint storage, production deployment controls and broader integration testing remain open.
 
 ## Recommended next steps
-1. Review and approve the next bounded accounting slice recorded in project-control/NEXT_TASK.md.
-2. Retire no MVC cohort until its exact files, mutation/download exceptions and deployment rollback are explicitly approved.
-3. Consider physical MVC retirement only after runtime coverage and staging evidence are complete.
+1. Continue only with the single approved slice recorded in `project-control/NEXT_TASK.md`.
+2. Keep the zero-MVC-presentation invariant and the 13 runtime-boundary allowlist green.
+3. Treat any retained-boundary removal as a separate architecture/security change with the matching session fixture.
 
 ## Read first
 Read `project-control/PROJECT_CONTEXT.md`, `project-control/PROJECT_STATUS.md`, `project-control/MASTER_ROADMAP.md` and `project-control/NEXT_TASK.md`; then read `01_CODEBASE_MAP.md`, the relevant module document and actual source.

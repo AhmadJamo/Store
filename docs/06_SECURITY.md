@@ -3,6 +3,15 @@
 > Source of truth: Static inspection and focused executable regression checks
 > Last reviewed: 2026-11-07
 
+## Final presentation boundary (2026-11-14)
+
+MOD-031H closes ordinary MVC business presentation at zero surfaces. Thirteen server runtime boundaries remain because
+they issue or challenge cookies, protect downloads/commands, validate public supplier tokens, or isolate Platform authority.
+Language remains the sole explicit POST-only compatibility endpoint with antiforgery. The modernization gate compares the
+generated boundary matrix with an exact allowlist and fails if an MVC business page returns or the boundary set drifts.
+This does not weaken API authorization: tenant permissions, Platform roles, antiforgery and Application-layer validation
+remain authoritative on every operation.
+
 ## UX-013 aging-report boundary
 
 The aging API is authenticated, tenant-filtered and GET-only under JournalEntries.View. Financial values and bucket

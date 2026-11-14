@@ -465,3 +465,9 @@
 - Added an executable invariant requiring zero ordinary MVC presentation surfaces and the exact 13 reviewed runtime boundaries.
 - Kept Language as the sole explicit POST-only compatibility boundary.
 - The main modernization gate now fails on new MVC business presentation or retained-boundary allowlist drift.
+
+## MOD-031H — MVC retirement stream closure — COMPLETE 2026-11-14
+
+- Reconciled project context, architecture, security and testing documentation to the final generated baseline.
+- Closed the MOD-031 retirement stream at zero ordinary MVC presentation surfaces and 13 intentional runtime boundaries.
+- Historical cohort counts remain history; they no longer describe current architecture or authorize more batch deletion.

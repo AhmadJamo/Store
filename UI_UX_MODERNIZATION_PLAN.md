@@ -615,6 +615,12 @@ largest underrepresented modules; production deployment readiness and physical M
 - Allowlisted exactly the 13 reviewed runtime boundaries and asserted Language remains POST-only.
 - Integrated the invariant into the standard modernization gate; no runtime route or business behavior changed.
 
+## MOD-031H — MVC retirement stream closure — COMPLETED 2026-11-14
+
+- Reconciled current project, architecture, security and testing documentation with the generated final baseline.
+- Closed ordinary MVC presentation retirement at zero surfaces; 13 reviewed server runtime boundaries remain intentional.
+- Future work returns to feature delivery; no further controller batch deletion is implied by the modernization plan.
+
 ## MOD-031C — fifteen-controller commercial retirement — COMPLETED 2026-11-14
 
 - Retired 15 MVC controllers spanning catalog masters, products, purchasing and sales returns/credits.

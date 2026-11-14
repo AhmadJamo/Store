@@ -2401,3 +2401,6 @@ Added optional category-owned ProductTemplate grouping while retaining Product a
   distinct, invalid portal tokens stayed private/no-store and unauthenticated antiforgery mutations were rejected.
 - 2026-11-14: Completed MOD-031G. Added an executable gate requiring zero ordinary MVC presentation surfaces, the exact
   13 reviewed runtime boundaries and Language as the sole POST-only compatibility boundary. No runtime behavior changed.
+- 2026-11-14: Completed MOD-031H documentation closure. Current context, architecture, security and testing now identify
+  Angular as the ordinary presentation layer, zero MVC business surfaces and 13 intentional server runtime boundaries.
+  Historical cohort counts remain audit history; the MOD-031 retirement stream is closed without runtime changes.

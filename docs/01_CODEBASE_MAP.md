@@ -870,3 +870,7 @@ composition for identity/session, onboarding, settings/downloads, subscription, 
 `scripts/Test-MvcPresentationInvariant.ps1` consumes the generated retirement inventory and dual-run matrix. The standard
 modernization gate invokes it after regeneration and fails if ordinary MVC presentation returns, the 13-boundary allowlist
 drifts, or Language stops being the explicit mutation-only compatibility endpoint.
+
+MOD-031H is the current map baseline: Angular owns all ordinary ERP business presentation. Earlier entries saying “MVC
+remains default” describe their historical migration phase and are superseded by the generated zero-surface invariant.
+The remaining Razor/controllers are limited to the 13 documented server runtime boundaries.

@@ -1,7 +1,7 @@
 # Testing
 > Status: FOCUSED REGRESSION EXECUTABLE IMPLEMENTED
 > Source of truth: `tests/SecurityRegression` and build output
-> Last reviewed: 2026-10-27
+> Last reviewed: 2026-11-14
 
 `tests/SecurityRegression` is a standalone executable test harness. It verifies tenant metadata/query filters and write guards; complete classification of mapped Domain entities; composite TenantId coverage; authorization; destructive action HTTP methods; throttling; SaaS and inventory invariants. The 2026-10-21 run passes 932 checks, including customer-invoice/payment permissions, tenant ownership, receipt evidence, reversal, actionable links and next-step guidance.
 
@@ -24,6 +24,12 @@ The 2026-09-15 Release run passed 167 checks, and `dotnet build MiniStore.slnx -
 Run the complete owner-approved local gate with `pwsh -NoProfile -File scripts/verify-local.ps1`. It builds Release, runs the focused executable, uses a disposable SQL database, starts the application, requires healthy readiness and then runs the workload. Remaining gaps include full HTTP authentication/authorization journeys, business-transaction/soak workloads, external payment webhook tests, production monitoring and penetration testing.
 
 ## Angular migration acceptance
+
+The current MOD-031H baseline is zero ordinary MVC presentation surfaces, 13 allowlisted runtime boundaries and Language
+as the sole mutation-only compatibility endpoint. `verify-angular-modernization.ps1` regenerates the inventory, rejects
+stale evidence, runs `Test-MvcPresentationInvariant.ps1`, builds Release, executes 1,601 focused checks, runs 242 Angular
+tests, enforces accessibility/consistency/bundle budgets and performs browser state/direction/keyboard/mobile acceptance.
+Environment-dependent authenticated API checks remain explicitly skipped unless an external storage-state is supplied.
 
 Run `pwsh -NoProfile -File scripts/verify-angular-modernization.ps1` before an Angular cutover increment. The command
 writes one ignored JSON report under `artifacts/verification/angular-acceptance`, fails on real build, regression,

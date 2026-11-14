@@ -17,6 +17,12 @@ under `/app`; MOD-030B..D commit Customers, Suppliers, Products, AnalyticsCenter
 is path-scoped and static-only, so API authorization, tenant middleware and MVC routing retain their existing boundaries.
 See `decisions/ADR-20261025-REVERSIBLE-PRESENTATION-CUTOVER.md` and `modernization/PHASE_30_CUTOVER.md`.
 
+MOD-031H closes this transitional presentation architecture. Ordinary ERP presentation is now Angular and the generated
+inventory reports zero ordinary MVC surfaces. The retired-route catalog preserves protected legacy navigation, while 13
+reviewed server runtime boundaries remain for identity/session, onboarding, downloads, billing, supplier tokens, Language
+POST and isolated Platform behavior. The standard gate enforces this state; earlier cutover-mode descriptions remain
+historical deployment context, not the current business-presentation default.
+
 Physical presentation retirement is a separate deployment boundary from reversible runtime cutover. `MOD-030G` removes
 only the approved read-only InventoryBalances, InventoryReservations, InventoryInsights, InventoryReconciliation and
 StockMovements MVC controllers/views after verifying their Angular/API counterparts. A centralized retired-route catalog
